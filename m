@@ -1,25 +1,28 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-Date: Thu, 23 Aug 2012 19:13:32 +0500
-Message-ID: <CAB=NE6X9pq_gnfFgCTYnwwhdaw2VAzxJTN0gMT_R5pWwhk_Teg@mail.gmail.com>
-Subject: compat-drivers-2012-08-23 update
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:26088 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757066Ab2HNTAq (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 14 Aug 2012 15:00:46 -0400
+Received: from int-mx12.intmail.prod.int.phx2.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+	by mx1.redhat.com (8.14.4/8.14.4) with ESMTP id q7EJ0ikh014483
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=OK)
+	for <backports@vger.kernel.org>; Tue, 14 Aug 2012 15:00:46 -0400
+Received: from quad.redhat.com (vpn-10-121.rdu.redhat.com [10.11.10.121])
+	by int-mx12.intmail.prod.int.phx2.redhat.com (8.14.4/8.14.4) with ESMTP id q7EJ0h1Y003968
+	for <backports@vger.kernel.org>; Tue, 14 Aug 2012 15:00:44 -0400
+From: Andy Gospodarek <andy@greyhouse.net>
 To: backports@vger.kernel.org
-Cc: Konstantin Ryabitsev <mricon@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH 0/5] compat: additional patches needed for RHEL6.3 support
+Date: Tue, 14 Aug 2012 14:59:44 -0400
+Message-Id: <1344970789-13047-1-git-send-email-andy@greyhouse.net>
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Stephen kicked linux-next.git to next-20120823, for this update no
-changes were required on either compat or compat-drivers, as such I've
-pegged and signed a new tag for both. A cronjob will eventually spit
-out results daily as shown below.
+The following patches should round out support for RHEL6.3 for compat.
 
-Although the first *stable* release will be based on v3.7-rc1, we
-should be able to be making daily snapshots based on linux-next.git
-now off of kernel.org under the new shiny compat-drivers name. That
-will soon be accommodated.
+After applying the patches I ran ckmake and get the following results.
 
-mcgrof@garbanzo ~/devel/compat-drivers (git::master)$ time ckmake
 Trying kernel 3.5.0-030500-generic [OK]
 Trying kernel 3.4.4-030404-generic [OK]
 Trying kernel 3.3.7-030307-generic [OK]
@@ -43,35 +46,14 @@ Trying kernel 2.6.26-020626-generic [OK]
 Trying kernel 2.6.25-020625-generic [OK]
 Trying kernel 2.6.24-020624-generic [OK]
 
-real    26m35.163s
-user    139m24.143s
-sys     13m13.934s
+Andy Gospodarek (5):
+  compat: RHEL build script fixup from upstream
+  compat: fix defines for RHEL by adding RHEL to string
+  compat: disable KFIFO on RHEL6.1 and later
+  compat: disable compat firmware module on RHEL6.0 and later
+  compat: fixup firmware defines on RHEL6
 
-Updated from local tree: /home/mcgrof/linux-next
-Origin remote URL:
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-This is a linux-next.git compat-drivers release
+ include/linux/compat-2.6.33.h |    2 ++
+ scripts/gen-compat-config.sh  |   14 +++++++++-----
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
-compat-drivers code metrics
-
-   1202383 - Total upstream lines of code being pulled
-      3041 - backport code changes
-      2546 - backport code additions
-       495 - backport code deletions
-     13767 - backport from compat module
-     16808 - total backport code
-    1.3979 - % of code consists of backport work
-       230 - backport code changes
-       180 - backport code additions
-        50 - backport code deletions
-     13767 - backport from compat module
-     13997 - total backport code
-    1.1641 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20120823
-compat.git: compat-2012-08-23
-compat-drivers release: compat-drivers-2012-08-23
-Code metrics archive: http://bit.ly/H6BTF7
-
-  Luis
