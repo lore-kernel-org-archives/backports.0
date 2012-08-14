@@ -1,84 +1,47 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-Date: Thu, 23 Aug 2012 17:50:24 +0500
-Message-ID: <CAB=NE6Xsx-5J_F3SA9XGzACCxvp4dnL1tKYN8X+QeqVTzjbSKQ@mail.gmail.com>
-Subject: [ANN] compat-drivers
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:60454 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757341Ab2HNSx1 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 14 Aug 2012 14:53:27 -0400
+Received: from int-mx12.intmail.prod.int.phx2.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+	by mx1.redhat.com (8.14.4/8.14.4) with ESMTP id q7EIrQtB023807
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=OK)
+	for <backports@vger.kernel.org>; Tue, 14 Aug 2012 14:53:27 -0400
+Received: from quad.redhat.com (vpn-10-121.rdu.redhat.com [10.11.10.121])
+	by int-mx12.intmail.prod.int.phx2.redhat.com (8.14.4/8.14.4) with ESMTP id q7EIrQkV000965
+	for <backports@vger.kernel.org>; Tue, 14 Aug 2012 14:53:26 -0400
+From: Andy Gospodarek <gospo@redhat.com>
 To: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] compat: only compile optional sdio code on 2.6.37 and later
+Date: Tue, 14 Aug 2012 14:52:27 -0400
+Message-Id: <1344970347-12440-1-git-send-email-gospo@redhat.com>
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-In synch with linux-next.git next-20120822, compat-2012-08-22,
-compat-drivers-2012-08-22 now has been test compiled successfully over
-21 kernels. This has the drm drivers Ozan =C3=87a=C4=9Flayan added as part =
-of
-his GSoC project. For those unfamiliar with the tagging process I add
-a tag to either compat or compat-drivers *only* if I can guarantee
-compilation over all supported vanilla kernels, the tags will match
-the same date as the ones from linux-next. Not too shabby for only
-1.1645% of code being backport code. So -- it seems we're on track
-with a drm driver integration set for compat-drivers for v3.7.
+The pm_runtime routines in wlcore/sdio.c are not included in compat and
+the best alternative is to build them only on kernels 2.6.37 and later.
 
-The new compat-drivers project wiki:
+Signed-off-by: Andy Gospodarek <andy@greyhouse.net>
 
-https://backports.wiki.kernel.org
+---
+ config.mk |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-mcgrof@garbanzo ~/devel/compat-drivers (git::master)$ time ckmake
-Trying kernel 3.5.0-030500-generic [OK]
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.32-02063255-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
+diff --git a/config.mk b/config.mk
+index 93f0738..165a6ad 100644
+--- a/config.mk
++++ b/config.mk
+@@ -588,7 +588,9 @@ ifdef CONFIG_WL12XX_PLATFORM_DATA
+ ifndef CONFIG_COMPAT_KERNEL_2_6_37
+ export CONFIG_COMPAT_WL1251_SDIO=m
+ endif #CONFIG_COMPAT_KERNEL_2_6_37
++ifndef CONFIG_COMPAT_KERNEL_2_6_38
+ export CONFIG_WLCORE_SDIO=m
++endif #CONFIG_COMPAT_KERNEL_2_6_38
+ endif #CONFIG_WL12XX_PLATFORM_DATA
+ endif #CONFIG_CRC7
+ 
+-- 
+1.7.6.5
 
-real    26m36.168s
-user    139m24.967s
-sys     13m13.114s
-
-Stats:
-
-Updated from local tree: /home/mcgrof/linux-next
-Origin remote URL:
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-This is a linux-next.git compat-drivers release
-
-compat-drivers code metrics
-
-   1202023 - Total upstream lines of code being pulled
-      3041 - backport code changes
-      2546 - backport code additions
-       495 - backport code deletions
-     13767 - backport from compat module
-     16808 - total backport code
-    1.3983 - % of code consists of backport work
-       230 - backport code changes
-       180 - backport code additions
-        50 - backport code deletions
-     13767 - backport from compat module
-     13997 - total backport code
-    1.1645 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20120822
-compat.git: compat-2012-08-22
-compat-drivers release: compat-drivers-2012-08-22
-Code metrics archive: http://bit.ly/H6BTF7
-
-  Luis
