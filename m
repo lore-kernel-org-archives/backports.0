@@ -1,34 +1,47 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:40705 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754652Ab2HVU0e (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 22 Aug 2012 16:26:34 -0400
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 91B645401D6
-	for <backports@vger.kernel.org>; Wed, 22 Aug 2012 16:16:40 -0400 (EDT)
+Received: from mx1.redhat.com ([209.132.183.28]:11901 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757066Ab2HNTB0 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 14 Aug 2012 15:01:26 -0400
+Received: from int-mx12.intmail.prod.int.phx2.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+	by mx1.redhat.com (8.14.4/8.14.4) with ESMTP id q7EJ1Q1l014725
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=OK)
+	for <backports@vger.kernel.org>; Tue, 14 Aug 2012 15:01:26 -0400
+Received: from quad.redhat.com (vpn-10-121.rdu.redhat.com [10.11.10.121])
+	by int-mx12.intmail.prod.int.phx2.redhat.com (8.14.4/8.14.4) with ESMTP id q7EJ0h1c003968
+	for <backports@vger.kernel.org>; Tue, 14 Aug 2012 15:01:26 -0400
+From: Andy Gospodarek <andy@greyhouse.net>
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-08-22 is baked
-Message-Id: <20120822201609.DB0FC40ABD@repository3.orbit-lab.org>
-Date: Wed, 22 Aug 2012 16:16:01 -0400 (EDT)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Subject: [PATCH 4/5] compat: disable compat firmware module on RHEL6.0 and later
+Date: Tue, 14 Aug 2012 14:59:48 -0400
+Message-Id: <1344970789-13047-5-git-send-email-andy@greyhouse.net>
+In-Reply-To: <1344970789-13047-1-git-send-email-andy@greyhouse.net>
+References: <1344970789-13047-1-git-send-email-andy@greyhouse.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at 40ec2b6 compat-wireless: add certification onus / base station pending patches
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at b8471d8 compat: add tty_port_register_device
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at bc6bbd1 Add linux-next specific files for 20120822
-find: `/var/opt/compat//linux-next//drivers/net/wireless/iwmc3200wifi/': No such file or directory
-find: `/var/opt/compat//linux-next//drivers/net/ethernet/atheros/alx/': No such file or directory
-Error while updating from wireless-testing
-/usr/bin/sha1sum: *.tar.bz2: No such file or directory
+Signed-off-by: Andy Gospodarek <andy@greyhouse.net>
 
-compat-wireless code metrics
+---
+ scripts/gen-compat-config.sh |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
-    841457 - Total upstream lines of code being pulled
+diff --git a/scripts/gen-compat-config.sh b/scripts/gen-compat-config.sh
+index c6368f3..810c51b 100755
+--- a/scripts/gen-compat-config.sh
++++ b/scripts/gen-compat-config.sh
+@@ -56,7 +56,9 @@ if [[ ! -z ${RHEL_MAJOR} ]]; then
+ fi
+ 
+ if [[ ${CONFIG_COMPAT_KERNEL_2_6_33} = "y" ]]; then
+-	echo "export CONFIG_COMPAT_FIRMWARE_CLASS=m"
++	if [[ ! ${CONFIG_COMPAT_RHEL_6_0} = "y" ]]; then
++		echo "export CONFIG_COMPAT_FIRMWARE_CLASS=m"
++	fi
+ fi
+ 
+ if [[ ${CONFIG_COMPAT_KERNEL_2_6_36} = "y" ]]; then
+-- 
+1.7.1
+
