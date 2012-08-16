@@ -1,88 +1,62 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:52745 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752376Ab2H3Uu2 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 30 Aug 2012 16:50:28 -0400
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 8CF32540237
-	for <backports@vger.kernel.org>; Thu, 30 Aug 2012 16:50:59 -0400 (EDT)
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:52032 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964786Ab2HPQMH (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 16 Aug 2012 12:12:07 -0400
+Received: by wibhq12 with SMTP id hq12so723782wib.1
+        for <backports@vger.kernel.org>; Thu, 16 Aug 2012 09:12:06 -0700 (PDT)
+From: =?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-08-30 is baked
-Message-Id: <20120830205025.87C7540ABE@repository3.orbit-lab.org>
-Date: Thu, 30 Aug 2012 16:50:25 -0400 (EDT)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Cc: =?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+Subject: [PATCH 2/2] compat-drivers: Add 2 convenience functions
+Date: Thu, 16 Aug 2012 19:11:53 +0300
+Message-Id: <1345133513-4592-2-git-send-email-ozancag@gmail.com>
+In-Reply-To: <1345133513-4592-1-git-send-email-ozancag@gmail.com>
+References: <1345133513-4592-1-git-send-email-ozancag@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at 95c1a78 compat-drivers: refresh patches for next-20120822
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 99d7ff9 compat: Backport eth_broadcast_addr()
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at c0deb77 Add linux-next specific files for 20120824
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+Add copyFiles and copyDirectories. Their functionality is repeated
+over and over in the current code. We'll start using them to get
+rid of redundant code snippets.
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+Signed-off-by: Ozan Çağlayan <ozancag@gmail.com>
+---
+ scripts/admin-update.sh | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-compat-drivers code metrics
+diff --git a/scripts/admin-update.sh b/scripts/admin-update.sh
+index bf5fb8e..22365cd 100755
+--- a/scripts/admin-update.sh
++++ b/scripts/admin-update.sh
+@@ -163,6 +163,24 @@ nagometer() {
+ 
+ }
+ 
++# Copy each file in $1 into $2
++copyFiles() {
++	FILES=$1
++	TARGET=$2
++	for file in $FILES; do
++		echo "Copying $GIT_TREE/$TARGET/$file"
++		cp "$GIT_TREE/$TARGET/$file" $TARGET/
++	done
++}
++
++copyDirectories() {
++	DIRS=$1
++	for dir in $DIRS; do
++		echo "Copying $GIT_TREE/$dir/*.[ch]"
++		cp $GIT_TREE/$dir/{Kconfig,Makefile,*.[ch]} $dir/ &> /dev/null
++	done
++}
++
+ # First check cmdline args to understand
+ # which patches to apply and which release tag to set.
+ #
+-- 
+1.7.11.2
 
-    841647 - Total upstream lines of code being pulled
-      3041 - backport code changes
-      2546 - backport code additions
-       495 - backport code deletions
-     12246 - backport from compat module
-     15287 - total backport code
-    1.8163 - % of code consists of backport work
-     19083 - Crap changes not yet posted
-     19023 - Crap additions not yet posted
-        60 - Crap deletions not yet posted
-    2.2673 - % of crap code
-
-Base tree: linux-next.git
-Base tree version: next-20120824
-compat.git: compat-2012-08-23
-compat-drivers release: compat-drivers-2012-08-23-pc
-Code metrics archive: http://bit.ly/H6BTF7
