@@ -1,47 +1,23 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:60454 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757341Ab2HNSx1 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 14 Aug 2012 14:53:27 -0400
-Received: from int-mx12.intmail.prod.int.phx2.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-	by mx1.redhat.com (8.14.4/8.14.4) with ESMTP id q7EIrQtB023807
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=OK)
-	for <backports@vger.kernel.org>; Tue, 14 Aug 2012 14:53:27 -0400
-Received: from quad.redhat.com (vpn-10-121.rdu.redhat.com [10.11.10.121])
-	by int-mx12.intmail.prod.int.phx2.redhat.com (8.14.4/8.14.4) with ESMTP id q7EIrQkV000965
-	for <backports@vger.kernel.org>; Tue, 14 Aug 2012 14:53:26 -0400
-From: Andy Gospodarek <gospo@redhat.com>
-To: backports@vger.kernel.org
-Subject: [PATCH] compat: only compile optional sdio code on 2.6.37 and later
-Date: Tue, 14 Aug 2012 14:52:27 -0400
-Message-Id: <1344970347-12440-1-git-send-email-gospo@redhat.com>
-Sender: backports-owner@vger.kernel.org
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <1345131891-2555-1-git-send-email-ozancag@gmail.com>
+References: <1345131891-2555-1-git-send-email-ozancag@gmail.com>
+Date: Mon, 20 Aug 2012 10:35:37 +0500
+Message-ID: <CAB=NE6XPZN6_eAwVLXMBTKshQb7=tiLPSV0bXbNZc9tFzvOf1Q@mail.gmail.com>
+Subject: Re: [PATCH] compat-drivers: Clean up *.mod.c after everything
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-The pm_runtime routines in wlcore/sdio.c are not included in compat and
-the best alternative is to build them only on kernels 2.6.37 and later.
+On Thu, Aug 16, 2012 at 7:44 PM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com=
+> wrote:
+> Remove possible .mod.c leftovers at the end instead of after every
+> copying operation.
+>
+> Signed-off-by: Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com>
 
-Signed-off-by: Andy Gospodarek <andy@greyhouse.net>
+Applied and pushed, thanks!
 
----
- config.mk |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/config.mk b/config.mk
-index 93f0738..165a6ad 100644
---- a/config.mk
-+++ b/config.mk
-@@ -588,7 +588,9 @@ ifdef CONFIG_WL12XX_PLATFORM_DATA
- ifndef CONFIG_COMPAT_KERNEL_2_6_37
- export CONFIG_COMPAT_WL1251_SDIO=m
- endif #CONFIG_COMPAT_KERNEL_2_6_37
-+ifndef CONFIG_COMPAT_KERNEL_2_6_38
- export CONFIG_WLCORE_SDIO=m
-+endif #CONFIG_COMPAT_KERNEL_2_6_38
- endif #CONFIG_WL12XX_PLATFORM_DATA
- endif #CONFIG_CRC7
- 
--- 
-1.7.6.5
-
+  Luis
