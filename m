@@ -1,88 +1,35 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:60622 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753172Ab2H1UuT (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 28 Aug 2012 16:50:19 -0400
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id AD35F540237
-	for <backports@vger.kernel.org>; Tue, 28 Aug 2012 16:50:47 -0400 (EDT)
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:44897 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757890Ab2HUQWa convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 21 Aug 2012 12:22:30 -0400
+Received: by yhmm54 with SMTP id m54so5973832yhm.19
+        for <backports@vger.kernel.org>; Tue, 21 Aug 2012 09:22:29 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1345135656-9563-1-git-send-email-ozancag@gmail.com>
+References: <1345135656-9563-1-git-send-email-ozancag@gmail.com>
+Date: Tue, 21 Aug 2012 19:22:28 +0300
+Message-ID: <CAFub=KQkpJtQ0ya2HKHi_T5iP=fzpJEN=jP-zOuWqOL80H_H7A@mail.gmail.com>
+Subject: Re: [PATCH] compat-drivers: Use case instead of if/if/.. blocks
+From: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-08-28 is baked
-Message-Id: <20120828205017.394CD40ABD@repository3.orbit-lab.org>
-Date: Tue, 28 Aug 2012 16:50:17 -0400 (EDT)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Cc: mcgrof@kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at 95c1a78 compat-drivers: refresh patches for next-20120822
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 99d7ff9 compat: Backport eth_broadcast_addr()
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at c0deb77 Add linux-next specific files for 20120824
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+On Thu, Aug 16, 2012 at 7:47 PM, Ozan Çağlayan <ozancag@gmail.com> wrote:
+> case is much cleaner both for reading and for extending.
+>
+> Signed-off-by: Ozan Çağlayan <ozancag@gmail.com>
+> ---
+>  scripts/admin-update.sh | 71 ++++++++++++++++++++++++++-----------------------
+>  1 file changed, 37 insertions(+), 34 deletions(-)
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+Did you miss this?
 
-compat-drivers code metrics
 
-    841647 - Total upstream lines of code being pulled
-      3041 - backport code changes
-      2546 - backport code additions
-       495 - backport code deletions
-     12246 - backport from compat module
-     15287 - total backport code
-    1.8163 - % of code consists of backport work
-     19083 - Crap changes not yet posted
-     19023 - Crap additions not yet posted
-        60 - Crap deletions not yet posted
-    2.2673 - % of crap code
 
-Base tree: linux-next.git
-Base tree version: next-20120824
-compat.git: compat-2012-08-23
-compat-drivers release: compat-drivers-2012-08-23-pc
-Code metrics archive: http://bit.ly/H6BTF7
+-- 
+Ozan Çağlayan
