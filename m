@@ -1,88 +1,67 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:40579 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753248Ab2HZUvs (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 26 Aug 2012 16:51:48 -0400
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id B80EF5402F4
-	for <backports@vger.kernel.org>; Sun, 26 Aug 2012 16:52:14 -0400 (EDT)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-08-26 is baked
-Message-Id: <20120826205146.5BE8B40ABD@repository3.orbit-lab.org>
-Date: Sun, 26 Aug 2012 16:51:46 -0400 (EDT)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <ozancag@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAB=NE6Vu_2RfyRRjLNNbykOLAX5rEwtKP9cPsMx8Z-VU1C962w@mail.gmail.com>
+References: <1345566895-22001-1-git-send-email-ozancag@gmail.com>
+	<1345566895-22001-5-git-send-email-ozancag@gmail.com>
+	<CAB=NE6Vu_2RfyRRjLNNbykOLAX5rEwtKP9cPsMx8Z-VU1C962w@mail.gmail.com>
+Date: Wed, 22 Aug 2012 20:48:40 +0300
+Message-ID: <CAFub=KQnVoHwSZu_SByU+UNJVZTTsmm-A9bLBhffiPaJABy7Ew@mail.gmail.com>
+Subject: Re: [PATCH 5/5] compat-drivers: Add DRM patches
+From: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org
+Content-Type: multipart/alternative; boundary=e89a8f13ebac6b1ddc04c7de5a66
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at 95c1a78 compat-drivers: refresh patches for next-20120822
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 99d7ff9 compat: Backport eth_broadcast_addr()
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at c0deb77 Add linux-next specific files for 20120824
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+--e89a8f13ebac6b1ddc04c7de5a66
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+> Awesome work, this is really great stuff. I applied and pushed all of
+> them. Also I updated the patches to synch agai
+>
+> On Tue, Aug 21, 2012 at 8:34 PM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail.c=
+om> wrote:
+> > These patches are part of the GSoC project for backporting the
+> > DRM drivers onto older kernels.
+> >
+> > Merge them into the compat-drivers tree.
+> >
+> > Signed-off-by: Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com>
+>
+> Awesome work, this is really great stuff. I applied and pushed all of
+> them. Also I updated the patches to synch against next-20120822. I'll
+> kick off a ckmake test build in a bit.
+>
+>   Luis
+>
 
-compat-drivers code metrics
+--e89a8f13ebac6b1ddc04c7de5a66
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-    841647 - Total upstream lines of code being pulled
-      3041 - backport code changes
-      2546 - backport code additions
-       495 - backport code deletions
-     12246 - backport from compat module
-     15287 - total backport code
-    1.8163 - % of code consists of backport work
-     19083 - Crap changes not yet posted
-     19023 - Crap additions not yet posted
-        60 - Crap deletions not yet posted
-    2.2673 - % of crap code
+<p dir=3D"ltr">&gt; Awesome work, this is really great stuff. I applied and=
+ pushed all of<br>
+&gt; them. Also I updated the patches to synch agai<blockquote class=3D"gma=
+il_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-lef=
+t:1ex">On Tue, Aug 21, 2012 at 8:34 PM, Ozan =C3=87a=C4=9Flayan &lt;<a href=
+=3D"mailto:ozancag@gmail.com">ozancag@gmail.com</a>&gt; wrote:<br>
 
-Base tree: linux-next.git
-Base tree version: next-20120824
-compat.git: compat-2012-08-23
-compat-drivers release: compat-drivers-2012-08-23-pc
-Code metrics archive: http://bit.ly/H6BTF7
+&gt; These patches are part of the GSoC project for backporting the<br>
+&gt; DRM drivers onto older kernels.<br>
+&gt;<br>
+&gt; Merge them into the compat-drivers tree.<br>
+&gt;<br>
+&gt; Signed-off-by: Ozan =C3=87a=C4=9Flayan &lt;<a href=3D"mailto:ozancag@g=
+mail.com">ozancag@gmail.com</a>&gt;<br>
+<br>
+Awesome work, this is really great stuff. I applied and pushed all of<br>
+them. Also I updated the patches to synch against next-20120822. I&#39;ll<b=
+r>
+kick off a ckmake test build in a bit.<br>
+<br>
+=C2=A0 Luis<br>
+</blockquote></p>
+
+--e89a8f13ebac6b1ddc04c7de5a66--
