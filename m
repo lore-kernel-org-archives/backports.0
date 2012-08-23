@@ -1,38 +1,33 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <CAFub=KSTKK4y9157DKM-2V-rhjFuGh-MCjxSQSR8gPwjSRy7Xg@mail.gmail.com>
-References: <1345021233-3152-1-git-send-email-ozancag@gmail.com>
-	<CAB=NE6UhoEKxxVrtscRtW6phWDbmFSjMKqVZWAdjSL7eU7=Yhg@mail.gmail.com>
-	<CAFub=KSTKK4y9157DKM-2V-rhjFuGh-MCjxSQSR8gPwjSRy7Xg@mail.gmail.com>
-Date: Wed, 22 Aug 2012 17:23:59 +0500
-Message-ID: <CAB=NE6WXgA2TN_xn0uGDZEaz85bWOphrs4Si=4-vTtQ5b9Rmaw@mail.gmail.com>
-Subject: Re: [PATCH] Switch README to markdown format
-From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
-Cc: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:48037 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751233Ab2HWUMb (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 23 Aug 2012 16:12:31 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 7DAB65401D6
+	for <backports@vger.kernel.org>; Thu, 23 Aug 2012 16:12:54 -0400 (EDT)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-08-23 is baked
+Message-Id: <20120823201229.7470D40ABD@repository3.orbit-lab.org>
+Date: Thu, 23 Aug 2012 16:12:29 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Aug 21, 2012 at 7:57 PM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com=
-> wrote:
-> On Mon, Aug 20, 2012 at 8:34 AM, Luis R. Rodriguez <mcgrof@frijolero.org>=
- wrote:
->> On Wed, Aug 15, 2012 at 1:00 PM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail.=
-com> wrote:
->>> Signed-off-by: Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com>
->>
->> Why is this good? Also please use git format-patch -M option.
->
-> github interprets and formats .md (markdown) in a very fashioned way.
-> See how it looks and you can decide to use markdown in your readme,
-> todo, etc. in future stuff:
->
->   https://github.com/ozancaglayan/compat-drivers/tree/markdown
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at 40ec2b6 compat-wireless: add certification onus / base station pending patches
+git fetch github (/var/opt/compat/compat)
+HEAD is now at 99d7ff9 compat: Backport eth_broadcast_addr()
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at c94456b Add linux-next specific files for 20120823
+find: `/var/opt/compat//linux-next//drivers/net/wireless/iwmc3200wifi/': No such file or directory
+find: `/var/opt/compat//linux-next//drivers/net/ethernet/atheros/alx/': No such file or directory
+Error while updating from wireless-testing
+/usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
-Wicked!
+compat-wireless code metrics
 
-> Thanks for the -M, I didn't know about it.
-
-:D
-
-  Luis
+    841608 - Total upstream lines of code being pulled
