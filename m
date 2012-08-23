@@ -1,56 +1,95 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <Mridula.Prakash@lnties.com>
-From: Mridula Prakash <Mridula.Prakash@lnties.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: [PATCH] compat-2.6: Supoprt ARM Architecture while  back porting
- for linux2.6.28 kernel
-Date: Tue, 28 Aug 2012 11:38:21 +0000
-Message-ID: <B0824BA06BBF0C4AA3F9BE696B46CC8C060BEA01@POCITMSEXMB01.LntUniverse.com>
-Content-Type: text/plain; charset="iso-8859-1"
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:39994 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756333Ab2HWLhv (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 23 Aug 2012 07:37:51 -0400
+Received: by mail-ey0-f174.google.com with SMTP id c11so190644eaa.19
+        for <backports@vger.kernel.org>; Thu, 23 Aug 2012 04:37:51 -0700 (PDT)
+From: =?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+To: backports@vger.kernel.org
+Cc: mcgrof@kernel.org,
+	=?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+Subject: [PATCH 2/2] compat: Backport eth_broadcast_addr()
+Date: Thu, 23 Aug 2012 14:37:27 +0300
+Message-Id: <1345721847-9279-2-git-send-email-ozancag@gmail.com>
+In-Reply-To: <1345721847-9279-1-git-send-email-ozancag@gmail.com>
+References: <1345721847-9279-1-git-send-email-ozancag@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
+This backports:
 
-This adds support for ARM Architectures while back porting for linux-2.6.28=
- kernel. The "atomic.h" file is part of the 2.6.28 kernel for ARM Architect=
-ures.
+commit ad7eee98bef92481581060801bdfd1b25a6106c0
+Author: Johannes Berg <johannes.berg@intel.com>
+Commit: David S. Miller <davem@davemloft.net>
 
-Signed-off-by: Mridula Prakash<Mridula.Prakash@lnties.com>
+    etherdevice: introduce eth_broadcast_addr
 
+    A lot of code has either the memset or an inefficient copy
+    from a static array that contains the all-ones broadcast
+    address. Introduce eth_broadcast_addr() to fill an address
+    with all ones, making the code clearer and allowing us to
+    get rid of some constant arrays.
+
+    Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+
+$ git describe --contains ad7eee98bef92481581060801bdfd1b25a6106c0
+v3.6-rc1~125^2~252
+
+Trying kernel 3.5.0-030500-generic [OK]
+Trying kernel 3.4.4-030404-generic [OK]
+Trying kernel 3.3.7-030307-generic [OK]
+Trying kernel 3.2.2-030202-generic [OK]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.32-02063255-generic [OK]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
+
+Signed-off-by: Ozan Çağlayan <ozancag@gmail.com>
 ---
-diff -uprN a/include/linux/compat-2.6.29.h b/include/linux/compat-2.6.29.h
---- a/include/linux/compat-2.6.29.h     2012-06-29 04:17:15.000000000 +0530
-+++ b/include/linux/compat-2.6.29.h     2012-08-28 16:39:40.991932473 +0530
-@@ -34,7 +34,9 @@ static inline int usb_autopm_get_interfa
-        defined(CONFIG_SUPERH) || defined(CONFIG_SPARC) || \
-        defined(CONFIG_FRV) || defined(CONFIG_X86) || \
-        defined(CONFIG_M32R) || defined(CONFIG_M68K) || \
--       defined(CONFIG_MN10300) || defined(CONFIG_XTENSA)
-+       defined(CONFIG_MN10300) || defined(CONFIG_XTENSA)|| \
-+       defined(CONFIG_ARM)
+ include/linux/compat-3.6.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/include/linux/compat-3.6.h b/include/linux/compat-3.6.h
+index 63753cd..97b5993 100644
+--- a/include/linux/compat-3.6.h
++++ b/include/linux/compat-3.6.h
+@@ -48,6 +48,17 @@
+ #include <linux/etherdevice.h>
+ 
+ /**
++ * eth_broadcast_addr - Assign broadcast address
++ * @addr: Pointer to a six-byte array containing the Ethernet address
++ *
++ * Assign the broadcast address to the given address array.
++ */
++static inline void eth_broadcast_addr(u8 *addr)
++{
++	memset(addr, 0xff, ETH_ALEN);
++}
 +
- #include <asm/atomic.h>
- #else
- typedef struct {
++/**
+  * eth_random_addr - Generate software assigned random Ethernet address
+  * @addr: Pointer to a six-byte array containing the Ethernet address
+  *
+-- 
+1.7.11.4
 
-
-Thanks and Regards
-Mridula Prakash
-Senior Software Engineer
-L&T - Integrated Engineering Services (IES)
-LARSEN & TOUBRO LIMITED
-KIADB Industrial Area
-Hebbal, Hootagalli,
-Mysore 570018, India
-
-
-Larsen & Toubro Limited
-
-www.larsentoubro.com
-
-This Email may contain confidential or privileged information for the inten=
-ded recipient (s). If you are not the intended recipient, please do not use=
- or disseminate the information, notify the sender and delete it from your =
-system.
