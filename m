@@ -1,108 +1,34 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:61631 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756147Ab2HUQfN (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 21 Aug 2012 12:35:13 -0400
-Received: by mail-ey0-f174.google.com with SMTP id c11so1955eaa.19
-        for <backports@vger.kernel.org>; Tue, 21 Aug 2012 09:35:12 -0700 (PDT)
-From: =?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+Received: from external1.orbit-lab.org ([128.6.192.131]:55683 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S932890Ab2HXUMr (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 24 Aug 2012 16:12:47 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 005AC54003A
+	for <backports@vger.kernel.org>; Fri, 24 Aug 2012 16:13:10 -0400 (EDT)
 To: backports@vger.kernel.org
-Cc: mcgrof@kernel.org,
-	=?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
-Subject: [PATCH 3/5] compat-drivers: Fetch in DRM drivers
-Date: Tue, 21 Aug 2012 19:34:53 +0300
-Message-Id: <1345566895-22001-3-git-send-email-ozancag@gmail.com>
-In-Reply-To: <1345566895-22001-1-git-send-email-ozancag@gmail.com>
-References: <1345566895-22001-1-git-send-email-ozancag@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: Compat-wireless release for 2012-08-24 is baked
+Message-Id: <20120824201244.E8C5240ABD@repository3.orbit-lab.org>
+Date: Fri, 24 Aug 2012 16:12:44 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Grab DRM drivers from $GIT_URL if drm is passed in the command line.
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at 40ec2b6 compat-wireless: add certification onus / base station pending patches
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 99d7ff9 compat: Backport eth_broadcast_addr()
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at c0deb77 Add linux-next specific files for 20120824
+find: `/var/opt/compat//linux-next//drivers/net/wireless/iwmc3200wifi/': No such file or directory
+find: `/var/opt/compat//linux-next//drivers/net/ethernet/atheros/alx/': No such file or directory
+Error while updating from wireless-testing
+/usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
-Note that 'make' will not currently build these drivers. This is just
-for fetching them in.
+compat-wireless code metrics
 
-Signed-off-by: Ozan Çağlayan <ozancag@gmail.com>
----
- scripts/admin-update.sh | 42 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
-
-diff --git a/scripts/admin-update.sh b/scripts/admin-update.sh
-index fe52419..0fa46c2 100755
---- a/scripts/admin-update.sh
-+++ b/scripts/admin-update.sh
-@@ -422,6 +422,23 @@ DRIVERS_WLAN_FILES="adm8211.c
- 		    mwl8k.c
- 		    rndis_wlan.c"
- 
-+# DRM drivers
-+DRIVERS_DRM="drivers/gpu/drm/ast
-+	     drivers/gpu/drm/cirrus
-+	     drivers/gpu/drm/gma500
-+	     drivers/gpu/drm/i2c
-+	     drivers/gpu/drm/i810
-+	     drivers/gpu/drm/i915
-+	     drivers/gpu/drm/mgag200
-+	     drivers/gpu/drm/nouveau
-+	     drivers/gpu/drm/radeon
-+	     drivers/gpu/drm/ttm
-+	     drivers/gpu/drm/via
-+	     drivers/gpu/drm/vmwgfx"
-+
-+# UDL uses the new dma-buf API, let's disable this for now
-+#DRIVERS="$DRIVERS drivers/gpu/drm/udl"
-+
- rm -rf drivers/
- 
- mkdir -p include/net/bluetooth \
-@@ -435,13 +452,15 @@ mkdir -p include/net/bluetooth \
- 	 drivers/misc/eeprom \
- 	 drivers/net/usb \
- 	 drivers/net/ethernet/broadcom \
-+	 drivers/platform/x86 \
- 	 drivers/ssb \
- 	 drivers/staging \
- 	 $NET_WLAN_DIRS \
- 	 $NET_BT_DIRS \
- 	 $DRIVERS_WLAN \
- 	 $DRIVERS_ETH \
--	 $DRIVERS_BT
-+	 $DRIVERS_BT \
-+	 $DRIVERS_DRM
- 
- if [[ "$ENABLE_NETWORK" == "1" ]]; then
- 	# WLAN and bluetooth files
-@@ -479,6 +498,27 @@ if [[ "$ENABLE_NETWORK" == "1" ]]; then
- 	echo "obj-\$(CONFIG_B44) += b44.o" > drivers/net/ethernet/broadcom/Makefile
- fi
- 
-+if [[ "$ENABLE_DRM" == "1" ]]; then
-+	# DRM drivers
-+	copyDirectories "$DRIVERS_DRM"
-+
-+	# Copy standalone drivers
-+	echo "Copying $GIT_TREE/drivers/gpu/drm/*.[ch]"
-+	cp $GIT_TREE/drivers/gpu/drm/{Makefile,*.[ch]} drivers/gpu/drm/
-+
-+	# Copy DRM headers
-+	cp -a $GIT_TREE/include/drm include/
-+
-+	# drivers/gpu/drm/i915/intel_pm.c requires this
-+	cp $GIT_TREE/drivers/platform/x86/intel_ips.h drivers/platform/x86
-+
-+	# Copy radeon reg_srcs for hostprogs
-+	cp -a $GIT_TREE/drivers/gpu/drm/radeon/reg_srcs drivers/gpu/drm/radeon
-+
-+	# Finally get the DRM top-level makefile
-+	cp $GIT_TREE/drivers/gpu/drm/Makefile drivers/gpu/drm
-+fi
-+
- # Staging drivers in their own directory
- for i in $STAGING_DRIVERS; do
- 	if [ ! -d $GIT_TREE/$i ]; then
--- 
-1.7.11.4
-
+    841647 - Total upstream lines of code being pulled
