@@ -1,39 +1,34 @@
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH] compat: add tty_port_register_device
-Date: Sat, 18 Aug 2012 13:46:54 +0200
-Message-Id: <1345290414-20674-1-git-send-email-hauke@hauke-m.de>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:34211 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751596Ab2HYUKd (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 25 Aug 2012 16:10:33 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id E8C5D540091
+	for <backports@vger.kernel.org>; Sat, 25 Aug 2012 16:10:58 -0400 (EDT)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-08-25 is baked
+Message-Id: <20120825201031.A526D40ABE@repository3.orbit-lab.org>
+Date: Sat, 25 Aug 2012 16:10:31 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-tty_register_device was replaced by tty_port_register_device in this
-commit:
-commit 734cc1783816ae358cef45673a29bf7af974e147
-Author: Jiri Slaby <jslaby@suse.cz>
-Date:   Tue Aug 7 21:47:47 2012 +0200
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at 40ec2b6 compat-wireless: add certification onus / base station pending patches
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 99d7ff9 compat: Backport eth_broadcast_addr()
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at c0deb77 Add linux-next specific files for 20120824
+find: `/var/opt/compat//linux-next//drivers/net/wireless/iwmc3200wifi/': No such file or directory
+find: `/var/opt/compat//linux-next//drivers/net/ethernet/atheros/alx/': No such file or directory
+Error while updating from wireless-testing
+/usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
-    TTY: use tty_port_register_device
+compat-wireless code metrics
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- include/linux/compat-3.7.h |    3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/include/linux/compat-3.7.h b/include/linux/compat-3.7.h
-index 9271c2e..22a7f9f 100644
---- a/include/linux/compat-3.7.h
-+++ b/include/linux/compat-3.7.h
-@@ -15,6 +15,9 @@ bool mod_delayed_work(struct workqueue_struct *wq, struct delayed_work *dwork,
- #define tty_lock(__tty) tty_lock()
- #define tty_unlock(__tty) tty_unlock()
- 
-+#define tty_port_register_device(port, driver, index, device) \
-+	tty_register_device(driver, index, device)
-+
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)) */
- 
- #endif /* LINUX_3_7_COMPAT_H */
--- 
-1.7.9.5
+    841647 - Total upstream lines of code being pulled
