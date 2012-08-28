@@ -1,23 +1,56 @@
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <Mridula.Prakash@lnties.com>
+From: Mridula Prakash <Mridula.Prakash@lnties.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: [PATCH] compat-2.6: Supoprt ARM Architecture while  back porting
+ for linux2.6.28 kernel
+Date: Tue, 28 Aug 2012 11:38:21 +0000
+Message-ID: <B0824BA06BBF0C4AA3F9BE696B46CC8C060BEA01@POCITMSEXMB01.LntUniverse.com>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <1345131891-2555-1-git-send-email-ozancag@gmail.com>
-References: <1345131891-2555-1-git-send-email-ozancag@gmail.com>
-Date: Mon, 20 Aug 2012 10:35:37 +0500
-Message-ID: <CAB=NE6XPZN6_eAwVLXMBTKshQb7=tiLPSV0bXbNZc9tFzvOf1Q@mail.gmail.com>
-Subject: Re: [PATCH] compat-drivers: Clean up *.mod.c after everything
-From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
-Cc: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Aug 16, 2012 at 7:44 PM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com=
-> wrote:
-> Remove possible .mod.c leftovers at the end instead of after every
-> copying operation.
->
-> Signed-off-by: Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com>
+Hi,
 
-Applied and pushed, thanks!
+This adds support for ARM Architectures while back porting for linux-2.6.28=
+ kernel. The "atomic.h" file is part of the 2.6.28 kernel for ARM Architect=
+ures.
 
-  Luis
+Signed-off-by: Mridula Prakash<Mridula.Prakash@lnties.com>
+
+---
+diff -uprN a/include/linux/compat-2.6.29.h b/include/linux/compat-2.6.29.h
+--- a/include/linux/compat-2.6.29.h     2012-06-29 04:17:15.000000000 +0530
++++ b/include/linux/compat-2.6.29.h     2012-08-28 16:39:40.991932473 +0530
+@@ -34,7 +34,9 @@ static inline int usb_autopm_get_interfa
+        defined(CONFIG_SUPERH) || defined(CONFIG_SPARC) || \
+        defined(CONFIG_FRV) || defined(CONFIG_X86) || \
+        defined(CONFIG_M32R) || defined(CONFIG_M68K) || \
+-       defined(CONFIG_MN10300) || defined(CONFIG_XTENSA)
++       defined(CONFIG_MN10300) || defined(CONFIG_XTENSA)|| \
++       defined(CONFIG_ARM)
++
+ #include <asm/atomic.h>
+ #else
+ typedef struct {
+
+
+Thanks and Regards
+Mridula Prakash
+Senior Software Engineer
+L&T - Integrated Engineering Services (IES)
+LARSEN & TOUBRO LIMITED
+KIADB Industrial Area
+Hebbal, Hootagalli,
+Mysore 570018, India
+
+
+Larsen & Toubro Limited
+
+www.larsentoubro.com
+
+This Email may contain confidential or privileged information for the inten=
+ded recipient (s). If you are not the intended recipient, please do not use=
+ or disseminate the information, notify the sender and delete it from your =
+system.
