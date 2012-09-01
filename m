@@ -1,95 +1,87 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <20120921081614.GA17547@kroah.com>
-References: <CAB=NE6UVZ2HQU27LdkzUFe3of6N1v8YZYVMKsfA+0Wmg5nRBug@mail.gmail.com>
-	<20120921081614.GA17547@kroah.com>
-Date: Fri, 21 Sep 2012 09:24:44 -0700
-Message-ID: <CAB=NE6WQg8PvuKc0kphSQWjuAhc+tRd8MEd+51tCwU3AfHwzjQ@mail.gmail.com>
-Subject: Re: Helping with backports: linux-next, linux, linux-stable - a few enhancements
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Konstantin Ryabitsev <mricon@kernel.org>,
-	linux-kernel@vger.kernel.org, backports@vger.kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:43202 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755679Ab2IAUuW (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 1 Sep 2012 16:50:22 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id B60C454012D
+	for <backports@vger.kernel.org>; Sat,  1 Sep 2012 16:50:55 -0400 (EDT)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-09-01 is baked
+Message-Id: <20120901205020.B207F40ABE@repository3.orbit-lab.org>
+Date: Sat,  1 Sep 2012 16:50:20 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Sep 21, 2012 at 1:16 AM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Thu, Sep 20, 2012 at 03:45:46PM -0700, Luis R. Rodriguez wrote:
->> Greg, Stephen, Konstantin,
->>
->> so for the Linux backports project [0] we rely on a few git trees:
->>
->>   * linux-next.git
->>   * linux-stable.git
->>   * linux.git
->>
->> The linux.git tree is required for RC releases. The linux-stable.git
->> tree for extraversion stable releases, and the linux-next.git tree for
->> daily snapshots. There is a trick for stable releases whereby we
->> accelerate the integration of pending-stable patches by cherry picking
->> them out of linux-next.git if the commit log entry has the
->> 'stable@vger.kernel.org' on the commit log, and if the stable patch
->> does not apply we require the developers to provide a backport
->> compatible port. This trick works swell on linux-next.git for RC
->> release given that we can query for rc releases there as linux-next
->> carries them but linux-next.git does not carry extra version tags.
->> Additionally the requirement of linux.git is only there given that at
->> times there are delays between which linux-stable.git will not have an
->> RC release on it. I have a way to address all these issues, namely to
->> add linux.git as a remote for my local linux-stable tree, and also by
->> adding linux-stable as a local remote for my linux-next tree. Now, I
->> document how I resolve this for backport package consumers / builders
->> but it occurs to me perhaps we can simplify this if we had:
->>
->>   * linux-next - pulling in linux-stable packs / tags
->>   * a new linux-releases.git - which has both linux.git and
->> linux-stable pulled together through a cronjob
->>
->> Would this be reasonable to accommodate to help ease of use or shall
->> we just live with folks having to do the remote / local remote hacks?
->
-> I pull the linux.git tree into linux-stable.git every few -rc releases,
-> and as it's based on linux.git, it's really not a big deal.
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+HEAD is now at cb14a84 compat-drivers: synch with linux-next 20120824
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 99d7ff9 compat: Backport eth_broadcast_addr()
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at c0deb77 Add linux-next specific files for 20120824
+Trying kernel 3.4.4-030404-generic [OK]
+Trying kernel 3.3.7-030307-generic [OK]
+Trying kernel 3.2.2-030202-generic [OK]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
+Worked!
 
-Keyword: "few", which is fine for those who can / want to wait, in my
-case I need them as they come.
+Trying kernel  3.4.4-030404-generic [OK]
+Trying kernel  3.3.7-030307-generic [OK]
+Trying kernel  3.2.2-030202-generic [OK]
+Trying kernel  3.1.10-030110-generic [OK]
+Trying kernel  3.0.18-030018-generic [OK]
+Trying kernel  2.6.39-02063904-generic [OK]
+Trying kernel  2.6.38-02063808-generic [OK]
+Trying kernel  2.6.37-02063706-generic [OK]
+Trying kernel  2.6.36-02063604-generic [OK]
+Trying kernel  2.6.35-02063512-generic [OK]
+Trying kernel  2.6.34-02063410-generic [OK]
+Trying kernel  2.6.33-02063305-generic [OK]
+Trying kernel  2.6.31-02063113-generic [OK]
+Trying kernel  2.6.30-02063010-generic [OK]
+Trying kernel  2.6.29-02062906-generic [OK]
+Trying kernel  2.6.28-02062810-generic [OK]
+Trying kernel  2.6.27-020627-generic [OK]
+Trying kernel  2.6.26-020626-generic [OK]
+Trying kernel  2.6.25-020625-generic [OK]
+Trying kernel  2.6.24-020624-generic [OK]
 
-> I don't see how pulling linux-stable into linux-next really helps anyone
-> out, linux-stable is so far behind what is in linux-next it's not funny.
+compat-drivers code metrics
 
-By pulling linux-stable into linux-next you get to be able to run
-things like this from within linux-next:
+    841647 - Total upstream lines of code being pulled
+      3041 - backport code changes
+      2546 - backport code additions
+       495 - backport code deletions
+     12246 - backport from compat module
+     15287 - total backport code
+    1.8163 - % of code consists of backport work
+     19083 - Crap changes not yet posted
+     19023 - Crap additions not yet posted
+        60 - Crap deletions not yet posted
+    2.2673 - % of crap code
 
-git format-patch --grep="stable@vger.kernel.org" -o
-$PENDING_STABLE_DIR v3.5.4.. $MY_FILES
-
-That is, from v3.5.4 up to that day's linux-next tag.
-
-Without linux-stable linux-next does not get the v3.5.4 tags to allow
-me / users of compat-drivers to do this. We do this to accelerate the
-incorporation of stable pending-stable patches into a release based on
-a stable extraversion release.
-
-> But, if you really want it all in a single tree, can't you just do this
-> with a few 'remote' markings in your git configuration file for the repo
-> and do it locally if you want to?
->
-> Otherwise I don't see the real question here.
-
-Right, absolutely! Using a remote arrangements fixes this completely
-for me. I alone can live happy doing what I do but since I have users
-depending on using compat-drivers to make their own set of releases
-and test things it means I have to get folks using compat-drivers to
-also set up the same git remotes arrangements. That's fine but I'm
-looking to simplify it if I can for users.
-
-> confused probably due to a bad case of jet lag,
-
-No problem :) I obviously could just push my own tree to do this as
-well but as for linux-next pulling linux-stable it seemed a trusty
-cronjob would be more trustworthy than me pushing stuff regularly.
-Likewise for linux-stable pulling more regularly linux.
-
-  Luis
+Base tree: linux-next.git
+Base tree version: next-20120824
+compat.git: compat-2012-08-23
+compat-drivers release: compat-drivers-2012-08-23-1-gcb14a84-pc
+Code metrics archive: http://bit.ly/H6BTF7
