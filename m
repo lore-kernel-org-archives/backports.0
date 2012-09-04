@@ -1,53 +1,32 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:49643 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750796Ab2IFTuK (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 6 Sep 2012 15:50:10 -0400
-Received: by wgbdr13 with SMTP id dr13so1941332wgb.1
-        for <backports@vger.kernel.org>; Thu, 06 Sep 2012 12:50:09 -0700 (PDT)
-From: =?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
-To: mcgrof@kernel.org
-Cc: backports@vger.kernel.org,
-	=?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
-Subject: [PATCH 2/2] compat-drivers: Update 53-pr_fmt.patch
-Date: Thu,  6 Sep 2012 22:49:55 +0300
-Message-Id: <1346960995-13363-2-git-send-email-ozancag@gmail.com>
-In-Reply-To: <1346960995-13363-1-git-send-email-ozancag@gmail.com>
-References: <1346960995-13363-1-git-send-email-ozancag@gmail.com>
 MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <CAGj=iG-wTJGOi+WFJ8fXyeVh=S5335zjdDniyTPfvmi=nXSKqA@mail.gmail.com>
+References: <CAGj=iG9meBuxqz=UsYwYW5pHbCXgsAp2eHi04ZK0LTLHHPu+=w@mail.gmail.com>
+	<CAGj=iG-wdYJe4CZBCJ=VfPxUA1NiOQi_356dSYsNZQ4v6fxkeg@mail.gmail.com>
+	<CAGj=iG_FzEsiU-25ckfiC8sbzq1rq-mPnexgRBqki+Q0+d82ew@mail.gmail.com>
+	<CAGj=iG-wTJGOi+WFJ8fXyeVh=S5335zjdDniyTPfvmi=nXSKqA@mail.gmail.com>
+Date: Tue, 4 Sep 2012 16:41:57 -0700
+Message-ID: <CAB=NE6XGd+0-WEEV-Erk5O7ih3GmebicDOmL7o=qaPYipYhq=A@mail.gmail.com>
+Subject: Re: Compiling only one driver
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: =?UTF-8?Q?Felipe_L=C3=B3pez?= <lopez.rottweiler@gmail.com>
+Cc: backports@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
-Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Fix ath5k/debug.c redefinition warning for pr_fmt macro
+On Tue, Sep 4, 2012 at 3:52 AM, Felipe L=C3=B3pez <lopez.rottweiler@gmail.c=
+om> wrote:
+> I am sorry. I forgot to be more specific about my impressions: is it
+> enough to just comment all the drivers in the file "driver-select"
+> apart from the one I am using (ath9k) and edit the makefile that it
+> points to (ATH9K_MAKEFILE=3D"drivers/net/wireless/ath/ath9k/Makefile")
+> with the cross-compiler that I am going to use?
 
-Signed-off-by: Ozan Çağlayan <ozancag@gmail.com>
----
- patches/network/53-pr_fmt.patch | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+./scripts/driver-select ath9k_htc
 
-diff --git a/patches/network/53-pr_fmt.patch b/patches/network/53-pr_fmt.patch
-index 4c29be6..f1af016 100644
---- a/patches/network/53-pr_fmt.patch
-+++ b/patches/network/53-pr_fmt.patch
-@@ -819,3 +819,16 @@ compiler warnings. This is going to be sent upstream.
-  #include <linux/slab.h>
-  
-  #include "ath5k.h"
-+--- a/drivers/net/wireless/ath/ath5k/debug.c
-++++ b/drivers/net/wireless/ath/ath5k/debug.c
-+@@ -58,8 +58,10 @@
-+  * THE POSSIBILITY OF SUCH DAMAGES.
-+  */
-+
-++#undef pr_fmt
-+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-++#include <linux/printk.h>
-+ #include <linux/export.h>
-+ #include <linux/moduleparam.h>
-+
--- 
-1.7.11.4
+and then with your compiler / etc:
 
+https://backports.wiki.kernel.org/index.php/Documentation/compat-drivers#Bu=
+ilding_for_external_kernels
+
+  Luis
