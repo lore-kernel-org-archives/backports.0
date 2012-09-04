@@ -1,34 +1,26 @@
 MIME-Version: 1.0
 Sender: mcgrof@gmail.com
-Date: Wed, 12 Sep 2012 17:53:40 -0700
-Message-ID: <CAB=NE6Ui1sbvoufjsdgrpUB=CQ=cGe=ztn94Ervn29QEj5UFAA@mail.gmail.com>
-Subject: netlink pid --> port id rename
+Date: Tue, 4 Sep 2012 10:35:45 -0700
+Message-ID: <CAB=NE6UGCgV6e=4e6v+3CW-m2MO+Kd-jR3rUSGZWV4gRPV1yJw@mail.gmail.com>
+Subject: G+ hangout for reviewing the backports project
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-Just a heads up that I have some work to backport the currently
-pending collateral evolution from this patch:
+For those that may have missed it, there will be a public G+ Hangout
+today to review this project:
 
-    Author: Eric W. Biederman <ebiederm@xmission.com>
-    Date:   Fri Sep 7 20:12:54 2012 +0000
+https://plus.google.com/events/cbsid8cbvp61sv4nmjfgftsv9f0/101487746899672598413
 
-        netlink: Rename pid to portid to avoid confusion
+This is scheduled at:
 
-        It is a frequent mistake to confuse the netlink port identifier with a
-        process identifier.  Try to reduce this confusion by renaming fields
-        that hold port identifiers portid instead of pid.
-
-        I have carefully avoided changing the structures exported to
-        userspace to avoid changing the userspace API.
-
-        I have successfully built an allyesconfig kernel with this change.
-
-        Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-        Acked-by: Stephen Hemminger <shemminger@vyatta.com>
-        Signed-off-by: David S. Miller <davem@davemloft.net>
-
-I think I'll be done by the end of the day.
+ * 08:00:00 p.m. Tuesday September 4, 2012 in GMT
+ * 01:00:00 p.m. Tuesday September 4, 2012 in US/Pacific
+ * 04:00:00 p.m. Tuesday September 4, 2012 in US/Eastern
+ * 10:00:00 p.m. Tuesday September 4, 2012 in Europe/Berlin
+ * 11:00:00 p.m. Tuesday September 4, 2012 in Europe/Helsinki
+ * 11:00:00 p.m. Tuesday September 4, 2012 in Asia/Jerusalem
+ * 01:30:00 a.m. Wednesday September 5, 2012 in Asia/Calcutta
 
   Luis
