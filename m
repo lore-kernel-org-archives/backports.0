@@ -1,86 +1,41 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:38035 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751786Ab2ISUzP (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 19 Sep 2012 16:55:15 -0400
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id C51FA5401D6
-	for <backports@vger.kernel.org>; Wed, 19 Sep 2012 16:56:11 -0400 (EDT)
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <CAB=NE6UGCgV6e=4e6v+3CW-m2MO+Kd-jR3rUSGZWV4gRPV1yJw@mail.gmail.com>
+References: <CAB=NE6UGCgV6e=4e6v+3CW-m2MO+Kd-jR3rUSGZWV4gRPV1yJw@mail.gmail.com>
+Date: Tue, 4 Sep 2012 13:42:19 -0700
+Message-ID: <CAB=NE6XWNDk6kPFTTbShA0nOcDvLxMpdmr0+dj+pLnDwVuFGfQ@mail.gmail.com>
+Subject: Re: G+ hangout for reviewing the backports project
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-09-19 is baked
-Message-Id: <20120919205516.9816540ABE@repository3.orbit-lab.org>
-Date: Wed, 19 Sep 2012 16:55:14 -0400 (EDT)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-HEAD is now at 58e4b96 compat-drivers: adjust scripts to support daily linux-next releases
-git fetch github (/var/opt/compat/compat)
-HEAD is now at 22e6331 compat: backport netlink pid to portid rename
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 1fda03c Add linux-next specific files for 20120919
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+On Tue, Sep 4, 2012 at 10:35 AM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> For those that may have missed it, there will be a public G+ Hangout
+> today to review this project:
+>
+> https://plus.google.com/events/cbsid8cbvp61sv4nmjfgftsv9f0/101487746899672598413
+>
+> This is scheduled at:
+>
+>  * 08:00:00 p.m. Tuesday September 4, 2012 in GMT
+>  * 01:00:00 p.m. Tuesday September 4, 2012 in US/Pacific
+>  * 04:00:00 p.m. Tuesday September 4, 2012 in US/Eastern
+>  * 10:00:00 p.m. Tuesday September 4, 2012 in Europe/Berlin
+>  * 11:00:00 p.m. Tuesday September 4, 2012 in Europe/Helsinki
+>  * 11:00:00 p.m. Tuesday September 4, 2012 in Asia/Jerusalem
+>  * 01:30:00 a.m. Wednesday September 5, 2012 in Asia/Calcutta
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+For those who missed it the video is now on YouTube:
 
-compat-drivers code metrics
+http://www.youtube.com/watch?v=FZqDz7sXZiQ
 
-    844392 - Total upstream lines of code being pulled
-      3107 - backport code changes
-      2580 - backport code additions
-       527 - backport code deletions
-     12556 - backport from compat module
-     15663 - total backport code
-    1.8549 - % of code consists of backport work
-     19083 - Crap changes not yet posted
-     19023 - Crap additions not yet posted
-        60 - Crap deletions not yet posted
-    2.2600 - % of crap code
+Unfortunately there seems to have been quite a few network
+connectivity issues for folks specially outside of the US. Module key
+signing seems to have been one of the few agenda items that requires a
+bit more review from different Linux distribution folks. This will be
+particularly important for Fedora 18 which at least at Plumbers was
+said that they'd embrace module signing for that release.
 
-Base tree: linux-next.git
-Base tree version: next-20120919
-compat.git: compat-2012-09-18
-compat-drivers release: compat-drivers-2012-09-18-1-g58e4b96-pc
-Code metrics archive: http://bit.ly/H6BTF7
+ Luis
