@@ -1,29 +1,27 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:50666 "HELO
+Received: from external1.orbit-lab.org ([128.6.192.131]:49855 "HELO
 	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755299Ab2IHUul (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 8 Sep 2012 16:50:41 -0400
+	with SMTP id S1754923Ab2IEUxE (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 5 Sep 2012 16:53:04 -0400
 Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 1DA6D5401D6
-	for <backports@vger.kernel.org>; Sat,  8 Sep 2012 16:51:25 -0400 (EDT)
+	by external1.orbit-lab.org (Postfix) with ESMTP id 23771540D4A
+	for <backports@vger.kernel.org>; Wed,  5 Sep 2012 16:53:42 -0400 (EDT)
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-09-08 is baked
-Message-Id: <20120908205042.5F67B40ABF@repository3.orbit-lab.org>
-Date: Sat,  8 Sep 2012 16:50:42 -0400 (EDT)
+Subject: Compat-wireless release for 2012-09-05 is baked
+Message-Id: <20120905205302.CB85040ABD@repository3.orbit-lab.org>
+Date: Wed,  5 Sep 2012 16:53:02 -0400 (EDT)
 From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at ddac993 compat-drivers: Update 53-pr_fmt.patch
+HEAD is now at 5f3ec57 compat-drivers: copy .compat_base on scripts/refresh-compat
 git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at be1c030 compat: fix typo on previous atomic changes
+HEAD is now at fbc930e compat: backport PCI: Add accessors for PCI Express Capability
 git fetch  (/var/opt/compat/linux-next)
 Nothing new to pack.
-HEAD is now at 9ea9798 Add linux-next specific files for 20120907
+HEAD is now at c883d24 Add linux-next specific files for 20120905
 Trying kernel 3.4.4-030404-generic [OK]
 Trying kernel 3.3.7-030307-generic [OK]
 Trying kernel 3.2.2-030202-generic [OK]
@@ -69,20 +67,20 @@ Trying kernel  2.6.24-020624-generic [OK]
 
 compat-drivers code metrics
 
-    841836 - Total upstream lines of code being pulled
-      3045 - backport code changes
-      2549 - backport code additions
-       496 - backport code deletions
-     12548 - backport from compat module
-     15593 - total backport code
-    1.8523 - % of code consists of backport work
+    841614 - Total upstream lines of code being pulled
+      3041 - backport code changes
+      2546 - backport code additions
+       495 - backport code deletions
+     12547 - backport from compat module
+     15588 - total backport code
+    1.8522 - % of code consists of backport work
      19083 - Crap changes not yet posted
      19023 - Crap additions not yet posted
         60 - Crap deletions not yet posted
-    2.2668 - % of crap code
+    2.2674 - % of crap code
 
 Base tree: linux-next.git
-Base tree version: next-20120907
-compat.git: compat-2012-09-04-2-gbe1c030
-compat-drivers release: compat-drivers-2012-09-04-2-gddac993-pc
+Base tree version: next-20120905
+compat.git: compat-2012-09-04
+compat-drivers release: compat-drivers-2012-09-04-pc
 Code metrics archive: http://bit.ly/H6BTF7
