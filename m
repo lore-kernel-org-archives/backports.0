@@ -1,62 +1,53 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:41323 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754155Ab2IMUX0 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 13 Sep 2012 16:23:26 -0400
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 778D45401D6
-	for <backports@vger.kernel.org>; Thu, 13 Sep 2012 16:24:15 -0400 (EDT)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-09-13 is baked
-Message-Id: <20120913202327.3532940ABF@repository3.orbit-lab.org>
-Date: Thu, 13 Sep 2012 16:23:27 -0400 (EDT)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:49643 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750796Ab2IFTuK (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 6 Sep 2012 15:50:10 -0400
+Received: by wgbdr13 with SMTP id dr13so1941332wgb.1
+        for <backports@vger.kernel.org>; Thu, 06 Sep 2012 12:50:09 -0700 (PDT)
+From: =?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org,
+	=?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+Subject: [PATCH 2/2] compat-drivers: Update 53-pr_fmt.patch
+Date: Thu,  6 Sep 2012 22:49:55 +0300
+Message-Id: <1346960995-13363-2-git-send-email-ozancag@gmail.com>
+In-Reply-To: <1346960995-13363-1-git-send-email-ozancag@gmail.com>
+References: <1346960995-13363-1-git-send-email-ozancag@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-HEAD is now at 66247ca compat-drivers: Use GIT_TREE variable.
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 677e895 compat: drop const to fix compiler warnings
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at d53be6e Add linux-next specific files for 20120913
-Trying kernel 3.4.4-030404-generic [FAILED]
-Trying kernel 3.3.7-030307-generic [FAILED]
-Trying kernel 3.2.2-030202-generic [FAILED]
-Trying kernel 3.1.10-030110-generic [FAILED]
-Trying kernel 3.0.18-030018-generic [FAILED]
-Trying kernel 2.6.39-02063904-generic [FAILED]
-Trying kernel 2.6.38-02063808-generic [FAILED]
-Trying kernel 2.6.37-02063706-generic [FAILED]
-Trying kernel 2.6.36-02063604-generic [FAILED]
-Trying kernel 2.6.35-02063512-generic [FAILED]
-Trying kernel 2.6.34-02063410-generic [FAILED]
-Trying kernel 2.6.33-02063305-generic [FAILED]
-Trying kernel 2.6.31-02063113-generic [FAILED]
-Trying kernel 2.6.30-02063010-generic [FAILED]
-Trying kernel 2.6.29-02062906-generic [FAILED]
-Trying kernel 2.6.28-02062810-generic [FAILED]
-Trying kernel 2.6.27-020627-generic [FAILED]
-Trying kernel 2.6.26-020626-generic [FAILED]
-Trying kernel 2.6.25-020625-generic [FAILED]
-Trying kernel 2.6.24-020624-generic [FAILED]
-Failed...
+Fix ath5k/debug.c redefinition warning for pr_fmt macro
 
-compat-drivers code metrics
+Signed-off-by: Ozan Çağlayan <ozancag@gmail.com>
+---
+ patches/network/53-pr_fmt.patch | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-    844390 - Total upstream lines of code being pulled
-      3045 - backport code changes
-      2549 - backport code additions
-       496 - backport code deletions
-     12548 - backport from compat module
-     15593 - total backport code
-    1.8467 - % of code consists of backport work
+diff --git a/patches/network/53-pr_fmt.patch b/patches/network/53-pr_fmt.patch
+index 4c29be6..f1af016 100644
+--- a/patches/network/53-pr_fmt.patch
++++ b/patches/network/53-pr_fmt.patch
+@@ -819,3 +819,16 @@ compiler warnings. This is going to be sent upstream.
+  #include <linux/slab.h>
+  
+  #include "ath5k.h"
++--- a/drivers/net/wireless/ath/ath5k/debug.c
+++++ b/drivers/net/wireless/ath/ath5k/debug.c
++@@ -58,8 +58,10 @@
++  * THE POSSIBILITY OF SUCH DAMAGES.
++  */
++
+++#undef pr_fmt
++ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
+++#include <linux/printk.h>
++ #include <linux/export.h>
++ #include <linux/moduleparam.h>
++
+-- 
+1.7.11.4
 
-Base tree: linux-next.git
-Base tree version: next-20120913
-compat.git: compat-v3.6-rc5-1-1-g677e895
-compat-drivers release: compat-drivers-2012-09-04-4-g66247ca
-Code metrics archive: http://bit.ly/H6BTF7
