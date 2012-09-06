@@ -1,68 +1,39 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <gregkh@linuxfoundation.org>
-Return-Path: <gregkh@linuxfoundation.org>
-Date: Fri, 21 Sep 2012 09:16:14 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Konstantin Ryabitsev <mricon@kernel.org>,
-	linux-kernel@vger.kernel.org, backports@vger.kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: Helping with backports: linux-next, linux, linux-stable - a few
- enhancements
-Message-ID: <20120921081614.GA17547@kroah.com>
-References: <CAB=NE6UVZ2HQU27LdkzUFe3of6N1v8YZYVMKsfA+0Wmg5nRBug@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAB=NE6UVZ2HQU27LdkzUFe3of6N1v8YZYVMKsfA+0Wmg5nRBug@mail.gmail.com>
+Sender: mcgrof@gmail.com
+In-Reply-To: <D38E8E86660E514AB505863C19C9287C41B5835A@ORSMSX101.amr.corp.intel.com>
+References: <5023A231020000D6000E4B88@novprvoes0310.provo.novell.com>
+	<D38E8E86660E514AB505863C19C9287C41B5835A@ORSMSX101.amr.corp.intel.com>
+Date: Thu, 6 Sep 2012 11:02:14 -0700
+Message-ID: <CAB=NE6VPWMLEoKTkyEROvTwObALxOLub-n5yc=gKeAfD4YfBfQ@mail.gmail.com>
+Subject: Re: [Lf_driver_backport] Some general questions about compat, also
+ adding distro kernels
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+To: "Ronciak, John" <john.ronciak@intel.com>
+Cc: Ann Davis <andavis@suse.com>,
+	"lf_driver_backport@lists.linux-foundation.org" <lf_driver_backport@lists.linux-foundation.org>, backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Sep 20, 2012 at 03:45:46PM -0700, Luis R. Rodriguez wrote:
-> Greg, Stephen, Konstantin,
-> 
-> so for the Linux backports project [0] we rely on a few git trees:
-> 
->   * linux-next.git
->   * linux-stable.git
->   * linux.git
-> 
-> The linux.git tree is required for RC releases. The linux-stable.git
-> tree for extraversion stable releases, and the linux-next.git tree for
-> daily snapshots. There is a trick for stable releases whereby we
-> accelerate the integration of pending-stable patches by cherry picking
-> them out of linux-next.git if the commit log entry has the
-> 'stable@vger.kernel.org' on the commit log, and if the stable patch
-> does not apply we require the developers to provide a backport
-> compatible port. This trick works swell on linux-next.git for RC
-> release given that we can query for rc releases there as linux-next
-> carries them but linux-next.git does not carry extra version tags.
-> Additionally the requirement of linux.git is only there given that at
-> times there are delays between which linux-stable.git will not have an
-> RC release on it. I have a way to address all these issues, namely to
-> add linux.git as a remote for my local linux-stable tree, and also by
-> adding linux-stable as a local remote for my linux-next tree. Now, I
-> document how I resolve this for backport package consumers / builders
-> but it occurs to me perhaps we can simplify this if we had:
-> 
->   * linux-next - pulling in linux-stable packs / tags
->   * a new linux-releases.git - which has both linux.git and
-> linux-stable pulled together through a cronjob
-> 
-> Would this be reasonable to accommodate to help ease of use or shall
-> we just live with folks having to do the remote / local remote hacks?
+On Thu, Sep 6, 2012 at 9:21 AM, Ronciak, John <john.ronciak@intel.com> wrote:
+>> 3)  ...Unless the idea is for backporters to just pull the compat
+>> functionality into their modules (and thus not provide an actual compat
+>> module)?
+>
+> We don't see this as the way to go.  Intel LAD has this already with our
+> stand-alone drivers, granted that it's our own compat code, but I don't
+> think you want all the different HW vendors pulling in different versions
+> of the compat code in to each driver.  That's just going to cause
+> problems and confusion.
 
-I pull the linux.git tree into linux-stable.git every few -rc releases,
-and as it's based on linux.git, it's really not a big deal.
+And this is solved by prioritizing Linux upstream development given
+that once upstream you get to become part of the stable releases that
+incorporates all upstream modules sharing the same compat module.
+Deltas can be accounted for by the additional patches to stable
+releases, which also prioritizes and categorizes patches based on life
+cycle on route upstream [0]. This even supports for patches not even
+posted for inclusion upstream yet, like typical OEM tools / etc which
+typically are not addressed (yet) upstream.
 
-I don't see how pulling linux-stable into linux-next really helps anyone
-out, linux-stable is so far behind what is in linux-next it's not funny.
+[0] https://backports.wiki.kernel.org/index.php/Documentation/compat-drivers/additional-patches
 
-But, if you really want it all in a single tree, can't you just do this
-with a few 'remote' markings in your git configuration file for the repo
-and do it locally if you want to?
-
-Otherwise I don't see the real question here.
-
-confused probably due to a bad case of jet lag,
-
-greg k-h
+  LUis
