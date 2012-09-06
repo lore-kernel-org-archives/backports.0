@@ -1,64 +1,62 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <CAB=NE6WBLusFkQP-a9mCxM2Hu-NyWvUiF8iALY6YvvbV81eKNg@mail.gmail.com>
-References: <1347637262-27782-1-git-send-email-bkamatch@qca.qualcomm.com>
-	<CAB=NE6WBLusFkQP-a9mCxM2Hu-NyWvUiF8iALY6YvvbV81eKNg@mail.gmail.com>
-Date: Fri, 14 Sep 2012 17:51:13 -0700
-Message-ID: <CAB=NE6XYjYrRSA8Xupu21GWoCd-jv63ic32Q3rP7YiVHajTWTg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] compat-drivers: update pending-stable patches.
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Bala Shanmugam <bkamatch@qca.qualcomm.com>
-Cc: linux-wireless@vger.kernel.org, backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:60871 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751759Ab2IFUqI (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 6 Sep 2012 16:46:08 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id BB5FA54003A
+	for <backports@vger.kernel.org>; Thu,  6 Sep 2012 16:46:47 -0400 (EDT)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-09-06 is baked
+Message-Id: <20120906204607.5A05240ABF@repository3.orbit-lab.org>
+Date: Thu,  6 Sep 2012 16:46:07 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Sep 14, 2012 at 3:28 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> On Fri, Sep 14, 2012 at 8:40 AM, Bala Shanmugam
-> <bkamatch@qca.qualcomm.com> wrote:
->> Signed-off-by: Bala Shanmugam <bkamatch@qca.qualcomm.com>
->> ---
->
-> Thanks but these patches do not apply on to the branch
-> origin/origin/linux-3.6.y. They do however apply on top of the branch
-> origin/linux-3.5.y... did you intend for these patches to be applied
-> on top of that branch?
->
-> Please be sure to do to be on top of commit
-> 4f298ae180e84c6857af803177f82724ba6cf97c from the origin/linux-3.6.y
-> branch if you want to send patches for that branch.
->
-> Also, we now have a new mailing list, backports@vger.kernel.org,
-> please subscribe and send future patches there.
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at 5f3ec57 compat-drivers: copy .compat_base on scripts/refresh-compat
+git fetch github (/var/opt/compat/compat)
+HEAD is now at 169203f compat: fix ARM architecture support for atomic_t and atomic64_t changes
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 1ad4cd6 Add linux-next specific files for 20120906
+Trying kernel 3.4.4-030404-generic [OK]
+Trying kernel 3.3.7-030307-generic [OK]
+Trying kernel 3.2.2-030202-generic [OK]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [FAILED]
+Trying kernel 2.6.27-020627-generic [FAILED]
+Trying kernel 2.6.26-020626-generic [FAILED]
+Trying kernel 2.6.25-020625-generic [FAILED]
+Trying kernel 2.6.24-020624-generic [FAILED]
+Failed...
 
-After reviewing company e-mails I see you sent me there a note about
-these being applicable to the linux-3.5.y branch. I applied them and
-test compiled against ckmake. Compilation was OK except for the -sn
-release and it fails at:
+compat-drivers code metrics
 
-/home/mcgrof/staging/v3.5.3/compat-wireless-3.5.3-1-sn/drivers/net/wireless=
-/ath/ath9k/ar9003_eeprom.c:3974:3:
-error: =E2=80=98AR_PHY_65NM_CH1_RXTX4=E2=80=99 undeclared (first use in thi=
-s function)
-/home/mcgrof/staging/v3.5.3/compat-wireless-3.5.3-1-sn/drivers/net/wireless=
-/ath/ath9k/ar9003_eeprom.c:3974:3:
-note: each undeclared identifier is reported only once for each
-function it appears in
-/home/mcgrof/staging/v3.5.3/compat-wireless-3.5.3-1-sn/drivers/net/wireless=
-/ath/ath9k/ar9003_eeprom.c:3977:3:
-error: =E2=80=98AR_PHY_65NM_CH2_RXTX4=E2=80=99 undeclared (first use in thi=
-s function)
-make[5]: *** [/home/mcgrof/staging/v3.5.3/compat-wireless-3.5.3-1-sn/driver=
-s/net/wireless/ath/ath9k/ar9003_eeprom.o]
-Error 1
-make[5]: *** Waiting for unfinished jobs....
+    841836 - Total upstream lines of code being pulled
+      3041 - backport code changes
+      2546 - backport code additions
+       495 - backport code deletions
+     12548 - backport from compat module
+     15589 - total backport code
+    1.8518 - % of code consists of backport work
 
-Now these guys are added through your crap/ patch.. but if you think
-about this.. this means that you had AR_PHY_65NM_CH1_RXTX4 and the
-other define used in code not yet upstream... I'm going to post that
-patch to uncrap it and to fix these releases. I will also throw in
-this patch into pending:
-
-https://patchwork.kernel.org/patch/1441611/
-
-  Luis
+Base tree: linux-next.git
+Base tree version: next-20120906
+compat.git: compat-2012-09-04-1-g169203f
+compat-drivers release: compat-drivers-2012-09-04
+Code metrics archive: http://bit.ly/H6BTF7
