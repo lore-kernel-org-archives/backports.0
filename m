@@ -1,30 +1,61 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from nbd.name ([46.4.11.11]:44154 "EHLO nbd.name"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757914Ab2IGJNE (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 7 Sep 2012 05:13:04 -0400
-Message-ID: <5049BA99.1060707@openwrt.org>
-Date: Fri, 07 Sep 2012 11:12:57 +0200
-From: Felix Fietkau <nbd@openwrt.org>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@qca.qualcomm.com>
-CC: linux-wireless@vger.kernel.org, backports@vger.kernel.org
-Subject: Re: [PATCH] compat: drop const to fix compiler warnings
-References: <1347004574-80506-1-git-send-email-nbd@openwrt.org> <CAB=NE6V6vAdsVQyjKyaMYnPRQdJLc+Gt=nqiS5cN9mWU3vz7aQ@mail.gmail.com>
-In-Reply-To: <CAB=NE6V6vAdsVQyjKyaMYnPRQdJLc+Gt=nqiS5cN9mWU3vz7aQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Received: from external1.orbit-lab.org ([128.6.192.131]:59794 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753117Ab2ILUYy (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 12 Sep 2012 16:24:54 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 1E9F55403E6
+	for <backports@vger.kernel.org>; Wed, 12 Sep 2012 16:25:42 -0400 (EDT)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-09-12 is baked
+Message-Id: <20120912202454.E2C3F40ABE@repository3.orbit-lab.org>
+Date: Wed, 12 Sep 2012 16:24:54 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 2012-09-07 11:04 AM, Luis R. Rodriguez wrote:
-> On Fri, Sep 7, 2012 at 12:56 AM, Felix Fietkau <nbd@openwrt.org> wrote:
->> When calling pci_find_capability and pci_read_config_word, struct pci_dev
->> needs to be passed without const.
-> 
-> Thanks! I guess because at certain kernel version pci_dev was const ?
-Probably, I didn't really check. Either way, this patch should be safe
-for all kernel versions.
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+HEAD is now at 6f8ff69 compat-drivers: refresh in synch with next-20120911
+git fetch github (/var/opt/compat/compat)
+HEAD is now at 677e895 compat: drop const to fix compiler warnings
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 270dede Add linux-next specific files for 20120912
+Trying kernel 3.4.4-030404-generic [FAILED]
+Trying kernel 3.3.7-030307-generic [FAILED]
+Trying kernel 3.2.2-030202-generic [FAILED]
+Trying kernel 3.1.10-030110-generic [FAILED]
+Trying kernel 3.0.18-030018-generic [FAILED]
+Trying kernel 2.6.39-02063904-generic [FAILED]
+Trying kernel 2.6.38-02063808-generic [FAILED]
+Trying kernel 2.6.37-02063706-generic [FAILED]
+Trying kernel 2.6.36-02063604-generic [FAILED]
+Trying kernel 2.6.35-02063512-generic [FAILED]
+Trying kernel 2.6.34-02063410-generic [FAILED]
+Trying kernel 2.6.33-02063305-generic [FAILED]
+Trying kernel 2.6.31-02063113-generic [FAILED]
+Trying kernel 2.6.30-02063010-generic [FAILED]
+Trying kernel 2.6.29-02062906-generic [FAILED]
+Trying kernel 2.6.28-02062810-generic [FAILED]
+Trying kernel 2.6.27-020627-generic [FAILED]
+Trying kernel 2.6.26-020626-generic [FAILED]
+Trying kernel 2.6.25-020625-generic [FAILED]
+Trying kernel 2.6.24-020624-generic [FAILED]
+Failed...
 
-- Felix
+compat-drivers code metrics
 
+    843818 - Total upstream lines of code being pulled
+      3045 - backport code changes
+      2549 - backport code additions
+       496 - backport code deletions
+     12548 - backport from compat module
+     15593 - total backport code
+    1.8479 - % of code consists of backport work
+
+Base tree: linux-next.git
+Base tree version: next-20120912
+compat.git: compat-v3.6-rc5-1-1-g677e895
+compat-drivers release: compat-drivers-2012-09-04-3-g6f8ff69
+Code metrics archive: http://bit.ly/H6BTF7
