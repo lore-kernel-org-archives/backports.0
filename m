@@ -1,39 +1,111 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:48573 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752309Ab2IDKdl convert rfc822-to-8bit
-	(ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 4 Sep 2012 06:33:41 -0400
-Received: by lagy9 with SMTP id y9so4049054lag.19
-        for <backports@vger.kernel.org>; Tue, 04 Sep 2012 03:33:39 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <CAGj=iG-wdYJe4CZBCJ=VfPxUA1NiOQi_356dSYsNZQ4v6fxkeg@mail.gmail.com>
-References: <CAGj=iG9meBuxqz=UsYwYW5pHbCXgsAp2eHi04ZK0LTLHHPu+=w@mail.gmail.com>
-	<CAGj=iG-wdYJe4CZBCJ=VfPxUA1NiOQi_356dSYsNZQ4v6fxkeg@mail.gmail.com>
-Date: Tue, 4 Sep 2012 12:33:39 +0200
-Message-ID: <CAGj=iG_FzEsiU-25ckfiC8sbzq1rq-mPnexgRBqki+Q0+d82ew@mail.gmail.com>
-Subject: Compiling only one driver
-From: =?ISO-8859-1?Q?Felipe_L=F3pez?= <lopez.rottweiler@gmail.com>
+Return-Path: <mcgrof@gmail.com>
+Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Content-Type: text/plain; charset=ISO-8859-1
-Sender: backports-owner@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Stephen Hemminger <shemminger@vyatta.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH] compat: backport netlink pid to portid rename
+Date: Thu, 13 Sep 2012 15:36:00 -0700
+Message-Id: <1347575760-15749-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
-Hello guys,
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-First of all I am going to introduce myself. I am Felipe López and I
-am trying to cross-compile the ath9k_htc driver for a ar9271 chipset.
-I bought a usb stick (specifically, the TP-LINK TL-WN722N) to build a
-small web server using the following board: Eddy v2.5
+The patch:
 
-I have it working in a PC (Ubuntu 11.04). Now I want to do the same
-for a embedded Linux (kernel 2.6.21) wich is the one that the Eddy's
-board comes with. The problem is that I can not figure out how to edit
-the makefile to cross-compile the driver for the embedded linux. I
-have another wifi dongle for that board but it can not be put in AP
-mode, so I tried with this one but I didn't succeed yet. Can anybody
-help me? I think that I only need to know how to isolate the ath9k
-driver from the others and cross-compile only this one.
+commit 15e473046cb6e5d18a4d0057e61d76315230382b
+Author: Eric W. Biederman <ebiederm@xmission.com>
+Date:   Fri Sep 7 20:12:54 2012 +0000
 
-Thanks in advance.
+    netlink: Rename pid to portid to avoid confusion
+
+    It is a frequent mistake to confuse the netlink port identifier with a
+    process identifier.  Try to reduce this confusion by renaming fields
+    that hold port identifiers portid instead of pid.
+
+    I have carefully avoided changing the structures exported to
+    userspace to avoid changing the userspace API.
+
+    I have successfully built an allyesconfig kernel with this change.
+
+    Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+    Acked-by: Stephen Hemminger <shemminger@vyatta.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+
+Changed the struct members:
+
+struct netlink_notify->pid    to
+struct netlink_notify->portid
+
+struct genl_info->snd_pid     to
+struct genl_info->snd_portid
+
+This adds helpers to help reduce the overhead cost to backport
+this collateral evolution.
+
+mcgrof@garbanzo ~/compat (git::master)$ time ckmake
+Trying kernel 3.5.0-030500-generic [OK]
+Trying kernel 3.4.4-030404-generic [OK]
+Trying kernel 3.3.7-030307-generic [OK]
+Trying kernel 3.2.2-030202-generic [OK]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.32-02063255-generic [OK]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
+
+real    1m0.017s
+user    3m12.748s
+sys     0m30.274s
+
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Stephen Hemminger <shemminger@vyatta.com>
+Cc: David S. Miller <davem@davemloft.net>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ include/linux/compat-3.7.h |    8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/include/linux/compat-3.7.h b/include/linux/compat-3.7.h
+index 6cee787..e4e126c 100644
+--- a/include/linux/compat-3.7.h
++++ b/include/linux/compat-3.7.h
+@@ -10,6 +10,10 @@
+ #include <linux/pci.h>
+ #include <linux/pci_regs.h>
+ 
++#define netlink_notify_portid(__notify) (__notify->pid)
++#define genl_info_snd_portid(__genl_info) (__genl_info->snd_pid)
++#define NETLINK_CB_PORTID(__skb) NETLINK_CB(cb->skb).pid
++
+ bool mod_delayed_work(struct workqueue_struct *wq, struct delayed_work *dwork,
+ 		      unsigned long delay);
+ 
+@@ -55,6 +59,10 @@ static inline int pcie_capability_clear_dword(struct pci_dev *dev, int pos,
+ 
+ #define PCI_EXP_LNKSTA2			50      /* Link Status 2 */
+ 
++#else /* (LINUX_VERSION_CODE > KERNEL_VERSION(3,7,0)) */
++#define netlink_notify_portid(__notify) (__notify->portid)
++#define genl_info_snd_portid(__genl_info) (__genl_info->snd_portid)
++#define NETLINK_CB_PORTID(__skb) NETLINK_CB(cb->skb).portid
+ #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)) */
+ 
+ #endif /* LINUX_3_7_COMPAT_H */
+-- 
+1.7.10.4
