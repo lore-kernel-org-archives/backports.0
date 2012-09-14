@@ -1,27 +1,31 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <ebiederm@xmission.com>
-In-Reply-To: <1348900705-12431-2-git-send-email-mcgrof@do-not-panic.com>
-References: <1348900705-12431-1-git-send-email-mcgrof@do-not-panic.com> <1348900705-12431-2-git-send-email-mcgrof@do-not-panic.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=UTF-8
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-Date: Sat, 29 Sep 2012 00:49:23 -0700
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,backports@vger.kernel.org
-CC: Serge Hallyn <serge.hallyn@canonical.com>
-Message-ID: <7df08404-c68b-4e3d-9bf8-ff04bbfa1160@email.android.com>
-Subject: Re: [PATCH 1/3] compat: backport uidgid.h kuid_t and kgid_t addition
+Sender: mcgrof@gmail.com
+In-Reply-To: <1347637262-27782-1-git-send-email-bkamatch@qca.qualcomm.com>
+References: <1347637262-27782-1-git-send-email-bkamatch@qca.qualcomm.com>
+Date: Fri, 14 Sep 2012 15:28:24 -0700
+Message-ID: <CAB=NE6WBLusFkQP-a9mCxM2Hu-NyWvUiF8iALY6YvvbV81eKNg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] compat-drivers: update pending-stable patches.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: Bala Shanmugam <bkamatch@qca.qualcomm.com>
+Cc: linux-wireless@vger.kernel.org, backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-I don't know the discipline you keep for the compat backports.
+On Fri, Sep 14, 2012 at 8:40 AM, Bala Shanmugam
+<bkamatch@qca.qualcomm.com> wrote:
+> Signed-off-by: Bala Shanmugam <bkamatch@qca.qualcomm.com>
+> ---
 
-However I e=
-xpect you can simplify this bit considerably by removing the USER_NS case a=
-s it will never be true, except in 3.5 where this code already in exists.
+Thanks but these patches do not apply on to the branch
+origin/origin/linux-3.6.y. They do however apply on top of the branch
+origin/linux-3.5.y... did you intend for these patches to be applied
+on top of that branch?
 
-=
-You can further simplify things by leaving out the overflowuid and overflow=
-gid cases from from_kuid_munged, as for a backport I doubt anyon will care =
-if the value is -1 or overflowuid.
+Please be sure to do to be on top of commit
+4f298ae180e84c6857af803177f82724ba6cf97c from the origin/linux-3.6.y
+branch if you want to send patches for that branch.
 
-Eric
+Also, we now have a new mailing list, backports@vger.kernel.org,
+please subscribe and send future patches there.
+
+  Luis
