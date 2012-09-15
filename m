@@ -1,49 +1,39 @@
 MIME-Version: 1.0
 Sender: mcgrof@gmail.com
-Date: Thu, 20 Sep 2012 15:45:46 -0700
-Message-ID: <CAB=NE6UVZ2HQU27LdkzUFe3of6N1v8YZYVMKsfA+0Wmg5nRBug@mail.gmail.com>
-Subject: Helping with backports: linux-next, linux, linux-stable - a few enhancements
+In-Reply-To: <CAB=NE6XYjYrRSA8Xupu21GWoCd-jv63ic32Q3rP7YiVHajTWTg@mail.gmail.com>
+References: <1347637262-27782-1-git-send-email-bkamatch@qca.qualcomm.com>
+	<CAB=NE6WBLusFkQP-a9mCxM2Hu-NyWvUiF8iALY6YvvbV81eKNg@mail.gmail.com>
+	<CAB=NE6XYjYrRSA8Xupu21GWoCd-jv63ic32Q3rP7YiVHajTWTg@mail.gmail.com>
+Date: Fri, 14 Sep 2012 17:55:09 -0700
+Message-ID: <CAB=NE6UG647WMS7kW=xEFgU=PGMq7fdt7G0k_8sMqkkS9sZkcw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] compat-drivers: update pending-stable patches.
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Konstantin Ryabitsev <mricon@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, backports@vger.kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
+To: Bala Shanmugam <bkamatch@qca.qualcomm.com>, Felix Fietkau <nbd@openwrt.org>
+Cc: linux-wireless@vger.kernel.org, backports@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-Greg, Stephen, Konstantin,
+On Fri, Sep 14, 2012 at 5:51 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> I'm going to post that patch to uncrap it and to fix these releases.
 
-so for the Linux backports project [0] we rely on a few git trees:
+OK I see these two defines are part of this patch:
 
-  * linux-next.git
-  * linux-stable.git
-  * linux.git
 
-The linux.git tree is required for RC releases. The linux-stable.git
-tree for extraversion stable releases, and the linux-next.git tree for
-daily snapshots. There is a trick for stable releases whereby we
-accelerate the integration of pending-stable patches by cherry picking
-them out of linux-next.git if the commit log entry has the
-'stable@vger.kernel.org' on the commit log, and if the stable patch
-does not apply we require the developers to provide a backport
-compatible port. This trick works swell on linux-next.git for RC
-release given that we can query for rc releases there as linux-next
-carries them but linux-next.git does not carry extra version tags.
-Additionally the requirement of linux.git is only there given that at
-times there are delays between which linux-stable.git will not have an
-RC release on it. I have a way to address all these issues, namely to
-add linux.git as a remote for my local linux-stable tree, and also by
-adding linux-stable as a local remote for my linux-next tree. Now, I
-document how I resolve this for backport package consumers / builders
-but it occurs to me perhaps we can simplify this if we had:
+commit 3e2ea543286dc2a4df46633a2ab6fda5f1a98cf3
+Author: Felix Fietkau <nbd@openwrt.org>
+Date:   Sun Jul 15 19:53:39 2012 +0200
 
-  * linux-next - pulling in linux-stable packs / tags
-  * a new linux-releases.git - which has both linux.git and
-linux-stable pulled together through a cronjob
+    ath9k_hw: apply XLNA bias settings from EEPROM
 
-Would this be reasonable to accommodate to help ease of use or shall
-we just live with folks having to do the remote / local remote hacks?
+    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+    Signed-off-by: John W. Linville <linville@tuxdriver.com>
 
-[0] https://backports.wiki.kernel.org/
+So based on what I think you described you only want these two hunks
+from that patch... to avoid regressions possibly caused by Felix'
+other changes.
 
-  LUis
+And this -- is why Felix's changes should have included those two
+defines separately :)
+
+  Luis
