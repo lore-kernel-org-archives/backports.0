@@ -1,87 +1,52 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:59164 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752576Ab2IUUyt (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 21 Sep 2012 16:54:49 -0400
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id D439A540909
-	for <backports@vger.kernel.org>; Fri, 21 Sep 2012 16:55:47 -0400 (EDT)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-09-21 is baked
-Message-Id: <20120921205450.5022F40ABE@repository3.orbit-lab.org>
-Date: Fri, 21 Sep 2012 16:54:50 -0400 (EDT)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <CAB=NE6XXN5ZqZ3_ho8MermvXMSU67MWv5j26B7_1j+BEySMnSA@mail.gmail.com>
+References: <1347637262-27782-1-git-send-email-bkamatch@qca.qualcomm.com>
+	<CAB=NE6WBLusFkQP-a9mCxM2Hu-NyWvUiF8iALY6YvvbV81eKNg@mail.gmail.com>
+	<CAB=NE6XYjYrRSA8Xupu21GWoCd-jv63ic32Q3rP7YiVHajTWTg@mail.gmail.com>
+	<CAB=NE6UG647WMS7kW=xEFgU=PGMq7fdt7G0k_8sMqkkS9sZkcw@mail.gmail.com>
+	<20563.54449.930282.825384@gargle.gargle.HOWL>
+	<CAB=NE6XXN5ZqZ3_ho8MermvXMSU67MWv5j26B7_1j+BEySMnSA@mail.gmail.com>
+Date: Sat, 15 Sep 2012 11:15:20 -0700
+Message-ID: <CAB=NE6V0vCy0BaXO8XCmJtOvgAG1MuHv0=CSQj2_S3Y9KtOyHQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] compat-drivers: update pending-stable patches.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: Sujith Manoharan <c_manoha@qualcomm.com>
+Cc: Bala Shanmugam <bkamatch@qca.qualcomm.com>, Felix Fietkau <nbd@openwrt.org>,
+	linux-wireless@vger.kernel.org, backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-HEAD is now at c629694 compat-drivers: gen-release.sh update to reflect usage of linux-next
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 22e6331 compat: backport netlink pid to portid rename
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at d2711cb Add linux-next specific files for 20120921
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+On Fri, Sep 14, 2012 at 6:26 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> On Fri, Sep 14, 2012 at 6:06 PM, Sujith Manoharan <c_manoha@qualcomm.com> wrote:
+>> Luis R. Rodriguez wrote:
+>>> So based on what I think you described you only want these two hunks
+>>> from that patch... to avoid regressions possibly caused by Felix'
+>>> other changes.
+>>
+>> This will not cause any regression for AR9462 because the patch does this:
+>>
+>>        if (!AR_SREV_9300(ah))
+>>                return;
+>>
+>> I think all this confusion would have been avoided if the 3.5.y patches had
+>> just backported Felix's patch. :)
+>
+> Oh well, I just relabeled the patch / description, put into
+> linux-next-pending for now and kicked out a new set of releases that
+> includes your other patch as well.
+>
+> http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.5/compat-wireless-3.5.3-1-snpc.tar.bz2
+> http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.5/compat-wireless-3.5.3-2-sn.tar.bz2
+> http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.5/compat-wireless-3.5.3-2-snpc.tar.bz2
+>
+> ckmake tests will follow up.
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+ckmake was very happy with all releases, no compilation failures. The
+respective log of ckmake is now attached to the 3.5 stable release
+page for each release.
 
-compat-drivers code metrics
+http://wireless.kernel.org/en/users/Download/stable#compat-wireless_3.5_stable_releases
 
-    844532 - Total upstream lines of code being pulled
-      3107 - backport code changes
-      2580 - backport code additions
-       527 - backport code deletions
-     12556 - backport from compat module
-     15663 - total backport code
-    1.8546 - % of code consists of backport work
-     19083 - Crap changes not yet posted
-     19023 - Crap additions not yet posted
-        60 - Crap deletions not yet posted
-    2.2596 - % of crap code
-
-Base tree: linux-next.git
-Base tree version: next-20120921
-compat.git: compat-2012-09-18
-compat-drivers release: compat-drivers-2012-09-18-7-gc629694-pc
-Code metrics archive: http://bit.ly/H6BTF7
+  Luis
