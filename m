@@ -1,30 +1,30 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:19602 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752954Ab2IGNBX (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 7 Sep 2012 09:01:23 -0400
-Date: Fri, 7 Sep 2012 08:59:58 -0400
-From: Andy Gospodarek <gospo@redhat.com>
-To: "Luis R. Rodriguez" <mcgrof@qca.qualcomm.com>
-Cc: Felix Fietkau <nbd@openwrt.org>, linux-wireless@vger.kernel.org,
-	backports@vger.kernel.org
-Subject: Re: [PATCH] compat: drop const to fix compiler warnings
-Message-ID: <20120907125958.GD3638@quad.redhat.com>
-References: <1347004574-80506-1-git-send-email-nbd@openwrt.org>
- <CAB=NE6V6vAdsVQyjKyaMYnPRQdJLc+Gt=nqiS5cN9mWU3vz7aQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAB=NE6V6vAdsVQyjKyaMYnPRQdJLc+Gt=nqiS5cN9mWU3vz7aQ@mail.gmail.com>
-Sender: backports-owner@vger.kernel.org
+Sender: mcgrof@gmail.com
+Date: Tue, 18 Sep 2012 17:57:36 -0700
+Message-ID: <CAB=NE6VKbsLaLwYYpc3xFNkhMWgZnvefz7zssGG7fBNR9EnmTQ@mail.gmail.com>
+Subject: compat-driver releases now on kernel.org
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: Konstantin Ryabitsev <mricon@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Sep 07, 2012 at 02:04:37AM -0700, Luis R. Rodriguez wrote:
-> On Fri, Sep 7, 2012 at 12:56 AM, Felix Fietkau <nbd@openwrt.org> wrote:
-> > When calling pci_find_capability and pci_read_config_word, struct pci_dev
-> > needs to be passed without const.
-> 
-> Thanks! I guess because at certain kernel version pci_dev was const ?
-> 
+Starting today we now have linux-next.git based snapshots of
+compat-drivers which have completed compilation through ckmake for all
+supported kernels on kernel.org:
 
-Similar issues exist with ethtool_ops, but it's not a huge deal, imo.
+http://www.kernel.org/pub/linux/kernel/projects/backports/
+
+The first set of releases are for today:
+
+http://www.kernel.org/pub/linux/kernel/projects/backports/2012/09/18/
+
+These all have have been signed. I'll look to compress next, the fact
+that they are not compressed was an overlook assuming that kup, the
+kernel uploader script we use, would do the job for me. For now I'm
+doing these manually as I have to sign these. The respective stable
+releases will be eventually uploaded once we get v3.7-rc1 kicked out.
+
+Thanks to Konstantin for his help with this setup.
+
+  Luis
