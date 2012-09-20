@@ -1,29 +1,49 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:57343 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752761Ab2IDKwm (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 4 Sep 2012 06:52:42 -0400
-Received: by lagy9 with SMTP id y9so4058547lag.19
-        for <backports@vger.kernel.org>; Tue, 04 Sep 2012 03:52:41 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAGj=iG_FzEsiU-25ckfiC8sbzq1rq-mPnexgRBqki+Q0+d82ew@mail.gmail.com>
-References: <CAGj=iG9meBuxqz=UsYwYW5pHbCXgsAp2eHi04ZK0LTLHHPu+=w@mail.gmail.com>
-	<CAGj=iG-wdYJe4CZBCJ=VfPxUA1NiOQi_356dSYsNZQ4v6fxkeg@mail.gmail.com>
-	<CAGj=iG_FzEsiU-25ckfiC8sbzq1rq-mPnexgRBqki+Q0+d82ew@mail.gmail.com>
-Date: Tue, 4 Sep 2012 12:52:40 +0200
-Message-ID: <CAGj=iG-wTJGOi+WFJ8fXyeVh=S5335zjdDniyTPfvmi=nXSKqA@mail.gmail.com>
-Subject: Re: Compiling only one driver
-From: =?ISO-8859-1?Q?Felipe_L=F3pez?= <lopez.rottweiler@gmail.com>
-To: backports@vger.kernel.org
-Content-Type: text/plain; charset=ISO-8859-1
-Sender: backports-owner@vger.kernel.org
+Sender: mcgrof@gmail.com
+Date: Thu, 20 Sep 2012 15:45:46 -0700
+Message-ID: <CAB=NE6UVZ2HQU27LdkzUFe3of6N1v8YZYVMKsfA+0Wmg5nRBug@mail.gmail.com>
+Subject: Helping with backports: linux-next, linux, linux-stable - a few enhancements
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Konstantin Ryabitsev <mricon@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, backports@vger.kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-I am sorry. I forgot to be more specific about my impressions: is it
-enough to just comment all the drivers in the file "driver-select"
-apart from the one I am using (ath9k) and edit the makefile that it
-points to (ATH9K_MAKEFILE="drivers/net/wireless/ath/ath9k/Makefile")
-with the cross-compiler that I am going to use?
+Greg, Stephen, Konstantin,
 
-Thanks a lot.
+so for the Linux backports project [0] we rely on a few git trees:
+
+  * linux-next.git
+  * linux-stable.git
+  * linux.git
+
+The linux.git tree is required for RC releases. The linux-stable.git
+tree for extraversion stable releases, and the linux-next.git tree for
+daily snapshots. There is a trick for stable releases whereby we
+accelerate the integration of pending-stable patches by cherry picking
+them out of linux-next.git if the commit log entry has the
+'stable@vger.kernel.org' on the commit log, and if the stable patch
+does not apply we require the developers to provide a backport
+compatible port. This trick works swell on linux-next.git for RC
+release given that we can query for rc releases there as linux-next
+carries them but linux-next.git does not carry extra version tags.
+Additionally the requirement of linux.git is only there given that at
+times there are delays between which linux-stable.git will not have an
+RC release on it. I have a way to address all these issues, namely to
+add linux.git as a remote for my local linux-stable tree, and also by
+adding linux-stable as a local remote for my linux-next tree. Now, I
+document how I resolve this for backport package consumers / builders
+but it occurs to me perhaps we can simplify this if we had:
+
+  * linux-next - pulling in linux-stable packs / tags
+  * a new linux-releases.git - which has both linux.git and
+linux-stable pulled together through a cronjob
+
+Would this be reasonable to accommodate to help ease of use or shall
+we just live with folks having to do the remote / local remote hacks?
+
+[0] https://backports.wiki.kernel.org/
+
+  LUis
