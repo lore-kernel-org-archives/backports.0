@@ -1,43 +1,95 @@
 MIME-Version: 1.0
 Sender: mcgrof@gmail.com
-In-Reply-To: <1348716514-8151-1-git-send-email-xiong@qca.qualcomm.com>
-References: <1348716514-8151-1-git-send-email-xiong@qca.qualcomm.com>
-Date: Thu, 27 Sep 2012 10:57:17 -0700
-Message-ID: <CAB=NE6Ufi40QeKRBQZrT2Oi=2PfDW_dszcceBzsqdZs9NT3THQ@mail.gmail.com>
-Subject: Re: [PATCH] net: add new QCA alx ethernet driver
+In-Reply-To: <20120921081614.GA17547@kroah.com>
+References: <CAB=NE6UVZ2HQU27LdkzUFe3of6N1v8YZYVMKsfA+0Wmg5nRBug@mail.gmail.com>
+	<20120921081614.GA17547@kroah.com>
+Date: Fri, 21 Sep 2012 09:24:44 -0700
+Message-ID: <CAB=NE6WQg8PvuKc0kphSQWjuAhc+tRd8MEd+51tCwU3AfHwzjQ@mail.gmail.com>
+Subject: Re: Helping with backports: linux-next, linux, linux-stable - a few enhancements
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: xiong@qca.qualcomm.com
-Cc: mcgrof@kernel.org, backports@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Konstantin Ryabitsev <mricon@kernel.org>,
+	linux-kernel@vger.kernel.org, backports@vger.kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Sep 26, 2012 at 8:28 PM,  <xiong@qca.qualcomm.com> wrote:
-> This driver support AR813x/AR815x/AR816x/AR817x ethernet chipsets.
+On Fri, Sep 21, 2012 at 1:16 AM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Thu, Sep 20, 2012 at 03:45:46PM -0700, Luis R. Rodriguez wrote:
+>> Greg, Stephen, Konstantin,
+>>
+>> so for the Linux backports project [0] we rely on a few git trees:
+>>
+>>   * linux-next.git
+>>   * linux-stable.git
+>>   * linux.git
+>>
+>> The linux.git tree is required for RC releases. The linux-stable.git
+>> tree for extraversion stable releases, and the linux-next.git tree for
+>> daily snapshots. There is a trick for stable releases whereby we
+>> accelerate the integration of pending-stable patches by cherry picking
+>> them out of linux-next.git if the commit log entry has the
+>> 'stable@vger.kernel.org' on the commit log, and if the stable patch
+>> does not apply we require the developers to provide a backport
+>> compatible port. This trick works swell on linux-next.git for RC
+>> release given that we can query for rc releases there as linux-next
+>> carries them but linux-next.git does not carry extra version tags.
+>> Additionally the requirement of linux.git is only there given that at
+>> times there are delays between which linux-stable.git will not have an
+>> RC release on it. I have a way to address all these issues, namely to
+>> add linux.git as a remote for my local linux-stable tree, and also by
+>> adding linux-stable as a local remote for my linux-next tree. Now, I
+>> document how I resolve this for backport package consumers / builders
+>> but it occurs to me perhaps we can simplify this if we had:
+>>
+>>   * linux-next - pulling in linux-stable packs / tags
+>>   * a new linux-releases.git - which has both linux.git and
+>> linux-stable pulled together through a cronjob
+>>
+>> Would this be reasonable to accommodate to help ease of use or shall
+>> we just live with folks having to do the remote / local remote hacks?
 >
-> Qualcomm Atheros(QCA) is committing to fix all bugs found on this
-> driver.
-> This driver is also permissively licensed thereby enabling developers of
-> ohter OSes to cherry pick this driver to port to their OS.
->
-> The version for upstream is also revising. after it's accepted by the
-> community, the user can use it for AR816x/AR817x.
->
-> This driver and patch also have addressed all sparse and checkpatch
-> warnings.
->
-> Signed-off-by: Cloud Ren <cjren@qca.qualcomm.com>
-> Tested-by: David Liu <dwliu@qca.qualcomm.com>
-> Signed-off-by: xiong <xiong@qca.qualcomm.com>
-> Signed-off-by: Luis R. Rodriguez <rodrigue@qca.qualcomm.com>
-> ---
->  drivers/net/ethernet/atheros/Kconfig           |   21 +
->  drivers/net/ethernet/atheros/Makefile          |    1 +
->  drivers/net/ethernet/atheros/alx/Makefile      |    7 +
+> I pull the linux.git tree into linux-stable.git every few -rc releases,
+> and as it's based on linux.git, it's really not a big deal.
 
-The way you are sending me this patch is treating compat-drivers as if
-it were an upstream tree. You should rename the subject of your commit
-log, search for other crap commit logs. You then also need to send me
-this driver as a patch file. You want to replace the existing set of
-alx patches under crap/.
+Keyword: "few", which is fine for those who can / want to wait, in my
+case I need them as they come.
+
+> I don't see how pulling linux-stable into linux-next really helps anyone
+> out, linux-stable is so far behind what is in linux-next it's not funny.
+
+By pulling linux-stable into linux-next you get to be able to run
+things like this from within linux-next:
+
+git format-patch --grep="stable@vger.kernel.org" -o
+$PENDING_STABLE_DIR v3.5.4.. $MY_FILES
+
+That is, from v3.5.4 up to that day's linux-next tag.
+
+Without linux-stable linux-next does not get the v3.5.4 tags to allow
+me / users of compat-drivers to do this. We do this to accelerate the
+incorporation of stable pending-stable patches into a release based on
+a stable extraversion release.
+
+> But, if you really want it all in a single tree, can't you just do this
+> with a few 'remote' markings in your git configuration file for the repo
+> and do it locally if you want to?
+>
+> Otherwise I don't see the real question here.
+
+Right, absolutely! Using a remote arrangements fixes this completely
+for me. I alone can live happy doing what I do but since I have users
+depending on using compat-drivers to make their own set of releases
+and test things it means I have to get folks using compat-drivers to
+also set up the same git remotes arrangements. That's fine but I'm
+looking to simplify it if I can for users.
+
+> confused probably due to a bad case of jet lag,
+
+No problem :) I obviously could just push my own tree to do this as
+well but as for linux-next pulling linux-stable it seemed a trusty
+cronjob would be more trustworthy than me pushing stuff regularly.
+Likewise for linux-stable pulling more regularly linux.
 
   Luis
