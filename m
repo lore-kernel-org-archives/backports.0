@@ -1,72 +1,28 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <CAB=NE6W9O-XvQUJgyfVgNtrNH6P-U57oMD+ptNGFid4bqZqv-Q@mail.gmail.com>
-References: <20566.39957.867109.459668@gargle.gargle.HOWL>
-	<CAB=NE6W9O-XvQUJgyfVgNtrNH6P-U57oMD+ptNGFid4bqZqv-Q@mail.gmail.com>
-Date: Mon, 17 Sep 2012 18:13:04 -0700
-Message-ID: <CAB=NE6VBk6_Fq7NTXXDUK1AVMBXfLRY52n4iLp+njX0e_ms7hA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Patches for compat 3.6.y
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Sujith Manoharan <c_manoha@qualcomm.com>
-Cc: linux-wireless@vger.kernel.org, backports@vger.kernel.org,
-	Konstantin Ryabitsev <mricon@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:59164 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752576Ab2IUUyt (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 21 Sep 2012 16:54:49 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id D439A540909
+	for <backports@vger.kernel.org>; Fri, 21 Sep 2012 16:55:47 -0400 (EDT)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-09-21 is baked
+Message-Id: <20120921205450.5022F40ABE@repository3.orbit-lab.org>
+Date: Fri, 21 Sep 2012 16:54:50 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Sep 17, 2012 at 3:21 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> On Sun, Sep 16, 2012 at 8:42 PM, Sujith Manoharan <c_manoha@qualcomm.com> wrote:
->> Hi,
->>
->> These patches are for the 3.6.y branch in compat-drivers.
->>
->> Sujith
->>
->> Sujith Manoharan (3):
->>   compat-drivers: Add pending stable patches
->>   compat-drivers: Add new cherry picked patches
->>   compat-drivers: Add linux-next pending patches
->
-> Great thanks, applied and pushed!
->
-> v3.6-rc6 was pushed out recently as well, and I updated the trees to
-> reflect that. Based on that and your patches I've kicked out a new set
-> of first tarballs based on v3.6-rc1. These releases did not have any
-> pending-stable/ patches as in between v3.6-rc6..next-20120917 and as
-> such there are no "-s" releases.
->
-> http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.6/compat-wireless-3.6-rc6-1.tar.bz2
-> http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.6/compat-wireless-3.6-rc6-1-n.tar.bz2
-> http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.6/compat-wireless-3.6-rc6-1-np.tar.bz2
-> http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.6/compat-wireless-3.6-rc6-1-npc.tar.bz2
->
-> Legend
->
-> Extra flag meanings:
->
-> -s - get and apply pending-stable/ from linux-next.git
-> -n - apply the patches linux-next-cherry-picks/ directory
-> -p - apply the patches on the linux-next-pending/ directory
-> -c - apply the patches on the crap/ directory
->
-> When no flags are used it means a vanilla release with 0 delta.
->
-> The respective ckmake logs for all releases will be uploaded in about
-> 2-3 hours, but before tagging a release I did run ckmake test against
-> the -snpc release and everything went fine so I don't suspect issues
-> with the rest of the releases.
-
-Respective ckmake logs:
-
-http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.6/ckmake-3.6-rc6-1.log.bz2
-http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.6/ckmake-3.6-rc6-1-n.log.bz2
-http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.6/ckmake-3.6-rc6-1-np.log.bz2
-http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.6/ckmake-3.6-rc6-1-npc.log.bz2
-
-The results are all OK for all 21 kernels. The compressed logs have
-all the details though, a summary for all kernels below.
-
-Trying kernel 3.5.0-030500-generic [OK]
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+HEAD is now at c629694 compat-drivers: gen-release.sh update to reflect usage of linux-next
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 22e6331 compat: backport netlink pid to portid rename
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at d2711cb Add linux-next specific files for 20120921
 Trying kernel 3.4.4-030404-generic [OK]
 Trying kernel 3.3.7-030307-generic [OK]
 Trying kernel 3.2.2-030202-generic [OK]
@@ -79,7 +35,6 @@ Trying kernel 2.6.36-02063604-generic [OK]
 Trying kernel 2.6.35-02063512-generic [OK]
 Trying kernel 2.6.34-02063410-generic [OK]
 Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.32-02063255-generic [OK]
 Trying kernel 2.6.31-02063113-generic [OK]
 Trying kernel 2.6.30-02063010-generic [OK]
 Trying kernel 2.6.29-02062906-generic [OK]
@@ -88,9 +43,45 @@ Trying kernel 2.6.27-020627-generic [OK]
 Trying kernel 2.6.26-020626-generic [OK]
 Trying kernel 2.6.25-020625-generic [OK]
 Trying kernel 2.6.24-020624-generic [OK]
+Worked!
 
-real    26m59.600s
-user    141m37.487s
-sys     13m34.835s
+Trying kernel  3.4.4-030404-generic [OK]
+Trying kernel  3.3.7-030307-generic [OK]
+Trying kernel  3.2.2-030202-generic [OK]
+Trying kernel  3.1.10-030110-generic [OK]
+Trying kernel  3.0.18-030018-generic [OK]
+Trying kernel  2.6.39-02063904-generic [OK]
+Trying kernel  2.6.38-02063808-generic [OK]
+Trying kernel  2.6.37-02063706-generic [OK]
+Trying kernel  2.6.36-02063604-generic [OK]
+Trying kernel  2.6.35-02063512-generic [OK]
+Trying kernel  2.6.34-02063410-generic [OK]
+Trying kernel  2.6.33-02063305-generic [OK]
+Trying kernel  2.6.31-02063113-generic [OK]
+Trying kernel  2.6.30-02063010-generic [OK]
+Trying kernel  2.6.29-02062906-generic [OK]
+Trying kernel  2.6.28-02062810-generic [OK]
+Trying kernel  2.6.27-020627-generic [OK]
+Trying kernel  2.6.26-020626-generic [OK]
+Trying kernel  2.6.25-020625-generic [OK]
+Trying kernel  2.6.24-020624-generic [OK]
 
-  Luis
+compat-drivers code metrics
+
+    844532 - Total upstream lines of code being pulled
+      3107 - backport code changes
+      2580 - backport code additions
+       527 - backport code deletions
+     12556 - backport from compat module
+     15663 - total backport code
+    1.8546 - % of code consists of backport work
+     19083 - Crap changes not yet posted
+     19023 - Crap additions not yet posted
+        60 - Crap deletions not yet posted
+    2.2596 - % of crap code
+
+Base tree: linux-next.git
+Base tree version: next-20120921
+compat.git: compat-2012-09-18
+compat-drivers release: compat-drivers-2012-09-18-7-gc629694-pc
+Code metrics archive: http://bit.ly/H6BTF7
