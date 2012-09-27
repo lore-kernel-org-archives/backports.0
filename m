@@ -1,111 +1,43 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <1348716514-8151-1-git-send-email-xiong@qca.qualcomm.com>
+References: <1348716514-8151-1-git-send-email-xiong@qca.qualcomm.com>
+Date: Thu, 27 Sep 2012 10:57:17 -0700
+Message-ID: <CAB=NE6Ufi40QeKRBQZrT2Oi=2PfDW_dszcceBzsqdZs9NT3THQ@mail.gmail.com>
+Subject: Re: [PATCH] net: add new QCA alx ethernet driver
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Stephen Hemminger <shemminger@vyatta.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH] compat: backport netlink pid to portid rename
-Date: Thu, 13 Sep 2012 15:36:00 -0700
-Message-Id: <1347575760-15749-1-git-send-email-mcgrof@do-not-panic.com>
+To: xiong@qca.qualcomm.com
+Cc: mcgrof@kernel.org, backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Wed, Sep 26, 2012 at 8:28 PM,  <xiong@qca.qualcomm.com> wrote:
+> This driver support AR813x/AR815x/AR816x/AR817x ethernet chipsets.
+>
+> Qualcomm Atheros(QCA) is committing to fix all bugs found on this
+> driver.
+> This driver is also permissively licensed thereby enabling developers of
+> ohter OSes to cherry pick this driver to port to their OS.
+>
+> The version for upstream is also revising. after it's accepted by the
+> community, the user can use it for AR816x/AR817x.
+>
+> This driver and patch also have addressed all sparse and checkpatch
+> warnings.
+>
+> Signed-off-by: Cloud Ren <cjren@qca.qualcomm.com>
+> Tested-by: David Liu <dwliu@qca.qualcomm.com>
+> Signed-off-by: xiong <xiong@qca.qualcomm.com>
+> Signed-off-by: Luis R. Rodriguez <rodrigue@qca.qualcomm.com>
+> ---
+>  drivers/net/ethernet/atheros/Kconfig           |   21 +
+>  drivers/net/ethernet/atheros/Makefile          |    1 +
+>  drivers/net/ethernet/atheros/alx/Makefile      |    7 +
 
-The patch:
+The way you are sending me this patch is treating compat-drivers as if
+it were an upstream tree. You should rename the subject of your commit
+log, search for other crap commit logs. You then also need to send me
+this driver as a patch file. You want to replace the existing set of
+alx patches under crap/.
 
-commit 15e473046cb6e5d18a4d0057e61d76315230382b
-Author: Eric W. Biederman <ebiederm@xmission.com>
-Date:   Fri Sep 7 20:12:54 2012 +0000
-
-    netlink: Rename pid to portid to avoid confusion
-
-    It is a frequent mistake to confuse the netlink port identifier with a
-    process identifier.  Try to reduce this confusion by renaming fields
-    that hold port identifiers portid instead of pid.
-
-    I have carefully avoided changing the structures exported to
-    userspace to avoid changing the userspace API.
-
-    I have successfully built an allyesconfig kernel with this change.
-
-    Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-    Acked-by: Stephen Hemminger <shemminger@vyatta.com>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
-
-Changed the struct members:
-
-struct netlink_notify->pid    to
-struct netlink_notify->portid
-
-struct genl_info->snd_pid     to
-struct genl_info->snd_portid
-
-This adds helpers to help reduce the overhead cost to backport
-this collateral evolution.
-
-mcgrof@garbanzo ~/compat (git::master)$ time ckmake
-Trying kernel 3.5.0-030500-generic [OK]
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.32-02063255-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-
-real    1m0.017s
-user    3m12.748s
-sys     0m30.274s
-
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Stephen Hemminger <shemminger@vyatta.com>
-Cc: David S. Miller <davem@davemloft.net>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- include/linux/compat-3.7.h |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/include/linux/compat-3.7.h b/include/linux/compat-3.7.h
-index 6cee787..e4e126c 100644
---- a/include/linux/compat-3.7.h
-+++ b/include/linux/compat-3.7.h
-@@ -10,6 +10,10 @@
- #include <linux/pci.h>
- #include <linux/pci_regs.h>
- 
-+#define netlink_notify_portid(__notify) (__notify->pid)
-+#define genl_info_snd_portid(__genl_info) (__genl_info->snd_pid)
-+#define NETLINK_CB_PORTID(__skb) NETLINK_CB(cb->skb).pid
-+
- bool mod_delayed_work(struct workqueue_struct *wq, struct delayed_work *dwork,
- 		      unsigned long delay);
- 
-@@ -55,6 +59,10 @@ static inline int pcie_capability_clear_dword(struct pci_dev *dev, int pos,
- 
- #define PCI_EXP_LNKSTA2			50      /* Link Status 2 */
- 
-+#else /* (LINUX_VERSION_CODE > KERNEL_VERSION(3,7,0)) */
-+#define netlink_notify_portid(__notify) (__notify->portid)
-+#define genl_info_snd_portid(__genl_info) (__genl_info->snd_portid)
-+#define NETLINK_CB_PORTID(__skb) NETLINK_CB(cb->skb).portid
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)) */
- 
- #endif /* LINUX_3_7_COMPAT_H */
--- 
-1.7.10.4
+  Luis
