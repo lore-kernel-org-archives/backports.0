@@ -1,450 +1,188 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Serge Hallyn <serge.hallyn@canonical.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 1/3] compat: backport uidgid.h kuid_t and kgid_t addition
-Date: Fri, 28 Sep 2012 23:38:23 -0700
-Message-Id: <1348900705-12431-2-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1348900705-12431-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1348900705-12431-1-git-send-email-mcgrof@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:46159 "EHLO
+	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752915Ab2I0Gvb (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 27 Sep 2012 02:51:31 -0400
+From: Sujith Manoharan <c_manoha@qualcomm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Message-ID: <20579.63268.74777.81720@gargle.gargle.HOWL>
+Date: Thu, 27 Sep 2012 12:20:12 +0530
+To: <rodrigue@qca.qualcomm.com>
+CC: <linux-wireless@vger.kernel.org>, <backports@vger.kernel.org>
+Subject: [PATCH 1/5] compat-drivers: Refresh patches for next-20120926
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-
-mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains \
-	7a4e7408c5cadb240e068a662251754a562355e3
-v3.5-rc1~107^2~33
-
-This backports:
-
-commit 7a4e7408c5cadb240e068a662251754a562355e3
-Author: Eric W. Biederman <ebiederm@xmission.com>
-Date:   Mon Nov 14 14:29:51 2011 -0800
-
-    userns: Add kuid_t and kgid_t and associated infrastructure in uidgid.h
-
-    Start distinguishing between internal kernel uids and gids and
-    values that userspace can use.  This is done by introducing two
-    new types: kuid_t and kgid_t.  These types and their associated
-    functions are infrastructure are declared in the new header
-    uidgid.h.
-
-    Ultimately there will be a different implementation of the mapping
-    functions for use with user namespaces.  But to keep it simple
-    we introduce the mapping functions first to separate the meat
-    from the mechanical code conversions.
-
-    Export overflowuid and overflowgid so we can use from_kuid_munged
-    and from_kgid_munged in modular code.
-
-    Acked-by: Serge Hallyn <serge.hallyn@canonical.com>
-    Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
-
-The uidgid.h header file is provided for older kernels and for
-newer kernels we use include_next trick. The only difference
-here is that compat-3.5.c now exports overflowuid and
-overflowgid in the case that CONFIG_UID16 was not defined
-given that on older kernels these were not exported although
-linux/highuid.h always has historically provided the extern
-declaration for them.
-
-Apart from all this we also force inclusion of uidgid.h
-within the compat framework now given that in newer
-kernels its expected to be included by many header files
-and modules without them having included it in upstream
-code already.
-
-mcgrof@garbanzo ~/compat (git::master)$ time ckmake
-Trying kernel 3.5.0-030500-generic [OK]
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.32-02063255-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-
-real	1m0.411s
-user	3m18.060s
-sys	0m30.686s
-
-Cc: Serge Hallyn <serge.hallyn@canonical.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Sujith Manoharan <c_manoha@qca.qualcomm.com>
 ---
- compat/Makefile            |    3 +
- compat/compat-3.5.c        |   30 +++++++
- compat/user_namespace.c    |   68 +++++++++++++++
- include/linux/compat-2.6.h |    1 +
- include/linux/uidgid.h     |  205 ++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 307 insertions(+)
- create mode 100644 compat/compat-3.5.c
- create mode 100644 compat/user_namespace.c
- create mode 100644 include/linux/uidgid.h
+ patches/0001-netdev_ops.patch    |  2 +-
+ patches/04-netns.patch           |  2 +-
+ patches/11-dev-pm-ops.patch      | 12 ++++++------
+ patches/14-device-type.patch     |  2 +-
+ patches/29-sdio_no_suspend.patch |  2 +-
+ patches/62-usb_driver_lpm.patch  | 10 +++++-----
+ 6 files changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/compat/Makefile b/compat/Makefile
-index a44b345..e9c6e1f 100644
---- a/compat/Makefile
-+++ b/compat/Makefile
-@@ -45,6 +45,9 @@ compat-$(CONFIG_COMPAT_KERNEL_3_2) += compat-3.2.o
- compat-$(CONFIG_COMPAT_KERNEL_3_3) += \
- 	compat-3.3.o
- compat-$(CONFIG_COMPAT_KERNEL_3_4) += compat-3.4.o
-+compat-$(CONFIG_COMPAT_KERNEL_3_5) += \
-+	compat-3.5.o \
-+	user_namespace.o
- compat-$(CONFIG_COMPAT_KERNEL_3_7) += compat-3.7.o
+diff --git a/patches/0001-netdev_ops.patch b/patches/0001-netdev_ops.patch
+index 3dc15ca..8c1dda5 100644
+--- a/patches/0001-netdev_ops.patch
++++ b/patches/0001-netdev_ops.patch
+@@ -49,7 +49,7 @@ Date:   Wed Nov 19 21:32:24 2008 -0800
+  	if (unlikely(retval < 0)) {
+ --- a/drivers/net/usb/usbnet.c
+ +++ b/drivers/net/usb/usbnet.c
+-@@ -1409,7 +1409,7 @@ usbnet_probe (struct usb_interface *udev
++@@ -1417,7 +1417,7 @@ usbnet_probe (struct usb_interface *udev
+  		net->features |= NETIF_F_HIGHDMA;
+  #endif
+  
+diff --git a/patches/04-netns.patch b/patches/04-netns.patch
+index 98c8468..0085052 100644
+--- a/patches/04-netns.patch
++++ b/patches/04-netns.patch
+@@ -6,7 +6,7 @@ files...
  
- compat-$(CONFIG_COMPAT_CORDIC) += cordic.o
-diff --git a/compat/compat-3.5.c b/compat/compat-3.5.c
-new file mode 100644
-index 0000000..a6b174d
---- /dev/null
-+++ b/compat/compat-3.5.c
-@@ -0,0 +1,30 @@
-+/*
-+ * Copyright 2012  Luis R. Rodriguez <mcgrof@do-not-panic.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Compatibility file for Linux wireless for kernels 3.5.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/highuid.h>
-+
-+/*
-+ * Commit 7a4e7408c5cadb240e068a662251754a562355e3
-+ * exported overflowuid and overflowgid for all
-+ * kernel configurations, prior to that we only
-+ * had it exported when CONFIG_UID16 was enabled.
-+ * We are technically redefining it here but
-+ * nothing seems to be changing it, except
-+ * kernel/ code does epose it via sysctl and
-+ * proc... if required later we can add that here.
-+ */
-+#ifndef CONFIG_UID16
-+int overflowuid = DEFAULT_OVERFLOWUID;
-+int overflowgid = DEFAULT_OVERFLOWGID;
-+
-+EXPORT_SYMBOL(overflowuid);
-+EXPORT_SYMBOL(overflowgid);
-+#endif
-diff --git a/compat/user_namespace.c b/compat/user_namespace.c
-new file mode 100644
-index 0000000..a7cebd5
---- /dev/null
-+++ b/compat/user_namespace.c
-@@ -0,0 +1,68 @@
-+/*
-+ * Copyright 2012  Luis R. Rodriguez <mcgrof@do-not-panic.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Compatibility file for Linux wireless for kernels backporting
-+ * user_namespace.c
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/highuid.h>
-+#include <linux/user_namespace.h>
-+
-+#ifdef CONFIG_USER_NS
-+
-+kuid_t make_kuid(struct user_namespace *ns, uid_t uid)
-+{
-+	/* Map the uid to a global kernel uid */
-+	return KUIDT_INIT(uid);
-+}
-+EXPORT_SYMBOL(make_kuid);
-+
-+uid_t from_kuid(struct user_namespace *targ, kuid_t kuid)
-+{
-+	/* Map the uid from a global kernel uid */
-+	return __kuid_val(kuid);
-+}
-+EXPORT_SYMBOL(from_kuid);
-+
-+uid_t from_kuid_munged(struct user_namespace *targ, kuid_t kuid)
-+{
-+	uid_t uid;
-+	uid = from_kuid(targ, kuid);
-+
-+	if (uid == (uid_t) -1)
-+		uid = overflowuid;
-+	return uid;
-+}
-+EXPORT_SYMBOL(from_kuid_munged);
-+
-+kgid_t make_kgid(struct user_namespace *ns, gid_t gid)
-+{
-+	/* Map the gid to a global kernel gid */
-+	return KGIDT_INIT(gid);
-+}
-+EXPORT_SYMBOL(make_kgid);
-+
-+gid_t from_kgid(struct user_namespace *targ, kgid_t kgid)
-+{
-+	/* Map the gid from a global kernel gid */
-+	return __kgid_val(kgid);
-+}
-+EXPORT_SYMBOL(from_kgid);
-+
-+gid_t from_kgid_munged(struct user_namespace *targ, kgid_t kgid)
-+{
-+	gid_t gid;
-+	gid = from_kgid(targ, kgid);
-+
-+	if (gid == (gid_t) -1)
-+		gid = overflowgid;
-+	return gid;
-+}
-+EXPORT_SYMBOL(from_kgid_munged);
-+
-+#endif /* CONFIG_USER_NS */
-diff --git a/include/linux/compat-2.6.h b/include/linux/compat-2.6.h
-index 46ae654..f26489c 100644
---- a/include/linux/compat-2.6.h
-+++ b/include/linux/compat-2.6.h
-@@ -11,6 +11,7 @@
- #endif
- #include <linux/compat_autoconf.h>
- #include <linux/init.h>
-+#include <linux/uidgid.h>
- 
- /*
-  * The define overwriting module_init is based on the original module_init
-diff --git a/include/linux/uidgid.h b/include/linux/uidgid.h
-new file mode 100644
-index 0000000..d9e4224
---- /dev/null
-+++ b/include/linux/uidgid.h
-@@ -0,0 +1,205 @@
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+#include_next <linux/uidgid.h>
-+#else
-+
-+#ifndef _LINUX_UIDGID_H
-+#define _LINUX_UIDGID_H
-+
-+/*
-+ * A set of types for the internal kernel types representing uids and gids.
-+ *
-+ * The types defined in this header allow distinguishing which uids and gids in
-+ * the kernel are values used by userspace and which uid and gid values are
-+ * the internal kernel values.  With the addition of user namespaces the values
-+ * can be different.  Using the type system makes it possible for the compiler
-+ * to detect when we overlook these differences.
-+ *
-+ */
-+#include <linux/types.h>
-+#include <linux/highuid.h>
-+
-+struct user_namespace;
-+extern struct user_namespace init_user_ns;
-+
-+#ifdef CONFIG_UIDGID_STRICT_TYPE_CHECKS
-+
-+typedef struct {
-+	uid_t val;
-+} kuid_t;
-+
-+
-+typedef struct {
-+	gid_t val;
-+} kgid_t;
-+
-+#define KUIDT_INIT(value) (kuid_t){ value }
-+#define KGIDT_INIT(value) (kgid_t){ value }
-+
-+static inline uid_t __kuid_val(kuid_t uid)
-+{
-+	return uid.val;
-+}
-+
-+static inline gid_t __kgid_val(kgid_t gid)
-+{
-+	return gid.val;
-+}
-+
-+#else
-+
-+typedef uid_t kuid_t;
-+typedef gid_t kgid_t;
-+
-+static inline uid_t __kuid_val(kuid_t uid)
-+{
-+	return uid;
-+}
-+
-+static inline gid_t __kgid_val(kgid_t gid)
-+{
-+	return gid;
-+}
-+
-+#define KUIDT_INIT(value) ((kuid_t) value )
-+#define KGIDT_INIT(value) ((kgid_t) value )
-+
-+#endif
-+
-+#define GLOBAL_ROOT_UID KUIDT_INIT(0)
-+#define GLOBAL_ROOT_GID KGIDT_INIT(0)
-+
-+#define INVALID_UID KUIDT_INIT(-1)
-+#define INVALID_GID KGIDT_INIT(-1)
-+
-+static inline bool uid_eq(kuid_t left, kuid_t right)
-+{
-+	return __kuid_val(left) == __kuid_val(right);
-+}
-+
-+static inline bool gid_eq(kgid_t left, kgid_t right)
-+{
-+	return __kgid_val(left) == __kgid_val(right);
-+}
-+
-+static inline bool uid_gt(kuid_t left, kuid_t right)
-+{
-+	return __kuid_val(left) > __kuid_val(right);
-+}
-+
-+static inline bool gid_gt(kgid_t left, kgid_t right)
-+{
-+	return __kgid_val(left) > __kgid_val(right);
-+}
-+
-+static inline bool uid_gte(kuid_t left, kuid_t right)
-+{
-+	return __kuid_val(left) >= __kuid_val(right);
-+}
-+
-+static inline bool gid_gte(kgid_t left, kgid_t right)
-+{
-+	return __kgid_val(left) >= __kgid_val(right);
-+}
-+
-+static inline bool uid_lt(kuid_t left, kuid_t right)
-+{
-+	return __kuid_val(left) < __kuid_val(right);
-+}
-+
-+static inline bool gid_lt(kgid_t left, kgid_t right)
-+{
-+	return __kgid_val(left) < __kgid_val(right);
-+}
-+
-+static inline bool uid_lte(kuid_t left, kuid_t right)
-+{
-+	return __kuid_val(left) <= __kuid_val(right);
-+}
-+
-+static inline bool gid_lte(kgid_t left, kgid_t right)
-+{
-+	return __kgid_val(left) <= __kgid_val(right);
-+}
-+
-+static inline bool uid_valid(kuid_t uid)
-+{
-+	return !uid_eq(uid, INVALID_UID);
-+}
-+
-+static inline bool gid_valid(kgid_t gid)
-+{
-+	return !gid_eq(gid, INVALID_GID);
-+}
-+
-+#ifdef CONFIG_USER_NS
-+
-+extern kuid_t make_kuid(struct user_namespace *from, uid_t uid);
-+extern kgid_t make_kgid(struct user_namespace *from, gid_t gid);
-+
-+extern uid_t from_kuid(struct user_namespace *to, kuid_t uid);
-+extern gid_t from_kgid(struct user_namespace *to, kgid_t gid);
-+extern uid_t from_kuid_munged(struct user_namespace *to, kuid_t uid);
-+extern gid_t from_kgid_munged(struct user_namespace *to, kgid_t gid);
-+
-+static inline bool kuid_has_mapping(struct user_namespace *ns, kuid_t uid)
-+{
-+	return from_kuid(ns, uid) != (uid_t) -1;
-+}
-+
-+static inline bool kgid_has_mapping(struct user_namespace *ns, kgid_t gid)
-+{
-+	return from_kgid(ns, gid) != (gid_t) -1;
-+}
-+
-+#else
-+
-+static inline kuid_t make_kuid(struct user_namespace *from, uid_t uid)
-+{
-+	return KUIDT_INIT(uid);
-+}
-+
-+static inline kgid_t make_kgid(struct user_namespace *from, gid_t gid)
-+{
-+	return KGIDT_INIT(gid);
-+}
-+
-+static inline uid_t from_kuid(struct user_namespace *to, kuid_t kuid)
-+{
-+	return __kuid_val(kuid);
-+}
-+
-+static inline gid_t from_kgid(struct user_namespace *to, kgid_t kgid)
-+{
-+	return __kgid_val(kgid);
-+}
-+
-+static inline uid_t from_kuid_munged(struct user_namespace *to, kuid_t kuid)
-+{
-+	uid_t uid = from_kuid(to, kuid);
-+	if (uid == (uid_t)-1)
-+		uid = overflowuid;
-+	return uid;
-+}
-+
-+static inline gid_t from_kgid_munged(struct user_namespace *to, kgid_t kgid)
-+{
-+	gid_t gid = from_kgid(to, kgid);
-+	if (gid == (gid_t)-1)
-+		gid = overflowgid;
-+	return gid;
-+}
-+
-+static inline bool kuid_has_mapping(struct user_namespace *ns, kuid_t uid)
-+{
-+	return true;
-+}
-+
-+static inline bool kgid_has_mapping(struct user_namespace *ns, kgid_t gid)
-+{
-+	return true;
-+}
-+
-+#endif /* CONFIG_USER_NS */
-+
-+#endif /* _LINUX_UIDGID_H */
-+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
+ --- a/net/wireless/nl80211.c
+ +++ b/net/wireless/nl80211.c
+-@@ -5689,7 +5689,9 @@ static int nl80211_wiphy_netns(struct sk
++@@ -5691,7 +5691,9 @@ static int nl80211_wiphy_netns(struct sk
+  	if (!net_eq(wiphy_net(&rdev->wiphy), net))
+  		err = cfg80211_switch_netns(rdev, net);
+  
+diff --git a/patches/11-dev-pm-ops.patch b/patches/11-dev-pm-ops.patch
+index 18dbba9..fc63aa0 100644
+--- a/patches/11-dev-pm-ops.patch
++++ b/patches/11-dev-pm-ops.patch
+@@ -19,7 +19,7 @@ calls on compat code with only slight modifications.
+  static SIMPLE_DEV_PM_OPS(bcma_pm_ops, bcma_host_pci_suspend,
+  			 bcma_host_pci_resume);
+  #define BCMA_PM_OPS	(&bcma_pm_ops)
+-@@ -283,7 +287,12 @@ static struct pci_driver bcma_pci_bridge
++@@ -283,7 +286,12 @@ static struct pci_driver bcma_pci_bridge
+  	.id_table = bcma_pci_bridge_tbl,
+  	.probe = bcma_host_pci_probe,
+  	.remove = __devexit_p(bcma_host_pci_remove),
+@@ -34,8 +34,7 @@ calls on compat code with only slight modifications.
+  int __init bcma_host_pci_init(void)
+ --- a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
+ +++ b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
+-@@ -2691,6 +2691,9 @@ static struct pci_error_handlers atl1c_e
+- 	.resume = atl1c_io_resume,
++@@ -2692,6 +2692,9 @@ static struct pci_error_handlers atl1c_e
+  };
+  
+  static SIMPLE_DEV_PM_OPS(atl1c_pm_ops, atl1c_suspend, atl1c_resume);
+@@ -44,6 +43,7 @@ calls on compat code with only slight modifications.
+ +
+  
+  static struct pci_driver atl1c_driver = {
++ 	.name     = atl1c_driver_name,
+ @@ -2700,7 +2703,12 @@ static struct pci_driver atl1c_driver =
+  	.remove   = __devexit_p(atl1c_remove),
+  	.shutdown = atl1c_shutdown,
+@@ -271,7 +271,7 @@ calls on compat code with only slight modifications.
+  
+ --- a/drivers/net/wireless/rtlwifi/rtl8192ce/sw.c
+ +++ b/drivers/net/wireless/rtlwifi/rtl8192ce/sw.c
+-@@ -372,21 +372,22 @@ MODULE_PARM_DESC(swlps, "Set to 1 to use
++@@ -374,21 +374,22 @@ MODULE_PARM_DESC(swlps, "Set to 1 to use
+  MODULE_PARM_DESC(fwlps, "Set to 1 to use FW control power save (default 1)\n");
+  MODULE_PARM_DESC(debug, "Set debug level (0-5) (default 0)");
+  
+@@ -370,7 +370,7 @@ calls on compat code with only slight modifications.
+  module_pci_driver(rtl92se_driver);
+ --- a/drivers/net/wireless/p54/p54pci.c
+ +++ b/drivers/net/wireless/p54/p54pci.c
+-@@ -681,14 +681,10 @@ static int p54p_resume(struct device *de
++@@ -645,14 +645,10 @@ static int p54p_resume(struct device *de
+  	return pci_set_power_state(pdev, PCI_D0);
+  }
+  
+@@ -389,7 +389,7 @@ calls on compat code with only slight modifications.
+  
+  #define P54P_PM_OPS (&p54pci_pm_ops)
+  #else
+-@@ -700,7 +696,12 @@ static struct pci_driver p54p_driver = {
++@@ -664,7 +660,12 @@ static struct pci_driver p54p_driver = {
+  	.id_table	= p54p_table,
+  	.probe		= p54p_probe,
+  	.remove		= __devexit_p(p54p_remove),
+diff --git a/patches/14-device-type.patch b/patches/14-device-type.patch
+index 9c4b2b6..4518bb4 100644
+--- a/patches/14-device-type.patch
++++ b/patches/14-device-type.patch
+@@ -36,7 +36,7 @@ compile warning.
+  {
+ --- a/drivers/net/usb/usbnet.c
+ +++ b/drivers/net/usb/usbnet.c
+-@@ -1326,13 +1326,17 @@ static const struct net_device_ops usbne
++@@ -1334,13 +1334,17 @@ static const struct net_device_ops usbne
+  
+  // precondition: never called in_interrupt
+  
+diff --git a/patches/29-sdio_no_suspend.patch b/patches/29-sdio_no_suspend.patch
+index 6efe7f5..1adb65c 100644
+--- a/patches/29-sdio_no_suspend.patch
++++ b/patches/29-sdio_no_suspend.patch
+@@ -60,7 +60,7 @@ suspend and resume that are not backported.
+  static int if_sdio_suspend(struct device *dev)
+  {
+  	struct sdio_func *func = dev_to_sdio_func(dev);
+-@@ -1373,15 +1374,18 @@ static const struct dev_pm_ops if_sdio_p
++@@ -1378,15 +1379,18 @@ static const struct dev_pm_ops if_sdio_p
+  	.suspend	= if_sdio_suspend,
+  	.resume		= if_sdio_resume,
+  };
+diff --git a/patches/62-usb_driver_lpm.patch b/patches/62-usb_driver_lpm.patch
+index fb888eb..6d94773 100644
+--- a/patches/62-usb_driver_lpm.patch
++++ b/patches/62-usb_driver_lpm.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/bluetooth/ath3k.c
+ +++ b/drivers/bluetooth/ath3k.c
+-@@ -450,7 +450,9 @@ static struct usb_driver ath3k_driver =
++@@ -452,7 +452,9 @@ static struct usb_driver ath3k_driver =
+  	.probe		= ath3k_probe,
+  	.disconnect	= ath3k_disconnect,
+  	.id_table	= ath3k_table,
+@@ -48,7 +48,7 @@
+  module_usb_driver(bpa10x_driver);
+ --- a/drivers/bluetooth/btusb.c
+ +++ b/drivers/bluetooth/btusb.c
+-@@ -1226,7 +1226,9 @@ static struct usb_driver btusb_driver =
++@@ -1228,7 +1228,9 @@ static struct usb_driver btusb_driver =
+  #endif
+  	.id_table	= btusb_table,
+  	.supports_autosuspend = 1,
+@@ -204,7 +204,7 @@
+  module_usb_driver(rndis_wlan_driver);
+ --- a/drivers/net/wireless/rt2x00/rt2500usb.c
+ +++ b/drivers/net/wireless/rt2x00/rt2500usb.c
+-@@ -1980,7 +1980,9 @@ static struct usb_driver rt2500usb_drive
++@@ -1989,7 +1989,9 @@ static struct usb_driver rt2500usb_drive
+  	.disconnect	= rt2x00usb_disconnect,
+  	.suspend	= rt2x00usb_suspend,
+  	.resume		= rt2x00usb_resume,
+@@ -216,7 +216,7 @@
+  module_usb_driver(rt2500usb_driver);
+ --- a/drivers/net/wireless/rt2x00/rt2800usb.c
+ +++ b/drivers/net/wireless/rt2x00/rt2800usb.c
+-@@ -1304,7 +1304,9 @@ static struct usb_driver rt2800usb_drive
++@@ -1322,7 +1322,9 @@ static struct usb_driver rt2800usb_drive
+  	.disconnect	= rt2x00usb_disconnect,
+  	.suspend	= rt2x00usb_suspend,
+  	.resume		= rt2x00usb_resume,
+@@ -228,7 +228,7 @@
+  module_usb_driver(rt2800usb_driver);
+ --- a/drivers/net/wireless/rt2x00/rt73usb.c
+ +++ b/drivers/net/wireless/rt2x00/rt73usb.c
+-@@ -2527,7 +2527,9 @@ static struct usb_driver rt73usb_driver
++@@ -2536,7 +2536,9 @@ static struct usb_driver rt73usb_driver
+  	.disconnect	= rt2x00usb_disconnect,
+  	.suspend	= rt2x00usb_suspend,
+  	.resume		= rt2x00usb_resume,
 -- 
-1.7.10.4
+1.7.12.1
+
