@@ -1,88 +1,92 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:58745 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751704Ab2I0Uzp (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 27 Sep 2012 16:55:45 -0400
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 18A5B540055
-	for <backports@vger.kernel.org>; Thu, 27 Sep 2012 16:56:52 -0400 (EDT)
+Return-Path: <mcgrof@gmail.com>
+Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-09-27 is baked
-Message-Id: <20120927205547.888BB40AC0@repository3.orbit-lab.org>
-Date: Thu, 27 Sep 2012 16:55:47 -0400 (EDT)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 3/5] compat-drivers: address usage of intel_enable_gtt() for i915
+Date: Fri, 28 Sep 2012 23:54:44 -0700
+Message-Id: <1348901686-15036-4-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1348901686-15036-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1348901686-15036-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at e9b2207 compat-drivers: refresh drm patches for next-20120925
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 22e6331 compat: backport netlink pid to portid rename
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at fd8c271 Add linux-next specific files for 20120927
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+Kernels older than 3.6 don't have intel_enable_gtt() exported
+and most Linux distributions have CONFIG_AGP_INTEL as built-in
+(y) and as such we don't bother to make it available as
+modular here. The change to export intel_enable_gtt() was
+made through commit 8ecd1a66 but previous to this the driver
+never called intel_enable_gtt() so we can safely assume we
+can do the same for older kernels.
 
-compat-drivers code metrics
+There should be a way to export an intel_enable_gtt() for
+kernels with CONFIG_AGP_INTEL as built-in but that itself
+is a project.
 
-    845104 - Total upstream lines of code being pulled
-      3107 - backport code changes
-      2580 - backport code additions
-       527 - backport code deletions
-     12556 - backport from compat module
-     15663 - total backport code
-    1.8534 - % of code consists of backport work
-     19083 - Crap changes not yet posted
-     19023 - Crap additions not yet posted
-        60 - Crap deletions not yet posted
-    2.2581 - % of crap code
+commit 8ecd1a6615f0d9de6759aafe229bc1cc4ee99c7b
+Author: Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Thu Jun 7 15:56:03 2012 +0200
 
-Base tree: linux-next.git
-Base tree version: next-20120927
-compat.git: compat-2012-09-25
-compat-drivers release: compat-drivers-2012-09-25-pc
-Code metrics archive: http://bit.ly/H6BTF7
+    drm/i915: call intel_enable_gtt
+
+    When drm/i915 is in control of the gtt, we need to call
+    the enable function at all the relevant places ourselves.
+
+    Reviewed-by: Jani Nikula <jani.nikula@linux.intel.com>
+    Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+This now goes with i915 run time tested against 3.2.0-3-amd64
+and code extrated from linux-next next-20120926.
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ patches/drm/07-intel-gtt.patch |   37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 patches/drm/07-intel-gtt.patch
+
+diff --git a/patches/drm/07-intel-gtt.patch b/patches/drm/07-intel-gtt.patch
+new file mode 100644
+index 0000000..6b3fabe
+--- /dev/null
++++ b/patches/drm/07-intel-gtt.patch
+@@ -0,0 +1,37 @@
++Kernels older than 3.6 don't have intel_enable_gtt() exported
++and most Linux distributions have CONFIG_AGP_INTEL as built-in
++(y) and as such we don't bother to make it available as
++modular here. The change to export intel_enable_gtt() was
++made through commit 8ecd1a66 but previous to this the driver
++never called intel_enable_gtt() so we can safely assume we
++can do the same for older kernels.
++
++There should be a way to export an intel_enable_gtt() for
++kernels with CONFIG_AGP_INTEL as built-in but that itself
++is a project.
++
++commit 8ecd1a6615f0d9de6759aafe229bc1cc4ee99c7b
++Author: Daniel Vetter <daniel.vetter@ffwll.ch>
++Date:   Thu Jun 7 15:56:03 2012 +0200
++
++    drm/i915: call intel_enable_gtt
++    
++    When drm/i915 is in control of the gtt, we need to call
++    the enable function at all the relevant places ourselves.
++    
++    Reviewed-by: Jani Nikula <jani.nikula@linux.intel.com>
++    Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
++
++--- a/drivers/gpu/drm/i915/i915_gem.c
+++++ b/drivers/gpu/drm/i915/i915_gem.c
++@@ -3914,8 +3914,10 @@ i915_gem_init_hw(struct drm_device *dev)
++ 	drm_i915_private_t *dev_priv = dev->dev_private;
++ 	int ret;
++ 
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
++ 	if (!intel_enable_gtt())
++ 		return -EIO;
+++#endif
++ 
++ 	i915_gem_l3_remap(dev);
++ 
+-- 
+1.7.10.4
