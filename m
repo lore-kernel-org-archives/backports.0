@@ -1,137 +1,67 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:52118 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751501Ab2I2UsP (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 29 Sep 2012 16:48:15 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 946005402FE
+	for <backports@vger.kernel.org>; Sat, 29 Sep 2012 16:48:13 -0400 (EDT)
 To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] cfg80211: fix possible circular lock on reg_regdb_search()
-Date: Fri, 14 Sep 2012 12:35:59 -0700
-Message-Id: <1347651359-22874-1-git-send-email-mcgrof@do-not-panic.com>
+Subject: Compat-wireless release for 2012-09-29 is baked
+Message-Id: <20120929204813.5FD9D40AC0@repository3.orbit-lab.org>
+Date: Sat, 29 Sep 2012 16:48:13 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+HEAD is now at 3df9094 compat-drivers: enable DRM drivers compilation
+git fetch github (/var/opt/compat/compat)
+HEAD is now at fb4936e compat: backport seq_file's user namespace addition
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at c88a977 Add linux-next specific files for 20120928
+Trying kernel 3.4.4-030404-generic [FAILED]
+Trying kernel 3.3.7-030307-generic [FAILED]
+Trying kernel 3.2.2-030202-generic [FAILED]
+Trying kernel 3.1.10-030110-generic [FAILED]
+Trying kernel 3.0.18-030018-generic [FAILED]
+Trying kernel 2.6.39-02063904-generic [FAILED]
+Trying kernel 2.6.38-02063808-generic [FAILED]
+Trying kernel 2.6.37-02063706-generic [FAILED]
+Trying kernel 2.6.36-02063604-generic [FAILED]
+Trying kernel 2.6.35-02063512-generic [FAILED]
+Trying kernel 2.6.34-02063410-generic [FAILED]
+Trying kernel 2.6.33-02063305-generic [FAILED]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
+Failed...
 
-When call_crda() is called we kick off a witch hunt search
-for the same regulatory domain on our internal regulatory
-database and that work gets kicked off on a workqueue, this
-is done while the cfg80211_mutex is held. If that workqueue
-kicks off it will first lock reg_regdb_search_mutex and
-later cfg80211_mutex but to ensure two CPUs will not contend
-against cfg80211_mutex the right thing to do is to have the
-reg_regdb_search() wait until the cfg80211_mutex is let go.
+compat-drivers code metrics
 
-The lockdep report is pasted below.
+   1210855 - Total upstream lines of code being pulled
+      3107 - backport code changes
+      2580 - backport code additions
+       527 - backport code deletions
+     12696 - backport from compat module
+     15803 - total backport code
+    1.3051 - % of code consists of backport work
+       304 - backport code changes
+       222 - backport code additions
+        82 - backport code deletions
+     12696 - backport from compat module
+     13000 - total backport code
+    1.0736 - % of code consists of backport work
 
-cfg80211: Calling CRDA to update world regulatory domain
-
-======================================================
-[ INFO: possible circular locking dependency detected ]
-3.3.8 #3 Tainted: G           O
--------------------------------------------------------
-kworker/0:1/235 is trying to acquire lock:
- (cfg80211_mutex){+.+...}, at: [<816468a4>] set_regdom+0x78c/0x808 [cfg80211]
-
-but task is already holding lock:
- (reg_regdb_search_mutex){+.+...}, at: [<81646828>] set_regdom+0x710/0x808 [cfg80211]
-
-which lock already depends on the new lock.
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (reg_regdb_search_mutex){+.+...}:
-       [<800a8384>] lock_acquire+0x60/0x88
-       [<802950a8>] mutex_lock_nested+0x54/0x31c
-       [<81645778>] is_world_regdom+0x9f8/0xc74 [cfg80211]
-
--> #1 (reg_mutex#2){+.+...}:
-       [<800a8384>] lock_acquire+0x60/0x88
-       [<802950a8>] mutex_lock_nested+0x54/0x31c
-       [<8164539c>] is_world_regdom+0x61c/0xc74 [cfg80211]
-
--> #0 (cfg80211_mutex){+.+...}:
-       [<800a77b8>] __lock_acquire+0x10d4/0x17bc
-       [<800a8384>] lock_acquire+0x60/0x88
-       [<802950a8>] mutex_lock_nested+0x54/0x31c
-       [<816468a4>] set_regdom+0x78c/0x808 [cfg80211]
-
-other info that might help us debug this:
-
-Chain exists of:
-  cfg80211_mutex --> reg_mutex#2 --> reg_regdb_search_mutex
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(reg_regdb_search_mutex);
-                               lock(reg_mutex#2);
-                               lock(reg_regdb_search_mutex);
-  lock(cfg80211_mutex);
-
- *** DEADLOCK ***
-
-3 locks held by kworker/0:1/235:
- #0:  (events){.+.+..}, at: [<80089a00>] process_one_work+0x230/0x460
- #1:  (reg_regdb_work){+.+...}, at: [<80089a00>] process_one_work+0x230/0x460
- #2:  (reg_regdb_search_mutex){+.+...}, at: [<81646828>] set_regdom+0x710/0x808 [cfg80211]
-
-stack backtrace:
-Call Trace:
-[<80290fd4>] dump_stack+0x8/0x34
-[<80291bc4>] print_circular_bug+0x2ac/0x2d8
-[<800a77b8>] __lock_acquire+0x10d4/0x17bc
-[<800a8384>] lock_acquire+0x60/0x88
-[<802950a8>] mutex_lock_nested+0x54/0x31c
-[<816468a4>] set_regdom+0x78c/0x808 [cfg80211]
-
-Reported-by: Felix Fietkau <nbd@openwrt.org>
-Tested-by: Felix Fietkau <nbd@openwrt.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
-
-This v2 remoes the search lock from the context of calling
-set_regdom().
-
- net/wireless/reg.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 1ad04e5..4de18ae 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -350,6 +350,9 @@ static void reg_regdb_search(struct work_struct *work)
- 	struct reg_regdb_search_request *request;
- 	const struct ieee80211_regdomain *curdom, *regdom;
- 	int i, r;
-+	bool set_reg = false;
-+
-+	mutex_lock(&cfg80211_mutex);
- 
- 	mutex_lock(&reg_regdb_search_mutex);
- 	while (!list_empty(&reg_regdb_search_list)) {
-@@ -365,9 +368,7 @@ static void reg_regdb_search(struct work_struct *work)
- 				r = reg_copy_regd(&regdom, curdom);
- 				if (r)
- 					break;
--				mutex_lock(&cfg80211_mutex);
--				set_regdom(regdom);
--				mutex_unlock(&cfg80211_mutex);
-+				set_reg = true;
- 				break;
- 			}
- 		}
-@@ -375,6 +376,11 @@ static void reg_regdb_search(struct work_struct *work)
- 		kfree(request);
- 	}
- 	mutex_unlock(&reg_regdb_search_mutex);
-+
-+	if (set_reg)
-+		set_regdom(regdom);
-+
-+	mutex_unlock(&cfg80211_mutex);
- }
- 
- static DECLARE_WORK(reg_regdb_work, reg_regdb_search);
--- 
-1.7.10.4
+Base tree: linux-next.git
+Base tree version: next-20120928
+compat.git: compat-2012-09-26
+compat-drivers release: compat-drivers-2012-09-26
+Code metrics archive: http://bit.ly/H6BTF7
