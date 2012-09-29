@@ -1,87 +1,27 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:43202 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755679Ab2IAUuW (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 1 Sep 2012 16:50:22 -0400
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id B60C454012D
-	for <backports@vger.kernel.org>; Sat,  1 Sep 2012 16:50:55 -0400 (EDT)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-09-01 is baked
-Message-Id: <20120901205020.B207F40ABE@repository3.orbit-lab.org>
-Date: Sat,  1 Sep 2012 16:50:20 -0400 (EDT)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <ebiederm@xmission.com>
+In-Reply-To: <1348900705-12431-2-git-send-email-mcgrof@do-not-panic.com>
+References: <1348900705-12431-1-git-send-email-mcgrof@do-not-panic.com> <1348900705-12431-2-git-send-email-mcgrof@do-not-panic.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+Date: Sat, 29 Sep 2012 00:49:23 -0700
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,backports@vger.kernel.org
+CC: Serge Hallyn <serge.hallyn@canonical.com>
+Message-ID: <7df08404-c68b-4e3d-9bf8-ff04bbfa1160@email.android.com>
+Subject: Re: [PATCH 1/3] compat: backport uidgid.h kuid_t and kgid_t addition
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-HEAD is now at cb14a84 compat-drivers: synch with linux-next 20120824
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 99d7ff9 compat: Backport eth_broadcast_addr()
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at c0deb77 Add linux-next specific files for 20120824
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+I don't know the discipline you keep for the compat backports.
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+However I e=
+xpect you can simplify this bit considerably by removing the USER_NS case a=
+s it will never be true, except in 3.5 where this code already in exists.
 
-compat-drivers code metrics
+=
+You can further simplify things by leaving out the overflowuid and overflow=
+gid cases from from_kuid_munged, as for a backport I doubt anyon will care =
+if the value is -1 or overflowuid.
 
-    841647 - Total upstream lines of code being pulled
-      3041 - backport code changes
-      2546 - backport code additions
-       495 - backport code deletions
-     12246 - backport from compat module
-     15287 - total backport code
-    1.8163 - % of code consists of backport work
-     19083 - Crap changes not yet posted
-     19023 - Crap additions not yet posted
-        60 - Crap deletions not yet posted
-    2.2673 - % of crap code
-
-Base tree: linux-next.git
-Base tree version: next-20120824
-compat.git: compat-2012-08-23
-compat-drivers release: compat-drivers-2012-08-23-1-gcb14a84-pc
-Code metrics archive: http://bit.ly/H6BTF7
+Eric
