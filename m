@@ -2,134 +2,164 @@ Return-Path: <mcgrof@gmail.com>
 Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH] cfg80211: fix possible circular lock on reg_regdb_search()
-Date: Fri, 14 Sep 2012 12:23:29 -0700
-Message-Id: <1347650609-19792-1-git-send-email-mcgrof@do-not-panic.com>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Al Viro <viro@ZenIV.linux.org.uk>,
+	Eric Dumazet <eric.dumazet@gmail.com>,
+	KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Serge Hallyn <serge.hallyn@canonical.com>
+Subject: [PATCH 3/3] compat: backport seq_file's user namespace addition
+Date: Fri, 28 Sep 2012 23:38:25 -0700
+Message-Id: <1348900705-12431-4-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1348900705-12431-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1348900705-12431-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-When call_crda() is called we kick off a witch hunt search
-for the same regulatory domain on our internal regulatory
-database and that work gets kicked off on a workqueue, this
-is done while the cfg80211_mutex is held. If that workqueue
-kicks off it will first lock reg_regdb_search_mutex and
-later cfg80211_mutex but to ensure two CPUs will not contend
-against cfg80211_mutex the right thing to do is to have the
-reg_regdb_search() wait until the cfg80211_mutex is let go.
+Commit adb37c4, which as per linux-next may get to
+v3.7-rc1, introduced adding a user namespace to a
+struct seq_file. For older kernels with CONFIG_USER_NS
+support just access the user_name space via the struct
+file. For kernels without CONFIG_USER_NS pass the
+init_user_ns. There is a special case to handle for
+kernels with CONFIG_USER_NS prior to v2.6.38 --
+see commit 47a150ed which added a struct user_namespace
+to struct cred.
 
-The lockdep report is pasted below.
+This backports:
 
-cfg80211: Calling CRDA to update world regulatory domain
+commit adb37c4c67f807f16beb222028fb3ce9a354dc2b
+Author: Eric W. Biederman <ebiederm@xmission.com>
+Date:   Wed May 23 18:01:20 2012 -0600
 
-======================================================
-[ INFO: possible circular locking dependency detected ]
-3.3.8 #3 Tainted: G           O
--------------------------------------------------------
-kworker/0:1/235 is trying to acquire lock:
- (cfg80211_mutex){+.+...}, at: [<816468a4>] set_regdom+0x78c/0x808 [cfg80211]
+    userns: Make seq_file's user namespace accessible
 
-but task is already holding lock:
- (reg_regdb_search_mutex){+.+...}, at: [<81646828>] set_regdom+0x710/0x808 [cfg80211]
+    struct file already has a user namespace associated with it
+    in file->f_cred->user_ns, unfortunately because struct
+    seq_file has no struct file backpointer associated with
+    it, it is difficult to get at the user namespace in seq_file
+    context.  Therefore add a helper function seq_user_ns to return
+    the associated user namespace and a user_ns field to struct
+    seq_file to be used in implementing seq_user_ns.
 
-which lock already depends on the new lock.
+    Cc: Al Viro <viro@ZenIV.linux.org.uk>
+    Cc: Eric Dumazet <eric.dumazet@gmail.com>
+    Cc: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
+    Cc: Alexey Dobriyan <adobriyan@gmail.com>
+    Acked-by: David S. Miller <davem@davemloft.net>
+    Acked-by: Serge Hallyn <serge.hallyn@canonical.com>
+    Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 
-the existing dependency chain (in reverse order) is:
+And for kernels older than v2.6.38 this is relevant to
+review:
 
--> #2 (reg_regdb_search_mutex){+.+...}:
-       [<800a8384>] lock_acquire+0x60/0x88
-       [<802950a8>] mutex_lock_nested+0x54/0x31c
-       [<81645778>] is_world_regdom+0x9f8/0xc74 [cfg80211]
+commit 47a150edc2ae734c0f4bf50aa19499e23b9a46f8
+Author: Serge E. Hallyn <serge.hallyn@canonical.com>
+Date:   Fri May 13 04:27:54 2011 +0100
 
--> #1 (reg_mutex#2){+.+...}:
-       [<800a8384>] lock_acquire+0x60/0x88
-       [<802950a8>] mutex_lock_nested+0x54/0x31c
-       [<8164539c>] is_world_regdom+0x61c/0xc74 [cfg80211]
+    Cache user_ns in struct cred
 
--> #0 (cfg80211_mutex){+.+...}:
-       [<800a77b8>] __lock_acquire+0x10d4/0x17bc
-       [<800a8384>] lock_acquire+0x60/0x88
-       [<802950a8>] mutex_lock_nested+0x54/0x31c
-       [<816468a4>] set_regdom+0x78c/0x808 [cfg80211]
+    If !CONFIG_USERNS, have current_user_ns() defined to (&init_user_ns).
 
-other info that might help us debug this:
+    Get rid of _current_user_ns.  This requires nsown_capable() to be
+    defined in capability.c rather than as static inline in capability.h,
+    so do that.
 
-Chain exists of:
-  cfg80211_mutex --> reg_mutex#2 --> reg_regdb_search_mutex
+    Request_key needs init_user_ns defined at current_user_ns if
+    !CONFIG_USERNS, so forward-declare that in cred.h if !CONFIG_USERNS
+    at current_user_ns() define.
 
- Possible unsafe locking scenario:
+    Compile-tested with and without CONFIG_USERNS.
 
-       CPU0                    CPU1
-       ----                    ----
-  lock(reg_regdb_search_mutex);
-                               lock(reg_mutex#2);
-                               lock(reg_regdb_search_mutex);
-  lock(cfg80211_mutex);
+    Signed-off-by: Serge E. Hallyn <serge.hallyn@canonical.com>
+    [ This makes a huge performance difference for acl_permission_check(),
+      up to 30%.  And that is one of the hottest kernel functions for loads
+      that are pathname-lookup heavy.  ]
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 
- *** DEADLOCK ***
+mcgrof@garbanzo ~/compat (git::master)$ time ckmake
+Trying kernel 3.5.0-030500-generic [OK]
+Trying kernel 3.4.4-030404-generic [OK]
+Trying kernel 3.3.7-030307-generic [OK]
+Trying kernel 3.2.2-030202-generic [OK]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.32-02063255-generic [OK]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
 
-3 locks held by kworker/0:1/235:
- #0:  (events){.+.+..}, at: [<80089a00>] process_one_work+0x230/0x460
- #1:  (reg_regdb_work){+.+...}, at: [<80089a00>] process_one_work+0x230/0x460
- #2:  (reg_regdb_search_mutex){+.+...}, at: [<81646828>] set_regdom+0x710/0x808 [cfg80211]
+real	1m1.219s
+user	3m19.912s
+sys	0m31.102s
 
-stack backtrace:
-Call Trace:
-[<80290fd4>] dump_stack+0x8/0x34
-[<80291bc4>] print_circular_bug+0x2ac/0x2d8
-[<800a77b8>] __lock_acquire+0x10d4/0x17bc
-[<800a8384>] lock_acquire+0x60/0x88
-[<802950a8>] mutex_lock_nested+0x54/0x31c
-[<816468a4>] set_regdom+0x78c/0x808 [cfg80211]
-
-Reported-by: Felix Fietkau <nbd@openwrt.org>
-Tested-by: Felix Fietkau <nbd@openwrt.org>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Serge Hallyn <serge.hallyn@canonical.com>
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
+ include/linux/compat-3.7.h |   27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-This v2 remoes the search lock from the context of calling
-set_regdom().
-
- net/wireless/reg.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 1ad04e5..4de18ae 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -350,6 +350,9 @@ static void reg_regdb_search(struct work_struct *work)
- 	struct reg_regdb_search_request *request;
- 	const struct ieee80211_regdomain *curdom, *regdom;
- 	int i, r;
-+	bool set_reg = false;
-+
-+	mutex_lock(&cfg80211_mutex);
+diff --git a/include/linux/compat-3.7.h b/include/linux/compat-3.7.h
+index 80c2aad..2d7b6dd 100644
+--- a/include/linux/compat-3.7.h
++++ b/include/linux/compat-3.7.h
+@@ -10,9 +10,36 @@
+ #include <linux/pci.h>
+ #include <linux/pci_regs.h>
+ #include <linux/mm.h>
++#include <linux/user_namespace.h>
++#include <linux/file.h>
++#include <linux/seq_file.h>
  
- 	mutex_lock(&reg_regdb_search_mutex);
- 	while (!list_empty(&reg_regdb_search_list)) {
-@@ -365,9 +368,7 @@ static void reg_regdb_search(struct work_struct *work)
- 				r = reg_copy_regd(&regdom, curdom);
- 				if (r)
- 					break;
--				mutex_lock(&cfg80211_mutex);
--				set_regdom(regdom);
--				mutex_unlock(&cfg80211_mutex);
-+				set_reg = true;
- 				break;
- 			}
- 		}
-@@ -375,6 +376,11 @@ static void reg_regdb_search(struct work_struct *work)
- 		kfree(request);
- 	}
- 	mutex_unlock(&reg_regdb_search_mutex);
-+
-+	if (set_reg)
-+		set_regdom(regdom);
-+
-+	mutex_unlock(&cfg80211_mutex);
- }
+ #define VM_DONTDUMP    VM_NODUMP
  
- static DECLARE_WORK(reg_regdb_work, reg_regdb_search);
++#ifdef CONFIG_USER_NS
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,38))
++static inline struct user_namespace *seq_user_ns(struct seq_file *seq)
++{
++	struct file *f = container_of((void *) seq, struct file, private_data);
++
++	return f->f_cred->user_ns;
++}
++#else
++static inline struct user_namespace *seq_user_ns(struct seq_file *seq)
++{
++	return current_user_ns();
++}
++#endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,38)) */
++
++#else
++static inline struct user_namespace *seq_user_ns(struct seq_file *seq)
++{
++	extern struct user_namespace init_user_ns;
++	return &init_user_ns;
++}
++#endif /* CONFIG_USER_NS */
++
+ #define netlink_notify_portid(__notify) (__notify->pid)
+ #define genl_info_snd_portid(__genl_info) (__genl_info->snd_pid)
+ #define NETLINK_CB_PORTID(__skb) NETLINK_CB(cb->skb).pid
 -- 
 1.7.10.4
