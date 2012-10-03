@@ -1,37 +1,27 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:36400 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S932800Ab2JEUN0 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 5 Oct 2012 16:13:26 -0400
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 85088540378
-	for <backports@vger.kernel.org>; Fri,  5 Oct 2012 16:13:24 -0400 (EDT)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-10-05 is baked
-Message-Id: <20121005201324.5C49140ABF@repository3.orbit-lab.org>
-Date: Fri,  5 Oct 2012 16:13:24 -0400 (EDT)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Return-Path: <james.leddy@canonical.com>
+Message-ID: <506C80A6.3050104@canonical.com>
+Date: Wed, 03 Oct 2012 14:15:02 -0400
+From: James M Leddy <james.leddy@canonical.com>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+CC: backports@vger.kernel.org
+Subject: Re:
+References: <506C617A.7010902@canonical.com> <CAB=NE6USvRqyY=R7KR3oAuQXtu-MBCGQNpgQqrGon62fJ2qsCg@mail.gmail.com>
+In-Reply-To: <CAB=NE6USvRqyY=R7KR3oAuQXtu-MBCGQNpgQqrGon62fJ2qsCg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at 7110a5c compat-drivers: copy over amp.h as a bluetooth header
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at fb4936e compat: backport seq_file's user namespace addition
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 080aa9c Add linux-next specific files for 20121005
-Error while updating from wireless-testing
+On 10/03/2012 01:53 PM, Luis R. Rodriguez wrote:
+> On Wed, Oct 3, 2012 at 9:02 AM, James M Leddy <james.leddy@canonical.com> wrote:
+>> subscribe backports
+> 
+> return -EOPNOTSUPP;
+> 
+> You want to poke majordomo@vger.kernel.org, not the actual mailing list.
 
-compat-drivers code metrics
+That's embarrassing. Would you consider taking out the first sentence
+after "subscribing to backports" on the wiki? It seems redundant with
+the information immediately above it.
 
-   1176384 - Total upstream lines of code being pulled
-      3107 - backport code changes
-      2580 - backport code additions
-       527 - backport code deletions
-     12696 - backport from compat module
-     15803 - total backport code
-    1.3434 - % of code consists of backport work
+https://backports.wiki.kernel.org/index.php/Mailing_list
