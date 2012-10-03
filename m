@@ -1,111 +1,36 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: devel@driverdev.osuosl.org,
-	backports@vger.kernel.org,
-	rob@ti.com,
-	arnd@arndb.de,
-	davej@redhat.com,
-	airlied@linux.ie,
-	bskeggs@redhat.com,
-	alan@lxorguk.ukuu.org.uk,
-	dhowells@redhat.com,
-	tglx@linutronix.de,
-	daniel.vetter@ffwll.ch,
-	jbarnes@virtuousgeek.org,
-	alexander.deucher@amd.com,
-	paulmck@linux.vnet.ibm.com,
-	gregkh@linuxfoundation.org,
-	laurent.pinchart@ideasonboard.com,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 2/2] uapi: remove trailing spaces
-Date: Fri, 12 Oct 2012 16:49:32 -0700
-Message-Id: <1350085772-8755-3-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1350085772-8755-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1350085772-8755-1-git-send-email-mcgrof@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:28126 "EHLO
+	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753216Ab2JCMZM (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 3 Oct 2012 08:25:12 -0400
+From: "Huang, Xiong" <xiong@qca.qualcomm.com>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+CC: "mcgrof@kernel.org" <mcgrof@kernel.org>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	nic-devel <nic-devel@qualcomm.com>,
+	"Ren, Cloud" <cjren@qca.qualcomm.com>
+Subject: RE: [PATCH] compat-drivers: update ethernet driver alx in crap dir
+Date: Wed, 3 Oct 2012 12:25:11 +0000
+Message-ID: <157393863283F442885425D2C45428562A4FFF1D@nasanexd02f.na.qualcomm.com>
+References: <1348824541-12396-1-git-send-email-xiong@qca.qualcomm.com>
+ <CAB=NE6UsbbXdhQh9hqRxByAVqtskpE4xW0Kz9ascip_8-K56ag@mail.gmail.com>
+In-Reply-To: <CAB=NE6UsbbXdhQh9hqRxByAVqtskpE4xW0Kz9ascip_8-K56ag@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-
-No functional changes.
-
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
-Cc: devel@driverdev.osuosl.org
-Cc: backports@vger.kernel.org
-
-Cc: Rob Clark <rob@ti.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Dave Jones <davej@redhat.com>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Ben Skeggs <bskeggs@redhat.com>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org> 
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- include/uapi/asm-generic/siginfo.h |    4 ++--
- include/uapi/asm-generic/statfs.h  |    4 ++--
- include/uapi/drm/radeon_drm.h      |    2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
-index ba5be7f..34b941ce6 100644
---- a/include/uapi/asm-generic/siginfo.h
-+++ b/include/uapi/asm-generic/siginfo.h
-@@ -252,8 +252,8 @@ typedef struct siginfo {
- 
- /*
-  * sigevent definitions
-- * 
-- * It seems likely that SIGEV_THREAD will have to be handled from 
-+ *
-+ * It seems likely that SIGEV_THREAD will have to be handled from
-  * userspace, libpthread transmuting it to SIGEV_SIGNAL, which the
-  * thread manager then catches and does the appropriate nonsense.
-  * However, everything is written out here so as to not get lost.
-diff --git a/include/uapi/asm-generic/statfs.h b/include/uapi/asm-generic/statfs.h
-index 0999647..0d79b2f 100644
---- a/include/uapi/asm-generic/statfs.h
-+++ b/include/uapi/asm-generic/statfs.h
-@@ -36,7 +36,7 @@ struct statfs {
- 
- /*
-  * ARM needs to avoid the 32-bit padding at the end, for consistency
-- * between EABI and OABI 
-+ * between EABI and OABI
-  */
- #ifndef ARCH_PACK_STATFS64
- #define ARCH_PACK_STATFS64
-@@ -57,7 +57,7 @@ struct statfs64 {
- 	__statfs_word f_spare[4];
- } ARCH_PACK_STATFS64;
- 
--/* 
-+/*
-  * IA64 and x86_64 need to avoid the 32-bit padding at the end,
-  * to be compatible with the i386 ABI
-  */
-diff --git a/include/uapi/drm/radeon_drm.h b/include/uapi/drm/radeon_drm.h
-index 4766c0f..48b0db3 100644
---- a/include/uapi/drm/radeon_drm.h
-+++ b/include/uapi/drm/radeon_drm.h
-@@ -229,7 +229,7 @@ typedef union {
- #	define R300_WAIT_3D		0x2
- /* these two defines are DOING IT WRONG - however
-  * we have userspace which relies on using these.
-- * The wait interface is backwards compat new 
-+ * The wait interface is backwards compat new
-  * code should use the NEW_WAIT defines below
-  * THESE ARE NOT BIT FIELDS
-  */
--- 
-1.7.10.4
+PiBYaW9uZywNCj4gDQo+IFlvdSBhcmUgZGVsZXRpbmcgdGhlIGZpbGUNCj4gY3JhcC9uZXR3b3Jr
+LzAwMDEtYWx4LWFkZC1uZXctUUNBLWV0aGVybmV0LWRyaXZlci13aGljaC1zdXBlcmNlZGVzLQ0K
+PiBhdGwucGF0Y2gNCj4gaGVyZSBhbmQgdGhlbiB5b3UgYXJlIHVwZGF0aW5nIHRoZQ0KPiBjcmFw
+L25ldHdvcmsvMDAwMi1iYWNrcG9ydC1hbHgucGF0Y2ggZmlsZS4gV2hhdCB5b3UgbGlrZWx5IHdh
+bnRlZCB0byBkbyB3YXMNCj4gdG8gcmVtb3ZlIHRoZSBvcmlnaW5hbCBjcmFwL25ldHdvcmsvMDAw
+MS1hbHgtYWRkLW5ldy1RQ0EtZXRoZXJuZXQtZHJpdmVyLQ0KPiB3aGljaC1zdXBlcmNlZGVzLWF0
+bC5wYXRjaA0KPiBmaWxlIGFuZCB0aGVuIGdpdCBhZGQgYSBuZXcgY3JhcC9uZXR3b3JrLzAwMDEt
+c29tZXRoaW5nLnBhdGNoIHdoaWNoIHlvdQ0KPiBsaWtlbHkgZm9yZ290IHRvIGRvLg0KPiANCkx1
+aXMsIEkganVzdCB0aG91Z2h0IHRoZSBwYXRjaCBuYW1lIGNvdWxkIGJlIGEgYml0IG1vcmUgYXBw
+cm9wcmlhdGVkLiBTb3JyeSB0byBjb25mdXNlIHlvdSA6KA0KSSB3aWxsIHJlc2VuZCB0aGUgcGF0
+Y2ggd2l0aCB0aGUgc2FtZSBwYXRjaCBmaWxlIG5hbWUsIEkgbWVhbiBqdXN0ICd1cGRhdGUnIHRo
+ZSBvcmlnaW5hbA0KcGF0Y2ggZmlsZXMgKDAwMDEgJiAwMDAyKSwgaXMgaXQgb2sgZm9yIHlvdSA/
+DQoNClRoYW5rcw0KWGlvbmcNCg0K
