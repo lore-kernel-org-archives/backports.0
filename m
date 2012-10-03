@@ -1,59 +1,92 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <CAFub=KSQ3xq1j8=dHqezh4NY05S7t0p4dSWdp=xa2HM74wL=Og@mail.gmail.com>
-References: <CAFub=KSQ3xq1j8=dHqezh4NY05S7t0p4dSWdp=xa2HM74wL=Og@mail.gmail.com>
-Date: Sat, 27 Oct 2012 08:01:52 -0700
-Message-ID: <CAB=NE6X-w7c=CZC0_27vW14PO30i_81Tqcr1sawuMch3SDk=Rw@mail.gmail.com>
-Subject: Re: Regarding compat_autoconf.h generation
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
-Cc: backports@vger.kernel.org, mcgrof@kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:42060 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753783Ab2JCU47 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 3 Oct 2012 16:56:59 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 8CB6F5403E6
+	for <backports@vger.kernel.org>; Wed,  3 Oct 2012 16:56:58 -0400 (EDT)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-10-03 is baked
+Message-Id: <20121003205658.6DF3D40ABF@repository3.orbit-lab.org>
+Date: Wed,  3 Oct 2012 16:56:58 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sat, Oct 27, 2012 at 7:25 AM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com=
-> wrote:
-> Hi,
->
-> In the nouveau DRM driver there is a CONFIG_NOUVEAU_DEBUG which has to
-> be an integer between 0 and 7 with the default as 3.
-> Currently gen-compat-autoconf.sh defines this as a string by default:
->
->            *) # Assume string
->  61                 # XXX: add better checks to make sure what was on
->  62                 # the right was indeed a string
->  63                 echo "#ifndef $VAR"
->  64                 echo "#define $VAR \"$VALUE\""
->  65                 echo "#endif /* $VAR */ "
->  66                 ;;
->
-> Is it OK to modify the script to allow defining integers?
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+HEAD is now at 7110a5c compat-drivers: copy over amp.h as a bluetooth header
+git fetch github (/var/opt/compat/compat)
+HEAD is now at fb4936e compat: backport seq_file's user namespace addition
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 25444c3 Add linux-next specific files for 20121003
+Trying kernel 3.4.4-030404-generic [OK]
+Trying kernel 3.3.7-030307-generic [OK]
+Trying kernel 3.2.2-030202-generic [OK]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
+Worked!
 
-Sure :)
+Trying kernel  3.4.4-030404-generic [OK]
+Trying kernel  3.3.7-030307-generic [OK]
+Trying kernel  3.2.2-030202-generic [OK]
+Trying kernel  3.1.10-030110-generic [OK]
+Trying kernel  3.0.18-030018-generic [OK]
+Trying kernel  2.6.39-02063904-generic [OK]
+Trying kernel  2.6.38-02063808-generic [OK]
+Trying kernel  2.6.37-02063706-generic [OK]
+Trying kernel  2.6.36-02063604-generic [OK]
+Trying kernel  2.6.35-02063512-generic [OK]
+Trying kernel  2.6.34-02063410-generic [OK]
+Trying kernel  2.6.33-02063305-generic [OK]
+Trying kernel  2.6.31-02063113-generic [OK]
+Trying kernel  2.6.30-02063010-generic [OK]
+Trying kernel  2.6.29-02062906-generic [OK]
+Trying kernel  2.6.28-02062810-generic [OK]
+Trying kernel  2.6.27-020627-generic [OK]
+Trying kernel  2.6.26-020626-generic [OK]
+Trying kernel  2.6.25-020625-generic [OK]
+Trying kernel  2.6.24-020624-generic [OK]
 
-> Also, it
-> seems that there is no difference with =3Dm and =3Dy:
->
->               y)
->  51                 echo "#ifndef $VAR"
->  52                 echo "#define $VAR 1"
->  53                 echo "#endif /* $VAR */ "
->  54                 ;;
->  55         m)
->  56                 echo "#ifndef $VAR"
->  57                 echo "#define $VAR 1"
->  58                 echo "#endif /* $VAR */ "
->  59                 ;;
->
-> How come this doesn't break things?
+compat-drivers code metrics
 
-The real magic for "y" or "m" happens via Kconfig and Makefiles, the
-header file is just at compile time of C code.
+   1215288 - Total upstream lines of code being pulled
+      3107 - backport code changes
+      2580 - backport code additions
+       527 - backport code deletions
+     12696 - backport from compat module
+     15803 - total backport code
+    1.3004 - % of code consists of backport work
+     19083 - Crap changes not yet posted
+     19023 - Crap additions not yet posted
+        60 - Crap deletions not yet posted
+    1.5702 - % of crap code
+       304 - backport code changes
+       222 - backport code additions
+        82 - backport code deletions
+     12696 - backport from compat module
+     13000 - total backport code
+    1.0697 - % of code consists of backport work
 
-> Both =3Dy and =3Dm exist in config.mk.
-
-We try to replicate what the kernel does, but m should always be used
-for modules otherwise they won't build. For an example fix see
-f456f3e174c65a6f5c8e34693b7f89ad52d9b072.
-
-  Luis
+Base tree: linux-next.git
+Base tree version: next-20121003
+compat.git: compat-2012-10-02
+compat-drivers release: compat-drivers-2012-10-02-pc
+Code metrics archive: http://bit.ly/H6BTF7
