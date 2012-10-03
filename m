@@ -1,60 +1,38 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <157393863283F442885425D2C45428562A4FFF1D@nasanexd02f.na.qualcomm.com>
+References: <1348824541-12396-1-git-send-email-xiong@qca.qualcomm.com>
+	<CAB=NE6UsbbXdhQh9hqRxByAVqtskpE4xW0Kz9ascip_8-K56ag@mail.gmail.com>
+	<157393863283F442885425D2C45428562A4FFF1D@nasanexd02f.na.qualcomm.com>
+Date: Wed, 3 Oct 2012 08:23:31 -0700
+Message-ID: <CAB=NE6V5cNQYXD5wMNSO4Y8ZHW-sETvq1ASX8tBUDMn36bJmZQ@mail.gmail.com>
+Subject: Re: [PATCH] compat-drivers: update ethernet driver alx in crap dir
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: devel@driverdev.osuosl.org,
-	backports@vger.kernel.org,
-	rob@ti.com,
-	arnd@arndb.de,
-	davej@redhat.com,
-	airlied@linux.ie,
-	bskeggs@redhat.com,
-	alan@lxorguk.ukuu.org.uk,
-	dhowells@redhat.com,
-	tglx@linutronix.de,
-	daniel.vetter@ffwll.ch,
-	jbarnes@virtuousgeek.org,
-	alexander.deucher@amd.com,
-	paulmck@linux.vnet.ibm.com,
-	gregkh@linuxfoundation.org,
-	laurent.pinchart@ideasonboard.com,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 0/2] uapi: two minor changes
-Date: Fri, 12 Oct 2012 16:49:30 -0700
-Message-Id: <1350085772-8755-1-git-send-email-mcgrof@do-not-panic.com>
+To: "Huang, Xiong" <xiong@qca.qualcomm.com>
+Cc: "mcgrof@kernel.org" <mcgrof@kernel.org>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>, nic-devel <nic-devel@qualcomm.com>,
+	"Ren, Cloud" <cjren@qca.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Wed, Oct 3, 2012 at 5:25 AM, Huang, Xiong <xiong@qca.qualcomm.com> wrote:
+>> Xiong,
+>>
+>> You are deleting the file
+>> crap/network/0001-alx-add-new-QCA-ethernet-driver-which-supercedes-
+>> atl.patch
+>> here and then you are updating the
+>> crap/network/0002-backport-alx.patch file. What you likely wanted to do was
+>> to remove the original crap/network/0001-alx-add-new-QCA-ethernet-driver-
+>> which-supercedes-atl.patch
+>> file and then git add a new crap/network/0001-something.patch which you
+>> likely forgot to do.
+>>
+> Luis, I just thought the patch name could be a bit more appropriated. Sorry to confuse you :(
+> I will resend the patch with the same patch file name, I mean just 'update' the original
+> patch files (0001 & 0002), is it ok for you ?
 
-Here are a few minor updates to the UAPI changes [0]. The first
-one is to help with the backport effort [1], the second one is
-simply space cosmetic change to address my eyes bleeding
-while reviewing the changes on next-20121012 with git.
+Either way is fine. I just meant that in your patch you forgot to
+provide a replacement for the old patch.
 
-If the changes on the first patch make sense perhaps similar
-changes can be done for the other subsystem in similar cases.
-In those cases the now kernel API header file no longer exists
-so even if userspace were using the files the only way to pick
-the header up would have been to provide the new uapi path.
-
-[0] http://lwn.net/Articles/507794/
-[1] https://backports.wiki.kernel.org
-
-Luis R. Rodriguez (2):
-  uapi: update includes for drm content when no kernel API exists
-  uapi: remove trailing spaces
-
- drivers/gpu/drm/drm_crtc.c            |    2 +-
- drivers/gpu/drm/nouveau/nv04_cursor.c |    2 +-
- drivers/staging/omapdrm/omap_crtc.c   |    2 +-
- include/drm/drmP.h                    |    4 ++--
- include/drm/drm_crtc.h                |    4 ++--
- include/uapi/asm-generic/siginfo.h    |    4 ++--
- include/uapi/asm-generic/statfs.h     |    4 ++--
- include/uapi/drm/drm.h                |    2 +-
- include/uapi/drm/radeon_drm.h         |    2 +-
- 9 files changed, 13 insertions(+), 13 deletions(-)
-
--- 
-1.7.10.4
+  Luis
