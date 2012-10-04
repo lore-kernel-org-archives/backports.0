@@ -1,68 +1,24 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:60584 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751512Ab2JLUtN (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 12 Oct 2012 16:49:13 -0400
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id E40455402FE
-	for <backports@vger.kernel.org>; Fri, 12 Oct 2012 16:49:11 -0400 (EDT)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-10-12 is baked
-Message-Id: <20121012204911.B083640AC0@repository3.orbit-lab.org>
-Date: Fri, 12 Oct 2012 16:49:11 -0400 (EDT)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Return-Path: <xiong@qca.qualcomm.com>
+From: "Huang, Xiong" <xiong@qca.qualcomm.com>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+CC: "mcgrof@kernel.org" <mcgrof@kernel.org>, "backports@vger.kernel.org"
+	<backports@vger.kernel.org>, nic-devel <nic-devel@qualcomm.com>, "Ren, Cloud"
+	<cjren@qca.qualcomm.com>
+Subject: RE: [PATCH] compat-drivers: update ethernet driver alx in crap dir
+Date: Thu, 4 Oct 2012 08:16:07 +0000
+Message-ID: <157393863283F442885425D2C45428562A4FFFD4@nasanexd02f.na.qualcomm.com>
+References: <1348824541-12396-1-git-send-email-xiong@qca.qualcomm.com>
+ <CAB=NE6UsbbXdhQh9hqRxByAVqtskpE4xW0Kz9ascip_8-K56ag@mail.gmail.com>
+ <157393863283F442885425D2C45428562A4FFF1D@nasanexd02f.na.qualcomm.com>
+ <CAB=NE6V5cNQYXD5wMNSO4Y8ZHW-sETvq1ASX8tBUDMn36bJmZQ@mail.gmail.com>
+In-Reply-To: <CAB=NE6V5cNQYXD5wMNSO4Y8ZHW-sETvq1ASX8tBUDMn36bJmZQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-HEAD is now at f0d0654 compat-drivers: refresh patches for next-20121011
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at fb4936e compat: backport seq_file's user namespace addition
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 6b35893 Add linux-next specific files for 20121012
-Trying kernel 3.4.4-030404-generic [FAILED]
-Trying kernel 3.3.7-030307-generic [FAILED]
-Trying kernel 3.2.2-030202-generic [FAILED]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [FAILED]
-Trying kernel 2.6.30-02063010-generic [FAILED]
-Trying kernel 2.6.29-02062906-generic [FAILED]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Failed...
-
-compat-drivers code metrics
-
-   1170618 - Total upstream lines of code being pulled
-      3107 - backport code changes
-      2580 - backport code additions
-       527 - backport code deletions
-     12696 - backport from compat module
-     15803 - total backport code
-    1.3500 - % of code consists of backport work
-       301 - backport code changes
-       219 - backport code additions
-        82 - backport code deletions
-     12696 - backport from compat module
-     12997 - total backport code
-    1.1103 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20121012
-compat.git: compat-2012-10-08
-compat-drivers release: compat-drivers-2012-10-08-1-gf0d0654
-Code metrics archive: http://bit.ly/H6BTF7
+PiANCj4gRWl0aGVyIHdheSBpcyBmaW5lLiBJIGp1c3QgbWVhbnQgdGhhdCBpbiB5b3VyIHBhdGNo
+IHlvdSBmb3Jnb3QgdG8gcHJvdmlkZSBhDQo+IHJlcGxhY2VtZW50IGZvciB0aGUgb2xkIHBhdGNo
+Lg0KPiANClllcywgeW91IGFyZSByaWdodCEgSSBmb3Jnb3QgdG8gYWRkIGEgcmVwbGFjZW1lbnQu
+IDopDQpJJ20gc28gY2FyZWxlc3Mgbm90IHRvIGNoZWNrIHRoZSBmaW5hbCBwYXRjaCBmaWxlICEg
+dGhhbmtzIGZvciByZW1pbmRlciAhDQoNCi1YaW9uZw0KDQoNCg==
