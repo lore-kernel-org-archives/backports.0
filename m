@@ -1,24 +1,37 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <xiong@qca.qualcomm.com>
-From: "Huang, Xiong" <xiong@qca.qualcomm.com>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-CC: "mcgrof@kernel.org" <mcgrof@kernel.org>, "backports@vger.kernel.org"
-	<backports@vger.kernel.org>, nic-devel <nic-devel@qualcomm.com>, "Ren, Cloud"
-	<cjren@qca.qualcomm.com>
-Subject: RE: [PATCH] compat-drivers: update ethernet driver alx in crap dir
-Date: Thu, 4 Oct 2012 08:16:07 +0000
-Message-ID: <157393863283F442885425D2C45428562A4FFFD4@nasanexd02f.na.qualcomm.com>
-References: <1348824541-12396-1-git-send-email-xiong@qca.qualcomm.com>
- <CAB=NE6UsbbXdhQh9hqRxByAVqtskpE4xW0Kz9ascip_8-K56ag@mail.gmail.com>
- <157393863283F442885425D2C45428562A4FFF1D@nasanexd02f.na.qualcomm.com>
- <CAB=NE6V5cNQYXD5wMNSO4Y8ZHW-sETvq1ASX8tBUDMn36bJmZQ@mail.gmail.com>
-In-Reply-To: <CAB=NE6V5cNQYXD5wMNSO4Y8ZHW-sETvq1ASX8tBUDMn36bJmZQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:36400 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S932800Ab2JEUN0 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 5 Oct 2012 16:13:26 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 85088540378
+	for <backports@vger.kernel.org>; Fri,  5 Oct 2012 16:13:24 -0400 (EDT)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-10-05 is baked
+Message-Id: <20121005201324.5C49140ABF@repository3.orbit-lab.org>
+Date: Fri,  5 Oct 2012 16:13:24 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-PiANCj4gRWl0aGVyIHdheSBpcyBmaW5lLiBJIGp1c3QgbWVhbnQgdGhhdCBpbiB5b3VyIHBhdGNo
-IHlvdSBmb3Jnb3QgdG8gcHJvdmlkZSBhDQo+IHJlcGxhY2VtZW50IGZvciB0aGUgb2xkIHBhdGNo
-Lg0KPiANClllcywgeW91IGFyZSByaWdodCEgSSBmb3Jnb3QgdG8gYWRkIGEgcmVwbGFjZW1lbnQu
-IDopDQpJJ20gc28gY2FyZWxlc3Mgbm90IHRvIGNoZWNrIHRoZSBmaW5hbCBwYXRjaCBmaWxlICEg
-dGhhbmtzIGZvciByZW1pbmRlciAhDQoNCi1YaW9uZw0KDQoNCg==
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at 7110a5c compat-drivers: copy over amp.h as a bluetooth header
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at fb4936e compat: backport seq_file's user namespace addition
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 080aa9c Add linux-next specific files for 20121005
+Error while updating from wireless-testing
+
+compat-drivers code metrics
+
+   1176384 - Total upstream lines of code being pulled
+      3107 - backport code changes
+      2580 - backport code additions
+       527 - backport code deletions
+     12696 - backport from compat module
+     15803 - total backport code
+    1.3434 - % of code consists of backport work
