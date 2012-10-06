@@ -1,39 +1,37 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <157393863283F442885425D2C45428562A50158C@nasanexd02f.na.qualcomm.com>
-References: <1349400892-25315-1-git-send-email-xiong@qca.qualcomm.com>
-	<CAB=NE6VotAu-cugsn4==3TPX0OGPEFtdn1J+5+Rd_YfLcg9YDQ@mail.gmail.com>
-	<157393863283F442885425D2C45428562A50158C@nasanexd02f.na.qualcomm.com>
-Date: Tue, 16 Oct 2012 08:37:26 -0700
-Message-ID: <CAB=NE6UoJBuLboW0=CVc5o3yj_SZOKehCc8QWP5e+zfEJBF2ug@mail.gmail.com>
-Subject: Re: [PATCH] compat-drivers: update ethernet driver alx in crap dir
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: "Huang, Xiong" <xiong@qca.qualcomm.com>
-Cc: "mcgrof@kernel.org" <mcgrof@kernel.org>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>, nic-devel <nic-devel@qualcomm.com>,
-	"Ren, Cloud" <cjren@qca.qualcomm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>,
-	qca_vkondrat <qca_vkondrat@qca.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:43284 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752301Ab2JFUKp (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 6 Oct 2012 16:10:45 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 9FCBF540356
+	for <backports@vger.kernel.org>; Sat,  6 Oct 2012 16:10:43 -0400 (EDT)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-10-06 is baked
+Message-Id: <20121006201043.6FE3040ABF@repository3.orbit-lab.org>
+Date: Sat,  6 Oct 2012 16:10:39 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Oct 8, 2012 at 6:24 PM, Huang, Xiong <xiong@qca.qualcomm.com> wrote:
-> Hi Luis
->
->     I'm refining the code, I try my best to make it upstream ASAP. Thanks !
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at 7110a5c compat-drivers: copy over amp.h as a bluetooth header
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at fb4936e compat: backport seq_file's user namespace addition
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 080aa9c Add linux-next specific files for 20121005
+Error while updating from wireless-testing
 
-Ok great thanks, in that case I'm going to make it policy moving
-forward to simply not take in full drivers at all into compat-drivers
-regardless of the situation. If  a driver is desired to be made
-available, whatever the situation may be, it must now go upstream
-directly onto drivers/staging or drivers/ proper somewhere.
+compat-drivers code metrics
 
-Xiong, Vlad, I'm going to then nuke the current drivers there from the
-v3.7-rc1 release, if you want those drivers to be part of the
-compat-drivers-3.7 releases you will have to submit your driver
-upstream into proper or staging.
-
-The additional patches then will be for components already upstream.
-
-  Luis
+   1176384 - Total upstream lines of code being pulled
+      3107 - backport code changes
+      2580 - backport code additions
+       527 - backport code deletions
+     12696 - backport from compat module
+     15803 - total backport code
+    1.3434 - % of code consists of backport work
