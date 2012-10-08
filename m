@@ -1,41 +1,39 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <ozancag@gmail.com>
-From: =?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
-To: backports@vger.kernel.org
-Cc: mcgrof@kernel.org,
-	=?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
-Subject: [PATCH 6/7] compat-drivers: Enable nouveau DRM driver for kernels >= 3.3
-Date: Sun, 28 Oct 2012 19:04:20 +0200
-Message-Id: <1351443861-26280-6-git-send-email-ozancag@gmail.com>
-In-Reply-To: <1351443861-26280-1-git-send-email-ozancag@gmail.com>
-References: <1351443861-26280-1-git-send-email-ozancag@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mail.fuel7.com ([74.222.0.51]:39329 "EHLO mail.fuel7.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752837Ab2JHUIi (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 8 Oct 2012 16:08:38 -0400
+From: Kyle Manna <kyle.manna@fuel7.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: backports@vger.kernel.org, Kyle Manna <kyle.manna@fuel7.com>
+Subject: [PATCH] compat-drivers: Fix typo for CONFIG_BT_HCIUART
+Date: Mon,  8 Oct 2012 14:51:02 -0500
+Message-Id: <1349725862-32284-1-git-send-email-kyle.manna@fuel7.com>
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Enable Nouveau DRM driver for kernels >= 3.3.
+The config value should be set to a lowercase 'm' or the config is
+ignored and the associated module doesn't build.  Fix this.
 
-Signed-off-by: Ozan Çağlayan <ozancag@gmail.com>
+Signed-off-by: Kyle Manna <kyle.manna@fuel7.com>
 ---
- config.mk | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ config.mk |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/config.mk b/config.mk
-index f743e05..5941135 100644
+index c3872b1..c9b2353 100644
 --- a/config.mk
 +++ b/config.mk
-@@ -709,3 +709,12 @@ export CONFIG_COMPAT_DRM_I915=m
- export CONFIG_COMPAT_DRM_LOAD_EDID_FIRMWARE=y
- export CONFIG_COMPAT_DRM_KMS_HELPER=m
- endif #CONFIG_COMPAT_KERNEL_3_2
-+
-+# Enable nouveau on >= 3.3
-+ifndef CONFIG_COMPAT_KERNEL_3_3
-+export CONFIG_COMPAT_DRM_TTM=m
-+export CONFIG_COMPAT_DRM_NOUVEAU=m
-+export CONFIG_COMPAT_DRM_NOUVEAU_BACKLIGHT=y
-+export CONFIG_COMPAT_NOUVEAU_DEBUG=5
-+export CONFIG_COMPAT_NOUVEAU_DEBUG_DEFAULT=3
-+endif #CONFIG_COMPAT_KERNEL_3_3
+@@ -209,7 +209,7 @@ ifndef CONFIG_COMPAT_KERNEL_2_6_28
+ export CONFIG_COMPAT_BT_HIDP=m
+ endif #CONFIG_COMPAT_KERNEL_2_6_28
+ 
+-export CONFIG_BT_HCIUART=M
++export CONFIG_BT_HCIUART=m
+ export CONFIG_BT_HCIUART_H4=y
+ export CONFIG_BT_HCIUART_BCSP=y
+ export CONFIG_BT_HCIUART_ATH3K=y
 -- 
-1.7.11.7
+1.7.9.5
+
