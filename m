@@ -1,37 +1,85 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:43284 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752301Ab2JFUKp (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 6 Oct 2012 16:10:45 -0400
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 9FCBF540356
-	for <backports@vger.kernel.org>; Sat,  6 Oct 2012 16:10:43 -0400 (EDT)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-10-06 is baked
-Message-Id: <20121006201043.6FE3040ABF@repository3.orbit-lab.org>
-Date: Sat,  6 Oct 2012 16:10:39 -0400 (EDT)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <xiong@qca.qualcomm.com>
+From: "Huang, Xiong" <xiong@qca.qualcomm.com>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+CC: "mcgrof@kernel.org" <mcgrof@kernel.org>, "backports@vger.kernel.org"
+	<backports@vger.kernel.org>, nic-devel <nic-devel@qualcomm.com>, "Ren, Cloud"
+	<cjren@qca.qualcomm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-wireless
+	<linux-wireless@vger.kernel.org>, qca_vkondrat
+	<qca_vkondrat@qca.qualcomm.com>
+Subject: RE: [PATCH] compat-drivers: update ethernet driver alx in crap dir
+Date: Tue, 9 Oct 2012 01:24:55 +0000
+Message-ID: <157393863283F442885425D2C45428562A50158C@nasanexd02f.na.qualcomm.com>
+References: <1349400892-25315-1-git-send-email-xiong@qca.qualcomm.com>
+ <CAB=NE6VotAu-cugsn4==3TPX0OGPEFtdn1J+5+Rd_YfLcg9YDQ@mail.gmail.com>
+In-Reply-To: <CAB=NE6VotAu-cugsn4==3TPX0OGPEFtdn1J+5+Rd_YfLcg9YDQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at 7110a5c compat-drivers: copy over amp.h as a bluetooth header
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at fb4936e compat: backport seq_file's user namespace addition
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 080aa9c Add linux-next specific files for 20121005
-Error while updating from wireless-testing
-
-compat-drivers code metrics
-
-   1176384 - Total upstream lines of code being pulled
-      3107 - backport code changes
-      2580 - backport code additions
-       527 - backport code deletions
-     12696 - backport from compat module
-     15803 - total backport code
-    1.3434 - % of code consists of backport work
+SGkgTHVpcw0KDQogICAgSSdtIHJlZmluaW5nIHRoZSBjb2RlLCBJIHRyeSBteSBiZXN0IHRvIG1h
+a2UgaXQgdXBzdHJlYW0gQVNBUC4gVGhhbmtzICENCg0KLVhpb25nDQoNCj4gLS0tLS1PcmlnaW5h
+bCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogbWNncm9mQGdtYWlsLmNvbSBbbWFpbHRvOm1jZ3JvZkBn
+bWFpbC5jb21dIE9uIEJlaGFsZiBPZiBMdWlzIFIuDQo+IFJvZHJpZ3Vleg0KPiBTZW50OiBUdWVz
+ZGF5LCBPY3RvYmVyIDA5LCAyMDEyIDY6MjUNCj4gVG86IEh1YW5nLCBYaW9uZw0KPiBDYzogbWNn
+cm9mQGtlcm5lbC5vcmc7IGJhY2twb3J0c0B2Z2VyLmtlcm5lbC5vcmc7IG5pYy1kZXZlbDsgUmVu
+LCBDbG91ZDsNCj4gR3JlZyBLcm9haC1IYXJ0bWFuOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwu
+b3JnOyBuZXRkZXZAdmdlci5rZXJuZWwub3JnOw0KPiBsaW51eC13aXJlbGVzczsgcWNhX3Zrb25k
+cmF0DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIGNvbXBhdC1kcml2ZXJzOiB1cGRhdGUgZXRoZXJu
+ZXQgZHJpdmVyIGFseCBpbiBjcmFwIGRpcg0KPiANCj4gT24gVGh1LCBPY3QgNCwgMjAxMiBhdCA2
+OjM0IFBNLCAgPHhpb25nQHFjYS5xdWFsY29tbS5jb20+IHdyb3RlOg0KPiA+IEZyb206IHhpb25n
+IDx4aW9uZ0BxY2EucXVhbGNvbW0uY29tPg0KPiA+DQo+ID4gMS4gc3VwcG9ydCBuZXcgZGV2aWNl
+IGlkICgweDEwQTAvMHgxMEExKS4NCj4gPiAyLiBhZGQgREVCVUdfRlMgaW50ZXJmYWNlIGZvciBk
+aWFnL3N3b2kgZnVuY3Rpb25zLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmVuIENsb3VkIDxj
+anJlbkBxY2EucXVhbGNvbW0uY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IHhpb25nIDx4aW9uZ0Bx
+Y2EucXVhbGNvbW0uY29tPg0KPiANCj4gWGlvbmcsDQo+IA0KPiAgLS0gVmxhZGltaXIsIGp1c3Qg
+YSBoZWFkcyB1cCAtLSB0aGlzIGFwcGxpZXMgdG8geW91IGFzIHdlbGwgZm9yIHRoZSA4MDIuMTFh
+ZA0KPiB3aWw2MjEwIGRyaXZlcg0KPiAgLS0gR3JlZywgc29tZSByZXZpZXcgb24geW91ciBwcmVm
+ZXJlbmNlIG9uIHRoaXMgd291bGQgYmUgYXBwcmVjaWF0ZWQNCj4gDQo+IFRoZSBvcmlnaW5hbCBh
+bHggY3JhcCBwYXRjaCB3YXMgYWRkZWQgaW50byBjb21wYXQtd2lyZWxlc3Mgb24gdGhlIGxpbnV4
+LTMuNS55DQo+IGJyYW5jaC4gSXRzIGJlZW4gdHdvIGtlcm5lbCByZWxlYXNlcyBhbmQgYWx4IGlz
+IG5vdCB5ZXQgdXBzdHJlYW0gYW5kIHVzZXJzIGNhbg0KPiBvbmx5IGdldCBhbHggdmlhIGNvbXBh
+dC1kcml2ZXJzICh0ZWNobmljYWxseSBjb21wYXQtd2lyZWxlc3MgYXMgdGhhdCB3YXMgcHJlDQo+
+IHYzLjcpLiB2My43IHdvdWxkIGJlIHRoZSAqdGhpcmQqIHJlbGVhc2UgaW4gd2hpY2ggdGhpcyB3
+b3VsZCBoYXBwZW4uLi4gVGhpcyBpcw0KPiB1bmZhaXIgdG8gdXNlcnMgYW5kIGNvbnN1bWVycyBv
+ZiB0aGUgTGludXgga2VybmVsIGFuZCBkZXJhaWxzIGV4cGVjdGF0aW9ucyBhbmQNCj4gb3VyIGFy
+cmFuZ2VtZW50cyBmb3IgTGludXgga2VybmVsIGRldmVsb3BtZW50LiBJIHJlYWxpemUgdGhhdCB0
+aGUgZ29hbCB3YXMgdG8NCj4gZ2V0IGFseCB1cHN0cmVhbSBBU0FQIGJ1dCByZWdhcmRsZXNzIG9m
+IHdoYXQgdGhlIHJlYXNvbiBpcywgaXRzIG5vdCB5ZXQNCj4gdXBzdHJlYW0uIElmIHlvdSBjYW5u
+b3Qgd29yayBvbiBhbHggb24gYSB0aW1lbHkgbWFubmVyIHRvIGdldCB1cHN0cmVhbSB0aGVuDQo+
+IHBsZWFzZSBzdWJtaXQgdGhlIGRyaXZlciB0byB0aGUgc3RhZ2luZyBhcmVhIG9mIHRoZSBMaW51
+eCBrZXJuZWwgdGhhdCBHcmVnDQo+IG1haW50YWlucyBzbyB0aGF0IG90aGVyIGRldmVsb3BlcnMg
+d2hvIG1heSBiZSBhYmxlIHRvIGhlbHAgY2FuIHN1Ym1pdA0KPiBwYXRjaGVzIHRvIGhlbHAgeW91
+LiBVbmRlciBzdGFnaW5nIHlvdXIgZHJpdmVyIHNob3VsZCBiZSBhY2NlcHRlZCBzbyBsb25nIGFz
+IGl0DQo+IGNvbXBpbGVzLg0KPiANCj4gSSB3aWxsIHVwZGF0ZSB0aGUgZG9jdW1lbnRhdGlvbiBm
+b3IgY3JhcC8gcGF0Y2hlcyBmb3IgY29tcGF0LWRyaXZlcnMgdG8gbWFrZQ0KPiBpdCBjbGVhciBu
+b3cgdGhhdCBjcmFwLyBwYXRjaGVzIGNhbiBiZSB1c2VkIGZvciBhZGRpbmcgY29tcG9uZW50cyAv
+IHBpZWNlcyBvZg0KPiBjb2RlIG5vdCB5ZXQgcmVhZHkgZm9yIHVwc3RyZWFtIGJ1dCBhcyBmYXIg
+YXMgZnVsbCBuZXcgZHJpdmVycyBhcmUgY29uY2VybmVkDQo+IHlvdSBvbmx5IGdldCBvbmUga2Vy
+bmVsIHJlbGVhc2UgY3ljbGUgZm9yIGl0IHRvIGxpbmdlciBvbiBjcmFwLyB1bmRlciBjb21wYXQt
+DQo+IGRyaXZlcnMsIGlmIHlvdSBoYXZlbid0IGFkZHJlc3NlZCB1cHN0cmVhbWluZyB5ZXQgdGhl
+biBpdCBzaG91bGQgZ28gdG8NCj4gZHJpdmVycy9zdGFnaW5nLy4gVGhhdCBpcyBjcmFwLyBzaG91
+bGQgb25seSBiZSB1c2VkIGFzIGEgc2hvcnRjdXQgYmVjYXVzZSB1c2Vycw0KPiBleGlzdCB0aGF0
+IGNhbiB1c2UgdGhlIGRyaXZlciBidXQgeW91ICpkbyogaGF2ZSBhIHRlYW0gcHJvcGVybHkgcmVz
+b3VyY2VkIHRvDQo+IGFkZHJlc3MgdXBzdHJlYW1pbmcgcHJvcGVybHkgaW4gYSB0aW1lbHkgbWFu
+bmVyLg0KPiANCj4gTGludXMgc2hvdWxkIHNvb24gcmVsZWFzZSB2My43LXJjMSBhbmQgbmV3IGRy
+aXZlcnMgYXJlIGFsbG93ZWQgdG8gYmUgbWVyZ2VkDQo+IGR1cmluZyB0aGUgUkMgY3ljbGVzLCBh
+cyBzdWNoIG15IHJlY29tbWVuZGF0aW9uIGlzIGluc3RlYWQgb2YgZ2V0dGluZyB1c2VycyB0bw0K
+PiBjb25zdW1lIGFseCBvbmx5IHRocm91Z2ggY29tcGF0LWRyaXZlcnMgeW91IG5vdyBzdWJtaXQg
+YWx4IGludG8gc3RhZ2luZyB0bw0KPiBHcmVnIGluIGhvcGVzIHRoYXQgd2UgY2FuIGdldCBpdCBp
+bnRvIHYzLjctcmNYIHNvbWUgdGltZSwgYW5kIGF0IHRoYXQgdGltZSB3ZQ0KPiBjYW4gcmVtb3Zl
+IHRoZSBjcmFwLyBwYXRjaCBmcm9tIGNvbXBhdC1kcml2ZXJzLg0KPiANCj4gVXNlcnMgc2hvdWxk
+IGJlIGFibGUgdG8gY29uc3VtZSBuZXcgZHJpdmVycyB0aHJvdWdoIGtlcm5lbC5vcmcgYW5kIGNv
+bXBhdC0NCj4gZHJpdmVycyBzaG91bGQgb25seSBwcm92aWRlIHRoZSBmcmFtZXdvcmsgZm9yIGJh
+Y2twb3J0aW5nIGFuZCBhbHNvDQo+IGNhdGVnb3JpemluZyBxdWljayBmaXhlcy4gSXQgc2hvdWxk
+IG5vdCBiZSB1c2VkIGZvciBvbmdvaW5nIHVwZGF0ZXMgZm9yIG5ldw0KPiBkcml2ZXJzIHRoYXQg
+dXNlcnMgbmVlZC4NCj4gDQo+IFdlIG11c3QgZHJhdyB0aGUgbGluZSB3aXRoIGNyYXAvIHBhdGNo
+ZXMgc29tZXdoZXJlLg0KPiANCj4gSSdsbCB0aGVuIHRha2UgdGhpcyBwYXRjaCBmb3Igbm93IGJ1
+dCBkbyBleHBlY3QgeW91IHRvIGdldCBhbHggaW50byBlaXRoZXIgc3RhZ2luZw0KPiBvciBwcm9w
+ZXIgdXBzdHJlYW0gZm9yIHRoZSB2My43LXJjWC4gSSB3ZWxjb21lIGZlZWRiYWNrIGZyb20gb3Ro
+ZXIgZm9sa3Mgb24NCj4gdGhlIHByb3Bvc2VkIGFycmFuZ2VtZW50IGZvciBjcmFwLyBwYXRjaGVz
+IGZvciBjb21wYXQtZHJpdmVycy4NCj4gDQo+IGh0dHBzOi8vYmFja3BvcnRzLndpa2kua2VybmVs
+Lm9yZy9pbmRleC5waHAvRG9jdW1lbnRhdGlvbi9jb21wYXQtDQo+IGRyaXZlcnMvYWRkaXRpb25h
+bC1wYXRjaGVzI2NyYXBfcGF0Y2hlcw0KPiANCj4gICBMdWlzDQo=
