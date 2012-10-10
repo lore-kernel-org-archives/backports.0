@@ -1,71 +1,69 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:50844 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750904Ab2JYWRV (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 25 Oct 2012 18:17:21 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/2] compat-drivers: deactivate cfg80211 tracing for kernels <= 2.6.32
-Date: Fri, 26 Oct 2012 00:17:10 +0200
-Message-Id: <1351203430-6865-2-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1351203430-6865-1-git-send-email-hauke@hauke-m.de>
-References: <1351203430-6865-1-git-send-email-hauke@hauke-m.de>
+Received: from external1.orbit-lab.org ([128.6.192.131]:45473 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753940Ab2JJUvD (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 10 Oct 2012 16:51:03 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 14E62540378
+	for <backports@vger.kernel.org>; Wed, 10 Oct 2012 16:51:01 -0400 (EDT)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-10-10 is baked
+Message-Id: <20121010205100.E411D40ABF@repository3.orbit-lab.org>
+Date: Wed, 10 Oct 2012 16:51:00 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at b074e4b compat-drivers: change condition for kernel.org release target
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at fb4936e compat: backport seq_file's user namespace addition
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at c22c5a1 Add linux-next specific files for 20121010
+Trying kernel 3.4.4-030404-generic [FAILED]
+Trying kernel 3.3.7-030307-generic [FAILED]
+Trying kernel 3.2.2-030202-generic [FAILED]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
+Failed...
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- config.mk                                          |    4 ++++
- .../network/44-deactivate-mac80211-tracing.patch   |   14 +++++++++++++-
- 2 files changed, 17 insertions(+), 1 deletion(-)
+compat-drivers code metrics
 
-diff --git a/config.mk b/config.mk
-index 4a390fd..f743e05 100644
---- a/config.mk
-+++ b/config.mk
-@@ -187,6 +187,10 @@ export CONFIG_CFG80211_DEFAULT_PS=y
- # export CONFIG_CFG80211_INTERNAL_REGDB=y
- # See below for wext stuff
- 
-+ifndef CONFIG_COMPAT_KERNEL_2_6_33
-+export CONFIG_COMPAT_CFG80211_DRIVER_API_TRACER=y
-+endif #CONFIG_COMPAT_KERNEL_2_6_33
-+
- export CONFIG_LIB80211=m
- export CONFIG_LIB80211_CRYPT_WEP=m
- export CONFIG_LIB80211_CRYPT_CCMP=m
-diff --git a/patches/network/44-deactivate-mac80211-tracing.patch b/patches/network/44-deactivate-mac80211-tracing.patch
-index 8ca585a..9c9858d 100644
---- a/patches/network/44-deactivate-mac80211-tracing.patch
-+++ b/patches/network/44-deactivate-mac80211-tracing.patch
-@@ -2,7 +2,7 @@ Do not activate the mac80211 tracing for kernels <= 2.6.32
- 
- --- a/net/mac80211/Makefile
- +++ b/net/mac80211/Makefile
--@@ -24,7 +24,9 @@ mac80211-y := \
-+@@ -25,7 +25,9 @@ mac80211-y := \
-  	wme.o \
-  	event.o \
-  	chan.o \
-@@ -13,3 +13,15 @@ Do not activate the mac80211 tracing for kernels <= 2.6.32
-  
-  mac80211-$(CONFIG_MAC80211_LEDS) += led.o
-  mac80211-$(CONFIG_MAC80211_DEBUGFS) += \
-+--- a/net/wireless/Makefile
-++++ b/net/wireless/Makefile
-+@@ -10,7 +10,8 @@ obj-$(CONFIG_WEXT_SPY) += wext-spy.o
-+ obj-$(CONFIG_WEXT_PRIV) += wext-priv.o
-+ 
-+ cfg80211-y += core.o sysfs.o radiotap.o util.o reg.o scan.o nl80211.o
-+-cfg80211-y += mlme.o ibss.o sme.o chan.o ethtool.o mesh.o ap.o trace.o
-++cfg80211-y += mlme.o ibss.o sme.o chan.o ethtool.o mesh.o ap.o
-++cfg80211-$(CONFIG_COMPAT_CFG80211_DRIVER_API_TRACER) += trace.o
-+ cfg80211-$(CONFIG_CFG80211_DEBUGFS) += debugfs.o
-+ cfg80211-$(CONFIG_CFG80211_WEXT) += wext-compat.o wext-sme.o
-+ cfg80211-$(CONFIG_CFG80211_INTERNAL_REGDB) += regdb.o
--- 
-1.7.9.5
+   1170477 - Total upstream lines of code being pulled
+      3107 - backport code changes
+      2580 - backport code additions
+       527 - backport code deletions
+     12696 - backport from compat module
+     15803 - total backport code
+    1.3501 - % of code consists of backport work
+       301 - backport code changes
+       219 - backport code additions
+        82 - backport code deletions
+     12696 - backport from compat module
+     12997 - total backport code
+    1.1104 - % of code consists of backport work
 
+Base tree: linux-next.git
+Base tree version: next-20121010
+compat.git: compat-2012-10-08
+compat-drivers release: compat-drivers-2012-10-08
+Code metrics archive: http://bit.ly/H6BTF7
