@@ -1,39 +1,68 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail.fuel7.com ([74.222.0.51]:39329 "EHLO mail.fuel7.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752837Ab2JHUIi (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 8 Oct 2012 16:08:38 -0400
-From: Kyle Manna <kyle.manna@fuel7.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org, Kyle Manna <kyle.manna@fuel7.com>
-Subject: [PATCH] compat-drivers: Fix typo for CONFIG_BT_HCIUART
-Date: Mon,  8 Oct 2012 14:51:02 -0500
-Message-Id: <1349725862-32284-1-git-send-email-kyle.manna@fuel7.com>
+Received: from external1.orbit-lab.org ([128.6.192.131]:44126 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753366Ab2JMUqn (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 13 Oct 2012 16:46:43 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 346E55402F2
+	for <backports@vger.kernel.org>; Sat, 13 Oct 2012 16:46:42 -0400 (EDT)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-10-13 is baked
+Message-Id: <20121013204642.121DD40ABF@repository3.orbit-lab.org>
+Date: Sat, 13 Oct 2012 16:46:42 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The config value should be set to a lowercase 'm' or the config is
-ignored and the associated module doesn't build.  Fix this.
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+HEAD is now at 788f585 compat-drivers: add UAPI backport fixes
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at fb4936e compat: backport seq_file's user namespace addition
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 6b35893 Add linux-next specific files for 20121012
+Trying kernel 3.4.4-030404-generic [FAILED]
+Trying kernel 3.3.7-030307-generic [FAILED]
+Trying kernel 3.2.2-030202-generic [FAILED]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.31-02063113-generic [FAILED]
+Trying kernel 2.6.30-02063010-generic [FAILED]
+Trying kernel 2.6.29-02062906-generic [FAILED]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
+Failed...
 
-Signed-off-by: Kyle Manna <kyle.manna@fuel7.com>
----
- config.mk |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+compat-drivers code metrics
 
-diff --git a/config.mk b/config.mk
-index c3872b1..c9b2353 100644
---- a/config.mk
-+++ b/config.mk
-@@ -209,7 +209,7 @@ ifndef CONFIG_COMPAT_KERNEL_2_6_28
- export CONFIG_COMPAT_BT_HIDP=m
- endif #CONFIG_COMPAT_KERNEL_2_6_28
- 
--export CONFIG_BT_HCIUART=M
-+export CONFIG_BT_HCIUART=m
- export CONFIG_BT_HCIUART_H4=y
- export CONFIG_BT_HCIUART_BCSP=y
- export CONFIG_BT_HCIUART_ATH3K=y
--- 
-1.7.9.5
+   1188291 - Total upstream lines of code being pulled
+      3107 - backport code changes
+      2580 - backport code additions
+       527 - backport code deletions
+     12696 - backport from compat module
+     15803 - total backport code
+    1.3299 - % of code consists of backport work
+       301 - backport code changes
+       219 - backport code additions
+        82 - backport code deletions
+     12696 - backport from compat module
+     12997 - total backport code
+    1.0938 - % of code consists of backport work
 
+Base tree: linux-next.git
+Base tree version: next-20121012
+compat.git: compat-2012-10-08
+compat-drivers release: compat-drivers-2012-10-08-3-g788f585
+Code metrics archive: http://bit.ly/H6BTF7
