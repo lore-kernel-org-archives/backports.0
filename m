@@ -1,63 +1,69 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:40626 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753251Ab2JVL6H (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 22 Oct 2012 07:58:07 -0400
-Received: by mail-ee0-f46.google.com with SMTP id b15so929388eek.19
-        for <backports@vger.kernel.org>; Mon, 22 Oct 2012 04:58:05 -0700 (PDT)
-From: =?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+Received: from external1.orbit-lab.org ([128.6.192.131]:51518 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753824Ab2JNUpl (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 14 Oct 2012 16:45:41 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 22BD6540428
+	for <backports@vger.kernel.org>; Sun, 14 Oct 2012 16:45:40 -0400 (EDT)
 To: backports@vger.kernel.org
-Cc: mcgrof@kernel.org,
-	=?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
-Subject: [PATCH] compat-drivers: Enable CONFIG_DRM_LOAD_EDID_FIRMWARE
-Date: Mon, 22 Oct 2012 14:57:59 +0300
-Message-Id: <1350907079-31735-1-git-send-email-ozancag@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: Compat-wireless release for 2012-10-14 is baked
+Message-Id: <20121014204539.DE15E40ABF@repository3.orbit-lab.org>
+Date: Sun, 14 Oct 2012 16:45:39 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This was added in 3.4. Rename the option in the relevant source file
-and enable CONFIG_COMPAT_DRM_LOAD_EDID_FIRMWARE in config.mk to build
-the symbol into DRM_KMS_HELPER kernel module.
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at 788f585 compat-drivers: add UAPI backport fixes
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at fb4936e compat: backport seq_file's user namespace addition
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 6b35893 Add linux-next specific files for 20121012
+Trying kernel 3.4.4-030404-generic [FAILED]
+Trying kernel 3.3.7-030307-generic [FAILED]
+Trying kernel 3.2.2-030202-generic [FAILED]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.31-02063113-generic [FAILED]
+Trying kernel 2.6.30-02063010-generic [FAILED]
+Trying kernel 2.6.29-02062906-generic [FAILED]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
+Failed...
 
-Signed-off-by: Ozan Çağlayan <ozancag@gmail.com>
----
- config.mk                                  |  1 +
- patches/drm/06-rename-config-options.patch | 11 +++++++++++
- 2 files changed, 12 insertions(+)
+compat-drivers code metrics
 
-diff --git a/config.mk b/config.mk
-index c9b2353..4a390fd 100644
---- a/config.mk
-+++ b/config.mk
-@@ -702,5 +702,6 @@ ifndef CONFIG_COMPAT_KERNEL_3_2
- export CONFIG_COMPAT_VIDEO_MODULES=y
- export CONFIG_COMPAT_DRM=m
- export CONFIG_COMPAT_DRM_I915=m
-+export CONFIG_COMPAT_DRM_LOAD_EDID_FIRMWARE=y
- export CONFIG_COMPAT_DRM_KMS_HELPER=m
- endif #CONFIG_COMPAT_KERNEL_3_2
-diff --git a/patches/drm/06-rename-config-options.patch b/patches/drm/06-rename-config-options.patch
-index 1096fce..9fda1f8 100644
---- a/patches/drm/06-rename-config-options.patch
-+++ b/patches/drm/06-rename-config-options.patch
-@@ -75,3 +75,14 @@
-  sil164-y := sil164_drv.o
- -obj-$(CONFIG_DRM_I2C_SIL164) += sil164.o
- +obj-$(CONFIG_COMPAT_DRM_I2C_SIL164) += sil164.o
-+--- a/drivers/gpu/drm/drm_crtc_helper.c
-++++ b/drivers/gpu/drm/drm_crtc_helper.c
-+@@ -119,7 +119,7 @@ int drm_helper_probe_single_connector_mo
-+ 		goto prune;
-+ 	}
-+ 
-+-#ifdef CONFIG_DRM_LOAD_EDID_FIRMWARE
-++#ifdef CONFIG_COMPAT_DRM_LOAD_EDID_FIRMWARE
-+ 	count = drm_load_edid_firmware(connector);
-+ 	if (count == 0)
-+ #endif
--- 
-1.7.11.7
+   1188291 - Total upstream lines of code being pulled
+      3107 - backport code changes
+      2580 - backport code additions
+       527 - backport code deletions
+     12696 - backport from compat module
+     15803 - total backport code
+    1.3299 - % of code consists of backport work
+       301 - backport code changes
+       219 - backport code additions
+        82 - backport code deletions
+     12696 - backport from compat module
+     12997 - total backport code
+    1.0938 - % of code consists of backport work
 
+Base tree: linux-next.git
+Base tree version: next-20121012
+compat.git: compat-2012-10-08
+compat-drivers release: compat-drivers-2012-10-08-3-g788f585
+Code metrics archive: http://bit.ly/H6BTF7
