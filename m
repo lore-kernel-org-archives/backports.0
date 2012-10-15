@@ -1,34 +1,39 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:52908 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S2992561Ab2JYUOe (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 25 Oct 2012 16:14:34 -0400
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 2E86A54025C
-	for <backports@vger.kernel.org>; Thu, 25 Oct 2012 16:14:33 -0400 (EDT)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-10-25 is baked
-Message-Id: <20121025201432.D62E040AC0@repository3.orbit-lab.org>
-Date: Thu, 25 Oct 2012 16:14:32 -0400 (EDT)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <1350307338-8133-1-git-send-email-bkamatch@qca.qualcomm.com>
+References: <1350307338-8133-1-git-send-email-bkamatch@qca.qualcomm.com>
+Date: Mon, 15 Oct 2012 14:28:09 -0700
+Message-ID: <CAB=NE6UpXjb9mp0ttJs08bKXmAJdS=Ndf=m9NNO75xEcFfTnMQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Patches for compat-drivers/linux-3.6.y
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: Bala Shanmugam <bkamatch@qca.qualcomm.com>
+Cc: linux-wireless@vger.kernel.org, backports@vger.kernel.org,
+	Senthil Balasubramanian <senthilb@qca.qualcomm.com>, Sujith Manoharan <c_manoha@qca.qualcomm.com>,
+	Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at a26c7c1 compat-drivers: Enable CONFIG_DRM_LOAD_EDID_FIRMWARE
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 8de8ebb compat: encourage non-root use of bin/get-compat-kernels
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 2253213 Add linux-next specific files for 20121025
-Error while updating from wireless-testing
+On Mon, Oct 15, 2012 at 6:22 AM, Bala Shanmugam
+<bkamatch@qca.qualcomm.com> wrote:
+> Hi,
+>
+> These patches are for linux-3.6.y branch and has BT coex
+> fixes for AR9565.
+>
+> Bala Shanmugam (3):
+>   compat-drivers: Update pending stable patches.
+>   compat-drivers: Move next-pending patches to cherry-picks.
+>   compat-drivers: Add new cherry-pick and next-pending  patches
 
-compat-drivers code metrics
+Thanks, I've applied this, made a few changes to adapt to v3.6.2 and
+have made 5 tarballs for this release:
 
-   1182719 - Total upstream lines of code being pulled
+http://wireless.kernel.org/en/users/Download/stable#compat-wireless_3.6_stable_releases
 
-   network
-   ----------------------------------------
+http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.6/compat-wireless-3.6.2-1-snpc.tar.bz2
+http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.6/compat-wireless-3.6.2-1-snp.tar.bz2
+http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.6/compat-wireless-3.6.2-1-sn.tar.bz2
+http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.6/compat-wireless-3.6.2-1-s.tar.bz2
+http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.6/compat-wireless-3.6.2-1.tar.bz2
+
+  Luis
