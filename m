@@ -1,48 +1,93 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from novprvoes0310.provo.novell.com ([137.65.248.74]:58857 "EHLO
-	novprvoes0310.provo.novell.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756036Ab2JKUTM convert rfc822-to-8bit
-	(ORCPT <rfc822;groupwise-backports@vger.kernel.org:1:1>);
-	Thu, 11 Oct 2012 16:19:12 -0400
-Message-Id: <5076D55D020000D6000EA457@novprvoes0310.provo.novell.com>
-Date: Thu, 11 Oct 2012 14:19:09 -0600
-From: "Ann Davis" <andavis@suse.com>
-To: <backports@vger.kernel.org>
-Subject: compat-drivers rpm builds on Open Build Service (OBS)
-References: <5075ABFB020000D6000EA32E@novprvoes0310.provo.novell.com>
- <5076D55D020000D6000EA457@novprvoes0310.provo.novell.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Sender: backports-owner@vger.kernel.org
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, backports@vger.kernel.org, rob@ti.com, arnd@arndb.de, davej@redhat.com, airlied@linux.ie, bskeggs@redhat.com, alan@lxorguk.ukuu.org.uk, dhowells@redhat.com, tglx@linutronix.de, daniel.vetter@ffwll.ch, jbarnes@virtuousgeek.org, alexander.deucher@amd.com, paulmck@linux.vnet.ibm.com, gregkh@linuxfoundation.org
+Subject: Re: [PATCH 1/2] uapi: update includes for drm content when no kernel API exists
+Date: Tue, 16 Oct 2012 14:34:39 +0200
+Message-ID: <5298100.2jQ2j2jhxN@avalon>
+In-Reply-To: <CAB=NE6UUL+zCSMwy4yzZq7+3pDLxZNsusSvXyJv4gi3_rz2ugg@mail.gmail.com>
+References: <1350085772-8755-1-git-send-email-mcgrof@do-not-panic.com> <3084988.3Xup6S3alX@avalon> <CAB=NE6UUL+zCSMwy4yzZq7+3pDLxZNsusSvXyJv4gi3_rz2ugg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <backports@vger.kernel.org>
 
-Hi all,
+Hi Luis,
 
-I've set up a project on the Open(SUSE) Build Service to build compat-drivers rpms for a bunch of our SUSE distros (and RHEL 6, just for fun ;))  My intention is to use this to catch any build problems that might occur when building on SUSE.  (Seems to me that it makes more sense for the main backports.kernel.org project to concentrate on building for standard kernels and each distro to concentrate on building/maintaining for their own stuff.)  Details/Notes:
+On Saturday 13 October 2012 10:00:42 Luis R. Rodriguez wrote:
+> On Sat, Oct 13, 2012 at 3:33 AM, Laurent Pinchart wrote:
+> > On Friday 12 October 2012 16:49:31 Luis R. Rodriguez wrote:
+> >> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+> >> 
+> >> The UAPI changes split kernel API and userspace API
+> >> content onto two separate header files. The userspace
+> >> API drm content was moved to include/uapi/drm/ with the
+> >> same file name while kernel specific API content was
+> >> kept under include/drm/ with the same file name. When
+> >> one file was split into two files the kernel header
+> >> includes the uapi header and a UAPI prefix was added to
+> >> the uapi header for its header guard. When there was no
+> >> kernel API content found the uapi header file was the
+> >> only one that was kept and the original guard for the
+> >> header file was kept. In this particular case the
+> >> original users of this header file were not modified
+> >> and the uapi header file is expected to be picked up
+> >> by path.
+> >> 
+> >> This may work well at compilation on the kernel but when
+> >> backporting this creates a few complexities.
+> > 
+> > Could you please provide more details about those complexities ?
+> 
+> Sure, the backported DRM code is as-is code from linux-next. The
+> header search path includes a copy of a few select header files from
+> linux-next, the rest are part of the compat [0] project to help with
+> backporting and the last set are from your own kernel. In this
+> particular case the UAPI effort pushed into include/uapi/drm a few
+> files which are now no longer present in the old include/drm/ location
+> when there was no respective kernel-only APIs exposed. For DRM code
+> that did not use the new uapi/drm/ path for old header includes this
+> means that upon backporting the older kernel's header file would be
+> used obviously leading to a series of compilation failures. By being
+> explicit about the path, as was done with a few other header files, we
+> can suck out DRM code intact from the kernel to be compilable for
+> older kernels. As of the v3.7-rc1 the compat-drivers project [1] will
+> be providing DRM modules. The new UAPI changes broke compilation on
+> compat-drivers when compiling DRM code so to fix this we either patch
+> code taken from the Linux kernel as I have done, force inclusion of a
+> few specific headers files, or use include_next tricks. It turns out
+> that forcing inclusion of -I$(M)/include/uapi as a path search prior
+> to your own kernel's at compilation time did not help.
 
-1)  Project/package page is 
-https://build.opensuse.org/package/show?package=compat-drivers&project=home%3Aandavis%3Acompat-drivers .  OBS login is required but free and easy to set up.
+Shouldn't that be added as a search path *after* include/linux/ instead of 
+before ?
 
-2)  I'm working on a cron job to do periodic (daily?) builds w/ the most recent compat-drivers snapshot on http://www.kernel.org/pub/linux/kernel/projects/backports/ .   I can change the download/build frequency and/or work off the git repo instead of the tarballs, but this seems easiest right now...
+> The include_next trick can work as well but that'd mean synching the UAPI
+> files regularly into compat. I'd much prefer to have code intact when
+> possible when backporting so the option I stuck with then was to patch
+> the code directly and then as part of compat-drivers to always copy
+> that day's linux-next UAPI headers into the current directory for
+> compilation. I see no other driver code using the uapi path explicitly
+> though, is that by design?
 
-3)  I'm not sure there's really any need for a compat-drivers rpm (or deb package), but doing the build is what matters and if we get the rpm for free, so much the better.  :)
+As far as I understand that's by design, yes. Kernel code isn't expected to 
+reference uapi/ headers directly.
 
-4)  WRT having an rpm:  I think it _would_ be helpful (at least from our distro-vendor perspective) to quickly build rpms that contain a subset of compat-drivers.    Maybe using the driver-select script?  Will look into that next.
+> Would it be wrong to be explicit about using a UAPI header alone if no
+> kernel API files exist?
 
-5)  The package is successfully building for all distros/arch's _except_SLES 11 SP2 i586.  Error is:
+I personally don't really like including such "features" in a mainline just 
+for backporting, especially when they go against the spirit of the 
+architecture (the uapi/ split design principles in this case). The way we're 
+dealing with this in the V4L backport tree 
+(http://git.linuxtv.org/media_build.git) is to play with Makefiles, include 
+compatibility headers and, if nothing else can work, maintain backport patches 
+for mainline code.
 
-[ 3801s]   CC [M]  /usr/src/packages/BUILD/compat-drivers-2012-10-08/obj/xen/compat/compat-3.1.o
-[ 3802s] In file included from /usr/src/packages/BUILD/compat-drivers-2012-10-08/obj/xen/compat/compat-3.1.c:12:
-[ 3802s] /usr/src/linux-3.0.13-0.27/include/linux/cpufreq.h:333: error: static declaration of 'compat_cpufreq_quick_get_max' follows non-static declaration
-[ 3802s] /usr/src/packages/BUILD/compat-drivers-2012-10-08/obj/xen/include/linux/compat-3.1.h:117: error: previous declaration of 'compat_cpufreq_quick_get_max' was here
+> [0] https://backports.wiki.kernel.org/index.php/Documentation/compat
+> [1] https://backports.wiki.kernel.org/
 
-Not sure what's happening yet but will look into it.
+-- 
+Regards,
 
-c/ya,
-
-Ann 
-
-
-
-
+Laurent Pinchart
