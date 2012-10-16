@@ -1,69 +1,56 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:52910 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1030247Ab2JKUvG (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 11 Oct 2012 16:51:06 -0400
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 06D7454046F
-	for <backports@vger.kernel.org>; Thu, 11 Oct 2012 16:51:05 -0400 (EDT)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-10-11 is baked
-Message-Id: <20121011205104.C019940ABF@repository3.orbit-lab.org>
-Date: Thu, 11 Oct 2012 16:51:04 -0400 (EDT)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <dhowells@redhat.com>
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAB=NE6VMxhE8O4J+OaKVNUjJqdBEiNkocvueGFn8Wsa8-AG_bQ@mail.gmail.com>
+References: <CAB=NE6VMxhE8O4J+OaKVNUjJqdBEiNkocvueGFn8Wsa8-AG_bQ@mail.gmail.com> <1350085772-8755-1-git-send-email-mcgrof@do-not-panic.com> <3084988.3Xup6S3alX@avalon> <CAB=NE6UUL+zCSMwy4yzZq7+3pDLxZNsusSvXyJv4gi3_rz2ugg@mail.gmail.com> <5298100.2jQ2j2jhxN@avalon>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: dhowells@redhat.com, Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, backports@vger.kernel.org, rob@ti.com,
+        arnd@arndb.de, davej@redhat.com, airlied@linux.ie, bskeggs@redhat.com,
+        alan@lxorguk.ukuu.org.uk, tglx@linutronix.de, daniel.vetter@ffwll.ch,
+        jbarnes@virtuousgeek.org, alexander.deucher@amd.com,
+        paulmck@linux.vnet.ibm.com, gregkh@linuxfoundation.org
+Subject: Re: [PATCH 1/2] uapi: update includes for drm content when no kernel API exists
+Date: Wed, 17 Oct 2012 00:27:30 +0100
+Message-ID: <7756.1350430050@warthog.procyon.org.uk>
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at b074e4b compat-drivers: change condition for kernel.org release target
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at fb4936e compat: backport seq_file's user namespace addition
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 1f3b59e Add linux-next specific files for 20121011
-Trying kernel 3.4.4-030404-generic [FAILED]
-Trying kernel 3.3.7-030307-generic [FAILED]
-Trying kernel 3.2.2-030202-generic [FAILED]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Failed...
+Luis R. Rodriguez <mcgrof@do-not-panic.com> wrote:
 
-compat-drivers code metrics
+> >> The include_next trick can work as well but that'd mean synching the UAPI
+> >> files regularly into compat. I'd much prefer to have code intact when
+> >> possible when backporting so the option I stuck with then was to patch
+> >> the code directly and then as part of compat-drivers to always copy
+> >> that day's linux-next UAPI headers into the current directory for
+> >> compilation. I see no other driver code using the uapi path explicitly
+> >> though, is that by design?
+> >
+> > As far as I understand that's by design, yes. Kernel code isn't expected to
+> > reference uapi/ headers directly.
+> 
+> Did the design consider the case where no respective kernel API header
+> file would ever exist?
 
-   1170477 - Total upstream lines of code being pulled
-      3107 - backport code changes
-      2580 - backport code additions
-       527 - backport code deletions
-     12696 - backport from compat module
-     15803 - total backport code
-    1.3501 - % of code consists of backport work
-       301 - backport code changes
-       219 - backport code additions
-        82 - backport code deletions
-     12696 - backport from compat module
-     12997 - total backport code
-    1.1104 - % of code consists of backport work
+I didn't particularly design it such that kernel .c files couldn't access uapi
+.h files directly.  I did, however, design it so that my scripts wouldn't have
+to touch any .c files where possible, and certainly I didn't want to have to
+double up all #includes that refer to KAPI/UAPI split headers.
 
-Base tree: linux-next.git
-Base tree version: next-20121011
-compat.git: compat-2012-10-08
-compat-drivers release: compat-drivers-2012-10-08
-Code metrics archive: http://bit.ly/H6BTF7
+Ideally, I'd've used #include_next in the KAPI file to refer to the UAPI file
+where both exist, but some people have strong objections to that, so I ended
+up having to do #include <uapi/...> instead.
+
+I also didn't want to rename the asm/, linux/, etc. prefixes as that would
+mandate changing pretty much every #include in the kernel.
+
+For the case where no respective KAPI file exists, it was considered and it is
+handled.  This is done by adding extra -I flags, for example:
+
+	-I include
+	-I include/uapi
+
+so looking for linux/foo.h, say, will look first for include/linux/foo.h and
+then for include/uapi/linux/foo.h.
+
+David
