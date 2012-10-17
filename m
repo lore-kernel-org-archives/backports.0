@@ -1,23 +1,32 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <1351347723-21884-1-git-send-email-ozancag@gmail.com>
-References: <1351347723-21884-1-git-send-email-ozancag@gmail.com>
-Date: Sat, 27 Oct 2012 08:04:21 -0700
-Message-ID: <CAB=NE6Vr+=+XcpXBTHsLWCus_eCOiA_1+xDPYJkjnf_ZRPVSVQ@mail.gmail.com>
-Subject: Re: [PATCH] compat-drivers: Copy core/ subdir of nouveau driver
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
-Cc: backports@vger.kernel.org, mcgrof@kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:54558 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1756464Ab2JQUNR (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 17 Oct 2012 16:13:17 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 1C27A5400C4
+	for <backports@vger.kernel.org>; Wed, 17 Oct 2012 16:13:16 -0400 (EDT)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-10-17 is baked
+Message-Id: <20121017201315.F125D40ABF@repository3.orbit-lab.org>
+Date: Wed, 17 Oct 2012 16:13:15 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sat, Oct 27, 2012 at 7:22 AM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com=
-> wrote:
-> This was introduced with the latest nouveau code rewrite. Copy
-> this directory too.
->
-> Signed-off-by: Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com>
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at 788f585 compat-drivers: add UAPI backport fixes
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at fb4936e compat: backport seq_file's user namespace addition
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at a49d810 Add linux-next specific files for 20121017
+cp: cannot stat `/var/opt/compat//linux-next//include/linux/nl80211.h': No such file or directory
+Error while updating from wireless-testing
 
-Thanks, applied and pushed!
+compat-drivers code metrics
 
-  Luis
+   1254475 - Total upstream lines of code being pulled
