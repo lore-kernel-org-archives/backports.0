@@ -1,88 +1,88 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <linux-wireless-owner@vger.kernel.org>
-From: Bala Shanmugam <bkamatch@qca.qualcomm.com>
-To: <rodrigue@qca.qualcomm.com>
-CC: <linux-wireless@vger.kernel.org>, <backports@vger.kernel.org>
-Subject: [PATCH 0/3] Patches for compat-drivers/linux-3.6.y
-Date: Mon, 15 Oct 2012 18:53:17 +0530
-Message-ID: <1350307400-8215-1-git-send-email-bkamatch@qca.qualcomm.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-wireless-owner@vger.kernel.org
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:53560 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751003Ab2JTUy1 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 20 Oct 2012 16:54:27 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id DC7D15400C4
+	for <backports@vger.kernel.org>; Sat, 20 Oct 2012 16:54:25 -0400 (EDT)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-10-20 is baked
+Message-Id: <20121020205425.B5E6240ABF@repository3.orbit-lab.org>
+Date: Sat, 20 Oct 2012 16:54:25 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+HEAD is now at f577c36 compat-drivers: add target path for ChangeLog file
+git fetch github (/var/opt/compat/compat)
+HEAD is now at 8de8ebb compat: encourage non-root use of bin/get-compat-kernels
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 0fa175cf Add linux-next specific files for 20121019
+Trying kernel 3.4.4-030404-generic [OK]
+Trying kernel 3.3.7-030307-generic [OK]
+Trying kernel 3.2.2-030202-generic [OK]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
+Worked!
 
-These patches are for linux-3.6.y branch and has BT coex
-fixes for AR9565.
+Trying kernel  3.4.4-030404-generic [OK]
+Trying kernel  3.3.7-030307-generic [OK]
+Trying kernel  3.2.2-030202-generic [OK]
+Trying kernel  3.1.10-030110-generic [OK]
+Trying kernel  3.0.18-030018-generic [OK]
+Trying kernel  2.6.39-02063904-generic [OK]
+Trying kernel  2.6.38-02063808-generic [OK]
+Trying kernel  2.6.37-02063706-generic [OK]
+Trying kernel  2.6.36-02063604-generic [OK]
+Trying kernel  2.6.35-02063512-generic [OK]
+Trying kernel  2.6.34-02063410-generic [OK]
+Trying kernel  2.6.33-02063305-generic [OK]
+Trying kernel  2.6.31-02063113-generic [OK]
+Trying kernel  2.6.30-02063010-generic [OK]
+Trying kernel  2.6.29-02062906-generic [OK]
+Trying kernel  2.6.28-02062810-generic [OK]
+Trying kernel  2.6.27-020627-generic [OK]
+Trying kernel  2.6.26-020626-generic [OK]
+Trying kernel  2.6.25-020625-generic [OK]
+Trying kernel  2.6.24-020624-generic [OK]
 
-Bala Shanmugam (3):
-  compat-drivers: Update pending stable patches.
-  compat-drivers: Move next-pending patches to cherry-picks.
-  compat-drivers: Add new cherry-pick and next-pending  patches
+compat-drivers code metrics
 
- ...dle-errors-properly-in-MCI-initialization.patch | 128 ++++++++++++
- ...-debugfs-file-to-adjust-antenna-diversity.patch |  99 ++++++++++
- ...-ath9k-Fix-chainmask-selection-for-AR9462.patch |  43 +++++
- .../0080-ath9k-Enable-MCI-for-AR9565.patch         |  63 ++++++
- ...81-ath9k-Fix-BTCOEX-weight-initialization.patch | 176 +++++++++++++++++
- ...dle-errors-properly-in-MCI-initialization.patch | 128 ------------
- ...01-ath9k_hw-Enable-OSLA-hw-fix-for-AR9565.patch |  34 ++++
- ...-debugfs-file-to-adjust-antenna-diversity.patch |  99 ----------
- ...2-ath9k_hw-Fix-selfgen-chainmask-for-9565.patch |  28 +++
- ...-ath9k-Fix-chainmask-selection-for-AR9462.patch |  43 -----
- ...ppropriate-bit-for-AR9565-in-btc-control-.patch |  33 ++++
- .../0004-ath9k-Enable-MCI-for-AR9565.patch         |  63 ------
- ...off-RXIQ-calibration-while-re-calibrating.patch |  46 +++++
- ...sable-MCI-stat-counter-by-default-for-AR9.patch |  34 ++++
- ...0006-ath9k_hw-Fix-frequent-BT-rx-recovery.patch |  66 +++++++
- ...-ath9k_hw-Fix-max-rx-rate-drop-for-AR9565.patch |  28 +++
- ...nfigure-new-switch-table-for-AR9565-BTCOE.patch |  47 +++++
- ...th9k_hw-Set-default-MCI-config-for-AR9565.patch |  21 ++
- ...ust-duty-cycle-for-FTP-profile-for-AR9565.patch |  21 ++
- ...-ath9k-Add-new-BT-profile-info-A2DP_Voice.patch |  44 +++++
- ...012-cfg80211-Disallow-HT-WEP-in-IBSS-mode.patch |  63 ++++++
- ...h-mgmt-Fix-enabling-SSP-while-powered-off.patch |  43 -----
- ...th-mgmt-Fix-enabling-LE-while-powered-off.patch |  46 -----
- ...h-Fix-not-removing-power_off-delayed-work.patch |  76 --------
- ...x-possible-circular-lock-on-reg_regdb_sea.patch | 129 -------------
- ...-t-double-free-the-interrupt-in-failure-p.patch |  33 ----
- ...gmt-Implement-support-for-passkey-notific.patch | 214 ---------------------
- ...ooth-Update-management-interface-revision.patch |  36 ----
- ...dd-USB_VENDOR_AND_INTERFACE_INFO-for-Broa.patch |  31 ---
- .../0009-ath9k-Disable-ASPM-only-for-AR9285.patch  |  38 ----
- 30 files changed, 974 insertions(+), 979 deletions(-)
- create mode 100644 linux-next-cherry-picks/0077-ath9k-Handle-errors-properly-in-MCI-initialization.patch
- create mode 100644 linux-next-cherry-picks/0078-ath9k-Add-a-debugfs-file-to-adjust-antenna-diversity.patch
- create mode 100644 linux-next-cherry-picks/0079-ath9k-Fix-chainmask-selection-for-AR9462.patch
- create mode 100644 linux-next-cherry-picks/0080-ath9k-Enable-MCI-for-AR9565.patch
- create mode 100644 linux-next-cherry-picks/0081-ath9k-Fix-BTCOEX-weight-initialization.patch
- delete mode 100644 linux-next-pending/0001-ath9k-Handle-errors-properly-in-MCI-initialization.patch
- create mode 100644 linux-next-pending/0001-ath9k_hw-Enable-OSLA-hw-fix-for-AR9565.patch
- delete mode 100644 linux-next-pending/0002-ath9k-Add-a-debugfs-file-to-adjust-antenna-diversity.patch
- create mode 100644 linux-next-pending/0002-ath9k_hw-Fix-selfgen-chainmask-for-9565.patch
- delete mode 100644 linux-next-pending/0003-ath9k-Fix-chainmask-selection-for-AR9462.patch
- create mode 100644 linux-next-pending/0003-ath9k-Set-appropriate-bit-for-AR9565-in-btc-control-.patch
- delete mode 100644 linux-next-pending/0004-ath9k-Enable-MCI-for-AR9565.patch
- create mode 100644 linux-next-pending/0004-ath9k-turn-off-RXIQ-calibration-while-re-calibrating.patch
- create mode 100644 linux-next-pending/0005-ath9k_hw-Disable-MCI-stat-counter-by-default-for-AR9.patch
- create mode 100644 linux-next-pending/0006-ath9k_hw-Fix-frequent-BT-rx-recovery.patch
- create mode 100644 linux-next-pending/0007-ath9k_hw-Fix-max-rx-rate-drop-for-AR9565.patch
- create mode 100644 linux-next-pending/0008-ath9k_hw-Configure-new-switch-table-for-AR9565-BTCOE.patch
- create mode 100644 linux-next-pending/0009-ath9k_hw-Set-default-MCI-config-for-AR9565.patch
- create mode 100644 linux-next-pending/0010-ath9k-adjust-duty-cycle-for-FTP-profile-for-AR9565.patch
- create mode 100644 linux-next-pending/0011-ath9k-Add-new-BT-profile-info-A2DP_Voice.patch
- create mode 100644 linux-next-pending/0012-cfg80211-Disallow-HT-WEP-in-IBSS-mode.patch
- delete mode 100644 pending-stable/0001-Bluetooth-mgmt-Fix-enabling-SSP-while-powered-off.patch
- delete mode 100644 pending-stable/0002-Bluetooth-mgmt-Fix-enabling-LE-while-powered-off.patch
- delete mode 100644 pending-stable/0003-Bluetooth-Fix-not-removing-power_off-delayed-work.patch
- delete mode 100644 pending-stable/0004-cfg80211-fix-possible-circular-lock-on-reg_regdb_sea.patch
- delete mode 100644 pending-stable/0005-iwlwifi-don-t-double-free-the-interrupt-in-failure-p.patch
- delete mode 100644 pending-stable/0006-Bluetooth-mgmt-Implement-support-for-passkey-notific.patch
- delete mode 100644 pending-stable/0007-Bluetooth-Update-management-interface-revision.patch
- delete mode 100644 pending-stable/0008-Bluetooth-Add-USB_VENDOR_AND_INTERFACE_INFO-for-Broa.patch
- delete mode 100644 pending-stable/0009-ath9k-Disable-ASPM-only-for-AR9285.patch
+   1177067 - Total upstream lines of code being pulled
+      3109 - backport code changes
+      2580 - backport code additions
+       529 - backport code deletions
+     12754 - backport from compat module
+     15863 - total backport code
+    1.3477 - % of code consists of backport work
+       301 - backport code changes
+       219 - backport code additions
+        82 - backport code deletions
+     12754 - backport from compat module
+     13055 - total backport code
+    1.1091 - % of code consists of backport work
 
--- 
-1.7.11.4
-
+Base tree: linux-next.git
+Base tree version: next-20121019
+compat.git: compat-v3.7-rc1-1
+compat-drivers release: compat-drivers-2012-10-16-6-gf577c36-pc
+Code metrics archive: http://bit.ly/H6BTF7
