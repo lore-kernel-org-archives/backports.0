@@ -1,38 +1,63 @@
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:40626 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753251Ab2JVL6H (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 22 Oct 2012 07:58:07 -0400
+Received: by mail-ee0-f46.google.com with SMTP id b15so929388eek.19
+        for <backports@vger.kernel.org>; Mon, 22 Oct 2012 04:58:05 -0700 (PDT)
+From: =?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+To: backports@vger.kernel.org
+Cc: mcgrof@kernel.org,
+	=?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+Subject: [PATCH] compat-drivers: Enable CONFIG_DRM_LOAD_EDID_FIRMWARE
+Date: Mon, 22 Oct 2012 14:57:59 +0300
+Message-Id: <1350907079-31735-1-git-send-email-ozancag@gmail.com>
 MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <157393863283F442885425D2C45428562A4FFF1D@nasanexd02f.na.qualcomm.com>
-References: <1348824541-12396-1-git-send-email-xiong@qca.qualcomm.com>
-	<CAB=NE6UsbbXdhQh9hqRxByAVqtskpE4xW0Kz9ascip_8-K56ag@mail.gmail.com>
-	<157393863283F442885425D2C45428562A4FFF1D@nasanexd02f.na.qualcomm.com>
-Date: Wed, 3 Oct 2012 08:23:31 -0700
-Message-ID: <CAB=NE6V5cNQYXD5wMNSO4Y8ZHW-sETvq1ASX8tBUDMn36bJmZQ@mail.gmail.com>
-Subject: Re: [PATCH] compat-drivers: update ethernet driver alx in crap dir
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: "Huang, Xiong" <xiong@qca.qualcomm.com>
-Cc: "mcgrof@kernel.org" <mcgrof@kernel.org>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>, nic-devel <nic-devel@qualcomm.com>,
-	"Ren, Cloud" <cjren@qca.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Oct 3, 2012 at 5:25 AM, Huang, Xiong <xiong@qca.qualcomm.com> wrote:
->> Xiong,
->>
->> You are deleting the file
->> crap/network/0001-alx-add-new-QCA-ethernet-driver-which-supercedes-
->> atl.patch
->> here and then you are updating the
->> crap/network/0002-backport-alx.patch file. What you likely wanted to do was
->> to remove the original crap/network/0001-alx-add-new-QCA-ethernet-driver-
->> which-supercedes-atl.patch
->> file and then git add a new crap/network/0001-something.patch which you
->> likely forgot to do.
->>
-> Luis, I just thought the patch name could be a bit more appropriated. Sorry to confuse you :(
-> I will resend the patch with the same patch file name, I mean just 'update' the original
-> patch files (0001 & 0002), is it ok for you ?
+This was added in 3.4. Rename the option in the relevant source file
+and enable CONFIG_COMPAT_DRM_LOAD_EDID_FIRMWARE in config.mk to build
+the symbol into DRM_KMS_HELPER kernel module.
 
-Either way is fine. I just meant that in your patch you forgot to
-provide a replacement for the old patch.
+Signed-off-by: Ozan Çağlayan <ozancag@gmail.com>
+---
+ config.mk                                  |  1 +
+ patches/drm/06-rename-config-options.patch | 11 +++++++++++
+ 2 files changed, 12 insertions(+)
 
-  Luis
+diff --git a/config.mk b/config.mk
+index c9b2353..4a390fd 100644
+--- a/config.mk
++++ b/config.mk
+@@ -702,5 +702,6 @@ ifndef CONFIG_COMPAT_KERNEL_3_2
+ export CONFIG_COMPAT_VIDEO_MODULES=y
+ export CONFIG_COMPAT_DRM=m
+ export CONFIG_COMPAT_DRM_I915=m
++export CONFIG_COMPAT_DRM_LOAD_EDID_FIRMWARE=y
+ export CONFIG_COMPAT_DRM_KMS_HELPER=m
+ endif #CONFIG_COMPAT_KERNEL_3_2
+diff --git a/patches/drm/06-rename-config-options.patch b/patches/drm/06-rename-config-options.patch
+index 1096fce..9fda1f8 100644
+--- a/patches/drm/06-rename-config-options.patch
++++ b/patches/drm/06-rename-config-options.patch
+@@ -75,3 +75,14 @@
+  sil164-y := sil164_drv.o
+ -obj-$(CONFIG_DRM_I2C_SIL164) += sil164.o
+ +obj-$(CONFIG_COMPAT_DRM_I2C_SIL164) += sil164.o
++--- a/drivers/gpu/drm/drm_crtc_helper.c
+++++ b/drivers/gpu/drm/drm_crtc_helper.c
++@@ -119,7 +119,7 @@ int drm_helper_probe_single_connector_mo
++ 		goto prune;
++ 	}
++ 
++-#ifdef CONFIG_DRM_LOAD_EDID_FIRMWARE
+++#ifdef CONFIG_COMPAT_DRM_LOAD_EDID_FIRMWARE
++ 	count = drm_load_edid_firmware(connector);
++ 	if (count == 0)
++ #endif
+-- 
+1.7.11.7
+
