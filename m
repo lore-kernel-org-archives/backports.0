@@ -1,46 +1,66 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:49675 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934530Ab2JYPLa (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 25 Oct 2012 11:11:30 -0400
-Message-ID: <50895699.6060009@hauke-m.de>
-Date: Thu, 25 Oct 2012 17:11:21 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:57240 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751245Ab2JVJ46 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 22 Oct 2012 05:56:58 -0400
+Received: by mail-ee0-f46.google.com with SMTP id b15so882872eek.19
+        for <backports@vger.kernel.org>; Mon, 22 Oct 2012 02:56:57 -0700 (PDT)
+From: =?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+To: backports@vger.kernel.org
+Cc: mcgrof@kernel.org,
+	=?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+Subject: [PATCH] compat-drivers: Separate code metrics for each subsystem
+Date: Mon, 22 Oct 2012 12:56:51 +0300
+Message-Id: <1350899811-16329-1-git-send-email-ozancag@gmail.com>
 MIME-Version: 1.0
-To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
-CC: backports@vger.kernel.org
-Subject: Re: Compat-wireless release for 2012-10-24 is baked
-References: <20121024201437.368EB40ABF@repository3.orbit-lab.org> <CAFub=KTgcjeNuL6T3aoV8g3pd4GeQu6QboUeNEMTjcRcq5Ji_w@mail.gmail.com>
-In-Reply-To: <CAFub=KTgcjeNuL6T3aoV8g3pd4GeQu6QboUeNEMTjcRcq5Ji_w@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 10/25/2012 04:57 PM, Ozan Çağlayan wrote:
-> On Wed, Oct 24, 2012 at 11:14 PM, Compat-wireless cronjob account
-> <compat@orbit-lab.org> wrote:
->> git fetch github (/var/opt/compat/compat-wireless-2.6)
->> HEAD is now at a26c7c1 compat-drivers: Enable CONFIG_DRM_LOAD_EDID_FIRMWARE
->> git fetch github (/var/opt/compat/compat)
->> Nothing new to pack.
->> HEAD is now at 8de8ebb compat: encourage non-root use of bin/get-compat-kernels
->> git fetch  (/var/opt/compat/linux-next)
->> Nothing new to pack.
->> HEAD is now at d1298f5 Add linux-next specific files for 20121024
->> Error while updating from wireless-testing
-> 
-> Do we have the code of these cron scripts anywhere on the net? Would
-> you consider to run bin/get-compat-trees before running this script to
-> fetch the latest kernels?
+Add a subsystem marker before code metrics to differentiate between
+multiple subsystems, e.g. drm, network, etc.:
 
-Hi Ozan,
+compat-drivers code metrics
 
-The code of the scripts is here:
-https://git.kernel.org/?p=linux/kernel/git/mcgrof/compat-user.git;a=summary
+   1181683 - Total upstream lines of code being pulled
 
-Doesn't get-compat-trees need root rights? If so then I do not think it
-is a good idea to run that automatically, but we should test against
-some more recent kernels.
+   network
+   ----------------------------------------
+      3109 - backport code changes
+      2580 - backport code additions
+       529 - backport code deletions
+     12754 - backport from compat module
+     15863 - total backport code
+    1.3424 - % of code consists of backport work
 
-Hauke
+   drm
+   ----------------------------------------
+       301 - backport code changes
+       219 - backport code additions
+        82 - backport code deletions
+     12754 - backport from compat module
+     13055 - total backport code
+    1.1048 - % of code consists of backport work
+
+Signed-off-by: Ozan Çağlayan <ozancag@gmail.com>
+---
+ scripts/admin-update.sh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/scripts/admin-update.sh b/scripts/admin-update.sh
+index 9b85026..00900a4 100755
+--- a/scripts/admin-update.sh
++++ b/scripts/admin-update.sh
+@@ -664,6 +664,8 @@ printf "${PURPLE}%10s${NORMAL} - Total upstream lines of code being pulled\n" $O
+ 
+ for subsystem in $SUBSYSTEMS; do
+ 
++	printf "\n   ${YELLOW}$subsystem${NORMAL}\n   ----------------------------------------\n" >> $CODE_METRICS
++
+ 	for dir in $EXTRA_PATCHES; do
+ 		LAST_ELEM=$dir
+ 	done
+-- 
+1.7.11.7
+
