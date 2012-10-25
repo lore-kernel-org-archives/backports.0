@@ -1,68 +1,47 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:44126 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753366Ab2JMUqn (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 13 Oct 2012 16:46:43 -0400
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 346E55402F2
-	for <backports@vger.kernel.org>; Sat, 13 Oct 2012 16:46:42 -0400 (EDT)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-10-13 is baked
-Message-Id: <20121013204642.121DD40ABF@repository3.orbit-lab.org>
-Date: Sat, 13 Oct 2012 16:46:42 -0400 (EDT)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <50895699.6060009@hauke-m.de>
+References: <20121024201437.368EB40ABF@repository3.orbit-lab.org>
+	<CAFub=KTgcjeNuL6T3aoV8g3pd4GeQu6QboUeNEMTjcRcq5Ji_w@mail.gmail.com>
+	<50895699.6060009@hauke-m.de>
+Date: Thu, 25 Oct 2012 08:20:24 -0700
+Message-ID: <CAB=NE6Uh0ZXAA=RiLNwL4X0+JjyTzE4YyR3DCMCdJei-hdedLw@mail.gmail.com>
+Subject: Re: Compat-wireless release for 2012-10-24 is baked
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>,
+	backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-HEAD is now at 788f585 compat-drivers: add UAPI backport fixes
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at fb4936e compat: backport seq_file's user namespace addition
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 6b35893 Add linux-next specific files for 20121012
-Trying kernel 3.4.4-030404-generic [FAILED]
-Trying kernel 3.3.7-030307-generic [FAILED]
-Trying kernel 3.2.2-030202-generic [FAILED]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [FAILED]
-Trying kernel 2.6.30-02063010-generic [FAILED]
-Trying kernel 2.6.29-02062906-generic [FAILED]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Failed...
+On Thu, Oct 25, 2012 at 8:11 AM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> On 10/25/2012 04:57 PM, Ozan =C3=87a=C4=9Flayan wrote:
+>> On Wed, Oct 24, 2012 at 11:14 PM, Compat-wireless cronjob account
+>> <compat@orbit-lab.org> wrote:
+>>> git fetch github (/var/opt/compat/compat-wireless-2.6)
+>>> HEAD is now at a26c7c1 compat-drivers: Enable CONFIG_DRM_LOAD_EDID_FIRM=
+WARE
+>>> git fetch github (/var/opt/compat/compat)
+>>> Nothing new to pack.
+>>> HEAD is now at 8de8ebb compat: encourage non-root use of bin/get-compat=
+-kernels
+>>> git fetch  (/var/opt/compat/linux-next)
+>>> Nothing new to pack.
+>>> HEAD is now at d1298f5 Add linux-next specific files for 20121024
+>>> Error while updating from wireless-testing
+>>
+>> Do we have the code of these cron scripts anywhere on the net? Would
+>> you consider to run bin/get-compat-trees before running this script to
+>> fetch the latest kernels?
+>
+> Hi Ozan,
+>
+> The code of the scripts is here:
+> https://git.kernel.org/?p=3Dlinux/kernel/git/mcgrof/compat-user.git;a=3Ds=
+ummary
+>
+> Doesn't get-compat-trees need root rights?
 
-compat-drivers code metrics
+Not anymore!
 
-   1188291 - Total upstream lines of code being pulled
-      3107 - backport code changes
-      2580 - backport code additions
-       527 - backport code deletions
-     12696 - backport from compat module
-     15803 - total backport code
-    1.3299 - % of code consists of backport work
-       301 - backport code changes
-       219 - backport code additions
-        82 - backport code deletions
-     12696 - backport from compat module
-     12997 - total backport code
-    1.0938 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20121012
-compat.git: compat-2012-10-08
-compat-drivers release: compat-drivers-2012-10-08-3-g788f585
-Code metrics archive: http://bit.ly/H6BTF7
+  Luis
