@@ -1,69 +1,39 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail-ea0-f174.google.com ([209.85.215.174]:52665 "EHLO
-	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753937Ab2J1Rzy (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 28 Oct 2012 13:55:54 -0400
-Received: by mail-ea0-f174.google.com with SMTP id c13so1431140eaa.19
-        for <backports@vger.kernel.org>; Sun, 28 Oct 2012 10:55:53 -0700 (PDT)
-From: =?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
-To: backports@vger.kernel.org
-Cc: mcgrof@kernel.org,
-	=?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
-Subject: [PATCH 2/3] compat-drivers: drm: Revert ACPI table size check for < 3.6
-Date: Sun, 28 Oct 2012 19:55:44 +0200
-Message-Id: <1351446945-23717-2-git-send-email-ozancag@gmail.com>
-In-Reply-To: <1351446945-23717-1-git-send-email-ozancag@gmail.com>
-References: <1351446945-23717-1-git-send-email-ozancag@gmail.com>
+Received: from mail-ia0-f174.google.com ([209.85.210.174]:46462 "EHLO
+	mail-ia0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759662Ab2JYO57 convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 25 Oct 2012 10:57:59 -0400
+Received: by mail-ia0-f174.google.com with SMTP id y32so1349029iag.19
+        for <backports@vger.kernel.org>; Thu, 25 Oct 2012 07:57:58 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <20121024201437.368EB40ABF@repository3.orbit-lab.org>
+References: <20121024201437.368EB40ABF@repository3.orbit-lab.org>
+Date: Thu, 25 Oct 2012 17:57:58 +0300
+Message-ID: <CAFub=KTgcjeNuL6T3aoV8g3pd4GeQu6QboUeNEMTjcRcq5Ji_w@mail.gmail.com>
+Subject: Re: Compat-wireless release for 2012-10-24 is baked
+From: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
+To: backports@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-acpi_get_table_with_size() was exported with kernels >= 3.6. Revert the
-size checking for kernels < 3.6.
+On Wed, Oct 24, 2012 at 11:14 PM, Compat-wireless cronjob account
+<compat@orbit-lab.org> wrote:
+> git fetch github (/var/opt/compat/compat-wireless-2.6)
+> HEAD is now at a26c7c1 compat-drivers: Enable CONFIG_DRM_LOAD_EDID_FIRMWARE
+> git fetch github (/var/opt/compat/compat)
+> Nothing new to pack.
+> HEAD is now at 8de8ebb compat: encourage non-root use of bin/get-compat-kernels
+> git fetch  (/var/opt/compat/linux-next)
+> Nothing new to pack.
+> HEAD is now at d1298f5 Add linux-next specific files for 20121024
+> Error while updating from wireless-testing
 
-Signed-off-by: Ozan Çağlayan <ozancag@gmail.com>
----
- .../10-radeon-revert-acpi-table-size-check.patch   | 29 ++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
- create mode 100644 patches/drm/10-radeon-revert-acpi-table-size-check.patch
+Do we have the code of these cron scripts anywhere on the net? Would
+you consider to run bin/get-compat-trees before running this script to
+fetch the latest kernels?
 
-diff --git a/patches/drm/10-radeon-revert-acpi-table-size-check.patch b/patches/drm/10-radeon-revert-acpi-table-size-check.patch
-new file mode 100644
-index 0000000..d595a98
---- /dev/null
-+++ b/patches/drm/10-radeon-revert-acpi-table-size-check.patch
-@@ -0,0 +1,29 @@
-+acpi_get_table_with_size() was exported with kernels >= 3.6. Revert the
-+size checking for kernels < 3.6.
-+
-+Index: compat-drivers/drivers/gpu/drm/radeon/radeon_bios.c
-+===================================================================
-+--- compat-drivers.orig/drivers/gpu/drm/radeon/radeon_bios.c
-++++ compat-drivers/drivers/gpu/drm/radeon/radeon_bios.c
-+@@ -554,12 +554,21 @@ static bool radeon_acpi_vfct_bios(struct
-+ {
-+ 	bool ret = false;
-+ 	struct acpi_table_header *hdr;
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
-+ 	acpi_size tbl_size;
-++#else
-++	/* acpi_get_table_with_size() not exported on kernels < 3.6 */
-++	acpi_size tbl_size = 0x7fffffff;
-++#endif
-+ 	UEFI_ACPI_VFCT *vfct;
-+ 	GOP_VBIOS_CONTENT *vbios;
-+ 	VFCT_IMAGE_HEADER *vhdr;
-+ 
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
-+ 	if (!ACPI_SUCCESS(acpi_get_table_with_size("VFCT", 1, &hdr, &tbl_size)))
-++#else
-++	if (!ACPI_SUCCESS(acpi_get_table("VFCT", 1, &hdr)))
-++#endif
-+ 		return false;
-+ 	if (tbl_size < sizeof(UEFI_ACPI_VFCT)) {
-+ 		DRM_ERROR("ACPI VFCT table present but broken (too short #1)\n");
+
 -- 
-1.7.11.7
-
+Ozan Çağlayan
