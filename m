@@ -1,21 +1,34 @@
-MIME-Version: 1.0
-In-Reply-To: <1351203430-6865-2-git-send-email-hauke@hauke-m.de>
-References: <1351203430-6865-1-git-send-email-hauke@hauke-m.de>
-	<1351203430-6865-2-git-send-email-hauke@hauke-m.de>
-Date: Sat, 27 Oct 2012 08:04:03 -0700
-Message-ID: <CAB=NE6WwX48ZLUPK0tY3HE7527pn4=gEd2UBbbf_TonsqhygNA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] compat-drivers: deactivate cfg80211 tracing for
- kernels <= 2.6.32
-From: "Luis R. Rodriguez" <mcgrof@gmail.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:33722 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S966344Ab2JZUPI (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 26 Oct 2012 16:15:08 -0400
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id BA21B5401E3
+	for <backports@vger.kernel.org>; Fri, 26 Oct 2012 16:15:06 -0400 (EDT)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-10-26 is baked
+Message-Id: <20121026201506.7B5AC40AC0@repository3.orbit-lab.org>
+Date: Fri, 26 Oct 2012 16:15:06 -0400 (EDT)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Oct 25, 2012 at 3:17 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
->
-> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at a26c7c1 compat-drivers: Enable CONFIG_DRM_LOAD_EDID_FIRMWARE
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 8de8ebb compat: encourage non-root use of bin/get-compat-kernels
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 8243aaf Add linux-next specific files for 20121026
+Error while updating from wireless-testing
 
-Thanks! Applied and pushed both!
+compat-drivers code metrics
 
-  Luis
+   1182835 - Total upstream lines of code being pulled
+
+   network
+   ----------------------------------------
