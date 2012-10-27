@@ -1,44 +1,37 @@
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH] compat-drivers: add ar5523 driver
-Date: Wed, 31 Oct 2012 23:09:05 +0100
-Message-Id: <1351721345-12336-1-git-send-email-hauke@hauke-m.de>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <ozancag@gmail.com>
+From: =?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+To: backports@vger.kernel.org
+Cc: mcgrof@kernel.org,
+	=?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+Subject: [PATCH] compat-drivers: Copy core/ subdir of nouveau driver
+Date: Sat, 27 Oct 2012 17:22:03 +0300
+Message-Id: <1351347723-21884-1-git-send-email-ozancag@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
+This was introduced with the latest nouveau code rewrite. Copy
+this directory too.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Ozan Çağlayan <ozancag@gmail.com>
 ---
- config.mk               |    2 ++
- scripts/admin-update.sh |    1 +
- 2 files changed, 3 insertions(+)
+ scripts/admin-update.sh | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/config.mk b/config.mk
-index f743e05..7316d7b 100644
---- a/config.mk
-+++ b/config.mk
-@@ -519,6 +519,8 @@ export CONFIG_ATH9K_HTC=m
- 
- export CONFIG_ATH6KL_USB=m
- 
-+export CONFIG_AR5523=m
-+
- export CONFIG_BRCMFMAC_USB=y
- 
- # RT2500USB does not require firmware
 diff --git a/scripts/admin-update.sh b/scripts/admin-update.sh
-index 68a5b27..ec5592c 100755
+index e94f9bd..68a5b27 100755
 --- a/scripts/admin-update.sh
 +++ b/scripts/admin-update.sh
-@@ -374,6 +374,7 @@ NET_BT_DIRS="net/bluetooth
- # Drivers that have their own directory
- DRIVERS_WLAN="drivers/net/wireless/ath
- 	      drivers/net/wireless/ath/carl9170
-+	      drivers/net/wireless/ath/ar5523
- 	      drivers/net/wireless/ath/ath5k
- 	      drivers/net/wireless/ath/ath6kl
- 	      drivers/net/wireless/ath/ath9k
+@@ -537,6 +537,9 @@ if [[ "$ENABLE_DRM" == "1" ]]; then
+ 	# Copy radeon reg_srcs for hostprogs
+ 	cp -a $GIT_TREE/drivers/gpu/drm/radeon/reg_srcs drivers/gpu/drm/radeon
+ 
++	# Copy core/ from nouveau/ (Introduced after new code rewrite in 3.7)
++	cp -a $GIT_TREE/drivers/gpu/drm/nouveau/core drivers/gpu/drm/nouveau
++
+ 	# Finally get the DRM top-level makefile
+ 	cp $GIT_TREE/drivers/gpu/drm/Makefile drivers/gpu/drm
+ else
 -- 
-1.7.10.4
+1.7.11.7
