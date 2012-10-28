@@ -1,73 +1,41 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, backports@vger.kernel.org, rob@ti.com, arnd@arndb.de, davej@redhat.com, airlied@linux.ie, bskeggs@redhat.com, alan@lxorguk.ukuu.org.uk, dhowells@redhat.com, tglx@linutronix.de, daniel.vetter@ffwll.ch, jbarnes@virtuousgeek.org, alexander.deucher@amd.com, paulmck@linux.vnet.ibm.com, gregkh@linuxfoundation.org
-Subject: Re: [PATCH 1/2] uapi: update includes for drm content when no kernel API exists
-Date: Sat, 13 Oct 2012 12:33:32 +0200
-Message-ID: <3084988.3Xup6S3alX@avalon>
-In-Reply-To: <1350085772-8755-2-git-send-email-mcgrof@do-not-panic.com>
-References: <1350085772-8755-1-git-send-email-mcgrof@do-not-panic.com> <1350085772-8755-2-git-send-email-mcgrof@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mail-ia0-f174.google.com ([209.85.210.174]:49865 "EHLO
+	mail-ia0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750980Ab2J1OuJ convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 28 Oct 2012 10:50:09 -0400
+Received: by mail-ia0-f174.google.com with SMTP id y32so3309651iag.19
+        for <backports@vger.kernel.org>; Sun, 28 Oct 2012 07:50:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <508D29FD.2020704@hauke-m.de>
+References: <CAFub=KSQ3xq1j8=dHqezh4NY05S7t0p4dSWdp=xa2HM74wL=Og@mail.gmail.com>
+	<508D29FD.2020704@hauke-m.de>
+Date: Sun, 28 Oct 2012 16:50:09 +0200
+Message-ID: <CAFub=KRzDY=mxc_nyB3Y-fwHEqwm4OsCUj19vDCMwkwYqT34_g@mail.gmail.com>
+Subject: Re: Regarding compat_autoconf.h generation
+From: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi Luis,
+> Hi,
+>
+> are you working o making nouveau work with compat-drivers? I just noticed
+> that i915 is only activated driver and I have some problems with my nvidia
+> card running nouveau and wanted to try out a new version.
+>
+> Hauke
 
-On Friday 12 October 2012 16:49:31 Luis R. Rodriguez wrote:
-> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-> 
-> The UAPI changes split kernel API and userspace API
-> content onto two separate header files. The userspace
-> API drm content was moved to include/uapi/drm/ with the
-> same file name while kernel specific API content was
-> kept under include/drm/ with the same file name. When
-> one file was split into two files the kernel header
-> includes the uapi header and a UAPI prefix was added to
-> the uapi header for its header guard. When there was no
-> kernel API content found the uapi header file was the
-> only one that was kept and the original guard for the
-> header file was kept. In this particular case the
-> original users of this header file were not modified
-> and the uapi header file is expected to be picked up
-> by path.
-> 
-> This may work well at compilation on the kernel but when
-> backporting this creates a few complexities.
+Yep actually I got hit by this while trying to build nouveau. Now I
+can succesfully build it but I broke up grub.cfg while adding a new
+boot entry for compat-drivers trials and have to find out how to use
+the uber-complicated grub2 command line...
 
-Could you please provide more details about those complexities ?
-
-> To help with
-> backporting [0] lets be explicit about the new uapi path
-> when there is no respective kernel API header file. For
-> more details on the UAPI changes see the lwn article on
-> this [1].
-> 
-> [0] https://backports.wiki.kernel.org
-> [1] http://lwn.net/Articles/507794/
-> 
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: devel@driverdev.osuosl.org
-> Cc: backports@vger.kernel.org
-> 
-> Cc: Rob Clark <rob@ti.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Dave Jones <davej@redhat.com>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Ben Skeggs <bskeggs@redhat.com>
-> Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
-> Cc: Alex Deucher <alexander.deucher@amd.com>
-> Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 
 -- 
-Regards,
-
-Laurent Pinchart
+Ozan Çağlayan
+Research Assistant
+Galatasaray University - Computer Engineering Dept.
+http://www.ozancaglayan.com
