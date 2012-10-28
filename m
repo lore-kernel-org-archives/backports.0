@@ -1,92 +1,60 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:42060 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753783Ab2JCU47 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 3 Oct 2012 16:56:59 -0400
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 8CB6F5403E6
-	for <backports@vger.kernel.org>; Wed,  3 Oct 2012 16:56:58 -0400 (EDT)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-10-03 is baked
-Message-Id: <20121003205658.6DF3D40ABF@repository3.orbit-lab.org>
-Date: Wed,  3 Oct 2012 16:56:58 -0400 (EDT)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Received: from server19320154104.serverpool.info ([193.201.54.104]:56016 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752240Ab2J1MuQ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 28 Oct 2012 08:50:16 -0400
+Message-ID: <508D29FD.2020704@hauke-m.de>
+Date: Sun, 28 Oct 2012 13:50:05 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
+MIME-Version: 1.0
+To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
+CC: backports@vger.kernel.org, mcgrof@kernel.org
+Subject: Re: Regarding compat_autoconf.h generation
+References: <CAFub=KSQ3xq1j8=dHqezh4NY05S7t0p4dSWdp=xa2HM74wL=Og@mail.gmail.com>
+In-Reply-To: <CAFub=KSQ3xq1j8=dHqezh4NY05S7t0p4dSWdp=xa2HM74wL=Og@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-HEAD is now at 7110a5c compat-drivers: copy over amp.h as a bluetooth header
-git fetch github (/var/opt/compat/compat)
-HEAD is now at fb4936e compat: backport seq_file's user namespace addition
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 25444c3 Add linux-next specific files for 20121003
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+On 10/27/2012 04:25 PM, Ozan Çağlayan wrote:
+> Hi,
+>
+> In the nouveau DRM driver there is a CONFIG_NOUVEAU_DEBUG which has to
+> be an integer between 0 and 7 with the default as 3.
+> Currently gen-compat-autoconf.sh defines this as a string by default:
+>
+>             *) # Assume string
+>   61                 # XXX: add better checks to make sure what was on
+>   62                 # the right was indeed a string
+>   63                 echo "#ifndef $VAR"
+>   64                 echo "#define $VAR \"$VALUE\""
+>   65                 echo "#endif /* $VAR */ "
+>   66                 ;;
+>
+> Is it OK to modify the script to allow defining integers? Also, it
+> seems that there is no difference with =m and =y:
+>
+>                y)
+>   51                 echo "#ifndef $VAR"
+>   52                 echo "#define $VAR 1"
+>   53                 echo "#endif /* $VAR */ "
+>   54                 ;;
+>   55         m)
+>   56                 echo "#ifndef $VAR"
+>   57                 echo "#define $VAR 1"
+>   58                 echo "#endif /* $VAR */ "
+>   59                 ;;
+>
+> How come this doesn't break things? Both =y and =m exist in config.mk.
+>
+> Thanks!
+>
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+Hi,
 
-compat-drivers code metrics
+are you working o making nouveau work with compat-drivers? I just 
+noticed that i915 is only activated driver and I have some problems with 
+my nvidia card running nouveau and wanted to try out a new version.
 
-   1215288 - Total upstream lines of code being pulled
-      3107 - backport code changes
-      2580 - backport code additions
-       527 - backport code deletions
-     12696 - backport from compat module
-     15803 - total backport code
-    1.3004 - % of code consists of backport work
-     19083 - Crap changes not yet posted
-     19023 - Crap additions not yet posted
-        60 - Crap deletions not yet posted
-    1.5702 - % of crap code
-       304 - backport code changes
-       222 - backport code additions
-        82 - backport code deletions
-     12696 - backport from compat module
-     13000 - total backport code
-    1.0697 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20121003
-compat.git: compat-2012-10-02
-compat-drivers release: compat-drivers-2012-10-02-pc
-Code metrics archive: http://bit.ly/H6BTF7
+Hauke
