@@ -1,34 +1,38 @@
 Return-Path: <hauke@hauke-m.de>
+Message-ID: <5092BF58.1040703@hauke-m.de>
+Date: Thu, 01 Nov 2012 19:28:40 +0100
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 3/8] compat-drivers: add CONFIG_BT_WILINK in config.mk
-Date: Tue,  6 Nov 2012 00:11:50 +0100
-Message-Id: <1352157115-13469-4-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1352157115-13469-1-git-send-email-hauke@hauke-m.de>
-References: <1352157115-13469-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+To: backports@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@gmail.com>
+Subject: Donwload locations and wiki structure
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <backports@vger.kernel.org>
 
+Hi Luis,
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- config.mk |    3 +++
- 1 file changed, 3 insertions(+)
+When I visit the backport wiki [0], I am missing the word download.
+The section name "compat-drivers releases" should better be named:
+"compat-drivers releases downloads". ;-)
 
-diff --git a/config.mk b/config.mk
-index 458f0c1..b7a468c 100644
---- a/config.mk
-+++ b/config.mk
-@@ -222,6 +222,9 @@ export CONFIG_BT_HCIUART_3WIRE=y
- 
- export CONFIG_BT_HCIVHCI=m
- export CONFIG_BT_MRVL=m
-+ifndef CONFIG_COMPAT_KERNEL_2_6_39
-+export CONFIG_BT_WILINK=m
-+endif #CONFIG_COMPAT_KERNEL_2_6_39
- 
- ifdef CONFIG_PCMCIA
- export CONFIG_BT_HCIDTL1=m
--- 
-1.7.10.4
+The change from compat-wireless to compat-drivers was more a rename than
+a very big change, why don't you link the old stable releases on the
+release page, I think most of the stable page should be integrated into
+the new release page?
+
+As automatically uploading to https://www.kernel.org does not work, it
+is not a suitable place to store the daily snapshots of compat-drivers,
+they are better localed at the other positions and the two releases at
+kernel.org should be removed.
+
+Putting all the snapshots into one directory on the download server gets
+messy with the daily releases, the old structure with /year/month/
+folders was better. The cmake reports should go into an own subdirectory
+as most of the users are not interested in them. A symlink to the latest
+release in the root folder would be nice.
+
+I just want to hear you opinion on this and would try to solve some of
+these things by myself.
+
+Hauke
+
+[0]: https://backports.wiki.kernel.org/index.php/Main_Page
