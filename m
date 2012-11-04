@@ -1,29 +1,21 @@
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 0/8] compat-drivers: little fixes
-Date: Tue,  6 Nov 2012 00:11:47 +0100
-Message-Id: <1352157115-13469-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <1351446945-23717-3-git-send-email-ozancag@gmail.com>
+References: <1351446945-23717-1-git-send-email-ozancag@gmail.com>
+	<1351446945-23717-3-git-send-email-ozancag@gmail.com>
+Date: Sun, 4 Nov 2012 09:36:00 -0800
+Message-ID: <CAB=NE6Ucxc3dZd1TO6DL-76-NpNMPYrHuVE4VJV=3qjq7vZVgg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] compat-drivers: Enable ATI/AMD Radeon for kernels >= 3.2
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-Some small enhancements and missing or removed config options.
+On Sun, Oct 28, 2012 at 10:55 AM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail.co=
+m> wrote:
+> Signed-off-by: Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com>
 
-Hauke Mehrtens (8):
-  compat-drivers: remove CONFIG_ATH9K_PKTLOG form config.mk
-  compat-drivers: activate CONFIG_BT_HCIUART_3WIRE in config.mk
-  compat-drivers: add CONFIG_BT_WILINK in config.mk
-  compat-drviers: remove CONFIG_IWM from config.mk
-  compat-drivers: remove CONFIG_WIL6210 from config.mk
-  compat-drivers: add CONFIG_RT2800PCI_RT3290 in config.mk
-  compat-drivers: add CONFIG_MWIFIEX_USB in config.mk
-  compat-drivers: rename drm config symbols
+Thanks, applied and pushed both sets!
 
- config.mk                                  |   17 ++--
- patches/drm/06-rename-config-options.patch |  122 ++++++++++++++++++++++++----
- patches/network/06-header-changes.patch    |   10 +++
- 3 files changed, 121 insertions(+), 28 deletions(-)
-
--- 
-1.7.10.4
+  Luis
