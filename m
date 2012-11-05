@@ -3,48 +3,35 @@ From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/4] compat: add eth_zero_addr()
-Date: Wed, 28 Nov 2012 23:57:38 +0100
-Message-Id: <1354143460-28164-2-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1354143460-28164-1-git-send-email-hauke@hauke-m.de>
-References: <1354143460-28164-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 5/8] compat-drivers: remove CONFIG_WIL6210 from config.mk
+Date: Tue,  6 Nov 2012 00:11:52 +0100
+Message-Id: <1352157115-13469-6-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1352157115-13469-1-git-send-email-hauke@hauke-m.de>
+References: <1352157115-13469-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
+The device driver was removed from crap some time ago.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- include/linux/compat-3.7.h |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ config.mk |    5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/include/linux/compat-3.7.h b/include/linux/compat-3.7.h
-index 2d7b6dd..9e8d675 100644
---- a/include/linux/compat-3.7.h
-+++ b/include/linux/compat-3.7.h
-@@ -89,6 +89,25 @@ static inline int pcie_capability_clear_dword(struct pci_dev *dev, int pos,
+diff --git a/config.mk b/config.mk
+index 0ea2059..ec9c8ca 100644
+--- a/config.mk
++++ b/config.mk
+@@ -275,11 +275,6 @@ export CONFIG_COMPAT_ATH9K_RATE_CONTROL=y
  
- #define PCI_EXP_LNKSTA2			50      /* Link Status 2 */
+ export CONFIG_ATH9K_BTCOEX_SUPPORT=y
  
-+/* This backports:
-+ *
-+ * commit 6d57e9078e880a3dd232d579f42ac437a8f1ef7b
-+ * Author: Duan Jiong <djduanjiong@gmail.com>
-+ * Date:   Sat Sep 8 16:32:28 2012 +0000
-+ * 
-+ *     etherdevice: introduce help function eth_zero_addr() 
-+ */
-+/**
-+ * eth_zero_addr - Assign zero address
-+ * @addr: Pointer to a six-byte array containing the Ethernet address
-+ *
-+ * Assign the zero address to the given address array.
-+ */
-+static inline void eth_zero_addr(u8 *addr)
-+{
-+	memset(addr, 0x00, ETH_ALEN);
-+}
-+
- #else /* (LINUX_VERSION_CODE > KERNEL_VERSION(3,7,0)) */
- #define netlink_notify_portid(__notify) (__notify->portid)
- #define genl_info_snd_portid(__genl_info) (__genl_info->snd_portid)
+-# WIL6210 requires MSI only available >= 2.6.30
+-ifndef CONFIG_COMPAT_KERNEL_2_6_30
+-export CONFIG_WIL6210=m
+-endif #CONFIG_COMPAT_KERNEL_2_6_30
+-
+ ifndef CONFIG_COMPAT_KERNEL_2_6_27
+ export CONFIG_ATH6KL=m
+ # export CONFIG_ATH6KL_DEBUG=y
 -- 
 1.7.10.4
