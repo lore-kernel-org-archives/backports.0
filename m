@@ -3,38 +3,32 @@ From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 6/6] compat-drivers: do not use struct spinlock
-Date: Thu, 29 Nov 2012 00:07:49 +0100
-Message-Id: <1354144069-28611-7-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1354144069-28611-1-git-send-email-hauke@hauke-m.de>
-References: <1354144069-28611-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 3/8] compat-drivers: add CONFIG_BT_WILINK in config.mk
+Date: Tue,  6 Nov 2012 00:11:50 +0100
+Message-Id: <1352157115-13469-4-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1352157115-13469-1-git-send-email-hauke@hauke-m.de>
+References: <1352157115-13469-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-struct spinlock does not exists on kernel version <= 2.6.32, use
-spinlock_t instead.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- patches/network/67-use_spinlock_t.patch |   11 +++++++++++
- 1 file changed, 11 insertions(+)
- create mode 100644 patches/network/67-use_spinlock_t.patch
+ config.mk |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/patches/network/67-use_spinlock_t.patch b/patches/network/67-use_spinlock_t.patch
-new file mode 100644
-index 0000000..4c9f315
---- /dev/null
-+++ b/patches/network/67-use_spinlock_t.patch
-@@ -0,0 +1,11 @@
-+--- a/drivers/net/wireless/brcm80211/brcmfmac/fweh.h
-++++ b/drivers/net/wireless/brcm80211/brcmfmac/fweh.h
-+@@ -158,7 +158,7 @@ typedef int (*brcmf_fweh_handler_t)(stru
-+  */
-+ struct brcmf_fweh_info {
-+ 	struct work_struct event_work;
-+-	struct spinlock evt_q_lock;
-++	spinlock_t evt_q_lock;
-+ 	struct list_head event_q;
-+ 	int (*evt_handler[BRCMF_E_LAST])(struct brcmf_if *ifp,
-+ 					 const struct brcmf_event_msg *evtmsg,
+diff --git a/config.mk b/config.mk
+index 458f0c1..b7a468c 100644
+--- a/config.mk
++++ b/config.mk
+@@ -222,6 +222,9 @@ export CONFIG_BT_HCIUART_3WIRE=y
+ 
+ export CONFIG_BT_HCIVHCI=m
+ export CONFIG_BT_MRVL=m
++ifndef CONFIG_COMPAT_KERNEL_2_6_39
++export CONFIG_BT_WILINK=m
++endif #CONFIG_COMPAT_KERNEL_2_6_39
+ 
+ ifdef CONFIG_PCMCIA
+ export CONFIG_BT_HCIDTL1=m
 -- 
 1.7.10.4
