@@ -1,96 +1,32 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:37261 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753481Ab2KYV5h (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 25 Nov 2012 16:57:37 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id ACA9B540262
-	for <backports@vger.kernel.org>; Sun, 25 Nov 2012 16:57:36 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-11-25 is baked
-Message-Id: <20121125215736.822F540AC0@repository3.orbit-lab.org>
-Date: Sun, 25 Nov 2012 16:57:36 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Return-Path: <hauke@hauke-m.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 6/8] compat-drivers: add CONFIG_RT2800PCI_RT3290 in config.mk
+Date: Tue,  6 Nov 2012 00:11:53 +0100
+Message-Id: <1352157115-13469-7-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1352157115-13469-1-git-send-email-hauke@hauke-m.de>
+References: <1352157115-13469-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at 41121c4 compat-drivers: disable mwifiex for kernels older than 2.6.27
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 2306855 compat: add USB_SUBCLASS_VENDOR_SPEC
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 3805711 Add linux-next specific files for 20121115
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ config.mk |    1 +
+ 1 file changed, 1 insertion(+)
 
-compat-drivers code metrics
-
-   1255031 - Total upstream lines of code being pulled
-
-   network
-   ----------------------------------------
-      3125 - backport code changes
-      2589 - backport code additions
-       536 - backport code deletions
-     12755 - backport from compat module
-     15880 - total backport code
-    1.2653 - % of code consists of backport work
-
-   drm
-   ----------------------------------------
-       424 - backport code changes
-       285 - backport code additions
-       139 - backport code deletions
-     12755 - backport from compat module
-     13179 - total backport code
-    1.0501 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20121115
-compat.git: compat-2012-11-15
-compat-drivers release: compat-drivers-2012-11-15-pc
-Code metrics archive: http://bit.ly/H6BTF7
+diff --git a/config.mk b/config.mk
+index ec9c8ca..985fb6a 100644
+--- a/config.mk
++++ b/config.mk
+@@ -390,6 +390,7 @@ export CONFIG_RT2400PCI=m
+ export CONFIG_RT2500PCI=m
+ ifdef CONFIG_CRC_CCITT
+ export CONFIG_RT2800PCI=m
++export CONFIG_RT2800PCI_RT3290=y
+ export CONFIG_RT2800PCI_RT33XX=y
+ export CONFIG_RT2800PCI_RT35XX=y
+ export CONFIG_RT2800PCI_RT53XX=y
+-- 
+1.7.10.4
