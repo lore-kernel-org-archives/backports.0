@@ -1,82 +1,59 @@
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 4/4] compat: move config_enabled to compat-3.4.h
-Date: Wed, 28 Nov 2012 23:57:40 +0100
-Message-Id: <1354143460-28164-4-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1354143460-28164-1-git-send-email-hauke@hauke-m.de>
-References: <1354143460-28164-1-git-send-email-hauke@hauke-m.de>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from sabertooth02.qualcomm.com ([65.197.215.38]:30826 "EHLO
+	sabertooth02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751308Ab2KFQra (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 6 Nov 2012 11:47:30 -0500
+Date: Tue, 6 Nov 2012 22:17:33 +0530
+From: Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
+To: Sujith <m.sujith@gmail.com>, Felix Fietkau <nbd@openwrt.org>
+CC: Bala Shanmugam <bkamatch@qca.qualcomm.com>,
+	<rodrigue@qca.qualcomm.com>, <linux-wireless@vger.kernel.org>,
+	<backports@vger.kernel.org>
+Subject: Re: [PATCH 2/2] compat-drivers: Add a next-pending patch.
+Message-ID: <20121106164732.GA10101@hemis.qca.qualcomm.com>
+References: <1352197894-4352-1-git-send-email-bkamatch@qca.qualcomm.com>
+ <1352197894-4352-3-git-send-email-bkamatch@qca.qualcomm.com>
+ <20633.14711.832133.513286@gargle.gargle.HOWL>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20633.14711.832133.513286@gargle.gargle.HOWL>
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-config_enabled() was introduced in kernel version 3.4 and not in
-version 3.1. Now some driver uses this directly and this fails without
-this patch.
+On Tue, Nov 06, 2012 at 09:53:19PM +0530, Sujith wrote:
+> Bala Shanmugam wrote:
+> > Signed-off-by: Bala Shanmugam <bkamatch@qca.qualcomm.com>
+> > ---
+> >  ...x-signal-strength-noise-measurements-on-a.patch |   28 ++++++++++++++++++++
+> >  1 files changed, 28 insertions(+), 0 deletions(-)
+> >  create mode 100644 linux-next-pending/0001-ath9k_hw-fix-signal-strength-noise-measurements-on-a.patch
+> > 
+> > diff --git a/linux-next-pending/0001-ath9k_hw-fix-signal-strength-noise-measurements-on-a.patch b/linux-next-pending/0001-ath9k_hw-fix-signal-strength-noise-measurements-on-a.patch
+> > new file mode 100644
+> > index 0000000..727c904
+> > --- /dev/null
+> > +++ b/linux-next-pending/0001-ath9k_hw-fix-signal-strength-noise-measurements-on-a.patch
+> > @@ -0,0 +1,28 @@
+> > +From f91a5adf7e8d778f8f006934400249ec9c84717c Mon Sep 17 00:00:00 2001
+> > +From: Felix Fietkau <nbd@openwrt.org>
+> > +Date: Fri, 2 Nov 2012 16:23:47 +0530
+> > +Subject: [PATCH] ath9k_hw: fix signal strength / noise measurements on ar9462
+> > +
+> > +The nominal noise floor for most channels is -120, though on some it can
+> > +reach -127. Use -120 for converting noise floor to channel noise to
+> > +avoid overestimating rx signal strength and channel noise.
+> 
+> I don't think this patch has been posted to linux-wireless.
+> linux-next-pending/ can only accept patches that have been posted and reviewed.
+> 
+> Also, this change has to be verified with the internal systems team.
+> 
+Agree. But this change is taken from Chrome kernel tree and it was already
+reviewed by Systems.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- include/linux/compat-3.1.h |   15 +--------------
- include/linux/compat-3.4.h |   14 ++++++++++++++
- 2 files changed, 15 insertions(+), 14 deletions(-)
+Felix,
 
-diff --git a/include/linux/compat-3.1.h b/include/linux/compat-3.1.h
-index fc05245..71bc00f 100644
---- a/include/linux/compat-3.1.h
-+++ b/include/linux/compat-3.1.h
-@@ -42,19 +42,6 @@ static inline struct sk_buff *__netdev_alloc_skb_ip_align(struct net_device *dev
- 	return skb;
- }
- 
--/*
-- * Getting something that works in C and CPP for an arg that may or may
-- * not be defined is tricky.  Here, if we have "#define CONFIG_BOOGER 1"
-- * we match on the placeholder define, insert the "0," for arg1 and generate
-- * the triplet (0, 1, 0).  Then the last step cherry picks the 2nd arg (a one).
-- * When CONFIG_BOOGER is not defined, we generate a (... 1, 0) pair, and when
-- * the last step cherry picks the 2nd arg, we get a zero.
-- */
--#define __ARG_PLACEHOLDER_1 0,
--#define config_enabled(cfg) _config_enabled(cfg)
--#define _config_enabled(value) __config_enabled(__ARG_PLACEHOLDER_##value)
--#define __config_enabled(arg1_or_junk) ___config_enabled(arg1_or_junk 1, 0)
--#define ___config_enabled(__ignored, val, ...) val
- #define genl_dump_check_consistent(cb, user_hdr, family)
- 
- /*
-@@ -63,7 +50,7 @@ static inline struct sk_buff *__netdev_alloc_skb_ip_align(struct net_device *dev
-  *
-  */
- #define IS_ENABLED(option) \
--        (config_enabled(option) || config_enabled(option##_MODULE))
-+	(config_enabled(option) || config_enabled(option##_MODULE))
- 
- #define IFF_TX_SKB_SHARING	0x10000	/* The interface supports sharing
- 					 * skbs on transmit */
-diff --git a/include/linux/compat-3.4.h b/include/linux/compat-3.4.h
-index 887293d..fbd92a2 100644
---- a/include/linux/compat-3.4.h
-+++ b/include/linux/compat-3.4.h
-@@ -123,6 +123,20 @@ static inline void eth_hw_addr_random(struct net_device *dev)
- 	module_driver(__pci_driver, pci_register_driver, \
- 		       pci_unregister_driver)
- 
-+/*
-+ * Getting something that works in C and CPP for an arg that may or may
-+ * not be defined is tricky.  Here, if we have "#define CONFIG_BOOGER 1"
-+ * we match on the placeholder define, insert the "0," for arg1 and generate
-+ * the triplet (0, 1, 0).  Then the last step cherry picks the 2nd arg (a one).
-+ * When CONFIG_BOOGER is not defined, we generate a (... 1, 0) pair, and when
-+ * the last step cherry picks the 2nd arg, we get a zero.
-+ */
-+#define __ARG_PLACEHOLDER_1 0,
-+#define config_enabled(cfg) _config_enabled(cfg)
-+#define _config_enabled(value) __config_enabled(__ARG_PLACEHOLDER_##value)
-+#define __config_enabled(arg1_or_junk) ___config_enabled(arg1_or_junk 1, 0)
-+#define ___config_enabled(__ignored, val, ...) val
-+
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0)) */
- 
- #endif /* LINUX_5_4_COMPAT_H */
--- 
-1.7.10.4
+Any comments. Can you please post this change?
+
+-Rajkumar
