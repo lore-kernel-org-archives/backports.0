@@ -1,78 +1,63 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from erley.org ([97.107.129.9]:38380 "EHLO remote.erley.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1423146Ab2KNSgC (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 14 Nov 2012 13:36:02 -0500
-Message-ID: <50A3E2A4.7000806@erley.org>
-Date: Wed, 14 Nov 2012 13:27:48 -0500
-From: Pat Erley <pat-lkml@erley.org>
+Received: from sabertooth01.qualcomm.com ([65.197.215.72]:43342 "EHLO
+	sabertooth01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751767Ab2KFKcB (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 6 Nov 2012 05:32:01 -0500
+From: Bala Shanmugam <bkamatch@qca.qualcomm.com>
+To: <rodrigue@qca.qualcomm.com>
+CC: <linux-wireless@vger.kernel.org>, <backports@vger.kernel.org>,
+	Bala Shanmugam <bkamatch@qca.qualcomm.com>
+Subject: [PATCH 2/2] compat-drivers: Add a next-pending patch.
+Date: Tue, 6 Nov 2012 16:01:34 +0530
+Message-ID: <1352197894-4352-3-git-send-email-bkamatch@qca.qualcomm.com>
+In-Reply-To: <1352197894-4352-1-git-send-email-bkamatch@qca.qualcomm.com>
+References: <1352197894-4352-1-git-send-email-bkamatch@qca.qualcomm.com>
 MIME-Version: 1.0
-To: =?ISO-8859-1?Q?Felipe_L=F3pez?= <lopez.rottweiler@gmail.com>
-CC: backports@vger.kernel.org
-Subject: Re:
-References: <CAGj=iG-eo0yNUR1rRrL-hEineQ=FHbEMA2He_=0NjuXHJ1KhuQ@mail.gmail.com>
-In-Reply-To: <CAGj=iG-eo0yNUR1rRrL-hEineQ=FHbEMA2He_=0NjuXHJ1KhuQ@mail.gmail.com>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 11/14/2012 05:21 AM, Felipe López wrote:
-> Hello guys,
->
->
-> I am Felipe López and I am working with an TL-WN722N that comes with a
-> AR9271 chipset. I got it to work in my PC some time ago but now I am
-> trying to install it in a ARM CPU.
->
-> I selected the driver I need (./scripts/driver-select ath9k) and I
-> cross-compiled it against the kernel 2.6.30. I think that everything
-> is OK up to here. I get the following *.ko files:
->
-> ./drivers/net/wireless/ath/
-> ath.ko
-> ./drivers/net/wireless/ath/ath9k/ath9k.ko
-> ./drivers/net/wireless/ath/ath9k/ath9k_common.ko
-> ./drivers/net/wireless/ath/ath9k/ath9k_htc.ko
-> ./drivers/net/wireless/ath/ath9k/ath9k_hw.ko
-> ./net/mac80211/mac80211.ko
-> ./net/rfkill/rfkill_backport.ko
-> ./net/wireless/cfg80211.ko
-> ./compat/sch_codel.ko
-> ./compat/sch_fq_codel.ko
-> ./compat/compat.ko
-> ./compat/compat_firmware_class.ko
->
-> The first thing I do not know is in which order I should do the
-> insmod. I suppose that compat.ko should be the first but then comes
-> the second problem. This is what the board throws when I do the insmod
-> of compat.ko:
->
-> compat: Unknown symbol cpufreq_cpu_put
->
->
-> I googled for that sentence and I found that that function is used in
-> kernels >= 2.6.31 so maybe I should use an older version of
-> compat-wireless. What version of compat-wireless is the best for the
-> kernel 2.6.30? The only I can imagine I can solve the last problem by
-> myself is trial-error.
->
->
-> Many thanks in advance
->
->
-> Felipe López
+Signed-off-by: Bala Shanmugam <bkamatch@qca.qualcomm.com>
+---
+ ...x-signal-strength-noise-measurements-on-a.patch |   28 ++++++++++++++++++++
+ 1 files changed, 28 insertions(+), 0 deletions(-)
+ create mode 100644 linux-next-pending/0001-ath9k_hw-fix-signal-strength-noise-measurements-on-a.patch
 
-You can find the order using the 'modinfo' command (if you're manually 
-loading all of the modules) like this:
-
-$ modinfo ./compat/compat.ko | grep depends
-depends:
-
-However, it does look like cpufreq_cpu_put may be a separate issue.  Did 
-you compile your arm CPU with cpufreq support?  This may work as a 
-temporary solution, as looking in the 2.6.30 source shows that function 
-is exported.
-
-Pat Erley
+diff --git a/linux-next-pending/0001-ath9k_hw-fix-signal-strength-noise-measurements-on-a.patch b/linux-next-pending/0001-ath9k_hw-fix-signal-strength-noise-measurements-on-a.patch
+new file mode 100644
+index 0000000..727c904
+--- /dev/null
++++ b/linux-next-pending/0001-ath9k_hw-fix-signal-strength-noise-measurements-on-a.patch
+@@ -0,0 +1,28 @@
++From f91a5adf7e8d778f8f006934400249ec9c84717c Mon Sep 17 00:00:00 2001
++From: Felix Fietkau <nbd@openwrt.org>
++Date: Fri, 2 Nov 2012 16:23:47 +0530
++Subject: [PATCH] ath9k_hw: fix signal strength / noise measurements on ar9462
++
++The nominal noise floor for most channels is -120, though on some it can
++reach -127. Use -120 for converting noise floor to channel noise to
++avoid overestimating rx signal strength and channel noise.
++
++Signed-off-by: Felix Fietkau <nbd@openwrt.org>
++---
++ drivers/net/wireless/ath/ath9k/ar9003_phy.h | 4 ++--
++ 1 file changed, 2 insertions(+), 2 deletions(-)
++
++--- a/drivers/net/wireless/ath/ath9k/ar9003_phy.h
+++++ b/drivers/net/wireless/ath/ath9k/ar9003_phy.h
++@@ -332,9 +332,9 @@
++ #define AR_PHY_CCA_MAX_GOOD_VAL_9300_2GHZ     -95
++ #define AR_PHY_CCA_MAX_GOOD_VAL_9300_5GHZ     -100
++ 
++-#define AR_PHY_CCA_NOM_VAL_9462_2GHZ          -127
+++#define AR_PHY_CCA_NOM_VAL_9462_2GHZ          -120
++ #define AR_PHY_CCA_MIN_GOOD_VAL_9462_2GHZ     -127
++-#define AR_PHY_CCA_NOM_VAL_9462_5GHZ          -127
+++#define AR_PHY_CCA_NOM_VAL_9462_5GHZ          -120
++ #define AR_PHY_CCA_MIN_GOOD_VAL_9462_5GHZ     -127
++ 
++ #define AR_PHY_CCA_NOM_VAL_9330_2GHZ          -118
+-- 
+1.7.4.1
 
