@@ -1,328 +1,112 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from sabertooth02.qualcomm.com ([65.197.215.38]:19111 "EHLO
+Received: from sabertooth02.qualcomm.com ([65.197.215.38]:43121 "EHLO
 	sabertooth02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754660Ab2K1MwC (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 28 Nov 2012 07:52:02 -0500
+	with ESMTP id S1751410Ab2KFKbb (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 6 Nov 2012 05:31:31 -0500
 From: Bala Shanmugam <bkamatch@qca.qualcomm.com>
 To: <rodrigue@qca.qualcomm.com>
-CC: <linux-wireless@vger.kernel.org>, <backports@vger.kernel.org>
-Subject: [PATCH v2 3/3] compat-drivers: Add a crap patch for AR9565
-Date: Wed, 28 Nov 2012 18:22:32 +0530
-Message-ID: <1354107152-28563-1-git-send-email-bkamatch@qca.qualcomm.com>
+CC: <linux-wireless@vger.kernel.org>, <backports@vger.kernel.org>,
+	Bala Shanmugam <bkamatch@qca.qualcomm.com>
+Subject: [PATCH 0/2] Patches for compat-drivers/linux-3.6.y
+Date: Tue, 6 Nov 2012 16:01:32 +0530
+Message-ID: <1352197894-4352-1-git-send-email-bkamatch@qca.qualcomm.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This patch is required to improve BT throughput to
-meet customer requirement.  This patch is a workaround
-to put WLAN to sleep during BT cycle and cannot be
-upstreamed.
+These two patches are for linux-3.6.y branch and has
+fixes for AR9565.
 
-Signed-off-by: Bala Shanmugam <bkamatch@qca.qualcomm.com>
----
- ...9k-Improve-BT-PAN-FTP-profile-performance.patch |  291 ++++++++++++++++++++
- 1 files changed, 291 insertions(+), 0 deletions(-)
- create mode 100644 crap/0005-ath9k-Improve-BT-PAN-FTP-profile-performance.patch
+Balas (2):
+  compat-drivers: Move next-pending patches to cherry-picks
+  compat-drivers: Add a next-pending patch.
 
-diff --git a/crap/0005-ath9k-Improve-BT-PAN-FTP-profile-performance.patch b/crap/0005-ath9k-Improve-BT-PAN-FTP-profile-performance.patch
-new file mode 100644
-index 0000000..ea3a88f
---- /dev/null
-+++ b/crap/0005-ath9k-Improve-BT-PAN-FTP-profile-performance.patch
-@@ -0,0 +1,291 @@
-+From 16366309f4752330ee93d6c6cbebe935371d235a Mon Sep 17 00:00:00 2001
-+From: Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
-+Date: Fri, 23 Nov 2012 14:17:59 +0530
-+Subject: [PATCH] ath9k: Improve BT PAN/FTP profile performance
-+
-+As AR9565 shares LNA and antenna for both BT & WLAN, there
-+are some degrade in BT performance. In order to improve BT PAN/FTP
-+profile performance, this change puts WLAN into sleep state
-+and inform the same to AP via nullfuc whenever BT gets its slot
-+during BTCOEX period. It improves BT performance at the cost of
-+WLAN throughout. Hence this change is applied only for AR9565
-+and BT FTP/PAN profiles.
-+
-+Signed-off-by: Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
-+---
-+ drivers/net/wireless/ath/ath9k/ath9k.h  |  3 ++
-+ drivers/net/wireless/ath/ath9k/btcoex.c | 13 ++++++++
-+ drivers/net/wireless/ath/ath9k/btcoex.h |  1 +
-+ drivers/net/wireless/ath/ath9k/gpio.c   |  5 ++-
-+ drivers/net/wireless/ath/ath9k/mci.c    | 59 +++++++++++++++++++++++++++++++++
-+ drivers/net/wireless/ath/ath9k/mci.h    |  2 ++
-+ drivers/net/wireless/ath/ath9k/reg.h    |  5 ++-
-+ drivers/net/wireless/ath/ath9k/xmit.c   | 18 ++++++----
-+ 8 files changed, 97 insertions(+), 9 deletions(-)
-+
-+Index: compat-drivers/drivers/net/wireless/ath/ath9k/ath9k.h
-+===================================================================
-+--- compat-drivers.orig/drivers/net/wireless/ath/ath9k/ath9k.h	2012-11-28 16:59:36.776615151 +0530
-++++ compat-drivers/drivers/net/wireless/ath/ath9k/ath9k.h	2012-11-28 17:00:37.880918151 +0530
-+@@ -93,6 +93,7 @@
-+ enum buffer_type {
-+ 	BUF_AMPDU		= BIT(0),
-+ 	BUF_AGGR		= BIT(1),
-++	BUF_INJECT		= BIT(2),
-+ };
-+ 
-+ #define bf_isampdu(bf)		(bf->bf_state.bf_type & BUF_AMPDU)
-+@@ -282,6 +283,7 @@
-+ 	struct ath_txq *txq;
-+ 	struct ath_node *an;
-+ 	u8 paprd;
-++	u8 inject;
-+ };
-+ 
-+ #define ATH_TX_ERROR        0x01
-+@@ -483,6 +485,7 @@
-+ 	struct ath_gen_timer *no_stomp_timer; /* Timer for no BT stomping */
-+ 	struct ath_mci_profile mci;
-+ 	u8 stomp_audio;
-++	u8 stomp_pan;
-+ };
-+ 
-+ #ifdef CONFIG_ATH9K_BTCOEX_SUPPORT
-+Index: compat-drivers/drivers/net/wireless/ath/ath9k/btcoex.c
-+===================================================================
-+--- compat-drivers.orig/drivers/net/wireless/ath/ath9k/btcoex.c	2012-11-28 16:59:36.776615151 +0530
-++++ compat-drivers/drivers/net/wireless/ath/ath9k/btcoex.c	2012-11-28 16:59:37.612619297 +0530
-+@@ -414,3 +414,16 @@
-+ 		btcoex->tx_prio[i] = stomp_txprio[i];
-+ }
-+ EXPORT_SYMBOL(ath9k_hw_btcoex_set_concur_txprio);
-++
-++void ath9k_hw_btcoex_set_sleep(struct ath_hw *ah, u8 state)
-++{
-++	REG_RMW_FIELD(ah, AR_PCU_MISC_MODE2,
-++		      AR_PCU_MISC_MODE2_PM_FIELD_FOR_DAT, state);
-++	REG_RMW_FIELD(ah, AR_PCU_MISC_MODE3,
-++		      AR_PCU_MISC_MODE3_PM_FIELD_FOR_MGT, state);
-++	if (state)
-++		REG_SET_BIT(ah, AR_STA_ID1, AR_STA_ID1_PWR_SAV);
-++	else
-++		REG_CLR_BIT(ah, AR_STA_ID1, AR_STA_ID1_PWR_SAV);
-++}
-++EXPORT_SYMBOL(ath9k_hw_btcoex_set_sleep);
-+Index: compat-drivers/drivers/net/wireless/ath/ath9k/btcoex.h
-+===================================================================
-+--- compat-drivers.orig/drivers/net/wireless/ath/ath9k/btcoex.h	2012-11-28 16:59:36.780615171 +0530
-++++ compat-drivers/drivers/net/wireless/ath/ath9k/btcoex.h	2012-11-28 16:59:37.612619297 +0530
-+@@ -120,5 +120,6 @@
-+ void ath9k_hw_btcoex_bt_stomp(struct ath_hw *ah,
-+ 			      enum ath_stomp_type stomp_type);
-+ void ath9k_hw_btcoex_set_concur_txprio(struct ath_hw *ah, u8 *stomp_txprio);
-++void ath9k_hw_btcoex_set_sleep(struct ath_hw *ah, u8 state);
-+ 
-+ #endif
-+Index: compat-drivers/drivers/net/wireless/ath/ath9k/gpio.c
-+===================================================================
-+--- compat-drivers.orig/drivers/net/wireless/ath/ath9k/gpio.c	2012-11-28 16:59:36.780615171 +0530
-++++ compat-drivers/drivers/net/wireless/ath/ath9k/gpio.c	2012-11-28 16:59:37.612619297 +0530
-+@@ -234,8 +234,10 @@
-+ 	if (!(ah->caps.hw_caps & ATH9K_HW_CAP_MCI))
-+ 		ath_detect_bt_priority(sc);
-+ 
-+-	if (ah->caps.hw_caps & ATH9K_HW_CAP_MCI)
-++	if (ah->caps.hw_caps & ATH9K_HW_CAP_MCI) {
-++		ath9k_mci_set_sleep(sc, 0);
-+ 		ath_mci_ftp_adjust(sc);
-++	}
-+ 
-+ 	spin_lock_bh(&btcoex->btcoex_lock);
-+ 
-+@@ -292,6 +294,7 @@
-+ 	ath_dbg(common, BTCOEX, "no stomp timer running\n");
-+ 
-+ 	ath9k_ps_wakeup(sc);
-++	ath9k_mci_set_sleep(sc, 1);
-+ 	spin_lock_bh(&btcoex->btcoex_lock);
-+ 
-+ 	if (btcoex->bt_stomp_type == ATH_BTCOEX_STOMP_LOW ||
-+Index: compat-drivers/drivers/net/wireless/ath/ath9k/mci.c
-+===================================================================
-+--- compat-drivers.orig/drivers/net/wireless/ath/ath9k/mci.c	2012-11-28 16:59:36.780615171 +0530
-++++ compat-drivers/drivers/net/wireless/ath/ath9k/mci.c	2012-11-28 17:01:20.281128402 +0530
-+@@ -745,6 +745,7 @@
-+ 
-+ 	btcoex->stomp_audio++;
-+ }
-++
-+ void ath9k_mci_update_rssi(struct ath_softc *sc)
-+ {
-+ 	struct ath_hw *ah = sc->sc_ah;
-+@@ -772,3 +773,59 @@
-+ 		}
-+ 	}
-+ }
-++
-++static void ath9k_mci_vif_iter(void *data, u8 *mac, struct ieee80211_vif *vif)
-++{
-++	struct ath_softc *sc = data;
-++	struct ath_vif *avp = (void *)vif->drv_priv;
-++	struct ieee80211_hdr_3addr *nullfunc;
-++	struct sk_buff *skb;
-++	struct ath_tx_control txctl;
-++
-++	if (vif->type != NL80211_IFTYPE_STATION)
-++		return;
-++
-++	if (!avp->primary_sta_vif)
-++		return;
-++
-++	skb = ieee80211_nullfunc_get(sc->hw, vif);
-++	if (!skb)
-++		return;
-++	nullfunc = (struct ieee80211_hdr_3addr *) skb->data;
-++	if (sc->btcoex.mci.sleep)
-++		nullfunc->frame_control |= cpu_to_le16(IEEE80211_FCTL_PM);
-++
-++	IEEE80211_SKB_CB(skb)->flags |= (IEEE80211_TX_INTFL_DONT_ENCRYPT |
-++					 IEEE80211_TX_CTL_USE_MINRATE);
-++
-++	memset(&txctl, 0, sizeof(txctl));
-++	txctl.txq = sc->tx.txq_map[IEEE80211_AC_BE];
-++	txctl.inject = 1;
-++
-++	ath_tx_start(sc->hw, skb, &txctl);
-++}
-++
-++void ath9k_mci_set_sleep(struct ath_softc *sc, u8 state)
-++{
-++	struct ath_mci_profile *mci = &sc->btcoex.mci;
-++
-++	if (!AR_SREV_9565(sc->sc_ah))
-++		return;
-++
-++	state = !!(state && (mci->num_pan || mci->num_other_acl));
-++
-++	if (mci->sleep == state)
-++		return;
-++
-++	mci->sleep = state;
-++	if (state && ++sc->btcoex.stomp_pan >= 23) {
-++		ieee80211_iterate_active_interfaces_atomic(
-++				sc->hw, ath9k_mci_vif_iter, sc);
-++		ath9k_hw_btcoex_set_sleep(sc->sc_ah, state);
-++	} else if (!state && sc->btcoex.stomp_pan >= 23) {
-++		sc->btcoex.stomp_pan = 0;
-++		ath9k_hw_btcoex_set_sleep(sc->sc_ah, state);
-++		ieee80211_iterate_active_interfaces_atomic(
-++				sc->hw, ath9k_mci_vif_iter, sc);
-++	}
-++}
-+Index: compat-drivers/drivers/net/wireless/ath/ath9k/mci.h
-+===================================================================
-+--- compat-drivers.orig/drivers/net/wireless/ath/ath9k/mci.h	2012-11-28 16:59:35.548609062 +0530
-++++ compat-drivers/drivers/net/wireless/ath/ath9k/mci.h	2012-11-28 16:59:37.612619297 +0530
-+@@ -137,6 +137,7 @@
-+ 	u8 num_other_acl;
-+ 	u8 num_bdr;
-+ 	u8 voice_priority;
-++	u8 sleep;
-+ };
-+ 
-+ struct ath_mci_buf {
-+@@ -155,6 +156,7 @@
-+ void ath_mci_cleanup(struct ath_softc *sc);
-+ void ath_mci_intr(struct ath_softc *sc);
-+ void ath9k_mci_update_rssi(struct ath_softc *sc);
-++void ath9k_mci_set_sleep(struct ath_softc *sc, u8 state);
-+ 
-+ #ifdef CONFIG_ATH9K_BTCOEX_SUPPORT
-+ void ath_mci_enable(struct ath_softc *sc);
-+Index: compat-drivers/drivers/net/wireless/ath/ath9k/reg.h
-+===================================================================
-+--- compat-drivers.orig/drivers/net/wireless/ath/ath9k/reg.h	2012-11-28 16:59:35.564609141 +0530
-++++ compat-drivers/drivers/net/wireless/ath/ath9k/reg.h	2012-11-28 16:59:37.612619297 +0530
-+@@ -1897,10 +1897,13 @@
-+ #define AR_PCU_MISC_MODE2_ENABLE_AGGWEP                0x00020000
-+ #define AR_PCU_MISC_MODE2_HWWAR1                       0x00100000
-+ #define AR_PCU_MISC_MODE2_HWWAR2                       0x02000000
-++#define AR_PCU_MISC_MODE2_PM_FIELD_FOR_DAT             0x04000000
-++#define AR_PCU_MISC_MODE2_PM_FIELD_FOR_DAT_S           26
-+ #define AR_PCU_MISC_MODE2_RESERVED2                    0xFFFE0000
-+ 
-+ #define AR_PCU_MISC_MODE3			       0x83d0
-+-
-++#define AR_PCU_MISC_MODE3_PM_FIELD_FOR_MGT	       0x00400000
-++#define AR_PCU_MISC_MODE3_PM_FIELD_FOR_MGT_S	       22
-+ #define AR_MAC_PCU_ASYNC_FIFO_REG3			0x8358
-+ #define AR_MAC_PCU_ASYNC_FIFO_REG3_DATAPATH_SEL		0x00000400
-+ #define AR_MAC_PCU_ASYNC_FIFO_REG3_SOFT_RESET		0x80000000
-+Index: compat-drivers/drivers/net/wireless/ath/ath9k/xmit.c
-+===================================================================
-+--- compat-drivers.orig/drivers/net/wireless/ath/ath9k/xmit.c	2012-11-28 16:59:35.176607217 +0530
-++++ compat-drivers/drivers/net/wireless/ath/ath9k/xmit.c	2012-11-28 16:59:37.612619297 +0530
-+@@ -50,7 +50,8 @@
-+ #define IS_HT_RATE(_rate)     ((_rate) & 0x80)
-+ 
-+ static void ath_tx_send_normal(struct ath_softc *sc, struct ath_txq *txq,
-+-			       struct ath_atx_tid *tid, struct sk_buff *skb);
-++			       struct ath_atx_tid *tid, struct sk_buff *skb,
-++			       u8 inject);
-+ static void ath_tx_complete(struct ath_softc *sc, struct sk_buff *skb,
-+ 			    int tx_flags, struct ath_txq *txq);
-+ static void ath_tx_complete_buf(struct ath_softc *sc, struct ath_buf *bf,
-+@@ -189,7 +190,7 @@
-+ 			ath_tx_complete_buf(sc, bf, txq, &bf_head, &ts, 0);
-+ 			sendbar = true;
-+ 		} else {
-+-			ath_tx_send_normal(sc, txq, NULL, skb);
-++			ath_tx_send_normal(sc, txq, NULL, skb, 0);
-+ 		}
-+ 	}
-+ 
-+@@ -1767,7 +1768,8 @@
-+ }
-+ 
-+ static void ath_tx_send_normal(struct ath_softc *sc, struct ath_txq *txq,
-+-			       struct ath_atx_tid *tid, struct sk_buff *skb)
-++			       struct ath_atx_tid *tid, struct sk_buff *skb,
-++			       u8 inject)
-+ {
-+ 	struct ath_frame_info *fi = get_frame_info(skb);
-+ 	struct list_head bf_head;
-+@@ -1777,7 +1779,7 @@
-+ 
-+ 	INIT_LIST_HEAD(&bf_head);
-+ 	list_add_tail(&bf->list, &bf_head);
-+-	bf->bf_state.bf_type = 0;
-++	bf->bf_state.bf_type = inject ? BUF_INJECT : 0;
-+ 
-+ 	bf->bf_next = NULL;
-+ 	bf->bf_lastbf = bf;
-+@@ -1928,7 +1930,7 @@
-+ 	} else {
-+ 		bf = ath_tx_setup_buffer(sc, txctl->txq, tid, skb);
-+ 		if (!bf) {
-+-			if (txctl->paprd)
-++			if (txctl->paprd || txctl->inject)
-+ 				dev_kfree_skb_any(skb);
-+ 			else
-+ 				ieee80211_free_txskb(sc->hw, skb);
-+@@ -1940,7 +1942,7 @@
-+ 		if (txctl->paprd)
-+ 			bf->bf_state.bfs_paprd_timestamp = jiffies;
-+ 
-+-		ath_tx_send_normal(sc, txctl->txq, tid, skb);
-++		ath_tx_send_normal(sc, txctl->txq, tid, skb, txctl->inject);
-+ 	}
-+ }
-+ 
-+@@ -2103,7 +2105,9 @@
-+ 			dev_kfree_skb_any(skb);
-+ 		else
-+ 			complete(&sc->paprd_complete);
-+-	} else {
-++	} else if (bf->bf_state.bf_type & BUF_INJECT)
-++		dev_kfree_skb_any(skb);
-++	else {
-+ 		ath_debug_stat_tx(sc, bf, ts, txq, tx_flags);
-+ 		ath_tx_complete(sc, skb, tx_flags, txq);
-+ 	}
+ ...5-ath9k-fix-ASPM-initialization-on-resume.patch |   40 +++
+ ...-ath9k-improve-suspend-resume-reliability.patch |  117 ++++++++
+ .../0088-cfg80211-fix-antenna-gain-handling.patch  |   39 +++
+ ...k-Use-a-helper-routine-for-MCI-FTP-tuning.patch |   72 +++++
+ .../0090-ath9k-Fix-BT_OP_SCAN-usage.patch          |   95 ++++++
+ ...091-ath9k-perform-ANI-cycle-in-idle-state.patch |  107 +++++++
+ ...tale-pointers-potentially-causing-access-.patch |   43 +++
+ .../0094-ath9k-Send-WLAN-channel-info-to-BT.patch  |  147 +++++++++
+ ...oncurrent-WLAN-and-BT-tx-support-for-MCI-.patch |  264 +++++++++++++++++
+ .../0096-ath9k-fill-channel-mode-in-caldata.patch  |   44 +++
+ ...djust-WLAN-and-BT-concurrent-transmission.patch |  313 ++++++++++++++++++++
+ ...00-ath9k_hw-Enable-OSLA-hw-fix-for-AR9565.patch |   42 +++
+ ...1-ath9k_hw-Fix-selfgen-chainmask-for-9565.patch |   34 +++
+ ...ppropriate-bit-for-AR9565-in-btc-control-.patch |   39 +++
+ ...off-RXIQ-calibration-while-re-calibrating.patch |   54 ++++
+ ...sable-MCI-stat-counter-by-default-for-AR9.patch |   42 +++
+ ...0105-ath9k_hw-Fix-frequent-BT-rx-recovery.patch |   76 +++++
+ ...-ath9k_hw-Fix-max-rx-rate-drop-for-AR9565.patch |   34 +++
+ ...nfigure-new-switch-table-for-AR9565-BTCOE.patch |   57 ++++
+ ...th9k_hw-Set-default-MCI-config-for-AR9565.patch |   27 ++
+ ...ust-duty-cycle-for-FTP-profile-for-AR9565.patch |   27 ++
+ ...-ath9k-Add-new-BT-profile-info-A2DP_Voice.patch |   52 ++++
+ ...111-cfg80211-Disallow-HT-WEP-in-IBSS-mode.patch |   63 ++++
+ ...9k_hw-Enable-hw-PLL-power-save-for-AR9565.patch |   49 +++
+ ...9k_hw-Fix-concurrent-tx-on-lower-tx-power.patch |   51 ++++
+ ...9k_hw-validate-MCI-stuck-after-RTC-wakeup.patch |   38 +++
+ .../0118-ath9k-Dump-BTCOEX-tuning-parameters.patch |  148 +++++++++
+ ...for-TID-only-in-BlockAcks-while-checking-.patch |   65 ++++
+ ...01-ath9k_hw-Enable-OSLA-hw-fix-for-AR9565.patch |   34 ---
+ ...x-signal-strength-noise-measurements-on-a.patch |   28 ++
+ ...2-ath9k_hw-Fix-selfgen-chainmask-for-9565.patch |   28 --
+ ...ppropriate-bit-for-AR9565-in-btc-control-.patch |   33 --
+ ...off-RXIQ-calibration-while-re-calibrating.patch |   46 ---
+ ...sable-MCI-stat-counter-by-default-for-AR9.patch |   34 ---
+ ...0006-ath9k_hw-Fix-frequent-BT-rx-recovery.patch |   66 ----
+ ...-ath9k_hw-Fix-max-rx-rate-drop-for-AR9565.patch |   28 --
+ ...nfigure-new-switch-table-for-AR9565-BTCOE.patch |   47 ---
+ ...th9k_hw-Set-default-MCI-config-for-AR9565.patch |   21 --
+ ...ust-duty-cycle-for-FTP-profile-for-AR9565.patch |   21 --
+ ...-ath9k-Add-new-BT-profile-info-A2DP_Voice.patch |   44 ---
+ ...012-cfg80211-Disallow-HT-WEP-in-IBSS-mode.patch |   63 ----
+ 41 files changed, 2207 insertions(+), 465 deletions(-)
+ create mode 100644 linux-next-cherry-picks/0085-ath9k-fix-ASPM-initialization-on-resume.patch
+ create mode 100644 linux-next-cherry-picks/0086-ath9k-improve-suspend-resume-reliability.patch
+ create mode 100644 linux-next-cherry-picks/0088-cfg80211-fix-antenna-gain-handling.patch
+ create mode 100644 linux-next-cherry-picks/0089-ath9k-Use-a-helper-routine-for-MCI-FTP-tuning.patch
+ create mode 100644 linux-next-cherry-picks/0090-ath9k-Fix-BT_OP_SCAN-usage.patch
+ create mode 100644 linux-next-cherry-picks/0091-ath9k-perform-ANI-cycle-in-idle-state.patch
+ create mode 100644 linux-next-cherry-picks/0093-ath9k-fix-stale-pointers-potentially-causing-access-.patch
+ create mode 100644 linux-next-cherry-picks/0094-ath9k-Send-WLAN-channel-info-to-BT.patch
+ create mode 100644 linux-next-cherry-picks/0095-ath9k-Add-concurrent-WLAN-and-BT-tx-support-for-MCI-.patch
+ create mode 100644 linux-next-cherry-picks/0096-ath9k-fill-channel-mode-in-caldata.patch
+ create mode 100644 linux-next-cherry-picks/0097-ath9k-adjust-WLAN-and-BT-concurrent-transmission.patch
+ create mode 100644 linux-next-cherry-picks/0100-ath9k_hw-Enable-OSLA-hw-fix-for-AR9565.patch
+ create mode 100644 linux-next-cherry-picks/0101-ath9k_hw-Fix-selfgen-chainmask-for-9565.patch
+ create mode 100644 linux-next-cherry-picks/0102-ath9k-Set-appropriate-bit-for-AR9565-in-btc-control-.patch
+ create mode 100644 linux-next-cherry-picks/0103-ath9k-turn-off-RXIQ-calibration-while-re-calibrating.patch
+ create mode 100644 linux-next-cherry-picks/0104-ath9k_hw-Disable-MCI-stat-counter-by-default-for-AR9.patch
+ create mode 100644 linux-next-cherry-picks/0105-ath9k_hw-Fix-frequent-BT-rx-recovery.patch
+ create mode 100644 linux-next-cherry-picks/0106-ath9k_hw-Fix-max-rx-rate-drop-for-AR9565.patch
+ create mode 100644 linux-next-cherry-picks/0107-ath9k_hw-Configure-new-switch-table-for-AR9565-BTCOE.patch
+ create mode 100644 linux-next-cherry-picks/0108-ath9k_hw-Set-default-MCI-config-for-AR9565.patch
+ create mode 100644 linux-next-cherry-picks/0109-ath9k-adjust-duty-cycle-for-FTP-profile-for-AR9565.patch
+ create mode 100644 linux-next-cherry-picks/0110-ath9k-Add-new-BT-profile-info-A2DP_Voice.patch
+ create mode 100644 linux-next-cherry-picks/0111-cfg80211-Disallow-HT-WEP-in-IBSS-mode.patch
+ create mode 100644 linux-next-cherry-picks/0115-ath9k_hw-Enable-hw-PLL-power-save-for-AR9565.patch
+ create mode 100644 linux-next-cherry-picks/0116-ath9k_hw-Fix-concurrent-tx-on-lower-tx-power.patch
+ create mode 100644 linux-next-cherry-picks/0117-ath9k_hw-validate-MCI-stuck-after-RTC-wakeup.patch
+ create mode 100644 linux-next-cherry-picks/0118-ath9k-Dump-BTCOEX-tuning-parameters.patch
+ create mode 100644 linux-next-cherry-picks/0119-ath9k-Test-for-TID-only-in-BlockAcks-while-checking-.patch
+ delete mode 100644 linux-next-pending/0001-ath9k_hw-Enable-OSLA-hw-fix-for-AR9565.patch
+ create mode 100644 linux-next-pending/0001-ath9k_hw-fix-signal-strength-noise-measurements-on-a.patch
+ delete mode 100644 linux-next-pending/0002-ath9k_hw-Fix-selfgen-chainmask-for-9565.patch
+ delete mode 100644 linux-next-pending/0003-ath9k-Set-appropriate-bit-for-AR9565-in-btc-control-.patch
+ delete mode 100644 linux-next-pending/0004-ath9k-turn-off-RXIQ-calibration-while-re-calibrating.patch
+ delete mode 100644 linux-next-pending/0005-ath9k_hw-Disable-MCI-stat-counter-by-default-for-AR9.patch
+ delete mode 100644 linux-next-pending/0006-ath9k_hw-Fix-frequent-BT-rx-recovery.patch
+ delete mode 100644 linux-next-pending/0007-ath9k_hw-Fix-max-rx-rate-drop-for-AR9565.patch
+ delete mode 100644 linux-next-pending/0008-ath9k_hw-Configure-new-switch-table-for-AR9565-BTCOE.patch
+ delete mode 100644 linux-next-pending/0009-ath9k_hw-Set-default-MCI-config-for-AR9565.patch
+ delete mode 100644 linux-next-pending/0010-ath9k-adjust-duty-cycle-for-FTP-profile-for-AR9565.patch
+ delete mode 100644 linux-next-pending/0011-ath9k-Add-new-BT-profile-info-A2DP_Voice.patch
+ delete mode 100644 linux-next-pending/0012-cfg80211-Disallow-HT-WEP-in-IBSS-mode.patch
+
 -- 
 1.7.4.1
 
