@@ -1,39 +1,96 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:54107 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752776Ab2K2XN1 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 29 Nov 2012 18:13:27 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id D62462039E
-	for <backports@vger.kernel.org>; Thu, 29 Nov 2012 23:13:25 +0000 (UTC)
-Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
-	by mail.kernel.org (Postfix) with ESMTP id 20B3D20219
-	for <backports@vger.kernel.org>; Thu, 29 Nov 2012 23:13:25 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+Received: from external1.orbit-lab.org ([128.6.192.131]:33852 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1756661Ab2KHWB0 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 8 Nov 2012 17:01:26 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id A9B3F54002F
+	for <backports@vger.kernel.org>; Thu,  8 Nov 2012 17:01:25 -0500 (EST)
 To: backports@vger.kernel.org
-Subject: [Bug 51061] brcmsmac crashes and disconnects
-In-Reply-To: <bug-51061-58281@https.bugzilla.kernel.org/>
-References: <bug-51061-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Message-Id: <20121129231325.1C30211FAE1@bugzilla.kernel.org>
-Date: Thu, 29 Nov 2012 23:13:25 +0000 (UTC)
+Subject: Compat-wireless release for 2012-11-08 is baked
+Message-Id: <20121108220125.92A0940ABF@repository3.orbit-lab.org>
+Date: Thu,  8 Nov 2012 17:01:25 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51061
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at 0d443c4 compat-drivers: refresh patches
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 28c4eaf compat: update list of kernel headers
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 50aa9ee Add linux-next specific files for 20121108
+Trying kernel 3.4.4-030404-generic [OK]
+Trying kernel 3.3.7-030307-generic [OK]
+Trying kernel 3.2.2-030202-generic [OK]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
+Worked!
 
+Trying kernel  3.4.4-030404-generic [OK]
+Trying kernel  3.3.7-030307-generic [OK]
+Trying kernel  3.2.2-030202-generic [OK]
+Trying kernel  3.1.10-030110-generic [OK]
+Trying kernel  3.0.18-030018-generic [OK]
+Trying kernel  2.6.39-02063904-generic [OK]
+Trying kernel  2.6.38-02063808-generic [OK]
+Trying kernel  2.6.37-02063706-generic [OK]
+Trying kernel  2.6.36-02063604-generic [OK]
+Trying kernel  2.6.35-02063512-generic [OK]
+Trying kernel  2.6.34-02063410-generic [OK]
+Trying kernel  2.6.33-02063305-generic [OK]
+Trying kernel  2.6.31-02063113-generic [OK]
+Trying kernel  2.6.30-02063010-generic [OK]
+Trying kernel  2.6.29-02062906-generic [OK]
+Trying kernel  2.6.28-02062810-generic [OK]
+Trying kernel  2.6.27-020627-generic [OK]
+Trying kernel  2.6.26-020626-generic [OK]
+Trying kernel  2.6.25-020625-generic [OK]
+Trying kernel  2.6.24-020624-generic [OK]
 
+compat-drivers code metrics
 
+   1239527 - Total upstream lines of code being pulled
 
+   network
+   ----------------------------------------
+      3114 - backport code changes
+      2583 - backport code additions
+       531 - backport code deletions
+     12754 - backport from compat module
+     15868 - total backport code
+    1.2802 - % of code consists of backport work
 
---- Comment #2 from Arend van Spriel <aspriel@gmail.com>  2012-11-29 23:13:24 ---
-The warning in the .flush() callback is an upstream issue indeed. I will dig a
-bit deeper, but indeed this does not seem like a backport issue. Feel free to
-reassign.
+   drm
+   ----------------------------------------
+       382 - backport code changes
+       264 - backport code additions
+       118 - backport code deletions
+     12754 - backport from compat module
+     13136 - total backport code
+    1.0598 - % of code consists of backport work
 
--- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+Base tree: linux-next.git
+Base tree version: next-20121108
+compat.git: compat-2012-11-02
+compat-drivers release: compat-drivers-2012-11-02-pc
+Code metrics archive: http://bit.ly/H6BTF7
