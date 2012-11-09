@@ -1,64 +1,40 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-Date: Fri, 30 Nov 2012 20:18:43 -0800
-Message-ID: <CAB=NE6WU2sRrG-Qf-8397HwkHn199-HO0quL-jUyV5G64993HQ@mail.gmail.com>
-Subject: A few updates to compat-drivers based on next-20121130
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:40516 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755851Ab2KIWAx (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 9 Nov 2012 17:00:53 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 13748540274
+	for <backports@vger.kernel.org>; Fri,  9 Nov 2012 17:00:52 -0500 (EST)
 To: backports@vger.kernel.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Adrian Chadd <adrian@freebsd.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Compat-wireless release for 2012-11-09 is baked
+Message-Id: <20121109220051.E7E7F40ABF@repository3.orbit-lab.org>
+Date: Fri,  9 Nov 2012 17:00:51 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I've pushed out a few changes to compat / compat-drivers worth mentioning:
-
-  * all patches are now under patches/ including:
-
-    - pending-stable/
-    - linux-next-cherry-picks/
-    - linux-next-pending/
-    - crap/
-
-  * backport patches are now called collateral-evolutions/ under patches/
-
-  * ./scripts/admin-update.sh supports -b for a basic update
-
-  * ./scripts/admin-update.sh now supports drivers in a unified driver format.
-    Patches for such drivers are placed under patches/unified-drivers/. If you
-    want these drivers you can supply -u option to admin-update.sh and
-the -u tag
-    will be added. This is to help with killing proprietary drivers
-and an attempt
-    me and Adrian have been dreaming up. At this point there is
-nothing formal but a
-    template and you can find the example driver we're trying to work on here:
-
-    - git://github.com/mcgrof/alx.git
-
-    This should help with a few things. For starters it means we don't
-need to carry
-    the alx driver as crap/ patches. It also provides a template for
-working on a
-    unified driver strategy that we can help review / participate in.
-
-compat-drivers goes now compile tested against next-20121130, here are
-the results:
-
-mcgrof@drvbp1 ~/devel/compat-drivers (git::master)$ time ckmake
-Trying kernel 3.6.5-030605-generic [OK]
-Trying kernel 3.5.7-030507-generic [OK]
-Trying kernel 3.4.17-030417-generic [OK]
-Trying kernel 3.3.8-030308-generic [OK]
-Trying kernel 3.2.33-030233-generic [OK]
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at 0d443c4 compat-drivers: refresh patches
+git fetch github (/var/opt/compat/compat)
+HEAD is now at 0022049 compat: run ckmake with num cpu threads
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 75e0eba Add linux-next specific files for 20121109
+Trying kernel 3.4.4-030404-generic [OK]
+Trying kernel 3.3.7-030307-generic [OK]
+Trying kernel 3.2.2-030202-generic [OK]
 Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.50-030050-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
 Trying kernel 2.6.39-02063904-generic [OK]
 Trying kernel 2.6.38-02063808-generic [OK]
 Trying kernel 2.6.37-02063706-generic [OK]
 Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063513-generic [OK]
-Trying kernel 2.6.34-02063413-generic [OK]
-Trying kernel 2.6.33-02063320-generic [OK]
-Trying kernel 2.6.32-02063260-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
 Trying kernel 2.6.31-02063113-generic [OK]
 Trying kernel 2.6.30-02063010-generic [OK]
 Trying kernel 2.6.29-02062906-generic [OK]
@@ -67,10 +43,53 @@ Trying kernel 2.6.27-020627-generic [OK]
 Trying kernel 2.6.26-020626-generic [OK]
 Trying kernel 2.6.25-020625-generic [OK]
 Trying kernel 2.6.24-020624-generic [OK]
+Worked!
 
-real    5m3.205s
-user    9m16.115s
-sys     3m39.166s
+Trying kernel  3.4.4-030404-generic [OK]
+Trying kernel  3.3.7-030307-generic [OK]
+Trying kernel  3.2.2-030202-generic [OK]
+Trying kernel  3.1.10-030110-generic [OK]
+Trying kernel  3.0.18-030018-generic [OK]
+Trying kernel  2.6.39-02063904-generic [OK]
+Trying kernel  2.6.38-02063808-generic [OK]
+Trying kernel  2.6.37-02063706-generic [OK]
+Trying kernel  2.6.36-02063604-generic [OK]
+Trying kernel  2.6.35-02063512-generic [OK]
+Trying kernel  2.6.34-02063410-generic [OK]
+Trying kernel  2.6.33-02063305-generic [OK]
+Trying kernel  2.6.31-02063113-generic [OK]
+Trying kernel  2.6.30-02063010-generic [OK]
+Trying kernel  2.6.29-02062906-generic [OK]
+Trying kernel  2.6.28-02062810-generic [OK]
+Trying kernel  2.6.27-020627-generic [OK]
+Trying kernel  2.6.26-020626-generic [OK]
+Trying kernel  2.6.25-020625-generic [OK]
+Trying kernel  2.6.24-020624-generic [OK]
 
+compat-drivers code metrics
 
-  Luis
+   1239527 - Total upstream lines of code being pulled
+
+   network
+   ----------------------------------------
+      3114 - backport code changes
+      2583 - backport code additions
+       531 - backport code deletions
+     12754 - backport from compat module
+     15868 - total backport code
+    1.2802 - % of code consists of backport work
+
+   drm
+   ----------------------------------------
+       382 - backport code changes
+       264 - backport code additions
+       118 - backport code deletions
+     12754 - backport from compat module
+     13136 - total backport code
+    1.0598 - % of code consists of backport work
+
+Base tree: linux-next.git
+Base tree version: next-20121109
+compat.git: compat-2012-11-02-3-g0022049
+compat-drivers release: compat-drivers-2012-11-02-pc
+Code metrics archive: http://bit.ly/H6BTF7
