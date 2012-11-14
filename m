@@ -1,59 +1,78 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from sabertooth02.qualcomm.com ([65.197.215.38]:30826 "EHLO
-	sabertooth02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751308Ab2KFQra (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 6 Nov 2012 11:47:30 -0500
-Date: Tue, 6 Nov 2012 22:17:33 +0530
-From: Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
-To: Sujith <m.sujith@gmail.com>, Felix Fietkau <nbd@openwrt.org>
-CC: Bala Shanmugam <bkamatch@qca.qualcomm.com>,
-	<rodrigue@qca.qualcomm.com>, <linux-wireless@vger.kernel.org>,
-	<backports@vger.kernel.org>
-Subject: Re: [PATCH 2/2] compat-drivers: Add a next-pending patch.
-Message-ID: <20121106164732.GA10101@hemis.qca.qualcomm.com>
-References: <1352197894-4352-1-git-send-email-bkamatch@qca.qualcomm.com>
- <1352197894-4352-3-git-send-email-bkamatch@qca.qualcomm.com>
- <20633.14711.832133.513286@gargle.gargle.HOWL>
+Received: from erley.org ([97.107.129.9]:38380 "EHLO remote.erley.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1423146Ab2KNSgC (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 14 Nov 2012 13:36:02 -0500
+Message-ID: <50A3E2A4.7000806@erley.org>
+Date: Wed, 14 Nov 2012 13:27:48 -0500
+From: Pat Erley <pat-lkml@erley.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20633.14711.832133.513286@gargle.gargle.HOWL>
+To: =?ISO-8859-1?Q?Felipe_L=F3pez?= <lopez.rottweiler@gmail.com>
+CC: backports@vger.kernel.org
+Subject: Re:
+References: <CAGj=iG-eo0yNUR1rRrL-hEineQ=FHbEMA2He_=0NjuXHJ1KhuQ@mail.gmail.com>
+In-Reply-To: <CAGj=iG-eo0yNUR1rRrL-hEineQ=FHbEMA2He_=0NjuXHJ1KhuQ@mail.gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Nov 06, 2012 at 09:53:19PM +0530, Sujith wrote:
-> Bala Shanmugam wrote:
-> > Signed-off-by: Bala Shanmugam <bkamatch@qca.qualcomm.com>
-> > ---
-> >  ...x-signal-strength-noise-measurements-on-a.patch |   28 ++++++++++++++++++++
-> >  1 files changed, 28 insertions(+), 0 deletions(-)
-> >  create mode 100644 linux-next-pending/0001-ath9k_hw-fix-signal-strength-noise-measurements-on-a.patch
-> > 
-> > diff --git a/linux-next-pending/0001-ath9k_hw-fix-signal-strength-noise-measurements-on-a.patch b/linux-next-pending/0001-ath9k_hw-fix-signal-strength-noise-measurements-on-a.patch
-> > new file mode 100644
-> > index 0000000..727c904
-> > --- /dev/null
-> > +++ b/linux-next-pending/0001-ath9k_hw-fix-signal-strength-noise-measurements-on-a.patch
-> > @@ -0,0 +1,28 @@
-> > +From f91a5adf7e8d778f8f006934400249ec9c84717c Mon Sep 17 00:00:00 2001
-> > +From: Felix Fietkau <nbd@openwrt.org>
-> > +Date: Fri, 2 Nov 2012 16:23:47 +0530
-> > +Subject: [PATCH] ath9k_hw: fix signal strength / noise measurements on ar9462
-> > +
-> > +The nominal noise floor for most channels is -120, though on some it can
-> > +reach -127. Use -120 for converting noise floor to channel noise to
-> > +avoid overestimating rx signal strength and channel noise.
-> 
-> I don't think this patch has been posted to linux-wireless.
-> linux-next-pending/ can only accept patches that have been posted and reviewed.
-> 
-> Also, this change has to be verified with the internal systems team.
-> 
-Agree. But this change is taken from Chrome kernel tree and it was already
-reviewed by Systems.
+On 11/14/2012 05:21 AM, Felipe López wrote:
+> Hello guys,
+>
+>
+> I am Felipe López and I am working with an TL-WN722N that comes with a
+> AR9271 chipset. I got it to work in my PC some time ago but now I am
+> trying to install it in a ARM CPU.
+>
+> I selected the driver I need (./scripts/driver-select ath9k) and I
+> cross-compiled it against the kernel 2.6.30. I think that everything
+> is OK up to here. I get the following *.ko files:
+>
+> ./drivers/net/wireless/ath/
+> ath.ko
+> ./drivers/net/wireless/ath/ath9k/ath9k.ko
+> ./drivers/net/wireless/ath/ath9k/ath9k_common.ko
+> ./drivers/net/wireless/ath/ath9k/ath9k_htc.ko
+> ./drivers/net/wireless/ath/ath9k/ath9k_hw.ko
+> ./net/mac80211/mac80211.ko
+> ./net/rfkill/rfkill_backport.ko
+> ./net/wireless/cfg80211.ko
+> ./compat/sch_codel.ko
+> ./compat/sch_fq_codel.ko
+> ./compat/compat.ko
+> ./compat/compat_firmware_class.ko
+>
+> The first thing I do not know is in which order I should do the
+> insmod. I suppose that compat.ko should be the first but then comes
+> the second problem. This is what the board throws when I do the insmod
+> of compat.ko:
+>
+> compat: Unknown symbol cpufreq_cpu_put
+>
+>
+> I googled for that sentence and I found that that function is used in
+> kernels >= 2.6.31 so maybe I should use an older version of
+> compat-wireless. What version of compat-wireless is the best for the
+> kernel 2.6.30? The only I can imagine I can solve the last problem by
+> myself is trial-error.
+>
+>
+> Many thanks in advance
+>
+>
+> Felipe López
 
-Felix,
+You can find the order using the 'modinfo' command (if you're manually 
+loading all of the modules) like this:
 
-Any comments. Can you please post this change?
+$ modinfo ./compat/compat.ko | grep depends
+depends:
 
--Rajkumar
+However, it does look like cpufreq_cpu_put may be a separate issue.  Did 
+you compile your arm CPU with cpufreq support?  This may work as a 
+temporary solution, as looking in the 2.6.30 source shows that function 
+is exported.
+
+Pat Erley
+
