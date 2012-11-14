@@ -1,37 +1,40 @@
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 5/8] compat-drivers: remove CONFIG_WIL6210 from config.mk
-Date: Tue,  6 Nov 2012 00:11:52 +0100
-Message-Id: <1352157115-13469-6-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1352157115-13469-1-git-send-email-hauke@hauke-m.de>
-References: <1352157115-13469-1-git-send-email-hauke@hauke-m.de>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:50251 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753017Ab2KNTsg (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 14 Nov 2012 14:48:36 -0500
+Received: by mail-ie0-f174.google.com with SMTP id k13so1142217iea.19
+        for <backports@vger.kernel.org>; Wed, 14 Nov 2012 11:48:36 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.02.1211141726190.23195@lap-x201>
+References: <alpine.DEB.2.02.1211141726190.23195@lap-x201>
+Date: Wed, 14 Nov 2012 21:48:36 +0200
+Message-ID: <CAFub=KQV=2HX7jSbY=dBQ9vXKNna1ppchmD3fhGiBvqguYekRw@mail.gmail.com>
+Subject: Re: compat-drivers 3.7-rc1: cfg80211 fails to load on
+ 3.0.0-26-generic-pae [AV#3438]
+From: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
+Cc: backports@vger.kernel.org, linux-wireless@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+To: unlisted-recipients:; (no To-header on input)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The device driver was removed from crap some time ago.
+On Wed, Nov 14, 2012 at 7:29 PM, Chris Wilson <chris@aptivate.org> wrote:
+> Dear developers,
+>
+> I'm trying to use compat-drivers to gain support for the Intel Centrino
+> Wireless-N (iwlwifi driver) on the Ubuntu Oneiric kernel backported to Lucid
+> (3.0.0-26-generic-pae). The driver compiles but fails to install, with the
+> following error:
+>
+> [  578.661869] Compat-drivers backport release: compat-drivers-v3.7-rc1-6
+> [  578.661879] Backport based on linux-stable.git v3.7-rc1
+> [  578.661885] compat.git: linux-stable.git
+> [  578.664089] cfg80211: Unknown symbol simple_open (err 0)
+>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- config.mk |    5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/config.mk b/config.mk
-index 0ea2059..ec9c8ca 100644
---- a/config.mk
-+++ b/config.mk
-@@ -275,11 +275,6 @@ export CONFIG_COMPAT_ATH9K_RATE_CONTROL=y
- 
- export CONFIG_ATH9K_BTCOEX_SUPPORT=y
- 
--# WIL6210 requires MSI only available >= 2.6.30
--ifndef CONFIG_COMPAT_KERNEL_2_6_30
--export CONFIG_WIL6210=m
--endif #CONFIG_COMPAT_KERNEL_2_6_30
--
- ifndef CONFIG_COMPAT_KERNEL_2_6_27
- export CONFIG_ATH6KL=m
- # export CONFIG_ATH6KL_DEBUG=y
--- 
-1.7.10.4
+Are you sure that you installed the modules correctly on your system?
+simple_open() is a new symbol that should normally be provided by the
+compat layer (compat.ko). Do you have any undefined symbol warnings at
+the end of the building process?
