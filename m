@@ -1,96 +1,40 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:33852 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1756661Ab2KHWB0 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 8 Nov 2012 17:01:26 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id A9B3F54002F
-	for <backports@vger.kernel.org>; Thu,  8 Nov 2012 17:01:25 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-11-08 is baked
-Message-Id: <20121108220125.92A0940ABF@repository3.orbit-lab.org>
-Date: Thu,  8 Nov 2012 17:01:25 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Received: from one-mail.aptivate.org ([87.106.150.205]:38927 "EHLO
+	one-mail.aptivate.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753502Ab2KNSSK (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 14 Nov 2012 13:18:10 -0500
+Date: Wed, 14 Nov 2012 17:29:53 +0000 (GMT)
+From: Chris Wilson <chris@aptivate.org>
+To: backports@vger.kernel.org, linux-wireless@vger.kernel.org
+Subject: compat-drivers 3.7-rc1: cfg80211 fails to load on 3.0.0-26-generic-pae
+ [AV#3438]
+Message-ID: <alpine.DEB.2.02.1211141726190.23195@lap-x201>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; format=flowed; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at 0d443c4 compat-drivers: refresh patches
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 28c4eaf compat: update list of kernel headers
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 50aa9ee Add linux-next specific files for 20121108
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+Dear developers,
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+I'm trying to use compat-drivers to gain support for the Intel Centrino 
+Wireless-N (iwlwifi driver) on the Ubuntu Oneiric kernel backported to 
+Lucid (3.0.0-26-generic-pae). The driver compiles but fails to install, 
+with the following error:
 
-compat-drivers code metrics
+[  578.661869] Compat-drivers backport release: compat-drivers-v3.7-rc1-6
+[  578.661879] Backport based on linux-stable.git v3.7-rc1
+[  578.661885] compat.git: linux-stable.git
+[  578.664089] cfg80211: Unknown symbol simple_open (err 0)
 
-   1239527 - Total upstream lines of code being pulled
+Does anyone know what this means? Did Ubuntu change the kernel enough that 
+compat-drivers compatibility layer is confused?
 
-   network
-   ----------------------------------------
-      3114 - backport code changes
-      2583 - backport code additions
-       531 - backport code deletions
-     12754 - backport from compat module
-     15868 - total backport code
-    1.2802 - % of code consists of backport work
+Cheers, Chris.
+-- 
+Aptivate | http://www.aptivate.org | Phone: +44 1223 967 838
+Future Business, Cam City FC, Milton Rd, Cambridge, CB4 1UY, UK
 
-   drm
-   ----------------------------------------
-       382 - backport code changes
-       264 - backport code additions
-       118 - backport code deletions
-     12754 - backport from compat module
-     13136 - total backport code
-    1.0598 - % of code consists of backport work
+Aptivate is a not-for-profit company registered in England and Wales
+with company number 04980791.
 
-Base tree: linux-next.git
-Base tree version: next-20121108
-compat.git: compat-2012-11-02
-compat-drivers release: compat-drivers-2012-11-02-pc
-Code metrics archive: http://bit.ly/H6BTF7
