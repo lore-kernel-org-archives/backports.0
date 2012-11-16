@@ -1,38 +1,28 @@
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 4/5] compat-drivers: run refresh for all patches
-Date: Thu, 29 Nov 2012 16:24:40 +0100
-Message-Id: <1354202681-11787-5-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1354202681-11787-1-git-send-email-hauke@hauke-m.de>
-References: <1354202681-11787-1-git-send-email-hauke@hauke-m.de>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mail-da0-f46.google.com ([209.85.210.46]:52081 "EHLO
+	mail-da0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752184Ab2KPRUw (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 16 Nov 2012 12:20:52 -0500
+Received: by mail-da0-f46.google.com with SMTP id n41so1224995dak.19
+        for <backports@vger.kernel.org>; Fri, 16 Nov 2012 09:20:51 -0800 (PST)
+Message-ID: <50A675EE.9010406@gmail.com>
+Date: Sat, 17 Nov 2012 01:20:46 +0800
+From: Shuo <shuox.liu@gmail.com>
+Reply-To: shuox.liu@gmail.com
+MIME-Version: 1.0
+To: backports@vger.kernel.org
+Subject: Build compat-wireless for linus tree
+Content-Type: text/plain; charset=GB2312
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-In the past refresh with quilt was just run for the last patch
-directory being applied and not for all, because our script had
-problems when patchRefresh() was called more then once in a single
-admin-update.sh run. This was fixed in the last patch and now it is
-safe to run it on all patches.
+Hi list,
+How could i get the latest compat-wireless code and compile against
+an new kernel which pull from linus' tree?
+I am using v3.7-rc4. It seems there is no ready compat-wireless code
+for it. Is there any repo for this?
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- scripts/admin-update.sh |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Any comment would be appreciated!
 
-diff --git a/scripts/admin-update.sh b/scripts/admin-update.sh
-index 10a2598..cdc5ce5 100755
---- a/scripts/admin-update.sh
-+++ b/scripts/admin-update.sh
-@@ -690,7 +690,7 @@ for subsystem in $SUBSYSTEMS; do
- 			echo -e "${RED}Patches: $PATCHDIR empty, skipping...${NORMAL}"
- 			continue
- 		fi
--		if [[ $LAST_ELEM = $dir && "$REFRESH" = y ]]; then
-+		if [[ "$REFRESH" = y ]]; then
- 			patchRefresh $PATCHDIR
- 		fi
- 
--- 
-1.7.10.4
+Shuo
