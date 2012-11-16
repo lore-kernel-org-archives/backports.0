@@ -1,96 +1,22 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:35865 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752665Ab2KSV5Y (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 19 Nov 2012 16:57:24 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 498B8540245
-	for <backports@vger.kernel.org>; Mon, 19 Nov 2012 16:57:23 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-11-19 is baked
-Message-Id: <20121119215723.1B86340AC0@repository3.orbit-lab.org>
-Date: Mon, 19 Nov 2012 16:57:23 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+MIME-Version: 1.0
+In-Reply-To: <1352157115-13469-9-git-send-email-hauke@hauke-m.de>
+References: <1352157115-13469-1-git-send-email-hauke@hauke-m.de>
+	<1352157115-13469-9-git-send-email-hauke@hauke-m.de>
+Date: Thu, 15 Nov 2012 21:42:24 -0800
+Message-ID: <CAB=NE6VRx6zwdJLhh6VDyJGSzUFz+cv2q-oW7c3ZXf5MHwoNmQ@mail.gmail.com>
+Subject: Re: [PATCH 8/8] compat-drivers: rename drm config symbols
+From: "Luis R. Rodriguez" <mcgrof@gmail.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at 41121c4 compat-drivers: disable mwifiex for kernels older than 2.6.27
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 2306855 compat: add USB_SUBCLASS_VENDOR_SPEC
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 3805711 Add linux-next specific files for 20121115
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+On Mon, Nov 5, 2012 at 3:11 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> When config symbols are renamed they should be renamed at all places
+> and not just at some places.
+>
+> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+applied and pushed all, thanks so much!!
 
-compat-drivers code metrics
-
-   1255031 - Total upstream lines of code being pulled
-
-   network
-   ----------------------------------------
-      3125 - backport code changes
-      2589 - backport code additions
-       536 - backport code deletions
-     12755 - backport from compat module
-     15880 - total backport code
-    1.2653 - % of code consists of backport work
-
-   drm
-   ----------------------------------------
-       424 - backport code changes
-       285 - backport code additions
-       139 - backport code deletions
-     12755 - backport from compat module
-     13179 - total backport code
-    1.0501 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20121115
-compat.git: compat-2012-11-15
-compat-drivers release: compat-drivers-2012-11-15-pc
-Code metrics archive: http://bit.ly/H6BTF7
+  Luis
