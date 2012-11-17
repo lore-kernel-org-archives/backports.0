@@ -1,95 +1,47 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:40516 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755851Ab2KIWAx (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 9 Nov 2012 17:00:53 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 13748540274
-	for <backports@vger.kernel.org>; Fri,  9 Nov 2012 17:00:52 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-11-09 is baked
-Message-Id: <20121109220051.E7E7F40ABF@repository3.orbit-lab.org>
-Date: Fri,  9 Nov 2012 17:00:51 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+Date: Sat, 17 Nov 2012 13:24:26 -0800
+Message-ID: <CAB=NE6WzzKLoBDhh4MR0-w+=-SuQnWEbvk_MzdNB6J=xuvb7DQ@mail.gmail.com>
+Subject: Let her rip - compat-drivers box up and ready
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: Eric Searcy <eric@linuxfoundation.org>, Konstantin Ryabitsev <mricon@kernel.org>,
+	"Philip J (Open Source Program Office) Robb" <phil.robb@hp.com>, Ann Davis <andavis@suse.com>,
+	"Mike (SUSE BizDev) Nelson" <mike.nelson2@hp.com>, Joe Gerkman <JGerkman@suse.com>, Alan Clark <ACLARK@suse.com>,
+	John Hawley <warthog19@eaglescrag.net>, Dan Stangel <dan.stangel@hp.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at 0d443c4 compat-drivers: refresh patches
-git fetch github (/var/opt/compat/compat)
-HEAD is now at 0022049 compat: run ckmake with num cpu threads
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 75e0eba Add linux-next specific files for 20121109
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+Thanks to arrangements by the Linux Foundation, HP, and SUSE we now
+have a suitable server we can share to help do compilation testing of
+our work for compat-drivers which aims at automatically backporting
+the Linux kernel down to all supported known kernel releases. HP
+donated a server to the project for the Linux Foundation backporting
+working group. Thanks to arrangements by SUSE, HP and Linux Foundation
+the server is up and running now. The server this has shaven down
+compilation for testing for the project across 23 kernels of
+compat-drivers from 120 minutes down to 23 minutes for a compilation
+of each kernel down to about one minute each, from 2.6.24 up to 3.6
+and in synch up to the latest linux-next tag next-20121115.
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+As it we have enough memory to run everything in memory. All of
+compat-ksrc code, linux-next, compat and compat-drivers git trees are
+kept in memory. The box has 32 virtual CPUs and 234 GB of RAM. Right
+now I've set up the /pub/mem directory to be shared and mounted 100 GB
+of tmpfs there so that uses all RAM. I've dumped into there a copy of
+/pub/local/* and upon reboot it copies all of /pub/local/* to
+/pub/mem/. I've set the group there to be compat and added all of
+active contributors to it.
 
-compat-drivers code metrics
+As it is right now I think we have enough RAM to be able to create our
+own tmpfs for each active developer. I think there is enough RAM and
+CPU horse power to get each of us to run ckmake all at the same time
+with 3 full copies of what we need. For further coordination lets do
+so on IRC on #kernel-backports on irc.freenode.net.
 
-   1239527 - Total upstream lines of code being pulled
+Thanks so much to the Linux Foundation, SUSE, HP, and of course all
+active contributors.
 
-   network
-   ----------------------------------------
-      3114 - backport code changes
-      2583 - backport code additions
-       531 - backport code deletions
-     12754 - backport from compat module
-     15868 - total backport code
-    1.2802 - % of code consists of backport work
-
-   drm
-   ----------------------------------------
-       382 - backport code changes
-       264 - backport code additions
-       118 - backport code deletions
-     12754 - backport from compat module
-     13136 - total backport code
-    1.0598 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20121109
-compat.git: compat-2012-11-02-3-g0022049
-compat-drivers release: compat-drivers-2012-11-02-pc
-Code metrics archive: http://bit.ly/H6BTF7
+  Luis
