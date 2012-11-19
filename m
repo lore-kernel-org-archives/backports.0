@@ -1,60 +1,96 @@
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 5/6] compat-drivers: add import to fix compile error
-Date: Thu, 29 Nov 2012 00:07:48 +0100
-Message-Id: <1354144069-28611-6-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1354144069-28611-1-git-send-email-hauke@hauke-m.de>
-References: <1354144069-28611-1-git-send-email-hauke@hauke-m.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:35865 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752665Ab2KSV5Y (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 19 Nov 2012 16:57:24 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 498B8540245
+	for <backports@vger.kernel.org>; Mon, 19 Nov 2012 16:57:23 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-11-19 is baked
+Message-Id: <20121119215723.1B86340AC0@repository3.orbit-lab.org>
+Date: Mon, 19 Nov 2012 16:57:23 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On kernel version <= 2.6.28, I saw the following compile error without
-this patch:
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at 41121c4 compat-drivers: disable mwifiex for kernels older than 2.6.27
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 2306855 compat: add USB_SUBCLASS_VENDOR_SPEC
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 3805711 Add linux-next specific files for 20121115
+Trying kernel 3.4.4-030404-generic [OK]
+Trying kernel 3.3.7-030307-generic [OK]
+Trying kernel 3.2.2-030202-generic [OK]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
+Worked!
 
-/net/wireless/util.c: In function ‘cfg80211_get_p2p_attr’:
-/net/wireless/util.c:1120:4: error: implicit declaration of function
-‘get_unaligned_le16’ [-Werror=implicit-function-declaration]
+Trying kernel  3.4.4-030404-generic [OK]
+Trying kernel  3.3.7-030307-generic [OK]
+Trying kernel  3.2.2-030202-generic [OK]
+Trying kernel  3.1.10-030110-generic [OK]
+Trying kernel  3.0.18-030018-generic [OK]
+Trying kernel  2.6.39-02063904-generic [OK]
+Trying kernel  2.6.38-02063808-generic [OK]
+Trying kernel  2.6.37-02063706-generic [OK]
+Trying kernel  2.6.36-02063604-generic [OK]
+Trying kernel  2.6.35-02063512-generic [OK]
+Trying kernel  2.6.34-02063410-generic [OK]
+Trying kernel  2.6.33-02063305-generic [OK]
+Trying kernel  2.6.31-02063113-generic [OK]
+Trying kernel  2.6.30-02063010-generic [OK]
+Trying kernel  2.6.29-02062906-generic [OK]
+Trying kernel  2.6.28-02062810-generic [OK]
+Trying kernel  2.6.27-020627-generic [OK]
+Trying kernel  2.6.26-020626-generic [OK]
+Trying kernel  2.6.25-020625-generic [OK]
+Trying kernel  2.6.24-020624-generic [OK]
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- patches/network/06-header-changes.patch |   10 ++++++++++
- patches/network/30-bridge-port.patch    |    2 +-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+compat-drivers code metrics
 
-diff --git a/patches/network/06-header-changes.patch b/patches/network/06-header-changes.patch
-index cd587cd..5da05c0 100644
---- a/patches/network/06-header-changes.patch
-+++ b/patches/network/06-header-changes.patch
-@@ -125,3 +125,13 @@ cases.
-  
-  #define USB_VERSION	"1.0"
-  
-+--- a/net/wireless/util.c
-++++ b/net/wireless/util.c
-+@@ -10,6 +10,7 @@
-+ #include <net/cfg80211.h>
-+ #include <net/ip.h>
-+ #include <net/dsfield.h>
-++#include <asm/unaligned.h>
-+ #include "core.h"
-+ #include "rdev-ops.h"
-+ 
-diff --git a/patches/network/30-bridge-port.patch b/patches/network/30-bridge-port.patch
-index b4106b7..a426274 100644
---- a/patches/network/30-bridge-port.patch
-+++ b/patches/network/30-bridge-port.patch
-@@ -23,7 +23,7 @@ compat-drivers.
- 
- --- a/net/wireless/util.c
- +++ b/net/wireless/util.c
--@@ -812,7 +812,7 @@ int cfg80211_change_iface(struct cfg8021
-+@@ -813,7 +813,7 @@ int cfg80211_change_iface(struct cfg8021
-  		return -EOPNOTSUPP;
-  
-  	/* if it's part of a bridge, reject changing type to station/ibss */
--- 
-1.7.10.4
+   1255031 - Total upstream lines of code being pulled
+
+   network
+   ----------------------------------------
+      3125 - backport code changes
+      2589 - backport code additions
+       536 - backport code deletions
+     12755 - backport from compat module
+     15880 - total backport code
+    1.2653 - % of code consists of backport work
+
+   drm
+   ----------------------------------------
+       424 - backport code changes
+       285 - backport code additions
+       139 - backport code deletions
+     12755 - backport from compat module
+     13179 - total backport code
+    1.0501 - % of code consists of backport work
+
+Base tree: linux-next.git
+Base tree version: next-20121115
+compat.git: compat-2012-11-15
+compat-drivers release: compat-drivers-2012-11-15-pc
+Code metrics archive: http://bit.ly/H6BTF7
