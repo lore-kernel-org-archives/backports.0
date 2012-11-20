@@ -1,36 +1,95 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <julia.lawall@lip6.fr>
-Date: Fri, 2 Nov 2012 10:48:30 +0100 (CET)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-    Stephen Rothwell <sfr@canb.auug.org.au>,
-    Konstantin Ryabitsev <mricon@kernel.org>,
-    "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: Expressing linux-next collateral evolutions in formal grammar
-In-Reply-To: <CAB=NE6Xv5Lag0J2U3CHK9huzMQLyJEZmdrcqWWomn48w=xUnag@mail.gmail.com>
-Message-ID: <alpine.DEB.2.02.1211021045200.2014@localhost6.localdomain6>
-References: <CAB=NE6Xv5Lag0J2U3CHK9huzMQLyJEZmdrcqWWomn48w=xUnag@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:45416 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752861Ab2KTV4p (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 20 Nov 2012 16:56:45 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id A8C595402E0
+	for <backports@vger.kernel.org>; Tue, 20 Nov 2012 16:56:43 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-11-20 is baked
+Message-Id: <20121120215643.8369340ABF@repository3.orbit-lab.org>
+Date: Tue, 20 Nov 2012 16:56:43 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-> The way I would envision this to be easier to manage is to break them
-> down by subsystem and the reviewer can then go and read the grammar
-> for their own subsystem of preference. The long term benefit of this
-> is that even if folks don't use SmPL for collateral evolutions we have
-> a possibility here of being able to backport a collateral evolution by
-> using the inverse of the SmPL grammar, if we can get to the point of
-> coming up with formal and proper grammar on each collateral evolution.
->
-> Thoughts?
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+HEAD is now at 41121c4 compat-drivers: disable mwifiex for kernels older than 2.6.27
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 2306855 compat: add USB_SUBCLASS_VENDOR_SPEC
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 3805711 Add linux-next specific files for 20121115
+Trying kernel 3.4.4-030404-generic [OK]
+Trying kernel 3.3.7-030307-generic [OK]
+Trying kernel 3.2.2-030202-generic [OK]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
+Worked!
 
-I had liked the idea of lwn, because that makes it public but doesn't 
-bother anyone.  But another option would be to just send an email to the 
-relevant maintainer?  Perhaps it would be better to send the email just 
-to the specific maintainer for the file, and not all the way up the 
-maintainer hierarchy, because these would be just suggestions of things to 
-look at, and not actual patch proposals.
+Trying kernel  3.4.4-030404-generic [OK]
+Trying kernel  3.3.7-030307-generic [OK]
+Trying kernel  3.2.2-030202-generic [OK]
+Trying kernel  3.1.10-030110-generic [OK]
+Trying kernel  3.0.18-030018-generic [OK]
+Trying kernel  2.6.39-02063904-generic [OK]
+Trying kernel  2.6.38-02063808-generic [OK]
+Trying kernel  2.6.37-02063706-generic [OK]
+Trying kernel  2.6.36-02063604-generic [OK]
+Trying kernel  2.6.35-02063512-generic [OK]
+Trying kernel  2.6.34-02063410-generic [OK]
+Trying kernel  2.6.33-02063305-generic [OK]
+Trying kernel  2.6.31-02063113-generic [OK]
+Trying kernel  2.6.30-02063010-generic [OK]
+Trying kernel  2.6.29-02062906-generic [OK]
+Trying kernel  2.6.28-02062810-generic [OK]
+Trying kernel  2.6.27-020627-generic [OK]
+Trying kernel  2.6.26-020626-generic [OK]
+Trying kernel  2.6.25-020625-generic [OK]
+Trying kernel  2.6.24-020624-generic [OK]
 
-thanks,
-julia
+compat-drivers code metrics
+
+   1255031 - Total upstream lines of code being pulled
+
+   network
+   ----------------------------------------
+      3125 - backport code changes
+      2589 - backport code additions
+       536 - backport code deletions
+     12755 - backport from compat module
+     15880 - total backport code
+    1.2653 - % of code consists of backport work
+
+   drm
+   ----------------------------------------
+       424 - backport code changes
+       285 - backport code additions
+       139 - backport code deletions
+     12755 - backport from compat module
+     13179 - total backport code
+    1.0501 - % of code consists of backport work
+
+Base tree: linux-next.git
+Base tree version: next-20121115
+compat.git: compat-2012-11-15
+compat-drivers release: compat-drivers-2012-11-15-pc
+Code metrics archive: http://bit.ly/H6BTF7
