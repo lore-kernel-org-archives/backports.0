@@ -1,40 +1,96 @@
-MIME-Version: 1.0
-In-Reply-To: <50B7D7C9.9020804@hauke-m.de>
-References: <1354144069-28611-1-git-send-email-hauke@hauke-m.de>
-	<1354144069-28611-4-git-send-email-hauke@hauke-m.de>
-	<CAB=NE6Vpqo4D6ieSHpekGkAp1=R+keLA+8x2nrwi7HrycLdUgA@mail.gmail.com>
-	<alpine.DEB.2.02.1211292235550.1999@localhost6.localdomain6>
-	<50B7D7C9.9020804@hauke-m.de>
-Date: Thu, 29 Nov 2012 13:53:51 -0800
-Message-ID: <CAB=NE6WeqFX1Eh0WmbD2Q_MWwDCUbC7gBftc=h5mNHp1Li=aQA@mail.gmail.com>
-Subject: Re: [PATCH 3/6] compat-drivers: build RTL8723AE
-From: "Luis R. Rodriguez" <mcgrof@gmail.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:38585 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754927Ab2KVV5F (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 22 Nov 2012 16:57:05 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id E7855540262
+	for <backports@vger.kernel.org>; Thu, 22 Nov 2012 16:57:02 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-11-22 is baked
+Message-Id: <20121122215702.C036A40AC0@repository3.orbit-lab.org>
+Date: Thu, 22 Nov 2012 16:57:02 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Nov 29, 2012 at 1:46 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
-> On 11/29/2012 10:36 PM, Julia Lawall wrote:
->>>> +-static const struct dev_pm_ops rtlwifi_pm_ops = {
->>>> +-      .suspend = rtl_pci_suspend,
->>>> +-      .resume = rtl_pci_resume,
->>>> +-      .freeze = rtl_pci_suspend,
->>>> +-      .thaw = rtl_pci_resume,
->>>> +-      .poweroff = rtl_pci_suspend,
->>>> +-      .restore = rtl_pci_resume,
->>>> +-};
->>
->> So it often happens that eg all of suspend, freeze, and poweroff have
->> the same value?
->>
->> julia
->
-> I will send a patch to replace them with SIMPLE_DEV_PM_OPS() upstream
-> for the wireless drivers, so this part of the patch will not be needed
-> any more in the future.
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at 41121c4 compat-drivers: disable mwifiex for kernels older than 2.6.27
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 2306855 compat: add USB_SUBCLASS_VENDOR_SPEC
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 3805711 Add linux-next specific files for 20121115
+Trying kernel 3.4.4-030404-generic [OK]
+Trying kernel 3.3.7-030307-generic [OK]
+Trying kernel 3.2.2-030202-generic [OK]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
+Worked!
 
-Well that solves that :) look at that a new 802.11 driver magically
-would be backported across releases with 0 changes required.
+Trying kernel  3.4.4-030404-generic [OK]
+Trying kernel  3.3.7-030307-generic [OK]
+Trying kernel  3.2.2-030202-generic [OK]
+Trying kernel  3.1.10-030110-generic [OK]
+Trying kernel  3.0.18-030018-generic [OK]
+Trying kernel  2.6.39-02063904-generic [OK]
+Trying kernel  2.6.38-02063808-generic [OK]
+Trying kernel  2.6.37-02063706-generic [OK]
+Trying kernel  2.6.36-02063604-generic [OK]
+Trying kernel  2.6.35-02063512-generic [OK]
+Trying kernel  2.6.34-02063410-generic [OK]
+Trying kernel  2.6.33-02063305-generic [OK]
+Trying kernel  2.6.31-02063113-generic [OK]
+Trying kernel  2.6.30-02063010-generic [OK]
+Trying kernel  2.6.29-02062906-generic [OK]
+Trying kernel  2.6.28-02062810-generic [OK]
+Trying kernel  2.6.27-020627-generic [OK]
+Trying kernel  2.6.26-020626-generic [OK]
+Trying kernel  2.6.25-020625-generic [OK]
+Trying kernel  2.6.24-020624-generic [OK]
 
-  Luis
+compat-drivers code metrics
+
+   1255031 - Total upstream lines of code being pulled
+
+   network
+   ----------------------------------------
+      3125 - backport code changes
+      2589 - backport code additions
+       536 - backport code deletions
+     12755 - backport from compat module
+     15880 - total backport code
+    1.2653 - % of code consists of backport work
+
+   drm
+   ----------------------------------------
+       424 - backport code changes
+       285 - backport code additions
+       139 - backport code deletions
+     12755 - backport from compat module
+     13179 - total backport code
+    1.0501 - % of code consists of backport work
+
+Base tree: linux-next.git
+Base tree version: next-20121115
+compat.git: compat-2012-11-15
+compat-drivers release: compat-drivers-2012-11-15-pc
+Code metrics archive: http://bit.ly/H6BTF7
