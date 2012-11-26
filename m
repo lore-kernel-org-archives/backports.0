@@ -1,69 +1,43 @@
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from sabertooth02.qualcomm.com ([65.197.215.38]:28953 "EHLO
+	sabertooth02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754914Ab2KZM3m (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 26 Nov 2012 07:29:42 -0500
+From: Bala Shanmugam <bkamatch@qca.qualcomm.com>
+To: <rodrigue@qca.qualcomm.com>
+CC: <linux-wireless@vger.kernel.org>, <backports@vger.kernel.org>
+Subject: [PATCH 0/3] Patches for compat-drivers/linux-3.6.y
+Date: Mon, 26 Nov 2012 17:59:54 +0530
+Message-ID: <1353932997-8051-1-git-send-email-bkamatch@qca.qualcomm.com>
 MIME-Version: 1.0
-In-Reply-To: <1354144069-28611-6-git-send-email-hauke@hauke-m.de>
-References: <1354144069-28611-1-git-send-email-hauke@hauke-m.de>
-	<1354144069-28611-6-git-send-email-hauke@hauke-m.de>
-Date: Thu, 29 Nov 2012 11:25:18 -0800
-Message-ID: <CAB=NE6VTooMH=mtDOiSw57DXez4E__nwrU_E=R3BHeXZ9jF1LQ@mail.gmail.com>
-Subject: Re: [PATCH 5/6] compat-drivers: add import to fix compile error
-From: "Luis R. Rodriguez" <mcgrof@gmail.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Nov 28, 2012 at 3:07 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
-> On kernel version <=3D 2.6.28, I saw the following compile error without
-> this patch:
->
-> /net/wireless/util.c: In function =E2=80=98cfg80211_get_p2p_attr=E2=80=99=
-:
-> /net/wireless/util.c:1120:4: error: implicit declaration of function
-> =E2=80=98get_unaligned_le16=E2=80=99 [-Werror=3Dimplicit-function-declara=
-tion]
->
-> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-> ---
->  patches/network/06-header-changes.patch |   10 ++++++++++
->  patches/network/30-bridge-port.patch    |    2 +-
->  2 files changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/patches/network/06-header-changes.patch b/patches/network/06=
--header-changes.patch
-> index cd587cd..5da05c0 100644
-> --- a/patches/network/06-header-changes.patch
-> +++ b/patches/network/06-header-changes.patch
-> @@ -125,3 +125,13 @@ cases.
->
->   #define USB_VERSION   "1.0"
->
-> +--- a/net/wireless/util.c
-> ++++ b/net/wireless/util.c
-> +@@ -10,6 +10,7 @@
-> + #include <net/cfg80211.h>
-> + #include <net/ip.h>
-> + #include <net/dsfield.h>
-> ++#include <asm/unaligned.h>
+These patches are for linux-3.6.y branch and has some
+fixes for AR9565.
 
-Interesting, I wonder if we should just get a compat header to add
-this therefore not requiring any patching.
+Bala Shanmugam (3):
+  compat-drivers: Remove few cherry-pick patches
+  compat-drivers: Add next-pending patches.
+  compat-drivers: Add a crap patch for AR9565
 
-> + #include "core.h"
-> + #include "rdev-ops.h"
-> +
-> diff --git a/patches/network/30-bridge-port.patch b/patches/network/30-br=
-idge-port.patch
-> index b4106b7..a426274 100644
-> --- a/patches/network/30-bridge-port.patch
-> +++ b/patches/network/30-bridge-port.patch
-> @@ -23,7 +23,7 @@ compat-drivers.
->
->  --- a/net/wireless/util.c
->  +++ b/net/wireless/util.c
-> -@@ -812,7 +812,7 @@ int cfg80211_change_iface(struct cfg8021
-> +@@ -813,7 +813,7 @@ int cfg80211_change_iface(struct cfg8021
->                 return -EOPNOTSUPP;
->
+ ...005-ath9k-Improve-PAN-profile-performance.patch |  141 ++++++++++++++++++++
+ .../0088-cfg80211-fix-antenna-gain-handling.patch  |   39 ------
+ ...tale-pointers-potentially-causing-access-.patch |   43 ------
+ ...for-TID-only-in-BlockAcks-while-checking-.patch |   65 ---------
+ ...x-signal-strength-noise-measurements-on-a.patch |    2 +-
+ .../0002-ath9k-Fix-MCI-reset-in-BT-cal_req.patch   |   95 +++++++++++++
+ ...mp-audio-profiles-on-weak-signal-strength.patch |  105 +++++++++++++++
+ 7 files changed, 342 insertions(+), 148 deletions(-)
+ create mode 100644 crap/0005-ath9k-Improve-PAN-profile-performance.patch
+ delete mode 100644 linux-next-cherry-picks/0088-cfg80211-fix-antenna-gain-handling.patch
+ delete mode 100644 linux-next-cherry-picks/0093-ath9k-fix-stale-pointers-potentially-causing-access-.patch
+ delete mode 100644 linux-next-cherry-picks/0119-ath9k-Test-for-TID-only-in-BlockAcks-while-checking-.patch
+ create mode 100644 linux-next-pending/0002-ath9k-Fix-MCI-reset-in-BT-cal_req.patch
+ create mode 100644 linux-next-pending/0003-ath9k-stomp-audio-profiles-on-weak-signal-strength.patch
 
-This hunk does not seem to be relevant so I'll discard it.
+-- 
+1.7.4.1
 
-  Luis
