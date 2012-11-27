@@ -1,47 +1,34 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-Date: Thu, 1 Nov 2012 20:09:15 -0700
-Message-ID: <CAB=NE6Xv5Lag0J2U3CHK9huzMQLyJEZmdrcqWWomn48w=xUnag@mail.gmail.com>
-Subject: Expressing linux-next collateral evolutions in formal grammar
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Julia Lawall <julia.lawall@lip6.fr>,
-	Konstantin Ryabitsev <mricon@kernel.org>, "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:52966 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755365Ab2K0VQT (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 27 Nov 2012 16:16:19 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id DDF105400C4
+	for <backports@vger.kernel.org>; Tue, 27 Nov 2012 16:16:17 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-11-27 is baked
+Message-Id: <20121127211617.B8D3940ABF@repository3.orbit-lab.org>
+Date: Tue, 27 Nov 2012 16:16:17 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I think by now quite a few amount of folks understand that SmPL can be
-used to express collateral evolutions for Linux kernel development.
-Obviously some collateral evolutions are not expressed this way though
-but Julia and her team have been working on research that would enable
-for one to infer such SmPL grammar by analyzing deltas. There is a few
-software tools now that start to do this and I think that to help with
-reviewing changes it would help us in the community to spread more
-education on SmPL grammar and to allow us to become more efficient at
-reviewing changes. For a while now Julia has been working on getting
-some form of SmPL grammar from linux-next git tag updates, from one
-tag to the next. I toyed with Julia the idea recently of perhaps this
-being useful to others and if we could point a link to these from lwn
-or any other place. My hope would be that collateral evolutions then
-would then be easily reviewable folks, in case one did not want to
-read a full diff between the tags.
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at 41121c4 compat-drivers: disable mwifiex for kernels older than 2.6.27
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 2306855 compat: add USB_SUBCLASS_VENDOR_SPEC
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at ce2931a Add linux-next specific files for 20121127
+Error while updating from wireless-testing
 
-Technically one next tag from the other though are not a linear
-evolutions though, so a proper evolution expression for a release
-would be from mainline to that day's tag, however being able to
-visualize a grammar on the evolutions would still be nice if possible
--- and I think it is. Wanted to review with you all the idea of
-possibly linking to collateral evolutions in SmPL grammer from lwn, or
-if perhaps kernel.org somewhere.
+compat-drivers code metrics
 
-The way I would envision this to be easier to manage is to break them
-down by subsystem and the reviewer can then go and read the grammar
-for their own subsystem of preference. The long term benefit of this
-is that even if folks don't use SmPL for collateral evolutions we have
-a possibility here of being able to backport a collateral evolution by
-using the inverse of the SmPL grammar, if we can get to the point of
-coming up with formal and proper grammar on each collateral evolution.
+   1262628 - Total upstream lines of code being pulled
 
-Thoughts?
-
-  Luis
+   network
+   ----------------------------------------
