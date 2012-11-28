@@ -1,94 +1,40 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:45670 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752257Ab2KQV4f (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 17 Nov 2012 16:56:35 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id DA63F540267
-	for <backports@vger.kernel.org>; Sat, 17 Nov 2012 16:56:33 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-11-17 is baked
-Message-Id: <20121117215633.BF80B40ABF@repository3.orbit-lab.org>
-Date: Sat, 17 Nov 2012 16:56:33 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Return-Path: <hauke@hauke-m.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 6/6] compat-drivers: do not use struct spinlock
+Date: Thu, 29 Nov 2012 00:07:49 +0100
+Message-Id: <1354144069-28611-7-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1354144069-28611-1-git-send-email-hauke@hauke-m.de>
+References: <1354144069-28611-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-HEAD is now at 41121c4 compat-drivers: disable mwifiex for kernels older than 2.6.27
-git fetch github (/var/opt/compat/compat)
-HEAD is now at 2306855 compat: add USB_SUBCLASS_VENDOR_SPEC
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 3805711 Add linux-next specific files for 20121115
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+struct spinlock does not exists on kernel version <= 2.6.32, use
+spinlock_t instead.
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ patches/network/67-use_spinlock_t.patch |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
+ create mode 100644 patches/network/67-use_spinlock_t.patch
 
-compat-drivers code metrics
-
-   1255031 - Total upstream lines of code being pulled
-
-   network
-   ----------------------------------------
-      3125 - backport code changes
-      2589 - backport code additions
-       536 - backport code deletions
-     12755 - backport from compat module
-     15880 - total backport code
-    1.2653 - % of code consists of backport work
-
-   drm
-   ----------------------------------------
-       424 - backport code changes
-       285 - backport code additions
-       139 - backport code deletions
-     12755 - backport from compat module
-     13179 - total backport code
-    1.0501 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20121115
-compat.git: compat-2012-11-15
-compat-drivers release: compat-drivers-2012-11-15-pc
-Code metrics archive: http://bit.ly/H6BTF7
+diff --git a/patches/network/67-use_spinlock_t.patch b/patches/network/67-use_spinlock_t.patch
+new file mode 100644
+index 0000000..4c9f315
+--- /dev/null
++++ b/patches/network/67-use_spinlock_t.patch
+@@ -0,0 +1,11 @@
++--- a/drivers/net/wireless/brcm80211/brcmfmac/fweh.h
+++++ b/drivers/net/wireless/brcm80211/brcmfmac/fweh.h
++@@ -158,7 +158,7 @@ typedef int (*brcmf_fweh_handler_t)(stru
++  */
++ struct brcmf_fweh_info {
++ 	struct work_struct event_work;
++-	struct spinlock evt_q_lock;
+++	spinlock_t evt_q_lock;
++ 	struct list_head event_q;
++ 	int (*evt_handler[BRCMF_E_LAST])(struct brcmf_if *ifp,
++ 					 const struct brcmf_event_msg *evtmsg,
+-- 
+1.7.10.4
