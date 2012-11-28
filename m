@@ -1,33 +1,50 @@
 Return-Path: <hauke@hauke-m.de>
-Message-ID: <50B7D7C9.9020804@hauke-m.de>
-Date: Thu, 29 Nov 2012 22:46:49 +0100
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Julia Lawall <julia.lawall@lip6.fr>
-CC: "Luis R. Rodriguez" <mcgrof@gmail.com>, backports@vger.kernel.org
-Subject: Re: [PATCH 3/6] compat-drivers: build RTL8723AE
-References: <1354144069-28611-1-git-send-email-hauke@hauke-m.de> <1354144069-28611-4-git-send-email-hauke@hauke-m.de> <CAB=NE6Vpqo4D6ieSHpekGkAp1=R+keLA+8x2nrwi7HrycLdUgA@mail.gmail.com> <alpine.DEB.2.02.1211292235550.1999@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1211292235550.1999@localhost6.localdomain6>
-Content-Type: text/plain; charset=ISO-8859-1
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 2/4] compat: add eth_zero_addr()
+Date: Wed, 28 Nov 2012 23:57:38 +0100
+Message-Id: <1354143460-28164-2-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1354143460-28164-1-git-send-email-hauke@hauke-m.de>
+References: <1354143460-28164-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-On 11/29/2012 10:36 PM, Julia Lawall wrote:
->>> +-static const struct dev_pm_ops rtlwifi_pm_ops = {
->>> +-      .suspend = rtl_pci_suspend,
->>> +-      .resume = rtl_pci_resume,
->>> +-      .freeze = rtl_pci_suspend,
->>> +-      .thaw = rtl_pci_resume,
->>> +-      .poweroff = rtl_pci_suspend,
->>> +-      .restore = rtl_pci_resume,
->>> +-};
-> 
-> So it often happens that eg all of suspend, freeze, and poweroff have
-> the same value?
-> 
-> julia
 
-I will send a patch to replace them with SIMPLE_DEV_PM_OPS() upstream
-for the wireless drivers, so this part of the patch will not be needed
-any more in the future.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ include/linux/compat-3.7.h |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-Hauke
+diff --git a/include/linux/compat-3.7.h b/include/linux/compat-3.7.h
+index 2d7b6dd..9e8d675 100644
+--- a/include/linux/compat-3.7.h
++++ b/include/linux/compat-3.7.h
+@@ -89,6 +89,25 @@ static inline int pcie_capability_clear_dword(struct pci_dev *dev, int pos,
+ 
+ #define PCI_EXP_LNKSTA2			50      /* Link Status 2 */
+ 
++/* This backports:
++ *
++ * commit 6d57e9078e880a3dd232d579f42ac437a8f1ef7b
++ * Author: Duan Jiong <djduanjiong@gmail.com>
++ * Date:   Sat Sep 8 16:32:28 2012 +0000
++ * 
++ *     etherdevice: introduce help function eth_zero_addr() 
++ */
++/**
++ * eth_zero_addr - Assign zero address
++ * @addr: Pointer to a six-byte array containing the Ethernet address
++ *
++ * Assign the zero address to the given address array.
++ */
++static inline void eth_zero_addr(u8 *addr)
++{
++	memset(addr, 0x00, ETH_ALEN);
++}
++
+ #else /* (LINUX_VERSION_CODE > KERNEL_VERSION(3,7,0)) */
+ #define netlink_notify_portid(__notify) (__notify->portid)
+ #define genl_info_snd_portid(__genl_info) (__genl_info->snd_portid)
+-- 
+1.7.10.4
