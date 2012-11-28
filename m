@@ -1,61 +1,68 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:54910 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758496Ab2K3O5i (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 30 Nov 2012 09:57:38 -0500
-Message-ID: <50B8C954.2090507@hauke-m.de>
-Date: Fri, 30 Nov 2012 15:57:24 +0100
+Return-Path: <hauke@hauke-m.de>
 From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 0/6] compat-drivers: fix problems introduced by changes in linux-next.
+Date: Thu, 29 Nov 2012 00:07:43 +0100
+Message-Id: <1354144069-28611-1-git-send-email-hauke@hauke-m.de>
 MIME-Version: 1.0
-To: shuox.liu@gmail.com, backports@vger.kernel.org
-Subject: Re: Build compat-wireless for linus tree
-References: <50A675EE.9010406@gmail.com> <50A79668.2060901@hauke-m.de> <50B4C158.3020701@gmail.com> <50B4D99B.8000308@gmail.com>
-In-Reply-To: <50B4D99B.8000308@gmail.com>
-Content-Type: text/plain; charset=GB2312
-Sender: backports-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-On 11/27/2012 04:17 PM, Shuo wrote:
-> Hi Hauke,
-> Sorry for disturb again.
-> I am trying compat-wireless-2012-11-25 for v3.7-rc7, but it fails.
-> I downloaded the tar package and unpackaged, driver-select b43, make
-> Some logs:
-> 
-> Processing new driver-select request...
-> Backing up makefile: Makefile.bk
-> Backup exists: Makefile.bk
-> Backup exists: Makefile.bk
-> Backup exists: Makefile.bk
-> Backing up makefile: drivers/misc/eeprom/Makefile.bk
-> Backing up makefile: net/wireless/Makefile.bk
-> Backing up makefile: drivers/net/wireless/Makefile.bk
-> ./scripts/gen-compat-autoconf.sh /home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25/.config /home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25/config.mk > include/linux/compat_autoconf.h
-> make -C /lib/modules/3.7.0-rc7-shuo-main+//build M=/home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25 modules
-> make[1]: Entering directory `/home/lskakaxi/work/linux/kernel_build'
-> /home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25/config.mk:247: "WARNING: CONFIG_CFG80211_WEXT will be deactivated or not working because kernel was compiled with CONFIG_WIRELESS_EXT=n. Tools using wext interface like iwconfig will not work. To activate it build your kernel e.g. with CONFIG_LIBIPW=m."
->   CC [M]  /home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25/compat/main.o
-> In file included from /home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25/include/linux/pm_qos.h:9:0,
->                  from /home/lskakaxi/work/linux/linux/include/linux/netdevice.h:28,
->                  from /home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25/include/linux/compat-2.6.29.h:5,
->                  from /home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25/include/linux/compat-2.6.h:50,
->                  from <command-line>:0:
-> /home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25/include/linux/pm_qos_params.h:7:38: fatal error: linux/pm_qos_params.h: No such file or directory
-> compilation terminated.
-> 
-> I found the linux/pm_qos_params.h has been renamed to pm_qos.h one year ago. I am confused why compat-wirelss need this old header.
-> Anything i missed?
-> 
-> Shuo
-> 
-Hi Shuo,
+This patch series mostly contains fixes for some problems introduces by
+changes in linu-next.
+This was compile tested with kernel version 2.6.24 to 3.7 and still has
+some compile problems with kernel 2.6.27 and 2.6.24.
 
-There seams to be something wrong with your kernel. The include done in
-include/linux/pm_qos.h:9:0 should not happen on your kernel version.
+Hauke Mehrtens (6):
+  compat-drivers: make patches apply again
+  compat-drivers: remove option for alx driver
+  compat-drivers: build RTL8723AE
+  compat-drivers: refresh patches
+  compat-drivers: add import to fix compile error
+  compat-drivers: do not use struct spinlock
 
-Does include/generated/uapi/linux/version.h in your kernel directory
-contains #define LINUX_VERSION_CODE 197895 or does it contain some other
-number?
+ config.mk                                          |    2 +-
+ patches/drm/03-swiotlb.patch                       |    8 +-
+ patches/drm/04-revert-prime-support.patch          |   22 ++---
+ patches/drm/05-i915-define-acpi-video-class.patch  |    2 +-
+ patches/drm/06-rename-config-options.patch         |   16 ++--
+ patches/drm/07-intel-gtt.patch                     |   13 ++-
+ .../drm/09-nouveau-compatify-kconfig-vars.patch    |   72 ++++++----------
+ .../10-radeon-revert-acpi-table-size-check.patch   |    6 +-
+ patches/drm/98-pr_fmt.patch                        |   14 ++++
+ patches/drm/99-change-makefile.patch               |    3 +-
+ patches/network/0001-netdev_ops.patch              |   24 +++---
+ patches/network/0002-net-misc.patch                |    4 +-
+ .../0003-netdev-needed_headroom_tailroom.patch     |    4 +-
+ patches/network/0005-netlink-portid.patch          |   87 +++++++++++---------
+ patches/network/04-netns.patch                     |   14 ++--
+ patches/network/06-header-changes.patch            |   10 +++
+ patches/network/08-rename-config-options.patch     |   28 +++----
+ patches/network/09-cfg80211-wext-padding.patch     |    2 +-
+ patches/network/09-threaded-irq.patch              |    6 +-
+ .../network/10-add-wext-handlers-to-netdev.patch   |    4 +-
+ patches/network/11-dev-pm-ops.patch                |   41 ++++++++-
+ patches/network/12-iw_handler-changes.patch        |    2 +-
+ patches/network/14-device-type.patch               |    4 +-
+ patches/network/15-symbol-export-conflicts.patch   |    2 +-
+ patches/network/16-bluetooth.patch                 |    6 +-
+ patches/network/17-netdev-queue.patch              |    4 +-
+ patches/network/25-multicast-list_head.patch       |   36 ++++----
+ patches/network/26-sdio-quirks.patch               |    4 +-
+ patches/network/29-sdio_no_suspend.patch           |   22 ++---
+ patches/network/30-bridge-port.patch               |    4 +-
+ patches/network/36-workqueue.patch                 |    2 +-
+ patches/network/40-netdev-hw-features.patch        |    8 +-
+ patches/network/42-netlink_seq.patch               |    2 +-
+ patches/network/46-use_other_workqueue.patch       |    2 +-
+ patches/network/53-pr_fmt.patch                    |   32 ++-----
+ patches/network/54-get_ts_info.patch               |    2 +-
+ patches/network/62-usb_driver_lpm.patch            |   18 ++--
+ patches/network/67-use_spinlock_t.patch            |   11 +++
+ 38 files changed, 294 insertions(+), 249 deletions(-)
+ create mode 100644 patches/network/67-use_spinlock_t.patch
 
-Hauke
+-- 
+1.7.10.4
