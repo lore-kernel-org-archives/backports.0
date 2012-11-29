@@ -1,38 +1,32 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from sabertooth02.qualcomm.com ([65.197.215.38]:38359 "EHLO
-	sabertooth02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752088Ab2K0Nes (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 27 Nov 2012 08:34:48 -0500
-Date: Tue, 27 Nov 2012 19:04:57 +0530
-From: Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
-To: Bala Shanmugam <bkamatch@qca.qualcomm.com>
-CC: <rodrigue@qca.qualcomm.com>, <linux-wireless@vger.kernel.org>,
-	<backports@vger.kernel.org>
-Subject: Re: [PATCH 3/3] compat-drivers: Add a crap patch for AR9565
-Message-ID: <20121127133455.GA3185@hemis.qca.qualcomm.com>
-References: <1353932997-8051-1-git-send-email-bkamatch@qca.qualcomm.com>
- <1353932997-8051-4-git-send-email-bkamatch@qca.qualcomm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <1353932997-8051-4-git-send-email-bkamatch@qca.qualcomm.com>
+Received: from external1.orbit-lab.org ([128.6.192.131]:40703 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755473Ab2K2VS3 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 29 Nov 2012 16:18:29 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id DA645540245
+	for <backports@vger.kernel.org>; Thu, 29 Nov 2012 16:18:27 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-11-29 is baked
+Message-Id: <20121129211827.BA4AC40ABF@repository3.orbit-lab.org>
+Date: Thu, 29 Nov 2012 16:18:27 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Nov 26, 2012 at 05:59:57PM +0530, Bala Shanmugam wrote:
-> This patch is required to improve BT throughput to
-> meet customer requirement.  This patch is a workaround
-> to put WLAN to sleep during BT cycle and cannot be
-> upstreamed.
-> 
-> Signed-off-by: Bala Shanmugam <bkamatch@qca.qualcomm.com>
-> ---
->  ...9k-Improve-BT-PAN-FTP-profile-performance.patch |  140 ++++++++++++++++++++
->  1 files changed, 140 insertions(+), 0 deletions(-)
->  create mode 100644 crap/0005-ath9k-Improve-BT-PAN-FTP-profile-performance.patch
->
-Luis,
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+HEAD is now at 41121c4 compat-drivers: disable mwifiex for kernels older than 2.6.27
+git fetch github (/var/opt/compat/compat)
+HEAD is now at 2306855 compat: add USB_SUBCLASS_VENDOR_SPEC
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at a283d97 Add linux-next specific files for 20121129
+Error while updating from wireless-testing
 
-Can you please hold this patch? It needs some more testing.
+compat-drivers code metrics
 
--Rajkumar
+   1262745 - Total upstream lines of code being pulled
+
+   network
+   ----------------------------------------
