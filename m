@@ -1,43 +1,50 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from sabertooth02.qualcomm.com ([65.197.215.38]:28953 "EHLO
-	sabertooth02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754914Ab2KZM3m (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 26 Nov 2012 07:29:42 -0500
-From: Bala Shanmugam <bkamatch@qca.qualcomm.com>
-To: <rodrigue@qca.qualcomm.com>
-CC: <linux-wireless@vger.kernel.org>, <backports@vger.kernel.org>
-Subject: [PATCH 0/3] Patches for compat-drivers/linux-3.6.y
-Date: Mon, 26 Nov 2012 17:59:54 +0530
-Message-ID: <1353932997-8051-1-git-send-email-bkamatch@qca.qualcomm.com>
+Received: from mail.kernel.org ([198.145.19.201]:54879 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754086Ab2K2Xt1 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 29 Nov 2012 18:49:27 -0500
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id B663320431
+	for <backports@vger.kernel.org>; Thu, 29 Nov 2012 23:49:26 +0000 (UTC)
+Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
+	by mail.kernel.org (Postfix) with ESMTP id BBF8C203F3
+	for <backports@vger.kernel.org>; Thu, 29 Nov 2012 23:49:25 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 51061] brcmsmac crashes and disconnects
+In-Reply-To: <bug-51061-58281@https.bugzilla.kernel.org/>
+References: <bug-51061-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-Id: <20121129234924.B0B6511FAE1@bugzilla.kernel.org>
+Date: Thu, 29 Nov 2012 23:49:24 +0000 (UTC)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-These patches are for linux-3.6.y branch and has some
-fixes for AR9565.
+https://bugzilla.kernel.org/show_bug.cgi?id=51061
 
-Bala Shanmugam (3):
-  compat-drivers: Remove few cherry-pick patches
-  compat-drivers: Add next-pending patches.
-  compat-drivers: Add a crap patch for AR9565
 
- ...005-ath9k-Improve-PAN-profile-performance.patch |  141 ++++++++++++++++++++
- .../0088-cfg80211-fix-antenna-gain-handling.patch  |   39 ------
- ...tale-pointers-potentially-causing-access-.patch |   43 ------
- ...for-TID-only-in-BlockAcks-while-checking-.patch |   65 ---------
- ...x-signal-strength-noise-measurements-on-a.patch |    2 +-
- .../0002-ath9k-Fix-MCI-reset-in-BT-cal_req.patch   |   95 +++++++++++++
- ...mp-audio-profiles-on-weak-signal-strength.patch |  105 +++++++++++++++
- 7 files changed, 342 insertions(+), 148 deletions(-)
- create mode 100644 crap/0005-ath9k-Improve-PAN-profile-performance.patch
- delete mode 100644 linux-next-cherry-picks/0088-cfg80211-fix-antenna-gain-handling.patch
- delete mode 100644 linux-next-cherry-picks/0093-ath9k-fix-stale-pointers-potentially-causing-access-.patch
- delete mode 100644 linux-next-cherry-picks/0119-ath9k-Test-for-TID-only-in-BlockAcks-while-checking-.patch
- create mode 100644 linux-next-pending/0002-ath9k-Fix-MCI-reset-in-BT-cal_req.patch
- create mode 100644 linux-next-pending/0003-ath9k-stomp-audio-profiles-on-weak-signal-strength.patch
+
+
+
+--- Comment #3 from Luis R. Rodriguez <mcgrof@gmail.com>  2012-11-29 23:49:24 ---
+Thanks for the review and confirmation. Konstantin, Alan, I tried to re-assign
+the bug to Arend but bugzilla indicates the Assignee
+(backports@vger.kernel.org) or someone with permissions needs to be able to do
+this. Not sure if we ever got a password to use for backports@vger.kernel.org
+to be able to re-assign bugs via bugzilla that were determined at a later time
+are not backport related, I don't think so. Can we or can a few of us get
+permissions to reassign bugs? Please note that in practice we have had so far
+only 1 reported bug regarding compat-drivers / compat-wireless (back in the
+day) that was an actual backport bug as such I suspect as with other bugs that
+have been filed before just a heads up that most bugs on drivers that use
+compat *will* likely be *real* driver bugs based on upstream linux-stable code.
+
+I am also not sure if it is possible to modify the bug entry to re-assign to
+networking for component.
 
 -- 
-1.7.4.1
-
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
