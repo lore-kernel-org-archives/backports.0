@@ -1,36 +1,29 @@
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/5] compat-drivers: print original name and path of patch in refresh
-Date: Thu, 29 Nov 2012 16:24:37 +0100
-Message-Id: <1354202681-11787-2-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1354202681-11787-1-git-send-email-hauke@hauke-m.de>
-References: <1354202681-11787-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+In-Reply-To: <1354143460-28164-4-git-send-email-hauke@hauke-m.de>
+References: <1354143460-28164-1-git-send-email-hauke@hauke-m.de>
+	<1354143460-28164-4-git-send-email-hauke@hauke-m.de>
+Date: Thu, 29 Nov 2012 10:30:49 -0800
+Message-ID: <CAB=NE6XbBOn8TNn_2oaM+BkSKxUobMFqSCU4eUz++3hORUGwXw@mail.gmail.com>
+Subject: Re: [PATCH 4/4] compat: move config_enabled to compat-3.4.h
+From: "Luis R. Rodriguez" <mcgrof@gmail.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-In the old version patches.orig/<patch name>.patch was printed as the
-current patch quilt is working on in refresh, now e.g. patches/network
-/<patch name>.patch is printed.
+On Wed, Nov 28, 2012 at 2:57 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> diff --git a/include/linux/compat-3.1.h b/include/linux/compat-3.1.h
+> index fc05245..71bc00f 100644
+> --- a/include/linux/compat-3.1.h
+> +++ b/include/linux/compat-3.1.h
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- scripts/admin-update.sh |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> @@ -63,7 +50,7 @@ static inline struct sk_buff *__netdev_alloc_skb_ip_align(struct net_device *dev
+>   *
+>   */
+>  #define IS_ENABLED(option) \
+> -        (config_enabled(option) || config_enabled(option##_MODULE))
+> +       (config_enabled(option) || config_enabled(option##_MODULE))
 
-diff --git a/scripts/admin-update.sh b/scripts/admin-update.sh
-index 6a085e3..89aae9f 100755
---- a/scripts/admin-update.sh
-+++ b/scripts/admin-update.sh
-@@ -51,7 +51,7 @@ patchRefresh() {
- 			echo -e "${RED}No patches found in $1${NORMAL}"
- 			break;
- 		fi
--		echo -e "${GREEN}Refresh backport patch${NORMAL}: ${BLUE}$i${NORMAL}"
-+		echo -e "${GREEN}Refresh backport patch${NORMAL}: ${BLUE}${1}/$(basename $i)${NORMAL}"
- 		quilt import $i
- 		quilt push -f
- 		RET=$?
--- 
-1.7.10.4
+This hunk is not required, right?
+
+  Luis
