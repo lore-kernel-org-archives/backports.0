@@ -1,45 +1,38 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:37241 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754841Ab2K2OlD (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 29 Nov 2012 09:41:03 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 7B814203EC
-	for <backports@vger.kernel.org>; Thu, 29 Nov 2012 14:41:01 +0000 (UTC)
-Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
-	by mail.kernel.org (Postfix) with ESMTP id C6121203F3
-	for <backports@vger.kernel.org>; Thu, 29 Nov 2012 14:40:55 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 51061] brcmsmac crashes and disconnects
-In-Reply-To: <bug-51061-58281@https.bugzilla.kernel.org/>
-References: <bug-51061-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Message-Id: <20121129144054.B98D711F883@bugzilla.kernel.org>
-Date: Thu, 29 Nov 2012 14:40:54 +0000 (UTC)
-Sender: backports-owner@vger.kernel.org
+Return-Path: <hauke@hauke-m.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 4/5] compat-drivers: run refresh for all patches
+Date: Thu, 29 Nov 2012 16:24:40 +0100
+Message-Id: <1354202681-11787-5-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1354202681-11787-1-git-send-email-hauke@hauke-m.de>
+References: <1354202681-11787-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51061
+In the past refresh with quilt was just run for the last patch
+directory being applied and not for all, because our script had
+problems when patchRefresh() was called more then once in a single
+admin-update.sh run. This was fixed in the last patch and now it is
+safe to run it on all patches.
 
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ scripts/admin-update.sh |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Alan <alan@lxorguk.ukuu.org.uk> changed:
-
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |alan@lxorguk.ukuu.org.uk
-          Component|Wireless                    |Compat-Drivers
-            Version|2.5                         |unspecified
-         AssignedTo|networking_wireless@kernel- |backports@vger.kernel.org
-                   |bugs.osdl.org               |
-            Product|Networking                  |Backports project
-
-
-
-
+diff --git a/scripts/admin-update.sh b/scripts/admin-update.sh
+index 10a2598..cdc5ce5 100755
+--- a/scripts/admin-update.sh
++++ b/scripts/admin-update.sh
+@@ -690,7 +690,7 @@ for subsystem in $SUBSYSTEMS; do
+ 			echo -e "${RED}Patches: $PATCHDIR empty, skipping...${NORMAL}"
+ 			continue
+ 		fi
+-		if [[ $LAST_ELEM = $dir && "$REFRESH" = y ]]; then
++		if [[ "$REFRESH" = y ]]; then
+ 			patchRefresh $PATCHDIR
+ 		fi
+ 
 -- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+1.7.10.4
