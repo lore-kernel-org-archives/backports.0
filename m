@@ -1,63 +1,82 @@
-Return-Path: <ozancag@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1354202681-11787-6-git-send-email-hauke@hauke-m.de>
-References: <1354202681-11787-1-git-send-email-hauke@hauke-m.de>
-	<1354202681-11787-6-git-send-email-hauke@hauke-m.de>
-Date: Fri, 30 Nov 2012 09:58:57 +0200
-Message-ID: <CAFub=KRsvwuXYa8EtMpm7hLgW+hgahP5mUhN2UWFBvxhBXXMeA@mail.gmail.com>
-Subject: Re: [PATCH 5/5] compat-drivers: do not apply patches in natural sort order
-From: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: mcgrof@gmail.com, backports@vger.kernel.org
+In-Reply-To: <alpine.DEB.2.02.1211292218150.1999@localhost6.localdomain6>
+References: <1354144069-28611-1-git-send-email-hauke@hauke-m.de>
+	<1354144069-28611-4-git-send-email-hauke@hauke-m.de>
+	<CAB=NE6Vpqo4D6ieSHpekGkAp1=R+keLA+8x2nrwi7HrycLdUgA@mail.gmail.com>
+	<alpine.DEB.2.02.1211292218150.1999@localhost6.localdomain6>
+Date: Thu, 29 Nov 2012 13:30:43 -0800
+Message-ID: <CAB=NE6V+xVTq7-cx4Y0hqXwhJqW860C-DE4BoWYJh6diOX0C+w@mail.gmail.com>
+Subject: Re: [PATCH 3/6] compat-drivers: build RTL8723AE
+From: "Luis R. Rodriguez" <mcgrof@gmail.com>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org,
+	Adrian Chadd <adrian@freebsd.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Nov 29, 2012 at 5:24 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
-> Without this patch the patches are applied in the natural sort order of
-> numbers, which caused this order for patches/network/:
-> patches/network/0001-netdev_ops.patch
-> patches/network/02-ksize.patch
-> patches/network/0002-net-misc.patch
-> patches/network/0003-netdev-needed_headroom_tailroom.patch
-> patches/network/03-rfkill.patch
-> patches/network/04-netns.patch
-> patches/network/0004-wext-namespace.patch
-> patches/network/0005-netlink-portid.patch
-> patches/network/05-usb.patch
+On Thu, Nov 29, 2012 at 1:21 PM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+> On Thu, 29 Nov 2012, Luis R. Rodriguez wrote:
+>
+>> On Wed, Nov 28, 2012 at 3:07 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+>>>
+>>> This driver is building on all supported kernel versions.
+>>>
+>>> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+>>
+>>
+>> Julia, just a heads up this is the only change that was required to
+>> backport one 802.11 driver with the current framework. I don't believe
+>> that the change below can be expressed in SmPL nor inferred into SmPL,
+>> but wanted to double check with you.
+>
+>
+> Will it be needed to transform other drivers in this way?
 
-Actually it was me who changed/broke this and I really can't decide
-now which one is more intuitive.
+Indeed the collection of changes for this collateral evolution is all
+present in one patch:
 
-commit 46a5aef05b92a2162150326f426bebe3541d6e8c
-Author: Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com>
-Date:   Fri Jun 22 16:30:54 2012 +0300
+patches/network/11-dev-pm-ops.patch
 
-    compat-wireless: Naturally sort patch prefixes
+As it is right now all patches with double digits have not been split
+out cleanly to *only* have present *one* collateral evolution. I
+started doing this starting with the first series of patches the old
+01-netdev-attach-ops.patcha and from this I split it up into four
+patches:
 
-    Use ls -v to get a naturally sorted list of patches like:
+0001-netdev_ops.patch
+0002-net-misc.patch
+0003-netdev-needed_headroom_tailroom.patch
+0004-wext-namespace.patch
+0005-netlink-portid.patch
 
-    patches/00-vga_switcheroo_client_ops.patch
-    patches/01-dma_buf_ops-addition.patch
-    patches/02-revert-vm_mmap.patch
-    patches/98-pr_fmt.patch
-    patches/99-change-makefile.patch
-    patches/9999-FIXME-dont-build-i915-for-i2c-problems.patch
+So for example 0001-netdev_ops.patch has only one collateral evolution
+which I have managed to infer SmPL using spdiff (but not yet
+patchparse).
 
-    instead of:
+I suspect we can do the same with 11-dev-pm-ops.patch.
 
-    patches/00-vga_switcheroo_client_ops.patch
-    patches/01-dma_buf_ops-addition.patch
-    patches/02-revert-vm_mmap.patch
-    patches/98-pr_fmt.patch
-    patches/9999-FIXME-dont-build-i915-for-i2c-problems.patch
-    patches/99-change-makefile.patch
+> In principle, these changes to data structures should be fine for SmPL.
 
-    Signed-off-by: Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com>
-    Signed-off-by: Luis R. Rodriguez <mcgrof@frijolero.org>
+Sweeeeeeeeeeeeeeet! Adding Adrian for #worlddomination
+#killingproprietarydriver plans.
 
+> I think you can even add the #ifdefs.
 
---=20
-Ozan =C3=87a=C4=9Flayan
-Research Assistant
-Galatasaray University - Computer Engineering Dept.
-http://www.ozancaglayan.com
+Mama mia.
+
+> The only thing that does not look good
+> to me is that compat_pci_suspend and compat_pci_suspend don't have
+> semicolons after them.  Unlike eg module_pci_driver.  Is there any reason
+> for this?
+
+Um, well these unwrap to defining either a routine or nothing, so I
+think adding one should be OK. I'll test compile that today and if it
+works I'll add it.
+
+> I don't think these changes would be inferred by spdiff, because of the
+> detail that it only works inside functions.
+
+Thought so, thanks for the confirmation, it clarifies the scope of
+work required for these type of collateral evolutions.
+
+  Luis
