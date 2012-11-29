@@ -1,96 +1,70 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:54013 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752500Ab2KRV4i (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 18 Nov 2012 16:56:38 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 06905540260
-	for <backports@vger.kernel.org>; Sun, 18 Nov 2012 16:56:37 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-11-18 is baked
-Message-Id: <20121118215636.D800940ABF@repository3.orbit-lab.org>
-Date: Sun, 18 Nov 2012 16:56:36 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <1354144069-28611-7-git-send-email-hauke@hauke-m.de>
+References: <1354144069-28611-1-git-send-email-hauke@hauke-m.de>
+	<1354144069-28611-7-git-send-email-hauke@hauke-m.de>
+Date: Thu, 29 Nov 2012 11:47:50 -0800
+Message-ID: <CAB=NE6Ww8SVm51qph=iXNGS8BN1cWdsT-bvKWrDt4b9c7ea9sg@mail.gmail.com>
+Subject: Re: [PATCH 6/6] compat-drivers: do not use struct spinlock
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Arend Van Spriel <arend@broadcom.com>, linux-wireless <linux-wireless@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Vetter <daniel.vetter@ffwll.ch>,
+	Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Alexander Stein <alexander.stein@systec-electronic.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at 41121c4 compat-drivers: disable mwifiex for kernels older than 2.6.27
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 2306855 compat: add USB_SUBCLASS_VENDOR_SPEC
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 3805711 Add linux-next specific files for 20121115
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+On Wed, Nov 28, 2012 at 3:07 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> struct spinlock does not exists on kernel version <= 2.6.32, use
+> spinlock_t instead.
+>
+> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+> ---
+>  patches/network/67-use_spinlock_t.patch |   11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>  create mode 100644 patches/network/67-use_spinlock_t.patch
+>
+> diff --git a/patches/network/67-use_spinlock_t.patch b/patches/network/67-use_spinlock_t.patch
+> new file mode 100644
+> index 0000000..4c9f315
+> --- /dev/null
+> +++ b/patches/network/67-use_spinlock_t.patch
+> @@ -0,0 +1,11 @@
+> +--- a/drivers/net/wireless/brcm80211/brcmfmac/fweh.h
+> ++++ b/drivers/net/wireless/brcm80211/brcmfmac/fweh.h
+> +@@ -158,7 +158,7 @@ typedef int (*brcmf_fweh_handler_t)(stru
+> +  */
+> + struct brcmf_fweh_info {
+> +       struct work_struct event_work;
+> +-      struct spinlock evt_q_lock;
+> ++      spinlock_t evt_q_lock;
+> +       struct list_head event_q;
+> +       int (*evt_handler[BRCMF_E_LAST])(struct brcmf_if *ifp,
+> +                                        const struct brcmf_event_msg *evtmsg,
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+This should have still worked, I thought for a second based on your
+backport patch we ditched the spinlock_t or perhaps this was related
+to the realtime work Thomas has been doing but upon further inspection
+I see now this is simply a discrepancy on sloppy driver development.
 
-compat-drivers code metrics
+IMHO your patch should go upstream and a respective patch should be
+submitted as well as for these drivers:
 
-   1255031 - Total upstream lines of code being pulled
+mcgrof@frijol ~/linux-next (git::master)$ git grep "struct spinlock" drivers/
+drivers/crypto/ux500/cryp/cryp.h:       struct spinlock ctx_lock;
+drivers/crypto/ux500/cryp/cryp.h:       struct spinlock power_state_spinlock;
+drivers/crypto/ux500/hash/hash_alg.h:   struct spinlock         ctx_lock;
+drivers/crypto/ux500/hash/hash_alg.h:   struct spinlock
+power_state_lock;
+drivers/gpu/drm/i915/i915_drv.h:        struct spinlock gt_lock;
+drivers/gpu/drm/i915/i915_drv.h:                struct spinlock lock;
+drivers/media/platform/s5p-fimc/mipi-csis.c:    struct spinlock slock;
+drivers/media/platform/s5p-jpeg/jpeg-core.h:    struct spinlock         slock;
+drivers/watchdog/ie6xx_wdt.c:   struct spinlock unlock_sequence;
 
-   network
-   ----------------------------------------
-      3125 - backport code changes
-      2589 - backport code additions
-       536 - backport code deletions
-     12755 - backport from compat module
-     15880 - total backport code
-    1.2653 - % of code consists of backport work
+Alexander, please also add your driver to the MAINTAINERS file.
 
-   drm
-   ----------------------------------------
-       424 - backport code changes
-       285 - backport code additions
-       139 - backport code deletions
-     12755 - backport from compat module
-     13179 - total backport code
-    1.0501 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20121115
-compat.git: compat-2012-11-15
-compat-drivers release: compat-drivers-2012-11-15-pc
-Code metrics archive: http://bit.ly/H6BTF7
+  Luis
