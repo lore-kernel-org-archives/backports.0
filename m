@@ -1,38 +1,39 @@
-Return-Path: <hauke@hauke-m.de>
-Message-ID: <5092BF58.1040703@hauke-m.de>
-Date: Thu, 01 Nov 2012 19:28:40 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.19.201]:54107 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752776Ab2K2XN1 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 29 Nov 2012 18:13:27 -0500
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id D62462039E
+	for <backports@vger.kernel.org>; Thu, 29 Nov 2012 23:13:25 +0000 (UTC)
+Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
+	by mail.kernel.org (Postfix) with ESMTP id 20B3D20219
+	for <backports@vger.kernel.org>; Thu, 29 Nov 2012 23:13:25 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 51061] brcmsmac crashes and disconnects
+In-Reply-To: <bug-51061-58281@https.bugzilla.kernel.org/>
+References: <bug-51061-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-To: backports@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@gmail.com>
-Subject: Donwload locations and wiki structure
-Content-Type: text/plain; charset=ISO-8859-1
+Message-Id: <20121129231325.1C30211FAE1@bugzilla.kernel.org>
+Date: Thu, 29 Nov 2012 23:13:25 +0000 (UTC)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi Luis,
+https://bugzilla.kernel.org/show_bug.cgi?id=51061
 
-When I visit the backport wiki [0], I am missing the word download.
-The section name "compat-drivers releases" should better be named:
-"compat-drivers releases downloads". ;-)
 
-The change from compat-wireless to compat-drivers was more a rename than
-a very big change, why don't you link the old stable releases on the
-release page, I think most of the stable page should be integrated into
-the new release page?
 
-As automatically uploading to https://www.kernel.org does not work, it
-is not a suitable place to store the daily snapshots of compat-drivers,
-they are better localed at the other positions and the two releases at
-kernel.org should be removed.
 
-Putting all the snapshots into one directory on the download server gets
-messy with the daily releases, the old structure with /year/month/
-folders was better. The cmake reports should go into an own subdirectory
-as most of the users are not interested in them. A symlink to the latest
-release in the root folder would be nice.
 
-I just want to hear you opinion on this and would try to solve some of
-these things by myself.
+--- Comment #2 from Arend van Spriel <aspriel@gmail.com>  2012-11-29 23:13:24 ---
+The warning in the .flush() callback is an upstream issue indeed. I will dig a
+bit deeper, but indeed this does not seem like a backport issue. Feel free to
+reassign.
 
-Hauke
-
-[0]: https://backports.wiki.kernel.org/index.php/Main_Page
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
