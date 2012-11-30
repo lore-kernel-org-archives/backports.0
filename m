@@ -1,45 +1,44 @@
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.19.201]:55221 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754777Ab2K3ACL (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 29 Nov 2012 19:02:11 -0500
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id F0C782041C
+	for <backports@vger.kernel.org>; Fri, 30 Nov 2012 00:02:08 +0000 (UTC)
+Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
+	by mail.kernel.org (Postfix) with ESMTP id 31FF42039F
+	for <backports@vger.kernel.org>; Fri, 30 Nov 2012 00:02:07 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 51061] brcmsmac crashes and disconnects
+In-Reply-To: <bug-51061-58281@https.bugzilla.kernel.org/>
+References: <bug-51061-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <CAB=NE6Ww8SVm51qph=iXNGS8BN1cWdsT-bvKWrDt4b9c7ea9sg@mail.gmail.com>
-References: <1354144069-28611-1-git-send-email-hauke@hauke-m.de>
-	<1354144069-28611-7-git-send-email-hauke@hauke-m.de>
-	<CAB=NE6Ww8SVm51qph=iXNGS8BN1cWdsT-bvKWrDt4b9c7ea9sg@mail.gmail.com>
-Date: Thu, 29 Nov 2012 12:51:37 -0800
-Message-ID: <CAB=NE6XiuZCzWXROi35no0nnU4F7-=d_FwX90xEKgSgFGVbfYg@mail.gmail.com>
-Subject: Re: [PATCH 6/6] compat-drivers: do not use struct spinlock
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Arend Van Spriel <arend@broadcom.com>, linux-wireless <linux-wireless@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alexander Stein <alexander.stein@systec-electronic.com>
-Content-Type: text/plain; charset=UTF-8
+Message-Id: <20121130000207.2014911FB3B@bugzilla.kernel.org>
+Date: Fri, 30 Nov 2012 00:02:07 +0000 (UTC)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Nov 29, 2012 at 11:47 AM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> On Wed, Nov 28, 2012 at 3:07 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
->
-> IMHO your patch should go upstream and a respective patch should be
-> submitted as well as for these drivers:
->
-> mcgrof@frijol ~/linux-next (git::master)$ git grep "struct spinlock" drivers/
-> drivers/crypto/ux500/cryp/cryp.h:       struct spinlock ctx_lock;
-> drivers/crypto/ux500/cryp/cryp.h:       struct spinlock power_state_spinlock;
-> drivers/crypto/ux500/hash/hash_alg.h:   struct spinlock         ctx_lock;
-> drivers/crypto/ux500/hash/hash_alg.h:   struct spinlock
-> power_state_lock;
-> drivers/gpu/drm/i915/i915_drv.h:        struct spinlock gt_lock;
-> drivers/gpu/drm/i915/i915_drv.h:                struct spinlock lock;
-> drivers/media/platform/s5p-fimc/mipi-csis.c:    struct spinlock slock;
-> drivers/media/platform/s5p-jpeg/jpeg-core.h:    struct spinlock         slock;
-> drivers/watchdog/ie6xx_wdt.c:   struct spinlock unlock_sequence;
->
-> Alexander, please also add your driver to the MAINTAINERS file.
+https://bugzilla.kernel.org/show_bug.cgi?id=51061
 
-Hauke, I'll add your patch for now into compat-drivers until shit
-catches up on linux-next if the series I just posted goes through.
 
-  Luis
+Alan <alan@lxorguk.ukuu.org.uk> changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+          Component|Compat-Drivers              |Wireless
+            Version|unspecified                 |2.5
+         AssignedTo|backports@vger.kernel.org   |networking_wireless@kernel-
+                   |                            |bugs.osdl.org
+            Product|Backports project           |Networking
+
+
+
+
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
