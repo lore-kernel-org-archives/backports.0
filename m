@@ -1,59 +1,81 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:39912 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751292Ab2LTJZI (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 20 Dec 2012 04:25:08 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 188622022A
-	for <backports@vger.kernel.org>; Thu, 20 Dec 2012 09:25:03 +0000 (UTC)
-Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
-	by mail.kernel.org (Postfix) with ESMTP id 6C31B20227
-	for <backports@vger.kernel.org>; Thu, 20 Dec 2012 09:25:01 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 51851] New: Unable to use alx driver without CONFIG_MDIO
-Message-ID: <bug-51851-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:57299 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751673Ab2LBQmD (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 2 Dec 2012 11:42:03 -0500
+Received: by mail-pa0-f46.google.com with SMTP id bh2so1378292pad.19
+        for <backports@vger.kernel.org>; Sun, 02 Dec 2012 08:42:03 -0800 (PST)
+Message-ID: <50BB84D3.9050402@gmail.com>
+Date: Mon, 03 Dec 2012 00:41:55 +0800
+From: Shuo <shuox.liu@gmail.com>
+Reply-To: shuox.liu@gmail.com
 MIME-Version: 1.0
-Date: Thu, 20 Dec 2012 09:25:00 +0000 (UTC)
+To: Hauke Mehrtens <hauke@hauke-m.de>
+CC: backports@vger.kernel.org
+Subject: Re: Build compat-wireless for linus tree
+References: <50A675EE.9010406@gmail.com> <50A79668.2060901@hauke-m.de> <50B4C158.3020701@gmail.com> <50B4D99B.8000308@gmail.com> <50B8C954.2090507@hauke-m.de>
+In-Reply-To: <50B8C954.2090507@hauke-m.de>
+Content-Type: text/plain; charset=GB2312
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51851
+On 11/30/2012 10:57 PM, Hauke Mehrtens wrote:
 
-           Summary: Unable to use alx driver without CONFIG_MDIO
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: 3.7.1
-          Platform: All
-        OS/Version: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: Compat-Drivers
-        AssignedTo: backports@vger.kernel.org
-        ReportedBy: pfactum@gmail.com
-        Regression: No
+> On 11/27/2012 04:17 PM, Shuo wrote:
+>> Hi Hauke,
+>> Sorry for disturb again.
+>> I am trying compat-wireless-2012-11-25 for v3.7-rc7, but it fails.
+>> I downloaded the tar package and unpackaged, driver-select b43, make
+>> Some logs:
+>>
+>> Processing new driver-select request...
+>> Backing up makefile: Makefile.bk
+>> Backup exists: Makefile.bk
+>> Backup exists: Makefile.bk
+>> Backup exists: Makefile.bk
+>> Backing up makefile: drivers/misc/eeprom/Makefile.bk
+>> Backing up makefile: net/wireless/Makefile.bk
+>> Backing up makefile: drivers/net/wireless/Makefile.bk
+>> ./scripts/gen-compat-autoconf.sh /home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25/.config /home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25/config.mk > include/linux/compat_autoconf.h
+>> make -C /lib/modules/3.7.0-rc7-shuo-main+//build M=/home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25 modules
+>> make[1]: Entering directory `/home/lskakaxi/work/linux/kernel_build'
+>> /home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25/config.mk:247: "WARNING: CONFIG_CFG80211_WEXT will be deactivated or not working because kernel was compiled with CONFIG_WIRELESS_EXT=n. Tools using wext interface like iwconfig will not work. To activate it build your kernel e.g. with CONFIG_LIBIPW=m."
+>>   CC [M]  /home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25/compat/main.o
+>> In file included from /home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25/include/linux/pm_qos.h:9:0,
+>>                  from /home/lskakaxi/work/linux/linux/include/linux/netdevice.h:28,
+>>                  from /home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25/include/linux/compat-2.6.29.h:5,
+>>                  from /home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25/include/linux/compat-2.6.h:50,
+>>                  from <command-line>:0:
+>> /home/lskakaxi/work/extern_modules/compat-wireless/compat-wireless-2012-11-25/include/linux/pm_qos_params.h:7:38: fatal error: linux/pm_qos_params.h: No such file or directory
+>> compilation terminated.
+>>
+>> I found the linux/pm_qos_params.h has been renamed to pm_qos.h one year ago. I am confused why compat-wirelss need this old header.
+>> Anything i missed?
+>>
+>> Shuo
+>>
+> Hi Shuo,
+> 
+> There seams to be something wrong with your kernel. The include done in
+> include/linux/pm_qos.h:9:0 should not happen on your kernel version.
+> 
+> Does include/generated/uapi/linux/version.h in your kernel directory
+> contains #define LINUX_VERSION_CODE 197895 or does it contain some other
+> number?
+> 
 
+The problem had been resolved.
+There is an old LINUX_VERSION_CODE in the version.h. So i clean the
+kernel tree and make a full compile again. The errors above went away.
+Another thing is i found the latest compat driver contains some
+graphics drivers. When i install a wireless driver, such as b43, the
+graphics drivers also will be installed. That will break my original
+in-tree graphic drivers dep and caused some issue when X startup.
+So now, i turn to use latest wireless and graphic in-tree drivers with
+the latest kernel. They work well.
+Thanks, again!
 
-I use own customized kernel in which I've disabled all unnecessary ethernet
-drivers. The fact is that new alx driver from 2012-12-19 tree depends on
-CONFIG_MDIO, and if I do not select in-kernel driver that depends on it (e.g.,
-some broadcom or so), inserting compiled alx module gives me this:
+> Hauke
 
-===
-[   44.248978] alx: Unknown symbol mdio_mii_ioctl (err 0)
-===
-
-I've got this fixed by adding into drivers/net/ethernet/atheros/Kconfig of my
-kernel tree "select MDIO" for Atheros drivers without selecting any other
-drivers.
-
-Probably, it's possible to get it fixed in compat-drivers tree?
-
--- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+Shuo
