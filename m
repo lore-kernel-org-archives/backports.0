@@ -1,54 +1,66 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:39234 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751278Ab2LSVQA (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 19 Dec 2012 16:16:00 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 8043654025C
-	for <backports@vger.kernel.org>; Wed, 19 Dec 2012 16:15:59 -0500 (EST)
+Received: from mail.kernel.org ([198.145.19.201]:44429 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1946455Ab2LFRvL (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 6 Dec 2012 12:51:11 -0500
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id C151F20388
+	for <backports@vger.kernel.org>; Thu,  6 Dec 2012 17:51:10 +0000 (UTC)
+Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
+	by mail.kernel.org (Postfix) with ESMTP id AA54B2039A
+	for <backports@vger.kernel.org>; Thu,  6 Dec 2012 17:51:08 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-12-19 is baked
-Message-Id: <20121219211559.61F2540ABF@repository3.orbit-lab.org>
-Date: Wed, 19 Dec 2012 16:15:59 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Subject: [Bug 51361] Executing skype result in a kernel panic
+In-Reply-To: <bug-51361-58281@https.bugzilla.kernel.org/>
+References: <bug-51361-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Message-Id: <20121206175107.9BE7C11FA5F@bugzilla.kernel.org>
+Date: Thu,  6 Dec 2012 17:51:07 +0000 (UTC)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-HEAD is now at 86d0f1f compat-drivers: refresh patches for next-20121218
-git fetch github (/var/opt/compat/compat)
-HEAD is now at a3fad85 compat: rewrite ckmake in Python
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at ba93608 Add linux-next specific files for 20121219
-/var/opt/compat//compat-ksrc/lib/modules does not exist
-Failed...
+https://bugzilla.kernel.org/show_bug.cgi?id=51361
 
-compat-drivers code metrics
 
-   1270444 - Total upstream lines of code being pulled
 
-   network
-   ----------------------------------------
-      3076 - backport code changes
-      2581 - backport code additions
-       495 - backport code deletions
-     14593 - backport from compat module
-     17669 - total backport code
-    1.3908 - % of code consists of backport work
 
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     14593 - backport from compat module
-     15029 - total backport code
-    1.1830 - % of code consists of backport work
 
-Base tree: linux-next.git
-Base tree version: next-20121219
-compat.git: compat-2012-12-14-9
-compat-drivers release: compat-drivers-2012-18
-Code metrics archive: http://bit.ly/H6BTF7
+--- Comment #2 from Hauke Mehrtens <hauke@hauke-m.de>  2012-12-06 17:51:07 ---
+Hi John,
+
+He never said that he uses compat-drivers and non of the functions in
+the call trace are shipped and compiled with compat-drivers. These
+functions prefixed with compat_ are from somewhere else in the kernel.
+
+Could you or someone else please reassign this to the appropriate person
+or list for the r8192u staging driver.
+
+Hauke
+
+On 12/06/2012 04:46 PM, bugzilla-daemon@bugzilla.kernel.org wrote:
+> https://bugzilla.kernel.org/show_bug.cgi?id=51361
+> 
+> 
+> John W. Linville <linville@tuxdriver.com> changed:
+> 
+>            What    |Removed                     |Added
+> ----------------------------------------------------------------------------
+>                  CC|                            |Larry.Finger@lwfinger.net,
+>                    |                            |linville@tuxdriver.com
+>           Component|network-wireless            |Compat-Drivers
+>             Version|2.5                         |unspecified
+>          AssignedTo|drivers_network-wireless@ke |backports@vger.kernel.org
+>                    |rnel-bugs.osdl.org          |
+>             Product|Drivers                     |Backports project
+> 
+> 
+> 
+>
+
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
