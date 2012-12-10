@@ -1,38 +1,34 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <ozancag@gmail.com>
-From: =?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:37922 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751633Ab2LJVSi (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 10 Dec 2012 16:18:38 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 05F3354015C
+	for <backports@vger.kernel.org>; Mon, 10 Dec 2012 16:18:37 -0500 (EST)
 To: backports@vger.kernel.org
-Cc: mcgrof@kernel.org,
-	=?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
-Subject: [PATCH 2/3] update-initramfs: Silence lsb_release output
-Date: Sat, 22 Dec 2012 13:04:12 +0200
-Message-Id: <1356174253-2192-2-git-send-email-ozancag@gmail.com>
-In-Reply-To: <1356174253-2192-1-git-send-email-ozancag@gmail.com>
-References: <1356174253-2192-1-git-send-email-ozancag@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: Compat-wireless release for 2012-12-10 is baked
+Message-Id: <20121210211836.C4CFD40AC0@repository3.orbit-lab.org>
+Date: Mon, 10 Dec 2012 16:18:36 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Silence lsb_release output to avoid command not found errors
-on distributions not having lsb_release like Fedora.
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at 0a2da43 compat-drivers: fix alx suspend/resume calls for old kernels
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 3a85112 compat: backport unsigned netlink attribute accessors
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 5a8bca6 Add linux-next specific files for 20121210
+Error while updating from wireless-testing
 
-Signed-off-by: Ozan Çağlayan <ozancag@gmail.com>
----
- scripts/update-initramfs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+compat-drivers code metrics
 
-diff --git a/scripts/update-initramfs b/scripts/update-initramfs
-index dcc1ee6..f926eeb 100755
---- a/scripts/update-initramfs
-+++ b/scripts/update-initramfs
-@@ -6,7 +6,7 @@
- # of their distribution. This can also help people who may
- # want to wireless-boot their systems.
- 
--LSB_RED_ID=$(/usr/bin/lsb_release -i -s)
-+LSB_RED_ID=$(/usr/bin/lsb_release -i -s &> /dev/null)
- 
- KLIB=/lib/modules/$(uname -r)/build
- ver=$(echo $KLIB | awk -F "/lib/modules/" '{print $2}' | awk -F"/" '{print $1}')
--- 
-1.8.0.2
+   1266548 - Total upstream lines of code being pulled
+
+   network
+   ----------------------------------------
