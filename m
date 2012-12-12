@@ -1,39 +1,73 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:33599 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752251Ab2LTEse (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 19 Dec 2012 23:48:34 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 2D7A6201CE
-	for <backports@vger.kernel.org>; Thu, 20 Dec 2012 04:48:33 +0000 (UTC)
-Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
-	by mail.kernel.org (Postfix) with ESMTP id E4CC8201D8
-	for <backports@vger.kernel.org>; Thu, 20 Dec 2012 04:48:31 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+Received: from external1.orbit-lab.org ([128.6.192.131]:57116 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755168Ab2LLV55 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 12 Dec 2012 16:57:57 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id E14B0540274
+	for <backports@vger.kernel.org>; Wed, 12 Dec 2012 16:57:55 -0500 (EST)
 To: backports@vger.kernel.org
-Subject: [Bug 51671] ALX driver unusable on new kernel
-In-Reply-To: <bug-51671-58281@https.bugzilla.kernel.org/>
-References: <bug-51671-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Message-Id: <20121220044830.D675D11FA39@bugzilla.kernel.org>
-Date: Thu, 20 Dec 2012 04:48:30 +0000 (UTC)
+Subject: Compat-wireless release for 2012-12-12 is baked
+Message-Id: <20121212215755.CC7B240ABF@repository3.orbit-lab.org>
+Date: Wed, 12 Dec 2012 16:57:55 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51671
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+HEAD is now at b84f870 compat-drivers: ship include/linux/bcm47xx_wdt.h
+git fetch github (/var/opt/compat/compat)
+HEAD is now at 20ace73 compat: add HID_QUIRK_IGNORE
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 3377153 Add linux-next specific files for 20121211
+Trying kernel 3.4.4-030404-generic [OK]
+Trying kernel 3.3.7-030307-generic [OK]
+Trying kernel 3.2.2-030202-generic [OK]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [FAILED]
+Trying kernel 2.6.26-020626-generic [FAILED]
+Trying kernel 2.6.25-020625-generic [FAILED]
+Trying kernel 2.6.24-020624-generic [FAILED]
+Failed...
 
+compat-drivers code metrics
 
+   1266702 - Total upstream lines of code being pulled
 
+   network
+   ----------------------------------------
+      3076 - backport code changes
+      2581 - backport code additions
+       495 - backport code deletions
+     14512 - backport from compat module
+     17588 - total backport code
+    1.3885 - % of code consists of backport work
 
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14512 - backport from compat module
+     14948 - total backport code
+    1.1801 - % of code consists of backport work
 
---- Comment #7 from Luis R. Rodriguez <mcgrof@gmail.com>  2012-12-20 04:48:30 ---
-Try this guy:
-
-http://www.kernel.org/pub/linux/kernel/projects/backports/2012/12/19/compat-drivers-2012-12-19-u.tar.bz2
-
--- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+Base tree: linux-next.git
+Base tree version: next-20121211
+compat.git: compat-2012-12-04-7-g20ace73
+compat-drivers release: compat-drivers-2012-12-04-1-6-gb84f870
+Code metrics archive: http://bit.ly/H6BTF7
