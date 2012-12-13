@@ -1,73 +1,94 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:54321 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751081Ab2LMFyJ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 13 Dec 2012 00:54:09 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 4397C201D6
-	for <backports@vger.kernel.org>; Thu, 13 Dec 2012 05:54:07 +0000 (UTC)
-Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
-	by mail.kernel.org (Postfix) with ESMTP id 4EE30201AD
-	for <backports@vger.kernel.org>; Thu, 13 Dec 2012 05:54:06 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+Received: from external1.orbit-lab.org ([128.6.192.131]:36212 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1756289Ab2LMWEM (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 13 Dec 2012 17:04:12 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id F05B45400ED
+	for <backports@vger.kernel.org>; Thu, 13 Dec 2012 17:04:10 -0500 (EST)
 To: backports@vger.kernel.org
-Subject: [Bug 51671] New: ALX driver unusable on new kernel
-Message-ID: <bug-51671-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Date: Thu, 13 Dec 2012 05:54:04 +0000 (UTC)
+Subject: Compat-wireless release for 2012-12-13 is baked
+Message-Id: <20121213220410.D264740ABF@repository3.orbit-lab.org>
+Date: Thu, 13 Dec 2012 17:04:10 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51671
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+HEAD is now at 953ea3b compat-drivers: refresh patches for next-20121211
+git fetch github (/var/opt/compat/compat)
+HEAD is now at 1337db8 compat: backport platform_device_register_data()
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at cf89d08 Add linux-next specific files for 20121213
+Trying kernel 3.4.4-030404-generic [OK]
+Trying kernel 3.3.7-030307-generic [OK]
+Trying kernel 3.2.2-030202-generic [OK]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
+Worked!
 
-           Summary: ALX driver unusable on new kernel
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: 3.7.0
-          Platform: All
-        OS/Version: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: high
-          Priority: P1
-         Component: Compat-Drivers
-        AssignedTo: backports@vger.kernel.org
-        ReportedBy: i@hexchain.org
-        Regression: No
+Trying kernel  3.4.4-030404-generic [OK]
+Trying kernel  3.3.7-030307-generic [OK]
+Trying kernel  3.2.2-030202-generic [OK]
+Trying kernel  3.1.10-030110-generic [OK]
+Trying kernel  3.0.18-030018-generic [OK]
+Trying kernel  2.6.39-02063904-generic [OK]
+Trying kernel  2.6.38-02063808-generic [OK]
+Trying kernel  2.6.37-02063706-generic [OK]
+Trying kernel  2.6.36-02063604-generic [OK]
+Trying kernel  2.6.35-02063512-generic [OK]
+Trying kernel  2.6.34-02063410-generic [OK]
+Trying kernel  2.6.33-02063305-generic [OK]
+Trying kernel  2.6.31-02063113-generic [OK]
+Trying kernel  2.6.30-02063010-generic [OK]
+Trying kernel  2.6.29-02062906-generic [OK]
+Trying kernel  2.6.28-02062810-generic [OK]
+Trying kernel  2.6.27-020627-generic [OK]
+Trying kernel  2.6.26-020626-generic [OK]
+Trying kernel  2.6.25-020625-generic [OK]
+Trying kernel  2.6.24-020624-generic [OK]
 
+compat-drivers code metrics
 
-After upgraded to kernel 3.7, the ALX driver in compat-drivers nolonger
-functions. Building is successful, but it is unable to load.
+   1268652 - Total upstream lines of code being pulled
 
-dmesg before kernel update, using compat-wireless 20121003:
-Dec 12 12:12:09 lightning.hexchain.org kernel: alx 0000:03:00.0: DMA to 64-BIT
-addresses
-Dec 12 12:12:09 lightning.hexchain.org kernel: alx 0000:03:00.0: (unregistered
-net_device): HW Flags = 0x415
-Dec 12 12:12:09 lightning.hexchain.org kernel: alx 0000:03:00.0: (unregistered
-net_device): reset PHY, pws = 1, az = 0, ptp = 0
-Dec 12 12:12:09 lightning.hexchain.org kernel: alx 0000:03:00.0: (unregistered
-net_device): speed = 0x2f, autoneg = 1
-Dec 12 12:12:09 lightning.hexchain.org kernel: alx 0000:03:00.0: irq 45 for
-MSI/MSI-X
-Dec 12 12:12:09 lightning.hexchain.org kernel: alx: Atheros Gigabit Network
-Connection
+   network
+   ----------------------------------------
+      3076 - backport code changes
+      2581 - backport code additions
+       495 - backport code deletions
+     14593 - backport from compat module
+     17669 - total backport code
+    1.3927 - % of code consists of backport work
 
-After kernel update, any version of compat-driver before 20121204 fails to
-build.
-dmesg after kernel update, using the newest compat-driver-u:
-Dec 12 22:31:21 lightning.hexchain.org kernel: alx 0000:03:00.0: DMA to 64-BIT
-addresses
-Dec 12 22:31:21 lightning.hexchain.org kernel: alx 0000:03:00.0: config PHY
-speed/duplex failed,err=4
-Dec 12 22:31:21 lightning.hexchain.org kernel: alx 0000:03:00.0: error when
-probe device, error = -5
-Dec 12 22:31:21 lightning.hexchain.org kernel: alx: probe of 0000:03:00.0
-failed with error -5
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14593 - backport from compat module
+     15029 - total backport code
+    1.1846 - % of code consists of backport work
 
--- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+Base tree: linux-next.git
+Base tree version: next-20121213
+compat.git: compat-2012-12-11
+compat-drivers release: compat-drivers-2012-12-11-pc
+Code metrics archive: http://bit.ly/H6BTF7
