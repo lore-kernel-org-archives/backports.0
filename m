@@ -1,29 +1,27 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:50659 "HELO
+Received: from external1.orbit-lab.org ([128.6.192.131]:55550 "HELO
 	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752000Ab2KKV4i (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 11 Nov 2012 16:56:38 -0500
+	with SMTP id S1751620Ab2LOV7b (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 15 Dec 2012 16:59:31 -0500
 Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 3690C5402E9
-	for <backports@vger.kernel.org>; Sun, 11 Nov 2012 16:56:37 -0500 (EST)
+	by external1.orbit-lab.org (Postfix) with ESMTP id CEA10540245
+	for <backports@vger.kernel.org>; Sat, 15 Dec 2012 16:59:29 -0500 (EST)
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-11-11 is baked
-Message-Id: <20121111215637.081C640AC0@repository3.orbit-lab.org>
-Date: Sun, 11 Nov 2012 16:56:36 -0500 (EST)
+Subject: Compat-wireless release for 2012-12-15 is baked
+Message-Id: <20121215215929.AB21640AC0@repository3.orbit-lab.org>
+Date: Sat, 15 Dec 2012 16:59:29 -0500 (EST)
 From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at 0d443c4 compat-drivers: refresh patches
+HEAD is now at c5da34e compat-drivers: allow git-paranoia to work on current directory
 git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 0022049 compat: run ckmake with num cpu threads
+HEAD is now at 744a6dd compat: add 3.2 and 3.3 kernels to rebuild headers
 git fetch  (/var/opt/compat/linux-next)
 Nothing new to pack.
-HEAD is now at 75e0eba Add linux-next specific files for 20121109
+HEAD is now at e65e238 Add linux-next specific files for 20121214
 Trying kernel 3.4.4-030404-generic [OK]
 Trying kernel 3.3.7-030307-generic [OK]
 Trying kernel 3.2.2-030202-generic [OK]
@@ -69,28 +67,28 @@ Trying kernel  2.6.24-020624-generic [OK]
 
 compat-drivers code metrics
 
-   1239527 - Total upstream lines of code being pulled
+   1269136 - Total upstream lines of code being pulled
 
    network
    ----------------------------------------
-      3114 - backport code changes
-      2583 - backport code additions
-       531 - backport code deletions
-     12754 - backport from compat module
-     15868 - total backport code
-    1.2802 - % of code consists of backport work
+      3076 - backport code changes
+      2581 - backport code additions
+       495 - backport code deletions
+     14593 - backport from compat module
+     17669 - total backport code
+    1.3922 - % of code consists of backport work
 
    drm
    ----------------------------------------
-       382 - backport code changes
-       264 - backport code additions
-       118 - backport code deletions
-     12754 - backport from compat module
-     13136 - total backport code
-    1.0598 - % of code consists of backport work
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14593 - backport from compat module
+     15029 - total backport code
+    1.1842 - % of code consists of backport work
 
 Base tree: linux-next.git
-Base tree version: next-20121109
-compat.git: compat-2012-11-02-3-g0022049
-compat-drivers release: compat-drivers-2012-11-02-pc
+Base tree version: next-20121214
+compat.git: compat-2012-12-14-8
+compat-drivers release: compat-drivers-2012-12-14-3-pc
 Code metrics archive: http://bit.ly/H6BTF7
