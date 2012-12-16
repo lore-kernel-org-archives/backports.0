@@ -1,96 +1,81 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:57982 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754569Ab2LRVzY (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 18 Dec 2012 16:55:24 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 18FFF54018E
-	for <backports@vger.kernel.org>; Tue, 18 Dec 2012 16:55:23 -0500 (EST)
+Received: from mail.kernel.org ([198.145.19.201]:55846 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750798Ab2LPWVI convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 16 Dec 2012 17:21:08 -0500
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 0AA6C201F9
+	for <backports@vger.kernel.org>; Sun, 16 Dec 2012 22:21:07 +0000 (UTC)
+Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
+	by mail.kernel.org (Postfix) with ESMTP id 3193A201E6
+	for <backports@vger.kernel.org>; Sun, 16 Dec 2012 22:21:06 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-12-18 is baked
-Message-Id: <20121218215522.F3B9440ABF@repository3.orbit-lab.org>
-Date: Tue, 18 Dec 2012 16:55:22 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Subject: [Bug 51751] New: debug build of ath9k fails.
+Message-ID: <bug-51751-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Date: Sun, 16 Dec 2012 22:21:05 +0000 (UTC)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at c5da34e compat-drivers: allow git-paranoia to work on current directory
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 744a6dd compat: add 3.2 and 3.3 kernels to rebuild headers
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at ff430f8 Add linux-next specific files for 20121218
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+https://bugzilla.kernel.org/show_bug.cgi?id=51751
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+           Summary: debug build of ath9k fails.
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: 3.6.9 - 3.6.10
+          Platform: All
+        OS/Version: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: Not sure
+        AssignedTo: backports@vger.kernel.org
+        ReportedBy: arclanceSignup@gmail.com
+        Regression: Yes
 
-compat-drivers code metrics
 
-   1270441 - Total upstream lines of code being pulled
+Since 2012-12-04 building the ath9k module from compat-wireless fails when
+these build options are enabled.
 
-   network
-   ----------------------------------------
-      3076 - backport code changes
-      2581 - backport code additions
-       495 - backport code deletions
-     14593 - backport from compat module
-     17669 - total backport code
-    1.3908 - % of code consists of backport work
+export CONFIG_ATH9K_DEBUGFS=y
+export CONFIG_ATH_DEBUG=y
 
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     14593 - backport from compat module
-     15029 - total backport code
-    1.1830 - % of code consists of backport work
+This is the error message from a failed build.
 
-Base tree: linux-next.git
-Base tree version: next-20121218
-compat.git: compat-2012-12-14-8
-compat-drivers release: compat-drivers-2012-12-14-3-pc
-Code metrics archive: http://bit.ly/H6BTF7
+  CC [M] 
+/media/Linux_Data/Programs_CB10/compat_wireless/compat-wireless-2012-12-15-p/compat-wireless-2012-12-15-p/drivers/net/wireless/ath/ath9k/debug.o
+/media/Linux_Data/Programs_CB10/compat_wireless/compat-wireless-2012-12-15-p/compat-wireless-2012-12-15-p/drivers/net/wireless/ath/ath9k/debug.c:
+In function ‘ath9k_sta_add_debugfs’:
+/media/Linux_Data/Programs_CB10/compat_wireless/compat-wireless-2012-12-15-p/compat-wireless-2012-12-15-p/drivers/net/wireless/ath/ath9k/debug.c:1589:4:
+error: ‘struct ath_node’ has no member named ‘node_stat’
+/media/Linux_Data/Programs_CB10/compat_wireless/compat-wireless-2012-12-15-p/compat-wireless-2012-12-15-p/drivers/net/wireless/ath/ath9k/debug.c:
+In function ‘ath9k_sta_remove_debugfs’:
+/media/Linux_Data/Programs_CB10/compat_wireless/compat-wireless-2012-12-15-p/compat-wireless-2012-12-15-p/drivers/net/wireless/ath/ath9k/debug.c:1599:19:
+error: ‘struct ath_node’ has no member named ‘node_stat’
+make[5]: ***
+[/media/Linux_Data/Programs_CB10/compat_wireless/compat-wireless-2012-12-15-p/compat-wireless-2012-12-15-p/drivers/net/wireless/ath/ath9k/debug.o]
+Error 1
+make[4]: ***
+[/media/Linux_Data/Programs_CB10/compat_wireless/compat-wireless-2012-12-15-p/compat-wireless-2012-12-15-p/drivers/net/wireless/ath/ath9k]
+Error 2
+make[3]: ***
+[/media/Linux_Data/Programs_CB10/compat_wireless/compat-wireless-2012-12-15-p/compat-wireless-2012-12-15-p/drivers/net/wireless/ath]
+Error 2
+make[2]: ***
+[/media/Linux_Data/Programs_CB10/compat_wireless/compat-wireless-2012-12-15-p/compat-wireless-2012-12-15-p/drivers/net/wireless]
+Error 2
+make[1]: ***
+[_module_/media/Linux_Data/Programs_CB10/compat_wireless/compat-wireless-2012-12-15-p/compat-wireless-2012-12-15-p]
+Error 2
+make[1]: Leaving directory
+`/usr/src/linux-headers-3.6.0-10.dmz.1-liquorix-amd64'
+make: *** [modules] Error 2
+
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
