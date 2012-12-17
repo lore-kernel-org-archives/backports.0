@@ -1,46 +1,96 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:39962 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1422692Ab2LFPqG (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 6 Dec 2012 10:46:06 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 67C002035C
-	for <backports@vger.kernel.org>; Thu,  6 Dec 2012 15:46:05 +0000 (UTC)
-Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
-	by mail.kernel.org (Postfix) with ESMTP id 800BD20357
-	for <backports@vger.kernel.org>; Thu,  6 Dec 2012 15:46:03 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+Received: from external1.orbit-lab.org ([128.6.192.131]:47566 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1750889Ab2LQWCW (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 17 Dec 2012 17:02:22 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 2A19B5400ED
+	for <backports@vger.kernel.org>; Mon, 17 Dec 2012 17:02:21 -0500 (EST)
 To: backports@vger.kernel.org
-Subject: [Bug 51361] Executing skype result in a kernel panic
-In-Reply-To: <bug-51361-58281@https.bugzilla.kernel.org/>
-References: <bug-51361-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Message-Id: <20121206154603.7D16411FB38@bugzilla.kernel.org>
-Date: Thu,  6 Dec 2012 15:46:03 +0000 (UTC)
+Subject: Compat-wireless release for 2012-12-17 is baked
+Message-Id: <20121217220221.1006E40ABF@repository3.orbit-lab.org>
+Date: Mon, 17 Dec 2012 17:02:20 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51361
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at c5da34e compat-drivers: allow git-paranoia to work on current directory
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 744a6dd compat: add 3.2 and 3.3 kernels to rebuild headers
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 1cfc3a4 Add linux-next specific files for 20121217
+Trying kernel 3.4.4-030404-generic [OK]
+Trying kernel 3.3.7-030307-generic [OK]
+Trying kernel 3.2.2-030202-generic [OK]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
+Worked!
 
+Trying kernel  3.4.4-030404-generic [OK]
+Trying kernel  3.3.7-030307-generic [OK]
+Trying kernel  3.2.2-030202-generic [OK]
+Trying kernel  3.1.10-030110-generic [OK]
+Trying kernel  3.0.18-030018-generic [OK]
+Trying kernel  2.6.39-02063904-generic [OK]
+Trying kernel  2.6.38-02063808-generic [OK]
+Trying kernel  2.6.37-02063706-generic [OK]
+Trying kernel  2.6.36-02063604-generic [OK]
+Trying kernel  2.6.35-02063512-generic [OK]
+Trying kernel  2.6.34-02063410-generic [OK]
+Trying kernel  2.6.33-02063305-generic [OK]
+Trying kernel  2.6.31-02063113-generic [OK]
+Trying kernel  2.6.30-02063010-generic [OK]
+Trying kernel  2.6.29-02062906-generic [OK]
+Trying kernel  2.6.28-02062810-generic [OK]
+Trying kernel  2.6.27-020627-generic [OK]
+Trying kernel  2.6.26-020626-generic [OK]
+Trying kernel  2.6.25-020625-generic [OK]
+Trying kernel  2.6.24-020624-generic [OK]
 
-John W. Linville <linville@tuxdriver.com> changed:
+compat-drivers code metrics
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |Larry.Finger@lwfinger.net,
-                   |                            |linville@tuxdriver.com
-          Component|network-wireless            |Compat-Drivers
-            Version|2.5                         |unspecified
-         AssignedTo|drivers_network-wireless@ke |backports@vger.kernel.org
-                   |rnel-bugs.osdl.org          |
-            Product|Drivers                     |Backports project
+   1270433 - Total upstream lines of code being pulled
 
+   network
+   ----------------------------------------
+      3076 - backport code changes
+      2581 - backport code additions
+       495 - backport code deletions
+     14593 - backport from compat module
+     17669 - total backport code
+    1.3908 - % of code consists of backport work
 
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14593 - backport from compat module
+     15029 - total backport code
+    1.1830 - % of code consists of backport work
 
-
--- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+Base tree: linux-next.git
+Base tree version: next-20121217
+compat.git: compat-2012-12-14-8
+compat-drivers release: compat-drivers-2012-12-14-3-pc
+Code metrics archive: http://bit.ly/H6BTF7
