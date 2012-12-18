@@ -1,33 +1,96 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:36675 "HELO
+Received: from external1.orbit-lab.org ([128.6.192.131]:57982 "HELO
 	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753047Ab2LGVQF (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 7 Dec 2012 16:16:05 -0500
+	with SMTP id S1754569Ab2LRVzY (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 18 Dec 2012 16:55:24 -0500
 Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id B4D7E5402F9
-	for <backports@vger.kernel.org>; Fri,  7 Dec 2012 16:16:03 -0500 (EST)
+	by external1.orbit-lab.org (Postfix) with ESMTP id 18FFF54018E
+	for <backports@vger.kernel.org>; Tue, 18 Dec 2012 16:55:23 -0500 (EST)
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-12-07 is baked
-Message-Id: <20121207211603.7D2F140AC0@repository3.orbit-lab.org>
-Date: Fri,  7 Dec 2012 16:16:03 -0500 (EST)
+Subject: Compat-wireless release for 2012-12-18 is baked
+Message-Id: <20121218215522.F3B9440ABF@repository3.orbit-lab.org>
+Date: Tue, 18 Dec 2012 16:55:22 -0500 (EST)
 From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 git fetch github (/var/opt/compat/compat-wireless-2.6)
 Nothing new to pack.
-HEAD is now at 0a2da43 compat-drivers: fix alx suspend/resume calls for old kernels
+HEAD is now at c5da34e compat-drivers: allow git-paranoia to work on current directory
 git fetch github (/var/opt/compat/compat)
-HEAD is now at 3a85112 compat: backport unsigned netlink attribute accessors
+Nothing new to pack.
+HEAD is now at 744a6dd compat: add 3.2 and 3.3 kernels to rebuild headers
 git fetch  (/var/opt/compat/linux-next)
 Nothing new to pack.
-HEAD is now at 7bd0111 Add linux-next specific files for 20121207
-Error while updating from wireless-testing
+HEAD is now at ff430f8 Add linux-next specific files for 20121218
+Trying kernel 3.4.4-030404-generic [OK]
+Trying kernel 3.3.7-030307-generic [OK]
+Trying kernel 3.2.2-030202-generic [OK]
+Trying kernel 3.1.10-030110-generic [OK]
+Trying kernel 3.0.18-030018-generic [OK]
+Trying kernel 2.6.39-02063904-generic [OK]
+Trying kernel 2.6.38-02063808-generic [OK]
+Trying kernel 2.6.37-02063706-generic [OK]
+Trying kernel 2.6.36-02063604-generic [OK]
+Trying kernel 2.6.35-02063512-generic [OK]
+Trying kernel 2.6.34-02063410-generic [OK]
+Trying kernel 2.6.33-02063305-generic [OK]
+Trying kernel 2.6.31-02063113-generic [OK]
+Trying kernel 2.6.30-02063010-generic [OK]
+Trying kernel 2.6.29-02062906-generic [OK]
+Trying kernel 2.6.28-02062810-generic [OK]
+Trying kernel 2.6.27-020627-generic [OK]
+Trying kernel 2.6.26-020626-generic [OK]
+Trying kernel 2.6.25-020625-generic [OK]
+Trying kernel 2.6.24-020624-generic [OK]
+Worked!
+
+Trying kernel  3.4.4-030404-generic [OK]
+Trying kernel  3.3.7-030307-generic [OK]
+Trying kernel  3.2.2-030202-generic [OK]
+Trying kernel  3.1.10-030110-generic [OK]
+Trying kernel  3.0.18-030018-generic [OK]
+Trying kernel  2.6.39-02063904-generic [OK]
+Trying kernel  2.6.38-02063808-generic [OK]
+Trying kernel  2.6.37-02063706-generic [OK]
+Trying kernel  2.6.36-02063604-generic [OK]
+Trying kernel  2.6.35-02063512-generic [OK]
+Trying kernel  2.6.34-02063410-generic [OK]
+Trying kernel  2.6.33-02063305-generic [OK]
+Trying kernel  2.6.31-02063113-generic [OK]
+Trying kernel  2.6.30-02063010-generic [OK]
+Trying kernel  2.6.29-02062906-generic [OK]
+Trying kernel  2.6.28-02062810-generic [OK]
+Trying kernel  2.6.27-020627-generic [OK]
+Trying kernel  2.6.26-020626-generic [OK]
+Trying kernel  2.6.25-020625-generic [OK]
+Trying kernel  2.6.24-020624-generic [OK]
 
 compat-drivers code metrics
 
-   1266565 - Total upstream lines of code being pulled
+   1270441 - Total upstream lines of code being pulled
 
    network
    ----------------------------------------
+      3076 - backport code changes
+      2581 - backport code additions
+       495 - backport code deletions
+     14593 - backport from compat module
+     17669 - total backport code
+    1.3908 - % of code consists of backport work
+
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14593 - backport from compat module
+     15029 - total backport code
+    1.1830 - % of code consists of backport work
+
+Base tree: linux-next.git
+Base tree version: next-20121218
+compat.git: compat-2012-12-14-8
+compat-drivers release: compat-drivers-2012-12-14-3-pc
+Code metrics archive: http://bit.ly/H6BTF7
