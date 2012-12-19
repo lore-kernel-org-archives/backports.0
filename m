@@ -1,49 +1,54 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:38841 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751214Ab2LTI2T (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 20 Dec 2012 03:28:19 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id B2594201CD
-	for <backports@vger.kernel.org>; Thu, 20 Dec 2012 08:28:18 +0000 (UTC)
-Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
-	by mail.kernel.org (Postfix) with ESMTP id 96901201DD
-	for <backports@vger.kernel.org>; Thu, 20 Dec 2012 08:28:17 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+Received: from external1.orbit-lab.org ([128.6.192.131]:39234 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751278Ab2LSVQA (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 19 Dec 2012 16:16:00 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 8043654025C
+	for <backports@vger.kernel.org>; Wed, 19 Dec 2012 16:15:59 -0500 (EST)
 To: backports@vger.kernel.org
-Subject: [Bug 51671] ALX driver unusable on new kernel
-In-Reply-To: <bug-51671-58281@https.bugzilla.kernel.org/>
-References: <bug-51671-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Message-Id: <20121220082816.84E1411FA1A@bugzilla.kernel.org>
-Date: Thu, 20 Dec 2012 08:28:16 +0000 (UTC)
+Subject: Compat-wireless release for 2012-12-19 is baked
+Message-Id: <20121219211559.61F2540ABF@repository3.orbit-lab.org>
+Date: Wed, 19 Dec 2012 16:15:59 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51671
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+HEAD is now at 86d0f1f compat-drivers: refresh patches for next-20121218
+git fetch github (/var/opt/compat/compat)
+HEAD is now at a3fad85 compat: rewrite ckmake in Python
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at ba93608 Add linux-next specific files for 20121219
+/var/opt/compat//compat-ksrc/lib/modules does not exist
+Failed...
 
+compat-drivers code metrics
 
+   1270444 - Total upstream lines of code being pulled
 
+   network
+   ----------------------------------------
+      3076 - backport code changes
+      2581 - backport code additions
+       495 - backport code deletions
+     14593 - backport from compat module
+     17669 - total backport code
+    1.3908 - % of code consists of backport work
 
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14593 - backport from compat module
+     15029 - total backport code
+    1.1830 - % of code consists of backport work
 
---- Comment #9 from Oleksandr Natalenko <pfactum@gmail.com>  2012-12-20 08:28:16 ---
-Fixed with 3.6.11, thanks, guys.
-
-===
-[ 9135.574895] Qualcomm Atheros(R) AR816x/AR817x PCI-E Ethernet Network Driver
-[ 9135.585114] alx 0000:02:00.0: alx(84:8f:69:d3:a6:09): Qualcomm Atheros
-Ethernet Network Connection
-[ 9156.532616] alx 0000:02:00.0: irq 45 for MSI/MSI-X
-[ 9156.532641] alx 0000:02:00.0: irq 46 for MSI/MSI-X
-[ 9156.532655] alx 0000:02:00.0: irq 47 for MSI/MSI-X
-[ 9156.532671] alx 0000:02:00.0: irq 48 for MSI/MSI-X
-[ 9156.532683] alx 0000:02:00.0: irq 49 for MSI/MSI-X
-[ 9156.534190] alx 0000:02:00.0: eth0: NIC Link Up: 1 Gbps Full
-===
-
--- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+Base tree: linux-next.git
+Base tree version: next-20121219
+compat.git: compat-2012-12-14-9
+compat-drivers release: compat-drivers-2012-18
+Code metrics archive: http://bit.ly/H6BTF7
