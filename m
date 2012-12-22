@@ -1,94 +1,41 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:55550 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751620Ab2LOV7b (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 15 Dec 2012 16:59:31 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id CEA10540245
-	for <backports@vger.kernel.org>; Sat, 15 Dec 2012 16:59:29 -0500 (EST)
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <ozancag@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1356174253-2192-1-git-send-email-ozancag@gmail.com>
+References: <1356174253-2192-1-git-send-email-ozancag@gmail.com>
+Date: Sat, 22 Dec 2012 13:05:40 +0200
+Message-ID: <CAFub=KQxO5gqkHAp7VCDE-_WMXskJ4Ahup9sgfFZA45MboAQcQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] update-initramfs: Update comments, fix some typos
+From: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-12-15 is baked
-Message-Id: <20121215215929.AB21640AC0@repository3.orbit-lab.org>
-Date: Sat, 15 Dec 2012 16:59:29 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Cc: mcgrof@kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-HEAD is now at c5da34e compat-drivers: allow git-paranoia to work on current directory
-git fetch github (/var/opt/compat/compat)
-HEAD is now at 744a6dd compat: add 3.2 and 3.3 kernels to rebuild headers
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at e65e238 Add linux-next specific files for 20121214
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+On Sat, Dec 22, 2012 at 1:04 PM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com=
+> wrote:
+> update-initramfs is crucial for DRM drivers, let's clarify this.
+>
+> Signed-off-by: Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com>
+> ---
+>  scripts/update-initramfs | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+>
+> diff --git a/scripts/update-initramfs b/scripts/update-initramfs
+> index e388df2..dcc1ee6 100755
+> --- a/scripts/update-initramfs
+> +++ b/scripts/update-initramfs
+> @@ -1,12 +1,10 @@
+>  #!/bin/bash
+>  # Copyright 2009        Luis R. Rodriguez <mcgrof@gmail.com>
+>  #
+> -# Since we provide ssb, the Ethernet module b44 some people may
+> -# rely on it to netboot, so update the initrafms for each
+> -# distribution.
+> -#
+> -# Note that in the future people may want to wireless-boot
+> -# so this will help with that as well.
+> +# Since we provide ssb, ethernet modules and most importantly
+> +# DRM drivers, people may want top update the initramfs image
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
-
-compat-drivers code metrics
-
-   1269136 - Total upstream lines of code being pulled
-
-   network
-   ----------------------------------------
-      3076 - backport code changes
-      2581 - backport code additions
-       495 - backport code deletions
-     14593 - backport from compat module
-     17669 - total backport code
-    1.3922 - % of code consists of backport work
-
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     14593 - backport from compat module
-     15029 - total backport code
-    1.1842 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20121214
-compat.git: compat-2012-12-14-8
-compat-drivers release: compat-drivers-2012-12-14-3-pc
-Code metrics archive: http://bit.ly/H6BTF7
+grr can you change "top" to "to" while merging this :)
