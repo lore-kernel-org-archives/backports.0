@@ -1,94 +1,81 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:35868 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751807Ab2LDWDP (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 4 Dec 2012 17:03:15 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 29EC3540267
-	for <backports@vger.kernel.org>; Tue,  4 Dec 2012 17:03:14 -0500 (EST)
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <ozancag@gmail.com>
+From: =?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-12-04 is baked
-Message-Id: <20121204220314.0912140ABF@repository3.orbit-lab.org>
-Date: Tue,  4 Dec 2012 17:03:13 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Cc: mcgrof@kernel.org,
+	=?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+Subject: [PATCH 3/3] update-initramfs: Add support for Fedora
+Date: Sat, 22 Dec 2012 13:04:13 +0200
+Message-Id: <1356174253-2192-3-git-send-email-ozancag@gmail.com>
+In-Reply-To: <1356174253-2192-1-git-send-email-ozancag@gmail.com>
+References: <1356174253-2192-1-git-send-email-ozancag@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-HEAD is now at 2fb7326 compat-drivers: fix 11-dev-pm-ops.patch
-git fetch github (/var/opt/compat/compat)
-HEAD is now at 398882c compat: backport netif_set_real_num_rx_queues()
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 176f674 Add linux-next specific files for 20121204
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+Fedora doesn't ship lsb_release anymore. So try to read /etc/os-release
+to find whether distribution is Fedora.
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+If Fedora is found, generate a new initramfs suffixed with -compat-drivers
+to not override the distribution kernel's default one. Also add a new
+kernel entry to grub2 configuration without overriding the default boot
+entry.
 
-compat-drivers code metrics
+Signed-off-by: Ozan Çağlayan <ozancag@gmail.com>
+---
+ scripts/update-initramfs | 29 +++++++++++++++++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
 
-   1264735 - Total upstream lines of code being pulled
-
-   network
-   ----------------------------------------
-      3092 - backport code changes
-      2594 - backport code additions
-       498 - backport code deletions
-     13166 - backport from compat module
-     16258 - total backport code
-    1.2855 - % of code consists of backport work
-
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     13166 - backport from compat module
-     13602 - total backport code
-    1.0755 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20121204
-compat.git: compat-2012-11-30-9-g398882c
-compat-drivers release: compat-drivers-2012-11-30-3-g2fb7326-pc
-Code metrics archive: http://bit.ly/H6BTF7
+diff --git a/scripts/update-initramfs b/scripts/update-initramfs
+index f926eeb..ec7aebe 100755
+--- a/scripts/update-initramfs
++++ b/scripts/update-initramfs
+@@ -6,12 +6,18 @@
+ # of their distribution. This can also help people who may
+ # want to wireless-boot their systems.
+ 
+-LSB_RED_ID=$(/usr/bin/lsb_release -i -s &> /dev/null)
+-
+ KLIB=/lib/modules/$(uname -r)/build
+ ver=$(echo $KLIB | awk -F "/lib/modules/" '{print $2}' | awk -F"/" '{print $1}')
+ dir=/boot/
+ 
++LSB_RED_ID=$(/usr/bin/lsb_release -i -s &> /dev/null)
++
++if [[ -z $LSB_RED_ID && -f "/etc/os-release" ]]; then
++	# Let's try with os-release. Fedora doesn't have
++	# lsb_release anymore.
++	LSB_RED_ID=$(sed -n '/^NAME/ s/^NAME=\(.*\)$/\1/p' /etc/os-release)
++fi
++
+ case $LSB_RED_ID in
+ "Ubuntu")
+ 	echo "Updating ${LSB_RED_ID}'s initramfs for $ver under $dir ..."
+@@ -25,6 +31,25 @@ case $LSB_RED_ID in
+ 	echo "Will now run update-grub to ensure grub will find the new initramfs ..."
+ 	update-grub
+ 	;;
++"Fedora")
++	# This adds a -compat-drivers suffixed initramfs with a new grub2
++	# entry to not override distribution's default stuff.
++	INITRAMFS=${dir}initramfs-$ver-compat-drivers.img
++	KERNEL=${dir}vmlinuz-$ver
++	GRUB_TITLE="Fedora ($ver) with compat-drivers"
++
++	echo "Updating ${LSB_RED_ID}'s initramfs for $ver under $dir ..."
++	mkinitrd --force $INITRAMFS $ver
++
++	# If a previous compat-drivers entry for the same kernel exists
++	# do not add it again.
++	grep -q "${GRUB_TITLE}" /etc/grub2.cfg &> /dev/null
++	if [[ "$?" == "1" ]]; then
++		echo "Will now run grubby to add a new kernel entry ..."
++		# Add a new kernel entry
++		grubby --grub2 --copy-default --add-kernel="$KERNEL" --initrd="$INITRAMFS" --title="$GRUB_TITLE"
++	fi
++	;;
+ *)
+ 	echo "Warning:"
+ 	echo "You may or may not need to update your initramfs, you should if"
+-- 
+1.8.0.2
