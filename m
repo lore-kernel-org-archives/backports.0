@@ -1,45 +1,60 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:33265 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750976Ab2LQDTV (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 16 Dec 2012 22:19:21 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 63BBE20258
-	for <backports@vger.kernel.org>; Mon, 17 Dec 2012 03:19:20 +0000 (UTC)
-Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
-	by mail.kernel.org (Postfix) with ESMTP id F0CC320240
-	for <backports@vger.kernel.org>; Mon, 17 Dec 2012 03:19:18 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+Received: from mail-ee0-f43.google.com ([74.125.83.43]:64387 "EHLO
+	mail-ee0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750853Ab2LVLEg (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 22 Dec 2012 06:04:36 -0500
+Received: by mail-ee0-f43.google.com with SMTP id e49so2904856eek.2
+        for <backports@vger.kernel.org>; Sat, 22 Dec 2012 03:04:35 -0800 (PST)
+From: =?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
 To: backports@vger.kernel.org
-Subject: [Bug 51671] ALX driver unusable on new kernel
-In-Reply-To: <bug-51671-58281@https.bugzilla.kernel.org/>
-References: <bug-51671-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
+Cc: mcgrof@kernel.org,
+	=?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+Subject: [PATCH 1/3] update-initramfs: Update comments, fix some typos
+Date: Sat, 22 Dec 2012 13:04:11 +0200
+Message-Id: <1356174253-2192-1-git-send-email-ozancag@gmail.com>
 MIME-Version: 1.0
-Message-Id: <20121217031917.E30C211FB37@bugzilla.kernel.org>
-Date: Mon, 17 Dec 2012 03:19:17 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51671
+update-initramfs is crucial for DRM drivers, let's clarify this.
 
+Signed-off-by: Ozan Çağlayan <ozancag@gmail.com>
+---
+ scripts/update-initramfs | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-
-
-
---- Comment #5 from QCA Ethernet team <nic-devel@qca.qualcomm.com>  2012-12-17 03:19:17 ---
-(In reply to comment #3)
-> 
-> (In reply to comment #2)
-> > compat-driver of 20121204, just pass compiler, all of tx/rx function is
-> > abnormal, we are debugging it internally.
-> 
-> So, there's no way to use this driver with 3.7 kernel?
-
-yes, but we'll publish a real usable one soon.
-
+diff --git a/scripts/update-initramfs b/scripts/update-initramfs
+index e388df2..dcc1ee6 100755
+--- a/scripts/update-initramfs
++++ b/scripts/update-initramfs
+@@ -1,12 +1,10 @@
+ #!/bin/bash
+ # Copyright 2009        Luis R. Rodriguez <mcgrof@gmail.com>
+ #
+-# Since we provide ssb, the Ethernet module b44 some people may
+-# rely on it to netboot, so update the initrafms for each
+-# distribution.
+-#
+-# Note that in the future people may want to wireless-boot
+-# so this will help with that as well.
++# Since we provide ssb, ethernet modules and most importantly
++# DRM drivers, people may want top update the initramfs image
++# of their distribution. This can also help people who may
++# want to wireless-boot their systems.
+ 
+ LSB_RED_ID=$(/usr/bin/lsb_release -i -s)
+ 
+@@ -29,7 +27,7 @@ case $LSB_RED_ID in
+ 	;;
+ *)
+ 	echo "Warning:"
+-	echo "You may or may not need to update your initframfs, you should if"
++	echo "You may or may not need to update your initramfs, you should if"
+ 	echo "any of the modules installed are part of your initramfs. To add"
+ 	echo "support for your distribution to do this automatically send a"
+ 	echo "patch against $0. If your distribution does not require this"
 -- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+1.8.0.2
+
