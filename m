@@ -1,29 +1,34 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <CAB=NE6WutFyazf55WQG4-v=9su6VoR_1_Nh8qF4xyUYs1kFbEw@mail.gmail.com>
-References: <CAFub=KTufrSp75puA+3UoXXY6ONKJ8okZjvw2TmChXW_MGgjvw@mail.gmail.com>
-	<CAB=NE6VUBQO-dtfoKzffCgpEW0G61k9PVb23AXFWaRArdCnOqg@mail.gmail.com>
-	<CAFub=KQgkApMGBZi6b_pa20DNdjeC6TN6O_4nJM1GrUfSj45Wg@mail.gmail.com>
-	<CAB=NE6WutFyazf55WQG4-v=9su6VoR_1_Nh8qF4xyUYs1kFbEw@mail.gmail.com>
-Date: Fri, 28 Dec 2012 15:10:42 -0800
-Message-ID: <CAB=NE6WeJHUpu3uf1nM7yjZn88iiYcDCrx-FHyrBPMGfPJWQOw@mail.gmail.com>
-Subject: Re: ckmake in Python
-From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
-Cc: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:50879 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753330Ab2LXVQH (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 24 Dec 2012 16:16:07 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 30037540245
+	for <backports@vger.kernel.org>; Mon, 24 Dec 2012 16:16:06 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-12-24 is baked
+Message-Id: <20121224211606.0D4B440ABF@repository3.orbit-lab.org>
+Date: Mon, 24 Dec 2012 16:16:05 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Dec 28, 2012 at 2:49 PM, Luis R. Rodriguez <mcgrof@frijolero.org> w=
-rote:
-> On Fri, Dec 28, 2012 at 1:47 PM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail.c=
-om> wrote:
->> Ah, So what was the point of using curses?
->
-> Multithreading.
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at b40c676 compat-drivers: refresh 0001-backport-alx.patch
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 46faf02 compat: move HID_USB_DEVICE and HID_BLUETOOTH_DEVICE
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 3979da7 Add linux-next specific files for 20121224
+Error while updating from wireless-testing
 
-Rather python --> multithreading. The fact that ncurses was used is
-more of a wish to display live results from multithreaded processes
-running in the background.
+compat-drivers code metrics
 
-  Luis
+   1270452 - Total upstream lines of code being pulled
+
+   network
+   ----------------------------------------
