@@ -1,34 +1,41 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:53043 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751161Ab2L0VOn (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 27 Dec 2012 16:14:43 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 589F8540233
-	for <backports@vger.kernel.org>; Thu, 27 Dec 2012 16:14:42 -0500 (EST)
+Received: from mail.kernel.org ([198.145.19.201]:54241 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753903Ab2LYQrf (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 25 Dec 2012 11:47:35 -0500
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 7AC37201A2
+	for <backports@vger.kernel.org>; Tue, 25 Dec 2012 16:47:29 +0000 (UTC)
+Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
+	by mail.kernel.org (Postfix) with ESMTP id F128E201A1
+	for <backports@vger.kernel.org>; Tue, 25 Dec 2012 16:47:25 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-12-27 is baked
-Message-Id: <20121227211442.2B33440ABF@repository3.orbit-lab.org>
-Date: Thu, 27 Dec 2012 16:14:42 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Subject: [Bug 51751] debug build of ath9k fails.
+In-Reply-To: <bug-51751-58281@https.bugzilla.kernel.org/>
+References: <bug-51751-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Message-Id: <20121225164725.4761C11FBAA@bugzilla.kernel.org>
+Date: Tue, 25 Dec 2012 16:47:25 +0000 (UTC)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at b40c676 compat-drivers: refresh 0001-backport-alx.patch
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 46faf02 compat: move HID_USB_DEVICE and HID_BLUETOOTH_DEVICE
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 3979da7 Add linux-next specific files for 20121224
-Error while updating from wireless-testing
+https://bugzilla.kernel.org/show_bug.cgi?id=51751
 
-compat-drivers code metrics
 
-   1270452 - Total upstream lines of code being pulled
 
-   network
-   ----------------------------------------
+
+
+--- Comment #5 from arclanceSignup@gmail.com  2012-12-25 16:47:25 ---
+Uncommenting export CONFIG_MAC80211_DEBUGFS=y works with
+compat-wireless-2012-12-17-p.tar.bz2.
+It seems that the ath9k module is broken in
+compat-wireless-2012-12-18-p.tar.bz2, it does not build even with the default
+options.
+
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
