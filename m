@@ -1,98 +1,34 @@
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/3] compat-drivers: add old suspend/resume handlers only when function is available
-Date: Thu, 27 Dec 2012 18:28:21 +0100
-Message-Id: <1356629302-15682-2-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1356629302-15682-1-git-send-email-hauke@hauke-m.de>
-References: <1356629302-15682-1-git-send-email-hauke@hauke-m.de>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:53043 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751161Ab2L0VOn (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 27 Dec 2012 16:14:43 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 589F8540233
+	for <backports@vger.kernel.org>; Thu, 27 Dec 2012 16:14:42 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2012-12-27 is baked
+Message-Id: <20121227211442.2B33440ABF@repository3.orbit-lab.org>
+Date: Thu, 27 Dec 2012 16:14:42 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-All the suspend resume functions are only activated when
-CONFIG_PM_SLEEP is set and not when CONFIG_PM is set.
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at b40c676 compat-drivers: refresh 0001-backport-alx.patch
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 46faf02 compat: move HID_USB_DEVICE and HID_BLUETOOTH_DEVICE
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 3979da7 Add linux-next specific files for 20121224
+Error while updating from wireless-testing
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../collateral-evolutions/network/11-dev-pm-ops.patch  |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+compat-drivers code metrics
 
-diff --git a/patches/collateral-evolutions/network/11-dev-pm-ops.patch b/patches/collateral-evolutions/network/11-dev-pm-ops.patch
-index acae45e..4afd308 100644
---- a/patches/collateral-evolutions/network/11-dev-pm-ops.patch
-+++ b/patches/collateral-evolutions/network/11-dev-pm-ops.patch
-@@ -25,7 +25,7 @@ calls on compat code with only slight modifications.
-  	.remove = bcma_host_pci_remove,
- +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,29))
-  	.driver.pm = BCMA_PM_OPS,
--+#elif defined(CONFIG_PM)
-++#elif defined(CONFIG_PM_SLEEP)
- +	.suspend = bcma_host_pci_suspend_compat,
- +	.resume = bcma_host_pci_resume_compat,
- +#endif
-@@ -125,7 +125,7 @@ calls on compat code with only slight modifications.
-  	.remove     = ath_pci_remove,
- +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,29))
-  	.driver.pm  = ATH9K_PM_OPS,
--+#elif defined(CONFIG_PM)
-++#elif defined(CONFIG_PM_SLEEP)
- +	.suspend    = ath_pci_suspend_compat,
- +	.resume     = ath_pci_resume_compat,
- +#endif
-@@ -217,7 +217,7 @@ calls on compat code with only slight modifications.
-  	.remove = iwl_pci_remove,
- +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,29))
-  	.driver.pm = IWL_PM_OPS,
--+#elif defined(CONFIG_PM)
-++#elif defined(CONFIG_PM_SLEEP)
- +	.suspend = iwl_pci_suspend_compat,
- +	.resume = iwl_pci_resume_compat,
- +#endif
-@@ -270,7 +270,7 @@ calls on compat code with only slight modifications.
-  	.remove = rtl_pci_disconnect,
- +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,29))
-  	.driver.pm = &rtlwifi_pm_ops,
--+#elif defined(CONFIG_PM)
-++#elif defined(CONFIG_PM_SLEEP)
- +	.suspend    = rtl_pci_suspend_compat,
- +	.resume     = rtl_pci_resume_compat,
- +#endif
-@@ -295,7 +295,7 @@ calls on compat code with only slight modifications.
-  	.remove = rtl_pci_disconnect,
- +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,29))
-  	.driver.pm = &rtlwifi_pm_ops,
--+#elif defined(CONFIG_PM)
-++#elif defined(CONFIG_PM_SLEEP)
- +	.suspend    = rtl_pci_suspend_compat,
- +	.resume     = rtl_pci_resume_compat,
- +#endif
-@@ -320,7 +320,7 @@ calls on compat code with only slight modifications.
-  	.remove = rtl_pci_disconnect,
- +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,29))
-  	.driver.pm = &rtlwifi_pm_ops,
--+#elif defined(CONFIG_PM)
-++#elif defined(CONFIG_PM_SLEEP)
- +	.suspend    = rtl_pci_suspend_compat,
- +	.resume     = rtl_pci_resume_compat,
- +#endif
-@@ -345,7 +345,7 @@ calls on compat code with only slight modifications.
-  	.remove = rtl_pci_disconnect,
- +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,29))
-  	.driver.pm = &rtlwifi_pm_ops,
--+#elif defined(CONFIG_PM)
-++#elif defined(CONFIG_PM_SLEEP)
- +	.suspend    = rtl_pci_suspend_compat,
- +	.resume     = rtl_pci_resume_compat,
- +#endif
-@@ -370,7 +370,7 @@ calls on compat code with only slight modifications.
-  	.remove		= p54p_remove,
- +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,29))
-  	.driver.pm	= P54P_PM_OPS,
--+#elif defined(CONFIG_PM)
-++#elif defined(CONFIG_PM_SLEEP)
- +	.suspend    = p54p_suspend_compat,
- +	.resume     = p54p_resume_compat,
- +#endif
--- 
-1.7.10.4
+   1270452 - Total upstream lines of code being pulled
+
+   network
+   ----------------------------------------
