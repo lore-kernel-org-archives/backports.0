@@ -1,47 +1,20 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:44877 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1946182Ab2LFSGN (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 6 Dec 2012 13:06:13 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 2787F203B3
-	for <backports@vger.kernel.org>; Thu,  6 Dec 2012 18:06:12 +0000 (UTC)
-Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
-	by mail.kernel.org (Postfix) with ESMTP id 993DB203B9
-	for <backports@vger.kernel.org>; Thu,  6 Dec 2012 18:06:09 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 51361] Executing skype result in a kernel panic
-In-Reply-To: <bug-51361-58281@https.bugzilla.kernel.org/>
-References: <bug-51361-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Message-Id: <20121206180609.792AD11FB38@bugzilla.kernel.org>
-Date: Thu,  6 Dec 2012 18:06:09 +0000 (UTC)
-Sender: backports-owner@vger.kernel.org
+In-Reply-To: <1356629302-15682-3-git-send-email-hauke@hauke-m.de>
+References: <1356629302-15682-1-git-send-email-hauke@hauke-m.de>
+	<1356629302-15682-3-git-send-email-hauke@hauke-m.de>
+Date: Fri, 28 Dec 2012 07:43:31 -0800
+Message-ID: <CAB=NE6WiNwP5mau4vOL-oJ0FEsEvm4EtCF31tnb_VH0c5QH_Hg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] compat-drivers: refresh patches
+From: "Luis R. Rodriguez" <mcgrof@gmail.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51361
+On Thu, Dec 27, 2012 at 9:28 AM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+>
+> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 
+Thanks, applied and pushed!
 
-John W. Linville <linville@tuxdriver.com> changed:
-
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-          Component|Compat-Drivers              |Staging
-            Version|unspecified                 |2.5
-         AssignedTo|backports@vger.kernel.org   |drivers_staging@kernel-bugs
-                   |                            |.osdl.org
-            Product|Backports project           |Drivers
-
-
-
-
---- Comment #3 from John W. Linville <linville@tuxdriver.com>  2012-12-06 18:06:09 ---
-Ooops...
-
--- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+  Luis
