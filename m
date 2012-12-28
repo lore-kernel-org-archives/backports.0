@@ -1,56 +1,32 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:50150 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754885Ab2L3VOM (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 30 Dec 2012 16:14:12 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 64A955401CC
-	for <backports@vger.kernel.org>; Sun, 30 Dec 2012 16:14:11 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-12-30 is baked
-Message-Id: <20121230211411.4515540ABF@repository3.orbit-lab.org>
-Date: Sun, 30 Dec 2012 16:14:11 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <1356174253-2192-3-git-send-email-ozancag@gmail.com>
+References: <1356174253-2192-1-git-send-email-ozancag@gmail.com>
+	<1356174253-2192-3-git-send-email-ozancag@gmail.com>
+Date: Fri, 28 Dec 2012 07:36:46 -0800
+Message-ID: <CAB=NE6WFfJBjC0j0Jj4s6KrgHdFdQwzRdz7b51QzEiqOMUT46A@mail.gmail.com>
+Subject: Re: [PATCH 3/3] update-initramfs: Add support for Fedora
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
+Cc: backports@vger.kernel.org, mcgrof@kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at 91cd77f compat-drivers: refresh patches
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 681f758 compat: export platform_device_register_data()
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 3979da7 Add linux-next specific files for 20121224
-/var/opt/compat//compat-ksrc/lib/modules does not exist
-Failed...
+On Sat, Dec 22, 2012 at 3:04 AM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com=
+> wrote:
+> Fedora doesn't ship lsb_release anymore. So try to read /etc/os-release
+> to find whether distribution is Fedora.
 
-compat-drivers code metrics
+Interesting..
 
-   1270452 - Total upstream lines of code being pulled
+> If Fedora is found, generate a new initramfs suffixed with -compat-driver=
+s
+> to not override the distribution kernel's default one. Also add a new
+> kernel entry to grub2 configuration without overriding the default boot
+> entry.
+>
+> Signed-off-by: Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com>
 
-   network
-   ----------------------------------------
-      3076 - backport code changes
-      2581 - backport code additions
-       495 - backport code deletions
-     14599 - backport from compat module
-     17675 - total backport code
-    1.3912 - % of code consists of backport work
+Thanks! Applied and pushed all!
 
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     14599 - backport from compat module
-     15035 - total backport code
-    1.1834 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20121224
-compat.git: compat-2012-12-24
-compat-drivers release: compat-drivers-2012-12-24
-Code metrics archive: http://bit.ly/H6BTF7
+  Luis
