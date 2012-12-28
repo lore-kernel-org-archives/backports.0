@@ -1,56 +1,26 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:45673 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751511Ab2LWVOj (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 23 Dec 2012 16:14:39 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id C18BE540290
-	for <backports@vger.kernel.org>; Sun, 23 Dec 2012 16:14:37 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-12-23 is baked
-Message-Id: <20121223211437.A442040ABF@repository3.orbit-lab.org>
-Date: Sun, 23 Dec 2012 16:14:37 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <ozancag@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAB=NE6VUBQO-dtfoKzffCgpEW0G61k9PVb23AXFWaRArdCnOqg@mail.gmail.com>
+References: <CAFub=KTufrSp75puA+3UoXXY6ONKJ8okZjvw2TmChXW_MGgjvw@mail.gmail.com>
+	<CAB=NE6VUBQO-dtfoKzffCgpEW0G61k9PVb23AXFWaRArdCnOqg@mail.gmail.com>
+Date: Fri, 28 Dec 2012 23:47:09 +0200
+Message-ID: <CAFub=KQgkApMGBZi6b_pa20DNdjeC6TN6O_4nJM1GrUfSj45Wg@mail.gmail.com>
+Subject: Re: ckmake in Python
+From: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
+To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+Cc: backports@vger.kernel.org
+Content-Type: multipart/alternative; boundary=089e01493f5e009e8a04d1f09b6c
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at b40c676 compat-drivers: refresh 0001-backport-alx.patch
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 46faf02 compat: move HID_USB_DEVICE and HID_BLUETOOTH_DEVICE
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 0233d95 Add linux-next specific files for 20121221
-/var/opt/compat//compat-ksrc/lib/modules does not exist
-Failed...
+--089e01493f5e009e8a04d1f09b6c
+Content-Type: text/plain; charset=UTF-8
 
-compat-drivers code metrics
+Ah, So what was the point of using curses?
 
-   1270453 - Total upstream lines of code being pulled
+--089e01493f5e009e8a04d1f09b6c
+Content-Type: text/html; charset=UTF-8
 
-   network
-   ----------------------------------------
-      3076 - backport code changes
-      2581 - backport code additions
-       495 - backport code deletions
-     14595 - backport from compat module
-     17671 - total backport code
-    1.3909 - % of code consists of backport work
+<p dir="ltr">Ah, So what was the point of using curses? </p>
 
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     14595 - backport from compat module
-     15031 - total backport code
-    1.1831 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20121221
-compat.git: compat-2012-12-19
-compat-drivers release: compat-drivers-2012-12-19
-Code metrics archive: http://bit.ly/H6BTF7
+--089e01493f5e009e8a04d1f09b6c--
