@@ -1,60 +1,54 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail-ee0-f43.google.com ([74.125.83.43]:64387 "EHLO
-	mail-ee0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750853Ab2LVLEg (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 22 Dec 2012 06:04:36 -0500
-Received: by mail-ee0-f43.google.com with SMTP id e49so2904856eek.2
-        for <backports@vger.kernel.org>; Sat, 22 Dec 2012 03:04:35 -0800 (PST)
-From: =?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
+Received: from external1.orbit-lab.org ([128.6.192.131]:34036 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752630Ab2L1VO3 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 28 Dec 2012 16:14:29 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 0AFDD54018E
+	for <backports@vger.kernel.org>; Fri, 28 Dec 2012 16:14:28 -0500 (EST)
 To: backports@vger.kernel.org
-Cc: mcgrof@kernel.org,
-	=?UTF-8?q?Ozan=20=C3=87a=C4=9Flayan?= <ozancag@gmail.com>
-Subject: [PATCH 1/3] update-initramfs: Update comments, fix some typos
-Date: Sat, 22 Dec 2012 13:04:11 +0200
-Message-Id: <1356174253-2192-1-git-send-email-ozancag@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: Compat-wireless release for 2012-12-28 is baked
+Message-Id: <20121228211427.DD9D640ABF@repository3.orbit-lab.org>
+Date: Fri, 28 Dec 2012 16:14:27 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-update-initramfs is crucial for DRM drivers, let's clarify this.
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+HEAD is now at 91cd77f compat-drivers: refresh patches
+git fetch github (/var/opt/compat/compat)
+HEAD is now at 681f758 compat: export platform_device_register_data()
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 3979da7 Add linux-next specific files for 20121224
+/var/opt/compat//compat-ksrc/lib/modules does not exist
+Failed...
 
-Signed-off-by: Ozan Çağlayan <ozancag@gmail.com>
----
- scripts/update-initramfs | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+compat-drivers code metrics
 
-diff --git a/scripts/update-initramfs b/scripts/update-initramfs
-index e388df2..dcc1ee6 100755
---- a/scripts/update-initramfs
-+++ b/scripts/update-initramfs
-@@ -1,12 +1,10 @@
- #!/bin/bash
- # Copyright 2009        Luis R. Rodriguez <mcgrof@gmail.com>
- #
--# Since we provide ssb, the Ethernet module b44 some people may
--# rely on it to netboot, so update the initrafms for each
--# distribution.
--#
--# Note that in the future people may want to wireless-boot
--# so this will help with that as well.
-+# Since we provide ssb, ethernet modules and most importantly
-+# DRM drivers, people may want top update the initramfs image
-+# of their distribution. This can also help people who may
-+# want to wireless-boot their systems.
- 
- LSB_RED_ID=$(/usr/bin/lsb_release -i -s)
- 
-@@ -29,7 +27,7 @@ case $LSB_RED_ID in
- 	;;
- *)
- 	echo "Warning:"
--	echo "You may or may not need to update your initframfs, you should if"
-+	echo "You may or may not need to update your initramfs, you should if"
- 	echo "any of the modules installed are part of your initramfs. To add"
- 	echo "support for your distribution to do this automatically send a"
- 	echo "patch against $0. If your distribution does not require this"
--- 
-1.8.0.2
+   1270452 - Total upstream lines of code being pulled
 
+   network
+   ----------------------------------------
+      3076 - backport code changes
+      2581 - backport code additions
+       495 - backport code deletions
+     14599 - backport from compat module
+     17675 - total backport code
+    1.3912 - % of code consists of backport work
+
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14599 - backport from compat module
+     15035 - total backport code
+    1.1834 - % of code consists of backport work
+
+Base tree: linux-next.git
+Base tree version: next-20121224
+compat.git: compat-2012-12-24
+compat-drivers release: compat-drivers-2012-12-24
+Code metrics archive: http://bit.ly/H6BTF7
