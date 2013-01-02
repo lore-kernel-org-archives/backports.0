@@ -1,56 +1,57 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:50113 "HELO
+Received: from external1.orbit-lab.org ([128.6.192.131]:48070 "HELO
 	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754128Ab3AZVMf (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 26 Jan 2013 16:12:35 -0500
+	with SMTP id S1751367Ab3ABVRe (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 2 Jan 2013 16:17:34 -0500
 Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 8D90154000C
-	for <backports@vger.kernel.org>; Sat, 26 Jan 2013 16:12:34 -0500 (EST)
+	by external1.orbit-lab.org (Postfix) with ESMTP id 2AF3D5400C4
+	for <backports@vger.kernel.org>; Wed,  2 Jan 2013 16:17:33 -0500 (EST)
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2013-01-26 is baked
-Message-Id: <20130126211234.4DE4140AC0@repository3.orbit-lab.org>
-Date: Sat, 26 Jan 2013 16:12:34 -0500 (EST)
+Subject: Compat-wireless release for 2013-01-02 is baked
+Message-Id: <20130102211733.0679040AC0@repository3.orbit-lab.org>
+Date: Wed,  2 Jan 2013 16:17:32 -0500 (EST)
 From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-git fetch hauke (/var/opt/compat/compat-drivers)
+git fetch github (/var/opt/compat/compat-wireless-2.6)
 Nothing new to pack.
-HEAD is now at 3e51785 compat-drivers: update genlog-3.8 for rc5
-git fetch hauke (/var/opt/compat/compat)
+HEAD is now at 91cd77f compat-drivers: refresh patches
+git fetch github (/var/opt/compat/compat)
 Nothing new to pack.
-HEAD is now at 5c165fc compat: backport nla_put_be{16,32,64}()
-git fetch origin (/var/opt/compat/linux-next)
+HEAD is now at 681f758 compat: export platform_device_register_data()
+git fetch  (/var/opt/compat/linux-next)
 Nothing new to pack.
-HEAD is now at 1587f71 Add linux-next specific files for 20130125
+HEAD is now at 559a8d7 Add linux-next specific files for 20130102
+/var/opt/compat//compat-ksrc/lib/modules does not exist
 Failed...
 /usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
 compat-drivers code metrics
 
-   1278976 - Total upstream lines of code being pulled
+   1270923 - Total upstream lines of code being pulled
 
    network
    ----------------------------------------
-      3047 - backport code changes
-      2557 - backport code additions
-       490 - backport code deletions
-     14654 - backport from compat module
-     17701 - total backport code
-    1.3840 - % of code consists of backport work
+      3076 - backport code changes
+      2581 - backport code additions
+       495 - backport code deletions
+     14599 - backport from compat module
+     17675 - total backport code
+    1.3907 - % of code consists of backport work
 
    drm
    ----------------------------------------
        436 - backport code changes
        293 - backport code additions
        143 - backport code deletions
-     14654 - backport from compat module
-     15090 - total backport code
-    1.1799 - % of code consists of backport work
+     14599 - backport from compat module
+     15035 - total backport code
+    1.1830 - % of code consists of backport work
 
 Base tree: linux-next.git
-Base tree version: next-20130110
-compat.git: compat-v3.8-rc2-1-5-g59a1d45
-compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
+Base tree version: next-20130102
+compat.git: compat-2012-12-24
+compat-drivers release: compat-drivers-2012-12-24
 Code metrics archive: http://bit.ly/H6BTF7
