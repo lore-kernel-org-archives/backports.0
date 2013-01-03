@@ -1,27 +1,57 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <hauke@hauke-m.de>
-Message-ID: <51032081.1000008@hauke-m.de>
-Date: Sat, 26 Jan 2013 01:17:05 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-CC: backports@vger.kernel.org, Konstantin Ryabitsev <mricon@kernel.org>
-Subject: Re: Maintenance of compat / compat-drivers
-References: <CAB=NE6VORZ8aoRvDz_evq3u7D6LC9Fct7kKOAqVTAUFjhsD=Ww@mail.gmail.com>
-In-Reply-To: <CAB=NE6VORZ8aoRvDz_evq3u7D6LC9Fct7kKOAqVTAUFjhsD=Ww@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:33790 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753197Ab3ACVSW (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 3 Jan 2013 16:18:22 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 043D95402D5
+	for <backports@vger.kernel.org>; Thu,  3 Jan 2013 16:18:21 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2013-01-03 is baked
+Message-Id: <20130103211820.D43E840ABF@repository3.orbit-lab.org>
+Date: Thu,  3 Jan 2013 16:18:20 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 01/23/2013 10:09 PM, Luis R. Rodriguez wrote:
-> I'm off to the mountains for a while and in my absence Hauke will be
-> taken over maintenance of compat, compat-drivers and respective
-> releases.
-> 
->   Luis
-I am currently using my git repository at github to maintain compat and
-compat-drivers. Please base your patches on top of that.
+git fetch github (/var/opt/compat/compat-wireless-2.6)
+Nothing new to pack.
+HEAD is now at 91cd77f compat-drivers: refresh patches
+git fetch github (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 681f758 compat: export platform_device_register_data()
+git fetch  (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 3696068 Add linux-next specific files for 20130103
+/var/opt/compat//compat-ksrc/lib/modules does not exist
+Failed...
+/usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
-https://github.com/hauke/compat
-https://github.com/hauke/compat-drivers
+compat-drivers code metrics
 
-Hauke
+   1270981 - Total upstream lines of code being pulled
+
+   network
+   ----------------------------------------
+      3076 - backport code changes
+      2581 - backport code additions
+       495 - backport code deletions
+     14599 - backport from compat module
+     17675 - total backport code
+    1.3907 - % of code consists of backport work
+
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14599 - backport from compat module
+     15035 - total backport code
+    1.1829 - % of code consists of backport work
+
+Base tree: linux-next.git
+Base tree version: next-20130103
+compat.git: compat-2012-12-24
+compat-drivers release: compat-drivers-2012-12-24
+Code metrics archive: http://bit.ly/H6BTF7
