@@ -1,46 +1,41 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:53229 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1756107Ab3AVVL7 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 22 Jan 2013 16:11:59 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 05757540202
-	for <backports@vger.kernel.org>; Tue, 22 Jan 2013 16:11:58 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2013-01-22 is baked
-Message-Id: <20130122211157.DF47A40ABF@repository3.orbit-lab.org>
-Date: Tue, 22 Jan 2013 16:11:57 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Return-Path: <hauke@hauke-m.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 4/5] compat: add ETHTOOL_FWVERS_LEN
+Date: Wed,  9 Jan 2013 17:34:22 +0100
+Message-Id: <1357749263-4596-4-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1357749263-4596-1-git-send-email-hauke@hauke-m.de>
+References: <1357749263-4596-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-/usr/bin/sha1sum: *.tar.bz2: No such file or directory
+In older kernel version this was hard coded to 32
 
-compat-drivers code metrics
+This was added in this commit:
+commit 141518c95870228da4e050fbe31a8f0c9df82c72
+Author: Matt Carlson <mcarlson@broadcom.com>
+Date:   Thu Dec 3 08:36:22 2009 +0000
 
-   1278976 - Total upstream lines of code being pulled
+    tg3: Add some VPD preprocessor constants
 
-   network
-   ----------------------------------------
-      3047 - backport code changes
-      2557 - backport code additions
-       490 - backport code deletions
-     14654 - backport from compat module
-     17701 - total backport code
-    1.3840 - % of code consists of backport work
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ include/linux/compat-3.3.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     14654 - backport from compat module
-     15090 - total backport code
-    1.1799 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20130110
-compat.git: compat-v3.8-rc2-1-5-g59a1d45
-compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
-Code metrics archive: http://bit.ly/H6BTF7
+diff --git a/include/linux/compat-3.3.h b/include/linux/compat-3.3.h
+index 5d07c1a..84988bb 100644
+--- a/include/linux/compat-3.3.h
++++ b/include/linux/compat-3.3.h
+@@ -267,6 +267,8 @@ static inline u32 ethtool_rxfh_indir_default(u32 index, u32 n_rx_rings)
+ 	return index % n_rx_rings;
+ }
+ 
++#define ETHTOOL_FWVERS_LEN	32
++
+ #if !((LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,9) && LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)) || (LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,23) && LINUX_VERSION_CODE < KERNEL_VERSION(3,1,0)))
+ #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,37))
+ /* mask qdisc_cb_private_validate as RHEL6 backports this */
+-- 
+1.7.10.4
