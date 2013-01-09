@@ -3,39 +3,76 @@ From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 4/5] compat: add ETHTOOL_FWVERS_LEN
-Date: Wed,  9 Jan 2013 17:34:22 +0100
-Message-Id: <1357749263-4596-4-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 3/5] compat: add simple_write_to_buffer
+Date: Wed,  9 Jan 2013 17:34:21 +0100
+Message-Id: <1357749263-4596-3-git-send-email-hauke@hauke-m.de>
 In-Reply-To: <1357749263-4596-1-git-send-email-hauke@hauke-m.de>
 References: <1357749263-4596-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-In older kernel version this was hard coded to 32
-
-This was added in this commit:
-commit 141518c95870228da4e050fbe31a8f0c9df82c72
-Author: Matt Carlson <mcarlson@broadcom.com>
-Date:   Thu Dec 3 08:36:22 2009 +0000
-
-    tg3: Add some VPD preprocessor constants
+This was copied from fs/libfs.c
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- include/linux/compat-3.3.h |    2 ++
- 1 file changed, 2 insertions(+)
+ compat/compat-2.6.35.c        |   34 ++++++++++++++++++++++++++++++++++
+ include/linux/compat-2.6.35.h |    3 +++
+ 2 files changed, 37 insertions(+)
 
-diff --git a/include/linux/compat-3.3.h b/include/linux/compat-3.3.h
-index 5d07c1a..84988bb 100644
---- a/include/linux/compat-3.3.h
-+++ b/include/linux/compat-3.3.h
-@@ -267,6 +267,8 @@ static inline u32 ethtool_rxfh_indir_default(u32 index, u32 n_rx_rings)
- 	return index % n_rx_rings;
+diff --git a/compat/compat-2.6.35.c b/compat/compat-2.6.35.c
+index 0fc0db2..422487c 100644
+--- a/compat/compat-2.6.35.c
++++ b/compat/compat-2.6.35.c
+@@ -89,3 +89,37 @@ loff_t noop_llseek(struct file *file, loff_t offset, int origin)
+ }
+ EXPORT_SYMBOL_GPL(noop_llseek);
+ 
++/**
++ * simple_write_to_buffer - copy data from user space to the buffer
++ * @to: the buffer to write to
++ * @available: the size of the buffer
++ * @ppos: the current position in the buffer
++ * @from: the user space buffer to read from
++ * @count: the maximum number of bytes to read
++ *
++ * The simple_write_to_buffer() function reads up to @count bytes from the user
++ * space address starting at @from into the buffer @to at offset @ppos.
++ *
++ * On success, the number of bytes written is returned and the offset @ppos is
++ * advanced by this number, or negative value is returned on error.
++ **/
++ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
++		const void __user *from, size_t count)
++{
++	loff_t pos = *ppos;
++	size_t res;
++
++	if (pos < 0)
++		return -EINVAL;
++	if (pos >= available || !count)
++		return 0;
++	if (count > available - pos)
++		count = available - pos;
++	res = copy_from_user(to + pos, from, count);
++	if (res == count)
++		return -EFAULT;
++	count -= res;
++	*ppos = pos + count;
++	return count;
++}
++EXPORT_SYMBOL(simple_write_to_buffer);
+diff --git a/include/linux/compat-2.6.35.h b/include/linux/compat-2.6.35.h
+index b06638a..82b4dea 100644
+--- a/include/linux/compat-2.6.35.h
++++ b/include/linux/compat-2.6.35.h
+@@ -88,6 +88,9 @@ usb_pipe_endpoint(struct usb_device *dev, unsigned int pipe)
+ 	return eps[usb_pipeendpoint(pipe)];
  }
  
-+#define ETHTOOL_FWVERS_LEN	32
++extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
++		const void __user *from, size_t count);
 +
- #if !((LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,9) && LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)) || (LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,23) && LINUX_VERSION_CODE < KERNEL_VERSION(3,1,0)))
- #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,37))
- /* mask qdisc_cb_private_validate as RHEL6 backports this */
+ #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35)) */
+ 
+ #endif /* LINUX_26_35_COMPAT_H */
 -- 
 1.7.10.4
