@@ -1,34 +1,58 @@
+Return-Path: <hauke@hauke-m.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 5/5] compat: fix warning in usb_autopm_get_interface_no_{resume,suspend}
+Date: Wed,  9 Jan 2013 17:34:23 +0100
+Message-Id: <1357749263-4596-5-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1357749263-4596-1-git-send-email-hauke@hauke-m.de>
+References: <1357749263-4596-1-git-send-email-hauke@hauke-m.de>
 MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <CAB=NE6Xd6ATWO_1zOcg97sXcnabKBHjrHFetbfGRbDL-x1gqxw@mail.gmail.com>
-References: <CAB=NE6Xd6ATWO_1zOcg97sXcnabKBHjrHFetbfGRbDL-x1gqxw@mail.gmail.com>
-Date: Fri, 11 Jan 2013 17:44:14 -0800
-Message-ID: <CAB=NE6V4nSkYGFiKKSb1cQJMXqftOxguL+Zrq=-oDvipshBm2A@mail.gmail.com>
-Subject: Re: rel-html: HTML5 release page for compat-drivers, maybe kernel.org
- and others
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Konstantin Ryabitsev <mricon@kernel.org>, backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Jan 10, 2013 at 6:37 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> I've created a Python release script called rel-html [0] to
-> generate a simple HTML5 page based on the initializr project for a
-> base HTML5 template [0].
->
-> [0] https://github.com/mcgrof/rel-html
+This fixes the following warning on kernel version <= 2.6.31.
 
-Example release pages:
+/compat/compat-2.6.33.c: In function ‘usb_autopm_get_interface_no_resume’:
+/compat/compat-2.6.33.c:32:2: warning: passing argument 1 of ‘atomic_inc’ from incompatible pointer type [enabled by default]
+/arch/x86/include/asm/atomic_64.h:85:20: note: expected ‘struct atomic_t *’ but argument is of type ‘int *’
+/compat/compat-2.6.33.c: In function ‘usb_autopm_put_interface_no_suspend’:
+/compat/compat-2.6.33.c:51:2: warning: passing argument 1 of ‘atomic_dec’ from incompatible pointer type [enabled by default]
+/arch/x86/include/asm/atomic_64.h:98:20: note: expected ‘struct atomic_t *’ but argument is of type ‘int *’
 
-  * http://drvbp1.linux-foundation.org/~mcgrof/rel-html/linux/
-  * http://drvbp1.linux-foundation.org/~mcgrof/rel-html/compat-drivers/
-  * http://drvbp1.linux-foundation.org/~mcgrof/rel-html/iw/
-  * http://drvbp1.linux-foundation.org/~mcgrof/rel-html/crda/
-  * http://drvbp1.linux-foundation.org/~mcgrof/rel-html/hostapd/
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ compat/compat-2.6.33.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Now with full paths for the URLs instead of relative.
-
-  Luis
+diff --git a/compat/compat-2.6.33.c b/compat/compat-2.6.33.c
+index 6d1c4d8..f584b85 100644
+--- a/compat/compat-2.6.33.c
++++ b/compat/compat-2.6.33.c
+@@ -29,7 +29,11 @@ void usb_autopm_get_interface_no_resume(struct usb_interface *intf)
+ 	struct usb_device       *udev = interface_to_usbdev(intf);
+ 
+ 	usb_mark_last_busy(udev);
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32))
+ 	atomic_inc(&intf->pm_usage_cnt);
++#else
++	intf->pm_usage_cnt++;
++#endif
+ 	pm_runtime_get_noresume(&intf->dev);
+ }
+ EXPORT_SYMBOL_GPL(usb_autopm_get_interface_no_resume);
+@@ -48,7 +52,11 @@ void usb_autopm_put_interface_no_suspend(struct usb_interface *intf)
+ 	struct usb_device       *udev = interface_to_usbdev(intf);
+ 
+ 	usb_mark_last_busy(udev);
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32))
+ 	atomic_dec(&intf->pm_usage_cnt);
++#else
++	intf->pm_usage_cnt--;
++#endif
+ 	pm_runtime_put_noidle(&intf->dev);
+ }
+ EXPORT_SYMBOL_GPL(usb_autopm_put_interface_no_suspend);
+-- 
+1.7.10.4
