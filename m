@@ -1,35 +1,61 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:58392 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751031Ab3AHVTI (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 8 Jan 2013 16:19:08 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id C7E06540335
-	for <backports@vger.kernel.org>; Tue,  8 Jan 2013 16:19:06 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2013-01-08 is baked
-Message-Id: <20130108211906.A828440ABF@repository3.orbit-lab.org>
-Date: Tue,  8 Jan 2013 16:19:06 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Return-Path: <hauke@hauke-m.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 1/5] compat: fix warning of missing struct netdev_queue
+Date: Wed,  9 Jan 2013 17:34:19 +0100
+Message-Id: <1357749263-4596-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at 91cd77f compat-drivers: refresh patches
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 681f758 compat: export platform_device_register_data()
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 6477718 Add linux-next specific files for 20130108
-Error while updating from wireless-testing
-/usr/bin/sha1sum: *.tar.bz2: No such file or directory
+Fix a warning on kernel version <= 2.6.26:
+include/linux/compat-3.3.h:44:49: warning: ‘struct netdev_queue’ declared inside parameter list [enabled by default]
 
-compat-drivers code metrics
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ include/linux/compat-3.3.h |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-   1271873 - Total upstream lines of code being pulled
-
-   network
-   ----------------------------------------
+diff --git a/include/linux/compat-3.3.h b/include/linux/compat-3.3.h
+index a8a1d7e..5d07c1a 100644
+--- a/include/linux/compat-3.3.h
++++ b/include/linux/compat-3.3.h
+@@ -22,28 +22,34 @@
+  * inlines if it was defined
+  */
+ #ifndef CONFIG_BQL
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,26))
+ static inline void netdev_tx_sent_queue(struct netdev_queue *dev_queue,
+ 					unsigned int bytes)
+ {
+ }
++#endif
+ 
+ static inline void netdev_sent_queue(struct net_device *dev, unsigned int bytes)
+ {
+ }
+ 
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,26))
+ static inline void netdev_tx_completed_queue(struct netdev_queue *dev_queue,
+ 					     unsigned pkts, unsigned bytes)
+ {
+ }
++#endif
+ 
+ static inline void netdev_completed_queue(struct net_device *dev,
+ 					  unsigned pkts, unsigned bytes)
+ {
+ }
+ 
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,26))
+ static inline void netdev_tx_reset_queue(struct netdev_queue *q)
+ {
+ }
++#endif
+ 
+ static inline void netdev_reset_queue(struct net_device *dev_queue)
+ {
+-- 
+1.7.10.4
