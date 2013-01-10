@@ -1,78 +1,34 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: hauke@hauke-m.de
-Cc: backports@vger.kernel.org,
-	Felix Fietkau <nbd@openwrt.org>,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 1/1] compat: fix compile errors when assembly is built into modules
-Date: Wed, 23 Jan 2013 13:22:44 -0800
-Message-Id: <1358976165-22389-2-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1358976165-22389-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1358976165-22389-1-git-send-email-mcgrof@do-not-panic.com>
+MIME-Version: 1.0
+In-Reply-To: <1357749263-4596-5-git-send-email-hauke@hauke-m.de>
+References: <1357749263-4596-1-git-send-email-hauke@hauke-m.de>
+	<1357749263-4596-5-git-send-email-hauke@hauke-m.de>
+Date: Thu, 10 Jan 2013 14:14:55 -0800
+Message-ID: <CAB=NE6WF98gFyyzJXg9==-EhrY7b45F+k3J_6OEO7xwTF7czOw@mail.gmail.com>
+Subject: Re: [PATCH 5/5] compat: fix warning in usb_autopm_get_interface_no_{resume,suspend}
+From: "Luis R. Rodriguez" <mcgrof@gmail.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-From: Felix Fietkau <nbd@openwrt.org>
+On Wed, Jan 9, 2013 at 8:34 AM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> This fixes the following warning on kernel version <=3D 2.6.31.
+>
+> /compat/compat-2.6.33.c: In function =E2=80=98usb_autopm_get_interface_no=
+_resume=E2=80=99:
+> /compat/compat-2.6.33.c:32:2: warning: passing argument 1 of =E2=80=98ato=
+mic_inc=E2=80=99 from incompatible pointer type [enabled by default]
+> /arch/x86/include/asm/atomic_64.h:85:20: note: expected =E2=80=98struct a=
+tomic_t *=E2=80=99 but argument is of type =E2=80=98int *=E2=80=99
+> /compat/compat-2.6.33.c: In function =E2=80=98usb_autopm_put_interface_no=
+_suspend=E2=80=99:
+> /compat/compat-2.6.33.c:51:2: warning: passing argument 1 of =E2=80=98ato=
+mic_dec=E2=80=99 from incompatible pointer type [enabled by default]
+> /arch/x86/include/asm/atomic_64.h:98:20: note: expected =E2=80=98struct a=
+tomic_t *=E2=80=99 but argument is of type =E2=80=98int *=E2=80=99
+>
+> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 
-On powerpc, modules can be compiled and linked with an assembly file, adding
-missing symbols that the compiler references when using -Os.
+Thanks applied all compat and compat-drivers patches and pushed!
 
-== ckmake-report.log ==
-
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.50              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.33              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.17              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.5               [  OK  ]
-24  3.7.0               [  OK  ]
-
-real    0m33.803s
-user    11m24.519s
-sys     3m39.690s
-
-Signed-off-by: Felix Fietkau <nbd@openwrt.org>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- include/linux/compat-2.6.h |    4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/include/linux/compat-2.6.h b/include/linux/compat-2.6.h
-index 00a5eda..34c49e6 100644
---- a/include/linux/compat-2.6.h
-+++ b/include/linux/compat-2.6.h
-@@ -1,6 +1,8 @@
- #ifndef LINUX_26_COMPAT_H
- #define LINUX_26_COMPAT_H
- 
-+#ifndef __ASSEMBLY__
-+
- #include <linux/version.h>
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0))
- #include <linux/kconfig.h>
-@@ -68,4 +70,6 @@ void compat_dependency_symbol(void);
- #include <linux/compat-3.7.h>
- #include <linux/compat-3.8.h>
- 
-+#endif /* __ASSEMBLY__ */
-+
- #endif /* LINUX_26_COMPAT_H */
--- 
-1.7.10.4
+  Luis
