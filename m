@@ -1,39 +1,60 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:35534 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753092Ab3AZUTh (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 26 Jan 2013 15:19:37 -0500
-Message-ID: <1359231601.8699.2.camel@jlt4.sipsolutions.net>
-Subject: Re: [PATCH v2] compat: backport nla_put_be{16,32,64}()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linux-wireless@vger.kernel.org, backports@vger.kernel.org
-Date: Sat, 26 Jan 2013 21:20:01 +0100
-In-Reply-To: <510320C8.6010407@hauke-m.de>
-References: <1359024296-17724-1-git-send-email-johannes@sipsolutions.net>
-	 <510320C8.6010407@hauke-m.de>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: backports-owner@vger.kernel.org
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+Date: Thu, 10 Jan 2013 18:37:50 -0800
+Message-ID: <CAB=NE6Xd6ATWO_1zOcg97sXcnabKBHjrHFetbfGRbDL-x1gqxw@mail.gmail.com>
+Subject: rel-html: HTML5 release page for compat-drivers, maybe kernel.org and others
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: Konstantin Ryabitsev <mricon@kernel.org>, backports@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-On Sat, 2013-01-26 at 01:18 +0100, Hauke Mehrtens wrote:
-> On 01/24/2013 11:44 AM, Johannes Berg wrote:
-> > From: Johannes Berg <johannes.berg@intel.com>
-> > 
-> > I intend to use these in nl80211.
-> > 
-> > Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> > ---
-> >  include/linux/compat-3.5.h | 24 ++++++++++++++++++++++++
-> >  1 file changed, 24 insertions(+)
-> > 
-> 
-> Thank you for your patch.
-> I added a missing #include <net/netlink.h> to it.
+The last step from the compat-wireless --> compat-drivers name change
+was to produce a release page for it. I was asked to see if I could
+come up with something generic that perhaps could be used by other
+projects. I've created a Python release script called rel-html [0] to
+generate a simple HTML5 page based on the initializr project for a
+base HTML5 template [0]. It currently supports generating new shiny
+simple HTML5 pages for compat-drivers and kernel.org. Whether or not
+its used for other projects is obviously an option for each project to
+choose but hope its simple enough for others to embrace if they so
+wish.
 
-Oops, thanks :)
+It works by allowing a project to add a simple configuration file and
+a few hints on where to find releases.
 
-johannes
+Example for kernel.org:
 
+https://raw.github.com/mcgrof/rel-html/master/rel-html.cfg
+
+Example for compat-drivers:
+
+https://raw.github.com/mcgrof/rel-html/master/projects/compat-drivers.cfg
+
+It currently relies on both the kernel.org and compat-drivers release
+model and only refers to releases if each release has respective
+ChangeLog and a signature file. Testing releases do not require
+ChangeLogs. Right now it does require manual configuration file
+updates if a new release is made but to figure out a way to make it
+autodetect the latest release is something I'd prefer address with the
+community.
+
+To generate a page and see what it spits out you can run and point
+your browser to the index.html file:
+
+# For kernel.org:
+mcgrof@frijol ~/devel/rel-html (git::master)$ ./rel-html.py  > html/index.html
+
+# For compat-drivers:
+mcgrof@frijol ~/devel/rel-html (git::master)$ ./rel-html.py -f
+projects/compat-drivers.cfg > html/index.html
+
+Konstantin, let me know if this works for a compat-driver release
+page. I also welcome feedback from others for considerations for other
+projects and of course I welcome patches.
+
+[0] https://github.com/mcgrof/rel-html
+[1] http://www.initializr.com/
+
+  Luis
