@@ -1,58 +1,46 @@
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 5/5] compat: fix warning in usb_autopm_get_interface_no_{resume,suspend}
-Date: Wed,  9 Jan 2013 17:34:23 +0100
-Message-Id: <1357749263-4596-5-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1357749263-4596-1-git-send-email-hauke@hauke-m.de>
-References: <1357749263-4596-1-git-send-email-hauke@hauke-m.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:54025 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754375Ab3AKVOA (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 11 Jan 2013 16:14:00 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id E2811540243
+	for <backports@vger.kernel.org>; Fri, 11 Jan 2013 16:13:56 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2013-01-11 is baked
+Message-Id: <20130111211356.BCA8D40ABF@repository3.orbit-lab.org>
+Date: Fri, 11 Jan 2013 16:13:56 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This fixes the following warning on kernel version <= 2.6.31.
+/usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
-/compat/compat-2.6.33.c: In function ‘usb_autopm_get_interface_no_resume’:
-/compat/compat-2.6.33.c:32:2: warning: passing argument 1 of ‘atomic_inc’ from incompatible pointer type [enabled by default]
-/arch/x86/include/asm/atomic_64.h:85:20: note: expected ‘struct atomic_t *’ but argument is of type ‘int *’
-/compat/compat-2.6.33.c: In function ‘usb_autopm_put_interface_no_suspend’:
-/compat/compat-2.6.33.c:51:2: warning: passing argument 1 of ‘atomic_dec’ from incompatible pointer type [enabled by default]
-/arch/x86/include/asm/atomic_64.h:98:20: note: expected ‘struct atomic_t *’ but argument is of type ‘int *’
+compat-drivers code metrics
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- compat/compat-2.6.33.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+   1278976 - Total upstream lines of code being pulled
 
-diff --git a/compat/compat-2.6.33.c b/compat/compat-2.6.33.c
-index 6d1c4d8..f584b85 100644
---- a/compat/compat-2.6.33.c
-+++ b/compat/compat-2.6.33.c
-@@ -29,7 +29,11 @@ void usb_autopm_get_interface_no_resume(struct usb_interface *intf)
- 	struct usb_device       *udev = interface_to_usbdev(intf);
- 
- 	usb_mark_last_busy(udev);
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32))
- 	atomic_inc(&intf->pm_usage_cnt);
-+#else
-+	intf->pm_usage_cnt++;
-+#endif
- 	pm_runtime_get_noresume(&intf->dev);
- }
- EXPORT_SYMBOL_GPL(usb_autopm_get_interface_no_resume);
-@@ -48,7 +52,11 @@ void usb_autopm_put_interface_no_suspend(struct usb_interface *intf)
- 	struct usb_device       *udev = interface_to_usbdev(intf);
- 
- 	usb_mark_last_busy(udev);
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32))
- 	atomic_dec(&intf->pm_usage_cnt);
-+#else
-+	intf->pm_usage_cnt--;
-+#endif
- 	pm_runtime_put_noidle(&intf->dev);
- }
- EXPORT_SYMBOL_GPL(usb_autopm_put_interface_no_suspend);
--- 
-1.7.10.4
+   network
+   ----------------------------------------
+      3047 - backport code changes
+      2557 - backport code additions
+       490 - backport code deletions
+     14654 - backport from compat module
+     17701 - total backport code
+    1.3840 - % of code consists of backport work
+
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14654 - backport from compat module
+     15090 - total backport code
+    1.1799 - % of code consists of backport work
+
+Base tree: linux-next.git
+Base tree version: next-20130110
+compat.git: compat-v3.8-rc2-1-5-g59a1d45
+compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
+Code metrics archive: http://bit.ly/H6BTF7
