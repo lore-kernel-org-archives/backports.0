@@ -1,46 +1,94 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:48734 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751032Ab3ASVLQ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 19 Jan 2013 16:11:16 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 62BAB540274
-	for <backports@vger.kernel.org>; Sat, 19 Jan 2013 16:11:15 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2013-01-19 is baked
-Message-Id: <20130119211115.3273940AC0@repository3.orbit-lab.org>
-Date: Sat, 19 Jan 2013 16:11:15 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Received: from mail-qa0-f52.google.com ([209.85.216.52]:57280 "EHLO
+	mail-qa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753160Ab3AKWtn (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 11 Jan 2013 17:49:43 -0500
+Message-ID: <50F0973E.9040506@gmail.com>
+Date: Fri, 11 Jan 2013 17:50:38 -0500
+From: Richard Farina <sidhayn@gmail.com>
+MIME-Version: 1.0
+To: Norman Shulman <norman.shulman@n-dimension.com>
+CC: backports@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: Can't build alx driver for hardened 3.7 kernel
+References: <CANQAqMVMY8Q2B0_2GatohnpBV5cYOY_vNb0owqMfi07ExrtvbA@mail.gmail.com>
+In-Reply-To: <CANQAqMVMY8Q2B0_2GatohnpBV5cYOY_vNb0owqMfi07ExrtvbA@mail.gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-/usr/bin/sha1sum: *.tar.bz2: No such file or directory
+On 01/11/2013 05:37 PM, Norman Shulman wrote:
+> nshulman@nvshp:~/src/compat-drivers-2013-01-10-2
+> $ uname -a
+> Linux nvshp 3.7.0-hardened #4 SMP Wed Jan 9 12:01:45 EST 2013 x86_64
+> Intel(R) Core(TM) i7-3770 CPU @ 3.40GHz GenuineIntel GNU/Linux
 
-compat-drivers code metrics
+Looking at that uname I'm guessing gentoo? My team maintains a
+compat-drivers ebuild that supports building on hardened. We only do the
+stable releases but if it helps, you can find it in the pentoo overlay.
 
-   1278976 - Total upstream lines of code being pulled
+-Zero_Chaos
+> 
+> nshulman@nvshp:~/src/compat-drivers-2013-01-10-2
+> $ ./scripts/driver-select alx
+> Processing new driver-select request...
+> Backing up makefile: Makefile.bk
+> Backup exists: Makefile.bk
+> Backing up makefile: drivers/net/ethernet/broadcom/Makefile.bk
+> Backing up makefile: drivers/net/ethernet/atheros/Makefile.bk
+> Backup exists: Makefile.bk
+> Backup exists: Makefile.bk
+> Backup exists: drivers/net/ethernet/broadcom/Makefile.bk
+> 
+> nshulman@nvshp:~/src/compat-drivers-2013-01-10-2
+> $ make
+> ./scripts/gen-compat-autoconf.sh
+> /home/nshulman/src/compat-drivers-2013-01-10-2/.config
+> /home/nshulman/src/compat-drivers-2013-01-10-2/config.mk >
+> include/linux/compat_autoconf.h
+> make -C /lib/modules/3.7.0-hardened/build
+> M=/home/nshulman/src/compat-drivers-2013-01-10-2 modules
+> make[1]: Entering directory `/usr/src/linux-3.7.0-hardened'
+> /home/nshulman/src/compat-drivers-2013-01-10-2/config.mk:73: "WARNING:
+> You are running a kernel >= 2.6.23, you should enable in it
+> CONFIG_NET_SCHED for 802.11[ne] support"
+> /home/nshulman/src/compat-drivers-2013-01-10-2/config.mk:252:
+> "WARNING: CONFIG_CFG80211_WEXT will be deactivated or not working
+> because kernel was compiled with CONFIG_WIRELESS_EXT=n. Tools using
+> wext interface like iwconfig will not work. To activate it build your
+> kernel e.g. with CONFIG_LIBIPW=m."
+>   CC [M]  /home/nshulman/src/compat-drivers-2013-01-10-2/compat/main.o
+>   CC [M]  /home/nshulman/src/compat-drivers-2013-01-10-2/compat/compat-3.8.o
+>   CC [M]  /home/nshulman/src/compat-drivers-2013-01-10-2/compat/cordic.o
+>   CC [M]  /home/nshulman/src/compat-drivers-2013-01-10-2/compat/crc8.o
+>   LD [M]  /home/nshulman/src/compat-drivers-2013-01-10-2/compat/compat.o
+> scripts/Makefile.build:44:
+> /home/nshulman/src/compat-drivers-2013-01-10-2/drivers/net/ethernet/atheros/alx/Makefile:
+> No such file or directory
+> make[4]: *** No rule to make target
+> `/home/nshulman/src/compat-drivers-2013-01-10-2/drivers/net/ethernet/atheros/alx/Makefile'.
+>  Stop.
+> 
+> 
+> --
+> Norman Shulman
+> Sr. Developer/Architect
+> N-Dimension Solutions Inc.
+> 9030 Leslie St, Unit 300
+> Richmond Hill, ON L4B 1G2
+> Canada
+> 
+> Tel: 905 707-8884 x 226
+> Fax: 905 707-0886
+> 
+> This email and any files transmitted with it are solely intended for
+> the use of the named recipient(s) and may contain information that is
+> privileged and confidential. If you receive this email in error,
+> please immediately notify the sender and delete this message in all
+> its forms.
+> --
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
-   network
-   ----------------------------------------
-      3047 - backport code changes
-      2557 - backport code additions
-       490 - backport code deletions
-     14654 - backport from compat module
-     17701 - total backport code
-    1.3840 - % of code consists of backport work
-
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     14654 - backport from compat module
-     15090 - total backport code
-    1.1799 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20130110
-compat.git: compat-v3.8-rc2-1-5-g59a1d45
-compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
-Code metrics archive: http://bit.ly/H6BTF7
