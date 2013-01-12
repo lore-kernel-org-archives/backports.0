@@ -1,59 +1,34 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:52658 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751731Ab3A2VMq (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 29 Jan 2013 16:12:46 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 622145400ED
-	for <backports@vger.kernel.org>; Tue, 29 Jan 2013 16:12:45 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2013-01-29 is baked
-Message-Id: <20130129211245.3ADF240AC0@repository3.orbit-lab.org>
-Date: Tue, 29 Jan 2013 16:12:45 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <CAB=NE6Xd6ATWO_1zOcg97sXcnabKBHjrHFetbfGRbDL-x1gqxw@mail.gmail.com>
+References: <CAB=NE6Xd6ATWO_1zOcg97sXcnabKBHjrHFetbfGRbDL-x1gqxw@mail.gmail.com>
+Date: Fri, 11 Jan 2013 17:44:14 -0800
+Message-ID: <CAB=NE6V4nSkYGFiKKSb1cQJMXqftOxguL+Zrq=-oDvipshBm2A@mail.gmail.com>
+Subject: Re: rel-html: HTML5 release page for compat-drivers, maybe kernel.org
+ and others
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: Konstantin Ryabitsev <mricon@kernel.org>, backports@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-git fetch hauke (/var/opt/compat/compat-drivers)
-Nothing new to pack.
-HEAD is now at 3e51785 compat-drivers: update genlog-3.8 for rc5
-git fetch hauke (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 5c165fc compat: backport nla_put_be{16,32,64}()
-git fetch origin (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at a6670e3 Add linux-next specific files for 20130128
-git fetch origin (/var/opt/compat/unified/alx)
-Nothing new to pack.
-HEAD is now at 8f56f40 alx: improve self-test for FPGA
-Failed...
-/usr/bin/sha1sum: *.tar.bz2: No such file or directory
+On Thu, Jan 10, 2013 at 6:37 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> I've created a Python release script called rel-html [0] to
+> generate a simple HTML5 page based on the initializr project for a
+> base HTML5 template [0].
+>
+> [0] https://github.com/mcgrof/rel-html
 
-compat-drivers code metrics
+Example release pages:
 
-   1278976 - Total upstream lines of code being pulled
+  * http://drvbp1.linux-foundation.org/~mcgrof/rel-html/linux/
+  * http://drvbp1.linux-foundation.org/~mcgrof/rel-html/compat-drivers/
+  * http://drvbp1.linux-foundation.org/~mcgrof/rel-html/iw/
+  * http://drvbp1.linux-foundation.org/~mcgrof/rel-html/crda/
+  * http://drvbp1.linux-foundation.org/~mcgrof/rel-html/hostapd/
 
-   network
-   ----------------------------------------
-      3047 - backport code changes
-      2557 - backport code additions
-       490 - backport code deletions
-     14654 - backport from compat module
-     17701 - total backport code
-    1.3840 - % of code consists of backport work
+Now with full paths for the URLs instead of relative.
 
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     14654 - backport from compat module
-     15090 - total backport code
-    1.1799 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20130110
-compat.git: compat-v3.8-rc2-1-5-g59a1d45
-compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
-Code metrics archive: http://bit.ly/H6BTF7
+  Luis
