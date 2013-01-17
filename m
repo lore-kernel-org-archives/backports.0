@@ -1,46 +1,46 @@
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/3] compat-drivers: fix section mismatch in ath5k
-Date: Wed,  9 Jan 2013 17:27:26 +0100
-Message-Id: <1357748847-4095-2-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1357748847-4095-1-git-send-email-hauke@hauke-m.de>
-References: <1357748847-4095-1-git-send-email-hauke@hauke-m.de>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:55888 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752064Ab3AQVLr (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 17 Jan 2013 16:11:47 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 2921C54002F
+	for <backports@vger.kernel.org>; Thu, 17 Jan 2013 16:11:46 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2013-01-17 is baked
+Message-Id: <20130117211146.0ADFF40ABF@repository3.orbit-lab.org>
+Date: Thu, 17 Jan 2013 16:11:45 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Fix section mismatch introduced by removing __devinitconst usage from
-the kernel.
+/usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
-WARNING: /home/hauke/compat-wireless/compat-wireless/drivers/net/wireless/ath/ath5k/ath5k.o(.text+0x13898): Section mismatch in reference from the function ath5k_init_leds() to the variable .devinit.rodata:ath5k_led_devices
-The function ath5k_init_leds() references
-the variable __devinitconst ath5k_led_devices.
-This is often because ath5k_init_leds lacks a __devinitconst
-annotation or the annotation of ath5k_led_devices is wrong.
+compat-drivers code metrics
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../network/67-fix-section-mismatch.patch                   |   11 +++++++++++
- 1 file changed, 11 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/67-fix-section-mismatch.patch
+   1278976 - Total upstream lines of code being pulled
 
-diff --git a/patches/collateral-evolutions/network/67-fix-section-mismatch.patch b/patches/collateral-evolutions/network/67-fix-section-mismatch.patch
-new file mode 100644
-index 0000000..15126b6
---- /dev/null
-+++ b/patches/collateral-evolutions/network/67-fix-section-mismatch.patch
-@@ -0,0 +1,11 @@
-+--- a/drivers/net/wireless/ath/ath5k/led.c
-++++ b/drivers/net/wireless/ath/ath5k/led.c
-+@@ -55,7 +55,7 @@
-+ #define ATH_POLARITY(data) ((data) & 0xff)
-+ 
-+ /* Devices we match on for LED config info (typically laptops) */
-+-static DEFINE_PCI_DEVICE_TABLE(ath5k_led_devices) = {
-++static const struct pci_device_id ath5k_led_devices[] = {
-+ 	/* AR5211 */
-+ 	{ PCI_VDEVICE(ATHEROS, PCI_DEVICE_ID_ATHEROS_AR5211), ATH_LED(0, 0) },
-+ 	/* HP Compaq nc6xx, nc4000, nx6000 */
--- 
-1.7.10.4
+   network
+   ----------------------------------------
+      3047 - backport code changes
+      2557 - backport code additions
+       490 - backport code deletions
+     14654 - backport from compat module
+     17701 - total backport code
+    1.3840 - % of code consists of backport work
+
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14654 - backport from compat module
+     15090 - total backport code
+    1.1799 - % of code consists of backport work
+
+Base tree: linux-next.git
+Base tree version: next-20130110
+compat.git: compat-v3.8-rc2-1-5-g59a1d45
+compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
+Code metrics archive: http://bit.ly/H6BTF7
