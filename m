@@ -1,35 +1,46 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <CAB=NE6USt7hRZu4dv7F4CPQ_22cwvp7V0nMYTsx2AiuXBnNUhg@mail.gmail.com>
-References: <CAFub=KTufrSp75puA+3UoXXY6ONKJ8okZjvw2TmChXW_MGgjvw@mail.gmail.com>
-	<CAB=NE6VUBQO-dtfoKzffCgpEW0G61k9PVb23AXFWaRArdCnOqg@mail.gmail.com>
-	<CAFub=KQgkApMGBZi6b_pa20DNdjeC6TN6O_4nJM1GrUfSj45Wg@mail.gmail.com>
-	<CAB=NE6WutFyazf55WQG4-v=9su6VoR_1_Nh8qF4xyUYs1kFbEw@mail.gmail.com>
-	<CAB=NE6WeJHUpu3uf1nM7yjZn88iiYcDCrx-FHyrBPMGfPJWQOw@mail.gmail.com>
-	<CAFub=KQKg6wJrOEEzdhuVFr-aPbmqtdKBkRedxbNYi-B_WDdcg@mail.gmail.com>
-	<CAB=NE6USt7hRZu4dv7F4CPQ_22cwvp7V0nMYTsx2AiuXBnNUhg@mail.gmail.com>
-Date: Mon, 21 Jan 2013 18:45:35 -0800
-Message-ID: <CAB=NE6Uq1Q8KHQe_Mz077TgVETNJKsru0ZU6mYhFpA8V55-e3g@mail.gmail.com>
-Subject: Re: ckmake in Python
-From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
-Cc: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:38914 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752459Ab3ARVMI (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 18 Jan 2013 16:12:08 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id E31B5540202
+	for <backports@vger.kernel.org>; Fri, 18 Jan 2013 16:12:06 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2013-01-18 is baked
+Message-Id: <20130118211206.9EF9740AC0@repository3.orbit-lab.org>
+Date: Fri, 18 Jan 2013 16:12:06 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Jan 21, 2013 at 5:15 PM, Luis R. Rodriguez <mcgrof@frijolero.org> wrote:
-> If we hit CTRL the signal handler should remove that directory. The
-> directory should also be nuked when it completes.
+/usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
-Another thing you could do to debug is to tail -f the log file for each kernel:
+compat-drivers code metrics
 
-tail -f .tmp.ckmake/2.6.24/ckmake.n.log
+   1278976 - Total upstream lines of code being pulled
 
-If that doesn't ever move you know something is going wrong. On a slow
-box this might happen but the only reason why I suspect this might
-happen on a slow box is the heuristics for the number of job processes
-running at the same time to do compilation is too high. Right now use
-use make -j $NUM_CPUS and this is computed by cpu_info_build_jobs() on
-ckmake.
+   network
+   ----------------------------------------
+      3047 - backport code changes
+      2557 - backport code additions
+       490 - backport code deletions
+     14654 - backport from compat module
+     17701 - total backport code
+    1.3840 - % of code consists of backport work
 
-  Luis
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14654 - backport from compat module
+     15090 - total backport code
+    1.1799 - % of code consists of backport work
+
+Base tree: linux-next.git
+Base tree version: next-20130110
+compat.git: compat-v3.8-rc2-1-5-g59a1d45
+compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
+Code metrics archive: http://bit.ly/H6BTF7
