@@ -1,29 +1,46 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:54464 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752854Ab3AXLFe (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 24 Jan 2013 06:05:34 -0500
-Message-ID: <1359025557.4639.4.camel@jlt4.sipsolutions.net>
-Subject: Re: [PATCH] compat: make hid_match_id static
-From: Johannes Berg <johannes@sipsolutions.net>
-To: linux-wireless@vger.kernel.org
-Cc: backports@vger.kernel.org
-Date: Thu, 24 Jan 2013 12:05:57 +0100
-In-Reply-To: <1359024373-21365-1-git-send-email-johannes@sipsolutions.net> (sfid-20130124_114553_865444_8E08B51E)
-References: <1359024373-21365-1-git-send-email-johannes@sipsolutions.net>
-	 (sfid-20130124_114553_865444_8E08B51E)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from external1.orbit-lab.org ([128.6.192.131]:48734 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751032Ab3ASVLQ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 19 Jan 2013 16:11:16 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 62BAB540274
+	for <backports@vger.kernel.org>; Sat, 19 Jan 2013 16:11:15 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2013-01-19 is baked
+Message-Id: <20130119211115.3273940AC0@repository3.orbit-lab.org>
+Date: Sat, 19 Jan 2013 16:11:15 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, 2013-01-24 at 11:46 +0100, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
-> 
-> Otherwise sparse complains.
+/usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
-Never mind, this then fails to compile in some cases, it seems?
+compat-drivers code metrics
 
-johannes
+   1278976 - Total upstream lines of code being pulled
 
+   network
+   ----------------------------------------
+      3047 - backport code changes
+      2557 - backport code additions
+       490 - backport code deletions
+     14654 - backport from compat module
+     17701 - total backport code
+    1.3840 - % of code consists of backport work
+
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14654 - backport from compat module
+     15090 - total backport code
+    1.1799 - % of code consists of backport work
+
+Base tree: linux-next.git
+Base tree version: next-20130110
+compat.git: compat-v3.8-rc2-1-5-g59a1d45
+compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
+Code metrics archive: http://bit.ly/H6BTF7
