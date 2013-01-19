@@ -1,60 +1,32 @@
 MIME-Version: 1.0
 Sender: mcgrof@gmail.com
-Date: Thu, 10 Jan 2013 18:37:50 -0800
-Message-ID: <CAB=NE6Xd6ATWO_1zOcg97sXcnabKBHjrHFetbfGRbDL-x1gqxw@mail.gmail.com>
-Subject: rel-html: HTML5 release page for compat-drivers, maybe kernel.org and others
+Date: Sat, 19 Jan 2013 10:22:22 -0800
+Message-ID: <CAB=NE6VY8pkNwZfx0HiAXRvx+RuXJpVByX7LSj2VTYdaMv9z_w@mail.gmail.com>
+Subject: [ANN] rel-html HTML5 release page generator for Linux and friends
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Konstantin Ryabitsev <mricon@kernel.org>, backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org, backports@vger.kernel.org
+Cc: Konstantin Ryabitsev <mricon@kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-The last step from the compat-wireless --> compat-drivers name change
-was to produce a release page for it. I was asked to see if I could
-come up with something generic that perhaps could be used by other
-projects. I've created a Python release script called rel-html [0] to
-generate a simple HTML5 page based on the initializr project for a
-base HTML5 template [0]. It currently supports generating new shiny
-simple HTML5 pages for compat-drivers and kernel.org. Whether or not
-its used for other projects is obviously an option for each project to
-choose but hope its simple enough for others to embrace if they so
-wish.
+I had to write an HTML5 release page generator [0] for compat-drivers
+[1] for its new shiny new home page on kernel.org. While working on it
+I got a feature request to try to support any project, so I
+generalized the tool for any FOSS project. It currently supports
+parsing releases for the Linux kernel, compat-drivers, iw, crda,
+hostapd should any of these projects like it for its releases page.
+I'm happy to make the tool's first release now that it actually infers
+releases so there is no need to update the project configuration file
+when a new release is made, it will infer releases based on some
+supplied hints and naked index release URLs.
 
-It works by allowing a project to add a simple configuration file and
-a few hints on where to find releases.
+Example output of what releases look like:
 
-Example for kernel.org:
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/
 
-https://raw.github.com/mcgrof/rel-html/master/rel-html.cfg
+Patches / feedback welcomed.
 
-Example for compat-drivers:
-
-https://raw.github.com/mcgrof/rel-html/master/projects/compat-drivers.cfg
-
-It currently relies on both the kernel.org and compat-drivers release
-model and only refers to releases if each release has respective
-ChangeLog and a signature file. Testing releases do not require
-ChangeLogs. Right now it does require manual configuration file
-updates if a new release is made but to figure out a way to make it
-autodetect the latest release is something I'd prefer address with the
-community.
-
-To generate a page and see what it spits out you can run and point
-your browser to the index.html file:
-
-# For kernel.org:
-mcgrof@frijol ~/devel/rel-html (git::master)$ ./rel-html.py  > html/index.html
-
-# For compat-drivers:
-mcgrof@frijol ~/devel/rel-html (git::master)$ ./rel-html.py -f
-projects/compat-drivers.cfg > html/index.html
-
-Konstantin, let me know if this works for a compat-driver release
-page. I also welcome feedback from others for considerations for other
-projects and of course I welcome patches.
-
-[0] https://github.com/mcgrof/rel-html
-[1] http://www.initializr.com/
+[0] git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/rel-html.git
+[1] https://backports.wiki.kernel.org/
 
   Luis
