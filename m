@@ -1,32 +1,46 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-Date: Sat, 19 Jan 2013 10:22:22 -0800
-Message-ID: <CAB=NE6VY8pkNwZfx0HiAXRvx+RuXJpVByX7LSj2VTYdaMv9z_w@mail.gmail.com>
-Subject: [ANN] rel-html HTML5 release page generator for Linux and friends
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: linux-kernel@vger.kernel.org, backports@vger.kernel.org
-Cc: Konstantin Ryabitsev <mricon@kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:57574 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752514Ab3ATVLf (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 20 Jan 2013 16:11:35 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id DFCF65401F0
+	for <backports@vger.kernel.org>; Sun, 20 Jan 2013 16:11:33 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2013-01-20 is baked
+Message-Id: <20130120211133.ACCA540AC0@repository3.orbit-lab.org>
+Date: Sun, 20 Jan 2013 16:11:33 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I had to write an HTML5 release page generator [0] for compat-drivers
-[1] for its new shiny new home page on kernel.org. While working on it
-I got a feature request to try to support any project, so I
-generalized the tool for any FOSS project. It currently supports
-parsing releases for the Linux kernel, compat-drivers, iw, crda,
-hostapd should any of these projects like it for its releases page.
-I'm happy to make the tool's first release now that it actually infers
-releases so there is no need to update the project configuration file
-when a new release is made, it will infer releases based on some
-supplied hints and naked index release URLs.
+/usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
-Example output of what releases look like:
+compat-drivers code metrics
 
-http://drvbp1.linux-foundation.org/~mcgrof/rel-html/
+   1278976 - Total upstream lines of code being pulled
 
-Patches / feedback welcomed.
+   network
+   ----------------------------------------
+      3047 - backport code changes
+      2557 - backport code additions
+       490 - backport code deletions
+     14654 - backport from compat module
+     17701 - total backport code
+    1.3840 - % of code consists of backport work
 
-[0] git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/rel-html.git
-[1] https://backports.wiki.kernel.org/
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14654 - backport from compat module
+     15090 - total backport code
+    1.1799 - % of code consists of backport work
 
-  Luis
+Base tree: linux-next.git
+Base tree version: next-20130110
+compat.git: compat-v3.8-rc2-1-5-g59a1d45
+compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
+Code metrics archive: http://bit.ly/H6BTF7
