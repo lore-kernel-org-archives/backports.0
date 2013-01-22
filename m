@@ -1,16 +1,16 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:38914 "HELO
+Received: from external1.orbit-lab.org ([128.6.192.131]:53229 "HELO
 	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752459Ab3ARVMI (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 18 Jan 2013 16:12:08 -0500
+	with SMTP id S1756107Ab3AVVL7 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 22 Jan 2013 16:11:59 -0500
 Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id E31B5540202
-	for <backports@vger.kernel.org>; Fri, 18 Jan 2013 16:12:06 -0500 (EST)
+	by external1.orbit-lab.org (Postfix) with ESMTP id 05757540202
+	for <backports@vger.kernel.org>; Tue, 22 Jan 2013 16:11:58 -0500 (EST)
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2013-01-18 is baked
-Message-Id: <20130118211206.9EF9740AC0@repository3.orbit-lab.org>
-Date: Fri, 18 Jan 2013 16:12:06 -0500 (EST)
+Subject: Compat-wireless release for 2013-01-22 is baked
+Message-Id: <20130122211157.DF47A40ABF@repository3.orbit-lab.org>
+Date: Tue, 22 Jan 2013 16:11:57 -0500 (EST)
 From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
