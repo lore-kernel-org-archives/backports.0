@@ -1,57 +1,95 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:44457 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755023Ab3ADVS7 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 4 Jan 2013 16:18:59 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 1A195540335
-	for <backports@vger.kernel.org>; Fri,  4 Jan 2013 16:18:58 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2013-01-04 is baked
-Message-Id: <20130104211857.D3BD540AC0@repository3.orbit-lab.org>
-Date: Fri,  4 Jan 2013 16:18:57 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <CAFub=KQKg6wJrOEEzdhuVFr-aPbmqtdKBkRedxbNYi-B_WDdcg@mail.gmail.com>
+References: <CAFub=KTufrSp75puA+3UoXXY6ONKJ8okZjvw2TmChXW_MGgjvw@mail.gmail.com>
+	<CAB=NE6VUBQO-dtfoKzffCgpEW0G61k9PVb23AXFWaRArdCnOqg@mail.gmail.com>
+	<CAFub=KQgkApMGBZi6b_pa20DNdjeC6TN6O_4nJM1GrUfSj45Wg@mail.gmail.com>
+	<CAB=NE6WutFyazf55WQG4-v=9su6VoR_1_Nh8qF4xyUYs1kFbEw@mail.gmail.com>
+	<CAB=NE6WeJHUpu3uf1nM7yjZn88iiYcDCrx-FHyrBPMGfPJWQOw@mail.gmail.com>
+	<CAFub=KQKg6wJrOEEzdhuVFr-aPbmqtdKBkRedxbNYi-B_WDdcg@mail.gmail.com>
+Date: Mon, 21 Jan 2013 17:15:53 -0800
+Message-ID: <CAB=NE6USt7hRZu4dv7F4CPQ_22cwvp7V0nMYTsx2AiuXBnNUhg@mail.gmail.com>
+Subject: Re: ckmake in Python
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at 91cd77f compat-drivers: refresh patches
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 681f758 compat: export platform_device_register_data()
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 1d4849d Add linux-next specific files for 20130104
-/var/opt/compat//compat-ksrc/lib/modules does not exist
-Failed...
-/usr/bin/sha1sum: *.tar.bz2: No such file or directory
+On Tue, Jan 8, 2013 at 2:27 AM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com>=
+ wrote:
+> On Sat, Dec 29, 2012 at 1:10 AM, Luis R. Rodriguez <mcgrof@frijolero.org>=
+ wrote:
+>> On Fri, Dec 28, 2012 at 2:49 PM, Luis R. Rodriguez <mcgrof@frijolero.org=
+> wrote:
+>>> On Fri, Dec 28, 2012 at 1:47 PM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail=
+.com> wrote:
+>>>> Ah, So what was the point of using curses?
+>>>
+>>> Multithreading.
+>>
+>> Rather python --> multithreading. The fact that ncurses was used is
+>> more of a wish to display live results from multithreaded processes
+>> running in the background.
+>
+> Okay. This really doesn't work on Fedora :) When I start ckmake,
+> nothing happens.
 
-compat-drivers code metrics
+Nothing should happen unless a compilation completes for a kernel.
 
-   1270981 - Total upstream lines of code being pulled
+> ckmake process runs, load average jumps to 15-20~,
+> ckmake hogs the cpu by %200 but building never finishes, even worse
+> last night there wasn't even any forked make process at all. I had to
+> stop it using CTRL+Z and then kill it after 20 minutes of waiting.
 
-   network
-   ----------------------------------------
-      3076 - backport code changes
-      2581 - backport code additions
-       495 - backport code deletions
-     14599 - backport from compat module
-     17675 - total backport code
-    1.3907 - % of code consists of backport work
+Hm odd, I just tested this on a Fedora 16 box and it worked without
+even adding any new packages. I tested this by trying to run ckmake
+only against compat.git, not compat-drivers. I'll try it now with
+compat-drivers on the Fedora box to see if I see something similar.
 
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     14599 - backport from compat module
-     15035 - total backport code
-    1.1829 - % of code consists of backport work
+> Also now I have a .tmp.ckmake folder in compat/ that I can't delete (I
+> cut 'rm -rf' after some 20 minutes, too. Maybe this should sit and
+> wait there for further compilations? I don't know)
 
-Base tree: linux-next.git
-Base tree version: next-20130104
-compat.git: compat-2012-12-24
-compat-drivers release: compat-drivers-2012-12-24
-Code metrics archive: http://bit.ly/H6BTF7
+Indeed, so it uses that directory to store compies of entire source
+code of the current git *for each kernel* that it wants to test on. We
+do this given that we cannot share the same directory for output
+binary for different kernels when they are all running in parallel.
+
+If we hit CTRL the signal handler should remove that directory. The
+directory should also be nuked when it completes.
+
+> [root@localhost .tmp.ckmake]# ll
+> total 40
+> drwxr-xr-x 6 root root 4096 Jan  7 18:56 2.6.24
+> drwxr-xr-x 6 root root 4096 Jan  7 18:56 2.6.27
+> drwxr-xr-x 3 root root 4096 Jan  8 12:17 2.6.28
+> drwxr-xr-x 6 root root 4096 Jan  7 18:56 2.6.30
+> drwxr-xr-x 6 root root 4096 Jan  7 18:56 2.6.31
+> drwxr-xr-x 6 root root 4096 Jan  7 18:56 2.6.33
+> drwxr-xr-x 6 root root 4096 Jan  7 18:56 2.6.35
+> drwxr-xr-x 6 root root 4096 Jan  7 18:56 2.6.36
+> drwxr-xr-x 6 root root 4096 Jan  7 18:56 3.1.10
+> drwxr-xr-x 6 root root 4096 Jan  7 18:56 3.2.33
+>
+> Anyway I started to think about reviving ckmake.sh and keeping this
+> python-based one as experimental or development stuff. What do you
+> think about?
+
+Sure.
+
+> Or how should I debug this to understand why things
+> stall?
+
+Can you try ckmake just against compat.git ? Or perhaps get me access
+to the box:
+
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCeF/MMg+KqfzBfy+undzW4XCP8vJedmMO3/q5=
+ypNz9P+825coqOfqVIJclO2/gPgYWwCP9oif7hVj9ASduaxQCQ1Cbqk7IU64MhdEKmsV77Z3f7+=
+GC0jwr7L5iF45DvD+XBO5ZC0EFZJbd45Fh7iW2/IBde7QWu1DtzjTu3PCeavSJ3MtV129qicSPX=
+SgWbEOZXngL8WrnQ5n7rbZ4lfJPag13SSoewhU582GTuroIe4f9g/4J6RpoKvR/Ck6wMwRt3evQ=
+x/yet+BaqlydJoAB/3H8FR9Y0qoGHGG32493Flb8MBROjutcvRx0mdqgZL1QJWdwfRjKcSbWe9a=
+Id699
+mcgrof@frijol
+
+  Luis
