@@ -1,46 +1,78 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:40244 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1750899Ab3AWVMM (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 23 Jan 2013 16:12:12 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 7903B54015C
-	for <backports@vger.kernel.org>; Wed, 23 Jan 2013 16:12:10 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2013-01-23 is baked
-Message-Id: <20130123211210.5A4ED40ABF@repository3.orbit-lab.org>
-Date: Wed, 23 Jan 2013 16:12:10 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Return-Path: <mcgrof@gmail.com>
+Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: hauke@hauke-m.de
+Cc: backports@vger.kernel.org,
+	Felix Fietkau <nbd@openwrt.org>,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 1/1] compat: fix compile errors when assembly is built into modules
+Date: Wed, 23 Jan 2013 13:22:44 -0800
+Message-Id: <1358976165-22389-2-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1358976165-22389-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1358976165-22389-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
-/usr/bin/sha1sum: *.tar.bz2: No such file or directory
+From: Felix Fietkau <nbd@openwrt.org>
 
-compat-drivers code metrics
+On powerpc, modules can be compiled and linked with an assembly file, adding
+missing symbols that the compiler references when using -Os.
 
-   1278976 - Total upstream lines of code being pulled
+== ckmake-report.log ==
 
-   network
-   ----------------------------------------
-      3047 - backport code changes
-      2557 - backport code additions
-       490 - backport code deletions
-     14654 - backport from compat module
-     17701 - total backport code
-    1.3840 - % of code consists of backport work
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.50              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.2.33              [  OK  ]
+20  3.3.8               [  OK  ]
+21  3.4.17              [  OK  ]
+22  3.5.7               [  OK  ]
+23  3.6.5               [  OK  ]
+24  3.7.0               [  OK  ]
 
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     14654 - backport from compat module
-     15090 - total backport code
-    1.1799 - % of code consists of backport work
+real    0m33.803s
+user    11m24.519s
+sys     3m39.690s
 
-Base tree: linux-next.git
-Base tree version: next-20130110
-compat.git: compat-v3.8-rc2-1-5-g59a1d45
-compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
-Code metrics archive: http://bit.ly/H6BTF7
+Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ include/linux/compat-2.6.h |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/include/linux/compat-2.6.h b/include/linux/compat-2.6.h
+index 00a5eda..34c49e6 100644
+--- a/include/linux/compat-2.6.h
++++ b/include/linux/compat-2.6.h
+@@ -1,6 +1,8 @@
+ #ifndef LINUX_26_COMPAT_H
+ #define LINUX_26_COMPAT_H
+ 
++#ifndef __ASSEMBLY__
++
+ #include <linux/version.h>
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0))
+ #include <linux/kconfig.h>
+@@ -68,4 +70,6 @@ void compat_dependency_symbol(void);
+ #include <linux/compat-3.7.h>
+ #include <linux/compat-3.8.h>
+ 
++#endif /* __ASSEMBLY__ */
++
+ #endif /* LINUX_26_COMPAT_H */
+-- 
+1.7.10.4
