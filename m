@@ -1,95 +1,46 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <CAFub=KQKg6wJrOEEzdhuVFr-aPbmqtdKBkRedxbNYi-B_WDdcg@mail.gmail.com>
-References: <CAFub=KTufrSp75puA+3UoXXY6ONKJ8okZjvw2TmChXW_MGgjvw@mail.gmail.com>
-	<CAB=NE6VUBQO-dtfoKzffCgpEW0G61k9PVb23AXFWaRArdCnOqg@mail.gmail.com>
-	<CAFub=KQgkApMGBZi6b_pa20DNdjeC6TN6O_4nJM1GrUfSj45Wg@mail.gmail.com>
-	<CAB=NE6WutFyazf55WQG4-v=9su6VoR_1_Nh8qF4xyUYs1kFbEw@mail.gmail.com>
-	<CAB=NE6WeJHUpu3uf1nM7yjZn88iiYcDCrx-FHyrBPMGfPJWQOw@mail.gmail.com>
-	<CAFub=KQKg6wJrOEEzdhuVFr-aPbmqtdKBkRedxbNYi-B_WDdcg@mail.gmail.com>
-Date: Mon, 21 Jan 2013 17:15:53 -0800
-Message-ID: <CAB=NE6USt7hRZu4dv7F4CPQ_22cwvp7V0nMYTsx2AiuXBnNUhg@mail.gmail.com>
-Subject: Re: ckmake in Python
-From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
-Cc: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:54896 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755720Ab3AXVMX (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 24 Jan 2013 16:12:23 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 5CF745401F0
+	for <backports@vger.kernel.org>; Thu, 24 Jan 2013 16:12:22 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2013-01-24 is baked
+Message-Id: <20130124211222.411FA40ABF@repository3.orbit-lab.org>
+Date: Thu, 24 Jan 2013 16:12:22 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Jan 8, 2013 at 2:27 AM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com>=
- wrote:
-> On Sat, Dec 29, 2012 at 1:10 AM, Luis R. Rodriguez <mcgrof@frijolero.org>=
- wrote:
->> On Fri, Dec 28, 2012 at 2:49 PM, Luis R. Rodriguez <mcgrof@frijolero.org=
-> wrote:
->>> On Fri, Dec 28, 2012 at 1:47 PM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail=
-.com> wrote:
->>>> Ah, So what was the point of using curses?
->>>
->>> Multithreading.
->>
->> Rather python --> multithreading. The fact that ncurses was used is
->> more of a wish to display live results from multithreaded processes
->> running in the background.
->
-> Okay. This really doesn't work on Fedora :) When I start ckmake,
-> nothing happens.
+/usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
-Nothing should happen unless a compilation completes for a kernel.
+compat-drivers code metrics
 
-> ckmake process runs, load average jumps to 15-20~,
-> ckmake hogs the cpu by %200 but building never finishes, even worse
-> last night there wasn't even any forked make process at all. I had to
-> stop it using CTRL+Z and then kill it after 20 minutes of waiting.
+   1278976 - Total upstream lines of code being pulled
 
-Hm odd, I just tested this on a Fedora 16 box and it worked without
-even adding any new packages. I tested this by trying to run ckmake
-only against compat.git, not compat-drivers. I'll try it now with
-compat-drivers on the Fedora box to see if I see something similar.
+   network
+   ----------------------------------------
+      3047 - backport code changes
+      2557 - backport code additions
+       490 - backport code deletions
+     14654 - backport from compat module
+     17701 - total backport code
+    1.3840 - % of code consists of backport work
 
-> Also now I have a .tmp.ckmake folder in compat/ that I can't delete (I
-> cut 'rm -rf' after some 20 minutes, too. Maybe this should sit and
-> wait there for further compilations? I don't know)
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14654 - backport from compat module
+     15090 - total backport code
+    1.1799 - % of code consists of backport work
 
-Indeed, so it uses that directory to store compies of entire source
-code of the current git *for each kernel* that it wants to test on. We
-do this given that we cannot share the same directory for output
-binary for different kernels when they are all running in parallel.
-
-If we hit CTRL the signal handler should remove that directory. The
-directory should also be nuked when it completes.
-
-> [root@localhost .tmp.ckmake]# ll
-> total 40
-> drwxr-xr-x 6 root root 4096 Jan  7 18:56 2.6.24
-> drwxr-xr-x 6 root root 4096 Jan  7 18:56 2.6.27
-> drwxr-xr-x 3 root root 4096 Jan  8 12:17 2.6.28
-> drwxr-xr-x 6 root root 4096 Jan  7 18:56 2.6.30
-> drwxr-xr-x 6 root root 4096 Jan  7 18:56 2.6.31
-> drwxr-xr-x 6 root root 4096 Jan  7 18:56 2.6.33
-> drwxr-xr-x 6 root root 4096 Jan  7 18:56 2.6.35
-> drwxr-xr-x 6 root root 4096 Jan  7 18:56 2.6.36
-> drwxr-xr-x 6 root root 4096 Jan  7 18:56 3.1.10
-> drwxr-xr-x 6 root root 4096 Jan  7 18:56 3.2.33
->
-> Anyway I started to think about reviving ckmake.sh and keeping this
-> python-based one as experimental or development stuff. What do you
-> think about?
-
-Sure.
-
-> Or how should I debug this to understand why things
-> stall?
-
-Can you try ckmake just against compat.git ? Or perhaps get me access
-to the box:
-
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCeF/MMg+KqfzBfy+undzW4XCP8vJedmMO3/q5=
-ypNz9P+825coqOfqVIJclO2/gPgYWwCP9oif7hVj9ASduaxQCQ1Cbqk7IU64MhdEKmsV77Z3f7+=
-GC0jwr7L5iF45DvD+XBO5ZC0EFZJbd45Fh7iW2/IBde7QWu1DtzjTu3PCeavSJ3MtV129qicSPX=
-SgWbEOZXngL8WrnQ5n7rbZ4lfJPag13SSoewhU582GTuroIe4f9g/4J6RpoKvR/Ck6wMwRt3evQ=
-x/yet+BaqlydJoAB/3H8FR9Y0qoGHGG32493Flb8MBROjutcvRx0mdqgZL1QJWdwfRjKcSbWe9a=
-Id699
-mcgrof@frijol
-
-  Luis
+Base tree: linux-next.git
+Base tree version: next-20130110
+compat.git: compat-v3.8-rc2-1-5-g59a1d45
+compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
+Code metrics archive: http://bit.ly/H6BTF7
