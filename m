@@ -1,46 +1,62 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:43753 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751969Ab3APVMI (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 16 Jan 2013 16:12:08 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id CBE46540427
-	for <backports@vger.kernel.org>; Wed, 16 Jan 2013 16:12:06 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2013-01-16 is baked
-Message-Id: <20130116211206.A749F40ABF@repository3.orbit-lab.org>
-Date: Wed, 16 Jan 2013 16:12:06 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Received: from he.sipsolutions.net ([78.46.109.217]:54392 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752939Ab3AXKnF (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 24 Jan 2013 05:43:05 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
+To: linux-wireless@vger.kernel.org
+Cc: backports@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] compat: backport nla_put_be{16,32,64}()
+Date: Thu, 24 Jan 2013 11:43:25 +0100
+Message-Id: <1359024205-17219-1-git-send-email-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-/usr/bin/sha1sum: *.tar.bz2: No such file or directory
+From: Johannes Berg <johannes.berg@intel.com>
 
-compat-drivers code metrics
+I intend to use these in nl80211.
 
-   1278976 - Total upstream lines of code being pulled
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ include/linux/compat-3.5.h | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-   network
-   ----------------------------------------
-      3047 - backport code changes
-      2557 - backport code additions
-       490 - backport code deletions
-     14654 - backport from compat module
-     17701 - total backport code
-    1.3840 - % of code consists of backport work
+diff --git a/include/linux/compat-3.5.h b/include/linux/compat-3.5.h
+index 9cffead..892f00c 100644
+--- a/include/linux/compat-3.5.h
++++ b/include/linux/compat-3.5.h
+@@ -10,6 +10,30 @@
+ 
+ /*
+  * This backports:
++ * commit 569a8fc38367dfafd87454f27ac646c8e6b54bca
++ * Author: David S. Miller <davem@davemloft.net>
++ * Date:   Thu Mar 29 23:18:53 2012 -0400
++
++ *     netlink: Add nla_put_be{16,32,64}() helpers.
++ */
++    
++static inline int nla_put_be16(struct sk_buff *skb, int attrtype, __be16 value)
++{
++	return nla_put(skb, attrtype, sizeof(__be16), &value);
++}
++
++static inline int nla_put_be32(struct sk_buff *skb, int attrtype, __be32 value)
++{
++	return nla_put(skb, attrtype, sizeof(__be32), &value);
++}
++
++static inline int nla_put_be64(struct sk_buff *skb, int attrtype, __be64 value)
++{
++	return nla_put(skb, attrtype, sizeof(__be64), &value);
++}
++
++/*
++ * This backports:
+  *
+  * commit f56f821feb7b36223f309e0ec05986bb137ce418
+  * Author: Daniel Vetter <daniel.vetter@ffwll.ch>
+-- 
+1.8.0
 
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     14654 - backport from compat module
-     15090 - total backport code
-    1.1799 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20130110
-compat.git: compat-v3.8-rc2-1-5-g59a1d45
-compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
-Code metrics archive: http://bit.ly/H6BTF7
