@@ -1,61 +1,46 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: hauke@hauke-m.de
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 0/1] compat: ppc stable assembly fix
-Date: Wed, 23 Jan 2013 13:22:43 -0800
-Message-Id: <1358976165-22389-1-git-send-email-mcgrof@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:40174 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752811Ab3AYVMn (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 25 Jan 2013 16:12:43 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 71E6D5400FC
+	for <backports@vger.kernel.org>; Fri, 25 Jan 2013 16:12:41 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2013-01-25 is baked
+Message-Id: <20130125211241.4F80740ABF@repository3.orbit-lab.org>
+Date: Fri, 25 Jan 2013 16:12:41 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+/usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
-Hauke,
+compat-drivers code metrics
 
-here's a patch I had almost missed by Felix for compat. I've
-test compiled this with ckmake against master branch of compat,
-compat-drivers on the linux-next tag next-20130123 (today's
-release). This fix should also be applied to the linux-3.8.y
-and linux-3.7.y branches.
+   1278976 - Total upstream lines of code being pulled
 
-The below is the ckmake log on compat-drivers after applying
-the patch to compat.
+   network
+   ----------------------------------------
+      3047 - backport code changes
+      2557 - backport code additions
+       490 - backport code deletions
+     14654 - backport from compat module
+     17701 - total backport code
+    1.3840 - % of code consists of backport work
 
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.50              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.33              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.17              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.5               [  OK  ]
-24  3.7.0               [  OK  ]
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14654 - backport from compat module
+     15090 - total backport code
+    1.1799 - % of code consists of backport work
 
-real    13m33.413s
-user    336m14.841s
-sys     48m46.255s
-
-Felix Fietkau (1):
-  compat: fix compile errors when assembly is built into modules
-
- include/linux/compat-2.6.h |    4 ++++
- 1 file changed, 4 insertions(+)
-
--- 
-1.7.10.4
+Base tree: linux-next.git
+Base tree version: next-20130110
+compat.git: compat-v3.8-rc2-1-5-g59a1d45
+compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
+Code metrics archive: http://bit.ly/H6BTF7
