@@ -1,96 +1,29 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:36387 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751491Ab2LPV7b (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 16 Dec 2012 16:59:31 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 5E7A4540245
-	for <backports@vger.kernel.org>; Sun, 16 Dec 2012 16:59:30 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2012-12-16 is baked
-Message-Id: <20121216215930.2AADE40AC0@repository3.orbit-lab.org>
-Date: Sun, 16 Dec 2012 16:59:30 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Return-path: <hauke@hauke-m.de>
+Message-ID: <510320C8.6010407@hauke-m.de>
+Date: Sat, 26 Jan 2013 01:18:16 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
+MIME-Version: 1.0
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: linux-wireless@vger.kernel.org, backports@vger.kernel.org,
+ Johannes Berg <johannes.berg@intel.com>
+Subject: Re: [PATCH v2] compat: backport nla_put_be{16,32,64}()
+References: <1359024296-17724-1-git-send-email-johannes@sipsolutions.net>
+In-Reply-To: <1359024296-17724-1-git-send-email-johannes@sipsolutions.net>
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <backports@vger.kernel.org>
 
-git fetch github (/var/opt/compat/compat-wireless-2.6)
-Nothing new to pack.
-HEAD is now at c5da34e compat-drivers: allow git-paranoia to work on current directory
-git fetch github (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 744a6dd compat: add 3.2 and 3.3 kernels to rebuild headers
-git fetch  (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at e65e238 Add linux-next specific files for 20121214
-Trying kernel 3.4.4-030404-generic [OK]
-Trying kernel 3.3.7-030307-generic [OK]
-Trying kernel 3.2.2-030202-generic [OK]
-Trying kernel 3.1.10-030110-generic [OK]
-Trying kernel 3.0.18-030018-generic [OK]
-Trying kernel 2.6.39-02063904-generic [OK]
-Trying kernel 2.6.38-02063808-generic [OK]
-Trying kernel 2.6.37-02063706-generic [OK]
-Trying kernel 2.6.36-02063604-generic [OK]
-Trying kernel 2.6.35-02063512-generic [OK]
-Trying kernel 2.6.34-02063410-generic [OK]
-Trying kernel 2.6.33-02063305-generic [OK]
-Trying kernel 2.6.31-02063113-generic [OK]
-Trying kernel 2.6.30-02063010-generic [OK]
-Trying kernel 2.6.29-02062906-generic [OK]
-Trying kernel 2.6.28-02062810-generic [OK]
-Trying kernel 2.6.27-020627-generic [OK]
-Trying kernel 2.6.26-020626-generic [OK]
-Trying kernel 2.6.25-020625-generic [OK]
-Trying kernel 2.6.24-020624-generic [OK]
-Worked!
+On 01/24/2013 11:44 AM, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+> 
+> I intend to use these in nl80211.
+> 
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+>  include/linux/compat-3.5.h | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
 
-Trying kernel  3.4.4-030404-generic [OK]
-Trying kernel  3.3.7-030307-generic [OK]
-Trying kernel  3.2.2-030202-generic [OK]
-Trying kernel  3.1.10-030110-generic [OK]
-Trying kernel  3.0.18-030018-generic [OK]
-Trying kernel  2.6.39-02063904-generic [OK]
-Trying kernel  2.6.38-02063808-generic [OK]
-Trying kernel  2.6.37-02063706-generic [OK]
-Trying kernel  2.6.36-02063604-generic [OK]
-Trying kernel  2.6.35-02063512-generic [OK]
-Trying kernel  2.6.34-02063410-generic [OK]
-Trying kernel  2.6.33-02063305-generic [OK]
-Trying kernel  2.6.31-02063113-generic [OK]
-Trying kernel  2.6.30-02063010-generic [OK]
-Trying kernel  2.6.29-02062906-generic [OK]
-Trying kernel  2.6.28-02062810-generic [OK]
-Trying kernel  2.6.27-020627-generic [OK]
-Trying kernel  2.6.26-020626-generic [OK]
-Trying kernel  2.6.25-020625-generic [OK]
-Trying kernel  2.6.24-020624-generic [OK]
+Thank you for your patch.
+I added a missing #include <net/netlink.h> to it.
 
-compat-drivers code metrics
-
-   1269136 - Total upstream lines of code being pulled
-
-   network
-   ----------------------------------------
-      3076 - backport code changes
-      2581 - backport code additions
-       495 - backport code deletions
-     14593 - backport from compat module
-     17669 - total backport code
-    1.3922 - % of code consists of backport work
-
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     14593 - backport from compat module
-     15029 - total backport code
-    1.1842 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20121214
-compat.git: compat-2012-12-14-8
-compat-drivers release: compat-drivers-2012-12-14-3-pc
-Code metrics archive: http://bit.ly/H6BTF7
+Hauke
