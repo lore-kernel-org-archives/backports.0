@@ -1,20 +1,33 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:59095 "HELO
+Received: from external1.orbit-lab.org ([128.6.192.131]:52658 "HELO
 	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754438Ab3ALVOf (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 12 Jan 2013 16:14:35 -0500
+	with SMTP id S1751731Ab3A2VMq (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 29 Jan 2013 16:12:46 -0500
 Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 3EEF25400ED
-	for <backports@vger.kernel.org>; Sat, 12 Jan 2013 16:14:32 -0500 (EST)
+	by external1.orbit-lab.org (Postfix) with ESMTP id 622145400ED
+	for <backports@vger.kernel.org>; Tue, 29 Jan 2013 16:12:45 -0500 (EST)
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2013-01-12 is baked
-Message-Id: <20130112211432.0465440AC0@repository3.orbit-lab.org>
-Date: Sat, 12 Jan 2013 16:14:31 -0500 (EST)
+Subject: Compat-wireless release for 2013-01-29 is baked
+Message-Id: <20130129211245.3ADF240AC0@repository3.orbit-lab.org>
+Date: Tue, 29 Jan 2013 16:12:45 -0500 (EST)
 From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+git fetch hauke (/var/opt/compat/compat-drivers)
+Nothing new to pack.
+HEAD is now at 3e51785 compat-drivers: update genlog-3.8 for rc5
+git fetch hauke (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 5c165fc compat: backport nla_put_be{16,32,64}()
+git fetch origin (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at a6670e3 Add linux-next specific files for 20130128
+git fetch origin (/var/opt/compat/unified/alx)
+Nothing new to pack.
+HEAD is now at 8f56f40 alx: improve self-test for FPGA
+Failed...
 /usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
 compat-drivers code metrics
