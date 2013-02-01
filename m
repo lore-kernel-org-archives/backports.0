@@ -1,46 +1,59 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH for 3.8 8/9] compat: check if efi_enabled() was already backported
-Date: Tue, 26 Feb 2013 22:03:11 +0100
-Message-Id: <1361912592-29591-9-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
-References: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:34926 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1757508Ab3BAVMz (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 1 Feb 2013 16:12:55 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 831CE54002F
+	for <backports@vger.kernel.org>; Fri,  1 Feb 2013 16:12:53 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2013-02-01 is baked
+Message-Id: <20130201211253.55E3640AC0@repository3.orbit-lab.org>
+Date: Fri,  1 Feb 2013 16:12:53 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Upstream commit 28c1dde0df2c9e01e8d57a774687734ed21bd208
+git fetch hauke (/var/opt/compat/compat-drivers)
+Nothing new to pack.
+HEAD is now at 3e51785 compat-drivers: update genlog-3.8 for rc5
+git fetch hauke (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 5c165fc compat: backport nla_put_be{16,32,64}()
+git fetch origin (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at a6670e3 Add linux-next specific files for 20130128
+git fetch origin (/var/opt/compat/unified/alx)
+Nothing new to pack.
+HEAD is now at 8f56f40 alx: improve self-test for FPGA
+Failed...
+/usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
-efi_enabled() gets backported to older kernel versions and if this is
-the case compat should not try to do the same.
+compat-drivers code metrics
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- include/linux/compat-3.8.h |    3 +++
- 1 file changed, 3 insertions(+)
+   1278976 - Total upstream lines of code being pulled
 
-diff --git a/include/linux/compat-3.8.h b/include/linux/compat-3.8.h
-index b55a46d..c913188 100644
---- a/include/linux/compat-3.8.h
-+++ b/include/linux/compat-3.8.h
-@@ -58,6 +58,8 @@ static inline int __must_check kref_get_unless_zero(struct kref *kref)
-  *     efi: Make 'efi_enabled' a function to query EFI facilities
-  *
-  */
-+/* check first if this was already backported */
-+#ifndef EFI_BOOT
- /*
-  * We play games with efi_enabled so that the compiler will, if
-  * possible, remove EFI-related code altogether.
-@@ -101,6 +103,7 @@ static inline int compat_efi_enabled(int facility)
- #undef efi_enabled
- #endif
- #define efi_enabled(facility) compat_efi_enabled(facility)
-+#endif /* EFI_BOOT */
- 
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)) */
- 
--- 
-1.7.10.4
+   network
+   ----------------------------------------
+      3047 - backport code changes
+      2557 - backport code additions
+       490 - backport code deletions
+     14654 - backport from compat module
+     17701 - total backport code
+    1.3840 - % of code consists of backport work
+
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14654 - backport from compat module
+     15090 - total backport code
+    1.1799 - % of code consists of backport work
+
+Base tree: linux-next.git
+Base tree version: next-20130110
+compat.git: compat-v3.8-rc2-1-5-g59a1d45
+compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
+Code metrics archive: http://bit.ly/H6BTF7
