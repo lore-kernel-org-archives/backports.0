@@ -1,46 +1,59 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 06/23] compat: ckmake: do not start all build at the same time
-Date: Tue, 26 Feb 2013 21:58:57 +0100
-Message-Id: <1361912354-29498-7-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
-References: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:44606 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1750941Ab3BBVXI (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 2 Feb 2013 16:23:08 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 2AF8A540302
+	for <backports@vger.kernel.org>; Sat,  2 Feb 2013 16:23:07 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2013-02-02 is baked
+Message-Id: <20130202212307.0758F40AC1@repository3.orbit-lab.org>
+Date: Sat,  2 Feb 2013 16:23:06 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-When all builds are started at the same time this causes problems like,
-because all threads want to access the same file.
+git fetch hauke (/var/opt/compat/compat-drivers)
+Nothing new to pack.
+HEAD is now at 3e51785 compat-drivers: update genlog-3.8 for rc5
+git fetch hauke (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 5c165fc compat: backport nla_put_be{16,32,64}()
+git fetch origin (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 2d2ee78 Add linux-next specific files for 20130202
+git fetch origin (/var/opt/compat/unified/alx)
+Nothing new to pack.
+HEAD is now at 8f56f40 alx: improve self-test for FPGA
+Error while updating from linux-next
+/usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
-In the compat-drivers build this resulted in this error for some threads:
-./scripts/gen-compat-autoconf.sh: /usr/bin/env: bad interpreter: Text file busy
+compat-drivers code metrics
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- bin/ckmake |    2 ++
- 1 file changed, 2 insertions(+)
+   1278976 - Total upstream lines of code being pulled
 
-diff --git a/bin/ckmake b/bin/ckmake
-index f5f46b0..3d30bee 100755
---- a/bin/ckmake
-+++ b/bin/ckmake
-@@ -22,6 +22,7 @@ import signal
- from Queue import *
- from threading import Thread, Lock
- from shutil import copytree, ignore_patterns, rmtree, copyfileobj
-+from time import sleep
- 
- releases_processed = []
- releases_baking = []
-@@ -277,6 +278,7 @@ class kernel_set():
- 	def kick_threads(self):
- 		for rel in self.releases:
- 			self.queue.put(rel)
-+			sleep(1)
- 	def wait_threads(self):
- 		self.queue.join()
- 	def update_status(self, rel, status):
--- 
-1.7.10.4
+   network
+   ----------------------------------------
+      3047 - backport code changes
+      2557 - backport code additions
+       490 - backport code deletions
+     14654 - backport from compat module
+     17701 - total backport code
+    1.3840 - % of code consists of backport work
+
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14654 - backport from compat module
+     15090 - total backport code
+    1.1799 - % of code consists of backport work
+
+Base tree: linux-next.git
+Base tree version: next-20130110
+compat.git: compat-v3.8-rc2-1-5-g59a1d45
+compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
+Code metrics archive: http://bit.ly/H6BTF7
