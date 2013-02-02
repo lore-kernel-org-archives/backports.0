@@ -1,52 +1,52 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH for 3.8 2/9] compat: do not access default_ethtool_ops
-Date: Tue, 26 Feb 2013 22:03:05 +0100
-Message-Id: <1361912592-29591-3-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
-References: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mail-wg0-f53.google.com ([74.125.82.53]:44258 "EHLO
+	mail-wg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754197Ab3BBMt1 convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 2 Feb 2013 07:49:27 -0500
+Received: by mail-wg0-f53.google.com with SMTP id fn15so3680656wgb.32
+        for <backports@vger.kernel.org>; Sat, 02 Feb 2013 04:49:26 -0800 (PST)
+MIME-Version: 1.0
+Date: Sat, 2 Feb 2013 14:49:26 +0200
+Message-ID: <CAFub=KRc30sW-zFKscTSOtAPa-jX-bLc777jcUX92eDgiSDBzg@mail.gmail.com>
+Subject: Return values in ckmake
+From: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
+To: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Upstream commit 670c4a3d46797a92fd15d201e5d9859393c7b2b6
+Hi,
 
-&default_ethtool_ops is not exported in kernel 3.7.4 and earlier and it
-should be be accessed from compat.
+I can't build current compat against 3.7:
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- compat/compat-3.8.c |   10 ----------
- 1 file changed, 10 deletions(-)
+ make -C /root/compat-ksrc/lib/modules/3.7.0-030700-generic/build/
+M=/root/git/compat/.tmp.ckmake/3.7.0 modules
+make[1]: Entering directory
+`/root/compat-ksrc/usr/src/linux-headers-3.7.0-030700-generic'
+   CC [M]  /root/git/compat/.tmp.ckmake/3.7.0/compat/main.o
+   CC [M]  /root/git/compat/.tmp.ckmake/3.7.0/compat/compat-3.8.o
+ /root/git/compat/.tmp.ckmake/3.7.0/compat/compat-3.8.c: In function
+‘netdev_set_default_ethtool_ops’:
+ /root/git/compat/.tmp.ckmake/3.7.0/compat/compat-3.8.c:34:27: error:
+‘default_ethtool_ops’ undeclared (first use in this function)
+ /root/git/compat/.tmp.ckmake/3.7.0/compat/compat-3.8.c:34:27: note:
+each undeclared identifier is reported only once for each function it
+appears in
+ make[3]: *** [/root/git/compat/.tmp.ckmake/3.7.0/compat/compat-3.8.o] Error 1
+ make[2]: *** [/root/git/compat/.tmp.ckmake/3.7.0/compat] Error 2
+ make[1]: *** [_module_/root/git/compat/.tmp.ckmake/3.7.0] Error 2
+ make[1]: Leaving directory
+`/root/compat-ksrc/usr/src/linux-headers-3.7.0-030700-generic'
+ make: *** [modules] Error 2
 
-diff --git a/compat/compat-3.8.c b/compat/compat-3.8.c
-index 36f3c50..be77767 100644
---- a/compat/compat-3.8.c
-+++ b/compat/compat-3.8.c
-@@ -19,22 +19,12 @@
- #include <linux/netdevice.h>
- 
- #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,5))
--
--#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0))
- void netdev_set_default_ethtool_ops(struct net_device *dev,
- 				    const struct ethtool_ops *ops)
- {
- 	if (!dev->ethtool_ops)
- 		dev->ethtool_ops = ops;
- }
--#else /* kernel is between 3.7.0 and 3.7.4 */
--void netdev_set_default_ethtool_ops(struct net_device *dev,
--				    const struct ethtool_ops *ops)
--{
--	if (dev->ethtool_ops == &default_ethtool_ops)
--		dev->ethtool_ops = ops;
--}
--#endif
- 
- EXPORT_SYMBOL_GPL(netdev_set_default_ethtool_ops);
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,5) */
--- 
-1.7.10.4
+--
+
+This returns 2 but ckmake interprets return values 0 and 2 to "OK" in
+get_status_name() thus logs and curses shows OK for this failed build.
+
+--
+Ozan Çağlayan
+Research Assistant
+Galatasaray University - Computer Engineering Dept.
+http://www.ozancaglayan.com
