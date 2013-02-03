@@ -1,84 +1,44 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 19/24] compat-drivers: backport threaded IRQ for iwlwifi
-Date: Tue, 26 Feb 2013 21:38:11 +0100
-Message-Id: <1361911096-29117-20-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361911096-29117-1-git-send-email-hauke@hauke-m.de>
-References: <1361911096-29117-1-git-send-email-hauke@hauke-m.de>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mail-wg0-f41.google.com ([74.125.82.41]:43907 "EHLO
+	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753596Ab3BCTTi convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 3 Feb 2013 14:19:38 -0500
+Received: by mail-wg0-f41.google.com with SMTP id ds1so2597147wgb.2
+        for <backports@vger.kernel.org>; Sun, 03 Feb 2013 11:19:36 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <510EB634.3080704@hauke-m.de>
+References: <1359916425-2377-1-git-send-email-ozancag@gmail.com>
+	<510EB634.3080704@hauke-m.de>
+Date: Sun, 3 Feb 2013 21:19:36 +0200
+Message-ID: <CAFub=KQx6wCMUsQJAJXbiaUQ4-uUDepp0datbWuef-Gqst0xnA@mail.gmail.com>
+Subject: Re: [PATCH] compat-drivers: Add possibility to build every subsystem separately
+From: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../network/09-threaded-irq.patch                  |   53 ++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+>
+> Why are you removing the ifeq ($(BT),) here?
 
-diff --git a/patches/collateral-evolutions/network/09-threaded-irq.patch b/patches/collateral-evolutions/network/09-threaded-irq.patch
-index 6c87a7f..ac83bc1 100644
---- a/patches/collateral-evolutions/network/09-threaded-irq.patch
-+++ b/patches/collateral-evolutions/network/09-threaded-irq.patch
-@@ -61,6 +61,59 @@ thread in process context as well.
-  };
-  
-  /* Data structure for the WLAN parts (802.11 cores) of the b43 chip. */
-+--- a/drivers/net/wireless/iwlwifi/pcie/internal.h
-++++ b/drivers/net/wireless/iwlwifi/pcie/internal.h
-+@@ -286,6 +286,9 @@ struct iwl_trans_pcie {
-+ 
-+ 	/*protect hw register */
-+ 	spinlock_t reg_lock;
-++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)
-++	struct compat_threaded_irq irq_compat;
-++#endif
-+ };
-+ 
-+ /**
-+--- a/drivers/net/wireless/iwlwifi/pcie/trans.c
-++++ b/drivers/net/wireless/iwlwifi/pcie/trans.c
-+@@ -759,12 +759,21 @@ void iwl_trans_pcie_free(struct iwl_tran
-+ {
-+ 	struct iwl_trans_pcie *trans_pcie = IWL_TRANS_GET_PCIE_TRANS(trans);
-+ 
-++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)
-++	compat_synchronize_threaded_irq(&trans_pcie->irq_compat);
-++#else
-+ 	synchronize_irq(trans_pcie->pci_dev->irq);
-++#endif
-+ 
-+ 	iwl_pcie_tx_free(trans);
-+ 	iwl_pcie_rx_free(trans);
-+ 
-++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)
-++	compat_free_threaded_irq(&trans_pcie->irq_compat);
-++	compat_destroy_threaded_irq(&trans_pcie->irq_compat);
-++#else
-+ 	free_irq(trans_pcie->pci_dev->irq, trans);
-++#endif
-+ 	iwl_pcie_free_ict(trans);
-+ 
-+ 	pci_disable_msi(trans_pcie->pci_dev);
-+@@ -1570,9 +1579,16 @@ struct iwl_trans *iwl_trans_pcie_alloc(s
-+ 	if (iwl_pcie_alloc_ict(trans))
-+ 		goto out_free_cmd_pool;
-+ 
-++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)
-++	if (compat_request_threaded_irq(&trans_pcie->irq_compat,
-++					pdev->irq, iwl_pcie_isr_ict,
-++					iwl_pcie_irq_handler,
-++					IRQF_SHARED, DRV_NAME, trans)) {
-++#else
-+ 	if (request_threaded_irq(pdev->irq, iwl_pcie_isr_ict,
-+ 				 iwl_pcie_irq_handler,
-+ 				 IRQF_SHARED, DRV_NAME, trans)) {
-++#endif
-+ 		IWL_ERR(trans, "Error allocating IRQ %d\n", pdev->irq);
-+ 		goto out_free_ict;
-+ 	}
- --- a/drivers/net/wireless/ti/wlcore/main.c
- +++ b/drivers/net/wireless/ti/wlcore/main.c
- @@ -5994,14 +5994,25 @@ static void wlcore_nvs_cb(const struct f
--- 
-1.7.10.4
+Well I didn't get what it does. (It seems to switch on/off bluetooth
+but not in an intuitive way) Also it was always set to True without
+user's intervention so I removed it to provoke a discussion about its
+functionality :p
+
+> I think it is better to add all (gpu and network) when nothing specific
+> was given, this way the script does the same when the same parameters
+> are given than it did before.
+
+Well yes you are right but then we have to change the parameter logic
+to support disabling subsystems, e.g.
+
+admin-update.sh --disable-network.
+
+--
+Ozan Çağlayan
+Research Assistant
+Galatasaray University - Computer Engineering Dept.
+http://www.ozancaglayan.com
