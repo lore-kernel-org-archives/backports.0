@@ -1,37 +1,59 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 19/23] compat: add empty struct watchdog_device
-Date: Tue, 26 Feb 2013 21:59:10 +0100
-Message-Id: <1361912354-29498-20-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
-References: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:48902 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1758026Ab3BFVXM (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 6 Feb 2013 16:23:12 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 1082454000C
+	for <backports@vger.kernel.org>; Wed,  6 Feb 2013 16:23:11 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2013-02-06 is baked
+Message-Id: <20130206212310.D9D9B40AC0@repository3.orbit-lab.org>
+Date: Wed,  6 Feb 2013 16:23:10 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is needed in some header file but so driver accesses this struct.
+git fetch hauke (/var/opt/compat/compat-drivers)
+Nothing new to pack.
+HEAD is now at 1ef7c8a compat-drivers: refresh patches on next-20130202
+git fetch hauke (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 726d9b2 compat: netdev_set_default_ethtool_ops() is not in kernel 3.7.5
+git fetch origin (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 45f822a Add linux-next specific files for 20130206
+git fetch origin (/var/opt/compat/unified/alx)
+Nothing new to pack.
+HEAD is now at 8f56f40 alx: improve self-test for FPGA
+Failed...
+/usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- include/linux/compat-3.1.h |    4 ++++
- 1 file changed, 4 insertions(+)
+compat-drivers code metrics
 
-diff --git a/include/linux/compat-3.1.h b/include/linux/compat-3.1.h
-index 9d78b7d..2b5eb8b 100644
---- a/include/linux/compat-3.1.h
-+++ b/include/linux/compat-3.1.h
-@@ -105,6 +105,10 @@ void ida_simple_remove(struct ida *ida, unsigned int id);
- 
- unsigned int cpufreq_quick_get_max(unsigned int cpu);
- #endif
-+
-+struct watchdog_device {
-+};
-+
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,1,0)) */
- 
- #endif /* LINUX_3_1_COMPAT_H */
--- 
-1.7.10.4
+   1278976 - Total upstream lines of code being pulled
+
+   network
+   ----------------------------------------
+      3047 - backport code changes
+      2557 - backport code additions
+       490 - backport code deletions
+     14654 - backport from compat module
+     17701 - total backport code
+    1.3840 - % of code consists of backport work
+
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14654 - backport from compat module
+     15090 - total backport code
+    1.1799 - % of code consists of backport work
+
+Base tree: linux-next.git
+Base tree version: next-20130110
+compat.git: compat-v3.8-rc2-1-5-g59a1d45
+compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
+Code metrics archive: http://bit.ly/H6BTF7
