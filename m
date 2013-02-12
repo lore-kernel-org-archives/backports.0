@@ -1,72 +1,38 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <hauke@hauke-m.de>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:51410 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933153Ab3BLTfu (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 12 Feb 2013 14:35:50 -0500
+Message-ID: <511A998B.8080204@hauke-m.de>
+Date: Tue, 12 Feb 2013 20:35:39 +0100
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 10/23] compat: backport BUILD_BUG_ON from recent kernel
-Date: Tue, 26 Feb 2013 21:59:01 +0100
-Message-Id: <1361912354-29498-11-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
-References: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+To: "Bitterli, Felix" <felixb@qca.qualcomm.com>
+CC: "Rodriguez, Luis" <rodrigue@qca.qualcomm.com>,
+	backports@vger.kernel.org
+Subject: Re: compat-drivers ./driver-select ath9k builds i915 as well, breaks
+ my video
+References: <40F35DA312B2CC468349B21A177FEE633C8AD5FA@NASANEXD02E.na.qualcomm.com>
+In-Reply-To: <40F35DA312B2CC468349B21A177FEE633C8AD5FA@NASANEXD02E.na.qualcomm.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This version of BUILD_BUG_ON does not have the following error on an
-old kernel version (2.6.32 - 2.6.37):
+On 02/11/2013 10:37 PM, Bitterli, Felix wrote:
+> Hello Hauke,
+> 
+> compat-drivers ./driver-select ath9k builds i915 as well, shouldn't, are
+> you available for fixing this or do we wait for Luis to get back from
+> Antarctica?
+> 
+> Best regards, Felix
 
-drivers/net/wireless/iwlwifi/mvm/quota.c:145:24: error: bit-field
-'<anonymous>' width not an integer constant
+Hi Felix,
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- include/linux/compat-2.6.38.h |   35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+I can not reproduce this with the current version based on linux-next
+from [0].
 
-diff --git a/include/linux/compat-2.6.38.h b/include/linux/compat-2.6.38.h
-index 0aa5d9b..8dfeed6 100644
---- a/include/linux/compat-2.6.38.h
-+++ b/include/linux/compat-2.6.38.h
-@@ -139,6 +139,41 @@ static inline int is_unicast_ether_addr(const u8 *addr)
- 	return !is_multicast_ether_addr(addr);
- }
- 
-+/* Backport of:
-+ *
-+ * commit 7ef88ad561457c0346355dfd1f53e503ddfde719
-+ * Author: Rusty Russell <rusty@rustcorp.com.au>
-+ * Date:   Mon Jan 24 14:45:10 2011 -0600
-+ *
-+ *     BUILD_BUG_ON: make it handle more cases
-+ */
-+#undef BUILD_BUG_ON
-+/**
-+ * BUILD_BUG_ON - break compile if a condition is true.
-+ * @condition: the condition which the compiler should know is false.
-+ *
-+ * If you have some code which relies on certain constants being equal, or
-+ * other compile-time-evaluated condition, you should use BUILD_BUG_ON to
-+ * detect if someone changes it.
-+ *
-+ * The implementation uses gcc's reluctance to create a negative array, but
-+ * gcc (as of 4.4) only emits that error for obvious cases (eg. not arguments
-+ * to inline functions).  So as a fallback we use the optimizer; if it can't
-+ * prove the condition is false, it will cause a link error on the undefined
-+ * "__build_bug_on_failed".  This error message can be harder to track down
-+ * though, hence the two different methods.
-+ */
-+#ifndef __OPTIMIZE__
-+#define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
-+#else
-+extern int __build_bug_on_failed;
-+#define BUILD_BUG_ON(condition)					\
-+	do {							\
-+		((void)sizeof(char[1 - 2*!!(condition)]));	\
-+		if (condition) __build_bug_on_failed = 1;	\
-+	} while(0)
-+#endif
-+
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,38)) */
- 
- #endif /* LINUX_26_38_COMPAT_H */
--- 
-1.7.10.4
+Hauke
+
+[0]: https://www.kernel.org/pub/linux/kernel/projects/backports/2013/02/08/
