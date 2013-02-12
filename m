@@ -1,63 +1,55 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <hauke@hauke-m.de>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:51866 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754500Ab3BLV2l (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 12 Feb 2013 16:28:41 -0500
+Message-ID: <511AB3FD.4020804@hauke-m.de>
+Date: Tue, 12 Feb 2013 22:28:29 +0100
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org,
-	Johannes Berg <johannes.berg@intel.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 07/23] compat: backport nla_put_be{16,32,64}()
-Date: Tue, 26 Feb 2013 21:58:58 +0100
-Message-Id: <1361912354-29498-8-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
-References: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+To: "Bitterli, Felix" <felixb@qca.qualcomm.com>
+CC: "Rodriguez, Luis" <rodrigue@qca.qualcomm.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: compat-drivers ./driver-select ath9k builds i915 as well, breaks
+ my video
+References: <40F35DA312B2CC468349B21A177FEE633C8AD5FA@NASANEXD02E.na.qualcomm.com>,<511A998B.8080204@hauke-m.de> <40F35DA312B2CC468349B21A177FEE633C8AD8A5@NASANEXD02E.na.qualcomm.com>
+In-Reply-To: <40F35DA312B2CC468349B21A177FEE633C8AD8A5@NASANEXD02E.na.qualcomm.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On 02/12/2013 09:19 PM, Bitterli, Felix wrote:
+>>> compat-drivers ./driver-select ath9k builds i915 as well, shouldn't, are
+>>> you available for fixing this or do we wait for Luis to get back from
+>>> Antarctica?
+>> I can not reproduce this with the current version based on linux-next
+>>from [0].
+>>
+>> Hauke
+>>
+>> [0]: https://www.kernel.org/pub/linux/kernel/projects/backports/2013/02/08/
+> Thanks Hauke,
+> 
+> The i915 issue was with stable compat-drivers-3.7.1-3 sorry for omitting that. It is solved with both backports/stable/v3.8-rc7/ and backports/2013/02/08/
+> 
+> Different issue: 'make uninstall' does nothing for me. history|tail -7
+>  2020  tar xjvf compat-drivers-2013-02-10.tar.bz2
+>  2021  cd compat-drivers-3.8-rc7-1/
+>  2022  ./scripts/driver-select ath9k
+>  2023  make
+>  2024  sudo make install
+>  2025  sudo make uninstall
+>  2026  history | tail -7
+> 
 
-I intend to use these in nl80211.
+Hi Felix,
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- include/linux/compat-3.5.h |   26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+It looks like Luis already fixed this bug in the more recent versions,
+see [0], You could apply it locally to your build and I will add it to
+the next release, but it will take some time till I new release from 3.7.
 
-diff --git a/include/linux/compat-3.5.h b/include/linux/compat-3.5.h
-index 9cffead..28a1209 100644
---- a/include/linux/compat-3.5.h
-+++ b/include/linux/compat-3.5.h
-@@ -8,6 +8,32 @@
- 
- #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0))
- 
-+#include <net/netlink.h>
-+
-+/*
-+ * This backports:
-+ * commit 569a8fc38367dfafd87454f27ac646c8e6b54bca
-+ * Author: David S. Miller <davem@davemloft.net>
-+ * Date:   Thu Mar 29 23:18:53 2012 -0400
-+ *
-+ *     netlink: Add nla_put_be{16,32,64}() helpers.
-+ */
-+
-+static inline int nla_put_be16(struct sk_buff *skb, int attrtype, __be16 value)
-+{
-+	return nla_put(skb, attrtype, sizeof(__be16), &value);
-+}
-+
-+static inline int nla_put_be32(struct sk_buff *skb, int attrtype, __be32 value)
-+{
-+	return nla_put(skb, attrtype, sizeof(__be32), &value);
-+}
-+
-+static inline int nla_put_be64(struct sk_buff *skb, int attrtype, __be64 value)
-+{
-+	return nla_put(skb, attrtype, sizeof(__be64), &value);
-+}
-+
- /*
-  * This backports:
-  *
--- 
-1.7.10.4
+Hauke
+
+[0]:
+https://github.com/hauke/compat-drivers/commit/2371a496060c87378c27eb0cb33feeefbc29f2fc
