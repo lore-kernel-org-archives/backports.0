@@ -1,139 +1,43 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 13/23] compat: backport drop of node parameter from iterators
-Date: Tue, 26 Feb 2013 21:59:04 +0100
-Message-Id: <1361912354-29498-14-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
-References: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from sabertooth01.qualcomm.com ([65.197.215.72]:33165 "EHLO
+	sabertooth01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750989Ab3BLUTz convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 12 Feb 2013 15:19:55 -0500
+From: "Bitterli, Felix" <felixb@qca.qualcomm.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+CC: "Rodriguez, Luis" <rodrigue@qca.qualcomm.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: RE: compat-drivers ./driver-select ath9k builds i915 as well,
+ breaks my video
+Date: Tue, 12 Feb 2013 20:19:36 +0000
+Message-ID: <40F35DA312B2CC468349B21A177FEE633C8AD8A5@NASANEXD02E.na.qualcomm.com>
+References: <40F35DA312B2CC468349B21A177FEE633C8AD5FA@NASANEXD02E.na.qualcomm.com>,<511A998B.8080204@hauke-m.de>
+In-Reply-To: <511A998B.8080204@hauke-m.de>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This patch backports the following commit in mainline linux kernel:
+>> compat-drivers ./driver-select ath9k builds i915 as well, shouldn't, are
+>> you available for fixing this or do we wait for Luis to get back from
+>> Antarctica?
+>I can not reproduce this with the current version based on linux-next
+>from [0].
+>
+> Hauke
+>
+>[0]: https://www.kernel.org/pub/linux/kernel/projects/backports/2013/02/08/
+Thanks Hauke,
 
-  commit 0bbacca7c3911451cea923b0ad6389d58e3d9ce9
-  Author: Sasha Levin <sasha.levin@oracle.com>
-  Date:   Thu Feb 7 12:32:18 2013 +1100
+The i915 issue was with stable compat-drivers-3.7.1-3 sorry for omitting that. It is solved with both backports/stable/v3.8-rc7/ and backports/2013/02/08/
 
-      hlist: drop the node parameter from iterators
+Different issue: 'make uninstall' does nothing for me. history|tail -7
+ 2020  tar xjvf compat-drivers-2013-02-10.tar.bz2
+ 2021  cd compat-drivers-3.8-rc7-1/
+ 2022  ./scripts/driver-select ath9k
+ 2023  make
+ 2024  sudo make install
+ 2025  sudo make uninstall
+ 2026  history | tail -7
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- include/linux/compat-2.6.37.h |   12 +++++++
- include/linux/compat-3.9.h    |   69 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 81 insertions(+)
-
-diff --git a/include/linux/compat-2.6.37.h b/include/linux/compat-2.6.37.h
-index d1e7db9..c1d45af 100644
---- a/include/linux/compat-2.6.37.h
-+++ b/include/linux/compat-2.6.37.h
-@@ -166,6 +166,18 @@ static inline bool skb_has_frag_list(const struct sk_buff *skb)
- 	return skb_shinfo(skb)->frag_list != NULL;
- }
- 
-+/**
-+ * backport:
-+ *
-+ * commit 67bdbffd696f29a0b68aa8daa285783a06651583
-+ * Author: Arnd Bergmann <arnd@arndb.de>
-+ * Date:   Thu Feb 25 16:55:13 2010 +0100
-+ *
-+ *     rculist: avoid __rcu annotations
-+ */
-+#define hlist_first_rcu(head)	(*((struct hlist_node __rcu **)(&(head)->first)))
-+#define hlist_next_rcu(node)	(*((struct hlist_node __rcu **)(&(node)->next)))
-+
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)) */
- 
- #endif /* LINUX_26_37_COMPAT_H */
-diff --git a/include/linux/compat-3.9.h b/include/linux/compat-3.9.h
-index b6cd415..f472cf8 100644
---- a/include/linux/compat-3.9.h
-+++ b/include/linux/compat-3.9.h
-@@ -6,6 +6,14 @@
- #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0))
- 
- #include <linux/idr.h>
-+#include <linux/list.h>
-+#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,25))
-+#include <linux/rculist.h>
-+#endif
-+#include <net/sock.h>
-+
-+/* include this before changing hlist_for_each_* to use the old versions. */
-+#include <net/sch_generic.h>
- 
- 
- /**
-@@ -47,6 +55,67 @@ static inline void idr_preload_end(void)
- {
- }
- 
-+
-+/**
-+ * backport:
-+ *
-+ * commit 0bbacca7c3911451cea923b0ad6389d58e3d9ce9
-+ * Author: Sasha Levin <sasha.levin@oracle.com>
-+ * Date:   Thu Feb 7 12:32:18 2013 +1100
-+ *
-+ *     hlist: drop the node parameter from iterators
-+ */
-+
-+#define hlist_entry_safe(ptr, type, member) \
-+	(ptr) ? hlist_entry(ptr, type, member) : NULL
-+
-+#undef hlist_for_each_entry
-+/**
-+ * hlist_for_each_entry	- iterate over list of given type
-+ * @pos:	the type * to use as a loop cursor.
-+ * @head:	the head for your list.
-+ * @member:	the name of the hlist_node within the struct.
-+ */
-+#define hlist_for_each_entry(pos, head, member)					\
-+	for (pos = hlist_entry_safe((head)->first, typeof(*(pos)), member);	\
-+	     pos;								\
-+	     pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
-+
-+#undef hlist_for_each_entry_safe
-+/**
-+ * hlist_for_each_entry_safe - iterate over list of given type safe against removal of list entry
-+ * @pos:	the type * to use as a loop cursor.
-+ * @n:		another &struct hlist_node to use as temporary storage
-+ * @head:	the head for your list.
-+ * @member:	the name of the hlist_node within the struct.
-+ */
-+#define hlist_for_each_entry_safe(pos, n, head, member) 			\
-+	for (pos = hlist_entry_safe((head)->first, typeof(*pos), member);	\
-+	     pos && ({ n = pos->member.next; 1; });				\
-+	     pos = hlist_entry_safe(n, typeof(*pos), member))
-+
-+#undef hlist_for_each_entry_rcu
-+/**
-+ * hlist_for_each_entry_rcu - iterate over rcu list of given type
-+ * @pos:	the type * to use as a loop cursor.
-+ * @head:	the head for your list.
-+ * @member:	the name of the hlist_node within the struct.
-+ *
-+ * This list-traversal primitive may safely run concurrently with
-+ * the _rcu list-mutation primitives such as hlist_add_head_rcu()
-+ * as long as the traversal is guarded by rcu_read_lock().
-+ */
-+#define hlist_for_each_entry_rcu(pos, head, member)				\
-+	for (pos = hlist_entry_safe (rcu_dereference_raw(hlist_first_rcu(head)),\
-+			typeof(*(pos)), member);				\
-+		pos;								\
-+		pos = hlist_entry_safe(rcu_dereference_raw(hlist_next_rcu(	\
-+			&(pos)->member)), typeof(*(pos)), member))
-+
-+#undef sk_for_each
-+#define sk_for_each(__sk, list) \
-+	hlist_for_each_entry(__sk, list, sk_node)
-+
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)) */
- 
- #endif /* LINUX_3_9_COMPAT_H */
--- 
-1.7.10.4
