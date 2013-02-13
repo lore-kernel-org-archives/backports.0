@@ -1,45 +1,65 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH for 3.7 6/8] compat: add compat/compat-3.8.c
-Date: Tue, 26 Feb 2013 22:05:43 +0100
-Message-Id: <1361912745-29665-7-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361912745-29665-1-git-send-email-hauke@hauke-m.de>
-References: <1361912745-29665-1-git-send-email-hauke@hauke-m.de>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from external1.orbit-lab.org ([128.6.192.131]:46864 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S964889Ab3BMVSH (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 13 Feb 2013 16:18:07 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 25D335400FC
+	for <backports@vger.kernel.org>; Wed, 13 Feb 2013 16:18:05 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2013-02-13 is baked
+Message-Id: <20130213211805.0905540AC0@repository3.orbit-lab.org>
+Date: Wed, 13 Feb 2013 16:18:04 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-compat/compat-3.8.c was never build and had a compile error which is
-fixed now.
+git fetch hauke (/var/opt/compat/compat-drivers)
+Nothing new to pack.
+HEAD is now at 9ae3560 compat-drivers: refresh patches
+git fetch hauke (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 1de0315 compat: move tty_flip_buffer_push() and tty_insert_flip_string()
+git fetch origin (/var/opt/compat/linux-next)
+>From git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next
+ + 14baa7b...0cf69bb master     -> origin/master  (forced update)
+ + dad99cd...2968ab7 akpm       -> origin/akpm  (forced update)
+ + 871433f...5058b21 akpm-base  -> origin/akpm-base  (forced update)
+   836dc9e..211b0cd  stable     -> origin/stable
+ * [new tag]         next-20130213 -> next-20130213
+Nothing new to pack.
+HEAD is now at 0cf69bb Add linux-next specific files for 20130213
+git fetch origin (/var/opt/compat/unified/alx)
+Nothing new to pack.
+HEAD is now at 8f56f40 alx: improve self-test for FPGA
+Error while updating from linux-next
+/usr/bin/sha1sum: *.tar.bz2: No such file or directory
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- compat/Makefile     |    1 +
- compat/compat-3.8.c |    1 -
- 2 files changed, 1 insertion(+), 1 deletion(-)
+compat-drivers code metrics
 
-diff --git a/compat/Makefile b/compat/Makefile
-index e9c6e1f..3adb3a0 100644
---- a/compat/Makefile
-+++ b/compat/Makefile
-@@ -49,6 +49,7 @@ compat-$(CONFIG_COMPAT_KERNEL_3_5) += \
- 	compat-3.5.o \
- 	user_namespace.o
- compat-$(CONFIG_COMPAT_KERNEL_3_7) += compat-3.7.o
-+compat-$(CONFIG_COMPAT_KERNEL_3_8) += compat-3.8.o
- 
- compat-$(CONFIG_COMPAT_CORDIC) += cordic.o
- compat-$(CONFIG_COMPAT_CRC8) += crc8.o
-diff --git a/compat/compat-3.8.c b/compat/compat-3.8.c
-index 8c1ea6f..91518f2 100644
---- a/compat/compat-3.8.c
-+++ b/compat/compat-3.8.c
-@@ -17,4 +17,3 @@ void netdev_set_default_ethtool_ops(struct net_device *dev,
- 		dev->ethtool_ops = ops;
- }
- EXPORT_SYMBOL_GPL(netdev_set_default_ethtool_ops);
--#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,5) */
--- 
-1.7.10.4
+   1278976 - Total upstream lines of code being pulled
+
+   network
+   ----------------------------------------
+      3047 - backport code changes
+      2557 - backport code additions
+       490 - backport code deletions
+     14654 - backport from compat module
+     17701 - total backport code
+    1.3840 - % of code consists of backport work
+
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14654 - backport from compat module
+     15090 - total backport code
+    1.1799 - % of code consists of backport work
+
+Base tree: linux-next.git
+Base tree version: next-20130110
+compat.git: compat-v3.8-rc2-1-5-g59a1d45
+compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
+Code metrics archive: http://bit.ly/H6BTF7
