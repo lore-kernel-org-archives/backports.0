@@ -1,31 +1,33 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:46670 "HELO
+Received: from external1.orbit-lab.org ([128.6.192.131]:47463 "HELO
 	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1758582Ab3BSVRk (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 19 Feb 2013 16:17:40 -0500
+	with SMTP id S1754503Ab3BPVMQ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 16 Feb 2013 16:12:16 -0500
 Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id E9AFE540302
-	for <backports@vger.kernel.org>; Tue, 19 Feb 2013 16:17:38 -0500 (EST)
+	by external1.orbit-lab.org (Postfix) with ESMTP id 9225E540206
+	for <backports@vger.kernel.org>; Sat, 16 Feb 2013 16:12:15 -0500 (EST)
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2013-02-19 is baked
-Message-Id: <20130219211738.C235A40AC0@repository3.orbit-lab.org>
-Date: Tue, 19 Feb 2013 16:17:38 -0500 (EST)
+Subject: Compat-wireless release for 2013-02-16 is baked
+Message-Id: <20130216211215.79E6740AC0@repository3.orbit-lab.org>
+Date: Sat, 16 Feb 2013 16:12:15 -0500 (EST)
 From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 git fetch hauke (/var/opt/compat/compat-drivers)
-HEAD is now at d0506a8 compat-drivers: rename GPL file to COPYING
+Nothing new to pack.
+HEAD is now at 1115b96 compat-drivers: backport threaded IRQ for iwlwifi
 git fetch hauke (/var/opt/compat/compat)
-HEAD is now at 4971ae5 compat: deactivate netdev_set_default_ethtool_ops() for some 3.7 kernels
+Nothing new to pack.
+HEAD is now at 6649081 compat: backport of lock_map_acquire() and lock_map_release()
 git fetch origin (/var/opt/compat/linux-next)
 Nothing new to pack.
-HEAD is now at e2cab6e Add linux-next specific files for 20130219
+HEAD is now at be03210 Add linux-next specific files for 20130215
 git fetch origin (/var/opt/compat/unified/alx)
 Nothing new to pack.
 HEAD is now at 8f56f40 alx: improve self-test for FPGA
-Error while updating from linux-next
+Failed...
 
 compat-drivers code metrics
 
@@ -407,5 +409,5 @@ compat-wireless-2012-12-18-pc.tar.bz2
 compat-wireless-2012-12-18.tar.bz2
 sha1sums.txt
 
-sent 2023091 bytes  received 3010960 bytes  50593.48 bytes/sec
+sent 2023091 bytes  received 3010960 bytes  54422.17 bytes/sec
 total size is 1163331375  speedup is 231.09
