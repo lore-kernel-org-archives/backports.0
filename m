@@ -1,53 +1,413 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:51816 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758637Ab3BLVSv (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 12 Feb 2013 16:18:51 -0500
-Message-ID: <511AB1B3.7090909@hauke-m.de>
-Date: Tue, 12 Feb 2013 22:18:43 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH] compat-drivers: Add possibility to build every subsystem
- separately
-References: <1359916425-2377-1-git-send-email-ozancag@gmail.com> <510EB634.3080704@hauke-m.de> <CAFub=KQx6wCMUsQJAJXbiaUQ4-uUDepp0datbWuef-Gqst0xnA@mail.gmail.com>
-In-Reply-To: <CAFub=KQx6wCMUsQJAJXbiaUQ4-uUDepp0datbWuef-Gqst0xnA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Received: from external1.orbit-lab.org ([128.6.192.131]:59082 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753219Ab3BRVSm (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 18 Feb 2013 16:18:42 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id D962E5402D5
+	for <backports@vger.kernel.org>; Mon, 18 Feb 2013 16:18:40 -0500 (EST)
+To: backports@vger.kernel.org
+Subject: Compat-wireless release for 2013-02-18 is baked
+Message-Id: <20130218211840.AF9DA40AC0@repository3.orbit-lab.org>
+Date: Mon, 18 Feb 2013 16:18:40 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 02/03/2013 08:19 PM, Ozan Çağlayan wrote:
->>
->> Why are you removing the ifeq ($(BT),) here?
-> 
-> Well I didn't get what it does. (It seems to switch on/off bluetooth
-> but not in an intuitive way) Also it was always set to True without
-> user's intervention so I removed it to provoke a discussion about its
-> functionality :p
+git fetch hauke (/var/opt/compat/compat-drivers)
+Nothing new to pack.
+HEAD is now at 1115b96 compat-drivers: backport threaded IRQ for iwlwifi
+git fetch hauke (/var/opt/compat/compat)
+Nothing new to pack.
+HEAD is now at 6649081 compat: backport of lock_map_acquire() and lock_map_release()
+git fetch origin (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at cb50a57 Add linux-next specific files for 20130218
+git fetch origin (/var/opt/compat/unified/alx)
+Nothing new to pack.
+HEAD is now at 8f56f40 alx: improve self-test for FPGA
+Error while updating from linux-next
 
-I do not get it neither. ;-)
-Could you remove it in a separate patch., in the long term it be nice to
-deactivate it like gpu and network independently from the other network
-stuff.
+compat-drivers code metrics
 
->> I think it is better to add all (gpu and network) when nothing specific
->> was given, this way the script does the same when the same parameters
->> are given than it did before.
-> 
-> Well yes you are right but then we have to change the parameter logic
-> to support disabling subsystems, e.g.
-> 
-> admin-update.sh --disable-network.
+   1278976 - Total upstream lines of code being pulled
 
-Isn't there a away to treat everything as selected if nothing is given
-and if something was given just build that particular subsystem.
+   network
+   ----------------------------------------
+      3047 - backport code changes
+      2557 - backport code additions
+       490 - backport code deletions
+     14654 - backport from compat module
+     17701 - total backport code
+    1.3840 - % of code consists of backport work
 
-Hmm, the longer I think about it this also does not sound very nice. I
-think your first approach is better, just add the selected subsystems
-But a help page should be displayed when nothing was given explaining
-what to do.
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14654 - backport from compat module
+     15090 - total backport code
+    1.1799 - % of code consists of backport work
 
-Hauke
+Base tree: linux-next.git
+Base tree version: next-20130110
+compat.git: compat-v3.8-rc2-1-5-g59a1d45
+compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
+Code metrics archive: http://bit.ly/H6BTF7
+skipping directory 2008
+skipping directory 2009
+skipping directory 2010
+skipping directory 2011
+skipping directory 2012
+skipping directory 2013
+ckmake-2012-06-29.log.bz2
+ckmake-2012-07-03.log.bz2
+ckmake-2012-08-26.log.bz2
+ckmake-2012-08-27.log.bz2
+ckmake-2012-08-28.log.bz2
+ckmake-2012-08-29.log.bz2
+ckmake-2012-08-30.log.bz2
+ckmake-2012-08-31.log.bz2
+ckmake-2012-09-01.log.bz2
+ckmake-2012-09-02.log.bz2
+ckmake-2012-09-03.log.bz2
+ckmake-2012-09-05.log.bz2
+ckmake-2012-09-07.log.bz2
+ckmake-2012-09-08.log.bz2
+ckmake-2012-09-09.log.bz2
+ckmake-2012-09-10.log.bz2
+ckmake-2012-09-14.log.bz2
+ckmake-2012-09-15.log.bz2
+ckmake-2012-09-16.log.bz2
+ckmake-2012-09-17.log.bz2
+ckmake-2012-09-18.log.bz2
+ckmake-2012-09-19.log.bz2
+ckmake-2012-09-20.log.bz2
+ckmake-2012-09-21.log.bz2
+ckmake-2012-09-22.log.bz2
+ckmake-2012-09-23.log.bz2
+ckmake-2012-09-24.log.bz2
+ckmake-2012-09-25.log.bz2
+ckmake-2012-09-26.log.bz2
+ckmake-2012-09-27.log.bz2
+ckmake-2012-10-03.log.bz2
+ckmake-2012-10-19.log.bz2
+ckmake-2012-10-20.log.bz2
+ckmake-2012-10-21.log.bz2
+ckmake-2012-10-27.log.bz2
+ckmake-2012-10-28.log.bz2
+ckmake-2012-10-29.log.bz2
+ckmake-2012-10-30.log.bz2
+ckmake-2012-11-04.log.bz2
+ckmake-2012-11-05.log.bz2
+ckmake-2012-11-06.log.bz2
+ckmake-2012-11-07.log.bz2
+ckmake-2012-11-08.log.bz2
+ckmake-2012-11-09.log.bz2
+ckmake-2012-11-10.log.bz2
+ckmake-2012-11-11.log.bz2
+ckmake-2012-11-12.log.bz2
+ckmake-2012-11-13.log.bz2
+ckmake-2012-11-14.log.bz2
+ckmake-2012-11-17.log.bz2
+ckmake-2012-11-18.log.bz2
+ckmake-2012-11-19.log.bz2
+ckmake-2012-11-20.log.bz2
+ckmake-2012-11-21.log.bz2
+ckmake-2012-11-22.log.bz2
+ckmake-2012-11-23.log.bz2
+ckmake-2012-11-24.log.bz2
+ckmake-2012-11-25.log.bz2
+ckmake-2012-12-01.log.bz2
+ckmake-2012-12-02.log.bz2
+ckmake-2012-12-04.log.bz2
+ckmake-2012-12-05.log.bz2
+ckmake-2012-12-06.log.bz2
+ckmake-2012-12-13.log.bz2
+ckmake-2012-12-14.log.bz2
+ckmake-2012-12-15.log.bz2
+ckmake-2012-12-16.log.bz2
+ckmake-2012-12-17.log.bz2
+ckmake-2012-12-18.log.bz2
+ckmake-report-2012-06-29.log
+ckmake-report-2012-07-03.log
+ckmake-report-2012-08-26.log
+ckmake-report-2012-08-27.log
+ckmake-report-2012-08-28.log
+ckmake-report-2012-08-29.log
+ckmake-report-2012-08-30.log
+ckmake-report-2012-08-31.log
+ckmake-report-2012-09-01.log
+ckmake-report-2012-09-02.log
+ckmake-report-2012-09-03.log
+ckmake-report-2012-09-05.log
+ckmake-report-2012-09-07.log
+ckmake-report-2012-09-08.log
+ckmake-report-2012-09-09.log
+ckmake-report-2012-09-10.log
+ckmake-report-2012-09-14.log
+ckmake-report-2012-09-15.log
+ckmake-report-2012-09-16.log
+ckmake-report-2012-09-17.log
+ckmake-report-2012-09-18.log
+ckmake-report-2012-09-19.log
+ckmake-report-2012-09-20.log
+ckmake-report-2012-09-21.log
+ckmake-report-2012-09-22.log
+ckmake-report-2012-09-23.log
+ckmake-report-2012-09-24.log
+ckmake-report-2012-09-25.log
+ckmake-report-2012-09-26.log
+ckmake-report-2012-09-27.log
+ckmake-report-2012-10-03.log
+ckmake-report-2012-10-19.log
+ckmake-report-2012-10-20.log
+ckmake-report-2012-10-21.log
+ckmake-report-2012-10-27.log
+ckmake-report-2012-10-28.log
+ckmake-report-2012-10-29.log
+ckmake-report-2012-10-30.log
+ckmake-report-2012-11-04.log
+ckmake-report-2012-11-05.log
+ckmake-report-2012-11-06.log
+ckmake-report-2012-11-07.log
+ckmake-report-2012-11-08.log
+ckmake-report-2012-11-09.log
+ckmake-report-2012-11-10.log
+ckmake-report-2012-11-11.log
+ckmake-report-2012-11-12.log
+ckmake-report-2012-11-13.log
+ckmake-report-2012-11-14.log
+ckmake-report-2012-11-17.log
+ckmake-report-2012-11-18.log
+ckmake-report-2012-11-19.log
+ckmake-report-2012-11-20.log
+ckmake-report-2012-11-21.log
+ckmake-report-2012-11-22.log
+ckmake-report-2012-11-23.log
+ckmake-report-2012-11-24.log
+ckmake-report-2012-11-25.log
+ckmake-report-2012-12-01.log
+ckmake-report-2012-12-02.log
+ckmake-report-2012-12-04.log
+ckmake-report-2012-12-05.log
+ckmake-report-2012-12-06.log
+ckmake-report-2012-12-13.log
+ckmake-report-2012-12-14.log
+ckmake-report-2012-12-15.log
+ckmake-report-2012-12-16.log
+ckmake-report-2012-12-17.log
+ckmake-report-2012-12-18.log
+compat-wireless-2012-06-29-p.tar.bz2
+compat-wireless-2012-06-29-pc.tar.bz2
+compat-wireless-2012-06-29.tar.bz2
+compat-wireless-2012-07-03-p.tar.bz2
+compat-wireless-2012-07-03-pc.tar.bz2
+compat-wireless-2012-07-03.tar.bz2
+compat-wireless-2012-08-26-p.tar.bz2
+compat-wireless-2012-08-26-pc.tar.bz2
+compat-wireless-2012-08-26.tar.bz2
+compat-wireless-2012-08-27-p.tar.bz2
+compat-wireless-2012-08-27-pc.tar.bz2
+compat-wireless-2012-08-27.tar.bz2
+compat-wireless-2012-08-28-p.tar.bz2
+compat-wireless-2012-08-28-pc.tar.bz2
+compat-wireless-2012-08-28.tar.bz2
+compat-wireless-2012-08-29-p.tar.bz2
+compat-wireless-2012-08-29-pc.tar.bz2
+compat-wireless-2012-08-29.tar.bz2
+compat-wireless-2012-08-30-p.tar.bz2
+compat-wireless-2012-08-30-pc.tar.bz2
+compat-wireless-2012-08-30.tar.bz2
+compat-wireless-2012-08-31-p.tar.bz2
+compat-wireless-2012-08-31-pc.tar.bz2
+compat-wireless-2012-08-31.tar.bz2
+compat-wireless-2012-09-01-p.tar.bz2
+compat-wireless-2012-09-01-pc.tar.bz2
+compat-wireless-2012-09-01.tar.bz2
+compat-wireless-2012-09-02-p.tar.bz2
+compat-wireless-2012-09-02-pc.tar.bz2
+compat-wireless-2012-09-02.tar.bz2
+compat-wireless-2012-09-03-p.tar.bz2
+compat-wireless-2012-09-03-pc.tar.bz2
+compat-wireless-2012-09-03.tar.bz2
+compat-wireless-2012-09-05-p.tar.bz2
+compat-wireless-2012-09-05-pc.tar.bz2
+compat-wireless-2012-09-05.tar.bz2
+compat-wireless-2012-09-07-p.tar.bz2
+compat-wireless-2012-09-07-pc.tar.bz2
+compat-wireless-2012-09-07.tar.bz2
+compat-wireless-2012-09-08-p.tar.bz2
+compat-wireless-2012-09-08-pc.tar.bz2
+compat-wireless-2012-09-08.tar.bz2
+compat-wireless-2012-09-09-p.tar.bz2
+compat-wireless-2012-09-09-pc.tar.bz2
+compat-wireless-2012-09-09.tar.bz2
+compat-wireless-2012-09-10-p.tar.bz2
+compat-wireless-2012-09-10-pc.tar.bz2
+compat-wireless-2012-09-10.tar.bz2
+compat-wireless-2012-09-14-p.tar.bz2
+compat-wireless-2012-09-14-pc.tar.bz2
+compat-wireless-2012-09-14.tar.bz2
+compat-wireless-2012-09-15-p.tar.bz2
+compat-wireless-2012-09-15-pc.tar.bz2
+compat-wireless-2012-09-15.tar.bz2
+compat-wireless-2012-09-16-p.tar.bz2
+compat-wireless-2012-09-16-pc.tar.bz2
+compat-wireless-2012-09-16.tar.bz2
+compat-wireless-2012-09-17-p.tar.bz2
+compat-wireless-2012-09-17-pc.tar.bz2
+compat-wireless-2012-09-17.tar.bz2
+compat-wireless-2012-09-18-p.tar.bz2
+compat-wireless-2012-09-18-pc.tar.bz2
+compat-wireless-2012-09-18.tar.bz2
+compat-wireless-2012-09-19-p.tar.bz2
+compat-wireless-2012-09-19-pc.tar.bz2
+compat-wireless-2012-09-19.tar.bz2
+compat-wireless-2012-09-20-p.tar.bz2
+compat-wireless-2012-09-20-pc.tar.bz2
+compat-wireless-2012-09-20.tar.bz2
+compat-wireless-2012-09-21-p.tar.bz2
+compat-wireless-2012-09-21-pc.tar.bz2
+compat-wireless-2012-09-21.tar.bz2
+compat-wireless-2012-09-22-p.tar.bz2
+compat-wireless-2012-09-22-pc.tar.bz2
+compat-wireless-2012-09-22.tar.bz2
+compat-wireless-2012-09-23-p.tar.bz2
+compat-wireless-2012-09-23-pc.tar.bz2
+compat-wireless-2012-09-23.tar.bz2
+compat-wireless-2012-09-24-p.tar.bz2
+compat-wireless-2012-09-24-pc.tar.bz2
+compat-wireless-2012-09-24.tar.bz2
+compat-wireless-2012-09-25-p.tar.bz2
+compat-wireless-2012-09-25-pc.tar.bz2
+compat-wireless-2012-09-25.tar.bz2
+compat-wireless-2012-09-26-p.tar.bz2
+compat-wireless-2012-09-26-pc.tar.bz2
+compat-wireless-2012-09-26.tar.bz2
+compat-wireless-2012-09-27-p.tar.bz2
+compat-wireless-2012-09-27-pc.tar.bz2
+compat-wireless-2012-09-27.tar.bz2
+compat-wireless-2012-10-03-p.tar.bz2
+compat-wireless-2012-10-03-pc.tar.bz2
+compat-wireless-2012-10-03.tar.bz2
+compat-wireless-2012-10-19-p.tar.bz2
+compat-wireless-2012-10-19-pc.tar.bz2
+compat-wireless-2012-10-19.tar.bz2
+compat-wireless-2012-10-20-p.tar.bz2
+compat-wireless-2012-10-20-pc.tar.bz2
+compat-wireless-2012-10-20.tar.bz2
+compat-wireless-2012-10-21-p.tar.bz2
+compat-wireless-2012-10-21-pc.tar.bz2
+compat-wireless-2012-10-21.tar.bz2
+compat-wireless-2012-10-27-p.tar.bz2
+compat-wireless-2012-10-27-pc.tar.bz2
+compat-wireless-2012-10-27.tar.bz2
+compat-wireless-2012-10-28-p.tar.bz2
+compat-wireless-2012-10-28-pc.tar.bz2
+compat-wireless-2012-10-28.tar.bz2
+compat-wireless-2012-10-29-p.tar.bz2
+compat-wireless-2012-10-29-pc.tar.bz2
+compat-wireless-2012-10-29.tar.bz2
+compat-wireless-2012-10-30-p.tar.bz2
+compat-wireless-2012-10-30-pc.tar.bz2
+compat-wireless-2012-10-30.tar.bz2
+compat-wireless-2012-11-04-p.tar.bz2
+compat-wireless-2012-11-04-pc.tar.bz2
+compat-wireless-2012-11-04.tar.bz2
+compat-wireless-2012-11-05-p.tar.bz2
+compat-wireless-2012-11-05-pc.tar.bz2
+compat-wireless-2012-11-05.tar.bz2
+compat-wireless-2012-11-06-p.tar.bz2
+compat-wireless-2012-11-06-pc.tar.bz2
+compat-wireless-2012-11-06.tar.bz2
+compat-wireless-2012-11-07-p.tar.bz2
+compat-wireless-2012-11-07-pc.tar.bz2
+compat-wireless-2012-11-07.tar.bz2
+compat-wireless-2012-11-08-p.tar.bz2
+compat-wireless-2012-11-08-pc.tar.bz2
+compat-wireless-2012-11-08.tar.bz2
+compat-wireless-2012-11-09-p.tar.bz2
+compat-wireless-2012-11-09-pc.tar.bz2
+compat-wireless-2012-11-09.tar.bz2
+compat-wireless-2012-11-10-p.tar.bz2
+compat-wireless-2012-11-10-pc.tar.bz2
+compat-wireless-2012-11-10.tar.bz2
+compat-wireless-2012-11-11-p.tar.bz2
+compat-wireless-2012-11-11-pc.tar.bz2
+compat-wireless-2012-11-11.tar.bz2
+compat-wireless-2012-11-12-p.tar.bz2
+compat-wireless-2012-11-12-pc.tar.bz2
+compat-wireless-2012-11-12.tar.bz2
+compat-wireless-2012-11-13-p.tar.bz2
+compat-wireless-2012-11-13-pc.tar.bz2
+compat-wireless-2012-11-13.tar.bz2
+compat-wireless-2012-11-14-p.tar.bz2
+compat-wireless-2012-11-14-pc.tar.bz2
+compat-wireless-2012-11-14.tar.bz2
+compat-wireless-2012-11-17-p.tar.bz2
+compat-wireless-2012-11-17-pc.tar.bz2
+compat-wireless-2012-11-17.tar.bz2
+compat-wireless-2012-11-18-p.tar.bz2
+compat-wireless-2012-11-18-pc.tar.bz2
+compat-wireless-2012-11-18.tar.bz2
+compat-wireless-2012-11-19-p.tar.bz2
+compat-wireless-2012-11-19-pc.tar.bz2
+compat-wireless-2012-11-19.tar.bz2
+compat-wireless-2012-11-20-p.tar.bz2
+compat-wireless-2012-11-20-pc.tar.bz2
+compat-wireless-2012-11-20.tar.bz2
+compat-wireless-2012-11-21-p.tar.bz2
+compat-wireless-2012-11-21-pc.tar.bz2
+compat-wireless-2012-11-21.tar.bz2
+compat-wireless-2012-11-22-p.tar.bz2
+compat-wireless-2012-11-22-pc.tar.bz2
+compat-wireless-2012-11-22.tar.bz2
+compat-wireless-2012-11-23-p.tar.bz2
+compat-wireless-2012-11-23-pc.tar.bz2
+compat-wireless-2012-11-23.tar.bz2
+compat-wireless-2012-11-24-p.tar.bz2
+compat-wireless-2012-11-24-pc.tar.bz2
+compat-wireless-2012-11-24.tar.bz2
+compat-wireless-2012-11-25-p.tar.bz2
+compat-wireless-2012-11-25-pc.tar.bz2
+compat-wireless-2012-11-25.tar.bz2
+compat-wireless-2012-12-01-p.tar.bz2
+compat-wireless-2012-12-01-pc.tar.bz2
+compat-wireless-2012-12-01.tar.bz2
+compat-wireless-2012-12-02-p.tar.bz2
+compat-wireless-2012-12-02-pc.tar.bz2
+compat-wireless-2012-12-02.tar.bz2
+compat-wireless-2012-12-04-p.tar.bz2
+compat-wireless-2012-12-04-pc.tar.bz2
+compat-wireless-2012-12-04.tar.bz2
+compat-wireless-2012-12-05-p.tar.bz2
+compat-wireless-2012-12-05-pc.tar.bz2
+compat-wireless-2012-12-05.tar.bz2
+compat-wireless-2012-12-06-p.tar.bz2
+compat-wireless-2012-12-06-pc.tar.bz2
+compat-wireless-2012-12-06.tar.bz2
+compat-wireless-2012-12-13-p.tar.bz2
+compat-wireless-2012-12-13-pc.tar.bz2
+compat-wireless-2012-12-13.tar.bz2
+compat-wireless-2012-12-14-p.tar.bz2
+compat-wireless-2012-12-14-pc.tar.bz2
+compat-wireless-2012-12-14.tar.bz2
+compat-wireless-2012-12-15-p.tar.bz2
+compat-wireless-2012-12-15-pc.tar.bz2
+compat-wireless-2012-12-15.tar.bz2
+compat-wireless-2012-12-16-p.tar.bz2
+compat-wireless-2012-12-16-pc.tar.bz2
+compat-wireless-2012-12-16.tar.bz2
+compat-wireless-2012-12-17-p.tar.bz2
+compat-wireless-2012-12-17-pc.tar.bz2
+compat-wireless-2012-12-17.tar.bz2
+compat-wireless-2012-12-18-p.tar.bz2
+compat-wireless-2012-12-18-pc.tar.bz2
+compat-wireless-2012-12-18.tar.bz2
+sha1sums.txt
 
+sent 2023091 bytes  received 3010960 bytes  49112.69 bytes/sec
+total size is 1163331375  speedup is 231.09
