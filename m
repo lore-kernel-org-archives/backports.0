@@ -1,33 +1,31 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:47666 "HELO
+Received: from external1.orbit-lab.org ([128.6.192.131]:37392 "HELO
 	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754685Ab3B1VPT (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 28 Feb 2013 16:15:19 -0500
+	with SMTP id S1751195Ab3BTVUj (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 20 Feb 2013 16:20:39 -0500
 Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 13377540302
-	for <backports@vger.kernel.org>; Thu, 28 Feb 2013 16:15:18 -0500 (EST)
+	by external1.orbit-lab.org (Postfix) with ESMTP id 74B2E54021C
+	for <backports@vger.kernel.org>; Wed, 20 Feb 2013 16:20:38 -0500 (EST)
 To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2013-02-28 is baked
-Message-Id: <20130228211517.CD86840AC1@repository3.orbit-lab.org>
-Date: Thu, 28 Feb 2013 16:15:17 -0500 (EST)
+Subject: Compat-wireless release for 2013-02-20 is baked
+Message-Id: <20130220212038.4F5B740AC0@repository3.orbit-lab.org>
+Date: Wed, 20 Feb 2013 16:20:38 -0500 (EST)
 From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 git fetch hauke (/var/opt/compat/compat-drivers)
-Nothing new to pack.
 HEAD is now at 81f04c4 compat-drivers: refresh patches
 git fetch hauke (/var/opt/compat/compat)
-Nothing new to pack.
 HEAD is now at fb57da5 compat: update kernel versions in bin/get-compat-kernels
 git fetch origin (/var/opt/compat/linux-next)
 Nothing new to pack.
-HEAD is now at 61e9ce6 Add linux-next specific files for 20130228
+HEAD is now at 28df63a Add linux-next specific files for 20130220
 git fetch origin (/var/opt/compat/unified/alx)
 Nothing new to pack.
 HEAD is now at 8f56f40 alx: improve self-test for FPGA
-Error while updating from linux-next
+Failed...
 
 compat-drivers code metrics
 
@@ -409,5 +407,5 @@ compat-wireless-2012-12-18-pc.tar.bz2
 compat-wireless-2012-12-18.tar.bz2
 sha1sums.txt
 
-sent 2023091 bytes  received 3010960 bytes  36879.49 bytes/sec
+sent 2023091 bytes  received 3010960 bytes  47268.08 bytes/sec
 total size is 1163331375  speedup is 231.09
