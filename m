@@ -1,46 +1,43 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:60445 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755482Ab3BFPuo (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 6 Feb 2013 10:50:44 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 5DCF220396
-	for <backports@vger.kernel.org>; Wed,  6 Feb 2013 15:50:43 +0000 (UTC)
-Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
-	by mail.kernel.org (Postfix) with ESMTP id 5143D2037E
-	for <backports@vger.kernel.org>; Wed,  6 Feb 2013 15:50:41 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 53421] eeprom init error of AR9582
-In-Reply-To: <bug-53421-58281@https.bugzilla.kernel.org/>
-References: <bug-53421-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <hauke@hauke-m.de>
+Message-ID: <5129FD42.5020202@hauke-m.de>
+Date: Sun, 24 Feb 2013 12:45:06 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-Message-Id: <20130206155041.4E35111FE9A@bugzilla.kernel.org>
-Date: Wed,  6 Feb 2013 15:50:41 +0000 (UTC)
-Sender: backports-owner@vger.kernel.org
+To: Walter Goldens <goldenstranger@yahoo.com>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+ "Luis R. Rodriguez" <mcgrof@gmail.com>,
+ "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: compat-wireless/drivers - slew of warnings and issues (older
+ kernel)
+References: <1361616101.52110.YahooMailNeo@web124704.mail.ne1.yahoo.com>
+In-Reply-To: <1361616101.52110.YahooMailNeo@web124704.mail.ne1.yahoo.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=53421
+On 02/23/2013 11:41 AM, Walter Goldens wrote:
+> A recent (stable) compat-wireless/drivers compilation exhibited a great deal of warnings on an older kernel (2.6.24  to 2.6.30 I think). Is 2.6.24 still supported?
 
+What version of compat-drivers are you using?
+What version of gcc are your using?
 
-John W. Linville <linville@tuxdriver.com> changed:
+Some parts of compat-drivers are still compiling against kernel 2.6.24,
+but I would not recommend using a so old kernel. I haven't done run time
+testes with 2.6.24 for a long time.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |linville@tuxdriver.com,
-                   |                            |shafi.wireless@gmail.com
-          Component|Compat                      |network-wireless
-            Version|unspecified                 |2.5
-         AssignedTo|backports@vger.kernel.org   |drivers_network-wireless@ke
-                   |                            |rnel-bugs.osdl.org
-            Product|Backports project           |Drivers
+> Also, there was an issue with 50-compat_firmware.rules. Ubuntu 8.04 looks for it at /lib/udev/rules.d/ which gave me severe problems with firmware loading and system freezes. I had to copy/symlink 50-compat_firmware.rules from /lib/udev/rules.d/ to /etc/udev/rules.d/.
 
+Could you provide a patch for this, I do not have a ubuntu 8.04
+installation any more, this is pretty old.
 
+> Warning log (partial). It compiles, but warnings galore. Is anyone up for backporting?
+> 
+>   CC [M]  /drivers/net/wireless/rt2x00/rt2x00dev.o
+> /include/net/cfg80211.h: In function ‘wiphy_name’:
+> /include/net/cfg80211.h:2676: warning: passing argument 1 of ‘dev_name’ discards qualifiers from pointer target type
 
+I do not get these warnings when compiling compat-drivers-3.8 against
+kernel 2.6.30. There are some other warnings with gcc 4.7 therefor I
+used "export KCFLAGS="-Wno-unused-but-set-variable"" with these old
+kernels, newer kernel versions already do this in the main Makefile.
 
--- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+Hauke
