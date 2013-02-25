@@ -1,59 +1,42 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:48902 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1758026Ab3BFVXM (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 6 Feb 2013 16:23:12 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 1082454000C
-	for <backports@vger.kernel.org>; Wed,  6 Feb 2013 16:23:11 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2013-02-06 is baked
-Message-Id: <20130206212310.D9D9B40AC0@repository3.orbit-lab.org>
-Date: Wed,  6 Feb 2013 16:23:10 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
+Received: from fep28.mx.upcmail.net ([62.179.121.48]:64734 "EHLO
+	fep28.mx.upcmail.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751529Ab3BYL2z (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 25 Feb 2013 06:28:55 -0500
+Received: from edge03.upcmail.net ([192.168.13.238])
+          by viefep17-int.chello.at
+          (InterMail vM.8.01.05.05 201-2260-151-110-20120111) with ESMTP
+          id <20130225112657.VXSV18677.viefep17-int.chello.at@edge03.upcmail.net>
+          for <backports@vger.kernel.org>; Mon, 25 Feb 2013 12:26:57 +0100
+Message-ID: <1361791599.9408.7.camel@Halley>
+Subject: conpat-drivers: scripts/admin-update.sh fails with patches being in
+ subfolder "patches"
+From: Stefan Kuhn <stefan.kuhn@hispeed.ch>
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Mon, 25 Feb 2013 12:26:39 +0100
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-git fetch hauke (/var/opt/compat/compat-drivers)
-Nothing new to pack.
-HEAD is now at 1ef7c8a compat-drivers: refresh patches on next-20130202
-git fetch hauke (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 726d9b2 compat: netdev_set_default_ethtool_ops() is not in kernel 3.7.5
-git fetch origin (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 45f822a Add linux-next specific files for 20130206
-git fetch origin (/var/opt/compat/unified/alx)
-Nothing new to pack.
-HEAD is now at 8f56f40 alx: improve self-test for FPGA
-Failed...
-/usr/bin/sha1sum: *.tar.bz2: No such file or directory
+Hi all
 
-compat-drivers code metrics
+I'm packaging "compat-drivers" for Gentoo/Pentoo.
+The docu at
+https://backports.wiki.kernel.org/index.php/Documentation/compat-drivers/hacking
+mentions running script:
+"scripts/admin-update.sh -s refresh"
 
-   1278976 - Total upstream lines of code being pulled
+But that dies until all patches are moved out of the folder "patches":
+mv patches/* .
 
-   network
-   ----------------------------------------
-      3047 - backport code changes
-      2557 - backport code additions
-       490 - backport code deletions
-     14654 - backport from compat module
-     17701 - total backport code
-    1.3840 - % of code consists of backport work
+Reason for the failure is commit:
+bb67ef032a61f5d0fdc6fa32ee28ed94503555e4
+where all patches were moved to that subfolder "patches".
 
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     14654 - backport from compat module
-     15090 - total backport code
-    1.1799 - % of code consists of backport work
+Pls tell if I should put this on bugzilla or anywhere else?
 
-Base tree: linux-next.git
-Base tree version: next-20130110
-compat.git: compat-v3.8-rc2-1-5-g59a1d45
-compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
-Code metrics archive: http://bit.ly/H6BTF7
+Best regards
+Stefan
+
