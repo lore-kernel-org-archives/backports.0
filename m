@@ -1,413 +1,324 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:50131 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755435Ab3BXVM5 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 24 Feb 2013 16:12:57 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id BACF75402D5
-	for <backports@vger.kernel.org>; Sun, 24 Feb 2013 16:12:54 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2013-02-24 is baked
-Message-Id: <20130224211254.A231740AC0@repository3.orbit-lab.org>
-Date: Sun, 24 Feb 2013 16:12:54 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Return-Path: <hauke@hauke-m.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH for 3.7 2/6] compat-drivers: refresh patches
+Date: Tue, 26 Feb 2013 21:46:56 +0100
+Message-Id: <1361911620-29333-3-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361911620-29333-1-git-send-email-hauke@hauke-m.de>
+References: <1361911620-29333-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-git fetch hauke (/var/opt/compat/compat-drivers)
-Nothing new to pack.
-HEAD is now at 81f04c4 compat-drivers: refresh patches
-git fetch hauke (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at fb57da5 compat: update kernel versions in bin/get-compat-kernels
-git fetch origin (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at b1714a8 Add linux-next specific files for 20130222
-git fetch origin (/var/opt/compat/unified/alx)
-Nothing new to pack.
-HEAD is now at 8f56f40 alx: improve self-test for FPGA
-Error while updating from linux-next
+refreshes patches based on linux 3.7.6.
 
-compat-drivers code metrics
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ patches/drm/04-revert-prime-support.patch          |    8 ++++----
+ patches/drm/07-intel-gtt.patch                     |    2 +-
+ patches/network/0001-netdev_ops.patch              |    6 +++---
+ patches/network/0002-net-misc.patch                |    2 +-
+ patches/network/05-usb.patch                       |    2 +-
+ patches/network/09-threaded-irq.patch              |    8 ++++----
+ patches/network/11-dev-pm-ops.patch                |    2 +-
+ patches/network/16-bluetooth.patch                 |    4 ++--
+ patches/network/17-netdev-queue.patch              |    4 ++--
+ patches/network/25-multicast-list_head.patch       |    6 +++---
+ patches/network/48-use_skb_get_queue_mapping.patch |    4 ++--
+ patches/network/62-usb_driver_lpm.patch            |    6 +++---
+ 12 files changed, 27 insertions(+), 27 deletions(-)
 
-   1278976 - Total upstream lines of code being pulled
-
-   network
-   ----------------------------------------
-      3047 - backport code changes
-      2557 - backport code additions
-       490 - backport code deletions
-     14654 - backport from compat module
-     17701 - total backport code
-    1.3840 - % of code consists of backport work
-
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     14654 - backport from compat module
-     15090 - total backport code
-    1.1799 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20130110
-compat.git: compat-v3.8-rc2-1-5-g59a1d45
-compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
-Code metrics archive: http://bit.ly/H6BTF7
-skipping directory 2008
-skipping directory 2009
-skipping directory 2010
-skipping directory 2011
-skipping directory 2012
-skipping directory 2013
-ckmake-2012-06-29.log.bz2
-ckmake-2012-07-03.log.bz2
-ckmake-2012-08-26.log.bz2
-ckmake-2012-08-27.log.bz2
-ckmake-2012-08-28.log.bz2
-ckmake-2012-08-29.log.bz2
-ckmake-2012-08-30.log.bz2
-ckmake-2012-08-31.log.bz2
-ckmake-2012-09-01.log.bz2
-ckmake-2012-09-02.log.bz2
-ckmake-2012-09-03.log.bz2
-ckmake-2012-09-05.log.bz2
-ckmake-2012-09-07.log.bz2
-ckmake-2012-09-08.log.bz2
-ckmake-2012-09-09.log.bz2
-ckmake-2012-09-10.log.bz2
-ckmake-2012-09-14.log.bz2
-ckmake-2012-09-15.log.bz2
-ckmake-2012-09-16.log.bz2
-ckmake-2012-09-17.log.bz2
-ckmake-2012-09-18.log.bz2
-ckmake-2012-09-19.log.bz2
-ckmake-2012-09-20.log.bz2
-ckmake-2012-09-21.log.bz2
-ckmake-2012-09-22.log.bz2
-ckmake-2012-09-23.log.bz2
-ckmake-2012-09-24.log.bz2
-ckmake-2012-09-25.log.bz2
-ckmake-2012-09-26.log.bz2
-ckmake-2012-09-27.log.bz2
-ckmake-2012-10-03.log.bz2
-ckmake-2012-10-19.log.bz2
-ckmake-2012-10-20.log.bz2
-ckmake-2012-10-21.log.bz2
-ckmake-2012-10-27.log.bz2
-ckmake-2012-10-28.log.bz2
-ckmake-2012-10-29.log.bz2
-ckmake-2012-10-30.log.bz2
-ckmake-2012-11-04.log.bz2
-ckmake-2012-11-05.log.bz2
-ckmake-2012-11-06.log.bz2
-ckmake-2012-11-07.log.bz2
-ckmake-2012-11-08.log.bz2
-ckmake-2012-11-09.log.bz2
-ckmake-2012-11-10.log.bz2
-ckmake-2012-11-11.log.bz2
-ckmake-2012-11-12.log.bz2
-ckmake-2012-11-13.log.bz2
-ckmake-2012-11-14.log.bz2
-ckmake-2012-11-17.log.bz2
-ckmake-2012-11-18.log.bz2
-ckmake-2012-11-19.log.bz2
-ckmake-2012-11-20.log.bz2
-ckmake-2012-11-21.log.bz2
-ckmake-2012-11-22.log.bz2
-ckmake-2012-11-23.log.bz2
-ckmake-2012-11-24.log.bz2
-ckmake-2012-11-25.log.bz2
-ckmake-2012-12-01.log.bz2
-ckmake-2012-12-02.log.bz2
-ckmake-2012-12-04.log.bz2
-ckmake-2012-12-05.log.bz2
-ckmake-2012-12-06.log.bz2
-ckmake-2012-12-13.log.bz2
-ckmake-2012-12-14.log.bz2
-ckmake-2012-12-15.log.bz2
-ckmake-2012-12-16.log.bz2
-ckmake-2012-12-17.log.bz2
-ckmake-2012-12-18.log.bz2
-ckmake-report-2012-06-29.log
-ckmake-report-2012-07-03.log
-ckmake-report-2012-08-26.log
-ckmake-report-2012-08-27.log
-ckmake-report-2012-08-28.log
-ckmake-report-2012-08-29.log
-ckmake-report-2012-08-30.log
-ckmake-report-2012-08-31.log
-ckmake-report-2012-09-01.log
-ckmake-report-2012-09-02.log
-ckmake-report-2012-09-03.log
-ckmake-report-2012-09-05.log
-ckmake-report-2012-09-07.log
-ckmake-report-2012-09-08.log
-ckmake-report-2012-09-09.log
-ckmake-report-2012-09-10.log
-ckmake-report-2012-09-14.log
-ckmake-report-2012-09-15.log
-ckmake-report-2012-09-16.log
-ckmake-report-2012-09-17.log
-ckmake-report-2012-09-18.log
-ckmake-report-2012-09-19.log
-ckmake-report-2012-09-20.log
-ckmake-report-2012-09-21.log
-ckmake-report-2012-09-22.log
-ckmake-report-2012-09-23.log
-ckmake-report-2012-09-24.log
-ckmake-report-2012-09-25.log
-ckmake-report-2012-09-26.log
-ckmake-report-2012-09-27.log
-ckmake-report-2012-10-03.log
-ckmake-report-2012-10-19.log
-ckmake-report-2012-10-20.log
-ckmake-report-2012-10-21.log
-ckmake-report-2012-10-27.log
-ckmake-report-2012-10-28.log
-ckmake-report-2012-10-29.log
-ckmake-report-2012-10-30.log
-ckmake-report-2012-11-04.log
-ckmake-report-2012-11-05.log
-ckmake-report-2012-11-06.log
-ckmake-report-2012-11-07.log
-ckmake-report-2012-11-08.log
-ckmake-report-2012-11-09.log
-ckmake-report-2012-11-10.log
-ckmake-report-2012-11-11.log
-ckmake-report-2012-11-12.log
-ckmake-report-2012-11-13.log
-ckmake-report-2012-11-14.log
-ckmake-report-2012-11-17.log
-ckmake-report-2012-11-18.log
-ckmake-report-2012-11-19.log
-ckmake-report-2012-11-20.log
-ckmake-report-2012-11-21.log
-ckmake-report-2012-11-22.log
-ckmake-report-2012-11-23.log
-ckmake-report-2012-11-24.log
-ckmake-report-2012-11-25.log
-ckmake-report-2012-12-01.log
-ckmake-report-2012-12-02.log
-ckmake-report-2012-12-04.log
-ckmake-report-2012-12-05.log
-ckmake-report-2012-12-06.log
-ckmake-report-2012-12-13.log
-ckmake-report-2012-12-14.log
-ckmake-report-2012-12-15.log
-ckmake-report-2012-12-16.log
-ckmake-report-2012-12-17.log
-ckmake-report-2012-12-18.log
-compat-wireless-2012-06-29-p.tar.bz2
-compat-wireless-2012-06-29-pc.tar.bz2
-compat-wireless-2012-06-29.tar.bz2
-compat-wireless-2012-07-03-p.tar.bz2
-compat-wireless-2012-07-03-pc.tar.bz2
-compat-wireless-2012-07-03.tar.bz2
-compat-wireless-2012-08-26-p.tar.bz2
-compat-wireless-2012-08-26-pc.tar.bz2
-compat-wireless-2012-08-26.tar.bz2
-compat-wireless-2012-08-27-p.tar.bz2
-compat-wireless-2012-08-27-pc.tar.bz2
-compat-wireless-2012-08-27.tar.bz2
-compat-wireless-2012-08-28-p.tar.bz2
-compat-wireless-2012-08-28-pc.tar.bz2
-compat-wireless-2012-08-28.tar.bz2
-compat-wireless-2012-08-29-p.tar.bz2
-compat-wireless-2012-08-29-pc.tar.bz2
-compat-wireless-2012-08-29.tar.bz2
-compat-wireless-2012-08-30-p.tar.bz2
-compat-wireless-2012-08-30-pc.tar.bz2
-compat-wireless-2012-08-30.tar.bz2
-compat-wireless-2012-08-31-p.tar.bz2
-compat-wireless-2012-08-31-pc.tar.bz2
-compat-wireless-2012-08-31.tar.bz2
-compat-wireless-2012-09-01-p.tar.bz2
-compat-wireless-2012-09-01-pc.tar.bz2
-compat-wireless-2012-09-01.tar.bz2
-compat-wireless-2012-09-02-p.tar.bz2
-compat-wireless-2012-09-02-pc.tar.bz2
-compat-wireless-2012-09-02.tar.bz2
-compat-wireless-2012-09-03-p.tar.bz2
-compat-wireless-2012-09-03-pc.tar.bz2
-compat-wireless-2012-09-03.tar.bz2
-compat-wireless-2012-09-05-p.tar.bz2
-compat-wireless-2012-09-05-pc.tar.bz2
-compat-wireless-2012-09-05.tar.bz2
-compat-wireless-2012-09-07-p.tar.bz2
-compat-wireless-2012-09-07-pc.tar.bz2
-compat-wireless-2012-09-07.tar.bz2
-compat-wireless-2012-09-08-p.tar.bz2
-compat-wireless-2012-09-08-pc.tar.bz2
-compat-wireless-2012-09-08.tar.bz2
-compat-wireless-2012-09-09-p.tar.bz2
-compat-wireless-2012-09-09-pc.tar.bz2
-compat-wireless-2012-09-09.tar.bz2
-compat-wireless-2012-09-10-p.tar.bz2
-compat-wireless-2012-09-10-pc.tar.bz2
-compat-wireless-2012-09-10.tar.bz2
-compat-wireless-2012-09-14-p.tar.bz2
-compat-wireless-2012-09-14-pc.tar.bz2
-compat-wireless-2012-09-14.tar.bz2
-compat-wireless-2012-09-15-p.tar.bz2
-compat-wireless-2012-09-15-pc.tar.bz2
-compat-wireless-2012-09-15.tar.bz2
-compat-wireless-2012-09-16-p.tar.bz2
-compat-wireless-2012-09-16-pc.tar.bz2
-compat-wireless-2012-09-16.tar.bz2
-compat-wireless-2012-09-17-p.tar.bz2
-compat-wireless-2012-09-17-pc.tar.bz2
-compat-wireless-2012-09-17.tar.bz2
-compat-wireless-2012-09-18-p.tar.bz2
-compat-wireless-2012-09-18-pc.tar.bz2
-compat-wireless-2012-09-18.tar.bz2
-compat-wireless-2012-09-19-p.tar.bz2
-compat-wireless-2012-09-19-pc.tar.bz2
-compat-wireless-2012-09-19.tar.bz2
-compat-wireless-2012-09-20-p.tar.bz2
-compat-wireless-2012-09-20-pc.tar.bz2
-compat-wireless-2012-09-20.tar.bz2
-compat-wireless-2012-09-21-p.tar.bz2
-compat-wireless-2012-09-21-pc.tar.bz2
-compat-wireless-2012-09-21.tar.bz2
-compat-wireless-2012-09-22-p.tar.bz2
-compat-wireless-2012-09-22-pc.tar.bz2
-compat-wireless-2012-09-22.tar.bz2
-compat-wireless-2012-09-23-p.tar.bz2
-compat-wireless-2012-09-23-pc.tar.bz2
-compat-wireless-2012-09-23.tar.bz2
-compat-wireless-2012-09-24-p.tar.bz2
-compat-wireless-2012-09-24-pc.tar.bz2
-compat-wireless-2012-09-24.tar.bz2
-compat-wireless-2012-09-25-p.tar.bz2
-compat-wireless-2012-09-25-pc.tar.bz2
-compat-wireless-2012-09-25.tar.bz2
-compat-wireless-2012-09-26-p.tar.bz2
-compat-wireless-2012-09-26-pc.tar.bz2
-compat-wireless-2012-09-26.tar.bz2
-compat-wireless-2012-09-27-p.tar.bz2
-compat-wireless-2012-09-27-pc.tar.bz2
-compat-wireless-2012-09-27.tar.bz2
-compat-wireless-2012-10-03-p.tar.bz2
-compat-wireless-2012-10-03-pc.tar.bz2
-compat-wireless-2012-10-03.tar.bz2
-compat-wireless-2012-10-19-p.tar.bz2
-compat-wireless-2012-10-19-pc.tar.bz2
-compat-wireless-2012-10-19.tar.bz2
-compat-wireless-2012-10-20-p.tar.bz2
-compat-wireless-2012-10-20-pc.tar.bz2
-compat-wireless-2012-10-20.tar.bz2
-compat-wireless-2012-10-21-p.tar.bz2
-compat-wireless-2012-10-21-pc.tar.bz2
-compat-wireless-2012-10-21.tar.bz2
-compat-wireless-2012-10-27-p.tar.bz2
-compat-wireless-2012-10-27-pc.tar.bz2
-compat-wireless-2012-10-27.tar.bz2
-compat-wireless-2012-10-28-p.tar.bz2
-compat-wireless-2012-10-28-pc.tar.bz2
-compat-wireless-2012-10-28.tar.bz2
-compat-wireless-2012-10-29-p.tar.bz2
-compat-wireless-2012-10-29-pc.tar.bz2
-compat-wireless-2012-10-29.tar.bz2
-compat-wireless-2012-10-30-p.tar.bz2
-compat-wireless-2012-10-30-pc.tar.bz2
-compat-wireless-2012-10-30.tar.bz2
-compat-wireless-2012-11-04-p.tar.bz2
-compat-wireless-2012-11-04-pc.tar.bz2
-compat-wireless-2012-11-04.tar.bz2
-compat-wireless-2012-11-05-p.tar.bz2
-compat-wireless-2012-11-05-pc.tar.bz2
-compat-wireless-2012-11-05.tar.bz2
-compat-wireless-2012-11-06-p.tar.bz2
-compat-wireless-2012-11-06-pc.tar.bz2
-compat-wireless-2012-11-06.tar.bz2
-compat-wireless-2012-11-07-p.tar.bz2
-compat-wireless-2012-11-07-pc.tar.bz2
-compat-wireless-2012-11-07.tar.bz2
-compat-wireless-2012-11-08-p.tar.bz2
-compat-wireless-2012-11-08-pc.tar.bz2
-compat-wireless-2012-11-08.tar.bz2
-compat-wireless-2012-11-09-p.tar.bz2
-compat-wireless-2012-11-09-pc.tar.bz2
-compat-wireless-2012-11-09.tar.bz2
-compat-wireless-2012-11-10-p.tar.bz2
-compat-wireless-2012-11-10-pc.tar.bz2
-compat-wireless-2012-11-10.tar.bz2
-compat-wireless-2012-11-11-p.tar.bz2
-compat-wireless-2012-11-11-pc.tar.bz2
-compat-wireless-2012-11-11.tar.bz2
-compat-wireless-2012-11-12-p.tar.bz2
-compat-wireless-2012-11-12-pc.tar.bz2
-compat-wireless-2012-11-12.tar.bz2
-compat-wireless-2012-11-13-p.tar.bz2
-compat-wireless-2012-11-13-pc.tar.bz2
-compat-wireless-2012-11-13.tar.bz2
-compat-wireless-2012-11-14-p.tar.bz2
-compat-wireless-2012-11-14-pc.tar.bz2
-compat-wireless-2012-11-14.tar.bz2
-compat-wireless-2012-11-17-p.tar.bz2
-compat-wireless-2012-11-17-pc.tar.bz2
-compat-wireless-2012-11-17.tar.bz2
-compat-wireless-2012-11-18-p.tar.bz2
-compat-wireless-2012-11-18-pc.tar.bz2
-compat-wireless-2012-11-18.tar.bz2
-compat-wireless-2012-11-19-p.tar.bz2
-compat-wireless-2012-11-19-pc.tar.bz2
-compat-wireless-2012-11-19.tar.bz2
-compat-wireless-2012-11-20-p.tar.bz2
-compat-wireless-2012-11-20-pc.tar.bz2
-compat-wireless-2012-11-20.tar.bz2
-compat-wireless-2012-11-21-p.tar.bz2
-compat-wireless-2012-11-21-pc.tar.bz2
-compat-wireless-2012-11-21.tar.bz2
-compat-wireless-2012-11-22-p.tar.bz2
-compat-wireless-2012-11-22-pc.tar.bz2
-compat-wireless-2012-11-22.tar.bz2
-compat-wireless-2012-11-23-p.tar.bz2
-compat-wireless-2012-11-23-pc.tar.bz2
-compat-wireless-2012-11-23.tar.bz2
-compat-wireless-2012-11-24-p.tar.bz2
-compat-wireless-2012-11-24-pc.tar.bz2
-compat-wireless-2012-11-24.tar.bz2
-compat-wireless-2012-11-25-p.tar.bz2
-compat-wireless-2012-11-25-pc.tar.bz2
-compat-wireless-2012-11-25.tar.bz2
-compat-wireless-2012-12-01-p.tar.bz2
-compat-wireless-2012-12-01-pc.tar.bz2
-compat-wireless-2012-12-01.tar.bz2
-compat-wireless-2012-12-02-p.tar.bz2
-compat-wireless-2012-12-02-pc.tar.bz2
-compat-wireless-2012-12-02.tar.bz2
-compat-wireless-2012-12-04-p.tar.bz2
-compat-wireless-2012-12-04-pc.tar.bz2
-compat-wireless-2012-12-04.tar.bz2
-compat-wireless-2012-12-05-p.tar.bz2
-compat-wireless-2012-12-05-pc.tar.bz2
-compat-wireless-2012-12-05.tar.bz2
-compat-wireless-2012-12-06-p.tar.bz2
-compat-wireless-2012-12-06-pc.tar.bz2
-compat-wireless-2012-12-06.tar.bz2
-compat-wireless-2012-12-13-p.tar.bz2
-compat-wireless-2012-12-13-pc.tar.bz2
-compat-wireless-2012-12-13.tar.bz2
-compat-wireless-2012-12-14-p.tar.bz2
-compat-wireless-2012-12-14-pc.tar.bz2
-compat-wireless-2012-12-14.tar.bz2
-compat-wireless-2012-12-15-p.tar.bz2
-compat-wireless-2012-12-15-pc.tar.bz2
-compat-wireless-2012-12-15.tar.bz2
-compat-wireless-2012-12-16-p.tar.bz2
-compat-wireless-2012-12-16-pc.tar.bz2
-compat-wireless-2012-12-16.tar.bz2
-compat-wireless-2012-12-17-p.tar.bz2
-compat-wireless-2012-12-17-pc.tar.bz2
-compat-wireless-2012-12-17.tar.bz2
-compat-wireless-2012-12-18-p.tar.bz2
-compat-wireless-2012-12-18-pc.tar.bz2
-compat-wireless-2012-12-18.tar.bz2
-sha1sums.txt
-
-sent 2023091 bytes  received 3010960 bytes  38575.10 bytes/sec
-total size is 1163331375  speedup is 231.09
+diff --git a/patches/drm/04-revert-prime-support.patch b/patches/drm/04-revert-prime-support.patch
+index 28db7a3..66f7ec0 100644
+--- a/patches/drm/04-revert-prime-support.patch
++++ b/patches/drm/04-revert-prime-support.patch
+@@ -97,7 +97,7 @@ not < 3.3.0.
+  #include <drm/drmP.h>
+  
+  #include "nouveau_drm.h"
+-@@ -228,4 +229,4 @@ fail_detach:
++@@ -229,4 +230,4 @@ fail_detach:
+  	dma_buf_detach(dma_buf, attach);
+  	return ERR_PTR(ret);
+  }
+@@ -113,7 +113,7 @@ not < 3.3.0.
+  #include <drm/drmP.h>
+  
+  #include "radeon.h"
+-@@ -225,3 +226,4 @@ fail_detach:
++@@ -226,3 +227,4 @@ fail_detach:
+  	dma_buf_detach(dma_buf, attach);
+  	return ERR_PTR(ret);
+  }
+@@ -323,7 +323,7 @@ not < 3.3.0.
+  
+  static void i915_gem_object_flush_gtt_write_domain(struct drm_i915_gem_object *obj);
+  static void i915_gem_object_flush_cpu_write_domain(struct drm_i915_gem_object *obj);
+-@@ -3776,8 +3778,10 @@ void i915_gem_free_object(struct drm_gem
++@@ -3784,8 +3786,10 @@ void i915_gem_free_object(struct drm_gem
+  
+  	BUG_ON(obj->pages);
+  
+@@ -344,7 +344,7 @@ not < 3.3.0.
+  #include <drm/drmP.h>
+  #include "i915_drv.h"
+  #include <linux/dma-buf.h>
+-@@ -302,3 +303,4 @@ fail_detach:
++@@ -307,3 +308,4 @@ fail_detach:
+  	dma_buf_detach(dma_buf, attach);
+  	return ERR_PTR(ret);
+  }
+diff --git a/patches/drm/07-intel-gtt.patch b/patches/drm/07-intel-gtt.patch
+index 62df61c..fc8fd22 100644
+--- a/patches/drm/07-intel-gtt.patch
++++ b/patches/drm/07-intel-gtt.patch
+@@ -24,7 +24,7 @@ Date:   Thu Jun 7 15:56:03 2012 +0200
+ 
+ --- a/drivers/gpu/drm/i915/i915_gem.c
+ +++ b/drivers/gpu/drm/i915/i915_gem.c
+-@@ -3971,8 +3971,10 @@ i915_gem_init_hw(struct drm_device *dev)
++@@ -3979,8 +3979,10 @@ i915_gem_init_hw(struct drm_device *dev)
+  	drm_i915_private_t *dev_priv = dev->dev_private;
+  	int ret;
+  
+diff --git a/patches/network/0001-netdev_ops.patch b/patches/network/0001-netdev_ops.patch
+index 45a2d1f..83db7de 100644
+--- a/patches/network/0001-netdev_ops.patch
++++ b/patches/network/0001-netdev_ops.patch
+@@ -223,7 +223,7 @@ Date:   Wed Nov 19 21:32:24 2008 -0800
+  	strncpy(netdev->name, pci_name(pdev), sizeof(netdev->name) - 1);
+ --- a/net/mac80211/iface.c
+ +++ b/net/mac80211/iface.c
+-@@ -987,7 +987,7 @@ static void ieee80211_if_setup(struct ne
++@@ -978,7 +978,7 @@ static void ieee80211_if_setup(struct ne
+  {
+  	ether_setup(dev);
+  	dev->priv_flags &= ~IFF_TX_SKB_SHARING;
+@@ -232,7 +232,7 @@ Date:   Wed Nov 19 21:32:24 2008 -0800
+  	dev->destructor = free_netdev;
+  }
+  
+-@@ -1143,7 +1143,7 @@ static void ieee80211_setup_sdata(struct
++@@ -1134,7 +1134,7 @@ static void ieee80211_setup_sdata(struct
+  
+  	/* only monitor/p2p-device differ */
+  	if (sdata->dev) {
+@@ -241,7 +241,7 @@ Date:   Wed Nov 19 21:32:24 2008 -0800
+  		sdata->dev->type = ARPHRD_ETHER;
+  	}
+  
+-@@ -1177,7 +1177,7 @@ static void ieee80211_setup_sdata(struct
++@@ -1168,7 +1168,7 @@ static void ieee80211_setup_sdata(struct
+  		break;
+  	case NL80211_IFTYPE_MONITOR:
+  		sdata->dev->type = ARPHRD_IEEE80211_RADIOTAP;
+diff --git a/patches/network/0002-net-misc.patch b/patches/network/0002-net-misc.patch
+index 35a2f9f..4e10918 100644
+--- a/patches/network/0002-net-misc.patch
++++ b/patches/network/0002-net-misc.patch
+@@ -22,7 +22,7 @@ compile tested against older kernels.
+  	 * For RX we handle drivers that zero-pad to end-of-packet.
+ --- a/net/mac80211/iface.c
+ +++ b/net/mac80211/iface.c
+-@@ -988,6 +988,11 @@ static void ieee80211_if_setup(struct ne
++@@ -979,6 +979,11 @@ static void ieee80211_if_setup(struct ne
+  	ether_setup(dev);
+  	dev->priv_flags &= ~IFF_TX_SKB_SHARING;
+  	netdev_attach_ops(dev, &ieee80211_dataif_ops);
+diff --git a/patches/network/05-usb.patch b/patches/network/05-usb.patch
+index 57471ca..16d7d8a 100644
+--- a/patches/network/05-usb.patch
++++ b/patches/network/05-usb.patch
+@@ -2,7 +2,7 @@ USB opt soft_unbid was added as of 2.6.27.
+ 
+ --- a/drivers/net/wireless/p54/p54usb.c
+ +++ b/drivers/net/wireless/p54/p54usb.c
+-@@ -1139,7 +1139,9 @@ static struct usb_driver p54u_driver = {
++@@ -1143,7 +1143,9 @@ static struct usb_driver p54u_driver = {
+  	.resume = p54u_resume,
+  	.reset_resume = p54u_resume,
+  #endif /* CONFIG_PM */
+diff --git a/patches/network/09-threaded-irq.patch b/patches/network/09-threaded-irq.patch
+index 929d527..1ff54c7 100644
+--- a/patches/network/09-threaded-irq.patch
++++ b/patches/network/09-threaded-irq.patch
+@@ -6,7 +6,7 @@ thread in process context as well.
+ 
+ --- a/drivers/net/wireless/b43/main.c
+ +++ b/drivers/net/wireless/b43/main.c
+-@@ -4212,8 +4212,13 @@ redo:
++@@ -4240,8 +4240,13 @@ redo:
+  	if (b43_bus_host_is_sdio(dev->dev)) {
+  		b43_sdio_free_irq(dev);
+  	} else {
+@@ -20,7 +20,7 @@ thread in process context as well.
+  	}
+  	mutex_lock(&wl->mutex);
+  	dev = wl->current_dev;
+-@@ -4255,9 +4260,17 @@ static int b43_wireless_core_start(struc
++@@ -4287,9 +4292,17 @@ static int b43_wireless_core_start(struc
+  			goto out;
+  		}
+  	} else {
+@@ -38,7 +38,7 @@ thread in process context as well.
+  		if (err) {
+  			b43err(dev->wl, "Cannot request IRQ-%d\n",
+  			       dev->dev->irq);
+-@@ -5080,6 +5093,10 @@ static int b43_setup_bands(struct b43_wl
++@@ -5112,6 +5125,10 @@ static int b43_setup_bands(struct b43_wl
+  
+  static void b43_wireless_core_detach(struct b43_wldev *dev)
+  {
+@@ -51,7 +51,7 @@ thread in process context as well.
+  	b43_release_firmware(dev);
+ --- a/drivers/net/wireless/b43/b43.h
+ +++ b/drivers/net/wireless/b43/b43.h
+-@@ -859,6 +859,9 @@ struct b43_wldev {
++@@ -864,6 +864,9 @@ struct b43_wldev {
+  	unsigned int tx_count;
+  	unsigned int rx_count;
+  #endif
+diff --git a/patches/network/11-dev-pm-ops.patch b/patches/network/11-dev-pm-ops.patch
+index 6725f80..acc9c62 100644
+--- a/patches/network/11-dev-pm-ops.patch
++++ b/patches/network/11-dev-pm-ops.patch
+@@ -173,7 +173,7 @@ calls on compat code with only slight modifications.
+  static int __init
+ --- a/drivers/net/wireless/iwlegacy/common.c
+ +++ b/drivers/net/wireless/iwlegacy/common.c
+-@@ -4906,8 +4906,17 @@ il_pci_resume(struct device *device)
++@@ -4899,8 +4899,17 @@ il_pci_resume(struct device *device)
+  	return 0;
+  }
+  
+diff --git a/patches/network/16-bluetooth.patch b/patches/network/16-bluetooth.patch
+index a4b6276..419357b 100644
+--- a/patches/network/16-bluetooth.patch
++++ b/patches/network/16-bluetooth.patch
+@@ -462,7 +462,7 @@ here still, but for now we keep this here.
+  	struct rfcomm_dlc *dlc = dev->dlc;
+ --- a/net/bluetooth/sco.c
+ +++ b/net/bluetooth/sco.c
+-@@ -432,8 +432,12 @@ static struct sock *sco_sock_alloc(struc
++@@ -423,8 +423,12 @@ static struct sock *sco_sock_alloc(struc
+  	return sk;
+  }
+  
+@@ -475,7 +475,7 @@ here still, but for now we keep this here.
+  {
+  	struct sock *sk;
+  
+-@@ -662,7 +666,11 @@ static int sco_sock_sendmsg(struct kiocb
++@@ -653,7 +657,11 @@ static int sco_sock_sendmsg(struct kiocb
+  	return err;
+  }
+  
+diff --git a/patches/network/17-netdev-queue.patch b/patches/network/17-netdev-queue.patch
+index 6b10765..3df62f9 100644
+--- a/patches/network/17-netdev-queue.patch
++++ b/patches/network/17-netdev-queue.patch
+@@ -14,7 +14,7 @@ The patch that introduced this on mac80211 was:
+ 
+ --- a/net/mac80211/iface.c
+ +++ b/net/mac80211/iface.c
+-@@ -1589,6 +1589,7 @@ void ieee80211_sdata_stop(struct ieee802
++@@ -1593,6 +1593,7 @@ void ieee80211_sdata_stop(struct ieee802
+   * Remove all interfaces, may only be called at hardware unregistration
+   * time because it doesn't do RCU-safe list removals.
+   */
+@@ -22,7 +22,7 @@ The patch that introduced this on mac80211 was:
+  void ieee80211_remove_interfaces(struct ieee80211_local *local)
+  {
+  	struct ieee80211_sub_if_data *sdata, *tmp;
+-@@ -1616,6 +1617,22 @@ void ieee80211_remove_interfaces(struct
++@@ -1620,6 +1621,22 @@ void ieee80211_remove_interfaces(struct
+  		kfree(sdata);
+  	}
+  }
+diff --git a/patches/network/25-multicast-list_head.patch b/patches/network/25-multicast-list_head.patch
+index bc1b808..7536ca5 100644
+--- a/patches/network/25-multicast-list_head.patch
++++ b/patches/network/25-multicast-list_head.patch
+@@ -651,7 +651,7 @@ This also backport commit 2f787b0b76bf5de2eaa3ca3a29d89123ae03c856
+  	}
+ --- a/include/net/mac80211.h
+ +++ b/include/net/mac80211.h
+-@@ -2343,7 +2343,11 @@ struct ieee80211_ops {
++@@ -2348,7 +2348,11 @@ struct ieee80211_ops {
+  				 u32 changed);
+  
+  	u64 (*prepare_multicast)(struct ieee80211_hw *hw,
+@@ -712,7 +712,7 @@ This also backport commit 2f787b0b76bf5de2eaa3ca3a29d89123ae03c856
+  
+ --- a/net/mac80211/ieee80211_i.h
+ +++ b/net/mac80211/ieee80211_i.h
+-@@ -868,7 +868,12 @@ struct ieee80211_local {
++@@ -872,7 +872,12 @@ struct ieee80211_local {
+  	struct work_struct recalc_smps;
+  
+  	/* aggregated multicast list */
+@@ -741,7 +741,7 @@ This also backport commit 2f787b0b76bf5de2eaa3ca3a29d89123ae03c856
+  		spin_unlock_bh(&local->filter_lock);
+  		netif_addr_unlock_bh(sdata->dev);
+  
+-@@ -899,7 +904,12 @@ static void ieee80211_set_multicast_list
++@@ -890,7 +895,12 @@ static void ieee80211_set_multicast_list
+  		sdata->flags ^= IEEE80211_SDATA_PROMISC;
+  	}
+  	spin_lock_bh(&local->filter_lock);
+diff --git a/patches/network/48-use_skb_get_queue_mapping.patch b/patches/network/48-use_skb_get_queue_mapping.patch
+index f27801d..5ed233b 100644
+--- a/patches/network/48-use_skb_get_queue_mapping.patch
++++ b/patches/network/48-use_skb_get_queue_mapping.patch
+@@ -4,7 +4,7 @@ function always returns something.
+ 
+ --- a/drivers/net/wireless/b43/main.c
+ +++ b/drivers/net/wireless/b43/main.c
+-@@ -3424,11 +3424,11 @@ static void b43_op_tx(struct ieee80211_h
++@@ -3452,11 +3452,11 @@ static void b43_op_tx(struct ieee80211_h
+  	}
+  	B43_WARN_ON(skb_shinfo(skb)->nr_frags);
+  
+@@ -21,7 +21,7 @@ function always returns something.
+  
+ --- a/drivers/net/wireless/b43legacy/main.c
+ +++ b/drivers/net/wireless/b43legacy/main.c
+-@@ -2504,11 +2504,11 @@ static void b43legacy_op_tx(struct ieee8
++@@ -2529,11 +2529,11 @@ static void b43legacy_op_tx(struct ieee8
+  	}
+  	B43legacy_WARN_ON(skb_shinfo(skb)->nr_frags);
+  
+diff --git a/patches/network/62-usb_driver_lpm.patch b/patches/network/62-usb_driver_lpm.patch
+index 1e34b68..b5e4ced 100644
+--- a/patches/network/62-usb_driver_lpm.patch
++++ b/patches/network/62-usb_driver_lpm.patch
+@@ -48,7 +48,7 @@
+  module_usb_driver(bpa10x_driver);
+ --- a/drivers/bluetooth/btusb.c
+ +++ b/drivers/bluetooth/btusb.c
+-@@ -1223,7 +1223,9 @@ static struct usb_driver btusb_driver =
++@@ -1224,7 +1224,9 @@ static struct usb_driver btusb_driver =
+  #endif
+  	.id_table	= btusb_table,
+  	.supports_autosuspend = 1,
+@@ -60,7 +60,7 @@
+  module_usb_driver(btusb_driver);
+ --- a/drivers/net/usb/cdc_ether.c
+ +++ b/drivers/net/usb/cdc_ether.c
+-@@ -716,7 +716,9 @@ static struct usb_driver cdc_driver = {
++@@ -731,7 +731,9 @@ static struct usb_driver cdc_driver = {
+  	.resume =	usbnet_resume,
+  	.reset_resume =	usbnet_resume,
+  	.supports_autosuspend = 1,
+@@ -180,7 +180,7 @@
+  module_usb_driver(orinoco_driver);
+ --- a/drivers/net/wireless/p54/p54usb.c
+ +++ b/drivers/net/wireless/p54/p54usb.c
+-@@ -1142,7 +1142,9 @@ static struct usb_driver p54u_driver = {
++@@ -1146,7 +1146,9 @@ static struct usb_driver p54u_driver = {
+  #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27))
+  	.soft_unbind = 1,
+  #endif
+-- 
+1.7.10.4
