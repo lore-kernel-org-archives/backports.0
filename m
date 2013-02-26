@@ -1,43 +1,148 @@
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <hauke@hauke-m.de>
-Message-ID: <5129FD42.5020202@hauke-m.de>
-Date: Sun, 24 Feb 2013 12:45:06 +0100
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Walter Goldens <goldenstranger@yahoo.com>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
- "Luis R. Rodriguez" <mcgrof@gmail.com>,
- "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: compat-wireless/drivers - slew of warnings and issues (older
- kernel)
-References: <1361616101.52110.YahooMailNeo@web124704.mail.ne1.yahoo.com>
-In-Reply-To: <1361616101.52110.YahooMailNeo@web124704.mail.ne1.yahoo.com>
-Content-Type: text/plain; charset=UTF-8
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH for 3.8 1/8] compat-drivers: remove devinit and devexit from alx driver
+Date: Tue, 26 Feb 2013 21:42:28 +0100
+Message-Id: <1361911355-29256-2-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361911355-29256-1-git-send-email-hauke@hauke-m.de>
+References: <1361911355-29256-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-On 02/23/2013 11:41 AM, Walter Goldens wrote:
-> A recent (stable) compat-wireless/drivers compilation exhibited a great deal of warnings on an older kernel (2.6.24  to 2.6.30 I think). Is 2.6.24 still supported?
+Upstream commit 300a589a5c74a4b09de2095599581914364c96b1
 
-What version of compat-drivers are you using?
-What version of gcc are your using?
+devinit and devexit were removed from kernel version 3.8 and using it
+causes compile problems.
 
-Some parts of compat-drivers are still compiling against kernel 2.6.24,
-but I would not recommend using a so old kernel. I haven't done run time
-testes with 2.6.24 for a long time.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../network/0003-alx-remove-devinit-devexit.patch  |  116 ++++++++++++++++++++
+ 1 file changed, 116 insertions(+)
+ create mode 100644 patches/unified-drivers/network/0003-alx-remove-devinit-devexit.patch
 
-> Also, there was an issue with 50-compat_firmware.rules. Ubuntu 8.04 looks for it at /lib/udev/rules.d/ which gave me severe problems with firmware loading and system freezes. I had to copy/symlink 50-compat_firmware.rules from /lib/udev/rules.d/ to /etc/udev/rules.d/.
-
-Could you provide a patch for this, I do not have a ubuntu 8.04
-installation any more, this is pretty old.
-
-> Warning log (partial). It compiles, but warnings galore. Is anyone up for backporting?
-> 
->   CC [M]  /drivers/net/wireless/rt2x00/rt2x00dev.o
-> /include/net/cfg80211.h: In function ‘wiphy_name’:
-> /include/net/cfg80211.h:2676: warning: passing argument 1 of ‘dev_name’ discards qualifiers from pointer target type
-
-I do not get these warnings when compiling compat-drivers-3.8 against
-kernel 2.6.30. There are some other warnings with gcc 4.7 therefor I
-used "export KCFLAGS="-Wno-unused-but-set-variable"" with these old
-kernels, newer kernel versions already do this in the main Makefile.
-
-Hauke
+diff --git a/patches/unified-drivers/network/0003-alx-remove-devinit-devexit.patch b/patches/unified-drivers/network/0003-alx-remove-devinit-devexit.patch
+new file mode 100644
+index 0000000..0b0ba96
+--- /dev/null
++++ b/patches/unified-drivers/network/0003-alx-remove-devinit-devexit.patch
+@@ -0,0 +1,116 @@
++--- a/drivers/net/ethernet/atheros/alx/alx.h
+++++ b/drivers/net/ethernet/atheros/alx/alx.h
++@@ -190,7 +190,7 @@ struct alx_adapter {
++ 
++ /* needed by alx_ethtool.c */
++ extern void alx_reinit(struct alx_adapter *adpt);
++-extern void __devinit alx_set_ethtool_ops(struct net_device *dev);
+++extern void alx_set_ethtool_ops(struct net_device *dev);
++ extern char alx_drv_name[];
++ extern char alx_drv_version[];
++ 
++--- a/drivers/net/ethernet/atheros/alx/alx_ethtool.c
+++++ b/drivers/net/ethernet/atheros/alx/alx_ethtool.c
++@@ -965,7 +965,7 @@ static const struct ethtool_ops alx_etht
++ 	.set_priv_flags  = alx_set_priv_flags,
++ };
++ 
++-void __devinit alx_set_ethtool_ops(struct net_device *dev)
+++void alx_set_ethtool_ops(struct net_device *dev)
++ {
++ 	SET_ETHTOOL_OPS(dev, &alx_ethtool_ops);
++ }
++--- a/drivers/net/ethernet/atheros/alx/alx_hw.c
+++++ b/drivers/net/ethernet/atheros/alx/alx_hw.c
++@@ -1379,12 +1379,12 @@ void __alx_update_hw_stats(struct alx_hw
++ 	}
++ }
++ 
++-static const struct alx_platform_patch plats[] __devinitdata = {
+++static const struct alx_platform_patch plats[] = {
++ {0x1091, 0x00, 0x1969, 0x0091, 0x1001},
++ {0},
++ };
++ 
++-void __devinit alx_patch_assign(struct alx_hw *hw)
+++void alx_patch_assign(struct alx_hw *hw)
++ {
++ 	int i = 0;
++ 
++@@ -1403,7 +1403,7 @@ void __devinit alx_patch_assign(struct a
++ 	}
++ }
++ 
++-bool __devinit alx_get_phy_info(struct alx_hw *hw)
+++bool alx_get_phy_info(struct alx_hw *hw)
++ {
++ 	u16  devs1, devs2;
++ 
++--- a/drivers/net/ethernet/atheros/alx/alx_hw.h
+++++ b/drivers/net/ethernet/atheros/alx/alx_hw.h
++@@ -674,7 +674,7 @@ struct alx_platform_patch {
++ #define ALX_PF_ANY_REV		0x10000
++ 
++ 
++-void __devinit alx_patch_assign(struct alx_hw *hw);
++-bool __devinit alx_get_phy_info(struct alx_hw *hw);
+++void alx_patch_assign(struct alx_hw *hw);
+++bool alx_get_phy_info(struct alx_hw *hw);
++ 
++ #endif
++--- a/drivers/net/ethernet/atheros/alx/alx_main.c
+++++ b/drivers/net/ethernet/atheros/alx/alx_main.c
++@@ -1007,7 +1007,7 @@ static void alx_free_irq(struct alx_adap
++ }
++ 
++ 
++-static int __devinit alx_identify_hw(struct alx_adapter *adpt)
+++static int alx_identify_hw(struct alx_adapter *adpt)
++ {
++ 	struct pci_dev *pdev = adpt->pdev;
++ 	struct alx_hw *hw = &adpt->hw;
++@@ -1045,7 +1045,7 @@ static int __devinit alx_identify_hw(str
++ }
++ 
++ 
++-static const u8 def_rss_key[40] __devinitdata = {
+++static const u8 def_rss_key[40] = {
++ 	0xE2, 0x91, 0xD7, 0x3D, 0x18, 0x05, 0xEC, 0x6C,
++ 	0x2A, 0x94, 0xB3, 0x0D, 0xA5, 0x4F, 0x2B, 0xEC,
++ 	0xEA, 0x49, 0xAF, 0x7C, 0xE2, 0x14, 0xAD, 0x3D,
++@@ -1071,7 +1071,7 @@ static void alx_init_def_rss_idt(struct
++  *    initialize general software structure (struct alx_adapter).
++  *    fields are inited based on PCI device information.
++  */
++-static int __devinit alx_init_sw(struct alx_adapter *adpt)
+++static int alx_init_sw(struct alx_adapter *adpt)
++ {
++ 	struct pci_dev	*pdev = adpt->pdev;
++ 	struct alx_hw *hw = &adpt->hw;
++@@ -2484,7 +2484,7 @@ static const struct net_device_ops alx_n
++ };
++ 
++ /* alx_probe - Device Initialization Routine */
++-static int __devinit
+++static int
++ alx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
++ {
++ 	struct net_device *netdev;
++@@ -2704,7 +2704,7 @@ err_dma_mask:
++ }
++ 
++ /* alx_remove - Device Removal Routine */
++-static void __devexit alx_remove(struct pci_dev *pdev)
+++static void alx_remove(struct pci_dev *pdev)
++ {
++ 	struct alx_adapter *adpt = pci_get_drvdata(pdev);
++ 	struct alx_hw *hw = &adpt->hw;
++@@ -2826,7 +2826,7 @@ static struct pci_driver alx_driver = {
++ 	.name        = alx_drv_name,
++ 	.id_table    = alx_pci_tbl,
++ 	.probe       = alx_probe,
++-	.remove      = __devexit_p(alx_remove),
+++	.remove      = alx_remove,
++ 	.shutdown    = alx_shutdown,
++ 	.err_handler = &alx_err_handler,
++ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,29))
+-- 
+1.7.10.4
