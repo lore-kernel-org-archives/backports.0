@@ -4,39 +4,40 @@ From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH for 3.7 0/6] compat-drivers: fixes for linux-3.7.y
-Date: Tue, 26 Feb 2013 21:46:54 +0100
-Message-Id: <1361911620-29333-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 09/24] compat-drivers: make patches apply again
+Date: Tue, 26 Feb 2013 21:38:01 +0100
+Message-Id: <1361911096-29117-10-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361911096-29117-1-git-send-email-hauke@hauke-m.de>
+References: <1361911096-29117-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-This are some backports and patch refreshes for the linux-3.7.y branch.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../network/45-remove-platform-id-table.patch                    |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Hauke Mehrtens (4):
-  compat-drivers: rename drm config symbols
-  compat-drivers: refresh patches
-  compat-drivers: refresh patches
-  compat-drivers: move disable_drm
-
-Luis R. Rodriguez (2):
-  compat-drivers: add disable_drm to driver-select
-  compat-drivers: disable DRM drivers for 802.11 drivers
-
- patches/drm/04-revert-prime-support.patch          |   12 +-
- patches/drm/06-rename-config-options.patch         |  138 ++++++++++++++++++++
- patches/drm/07-intel-gtt.patch                     |    2 +-
- patches/network/0001-netdev_ops.patch              |    6 +-
- patches/network/0002-net-misc.patch                |    2 +-
- patches/network/04-netns.patch                     |    8 +-
- patches/network/05-usb.patch                       |    2 +-
- patches/network/09-threaded-irq.patch              |    8 +-
- patches/network/11-dev-pm-ops.patch                |    2 +-
- patches/network/16-bluetooth.patch                 |    4 +-
- patches/network/17-netdev-queue.patch              |    4 +-
- patches/network/25-multicast-list_head.patch       |    6 +-
- patches/network/48-use_skb_get_queue_mapping.patch |    4 +-
- patches/network/62-usb_driver_lpm.patch            |    6 +-
- scripts/driver-select                              |    7 +
- 15 files changed, 178 insertions(+), 33 deletions(-)
-
+diff --git a/patches/collateral-evolutions/network/45-remove-platform-id-table.patch b/patches/collateral-evolutions/network/45-remove-platform-id-table.patch
+index 29c4e73..c14a8b1 100644
+--- a/patches/collateral-evolutions/network/45-remove-platform-id-table.patch
++++ b/patches/collateral-evolutions/network/45-remove-platform-id-table.patch
+@@ -1,7 +1,7 @@
+ --- a/drivers/net/wireless/ti/wl12xx/main.c
+ +++ b/drivers/net/wireless/ti/wl12xx/main.c
+-@@ -1725,16 +1725,20 @@ out:
+- 	return ret;
++@@ -1813,16 +1813,20 @@ out:
++ 	return wlcore_remove(pdev);
+  }
+  
+ +#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30)
+@@ -14,7 +14,7 @@
+  
+  static struct platform_driver wl12xx_driver = {
+  	.probe		= wl12xx_probe,
+- 	.remove		= wlcore_remove,
++ 	.remove		= wl12xx_remove,
+ +#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30)
+  	.id_table	= wl12xx_id_table,
+ +#endif
 -- 
 1.7.10.4
