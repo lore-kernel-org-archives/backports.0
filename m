@@ -1,94 +1,46 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <hauke@hauke-m.de>
-Message-ID: <512D2646.6070900@hauke-m.de>
-Date: Tue, 26 Feb 2013 22:16:54 +0100
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
 To: mcgrof@do-not-panic.com
-CC: backports@vger.kernel.org
-Subject: compat-drivers: pull request for linux-3.8.y branch
-Content-Type: text/plain; charset=ISO-8859-1
+Cc: backports@vger.kernel.org
+Subject: [PATCH for 3.7 3/6] compat-drivers: add disable_drm to driver-select
+Date: Tue, 26 Feb 2013 21:46:57 +0100
+Message-Id: <1361911620-29333-4-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361911620-29333-1-git-send-email-hauke@hauke-m.de>
+References: <1361911620-29333-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-Hi Luis,
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-please pull these changes and also pull the tags I made into your
-repository so it is easy to find the code base matching the releases.
+Upstream commit 465d036de8310671c5ed6ad161276d30c05f952b
 
-The following changes since commit 86fadae07896ba4ee76195f1f49ff26083704944:
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ scripts/driver-select |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-  compat-drivers: fix driver-select for atheros drivers (2013-01-21
-16:36:11 -0800)
-
-are available in the git repository at:
-
-  git://github.com/hauke/compat-drivers.git tags/compat-drivers-v3.8-1
-
-for you to fetch changes up to 041d0a49f2e2b22a51a7cbfc4187aec91073ccb7:
-
-  compat-drivers: refresh patches (2013-02-20 13:11:18 +0100)
-
-----------------------------------------------------------------
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.65              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.38              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.32              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.9               [  OK  ]
-25  3.8.0               [  OK  ]
-
-----------------------------------------------------------------
-Hauke Mehrtens (8):
-      compat-drivers: remove devinit and devexit from alx driver
-      compat-drivers: deactivate loopback testing for older kernels
-      compat-drivers: do not treat a warning as error
-      compat-drivers: refresh patches
-      compat-drivers: update genlog-3.8 for rc5
-      compat-drivers: refresh patches
-      compat-drivers: move disable_drm
-      compat-drivers: refresh patches
-
- patches/collateral-evolutions/drm/03-swiotlb.patch |   12 +-
- .../drm/04-revert-prime-support.patch              |   18 +--
- .../drm/06-rename-config-options.patch             |    4 +-
- .../network/0001-netdev_ops.patch                  |    4 +-
- .../network/11-dev-pm-ops.patch                    |    6 +-
- .../network/12-mac80211-disable-tx-status.patch    |    4 +-
- .../network/14-device-type.patch                   |    2 +-
- .../collateral-evolutions/network/24-pcmcia.patch  |    2 +-
- .../network/40-netdev-hw-features.patch            |    6 +-
- .../network/54-get_ts_info.patch                   |    2 +-
- .../network/61-netdev-addr_assign_type.patch       |    2 +-
- .../network/62-usb_driver_lpm.patch                |    4 +-
- .../network/68-do-not-add-Werror.patch             |    8 ++
- .../network/0001-backport-alx.patch                |   16 +--
- .../network/0003-alx-remove-devinit-devexit.patch  |  116
-++++++++++++++++++++
- .../0004-alx-deactivate-loopback-test.patch        |   25 +++++
- scripts/driver-select                              |    2 +-
- scripts/genlog-3.8                                 |    2 +-
- 18 files changed, 192 insertions(+), 43 deletions(-)
- create mode 100644
-patches/collateral-evolutions/network/68-do-not-add-Werror.patch
- create mode 100644
-patches/unified-drivers/network/0003-alx-remove-devinit-devexit.patch
- create mode 100644
-patches/unified-drivers/network/0004-alx-deactivate-loopback-test.patch
+diff --git a/scripts/driver-select b/scripts/driver-select
+index 885033f..e5cc177 100755
+--- a/scripts/driver-select
++++ b/scripts/driver-select
+@@ -183,6 +183,10 @@ function disable_80211 {
+ 	perl -i -ne 'print if ! /CONFIG_COMPAT_WIRELESS/' Makefile
+ }
+ 
++function disable_drm {
++	perl -i -ne 'print if ! /CONFIG_COMPAT_VIDEO_MODULES/' Makefile
++}
++
+ function disable_bt_usb_ethernet {
+ 	backup_file Makefile
+ 	disable_usbnet
+@@ -205,6 +209,7 @@ function enable_only_ethernet {
+ 	disable_usbnet
+ 	disable_var_03
+ 	disable_bt
++	disable_drm
+ 	# rfkill may be needed if you enable b44 as you may have b43
+ 	disable_rfkill
+ 	disable_80211
+-- 
+1.7.10.4
