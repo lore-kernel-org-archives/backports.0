@@ -4,37 +4,39 @@ From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 16/24] compat-drivers: add missing include linux/export.h
-Date: Tue, 26 Feb 2013 21:38:08 +0100
-Message-Id: <1361911096-29117-17-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 20/24] compat-drivers: move disable_drm
+Date: Tue, 26 Feb 2013 21:38:12 +0100
+Message-Id: <1361911096-29117-21-git-send-email-hauke@hauke-m.de>
 In-Reply-To: <1361911096-29117-1-git-send-email-hauke@hauke-m.de>
 References: <1361911096-29117-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
+drm should be disabled when disable_bt_usb_ethernet is selected. This
+disables drm also for e.g. b43.
+
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- patches/collateral-evolutions/network/06-header-changes.patch |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ scripts/driver-select |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/patches/collateral-evolutions/network/06-header-changes.patch b/patches/collateral-evolutions/network/06-header-changes.patch
-index ca62bd3..647ce84 100644
---- a/patches/collateral-evolutions/network/06-header-changes.patch
-+++ b/patches/collateral-evolutions/network/06-header-changes.patch
-@@ -75,6 +75,15 @@ cases.
-  
-  /**
-   * DOC: Key handling basics
-+--- a/net/mac80211/pm.c
-++++ b/net/mac80211/pm.c
-+@@ -1,5 +1,6 @@
-+ #include <net/mac80211.h>
-+ #include <net/rtnetlink.h>
-++#include <linux/export.h>
-+ 
-+ #include "ieee80211_i.h"
-+ #include "mesh.h"
- --- a/net/bluetooth/bnep/sock.c
- +++ b/net/bluetooth/bnep/sock.c
- @@ -26,6 +26,7 @@
+diff --git a/scripts/driver-select b/scripts/driver-select
+index 2c9f145..4f71e34 100755
+--- a/scripts/driver-select
++++ b/scripts/driver-select
+@@ -193,13 +193,13 @@ function disable_bt_usb_ethernet {
+ 	disable_ethernet
+ 	disable_bt
+ 	disable_update-initramfs
++	disable_drm
+ }
+ 
+ function disable_bt_usb_ethernet_var {
+ 	backup_file Makefile
+ 	disable_bt_usb_ethernet
+ 	disable_var_03
+-	disable_drm
+ }
+ 
+ function enable_only_ethernet {
 -- 
 1.7.10.4
