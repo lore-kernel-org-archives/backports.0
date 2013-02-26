@@ -4,32 +4,44 @@ From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH for 3.8 0/9] compat: many patches with many fixes
-Date: Tue, 26 Feb 2013 22:03:03 +0100
-Message-Id: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH for 3.7 5/8] compat: include linux/compat-3.8.h
+Date: Tue, 26 Feb 2013 22:05:42 +0100
+Message-Id: <1361912745-29665-6-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361912745-29665-1-git-send-email-hauke@hauke-m.de>
+References: <1361912745-29665-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-These are backports of some patches for the compat linux-3.8.y branch.
+This header file was not included in this branch.
+This also fixes a compile problem in linux/compat-3.8.h.
 
-Felix Fietkau (1):
-  compat: fix compile errors when assembly is built into modules
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ include/linux/compat-2.6.h |    1 +
+ include/linux/compat-3.8.h |    2 ++
+ 2 files changed, 3 insertions(+)
 
-Hauke Mehrtens (8):
-  compat: do not access default_ethtool_ops
-  compat: ckmake: make return code 2 is error
-  compat: ckmake: remove lots of warning spam for the log
-  compat: ckmake: do not start all build at the same time
-  compat: add efi_enabled()
-  compat: netdev_set_default_ethtool_ops() is not in kernel 3.7.5
-  compat: check if efi_enabled() was already backported
-  compat: deactivate netdev_set_default_ethtool_ops() for some 3.7
-    kernels
-
- bin/ckmake                 |   12 ++++-----
- compat/compat-3.8.c        |   15 ++---------
- include/linux/compat-2.6.h |    4 +++
- include/linux/compat-3.8.h |   60 +++++++++++++++++++++++++++++++++++++++++++-
- 4 files changed, 71 insertions(+), 20 deletions(-)
-
+diff --git a/include/linux/compat-2.6.h b/include/linux/compat-2.6.h
+index 7a8409f..34c49e6 100644
+--- a/include/linux/compat-2.6.h
++++ b/include/linux/compat-2.6.h
+@@ -68,6 +68,7 @@ void compat_dependency_symbol(void);
+ #include <linux/compat-3.5.h>
+ #include <linux/compat-3.6.h>
+ #include <linux/compat-3.7.h>
++#include <linux/compat-3.8.h>
+ 
+ #endif /* __ASSEMBLY__ */
+ 
+diff --git a/include/linux/compat-3.8.h b/include/linux/compat-3.8.h
+index 1a3c320..60a08d2 100644
+--- a/include/linux/compat-3.8.h
++++ b/include/linux/compat-3.8.h
+@@ -10,4 +10,6 @@
+ extern void netdev_set_default_ethtool_ops(struct net_device *dev,
+ 					   const struct ethtool_ops *ops);
+ 
++#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)) */
++
+ #endif /* LINUX_3_8_COMPAT_H */
 -- 
 1.7.10.4
