@@ -4,65 +4,90 @@ From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 16/23] compat: move tty_flip_buffer_push() and tty_insert_flip_string()
-Date: Tue, 26 Feb 2013 21:59:07 +0100
-Message-Id: <1361912354-29498-17-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 12/23] compat: backport idr_alloc() usage
+Date: Tue, 26 Feb 2013 21:59:03 +0100
+Message-Id: <1361912354-29498-13-git-send-email-hauke@hauke-m.de>
 In-Reply-To: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
 References: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-These backports are also needed for kernel 3.7 and 3.8.
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+This backports a patch series send by Tejun Heo:
+https://lkml.org/lkml/2013/2/2/159
 ---
- include/linux/compat-3.7.h |    4 ----
- include/linux/compat-3.9.h |    5 +++++
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ include/linux/compat-2.6.h |    1 +
+ include/linux/compat-3.9.h |   52 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+)
+ create mode 100644 include/linux/compat-3.9.h
 
-diff --git a/include/linux/compat-3.7.h b/include/linux/compat-3.7.h
-index 03c5ce4..6b1d2cf 100644
---- a/include/linux/compat-3.7.h
-+++ b/include/linux/compat-3.7.h
-@@ -13,7 +13,6 @@
- #include <linux/user_namespace.h>
- #include <linux/file.h>
- #include <linux/seq_file.h>
--#include <linux/tty_flip.h>
- #include <net/netlink.h>
+diff --git a/include/linux/compat-2.6.h b/include/linux/compat-2.6.h
+index 34c49e6..68e95d5 100644
+--- a/include/linux/compat-2.6.h
++++ b/include/linux/compat-2.6.h
+@@ -69,6 +69,7 @@ void compat_dependency_symbol(void);
+ #include <linux/compat-3.6.h>
+ #include <linux/compat-3.7.h>
+ #include <linux/compat-3.8.h>
++#include <linux/compat-3.9.h>
  
- #define VM_DONTDUMP    VM_NODUMP
-@@ -198,9 +197,6 @@ static inline s64 nla_get_s64(struct nlattr *nla)
- 	return tmp;
- }
+ #endif /* __ASSEMBLY__ */
  
--#define tty_flip_buffer_push(port) tty_flip_buffer_push((port)->tty)
--#define tty_insert_flip_string(port, chars, size) tty_insert_flip_string((port)->tty, chars, size)
--
- #else /* (LINUX_VERSION_CODE > KERNEL_VERSION(3,7,0)) */
- #define netlink_notify_portid(__notify) (__notify->portid)
- #define genl_info_snd_portid(__genl_info) (__genl_info->snd_portid)
 diff --git a/include/linux/compat-3.9.h b/include/linux/compat-3.9.h
-index f472cf8..ff1b386 100644
---- a/include/linux/compat-3.9.h
+new file mode 100644
+index 0000000..b6cd415
+--- /dev/null
 +++ b/include/linux/compat-3.9.h
-@@ -11,6 +11,8 @@
- #include <linux/rculist.h>
- #endif
- #include <net/sock.h>
-+#include <linux/tty.h>
-+#include <linux/tty_flip.h>
- 
- /* include this before changing hlist_for_each_* to use the old versions. */
- #include <net/sch_generic.h>
-@@ -116,6 +118,9 @@ static inline void idr_preload_end(void)
- #define sk_for_each(__sk, list) \
- 	hlist_for_each_entry(__sk, list, sk_node)
- 
-+#define tty_flip_buffer_push(port) tty_flip_buffer_push((port)->tty)
-+#define tty_insert_flip_string(port, chars, size) tty_insert_flip_string((port)->tty, chars, size)
+@@ -0,0 +1,52 @@
++#ifndef LINUX_3_9_COMPAT_H
++#define LINUX_3_9_COMPAT_H
 +
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)) */
- 
- #endif /* LINUX_3_9_COMPAT_H */
++#include <linux/version.h>
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0))
++
++#include <linux/idr.h>
++
++
++/**
++ * backport of idr idr_alloc() usage
++ * 
++ * This backports a patch series send by Tejun Heo:
++ * https://lkml.org/lkml/2013/2/2/159
++ */
++static inline void compat_idr_destroy(struct idr *idp)
++{
++	idr_remove_all(idp);
++	idr_destroy(idp);
++}
++#define idr_destroy(idp) compat_idr_destroy(idp)
++
++static inline int idr_alloc(struct idr *idr, void *ptr, int start, int end,
++			    gfp_t gfp_mask)
++{
++	int id, ret;
++
++	do {
++		if (!idr_pre_get(idr, gfp_mask))
++			return -ENOMEM;
++		ret = idr_get_new_above(idr, ptr, start, &id);
++		if (!ret && id > end) {
++			idr_remove(idr, id);
++			ret = -ENOSPC;
++		}
++	} while (ret == -EAGAIN);
++
++	return ret ? ret : id;
++}
++
++static inline void idr_preload(gfp_t gfp_mask)
++{
++}
++
++static inline void idr_preload_end(void)
++{
++}
++
++#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)) */
++
++#endif /* LINUX_3_9_COMPAT_H */
 -- 
 1.7.10.4
