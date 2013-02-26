@@ -1,86 +1,42 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:34696 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759860Ab3BZVDV (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 26 Feb 2013 16:03:21 -0500
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <hauke@hauke-m.de>
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Felix Fietkau <nbd@openwrt.org>,
+Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH for 3.8 1/9] compat: fix compile errors when assembly is built into modules
-Date: Tue, 26 Feb 2013 22:03:04 +0100
-Message-Id: <1361912592-29591-2-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
-References: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
-Sender: backports-owner@vger.kernel.org
+Subject: [PATCH 17/24] compat-drivers: do not include videomode headers when this feature is deactivated
+Date: Tue, 26 Feb 2013 21:38:09 +0100
+Message-Id: <1361911096-29117-18-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361911096-29117-1-git-send-email-hauke@hauke-m.de>
+References: <1361911096-29117-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-From: Felix Fietkau <nbd@openwrt.org>
-
-Upstream commit a04996415774e7bfe7bd95ef0013b13fd12eb6b2
-
-On powerpc, modules can be compiled and linked with an assembly file, adding
-missing symbols that the compiler references when using -Os.
-
-== ckmake-report.log ==
-
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.50              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.33              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.17              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.5               [  OK  ]
-24  3.7.0               [  OK  ]
-
-real    0m33.803s
-user    11m24.519s
-sys     3m39.690s
-
-Signed-off-by: Felix Fietkau <nbd@openwrt.org>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- include/linux/compat-2.6.h |    4 ++++
- 1 file changed, 4 insertions(+)
+ .../drm/11-videomode-includes.patch                     |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+ create mode 100644 patches/collateral-evolutions/drm/11-videomode-includes.patch
 
-diff --git a/include/linux/compat-2.6.h b/include/linux/compat-2.6.h
-index 00a5eda..34c49e6 100644
---- a/include/linux/compat-2.6.h
-+++ b/include/linux/compat-2.6.h
-@@ -1,6 +1,8 @@
- #ifndef LINUX_26_COMPAT_H
- #define LINUX_26_COMPAT_H
- 
-+#ifndef __ASSEMBLY__
-+
- #include <linux/version.h>
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0))
- #include <linux/kconfig.h>
-@@ -68,4 +70,6 @@ void compat_dependency_symbol(void);
- #include <linux/compat-3.7.h>
- #include <linux/compat-3.8.h>
- 
-+#endif /* __ASSEMBLY__ */
-+
- #endif /* LINUX_26_COMPAT_H */
+diff --git a/patches/collateral-evolutions/drm/11-videomode-includes.patch b/patches/collateral-evolutions/drm/11-videomode-includes.patch
+new file mode 100644
+index 0000000..1858cc3
+--- /dev/null
++++ b/patches/collateral-evolutions/drm/11-videomode-includes.patch
+@@ -0,0 +1,15 @@
++--- a/drivers/gpu/drm/drm_modes.c
+++++ b/drivers/gpu/drm/drm_modes.c
++@@ -35,8 +35,12 @@
++ #include <linux/export.h>
++ #include <drm/drmP.h>
++ #include <drm/drm_crtc.h>
+++#if IS_ENABLED(CONFIG_OF_VIDEOMODE)
++ #include <video/of_videomode.h>
+++#endif
+++#if IS_ENABLED(CONFIG_VIDEOMODE)
++ #include <video/videomode.h>
+++#endif
++ 
++ /**
++  * drm_mode_debug_printmodeline - debug print a mode
 -- 
 1.7.10.4
-
