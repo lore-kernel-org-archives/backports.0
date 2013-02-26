@@ -4,55 +4,54 @@ From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH for 3.7 7/8] compat: deactivate netdev_set_default_ethtool_ops() for some 3.7 kernels
-Date: Tue, 26 Feb 2013 22:05:44 +0100
-Message-Id: <1361912745-29665-8-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361912745-29665-1-git-send-email-hauke@hauke-m.de>
-References: <1361912745-29665-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 20/23] compat: backport of lock_map_acquire_read()
+Date: Tue, 26 Feb 2013 21:59:11 +0100
+Message-Id: <1361912354-29498-21-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
+References: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-Upstream commit 4971ae5e2075a284ff36a68cab7c3f407a852801
+This is a backport of:
 
-netdev_set_default_ethtool_ops() was backported in 3.7.8 and compat
-should not ship it on any more recent versions any more.
+commit e159489baa717dbae70f9903770a6a4990865887
+Author: Tejun Heo <tj@kernel.org>
+Date:   Sun Jan 9 23:32:15 2011 +0100
+
+    workqueue: relax lockdep annotation on flush_work()
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- compat/compat-3.8.c        |    2 ++
- include/linux/compat-3.8.h |    2 ++
- 2 files changed, 4 insertions(+)
+ include/linux/compat-2.6.38.h |   18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/compat/compat-3.8.c b/compat/compat-3.8.c
-index 91518f2..82730f2 100644
---- a/compat/compat-3.8.c
-+++ b/compat/compat-3.8.c
-@@ -10,6 +10,7 @@
+diff --git a/include/linux/compat-2.6.38.h b/include/linux/compat-2.6.38.h
+index 8dfeed6..e936c42 100644
+--- a/include/linux/compat-2.6.38.h
++++ b/include/linux/compat-2.6.38.h
+@@ -174,6 +174,24 @@ extern int __build_bug_on_failed;
+ 	} while(0)
+ #endif
  
- #include <linux/netdevice.h>
- 
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,8))
- void netdev_set_default_ethtool_ops(struct net_device *dev,
- 				    const struct ethtool_ops *ops)
- {
-@@ -17,3 +18,4 @@ void netdev_set_default_ethtool_ops(struct net_device *dev,
- 		dev->ethtool_ops = ops;
- }
- EXPORT_SYMBOL_GPL(netdev_set_default_ethtool_ops);
++/* Backport of:
++ *
++ * commit e159489baa717dbae70f9903770a6a4990865887
++ * Author: Tejun Heo <tj@kernel.org>
++ * Date:   Sun Jan 9 23:32:15 2011 +0100
++ *
++ *     workqueue: relax lockdep annotation on flush_work()
++ */
++#ifdef CONFIG_DEBUG_LOCK_ALLOC
++# ifdef CONFIG_PROVE_LOCKING
++#  define lock_map_acquire_read(l)	lock_acquire(l, 0, 0, 2, 2, NULL, _THIS_IP_)
++# else
++#  define lock_map_acquire_read(l)	lock_acquire(l, 0, 0, 2, 1, NULL, _THIS_IP_)
++# endif
++#else
++# define lock_map_acquire_read(l)		do { } while (0)
 +#endif
-diff --git a/include/linux/compat-3.8.h b/include/linux/compat-3.8.h
-index 60a08d2..0879101 100644
---- a/include/linux/compat-3.8.h
-+++ b/include/linux/compat-3.8.h
-@@ -7,8 +7,10 @@
++
+ #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,38)) */
  
- #include <linux/netdevice.h>
- 
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,8))
- extern void netdev_set_default_ethtool_ops(struct net_device *dev,
- 					   const struct ethtool_ops *ops);
-+#endif
- 
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)) */
- 
+ #endif /* LINUX_26_38_COMPAT_H */
 -- 
 1.7.10.4
