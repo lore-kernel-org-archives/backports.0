@@ -4,52 +4,49 @@ From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 04/23] compat: ckmake: make return code 2 is error
-Date: Tue, 26 Feb 2013 21:58:55 +0100
-Message-Id: <1361912354-29498-5-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
-References: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 12/24] compat-drivers: add missing include for export
+Date: Tue, 26 Feb 2013 21:38:04 +0100
+Message-Id: <1361911096-29117-13-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361911096-29117-1-git-send-email-hauke@hauke-m.de>
+References: <1361911096-29117-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-If make returns 2 it should be treat as an error and not as ok.
-The documentation says 2 is returned if make encountered an error:
-https://www.gnu.org/software/make/manual/html_node/Running.html
+drivers/net/wireless/ti/wlcore/scan.c and drivers/net/wireless/ti/wlcore
+/event.c need an #include <linux/export.h> to add EXPORT_SYMBOL_GPL on
+kernel 3.2 and 3.3.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- bin/ckmake |    6 ------
- 1 file changed, 6 deletions(-)
+ .../network/06-header-changes.patch                |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/bin/ckmake b/bin/ckmake
-index 34bfb09..c821b0a 100755
---- a/bin/ckmake
-+++ b/bin/ckmake
-@@ -62,8 +62,6 @@ def get_processed_rel(i):
- def get_status_name(status):
- 	if (status == 0):
- 		return 'OK'
--	if (status == 2):
--		return 'OK'
- 	elif (status == 130):
- 		return 'TERM'
- 	elif (status == 1234):
-@@ -76,8 +74,6 @@ def get_status_name(status):
- def get_stat_pos(status):
- 	if (status == 0):
- 		return 34
--	if (status == 2):
--		return 34
- 	elif (status == 130):
- 		return 33
- 	elif (status == 1234):
-@@ -90,8 +86,6 @@ def get_stat_pos(status):
- def get_status_color(status):
- 	if (status == 0):
- 		return curses.color_pair(1)
--	if (status == 2):
--		return curses.color_pair(1)
- 	elif (status == 130):
- 		return curses.color_pair(2)
- 	elif (status == 1234):
+diff --git a/patches/collateral-evolutions/network/06-header-changes.patch b/patches/collateral-evolutions/network/06-header-changes.patch
+index a619fa7..ca62bd3 100644
+--- a/patches/collateral-evolutions/network/06-header-changes.patch
++++ b/patches/collateral-evolutions/network/06-header-changes.patch
+@@ -145,3 +145,23 @@ cases.
+  
+  /**
+   * DOC: Introduction
++--- a/drivers/net/wireless/ti/wlcore/event.c
+++++ b/drivers/net/wireless/ti/wlcore/event.c
++@@ -21,6 +21,7 @@
++  *
++  */
++ 
+++#include <linux/export.h>
++ #include "wlcore.h"
++ #include "debug.h"
++ #include "io.h"
++--- a/drivers/net/wireless/ti/wlcore/scan.c
+++++ b/drivers/net/wireless/ti/wlcore/scan.c
++@@ -22,6 +22,7 @@
++  */
++ 
++ #include <linux/ieee80211.h>
+++#include <linux/export.h>
++ 
++ #include "wlcore.h"
++ #include "debug.h"
 -- 
 1.7.10.4
