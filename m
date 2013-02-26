@@ -4,44 +4,43 @@ From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH for 3.7 5/8] compat: include linux/compat-3.8.h
-Date: Tue, 26 Feb 2013 22:05:42 +0100
-Message-Id: <1361912745-29665-6-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361912745-29665-1-git-send-email-hauke@hauke-m.de>
-References: <1361912745-29665-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH for 3.8 8/9] compat: check if efi_enabled() was already backported
+Date: Tue, 26 Feb 2013 22:03:11 +0100
+Message-Id: <1361912592-29591-9-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
+References: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-This header file was not included in this branch.
-This also fixes a compile problem in linux/compat-3.8.h.
+Upstream commit 28c1dde0df2c9e01e8d57a774687734ed21bd208
+
+efi_enabled() gets backported to older kernel versions and if this is
+the case compat should not try to do the same.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- include/linux/compat-2.6.h |    1 +
- include/linux/compat-3.8.h |    2 ++
- 2 files changed, 3 insertions(+)
+ include/linux/compat-3.8.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/compat-2.6.h b/include/linux/compat-2.6.h
-index 7a8409f..34c49e6 100644
---- a/include/linux/compat-2.6.h
-+++ b/include/linux/compat-2.6.h
-@@ -68,6 +68,7 @@ void compat_dependency_symbol(void);
- #include <linux/compat-3.5.h>
- #include <linux/compat-3.6.h>
- #include <linux/compat-3.7.h>
-+#include <linux/compat-3.8.h>
- 
- #endif /* __ASSEMBLY__ */
- 
 diff --git a/include/linux/compat-3.8.h b/include/linux/compat-3.8.h
-index 1a3c320..60a08d2 100644
+index b55a46d..c913188 100644
 --- a/include/linux/compat-3.8.h
 +++ b/include/linux/compat-3.8.h
-@@ -10,4 +10,6 @@
- extern void netdev_set_default_ethtool_ops(struct net_device *dev,
- 					   const struct ethtool_ops *ops);
+@@ -58,6 +58,8 @@ static inline int __must_check kref_get_unless_zero(struct kref *kref)
+  *     efi: Make 'efi_enabled' a function to query EFI facilities
+  *
+  */
++/* check first if this was already backported */
++#ifndef EFI_BOOT
+ /*
+  * We play games with efi_enabled so that the compiler will, if
+  * possible, remove EFI-related code altogether.
+@@ -101,6 +103,7 @@ static inline int compat_efi_enabled(int facility)
+ #undef efi_enabled
+ #endif
+ #define efi_enabled(facility) compat_efi_enabled(facility)
++#endif /* EFI_BOOT */
  
-+#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)) */
-+
- #endif /* LINUX_3_8_COMPAT_H */
+ #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)) */
+ 
 -- 
 1.7.10.4
