@@ -1,57 +1,59 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:54013 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753554Ab3BCVNb (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 3 Feb 2013 16:13:31 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id C6A49540206
-	for <backports@vger.kernel.org>; Sun,  3 Feb 2013 16:13:29 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2013-02-03 is baked
-Message-Id: <20130203211329.971C640AC1@repository3.orbit-lab.org>
-Date: Sun,  3 Feb 2013 16:13:29 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Return-Path: <hauke@hauke-m.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 22/23] compat: deactivate netdev_set_default_ethtool_ops() for some 3.7 kernels
+Date: Tue, 26 Feb 2013 21:59:13 +0100
+Message-Id: <1361912354-29498-23-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
+References: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-git fetch hauke (/var/opt/compat/compat-drivers)
-HEAD is now at 1ef7c8a compat-drivers: refresh patches on next-20130202
-git fetch hauke (/var/opt/compat/compat)
-HEAD is now at 726d9b2 compat: netdev_set_default_ethtool_ops() is not in kernel 3.7.5
-git fetch origin (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 2d2ee78 Add linux-next specific files for 20130202
-git fetch origin (/var/opt/compat/unified/alx)
-Nothing new to pack.
-HEAD is now at 8f56f40 alx: improve self-test for FPGA
-Failed...
-/usr/bin/sha1sum: *.tar.bz2: No such file or directory
+netdev_set_default_ethtool_ops() was backported in 3.7.8 and compat
+should not ship it on any more recent versions any more.
 
-compat-drivers code metrics
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ compat/compat-3.8.c        |    2 ++
+ include/linux/compat-3.8.h |    2 ++
+ 2 files changed, 4 insertions(+)
 
-   1278976 - Total upstream lines of code being pulled
-
-   network
-   ----------------------------------------
-      3047 - backport code changes
-      2557 - backport code additions
-       490 - backport code deletions
-     14654 - backport from compat module
-     17701 - total backport code
-    1.3840 - % of code consists of backport work
-
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     14654 - backport from compat module
-     15090 - total backport code
-    1.1799 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20130110
-compat.git: compat-v3.8-rc2-1-5-g59a1d45
-compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
-Code metrics archive: http://bit.ly/H6BTF7
+diff --git a/compat/compat-3.8.c b/compat/compat-3.8.c
+index b3d399c..8134323 100644
+--- a/compat/compat-3.8.c
++++ b/compat/compat-3.8.c
+@@ -18,6 +18,7 @@
+ #include "hid-ids.h"
+ #include <linux/netdevice.h>
+ 
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,8))
+ void netdev_set_default_ethtool_ops(struct net_device *dev,
+ 				    const struct ethtool_ops *ops)
+ {
+@@ -25,6 +26,7 @@ void netdev_set_default_ethtool_ops(struct net_device *dev,
+ 		dev->ethtool_ops = ops;
+ }
+ EXPORT_SYMBOL_GPL(netdev_set_default_ethtool_ops);
++#endif
+ 
+ /* a list of devices that shouldn't be handled by HID core at all */
+ static const struct hid_device_id hid_ignore_list[] = {
+diff --git a/include/linux/compat-3.8.h b/include/linux/compat-3.8.h
+index 545e9f0..4aeffdb 100644
+--- a/include/linux/compat-3.8.h
++++ b/include/linux/compat-3.8.h
+@@ -9,8 +9,10 @@
+ #include <linux/netdevice.h>
+ #include <linux/efi.h>
+ 
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,8))
+ extern void netdev_set_default_ethtool_ops(struct net_device *dev,
+ 					   const struct ethtool_ops *ops);
++#endif
+ 
+ #define HID_BUS_ANY                            0xffff
+ #define HID_GROUP_ANY                          0x0000
+-- 
+1.7.10.4
