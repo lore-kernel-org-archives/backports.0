@@ -1,59 +1,96 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from external1.orbit-lab.org ([128.6.192.131]:44606 "HELO
-	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1750941Ab3BBVXI (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 2 Feb 2013 16:23:08 -0500
-Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
-	by external1.orbit-lab.org (Postfix) with ESMTP id 2AF8A540302
-	for <backports@vger.kernel.org>; Sat,  2 Feb 2013 16:23:07 -0500 (EST)
-To: backports@vger.kernel.org
-Subject: Compat-wireless release for 2013-02-02 is baked
-Message-Id: <20130202212307.0758F40AC1@repository3.orbit-lab.org>
-Date: Sat,  2 Feb 2013 16:23:06 -0500 (EST)
-From: compat@orbit-lab.org (Compat-wireless cronjob account)
-Sender: backports-owner@vger.kernel.org
+Return-Path: <hauke@hauke-m.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 10/24] compat-drivers: add the iwlwifi MVM driver
+Date: Tue, 26 Feb 2013 21:38:02 +0100
+Message-Id: <1361911096-29117-11-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361911096-29117-1-git-send-email-hauke@hauke-m.de>
+References: <1361911096-29117-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-git fetch hauke (/var/opt/compat/compat-drivers)
-Nothing new to pack.
-HEAD is now at 3e51785 compat-drivers: update genlog-3.8 for rc5
-git fetch hauke (/var/opt/compat/compat)
-Nothing new to pack.
-HEAD is now at 5c165fc compat: backport nla_put_be{16,32,64}()
-git fetch origin (/var/opt/compat/linux-next)
-Nothing new to pack.
-HEAD is now at 2d2ee78 Add linux-next specific files for 20130202
-git fetch origin (/var/opt/compat/unified/alx)
-Nothing new to pack.
-HEAD is now at 8f56f40 alx: improve self-test for FPGA
-Error while updating from linux-next
-/usr/bin/sha1sum: *.tar.bz2: No such file or directory
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ config.mk                                          |    1 +
+ .../network/38-led-max-brightness.patch            |   12 +++++++++++
+ .../network/67-ipv6-dev-list.patch                 |   22 ++++++++++++++++++++
+ scripts/admin-update.sh                            |    1 +
+ 4 files changed, 36 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/67-ipv6-dev-list.patch
 
-compat-drivers code metrics
-
-   1278976 - Total upstream lines of code being pulled
-
-   network
-   ----------------------------------------
-      3047 - backport code changes
-      2557 - backport code additions
-       490 - backport code deletions
-     14654 - backport from compat module
-     17701 - total backport code
-    1.3840 - % of code consists of backport work
-
-   drm
-   ----------------------------------------
-       436 - backport code changes
-       293 - backport code additions
-       143 - backport code deletions
-     14654 - backport from compat module
-     15090 - total backport code
-    1.1799 - % of code consists of backport work
-
-Base tree: linux-next.git
-Base tree version: next-20130110
-compat.git: compat-v3.8-rc2-1-5-g59a1d45
-compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
-Code metrics archive: http://bit.ly/H6BTF7
+diff --git a/config.mk b/config.mk
+index d0f2e0b..add66c7 100644
+--- a/config.mk
++++ b/config.mk
+@@ -300,6 +300,7 @@ endif #CONFIG_COMPAT_KERNEL_2_6_31
+ 
+ export CONFIG_IWLWIFI=m
+ export CONFIG_IWLDVM=m
++export CONFIG_IWLMVM=m
+ export CONFIG_IWLWIFI_P2P=y
+ # export CONFIG_IWLWIFI_DEBUG=y
+ # export CONFIG_IWLWIFI_DEBUGFS=y
+diff --git a/patches/collateral-evolutions/network/38-led-max-brightness.patch b/patches/collateral-evolutions/network/38-led-max-brightness.patch
+index fa0dee7..1495815 100644
+--- a/patches/collateral-evolutions/network/38-led-max-brightness.patch
++++ b/patches/collateral-evolutions/network/38-led-max-brightness.patch
+@@ -22,3 +22,15 @@
+  
+  	switch (mode) {
+  	case IWL_LED_DEFAULT:
++--- a/drivers/net/wireless/iwlwifi/mvm/led.c
+++++ b/drivers/net/wireless/iwlwifi/mvm/led.c
++@@ -108,7 +108,9 @@ int iwl_mvm_leds_init(struct iwl_mvm *mv
++ 	mvm->led.name = kasprintf(GFP_KERNEL, "%s-led",
++ 				   wiphy_name(mvm->hw->wiphy));
++ 	mvm->led.brightness_set = iwl_led_brightness_set;
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30)
++ 	mvm->led.max_brightness = 1;
+++#endif
++ 
++ 	if (mode == IWL_LED_RF_STATE)
++ 		mvm->led.default_trigger =
+diff --git a/patches/collateral-evolutions/network/67-ipv6-dev-list.patch b/patches/collateral-evolutions/network/67-ipv6-dev-list.patch
+new file mode 100644
+index 0000000..7af6382
+--- /dev/null
++++ b/patches/collateral-evolutions/network/67-ipv6-dev-list.patch
+@@ -0,0 +1,22 @@
++This backports:
++
++commit 502a2ffd7376ae27cfde6172257db0ff9d8cfec2
++Author: stephen hemminger <shemminger@vyatta.com>
++Date:   Wed Mar 17 20:31:13 2010 +0000
++
++    ipv6: convert idev_list to list macros
++
++--- a/drivers/net/wireless/iwlwifi/mvm/d3.c
+++++ b/drivers/net/wireless/iwlwifi/mvm/d3.c
++@@ -98,7 +98,11 @@ void iwl_mvm_ipv6_addr_change(struct iee
++ 	int idx = 0;
++ 
++ 	read_lock(&idev->lock);
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35))
++ 	list_for_each_entry(ifa, &idev->addr_list, if_list) {
+++#else
+++	for (ifa = idev->addr_list; ifa; ifa = ifa->if_next) {
+++#endif
++ 		mvmvif->target_ipv6_addrs[idx] = ifa->addr;
++ 		idx++;
++ 		if (idx >= IWL_PROTO_OFFLOAD_NUM_IPV6_ADDRS)
+diff --git a/scripts/admin-update.sh b/scripts/admin-update.sh
+index 73f0cea..48055a9 100755
+--- a/scripts/admin-update.sh
++++ b/scripts/admin-update.sh
+@@ -353,6 +353,7 @@ DRIVERS_WLAN="drivers/net/wireless/ath
+ 	      drivers/net/wireless/iwlwifi
+ 	      drivers/net/wireless/iwlwifi/pcie
+ 	      drivers/net/wireless/iwlwifi/dvm
++	      drivers/net/wireless/iwlwifi/mvm
+ 	      drivers/net/wireless/rt2x00
+ 	      drivers/net/wireless/zd1211rw
+ 	      drivers/net/wireless/libertas
+-- 
+1.7.10.4
