@@ -4,47 +4,34 @@ From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 17/23] compat: add PCI_EXP_LNKCAP_SLS_2_5GB and PCI_EXP_LNKCAP_SLS_5_0GB
-Date: Tue, 26 Feb 2013 21:59:08 +0100
-Message-Id: <1361912354-29498-18-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 19/23] compat: add empty struct watchdog_device
+Date: Tue, 26 Feb 2013 21:59:10 +0100
+Message-Id: <1361912354-29498-20-git-send-email-hauke@hauke-m.de>
 In-Reply-To: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
 References: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-This is a backport of:
-
-commit 130f1b8f35f14d27c43da755f3c9226318c17f57
-Author: Bjorn Helgaas <bhelgaas@google.com>
-Date:   Wed Dec 26 10:39:23 2012 -0700
-
-    PCI: Add PCIe Link Capability link speed and width names
+This is needed in some header file but so driver accesses this struct.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- include/linux/compat-3.8.h |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ include/linux/compat-3.1.h |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/linux/compat-3.8.h b/include/linux/compat-3.8.h
-index c913188..545e9f0 100644
---- a/include/linux/compat-3.8.h
-+++ b/include/linux/compat-3.8.h
-@@ -105,6 +105,17 @@ static inline int compat_efi_enabled(int facility)
- #define efi_enabled(facility) compat_efi_enabled(facility)
- #endif /* EFI_BOOT */
+diff --git a/include/linux/compat-3.1.h b/include/linux/compat-3.1.h
+index 9d78b7d..2b5eb8b 100644
+--- a/include/linux/compat-3.1.h
++++ b/include/linux/compat-3.1.h
+@@ -105,6 +105,10 @@ void ida_simple_remove(struct ida *ida, unsigned int id);
  
-+/* This backports:
-+ *
-+ * commit 130f1b8f35f14d27c43da755f3c9226318c17f57
-+ * Author: Bjorn Helgaas <bhelgaas@google.com>
-+ * Date:   Wed Dec 26 10:39:23 2012 -0700
-+ *
-+ *     PCI: Add PCIe Link Capability link speed and width names
-+ */
-+#define  PCI_EXP_LNKCAP_SLS_2_5GB 0x1	/* LNKCAP2 SLS Vector bit 0 (2.5GT/s) */
-+#define  PCI_EXP_LNKCAP_SLS_5_0GB 0x2	/* LNKCAP2 SLS Vector bit 1 (5.0GT/s) */
+ unsigned int cpufreq_quick_get_max(unsigned int cpu);
+ #endif
 +
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)) */
++struct watchdog_device {
++};
++
+ #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,1,0)) */
  
- #endif /* LINUX_3_8_COMPAT_H */
+ #endif /* LINUX_3_1_COMPAT_H */
 -- 
 1.7.10.4
