@@ -1,66 +1,95 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:54766 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753070Ab3BCL30 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 3 Feb 2013 06:29:26 -0500
-Message-ID: <510E4A0A.60309@hauke-m.de>
-Date: Sun, 03 Feb 2013 12:29:14 +0100
+Return-Path: <hauke@hauke-m.de>
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
-CC: backports@vger.kernel.org
-Subject: Re: Return values in ckmake
-References: <CAFub=KRc30sW-zFKscTSOtAPa-jX-bLc777jcUX92eDgiSDBzg@mail.gmail.com>
-In-Reply-To: <CAFub=KRc30sW-zFKscTSOtAPa-jX-bLc777jcUX92eDgiSDBzg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: backports-owner@vger.kernel.org
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH for 3.8 6/9] compat: add efi_enabled()
+Date: Tue, 26 Feb 2013 22:03:09 +0100
+Message-Id: <1361912592-29591-7-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
+References: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-On 02/02/2013 01:49 PM, Ozan Çağlayan wrote:
-> Hi,
+Upstream commit 3e1afb65a6fa6d964c1bbc9b2f4fc89c31d42d1a
 
-Hi Ozan,
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ include/linux/compat-3.8.h |   55 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-while Luis is on vacation for some weeks I took over compat and
-compat-driver maintenance. I can not push to Luis git repositories so my
-current changes are on github and I am making release based on these trees:
-
-https://github.com/hauke/compat
-https://github.com/hauke/compat-drivers
-
-> I can't build current compat against 3.7:
-> 
->  make -C /root/compat-ksrc/lib/modules/3.7.0-030700-generic/build/
-> M=/root/git/compat/.tmp.ckmake/3.7.0 modules
-> make[1]: Entering directory
-> `/root/compat-ksrc/usr/src/linux-headers-3.7.0-030700-generic'
->    CC [M]  /root/git/compat/.tmp.ckmake/3.7.0/compat/main.o
->    CC [M]  /root/git/compat/.tmp.ckmake/3.7.0/compat/compat-3.8.o
->  /root/git/compat/.tmp.ckmake/3.7.0/compat/compat-3.8.c: In function
-> ‘netdev_set_default_ethtool_ops’:
->  /root/git/compat/.tmp.ckmake/3.7.0/compat/compat-3.8.c:34:27: error:
-> ‘default_ethtool_ops’ undeclared (first use in this function)
->  /root/git/compat/.tmp.ckmake/3.7.0/compat/compat-3.8.c:34:27: note:
-> each undeclared identifier is reported only once for each function it
-> appears in
->  make[3]: *** [/root/git/compat/.tmp.ckmake/3.7.0/compat/compat-3.8.o] Error 1
->  make[2]: *** [/root/git/compat/.tmp.ckmake/3.7.0/compat] Error 2
->  make[1]: *** [_module_/root/git/compat/.tmp.ckmake/3.7.0] Error 2
->  make[1]: Leaving directory
-> `/root/compat-ksrc/usr/src/linux-headers-3.7.0-030700-generic'
->  make: *** [modules] Error 2
-
-This is fixed in:
-https://github.com/hauke/compat/commit/670c4a3d46797a92fd15d201e5d9859393c7b2b6
-
-
-> --
-> 
-> This returns 2 but ckmake interprets return values 0 and 2 to "OK" in
-> get_status_name() thus logs and curses shows OK for this failed build.
-
-This is fixed in:
-https://github.com/hauke/compat/commit/9f0c7145e86d00246363c25d0f063994e17dd995
-
-Hauke
+diff --git a/include/linux/compat-3.8.h b/include/linux/compat-3.8.h
+index 942b4cb..3af253b 100644
+--- a/include/linux/compat-3.8.h
++++ b/include/linux/compat-3.8.h
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/hid.h>
+ #include <linux/netdevice.h>
++#include <linux/efi.h>
+ 
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,5))
+ extern void netdev_set_default_ethtool_ops(struct net_device *dev,
+@@ -49,6 +50,60 @@ static inline int __must_check kref_get_unless_zero(struct kref *kref)
+ {
+ 	return atomic_add_unless(&kref->refcount, 1, 0);
+ }
++
++/* This backports:
++ *
++ * commit 83e68189745ad931c2afd45d8ee3303929233e7f
++ * Author: Matt Fleming <matt.fleming@intel.com>
++ * Date:   Wed Nov 14 09:42:35 2012 +0000
++ *
++ *     efi: Make 'efi_enabled' a function to query EFI facilities
++ *
++ */
++/*
++ * We play games with efi_enabled so that the compiler will, if
++ * possible, remove EFI-related code altogether.
++ */
++#define EFI_BOOT		0	/* Were we booted from EFI? */
++#define EFI_SYSTEM_TABLES	1	/* Can we use EFI system tables? */
++#define EFI_CONFIG_TABLES	2	/* Can we use EFI config tables? */
++#define EFI_RUNTIME_SERVICES	3	/* Can we use runtime services? */
++#define EFI_MEMMAP		4	/* Can we use EFI memory map? */
++#define EFI_64BIT		5	/* Is the firmware 64-bit? */
++
++#ifdef CONFIG_EFI
++# ifdef CONFIG_X86
++static inline int compat_efi_enabled(int facility)
++{
++	switch (facility) {
++	case EFI_BOOT:
++		return efi_enabled;
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0))
++	case EFI_64BIT:
++		return efi_64bit;
++#endif
++	default:
++		printk(KERN_ERR "can not translate efi_enabled() to old values completly\n");
++		return efi_enabled;
++	}
++}
++# else
++static inline int compat_efi_enabled(int facility)
++{
++	return 1;
++}
++# endif
++#else
++static inline int compat_efi_enabled(int facility)
++{
++	return 0;
++}
++#endif
++#ifdef efi_enabled
++#undef efi_enabled
++#endif
++#define efi_enabled(facility) compat_efi_enabled(facility)
++
+ #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)) */
+ 
+ #endif /* LINUX_3_8_COMPAT_H */
+-- 
+1.7.10.4
