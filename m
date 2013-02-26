@@ -4,54 +4,54 @@ From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH for 3.8 2/8] compat-drivers: deactivate loopback testing for older kernels
-Date: Tue, 26 Feb 2013 21:42:29 +0100
-Message-Id: <1361911355-29256-3-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361911355-29256-1-git-send-email-hauke@hauke-m.de>
-References: <1361911355-29256-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH for 3.8 3/9] compat: ckmake: make return code 2 is error
+Date: Tue, 26 Feb 2013 22:03:06 +0100
+Message-Id: <1361912592-29591-4-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
+References: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-Upstream commit 2e05b625a813f79ff4a255d120883ea8aa539972
+Upstream commit 9f0c7145e86d00246363c25d0f063994e17dd995
 
-ETH_TEST_FL_EXTERNAL_LB and ETH_TEST_FL_EXTERNAL_LB_DONE are not
-available in kernel version < 3.1.
+If make returns 2 it should be treat as an error and not as ok.
+The documentation says 2 is returned if make encountered an error:
+https://www.gnu.org/software/make/manual/html_node/Running.html
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../0004-alx-deactivate-loopback-test.patch        |   25 ++++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 patches/unified-drivers/network/0004-alx-deactivate-loopback-test.patch
+ bin/ckmake |    6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/patches/unified-drivers/network/0004-alx-deactivate-loopback-test.patch b/patches/unified-drivers/network/0004-alx-deactivate-loopback-test.patch
-new file mode 100644
-index 0000000..3ed96a4
---- /dev/null
-+++ b/patches/unified-drivers/network/0004-alx-deactivate-loopback-test.patch
-@@ -0,0 +1,25 @@
-+--- a/drivers/net/ethernet/atheros/alx/alx_ethtool.c
-++++ b/drivers/net/ethernet/atheros/alx/alx_ethtool.c
-+@@ -1687,7 +1687,9 @@ static void alx_self_test(struct net_dev
-+ {
-+ 	struct alx_adapter *adpt = netdev_priv(netdev);
-+ 	bool if_running = netif_running(netdev);
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0))
-+ 	bool phy_lpback = etest->flags & ETH_TEST_FL_EXTERNAL_LB;
-++#endif
-+ 
-+ 	ALX_FLAG_SET(adpt, TESTING);
-+ 	memset(data, 0, sizeof(u64) * ALX_TEST_LEN);
-+@@ -1707,10 +1709,12 @@ static void alx_self_test(struct net_dev
-+ 		if (alx_diag_interrupt(adpt, &data[2]))
-+ 			etest->flags |= ETH_TEST_FL_FAILED;
-+ 
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0))
-+ 		if (phy_lpback)
-+ 			etest->flags |= ETH_TEST_FL_EXTERNAL_LB_DONE;
-+ 		if (alx_diag_loopback(adpt, &data[3], phy_lpback))
-+ 			etest->flags |= ETH_TEST_FL_FAILED;
-++#endif
-+ 
-+ 	} else {
-+ 		netif_info(adpt, hw, adpt->netdev,  "online test start...\n");
+diff --git a/bin/ckmake b/bin/ckmake
+index 34bfb09..c821b0a 100755
+--- a/bin/ckmake
++++ b/bin/ckmake
+@@ -62,8 +62,6 @@ def get_processed_rel(i):
+ def get_status_name(status):
+ 	if (status == 0):
+ 		return 'OK'
+-	if (status == 2):
+-		return 'OK'
+ 	elif (status == 130):
+ 		return 'TERM'
+ 	elif (status == 1234):
+@@ -76,8 +74,6 @@ def get_status_name(status):
+ def get_stat_pos(status):
+ 	if (status == 0):
+ 		return 34
+-	if (status == 2):
+-		return 34
+ 	elif (status == 130):
+ 		return 33
+ 	elif (status == 1234):
+@@ -90,8 +86,6 @@ def get_stat_pos(status):
+ def get_status_color(status):
+ 	if (status == 0):
+ 		return curses.color_pair(1)
+-	if (status == 2):
+-		return curses.color_pair(1)
+ 	elif (status == 130):
+ 		return curses.color_pair(2)
+ 	elif (status == 1234):
 -- 
 1.7.10.4
