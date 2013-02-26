@@ -4,56 +4,44 @@ From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 21/23] compat: backport of lock_map_acquire() and lock_map_release()
-Date: Tue, 26 Feb 2013 21:59:12 +0100
-Message-Id: <1361912354-29498-22-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
-References: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH for 3.7 4/6] compat-drivers: disable DRM drivers for 802.11 drivers
+Date: Tue, 26 Feb 2013 21:46:58 +0100
+Message-Id: <1361911620-29333-5-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361911620-29333-1-git-send-email-hauke@hauke-m.de>
+References: <1361911620-29333-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-This is a backport of:
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-commit 3295f0ef9ff048a4619ede597ad9ec9cab725654
-Author: Ingo Molnar <mingo@elte.hu>
-Date:   Mon Aug 11 10:30:30 2008 +0200
+Upstream commit 2371a496060c87378c27eb0cb33feeefbc29f2fc
 
-    lockdep: rename map_[acquire|release]() => lock_map_[acquire|release]()
+When using driver-select disable DRM driver sfor 802.11 drivers.
 
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- include/linux/compat-2.6.27.h |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ scripts/driver-select |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/compat-2.6.27.h b/include/linux/compat-2.6.27.h
-index ece825d..2eae9f2 100644
---- a/include/linux/compat-2.6.27.h
-+++ b/include/linux/compat-2.6.27.h
-@@ -287,6 +287,26 @@ static inline __u32 ethtool_cmd_speed(const struct ethtool_cmd *ep)
+diff --git a/scripts/driver-select b/scripts/driver-select
+index e5cc177..033d7e5 100755
+--- a/scripts/driver-select
++++ b/scripts/driver-select
+@@ -199,6 +199,7 @@ function disable_bt_usb_ethernet_var {
+ 	backup_file Makefile
+ 	disable_bt_usb_ethernet
+ 	disable_var_03
++	disable_drm
+ }
  
- #define netif_wake_subqueue netif_start_subqueue
- 
-+/* Backport of:
-+ *
-+ * commit 3295f0ef9ff048a4619ede597ad9ec9cab725654
-+ * Author: Ingo Molnar <mingo@elte.hu>
-+ * Date:   Mon Aug 11 10:30:30 2008 +0200
-+ *
-+ *     lockdep: rename map_[acquire|release]() => lock_map_[acquire|release]()
-+ */
-+#ifdef CONFIG_DEBUG_LOCK_ALLOC
-+# ifdef CONFIG_PROVE_LOCKING
-+#  define lock_map_acquire(l)		lock_acquire(l, 0, 0, 0, 2, NULL, _THIS_IP_)
-+# else
-+#  define lock_map_acquire(l)		lock_acquire(l, 0, 0, 0, 1, NULL, _THIS_IP_)
-+# endif
-+# define lock_map_release(l)			lock_release(l, 1, _THIS_IP_)
-+#else
-+# define lock_map_acquire(l)			do { } while (0)
-+# define lock_map_release(l)			do { } while (0)
-+#endif
-+
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,27)) */
- 
- #endif /* LINUX_26_27_COMPAT_H */
+ function enable_only_ethernet {
+@@ -399,6 +400,7 @@ case $1 in
+ 		;;
+ 	ti)
+ 		select_drivers		CONFIG_WL_TI
++		disable_bt_usb_ethernet_var
+ 		disable_staging
+ 		disable_var_01
+ 		;;
 -- 
 1.7.10.4
