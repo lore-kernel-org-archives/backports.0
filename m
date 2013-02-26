@@ -1,38 +1,81 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:51410 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933153Ab3BLTfu (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 12 Feb 2013 14:35:50 -0500
-Message-ID: <511A998B.8080204@hauke-m.de>
-Date: Tue, 12 Feb 2013 20:35:39 +0100
+Return-Path: <hauke@hauke-m.de>
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: "Bitterli, Felix" <felixb@qca.qualcomm.com>
-CC: "Rodriguez, Luis" <rodrigue@qca.qualcomm.com>,
-	backports@vger.kernel.org
-Subject: Re: compat-drivers ./driver-select ath9k builds i915 as well, breaks
- my video
-References: <40F35DA312B2CC468349B21A177FEE633C8AD5FA@NASANEXD02E.na.qualcomm.com>
-In-Reply-To: <40F35DA312B2CC468349B21A177FEE633C8AD5FA@NASANEXD02E.na.qualcomm.com>
-Content-Type: text/plain; charset=ISO-8859-1
-Sender: backports-owner@vger.kernel.org
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org,
+	Felix Fietkau <nbd@openwrt.org>,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH for 3.7 2/8] compat: fix compile errors when assembly is built into modules
+Date: Tue, 26 Feb 2013 22:05:39 +0100
+Message-Id: <1361912745-29665-3-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361912745-29665-1-git-send-email-hauke@hauke-m.de>
+References: <1361912745-29665-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-On 02/11/2013 10:37 PM, Bitterli, Felix wrote:
-> Hello Hauke,
-> 
-> compat-drivers ./driver-select ath9k builds i915 as well, shouldn't, are
-> you available for fixing this or do we wait for Luis to get back from
-> Antarctica?
-> 
-> Best regards, Felix
+From: Felix Fietkau <nbd@openwrt.org>
 
-Hi Felix,
+Upstream commit a04996415774e7bfe7bd95ef0013b13fd12eb6b2
 
-I can not reproduce this with the current version based on linux-next
-from [0].
+On powerpc, modules can be compiled and linked with an assembly file, adding
+missing symbols that the compiler references when using -Os.
 
-Hauke
+== ckmake-report.log ==
 
-[0]: https://www.kernel.org/pub/linux/kernel/projects/backports/2013/02/08/
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.50              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.2.33              [  OK  ]
+20  3.3.8               [  OK  ]
+21  3.4.17              [  OK  ]
+22  3.5.7               [  OK  ]
+23  3.6.5               [  OK  ]
+24  3.7.0               [  OK  ]
+
+real    0m33.803s
+user    11m24.519s
+sys     3m39.690s
+
+Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ include/linux/compat-2.6.h |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/include/linux/compat-2.6.h b/include/linux/compat-2.6.h
+index f26489c..7a8409f 100644
+--- a/include/linux/compat-2.6.h
++++ b/include/linux/compat-2.6.h
+@@ -1,6 +1,8 @@
+ #ifndef LINUX_26_COMPAT_H
+ #define LINUX_26_COMPAT_H
+ 
++#ifndef __ASSEMBLY__
++
+ #include <linux/version.h>
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0))
+ #include <linux/kconfig.h>
+@@ -67,4 +69,6 @@ void compat_dependency_symbol(void);
+ #include <linux/compat-3.6.h>
+ #include <linux/compat-3.7.h>
+ 
++#endif /* __ASSEMBLY__ */
++
+ #endif /* LINUX_26_COMPAT_H */
+-- 
+1.7.10.4
