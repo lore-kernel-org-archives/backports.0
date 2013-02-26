@@ -4,59 +4,42 @@ From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH for 3.8 7/9] compat: netdev_set_default_ethtool_ops() is not in kernel 3.7.5
-Date: Tue, 26 Feb 2013 22:03:10 +0100
-Message-Id: <1361912592-29591-8-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
-References: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 18/23] compat: add missing platform devid constants
+Date: Tue, 26 Feb 2013 21:59:09 +0100
+Message-Id: <1361912354-29498-19-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
+References: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-Upstream commit 726d9b2ca3f75cba9f1d03e519c2b2e8bf6523a7
+They are both set to none and will result in no id being added to the
+device.
 
-netdev_set_default_ethtool_ops() should be added to compat for every
-3.7.X series kernel as it is also not in 3.7.5.
+This is a backport of:
+
+commit 689ae231afbac8979f96100b372a5a73458baaa9
+Author: Jean Delvare <khali@linux-fr.org>
+Date:   Fri Jul 27 22:14:59 2012 +0200
+
+    platform: Add support for automatic device IDs
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- compat/compat-3.8.c        |    3 ---
- include/linux/compat-3.8.h |    2 --
- 2 files changed, 5 deletions(-)
+ include/linux/compat-3.7.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/compat/compat-3.8.c b/compat/compat-3.8.c
-index be77767..b3d399c 100644
---- a/compat/compat-3.8.c
-+++ b/compat/compat-3.8.c
-@@ -18,16 +18,13 @@
- #include "hid-ids.h"
- #include <linux/netdevice.h>
- 
--#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,5))
- void netdev_set_default_ethtool_ops(struct net_device *dev,
- 				    const struct ethtool_ops *ops)
- {
- 	if (!dev->ethtool_ops)
- 		dev->ethtool_ops = ops;
+diff --git a/include/linux/compat-3.7.h b/include/linux/compat-3.7.h
+index 6b1d2cf..dd05e00 100644
+--- a/include/linux/compat-3.7.h
++++ b/include/linux/compat-3.7.h
+@@ -197,6 +197,9 @@ static inline s64 nla_get_s64(struct nlattr *nla)
+ 	return tmp;
  }
--
- EXPORT_SYMBOL_GPL(netdev_set_default_ethtool_ops);
--#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,5) */
  
- /* a list of devices that shouldn't be handled by HID core at all */
- static const struct hid_device_id hid_ignore_list[] = {
-diff --git a/include/linux/compat-3.8.h b/include/linux/compat-3.8.h
-index 3af253b..b55a46d 100644
---- a/include/linux/compat-3.8.h
-+++ b/include/linux/compat-3.8.h
-@@ -9,10 +9,8 @@
- #include <linux/netdevice.h>
- #include <linux/efi.h>
- 
--#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,5))
- extern void netdev_set_default_ethtool_ops(struct net_device *dev,
- 					   const struct ethtool_ops *ops);
--#endif
- 
- #define HID_BUS_ANY                            0xffff
- #define HID_GROUP_ANY                          0x0000
++#define PLATFORM_DEVID_NONE	(-1)
++#define PLATFORM_DEVID_AUTO	(-1)
++
+ #else /* (LINUX_VERSION_CODE > KERNEL_VERSION(3,7,0)) */
+ #define netlink_notify_portid(__notify) (__notify->portid)
+ #define genl_info_snd_portid(__genl_info) (__genl_info->snd_portid)
 -- 
 1.7.10.4
