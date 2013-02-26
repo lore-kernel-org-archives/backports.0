@@ -4,48 +4,55 @@ From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 07/24] compat-drivers: use backport for second workqueue
-Date: Tue, 26 Feb 2013 21:37:59 +0100
-Message-Id: <1361911096-29117-8-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 06/24] compat-drivers: deactivate mac80211_hwsim for kernel < 2.6.31
+Date: Tue, 26 Feb 2013 21:37:58 +0100
+Message-Id: <1361911096-29117-7-git-send-email-hauke@hauke-m.de>
 In-Reply-To: <1361911096-29117-1-git-send-email-hauke@hauke-m.de>
 References: <1361911096-29117-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-bluetooth hci_core uses a second workqueue.
+kernel version < 2.6.31 does not support tasklet_hrtimer, so deactivate
+the driver there.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../network/46-use_other_workqueue.patch                 |   14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ config.mk                                                       |    4 +++-
+ .../network/08-rename-config-options.patch                      |    7 ++++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/patches/collateral-evolutions/network/46-use_other_workqueue.patch b/patches/collateral-evolutions/network/46-use_other_workqueue.patch
-index 765fc4e..b342ddd 100644
---- a/patches/collateral-evolutions/network/46-use_other_workqueue.patch
-+++ b/patches/collateral-evolutions/network/46-use_other_workqueue.patch
-@@ -4,7 +4,7 @@ position before.
+diff --git a/config.mk b/config.mk
+index 6af57a4..d0f2e0b 100644
+--- a/config.mk
++++ b/config.mk
+@@ -256,8 +256,10 @@ ifdef CONFIG_STAGING
+ export CONFIG_COMPAT_STAGING=m
+ endif #CONFIG_STAGING
  
- --- a/net/bluetooth/hci_core.c
- +++ b/net/bluetooth/hci_core.c
--@@ -1793,8 +1793,12 @@ int hci_register_dev(struct hci_dev *hde
-+@@ -1793,16 +1793,24 @@ int hci_register_dev(struct hci_dev *hde
-  	list_add(&hdev->list, &hci_dev_list);
-  	write_unlock(&hci_dev_list_lock);
-  
-@@ -17,3 +17,15 @@ position before.
-  	if (!hdev->workqueue) {
-  		error = -ENOMEM;
-  		goto err;
-+ 	}
++ifndef CONFIG_COMPAT_KERNEL_2_6_31
+ # mac80211 test driver
+-export CONFIG_MAC80211_HWSIM=m
++export CONFIG_COMPAT_MAC80211_HWSIM=m
++endif #CONFIG_COMPAT_KERNEL_2_6_31
+ 
+ export CONFIG_ATH5K=m
+ # export CONFIG_ATH5K_DEBUG=y
+diff --git a/patches/collateral-evolutions/network/08-rename-config-options.patch b/patches/collateral-evolutions/network/08-rename-config-options.patch
+index 49a2fd4..72e9b58 100644
+--- a/patches/collateral-evolutions/network/08-rename-config-options.patch
++++ b/patches/collateral-evolutions/network/08-rename-config-options.patch
+@@ -30,7 +30,12 @@ CONFIG_BT_HIDP does not build with older kernel versions.
+  obj-$(CONFIG_RTL8180)		+= rtl818x/
+  obj-$(CONFIG_RTL8187)		+= rtl818x/
+  obj-$(CONFIG_RTLWIFI)		+= rtlwifi/
+-@@ -53,7 +53,7 @@ obj-$(CONFIG_MAC80211_HWSIM)	+= mac80211
++@@ -49,11 +49,11 @@ obj-$(CONFIG_P54_COMMON)	+= p54/
 + 
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,37))
-+ 	hdev->req_workqueue = alloc_workqueue(hdev->name,
-+ 					      WQ_HIGHPRI | WQ_UNBOUND |
-+ 					      WQ_MEM_RECLAIM, 1);
-++#else
-++	hdev->req_workqueue = create_singlethread_workqueue(hdev->name);
-++#endif
-+ 	if (!hdev->req_workqueue) {
-+ 		destroy_workqueue(hdev->workqueue);
-+ 		error = -ENOMEM;
++ obj-$(CONFIG_ATH_CARDS)		+= ath/
++ 
++-obj-$(CONFIG_MAC80211_HWSIM)	+= mac80211_hwsim.o
+++obj-$(CONFIG_COMPAT_MAC80211_HWSIM)	+= mac80211_hwsim.o
+  
+  obj-$(CONFIG_WL_TI)	+= ti/
+  
 -- 
 1.7.10.4
