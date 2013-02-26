@@ -4,55 +4,59 @@ From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 09/23] compat: adapt signature change of tty_flip_buffer_push() and tty_insert_flip_string()
-Date: Tue, 26 Feb 2013 21:59:00 +0100
-Message-Id: <1361912354-29498-10-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
-References: <1361912354-29498-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH for 3.8 7/9] compat: netdev_set_default_ethtool_ops() is not in kernel 3.7.5
+Date: Tue, 26 Feb 2013 22:03:10 +0100
+Message-Id: <1361912592-29591-8-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
+References: <1361912592-29591-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-The method signature of tty_flip_buffer_push() and
-tty_insert_flip_string() was changed in these commits and this converts
-it to the old behavior.
+Upstream commit 726d9b2ca3f75cba9f1d03e519c2b2e8bf6523a7
 
-commit 2e124b4a390ca85325fae75764bef92f0547fa25
-Author: Jiri Slaby <jslaby@suse.cz>
-Date:   Thu Jan 3 15:53:06 2013 +0100
-
-    TTY: switch tty_flip_buffer_push
-
-commit 05c7cd39907184328f48d3e7899f9cdd653ad336
-Author: Jiri Slaby <jslaby@suse.cz>
-Date:   Thu Jan 3 15:53:04 2013 +0100
-
-    TTY: switch tty_insert_flip_string
+netdev_set_default_ethtool_ops() should be added to compat for every
+3.7.X series kernel as it is also not in 3.7.5.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- include/linux/compat-3.7.h |    4 ++++
- 1 file changed, 4 insertions(+)
+ compat/compat-3.8.c        |    3 ---
+ include/linux/compat-3.8.h |    2 --
+ 2 files changed, 5 deletions(-)
 
-diff --git a/include/linux/compat-3.7.h b/include/linux/compat-3.7.h
-index 6b1d2cf..03c5ce4 100644
---- a/include/linux/compat-3.7.h
-+++ b/include/linux/compat-3.7.h
-@@ -13,6 +13,7 @@
- #include <linux/user_namespace.h>
- #include <linux/file.h>
- #include <linux/seq_file.h>
-+#include <linux/tty_flip.h>
- #include <net/netlink.h>
+diff --git a/compat/compat-3.8.c b/compat/compat-3.8.c
+index be77767..b3d399c 100644
+--- a/compat/compat-3.8.c
++++ b/compat/compat-3.8.c
+@@ -18,16 +18,13 @@
+ #include "hid-ids.h"
+ #include <linux/netdevice.h>
  
- #define VM_DONTDUMP    VM_NODUMP
-@@ -197,6 +198,9 @@ static inline s64 nla_get_s64(struct nlattr *nla)
- 	return tmp;
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,5))
+ void netdev_set_default_ethtool_ops(struct net_device *dev,
+ 				    const struct ethtool_ops *ops)
+ {
+ 	if (!dev->ethtool_ops)
+ 		dev->ethtool_ops = ops;
  }
+-
+ EXPORT_SYMBOL_GPL(netdev_set_default_ethtool_ops);
+-#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,5) */
  
-+#define tty_flip_buffer_push(port) tty_flip_buffer_push((port)->tty)
-+#define tty_insert_flip_string(port, chars, size) tty_insert_flip_string((port)->tty, chars, size)
-+
- #else /* (LINUX_VERSION_CODE > KERNEL_VERSION(3,7,0)) */
- #define netlink_notify_portid(__notify) (__notify->portid)
- #define genl_info_snd_portid(__genl_info) (__genl_info->snd_portid)
+ /* a list of devices that shouldn't be handled by HID core at all */
+ static const struct hid_device_id hid_ignore_list[] = {
+diff --git a/include/linux/compat-3.8.h b/include/linux/compat-3.8.h
+index 3af253b..b55a46d 100644
+--- a/include/linux/compat-3.8.h
++++ b/include/linux/compat-3.8.h
+@@ -9,10 +9,8 @@
+ #include <linux/netdevice.h>
+ #include <linux/efi.h>
+ 
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,5))
+ extern void netdev_set_default_ethtool_ops(struct net_device *dev,
+ 					   const struct ethtool_ops *ops);
+-#endif
+ 
+ #define HID_BUS_ANY                            0xffff
+ #define HID_GROUP_ANY                          0x0000
 -- 
 1.7.10.4
