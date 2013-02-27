@@ -1,101 +1,82 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <hauke@hauke-m.de>
-Message-ID: <512D288A.10102@hauke-m.de>
-Date: Tue, 26 Feb 2013 22:26:34 +0100
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:38046 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752946Ab3B0Xxv (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 27 Feb 2013 18:53:51 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
 To: mcgrof@do-not-panic.com
-CC: backports@vger.kernel.org
-Subject: compat: pull request for linux-3.8.y branch
-Content-Type: text/plain; charset=ISO-8859-1
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 2/2] compat-drivers: build driver/video/hdmi.ko
+Date: Thu, 28 Feb 2013 00:53:39 +0100
+Message-Id: <1362009219-20091-2-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1362009219-20091-1-git-send-email-hauke@hauke-m.de>
+References: <1362009219-20091-1-git-send-email-hauke@hauke-m.de>
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+This module is needed by the drm driver now.
 
-Hi Luis,
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ Makefile                |    1 +
+ config.mk               |    1 +
+ scripts/admin-update.sh |    9 ++++++++-
+ 3 files changed, 10 insertions(+), 1 deletion(-)
 
-please pull these changes and also pull the tags I made into your
-repository so it is easy to find the code base matching the releases.
+diff --git a/Makefile b/Makefile
+index e986a09..89bc991 100644
+--- a/Makefile
++++ b/Makefile
+@@ -42,6 +42,7 @@ obj-y := compat/
+ 
+ obj-$(CONFIG_COMPAT_RFKILL) += net/rfkill/
+ obj-$(CONFIG_COMPAT_VIDEO_MODULES) += drivers/gpu/drm/
++obj-$(CONFIG_COMPAT_VIDEO_MODULES) += drivers/video/
+ 
+ ifeq ($(BT),)
+ obj-$(CONFIG_COMPAT_WIRELESS) += net/wireless/ net/mac80211/
+diff --git a/config.mk b/config.mk
+index add66c7..13b44d4 100644
+--- a/config.mk
++++ b/config.mk
+@@ -723,6 +723,7 @@ endif #CONFIG_COMPAT_KERNEL_2_6_31
+ # tests have only started on 3.2.
+ ifndef CONFIG_COMPAT_KERNEL_3_2
+ # Basic DRM support
++export CONFIG_COMPAT_HDMI=m
+ export CONFIG_COMPAT_VIDEO_MODULES=y
+ export CONFIG_COMPAT_DRM=m
+ export CONFIG_COMPAT_DRM_TTM=m
+diff --git a/scripts/admin-update.sh b/scripts/admin-update.sh
+index 48055a9..e1e5f0d 100755
+--- a/scripts/admin-update.sh
++++ b/scripts/admin-update.sh
+@@ -444,7 +444,8 @@ mkdir -p include/net/bluetooth \
+ 	 $DRIVERS_WLAN \
+ 	 $DRIVERS_ETH \
+ 	 $DRIVERS_BT \
+-	 $DRIVERS_DRM
++	 $DRIVERS_DRM \
++	 drivers/video
+ 
+ 
+ 
+@@ -677,8 +678,14 @@ if [[ "$ENABLE_DRM" == "1" ]]; then
+ 
+ 	# Finally get the DRM top-level makefile
+ 	cp $GIT_TREE/drivers/gpu/drm/Makefile drivers/gpu/drm
++
++	DIR="drivers/video"
++	cp $GIT_TREE/$DIR/hdmi.c $DIR
++	echo "obj-\$(CONFIG_COMPAT_HDMI) += hdmi.o" > $DIR/Makefile
++	cp $GIT_TREE/include/linux/hdmi.h include/linux/hdmi.h
+ else
+ 	touch drivers/gpu/drm/Makefile
++	touch drivers/video/Makefile
+ fi
+ 
+ # Staging drivers in their own directory
+-- 
+1.7.10.4
 
-The following changes since commit
-fbe17013eb3dd71332dd948bacd05d6fc876f8a4:
-
-  compat: remove trailing erroneous semicolon from compat-3.8.c
-(2013-01-21 16:02:29 -0800)
-
-are available in the git repository at:
-
-  git://github.com/hauke/compat.git tags/compat-v3.8-1
-
-for you to fetch changes up to 0dbce027eb398843ed590f3f79bfab1ddfe70fd5:
-
-  compat: deactivate netdev_set_default_ethtool_ops() for some 3.7
-kernels (2013-02-20 13:06:27 +0100)
-
-- ----------------------------------------------------------------
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.65              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.38              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.32              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.9               [  OK  ]
-25  3.8.0               [  OK  ]
-
-- ----------------------------------------------------------------
-Felix Fietkau (1):
-      compat: fix compile errors when assembly is built into modules
-
-Hauke Mehrtens (8):
-      compat: do not access default_ethtool_ops
-      compat: ckmake: make return code 2 is error
-      compat: ckmake: remove lots of warning spam for the log
-      compat: ckmake: do not start all build at the same time
-      compat: add efi_enabled()
-      compat: netdev_set_default_ethtool_ops() is not in kernel 3.7.5
-      compat: check if efi_enabled() was already backported
-      compat: deactivate netdev_set_default_ethtool_ops() for some 3.7
-kernels
-
- bin/ckmake                 |   12 ++++-----
- compat/compat-3.8.c        |   15 ++---------
- include/linux/compat-2.6.h |    4 +++
- include/linux/compat-3.8.h |   60
-+++++++++++++++++++++++++++++++++++++++++++-
- 4 files changed, 71 insertions(+), 20 deletions(-)
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-Comment: Using GnuPG with undefined - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJRLSiKAAoJEIZ0px9YPRMyvk0QAKh/USiI2GxKMZss/JUQVpgw
-DvpVJ4iCpUGYZNUQ7KBw//kRLaVr65TYcYMAjp2tCQdtVcVDNwEhzCQ5pS4aFKi8
-/efE5bK0hcPM+5Gj7MXXEy8WPRAq+YMkBe2itW3a+V9lGkkJJ/VyClRaMoaq9ECo
-TzJVYX3kGQomEjSaH9ev1bSZ9JkTeoufTbQnKyZtAzMWqBQfARGPR89kNm2pEjSx
-b1Q6KEvsOXuu1FFUZwFyRdeE6oUGskAWnGdSMBGSXIoel/nCGVXMUQwMAvZ1Xdu/
-c2pCOrTezpzIh1RuS1nSrgf93b4tRhU+qNtuchwsnzBzJqXOfQ37COFva+rvqJCi
-lV7GmK3TYbtNfV4fQrntH8+U7Rxf9yqYviN7T/Ld2r7A5YCgaH+diDEiD7Qtl0NL
-3kXlohWzRf8Oks6W1nGwdSri03lRcizjrMNaH9BvTPjd0x18damVJZnD7Fz2kQKX
-AF1jQ6Ab5L/TfWEOKP3p7ZG6R5bRVJHdL/vgScp0yhh5H1qKwvN7fRJ3jgW8evft
-N8QOMSa/ZIwSnWZgUuf62YJOioPkaWWRRX2ITr+h8r6AWIzoAy0vv1sVD/VAh8JK
-48k+HBtia43ecV+U95YPLkYJGZJeUck8LMU2x3fhAAaCfhFxTY398bphMDC5+KdL
-7j9Lw84z0ZJg/1JcpzZR
-=lYoc
------END PGP SIGNATURE-----
