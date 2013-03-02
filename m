@@ -1,59 +1,67 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <julia.lawall@lip6.fr>
-Date: Thu, 28 Mar 2013 17:19:59 +0100 (CET)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>, FlorianSchandinat@gmx.de,
-    linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-    backports@vger.kernel.org, cocci@systeme.lip6.fr,
-    linux-kernel@vger.kernel.org, julia.lawall@lip6.fr, rodrigo.vivi@gmail.com,
-    daniel.vetter@ffwll.ch, rafael.j.wysocki@intel.com
-Subject: Re: [PATCH] compat/compat-drivers/linux-next: fb skip_vt_switch
-In-Reply-To: <20130328083943.01e61b4b@jbarnes-desktop>
-Message-ID: <alpine.DEB.2.02.1303281718490.1928@hadrien>
-References: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com> <20130328083943.01e61b4b@jbarnes-desktop>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mail.stepping-stone.ch ([194.176.109.206]:33191 "EHLO
+	mail.stepping-stone.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752277Ab3CBTRO (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 2 Mar 2013 14:17:14 -0500
+From: stefan.kuhn@foss-group.ch
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: backports@vger.kernel.org, Stefan Kuhn <stefan.kuhn@hispeed.ch>
+Subject: [compat-drivers 1/1] scripts/driver-select: use $BACKUP_EXT everywhere
+Date: Sat,  2 Mar 2013 20:07:41 +0100
+Message-Id: <1362251261-7270-2-git-send-email-stefan.kuhn@hispeed.ch>
+In-Reply-To: <1362251261-7270-1-git-send-email-stefan.kuhn@hispeed.ch>
+References: <1362251261-7270-1-git-send-email-stefan.kuhn@hispeed.ch>
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, 28 Mar 2013, Jesse Barnes wrote:
+Signed-off-by: Stefan Kuhn <stefan.kuhn@hispeed.ch>
+---
+ scripts/driver-select | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-> On Thu, 28 Mar 2013 05:04:26 -0700
-> "Luis R. Rodriguez" <mcgrof@do-not-panic.com> wrote:
->
-> > The new commit by Jesse that extended the fb_info with a skip_vt_switch
-> > element is the simplest example of a data structure expansion. We'd backport
-> > this by adding a static inline to compat so that new kernels muck with the
-> > new element and for older kernels this would be a no-op. This reduces the
-> > size of the backport and unclutters the required patch with #idefs, and
-> > insteads leaves only a replacement of the usage of the new elements with
-> > a static inline, this however would still be required on our end:
-> >
-> > 	-      info->skip_vt_switch = true;
-> > 	+      fb_enable_skip_vt_switch(info);
-> >
-> > So we'd then have to just add this static inline change for each new driver...
-> > There may be a way to get SmPL to do this for us...
+diff --git a/scripts/driver-select b/scripts/driver-select
+index 4f71e34..4dfbe3f 100755
+--- a/scripts/driver-select
++++ b/scripts/driver-select
+@@ -20,9 +20,6 @@ SSB_MAKEFILE="drivers/ssb/Makefile"
+ BCMA_MAKEFILE="drivers/bcma/Makefile"
+ 
+ # used to backup files from foo to foo.${BACKUP_EXT}
+-# If you change this also modify restore_compat() and
+-# restore_file() below I couldn't find a way to use
+-# the $BACKUP_EXT there.
+ BACKUP_EXT="bk"
+ 
+ # Pretty colors
+@@ -90,7 +87,7 @@ function backup_file {
+ 		return
+ 	fi
+ 	echo -e "Backing up makefile: ${CYAN}${1}.${BACKUP_EXT}${NORMAL}"
+-	cp $1 $1.bk
++	cp "${1}" "${1}.${BACKUP_EXT}"
+ }
+ 
+ function disable_makefile
+@@ -301,16 +298,14 @@ function select_brcm80211_driver
+ }
+ 
+ function restore_file {
+-	#ORIG=$(shell ${1%%.${BACKUP_EXT}})
+-	ORIG=${1%%.bk}
++	local ORIG="${1%%${BACKUP_EXT}}"
+ 	cp $1 $ORIG
+ 	rm -f $1
+ 	echo -e "Restored makefile: ${CYAN}${ORIG}${NORMAL} (and removed backup)"
+ }
+ 
+ function restore_compat {
+-	#FILES=$(find ./ -type f -name *.$BACKUP_EXT)
+-	FILES=$(find ./ -type f -name *.bk)
++	local FILES=$(find ./ -type f -name *"${BACKUP_EXT}")
+ 	for i in $FILES; do
+ 		restore_file $i
+ 	done
+-- 
+1.7.12.4
 
-@@
-type of info  *info;
-@@
-
--      info->skip_vt_switch = true;
-+      fb_enable_skip_vt_switch(info);
-
-for whatever the type of info is.
-
-Then I guess there would be a similar rule for the false case?
-
-julia
-
-
->
-> Yeah I'm not attached to the direct structure reference; a couple of
-> inlines are just as easy to read.  So no argument from me.
->
-> Thanks,
-> --
-> Jesse Barnes, Intel Open Source Technology Center
->
