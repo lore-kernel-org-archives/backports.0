@@ -1,27 +1,49 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <5139EDFE.6030305@elrepo.org>
-References: <5139EDFE.6030305@elrepo.org>
-Date: Fri, 8 Mar 2013 14:48:22 -0800
-Message-ID: <CAB=NE6VZsb8a0=Re=zqQpP_mncOS19bGs66k44Um6y4Gk88vUw@mail.gmail.com>
-Subject: Re: Permission denied on backports website
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Phil Perry <phil@elrepo.org>
-Cc: lf driver backport <lf_driver_backport@lists.linux-foundation.org>,
-	backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from he.sipsolutions.net ([78.46.109.217]:45295 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755299Ab3CEKEx (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 5 Mar 2013 05:04:53 -0500
+Message-ID: <1362477886.8224.0.camel@jlt4.sipsolutions.net>
+Subject: [PATCH] compat-wireless: fix netlink portid patch for nl80211
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org, linux-wireless@vger.kernel.org
+Date: Tue, 05 Mar 2013 11:04:46 +0100
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Mar 8, 2013 at 5:56 AM, Phil Perry <phil@elrepo.org> wrote:
-> Hi list,
->
-> I'm getting permissions errors trying to access/download anything under:
->
-> https://www.kernel.org/pub/linux/kernel/projects/backports/
->
-> Not sure if this is a temporary glitch as it was OK yesterday, so just a
-> heads up in case anyone here is able to fix it or ping those responsible.
+From: Johannes Berg <johannes.berg@intel.com>
 
-Should have been cause by a hiccup on kernel.org, things are back up.
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ patches/0005-netlink-portid.patch | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-  Luis
+diff --git a/patches/0005-netlink-portid.patch b/patches/0005-netlink-portid.patch
+index ee9bc85..ebf10b6 100644
+--- a/patches/0005-netlink-portid.patch
++++ b/patches/0005-netlink-portid.patch
+@@ -70,11 +70,11 @@ this one should other drivers / subsystem need this change.
+  			continue;
+  		if (++idx <= start)
+  			continue;
+--		if (nl80211_send_wiphy(skb, NETLINK_CB(cb->skb).portid,
+-+		if (nl80211_send_wiphy(skb, NETLINK_CB_PORTID(skb),
+- 				       cb->nlh->nlmsg_seq, NLM_F_MULTI,
+- 				       dev) < 0) {
+- 			idx--;
++-		ret = nl80211_send_wiphy(skb, NETLINK_CB(cb->skb).portid,
+++		ret = nl80211_send_wiphy(skb, NETLINK_CB_PORTID(skb),
++ 					 cb->nlh->nlmsg_seq, NLM_F_MULTI,
++ 					 dev);
++ 		if (ret < 0) {
+ @@ -1300,7 +1300,7 @@ static int nl80211_get_wiphy(struct sk_buff *skb, struct genl_info *info)
+  	if (!msg)
+  		return -ENOMEM;
+-- 
+1.8.0
+
+
+
