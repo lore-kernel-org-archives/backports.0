@@ -1,271 +1,411 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:51053 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753773Ab3CKUMU (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 11 Mar 2013 16:12:20 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 0844E20234
-	for <backports@vger.kernel.org>; Mon, 11 Mar 2013 20:12:18 +0000 (UTC)
-Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
-	by mail.kernel.org (Postfix) with ESMTP id 4FF21202BC
-	for <backports@vger.kernel.org>; Mon, 11 Mar 2013 20:12:14 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+Received: from external1.orbit-lab.org ([128.6.192.131]:36364 "HELO
+	external1.orbit-lab.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753478Ab3CFVOT (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 6 Mar 2013 16:14:19 -0500
+Received: from repository3.orbit-lab.org (repository3.orbit-lab.org [10.50.0.41])
+	by external1.orbit-lab.org (Postfix) with ESMTP id 2124B5401F0
+	for <backports@vger.kernel.org>; Wed,  6 Mar 2013 16:14:18 -0500 (EST)
 To: backports@vger.kernel.org
-Subject: [Bug 51671] ALX driver unusable on new kernel
-In-Reply-To: <bug-51671-58281@https.bugzilla.kernel.org/>
-References: <bug-51671-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Message-Id: <20130311201213.4361E11FA28@bugzilla.kernel.org>
-Date: Mon, 11 Mar 2013 20:12:13 +0000 (UTC)
+Subject: Compat-wireless release for 2013-03-06 is baked
+Message-Id: <20130306211418.0226240AC1@repository3.orbit-lab.org>
+Date: Wed,  6 Mar 2013 16:14:17 -0500 (EST)
+From: compat@orbit-lab.org (Compat-wireless cronjob account)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51671
+git fetch hauke (/var/opt/compat/compat-drivers)
+HEAD is now at b4f34a4 compat-drivers: refresh unified-drivers patches
+git fetch hauke (/var/opt/compat/compat)
+HEAD is now at fffc428 compat: add file_inode()
+git fetch origin (/var/opt/compat/linux-next)
+Nothing new to pack.
+HEAD is now at 53f4d2c Add linux-next specific files for 20130306
+git fetch origin (/var/opt/compat/unified/alx)
+Nothing new to pack.
+HEAD is now at 8f56f40 alx: improve self-test for FPGA
+Error while updating from linux-next
 
+compat-drivers code metrics
 
+   1278976 - Total upstream lines of code being pulled
 
+   network
+   ----------------------------------------
+      3047 - backport code changes
+      2557 - backport code additions
+       490 - backport code deletions
+     14654 - backport from compat module
+     17701 - total backport code
+    1.3840 - % of code consists of backport work
 
+   drm
+   ----------------------------------------
+       436 - backport code changes
+       293 - backport code additions
+       143 - backport code deletions
+     14654 - backport from compat module
+     15090 - total backport code
+    1.1799 - % of code consists of backport work
 
---- Comment #14 from mp-001@ponschab.de  2013-03-11 20:12:12 ---
-Here dmesg:
+Base tree: linux-next.git
+Base tree version: next-20130110
+compat.git: compat-v3.8-rc2-1-5-g59a1d45
+compat-drivers release: compat-drivers-2013-01-08-3-6-g06fd418
+Code metrics archive: http://bit.ly/H6BTF7
+skipping directory 2008
+skipping directory 2009
+skipping directory 2010
+skipping directory 2011
+skipping directory 2012
+skipping directory 2013
+ckmake-2012-06-29.log.bz2
+ckmake-2012-07-03.log.bz2
+ckmake-2012-08-26.log.bz2
+ckmake-2012-08-27.log.bz2
+ckmake-2012-08-28.log.bz2
+ckmake-2012-08-29.log.bz2
+ckmake-2012-08-30.log.bz2
+ckmake-2012-08-31.log.bz2
+ckmake-2012-09-01.log.bz2
+ckmake-2012-09-02.log.bz2
+ckmake-2012-09-03.log.bz2
+ckmake-2012-09-05.log.bz2
+ckmake-2012-09-07.log.bz2
+ckmake-2012-09-08.log.bz2
+ckmake-2012-09-09.log.bz2
+ckmake-2012-09-10.log.bz2
+ckmake-2012-09-14.log.bz2
+ckmake-2012-09-15.log.bz2
+ckmake-2012-09-16.log.bz2
+ckmake-2012-09-17.log.bz2
+ckmake-2012-09-18.log.bz2
+ckmake-2012-09-19.log.bz2
+ckmake-2012-09-20.log.bz2
+ckmake-2012-09-21.log.bz2
+ckmake-2012-09-22.log.bz2
+ckmake-2012-09-23.log.bz2
+ckmake-2012-09-24.log.bz2
+ckmake-2012-09-25.log.bz2
+ckmake-2012-09-26.log.bz2
+ckmake-2012-09-27.log.bz2
+ckmake-2012-10-03.log.bz2
+ckmake-2012-10-19.log.bz2
+ckmake-2012-10-20.log.bz2
+ckmake-2012-10-21.log.bz2
+ckmake-2012-10-27.log.bz2
+ckmake-2012-10-28.log.bz2
+ckmake-2012-10-29.log.bz2
+ckmake-2012-10-30.log.bz2
+ckmake-2012-11-04.log.bz2
+ckmake-2012-11-05.log.bz2
+ckmake-2012-11-06.log.bz2
+ckmake-2012-11-07.log.bz2
+ckmake-2012-11-08.log.bz2
+ckmake-2012-11-09.log.bz2
+ckmake-2012-11-10.log.bz2
+ckmake-2012-11-11.log.bz2
+ckmake-2012-11-12.log.bz2
+ckmake-2012-11-13.log.bz2
+ckmake-2012-11-14.log.bz2
+ckmake-2012-11-17.log.bz2
+ckmake-2012-11-18.log.bz2
+ckmake-2012-11-19.log.bz2
+ckmake-2012-11-20.log.bz2
+ckmake-2012-11-21.log.bz2
+ckmake-2012-11-22.log.bz2
+ckmake-2012-11-23.log.bz2
+ckmake-2012-11-24.log.bz2
+ckmake-2012-11-25.log.bz2
+ckmake-2012-12-01.log.bz2
+ckmake-2012-12-02.log.bz2
+ckmake-2012-12-04.log.bz2
+ckmake-2012-12-05.log.bz2
+ckmake-2012-12-06.log.bz2
+ckmake-2012-12-13.log.bz2
+ckmake-2012-12-14.log.bz2
+ckmake-2012-12-15.log.bz2
+ckmake-2012-12-16.log.bz2
+ckmake-2012-12-17.log.bz2
+ckmake-2012-12-18.log.bz2
+ckmake-report-2012-06-29.log
+ckmake-report-2012-07-03.log
+ckmake-report-2012-08-26.log
+ckmake-report-2012-08-27.log
+ckmake-report-2012-08-28.log
+ckmake-report-2012-08-29.log
+ckmake-report-2012-08-30.log
+ckmake-report-2012-08-31.log
+ckmake-report-2012-09-01.log
+ckmake-report-2012-09-02.log
+ckmake-report-2012-09-03.log
+ckmake-report-2012-09-05.log
+ckmake-report-2012-09-07.log
+ckmake-report-2012-09-08.log
+ckmake-report-2012-09-09.log
+ckmake-report-2012-09-10.log
+ckmake-report-2012-09-14.log
+ckmake-report-2012-09-15.log
+ckmake-report-2012-09-16.log
+ckmake-report-2012-09-17.log
+ckmake-report-2012-09-18.log
+ckmake-report-2012-09-19.log
+ckmake-report-2012-09-20.log
+ckmake-report-2012-09-21.log
+ckmake-report-2012-09-22.log
+ckmake-report-2012-09-23.log
+ckmake-report-2012-09-24.log
+ckmake-report-2012-09-25.log
+ckmake-report-2012-09-26.log
+ckmake-report-2012-09-27.log
+ckmake-report-2012-10-03.log
+ckmake-report-2012-10-19.log
+ckmake-report-2012-10-20.log
+ckmake-report-2012-10-21.log
+ckmake-report-2012-10-27.log
+ckmake-report-2012-10-28.log
+ckmake-report-2012-10-29.log
+ckmake-report-2012-10-30.log
+ckmake-report-2012-11-04.log
+ckmake-report-2012-11-05.log
+ckmake-report-2012-11-06.log
+ckmake-report-2012-11-07.log
+ckmake-report-2012-11-08.log
+ckmake-report-2012-11-09.log
+ckmake-report-2012-11-10.log
+ckmake-report-2012-11-11.log
+ckmake-report-2012-11-12.log
+ckmake-report-2012-11-13.log
+ckmake-report-2012-11-14.log
+ckmake-report-2012-11-17.log
+ckmake-report-2012-11-18.log
+ckmake-report-2012-11-19.log
+ckmake-report-2012-11-20.log
+ckmake-report-2012-11-21.log
+ckmake-report-2012-11-22.log
+ckmake-report-2012-11-23.log
+ckmake-report-2012-11-24.log
+ckmake-report-2012-11-25.log
+ckmake-report-2012-12-01.log
+ckmake-report-2012-12-02.log
+ckmake-report-2012-12-04.log
+ckmake-report-2012-12-05.log
+ckmake-report-2012-12-06.log
+ckmake-report-2012-12-13.log
+ckmake-report-2012-12-14.log
+ckmake-report-2012-12-15.log
+ckmake-report-2012-12-16.log
+ckmake-report-2012-12-17.log
+ckmake-report-2012-12-18.log
+compat-wireless-2012-06-29-p.tar.bz2
+compat-wireless-2012-06-29-pc.tar.bz2
+compat-wireless-2012-06-29.tar.bz2
+compat-wireless-2012-07-03-p.tar.bz2
+compat-wireless-2012-07-03-pc.tar.bz2
+compat-wireless-2012-07-03.tar.bz2
+compat-wireless-2012-08-26-p.tar.bz2
+compat-wireless-2012-08-26-pc.tar.bz2
+compat-wireless-2012-08-26.tar.bz2
+compat-wireless-2012-08-27-p.tar.bz2
+compat-wireless-2012-08-27-pc.tar.bz2
+compat-wireless-2012-08-27.tar.bz2
+compat-wireless-2012-08-28-p.tar.bz2
+compat-wireless-2012-08-28-pc.tar.bz2
+compat-wireless-2012-08-28.tar.bz2
+compat-wireless-2012-08-29-p.tar.bz2
+compat-wireless-2012-08-29-pc.tar.bz2
+compat-wireless-2012-08-29.tar.bz2
+compat-wireless-2012-08-30-p.tar.bz2
+compat-wireless-2012-08-30-pc.tar.bz2
+compat-wireless-2012-08-30.tar.bz2
+compat-wireless-2012-08-31-p.tar.bz2
+compat-wireless-2012-08-31-pc.tar.bz2
+compat-wireless-2012-08-31.tar.bz2
+compat-wireless-2012-09-01-p.tar.bz2
+compat-wireless-2012-09-01-pc.tar.bz2
+compat-wireless-2012-09-01.tar.bz2
+compat-wireless-2012-09-02-p.tar.bz2
+compat-wireless-2012-09-02-pc.tar.bz2
+compat-wireless-2012-09-02.tar.bz2
+compat-wireless-2012-09-03-p.tar.bz2
+compat-wireless-2012-09-03-pc.tar.bz2
+compat-wireless-2012-09-03.tar.bz2
+compat-wireless-2012-09-05-p.tar.bz2
+compat-wireless-2012-09-05-pc.tar.bz2
+compat-wireless-2012-09-05.tar.bz2
+compat-wireless-2012-09-07-p.tar.bz2
+compat-wireless-2012-09-07-pc.tar.bz2
+compat-wireless-2012-09-07.tar.bz2
+compat-wireless-2012-09-08-p.tar.bz2
+compat-wireless-2012-09-08-pc.tar.bz2
+compat-wireless-2012-09-08.tar.bz2
+compat-wireless-2012-09-09-p.tar.bz2
+compat-wireless-2012-09-09-pc.tar.bz2
+compat-wireless-2012-09-09.tar.bz2
+compat-wireless-2012-09-10-p.tar.bz2
+compat-wireless-2012-09-10-pc.tar.bz2
+compat-wireless-2012-09-10.tar.bz2
+compat-wireless-2012-09-14-p.tar.bz2
+compat-wireless-2012-09-14-pc.tar.bz2
+compat-wireless-2012-09-14.tar.bz2
+compat-wireless-2012-09-15-p.tar.bz2
+compat-wireless-2012-09-15-pc.tar.bz2
+compat-wireless-2012-09-15.tar.bz2
+compat-wireless-2012-09-16-p.tar.bz2
+compat-wireless-2012-09-16-pc.tar.bz2
+compat-wireless-2012-09-16.tar.bz2
+compat-wireless-2012-09-17-p.tar.bz2
+compat-wireless-2012-09-17-pc.tar.bz2
+compat-wireless-2012-09-17.tar.bz2
+compat-wireless-2012-09-18-p.tar.bz2
+compat-wireless-2012-09-18-pc.tar.bz2
+compat-wireless-2012-09-18.tar.bz2
+compat-wireless-2012-09-19-p.tar.bz2
+compat-wireless-2012-09-19-pc.tar.bz2
+compat-wireless-2012-09-19.tar.bz2
+compat-wireless-2012-09-20-p.tar.bz2
+compat-wireless-2012-09-20-pc.tar.bz2
+compat-wireless-2012-09-20.tar.bz2
+compat-wireless-2012-09-21-p.tar.bz2
+compat-wireless-2012-09-21-pc.tar.bz2
+compat-wireless-2012-09-21.tar.bz2
+compat-wireless-2012-09-22-p.tar.bz2
+compat-wireless-2012-09-22-pc.tar.bz2
+compat-wireless-2012-09-22.tar.bz2
+compat-wireless-2012-09-23-p.tar.bz2
+compat-wireless-2012-09-23-pc.tar.bz2
+compat-wireless-2012-09-23.tar.bz2
+compat-wireless-2012-09-24-p.tar.bz2
+compat-wireless-2012-09-24-pc.tar.bz2
+compat-wireless-2012-09-24.tar.bz2
+compat-wireless-2012-09-25-p.tar.bz2
+compat-wireless-2012-09-25-pc.tar.bz2
+compat-wireless-2012-09-25.tar.bz2
+compat-wireless-2012-09-26-p.tar.bz2
+compat-wireless-2012-09-26-pc.tar.bz2
+compat-wireless-2012-09-26.tar.bz2
+compat-wireless-2012-09-27-p.tar.bz2
+compat-wireless-2012-09-27-pc.tar.bz2
+compat-wireless-2012-09-27.tar.bz2
+compat-wireless-2012-10-03-p.tar.bz2
+compat-wireless-2012-10-03-pc.tar.bz2
+compat-wireless-2012-10-03.tar.bz2
+compat-wireless-2012-10-19-p.tar.bz2
+compat-wireless-2012-10-19-pc.tar.bz2
+compat-wireless-2012-10-19.tar.bz2
+compat-wireless-2012-10-20-p.tar.bz2
+compat-wireless-2012-10-20-pc.tar.bz2
+compat-wireless-2012-10-20.tar.bz2
+compat-wireless-2012-10-21-p.tar.bz2
+compat-wireless-2012-10-21-pc.tar.bz2
+compat-wireless-2012-10-21.tar.bz2
+compat-wireless-2012-10-27-p.tar.bz2
+compat-wireless-2012-10-27-pc.tar.bz2
+compat-wireless-2012-10-27.tar.bz2
+compat-wireless-2012-10-28-p.tar.bz2
+compat-wireless-2012-10-28-pc.tar.bz2
+compat-wireless-2012-10-28.tar.bz2
+compat-wireless-2012-10-29-p.tar.bz2
+compat-wireless-2012-10-29-pc.tar.bz2
+compat-wireless-2012-10-29.tar.bz2
+compat-wireless-2012-10-30-p.tar.bz2
+compat-wireless-2012-10-30-pc.tar.bz2
+compat-wireless-2012-10-30.tar.bz2
+compat-wireless-2012-11-04-p.tar.bz2
+compat-wireless-2012-11-04-pc.tar.bz2
+compat-wireless-2012-11-04.tar.bz2
+compat-wireless-2012-11-05-p.tar.bz2
+compat-wireless-2012-11-05-pc.tar.bz2
+compat-wireless-2012-11-05.tar.bz2
+compat-wireless-2012-11-06-p.tar.bz2
+compat-wireless-2012-11-06-pc.tar.bz2
+compat-wireless-2012-11-06.tar.bz2
+compat-wireless-2012-11-07-p.tar.bz2
+compat-wireless-2012-11-07-pc.tar.bz2
+compat-wireless-2012-11-07.tar.bz2
+compat-wireless-2012-11-08-p.tar.bz2
+compat-wireless-2012-11-08-pc.tar.bz2
+compat-wireless-2012-11-08.tar.bz2
+compat-wireless-2012-11-09-p.tar.bz2
+compat-wireless-2012-11-09-pc.tar.bz2
+compat-wireless-2012-11-09.tar.bz2
+compat-wireless-2012-11-10-p.tar.bz2
+compat-wireless-2012-11-10-pc.tar.bz2
+compat-wireless-2012-11-10.tar.bz2
+compat-wireless-2012-11-11-p.tar.bz2
+compat-wireless-2012-11-11-pc.tar.bz2
+compat-wireless-2012-11-11.tar.bz2
+compat-wireless-2012-11-12-p.tar.bz2
+compat-wireless-2012-11-12-pc.tar.bz2
+compat-wireless-2012-11-12.tar.bz2
+compat-wireless-2012-11-13-p.tar.bz2
+compat-wireless-2012-11-13-pc.tar.bz2
+compat-wireless-2012-11-13.tar.bz2
+compat-wireless-2012-11-14-p.tar.bz2
+compat-wireless-2012-11-14-pc.tar.bz2
+compat-wireless-2012-11-14.tar.bz2
+compat-wireless-2012-11-17-p.tar.bz2
+compat-wireless-2012-11-17-pc.tar.bz2
+compat-wireless-2012-11-17.tar.bz2
+compat-wireless-2012-11-18-p.tar.bz2
+compat-wireless-2012-11-18-pc.tar.bz2
+compat-wireless-2012-11-18.tar.bz2
+compat-wireless-2012-11-19-p.tar.bz2
+compat-wireless-2012-11-19-pc.tar.bz2
+compat-wireless-2012-11-19.tar.bz2
+compat-wireless-2012-11-20-p.tar.bz2
+compat-wireless-2012-11-20-pc.tar.bz2
+compat-wireless-2012-11-20.tar.bz2
+compat-wireless-2012-11-21-p.tar.bz2
+compat-wireless-2012-11-21-pc.tar.bz2
+compat-wireless-2012-11-21.tar.bz2
+compat-wireless-2012-11-22-p.tar.bz2
+compat-wireless-2012-11-22-pc.tar.bz2
+compat-wireless-2012-11-22.tar.bz2
+compat-wireless-2012-11-23-p.tar.bz2
+compat-wireless-2012-11-23-pc.tar.bz2
+compat-wireless-2012-11-23.tar.bz2
+compat-wireless-2012-11-24-p.tar.bz2
+compat-wireless-2012-11-24-pc.tar.bz2
+compat-wireless-2012-11-24.tar.bz2
+compat-wireless-2012-11-25-p.tar.bz2
+compat-wireless-2012-11-25-pc.tar.bz2
+compat-wireless-2012-11-25.tar.bz2
+compat-wireless-2012-12-01-p.tar.bz2
+compat-wireless-2012-12-01-pc.tar.bz2
+compat-wireless-2012-12-01.tar.bz2
+compat-wireless-2012-12-02-p.tar.bz2
+compat-wireless-2012-12-02-pc.tar.bz2
+compat-wireless-2012-12-02.tar.bz2
+compat-wireless-2012-12-04-p.tar.bz2
+compat-wireless-2012-12-04-pc.tar.bz2
+compat-wireless-2012-12-04.tar.bz2
+compat-wireless-2012-12-05-p.tar.bz2
+compat-wireless-2012-12-05-pc.tar.bz2
+compat-wireless-2012-12-05.tar.bz2
+compat-wireless-2012-12-06-p.tar.bz2
+compat-wireless-2012-12-06-pc.tar.bz2
+compat-wireless-2012-12-06.tar.bz2
+compat-wireless-2012-12-13-p.tar.bz2
+compat-wireless-2012-12-13-pc.tar.bz2
+compat-wireless-2012-12-13.tar.bz2
+compat-wireless-2012-12-14-p.tar.bz2
+compat-wireless-2012-12-14-pc.tar.bz2
+compat-wireless-2012-12-14.tar.bz2
+compat-wireless-2012-12-15-p.tar.bz2
+compat-wireless-2012-12-15-pc.tar.bz2
+compat-wireless-2012-12-15.tar.bz2
+compat-wireless-2012-12-16-p.tar.bz2
+compat-wireless-2012-12-16-pc.tar.bz2
+compat-wireless-2012-12-16.tar.bz2
+compat-wireless-2012-12-17-p.tar.bz2
+compat-wireless-2012-12-17-pc.tar.bz2
+compat-wireless-2012-12-17.tar.bz2
+compat-wireless-2012-12-18-p.tar.bz2
+compat-wireless-2012-12-18-pc.tar.bz2
+compat-wireless-2012-12-18.tar.bz2
+sha1sums.txt
 
-### booting ...
-[    6.666705] alx 0000:04:00.0: irq 47 for MSI/MSI-X
-[    6.666711] alx 0000:04:00.0: irq 48 for MSI/MSI-X
-[    6.666714] alx 0000:04:00.0: irq 49 for MSI/MSI-X
-[    6.666717] alx 0000:04:00.0: irq 50 for MSI/MSI-X
-[    6.666721] alx 0000:04:00.0: irq 51 for MSI/MSI-X
-[    6.666724] alx 0000:04:00.0: irq 52 for MSI/MSI-X
-[    6.666728] alx 0000:04:00.0: irq 53 for MSI/MSI-X
-[    6.666732] alx 0000:04:00.0: irq 54 for MSI/MSI-X
-[    6.666735] alx 0000:04:00.0: irq 55 for MSI/MSI-X
-[    6.667708] alx 0000:04:00.0 p3p1: NIC Link Up: 1 Gbps Full
-[    6.974830] Bridge firewalling registered
-[    6.978233] RPC: Registered named UNIX socket transport module.
-[    6.978236] RPC: Registered udp transport module.
-[    6.978237] RPC: Registered tcp transport module.
-[    6.978238] RPC: Registered tcp NFSv4.1 backchannel transport module.
-[    7.018578] device virbr0-nic entered promiscuous mode
-[    7.130203] virbr0: topology change detected, propagating
-[    7.130211] virbr0: port 1(virbr0-nic) entered forwarding state
-[    7.130231] virbr0: port 1(virbr0-nic) entered forwarding state
-[    7.151878] virbr0: port 1(virbr0-nic) entered disabled state
-[    7.173009] systemd-readahead[411]: Failed to read event: Value too large
-for defined data type
-[    7.271444] Ebtables v2.0 registered
-[    7.317803] cgroup: libvirtd (1340) created nested cgroup for controller
-"memory" which has incomplete hierarchy support. Nested cgroups may change
-behavior in the future.
-[    7.317809] cgroup: "memory" requires setting use_hierarchy to 1 on the
-root.
-[    7.317897] cgroup: libvirtd (1340) created nested cgroup for controller
-"devices" which has incomplete hierarchy support. Nested cgroups may change
-behavior in the future.
-[    7.317994] cgroup: libvirtd (1340) created nested cgroup for controller
-"blkio" which has incomplete hierarchy support. Nested cgroups may change
-behavior in the future.
-[    8.762277] SELinux: initialized (dev mqueue, type mqueue), uses transition
-SIDs
-[    8.762338] SELinux: initialized (dev proc, type proc), uses genfs_contexts
-[    8.780100] SELinux: initialized (dev mqueue, type mqueue), uses transition
-SIDs
-[    8.780563] SELinux: initialized (dev proc, type proc), uses genfs_contexts
-[   19.299383] fuse init (API version 7.20)
-[   19.304469] SELinux: initialized (dev fuse, type fuse), uses genfs_contexts
-[   19.329191] SELinux: initialized (dev fusectl, type fusectl), uses
-genfs_contexts
-
-
-##### Suspend/Resume
-
-
-[   51.801000] PM: Syncing filesystems ... done.
-[   51.802365] PM: Preparing system for mem sleep
-[   51.919598] Freezing user space processes ... (elapsed 0.01 seconds) done.
-[   51.931307] Freezing remaining freezable tasks ... (elapsed 0.01 seconds)
-done.
-[   51.942323] PM: Entering mem sleep
-[   51.942674] Suspending console(s) (use no_console_suspend to debug)
-[   51.942920] xhci_hcd 0000:00:14.0: WARN Event TRB for slot 1 ep 0 with no
-TDs queued?
-[   51.942954] sd 1:0:0:0: [sdb] Synchronizing SCSI cache
-[   51.942958] sd 0:0:0:0: [sda] Synchronizing SCSI cache
-[   51.943089] sd 0:0:0:0: [sda] Stopping disk
-[   51.943800] sd 1:0:0:0: [sdb] Stopping disk
-[   51.956198] nouveau  [     DRM] suspending fbcon...
-[   51.956201] nouveau  [     DRM] suspending display...
-[   51.956209] nouveau  [     DRM] unpinning framebuffer(s)...
-[   51.956281] nouveau  [     DRM] evicting buffers...
-[   51.963344] nouveau  [     DRM] suspending client object trees...
-[   52.602795] ACPI: Cannot transition to non-D0 state from D3
-[   54.281631] alx 0000:04:00.0 p3p1: wol: ctrl=3, speed=C
-[   54.285938] alx 0000:04:00.0: System wakeup enabled by ACPI
-[   54.297100] PM: suspend of devices complete after 2355.576 msecs
-[   54.297221] PM: late suspend of devices complete after 0.119 msecs
-[   54.308033] ehci-pci 0000:00:1d.0: System wakeup enabled by ACPI
-[   54.318957] ehci-pci 0000:00:1a.0: System wakeup enabled by ACPI
-[   54.340919] xhci_hcd 0000:00:14.0: System wakeup enabled by ACPI
-[   54.351908] PM: noirq suspend of devices complete after 54.714 msecs
-[   54.352556] ACPI: Preparing to enter system sleep state S3
-[   54.434093] PM: Saving platform NVS memory
-[   54.487218] Disabling non-boot CPUs ...
-[   54.488995] smpboot: CPU 1 is now offline
-[   54.489186] CPU 1 offline: Remove Rx thread
-[   54.490536] smpboot: CPU 2 is now offline
-[   54.490676] CPU 2 offline: Remove Rx thread
-[   54.492095] smpboot: CPU 3 is now offline
-[   54.492242] CPU 3 offline: Remove Rx thread
-[   54.493810] smpboot: CPU 4 is now offline
-[   54.494017] CPU 4 offline: Remove Rx thread
-[   54.495326] smpboot: CPU 5 is now offline
-[   54.495477] CPU 5 offline: Remove Rx thread
-[   54.495788] Broke affinity for irq 42
-[   54.496805] smpboot: CPU 6 is now offline
-[   54.496971] CPU 6 offline: Remove Rx thread
-[   54.497277] Broke affinity for irq 23
-[   54.497279] Broke affinity for irq 41
-[   54.498300] smpboot: CPU 7 is now offline
-[   54.498534] CPU 7 offline: Remove Rx thread
-[   54.498641] Extended CMOS year: 2000
-[   54.499792] ACPI: Low-level resume complete
-[   54.499834] PM: Restoring platform NVS memory
-[   54.501452] Extended CMOS year: 2000
-[   54.502155] microcode: CPU0 updated to revision 0x13, date = 2012-07-16
-[   54.502187] Enabling non-boot CPUs ...
-[   54.502256] smpboot: Booting Node 0 Processor 1 APIC 0x2
-[   54.516592] microcode: CPU1 updated to revision 0x13, date = 2012-07-16
-[   54.516596] bnx2i: CPU 1 online: Create Rx thread
-[   54.516638] CPU1 is up
-[   54.516679] smpboot: Booting Node 0 Processor 2 APIC 0x4
-[   54.531035] microcode: CPU2 updated to revision 0x13, date = 2012-07-16
-[   54.531039] bnx2i: CPU 2 online: Create Rx thread
-[   54.531068] CPU2 is up
-[   54.531109] smpboot: Booting Node 0 Processor 3 APIC 0x6
-[   54.545475] microcode: CPU3 updated to revision 0x13, date = 2012-07-16
-[   54.545480] bnx2i: CPU 3 online: Create Rx thread
-[   54.545508] CPU3 is up
-[   54.545542] smpboot: Booting Node 0 Processor 4 APIC 0x1
-[   54.559845] microcode: CPU4 updated to revision 0x13, date = 2012-07-16
-[   54.559849] bnx2i: CPU 4 online: Create Rx thread
-[   54.559880] CPU4 is up
-[   54.559914] smpboot: Booting Node 0 Processor 5 APIC 0x3
-[   54.574260] microcode: CPU5 updated to revision 0x13, date = 2012-07-16
-[   54.574264] bnx2i: CPU 5 online: Create Rx thread
-[   54.574289] CPU5 is up
-[   54.574322] smpboot: Booting Node 0 Processor 6 APIC 0x5
-[   54.588624] microcode: CPU6 updated to revision 0x13, date = 2012-07-16
-[   54.588633] bnx2i: CPU 6 online: Create Rx thread
-[   54.588660] CPU6 is up
-[   54.588688] smpboot: Booting Node 0 Processor 7 APIC 0x7
-[   54.602966] microcode: CPU7 updated to revision 0x13, date = 2012-07-16
-[   54.602969] bnx2i: CPU 7 online: Create Rx thread
-[   54.602995] CPU7 is up
-[   54.613273] ACPI: Waking up from system sleep state S3
-[   54.685567] xhci_hcd 0000:00:14.0: System wakeup disabled by ACPI
-[   54.707544] ehci-pci 0000:00:1a.0: System wakeup disabled by ACPI
-[   54.729531] ehci-pci 0000:00:1d.0: System wakeup disabled by ACPI
-[   54.740565] nouveau 0000:01:00.0: power state changed by ACPI to D0
-[   54.773587] PM: noirq resume of devices complete after 109.717 msecs
-[   54.773683] PM: early resume of devices complete after 0.074 msecs
-[   54.773712] i915 0000:00:02.0: setting latency timer to 64
-[   54.773723] xhci_hcd 0000:00:14.0: setting latency timer to 64
-[   54.773756] ehci-pci 0000:00:1a.0: setting latency timer to 64
-[   54.773768] usb usb1: root hub lost power or was reset
-[   54.773770] usb usb3: root hub lost power or was reset
-[   54.773772] usb usb4: root hub lost power or was reset
-[   54.773793] ahci 0000:00:1f.2: setting latency timer to 64
-[   54.773794] nouveau  [     DRM] re-enabling device...
-[   54.773811] mei 0000:00:16.0: irq 44 for MSI/MSI-X
-[   54.773845] xhci_hcd 0000:00:14.0: Slot 1 endpoint 2 not removed from BW
-list!
-[   54.773851] nouveau  [     DRM] resuming client object trees...
-[   54.773856] nouveau  [   VBIOS][0000:01:00.0] running init tables
-[   54.773870] alx 0000:04:00.0: System wakeup disabled by ACPI
-[   54.773891] snd_hda_intel 0000:00:1b.0: irq 42 for MSI/MSI-X
-[   54.773931] ehci-pci 0000:00:1d.0: setting latency timer to 64
-[   54.773991] usb usb2: root hub lost power or was reset
-[   54.774078] xhci_hcd 0000:00:14.0: irq 46 for MSI/MSI-X
-[   54.776668] mei 0000:00:16.0: unexpected reset: dev_state = RESETING
-[   54.777665] ehci-pci 0000:00:1a.0: cache line size of 64 is not supported
-[   54.777876] ehci-pci 0000:00:1d.0: cache line size of 64 is not supported
-[   54.925686] nouveau  [     DRM] resuming display...
-[   55.079363] ata3: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
-[   55.080891] ata3.00: ACPI cmd ef/10:06:00:00:00:a0 (SET FEATURES) succeeded
-[   55.080903] ata3.00: ACPI cmd ef/10:03:00:00:00:a0 (SET FEATURES) filtered
-out
-[   55.081303] ata2: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
-[   55.082027] ata2.00: ACPI cmd f5/00:00:00:00:00:a0 (SECURITY FREEZE LOCK)
-filtered out
-[   55.082111] ata2.00: ACPI cmd ef/10:06:00:00:00:a0 (SET FEATURES) succeeded
-[   55.082115] ata2.00: ACPI cmd ef/10:03:00:00:00:a0 (SET FEATURES) filtered
-out
-[   55.083149] ata2.00: ACPI cmd f5/00:00:00:00:00:a0 (SECURITY FREEZE LOCK)
-filtered out
-[   55.083154] ata3.00: ACPI cmd ef/10:06:00:00:00:a0 (SET FEATURES) succeeded
-[   55.083155] ata3.00: ACPI cmd ef/10:03:00:00:00:a0 (SET FEATURES) filtered
-out
-[   55.083231] ata2.00: ACPI cmd ef/10:06:00:00:00:a0 (SET FEATURES) succeeded
-[   55.083235] ata2.00: ACPI cmd ef/10:03:00:00:00:a0 (SET FEATURES) filtered
-out
-[   55.083509] ata3.00: configured for UDMA/100
-[   55.083579] ata2.00: configured for UDMA/133
-[   55.083738] sd 1:0:0:0: [sdb] Starting disk
-[   55.228348] usb 3-3: reset low-speed USB device number 2 using xhci_hcd
-[   55.242226] xhci_hcd 0000:00:14.0: xHCI xhci_drop_endpoint called with
-disabled ep ffff88021ec41840
-[   55.242232] usb 3-3: ep 0x81 - rounding interval to 64 microframes, ep desc
-says 80 microframes
-[   55.342262] usb 2-1: reset high-speed USB device number 2 using ehci-pci
-[   55.558141] usb 1-1: reset high-speed USB device number 2 using ehci-pci
-[   55.949055] usb 1-1.1: reset full-speed USB device number 3 using ehci-pci
-[   56.027058] btusb 1-1.1:1.0: no reset_resume for driver btusb?
-[   56.027061] btusb 1-1.1:1.1: no reset_resume for driver btusb?
-[   56.097967] usb 1-1.3: reset high-speed USB device number 4 using ehci-pci
-[   56.775847] [drm] Enabling RC6 states: RC6 on, RC6p on, RC6pp off
-[   57.627026] ata1: SATA link up 3.0 Gbps (SStatus 123 SControl 300)
-[   57.633272] ata1.00: ACPI cmd f5/00:00:00:00:00:a0 (SECURITY FREEZE LOCK)
-filtered out
-[   57.633359] ata1.00: ACPI cmd ef/10:06:00:00:00:a0 (SET FEATURES) succeeded
-[   57.633363] ata1.00: ACPI cmd ef/10:03:00:00:00:a0 (SET FEATURES) filtered
-out
-[   57.645737] ata1.00: ACPI cmd f5/00:00:00:00:00:a0 (SECURITY FREEZE LOCK)
-filtered out
-[   57.645826] ata1.00: ACPI cmd ef/10:06:00:00:00:a0 (SET FEATURES) succeeded
-[   57.645829] ata1.00: ACPI cmd ef/10:03:00:00:00:a0 (SET FEATURES) filtered
-out
-[   57.651976] ata1.00: configured for UDMA/133
-[   57.652361] sd 0:0:0:0: [sda] Starting disk
-[   57.654026] Extended CMOS year: 2000
-[   57.677143] PM: resume of devices complete after 2904.997 msecs
-[   57.677639] PM: Finishing wakeup.
-[   57.677640] Restarting tasks ... done.
-[   57.690291] video LNXVIDEO:00: Restoring backlight state
-[   57.690295] video LNXVIDEO:01: Restoring backlight state
-
-
-###### sudo rmmod alx; sudo modprobe alx
-
-
-[  102.414400] Qualcomm Atheros(R) AR816x/AR817x PCI-E Ethernet Network Driver
-[  102.432649] alx 0000:04:00.0: alx(30:85:a9:01:9b:01): Qualcomm Atheros
-Ethernet Network Connection
-[  102.451912] systemd-udevd[2839]: renamed network interface eth0 to p3p1
-[  102.460935] alx 0000:04:00.0: irq 47 for MSI/MSI-X
-[  102.460958] alx 0000:04:00.0: irq 48 for MSI/MSI-X
-[  102.460974] alx 0000:04:00.0: irq 49 for MSI/MSI-X
-[  102.460991] alx 0000:04:00.0: irq 50 for MSI/MSI-X
-[  102.461007] alx 0000:04:00.0: irq 51 for MSI/MSI-X
-[  102.461025] alx 0000:04:00.0: irq 52 for MSI/MSI-X
-[  102.461042] alx 0000:04:00.0: irq 53 for MSI/MSI-X
-[  102.461059] alx 0000:04:00.0: irq 54 for MSI/MSI-X
-[  102.461077] alx 0000:04:00.0: irq 55 for MSI/MSI-X
-[  102.462652] IPv6: ADDRCONF(NETDEV_UP): p3p1: link is not ready
-[  104.329822] alx 0000:04:00.0 p3p1: NIC Link Up: 1 Gbps Full
-[  104.330071] IPv6: ADDRCONF(NETDEV_CHANGE): p3p1: link becomes ready
-
--- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+sent 2023091 bytes  received 3010960 bytes  58877.79 bytes/sec
+total size is 1163331375  speedup is 231.09
