@@ -1,41 +1,35 @@
-Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f180.google.com ([209.85.217.180]:56870 "EHLO
-	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756234Ab3C2ReS (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 29 Mar 2013 13:34:18 -0400
-Received: by mail-lb0-f180.google.com with SMTP id t11so479299lbi.25
-        for <backports@vger.kernel.org>; Fri, 29 Mar 2013 10:34:16 -0700 (PDT)
+Return-path: <mcgrof@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAB=NE6XSh1Ox2PVMhH4+6sW7UJ73kXuxvzU=eLZz=pGoR==POQ@mail.gmail.com>
-References: <CAB=NE6Wbym4XksV=uKz9eZD0rZwmtS3ZfP-zbXg9TAc2+2+Z9g@mail.gmail.com>
- <CAKprTDEEEdy++Bk5AY4Zfrtwsc9HOKGQ+uWR58PFCWU=v+PE1g@mail.gmail.com>
- <CAB=NE6UtuxuTduYhDy5BcPap-rri+P1mcKYr2KEjAbuE2FU13g@mail.gmail.com>
- <20130327175711.GA8794@stt008.linux.site> <CAKprTDFspW4B2tk9EZPBBXy3C6gL_NJsjwj-bUeYj1rN3j6sYg@mail.gmail.com>
- <CAB=NE6W6Ey8iU1vs=XfA7Or0wF=Qh6Gu8zF-DxMatgk-V+wdkQ@mail.gmail.com>
- <CAKprTDFJet+m7RmkZt5uyf=FMyEYciCYUahEcCC6_ukRQ2pjgw@mail.gmail.com>
- <CAB=NE6VzvVkFvGaudZHQTM5R3s05QV5Jw23wZ_DLxkNf00Utdg@mail.gmail.com>
- <20130328104030.GA4602@stt008.linux.site> <CAB=NE6V=AnTabh3p_yY+GmzPo-+GLAdzEBTQMm4VN1xUuVm_sw@mail.gmail.com>
- <20130328111250.GA4671@stt008.linux.site> <CAKprTDGZAzLMGTYw0sY+oW+T3uX8WNh98oXkjcX+Cf5LEwYTHA@mail.gmail.com>
- <CAB=NE6UqpfTgK=EAeQL_FmxtP7qC=FetiwLDs+ORix4jazet2A@mail.gmail.com>
- <CAKprTDHOO42s-wvr8mZGqxoB8BL986HxCTSJ0q9B=s5UHVmuQQ@mail.gmail.com>
- <CAKprTDES3t0p2117U9BwiCpTOzHPtvN_8RrQ4i1aTQCXa5nV7A@mail.gmail.com>
- <CAKprTDHOCOHw=Jc7rqFrhDXpOHMZ2OnH6+ps=fttTjZxc0o42g@mail.gmail.com> <CAB=NE6XSh1Ox2PVMhH4+6sW7UJ73kXuxvzU=eLZz=pGoR==POQ@mail.gmail.com>
+Sender: mcgrof@gmail.com
+In-Reply-To: <1362477886.8224.0.camel@jlt4.sipsolutions.net>
+References: <1362477886.8224.0.camel@jlt4.sipsolutions.net>
 From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Date: Fri, 29 Mar 2013 10:33:56 -0700
-Message-ID: <CAB=NE6U3EDnt-S_mGwXJhnaeaMOhszMe_-g9PZ7o=5odOPjrww@mail.gmail.com> (sfid-20130329_183420_791595_53547F61)
-Subject: Re: brcmsmac: Unknown symbol backport_cordic_calc_iq (err 0)
-To: =?UTF-8?B?Q2FtYWxlw7Nu?= <noelamac@gmail.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Thu, 7 Mar 2013 14:12:40 -0800
+Message-ID: <CAB=NE6U-Y9f+X2H94cHf9=3NygMbKysMzzG31e_yuBZmxn8eaA@mail.gmail.com> (sfid-20130307_231303_448552_BE7AC42B)
+Subject: Re: [PATCH] compat-wireless: fix netlink portid patch for nl80211
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: backports@vger.kernel.org, linux-wireless@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
-Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Mar 29, 2013 at 10:33 AM, Luis R. Rodriguez
-<mcgrof@frijolero.org> wrote:
-> As for the backport issue can you try the new release?
+On Tue, Mar 5, 2013 at 2:04 AM, Johannes Berg <johannes@sipsolutions.net> wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
 >
-> https://www.kernel.org/pub/linux/kernel/projects/backports/2013/03/28/
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+>  patches/0005-netlink-portid.patch | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/patches/0005-netlink-portid.patch b/patches/0005-netlink-portid.patch
+> index ee9bc85..ebf10b6 100644
+> --- a/patches/0005-netlink-portid.patch
+> +++ b/patches/0005-netlink-portid.patch
 
-This should compile on Debian now. So don't boot into 3.9.
+Seems you are running on an old branch where patches were just under
+patches. I've massaged this to conform to the new layout on the master
+branch. I also modified the subject to indicate compat-drivers instead
+of compat-wireless.
+
+Thanks, applied and pushed!
 
   Luis
