@@ -1,21 +1,22 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+Date: Thu, 7 Mar 2013 18:43:08 -0800
+Message-ID: <CAB=NE6WWBfwVLhtf8H4Yorhiy_cU+tkLg-NbXTGj3nOgcvYF2w@mail.gmail.com>
+Subject: [ANN] compat-drivers-3.9-rc1 releases
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: ben@decadent.org.uk,
-	noelamac@gmail.com,
-	linux-kernel@vger.kernel.org,
-	rusty@rustcorp.com.au,
-	andi@firstfloor.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 17/30] compat: embrace LINUX_BACKPORT() for v2.6.39
-Date: Wed, 20 Mar 2013 02:22:42 -0700
-Message-Id: <1363771375-31715-18-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Linus kicked out v3.9-rc1, the first respective backport of this
+release's 802.11, Bluetooth, Ethernet and DRM subsystems down to the
+last 30 kernel releases is now available at:
+
+https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.9-rc1/
+
+ckmake test compile results of these releases against the last 30
+vanilla kernels:
 
 1   2.6.24              [  OK  ]
 2   2.6.25              [  OK  ]
@@ -33,33 +34,19 @@ From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 14  2.6.37              [  OK  ]
 15  2.6.38              [  OK  ]
 16  2.6.39              [  OK  ]
-17  3.0.65              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.38              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.32              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.9               [  OK  ]
-25  3.8.0               [  OK  ]
-26  3.9-rc1             [  OK  ]
+17  3.0.50              [  OK  ]
+18  3.0.65              [  OK  ]
+19  3.1.10              [  OK  ]
+20  3.2.33              [  OK  ]
+21  3.2.38              [  OK  ]
+22  3.3.8               [  OK  ]
+23  3.4.17              [  OK  ]
+24  3.4.32              [  OK  ]
+25  3.5.7               [  OK  ]
+26  3.6.11              [  OK  ]
+27  3.6.5               [  OK  ]
+28  3.7.0               [  OK  ]
+29  3.7.9               [  OK  ]
+30  3.8.0               [  OK  ]
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- include/linux/compat-2.6.39.h |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/include/linux/compat-2.6.39.h b/include/linux/compat-2.6.39.h
-index 33db220..e9a2eba 100644
---- a/include/linux/compat-2.6.39.h
-+++ b/include/linux/compat-2.6.39.h
-@@ -24,6 +24,7 @@ static inline int __must_check PTR_RET(const void *ptr)
- #define tiocmset(tty, set, clear) tiocmset(tty, NULL, set, clear)
- 
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27))
-+#define tty_set_termios LINUX_BACKPORT(tty_set_termios)
- extern int tty_set_termios(struct tty_struct *tty, struct ktermios *kt);
- #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27)) */
- 
--- 
-1.7.10.4
+  Luis
