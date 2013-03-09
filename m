@@ -1,34 +1,39 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail-bk0-f48.google.com ([209.85.214.48]:43361 "EHLO
-	mail-bk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752420Ab3CRSDC (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 18 Mar 2013 14:03:02 -0400
-Received: by mail-bk0-f48.google.com with SMTP id jf20so2626990bkc.7
-        for <backports@vger.kernel.org>; Mon, 18 Mar 2013 11:03:01 -0700 (PDT)
-Message-ID: <514756D2.3060102@gmail.com>
-Date: Mon, 18 Mar 2013 19:02:58 +0100
-From: Till Kamppeter <till.kamppeter@gmail.com>
+Received: from mail.kernel.org ([198.145.19.201]:56370 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751552Ab3CIWAw (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 9 Mar 2013 17:00:52 -0500
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id DA36D201A0
+	for <backports@vger.kernel.org>; Sat,  9 Mar 2013 22:00:51 +0000 (UTC)
+Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
+	by mail.kernel.org (Postfix) with ESMTP id 1BDB2201C1
+	for <backports@vger.kernel.org>; Sat,  9 Mar 2013 22:00:48 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 51671] ALX driver unusable on new kernel
+In-Reply-To: <bug-51671-58281@https.bugzilla.kernel.org/>
+References: <bug-51671-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-To: lf driver backport
-	<lf_driver_backport@lists.linux-foundation.org>,
-	backports@vger.kernel.org
-Subject: I will apply at the GSoC 2013 for the LF again
-Content-Type: text/plain; charset=UTF-8
+Message-Id: <20130309220047.0C22D11F8CD@bugzilla.kernel.org>
+Date: Sat,  9 Mar 2013 22:00:47 +0000 (UTC)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
+https://bugzilla.kernel.org/show_bug.cgi?id=51671
 
-please put up your GSoC ideas list for the application of the Linux
-Foundation.
 
-I have set up the site now:
 
-https://www.linuxfoundation.org/collaborate/workgroups/gsoc/google-summer-code-2013
 
-The space for driver backports ideas is here:
 
-https://www.linuxfoundation.org/collaborate/workgroups/gsoc/2013-gsoc-driver-backports
+--- Comment #12 from mp-001@ponschab.de  2013-03-09 22:00:46 ---
+compat-drivers-2013-03-04-u is working on F18 (at least kernel 3.7.9-205 and
+3.8.1-201 / Asus N76VM), but after suspend-resume the device is gone (`sudo
+rmmod alx; sudo modprobe alx` is fixing this).
 
-   Till
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
