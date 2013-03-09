@@ -1,65 +1,70 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: ben@decadent.org.uk,
-	noelamac@gmail.com,
-	linux-kernel@vger.kernel.org,
-	rusty@rustcorp.com.au,
-	andi@firstfloor.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 05/30] compat: embrace LINUX_BACKPORT() for v2.6.26
-Date: Wed, 20 Mar 2013 02:22:30 -0700
-Message-Id: <1363771375-31715-6-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <vbmanu@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAFbutie0uH+41CWb8iJBr1i3QY9ta+7H8=nGyaoi2cvTK=kVgg@mail.gmail.com>
+References: <CAFbutietUh=r65eZM7tGG+ST3RhS+pB+RJrX=ZK0jZehEyYaNA@mail.gmail.com>
+	<CAB=NE6VDJrNHr130gsiaoGcHOSpRadJYnJjE=qCNW3535LZX1g@mail.gmail.com>
+	<CAFbutifjPK3gdYRAQhAeYMJEM5c8=N7_YpSYwTtRg1nZBoEGAA@mail.gmail.com>
+	<CAB=NE6X=r=MNHXYCQrR9i4BxDfCVSzO7nF1Nq+n=vXvge-nR0w@mail.gmail.com>
+	<CAB=NE6UkcLZv9Wy2k3TTtj+bNZAV667Ejws4bFE=wbmqHBQeXA@mail.gmail.com>
+	<CAFbutic3M0=LKb=U45+PAxJZGziMxku_C6qcNLrX86R4F77vxA@mail.gmail.com>
+	<CAB=NE6UGHzH_MMkkxO4VX+TfP0XZMh9Laa_DXV=vz8nMfd8p9Q@mail.gmail.com>
+	<CAFbutie0uH+41CWb8iJBr1i3QY9ta+7H8=nGyaoi2cvTK=kVgg@mail.gmail.com>
+Date: Sat, 9 Mar 2013 13:29:29 +0100
+Message-ID: <CAFbutidZR4rJuw95XyqHyzQ1y0AzD3MyAi1n3vsgoZYadxhHpw@mail.gmail.com>
+Subject: Re: compat-driver doesn't compile
+From: Manu <vbmanu@gmail.com>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+RESOLVED!!!
 
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.65              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.38              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.32              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.9               [  OK  ]
-25  3.8.0               [  OK  ]
-26  3.9-rc1             [  OK  ]
+downloaded compat-drivers-3.9-rc1-3.tar.bz2, compiled, modprobe
+ar5523, and.... WLAN0!!!!
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- include/linux/compat-2.6.26.h |    1 +
- 1 file changed, 1 insertion(+)
+Thanks you very very very much
 
-diff --git a/include/linux/compat-2.6.26.h b/include/linux/compat-2.6.26.h
-index 177792a..b8d9dc6 100644
---- a/include/linux/compat-2.6.26.h
-+++ b/include/linux/compat-2.6.26.h
-@@ -45,6 +45,7 @@
- #define SHORT_MAX       ((s16)(USHORT_MAX>>1))
- #define SHORT_MIN       (-SHORT_MAX - 1)
- 
-+#define dev_set_name LINUX_BACKPORT(dev_set_name)
- extern int dev_set_name(struct device *dev, const char *name, ...)
- 			__attribute__((format(printf, 2, 3)));
- 
--- 
-1.7.10.4
+2013/3/9 Manu <vbmanu@gmail.com>:
+>>I don't expect you to be an expert, and supporting RasberryPi's kernel
+>>seems like a worthwhile effort to support, so I'd gladly accept
+>>patches for whoever wants to support that if the kernel can be
+>>identified somehow.
+>
+> I hope it's will be usefull
+> https://github.com/raspberrypi/linux
+>
+> 2013/3/9 Luis R. Rodriguez <mcgrof@do-not-panic.com>:
+>> On Fri, Mar 8, 2013 at 5:41 PM, Manu <vbmanu@gmail.com> wrote:
+>>>>      >      | What kernel are you on?
+>>>>      >      |
+>>>>      >      | uname -r
+>>>>      >
+>>>>      > 3.6.11+
+>>>
+>>>>      What is this + postfix here ? What distribution are you running? Is
+>>>>      this a vanilla kernel from kernel.org or some modified Linux
+>>>>      distribution kernel? When distributions decide they want to
+>>>>      incorporate some behavior from future kernels into older kernels they
+>>>>      break proper kernel backport detection / support and this requires
+>>>>      manual intervention on compat / compat-drivers. So for example RHEL
+>>>>      and SUSE kernels are supported on compat / compat-drivers. Other than
+>>>>      that we support vanilla kernels. The better you describe where your
+>>>>      kernel came from the better we are able to provide support. Also
+>>>>      please note that every single compat-drivers release come already
+>>>>      compile tested against all supported kernels: 2.6.24 - 3.9, so hearing
+>>>>      a compile issue is odd. One other possibility on a compile issue other
+>>>>      than a custom distro hacked kernel is a different kernel
+>>>>      configuration. Right now we use a basic desktop type like kernel
+>>>>      configuration for our tests.
+>>>
+>>> I'm running Gentoo/arm on RaspberryPi Kernel. I'm not an expert, but I
+>>> think the error depends on PCI missing on arm architecture.
+>>
+>> I don't expect you to be an expert, and supporting RasberryPi's kernel
+>> seems like a worthwhile effort to support, so I'd gladly accept
+>> patches for whoever wants to support that if the kernel can be
+>> identified somehow.
+>>
+>>   Luis
