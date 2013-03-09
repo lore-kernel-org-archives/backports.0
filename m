@@ -1,89 +1,53 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <noelamac@gmail.com>
-Return-Path: <noelamac@gmail.com>
-Date: Thu, 28 Mar 2013 11:40:30 +0100
-From: =?utf-8?B?Q2FtYWxlw7Nu?= <noelamac@gmail.com>
-To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	linux-wireless <linux-wireless@vger.kernel.org>,
-	Brett Rudley <brudley@broadcom.com>,
-	Arend Van Spriel <arend@broadcom.com>,
-	"Franky (Zhenhui) Lin" <frankyl@broadcom.com>,
-	meuleman <meuleman@broadcom.com>, brcm80211-dev-list@broadcom.com
-Subject: Re: brcmsmac: Unknown symbol backport_cordic_calc_iq (err 0)
-Message-ID: <20130328104030.GA4602@stt008.linux.site>
-References: <CAKprTDHpf0PgisfJK9bJOYgYxLU5PRLNtbkg7V6Zj2s=gVVMCA@mail.gmail.com> <CAB=NE6Wbym4XksV=uKz9eZD0rZwmtS3ZfP-zbXg9TAc2+2+Z9g@mail.gmail.com> <CAKprTDEEEdy++Bk5AY4Zfrtwsc9HOKGQ+uWR58PFCWU=v+PE1g@mail.gmail.com> <CAB=NE6UtuxuTduYhDy5BcPap-rri+P1mcKYr2KEjAbuE2FU13g@mail.gmail.com> <20130327175711.GA8794@stt008.linux.site> <CAKprTDFspW4B2tk9EZPBBXy3C6gL_NJsjwj-bUeYj1rN3j6sYg@mail.gmail.com> <CAB=NE6W6Ey8iU1vs=XfA7Or0wF=Qh6Gu8zF-DxMatgk-V+wdkQ@mail.gmail.com> <CAKprTDFJet+m7RmkZt5uyf=FMyEYciCYUahEcCC6_ukRQ2pjgw@mail.gmail.com> <CAB=NE6VzvVkFvGaudZHQTM5R3s05QV5Jw23wZ_DLxkNf00Utdg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <CAB=NE6VzvVkFvGaudZHQTM5R3s05QV5Jw23wZ_DLxkNf00Utdg@mail.gmail.com>
+Sender: mcgrof@gmail.com
+Date: Fri, 8 Mar 2013 23:29:34 -0800
+Message-ID: <CAB=NE6VgjMOWJ_POwc4mKRuApafSxzbO1eWyUSdOQ0F5e_JYJA@mail.gmail.com>
+Subject: compat-drivers-3.9-rc1-3 released
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-El 2013-03-28 a las 03:23 -0700, Luis R. Rodriguez escribió:
+A -3 release goes out based on v3.9-rc1. In this revision update we
+get now pending-stable patches fixed so that means we get an -s
+release. Also on behalf of a report on this list I've added ar5523 to
+driver-select as an option.
 
-> On Thu, Mar 28, 2013 at 2:56 AM, Camaleón <noelamac@gmail.com> wrote:
+There are three releases:
 
-(...)
+https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.9-rc1/compat-drivers-3.9-rc1-3.tar.bz2
+https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.9-rc1/compat-drivers-3.9-rc1-3-s.tar.bz2
+https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.9-rc1/compat-drivers-3.9-rc1-3-su.tar.bz2
 
-> > Now, what happens is that the compat-driver freezes with kernel 3.9
-> > and I get this message with kernel 3.2:
-> >
-> > [  684.589268] Compat-drivers backport release: compat-drivers-2013-03-26-u
-> > [  684.589279] Backport based on linux-next.git next-20130326
-> > [  684.589285] compat.git: linux-next.git
-> > [  684.609187] cfg80211: Unknown symbol
-> > backport_netdev_set_default_ethtool_ops (err 0)
-> >
-> > This driver is "driving" me nuts :-)
-> 
-> I have a fix for this, mind you, this is a Debian thing, that is --
-> debian cherry picked some code from a future kernel on their own
-> kernel. The new LINUX_BACKPORT() macro will rescue these. I'll post a
-> new release tomorrow, but I'm working on backporting some other
-> collateral evolutions right now.
+If unclear on the definition of the extra tags on the release please see:
 
-Okay, no problem and thanks for caring about this.
- 
-> >> We have yet to require any backport work between 3.9 and what we assume will be
-> >> 3.10. My bet is this is a real driver bug, not backport bug.
-> >
-> > Curious is that brcmsmac module loads fine from the common kernel
-> > module, I mean, the stock one.
-> 
-> What do you mean? Have you tried the stock driver from 3.9-rc2?
+https://backports.wiki.kernel.org/index.php/Documentation/compat-drivers/additional-patches
 
-Sure! (full report is on the kernel wireless mailing list)
+The -s releases have these pending-stable networking patches sucked
+out from linux-next and merged in. These would typically go into -rc2
+but the model we have allows us to get them faster.
 
-In fact, the only reason I compiled the kernel is to test the latest brcmsmac 
-driver because being this a netbook, having to use an external usb card 
-to be "online" when I'm out of home is a bit annoying.
+0001-iwlwifi-always-copy-first-16-bytes-of-commands.patch
+0002-mac80211-Fix-crash-due-to-un-canceled-work-items.patch
+0003-ath9k-fix-RSSI-dummy-marker-value.patch
+0004-ath9k_htc-fix-signal-strength-handling-issues.patch
+0005-ath9k_hw-improve-reset-reliability-after-errors.patch
+0006-mwifiex-correct-sleep-delay-counter.patch
+0007-rt2x00-error-in-configurations-with-mesh-support-dis.patch
+0008-libertas-fix-crash-for-SD8688.patch
+0009-rt2x00-rt2x00pci_regbusy_read-only-print-register-ac.patch
 
-Now you say... can you please tell me -in user's parlance terms so I can 
-understand it- what's the difference between "brcmsmac" from the stock 
-kernel modules and this one from "compat-drivers"? I mean, what's the 
-difference from a user's POV and from kernel hacker POV. Are they 
-related? Are they going to me merged somehow? What's the goal of having 
-both?
+In this case there were no pending-stable patches for the DRM
+subsystem. Please help test and report any issues you see. If anyone
+has any type of patch they would like to see merged in that is *not*
+marked as stable and if you think it won't get accepted as a stable
+patch but you need it for your customers / mom / whoever, I'll take it
+in, just be sure to add the patch to the respective category as
+described in the wiki. The model is designed to let silicon vendors
+address "customer" releases without breaking the upstream model, by
+prioritizing the upstream process and categorizing patches in their
+respective place, but also documenting them. In the end, for example,
+this is designed to for example steer people away from annotating
+patches under crap/.
 
-> >> Can you
-> >>
-> >> git clone git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-testing.git
-> >>
-> >> and use your .config, and build and test that kernel ? If it fails to
-> >> boot / crash then you know its the driver.
-> >
-> > I'm not using git (don't even have it installed in my system), I'm
-> > used to compile kernels/modules in the old fashion way. Sorry, I don't
-> > know how git works.
-> 
-> make localmodconfig
-> make
-> make install
-
-(...)
-
-Will try and report back. Thanks, Luis.
- 
-Greetings,
-
--- 
-Camaleón 
+  Luis
