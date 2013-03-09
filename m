@@ -1,38 +1,61 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:40682 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751453Ab3C1TSn (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 28 Mar 2013 15:18:43 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/5] compat: fix export of __sg_page_iter*
-Date: Thu, 28 Mar 2013 20:18:24 +0100
-Message-Id: <1364498307-11855-2-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1364498307-11855-1-git-send-email-hauke@hauke-m.de>
-References: <1364498307-11855-1-git-send-email-hauke@hauke-m.de>
-Sender: backports-owner@vger.kernel.org
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <vbmanu@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAB=NE6UGHzH_MMkkxO4VX+TfP0XZMh9Laa_DXV=vz8nMfd8p9Q@mail.gmail.com>
+References: <CAFbutietUh=r65eZM7tGG+ST3RhS+pB+RJrX=ZK0jZehEyYaNA@mail.gmail.com>
+	<CAB=NE6VDJrNHr130gsiaoGcHOSpRadJYnJjE=qCNW3535LZX1g@mail.gmail.com>
+	<CAFbutifjPK3gdYRAQhAeYMJEM5c8=N7_YpSYwTtRg1nZBoEGAA@mail.gmail.com>
+	<CAB=NE6X=r=MNHXYCQrR9i4BxDfCVSzO7nF1Nq+n=vXvge-nR0w@mail.gmail.com>
+	<CAB=NE6UkcLZv9Wy2k3TTtj+bNZAV667Ejws4bFE=wbmqHBQeXA@mail.gmail.com>
+	<CAFbutic3M0=LKb=U45+PAxJZGziMxku_C6qcNLrX86R4F77vxA@mail.gmail.com>
+	<CAB=NE6UGHzH_MMkkxO4VX+TfP0XZMh9Laa_DXV=vz8nMfd8p9Q@mail.gmail.com>
+Date: Sat, 9 Mar 2013 09:19:41 +0100
+Message-ID: <CAFbutie0uH+41CWb8iJBr1i3QY9ta+7H8=nGyaoi2cvTK=kVgg@mail.gmail.com>
+Subject: Re: compat-driver doesn't compile
+From: Manu <vbmanu@gmail.com>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- compat/compat-3.9.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>I don't expect you to be an expert, and supporting RasberryPi's kernel
+>seems like a worthwhile effort to support, so I'd gladly accept
+>patches for whoever wants to support that if the kernel can be
+>identified somehow.
 
-diff --git a/compat/compat-3.9.c b/compat/compat-3.9.c
-index 7134caa..1f24842 100644
---- a/compat/compat-3.9.c
-+++ b/compat/compat-3.9.c
-@@ -11,7 +11,7 @@
- #include <linux/module.h>
- #include <linux/scatterlist.h>
- 
--#ifndef __sg_page_iter_next
-+#ifdef __sg_page_iter_next
- 
- void __sg_page_iter_start(struct sg_page_iter *piter,
- 			  struct scatterlist *sglist, unsigned int nents,
--- 
-1.7.10.4
+I hope it's will be usefull
+https://github.com/raspberrypi/linux
 
+2013/3/9 Luis R. Rodriguez <mcgrof@do-not-panic.com>:
+> On Fri, Mar 8, 2013 at 5:41 PM, Manu <vbmanu@gmail.com> wrote:
+>>>      >      | What kernel are you on?
+>>>      >      |
+>>>      >      | uname -r
+>>>      >
+>>>      > 3.6.11+
+>>
+>>>      What is this + postfix here ? What distribution are you running? Is
+>>>      this a vanilla kernel from kernel.org or some modified Linux
+>>>      distribution kernel? When distributions decide they want to
+>>>      incorporate some behavior from future kernels into older kernels they
+>>>      break proper kernel backport detection / support and this requires
+>>>      manual intervention on compat / compat-drivers. So for example RHEL
+>>>      and SUSE kernels are supported on compat / compat-drivers. Other than
+>>>      that we support vanilla kernels. The better you describe where your
+>>>      kernel came from the better we are able to provide support. Also
+>>>      please note that every single compat-drivers release come already
+>>>      compile tested against all supported kernels: 2.6.24 - 3.9, so hearing
+>>>      a compile issue is odd. One other possibility on a compile issue other
+>>>      than a custom distro hacked kernel is a different kernel
+>>>      configuration. Right now we use a basic desktop type like kernel
+>>>      configuration for our tests.
+>>
+>> I'm running Gentoo/arm on RaspberryPi Kernel. I'm not an expert, but I
+>> think the error depends on PCI missing on arm architecture.
+>
+> I don't expect you to be an expert, and supporting RasberryPi's kernel
+> seems like a worthwhile effort to support, so I'd gladly accept
+> patches for whoever wants to support that if the kernel can be
+> identified somehow.
+>
+>   Luis
