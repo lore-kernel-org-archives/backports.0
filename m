@@ -1,84 +1,54 @@
 MIME-Version: 1.0
 Sender: mcgrof@gmail.com
-In-Reply-To: <1363790495.31336.51.camel@deadeye.wl.decadent.org.uk>
-References: <20130317144603.GA4850@stt008.linux.site>
-	<1363532310.3937.266.camel@deadeye.wl.decadent.org.uk>
-	<20130317152428.GA4940@stt008.linux.site>
-	<1363544257.3937.278.camel@deadeye.wl.decadent.org.uk>
-	<1363556604.3937.285.camel@deadeye.wl.decadent.org.uk>
-	<CAB=NE6UPgjOXi7wWBmA5XVHY8MMcf6KwqSWxWViM6kiJYpV0tA@mail.gmail.com>
-	<1363790495.31336.51.camel@deadeye.wl.decadent.org.uk>
-Date: Wed, 20 Mar 2013 08:50:15 -0700
-Message-ID: <CAB=NE6UZ+RvFHyzUhSwzATnkd9gAGa0EKDQD+U9vxVM8FSvLrA@mail.gmail.com>
-Subject: Re: Bug#703142: compatibility with alx ?
+In-Reply-To: <CAB=NE6X=r=MNHXYCQrR9i4BxDfCVSzO7nF1Nq+n=vXvge-nR0w@mail.gmail.com>
+References: <CAFbutietUh=r65eZM7tGG+ST3RhS+pB+RJrX=ZK0jZehEyYaNA@mail.gmail.com>
+	<CAB=NE6VDJrNHr130gsiaoGcHOSpRadJYnJjE=qCNW3535LZX1g@mail.gmail.com>
+	<CAFbutifjPK3gdYRAQhAeYMJEM5c8=N7_YpSYwTtRg1nZBoEGAA@mail.gmail.com>
+	<CAB=NE6X=r=MNHXYCQrR9i4BxDfCVSzO7nF1Nq+n=vXvge-nR0w@mail.gmail.com>
+Date: Fri, 8 Mar 2013 17:22:59 -0800
+Message-ID: <CAB=NE6UkcLZv9Wy2k3TTtj+bNZAV667Ejws4bFE=wbmqHBQeXA@mail.gmail.com>
+Subject: Re: compat-driver doesn't compile
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Ben Hutchings <ben@decadent.org.uk>
-Cc: backports@vger.kernel.org, 703142@bugs.debian.org,
-	=?UTF-8?B?Q2FtYWxlw7Nu?= <noelamac@gmail.com>
+To: Manu <vbmanu@gmail.com>
+Cc: backports@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Mar 20, 2013 at 7:41 AM, Ben Hutchings <ben@decadent.org.uk> wrote:
-> On Wed, 2013-03-20 at 02:07 -0700, Luis R. Rodriguez wrote:
->> On Sun, Mar 17, 2013 at 2:43 PM, Ben Hutchings <ben@decadent.org.uk> wro=
-te:
->> > [Re-sending to the correct list address.]
->> >
->> > On Sun, 2013-03-17 at 16:24 +0100, Camale=C3=B3n wrote:
->> >> El 2013-03-17 a las 14:58 +0000, Ben Hutchings escribi=C3=B3:
->> >>
->> >> > On Sun, 2013-03-17 at 15:46 +0100, Camale=C3=B3n wrote:
->> >>
->> >> (...)
->> >>
->> >> > > Using Debian's stock network driver is not an option for me (full=
- report
->> >> > > available here=C2=B2) so I have to try with the latests drivers b=
-ut now that
->> >> > > "compat-drivers" are compiled the generated modules cannot be loa=
-ded.
->> >> > >
->> >> > > Is there any by-pass for this?
->> >> > >
->> >> > > =C2=B9http://marc.info/?t=3D136351034300002&r=3D1&w=3D2
->> >> > > =C2=B2http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D664767
->> >> >
->> >> > Talk to the compat-drivers developers.
->> >>
->> >> To be sincere, I don't think that's a user's role.
->> >>
->> >> I don't know what's going on with these drivers but if they are not
->> >> supported by Debian at all it would be better for all of us (plain
->> >> users and developers) to simply say it so to avoid wasting time and
->> >> resources.
->> >
->> > I would like to support them, in fact more than that I would like to
->> > integrate them into official packages.  But there is no way we can
->> > support an OOT module that defines symbols that we might need to add f=
-or
->> > our own backports.  As it is 'compat' will ironically cause
->> > incompatibility with Debian's own kernel upgrades.
->> >
->> > Compat developers: please add a prefix (not 'compat', that one's alrea=
-dy
->> > taken!)
->>
->> We have been using compat_ for a while now to prefix a lot of our
->> symbols without clashes for the 32-64 compat stuff, but sure -- we can
->> use something else to help with any theoretical issues. Surprised
->> Debian of all distributions would frankly have been affected given
->> RHEL / SUSE didn't, but its OK, lets deal with it.
->
-> The conflict that just showed up in Debian involved the 'i2c_bit_algo'
-> symbol which had no symbol prefix in 'compat'.  We updated the in-tree
-> DRM drivers from 3.4.32 and started exporting the symbol from
-> i2c-algo-bit itself.
->
-> I hadn't noticed that you already used the 'compat_' prefix for some
-> exported symbols and I'm not aware of any current conflict with the
-> 32-bit compatibility layer, but it seems plausible that it could happen
-> in future.
-
-Sure, let me know what you think of the proposed posted changes.
+Forgot to add the list. Please never remove the list.
 
   Luis
+
+On Fri, Mar 8, 2013 at 5:22 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> On Fri, Mar 8, 2013 at 4:05 PM, Manu <vbmanu@gmail.com> wrote:
+>>      | What kernel are you on?
+>>      |
+>>      | uname -r
+>>
+>> 3.6.11+
+>
+> What is this + postfix here ? What distribution are you running? Is
+> this a vanilla kernel from kernel.org or some modified Linux
+> distribution kernel? When distributions decide they want to
+> incorporate some behavior from future kernels into older kernels they
+> break proper kernel backport detection / support and this requires
+> manual intervention on compat / compat-drivers. So for example RHEL
+> and SUSE kernels are supported on compat / compat-drivers. Other than
+> that we support vanilla kernels. The better you describe where your
+> kernel came from the better we are able to provide support. Also
+> please note that every single compat-drivers release come already
+> compile tested against all supported kernels: 2.6.24 - 3.9, so hearing
+> a compile issue is odd. One other possibility on a compile issue other
+> than a custom distro hacked kernel is a different kernel
+> configuration. Right now we use a basic desktop type like kernel
+> configuration for our tests.
+>
+>>     | Also please note that compat-drivers-3.9-rc1-1 is out too, you
+>> should upgrade.
+>> compat-drivers-3.9-rc1-2 # ./scripts/driver-select ath  # I need only ar5523
+>
+> ar5523 didn't have its own driver-select menu entry but I just added
+> it, that will be part of the new release I'm about to announce, so
+> please use this next but in the meantime please verify the above.
+>
+>   Luis
