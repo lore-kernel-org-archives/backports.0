@@ -1,36 +1,25 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 5/5] compat: build kstrtox for kernel < 2.6.25
-Date: Thu, 28 Mar 2013 20:18:27 +0100
-Message-Id: <1364498307-11855-5-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1364498307-11855-1-git-send-email-hauke@hauke-m.de>
-References: <1364498307-11855-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <CAFub=KTNR2ag=KB-MbdoHr-ROjs85kKaQTMYoLv6A4Bmpt-pnQ@mail.gmail.com>
+References: <1359916425-2377-1-git-send-email-ozancag@gmail.com>
+	<510EB634.3080704@hauke-m.de>
+	<CAFub=KQx6wCMUsQJAJXbiaUQ4-uUDepp0datbWuef-Gqst0xnA@mail.gmail.com>
+	<511AB1B3.7090909@hauke-m.de>
+	<CAFub=KTNR2ag=KB-MbdoHr-ROjs85kKaQTMYoLv6A4Bmpt-pnQ@mail.gmail.com>
+Date: Tue, 12 Mar 2013 03:51:42 -0700
+Message-ID: <CAB=NE6X6-0ELebcYt=72oGfgHa36SdyUDHeu1DQuZDxrjA5uJw@mail.gmail.com>
+Subject: Re: [PATCH] compat-drivers: Add possibility to build every subsystem separately
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org, mcgrof@kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-strict_strtol with one l is defined in compat-2.6.25.h code now and
-this deactivates this check, use strict_strtoll instead.
+On Tue, Mar 12, 2013 at 2:13 AM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com=
+> wrote:
+> Bringing this again. Luis, what do you think?
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- compat/kstrtox.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I read this thread when I got back from the mountains and agreed with
+Hauke's recommendation.
 
-diff --git a/compat/kstrtox.c b/compat/kstrtox.c
-index 266ffbc..fdbc56e 100644
---- a/compat/kstrtox.c
-+++ b/compat/kstrtox.c
-@@ -17,7 +17,7 @@
-  * version included in compat-drivers. We use strict_strtol to check if
-  * kstrto* is already available.
-  */
--#ifndef strict_strtol
-+#ifndef strict_strtoll
- 
- #include <linux/ctype.h>
- #include <linux/errno.h>
--- 
-1.7.10.4
+  Luis
