@@ -1,78 +1,30 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: ben@decadent.org.uk,
-	noelamac@gmail.com,
-	linux-kernel@vger.kernel.org,
-	rusty@rustcorp.com.au,
-	andi@firstfloor.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 18/30] compat: embrace LINUX_BACKPORT() for v3.0
-Date: Wed, 20 Mar 2013 02:22:43 -0700
-Message-Id: <1363771375-31715-19-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:48898 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756111Ab3CQLDS (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 17 Mar 2013 07:03:18 -0400
+Received: by mail-wg0-f49.google.com with SMTP id ds1so3176463wgb.4
+        for <backports@vger.kernel.org>; Sun, 17 Mar 2013 04:03:17 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAKprTDEyC54zL8zBOHW-De3bVRxiLaAzNAq+Jd39f67gX2waPQ@mail.gmail.com>
+References: <20130317085202.GB3547@stt008.linux.site>
+	<CAFub=KRQgdhMBxda2QHK-x6CYCb_WUVq2o6pgpDKMtfZj8MtiQ@mail.gmail.com>
+	<CAKprTDEyC54zL8zBOHW-De3bVRxiLaAzNAq+Jd39f67gX2waPQ@mail.gmail.com>
+Date: Sun, 17 Mar 2013 13:03:17 +0200
+Message-ID: <CAFub=KTb2PrCVYoxc5mts3CTAypEzKwZjbRiBNpMoVz7yz-s5g@mail.gmail.com>
+Subject: Re: Unable to compile "compat-drivers" in Debian Wheezy
+From: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
+To: =?UTF-8?B?Q2FtYWxlw7Nu?= <noelamac@gmail.com>
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+insmod doesn't resolve module dependencies. You have to use modprobe
+or load dependencies of alx before insmod'ding alx by looking at the
+output of modinfo alx.
 
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.65              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.38              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.32              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.9               [  OK  ]
-25  3.8.0               [  OK  ]
-26  3.9-rc1             [  OK  ]
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- include/linux/compat-3.0.h |    3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/include/linux/compat-3.0.h b/include/linux/compat-3.0.h
-index ba25846..7fcd763 100644
---- a/include/linux/compat-3.0.h
-+++ b/include/linux/compat-3.0.h
-@@ -23,10 +23,12 @@
-  *
-  * First part is in compat-3.0.c.
-  */
-+#define shmem_read_mapping_page_gfp LINUX_BACKPORT(shmem_read_mapping_page_gfp)
- extern struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
- 						pgoff_t index, gfp_t gfp);
- 
- 
-+#define shmem_read_mapping_page LINUX_BACKPORT(shmem_read_mapping_page)
- static inline struct page *shmem_read_mapping_page(
-                                struct address_space *mapping, pgoff_t index)
- {
-@@ -77,6 +79,7 @@ struct bcma_device_id {
- #define BCMA_ANY_CLASS		0xFF
- #endif /* BCMA_CORE */
- 
-+#define mac_pton LINUX_BACKPORT(mac_pton)
- int mac_pton(const char *s, u8 *mac);
- 
- int __must_check kstrtoull_from_user(const char __user *s, size_t count, unsigned int base, unsigned long long *res);
--- 
-1.7.10.4
+By the way make install should install the modules under a different
+subdirectory of /lib/modules/<your kernel>. So this wouldn't overwrite
+your already install stuff.
