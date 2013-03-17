@@ -1,59 +1,55 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <rodrigue@qca.qualcomm.com>
-Date: Tue, 12 Mar 2013 13:36:38 -0700
-From: "Luis R. Rodriguez" <rodrigue@qca.qualcomm.com>
-To: Ozan =?utf-8?B?w4dhxJ9sYXlhbg==?= <ozancag@gmail.com>
-CC: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, <backports@vger.kernel.org>, <mcgrof@kernel.org>
-Subject: Re: [PATCH] compat-drivers: Add possibility to build every
- subsystem separately
-Message-ID: <20130312203638.GJ32416@pogo>
-References: <1359916425-2377-1-git-send-email-ozancag@gmail.com>
- <510EB634.3080704@hauke-m.de>
- <CAFub=KQx6wCMUsQJAJXbiaUQ4-uUDepp0datbWuef-Gqst0xnA@mail.gmail.com>
- <511AB1B3.7090909@hauke-m.de>
- <CAFub=KTNR2ag=KB-MbdoHr-ROjs85kKaQTMYoLv6A4Bmpt-pnQ@mail.gmail.com>
- <CAB=NE6X6-0ELebcYt=72oGfgHa36SdyUDHeu1DQuZDxrjA5uJw@mail.gmail.com>
- <CAFub=KRfAsohiy3U9gAsjY=nfsPCreTboYhiZ=NcJqp+x07=5w@mail.gmail.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mail-ie0-f179.google.com ([209.85.223.179]:41503 "EHLO
+	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755786Ab3CQL0h convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 17 Mar 2013 07:26:37 -0400
+Received: by mail-ie0-f179.google.com with SMTP id k11so5979962iea.10
+        for <backports@vger.kernel.org>; Sun, 17 Mar 2013 04:26:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-In-Reply-To: <CAFub=KRfAsohiy3U9gAsjY=nfsPCreTboYhiZ=NcJqp+x07=5w@mail.gmail.com>
-Return-Path: rodrigue@qca.qualcomm.com
+In-Reply-To: <CAFub=KTb2PrCVYoxc5mts3CTAypEzKwZjbRiBNpMoVz7yz-s5g@mail.gmail.com>
+References: <20130317085202.GB3547@stt008.linux.site>
+	<CAFub=KRQgdhMBxda2QHK-x6CYCb_WUVq2o6pgpDKMtfZj8MtiQ@mail.gmail.com>
+	<CAKprTDEyC54zL8zBOHW-De3bVRxiLaAzNAq+Jd39f67gX2waPQ@mail.gmail.com>
+	<CAFub=KTb2PrCVYoxc5mts3CTAypEzKwZjbRiBNpMoVz7yz-s5g@mail.gmail.com>
+Date: Sun, 17 Mar 2013 12:26:36 +0100
+Message-ID: <CAKprTDEtReToSww5_YhXhj2f0YtsmQczpexf4a-_aEtvaFTXdQ@mail.gmail.com>
+Subject: Re: Unable to compile "compat-drivers" in Debian Wheezy
+From: =?ISO-8859-1?Q?Camale=F3n?= <noelamac@gmail.com>
+To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Mar 12, 2013 at 02:12:15PM +0200, Ozan Çağlayan wrote:
-> > I read this thread when I got back from the mountains and agreed with
-> > Hauke's recommendation.
-> >
-> >   Luis
-> 
-> Can you clarify what does $BT, BT=True achieve? It looks like it was
-> some kind of switch to enable/disable BT but I can't be sure.
+2013/3/17 Ozan Çağlayan <ozancag@gmail.com>:
+> insmod doesn't resolve module dependencies. You have to use modprobe
+> or load dependencies of alx before insmod'ding alx by looking at the
+> output of modinfo alx.
 
-Yeah that's legacy junk, nuke it at your liking.
+Ah, okay.
 
-> On the other part, Hauke first suggested a different thing and then another
-> way.
+> By the way make install should install the modules under a different
+> subdirectory of /lib/modules/<your kernel>. So this wouldn't overwrite
+> your already install stuff.
 
-I think the concern was to not build everything on the stock
-vanilla release.
+Well, I finally run "make install", then "make unload" and finally
+"modprobe alx" but I get:
 
-> Should we enable all by default and --disable the unwanted ones or
-> should we disable and print a usage by default and add --enable
-> switches to enable subsystems?
+root@stt300:/home/hpc03/Escritorio/compat-drivers-3.9-rc2-2-su# modprobe alx
+ERROR: could not insert 'alx': Exec format error
 
-How about something very simple:
+While loading Debian's stock module seems to be fine:
 
-  * Enable all by default
+root@stt300:/home/hpc03/Escritorio/compat-drivers-3.9-rc2-2-su# insmod
+/lib/modules/3.2.0-4-686-pae/kernel/drivers/net/ethernet/atheros/alx/alx.ko
 
-  * Use Kconfig to allow us to select 4 subsystems:
-    - Ethernet
-    - WiFi
-    - Bluetooth
-    - DRM
+root@stt300:/home/hpc03/Escritorio/compat-drivers-3.9-rc2-2-su# lsmod|grep alx
+alx                    59294  0
 
-This way we'd keep the logic easy for an initial implementation
-to support Kconfig (scripts/kconfig/mconf.c) and then build on
-top of it to expand specifics.
+Again, thanks for any hint :-)
 
-  Luis
+Greetings,
+
+-- 
+Camaleón
