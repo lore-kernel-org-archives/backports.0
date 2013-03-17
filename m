@@ -1,52 +1,55 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-Date: Thu, 7 Mar 2013 18:43:08 -0800
-Message-ID: <CAB=NE6WWBfwVLhtf8H4Yorhiy_cU+tkLg-NbXTGj3nOgcvYF2w@mail.gmail.com>
-Subject: [ANN] compat-drivers-3.9-rc1 releases
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mail-we0-f182.google.com ([74.125.82.182]:43360 "EHLO
+	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752037Ab3CQRx1 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 17 Mar 2013 13:53:27 -0400
+Received: by mail-we0-f182.google.com with SMTP id t57so4337012wey.13
+        for <backports@vger.kernel.org>; Sun, 17 Mar 2013 10:53:25 -0700 (PDT)
+Date: Sun, 17 Mar 2013 18:53:21 +0100
+From: =?utf-8?B?Q2FtYWxlw7Nu?= <noelamac@gmail.com>
 To: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Subject: Debian Wheezy: intel driver conflicts with compat-drivers
+Message-ID: <20130317175321.GA5732@stt008.linux.site>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Linus kicked out v3.9-rc1, the first respective backport of this
-release's 802.11, Bluetooth, Ethernet and DRM subsystems down to the
-last 30 kernel releases is now available at:
+Hello,
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.9-rc1/
+After compiling the compat-drivers (thanks to this mailing list 
+support) I was unable to load the generated kernel module. It failed 
+with a succinct message:
 
-ckmake test compile results of these releases against the last 30
-vanilla kernels:
+***
+ERROR: could not insert 'alx': Exec format error
+***
 
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.50              [  OK  ]
-18  3.0.65              [  OK  ]
-19  3.1.10              [  OK  ]
-20  3.2.33              [  OK  ]
-21  3.2.38              [  OK  ]
-22  3.3.8               [  OK  ]
-23  3.4.17              [  OK  ]
-24  3.4.32              [  OK  ]
-25  3.5.7               [  OK  ]
-26  3.6.11              [  OK  ]
-27  3.6.5               [  OK  ]
-28  3.7.0               [  OK  ]
-29  3.7.9               [  OK  ]
-30  3.8.0               [  OK  ]
+But dmesg showed more:
 
-  Luis
+***
+compat: exports duplicate symbol i2c_bit_algo (owned by i2c_algo_bit)
+***
+
+After restartig the system, gnome-shell crashed because Xorg loaded the
+VESA driver. I did not join the points until I found a related bug 
+report at Debian:
+
+http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=703142#51
+
+And then was "pointed" to ask you :-)
+
+http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=703142#71
+
+True is that I was able to compile and load "compat-drivers" with no 
+problems at all from another system with no Intel card on it, so here
+I am. 
+
+Is is a known problem? Is there a workaround for Intel VGA-based 
+systems?
+
+Greetings,
+
+-- 
+Camaleón 
