@@ -1,28 +1,34 @@
 Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <ozancag@gmail.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mail-bk0-f48.google.com ([209.85.214.48]:43361 "EHLO
+	mail-bk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752420Ab3CRSDC (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 18 Mar 2013 14:03:02 -0400
+Received: by mail-bk0-f48.google.com with SMTP id jf20so2626990bkc.7
+        for <backports@vger.kernel.org>; Mon, 18 Mar 2013 11:03:01 -0700 (PDT)
+Message-ID: <514756D2.3060102@gmail.com>
+Date: Mon, 18 Mar 2013 19:02:58 +0100
+From: Till Kamppeter <till.kamppeter@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAB=NE6WaHU23mDEgfm0NMj=EJjiCS1x3rnxqOsfZhmVYWCERRw@mail.gmail.com>
-References: <CAB=NE6WaHU23mDEgfm0NMj=EJjiCS1x3rnxqOsfZhmVYWCERRw@mail.gmail.com>
-Date: Wed, 27 Mar 2013 12:14:20 +0200
-Message-ID: <CAFub=KS4k_q+dwHZUWxGjpPtQzQkXk5j_pjJbFnXMktT_2bf-w@mail.gmail.com>
-Subject: Re: Initial develoment backports kconfig support added
-From: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+To: lf driver backport
+	<lf_driver_backport@lists.linux-foundation.org>,
+	backports@vger.kernel.org
+Subject: I will apply at the GSoC 2013 for the LF again
 Content-Type: text/plain; charset=UTF-8
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Mar 27, 2013 at 4:48 AM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> If you've been looking to clean up the Makefile / config.mk here's
-> your chance. I've thrown initial Kconfig support for compat-drivers.
-> Feel free to rip things apart.
+Hi,
 
-Woot, thank you! :)
+please put up your GSoC ideas list for the application of the Linux
+Foundation.
 
+I have set up the site now:
 
---
-Ozan =C3=87a=C4=9Flayan
-Research Assistant
-Galatasaray University - Computer Engineering Dept.
-http://www.ozancaglayan.com
+https://www.linuxfoundation.org/collaborate/workgroups/gsoc/google-summer-code-2013
+
+The space for driver backports ideas is here:
+
+https://www.linuxfoundation.org/collaborate/workgroups/gsoc/2013-gsoc-driver-backports
+
+   Till
