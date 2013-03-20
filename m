@@ -8,209 +8,57 @@ Cc: ben@decadent.org.uk,
 	rusty@rustcorp.com.au,
 	andi@firstfloor.org,
 	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 27/30] compat: embrace LINUX_BACKPORT() for kfifo
-Date: Wed, 20 Mar 2013 02:22:52 -0700
-Message-Id: <1363771375-31715-28-git-send-email-mcgrof@do-not-panic.com>
+Subject: [RFC 01/30] compat: add LINUX_BACKPORT() for prefixing symbols
+Date: Wed, 20 Mar 2013 02:22:26 -0700
+Message-Id: <1363771375-31715-2-git-send-email-mcgrof@do-not-panic.com>
 In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.65              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.38              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.32              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.9               [  OK  ]
-25  3.8.0               [  OK  ]
-26  3.9-rc1             [  OK  ]
+Ben Hutchings notes that "compat_" is already taken as a
+prefix for symbols and while this is only slightly true
+in practice its best we avoid any future issues.
+
+Others in the past have noted issues with symbols exported
+by backporting effort to conflict with other symbols that
+might be preferred by the running kernel. In the worst
+case scenerio we'd have the same subsystems with two eras
+with two sets of drivers using a subystem from an era each.
+This patch doesn't address that but tries to address the
+namespace conflict by compat itself. The best alternative I
+was hoping for was to use core module symbol namespaces but
+after reviewing that effort introduced in 2007
+by Andi Kleen [0] I see in the end Rusty Russell nack'd
+these patches [1] so we're left with dealing with symbol
+renaming.
+
+Define LINUX_BACKPORT() to be used to allow us to rename
+symbols with a backport_ prefix. The the cleanest, but
+its a start. It isn't clean but its something, I welcome
+other ideas.
+
+[0] http://thread.gmane.org/gmane.linux.network/78674
+[1] http://article.gmane.org/gmane.linux.kernel/606885
 
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- include/linux/kfifo.h |  146 ++++++++++++++++++++++++++++---------------------
- 1 file changed, 83 insertions(+), 63 deletions(-)
+ include/linux/compat-2.6.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/kfifo.h b/include/linux/kfifo.h
-index e30bb54..398b00d 100644
---- a/include/linux/kfifo.h
-+++ b/include/linux/kfifo.h
-@@ -187,6 +187,89 @@ __kfifo_int_must_check_helper(int val)
- 	return val;
- }
+diff --git a/include/linux/compat-2.6.h b/include/linux/compat-2.6.h
+index 68e95d5..d1d24d0 100644
+--- a/include/linux/compat-2.6.h
++++ b/include/linux/compat-2.6.h
+@@ -3,6 +3,8 @@
  
-+#define __kfifo_alloc LINUX_BACKPORT(__kfifo_alloc)
-+extern int __kfifo_alloc(struct __kfifo *fifo, unsigned int size,
-+	size_t esize, gfp_t gfp_mask);
-+#define __kfifo_free LINUX_BACKPORT(__kfifo_free)
-+extern void __kfifo_free(struct __kfifo *fifo);
+ #ifndef __ASSEMBLY__
+ 
++#define LINUX_BACKPORT(__sym) backport_ ##__sym
 +
-+#define __kfifo_init LINUX_BACKPORT(__kfifo_init)
-+extern int __kfifo_init(struct __kfifo *fifo, void *buffer,
-+	unsigned int size, size_t esize);
-+
-+#define __kfifo_in LINUX_BACKPORT(__kfifo_in)
-+extern unsigned int __kfifo_in(struct __kfifo *fifo,
-+	const void *buf, unsigned int len);
-+
-+#define __kfifo_out LINUX_BACKPORT(__kfifo_out)
-+extern unsigned int __kfifo_out(struct __kfifo *fifo,
-+	void *buf, unsigned int len);
-+
-+#define __kfifo_from_user LINUX_BACKPORT(__kfifo_from_user)
-+extern int __kfifo_from_user(struct __kfifo *fifo,
-+	const void __user *from, unsigned long len, unsigned int *copied);
-+
-+#define __kfifo_to_user LINUX_BACKPORT(__kfifo_to_user)
-+extern int __kfifo_to_user(struct __kfifo *fifo,
-+	void __user *to, unsigned long len, unsigned int *copied);
-+
-+#define __kfifo_dma_in_prepare LINUX_BACKPORT(__kfifo_dma_in_prepare)
-+extern unsigned int __kfifo_dma_in_prepare(struct __kfifo *fifo,
-+	struct scatterlist *sgl, int nents, unsigned int len);
-+
-+#define __kfifo_dma_out_prepare LINUX_BACKPORT(__kfifo_dma_out_prepare)
-+extern unsigned int __kfifo_dma_out_prepare(struct __kfifo *fifo,
-+	struct scatterlist *sgl, int nents, unsigned int len);
-+
-+#define __kfifo_out_peek LINUX_BACKPORT(__kfifo_out_peek)
-+extern unsigned int __kfifo_out_peek(struct __kfifo *fifo,
-+	void *buf, unsigned int len);
-+
-+#define __kfifo_in_r LINUX_BACKPORT(__kfifo_in_r)
-+extern unsigned int __kfifo_in_r(struct __kfifo *fifo,
-+	const void *buf, unsigned int len, size_t recsize);
-+
-+#define __kfifo_out_r LINUX_BACKPORT(__kfifo_out_r)
-+extern unsigned int __kfifo_out_r(struct __kfifo *fifo,
-+	void *buf, unsigned int len, size_t recsize);
-+
-+#define __kfifo_from_user_r LINUX_BACKPORT(__kfifo_from_user_r)
-+extern int __kfifo_from_user_r(struct __kfifo *fifo,
-+	const void __user *from, unsigned long len, unsigned int *copied,
-+	size_t recsize);
-+
-+#define __kfifo_to_user_r LINUX_BACKPORT(__kfifo_to_user_r)
-+extern int __kfifo_to_user_r(struct __kfifo *fifo, void __user *to,
-+	unsigned long len, unsigned int *copied, size_t recsize);
-+
-+#define __kfifo_dma_in_prepare_r LINUX_BACKPORT(__kfifo_dma_in_prepare_r)
-+extern unsigned int __kfifo_dma_in_prepare_r(struct __kfifo *fifo,
-+	struct scatterlist *sgl, int nents, unsigned int len, size_t recsize);
-+
-+#define __kfifo_dma_in_finish_r LINUX_BACKPORT(__kfifo_dma_in_finish_r)
-+extern void __kfifo_dma_in_finish_r(struct __kfifo *fifo,
-+	unsigned int len, size_t recsize);
-+
-+#define __kfifo_dma_out_prepare_r LINUX_BACKPORT(__kfifo_dma_out_prepare_r)
-+extern unsigned int __kfifo_dma_out_prepare_r(struct __kfifo *fifo,
-+	struct scatterlist *sgl, int nents, unsigned int len, size_t recsize);
-+
-+#define __kfifo_dma_out_finish_r LINUX_BACKPORT(__kfifo_dma_out_finish_r)
-+extern void __kfifo_dma_out_finish_r(struct __kfifo *fifo, size_t recsize);
-+
-+#define __kfifo_len_r LINUX_BACKPORT(__kfifo_len_r)
-+extern unsigned int __kfifo_len_r(struct __kfifo *fifo, size_t recsize);
-+
-+#define __kfifo_skip_r LINUX_BACKPORT(__kfifo_skip_r)
-+extern void __kfifo_skip_r(struct __kfifo *fifo, size_t recsize);
-+
-+#define __kfifo_out_peek_r LINUX_BACKPORT(__kfifo_out_peek_r)
-+extern unsigned int __kfifo_out_peek_r(struct __kfifo *fifo,
-+	void *buf, unsigned int len, size_t recsize);
-+
-+#define __kfifo_max_r LINUX_BACKPORT(__kfifo_max_r)
-+extern unsigned int __kfifo_max_r(unsigned int len, size_t recsize);
-+
- /**
-  * kfifo_initialized - Check if the fifo is initialized
-  * @fifo: address of the fifo to check
-@@ -790,68 +873,5 @@ __kfifo_uint_must_check_helper( \
- 	__kfifo_out_peek(__kfifo, __buf, __n); \
- }) \
- )
--
--extern int __kfifo_alloc(struct __kfifo *fifo, unsigned int size,
--	size_t esize, gfp_t gfp_mask);
--
--extern void __kfifo_free(struct __kfifo *fifo);
--
--extern int __kfifo_init(struct __kfifo *fifo, void *buffer,
--	unsigned int size, size_t esize);
--
--extern unsigned int __kfifo_in(struct __kfifo *fifo,
--	const void *buf, unsigned int len);
--
--extern unsigned int __kfifo_out(struct __kfifo *fifo,
--	void *buf, unsigned int len);
--
--extern int __kfifo_from_user(struct __kfifo *fifo,
--	const void __user *from, unsigned long len, unsigned int *copied);
--
--extern int __kfifo_to_user(struct __kfifo *fifo,
--	void __user *to, unsigned long len, unsigned int *copied);
--
--extern unsigned int __kfifo_dma_in_prepare(struct __kfifo *fifo,
--	struct scatterlist *sgl, int nents, unsigned int len);
--
--extern unsigned int __kfifo_dma_out_prepare(struct __kfifo *fifo,
--	struct scatterlist *sgl, int nents, unsigned int len);
--
--extern unsigned int __kfifo_out_peek(struct __kfifo *fifo,
--	void *buf, unsigned int len);
--
--extern unsigned int __kfifo_in_r(struct __kfifo *fifo,
--	const void *buf, unsigned int len, size_t recsize);
--
--extern unsigned int __kfifo_out_r(struct __kfifo *fifo,
--	void *buf, unsigned int len, size_t recsize);
--
--extern int __kfifo_from_user_r(struct __kfifo *fifo,
--	const void __user *from, unsigned long len, unsigned int *copied,
--	size_t recsize);
--
--extern int __kfifo_to_user_r(struct __kfifo *fifo, void __user *to,
--	unsigned long len, unsigned int *copied, size_t recsize);
--
--extern unsigned int __kfifo_dma_in_prepare_r(struct __kfifo *fifo,
--	struct scatterlist *sgl, int nents, unsigned int len, size_t recsize);
--
--extern void __kfifo_dma_in_finish_r(struct __kfifo *fifo,
--	unsigned int len, size_t recsize);
--
--extern unsigned int __kfifo_dma_out_prepare_r(struct __kfifo *fifo,
--	struct scatterlist *sgl, int nents, unsigned int len, size_t recsize);
--
--extern void __kfifo_dma_out_finish_r(struct __kfifo *fifo, size_t recsize);
--
--extern unsigned int __kfifo_len_r(struct __kfifo *fifo, size_t recsize);
--
--extern void __kfifo_skip_r(struct __kfifo *fifo, size_t recsize);
--
--extern unsigned int __kfifo_out_peek_r(struct __kfifo *fifo,
--	void *buf, unsigned int len, size_t recsize);
--
--extern unsigned int __kfifo_max_r(unsigned int len, size_t recsize);
--
- #endif
- #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,36)) */
+ #include <linux/version.h>
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0))
+ #include <linux/kconfig.h>
 -- 
 1.7.10.4
