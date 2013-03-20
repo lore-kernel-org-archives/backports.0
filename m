@@ -1,129 +1,69 @@
 Return-Path: <mcgrof@gmail.com>
 Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: FlorianSchandinat@gmx.de
-Cc: linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	jbarnes@virtuousgeek.org,
-	backports@vger.kernel.org,
-	cocci@systeme.lip6.fr,
+To: backports@vger.kernel.org
+Cc: ben@decadent.org.uk,
+	noelamac@gmail.com,
 	linux-kernel@vger.kernel.org,
-	julia.lawall@lip6.fr,
-	rodrigo.vivi@gmail.com,
-	daniel.vetter@ffwll.ch,
-	rafael.j.wysocki@intel.com,
+	rusty@rustcorp.com.au,
+	andi@firstfloor.org,
 	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 2/4] compat: backport fb_info->skip_vt_switch using a static inline
-Date: Thu, 28 Mar 2013 05:04:28 -0700
-Message-Id: <1364472270-9297-3-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com>
+Subject: [RFC 22/30] compat: embrace LINUX_BACKPORT() for v3.4
+Date: Wed, 20 Mar 2013 02:22:47 -0700
+Message-Id: <1363771375-31715-23-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Commit 3cf2667 as of next-20130301 extended the struct fb_info
-with a skip_vt_switch to allow drivers to skip the VT switch
-at suspend/resume time. For older kernels we can skip this
-as all this switch does is call pm_vt_switch_required() with true
-or false depending on this new flag and later
-pm_vt_switch_unregister() would not have been made.
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.65              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.2.38              [  OK  ]
+20  3.3.8               [  OK  ]
+21  3.4.32              [  OK  ]
+22  3.5.7               [  OK  ]
+23  3.6.11              [  OK  ]
+24  3.7.9               [  OK  ]
+25  3.8.0               [  OK  ]
+26  3.9-rc1             [  OK  ]
 
-compat-drivers was backporting this using #ifdef's but by
-integrating a static inline we'd reduce the number of lines
-to backport to just 1 line replacement. This would be something
-like:
-
-  -       info->skip_vt_switch = true;
-  +       fb_enable_skip_vt_switch(info);
-
-For kernels >= 3.10 we'd set the attribute as we do upstream,
-for older kernels this would be a no-op.
-
-If this static inline would have been added upstream it would
-have meant this collateral evolution would require just adding
-a no-op static inline to backport, and no changes as the above
-example hunk for every driver that requires the change.
-
-If this static inline ends up upstream *now* it means we do *not*
-require the type of hunk above for every driver that requires
-the change.
-
-All the code would be left intact !
-
-This is a linux-next 'data structure element collateral evolution'.
-
-Cc: cocci@systeme.lip6.fr
-Cc: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Rodrigo Vivi <rodrigo.vivi@gmail.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- include/linux/compat-3.10.h |   41 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ include/linux/compat-3.4.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/compat-3.10.h b/include/linux/compat-3.10.h
-index 69ddc11..9abfc4b 100644
---- a/include/linux/compat-3.10.h
-+++ b/include/linux/compat-3.10.h
-@@ -7,6 +7,7 @@
+diff --git a/include/linux/compat-3.4.h b/include/linux/compat-3.4.h
+index fbd92a2..94d3bf7 100644
+--- a/include/linux/compat-3.4.h
++++ b/include/linux/compat-3.4.h
+@@ -51,9 +51,11 @@ static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
+ #include <linux/skbuff.h>
  
- #include <linux/scatterlist.h>
- #include <linux/mm.h>
-+#include <linux/fb.h>
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
++#define i2c_bit_algo LINUX_BACKPORT(i2c_bit_algo)
+ extern const struct i2c_algorithm i2c_bit_algo;
+ #endif
  
- #define sg_page_iter_page LINUX_BACKPORT(sg_page_iter_page)
- /**
-@@ -29,6 +30,46 @@ static inline dma_addr_t sg_page_iter_dma_address(struct sg_page_iter *piter)
- 	return sg_dma_address(piter->sg) + (piter->sg_pgoffset << PAGE_SHIFT);
- }
++#define simple_open LINUX_BACKPORT(simple_open)
+ extern int simple_open(struct inode *inode, struct file *file);
  
-+/*
-+ * This is a linux-next data structure element collateral evolution,
-+ * we use a wrapper to avoid #ifdef hell to backport it. This allows
-+ * us to use a simple fb_info_skip_vt_switch() replacement for when
-+ * the new data structure element is used. If coccinelle SmPL grammar
-+ * could be used to express the transformation for us on compat-drivers
-+ * it means we'd need to express it only once. If the structure element
-+ * collateral evolution were to be used *at development* time and we'd
-+ * have a way to express the inverse through SmPL we'd be able to
-+ * backport this collateral evolution automatically for any new driver
-+ * that used it. We'd use coccinelle to look for it and do the
-+ * transformations for us based on the original commit (maybe SmPL
-+ * would be listed on the commit log.
-+ *
-+ * We may need the LINUX_BACKPORT() call that adds the backport_
-+ * prefix for older kernels than 3.10 if distros decide to
-+ * add this same static inline themselves (although unlikely).
-+ */
-+#define fb_enable_skip_vt_switch LINUX_BACKPORT(fb_enable_skip_vt_switch)
-+static inline void fb_enable_skip_vt_switch(struct fb_info *info)
-+{
-+}
-+
-+#else /* kernel is >= 3.10 */
-+/*
-+ * We'd delete this upstream ever got this, we use our
-+ * backport_ prefix with LINUX_BACKPORT() so that if this
-+ * does get upstream we would not have to add another ifdef
-+ * here for the kernels in between v3.10.. up to the point
-+ * the routine would have gotten added, we'd just delete this
-+ * #else condition completely. If we didn't have this and
-+ * say 3.12 added the static inline upstream, we'd have a
-+ * clash on the backport for 3.12 as the routine would
-+ * already be defined *but* we'd need it for 3.11.
-+ */
-+#define fb_enable_skip_vt_switch LINUX_BACKPORT(fb_enable_skip_vt_switch)
-+static inline void fb_enable_skip_vt_switch(struct fb_info *info)
-+{
-+	info->skip_vt_switch = true;
-+}
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)) */
- 
- #endif /* LINUX_3_10_COMPAT_H */
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28))
 -- 
 1.7.10.4
