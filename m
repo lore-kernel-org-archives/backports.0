@@ -1,80 +1,65 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail-wg0-f52.google.com ([74.125.82.52]:57277 "EHLO
-	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756099Ab3CQIwI (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 17 Mar 2013 04:52:08 -0400
-Received: by mail-wg0-f52.google.com with SMTP id 15so3235402wgd.7
-        for <backports@vger.kernel.org>; Sun, 17 Mar 2013 01:52:06 -0700 (PDT)
-Date: Sun, 17 Mar 2013 09:52:02 +0100
-From: =?utf-8?B?Q2FtYWxlw7Nu?= <noelamac@gmail.com>
+Return-Path: <mcgrof@gmail.com>
+Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Subject: Unable to compile "compat-drivers" in Debian Wheezy
-Message-ID: <20130317085202.GB3547@stt008.linux.site>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Sender: backports-owner@vger.kernel.org
+Cc: ben@decadent.org.uk,
+	noelamac@gmail.com,
+	linux-kernel@vger.kernel.org,
+	rusty@rustcorp.com.au,
+	andi@firstfloor.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 20/30] compat: embrace LINUX_BACKPORT() for v3.2
+Date: Wed, 20 Mar 2013 02:22:45 -0700
+Message-Id: <1363771375-31715-21-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
-Hello,
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-I'm trying to compile "compat-drivers" in Debian Wheezy but it fails:
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.65              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.2.38              [  OK  ]
+20  3.3.8               [  OK  ]
+21  3.4.32              [  OK  ]
+22  3.5.7               [  OK  ]
+23  3.6.11              [  OK  ]
+24  3.7.9               [  OK  ]
+25  3.8.0               [  OK  ]
+26  3.9-rc1             [  OK  ]
 
-Kernel version:
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ include/linux/compat-3.2.h |    1 +
+ 1 file changed, 1 insertion(+)
 
-root@stt300:~# dpkg -l | grep linux-image
-ii  linux-image-3.2.0-4-686-pae          3.2.39-2                i386         Linux 3.2 for modern PCs
-ii  linux-image-686-pae                  3.2+46                  i386         Linux for modern PCs (meta-package)
-        
-Build tools installed:
-        
-root@stt300:~# LANG=POSIX apt-get install build-essential 
-linux-headers-`uname -r`
-Reading package lists... Done
-Building dependency tree       
-Reading state information... Done
-build-essential is already the newest version.
-linux-headers-3.2.0-4-686-pae is already the newest version.
-0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
-
-But when running the build commands:
-
-hpc03@stt300:~/Escritorio/compat-drivers-3.9-rc2-2-su$ 
-./scripts/driver-select brcmsmac
-Processing new driver-select request...
-Backing up makefile: Makefile.bk
-Backup exists: Makefile.bk
-Backup exists: Makefile.bk
-Backup exists: Makefile.bk
-Backup exists: Makefile.bk
-Backing up makefile: drivers/net/wireless/Makefile.bk
-Backing up makefile: drivers/net/wireless/brcm80211/Makefile.bk
-
-hpc03@stt300:~/Escritorio/compat-drivers-3.9-rc2-2-su$ LANG=POSIX make
-make -C /lib/modules/3.2.0-4-686-pae/build M=/home/hpc03/Escritorio/compat-drivers-3.9-rc2-2-su modules
-make[1]: Entering directory `/usr/src/linux-headers-3.2.0-4-686-pae'
-CC [M]  /home/hpc03/Escritorio/compat-drivers-3.9-rc2-2-su/compat/main.o
-In file included from /home/hpc03/Escritorio/compat-drivers-3.9-rc2-2-su/include/linux/compat-2.6.h:67:0,
-from <command-line>:0:
-                 
-/home/hpc03/Escritorio/compat-drivers-3.9-rc2-2-su/include/linux/compat-3.4.h:43:21: error: redefinition of 'kmalloc_array'
-/usr/src/linux-headers-3.2.0-4-common/include/linux/slab.h:243:21: note: previous definition of 'kmalloc_array' was here
-/home/hpc03/Escritorio/compat-drivers-3.9-rc2-2-su/include/linux/compat-3.4.h:104:20: error: redefinition of 'eth_hw_addr_random'
-/usr/src/linux-headers-3.2.0-4-common/include/linux/etherdevice.h:165:20: note: previous definition of 'eth_hw_addr_random' was here
-make[5]: *** [/home/hpc03/Escritorio/compat-drivers-3.9-rc2-2-su/compat/main.o] Error 1
-make[4]: *** [/home/hpc03/Escritorio/compat-drivers-3.9-rc2-2-su/compat] Error 2
-make[3]: *** [_module_/home/hpc03/Escritorio/compat-drivers-3.9-rc2-2-su] Error 2
-make[2]: *** [sub-make] Error 2
-make[1]: *** [all] Error 2
-make[1]: Leaving directory `/usr/src/linux-headers-3.2.0-4-686-pae'
-make: *** [modules] Error 2
-
-Note: I've tried with a bunch of different "compat-drivers" and 
-"compat-wireless" packages but none succeeded.
-
-Note 2: I also reported this to Debian BTS (bug #703205)
-
-Greetings,
-
+diff --git a/include/linux/compat-3.2.h b/include/linux/compat-3.2.h
+index d230206..982b989 100644
+--- a/include/linux/compat-3.2.h
++++ b/include/linux/compat-3.2.h
+@@ -102,6 +102,7 @@ static inline void *dma_zalloc_coherent(struct device *dev, size_t size,
+ 	return ret;
+ }
+ 
++#define __netdev_printk LINUX_BACKPORT(__netdev_printk)
+ extern int __netdev_printk(const char *level, const struct net_device *dev,
+ 			   struct va_format *vaf);
+ 
 -- 
-Camaleón 
+1.7.10.4
