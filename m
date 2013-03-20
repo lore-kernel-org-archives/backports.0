@@ -1,94 +1,139 @@
 Return-Path: <mcgrof@gmail.com>
 Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: FlorianSchandinat@gmx.de
-Cc: linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	jbarnes@virtuousgeek.org,
-	backports@vger.kernel.org,
-	cocci@systeme.lip6.fr,
+To: backports@vger.kernel.org
+Cc: ben@decadent.org.uk,
+	noelamac@gmail.com,
 	linux-kernel@vger.kernel.org,
-	julia.lawall@lip6.fr,
-	rodrigo.vivi@gmail.com,
-	daniel.vetter@ffwll.ch,
-	rafael.j.wysocki@intel.com,
+	rusty@rustcorp.com.au,
+	andi@firstfloor.org,
 	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 3/4] compat-drivers: simplify backport fb_info->skip_vt_switch CE
-Date: Thu, 28 Mar 2013 05:04:29 -0700
-Message-Id: <1364472270-9297-4-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com>
+Subject: [RFC 19/30] compat: embrace LINUX_BACKPORT() for v3.1
+Date: Wed, 20 Mar 2013 02:22:44 -0700
+Message-Id: <1363771375-31715-20-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-The collateral evolution (CE) on the fb_info data structure
-that added the skip_vt_switch element can be simplified
-further by replacing the #ifdef hell with a static inline.
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.65              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.2.38              [  OK  ]
+20  3.3.8               [  OK  ]
+21  3.4.32              [  OK  ]
+22  3.5.7               [  OK  ]
+23  3.6.11              [  OK  ]
+24  3.7.9               [  OK  ]
+25  3.8.0               [  OK  ]
+26  3.9-rc1             [  OK  ]
 
-Furthermore, if the static inline is added upstream it'd mean
-we can get rid of all these static inline replacements for
-this data structure element CE.
-
-Cc: cocci@systeme.lip6.fr
-Cc: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Rodrigo Vivi <rodrigo.vivi@gmail.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- .../drm/0001-fb-info-vt_switch.patch               |   25 ++++----------------
- 1 file changed, 4 insertions(+), 21 deletions(-)
+ compat/compat-3.1.c        |   12 ++++++------
+ include/linux/compat-3.1.h |   12 +++---------
+ 2 files changed, 9 insertions(+), 15 deletions(-)
 
-diff --git a/patches/collateral-evolutions/drm/0001-fb-info-vt_switch.patch b/patches/collateral-evolutions/drm/0001-fb-info-vt_switch.patch
-index cdced87..39b13d1 100644
---- a/patches/collateral-evolutions/drm/0001-fb-info-vt_switch.patch
-+++ b/patches/collateral-evolutions/drm/0001-fb-info-vt_switch.patch
-@@ -8,23 +8,7 @@ pm_vt_switch_unregister() would not have been made.
- This patch cannot be broken down further so I'm pegging
- this as the first one with 4 digits under the DRM folder
- for collateral evolutions. This reflects its as atomic as
--is possible. As we'll see on the next commit, these type
--of collateral evolutions can best be backported not by
--keeping ifdef's as below but instead by using a wrapper
--caller, to help reduce with the amount of lines of code
--we need. If a static inline is added upstream for these
--changes, then no code is required for backporting, at all,
--we'd just implement the static inline later upstream as
--a no-op.
+diff --git a/compat/compat-3.1.c b/compat/compat-3.1.c
+index bfaf8ea..cb5d596 100644
+--- a/compat/compat-3.1.c
++++ b/compat/compat-3.1.c
+@@ -19,7 +19,7 @@
+  * 	cpufreq: expose a cpufreq_quick_get_max routine
+  */
+ #ifdef CONFIG_CPU_FREQ
+-unsigned int compat_cpufreq_quick_get_max(unsigned int cpu)
++unsigned int cpufreq_quick_get_max(unsigned int cpu)
+ {
+ 	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+ 	unsigned int ret_freq = 0;
+@@ -31,7 +31,7 @@ unsigned int compat_cpufreq_quick_get_max(unsigned int cpu)
+ 
+ 	return ret_freq;
+ }
+-EXPORT_SYMBOL_GPL(compat_cpufreq_quick_get_max);
++EXPORT_SYMBOL_GPL(cpufreq_quick_get_max);
+ #endif
+ 
+ static DEFINE_SPINLOCK(compat_simple_ida_lock);
+@@ -48,7 +48,7 @@ static DEFINE_SPINLOCK(compat_simple_ida_lock);
+  *
+  * Use ida_simple_remove() to get rid of an id.
+  */
+-int compat_ida_simple_get(struct ida *ida, unsigned int start, unsigned int end,
++int ida_simple_get(struct ida *ida, unsigned int start, unsigned int end,
+ 		   gfp_t gfp_mask)
+ {
+ 	int ret, id;
+@@ -86,14 +86,14 @@ again:
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(compat_ida_simple_get);
++EXPORT_SYMBOL_GPL(ida_simple_get);
+ 
+ /**
+  * ida_simple_remove - remove an allocated id.
+  * @ida: the (initialized) ida.
+  * @id: the id returned by ida_simple_get.
+  */
+-void compat_ida_simple_remove(struct ida *ida, unsigned int id)
++void ida_simple_remove(struct ida *ida, unsigned int id)
+ {
+ 	unsigned long flags;
+ 
+@@ -102,6 +102,6 @@ void compat_ida_simple_remove(struct ida *ida, unsigned int id)
+ 	ida_remove(ida, id);
+ 	spin_unlock_irqrestore(&compat_simple_ida_lock, flags);
+ }
+-EXPORT_SYMBOL_GPL(compat_ida_simple_remove);
++EXPORT_SYMBOL_GPL(ida_simple_remove);
+ /* source lib/idr.c */
+ 
+diff --git a/include/linux/compat-3.1.h b/include/linux/compat-3.1.h
+index 2b5eb8b..3e8be33 100644
+--- a/include/linux/compat-3.1.h
++++ b/include/linux/compat-3.1.h
+@@ -88,21 +88,15 @@ static inline void security_sk_clone(const struct sock *sk, struct sock *newsk)
+ #include <asm-generic/atomic64.h>
+ #endif
+ 
+-/* mask ida_simple_get as RHEL6 backports this */
+-#define ida_simple_get(a,b,c,d) compat_ida_simple_get(a,b,c,d)
 -
--The tradeoffs to consider for this is if we can live with
--these practices upstream, we may be able to support full
--subsystems only with a compat module, and no need for
--patches. This also means less code and likely less bugs
--on the distribution front when backporting is required.
--At least IMHO this may be worthy to consider at least to
--support kernels listed as supported on kernel.org. We could
--just leave the ifdef hell to older unsupported kernels.
-+is possible.
++#define ida_simple_get LINUX_BACKPORT(ida_simple_get)
+ int ida_simple_get(struct ida *ida, unsigned int start, unsigned int end,
+ 		   gfp_t gfp_mask);
  
- Relevant commits below, starting with the first one that
- added this new collateral evolution.
-@@ -60,14 +44,13 @@ Date:   Tue Mar 26 09:25:45 2013 -0700
+-/* mask ida_simple_remove as RHEL6 backports this */
+-#define ida_simple_remove(a,b) compat_ida_simple_remove(a,b)
+-
++#define ida_simple_remove LINUX_BACKPORT(ida_simple_remove)
+ void ida_simple_remove(struct ida *ida, unsigned int id);
  
- --- a/drivers/gpu/drm/i915/intel_fb.c
- +++ b/drivers/gpu/drm/i915/intel_fb.c
--@@ -150,8 +150,10 @@ static int intelfb_create(struct drm_fb_
-+@@ -150,8 +150,8 @@ static int intelfb_create(struct drm_fb_
-  	}
-  	info->screen_size = size;
-  
--+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0))
-  	/* This driver doesn't need a VT switch to restore the mode on resume */
-- 	info->skip_vt_switch = true;
--+#endif
-+- 	info->skip_vt_switch = true;
-++ 	fb_enable_skip_vt_switch(info);
-  
-  	drm_fb_helper_fill_fix(info, fb->pitches[0], fb->depth);
-  	drm_fb_helper_fill_var(info, &ifbdev->helper, sizes->fb_width, sizes->fb_height);
+ #ifdef CONFIG_CPU_FREQ
+-/* mask cpufreq_quick_get_max as RHEL6 backports this */
+-#define cpufreq_quick_get_max(a) compat_cpufreq_quick_get_max(a)
+-
++#define cpufreq_quick_get_max LINUX_BACKPORT(cpufreq_quick_get_max)
+ unsigned int cpufreq_quick_get_max(unsigned int cpu);
+ #endif
+ 
 -- 
 1.7.10.4
