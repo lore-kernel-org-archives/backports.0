@@ -1,60 +1,84 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <noelamac@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20130327175711.GA8794@stt008.linux.site>
-References: <CAKprTDHpf0PgisfJK9bJOYgYxLU5PRLNtbkg7V6Zj2s=gVVMCA@mail.gmail.com>
-	<CAB=NE6Wbym4XksV=uKz9eZD0rZwmtS3ZfP-zbXg9TAc2+2+Z9g@mail.gmail.com>
-	<CAKprTDEEEdy++Bk5AY4Zfrtwsc9HOKGQ+uWR58PFCWU=v+PE1g@mail.gmail.com>
-	<CAB=NE6UtuxuTduYhDy5BcPap-rri+P1mcKYr2KEjAbuE2FU13g@mail.gmail.com>
-	<20130327175711.GA8794@stt008.linux.site>
-Date: Thu, 28 Mar 2013 10:02:24 +0100
-Message-ID: <CAKprTDFspW4B2tk9EZPBBXy3C6gL_NJsjwj-bUeYj1rN3j6sYg@mail.gmail.com>
-Subject: Re: brcmsmac: Unknown symbol backport_cordic_calc_iq (err 0)
-From: =?ISO-8859-1?Q?Camale=F3n?= <noelamac@gmail.com>
-To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <mcgrof@gmail.com>
+Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: ben@decadent.org.uk,
+	noelamac@gmail.com,
+	linux-kernel@vger.kernel.org,
+	rusty@rustcorp.com.au,
+	andi@firstfloor.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 23/30] compat: embrace LINUX_BACKPORT() for v3.7
+Date: Wed, 20 Mar 2013 02:22:48 -0700
+Message-Id: <1363771375-31715-24-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
-2013/3/27 Camale=F3n <noelamac@gmail.com>:
-> El 2013-03-27 a las 09:41 -0700, Luis R. Rodriguez escribi=F3:
->
->> On Wed, Mar 27, 2013 at 8:28 AM, Camale=F3n <noelamac@gmail.com> wrote:
->> > 2013/3/27 Luis R. Rodriguez <mcgrof@frijolero.org>:
->> >> On Tue, Mar 26, 2013 at 8:23 AM, Camale=F3n <noelamac@gmail.com> wrot=
-e:
->> >>> https://www.kernel.org/pub/linux/kernel/projects/backports/2013/03/2=
-2/compat-drivers-2013-03-22-u.tar.bz2
->> >>
->> >> Thanks for reporting this, this should now be fixed, please try today=
-'s release.
->> >
->> > Thanks Luis, this one prints no error when loading but it makes the
->> > system to completely freeze (hard reset required).
->> >
->> > How could I debug this?
->>
->> Eek.
->>
->> /var/log/messages
->>
->> Does that show any poo from your last boot?
->
-> Sadly no, nothing was logged immediately after the freeze and the next
-> boot log (neither from "/var/log/messages" nor "/var/log/syslog") ;-(
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-I tried this: switched off the button for wifi+bt (this is a netbook),
-then manually loaded these modules in this order (mac80211, bcma,
-compat, brcmutil, cfg80211 and cordic). At this point the system is
-fine, no freezes and dmesg shows normal messages.
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.65              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.2.38              [  OK  ]
+20  3.3.8               [  OK  ]
+21  3.4.32              [  OK  ]
+22  3.5.7               [  OK  ]
+23  3.6.11              [  OK  ]
+24  3.7.9               [  OK  ]
+25  3.8.0               [  OK  ]
+26  3.9-rc1             [  OK  ]
 
-Now, as soon as I proceed to load "brcmsmac" I get a long and
-uninterruptible "beeeeep", system hard-freezes (no mouse nor caps lock
-led reaction) and only restart is possible.
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ include/linux/compat-3.7.h |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Any clue?
-
-Greetings,
-
---=20
-Camale=F3n
+diff --git a/include/linux/compat-3.7.h b/include/linux/compat-3.7.h
+index dd05e00..96662e3 100644
+--- a/include/linux/compat-3.7.h
++++ b/include/linux/compat-3.7.h
+@@ -45,6 +45,7 @@ static inline struct user_namespace *seq_user_ns(struct seq_file *seq)
+ #define genl_info_snd_portid(__genl_info) (__genl_info->snd_pid)
+ #define NETLINK_CB_PORTID(__skb) NETLINK_CB(cb->skb).pid
+ 
++#define mod_delayed_work LINUX_BACKPORT(mod_delayed_work)
+ bool mod_delayed_work(struct workqueue_struct *wq, struct delayed_work *dwork,
+ 		      unsigned long delay);
+ 
+@@ -55,12 +56,18 @@ bool mod_delayed_work(struct workqueue_struct *wq, struct delayed_work *dwork,
+ #define tty_port_register_device(port, driver, index, device) \
+ 	tty_register_device(driver, index, device)
+ 
++#define pcie_capability_read_word LINUX_BACKPORT(pcie_capability_read_word)
+ int pcie_capability_read_word(struct pci_dev *dev, int pos, u16 *val);
++#define pcie_capability_read_dword LINUX_BACKPORT(pcie_capability_read_dword)
+ int pcie_capability_read_dword(struct pci_dev *dev, int pos, u32 *val);
++#define pcie_capability_write_word LINUX_BACKPORT(pcie_capability_write_word)
+ int pcie_capability_write_word(struct pci_dev *dev, int pos, u16 val);
++#define pcie_capability_write_dword LINUX_BACKPORT(pcie_capability_write_dword)
+ int pcie_capability_write_dword(struct pci_dev *dev, int pos, u32 val);
++#define pcie_capability_clear_and_set_word LINUX_BACKPORT(pcie_capability_clear_and_set_word)
+ int pcie_capability_clear_and_set_word(struct pci_dev *dev, int pos,
+ 				       u16 clear, u16 set);
++#define pcie_capability_clear_and_set_dword LINUX_BACKPORT(pcie_capability_clear_and_set_dword)
+ int pcie_capability_clear_and_set_dword(struct pci_dev *dev, int pos,
+ 					u32 clear, u32 set);
+ 
+-- 
+1.7.10.4
