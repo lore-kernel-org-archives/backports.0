@@ -1,104 +1,84 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <1363790495.31336.51.camel@deadeye.wl.decadent.org.uk>
+References: <20130317144603.GA4850@stt008.linux.site>
+	<1363532310.3937.266.camel@deadeye.wl.decadent.org.uk>
+	<20130317152428.GA4940@stt008.linux.site>
+	<1363544257.3937.278.camel@deadeye.wl.decadent.org.uk>
+	<1363556604.3937.285.camel@deadeye.wl.decadent.org.uk>
+	<CAB=NE6UPgjOXi7wWBmA5XVHY8MMcf6KwqSWxWViM6kiJYpV0tA@mail.gmail.com>
+	<1363790495.31336.51.camel@deadeye.wl.decadent.org.uk>
+Date: Wed, 20 Mar 2013 08:50:15 -0700
+Message-ID: <CAB=NE6UZ+RvFHyzUhSwzATnkd9gAGa0EKDQD+U9vxVM8FSvLrA@mail.gmail.com>
+Subject: Re: Bug#703142: compatibility with alx ?
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: FlorianSchandinat@gmx.de
-Cc: linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	jbarnes@virtuousgeek.org,
-	backports@vger.kernel.org,
-	cocci@systeme.lip6.fr,
-	linux-kernel@vger.kernel.org,
-	julia.lawall@lip6.fr,
-	rodrigo.vivi@gmail.com,
-	daniel.vetter@ffwll.ch,
-	rafael.j.wysocki@intel.com,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 4/4] fb: add helpers to enable and test for the skip_vt_switch
-Date: Thu, 28 Mar 2013 05:04:30 -0700
-Message-Id: <1364472270-9297-5-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com>
+To: Ben Hutchings <ben@decadent.org.uk>
+Cc: backports@vger.kernel.org, 703142@bugs.debian.org,
+	=?UTF-8?B?Q2FtYWxlw7Nu?= <noelamac@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Wed, Mar 20, 2013 at 7:41 AM, Ben Hutchings <ben@decadent.org.uk> wrote:
+> On Wed, 2013-03-20 at 02:07 -0700, Luis R. Rodriguez wrote:
+>> On Sun, Mar 17, 2013 at 2:43 PM, Ben Hutchings <ben@decadent.org.uk> wro=
+te:
+>> > [Re-sending to the correct list address.]
+>> >
+>> > On Sun, 2013-03-17 at 16:24 +0100, Camale=C3=B3n wrote:
+>> >> El 2013-03-17 a las 14:58 +0000, Ben Hutchings escribi=C3=B3:
+>> >>
+>> >> > On Sun, 2013-03-17 at 15:46 +0100, Camale=C3=B3n wrote:
+>> >>
+>> >> (...)
+>> >>
+>> >> > > Using Debian's stock network driver is not an option for me (full=
+ report
+>> >> > > available here=C2=B2) so I have to try with the latests drivers b=
+ut now that
+>> >> > > "compat-drivers" are compiled the generated modules cannot be loa=
+ded.
+>> >> > >
+>> >> > > Is there any by-pass for this?
+>> >> > >
+>> >> > > =C2=B9http://marc.info/?t=3D136351034300002&r=3D1&w=3D2
+>> >> > > =C2=B2http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D664767
+>> >> >
+>> >> > Talk to the compat-drivers developers.
+>> >>
+>> >> To be sincere, I don't think that's a user's role.
+>> >>
+>> >> I don't know what's going on with these drivers but if they are not
+>> >> supported by Debian at all it would be better for all of us (plain
+>> >> users and developers) to simply say it so to avoid wasting time and
+>> >> resources.
+>> >
+>> > I would like to support them, in fact more than that I would like to
+>> > integrate them into official packages.  But there is no way we can
+>> > support an OOT module that defines symbols that we might need to add f=
+or
+>> > our own backports.  As it is 'compat' will ironically cause
+>> > incompatibility with Debian's own kernel upgrades.
+>> >
+>> > Compat developers: please add a prefix (not 'compat', that one's alrea=
+dy
+>> > taken!)
+>>
+>> We have been using compat_ for a while now to prefix a lot of our
+>> symbols without clashes for the 32-64 compat stuff, but sure -- we can
+>> use something else to help with any theoretical issues. Surprised
+>> Debian of all distributions would frankly have been affected given
+>> RHEL / SUSE didn't, but its OK, lets deal with it.
+>
+> The conflict that just showed up in Debian involved the 'i2c_bit_algo'
+> symbol which had no symbol prefix in 'compat'.  We updated the in-tree
+> DRM drivers from 3.4.32 and started exporting the symbol from
+> i2c-algo-bit itself.
+>
+> I hadn't noticed that you already used the 'compat_' prefix for some
+> exported symbols and I'm not aware of any current conflict with the
+> 32-bit compatibility layer, but it seems plausible that it could happen
+> in future.
 
-This adds helpers to enable and test for the skip_vt_switch.
-This gets us two things:
+Sure, let me know what you think of the proposed posted changes.
 
-1) It allows us to require less collateral evolutions
-   should we need changes on the fb_info data structure
-   later (perhaps a bitmap flag).
-
-2) Allows this feature to be backported with 0 delta
-   required on the upstream drivers, we'd just require
-   the static inline to do a no-op.
-
-1) may be worth while considering, 2) is a new consideration
-I'm trying to get others to evaluate to help with automatically
-backporting the Linux kernel. This is the first time I am
-aware someone argues for it.
-
-Cc: cocci@systeme.lip6.fr
-Cc: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Rodrigo Vivi <rodrigo.vivi@gmail.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- drivers/gpu/drm/i915/intel_fb.c |    2 +-
- drivers/video/fbmem.c           |    2 +-
- include/linux/fb.h              |   10 ++++++++++
- 3 files changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/intel_fb.c b/drivers/gpu/drm/i915/intel_fb.c
-index 8d81c929..c0f306c 100644
---- a/drivers/gpu/drm/i915/intel_fb.c
-+++ b/drivers/gpu/drm/i915/intel_fb.c
-@@ -151,7 +151,7 @@ static int intelfb_create(struct drm_fb_helper *helper,
- 	info->screen_size = size;
- 
- 	/* This driver doesn't need a VT switch to restore the mode on resume */
--	info->skip_vt_switch = true;
-+	fb_enable_skip_vt_switch(info);
- 
- 	drm_fb_helper_fill_fix(info, fb->pitches[0], fb->depth);
- 	drm_fb_helper_fill_var(info, &ifbdev->helper, sizes->fb_width, sizes->fb_height);
-diff --git a/drivers/video/fbmem.c b/drivers/video/fbmem.c
-index ccd44b0..daffadc 100644
---- a/drivers/video/fbmem.c
-+++ b/drivers/video/fbmem.c
-@@ -1645,7 +1645,7 @@ static int do_register_framebuffer(struct fb_info *fb_info)
- 	if (!fb_info->modelist.prev || !fb_info->modelist.next)
- 		INIT_LIST_HEAD(&fb_info->modelist);
- 
--	if (fb_info->skip_vt_switch)
-+	if (fb_skip_vt_switch_isset(fb_info))
- 		pm_vt_switch_required(fb_info->dev, false);
- 	else
- 		pm_vt_switch_required(fb_info->dev, true);
-diff --git a/include/linux/fb.h b/include/linux/fb.h
-index d49c60f..d534966 100644
---- a/include/linux/fb.h
-+++ b/include/linux/fb.h
-@@ -505,6 +505,16 @@ struct fb_info {
- 	bool skip_vt_switch; /* no VT switch on suspend/resume required */
- };
- 
-+static inline void fb_enable_skip_vt_switch(struct fb_info *info)
-+{
-+	info->skip_vt_switch = true;
-+}
-+
-+static inline bool fb_skip_vt_switch_isset(struct fb_info *info)
-+{
-+	return info->skip_vt_switch;
-+}
-+
- static inline struct apertures_struct *alloc_apertures(unsigned int max_num) {
- 	struct apertures_struct *a = kzalloc(sizeof(struct apertures_struct)
- 			+ max_num * sizeof(struct aperture), GFP_KERNEL);
--- 
-1.7.10.4
+  Luis
