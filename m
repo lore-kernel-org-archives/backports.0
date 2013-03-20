@@ -8,9 +8,9 @@ Cc: ben@decadent.org.uk,
 	rusty@rustcorp.com.au,
 	andi@firstfloor.org,
 	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 10/30] compat: embrace LINUX_BACKPORT() for v2.6.32
-Date: Wed, 20 Mar 2013 02:22:35 -0700
-Message-Id: <1363771375-31715-11-git-send-email-mcgrof@do-not-panic.com>
+Subject: [RFC 26/30] compat: embrace LINUX_BACKPORT() for crc8
+Date: Wed, 20 Mar 2013 02:22:51 -0700
+Message-Id: <1363771375-31715-27-git-send-email-mcgrof@do-not-panic.com>
 In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
@@ -46,20 +46,36 @@ From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- include/linux/compat-2.6.32.h |    1 +
- 1 file changed, 1 insertion(+)
+ include/linux/crc8.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/compat-2.6.32.h b/include/linux/compat-2.6.32.h
-index f8320cf..d5b5df8 100644
---- a/include/linux/compat-2.6.32.h
-+++ b/include/linux/compat-2.6.32.h
-@@ -190,6 +190,7 @@ struct tm {
- 	int tm_yday;
- };
+diff --git a/include/linux/crc8.h b/include/linux/crc8.h
+index 13c8dab..f0a92ef 100644
+--- a/include/linux/crc8.h
++++ b/include/linux/crc8.h
+@@ -52,6 +52,7 @@
+  *
+  * - lsb first: poly = 10101011(1) = 0xAB
+  */
++#define crc8_populate_lsb LINUX_BACKPORT(crc8_populate_lsb)
+ void crc8_populate_lsb(u8 table[CRC8_TABLE_SIZE], u8 polynomial);
  
-+#define time_to_tm LINUX_BACKPORT(time_to_tm)
- void time_to_tm(time_t totalsecs, int offset, struct tm *result);
+ /**
+@@ -70,6 +71,7 @@ void crc8_populate_lsb(u8 table[CRC8_TABLE_SIZE], u8 polynomial);
+  *
+  * - msb first: poly = (1)11010101 = 0xD5
+  */
++#define crc8_populate_msb LINUX_BACKPORT(crc8_populate_msb)
+ void crc8_populate_msb(u8 table[CRC8_TABLE_SIZE], u8 polynomial);
  
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,32)) */
+ /**
+@@ -96,6 +98,7 @@ void crc8_populate_msb(u8 table[CRC8_TABLE_SIZE], u8 polynomial);
+  * Williams, Ross N., ross<at>ross.net
+  * (see URL http://www.ross.net/crc/download/crc_v3.txt).
+  */
++#define crc8 LINUX_BACKPORT(crc8)
+ u8 crc8(const u8 table[CRC8_TABLE_SIZE], u8 *pdata, size_t nbytes, u8 crc);
+ 
+ #endif /* __CRC8_H_ */
 -- 
 1.7.10.4
