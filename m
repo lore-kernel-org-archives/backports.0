@@ -1,39 +1,65 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:56370 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751552Ab3CIWAw (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 9 Mar 2013 17:00:52 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id DA36D201A0
-	for <backports@vger.kernel.org>; Sat,  9 Mar 2013 22:00:51 +0000 (UTC)
-Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
-	by mail.kernel.org (Postfix) with ESMTP id 1BDB2201C1
-	for <backports@vger.kernel.org>; Sat,  9 Mar 2013 22:00:48 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+Return-Path: <mcgrof@gmail.com>
+Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Subject: [Bug 51671] ALX driver unusable on new kernel
-In-Reply-To: <bug-51671-58281@https.bugzilla.kernel.org/>
-References: <bug-51671-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Message-Id: <20130309220047.0C22D11F8CD@bugzilla.kernel.org>
-Date: Sat,  9 Mar 2013 22:00:47 +0000 (UTC)
-Sender: backports-owner@vger.kernel.org
+Cc: ben@decadent.org.uk,
+	noelamac@gmail.com,
+	linux-kernel@vger.kernel.org,
+	rusty@rustcorp.com.au,
+	andi@firstfloor.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 10/30] compat: embrace LINUX_BACKPORT() for v2.6.32
+Date: Wed, 20 Mar 2013 02:22:35 -0700
+Message-Id: <1363771375-31715-11-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51671
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.65              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.2.38              [  OK  ]
+20  3.3.8               [  OK  ]
+21  3.4.32              [  OK  ]
+22  3.5.7               [  OK  ]
+23  3.6.11              [  OK  ]
+24  3.7.9               [  OK  ]
+25  3.8.0               [  OK  ]
+26  3.9-rc1             [  OK  ]
 
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ include/linux/compat-2.6.32.h |    1 +
+ 1 file changed, 1 insertion(+)
 
-
-
---- Comment #12 from mp-001@ponschab.de  2013-03-09 22:00:46 ---
-compat-drivers-2013-03-04-u is working on F18 (at least kernel 3.7.9-205 and
-3.8.1-201 / Asus N76VM), but after suspend-resume the device is gone (`sudo
-rmmod alx; sudo modprobe alx` is fixing this).
-
+diff --git a/include/linux/compat-2.6.32.h b/include/linux/compat-2.6.32.h
+index f8320cf..d5b5df8 100644
+--- a/include/linux/compat-2.6.32.h
++++ b/include/linux/compat-2.6.32.h
+@@ -190,6 +190,7 @@ struct tm {
+ 	int tm_yday;
+ };
+ 
++#define time_to_tm LINUX_BACKPORT(time_to_tm)
+ void time_to_tm(time_t totalsecs, int offset, struct tm *result);
+ 
+ #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,32)) */
 -- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+1.7.10.4
