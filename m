@@ -1,49 +1,216 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:45295 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755299Ab3CEKEx (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 5 Mar 2013 05:04:53 -0500
-Message-ID: <1362477886.8224.0.camel@jlt4.sipsolutions.net>
-Subject: [PATCH] compat-wireless: fix netlink portid patch for nl80211
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org, linux-wireless@vger.kernel.org
-Date: Tue, 05 Mar 2013 11:04:46 +0100
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: backports-owner@vger.kernel.org
+Return-Path: <mcgrof@gmail.com>
+Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: ben@decadent.org.uk,
+	noelamac@gmail.com,
+	linux-kernel@vger.kernel.org,
+	rusty@rustcorp.com.au,
+	andi@firstfloor.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 27/30] compat: embrace LINUX_BACKPORT() for kfifo
+Date: Wed, 20 Mar 2013 02:22:52 -0700
+Message-Id: <1363771375-31715-28-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.65              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.2.38              [  OK  ]
+20  3.3.8               [  OK  ]
+21  3.4.32              [  OK  ]
+22  3.5.7               [  OK  ]
+23  3.6.11              [  OK  ]
+24  3.7.9               [  OK  ]
+25  3.8.0               [  OK  ]
+26  3.9-rc1             [  OK  ]
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- patches/0005-netlink-portid.patch | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ include/linux/kfifo.h |  146 ++++++++++++++++++++++++++++---------------------
+ 1 file changed, 83 insertions(+), 63 deletions(-)
 
-diff --git a/patches/0005-netlink-portid.patch b/patches/0005-netlink-portid.patch
-index ee9bc85..ebf10b6 100644
---- a/patches/0005-netlink-portid.patch
-+++ b/patches/0005-netlink-portid.patch
-@@ -70,11 +70,11 @@ this one should other drivers / subsystem need this change.
-  			continue;
-  		if (++idx <= start)
-  			continue;
---		if (nl80211_send_wiphy(skb, NETLINK_CB(cb->skb).portid,
--+		if (nl80211_send_wiphy(skb, NETLINK_CB_PORTID(skb),
-- 				       cb->nlh->nlmsg_seq, NLM_F_MULTI,
-- 				       dev) < 0) {
-- 			idx--;
-+-		ret = nl80211_send_wiphy(skb, NETLINK_CB(cb->skb).portid,
-++		ret = nl80211_send_wiphy(skb, NETLINK_CB_PORTID(skb),
-+ 					 cb->nlh->nlmsg_seq, NLM_F_MULTI,
-+ 					 dev);
-+ 		if (ret < 0) {
- @@ -1300,7 +1300,7 @@ static int nl80211_get_wiphy(struct sk_buff *skb, struct genl_info *info)
-  	if (!msg)
-  		return -ENOMEM;
+diff --git a/include/linux/kfifo.h b/include/linux/kfifo.h
+index e30bb54..398b00d 100644
+--- a/include/linux/kfifo.h
++++ b/include/linux/kfifo.h
+@@ -187,6 +187,89 @@ __kfifo_int_must_check_helper(int val)
+ 	return val;
+ }
+ 
++#define __kfifo_alloc LINUX_BACKPORT(__kfifo_alloc)
++extern int __kfifo_alloc(struct __kfifo *fifo, unsigned int size,
++	size_t esize, gfp_t gfp_mask);
++#define __kfifo_free LINUX_BACKPORT(__kfifo_free)
++extern void __kfifo_free(struct __kfifo *fifo);
++
++#define __kfifo_init LINUX_BACKPORT(__kfifo_init)
++extern int __kfifo_init(struct __kfifo *fifo, void *buffer,
++	unsigned int size, size_t esize);
++
++#define __kfifo_in LINUX_BACKPORT(__kfifo_in)
++extern unsigned int __kfifo_in(struct __kfifo *fifo,
++	const void *buf, unsigned int len);
++
++#define __kfifo_out LINUX_BACKPORT(__kfifo_out)
++extern unsigned int __kfifo_out(struct __kfifo *fifo,
++	void *buf, unsigned int len);
++
++#define __kfifo_from_user LINUX_BACKPORT(__kfifo_from_user)
++extern int __kfifo_from_user(struct __kfifo *fifo,
++	const void __user *from, unsigned long len, unsigned int *copied);
++
++#define __kfifo_to_user LINUX_BACKPORT(__kfifo_to_user)
++extern int __kfifo_to_user(struct __kfifo *fifo,
++	void __user *to, unsigned long len, unsigned int *copied);
++
++#define __kfifo_dma_in_prepare LINUX_BACKPORT(__kfifo_dma_in_prepare)
++extern unsigned int __kfifo_dma_in_prepare(struct __kfifo *fifo,
++	struct scatterlist *sgl, int nents, unsigned int len);
++
++#define __kfifo_dma_out_prepare LINUX_BACKPORT(__kfifo_dma_out_prepare)
++extern unsigned int __kfifo_dma_out_prepare(struct __kfifo *fifo,
++	struct scatterlist *sgl, int nents, unsigned int len);
++
++#define __kfifo_out_peek LINUX_BACKPORT(__kfifo_out_peek)
++extern unsigned int __kfifo_out_peek(struct __kfifo *fifo,
++	void *buf, unsigned int len);
++
++#define __kfifo_in_r LINUX_BACKPORT(__kfifo_in_r)
++extern unsigned int __kfifo_in_r(struct __kfifo *fifo,
++	const void *buf, unsigned int len, size_t recsize);
++
++#define __kfifo_out_r LINUX_BACKPORT(__kfifo_out_r)
++extern unsigned int __kfifo_out_r(struct __kfifo *fifo,
++	void *buf, unsigned int len, size_t recsize);
++
++#define __kfifo_from_user_r LINUX_BACKPORT(__kfifo_from_user_r)
++extern int __kfifo_from_user_r(struct __kfifo *fifo,
++	const void __user *from, unsigned long len, unsigned int *copied,
++	size_t recsize);
++
++#define __kfifo_to_user_r LINUX_BACKPORT(__kfifo_to_user_r)
++extern int __kfifo_to_user_r(struct __kfifo *fifo, void __user *to,
++	unsigned long len, unsigned int *copied, size_t recsize);
++
++#define __kfifo_dma_in_prepare_r LINUX_BACKPORT(__kfifo_dma_in_prepare_r)
++extern unsigned int __kfifo_dma_in_prepare_r(struct __kfifo *fifo,
++	struct scatterlist *sgl, int nents, unsigned int len, size_t recsize);
++
++#define __kfifo_dma_in_finish_r LINUX_BACKPORT(__kfifo_dma_in_finish_r)
++extern void __kfifo_dma_in_finish_r(struct __kfifo *fifo,
++	unsigned int len, size_t recsize);
++
++#define __kfifo_dma_out_prepare_r LINUX_BACKPORT(__kfifo_dma_out_prepare_r)
++extern unsigned int __kfifo_dma_out_prepare_r(struct __kfifo *fifo,
++	struct scatterlist *sgl, int nents, unsigned int len, size_t recsize);
++
++#define __kfifo_dma_out_finish_r LINUX_BACKPORT(__kfifo_dma_out_finish_r)
++extern void __kfifo_dma_out_finish_r(struct __kfifo *fifo, size_t recsize);
++
++#define __kfifo_len_r LINUX_BACKPORT(__kfifo_len_r)
++extern unsigned int __kfifo_len_r(struct __kfifo *fifo, size_t recsize);
++
++#define __kfifo_skip_r LINUX_BACKPORT(__kfifo_skip_r)
++extern void __kfifo_skip_r(struct __kfifo *fifo, size_t recsize);
++
++#define __kfifo_out_peek_r LINUX_BACKPORT(__kfifo_out_peek_r)
++extern unsigned int __kfifo_out_peek_r(struct __kfifo *fifo,
++	void *buf, unsigned int len, size_t recsize);
++
++#define __kfifo_max_r LINUX_BACKPORT(__kfifo_max_r)
++extern unsigned int __kfifo_max_r(unsigned int len, size_t recsize);
++
+ /**
+  * kfifo_initialized - Check if the fifo is initialized
+  * @fifo: address of the fifo to check
+@@ -790,68 +873,5 @@ __kfifo_uint_must_check_helper( \
+ 	__kfifo_out_peek(__kfifo, __buf, __n); \
+ }) \
+ )
+-
+-extern int __kfifo_alloc(struct __kfifo *fifo, unsigned int size,
+-	size_t esize, gfp_t gfp_mask);
+-
+-extern void __kfifo_free(struct __kfifo *fifo);
+-
+-extern int __kfifo_init(struct __kfifo *fifo, void *buffer,
+-	unsigned int size, size_t esize);
+-
+-extern unsigned int __kfifo_in(struct __kfifo *fifo,
+-	const void *buf, unsigned int len);
+-
+-extern unsigned int __kfifo_out(struct __kfifo *fifo,
+-	void *buf, unsigned int len);
+-
+-extern int __kfifo_from_user(struct __kfifo *fifo,
+-	const void __user *from, unsigned long len, unsigned int *copied);
+-
+-extern int __kfifo_to_user(struct __kfifo *fifo,
+-	void __user *to, unsigned long len, unsigned int *copied);
+-
+-extern unsigned int __kfifo_dma_in_prepare(struct __kfifo *fifo,
+-	struct scatterlist *sgl, int nents, unsigned int len);
+-
+-extern unsigned int __kfifo_dma_out_prepare(struct __kfifo *fifo,
+-	struct scatterlist *sgl, int nents, unsigned int len);
+-
+-extern unsigned int __kfifo_out_peek(struct __kfifo *fifo,
+-	void *buf, unsigned int len);
+-
+-extern unsigned int __kfifo_in_r(struct __kfifo *fifo,
+-	const void *buf, unsigned int len, size_t recsize);
+-
+-extern unsigned int __kfifo_out_r(struct __kfifo *fifo,
+-	void *buf, unsigned int len, size_t recsize);
+-
+-extern int __kfifo_from_user_r(struct __kfifo *fifo,
+-	const void __user *from, unsigned long len, unsigned int *copied,
+-	size_t recsize);
+-
+-extern int __kfifo_to_user_r(struct __kfifo *fifo, void __user *to,
+-	unsigned long len, unsigned int *copied, size_t recsize);
+-
+-extern unsigned int __kfifo_dma_in_prepare_r(struct __kfifo *fifo,
+-	struct scatterlist *sgl, int nents, unsigned int len, size_t recsize);
+-
+-extern void __kfifo_dma_in_finish_r(struct __kfifo *fifo,
+-	unsigned int len, size_t recsize);
+-
+-extern unsigned int __kfifo_dma_out_prepare_r(struct __kfifo *fifo,
+-	struct scatterlist *sgl, int nents, unsigned int len, size_t recsize);
+-
+-extern void __kfifo_dma_out_finish_r(struct __kfifo *fifo, size_t recsize);
+-
+-extern unsigned int __kfifo_len_r(struct __kfifo *fifo, size_t recsize);
+-
+-extern void __kfifo_skip_r(struct __kfifo *fifo, size_t recsize);
+-
+-extern unsigned int __kfifo_out_peek_r(struct __kfifo *fifo,
+-	void *buf, unsigned int len, size_t recsize);
+-
+-extern unsigned int __kfifo_max_r(unsigned int len, size_t recsize);
+-
+ #endif
+ #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,36)) */
 -- 
-1.8.0
-
-
-
+1.7.10.4
