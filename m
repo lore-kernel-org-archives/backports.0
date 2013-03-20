@@ -1,25 +1,93 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <CAFub=KTNR2ag=KB-MbdoHr-ROjs85kKaQTMYoLv6A4Bmpt-pnQ@mail.gmail.com>
-References: <1359916425-2377-1-git-send-email-ozancag@gmail.com>
-	<510EB634.3080704@hauke-m.de>
-	<CAFub=KQx6wCMUsQJAJXbiaUQ4-uUDepp0datbWuef-Gqst0xnA@mail.gmail.com>
-	<511AB1B3.7090909@hauke-m.de>
-	<CAFub=KTNR2ag=KB-MbdoHr-ROjs85kKaQTMYoLv6A4Bmpt-pnQ@mail.gmail.com>
-Date: Tue, 12 Mar 2013 03:51:42 -0700
-Message-ID: <CAB=NE6X6-0ELebcYt=72oGfgHa36SdyUDHeu1DQuZDxrjA5uJw@mail.gmail.com>
-Subject: Re: [PATCH] compat-drivers: Add possibility to build every subsystem separately
+Return-Path: <mcgrof@gmail.com>
+Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org, mcgrof@kernel.org
-Content-Type: text/plain; charset=UTF-8
+To: backports@vger.kernel.org
+Cc: ben@decadent.org.uk,
+	noelamac@gmail.com,
+	linux-kernel@vger.kernel.org,
+	rusty@rustcorp.com.au,
+	andi@firstfloor.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 08/30] compat: embrace LINUX_BACKPORT() for v2.6.29
+Date: Wed, 20 Mar 2013 02:22:33 -0700
+Message-Id: <1363771375-31715-9-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Mar 12, 2013 at 2:13 AM, Ozan =C3=87a=C4=9Flayan <ozancag@gmail.com=
-> wrote:
-> Bringing this again. Luis, what do you think?
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-I read this thread when I got back from the mountains and agreed with
-Hauke's recommendation.
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.65              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.2.38              [  OK  ]
+20  3.3.8               [  OK  ]
+21  3.4.32              [  OK  ]
+22  3.5.7               [  OK  ]
+23  3.6.11              [  OK  ]
+24  3.7.9               [  OK  ]
+25  3.8.0               [  OK  ]
+26  3.9-rc1             [  OK  ]
 
-  Luis
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ include/linux/compat-2.6.29.h |    6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/include/linux/compat-2.6.29.h b/include/linux/compat-2.6.29.h
+index 9ebc5d5..c8cf898 100644
+--- a/include/linux/compat-2.6.29.h
++++ b/include/linux/compat-2.6.29.h
+@@ -245,6 +245,7 @@ static inline int ndo_do_ioctl(struct net_device *dev,
+ }
+ 
+ 
++#define netdev_attach_ops LINUX_BACKPORT(netdev_attach_ops)
+ void netdev_attach_ops(struct net_device *dev,
+ 		       const struct net_device_ops *ops);
+ 
+@@ -287,6 +288,7 @@ static inline struct net_device_stats *dev_get_stats(struct net_device *dev)
+ 
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,23))
+ #if defined(CONFIG_USB) || defined(CONFIG_USB_MODULE)
++#define usb_unpoison_anchored_urbs LINUX_BACKPORT(usb_unpoison_anchored_urbs)
+ extern void usb_unpoison_anchored_urbs(struct usb_anchor *anchor);
+ #endif /* CONFIG_USB */
+ #endif
+@@ -298,8 +300,11 @@ extern void usb_unpoison_anchored_urbs(struct usb_anchor *anchor);
+ }							\
+ )
+ 
++#define eth_mac_addr LINUX_BACKPORT(eth_mac_addr)
+ extern int eth_mac_addr(struct net_device *dev, void *p);
++#define eth_change_mtu LINUX_BACKPORT(eth_change_mtu)
+ extern int eth_change_mtu(struct net_device *dev, int new_mtu);
++#define eth_validate_addr LINUX_BACKPORT(eth_validate_addr)
+ extern int eth_validate_addr(struct net_device *dev);
+ 
+ #ifdef CONFIG_NET_NS
+@@ -327,6 +332,7 @@ static inline struct net *read_pnet(struct net * const *pnet)
+ 
+ #endif
+ 
++#define init_dummy_netdev LINUX_BACKPORT(init_dummy_netdev)
+ extern int		init_dummy_netdev(struct net_device *dev);
+ 
+ #else /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29)) */
+-- 
+1.7.10.4
