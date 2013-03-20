@@ -1,55 +1,110 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <noelamac@gmail.com>
-Return-Path: <noelamac@gmail.com>
-Date: Thu, 28 Mar 2013 12:12:50 +0100
-From: =?utf-8?B?Q2FtYWxlw7Nu?= <noelamac@gmail.com>
-To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	linux-wireless <linux-wireless@vger.kernel.org>,
-	Brett Rudley <brudley@broadcom.com>,
-	Arend Van Spriel <arend@broadcom.com>,
-	"Franky (Zhenhui) Lin" <frankyl@broadcom.com>,
-	meuleman <meuleman@broadcom.com>, brcm80211-dev-list@broadcom.com
-Subject: Re: brcmsmac: Unknown symbol backport_cordic_calc_iq (err 0)
-Message-ID: <20130328111250.GA4671@stt008.linux.site>
-References: <CAB=NE6Wbym4XksV=uKz9eZD0rZwmtS3ZfP-zbXg9TAc2+2+Z9g@mail.gmail.com> <CAKprTDEEEdy++Bk5AY4Zfrtwsc9HOKGQ+uWR58PFCWU=v+PE1g@mail.gmail.com> <CAB=NE6UtuxuTduYhDy5BcPap-rri+P1mcKYr2KEjAbuE2FU13g@mail.gmail.com> <20130327175711.GA8794@stt008.linux.site> <CAKprTDFspW4B2tk9EZPBBXy3C6gL_NJsjwj-bUeYj1rN3j6sYg@mail.gmail.com> <CAB=NE6W6Ey8iU1vs=XfA7Or0wF=Qh6Gu8zF-DxMatgk-V+wdkQ@mail.gmail.com> <CAKprTDFJet+m7RmkZt5uyf=FMyEYciCYUahEcCC6_ukRQ2pjgw@mail.gmail.com> <CAB=NE6VzvVkFvGaudZHQTM5R3s05QV5Jw23wZ_DLxkNf00Utdg@mail.gmail.com> <20130328104030.GA4602@stt008.linux.site> <CAB=NE6V=AnTabh3p_yY+GmzPo-+GLAdzEBTQMm4VN1xUuVm_sw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <CAB=NE6V=AnTabh3p_yY+GmzPo-+GLAdzEBTQMm4VN1xUuVm_sw@mail.gmail.com>
+Return-Path: <mcgrof@gmail.com>
+Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: ben@decadent.org.uk,
+	noelamac@gmail.com,
+	linux-kernel@vger.kernel.org,
+	rusty@rustcorp.com.au,
+	andi@firstfloor.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 13/30] compat: embrace LINUX_BACKPORT() for v2.6.35
+Date: Wed, 20 Mar 2013 02:22:38 -0700
+Message-Id: <1363771375-31715-14-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
-El 2013-03-28 a las 03:56 -0700, Luis R. Rodriguez escribió:
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-> On Thu, Mar 28, 2013 at 3:40 AM, Camaleón <noelamac@gmail.com> wrote:
-> > Now you say... can you please tell me -in user's parlance terms so I can
-> > understand it- what's the difference between "brcmsmac" from the stock
-> > kernel modules and this one from "compat-drivers"? I mean, what's the
-> > difference from a user's POV and from kernel hacker POV. Are they
-> > related? Are they going to me merged somehow? What's the goal of having
-> > both?
-> 
-> The releases annotated with a date come from linux-next. While Linus
-> is whipping people in shape for the RC releases in preparation for the
-> first official release we hounds still do some development. During the
-> RC cycle only regression fixes get merged into Linus' tree as well a
-> shiny new drivers as they do not regress. The development cycle
-> continues on without Linus. Stephen Rothwell maintains a tree that
-> sucks all development trees together daily, this is called linux-next.
-> We use linux-next for compat-drivers given that we backport not just
-> wireless but also drm. So by you using dated compat-drivers releases
-> you are using what's currently being developed and will likely hit
-> 3.10.
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.65              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.2.38              [  OK  ]
+20  3.3.8               [  OK  ]
+21  3.4.32              [  OK  ]
+22  3.5.7               [  OK  ]
+23  3.6.11              [  OK  ]
+24  3.7.9               [  OK  ]
+25  3.8.0               [  OK  ]
+26  3.9-rc1             [  OK  ]
 
-Mmm... it resembles to me like Debian's own release cycle where the 
-"testing" branch would be like the drivers included at stock kernel 
-and "unstable" would be similar to what compat-drivers are aimed for 
-→ the next hit.
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ compat/compat-2.6.35.c        |    4 ++--
+ include/linux/compat-2.6.35.h |    7 ++++---
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-Well, more or less :-)
-
-Thanks for the explanation. Now awaiting for "git clone" ends its job.
-
-Greetings,
-
+diff --git a/compat/compat-2.6.35.c b/compat/compat-2.6.35.c
+index 646afa2..20fee85 100644
+--- a/compat/compat-2.6.35.c
++++ b/compat/compat-2.6.35.c
+@@ -61,7 +61,7 @@ EXPORT_SYMBOL_GPL(netif_set_real_num_tx_queues);
+  * hex_to_bin() converts one hex digit to its actual value or -1 in case of bad
+  * input.
+  */
+-int compat_hex_to_bin(char ch)
++int hex_to_bin(char ch)
+ {
+ 	if ((ch >= '0') && (ch <= '9'))
+ 		return ch - '0';
+@@ -70,7 +70,7 @@ int compat_hex_to_bin(char ch)
+ 		return ch - 'a' + 10;
+ 	return -1;
+ }
+-EXPORT_SYMBOL_GPL(compat_hex_to_bin);
++EXPORT_SYMBOL_GPL(hex_to_bin);
+ 
+ /**
+  * noop_llseek - No Operation Performed llseek implementation
+diff --git a/include/linux/compat-2.6.35.h b/include/linux/compat-2.6.35.h
+index 82b4dea..99968bf 100644
+--- a/include/linux/compat-2.6.35.h
++++ b/include/linux/compat-2.6.35.h
+@@ -45,6 +45,7 @@ static inline void qdisc_reset_all_tx_gt(struct net_device *dev, unsigned int i)
+ }
+ #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27)) */
+ 
++#define netif_set_real_num_tx_queues LINUX_BACKPORT(netif_set_real_num_tx_queues)
+ extern int netif_set_real_num_tx_queues(struct net_device *dev,
+ 					unsigned int txq);
+ 
+@@ -68,11 +69,10 @@ static inline wait_queue_head_t *sk_sleep(struct sock *sk)
+ 
+ #define sdio_writeb_readb(func, write_byte, addr, err_ret) sdio_readb(func, addr, err_ret)
+ 
+-/* mask hex_to_bin as RHEL6 backports this */
+-#define hex_to_bin(a) compat_hex_to_bin(a)
+-
++#define hex_to_bin LINUX_BACKPORT(hex_to_bin)
+ int hex_to_bin(char ch);
+ 
++#define noop_llseek LINUX_BACKPORT(noop_llseek)
+ extern loff_t noop_llseek(struct file *file, loff_t offset, int origin);
+ 
+ #define pm_qos_request(_qos) pm_qos_requirement(_qos)
+@@ -88,6 +88,7 @@ usb_pipe_endpoint(struct usb_device *dev, unsigned int pipe)
+ 	return eps[usb_pipeendpoint(pipe)];
+ }
+ 
++#define simple_write_to_buffer LINUX_BACKPORT(simple_write_to_buffer)
+ extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
+ 		const void __user *from, size_t count);
+ 
 -- 
-Camaleón 
+1.7.10.4
