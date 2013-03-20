@@ -8,86 +8,14 @@ Cc: ben@decadent.org.uk,
 	rusty@rustcorp.com.au,
 	andi@firstfloor.org,
 	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 04/30] compat: embrace LINUX_BACKPORT() for v2.6.25
-Date: Wed, 20 Mar 2013 02:22:29 -0700
-Message-Id: <1363771375-31715-5-git-send-email-mcgrof@do-not-panic.com>
+Subject: [RFC 06/30] compat: embrace LINUX_BACKPORT() for v2.6.27
+Date: Wed, 20 Mar 2013 02:22:31 -0700
+Message-Id: <1363771375-31715-7-git-send-email-mcgrof@do-not-panic.com>
 In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-
-There is one change needed here to get compilation
-working on v2.6.24, strict_strtoull is now being
-redefined and because of a change that went into
-v2.6.38.4 kstrtoul() was added there and the old
-strict_strtoul was made a define from it. To help
-aid the older kernels such as 2.6.24 that need
-the old strict_strtoul we simply check if strict_strtoull
-is defined, then we know you're on >= 2.6.38.4 and
-don't need kstrtoul() and friends.
-
-If strict_strtoull ever needs to be backported for
-older kernels we'll have to revisit this check.
-
-It is worth documenting here why this change went into
-v2.6.38.4 and not the orignal v2.6.38 release, so
-the commit is provided.
-
-commit 280a1c38c907ab1e2617bdcef66de6bc70897253
-Author: Alexey Dobriyan <adobriyan@gmail.com>
-
-    kstrto*: converting strings to integers done (hopefully) right
-
-    commit 33ee3b2e2eb9b4b6c64dcf9ed66e2ac3124e748c upstream.
-
-    1. simple_strto*() do not contain overflow checks and crufty,
-       libc way to indicate failure.
-    2. strict_strto*() also do not have overflow checks but the name and
-       comments pretend they do.
-    3. Both families have only "long long" and "long" variants,
-       but users want strtou8()
-    4. Both "simple" and "strict" prefixes are wrong:
-       Simple doesn't exactly say what's so simple, strict should not exist
-       because conversion should be strict by default.
-
-    The solution is to use "k" prefix and add convertors for more types.
-    Enter
-        kstrtoull()
-        kstrtoll()
-        kstrtoul()
-        kstrtol()
-        kstrtouint()
-        kstrtoint()
-
-        kstrtou64()
-        kstrtos64()
-        kstrtou32()
-        kstrtos32()
-        kstrtou16()
-        kstrtos16()
-        kstrtou8()
-        kstrtos8()
-
-    Include runtime testsuite (somewhat incomplete) as well.
-
-    strict_strto*() become deprecated, stubbed to kstrto*() and
-    eventually will be removed altogether.
-
-    Use kstrto*() in code today!
-
-    Note: on some archs _kstrtoul() and _kstrtol() are left in tree, even if
-          they'll be unused at runtime. This is temporarily solution,
-          because I don't want to hardcode list of archs where these
-          functions aren't needed. Current solution with sizeof() and
-          __alignof__ at least always works.
-
-    Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-    Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
-
-Tested with ckmake:
 
 1   2.6.24              [  OK  ]
 2   2.6.25              [  OK  ]
@@ -118,54 +46,39 @@ Tested with ckmake:
 
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- include/linux/compat-2.6.25.h |    5 +++++
- include/linux/compat-2.6.39.h |    2 +-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ include/linux/compat-2.6.27.h |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/include/linux/compat-2.6.25.h b/include/linux/compat-2.6.25.h
-index 5ca6783..5d4fe38 100644
---- a/include/linux/compat-2.6.25.h
-+++ b/include/linux/compat-2.6.25.h
-@@ -68,6 +68,7 @@ hit:
+diff --git a/include/linux/compat-2.6.27.h b/include/linux/compat-2.6.27.h
+index 2eae9f2..b71a3b5 100644
+--- a/include/linux/compat-2.6.27.h
++++ b/include/linux/compat-2.6.27.h
+@@ -87,6 +87,7 @@ static inline bool qdisc_all_tx_empty(const struct net_device *dev)
+ 	return skb_queue_empty(&dev->qdisc->q);
  }
  
- /* Backports b718989da7 */
-+#define pci_enable_device_mem LINUX_BACKPORT(pci_enable_device_mem)
- int __must_check pci_enable_device_mem(struct pci_dev *dev);
++#define pci_pme_capable LINUX_BACKPORT(pci_pme_capable)
+ bool pci_pme_capable(struct pci_dev *dev, pci_power_t state);
  
  /*
-@@ -221,7 +222,9 @@ int compat_pm_qos_power_deinit(void);
- #define dev_crit(dev, format, arg...)           \
- 	dev_printk(KERN_CRIT , dev , format , ## arg)
+@@ -207,7 +208,9 @@ static inline void list_splice_tail_init(struct list_head *list,
+ }
  
-+#define __dev_addr_sync LINUX_BACKPORT(__dev_addr_sync)
- extern int		__dev_addr_sync(struct dev_addr_list **to, int *to_count, struct dev_addr_list **from, int *from_count);
-+#define __dev_addr_unsync LINUX_BACKPORT(__dev_addr_unsync)
- extern void		__dev_addr_unsync(struct dev_addr_list **to, int *to_count, struct dev_addr_list **from, int *from_count);
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,24))
++#define mmc_align_data_size LINUX_BACKPORT(mmc_align_data_size)
+ extern unsigned int mmc_align_data_size(struct mmc_card *, unsigned int);
++#define sdio_align_size LINUX_BACKPORT(sdio_align_size)
+ extern unsigned int sdio_align_size(struct sdio_func *func, unsigned int sz);
+ #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,24) */
  
- #define seq_file_net &init_net;
-@@ -301,7 +304,9 @@ static inline void led_classdev_unregister_suspended(struct led_classdev *lcd)
-  * The following things are out of ./include/linux/kernel.h
-  * The new iwlwifi driver is using them.
-  */
-+#define strict_strtoul LINUX_BACKPORT(strict_strtoul)
- extern int strict_strtoul(const char *, unsigned int, unsigned long *);
-+#define strict_strtol LINUX_BACKPORT(strict_strtol)
- extern int strict_strtol(const char *, unsigned int, long *);
+@@ -251,6 +254,8 @@ static inline void dma_sync_single_range_for_device(struct device *dev,
  
+ #endif /* arm */
+ 
++#define debugfs_remove_recursive LINUX_BACKPORT(debugfs_remove_recursive)
++
+ #if defined(CONFIG_DEBUG_FS)
+ void debugfs_remove_recursive(struct dentry *dentry);
  #else
-diff --git a/include/linux/compat-2.6.39.h b/include/linux/compat-2.6.39.h
-index 8ff08ba..33db220 100644
---- a/include/linux/compat-2.6.39.h
-+++ b/include/linux/compat-2.6.39.h
-@@ -113,7 +113,7 @@ static inline struct msi_desc *irq_desc_get_msi_desc(struct irq_desc *desc)
-  * version included in compat-drivers. We use strict_strtol to check if
-  * kstrto* is already available.
-  */
--#ifndef strict_strtol
-+#ifndef strict_strtoull
- /* Internal, do not use. */
- int __must_check _kstrtoul(const char *s, unsigned int base, unsigned long *res);
- int __must_check _kstrtol(const char *s, unsigned int base, long *res);
 -- 
 1.7.10.4
