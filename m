@@ -8,9 +8,9 @@ Cc: ben@decadent.org.uk,
 	rusty@rustcorp.com.au,
 	andi@firstfloor.org,
 	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 13/30] compat: embrace LINUX_BACKPORT() for v2.6.35
-Date: Wed, 20 Mar 2013 02:22:38 -0700
-Message-Id: <1363771375-31715-14-git-send-email-mcgrof@do-not-panic.com>
+Subject: [RFC 02/30] compat: embrace LINUX_BACKPORT() for v2.6.23
+Date: Wed, 20 Mar 2013 02:22:27 -0700
+Message-Id: <1363771375-31715-3-git-send-email-mcgrof@do-not-panic.com>
 In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
@@ -46,65 +46,50 @@ From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- compat/compat-2.6.35.c        |    4 ++--
- include/linux/compat-2.6.35.h |    7 ++++---
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ compat/compat-2.6.23.c        |    2 ++
+ include/linux/compat-2.6.23.h |    3 +++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/compat/compat-2.6.35.c b/compat/compat-2.6.35.c
-index 646afa2..20fee85 100644
---- a/compat/compat-2.6.35.c
-+++ b/compat/compat-2.6.35.c
-@@ -61,7 +61,7 @@ EXPORT_SYMBOL_GPL(netif_set_real_num_tx_queues);
-  * hex_to_bin() converts one hex digit to its actual value or -1 in case of bad
-  * input.
-  */
--int compat_hex_to_bin(char ch)
-+int hex_to_bin(char ch)
+diff --git a/compat/compat-2.6.23.c b/compat/compat-2.6.23.c
+index bc49e98..1a76957 100644
+--- a/compat/compat-2.6.23.c
++++ b/compat/compat-2.6.23.c
+@@ -11,6 +11,7 @@
+ #include <net/compat.h>
+ 
+ /* On net/core/dev.c as of 2.6.24 */
++#define __dev_addr_delete LINUX_BACKPORT(__dev_addr_delete)
+ int __dev_addr_delete(struct dev_addr_list **list, int *count,
+                       void *addr, int alen, int glbl)
  {
- 	if ((ch >= '0') && (ch <= '9'))
- 		return ch - '0';
-@@ -70,7 +70,7 @@ int compat_hex_to_bin(char ch)
- 		return ch - 'a' + 10;
- 	return -1;
- }
--EXPORT_SYMBOL_GPL(compat_hex_to_bin);
-+EXPORT_SYMBOL_GPL(hex_to_bin);
+@@ -40,6 +41,7 @@ EXPORT_SYMBOL_GPL(__dev_addr_delete);
  
- /**
-  * noop_llseek - No Operation Performed llseek implementation
-diff --git a/include/linux/compat-2.6.35.h b/include/linux/compat-2.6.35.h
-index 82b4dea..99968bf 100644
---- a/include/linux/compat-2.6.35.h
-+++ b/include/linux/compat-2.6.35.h
-@@ -45,6 +45,7 @@ static inline void qdisc_reset_all_tx_gt(struct net_device *dev, unsigned int i)
- }
- #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27)) */
+ /* On net/core/dev.c as of 2.6.24. This is not yet used by mac80211 but
+  * might as well add it */
++#define __dev_addr_add LINUX_BACKPORT(__dev_addr_add)
+ int __dev_addr_add(struct dev_addr_list **list, int *count,
+                    void *addr, int alen, int glbl)
+ {
+diff --git a/include/linux/compat-2.6.23.h b/include/linux/compat-2.6.23.h
+index fbfb470..37cbc22 100644
+--- a/include/linux/compat-2.6.23.h
++++ b/include/linux/compat-2.6.23.h
+@@ -75,6 +75,8 @@ static inline void tcf_destroy_chain_compat(struct tcf_proto **fl)
+ #define __dev_set_promiscuity dev_set_promiscuity
  
-+#define netif_set_real_num_tx_queues LINUX_BACKPORT(netif_set_real_num_tx_queues)
- extern int netif_set_real_num_tx_queues(struct net_device *dev,
- 					unsigned int txq);
+ /* Our own 2.6.22 port on compat.c */
++#define dev_mc_unsync LINUX_BACKPORT(dev_mc_unsync)
++#define dev_mc_sync LINUX_BACKPORT(dev_mc_sync)
+ extern void	dev_mc_unsync(struct net_device *to, struct net_device *from);
+ extern int	dev_mc_sync(struct net_device *to, struct net_device *from);
  
-@@ -68,11 +69,10 @@ static inline wait_queue_head_t *sk_sleep(struct sock *sk)
+@@ -113,6 +115,7 @@ struct genl_multicast_group
  
- #define sdio_writeb_readb(func, write_byte, addr, err_ret) sdio_readb(func, addr, err_ret)
  
--/* mask hex_to_bin as RHEL6 backports this */
--#define hex_to_bin(a) compat_hex_to_bin(a)
--
-+#define hex_to_bin LINUX_BACKPORT(hex_to_bin)
- int hex_to_bin(char ch);
+ /* Added as of 2.6.23 */
++#define pci_try_set_mwi LINUX_BACKPORT(pci_try_set_mwi)
+ int pci_try_set_mwi(struct pci_dev *dev);
  
-+#define noop_llseek LINUX_BACKPORT(noop_llseek)
- extern loff_t noop_llseek(struct file *file, loff_t offset, int origin);
- 
- #define pm_qos_request(_qos) pm_qos_requirement(_qos)
-@@ -88,6 +88,7 @@ usb_pipe_endpoint(struct usb_device *dev, unsigned int pipe)
- 	return eps[usb_pipeendpoint(pipe)];
- }
- 
-+#define simple_write_to_buffer LINUX_BACKPORT(simple_write_to_buffer)
- extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
- 		const void __user *from, size_t count);
- 
+ /* Added as of 2.6.23 */
 -- 
 1.7.10.4
