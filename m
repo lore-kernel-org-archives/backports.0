@@ -1,82 +1,65 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 4/5] compat: firmware class, remove the compat prefix
-Date: Thu, 28 Mar 2013 20:18:26 +0100
-Message-Id: <1364498307-11855-4-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1364498307-11855-1-git-send-email-hauke@hauke-m.de>
-References: <1364498307-11855-1-git-send-email-hauke@hauke-m.de>
+Return-Path: <mcgrof@gmail.com>
+Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: ben@decadent.org.uk,
+	noelamac@gmail.com,
+	linux-kernel@vger.kernel.org,
+	rusty@rustcorp.com.au,
+	andi@firstfloor.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 25/30] compat: embrace LINUX_BACKPORT() for cordic
+Date: Wed, 20 Mar 2013 02:22:50 -0700
+Message-Id: <1363771375-31715-26-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
-This depended on some define changing firmware_* to compat_firmware_*
-and this should now be used to generate backport_firmware_*. This makes
-it export the expected symbols with the backport prefix.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.65              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.2.38              [  OK  ]
+20  3.3.8               [  OK  ]
+21  3.4.32              [  OK  ]
+22  3.5.7               [  OK  ]
+23  3.6.11              [  OK  ]
+24  3.7.9               [  OK  ]
+25  3.8.0               [  OK  ]
+26  3.9-rc1             [  OK  ]
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- compat/compat_firmware_class.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ include/linux/cordic.h |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/compat/compat_firmware_class.c b/compat/compat_firmware_class.c
-index 69b442b..9ea5080 100644
---- a/compat/compat_firmware_class.c
-+++ b/compat/compat_firmware_class.c
-@@ -21,7 +21,7 @@
- #include <linux/firmware.h>
- #include <linux/slab.h>
+diff --git a/include/linux/cordic.h b/include/linux/cordic.h
+index f932093..2de0aa3 100644
+--- a/include/linux/cordic.h
++++ b/include/linux/cordic.h
+@@ -43,6 +43,7 @@ struct cordic_iq {
+  * for -180 degrees to +180 degrees. Passed values outside this range are
+  * converted before doing the actual calculation.
+  */
++#define cordic_calc_iq LINUX_BACKPORT(cordic_calc_iq)
+ struct cordic_iq cordic_calc_iq(s32 theta);
  
--#define compat_firmware_to_dev(obj) container_of(obj, struct device, kobj)
-+#define backport_firmware_to_dev(obj) container_of(obj, struct device, kobj)
- 
- MODULE_AUTHOR("Manuel Estrada Sainz");
- MODULE_DESCRIPTION("Multi purpose firmware loading support");
-@@ -324,7 +324,7 @@ static ssize_t firmware_data_read(struct kobject *kobj,
- 				  char *buffer, loff_t offset, size_t count)
- #endif
- {
--	struct device *dev = compat_firmware_to_dev(kobj);
-+	struct device *dev = backport_firmware_to_dev(kobj);
- 	struct firmware_priv *fw_priv = to_firmware_priv(dev);
- 	struct firmware *fw;
- 	ssize_t ret_count;
-@@ -423,7 +423,7 @@ static ssize_t firmware_data_write(struct kobject *kobj,
- 				   char *buffer, loff_t offset, size_t count)
- #endif
- {
--	struct device *dev = compat_firmware_to_dev(kobj);
-+	struct device *dev = backport_firmware_to_dev(kobj);
- 	struct firmware_priv *fw_priv = to_firmware_priv(dev);
- 	struct firmware *fw;
- 	ssize_t retval;
-@@ -635,7 +635,7 @@ out:
-  *      firmware image for this or any other device.
-  **/
- int
--compat_request_firmware(const struct firmware **firmware_p, const char *name,
-+request_firmware(const struct firmware **firmware_p, const char *name,
-                  struct device *device)
- {
-         int uevent = 1;
-@@ -646,7 +646,7 @@ compat_request_firmware(const struct firmware **firmware_p, const char *name,
-  * release_firmware: - release the resource associated with a firmware image
-  * @fw: firmware resource to release
-  **/
--void compat_release_firmware(const struct firmware *fw)
-+void release_firmware(const struct firmware *fw)
- {
- 	if (fw) {
- 		if (!fw_is_builtin_firmware(fw))
-@@ -705,7 +705,7 @@ static int request_firmware_work_func(void *arg)
-  *	in atomic contexts.
-  **/
- int
--compat_request_firmware_nowait(
-+request_firmware_nowait(
- 	struct module *module, int uevent,
- 	const char *name, struct device *device, gfp_t gfp, void *context,
- 	void (*cont)(const struct firmware *fw, void *context))
+ #endif /* __CORDIC_H_ */
 -- 
 1.7.10.4
