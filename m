@@ -1,43 +1,98 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:40605 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752529Ab3C1TNX (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 28 Mar 2013 15:13:23 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 6/8] compat-drivers: fix parameter dereference for drv_set_multicast_list()
-Date: Thu, 28 Mar 2013 20:12:16 +0100
-Message-Id: <1364497938-10646-6-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1364497938-10646-1-git-send-email-hauke@hauke-m.de>
-References: <1364497938-10646-1-git-send-email-hauke@hauke-m.de>
-Sender: backports-owner@vger.kernel.org
+Return-Path: <mcgrof@gmail.com>
+Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: ben@decadent.org.uk,
+	noelamac@gmail.com,
+	linux-kernel@vger.kernel.org,
+	rusty@rustcorp.com.au,
+	andi@firstfloor.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 15/30] compat: embrace LINUX_BACKPORT() for v2.6.37
+Date: Wed, 20 Mar 2013 02:22:40 -0700
+Message-Id: <1363771375-31715-16-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
-drv_set_multicast_list() does not take a pinter but the direct
-parameter on kernel < 2.6.35.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.65              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.2.38              [  OK  ]
+20  3.3.8               [  OK  ]
+21  3.4.32              [  OK  ]
+22  3.5.7               [  OK  ]
+23  3.6.11              [  OK  ]
+24  3.7.9               [  OK  ]
+25  3.8.0               [  OK  ]
+26  3.9-rc1             [  OK  ]
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- patches/collateral-evolutions/network/25-multicast-list_head.patch |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ compat/compat-2.6.37.c        |    4 ++--
+ include/linux/compat-2.6.37.h |    5 ++---
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/patches/collateral-evolutions/network/25-multicast-list_head.patch b/patches/collateral-evolutions/network/25-multicast-list_head.patch
-index 602d5e7..a20aa54 100644
---- a/patches/collateral-evolutions/network/25-multicast-list_head.patch
-+++ b/patches/collateral-evolutions/network/25-multicast-list_head.patch
-@@ -792,8 +792,8 @@ This also backport commit 2f787b0b76bf5de2eaa3ca3a29d89123ae03c856
- +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35))
-  		drv_set_multicast_list(local, sdata, &dev->mc);
- +#else
--+		drv_set_multicast_list(local, sdata, &dev->mc_count,
--+				       &dev->mc_list);
-++		drv_set_multicast_list(local, sdata, dev->mc_count,
-++				       dev->mc_list);
- +#endif
-  
-  	spin_lock_bh(&local->filter_lock);
+diff --git a/compat/compat-2.6.37.c b/compat/compat-2.6.37.c
+index 24b267a..9f722a6 100644
+--- a/compat/compat-2.6.37.c
++++ b/compat/compat-2.6.37.c
+@@ -345,7 +345,7 @@ EXPORT_SYMBOL_GPL(compat_led_classdev_unregister);
+  *	For tight control over page level allocator and protection flags
+  *	use __vmalloc() instead.
+  */
+-void *compat_vzalloc(unsigned long size)
++void *vzalloc(unsigned long size)
+ {
+ 	void *buf;
+ 	buf = vmalloc(size);
+@@ -353,6 +353,6 @@ void *compat_vzalloc(unsigned long size)
+ 		memset(buf, 0, size);
+ 	return buf;
+ }
+-EXPORT_SYMBOL_GPL(compat_vzalloc);
++EXPORT_SYMBOL_GPL(vzalloc);
+ 
+ #endif
+diff --git a/include/linux/compat-2.6.37.h b/include/linux/compat-2.6.37.h
+index c1d45af..317ae6f 100644
+--- a/include/linux/compat-2.6.37.h
++++ b/include/linux/compat-2.6.37.h
+@@ -41,6 +41,7 @@ static inline int proto_ports_offset(int proto)
+ 
+ #define SDIO_CLASS_BT_AMP	0x09	/* Type-A Bluetooth AMP interface */
+ 
++#define net_ns_type_operations LINUX_BACKPORT(net_ns_type_operations)
+ extern struct kobj_ns_type_operations net_ns_type_operations;
+ 
+ /* mask skb_checksum_none_assert as RHEL6 backports this */
+@@ -144,9 +145,7 @@ extern void compat_led_brightness_set(struct led_classdev *led_cdev,
+ 
+ #define netdev_refcnt_read(a) atomic_read(&a->refcnt)
+ 
+-/* mask vzalloc as RHEL6 backports this */
+-#define vzalloc(a) compat_vzalloc(a)
+-
++#define vzalloc LINUX_BACKPORT(vzalloc)
+ extern void *vzalloc(unsigned long size);
+ 
+ #define rtnl_dereference(p)                                     \
 -- 
 1.7.10.4
-
