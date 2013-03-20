@@ -1,65 +1,65 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <julia.lawall@lip6.fr>
-Date: Thu, 28 Mar 2013 19:10:50 +0100 (CET)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-cc: Julia Lawall <julia.lawall@lip6.fr>,
-    Jesse Barnes <jbarnes@virtuousgeek.org>, FlorianSchandinat@gmx.de,
-    linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-    "backports@vger.kernel.org" <backports@vger.kernel.org>,
-    cocci@systeme.lip6.fr,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-    rodrigo.vivi@gmail.com, Daniel Vetter <daniel.vetter@ffwll.ch>,
-    rafael.j.wysocki@intel.com
-Subject: Re: [PATCH] compat/compat-drivers/linux-next: fb skip_vt_switch
-In-Reply-To: <CAB=NE6WbNwPqEPYsASAPaECe4qbAWdd4=eJ402ib+CzZbT69=g@mail.gmail.com>
-Message-ID: <alpine.DEB.2.02.1303281909570.1928@hadrien>
-References: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com> <20130328083943.01e61b4b@jbarnes-desktop> <alpine.DEB.2.02.1303281718490.1928@hadrien> <CAB=NE6WbNwPqEPYsASAPaECe4qbAWdd4=eJ402ib+CzZbT69=g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-Path: <mcgrof@gmail.com>
+Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: ben@decadent.org.uk,
+	noelamac@gmail.com,
+	linux-kernel@vger.kernel.org,
+	rusty@rustcorp.com.au,
+	andi@firstfloor.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 17/30] compat: embrace LINUX_BACKPORT() for v2.6.39
+Date: Wed, 20 Mar 2013 02:22:42 -0700
+Message-Id: <1363771375-31715-18-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.65              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.2.38              [  OK  ]
+20  3.3.8               [  OK  ]
+21  3.4.32              [  OK  ]
+22  3.5.7               [  OK  ]
+23  3.6.11              [  OK  ]
+24  3.7.9               [  OK  ]
+25  3.8.0               [  OK  ]
+26  3.9-rc1             [  OK  ]
 
-On Thu, 28 Mar 2013, Luis R. Rodriguez wrote:
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ include/linux/compat-2.6.39.h |    1 +
+ 1 file changed, 1 insertion(+)
 
-> On Thu, Mar 28, 2013 at 9:19 AM, Julia Lawall <julia.lawall@lip6.fr> wrote:
-> > On Thu, 28 Mar 2013, Jesse Barnes wrote:
-> >> >     -      info->skip_vt_switch = true;
-> >> >     +      fb_enable_skip_vt_switch(info);
-> >> >
-> >> > So we'd then have to just add this static inline change for each new driver...
-> >> > There may be a way to get SmPL to do this for us...
-> >
-> > @@
-> > type of info  *info;
-> > @@
-> >
-> > -      info->skip_vt_switch = true;
-> > +      fb_enable_skip_vt_switch(info);
-> >
-> > for whatever the type of info is.
->
-> Thanks Julia! I'll be sure to try to add this to compat-drivers if the
-> upstream fb patch is not accepted. If it is accepted we would not need
-> this at all!
->
-> > Then I guess there would be a similar rule for the false case?
->
-> Nope, see that's the proactive strategy taken by the static inline and
-> hence the patch. compat would have a static inline for both cases, and
-> for the false case it'd be a no-op. If accepted upstream though then
-> we would not need any changes for this collateral evolution. However
-> *spotting* these collateral evolutions and giving you SmPL for them as
-> a proactive strategy might be good given that if these type of patches
-> are indeed welcomed upstream we'd then be able to address these as
-> secondary steps. If they are not accepted then indeed we'd use them to
-> backport that collateral evolution through both compat (adds the
-> static inlines) and compat-drivers (the SmPL).
-
-Probably I am missing something, since I haven't looked at the code in
-detail, bu wouldn't it be nicer to have a function call for the false
-case, if there is a function call for the true case?  In looking at the
-code, one could wonder why things are not done in a parallel way.
-
-julia
+diff --git a/include/linux/compat-2.6.39.h b/include/linux/compat-2.6.39.h
+index 33db220..e9a2eba 100644
+--- a/include/linux/compat-2.6.39.h
++++ b/include/linux/compat-2.6.39.h
+@@ -24,6 +24,7 @@ static inline int __must_check PTR_RET(const void *ptr)
+ #define tiocmset(tty, set, clear) tiocmset(tty, NULL, set, clear)
+ 
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27))
++#define tty_set_termios LINUX_BACKPORT(tty_set_termios)
+ extern int tty_set_termios(struct tty_struct *tty, struct ktermios *kt);
+ #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27)) */
+ 
+-- 
+1.7.10.4
