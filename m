@@ -1,54 +1,73 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <CAB=NE6X=r=MNHXYCQrR9i4BxDfCVSzO7nF1Nq+n=vXvge-nR0w@mail.gmail.com>
-References: <CAFbutietUh=r65eZM7tGG+ST3RhS+pB+RJrX=ZK0jZehEyYaNA@mail.gmail.com>
-	<CAB=NE6VDJrNHr130gsiaoGcHOSpRadJYnJjE=qCNW3535LZX1g@mail.gmail.com>
-	<CAFbutifjPK3gdYRAQhAeYMJEM5c8=N7_YpSYwTtRg1nZBoEGAA@mail.gmail.com>
-	<CAB=NE6X=r=MNHXYCQrR9i4BxDfCVSzO7nF1Nq+n=vXvge-nR0w@mail.gmail.com>
-Date: Fri, 8 Mar 2013 17:22:59 -0800
-Message-ID: <CAB=NE6UkcLZv9Wy2k3TTtj+bNZAV667Ejws4bFE=wbmqHBQeXA@mail.gmail.com>
-Subject: Re: compat-driver doesn't compile
+Return-Path: <mcgrof@gmail.com>
+Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Manu <vbmanu@gmail.com>
-Cc: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+To: backports@vger.kernel.org
+Cc: ben@decadent.org.uk,
+	noelamac@gmail.com,
+	linux-kernel@vger.kernel.org,
+	rusty@rustcorp.com.au,
+	andi@firstfloor.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 24/30] compat: embrace LINUX_BACKPORT() for v3.8
+Date: Wed, 20 Mar 2013 02:22:49 -0700
+Message-Id: <1363771375-31715-25-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
-Forgot to add the list. Please never remove the list.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-  Luis
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.65              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.2.38              [  OK  ]
+20  3.3.8               [  OK  ]
+21  3.4.32              [  OK  ]
+22  3.5.7               [  OK  ]
+23  3.6.11              [  OK  ]
+24  3.7.9               [  OK  ]
+25  3.8.0               [  OK  ]
+26  3.9-rc1             [  OK  ]
 
-On Fri, Mar 8, 2013 at 5:22 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> On Fri, Mar 8, 2013 at 4:05 PM, Manu <vbmanu@gmail.com> wrote:
->>      | What kernel are you on?
->>      |
->>      | uname -r
->>
->> 3.6.11+
->
-> What is this + postfix here ? What distribution are you running? Is
-> this a vanilla kernel from kernel.org or some modified Linux
-> distribution kernel? When distributions decide they want to
-> incorporate some behavior from future kernels into older kernels they
-> break proper kernel backport detection / support and this requires
-> manual intervention on compat / compat-drivers. So for example RHEL
-> and SUSE kernels are supported on compat / compat-drivers. Other than
-> that we support vanilla kernels. The better you describe where your
-> kernel came from the better we are able to provide support. Also
-> please note that every single compat-drivers release come already
-> compile tested against all supported kernels: 2.6.24 - 3.9, so hearing
-> a compile issue is odd. One other possibility on a compile issue other
-> than a custom distro hacked kernel is a different kernel
-> configuration. Right now we use a basic desktop type like kernel
-> configuration for our tests.
->
->>     | Also please note that compat-drivers-3.9-rc1-1 is out too, you
->> should upgrade.
->> compat-drivers-3.9-rc1-2 # ./scripts/driver-select ath  # I need only ar5523
->
-> ar5523 didn't have its own driver-select menu entry but I just added
-> it, that will be part of the new release I'm about to announce, so
-> please use this next but in the meantime please verify the above.
->
->   Luis
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ include/linux/compat-3.8.h |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/linux/compat-3.8.h b/include/linux/compat-3.8.h
+index 184d1d0..55fdc16 100644
+--- a/include/linux/compat-3.8.h
++++ b/include/linux/compat-3.8.h
+@@ -16,6 +16,7 @@
+ #define prandom_u32_state(_state)	prandom32(_state)
+ 
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,8))
++#define netdev_set_default_ethtool_ops LINUX_BACKPORT(netdev_set_default_ethtool_ops)
+ extern void netdev_set_default_ethtool_ops(struct net_device *dev,
+ 					   const struct ethtool_ops *ops);
+ #endif
+@@ -26,6 +27,7 @@ extern void netdev_set_default_ethtool_ops(struct net_device *dev,
+ #define  PCI_EXP_LNKCTL_ASPM_L0S  0x01 /* L0s Enable */
+ #define  PCI_EXP_LNKCTL_ASPM_L1   0x02 /* L1 Enable */
+ 
++#define hid_ignore LINUX_BACKPORT(hid_ignore)
+ extern bool hid_ignore(struct hid_device *);
+ 
+ /* This backports:
+-- 
+1.7.10.4
