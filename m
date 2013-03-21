@@ -1,67 +1,55 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail.stepping-stone.ch ([194.176.109.206]:33191 "EHLO
-	mail.stepping-stone.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752277Ab3CBTRO (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 2 Mar 2013 14:17:14 -0500
-From: stefan.kuhn@foss-group.ch
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org, Stefan Kuhn <stefan.kuhn@hispeed.ch>
-Subject: [compat-drivers 1/1] scripts/driver-select: use $BACKUP_EXT everywhere
-Date: Sat,  2 Mar 2013 20:07:41 +0100
-Message-Id: <1362251261-7270-2-git-send-email-stefan.kuhn@hispeed.ch>
-In-Reply-To: <1362251261-7270-1-git-send-email-stefan.kuhn@hispeed.ch>
-References: <1362251261-7270-1-git-send-email-stefan.kuhn@hispeed.ch>
-Sender: backports-owner@vger.kernel.org
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+Date: Wed, 20 Mar 2013 18:51:14 -0700
+Message-ID: <CAB=NE6WzwBMmkO=z0HjqZdEJn4s0m+d_8Vh08_zDO0PuLvy9jA@mail.gmail.com>
+Subject: Re: [RFC 00/30] compat: deal with kernel backport namespace
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: ben@decadent.org.uk, noelamac@gmail.com, linux-kernel@vger.kernel.org,
+	rusty@rustcorp.com.au, andi@firstfloor.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Stefan Kuhn <stefan.kuhn@hispeed.ch>
----
- scripts/driver-select | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+On Wed, Mar 20, 2013 at 2:22 AM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+>
+> This patch series deals with the project that aims at
+> backporting the Linux kernel [0]. If you don't care
+> for that, at least read this and patch #1, the rest
+> you can nuke.
+>
+> Ben reports compat_ namespace is already taken by the
+> kernel, and while this is slightly true, I rather just
+> deal with this now and avoid any future issues.
+>
+> I've chosen backport_. Any nay's?
+>
+> I've broken this set for easier review to one per kernel
+> backported. Each patch is test compiled with ckmake [1]
+> for kernels 2.6.24 - 3.9. I've then test compiled all this
+> against compat-drivers-2013-03-15, which sucks in Ethernet,
+> 802.11 Bluetooth, and DRM video drivers against linux-next
+> tag next-20130315 and it all went fine for all kernels
+> 2.6.24 - 3.9.
+>
+> I suppose the next set here, if we really are adamant about
+> any possible namespace issues (is it necessary?) is to use
+> include/linux/backport/ instead of include/linux/compat/ and
+> likewise rename the compat module to backports as with
+> COMPAT_* macros.
+>
+> I'm sending these as RFCs in hopes to get reviews / testing
+> prior to any radical change, but more importantly in hopes
+> anyone who cares for maintaining a Linux distribution will
+> review.
+>
+> [0] https://backports.wiki.kernel.org
+> [1] https://git.kernel.org/cgit/linux/kernel/git/mcgrof/compat.git/tree/bin/ckmake
 
-diff --git a/scripts/driver-select b/scripts/driver-select
-index 4f71e34..4dfbe3f 100755
---- a/scripts/driver-select
-+++ b/scripts/driver-select
-@@ -20,9 +20,6 @@ SSB_MAKEFILE="drivers/ssb/Makefile"
- BCMA_MAKEFILE="drivers/bcma/Makefile"
- 
- # used to backup files from foo to foo.${BACKUP_EXT}
--# If you change this also modify restore_compat() and
--# restore_file() below I couldn't find a way to use
--# the $BACKUP_EXT there.
- BACKUP_EXT="bk"
- 
- # Pretty colors
-@@ -90,7 +87,7 @@ function backup_file {
- 		return
- 	fi
- 	echo -e "Backing up makefile: ${CYAN}${1}.${BACKUP_EXT}${NORMAL}"
--	cp $1 $1.bk
-+	cp "${1}" "${1}.${BACKUP_EXT}"
- }
- 
- function disable_makefile
-@@ -301,16 +298,14 @@ function select_brcm80211_driver
- }
- 
- function restore_file {
--	#ORIG=$(shell ${1%%.${BACKUP_EXT}})
--	ORIG=${1%%.bk}
-+	local ORIG="${1%%${BACKUP_EXT}}"
- 	cp $1 $ORIG
- 	rm -f $1
- 	echo -e "Restored makefile: ${CYAN}${ORIG}${NORMAL} (and removed backup)"
- }
- 
- function restore_compat {
--	#FILES=$(find ./ -type f -name *.$BACKUP_EXT)
--	FILES=$(find ./ -type f -name *.bk)
-+	local FILES=$(find ./ -type f -name *"${BACKUP_EXT}")
- 	for i in $FILES; do
- 		restore_file $i
- 	done
--- 
-1.7.12.4
+I heard no one cry, so pushed.
 
+  Luis
