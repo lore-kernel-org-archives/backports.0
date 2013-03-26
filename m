@@ -1,82 +1,40 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: ben@decadent.org.uk,
-	noelamac@gmail.com,
-	linux-kernel@vger.kernel.org,
-	rusty@rustcorp.com.au,
-	andi@firstfloor.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 03/30] compat: embrace LINUX_BACKPORT() for v2.6.24
-Date: Wed, 20 Mar 2013 02:22:28 -0700
-Message-Id: <1363771375-31715-4-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <noelamac@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1363801516.31336.68.camel@deadeye.wl.decadent.org.uk>
+References: <20130317144603.GA4850@stt008.linux.site>
+	<1363532310.3937.266.camel@deadeye.wl.decadent.org.uk>
+	<20130317152428.GA4940@stt008.linux.site>
+	<1363544257.3937.278.camel@deadeye.wl.decadent.org.uk>
+	<1363556604.3937.285.camel@deadeye.wl.decadent.org.uk>
+	<CAB=NE6UPgjOXi7wWBmA5XVHY8MMcf6KwqSWxWViM6kiJYpV0tA@mail.gmail.com>
+	<1363790495.31336.51.camel@deadeye.wl.decadent.org.uk>
+	<CAB=NE6UZ+RvFHyzUhSwzATnkd9gAGa0EKDQD+U9vxVM8FSvLrA@mail.gmail.com>
+	<1363801516.31336.68.camel@deadeye.wl.decadent.org.uk>
+Date: Tue, 26 Mar 2013 16:07:34 +0100
+Message-ID: <CAKprTDHeOkLpsmo-bhovmpQp7th2B82Epn2Tj_gj94910VWrSg@mail.gmail.com>
+Subject: Re: Bug#703142: compatibility with alx ?
+From: =?ISO-8859-1?Q?Camale=F3n?= <noelamac@gmail.com>
+To: Ben Hutchings <ben@decadent.org.uk>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>, backports@vger.kernel.org,
+	703142@bugs.debian.org
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+2013/3/20 Ben Hutchings <ben@decadent.org.uk>:
+> On Wed, 2013-03-20 at 08:50 -0700, Luis R. Rodriguez wrote:
 
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.65              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.38              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.32              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.9               [  OK  ]
-25  3.8.0               [  OK  ]
-26  3.9-rc1             [  OK  ]
+(...)
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- include/linux/compat-2.6.24.h |    5 +++++
- 1 file changed, 5 insertions(+)
+>> Sure, let me know what you think of the proposed posted changes.
+>
+> All looked fine to me, but I'm not that familiar with the compat-drivers
+> code base.
 
-diff --git a/include/linux/compat-2.6.24.h b/include/linux/compat-2.6.24.h
-index 456dcb6..5448604 100644
---- a/include/linux/compat-2.6.24.h
-+++ b/include/linux/compat-2.6.24.h
-@@ -45,6 +45,7 @@ struct net {
- 
- #ifdef CONFIG_NET
- /* Init's network namespace */
-+#define init_net LINUX_BACKPORT(init_net)
- extern struct net init_net;
- #define INIT_NET_NS(net_ns) .net_ns = &init_net,
- #else
-@@ -162,12 +163,16 @@ struct ssb_device_id {
- #define dev_get_by_index(a, b)		dev_get_by_index(b)
- #define __dev_get_by_index(a, b)	__dev_get_by_index(b)
- 
-+#define eth_header LINUX_BACKPORT(eth_header)
- extern int		eth_header(struct sk_buff *skb, struct net_device *dev,
- 				unsigned short type, void *daddr,
- 				void *saddr, unsigned len);
-+#define eth_rebuild_header LINUX_BACKPORT(eth_rebuild_header)
- extern int		eth_rebuild_header(struct sk_buff *skb);
-+#define eth_header_cache_update LINUX_BACKPORT(eth_header_cache_update)
- extern void		eth_header_cache_update(struct hh_cache *hh, struct net_device *dev,
- 				unsigned char * haddr);
-+#define eth_header_cache LINUX_BACKPORT(eth_header_cache)
- extern int		eth_header_cache(struct neighbour *neigh,
- 			struct hh_cache *hh);
- 
--- 
-1.7.10.4
+Just a few lines to say thank you all and to confirm the latest
+"compat-drivers" solve the problem.
+
+Greetings,
+
+--=20
+Camale=F3n
