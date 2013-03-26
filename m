@@ -1,116 +1,48 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:47024 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754545Ab3CZTgm (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 26 Mar 2013 15:36:42 -0400
+MIME-Version: 1.0
+Date: Tue, 26 Mar 2013 12:36:42 -0700
+Message-ID: <CAC_eAnVSYjiVw+XyZH-guwtBh82x=OEc3A7PXyK+aHb5V1Cq8A@mail.gmail.com>
+Subject: Losing connection when using rtlwifi
+From: Benjamin Byington <benbyington84@gmail.com>
 To: backports@vger.kernel.org
-Cc: ben@decadent.org.uk,
-	noelamac@gmail.com,
-	linux-kernel@vger.kernel.org,
-	rusty@rustcorp.com.au,
-	andi@firstfloor.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 16/30] compat: embrace LINUX_BACKPORT() for v2.6.38
-Date: Wed, 20 Mar 2013 02:22:41 -0700
-Message-Id: <1363771375-31715-17-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+Cc: linux-wireless@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Hello,
 
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.65              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.38              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.32              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.9               [  OK  ]
-25  3.8.0               [  OK  ]
-26  3.9-rc1             [  OK  ]
+I'm currently having issues when using the backported rtlwifi driver set.
+ I'm running Fedora 17 and have the wireless chipset RTL8723.  Until
+recently I've just been using an unofficial driver provided by realtek, but
+that driver fails to compile starting with kernel versions 3.7 and on, so
+since then I've been using various versions of backports as they come out.
+ I'm currently on kernel version 3.8.3 with compat-drivers-3.9-rc2.
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- compat/compat-2.6.38.c        |    8 ++++----
- include/linux/compat-2.6.38.h |    9 +++------
- 2 files changed, 7 insertions(+), 10 deletions(-)
+When connecting to my home networks, with WPA encryption, then the drivers
+work fine.  When I connect to my campus network, which requires no password
+to connect to the router, but does require you to sign in on their webpage
+before the general net can be accessed, then I can connect initially,
+navigate and download files for a couple minutes, and then all connection
+cuts out.  Trying to reconnect, or disabling and then re-enabling the wifi
+does not help.  The unofficial driver provided by realtek did not have this
+problem.
 
-diff --git a/compat/compat-2.6.38.c b/compat/compat-2.6.38.c
-index b546194..0074ac6 100644
---- a/compat/compat-2.6.38.c
-+++ b/compat/compat-2.6.38.c
-@@ -22,14 +22,14 @@
-  *
-  * Initialize the EWMA parameters for a given struct ewma @avg.
-  */
--void compat_ewma_init(struct ewma *avg, unsigned long factor, unsigned long weight)
-+void ewma_init(struct ewma *avg, unsigned long factor, unsigned long weight)
- {
- 	WARN_ON(weight <= 1 || factor == 0);
- 	avg->internal = 0;
- 	avg->weight = weight;
- 	avg->factor = factor;
- }
--EXPORT_SYMBOL_GPL(compat_ewma_init);
-+EXPORT_SYMBOL_GPL(ewma_init);
- 
- /**
-  * ewma_add() - Exponentially weighted moving average (EWMA)
-@@ -38,7 +38,7 @@ EXPORT_SYMBOL_GPL(compat_ewma_init);
-  *
-  * Add a sample to the average.
-  */
--struct ewma *compat_ewma_add(struct ewma *avg, unsigned long val)
-+struct ewma *ewma_add(struct ewma *avg, unsigned long val)
- {
- 	avg->internal = avg->internal  ?
- 		(((avg->internal * (avg->weight - 1)) +
-@@ -46,5 +46,5 @@ struct ewma *compat_ewma_add(struct ewma *avg, unsigned long val)
- 		(val * avg->factor);
- 	return avg;
- }
--EXPORT_SYMBOL_GPL(compat_ewma_add);
-+EXPORT_SYMBOL_GPL(ewma_add);
- 
-diff --git a/include/linux/compat-2.6.38.h b/include/linux/compat-2.6.38.h
-index e936c42..58ec64e 100644
---- a/include/linux/compat-2.6.38.h
-+++ b/include/linux/compat-2.6.38.h
-@@ -66,17 +66,14 @@ struct ewma {
- 	unsigned long weight;
- };
- 
--/* mask ewma_init as RHEL6 backports this */
--#define ewma_init(a,b,c) compat_ewma_init(a,b,c)
--
-+#define ewma_init LINUX_BACKPORT(ewma_init)
- extern void ewma_init(struct ewma *avg, unsigned long factor,
- 		      unsigned long weight);
- 
--/* mask ewma_add as RHEL6 backports this */
--#define ewma_add(a,b) compat_ewma_add(a,b)
--
-+#define ewma_add LINUX_BACKPORT(ewma_add)
- extern struct ewma *ewma_add(struct ewma *avg, unsigned long val);
- 
-+#define ewma_read LINUX_BACKPORT(ewma_read)
- /**
-  * ewma_read() - Get average value
-  * @avg: Average structure
--- 
-1.7.10.4
+Here is where I quickly become useless; I don't know diddly squat about
+networks, and I don't even have a notion of how to give you useful
+information about what is actually failing on my machine.  I'm perfectly
+fine with keeping my 3.6 kernel version around if necessary, and I'm mostly
+reporting problems to help others find bugs.  If there are any diagnostic
+actions that would be useful then please tell me and I'll execute them.  If
+I should report a bug with people actually maintaining the drivers code (I
+assume it's not an actual backports bug) then please tell me where to to
+that.
+
+Thanks,
+
+~Ben
