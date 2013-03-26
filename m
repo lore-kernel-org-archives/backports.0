@@ -1,21 +1,45 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <1364336362-10826-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1364336362-10826-1-git-send-email-mcgrof@do-not-panic.com>
+Date: Tue, 26 Mar 2013 15:24:13 -0700
+Message-ID: <CAB=NE6Xt-WNEre6bWP4zQdLjSb3+-s66gCYqehPCbAdCUa4h1Q@mail.gmail.com>
+Subject: Re: [PATCH] compat: fix cordic backport header
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: ben@decadent.org.uk,
-	noelamac@gmail.com,
-	linux-kernel@vger.kernel.org,
-	rusty@rustcorp.com.au,
-	andi@firstfloor.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 26/30] compat: embrace LINUX_BACKPORT() for crc8
-Date: Wed, 20 Mar 2013 02:22:51 -0700
-Message-Id: <1363771375-31715-27-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Tue, Mar 26, 2013 at 3:19 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+>
+> mcgrof@frijol ~/linux-next (git::master)$ git describe --contains \
+>         10f8113ecb76eea72f96c7cfb72d7fed7c282565
+> v3.1-rc1~24^2~10^2^2~515
+>
+> The cordic backport added the cordic library
+> and the cordic header. It correctly only compiled
+> cordic for kernels < 3.1 but the header however was
+> left intact. This is non-issue until cordic itself
+> gets updated with some new features or changes but
+> also an issue was created when we switched the
+> backort namespace. The issue is that the header
+> declares backport_cordic_calc_iq() exists while
+> it actually is not compiled on newer kernels.
+>
+> Fix this by doing the kernel revision check on the
+> backported header, otherwise use #include_next to
+> get the next header, the proper kernel header.
+>
+> This does not have to be added to the older releases
+> given that the header is the same for older kernels,
+> and we are not exporting the symbol twice given that
+> the proper check was already in place for cordic.c.
+>
+> Reported-by: Camale=C3=B3n <noelamac@gmail.com>
+> Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 
 1   2.6.24              [  OK  ]
 2   2.6.25              [  OK  ]
@@ -44,38 +68,8 @@ From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 25  3.8.0               [  OK  ]
 26  3.9-rc1             [  OK  ]
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- include/linux/crc8.h |    3 +++
- 1 file changed, 3 insertions(+)
+real    0m32.956s
+user    12m14.398s
+sys     2m12.304s
 
-diff --git a/include/linux/crc8.h b/include/linux/crc8.h
-index 13c8dab..f0a92ef 100644
---- a/include/linux/crc8.h
-+++ b/include/linux/crc8.h
-@@ -52,6 +52,7 @@
-  *
-  * - lsb first: poly = 10101011(1) = 0xAB
-  */
-+#define crc8_populate_lsb LINUX_BACKPORT(crc8_populate_lsb)
- void crc8_populate_lsb(u8 table[CRC8_TABLE_SIZE], u8 polynomial);
- 
- /**
-@@ -70,6 +71,7 @@ void crc8_populate_lsb(u8 table[CRC8_TABLE_SIZE], u8 polynomial);
-  *
-  * - msb first: poly = (1)11010101 = 0xD5
-  */
-+#define crc8_populate_msb LINUX_BACKPORT(crc8_populate_msb)
- void crc8_populate_msb(u8 table[CRC8_TABLE_SIZE], u8 polynomial);
- 
- /**
-@@ -96,6 +98,7 @@ void crc8_populate_msb(u8 table[CRC8_TABLE_SIZE], u8 polynomial);
-  * Williams, Ross N., ross<at>ross.net
-  * (see URL http://www.ross.net/crc/download/crc_v3.txt).
-  */
-+#define crc8 LINUX_BACKPORT(crc8)
- u8 crc8(const u8 table[CRC8_TABLE_SIZE], u8 *pdata, size_t nbytes, u8 crc);
- 
- #endif /* __CRC8_H_ */
--- 
-1.7.10.4
+  Luis
