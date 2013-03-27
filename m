@@ -1,55 +1,37 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail-ie0-f179.google.com ([209.85.223.179]:41503 "EHLO
-	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755786Ab3CQL0h convert rfc822-to-8bit (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 17 Mar 2013 07:26:37 -0400
-Received: by mail-ie0-f179.google.com with SMTP id k11so5979962iea.10
-        for <backports@vger.kernel.org>; Sun, 17 Mar 2013 04:26:37 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAFub=KTb2PrCVYoxc5mts3CTAypEzKwZjbRiBNpMoVz7yz-s5g@mail.gmail.com>
-References: <20130317085202.GB3547@stt008.linux.site>
-	<CAFub=KRQgdhMBxda2QHK-x6CYCb_WUVq2o6pgpDKMtfZj8MtiQ@mail.gmail.com>
-	<CAKprTDEyC54zL8zBOHW-De3bVRxiLaAzNAq+Jd39f67gX2waPQ@mail.gmail.com>
-	<CAFub=KTb2PrCVYoxc5mts3CTAypEzKwZjbRiBNpMoVz7yz-s5g@mail.gmail.com>
-Date: Sun, 17 Mar 2013 12:26:36 +0100
-Message-ID: <CAKprTDEtReToSww5_YhXhj2f0YtsmQczpexf4a-_aEtvaFTXdQ@mail.gmail.com>
-Subject: Re: Unable to compile "compat-drivers" in Debian Wheezy
-From: =?ISO-8859-1?Q?Camale=F3n?= <noelamac@gmail.com>
-To: =?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
-Cc: backports@vger.kernel.org
+Sender: mcgrof@gmail.com
+In-Reply-To: <CAKprTDEEEdy++Bk5AY4Zfrtwsc9HOKGQ+uWR58PFCWU=v+PE1g@mail.gmail.com>
+References: <CAKprTDHpf0PgisfJK9bJOYgYxLU5PRLNtbkg7V6Zj2s=gVVMCA@mail.gmail.com>
+	<CAB=NE6Wbym4XksV=uKz9eZD0rZwmtS3ZfP-zbXg9TAc2+2+Z9g@mail.gmail.com>
+	<CAKprTDEEEdy++Bk5AY4Zfrtwsc9HOKGQ+uWR58PFCWU=v+PE1g@mail.gmail.com>
+Date: Wed, 27 Mar 2013 09:41:04 -0700
+Message-ID: <CAB=NE6UtuxuTduYhDy5BcPap-rri+P1mcKYr2KEjAbuE2FU13g@mail.gmail.com>
+Subject: Re: brcmsmac: Unknown symbol backport_cordic_calc_iq (err 0)
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+To: =?UTF-8?B?Q2FtYWxlw7Nu?= <noelamac@gmail.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-2013/3/17 Ozan Çağlayan <ozancag@gmail.com>:
-> insmod doesn't resolve module dependencies. You have to use modprobe
-> or load dependencies of alx before insmod'ding alx by looking at the
-> output of modinfo alx.
+On Wed, Mar 27, 2013 at 8:28 AM, Camale=C3=B3n <noelamac@gmail.com> wrote:
+> 2013/3/27 Luis R. Rodriguez <mcgrof@frijolero.org>:
+>> On Tue, Mar 26, 2013 at 8:23 AM, Camale=C3=B3n <noelamac@gmail.com> wrot=
+e:
+>>> https://www.kernel.org/pub/linux/kernel/projects/backports/2013/03/22/c=
+ompat-drivers-2013-03-22-u.tar.bz2
+>>
+>> Thanks for reporting this, this should now be fixed, please try today's =
+release.
+>
+> Thanks Luis, this one prints no error when loading but it makes the
+> system to completely freeze (hard reset required).
+>
+> How could I debug this?
 
-Ah, okay.
+Eek.
 
-> By the way make install should install the modules under a different
-> subdirectory of /lib/modules/<your kernel>. So this wouldn't overwrite
-> your already install stuff.
+/var/log/messages
 
-Well, I finally run "make install", then "make unload" and finally
-"modprobe alx" but I get:
+Does that show any poo from your last boot?
 
-root@stt300:/home/hpc03/Escritorio/compat-drivers-3.9-rc2-2-su# modprobe alx
-ERROR: could not insert 'alx': Exec format error
-
-While loading Debian's stock module seems to be fine:
-
-root@stt300:/home/hpc03/Escritorio/compat-drivers-3.9-rc2-2-su# insmod
-/lib/modules/3.2.0-4-686-pae/kernel/drivers/net/ethernet/atheros/alx/alx.ko
-
-root@stt300:/home/hpc03/Escritorio/compat-drivers-3.9-rc2-2-su# lsmod|grep alx
-alx                    59294  0
-
-Again, thanks for any hint :-)
-
-Greetings,
-
--- 
-Camaleón
+  Luis
