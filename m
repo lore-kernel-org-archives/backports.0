@@ -1,55 +1,179 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail-we0-f182.google.com ([74.125.82.182]:43360 "EHLO
-	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752037Ab3CQRx1 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 17 Mar 2013 13:53:27 -0400
-Received: by mail-we0-f182.google.com with SMTP id t57so4337012wey.13
-        for <backports@vger.kernel.org>; Sun, 17 Mar 2013 10:53:25 -0700 (PDT)
-Date: Sun, 17 Mar 2013 18:53:21 +0100
-From: =?utf-8?B?Q2FtYWxlw7Nu?= <noelamac@gmail.com>
-To: backports@vger.kernel.org
-Subject: Debian Wheezy: intel driver conflicts with compat-drivers
-Message-ID: <20130317175321.GA5732@stt008.linux.site>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Sender: backports-owner@vger.kernel.org
+Return-Path: <mcgrof@gmail.com>
+Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: FlorianSchandinat@gmx.de
+Cc: linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	jbarnes@virtuousgeek.org,
+	backports@vger.kernel.org,
+	cocci@systeme.lip6.fr,
+	linux-kernel@vger.kernel.org,
+	julia.lawall@lip6.fr,
+	rodrigo.vivi@gmail.com,
+	daniel.vetter@ffwll.ch,
+	rafael.j.wysocki@intel.com,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 1/4] compat-drivers: backport fb_info->skip_vt_switch using ifdefs
+Date: Thu, 28 Mar 2013 05:04:27 -0700
+Message-Id: <1364472270-9297-2-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com>
 List-ID: <backports@vger.kernel.org>
 
-Hello,
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-After compiling the compat-drivers (thanks to this mailing list 
-support) I was unable to load the generated kernel module. It failed 
-with a succinct message:
+Commit 3cf2667 as of next-20130301 extended the struct fb_info
+with a skip_vt_switch to allow drivers to skip the VT switch
+at suspend/resume time. For older kernels we can skip this
+as all this switch does is call pm_vt_switch_required() with true
+or false depending on this new flag and later
+pm_vt_switch_unregister() would not have been made.
 
-***
-ERROR: could not insert 'alx': Exec format error
-***
+This patch cannot be broken down further so I'm pegging
+this as the first one with 4 digits under the DRM folder
+for collateral evolutions. This reflects its as atomic as
+is possible. As we'll see on the next commit, these type
+of collateral evolutions can best be backported not by
+keeping ifdef's as below but instead by using a wrapper
+caller, to help reduce with the amount of lines of code
+we need. If a static inline is added upstream for these
+changes, then no code is required for backporting, at all,
+we'd just implement the static inline later upstream as
+a no-op.
 
-But dmesg showed more:
+The tradeoffs to consider for this is if we can live with
+these practices upstream, we may be able to support full
+subsystems only with a compat module, and no need for
+patches. This also means less code and likely less bugs
+on the distribution front when backporting is required.
+At least IMHO this may be worthy to consider at least to
+support kernels listed as supported on kernel.org. We could
+just leave the ifdef hell to older unsupported kernels.
 
-***
-compat: exports duplicate symbol i2c_bit_algo (owned by i2c_algo_bit)
-***
+Relevant commits below, starting with the first one that
+added this new collateral evolution.
 
-After restartig the system, gnome-shell crashed because Xorg loaded the
-VESA driver. I did not join the points until I found a related bug 
-report at Debian:
+commit 3cf2667b9f8b2c2fe298a427deb399e52321da6b
+Author: Jesse Barnes <jbarnes@virtuousgeek.org>
+Date:   Mon Feb 4 13:37:21 2013 +0000
 
-http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=703142#51
+    fb: add support for drivers not needing VT switch at suspend/resume time
 
-And then was "pointed" to ask you :-)
+    Use the new PM routines to indicate whether we need to VT switch at suspend
+    and resume time.  When a new driver is bound, set its flag accordingly,
+    and when unbound, remove it from the PM's console tracking list.
 
-http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=703142#71
+    Signed-off-by: Jesse Barnes <jbarnes@virtuousgeek.org>
+    Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+    Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-True is that I was able to compile and load "compat-drivers" with no 
-problems at all from another system with no Intel card on it, so here
-I am. 
+commit 24576d23976746cb52e7700c4cadbf4bc1bc3472
+Author: Jesse Barnes <jbarnes@virtuousgeek.org>
+Date:   Tue Mar 26 09:25:45 2013 -0700
 
-Is is a known problem? Is there a workaround for Intel VGA-based 
-systems?
+    drm/i915: enable VT switchless resume v3
 
-Greetings,
+    With the other bits in place, we can do this safely.
 
+    v2: disable backlight on suspend to prevent premature enablement on resume
+    v3: disable CRTCs on suspend to allow RTD3 (Kristen)
+
+    Signed-off-by: Jesse Barnes <jbarnes@virtuousgeek.org>
+    Reviewed-by: Rodrigo Vivi <rodrigo.vivi@gmail.com>
+    Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+Cc: cocci@systeme.lip6.fr
+Cc: backports@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Rodrigo Vivi <rodrigo.vivi@gmail.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ .../drm/0001-fb-info-vt_switch.patch               |   73 ++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
+ create mode 100644 patches/collateral-evolutions/drm/0001-fb-info-vt_switch.patch
+
+diff --git a/patches/collateral-evolutions/drm/0001-fb-info-vt_switch.patch b/patches/collateral-evolutions/drm/0001-fb-info-vt_switch.patch
+new file mode 100644
+index 0000000..cdced87
+--- /dev/null
++++ b/patches/collateral-evolutions/drm/0001-fb-info-vt_switch.patch
+@@ -0,0 +1,73 @@
++Commit 3cf2667 as of next-20130301 extended the struct fb_info
++with a skip_vt_switch to allow drivers to skip the VT switch
++at suspend/resume time. For older kernels we can skip this
++as all this switch does is call pm_vt_switch_required() with true
++or false depending on this new flag and later
++pm_vt_switch_unregister() would not have been made.
++
++This patch cannot be broken down further so I'm pegging
++this as the first one with 4 digits under the DRM folder
++for collateral evolutions. This reflects its as atomic as
++is possible. As we'll see on the next commit, these type
++of collateral evolutions can best be backported not by
++keeping ifdef's as below but instead by using a wrapper
++caller, to help reduce with the amount of lines of code
++we need. If a static inline is added upstream for these
++changes, then no code is required for backporting, at all,
++we'd just implement the static inline later upstream as
++a no-op.
++
++The tradeoffs to consider for this is if we can live with
++these practices upstream, we may be able to support full
++subsystems only with a compat module, and no need for
++patches. This also means less code and likely less bugs
++on the distribution front when backporting is required.
++At least IMHO this may be worthy to consider at least to
++support kernels listed as supported on kernel.org. We could
++just leave the ifdef hell to older unsupported kernels.
++
++Relevant commits below, starting with the first one that
++added this new collateral evolution.
++
++commit 3cf2667b9f8b2c2fe298a427deb399e52321da6b
++Author: Jesse Barnes <jbarnes@virtuousgeek.org>
++Date:   Mon Feb 4 13:37:21 2013 +0000
++
++    fb: add support for drivers not needing VT switch at suspend/resume time
++    
++    Use the new PM routines to indicate whether we need to VT switch at suspend
++    and resume time.  When a new driver is bound, set its flag accordingly,
++    and when unbound, remove it from the PM's console tracking list.
++    
++    Signed-off-by: Jesse Barnes <jbarnes@virtuousgeek.org>
++    Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
++    Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
++
++commit 24576d23976746cb52e7700c4cadbf4bc1bc3472
++Author: Jesse Barnes <jbarnes@virtuousgeek.org>
++Date:   Tue Mar 26 09:25:45 2013 -0700
++
++    drm/i915: enable VT switchless resume v3
++    
++    With the other bits in place, we can do this safely.
++    
++    v2: disable backlight on suspend to prevent premature enablement on resume
++    v3: disable CRTCs on suspend to allow RTD3 (Kristen)
++    
++    Signed-off-by: Jesse Barnes <jbarnes@virtuousgeek.org>
++    Reviewed-by: Rodrigo Vivi <rodrigo.vivi@gmail.com>
++    Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
++
++--- a/drivers/gpu/drm/i915/intel_fb.c
+++++ b/drivers/gpu/drm/i915/intel_fb.c
++@@ -150,8 +150,10 @@ static int intelfb_create(struct drm_fb_
++ 	}
++ 	info->screen_size = size;
++ 
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0))
++ 	/* This driver doesn't need a VT switch to restore the mode on resume */
++ 	info->skip_vt_switch = true;
+++#endif
++ 
++ 	drm_fb_helper_fill_fix(info, fb->pitches[0], fb->depth);
++ 	drm_fb_helper_fill_var(info, &ifbdev->helper, sizes->fb_width, sizes->fb_height);
 -- 
-Camaleón 
+1.7.10.4
