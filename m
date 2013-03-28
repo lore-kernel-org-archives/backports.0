@@ -1,55 +1,48 @@
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
-Date: Wed, 20 Mar 2013 18:51:14 -0700
-Message-ID: <CAB=NE6WzwBMmkO=z0HjqZdEJn4s0m+d_8Vh08_zDO0PuLvy9jA@mail.gmail.com>
-Subject: Re: [RFC 00/30] compat: deal with kernel backport namespace
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: ben@decadent.org.uk, noelamac@gmail.com, linux-kernel@vger.kernel.org,
-	rusty@rustcorp.com.au, andi@firstfloor.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <backports-owner@vger.kernel.org>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:40617 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752893Ab3C1TN3 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 28 Mar 2013 15:13:29 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 8/8] compat-drivers: fix signature for struct bin_attribute
+Date: Thu, 28 Mar 2013 20:12:18 +0100
+Message-Id: <1364497938-10646-8-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1364497938-10646-1-git-send-email-hauke@hauke-m.de>
+References: <1364497938-10646-1-git-send-email-hauke@hauke-m.de>
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Mar 20, 2013 at 2:22 AM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
->
-> This patch series deals with the project that aims at
-> backporting the Linux kernel [0]. If you don't care
-> for that, at least read this and patch #1, the rest
-> you can nuke.
->
-> Ben reports compat_ namespace is already taken by the
-> kernel, and while this is slightly true, I rather just
-> deal with this now and avoid any future issues.
->
-> I've chosen backport_. Any nay's?
->
-> I've broken this set for easier review to one per kernel
-> backported. Each patch is test compiled with ckmake [1]
-> for kernels 2.6.24 - 3.9. I've then test compiled all this
-> against compat-drivers-2013-03-15, which sucks in Ethernet,
-> 802.11 Bluetooth, and DRM video drivers against linux-next
-> tag next-20130315 and it all went fine for all kernels
-> 2.6.24 - 3.9.
->
-> I suppose the next set here, if we really are adamant about
-> any possible namespace issues (is it necessary?) is to use
-> include/linux/backport/ instead of include/linux/compat/ and
-> likewise rename the compat module to backports as with
-> COMPAT_* macros.
->
-> I'm sending these as RFCs in hopes to get reviews / testing
-> prior to any radical change, but more importantly in hopes
-> anyone who cares for maintaining a Linux distribution will
-> review.
->
-> [0] https://backports.wiki.kernel.org
-> [1] https://git.kernel.org/cgit/linux/kernel/git/mcgrof/compat.git/tree/bin/ckmake
+The signature for struct bin_attribute.read changed.
 
-I heard no one cry, so pushed.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../network/71-bin_attribute-api-change.patch            |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/71-bin_attribute-api-change.patch
 
-  Luis
+diff --git a/patches/collateral-evolutions/network/71-bin_attribute-api-change.patch b/patches/collateral-evolutions/network/71-bin_attribute-api-change.patch
+new file mode 100644
+index 0000000..2425660
+--- /dev/null
++++ b/patches/collateral-evolutions/network/71-bin_attribute-api-change.patch
+@@ -0,0 +1,14 @@
++--- a/drivers/net/wireless/ti/wlcore/main.c
+++++ b/drivers/net/wireless/ti/wlcore/main.c
++@@ -5518,7 +5518,11 @@ static ssize_t wl1271_sysfs_show_hw_pg_v
++ static DEVICE_ATTR(hw_pg_ver, S_IRUGO,
++ 		   wl1271_sysfs_show_hw_pg_ver, NULL);
++ 
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35))
++ static ssize_t wl1271_sysfs_read_fwlog(struct file *filp, struct kobject *kobj,
+++#else
+++static ssize_t wl1271_sysfs_read_fwlog(struct kobject *kobj,
+++#endif
++ 				       struct bin_attribute *bin_attr,
++ 				       char *buffer, loff_t pos, size_t count)
++ {
+-- 
+1.7.10.4
+
