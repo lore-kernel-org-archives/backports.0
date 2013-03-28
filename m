@@ -1,84 +1,35 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: ben@decadent.org.uk,
-	noelamac@gmail.com,
-	linux-kernel@vger.kernel.org,
-	rusty@rustcorp.com.au,
-	andi@firstfloor.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 06/30] compat: embrace LINUX_BACKPORT() for v2.6.27
-Date: Wed, 20 Mar 2013 02:22:31 -0700
-Message-Id: <1363771375-31715-7-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <hauke@hauke-m.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 3/5] compat: do not undef flush_scheduled_work
+Date: Thu, 28 Mar 2013 20:18:25 +0100
+Message-Id: <1364498307-11855-3-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1364498307-11855-1-git-send-email-hauke@hauke-m.de>
+References: <1364498307-11855-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+This caused flush_scheduled_work instead of
+backport_flush_scheduled_work being exported.
 
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.65              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.38              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.32              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.9               [  OK  ]
-25  3.8.0               [  OK  ]
-26  3.9-rc1             [  OK  ]
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- include/linux/compat-2.6.27.h |    5 +++++
- 1 file changed, 5 insertions(+)
+ compat/compat-2.6.36.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/include/linux/compat-2.6.27.h b/include/linux/compat-2.6.27.h
-index 2eae9f2..b71a3b5 100644
---- a/include/linux/compat-2.6.27.h
-+++ b/include/linux/compat-2.6.27.h
-@@ -87,6 +87,7 @@ static inline bool qdisc_all_tx_empty(const struct net_device *dev)
- 	return skb_queue_empty(&dev->qdisc->q);
+diff --git a/compat/compat-2.6.36.c b/compat/compat-2.6.36.c
+index 3479af4..9295895 100644
+--- a/compat/compat-2.6.36.c
++++ b/compat/compat-2.6.36.c
+@@ -133,7 +133,6 @@ int schedule_delayed_work_on(int cpu,
  }
+ EXPORT_SYMBOL_GPL(schedule_delayed_work_on);
  
-+#define pci_pme_capable LINUX_BACKPORT(pci_pme_capable)
- bool pci_pme_capable(struct pci_dev *dev, pci_power_t state);
- 
- /*
-@@ -207,7 +208,9 @@ static inline void list_splice_tail_init(struct list_head *list,
- }
- 
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,24))
-+#define mmc_align_data_size LINUX_BACKPORT(mmc_align_data_size)
- extern unsigned int mmc_align_data_size(struct mmc_card *, unsigned int);
-+#define sdio_align_size LINUX_BACKPORT(sdio_align_size)
- extern unsigned int sdio_align_size(struct sdio_func *func, unsigned int sz);
- #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,24) */
- 
-@@ -251,6 +254,8 @@ static inline void dma_sync_single_range_for_device(struct device *dev,
- 
- #endif /* arm */
- 
-+#define debugfs_remove_recursive LINUX_BACKPORT(debugfs_remove_recursive)
-+
- #if defined(CONFIG_DEBUG_FS)
- void debugfs_remove_recursive(struct dentry *dentry);
- #else
+-#undef flush_scheduled_work
+ void flush_scheduled_work(void)
+ {
+ 	/*
 -- 
 1.7.10.4
