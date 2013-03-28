@@ -1,73 +1,89 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: ben@decadent.org.uk,
-	noelamac@gmail.com,
-	linux-kernel@vger.kernel.org,
-	rusty@rustcorp.com.au,
-	andi@firstfloor.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 24/30] compat: embrace LINUX_BACKPORT() for v3.8
-Date: Wed, 20 Mar 2013 02:22:49 -0700
-Message-Id: <1363771375-31715-25-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <noelamac@gmail.com>
+Return-Path: <noelamac@gmail.com>
+Date: Thu, 28 Mar 2013 11:40:30 +0100
+From: =?utf-8?B?Q2FtYWxlw7Nu?= <noelamac@gmail.com>
+To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	linux-wireless <linux-wireless@vger.kernel.org>,
+	Brett Rudley <brudley@broadcom.com>,
+	Arend Van Spriel <arend@broadcom.com>,
+	"Franky (Zhenhui) Lin" <frankyl@broadcom.com>,
+	meuleman <meuleman@broadcom.com>, brcm80211-dev-list@broadcom.com
+Subject: Re: brcmsmac: Unknown symbol backport_cordic_calc_iq (err 0)
+Message-ID: <20130328104030.GA4602@stt008.linux.site>
+References: <CAKprTDHpf0PgisfJK9bJOYgYxLU5PRLNtbkg7V6Zj2s=gVVMCA@mail.gmail.com> <CAB=NE6Wbym4XksV=uKz9eZD0rZwmtS3ZfP-zbXg9TAc2+2+Z9g@mail.gmail.com> <CAKprTDEEEdy++Bk5AY4Zfrtwsc9HOKGQ+uWR58PFCWU=v+PE1g@mail.gmail.com> <CAB=NE6UtuxuTduYhDy5BcPap-rri+P1mcKYr2KEjAbuE2FU13g@mail.gmail.com> <20130327175711.GA8794@stt008.linux.site> <CAKprTDFspW4B2tk9EZPBBXy3C6gL_NJsjwj-bUeYj1rN3j6sYg@mail.gmail.com> <CAB=NE6W6Ey8iU1vs=XfA7Or0wF=Qh6Gu8zF-DxMatgk-V+wdkQ@mail.gmail.com> <CAKprTDFJet+m7RmkZt5uyf=FMyEYciCYUahEcCC6_ukRQ2pjgw@mail.gmail.com> <CAB=NE6VzvVkFvGaudZHQTM5R3s05QV5Jw23wZ_DLxkNf00Utdg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAB=NE6VzvVkFvGaudZHQTM5R3s05QV5Jw23wZ_DLxkNf00Utdg@mail.gmail.com>
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+El 2013-03-28 a las 03:23 -0700, Luis R. Rodriguez escribió:
 
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.65              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.38              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.32              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.9               [  OK  ]
-25  3.8.0               [  OK  ]
-26  3.9-rc1             [  OK  ]
+> On Thu, Mar 28, 2013 at 2:56 AM, Camaleón <noelamac@gmail.com> wrote:
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- include/linux/compat-3.8.h |    2 ++
- 1 file changed, 2 insertions(+)
+(...)
 
-diff --git a/include/linux/compat-3.8.h b/include/linux/compat-3.8.h
-index 184d1d0..55fdc16 100644
---- a/include/linux/compat-3.8.h
-+++ b/include/linux/compat-3.8.h
-@@ -16,6 +16,7 @@
- #define prandom_u32_state(_state)	prandom32(_state)
+> > Now, what happens is that the compat-driver freezes with kernel 3.9
+> > and I get this message with kernel 3.2:
+> >
+> > [  684.589268] Compat-drivers backport release: compat-drivers-2013-03-26-u
+> > [  684.589279] Backport based on linux-next.git next-20130326
+> > [  684.589285] compat.git: linux-next.git
+> > [  684.609187] cfg80211: Unknown symbol
+> > backport_netdev_set_default_ethtool_ops (err 0)
+> >
+> > This driver is "driving" me nuts :-)
+> 
+> I have a fix for this, mind you, this is a Debian thing, that is --
+> debian cherry picked some code from a future kernel on their own
+> kernel. The new LINUX_BACKPORT() macro will rescue these. I'll post a
+> new release tomorrow, but I'm working on backporting some other
+> collateral evolutions right now.
+
+Okay, no problem and thanks for caring about this.
  
- #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,8))
-+#define netdev_set_default_ethtool_ops LINUX_BACKPORT(netdev_set_default_ethtool_ops)
- extern void netdev_set_default_ethtool_ops(struct net_device *dev,
- 					   const struct ethtool_ops *ops);
- #endif
-@@ -26,6 +27,7 @@ extern void netdev_set_default_ethtool_ops(struct net_device *dev,
- #define  PCI_EXP_LNKCTL_ASPM_L0S  0x01 /* L0s Enable */
- #define  PCI_EXP_LNKCTL_ASPM_L1   0x02 /* L1 Enable */
+> >> We have yet to require any backport work between 3.9 and what we assume will be
+> >> 3.10. My bet is this is a real driver bug, not backport bug.
+> >
+> > Curious is that brcmsmac module loads fine from the common kernel
+> > module, I mean, the stock one.
+> 
+> What do you mean? Have you tried the stock driver from 3.9-rc2?
+
+Sure! (full report is on the kernel wireless mailing list)
+
+In fact, the only reason I compiled the kernel is to test the latest brcmsmac 
+driver because being this a netbook, having to use an external usb card 
+to be "online" when I'm out of home is a bit annoying.
+
+Now you say... can you please tell me -in user's parlance terms so I can 
+understand it- what's the difference between "brcmsmac" from the stock 
+kernel modules and this one from "compat-drivers"? I mean, what's the 
+difference from a user's POV and from kernel hacker POV. Are they 
+related? Are they going to me merged somehow? What's the goal of having 
+both?
+
+> >> Can you
+> >>
+> >> git clone git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-testing.git
+> >>
+> >> and use your .config, and build and test that kernel ? If it fails to
+> >> boot / crash then you know its the driver.
+> >
+> > I'm not using git (don't even have it installed in my system), I'm
+> > used to compile kernels/modules in the old fashion way. Sorry, I don't
+> > know how git works.
+> 
+> make localmodconfig
+> make
+> make install
+
+(...)
+
+Will try and report back. Thanks, Luis.
  
-+#define hid_ignore LINUX_BACKPORT(hid_ignore)
- extern bool hid_ignore(struct hid_device *);
- 
- /* This backports:
+Greetings,
+
 -- 
-1.7.10.4
+Camaleón 
