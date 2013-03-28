@@ -1,67 +1,54 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
-Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail.stepping-stone.ch ([194.176.109.206]:44837 "EHLO
-	mail.stepping-stone.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752369Ab3CBTbt (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 2 Mar 2013 14:31:49 -0500
-From: stefan.kuhn@foss-group.ch
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org, Stefan Kuhn <stefan.kuhn@hispeed.ch>
-Subject: [compat-drivers 1/1] scripts/driver-select: use $BACKUP_EXT everywhere
-Date: Sat,  2 Mar 2013 20:31:38 +0100
-Message-Id: <1362252698-13736-2-git-send-email-stefan.kuhn@hispeed.ch>
-In-Reply-To: <1362252698-13736-1-git-send-email-stefan.kuhn@hispeed.ch>
-References: <1362252698-13736-1-git-send-email-stefan.kuhn@hispeed.ch>
-Sender: backports-owner@vger.kernel.org
+Return-Path: <cocci-bounces@systeme.lip6.fr>
+Date: Thu, 28 Mar 2013 08:39:43 -0700
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Message-ID: <20130328083943.01e61b4b@jbarnes-desktop>
+In-Reply-To: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com>
+Mime-Version: 1.0
+Cc: linux-fbdev@vger.kernel.org, backports@vger.kernel.org,
+        FlorianSchandinat@gmx.de, daniel.vetter@ffwll.ch,
+        rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, rodrigo.vivi@gmail.com,
+        cocci@systeme.lip6.fr
+Subject: Re: [Cocci] [PATCH] compat/compat-drivers/linux-next: fb
+	skip_vt_switch
+List-Unsubscribe: <https://systeme.lip6.fr/mailman/options/cocci>,
+ <mailto:cocci-request@systeme.lip6.fr?subject=unsubscribe>
+List-Archive: <https://systeme.lip6.fr/pipermail/cocci>
+List-Post: <mailto:cocci@systeme.lip6.fr>
+List-Help: <mailto:cocci-request@systeme.lip6.fr?subject=help>
+List-Subscribe: <https://systeme.lip6.fr/mailman/listinfo/cocci>,
+ <mailto:cocci-request@systeme.lip6.fr?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Sender: cocci-bounces@systeme.lip6.fr
+Errors-To: cocci-bounces@systeme.lip6.fr
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Stefan Kuhn <stefan.kuhn@hispeed.ch>
----
- scripts/driver-select | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+On Thu, 28 Mar 2013 05:04:26 -0700
+"Luis R. Rodriguez" <mcgrof@do-not-panic.com> wrote:
 
-diff --git a/scripts/driver-select b/scripts/driver-select
-index 4f71e34..a14d1b1 100755
---- a/scripts/driver-select
-+++ b/scripts/driver-select
-@@ -20,9 +20,6 @@ SSB_MAKEFILE="drivers/ssb/Makefile"
- BCMA_MAKEFILE="drivers/bcma/Makefile"
- 
- # used to backup files from foo to foo.${BACKUP_EXT}
--# If you change this also modify restore_compat() and
--# restore_file() below I couldn't find a way to use
--# the $BACKUP_EXT there.
- BACKUP_EXT="bk"
- 
- # Pretty colors
-@@ -90,7 +87,7 @@ function backup_file {
- 		return
- 	fi
- 	echo -e "Backing up makefile: ${CYAN}${1}.${BACKUP_EXT}${NORMAL}"
--	cp $1 $1.bk
-+	cp "${1}" "${1}.${BACKUP_EXT}"
- }
- 
- function disable_makefile
-@@ -301,16 +298,14 @@ function select_brcm80211_driver
- }
- 
- function restore_file {
--	#ORIG=$(shell ${1%%.${BACKUP_EXT}})
--	ORIG=${1%%.bk}
-+	local ORIG="${1%%.${BACKUP_EXT}}"
- 	cp $1 $ORIG
- 	rm -f $1
- 	echo -e "Restored makefile: ${CYAN}${ORIG}${NORMAL} (and removed backup)"
- }
- 
- function restore_compat {
--	#FILES=$(find ./ -type f -name *.$BACKUP_EXT)
--	FILES=$(find ./ -type f -name *.bk)
-+	local FILES=$(find ./ -type f -name *\."${BACKUP_EXT}")
- 	for i in $FILES; do
- 		restore_file $i
- 	done
+> The new commit by Jesse that extended the fb_info with a skip_vt_switch
+> element is the simplest example of a data structure expansion. We'd backport
+> this by adding a static inline to compat so that new kernels muck with the
+> new element and for older kernels this would be a no-op. This reduces the
+> size of the backport and unclutters the required patch with #idefs, and
+> insteads leaves only a replacement of the usage of the new elements with
+> a static inline, this however would still be required on our end:
+> 
+> 	-      info->skip_vt_switch = true;
+> 	+      fb_enable_skip_vt_switch(info);
+> 
+> So we'd then have to just add this static inline change for each new driver...
+> There may be a way to get SmPL to do this for us...
+
+Yeah I'm not attached to the direct structure reference; a couple of
+inlines are just as easy to read.  So no argument from me.
+
+Thanks,
 -- 
-1.7.12.4
-
+Jesse Barnes, Intel Open Source Technology Center
+_______________________________________________
+Cocci mailing list
+Cocci@systeme.lip6.fr
+https://systeme.lip6.fr/mailman/listinfo/cocci
