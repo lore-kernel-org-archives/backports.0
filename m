@@ -1,69 +1,36 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: ben@decadent.org.uk,
-	noelamac@gmail.com,
-	linux-kernel@vger.kernel.org,
-	rusty@rustcorp.com.au,
-	andi@firstfloor.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 12/30] compat: embrace LINUX_BACKPORT() for v2.6.34
-Date: Wed, 20 Mar 2013 02:22:37 -0700
-Message-Id: <1363771375-31715-13-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <hauke@hauke-m.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 5/5] compat: build kstrtox for kernel < 2.6.25
+Date: Thu, 28 Mar 2013 20:18:27 +0100
+Message-Id: <1364498307-11855-5-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1364498307-11855-1-git-send-email-hauke@hauke-m.de>
+References: <1364498307-11855-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+strict_strtol with one l is defined in compat-2.6.25.h code now and
+this deactivates this check, use strict_strtoll instead.
 
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.65              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.38              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.32              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.9               [  OK  ]
-25  3.8.0               [  OK  ]
-26  3.9-rc1             [  OK  ]
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- include/linux/compat-2.6.34.h |    2 ++
- 1 file changed, 2 insertions(+)
+ compat/kstrtox.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/compat-2.6.34.h b/include/linux/compat-2.6.34.h
-index eb22865..c206633 100644
---- a/include/linux/compat-2.6.34.h
-+++ b/include/linux/compat-2.6.34.h
-@@ -326,9 +326,11 @@ static inline int lockdep_rtnl_is_held(void)
- }
- #endif /* #ifdef CONFIG_PROVE_LOCKING */
+diff --git a/compat/kstrtox.c b/compat/kstrtox.c
+index 266ffbc..fdbc56e 100644
+--- a/compat/kstrtox.c
++++ b/compat/kstrtox.c
+@@ -17,7 +17,7 @@
+  * version included in compat-drivers. We use strict_strtol to check if
+  * kstrto* is already available.
+  */
+-#ifndef strict_strtol
++#ifndef strict_strtoll
  
-+#define seq_hlist_start_head LINUX_BACKPORT(seq_hlist_start_head)
- extern struct hlist_node *seq_hlist_start_head(struct hlist_head *head,
- 					       loff_t pos);
- 
-+#define seq_hlist_next LINUX_BACKPORT(seq_hlist_next)
- extern struct hlist_node *seq_hlist_next(void *v, struct hlist_head *head,
- 					 loff_t *ppos);
- 
+ #include <linux/ctype.h>
+ #include <linux/errno.h>
 -- 
 1.7.10.4
