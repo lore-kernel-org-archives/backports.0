@@ -1,48 +1,62 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
 Return-Path: <backports-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:47024 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754545Ab3CZTgm (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 26 Mar 2013 15:36:42 -0400
-MIME-Version: 1.0
-Date: Tue, 26 Mar 2013 12:36:42 -0700
-Message-ID: <CAC_eAnVSYjiVw+XyZH-guwtBh82x=OEc3A7PXyK+aHb5V1Cq8A@mail.gmail.com>
-Subject: Losing connection when using rtlwifi
-From: Benjamin Byington <benbyington84@gmail.com>
-To: backports@vger.kernel.org
-Cc: linux-wireless@vger.kernel.org
-Content-Type: text/plain; charset=ISO-8859-1
+Received: from server19320154104.serverpool.info ([193.201.54.104]:40611 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752529Ab3C1TNn (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 28 Mar 2013 15:13:43 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 7/8] compat-drivers: fix signature for struct rchan_callbacks
+Date: Thu, 28 Mar 2013 20:12:17 +0100
+Message-Id: <1364497938-10646-7-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1364497938-10646-1-git-send-email-hauke@hauke-m.de>
+References: <1364497938-10646-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hello,
+the signature for struct rchan_callbacks.create_buf_file changed.
 
-I'm currently having issues when using the backported rtlwifi driver set.
- I'm running Fedora 17 and have the wireless chipset RTL8723.  Until
-recently I've just been using an unofficial driver provided by realtek, but
-that driver fails to compile starting with kernel versions 3.7 and on, so
-since then I've been using various versions of backports as they come out.
- I'm currently on kernel version 3.8.3 with compat-drivers-3.9-rc2.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../network/70-umode_t-api-change.patch            |   28 ++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/70-umode_t-api-change.patch
 
-When connecting to my home networks, with WPA encryption, then the drivers
-work fine.  When I connect to my campus network, which requires no password
-to connect to the router, but does require you to sign in on their webpage
-before the general net can be accessed, then I can connect initially,
-navigate and download files for a couple minutes, and then all connection
-cuts out.  Trying to reconnect, or disabling and then re-enabling the wifi
-does not help.  The unofficial driver provided by realtek did not have this
-problem.
+diff --git a/patches/collateral-evolutions/network/70-umode_t-api-change.patch b/patches/collateral-evolutions/network/70-umode_t-api-change.patch
+new file mode 100644
+index 0000000..dd6ec68
+--- /dev/null
++++ b/patches/collateral-evolutions/network/70-umode_t-api-change.patch
+@@ -0,0 +1,28 @@
++--- a/drivers/net/wireless/ath/ath9k/debug.c
+++++ b/drivers/net/wireless/ath/ath9k/debug.c
++@@ -1217,7 +1217,11 @@ static const struct file_operations fops
++ 
++ static struct dentry *create_buf_file_handler(const char *filename,
++ 					      struct dentry *parent,
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0))
++ 					      umode_t mode,
+++#else
+++					      int mode,
+++#endif
++ 					      struct rchan_buf *buf,
++ 					      int *is_global)
++ {
++--- a/drivers/gpu/drm/drm_sysfs.c
+++++ b/drivers/gpu/drm/drm_sysfs.c
++@@ -72,7 +72,11 @@ static int drm_class_resume(struct devic
++ 	return 0;
++ }
++ 
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0))
++ static char *drm_devnode(struct device *dev, umode_t *mode)
+++#else
+++static char *drm_devnode(struct device *dev, mode_t *mode)
+++#endif
++ {
++ 	return kasprintf(GFP_KERNEL, "dri/%s", dev_name(dev));
++ }
+-- 
+1.7.10.4
 
-Here is where I quickly become useless; I don't know diddly squat about
-networks, and I don't even have a notion of how to give you useful
-information about what is actually failing on my machine.  I'm perfectly
-fine with keeping my 3.6 kernel version around if necessary, and I'm mostly
-reporting problems to help others find bugs.  If there are any diagnostic
-actions that would be useful then please tell me and I'll execute them.  If
-I should report a bug with people actually maintaining the drivers code (I
-assume it's not an actual backports bug) then please tell me where to to
-that.
-
-Thanks,
-
-~Ben
