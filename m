@@ -1,53 +1,59 @@
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <julia.lawall@lip6.fr>
+Date: Thu, 28 Mar 2013 17:19:59 +0100 (CET)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>, FlorianSchandinat@gmx.de,
+    linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+    backports@vger.kernel.org, cocci@systeme.lip6.fr,
+    linux-kernel@vger.kernel.org, julia.lawall@lip6.fr, rodrigo.vivi@gmail.com,
+    daniel.vetter@ffwll.ch, rafael.j.wysocki@intel.com
+Subject: Re: [PATCH] compat/compat-drivers/linux-next: fb skip_vt_switch
+In-Reply-To: <20130328083943.01e61b4b@jbarnes-desktop>
+Message-ID: <alpine.DEB.2.02.1303281718490.1928@hadrien>
+References: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com> <20130328083943.01e61b4b@jbarnes-desktop>
 MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-Date: Fri, 8 Mar 2013 23:29:34 -0800
-Message-ID: <CAB=NE6VgjMOWJ_POwc4mKRuApafSxzbO1eWyUSdOQ0F5e_JYJA@mail.gmail.com>
-Subject: compat-drivers-3.9-rc1-3 released
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <backports@vger.kernel.org>
 
-A -3 release goes out based on v3.9-rc1. In this revision update we
-get now pending-stable patches fixed so that means we get an -s
-release. Also on behalf of a report on this list I've added ar5523 to
-driver-select as an option.
+On Thu, 28 Mar 2013, Jesse Barnes wrote:
 
-There are three releases:
+> On Thu, 28 Mar 2013 05:04:26 -0700
+> "Luis R. Rodriguez" <mcgrof@do-not-panic.com> wrote:
+>
+> > The new commit by Jesse that extended the fb_info with a skip_vt_switch
+> > element is the simplest example of a data structure expansion. We'd backport
+> > this by adding a static inline to compat so that new kernels muck with the
+> > new element and for older kernels this would be a no-op. This reduces the
+> > size of the backport and unclutters the required patch with #idefs, and
+> > insteads leaves only a replacement of the usage of the new elements with
+> > a static inline, this however would still be required on our end:
+> >
+> > 	-      info->skip_vt_switch = true;
+> > 	+      fb_enable_skip_vt_switch(info);
+> >
+> > So we'd then have to just add this static inline change for each new driver...
+> > There may be a way to get SmPL to do this for us...
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.9-rc1/compat-drivers-3.9-rc1-3.tar.bz2
-https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.9-rc1/compat-drivers-3.9-rc1-3-s.tar.bz2
-https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.9-rc1/compat-drivers-3.9-rc1-3-su.tar.bz2
+@@
+type of info  *info;
+@@
 
-If unclear on the definition of the extra tags on the release please see:
+-      info->skip_vt_switch = true;
++      fb_enable_skip_vt_switch(info);
 
-https://backports.wiki.kernel.org/index.php/Documentation/compat-drivers/additional-patches
+for whatever the type of info is.
 
-The -s releases have these pending-stable networking patches sucked
-out from linux-next and merged in. These would typically go into -rc2
-but the model we have allows us to get them faster.
+Then I guess there would be a similar rule for the false case?
 
-0001-iwlwifi-always-copy-first-16-bytes-of-commands.patch
-0002-mac80211-Fix-crash-due-to-un-canceled-work-items.patch
-0003-ath9k-fix-RSSI-dummy-marker-value.patch
-0004-ath9k_htc-fix-signal-strength-handling-issues.patch
-0005-ath9k_hw-improve-reset-reliability-after-errors.patch
-0006-mwifiex-correct-sleep-delay-counter.patch
-0007-rt2x00-error-in-configurations-with-mesh-support-dis.patch
-0008-libertas-fix-crash-for-SD8688.patch
-0009-rt2x00-rt2x00pci_regbusy_read-only-print-register-ac.patch
+julia
 
-In this case there were no pending-stable patches for the DRM
-subsystem. Please help test and report any issues you see. If anyone
-has any type of patch they would like to see merged in that is *not*
-marked as stable and if you think it won't get accepted as a stable
-patch but you need it for your customers / mom / whoever, I'll take it
-in, just be sure to add the patch to the respective category as
-described in the wiki. The model is designed to let silicon vendors
-address "customer" releases without breaking the upstream model, by
-prioritizing the upstream process and categorizing patches in their
-respective place, but also documenting them. In the end, for example,
-this is designed to for example steer people away from annotating
-patches under crap/.
 
-  Luis
+>
+> Yeah I'm not attached to the direct structure reference; a couple of
+> inlines are just as easy to read.  So no argument from me.
+>
+> Thanks,
+> --
+> Jesse Barnes, Intel Open Source Technology Center
+>
