@@ -1,98 +1,58 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: ben@decadent.org.uk,
-	noelamac@gmail.com,
-	linux-kernel@vger.kernel.org,
-	rusty@rustcorp.com.au,
-	andi@firstfloor.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 15/30] compat: embrace LINUX_BACKPORT() for v2.6.37
-Date: Wed, 20 Mar 2013 02:22:40 -0700
-Message-Id: <1363771375-31715-16-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
+Return-Path: <hauke@hauke-m.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 1/5] compat: add module_pcmcia_driver
+Date: Thu, 28 Mar 2013 20:18:23 +0100
+Message-Id: <1364498307-11855-1-git-send-email-hauke@hauke-m.de>
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+This is a backport of:
+commit 6ed7ffddcf61f668114edb676417e5fb33773b59
+Author: H Hartley Sweeten <hsweeten@visionengravers.com>
+Date:   Wed Mar 6 11:24:44 2013 -0700
 
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.65              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.38              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.32              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.9               [  OK  ]
-25  3.8.0               [  OK  ]
-26  3.9-rc1             [  OK  ]
+    pcmcia/ds.h: introduce helper for pcmcia_driver module boilerplate
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- compat/compat-2.6.37.c        |    4 ++--
- include/linux/compat-2.6.37.h |    5 ++---
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ include/linux/compat-3.10.h |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/compat/compat-2.6.37.c b/compat/compat-2.6.37.c
-index 24b267a..9f722a6 100644
---- a/compat/compat-2.6.37.c
-+++ b/compat/compat-2.6.37.c
-@@ -345,7 +345,7 @@ EXPORT_SYMBOL_GPL(compat_led_classdev_unregister);
-  *	For tight control over page level allocator and protection flags
-  *	use __vmalloc() instead.
-  */
--void *compat_vzalloc(unsigned long size)
-+void *vzalloc(unsigned long size)
+diff --git a/include/linux/compat-3.10.h b/include/linux/compat-3.10.h
+index 9abfc4b..f972203 100644
+--- a/include/linux/compat-3.10.h
++++ b/include/linux/compat-3.10.h
+@@ -53,6 +53,28 @@ static inline void fb_enable_skip_vt_switch(struct fb_info *info)
  {
- 	void *buf;
- 	buf = vmalloc(size);
-@@ -353,6 +353,6 @@ void *compat_vzalloc(unsigned long size)
- 		memset(buf, 0, size);
- 	return buf;
  }
--EXPORT_SYMBOL_GPL(compat_vzalloc);
-+EXPORT_SYMBOL_GPL(vzalloc);
  
- #endif
-diff --git a/include/linux/compat-2.6.37.h b/include/linux/compat-2.6.37.h
-index c1d45af..317ae6f 100644
---- a/include/linux/compat-2.6.37.h
-+++ b/include/linux/compat-2.6.37.h
-@@ -41,6 +41,7 @@ static inline int proto_ports_offset(int proto)
- 
- #define SDIO_CLASS_BT_AMP	0x09	/* Type-A Bluetooth AMP interface */
- 
-+#define net_ns_type_operations LINUX_BACKPORT(net_ns_type_operations)
- extern struct kobj_ns_type_operations net_ns_type_operations;
- 
- /* mask skb_checksum_none_assert as RHEL6 backports this */
-@@ -144,9 +145,7 @@ extern void compat_led_brightness_set(struct led_classdev *led_cdev,
- 
- #define netdev_refcnt_read(a) atomic_read(&a->refcnt)
- 
--/* mask vzalloc as RHEL6 backports this */
--#define vzalloc(a) compat_vzalloc(a)
--
-+#define vzalloc LINUX_BACKPORT(vzalloc)
- extern void *vzalloc(unsigned long size);
- 
- #define rtnl_dereference(p)                                     \
++/**
++ * backport of:
++ *
++ * commit 6ed7ffddcf61f668114edb676417e5fb33773b59
++ * Author: H Hartley Sweeten <hsweeten@visionengravers.com>
++ * Date:   Wed Mar 6 11:24:44 2013 -0700
++ *
++ *     pcmcia/ds.h: introduce helper for pcmcia_driver module boilerplate
++ */
++
++/**
++ * module_pcmcia_driver() - Helper macro for registering a pcmcia driver
++ * @__pcmcia_driver: pcmcia_driver struct
++ *
++ * Helper macro for pcmcia drivers which do not do anything special in module
++ * init/exit. This eliminates a lot of boilerplate. Each module may only use
++ * this macro once, and calling it replaces module_init() and module_exit().
++ */
++#define module_pcmcia_driver(__pcmcia_driver) \
++	module_driver(__pcmcia_driver, pcmcia_register_driver, \
++			pcmcia_unregister_driver)
++
+ #else /* kernel is >= 3.10 */
+ /*
+  * We'd delete this upstream ever got this, we use our
 -- 
 1.7.10.4
