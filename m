@@ -1,42 +1,77 @@
-Return-Path: <mcgrof+caf_=mcgrof=gmail.com@do-not-panic.com>
-Return-Path: <hauke@hauke-m.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 20/24] compat-drivers: move disable_drm
-Date: Tue, 26 Feb 2013 21:38:12 +0100
-Message-Id: <1361911096-29117-21-git-send-email-hauke@hauke-m.de>
-In-Reply-To: <1361911096-29117-1-git-send-email-hauke@hauke-m.de>
-References: <1361911096-29117-1-git-send-email-hauke@hauke-m.de>
+Return-path: <backports-owner@vger.kernel.org>
+Received: from mail-la0-f44.google.com ([209.85.215.44]:65369 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753469Ab3C1XZd (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 28 Mar 2013 19:25:33 -0400
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.02.1303282328200.2022@localhost6.localdomain6>
+References: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com>
+ <20130328083943.01e61b4b@jbarnes-desktop> <alpine.DEB.2.02.1303281718490.1928@hadrien>
+ <CAB=NE6WbNwPqEPYsASAPaECe4qbAWdd4=eJ402ib+CzZbT69=g@mail.gmail.com>
+ <alpine.DEB.2.02.1303281909570.1928@hadrien> <CAB=NE6VPRu8DvneVdwd=pXF0ngi5OifNTpZtX3pLi50i116_OA@mail.gmail.com>
+ <alpine.DEB.2.02.1303282328200.2022@localhost6.localdomain6>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Thu, 28 Mar 2013 16:25:10 -0700
+Message-ID: <CAB=NE6WX5Dv9p2jrNwe9GxfH=EUm596uvSspsLQ5-Uuonc6Fqg@mail.gmail.com> (sfid-20130329_002558_079550_D7B8AA81)
+Subject: Re: [PATCH] compat/compat-drivers/linux-next: fb skip_vt_switch
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>,
+	florianschandinat <FlorianSchandinat@gmx.de>,
+	linux-fbdev <linux-fbdev@vger.kernel.org>,
+	dri-devel@lists.freedesktop.org,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	cocci@systeme.lip6.fr,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"rodrigo.vivi" <rodrigo.vivi@gmail.com>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>,
+	"rafael.j.wysocki" <rafael.j.wysocki@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-drm should be disabled when disable_bt_usb_ethernet is selected. This
-disables drm also for e.g. b43.
+On Thu, Mar 28, 2013 at 3:29 PM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+> On Thu, 28 Mar 2013, Luis R. Rodriguez wrote:
+>
+>> On Thu, Mar 28, 2013 at 11:10 AM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+>> > On Thu, 28 Mar 2013, Luis R. Rodriguez wrote:
+>> >>
+>> >> Thanks Julia! I'll be sure to try to add this to compat-drivers if the
+>> >> upstream fb patch is not accepted. If it is accepted we would not need
+>> >> this at all!
+>> >>
+>> >> > Then I guess there would be a similar rule for the false case?
+>> >>
+>> >> Nope, see that's the proactive strategy taken by the static inline and
+>> >> hence the patch. compat would have a static inline for both cases, and
+>> >> for the false case it'd be a no-op. If accepted upstream though then
+>> >> we would not need any changes for this collateral evolution. However
+>> >> *spotting* these collateral evolutions and giving you SmPL for them as
+>> >> a proactive strategy might be good given that if these type of patches
+>> >> are indeed welcomed upstream we'd then be able to address these as
+>> >> secondary steps. If they are not accepted then indeed we'd use them to
+>> >> backport that collateral evolution through both compat (adds the
+>> >> static inlines) and compat-drivers (the SmPL).
+>> >
+>> > Probably I am missing something, since I haven't looked at the code in
+>> > detail, bu wouldn't it be nicer to have a function call for the false
+>> > case, if there is a function call for the true case?
+>>
+>> Yes, and indeed we have that, its the same function call, in the
+>> negative case its a no-op, in the newer kernels it wraps to modifying
+>> the element as in the original code.
+>>
+>> > In looking at the
+>> > code, one could wonder why things are not done in a parallel way.
+>>
+>> Not sure I get this.
+>
+> I looked in today's linux-next, and there seems to be only one
+> initialization of this field, to true, and one test of this field.  So
+> perhaps the case for setting the field to false just isn't needed.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- scripts/driver-select |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Oh sorry now I get what you mean! I thought about this -- and yes I
+decided to not add a bool false setting for the structure field given
+that the assumption is this would not be something dynamic, and data
+structure would be kzalloc()'d so by default they are 0.
 
-diff --git a/scripts/driver-select b/scripts/driver-select
-index 2c9f145..4f71e34 100755
---- a/scripts/driver-select
-+++ b/scripts/driver-select
-@@ -193,13 +193,13 @@ function disable_bt_usb_ethernet {
- 	disable_ethernet
- 	disable_bt
- 	disable_update-initramfs
-+	disable_drm
- }
- 
- function disable_bt_usb_ethernet_var {
- 	backup_file Makefile
- 	disable_bt_usb_ethernet
- 	disable_var_03
--	disable_drm
- }
- 
- function enable_only_ethernet {
--- 
-1.7.10.4
+  Luis
