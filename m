@@ -1,68 +1,46 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH] compat: fix cordic backport header
-Date: Tue, 26 Mar 2013 15:19:22 -0700
-Message-Id: <1364336362-10826-1-git-send-email-mcgrof@do-not-panic.com>
 MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <20130328104030.GA4602@stt008.linux.site>
+References: <CAKprTDHpf0PgisfJK9bJOYgYxLU5PRLNtbkg7V6Zj2s=gVVMCA@mail.gmail.com>
+	<CAB=NE6Wbym4XksV=uKz9eZD0rZwmtS3ZfP-zbXg9TAc2+2+Z9g@mail.gmail.com>
+	<CAKprTDEEEdy++Bk5AY4Zfrtwsc9HOKGQ+uWR58PFCWU=v+PE1g@mail.gmail.com>
+	<CAB=NE6UtuxuTduYhDy5BcPap-rri+P1mcKYr2KEjAbuE2FU13g@mail.gmail.com>
+	<20130327175711.GA8794@stt008.linux.site>
+	<CAKprTDFspW4B2tk9EZPBBXy3C6gL_NJsjwj-bUeYj1rN3j6sYg@mail.gmail.com>
+	<CAB=NE6W6Ey8iU1vs=XfA7Or0wF=Qh6Gu8zF-DxMatgk-V+wdkQ@mail.gmail.com>
+	<CAKprTDFJet+m7RmkZt5uyf=FMyEYciCYUahEcCC6_ukRQ2pjgw@mail.gmail.com>
+	<CAB=NE6VzvVkFvGaudZHQTM5R3s05QV5Jw23wZ_DLxkNf00Utdg@mail.gmail.com>
+	<20130328104030.GA4602@stt008.linux.site>
+Date: Thu, 28 Mar 2013 03:56:08 -0700
+Message-ID: <CAB=NE6V=AnTabh3p_yY+GmzPo-+GLAdzEBTQMm4VN1xUuVm_sw@mail.gmail.com>
+Subject: Re: brcmsmac: Unknown symbol backport_cordic_calc_iq (err 0)
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+To: =?UTF-8?B?Q2FtYWxlw7Nu?= <noelamac@gmail.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	linux-wireless <linux-wireless@vger.kernel.org>, Brett Rudley <brudley@broadcom.com>,
+	Arend Van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>,
+	meuleman <meuleman@broadcom.com>, brcm80211-dev-list@broadcom.com
 Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Thu, Mar 28, 2013 at 3:40 AM, Camale=C3=B3n <noelamac@gmail.com> wrote:
+> Now you say... can you please tell me -in user's parlance terms so I can
+> understand it- what's the difference between "brcmsmac" from the stock
+> kernel modules and this one from "compat-drivers"? I mean, what's the
+> difference from a user's POV and from kernel hacker POV. Are they
+> related? Are they going to me merged somehow? What's the goal of having
+> both?
 
-mcgrof@frijol ~/linux-next (git::master)$ git describe --contains \
-	10f8113ecb76eea72f96c7cfb72d7fed7c282565
-v3.1-rc1~24^2~10^2^2~515
+The releases annotated with a date come from linux-next. While Linus
+is whipping people in shape for the RC releases in preparation for the
+first official release we hounds still do some development. During the
+RC cycle only regression fixes get merged into Linus' tree as well a
+shiny new drivers as they do not regress. The development cycle
+continues on without Linus. Stephen Rothwell maintains a tree that
+sucks all development trees together daily, this is called linux-next.
+We use linux-next for compat-drivers given that we backport not just
+wireless but also drm. So by you using dated compat-drivers releases
+you are using what's currently being developed and will likely hit
+3.10.
 
-The cordic backport added the cordic library
-and the cordic header. It correctly only compiled
-cordic for kernels < 3.1 but the header however was
-left intact. This is non-issue until cordic itself
-gets updated with some new features or changes but
-also an issue was created when we switched the
-backort namespace. The issue is that the header
-declares backport_cordic_calc_iq() exists while
-it actually is not compiled on newer kernels.
-
-Fix this by doing the kernel revision check on the
-backported header, otherwise use #include_next to
-get the next header, the proper kernel header.
-
-This does not have to be added to the older releases
-given that the header is the same for older kernels,
-and we are not exporting the symbol twice given that
-the proper check was already in place for cordic.c.
-
-Reported-by: Camaleón <noelamac@gmail.com>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- include/linux/cordic.h |   11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/include/linux/cordic.h b/include/linux/cordic.h
-index 2de0aa3..7f27b00 100644
---- a/include/linux/cordic.h
-+++ b/include/linux/cordic.h
-@@ -1,3 +1,12 @@
-+#ifndef _BACKPORT_LINUX_CORDIC_H
-+#define _BACKPORT_LINUX_CORDIC_H 1
-+
-+#include <linux/version.h>
-+
-+#if (LINUX_VERSION_CODE > KERNEL_VERSION(3,1,0))
-+#include_next <linux/cordic.h>
-+#else
-+
- /*
-  * Copyright (c) 2011 Broadcom Corporation
-  *
-@@ -47,3 +56,5 @@ struct cordic_iq {
- struct cordic_iq cordic_calc_iq(s32 theta);
- 
- #endif /* __CORDIC_H_ */
-+#endif /* LINUX_VERSION_CODE > KERNEL_VERSION(3,1,0)) */
-+#endif /* _BACKPORT_LINUX_CORDIC_H */
--- 
-1.7.10.4
+  Luis
