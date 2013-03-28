@@ -1,65 +1,55 @@
-Return-Path: <mcgrof@gmail.com>
-Sender: "Luis R. Rodriguez" <mcgrof@gmail.com>
+MIME-Version: 1.0
+Sender: mcgrof@gmail.com
+In-Reply-To: <alpine.DEB.2.02.1303281909570.1928@hadrien>
+References: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com>
+	<20130328083943.01e61b4b@jbarnes-desktop>
+	<alpine.DEB.2.02.1303281718490.1928@hadrien>
+	<CAB=NE6WbNwPqEPYsASAPaECe4qbAWdd4=eJ402ib+CzZbT69=g@mail.gmail.com>
+	<alpine.DEB.2.02.1303281909570.1928@hadrien>
+Date: Thu, 28 Mar 2013 11:25:11 -0700
+Message-ID: <CAB=NE6VPRu8DvneVdwd=pXF0ngi5OifNTpZtX3pLi50i116_OA@mail.gmail.com>
+Subject: Re: [PATCH] compat/compat-drivers/linux-next: fb skip_vt_switch
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: ben@decadent.org.uk,
-	noelamac@gmail.com,
-	linux-kernel@vger.kernel.org,
-	rusty@rustcorp.com.au,
-	andi@firstfloor.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 20/30] compat: embrace LINUX_BACKPORT() for v3.2
-Date: Wed, 20 Mar 2013 02:22:45 -0700
-Message-Id: <1363771375-31715-21-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1363771375-31715-1-git-send-email-mcgrof@do-not-panic.com>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, florianschandinat <FlorianSchandinat@gmx.de>,
+	linux-fbdev <linux-fbdev@vger.kernel.org>, dri-devel@lists.freedesktop.org,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>, cocci@systeme.lip6.fr,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rodrigo.vivi" <rodrigo.vivi@gmail.com>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>, "rafael.j.wysocki" <rafael.j.wysocki@intel.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Thu, Mar 28, 2013 at 11:10 AM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+> On Thu, 28 Mar 2013, Luis R. Rodriguez wrote:
+>>
+>> Thanks Julia! I'll be sure to try to add this to compat-drivers if the
+>> upstream fb patch is not accepted. If it is accepted we would not need
+>> this at all!
+>>
+>> > Then I guess there would be a similar rule for the false case?
+>>
+>> Nope, see that's the proactive strategy taken by the static inline and
+>> hence the patch. compat would have a static inline for both cases, and
+>> for the false case it'd be a no-op. If accepted upstream though then
+>> we would not need any changes for this collateral evolution. However
+>> *spotting* these collateral evolutions and giving you SmPL for them as
+>> a proactive strategy might be good given that if these type of patches
+>> are indeed welcomed upstream we'd then be able to address these as
+>> secondary steps. If they are not accepted then indeed we'd use them to
+>> backport that collateral evolution through both compat (adds the
+>> static inlines) and compat-drivers (the SmPL).
+>
+> Probably I am missing something, since I haven't looked at the code in
+> detail, bu wouldn't it be nicer to have a function call for the false
+> case, if there is a function call for the true case?
 
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.65              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.38              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.32              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.9               [  OK  ]
-25  3.8.0               [  OK  ]
-26  3.9-rc1             [  OK  ]
+Yes, and indeed we have that, its the same function call, in the
+negative case its a no-op, in the newer kernels it wraps to modifying
+the element as in the original code.
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- include/linux/compat-3.2.h |    1 +
- 1 file changed, 1 insertion(+)
+> In looking at the
+> code, one could wonder why things are not done in a parallel way.
 
-diff --git a/include/linux/compat-3.2.h b/include/linux/compat-3.2.h
-index d230206..982b989 100644
---- a/include/linux/compat-3.2.h
-+++ b/include/linux/compat-3.2.h
-@@ -102,6 +102,7 @@ static inline void *dma_zalloc_coherent(struct device *dev, size_t size,
- 	return ret;
- }
- 
-+#define __netdev_printk LINUX_BACKPORT(__netdev_printk)
- extern int __netdev_printk(const char *level, const struct net_device *dev,
- 			   struct va_format *vaf);
- 
--- 
-1.7.10.4
+Not sure I get this.
+
+  Luis
