@@ -1,15 +1,85 @@
+Return-Path: <mcgrof+caf_=mcgrof=gmail.com@frijolero.org>
+Return-Path: <noelamac@gmail.com>
 MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-Date: Fri, 15 Mar 2013 13:11:04 -0700
-Message-ID: <CAB=NE6WbviUcUNwhQy9s+Z5KqZNTxD2Dfp1rogrOhh_bSOdJuQ@mail.gmail.com>
-Subject: compat-drivers in synch with next-20130315
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAB=NE6W6Ey8iU1vs=XfA7Or0wF=Qh6Gu8zF-DxMatgk-V+wdkQ@mail.gmail.com>
+References: <CAKprTDHpf0PgisfJK9bJOYgYxLU5PRLNtbkg7V6Zj2s=gVVMCA@mail.gmail.com>
+	<CAB=NE6Wbym4XksV=uKz9eZD0rZwmtS3ZfP-zbXg9TAc2+2+Z9g@mail.gmail.com>
+	<CAKprTDEEEdy++Bk5AY4Zfrtwsc9HOKGQ+uWR58PFCWU=v+PE1g@mail.gmail.com>
+	<CAB=NE6UtuxuTduYhDy5BcPap-rri+P1mcKYr2KEjAbuE2FU13g@mail.gmail.com>
+	<20130327175711.GA8794@stt008.linux.site>
+	<CAKprTDFspW4B2tk9EZPBBXy3C6gL_NJsjwj-bUeYj1rN3j6sYg@mail.gmail.com>
+	<CAB=NE6W6Ey8iU1vs=XfA7Or0wF=Qh6Gu8zF-DxMatgk-V+wdkQ@mail.gmail.com>
+Date: Thu, 28 Mar 2013 10:56:08 +0100
+Message-ID: <CAKprTDFJet+m7RmkZt5uyf=FMyEYciCYUahEcCC6_ukRQ2pjgw@mail.gmail.com>
+Subject: Re: brcmsmac: Unknown symbol backport_cordic_calc_iq (err 0)
+From: =?ISO-8859-1?Q?Camale=F3n?= <noelamac@gmail.com>
+To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	linux-wireless <linux-wireless@vger.kernel.org>, Brett Rudley <brudley@broadcom.com>,
+	Arend Van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, meuleman@broadcom.com,
+	brcm80211-dev-list@broadcom.com
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <backports@vger.kernel.org>
 
-Kicked out releases for today based on linux-next next-20130315 :
+2013/3/28 Luis R. Rodriguez <mcgrof@frijolero.org>:
+> On Thu, Mar 28, 2013 at 2:02 AM, Camale=F3n <noelamac@gmail.com> wrote:
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/2013/03/15/
+(...)
 
-  Luis
+>> Now, as soon as I proceed to load "brcmsmac" I get a long and
+>> uninterruptible "beeeeep", system hard-freezes (no mouse nor caps lock
+>> led reaction) and only restart is possible.
+>>
+>> Any clue?
+>
+> You are on 3.9.0-rc2, so there is nothing for us to backport on these
+> linux-next based releases except the delta between v3.9 and what is
+> not yet on Linus' tree, in other worlds just the development delta for
+> the 802.11 subsystem.
+
+I have two sets of kernels installed in this system: Debian's stock
+kernel (3.2.39-2) and another one I get from kernel.org (3.9.0-rc2).
+
+Now, what happens is that the compat-driver freezes with kernel 3.9
+and I get this message with kernel 3.2:
+
+[  684.589268] Compat-drivers backport release: compat-drivers-2013-03-26-u
+[  684.589279] Backport based on linux-next.git next-20130326
+[  684.589285] compat.git: linux-next.git
+[  684.609187] cfg80211: Unknown symbol
+backport_netdev_set_default_ethtool_ops (err 0)
+
+This driver is "driving" me nuts :-)
+
+> We have yet to require any backport work between 3.9 and what we assume w=
+ill be
+> 3.10. My bet is this is a real driver bug, not backport bug.
+
+Curious is that brcmsmac module loads fine from the common kernel
+module, I mean, the stock one.
+
+> Can you
+>
+> git clone git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless=
+-testing.git
+>
+> and use your .config, and build and test that kernel ? If it fails to
+> boot / crash then you know its the driver.
+
+I'm not using git (don't even have it installed in my system), I'm
+used to compile kernels/modules in the old fashion way. Sorry, I don't
+know how git works.
+
+> Has brcmsmac ever worked for you?
+
+Well, yes (this is a long story=B9 with many helpful people doing their
+best). It stopped from working since kernel 2.38 or so, but even
+though the driver is giving me some headaches, it never froze the
+system like is doing now.
+
+=B9 http://marc.info/?t=3D136359599600001&r=3D1&w=3D2
+
+Greetings,
+
+--=20
+Camale=F3n
