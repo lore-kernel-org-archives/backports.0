@@ -1,45 +1,166 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:44414 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752607Ab3C1WcT (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 28 Mar 2013 18:32:19 -0400
-Message-ID: <1364509929.10397.79.camel@jlt4.sipsolutions.net> (sfid-20130328_233223_816977_2B59FC60)
+Received: from server19320154104.serverpool.info ([193.201.54.104]:41213 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753982Ab3C1Wki (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 28 Mar 2013 18:40:38 -0400
+Message-ID: <5154C6D8.3040603@hauke-m.de> (sfid-20130328_234100_537139_9B8B4A56)
+Date: Thu, 28 Mar 2013 23:40:24 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
+MIME-Version: 1.0
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: backports@vger.kernel.org
 Subject: Re: compat-drivers wishlist
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Thu, 28 Mar 2013 23:32:09 +0100
-In-Reply-To: <CAB=NE6U=_C72wQLQbXdqN88tudZr7U9Quk_FVeYSgYwEgzeusQ@mail.gmail.com> (sfid-20130328_232511_312472_24B65844)
-References: <1364507345.10397.42.camel@jlt4.sipsolutions.net>
-	 <CAB=NE6X9X0apA0tR-f2_f24W-sWXhUVky2OGEQhAO3=ta1Q2pA@mail.gmail.com>
-	 <CAB=NE6U=_C72wQLQbXdqN88tudZr7U9Quk_FVeYSgYwEgzeusQ@mail.gmail.com>
-	 (sfid-20130328_232511_312472_24B65844)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+References: <1364507345.10397.42.camel@jlt4.sipsolutions.net>  (sfid-20130328_224915_104660_21BB9723) <1364509206.10397.69.camel@jlt4.sipsolutions.net>
+In-Reply-To: <1364509206.10397.69.camel@jlt4.sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, 2013-03-28 at 15:24 -0700, Luis R. Rodriguez wrote:
-
-> Another thing I should mention here about Kconfig.
+On 03/28/2013 11:20 PM, Johannes Berg wrote:
 > 
-> 'make localmodconfig' is great and IMHO something which we should
-> strive for as well for end users. The issue comes in when you have to
-> build something for remote systems. For this I wrote a script a while
-> ago to let us extract only the necessary components from the kernel,
-> scp to target, and extract back our .config [0]. This is hacky but
-> something to keep in mind.
+>> 1) Ability to copy only some drivers.
+>> 2) To make that easier: split all patches per *file* in addition to per change.
+> 
+> You could think that an alternative to these would be for me to
+> post-process the sources and remove everything I don't care about.
+> However, that gets tricky because my compat package is created from my
+> own tree, and there the patches don't always apply. Therefore these
+> wishes.
+> 
+> I think for 2), I'd propose the following structure:
+> 
+> patches/collateral-evolutions/network/0001-netdev_ops/
+> 	-> INFO
+> 	-> rndis.patch
+> 	-> usbnet.patch
+> 	-> ath6kl.patch
+> 
+> Since the filename doesn't matter all that much, an automated conversion
+> could just split the patch per file and store it in a filename obtained
+> as follows:
+> 	drivers/net/usb/rndis_host.c
+> ->	drivers_net_usb_rndis_host.c
+> 
+> Easy :-)
+> 
+> The script to apply them gets a little more difficult, but I think we
+> should start using python for the tree-creation-time scripting which
+> will make this easy enough. Just walk the tree, etc.
+> 
+>> 3) Separate the output from the compat-drivers tree.
+> 
+> Should be easy, though it probably requires rewriting admin-update.
+> OTOH, admin-refresh etc. all pretty much goes away since you can just rm
+> -rf the output directory.
+> 
+>> 4) Kconfig.
+> 
+> So my wishes 1-3 apply at "tree creation" time, which is when the compat
+> source tree (and later tarball) is created and patched for the
+> backports. I've already suggested to rewrite that scripting in python,
+> and I'm willing to invest time in that if it stands a chance of getting
+> accepted :-)
+> 
+> This one is a bit more difficult. On the one hand we need to have all
+> the symbols from the kernel, but we don't want to leak them into the
+> compat namespace. Right now, for example, we do things like renaming
+> CONFIG_USB_NET_RNDIS_HOST to CONFIG_USB_NET_COMPAT_RNDIS_HOST which we
+> really should do for everything -- we get into trouble occasionally
+> because somebody enables something in the base kernel and then tries to
+> disable it in compat, which doesn't work.
+> 
+> I've been thinking a while about this, and I think I pretty much found a
+> solution.
+> 
+> First of all, it's easy to write a small Kconfig program (using the
+> existing Kconfig C code of course) that generates a list of all symbols
+> present in a given Kconfig tree, even disabled ones. Here's the program,
+> you just have to link it with zconf.tab.c and pass a root Kconfig file
+> as the only command line argument:
+> http://p.sipsolutions.net/3300bc91340ae747.txt
+> 
+> Equipped with a list of config symbols, we can go through the sources
+> and Makefiles and replace CONFIG_* with (e.g.) CPTCFG_* (and also
+> CONFIG_*_MODULE). We can't just replace CONFIG_ with CPTCFG_ because
+> then we get kernel symbols wrong. We could rename all CONFIG_ to CPTCFG_
+> and import the kernel symbols, which we have to do for Kconfig anyway,
+> but I feel that doing that would make things more brittle. (*)
+> 
+> Now obviously if we have a local Kconfig tree, it's pretty useless. The
+> reason is that we'll have things like
+> 
+> config MYDRIVER_PCI
+> 	tristate "my good PCI driver"
+> 	depends on PCI && HAS_IOMEM
+> config MYDRIVER_USB
+> 	tristate "my good USB driver"
+> 	depends on USB
+> 
+> or something like that, and the Kconfig tree we have clearly doesn't
+> know about PCI, HAS_IOMEM or USB. We'll have to teach it, which is
+> surprisingly easy:
+> 
+> path/to/syms-program Kconfig > local-symbol-list
+> sed -i 's/$/=/' local-symbol-list
+> grep -v -f local-symbol-list $KLIB_BUILD/.config | dotconf-to-kconf.py > Kconfig.kernel
+> 
+> dotconf-to-kconf.py is this little tool: http://p.sipsolutions.net/986bfbd397ad51c5.txt
+> (Clearly it has to be rewritten in a different language since this has
+> to run at build time, not just at tarball creation time, but that's easy
+> to do)
+> 
+> Now we can "source Kconfig.kernel" into our local Kconfig tree, and the
+> "depends on USB" can magically work the right way. For the symbol walk
+> (syms program above) we'll have to include an empty file, but that's not
+> terribly difficult either.
 
-Yes, that's another interesting thing to do. I myself tend to think it's
-less important as even building all of compat shouldn't take all that
-much time. OTOH, it's clearly a lot more than what you usually want.
+We also have to change all the select SOME_KERNEL_OPTION into a depends
+SOME_KERNEL_OPTION, because the options of the used kernel can not be
+changed.
 
-The tricky part here is that for those users that have most reason to
-use compat, those who need it for new driver modules, it won't work
-because they can't already be loaded on the system.
+> Oh, whenever we execute menuconfig/oldconfig/... we set the environment
+> variable CONFIG_ to CPTCFG_ -- this will make the tool output CPTCFG_
+> instead of CONFIG_ as the prefix for all the output variables.
+> 
+> This is about as far as I got with the implementation. There are a few
+> issues left. 
+> 
+> 1) All of the kernel symbols like USB get put into the .config file,
+> e.g. CPTCFG_USB. This doesn't actually matter all that much because
+> they're prefixed CPTCFG_ and the code we compile still looks for CONFIG_
+> for the kernel symbols -- remember that we only renamed the ones we
+> found in our local Kconfig tree.
+> 
+> 2) I have no idea how to go from a .config file to a working
+> Makefile/autoconf.h system.
+> 
+> 3) If KLIB_BUILD dir or the kernel config changes, this has to be
+> regenerated and oldconfig must be run. For instance, if USB was now
+> disabled in the base kernel then we shouldn't attempt to build USB
+> drivers, etc. This is a bit tricky because we also don't want to redo
+> everything for each "make". I'm not sure how much we care about this,
+> but we can probably solve it by storing a checksum of
+> $KLIB_BUILD/.config and doing the preparation steps only if that
+> changes, or so.
 
-Anyway I don't see why we couldn't just copy the streamline config perl
-script, with the Kconfig tree we build it would probably work just fine.
+compat should be changed in this way to not always backport any e.g. all
+USB stuff and depend on USB stuff if the USB subsystem was not
+activated. I think this should be modularized to have one *.ko for the
+USB stuff, one for the PCMCIA stuff and so on.
+Currently compat.ko depends on USB for some kernel versions.
 
-johannes
+This could also be done later.
+
+> 4) This assumes KLIB_BUILD is configured externally, it's not possible
+> to configure that through menuconfig since the Kconfig tree needs to be
+> built first. I don't think this is a problem, but it looks like Luis
+> wanted to put that into Kconfig so I'm saying it won't really work.
+> 
+> Thoughts?
+> 
+> johannes
+> 
+> (*) post-scriptum: this can and should actually happen at tree creation
+> time, not at build time
+> 
 
