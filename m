@@ -1,90 +1,111 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:44504 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753440Ab3C1W7f (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 28 Mar 2013 18:59:35 -0400
-Message-ID: <1364511560.10397.94.camel@jlt4.sipsolutions.net> (sfid-20130328_235937_082532_E9522B14)
-Subject: Re: compat-drivers wishlist
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org
-Date: Thu, 28 Mar 2013 23:59:20 +0100
-In-Reply-To: <5154C6D8.3040603@hauke-m.de>
+Received: from mail-la0-f49.google.com ([209.85.215.49]:55998 "EHLO
+	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752424Ab3C1WPe (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 28 Mar 2013 18:15:34 -0400
+Received: by mail-la0-f49.google.com with SMTP id fs13so27970lab.22
+        for <backports@vger.kernel.org>; Thu, 28 Mar 2013 15:15:32 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1364507345.10397.42.camel@jlt4.sipsolutions.net>
 References: <1364507345.10397.42.camel@jlt4.sipsolutions.net>
-	  (sfid-20130328_224915_104660_21BB9723) <1364509206.10397.69.camel@jlt4.sipsolutions.net>
-	 <5154C6D8.3040603@hauke-m.de>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Thu, 28 Mar 2013 15:15:12 -0700
+Message-ID: <CAB=NE6X9X0apA0tR-f2_f24W-sWXhUVky2OGEQhAO3=ta1Q2pA@mail.gmail.com> (sfid-20130328_231602_638862_02D2B887)
+Subject: Re: compat-drivers wishlist
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, 2013-03-28 at 23:40 +0100, Hauke Mehrtens wrote:
-> > Now we can "source Kconfig.kernel" into our local Kconfig tree, and the
-> > "depends on USB" can magically work the right way. For the symbol walk
-> > (syms program above) we'll have to include an empty file, but that's not
-> > terribly difficult either.
-> 
-> We also have to change all the select SOME_KERNEL_OPTION into a depends
-> SOME_KERNEL_OPTION, because the options of the used kernel can not be
-> changed.
+On Thu, Mar 28, 2013 at 2:49 PM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> Hi,
+>
+> I've long been fed up with the state of compat's build system, so I
+> figured I'd start by soliciting wishlist items.
+>
+> FWIW, I think that the whole compat-drivers/scripts/ dir needs to be
+> rewritten for this ... :-)
+>
+> My personal wishlist is below. I realize that some of these wishes cause
+> contradictions/problems in their implementation, but nonetheless I have
+> them :-)
+>
+> 1) Ability to copy only some drivers.
+>    We're interested in using compat-drivers to ship our driver to
+> customers for
+>    older kernels. We're not at all interested in shipping DRM, Atheros
+> drivers,
+>    etc.
 
-Huh, good point. I didn't think about that, and it probably doesn't even
-exist? But yeah, I agree, we need to do this. It's not terribly
-difficult though -- after we have a list of local symbols we can go
-through and rewrite "select NONLOCAL" to "depends on NONLOCAL".
+Seems reasonable. Maybe admin-update can read your own .config
 
-> compat should be changed in this way to not always backport any e.g. all
-> USB stuff and depend on USB stuff if the USB subsystem was not
-> activated. I think this should be modularized to have one *.ko for the
-> USB stuff, one for the PCMCIA stuff and so on.
-> Currently compat.ko depends on USB for some kernel versions.
+> 2) To make that easier: split all patches per *file* in addition to per
+> change.
+>    That way, it would be possible to apply only patches for those files
+> that are
+>    actually in the tree. Right now, I heavily patch out those patches
+> that aren't
+>    really need.
+>    I suppose the best way would be to have directories for each change
+> and change
+>    the script that applies them to parse the patch header first. Or just
+> ignore
+>    patches that fail with "no file", but I don't know if that's easy to
+> determine
+>    from the patch exit status code.
 
-I don't think compat backports USB/PCMCIA/...? I was under the
-impression that it was necessary to be from the base kernel anyway, but
-I don't really know. In theory I agree, anything that's backported in
-compat needs to be included into the Kconfig somehow, particularly
-things like this.
+GNU patch could use some love. See commit 4a1a94f93 on compat-drivers.
+Perhaps this is an area we'd be interested in extending functionality
+as well. Having collateral evolutions split up each into their own
+directory is a fine approach as well, but lets think long term here,
+given that we're seeing what short term script/hack solutions can cost
+us.
 
-Actually, I guess we do have things like that now, just not USB/PCMCIA:
+Maybe we need a context patch parser that given a .config will only
+apply patches for the desired files. For this to work we'd need a
+mapping of CONFIG_FOO symbols to respective driver path files regexps.
+The Linux kernel MAINTAINERS file comes to mind as something close to
+get us there, but that does not yet use CONFIG_ symbols, the title is
+a bit loose.
 
-CONFIG_COMPAT_FIRMWARE_CLASS
-CONFIG_COMPAT_NET_SCH_CODEL
-CONFIG_COMPAT_NET_SCH_FQ_CODEL
-CONFIG_COMPAT_KFIFO
-CONFIG_COMPAT_CORDIC
-CONFIG_COMPAT_CRC8
+Kconfig however gives us the config to let us build a target, and the
+Makefile should let us extract its target dependencies, so I wonder if
+we can use this to dynamically build kconfig to target maps.
 
-and something about CONFIG_GENERIC_ATOMIC64 on non-64 bit platforms.
+> 3) Separate the output from the compat-drivers tree.
+>    There's no reason to ship patches/, most of scripts/ etc. in the
+> resulting
+>    tarball, in fact it's just confusing. Having the output in a separate
+>    directory, copying there only the few things that are needed, would
+> be very
+>    helpful.
 
-This is interesting! It probably means we need to generate a Kconfig
-file for the kernel versions as well, at build time:
+Sure, makes sense.
 
-config COMPAT_KERNEL_2_6_26
-	def_bool y
+> 4) Kconfig.
+>    This is a bit conflicting with 1) because a valid Kconfig structure
+> requires
+>    all the sub-Kconfig files exist. Maybe ship all Kconfig files, or
+> automate a
+>    way to remove "source" statements for files that don't exist
+> (probably easy)
 
-Obviously then compat relies more on compat-drivers to actually build?
-It could have its own Kconfig file, and probably best if the creation of
-this Kconfig.compat file is done through a script there.
+I think its possible to remove not desired source code based on
+reading .config. This can be done as a pass if the Kconfig to Makefile
+thing is figured out. Then as a secondary step I think we can remove
+directories that have just a Kconfig / Makefile, but that's
+theoretical, in practice this may be harder, the biggest issue I think
+would be to ensure removal of the calling 'source foo/Kconfig' entry,
+or we extend Kconfig to support Kconfig imports that don't exist, sort
+of with Makefile and the -include foo.mk trick.
 
-Anyway this is special. So we can treat it specially, and do something
-like
+> I'll leave it at that for now, and follow up with some concrete
+> implementation ideas :-)
+>
+> Any other thoughts?
 
-config COMPAT_CORDIC
-	bool
-	default !CORDIC
+There, some feedback, thanks for taking the time to dumping your ideas.
 
-which should work just fine since we imported the symbols from the base
-kernel. We'll then get a CPTCFG_COMPAT_CORDIC symbol that we can use to
-build (or not) the cordic code.
-
-For something that depends on a specific kernel version it's just as
-simple:
-
-config COMPAT_FIRMWARE_CLASS
-	tristate
-	default m if COMPAT_KERNEL_2_6_33 && !COMPAT_RHEL_6_1
-
-or so.
-
-johannes
-
+  Luis
