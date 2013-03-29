@@ -1,58 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:37368 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754759Ab3C3HcD (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 30 Mar 2013 03:32:03 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 8CCBF201B6
-	for <backports@vger.kernel.org>; Sat, 30 Mar 2013 07:32:01 +0000 (UTC)
-Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
-	by mail.kernel.org (Postfix) with ESMTP id 99FC92019B
-	for <backports@vger.kernel.org>; Sat, 30 Mar 2013 07:32:00 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 55971] New: redefined error in 2.6.32-279.22.1.el6.x86_64
- kernel
-Message-ID: <bug-55971-58281@https.bugzilla.kernel.org/> (sfid-20130330_083205_979925_C4D1F1CE)
-Content-Type: text/plain; charset="UTF-8"
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:54543
+	"EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754020Ab3C2GVM (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 29 Mar 2013 02:21:12 -0400
+Date: Fri, 29 Mar 2013 07:21:07 +0100 (CET)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+cc: Julia Lawall <julia.lawall@lip6.fr>,
+	Jesse Barnes <jbarnes@virtuousgeek.org>,
+	florianschandinat <FlorianSchandinat@gmx.de>,
+	linux-fbdev <linux-fbdev@vger.kernel.org>,
+	dri-devel@lists.freedesktop.org,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	cocci@systeme.lip6.fr,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"rodrigo.vivi" <rodrigo.vivi@gmail.com>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>,
+	"rafael.j.wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH] compat/compat-drivers/linux-next: fb skip_vt_switch
+In-Reply-To: <CAB=NE6WX5Dv9p2jrNwe9GxfH=EUm596uvSspsLQ5-Uuonc6Fqg@mail.gmail.com>
+Message-ID: <alpine.DEB.2.02.1303290720350.2023@localhost6.localdomain6> (sfid-20130329_072133_606807_5DB51AE0)
+References: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com> <20130328083943.01e61b4b@jbarnes-desktop> <alpine.DEB.2.02.1303281718490.1928@hadrien> <CAB=NE6WbNwPqEPYsASAPaECe4qbAWdd4=eJ402ib+CzZbT69=g@mail.gmail.com> <alpine.DEB.2.02.1303281909570.1928@hadrien>
+ <CAB=NE6VPRu8DvneVdwd=pXF0ngi5OifNTpZtX3pLi50i116_OA@mail.gmail.com> <alpine.DEB.2.02.1303282328200.2022@localhost6.localdomain6> <CAB=NE6WX5Dv9p2jrNwe9GxfH=EUm596uvSspsLQ5-Uuonc6Fqg@mail.gmail.com>
 MIME-Version: 1.0
-Date: Sat, 30 Mar 2013 07:32:00 +0000 (UTC)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=55971
+> > I looked in today's linux-next, and there seems to be only one
+> > initialization of this field, to true, and one test of this field.  So
+> > perhaps the case for setting the field to false just isn't needed.
+> 
+> Oh sorry now I get what you mean! I thought about this -- and yes I
+> decided to not add a bool false setting for the structure field given
+> that the assumption is this would not be something dynamic, and data
+> structure would be kzalloc()'d so by default they are 0.
 
-           Summary: redefined error in 2.6.32-279.22.1.el6.x86_64 kernel
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: 2.6.32-279.22.1.el6.x86_64
-          Platform: All
-        OS/Version: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: Compat
-        AssignedTo: backports@vger.kernel.org
-        ReportedBy: sihara@ddn.com
-        Regression: No
+What do you do about the test, though?
 
-
-Since RHEL6.3's security updated kernel (2.6.32-279.22.1.el6.x86_64) has
-included two macros (rcu_dereference_protected and kfree_rcu) in
-include/linux/rcupdate.h
-
-These were not existed in original RHEL6.3's kernel (2.6.32-279) and even the
-previous kernel of 2.6.32-279.22.1.el6.x86_64.
-
-The other hand, these macros are defined in include/linux/compat-x.z.h.
-(rcu_dereference_protected in compat-2.6.34.h and kfree_rcu in compat-3.0.h).
-
-It needs to check in compat headers wether these macro are defined or not,
-doesn't it now? otherwise we see redefined error if both kernel header and
-compat headers are included for the souce codes..
-
--- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+julia
