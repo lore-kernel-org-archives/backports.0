@@ -1,62 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ia0-f175.google.com ([209.85.210.175]:33551 "EHLO
-	mail-ia0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754154Ab3C2Qhj convert rfc822-to-8bit (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 29 Mar 2013 12:37:39 -0400
-Received: by mail-ia0-f175.google.com with SMTP id y26so519185iab.20
-        for <backports@vger.kernel.org>; Fri, 29 Mar 2013 09:37:39 -0700 (PDT)
+Received: from mail-la0-f49.google.com ([209.85.215.49]:55053 "EHLO
+	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753431Ab3C2HaH (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 29 Mar 2013 03:30:07 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAKprTDHOO42s-wvr8mZGqxoB8BL986HxCTSJ0q9B=s5UHVmuQQ@mail.gmail.com>
-References: <CAB=NE6Wbym4XksV=uKz9eZD0rZwmtS3ZfP-zbXg9TAc2+2+Z9g@mail.gmail.com>
-	<CAKprTDEEEdy++Bk5AY4Zfrtwsc9HOKGQ+uWR58PFCWU=v+PE1g@mail.gmail.com>
-	<CAB=NE6UtuxuTduYhDy5BcPap-rri+P1mcKYr2KEjAbuE2FU13g@mail.gmail.com>
-	<20130327175711.GA8794@stt008.linux.site>
-	<CAKprTDFspW4B2tk9EZPBBXy3C6gL_NJsjwj-bUeYj1rN3j6sYg@mail.gmail.com>
-	<CAB=NE6W6Ey8iU1vs=XfA7Or0wF=Qh6Gu8zF-DxMatgk-V+wdkQ@mail.gmail.com>
-	<CAKprTDFJet+m7RmkZt5uyf=FMyEYciCYUahEcCC6_ukRQ2pjgw@mail.gmail.com>
-	<CAB=NE6VzvVkFvGaudZHQTM5R3s05QV5Jw23wZ_DLxkNf00Utdg@mail.gmail.com>
-	<20130328104030.GA4602@stt008.linux.site>
-	<CAB=NE6V=AnTabh3p_yY+GmzPo-+GLAdzEBTQMm4VN1xUuVm_sw@mail.gmail.com>
-	<20130328111250.GA4671@stt008.linux.site>
-	<CAKprTDGZAzLMGTYw0sY+oW+T3uX8WNh98oXkjcX+Cf5LEwYTHA@mail.gmail.com>
-	<CAB=NE6UqpfTgK=EAeQL_FmxtP7qC=FetiwLDs+ORix4jazet2A@mail.gmail.com>
-	<CAKprTDHOO42s-wvr8mZGqxoB8BL986HxCTSJ0q9B=s5UHVmuQQ@mail.gmail.com>
-Date: Fri, 29 Mar 2013 17:37:39 +0100
-Message-ID: <CAKprTDES3t0p2117U9BwiCpTOzHPtvN_8RrQ4i1aTQCXa5nV7A@mail.gmail.com> (sfid-20130329_174513_088459_37C8B53D)
-Subject: Re: brcmsmac: Unknown symbol backport_cordic_calc_iq (err 0)
-From: =?ISO-8859-1?Q?Camale=F3n?= <noelamac@gmail.com>
-To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=ISO-8859-1
+In-Reply-To: <alpine.DEB.2.02.1303290720350.2023@localhost6.localdomain6>
+References: <1364472270-9297-1-git-send-email-mcgrof@do-not-panic.com>
+ <20130328083943.01e61b4b@jbarnes-desktop> <alpine.DEB.2.02.1303281718490.1928@hadrien>
+ <CAB=NE6WbNwPqEPYsASAPaECe4qbAWdd4=eJ402ib+CzZbT69=g@mail.gmail.com>
+ <alpine.DEB.2.02.1303281909570.1928@hadrien> <CAB=NE6VPRu8DvneVdwd=pXF0ngi5OifNTpZtX3pLi50i116_OA@mail.gmail.com>
+ <alpine.DEB.2.02.1303282328200.2022@localhost6.localdomain6>
+ <CAB=NE6WX5Dv9p2jrNwe9GxfH=EUm596uvSspsLQ5-Uuonc6Fqg@mail.gmail.com> <alpine.DEB.2.02.1303290720350.2023@localhost6.localdomain6>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Fri, 29 Mar 2013 00:29:44 -0700
+Message-ID: <CAB=NE6U2-4uc90p5Os1kUp6QWChMcjarCMR7af0g=XUbGEXjGg@mail.gmail.com> (sfid-20130329_083010_958812_DD125332)
+Subject: Re: [PATCH] compat/compat-drivers/linux-next: fb skip_vt_switch
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>,
+	florianschandinat <FlorianSchandinat@gmx.de>,
+	linux-fbdev <linux-fbdev@vger.kernel.org>,
+	dri-devel@lists.freedesktop.org,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	cocci@systeme.lip6.fr,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"rodrigo.vivi" <rodrigo.vivi@gmail.com>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>,
+	"rafael.j.wysocki" <rafael.j.wysocki@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-2013/3/29 Camaleón <noelamac@gmail.com>:
+On Thu, Mar 28, 2013 at 11:21 PM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+>> > I looked in today's linux-next, and there seems to be only one
+>> > initialization of this field, to true, and one test of this field.  So
+>> > perhaps the case for setting the field to false just isn't needed.
+>>
+>> Oh sorry now I get what you mean! I thought about this -- and yes I
+>> decided to not add a bool false setting for the structure field given
+>> that the assumption is this would not be something dynamic, and data
+>> structure would be kzalloc()'d so by default they are 0.
+>
+> What do you do about the test, though?
 
-(...)
+Return the value.
 
-> Curiously enough, loading the module does not makes the system to
-> freeze. In fact, I can even get associated with the AP without much
-> hassle (!) but I still experience the same behaviuor than using the
-> stock drivers from kernel 3.9.0-rc2 (wlan0 is up but pings are
-> rejected).
-
-(...)
-
-> [  203.886813] wlan0: associated
-> [  210.067594] brcmsmac bcma0:0: brcms_ops_bss_info_changed: arp
-> filtering: 1 addresses (implement)
-> [  323.206432] brcmsmac bcma0:0: brcms_c_ampdu_dotxstatus_complete:
-> Pkt tx suppressed, illegal channel possibly 1
-
-(...)
-
-Well, after manually setting channel 11 for the AP (it was set to
-"auto") and removing any previous information from N-M I'm right now
-successfully connecetd to the AP since 15 minutes and still not
-disconnected. This looks very promising :-D
-
-Greetings,
-
--- 
-Camaleón
+  Luis
