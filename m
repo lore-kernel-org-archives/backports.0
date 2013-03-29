@@ -1,29 +1,25 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:34565 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753462Ab3C2AgR (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 28 Mar 2013 20:36:17 -0400
-Received: by mail-la0-f41.google.com with SMTP id fo12so155432lab.14
-        for <backports@vger.kernel.org>; Thu, 28 Mar 2013 17:36:15 -0700 (PDT)
+Received: from mail-la0-f45.google.com ([209.85.215.45]:59328 "EHLO
+	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753623Ab3C2B2I (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 28 Mar 2013 21:28:08 -0400
+Received: by mail-la0-f45.google.com with SMTP id er20so193292lab.18
+        for <backports@vger.kernel.org>; Thu, 28 Mar 2013 18:28:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1364498307-11855-5-git-send-email-hauke@hauke-m.de>
-References: <1364498307-11855-1-git-send-email-hauke@hauke-m.de> <1364498307-11855-5-git-send-email-hauke@hauke-m.de>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Thu, 28 Mar 2013 17:35:54 -0700
-Message-ID: <CAB=NE6XBBz2v-2bm9TZyJBfM=h9beyi-FHFgWqa94c5ojWNrfA@mail.gmail.com> (sfid-20130329_013618_819973_DEEDA0F5)
-Subject: Re: [PATCH 5/5] compat: build kstrtox for kernel < 2.6.25
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Thu, 28 Mar 2013 18:27:47 -0700
+Message-ID: <CAB=NE6Whr-a2ogoJh6YAYOf=i1DUPv-rGHTm6jrUQt-vXU4PyQ@mail.gmail.com> (sfid-20130329_022811_339685_DC12B2DE)
+Subject: Second release based on next-20130328
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Mar 28, 2013 at 12:18 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
-> strict_strtol with one l is defined in compat-2.6.25.h code now and
-> this deactivates this check, use strict_strtoll instead.
->
-> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+A second release based on a few new fixes and Hauke's patches have
+been made based on next-20130328:
 
-Thanks so much, applied and pushed all for both compat and compat-drivers.
+https://www.kernel.org/pub/linux/kernel/projects/backports/2013/03/28/compat-drivers-2013-03-28-2-u.tar.bz2
+
+Please test!
 
   Luis
