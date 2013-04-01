@@ -1,187 +1,64 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:37186 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750828Ab3DKXm7 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 11 Apr 2013 19:42:59 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [RFC/WIP 04/24] backports: move compat_pci_{suspend,resume}
-Date: Fri, 12 Apr 2013 01:42:31 +0200
-Message-Id: <1365723771-10660-5-git-send-email-johannes@sipsolutions.net> (sfid-20130412_014303_764970_1E1B6333)
-In-Reply-To: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
-References: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
+Received: from imta22.fe.bosch.de ([139.15.243.26]:36303 "EHLO
+	imta22.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759011Ab3DAWYg (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 1 Apr 2013 18:24:36 -0400
+Received: from smtp6-v.fe.bosch.de (imta23.fe.bosch.de [139.15.243.227])
+	by imta22.fe.bosch.de (Postfix) with ESMTP id 8F264840575
+	for <backports@vger.kernel.org>; Tue,  2 Apr 2013 00:17:44 +0200 (CEST)
+From: "Jonathan David (AA-DG/PAO-ENG1)" <David.Jonathan@etas.com>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: RE: compat-drivers for older kernels
+Date: Mon, 1 Apr 2013 22:16:50 +0000
+Message-ID: <63F46C2DA34879449F56E238025B3C0B54CEDC9F@fe20107s.ecn.etasgroup.com> (sfid-20130402_002439_792627_3F8FE6DE)
+References: <63F46C2DA34879449F56E238025B3C0B54CEDB13@fe20107s.ecn.etasgroup.com>
+ <CAB=NE6VShWL_CLURZMNPacTyz44Hmj6iNLoN25PehK3V2ML5jA@mail.gmail.com>
+In-Reply-To: <CAB=NE6VShWL_CLURZMNPacTyz44Hmj6iNLoN25PehK3V2ML5jA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/linux/compat-2.6.29.h | 67 ----------------------
- backport/backport-include/linux/pci.h           | 75 +++++++++++++++++++++++++
- 2 files changed, 75 insertions(+), 67 deletions(-)
- create mode 100644 backport/backport-include/linux/pci.h
-
-diff --git a/backport/backport-include/linux/compat-2.6.29.h b/backport/backport-include/linux/compat-2.6.29.h
-index c8cf898..949874e 100644
---- a/backport/backport-include/linux/compat-2.6.29.h
-+++ b/backport/backport-include/linux/compat-2.6.29.h
-@@ -358,73 +358,6 @@ static inline int ndo_do_ioctl(struct net_device *dev,
- 
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29)) */
- 
--#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29)
--#define compat_pci_suspend(fn)						\
--	int fn##_compat(struct pci_dev *pdev, pm_message_t state) 	\
--	{								\
--		int r;							\
--									\
--		r = fn(&pdev->dev);					\
--		if (r)							\
--			return r;					\
--									\
--		pci_save_state(pdev);					\
--		pci_disable_device(pdev);				\
--		pci_set_power_state(pdev, PCI_D3hot);			\
--									\
--		return 0;						\
--	}
--
--#define compat_pci_resume(fn)						\
--	int fn##_compat(struct pci_dev *pdev)				\
--	{								\
--		int r;							\
--									\
--		pci_set_power_state(pdev, PCI_D0);			\
--		r = pci_enable_device(pdev);				\
--		if (r)							\
--			return r;					\
--		pci_restore_state(pdev);				\
--									\
--		return fn(&pdev->dev);					\
--	}
--#elif LINUX_VERSION_CODE == KERNEL_VERSION(2,6,29)
--#define compat_pci_suspend(fn)						\
--	int fn##_compat(struct device *dev)			 	\
--	{								\
--		struct pci_dev *pdev = to_pci_dev(dev);			\
--		int r;							\
--									\
--		r = fn(&pdev->dev);					\
--		if (r)							\
--			return r;					\
--									\
--		pci_save_state(pdev);					\
--		pci_disable_device(pdev);				\
--		pci_set_power_state(pdev, PCI_D3hot);			\
--									\
--		return 0;						\
--	}
--
--#define compat_pci_resume(fn)						\
--	int fn##_compat(struct device *dev)				\
--	{								\
--		struct pci_dev *pdev = to_pci_dev(dev);			\
--		int r;							\
--									\
--		pci_set_power_state(pdev, PCI_D0);			\
--		r = pci_enable_device(pdev);				\
--		if (r)							\
--			return r;					\
--		pci_restore_state(pdev);				\
--									\
--		return fn(&pdev->dev);					\
--	}
--#else
--#define compat_pci_suspend(fn)
--#define compat_pci_resume(fn)
--#endif
--
- #define  PCI_EXP_SLTSTA_PDS	0x0040  /* Presence Detect State */
- 
- #endif /*  LINUX_26_29_COMPAT_H */
-diff --git a/backport/backport-include/linux/pci.h b/backport/backport-include/linux/pci.h
-new file mode 100644
-index 0000000..2600376
---- /dev/null
-+++ b/backport/backport-include/linux/pci.h
-@@ -0,0 +1,75 @@
-+#ifndef _BACKPORT_LINUX_PCI_H
-+#define _BACKPORT_LINUX_PCI_H
-+
-+#include_next <linux/pci.h>
-+
-+#include <linux/version.h>
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29)
-+#define compat_pci_suspend(fn)						\
-+	int fn##_compat(struct pci_dev *pdev, pm_message_t state) 	\
-+	{								\
-+		int r;							\
-+									\
-+		r = fn(&pdev->dev);					\
-+		if (r)							\
-+			return r;					\
-+									\
-+		pci_save_state(pdev);					\
-+		pci_disable_device(pdev);				\
-+		pci_set_power_state(pdev, PCI_D3hot);			\
-+									\
-+		return 0;						\
-+	}
-+
-+#define compat_pci_resume(fn)						\
-+	int fn##_compat(struct pci_dev *pdev)				\
-+	{								\
-+		int r;							\
-+									\
-+		pci_set_power_state(pdev, PCI_D0);			\
-+		r = pci_enable_device(pdev);				\
-+		if (r)							\
-+			return r;					\
-+		pci_restore_state(pdev);				\
-+									\
-+		return fn(&pdev->dev);					\
-+	}
-+#elif LINUX_VERSION_CODE == KERNEL_VERSION(2,6,29)
-+#define compat_pci_suspend(fn)						\
-+	int fn##_compat(struct device *dev)			 	\
-+	{								\
-+		struct pci_dev *pdev = to_pci_dev(dev);			\
-+		int r;							\
-+									\
-+		r = fn(&pdev->dev);					\
-+		if (r)							\
-+			return r;					\
-+									\
-+		pci_save_state(pdev);					\
-+		pci_disable_device(pdev);				\
-+		pci_set_power_state(pdev, PCI_D3hot);			\
-+									\
-+		return 0;						\
-+	}
-+
-+#define compat_pci_resume(fn)						\
-+	int fn##_compat(struct device *dev)				\
-+	{								\
-+		struct pci_dev *pdev = to_pci_dev(dev);			\
-+		int r;							\
-+									\
-+		pci_set_power_state(pdev, PCI_D0);			\
-+		r = pci_enable_device(pdev);				\
-+		if (r)							\
-+			return r;					\
-+		pci_restore_state(pdev);				\
-+									\
-+		return fn(&pdev->dev);					\
-+	}
-+#else
-+#define compat_pci_suspend(fn)
-+#define compat_pci_resume(fn)
-+#endif
-+
-+#endif /* _BACKPORT_LINUX_PCI_H */
--- 
-1.8.0
-
+VGhhbmtzIGZvciB0aGUgY2xhcmlmaWNhdGlvbi4gIEknbGwgY2VydGFpbmx5IHJldHVybiBwYXRj
+aGVzIGlmL3doZW4gSSBhbSBzdWNjZXNzZnVsLg0KDQpPbmUgbW9yZSB0aGluZyBJJ20gYmV0dGlu
+ZyB5b3UgY2FuIGFuc3dlciByZWxhdGVzIHRvIHRoZSBMSU5VWF9WRVJTSU9OIG1hY3JvczogSG93
+IGRvIHlvdSBmaW5kIGluIHdoYXQga2VybmVsIHZlcnNpb24gYSBmZWF0dXJlIGNoYW5nZWQgKGUu
+Zy4gdHR5LT5kcml2ZXItPndyaXRlIGJlY2FtZSB0dHktPm9wcy0+d3JpdGUpPyAgSSBjYW4ndCBp
+bWFnaW5lIGl0J3MgYnkgaW5zcGVjdGlvbiwgIHlldCBhIGNyb3NzLXJlZmVyZW5jZSBzaXRlIGxp
+a2UgbHhyLmxpbnV4Lm5vLCB3aGljaCBzaG91bGQgYmUgYWJsZSB0byBzcGl0IHRoYXQgb3V0LCBk
+b2VzIG5vdC4NCg0KLURhdmlkDQoNCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206
+IG1jZ3JvZkBnbWFpbC5jb20gW21haWx0bzptY2dyb2ZAZ21haWwuY29tXSBPbiBCZWhhbGYgT2Yg
+THVpcyBSLiBSb2RyaWd1ZXoNClNlbnQ6IFRodXJzZGF5LCBNYXJjaCAyOCwgMjAxMyAxMTozOSBB
+TQ0KVG86IEpvbmF0aGFuIERhdmlkIChBQS1ERy9QQU8tRU5HMSkNCkNjOiBiYWNrcG9ydHNAdmdl
+ci5rZXJuZWwub3JnDQpTdWJqZWN0OiBSZTogY29tcGF0LWRyaXZlcnMgZm9yIG9sZGVyIGtlcm5l
+bHMNCg0KT24gVGh1LCBNYXIgMjgsIDIwMTMgYXQgMTA6MzYgQU0sIEpvbmF0aGFuIERhdmlkIChB
+QS1ERy9QQU8tRU5HMSkgPERhdmlkLkpvbmF0aGFuQGV0YXMuY29tPiB3cm90ZToNCj4gSGkgTHVp
+cywNCj4NCj4gSW4gbXkgc2VhcmNoIGZvciBhbnN3ZXJzIEkgY2FtZSB1cCB3aXRoIHRoaXMgbGlu
+aywgYW5kIHRoZXJlZm9yZSBJ4oCZbSANCj4gdGFsa2luZyB0byB5b3U6DQo+IGh0dHBzOi8vZ2l0
+aHViLmNvbS9tY2dyb2YvY29tcGF0LWRyaXZlcnMvdHJlZS9tYXN0ZXIvZW5hYmxlLW9sZGVyLWtl
+cm5lbHMuDQo+IEZlZWwgZnJlZSB0byBwb2ludCBtZSBlbHNld2hlcmXigKYNCj4NCj4NCj4NCj4g
+SSBjbGlja2VkIHRocm91Z2ggdG8gZG8tbm90LXBhbmljLmNvbSwgcmVhZCBhYm91dCBjb21wYXQt
+ZHJpdmVycyANCj4gdGVzdGluZywgc2F3IHRoZSBsaXN0IG9mIDMxIGtlcm5lbHMsIGluY2x1ZGlu
+ZyAyLjYuMjQgd2l0aCBPSywgYW5kIEnigJltIA0KPiB3b25kZXJpbmcgaG93IHRoaXMgY2FuIGJl
+Lg0KDQpPSyBtZWFucyB0aGUgbWFzdGVyIGJyYW5jaCBmcm9tIGNvbXBhdCBhbmQgY29tcGF0LWRy
+aXZlcnMgaGFzIGJlZW4gY29tcGlsZSB0ZXN0ZWQgb24gdGhhdCB2YW5pbGxhIHVwc3RyZWFtIGtl
+cm5lbC4gU28gY29tcGF0LmdpdCB3b3VsZCB3b3JrIGNvbXBpbGluZyBhZ2FpbnN0IDIuNi4yNC4g
+Y29tcGF0LWRyaXZlcnMuZ2l0IHdpbGwgYWxzbyBjb21waWxlIHN1Y2Nlc3NmdWxseSBvbiAyLjYu
+MjQuDQoNCj4gSeKAmW0gdHJ5aW5nIHRvIGJ1aWxkIGNvbXBhdC1kcml2ZXJzLTMuOC4xIChmb3Ig
+QVJNLCBidXQgSSBkb27igJl0IHRoaW5rIA0KPiB0aGF0IGlzIHRoZSBpc3N1ZSkgYWdhaW5zdCBh
+IDIuNi4yNC40IGtlcm5lbC4NCg0KR3JlYXQuDQoNCj4gSSBzdGFydGVkIGJ5IHNlbGVjdGluZyBq
+dXN0IHRoZQ0KPiBCbHVldG9vdGggZHJpdmVycywgYW5kIHNlZSBzdHJ1Y3R1cmUgaW5jb21wYXRp
+YmlsaXRpZXMuICBPbmUgZXhhbXBsZToNCj4gZHJpdmVycy9ibHVldG9vdGgvaGNpX2xkaXNjLmMg
+YXNzdW1lcyB0aGF0IHN0cnVjdCB0dHlfc3RydWN0IGhhcyBhbiANCj4gb3BzIGZpZWxkLiAgSW4g
+Mi42LjI0LjQgaXQgZG9lcyBub3QuDQoNCkJsdWV0b290aCBpcyBub3QgZW5hYmxlZCBieSBkZWZh
+dWx0IG9uIHRoZSBtYXN0ZXIgYnJhbmNoIGZvciAyLjYuMjQuDQpJZiB5b3Ugd2FudCB0byB3b3Jr
+IG9uIHRoYXQsIHBhdGNoZXMgYXJlIHdlbGNvbWVkLg0KDQo+IEnigJl2ZSBiZWVuICNpZmRlZuKA
+mWluZyBteSB0aHJvdWdoIGEgbnVtYmVyIG9mIHRoaW5ncyBsaWtlIHRoZSBhYm92ZSwgYnV0IA0K
+PiB0aG91Z2h0IEnigJlkIGFzayBpbiBjYXNlIEnigJl2ZSBvdmVybG9va2VkIHNvbWV0aGluZyBv
+YnZpb3VzLg0KDQpQYXRjaGVzIHdlbGNvbWVkIGZvciBlbmFibGluZyBkcml2ZXJzIC8gc3Vic3lz
+dGVtcyBvbiBvbGRlciBrZXJuZWxzLg0KQnkgZGVmYXVsdCB0aGV5IGFyZSBlbmFibGVkIG9ubHkg
+Zm9yIGNlcnRhaW4ga2VybmVscyB3aGVyZSB0aGUgbWFpbnRhaW5lciBkZWNpZGVzIHRvIHN0YXJ0
+IHN1cHBvcnRpbmcgc29tZXRoaW5nLiBUaGlzIGlzIGN1cnJlbnRseSBleHByZXNzZWQgb24gY29u
+ZmlnLm1rLiBUaGlzIHdpbGwgaG9wZWZ1bGx5IGJlIGEgbG90IGNsZWFyZXIgbm93IHRoYXQgd2Ug
+aGF2ZSBrY29uZmlnIHN1cHBvcnQgc3RhcmluZy4NCg0KICBMdWlzDQo=
