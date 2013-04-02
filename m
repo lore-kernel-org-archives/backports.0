@@ -1,91 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:37224 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750915Ab3DKXnw (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 11 Apr 2013 19:43:52 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [RFC/WIP 15/24] backports: remove __inet_lookup_established
-Date: Fri, 12 Apr 2013 01:42:42 +0200
-Message-Id: <1365723771-10660-16-git-send-email-johannes@sipsolutions.net> (sfid-20130412_014408_366530_CA2F84B2)
-In-Reply-To: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
-References: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
+Received: from quad.pendre.co.uk ([195.137.4.79]:40135 "EHLO quad.pendre.co.uk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754460Ab3DBVTS (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 2 Apr 2013 17:19:18 -0400
+Message-ID: <515B4994.3030309@pendre.co.uk> (sfid-20130402_231923_075543_11BA9561)
+Date: Tue, 02 Apr 2013 22:11:48 +0100
+From: Phil Perry <phil@pendre.co.uk>
+MIME-Version: 1.0
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+CC: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: [ANN] new backports project
+References: <1364908781.8204.14.camel@jlt4.sipsolutions.net>  (sfid-20130402_151948_622703_76140D33) <1364923241.8204.15.camel@jlt4.sipsolutions.net>
+In-Reply-To: <1364923241.8204.15.camel@jlt4.sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On 02/04/13 18:20, Johannes Berg wrote:
+>
+>>   * Redhat kernel backport support -- this should be fairly easy
+>
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/linux/compat-2.6.25.h | 47 -------------------------
- 1 file changed, 47 deletions(-)
+I too am very interested in support for RHEL.
 
-diff --git a/backport/backport-include/linux/compat-2.6.25.h b/backport/backport-include/linux/compat-2.6.25.h
-index dd986f5..9a2afdb 100644
---- a/backport/backport-include/linux/compat-2.6.25.h
-+++ b/backport/backport-include/linux/compat-2.6.25.h
-@@ -21,10 +21,6 @@
- #include <linux/init.h>
- #include <linux/pci.h>
- #include <linux/scatterlist.h>
--#define __inet_lookup_established __inet_lookup_established_old
--#include <net/inet_hashtables.h>
--#undef __inet_lookup_established
--#include <linux/compat-3.9.h>
- 
- struct sg_table {
- 	struct scatterlist *sgl;        /* the list */
-@@ -57,49 +53,6 @@ int sg_alloc_table(struct sg_table *table, unsigned int nents, gfp_t gfp_mask);
- #define SG_MAX_SINGLE_ALLOC            (PAGE_SIZE / sizeof(struct scatterlist))
- 
- 
--/*
-- * Sockets in TCP_CLOSE state are _always_ taken out of the hash, so we need
-- * not check it for lookups anymore, thanks Alexey. -DaveM
-- *
-- * Local BH must be disabled here.
-- */
--static inline struct sock *
--	__inet_lookup_established(struct inet_hashinfo *hashinfo,
--				  const __be32 saddr, const __be16 sport,
--				  const __be32 daddr, const u16 hnum,
--				  const int dif)
--{
--	INET_ADDR_COOKIE(acookie, saddr, daddr)
--	const __portpair ports = INET_COMBINED_PORTS(sport, hnum);
--	struct sock *sk;
--	/* Optimize here for direct hit, only listening connections can
--	 * have wildcards anyways.
--	 */
--	unsigned int hash = inet_ehashfn(daddr, hnum, saddr, sport);
--	struct inet_ehash_bucket *head = inet_ehash_bucket(hashinfo, hash);
--	rwlock_t *lock = inet_ehash_lockp(hashinfo, hash);
--
--	prefetch(head->chain.first);
--	read_lock(lock);
--	sk_for_each(sk, &head->chain) {
--		if (INET_MATCH(sk, hash, acookie, saddr, daddr, ports, dif))
--			goto hit; /* You sunk my battleship! */
--	}
--
--	/* Must check for a TIME_WAIT'er before going to listener hash. */
--	sk_for_each(sk, &head->twchain) {
--		if (INET_TW_MATCH(sk, hash, acookie, saddr, daddr, ports, dif))
--			goto hit;
--	}
--	sk = NULL;
--out:
--	read_unlock(lock);
--	return sk;
--hit:
--	sock_hold(sk);
--	goto out;
--}
--
- /* Backports b718989da7 */
- #define pci_enable_device_mem LINUX_BACKPORT(pci_enable_device_mem)
- int __must_check pci_enable_device_mem(struct pci_dev *dev);
--- 
-1.8.0
+We had support up to date for compat-wireless-3.5 under RHEL-6.3.
+
+Unsurprisingly the release of RHEL-6.4 broke a whole load of stuff given 
+the amount of backporting RH did into their kernel (I believe they 
+backported the wireless stack from ~ kernel-3.5 into their kernel).
+
+I (and a colleague) played with compat-drivers-2013-03-07-u.tar.bz2 to 
+get alx to build under RHEL-6.4 but I never got as far as looking at 
+building everything. The seemingly endless cycle of breakage on every 
+RHEL release and having to fix it kind of left me losing the will to 
+keep fixing it, especially as for the moment the RHEL kernel has a 
+relatively recent wireless driver stack. Any solution that might ease 
+this break and fix cycle would be very welcome here.
+
+> I addressed this, but I'm unsure of it and don't have a way to test it,
+> so any testing would be appreciated (as it is in general, of course)
+>
+
+I've not looked closely at what you've done, but I have an interest in 
+building/packaging compat-drivers for RHEL and can possibly help test. 
+If you have a snapshot that you think should build on RHEL or that I 
+could use as a starting point?
+
+Phil
+
 
