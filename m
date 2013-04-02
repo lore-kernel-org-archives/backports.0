@@ -1,84 +1,29 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:37192 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751001Ab3DKXnB (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 11 Apr 2013 19:43:01 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [RFC/WIP 07/24] backports: move skb_add_rx_frag
-Date: Fri, 12 Apr 2013 01:42:34 +0200
-Message-Id: <1365723771-10660-8-git-send-email-johannes@sipsolutions.net> (sfid-20130412_014307_219704_E7A8030A)
-In-Reply-To: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
-References: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
+Received: from mail-la0-f52.google.com ([209.85.215.52]:65529 "EHLO
+	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753840Ab3DBB3s (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 1 Apr 2013 21:29:48 -0400
+Received: by mail-la0-f52.google.com with SMTP id fs12so2646322lab.11
+        for <backports@vger.kernel.org>; Mon, 01 Apr 2013 18:29:47 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <5159F9AA.8060508@hauke-m.de>
+References: <1364497938-10646-1-git-send-email-hauke@hauke-m.de>
+ <1364497938-10646-2-git-send-email-hauke@hauke-m.de> <5159F9AA.8060508@hauke-m.de>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Mon, 1 Apr 2013 18:29:26 -0700
+Message-ID: <CAB=NE6UvBR96b2WxuLW7QLqO2gwqO-5_q6kRK+nNfLETXi_V_A@mail.gmail.com> (sfid-20130402_032951_386421_349A263A)
+Subject: Re: [PATCH 2/8] compat-drivers: add config option CONFIG_WILINK_PLATFORM_DATA
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Mon, Apr 1, 2013 at 2:18 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> Hi Luis,
+>
+> Is there any reason you did not apply this patch?
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/linux/compat-2.6.28.h |  3 ---
- backport/backport-include/linux/compat-3.4.h    |  8 --------
- backport/backport-include/linux/skbuff.h        | 16 ++++++++++++++++
- 3 files changed, 16 insertions(+), 11 deletions(-)
- create mode 100644 backport/backport-include/linux/skbuff.h
+Crap, sorry I must have missed it somehow, applied and pushed!
 
-diff --git a/backport/backport-include/linux/compat-2.6.28.h b/backport/backport-include/linux/compat-2.6.28.h
-index 3b5f3ea..60f56f4 100644
---- a/backport/backport-include/linux/compat-2.6.28.h
-+++ b/backport/backport-include/linux/compat-2.6.28.h
-@@ -276,9 +276,6 @@ static inline void skb_queue_splice_tail(const struct sk_buff_head *list,
- #define round_jiffies_up LINUX_BACKPORT(round_jiffies_up)
- unsigned long round_jiffies_up(unsigned long j);
- 
--extern void v2_6_28_skb_add_rx_frag(struct sk_buff *skb, int i, struct page *page,
--			    int off, int size);
--
- #define wake_up_interruptible_poll(x, m)			\
- 	__wake_up(x, TASK_INTERRUPTIBLE, 1, (void *) (m))
- 
-diff --git a/backport/backport-include/linux/compat-3.4.h b/backport/backport-include/linux/compat-3.4.h
-index 45aef72..fafec0c 100644
---- a/backport/backport-include/linux/compat-3.4.h
-+++ b/backport/backport-include/linux/compat-3.4.h
-@@ -102,14 +102,6 @@ static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
- extern const struct i2c_algorithm i2c_bit_algo;
- #endif
- 
--#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28))
--#define skb_add_rx_frag(skb, i, page, off, size, truesize) \
--	v2_6_28_skb_add_rx_frag(skb, i, page, off, size)
--#else
--#define skb_add_rx_frag(skb, i, page, off, size, truesize) \
--	skb_add_rx_frag(skb, i, page, off, size)
--#endif
--
- #ifdef CONFIG_X86_X32_ABI
- #define COMPAT_USE_64BIT_TIME \
- 	(!!(task_pt_regs(current)->orig_ax & __X32_SYSCALL_BIT))
-diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
-new file mode 100644
-index 0000000..0c09f9b
---- /dev/null
-+++ b/backport/backport-include/linux/skbuff.h
-@@ -0,0 +1,16 @@
-+#ifndef __BACKPORT_SKBUFF_H
-+#define __BACKPORT_SKBUFF_H
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28))
-+extern void v2_6_28_skb_add_rx_frag(struct sk_buff *skb, int i,
-+				    struct page *page,
-+				    int off, int size);
-+
-+#define skb_add_rx_frag(skb, i, page, off, size, truesize) \
-+	v2_6_28_skb_add_rx_frag(skb, i, page, off, size)
-+#elif (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
-+#define skb_add_rx_frag(skb, i, page, off, size, truesize) \
-+	skb_add_rx_frag(skb, i, page, off, size)
-+#endif
-+
-+#endif /* __BACKPORT_SKBUFF_H */
--- 
-1.8.0
-
+  Luis
