@@ -1,51 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-da0-f42.google.com ([209.85.210.42]:34615 "EHLO
-	mail-da0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752943Ab3DLJgc (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 12 Apr 2013 05:36:32 -0400
-Received: by mail-da0-f42.google.com with SMTP id n15so1072261dad.1
-        for <backports@vger.kernel.org>; Fri, 12 Apr 2013 02:36:31 -0700 (PDT)
+Received: from mail-la0-f44.google.com ([209.85.215.44]:33692 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755618Ab3DBKZY (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 2 Apr 2013 06:25:24 -0400
+Received: by mail-la0-f44.google.com with SMTP id eb20so234562lab.17
+        for <backports@vger.kernel.org>; Tue, 02 Apr 2013 03:25:22 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1364888940.8204.1.camel@jlt4.sipsolutions.net>
+References: <1364865614-31844-1-git-send-email-mcgrof@do-not-panic.com> <1364888940.8204.1.camel@jlt4.sipsolutions.net>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH] gentree.py: add support to explicitly disable a config
-Date: Fri, 12 Apr 2013 02:36:25 -0700
-Message-Id: <1365759385-5793-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130412_113639_448865_B5DA3C4D)
+Date: Tue, 2 Apr 2013 03:25:02 -0700
+Message-ID: <CAB=NE6XuzPq+JOWRLH=VPZ+MvX0T37ZNeYB3bduTEivECoio9Q@mail.gmail.com> (sfid-20130402_122526_986237_93B91842)
+Subject: Re: [PATCH] compat: backport kernel dma-buf implementation
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>,
+	Dave Airlie <airlied@redhat.com>, sumit.semwal@linaro.org,
+	rob.clark@linaro.org
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Tue, Apr 2, 2013 at 12:49 AM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+>
+>> dma-buf was added via commit d15bd7ee on v3.3 but completed
+>> in a more sound fassion in later kernels, you should preferably
+>> be at v3.5 a least, so we take the latest dma-buf implementation
+>> and port it for usage on kernels [3.0-3.4]. We take the
+>> implementation as of next-20130328.
+>
+> I'm curious about that approach -- I noticed it a few times already,
+> e.g. with CONFIG_AVERAGE, however...
+>
+> If you don't mangle symbols (you don't), then wouldn't this cause
+> linking errors when you try to load compat.ko on say kernel 3.0?
 
-At times we may want to disable a config option completely.
-Add support for this. All you have to is list the config
-on the depdependencies file with DISABLE instead of a kernel
-version.
+Did you see the usage of LINUX_BACKPORT() on the header file? That
+would rename the exported symbols, and the header we carry makes sure
+the kernel's original is not used, that means that our DRM code would
+use our backport_*() symbols instead. Not sure, perhaps I'm missing
+something?
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
-
-Lets play a game. I'm testing this right now with ckmake so you can either wait
-for that result or apply it if you know for sure this should work (tm).
-
- gentree.py |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/gentree.py b/gentree.py
-index 476a3fc..a80db69 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -500,7 +500,10 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
-     for sym in tuple(deplist.keys()):
-         new = []
-         for dep in deplist[sym]:
--            new.append('!BACKPORT_KERNEL_%s' % dep.replace('.', '_'))
-+            if (dep == "DISABLE"):
-+		    new.append('BACKPORT_KERNEL_%s' % dep.replace('.', '_'))
-+            else:
-+                    new.append('!BACKPORT_KERNEL_%s' % dep.replace('.', '_'))
-         deplist[sym] = new
-     configtree.add_dependencies(deplist)
-     git_debug_snapshot(args, "add kernel version dependencies")
--- 
-1.7.10.4
-
+  Luis
