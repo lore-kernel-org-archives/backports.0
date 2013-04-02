@@ -1,32 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ia0-f181.google.com ([209.85.210.181]:53468 "EHLO
-	mail-ia0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935235Ab3DJOj5 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 10:39:57 -0400
-MIME-Version: 1.0
-Date: Wed, 10 Apr 2013 16:39:56 +0200
-Message-ID: <CAFSJ42a2iTUxt4PytZHAQ2hbNV=PTsedrjUVuSTa5x_qvBF3sw@mail.gmail.com> (sfid-20130410_163959_589227_379BC59C)
-Subject: Build error: net/mac80211/tx.c:2098:26: error: 'ETH_P_802_3_MIN' undeclared
-From: Eugene Krasnikov <k.eugene.e@gmail.com>
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	linux-wireless <linux-wireless@vger.kernel.org>
-Content-Type: text/plain; charset=ISO-8859-1
+Received: from he.sipsolutions.net ([78.46.109.217]:59195 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760541Ab3DBHtK (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 2 Apr 2013 03:49:10 -0400
+Message-ID: <1364888940.8204.1.camel@jlt4.sipsolutions.net> (sfid-20130402_094915_944850_C135D6F2)
+Subject: Re: [PATCH] compat: backport kernel dma-buf implementation
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org, daniel.vetter@ffwll.ch,
+	airlied@redhat.com, sumit.semwal@linaro.org, rob.clark@linaro.org
+Date: Tue, 02 Apr 2013 09:49:00 +0200
+In-Reply-To: <1364865614-31844-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130402_032026_500145_209762EB)
+References: <1364865614-31844-1-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20130402_032026_500145_209762EB)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi All,
 
-While building latest compat-drivers for android/cyanogenmod kernel
-version 3.0.60 build fails with the following error:
+> dma-buf was added via commit d15bd7ee on v3.3 but completed
+> in a more sound fassion in later kernels, you should preferably
+> be at v3.5 a least, so we take the latest dma-buf implementation
+> and port it for usage on kernels [3.0-3.4]. We take the
+> implementation as of next-20130328.
 
-/compat-drivers/net/mac80211/tx.c:2098:26: error: 'ETH_P_802_3_MIN'
-undeclared (first use in this function)
+I'm curious about that approach -- I noticed it a few times already,
+e.g. with CONFIG_AVERAGE, however...
 
-As far as i understand latest kernel has define ETH_P_802_3_MIN but
-old kernels(including 3.0.60) do not have this define.
-Maybe this define should be added to the compat to avoid such a build
-error with old kernels? Any ideas are really appreciated?
+If you don't mangle symbols (you don't), then wouldn't this cause
+linking errors when you try to load compat.ko on say kernel 3.0?
 
---
-Best regards,
-Eugene
+johannes
+
+
