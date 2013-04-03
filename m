@@ -1,56 +1,37 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:43478 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1162581Ab3DET3i (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 5 Apr 2013 15:29:38 -0400
-Message-ID: <1365190171.8515.37.camel@jlt4.sipsolutions.net> (sfid-20130405_212939_479284_FF6B41CB)
-Subject: Re: [PATCH 0/5] backports: add DRM drivers
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: backports@vger.kernel.org
-Date: Fri, 05 Apr 2013 21:29:31 +0200
-In-Reply-To: <1365179899-7984-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130405_183828_050373_194F1346)
-References: <1365179899-7984-1-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20130405_183828_050373_194F1346)
+Received: from mail.kernel.org ([198.145.19.201]:53992 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758431Ab3DCObe (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 3 Apr 2013 10:31:34 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 8965320456
+	for <backports@vger.kernel.org>; Wed,  3 Apr 2013 14:31:32 +0000 (UTC)
+Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
+	by mail.kernel.org (Postfix) with ESMTP id 9E64420314
+	for <backports@vger.kernel.org>; Wed,  3 Apr 2013 14:31:26 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 55971] redefined error in 2.6.32-279.22.1.el6.x86_64 kernel
+In-Reply-To: <bug-55971-58281@https.bugzilla.kernel.org/>
+References: <bug-55971-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+MIME-Version: 1.0
+Message-Id: <20130403143126.78C5E11FA61@bugzilla.kernel.org> (sfid-20130403_163136_650786_3392A58A)
+Date: Wed,  3 Apr 2013 14:31:26 +0000 (UTC)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2013-04-05 at 09:38 -0700, Luis R. Rodriguez wrote:
+https://bugzilla.kernel.org/show_bug.cgi?id=55971
 
->   compat: backport dma-buf
->   compat: add HDMI library support
 
-I replaced these two with the new automatic system I created, so all
-they need to do is add the Kconfig parts (and a patch for dma-buf). It
-works pretty well -- what I haven't done yet though is make it depend on
-the drivers you actually have so that hdmi/dma-buf wouldn't be included
-if you modify the copy-list to only have wireless drivers -- not a big
-deal right now.
 
->   backports: remove dma-buf patches
->   backports: remove DRM nouveau kconfig patches
 
-Applied.
 
->   backports: add DRM drivers
+--- Comment #2 from Andy Gospodarek <andy@greyhouse.net>  2013-04-03 14:31:26 ---
+This should be pretty easy to fix.  I'll fire up a RHEL6.3 host with the latest
+kernel and verify a fix.
 
-I changed the copy-list patch here to remove two redundant
-subdirectories under nouveau/ and radeon that you had listed:
-
-+drivers/gpu/drm/nouveau/core/
-+drivers/gpu/drm/nouveau/
-+drivers/gpu/drm/radeon/reg_srcs/
-+drivers/gpu/drm/radeon/
-
-Since copying is recursive, just the core/ and reg_srcs/ lines are
-redundant.
-
-Otherwise it's building a ckmake --allyesconfig right now, and if it
-doesn't break I'll push it out.
-
-Thanks!
-
-johannes
-
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
