@@ -1,45 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:32797 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752175Ab3DJT2G (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 15:28:06 -0400
-Message-ID: <1365622074.4235.37.camel@jlt4.sipsolutions.net> (sfid-20130410_212827_529232_97096359)
-Subject: Re: [PATCH 06/18] compat: backport ASYNC_DOMAIN_EXCLUSIVE()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Dan Williams <dcbw@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date: Wed, 10 Apr 2013 21:27:54 +0200
-In-Reply-To: <CAB=NE6VKT11k95Szi4NmigKCgMJ1XJoU3+rACbJpnWwUpCC1EA@mail.gmail.com> (sfid-20130410_212018_257275_49D74B5B)
-References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1365593728-5720-7-git-send-email-mcgrof@do-not-panic.com>
-	 <1365600139.4235.4.camel@jlt4.sipsolutions.net>
-	 <CAB=NE6UpP-X1NCTNRnoSdv_bk3ioZdg5bO1zz0U0dqeWVxZdLw@mail.gmail.com>
-	 <1365614413.4235.29.camel@jlt4.sipsolutions.net>
-	 <CAB=NE6VAfAvjRs0uZ=jpMjfP5Dz-zEHu3N7t8AUAofZAggrEEQ@mail.gmail.com>
-	 <1365618018.4235.35.camel@jlt4.sipsolutions.net>
-	 <CAB=NE6VKT11k95Szi4NmigKCgMJ1XJoU3+rACbJpnWwUpCC1EA@mail.gmail.com>
-	 (sfid-20130410_212018_257275_49D74B5B)
+Received: from mail.kernel.org ([198.145.19.201]:38310 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1760286Ab3DCVPw (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 3 Apr 2013 17:15:52 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id B957620135
+	for <backports@vger.kernel.org>; Wed,  3 Apr 2013 21:15:51 +0000 (UTC)
+Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
+	by mail.kernel.org (Postfix) with ESMTP id CB3E82045E
+	for <backports@vger.kernel.org>; Wed,  3 Apr 2013 21:15:50 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 55971] redefined error in 2.6.32-279.22.1.el6.x86_64 kernel
+In-Reply-To: <bug-55971-58281@https.bugzilla.kernel.org/>
+References: <bug-55971-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+MIME-Version: 1.0
+Message-Id: <20130403211550.0728C11FB08@bugzilla.kernel.org> (sfid-20130403_231555_148810_82A88FB7)
+Date: Wed,  3 Apr 2013 21:15:50 +0000 (UTC)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2013-04-10 at 12:19 -0700, Luis R. Rodriguez wrote:
+https://bugzilla.kernel.org/show_bug.cgi?id=55971
 
-> > However, it seems entirely pointless to backport just a small part of
-> > the API?
-> 
-> Oh I agree don't get me wrong, however porting kernel/async.c seems
-> like a rather separate effort worth considering. As-is though I have
-> not seen any negative impact though to keep older subsystems from
-> compiling, ie its a no-op for older kernels as I see it.
 
-I guess that's what I don't understand -- I don't see usages of
-ASYNC_DOMAIN_EXCLUSIVE in any header files, and in e.g. regulator/core.c
-you'd also need the functions async_schedule_domain() etc. So where does
-this help even compiling?
 
-johannes
 
+
+--- Comment #3 from Andy Gospodarek <andy@greyhouse.net>  2013-04-03 21:15:49 ---
+Created an attachment (id=97241)
+ --> (https://bugzilla.kernel.org/attachment.cgi?id=97241)
+Initial fix for 6.3 update kernel
+
+This has not been tested other than to be sure it compiles.  I'll post to the
+list once I receive confirmation that it works for the reporter.
+
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
