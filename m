@@ -1,72 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-da0-f54.google.com ([209.85.210.54]:61377 "EHLO
-	mail-da0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933890Ab3DJLgD (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 07:36:03 -0400
-Received: by mail-da0-f54.google.com with SMTP id p1so178119dad.13
-        for <backports@vger.kernel.org>; Wed, 10 Apr 2013 04:36:03 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 06/18] compat: backport ASYNC_DOMAIN_EXCLUSIVE()
-Date: Wed, 10 Apr 2013 04:35:16 -0700
-Message-Id: <1365593728-5720-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20130410_133609_684314_6C8A0CDC)
-In-Reply-To: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from mga02.intel.com ([134.134.136.20]:10788 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1162638Ab3DEVUx (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 5 Apr 2013 17:20:53 -0400
+From: Thierry Escande <thierry.escande@linux.intel.com>
+To: backports@vger.kernel.org
+Subject: [PATCH v3 7/8] build: enable NFC build
+Date: Fri,  5 Apr 2013 23:20:41 +0200
+Message-Id: <1365196842-12992-7-git-send-email-thierry.escande@linux.intel.com> (sfid-20130405_232058_568085_74D8028D)
+Content-Type: text/plain; charset = "utf-8"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-
-For older kernels this is simply a matter of using
-LIST_HEAD.
-
-mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains 2955b47d
-v3.6-rc1~103^2~4
-
-commit 2955b47d2c1983998a8c5915cb96884e67f7cb53
-Author: Dan Williams <dan.j.williams@intel.com>
-Date:   Mon Jul 9 19:33:25 2012 -0700
-
-    [SCSI] async: introduce 'async_domain' type
-
-    This is in preparation for teaching async_synchronize_full() to sync all
-    pending async work, and not just on the async_running domain.  This
-    conversion is functionally equivalent, just embedding the existing list
-    in a new async_domain type.
-
-    The .registered attribute is used in a later patch to distinguish
-    between domains that want to be flushed by async_synchronize_full()
-    versus those that only expect async_synchronize_{full|cookie}_domain to
-    be used for flushing.
-
-    [jejb: add async.h to scsi_priv.h for struct async_domain]
-    Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-    Acked-by: Arjan van de Ven <arjan@linux.intel.com>
-    Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-    Tested-by: Eldad Zack <eldad@fogrefinery.com>
-    Signed-off-by: James Bottomley <JBottomley@Parallels.com>
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Thierry Escande <thierry.escande@linux.intel.com>
 ---
- backport/include/linux/compat-3.6.h |    3 +++
- 1 file changed, 3 insertions(+)
+ backport/Kconfig         |    2 ++
+ backport/Makefile.kernel |    2 ++
+ dependencies             |    4 ++++
+ 3 files changed, 8 insertions(+)
 
-diff --git a/backport/include/linux/compat-3.6.h b/backport/include/linux/compat-3.6.h
-index 8fddd31..49f4d3b 100644
---- a/backport/include/linux/compat-3.6.h
-+++ b/backport/include/linux/compat-3.6.h
-@@ -9,6 +9,9 @@
+diff --git a/backport/Kconfig b/backport/Kconfig
+index 8a38d61..6ab0991 100644
+--- a/backport/Kconfig
++++ b/backport/Kconfig
+@@ -36,3 +36,5 @@ source drivers/ssb/Kconfig
+ source drivers/bcma/Kconfig
  
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
- #include <linux/i2c.h>
+ source drivers/gpu/drm/Kconfig
 +
-+#define ASYNC_DOMAIN_EXCLUSIVE(_domain) LIST_HEAD(_domain)
++source net/nfc/Kconfig
+diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
+index a599ad7..ac58225 100644
+--- a/backport/Makefile.kernel
++++ b/backport/Makefile.kernel
+@@ -22,3 +22,5 @@ obj-$(CPTCFG_BT) += drivers/bluetooth/
+ obj-$(CPTCFG_SSB) += drivers/ssb/
+ obj-$(CPTCFG_BCMA) += drivers/bcma/
+ obj-$(CPTCFG_ETHERNET) += drivers/net/ethernet/
++obj-$(CPTCFG_NFC) += net/nfc/
++obj-$(CPTCFG_NFC) += drivers/nfc/
+diff --git a/dependencies b/dependencies
+index 7c79449..e9aaa2e 100644
+--- a/dependencies
++++ b/dependencies
+@@ -83,3 +83,7 @@ BRCMDBG 2.6.30
+ # backport it, but I can't test that and this is a
+ # lot easier right now.
+ BT_HIDP 2.6.33
 +
- /* Unlocked flavor */
- #define __i2c_transfer LINUX_BACKPORT(__i2c_transfer)
- extern int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
++# NFC core needs PF_NFC defined in socket.h which was
++# only introduced in kernel 3.1
++NFC 3.1
 -- 
 1.7.10.4
 
