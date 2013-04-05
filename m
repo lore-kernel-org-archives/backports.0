@@ -1,44 +1,32 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:53849 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935627Ab3DHTku (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 8 Apr 2013 15:40:50 -0400
-Message-ID: <1365450036.25475.21.camel@jlt4.sipsolutions.net> (sfid-20130408_214053_853532_274E498C)
-Subject: Re: [PATCH v3 8/8] build: add NFC defconfig file
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Cc: Thierry Escande <thierry.escande@linux.intel.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Mon, 08 Apr 2013 21:40:36 +0200
-In-Reply-To: <CAB=NE6X6+M2-eUeqTv-PAJDQ_VaLwUv3n94J1YTR+4CK7YYdaw@mail.gmail.com> (sfid-20130408_213755_513280_4A96F3C1)
-References: <1365416773-12836-9-git-send-email-thierry.escande@linux.intel.com>
-	 <CAB=NE6WWA4r+FyqR484ZJJm_usrCRDOjzMut-6JawNXJXUNmvw@mail.gmail.com>
-	 <1365449679.25475.18.camel@jlt4.sipsolutions.net>
-	 <CAB=NE6X6+M2-eUeqTv-PAJDQ_VaLwUv3n94J1YTR+4CK7YYdaw@mail.gmail.com>
-	 (sfid-20130408_213755_513280_4A96F3C1)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mga03.intel.com ([143.182.124.21]:41294 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753138Ab3DEPNh (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 5 Apr 2013 11:13:37 -0400
+From: Thierry Escande <thierry.escande@linux.intel.com>
+To: backports@vger.kernel.org
+Subject: [PATCH] build: enable NFC build
+Date: Fri,  5 Apr 2013 17:13:30 +0200
+Message-Id: <1365174812-2672-4-git-send-email-thierry.escande@linux.intel.com> (sfid-20130405_171339_936952_BB80F4D3)
+Content-Type: text/plain; charset = "utf-8"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 2013-04-08 at 12:37 -0700, Luis R. Rodriguez wrote:
+Signed-off-by: Thierry Escande <thierry.escande@linux.intel.com>
+---
+ backport/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> >> > +CPTCFG_NFC=m
-[...]
-> >> Johannes, do we want to be disabling the other subsystems in these ?
-> >
-> > Well anything not listed will have the default values, so that should be
-> > OK, right? Most things should be default off.
-> 
-> OK so the default would be -- "if you have it on your kernel then
-> we'll enable at build time", is that right? I wasn't clear on this,
-> that's all.
-
-No, because of the prefix rename (CONFIG_ -> CPTCFG_) the kernel's
-configuration has no influence on our configuration at all.
-
-So the default is just whatever the default is in the Kconfig files,
-which is essentially everything else turned off.
-
-johannes
+diff --git a/backport/Kconfig b/backport/Kconfig
+index 87e3869..eb74b08 100644
+--- a/backport/Kconfig
++++ b/backport/Kconfig
+@@ -35,4 +35,4 @@ source drivers/net/ethernet/Kconfig
+ source drivers/ssb/Kconfig
+ source drivers/bcma/Kconfig
+ 
+-# source net/nfc/Kconfig
++source net/nfc/Kconfig
+-- 
+1.7.10.4
 
