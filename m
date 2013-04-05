@@ -1,75 +1,99 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:50048 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754692Ab3DOQZg (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 15 Apr 2013 12:25:36 -0400
-Date: Mon, 15 Apr 2013 17:25:34 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: johannes@sipsolutions.net, backports@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/7] backports: add support for voltage / current
- regulator drivers
-Message-ID: <20130415162534.GJ15837@opensource.wolfsonmicro.com> (sfid-20130415_182539_233228_C3FA2868)
-References: <1365862424-6530-1-git-send-email-mcgrof@do-not-panic.com>
- <1365862424-6530-6-git-send-email-mcgrof@do-not-panic.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GvznHscUikHnwW2p"
-In-Reply-To: <1365862424-6530-6-git-send-email-mcgrof@do-not-panic.com>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:62955 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161970Ab3DEQir (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 5 Apr 2013 12:38:47 -0400
+Received: by mail-pa0-f46.google.com with SMTP id lb1so2132847pab.19
+        for <backports@vger.kernel.org>; Fri, 05 Apr 2013 09:38:47 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 5/5] backports: add DRM drivers
+Date: Fri,  5 Apr 2013 09:38:19 -0700
+Message-Id: <1365179899-7984-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20130405_183849_511540_C94044EE)
+In-Reply-To: <1365179899-7984-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1365179899-7984-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
---GvznHscUikHnwW2p
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+They are building just fine so enable them.
 
-On Sat, Apr 13, 2013 at 07:13:42AM -0700, Luis R. Rodriguez wrote:
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.65              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.2.38              [  OK  ]
+20  3.3.8               [  OK  ]
+21  3.4.32              [  OK  ]
+22  3.5.7               [  OK  ]
+23  3.6.11              [  OK  ]
+24  3.7.9               [  OK  ]
+25  3.8.0               [  OK  ]
+26  3.9-rc1             [  OK  ]
 
-> This backports the latest regulator drivers for kernels >= 3.4.
-> We enable the regulator only on kernels >= 3.4 given that
-> it relies on the new probe deferral mechanism which would
-> otherwise mean having to support drivers that do not probe
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ backport/Kconfig |    2 ++
+ copy-list        |   22 ++++++++++++++++++++++
+ 2 files changed, 24 insertions(+)
 
-There's no great reliance on deferred probes here...
+diff --git a/backport/Kconfig b/backport/Kconfig
+index d0ae17f..8a38d61 100644
+--- a/backport/Kconfig
++++ b/backport/Kconfig
+@@ -34,3 +34,5 @@ source drivers/net/ethernet/Kconfig
+ 
+ source drivers/ssb/Kconfig
+ source drivers/bcma/Kconfig
++
++source drivers/gpu/drm/Kconfig
+diff --git a/copy-list b/copy-list
+index 4243619..4c606a5 100644
+--- a/copy-list
++++ b/copy-list
+@@ -114,3 +114,25 @@ drivers/net/ethernet/broadcom/Kconfig
+ drivers/net/ethernet/broadcom/Makefile
+ drivers/net/ethernet/broadcom/b44.c
+ drivers/net/ethernet/broadcom/b44.h
++
++# DRM
++include/drm/
++include/uapi/drm/
++drivers/platform/x86/intel_ips.h
++
++drivers/gpu/drm/Makefile
++drivers/gpu/drm/Kconfig
++drivers/gpu/drm/ast/
++drivers/gpu/drm/cirrus/
++drivers/gpu/drm/gma500/
++drivers/gpu/drm/i2c/
++drivers/gpu/drm/i810/
++drivers/gpu/drm/i915/
++drivers/gpu/drm/mgag200/
++drivers/gpu/drm/nouveau/core/
++drivers/gpu/drm/nouveau/
++drivers/gpu/drm/radeon/reg_srcs/
++drivers/gpu/drm/radeon/
++drivers/gpu/drm/ttm/
++drivers/gpu/drm/via/
++drivers/gpu/drm/vmwgfx/
+-- 
+1.7.10.4
 
-> correctly. Note that 3.2 had a base regulator implementation
-> but that was just stubs.
-
-I'm sorry, what on earth makes you say that?  The regulator API has been
-usefully functional since it was merged.
-
-> I did look into a way to upgrade the core kernel regulator
-> but given that it relies on late_initcall() and core_initcall()
-> we can't update this part of the kernel. I even looked at
-> using ksplice for this but it seems ksplice can't be used to
-> update init sections on the vmlinux ELF. I also haven't much
-> updates to these routines since 3.4 except for 86f5fcfc.
-
-Again I'm not sure what you're talking about here?
-
---GvznHscUikHnwW2p
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRbCn3AAoJELSic+t+oim9+qkP/0W3MBZi09P5qFnlIeelwukI
-QdMOG9LnefbhBY6/YJgUkuDnUp8J1MSB8K72c4FXgyNBpOsr2o7oDi9UfBf82YF/
-VRpk10wRxLvlU94niqGUbTW+7ZjYuu/pHw2Nel6eQiEfLTiSXhpRSCeP+0jKrbx0
-MABnjDEDmO/Mau28mS07D6dPMtI8m8fqumHy/CWxPdNp6F8H3SI+K7XejUIsQRuM
-tzzttXsgy7ZT+hzkctvbVv4Ee3eIUtqbHNXaFqxxIcLUgfEvq/QUA5luBgtLuc6B
-9nitTdBXGdByTYow4qiKlAS+g90baxPp+FeCRVaZtQ77DDTjlR4PfzNynEFfdlKR
-B97itdWW4bZivA48N8Km+HXzgRFiH7Zn5SdtrXjPDrXLNyueqK9QOY7CpNyWYL+h
-F8uZWe8wg5zWBTT4IV2fHeJFllzy8kRaTG1GBM6DDC3SJJA2Bh6UzKrNhLrnjZfQ
-7VRgDuV0I8GNVtbkyZdLlgUAUmtcXYemIVCIObAe6UP8U38G1NrEjdUBpiS66FQq
-4SVLG6jTNJBBnq33dMIN3Uanm/E9WG31DkETEMZfludEca8k+pU/TUGgsxh9ns6I
-BR8qh5L1KAEel3CERW8iWmXOZpMKuvI0O1d2TjCfW2wydauZvPG5CHeksPSRF4Sd
-AWzcvPE0JUkAWjXSFqlH
-=xgsb
------END PGP SIGNATURE-----
-
---GvznHscUikHnwW2p--
