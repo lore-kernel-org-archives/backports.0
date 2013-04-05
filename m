@@ -1,80 +1,84 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:37220 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750836Ab3DKXns (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 11 Apr 2013 19:43:48 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
+Received: from mga14.intel.com ([143.182.124.37]:54450 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753056Ab3DEPQ4 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 5 Apr 2013 11:16:56 -0400
+From: Thierry Escande <thierry.escande@linux.intel.com>
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [RFC/WIP 13/24] backports: move module_usb_driver()
-Date: Fri, 12 Apr 2013 01:42:40 +0200
-Message-Id: <1365723771-10660-14-git-send-email-johannes@sipsolutions.net> (sfid-20130412_014409_363156_0AE6A3D7)
-In-Reply-To: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
-References: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
+Subject: [PATCH v2 2/5] backports: Add NFC core and drivers
+Date: Fri,  5 Apr 2013 17:16:51 +0200
+Message-Id: <1365175014-6028-2-git-send-email-thierry.escande@linux.intel.com> (sfid-20130405_171658_345140_E6DC5D9A)
+Content-Type: text/plain; charset = "utf-8"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+This grabs NFC core and drivers files from your linux tree.
+NFC build is disabled for now.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Thierry Escande <thierry.escande@linux.intel.com>
 ---
- backport/backport-include/linux/compat-3.3.h | 14 --------------
- backport/backport-include/linux/usb.h        | 21 +++++++++++++++++++++
- 2 files changed, 21 insertions(+), 14 deletions(-)
- create mode 100644 backport/backport-include/linux/usb.h
+ backport/Kconfig         |    2 ++
+ backport/Makefile.kernel |    2 ++
+ copy-list                |   16 ++++++++++++++++
+ dependencies             |    4 ++++
+ 4 files changed, 24 insertions(+)
 
-diff --git a/backport/backport-include/linux/compat-3.3.h b/backport/backport-include/linux/compat-3.3.h
-index eded1bb..5950e2b 100644
---- a/backport/backport-include/linux/compat-3.3.h
-+++ b/backport/backport-include/linux/compat-3.3.h
-@@ -307,20 +307,6 @@ static inline void qdisc_cb_private_validate(const struct sk_buff *skb, int sz)
+diff --git a/backport/Kconfig b/backport/Kconfig
+index d0ae17f..87e3869 100644
+--- a/backport/Kconfig
++++ b/backport/Kconfig
+@@ -34,3 +34,5 @@ source drivers/net/ethernet/Kconfig
  
- #define NL80211_FEATURE_SK_TX_STATUS 0
- 
--/* source include/linux/usb.h */
--/**
-- * module_usb_driver() - Helper macro for registering a USB driver
-- * @__usb_driver: usb_driver struct
-- *
-- * Helper macro for USB drivers which do not do anything special in module
-- * init/exit. This eliminates a lot of boilerplate. Each module may only
-- * use this macro once, and calling it replaces module_init() and module_exit()
-- */
--#define module_usb_driver(__usb_driver) \
--	module_driver(__usb_driver, usb_register, \
--		       usb_deregister)
--
--
- /*
-  * PCI_EXP_TYPE_RC_EC was added via 1b6b8ce2 on v2.6.30-rc4~20 :
-  *
-diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
-new file mode 100644
-index 0000000..2c81e48
---- /dev/null
-+++ b/backport/backport-include/linux/usb.h
-@@ -0,0 +1,21 @@
-+#ifndef __BACKPORT_USB_H
-+#define __BACKPORT_USB_H
+ source drivers/ssb/Kconfig
+ source drivers/bcma/Kconfig
 +
-+#include_next <linux/usb.h>
-+#include <linux/version.h>
++# source net/nfc/Kconfig
+diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
+index a599ad7..ac58225 100644
+--- a/backport/Makefile.kernel
++++ b/backport/Makefile.kernel
+@@ -22,3 +22,5 @@ obj-$(CPTCFG_BT) += drivers/bluetooth/
+ obj-$(CPTCFG_SSB) += drivers/ssb/
+ obj-$(CPTCFG_BCMA) += drivers/bcma/
+ obj-$(CPTCFG_ETHERNET) += drivers/net/ethernet/
++obj-$(CPTCFG_NFC) += net/nfc/
++obj-$(CPTCFG_NFC) += drivers/nfc/
+diff --git a/copy-list b/copy-list
+index 4243619..82e21b1 100644
+--- a/copy-list
++++ b/copy-list
+@@ -114,3 +114,19 @@ drivers/net/ethernet/broadcom/Kconfig
+ drivers/net/ethernet/broadcom/Makefile
+ drivers/net/ethernet/broadcom/b44.c
+ drivers/net/ethernet/broadcom/b44.h
 +
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
-+/**
-+ * module_usb_driver() - Helper macro for registering a USB driver
-+ * @__usb_driver: usb_driver struct
-+ *
-+ * Helper macro for USB drivers which do not do anything special in module
-+ * init/exit. This eliminates a lot of boilerplate. Each module may only
-+ * use this macro once, and calling it replaces module_init() and module_exit()
-+ */
-+#define module_usb_driver(__usb_driver) \
-+	module_driver(__usb_driver, usb_register, \
-+		       usb_deregister)
-+#endif
++# NFC
++net/nfc/
++net/nfc/hci/
++net/nfc/llcp/
++net/nfc/nci/
++include/net/nfc/
++include/linux/socket.h
++include/uapi/linux/nfc.h
++include/uapi/linux/socket.h
 +
-+#endif /* __BACKPORT_USB_H */
++# NFC drivers
++drivers/nfc/
++drivers/nfc/microread/
++drivers/nfc/pn544/
++include/linux/platform_data/pn544.h
+diff --git a/dependencies b/dependencies
+index 7c79449..e9aaa2e 100644
+--- a/dependencies
++++ b/dependencies
+@@ -83,3 +83,7 @@ BRCMDBG 2.6.30
+ # backport it, but I can't test that and this is a
+ # lot easier right now.
+ BT_HIDP 2.6.33
++
++# NFC core needs PF_NFC defined in socket.h which was
++# only introduced in kernel 3.1
++NFC 3.1
 -- 
-1.8.0
+1.7.10.4
 
