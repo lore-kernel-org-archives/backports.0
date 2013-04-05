@@ -1,59 +1,29 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-we0-f172.google.com ([74.125.82.172]:55056 "EHLO
-	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935117Ab3DJT6D (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 15:58:03 -0400
-Received: by mail-we0-f172.google.com with SMTP id r3so659952wey.31
-        for <backports@vger.kernel.org>; Wed, 10 Apr 2013 12:58:01 -0700 (PDT)
+Received: from mga03.intel.com ([143.182.124.21]:62769 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1162121Ab3DERVN (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 5 Apr 2013 13:21:13 -0400
+Message-ID: <515F0801.7020507@linux.intel.com> (sfid-20130405_192116_443453_E71D25D0)
+Date: Fri, 05 Apr 2013 19:21:05 +0200
+From: Thierry Escande <thierry.escande@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1365600903.4235.10.camel@jlt4.sipsolutions.net>
-References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
- <1365593728-5720-14-git-send-email-mcgrof@do-not-panic.com> <1365600903.4235.10.camel@jlt4.sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Wed, 10 Apr 2013 12:57:40 -0700
-Message-ID: <CAB=NE6UEUcszkUMBtpwJQnWjAj5p15j_kf158697rSfVmwQM4A@mail.gmail.com> (sfid-20130410_215806_307534_2A39AFCF)
-Subject: Re: [PATCH 13/18] backports: add blacklist module support
 To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+CC: backports@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] backports: Add NFC core and drivers
+References: <1365175014-6028-2-git-send-email-thierry.escande@linux.intel.com>  (sfid-20130405_171658_345140_E6DC5D9A) <1365176113.8515.33.camel@jlt4.sipsolutions.net>
+In-Reply-To: <1365176113.8515.33.camel@jlt4.sipsolutions.net>
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Apr 10, 2013 at 6:35 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Wed, 2013-04-10 at 04:35 -0700, Luis R. Rodriguez wrote:
->> +rm -f $BLACKLIST_CONF
->> +
->> +echo "# To be used when using backported drivers" >> $BLACKLIST_CONF
->
-> Or you could just use > instead of >> on this first line ;-)
+On 04/05/2013 05:35 PM, Johannes Berg wrote:
+>> +# NFC core needs PF_NFC defined in socket.h which was
+>> +# only introduced in kernel 3.1
+>> +NFC 3.1
+> 
+> Just PF_NFC could be defined in compat, no?
 
-Doh, yes.
+That's right for compilation but sock_register for PF_NFC will fail and the module won't load.
 
->> +for i in $(grep -v ^# $BLACKLIST_MAP | cut -f 2); do
->
-> What happens if the blacklist map contains empty lines? Might want to
-> allow that.
+ Thierry
 
-That's magically taken care of, I tested even with a line with just
-just empty lines but also spaces. For some reason awk works more
-reliably for the field cutting so I'll switch it.
-
->> +     MODULE="${i}.ko"
->> +     MODULE_UPDATE="$(grep -v ^# $BLACKLIST_MAP | grep $i | cut -f 1 | head -1).ko"
->> +
->> +     COUNT=$(find $MODULE_DIR -type f -name ${MODULE} -or -name ${MODULE}.gz | wc -l)
->> +     COUNT_REPLACE=$(find $MODULE_UPDATES -type f -name ${MODULE_UPDATE} -or -name ${MODULE_UPDATE}.gz | wc -l)
->> +
->> +     if [ $COUNT -ne 0 ]; then
->> +             if [ $COUNT_REPLACE -ne 0 ]; then
->> +                     echo "Blacklisting $MODULE ..."
->> +                     echo blacklist $i >> $BLACKLIST_CONF
->> +             fi
->
-> So you do mean "# new-driver old-driver", but then shouldn't the iwlwifi
-> lines be reversed?
-
-You would know better, sorry I thought iwlagn replaces those, I'll swap.
-
-  Luis
