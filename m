@@ -1,60 +1,34 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:2367 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1162502Ab3DEVUv (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 5 Apr 2013 17:20:51 -0400
-From: Thierry Escande <thierry.escande@linux.intel.com>
-To: backports@vger.kernel.org
-Subject: [PATCH v3 3/8] backport MODULE_ALIAS_GENL_FAMILY macro
-Date: Fri,  5 Apr 2013 23:20:37 +0200
-Message-Id: <1365196842-12992-3-git-send-email-thierry.escande@linux.intel.com> (sfid-20130405_232053_918112_38B6FCDD)
-Content-Type: text/plain; charset = "utf-8"
+Received: from he.sipsolutions.net ([78.46.109.217]:43245 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1162213Ab3DERtC (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 5 Apr 2013 13:49:02 -0400
+Message-ID: <1365184133.8515.34.camel@jlt4.sipsolutions.net> (sfid-20130405_194905_060922_AE3A5DF6)
+Subject: Re: [PATCH v2 2/5] backports: Add NFC core and drivers
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Thierry Escande <thierry.escande@linux.intel.com>
+Cc: backports@vger.kernel.org
+Date: Fri, 05 Apr 2013 19:48:53 +0200
+In-Reply-To: <515F0801.7020507@linux.intel.com>
+References: <1365175014-6028-2-git-send-email-thierry.escande@linux.intel.com>
+	  (sfid-20130405_171658_345140_E6DC5D9A) <1365176113.8515.33.camel@jlt4.sipsolutions.net>
+	 <515F0801.7020507@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This also backports MODULE_ALIAS_NET_PF_PROTO_NAME used by MODULE_ALIAS_GENL_FAMILY
+On Fri, 2013-04-05 at 19:21 +0200, Thierry Escande wrote:
+> On 04/05/2013 05:35 PM, Johannes Berg wrote:
+> >> +# NFC core needs PF_NFC defined in socket.h which was
+> >> +# only introduced in kernel 3.1
+> >> +NFC 3.1
+> > 
+> > Just PF_NFC could be defined in compat, no?
+> 
+> That's right for compilation but sock_register for PF_NFC will fail and the module won't load.
 
-Signed-off-by: Thierry Escande <thierry.escande@linux.intel.com>
----
- backport/include/linux/compat-3.5.h |   25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Ok.
 
-diff --git a/backport/include/linux/compat-3.5.h b/backport/include/linux/compat-3.5.h
-index 57b06b0..7e9e65a 100644
---- a/backport/include/linux/compat-3.5.h
-+++ b/backport/include/linux/compat-3.5.h
-@@ -297,6 +297,31 @@ do {								\
- #define ktime_get_monotonic_offset LINUX_BACKPORT(ktime_get_monotonic_offset)
- extern ktime_t ktime_get_monotonic_offset(void);
- 
-+/* This backports:
-+ *
-+ * commit 2033e9bf06f07e049bbc77e9452856df846714cc
-+ * Author: Neil Horman <nhorman@tuxdriver.com>
-+ * Date:   Tue May 29 09:30:40 2012 +0000
-+ *
-+ *     net: add MODULE_ALIAS_NET_PF_PROTO_NAME
-+ */
-+
-+#define MODULE_ALIAS_NET_PF_PROTO_NAME(pf, proto, name) \
-+	MODULE_ALIAS("net-pf-" __stringify(pf) "-proto-" __stringify(proto) \
-+		     name)
-+
-+/* This backports:
-+ *
-+ * commit e9412c37082b5c932e83364aaed0c38c2ce33acb
-+ * Author: Neil Horman <nhorman@tuxdriver.com>
-+ * Date:   Tue May 29 09:30:41 2012 +0000
-+ *
-+ *     genetlink: Build a generic netlink family module alias
-+ */
-+
-+#define MODULE_ALIAS_GENL_FAMILY(family)\
-+ MODULE_ALIAS_NET_PF_PROTO_NAME(PF_NETLINK, NETLINK_GENERIC, "-family-" family)
-+
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)) */
- 
- #endif /* LINUX_3_5_COMPAT_H */
--- 
-1.7.10.4
+johannes
 
