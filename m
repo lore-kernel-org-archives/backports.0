@@ -1,65 +1,72 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f53.google.com ([209.85.215.53]:59472 "EHLO
-	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933074Ab3DJTUD (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 15:20:03 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49075 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932107Ab3DECTD (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 4 Apr 2013 22:19:03 -0400
+Date: Thu, 4 Apr 2013 22:12:59 -0400
+From: Andy Gospodarek <andy@greyhouse.net>
+To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	Phil Perry <phil@pendre.co.uk>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: [ANN] new backports project
+Message-ID: <20130405021259.GM27415@gospo.rdu.redhat.com> (sfid-20130405_041907_256420_A88C91F8)
+References: <1364908781.8204.14.camel@jlt4.sipsolutions.net>
+ <1364923241.8204.15.camel@jlt4.sipsolutions.net>
+ <515B4994.3030309@pendre.co.uk>
+ <1364937780.8204.18.camel@jlt4.sipsolutions.net>
+ <CAB=NE6VDAekd_a--iFocHGWxdzhVXbQrBcV1HD+kHvbL68r4iw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1365618018.4235.35.camel@jlt4.sipsolutions.net>
-References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
- <1365593728-5720-7-git-send-email-mcgrof@do-not-panic.com>
- <1365600139.4235.4.camel@jlt4.sipsolutions.net> <CAB=NE6UpP-X1NCTNRnoSdv_bk3ioZdg5bO1zz0U0dqeWVxZdLw@mail.gmail.com>
- <1365614413.4235.29.camel@jlt4.sipsolutions.net> <CAB=NE6VAfAvjRs0uZ=jpMjfP5Dz-zEHu3N7t8AUAofZAggrEEQ@mail.gmail.com>
- <1365618018.4235.35.camel@jlt4.sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Wed, 10 Apr 2013 12:19:40 -0700
-Message-ID: <CAB=NE6VKT11k95Szi4NmigKCgMJ1XJoU3+rACbJpnWwUpCC1EA@mail.gmail.com> (sfid-20130410_212007_386953_01D4D2C1)
-Subject: Re: [PATCH 06/18] compat: backport ASYNC_DOMAIN_EXCLUSIVE()
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Dan Williams <dcbw@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAB=NE6VDAekd_a--iFocHGWxdzhVXbQrBcV1HD+kHvbL68r4iw@mail.gmail.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Apr 10, 2013 at 11:20 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Wed, 2013-04-10 at 10:26 -0700, Luis R. Rodriguez wrote:
->
->> > I guess I'd have to review the async API,
->>
->> Yeap, reviewing the commit noted would help too.
->
-> Yeah ... :)
->
->> > What's the use of just this when you don't have things like
->> > async_schedule_domain() and async_synchronize_full_domain(), regulator
->> > stuff wouldn't compile I think?
->>
->> You mean is not having the full asynch that deals with all registered
->> domains likely to have an issue on the useres of
->> async_synchronize_full_domain() ? Lets better ask Dan.
->
-> I don't know. However it seems that in order to have an ASYNC_DOMAIN()
-> or ASYNC_DOMAIN_EXCLUSIVE() you always need to *do* something with it,
-> so for that you'd also need the functions async_schedule_domain() and
-> async_synchronize_full_domain() or similar, at least, no?
->
-> The point here seems to be making boot faster by starting a bunch of
-> async probing inside a domain, and then you wait for the entire domain,
-> so everything that's in that domain can be done in parallel.
->
-> Say for example you have 20 SCSI drives. If you look at them serially
-> then you'd waste much time waiting for the drives. The point here
-> appears to be that you create a domain (using this macro), then add all
-> the drives to the domain and then wait for the domain to finish.
->
-> However, it seems entirely pointless to backport just a small part of
-> the API?
+On Tue, Apr 02, 2013 at 02:42:56PM -0700, Luis R. Rodriguez wrote:
+> On Tue, Apr 2, 2013 at 2:23 PM, Johannes Berg <johannes@sipsolutions.net> wrote:
+> > I only addressed what compat-drivers-... had a few days ago.
+> >
+> > However, I simplified the system a bit. I don't have any snapshot, but I
+> > did announce the git tree. Grab that, run ./gentree.py against
+> > linux-next and you should get something. Then you will have to hack up
+> > the Kconfig (backport/compat/Kconfig) and include files
+> > (backport/include/*), presumably.
+> 
+> Or you can wait until we merge. At this point I'm freezing development
+> on compat and compat-drivers to merge all this work onto Johannes'
+> tree.
+> 
+> > If you're interested in alx, you'd have to add that -- look at the
+> > copy-list.alx file for that.
+> 
+> Johannes already committed a few things here, I'll be sure to test it as well.
+> 
+> > I hope that soon enough Luis might cut some testing releases from this
+> > though.
+> 
+> Absolutely, full steam ahead, just give us a few days.
+> 
+> I should note that RHEL / SUSE / Debian all had the same issues --
+> running into symbols we are exporting with the same upstream name. The
+> move to use LINUX_BACKPORT() should help cure these issues in general
+> moving forward. Additionally if you really want to help in this area
+> please review commit 8ae96730 on compat.git specifically Andi Kleen's
+> work on module namespace. If we can figure out to support module
+> namespace *ourselves*, ie, without Linus having to carry this crap
+> around, then we'd solve all these issues easily, I believe we wouldn't
+> have to rely on LINUX_BACKPORT() and in fact that would also mean
+> renaming our *driver* symbols. This means for instance you can run one
+> drivers with your stock mac80211, another with the backported version,
+> should you ever have to support such crazy environement.
+> 
 
-Oh I agree don't get me wrong, however porting kernel/async.c seems
-like a rather separate effort worth considering. As-is though I have
-not seen any negative impact though to keep older subsystems from
-compiling, ie its a no-op for older kernels as I see it.
+As I was watching the patches for LINUX_BACKPORT fly past over the last
+few weeks and making changes to allow RHEL to work with compat, I
+wondered, "Why not add the LINUX_BACKPORT macro to each one of the
+symbols backported?"
 
- Luis
+Of course that seems extremely tedious, but is there a compelling reason
+why something like this should not be done -- other than possibly doing
+as Luis suggests and finding a way to resurrect Andi Kleen's proposal
+for module symbol namespaces -- then I think the option to begin a more
+liberal use of the LINUX_BACKPORT macro is worth considering.
