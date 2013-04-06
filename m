@@ -1,37 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:54062 "EHLO
+Received: from he.sipsolutions.net ([78.46.109.217]:47018 "EHLO
 	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965060Ab3DHU4e (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 8 Apr 2013 16:56:34 -0400
-Message-ID: <1365454577.25475.27.camel@jlt4.sipsolutions.net> (sfid-20130408_225700_937081_D5F0B880)
-Subject: Re: [PATCH v3 8/8] build: add NFC defconfig file
+	with ESMTP id S1759629Ab3DFU35 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 6 Apr 2013 16:29:57 -0400
+Message-ID: <1365280189.8313.1.camel@jlt4.sipsolutions.net> (sfid-20130406_223002_028930_9CA983C9)
+Subject: Re: [PATCH v3 6/8] backports: add NFC patches
 From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 Cc: Thierry Escande <thierry.escande@linux.intel.com>,
 	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Mon, 08 Apr 2013 22:56:17 +0200
-In-Reply-To: <CAB=NE6XzZvJcGb4xLZN7QKrCiYDMN0JN=uU8VR5yGUkyWS9uTw@mail.gmail.com> (sfid-20130408_225206_192759_DF72C17C)
-References: <1365416773-12836-9-git-send-email-thierry.escande@linux.intel.com>
-	 <CAB=NE6WWA4r+FyqR484ZJJm_usrCRDOjzMut-6JawNXJXUNmvw@mail.gmail.com>
-	 <1365449679.25475.18.camel@jlt4.sipsolutions.net>
-	 <CAB=NE6X6+M2-eUeqTv-PAJDQ_VaLwUv3n94J1YTR+4CK7YYdaw@mail.gmail.com>
-	 <1365450036.25475.21.camel@jlt4.sipsolutions.net>
-	 <CAB=NE6XzZvJcGb4xLZN7QKrCiYDMN0JN=uU8VR5yGUkyWS9uTw@mail.gmail.com>
-	 (sfid-20130408_225206_192759_DF72C17C)
+Date: Sat, 06 Apr 2013 22:29:49 +0200
+In-Reply-To: <CAB=NE6VJt2d1JJVe0rbe50rrw-TCTHgOyt9b3ig-RU8ghR2Wbw@mail.gmail.com> (sfid-20130406_222335_063212_D6C0EFEF)
+References: <1365196842-12992-6-git-send-email-thierry.escande@linux.intel.com>
+	 <1365199513.8515.41.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6VJt2d1JJVe0rbe50rrw-TCTHgOyt9b3ig-RU8ghR2Wbw@mail.gmail.com>
+	 (sfid-20130406_222335_063212_D6C0EFEF)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 2013-04-08 at 13:51 -0700, Luis R. Rodriguez wrote:
+On Sat, 2013-04-06 at 13:22 -0700, Luis R. Rodriguez wrote:
 
-> > So the default is just whatever the default is in the Kconfig files,
-> > which is essentially everything else turned off.
+> > FWIW, it's probably more efficient to just put them all into one
+> > net_nfc.patch file. The only reason they're split by *file* rather than
+> > by *logical group* right now is that it was easy to do automatically and
+> > solved the problem I had (of wanting to copy only some drivers and then
+> > applying only some patches). For this it's not really needed or even
+> > useful to split by file, it was just the fastest way :-)
+> >
+> > So I think it'd make sense to put it into a single file, but I'm happy
+> > to apply it as-is as well (though I want to give others more time to
+> > review, so I'll not do it today)
 > 
-> Odd, when I tried to do media with similar defconfig I got wireless
-> building :( but its great this was the goal, I'll try again.
+> How about a directory alone for NFC patches as we do for DRM. In fact
+> perhaps Bluetooth should be split out from network as well, just as
+> ethernet. That is, per subsystem.
 
-Did you create a new tree or rm .config first?
+Personally, I don't care. In fact, I'm going to change the apply process
+a bit to just read any *.patch file, sort the list and then see if they
+need to applied (in that order) -- that way we don't have to put things
+all those levels down etc. and can split it up in any logical way we
+like.
 
 johannes
 
