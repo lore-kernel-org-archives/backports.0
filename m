@@ -1,29 +1,97 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:60153 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752758Ab3DJNsW (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 09:48:22 -0400
-Message-ID: <1365601698.4235.19.camel@jlt4.sipsolutions.net> (sfid-20130410_154823_538634_4A9E7264)
-Subject: Re: [PATCH 18/18] backports: add update-initramfs support
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: backports@vger.kernel.org
-Date: Wed, 10 Apr 2013 15:48:18 +0200
-In-Reply-To: <1365593728-5720-19-git-send-email-mcgrof@do-not-panic.com> (sfid-20130410_133704_968712_2A471864)
-References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1365593728-5720-19-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20130410_133704_968712_2A471864)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-da0-f50.google.com ([209.85.210.50]:36394 "EHLO
+	mail-da0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161269Ab3DGCgG (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 6 Apr 2013 22:36:06 -0400
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 0/3] backports: adds regulator and media susbsystems
+Date: Sat,  6 Apr 2013 19:35:35 -0700
+Message-Id: <1365302138-19736-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130407_043611_286750_8B039DA1)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2013-04-10 at 04:35 -0700, Luis R. Rodriguez wrote:
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-> +KLIB=1
+This is just test work I've been doing on the side, that really
+just started from scratching an itch to see what is possible.
+In the compat-drivers trees I had actually gotten to run time
+test the USB video camera driver and that worked fine. Under
+the new backports tree we are encouraged to just backport the
+entire subsystem so I gave that a shot and this is where I got
+up to. It turned out a few drivers required mucking with the
+regulator and as I started backporting some functionality I
+realized that the 3.2 regulator was just stubs so ended up trying
+to port all of the regulator and its drivers as well.
 
-pretty sure that should be "$1" or at least just $1 ?
+The media drivers should now compile *if* we fix the regulator
+issues but as it turns out the last issues I ran into hit a gcc
+segfault :)
 
-johannes
+These patches depend on the other 9 patches I just posted. I hadn't
+tested ckmake yet with the other patches...
 
+Note one thing I realize from this exercise is that it'd be nice
+to be able to rename the upstream target file when being sucked
+into compat as part of compat-y or perhaps its best to do this
+always with a _backport prefix ? See core.c from regulator and
+how it gets pulled into compat/
+
+I do realize that porting the regulator code may not make make sense
+and if so then perhaps any media drivers that rely on it shoud likley
+not be ported... But that sounds like a cheap "solution". For mobile
+for example I do envision it being desirable to port over any media
+or regulator drivers. One possibility I have only been toying with
+in thought has been using ksplice... but that seems a bit over kill
+and likely very fragile for adding new symbols. Can we extend a kernel
+with backport ELF sections ? If so so, we don't necessarily need to
+have the functionality to patch a kernel and keep it running at runtime
+but *if* this is possible perhaps that may allow for us to add our own
+sections to call on the kernel. The only issue with that of course is
+that then compat-y as a whole would need to be thrown in there.
+
+  CC [M]  /home/mcgrof/tmp/build/compat/main.o
+  CC [M]  /home/mcgrof/tmp/build/compat/compat-3.3.o
+  CC [M]  /home/mcgrof/tmp/build/compat/compat-3.4.o
+  CC [M]  /home/mcgrof/tmp/build/compat/compat-3.5.o
+  CC [M]  /home/mcgrof/tmp/build/compat/user_namespace.o
+  CC [M]  /home/mcgrof/tmp/build/compat/compat-3.6.o
+  CC [M]  /home/mcgrof/tmp/build/compat/compat-3.7.o
+  CC [M]  /home/mcgrof/tmp/build/compat/compat-3.8.o
+  CC [M]  /home/mcgrof/tmp/build/compat/compat-3.9.o
+  CC [M]  /home/mcgrof/tmp/build/compat/core.o
+Segmentation fault
+make[8]: *** [/home/mcgrof/tmp/build/compat/core.o] Error 139
+
+Luis R. Rodriguez (3):
+  compat: redefine core_initcall() and late_initcall()
+  backports: add support for voltage / current regulator subsystem
+  backports: add media subsystem drivers
+
+ .blacklist.map                                     |    9 +
+ backport/Makefile.kernel                           |    8 +
+ backport/Makefile.real                             |    1 +
+ backport/compat/Kconfig                            |   18 +
+ backport/compat/main.c                             |    5 +
+ backport/defconfigs/media                          |  506 ++++++++++++++++++++
+ backport/defconfigs/regulator                      |   63 +++
+ backport/include/linux/compat-2.6.h                |   15 +
+ backport/include/linux/compat-3.3.h                |    8 +
+ copy-list                                          |   44 ++
+ dependencies                                       |    6 +
+ lib/blacklist.sh                                   |   35 ++
+ .../media/0001-media_entity_info.patch             |   67 +++
+ .../regulator/0001-disable-ftrace.patch            |   74 +++
+ 14 files changed, 859 insertions(+)
+ create mode 100644 .blacklist.map
+ create mode 100644 backport/defconfigs/media
+ create mode 100644 backport/defconfigs/regulator
+ create mode 100755 lib/blacklist.sh
+ create mode 100644 patches/collateral-evolutions/media/0001-media_entity_info.patch
+ create mode 100644 patches/collateral-evolutions/regulator/0001-disable-ftrace.patch
+
+-- 
+1.7.10.4
 
