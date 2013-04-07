@@ -1,106 +1,119 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-da0-f50.google.com ([209.85.210.50]:37137 "EHLO
-	mail-da0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933890Ab3DJLgI (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 07:36:08 -0400
-Received: by mail-da0-f50.google.com with SMTP id t1so176980dae.37
-        for <backports@vger.kernel.org>; Wed, 10 Apr 2013 04:36:08 -0700 (PDT)
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:47027 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161185Ab3DGCWS (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 6 Apr 2013 22:22:18 -0400
+Received: by mail-pa0-f44.google.com with SMTP id bi5so2664480pad.3
+        for <backports@vger.kernel.org>; Sat, 06 Apr 2013 19:22:17 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: johannes@sipsolutions.net
 Cc: backports@vger.kernel.org,
 	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 07/18] compat: backport devres_release()
-Date: Wed, 10 Apr 2013 04:35:17 -0700
-Message-Id: <1365593728-5720-8-git-send-email-mcgrof@do-not-panic.com> (sfid-20130410_133610_831026_7ECF7EB1)
-In-Reply-To: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
+Subject: [PATCH 3/9] compat: backport __i2c_transfer()
+Date: Sat,  6 Apr 2013 19:21:56 -0700
+Message-Id: <1365301322-19327-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20130407_042219_802700_F2D736A5)
+In-Reply-To: <1365301322-19327-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1365301322-19327-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-commit d926d0e4c74cfcb42a05e91d1cdf698b41e1e118
-Author: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date:   Thu May 3 18:15:13 2012 +0100
+mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains b37d2a3a
+v3.6-rc1~28^2~265
 
-    devres: Add devres_release()
+commit b37d2a3a75cb0e72e18c29336cb2095b63dabfc8
+Author: Jean Delvare <khali@linux-fr.org>
+Date:   Fri Jun 29 07:47:19 2012 -0300
 
-    APIs using devres frequently want to implement a "remove and free the
-    resource" operation so it seems sensible that they should be able to
-    just have devres do the freeing for them since that's a big part of what
-    devres is all about.
+    [media] i2c: Export an unlocked flavor of i2c_transfer
 
-    Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Some drivers (in particular for TV cards) need exclusive access to
+    their I2C buses for specific operations. Export an unlocked flavor
+    of i2c_transfer to give them full control.
+
+    The unlocked flavor has the following limitations:
+    * Obviously, caller must hold the i2c adapter lock.
+    * No debug messages are logged. We don't want to log messages while
+      holding a rt_mutex.
+    * No check is done on the existence of adap->algo->master_xfer. It
+      is thus the caller's responsibility to ensure that the function is
+      OK to call.
+
+    Signed-off-by: Jean Delvare <khali@linux-fr.org>
+    Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
 
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/compat/compat-3.5.c        |   34 ++++++++++++++++++++++++++++++++++
- backport/include/linux/compat-3.5.h |    6 ++++++
- 2 files changed, 40 insertions(+)
+ backport/compat/compat-3.6.c        |   34 ++++++++++++++++++++++++++++++++++
+ backport/include/linux/compat-3.6.h |    9 +++++++++
+ 2 files changed, 43 insertions(+)
 
-diff --git a/backport/compat/compat-3.5.c b/backport/compat/compat-3.5.c
-index d7f1c27..9cc8456 100644
---- a/backport/compat/compat-3.5.c
-+++ b/backport/compat/compat-3.5.c
-@@ -12,6 +12,40 @@
- #include <linux/highuid.h>
- #include <linux/ktime.h>
- 
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
-+#include <linux/device.h>
+diff --git a/backport/compat/compat-3.6.c b/backport/compat/compat-3.6.c
+index a50fc98..05954d4 100644
+--- a/backport/compat/compat-3.6.c
++++ b/backport/compat/compat-3.6.c
+@@ -13,6 +13,40 @@
+ #include <linux/export.h>
+ #include <linux/bug.h>
+ #include <linux/bitmap.h>
++#include <linux/i2c.h>
 +
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
 +/**
-+ * devres_release - Find a device resource and destroy it, calling release
-+ * @dev: Device to find resource from
-+ * @release: Look for resources associated with this release function
-+ * @match: Match function (optional)
-+ * @match_data: Data for the match function
++ * __i2c_transfer - unlocked flavor of i2c_transfer
++ * @adap: Handle to I2C bus
++ * @msgs: One or more messages to execute before STOP is issued to
++ *     terminate the operation; each message begins with a START.
++ * @num: Number of messages to be executed.
 + *
-+ * Find the latest devres of @dev associated with @release and for
-+ * which @match returns 1.  If @match is NULL, it's considered to
-+ * match all.  If found, the resource is removed atomically, the
-+ * release function called and the resource freed.
++ * Returns negative errno, else the number of messages executed.
 + *
-+ * RETURNS:
-+ * 0 if devres is found and freed, -ENOENT if not found.
++ * Adapter lock must be held when calling this function. No debug logging
++ * takes place. adap->algo->master_xfer existence isn't checked.
 + */
-+int devres_release(struct device *dev, dr_release_t release,
-+		   dr_match_t match, void *match_data)
++int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
 +{
-+	void *res;
++	unsigned long orig_jiffies;
++	int ret, try;
 +
-+	res = devres_remove(dev, release, match, match_data);
-+	if (unlikely(!res))
-+		return -ENOENT;
++	/* Retry automatically on arbitration loss */
++	orig_jiffies = jiffies;
++	for (ret = 0, try = 0; try <= adap->retries; try++) {
++		ret = adap->algo->master_xfer(adap, msgs, num);
++		if (ret != -EAGAIN)
++			break;
++		if (time_after(jiffies, orig_jiffies + adap->timeout))
++			break;
++	}
 +
-+	(*release)(dev, res);
-+	devres_free(res);
-+	return 0;
++	return ret;
 +}
-+EXPORT_SYMBOL_GPL(devres_release);
-+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)) */
-+
- /*
-  * Commit 7a4e7408c5cadb240e068a662251754a562355e3
-  * exported overflowuid and overflowgid for all
-diff --git a/backport/include/linux/compat-3.5.h b/backport/include/linux/compat-3.5.h
-index dbf8f00..1515a5b 100644
---- a/backport/include/linux/compat-3.5.h
-+++ b/backport/include/linux/compat-3.5.h
-@@ -10,6 +10,12 @@
++EXPORT_SYMBOL(__i2c_transfer);
++#endif
  
- #include <net/netlink.h>
+ /**
+  * memweight - count the total number of bits set in memory area
+diff --git a/backport/include/linux/compat-3.6.h b/backport/include/linux/compat-3.6.h
+index bef0503..8fddd31 100644
+--- a/backport/include/linux/compat-3.6.h
++++ b/backport/include/linux/compat-3.6.h
+@@ -7,6 +7,15 @@
+ 
+ #include <linux/scatterlist.h>
  
 +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
-+#define devres_release LINUX_BACKPORT(devres_release)
-+extern int devres_release(struct device *dev, dr_release_t release,
-+			  dr_match_t match, void *match_data);
++#include <linux/i2c.h>
++/* Unlocked flavor */
++#define __i2c_transfer LINUX_BACKPORT(__i2c_transfer)
++extern int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
++			  int num);
 +#endif
 +
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27))
- #include <linux/ratelimit.h>
- #define dev_level_ratelimited(dev_level, dev, fmt, ...)			\
++
+ #define memweight LINUX_BACKPORT(memweight)
+ extern size_t memweight(const void *ptr, size_t bytes);
+ 
 -- 
 1.7.10.4
 
