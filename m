@@ -1,55 +1,69 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:38790 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753346Ab3DVNeV (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 22 Apr 2013 09:34:21 -0400
-Date: Mon, 22 Apr 2013 14:11:01 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/7] backports: add support for voltage / current
- regulator drivers
-Message-ID: <20130422131101.GA17463@sirena.org.uk> (sfid-20130422_153423_614673_BB62AA16)
-References: <1365862424-6530-1-git-send-email-mcgrof@do-not-panic.com>
- <1365862424-6530-6-git-send-email-mcgrof@do-not-panic.com>
- <1365886878.1089.5.camel@jlt4.sipsolutions.net>
- <20130415162652.GK15837@opensource.wolfsonmicro.com>
- <1366043632.8361.33.camel@jlt4.sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1366043632.8361.33.camel@jlt4.sipsolutions.net>
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:56028 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161252Ab3DGCWa (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 6 Apr 2013 22:22:30 -0400
+Received: by mail-pa0-f43.google.com with SMTP id hz11so2675771pad.16
+        for <backports@vger.kernel.org>; Sat, 06 Apr 2013 19:22:30 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 6/9] compat: backport GPIOF_OPEN_DRAIN definition
+Date: Sat,  6 Apr 2013 19:21:59 -0700
+Message-Id: <1365301322-19327-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20130407_042232_359752_DF207B9B)
+In-Reply-To: <1365301322-19327-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1365301322-19327-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Apr 15, 2013 at 06:33:52PM +0200, Johannes Berg wrote:
-> On Mon, 2013-04-15 at 17:26 +0100, Mark Brown wrote:
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-> > Please let's at least discuss the issues here, I'm not sure what this is
-> > supposed to do but the analysis of the subsystem didn't seem complete.
+This functionality will just be ignored, later we'll
+just port the full gpiolib.
 
-> I wouldn't worry about it too much. For some reason (media drivers
-> related?) Luis decided that it was worth including this in the backports
-> project (see http://backports.wiki.kernel.org) and I am currently
-> maintaining the git tree for that, at least while I was doing some
-> refactoring.
+mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains  aca5ce14
+v3.4-rc1~65^2~20
 
-> I do notice that it doesn't quite work, there are a lot of unresolved
-> symbols :)
+commit aca5ce14eb773a75e5d935968b2e390dc5bd29c3
+Author: Laxman Dewangan <ldewangan@nvidia.com>
+Date:   Fri Feb 17 20:26:21 2012 +0530
 
-> If you think you'd be impacted by this because users demand support from
-> you for the backport or whatever I can revert this (or probably just
-> remove it from the copy list for now.) I don't really have an opinion on
-> it, I'm doing this because I'm interested in one specific wireless
-> driver.
+    gpio: gpiolib: Support for open drain/collector gpios
 
-Well, I'd much rather have a sane backport if we're going to have one -
-whatever problem is being solved here it seems likely that someone else
-will have the same need and if there's a general kernel project for this
-(which preusmably has some overlap with LTSI?) it seems bad to have one
-that people have to be warned away from using.
+    Adding support for the open drain gpio on which client
+    can specify the open drain property through GPIO flag
+    GPIOF_OPEN_DRAIN at the time of gpio request.
+    The open drain pins are normally pulled high and it
+    cannot be driven to output with value of 1 and so
+    when client request for setting the pin to HIGH, the
+    gpio will be set to input direction to make pin in tristate
+    and hence PULL-UP on pins will make the state to HIGH.
+    The open drain pin can be driven to LOW by setting output
+    with value of 0.
 
-Given how big the misunderstandings in the cover letter for Luis' patch
-were I'd be really concerned about seeing this going into anything
-officialish without some discussion about what's going on.
+    Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+    Reviwed-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+    Acked-by: Linus Walleij <linus.walleij@linaro.org>
+    Signed-off-by: Grant Likely <grant.likely@secretlab.ca>
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ backport/include/linux/compat-3.4.h |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/backport/include/linux/compat-3.4.h b/backport/include/linux/compat-3.4.h
+index 0636499..eb557d9 100644
+--- a/backport/include/linux/compat-3.4.h
++++ b/backport/include/linux/compat-3.4.h
+@@ -12,6 +12,7 @@
+ #endif
+ 
+ #define EPROBE_DEFER   517     /* Driver requests probe retry */
++#define GPIOF_OPEN_DRAIN       (1 << 2)
+ 
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
+ #include <linux/regmap.h>
+-- 
+1.7.10.4
+
