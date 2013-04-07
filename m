@@ -1,88 +1,95 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:33266 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751818Ab3DJLgm (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 07:36:42 -0400
-Received: by mail-pa0-f49.google.com with SMTP id kp14so265884pab.22
-        for <backports@vger.kernel.org>; Wed, 10 Apr 2013 04:36:42 -0700 (PDT)
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:40218 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161185Ab3DGCWN (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 6 Apr 2013 22:22:13 -0400
+Received: by mail-pa0-f42.google.com with SMTP id kq13so2656934pab.1
+        for <backports@vger.kernel.org>; Sat, 06 Apr 2013 19:22:12 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: johannes@sipsolutions.net
 Cc: backports@vger.kernel.org,
 	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 14/18] backports: add support for module compression
-Date: Wed, 10 Apr 2013 04:35:24 -0700
-Message-Id: <1365593728-5720-15-git-send-email-mcgrof@do-not-panic.com> (sfid-20130410_133644_459305_596DFDC7)
-In-Reply-To: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
+Subject: [PATCH 2/9] compat: backport dev_level_ratelimited()
+Date: Sat,  6 Apr 2013 19:21:55 -0700
+Message-Id: <1365301322-19327-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20130407_042215_529308_9299EB5D)
+In-Reply-To: <1365301322-19327-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1365301322-19327-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Some Linux distributions like to compress their modules.
-Add support to detect this in a modutils / modprobe agnostic
-way.
+mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains 6ca04593
+v3.5-rc1~147^2~7
+
+This is only enabled for kernels where ratelimit.h was added.
+
+commit 6ca045930338485a8cdef117e74372aa1678009d
+Author: Hiroshi DOYU <hdoyu@nvidia.com>
+Date:   Mon May 14 10:47:57 2012 +0300
+
+    driver core: Add dev_*_ratelimited() family
+
+    Add dev_*_ratelimited() family, dev_* version of pr_*_ratelimited().
+
+    Using Joe Perches's proposal/implementation.
+
+    Signed-off-by: Hiroshi DOYU <hdoyu@nvidia.com>
+    Cc: Joe Perches <joe@perches.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/Makefile.real               |    6 +++++-
- backport/scripts/are_mods_compressed |    8 ++++++++
- backport/scripts/mod_path            |    8 ++++++++
- 3 files changed, 21 insertions(+), 1 deletion(-)
- create mode 100755 backport/scripts/are_mods_compressed
- create mode 100755 backport/scripts/mod_path
+ backport/include/linux/compat-3.5.h |   36 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/backport/Makefile.real b/backport/Makefile.real
-index 032a8d7..250676d 100644
---- a/backport/Makefile.real
-+++ b/backport/Makefile.real
-@@ -88,13 +88,17 @@ install: modules
- 		INSTALL_MOD_DIR=$(KMODDIR) $(KMODPATH_ARG)		\
- 		modules_install
- 	@./scripts/blacklist.sh $(KLIB)/ $(KLIB)/$(KMODDIR)
-+	@./scripts/are_mods_compressed || (				\
-+        for driver in $$(find $(KLIB)/$(KMODDIR) 			\
-+			-type f -name *.ko); do        			\
-+			gzip -9 $$driver				;\
-+	done )
- 	@/sbin/depmod -ae
- 	@echo
- 	@echo Your backported driver modules should be installed now.
- 	@echo Try loading them with modprobe.
- 	@echo
- # FIXME:
--#	compress modules
- #	check depmod
- #	install/load/unload/... scripts?
- #	compat firmware class udev stuff
-diff --git a/backport/scripts/are_mods_compressed b/backport/scripts/are_mods_compressed
-new file mode 100755
-index 0000000..989da2f
---- /dev/null
-+++ b/backport/scripts/are_mods_compressed
-@@ -0,0 +1,8 @@
-+#!/bin/bash
-+MODULE=$(./scripts/mod_path mac80211)
-+MODULE=${MODULE##*/}
-+if [ "$MODULE" = "mac80211.ko.gz" ]; then
-+	COMPRESSION_FOUND="y"
-+	exit 1
-+fi
-+exit 0
-diff --git a/backport/scripts/mod_path b/backport/scripts/mod_path
-new file mode 100755
-index 0000000..f37321f
---- /dev/null
-+++ b/backport/scripts/mod_path
-@@ -0,0 +1,8 @@
-+#!/bin/bash
-+which modinfo > /dev/null 2>&1
-+if [[ $? -eq 0 ]]; then
-+	MOD_QUERY="modinfo -F filename"
-+else
-+	MOD_QUERY="modprobe -l"
-+fi
-+$MOD_QUERY $1 | tail -1
+diff --git a/backport/include/linux/compat-3.5.h b/backport/include/linux/compat-3.5.h
+index 57b06b0..7e1d9b3 100644
+--- a/backport/include/linux/compat-3.5.h
++++ b/backport/include/linux/compat-3.5.h
+@@ -10,6 +10,42 @@
+ 
+ #include <net/netlink.h>
+ 
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27))
++#include <linux/ratelimit.h>
++#define dev_level_ratelimited(dev_level, dev, fmt, ...)			\
++do {									\
++	static DEFINE_RATELIMIT_STATE(_rs,				\
++				      DEFAULT_RATELIMIT_INTERVAL,	\
++				      DEFAULT_RATELIMIT_BURST);		\
++	if (__ratelimit(&_rs))						\
++		dev_level(dev, fmt, ##__VA_ARGS__);			\
++} while (0)
++
++#define dev_emerg_ratelimited(dev, fmt, ...)				\
++	dev_level_ratelimited(dev_emerg, dev, fmt, ##__VA_ARGS__)
++#define dev_alert_ratelimited(dev, fmt, ...)				\
++	dev_level_ratelimited(dev_alert, dev, fmt, ##__VA_ARGS__)
++
++
++#if defined(CONFIG_DYNAMIC_DEBUG) || defined(DEBUG)
++#define dev_dbg_ratelimited(dev, fmt, ...)				\
++do {									\
++	static DEFINE_RATELIMIT_STATE(_rs,				\
++				      DEFAULT_RATELIMIT_INTERVAL,	\
++				      DEFAULT_RATELIMIT_BURST);		\
++	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);			\
++	if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT) &&	\
++	    __ratelimit(&_rs))						\
++		__dynamic_pr_debug(&descriptor, pr_fmt(fmt),		\
++				   ##__VA_ARGS__);			\
++} while (0)
++#else
++#define dev_dbg_ratelimited(dev, fmt, ...)			\
++	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
++#endif
++
++#endif
++
+ /*
+  * This backports:
+  * commit 569a8fc38367dfafd87454f27ac646c8e6b54bca
 -- 
 1.7.10.4
 
