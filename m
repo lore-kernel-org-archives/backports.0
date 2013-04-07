@@ -1,317 +1,97 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:41238 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161269Ab3DGCgQ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 6 Apr 2013 22:36:16 -0400
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:50849 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161302Ab3DGCWX (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 6 Apr 2013 22:22:23 -0400
+Received: by mail-pa0-f41.google.com with SMTP id kx1so2680543pab.28
+        for <backports@vger.kernel.org>; Sat, 06 Apr 2013 19:22:22 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org,
 	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 2/3] backports: add support for voltage / current regulator subsystem
-Date: Sat,  6 Apr 2013 19:35:37 -0700
-Message-Id: <1365302138-19736-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20130407_043651_633273_71495726)
-In-Reply-To: <1365302138-19736-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1365302138-19736-1-git-send-email-mcgrof@do-not-panic.com>
+Subject: [PATCH 4/9] compat: backport EPROBE_DEFER value
+Date: Sat,  6 Apr 2013 19:21:57 -0700
+Message-Id: <1365301322-19327-4-git-send-email-mcgrof@do-not-panic.com> (sfid-20130407_042226_160596_57FC64C3)
+In-Reply-To: <1365301322-19327-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1365301322-19327-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-This is enabled only for >= 3.2 and enables all regulator
-drivers. This is required by some media subsystem drivers.
+Grant added the ability to the driver core to return
+EPROBE_DEFER at device driver probe time and for that to
+trigger a later deferred probe through a workqueue. It
+seems we could in theory backport this functionality but
+that requires quite a bit of work. For now just pass on
+the EPROBE_DEFER definition safely and for older kernels
+than 3.4 the EPROBE_DEFER would be treated as a regular
+probe error.
+
+mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains d1c3414c
+v3.4-rc1~187^2~10
+
+commit d1c3414c2a9d10ef7f0f7665f5d2947cd088c093
+Author: Grant Likely <grant.likely@secretlab.ca>
+Date:   Mon Mar 5 08:47:41 2012 -0700
+
+    drivercore: Add driver probe deferral mechanism
+
+    Allow drivers to report at probe time that they cannot get all the resources
+    required by the device, and should be retried at a later time.
+
+    This should completely solve the problem of getting devices
+    initialized in the right order.  Right now this is mostly handled by
+    mucking about with initcall ordering which is a complete hack, and
+    doesn't even remotely handle the case where device drivers are in
+    modules.  This approach completely sidesteps the issues by allowing
+    driver registration to occur in any order, and any driver can request
+    to be retried after a few more other drivers get probed.
+
+    v4: - Integrate Manjunath's addition of a separate workqueue
+        - Change -EAGAIN to -EPROBE_DEFER for drivers to trigger deferral
+        - Update comment blocks to reflect how the code really works
+    v3: - Hold off workqueue scheduling until late_initcall so that the bulk
+          of driver probes are complete before we start retrying deferred devices.
+        - Tested with simple use cases.  Still needs more testing though.
+          Using it to get rid of the gpio early_initcall madness, or to replace
+          the ASoC internal probe deferral code would be ideal.
+    v2: - added locking so it should no longer be utterly broken in that regard
+        - remove device from deferred list at device_del time.
+        - Still completely untested with any real use case, but has been
+          boot tested.
+
+    Signed-off-by: Grant Likely <grant.likely@secretlab.ca>
+    Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+    Cc: Arnd Bergmann <arnd@arndb.de>
+    Cc: Dilan Lee <dilee@nvidia.com>
+    Cc: Manjunath GKondaiah <manjunath.gkondaiah@linaro.org>
+    Cc: Alan Stern <stern@rowland.harvard.edu>
+    Cc: Tony Lindgren <tony@atomide.com>
+    Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
+    Reviewed-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+    Acked-by: David Daney <david.daney@cavium.com>
+    Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/Makefile.kernel                           |    1 +
- backport/compat/Kconfig                            |   18 +++++
- backport/compat/main.c                             |    5 ++
- backport/defconfigs/regulator                      |   63 +++++++++++++++++
- backport/include/linux/compat-3.3.h                |    8 +++
- copy-list                                          |   27 +++++++
- dependencies                                       |    3 +
- .../regulator/0001-disable-ftrace.patch            |   74 ++++++++++++++++++++
- 8 files changed, 199 insertions(+)
- create mode 100644 backport/defconfigs/regulator
- create mode 100644 patches/collateral-evolutions/regulator/0001-disable-ftrace.patch
+ backport/include/linux/compat-3.4.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
-index 8aa3e4a..3b2c1a4 100644
---- a/backport/Makefile.kernel
-+++ b/backport/Makefile.kernel
-@@ -23,3 +23,4 @@ obj-$(CPTCFG_SSB) += drivers/ssb/
- obj-$(CPTCFG_BCMA) += drivers/bcma/
- obj-$(CPTCFG_ETHERNET) += drivers/net/ethernet/
- obj-$(CPTCFG_DRM) += drivers/gpu/drm/
-+obj-$(CPTCFG_REGULATOR) += drivers/regulator/
-diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
-index df58dcc..6ed7c71 100644
---- a/backport/compat/Kconfig
-+++ b/backport/compat/Kconfig
-@@ -156,6 +156,24 @@ config BACKPORT_BUILD_HDMI
- config BACKPORT_HDMI
- 	bool
+diff --git a/backport/include/linux/compat-3.4.h b/backport/include/linux/compat-3.4.h
+index 01a72b7..2a53cef 100644
+--- a/backport/include/linux/compat-3.4.h
++++ b/backport/include/linux/compat-3.4.h
+@@ -11,6 +11,8 @@
+ #include <linux/kconfig.h>
+ #endif
  
-+config BACKPORT_BUILD_REGULATOR
-+	bool
-+	# not possible on kernel < 3.2
-+	depends on !BACKPORT_KERNEL_3_2
-+	# don't build if base kernel has it, except on kernel < 3.9
-+	depends on !HDMI || BACKPORT_KERNEL_3_9
-+	# build for testing
-+	default y if BACKPORT_USERSEL_BUILD_ALL
-+	# build if a driver needs it
-+	default y if BACKPORT_REGULATOR
-+	#c-file drivers/regulator/core.c
-+	#c-file drivers/regulator/dummy.c
-+	#c-file drivers/regulator/fixed-helper.c
-+	#h-file linux/regulator/consumer.h
-+
-+config BACKPORT_REGULATOR
-+	bool
-+
- config BACKPORT_USERSEL_BUILD_ALL
- 	bool "Build all compat code"
- 	help
-diff --git a/backport/compat/main.c b/backport/compat/main.c
-index 6f1bfb7..9c5e5a6 100644
---- a/backport/compat/main.c
-+++ b/backport/compat/main.c
-@@ -38,6 +38,8 @@ void backport_dependency_symbol(void)
- }
- EXPORT_SYMBOL_GPL(backport_dependency_symbol);
- 
-+backport_init_sym(regulator_init);
-+backport_init_sym(regulator_init_complete);
- 
- static int __init backport_init(void)
- {
-@@ -45,6 +47,9 @@ static int __init backport_init(void)
- 	backport_system_workqueue_create();
- 	backport_init_mmc_pm_flags();
- 
-+	backport_init_call(regulator_init);
-+	backport_init_call(regulator_init_complete);
-+
- 	printk(KERN_INFO "Loading modules backported from " BACKPORTED_KERNEL_NAME " version " BACKPORTED_KERNEL_VERSION "\n");
- 	printk(KERN_INFO "Backport generated by backports.git " BACKPORTS_VERSION "\n");
- 
-diff --git a/backport/defconfigs/regulator b/backport/defconfigs/regulator
-new file mode 100644
-index 0000000..c080747
---- /dev/null
-+++ b/backport/defconfigs/regulator
-@@ -0,0 +1,63 @@
-+CPTCFG_REGULATOR=y
-+CPTCFG_REGULATOR_88PM8607=y
-+CPTCFG_REGULATOR_AAT2870=y
-+CPTCFG_REGULATOR_AB3100=y
-+CPTCFG_REGULATOR_AB8500=y
-+CPTCFG_REGULATOR_AD5398=y
-+CPTCFG_REGULATOR_ANATOP=y
-+CPTCFG_REGULATOR_ARIZONA=y
-+CPTCFG_REGULATOR_AS3711=y
-+CPTCFG_REGULATOR_DA903X=y
-+CPTCFG_REGULATOR_DA9052=y
-+CPTCFG_REGULATOR_DA9055=y
-+CPTCFG_REGULATOR_DB8500_PRCMU=y
-+CPTCFG_REGULATOR_DBX500_PRCMU=y
-+CPTCFG_REGULATOR_DEBUG=y
-+CPTCFG_REGULATOR_FAN53555=y
-+CPTCFG_REGULATOR_FIXED_VOLTAGE=y
-+CPTCFG_REGULATOR_GPIO=y
-+CPTCFG_REGULATOR_ISL6271A=y
-+CPTCFG_REGULATOR_LP3971=y
-+CPTCFG_REGULATOR_LP3972=y
-+CPTCFG_REGULATOR_LP872X=y
-+CPTCFG_REGULATOR_LP8755=y
-+CPTCFG_REGULATOR_LP8788=y
-+CPTCFG_REGULATOR_MAX1586=y
-+CPTCFG_REGULATOR_MAX77686=y
-+CPTCFG_REGULATOR_MAX8649=y
-+CPTCFG_REGULATOR_MAX8660=y
-+CPTCFG_REGULATOR_MAX8907=y
-+CPTCFG_REGULATOR_MAX8925=y
-+CPTCFG_REGULATOR_MAX8952=y
-+CPTCFG_REGULATOR_MAX8973=y
-+CPTCFG_REGULATOR_MAX8997=y
-+CPTCFG_REGULATOR_MAX8998=y
-+CPTCFG_REGULATOR_MC13783=y
-+CPTCFG_REGULATOR_MC13892=y
-+CPTCFG_REGULATOR_MC13XXX_CORE=y
-+CPTCFG_REGULATOR_PALMAS=y
-+CPTCFG_REGULATOR_PCAP=y
-+CPTCFG_REGULATOR_PCF50633=y
-+CPTCFG_REGULATOR_RC5T583=y
-+CPTCFG_REGULATOR_S2MPS11=y
-+CPTCFG_REGULATOR_S5M8767=y
-+CPTCFG_REGULATOR_TPS51632=y
-+CPTCFG_REGULATOR_TPS6105X=y
-+CPTCFG_REGULATOR_TPS62360=y
-+CPTCFG_REGULATOR_TPS65023=y
-+CPTCFG_REGULATOR_TPS6507X=y
-+CPTCFG_REGULATOR_TPS65090=y
-+CPTCFG_REGULATOR_TPS65217=y
-+CPTCFG_REGULATOR_TPS6524X=y
-+CPTCFG_REGULATOR_TPS6586X=y
-+CPTCFG_REGULATOR_TPS65910=y
-+CPTCFG_REGULATOR_TPS65912=y
-+CPTCFG_REGULATOR_TPS80031=y
-+CPTCFG_REGULATOR_TWL4030=y
-+CPTCFG_REGULATOR_USERSPACE_CONSUMER=y
-+CPTCFG_REGULATOR_VEXPRESS=y
-+CPTCFG_REGULATOR_VIRTUAL_CONSUMER=y
-+CPTCFG_REGULATOR_WM831X=y
-+CPTCFG_REGULATOR_WM8350=y
-+CPTCFG_REGULATOR_WM8400=y
-+CPTCFG_REGULATOR_WM8994=y
-diff --git a/backport/include/linux/compat-3.3.h b/backport/include/linux/compat-3.3.h
-index 2af4a52..e09ba91 100644
---- a/backport/include/linux/compat-3.3.h
-+++ b/backport/include/linux/compat-3.3.h
-@@ -14,6 +14,14 @@
- #include <linux/mii.h>
- #include <linux/netdevice.h>
- 
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
-+/*
-+ * In order to get help the regulatory core.c that gets
-+ * pulled into the compat module get it without any changes
-+ */
-+#include <linux/async.h>
-+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)) */
++#define EPROBE_DEFER   517     /* Driver requests probe retry */
 +
  /*
-  * BQL was added as of v3.3 but some Linux distributions
-  * have backported BQL to their v3.2 kernels or older. To
-diff --git a/copy-list b/copy-list
-index 8c1fb61..7ca33b0 100644
---- a/copy-list
-+++ b/copy-list
-@@ -121,3 +121,30 @@ include/uapi/drm/
- drivers/platform/x86/intel_ips.h
- 
- drivers/gpu/drm/
-+
-+# Regulator
-+# we don't include the whole directory as we need
-+# to do hackery with linux/regulator/consumer.h
-+include/linux/regulator/ab8500.h
-+include/linux/regulator/db8500-prcmu.h
-+include/linux/regulator/driver.h
-+include/linux/regulator/fan53555.h
-+include/linux/regulator/fixed.h
-+include/linux/regulator/gpio-regulator.h
-+include/linux/regulator/lp3971.h
-+include/linux/regulator/lp3972.h
-+include/linux/regulator/lp872x.h
-+include/linux/regulator/machine.h
-+include/linux/regulator/max1586.h
-+include/linux/regulator/max8649.h
-+include/linux/regulator/max8660.h
-+include/linux/regulator/max8952.h
-+include/linux/regulator/max8973-regulator.h
-+include/linux/regulator/of_regulator.h
-+include/linux/regulator/tps51632-regulator.h
-+include/linux/regulator/tps62360.h
-+include/linux/regulator/tps6507x.h
-+include/linux/regulator/userspace-consumer.h
-+
-+drivers/regulator/dummy.h -> compat/dummy.h
-+drivers/regulator/
-diff --git a/dependencies b/dependencies
-index d001a38..6821c5a 100644
---- a/dependencies
-+++ b/dependencies
-@@ -46,6 +46,9 @@ HDMI 3.2
- DRM 3.2
- DRM_TTM 3.2
- 
-+# Regulator
-+REGULATOR 3.2
-+
- # This requires proc_create(), and that doesn't exist before 2.6.24
- LIBIPW_DEBUG 2.6.25
- 
-diff --git a/patches/collateral-evolutions/regulator/0001-disable-ftrace.patch b/patches/collateral-evolutions/regulator/0001-disable-ftrace.patch
-new file mode 100644
-index 0000000..e32694c
---- /dev/null
-+++ b/patches/collateral-evolutions/regulator/0001-disable-ftrace.patch
-@@ -0,0 +1,74 @@
-+--- a/compat/core.c
-++++ b/compat/core.c
-+@@ -32,9 +32,6 @@
-+ #include <linux/regulator/machine.h>
-+ #include <linux/module.h>
-+ 
-+-#define CREATE_TRACE_POINTS
-+-#include <trace/events/regulator.h>
-+-
-+ #include "dummy.h"
-+ 
-+ #define rdev_crit(rdev, fmt, ...)					\
-+@@ -1578,8 +1575,6 @@ static int _regulator_do_enable(struct r
-+ 		delay = 0;
-+ 	}
-+ 
-+-	trace_regulator_enable(rdev_get_name(rdev));
-+-
-+ 	if (rdev->ena_pin) {
-+ 		ret = regulator_ena_gpio_ctrl(rdev, true);
-+ 		if (ret < 0)
-+@@ -1596,7 +1591,6 @@ static int _regulator_do_enable(struct r
-+ 	/* Allow the regulator to ramp; it would be useful to extend
-+ 	 * this for bulk operations so that the regulators can ramp
-+ 	 * together.  */
-+-	trace_regulator_enable_delay(rdev_get_name(rdev));
-+ 
-+ 	if (delay >= 1000) {
-+ 		mdelay(delay / 1000);
-+@@ -1605,8 +1599,6 @@ static int _regulator_do_enable(struct r
-+ 		udelay(delay);
-+ 	}
-+ 
-+-	trace_regulator_enable_complete(rdev_get_name(rdev));
-+-
-+ 	return 0;
-+ }
-+ 
-+@@ -1683,8 +1675,6 @@ static int _regulator_do_disable(struct
-+ {
-+ 	int ret;
-+ 
-+-	trace_regulator_disable(rdev_get_name(rdev));
-+-
-+ 	if (rdev->ena_pin) {
-+ 		ret = regulator_ena_gpio_ctrl(rdev, false);
-+ 		if (ret < 0)
-+@@ -1697,8 +1687,6 @@ static int _regulator_do_disable(struct
-+ 			return ret;
-+ 	}
-+ 
-+-	trace_regulator_disable_complete(rdev_get_name(rdev));
-+-
-+ 	_notifier_call_chain(rdev, REGULATOR_EVENT_DISABLE,
-+ 			     NULL);
-+ 	return 0;
-+@@ -2319,8 +2307,6 @@ static int _regulator_do_set_voltage(str
-+ 	unsigned int selector;
-+ 	int old_selector = -1;
-+ 
-+-	trace_regulator_set_voltage(rdev_get_name(rdev), min_uV, max_uV);
-+-
-+ 	min_uV += rdev->constraints->uV_offset;
-+ 	max_uV += rdev->constraints->uV_offset;
-+ 
-+@@ -2407,8 +2393,6 @@ static int _regulator_do_set_voltage(str
-+ 				     (void *)data);
-+ 	}
-+ 
-+-	trace_regulator_set_voltage_complete(rdev_get_name(rdev), best_val);
-+-
-+ 	return ret;
-+ }
-+ 
+  * defined here to allow things to compile but technically
+  * using this for memory regions will yield in a no-op on newer
 -- 
 1.7.10.4
 
