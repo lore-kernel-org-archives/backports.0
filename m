@@ -1,39 +1,64 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:53979 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S936007Ab3DHU0v (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 8 Apr 2013 16:26:51 -0400
-Message-ID: <1365452804.25475.25.camel@jlt4.sipsolutions.net> (sfid-20130408_222655_029181_244811AF)
-Subject: Re: [PATCH v3 0/8] backports: add NFC subsystem
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Cc: Thierry Escande <thierry.escande@linux.intel.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Mon, 08 Apr 2013 22:26:44 +0200
-In-Reply-To: <CAB=NE6X_gaL99LLsB-FqDwShqZ08CCFR+4KjNuremdefO_O0Ug@mail.gmail.com> (sfid-20130408_212844_658236_AFD91CE7)
-References: <1365416773-12836-1-git-send-email-thierry.escande@linux.intel.com>
-	 <CAB=NE6X_gaL99LLsB-FqDwShqZ08CCFR+4KjNuremdefO_O0Ug@mail.gmail.com>
-	 (sfid-20130408_212844_658236_AFD91CE7)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:65154 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161269Ab3DGCgK (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 6 Apr 2013 22:36:10 -0400
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 1/3] compat: redefine core_initcall() and late_initcall()
+Date: Sat,  6 Apr 2013 19:35:36 -0700
+Message-Id: <1365302138-19736-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20130407_043656_400134_CE282037)
+In-Reply-To: <1365302138-19736-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1365302138-19736-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 2013-04-08 at 12:28 -0700, Luis R. Rodriguez wrote:
-> On Mon, Apr 8, 2013 at 3:26 AM, Thierry Escande
-> <thierry.escande@linux.intel.com> wrote:
-> > This adds support for NFC core and drivers backport down to v3.1. Prior kernel
-> > versions won't support it as is since PF_NFC net proto as been introduced in
-> > v3.1 and sock_register kernel api in prior kernels will fail for PF_NFC.
-> >
-> > $ckmake --defconfig nfc
-> 
-> I think using this makes sense for testing *your* development work but
-> for integration upstream I'd prefer to see a full ckmake test. We can
-> get you access to the build box to help with this, or Johannes can
-> also run it prior to integration.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-I ran it, works & pushed.
+It is questionable if we'd want to backport calls declared
+through late_initcall() or core_initcall() on the kernel
+but if this ends up being desired the current of copying
+kernel code requires either patching or redefining these
+symbols to make them build.
 
-johannes
+To avoid having to maintain patches for these components
+and having to delcare these routines on header files through
+compat manually use these init macros to help us define
+symbols we *can* use on the compat module init.
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ backport/include/linux/compat-2.6.h |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/backport/include/linux/compat-2.6.h b/backport/include/linux/compat-2.6.h
+index 57a1c13..109afd4 100644
+--- a/backport/include/linux/compat-2.6.h
++++ b/backport/include/linux/compat-2.6.h
+@@ -18,6 +18,21 @@
+ #include <linux/init.h>
+ #include <linux/uidgid.h>
+ 
++#define backport_init_sym(fn) extern void backport_##fn(void);
++#define backport_init_call(fn) backport_##fn()
++
++#define backport_initcall(fn)			\
++	void backport_##fn(void)		\
++	{					\
++		fn();				\
++	}
++
++#undef core_initcall
++#undef late_initcall
++
++#define core_initcall	backport_initcall
++#define late_initcall	backport_initcall
++
+ /*
+  * The define overwriting module_init is based on the original module_init
+  * which looks like this:
+-- 
+1.7.10.4
 
