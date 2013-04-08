@@ -1,65 +1,61 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ie0-f179.google.com ([209.85.223.179]:53957 "EHLO
-	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751746Ab3DJJUh (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 05:20:37 -0400
+Received: from mail-la0-f42.google.com ([209.85.215.42]:49694 "EHLO
+	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935727Ab3DHThg (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 8 Apr 2013 15:37:36 -0400
+Received: by mail-la0-f42.google.com with SMTP id fe20so5771429lab.1
+        for <backports@vger.kernel.org>; Mon, 08 Apr 2013 12:37:34 -0700 (PDT)
 MIME-Version: 1.0
-Date: Wed, 10 Apr 2013 11:20:37 +0200
-Message-ID: <CAFSJ42ZZH7Y+MPUURG_hQRuwhv8UKkF5sQQebsTjhH0uT07rjA@mail.gmail.com> (sfid-20130410_112040_717780_B0C9C65C)
-Subject: include/linux/device.h:715:38: error: 'THIS_MODULE' undeclared
-From: Eugene Krasnikov <k.eugene.e@gmail.com>
-To: backports@vger.kernel.org,
-	linux-wireless <linux-wireless@vger.kernel.org>
-Content-Type: text/plain; charset=ISO-8859-1
+In-Reply-To: <1365449679.25475.18.camel@jlt4.sipsolutions.net>
+References: <1365416773-12836-9-git-send-email-thierry.escande@linux.intel.com>
+ <CAB=NE6WWA4r+FyqR484ZJJm_usrCRDOjzMut-6JawNXJXUNmvw@mail.gmail.com> <1365449679.25475.18.camel@jlt4.sipsolutions.net>
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+Date: Mon, 8 Apr 2013 12:37:14 -0700
+Message-ID: <CAB=NE6X6+M2-eUeqTv-PAJDQ_VaLwUv3n94J1YTR+4CK7YYdaw@mail.gmail.com> (sfid-20130408_213755_447659_DE3B98ED)
+Subject: Re: [PATCH v3 8/8] build: add NFC defconfig file
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Thierry Escande <thierry.escande@linux.intel.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi All,
+On Mon, Apr 8, 2013 at 12:34 PM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> On Mon, 2013-04-08 at 12:31 -0700, Luis R. Rodriguez wrote:
+>> On Mon, Apr 8, 2013 at 3:26 AM, Thierry Escande
+>> <thierry.escande@linux.intel.com> wrote:
+>> > Signed-off-by: Thierry Escande <thierry.escande@linux.intel.com>
+>> > ---
+>> >  backport/defconfigs/nfc |   11 +++++++++++
+>> >  1 file changed, 11 insertions(+)
+>> >  create mode 100644 backport/defconfigs/nfc
+>> >
+>> > diff --git a/backport/defconfigs/nfc b/backport/defconfigs/nfc
+>> > new file mode 100644
+>> > index 0000000..999127f
+>> > --- /dev/null
+>> > +++ b/backport/defconfigs/nfc
+>> > @@ -0,0 +1,11 @@
+>> > +CPTCFG_NFC=m
+>> > +CPTCFG_NFC_NCI=m
+>> > +CPTCFG_NFC_HCI=m
+>> > +CPTCFG_NFC_SHDLC=y
+>> > +CPTCFG_NFC_LLCP=y
+>> > +CPTCFG_NFC_PN533=m
+>> > +CPTCFG_NFC_WILINK=m
+>> > +CPTCFG_NFC_PN544=m
+>> > +CPTCFG_NFC_PN544_I2C=m
+>> > +CPTCFG_NFC_MICROREAD=m
+>> > +CPTCFG_NFC_MICROREAD_I2C=m
+>>
+>> Johannes, do we want to be disabling the other subsystems in these ?
+>
+> Well anything not listed will have the default values, so that should be
+> OK, right? Most things should be default off.
 
-I have tried to build latest compat-drivers for android/cyanogenmod
-kernel version 3.0.60 but it fails with the following error:
+OK so the default would be -- "if you have it on your kernel then
+we'll enable at build time", is that right? I wasn't clear on this,
+that's all.
 
-/cyanogenmod/kernel/sony/msm8x60/include/linux/device.h: In function
-'root_device_register':
-/cyanogenmod/kernel/sony/msm8x60/include/linux/device.h:715:38: error:
-'THIS_MODULE' undeclared (first use in this function)
-
-Command line that is used to build compat-drivers is:
-
-make KLIB=/cyanogenmod/out/target/product/mint/obj/KERNEL_OBJ
-KLIB_BUILD=/cyanogenmod/out/target/product/mint/obj/KERNEL_OBJ
-ARCH=arm CROSS_COMPILE=/cyanogenmod/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin/arm-eabi-
-
-Did anybody meet such an error?
-Patch bellow was used as a workaround to this error, but i would like
-to find a proper solution.
-
->From c059e8b803550c7b76cc102d6c1fb1d8a0fa6fa9 Mon Sep 17 00:00:00 2001
-From: Eugene Krasnikov <k.eugene.e@gmail.com>
-Date: Tue, 9 Apr 2013 18:28:38 +0200
-Subject: [PATCH] Use export.h from CM location
-
-Signed-off-by: Eugene Krasnikov <k.eugene.e@gmail.com>
----
- include/linux/compat-2.6.h |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/include/linux/compat-2.6.h b/include/linux/compat-2.6.h
-index 1e9effb..47f7434 100644
---- a/include/linux/compat-2.6.h
-+++ b/include/linux/compat-2.6.h
-@@ -43,6 +43,7 @@ void backport_dependency_symbol(void);
-  * Each compat file represents compatibility code for new kernel
-  * code introduced for *that* kernel revision.
-  */
-+#include </cyanogenmod/kernel/sony/msm8x60/include/linux/export.h>
-
- #include <linux/compat-2.6.22.h>
- #include <linux/compat-2.6.23.h>
---
-1.7.10
-
-
---
-Best regards,
-Eugene
+  Luis
