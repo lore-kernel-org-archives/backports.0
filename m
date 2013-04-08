@@ -1,34 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:44297 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752955Ab3DMX56 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 19:57:58 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.0:DHE_RSA_CAMELLIA_256_CBC_SHA1:256)
-	(Exim 4.80)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1URAKT-000454-3j
-	for backports@vger.kernel.org; Sun, 14 Apr 2013 01:57:57 +0200
-Message-ID: <1365897475.1089.8.camel@jlt4.sipsolutions.net> (sfid-20130414_015828_709395_7AFBA399)
-Subject: Re: [RFC/RFT 00/42] explode header files
-From: Johannes Berg <johannes@sipsolutions.net>
+Received: from mga09.intel.com ([134.134.136.24]:50018 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S936717Ab3DHK0g (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 8 Apr 2013 06:26:36 -0400
+From: Thierry Escande <thierry.escande@linux.intel.com>
 To: backports@vger.kernel.org
-Date: Sun, 14 Apr 2013 01:57:55 +0200
-In-Reply-To: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net> (sfid-20130414_015412_493914_07CF2B64)
-References: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net>
-	 (sfid-20130414_015412_493914_07CF2B64)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Subject: [PATCH v3 7/8] build: enable NFC build
+Date: Mon,  8 Apr 2013 12:26:12 +0200
+Message-Id: <1365416773-12836-8-git-send-email-thierry.escande@linux.intel.com> (sfid-20130408_122640_345407_D511D9A6)
+Content-Type: text/plain; charset = "utf-8"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The full diffstat is too long really, but the summary is this:
+Signed-off-by: Thierry Escande <thierry.escande@linux.intel.com>
+---
+ backport/Kconfig         |    2 ++
+ backport/Makefile.kernel |    2 ++
+ dependencies             |    4 ++++
+ 3 files changed, 8 insertions(+)
 
-271 files changed, 6298 insertions(+), 9005 deletions(-)
-
-Obviously the deletions are due to the pr_fmt patches getting killed.
-
-This is also in my test branch:
-http://git.sipsolutions.net/?p=backports.git;a=shortlog;h=refs/heads/test
-
-johannes
+diff --git a/backport/Kconfig b/backport/Kconfig
+index 8a38d61..6ab0991 100644
+--- a/backport/Kconfig
++++ b/backport/Kconfig
+@@ -36,3 +36,5 @@ source drivers/ssb/Kconfig
+ source drivers/bcma/Kconfig
+ 
+ source drivers/gpu/drm/Kconfig
++
++source net/nfc/Kconfig
+diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
+index 8aa3e4a..4d00bda 100644
+--- a/backport/Makefile.kernel
++++ b/backport/Makefile.kernel
+@@ -23,3 +23,5 @@ obj-$(CPTCFG_SSB) += drivers/ssb/
+ obj-$(CPTCFG_BCMA) += drivers/bcma/
+ obj-$(CPTCFG_ETHERNET) += drivers/net/ethernet/
+ obj-$(CPTCFG_DRM) += drivers/gpu/drm/
++obj-$(CPTCFG_NFC) += net/nfc/
++obj-$(CPTCFG_NFC) += drivers/nfc/
+diff --git a/dependencies b/dependencies
+index 7c79449..e9aaa2e 100644
+--- a/dependencies
++++ b/dependencies
+@@ -83,3 +83,7 @@ BRCMDBG 2.6.30
+ # backport it, but I can't test that and this is a
+ # lot easier right now.
+ BT_HIDP 2.6.33
++
++# NFC core needs PF_NFC defined in socket.h which was
++# only introduced in kernel 3.1
++NFC 3.1
+-- 
+1.7.10.4
 
