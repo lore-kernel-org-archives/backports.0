@@ -1,98 +1,34 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:37208 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751001Ab3DKXnI (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 11 Apr 2013 19:43:08 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [RFC/WIP 12/24] backports: move module_driver()
-Date: Fri, 12 Apr 2013 01:42:39 +0200
-Message-Id: <1365723771-10660-13-git-send-email-johannes@sipsolutions.net> (sfid-20130412_014341_164022_B9296D29)
-In-Reply-To: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
-References: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:38464 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935713Ab3DHT2a (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 8 Apr 2013 15:28:30 -0400
+Received: by mail-lb0-f171.google.com with SMTP id v10so6130831lbd.16
+        for <backports@vger.kernel.org>; Mon, 08 Apr 2013 12:28:28 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1365416773-12836-1-git-send-email-thierry.escande@linux.intel.com>
+References: <1365416773-12836-1-git-send-email-thierry.escande@linux.intel.com>
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+Date: Mon, 8 Apr 2013 12:28:08 -0700
+Message-ID: <CAB=NE6X_gaL99LLsB-FqDwShqZ08CCFR+4KjNuremdefO_O0Ug@mail.gmail.com> (sfid-20130408_212844_658236_AFD91CE7)
+Subject: Re: [PATCH v3 0/8] backports: add NFC subsystem
+To: Thierry Escande <thierry.escande@linux.intel.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Mon, Apr 8, 2013 at 3:26 AM, Thierry Escande
+<thierry.escande@linux.intel.com> wrote:
+> This adds support for NFC core and drivers backport down to v3.1. Prior kernel
+> versions won't support it as is since PF_NFC net proto as been introduced in
+> v3.1 and sock_register kernel api in prior kernels will fail for PF_NFC.
+>
+> $ckmake --defconfig nfc
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/linux/compat-3.3.h | 22 --------------------
- backport/backport-include/linux/device.h     | 31 ++++++++++++++++++++++++++++
- 2 files changed, 31 insertions(+), 22 deletions(-)
- create mode 100644 backport/backport-include/linux/device.h
+I think using this makes sense for testing *your* development work but
+for integration upstream I'd prefer to see a full ckmake test. We can
+get you access to the build box to help with this, or Johannes can
+also run it prior to integration.
 
-diff --git a/backport/backport-include/linux/compat-3.3.h b/backport/backport-include/linux/compat-3.3.h
-index 7b2ec47..eded1bb 100644
---- a/backport/backport-include/linux/compat-3.3.h
-+++ b/backport/backport-include/linux/compat-3.3.h
-@@ -307,28 +307,6 @@ static inline void qdisc_cb_private_validate(const struct sk_buff *skb, int sz)
- 
- #define NL80211_FEATURE_SK_TX_STATUS 0
- 
--/* source include/linux/device.h */
--/**
-- * module_driver() - Helper macro for drivers that don't do anything
-- * special in module init/exit. This eliminates a lot of boilerplate.
-- * Each module may only use this macro once, and calling it replaces
-- * module_init() and module_exit().
-- *
-- * Use this macro to construct bus specific macros for registering
-- * drivers, and do not use it on its own.
-- */
--#define module_driver(__driver, __register, __unregister) \
--static int __init __driver##_init(void) \
--{ \
--	return __register(&(__driver)); \
--} \
--module_init(__driver##_init); \
--static void __exit __driver##_exit(void) \
--{ \
--	__unregister(&(__driver)); \
--} \
--module_exit(__driver##_exit);
--
- /* source include/linux/usb.h */
- /**
-  * module_usb_driver() - Helper macro for registering a USB driver
-diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
-new file mode 100644
-index 0000000..b46731a
---- /dev/null
-+++ b/backport/backport-include/linux/device.h
-@@ -0,0 +1,31 @@
-+#ifndef __BACKPORT_DEVICE_H
-+#define __BACKPORT_DEVICE_H
-+#include <linux/export.h>
-+#include_next <linux/device.h>
-+
-+#include <linux/version.h>
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
-+/**
-+ * module_driver() - Helper macro for drivers that don't do anything
-+ * special in module init/exit. This eliminates a lot of boilerplate.
-+ * Each module may only use this macro once, and calling it replaces
-+ * module_init() and module_exit().
-+ *
-+ * Use this macro to construct bus specific macros for registering
-+ * drivers, and do not use it on its own.
-+ */
-+#define module_driver(__driver, __register, __unregister) \
-+static int __init __driver##_init(void) \
-+{ \
-+	return __register(&(__driver)); \
-+} \
-+module_init(__driver##_init); \
-+static void __exit __driver##_exit(void) \
-+{ \
-+	__unregister(&(__driver)); \
-+} \
-+module_exit(__driver##_exit);
-+#endif
-+
-+#endif /* __BACKPORT_DEVICE_H */
--- 
-1.8.0
-
+  Luis
