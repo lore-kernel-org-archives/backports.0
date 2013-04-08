@@ -1,13 +1,13 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:10788 "EHLO mga02.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:29172 "EHLO mga02.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1162638Ab3DEVUv (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 5 Apr 2013 17:20:51 -0400
+	id S936643Ab3DHK0e (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 8 Apr 2013 06:26:34 -0400
 From: Thierry Escande <thierry.escande@linux.intel.com>
 To: backports@vger.kernel.org
 Subject: [PATCH v3 5/8] backports: add NFC core and drivers
-Date: Fri,  5 Apr 2013 23:20:39 +0200
-Message-Id: <1365196842-12992-5-git-send-email-thierry.escande@linux.intel.com> (sfid-20130405_232055_726516_4AE4C9DE)
+Date: Mon,  8 Apr 2013 12:26:10 +0200
+Message-Id: <1365416773-12836-6-git-send-email-thierry.escande@linux.intel.com> (sfid-20130408_122644_107327_7FFCBAE7)
 Content-Type: text/plain; charset = "utf-8"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
@@ -20,13 +20,13 @@ Signed-off-by: Thierry Escande <thierry.escande@linux.intel.com>
  1 file changed, 14 insertions(+)
 
 diff --git a/copy-list b/copy-list
-index 820e17a..20cc02a 100644
+index 8c1fb61..e8b1241 100644
 --- a/copy-list
 +++ b/copy-list
-@@ -134,3 +134,17 @@ drivers/gpu/drm/radeon/
- drivers/gpu/drm/ttm/
- drivers/gpu/drm/via/
- drivers/gpu/drm/vmwgfx/
+@@ -121,3 +121,17 @@ include/uapi/drm/
+ drivers/platform/x86/intel_ips.h
+ 
+ drivers/gpu/drm/
 +
 +# NFC core
 +net/nfc/
