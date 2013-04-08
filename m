@@ -1,37 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:60101 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935833Ab3DJNke (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 09:40:34 -0400
-Message-ID: <1365601223.4235.13.camel@jlt4.sipsolutions.net> (sfid-20130410_154044_872232_72BBC4FA)
-Subject: Re: [PATCH 14/18] backports: add support for module compression
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: backports@vger.kernel.org
-Date: Wed, 10 Apr 2013 15:40:23 +0200
-In-Reply-To: <1365593728-5720-15-git-send-email-mcgrof@do-not-panic.com> (sfid-20130410_133659_917460_4A29DF72)
-References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1365593728-5720-15-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20130410_133659_917460_4A29DF72)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mga02.intel.com ([134.134.136.20]:24554 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S935419Ab3DHK0e (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 8 Apr 2013 06:26:34 -0400
+From: Thierry Escande <thierry.escande@linux.intel.com>
+To: backports@vger.kernel.org
+Subject: [PATCH v3 4/8] backport module_i2c_driver helper macro
+Date: Mon,  8 Apr 2013 12:26:09 +0200
+Message-Id: <1365416773-12836-5-git-send-email-thierry.escande@linux.intel.com> (sfid-20130408_122644_799462_F2694913)
+Content-Type: text/plain; charset = "utf-8"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2013-04-10 at 04:35 -0700, Luis R. Rodriguez wrote:
+Signed-off-by: Thierry Escande <thierry.escande@linux.intel.com>
+---
+ backport/include/linux/compat-3.3.h |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-> +++ b/backport/scripts/are_mods_compressed
-> @@ -0,0 +1,8 @@
-> +#!/bin/bash
-> +MODULE=$(./scripts/mod_path mac80211)
-> +MODULE=${MODULE##*/}
-> +if [ "$MODULE" = "mac80211.ko.gz" ]; then
-> +	COMPRESSION_FOUND="y"
-
-That variable seems useless?
-
-Also is there much value in splitting this across two scripts? Seems a
-bit small to do that?
-
-johannes
+diff --git a/backport/include/linux/compat-3.3.h b/backport/include/linux/compat-3.3.h
+index 2af4a52..ce7e776 100644
+--- a/backport/include/linux/compat-3.3.h
++++ b/backport/include/linux/compat-3.3.h
+@@ -371,6 +371,27 @@ module_exit(__driver##_exit);
+ #undef PCI_EXP_TYPE_RC_EC
+ #define  PCI_EXP_TYPE_RC_EC    0xa     /* Root Complex Event Collector */
+ 
++
++/* This backports:
++ *
++ * commit 7c92784a546d2945b6d6973a30f7134be78eb7a4
++ * Author: Lars-Peter Clausen <lars@metafoo.de>
++ * Date:   Wed Nov 16 10:13:36 2011 +0100
++ *
++ *     I2C: Add helper macro for i2c_driver boilerplate
++ */
++/**
++ * module_i2c_driver() - Helper macro for registering a I2C driver
++ * @__i2c_driver: i2c_driver struct
++ *
++ * Helper macro for I2C drivers which do not do anything special in module
++ * init/exit. This eliminates a lot of boilerplate. Each module may only
++ * use this macro once, and calling it replaces module_init() and module_exit()
++ */
++#define module_i2c_driver(__i2c_driver) \
++	module_driver(__i2c_driver, i2c_add_driver, \
++			i2c_del_driver)
++
+ #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)) */
+ 
+ #endif /* LINUX_3_3_COMPAT_H */
+-- 
+1.7.10.4
 
