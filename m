@@ -1,86 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from fep27.mx.upcmail.net ([62.179.121.47]:52474 "EHLO
-	fep27.mx.upcmail.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932391Ab3DIOAJ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 9 Apr 2013 10:00:09 -0400
-Received: from edge01.upcmail.net ([192.168.13.236])
-          by viefep23-int.chello.at
-          (InterMail vM.8.01.05.05 201-2260-151-110-20120111) with ESMTP
-          id <20130409135826.CUGK17478.viefep23-int.chello.at@edge01.upcmail.net>
-          for <backports@vger.kernel.org>; Tue, 9 Apr 2013 15:58:26 +0200
-Message-ID: <1365508697.8720.11.camel@livecd.gentoo> (sfid-20130409_160018_285985_709149E7)
-Subject: compat-drivers >=3.8 fails with inteldrmfb/i915
-From: Stefan Kuhn <stefan.kuhn@hispeed.ch>
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Tue, 09 Apr 2013 13:58:17 +0200
-Content-Type: text/plain; charset="us-ascii"
+Received: from he.sipsolutions.net ([78.46.109.217]:53849 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935627Ab3DHTku (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 8 Apr 2013 15:40:50 -0400
+Message-ID: <1365450036.25475.21.camel@jlt4.sipsolutions.net> (sfid-20130408_214053_853532_274E498C)
+Subject: Re: [PATCH v3 8/8] build: add NFC defconfig file
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+Cc: Thierry Escande <thierry.escande@linux.intel.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Mon, 08 Apr 2013 21:40:36 +0200
+In-Reply-To: <CAB=NE6X6+M2-eUeqTv-PAJDQ_VaLwUv3n94J1YTR+4CK7YYdaw@mail.gmail.com> (sfid-20130408_213755_513280_4A96F3C1)
+References: <1365416773-12836-9-git-send-email-thierry.escande@linux.intel.com>
+	 <CAB=NE6WWA4r+FyqR484ZJJm_usrCRDOjzMut-6JawNXJXUNmvw@mail.gmail.com>
+	 <1365449679.25475.18.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6X6+M2-eUeqTv-PAJDQ_VaLwUv3n94J1YTR+4CK7YYdaw@mail.gmail.com>
+	 (sfid-20130408_213755_513280_4A96F3C1)
+Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hello
+On Mon, 2013-04-08 at 12:37 -0700, Luis R. Rodriguez wrote:
 
-compat-drivers works fine up to v3.7.9
-Above that, it fails somewhere when loading the modules.
-The result is a black screen right after booting.
+> >> > +CPTCFG_NFC=m
+[...]
+> >> Johannes, do we want to be disabling the other subsystems in these ?
+> >
+> > Well anything not listed will have the default values, so that should be
+> > OK, right? Most things should be default off.
+> 
+> OK so the default would be -- "if you have it on your kernel then
+> we'll enable at build time", is that right? I wasn't clear on this,
+> that's all.
 
-I tested kernel versions 3.7.5 and 3.8.3 versus compat-drivers versions
-3.7.9, 3.8.0 and 3.8.3 - so I'm rather positive the change happened
-between compat-driver 3.7.9 and 3.8.0.
+No, because of the prefix rename (CONFIG_ -> CPTCFG_) the kernel's
+configuration has no influence on our configuration at all.
 
-My suspicion is that it fails when moving from the "EFI VGA" to the
-"inteldrmfb" driver.
+So the default is just whatever the default is in the Kconfig files,
+which is essentially everything else turned off.
 
-Below is a sample of the dmesg log of kernel 3.7.5 vs. cp-drivers 3.8.0.
-All other logs can be found at:
-http://code.google.com/p/compat-drivers-i915-issue/
-(I don't want to clog up everyones mail account)
-
-I'm happy for any advice or hint and willing to provide any logs or run
-tests, this has cost me days already!
-
-Greetings
-Stefan
-
-
-
-Sample output of dmesg:
-
-26.222313 checking generic (d0000000 300000) vs hw (d0000000 10000000)
-26.222314 fb: conflicting fb hw usage inteldrmfb vs EFI VGA - removing
-generic driver
-26.222328 Console: switching to colour dummy device 80x25
-26.222422 i915 0000:00:02.0: setting latency timer to 64
-26.254305 mtrr: type mismatch for d0000000,10000000 old: write-back new:
-write-combining
-26.254307 drm? MTRR allocation failed. Graphics performance may suffer.
-26.254419 i915 0000:00:02.0: irq 48 for MSI/MSI-X
-26.254426 drm? Supports vblank timestamp caching Rev 1 (10.10.2010).
-26.254427 drm? Driver supports precise vblank timestamp query.
-26.254504 vgaarb: device changed decodes: PCI:0000:00:02.0,olddecodes=io
-+mem,decodes=none:owns=io+mem
-26.254505 vgaarb: transferring owner from PCI:0000:00:02.0 to
-PCI:0000:01:00.0
-26.316654 BUG: unable to handle kernel NULL pointer dereference at
-(null)
-26.316661 IP: [<ffffffffa006fc3f>] intel_enable_gtt+0xb/0x13f intel_gtt?
-....
-....
-26.316796 Call Trace:
-26.316813 [<ffffffffa082b4cd>] ? i915_gem_init_hw+0x29/0x13b i915?
-26.316824 [<ffffffffa082b699>] ? i915_gem_init+0xba/0xf9 i915?
-26.316836 [<ffffffffa081b4e4>] ? i915_driver_load+0xb1c/0xd23 i915?
-26.316846 [<ffffffffa0e1ffdb>] ? drm_get_pci_dev+0x152/0x254 drm?
-26.316851 [<ffffffff81396e5d>] ? pci_device_probe+0x63/0x9e
-26.316856 [<ffffffff814254d9>] ? driver_probe_device+0xa1/0x1ac
-26.316859 [<ffffffff81425633>] ? driver_attach+0x4f/0x6f
-26.316862 [<ffffffff814255e4>] ? driver_probe_device+0x1ac/0x1ac
-26.316865 [<ffffffff81423f18>] ? bus_for_each_dev+0x4a/0x75
-26.316869 [<ffffffff81424cc9>] ? bus_add_driver+0xbc/0x207
-26.316873 [<ffffffffa06e4000>] ? 0xffffffffa06e3fff
-26.316876 [<ffffffff81425a47>] ? driver_register+0x85/0xfa
-26.316879 [<ffffffffa06e4000>] ? 0xffffffffa06e3fff
-26.316884 [<ffffffff81000226>] ? do_one_initcall+0x75/0x127
-26.316888 [<ffffffff810c397b>] ? sys_init_module+0x7c/0x1bb
-26.316893 [<ffffffff8167c996>] ? system_call_fastpath+0x1a/0x1f
+johannes
 
