@@ -1,29 +1,30 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f52.google.com ([209.85.215.52]:65529 "EHLO
-	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753840Ab3DBB3s (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 1 Apr 2013 21:29:48 -0400
-Received: by mail-la0-f52.google.com with SMTP id fs12so2646322lab.11
-        for <backports@vger.kernel.org>; Mon, 01 Apr 2013 18:29:47 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <5159F9AA.8060508@hauke-m.de>
-References: <1364497938-10646-1-git-send-email-hauke@hauke-m.de>
- <1364497938-10646-2-git-send-email-hauke@hauke-m.de> <5159F9AA.8060508@hauke-m.de>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Mon, 1 Apr 2013 18:29:26 -0700
-Message-ID: <CAB=NE6UvBR96b2WxuLW7QLqO2gwqO-5_q6kRK+nNfLETXi_V_A@mail.gmail.com> (sfid-20130402_032951_386421_349A263A)
-Subject: Re: [PATCH 2/8] compat-drivers: add config option CONFIG_WILINK_PLATFORM_DATA
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from he.sipsolutions.net ([78.46.109.217]:60070 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751202Ab3DJNWX (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 09:22:23 -0400
+Message-ID: <1365600139.4235.4.camel@jlt4.sipsolutions.net> (sfid-20130410_152224_914982_7C4A5BC0)
+Subject: Re: [PATCH 06/18] compat: backport ASYNC_DOMAIN_EXCLUSIVE()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org
+Date: Wed, 10 Apr 2013 15:22:19 +0200
+In-Reply-To: <1365593728-5720-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20130410_133605_827300_72FBDC00)
+References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1365593728-5720-7-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20130410_133605_827300_72FBDC00)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Apr 1, 2013 at 2:18 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
-> Hi Luis,
->
-> Is there any reason you did not apply this patch?
+On Wed, 2013-04-10 at 04:35 -0700, Luis R. Rodriguez wrote:
+> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+> 
+> For older kernels this is simply a matter of using
+> LIST_HEAD.
 
-Crap, sorry I must have missed it somehow, applied and pushed!
+Hmm, how is that useful if it will not have any effect?
 
-  Luis
+johannes
+
