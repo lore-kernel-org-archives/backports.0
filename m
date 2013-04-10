@@ -1,39 +1,138 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f45.google.com ([209.85.215.45]:36655 "EHLO
-	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964971Ab3DHU5f (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 8 Apr 2013 16:57:35 -0400
-Received: by mail-la0-f45.google.com with SMTP id fn20so2324344lab.4
-        for <backports@vger.kernel.org>; Mon, 08 Apr 2013 13:57:33 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1365454577.25475.27.camel@jlt4.sipsolutions.net>
-References: <1365416773-12836-9-git-send-email-thierry.escande@linux.intel.com>
- <CAB=NE6WWA4r+FyqR484ZJJm_usrCRDOjzMut-6JawNXJXUNmvw@mail.gmail.com>
- <1365449679.25475.18.camel@jlt4.sipsolutions.net> <CAB=NE6X6+M2-eUeqTv-PAJDQ_VaLwUv3n94J1YTR+4CK7YYdaw@mail.gmail.com>
- <1365450036.25475.21.camel@jlt4.sipsolutions.net> <CAB=NE6XzZvJcGb4xLZN7QKrCiYDMN0JN=uU8VR5yGUkyWS9uTw@mail.gmail.com>
- <1365454577.25475.27.camel@jlt4.sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Date: Mon, 8 Apr 2013 13:57:13 -0700
-Message-ID: <CAB=NE6XARg9-6j7BJ7J_=03pnKyOTZzd-TYWJp7j7Fo-3aEJ+g@mail.gmail.com> (sfid-20130408_225739_744192_78500958)
-Subject: Re: [PATCH v3 8/8] build: add NFC defconfig file
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Thierry Escande <thierry.escande@linux.intel.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:52836 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751818Ab3DJLgr (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 07:36:47 -0400
+Received: by mail-pa0-f43.google.com with SMTP id hz11so269768pad.30
+        for <backports@vger.kernel.org>; Wed, 10 Apr 2013 04:36:46 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 15/18] backports: add check_depmod to look for module search path
+Date: Wed, 10 Apr 2013 04:35:25 -0700
+Message-Id: <1365593728-5720-16-git-send-email-mcgrof@do-not-panic.com> (sfid-20130410_134304_170244_188A46CE)
+In-Reply-To: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Apr 8, 2013 at 1:56 PM, Johannes Berg <johannes@sipsolutions.net> wrote:
-> On Mon, 2013-04-08 at 13:51 -0700, Luis R. Rodriguez wrote:
->
->> > So the default is just whatever the default is in the Kconfig files,
->> > which is essentially everything else turned off.
->>
->> Odd, when I tried to do media with similar defconfig I got wireless
->> building :( but its great this was the goal, I'll try again.
->
-> Did you create a new tree or rm .config first?
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-I've corrected my habbits now, git clean -f -x -d and always new tree generated.
+This backports project relies on you being able to update
+your Linux distribution modules by looking at an updates
+search path, if one is not found we update depmod to look
+for the new path for you.
 
-  Luis
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ backport/Makefile.real        |    2 +-
+ backport/scripts/check_depmod |   78 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 79 insertions(+), 1 deletion(-)
+ create mode 100755 backport/scripts/check_depmod
+
+diff --git a/backport/Makefile.real b/backport/Makefile.real
+index 250676d..f70932e 100644
+--- a/backport/Makefile.real
++++ b/backport/Makefile.real
+@@ -93,12 +93,12 @@ install: modules
+ 			-type f -name *.ko); do        			\
+ 			gzip -9 $$driver				;\
+ 	done )
++	@./scripts/check_depmod
+ 	@/sbin/depmod -ae
+ 	@echo
+ 	@echo Your backported driver modules should be installed now.
+ 	@echo Try loading them with modprobe.
+ 	@echo
+ # FIXME:
+-#	check depmod
+ #	install/load/unload/... scripts?
+ #	compat firmware class udev stuff
+diff --git a/backport/scripts/check_depmod b/backport/scripts/check_depmod
+new file mode 100755
+index 0000000..6123894
+--- /dev/null
++++ b/backport/scripts/check_depmod
+@@ -0,0 +1,78 @@
++#!/bin/bash
++# Copyright 2009-2013	Luis R. Rodriguez <mcgrof@do-not-panic.com>
++#
++# Ensures your distribution likes to prefer updates/ over the kernel/
++# search updates built-in
++
++# Seems Mandriva has an $DEPMOD_DIR but it doesn't have any files,
++# so lets deal with those distributions.
++DEPMOD_CONF="/etc/depmod.conf"
++DEPMOD_CONF_TMP="$DEPMOD_CONF.backports.old"
++DEPMOD_DIR="/etc/depmod.d/"
++BACKPORT_DEPMOD_FILE="backports.conf"
++GREP_REGEX_UPDATES="^[[:space:]]*search.*[[:space:]]updates\([[:space:]]\|$\)"
++GREP_REGEX_SEARCH="^[[:space:]]*search[[:space:]].\+$"
++DEPMOD_CMD="depmod"
++
++function add_compat_depmod_conf {
++	echo "NOTE: Your distribution lacks an $DEPMOD_DIR directory with "
++	echo "updates/ directory being prioritized for modules, we're adding "
++	echo "one for you."
++	mkdir -p $DEPMOD_DIR
++	FIRST_FILE=$(ls $DEPMOD_DIR|head -1)
++	[ -n "$FIRST_FILE" ] && while [[ $FIRST_FILE < $BACKPORT_DEPMOD_FILE ]]; do
++		BACKPORT_DEPMOD_FILE="0$BACKPORT_DEPMOD_FILE"
++	done
++	echo "search updates" > $DEPMOD_DIR/$BACKPORT_DEPMOD_FILE
++}
++
++function add_global_depmod_conf {
++	echo "NOTE: Your distribution lacks updates/ directory being"
++	echo "prioritized for modules, we're adding it to $DEPMOD_CONF."
++	rm -f $DEPMOD_CONF_TMP
++	[ -f $DEPMOD_CONF ] && cp -f $DEPMOD_CONF $DEPMOD_CONF_TMP
++	echo "search updates" > $DEPMOD_CONF
++	[ -f $DEPMOD_CONF_TMP ] && cat $DEPMOD_CONF_TMP >> $DEPMOD_CONF
++}
++
++function depmod_updates_ok {
++	echo "depmod will prefer updates/ over kernel/ -- OK!"
++}
++
++function add_depmod_conf {
++	if [ -f "$DEPMOD_CONF" ]; then
++		add_global_depmod_conf
++	else
++		DEPMOD_VERSION=$($DEPMOD_CMD --version | cut -d" " -f2 | sed "s/\.//")
++		if [[ $DEPMOD_VERSION -gt 36 ]]; then
++			add_compat_depmod_conf
++		else
++			add_global_depmod_conf
++		fi
++	fi
++}
++
++GREP_FILES=""
++[ -f $DEPMOD_CONF ] && GREP_FILES="$DEPMOD_CONF"
++if [ -d $DEPMOD_DIR ]; then
++	DEPMOD_FILE_COUNT=$(ls $DEPMOD_DIR | wc -l)
++	[[ $DEPMOD_FILE_COUNT -gt 0 ]] && GREP_FILES="$GREP_FILES $DEPMOD_DIR/*"
++fi
++
++if [ -n "$GREP_FILES" ]; then
++	grep -q "$GREP_REGEX_SEARCH" $GREP_FILES
++	if [[ $? -eq 0 ]]; then
++		grep -q "$GREP_REGEX_UPDATES" $GREP_FILES
++		if [[ $? -eq 0 ]]; then
++			depmod_updates_ok
++		else
++			add_depmod_conf
++		fi
++	else
++		depmod_updates_ok
++	fi
++else
++	depmod_updates_ok
++fi
++
++exit 0
+-- 
+1.7.10.4
+
