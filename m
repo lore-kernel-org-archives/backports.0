@@ -1,35 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:56872 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752051Ab3D0Uhg (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 27 Apr 2013 16:37:36 -0400
-Received: by mail-la0-f46.google.com with SMTP id fs13so1814268lab.33
-        for <backports@vger.kernel.org>; Sat, 27 Apr 2013 13:37:34 -0700 (PDT)
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:62079 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757542Ab3DJRIH (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 13:08:07 -0400
+Received: by mail-lb0-f173.google.com with SMTP id w20so761580lbh.4
+        for <backports@vger.kernel.org>; Wed, 10 Apr 2013 10:08:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAJqaZwwH6HQqd0m9QO-Noc+SUAx79pHoSNWGfysei1Zgr9K4+g@mail.gmail.com>
-References: <CAJqaZwwH6HQqd0m9QO-Noc+SUAx79pHoSNWGfysei1Zgr9K4+g@mail.gmail.com>
+In-Reply-To: <1365599791.8388.16.camel@jlt4.sipsolutions.net>
+References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
+ <1365593728-5720-3-git-send-email-mcgrof@do-not-panic.com> <1365599791.8388.16.camel@jlt4.sipsolutions.net>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Sat, 27 Apr 2013 13:37:14 -0700
-Message-ID: <CAB=NE6UOhsxqXMhVJJ6=oKOAerR=8zfHxR6z79YNKUs0GvznSg@mail.gmail.com> (sfid-20130427_223738_960579_8711E09E)
-Subject: Re: [PATCH v2] compat-drivers/Makefile: make uninstall leaves drm and
- two b44 files
-To: ASIC Felix <ic.felix@gmail.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Wed, 10 Apr 2013 10:07:44 -0700
+Message-ID: <CAB=NE6XVe1UcpXozrpC62z750kveY2ACi_-oKVohSZcMNRxSPQ@mail.gmail.com> (sfid-20130410_190810_059831_A82B2300)
+Subject: Re: [PATCH 02/18] compat: backport dev_level_ratelimited()
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Apr 26, 2013 at 9:18 PM, ASIC Felix <ic.felix@gmail.com> wrote:
-> make uninstall doesn't remove drm and two b44 ethernet modules.
+On Wed, Apr 10, 2013 at 6:16 AM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> On Wed, 2013-04-10 at 04:35 -0700, Luis R. Rodriguez wrote:
 >
-> Signed-off-by: Felix Bitterli <ic.felix@gmail.com>
-> ---
+> Applied.
+>
+>> +++ b/backport/include/linux/compat-3.5.h
+>> @@ -10,6 +10,42 @@
+>>
+>>  #include <net/netlink.h>
+>>
+>> +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27))
+>> +#include <linux/ratelimit.h>
+>
+> I think, however, that it would be easier to understand if we started
+> putting less stuff into compat-xyz.h and more into linux/feature.h?
+> Needs more discussion though I guess.
 
-Applied and pushed onto the linux-3.9.y branch. I didn't apply to the
-master branch as the 3.10 releases will be coming from the new
-backports tree. I'll post more on this later though.
-
-Thanks!
+Sure, lets what's the idea or do you want to do that on another thread?
 
   Luis
