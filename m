@@ -1,47 +1,29 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f195.google.com ([209.85.217.195]:54375 "EHLO
-	mail-lb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750727Ab3D0ESu (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 27 Apr 2013 00:18:50 -0400
-Received: by mail-lb0-f195.google.com with SMTP id 13so618404lba.10
-        for <backports@vger.kernel.org>; Fri, 26 Apr 2013 21:18:49 -0700 (PDT)
-MIME-Version: 1.0
-Date: Fri, 26 Apr 2013 21:18:49 -0700
-Message-ID: <CAJqaZwwH6HQqd0m9QO-Noc+SUAx79pHoSNWGfysei1Zgr9K4+g@mail.gmail.com> (sfid-20130427_061854_046583_D781CADE)
-Subject: [PATCH v2] compat-drivers/Makefile: make uninstall leaves drm and two
- b44 files
-From: ASIC Felix <ic.felix@gmail.com>
-To: mcgrof@kernel.org
+Received: from he.sipsolutions.net ([78.46.109.217]:60153 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752758Ab3DJNsW (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 09:48:22 -0400
+Message-ID: <1365601698.4235.19.camel@jlt4.sipsolutions.net> (sfid-20130410_154823_538634_4A9E7264)
+Subject: Re: [PATCH 18/18] backports: add update-initramfs support
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 Cc: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Date: Wed, 10 Apr 2013 15:48:18 +0200
+In-Reply-To: <1365593728-5720-19-git-send-email-mcgrof@do-not-panic.com> (sfid-20130410_133704_968712_2A471864)
+References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1365593728-5720-19-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20130410_133704_968712_2A471864)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-make uninstall doesn't remove drm and two b44 ethernet modules.
+On Wed, 2013-04-10 at 04:35 -0700, Luis R. Rodriguez wrote:
 
-Signed-off-by: Felix Bitterli <ic.felix@gmail.com>
+> +KLIB=1
 
----
- Makefile |    9 +++++++++
- 1 file changed, 9 insertions(+)
+pretty sure that should be "$1" or at least just $1 ?
 
-diff --git a/Makefile b/Makefile
-index dc25969..dd16833 100644
---- a/Makefile
-+++ b/Makefile
-@@ -249,6 +249,15 @@ uninstall:
-     @rm -f $(KLIB)/$(KMODDIR)/drivers/misc/eeprom/eeprom_93cx6.ko*
-     @rm -f $(KLIB)/$(KMODDIR)/drivers/misc/eeprom_93cx6.ko*
-     @rm -f $(KLIB)/$(KMODDIR)/drivers/net/b44.ko*
-+    @rm -f $(KLIB)/$(KMODDIR)/drivers/net/ethernet/broadcom/b44.ko*
-+    @rm -f $(KLIB)/$(KMODDIR)/drivers/bcma/bcma.ko*
-+    @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/drm_kms_helper.ko*
-+    @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/drm.ko*
-+    @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/i915/i915.ko*
-+    @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/nouveau/nouveau.ko*
-+    @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/radeon/radeon.ko*
-+    @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/ttm/ttm.ko*
-+    @rm -f $(KLIB)/$(KMODDIR)/drivers/video/hdmi.ko*
-     @/sbin/depmod -a
-     @./scripts/update-initramfs
-     @echo
+johannes
+
+
