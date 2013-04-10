@@ -1,54 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:50520 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760614Ab3DIPpA (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 9 Apr 2013 11:45:00 -0400
-Received: by mail-lb0-f171.google.com with SMTP id v10so6936728lbd.2
-        for <backports@vger.kernel.org>; Tue, 09 Apr 2013 08:44:59 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1365498693-21795-1-git-send-email-johannes@sipsolutions.net>
-References: <1365498693-21795-1-git-send-email-johannes@sipsolutions.net>
+Received: from mail-pb0-f45.google.com ([209.85.160.45]:54342 "EHLO
+	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751818Ab3DJLg4 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 07:36:56 -0400
+Received: by mail-pb0-f45.google.com with SMTP id ro12so218294pbb.32
+        for <backports@vger.kernel.org>; Wed, 10 Apr 2013 04:36:56 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Tue, 9 Apr 2013 08:44:38 -0700
-Message-ID: <CAB=NE6XRvCJPpea8teOjGqCGhX7Kz5zQybhcLc+ZvdEmY+iM2A@mail.gmail.com> (sfid-20130409_174503_481186_80610AEF)
-Subject: Re: [PATCH] backports: add backport version to all modules
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>
-Content-Type: text/plain; charset=UTF-8
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 17/18] backports: use depmod -a
+Date: Wed, 10 Apr 2013 04:35:27 -0700
+Message-Id: <1365593728-5720-18-git-send-email-mcgrof@do-not-panic.com> (sfid-20130410_134305_435484_2B059C5D)
+In-Reply-To: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Apr 9, 2013 at 2:11 AM, Johannes Berg <johannes@sipsolutions.net> wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
->
-> We print out the backports version at runtime, but it
-> can also be useful to be able to determine it from the
-> installed modules.
->
-> As we already override module_init() to make all our
-> backported modules depend on compat.ko (in order to do
-> exactly this -- print out the version at runtime) also
-> add some MODULE_VERSION directives to it.
->
-> This results in, for example for mac80211, this:
->
-> $ /sbin/modinfo .../net/mac80211/mac80211.ko
-> filename:       .../net/mac80211/mac80211.ko
-> license:        GPL
-> description:    IEEE 802.11 subsystem
-> version:        backported from: Linux (next-20130405-0-g7df052b)
-> version:        backports: 6e0475b
-> srcversion:     6C298E6033E34EA8E223D7B
-> depends:        cfg80211,compat
-> vermagic:       3.8.0 SMP mod_unload modversions
-> parm:           max_nullfunc_tries:Maximum nullfunc tx tries before disconnecting (reason 4). (int)
-> parm:           max_probe_tries:Maximum probe tries before disconnecting (reason 4). (int)
-> parm:           probe_wait_ms:Maximum time(ms) to wait for probe response before disconnecting (reason 4). (int)
-> parm:           ieee80211_default_rc_algo:Default rate control algorithm for mac80211 to use (charp)
->
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Fuck-yeah: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Use only depmod -a and at the same time tell the
+user to reboot, we no longer support unloading /
+loading for them given that we backport too many
+modules.
 
-  Luis
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ backport/Makefile.real |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/backport/Makefile.real b/backport/Makefile.real
+index 3eb92a7..f2b5b56 100644
+--- a/backport/Makefile.real
++++ b/backport/Makefile.real
+@@ -95,10 +95,8 @@ install: modules
+ 	done )
+ 	@./scripts/check_depmod
+ 	@./scripts/backport_firmware_install
+-	@/sbin/depmod -ae
++	@/sbin/depmod -a
+ 	@echo
+ 	@echo Your backported driver modules should be installed now.
+-	@echo Try loading them with modprobe.
++	@echo Reboot.
+ 	@echo
+-# FIXME:
+-#	install/load/unload/... scripts?
+-- 
+1.7.10.4
+
