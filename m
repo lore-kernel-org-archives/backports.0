@@ -1,38 +1,73 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:43782 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753788Ab3DMUz5 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 16:55:57 -0400
-Message-ID: <1365886553.1089.1.camel@jlt4.sipsolutions.net> (sfid-20130413_225600_064851_83CABFD0)
-Subject: Re: [PATCH 1/7] backports: add support for backport_srctree
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: backports@vger.kernel.org
-Date: Sat, 13 Apr 2013 22:55:53 +0200
-In-Reply-To: <1365862424-6530-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20130413_161358_045253_866190AD)
-References: <1365862424-6530-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1365862424-6530-2-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20130413_161358_045253_866190AD)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from ebb05.tieto.com ([131.207.168.36]:57416 "EHLO ebb05.tieto.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S934753Ab3DJL47 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 10 Apr 2013 07:56:59 -0400
+From: Szymon Janc <szymon.janc@tieto.com>
+To: Eugene Krasnikov <k.eugene.e@gmail.com>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	linux-wireless <linux-wireless@vger.kernel.org>
+Subject: Re: include/linux/device.h:715:38: error: 'THIS_MODULE' undeclared
+Date: Wed, 10 Apr 2013 13:56:56 +0200
+Message-ID: <8701347.YaW7b4Fxgt@uw000953> (sfid-20130410_135706_286362_C65B0E9B)
+In-Reply-To: <CAFSJ42ZZH7Y+MPUURG_hQRuwhv8UKkF5sQQebsTjhH0uT07rjA@mail.gmail.com>
+References: <CAFSJ42ZZH7Y+MPUURG_hQRuwhv8UKkF5sQQebsTjhH0uT07rjA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sat, 2013-04-13 at 07:13 -0700, Luis R. Rodriguez wrote:
-> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Wednesday 10 of April 2013 12:20:37 Eugene Krasnikov wrote:
+Hi Eugene,
+ 
+> I have tried to build latest compat-drivers for android/cyanogenmod
+> kernel version 3.0.60 but it fails with the following error:
 > 
-> The Linux kernel uses srctree to help prefix header files
-> and scripts. When backporting we want to be able to override
-> driver's Makefiles' usage of srctree with our own. Since we
-> can't easily and sanely override the srctree itself without
-> causing a lot of issues just use the python generator to
-> do the change for us on the target Makefiles. This addresses
-> the srctree usage case and where ccflags was used without
-> prefixing any parent directory when used with drivers, the
-> kernel tends to fix that with addtree command.
+> /cyanogenmod/kernel/sony/msm8x60/include/linux/device.h: In function
+> 'root_device_register':
+> /cyanogenmod/kernel/sony/msm8x60/include/linux/device.h:715:38: error:
+> 'THIS_MODULE' undeclared (first use in this function)
+> 
+> Command line that is used to build compat-drivers is:
+> 
+> make KLIB=/cyanogenmod/out/target/product/mint/obj/KERNEL_OBJ
+> KLIB_BUILD=/cyanogenmod/out/target/product/mint/obj/KERNEL_OBJ
+> ARCH=arm CROSS_COMPILE=/cyanogenmod/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin/arm-eabi-
+> 
+> Did anybody meet such an error?
+> Patch bellow was used as a workaround to this error, but i would like
+> to find a proper solution.
 
-Applied. I also removed the now unnecessary patches that change
--Idrivers/...
+I had similar issue with grouper (nexus7) 3.1 kernel. This was due to DMA_BUF
+stuff being backported to that kernel (and that pulled also export.h change).
+Maybe it is same with CM kernel?
 
-johannes
+This fixed build for me:
+---
+ include/linux/export.h |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/include/linux/export.h b/include/linux/export.h
+index f7842b7..5ef58c5 100644
+--- a/include/linux/export.h
++++ b/include/linux/export.h
+@@ -3,10 +3,10 @@
+ 
+ #include <linux/version.h>
+ 
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0))
+ #include_next <linux/export.h>
+ #else
+ #include <linux/module.h>
+-#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)) */
++#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0)) */
+ 
+ #endif	/* _COMPAT_LINUX_EXPORT_H */
+
+
+You can check if enabling this for kernel >=3.0.0 works for you:)
+
+-- 
+BR
+Szymon Janc
