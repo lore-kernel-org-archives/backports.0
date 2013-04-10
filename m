@@ -1,28 +1,65 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:55452 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161234Ab3DGChv (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 6 Apr 2013 22:37:51 -0400
+Received: from mail-ie0-f179.google.com ([209.85.223.179]:53957 "EHLO
+	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751746Ab3DJJUh (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 05:20:37 -0400
 MIME-Version: 1.0
-In-Reply-To: <1365302138-19736-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1365302138-19736-1-git-send-email-mcgrof@do-not-panic.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Sat, 6 Apr 2013 19:37:29 -0700
-Message-ID: <CAB=NE6UgJoQzwrCzdc0P04vSRHGK4FtNEcJTBnN0nsQSKDviEw@mail.gmail.com> (sfid-20130407_043752_680214_3EE1738A)
-Subject: Re: [PATCH 0/3] backports: adds regulator and media susbsystems
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Content-Type: text/plain; charset=UTF-8
+Date: Wed, 10 Apr 2013 11:20:37 +0200
+Message-ID: <CAFSJ42ZZH7Y+MPUURG_hQRuwhv8UKkF5sQQebsTjhH0uT07rjA@mail.gmail.com> (sfid-20130410_112040_717780_B0C9C65C)
+Subject: include/linux/device.h:715:38: error: 'THIS_MODULE' undeclared
+From: Eugene Krasnikov <k.eugene.e@gmail.com>
+To: backports@vger.kernel.org,
+	linux-wireless <linux-wireless@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sat, Apr 6, 2013 at 7:35 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> Segmentation fault
-> make[8]: *** [/home/mcgrof/tmp/build/compat/core.o] Error 139
+Hi All,
 
-And sorry, *this* set should have gone out as RFCs, not PATCH. The
-other 9 should be fine if we just run ckmake to test them.
+I have tried to build latest compat-drivers for android/cyanogenmod
+kernel version 3.0.60 but it fails with the following error:
 
-  Luis
+/cyanogenmod/kernel/sony/msm8x60/include/linux/device.h: In function
+'root_device_register':
+/cyanogenmod/kernel/sony/msm8x60/include/linux/device.h:715:38: error:
+'THIS_MODULE' undeclared (first use in this function)
+
+Command line that is used to build compat-drivers is:
+
+make KLIB=/cyanogenmod/out/target/product/mint/obj/KERNEL_OBJ
+KLIB_BUILD=/cyanogenmod/out/target/product/mint/obj/KERNEL_OBJ
+ARCH=arm CROSS_COMPILE=/cyanogenmod/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin/arm-eabi-
+
+Did anybody meet such an error?
+Patch bellow was used as a workaround to this error, but i would like
+to find a proper solution.
+
+>From c059e8b803550c7b76cc102d6c1fb1d8a0fa6fa9 Mon Sep 17 00:00:00 2001
+From: Eugene Krasnikov <k.eugene.e@gmail.com>
+Date: Tue, 9 Apr 2013 18:28:38 +0200
+Subject: [PATCH] Use export.h from CM location
+
+Signed-off-by: Eugene Krasnikov <k.eugene.e@gmail.com>
+---
+ include/linux/compat-2.6.h |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/linux/compat-2.6.h b/include/linux/compat-2.6.h
+index 1e9effb..47f7434 100644
+--- a/include/linux/compat-2.6.h
++++ b/include/linux/compat-2.6.h
+@@ -43,6 +43,7 @@ void backport_dependency_symbol(void);
+  * Each compat file represents compatibility code for new kernel
+  * code introduced for *that* kernel revision.
+  */
++#include </cyanogenmod/kernel/sony/msm8x60/include/linux/export.h>
+
+ #include <linux/compat-2.6.22.h>
+ #include <linux/compat-2.6.23.h>
+--
+1.7.10
+
+
+--
+Best regards,
+Eugene
