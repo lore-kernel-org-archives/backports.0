@@ -1,60 +1,85 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f175.google.com ([209.85.217.175]:34529 "EHLO
-	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761127Ab3DBVnS (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 2 Apr 2013 17:43:18 -0400
-Received: by mail-lb0-f175.google.com with SMTP id o10so946202lbi.20
-        for <backports@vger.kernel.org>; Tue, 02 Apr 2013 14:43:17 -0700 (PDT)
+Received: from mail-ia0-f176.google.com ([209.85.210.176]:55447 "EHLO
+	mail-ia0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760313Ab3DJOV6 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 10:21:58 -0400
 MIME-Version: 1.0
-In-Reply-To: <1364937780.8204.18.camel@jlt4.sipsolutions.net>
-References: <1364908781.8204.14.camel@jlt4.sipsolutions.net>
- <1364923241.8204.15.camel@jlt4.sipsolutions.net> <515B4994.3030309@pendre.co.uk>
- <1364937780.8204.18.camel@jlt4.sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Date: Tue, 2 Apr 2013 14:42:56 -0700
-Message-ID: <CAB=NE6VDAekd_a--iFocHGWxdzhVXbQrBcV1HD+kHvbL68r4iw@mail.gmail.com> (sfid-20130402_234321_547441_29B4BB2E)
-Subject: Re: [ANN] new backports project
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Phil Perry <phil@pendre.co.uk>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <8701347.YaW7b4Fxgt@uw000953>
+References: <CAFSJ42ZZH7Y+MPUURG_hQRuwhv8UKkF5sQQebsTjhH0uT07rjA@mail.gmail.com>
+	<8701347.YaW7b4Fxgt@uw000953>
+Date: Wed, 10 Apr 2013 16:21:57 +0200
+Message-ID: <CAFSJ42a5PsnbhgEaWWWZTBDVKhKUGR4xWY1pEXPc-UaQcC9AFA@mail.gmail.com> (sfid-20130410_162201_047171_E0D7D5BD)
+Subject: Re: include/linux/device.h:715:38: error: 'THIS_MODULE' undeclared
+From: Eugene Krasnikov <k.eugene.e@gmail.com>
+To: Szymon Janc <szymon.janc@tieto.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	linux-wireless <linux-wireless@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Apr 2, 2013 at 2:23 PM, Johannes Berg <johannes@sipsolutions.net> wrote:
-> I only addressed what compat-drivers-... had a few days ago.
+Thanx for reply. That also works.
+But is it a solution or workaround? May be there should be smarter
+check than just a kernel version?
+
+2013/4/10 Szymon Janc <szymon.janc@tieto.com>:
+> On Wednesday 10 of April 2013 12:20:37 Eugene Krasnikov wrote:
+> Hi Eugene,
 >
-> However, I simplified the system a bit. I don't have any snapshot, but I
-> did announce the git tree. Grab that, run ./gentree.py against
-> linux-next and you should get something. Then you will have to hack up
-> the Kconfig (backport/compat/Kconfig) and include files
-> (backport/include/*), presumably.
+>> I have tried to build latest compat-drivers for android/cyanogenmod
+>> kernel version 3.0.60 but it fails with the following error:
+>>
+>> /cyanogenmod/kernel/sony/msm8x60/include/linux/device.h: In function
+>> 'root_device_register':
+>> /cyanogenmod/kernel/sony/msm8x60/include/linux/device.h:715:38: error:
+>> 'THIS_MODULE' undeclared (first use in this function)
+>>
+>> Command line that is used to build compat-drivers is:
+>>
+>> make KLIB=/cyanogenmod/out/target/product/mint/obj/KERNEL_OBJ
+>> KLIB_BUILD=/cyanogenmod/out/target/product/mint/obj/KERNEL_OBJ
+>> ARCH=arm CROSS_COMPILE=/cyanogenmod/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin/arm-eabi-
+>>
+>> Did anybody meet such an error?
+>> Patch bellow was used as a workaround to this error, but i would like
+>> to find a proper solution.
+>
+> I had similar issue with grouper (nexus7) 3.1 kernel. This was due to DMA_BUF
+> stuff being backported to that kernel (and that pulled also export.h change).
+> Maybe it is same with CM kernel?
+>
+> This fixed build for me:
+> ---
+>  include/linux/export.h |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/linux/export.h b/include/linux/export.h
+> index f7842b7..5ef58c5 100644
+> --- a/include/linux/export.h
+> +++ b/include/linux/export.h
+> @@ -3,10 +3,10 @@
+>
+>  #include <linux/version.h>
+>
+> -#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
+> +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0))
+>  #include_next <linux/export.h>
+>  #else
+>  #include <linux/module.h>
+> -#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)) */
+> +#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0)) */
+>
+>  #endif /* _COMPAT_LINUX_EXPORT_H */
+>
+>
+> You can check if enabling this for kernel >=3.0.0 works for you:)
+>
+> --
+> BR
+> Szymon Janc
 
-Or you can wait until we merge. At this point I'm freezing development
-on compat and compat-drivers to merge all this work onto Johannes'
-tree.
 
-> If you're interested in alx, you'd have to add that -- look at the
-> copy-list.alx file for that.
 
-Johannes already committed a few things here, I'll be sure to test it as well.
-
-> I hope that soon enough Luis might cut some testing releases from this
-> though.
-
-Absolutely, full steam ahead, just give us a few days.
-
-I should note that RHEL / SUSE / Debian all had the same issues --
-running into symbols we are exporting with the same upstream name. The
-move to use LINUX_BACKPORT() should help cure these issues in general
-moving forward. Additionally if you really want to help in this area
-please review commit 8ae96730 on compat.git specifically Andi Kleen's
-work on module namespace. If we can figure out to support module
-namespace *ourselves*, ie, without Linus having to carry this crap
-around, then we'd solve all these issues easily, I believe we wouldn't
-have to rely on LINUX_BACKPORT() and in fact that would also mean
-renaming our *driver* symbols. This means for instance you can run one
-drivers with your stock mac80211, another with the backported version,
-should you ever have to support such crazy environement.
-
-  Luis
+-- 
+Best regards,
+Eugene
