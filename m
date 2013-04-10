@@ -1,69 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:56028 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161252Ab3DGCWa (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 6 Apr 2013 22:22:30 -0400
-Received: by mail-pa0-f43.google.com with SMTP id hz11so2675771pad.16
-        for <backports@vger.kernel.org>; Sat, 06 Apr 2013 19:22:30 -0700 (PDT)
+Received: from mail-la0-f44.google.com ([209.85.215.44]:40949 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934226Ab3DJTlM (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 15:41:12 -0400
+MIME-Version: 1.0
+In-Reply-To: <1365622791.4235.38.camel@jlt4.sipsolutions.net>
+References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
+ <1365593728-5720-7-git-send-email-mcgrof@do-not-panic.com>
+ <1365600139.4235.4.camel@jlt4.sipsolutions.net> <CAB=NE6UpP-X1NCTNRnoSdv_bk3ioZdg5bO1zz0U0dqeWVxZdLw@mail.gmail.com>
+ <1365614413.4235.29.camel@jlt4.sipsolutions.net> <CAB=NE6VAfAvjRs0uZ=jpMjfP5Dz-zEHu3N7t8AUAofZAggrEEQ@mail.gmail.com>
+ <1365618018.4235.35.camel@jlt4.sipsolutions.net> <CAB=NE6VKT11k95Szi4NmigKCgMJ1XJoU3+rACbJpnWwUpCC1EA@mail.gmail.com>
+ <1365622074.4235.37.camel@jlt4.sipsolutions.net> <CAB=NE6W8wZbwGiCCq2n2LObNreWhxd-uFU7CrX5yJw2Uik9hAg@mail.gmail.com>
+ <1365622791.4235.38.camel@jlt4.sipsolutions.net>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 6/9] compat: backport GPIOF_OPEN_DRAIN definition
-Date: Sat,  6 Apr 2013 19:21:59 -0700
-Message-Id: <1365301322-19327-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20130407_042232_359752_DF207B9B)
-In-Reply-To: <1365301322-19327-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1365301322-19327-1-git-send-email-mcgrof@do-not-panic.com>
+Date: Wed, 10 Apr 2013 12:40:50 -0700
+Message-ID: <CAB=NE6VzjradFaesB7pTFYC8E=fXOWfs7X6nxBpnKAqGCTHNpg@mail.gmail.com> (sfid-20130410_214118_048445_2A700C59)
+Subject: Re: [PATCH 06/18] compat: backport ASYNC_DOMAIN_EXCLUSIVE()
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Dan Williams <dcbw@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Wed, Apr 10, 2013 at 12:39 PM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> On Wed, 2013-04-10 at 12:32 -0700, Luis R. Rodriguez wrote:
+>
+>> >> Oh I agree don't get me wrong, however porting kernel/async.c seems
+>> >> like a rather separate effort worth considering. As-is though I have
+>> >> not seen any negative impact though to keep older subsystems from
+>> >> compiling, ie its a no-op for older kernels as I see it.
+>> >
+>> > I guess that's what I don't understand -- I don't see usages of
+>> > ASYNC_DOMAIN_EXCLUSIVE in any header files, and in e.g. regulator/core.c
+>> > you'd also need the functions async_schedule_domain() etc. So where does
+>> > this help even compiling?
+>>
+>> You know what, sorry this was left over from when I tried to backport
+>> the regulatory to the core of compat, and since I decided to not even
+>> go there given that it relies on init sections on the vmlinux we can
+>> safely discard this patch (although what I said still hold, just not
+>> needed).
+>
+> Ok. Yeah after looking at the users I actually do agree this won't
+> really hurt, but it seemed it doesn't help anything at all hence my
+> confusion... :)
 
-This functionality will just be ignored, later we'll
-just port the full gpiolib.
+Yea its fine to drop for now.
 
-mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains  aca5ce14
-v3.4-rc1~65^2~20
-
-commit aca5ce14eb773a75e5d935968b2e390dc5bd29c3
-Author: Laxman Dewangan <ldewangan@nvidia.com>
-Date:   Fri Feb 17 20:26:21 2012 +0530
-
-    gpio: gpiolib: Support for open drain/collector gpios
-
-    Adding support for the open drain gpio on which client
-    can specify the open drain property through GPIO flag
-    GPIOF_OPEN_DRAIN at the time of gpio request.
-    The open drain pins are normally pulled high and it
-    cannot be driven to output with value of 1 and so
-    when client request for setting the pin to HIGH, the
-    gpio will be set to input direction to make pin in tristate
-    and hence PULL-UP on pins will make the state to HIGH.
-    The open drain pin can be driven to LOW by setting output
-    with value of 0.
-
-    Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-    Reviwed-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-    Acked-by: Linus Walleij <linus.walleij@linaro.org>
-    Signed-off-by: Grant Likely <grant.likely@secretlab.ca>
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- backport/include/linux/compat-3.4.h |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/backport/include/linux/compat-3.4.h b/backport/include/linux/compat-3.4.h
-index 0636499..eb557d9 100644
---- a/backport/include/linux/compat-3.4.h
-+++ b/backport/include/linux/compat-3.4.h
-@@ -12,6 +12,7 @@
- #endif
- 
- #define EPROBE_DEFER   517     /* Driver requests probe retry */
-+#define GPIOF_OPEN_DRAIN       (1 << 2)
- 
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
- #include <linux/regmap.h>
--- 
-1.7.10.4
-
+  Luis
