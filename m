@@ -1,84 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:54450 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753056Ab3DEPQ4 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 5 Apr 2013 11:16:56 -0400
-From: Thierry Escande <thierry.escande@linux.intel.com>
-To: backports@vger.kernel.org
-Subject: [PATCH v2 2/5] backports: Add NFC core and drivers
-Date: Fri,  5 Apr 2013 17:16:51 +0200
-Message-Id: <1365175014-6028-2-git-send-email-thierry.escande@linux.intel.com> (sfid-20130405_171658_345140_E6DC5D9A)
-Content-Type: text/plain; charset = "utf-8"
+Received: from mail-lb0-f177.google.com ([209.85.217.177]:60615 "EHLO
+	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752119Ab3DJROJ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 13:14:09 -0400
+Received: by mail-lb0-f177.google.com with SMTP id r10so761909lbi.8
+        for <backports@vger.kernel.org>; Wed, 10 Apr 2013 10:14:08 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1365600139.4235.4.camel@jlt4.sipsolutions.net>
+References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
+ <1365593728-5720-7-git-send-email-mcgrof@do-not-panic.com> <1365600139.4235.4.camel@jlt4.sipsolutions.net>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Wed, 10 Apr 2013 10:13:47 -0700
+Message-ID: <CAB=NE6UpP-X1NCTNRnoSdv_bk3ioZdg5bO1zz0U0dqeWVxZdLw@mail.gmail.com> (sfid-20130410_191423_448632_0058185F)
+Subject: Re: [PATCH 06/18] compat: backport ASYNC_DOMAIN_EXCLUSIVE()
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This grabs NFC core and drivers files from your linux tree.
-NFC build is disabled for now.
+On Wed, Apr 10, 2013 at 6:22 AM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> On Wed, 2013-04-10 at 04:35 -0700, Luis R. Rodriguez wrote:
+>> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+>>
+>> For older kernels this is simply a matter of using
+>> LIST_HEAD.
+>
+> Hmm, how is that useful if it will not have any effect?
 
-Signed-off-by: Thierry Escande <thierry.escande@linux.intel.com>
----
- backport/Kconfig         |    2 ++
- backport/Makefile.kernel |    2 ++
- copy-list                |   16 ++++++++++++++++
- dependencies             |    4 ++++
- 4 files changed, 24 insertions(+)
+The core of the handling is done in the internal asynch code and
+that's kept hidden from the users of this -- so far.
 
-diff --git a/backport/Kconfig b/backport/Kconfig
-index d0ae17f..87e3869 100644
---- a/backport/Kconfig
-+++ b/backport/Kconfig
-@@ -34,3 +34,5 @@ source drivers/net/ethernet/Kconfig
- 
- source drivers/ssb/Kconfig
- source drivers/bcma/Kconfig
-+
-+# source net/nfc/Kconfig
-diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
-index a599ad7..ac58225 100644
---- a/backport/Makefile.kernel
-+++ b/backport/Makefile.kernel
-@@ -22,3 +22,5 @@ obj-$(CPTCFG_BT) += drivers/bluetooth/
- obj-$(CPTCFG_SSB) += drivers/ssb/
- obj-$(CPTCFG_BCMA) += drivers/bcma/
- obj-$(CPTCFG_ETHERNET) += drivers/net/ethernet/
-+obj-$(CPTCFG_NFC) += net/nfc/
-+obj-$(CPTCFG_NFC) += drivers/nfc/
-diff --git a/copy-list b/copy-list
-index 4243619..82e21b1 100644
---- a/copy-list
-+++ b/copy-list
-@@ -114,3 +114,19 @@ drivers/net/ethernet/broadcom/Kconfig
- drivers/net/ethernet/broadcom/Makefile
- drivers/net/ethernet/broadcom/b44.c
- drivers/net/ethernet/broadcom/b44.h
-+
-+# NFC
-+net/nfc/
-+net/nfc/hci/
-+net/nfc/llcp/
-+net/nfc/nci/
-+include/net/nfc/
-+include/linux/socket.h
-+include/uapi/linux/nfc.h
-+include/uapi/linux/socket.h
-+
-+# NFC drivers
-+drivers/nfc/
-+drivers/nfc/microread/
-+drivers/nfc/pn544/
-+include/linux/platform_data/pn544.h
-diff --git a/dependencies b/dependencies
-index 7c79449..e9aaa2e 100644
---- a/dependencies
-+++ b/dependencies
-@@ -83,3 +83,7 @@ BRCMDBG 2.6.30
- # backport it, but I can't test that and this is a
- # lot easier right now.
- BT_HIDP 2.6.33
-+
-+# NFC core needs PF_NFC defined in socket.h which was
-+# only introduced in kernel 3.1
-+NFC 3.1
--- 
-1.7.10.4
-
+  Luis
