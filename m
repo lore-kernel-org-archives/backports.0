@@ -1,39 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:2367 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1162366Ab3DEVUq (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 5 Apr 2013 17:20:46 -0400
-From: Thierry Escande <thierry.escande@linux.intel.com>
-To: backports@vger.kernel.org
-Subject: [PATCH v3 1/8] backport sk_for_each_safe
-Date: Fri,  5 Apr 2013 23:20:35 +0200
-Message-Id: <1365196842-12992-1-git-send-email-thierry.escande@linux.intel.com> (sfid-20130405_232049_244735_AB219199)
-Content-Type: text/plain; charset = "utf-8"
+Received: from mail-da0-f46.google.com ([209.85.210.46]:41643 "EHLO
+	mail-da0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933890Ab3DJLfj (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 07:35:39 -0400
+Received: by mail-da0-f46.google.com with SMTP id y19so175700dan.33
+        for <backports@vger.kernel.org>; Wed, 10 Apr 2013 04:35:38 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 01/18] backports: enable DRM_NOUVEAU for 3.2
+Date: Wed, 10 Apr 2013 04:35:11 -0700
+Message-Id: <1365593728-5720-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20130410_133543_521810_C2227A1E)
+In-Reply-To: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is needed for NFC core.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Signed-off-by: Thierry Escande <thierry.escande@linux.intel.com>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/include/linux/compat-3.9.h |    4 ++++
- 1 file changed, 4 insertions(+)
+ dependencies |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/backport/include/linux/compat-3.9.h b/backport/include/linux/compat-3.9.h
-index 240a328..aed569c 100644
---- a/backport/include/linux/compat-3.9.h
-+++ b/backport/include/linux/compat-3.9.h
-@@ -186,6 +186,10 @@ static inline void idr_preload_end(void)
- #define sk_for_each(__sk, list) \
- 	hlist_for_each_entry(__sk, list, sk_node)
+diff --git a/dependencies b/dependencies
+index e9aaa2e..44e23da 100644
+--- a/dependencies
++++ b/dependencies
+@@ -45,7 +45,6 @@ MWIFIEX 2.6.27
+ HDMI 3.2
+ DRM 3.2
+ DRM_TTM 3.2
+-DRM_NOUVEAU 3.3
  
-+#undef sk_for_each_safe
-+#define sk_for_each_safe(__sk, tmp, list) \
-+	hlist_for_each_entry_safe(__sk, tmp, list, sk_node)
-+
- #define tty_flip_buffer_push(port) tty_flip_buffer_push((port)->tty)
- #define tty_insert_flip_string(port, chars, size) tty_insert_flip_string((port)->tty, chars, size)
- 
+ # This requires proc_create(), and that doesn't exist before 2.6.24
+ LIBIPW_DEBUG 2.6.25
 -- 
 1.7.10.4
 
