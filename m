@@ -1,70 +1,72 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:60093 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752080Ab3DJNfJ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 09:35:09 -0400
-Message-ID: <1365600903.4235.10.camel@jlt4.sipsolutions.net> (sfid-20130410_153511_507576_DB3F3754)
-Subject: Re: [PATCH 13/18] backports: add blacklist module support
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: backports@vger.kernel.org
-Date: Wed, 10 Apr 2013 15:35:03 +0200
-In-Reply-To: <1365593728-5720-14-git-send-email-mcgrof@do-not-panic.com> (sfid-20130410_133640_558509_CE70F58E)
+Received: from mail-da0-f54.google.com ([209.85.210.54]:61377 "EHLO
+	mail-da0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933890Ab3DJLgD (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 07:36:03 -0400
+Received: by mail-da0-f54.google.com with SMTP id p1so178119dad.13
+        for <backports@vger.kernel.org>; Wed, 10 Apr 2013 04:36:03 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 06/18] compat: backport ASYNC_DOMAIN_EXCLUSIVE()
+Date: Wed, 10 Apr 2013 04:35:16 -0700
+Message-Id: <1365593728-5720-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20130410_133609_684314_6C8A0CDC)
+In-Reply-To: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
 References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1365593728-5720-14-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20130410_133640_558509_CE70F58E)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2013-04-10 at 04:35 -0700, Luis R. Rodriguez wrote:
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-> --- /dev/null
-> +++ b/backport/.blacklist.map
-> @@ -0,0 +1,10 @@
-> +# Update this map when a driver gets renamed or
-> +# symbols from old drivers get moved to a newer
-> +# driver. If you have the driver on the right
-> +# hand side it will be blacklisted upon installation
-> +# only if you actually installed the driver on the
-> +# left.
-> +
-> +# new-driver	old-driver
-> +iwlagn		iwlwifi
-> +iwlagn		iwl4965
+For older kernels this is simply a matter of using
+LIST_HEAD.
 
-Seems that's really
+mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains 2955b47d
+v3.6-rc1~103^2~4
 
-# old-driver	new-driver
+commit 2955b47d2c1983998a8c5915cb96884e67f7cb53
+Author: Dan Williams <dan.j.williams@intel.com>
+Date:   Mon Jul 9 19:33:25 2012 -0700
 
-no?
+    [SCSI] async: introduce 'async_domain' type
 
-> +rm -f $BLACKLIST_CONF
-> +
-> +echo "# To be used when using backported drivers" >> $BLACKLIST_CONF
+    This is in preparation for teaching async_synchronize_full() to sync all
+    pending async work, and not just on the async_running domain.  This
+    conversion is functionally equivalent, just embedding the existing list
+    in a new async_domain type.
 
-Or you could just use > instead of >> on this first line ;-)
+    The .registered attribute is used in a later patch to distinguish
+    between domains that want to be flushed by async_synchronize_full()
+    versus those that only expect async_synchronize_{full|cookie}_domain to
+    be used for flushing.
 
-> +for i in $(grep -v ^# $BLACKLIST_MAP | cut -f 2); do
+    [jejb: add async.h to scsi_priv.h for struct async_domain]
+    Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+    Acked-by: Arjan van de Ven <arjan@linux.intel.com>
+    Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+    Tested-by: Eldad Zack <eldad@fogrefinery.com>
+    Signed-off-by: James Bottomley <JBottomley@Parallels.com>
 
-What happens if the blacklist map contains empty lines? Might want to
-allow that.
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ backport/include/linux/compat-3.6.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
-> +	MODULE="${i}.ko"
-> +	MODULE_UPDATE="$(grep -v ^# $BLACKLIST_MAP | grep $i | cut -f 1 | head -1).ko"
-> +
-> +	COUNT=$(find $MODULE_DIR -type f -name ${MODULE} -or -name ${MODULE}.gz | wc -l)
-> +	COUNT_REPLACE=$(find $MODULE_UPDATES -type f -name ${MODULE_UPDATE} -or -name ${MODULE_UPDATE}.gz | wc -l)
-> +
-> +	if [ $COUNT -ne 0 ]; then
-> +		if [ $COUNT_REPLACE -ne 0 ]; then
-> +			echo "Blacklisting $MODULE ..."
-> +			echo blacklist $i >> $BLACKLIST_CONF
-> +		fi
-
-So you do mean "# new-driver old-driver", but then shouldn't the iwlwifi
-lines be reversed?
-
-johannes
+diff --git a/backport/include/linux/compat-3.6.h b/backport/include/linux/compat-3.6.h
+index 8fddd31..49f4d3b 100644
+--- a/backport/include/linux/compat-3.6.h
++++ b/backport/include/linux/compat-3.6.h
+@@ -9,6 +9,9 @@
+ 
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
+ #include <linux/i2c.h>
++
++#define ASYNC_DOMAIN_EXCLUSIVE(_domain) LIST_HEAD(_domain)
++
+ /* Unlocked flavor */
+ #define __i2c_transfer LINUX_BACKPORT(__i2c_transfer)
+ extern int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+-- 
+1.7.10.4
 
