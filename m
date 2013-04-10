@@ -1,45 +1,181 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f53.google.com ([209.85.215.53]:38256 "EHLO
-	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750752Ab3DLGLH (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 12 Apr 2013 02:11:07 -0400
-Received: by mail-la0-f53.google.com with SMTP id fp13so2185274lab.40
-        for <backports@vger.kernel.org>; Thu, 11 Apr 2013 23:11:04 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
-References: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Date: Thu, 11 Apr 2013 23:10:44 -0700
-Message-ID: <CAB=NE6VEv9A=0y9xfUr-UGvTuHZMbgFaqA-jDSs_R8exWM_RWw@mail.gmail.com> (sfid-20130412_081109_422026_22D1E049)
-Subject: Re: [RFC/WIP 00/24] backports: disentangle header file mess
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from mail-da0-f43.google.com ([209.85.210.43]:35622 "EHLO
+	mail-da0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751818Ab3DJLgw (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 07:36:52 -0400
+Received: by mail-da0-f43.google.com with SMTP id u36so178523dak.30
+        for <backports@vger.kernel.org>; Wed, 10 Apr 2013 04:36:51 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 16/18] backports: add udev rules if required for backported firmware_class
+Date: Wed, 10 Apr 2013 04:35:26 -0700
+Message-Id: <1365593728-5720-17-git-send-email-mcgrof@do-not-panic.com> (sfid-20130410_134305_120580_4B1253B4)
+In-Reply-To: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Apr 11, 2013 at 4:42 PM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> As we were discussing, let's disentangle the header file mess
-> and the various random includes all over the place and instead
-> provide each header file that needs something backported with
-> those backported things and and #include_next.
->
-> The list.h stuff was a bit tricky, but not really a big issue
-> thanks to Hauke's idea.
->
-> I'm also removing compatibility with < 2.6.24 ... it just doesn't
-> seem worth it any more.
->
-> Up until patch 22 it passes ckmake --allyesconfig, but then after
-> that I haven't tried and clearly with patch 24 it won't, that one
-> can only work for kernels 3.5 and up or so since not all of the
-> compat headers are dissolved yet.
->
-> One of the nice things is that we can get rid of the pr_fmt mess,
-> that's a huge patch removal. But overall, this is also nicer as
-> it will better replicate the include structure of the kernel.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-I'm supportive of the switch.
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ backport/Makefile.real                     |    2 +-
+ backport/scripts/backport_firmware_install |   21 +++++++++++++++++
+ backport/udev/50-compat_firmware.rules     |    4 ++++
+ backport/udev/compat_firmware.sh           |   35 ++++++++++++++++++++++++++++
+ backport/udev/ubuntu/compat_firmware.sh    |   29 +++++++++++++++++++++++
+ gentree.py                                 |    2 +-
+ 6 files changed, 91 insertions(+), 2 deletions(-)
+ create mode 100755 backport/scripts/backport_firmware_install
+ create mode 100644 backport/udev/50-compat_firmware.rules
+ create mode 100755 backport/udev/compat_firmware.sh
+ create mode 100755 backport/udev/ubuntu/compat_firmware.sh
 
-  Luis
+diff --git a/backport/Makefile.real b/backport/Makefile.real
+index f70932e..3eb92a7 100644
+--- a/backport/Makefile.real
++++ b/backport/Makefile.real
+@@ -94,6 +94,7 @@ install: modules
+ 			gzip -9 $$driver				;\
+ 	done )
+ 	@./scripts/check_depmod
++	@./scripts/backport_firmware_install
+ 	@/sbin/depmod -ae
+ 	@echo
+ 	@echo Your backported driver modules should be installed now.
+@@ -101,4 +102,3 @@ install: modules
+ 	@echo
+ # FIXME:
+ #	install/load/unload/... scripts?
+-#	compat firmware class udev stuff
+diff --git a/backport/scripts/backport_firmware_install b/backport/scripts/backport_firmware_install
+new file mode 100755
+index 0000000..e4b9fb0
+--- /dev/null
++++ b/backport/scripts/backport_firmware_install
+@@ -0,0 +1,21 @@
++#!/bin/sh
++
++if [ -f /usr/bin/lsb_release ]; then
++	LSB_RED_ID=$(/usr/bin/lsb_release -i -s)
++else
++	LSB_RED_ID="Unknown"
++fi
++
++case $LSB_RED_ID in
++"Ubuntu")
++	mkdir -p /lib/udev/ /lib/udev/rules.d/
++	cp udev/ubuntu/compat_firmware.sh /lib/udev/
++	cp udev/50-compat_firmware.rules /lib/udev/rules.d/
++        ;;
++*)
++	mkdir -p /lib/udev/ /lib/udev/rules.d/
++	cp udev/compat_firmware.sh /lib/udev/
++	cp udev/50-compat_firmware.rules /lib/udev/rules.d/
++        ;;
++esac
++
+diff --git a/backport/udev/50-compat_firmware.rules b/backport/udev/50-compat_firmware.rules
+new file mode 100644
+index 0000000..6473788
+--- /dev/null
++++ b/backport/udev/50-compat_firmware.rules
+@@ -0,0 +1,4 @@
++# do not edit this file, it will be overwritten on update
++
++# compat_firmware-class requests, copies files into the kernel
++SUBSYSTEM=="compat_firmware", ACTION=="add", RUN+="compat_firmware.sh"
+diff --git a/backport/udev/compat_firmware.sh b/backport/udev/compat_firmware.sh
+new file mode 100755
+index 0000000..ef609e7
+--- /dev/null
++++ b/backport/udev/compat_firmware.sh
+@@ -0,0 +1,35 @@
++#!/bin/sh -e
++
++# This is ported from Ubuntu but ubuntu uses these directories which
++# other distributions don't care about:
++# FIRMWARE_DIRS="/lib/firmware/updates/$(uname -r) /lib/firmware/updates \
++#               /lib/firmware/$(uname -r) /lib/firmware"
++# If your distribution looks for firmware in other directories
++# feel free to extend this and add your own directory here.
++#
++FIRMWARE_DIRS="/lib/firmware"
++
++err() {
++	echo "$@" >&2
++	logger -t "${0##*/}[$$]" "$@" 2>/dev/null || true
++}
++
++if [ ! -e /sys$DEVPATH/loading ]; then
++	err "udev firmware loader misses sysfs directory"
++	exit 1
++fi
++
++for DIR in $FIRMWARE_DIRS; do
++	[ -e "$DIR/$FIRMWARE" ] || continue
++	echo 1 > /sys$DEVPATH/loading
++	cat "$DIR/$FIRMWARE" > /sys$DEVPATH/data
++	echo 0 > /sys$DEVPATH/loading
++	exit 0
++done
++
++echo -1 > /sys$DEVPATH/loading
++err "Cannot find  firmware file '$FIRMWARE'"
++mkdir -p /dev/.udev/firmware-missing
++file=$(echo "$FIRMWARE" | sed 's:/:\\x2f:g')
++ln -s -f "$DEVPATH" /dev/.udev/firmware-missing/$file
++exit 1
+diff --git a/backport/udev/ubuntu/compat_firmware.sh b/backport/udev/ubuntu/compat_firmware.sh
+new file mode 100755
+index 0000000..9d4659a
+--- /dev/null
++++ b/backport/udev/ubuntu/compat_firmware.sh
+@@ -0,0 +1,29 @@
++#!/bin/sh -e
++
++FIRMWARE_DIRS="/lib/firmware/updates/$(uname -r) /lib/firmware/updates \
++               /lib/firmware/$(uname -r) /lib/firmware"
++
++err() {
++	echo "$@" >&2
++	logger -t "${0##*/}[$$]" "$@" 2>/dev/null || true
++}
++
++if [ ! -e /sys$DEVPATH/loading ]; then
++	err "udev firmware loader misses sysfs directory"
++	exit 1
++fi
++
++for DIR in $FIRMWARE_DIRS; do
++	[ -e "$DIR/$FIRMWARE" ] || continue
++	echo 1 > /sys$DEVPATH/loading
++	cat "$DIR/$FIRMWARE" > /sys$DEVPATH/data
++	echo 0 > /sys$DEVPATH/loading
++	exit 0
++done
++
++echo -1 > /sys$DEVPATH/loading
++err "Cannot find  firmware file '$FIRMWARE'"
++mkdir -p /dev/.udev/firmware-missing
++file=$(echo "$FIRMWARE" | sed 's:/:\\x2f:g')
++ln -s -f "$DEVPATH" /dev/.udev/firmware-missing/$file
++exit 1
+diff --git a/gentree.py b/gentree.py
+index 3f875c7..dc54e4b 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -324,7 +324,7 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+     backport_files = [(x, x) for x in [
+         'Kconfig', 'Makefile', 'Makefile.build', 'Makefile.kernel', '.gitignore',
+         'Makefile.real', 'compat/', 'include/', 'kconfig/', 'defconfigs/',
+-	'scripts/', '.blacklist.map',
++	'scripts/', '.blacklist.map', 'udev/',
+     ]]
+     if not args.git_revision:
+         logwrite('Copy original source files ...')
+-- 
+1.7.10.4
+
