@@ -1,393 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:55950 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755648Ab3DOUgB (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 15 Apr 2013 16:36:01 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH v2] devel: add back scripts for fetching kernels
-Date: Mon, 15 Apr 2013 22:35:46 +0200
-Message-Id: <1366058146-6783-1-git-send-email-hauke@hauke-m.de> (sfid-20130415_223615_747077_68D4E608)
+Received: from he.sipsolutions.net ([78.46.109.217]:32818 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935229Ab3DJTkF (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 15:40:05 -0400
+Message-ID: <1365622791.4235.38.camel@jlt4.sipsolutions.net> (sfid-20130410_214021_003507_B744C7FA)
+Subject: Re: [PATCH 06/18] compat: backport ASYNC_DOMAIN_EXCLUSIVE()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Dan Williams <dcbw@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date: Wed, 10 Apr 2013 21:39:51 +0200
+In-Reply-To: <CAB=NE6W8wZbwGiCCq2n2LObNreWhxd-uFU7CrX5yJw2Uik9hAg@mail.gmail.com> (sfid-20130410_213320_489401_CDFE35C3)
+References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1365593728-5720-7-git-send-email-mcgrof@do-not-panic.com>
+	 <1365600139.4235.4.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6UpP-X1NCTNRnoSdv_bk3ioZdg5bO1zz0U0dqeWVxZdLw@mail.gmail.com>
+	 <1365614413.4235.29.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6VAfAvjRs0uZ=jpMjfP5Dz-zEHu3N7t8AUAofZAggrEEQ@mail.gmail.com>
+	 <1365618018.4235.35.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6VKT11k95Szi4NmigKCgMJ1XJoU3+rACbJpnWwUpCC1EA@mail.gmail.com>
+	 <1365622074.4235.37.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6W8wZbwGiCCq2n2LObNreWhxd-uFU7CrX5yJw2Uik9hAg@mail.gmail.com>
+	 (sfid-20130410_213320_489401_CDFE35C3)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-These scripts are copied from compats bin directory.
+On Wed, 2013-04-10 at 12:32 -0700, Luis R. Rodriguez wrote:
 
-I updated the kernels referenced in get-compat-kernels.
+> >> Oh I agree don't get me wrong, however porting kernel/async.c seems
+> >> like a rather separate effort worth considering. As-is though I have
+> >> not seen any negative impact though to keep older subsystems from
+> >> compiling, ie its a no-op for older kernels as I see it.
+> >
+> > I guess that's what I don't understand -- I don't see usages of
+> > ASYNC_DOMAIN_EXCLUSIVE in any header files, and in e.g. regulator/core.c
+> > you'd also need the functions async_schedule_domain() etc. So where does
+> > this help even compiling?
+> 
+> You know what, sorry this was left over from when I tried to backport
+> the regulatory to the core of compat, and since I decided to not even
+> go there given that it relies on init sections on the vmlinux we can
+> safely discard this patch (although what I said still hold, just not
+> needed).
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- devel/get-compat-kernels |  265 ++++++++++++++++++++++++++++++++++++++++++++++
- devel/get-compat-trees   |   87 +++++++++++++++
- 2 files changed, 352 insertions(+)
- create mode 100755 devel/get-compat-kernels
- create mode 100755 devel/get-compat-trees
+Ok. Yeah after looking at the users I actually do agree this won't
+really hurt, but it seemed it doesn't help anything at all hence my
+confusion... :)
 
-diff --git a/devel/get-compat-kernels b/devel/get-compat-kernels
-new file mode 100755
-index 0000000..84fb9a6
---- /dev/null
-+++ b/devel/get-compat-kernels
-@@ -0,0 +1,265 @@
-+#!/bin/bash
-+#
-+# Copyright (C) 2012, Luis R. Rodriguez <mcgrof@frijolero.org>
-+#
-+# This program is free software; you can redistribute it and/or modify
-+# it under the terms of the GNU General Public License version 2 as
-+# published by the Free Software Foundation.
-+#
-+# You can use this script to install all mainline kernels used
-+# to test compile the Linux kernel compatibility module. You can
-+# then use ckmake to cross compile against all supported kernels.
-+
-+# Pretty colors
-+GREEN="\033[01;32m"
-+YELLOW="\033[01;33m"
-+NORMAL="\033[00m"
-+BLUE="\033[34m"
-+RED="\033[31m"
-+PURPLE="\033[35m"
-+CYAN="\033[36m"
-+UNDERLINE="\033[02m"
-+
-+KERNELS=""
-+KPATH="http://kernel.ubuntu.com/~kernel-ppa/mainline/"
-+
-+FORCE="0"
-+KSRC_PREFIX=
-+# Check whether we're running as root or not
-+# If we're root stuff things into /usr/src and /lib/modules
-+# else, use $HOME/compat-ksrc for enabling user-mode builds.
-+if [[ "$EUID" != "0" ]]; then
-+	KSRC_PREFIX="$HOME/compat-ksrc"
-+else
-+	KSRC_PREFIX="${PWD}/compat-ksrc"
-+fi
-+
-+
-+# Create target directories if they doesn't exist
-+mkdir -p $KSRC_PREFIX/{usr/src,lib/modules}
-+
-+# List of currently supported kernels that will be downloaded
-+KERNELS="$KERNELS ${KPATH}/v2.6.24/linux-headers-2.6.24-020624_2.6.24-020624_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v2.6.25/linux-headers-2.6.25-020625_2.6.25-020625_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v2.6.26/linux-headers-2.6.26-020626_2.6.26-020626_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v2.6.27/linux-headers-2.6.27-020627_2.6.27-020627_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v2.6.28.10/linux-headers-2.6.28-02062810_2.6.28-02062810_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v2.6.29.6/linux-headers-2.6.29-02062906_2.6.29-02062906_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v2.6.30.10/linux-headers-2.6.30-02063010_2.6.30-02063010_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v2.6.31.13-karmic/linux-headers-2.6.31-02063113_2.6.31-02063113_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v2.6.32.60-lucid/linux-headers-2.6.32-02063260_2.6.32-02063260.201210082135_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v2.6.33.20-maverick/linux-headers-2.6.33-02063320_2.6.33-02063320.201111071735_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v2.6.34.14-maverick/linux-headers-2.6.34-02063414_2.6.34-02063414.201301162135_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v2.6.35.13-original-maverick/linux-headers-2.6.35-02063513_2.6.35-02063513.201107261012_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v2.6.36.4-natty/linux-headers-2.6.36-02063604_2.6.36-02063604.201102180911_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v2.6.37.6-natty/linux-headers-2.6.37-02063706_2.6.37-02063706.201103281005_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v2.6.38.8-natty/linux-headers-2.6.38-02063808_2.6.38-02063808.201106040910_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v2.6.39.4-oneiric/linux-headers-2.6.39-02063904_2.6.39-02063904.201108040905_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.0.73-oneiric/linux-headers-3.0.73-030073_3.0.73-030073.201304121235_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.1.10-precise/linux-headers-3.1.10-030110_3.1.10-030110.201201181135_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.2.43-precise/linux-headers-3.2.43-030243_3.2.43-030243.201304092335_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.3.8-quantal/linux-headers-3.3.8-030308_3.3.8-030308.201206041356_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.4.40-quantal/linux-headers-3.4.40-030440_3.4.40-030440.201304121354_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.5.7-quantal/linux-headers-3.5.7-030507_3.5.7-030507.201210130556_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.6.11-raring/linux-headers-3.6.11-030611_3.6.11-030611.201212171335_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.7.10-raring/linux-headers-3.7.10-030710_3.7.10-030710.201302271235_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.8.7-raring/linux-headers-3.8.7-030807_3.8.7-030807.201304121430_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.9-rc6-raring/linux-headers-3.9.0-030900rc6_3.9.0-030900rc6.201304080035_all.deb"
-+
-+# Number of kernels
-+NUM_KERNELS=$(echo $KERNELS | wc -w)
-+
-+# ~ 101 MiB for installed space on $KSRC_PREFIX/usr/src/ and $KSRC_PREFIX/lib/modules/
-+SPACE_PER_KERNEL="101"
-+
-+# ~13 MiB of both deb files
-+SPACE_PER_KERNEL_DEB="13"
-+
-+function get_ubuntu_kernels() {
-+
-+	ARCH=$(uname -m)
-+	TARGET=""
-+
-+	case $ARCH in
-+	"x86_64")
-+		TARGET="amd64"
-+		;;
-+	"i686")
-+		TARGET="i386"
-+		;;
-+	*)
-+		echo -e "Unsupported architecture"
-+		exit
-+		;;
-+	esac
-+
-+	mkdir -p debs
-+	cd debs
-+
-+	for i in $KERNELS; do
-+		FILE=$(basename $i)
-+		PKG=$(echo $FILE | awk -F"_" '{print $1}')
-+
-+		# Do not download if installed or deb exists
-+		if [[ ! -d $KSRC_PREFIX/usr/src/$PKG && ! -f $FILE ]]; then
-+			# Download the _all.deb
-+			wget -c $i
-+
-+			# Download the generic-ARCH headers
-+			GENERIC_DEB=`echo $i | sed -e "s:\(.*\)_\(.*\)_all.deb:\1-generic_\2_$TARGET.deb:"`
-+			wget -c $GENERIC_DEB
-+		fi
-+	done
-+
-+	# List of downloaded debs
-+	DEB_LIST=`ls linux-*.deb 2>/dev/null`
-+
-+	if [[ -z $DEB_LIST ]]; then
-+		echo "All kernel sources are found in $KSRC_PREFIX/usr/src."
-+		exit
-+	fi
-+
-+	# Create a temporary directory first
-+	TEMP_DIR=`mktemp -d`
-+
-+	for deb in $DEB_LIST; do
-+		DIR_NAME=$(echo $deb | awk -F"_" '{print $1}')
-+		if [[ ! -d $KSRC_PREFIX/usr/src/$DIR_NAME ]]; then
-+			echo "Extracting $deb..."
-+			ar p $deb data.tar.gz | tar xz --exclude=usr/share -C $TEMP_DIR
-+		fi
-+	done
-+
-+	# Move the extracted folders into the system
-+	if [[ -d $TEMP_DIR/lib/modules ]]; then
-+
-+		# Relink lib/modules/*/build/ directories relatively to make it work
-+		# for regular user based workflows
-+		if [[ -n $KSRC_PREFIX ]]; then
-+			echo "Adjusting build/ symlinks for non-root installation..."
-+
-+			for kernel in $(ls -d $TEMP_DIR/lib/modules/*generic); do
-+				unlink $kernel/build
-+				ln -s ../../../usr/src/linux-headers-`basename $kernel` $kernel/build
-+			done
-+		fi
-+
-+		mv $TEMP_DIR/lib/modules/* $KSRC_PREFIX/lib/modules
-+	fi
-+	if [[ -d $TEMP_DIR/usr/src ]]; then
-+		# Because of a bug in make < 3.82, mixed implicit and normal
-+		# rules do not cause harm. Since the bug is fixed in the new make
-+		# we have to adjust older kernel's Makefiles to fix the bug.
-+		sed -i 's#^/ %/:#%/:#' $TEMP_DIR/usr/src/linux-headers-2.6.2[45678]-0*/Makefile &>/dev/null
-+
-+		mv $TEMP_DIR/usr/src/* $KSRC_PREFIX/usr/src
-+	fi
-+
-+	# Remove the temporary directory
-+	rm -rf $TEMP_DIR
-+}
-+
-+function rebuild_header_binary_deps() {
-+	if [[ ! -d ${KSRC_PREFIX}/lib/modules/ ]]; then
-+		echo "You do not seem to have any vanilla kernels available to fix"
-+		exit 1
-+	fi
-+
-+	COUNT=$(ls -d ${KSRC_PREFIX}/lib/modules/*generic | wc -l)
-+	if [[ $COUNT -le 0 ]]; then
-+		echo "You do not seem to have any vanilla kernels available to fix"
-+		exit 1
-+	fi
-+
-+	for kernel in $(ls -d ${KSRC_PREFIX}/lib/modules/*generic | grep -E "/3.[2-9]|/[4-9]"); do
-+		echo $kernel
-+
-+		count=0
-+		while [[ $count -ne 4 ]]; do
-+			for i in basic mod genksyms; do
-+				if [[ $count -eq 0 ]]; then
-+					make -C ${kernel}/build/ M=scripts/${i}/ clean > /dev/null 2>&1
-+				fi
-+				make -C ${kernel}/build/ M=scripts/${i}/ > /dev/null 2>&1
-+			done
-+			let count=$count+1
-+		done
-+	done
-+}
-+
-+function usage() {
-+	echo -e "Usage: $0 [ -r ] [ -f ] "
-+	echo -e "-r Rebuilds binaries required in kernel headers. Use"
-+	echo -e "   this option if you've already ran this script and"
-+	echo -e "   just need to fix the libc versions against which"
-+	echo -e "   the binaries in the headers files are linked against. "
-+	echo -e "   This was added since kernels >= 3.4 require"
-+	echo -e "   a glibc >= 2.14 for memcpy(), and not all Linux"
-+	echo -e "   distributions have such versions of glibc."
-+	echo -e ""
-+	echo -e "-f Force running, do not ask"
-+}
-+
-+if [[ $# -gt 3 ]]; then
-+	usage
-+	exit 1
-+fi
-+
-+if [[ $1 == "-r" ]]; then
-+	rebuild_header_binary_deps
-+	exit
-+fi
-+
-+if [[ $1 == "-f" ]]; then
-+	FORCE="1"
-+	shift
-+fi
-+
-+# Check for the availability of 'ar' before continuing
-+which ar 2>&1 > /dev/null
-+if [[ $? -ne 0 ]]; then
-+	echo -e "${GREEN}ar${NORMAL} is not avilable, typically this is available through a package called binutils"
-+	echo -e "Install binutils and run this script again..."
-+	exit 1
-+fi
-+
-+echo -e ""
-+
-+if [[ ! -n $KSRC_PREFIX ]]; then
-+	echo -e "** Running as a privileged user!"
-+	echo -e "** You are trying to force using ${BLUE}${KSRC_PREFIX}/lib/modules${NORMAL} and ${BLUE}${KSRC_PREFIX}/usr/src${NORMAL} ..."
-+	echo -e "** This is a terrible idea. Consider running as a regular user."
-+	echo -e ""
-+	read -p "Do you still want to continue (y/N)? "
-+	if [[ "${REPLY}" != "y" ]]; then
-+		echo -e "Bailing out !"
-+		exit 1
-+	fi
-+fi
-+
-+echo -e "This will download ${YELLOW}${NUM_KERNELS}${NORMAL} kernel headers to allow you to"
-+echo -e "cross compile any module over these kernels with ${GREEN}ckmake${NORMAL}."
-+echo -e "The download payload is about ${YELLOW}~ $((${SPACE_PER_KERNEL_DEB} * ${NUM_KERNELS})) ${CYAN}MiB${NORMAL}, once uncompressed"
-+echo -e "it will stash kernel header files under ${BLUE}$KSRC_PREFIX/usr/src/${NORMAL}"
-+echo -e "and ${BLUE}$KSRC_PREFIX/lib/modules/${NORMAL} and consume about ~ ${YELLOW}$((${NUM_KERNELS} * ${SPACE_PER_KERNEL})) ${RED}MiB${NORMAL} of space."
-+echo -e ""
-+echo -e "The kernel headers used are from ${PURPLE}${UNDERLINE}Vanilla${NORMAL} kernels"
-+echo -e "from the Ubuntu mainline / vanilla kernel PPA and are extracted"
-+echo -e "using ${GREEN}ar${NORMAL} and ${GREEN}tar${NORMAL}:"
-+echo -e ""
-+echo -e "${BLUE}http://kernel.ubuntu.com/~kernel-ppa/mainline/${NORMAL}"
-+echo -e ""
-+
-+if [[ "$FORCE" != "1" ]]; then
-+	read -p "Do you still want to continue (y/N)? "
-+	if [[ "${REPLY}" != "y" ]]; then
-+		echo -e "Bailing out !"
-+		exit 1
-+	fi
-+fi
-+
-+get_ubuntu_kernels
-+echo -e "Vanilla kernels headers ${BLUE}installed${NORMAL}, "
-+echo -e "now going to ${GREEN}rebuild${NORMAL} some binary dependencies..."
-+sleep 1
-+rebuild_header_binary_deps
-diff --git a/devel/get-compat-trees b/devel/get-compat-trees
-new file mode 100755
-index 0000000..d781245
---- /dev/null
-+++ b/devel/get-compat-trees
-@@ -0,0 +1,87 @@
-+#!/bin/bash
-+#
-+# Copyright (C) 2012, Luis R. Rodriguez <mcgrof@frijolero.org>
-+#
-+# This program is free software; you can redistribute it and/or modify
-+# it under the terms of the GNU General Public License version 2 as
-+# published by the Free Software Foundation.
-+#
-+# You can use this script to install all mainline kernels used
-+# to test compile the Linux kernel compatibility module. You can
-+# then use ckmake to cross compile against all supported kernels.
-+
-+# Pretty colors
-+GREEN="\033[01;32m"
-+YELLOW="\033[01;33m"
-+NORMAL="\033[00m"
-+BLUE="\033[34m"
-+RED="\033[31m"
-+PURPLE="\033[35m"
-+CYAN="\033[36m"
-+UNDERLINE="\033[02m"
-+
-+PREFIX=$HOME/
-+
-+GIT_TREES="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git"
-+GIT_TREES="$GIT_TREES git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git"
-+GIT_TREES="$GIT_TREES git://github.com/mcgrof/compat.git"
-+GIT_TREES="$GIT_TREES git://github.com/mcgrof/compat-drivers.git"
-+
-+LINUX_GIT="git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git"
-+
-+which git 2>&1 > /dev/null
-+if [[ $? -ne 0 ]]; then
-+	echo -e "You need to install ${PURPLE}git${NORMAL}"
-+	exit 1
-+fi
-+
-+echo -e "This will typically take ~ ${YELLOW}10 ${CYAN}minutes${NORMAL}, download about "
-+echo -e "~ ${YELLOW}1 ${CYAN}GiB${NORMAL} of data over your network, and then consume about "
-+echo -e "~ ${YELLOW}2 ${CYAN}GiB${NORMAL} of hard drive space."
-+
-+read -p "Do you still want to continue (y/N)? "
-+if [[ "${REPLY}" != "y" ]]; then
-+	echo -e "Bailing out !"
-+	exit 1
-+fi
-+
-+mkdir -p $PREFIX
-+cd $PREFIX
-+
-+for i in $GIT_TREES; do
-+	TREE=$(echo ${i} | awk -F"/" '{print $NF}')
-+
-+	if [[ -d $PREFIX/$TREE ]]; then
-+		echo "${GREEN}${TREE}${NORMAL} is already present, skipping..."
-+		continue
-+	fi
-+
-+	echo -e "Cloning ${GREEN}${TREE}${NORMAL}..."
-+
-+	case $TREE in
-+	"linux-stable.git")
-+		cd $PREFIX/
-+		git clone $i
-+
-+		cd $PREFIX/linux-stable
-+		# This lets us bake releases off of Linus' RC releases by
-+		# simply git fetch'ing "linus" and reseting the tree afterwards.
-+		git remote add linus $LINUX_GIT
-+		;;
-+	"linux-next.git")
-+		cd $PREFIX
-+		git clone $i --reference $PREFIX/linux-stable/.git/
-+		;;
-+	"compat-drivers.git")
-+		# This is just what scripts are tested for. Probably best to
-+		# unify all into one place but this will do for now.
-+		mkdir -p $PREFIX/devel/
-+		cd $PREFIX/devel/
-+		git clone $i
-+		;;
-+	*)
-+		cd $PREFIX
-+		git clone $i
-+		;;
-+	esac
-+done
--- 
-1.7.10.4
+johannes
 
