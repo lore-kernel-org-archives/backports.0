@@ -1,32 +1,37 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:54450 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1161236Ab3DEPQ6 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 5 Apr 2013 11:16:58 -0400
-From: Thierry Escande <thierry.escande@linux.intel.com>
-To: backports@vger.kernel.org
-Subject: [PATCH v2 4/5] build: enable NFC build
-Date: Fri,  5 Apr 2013 17:16:53 +0200
-Message-Id: <1365175014-6028-4-git-send-email-thierry.escande@linux.intel.com> (sfid-20130405_171701_387162_1838CC96)
-Content-Type: text/plain; charset = "utf-8"
+Received: from he.sipsolutions.net ([78.46.109.217]:32890 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934822Ab3DJUAP (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 10 Apr 2013 16:00:15 -0400
+Message-ID: <1365624006.4235.42.camel@jlt4.sipsolutions.net> (sfid-20130410_220019_092094_5142A3F0)
+Subject: Re: [PATCH 13/18] backports: add blacklist module support
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Wed, 10 Apr 2013 22:00:06 +0200
+In-Reply-To: <CAB=NE6UEUcszkUMBtpwJQnWjAj5p15j_kf158697rSfVmwQM4A@mail.gmail.com> (sfid-20130410_215802_673573_F59A500A)
+References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1365593728-5720-14-git-send-email-mcgrof@do-not-panic.com>
+	 <1365600903.4235.10.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6UEUcszkUMBtpwJQnWjAj5p15j_kf158697rSfVmwQM4A@mail.gmail.com>
+	 (sfid-20130410_215802_673573_F59A500A)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Thierry Escande <thierry.escande@linux.intel.com>
----
- backport/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 2013-04-10 at 12:57 -0700, Luis R. Rodriguez wrote:
 
-diff --git a/backport/Kconfig b/backport/Kconfig
-index 87e3869..eb74b08 100644
---- a/backport/Kconfig
-+++ b/backport/Kconfig
-@@ -35,4 +35,4 @@ source drivers/net/ethernet/Kconfig
- source drivers/ssb/Kconfig
- source drivers/bcma/Kconfig
- 
--# source net/nfc/Kconfig
-+source net/nfc/Kconfig
--- 
-1.7.10.4
+> > So you do mean "# new-driver old-driver", but then shouldn't the iwlwifi
+> > lines be reversed?
+> 
+> You would know better, sorry I thought iwlagn replaces those, I'll swap.
+
+Well it's a bit complicated and it changed a few times, but now there's
+only iwlegacy and iwlwifi (with iwldvm/iwlmvm), so iwlagn no longer
+exists. It did inbetween at some point, and I think iwlwifi even existed
+before already, but that doesn't really matter since a new iwlwifi would
+override an existing iwlwifi. So yeah I think they should be switched.
+
+johannes
 
