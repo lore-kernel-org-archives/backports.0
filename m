@@ -1,67 +1,66 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:44213 "EHLO
+Received: from he.sipsolutions.net ([78.46.109.217]:37205 "EHLO
 	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753809Ab3DMXyK (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 19:54:10 -0400
+	with ESMTP id S1751001Ab3DKXnH (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 11 Apr 2013 19:43:07 -0400
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
 Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [RFC/RFT 03/42] backports: patch tracing for older kernels
-Date: Sun, 14 Apr 2013 01:53:23 +0200
-Message-Id: <1365897243-31214-4-git-send-email-johannes@sipsolutions.net> (sfid-20130414_015413_927914_BB511F7C)
-In-Reply-To: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net>
-References: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net>
+Subject: [RFC/WIP 10/24] backports: move kernel 3.3 SKB functions
+Date: Fri, 12 Apr 2013 01:42:37 +0200
+Message-Id: <1365723771-10660-11-git-send-email-johannes@sipsolutions.net> (sfid-20130412_014353_372929_C1F91B0E)
+In-Reply-To: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
+References: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: Johannes Berg <johannes.berg@intel.com>
 
-For some reason the tracing on older kernels requires
-the tracing to be declared before it's defined; it's
-broken when the trace header is only included to create
-the tracepoints.
-
-Since new kernels don't, add patches for the two places
-that rely on the new behaviour.
-
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- .../network/74-define-tracing/ath6kl.patch                     | 10 ++++++++++
- .../network/74-define-tracing/cfg80211.patch                   |  8 ++++++++
- 2 files changed, 18 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/74-define-tracing/ath6kl.patch
- create mode 100644 patches/collateral-evolutions/network/74-define-tracing/cfg80211.patch
+ backport/backport-include/linux/compat-3.3.h |  8 --------
+ backport/backport-include/linux/skbuff.h     | 11 +++++++++++
+ 2 files changed, 11 insertions(+), 8 deletions(-)
 
-diff --git a/patches/collateral-evolutions/network/74-define-tracing/ath6kl.patch b/patches/collateral-evolutions/network/74-define-tracing/ath6kl.patch
-new file mode 100644
-index 0000000..5910f54
---- /dev/null
-+++ b/patches/collateral-evolutions/network/74-define-tracing/ath6kl.patch
-@@ -0,0 +1,10 @@
-+--- a/drivers/net/wireless/ath/ath6kl/trace.c
-++++ b/drivers/net/wireless/ath/ath6kl/trace.c
-+@@ -16,6 +16,7 @@
-+ 
-+ #include <linux/module.h>
-+ 
-++#include "trace.h"
-+ #define CREATE_TRACE_POINTS
-+ #include "trace.h"
-+ 
-diff --git a/patches/collateral-evolutions/network/74-define-tracing/cfg80211.patch b/patches/collateral-evolutions/network/74-define-tracing/cfg80211.patch
-new file mode 100644
-index 0000000..eeab23d
---- /dev/null
-+++ b/patches/collateral-evolutions/network/74-define-tracing/cfg80211.patch
-@@ -0,0 +1,8 @@
-+--- a/net/wireless/trace.c
-++++ b/net/wireless/trace.c
-+@@ -1,4 +1,5 @@
-+ #include <linux/module.h>
-++#include "trace.h"
-+ 
-+ #ifndef __CHECKER__
-+ #define CREATE_TRACE_POINTS
+diff --git a/backport/backport-include/linux/compat-3.3.h b/backport/backport-include/linux/compat-3.3.h
+index ce7e776..72686da 100644
+--- a/backport/backport-include/linux/compat-3.3.h
++++ b/backport/backport-include/linux/compat-3.3.h
+@@ -305,14 +305,6 @@ static inline void qdisc_cb_private_validate(const struct sk_buff *skb, int sz)
+ #endif
+ #endif
+ 
+-#define __pskb_copy LINUX_BACKPORT(__pskb_copy)
+-extern struct sk_buff *__pskb_copy(struct sk_buff *skb,
+-				   int headroom, gfp_t gfp_mask);
+-
+-static inline void skb_complete_wifi_ack(struct sk_buff *skb, bool acked)
+-{
+-	WARN_ON(1);
+-}
+ #define NL80211_FEATURE_SK_TX_STATUS 0
+ 
+ typedef u32 netdev_features_t;
+diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
+index 0c09f9b..0a2e4cf 100644
+--- a/backport/backport-include/linux/skbuff.h
++++ b/backport/backport-include/linux/skbuff.h
+@@ -13,4 +13,15 @@ extern void v2_6_28_skb_add_rx_frag(struct sk_buff *skb, int i,
+ 	skb_add_rx_frag(skb, i, page, off, size)
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
++#define __pskb_copy LINUX_BACKPORT(__pskb_copy)
++extern struct sk_buff *__pskb_copy(struct sk_buff *skb,
++				   int headroom, gfp_t gfp_mask);
++
++static inline void skb_complete_wifi_ack(struct sk_buff *skb, bool acked)
++{
++	WARN_ON(1);
++}
++#endif
++
+ #endif /* __BACKPORT_SKBUFF_H */
 -- 
 1.8.0
 
