@@ -1,30 +1,63 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f44.google.com ([209.85.215.44]:61623 "EHLO
-	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758818Ab3DBFCY (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 2 Apr 2013 01:02:24 -0400
-Received: by mail-la0-f44.google.com with SMTP id eb20so29475lab.31
-        for <backports@vger.kernel.org>; Mon, 01 Apr 2013 22:02:20 -0700 (PDT)
-MIME-Version: 1.0
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Mon, 1 Apr 2013 22:02:00 -0700
-Message-ID: <CAB=NE6XO=RrAvo-aQ5aoY8vmw5g9XzPdqNvewhpkJK_SyXmxxw@mail.gmail.com> (sfid-20130402_070227_482800_87AD7E76)
-Subject: Fifth release based on next-20130328
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from he.sipsolutions.net ([78.46.109.217]:37188 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750731Ab3DKXnA (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 11 Apr 2013 19:43:00 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [RFC/WIP 05/24] backports: move simple_open()
+Date: Fri, 12 Apr 2013 01:42:32 +0200
+Message-Id: <1365723771-10660-6-git-send-email-johannes@sipsolutions.net> (sfid-20130412_014304_493568_392D9235)
+In-Reply-To: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
+References: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-linux-next has stalled now on next-20130328 due toe merge window so we
-have a fifth release based on it with quite a few updates, in
-particular for DRM -- drm-buf is now available even on kernels
-3.2-3.4, this includes also enabing nouveau driver support on 3.2, it
-was previously only available on >= 3.3. Additionally the media
-subsystem was backported with the first drivers added being v4l2 and
-uvcvideo. It should be easy to add more media drivers now.
+From: Hauke Mehrtens <hauke@hauke-m.de>
 
-Please test! (tarball will be available in a few minutes)
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/backport-include/linux/compat-3.4.h |  3 ---
+ backport/backport-include/linux/fs.h         | 15 +++++++++++++++
+ 2 files changed, 15 insertions(+), 3 deletions(-)
+ create mode 100644 backport/backport-include/linux/fs.h
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/2013/03/28/compat-drivers-2013-03-28-5-u.tar.bz2
+diff --git a/backport/backport-include/linux/compat-3.4.h b/backport/backport-include/linux/compat-3.4.h
+index a152d51..6f655bd 100644
+--- a/backport/backport-include/linux/compat-3.4.h
++++ b/backport/backport-include/linux/compat-3.4.h
+@@ -102,9 +102,6 @@ static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
+ extern const struct i2c_algorithm i2c_bit_algo;
+ #endif
+ 
+-#define simple_open LINUX_BACKPORT(simple_open)
+-extern int simple_open(struct inode *inode, struct file *file);
+-
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28))
+ #define skb_add_rx_frag(skb, i, page, off, size, truesize) \
+ 	v2_6_28_skb_add_rx_frag(skb, i, page, off, size)
+diff --git a/backport/backport-include/linux/fs.h b/backport/backport-include/linux/fs.h
+new file mode 100644
+index 0000000..db57d42
+--- /dev/null
++++ b/backport/backport-include/linux/fs.h
+@@ -0,0 +1,15 @@
++#ifndef _COMPAT_LINUX_FS_H
++#define _COMPAT_LINUX_FS_H
++
++#include_next <linux/fs.h>
++
++#include <linux/version.h>
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
++
++#define simple_open LINUX_BACKPORT(simple_open)
++extern int simple_open(struct inode *inode, struct file *file);
++
++#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)) */
++
++#endif	/* _COMPAT_LINUX_FS_H */
+-- 
+1.8.0
 
-  Luis
