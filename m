@@ -1,67 +1,108 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:56839 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754023Ab3DOQ06 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 15 Apr 2013 12:26:58 -0400
-Date: Mon, 15 Apr 2013 17:26:52 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/7] backports: add support for voltage / current
- regulator drivers
-Message-ID: <20130415162652.GK15837@opensource.wolfsonmicro.com> (sfid-20130415_182701_849345_5EAE7E6A)
-References: <1365862424-6530-1-git-send-email-mcgrof@do-not-panic.com>
- <1365862424-6530-6-git-send-email-mcgrof@do-not-panic.com>
- <1365886878.1089.5.camel@jlt4.sipsolutions.net>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:48590 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S936087Ab3DKO4l (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 11 Apr 2013 10:56:41 -0400
+Message-ID: <5166CF1F.6050808@hauke-m.de> (sfid-20130411_165644_812093_1AC32D56)
+Date: Thu, 11 Apr 2013 16:56:31 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="VJJoKLVEFXdmHQwR"
-In-Reply-To: <1365886878.1089.5.camel@jlt4.sipsolutions.net>
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: taking backports out of compat-*.h
+References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>  <1365593728-5720-3-git-send-email-mcgrof@do-not-panic.com>  <1365599791.8388.16.camel@jlt4.sipsolutions.net>  <CAB=NE6XVe1UcpXozrpC62z750kveY2ACi_-oKVohSZcMNRxSPQ@mail.gmail.com>  (sfid-20130410_190809_555509_3F0894BA) <1365614155.4235.27.camel@jlt4.sipsolutions.net>  (sfid-20130410_191605_116427_ECB60701) <1365691457.8272.64.camel@jlt4.sipsolutions.net>
+In-Reply-To: <1365691457.8272.64.camel@jlt4.sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+On 04/11/2013 04:44 PM, Johannes Berg wrote:
+> On Wed, 2013-04-10 at 19:15 +0200, Johannes Berg wrote:
+> 
+>>> Sure, lets what's the idea or do you want to do that on another thread?
+> 
+> Let me give it a different subject :-)
+> 
+>> It's kinda half-baked and I'm not completely sure it's a good idea
+>> (because we may have to follow header file renames, though they happen
+>> rarely), but I was basically thinking this:
+>>
+>> Say there's
+>>
+>> void my_foo_function(struct foo *f);
+>>
+>> that we want to backport. Let's also say it's defined in <linux/foo.h>,
+>> and that it was usually present starting from kernel 3.0, but for now
+>> let's assume the "foo" subsystem always existed (i.e. <linux/foo.h>)
+>>
+>> Typically, we'd therefore add it to <linux/compat-3.0.h> and declare it
+>> there, maybe with the LINUX_BACKPORT() wrapper, and then define it in
+>> compat/compat-3.0.c.
+>>
+>> What I'm thinking is that we should maybe declare it in compat in
+>> include/linux/foo.h instead, maybe like this:
+>>
+>> #ifndef __BACKPORT_FOO
+>> #define __BACKPORT_FOO
+>> #include_next <linux/foo.h>
+>>
+>> #if LINUX_VERSION < 3.0
+>> #define my_foo_function LINUX_BACKPORT(my_foo_function)
+>>
+>> void my_foo_function(struct foo *f);
+>> #endif
+>>
+>> #endif /* __BACKPORT_FOO */
+>>
+>>
+>>
+>> I'm a bit undecided. On the one hand I think it's nice that we can spot
+>> in one place what's backported where in all the
+>> include/linux/compat-xyz.h files, but on the other hand it's kinda
+>> becoming a messy jumble of features across different subsystems, and
+>> hard to determine what you have already and might need for a given
+>> header file?
+> 
+> In addition to what I said, I just realized that we should probably do
+> this, and do it consistently even for old things. That way, we can get
+> rid of all the pr_fmt patches.
+> 
+> The reason for the pr_fmt patches is that typically, a source file would
+> have
+> 
+> #define pr_fmt(fmt)           KBUILD_MODNAME ": " fmt
+> #include <whatever, including somehow getting printk.h>
+> 
+> Now that we force them to include compat-2.6.h at the very beginning of
+> the file, printk.h already gets included in some way through
+> compat-2.6.h (there are of course MANY MANY paths to it.)
+> 
+> To avoid redefine warnings, we thus patch everything to be
+> 
+> #undef pr_fmt
+> #define pr_fmt
+> ...
+> 
+> which of course works, but it's pretty ugly (we have >1000 patchlines
+> for this!)
+> 
+> 
+> If we were able to get rid of compat-2.6.h and put all the backports
+> into their appropriate headers (linux/foo.h) we could only force an
+> include of compat_autoconf.h (which doesn't include printk.h of course)
+> and then we'd be able to get rid of all these patches.
 
---VJJoKLVEFXdmHQwR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I had a similar same idea a year ago, but haven't found the time to
+complete it, see [0]. I am still for this solution.
 
-On Sat, Apr 13, 2013 at 11:01:18PM +0200, Johannes Berg wrote:
-> On Sat, 2013-04-13 at 07:13 -0700, Luis R. Rodriguez wrote:
+If linux/foo.h does not exist in recent kernel versions we have to add
+it anyway, because the new code references it, so this is not a problem.
 
-> > This backports the latest regulator drivers for kernels >= 3.4.
-> > We enable the regulator only on kernels >= 3.4 given that
-> > it relies on the new probe deferral mechanism which would
-> > otherwise mean having to support drivers that do not probe
-> > correctly. Note that 3.2 had a base regulator implementation
-> > but that was just stubs.
+With this solution we would clean up the includes used when compiling
+and we do not need the pr_fmt patch any more and hopefully some more.
 
-> Applied.
+Hauke
 
-Please let's at least discuss the issues here, I'm not sure what this is
-supposed to do but the analysis of the subsystem didn't seem complete.
-
---VJJoKLVEFXdmHQwR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRbCo+AAoJELSic+t+oim9OzoP/AjBaQL3JwmcebLcVfupNJeM
-vObnJ+pjjin7HWojxQ6WM6oMpqHpK9g76QCl8KRjyMVVXDojYgj26SO45ail/arP
-4IYa8GB2sBvRHKvkENnhUeOgc0pw8ycqx7lNm/2xLG/6gqisGLBErImXRd2SAKml
-Q2OtfKy++sEDmm1LJ7s6yvLmtlWkBTuopMAwn0ChLJ9/j9pgr9aZsa/un+iowOIm
-Gr93GmWgohmKoHPzw6kO27p102P0B9Z9jJ873FRj32z1lLyoSJ6VT6XAFXqV394D
-h0Psq2T5zWXaPhD3RCJ61wNlX71oFe0gyCrWIJiAfYVL+lbVVDTuQ+ZtQuaZOaxp
-SQg5IMODBjoGyEgmpEcqBtSM1Sa73ukCXSQtMiiT7qMVDyUqx+doVrdoVXX5ddSL
-zDjEfsOVl/1wYIIHedGs+2spG6sHgoieE74yhkxmUlx/JgCSC25Fn09GDzYM9pGd
-JHEzjJy8OtMRZqnnLFriITFlEBMrSamtcjuWTqNhniHc389qNTbQh5orcUdEmmSO
-2V3/jvy66GBzhY9EQzift3VP38EJArUVcdRmggSgsgLzbN7wjYHrCj3WdWHun6A1
-EbOJBD5nMaW2uFkt9dn8LmrBncTBu+R20D49KvjC9SgBeycDBhIRvszhbP7JIGFl
-EPqzgp/0TG4oc31J86Ec
-=Ka9j
------END PGP SIGNATURE-----
-
---VJJoKLVEFXdmHQwR--
+[0]:
+https://lists.linuxfoundation.org/pipermail/lf_driver_backport/2012-April/000972.html
