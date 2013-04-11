@@ -1,99 +1,68 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:62955 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161970Ab3DEQir (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 5 Apr 2013 12:38:47 -0400
-Received: by mail-pa0-f46.google.com with SMTP id lb1so2132847pab.19
-        for <backports@vger.kernel.org>; Fri, 05 Apr 2013 09:38:47 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 5/5] backports: add DRM drivers
-Date: Fri,  5 Apr 2013 09:38:19 -0700
-Message-Id: <1365179899-7984-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20130405_183849_511540_C94044EE)
-In-Reply-To: <1365179899-7984-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1365179899-7984-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from he.sipsolutions.net ([78.46.109.217]:37194 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751372Ab3DKXnC (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 11 Apr 2013 19:43:02 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [RFC/WIP 08/24] backports: move COMPAT_USE_64BIT_TIME
+Date: Fri, 12 Apr 2013 01:42:35 +0200
+Message-Id: <1365723771-10660-9-git-send-email-johannes@sipsolutions.net> (sfid-20130412_014307_965712_9360A3E8)
+In-Reply-To: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
+References: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-They are building just fine so enable them.
-
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.65              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.38              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.32              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.9               [  OK  ]
-25  3.8.0               [  OK  ]
-26  3.9-rc1             [  OK  ]
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/Kconfig |    2 ++
- copy-list        |   22 ++++++++++++++++++++++
- 2 files changed, 24 insertions(+)
+ backport/backport-include/linux/compat-3.4.h |  7 -------
+ backport/backport-include/linux/compat.h     | 16 ++++++++++++++++
+ 2 files changed, 16 insertions(+), 7 deletions(-)
+ create mode 100644 backport/backport-include/linux/compat.h
 
-diff --git a/backport/Kconfig b/backport/Kconfig
-index d0ae17f..8a38d61 100644
---- a/backport/Kconfig
-+++ b/backport/Kconfig
-@@ -34,3 +34,5 @@ source drivers/net/ethernet/Kconfig
+diff --git a/backport/backport-include/linux/compat-3.4.h b/backport/backport-include/linux/compat-3.4.h
+index fafec0c..51c058e 100644
+--- a/backport/backport-include/linux/compat-3.4.h
++++ b/backport/backport-include/linux/compat-3.4.h
+@@ -102,13 +102,6 @@ static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
+ extern const struct i2c_algorithm i2c_bit_algo;
+ #endif
  
- source drivers/ssb/Kconfig
- source drivers/bcma/Kconfig
+-#ifdef CONFIG_X86_X32_ABI
+-#define COMPAT_USE_64BIT_TIME \
+-	(!!(task_pt_regs(current)->orig_ax & __X32_SYSCALL_BIT))
+-#else
+-#define COMPAT_USE_64BIT_TIME 0
+-#endif
+-
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,12))
+ #define eth_hw_addr_random LINUX_BACKPORT(eth_hw_addr_random)
+ static inline void eth_hw_addr_random(struct net_device *dev)
+diff --git a/backport/backport-include/linux/compat.h b/backport/backport-include/linux/compat.h
+new file mode 100644
+index 0000000..22db9b0
+--- /dev/null
++++ b/backport/backport-include/linux/compat.h
+@@ -0,0 +1,16 @@
++#ifndef __BACKPORT_COMPAT_H
++#define __BACKPORT_COMPAT_H
 +
-+source drivers/gpu/drm/Kconfig
-diff --git a/copy-list b/copy-list
-index 4243619..4c606a5 100644
---- a/copy-list
-+++ b/copy-list
-@@ -114,3 +114,25 @@ drivers/net/ethernet/broadcom/Kconfig
- drivers/net/ethernet/broadcom/Makefile
- drivers/net/ethernet/broadcom/b44.c
- drivers/net/ethernet/broadcom/b44.h
++#include_next <linux/compat.h>
++#include <linux/version.h>
 +
-+# DRM
-+include/drm/
-+include/uapi/drm/
-+drivers/platform/x86/intel_ips.h
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
++#ifdef CONFIG_X86_X32_ABI
++#define COMPAT_USE_64BIT_TIME \
++	(!!(task_pt_regs(current)->orig_ax & __X32_SYSCALL_BIT))
++#else
++#define COMPAT_USE_64BIT_TIME 0
++#endif
++#endif
 +
-+drivers/gpu/drm/Makefile
-+drivers/gpu/drm/Kconfig
-+drivers/gpu/drm/ast/
-+drivers/gpu/drm/cirrus/
-+drivers/gpu/drm/gma500/
-+drivers/gpu/drm/i2c/
-+drivers/gpu/drm/i810/
-+drivers/gpu/drm/i915/
-+drivers/gpu/drm/mgag200/
-+drivers/gpu/drm/nouveau/core/
-+drivers/gpu/drm/nouveau/
-+drivers/gpu/drm/radeon/reg_srcs/
-+drivers/gpu/drm/radeon/
-+drivers/gpu/drm/ttm/
-+drivers/gpu/drm/via/
-+drivers/gpu/drm/vmwgfx/
++#endif /* __BACKPORT_COMPAT_H */
 -- 
-1.7.10.4
+1.8.0
 
