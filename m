@@ -1,54 +1,128 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:48408 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753518Ab3DMON7 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 10:13:59 -0400
-Received: by mail-pa0-f47.google.com with SMTP id bj3so1887761pad.6
-        for <backports@vger.kernel.org>; Sat, 13 Apr 2013 07:13:59 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 2/7] compat: add missing header includes for DMA backports
-Date: Sat, 13 Apr 2013 07:13:39 -0700
-Message-Id: <1365862424-6530-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20130413_161400_802821_AF4B6AD0)
-In-Reply-To: <1365862424-6530-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1365862424-6530-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from he.sipsolutions.net ([78.46.109.217]:37196 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751026Ab3DKXnD (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 11 Apr 2013 19:43:03 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [RFC/WIP 09/24] backports: move eth_hw_addr_random
+Date: Fri, 12 Apr 2013 01:42:36 +0200
+Message-Id: <1365723771-10660-10-git-send-email-johannes@sipsolutions.net> (sfid-20130412_014308_661681_068CDE9E)
+In-Reply-To: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
+References: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/compat/compat-3.6.c        |    1 +
- backport/include/linux/compat-3.6.h |    1 +
- 2 files changed, 2 insertions(+)
+ backport/backport-include/linux/compat-3.4.h  | 43 ---------------------------
+ backport/backport-include/linux/etherdevice.h | 40 +++++++++++++++++++++++++
+ 2 files changed, 40 insertions(+), 43 deletions(-)
+ create mode 100644 backport/backport-include/linux/etherdevice.h
 
-diff --git a/backport/compat/compat-3.6.c b/backport/compat/compat-3.6.c
-index 5355cd2..1e4480b 100644
---- a/backport/compat/compat-3.6.c
-+++ b/backport/compat/compat-3.6.c
-@@ -16,6 +16,7 @@
- #include <linux/i2c.h>
+diff --git a/backport/backport-include/linux/compat-3.4.h b/backport/backport-include/linux/compat-3.4.h
+index 51c058e..1faa5b9 100644
+--- a/backport/backport-include/linux/compat-3.4.h
++++ b/backport/backport-include/linux/compat-3.4.h
+@@ -102,49 +102,6 @@ static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
+ extern const struct i2c_algorithm i2c_bit_algo;
+ #endif
  
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
-+#include <linux/dma-attrs.h>
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,12))
+-#define eth_hw_addr_random LINUX_BACKPORT(eth_hw_addr_random)
+-static inline void eth_hw_addr_random(struct net_device *dev)
+-{
+-#error eth_hw_addr_random() needs to be implemented for < 2.6.12
+-}
+-#else  /* kernels >= 2.6.12 */
+-
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31))
+-#define eth_hw_addr_random LINUX_BACKPORT(eth_hw_addr_random)
+-static inline void eth_hw_addr_random(struct net_device *dev)
+-{
+-	get_random_bytes(dev->dev_addr, ETH_ALEN);
+-	dev->dev_addr[0] &= 0xfe;       /* clear multicast bit */
+-	dev->dev_addr[0] |= 0x02;       /* set local assignment bit (IEEE802) */
+-}
+-#else /* kernels >= 2.6.31 */
+-
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36))
+-/* So this is 2.6.31..2.6.35 */
+-
+-/* Just have the flags present, they won't really mean anything though */
+-#define NET_ADDR_PERM          0       /* address is permanent (default) */
+-#define NET_ADDR_RANDOM                1       /* address is generated randomly */
+-#define NET_ADDR_STOLEN                2       /* address is stolen from other device */
+-
+-#define eth_hw_addr_random LINUX_BACKPORT(eth_hw_addr_random)
+-static inline void eth_hw_addr_random(struct net_device *dev)
+-{
+-	random_ether_addr(dev->dev_addr);
+-}
+-
+-#else /* 2.6.36 and on */
+-#define eth_hw_addr_random LINUX_BACKPORT(eth_hw_addr_random)
+-static inline void eth_hw_addr_random(struct net_device *dev)
+-{
+-	dev_hw_addr_random(dev, dev->dev_addr);
+-}
+-#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)) */
+-
+-#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)) */
+-#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,12)) */
+-
  /*
-  * Create scatter-list for the already allocated DMA buffer.
-  */
-diff --git a/backport/include/linux/compat-3.6.h b/backport/include/linux/compat-3.6.h
-index ccc43a2..f2c1a90 100644
---- a/backport/include/linux/compat-3.6.h
-+++ b/backport/include/linux/compat-3.6.h
-@@ -9,6 +9,7 @@
- 
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
- #include <linux/i2c.h>
-+#include <linux/dma-attrs.h>
- /* Unlocked flavor */
- #define __i2c_transfer LINUX_BACKPORT(__i2c_transfer)
- extern int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+  * Getting something that works in C and CPP for an arg that may or may
+  * not be defined is tricky.  Here, if we have "#define CONFIG_BOOGER 1"
+diff --git a/backport/backport-include/linux/etherdevice.h b/backport/backport-include/linux/etherdevice.h
+new file mode 100644
+index 0000000..9f31ab2
+--- /dev/null
++++ b/backport/backport-include/linux/etherdevice.h
+@@ -0,0 +1,40 @@
++#ifndef _BACKPORT_LINUX_ETHERDEVICE_H
++#define _BACKPORT_LINUX_ETHERDEVICE_H
++
++#include_next <linux/etherdevice.h>
++
++#include <linux/version.h>
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,12))
++static inline void eth_hw_addr_random(struct net_device *dev)
++{
++#error eth_hw_addr_random() needs to be implemented for < 2.6.12
++}
++#elif (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31))
++static inline void eth_hw_addr_random(struct net_device *dev)
++{
++	get_random_bytes(dev->dev_addr, ETH_ALEN);
++	dev->dev_addr[0] &= 0xfe;       /* clear multicast bit */
++	dev->dev_addr[0] |= 0x02;       /* set local assignment bit (IEEE802) */
++}
++#elif (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36))
++/* So this is 2.6.31..2.6.35 */
++
++/* Just have the flags present, they won't really mean anything though */
++#define NET_ADDR_PERM		0	/* address is permanent (default) */
++#define NET_ADDR_RANDOM		1	/* address is generated randomly */
++#define NET_ADDR_STOLEN		2	/* address is stolen from other device */
++
++static inline void eth_hw_addr_random(struct net_device *dev)
++{
++	random_ether_addr(dev->dev_addr);
++}
++
++#elif LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0)
++static inline void eth_hw_addr_random(struct net_device *dev)
++{
++	dev_hw_addr_random(dev, dev->dev_addr);
++}
++#endif
++
++#endif /* _BACKPORT_LINUX_ETHERDEVICE_H */
 -- 
-1.7.10.4
+1.8.0
 
