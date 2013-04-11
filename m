@@ -1,32 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:41294 "EHLO mga03.intel.com"
+Received: from ebb06.tieto.com ([131.207.168.38]:64112 "EHLO ebb06.tieto.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753138Ab3DEPNh (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 5 Apr 2013 11:13:37 -0400
-From: Thierry Escande <thierry.escande@linux.intel.com>
-To: backports@vger.kernel.org
-Subject: [PATCH] build: enable NFC build
-Date: Fri,  5 Apr 2013 17:13:30 +0200
-Message-Id: <1365174812-2672-4-git-send-email-thierry.escande@linux.intel.com> (sfid-20130405_171339_936952_BB80F4D3)
-Content-Type: text/plain; charset = "utf-8"
+	id S1754117Ab3DKJRU (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 11 Apr 2013 05:17:20 -0400
+From: Szymon Janc <szymon.janc@tieto.com>
+To: Eugene Krasnikov <k.eugene.e@gmail.com>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	linux-wireless <linux-wireless@vger.kernel.org>
+Subject: Re: include/linux/device.h:715:38: error: 'THIS_MODULE' undeclared
+Date: Thu, 11 Apr 2013 11:17:17 +0200
+Message-ID: <3231828.tgzQTMkMFI@uw000953> (sfid-20130411_111723_496419_3D16D64E)
+In-Reply-To: <CAFSJ42a5PsnbhgEaWWWZTBDVKhKUGR4xWY1pEXPc-UaQcC9AFA@mail.gmail.com>
+References: <CAFSJ42ZZH7Y+MPUURG_hQRuwhv8UKkF5sQQebsTjhH0uT07rjA@mail.gmail.com> <8701347.YaW7b4Fxgt@uw000953> <CAFSJ42a5PsnbhgEaWWWZTBDVKhKUGR4xWY1pEXPc-UaQcC9AFA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Thierry Escande <thierry.escande@linux.intel.com>
----
- backport/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wednesday 10 of April 2013 17:21:57 Eugene Krasnikov wrote:
 
-diff --git a/backport/Kconfig b/backport/Kconfig
-index 87e3869..eb74b08 100644
---- a/backport/Kconfig
-+++ b/backport/Kconfig
-@@ -35,4 +35,4 @@ source drivers/net/ethernet/Kconfig
- source drivers/ssb/Kconfig
- source drivers/bcma/Kconfig
- 
--# source net/nfc/Kconfig
-+source net/nfc/Kconfig
+Hi,
+
+> Thanx for reply. That also works.
+> But is it a solution or workaround? May be there should be smarter
+> check than just a kernel version?
+
+Note that android kernel is not vanilla kernel.
+
+If you have custom kernel (e.g android kernel) with extra features backported
+you need to enable support for those features in compat-drivers for
+your kernel i.e. mark it as applicable for lower kernel version (comparing to
+vanilla kernel which introduced this feature)
+
+The 'proper' solution would be to have support for Android (or CM) kernel in
+compat-drivers (same as eg. RH kernel would). But Android kernels varies
+heavily among devices and it could be hard to support all of them. It is also
+worth noting that often custom non-mainlined code doesn't even build when
+configured as module e.g. bluesleep driver from grouper kernel. This is extra
+obstacle as one would have to fix or disable such offending code.
+
 -- 
-1.7.10.4
-
+BR
+Szymon Janc
