@@ -1,29 +1,101 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:62769 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1162121Ab3DERVN (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 5 Apr 2013 13:21:13 -0400
-Message-ID: <515F0801.7020507@linux.intel.com> (sfid-20130405_192116_443453_E71D25D0)
-Date: Fri, 05 Apr 2013 19:21:05 +0200
-From: Thierry Escande <thierry.escande@linux.intel.com>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] backports: Add NFC core and drivers
-References: <1365175014-6028-2-git-send-email-thierry.escande@linux.intel.com>  (sfid-20130405_171658_345140_E6DC5D9A) <1365176113.8515.33.camel@jlt4.sipsolutions.net>
-In-Reply-To: <1365176113.8515.33.camel@jlt4.sipsolutions.net>
-Content-Type: text/plain; charset=UTF-8
+Received: from he.sipsolutions.net ([78.46.109.217]:37223 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750875Ab3DKXnt (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 11 Apr 2013 19:43:49 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [RFC/WIP 14/24] backports: remove vb2_mmap_pfn_range
+Date: Fri, 12 Apr 2013 01:42:41 +0200
+Message-Id: <1365723771-10660-15-git-send-email-johannes@sipsolutions.net> (sfid-20130412_014408_833789_899817A9)
+In-Reply-To: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
+References: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 04/05/2013 05:35 PM, Johannes Berg wrote:
->> +# NFC core needs PF_NFC defined in socket.h which was
->> +# only introduced in kernel 3.1
->> +NFC 3.1
-> 
-> Just PF_NFC could be defined in compat, no?
+From: Johannes Berg <johannes.berg@intel.com>
 
-That's right for compilation but sock_register for PF_NFC will fail and the module won't load.
+This doesn't seem to be used anywhere.
 
- Thierry
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/backport-include/linux/compat-3.9.h |  7 -----
+ backport/compat/compat-3.9.c                 | 43 ----------------------------
+ 2 files changed, 50 deletions(-)
+
+diff --git a/backport/backport-include/linux/compat-3.9.h b/backport/backport-include/linux/compat-3.9.h
+index a939e0b..2a1f2da 100644
+--- a/backport/backport-include/linux/compat-3.9.h
++++ b/backport/backport-include/linux/compat-3.9.h
+@@ -18,13 +18,6 @@
+ #include <linux/device.h>
+ #include <linux/platform_device.h>
+ 
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
+-int vb2_mmap_pfn_range(struct vm_area_struct *vma, unsigned long paddr,
+-				unsigned long size,
+-				const struct vm_operations_struct *vm_ops,
+-				void *priv);
+-#endif
+-
+ /* module_platform_driver_probe() - Helper macro for drivers that don't do
+  * anything special in module init/exit.  This eliminates a lot of
+  * boilerplate.  Each module may only use this macro once, and
+diff --git a/backport/compat/compat-3.9.c b/backport/compat/compat-3.9.c
+index 56c40d3..61a062a 100644
+--- a/backport/compat/compat-3.9.c
++++ b/backport/compat/compat-3.9.c
+@@ -12,49 +12,6 @@
+ #include <linux/scatterlist.h>
+ #include <linux/device.h>
+ 
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
+-/**
+- * vb2_mmap_pfn_range() - map physical pages to userspace
+- * @vma:	virtual memory region for the mapping
+- * @paddr:	starting physical address of the memory to be mapped
+- * @size:	size of the memory to be mapped
+- * @vm_ops:	vm operations to be assigned to the created area
+- * @priv:	private data to be associated with the area
+- *
+- * Returns 0 on success.
+- */
+-int vb2_mmap_pfn_range(struct vm_area_struct *vma, unsigned long paddr,
+-				unsigned long size,
+-				const struct vm_operations_struct *vm_ops,
+-				void *priv)
+-{
+-	int ret;
+-
+-	size = min_t(unsigned long, vma->vm_end - vma->vm_start, size);
+-
+-	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
+-	ret = remap_pfn_range(vma, vma->vm_start, paddr >> PAGE_SHIFT,
+-				size, vma->vm_page_prot);
+-	if (ret) {
+-		printk(KERN_ERR "Remapping memory failed, error: %d\n", ret);
+-		return ret;
+-	}
+-
+-	vma->vm_flags		|= VM_DONTEXPAND | VM_DONTDUMP;
+-	vma->vm_private_data	= priv;
+-	vma->vm_ops		= vm_ops;
+-
+-	vma->vm_ops->open(vma);
+-
+-	pr_debug("%s: mapped paddr 0x%08lx at 0x%08lx, size %ld\n",
+-			__func__, paddr, vma->vm_start, size);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(vb2_mmap_pfn_range);
+-#endif
+-
+-
+ #ifdef __sg_page_iter_next
+ 
+ void __sg_page_iter_start(struct sg_page_iter *piter,
+-- 
+1.8.0
 
