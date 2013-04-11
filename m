@@ -1,42 +1,94 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f193.google.com ([209.85.217.193]:62810 "EHLO
-	mail-lb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755426Ab3DXCQx (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 23 Apr 2013 22:16:53 -0400
-Received: by mail-lb0-f193.google.com with SMTP id p10so356390lbi.8
-        for <backports@vger.kernel.org>; Tue, 23 Apr 2013 19:16:52 -0700 (PDT)
-MIME-Version: 1.0
-Date: Tue, 23 Apr 2013 19:16:51 -0700
-Message-ID: <CAJqaZwyQN+66QK1kC5qiALwYAN4V6AmxEWC9kE9_4B-9GAnnfg@mail.gmail.com> (sfid-20130424_041656_207358_FC1077D8)
-Subject: [Patch] compat-drivers/Makefile: make uninstall leaves drm and two
- b44 files
-From: ASIC Felix <ic.felix@gmail.com>
-To: mcgrof@kernel.org
-Cc: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Received: from he.sipsolutions.net ([78.46.109.217]:37180 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750731Ab3DKXm7 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 11 Apr 2013 19:42:59 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [RFC/WIP 02/24] backports: move br_port_exists
+Date: Fri, 12 Apr 2013 01:42:29 +0200
+Message-Id: <1365723771-10660-3-git-send-email-johannes@sipsolutions.net> (sfid-20130412_014301_757703_77027FF0)
+In-Reply-To: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
+References: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-make uninstall doesn't remove drm and two b44 ethernet modules.
+From: Hauke Mehrtens <hauke@hauke-m.de>
 
-Signed-off-by: Felix Bitterli <ic.felix@gmail.com>
-diff --git a/Makefile b/Makefile
-index dc25969..dd16833 100644
---- a/Makefile
-+++ b/Makefile
-@@ -249,6 +249,15 @@ uninstall:
-        @rm -f $(KLIB)/$(KMODDIR)/drivers/misc/eeprom/eeprom_93cx6.ko*
-        @rm -f $(KLIB)/$(KMODDIR)/drivers/misc/eeprom_93cx6.ko*
-        @rm -f $(KLIB)/$(KMODDIR)/drivers/net/b44.ko*
-+       @rm -f $(KLIB)/$(KMODDIR)/drivers/net/ethernet/broadcom/b44.ko*
-+       @rm -f $(KLIB)/$(KMODDIR)/drivers/bcma/bcma.ko*
-+       @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/drm_kms_helper.ko*
-+       @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/drm.ko*
-+       @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/i915/i915.ko*
-+       @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/nouveau/nouveau.ko*
-+       @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/radeon/radeon.ko*
-+       @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/ttm/ttm.ko*
-+       @rm -f $(KLIB)/$(KMODDIR)/drivers/video/hdmi.ko*
-        @/sbin/depmod -a
-        @./scripts/update-initramfs
-        @echo
+---
+ backport/backport-include/linux/compat-2.6.36.h | 15 -------------
+ backport/backport-include/linux/if.h            | 28 +++++++++++++++++++++++++
+ 2 files changed, 28 insertions(+), 15 deletions(-)
+ create mode 100644 backport/backport-include/linux/if.h
+
+diff --git a/backport/backport-include/linux/compat-2.6.36.h b/backport/backport-include/linux/compat-2.6.36.h
+index ff6a53f..ae3ffa6 100644
+--- a/backport/backport-include/linux/compat-2.6.36.h
++++ b/backport/backport-include/linux/compat-2.6.36.h
+@@ -187,8 +187,6 @@ enum {
+ #define work_busy LINUX_BACKPORT(work_busy)
+ extern unsigned int work_busy(struct work_struct *work);
+ 
+-#define br_port_exists(dev)	(dev->br_port)
+-
+ #else
+ 
+ static inline void backport_system_workqueue_create(void)
+@@ -199,19 +197,6 @@ static inline void backport_system_workqueue_destroy(void)
+ {
+ }
+ 
+-/*
+- * This is not part of The 2.6.37 kernel yet but we
+- * we use it to optimize the backport code we
+- * need to implement. Instead of using ifdefs
+- * to check what version of the check we use
+- * we just replace all checks on current code
+- * with this. I'll submit this upstream too, that
+- * way all we'd have to do is to implement this
+- * for older kernels, then we would not have to
+- * edit the upstrema code for backport efforts.
+- */
+-#define br_port_exists(dev)	(dev->priv_flags & IFF_BRIDGE_PORT)
+-
+ #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36)) */
+ 
+ #endif /* LINUX_26_36_COMPAT_H */
+diff --git a/backport/backport-include/linux/if.h b/backport/backport-include/linux/if.h
+new file mode 100644
+index 0000000..63fef8a
+--- /dev/null
++++ b/backport/backport-include/linux/if.h
+@@ -0,0 +1,28 @@
++#ifndef _BACKPORT_LINUX_IF_H
++#define _BACKPORT_LINUX_IF_H
++
++#include_next <linux/if.h>
++
++#include <linux/version.h>
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36))
++
++#define br_port_exists(dev)	(dev->br_port)
++
++#else
++
++/*
++ * This is not part of The 2.6.37 kernel yet but we
++ * we use it to optimize the backport code we
++ * need to implement. Instead of using ifdefs
++ * to check what version of the check we use
++ * we just replace all checks on current code
++ * with this. I'll submit this upstream too, that
++ * way all we'd have to do is to implement this
++ * for older kernels, then we would not have to
++ * edit the upstrema code for backport efforts.
++ */
++#define br_port_exists(dev)	(dev->priv_flags & IFF_BRIDGE_PORT)
++
++#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36)) */
++#endif	/* _BACKPORT_LINUX_IF_H */
+-- 
+1.8.0
+
