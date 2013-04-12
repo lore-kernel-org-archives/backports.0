@@ -1,67 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:35194 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760584Ab3DCLe6 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 3 Apr 2013 07:34:58 -0400
-Message-ID: <1364988895.8351.18.camel@jlt4.sipsolutions.net> (sfid-20130403_133501_082323_5D8D3E6E)
-Subject: Re: [PATCH 2/2] compat: add HDMI library support
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: backports@vger.kernel.org
-Date: Wed, 03 Apr 2013 13:34:55 +0200
-In-Reply-To: <1364988697.8351.15.camel@jlt4.sipsolutions.net> (sfid-20130403_133144_245875_662B42EB)
-References: <1364963566-31377-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1364963566-31377-3-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20130403_063310_293485_8E9CDCC2) <1364988697.8351.15.camel@jlt4.sipsolutions.net>
-	 (sfid-20130403_133144_245875_662B42EB)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-da0-f42.google.com ([209.85.210.42]:34615 "EHLO
+	mail-da0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752943Ab3DLJgc (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 12 Apr 2013 05:36:32 -0400
+Received: by mail-da0-f42.google.com with SMTP id n15so1072261dad.1
+        for <backports@vger.kernel.org>; Fri, 12 Apr 2013 02:36:31 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH] gentree.py: add support to explicitly disable a config
+Date: Fri, 12 Apr 2013 02:36:25 -0700
+Message-Id: <1365759385-5793-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130412_113639_448865_B5DA3C4D)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2013-04-03 at 13:31 +0200, Johannes Berg wrote:
-> On Tue, 2013-04-02 at 21:32 -0700, Luis R. Rodriguez wrote:
-> 
-> > --- a/backport/compat/Kconfig
-> > +++ b/backport/compat/Kconfig
-> > @@ -118,6 +118,16 @@ config BACKPORT_BUILD_DMA_SHARED_BUFFER
-> >  config BACKPORT_DMA_SHARED_BUFFER
-> >  	bool
-> >  
-> > +config BACKPORT_BUILD_HDMI
-> > +	bool
-> > +	depends on !BACKPORT_KERNEL_3_0
-> > +	default y if BACKPORT_KERNEL_3_9
-> > +	default y if BACKPORT_USERSEL_BUILD_ALL
-> > +	default y if !HDMI && BACKPORT_HDMI
-> 
-> You enable this if HDMI wasn't supported in the base kernel and if it's
-> needed (or build-all selected), but why also if the kernel is < 3.9? It
-> seems it should be something like
-> 
-> default y if (!HDMI || BACKPORT_KERNEL_3_9) && BACKPORT_HDMI
-> 
-> to basically make it ignore the HDMI symbol in kernels < 3.9?
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Or like for the dmabuf stuff:
+At times we may want to disable a config option completely.
+Add support for this. All you have to is list the config
+on the depdependencies file with DISABLE instead of a kernel
+version.
 
-config BACKPORT_BUILD_HDMI
-	bool
-	# not possible on kernel < 3.0
-	depends on !BACKPORT_KERNEL_3_0
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
 
-	# don't build if base kernel has it, except on kernel < 3.9
-	depends on !HDMI || BACKPORT_KERNEL_3_9
+Lets play a game. I'm testing this right now with ckmake so you can either wait
+for that result or apply it if you know for sure this should work (tm).
 
-	# build for testing
-	default y if BACKPORT_USERSEL_BUILDALL
+ gentree.py |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-	# build if a driver needs it
-	default y if BACKPORT_HDMI
-
-I think that's more expressive as to what we want here?
-
-(maybe we should actually have the comments in there)
-
-johannes
+diff --git a/gentree.py b/gentree.py
+index 476a3fc..a80db69 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -500,7 +500,10 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+     for sym in tuple(deplist.keys()):
+         new = []
+         for dep in deplist[sym]:
+-            new.append('!BACKPORT_KERNEL_%s' % dep.replace('.', '_'))
++            if (dep == "DISABLE"):
++		    new.append('BACKPORT_KERNEL_%s' % dep.replace('.', '_'))
++            else:
++                    new.append('!BACKPORT_KERNEL_%s' % dep.replace('.', '_'))
+         deplist[sym] = new
+     configtree.add_dependencies(deplist)
+     git_debug_snapshot(args, "add kernel version dependencies")
+-- 
+1.7.10.4
 
