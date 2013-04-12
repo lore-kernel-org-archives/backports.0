@@ -1,84 +1,69 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:56090 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753138Ab3DEPNg (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 5 Apr 2013 11:13:36 -0400
-From: Thierry Escande <thierry.escande@linux.intel.com>
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:48195 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752886Ab3DLGlO (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 12 Apr 2013 02:41:14 -0400
+Received: by mail-pd0-f182.google.com with SMTP id 3so1247670pdj.41
+        for <backports@vger.kernel.org>; Thu, 11 Apr 2013 23:41:14 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Subject: [PATCH] backports: Add NFC core and drivers
-Date: Fri,  5 Apr 2013 17:13:28 +0200
-Message-Id: <1365174812-2672-2-git-send-email-thierry.escande@linux.intel.com> (sfid-20130405_171339_088170_B1D8E6CB)
-Content-Type: text/plain; charset = "utf-8"
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC] backports: redefine srctree
+Date: Thu, 11 Apr 2013 23:41:08 -0700
+Message-Id: <1365748868-3174-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130412_084117_670590_A3E3A8CE)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This grabs NFC core and drivers files from your linux tree.
-NFC build is disabled for now.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Signed-off-by: Thierry Escande <thierry.escande@linux.intel.com>
+Drivers may do header sharing in their subsystems by
+not using a full include path. There are different ways
+folks append the include path, one strategy is to use
+srctree as follows:
+
+ccflags-y += -I$(srctree)/drivers/media/dvb-core/
+
+Another example (for b2c2):
+
+ccflags-y += -Idrivers/media/dvb-core/
+
+The above gets fixed by the kernel through addtree which
+prefixes -I with $(srctree) if it was not set. To take
+advantage of the kernel's srctree but not break the build
+we must lead it back in to the scripts/Makefile.build,
+we do this by using our own scripts/Makefile.build that
+points back to the kernel's.
 ---
- backport/Kconfig         |    2 ++
- backport/Makefile.kernel |    2 ++
- copy-list                |   16 ++++++++++++++++
- dependencies             |    4 ++++
- 4 files changed, 24 insertions(+)
 
-diff --git a/backport/Kconfig b/backport/Kconfig
-index d0ae17f..87e3869 100644
---- a/backport/Kconfig
-+++ b/backport/Kconfig
-@@ -34,3 +34,5 @@ source drivers/net/ethernet/Kconfig
- 
- source drivers/ssb/Kconfig
- source drivers/bcma/Kconfig
-+
-+# source net/nfc/Kconfig
+Note: this breaks the kernel's build scripts that rely on
+srctree so ideally we'd want to modify instead addtree but
+I can't figure out how. Thoughts?
+
+ backport/Makefile.kernel        |    2 ++
+ backport/scripts/Makefile.build |    1 +
+ 2 files changed, 3 insertions(+)
+ create mode 100644 backport/scripts/Makefile.build
+
 diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
-index a599ad7..ac58225 100644
+index 91e7dd6..12b5112 100644
 --- a/backport/Makefile.kernel
 +++ b/backport/Makefile.kernel
-@@ -22,3 +22,5 @@ obj-$(CPTCFG_BT) += drivers/bluetooth/
- obj-$(CPTCFG_SSB) += drivers/ssb/
- obj-$(CPTCFG_BCMA) += drivers/bcma/
- obj-$(CPTCFG_ETHERNET) += drivers/net/ethernet/
-+obj-$(CPTCFG_NFC) += net/nfc/
-+obj-$(CPTCFG_NFC) += drivers/nfc/
-diff --git a/copy-list b/copy-list
-index 4243619..82e21b1 100644
---- a/copy-list
-+++ b/copy-list
-@@ -114,3 +114,19 @@ drivers/net/ethernet/broadcom/Kconfig
- drivers/net/ethernet/broadcom/Makefile
- drivers/net/ethernet/broadcom/b44.c
- drivers/net/ethernet/broadcom/b44.h
+@@ -15,6 +15,8 @@ NOSTDINC_FLAGS := \
+ 	$(BACKPORTS_GIT_TRACKER_DEF) \
+ 	$(CFLAGS)
+ 
++srctree = $(M)
 +
-+# NFC
-+net/nfc/
-+net/nfc/hci/
-+net/nfc/llcp/
-+net/nfc/nci/
-+include/net/nfc/
-+include/linux/socket.h
-+include/uapi/linux/nfc.h
-+include/uapi/linux/socket.h
-+
-+# NFC drivers
-+drivers/nfc/
-+drivers/nfc/microread/
-+drivers/nfc/pn544/
-+include/linux/platform_data/pn544.h
-diff --git a/dependencies b/dependencies
-index 7c79449..e9aaa2e 100644
---- a/dependencies
-+++ b/dependencies
-@@ -83,3 +83,7 @@ BRCMDBG 2.6.30
- # backport it, but I can't test that and this is a
- # lot easier right now.
- BT_HIDP 2.6.33
-+
-+# NFC core needs PF_NFC defined in socket.h which was
-+# only introduced in kernel 3.1
-+NFC 3.1
+ obj-y += compat/
+ 
+ obj-$(CPTCFG_CFG80211) += net/wireless/
+diff --git a/backport/scripts/Makefile.build b/backport/scripts/Makefile.build
+new file mode 100644
+index 0000000..4c7498d
+--- /dev/null
++++ b/backport/scripts/Makefile.build
+@@ -0,0 +1 @@
++include $(KLIB_BUILD)/scripts/Makefile.build
 -- 
 1.7.10.4
 
