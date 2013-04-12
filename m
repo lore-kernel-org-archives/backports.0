@@ -1,57 +1,69 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:50090 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754678Ab3DOQeA (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 15 Apr 2013 12:34:00 -0400
-Message-ID: <1366043632.8361.33.camel@jlt4.sipsolutions.net> (sfid-20130415_183403_456617_039AE356)
-Subject: Re: [PATCH 5/7] backports: add support for voltage / current
- regulator drivers
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Mark Brown <broonie@kernel.org>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-	linux-kernel@vger.kernel.org
-Date: Mon, 15 Apr 2013 18:33:52 +0200
-In-Reply-To: <20130415162652.GK15837@opensource.wolfsonmicro.com>
-References: <1365862424-6530-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1365862424-6530-6-git-send-email-mcgrof@do-not-panic.com>
-	 <1365886878.1089.5.camel@jlt4.sipsolutions.net>
-	 <20130415162652.GK15837@opensource.wolfsonmicro.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-da0-f47.google.com ([209.85.210.47]:44010 "EHLO
+	mail-da0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752886Ab3DLGlM (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 12 Apr 2013 02:41:12 -0400
+Received: by mail-da0-f47.google.com with SMTP id s35so1006243dak.6
+        for <backports@vger.kernel.org>; Thu, 11 Apr 2013 23:41:11 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC] backports: redefine srctree
+Date: Thu, 11 Apr 2013 23:41:05 -0700
+Message-Id: <1365748865-3132-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130412_084116_734066_D3C3238C)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 2013-04-15 at 17:26 +0100, Mark Brown wrote:
-> On Sat, Apr 13, 2013 at 11:01:18PM +0200, Johannes Berg wrote:
-> > On Sat, 2013-04-13 at 07:13 -0700, Luis R. Rodriguez wrote:
-> 
-> > > This backports the latest regulator drivers for kernels >= 3.4.
-> > > We enable the regulator only on kernels >= 3.4 given that
-> > > it relies on the new probe deferral mechanism which would
-> > > otherwise mean having to support drivers that do not probe
-> > > correctly. Note that 3.2 had a base regulator implementation
-> > > but that was just stubs.
-> 
-> > Applied.
-> 
-> Please let's at least discuss the issues here, I'm not sure what this is
-> supposed to do but the analysis of the subsystem didn't seem complete.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-I wouldn't worry about it too much. For some reason (media drivers
-related?) Luis decided that it was worth including this in the backports
-project (see http://backports.wiki.kernel.org) and I am currently
-maintaining the git tree for that, at least while I was doing some
-refactoring.
+Drivers may do header sharing in their subsystems by
+not using a full include path. There are different ways
+folks append the include path, one strategy is to use
+srctree as follows:
 
-I do notice that it doesn't quite work, there are a lot of unresolved
-symbols :)
+ccflags-y += -I$(srctree)/drivers/media/dvb-core/
 
-If you think you'd be impacted by this because users demand support from
-you for the backport or whatever I can revert this (or probably just
-remove it from the copy list for now.) I don't really have an opinion on
-it, I'm doing this because I'm interested in one specific wireless
-driver.
+Another example (for b2c2):
 
-johannes
+ccflags-y += -Idrivers/media/dvb-core/
+
+The above gets fixed by the kernel through addtree which
+prefixes -I with $(srctree) if it was not set. To take
+advantage of the kernel's srctree but not break the build
+we must lead it back in to the scripts/Makefile.build,
+we do this by using our own scripts/Makefile.build that
+points back to the kernel's.
+---
+
+Note: this breaks the kernel's build scripts that rely on
+srctree so ideally we'd want to modify instead addtree but
+I can't figure out how. Thoughts?
+
+ backport/Makefile.kernel        |    2 ++
+ backport/scripts/Makefile.build |    1 +
+ 2 files changed, 3 insertions(+)
+ create mode 100644 backport/scripts/Makefile.build
+
+diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
+index 91e7dd6..12b5112 100644
+--- a/backport/Makefile.kernel
++++ b/backport/Makefile.kernel
+@@ -15,6 +15,8 @@ NOSTDINC_FLAGS := \
+ 	$(BACKPORTS_GIT_TRACKER_DEF) \
+ 	$(CFLAGS)
+ 
++srctree = $(M)
++
+ obj-y += compat/
+ 
+ obj-$(CPTCFG_CFG80211) += net/wireless/
+diff --git a/backport/scripts/Makefile.build b/backport/scripts/Makefile.build
+new file mode 100644
+index 0000000..4c7498d
+--- /dev/null
++++ b/backport/scripts/Makefile.build
+@@ -0,0 +1 @@
++include $(KLIB_BUILD)/scripts/Makefile.build
+-- 
+1.7.10.4
 
