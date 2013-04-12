@@ -1,39 +1,80 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:38382 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757901Ab3DCVQh (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 3 Apr 2013 17:16:37 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 71D9D2010E
-	for <backports@vger.kernel.org>; Wed,  3 Apr 2013 21:16:32 +0000 (UTC)
-Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
-	by mail.kernel.org (Postfix) with ESMTP id E79092027F
-	for <backports@vger.kernel.org>; Wed,  3 Apr 2013 21:16:27 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 55971] redefined error in 2.6.32-279.22.1.el6.x86_64 kernel
-In-Reply-To: <bug-55971-58281@https.bugzilla.kernel.org/>
-References: <bug-55971-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
+Received: from mail-la0-f48.google.com ([209.85.215.48]:59123 "EHLO
+	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752043Ab3DLJQT (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 12 Apr 2013 05:16:19 -0400
+Received: by mail-la0-f48.google.com with SMTP id fq12so2285685lab.21
+        for <backports@vger.kernel.org>; Fri, 12 Apr 2013 02:16:17 -0700 (PDT)
 MIME-Version: 1.0
-Message-Id: <20130403211627.E24DA11F978@bugzilla.kernel.org> (sfid-20130403_231639_534638_3ED4B785)
-Date: Wed,  3 Apr 2013 21:16:27 +0000 (UTC)
+In-Reply-To: <1365752487.8399.4.camel@jlt4.sipsolutions.net>
+References: <1365748868-3174-1-git-send-email-mcgrof@do-not-panic.com> <1365752487.8399.4.camel@jlt4.sipsolutions.net>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Fri, 12 Apr 2013 02:15:57 -0700
+Message-ID: <CAB=NE6XjtSPEFqnJ0PbB9D7Z3HBJbhoK_W+iMbiJMVBiFvXYEQ@mail.gmail.com> (sfid-20130412_111640_613864_247FE6CB)
+Subject: Re: [RFC] backports: redefine srctree
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=55971
+On Fri, Apr 12, 2013 at 12:41 AM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> On Thu, 2013-04-11 at 23:41 -0700, Luis R. Rodriguez wrote:
+>> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+>>
+>> Drivers may do header sharing in their subsystems by
+>> not using a full include path. There are different ways
+>> folks append the include path, one strategy is to use
+>> srctree as follows:
+>>
+>> ccflags-y += -I$(srctree)/drivers/media/dvb-core/
+>
+> We also have a patch for net/wireless/Makefile because of this
+> (patches/collateral-evolutions/network/35-fix-makefile-includes/net_wireless_Makefile.patch
+>
+> --- a/net/wireless/Makefile
+> +++ b/net/wireless/Makefile
+> @@ -20,6 +20,6 @@ CFLAGS_trace.o := -I$(src)
+>  ccflags-y += -D__CHECK_ENDIAN__
+>
+>  $(obj)/regdb.c: $(src)/db.txt $(src)/genregdb.awk
+> -       @$(AWK) -f $(srctree)/$(src)/genregdb.awk < $< > $@
+> +       @$(AWK) -f $(src)/genregdb.awk < $< > $@
+>
+>  clean-files := regdb.c
+>
+>> The above gets fixed by the kernel through addtree which
+>> prefixes -I with $(srctree) if it was not set. To take
+>> advantage of the kernel's srctree but not break the build
+>> we must lead it back in to the scripts/Makefile.build,
+>> we do this by using our own scripts/Makefile.build that
+>> points back to the kernel's.
+>> ---
+>>
+>> Note: this breaks the kernel's build scripts that rely on
+>> srctree so ideally we'd want to modify instead addtree but
+>> I can't figure out how. Thoughts?
+>
+> Yeah I was going to say ... does this actually work? It also relies on
+> the kernel's Makefile.build existing in all versions of the kernel, is
+> that actually true? Just curious.
 
+I tried ckmake --allyesconfig and its looked actually fine for the
+older kernels, for the newer ones it started messing up due to some
+perl script that was being looked up via srctree.
 
-Andy Gospodarek <andy@greyhouse.net> changed:
+> I don't see a good way to solve these things other than patching them,
+> unfortunately.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-         AssignedTo|backports@vger.kernel.org   |andy@greyhouse.net
+So what if we had instead of obj-m backport-m ? We might have to
+reinvent a lot of the while but all I think we'd need is to add a
+backport_addtree for the header hack.
 
+> An alternative might be to have the gentree script replace "$(srctree)"
+> with "$(backport-sourcetree)" in the copied Makefiles, and then just set
+> that variable?
 
+Sexy. Thanks Python.
 
-
--- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+  Luis
