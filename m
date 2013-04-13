@@ -1,69 +1,33 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-da0-f47.google.com ([209.85.210.47]:44010 "EHLO
-	mail-da0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752886Ab3DLGlM (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 12 Apr 2013 02:41:12 -0400
-Received: by mail-da0-f47.google.com with SMTP id s35so1006243dak.6
-        for <backports@vger.kernel.org>; Thu, 11 Apr 2013 23:41:11 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Received: from he.sipsolutions.net ([78.46.109.217]:44208 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752955Ab3DMXyI (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 19:54:08 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+	(Exim 4.80)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1URAGl-0003nu-3w
+	for backports@vger.kernel.org; Sun, 14 Apr 2013 01:54:07 +0200
+From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC] backports: redefine srctree
-Date: Thu, 11 Apr 2013 23:41:05 -0700
-Message-Id: <1365748865-3132-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130412_084116_734066_D3C3238C)
+Subject: [RFC/RFT 00/42] explode header files
+Date: Sun, 14 Apr 2013 01:53:20 +0200
+Message-Id: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net> (sfid-20130414_015412_493914_07CF2B64)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+As we discussed recently, it's better to explode our backport
+header files into the names that the kernel uses instead of
+pre-including half the world from the gcc command line. Doing
+so is obviously a lot of work and can't really be done in a
+way that would continue working inbetween the patch series,
+so I'm doing it per kernel version (or rather compat-x.y.z
+header.)
 
-Drivers may do header sharing in their subsystems by
-not using a full include path. There are different ways
-folks append the include path, one strategy is to use
-srctree as follows:
+Before I rebased onto the media drivers this was pretty much
+passing ckmake --allyesconfig, now minor issues could have
+come up that I need to solve, but generally this should be
+fine. I did solve the issues that I saw in ckmake before.
 
-ccflags-y += -I$(srctree)/drivers/media/dvb-core/
-
-Another example (for b2c2):
-
-ccflags-y += -Idrivers/media/dvb-core/
-
-The above gets fixed by the kernel through addtree which
-prefixes -I with $(srctree) if it was not set. To take
-advantage of the kernel's srctree but not break the build
-we must lead it back in to the scripts/Makefile.build,
-we do this by using our own scripts/Makefile.build that
-points back to the kernel's.
----
-
-Note: this breaks the kernel's build scripts that rely on
-srctree so ideally we'd want to modify instead addtree but
-I can't figure out how. Thoughts?
-
- backport/Makefile.kernel        |    2 ++
- backport/scripts/Makefile.build |    1 +
- 2 files changed, 3 insertions(+)
- create mode 100644 backport/scripts/Makefile.build
-
-diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
-index 91e7dd6..12b5112 100644
---- a/backport/Makefile.kernel
-+++ b/backport/Makefile.kernel
-@@ -15,6 +15,8 @@ NOSTDINC_FLAGS := \
- 	$(BACKPORTS_GIT_TRACKER_DEF) \
- 	$(CFLAGS)
- 
-+srctree = $(M)
-+
- obj-y += compat/
- 
- obj-$(CPTCFG_CFG80211) += net/wireless/
-diff --git a/backport/scripts/Makefile.build b/backport/scripts/Makefile.build
-new file mode 100644
-index 0000000..4c7498d
---- /dev/null
-+++ b/backport/scripts/Makefile.build
-@@ -0,0 +1 @@
-+include $(KLIB_BUILD)/scripts/Makefile.build
--- 
-1.7.10.4
+johannes
 
