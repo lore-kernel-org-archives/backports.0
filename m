@@ -1,332 +1,410 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f47.google.com ([209.85.160.47]:59746 "EHLO
-	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753520Ab3DMOON (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 10:14:13 -0400
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@opensource.wolfsonmicro.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/7] backports: add support for voltage / current regulator drivers
-Date: Sat, 13 Apr 2013 07:13:42 -0700
-Message-Id: <1365862424-6530-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20130413_161415_888967_E0AB5D8E)
-In-Reply-To: <1365862424-6530-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1365862424-6530-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from he.sipsolutions.net ([78.46.109.217]:44288 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754239Ab3DMX4E (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 19:56:04 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [RFC/RFT 18/42] backports: dissolve compat-3.2.h
+Date: Sun, 14 Apr 2013 01:53:38 +0200
+Message-Id: <1365897243-31214-19-git-send-email-johannes@sipsolutions.net> (sfid-20130414_015644_090720_C08591B0)
+In-Reply-To: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net>
+References: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-This backports the latest regulator drivers for kernels >= 3.4.
-We enable the regulator only on kernels >= 3.4 given that
-it relies on the new probe deferral mechanism which would
-otherwise mean having to support drivers that do not probe
-correctly. Note that 3.2 had a base regulator implementation
-but that was just stubs.
+Also get rid of __netdev_printk() as it's no longer
+exported from the kernel and thus can't be used by
+any drivers/other backported code.
 
-I did look into a way to upgrade the core kernel regulator
-but given that it relies on late_initcall() and core_initcall()
-we can't update this part of the kernel. I even looked at
-using ksplice for this but it seems ksplice can't be used to
-update init sections on the vmlinux ELF. I also haven't much
-updates to these routines since 3.4 except for 86f5fcfc.
-
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.65              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.38              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.32              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.9               [  OK  ]
-25  3.8.0               [  OK  ]
-26  3.9-rc1             [  OK  ]
-
-real    39m35.615s
-user    1068m47.428s
-sys     155m55.657s
-
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/Kconfig                                   |    2 +
- backport/Makefile.kernel                           |    1 +
- backport/defconfigs/regulator                      |   63 ++++++++++++++++++
- copy-list                                          |   33 ++++++++++
- dependencies                                       |   27 ++++++++
- .../regulator/0001-bt8xx-rename-dst-ops.patch      |   67 ++++++++++++++++++++
- 6 files changed, 193 insertions(+)
- create mode 100644 backport/defconfigs/regulator
- create mode 100644 patches/collateral-evolutions/regulator/0001-bt8xx-rename-dst-ops.patch
+ backport/backport-include/linux/compat-3.2.h      | 111 ----------------------
+ backport/backport-include/linux/dma-mapping.h     |  17 ++++
+ backport/backport-include/linux/dynamic_debug.h   |  25 +++++
+ backport/backport-include/linux/if_ether.h        |   4 +
+ backport/backport-include/linux/kernel.h          |  20 ++++
+ backport/backport-include/linux/mmc/sdio.h        |  14 +++
+ backport/backport-include/linux/platform_device.h |   6 ++
+ backport/backport-include/linux/pm.h              |   4 +
+ backport/backport-include/linux/skbuff.h          |  28 ++++++
+ backport/compat/Makefile                          |   1 -
+ backport/compat/compat-2.6.26.c                   |   3 +
+ backport/compat/compat-3.2.c                      |  34 -------
+ 12 files changed, 121 insertions(+), 146 deletions(-)
+ delete mode 100644 backport/backport-include/linux/compat-3.2.h
+ create mode 100644 backport/backport-include/linux/dma-mapping.h
+ create mode 100644 backport/backport-include/linux/dynamic_debug.h
+ create mode 100644 backport/backport-include/linux/mmc/sdio.h
+ delete mode 100644 backport/compat/compat-3.2.c
 
-diff --git a/backport/Kconfig b/backport/Kconfig
-index 6ab0991..6088bfe 100644
---- a/backport/Kconfig
-+++ b/backport/Kconfig
-@@ -38,3 +38,5 @@ source drivers/bcma/Kconfig
- source drivers/gpu/drm/Kconfig
- 
- source net/nfc/Kconfig
-+
-+source drivers/regulator/Kconfig
-diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
-index 59e95ef..2741cc9 100644
---- a/backport/Makefile.kernel
-+++ b/backport/Makefile.kernel
-@@ -31,3 +31,4 @@ obj-$(CPTCFG_ETHERNET) += drivers/net/ethernet/
- obj-$(CPTCFG_DRM) += drivers/gpu/drm/
- obj-$(CPTCFG_NFC) += net/nfc/
- obj-$(CPTCFG_NFC) += drivers/nfc/
-+obj-$(CPTCFG_REGULATOR) += drivers/regulator/
-diff --git a/backport/defconfigs/regulator b/backport/defconfigs/regulator
+diff --git a/backport/backport-include/linux/compat-3.2.h b/backport/backport-include/linux/compat-3.2.h
+deleted file mode 100644
+index 982b989..0000000
+--- a/backport/backport-include/linux/compat-3.2.h
++++ /dev/null
+@@ -1,111 +0,0 @@
+-#ifndef LINUX_3_2_COMPAT_H
+-#define LINUX_3_2_COMPAT_H
+-
+-#include <linux/version.h>
+-
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0))
+-
+-#include <linux/skbuff.h>
+-#include <linux/dma-mapping.h>
+-#include <linux/printk.h>
+-
+-/* backports 07613b0b */
+-#if defined(CONFIG_DYNAMIC_DEBUG)
+-#define DEFINE_DYNAMIC_DEBUG_METADATA(name, fmt)               \
+-	static struct _ddebug __used __aligned(8)               \
+-	__attribute__((section("__verbose"))) name = {          \
+-		.modname = KBUILD_MODNAME,                      \
+-		.function = __func__,                           \
+-		.filename = __FILE__,                           \
+-		.format = (fmt),                                \
+-		.lineno = __LINE__,                             \
+-		.flags =  _DPRINTK_FLAGS_DEFAULT,               \
+-		.enabled = false,                               \
+-	}
+-#endif /* defined(CONFIG_DYNAMIC_DEBUG) */
+-
+-/* backports b4625dab */
+-#define  SDIO_CCCR_REV_3_00    3       /* CCCR/FBR Version 3.00 */
+-#define  SDIO_SDIO_REV_3_00    4       /* SDIO Spec Version 3.00 */
+-
+-#define PMSG_IS_AUTO(msg)	(((msg).event & PM_EVENT_AUTO) != 0)
+-
+-/* mask skb_frag_page as RHEL6 backports this */
+-#define skb_frag_page(a) compat_skb_frag_page(a)
+-
+-/**
+- * skb_frag_page - retrieve the page refered to by a paged fragment
+- * @frag: the paged fragment
+- *
+- * Returns the &struct page associated with @frag.
+- */
+-static inline struct page *skb_frag_page(const skb_frag_t *frag)
+-{
+-	return frag->page;
+-}
+-
+-/* mask skb_frag_dma_map as RHEL6 backports this */
+-#define skb_frag_dma_map(a,b,c,d,e) compat_skb_frag_dma_map(a,b,c,d,e)
+-
+-/**
+- * skb_frag_dma_map - maps a paged fragment via the DMA API
+- * @device: the device to map the fragment to
+- * @frag: the paged fragment to map
+- * @offset: the offset within the fragment (starting at the
+- *          fragment's own offset)
+- * @size: the number of bytes to map
+- * @direction: the direction of the mapping (%PCI_DMA_*)
+- *
+- * Maps the page associated with @frag to @device.
+- */
+-static inline dma_addr_t skb_frag_dma_map(struct device *dev,
+-					  const skb_frag_t *frag,
+-					  size_t offset, size_t size,
+-					  enum dma_data_direction dir)
+-{
+-	return dma_map_page(dev, skb_frag_page(frag),
+-			    frag->page_offset + offset, size, dir);
+-}
+-
+-#define ETH_P_TDLS	0x890D          /* TDLS */
+-
+-/* mask skb_frag_size as RHEL6 backports this */
+-#define skb_frag_size(a) compat_skb_frag_size(a)
+-
+-static inline unsigned int skb_frag_size(const skb_frag_t *frag)
+-{
+-	return frag->size;
+-}
+-
+-static inline char *hex_byte_pack(char *buf, u8 byte)
+-{
+-	*buf++ = hex_asc_hi(byte);
+-	*buf++ = hex_asc_lo(byte);
+-	return buf;
+-}
+-
+-/* module_platform_driver() - Helper macro for drivers that don't do
+- * anything special in module init/exit.  This eliminates a lot of
+- * boilerplate.  Each module may only use this macro once, and
+- * calling it replaces module_init() and module_exit()
+- */
+-#define module_platform_driver(__platform_driver) \
+-        module_driver(__platform_driver, platform_driver_register, \
+-                        platform_driver_unregister)
+-
+-static inline void *dma_zalloc_coherent(struct device *dev, size_t size,
+-					dma_addr_t *dma_handle, gfp_t flag)
+-{
+-	void *ret = dma_alloc_coherent(dev, size, dma_handle, flag);
+-	if (ret)
+-		memset(ret, 0, size);
+-	return ret;
+-}
+-
+-#define __netdev_printk LINUX_BACKPORT(__netdev_printk)
+-extern int __netdev_printk(const char *level, const struct net_device *dev,
+-			   struct va_format *vaf);
+-
+-#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)) */
+-
+-#endif /* LINUX_3_2_COMPAT_H */
+diff --git a/backport/backport-include/linux/dma-mapping.h b/backport/backport-include/linux/dma-mapping.h
 new file mode 100644
-index 0000000..c080747
+index 0000000..091e505
 --- /dev/null
-+++ b/backport/defconfigs/regulator
-@@ -0,0 +1,63 @@
-+CPTCFG_REGULATOR=y
-+CPTCFG_REGULATOR_88PM8607=y
-+CPTCFG_REGULATOR_AAT2870=y
-+CPTCFG_REGULATOR_AB3100=y
-+CPTCFG_REGULATOR_AB8500=y
-+CPTCFG_REGULATOR_AD5398=y
-+CPTCFG_REGULATOR_ANATOP=y
-+CPTCFG_REGULATOR_ARIZONA=y
-+CPTCFG_REGULATOR_AS3711=y
-+CPTCFG_REGULATOR_DA903X=y
-+CPTCFG_REGULATOR_DA9052=y
-+CPTCFG_REGULATOR_DA9055=y
-+CPTCFG_REGULATOR_DB8500_PRCMU=y
-+CPTCFG_REGULATOR_DBX500_PRCMU=y
-+CPTCFG_REGULATOR_DEBUG=y
-+CPTCFG_REGULATOR_FAN53555=y
-+CPTCFG_REGULATOR_FIXED_VOLTAGE=y
-+CPTCFG_REGULATOR_GPIO=y
-+CPTCFG_REGULATOR_ISL6271A=y
-+CPTCFG_REGULATOR_LP3971=y
-+CPTCFG_REGULATOR_LP3972=y
-+CPTCFG_REGULATOR_LP872X=y
-+CPTCFG_REGULATOR_LP8755=y
-+CPTCFG_REGULATOR_LP8788=y
-+CPTCFG_REGULATOR_MAX1586=y
-+CPTCFG_REGULATOR_MAX77686=y
-+CPTCFG_REGULATOR_MAX8649=y
-+CPTCFG_REGULATOR_MAX8660=y
-+CPTCFG_REGULATOR_MAX8907=y
-+CPTCFG_REGULATOR_MAX8925=y
-+CPTCFG_REGULATOR_MAX8952=y
-+CPTCFG_REGULATOR_MAX8973=y
-+CPTCFG_REGULATOR_MAX8997=y
-+CPTCFG_REGULATOR_MAX8998=y
-+CPTCFG_REGULATOR_MC13783=y
-+CPTCFG_REGULATOR_MC13892=y
-+CPTCFG_REGULATOR_MC13XXX_CORE=y
-+CPTCFG_REGULATOR_PALMAS=y
-+CPTCFG_REGULATOR_PCAP=y
-+CPTCFG_REGULATOR_PCF50633=y
-+CPTCFG_REGULATOR_RC5T583=y
-+CPTCFG_REGULATOR_S2MPS11=y
-+CPTCFG_REGULATOR_S5M8767=y
-+CPTCFG_REGULATOR_TPS51632=y
-+CPTCFG_REGULATOR_TPS6105X=y
-+CPTCFG_REGULATOR_TPS62360=y
-+CPTCFG_REGULATOR_TPS65023=y
-+CPTCFG_REGULATOR_TPS6507X=y
-+CPTCFG_REGULATOR_TPS65090=y
-+CPTCFG_REGULATOR_TPS65217=y
-+CPTCFG_REGULATOR_TPS6524X=y
-+CPTCFG_REGULATOR_TPS6586X=y
-+CPTCFG_REGULATOR_TPS65910=y
-+CPTCFG_REGULATOR_TPS65912=y
-+CPTCFG_REGULATOR_TPS80031=y
-+CPTCFG_REGULATOR_TWL4030=y
-+CPTCFG_REGULATOR_USERSPACE_CONSUMER=y
-+CPTCFG_REGULATOR_VEXPRESS=y
-+CPTCFG_REGULATOR_VIRTUAL_CONSUMER=y
-+CPTCFG_REGULATOR_WM831X=y
-+CPTCFG_REGULATOR_WM8350=y
-+CPTCFG_REGULATOR_WM8400=y
-+CPTCFG_REGULATOR_WM8994=y
-diff --git a/copy-list b/copy-list
-index e8b1241..9771c43 100644
---- a/copy-list
-+++ b/copy-list
-@@ -135,3 +135,36 @@ drivers/nfc/
- drivers/nfc/microread/
- drivers/nfc/pn544/
- include/linux/platform_data/pn544.h
++++ b/backport/backport-include/linux/dma-mapping.h
+@@ -0,0 +1,17 @@
++#ifndef __BACKPORT_LINUX_DMA_MAPPING_H
++#define __BACKPORT_LINUX_DMA_MAPPING_H
++#include_next <linux/dma-mapping.h>
++#include <linux/version.h>
 +
-+# Regulator
-+# we don't include the whole directory as we need
-+# rely on your core regulator implementation given that
-+# it relies on late_initcall() and core_initcall() and
-+# these can't be backported, as such we need to rely
-+# on your base kernel regulator implementatin and can
-+# only extend it with further exports. Your core
-+# regulator routines are defined via the header file
-+# include/linux/regulator/consumer.h and dummy.h
-+include/linux/regulator/ab8500.h
-+include/linux/regulator/db8500-prcmu.h
-+include/linux/regulator/driver.h
-+include/linux/regulator/fan53555.h
-+include/linux/regulator/fixed.h
-+include/linux/regulator/gpio-regulator.h
-+include/linux/regulator/lp3971.h
-+include/linux/regulator/lp3972.h
-+include/linux/regulator/lp872x.h
-+include/linux/regulator/machine.h
-+include/linux/regulator/max1586.h
-+include/linux/regulator/max8649.h
-+include/linux/regulator/max8660.h
-+include/linux/regulator/max8952.h
-+include/linux/regulator/max8973-regulator.h
-+include/linux/regulator/of_regulator.h
-+include/linux/regulator/tps51632-regulator.h
-+include/linux/regulator/tps62360.h
-+include/linux/regulator/tps6507x.h
-+include/linux/regulator/userspace-consumer.h
-+include/linux/platform_data/lp8755.h
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
++static inline void *dma_zalloc_coherent(struct device *dev, size_t size,
++					dma_addr_t *dma_handle, gfp_t flag)
++{
++	void *ret = dma_alloc_coherent(dev, size, dma_handle, flag);
++	if (ret)
++		memset(ret, 0, size);
++	return ret;
++}
++#endif
 +
-+drivers/regulator/
-diff --git a/dependencies b/dependencies
-index 44e23da..0ab99d4 100644
---- a/dependencies
-+++ b/dependencies
-@@ -46,6 +46,28 @@ HDMI 3.2
- DRM 3.2
- DRM_TTM 3.2
- 
-+# Regulator
-+# Because of -EPROBE_DEFER see commit d1c3414c and note that
-+# we can't backport the core regulator as its part of the core
-+# vmlinux.
-+REGULATOR 3.4
-+# requires some work
-+REGULATOR_ARIZONA DISABLE
-+REGULATOR_MAX8973 DISABLE
-+REGULATOR_MAX77686 DISABLE
-+REGULATOR_MAX8997 DISABLE
-+REGULATOR_RC5T583 DISABLE
-+REGULATOR_TPS62360 DISABLE
-+REGULATOR_TPS65910 DISABLE
-+REGULATOR_TPS65090 DISABLE
-+REGULATOR_TPS65217 DISABLE
-+REGULATOR_TPS6586X DISABLE
-+REGULATOR_WM831X DISABLE
-+REGULATOR_WM8350 DISABLE
-+REGULATOR_PALMAS DISABLE
-+REGULATOR_DA9055 DISABLE
-+REGULATOR_S5M8767 DISABLE
-+
- # This requires proc_create(), and that doesn't exist before 2.6.24
- LIBIPW_DEBUG 2.6.25
- 
-@@ -71,6 +93,11 @@ BCMA_DRIVER_GPIO 3.0
- # (rfkill-regulator.h) that we don't backport
- # right now, so make it depend on 3.0
- RFKILL_REGULATOR 3.0
-+# drivers/regulator/ab3100.c and drivers/mfd/ab3100-core.c
-+# both depend on include/linux/mfd/ab3100.h and we should
-+# only backport REGULATOR_AB3100 if the mfd driver is
-+# backported as well.
-+REGULATOR_AB3100 3.9
- 
- # This is a fun one ... the implementation of this
- # uses subdir-ccflags-$(CONFIG_BRCMDBG) which was
-diff --git a/patches/collateral-evolutions/regulator/0001-bt8xx-rename-dst-ops.patch b/patches/collateral-evolutions/regulator/0001-bt8xx-rename-dst-ops.patch
++#endif /* __BACKPORT_LINUX_DMA_MAPPING_H */
+diff --git a/backport/backport-include/linux/dynamic_debug.h b/backport/backport-include/linux/dynamic_debug.h
 new file mode 100644
-index 0000000..2e8e1b3
+index 0000000..00ab160
 --- /dev/null
-+++ b/patches/collateral-evolutions/regulator/0001-bt8xx-rename-dst-ops.patch
-@@ -0,0 +1,67 @@
-+This will be sent upstream... there is a conflict with these
-+names and another symbol from older kernels.
++++ b/backport/backport-include/linux/dynamic_debug.h
+@@ -0,0 +1,25 @@
++#ifndef __BACKPORT_LINUX_DYNAMIC_DEBUG_H
++#define __BACKPORT_LINUX_DYNAMIC_DEBUG_H
++#include <linux/version.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30)
++#include_next <linux/dynamic_debug.h>
++#endif
 +
-+--- a/drivers/media/pci/bt8xx/dst.c
-++++ b/drivers/media/pci/bt8xx/dst.c
-+@@ -1544,7 +1544,7 @@ static int dst_send_burst(struct dvb_fro
-+ }
-+ 
-+ 
-+-static int dst_init(struct dvb_frontend *fe)
-++static int bt8xx_dst_init(struct dvb_frontend *fe)
-+ {
-+ 	struct dst_state *state = fe->demodulator_priv;
-+ 
-+@@ -1707,7 +1707,7 @@ static int dst_get_frontend(struct dvb_f
-+ 	return 0;
-+ }
-+ 
-+-static void dst_release(struct dvb_frontend *fe)
-++static void bt8xx_dst_release(struct dvb_frontend *fe)
-+ {
-+ 	struct dst_state *state = fe->demodulator_priv;
-+ 	if (state->dst_ca) {
-+@@ -1776,8 +1776,8 @@ static struct dvb_frontend_ops dst_dvbt_
-+ 			FE_CAN_GUARD_INTERVAL_AUTO
-+ 	},
-+ 
-+-	.release = dst_release,
-+-	.init = dst_init,
-++	.release = bt8xx_dst_release,
-++	.init = bt8xx_dst_init,
-+ 	.tune = dst_tune_frontend,
-+ 	.set_frontend = dst_set_frontend,
-+ 	.get_frontend = dst_get_frontend,
-+@@ -1801,8 +1801,8 @@ static struct dvb_frontend_ops dst_dvbs_
-+ 		.caps = FE_CAN_FEC_AUTO | FE_CAN_QPSK
-+ 	},
-+ 
-+-	.release = dst_release,
-+-	.init = dst_init,
-++	.release = bt8xx_dst_release,
-++	.init = bt8xx_dst_init,
-+ 	.tune = dst_tune_frontend,
-+ 	.set_frontend = dst_set_frontend,
-+ 	.get_frontend = dst_get_frontend,
-+@@ -1834,8 +1834,8 @@ static struct dvb_frontend_ops dst_dvbc_
-+ 			FE_CAN_QAM_256
-+ 	},
-+ 
-+-	.release = dst_release,
-+-	.init = dst_init,
-++	.release = bt8xx_dst_release,
-++	.init = bt8xx_dst_init,
-+ 	.tune = dst_tune_frontend,
-+ 	.set_frontend = dst_set_frontend,
-+ 	.get_frontend = dst_get_frontend,
-+@@ -1857,8 +1857,8 @@ static struct dvb_frontend_ops dst_atsc_
-+ 		.caps = FE_CAN_FEC_AUTO | FE_CAN_QAM_AUTO | FE_CAN_QAM_64 | FE_CAN_QAM_256 | FE_CAN_8VSB
-+ 	},
-+ 
-+-	.release = dst_release,
-+-	.init = dst_init,
-++	.release = bt8xx_dst_release,
-++	.init = bt8xx_dst_init,
-+ 	.tune = dst_tune_frontend,
-+ 	.set_frontend = dst_set_frontend,
-+ 	.get_frontend = dst_get_frontend,
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
++/* backports 07613b0b */
++#if defined(CONFIG_DYNAMIC_DEBUG)
++#define DEFINE_DYNAMIC_DEBUG_METADATA(name, fmt)               \
++	static struct _ddebug __used __aligned(8)               \
++	__attribute__((section("__verbose"))) name = {          \
++		.modname = KBUILD_MODNAME,                      \
++		.function = __func__,                           \
++		.filename = __FILE__,                           \
++		.format = (fmt),                                \
++		.lineno = __LINE__,                             \
++		.flags =  _DPRINTK_FLAGS_DEFAULT,               \
++		.enabled = false,                               \
++	}
++#endif /* defined(CONFIG_DYNAMIC_DEBUG) */
++#endif /* < 3.2 */
++
++#endif /* __BACKPORT_LINUX_DYNAMIC_DEBUG_H */
+diff --git a/backport/backport-include/linux/if_ether.h b/backport/backport-include/linux/if_ether.h
+index a3c6e45..e5f103e 100644
+--- a/backport/backport-include/linux/if_ether.h
++++ b/backport/backport-include/linux/if_ether.h
+@@ -14,4 +14,8 @@
+ #define ETH_P_802_3_MIN 0x0600
+ #endif
+ 
++#ifndef ETH_P_TDLS
++#define ETH_P_TDLS	0x890D          /* TDLS */
++#endif
++
+ #endif /* __BACKPORT_IF_ETHER_H */
+diff --git a/backport/backport-include/linux/kernel.h b/backport/backport-include/linux/kernel.h
+index 01aaa91..67dca62 100644
+--- a/backport/backport-include/linux/kernel.h
++++ b/backport/backport-include/linux/kernel.h
+@@ -26,4 +26,24 @@ extern int strict_strtol(const char *, unsigned int, long *);
+ #define SIZE_MAX    (~(size_t)0)
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)
++extern const char hex_asc[];
++#endif
++
++#ifndef hex_asc_hi
++#define hex_asc_hi(x)	hex_asc[((x) & 0xf0) >> 4]
++#endif
++#ifndef hex_asc_lo
++#define hex_asc_lo(x)	hex_asc[((x) & 0x0f)]
++#endif
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
++static inline char *hex_byte_pack(char *buf, u8 byte)
++{
++	*buf++ = hex_asc_hi(byte);
++	*buf++ = hex_asc_lo(byte);
++	return buf;
++}
++#endif
++
+ #endif /* __BACKPORT_KERNEL_H */
+diff --git a/backport/backport-include/linux/mmc/sdio.h b/backport/backport-include/linux/mmc/sdio.h
+new file mode 100644
+index 0000000..9bdbdc5
+--- /dev/null
++++ b/backport/backport-include/linux/mmc/sdio.h
+@@ -0,0 +1,14 @@
++#ifndef __BACKPORT_MMC_SDIO_H
++#define __BACKPORT_MMC_SDIO_H
++#include <linux/version.h>
++#include_next <linux/mmc/sdio.h>
++
++/* backports b4625dab */
++#ifndef SDIO_CCCR_REV_3_00
++#define  SDIO_CCCR_REV_3_00    3       /* CCCR/FBR Version 3.00 */
++#endif
++#ifndef SDIO_SDIO_REV_3_00
++#define  SDIO_SDIO_REV_3_00    4       /* SDIO Spec Version 3.00 */
++#endif
++
++#endif /* __BACKPORT_MMC_SDIO_H */
+diff --git a/backport/backport-include/linux/platform_device.h b/backport/backport-include/linux/platform_device.h
+index f0d6f89..d7a34a9 100644
+--- a/backport/backport-include/linux/platform_device.h
++++ b/backport/backport-include/linux/platform_device.h
+@@ -27,4 +27,10 @@ module_exit(__platform_driver##_exit);
+ #define PLATFORM_DEVID_AUTO	(-1)
+ #endif
+ 
++#ifndef module_platform_driver
++#define module_platform_driver(__platform_driver) \
++        module_driver(__platform_driver, platform_driver_register, \
++                        platform_driver_unregister)
++#endif
++
+ #endif /* __BACKPORT_PLATFORM_DEVICE_H */
+diff --git a/backport/backport-include/linux/pm.h b/backport/backport-include/linux/pm.h
+index 5040949..09ab926 100644
+--- a/backport/backport-include/linux/pm.h
++++ b/backport/backport-include/linux/pm.h
+@@ -6,4 +6,8 @@
+ #define PM_EVENT_SLEEP  (PM_EVENT_SUSPEND)
+ #endif
+ 
++#ifndef PMSG_IS_AUTO
++#define PMSG_IS_AUTO(msg)	(((msg).event & PM_EVENT_AUTO) != 0)
++#endif
++
+ #endif /* __BACKPORT_PM_H */
+diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
+index e8ff5ac..113d638 100644
+--- a/backport/backport-include/linux/skbuff.h
++++ b/backport/backport-include/linux/skbuff.h
+@@ -26,4 +26,32 @@ static inline void skb_complete_wifi_ack(struct sk_buff *skb, bool acked)
+ }
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
++#include <linux/dma-mapping.h>
++
++/* mask skb_frag_page as RHEL6 backports this */
++#define skb_frag_page LINUX_BACKPORT(skb_frag_page)
++static inline struct page *skb_frag_page(const skb_frag_t *frag)
++{
++	return frag->page;
++}
++
++#define skb_frag_size LINUX_BACKPORT(skb_frag_size)
++static inline unsigned int skb_frag_size(const skb_frag_t *frag)
++{
++	return frag->size;
++}
++
++/* mask skb_frag_dma_map as RHEL6 backports this */
++#define skb_frag_dma_map LINUX_BACKPORT(skb_frag_dma_map)
++static inline dma_addr_t skb_frag_dma_map(struct device *dev,
++					  const skb_frag_t *frag,
++					  size_t offset, size_t size,
++					  enum dma_data_direction dir)
++{
++	return dma_map_page(dev, skb_frag_page(frag),
++			    frag->page_offset + offset, size, dir);
++}
++#endif
++
+ #endif /* __BACKPORT_SKBUFF_H */
+diff --git a/backport/compat/Makefile b/backport/compat/Makefile
+index 8c62cbb..59584f1 100644
+--- a/backport/compat/Makefile
++++ b/backport/compat/Makefile
+@@ -28,7 +28,6 @@ compat-$(CPTCFG_BACKPORT_BUILD_AVERAGE) += average.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_2_6_39) += compat-2.6.39.o kstrtox.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_3_0) += compat-3.0.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_3_1) += compat-3.1.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_2) += compat-3.2.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_3_3) += compat-3.3.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_3_4) += compat-3.4.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_3_5) += compat-3.5.o user_namespace.o
+diff --git a/backport/compat/compat-2.6.26.c b/backport/compat/compat-2.6.26.c
+index 5193886..9063a6a 100644
+--- a/backport/compat/compat-2.6.26.c
++++ b/backport/compat/compat-2.6.26.c
+@@ -17,6 +17,9 @@
+ #include <net/sock.h>
+ #include <net/compat.h>
+ 
++const char hex_asc[] = "0123456789abcdef";
++EXPORT_SYMBOL(hex_asc);
++
+ /* 2.6.24 does not have the struct kobject with a name */
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,25))
+ 
+diff --git a/backport/compat/compat-3.2.c b/backport/compat/compat-3.2.c
+deleted file mode 100644
+index 55ae6af..0000000
+--- a/backport/compat/compat-3.2.c
++++ /dev/null
+@@ -1,34 +0,0 @@
+-/*
+- * Copyright 2012  Luis R. Rodriguez <mcgrof@frijolero.org>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * Compatibility file for Linux wireless for kernels 3.2.
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/device.h>
+-
+-int __netdev_printk(const char *level, const struct net_device *dev,
+-			   struct va_format *vaf)
+-{
+-	int r;
+-
+-	if (dev && dev->dev.parent)
+-#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,35))
+-		r = dev_printk(level, dev->dev.parent, "%s: %pV",
+-			       netdev_name(dev), vaf);
+-#else
+-		/* XXX: this could likely be done better but I'm lazy */
+-		r = printk("%s%s: %pV", level, netdev_name(dev), vaf);
+-#endif
+-	else if (dev)
+-		r = printk("%s%s: %pV", level, netdev_name(dev), vaf);
+-	else
+-		r = printk("%s(NULL net_device): %pV", level, vaf);
+-
+-	return r;
+-}
+-EXPORT_SYMBOL_GPL(__netdev_printk);
 -- 
-1.7.10.4
+1.8.0
 
