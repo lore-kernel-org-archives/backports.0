@@ -1,14 +1,14 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:44275 "EHLO
+Received: from he.sipsolutions.net ([78.46.109.217]:44265 "EHLO
 	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753966Ab3DMXzx (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 19:55:53 -0400
+	with ESMTP id S1753678Ab3DMXzn (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 19:55:43 -0400
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
 Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [RFC/RFT 34/42] backports: dissolve compat-2.6.26.h
-Date: Sun, 14 Apr 2013 01:53:54 +0200
-Message-Id: <1365897243-31214-35-git-send-email-johannes@sipsolutions.net> (sfid-20130414_015644_342765_79AF4BFF)
+Subject: [RFC/RFT 29/42] backports: dissolve compat-2.6.31.h
+Date: Sun, 14 Apr 2013 01:53:49 +0200
+Message-Id: <1365897243-31214-30-git-send-email-johannes@sipsolutions.net> (sfid-20130414_015639_617643_7379E769)
 In-Reply-To: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net>
 References: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
@@ -18,963 +18,693 @@ From: Johannes Berg <johannes.berg@intel.com>
 
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/asm/unaligned.h       | 213 +++++++++++
- backport/backport-include/linux/compat-2.6.26.h | 456 ------------------------
- backport/backport-include/linux/device.h        |  14 +
- backport/backport-include/linux/input.h         |   4 +
- backport/backport-include/linux/jiffies.h       |  21 ++
- backport/backport-include/linux/kernel.h        |  35 ++
- backport/backport-include/linux/list.h          |   7 +
- backport/backport-include/linux/math64.h        |  31 ++
- backport/backport-include/linux/netdevice.h     |  17 +
- backport/backport-include/linux/pci-aspm.h      |  10 +
- backport/backport-include/net/net_namespace.h   |  35 ++
- 11 files changed, 387 insertions(+), 456 deletions(-)
- create mode 100644 backport/backport-include/asm/unaligned.h
- delete mode 100644 backport/backport-include/linux/compat-2.6.26.h
- create mode 100644 backport/backport-include/linux/jiffies.h
+ backport/backport-include/asm/atomic.h          |  17 ++
+ backport/backport-include/asm/errno.h           |  23 ++
+ backport/backport-include/linux/compat-2.6.31.h | 273 ------------------------
+ backport/backport-include/linux/ethtool.h       |  14 ++
+ backport/backport-include/linux/interrupt.h     |  83 +++++++
+ backport/backport-include/linux/kmemleak.h      |  21 +-
+ backport/backport-include/linux/mdio.h          |  17 ++
+ backport/backport-include/linux/mmc/sdio_ids.h  |   4 +
+ backport/backport-include/linux/netdevice.h     |   4 +
+ backport/backport-include/linux/rculist.h       |   5 +
+ backport/backport-include/linux/rfkill.h        |  16 ++
+ backport/backport-include/linux/skbuff.h        |   5 +
+ backport/backport-include/linux/usb.h           |   5 +
+ backport/backport-include/net/dst.h             |  35 +++
+ backport/backport-include/net/sock.h            |  17 ++
+ 15 files changed, 265 insertions(+), 274 deletions(-)
+ create mode 100644 backport/backport-include/asm/errno.h
+ delete mode 100644 backport/backport-include/linux/compat-2.6.31.h
+ create mode 100644 backport/backport-include/linux/mdio.h
+ create mode 100644 backport/backport-include/net/dst.h
 
-diff --git a/backport/backport-include/asm/unaligned.h b/backport/backport-include/asm/unaligned.h
+diff --git a/backport/backport-include/asm/atomic.h b/backport/backport-include/asm/atomic.h
+index f8c9fa7..cabdcfd 100644
+--- a/backport/backport-include/asm/atomic.h
++++ b/backport/backport-include/asm/atomic.h
+@@ -17,4 +17,21 @@
+ #endif
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)
++#ifndef CONFIG_64BIT
++
++typedef struct {
++	long long counter;
++} atomic64_t;
++
++#define atomic64_read LINUX_BACKPORT(atomic64_read)
++extern long long atomic64_read(const atomic64_t *v);
++#define atomic64_add_return LINUX_BACKPORT(atomic64_add_return)
++extern long long atomic64_add_return(long long a, atomic64_t *v);
++
++#define atomic64_inc_return(v)          atomic64_add_return(1LL, (v))
++
++#endif
++#endif
++
+ #endif /* __BACKPORT_ASM_ATOMIC_H */
+diff --git a/backport/backport-include/asm/errno.h b/backport/backport-include/asm/errno.h
 new file mode 100644
-index 0000000..7f552b8
+index 0000000..0a730b7
 --- /dev/null
-+++ b/backport/backport-include/asm/unaligned.h
-@@ -0,0 +1,213 @@
-+#ifndef __BACKPORT_ASM_UNALIGNED_H
-+#define __BACKPORT_ASM_UNALIGNED_H
-+#include_next <asm/unaligned.h>
++++ b/backport/backport-include/asm/errno.h
+@@ -0,0 +1,23 @@
++#ifndef __BACKPORT_ASM_ERRNO_H
++#define __BACKPORT_ASM_ERRNO_H
++#include_next <asm/errno.h>
 +
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)
-+/*
-+ * 2.6.26 added its own unaligned API which the
-+ * new drivers can use. Lets port it here by including it in older
-+ * kernels and also deal with the architecture handling here.
-+ */
++#ifndef ERFKILL
++#if !defined(CONFIG_ALPHA) && !defined(CONFIG_MIPS) && !defined(CONFIG_PARISC) && !defined(CONFIG_SPARC)
++#define ERFKILL		132	/* Operation not possible due to RF-kill */
++#endif
 +#ifdef CONFIG_ALPHA
-+
-+#include <linux/unaligned/be_struct.h>
-+#include <linux/unaligned/le_byteshift.h>
-+#include <linux/unaligned/generic.h>
-+
-+#endif /* alpha */
-+#ifdef CONFIG_ARM
-+
-+/* arm */
-+#include <linux/unaligned/le_byteshift.h>
-+#include <linux/unaligned/be_byteshift.h>
-+#include <linux/unaligned/generic.h>
-+
-+#endif /* arm */
-+#ifdef CONFIG_AVR32
-+
-+/*
-+ * AVR32 can handle some unaligned accesses, depending on the
-+ * implementation.  The AVR32 AP implementation can handle unaligned
-+ * words, but halfwords must be halfword-aligned, and doublewords must
-+ * be word-aligned.
-+ *
-+ * However, swapped word loads must be word-aligned so we can't
-+ * optimize word loads in general.
-+ */
-+
-+#include <linux/unaligned/be_struct.h>
-+#include <linux/unaligned/le_byteshift.h>
-+#include <linux/unaligned/generic.h>
-+
++#define ERFKILL		138	/* Operation not possible due to RF-kill */
 +#endif
-+#ifdef CONFIG_BLACKFIN
-+
-+#include <linux/unaligned/le_struct.h>
-+#include <linux/unaligned/be_byteshift.h>
-+#include <linux/unaligned/generic.h>
-+
-+#endif /* blackfin */
-+#ifdef CONFIG_CRIS
-+
-+/*
-+ * CRIS can do unaligned accesses itself.
-+ */
-+#include <linux/unaligned/access_ok.h>
-+#include <linux/unaligned/generic.h>
-+
-+#endif /* cris */
-+#ifdef CONFIG_FRV
-+
-+#include <linux/unaligned/le_byteshift.h>
-+#include <linux/unaligned/be_byteshift.h>
-+#include <linux/unaligned/generic.h>
-+
-+#endif /* frv */
-+#ifdef CONFIG_H8300
-+
-+#include <linux/unaligned/be_memmove.h>
-+#include <linux/unaligned/le_byteshift.h>
-+#include <linux/unaligned/generic.h>
-+
-+#endif /* h8300 */
-+#ifdef  CONFIG_IA64
-+
-+#include <linux/unaligned/le_struct.h>
-+#include <linux/unaligned/be_byteshift.h>
-+#include <linux/unaligned/generic.h>
-+
-+#endif /* ia64 */
-+#ifdef CONFIG_M32R
-+
-+#if defined(__LITTLE_ENDIAN__)
-+# include <linux/unaligned/le_memmove.h>
-+# include <linux/unaligned/be_byteshift.h>
-+# include <linux/unaligned/generic.h>
-+#else
-+# include <linux/unaligned/be_memmove.h>
-+# include <linux/unaligned/le_byteshift.h>
-+# include <linux/unaligned/generic.h>
-+#endif
-+
-+#endif /* m32r */
-+#ifdef CONFIG_M68K /* this handles both m68k and m68knommu */
-+
-+#ifdef CONFIG_COLDFIRE
-+#include <linux/unaligned/be_struct.h>
-+#include <linux/unaligned/le_byteshift.h>
-+#include <linux/unaligned/generic.h>
-+#else
-+
-+/*
-+ * The m68k can do unaligned accesses itself.
-+ */
-+#include <linux/unaligned/access_ok.h>
-+#include <linux/unaligned/generic.h>
-+#endif
-+
-+#endif /* m68k and m68knommu */
 +#ifdef CONFIG_MIPS
-+
-+#if defined(__MIPSEB__)
-+# include <linux/unaligned/be_struct.h>
-+# include <linux/unaligned/le_byteshift.h>
-+# include <linux/unaligned/generic.h>
-+# define get_unaligned  __get_unaligned_be
-+# define put_unaligned  __put_unaligned_be
-+#elif defined(__MIPSEL__)
-+# include <linux/unaligned/le_struct.h>
-+# include <linux/unaligned/be_byteshift.h>
-+# include <linux/unaligned/generic.h>
++#define ERFKILL		167	/* Operation not possible due to RF-kill */
 +#endif
-+
-+#endif /* mips */
-+#ifdef CONFIG_MN10300
-+
-+#include <linux/unaligned/access_ok.h>
-+#include <linux/unaligned/generic.h>
-+
-+#endif /* mn10300 */
 +#ifdef CONFIG_PARISC
-+
-+#include <linux/unaligned/be_struct.h>
-+#include <linux/unaligned/le_byteshift.h>
-+#include <linux/unaligned/generic.h>
-+
-+#endif /* parisc */
-+#ifdef CONFIG_PPC
-+/*
-+ * The PowerPC can do unaligned accesses itself in big endian mode.
-+ */
-+#include <linux/unaligned/access_ok.h>
-+#include <linux/unaligned/generic.h>
-+
-+#endif /* ppc */
-+#ifdef CONFIG_S390
-+
-+/*
-+ * The S390 can do unaligned accesses itself.
-+ */
-+#include <linux/unaligned/access_ok.h>
-+#include <linux/unaligned/generic.h>
-+
-+#endif /* s390 */
-+#ifdef CONFIG_SUPERH
-+
-+/* SH can't handle unaligned accesses. */
-+#ifdef __LITTLE_ENDIAN__
-+# include <linux/unaligned/le_struct.h>
-+# include <linux/unaligned/be_byteshift.h>
-+# include <linux/unaligned/generic.h>
-+#else
-+# include <linux/unaligned/be_struct.h>
-+# include <linux/unaligned/le_byteshift.h>
-+# include <linux/unaligned/generic.h>
++#define ERFKILL		256	/* Operation not possible due to RF-kill */
 +#endif
-+
-+#endif /* sh - SUPERH */
 +#ifdef CONFIG_SPARC
-+
-+/* sparc and sparc64 */
-+#include <linux/unaligned/be_struct.h>
-+#include <linux/unaligned/le_byteshift.h>
-+#include <linux/unaligned/generic.h>
-+
-+#endif  /* sparc */
-+#ifdef CONFIG_UML
-+
-+#include "asm/arch/unaligned.h"
-+
-+#endif /* um - uml */
-+#ifdef CONFIG_V850
-+
-+#include <linux/unaligned/be_byteshift.h>
-+#include <linux/unaligned/le_byteshift.h>
-+#include <linux/unaligned/generic.h>
-+
-+#endif /* v850 */
-+#ifdef CONFIG_X86
-+/*
-+ * The x86 can do unaligned accesses itself.
-+ */
-+#include <linux/unaligned/access_ok.h>
-+#include <linux/unaligned/generic.h>
-+
-+#endif /* x86 */
-+#ifdef CONFIG_XTENSA
-+
-+#ifdef __XTENSA_EL__
-+# include <linux/unaligned/le_memmove.h>
-+# include <linux/unaligned/be_byteshift.h>
-+# include <linux/unaligned/generic.h>
-+#elif defined(__XTENSA_EB__)
-+# include <linux/unaligned/be_memmove.h>
-+# include <linux/unaligned/le_byteshift.h>
-+# include <linux/unaligned/generic.h>
-+#else
-+# error processor byte order undefined!
++#define ERFKILL		134	/* Operation not possible due to RF-kill */
++#endif
 +#endif
 +
-+#endif /* xtensa */
-+#endif /* < 2.6.26 */
-+
-+#endif /* __BACKPORT_ASM_UNALIGNED_H */
-diff --git a/backport/backport-include/linux/compat-2.6.26.h b/backport/backport-include/linux/compat-2.6.26.h
++#endif /* __BACKPORT_ASM_ERRNO_H */
+diff --git a/backport/backport-include/linux/compat-2.6.31.h b/backport/backport-include/linux/compat-2.6.31.h
 deleted file mode 100644
-index b8d9dc6..0000000
---- a/backport/backport-include/linux/compat-2.6.26.h
+index 096c131..0000000
+--- a/backport/backport-include/linux/compat-2.6.31.h
 +++ /dev/null
-@@ -1,456 +0,0 @@
--#ifndef LINUX_26_26_COMPAT_H
--#define LINUX_26_26_COMPAT_H
+@@ -1,273 +0,0 @@
+-#ifndef LINUX_26_31_COMPAT_H
+-#define LINUX_26_31_COMPAT_H
 -
 -#include <linux/version.h>
 -
--#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26))
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31))
 -
--#include <linux/device.h>
--#include <linux/list.h>
--#include <linux/kernel.h>
--#include <linux/jiffies.h>
+-#include <linux/skbuff.h>
+-#include <linux/workqueue.h>
+-#include <linux/interrupt.h>
+-#include <net/dst.h>
+-#include <net/genetlink.h>
+-#include <linux/ethtool.h>
 -#include <net/sock.h>
--#include <linux/fs.h>
--#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,24))
--#include <net/net_namespace.h>
+-
+-#define SUPPORTED_Backplane            (1 << 16)
+-#define SUPPORTED_1000baseKX_Full      (1 << 17)
+-#define SUPPORTED_10000baseKX4_Full    (1 << 18)
+-#define SUPPORTED_10000baseKR_Full     (1 << 19)
+-#define SUPPORTED_10000baseR_FEC       (1 << 20)
+-
+-#define ADVERTISED_Backplane           (1 << 16)
+-#define ADVERTISED_1000baseKX_Full     (1 << 17)
+-#define ADVERTISED_10000baseKX4_Full   (1 << 18)
+-#define ADVERTISED_10000baseKR_Full    (1 << 19)
+-#define ADVERTISED_10000baseR_FEC      (1 << 20)
+-
+-#define rfkill_get_led_trigger_name LINUX_BACKPORT(rfkill_get_led_trigger_name)
+-#define rfkill_set_led_trigger_name LINUX_BACKPORT(rfkill_set_led_trigger_name)
+-#define rfkill_set_hw_state LINUX_BACKPORT(rfkill_set_hw_state)
+-#define rfkill_set_sw_state LINUX_BACKPORT(rfkill_set_sw_state)
+-#define rfkill_init_sw_state LINUX_BACKPORT(rfkill_init_sw_state)
+-#define rfkill_set_states LINUX_BACKPORT(rfkill_set_states)
+-#define rfkill_pause_polling LINUX_BACKPORT(rfkill_pause_polling)
+-#define rfkill_resume_polling LINUX_BACKPORT(rfkill_resume_polling)
+-#define rfkill_blocked LINUX_BACKPORT(rfkill_blocked)
+-#define rfkill_alloc LINUX_BACKPORT(rfkill_alloc)
+-#define rfkill_register LINUX_BACKPORT(rfkill_register)
+-#define rfkill_unregister LINUX_BACKPORT(rfkill_unregister)
+-#define rfkill_destroy LINUX_BACKPORT(rfkill_destroy)
+-
+-#ifndef ERFKILL
+-#if !defined(CONFIG_ALPHA) && !defined(CONFIG_MIPS) && !defined(CONFIG_PARISC) && !defined(CONFIG_SPARC)
+-#define ERFKILL		132	/* Operation not possible due to RF-kill */
 -#endif
--#include <linux/fs.h>
--#include <linux/types.h>
--#include <asm/div64.h>
--
--/* These jiffie helpers added as of 2.6.26 */
--
--/*
-- * These four macros compare jiffies and 'a' for convenience.
-- */
--
--/* time_is_before_jiffies(a) return true if a is before jiffies */
--#define time_is_before_jiffies(a) time_after(jiffies, a)
--
--/* time_is_after_jiffies(a) return true if a is after jiffies */
--#define time_is_after_jiffies(a) time_before(jiffies, a)
--
--/* time_is_before_eq_jiffies(a) return true if a is before or equal to jiffies*/
--#define time_is_before_eq_jiffies(a) time_after_eq(jiffies, a)
--
--/* time_is_after_eq_jiffies(a) return true if a is after or equal to jiffies*/
--#define time_is_after_eq_jiffies(a) time_before_eq(jiffies, a)
--
--/* This comes from include/linux/input.h */
--#define SW_RFKILL_ALL           0x03  /* rfkill master switch, type "any"
--					 set = radio enabled */
--
--/* From kernel.h */
--#define USHORT_MAX      ((u16)(~0U))
--#define SHORT_MAX       ((s16)(USHORT_MAX>>1))
--#define SHORT_MIN       (-SHORT_MAX - 1)
--
--#define dev_set_name LINUX_BACKPORT(dev_set_name)
--extern int dev_set_name(struct device *dev, const char *name, ...)
--			__attribute__((format(printf, 2, 3)));
--
--/**
-- * clamp - return a value clamped to a given range with strict typechecking
-- * @val: current value
-- * @min: minimum allowable value
-- * @max: maximum allowable value
-- *
-- * This macro does strict typechecking of min/max to make sure they are of the
-- * same type as val.  See the unnecessary pointer comparisons.
-- */
--#define clamp(val, min, max) ({			\
--	typeof(val) __val = (val);		\
--	typeof(min) __min = (min);		\
--	typeof(max) __max = (max);		\
--	(void) (&__val == &__min);		\
--	(void) (&__val == &__max);		\
--	__val = __val < __min ? __min: __val;	\
--	__val > __max ? __max: __val; })
--
--/**
-- * clamp_t - return a value clamped to a given range using a given type
-- * @type: the type of variable to use
-- * @val: current value
-- * @min: minimum allowable value
-- * @max: maximum allowable value
-- *
-- * This macro does no typechecking and uses temporary variables of type
-- * 'type' to make all the comparisons.
-- */
--#define clamp_t(type, val, min, max) ({		\
--	type __val = (val);			\
--	type __min = (min);			\
--	type __max = (max);			\
--	__val = __val < __min ? __min: __val;	\
--	__val > __max ? __max: __val; })
--
--
--/* from include/linux/device.h */
--/* device_create_drvdata() is new */
--extern struct device *device_create_drvdata(struct class *cls,
--	struct device *parent,
--	dev_t devt,
--	void *drvdata,
--	const char *fmt, ...)
--__attribute__((format(printf, 5, 6)));
--
--/* This is from include/linux/list.h */
--
--/**
-- * list_is_singular - tests whether a list has just one entry.
-- * @head: the list to test.
-- */
--static inline int list_is_singular(const struct list_head *head)
--{
--	return !list_empty(head) && (head->next == head->prev);
--}
--
--/* This is from include/linux/device.h, which was added as of 2.6.26 */
--static inline const char *dev_name(struct device *dev)
--{
--	/* will be changed into kobject_name(&dev->kobj) in the near future */
--	return dev->bus_id;
--}
--
--/* This is from include/linux/kernel.h, which was added as of 2.6.26 */
--
--/**
-- * clamp_val - return a value clamped to a given range using val's type
-- * @val: current value
-- * @min: minimum allowable value
-- * @max: maximum allowable value
-- *
-- * This macro does no typechecking and uses temporary variables of whatever
-- * type the input argument 'val' is.  This is useful when val is an unsigned
-- * type and min and max are literals that will otherwise be assigned a signed
-- * integer type.
-- */
--
--#define clamp_val(val, min, max) ({             \
--	typeof(val) __val = (val);              \
--	typeof(val) __min = (min);              \
--	typeof(val) __max = (max);              \
--	__val = __val < __min ? __min: __val;   \
--	__val > __max ? __max: __val; })
--
--/* This comes from include/net/net_namespace.h */
--
--#ifdef CONFIG_NET_NS
--static inline
--int net_eq(const struct net *net1, const struct net *net2)
--{
--	return net1 == net2;
--}
--#else
--static inline
--int net_eq(const struct net *net1, const struct net *net2)
--{
--	return 1;
--}
--#endif
--
--static inline
--void dev_net_set(struct net_device *dev, struct net *net)
--{
--#ifdef CONFIG_NET_NS
--	release_net(dev->nd_net);
--	dev->nd_net = hold_net(net);
--#endif
--}
--
--static inline
--struct net *sock_net(const struct sock *sk)
--{
--#ifdef CONFIG_NET_NS
--	return sk->sk_net;
--#else
--	return &init_net;
--#endif
--}
--
--/* This comes from include/linux/netdevice.h */
--
--/*
-- * Net namespace inlines
-- */
--static inline
--struct net *dev_net(const struct net_device *dev)
--{
--#ifdef CONFIG_NET_NS
--	/*
--	 * compat-wirelss backport note:
--	 * For older kernels we may just need to always return init_net,
--	 * not sure when we added dev->nd_net.
--	 */
--	return dev->nd_net;
--#else
--	return &init_net;
--#endif
--}
--
--
--/*
-- * 2.6.26 added its own unaligned API which the
-- * new drivers can use. Lets port it here by including it in older
-- * kernels and also deal with the architecture handling here.
-- */
--
 -#ifdef CONFIG_ALPHA
--
--#include <linux/unaligned/be_struct.h>
--#include <linux/unaligned/le_byteshift.h>
--#include <linux/unaligned/generic.h>
--
--#endif /* alpha */
--#ifdef CONFIG_ARM
--
--/* arm */
--#include <linux/unaligned/le_byteshift.h>
--#include <linux/unaligned/be_byteshift.h>
--#include <linux/unaligned/generic.h>
--
--#endif /* arm */
--#ifdef CONFIG_AVR32
--
--/*
-- * AVR32 can handle some unaligned accesses, depending on the
-- * implementation.  The AVR32 AP implementation can handle unaligned
-- * words, but halfwords must be halfword-aligned, and doublewords must
-- * be word-aligned.
-- *
-- * However, swapped word loads must be word-aligned so we can't
-- * optimize word loads in general.
-- */
--
--#include <linux/unaligned/be_struct.h>
--#include <linux/unaligned/le_byteshift.h>
--#include <linux/unaligned/generic.h>
--
+-#define ERFKILL		138	/* Operation not possible due to RF-kill */
 -#endif
--#ifdef CONFIG_BLACKFIN
--
--#include <linux/unaligned/le_struct.h>
--#include <linux/unaligned/be_byteshift.h>
--#include <linux/unaligned/generic.h>
--
--#endif /* blackfin */
--#ifdef CONFIG_CRIS
--
--/*
-- * CRIS can do unaligned accesses itself.
-- */
--#include <linux/unaligned/access_ok.h>
--#include <linux/unaligned/generic.h>
--
--#endif /* cris */
--#ifdef CONFIG_FRV
--
--#include <linux/unaligned/le_byteshift.h>
--#include <linux/unaligned/be_byteshift.h>
--#include <linux/unaligned/generic.h>
--
--#endif /* frv */
--#ifdef CONFIG_H8300
--
--#include <linux/unaligned/be_memmove.h>
--#include <linux/unaligned/le_byteshift.h>
--#include <linux/unaligned/generic.h>
--
--#endif /* h8300 */
--#ifdef  CONFIG_IA64
--
--#include <linux/unaligned/le_struct.h>
--#include <linux/unaligned/be_byteshift.h>
--#include <linux/unaligned/generic.h>
--
--#endif /* ia64 */
--#ifdef CONFIG_M32R
--
--#if defined(__LITTLE_ENDIAN__)
--# include <linux/unaligned/le_memmove.h>
--# include <linux/unaligned/be_byteshift.h>
--# include <linux/unaligned/generic.h>
--#else
--# include <linux/unaligned/be_memmove.h>
--# include <linux/unaligned/le_byteshift.h>
--# include <linux/unaligned/generic.h>
--#endif
--
--#endif /* m32r */
--#ifdef CONFIG_M68K /* this handles both m68k and m68knommu */
--
--#ifdef CONFIG_COLDFIRE
--#include <linux/unaligned/be_struct.h>
--#include <linux/unaligned/le_byteshift.h>
--#include <linux/unaligned/generic.h>
--#else
--
--/*
-- * The m68k can do unaligned accesses itself.
-- */
--#include <linux/unaligned/access_ok.h>
--#include <linux/unaligned/generic.h>
--#endif
--
--#endif /* m68k and m68knommu */
 -#ifdef CONFIG_MIPS
--
--#if defined(__MIPSEB__)
--# include <linux/unaligned/be_struct.h>
--# include <linux/unaligned/le_byteshift.h>
--# include <linux/unaligned/generic.h>
--# define get_unaligned  __get_unaligned_be
--# define put_unaligned  __put_unaligned_be
--#elif defined(__MIPSEL__)
--# include <linux/unaligned/le_struct.h>
--# include <linux/unaligned/be_byteshift.h>
--# include <linux/unaligned/generic.h>
+-#define ERFKILL		167	/* Operation not possible due to RF-kill */
 -#endif
--
--#endif /* mips */
--#ifdef CONFIG_MN10300
--
--#include <linux/unaligned/access_ok.h>
--#include <linux/unaligned/generic.h>
--
--#endif /* mn10300 */
 -#ifdef CONFIG_PARISC
--
--#include <linux/unaligned/be_struct.h>
--#include <linux/unaligned/le_byteshift.h>
--#include <linux/unaligned/generic.h>
--
--#endif /* parisc */
--#ifdef CONFIG_PPC
--/*
-- * The PowerPC can do unaligned accesses itself in big endian mode.
-- */
--#include <linux/unaligned/access_ok.h>
--#include <linux/unaligned/generic.h>
--
--#endif /* ppc */
--#ifdef CONFIG_S390
--
--/*
-- * The S390 can do unaligned accesses itself.
-- */
--#include <linux/unaligned/access_ok.h>
--#include <linux/unaligned/generic.h>
--
--#endif /* s390 */
--#ifdef CONFIG_SUPERH
--
--/* SH can't handle unaligned accesses. */
--#ifdef __LITTLE_ENDIAN__
--# include <linux/unaligned/le_struct.h>
--# include <linux/unaligned/be_byteshift.h>
--# include <linux/unaligned/generic.h>
--#else
--# include <linux/unaligned/be_struct.h>
--# include <linux/unaligned/le_byteshift.h>
--# include <linux/unaligned/generic.h>
+-#define ERFKILL		256	/* Operation not possible due to RF-kill */
 -#endif
--
--#endif /* sh - SUPERH */
 -#ifdef CONFIG_SPARC
+-#define ERFKILL		134	/* Operation not possible due to RF-kill */
+-#endif
+-#endif
 -
--/* sparc and sparc64 */
--#include <linux/unaligned/be_struct.h>
--#include <linux/unaligned/le_byteshift.h>
--#include <linux/unaligned/generic.h>
+-#define mdio45_probe LINUX_BACKPORT(mdio45_probe)
+-#define mdio_set_flag LINUX_BACKPORT(mdio_set_flag)
+-#define mdio45_links_ok LINUX_BACKPORT(mdio45_links_ok)
+-#define mdio45_nway_restart LINUX_BACKPORT(mdio45_nway_restart)
 -
--#endif  /* sparc */
--#ifdef CONFIG_UML
+-#define mdio45_ethtool_gset_npage LINUX_BACKPORT(mdio45_ethtool_gset_npage)
+-#define mdio45_ethtool_spauseparam_an LINUX_BACKPORT(mdio45_ethtool_spauseparam_an)
+-#define mdio_mii_ioctl LINUX_BACKPORT(mdio_mii_ioctl)
 -
--#include "asm/arch/unaligned.h"
+-#ifndef NETDEV_PRE_UP
+-#define NETDEV_PRE_UP		0x000D
+-#endif
 -
--#endif /* um - uml */
--#ifdef CONFIG_V850
+-#ifndef SDIO_DEVICE_ID_MARVELL_8688WLAN
+-#define SDIO_DEVICE_ID_MARVELL_8688WLAN		0x9104
+-#endif
 -
--#include <linux/unaligned/be_byteshift.h>
--#include <linux/unaligned/le_byteshift.h>
--#include <linux/unaligned/generic.h>
+-struct compat_threaded_irq {
+-	unsigned int irq;
+-	irq_handler_t handler;
+-	irq_handler_t thread_fn;
+-	void *dev_id;
+-	char wq_name[64];
+-	struct workqueue_struct *wq;
+-	struct work_struct work;
+-};
 -
--#endif /* v850 */
--#ifdef CONFIG_X86
 -/*
-- * The x86 can do unaligned accesses itself.
+- * kmemleak was introduced on 2.6.31, since older kernels do not have
+- * we simply ignore its tuning.
 - */
--#include <linux/unaligned/access_ok.h>
--#include <linux/unaligned/generic.h>
--
--#endif /* x86 */
--#ifdef CONFIG_XTENSA
--
--#ifdef __XTENSA_EL__
--# include <linux/unaligned/le_memmove.h>
--# include <linux/unaligned/be_byteshift.h>
--# include <linux/unaligned/generic.h>
--#elif defined(__XTENSA_EB__)
--# include <linux/unaligned/be_memmove.h>
--# include <linux/unaligned/le_byteshift.h>
--# include <linux/unaligned/generic.h>
--#else
--# error processor byte order undefined!
--#endif
--
--#endif /* xtensa */
--
--#define PCIE_LINK_STATE_L0S	1
--#define PCIE_LINK_STATE_L1	2
--#define PCIE_LINK_STATE_CLKPM	4
--
--static inline void pci_disable_link_state(struct pci_dev *pdev, int state)
+-static inline void kmemleak_ignore(const void *ptr)
 -{
+-	return;
 -}
--/* source: include/linux/pci-aspm.h */
 -
+-static inline void kmemleak_not_leak(const void *ptr)
+-{
+-	return;
+-}
 -
--#if BITS_PER_LONG == 64
+-static inline void kmemleak_no_scan(const void *ptr)
+-{
+-	return;
+-}
+-
+-/*
+- * Added via adf30907d63893e4208dfe3f5c88ae12bc2f25d5
+- *
+- * There is no _sk_dst on older kernels, so just set the
+- * old dst to NULL and release it directly.
+- */
+-static inline void skb_dst_drop(struct sk_buff *skb)
+-{
+-	dst_release(skb->dst);
+-	skb->dst = NULL;
+-}
+-
+-static inline struct dst_entry *skb_dst(const struct sk_buff *skb)
+-{
+-	return (struct dst_entry *)skb->dst;
+-}
+-
+-static inline void skb_dst_set(struct sk_buff *skb, struct dst_entry *dst)
+-{
+-	skb->dst = dst;
+-}
+-
+-static inline struct rtable *skb_rtable(const struct sk_buff *skb)
+-{
+-	return (struct rtable *)skb_dst(skb);
+-}
+-
+-/* Backport threaded IRQ support */
+-
+-static inline
+-void compat_irq_work(struct work_struct *work)
+-{
+-	struct compat_threaded_irq *comp = container_of(work, struct compat_threaded_irq, work);
+-	comp->thread_fn(comp->irq, comp->dev_id);
+-}
+-
+-static inline
+-irqreturn_t compat_irq_dispatcher(int irq, void *dev_id)
+-{
+-	struct compat_threaded_irq *comp = dev_id;
+-	irqreturn_t res;
+-
+-	res = comp->handler(irq, comp->dev_id);
+-	if (res == IRQ_WAKE_THREAD) {
+-		queue_work(comp->wq, &comp->work);
+-		res = IRQ_HANDLED;
+-	}
+-
+-	return res;
+-}
+-
+-static inline
+-int compat_request_threaded_irq(struct compat_threaded_irq *comp,
+-				unsigned int irq,
+-				irq_handler_t handler,
+-				irq_handler_t thread_fn,
+-				unsigned long flags,
+-				const char *name,
+-				void *dev_id)
+-{
+-	comp->irq = irq;
+-	comp->handler = handler;
+-	comp->thread_fn = thread_fn;
+-	comp->dev_id = dev_id;
+-	INIT_WORK(&comp->work, compat_irq_work);
+-
+-	if (!comp->wq) {
+-		snprintf(comp->wq_name, sizeof(comp->wq_name),
+-			 "compirq/%u-%s", irq, name);
+-		comp->wq = create_singlethread_workqueue(comp->wq_name);
+-		if (!comp->wq) {
+-			printk(KERN_ERR "Failed to create compat-threaded-IRQ workqueue %s\n",
+-			       comp->wq_name);
+-			return -ENOMEM;
+-		}
+-	}
+-	return request_irq(irq, compat_irq_dispatcher, flags, name, comp);
+-}
+-
+-static inline
+-void compat_free_threaded_irq(struct compat_threaded_irq *comp)
+-{
+-	free_irq(comp->irq, comp);
+-}
+-
+-static inline
+-void compat_destroy_threaded_irq(struct compat_threaded_irq *comp)
+-{
+-	if (comp->wq)
+-		destroy_workqueue(comp->wq);
+-	comp->wq = NULL;
+-}
+-
+-static inline
+-void compat_synchronize_threaded_irq(struct compat_threaded_irq *comp)
+-{
+-	synchronize_irq(comp->irq);
+-	cancel_work_sync(&comp->work);
+-}
 -
 -/**
-- * div_u64_rem - unsigned 64bit divide with 32bit divisor with remainder
+- * list_entry_rcu - get the struct for this entry
+- * @ptr:        the &struct list_head pointer.
+- * @type:       the type of the struct this is embedded in.
+- * @member:     the name of the list_struct within the struct.
 - *
-- * This is commonly provided by 32bit archs to provide an optimized 64bit
-- * divide.
+- * This primitive may safely run concurrently with the _rcu list-mutation
+- * primitives such as list_add_rcu() as long as it's guarded by rcu_read_lock().
 - */
--static inline u64 div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
--{
--	*remainder = dividend % divisor;
--	return dividend / divisor;
--}
+-#define list_entry_rcu(ptr, type, member) \
+-	container_of(rcu_dereference(ptr), type, member)
 -
--#elif BITS_PER_LONG == 32
+-#define skb_walk_frags(skb, iter)	\
+-	for (iter = skb_shinfo(skb)->frag_list; iter; iter = iter->next)
 -
--#ifndef div_u64_rem
--static inline u64 div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
--{
--	*remainder = do_div(dividend, divisor);
--	return dividend;
--}
+-#ifndef CONFIG_64BIT
+-
+-typedef struct {
+-	long long counter;
+-} atomic64_t;
+-
+-#define atomic64_read LINUX_BACKPORT(atomic64_read)
+-extern long long atomic64_read(const atomic64_t *v);
+-#define atomic64_add_return LINUX_BACKPORT(atomic64_add_return)
+-extern long long atomic64_add_return(long long a, atomic64_t *v);
+-
+-#define atomic64_inc_return(v)          atomic64_add_return(1LL, (v))
+-
 -#endif
--
--#endif /* BITS_PER_LONG */
 -
 -/**
-- * div_u64 - unsigned 64bit divide with 32bit divisor
+- * sk_rmem_alloc_get - returns read allocations
+- * @sk: socket
 - *
-- * This is the most common 64bit divide and should be used if possible,
-- * as many 32bit archs can optimize this variant better than a full 64bit
-- * divide.
+- * Returns sk_rmem_alloc
 - */
--#ifndef div_u64
--static inline u64 div_u64(u64 dividend, u32 divisor)
+-static inline int sk_rmem_alloc_get(const struct sock *sk)
 -{
--	u32 remainder;
--	return div_u64_rem(dividend, divisor, &remainder);
+-	return atomic_read(&sk->sk_rmem_alloc);
 -}
--#endif
--/* source: include/math64.h */
 -
--#define hex_asc_lo(x)	hex_asc((x) & 0x0f)
--#define hex_asc_hi(x)	hex_asc(((x) & 0xf0) >> 4)
+-/**
+- * sk_wmem_alloc_get - returns write allocations
+- * @sk: socket
+- *
+- * Returns sk_wmem_alloc minus initial offset of one
+- */
+-static inline int sk_wmem_alloc_get(const struct sock *sk)
+-{
+-	return atomic_read(&sk->sk_wmem_alloc) - 1;
+-}
 -
--#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)) */
+-/**
+- * sk_has_allocations - check if allocations are outstanding
+- * @sk: socket
+- *
+- * Returns true if socket has write or read allocations
+- */
+-static inline bool sk_has_allocations(const struct sock *sk)
+-{
+-	return sk_wmem_alloc_get(sk) || sk_rmem_alloc_get(sk);
+-}
 -
--#endif /* LINUX_26_26_COMPAT_H */
-diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
-index 07ebe9f..f672a99 100644
---- a/backport/backport-include/linux/device.h
-+++ b/backport/backport-include/linux/device.h
-@@ -122,6 +122,14 @@ static inline void device_unlock(struct device *dev)
+-#define USB_SUBCLASS_VENDOR_SPEC	0xff
+-
+-#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)) */
+-
+-#endif /* LINUX_26_31_COMPAT_H */
+diff --git a/backport/backport-include/linux/ethtool.h b/backport/backport-include/linux/ethtool.h
+index 2236d0e..4fb3dcc 100644
+--- a/backport/backport-include/linux/ethtool.h
++++ b/backport/backport-include/linux/ethtool.h
+@@ -14,4 +14,18 @@ static inline u32 ethtool_rxfh_indir_default(u32 index, u32 n_rx_rings)
+ #define ETHTOOL_FWVERS_LEN 32
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)
++#define SUPPORTED_Backplane            (1 << 16)
++#define SUPPORTED_1000baseKX_Full      (1 << 17)
++#define SUPPORTED_10000baseKX4_Full    (1 << 18)
++#define SUPPORTED_10000baseKR_Full     (1 << 19)
++#define SUPPORTED_10000baseR_FEC       (1 << 20)
++
++#define ADVERTISED_Backplane           (1 << 16)
++#define ADVERTISED_1000baseKX_Full     (1 << 17)
++#define ADVERTISED_10000baseKX4_Full   (1 << 18)
++#define ADVERTISED_10000baseKR_Full    (1 << 19)
++#define ADVERTISED_10000baseR_FEC      (1 << 20)
++#endif
++
+ #endif /* __BACKPORT_LINUX_ETHTOOL_H */
+diff --git a/backport/backport-include/linux/interrupt.h b/backport/backport-include/linux/interrupt.h
+index 908ef36..546a7fb 100644
+--- a/backport/backport-include/linux/interrupt.h
++++ b/backport/backport-include/linux/interrupt.h
+@@ -25,4 +25,87 @@ static inline int irq_set_affinity_hint(unsigned int irq,
  }
  #endif
  
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)
-+static inline const char *dev_name(struct device *dev)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)
++struct compat_threaded_irq {
++	unsigned int irq;
++	irq_handler_t handler;
++	irq_handler_t thread_fn;
++	void *dev_id;
++	char wq_name[64];
++	struct workqueue_struct *wq;
++	struct work_struct work;
++};
++
++static inline
++void compat_irq_work(struct work_struct *work)
 +{
-+	/* will be changed into kobject_name(&dev->kobj) in the near future */
-+	return dev->bus_id;
++	struct compat_threaded_irq *comp = container_of(work, struct compat_threaded_irq, work);
++	comp->thread_fn(comp->irq, comp->dev_id);
++}
++
++static inline
++irqreturn_t compat_irq_dispatcher(int irq, void *dev_id)
++{
++	struct compat_threaded_irq *comp = dev_id;
++	irqreturn_t res;
++
++	res = comp->handler(irq, comp->dev_id);
++	if (res == IRQ_WAKE_THREAD) {
++		queue_work(comp->wq, &comp->work);
++		res = IRQ_HANDLED;
++	}
++
++	return res;
++}
++
++static inline
++int compat_request_threaded_irq(struct compat_threaded_irq *comp,
++				unsigned int irq,
++				irq_handler_t handler,
++				irq_handler_t thread_fn,
++				unsigned long flags,
++				const char *name,
++				void *dev_id)
++{
++	comp->irq = irq;
++	comp->handler = handler;
++	comp->thread_fn = thread_fn;
++	comp->dev_id = dev_id;
++	INIT_WORK(&comp->work, compat_irq_work);
++
++	if (!comp->wq) {
++		snprintf(comp->wq_name, sizeof(comp->wq_name),
++			 "compirq/%u-%s", irq, name);
++		comp->wq = create_singlethread_workqueue(comp->wq_name);
++		if (!comp->wq) {
++			printk(KERN_ERR "Failed to create compat-threaded-IRQ workqueue %s\n",
++			       comp->wq_name);
++			return -ENOMEM;
++		}
++	}
++	return request_irq(irq, compat_irq_dispatcher, flags, name, comp);
++}
++
++static inline
++void compat_free_threaded_irq(struct compat_threaded_irq *comp)
++{
++	free_irq(comp->irq, comp);
++}
++
++static inline
++void compat_destroy_threaded_irq(struct compat_threaded_irq *comp)
++{
++	if (comp->wq)
++		destroy_workqueue(comp->wq);
++	comp->wq = NULL;
++}
++
++static inline
++void compat_synchronize_threaded_irq(struct compat_threaded_irq *comp)
++{
++	synchronize_irq(comp->irq);
++	cancel_work_sync(&comp->work);
 +}
 +#endif
 +
- #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
- static inline void dev_set_uevent_suppress(struct device *dev, int val)
- {
-@@ -141,4 +149,10 @@ static inline void dev_set_uevent_suppress(struct device *dev, int val)
- #define dev_name(dev) dev_name((struct device *)dev)
- #endif
+ #endif /* __BACKPORT_LINUX_INTERRUPT_H */
+diff --git a/backport/backport-include/linux/kmemleak.h b/backport/backport-include/linux/kmemleak.h
+index 83bd199..99fff66 100644
+--- a/backport/backport-include/linux/kmemleak.h
++++ b/backport/backport-include/linux/kmemleak.h
+@@ -2,4 +2,23 @@
  
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)
-+#define dev_set_name LINUX_BACKPORT(dev_set_name)
-+extern int dev_set_name(struct device *dev, const char *name, ...)
-+			__attribute__((format(printf, 2, 3)));
-+#endif
+ #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,30))
+ #include_next <linux/kmemleak.h>
+-#endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,25)) */
++#else
++/*
++ * kmemleak was introduced on 2.6.31, since older kernels do not have
++ * we simply ignore its tuning.
++ */
++static inline void kmemleak_ignore(const void *ptr)
++{
++	return;
++}
 +
- #endif /* __BACKPORT_DEVICE_H */
-diff --git a/backport/backport-include/linux/input.h b/backport/backport-include/linux/input.h
-index fa95263..3442db0 100644
---- a/backport/backport-include/linux/input.h
-+++ b/backport/backport-include/linux/input.h
-@@ -14,4 +14,8 @@
- #define KEY_RFKILL		247
- #endif
- 
-+#ifndef SW_RFKILL_ALL
-+#define SW_RFKILL_ALL           0x03
-+#endif
++static inline void kmemleak_not_leak(const void *ptr)
++{
++	return;
++}
 +
- #endif /* __BACKPORT_INPUT_H */
-diff --git a/backport/backport-include/linux/jiffies.h b/backport/backport-include/linux/jiffies.h
++static inline void kmemleak_no_scan(const void *ptr)
++{
++	return;
++}
++#endif
+diff --git a/backport/backport-include/linux/mdio.h b/backport/backport-include/linux/mdio.h
 new file mode 100644
-index 0000000..9e74e6a
+index 0000000..888bfee
 --- /dev/null
-+++ b/backport/backport-include/linux/jiffies.h
-@@ -0,0 +1,21 @@
-+#ifndef __BACKPORT_LNIUX_JIFFIES_H
-+#define __BACKPORT_LNIUX_JIFFIES_H
-+#include_next <linux/jiffies.h>
++++ b/backport/backport-include/linux/mdio.h
+@@ -0,0 +1,17 @@
++#ifndef __BACKPORT_LINUX_MDIO_H
++#define __BACKPORT_LINUX_MDIO_H
++#include_next <linux/mdio.h>
++#include <linux/version.h>
 +
-+#ifndef time_is_before_jiffies
-+#define time_is_before_jiffies(a) time_after(jiffies, a)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)
++#define mdio45_probe LINUX_BACKPORT(mdio45_probe)
++#define mdio_set_flag LINUX_BACKPORT(mdio_set_flag)
++#define mdio45_links_ok LINUX_BACKPORT(mdio45_links_ok)
++#define mdio45_nway_restart LINUX_BACKPORT(mdio45_nway_restart)
++
++#define mdio45_ethtool_gset_npage LINUX_BACKPORT(mdio45_ethtool_gset_npage)
++#define mdio45_ethtool_spauseparam_an LINUX_BACKPORT(mdio45_ethtool_spauseparam_an)
++#define mdio_mii_ioctl LINUX_BACKPORT(mdio_mii_ioctl)
 +#endif
 +
-+#ifndef time_is_after_jiffies
-+#define time_is_after_jiffies(a) time_before(jiffies, a)
-+#endif
-+
-+#ifndef time_is_before_eq_jiffies
-+#define time_is_before_eq_jiffies(a) time_after_eq(jiffies, a)
-+#endif
-+
-+#ifndef time_is_after_eq_jiffies
-+#define time_is_after_eq_jiffies(a) time_before_eq(jiffies, a)
-+#endif
-+
-+#endif /* __BACKPORT_LNIUX_JIFFIES_H */
-diff --git a/backport/backport-include/linux/kernel.h b/backport/backport-include/linux/kernel.h
-index b0ab089..24755b0 100644
---- a/backport/backport-include/linux/kernel.h
-+++ b/backport/backport-include/linux/kernel.h
-@@ -206,4 +206,39 @@ int hex_to_bin(char ch);
- #define lower_32_bits(n) ((u32)(n))
++#endif /* __BACKPORT_LINUX_MDIO_H */
+diff --git a/backport/backport-include/linux/mmc/sdio_ids.h b/backport/backport-include/linux/mmc/sdio_ids.h
+index 3223fca..64fe8ec 100644
+--- a/backport/backport-include/linux/mmc/sdio_ids.h
++++ b/backport/backport-include/linux/mmc/sdio_ids.h
+@@ -7,4 +7,8 @@
+ #define SDIO_CLASS_BT_AMP	0x09	/* Type-A Bluetooth AMP interface */
  #endif
  
-+#ifndef USHORT_MAX
-+#define USHORT_MAX      ((u16)(~0U))
-+#define SHORT_MAX       ((s16)(USHORT_MAX>>1))
-+#define SHORT_MIN       (-SHORT_MAX - 1)
++#ifndef SDIO_DEVICE_ID_MARVELL_8688WLAN
++#define SDIO_DEVICE_ID_MARVELL_8688WLAN		0x9104
 +#endif
 +
-+#ifndef clamp
-+#define clamp(val, min, max) ({			\
-+	typeof(val) __val = (val);		\
-+	typeof(min) __min = (min);		\
-+	typeof(max) __max = (max);		\
-+	(void) (&__val == &__min);		\
-+	(void) (&__val == &__max);		\
-+	__val = __val < __min ? __min: __val;	\
-+	__val > __max ? __max: __val; })
-+#endif
-+
-+#ifndef clamp_t
-+#define clamp_t(type, val, min, max) ({		\
-+	type __val = (val);			\
-+	type __min = (min);			\
-+	type __max = (max);			\
-+	__val = __val < __min ? __min: __val;	\
-+	__val > __max ? __max: __val; })
-+#endif
-+
-+#ifndef clamp_val
-+#define clamp_val(val, min, max) ({             \
-+	typeof(val) __val = (val);              \
-+	typeof(val) __min = (min);              \
-+	typeof(val) __max = (max);              \
-+	__val = __val < __min ? __min: __val;   \
-+	__val > __max ? __max: __val; })
-+#endif
-+
- #endif /* __BACKPORT_KERNEL_H */
-diff --git a/backport/backport-include/linux/list.h b/backport/backport-include/linux/list.h
-index 8ad0b28..fb5ee4b 100644
---- a/backport/backport-include/linux/list.h
-+++ b/backport/backport-include/linux/list.h
-@@ -50,6 +50,13 @@
- 
- #endif
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)
-+static inline int list_is_singular(const struct list_head *head)
-+{
-+	return !list_empty(head) && (head->next == head->prev);
-+}
-+#endif
-+
- #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,27)
- static inline void __list_cut_position(struct list_head *list,
- 		struct list_head *head, struct list_head *entry)
-diff --git a/backport/backport-include/linux/math64.h b/backport/backport-include/linux/math64.h
-index eb9e8e1..7f3a81b 100644
---- a/backport/backport-include/linux/math64.h
-+++ b/backport/backport-include/linux/math64.h
-@@ -7,4 +7,35 @@
- #include_next <linux/math64.h>
- #endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,25)) */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)
-+#if BITS_PER_LONG == 64
-+
-+static inline u64 div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
-+{
-+	*remainder = dividend % divisor;
-+	return dividend / divisor;
-+}
-+
-+#elif BITS_PER_LONG == 32
-+
-+#ifndef div_u64_rem
-+static inline u64 div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
-+{
-+	*remainder = do_div(dividend, divisor);
-+	return dividend;
-+}
-+#endif
-+
-+#endif /* BITS_PER_LONG */
-+
-+#ifndef div_u64
-+static inline u64 div_u64(u64 dividend, u32 divisor)
-+{
-+	u32 remainder;
-+	return div_u64_rem(dividend, divisor, &remainder);
-+}
-+#endif
-+
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26) */
-+
- #endif	/* _COMPAT_LINUX_MATH64_H */
+ #endif /* __BACKPORT_MMC_SDIO_IDS_H */
 diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
-index ca2baf7..74230d9 100644
+index ee4f410..0300ca0 100644
 --- a/backport/backport-include/linux/netdevice.h
 +++ b/backport/backport-include/linux/netdevice.h
-@@ -435,4 +435,21 @@ static inline void netif_tx_stop_all_queues(struct net_device *dev)
- #define netif_wake_subqueue netif_start_subqueue
- #endif /* < 2.6.27 */
+@@ -291,4 +291,8 @@ do {								\
+ #define NETDEV_POST_INIT 0xffff
+ #endif
  
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)
-+static inline
-+struct net *dev_net(const struct net_device *dev)
-+{
-+#ifdef CONFIG_NET_NS
-+	/*
-+	 * compat-wirelss backport note:
-+	 * For older kernels we may just need to always return init_net,
-+	 * not sure when we added dev->nd_net.
-+	 */
-+	return dev->nd_net;
-+#else
-+	return &init_net;
-+#endif
-+}
++#ifndef NETDEV_PRE_UP
++#define NETDEV_PRE_UP		0x000D
 +#endif
 +
  #endif /* __BACKPORT_NETDEVICE_H */
-diff --git a/backport/backport-include/linux/pci-aspm.h b/backport/backport-include/linux/pci-aspm.h
-index 2bc6efb..367112e 100644
---- a/backport/backport-include/linux/pci-aspm.h
-+++ b/backport/backport-include/linux/pci-aspm.h
-@@ -3,3 +3,13 @@
- #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,25))
- #include_next <linux/pci-aspm.h>
- #endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,25)) */
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)
-+#define PCIE_LINK_STATE_L0S	1
-+#define PCIE_LINK_STATE_L1	2
-+#define PCIE_LINK_STATE_CLKPM	4
-+
-+static inline void pci_disable_link_state(struct pci_dev *pdev, int state)
-+{
-+}
-+#endif
-diff --git a/backport/backport-include/net/net_namespace.h b/backport/backport-include/net/net_namespace.h
-index edd02ff..f23702f 100644
---- a/backport/backport-include/net/net_namespace.h
-+++ b/backport/backport-include/net/net_namespace.h
-@@ -25,4 +25,39 @@ static inline struct net *read_pnet(struct net * const *pnet)
+diff --git a/backport/backport-include/linux/rculist.h b/backport/backport-include/linux/rculist.h
+index bb9f367..73c47df 100644
+--- a/backport/backport-include/linux/rculist.h
++++ b/backport/backport-include/linux/rculist.h
+@@ -46,4 +46,9 @@
+ 	     pos = list_entry_rcu(pos->member.next, typeof(*pos), member))
  #endif
- #endif /* < 2.6.29 */
  
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)
-+#ifdef CONFIG_NET_NS
-+static inline
-+int net_eq(const struct net *net1, const struct net *net2)
++#ifndef list_entry_rcu
++#define list_entry_rcu(ptr, type, member) \
++	container_of(rcu_dereference(ptr), type, member)
++#endif
++
+ #endif /* __BACKPORT_RCULIST_H */
+diff --git a/backport/backport-include/linux/rfkill.h b/backport/backport-include/linux/rfkill.h
+index da236b2..01d18f1 100644
+--- a/backport/backport-include/linux/rfkill.h
++++ b/backport/backport-include/linux/rfkill.h
+@@ -1,9 +1,25 @@
+ #ifndef __COMPAT_RFKILL_H
+ #define __COMPAT_RFKILL_H
++#include <linux/version.h>
+ 
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,33))
+ #include_next <linux/rfkill.h>
+ #else
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)
++#define rfkill_get_led_trigger_name LINUX_BACKPORT(rfkill_get_led_trigger_name)
++#define rfkill_set_led_trigger_name LINUX_BACKPORT(rfkill_set_led_trigger_name)
++#define rfkill_set_hw_state LINUX_BACKPORT(rfkill_set_hw_state)
++#define rfkill_set_sw_state LINUX_BACKPORT(rfkill_set_sw_state)
++#define rfkill_init_sw_state LINUX_BACKPORT(rfkill_init_sw_state)
++#define rfkill_set_states LINUX_BACKPORT(rfkill_set_states)
++#define rfkill_pause_polling LINUX_BACKPORT(rfkill_pause_polling)
++#define rfkill_resume_polling LINUX_BACKPORT(rfkill_resume_polling)
++#define rfkill_blocked LINUX_BACKPORT(rfkill_blocked)
++#define rfkill_alloc LINUX_BACKPORT(rfkill_alloc)
++#define rfkill_register LINUX_BACKPORT(rfkill_register)
++#define rfkill_unregister LINUX_BACKPORT(rfkill_unregister)
++#define rfkill_destroy LINUX_BACKPORT(rfkill_destroy)
++#endif
+ #include <linux/rfkill_backport.h>
+ #endif
+ 
+diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
+index e7f667e..cc145a6 100644
+--- a/backport/backport-include/linux/skbuff.h
++++ b/backport/backport-include/linux/skbuff.h
+@@ -117,4 +117,9 @@ static inline struct sk_buff *netdev_alloc_skb_ip_align(struct net_device *dev,
+ }
+ #endif
+ 
++#ifndef skb_walk_frags
++#define skb_walk_frags(skb, iter)	\
++	for (iter = skb_shinfo(skb)->frag_list; iter; iter = iter->next)
++#endif
++
+ #endif /* __BACKPORT_SKBUFF_H */
+diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
+index 79ac140..4ed9617 100644
+--- a/backport/backport-include/linux/usb.h
++++ b/backport/backport-include/linux/usb.h
+@@ -92,4 +92,9 @@ static inline void usb_autopm_put_interface_no_suspend(struct usb_interface *int
+ #endif /* CONFIG_USB_SUSPEND */
+ #endif /* < 2.6.33 */
+ 
++#ifndef USB_SUBCLASS_VENDOR_SPEC
++/* this is defined in usb/ch9.h, but we only need it through here */
++#define USB_SUBCLASS_VENDOR_SPEC	0xff
++#endif
++
+ #endif /* __BACKPORT_USB_H */
+diff --git a/backport/backport-include/net/dst.h b/backport/backport-include/net/dst.h
+new file mode 100644
+index 0000000..e4e3d8f
+--- /dev/null
++++ b/backport/backport-include/net/dst.h
+@@ -0,0 +1,35 @@
++#ifndef __BACKPORT_NET_DST_H
++#define __BACKPORT_NET_DST_H
++#include_next <net/dst.h>
++#include <linux/version.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)
++/*
++ * Added via adf30907d63893e4208dfe3f5c88ae12bc2f25d5
++ *
++ * There is no _sk_dst on older kernels, so just set the
++ * old dst to NULL and release it directly.
++ */
++static inline void skb_dst_drop(struct sk_buff *skb)
 +{
-+	return net1 == net2;
++	dst_release(skb->dst);
++	skb->dst = NULL;
 +}
-+#else
-+static inline
-+int net_eq(const struct net *net1, const struct net *net2)
++
++static inline struct dst_entry *skb_dst(const struct sk_buff *skb)
 +{
-+	return 1;
++	return (struct dst_entry *)skb->dst;
++}
++
++static inline void skb_dst_set(struct sk_buff *skb, struct dst_entry *dst)
++{
++	skb->dst = dst;
++}
++
++static inline struct rtable *skb_rtable(const struct sk_buff *skb)
++{
++	return (struct rtable *)skb_dst(skb);
 +}
 +#endif
 +
-+static inline
-+void dev_net_set(struct net_device *dev, struct net *net)
++#endif /* __BACKPORT_NET_DST_H */
+diff --git a/backport/backport-include/net/sock.h b/backport/backport-include/net/sock.h
+index 93dc6a8..b4f3e6a 100644
+--- a/backport/backport-include/net/sock.h
++++ b/backport/backport-include/net/sock.h
+@@ -56,4 +56,21 @@ static inline struct sock *sk_entry(const struct hlist_node *node)
+ #define sock_recv_ts_and_drops(msg, sk, skb) sock_recv_timestamp(msg, sk, skb)
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)
++static inline int sk_rmem_alloc_get(const struct sock *sk)
 +{
-+#ifdef CONFIG_NET_NS
-+	release_net(dev->nd_net);
-+	dev->nd_net = hold_net(net);
-+#endif
++	return atomic_read(&sk->sk_rmem_alloc);
 +}
 +
-+static inline
-+struct net *sock_net(const struct sock *sk)
++static inline int sk_wmem_alloc_get(const struct sock *sk)
 +{
-+#ifdef CONFIG_NET_NS
-+	return sk->sk_net;
-+#else
-+	return &init_net;
-+#endif
++	return atomic_read(&sk->sk_wmem_alloc) - 1;
 +}
-+#endif /* < 2.6.26 */
 +
- #endif	/* _COMPAT_NET_NET_NAMESPACE_H */
++static inline bool sk_has_allocations(const struct sock *sk)
++{
++	return sk_wmem_alloc_get(sk) || sk_rmem_alloc_get(sk);
++}
++#endif
++
+ #endif /* __BACKPORT_NET_SOCK_H */
 -- 
 1.8.0
 
