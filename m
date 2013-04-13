@@ -1,16 +1,16 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:37210 "EHLO
+Received: from he.sipsolutions.net ([78.46.109.217]:44241 "EHLO
 	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750731Ab3DKXne (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 11 Apr 2013 19:43:34 -0400
+	with ESMTP id S1753678Ab3DMXzW (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 19:55:22 -0400
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
 Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [RFC/WIP 19/24] backports: dissolve compat-2.6.25.h
-Date: Fri, 12 Apr 2013 01:42:46 +0200
-Message-Id: <1365723771-10660-20-git-send-email-johannes@sipsolutions.net> (sfid-20130412_014406_544240_492BFBAF)
-In-Reply-To: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
-References: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
+Subject: [RFC/RFT 26/42] backports: dissolve compat-2.6.34.h
+Date: Sun, 14 Apr 2013 01:53:46 +0200
+Message-Id: <1365897243-31214-27-git-send-email-johannes@sipsolutions.net> (sfid-20130414_015523_801622_6E05C267)
+In-Reply-To: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net>
+References: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
@@ -18,905 +18,836 @@ From: Johannes Berg <johannes.berg@intel.com>
 
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/asm-generic/bug.h        |   9 +
- backport/backport-include/backport/backport.h      |   1 -
- .../backport-include/linux/byteorder/generic.h     |  52 ++++
- backport/backport-include/linux/compat-2.6.25.h    | 314 ---------------------
- backport/backport-include/linux/compat-2.6.28.h    |  16 --
- backport/backport-include/linux/device.h           |   9 +
- backport/backport-include/linux/in.h               |  75 +++++
- backport/backport-include/linux/init.h             |  19 ++
- backport/backport-include/linux/input.h            |   9 +
- backport/backport-include/linux/kernel.h           |  17 ++
- backport/backport-include/linux/netdevice.h        |   7 +
- backport/backport-include/linux/pci.h              |   9 +
- backport/backport-include/linux/pm.h               |   9 +
- backport/backport-include/linux/pm_qos.h           |  45 +++
- backport/backport-include/linux/pm_qos_params.h    |   3 +-
- backport/backport-include/linux/scatterlist.h      |  28 ++
- backport/backport-include/linux/types.h            |  35 +++
- backport/compat/compat-2.6.32.c                    |  48 ----
- backport/compat/main.c                             |   1 +
- 19 files changed, 325 insertions(+), 381 deletions(-)
- create mode 100644 backport/backport-include/asm-generic/bug.h
- create mode 100644 backport/backport-include/linux/byteorder/generic.h
- delete mode 100644 backport/backport-include/linux/compat-2.6.25.h
- create mode 100644 backport/backport-include/linux/in.h
- create mode 100644 backport/backport-include/linux/init.h
- create mode 100644 backport/backport-include/linux/input.h
- create mode 100644 backport/backport-include/linux/kernel.h
- create mode 100644 backport/backport-include/linux/pm.h
- create mode 100644 backport/backport-include/linux/types.h
+ backport/backport-include/linux/compat-2.6.34.h | 347 ------------------------
+ backport/backport-include/linux/device.h        |  29 ++
+ backport/backport-include/linux/dma-mapping.h   |  32 +++
+ backport/backport-include/linux/input.h         |   4 +
+ backport/backport-include/linux/kernel.h        |   6 +
+ backport/backport-include/linux/mmc/sdio_func.h |  20 ++
+ backport/backport-include/linux/netdevice.h     | 149 ++++++++++
+ backport/backport-include/linux/rcupdate.h      |  22 ++
+ backport/backport-include/linux/rtnetlink.h     |  14 +
+ backport/backport-include/linux/seq_file.h      |  10 +
+ backport/backport-include/linux/sysfs.h         |  34 +++
+ backport/backport-include/linux/usb.h           |  11 +
+ backport/backport-include/net/sock.h            |   7 +
+ backport/backport-include/pcmcia/device_id.h    |   7 +
+ 14 files changed, 345 insertions(+), 347 deletions(-)
+ delete mode 100644 backport/backport-include/linux/compat-2.6.34.h
+ create mode 100644 backport/backport-include/linux/sysfs.h
 
-diff --git a/backport/backport-include/asm-generic/bug.h b/backport/backport-include/asm-generic/bug.h
-new file mode 100644
-index 0000000..86d683c
---- /dev/null
-+++ b/backport/backport-include/asm-generic/bug.h
-@@ -0,0 +1,9 @@
-+#ifndef __BACKPORT_ASM_GENERIC_BUG_H
-+#define __BACKPORT_ASM_GENERIC_BUG_H
-+#include_next <asm-generic/bug.h>
-+
-+#ifndef __WARN
-+#define __WARN(foo) dump_stack()
-+#endif
-+
-+#endif /* __BACKPORT_ASM_GENERIC_BUG_H */
-diff --git a/backport/backport-include/backport/backport.h b/backport/backport-include/backport/backport.h
-index a50e488..2c86774 100644
---- a/backport/backport-include/backport/backport.h
-+++ b/backport/backport-include/backport/backport.h
-@@ -56,7 +56,6 @@ void backport_dependency_symbol(void);
-  * code introduced for *that* kernel revision.
-  */
- 
--#include <linux/compat-2.6.25.h>
- #include <linux/compat-2.6.26.h>
- #include <linux/compat-2.6.27.h>
- #include <linux/compat-2.6.28.h>
-diff --git a/backport/backport-include/linux/byteorder/generic.h b/backport/backport-include/linux/byteorder/generic.h
-new file mode 100644
-index 0000000..005a92f
---- /dev/null
-+++ b/backport/backport-include/linux/byteorder/generic.h
-@@ -0,0 +1,52 @@
-+#ifndef __BACKPORT_BYTEORDER_GENERIC_H
-+#define __BACKPORT_BYTEORDER_GENERIC_H
-+#include_next <linux/byteorder/generic.h>
-+#include <linux/version.h>
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25)
-+/* The patch:
-+ * commit 8b5f6883683c91ad7e1af32b7ceeb604d68e2865
-+ * Author: Marcin Slusarz <marcin.slusarz@gmail.com>
-+ * Date:   Fri Feb 8 04:20:12 2008 -0800
-+ *
-+ *     byteorder: move le32_add_cpu & friends from OCFS2 to core
-+ *
-+ * moves le*_add_cpu and be*_add_cpu functions from OCFS2 to core
-+ * header (1st) and converted some existing code to it. We port
-+ * it here as later kernels will most likely use it.
-+ */
-+static inline void le16_add_cpu(__le16 *var, u16 val)
-+{
-+	*var = cpu_to_le16(le16_to_cpu(*var) + val);
-+}
-+
-+static inline void le32_add_cpu(__le32 *var, u32 val)
-+{
-+	*var = cpu_to_le32(le32_to_cpu(*var) + val);
-+}
-+
-+static inline void le64_add_cpu(__le64 *var, u64 val)
-+{
-+	*var = cpu_to_le64(le64_to_cpu(*var) + val);
-+}
-+
-+static inline void be16_add_cpu(__be16 *var, u16 val)
-+{
-+	u16 v = be16_to_cpu(*var);
-+	*var = cpu_to_be16(v + val);
-+}
-+
-+static inline void be32_add_cpu(__be32 *var, u32 val)
-+{
-+	u32 v = be32_to_cpu(*var);
-+	*var = cpu_to_be32(v + val);
-+}
-+
-+static inline void be64_add_cpu(__be64 *var, u64 val)
-+{
-+	u64 v = be64_to_cpu(*var);
-+	*var = cpu_to_be64(v + val);
-+}
-+#endif
-+
-+#endif /* __BACKPORT_BYTEORDER_GENERIC_H */
-diff --git a/backport/backport-include/linux/compat-2.6.25.h b/backport/backport-include/linux/compat-2.6.25.h
+diff --git a/backport/backport-include/linux/compat-2.6.34.h b/backport/backport-include/linux/compat-2.6.34.h
 deleted file mode 100644
-index 9a2afdb..0000000
---- a/backport/backport-include/linux/compat-2.6.25.h
+index d444853..0000000
+--- a/backport/backport-include/linux/compat-2.6.34.h
 +++ /dev/null
-@@ -1,314 +0,0 @@
--#ifndef LINUX_26_25_COMPAT_H
--#define LINUX_26_25_COMPAT_H
+@@ -1,347 +0,0 @@
+-#ifndef LINUX_26_34_COMPAT_H
+-#define LINUX_26_34_COMPAT_H
 -
 -#include <linux/version.h>
 -
--/* Compat work for 2.6.24 */
--#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25))
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34))
 -
--#include <linux/types.h>
--#include <linux/io.h>
--#include <linux/hw_random.h>
--#include <linux/leds.h>
--#include <linux/kernel.h>
 -#include <linux/netdevice.h>
--#include <linux/pm.h>
--#include <asm-generic/bug.h>
--#include <linux/pm_qos_params.h>
--#include <linux/pci.h>
--#include <linux/in.h>
--#include <linux/errno.h>
--#include <linux/init.h>
--#include <linux/pci.h>
--#include <linux/scatterlist.h>
--
--struct sg_table {
--	struct scatterlist *sgl;        /* the list */
--	unsigned int nents;             /* number of mapped entries */
--	unsigned int orig_nents;        /* original size of list */
--};
--
--#define sg_alloc_fn LINUX_BACKPORT(sg_alloc_fn)
--typedef struct scatterlist *(sg_alloc_fn)(unsigned int, gfp_t);
--
--#define sg_free_fn LINUX_BACKPORT(sg_free_fn)
--typedef void (sg_free_fn)(struct scatterlist *, unsigned int);
--
--#define __sg_free_table LINUX_BACKPORT(__sg_free_table)
--void __sg_free_table(struct sg_table *table, unsigned int max_ents,
--		     sg_free_fn *free_fn);
--#define sg_free_table LINUX_BACKPORT(sg_free_table)
--void sg_free_table(struct sg_table *);
--#define __sg_alloc_table LINUX_BACKPORT(__sg_alloc_table)
--int __sg_alloc_table(struct sg_table *table, unsigned int nents,
--		     unsigned int max_ents, gfp_t gfp_mask,
--		     sg_alloc_fn *alloc_fn);
--#define sg_alloc_table LINUX_BACKPORT(sg_alloc_table)
--int sg_alloc_table(struct sg_table *table, unsigned int nents, gfp_t gfp_mask);
+-#include <linux/usb.h>
+-#include <linux/mmc/sdio_func.h>
+-#include <net/sock.h>
 -
 -/*
-- * Maximum number of entries that will be allocated in one piece, if
-- * a list larger than this is required then chaining will be utilized.
+- * Backports da68c4eb25
+- * sdio: introduce API for special power management features
+- *
+- * We wimply carry around the data structures and flags, and
+- * make the host return no flags set by the driver.
 - */
--#define SG_MAX_SINGLE_ALLOC            (PAGE_SIZE / sizeof(struct scatterlist))
+-typedef unsigned int mmc_pm_flag_t;
+-
+-#define MMC_PM_KEEP_POWER      (1 << 0)        /* preserve card power during suspend */
+-#define MMC_PM_WAKE_SDIO_IRQ   (1 << 1)        /* wake up host system on SDIO IRQ assertion */
+-
+-extern mmc_pm_flag_t sdio_get_host_pm_caps(struct sdio_func *func);
+-extern int sdio_set_host_pm_flags(struct sdio_func *func, mmc_pm_flag_t flags);
+-
+-#define netdev_mc_count(dev) ((dev)->mc_count)
+-#define netdev_mc_empty(dev) (netdev_mc_count(dev) == 0)
+-
+-/* mask netdev_for_each_mc_addr as RHEL6 backports this */
+-#if !defined(netdev_for_each_mc_addr)
+-#define netdev_for_each_mc_addr(mclist, dev) \
+-	for (mclist = dev->mc_list; mclist; mclist = mclist->next)
+-#endif
+-/* source: include/linux/netdevice.h */
 -
 -
--/* Backports b718989da7 */
--#define pci_enable_device_mem LINUX_BACKPORT(pci_enable_device_mem)
--int __must_check pci_enable_device_mem(struct pci_dev *dev);
+-/* Logging, debugging and troubleshooting/diagnostic helpers. */
 -
--/*
-- * Backports 312b1485fb509c9bc32eda28ad29537896658cb8
-- * Author: Sam Ravnborg <sam@ravnborg.org>
-- * Date:   Mon Jan 28 20:21:15 2008 +0100
-- * 
-- * Introduce new section reference annotations tags: __ref, __refdata, __refconst
-- */
--#define __ref		__init_refok
--#define __refdata	__initdata_refok
+-/* netdev_printk helpers, similar to dev_printk */
 -
--/*
-- * backports 2658fa803111dae1353602e7f586de8e537803e2
-- */
--
--static inline bool ipv4_is_loopback(__be32 addr)
--{
--	return (addr & htonl(0xff000000)) == htonl(0x7f000000);
--}
--
--static inline bool ipv4_is_multicast(__be32 addr)
--{
--	return (addr & htonl(0xf0000000)) == htonl(0xe0000000);
--}
--
--static inline bool ipv4_is_local_multicast(__be32 addr)
--{
--	return (addr & htonl(0xffffff00)) == htonl(0xe0000000);
--}
--
--static inline bool ipv4_is_lbcast(__be32 addr)
--{
--	/* limited broadcast */
--	return addr == htonl(INADDR_BROADCAST);
--}
--
--static inline bool ipv4_is_zeronet(__be32 addr)
--{
--	return (addr & htonl(0xff000000)) == htonl(0x00000000);
--}
--
--/* Special-Use IPv4 Addresses (RFC3330) */
--
--static inline bool ipv4_is_private_10(__be32 addr)
--{
--	return (addr & htonl(0xff000000)) == htonl(0x0a000000);
--}
--
--static inline bool ipv4_is_private_172(__be32 addr)
--{
--	return (addr & htonl(0xfff00000)) == htonl(0xac100000);
--}
--
--static inline bool ipv4_is_private_192(__be32 addr)
--{
--	return (addr & htonl(0xffff0000)) == htonl(0xc0a80000);
--}
--
--static inline bool ipv4_is_linklocal_169(__be32 addr)
--{
--	return (addr & htonl(0xffff0000)) == htonl(0xa9fe0000);
--}
--
--static inline bool ipv4_is_anycast_6to4(__be32 addr)
--{
--	return (addr & htonl(0xffffff00)) == htonl(0xc0586300);
--}
--
--static inline bool ipv4_is_test_192(__be32 addr)
--{
--	return (addr & htonl(0xffffff00)) == htonl(0xc0000200);
--}
--
--static inline bool ipv4_is_test_198(__be32 addr)
--{
--	return (addr & htonl(0xfffe0000)) == htonl(0xc6120000);
--}
--
--/*
-- * phys_addr_t was added as a generic arch typedef on 2.6.28,
-- * that backport is dealt with in compat-2.6.28.h
-- */
--#if defined(CONFIG_X86) || defined(CONFIG_X86_64)
--
--#if defined(CONFIG_64BIT) || defined(CONFIG_X86_PAE) || defined(CONFIG_PHYS_64BIT)
--typedef u64 phys_addr_t;
--#else
--typedef u32 phys_addr_t;
+-#ifndef netdev_name
+-#define netdev_name(__dev) \
+-	((__dev->reg_state != NETREG_REGISTERED) ? \
+-		"(unregistered net_device)" : __dev->name)
 -#endif
 -
--#endif /* x86 */
+-#define netdev_printk(level, netdev, format, args...)		\
+-	dev_printk(level, (netdev)->dev.parent,			\
+-		   "%s: " format,				\
+-		   netdev_name(netdev), ##args)
 -
--/* The macro below uses a const upstream, this differs */
+-#define netdev_emerg(dev, format, args...)			\
+-	netdev_printk(KERN_EMERG, dev, format, ##args)
+-#define netdev_alert(dev, format, args...)			\
+-	netdev_printk(KERN_ALERT, dev, format, ##args)
+-#define netdev_crit(dev, format, args...)			\
+-	netdev_printk(KERN_CRIT, dev, format, ##args)
+-#define netdev_err(dev, format, args...)			\
+-	netdev_printk(KERN_ERR, dev, format, ##args)
+-#define netdev_warn(dev, format, args...)			\
+-	netdev_printk(KERN_WARNING, dev, format, ##args)
+-#define netdev_notice(dev, format, args...)			\
+-	netdev_printk(KERN_NOTICE, dev, format, ##args)
+-#define netdev_info(dev, format, args...)			\
+-	netdev_printk(KERN_INFO, dev, format, ##args)
 -
--/**
-- * DEFINE_PCI_DEVICE_TABLE - macro used to describe a pci device table
-- * @_table: device table name
-- *
-- * This macro is used to create a struct pci_device_id array (a device table)
-- * in a generic manner.
-- */
--#define DEFINE_PCI_DEVICE_TABLE(_table) \
--	const struct pci_device_id _table[] __devinitdata
+-/* mask netdev_dbg as RHEL6 backports this */
+-#if !defined(netdev_dbg)
 -
--/*
-- * Backport work for QoS dependencies (kernel/pm_qos_params.c)
-- * pm-qos stuff written by mark gross mgross@linux.intel.com.
-- *
-- * ipw2100 now makes use of:
-- *
-- * pm_qos_add_requirement(),
-- * pm_qos_update_requirement() and
-- * pm_qos_remove_requirement() from it
-- *
-- * mac80211 uses the network latency to determine if to enable or not
-- * dynamic PS. mac80211 also and registers a notifier for when
-- * the latency changes. Since older kernels do no thave pm-qos stuff
-- * we just implement it completley here and register it upon cfg80211
-- * init. I haven't tested ipw2100 on 2.6.24 though.
-- *
-- * This pm-qos implementation is copied verbatim from the kernel
-- * written by mark gross mgross@linux.intel.com. You don't have
-- * to do anythinig to use pm-qos except use the same exported
-- * routines as used in newer kernels. The backport_pm_qos_power_init()
-- * defned below is used by the compat module to initialize pm-qos.
-- */
--int backport_pm_qos_power_init(void);
--int backport_pm_qos_power_deinit(void);
--
--/*
-- * 2.6.25 adds PM_EVENT_HIBERNATE as well here but
-- * we don't have this on <= 2.6.23)
-- */
--#ifndef PM_EVENT_SLEEP /* some distribution have mucked with their own headers to add this.. */
--#define PM_EVENT_SLEEP  (PM_EVENT_SUSPEND)
+-#if defined(DEBUG)
+-#define netdev_dbg(__dev, format, args...)			\
+-	netdev_printk(KERN_DEBUG, __dev, format, ##args)
+-#elif defined(CONFIG_DYNAMIC_DEBUG)
+-#define netdev_dbg(__dev, format, args...)			\
+-do {								\
+-	dynamic_dev_dbg((__dev)->dev.parent, "%s: " format,	\
+-			netdev_name(__dev), ##args);		\
+-} while (0)
+-#else
+-#define netdev_dbg(__dev, format, args...)			\
+-({								\
+-	if (0)							\
+-		netdev_printk(KERN_DEBUG, __dev, format, ##args); \
+-	0;							\
+-})
 -#endif
 -
--/* Although we don't care about wimax this is needed for rfkill input stuff */
--#define KEY_WIMAX		246
+-#endif
 -
--/* Although pm_qos stuff is not implemented on <= 2.6.24 lets keep the define */
--#define PM_QOS_DEFAULT_VALUE -1
+-/* mask netdev_vdbg as RHEL6 backports this */
+-#if !defined(netdev_dbg)
 -
--#define __WARN(foo) dump_stack()
+-#if defined(VERBOSE_DEBUG)
+-#define netdev_vdbg	netdev_dbg
+-#else
 -
--#define dev_emerg(dev, format, arg...)          \
--	dev_printk(KERN_EMERG , dev , format , ## arg)
--#define dev_alert(dev, format, arg...)          \
--	dev_printk(KERN_ALERT , dev , format , ## arg)
--#define dev_crit(dev, format, arg...)           \
--	dev_printk(KERN_CRIT , dev , format , ## arg)
+-#define netdev_vdbg(dev, format, args...)			\
+-({								\
+-	if (0)							\
+-		netdev_printk(KERN_DEBUG, dev, format, ##args);	\
+-	0;							\
+-})
+-#endif
 -
--#define __dev_addr_sync LINUX_BACKPORT(__dev_addr_sync)
--extern int		__dev_addr_sync(struct dev_addr_list **to, int *to_count, struct dev_addr_list **from, int *from_count);
--#define __dev_addr_unsync LINUX_BACKPORT(__dev_addr_unsync)
--extern void		__dev_addr_unsync(struct dev_addr_list **to, int *to_count, struct dev_addr_list **from, int *from_count);
+-#endif
 -
--#define seq_file_net &init_net;
--
--enum nf_inet_hooks {
--	NF_INET_PRE_ROUTING = 0,
--	NF_INET_LOCAL_IN = 1,
--	NF_INET_FORWARD = 2,
--	NF_INET_LOCAL_OUT = 3,
--	NF_INET_POST_ROUTING = 4,
--	NF_INET_NUMHOOKS = 5
--};
--
--/* The patch:
-- * commit 8b5f6883683c91ad7e1af32b7ceeb604d68e2865
-- * Author: Marcin Slusarz <marcin.slusarz@gmail.com>
-- * Date:   Fri Feb 8 04:20:12 2008 -0800
-- *
-- *     byteorder: move le32_add_cpu & friends from OCFS2 to core
-- *
-- * moves le*_add_cpu and be*_add_cpu functions from OCFS2 to core
-- * header (1st) and converted some existing code to it. We port
-- * it here as later kernels will most likely use it.
+-/*
+- * netdev_WARN() acts like dev_printk(), but with the key difference
+- * of using a WARN/WARN_ON to get the message out, including the
+- * file/line information and a backtrace.
 - */
--static inline void le16_add_cpu(__le16 *var, u16 val)
+-#define netdev_WARN(dev, format, args...)			\
+-	WARN(1, "netdevice: %s\n" format, netdev_name(dev), ##args);
+-
+-/* netif printk helpers, similar to netdev_printk */
+-
+-#define netif_printk(priv, type, level, dev, fmt, args...)	\
+-do {					  			\
+-	if (netif_msg_##type(priv))				\
+-		netdev_printk(level, (dev), fmt, ##args);	\
+-} while (0)
+-
+-#define netif_emerg(priv, type, dev, fmt, args...)		\
+-	netif_printk(priv, type, KERN_EMERG, dev, fmt, ##args)
+-#define netif_alert(priv, type, dev, fmt, args...)		\
+-	netif_printk(priv, type, KERN_ALERT, dev, fmt, ##args)
+-#define netif_crit(priv, type, dev, fmt, args...)		\
+-	netif_printk(priv, type, KERN_CRIT, dev, fmt, ##args)
+-#define netif_err(priv, type, dev, fmt, args...)		\
+-	netif_printk(priv, type, KERN_ERR, dev, fmt, ##args)
+-#define netif_warn(priv, type, dev, fmt, args...)		\
+-	netif_printk(priv, type, KERN_WARNING, dev, fmt, ##args)
+-#define netif_notice(priv, type, dev, fmt, args...)		\
+-	netif_printk(priv, type, KERN_NOTICE, dev, fmt, ##args)
+-#define netif_info(priv, type, dev, fmt, args...)		\
+-	netif_printk(priv, type, KERN_INFO, (dev), fmt, ##args)
+-
+-/* mask netif_dbg as RHEL6 backports this */
+-#if !defined(netif_dbg)
+-
+-#if defined(DEBUG)
+-#define netif_dbg(priv, type, dev, format, args...)		\
+-	netif_printk(priv, type, KERN_DEBUG, dev, format, ##args)
+-#elif defined(CONFIG_DYNAMIC_DEBUG)
+-#define netif_dbg(priv, type, netdev, format, args...)		\
+-do {								\
+-	if (netif_msg_##type(priv))				\
+-		dynamic_dev_dbg((netdev)->dev.parent,		\
+-				"%s: " format,			\
+-				netdev_name(netdev), ##args);	\
+-} while (0)
+-#else
+-#define netif_dbg(priv, type, dev, format, args...)			\
+-({									\
+-	if (0)								\
+-		netif_printk(priv, type, KERN_DEBUG, dev, format, ##args); \
+-	0;								\
+-})
+-#endif
+-
+-#endif
+-
+-/* mask netif_vdbg as RHEL6 backports this */
+-#if !defined(netif_vdbg)
+-
+-#if defined(VERBOSE_DEBUG)
+-#define netif_vdbg	netdev_dbg
+-#else
+-#define netif_vdbg(priv, type, dev, format, args...)		\
+-({								\
+-	if (0)							\
+-		netif_printk(KERN_DEBUG, dev, format, ##args);	\
+-	0;							\
+-})
+-#endif
+-#endif
+-/* source: include/linux/netdevice.h */
+-
+-
+-static inline void device_lock(struct device *dev)
 -{
--	*var = cpu_to_le16(le16_to_cpu(*var) + val);
+-#if defined(CONFIG_PREEMPT_RT) || defined(CONFIG_PREEMPT_DESKTOP)
+-        mutex_lock(&dev->mutex);
+-#else
+-	down(&dev->sem);
+-#endif
 -}
 -
--static inline void le32_add_cpu(__le32 *var, u32 val)
+-static inline int device_trylock(struct device *dev)
 -{
--	*var = cpu_to_le32(le32_to_cpu(*var) + val);
+-#if defined(CONFIG_PREEMPT_RT) || defined(CONFIG_PREEMPT_DESKTOP)
+-	return mutex_trylock(&dev->mutex);
+-#else
+-	return down_trylock(&dev->sem);
+-#endif
 -}
 -
--static inline void le64_add_cpu(__le64 *var, u64 val)
+-static inline void device_unlock(struct device *dev)
 -{
--	*var = cpu_to_le64(le64_to_cpu(*var) + val);
+-#if defined(CONFIG_PREEMPT_RT) || defined(CONFIG_PREEMPT_DESKTOP)
+-        mutex_unlock(&dev->mutex);
+-#else
+-	up(&dev->sem);
+-#endif
 -}
 -
--static inline void be16_add_cpu(__be16 *var, u16 val)
--{
--	u16 v = be16_to_cpu(*var);
--	*var = cpu_to_be16(v + val);
--}
+-#if defined(CONFIG_PCMCIA) || defined(CONFIG_PCMCIA_MODULE)
+-#define PCMCIA_DEVICE_PROD_ID3(v3, vh3) { \
+-	.match_flags = PCMCIA_DEV_ID_MATCH_PROD_ID3, \
+-	.prod_id = { NULL, NULL, (v3), NULL },  \
+-	.prod_id_hash = { 0, 0, (vh3), 0 }, }
+-#endif
 -
--static inline void be32_add_cpu(__be32 *var, u32 val)
--{
--	u32 v = be32_to_cpu(*var);
--	*var = cpu_to_be32(v + val);
--}
--
--static inline void be64_add_cpu(__be64 *var, u64 val)
--{
--	u64 v = be64_to_cpu(*var);
--	*var = cpu_to_be64(v + val);
--}
--
--/* 2.6.25 changes hwrng_unregister()'s behaviour by supporting
-- * suspend of its parent device (the misc device, which is itself the
-- * hardware random number generator). It does this by passing a parameter to
-- * unregister_miscdev() which is not supported in older kernels. The suspend
-- * parameter allows us to enable access to the device's hardware
-- * number generator during suspend. As far as wireless is concerned this means
-- * if a driver goes to suspend it you won't have the HNR available in
-- * older kernels. */
--static inline void __hwrng_unregister(struct hwrng *rng, bool suspended)
--{
--	hwrng_unregister(rng);
--}
--
--static inline void led_classdev_unregister_suspended(struct led_classdev *lcd)
--{
--	led_classdev_unregister(lcd);
--}
+-#define rcu_dereference_check(p, c) rcu_dereference(p)
 -
 -/**
-- * The following things are out of ./include/linux/kernel.h
-- * The new iwlwifi driver is using them.
+- *	sysfs_attr_init - initialize a dynamically allocated sysfs attribute
+- *	@attr: struct attribute to initialize
+- *
+- *	Initialize a dynamically allocated struct attribute so we can
+- *	make lockdep happy.  This is a new requirement for attributes
+- *	and initially this is only needed when lockdep is enabled.
+- *	Lockdep gives a nice error when your attribute is added to
+- *	sysfs if you don't have this.
 - */
--#define strict_strtoul LINUX_BACKPORT(strict_strtoul)
--extern int strict_strtoul(const char *, unsigned int, unsigned long *);
--#define strict_strtol LINUX_BACKPORT(strict_strtol)
--extern int strict_strtol(const char *, unsigned int, long *);
--
+-#ifdef CONFIG_DEBUG_LOCK_ALLOC
+-#define sysfs_attr_init(attr)				\
+-do {							\
+-	static struct lock_class_key __key;		\
+-							\
+-	(attr)->key = &__key;				\
+-} while(0)
 -#else
--/*
-- * Kernels >= 2.6.25 have pm-qos and its initialized as part of
-- * the bootup process
+-#define sysfs_attr_init(attr) do {} while(0)
+-#endif
+-
+-/* mask sysfs_bin_attr_init as RHEL6 backports this */
+-#if !defined(sysfs_bin_attr_init)
+-/**
+- *	sysfs_bin_attr_init - initialize a dynamically allocated bin_attribute
+- *	@attr: struct bin_attribute to initialize
+- *
+- *	Initialize a dynamically allocated struct bin_attribute so we
+- *	can make lockdep happy.  This is a new requirement for
+- *	attributes and initially this is only needed when lockdep is
+- *	enabled.  Lockdep gives a nice error when your attribute is
+- *	added to sysfs if you don't have this.
 - */
--static inline int backport_pm_qos_power_init(void)
+-#define sysfs_bin_attr_init(bin_attr) sysfs_attr_init(&(bin_attr)->attr)
+-#endif
+-
+-#define usb_alloc_coherent(dev, size, mem_flags, dma) usb_buffer_alloc(dev, size, mem_flags, dma)
+-#define usb_free_coherent(dev, size, addr, dma) usb_buffer_free(dev, size, addr, dma)
+-
+-/* only include this if DEFINE_DMA_UNMAP_ADDR is not set as debian squeeze also backports this  */
+-#ifndef DEFINE_DMA_UNMAP_ADDR
+-#ifdef CONFIG_NEED_DMA_MAP_STATE
+-#define DEFINE_DMA_UNMAP_ADDR(ADDR_NAME)        dma_addr_t ADDR_NAME
+-#define DEFINE_DMA_UNMAP_LEN(LEN_NAME)          __u32 LEN_NAME
+-#define dma_unmap_addr(PTR, ADDR_NAME)           ((PTR)->ADDR_NAME)
+-#define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  (((PTR)->ADDR_NAME) = (VAL))
+-#define dma_unmap_len(PTR, LEN_NAME)             ((PTR)->LEN_NAME)
+-#define dma_unmap_len_set(PTR, LEN_NAME, VAL)    (((PTR)->LEN_NAME) = (VAL))
+-#else
+-#define DEFINE_DMA_UNMAP_ADDR(ADDR_NAME)
+-#define DEFINE_DMA_UNMAP_LEN(LEN_NAME)
+-#define dma_unmap_addr(PTR, ADDR_NAME)           (0)
+-#define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  do { } while (0)
+-#define dma_unmap_len(PTR, LEN_NAME)             (0)
+-#define dma_unmap_len_set(PTR, LEN_NAME, VAL)    do { } while (0)
+-#endif
+-#endif
+-
+-/* mask dma_set_coherent_mask as debian squeeze also backports this */
+-#define dma_set_coherent_mask(a, b) compat_dma_set_coherent_mask(a, b)
+-
+-static inline int dma_set_coherent_mask(struct device *dev, u64 mask)
 -{
+-	if (!dma_supported(dev, mask))
+-		return -EIO;
+-	dev->coherent_dma_mask = mask;
 -	return 0;
 -}
 -
--static inline int backport_pm_qos_power_deinit(void)
--{
--	return 0;
--}
--#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25)) */
+-/* USB autosuspend and autoresume */
+-static inline int usb_enable_autosuspend(struct usb_device *udev)
+-{ return 0; }
+-static inline int usb_disable_autosuspend(struct usb_device *udev)
+-{ return 0; }
 -
--#endif /* LINUX_26_25_COMPAT_H */
-diff --git a/backport/backport-include/linux/compat-2.6.28.h b/backport/backport-include/linux/compat-2.6.28.h
-index 60f56f4..12b644f 100644
---- a/backport/backport-include/linux/compat-2.6.28.h
-+++ b/backport/backport-include/linux/compat-2.6.28.h
-@@ -44,22 +44,6 @@ extern struct platform_device *platform_device_register_data(struct device *,
- 
- typedef struct cpumask { DECLARE_BITMAP(bits, NR_CPUS); } compat_cpumask_t;
- 
--#if defined(CONFIG_X86) || defined(CONFIG_X86_64) || defined(CONFIG_PPC)
--/*
-- * CONFIG_PHYS_ADDR_T_64BIT was added as new to all architectures
-- * as of 2.6.28 but x86 and ppc had it already. x86 only got phys_addr_t
-- * as of 2.6.25 but then is backported in compat-2.6.25.h
-- */
--#else
--#if defined(CONFIG_64BIT) || defined(CONFIG_X86_PAE) || defned(CONFIG_PPC64) || defined(CONFIG_PHYS_64BIT)
--#define CONFIG_PHYS_ADDR_T_64BIT 1
--typedef u64 phys_addr_t;
--#else
--typedef u32 phys_addr_t;
+-#if !defined(rcu_dereference_protected)
+-#define rcu_dereference_protected(p, c) (p)
 -#endif
+-#define rcu_access_pointer(p)   ACCESS_ONCE(p)
 -
--#endif /* non x86 and ppc */
+-#define rcu_dereference_raw(p)	rcu_dereference(p)
 -
- #ifndef WARN_ONCE
- #define WARN_ONCE(condition, format...) ({                      \
- 	static int __warned;                                    \
+-#define KEY_WPS_BUTTON		0x211	/* WiFi Protected Setup key */
+-
+-/*
+- * This looks more complex than it should be. But we need to
+- * get the type for the ~ right in round_down (it needs to be
+- * as wide as the result!), and we want to evaluate the macro
+- * arguments just once each.
+- */
+-#define __round_mask(x, y) ((__typeof__(x))((y)-1))
+-#define round_up(x, y) ((((x)-1) | __round_mask(x, y))+1)
+-#define round_down(x, y) ((x) & ~__round_mask(x, y))
+-
+-static inline int rcu_read_lock_held(void)
+-{
+-	return 1;
+-}
+-
+-#ifdef CONFIG_PROVE_LOCKING
+-/*
+- * Obviously, this is wrong.  But the base kernel will have rtnl_mutex
+- * declared static, with no way to access it.  I think this is the best
+- * we can do...
+- */
+-static inline int lockdep_rtnl_is_held(void)
+-{
+-        return 1;
+-}
+-#endif /* #ifdef CONFIG_PROVE_LOCKING */
+-
+-#define seq_hlist_start_head LINUX_BACKPORT(seq_hlist_start_head)
+-extern struct hlist_node *seq_hlist_start_head(struct hlist_head *head,
+-					       loff_t pos);
+-
+-#define seq_hlist_next LINUX_BACKPORT(seq_hlist_next)
+-extern struct hlist_node *seq_hlist_next(void *v, struct hlist_head *head,
+-					 loff_t *ppos);
+-
+-static inline struct sock *sk_entry(const struct hlist_node *node)
+-{
+-	return hlist_entry(node, struct sock, sk_node);
+-}
+-
+-#else /* Kernels >= 2.6.34 */
+-
+-#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34)) */
+-
+-
+-#endif /* LINUX_26_34_COMPAT_H */
 diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
-index 4f5df9d..058f3da 100644
+index cb76099..0e45c1b 100644
 --- a/backport/backport-include/linux/device.h
 +++ b/backport/backport-include/linux/device.h
-@@ -5,6 +5,15 @@
+@@ -93,4 +93,33 @@ do {									\
+ static inline void pm_wakeup_event(struct device *dev, unsigned int msec) {}
+ #endif
  
- #include <linux/version.h>
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34)
++static inline void device_lock(struct device *dev)
++{
++#if defined(CONFIG_PREEMPT_RT) || defined(CONFIG_PREEMPT_DESKTOP)
++        mutex_lock(&dev->mutex);
++#else
++	down(&dev->sem);
++#endif
++}
++
++static inline int device_trylock(struct device *dev)
++{
++#if defined(CONFIG_PREEMPT_RT) || defined(CONFIG_PREEMPT_DESKTOP)
++	return mutex_trylock(&dev->mutex);
++#else
++	return down_trylock(&dev->sem);
++#endif
++}
++
++static inline void device_unlock(struct device *dev)
++{
++#if defined(CONFIG_PREEMPT_RT) || defined(CONFIG_PREEMPT_DESKTOP)
++        mutex_unlock(&dev->mutex);
++#else
++	up(&dev->sem);
++#endif
++}
++#endif
++
+ #endif /* __BACKPORT_DEVICE_H */
+diff --git a/backport/backport-include/linux/dma-mapping.h b/backport/backport-include/linux/dma-mapping.h
+index 091e505..540355a 100644
+--- a/backport/backport-include/linux/dma-mapping.h
++++ b/backport/backport-include/linux/dma-mapping.h
+@@ -14,4 +14,36 @@ static inline void *dma_zalloc_coherent(struct device *dev, size_t size,
+ }
+ #endif
  
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25)
-+#define dev_emerg(dev, format, arg...)          \
-+	dev_printk(KERN_EMERG , dev , format , ## arg)
-+#define dev_alert(dev, format, arg...)          \
-+	dev_printk(KERN_ALERT , dev , format , ## arg)
-+#define dev_crit(dev, format, arg...)           \
-+	dev_printk(KERN_CRIT , dev , format , ## arg)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34)
++/* only include this if DEFINE_DMA_UNMAP_ADDR is not set as debian squeeze also backports this  */
++#ifndef DEFINE_DMA_UNMAP_ADDR
++#ifdef CONFIG_NEED_DMA_MAP_STATE
++#define DEFINE_DMA_UNMAP_ADDR(ADDR_NAME)        dma_addr_t ADDR_NAME
++#define DEFINE_DMA_UNMAP_LEN(LEN_NAME)          __u32 LEN_NAME
++#define dma_unmap_addr(PTR, ADDR_NAME)           ((PTR)->ADDR_NAME)
++#define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  (((PTR)->ADDR_NAME) = (VAL))
++#define dma_unmap_len(PTR, LEN_NAME)             ((PTR)->LEN_NAME)
++#define dma_unmap_len_set(PTR, LEN_NAME, VAL)    (((PTR)->LEN_NAME) = (VAL))
++#else
++#define DEFINE_DMA_UNMAP_ADDR(ADDR_NAME)
++#define DEFINE_DMA_UNMAP_LEN(LEN_NAME)
++#define dma_unmap_addr(PTR, ADDR_NAME)           (0)
++#define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  do { } while (0)
++#define dma_unmap_len(PTR, LEN_NAME)             (0)
++#define dma_unmap_len_set(PTR, LEN_NAME, VAL)    do { } while (0)
++#endif
 +#endif
 +
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
- /**
-  * module_driver() - Helper macro for drivers that don't do anything
-diff --git a/backport/backport-include/linux/in.h b/backport/backport-include/linux/in.h
-new file mode 100644
-index 0000000..5cca155
---- /dev/null
-+++ b/backport/backport-include/linux/in.h
-@@ -0,0 +1,75 @@
-+#ifndef __BACKPORT_IN_H
-+#define __BACKPORT_IN_H
-+#include_next <linux/in.h>
-+#include <linux/version.h>
++/* mask dma_set_coherent_mask as debian squeeze also backports this */
++#define dma_set_coherent_mask LINUX_BACKPORT(dma_set_coherent_mask)
 +
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25)
-+/*
-+ * backports 2658fa803111dae1353602e7f586de8e537803e2
-+ */
-+
-+static inline bool ipv4_is_loopback(__be32 addr)
++static inline int dma_set_coherent_mask(struct device *dev, u64 mask)
 +{
-+	return (addr & htonl(0xff000000)) == htonl(0x7f000000);
++	if (!dma_supported(dev, mask))
++		return -EIO;
++	dev->coherent_dma_mask = mask;
++	return 0;
 +}
++#endif /* < 2.6.34 */
 +
-+static inline bool ipv4_is_multicast(__be32 addr)
-+{
-+	return (addr & htonl(0xf0000000)) == htonl(0xe0000000);
-+}
-+
-+static inline bool ipv4_is_local_multicast(__be32 addr)
-+{
-+	return (addr & htonl(0xffffff00)) == htonl(0xe0000000);
-+}
-+
-+static inline bool ipv4_is_lbcast(__be32 addr)
-+{
-+	/* limited broadcast */
-+	return addr == htonl(INADDR_BROADCAST);
-+}
-+
-+static inline bool ipv4_is_zeronet(__be32 addr)
-+{
-+	return (addr & htonl(0xff000000)) == htonl(0x00000000);
-+}
-+
-+/* Special-Use IPv4 Addresses (RFC3330) */
-+
-+static inline bool ipv4_is_private_10(__be32 addr)
-+{
-+	return (addr & htonl(0xff000000)) == htonl(0x0a000000);
-+}
-+
-+static inline bool ipv4_is_private_172(__be32 addr)
-+{
-+	return (addr & htonl(0xfff00000)) == htonl(0xac100000);
-+}
-+
-+static inline bool ipv4_is_private_192(__be32 addr)
-+{
-+	return (addr & htonl(0xffff0000)) == htonl(0xc0a80000);
-+}
-+
-+static inline bool ipv4_is_linklocal_169(__be32 addr)
-+{
-+	return (addr & htonl(0xffff0000)) == htonl(0xa9fe0000);
-+}
-+
-+static inline bool ipv4_is_anycast_6to4(__be32 addr)
-+{
-+	return (addr & htonl(0xffffff00)) == htonl(0xc0586300);
-+}
-+
-+static inline bool ipv4_is_test_192(__be32 addr)
-+{
-+	return (addr & htonl(0xffffff00)) == htonl(0xc0000200);
-+}
-+
-+static inline bool ipv4_is_test_198(__be32 addr)
-+{
-+	return (addr & htonl(0xfffe0000)) == htonl(0xc6120000);
-+}
-+#endif
-+
-+#endif /* __BACKPORT_IN_H */
-diff --git a/backport/backport-include/linux/init.h b/backport/backport-include/linux/init.h
-new file mode 100644
-index 0000000..a835e33
---- /dev/null
-+++ b/backport/backport-include/linux/init.h
-@@ -0,0 +1,19 @@
-+#ifndef __BACKPORT_INIT_H
-+#define __BACKPORT_INIT_H
-+#include_next <linux/init.h>
-+
-+/*
-+ * Backports 312b1485fb509c9bc32eda28ad29537896658cb8
-+ * Author: Sam Ravnborg <sam@ravnborg.org>
-+ * Date:   Mon Jan 28 20:21:15 2008 +0100
-+ * 
-+ * Introduce new section reference annotations tags: __ref, __refdata, __refconst
-+ */
-+#ifndef __ref
-+#define __ref		__init_refok
-+#endif
-+#ifndef __refdata
-+#define __refdata	__initdata_refok
-+#endif
-+
-+#endif /* __BACKPORT_INIT_H */
+ #endif /* __BACKPORT_LINUX_DMA_MAPPING_H */
 diff --git a/backport/backport-include/linux/input.h b/backport/backport-include/linux/input.h
-new file mode 100644
-index 0000000..588b4f6
---- /dev/null
+index 588b4f6..0d58f9b 100644
+--- a/backport/backport-include/linux/input.h
 +++ b/backport/backport-include/linux/input.h
-@@ -0,0 +1,9 @@
-+#ifndef __BACKPORT_INPUT_H
-+#define __BACKPORT_INPUT_H
-+#include_next <linux/input.h>
-+
-+#ifndef KEY_WIMAX
-+#define KEY_WIMAX		246
+@@ -6,4 +6,8 @@
+ #define KEY_WIMAX		246
+ #endif
+ 
++#ifndef KEY_WPS_BUTTON
++#define KEY_WPS_BUTTON		0x211
 +#endif
 +
-+#endif /* __BACKPORT_INPUT_H */
+ #endif /* __BACKPORT_INPUT_H */
 diff --git a/backport/backport-include/linux/kernel.h b/backport/backport-include/linux/kernel.h
-new file mode 100644
-index 0000000..499f538
---- /dev/null
+index dafcc33..f189f54 100644
+--- a/backport/backport-include/linux/kernel.h
 +++ b/backport/backport-include/linux/kernel.h
-@@ -0,0 +1,17 @@
-+#ifndef __BACKPORT_KERNEL_H
-+#define __BACKPORT_KERNEL_H
-+#include_next <linux/kernel.h>
-+#include <linux/version.h>
+@@ -184,4 +184,10 @@ int __must_check kstrtos8(const char *s, unsigned int base, s8 *res);
+ int hex_to_bin(char ch);
+ #endif
+ 
++#ifndef __round_mask
++#define __round_mask(x, y) ((__typeof__(x))((y)-1))
++#define round_up(x, y) ((((x)-1) | __round_mask(x, y))+1)
++#define round_down(x, y) ((x) & ~__round_mask(x, y))
++#endif
 +
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25))
-+/**
-+ * The following things are out of ./include/linux/kernel.h
-+ * The new iwlwifi driver is using them.
+ #endif /* __BACKPORT_KERNEL_H */
+diff --git a/backport/backport-include/linux/mmc/sdio_func.h b/backport/backport-include/linux/mmc/sdio_func.h
+index 9f720a2..62f89a5 100644
+--- a/backport/backport-include/linux/mmc/sdio_func.h
++++ b/backport/backport-include/linux/mmc/sdio_func.h
+@@ -7,4 +7,24 @@
+ #define sdio_writeb_readb(func, write_byte, addr, err_ret) sdio_readb(func, addr, err_ret)
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34)
++/*
++ * Backports da68c4eb25
++ * sdio: introduce API for special power management features
++ *
++ * We simply carry around the data structures and flags, and
++ * make the host return no flags set by the driver.
++ *
++ * This is declared in mmc/pm.h upstream, but that files
++ * didn't exist before this commit and isn't included directly.
 + */
-+#define strict_strtoul LINUX_BACKPORT(strict_strtoul)
-+extern int strict_strtoul(const char *, unsigned int, unsigned long *);
-+#define strict_strtol LINUX_BACKPORT(strict_strtol)
-+extern int strict_strtol(const char *, unsigned int, long *);
-+#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25)) */
++typedef unsigned int mmc_pm_flag_t;
 +
-+#endif /* __BACKPORT_KERNEL_H */
++#define MMC_PM_KEEP_POWER      (1 << 0)        /* preserve card power during suspend */
++#define MMC_PM_WAKE_SDIO_IRQ   (1 << 1)        /* wake up host system on SDIO IRQ assertion */
++
++extern mmc_pm_flag_t sdio_get_host_pm_caps(struct sdio_func *func);
++extern int sdio_set_host_pm_flags(struct sdio_func *func, mmc_pm_flag_t flags);
++#endif
++
+ #endif /* __BACKPORT_MMC_SDIO_FUNC_H */
 diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
-index 4971239..5922f81 100644
+index cba926b..b18d9c7 100644
 --- a/backport/backport-include/linux/netdevice.h
 +++ b/backport/backport-include/linux/netdevice.h
-@@ -3,4 +3,11 @@
- #include_next <linux/netdevice.h>
- #include <linux/netdev_features.h>
+@@ -128,4 +128,153 @@ extern int netif_set_real_num_tx_queues(struct net_device *dev,
+ 					unsigned int txq);
+ #endif
  
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25)
-+#define __dev_addr_sync LINUX_BACKPORT(__dev_addr_sync)
-+extern int __dev_addr_sync(struct dev_addr_list **to, int *to_count, struct dev_addr_list **from, int *from_count);
-+#define __dev_addr_unsync LINUX_BACKPORT(__dev_addr_unsync)
-+extern void __dev_addr_unsync(struct dev_addr_list **to, int *to_count, struct dev_addr_list **from, int *from_count);
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34)
++#define netdev_mc_count(dev) ((dev)->mc_count)
++#define netdev_mc_empty(dev) (netdev_mc_count(dev) == 0)
++
++/* mask netdev_for_each_mc_addr as RHEL6 backports this */
++#ifndef netdev_for_each_mc_addr
++#define netdev_for_each_mc_addr(mclist, dev) \
++	for (mclist = dev->mc_list; mclist; mclist = mclist->next)
 +#endif
++
++#ifndef netdev_name
++#define netdev_name(__dev) \
++	((__dev->reg_state != NETREG_REGISTERED) ? \
++		"(unregistered net_device)" : __dev->name)
++#endif
++
++#define netdev_printk(level, netdev, format, args...)		\
++	dev_printk(level, (netdev)->dev.parent,			\
++		   "%s: " format,				\
++		   netdev_name(netdev), ##args)
++
++#define netdev_emerg(dev, format, args...)			\
++	netdev_printk(KERN_EMERG, dev, format, ##args)
++#define netdev_alert(dev, format, args...)			\
++	netdev_printk(KERN_ALERT, dev, format, ##args)
++#define netdev_crit(dev, format, args...)			\
++	netdev_printk(KERN_CRIT, dev, format, ##args)
++#define netdev_err(dev, format, args...)			\
++	netdev_printk(KERN_ERR, dev, format, ##args)
++#define netdev_warn(dev, format, args...)			\
++	netdev_printk(KERN_WARNING, dev, format, ##args)
++#define netdev_notice(dev, format, args...)			\
++	netdev_printk(KERN_NOTICE, dev, format, ##args)
++#define netdev_info(dev, format, args...)			\
++	netdev_printk(KERN_INFO, dev, format, ##args)
++
++/* mask netdev_dbg as RHEL6 backports this */
++#if !defined(netdev_dbg)
++
++#if defined(DEBUG)
++#define netdev_dbg(__dev, format, args...)			\
++	netdev_printk(KERN_DEBUG, __dev, format, ##args)
++#elif defined(CONFIG_DYNAMIC_DEBUG)
++#define netdev_dbg(__dev, format, args...)			\
++do {								\
++	dynamic_dev_dbg((__dev)->dev.parent, "%s: " format,	\
++			netdev_name(__dev), ##args);		\
++} while (0)
++#else
++#define netdev_dbg(__dev, format, args...)			\
++({								\
++	if (0)							\
++		netdev_printk(KERN_DEBUG, __dev, format, ##args); \
++	0;							\
++})
++#endif
++
++#endif
++
++/* mask netdev_vdbg as RHEL6 backports this */
++#if !defined(netdev_dbg)
++
++#if defined(VERBOSE_DEBUG)
++#define netdev_vdbg	netdev_dbg
++#else
++
++#define netdev_vdbg(dev, format, args...)			\
++({								\
++	if (0)							\
++		netdev_printk(KERN_DEBUG, dev, format, ##args);	\
++	0;							\
++})
++#endif
++
++#endif
++
++/*
++ * netdev_WARN() acts like dev_printk(), but with the key difference
++ * of using a WARN/WARN_ON to get the message out, including the
++ * file/line information and a backtrace.
++ */
++#define netdev_WARN(dev, format, args...)			\
++	WARN(1, "netdevice: %s\n" format, netdev_name(dev), ##args);
++
++/* netif printk helpers, similar to netdev_printk */
++
++#define netif_printk(priv, type, level, dev, fmt, args...)	\
++do {					  			\
++	if (netif_msg_##type(priv))				\
++		netdev_printk(level, (dev), fmt, ##args);	\
++} while (0)
++
++#define netif_emerg(priv, type, dev, fmt, args...)		\
++	netif_printk(priv, type, KERN_EMERG, dev, fmt, ##args)
++#define netif_alert(priv, type, dev, fmt, args...)		\
++	netif_printk(priv, type, KERN_ALERT, dev, fmt, ##args)
++#define netif_crit(priv, type, dev, fmt, args...)		\
++	netif_printk(priv, type, KERN_CRIT, dev, fmt, ##args)
++#define netif_err(priv, type, dev, fmt, args...)		\
++	netif_printk(priv, type, KERN_ERR, dev, fmt, ##args)
++#define netif_warn(priv, type, dev, fmt, args...)		\
++	netif_printk(priv, type, KERN_WARNING, dev, fmt, ##args)
++#define netif_notice(priv, type, dev, fmt, args...)		\
++	netif_printk(priv, type, KERN_NOTICE, dev, fmt, ##args)
++#define netif_info(priv, type, dev, fmt, args...)		\
++	netif_printk(priv, type, KERN_INFO, (dev), fmt, ##args)
++
++/* mask netif_dbg as RHEL6 backports this */
++#if !defined(netif_dbg)
++
++#if defined(DEBUG)
++#define netif_dbg(priv, type, dev, format, args...)		\
++	netif_printk(priv, type, KERN_DEBUG, dev, format, ##args)
++#elif defined(CONFIG_DYNAMIC_DEBUG)
++#define netif_dbg(priv, type, netdev, format, args...)		\
++do {								\
++	if (netif_msg_##type(priv))				\
++		dynamic_dev_dbg((netdev)->dev.parent,		\
++				"%s: " format,			\
++				netdev_name(netdev), ##args);	\
++} while (0)
++#else
++#define netif_dbg(priv, type, dev, format, args...)			\
++({									\
++	if (0)								\
++		netif_printk(priv, type, KERN_DEBUG, dev, format, ##args); \
++	0;								\
++})
++#endif
++
++#endif
++
++/* mask netif_vdbg as RHEL6 backports this */
++#if !defined(netif_vdbg)
++
++#if defined(VERBOSE_DEBUG)
++#define netif_vdbg	netdev_dbg
++#else
++#define netif_vdbg(priv, type, dev, format, args...)		\
++({								\
++	if (0)							\
++		netif_printk(KERN_DEBUG, dev, format, ##args);	\
++	0;							\
++})
++#endif
++#endif
++
++#endif /* < 2.6.34 */
 +
  #endif /* __BACKPORT_NETDEVICE_H */
-diff --git a/backport/backport-include/linux/pci.h b/backport/backport-include/linux/pci.h
-index 9a6d2b5..e78865f 100644
---- a/backport/backport-include/linux/pci.h
-+++ b/backport/backport-include/linux/pci.h
-@@ -6,6 +6,15 @@
+diff --git a/backport/backport-include/linux/rcupdate.h b/backport/backport-include/linux/rcupdate.h
+index 5770b11..d6d9262 100644
+--- a/backport/backport-include/linux/rcupdate.h
++++ b/backport/backport-include/linux/rcupdate.h
+@@ -26,4 +26,26 @@
+ 		p = (typeof(*v) __force __rcu *)(v)
+ #endif
  
- #include <linux/version.h>
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25)
-+/* Backports b718989da7 */
-+#define pci_enable_device_mem LINUX_BACKPORT(pci_enable_device_mem)
-+int __must_check pci_enable_device_mem(struct pci_dev *dev);
-+
-+#define DEFINE_PCI_DEVICE_TABLE(_table) \
-+	const struct pci_device_id _table[] __devinitdata
++#ifndef rcu_dereference_check
++#define rcu_dereference_check(p, c) rcu_dereference(p)
 +#endif
 +
- #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29)
- #define compat_pci_suspend(fn)						\
- 	int fn##_compat(struct pci_dev *pdev, pm_message_t state) 	\
-diff --git a/backport/backport-include/linux/pm.h b/backport/backport-include/linux/pm.h
-new file mode 100644
-index 0000000..5040949
---- /dev/null
-+++ b/backport/backport-include/linux/pm.h
-@@ -0,0 +1,9 @@
-+#ifndef __BACKPORT_PM_H
-+#define __BACKPORT_PM_H
-+#include_next <linux/pm.h>
-+
-+#ifndef PM_EVENT_SLEEP
-+#define PM_EVENT_SLEEP  (PM_EVENT_SUSPEND)
++#ifndef rcu_dereference_protected
++#define rcu_dereference_protected(p, c) (p)
++#endif
++#ifndef rcu_access_pointer
++#define rcu_access_pointer(p)   ACCESS_ONCE(p)
 +#endif
 +
-+#endif /* __BACKPORT_PM_H */
-diff --git a/backport/backport-include/linux/pm_qos.h b/backport/backport-include/linux/pm_qos.h
-index c58c1c1..806a20f 100644
---- a/backport/backport-include/linux/pm_qos.h
-+++ b/backport/backport-include/linux/pm_qos.h
-@@ -3,10 +3,55 @@
- 
- #include <linux/version.h>
- 
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,25))
-+/*
-+ * Kernels >= 2.6.25 have pm-qos and its initialized as part of
-+ * the bootup process
-+ */
-+static inline int backport_pm_qos_power_init(void)
++#ifndef rcu_dereference_raw
++#define rcu_dereference_raw(p)	rcu_dereference(p)
++#endif
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34)
++static inline int rcu_read_lock_held(void)
 +{
-+	return 0;
++	return 1;
 +}
++#endif
 +
-+static inline int backport_pm_qos_power_deinit(void)
-+{
-+	return 0;
-+}
-+#else
+ #endif /* __BACKPORT_LINUX_RCUPDATE_H */
+diff --git a/backport/backport-include/linux/rtnetlink.h b/backport/backport-include/linux/rtnetlink.h
+index b765cc8..56ba9f6 100644
+--- a/backport/backport-include/linux/rtnetlink.h
++++ b/backport/backport-include/linux/rtnetlink.h
+@@ -7,4 +7,18 @@
+         rcu_dereference_protected(p, lockdep_rtnl_is_held())
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34)
++#ifdef CONFIG_PROVE_LOCKING
 +/*
-+ * Backport work for QoS dependencies (kernel/pm_qos_params.c)
-+ * pm-qos stuff written by mark gross mgross@linux.intel.com.
-+ *
-+ * ipw2100 now makes use of:
-+ *
-+ * pm_qos_add_requirement(),
-+ * pm_qos_update_requirement() and
-+ * pm_qos_remove_requirement() from it
-+ *
-+ * mac80211 uses the network latency to determine if to enable or not
-+ * dynamic PS. mac80211 also and registers a notifier for when
-+ * the latency changes. Since older kernels do no thave pm-qos stuff
-+ * we just implement it completley here and register it upon cfg80211
-+ * init. I haven't tested ipw2100 on 2.6.24 though.
-+ *
-+ * This pm-qos implementation is copied verbatim from the kernel
-+ * written by mark gross mgross@linux.intel.com. You don't have
-+ * to do anythinig to use pm-qos except use the same exported
-+ * routines as used in newer kernels. The backport_pm_qos_power_init()
-+ * defned below is used by the compat module to initialize pm-qos.
++ * Obviously, this is wrong.  But the base kernel will have rtnl_mutex
++ * declared static, with no way to access it.  I think this is the best
++ * we can do...
 + */
-+int backport_pm_qos_power_init(void);
-+int backport_pm_qos_power_deinit(void);
++static inline int lockdep_rtnl_is_held(void)
++{
++        return 1;
++}
++#endif /* #ifdef CONFIG_PROVE_LOCKING */
++#endif /* < 2.6.34 */
++
+ #endif /* __BACKPORT_LINUX_RTNETLINK_H */
+diff --git a/backport/backport-include/linux/seq_file.h b/backport/backport-include/linux/seq_file.h
+index c407161..17f7b3d 100644
+--- a/backport/backport-include/linux/seq_file.h
++++ b/backport/backport-include/linux/seq_file.h
+@@ -31,4 +31,14 @@ static inline struct user_namespace *seq_user_ns(struct seq_file *seq)
+ #endif /* CONFIG_USER_NS */
+ #endif /* < 3.7 */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34)
++#define seq_hlist_start_head LINUX_BACKPORT(seq_hlist_start_head)
++extern struct hlist_node *seq_hlist_start_head(struct hlist_head *head,
++					       loff_t pos);
++
++#define seq_hlist_next LINUX_BACKPORT(seq_hlist_next)
++extern struct hlist_node *seq_hlist_next(void *v, struct hlist_head *head,
++					 loff_t *ppos);
 +#endif
 +
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
- #include_next <linux/pm_qos.h>
- #else
- #include <linux/pm_qos_params.h>
- #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)) */
- 
-+#ifndef PM_QOS_DEFAULT_VALUE
-+#define PM_QOS_DEFAULT_VALUE -1
-+#endif
-+
- #endif	/* _COMPAT_LINUX_PM_QOS_H */
-diff --git a/backport/backport-include/linux/pm_qos_params.h b/backport/backport-include/linux/pm_qos_params.h
-index 4c8c89e..c591753 100644
---- a/backport/backport-include/linux/pm_qos_params.h
-+++ b/backport/backport-include/linux/pm_qos_params.h
-@@ -1,7 +1,6 @@
--#include <linux/version.h>
--
- #ifndef __COMPAT_LINUX_PM_QOS_PARAMS_H
- #define __COMPAT_LINUX_PM_QOS_PARAMS_H
-+#include <linux/version.h>
- 
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,25))
- #include_next <linux/pm_qos_params.h>
-diff --git a/backport/backport-include/linux/scatterlist.h b/backport/backport-include/linux/scatterlist.h
-index 66bce16..678b03c 100644
---- a/backport/backport-include/linux/scatterlist.h
-+++ b/backport/backport-include/linux/scatterlist.h
-@@ -3,6 +3,34 @@
- #include_next <linux/scatterlist.h>
- #include <linux/version.h>
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25)
-+struct sg_table {
-+	struct scatterlist *sgl;        /* the list */
-+	unsigned int nents;             /* number of mapped entries */
-+	unsigned int orig_nents;        /* original size of list */
-+};
-+
-+#define sg_alloc_fn LINUX_BACKPORT(sg_alloc_fn)
-+typedef struct scatterlist *(sg_alloc_fn)(unsigned int, gfp_t);
-+
-+#define sg_free_fn LINUX_BACKPORT(sg_free_fn)
-+typedef void (sg_free_fn)(struct scatterlist *, unsigned int);
-+
-+#define __sg_free_table LINUX_BACKPORT(__sg_free_table)
-+void __sg_free_table(struct sg_table *table, unsigned int max_ents,
-+		     sg_free_fn *free_fn);
-+#define sg_free_table LINUX_BACKPORT(sg_free_table)
-+void sg_free_table(struct sg_table *);
-+#define __sg_alloc_table LINUX_BACKPORT(__sg_alloc_table)
-+int __sg_alloc_table(struct sg_table *table, unsigned int nents,
-+		     unsigned int max_ents, gfp_t gfp_mask,
-+		     sg_alloc_fn *alloc_fn);
-+#define sg_alloc_table LINUX_BACKPORT(sg_alloc_table)
-+int sg_alloc_table(struct sg_table *table, unsigned int nents, gfp_t gfp_mask);
-+
-+#define SG_MAX_SINGLE_ALLOC            (PAGE_SIZE / sizeof(struct scatterlist))
-+#endif
-+
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
- 
- /* Lets expect distributions might backport this */
-diff --git a/backport/backport-include/linux/types.h b/backport/backport-include/linux/types.h
+ #endif /* __BACKPORT_SEQ_FILE_H */
+diff --git a/backport/backport-include/linux/sysfs.h b/backport/backport-include/linux/sysfs.h
 new file mode 100644
-index 0000000..b787df6
+index 0000000..a2ef73f
 --- /dev/null
-+++ b/backport/backport-include/linux/types.h
-@@ -0,0 +1,35 @@
-+#ifndef __BACKPORT_TYPES_H
-+#define __BACKPORT_TYPES_H
-+#include_next <linux/types.h>
++++ b/backport/backport-include/linux/sysfs.h
+@@ -0,0 +1,34 @@
++#ifndef __BACKPORT_LINUX_SYSFS_H
++#define __BACKPORT_LINUX_SYSFS_H
++#include_next <linux/sysfs.h>
 +#include <linux/version.h>
 +
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25)
-+#if defined(CONFIG_X86) || defined(CONFIG_X86_64)
-+
-+#if defined(CONFIG_64BIT) || defined(CONFIG_X86_PAE) || defined(CONFIG_PHYS_64BIT)
-+typedef u64 phys_addr_t;
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34)
++#ifdef CONFIG_DEBUG_LOCK_ALLOC
++#define sysfs_attr_init(attr)				\
++do {							\
++	static struct lock_class_key __key;		\
++							\
++	(attr)->key = &__key;				\
++} while(0)
 +#else
-+typedef u32 phys_addr_t;
++#define sysfs_attr_init(attr) do {} while(0)
 +#endif
 +
-+#endif /* x86 */
-+#elif LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28) /* < 2.6.25 */
-+
-+#if defined(CONFIG_X86) || defined(CONFIG_X86_64) || defined(CONFIG_PPC)
-+/*
-+ * CONFIG_PHYS_ADDR_T_64BIT was added as new to all architectures
-+ * as of 2.6.28 but x86 and ppc had it already.
++/* mask sysfs_bin_attr_init as RHEL6 backports this */
++#if !defined(sysfs_bin_attr_init)
++/**
++ *	sysfs_bin_attr_init - initialize a dynamically allocated bin_attribute
++ *	@attr: struct bin_attribute to initialize
++ *
++ *	Initialize a dynamically allocated struct bin_attribute so we
++ *	can make lockdep happy.  This is a new requirement for
++ *	attributes and initially this is only needed when lockdep is
++ *	enabled.  Lockdep gives a nice error when your attribute is
++ *	added to sysfs if you don't have this.
 + */
-+#else
-+#if defined(CONFIG_64BIT) || defined(CONFIG_X86_PAE) || defned(CONFIG_PPC64) || defined(CONFIG_PHYS_64BIT)
-+#define CONFIG_PHYS_ADDR_T_64BIT 1
-+typedef u64 phys_addr_t;
-+#else
-+typedef u32 phys_addr_t;
++#define sysfs_bin_attr_init(bin_attr) sysfs_attr_init(&(bin_attr)->attr)
++#endif
 +#endif
 +
-+#endif /* non x86 and ppc */
-+
-+#endif /* < 2.6.28 */
-+
-+#endif /* __BACKPORT_TYPES_H */
-diff --git a/backport/compat/compat-2.6.32.c b/backport/compat/compat-2.6.32.c
-index b5a66a8..07fb314 100644
---- a/backport/compat/compat-2.6.32.c
-+++ b/backport/compat/compat-2.6.32.c
-@@ -69,54 +69,6 @@ int __dev_addr_delete(struct dev_addr_list **list, int *count,
- 	return -ENOENT;
++#endif /* __BACKPORT_LINUX_SYSFS_H */
+diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
+index 3e820f0..d67317f 100644
+--- a/backport/backport-include/linux/usb.h
++++ b/backport/backport-include/linux/usb.h
+@@ -63,4 +63,15 @@ usb_pipe_endpoint(struct usb_device *dev, unsigned int pipe)
  }
+ #endif
  
--int __dev_addr_sync(struct dev_addr_list **to, int *to_count,
--		    struct dev_addr_list **from, int *from_count)
--{
--	struct dev_addr_list *da, *next;
--	int err = 0;
--
--	da = *from;
--	while (da != NULL) {
--		next = da->next;
--		if (!da->da_synced) {
--			err = __dev_addr_add(to, to_count,
--					     da->da_addr, da->da_addrlen, 0);
--			if (err < 0)
--				break;
--			da->da_synced = 1;
--			da->da_users++;
--		} else if (da->da_users == 1) {
--			__dev_addr_delete(to, to_count,
--					  da->da_addr, da->da_addrlen, 0);
--			__dev_addr_delete(from, from_count,
--					  da->da_addr, da->da_addrlen, 0);
--		}
--		da = next;
--	}
--	return err;
--}
--EXPORT_SYMBOL_GPL(__dev_addr_sync);
--
--void __dev_addr_unsync(struct dev_addr_list **to, int *to_count,
--		       struct dev_addr_list **from, int *from_count)
--{
--	struct dev_addr_list *da, *next;
--
--	da = *from;
--	while (da != NULL) {
--		next = da->next;
--		if (da->da_synced) {
--			__dev_addr_delete(to, to_count,
--					  da->da_addr, da->da_addrlen, 0);
--			da->da_synced = 0;
--			__dev_addr_delete(from, from_count,
--					  da->da_addr, da->da_addrlen, 0);
--		}
--		da = next;
--	}
--}
--EXPORT_SYMBOL_GPL(__dev_addr_unsync);
--
- /*
-  * Nonzero if YEAR is a leap year (every 4 years,
-  * except every 100th isn't, and every 400th is).
-diff --git a/backport/compat/main.c b/backport/compat/main.c
-index 7818d73..9607209 100644
---- a/backport/compat/main.c
-+++ b/backport/compat/main.c
-@@ -1,4 +1,5 @@
- #include <linux/module.h>
-+#include <linux/pm_qos.h>
- #include "compat-2.6.34.h"
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34)
++#define usb_alloc_coherent(dev, size, mem_flags, dma) usb_buffer_alloc(dev, size, mem_flags, dma)
++#define usb_free_coherent(dev, size, addr, dma) usb_buffer_free(dev, size, addr, dma)
++
++/* USB autosuspend and autoresume */
++static inline int usb_enable_autosuspend(struct usb_device *udev)
++{ return 0; }
++static inline int usb_disable_autosuspend(struct usb_device *udev)
++{ return 0; }
++#endif
++
+ #endif /* __BACKPORT_USB_H */
+diff --git a/backport/backport-include/net/sock.h b/backport/backport-include/net/sock.h
+index 4e1141f..6943721 100644
+--- a/backport/backport-include/net/sock.h
++++ b/backport/backport-include/net/sock.h
+@@ -45,4 +45,11 @@ static inline wait_queue_head_t *sk_sleep(struct sock *sk)
+ }
+ #endif
  
- MODULE_AUTHOR("Luis R. Rodriguez");
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34)
++static inline struct sock *sk_entry(const struct hlist_node *node)
++{
++	return hlist_entry(node, struct sock, sk_node);
++}
++#endif
++
+ #endif /* __BACKPORT_NET_SOCK_H */
+diff --git a/backport/backport-include/pcmcia/device_id.h b/backport/backport-include/pcmcia/device_id.h
+index 0c47a68..908af50 100644
+--- a/backport/backport-include/pcmcia/device_id.h
++++ b/backport/backport-include/pcmcia/device_id.h
+@@ -13,4 +13,11 @@
+ 	.prod_id_hash = { 0, 0, (vh3), 0 }, }
+ #endif
+ 
++#ifndef PCMCIA_DEVICE_PROD_ID3
++#define PCMCIA_DEVICE_PROD_ID3(v3, vh3) { \
++	.match_flags = PCMCIA_DEV_ID_MATCH_PROD_ID3, \
++	.prod_id = { NULL, NULL, (v3), NULL },  \
++	.prod_id_hash = { 0, 0, (vh3), 0 }, }
++#endif
++
+ #endif /* __BACKPORT_PCMCIA_DEVICE_ID_H */
 -- 
 1.8.0
 
