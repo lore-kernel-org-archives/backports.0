@@ -1,108 +1,451 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:48590 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S936087Ab3DKO4l (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 11 Apr 2013 10:56:41 -0400
-Message-ID: <5166CF1F.6050808@hauke-m.de> (sfid-20130411_165644_812093_1AC32D56)
-Date: Thu, 11 Apr 2013 16:56:31 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: taking backports out of compat-*.h
-References: <1365593728-5720-1-git-send-email-mcgrof@do-not-panic.com>  <1365593728-5720-3-git-send-email-mcgrof@do-not-panic.com>  <1365599791.8388.16.camel@jlt4.sipsolutions.net>  <CAB=NE6XVe1UcpXozrpC62z750kveY2ACi_-oKVohSZcMNRxSPQ@mail.gmail.com>  (sfid-20130410_190809_555509_3F0894BA) <1365614155.4235.27.camel@jlt4.sipsolutions.net>  (sfid-20130410_191605_116427_ECB60701) <1365691457.8272.64.camel@jlt4.sipsolutions.net>
-In-Reply-To: <1365691457.8272.64.camel@jlt4.sipsolutions.net>
-Content-Type: text/plain; charset=UTF-8
+Received: from he.sipsolutions.net ([78.46.109.217]:44229 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752955Ab3DMXzK (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 19:55:10 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [RFC/RFT 13/42] backports: dissolve compat-3.6.h
+Date: Sun, 14 Apr 2013 01:53:33 +0200
+Message-Id: <1365897243-31214-14-git-send-email-johannes@sipsolutions.net> (sfid-20130414_015513_606310_1DFAB63C)
+In-Reply-To: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net>
+References: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 04/11/2013 04:44 PM, Johannes Berg wrote:
-> On Wed, 2013-04-10 at 19:15 +0200, Johannes Berg wrote:
-> 
->>> Sure, lets what's the idea or do you want to do that on another thread?
-> 
-> Let me give it a different subject :-)
-> 
->> It's kinda half-baked and I'm not completely sure it's a good idea
->> (because we may have to follow header file renames, though they happen
->> rarely), but I was basically thinking this:
->>
->> Say there's
->>
->> void my_foo_function(struct foo *f);
->>
->> that we want to backport. Let's also say it's defined in <linux/foo.h>,
->> and that it was usually present starting from kernel 3.0, but for now
->> let's assume the "foo" subsystem always existed (i.e. <linux/foo.h>)
->>
->> Typically, we'd therefore add it to <linux/compat-3.0.h> and declare it
->> there, maybe with the LINUX_BACKPORT() wrapper, and then define it in
->> compat/compat-3.0.c.
->>
->> What I'm thinking is that we should maybe declare it in compat in
->> include/linux/foo.h instead, maybe like this:
->>
->> #ifndef __BACKPORT_FOO
->> #define __BACKPORT_FOO
->> #include_next <linux/foo.h>
->>
->> #if LINUX_VERSION < 3.0
->> #define my_foo_function LINUX_BACKPORT(my_foo_function)
->>
->> void my_foo_function(struct foo *f);
->> #endif
->>
->> #endif /* __BACKPORT_FOO */
->>
->>
->>
->> I'm a bit undecided. On the one hand I think it's nice that we can spot
->> in one place what's backported where in all the
->> include/linux/compat-xyz.h files, but on the other hand it's kinda
->> becoming a messy jumble of features across different subsystems, and
->> hard to determine what you have already and might need for a given
->> header file?
-> 
-> In addition to what I said, I just realized that we should probably do
-> this, and do it consistently even for old things. That way, we can get
-> rid of all the pr_fmt patches.
-> 
-> The reason for the pr_fmt patches is that typically, a source file would
-> have
-> 
-> #define pr_fmt(fmt)           KBUILD_MODNAME ": " fmt
-> #include <whatever, including somehow getting printk.h>
-> 
-> Now that we force them to include compat-2.6.h at the very beginning of
-> the file, printk.h already gets included in some way through
-> compat-2.6.h (there are of course MANY MANY paths to it.)
-> 
-> To avoid redefine warnings, we thus patch everything to be
-> 
-> #undef pr_fmt
-> #define pr_fmt
-> ...
-> 
-> which of course works, but it's pretty ugly (we have >1000 patchlines
-> for this!)
-> 
-> 
-> If we were able to get rid of compat-2.6.h and put all the backports
-> into their appropriate headers (linux/foo.h) we could only force an
-> include of compat_autoconf.h (which doesn't include printk.h of course)
-> and then we'd be able to get rid of all these patches.
+From: Johannes Berg <johannes.berg@intel.com>
 
-I had a similar same idea a year ago, but haven't found the time to
-complete it, see [0]. I am still for this solution.
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ .../asm-generic/dma-mapping-common.h               |  25 ++++
+ backport/backport-include/backport/backport.h      |   1 -
+ backport/backport-include/linux/compat-3.6.h       | 139 ---------------------
+ backport/backport-include/linux/etherdevice.h      |  28 +++++
+ backport/backport-include/linux/i2c.h              |  15 +++
+ backport/backport-include/linux/leds.h             |  29 +++++
+ backport/backport-include/linux/pci_regs.h         |  34 +++++
+ backport/backport-include/linux/scatterlist.h      |   9 ++
+ backport/backport-include/linux/string.h           |  11 ++
+ backport/backport-include/linux/usb.h              |  27 ++++
+ backport/backport-include/net/genetlink.h          |   4 +
+ 11 files changed, 182 insertions(+), 140 deletions(-)
+ create mode 100644 backport/backport-include/asm-generic/dma-mapping-common.h
+ delete mode 100644 backport/backport-include/linux/compat-3.6.h
+ create mode 100644 backport/backport-include/linux/i2c.h
+ create mode 100644 backport/backport-include/linux/leds.h
+ create mode 100644 backport/backport-include/linux/string.h
+ create mode 100644 backport/backport-include/linux/usb.h
 
-If linux/foo.h does not exist in recent kernel versions we have to add
-it anyway, because the new code references it, so this is not a problem.
+diff --git a/backport/backport-include/asm-generic/dma-mapping-common.h b/backport/backport-include/asm-generic/dma-mapping-common.h
+new file mode 100644
+index 0000000..ed2fe61
+--- /dev/null
++++ b/backport/backport-include/asm-generic/dma-mapping-common.h
+@@ -0,0 +1,25 @@
++#ifndef __BACKPORT_ASM_GENERIC_DMA_MAPPING_COMMON_H
++#define __BACKPORT_ASM_GENERIC_DMA_MAPPING_COMMON_H
++#include_next <asm-generic/dma-mapping-common.h>
++#include <linux/version.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
++
++#define dma_common_get_sgtable LINUX_BACKPORT(dma_common_get_sgtable)
++int
++dma_common_get_sgtable(struct device *dev, struct sg_table *sgt,
++		       void *cpu_addr, dma_addr_t dma_addr, size_t size);
++
++#define dma_get_sgtable_attrs LINUX_BACKPORT(dma_get_sgtable_attrs)
++struct dma_attrs;
++static inline int
++dma_get_sgtable_attrs(struct device *dev, struct sg_table *sgt, void *cpu_addr,
++		      dma_addr_t dma_addr, size_t size, struct dma_attrs *attrs)
++{
++	return dma_common_get_sgtable(dev, sgt, cpu_addr, dma_addr, size);
++}
++
++#define dma_get_sgtable(d, t, v, h, s) dma_get_sgtable_attrs(d, t, v, h, s, NULL)
++#endif
++
++#endif /* __BACKPORT_ASM_GENERIC_DMA_MAPPING_COMMON_H */
+diff --git a/backport/backport-include/backport/backport.h b/backport/backport-include/backport/backport.h
+index e892279..c5c194e 100644
+--- a/backport/backport-include/backport/backport.h
++++ b/backport/backport-include/backport/backport.h
+@@ -76,7 +76,6 @@ void backport_dependency_symbol(void);
+ #include <linux/compat-3.3.h>
+ #include <linux/compat-3.4.h>
+ #include <linux/compat-3.5.h>
+-#include <linux/compat-3.6.h>
+ 
+ #endif /* __ASSEMBLY__ */
+ 
+diff --git a/backport/backport-include/linux/compat-3.6.h b/backport/backport-include/linux/compat-3.6.h
+deleted file mode 100644
+index 770a333..0000000
+--- a/backport/backport-include/linux/compat-3.6.h
++++ /dev/null
+@@ -1,139 +0,0 @@
+-#ifndef LINUX_3_6_COMPAT_H
+-#define LINUX_3_6_COMPAT_H
+-
+-#include <linux/version.h>
+-
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0))
+-
+-#include <linux/scatterlist.h>
+-
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
+-#include <linux/i2c.h>
+-#include <linux/dma-attrs.h>
+-/* Unlocked flavor */
+-#define __i2c_transfer LINUX_BACKPORT(__i2c_transfer)
+-extern int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+-			  int num);
+-#endif
+-
+-
+-#define memweight LINUX_BACKPORT(memweight)
+-extern size_t memweight(const void *ptr, size_t bytes);
+-
+-/* backports efc42bc9 */
+-#define sg_alloc_table_from_pages LINUX_BACKPORT(sg_alloc_table_from_pages)
+-int sg_alloc_table_from_pages(struct sg_table *sgt,
+-			      struct page **pages, unsigned int n_pages,
+-			      unsigned long offset, unsigned long size,
+-			      gfp_t gfp_mask);
+-
+-#define dma_common_get_sgtable LINUX_BACKPORT(dma_common_get_sgtable)
+-int
+-dma_common_get_sgtable(struct device *dev, struct sg_table *sgt,
+-		       void *cpu_addr, dma_addr_t dma_addr, size_t size);
+-
+-#define dma_get_sgtable_attrs LINUX_BACKPORT(dma_get_sgtable_attrs)
+-struct dma_attrs;
+-static inline int
+-dma_get_sgtable_attrs(struct device *dev, struct sg_table *sgt, void *cpu_addr,
+-		      dma_addr_t dma_addr, size_t size, struct dma_attrs *attrs)
+-{
+-	return dma_common_get_sgtable(dev, sgt, cpu_addr, dma_addr, size);
+-}
+-
+-#define dma_get_sgtable(d, t, v, h, s) dma_get_sgtable_attrs(d, t, v, h, s, NULL)
+-
+-
+-/**
+- * Backports
+- *
+- * commit d81a5d1956731c453b85c141458d4ff5d6cc5366
+- * Author: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+- * Date:   Tue Jul 10 19:10:06 2012 -0300
+- *
+- * 	USB: add USB_VENDOR_AND_INTERFACE_INFO() macro
+- */
+-#include <linux/usb.h>
+-#define USB_VENDOR_AND_INTERFACE_INFO(vend, cl, sc, pr) \
+-       .match_flags = USB_DEVICE_ID_MATCH_INT_INFO \
+-               | USB_DEVICE_ID_MATCH_VENDOR, \
+-       .idVendor = (vend), \
+-       .bInterfaceClass = (cl), \
+-       .bInterfaceSubClass = (sc), \
+-       .bInterfaceProtocol = (pr)
+-
+-/**
+- * Backports
+- *
+- * commit cdcac9cd7741af2c2b9255cbf060f772596907bb
+- * Author: Dave Airlie <airlied@redhat.com>
+- * Date:   Wed Jun 27 08:35:52 2012 +0100
+- *
+- * 	pci_regs: define LNKSTA2 pcie cap + bits.
+- *
+- * 	We need these for detecting the max link speed for drm drivers.
+- *
+- * 	Acked-by: Bjorn Helgaas <bhelgass@google.com>
+- * 	Signed-off-by: Dave Airlie <airlied@redhat.com>
+- */
+-
+-#define  PCI_EXP_LNKCAP2 		44	/* Link Capability 2 */
+-#define  PCI_EXP_LNKCAP2_SLS_2_5GB 	0x01	/* Current Link Speed 2.5GT/s */
+-#define  PCI_EXP_LNKCAP2_SLS_5_0GB 	0x02	/* Current Link Speed 5.0GT/s */
+-#define  PCI_EXP_LNKCAP2_SLS_8_0GB 	0x04	/* Current Link Speed 8.0GT/s */
+-#define  PCI_EXP_LNKCAP2_CROSSLINK 	0x100 /* Crosslink supported */
+-
+-#include <net/genetlink.h>
+-#include <linux/etherdevice.h>
+-
+-/**
+- * eth_broadcast_addr - Assign broadcast address
+- * @addr: Pointer to a six-byte array containing the Ethernet address
+- *
+- * Assign the broadcast address to the given address array.
+- */
+-static inline void eth_broadcast_addr(u8 *addr)
+-{
+-	memset(addr, 0xff, ETH_ALEN);
+-}
+-
+-/**
+- * eth_random_addr - Generate software assigned random Ethernet address
+- * @addr: Pointer to a six-byte array containing the Ethernet address
+- *
+- * Generate a random Ethernet address (MAC) that is not multicast
+- * and has the local assigned bit set.
+- */
+-static inline void eth_random_addr(u8 *addr)
+-{
+-	get_random_bytes(addr, ETH_ALEN);
+-	addr[0] &= 0xfe;        /* clear multicast bit */
+-	addr[0] |= 0x02;        /* set local assignment bit (IEEE802) */
+-}
+-
+-#define GENLMSG_DEFAULT_SIZE (NLMSG_DEFAULT_SIZE - GENL_HDRLEN)
+-
+-/*
+- * Backports 
+- * 
+- * commit 959d62fa865d2e616b61a509e1cc5b88741f065e
+- * Author: Shuah Khan <shuahkhan@gmail.com>
+- * Date:   Thu Jun 14 04:34:30 2012 +0800
+- *
+- *   leds: Rename led_brightness_set() to led_set_brightness()
+- *   
+- *   Rename leds external interface led_brightness_set() to led_set_brightness().
+- *   This is the second phase of the change to reduce confusion between the
+- *   leds internal and external interfaces that set brightness. With this change,
+- *   now the external interface is led_set_brightness(). The first phase renamed
+- *   the internal interface led_set_brightness() to __led_set_brightness().
+- *   There are no changes to the interface implementations.
+- *   
+- *   Signed-off-by: Shuah Khan <shuahkhan@gmail.com>
+- *   Signed-off-by: Bryan Wu <bryan.wu@canonical.com>
+- */
+-#define led_set_brightness(_dev, _switch) led_brightness_set(_dev, _switch)
+-
+-#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)) */
+-
+-#endif /* LINUX_3_6_COMPAT_H */
+diff --git a/backport/backport-include/linux/etherdevice.h b/backport/backport-include/linux/etherdevice.h
+index 8cedf49..1246be4 100644
+--- a/backport/backport-include/linux/etherdevice.h
++++ b/backport/backport-include/linux/etherdevice.h
+@@ -3,6 +3,34 @@
+ #include_next <linux/etherdevice.h>
+ #include <linux/version.h>
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
++#include <linux/random.h>
++/**
++ * eth_broadcast_addr - Assign broadcast address
++ * @addr: Pointer to a six-byte array containing the Ethernet address
++ *
++ * Assign the broadcast address to the given address array.
++ */
++static inline void eth_broadcast_addr(u8 *addr)
++{
++	memset(addr, 0xff, ETH_ALEN);
++}
++
++/**
++ * eth_random_addr - Generate software assigned random Ethernet address
++ * @addr: Pointer to a six-byte array containing the Ethernet address
++ *
++ * Generate a random Ethernet address (MAC) that is not multicast
++ * and has the local assigned bit set.
++ */
++static inline void eth_random_addr(u8 *addr)
++{
++	get_random_bytes(addr, ETH_ALEN);
++	addr[0] &= 0xfe;        /* clear multicast bit */
++	addr[0] |= 0x02;        /* set local assignment bit (IEEE802) */
++}
++#endif
++
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
+ 
+ /* This backports:
+diff --git a/backport/backport-include/linux/i2c.h b/backport/backport-include/linux/i2c.h
+new file mode 100644
+index 0000000..5b87732
+--- /dev/null
++++ b/backport/backport-include/linux/i2c.h
+@@ -0,0 +1,15 @@
++#ifndef __BACKPORT_LINUX_I2C_H
++#define __BACKPORT_LINUX_I2C_H
++#include_next <linux/i2c.h>
++#include <linux/version.h>
++
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0) && \
++    LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
++#include <linux/i2c.h>
++/* Unlocked flavor */
++#define __i2c_transfer LINUX_BACKPORT(__i2c_transfer)
++extern int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
++			  int num);
++#endif
++
++#endif /* __BACKPORT_LINUX_I2C_H */
+diff --git a/backport/backport-include/linux/leds.h b/backport/backport-include/linux/leds.h
+new file mode 100644
+index 0000000..17fc89e
+--- /dev/null
++++ b/backport/backport-include/linux/leds.h
+@@ -0,0 +1,29 @@
++#ifndef __BACKPORT_LINUX_LEDS_H
++#define __BACKPORT_LINUX_LEDS_H
++#include_next <linux/leds.h>
++#include <linux/version.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
++/*
++ * Backports 
++ * 
++ * commit 959d62fa865d2e616b61a509e1cc5b88741f065e
++ * Author: Shuah Khan <shuahkhan@gmail.com>
++ * Date:   Thu Jun 14 04:34:30 2012 +0800
++ *
++ *   leds: Rename led_brightness_set() to led_set_brightness()
++ *   
++ *   Rename leds external interface led_brightness_set() to led_set_brightness().
++ *   This is the second phase of the change to reduce confusion between the
++ *   leds internal and external interfaces that set brightness. With this change,
++ *   now the external interface is led_set_brightness(). The first phase renamed
++ *   the internal interface led_set_brightness() to __led_set_brightness().
++ *   There are no changes to the interface implementations.
++ *   
++ *   Signed-off-by: Shuah Khan <shuahkhan@gmail.com>
++ *   Signed-off-by: Bryan Wu <bryan.wu@canonical.com>
++ */
++#define led_set_brightness(_dev, _switch) led_brightness_set(_dev, _switch)
++#endif
++
++#endif /* __BACKPORT_LINUX_LEDS_H */
+diff --git a/backport/backport-include/linux/pci_regs.h b/backport/backport-include/linux/pci_regs.h
+index dd13eb3..f479236 100644
+--- a/backport/backport-include/linux/pci_regs.h
++++ b/backport/backport-include/linux/pci_regs.h
+@@ -30,4 +30,38 @@
+ #define PCI_EXP_LNKSTA2			50      /* Link Status 2 */
+ #endif
+ 
++/**
++ * Backports
++ *
++ * commit cdcac9cd7741af2c2b9255cbf060f772596907bb
++ * Author: Dave Airlie <airlied@redhat.com>
++ * Date:   Wed Jun 27 08:35:52 2012 +0100
++ *
++ * 	pci_regs: define LNKSTA2 pcie cap + bits.
++ *
++ * 	We need these for detecting the max link speed for drm drivers.
++ *
++ * 	Acked-by: Bjorn Helgaas <bhelgass@google.com>
++ * 	Signed-off-by: Dave Airlie <airlied@redhat.com>
++ */
++#ifndef PCI_EXP_LNKCAP2
++#define  PCI_EXP_LNKCAP2 		44	/* Link Capability 2 */
++#endif
++
++#ifndef PCI_EXP_LNKCAP2_SLS_2_5GB
++#define  PCI_EXP_LNKCAP2_SLS_2_5GB 	0x01	/* Current Link Speed 2.5GT/s */
++#endif
++
++#ifndef PCI_EXP_LNKCAP2_SLS_5_0GB
++#define  PCI_EXP_LNKCAP2_SLS_5_0GB 	0x02	/* Current Link Speed 5.0GT/s */
++#endif
++
++#ifndef PCI_EXP_LNKCAP2_SLS_8_0GB
++#define  PCI_EXP_LNKCAP2_SLS_8_0GB 	0x04	/* Current Link Speed 8.0GT/s */
++#endif
++
++#ifndef PCI_EXP_LNKCAP2_CROSSLINK
++#define  PCI_EXP_LNKCAP2_CROSSLINK 	0x100 /* Crosslink supported */
++#endif
++
+ #endif /* __BACKPORT_UAPI_PCI_REGS_H */
+diff --git a/backport/backport-include/linux/scatterlist.h b/backport/backport-include/linux/scatterlist.h
+index 678b03c..448730f 100644
+--- a/backport/backport-include/linux/scatterlist.h
++++ b/backport/backport-include/linux/scatterlist.h
+@@ -31,6 +31,15 @@ int sg_alloc_table(struct sg_table *table, unsigned int nents, gfp_t gfp_mask);
+ #define SG_MAX_SINGLE_ALLOC            (PAGE_SIZE / sizeof(struct scatterlist))
+ #endif
+ 
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0))
++/* backports efc42bc9 */
++#define sg_alloc_table_from_pages LINUX_BACKPORT(sg_alloc_table_from_pages)
++int sg_alloc_table_from_pages(struct sg_table *sgt,
++			      struct page **pages, unsigned int n_pages,
++			      unsigned long offset, unsigned long size,
++			      gfp_t gfp_mask);
++#endif /* < 3.6 */
++
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
+ 
+ /* Lets expect distributions might backport this */
+diff --git a/backport/backport-include/linux/string.h b/backport/backport-include/linux/string.h
+new file mode 100644
+index 0000000..819d141
+--- /dev/null
++++ b/backport/backport-include/linux/string.h
+@@ -0,0 +1,11 @@
++#ifndef __BACKPORT_LINUX_STRING_H
++#define __BACKPORT_LINUX_STRING_H
++#include_next <linux/string.h>
++#include <linux/version.h>
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0))
++#define memweight LINUX_BACKPORT(memweight)
++extern size_t memweight(const void *ptr, size_t bytes);
++#endif
++
++#endif /* __BACKPORT_LINUX_STRING_H */
+diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
+new file mode 100644
+index 0000000..e1ff8be
+--- /dev/null
++++ b/backport/backport-include/linux/usb.h
+@@ -0,0 +1,27 @@
++#ifndef __BACKPORT_USB_H
++#define __BACKPORT_USB_H
++
++#include_next <linux/usb.h>
++#include <linux/version.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
++/**
++ * Backports
++ *
++ * commit d81a5d1956731c453b85c141458d4ff5d6cc5366
++ * Author: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
++ * Date:   Tue Jul 10 19:10:06 2012 -0300
++ *
++ * 	USB: add USB_VENDOR_AND_INTERFACE_INFO() macro
++ */
++#include <linux/usb.h>
++#define USB_VENDOR_AND_INTERFACE_INFO(vend, cl, sc, pr) \
++       .match_flags = USB_DEVICE_ID_MATCH_INT_INFO \
++               | USB_DEVICE_ID_MATCH_VENDOR, \
++       .idVendor = (vend), \
++       .bInterfaceClass = (cl), \
++       .bInterfaceSubClass = (sc), \
++       .bInterfaceProtocol = (pr)
++#endif
++
++#endif /* __BACKPORT_USB_H */
+diff --git a/backport/backport-include/net/genetlink.h b/backport/backport-include/net/genetlink.h
+index 9512549..44ffcaf 100644
+--- a/backport/backport-include/net/genetlink.h
++++ b/backport/backport-include/net/genetlink.h
+@@ -9,4 +9,8 @@
+ #define genl_info_snd_portid(__genl_info) (__genl_info->snd_portid)
+ #endif
+ 
++#ifndef GENLMSG_DEFAULT_SIZE
++#define GENLMSG_DEFAULT_SIZE (NLMSG_DEFAULT_SIZE - GENL_HDRLEN)
++#endif
++
+ #endif /* __BACKPORT_NET_GENETLINK_H */
+-- 
+1.8.0
 
-With this solution we would clean up the includes used when compiling
-and we do not need the pr_fmt patch any more and hopefully some more.
-
-Hauke
-
-[0]:
-https://lists.linuxfoundation.org/pipermail/lf_driver_backport/2012-April/000972.html
