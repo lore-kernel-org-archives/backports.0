@@ -1,34 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:38464 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935713Ab3DHT2a (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 8 Apr 2013 15:28:30 -0400
-Received: by mail-lb0-f171.google.com with SMTP id v10so6130831lbd.16
-        for <backports@vger.kernel.org>; Mon, 08 Apr 2013 12:28:28 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1365416773-12836-1-git-send-email-thierry.escande@linux.intel.com>
-References: <1365416773-12836-1-git-send-email-thierry.escande@linux.intel.com>
-From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Date: Mon, 8 Apr 2013 12:28:08 -0700
-Message-ID: <CAB=NE6X_gaL99LLsB-FqDwShqZ08CCFR+4KjNuremdefO_O0Ug@mail.gmail.com> (sfid-20130408_212844_658236_AFD91CE7)
-Subject: Re: [PATCH v3 0/8] backports: add NFC subsystem
-To: Thierry Escande <thierry.escande@linux.intel.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from he.sipsolutions.net ([78.46.109.217]:43802 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753387Ab3DMVCt (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 17:02:49 -0400
+Message-ID: <1365886961.1089.6.camel@jlt4.sipsolutions.net> (sfid-20130413_230251_460167_2C65F7ED)
+Subject: Re: [PATCH 6/7] backports: add media subsystem drivers
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@redhat.com>
+Date: Sat, 13 Apr 2013 23:02:41 +0200
+In-Reply-To: <1365862424-6530-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20130413_161421_323308_27727044)
+References: <1365862424-6530-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1365862424-6530-7-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20130413_161421_323308_27727044)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Apr 8, 2013 at 3:26 AM, Thierry Escande
-<thierry.escande@linux.intel.com> wrote:
-> This adds support for NFC core and drivers backport down to v3.1. Prior kernel
-> versions won't support it as is since PF_NFC net proto as been introduced in
-> v3.1 and sock_register kernel api in prior kernels will fail for PF_NFC.
->
-> $ckmake --defconfig nfc
+On Sat, 2013-04-13 at 07:13 -0700, Luis R. Rodriguez wrote:
+> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+> 
+> This adds backport support for all media subsystem
+> drivers. This is enabled only for >= 3.2. Some media
+> drivers rely on the new probe deferrral mechanism
+> (-EPROBE_DEFER see commit d1c3414c), those are only
+> enabled for kernels >= 3.4. Some media drivers only
+> depend on the regulatory but since we only support
+> backporting the regulatory on kernels >= 3.4 we only
+> enable those media drivers for >= 3.4.
+> 
+> This backports 433 media drivers.
 
-I think using this makes sense for testing *your* development work but
-for integration upstream I'd prefer to see a full ckmake test. We can
-get you access to the build box to help with this, or Johannes can
-also run it prior to integration.
+Heh. Applied. Good thing I can kill the pr_fmt patches again soon.
 
-  Luis
+johannes
+
