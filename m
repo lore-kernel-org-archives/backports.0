@@ -1,97 +1,91 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-da0-f50.google.com ([209.85.210.50]:36394 "EHLO
-	mail-da0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161269Ab3DGCgG (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 6 Apr 2013 22:36:06 -0400
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Received: from he.sipsolutions.net ([78.46.109.217]:44221 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754108Ab3DMXyM (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 19:54:12 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 0/3] backports: adds regulator and media susbsystems
-Date: Sat,  6 Apr 2013 19:35:35 -0700
-Message-Id: <1365302138-19736-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130407_043611_286750_8B039DA1)
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [RFC/RFT 07/42] backports: remove __inet_lookup_established
+Date: Sun, 14 Apr 2013 01:53:27 +0200
+Message-Id: <1365897243-31214-8-git-send-email-johannes@sipsolutions.net> (sfid-20130414_015417_189000_535B29C8)
+In-Reply-To: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net>
+References: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-This is just test work I've been doing on the side, that really
-just started from scratching an itch to see what is possible.
-In the compat-drivers trees I had actually gotten to run time
-test the USB video camera driver and that worked fine. Under
-the new backports tree we are encouraged to just backport the
-entire subsystem so I gave that a shot and this is where I got
-up to. It turned out a few drivers required mucking with the
-regulator and as I started backporting some functionality I
-realized that the 3.2 regulator was just stubs so ended up trying
-to port all of the regulator and its drivers as well.
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/backport-include/linux/compat-2.6.25.h | 47 -------------------------
+ 1 file changed, 47 deletions(-)
 
-The media drivers should now compile *if* we fix the regulator
-issues but as it turns out the last issues I ran into hit a gcc
-segfault :)
-
-These patches depend on the other 9 patches I just posted. I hadn't
-tested ckmake yet with the other patches...
-
-Note one thing I realize from this exercise is that it'd be nice
-to be able to rename the upstream target file when being sucked
-into compat as part of compat-y or perhaps its best to do this
-always with a _backport prefix ? See core.c from regulator and
-how it gets pulled into compat/
-
-I do realize that porting the regulator code may not make make sense
-and if so then perhaps any media drivers that rely on it shoud likley
-not be ported... But that sounds like a cheap "solution". For mobile
-for example I do envision it being desirable to port over any media
-or regulator drivers. One possibility I have only been toying with
-in thought has been using ksplice... but that seems a bit over kill
-and likely very fragile for adding new symbols. Can we extend a kernel
-with backport ELF sections ? If so so, we don't necessarily need to
-have the functionality to patch a kernel and keep it running at runtime
-but *if* this is possible perhaps that may allow for us to add our own
-sections to call on the kernel. The only issue with that of course is
-that then compat-y as a whole would need to be thrown in there.
-
-  CC [M]  /home/mcgrof/tmp/build/compat/main.o
-  CC [M]  /home/mcgrof/tmp/build/compat/compat-3.3.o
-  CC [M]  /home/mcgrof/tmp/build/compat/compat-3.4.o
-  CC [M]  /home/mcgrof/tmp/build/compat/compat-3.5.o
-  CC [M]  /home/mcgrof/tmp/build/compat/user_namespace.o
-  CC [M]  /home/mcgrof/tmp/build/compat/compat-3.6.o
-  CC [M]  /home/mcgrof/tmp/build/compat/compat-3.7.o
-  CC [M]  /home/mcgrof/tmp/build/compat/compat-3.8.o
-  CC [M]  /home/mcgrof/tmp/build/compat/compat-3.9.o
-  CC [M]  /home/mcgrof/tmp/build/compat/core.o
-Segmentation fault
-make[8]: *** [/home/mcgrof/tmp/build/compat/core.o] Error 139
-
-Luis R. Rodriguez (3):
-  compat: redefine core_initcall() and late_initcall()
-  backports: add support for voltage / current regulator subsystem
-  backports: add media subsystem drivers
-
- .blacklist.map                                     |    9 +
- backport/Makefile.kernel                           |    8 +
- backport/Makefile.real                             |    1 +
- backport/compat/Kconfig                            |   18 +
- backport/compat/main.c                             |    5 +
- backport/defconfigs/media                          |  506 ++++++++++++++++++++
- backport/defconfigs/regulator                      |   63 +++
- backport/include/linux/compat-2.6.h                |   15 +
- backport/include/linux/compat-3.3.h                |    8 +
- copy-list                                          |   44 ++
- dependencies                                       |    6 +
- lib/blacklist.sh                                   |   35 ++
- .../media/0001-media_entity_info.patch             |   67 +++
- .../regulator/0001-disable-ftrace.patch            |   74 +++
- 14 files changed, 859 insertions(+)
- create mode 100644 .blacklist.map
- create mode 100644 backport/defconfigs/media
- create mode 100644 backport/defconfigs/regulator
- create mode 100755 lib/blacklist.sh
- create mode 100644 patches/collateral-evolutions/media/0001-media_entity_info.patch
- create mode 100644 patches/collateral-evolutions/regulator/0001-disable-ftrace.patch
-
+diff --git a/backport/backport-include/linux/compat-2.6.25.h b/backport/backport-include/linux/compat-2.6.25.h
+index dd986f5..9a2afdb 100644
+--- a/backport/backport-include/linux/compat-2.6.25.h
++++ b/backport/backport-include/linux/compat-2.6.25.h
+@@ -21,10 +21,6 @@
+ #include <linux/init.h>
+ #include <linux/pci.h>
+ #include <linux/scatterlist.h>
+-#define __inet_lookup_established __inet_lookup_established_old
+-#include <net/inet_hashtables.h>
+-#undef __inet_lookup_established
+-#include <linux/compat-3.9.h>
+ 
+ struct sg_table {
+ 	struct scatterlist *sgl;        /* the list */
+@@ -57,49 +53,6 @@ int sg_alloc_table(struct sg_table *table, unsigned int nents, gfp_t gfp_mask);
+ #define SG_MAX_SINGLE_ALLOC            (PAGE_SIZE / sizeof(struct scatterlist))
+ 
+ 
+-/*
+- * Sockets in TCP_CLOSE state are _always_ taken out of the hash, so we need
+- * not check it for lookups anymore, thanks Alexey. -DaveM
+- *
+- * Local BH must be disabled here.
+- */
+-static inline struct sock *
+-	__inet_lookup_established(struct inet_hashinfo *hashinfo,
+-				  const __be32 saddr, const __be16 sport,
+-				  const __be32 daddr, const u16 hnum,
+-				  const int dif)
+-{
+-	INET_ADDR_COOKIE(acookie, saddr, daddr)
+-	const __portpair ports = INET_COMBINED_PORTS(sport, hnum);
+-	struct sock *sk;
+-	/* Optimize here for direct hit, only listening connections can
+-	 * have wildcards anyways.
+-	 */
+-	unsigned int hash = inet_ehashfn(daddr, hnum, saddr, sport);
+-	struct inet_ehash_bucket *head = inet_ehash_bucket(hashinfo, hash);
+-	rwlock_t *lock = inet_ehash_lockp(hashinfo, hash);
+-
+-	prefetch(head->chain.first);
+-	read_lock(lock);
+-	sk_for_each(sk, &head->chain) {
+-		if (INET_MATCH(sk, hash, acookie, saddr, daddr, ports, dif))
+-			goto hit; /* You sunk my battleship! */
+-	}
+-
+-	/* Must check for a TIME_WAIT'er before going to listener hash. */
+-	sk_for_each(sk, &head->twchain) {
+-		if (INET_TW_MATCH(sk, hash, acookie, saddr, daddr, ports, dif))
+-			goto hit;
+-	}
+-	sk = NULL;
+-out:
+-	read_unlock(lock);
+-	return sk;
+-hit:
+-	sock_hold(sk);
+-	goto out;
+-}
+-
+ /* Backports b718989da7 */
+ #define pci_enable_device_mem LINUX_BACKPORT(pci_enable_device_mem)
+ int __must_check pci_enable_device_mem(struct pci_dev *dev);
 -- 
-1.7.10.4
+1.8.0
 
