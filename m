@@ -1,58 +1,76 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f181.google.com ([209.85.217.181]:58296 "EHLO
-	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964787Ab3DECaE (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 4 Apr 2013 22:30:04 -0400
-Received: by mail-lb0-f181.google.com with SMTP id r11so3339086lbv.12
-        for <backports@vger.kernel.org>; Thu, 04 Apr 2013 19:30:02 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20130405021259.GM27415@gospo.rdu.redhat.com>
-References: <1364908781.8204.14.camel@jlt4.sipsolutions.net>
- <1364923241.8204.15.camel@jlt4.sipsolutions.net> <515B4994.3030309@pendre.co.uk>
- <1364937780.8204.18.camel@jlt4.sipsolutions.net> <CAB=NE6VDAekd_a--iFocHGWxdzhVXbQrBcV1HD+kHvbL68r4iw@mail.gmail.com>
- <20130405021259.GM27415@gospo.rdu.redhat.com>
-From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Date: Thu, 4 Apr 2013 19:29:42 -0700
-Message-ID: <CAB=NE6VOZpEYC=OLJ7KsMq3xwXdEqVeKxvLCOZTOCuEOUwijMQ@mail.gmail.com> (sfid-20130405_043012_934520_0A2CB82F)
-Subject: Re: [ANN] new backports project
-To: Andy Gospodarek <andy@greyhouse.net>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-	Phil Perry <phil@pendre.co.uk>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from mail-pd0-f173.google.com ([209.85.192.173]:50410 "EHLO
+	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753591Ab3DMOOE (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 10:14:04 -0400
+Received: by mail-pd0-f173.google.com with SMTP id v14so1844371pde.18
+        for <backports@vger.kernel.org>; Sat, 13 Apr 2013 07:14:03 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 3/7] compat: backport IORESOURCE_REG definition
+Date: Sat, 13 Apr 2013 07:13:40 -0700
+Message-Id: <1365862424-6530-4-git-send-email-mcgrof@do-not-panic.com> (sfid-20130413_161406_250570_6E2153E7)
+In-Reply-To: <1365862424-6530-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1365862424-6530-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Apr 4, 2013 at 7:12 PM, Andy Gospodarek <andy@greyhouse.net> wrote:
-> On Tue, Apr 02, 2013 at 02:42:56PM -0700, Luis R. Rodriguez wrote:
->> I should note that RHEL / SUSE / Debian all had the same issues --
->> running into symbols we are exporting with the same upstream name. The
->> move to use LINUX_BACKPORT() should help cure these issues in general
->> moving forward. Additionally if you really want to help in this area
->> please review commit 8ae96730 on compat.git specifically Andi Kleen's
->> work on module namespace. If we can figure out to support module
->> namespace *ourselves*, ie, without Linus having to carry this crap
->> around, then we'd solve all these issues easily, I believe we wouldn't
->> have to rely on LINUX_BACKPORT() and in fact that would also mean
->> renaming our *driver* symbols. This means for instance you can run one
->> drivers with your stock mac80211, another with the backported version,
->> should you ever have to support such crazy environement.
->>
->
-> As I was watching the patches for LINUX_BACKPORT fly past over the last
-> few weeks and making changes to allow RHEL to work with compat, I
-> wondered, "Why not add the LINUX_BACKPORT macro to each one of the
-> symbols backported?"
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Its sort of already done and committed!
+This was added to help regmap drivers avoid having
+to use some non memory mapped equivalent, IORESOURCE_IO,
+to help avoid confusion. This is simply carried over.
 
-> Of course that seems extremely tedious, but is there a compelling reason
-> why something like this should not be done -- other than possibly doing
-> as Luis suggests and finding a way to resurrect Andi Kleen's proposal
-> for module symbol namespaces -- then I think the option to begin a more
-> liberal use of the LINUX_BACKPORT macro is worth considering.
+mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains 72dcb119
+v3.7-rc1~112^2~84
 
-Johannes some idea to help with the tedious work of doing this moving
-forward for new code. I'll let him dive in when he awakens.
+commit 72dcb1197228b50bfb709ba97c2d53013c605868
+Author: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Date:   Tue Aug 7 19:42:45 2012 +0100
 
-  Luis
+    resources: Add register address resource type
+
+    Currently a bunch of I2C/SPI MFD drivers are using IORESOURCE_IO for
+    register address ranges. Since this causes some confusion due to the
+    primary use of this resource type for PCI/ISA I/O ports create a new
+    resource type IORESOURCE_REG.
+
+    Unfortunately the current resource types are specified as bitmasks and
+    there are no free bitmasks even though they really shouldn't be used as
+    such so we define the new type as IORESOURCE_IO | IORESOURCE_MEM.
+    Benjamin Herrenschmidt and Russell King have both verified that none of
+    the users in this series will have a problem with this, and no new code
+    should be affected.
+
+    This patch was written by Russell King but he found himself unable to
+    take the patch further.
+
+    Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+    Acked-by: Arnd Bergmann <arnd@arndb.de>
+    Acked-by: Haojian Zhuang <haojian.zhuang@gmail.com>
+    Tested-by: Haojian Zhuang <haojian.zhuang@gmail.com>
+    Signed-off-by: Samuel Ortiz <sameo@linux.intel.com>
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ backport/include/linux/compat-3.7.h |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/backport/include/linux/compat-3.7.h b/backport/include/linux/compat-3.7.h
+index 96662e3..c7a4ebc 100644
+--- a/backport/include/linux/compat-3.7.h
++++ b/backport/include/linux/compat-3.7.h
+@@ -17,6 +17,8 @@
+ 
+ #define VM_DONTDUMP    VM_NODUMP
+ 
++#define IORESOURCE_REG	0x00000300	/* Register offsets */
++
+ #ifdef CONFIG_USER_NS
+ 
+ #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,38))
+-- 
+1.7.10.4
+
