@@ -1,68 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:37194 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751372Ab3DKXnC (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 11 Apr 2013 19:43:02 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [RFC/WIP 08/24] backports: move COMPAT_USE_64BIT_TIME
-Date: Fri, 12 Apr 2013 01:42:35 +0200
-Message-Id: <1365723771-10660-9-git-send-email-johannes@sipsolutions.net> (sfid-20130412_014307_965712_9360A3E8)
-In-Reply-To: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
-References: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
+Received: from mail-da0-f45.google.com ([209.85.210.45]:50496 "EHLO
+	mail-da0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753520Ab3DMOOI (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 10:14:08 -0400
+Received: by mail-da0-f45.google.com with SMTP id v40so1499761dad.18
+        for <backports@vger.kernel.org>; Sat, 13 Apr 2013 07:14:07 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 4/7] gentree.py: add support to explicitly disable a config
+Date: Sat, 13 Apr 2013 07:13:41 -0700
+Message-Id: <1365862424-6530-5-git-send-email-mcgrof@do-not-panic.com> (sfid-20130413_161409_937133_E0DD782D)
+In-Reply-To: <1365862424-6530-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1365862424-6530-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+At times we may want to disable a config option completely.
+Add support for this. All you have to is list the config
+on the depdependencies file with DISABLE instead of a kernel
+version.
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/backport-include/linux/compat-3.4.h |  7 -------
- backport/backport-include/linux/compat.h     | 16 ++++++++++++++++
- 2 files changed, 16 insertions(+), 7 deletions(-)
- create mode 100644 backport/backport-include/linux/compat.h
+ gentree.py |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/backport/backport-include/linux/compat-3.4.h b/backport/backport-include/linux/compat-3.4.h
-index fafec0c..51c058e 100644
---- a/backport/backport-include/linux/compat-3.4.h
-+++ b/backport/backport-include/linux/compat-3.4.h
-@@ -102,13 +102,6 @@ static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
- extern const struct i2c_algorithm i2c_bit_algo;
- #endif
- 
--#ifdef CONFIG_X86_X32_ABI
--#define COMPAT_USE_64BIT_TIME \
--	(!!(task_pt_regs(current)->orig_ax & __X32_SYSCALL_BIT))
--#else
--#define COMPAT_USE_64BIT_TIME 0
--#endif
--
- #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,12))
- #define eth_hw_addr_random LINUX_BACKPORT(eth_hw_addr_random)
- static inline void eth_hw_addr_random(struct net_device *dev)
-diff --git a/backport/backport-include/linux/compat.h b/backport/backport-include/linux/compat.h
-new file mode 100644
-index 0000000..22db9b0
---- /dev/null
-+++ b/backport/backport-include/linux/compat.h
-@@ -0,0 +1,16 @@
-+#ifndef __BACKPORT_COMPAT_H
-+#define __BACKPORT_COMPAT_H
-+
-+#include_next <linux/compat.h>
-+#include <linux/version.h>
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
-+#ifdef CONFIG_X86_X32_ABI
-+#define COMPAT_USE_64BIT_TIME \
-+	(!!(task_pt_regs(current)->orig_ax & __X32_SYSCALL_BIT))
-+#else
-+#define COMPAT_USE_64BIT_TIME 0
-+#endif
-+#endif
-+
-+#endif /* __BACKPORT_COMPAT_H */
+diff --git a/gentree.py b/gentree.py
+index c0838ea..6dccaa9 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -502,7 +502,10 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+     for sym in tuple(deplist.keys()):
+         new = []
+         for dep in deplist[sym]:
+-            new.append('!BACKPORT_KERNEL_%s' % dep.replace('.', '_'))
++            if (dep == "DISABLE"):
++		    new.append('BACKPORT_KERNEL_%s' % dep.replace('.', '_'))
++            else:
++                    new.append('!BACKPORT_KERNEL_%s' % dep.replace('.', '_'))
+         deplist[sym] = new
+     configtree.add_dependencies(deplist)
+     git_debug_snapshot(args, "add kernel version dependencies")
 -- 
-1.8.0
+1.7.10.4
 
