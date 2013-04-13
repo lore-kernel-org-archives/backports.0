@@ -1,14 +1,14 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:44261 "EHLO
+Received: from he.sipsolutions.net ([78.46.109.217]:44271 "EHLO
 	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753678Ab3DMXzk (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 19:55:40 -0400
+	with ESMTP id S1753966Ab3DMXzt (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 19:55:49 -0400
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
 Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [RFC/RFT 42/42] backports: automatically backport EWMA lib
-Date: Sun, 14 Apr 2013 01:54:02 +0200
-Message-Id: <1365897243-31214-43-git-send-email-johannes@sipsolutions.net> (sfid-20130414_015641_884074_34F66841)
+Subject: [RFC/RFT 20/42] backports: dissolve compat-3.0.h
+Date: Sun, 14 Apr 2013 01:53:40 +0200
+Message-Id: <1365897243-31214-21-git-send-email-johannes@sipsolutions.net> (sfid-20130414_015639_107593_E0D92DB0)
 In-Reply-To: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net>
 References: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
@@ -16,143 +16,423 @@ List-ID: <backports@vger.kernel.org>
 
 From: Johannes Berg <johannes.berg@intel.com>
 
-Use the scripting to always copy the latest version.
-
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/linux/average.h | 34 -------------------
- backport/compat/Kconfig                   |  2 ++
- backport/compat/Makefile                  |  1 -
- backport/compat/average.c                 | 54 -------------------------------
- 4 files changed, 2 insertions(+), 89 deletions(-)
- delete mode 100644 backport/backport-include/linux/average.h
- delete mode 100644 backport/compat/average.c
+ backport/backport-include/linux/compat-3.0.h      | 163 ----------------------
+ backport/backport-include/linux/if_ether.h        |   5 +
+ backport/backport-include/linux/kernel.h          |  33 +++++
+ backport/backport-include/linux/mod_devicetable.h |  22 +++
+ backport/backport-include/linux/module.h          |  25 ++++
+ backport/backport-include/linux/netdevice.h       |  23 +++
+ backport/backport-include/linux/rcupdate.h        |  24 ++++
+ backport/backport-include/linux/shmem_fs.h        |  37 +++++
+ 8 files changed, 169 insertions(+), 163 deletions(-)
+ delete mode 100644 backport/backport-include/linux/compat-3.0.h
+ create mode 100644 backport/backport-include/linux/rcupdate.h
+ create mode 100644 backport/backport-include/linux/shmem_fs.h
 
-diff --git a/backport/backport-include/linux/average.h b/backport/backport-include/linux/average.h
+diff --git a/backport/backport-include/linux/compat-3.0.h b/backport/backport-include/linux/compat-3.0.h
 deleted file mode 100644
-index 2d6210e..0000000
---- a/backport/backport-include/linux/average.h
+index 0bf179d..0000000
+--- a/backport/backport-include/linux/compat-3.0.h
 +++ /dev/null
-@@ -1,34 +0,0 @@
+@@ -1,163 +0,0 @@
+-#ifndef LINUX_3_0_COMPAT_H
+-#define LINUX_3_0_COMPAT_H
+-
 -#include <linux/version.h>
 -
--#ifndef CPTCFG_BACKPORT_BUILD_AVERAGE
--#include_next <linux/average.h>
--#else
--/* Exponentially weighted moving average (EWMA) */
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0))
 -
--/* For more documentation see lib/average.c */
+-#include <linux/rcupdate.h>
 -
--struct ewma {
--	unsigned long internal;
--	unsigned long factor;
--	unsigned long weight;
--};
+-/* This pulls-in a lot of non-exported symbol backports
+- * on kernels older than 2.6.32. There's no harm for not
+- * making this available on kernels < 2.6.32. */
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32))
+-#include <linux/pagemap.h>
 -
--#define ewma_init LINUX_BACKPORT(ewma_init)
--extern void ewma_init(struct ewma *avg, unsigned long factor,
--		      unsigned long weight);
--
--#define ewma_add LINUX_BACKPORT(ewma_add)
--extern struct ewma *ewma_add(struct ewma *avg, unsigned long val);
--
--#define ewma_read LINUX_BACKPORT(ewma_read)
--/**
-- * ewma_read() - Get average value
-- * @avg: Average structure
+-/* This backports the 2nd part of:
 - *
-- * Returns the average value held in @avg.
+- * commit d9d90e5eb70e09903dadff42099b6c948f814050
+- * Author: Hugh Dickins <hughd@google.com>
+- * Date:   Mon Jun 27 16:18:04 2011 -0700
+- *
+- *	tmpfs: add shmem_read_mapping_page_gfp
+- *
+- * First part is in compat-3.0.c.
 - */
--static inline unsigned long ewma_read(const struct ewma *avg)
+-#define shmem_read_mapping_page_gfp LINUX_BACKPORT(shmem_read_mapping_page_gfp)
+-extern struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
+-						pgoff_t index, gfp_t gfp);
+-
+-
+-#define shmem_read_mapping_page LINUX_BACKPORT(shmem_read_mapping_page)
+-static inline struct page *shmem_read_mapping_page(
+-                               struct address_space *mapping, pgoff_t index)
 -{
--	return avg->internal >> avg->factor;
+-       return shmem_read_mapping_page_gfp(mapping, index,
+-                                       mapping_gfp_mask(mapping));
 -}
--#endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,37)) */
-diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
-index df58dcc..0a2499e 100644
---- a/backport/compat/Kconfig
-+++ b/backport/compat/Kconfig
-@@ -116,6 +116,8 @@ config BACKPORT_BUILD_AVERAGE
- 	depends on !AVERAGE
- 	default y if BACKPORT_USERSEL_BUILD_ALL
- 	default y if BACKPORT_AVERAGE
-+	#h-file linux/average.h
-+	#c-file lib/average.c
- 
- config BACKPORT_AVERAGE
- 	bool
-diff --git a/backport/compat/Makefile b/backport/compat/Makefile
-index 59584f1..41f223f 100644
---- a/backport/compat/Makefile
-+++ b/backport/compat/Makefile
-@@ -24,7 +24,6 @@ compat-$(CPTCFG_BACKPORT_KERNEL_2_6_34) += compat-2.6.34.o
- compat-$(CPTCFG_BACKPORT_KERNEL_2_6_35) += compat-2.6.35.o
- compat-$(CPTCFG_BACKPORT_KERNEL_2_6_36) += compat-2.6.36.o
- compat-$(CPTCFG_BACKPORT_KERNEL_2_6_37) += compat-2.6.37.o
--compat-$(CPTCFG_BACKPORT_BUILD_AVERAGE) += average.o
- compat-$(CPTCFG_BACKPORT_KERNEL_2_6_39) += compat-2.6.39.o kstrtox.o
- compat-$(CPTCFG_BACKPORT_KERNEL_3_0) += compat-3.0.o
- compat-$(CPTCFG_BACKPORT_KERNEL_3_1) += compat-3.1.o
-diff --git a/backport/compat/average.c b/backport/compat/average.c
-deleted file mode 100644
-index b7a51a1..0000000
---- a/backport/compat/average.c
-+++ /dev/null
-@@ -1,54 +0,0 @@
+-#endif
+-
+-
 -/*
-- * Copyright 2010    Hauke Mehrtens <hauke@hauke-m.de>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * Compatibility file for Linux wireless for kernels 2.6.38.
+- * since commit 1c5cae815d19ffe02bdfda1260949ef2b1806171
+- * "net: call dev_alloc_name from register_netdevice" dev_alloc_name is
+- * called automatically. This is not implemented in older kernel
+- * versions so it will result in device wrong names.
 - */
--
--#include <linux/average.h>
--#include <linux/module.h>
--#include <linux/bug.h>
--#include <linux/log2.h>
--
--/**
-- * ewma_init() - Initialize EWMA parameters
-- * @avg: Average structure
-- * @factor: Factor to use for the scaled up internal value. The maximum value
-- *	of averages can be ULONG_MAX/(factor*weight). For performance reasons
-- *	factor has to be a power of 2.
-- * @weight: Exponential weight, or decay rate. This defines how fast the
-- *	influence of older values decreases. For performance reasons weight has
-- *	to be a power of 2.
-- *
-- * Initialize the EWMA parameters for a given struct ewma @avg.
-- */
--void ewma_init(struct ewma *avg, unsigned long factor, unsigned long weight)
+-static inline int register_netdevice_name(struct net_device *dev)
 -{
--	WARN_ON(!is_power_of_2(weight) || !is_power_of_2(factor));
+-	int err;
 -
--	avg->weight = ilog2(weight);
--	avg->factor = ilog2(factor);
--	avg->internal = 0;
+-	if (strchr(dev->name, '%')) {
+-		err = dev_alloc_name(dev, dev->name);
+-		if (err < 0)
+-			return err;
+-	}
+-
+-	return register_netdevice(dev);
 -}
--EXPORT_SYMBOL_GPL(ewma_init);
 -
--/**
-- * ewma_add() - Exponentially weighted moving average (EWMA)
-- * @avg: Average structure
-- * @val: Current value
-- *
-- * Add a sample to the average.
-- */
--struct ewma *ewma_add(struct ewma *avg, unsigned long val)
+-#define register_netdevice(dev) register_netdevice_name(dev)
+-
+-/* BCMA core, see drivers/bcma/ */
+-#ifndef BCMA_CORE
+-/* Broadcom's specific AMBA core, see drivers/bcma/ */
+-struct bcma_device_id {
+-	__u16	manuf;
+-	__u16	id;
+-	__u8	rev;
+-	__u8	class;
+-};
+-#define BCMA_CORE(_manuf, _id, _rev, _class)  \
+-	{ .manuf = _manuf, .id = _id, .rev = _rev, .class = _class, }
+-#define BCMA_CORETABLE_END  \
+-	{ 0, },
+-
+-#define BCMA_ANY_MANUF		0xFFFF
+-#define BCMA_ANY_ID		0xFFFF
+-#define BCMA_ANY_REV		0xFF
+-#define BCMA_ANY_CLASS		0xFF
+-#endif /* BCMA_CORE */
+-
+-#define mac_pton LINUX_BACKPORT(mac_pton)
+-int mac_pton(const char *s, u8 *mac);
+-
+-int __must_check kstrtoull_from_user(const char __user *s, size_t count, unsigned int base, unsigned long long *res);
+-int __must_check kstrtoll_from_user(const char __user *s, size_t count, unsigned int base, long long *res);
+-int __must_check kstrtoul_from_user(const char __user *s, size_t count, unsigned int base, unsigned long *res);
+-int __must_check kstrtol_from_user(const char __user *s, size_t count, unsigned int base, long *res);
+-int __must_check kstrtouint_from_user(const char __user *s, size_t count, unsigned int base, unsigned int *res);
+-int __must_check kstrtoint_from_user(const char __user *s, size_t count, unsigned int base, int *res);
+-int __must_check kstrtou16_from_user(const char __user *s, size_t count, unsigned int base, u16 *res);
+-int __must_check kstrtos16_from_user(const char __user *s, size_t count, unsigned int base, s16 *res);
+-int __must_check kstrtou8_from_user(const char __user *s, size_t count, unsigned int base, u8 *res);
+-int __must_check kstrtos8_from_user(const char __user *s, size_t count, unsigned int base, s8 *res);
+-
+-static inline int __must_check kstrtou64_from_user(const char __user *s, size_t count, unsigned int base, u64 *res)
 -{
--	avg->internal = avg->internal  ?
--		(((avg->internal << avg->weight) - avg->internal) +
--			(val << avg->factor)) >> avg->weight :
--		(val << avg->factor);
--	return avg;
+-	return kstrtoull_from_user(s, count, base, res);
 -}
--EXPORT_SYMBOL_GPL(ewma_add);
 -
+-static inline int __must_check kstrtos64_from_user(const char __user *s, size_t count, unsigned int base, s64 *res)
+-{
+-	return kstrtoll_from_user(s, count, base, res);
+-}
+-
+-static inline int __must_check kstrtou32_from_user(const char __user *s, size_t count, unsigned int base, u32 *res)
+-{
+-	return kstrtouint_from_user(s, count, base, res);
+-}
+-
+-static inline int __must_check kstrtos32_from_user(const char __user *s, size_t count, unsigned int base, s32 *res)
+-{
+-	return kstrtoint_from_user(s, count, base, res);
+-}
+-
+-/* 
+- * This adds a nested function everywhere kfree_rcu() was called. This
+- * function frees the memory and is given as a function to call_rcu().
+- * The rcu callback could happen every time also after the module was
+- *  unloaded and this will cause problems.
+- */
+-#if !defined(kfree_rcu)
+-#define kfree_rcu(data, rcuhead)		do {			\
+-		void __kfree_rcu_fn(struct rcu_head *rcu_head)		\
+-		{							\
+-			void *___ptr;					\
+-			___ptr = container_of(rcu_head, typeof(*(data)), rcuhead);\
+-			kfree(___ptr);					\
+-		}							\
+-		call_rcu(&(data)->rcuhead, __kfree_rcu_fn);		\
+-	} while (0)
+-#endif
+-#ifdef MODULE
+-
+-/*
+- * The define overwriting module_exit is based on the original module_exit
+- * which looks like this:
+- * #define module_exit(exitfn)                                    \
+- *         static inline exitcall_t __exittest(void)               \
+- *         { return exitfn; }                                      \
+- *         void cleanup_module(void) __attribute__((alias(#exitfn)));
+- *
+- * We replaced the call to the actual function exitfn() with a call to our
+- * function which calls the original exitfn() and then rcu_barrier()
+- *
+- * As a module will not be unloaded that ofter it should not have a big
+- * performance impact when rcu_barrier() is called on every module exit,
+- * also when no kfree_rcu() backport is used in that module.
+- */
+-#undef module_exit
+-#define module_exit(exitfn)						\
+-	static void __exit __exit_compat(void)				\
+-	{								\
+-		exitfn();						\
+-		rcu_barrier();						\
+-	}								\
+-	void cleanup_module(void) __attribute__((alias("__exit_compat")));
+-
+-#endif
+-
+-#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0)) */
+-
+-#endif /* LINUX_3_0_COMPAT_H */
+diff --git a/backport/backport-include/linux/if_ether.h b/backport/backport-include/linux/if_ether.h
+index e5f103e..b47722c 100644
+--- a/backport/backport-include/linux/if_ether.h
++++ b/backport/backport-include/linux/if_ether.h
+@@ -18,4 +18,9 @@
+ #define ETH_P_TDLS	0x890D          /* TDLS */
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0)
++#define mac_pton LINUX_BACKPORT(mac_pton)
++int mac_pton(const char *s, u8 *mac);
++#endif
++
+ #endif /* __BACKPORT_IF_ETHER_H */
+diff --git a/backport/backport-include/linux/kernel.h b/backport/backport-include/linux/kernel.h
+index 5dc8c61..7d22b74 100644
+--- a/backport/backport-include/linux/kernel.h
++++ b/backport/backport-include/linux/kernel.h
+@@ -59,4 +59,37 @@ static inline char *hex_byte_pack(char *buf, u8 byte)
+ 	({ unsigned long long _tmp = (ll)+(d)-1; do_div(_tmp, d); _tmp; })
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0)
++int __must_check kstrtoull_from_user(const char __user *s, size_t count, unsigned int base, unsigned long long *res);
++int __must_check kstrtoll_from_user(const char __user *s, size_t count, unsigned int base, long long *res);
++int __must_check kstrtoul_from_user(const char __user *s, size_t count, unsigned int base, unsigned long *res);
++int __must_check kstrtol_from_user(const char __user *s, size_t count, unsigned int base, long *res);
++int __must_check kstrtouint_from_user(const char __user *s, size_t count, unsigned int base, unsigned int *res);
++int __must_check kstrtoint_from_user(const char __user *s, size_t count, unsigned int base, int *res);
++int __must_check kstrtou16_from_user(const char __user *s, size_t count, unsigned int base, u16 *res);
++int __must_check kstrtos16_from_user(const char __user *s, size_t count, unsigned int base, s16 *res);
++int __must_check kstrtou8_from_user(const char __user *s, size_t count, unsigned int base, u8 *res);
++int __must_check kstrtos8_from_user(const char __user *s, size_t count, unsigned int base, s8 *res);
++
++static inline int __must_check kstrtou64_from_user(const char __user *s, size_t count, unsigned int base, u64 *res)
++{
++	return kstrtoull_from_user(s, count, base, res);
++}
++
++static inline int __must_check kstrtos64_from_user(const char __user *s, size_t count, unsigned int base, s64 *res)
++{
++	return kstrtoll_from_user(s, count, base, res);
++}
++
++static inline int __must_check kstrtou32_from_user(const char __user *s, size_t count, unsigned int base, u32 *res)
++{
++	return kstrtouint_from_user(s, count, base, res);
++}
++
++static inline int __must_check kstrtos32_from_user(const char __user *s, size_t count, unsigned int base, s32 *res)
++{
++	return kstrtoint_from_user(s, count, base, res);
++}
++#endif
++
+ #endif /* __BACKPORT_KERNEL_H */
+diff --git a/backport/backport-include/linux/mod_devicetable.h b/backport/backport-include/linux/mod_devicetable.h
+index 5ad4c06..59321af 100644
+--- a/backport/backport-include/linux/mod_devicetable.h
++++ b/backport/backport-include/linux/mod_devicetable.h
+@@ -10,4 +10,26 @@
+ #define HID_GROUP_ANY                          0x0000
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0)
++#ifndef BCMA_CORE
++/* Broadcom's specific AMBA core, see drivers/bcma/ */
++struct bcma_device_id {
++	__u16	manuf;
++	__u16	id;
++	__u8	rev;
++	__u8	class;
++};
++#define BCMA_CORE(_manuf, _id, _rev, _class)  \
++	{ .manuf = _manuf, .id = _id, .rev = _rev, .class = _class, }
++#define BCMA_CORETABLE_END  \
++	{ 0, },
++
++#define BCMA_ANY_MANUF		0xFFFF
++#define BCMA_ANY_ID		0xFFFF
++#define BCMA_ANY_REV		0xFF
++#define BCMA_ANY_CLASS		0xFF
++#endif /* BCMA_CORE */
++
++#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0)) */
++
+ #endif /* __BACKPORT_MOD_DEVICETABLE_H */
+diff --git a/backport/backport-include/linux/module.h b/backport/backport-include/linux/module.h
+index 8112ebc..6bddc76 100644
+--- a/backport/backport-include/linux/module.h
++++ b/backport/backport-include/linux/module.h
+@@ -1,6 +1,7 @@
+ #ifndef __BACKPORT_LINUX_MODULE_H
+ #define __BACKPORT_LINUX_MODULE_H
+ #include_next <linux/module.h>
++#include <linux/rcupdate.h>
+ 
+ /*
+  * The define overwriting module_init is based on the original module_init
+@@ -34,4 +35,28 @@ extern void backport_dependency_symbol(void);
+ 	int init_module(void) __attribute__((alias("__init_backport")));\
+ 	BACKPORT_MOD_VERSIONS
+ 
++/*
++ * The define overwriting module_exit is based on the original module_exit
++ * which looks like this:
++ * #define module_exit(exitfn)                                    \
++ *         static inline exitcall_t __exittest(void)               \
++ *         { return exitfn; }                                      \
++ *         void cleanup_module(void) __attribute__((alias(#exitfn)));
++ *
++ * We replaced the call to the actual function exitfn() with a call to our
++ * function which calls the original exitfn() and then rcu_barrier()
++ *
++ * As a module will not be unloaded that ofter it should not have a big
++ * performance impact when rcu_barrier() is called on every module exit,
++ * also when no kfree_rcu() backport is used in that module.
++ */
++#undef module_exit
++#define module_exit(exitfn)						\
++	static void __exit __exit_compat(void)				\
++	{								\
++		exitfn();						\
++		rcu_barrier();						\
++	}								\
++	void cleanup_module(void) __attribute__((alias("__exit_compat")));
++
+ #endif /* __BACKPORT_LINUX_MODULE_H */
+diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+index 441db72..4b2a1ea 100644
+--- a/backport/backport-include/linux/netdevice.h
++++ b/backport/backport-include/linux/netdevice.h
+@@ -64,4 +64,27 @@ static inline void netdev_reset_queue(struct net_device *dev_queue)
+ #endif /* CONFIG_BQL */
+ #endif /* < 3.3 */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0)
++/*
++ * since commit 1c5cae815d19ffe02bdfda1260949ef2b1806171
++ * "net: call dev_alloc_name from register_netdevice" dev_alloc_name is
++ * called automatically. This is not implemented in older kernel
++ * versions so it will result in device wrong names.
++ */
++static inline int register_netdevice_name(struct net_device *dev)
++{
++	int err;
++
++	if (strchr(dev->name, '%')) {
++		err = dev_alloc_name(dev, dev->name);
++		if (err < 0)
++			return err;
++	}
++
++	return register_netdevice(dev);
++}
++
++#define register_netdevice(dev) register_netdevice_name(dev)
++#endif
++
+ #endif /* __BACKPORT_NETDEVICE_H */
+diff --git a/backport/backport-include/linux/rcupdate.h b/backport/backport-include/linux/rcupdate.h
+new file mode 100644
+index 0000000..9bfa939
+--- /dev/null
++++ b/backport/backport-include/linux/rcupdate.h
+@@ -0,0 +1,24 @@
++#ifndef __BACKPORT_LINUX_RCUPDATE_H
++#define __BACKPORT_LINUX_RCUPDATE_H
++#include_next <linux/rcupdate.h>
++
++/* 
++ * This adds a nested function everywhere kfree_rcu() was called. This
++ * function frees the memory and is given as a function to call_rcu().
++ * The rcu callback could happen every time also after the module was
++ * unloaded and this will cause problems. To address that problem, we
++ * put rcu_barrier() into each module_exit() in module.h.
++ */
++#if !defined(kfree_rcu)
++#define kfree_rcu(data, rcuhead)		do {			\
++		void __kfree_rcu_fn(struct rcu_head *rcu_head)		\
++		{							\
++			void *___ptr;					\
++			___ptr = container_of(rcu_head, typeof(*(data)), rcuhead);\
++			kfree(___ptr);					\
++		}							\
++		call_rcu(&(data)->rcuhead, __kfree_rcu_fn);		\
++	} while (0)
++#endif
++
++#endif /* __BACKPORT_LINUX_RCUPDATE_H */
+diff --git a/backport/backport-include/linux/shmem_fs.h b/backport/backport-include/linux/shmem_fs.h
+new file mode 100644
+index 0000000..f32de7a
+--- /dev/null
++++ b/backport/backport-include/linux/shmem_fs.h
+@@ -0,0 +1,37 @@
++#ifndef __BACKPORT_LINUX_SHMEM_FS_H
++#define __BACKPORT_LINUX_SHMEM_FS_H
++#include_next <linux/shmem_fs.h>
++
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0)
++/* This pulls-in a lot of non-exported symbol backports
++ * on kernels older than 2.6.32. There's no harm for not
++ * making this available on kernels < 2.6.32. */
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32))
++#include <linux/pagemap.h>
++/* This backports the 2nd part of:
++ *
++ * commit d9d90e5eb70e09903dadff42099b6c948f814050
++ * Author: Hugh Dickins <hughd@google.com>
++ * Date:   Mon Jun 27 16:18:04 2011 -0700
++ *
++ *	tmpfs: add shmem_read_mapping_page_gfp
++ *
++ * First part is in compat-3.0.c.
++ */
++#define shmem_read_mapping_page_gfp LINUX_BACKPORT(shmem_read_mapping_page_gfp)
++extern struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
++						pgoff_t index, gfp_t gfp);
++
++
++#define shmem_read_mapping_page LINUX_BACKPORT(shmem_read_mapping_page)
++static inline struct page *shmem_read_mapping_page(
++                               struct address_space *mapping, pgoff_t index)
++{
++       return shmem_read_mapping_page_gfp(mapping, index,
++                                       mapping_gfp_mask(mapping));
++}
++#endif
++#endif
++
++#endif /* __BACKPORT_LINUX_SHMEM_FS_H */
 -- 
 1.8.0
 
