@@ -1,44 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from ebb06.tieto.com ([131.207.168.38]:64112 "EHLO ebb06.tieto.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754117Ab3DKJRU (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 11 Apr 2013 05:17:20 -0400
-From: Szymon Janc <szymon.janc@tieto.com>
-To: Eugene Krasnikov <k.eugene.e@gmail.com>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	linux-wireless <linux-wireless@vger.kernel.org>
-Subject: Re: include/linux/device.h:715:38: error: 'THIS_MODULE' undeclared
-Date: Thu, 11 Apr 2013 11:17:17 +0200
-Message-ID: <3231828.tgzQTMkMFI@uw000953> (sfid-20130411_111723_496419_3D16D64E)
-In-Reply-To: <CAFSJ42a5PsnbhgEaWWWZTBDVKhKUGR4xWY1pEXPc-UaQcC9AFA@mail.gmail.com>
-References: <CAFSJ42ZZH7Y+MPUURG_hQRuwhv8UKkF5sQQebsTjhH0uT07rjA@mail.gmail.com> <8701347.YaW7b4Fxgt@uw000953> <CAFSJ42a5PsnbhgEaWWWZTBDVKhKUGR4xWY1pEXPc-UaQcC9AFA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Received: from he.sipsolutions.net ([78.46.109.217]:44355 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752955Ab3DNAR0 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 13 Apr 2013 20:17:26 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.0:DHE_RSA_CAMELLIA_256_CBC_SHA1:256)
+	(Exim 4.80)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1URAdI-0004L6-Gk
+	for backports@vger.kernel.org; Sun, 14 Apr 2013 02:17:24 +0200
+Message-ID: <1365898643.25020.3.camel@jlt4.sipsolutions.net> (sfid-20130414_021729_513471_C799BC04)
+Subject: Re: [RFC/RFT 00/42] explode header files
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Date: Sun, 14 Apr 2013 02:17:23 +0200
+In-Reply-To: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net> (sfid-20130414_015412_493914_07CF2B64)
+References: <1365897243-31214-1-git-send-email-johannes@sipsolutions.net>
+	 (sfid-20130414_015412_493914_07CF2B64)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wednesday 10 of April 2013 17:21:57 Eugene Krasnikov wrote:
 
-Hi,
+> Before I rebased onto the media drivers this was pretty much
+> passing ckmake --allyesconfig, now minor issues could have
+> come up that I need to solve, but generally this should be
+> fine. I did solve the issues that I saw in ckmake before.
 
-> Thanx for reply. That also works.
-> But is it a solution or workaround? May be there should be smarter
-> check than just a kernel version?
+Well, ckmake isn't quite happy, it's missing I2C_CLIENT_SCCB ... that
+seems to be more of an issue with the media backport? Anyway, that'll be
+trivial to fix.
 
-Note that android kernel is not vanilla kernel.
+johannes
 
-If you have custom kernel (e.g android kernel) with extra features backported
-you need to enable support for those features in compat-drivers for
-your kernel i.e. mark it as applicable for lower kernel version (comparing to
-vanilla kernel which introduced this feature)
-
-The 'proper' solution would be to have support for Android (or CM) kernel in
-compat-drivers (same as eg. RH kernel would). But Android kernels varies
-heavily among devices and it could be hard to support all of them. It is also
-worth noting that often custom non-mainlined code doesn't even build when
-configured as module e.g. bluesleep driver from grouper kernel. This is extra
-obstacle as one would have to fix or disable such offending code.
-
--- 
-BR
-Szymon Janc
