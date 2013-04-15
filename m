@@ -1,678 +1,391 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:57686 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161970Ab3DEQie (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 5 Apr 2013 12:38:34 -0400
-Received: by mail-pd0-f182.google.com with SMTP id 3so2086976pdj.27
-        for <backports@vger.kernel.org>; Fri, 05 Apr 2013 09:38:33 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:55910 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755935Ab3DOU3l (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 15 Apr 2013 16:29:41 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 2/5] compat: add HDMI library support
-Date: Fri,  5 Apr 2013 09:38:16 -0700
-Message-Id: <1365179899-7984-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20130405_183836_408569_81C568EB)
-In-Reply-To: <1365179899-7984-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1365179899-7984-1-git-send-email-mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH] devel: add back scripts for fetching kernels
+Date: Mon, 15 Apr 2013 22:28:47 +0200
+Message-Id: <1366057727-6630-1-git-send-email-hauke@hauke-m.de> (sfid-20130415_222951_933306_CD0D0400)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+these scripts are copied from compats bin directory.
 
-HDMI was being carried over through compat but that
-was a mistake as all its doing is providing helper
-routines. It was also defining it as a module which
-was tainting the kernel! This fixes that.
-
-mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains \
-	f142d3bd556c5e82e9bb3d33d07d6708702ea4ce
-v3.9-rc1~83^2~1^2~4
-
-commit f142d3bd556c5e82e9bb3d33d07d6708702ea4ce
-Author: Thierry Reding <thierry.reding@avionic-design.de>
-Date:   Wed Nov 21 15:29:29 2012 +0100
-
-    video: Add generic HDMI infoframe helpers
-
-    Add generic helpers to pack HDMI infoframes into binary buffers.
-
-    Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
-    Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.65              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.38              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.32              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.9               [  OK  ]
-25  3.8.0               [  OK  ]
-26  3.9-rc1             [  OK  ]
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+I updated the kernels referenced in get-compat-kernels.
 ---
- backport/compat/Kconfig       |   14 ++
- backport/compat/Makefile      |    1 +
- backport/compat/hdmi.c        |  308 +++++++++++++++++++++++++++++++++++++++++
- backport/include/linux/hdmi.h |  240 ++++++++++++++++++++++++++++++++
- 4 files changed, 563 insertions(+)
- create mode 100644 backport/compat/hdmi.c
- create mode 100644 backport/include/linux/hdmi.h
+ devel/get-compat-kernels |  265 ++++++++++++++++++++++++++++++++++++++++++++++
+ devel/get-compat-trees   |   87 +++++++++++++++
+ 2 files changed, 352 insertions(+)
+ create mode 100755 devel/get-compat-kernels
+ create mode 100755 devel/get-compat-trees
 
-diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
-index 14f401c..03320f7 100644
---- a/backport/compat/Kconfig
-+++ b/backport/compat/Kconfig
-@@ -138,6 +138,20 @@ config BACKPORT_BUILD_DMA_SHARED_BUFFER
- config BACKPORT_DMA_SHARED_BUFFER
- 	bool
- 
-+config BACKPORT_BUILD_HDMI
-+	bool
-+	# not possible on kernel < 3.0
-+	depends on !BACKPORT_KERNEL_3_0
-+	# don't build if base kernel has it, except on kernel < 3.9
-+	depends on !HDMI || BACKPORT_KERNEL_3_9
-+	# build for testing
-+	default y if BACKPORT_USERSEL_BUILD_ALL
-+	# build if a driver needs it
-+	default y if BACKPORT_HDMI
-+
-+config BACKPORT_HDMI
-+	bool
-+
- config BACKPORT_USERSEL_BUILD_ALL
- 	bool "Build all compat code"
- 	help
-diff --git a/backport/compat/Makefile b/backport/compat/Makefile
-index e738e2f..a4c789b 100644
---- a/backport/compat/Makefile
-+++ b/backport/compat/Makefile
-@@ -5,6 +5,7 @@ ccflags-y += -DBACKPORTED_KERNEL_NAME=\"$(BACKPORTED_KERNEL_NAME)\"
- obj-m += compat.o
- compat-y += main.o
- compat-$(CPTCFG_BACKPORT_BUILD_DMA_SHARED_BUFFER) += dma-buf.o
-+compat-$(CPTCFG_BACKPORT_BUILD_HDMI) += hdmi.o
- 
- obj-$(CPTCFG_BACKPORT_BUILD_FW_LOADER) += compat_firmware_class.o
- 
-diff --git a/backport/compat/hdmi.c b/backport/compat/hdmi.c
-new file mode 100644
-index 0000000..396e47f
+diff --git a/devel/get-compat-kernels b/devel/get-compat-kernels
+new file mode 100755
+index 0000000..84fb9a6
 --- /dev/null
-+++ b/backport/compat/hdmi.c
-@@ -0,0 +1,308 @@
-+/*
-+ * Copyright (C) 2012 Avionic Design GmbH
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
++++ b/devel/get-compat-kernels
+@@ -0,0 +1,265 @@
++#!/bin/bash
++#
++# Copyright (C) 2012, Luis R. Rodriguez <mcgrof@frijolero.org>
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License version 2 as
++# published by the Free Software Foundation.
++#
++# You can use this script to install all mainline kernels used
++# to test compile the Linux kernel compatibility module. You can
++# then use ckmake to cross compile against all supported kernels.
 +
-+#include <linux/bitops.h>
-+#include <linux/errno.h>
-+#include <linux/export.h>
-+#include <linux/hdmi.h>
-+#include <linux/string.h>
++# Pretty colors
++GREEN="\033[01;32m"
++YELLOW="\033[01;33m"
++NORMAL="\033[00m"
++BLUE="\033[34m"
++RED="\033[31m"
++PURPLE="\033[35m"
++CYAN="\033[36m"
++UNDERLINE="\033[02m"
 +
-+static void hdmi_infoframe_checksum(void *buffer, size_t size)
-+{
-+	u8 *ptr = buffer;
-+	u8 csum = 0;
-+	size_t i;
++KERNELS=""
++KPATH="http://kernel.ubuntu.com/~kernel-ppa/mainline/"
 +
-+	/* compute checksum */
-+	for (i = 0; i < size; i++)
-+		csum += ptr[i];
++FORCE="0"
++KSRC_PREFIX=
++# Check whether we're running as root or not
++# If we're root stuff things into /usr/src and /lib/modules
++# else, use $HOME/compat-ksrc for enabling user-mode builds.
++if [[ "$EUID" != "0" ]]; then
++	KSRC_PREFIX="$HOME/compat-ksrc"
++else
++	KSRC_PREFIX="${PWD}/compat-ksrc"
++fi
 +
-+	ptr[3] = 256 - csum;
++
++# Create target directories if they doesn't exist
++mkdir -p $KSRC_PREFIX/{usr/src,lib/modules}
++
++# List of currently supported kernels that will be downloaded
++KERNELS="$KERNELS ${KPATH}/v2.6.24/linux-headers-2.6.24-020624_2.6.24-020624_all.deb"
++KERNELS="$KERNELS ${KPATH}/v2.6.25/linux-headers-2.6.25-020625_2.6.25-020625_all.deb"
++KERNELS="$KERNELS ${KPATH}/v2.6.26/linux-headers-2.6.26-020626_2.6.26-020626_all.deb"
++KERNELS="$KERNELS ${KPATH}/v2.6.27/linux-headers-2.6.27-020627_2.6.27-020627_all.deb"
++KERNELS="$KERNELS ${KPATH}/v2.6.28.10/linux-headers-2.6.28-02062810_2.6.28-02062810_all.deb"
++KERNELS="$KERNELS ${KPATH}/v2.6.29.6/linux-headers-2.6.29-02062906_2.6.29-02062906_all.deb"
++KERNELS="$KERNELS ${KPATH}/v2.6.30.10/linux-headers-2.6.30-02063010_2.6.30-02063010_all.deb"
++KERNELS="$KERNELS ${KPATH}/v2.6.31.13-karmic/linux-headers-2.6.31-02063113_2.6.31-02063113_all.deb"
++KERNELS="$KERNELS ${KPATH}/v2.6.32.60-lucid/linux-headers-2.6.32-02063260_2.6.32-02063260.201210082135_all.deb"
++KERNELS="$KERNELS ${KPATH}/v2.6.33.20-maverick/linux-headers-2.6.33-02063320_2.6.33-02063320.201111071735_all.deb"
++KERNELS="$KERNELS ${KPATH}/v2.6.34.14-maverick/linux-headers-2.6.34-02063414_2.6.34-02063414.201301162135_all.deb"
++KERNELS="$KERNELS ${KPATH}/v2.6.35.13-original-maverick/linux-headers-2.6.35-02063513_2.6.35-02063513.201107261012_all.deb"
++KERNELS="$KERNELS ${KPATH}/v2.6.36.4-natty/linux-headers-2.6.36-02063604_2.6.36-02063604.201102180911_all.deb"
++KERNELS="$KERNELS ${KPATH}/v2.6.37.6-natty/linux-headers-2.6.37-02063706_2.6.37-02063706.201103281005_all.deb"
++KERNELS="$KERNELS ${KPATH}/v2.6.38.8-natty/linux-headers-2.6.38-02063808_2.6.38-02063808.201106040910_all.deb"
++KERNELS="$KERNELS ${KPATH}/v2.6.39.4-oneiric/linux-headers-2.6.39-02063904_2.6.39-02063904.201108040905_all.deb"
++KERNELS="$KERNELS ${KPATH}/v3.0.73-oneiric/linux-headers-3.0.73-030073_3.0.73-030073.201304121235_all.deb"
++KERNELS="$KERNELS ${KPATH}/v3.1.10-precise/linux-headers-3.1.10-030110_3.1.10-030110.201201181135_all.deb"
++KERNELS="$KERNELS ${KPATH}/v3.2.43-precise/linux-headers-3.2.43-030243_3.2.43-030243.201304092335_all.deb"
++KERNELS="$KERNELS ${KPATH}/v3.3.8-quantal/linux-headers-3.3.8-030308_3.3.8-030308.201206041356_all.deb"
++KERNELS="$KERNELS ${KPATH}/v3.4.40-quantal/linux-headers-3.4.40-030440_3.4.40-030440.201304121354_all.deb"
++KERNELS="$KERNELS ${KPATH}/v3.5.7-quantal/linux-headers-3.5.7-030507_3.5.7-030507.201210130556_all.deb"
++KERNELS="$KERNELS ${KPATH}/v3.6.11-raring/linux-headers-3.6.11-030611_3.6.11-030611.201212171335_all.deb"
++KERNELS="$KERNELS ${KPATH}/v3.7.10-raring/linux-headers-3.7.10-030710_3.7.10-030710.201302271235_all.deb"
++KERNELS="$KERNELS ${KPATH}/v3.8.7-raring/linux-headers-3.8.7-030807_3.8.7-030807.201304121430_all.deb"
++KERNELS="$KERNELS ${KPATH}/v3.9-rc6-raring/linux-headers-3.9.0-030900rc6_3.9.0-030900rc6.201304080035_all.deb"
++
++# Number of kernels
++NUM_KERNELS=$(echo $KERNELS | wc -w)
++
++# ~ 101 MiB for installed space on $KSRC_PREFIX/usr/src/ and $KSRC_PREFIX/lib/modules/
++SPACE_PER_KERNEL="101"
++
++# ~13 MiB of both deb files
++SPACE_PER_KERNEL_DEB="13"
++
++function get_ubuntu_kernels() {
++
++	ARCH=$(uname -m)
++	TARGET=""
++
++	case $ARCH in
++	"x86_64")
++		TARGET="amd64"
++		;;
++	"i686")
++		TARGET="i386"
++		;;
++	*)
++		echo -e "Unsupported architecture"
++		exit
++		;;
++	esac
++
++	mkdir -p debs
++	cd debs
++
++	for i in $KERNELS; do
++		FILE=$(basename $i)
++		PKG=$(echo $FILE | awk -F"_" '{print $1}')
++
++		# Do not download if installed or deb exists
++		if [[ ! -d $KSRC_PREFIX/usr/src/$PKG && ! -f $FILE ]]; then
++			# Download the _all.deb
++			wget -c $i
++
++			# Download the generic-ARCH headers
++			GENERIC_DEB=`echo $i | sed -e "s:\(.*\)_\(.*\)_all.deb:\1-generic_\2_$TARGET.deb:"`
++			wget -c $GENERIC_DEB
++		fi
++	done
++
++	# List of downloaded debs
++	DEB_LIST=`ls linux-*.deb 2>/dev/null`
++
++	if [[ -z $DEB_LIST ]]; then
++		echo "All kernel sources are found in $KSRC_PREFIX/usr/src."
++		exit
++	fi
++
++	# Create a temporary directory first
++	TEMP_DIR=`mktemp -d`
++
++	for deb in $DEB_LIST; do
++		DIR_NAME=$(echo $deb | awk -F"_" '{print $1}')
++		if [[ ! -d $KSRC_PREFIX/usr/src/$DIR_NAME ]]; then
++			echo "Extracting $deb..."
++			ar p $deb data.tar.gz | tar xz --exclude=usr/share -C $TEMP_DIR
++		fi
++	done
++
++	# Move the extracted folders into the system
++	if [[ -d $TEMP_DIR/lib/modules ]]; then
++
++		# Relink lib/modules/*/build/ directories relatively to make it work
++		# for regular user based workflows
++		if [[ -n $KSRC_PREFIX ]]; then
++			echo "Adjusting build/ symlinks for non-root installation..."
++
++			for kernel in $(ls -d $TEMP_DIR/lib/modules/*generic); do
++				unlink $kernel/build
++				ln -s ../../../usr/src/linux-headers-`basename $kernel` $kernel/build
++			done
++		fi
++
++		mv $TEMP_DIR/lib/modules/* $KSRC_PREFIX/lib/modules
++	fi
++	if [[ -d $TEMP_DIR/usr/src ]]; then
++		# Because of a bug in make < 3.82, mixed implicit and normal
++		# rules do not cause harm. Since the bug is fixed in the new make
++		# we have to adjust older kernel's Makefiles to fix the bug.
++		sed -i 's#^/ %/:#%/:#' $TEMP_DIR/usr/src/linux-headers-2.6.2[45678]-0*/Makefile &>/dev/null
++
++		mv $TEMP_DIR/usr/src/* $KSRC_PREFIX/usr/src
++	fi
++
++	# Remove the temporary directory
++	rm -rf $TEMP_DIR
 +}
 +
-+/**
-+ * hdmi_avi_infoframe_init() - initialize an HDMI AVI infoframe
-+ * @frame: HDMI AVI infoframe
-+ *
-+ * Returns 0 on success or a negative error code on failure.
-+ */
-+int hdmi_avi_infoframe_init(struct hdmi_avi_infoframe *frame)
-+{
-+	memset(frame, 0, sizeof(*frame));
++function rebuild_header_binary_deps() {
++	if [[ ! -d ${KSRC_PREFIX}/lib/modules/ ]]; then
++		echo "You do not seem to have any vanilla kernels available to fix"
++		exit 1
++	fi
 +
-+	frame->type = HDMI_INFOFRAME_TYPE_AVI;
-+	frame->version = 2;
-+	frame->length = 13;
++	COUNT=$(ls -d ${KSRC_PREFIX}/lib/modules/*generic | wc -l)
++	if [[ $COUNT -le 0 ]]; then
++		echo "You do not seem to have any vanilla kernels available to fix"
++		exit 1
++	fi
 +
-+	return 0;
++	for kernel in $(ls -d ${KSRC_PREFIX}/lib/modules/*generic | grep -E "/3.[2-9]|/[4-9]"); do
++		echo $kernel
++
++		count=0
++		while [[ $count -ne 4 ]]; do
++			for i in basic mod genksyms; do
++				if [[ $count -eq 0 ]]; then
++					make -C ${kernel}/build/ M=scripts/${i}/ clean > /dev/null 2>&1
++				fi
++				make -C ${kernel}/build/ M=scripts/${i}/ > /dev/null 2>&1
++			done
++			let count=$count+1
++		done
++	done
 +}
-+EXPORT_SYMBOL_GPL(hdmi_avi_infoframe_init);
 +
-+/**
-+ * hdmi_avi_infoframe_pack() - write HDMI AVI infoframe to binary buffer
-+ * @frame: HDMI AVI infoframe
-+ * @buffer: destination buffer
-+ * @size: size of buffer
-+ *
-+ * Packs the information contained in the @frame structure into a binary
-+ * representation that can be written into the corresponding controller
-+ * registers. Also computes the checksum as required by section 5.3.5 of
-+ * the HDMI 1.4 specification.
-+ *
-+ * Returns the number of bytes packed into the binary buffer or a negative
-+ * error code on failure.
-+ */
-+ssize_t hdmi_avi_infoframe_pack(struct hdmi_avi_infoframe *frame, void *buffer,
-+				size_t size)
-+{
-+	u8 *ptr = buffer;
-+	size_t length;
-+
-+	length = HDMI_INFOFRAME_HEADER_SIZE + frame->length;
-+
-+	if (size < length)
-+		return -ENOSPC;
-+
-+	memset(buffer, 0, length);
-+
-+	ptr[0] = frame->type;
-+	ptr[1] = frame->version;
-+	ptr[2] = frame->length;
-+	ptr[3] = 0; /* checksum */
-+
-+	/* start infoframe payload */
-+	ptr += HDMI_INFOFRAME_HEADER_SIZE;
-+
-+	ptr[0] = ((frame->colorspace & 0x3) << 5) | (frame->scan_mode & 0x3);
-+
-+	if (frame->active_info_valid)
-+		ptr[0] |= BIT(4);
-+
-+	if (frame->horizontal_bar_valid)
-+		ptr[0] |= BIT(3);
-+
-+	if (frame->vertical_bar_valid)
-+		ptr[0] |= BIT(2);
-+
-+	ptr[1] = ((frame->colorimetry & 0x3) << 6) |
-+		 ((frame->picture_aspect & 0x3) << 4) |
-+		 (frame->active_aspect & 0xf);
-+
-+	ptr[2] = ((frame->extended_colorimetry & 0x7) << 4) |
-+		 ((frame->quantization_range & 0x3) << 2) |
-+		 (frame->nups & 0x3);
-+
-+	if (frame->itc)
-+		ptr[2] |= BIT(7);
-+
-+	ptr[3] = frame->video_code & 0x7f;
-+
-+	ptr[4] = ((frame->ycc_quantization_range & 0x3) << 6) |
-+		 ((frame->content_type & 0x3) << 4) |
-+		 (frame->pixel_repeat & 0xf);
-+
-+	ptr[5] = frame->top_bar & 0xff;
-+	ptr[6] = (frame->top_bar >> 8) & 0xff;
-+	ptr[7] = frame->bottom_bar & 0xff;
-+	ptr[8] = (frame->bottom_bar >> 8) & 0xff;
-+	ptr[9] = frame->left_bar & 0xff;
-+	ptr[10] = (frame->left_bar >> 8) & 0xff;
-+	ptr[11] = frame->right_bar & 0xff;
-+	ptr[12] = (frame->right_bar >> 8) & 0xff;
-+
-+	hdmi_infoframe_checksum(buffer, length);
-+
-+	return length;
++function usage() {
++	echo -e "Usage: $0 [ -r ] [ -f ] "
++	echo -e "-r Rebuilds binaries required in kernel headers. Use"
++	echo -e "   this option if you've already ran this script and"
++	echo -e "   just need to fix the libc versions against which"
++	echo -e "   the binaries in the headers files are linked against. "
++	echo -e "   This was added since kernels >= 3.4 require"
++	echo -e "   a glibc >= 2.14 for memcpy(), and not all Linux"
++	echo -e "   distributions have such versions of glibc."
++	echo -e ""
++	echo -e "-f Force running, do not ask"
 +}
-+EXPORT_SYMBOL_GPL(hdmi_avi_infoframe_pack);
 +
-+/**
-+ * hdmi_spd_infoframe_init() - initialize an HDMI SPD infoframe
-+ * @frame: HDMI SPD infoframe
-+ * @vendor: vendor string
-+ * @product: product string
-+ *
-+ * Returns 0 on success or a negative error code on failure.
-+ */
-+int hdmi_spd_infoframe_init(struct hdmi_spd_infoframe *frame,
-+			    const char *vendor, const char *product)
-+{
-+	memset(frame, 0, sizeof(*frame));
++if [[ $# -gt 3 ]]; then
++	usage
++	exit 1
++fi
 +
-+	frame->type = HDMI_INFOFRAME_TYPE_SPD;
-+	frame->version = 1;
-+	frame->length = 25;
++if [[ $1 == "-r" ]]; then
++	rebuild_header_binary_deps
++	exit
++fi
 +
-+	strncpy(frame->vendor, vendor, sizeof(frame->vendor));
-+	strncpy(frame->product, product, sizeof(frame->product));
++if [[ $1 == "-f" ]]; then
++	FORCE="1"
++	shift
++fi
 +
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(hdmi_spd_infoframe_init);
++# Check for the availability of 'ar' before continuing
++which ar 2>&1 > /dev/null
++if [[ $? -ne 0 ]]; then
++	echo -e "${GREEN}ar${NORMAL} is not avilable, typically this is available through a package called binutils"
++	echo -e "Install binutils and run this script again..."
++	exit 1
++fi
 +
-+/**
-+ * hdmi_spd_infoframe_pack() - write HDMI SPD infoframe to binary buffer
-+ * @frame: HDMI SPD infoframe
-+ * @buffer: destination buffer
-+ * @size: size of buffer
-+ *
-+ * Packs the information contained in the @frame structure into a binary
-+ * representation that can be written into the corresponding controller
-+ * registers. Also computes the checksum as required by section 5.3.5 of
-+ * the HDMI 1.4 specification.
-+ *
-+ * Returns the number of bytes packed into the binary buffer or a negative
-+ * error code on failure.
-+ */
-+ssize_t hdmi_spd_infoframe_pack(struct hdmi_spd_infoframe *frame, void *buffer,
-+				size_t size)
-+{
-+	u8 *ptr = buffer;
-+	size_t length;
++echo -e ""
 +
-+	length = HDMI_INFOFRAME_HEADER_SIZE + frame->length;
++if [[ ! -n $KSRC_PREFIX ]]; then
++	echo -e "** Running as a privileged user!"
++	echo -e "** You are trying to force using ${BLUE}${KSRC_PREFIX}/lib/modules${NORMAL} and ${BLUE}${KSRC_PREFIX}/usr/src${NORMAL} ..."
++	echo -e "** This is a terrible idea. Consider running as a regular user."
++	echo -e ""
++	read -p "Do you still want to continue (y/N)? "
++	if [[ "${REPLY}" != "y" ]]; then
++		echo -e "Bailing out !"
++		exit 1
++	fi
++fi
 +
-+	if (size < length)
-+		return -ENOSPC;
++echo -e "This will download ${YELLOW}${NUM_KERNELS}${NORMAL} kernel headers to allow you to"
++echo -e "cross compile any module over these kernels with ${GREEN}ckmake${NORMAL}."
++echo -e "The download payload is about ${YELLOW}~ $((${SPACE_PER_KERNEL_DEB} * ${NUM_KERNELS})) ${CYAN}MiB${NORMAL}, once uncompressed"
++echo -e "it will stash kernel header files under ${BLUE}$KSRC_PREFIX/usr/src/${NORMAL}"
++echo -e "and ${BLUE}$KSRC_PREFIX/lib/modules/${NORMAL} and consume about ~ ${YELLOW}$((${NUM_KERNELS} * ${SPACE_PER_KERNEL})) ${RED}MiB${NORMAL} of space."
++echo -e ""
++echo -e "The kernel headers used are from ${PURPLE}${UNDERLINE}Vanilla${NORMAL} kernels"
++echo -e "from the Ubuntu mainline / vanilla kernel PPA and are extracted"
++echo -e "using ${GREEN}ar${NORMAL} and ${GREEN}tar${NORMAL}:"
++echo -e ""
++echo -e "${BLUE}http://kernel.ubuntu.com/~kernel-ppa/mainline/${NORMAL}"
++echo -e ""
 +
-+	memset(buffer, 0, length);
++if [[ "$FORCE" != "1" ]]; then
++	read -p "Do you still want to continue (y/N)? "
++	if [[ "${REPLY}" != "y" ]]; then
++		echo -e "Bailing out !"
++		exit 1
++	fi
++fi
 +
-+	ptr[0] = frame->type;
-+	ptr[1] = frame->version;
-+	ptr[2] = frame->length;
-+	ptr[3] = 0; /* checksum */
-+
-+	/* start infoframe payload */
-+	ptr += HDMI_INFOFRAME_HEADER_SIZE;
-+
-+	memcpy(ptr, frame->vendor, sizeof(frame->vendor));
-+	memcpy(ptr + 8, frame->product, sizeof(frame->product));
-+
-+	ptr[24] = frame->sdi;
-+
-+	hdmi_infoframe_checksum(buffer, length);
-+
-+	return length;
-+}
-+EXPORT_SYMBOL_GPL(hdmi_spd_infoframe_pack);
-+
-+/**
-+ * hdmi_audio_infoframe_init() - initialize an HDMI audio infoframe
-+ * @frame: HDMI audio infoframe
-+ *
-+ * Returns 0 on success or a negative error code on failure.
-+ */
-+int hdmi_audio_infoframe_init(struct hdmi_audio_infoframe *frame)
-+{
-+	memset(frame, 0, sizeof(*frame));
-+
-+	frame->type = HDMI_INFOFRAME_TYPE_AUDIO;
-+	frame->version = 1;
-+	frame->length = 10;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(hdmi_audio_infoframe_init);
-+
-+/**
-+ * hdmi_audio_infoframe_pack() - write HDMI audio infoframe to binary buffer
-+ * @frame: HDMI audio infoframe
-+ * @buffer: destination buffer
-+ * @size: size of buffer
-+ *
-+ * Packs the information contained in the @frame structure into a binary
-+ * representation that can be written into the corresponding controller
-+ * registers. Also computes the checksum as required by section 5.3.5 of
-+ * the HDMI 1.4 specification.
-+ *
-+ * Returns the number of bytes packed into the binary buffer or a negative
-+ * error code on failure.
-+ */
-+ssize_t hdmi_audio_infoframe_pack(struct hdmi_audio_infoframe *frame,
-+				  void *buffer, size_t size)
-+{
-+	unsigned char channels;
-+	u8 *ptr = buffer;
-+	size_t length;
-+
-+	length = HDMI_INFOFRAME_HEADER_SIZE + frame->length;
-+
-+	if (size < length)
-+		return -ENOSPC;
-+
-+	memset(buffer, 0, length);
-+
-+	if (frame->channels >= 2)
-+		channels = frame->channels - 1;
-+	else
-+		channels = 0;
-+
-+	ptr[0] = frame->type;
-+	ptr[1] = frame->version;
-+	ptr[2] = frame->length;
-+	ptr[3] = 0; /* checksum */
-+
-+	/* start infoframe payload */
-+	ptr += HDMI_INFOFRAME_HEADER_SIZE;
-+
-+	ptr[0] = ((frame->coding_type & 0xf) << 4) | (channels & 0x7);
-+	ptr[1] = ((frame->sample_frequency & 0x7) << 2) |
-+		 (frame->sample_size & 0x3);
-+	ptr[2] = frame->coding_type_ext & 0x1f;
-+	ptr[3] = frame->channel_allocation;
-+	ptr[4] = (frame->level_shift_value & 0xf) << 3;
-+
-+	if (frame->downmix_inhibit)
-+		ptr[4] |= BIT(7);
-+
-+	hdmi_infoframe_checksum(buffer, length);
-+
-+	return length;
-+}
-+EXPORT_SYMBOL_GPL(hdmi_audio_infoframe_pack);
-+
-+/**
-+ * hdmi_vendor_infoframe_pack() - write a HDMI vendor infoframe to binary
-+ *                                buffer
-+ * @frame: HDMI vendor infoframe
-+ * @buffer: destination buffer
-+ * @size: size of buffer
-+ *
-+ * Packs the information contained in the @frame structure into a binary
-+ * representation that can be written into the corresponding controller
-+ * registers. Also computes the checksum as required by section 5.3.5 of
-+ * the HDMI 1.4 specification.
-+ *
-+ * Returns the number of bytes packed into the binary buffer or a negative
-+ * error code on failure.
-+ */
-+ssize_t hdmi_vendor_infoframe_pack(struct hdmi_vendor_infoframe *frame,
-+				   void *buffer, size_t size)
-+{
-+	u8 *ptr = buffer;
-+	size_t length;
-+
-+	length = HDMI_INFOFRAME_HEADER_SIZE + frame->length;
-+
-+	if (size < length)
-+		return -ENOSPC;
-+
-+	memset(buffer, 0, length);
-+
-+	ptr[0] = frame->type;
-+	ptr[1] = frame->version;
-+	ptr[2] = frame->length;
-+	ptr[3] = 0; /* checksum */
-+
-+	memcpy(&ptr[HDMI_INFOFRAME_HEADER_SIZE], frame->data, frame->length);
-+
-+	hdmi_infoframe_checksum(buffer, length);
-+
-+	return length;
-+}
-+EXPORT_SYMBOL_GPL(hdmi_vendor_infoframe_pack);
-diff --git a/backport/include/linux/hdmi.h b/backport/include/linux/hdmi.h
-new file mode 100644
-index 0000000..777190d
++get_ubuntu_kernels
++echo -e "Vanilla kernels headers ${BLUE}installed${NORMAL}, "
++echo -e "now going to ${GREEN}rebuild${NORMAL} some binary dependencies..."
++sleep 1
++rebuild_header_binary_deps
+diff --git a/devel/get-compat-trees b/devel/get-compat-trees
+new file mode 100755
+index 0000000..d781245
 --- /dev/null
-+++ b/backport/include/linux/hdmi.h
-@@ -0,0 +1,240 @@
-+#ifndef CPTCFG_BACKPORT_BUILD_HDMI
-+#include_next <linux/hdmi.h>
-+#else
-+/*
-+ * Copyright (C) 2012 Avionic Design GmbH
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
++++ b/devel/get-compat-trees
+@@ -0,0 +1,87 @@
++#!/bin/bash
++#
++# Copyright (C) 2012, Luis R. Rodriguez <mcgrof@frijolero.org>
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License version 2 as
++# published by the Free Software Foundation.
++#
++# You can use this script to install all mainline kernels used
++# to test compile the Linux kernel compatibility module. You can
++# then use ckmake to cross compile against all supported kernels.
 +
-+#ifndef __LINUX_HDMI_H_
-+#define __LINUX_HDMI_H_
++# Pretty colors
++GREEN="\033[01;32m"
++YELLOW="\033[01;33m"
++NORMAL="\033[00m"
++BLUE="\033[34m"
++RED="\033[31m"
++PURPLE="\033[35m"
++CYAN="\033[36m"
++UNDERLINE="\033[02m"
 +
-+#include <linux/types.h>
++PREFIX=$HOME/
 +
-+enum hdmi_infoframe_type {
-+	HDMI_INFOFRAME_TYPE_VENDOR = 0x81,
-+	HDMI_INFOFRAME_TYPE_AVI = 0x82,
-+	HDMI_INFOFRAME_TYPE_SPD = 0x83,
-+	HDMI_INFOFRAME_TYPE_AUDIO = 0x84,
-+};
++GIT_TREES="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git"
++GIT_TREES="$GIT_TREES git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git"
++GIT_TREES="$GIT_TREES git://github.com/mcgrof/compat.git"
++GIT_TREES="$GIT_TREES git://github.com/mcgrof/compat-drivers.git"
 +
-+#define HDMI_INFOFRAME_HEADER_SIZE  4
-+#define HDMI_AVI_INFOFRAME_SIZE    13
-+#define HDMI_SPD_INFOFRAME_SIZE    25
-+#define HDMI_AUDIO_INFOFRAME_SIZE  10
++LINUX_GIT="git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git"
 +
-+enum hdmi_colorspace {
-+	HDMI_COLORSPACE_RGB,
-+	HDMI_COLORSPACE_YUV422,
-+	HDMI_COLORSPACE_YUV444,
-+};
++which git 2>&1 > /dev/null
++if [[ $? -ne 0 ]]; then
++	echo -e "You need to install ${PURPLE}git${NORMAL}"
++	exit 1
++fi
 +
-+enum hdmi_scan_mode {
-+	HDMI_SCAN_MODE_NONE,
-+	HDMI_SCAN_MODE_OVERSCAN,
-+	HDMI_SCAN_MODE_UNDERSCAN,
-+};
++echo -e "This will typically take ~ ${YELLOW}10 ${CYAN}minutes${NORMAL}, download about "
++echo -e "~ ${YELLOW}1 ${CYAN}GiB${NORMAL} of data over your network, and then consume about "
++echo -e "~ ${YELLOW}2 ${CYAN}GiB${NORMAL} of hard drive space."
 +
-+enum hdmi_colorimetry {
-+	HDMI_COLORIMETRY_NONE,
-+	HDMI_COLORIMETRY_ITU_601,
-+	HDMI_COLORIMETRY_ITU_709,
-+	HDMI_COLORIMETRY_EXTENDED,
-+};
++read -p "Do you still want to continue (y/N)? "
++if [[ "${REPLY}" != "y" ]]; then
++	echo -e "Bailing out !"
++	exit 1
++fi
 +
-+enum hdmi_picture_aspect {
-+	HDMI_PICTURE_ASPECT_NONE,
-+	HDMI_PICTURE_ASPECT_4_3,
-+	HDMI_PICTURE_ASPECT_16_9,
-+};
++mkdir -p $PREFIX
++cd $PREFIX
 +
-+enum hdmi_active_aspect {
-+	HDMI_ACTIVE_ASPECT_16_9_TOP = 2,
-+	HDMI_ACTIVE_ASPECT_14_9_TOP = 3,
-+	HDMI_ACTIVE_ASPECT_16_9_CENTER = 4,
-+	HDMI_ACTIVE_ASPECT_PICTURE = 8,
-+	HDMI_ACTIVE_ASPECT_4_3 = 9,
-+	HDMI_ACTIVE_ASPECT_16_9 = 10,
-+	HDMI_ACTIVE_ASPECT_14_9 = 11,
-+	HDMI_ACTIVE_ASPECT_4_3_SP_14_9 = 13,
-+	HDMI_ACTIVE_ASPECT_16_9_SP_14_9 = 14,
-+	HDMI_ACTIVE_ASPECT_16_9_SP_4_3 = 15,
-+};
++for i in $GIT_TREES; do
++	TREE=$(echo ${i} | awk -F"/" '{print $NF}')
 +
-+enum hdmi_extended_colorimetry {
-+	HDMI_EXTENDED_COLORIMETRY_XV_YCC_601,
-+	HDMI_EXTENDED_COLORIMETRY_XV_YCC_709,
-+	HDMI_EXTENDED_COLORIMETRY_S_YCC_601,
-+	HDMI_EXTENDED_COLORIMETRY_ADOBE_YCC_601,
-+	HDMI_EXTENDED_COLORIMETRY_ADOBE_RGB,
-+};
++	if [[ -d $PREFIX/$TREE ]]; then
++		echo "${GREEN}${TREE}${NORMAL} is already present, skipping..."
++		continue
++	fi
 +
-+enum hdmi_quantization_range {
-+	HDMI_QUANTIZATION_RANGE_DEFAULT,
-+	HDMI_QUANTIZATION_RANGE_LIMITED,
-+	HDMI_QUANTIZATION_RANGE_FULL,
-+};
++	echo -e "Cloning ${GREEN}${TREE}${NORMAL}..."
 +
-+/* non-uniform picture scaling */
-+enum hdmi_nups {
-+	HDMI_NUPS_UNKNOWN,
-+	HDMI_NUPS_HORIZONTAL,
-+	HDMI_NUPS_VERTICAL,
-+	HDMI_NUPS_BOTH,
-+};
++	case $TREE in
++	"linux-stable.git")
++		cd $PREFIX/
++		git clone $i
 +
-+enum hdmi_ycc_quantization_range {
-+	HDMI_YCC_QUANTIZATION_RANGE_LIMITED,
-+	HDMI_YCC_QUANTIZATION_RANGE_FULL,
-+};
-+
-+enum hdmi_content_type {
-+	HDMI_CONTENT_TYPE_NONE,
-+	HDMI_CONTENT_TYPE_PHOTO,
-+	HDMI_CONTENT_TYPE_CINEMA,
-+	HDMI_CONTENT_TYPE_GAME,
-+};
-+
-+struct hdmi_avi_infoframe {
-+	enum hdmi_infoframe_type type;
-+	unsigned char version;
-+	unsigned char length;
-+	enum hdmi_colorspace colorspace;
-+	bool active_info_valid;
-+	bool horizontal_bar_valid;
-+	bool vertical_bar_valid;
-+	enum hdmi_scan_mode scan_mode;
-+	enum hdmi_colorimetry colorimetry;
-+	enum hdmi_picture_aspect picture_aspect;
-+	enum hdmi_active_aspect active_aspect;
-+	bool itc;
-+	enum hdmi_extended_colorimetry extended_colorimetry;
-+	enum hdmi_quantization_range quantization_range;
-+	enum hdmi_nups nups;
-+	unsigned char video_code;
-+	enum hdmi_ycc_quantization_range ycc_quantization_range;
-+	enum hdmi_content_type content_type;
-+	unsigned char pixel_repeat;
-+	unsigned short top_bar;
-+	unsigned short bottom_bar;
-+	unsigned short left_bar;
-+	unsigned short right_bar;
-+};
-+
-+int hdmi_avi_infoframe_init(struct hdmi_avi_infoframe *frame);
-+ssize_t hdmi_avi_infoframe_pack(struct hdmi_avi_infoframe *frame, void *buffer,
-+				size_t size);
-+
-+enum hdmi_spd_sdi {
-+	HDMI_SPD_SDI_UNKNOWN,
-+	HDMI_SPD_SDI_DSTB,
-+	HDMI_SPD_SDI_DVDP,
-+	HDMI_SPD_SDI_DVHS,
-+	HDMI_SPD_SDI_HDDVR,
-+	HDMI_SPD_SDI_DVC,
-+	HDMI_SPD_SDI_DSC,
-+	HDMI_SPD_SDI_VCD,
-+	HDMI_SPD_SDI_GAME,
-+	HDMI_SPD_SDI_PC,
-+	HDMI_SPD_SDI_BD,
-+	HDMI_SPD_SDI_SACD,
-+	HDMI_SPD_SDI_HDDVD,
-+	HDMI_SPD_SDI_PMP,
-+};
-+
-+struct hdmi_spd_infoframe {
-+	enum hdmi_infoframe_type type;
-+	unsigned char version;
-+	unsigned char length;
-+	char vendor[8];
-+	char product[16];
-+	enum hdmi_spd_sdi sdi;
-+};
-+
-+#define hdmi_spd_infoframe_init LINUX_BACKPORT(hdmi_spd_infoframe_init)
-+int hdmi_spd_infoframe_init(struct hdmi_spd_infoframe *frame,
-+			    const char *vendor, const char *product);
-+#define hdmi_spd_infoframe_pack LINUX_BACKPORT(hdmi_spd_infoframe_pack)
-+ssize_t hdmi_spd_infoframe_pack(struct hdmi_spd_infoframe *frame, void *buffer,
-+				size_t size);
-+
-+enum hdmi_audio_coding_type {
-+	HDMI_AUDIO_CODING_TYPE_STREAM,
-+	HDMI_AUDIO_CODING_TYPE_PCM,
-+	HDMI_AUDIO_CODING_TYPE_AC3,
-+	HDMI_AUDIO_CODING_TYPE_MPEG1,
-+	HDMI_AUDIO_CODING_TYPE_MP3,
-+	HDMI_AUDIO_CODING_TYPE_MPEG2,
-+	HDMI_AUDIO_CODING_TYPE_AAC_LC,
-+	HDMI_AUDIO_CODING_TYPE_DTS,
-+	HDMI_AUDIO_CODING_TYPE_ATRAC,
-+	HDMI_AUDIO_CODING_TYPE_DSD,
-+	HDMI_AUDIO_CODING_TYPE_EAC3,
-+	HDMI_AUDIO_CODING_TYPE_DTS_HD,
-+	HDMI_AUDIO_CODING_TYPE_MLP,
-+	HDMI_AUDIO_CODING_TYPE_DST,
-+	HDMI_AUDIO_CODING_TYPE_WMA_PRO,
-+};
-+
-+enum hdmi_audio_sample_size {
-+	HDMI_AUDIO_SAMPLE_SIZE_STREAM,
-+	HDMI_AUDIO_SAMPLE_SIZE_16,
-+	HDMI_AUDIO_SAMPLE_SIZE_20,
-+	HDMI_AUDIO_SAMPLE_SIZE_24,
-+};
-+
-+enum hdmi_audio_sample_frequency {
-+	HDMI_AUDIO_SAMPLE_FREQUENCY_STREAM,
-+	HDMI_AUDIO_SAMPLE_FREQUENCY_32000,
-+	HDMI_AUDIO_SAMPLE_FREQUENCY_44100,
-+	HDMI_AUDIO_SAMPLE_FREQUENCY_48000,
-+	HDMI_AUDIO_SAMPLE_FREQUENCY_88200,
-+	HDMI_AUDIO_SAMPLE_FREQUENCY_96000,
-+	HDMI_AUDIO_SAMPLE_FREQUENCY_176400,
-+	HDMI_AUDIO_SAMPLE_FREQUENCY_192000,
-+};
-+
-+enum hdmi_audio_coding_type_ext {
-+	HDMI_AUDIO_CODING_TYPE_EXT_STREAM,
-+	HDMI_AUDIO_CODING_TYPE_EXT_HE_AAC,
-+	HDMI_AUDIO_CODING_TYPE_EXT_HE_AAC_V2,
-+	HDMI_AUDIO_CODING_TYPE_EXT_MPEG_SURROUND,
-+};
-+
-+struct hdmi_audio_infoframe {
-+	enum hdmi_infoframe_type type;
-+	unsigned char version;
-+	unsigned char length;
-+	unsigned char channels;
-+	enum hdmi_audio_coding_type coding_type;
-+	enum hdmi_audio_sample_size sample_size;
-+	enum hdmi_audio_sample_frequency sample_frequency;
-+	enum hdmi_audio_coding_type_ext coding_type_ext;
-+	unsigned char channel_allocation;
-+	unsigned char level_shift_value;
-+	bool downmix_inhibit;
-+
-+};
-+
-+#define hdmi_audio_infoframe_init LINUX_BACKPORT(hdmi_audio_infoframe_init)
-+int hdmi_audio_infoframe_init(struct hdmi_audio_infoframe *frame);
-+#define hdmi_audio_infoframe_pack LINUX_BACKPORT(hdmi_audio_infoframe_pack)
-+ssize_t hdmi_audio_infoframe_pack(struct hdmi_audio_infoframe *frame,
-+				  void *buffer, size_t size);
-+
-+struct hdmi_vendor_infoframe {
-+	enum hdmi_infoframe_type type;
-+	unsigned char version;
-+	unsigned char length;
-+	u8 data[27];
-+};
-+
-+#define hdmi_vendor_infoframe_pack LINUX_BACKPORT(hdmi_vendor_infoframe_pack)
-+ssize_t hdmi_vendor_infoframe_pack(struct hdmi_vendor_infoframe *frame,
-+				   void *buffer, size_t size);
-+
-+#endif /* _DRM_HDMI_H */
-+#endif /* CPTCFG_BACKPORT_BUILD_HDMI */
++		cd $PREFIX/linux-stable
++		# This lets us bake releases off of Linus' RC releases by
++		# simply git fetch'ing "linus" and reseting the tree afterwards.
++		git remote add linus $LINUX_GIT
++		;;
++	"linux-next.git")
++		cd $PREFIX
++		git clone $i --reference $PREFIX/linux-stable/.git/
++		;;
++	"compat-drivers.git")
++		# This is just what scripts are tested for. Probably best to
++		# unify all into one place but this will do for now.
++		mkdir -p $PREFIX/devel/
++		cd $PREFIX/devel/
++		git clone $i
++		;;
++	*)
++		cd $PREFIX
++		git clone $i
++		;;
++	esac
++done
 -- 
 1.7.10.4
 
