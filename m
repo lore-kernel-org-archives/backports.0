@@ -1,37 +1,57 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f178.google.com ([209.85.217.178]:64401 "EHLO
-	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932961Ab3DBTEr (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 2 Apr 2013 15:04:47 -0400
-Received: by mail-lb0-f178.google.com with SMTP id q13so828412lbi.9
-        for <backports@vger.kernel.org>; Tue, 02 Apr 2013 12:04:45 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1364923241.8204.15.camel@jlt4.sipsolutions.net>
-References: <1364908781.8204.14.camel@jlt4.sipsolutions.net> <1364923241.8204.15.camel@jlt4.sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Date: Tue, 2 Apr 2013 12:04:25 -0700
-Message-ID: <CAB=NE6U0Y5muk84EAvzaLARPOQ__0prgT1Fsdcb2AMBBgDS+FA@mail.gmail.com> (sfid-20130402_210454_285515_27A9362B)
-Subject: Re: [ANN] new backports project
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from he.sipsolutions.net ([78.46.109.217]:50090 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754678Ab3DOQeA (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 15 Apr 2013 12:34:00 -0400
+Message-ID: <1366043632.8361.33.camel@jlt4.sipsolutions.net> (sfid-20130415_183403_456617_039AE356)
+Subject: Re: [PATCH 5/7] backports: add support for voltage / current
+ regulator drivers
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	backports@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+	linux-kernel@vger.kernel.org
+Date: Mon, 15 Apr 2013 18:33:52 +0200
+In-Reply-To: <20130415162652.GK15837@opensource.wolfsonmicro.com>
+References: <1365862424-6530-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1365862424-6530-6-git-send-email-mcgrof@do-not-panic.com>
+	 <1365886878.1089.5.camel@jlt4.sipsolutions.net>
+	 <20130415162652.GK15837@opensource.wolfsonmicro.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Apr 2, 2013 at 10:20 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
->
->>  * Redhat kernel backport support -- this should be fairly easy
->
-> I addressed this, but I'm unsure of it and don't have a way to test it,
-> so any testing would be appreciated (as it is in general, of course)
+On Mon, 2013-04-15 at 17:26 +0100, Mark Brown wrote:
+> On Sat, Apr 13, 2013 at 11:01:18PM +0200, Johannes Berg wrote:
+> > On Sat, 2013-04-13 at 07:13 -0700, Luis R. Rodriguez wrote:
+> 
+> > > This backports the latest regulator drivers for kernels >= 3.4.
+> > > We enable the regulator only on kernels >= 3.4 given that
+> > > it relies on the new probe deferral mechanism which would
+> > > otherwise mean having to support drivers that do not probe
+> > > correctly. Note that 3.2 had a base regulator implementation
+> > > but that was just stubs.
+> 
+> > Applied.
+> 
+> Please let's at least discuss the issues here, I'm not sure what this is
+> supposed to do but the analysis of the subsystem didn't seem complete.
 
-FWIW the LINUX_BACKPORT() stuff replaced RHEL specific changes, that
-is, LINUX_BACKPORT() stuff extended the work that folks used to add
-RHEL support making it more generic. This helps try to avoid clashes
-with *any* Linux distribution trying to cherry pick features from the
-kernel, so long as they don't use the same prefix for exported
-symbols. I wonder if there's any more need for RHEL / SUSE specific
-kernel checks now after LINUX_BACKPORT() stuff.
+I wouldn't worry about it too much. For some reason (media drivers
+related?) Luis decided that it was worth including this in the backports
+project (see http://backports.wiki.kernel.org) and I am currently
+maintaining the git tree for that, at least while I was doing some
+refactoring.
 
-  Luis
+I do notice that it doesn't quite work, there are a lot of unresolved
+symbols :)
+
+If you think you'd be impacted by this because users demand support from
+you for the backport or whatever I can revert this (or probably just
+remove it from the copy list for now.) I don't really have an opinion on
+it, I'm doing this because I'm interested in one specific wireless
+driver.
+
+johannes
+
