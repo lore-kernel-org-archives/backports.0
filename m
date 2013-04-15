@@ -1,80 +1,75 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:59123 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752043Ab3DLJQT (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 12 Apr 2013 05:16:19 -0400
-Received: by mail-la0-f48.google.com with SMTP id fq12so2285685lab.21
-        for <backports@vger.kernel.org>; Fri, 12 Apr 2013 02:16:17 -0700 (PDT)
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:50048 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754692Ab3DOQZg (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 15 Apr 2013 12:25:36 -0400
+Date: Mon, 15 Apr 2013 17:25:34 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: johannes@sipsolutions.net, backports@vger.kernel.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/7] backports: add support for voltage / current
+ regulator drivers
+Message-ID: <20130415162534.GJ15837@opensource.wolfsonmicro.com> (sfid-20130415_182539_233228_C3FA2868)
+References: <1365862424-6530-1-git-send-email-mcgrof@do-not-panic.com>
+ <1365862424-6530-6-git-send-email-mcgrof@do-not-panic.com>
 MIME-Version: 1.0
-In-Reply-To: <1365752487.8399.4.camel@jlt4.sipsolutions.net>
-References: <1365748868-3174-1-git-send-email-mcgrof@do-not-panic.com> <1365752487.8399.4.camel@jlt4.sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Fri, 12 Apr 2013 02:15:57 -0700
-Message-ID: <CAB=NE6XjtSPEFqnJ0PbB9D7Z3HBJbhoK_W+iMbiJMVBiFvXYEQ@mail.gmail.com> (sfid-20130412_111640_613864_247FE6CB)
-Subject: Re: [RFC] backports: redefine srctree
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="GvznHscUikHnwW2p"
+In-Reply-To: <1365862424-6530-6-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Apr 12, 2013 at 12:41 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Thu, 2013-04-11 at 23:41 -0700, Luis R. Rodriguez wrote:
->> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
->>
->> Drivers may do header sharing in their subsystems by
->> not using a full include path. There are different ways
->> folks append the include path, one strategy is to use
->> srctree as follows:
->>
->> ccflags-y += -I$(srctree)/drivers/media/dvb-core/
->
-> We also have a patch for net/wireless/Makefile because of this
-> (patches/collateral-evolutions/network/35-fix-makefile-includes/net_wireless_Makefile.patch
->
-> --- a/net/wireless/Makefile
-> +++ b/net/wireless/Makefile
-> @@ -20,6 +20,6 @@ CFLAGS_trace.o := -I$(src)
->  ccflags-y += -D__CHECK_ENDIAN__
->
->  $(obj)/regdb.c: $(src)/db.txt $(src)/genregdb.awk
-> -       @$(AWK) -f $(srctree)/$(src)/genregdb.awk < $< > $@
-> +       @$(AWK) -f $(src)/genregdb.awk < $< > $@
->
->  clean-files := regdb.c
->
->> The above gets fixed by the kernel through addtree which
->> prefixes -I with $(srctree) if it was not set. To take
->> advantage of the kernel's srctree but not break the build
->> we must lead it back in to the scripts/Makefile.build,
->> we do this by using our own scripts/Makefile.build that
->> points back to the kernel's.
->> ---
->>
->> Note: this breaks the kernel's build scripts that rely on
->> srctree so ideally we'd want to modify instead addtree but
->> I can't figure out how. Thoughts?
->
-> Yeah I was going to say ... does this actually work? It also relies on
-> the kernel's Makefile.build existing in all versions of the kernel, is
-> that actually true? Just curious.
 
-I tried ckmake --allyesconfig and its looked actually fine for the
-older kernels, for the newer ones it started messing up due to some
-perl script that was being looked up via srctree.
+--GvznHscUikHnwW2p
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> I don't see a good way to solve these things other than patching them,
-> unfortunately.
+On Sat, Apr 13, 2013 at 07:13:42AM -0700, Luis R. Rodriguez wrote:
 
-So what if we had instead of obj-m backport-m ? We might have to
-reinvent a lot of the while but all I think we'd need is to add a
-backport_addtree for the header hack.
+> This backports the latest regulator drivers for kernels >= 3.4.
+> We enable the regulator only on kernels >= 3.4 given that
+> it relies on the new probe deferral mechanism which would
+> otherwise mean having to support drivers that do not probe
 
-> An alternative might be to have the gentree script replace "$(srctree)"
-> with "$(backport-sourcetree)" in the copied Makefiles, and then just set
-> that variable?
+There's no great reliance on deferred probes here...
 
-Sexy. Thanks Python.
+> correctly. Note that 3.2 had a base regulator implementation
+> but that was just stubs.
 
-  Luis
+I'm sorry, what on earth makes you say that?  The regulator API has been
+usefully functional since it was merged.
+
+> I did look into a way to upgrade the core kernel regulator
+> but given that it relies on late_initcall() and core_initcall()
+> we can't update this part of the kernel. I even looked at
+> using ksplice for this but it seems ksplice can't be used to
+> update init sections on the vmlinux ELF. I also haven't much
+> updates to these routines since 3.4 except for 86f5fcfc.
+
+Again I'm not sure what you're talking about here?
+
+--GvznHscUikHnwW2p
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRbCn3AAoJELSic+t+oim9+qkP/0W3MBZi09P5qFnlIeelwukI
+QdMOG9LnefbhBY6/YJgUkuDnUp8J1MSB8K72c4FXgyNBpOsr2o7oDi9UfBf82YF/
+VRpk10wRxLvlU94niqGUbTW+7ZjYuu/pHw2Nel6eQiEfLTiSXhpRSCeP+0jKrbx0
+MABnjDEDmO/Mau28mS07D6dPMtI8m8fqumHy/CWxPdNp6F8H3SI+K7XejUIsQRuM
+tzzttXsgy7ZT+hzkctvbVv4Ee3eIUtqbHNXaFqxxIcLUgfEvq/QUA5luBgtLuc6B
+9nitTdBXGdByTYow4qiKlAS+g90baxPp+FeCRVaZtQ77DDTjlR4PfzNynEFfdlKR
+B97itdWW4bZivA48N8Km+HXzgRFiH7Zn5SdtrXjPDrXLNyueqK9QOY7CpNyWYL+h
+F8uZWe8wg5zWBTT4IV2fHeJFllzy8kRaTG1GBM6DDC3SJJA2Bh6UzKrNhLrnjZfQ
+7VRgDuV0I8GNVtbkyZdLlgUAUmtcXYemIVCIObAe6UP8U38G1NrEjdUBpiS66FQq
+4SVLG6jTNJBBnq33dMIN3Uanm/E9WG31DkETEMZfludEca8k+pU/TUGgsxh9ns6I
+BR8qh5L1KAEel3CERW8iWmXOZpMKuvI0O1d2TjCfW2wydauZvPG5CHeksPSRF4Sd
+AWzcvPE0JUkAWjXSFqlH
+=xgsb
+-----END PGP SIGNATURE-----
+
+--GvznHscUikHnwW2p--
