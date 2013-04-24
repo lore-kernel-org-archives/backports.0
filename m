@@ -1,66 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from he.sipsolutions.net ([78.46.109.217]:37205 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751001Ab3DKXnH (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 11 Apr 2013 19:43:07 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [RFC/WIP 10/24] backports: move kernel 3.3 SKB functions
-Date: Fri, 12 Apr 2013 01:42:37 +0200
-Message-Id: <1365723771-10660-11-git-send-email-johannes@sipsolutions.net> (sfid-20130412_014353_372929_C1F91B0E)
-In-Reply-To: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
-References: <1365723771-10660-1-git-send-email-johannes@sipsolutions.net>
+Received: from mail-lb0-f193.google.com ([209.85.217.193]:62810 "EHLO
+	mail-lb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755426Ab3DXCQx (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 23 Apr 2013 22:16:53 -0400
+Received: by mail-lb0-f193.google.com with SMTP id p10so356390lbi.8
+        for <backports@vger.kernel.org>; Tue, 23 Apr 2013 19:16:52 -0700 (PDT)
+MIME-Version: 1.0
+Date: Tue, 23 Apr 2013 19:16:51 -0700
+Message-ID: <CAJqaZwyQN+66QK1kC5qiALwYAN4V6AmxEWC9kE9_4B-9GAnnfg@mail.gmail.com> (sfid-20130424_041656_207358_FC1077D8)
+Subject: [Patch] compat-drivers/Makefile: make uninstall leaves drm and two
+ b44 files
+From: ASIC Felix <ic.felix@gmail.com>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+make uninstall doesn't remove drm and two b44 ethernet modules.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/linux/compat-3.3.h |  8 --------
- backport/backport-include/linux/skbuff.h     | 11 +++++++++++
- 2 files changed, 11 insertions(+), 8 deletions(-)
-
-diff --git a/backport/backport-include/linux/compat-3.3.h b/backport/backport-include/linux/compat-3.3.h
-index ce7e776..72686da 100644
---- a/backport/backport-include/linux/compat-3.3.h
-+++ b/backport/backport-include/linux/compat-3.3.h
-@@ -305,14 +305,6 @@ static inline void qdisc_cb_private_validate(const struct sk_buff *skb, int sz)
- #endif
- #endif
- 
--#define __pskb_copy LINUX_BACKPORT(__pskb_copy)
--extern struct sk_buff *__pskb_copy(struct sk_buff *skb,
--				   int headroom, gfp_t gfp_mask);
--
--static inline void skb_complete_wifi_ack(struct sk_buff *skb, bool acked)
--{
--	WARN_ON(1);
--}
- #define NL80211_FEATURE_SK_TX_STATUS 0
- 
- typedef u32 netdev_features_t;
-diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
-index 0c09f9b..0a2e4cf 100644
---- a/backport/backport-include/linux/skbuff.h
-+++ b/backport/backport-include/linux/skbuff.h
-@@ -13,4 +13,15 @@ extern void v2_6_28_skb_add_rx_frag(struct sk_buff *skb, int i,
- 	skb_add_rx_frag(skb, i, page, off, size)
- #endif
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
-+#define __pskb_copy LINUX_BACKPORT(__pskb_copy)
-+extern struct sk_buff *__pskb_copy(struct sk_buff *skb,
-+				   int headroom, gfp_t gfp_mask);
-+
-+static inline void skb_complete_wifi_ack(struct sk_buff *skb, bool acked)
-+{
-+	WARN_ON(1);
-+}
-+#endif
-+
- #endif /* __BACKPORT_SKBUFF_H */
--- 
-1.8.0
-
+Signed-off-by: Felix Bitterli <ic.felix@gmail.com>
+diff --git a/Makefile b/Makefile
+index dc25969..dd16833 100644
+--- a/Makefile
++++ b/Makefile
+@@ -249,6 +249,15 @@ uninstall:
+        @rm -f $(KLIB)/$(KMODDIR)/drivers/misc/eeprom/eeprom_93cx6.ko*
+        @rm -f $(KLIB)/$(KMODDIR)/drivers/misc/eeprom_93cx6.ko*
+        @rm -f $(KLIB)/$(KMODDIR)/drivers/net/b44.ko*
++       @rm -f $(KLIB)/$(KMODDIR)/drivers/net/ethernet/broadcom/b44.ko*
++       @rm -f $(KLIB)/$(KMODDIR)/drivers/bcma/bcma.ko*
++       @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/drm_kms_helper.ko*
++       @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/drm.ko*
++       @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/i915/i915.ko*
++       @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/nouveau/nouveau.ko*
++       @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/radeon/radeon.ko*
++       @rm -f $(KLIB)/$(KMODDIR)/drivers/gpu/drm/ttm/ttm.ko*
++       @rm -f $(KLIB)/$(KMODDIR)/drivers/video/hdmi.ko*
+        @/sbin/depmod -a
+        @./scripts/update-initramfs
+        @echo
