@@ -1,32 +1,34 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:58458 "EHLO
+Received: from s3.sipsolutions.net ([144.76.43.152]:54298 "EHLO
 	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754799Ab3EVMFK (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 22 May 2013 08:05:10 -0400
-Message-ID: <1369224306.8207.7.camel@jlt4.sipsolutions.net> (sfid-20130522_140511_583011_5B11BF46)
-Subject: Re: [PATCH 6/9] lib/bpgit.py: add support for git paranoia
+	with ESMTP id S1758086Ab3EGNXT (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 7 May 2013 09:23:19 -0400
+Message-ID: <1367932996.8328.7.camel@jlt4.sipsolutions.net> (sfid-20130507_152322_180792_9A3F5FDB)
+Subject: Re: [PATCH v2 0/4] backports: fix final link errors
 From: Johannes Berg <johannes@sipsolutions.net>
 To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 Cc: backports@vger.kernel.org
-Date: Wed, 22 May 2013 14:05:06 +0200
-In-Reply-To: <1369222478-30577-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20130522_133517_032877_8CD5B8EE)
-References: <1369222478-30577-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1369222478-30577-7-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20130522_133517_032877_8CD5B8EE)
+Date: Tue, 07 May 2013 15:23:16 +0200
+In-Reply-To: <1367877128-10812-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130506_235223_925793_4F77E4F3)
+References: <1367877128-10812-1-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20130506_235223_925793_4F77E4F3)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2013-05-22 at 04:34 -0700, Luis R. Rodriguez wrote:
+On Mon, 2013-05-06 at 14:52 -0700, Luis R. Rodriguez wrote:
 > From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 > 
-> This cleans sanitizes a source tree and ensures
-> no content is present from what was intended.
+> OK this took a while but finally figured it out. This addresses
+> the link errors introduced by adding the media and voltage
+> regulator subsystems. We can now move on with life and hopefully
+> cook a release right in time for v3.10. Now we just have to
+> step slowly forward on linux-next tags up to where we are
+> today (which hopefully will remain this way for another week).
 
-All of this (including the previous patches) makes me think
-"--git-revision HEAD" should just be the default instead of trying to
-muck with the working directory of the kernel tree too much?
+Thanks Luis! Applied all 4 (actually 4/4 I applied the one you sent
+later)
 
 johannes
 
