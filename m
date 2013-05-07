@@ -1,40 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f47.google.com ([209.85.215.47]:64628 "EHLO
-	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752215Ab3EPQ6c (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 16 May 2013 12:58:32 -0400
-Received: by mail-la0-f47.google.com with SMTP id fq12so3213434lab.6
-        for <backports@vger.kernel.org>; Thu, 16 May 2013 09:58:31 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1368703552.8387.4.camel@jlt4.sipsolutions.net>
-References: <1368692610-24662-1-git-send-email-mcgrof@do-not-panic.com>
- <1368692610-24662-5-git-send-email-mcgrof@do-not-panic.com> <1368703552.8387.4.camel@jlt4.sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Thu, 16 May 2013 09:58:11 -0700
-Message-ID: <CAB=NE6XPYWQVLuEDDR7L5An2CS+ZHtGcOH6OOWVYMK7H3g77nA@mail.gmail.com> (sfid-20130516_185836_445577_F5EED60C)
-Subject: Re: [PATCH v2 4/4] gentree.py: do not skip /dev/null patches
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from s3.sipsolutions.net ([144.76.43.152]:54302 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758062Ab3EGNYC (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 7 May 2013 09:24:02 -0400
+Message-ID: <1367933038.8328.8.camel@jlt4.sipsolutions.net> (sfid-20130507_152404_353835_B703F82C)
+Subject: Re: [PATCH v2 4/4] ckmake: make --check-exports default
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org
+Date: Tue, 07 May 2013 15:23:58 +0200
+In-Reply-To: <1367877266-11028-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130506_235434_633995_0DF1E162)
+References: <1367877266-11028-1-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20130506_235434_633995_0DF1E162)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, May 16, 2013 at 4:25 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Thu, 2013-05-16 at 01:23 -0700, Luis R. Rodriguez wrote:
->
->> --- a/gentree.py
->> +++ b/gentree.py
->> @@ -368,7 +368,7 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
->>          # assume the patch needs to be applied -- otherwise continue
->>          patched_file = '/'.join(p.items[0].source.split('/')[1:])
->>          fullfn = os.path.join(args.outdir, patched_file)
->> -        if not os.path.exists(fullfn):
->> +        if ((patched_file != "null") and (not os.path.exists(fullfn))):
->
-> Do you actually have patches adding completely new files? That seems a
-> bit odd to me?
+On Mon, 2013-05-06 at 14:54 -0700, Luis R. Rodriguez wrote:
+> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+> 
+> Remove --check-exports as an option and now just enable it by default.
+> 
+> Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+> ---
+>  devel/ckmake |    4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/devel/ckmake b/devel/ckmake
+> index 0b738e5..61f9864 100755
+> --- a/devel/ckmake
+> +++ b/devel/ckmake
+> @@ -180,7 +180,7 @@ def process_kernel(num, kset, cmdline_args):
+>  
+>  		log_file.close()
+>  		status = p.returncode
+> -		if status == 0 and cmdline_args.check_exports:
+> +		if status == 0
 
-For nouveau I did during some of my tests but no, I don't now.
+with that fixed (missing colon) of course
 
-  Luis
+johannes
+
