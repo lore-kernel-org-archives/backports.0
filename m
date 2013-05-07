@@ -1,68 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:60095 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752557Ab3EHIcs (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 8 May 2013 04:32:48 -0400
-Message-ID: <518A0DA5.4060001@hauke-m.de> (sfid-20130508_103252_759048_3E646B9B)
-Date: Wed, 08 May 2013 10:32:37 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Dropping non supported kernels for kernel backports ?
-References: <CAB=NE6Wy0dp51wDxKzo74Kz=2F-MQjOnARS1r-z3v+LrOwhn-Q@mail.gmail.com>  (sfid-20130508_015436_904346_B7B59A0B) <1367996104.8279.5.camel@jlt4.sipsolutions.net>
-In-Reply-To: <1367996104.8279.5.camel@jlt4.sipsolutions.net>
-Content-Type: text/plain; charset=UTF-8
+Received: from s3.sipsolutions.net ([144.76.43.152]:54342 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758098Ab3EGNbh (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 7 May 2013 09:31:37 -0400
+Message-ID: <1367933493.8328.13.camel@jlt4.sipsolutions.net> (sfid-20130507_153139_344612_771A8F95)
+Subject: Re: [PATCH 2/2] ckmake: add support for kernel ranges
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org
+Date: Tue, 07 May 2013 15:31:33 +0200
+In-Reply-To: <1367917626-21870-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20130507_110719_669025_E1428726)
+References: <1367917626-21870-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1367917626-21870-2-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20130507_110719_669025_E1428726)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 05/08/2013 08:55 AM, Johannes Berg wrote:
-> On Tue, 2013-05-07 at 16:53 -0700, Luis R. Rodriguez wrote:
->> Today the backports project provides support to backport down to
->> 2.6.24 for some subsystems. While this is good for users in practice
->> for development and maintenance this is quite a bit of overhead. Apart
->> from older kernels there are also gaps in between stable releases that
->> are not supported. For example 3.8 and 3.4 are supported but anything
->> in between is not (3.5, 3.6, 3.7), but we still do support them on the
->> backports project. At times this may mean a stable fix may get
->> propagated onto a the linux-3.4.y branch but obviously not the the
->> linux-3.5.y branch. If backporting expressing this becomes a bit
->> complex and we have dealt with it. In short, its a pain.
->>
->> I'd like to see what folks thought if we went ahead and *only*
->> supported kernels listed on kernel.org as supported. This would help
->> with the Linux kernel maintainer effort by also persuading users to
->> upgrade to stable releases as well as educating around this.
->>
->> If v3.10 backported releases are too soon to do this I propose we
->> seriously consider it for v3.11 releases. Any thoughts?
+On Tue, 2013-05-07 at 02:07 -0700, Luis R. Rodriguez wrote:
+> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 > 
-> I'm sure I'd still have to support other kernels random customers might
-> be on (customers, they don't always do the smart thing ;-) ). I could do
-> that myself of course, but then where would I stick the support patches?
+> At times you may only want to test with ckmake a specific
+> kernel range or target kernels. You can do that now. ckmake
+> will use this list against what it finds on your system.
 > 
-> Maybe we could do a compromise and drop support for no longer supported
-> kernels, but only a few years later? If we put the cutoff at 3 years now
-> we'd drop everything before 2.6.34, for example.
+> Examples:
 > 
-> johannes
+>   * ckmake --revs 3.3..3.4
+>   * ckmake --revs 2.6.24,2.6.30,2.6.32..3.2,3.4
 
-I it is not often that something compat depends on gets backported into
-some longterm kernel. The majority ~90% of backports added to compat are
-not backported to any longterm kernel. If we want to support some kernel
-version I do not think it is a hard task to support the versions in between.
+I don't really understand the computations you do, but hey, if it
+works :-)
 
-Instead of supporting everything back to 2.6.34 I would like to got to
-2.6.32 because this was used in Debian squeeze, RedHat 6 and some Ubuntu
-long term version.
+Applied both.
 
-Dropping support for kernel versions not older than a year but not
-supported any more is a bad idea, because the big distributions often
-pick a non longterm kernel as their distribution kernel. Than we would
-not even support the recent Ubuntu versions for a long time. Ubuntu
-12.10 uses kernel 3.5 and Ubuntu 13.04 uses 3.8, both are no longterm
-kernel versions.
+johannes
 
-Hauke
