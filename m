@@ -1,43 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:59692 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752556Ab3EaTPg (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 31 May 2013 15:15:36 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/3] backports: add rcu_dereference_rtnl
-Date: Fri, 31 May 2013 21:15:23 +0200
-Message-Id: <1370027724-22627-2-git-send-email-hauke@hauke-m.de> (sfid-20130531_211538_022786_EE87592C)
-In-Reply-To: <1370027724-22627-1-git-send-email-hauke@hauke-m.de>
-References: <1370027724-22627-1-git-send-email-hauke@hauke-m.de>
+Received: from s3.sipsolutions.net ([144.76.43.152]:57001 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752485Ab3EHG7T (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 8 May 2013 02:59:19 -0400
+Message-ID: <1367996357.8279.8.camel@jlt4.sipsolutions.net> (sfid-20130508_085921_022858_CCA78F47)
+Subject: Re: [PATCH 2/2] backports: refresh patches for next-20130403
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Wed, 08 May 2013 08:59:17 +0200
+In-Reply-To: <CAB=NE6WXt0eyO3UAV_utFtZmFuPRM-2cRx3nufwKv=w6wST9sg@mail.gmail.com> (sfid-20130508_002204_734233_8632C85F)
+References: <1367925800-18555-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1367925800-18555-2-git-send-email-mcgrof@do-not-panic.com>
+	 <1367929330.8328.4.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6VEzLRPumquo-2MnJ3txvAUKsWQfSh3y9wuYOh1ds-keg@mail.gmail.com>
+	 <CAB=NE6WXt0eyO3UAV_utFtZmFuPRM-2cRx3nufwKv=w6wST9sg@mail.gmail.com>
+	 (sfid-20130508_002204_734233_8632C85F)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Add backport for rcu_dereference_rtnl()
+On Tue, 2013-05-07 at 15:21 -0700, Luis R. Rodriguez wrote:
+> On Tue, May 7, 2013 at 12:25 PM, Luis R. Rodriguez
+> <mcgrof@do-not-panic.com> wrote:
+> > On Tue, May 7, 2013 at 5:22 AM, Johannes Berg <johannes@sipsolutions.net> wrote:
+> >> Did you mean next-20130503? I was already on next-20130405.
+> >
+> > Sorry it seems I was behind you so that's good. I'll jump to next-20130405.
+> 
+> Well so this is odd, with next-20130405 I get:
+> 
+> == ckmake-report.log ==
+> 
+> 1   2.6.24              [  FAIL  ]
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/rtnetlink.h |    6 ++++++
- 1 file changed, 6 insertions(+)
+Odd. I was almost certain I had done this, but I guess I didn't or
+something. Sorry.
 
-diff --git a/backport/backport-include/linux/rtnetlink.h b/backport/backport-include/linux/rtnetlink.h
-index 56ba9f6..81540a3 100644
---- a/backport/backport-include/linux/rtnetlink.h
-+++ b/backport/backport-include/linux/rtnetlink.h
-@@ -7,6 +7,12 @@
-         rcu_dereference_protected(p, lockdep_rtnl_is_held())
- #endif
- 
-+#ifndef rcu_dereference_rtnl
-+#define rcu_dereference_rtnl(p)					\
-+	rcu_dereference_check(p, rcu_read_lock_held() ||	\
-+				 lockdep_rtnl_is_held())
-+#endif
-+
- #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34)
- #ifdef CONFIG_PROVE_LOCKING
- /*
--- 
-1.7.10.4
+johannes
 
