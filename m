@@ -1,58 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:51943 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753608Ab3EVLe6 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 22 May 2013 07:34:58 -0400
-Received: by mail-pa0-f50.google.com with SMTP id fb11so317667pad.9
-        for <backports@vger.kernel.org>; Wed, 22 May 2013 04:34:57 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 2/9] lib/bpgit.py: add git describe --dirty support
-Date: Wed, 22 May 2013 04:34:31 -0700
-Message-Id: <1369222478-30577-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20130522_133459_394592_20E33480)
-In-Reply-To: <1369222478-30577-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1369222478-30577-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from mail-la0-f44.google.com ([209.85.215.44]:33978 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752464Ab3EHJFg (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 8 May 2013 05:05:36 -0400
+Received: by mail-la0-f44.google.com with SMTP id ed20so1520540lab.3
+        for <backports@vger.kernel.org>; Wed, 08 May 2013 02:05:34 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1368003661.8279.17.camel@jlt4.sipsolutions.net>
+References: <1367997031-11574-1-git-send-email-johannes@sipsolutions.net>
+ <1367997056.8279.10.camel@jlt4.sipsolutions.net> <CAB=NE6UiDwf4ojR=XaVF+QqttKxKnNHcLJ9otF2ud3kdkdoddQ@mail.gmail.com>
+ <1368003661.8279.17.camel@jlt4.sipsolutions.net>
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+Date: Wed, 8 May 2013 02:05:14 -0700
+Message-ID: <CAB=NE6UQtjEex53OYiF+u0WdB8Y2ZF0Zpp=D=c11ENyx704+3g@mail.gmail.com> (sfid-20130508_110544_882743_A5EB149C)
+Subject: Re: [PATCH] backports: adjust snd_portid patch for nl80211 update
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Wed, May 8, 2013 at 2:01 AM, Johannes Berg <johannes@sipsolutions.net> wrote:
+> On Wed, 2013-05-08 at 01:59 -0700, Luis R. Rodriguez wrote:
+>
+>
+>> So that's next-20130428 but since that doesn't exist we want to easily
+>> branch out into a linux-3.10.y branch by having at least:
+>>
+>>   * next-20130426
+>>   * next-20130426
+>>   * next-20130429
+>>
+>> Given that johill has likely time warped us to next-20130423 perhaps
+>> its also good to have next-20130424. That would be the full set prior
+>> to the merge window for v3.10 (or whatever $linux_deity wants to call
+>> it).
+>
+> I haven't really, I just needed this particular patch for iwlwifi from
+> wireless-testing.
 
-git describe --dirty pegs a "-dirty" at the end of
-your tag if you haven't properly commited things.
-When the the --dirty flag is used assume the current
-state of the tree.
+Cookie time warp. Close enough. Eat the cookie Spock.
 
-We will use this later.
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- lib/bpgit.py |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/lib/bpgit.py b/lib/bpgit.py
-index 142b9b5..40523f2 100644
---- a/lib/bpgit.py
-+++ b/lib/bpgit.py
-@@ -27,13 +27,15 @@ def rev_parse(rev='HEAD', tree=None):
-         raise SHAError()
-     return sha
- 
--def describe(rev='HEAD', tree=None, get_long=False):
-+def describe(rev='HEAD', tree=None, get_long=False, dirty=False):
-     cmd = ['git', 'describe', '--always']
- 
-     if (get_long):
-         cmd.append('--long')
--
--    cmd.append(rev)
-+    if (dirty):
-+        cmd.append('--dirty')
-+    else:
-+        cmd.append(rev)
- 
-     process = subprocess.Popen(cmd,
-                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
--- 
-1.7.10.4
-
+  Luis
