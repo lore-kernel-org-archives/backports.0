@@ -1,43 +1,30 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-oa0-f51.google.com ([209.85.219.51]:39625 "EHLO
-	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753856Ab3E1T44 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 28 May 2013 15:56:56 -0400
-Received: by mail-oa0-f51.google.com with SMTP id f4so10531966oah.38
-        for <backports@vger.kernel.org>; Tue, 28 May 2013 12:56:56 -0700 (PDT)
-Message-ID: <51A50C06.8060503@lwfinger.net> (sfid-20130528_215658_725355_DE2EB11D)
-Date: Tue, 28 May 2013 14:56:54 -0500
-From: Larry Finger <Larry.Finger@lwfinger.net>
+Received: from mail-lb0-f181.google.com ([209.85.217.181]:36572 "EHLO
+	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752642Ab3EJSUG (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 10 May 2013 14:20:06 -0400
+Received: by mail-lb0-f181.google.com with SMTP id w10so4442587lbi.26
+        for <backports@vger.kernel.org>; Fri, 10 May 2013 11:20:03 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <CAB=NE6UQtjEex53OYiF+u0WdB8Y2ZF0Zpp=D=c11ENyx704+3g@mail.gmail.com>
+References: <1367997031-11574-1-git-send-email-johannes@sipsolutions.net>
+ <1367997056.8279.10.camel@jlt4.sipsolutions.net> <CAB=NE6UiDwf4ojR=XaVF+QqttKxKnNHcLJ9otF2ud3kdkdoddQ@mail.gmail.com>
+ <1368003661.8279.17.camel@jlt4.sipsolutions.net> <CAB=NE6UQtjEex53OYiF+u0WdB8Y2ZF0Zpp=D=c11ENyx704+3g@mail.gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+Date: Fri, 10 May 2013 11:19:43 -0700
+Message-ID: <CAB=NE6W3n3+fD7_Hf=EgHEm8-tnJr3yYK+3iu9ZKRgn2Zs=5=w@mail.gmail.com> (sfid-20130510_202009_106670_8FF9C7F9)
+Subject: Re: [PATCH] backports: adjust snd_portid patch for nl80211 update
 To: Johannes Berg <johannes@sipsolutions.net>
-CC: "Luis R. Rodriguez" <mcgrof@frijolero.org>,
-	backports@vger.kernel.org
-Subject: Re: Problem with backports git repo
-References: <51A502AD.1060104@lwfinger.net>  (sfid-20130528_211707_085177_DE2DD9E0) <1369769122.8548.7.camel@jlt4.sipsolutions.net>  (sfid-20130528_212531_921012_9500F06E) <1369770189.8548.20.camel@jlt4.sipsolutions.net>
-In-Reply-To: <1369770189.8548.20.camel@jlt4.sipsolutions.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 05/28/2013 02:43 PM, Johannes Berg wrote:
-> On Tue, 2013-05-28 at 21:25 +0200, Johannes Berg wrote:
->> Hi Larry,
->>
->>> I just used 'git clone' to get a fresh copy of the repo. When I try 'make
->>> menuconfig', I get the following error:
->>>
->>> finger@larrylap:~/backports/backport> make menuconfig
->>
->> The docs haven't been updated, but this is just the skeleton, you're not
->> supposed to run anything in there. Go to the top-level first, and run
->
-> Oh, n/m me, it seems this was just an accidental resend of your previous
-> mail?
+On Wed, May 8, 2013 at 2:05 AM, Luis R. Rodriguez <mcgrof@frijolero.org> wrote:
+> Cookie time warp. Close enough. Eat the cookie Spock.
 
-It was a resend, but I did not include the backports ML and I got no response.
+Please hold on merging this, I've done quite a bit of updates to get
+us up to speed and this patch is required but later. I'll sort them
+all out and post shortly.
 
-Thanks for your input. I was able to build just file.
-
-Larry
-
-
+  Luis
