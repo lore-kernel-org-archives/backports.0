@@ -1,56 +1,74 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f52.google.com ([209.85.215.52]:58886 "EHLO
-	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751538Ab3ERVFp (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 18 May 2013 17:05:45 -0400
-MIME-Version: 1.0
+Received: from mail-ia0-f182.google.com ([209.85.210.182]:40290 "EHLO
+	mail-ia0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754365Ab3EKAdw (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 10 May 2013 20:33:52 -0400
+Received: by mail-ia0-f182.google.com with SMTP id j5so3127729iaf.13
+        for <backports@vger.kernel.org>; Fri, 10 May 2013 17:33:52 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Sat, 18 May 2013 14:05:23 -0700
-Message-ID: <CAB=NE6VAWUQpbZpM8T77d-r7ZYJd4veghKY_eMV9sDv831gbXw@mail.gmail.com> (sfid-20130518_230549_083959_22936D30)
-Subject: [ANN] Backports based on v3.10-rc1 released
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 1/5] backports: backport rfkill now for < v3.10
+Date: Fri, 10 May 2013 17:33:37 -0700
+Message-Id: <1368232421-24123-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20130511_023354_423707_2302CEC1)
+In-Reply-To: <1368232421-24123-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1368232421-24123-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-As announced on the list the compat-drivers project was renamed to
-backports [0] and uses now only one new tree for development [1]. Due
-to the huge amount of changes we've been behind on linux-next daily
-snapshots but we've now caught up with Linus so a release based on
-v3.10-rc1 is due and is now available [2]. Please test ! There are
-tons of changes in terms of how we do backports that should make it
-easier and consistent to backport drivers and subsystems thanks mainly
-to Johannes' huge changes. As it is now most if not all development
-scripts have been converted to Python, except for scripts required on
-the user's part for installation.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-As for user's experience you no longer have to use the silly
-./scripts/drivers-select script to enable only one driver for
-compilation, you just type in
+We want to backport rfkill now for < v3.10 to enable
+NFC rfkill support. This is required as of next-20130423.
 
-make menuconfig
-make -j 4
-# Then as root:
-make install
+commit 44b3decb414919760c7327df05e63372c1bf5d9a
+Author: Samuel Ortiz <sameo@linux.intel.com>
+Date:   Thu Apr 11 11:51:36 2013 +0200
 
-There are also a series of defconfigs, present on the defconfig
-directory, you can use the iwlwifi defconfig as follows for example:
+    rfkill: Add NFC to the list of supported radios
 
-make defconfig-iwlwifi
+    And return the proper string for it.
 
-We need more defconfigs! Please feel free to send your submissions.
-I'm willing to merge these in for the rc series prior to the final
-release. Apart from these changes we now also backport three new
-subsystems: NFC, media and regulator subsystems. For NFC we have 8 new
-drivers. For media we ended up backporting 433 new drivers. For
-regulator we backported 37 new drivers.
+    Acked-by: Johannes Berg <johannes@sipsolutions.net>
+    Acked-by: Marcel Holtmann <marcel@holtmann.org>
+    Signed-off-by: Samuel Ortiz <sameo@linux.intel.com>
 
-Many thanks to Johannes, Samuel, and Hauke for their huge help with
-all these new changes. Now please go test!
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ backport/backport-include/linux/rfkill.h |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-[0] http://marc.info/?l=linux-backports&m=136891011622088&w=2
-[1] git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/backports.git
-[2] https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.10-rc1/backports-3.10-rc1-1.tar.bz2
+diff --git a/backport/backport-include/linux/rfkill.h b/backport/backport-include/linux/rfkill.h
+index 01d18f1..3869bbf 100644
+--- a/backport/backport-include/linux/rfkill.h
++++ b/backport/backport-include/linux/rfkill.h
+@@ -2,10 +2,8 @@
+ #define __COMPAT_RFKILL_H
+ #include <linux/version.h>
+ 
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,33))
+-#include_next <linux/rfkill.h>
+-#else
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(3,10,0))
++
+ #define rfkill_get_led_trigger_name LINUX_BACKPORT(rfkill_get_led_trigger_name)
+ #define rfkill_set_led_trigger_name LINUX_BACKPORT(rfkill_set_led_trigger_name)
+ #define rfkill_set_hw_state LINUX_BACKPORT(rfkill_set_hw_state)
+@@ -19,8 +17,11 @@
+ #define rfkill_register LINUX_BACKPORT(rfkill_register)
+ #define rfkill_unregister LINUX_BACKPORT(rfkill_unregister)
+ #define rfkill_destroy LINUX_BACKPORT(rfkill_destroy)
+-#endif
++
+ #include <linux/rfkill_backport.h>
++
++#else
++#include_next <linux/rfkill.h>
+ #endif
+ 
+ #endif
+-- 
+1.7.10.4
 
-  Luis
