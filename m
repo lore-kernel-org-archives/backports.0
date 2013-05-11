@@ -1,49 +1,71 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:47005 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752227Ab3EMMCK (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 13 May 2013 08:02:10 -0400
-Message-ID: <1368446524.8300.22.camel@jlt4.sipsolutions.net> (sfid-20130513_140231_639455_1C832DA7)
-Subject: Re: [PATCH 01/12] backports: make compat module use
- subsys_initcall()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: backports@vger.kernel.org, pstew@chromium.org
-Date: Mon, 13 May 2013 14:02:04 +0200
-In-Reply-To: <1368232023-23817-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20130511_022718_965302_E9DED80D)
-References: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1368232023-23817-2-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20130511_022718_965302_E9DED80D)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-pb0-f41.google.com ([209.85.160.41]:44434 "EHLO
+	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753083Ab3EKSyf (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 11 May 2013 14:54:35 -0400
+Received: by mail-pb0-f41.google.com with SMTP id jt11so1629974pbb.14
+        for <backports@vger.kernel.org>; Sat, 11 May 2013 11:54:34 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH v2 0/5] backports: move us up to next-20130423
+Date: Sat, 11 May 2013 11:54:24 -0700
+Message-Id: <1368298469-29143-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130511_205438_343570_19DD7C0B)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2013-05-10 at 17:26 -0700, Luis R. Rodriguez wrote:
-> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-> 
-> This is a no-op for the modular use case of the
-> backports project but by enabling this it allows
-> for developers a way to embed the backports releases
-> onto a target source Linux directory, with obvious
-> pending modifications, by adding our backport_init()
-> onto the target kernel's init/main.c start_kernel().
-> 
-> Enable this theoretical use case. Hackers welcome to
-> go play on this theoretical integration strategy now.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-I applied all but this one, it caused a compiler warning that seemed
-important (missing an include?)
+I've addressed backporting rfkill here in a way that
+I think is more suitable. Let me know what you think.
 
-/tmp/i/compat/main.c:83:1: warning: data definition has no type or
-storage class [enabled by default]
-/tmp/i/compat/main.c:83:1: warning: type defaults to ‘int’ in
-declaration of ‘__exitcall’ [-Wimplicit-int]
-/tmp/i/compat/main.c:83:1: warning: parameter names (without types) in
-function declaration [enabled by default]
-/tmp/i/compat/main.c:76:123: warning: ‘backport_exit’ defined but not
-used [-Wunused-function]
+Johannes Berg (1):
+  backports: adjust snd_portid patch for nl80211 update
 
+Luis R. Rodriguez (4):
+  backports: backport rfkill properly
+  backports: backport vlan ethernet changes
+  backports: address vlan ethernet driver changes
+  backports: refresh patches for next-20130423
 
-johannes
+ backport/backport-include/linux/if_vlan.h          |   18 +++++
+ backport/backport-include/linux/netdev_features.h  |   23 +++++++
+ backport/backport-include/linux/rfkill.h           |   13 ++--
+ copy-list                                          |    4 +-
+ .../network/0001-netdev_ops/mac80211.patch         |    6 +-
+ .../network/0001-netdev_ops/mac80211_hwsim.patch   |    2 +-
+ .../mac80211.patch                                 |    4 +-
+ .../0005-netlink-portid/mac80211_hwsim.patch       |    4 +-
+ .../network/0005-netlink-portid/nl80211.patch      |   69 +++++++++++---------
+ .../0006-disable-dump-adjust-on-old-kernels.patch  |    4 +-
+ .../network/0007-ksize-orinoco.patch               |    1 +
+ .../network/0008-rfkill.patch                      |   34 ++++++----
+ .../include_net_cfg80211.patch                     |    2 +-
+ .../drivers_net_wireless_iwlegacy_4965-mac.patch   |    2 +-
+ .../net_mac80211_tx.patch                          |    4 +-
+ .../17-netdev-queue/net_mac80211_iface.patch       |    4 +-
+ .../network/22-multiqueue/net_mac80211_tx.patch    |    2 +-
+ .../drivers_net_wireless_mwl8k.patch               |   10 +--
+ .../include_net_mac80211.patch                     |    2 +-
+ .../net_mac80211_ieee80211_i.patch                 |    2 +-
+ .../net_mac80211_iface.patch                       |    2 +-
+ .../30-bridge-port/net_wireless_nl80211.patch      |    2 +-
+ .../network/36-workqueue/net_mac80211_main.patch   |    2 +-
+ ...ers_net_ethernet_atheros_atl1c_atl1c_main.patch |   14 ++--
+ ...ers_net_ethernet_atheros_atl1e_atl1e_main.patch |    6 +-
+ .../drivers_net_ethernet_atheros_atlx_atl1.patch   |    4 +-
+ .../drivers_net_ethernet_atheros_atlx_atl2.patch   |   49 ++++++++++----
+ .../42-netlink_seq/net_wireless_nl80211.patch      |    2 +-
+ .../drivers_net_wireless_rt2x00_rt2500usb.patch    |    2 +-
+ .../network/66-uapi-changes/INFO                   |   18 -----
+ .../include_linux_rfkill_backport.patch            |   11 ----
+ .../69-wowlan-no-socket/net_wireless_nl80211.patch |    2 +-
+ 32 files changed, 190 insertions(+), 134 deletions(-)
+ create mode 100644 backport/backport-include/linux/if_vlan.h
+ delete mode 100644 patches/collateral-evolutions/network/66-uapi-changes/INFO
+ delete mode 100644 patches/collateral-evolutions/network/66-uapi-changes/include_linux_rfkill_backport.patch
+
+-- 
+1.7.10.4
 
