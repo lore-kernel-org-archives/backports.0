@@ -1,68 +1,100 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f53.google.com ([209.85.215.53]:56103 "EHLO
-	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752227Ab3EMBbF (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 12 May 2013 21:31:05 -0400
-Received: by mail-la0-f53.google.com with SMTP id eo20so5520986lab.26
-        for <backports@vger.kernel.org>; Sun, 12 May 2013 18:31:03 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <CANq1E4RXkYU=PNd-acNT-cp1ARQPR6-2Rq-a8eJGseSbRLCLxg@mail.gmail.com>
-References: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
- <1368232023-23817-12-git-send-email-mcgrof@do-not-panic.com>
- <CANq1E4Re_uJQqvqEpWzRbVxsxVz3MBvZUqzM3ONFiJ+mXy4rNA@mail.gmail.com>
- <CAB=NE6XrKUSDQbjdeht=Aip-E1=oqPd4D=JmMdEdrJSNXLGukg@mail.gmail.com> <CANq1E4RXkYU=PNd-acNT-cp1ARQPR6-2Rq-a8eJGseSbRLCLxg@mail.gmail.com>
+Received: from mail-ie0-f178.google.com ([209.85.223.178]:52904 "EHLO
+	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754465Ab3EKA1f (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 10 May 2013 20:27:35 -0400
+Received: by mail-ie0-f178.google.com with SMTP id b11so9435853iee.9
+        for <backports@vger.kernel.org>; Fri, 10 May 2013 17:27:35 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Sun, 12 May 2013 18:30:43 -0700
-Message-ID: <CAB=NE6WyvXSUS2PUNFktBVUn4u0rcVwXGQ1sYDbL34d8iU2RYw@mail.gmail.com> (sfid-20130513_033108_435280_87A8967F)
-Subject: Re: [PATCH 11/12] backports: backport new bluetooth hidp session-management
-To: David Herrmann <dh.herrmann@gmail.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 05/12] backports: remove brcmsmac / brcmutil Makefile patches
+Date: Fri, 10 May 2013 17:26:56 -0700
+Message-Id: <1368232023-23817-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20130511_022736_834639_B960A4A7)
+In-Reply-To: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, May 12, 2013 at 2:38 PM, David Herrmann <dh.herrmann@gmail.com> wrote:
-> On Sun, May 12, 2013 at 9:33 PM, Luis R. Rodriguez
->> http://drvbp1.linux-foundation.org/~mcgrof/backport-tmp/backports-20130426.tar.bz2
->
-> That one helped a lot, thx!
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Great!
+These are now upstream thanks to commit 8e8d4ff0 on
+next-20130415.
 
->> I think patch miserably guessed the hunks where to apply some of these
->> changes to. I tried to make sense of it but the rewrite was a bit big
->> so I was not sure where to places things correctly, hence me Cc'ing
->> you, I really appreciate you reviewing this.
->
-> Yeah, it was really weird. I fixed it up how I think it should work.
-> However, compiling kernels takes like 50min here (hurray, intel
-> Atom!), so this isn't even compile-tested. I can do this later this
-> week if you want.
+commit 8e8d4ff051672d4a2939e7d6925c4acd234b0220
+Author: Johannes Berg <johannes.berg@intel.com>
+Date:   Thu Apr 11 16:15:28 2013 +0200
 
-No worries we have a crazy build box for the backports project that
-lets us test compile these releases across 26 kernels (2.6.24-3.9) in
-about 30 minutes using our script ckmake, all in RAM, so I just
-integrated your changes and in 30 minutes we'll know if anything
-broke, and I can provide the log then.
+    brcm80211: simplify makefiles
 
-> The net/bluetooth/hidp/core.c file is attached. It is from the tarball
-> you created above (2013-04-26). I fixed some other small issues.
+    This came up during my backporting work but it seems
+    perfectly appropriate for the kernel as well.
 
-Nice, can you provide me a Signed-off-by tag ? With it I'd just amend
-it to my commit provided everything compiles fine.
+    Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+    Acked-by: Arend van Spriel <arend@broadcom.com>
+    Signed-off-by: John W. Linville <linville@tuxdriver.com>
 
-> Can you tell me whether that works for you? The diff to linux-next is pretty small.
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ .../network/72-brcm80211-makefiles/brcmsmac.patch  |   25 --------------------
+ .../network/72-brcm80211-makefiles/brcmutil.patch  |   15 ------------
+ 2 files changed, 40 deletions(-)
+ delete mode 100644 patches/collateral-evolutions/network/72-brcm80211-makefiles/brcmsmac.patch
+ delete mode 100644 patches/collateral-evolutions/network/72-brcm80211-makefiles/brcmutil.patch
 
-Indeed, I used the core.c file to generate the new diff by removing
-first completely the patch in question. We'll now just wait for
-compilation test results.
+diff --git a/patches/collateral-evolutions/network/72-brcm80211-makefiles/brcmsmac.patch b/patches/collateral-evolutions/network/72-brcm80211-makefiles/brcmsmac.patch
+deleted file mode 100644
+index 112c769..0000000
+--- a/patches/collateral-evolutions/network/72-brcm80211-makefiles/brcmsmac.patch
++++ /dev/null
+@@ -1,25 +0,0 @@
+---- a/drivers/net/wireless/brcm80211/brcmsmac/Makefile
+-+++ b/drivers/net/wireless/brcm80211/brcmsmac/Makefile
+-@@ -21,7 +21,7 @@ ccflags-y := \
+- 	-Idrivers/net/wireless/brcm80211/brcmsmac/phy \
+- 	-Idrivers/net/wireless/brcm80211/include
+- 
+--BRCMSMAC_OFILES := \
+-+brcmsmac-y := \
+- 	mac80211_if.o \
+- 	ucode_loader.o \
+- 	ampdu.o \
+-@@ -43,11 +43,6 @@ BRCMSMAC_OFILES := \
+- 	brcms_trace_events.o \
+- 	debug.o
+- 
+--ifdef CONFIG_BCMA_DRIVER_GPIO
+--BRCMSMAC_OFILES += led.o
+--endif
+-+brcmsmac-$(CONFIG_BCMA_DRIVER_GPIO) += led.o
+- 
+--MODULEPFX := brcmsmac
+--
+--obj-$(CONFIG_BRCMSMAC)	+= $(MODULEPFX).o
+--$(MODULEPFX)-objs	= $(BRCMSMAC_OFILES)
+-+obj-$(CONFIG_BRCMSMAC)	+= brcmsmac.o
+diff --git a/patches/collateral-evolutions/network/72-brcm80211-makefiles/brcmutil.patch b/patches/collateral-evolutions/network/72-brcm80211-makefiles/brcmutil.patch
+deleted file mode 100644
+index 3b84733..0000000
+--- a/patches/collateral-evolutions/network/72-brcm80211-makefiles/brcmutil.patch
++++ /dev/null
+@@ -1,15 +0,0 @@
+---- a/drivers/net/wireless/brcm80211/brcmutil/Makefile
+-+++ b/drivers/net/wireless/brcm80211/brcmutil/Makefile
+-@@ -19,10 +19,5 @@ ccflags-y :=				\
+- 	-Idrivers/net/wireless/brcm80211/brcmutil \
+- 	-Idrivers/net/wireless/brcm80211/include
+- 
+--BRCMUTIL_OFILES := \
+--	utils.o
+--
+--MODULEPFX := brcmutil
+--
+--obj-$(CONFIG_BRCMUTIL)	+= $(MODULEPFX).o
+--$(MODULEPFX)-objs	= $(BRCMUTIL_OFILES)
+-+obj-$(CONFIG_BRCMUTIL)	+= brcmutil.o
+-+brcmutil-objs	= utils.o
+-- 
+1.7.10.4
 
-As for run time tests I'm personally on 3.2, I suppose what we can do
-is if this compiles fine just let this move forward and then at a
-later time ask on linux-blueooth list to see if anyone is on a kernel
-older than or equal to 2.6.27 using bluetooth to be able to run time
-test this. Is there any particular run time test anyone can do to test
-if this worked ?
-
-  Luis
