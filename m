@@ -1,124 +1,105 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:57428 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754109Ab3EKA1K (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 10 May 2013 20:27:10 -0400
-Received: by mail-ie0-f172.google.com with SMTP id 16so9283663iea.31
-        for <backports@vger.kernel.org>; Fri, 10 May 2013 17:27:09 -0700 (PDT)
+Received: from mail-ie0-f170.google.com ([209.85.223.170]:47889 "EHLO
+	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755640Ab3EKA1o (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 10 May 2013 20:27:44 -0400
+Received: by mail-ie0-f170.google.com with SMTP id aq17so9435343iec.29
+        for <backports@vger.kernel.org>; Fri, 10 May 2013 17:27:44 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: johannes@sipsolutions.net
 Cc: backports@vger.kernel.org,
 	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 00/12] backports: move us up to next-20130419
-Date: Fri, 10 May 2013 17:26:51 -0700
-Message-Id: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130511_022713_449938_1B9BB9DF)
+Subject: [PATCH 07/12] backports: enable the CONFIG_DRM_QXL driver on >= v3.3
+Date: Fri, 10 May 2013 17:26:58 -0700
+Message-Id: <1368232023-23817-8-git-send-email-mcgrof@do-not-panic.com> (sfid-20130511_022745_798441_3EE4176D)
+In-Reply-To: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-As far as compilation for all of the drivers is concerned
-we're currently at next-20130409, this series bumps us up to
-next-20130419.
+This provides a requirement of the new qxl DRM driver to
+be available only on kernels >= 3.3. The requirement
+comes from the usage of radix_tree_for_each_slot() that
+this uses the new radix bit-optimized iterator added
+via 78c1d7848 on 3.4. We backport this via the compat
+module but only for v3.3 given that addressing this
+backport for v3.2 requires addressing e2bdb933 which
+changes the radix_tree_node.
 
-I do have patches that takes us up to next-20130423 as well but those
-are currently being tested. I'll post them as a separate series in
-case anyone wants to help. I'll be out for a bit now.
+qxl was added on next-20130415.
 
-Note these are the next tags we've tested or are testing:
+mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains 78c1d7848
+v3.4-rc2~15^2~26
 
-next-20130402 OK
-next-20130403 OK
-next-20130404
-next-20130405 OK
-next-20130408 OK
-next-20130409 OK
-next-20130410 OK
-next-20130411
-next-20130412
-next-20130415 OK
-next-20130416
-next-20130417
-next-20130418
-next-20130419 OK
-next-20130422
-next-20130423 testing -- I'll post patches as RFTs
-next-20130424
-next-20130426
- ~~ around here Linus blessed v3.9 ~~
-next-20130429
-next-20130430
+mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains e2bdb933
+v3.3-rc1~81^2~8
 
-We want to be sure to atomically test next-20130424,
-next-20130426, next-20130429 and next-20130430 given
-that one of those will serve as a branch point for
-our linux-3.10.y stable branch once Linus releases
-v3.10.
+Someone wishing to #ifdef this to enable qxl support on
+v3.2 by using the old radix_tree_gang_lookup_slot()
+can look at 0fc9d1040313047edf6a39fd4d7c7defdca97c62
+as an example collateral evolution change.
 
-Luis R. Rodriguez (12):
-  backports: make compat module use subsys_initcall()
-  backports: backport dma-buf debugfs support
-  compat: backport radix-tree bit optimized iterator
-  backports: copy brcmfmac-sdio.h
-  backports: remove brcmsmac / brcmutil Makefile patches
-  backports: remove ath5k trace fix patch
-  backports: enable the CONFIG_DRM_QXL driver on >= v3.3
-  backports: enable REGULATOR_WM8994 only on >= 3.8
-  backports: refresh patches for next-20130415
-  backports: fix atl1.c dev-pm-ops patch
-  backports: backport new bluetooth hidp session-management
-  backports: refresh patches for next-20130419
+commit f64122c1f6ade301585569863b4b3b18f6e4e332
+Author: Dave Airlie <airlied@gmail.com>
+Date:   Mon Feb 25 14:47:55 2013 +1000
 
- backport/backport-include/linux/radix-tree.h       |  218 ++++++++++++++++
- backport/compat/Kconfig                            |    7 +
- backport/compat/Makefile                           |    1 +
- backport/compat/backports.h                        |   14 ++
- backport/compat/lib-radix-tree-helpers.c           |  266 ++++++++++++++++++++
- backport/compat/main.c                             |    7 +-
- copy-list                                          |    1 +
- dependencies                                       |    8 +-
- patches/backport-adjustments/dma-buf.patch         |   30 ++-
- .../network/0001-netdev_ops/atlx.patch             |    2 +-
- .../network/0001-netdev_ops/ipw2100.patch          |    2 +-
- .../network/0001-netdev_ops/mac80211.patch         |    6 +-
- .../network/0001-netdev_ops/mac80211_hwsim.patch   |    2 +-
- .../network/0001-netdev_ops/usbnet.patch           |    2 +-
- .../mac80211.patch                                 |    4 +-
- .../0005-netlink-portid/mac80211_hwsim.patch       |    4 +-
- .../include_net_cfg80211.patch                     |    2 +-
- .../drivers_net_ethernet_atheros_atlx_atl1.patch   |   10 +-
- .../drivers_net_wireless_iwlwifi_pcie_drv.patch    |    4 +-
- .../drivers_net_wireless_ipw2x00_ipw2100.patch     |    2 +-
- .../16-bluetooth/net_bluetooth_hci_sysfs.patch     |    2 +-
- .../16-bluetooth/net_bluetooth_hidp_core.patch     |  109 ++++----
- .../16-bluetooth/net_bluetooth_hidp_sock.patch     |    2 +-
- .../network/16-bluetooth/net_bluetooth_sco.patch   |    2 +-
- .../17-netdev-queue/net_mac80211_iface.patch       |    4 +-
- .../drivers_net_wireless_adm8211.patch             |    2 +-
- .../drivers_net_wireless_ath_carl9170_main.patch   |    2 +-
- .../drivers_net_wireless_mwl8k.patch               |    6 +-
- .../include_net_mac80211.patch                     |    2 +-
- .../net_mac80211_ieee80211_i.patch                 |    2 +-
- .../net_mac80211_iface.patch                       |    6 +-
- .../25-multicast-list_head/net_mac80211_main.patch |    2 +-
- ..._wireless_brcm80211_brcmfmac_bcmsdh_sdmmc.patch |   10 +-
- .../network/36-workqueue/net_mac80211_main.patch   |    2 +-
- .../drivers_net_ethernet_atheros_atlx_atl1.patch   |    8 +-
- .../net_bluetooth_hci_core.patch                   |    2 +-
- .../drivers_net_ethernet_atheros_atlx_atl1.patch   |    2 +-
- .../drivers_bluetooth_btusb.patch                  |    2 +-
- .../drivers_net_usb_cdc_ether.patch                |    2 +-
- .../network/72-brcm80211-makefiles/brcmsmac.patch  |   25 --
- .../network/72-brcm80211-makefiles/brcmutil.patch  |   15 --
- .../network/73-ath5k-tracing/ath5k.patch           |   21 --
- 42 files changed, 644 insertions(+), 178 deletions(-)
- create mode 100644 backport/backport-include/linux/radix-tree.h
- create mode 100644 backport/compat/backports.h
- create mode 100644 backport/compat/lib-radix-tree-helpers.c
- delete mode 100644 patches/collateral-evolutions/network/72-brcm80211-makefiles/brcmsmac.patch
- delete mode 100644 patches/collateral-evolutions/network/72-brcm80211-makefiles/brcmutil.patch
- delete mode 100644 patches/collateral-evolutions/network/73-ath5k-tracing/ath5k.patch
+    drm: add new QXL driver. (v1.4)
 
+    QXL is a paravirtual graphics device used by the Spice virtual desktop
+    interface.
+
+    The drivers uses GEM and TTM to manage memory, the qxl hw fencing however
+    is quite different than normal TTM expects, we have to keep track of a number
+    of non-linear fence ids per bo that we need to have released by the hardware.
+
+    The releases are freed from a workqueue that wakes up and processes the
+    release ring.
+
+    releases are suballocated from a BO, there are 3 release categories, drawables,
+    surfaces and cursor cmds. The hw also has 3 rings for commands, cursor and release handling.
+
+    The hardware also have a surface id tracking mechnaism and the driver
+    encapsulates it completely inside the kernel, userspace never sees the actual hw sur
+    ids.
+
+    This requires a newer version of the QXL userspace driver, so shouldn't be
+    enabled until that has been placed into your distro of choice.
+
+    Authors: Dave Airlie, Alon Levy
+
+    v1.1: fixup some issues in the ioctl interface with padding
+    v1.2: add module device table
+    v1.3: fix nomodeset, fbcon leak, dumb bo create, release ring irq,
+          don't try flush release ring (broken hw), fix -modesetting.
+    v1.4: fbcon cpu usage reduction + suitable accel flags.
+
+    Signed-off-by: Alon Levy <alevy@redhat.com>
+    Signed-off-by: Dave Airlie <airlied@redhat.com>
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ dependencies |    6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/dependencies b/dependencies
+index 5ae6bce..c85577c 100644
+--- a/dependencies
++++ b/dependencies
+@@ -47,6 +47,12 @@ MWIFIEX 2.6.27
+ HDMI 3.2
+ DRM 3.2
+ DRM_TTM 3.2
++# See e2bdb933, this was added on v3.3, in order to
++# support DRM_QXL on 3.2 you'd have to backport 78c1d7848
++# to 3.2 on BACKPORT_BUILD_RADIX_HELPERS and that requires
++# taking into consideration the radix_tree_node rcu change
++# on e2bdb933.
++DRM_QXL 3.3
+ 
+ # Regulator
+ # Because of -EPROBE_DEFER see commit d1c3414c and note that
 -- 
 1.7.10.4
 
