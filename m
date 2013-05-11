@@ -1,168 +1,82 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:52194 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755376Ab3ENUM1 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 14 May 2013 16:12:27 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: mcgrof@do-not-panic.com, Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: move vb2_mmap_pfn_range into patch
-Date: Tue, 14 May 2013 22:12:16 +0200
-Message-Id: <1368562336-15584-1-git-send-email-johannes@sipsolutions.net> (sfid-20130514_221230_129579_39795629)
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:53652 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753083Ab3EKSyn (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 11 May 2013 14:54:43 -0400
+Received: by mail-pd0-f174.google.com with SMTP id u10so3505335pdi.19
+        for <backports@vger.kernel.org>; Sat, 11 May 2013 11:54:43 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH v2 2/5] backports: adjust snd_portid patch for nl80211 update
+Date: Sat, 11 May 2013 11:54:26 -0700
+Message-Id: <1368298469-29143-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20130511_205445_832613_05AC7393)
+In-Reply-To: <1368298469-29143-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1368298469-29143-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: Johannes Berg <johannes.berg@intel.com>
 
-There's only a single user of vb2_mmap_pfn_range() and
-at least on 3.2 having the function in compat-3.9.c is
-problematic if CPTCFG_BACKPORT_BUILD_DMA_SHARED_BUFFER
-isn't set, because on that kernel there's no dma-buf.h
-and then compilation can fail.
+The new code for the "critical protocol indication" uses
+snd_portid and must be adjusted in the backport patches.
+This is required as of next-20130423.
 
+commit 5de17984898c5758fc6ebe08eccea9f4b6548914
+Author: Arend van Spriel <arend@broadcom.com>
+Date:   Thu Apr 18 15:49:00 2013 +0200
+
+    cfg80211: introduce critical protocol indication from user-space
+
+    Some protocols need a more reliable connection to complete
+    successful in reasonable time. This patch adds a user-space
+    API to indicate the wireless driver that a critical protocol
+    is about to commence and when it is done, using nl80211 primitives
+    NL80211_CMD_CRIT_PROTOCOL_START and NL80211_CRIT_PROTOCOL_STOP.
+
+    There can be only on critical protocol session started per
+    registered cfg80211 device.
+
+    The driver can support this by implementing the cfg80211 callbacks
+    .crit_proto_start() and .crit_proto_stop(). Examples of protocols
+    that can benefit from this are DHCP, EAPOL, APIPA. Exactly how the
+    link can/should be made more reliable is up to the driver. Things
+    to consider are avoid scanning, no multi-channel operations, and
+    alter coexistence schemes.
+
+    Reviewed-by: Pieter-Paul Giesberts <pieterpg@broadcom.com>
+    Reviewed-by: Franky (Zhenhui) Lin <frankyl@broadcom.com>
+    Signed-off-by: Arend van Spriel <arend@broadcom.com>
+    Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+
+[mcgrof@do-not-panic.com]: Required as of next-20130423
+ and provided commit log message that introduced this
+ change.
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/media/videobuf2-memops.h | 15 --------
- backport/compat/compat-3.9.c                       | 44 ----------------------
- .../media/0002-dma_mmap_coherent-revert.patch      | 36 ++++++++++++++++--
- 3 files changed, 33 insertions(+), 62 deletions(-)
- delete mode 100644 backport/backport-include/media/videobuf2-memops.h
+ .../network/0005-netlink-portid/nl80211.patch                 |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/backport/backport-include/media/videobuf2-memops.h b/backport/backport-include/media/videobuf2-memops.h
-deleted file mode 100644
-index 49d0435..0000000
---- a/backport/backport-include/media/videobuf2-memops.h
-+++ /dev/null
-@@ -1,15 +0,0 @@
--#ifndef __BACKPORT_MEDIA_VB2_MEMOPS_H
--#define __BACKPORT_MEDIA_VB2_MEMOPS_H
--#include_next <media/videobuf2-memops.h>
--#include <linux/version.h>
--
--#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0) && \
--    LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)
--#define vb2_mmap_pfn_range LINUX_BACKPORT(vb2_mmap_pfn_range)
--int vb2_mmap_pfn_range(struct vm_area_struct *vma, unsigned long paddr,
--				unsigned long size,
--				const struct vm_operations_struct *vm_ops,
--				void *priv);
--#endif
--
--#endif /* __BACKPORT_MEDIA_VB2_MEMOPS_H */
-diff --git a/backport/compat/compat-3.9.c b/backport/compat/compat-3.9.c
-index 5ae236c..f81fe79 100644
---- a/backport/compat/compat-3.9.c
-+++ b/backport/compat/compat-3.9.c
-@@ -13,50 +13,6 @@
- #include <linux/device.h>
- #include <linux/err.h>
- 
--#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
--#include <media/videobuf2-memops.h>
--/**
-- * vb2_mmap_pfn_range() - map physical pages to userspace
-- * @vma:	virtual memory region for the mapping
-- * @paddr:	starting physical address of the memory to be mapped
-- * @size:	size of the memory to be mapped
-- * @vm_ops:	vm operations to be assigned to the created area
-- * @priv:	private data to be associated with the area
-- *
-- * Returns 0 on success.
-- */
--int vb2_mmap_pfn_range(struct vm_area_struct *vma, unsigned long paddr,
--				unsigned long size,
--				const struct vm_operations_struct *vm_ops,
--				void *priv)
--{
--	int ret;
--
--	size = min_t(unsigned long, vma->vm_end - vma->vm_start, size);
--
--	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
--	ret = remap_pfn_range(vma, vma->vm_start, paddr >> PAGE_SHIFT,
--				size, vma->vm_page_prot);
--	if (ret) {
--		printk(KERN_ERR "Remapping memory failed, error: %d\n", ret);
--		return ret;
--	}
--
--	vma->vm_flags		|= VM_DONTEXPAND | VM_DONTDUMP;
--	vma->vm_private_data	= priv;
--	vma->vm_ops		= vm_ops;
--
--	vma->vm_ops->open(vma);
--
--	pr_debug("%s: mapped paddr 0x%08lx at 0x%08lx, size %ld\n",
--			__func__, paddr, vma->vm_start, size);
--
--	return 0;
--}
--EXPORT_SYMBOL_GPL(vb2_mmap_pfn_range);
--#endif
--
--
- #ifdef __sg_page_iter_next
- 
- void __sg_page_iter_start(struct sg_page_iter *piter,
-diff --git a/patches/collateral-evolutions/media/0002-dma_mmap_coherent-revert.patch b/patches/collateral-evolutions/media/0002-dma_mmap_coherent-revert.patch
-index 4d3a77e..2a6f51a 100644
---- a/patches/collateral-evolutions/media/0002-dma_mmap_coherent-revert.patch
-+++ b/patches/collateral-evolutions/media/0002-dma_mmap_coherent-revert.patch
-@@ -25,12 +25,42 @@ Date:   Thu Jun 14 11:32:21 2012 -0300
- 
- --- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
- +++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
--@@ -186,6 +186,22 @@ static void *vb2_dc_alloc(void *alloc_ct
-+@@ -186,6 +186,52 @@ static void *vb2_dc_alloc(void *alloc_ct
-  	return buf;
-  }
+diff --git a/patches/collateral-evolutions/network/0005-netlink-portid/nl80211.patch b/patches/collateral-evolutions/network/0005-netlink-portid/nl80211.patch
+index 0e2b981..bde418d 100644
+--- a/patches/collateral-evolutions/network/0005-netlink-portid/nl80211.patch
++++ b/patches/collateral-evolutions/network/0005-netlink-portid/nl80211.patch
+@@ -232,6 +232,15 @@
+  			     NL80211_CMD_GET_PROTOCOL_FEATURES);
+  	if (!hdr)
+  		goto nla_put_failure;
++@@ -8261,7 +8261,7 @@ static int nl80211_crit_protocol_start(struct sk_buff *skb,
++ 
++ 	ret = rdev_crit_proto_start(rdev, wdev, proto, duration);
++ 	if (!ret)
++-		rdev->crit_proto_nlportid = info->snd_portid;
+++		rdev->crit_proto_nlportid = genl_info_snd_portid(info);
++ 
++ 	return ret;
++ }
+ @@ -10565,12 +10565,12 @@ static int nl80211_netlink_notify(struct
   
- +#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0))
- +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
-++static int
-++backport_vb2_mmap_pfn_range(struct vm_area_struct *vma, unsigned long paddr,
-++			    unsigned long size,
-++			    const struct vm_operations_struct *vm_ops,
-++			    void *priv)
-++{
-++	int ret;
-++
-++	size = min_t(unsigned long, vma->vm_end - vma->vm_start, size);
-++
-++	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-++	ret = remap_pfn_range(vma, vma->vm_start, paddr >> PAGE_SHIFT,
-++				size, vma->vm_page_prot);
-++	if (ret) {
-++		printk(KERN_ERR "Remapping memory failed, error: %d\n", ret);
-++		return ret;
-++	}
-++
-++	vma->vm_flags		|= VM_DONTEXPAND | VM_DONTDUMP;
-++	vma->vm_private_data	= priv;
-++	vma->vm_ops		= vm_ops;
-++
-++	vma->vm_ops->open(vma);
-++
-++	pr_debug("%s: mapped paddr 0x%08lx at 0x%08lx, size %ld\n",
-++			__func__, paddr, vma->vm_start, size);
-++
-++	return 0;
-++}
-++
- +static int vb2_dc_mmap(void *buf_priv, struct vm_area_struct *vma)
- +{
- +	struct vb2_dc_buf *buf = buf_priv;
-@@ -40,8 +70,8 @@ Date:   Thu Jun 14 11:32:21 2012 -0300
- +		return -EINVAL;
- +	}
- +
--+	return vb2_mmap_pfn_range(vma, buf->dma_addr, buf->size,
--+				  &vb2_common_vm_ops, &buf->handler);
-++	return backport_vb2_mmap_pfn_range(vma, buf->dma_addr, buf->size,
-++					   &vb2_common_vm_ops, &buf->handler);
- +}
- +#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)) */
- +#else
+  	list_for_each_entry_rcu(rdev, &cfg80211_rdev_list, list) {
 -- 
-1.8.0
+1.7.10.4
 
