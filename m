@@ -1,77 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:46543 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753608Ab3EVLey (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 22 May 2013 07:34:54 -0400
-Received: by mail-pd0-f170.google.com with SMTP id x10so1490136pdj.1
-        for <backports@vger.kernel.org>; Wed, 22 May 2013 04:34:53 -0700 (PDT)
+Received: from mail-wg0-f45.google.com ([74.125.82.45]:44354 "EHLO
+	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751394Ab3ELUWU (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 12 May 2013 16:22:20 -0400
+Received: by mail-wg0-f45.google.com with SMTP id l18so5874419wgh.24
+        for <backports@vger.kernel.org>; Sun, 12 May 2013 13:22:19 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAB=NE6XrKUSDQbjdeht=Aip-E1=oqPd4D=JmMdEdrJSNXLGukg@mail.gmail.com>
+References: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
+ <1368232023-23817-12-git-send-email-mcgrof@do-not-panic.com>
+ <CANq1E4Re_uJQqvqEpWzRbVxsxVz3MBvZUqzM3ONFiJ+mXy4rNA@mail.gmail.com> <CAB=NE6XrKUSDQbjdeht=Aip-E1=oqPd4D=JmMdEdrJSNXLGukg@mail.gmail.com>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 1/9] lib/bpgit.py: make git describe --long optional
-Date: Wed, 22 May 2013 04:34:30 -0700
-Message-Id: <1369222478-30577-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20130522_133455_410970_C278E6E9)
-In-Reply-To: <1369222478-30577-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1369222478-30577-1-git-send-email-mcgrof@do-not-panic.com>
+Date: Sun, 12 May 2013 13:21:59 -0700
+Message-ID: <CAB=NE6Xk8M+Azx6QcBLfv4Du9Ax84DhFruSvxTTki=Dun1FMrg@mail.gmail.com> (sfid-20130512_222224_305345_E8290103)
+Subject: Re: [PATCH 11/12] backports: backport new bluetooth hidp session-management
+To: David Herrmann <dh.herrmann@gmail.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Sun, May 12, 2013 at 12:33 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+>
+> http://drvbp1.linux-foundation.org/~mcgrof/backport-tmp/backports-20130426.tar.bz2
 
-When calling git describe through our Python library
-the long option is always used. Make this optional
-but keep the existing behaviour.
+Realizing that you might want to see what this looked like prior to
+your changes being merged into linux-next here is a tarball for that,
+its based on next-20130415 and the backports git tree reset to
+43c24dc310979c70d04269a5138eb1b5e77ac3d0.
 
-This will be used later without the long option and
-using an argument saves us from having to parse it.
-We need to use get_long over long given that long
-is a Python type.
+http://drvbp1.linux-foundation.org/~mcgrof/backport-tmp/backports-20130415.tar.bz2
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- gentree.py   |    5 +++--
- lib/bpgit.py |   11 +++++++++--
- 2 files changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/gentree.py b/gentree.py
-index 86b3f3c..f25db52 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -447,9 +447,10 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
-         backports_version = "(see git)"
-         kernel_version = "(see git)"
-     else:
--        backports_version = git.describe(tree=source_dir)
-+        backports_version = git.describe(tree=source_dir, get_long=True)
-         kernel_version = git.describe(rev=args.git_revision or 'HEAD',
--                                      tree=args.kerneldir)
-+                                      tree=args.kerneldir,
-+                                      get_long=True)
-     f = open(os.path.join(args.outdir, 'versions'), 'w')
-     f.write('BACKPORTS_VERSION="%s"\n' % backports_version)
-     f.write('BACKPORTED_KERNEL_VERSION="%s"\n' % kernel_version)
-diff --git a/lib/bpgit.py b/lib/bpgit.py
-index 31b7de3..142b9b5 100644
---- a/lib/bpgit.py
-+++ b/lib/bpgit.py
-@@ -27,8 +27,15 @@ def rev_parse(rev='HEAD', tree=None):
-         raise SHAError()
-     return sha
- 
--def describe(rev='HEAD', tree=None):
--    process = subprocess.Popen(['git', 'describe', '--always', '--long', rev],
-+def describe(rev='HEAD', tree=None, get_long=False):
-+    cmd = ['git', 'describe', '--always']
-+
-+    if (get_long):
-+        cmd.append('--long')
-+
-+    cmd.append(rev)
-+
-+    process = subprocess.Popen(cmd,
-                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                close_fds=True, universal_newlines=True, cwd=tree)
-     stdout = process.communicate()[0]
--- 
-1.7.10.4
-
+  Luis
