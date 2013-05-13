@@ -1,65 +1,76 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:60013 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754820Ab3ETL3R (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 20 May 2013 07:29:17 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/2] backports: add kernel 3.10 and update others
-Date: Mon, 20 May 2013 13:29:05 +0200
-Message-Id: <1369049345-13966-2-git-send-email-hauke@hauke-m.de> (sfid-20130520_132919_719474_547F9CBF)
-In-Reply-To: <1369049345-13966-1-git-send-email-hauke@hauke-m.de>
-References: <1369049345-13966-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-la0-f49.google.com ([209.85.215.49]:43920 "EHLO
+	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752620Ab3EMCgq (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 12 May 2013 22:36:46 -0400
+Received: by mail-la0-f49.google.com with SMTP id ee20so2404155lab.36
+        for <backports@vger.kernel.org>; Sun, 12 May 2013 19:36:44 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAB=NE6WyvXSUS2PUNFktBVUn4u0rcVwXGQ1sYDbL34d8iU2RYw@mail.gmail.com>
+References: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
+ <1368232023-23817-12-git-send-email-mcgrof@do-not-panic.com>
+ <CANq1E4Re_uJQqvqEpWzRbVxsxVz3MBvZUqzM3ONFiJ+mXy4rNA@mail.gmail.com>
+ <CAB=NE6XrKUSDQbjdeht=Aip-E1=oqPd4D=JmMdEdrJSNXLGukg@mail.gmail.com>
+ <CANq1E4RXkYU=PNd-acNT-cp1ARQPR6-2Rq-a8eJGseSbRLCLxg@mail.gmail.com> <CAB=NE6WyvXSUS2PUNFktBVUn4u0rcVwXGQ1sYDbL34d8iU2RYw@mail.gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Sun, 12 May 2013 19:36:24 -0700
+Message-ID: <CAB=NE6V0CywQoS0Xn5Xc2-biWeU34HGr7k9F2g+7+0wMZNCNFg@mail.gmail.com> (sfid-20130513_043649_077009_B75C5BE4)
+Subject: Re: [PATCH 11/12] backports: backport new bluetooth hidp session-management
+To: David Herrmann <dh.herrmann@gmail.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Add kernel 3.10 to the script fetching the kernels for compile testing.
+On Sun, May 12, 2013 at 6:30 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+>
+> No worries we have a crazy build box for the backports project that
+> lets us test compile these releases across 26 kernels (2.6.24-3.9) in
+> about 30 minutes using our script ckmake, all in RAM, so I just
+> integrated your changes and in 30 minutes we'll know if anything
+> broke, and I can provide the log then.
 
-This also fixes the header rebuild for kernel versions >= 3.10.
+$ time ckmake --allyesconfig
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- devel/get-compat-kernels |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.76              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.2.44              [  OK  ]
+20  3.3.8               [  OK  ]
+21  3.4.43              [  OK  ]
+22  3.5.7               [  OK  ]
+23  3.6.11              [  OK  ]
+24  3.7.10              [  OK  ]
+25  3.8.11              [  OK  ]
+26  3.9.0               [  OK  ]
 
-diff --git a/devel/get-compat-kernels b/devel/get-compat-kernels
-index e649d8e..4fd4486 100755
---- a/devel/get-compat-kernels
-+++ b/devel/get-compat-kernels
-@@ -55,16 +55,17 @@ KERNELS="$KERNELS ${KPATH}/v2.6.36.4-natty/linux-headers-2.6.36-02063604_2.6.36-
- KERNELS="$KERNELS ${KPATH}/v2.6.37.6-natty/linux-headers-2.6.37-02063706_2.6.37-02063706.201103281005_all.deb"
- KERNELS="$KERNELS ${KPATH}/v2.6.38.8-natty/linux-headers-2.6.38-02063808_2.6.38-02063808.201106040910_all.deb"
- KERNELS="$KERNELS ${KPATH}/v2.6.39.4-oneiric/linux-headers-2.6.39-02063904_2.6.39-02063904.201108040905_all.deb"
--KERNELS="$KERNELS ${KPATH}/v3.0.76-oneiric/linux-headers-3.0.76-030076_3.0.76-030076.201305011235_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.0.79-oneiric/linux-headers-3.0.79-030079_3.0.79-030079.201305191335_all.deb"
- KERNELS="$KERNELS ${KPATH}/v3.1.10-precise/linux-headers-3.1.10-030110_3.1.10-030110.201201181135_all.deb"
--KERNELS="$KERNELS ${KPATH}/v3.2.44-precise/linux-headers-3.2.44-030244_3.2.44-030244.201304260219_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.2.45-precise/linux-headers-3.2.45-030245_3.2.45-030245.201305140735_all.deb"
- KERNELS="$KERNELS ${KPATH}/v3.3.8-quantal/linux-headers-3.3.8-030308_3.3.8-030308.201206041356_all.deb"
--KERNELS="$KERNELS ${KPATH}/v3.4.43-quantal/linux-headers-3.4.43-030443_3.4.43-030443.201305011335_all.deb"
--KERNELS="$KERNELS ${KPATH}/v3.5.7.11-quantal/linux-headers-3.5.7-03050711_3.5.7-03050711.201304220635_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.4.46-quantal/linux-headers-3.4.46-030446_3.4.46-030446.201305191435_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.5.7.12-quantal/linux-headers-3.5.7-03050712_3.5.7-03050712.201305111435_all.deb"
- KERNELS="$KERNELS ${KPATH}/v3.6.11-raring/linux-headers-3.6.11-030611_3.6.11-030611.201212171335_all.deb"
- KERNELS="$KERNELS ${KPATH}/v3.7.10-raring/linux-headers-3.7.10-030710_3.7.10-030710.201302271235_all.deb"
--KERNELS="$KERNELS ${KPATH}/v3.8.11-raring/linux-headers-3.8.11-030811_3.8.11-030811.201305011408_all.deb"
--KERNELS="$KERNELS ${KPATH}/v3.9-raring/linux-headers-3.9.0-030900_3.9.0-030900.201304291257_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.8.13-raring/linux-headers-3.8.13-030813_3.8.13-030813.201305111843_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.9.3-saucy/linux-headers-3.9.3-030903_3.9.3-030903.201305191535_all.deb"
-+KERNELS="$KERNELS ${KPATH}/v3.10-rc1-saucy/linux-headers-3.10.0-031000rc1_3.10.0-031000rc1.201305130510_all.deb"
- 
- # Number of kernels
- NUM_KERNELS=$(echo $KERNELS | wc -w)
-@@ -171,7 +172,7 @@ function rebuild_header_binary_deps() {
- 		exit 1
- 	fi
- 
--	for kernel in $(ls -d ${KSRC_PREFIX}/lib/modules/*generic | grep -E "/3.[2-9]|/[4-9]"); do
-+	for kernel in $(ls -d ${KSRC_PREFIX}/lib/modules/*generic | grep -E "/3\.[2-9]\.|/3\.[1-9][0-9]\.|/[4-9]\."); do
- 		echo $kernel
- 
- 		count=0
--- 
-1.7.10.4
+real    30m53.311s
+user    817m3.260s
+sys     127m37.555s
 
+>> The net/bluetooth/hidp/core.c file is attached. It is from the tarball
+>> you created above (2013-04-26). I fixed some other small issues.
+>
+> Nice, can you provide me a Signed-off-by tag ? With it I'd just amend
+> it to my commit provided everything compiles fine.
+
+Just need a Signed-off-by from you and we're good, thanks so much.
+
+  Luis
