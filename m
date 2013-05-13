@@ -1,62 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f48.google.com ([209.85.160.48]:34628 "EHLO
-	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756717Ab3EWDQg (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 22 May 2013 23:16:36 -0400
-Received: by mail-pb0-f48.google.com with SMTP id md12so2386231pbc.35
-        for <backports@vger.kernel.org>; Wed, 22 May 2013 20:16:36 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH v3 6/8] lib/bpgpg.py: add simple gpg helper for gpg signing
-Date: Wed, 22 May 2013 20:15:54 -0700
-Message-Id: <1369278956-17550-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20130523_051638_323083_0B7B3BB0)
-In-Reply-To: <1369278956-17550-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1369278956-17550-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from s3.sipsolutions.net ([144.76.43.152]:46728 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753356Ab3EMJxV (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 13 May 2013 05:53:21 -0400
+Message-ID: <1368438795.8300.15.camel@jlt4.sipsolutions.net> (sfid-20130513_115323_429313_4C3365A4)
+Subject: Re: [PATCH 11/12] backports: backport new bluetooth hidp
+ session-management
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: David Herrmann <dh.herrmann@gmail.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Mon, 13 May 2013 11:53:15 +0200
+In-Reply-To: <CAB=NE6V0CywQoS0Xn5Xc2-biWeU34HGr7k9F2g+7+0wMZNCNFg@mail.gmail.com> (sfid-20130513_043647_119351_DD4C5694)
+References: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1368232023-23817-12-git-send-email-mcgrof@do-not-panic.com>
+	 <CANq1E4Re_uJQqvqEpWzRbVxsxVz3MBvZUqzM3ONFiJ+mXy4rNA@mail.gmail.com>
+	 <CAB=NE6XrKUSDQbjdeht=Aip-E1=oqPd4D=JmMdEdrJSNXLGukg@mail.gmail.com>
+	 <CANq1E4RXkYU=PNd-acNT-cp1ARQPR6-2Rq-a8eJGseSbRLCLxg@mail.gmail.com>
+	 <CAB=NE6WyvXSUS2PUNFktBVUn4u0rcVwXGQ1sYDbL34d8iU2RYw@mail.gmail.com>
+	 <CAB=NE6V0CywQoS0Xn5Xc2-biWeU34HGr7k9F2g+7+0wMZNCNFg@mail.gmail.com>
+	 (sfid-20130513_043647_119351_DD4C5694)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Sun, 2013-05-12 at 19:36 -0700, Luis R. Rodriguez wrote:
 
-Note that kup expects --armor --detach-sign, we'll pass that
-as part of our extra_args. The python gpg lib doesn't provide
-support for random arguments as this one, so just add our
-own little helper and carry it over.
+> >> The net/bluetooth/hidp/core.c file is attached. It is from the tarball
+> >> you created above (2013-04-26). I fixed some other small issues.
+> >
+> > Nice, can you provide me a Signed-off-by tag ? With it I'd just amend
+> > it to my commit provided everything compiles fine.
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- lib/bpgpg.py |   22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 lib/bpgpg.py
+You're going to send a new version of patch 11 then?
 
-diff --git a/lib/bpgpg.py b/lib/bpgpg.py
-new file mode 100644
-index 0000000..3b5ec78
---- /dev/null
-+++ b/lib/bpgpg.py
-@@ -0,0 +1,22 @@
-+import subprocess, os
-+
-+class GpgError(Exception):
-+    pass
-+class ExecutionError(GpgError):
-+    def __init__(self, errcode):
-+        self.error_code = errcode
-+
-+def sign(input_file, extra_args=[]):
-+    cmd = ['gpg', '--sign']
-+
-+    cmd.extend(extra_args)
-+    cmd.append(input_file)
-+
-+    process = subprocess.Popen(cmd,
-+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                               close_fds=True, universal_newlines=True)
-+    stdout = process.communicate()[0]
-+    process.wait()
-+    if process.returncode != 0:
-+        raise ExecutionError(process.returncode)
-+    return stdout
--- 
-1.7.10.4
+johannes
 
