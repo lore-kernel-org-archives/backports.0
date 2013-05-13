@@ -1,33 +1,49 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f45.google.com ([209.85.215.45]:42382 "EHLO
-	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753286Ab3EHAU2 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 7 May 2013 20:20:28 -0400
-Received: by mail-la0-f45.google.com with SMTP id fp12so1193232lab.32
-        for <backports@vger.kernel.org>; Tue, 07 May 2013 17:20:25 -0700 (PDT)
+Received: from mail-we0-f177.google.com ([74.125.82.177]:45332 "EHLO
+	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751013Ab3EMGOa (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 13 May 2013 02:14:30 -0400
+Received: by mail-we0-f177.google.com with SMTP id q58so5904837wes.22
+        for <backports@vger.kernel.org>; Sun, 12 May 2013 23:14:29 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <20130513054042.GU25399@ZenIV.linux.org.uk>
+References: <1368419498-15809-1-git-send-email-mcgrof@do-not-panic.com>
+ <20130513050305.GT25399@ZenIV.linux.org.uk> <CAB=NE6UeupVx+DPuwg1hh1Y09Bb1vF08uObvpyhBS1wwMFUaZw@mail.gmail.com>
+ <20130513054042.GU25399@ZenIV.linux.org.uk>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Tue, 7 May 2013 17:20:05 -0700
-Message-ID: <CAB=NE6V7drWK18ij8Ue78J+GSDdVpTJWwqTt3+tVNk01EN4q6Q@mail.gmail.com> (sfid-20130508_022029_958604_D44EF59E)
-Subject: Backports project release tags for daily snapshots
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Sun, 12 May 2013 23:14:09 -0700
+Message-ID: <CAB=NE6X6Y35i7opGwh4rD++r-uGsLkVcafu4o17D8141BNU41Q@mail.gmail.com> (sfid-20130513_081433_115839_EEAABF8E)
+Subject: Re: [RFC] backports: add remove_proc_subtree() backport
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Now'also a good time to consider tagging efforts. I used to tag
-compat-drivers releases to match the same next tag from linux-next as
-we moved on with the only difference I used compat-drivers-2013-05-07
-dates instead  of next-20130507 and I also added a -1 or -2 if I
-bumped updates by sticking to the same linux-next target.
+On Sun, May 12, 2013 at 10:40 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Sun, May 12, 2013 at 10:21:02PM -0700, Luis R. Rodriguez wrote:
+>
+>> > The difference from your variant is that you use the stack to hold
+>> > pointers to ancestors of the current victim.  You get to the parent
+>> > of said victim by discarding a stack frame.  No need, since the
+>> > victim contained an explicit pointer to its parent...
+>>
+>> Except I thought NULL was passed?
+>
+> AFAICS, your variant removes _everything_ in the parent.  IOW, instead
+> of
+>         rm -rf $ROOT/$RELATIVE_PATH
+> you do
+>         test -n $ROOT && rm -rf $ROOT/*
+>         rm $ROOT/$RELATIVE_PATH
+> which is not the same thing...
 
-Whatever we decide I'll just note that rel-html currently supports the
-scheme of dates that are split. I'll still have to update rel-html to
-support the project name change so perhaps its good for us to consider
-the tag use / practice. To be clear I only added a signed tag if and
-only if ckmake yielded good results on all supported kernels. Using
-git describe you'd be able to easily get the target next release tag.
+Crap, yes, I see now thanks. I can't see how we can safely traverse
+the tree to find the respective struct proc_dir_entry for the passed
+name as a modular solution. That is, in order to rm -rf
+$ROOT/$RELATIVE_PATH I first need the $ROOT/$RELATIVE_PATH struct
+proc_dir_entry.
 
-Thoughts, preferences?
+Any recommendations?
 
   Luis
