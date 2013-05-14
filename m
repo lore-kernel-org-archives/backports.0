@@ -1,103 +1,38 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:59246 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753806Ab3ESW47 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 19 May 2013 18:56:59 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/2] backports: add defconfig for broadcom drivers
-Date: Mon, 20 May 2013 00:56:48 +0200
-Message-Id: <1369004209-21470-1-git-send-email-hauke@hauke-m.de> (sfid-20130520_005700_566266_36F884FB)
+Received: from s3.sipsolutions.net ([144.76.43.152]:50297 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756330Ab3ENHcb (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 14 May 2013 03:32:31 -0400
+Message-ID: <1368516745.12858.0.camel@jlt4.sipsolutions.net> (sfid-20130514_093243_627015_3B0A8C57)
+Subject: Re: [PATCH 01/12] backports: make compat module use
+ subsys_initcall()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Paul Stewart <pstew@chromium.org>
+Date: Tue, 14 May 2013 09:32:25 +0200
+In-Reply-To: <CAB=NE6U=rTR2ZKXexPDeyv6VBi8k74wpj5f6SnS3rxQHaDwB0A@mail.gmail.com> (sfid-20130514_083544_822603_18C952B3)
+References: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1368232023-23817-2-git-send-email-mcgrof@do-not-panic.com>
+	 <1368446524.8300.22.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6U1VbZTogeXVmwFN8WxHCHcWN+Ofn5SwiW1ceg2V3ujdQ@mail.gmail.com>
+	 <1368512752.8252.3.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6U=rTR2ZKXexPDeyv6VBi8k74wpj5f6SnS3rxQHaDwB0A@mail.gmail.com>
+	 (sfid-20130514_083544_822603_18C952B3)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This adds a default config for the broadcom wifi drivers.
+On Mon, 2013-05-13 at 23:35 -0700, Luis R. Rodriguez wrote:
+> On Mon, May 13, 2013 at 11:25 PM, Johannes Berg
+> <johannes@sipsolutions.net> wrote:
+> > why not just keep module_exit()?
+> 
+> Sure.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/defconfigs/b43       |   21 +++++++++++++++++++++
- backport/defconfigs/b43legacy |   12 ++++++++++++
- backport/defconfigs/brcmfmac  |    6 ++++++
- backport/defconfigs/brcmsmac  |    9 +++++++++
- 4 files changed, 48 insertions(+)
- create mode 100644 backport/defconfigs/b43
- create mode 100644 backport/defconfigs/b43legacy
- create mode 100644 backport/defconfigs/brcmfmac
- create mode 100644 backport/defconfigs/brcmsmac
+This one works, applied. In fact it makes no difference in code
+generation at all, as I thought.
 
-diff --git a/backport/defconfigs/b43 b/backport/defconfigs/b43
-new file mode 100644
-index 0000000..96354eb
---- /dev/null
-+++ b/backport/defconfigs/b43
-@@ -0,0 +1,21 @@
-+CPTCFG_CFG80211=m
-+CPTCFG_CFG80211_WEXT=y
-+CPTCFG_MAC80211=m
-+CPTCFG_MAC80211_MESH=y
-+CPTCFG_MAC80211_LEDS=y
-+CPTCFG_WLAN=y
-+CPTCFG_B43=m
-+CPTCFG_B43_BCMA=y
-+CPTCFG_B43_BCMA_EXTRA=y
-+CPTCFG_B43_PCMCIA=y
-+CPTCFG_B43_SDIO=y
-+CPTCFG_B43_PHY_N=y
-+CPTCFG_B43_PHY_LP=y
-+CPTCFG_B43_PHY_HT=y
-+CPTCFG_BCMA=m
-+CPTCFG_BCMA_HOST_PCI=y
-+CPTCFG_SSB=m
-+CPTCFG_SSB_PCIHOST=y
-+CPTCFG_SSB_PCMCIAHOST=y
-+CPTCFG_SSB_SDIOHOST=y
-+CPTCFG_SSB_DRIVER_PCICORE=y
-diff --git a/backport/defconfigs/b43legacy b/backport/defconfigs/b43legacy
-new file mode 100644
-index 0000000..9a7fbe9
---- /dev/null
-+++ b/backport/defconfigs/b43legacy
-@@ -0,0 +1,12 @@
-+CPTCFG_CFG80211=m
-+CPTCFG_CFG80211_WEXT=y
-+CPTCFG_MAC80211=m
-+CPTCFG_MAC80211_MESH=y
-+CPTCFG_MAC80211_LEDS=y
-+CPTCFG_WLAN=y
-+CPTCFG_B43LEGACY=m
-+CPTCFG_SSB=m
-+CPTCFG_SSB_PCIHOST=y
-+CPTCFG_SSB_PCMCIAHOST=y
-+CPTCFG_SSB_SDIOHOST=y
-+CPTCFG_SSB_DRIVER_PCICORE=y
-diff --git a/backport/defconfigs/brcmfmac b/backport/defconfigs/brcmfmac
-new file mode 100644
-index 0000000..72b2859
---- /dev/null
-+++ b/backport/defconfigs/brcmfmac
-@@ -0,0 +1,6 @@
-+CPTCFG_CFG80211=m
-+CPTCFG_CFG80211_WEXT=y
-+CPTCFG_WLAN=y
-+CPTCFG_BRCMFMAC=m
-+CPTCFG_BRCMFMAC_SDIO=y
-+CPTCFG_BRCMFMAC_USB=y
-diff --git a/backport/defconfigs/brcmsmac b/backport/defconfigs/brcmsmac
-new file mode 100644
-index 0000000..a1c56bc
---- /dev/null
-+++ b/backport/defconfigs/brcmsmac
-@@ -0,0 +1,9 @@
-+CPTCFG_CFG80211=m
-+CPTCFG_CFG80211_WEXT=y
-+CPTCFG_MAC80211=m
-+CPTCFG_MAC80211_LEDS=y
-+CPTCFG_WLAN=y
-+CPTCFG_BRCMSMAC=m
-+CPTCFG_BCMA=m
-+CPTCFG_BCMA_HOST_PCI=y
-+CPTCFG_BCMA_DRIVER_GPIO=y
--- 
-1.7.10.4
+johannes
 
