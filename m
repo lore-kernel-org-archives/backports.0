@@ -1,41 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wg0-f50.google.com ([74.125.82.50]:50317 "EHLO
-	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751878Ab3E1Su6 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 28 May 2013 14:50:58 -0400
-Received: by mail-wg0-f50.google.com with SMTP id k13so5573493wgh.17
-        for <backports@vger.kernel.org>; Tue, 28 May 2013 11:50:57 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <CAB=NE6Voe6E7hMsWfKyKETFhvQdiJ3xhECAfHePs1zRTCJh_jA@mail.gmail.com>
-References: <1369318287-18024-1-git-send-email-johannes@sipsolutions.net> <CAB=NE6Voe6E7hMsWfKyKETFhvQdiJ3xhECAfHePs1zRTCJh_jA@mail.gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Date: Tue, 28 May 2013 11:50:36 -0700
-Message-ID: <CAB=NE6V1xkJz4mNO2JSeaOEsNC44yzUqsSv7BHJ8Lnx6MWuHhg@mail.gmail.com> (sfid-20130528_205100_498331_54E9CBE3)
-Subject: Re: [PATCH] backport: move kconfig code to "kconf" directory
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:33806 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755842Ab3EPIXx (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 16 May 2013 04:23:53 -0400
+Received: by mail-pa0-f50.google.com with SMTP id fb10so2265042pad.23
+        for <backports@vger.kernel.org>; Thu, 16 May 2013 01:23:52 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH v2 4/4] gentree.py: do not skip /dev/null patches
+Date: Thu, 16 May 2013 01:23:30 -0700
+Message-Id: <1368692610-24662-5-git-send-email-mcgrof@do-not-panic.com> (sfid-20130516_102356_806104_2369DBE5)
+In-Reply-To: <1368692610-24662-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1368692610-24662-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, May 28, 2013 at 11:48 AM, Luis R. Rodriguez
-<mcgrof@frijolero.org> wrote:
-> On Thu, May 23, 2013 at 7:11 AM, Johannes Berg
-> <johannes@sipsolutions.net> wrote:
->> From: Johannes Berg <johannes.berg@intel.com>
->>
->> Having the kconfig code in a directory called "kconfig"
->> and having a file called "Kconfig" causes issues if the
->> code is ever stored on a case-insensitive filesystem.
->> Avoid these by just calling the kconfig directory kconf
->> instead.
->>
->> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
->
-> Thanks, applied and pushed!
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-I mistakenly applied v1, so I reverted it and later applied v2.
-Applied and pushed.
+Patches where the origin is /dev/null should
+be considered as needed.
 
-  Luis
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ gentree.py |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gentree.py b/gentree.py
+index 9d0f3ae..372587f 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -368,7 +368,7 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+         # assume the patch needs to be applied -- otherwise continue
+         patched_file = '/'.join(p.items[0].source.split('/')[1:])
+         fullfn = os.path.join(args.outdir, patched_file)
+-        if not os.path.exists(fullfn):
++        if ((patched_file != "null") and (not os.path.exists(fullfn))):
+             if args.verbose:
+                 logwrite("Not applying %s, not needed" % print_name)
+             continue
+-- 
+1.7.10.4
+
