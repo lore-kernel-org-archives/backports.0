@@ -1,57 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f52.google.com ([209.85.215.52]:63301 "EHLO
-	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751144Ab3EPFpE (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 16 May 2013 01:45:04 -0400
-Received: by mail-la0-f52.google.com with SMTP id fo13so2603528lab.11
-        for <backports@vger.kernel.org>; Wed, 15 May 2013 22:45:02 -0700 (PDT)
+Received: from mail-la0-f47.google.com ([209.85.215.47]:64628 "EHLO
+	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752215Ab3EPQ6c (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 16 May 2013 12:58:32 -0400
+Received: by mail-la0-f47.google.com with SMTP id fq12so3213434lab.6
+        for <backports@vger.kernel.org>; Thu, 16 May 2013 09:58:31 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAB=NE6Ut5CdpistLecYnbzK-t+Rymw-Gzhj=DdhYEcm8DGPBYw@mail.gmail.com>
-References: <1368440675-23190-1-git-send-email-mcgrof@do-not-panic.com>
- <1368603799.8359.5.camel@jlt4.sipsolutions.net> <CAB=NE6UiZPP02y126Qxc5c7q1wFer0_9cZLFP_QCQo_Z6uGJmQ@mail.gmail.com>
- <CAB=NE6Ut5CdpistLecYnbzK-t+Rymw-Gzhj=DdhYEcm8DGPBYw@mail.gmail.com>
+In-Reply-To: <1368703552.8387.4.camel@jlt4.sipsolutions.net>
+References: <1368692610-24662-1-git-send-email-mcgrof@do-not-panic.com>
+ <1368692610-24662-5-git-send-email-mcgrof@do-not-panic.com> <1368703552.8387.4.camel@jlt4.sipsolutions.net>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Wed, 15 May 2013 22:44:42 -0700
-Message-ID: <CAB=NE6UrCSYztvoe0HP8fBANki0C4huePhAxxpSb6eV8KnCo6w@mail.gmail.com> (sfid-20130516_074507_868699_13ED55E5)
-Subject: Re: [PATCH 0/3] backports: take up up to next-20130426
+Date: Thu, 16 May 2013 09:58:11 -0700
+Message-ID: <CAB=NE6XPYWQVLuEDDR7L5An2CS+ZHtGcOH6OOWVYMK7H3g77nA@mail.gmail.com> (sfid-20130516_185836_445577_F5EED60C)
+Subject: Re: [PATCH v2 4/4] gentree.py: do not skip /dev/null patches
 To: Johannes Berg <johannes@sipsolutions.net>
 Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, May 15, 2013 at 8:56 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> On Wed, May 15, 2013 at 8:45 PM, Luis R. Rodriguez
-> <mcgrof@do-not-panic.com> wrote:
->> while nouveau fails and uses the later.
+On Thu, May 16, 2013 at 4:25 AM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> On Thu, 2013-05-16 at 01:23 -0700, Luis R. Rodriguez wrote:
 >
-> Actually I see now drivers that use either work so this seems to be
-> nouveau specific.
+>> --- a/gentree.py
+>> +++ b/gentree.py
+>> @@ -368,7 +368,7 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+>>          # assume the patch needs to be applied -- otherwise continue
+>>          patched_file = '/'.join(p.items[0].source.split('/')[1:])
+>>          fullfn = os.path.join(args.outdir, patched_file)
+>> -        if not os.path.exists(fullfn):
+>> +        if ((patched_file != "null") and (not os.path.exists(fullfn))):
+>
+> Do you actually have patches adding completely new files? That seems a
+> bit odd to me?
 
-This seems to be because of the new changes that stuffed nouveau files
-into separate directories:
-
-drivers/gpu/drm/nouveau/core/
-drivers/gpu/drm/nouveau/dispnv04/
-
-I've tried this but no luck.
-
---- a/drivers/gpu/drm/nouveau/Makefile
-+++ b/drivers/gpu/drm/nouveau/Makefile
-@@ -3,9 +3,9 @@
- # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
-
- ccflags-y := -Iinclude/drm
--ccflags-y += -I$(src)/core/include
--ccflags-y += -I$(src)/core
--ccflags-y += -I$(src)
-+ccflags-y += -I$(backport_srctree)/drivers/gpu/drm/nouveau/core/include/
-+ccflags-y += -I$(backport_srctree)/drivers/gpu/drm/nouveau/core/
-+ccflags-y += -I$(backport_srctree)/drivers/gpu/drm/nouveau/
-
- nouveau-y := core/core/client.o
- nouveau-y += core/core/engctx.o
-
+For nouveau I did during some of my tests but no, I don't now.
 
   Luis
