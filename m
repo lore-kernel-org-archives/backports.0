@@ -1,36 +1,61 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:44354 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751394Ab3ELUWU (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 12 May 2013 16:22:20 -0400
-Received: by mail-wg0-f45.google.com with SMTP id l18so5874419wgh.24
-        for <backports@vger.kernel.org>; Sun, 12 May 2013 13:22:19 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <CAB=NE6XrKUSDQbjdeht=Aip-E1=oqPd4D=JmMdEdrJSNXLGukg@mail.gmail.com>
-References: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
- <1368232023-23817-12-git-send-email-mcgrof@do-not-panic.com>
- <CANq1E4Re_uJQqvqEpWzRbVxsxVz3MBvZUqzM3ONFiJ+mXy4rNA@mail.gmail.com> <CAB=NE6XrKUSDQbjdeht=Aip-E1=oqPd4D=JmMdEdrJSNXLGukg@mail.gmail.com>
+Received: from mail-pd0-f173.google.com ([209.85.192.173]:62951 "EHLO
+	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753215Ab3EPWaO (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 16 May 2013 18:30:14 -0400
+Received: by mail-pd0-f173.google.com with SMTP id v10so2750333pde.18
+        for <backports@vger.kernel.org>; Thu, 16 May 2013 15:30:13 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Sun, 12 May 2013 13:21:59 -0700
-Message-ID: <CAB=NE6Xk8M+Azx6QcBLfv4Du9Ax84DhFruSvxTTki=Dun1FMrg@mail.gmail.com> (sfid-20130512_222224_305345_E8290103)
-Subject: Re: [PATCH 11/12] backports: backport new bluetooth hidp session-management
-To: David Herrmann <dh.herrmann@gmail.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 1/2] backports: address nouveau file shuffling
+Date: Thu, 16 May 2013 15:30:03 -0700
+Message-Id: <1368743404-30324-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20130517_003016_532608_77149864)
+In-Reply-To: <1368743404-30324-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1368743404-30324-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, May 12, 2013 at 12:33 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
->
-> http://drvbp1.linux-foundation.org/~mcgrof/backport-tmp/backports-20130426.tar.bz2
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Realizing that you might want to see what this looked like prior to
-your changes being merged into linux-next here is a tarball for that,
-its based on next-20130415 and the backports git tree reset to
-43c24dc310979c70d04269a5138eb1b5e77ac3d0.
+The recent file shuffling on nouveau requires some
+changes not upstream to get it to compile to ensure
+some objects do get interpreted as requiring the
+new search path.
 
-http://drvbp1.linux-foundation.org/~mcgrof/backport-tmp/backports-20130415.tar.bz2
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ .../collateral-evolutions/drm/13-nouveau-include-fix/INFO   |    2 ++
+ .../drivers_gpu_drm_nouveau_Makefile.patch                  |   11 +++++++++++
+ 2 files changed, 13 insertions(+)
+ create mode 100644 patches/collateral-evolutions/drm/13-nouveau-include-fix/INFO
+ create mode 100644 patches/collateral-evolutions/drm/13-nouveau-include-fix/drivers_gpu_drm_nouveau_Makefile.patch
 
-  Luis
+diff --git a/patches/collateral-evolutions/drm/13-nouveau-include-fix/INFO b/patches/collateral-evolutions/drm/13-nouveau-include-fix/INFO
+new file mode 100644
+index 0000000..9fda4df
+--- /dev/null
++++ b/patches/collateral-evolutions/drm/13-nouveau-include-fix/INFO
+@@ -0,0 +1,2 @@
++The headers are not being picked up and require
++ensuring we are pointing to our backport selection.
+diff --git a/patches/collateral-evolutions/drm/13-nouveau-include-fix/drivers_gpu_drm_nouveau_Makefile.patch b/patches/collateral-evolutions/drm/13-nouveau-include-fix/drivers_gpu_drm_nouveau_Makefile.patch
+new file mode 100644
+index 0000000..dace69b
+--- /dev/null
++++ b/patches/collateral-evolutions/drm/13-nouveau-include-fix/drivers_gpu_drm_nouveau_Makefile.patch
+@@ -0,0 +1,11 @@
++--- a/drivers/gpu/drm/nouveau/Makefile
+++++ b/drivers/gpu/drm/nouveau/Makefile
++@@ -2,7 +2,7 @@
++ # Makefile for the drm device driver.  This driver provides support for the
++ # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
++ 
++-ccflags-y := -Iinclude/drm
+++ccflags-y += -I$(backport_srctree)/include/drm
++ ccflags-y += -I$(src)/core/include
++ ccflags-y += -I$(src)/core
++ ccflags-y += -I$(src)
+-- 
+1.7.10.4
+
