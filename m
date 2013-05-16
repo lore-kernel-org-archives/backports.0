@@ -1,48 +1,30 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:59150 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750780Ab3ESWVG (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 19 May 2013 18:21:06 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/3] backport: do not add the vlan backports for kernel 3.10
-Date: Mon, 20 May 2013 00:20:49 +0200
-Message-Id: <1369002051-4002-2-git-send-email-hauke@hauke-m.de> (sfid-20130520_002110_213519_32DE8B08)
-In-Reply-To: <1369002051-4002-1-git-send-email-hauke@hauke-m.de>
-References: <1369002051-4002-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-lb0-f169.google.com ([209.85.217.169]:61078 "EHLO
+	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755130Ab3EPHHx (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 16 May 2013 03:07:53 -0400
+Received: by mail-lb0-f169.google.com with SMTP id 10so2782250lbf.0
+        for <backports@vger.kernel.org>; Thu, 16 May 2013 00:07:51 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1368683306-21463-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1368683306-21463-1-git-send-email-mcgrof@do-not-panic.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Thu, 16 May 2013 00:07:31 -0700
+Message-ID: <CAB=NE6V8Lmi5rL=eupANpa-RsS71BeRaJES5mfWFoFVHtmNNjw@mail.gmail.com> (sfid-20130516_090755_264223_490FF0D4)
+Subject: Re: [PATCH 0/3] backports: updates for next-20130429
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The kernel 3.10 already includes the new versions.
+On Wed, May 15, 2013 at 10:48 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+>
+> Here are 3 updates for next-20130429.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
+Ignore this, I'll send a new series and I think I've fixed the nouveau
+compilation problems.
 
-This should also go into the 3.10 branch
-
- backport/backport-include/linux/if_vlan.h |    2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/backport/backport-include/linux/if_vlan.h b/backport/backport-include/linux/if_vlan.h
-index a5839e8..fea0acc 100644
---- a/backport/backport-include/linux/if_vlan.h
-+++ b/backport/backport-include/linux/if_vlan.h
-@@ -2,6 +2,7 @@
- #define __BACKPORT_LINUX_IF_VLAN_H_
- #include_next <linux/if_vlan.h>
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
- #define vlan_insert_tag(__skb, __vlan_proto, __vlan_tci)	vlan_insert_tag(__skb, __vlan_tci)
- #define __vlan_put_tag(__skb, __vlan_proto, __vlan_tci)		__vlan_put_tag(__skb, __vlan_tci)
- #define vlan_put_tag(__skb, __vlan_proto, __vlan_tci)		vlan_put_tag(__skb, __vlan_tci)
-@@ -14,5 +15,6 @@ static inline bool vlan_hw_offload_capable(netdev_features_t features,
- 		return true;
- 	return false;
- }
-+#endif 
- 
- #endif /* __BACKPORT_LINUX_IF_VLAN_H_ */
--- 
-1.7.10.4
-
+  Luis
