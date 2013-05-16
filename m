@@ -1,66 +1,57 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ia0-f181.google.com ([209.85.210.181]:50781 "EHLO
-	mail-ia0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754465Ab3EKA1b (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 10 May 2013 20:27:31 -0400
-Received: by mail-ia0-f181.google.com with SMTP id f27so5315324iae.40
-        for <backports@vger.kernel.org>; Fri, 10 May 2013 17:27:30 -0700 (PDT)
+Received: from mail-la0-f52.google.com ([209.85.215.52]:63301 "EHLO
+	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751144Ab3EPFpE (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 16 May 2013 01:45:04 -0400
+Received: by mail-la0-f52.google.com with SMTP id fo13so2603528lab.11
+        for <backports@vger.kernel.org>; Wed, 15 May 2013 22:45:02 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAB=NE6Ut5CdpistLecYnbzK-t+Rymw-Gzhj=DdhYEcm8DGPBYw@mail.gmail.com>
+References: <1368440675-23190-1-git-send-email-mcgrof@do-not-panic.com>
+ <1368603799.8359.5.camel@jlt4.sipsolutions.net> <CAB=NE6UiZPP02y126Qxc5c7q1wFer0_9cZLFP_QCQo_Z6uGJmQ@mail.gmail.com>
+ <CAB=NE6Ut5CdpistLecYnbzK-t+Rymw-Gzhj=DdhYEcm8DGPBYw@mail.gmail.com>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 04/12] backports: copy brcmfmac-sdio.h
-Date: Fri, 10 May 2013 17:26:55 -0700
-Message-Id: <1368232023-23817-5-git-send-email-mcgrof@do-not-panic.com> (sfid-20130511_022732_446894_9FBF9D98)
-In-Reply-To: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
+Date: Wed, 15 May 2013 22:44:42 -0700
+Message-ID: <CAB=NE6UrCSYztvoe0HP8fBANki0C4huePhAxxpSb6eV8KnCo6w@mail.gmail.com> (sfid-20130516_074507_868699_13ED55E5)
+Subject: Re: [PATCH 0/3] backports: take up up to next-20130426
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Wed, May 15, 2013 at 8:56 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> On Wed, May 15, 2013 at 8:45 PM, Luis R. Rodriguez
+> <mcgrof@do-not-panic.com> wrote:
+>> while nouveau fails and uses the later.
+>
+> Actually I see now drivers that use either work so this seems to be
+> nouveau specific.
 
-On next-20130415 commit 668761ac0 added platform
-specific data for brcmfmac for SDIO. Copy that
-over. This is the first in a series of changes
-required for next-20130415.
+This seems to be because of the new changes that stuffed nouveau files
+into separate directories:
 
-commit 668761ac01d6f5a36b8e5a24d4e154550e2c4c3b
-Author: Hante Meuleman <meuleman@broadcom.com>
-Date:   Fri Apr 12 10:55:55 2013 +0200
+drivers/gpu/drm/nouveau/core/
+drivers/gpu/drm/nouveau/dispnv04/
 
-    brcmfmac: define and use platform specific data for SDIO.
+I've tried this but no luck.
 
-    This patch adds support for platform specific data for SDIO
-    fullmac devices. Currently OOB interrupts are configured by Kconfig
-    BRCMFMAC_SDIO_OOB but that is now determined dynamically by checking
-    availibility of platform data.
+--- a/drivers/gpu/drm/nouveau/Makefile
++++ b/drivers/gpu/drm/nouveau/Makefile
+@@ -3,9 +3,9 @@
+ # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
 
-    Cc: Hauke Mehrtens <hauke@hauke-m.de>
-    Reviewed-by: Arend Van Spriel <arend@broadcom.com>
-    Reviewed-by: Franky (Zhenhui) Lin <frankyl@broadcom.com>
-    Reviewed-by: Pieter-Paul Giesberts <pieterpg@broadcom.com>
-    Reviewed-by: Piotr Haber <phaber@broadcom.com>
-    Signed-off-by: Hante Meuleman <meuleman@broadcom.com>
-    Signed-off-by: Arend van Spriel <arend@broadcom.com>
-    Signed-off-by: John W. Linville <linville@tuxdriver.com>
+ ccflags-y := -Iinclude/drm
+-ccflags-y += -I$(src)/core/include
+-ccflags-y += -I$(src)/core
+-ccflags-y += -I$(src)
++ccflags-y += -I$(backport_srctree)/drivers/gpu/drm/nouveau/core/include/
++ccflags-y += -I$(backport_srctree)/drivers/gpu/drm/nouveau/core/
++ccflags-y += -I$(backport_srctree)/drivers/gpu/drm/nouveau/
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- copy-list |    1 +
- 1 file changed, 1 insertion(+)
+ nouveau-y := core/core/client.o
+ nouveau-y += core/core/engctx.o
 
-diff --git a/copy-list b/copy-list
-index 6db79a3..8b3de0c 100644
---- a/copy-list
-+++ b/copy-list
-@@ -27,6 +27,7 @@ include/linux/bcm47xx_wdt.h
- include/linux/usb/usbnet.h
- include/linux/usb/rndis_host.h
- include/linux/spi/libertas_spi.h
-+include/linux/platform_data/brcmfmac-sdio.h
- 
- include/uapi/linux/nl80211.h
- include/linux/rfkill.h -> include/linux/rfkill_backport.h
--- 
-1.7.10.4
 
+  Luis
