@@ -1,36 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:59161 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752517Ab3ESWVK (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 19 May 2013 18:21:10 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/3] backport: make patch apply again
-Date: Mon, 20 May 2013 00:20:50 +0200
-Message-Id: <1369002051-4002-3-git-send-email-hauke@hauke-m.de> (sfid-20130520_002111_485953_9566BC45)
-In-Reply-To: <1369002051-4002-1-git-send-email-hauke@hauke-m.de>
-References: <1369002051-4002-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-la0-f52.google.com ([209.85.215.52]:58886 "EHLO
+	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751538Ab3ERVFp (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 18 May 2013 17:05:45 -0400
+MIME-Version: 1.0
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Sat, 18 May 2013 14:05:23 -0700
+Message-ID: <CAB=NE6VAWUQpbZpM8T77d-r7ZYJd4veghKY_eMV9sDv831gbXw@mail.gmail.com> (sfid-20130518_230549_083959_22936D30)
+Subject: [ANN] Backports based on v3.10-rc1 released
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- patches/collateral-evolutions/network/0001-netdev_ops/mwifiex.patch |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+As announced on the list the compat-drivers project was renamed to
+backports [0] and uses now only one new tree for development [1]. Due
+to the huge amount of changes we've been behind on linux-next daily
+snapshots but we've now caught up with Linus so a release based on
+v3.10-rc1 is due and is now available [2]. Please test ! There are
+tons of changes in terms of how we do backports that should make it
+easier and consistent to backport drivers and subsystems thanks mainly
+to Johannes' huge changes. As it is now most if not all development
+scripts have been converted to Python, except for scripts required on
+the user's part for installation.
 
-diff --git a/patches/collateral-evolutions/network/0001-netdev_ops/mwifiex.patch b/patches/collateral-evolutions/network/0001-netdev_ops/mwifiex.patch
-index 74f2c8e..9780e99 100644
---- a/patches/collateral-evolutions/network/0001-netdev_ops/mwifiex.patch
-+++ b/patches/collateral-evolutions/network/0001-netdev_ops/mwifiex.patch
-@@ -6,6 +6,6 @@
-  {
- -	dev->netdev_ops = &mwifiex_netdev_ops;
- +	netdev_attach_ops(dev, &mwifiex_netdev_ops);
-+ 	dev->destructor = free_netdev;
-  	/* Initialize private structure */
-  	priv->current_key_index = 0;
-- 	priv->media_connected = false;
--- 
-1.7.10.4
+As for user's experience you no longer have to use the silly
+./scripts/drivers-select script to enable only one driver for
+compilation, you just type in
 
+make menuconfig
+make -j 4
+# Then as root:
+make install
+
+There are also a series of defconfigs, present on the defconfig
+directory, you can use the iwlwifi defconfig as follows for example:
+
+make defconfig-iwlwifi
+
+We need more defconfigs! Please feel free to send your submissions.
+I'm willing to merge these in for the rc series prior to the final
+release. Apart from these changes we now also backport three new
+subsystems: NFC, media and regulator subsystems. For NFC we have 8 new
+drivers. For media we ended up backporting 433 new drivers. For
+regulator we backported 37 new drivers.
+
+Many thanks to Johannes, Samuel, and Hauke for their huge help with
+all these new changes. Now please go test!
+
+[0] http://marc.info/?l=linux-backports&m=136891011622088&w=2
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/backports.git
+[2] https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.10-rc1/backports-3.10-rc1-1.tar.bz2
+
+  Luis
