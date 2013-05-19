@@ -1,37 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:57823 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753578Ab3E1TnN (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 28 May 2013 15:43:13 -0400
-Message-ID: <1369770189.8548.20.camel@jlt4.sipsolutions.net> (sfid-20130528_214314_810781_E5D4DE96)
-Subject: Re: Problem with backports git repo
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: "Luis R. Rodriguez" <mcgrof@frijolero.org>,
-	backports@vger.kernel.org
-Date: Tue, 28 May 2013 21:43:09 +0200
-In-Reply-To: <1369769122.8548.7.camel@jlt4.sipsolutions.net> (sfid-20130528_212531_921012_9500F06E)
-References: <51A502AD.1060104@lwfinger.net>
-	 (sfid-20130528_211707_085177_DE2DD9E0) <1369769122.8548.7.camel@jlt4.sipsolutions.net>
-	 (sfid-20130528_212531_921012_9500F06E)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:39485 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753748Ab3ESCe2 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 18 May 2013 22:34:28 -0400
+Received: by mail-pd0-f182.google.com with SMTP id z10so854552pdj.13
+        for <backports@vger.kernel.org>; Sat, 18 May 2013 19:34:27 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: mricon@kernel.org, "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	Jouni Malinen <j@w1.fi>
+Subject: [PATCH 8/8] rel-html: update hostapd releases
+Date: Sat, 18 May 2013 19:33:42 -0700
+Message-Id: <1368930822-13641-9-git-send-email-mcgrof@do-not-panic.com> (sfid-20130519_043429_420126_DFA3810F)
+In-Reply-To: <1368930822-13641-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1368930822-13641-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2013-05-28 at 21:25 +0200, Johannes Berg wrote:
-> Hi Larry,
-> 
-> > I just used 'git clone' to get a fresh copy of the repo. When I try 'make 
-> > menuconfig', I get the following error:
-> > 
-> > finger@larrylap:~/backports/backport> make menuconfig
-> 
-> The docs haven't been updated, but this is just the skeleton, you're not
-> supposed to run anything in there. Go to the top-level first, and run
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Oh, n/m me, it seems this was just an accidental resend of your previous
-mail?
+Jouni released v2.0 of hostapd a while ago in January, update
+the project file for it.
 
-johannes
+Cc: Jouni Malinen <j@w1.fi>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ projects/hostapd.cfg |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/projects/hostapd.cfg b/projects/hostapd.cfg
+index 703a120..c2f0c68 100644
+--- a/projects/hostapd.cfg
++++ b/projects/hostapd.cfg
+@@ -2,6 +2,7 @@
+ rel_html_proj           = hostapd
+ supported =
+ 	1.1
++	2.0
+ rel_html_url_releases	= http://hostap.epitest.fi/releases/
+ rel_license 		= BSD
+ ignore_signatures	= True
+-- 
+1.7.10.4
 
