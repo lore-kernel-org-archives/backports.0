@@ -1,73 +1,30 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f50.google.com ([209.85.160.50]:45984 "EHLO
-	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753769Ab3ESCeG (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 18 May 2013 22:34:06 -0400
-Received: by mail-pb0-f50.google.com with SMTP id wy17so1436647pbc.37
-        for <backports@vger.kernel.org>; Sat, 18 May 2013 19:34:05 -0700 (PDT)
+Received: from mail-la0-f49.google.com ([209.85.215.49]:60100 "EHLO
+	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753552Ab3ESBFU (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 18 May 2013 21:05:20 -0400
+Received: by mail-la0-f49.google.com with SMTP id fp13so4779929lab.36
+        for <backports@vger.kernel.org>; Sat, 18 May 2013 18:05:19 -0700 (PDT)
+MIME-Version: 1.0
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: mricon@kernel.org, "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 3/8] rel-html: really listen to ignore_changelogs
-Date: Sat, 18 May 2013 19:33:37 -0700
-Message-Id: <1368930822-13641-4-git-send-email-mcgrof@do-not-panic.com> (sfid-20130519_043407_937163_7AB0E6F2)
-In-Reply-To: <1368930822-13641-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1368930822-13641-1-git-send-email-mcgrof@do-not-panic.com>
+Date: Sat, 18 May 2013 18:04:58 -0700
+Message-ID: <CAB=NE6Ukgibio21rgu2xBZwpZrCsKQjwhOMX9sGTAQ5GXBiLjg@mail.gmail.com> (sfid-20130519_030523_200998_B70F8B0C)
+Subject: backports daily snapshots move on
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+I'm going to keep moving on with daily backports snapshots now that
+we've caught up. First daily snapshot release:
 
-When a project was setting ignore_changelogs the changelog
-was still printed if and only if the changelog happened
-to be found by chance and it was also signed. In practice
-if a project wants to abandon changelogs this would then
-produce an output that would likely make users think the
-developers forgot to provide a changelog. Simply ignore
-changelogs even if they are found for older releases when
-ignore_changelogs is set.
+https://www.kernel.org/pub/linux/kernel/projects/backports/2013/05/02/backports-20130502.tar.bz2
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- rel-html.py |   18 ++----------------
- 1 file changed, 2 insertions(+), 16 deletions(-)
+The backports.git tree tags for these will match linux-next tags but
+replacing the long RFC 3339 dates (compat-drivers-2012-02-02) with the
+shorter linux-next style dates (backports-20130502). Note that for
+stable releases the tags will simply match Linus' stags with the
+addition of an extra tag release to match the update revision during
+that same release in case we need a fix / update for it.
 
-diff --git a/rel-html.py b/rel-html.py
-index 068d855..f50fa6f 100755
---- a/rel-html.py
-+++ b/rel-html.py
-@@ -1008,14 +1008,7 @@ class rel_html_gen(HTMLParser):
- 				sys.stdout.write('\t\t\t\t<td><a href="%s">%s</a></td>\n' % \
- 						 (r.get('changelog_url'), "ChangeLog"))
- 			else:
--				if (r.get('changelog_exists')):
--					if (r['signed_changelog_exists']):
--						sys.stdout.write('\t\t\t\t<td><a href="%s">%s</a></td>\n' % \
--								 (r.get('changelog_url'), "ChangeLog"))
--					else:
--						sys.stdout.write('\t\t\t\t<td></td>\n')
--				else:
--					sys.stdout.write('\t\t\t\t<td></td>\n')
-+				sys.stdout.write('\t\t\t\t<td></td>\n')
- 			sys.stdout.write('\t\t\t\t</tr>')
- 
- 		sys.stdout.write('\t\t\t</table>\n')
-@@ -1053,14 +1046,7 @@ class rel_html_gen(HTMLParser):
- 				sys.stdout.write('\t\t\t\t<td><a href="%s">%s</a></td>\n' % \
- 						 (r.get('changelog_url'), "ChangeLog"))
- 			else:
--				if (r.get('changelog_exists')):
--					if (r['signed_changelog_exists']):
--						sys.stdout.write('\t\t\t\t<td><a href="%s">%s</a></td>\n' % \
--								 (r.get('changelog_url'), "ChangeLog"))
--					else:
--						sys.stdout.write('\t\t\t\t<td></td>\n')
--				else:
--					sys.stdout.write('\t\t\t\t<td></td>\n')
-+				sys.stdout.write('\t\t\t\t<td></td>\n')
- 			sys.stdout.write('\t\t\t\t</tr>')
- 
- 		sys.stdout.write('\t\t\t</table>\n')
--- 
-1.7.10.4
-
+  Luis
