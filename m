@@ -1,34 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:54298 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758086Ab3EGNXT (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 7 May 2013 09:23:19 -0400
-Message-ID: <1367932996.8328.7.camel@jlt4.sipsolutions.net> (sfid-20130507_152322_180792_9A3F5FDB)
-Subject: Re: [PATCH v2 0/4] backports: fix final link errors
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: backports@vger.kernel.org
-Date: Tue, 07 May 2013 15:23:16 +0200
-In-Reply-To: <1367877128-10812-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130506_235223_925793_4F77E4F3)
-References: <1367877128-10812-1-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20130506_235223_925793_4F77E4F3)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-pb0-f42.google.com ([209.85.160.42]:41603 "EHLO
+	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753748Ab3ESCeX (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 18 May 2013 22:34:23 -0400
+Received: by mail-pb0-f42.google.com with SMTP id up7so4374002pbc.29
+        for <backports@vger.kernel.org>; Sat, 18 May 2013 19:34:23 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: mricon@kernel.org, "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 7/8] rel-html: update iw release
+Date: Sat, 18 May 2013 19:33:41 -0700
+Message-Id: <1368930822-13641-8-git-send-email-mcgrof@do-not-panic.com> (sfid-20130519_043425_158455_E612C8E7)
+In-Reply-To: <1368930822-13641-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1368930822-13641-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 2013-05-06 at 14:52 -0700, Luis R. Rodriguez wrote:
-> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-> 
-> OK this took a while but finally figured it out. This addresses
-> the link errors introduced by adding the media and voltage
-> regulator subsystems. We can now move on with life and hopefully
-> cook a release right in time for v3.10. Now we just have to
-> step slowly forward on linux-next tags up to where we are
-> today (which hopefully will remain this way for another week).
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Thanks Luis! Applied all 4 (actually 4/4 I applied the one you sent
-later)
+Johannes released the v3.10 release of iw so update
+the config file for the project to annotate it as supported.
+Note that there was no v3.9 relase for iw.
 
-johannes
+Johannes is now following the releases of the kernel for iw
+release.
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ projects/iw.cfg |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/projects/iw.cfg b/projects/iw.cfg
+index becefa8..a8c2305 100644
+--- a/projects/iw.cfg
++++ b/projects/iw.cfg
+@@ -2,6 +2,7 @@
+ rel_html_proj           = iw
+ supported =
+ 	3.8
++	3.10
+ rel_html_testing_ver	= latest
+ rel_html_url_releases	= https://www.kernel.org/pub/software/network/iw/
+ rel_license 		= ISC
+-- 
+1.7.10.4
 
