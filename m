@@ -1,63 +1,77 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:53968 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755111Ab3EWA2Z (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 22 May 2013 20:28:25 -0400
-Received: by mail-la0-f41.google.com with SMTP id ee20so2626716lab.14
-        for <backports@vger.kernel.org>; Wed, 22 May 2013 17:28:24 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1369224166.8207.4.camel@jlt4.sipsolutions.net>
-References: <1369222478-30577-1-git-send-email-mcgrof@do-not-panic.com>
- <1369222478-30577-4-git-send-email-mcgrof@do-not-panic.com> <1369224166.8207.4.camel@jlt4.sipsolutions.net>
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:64713 "EHLO
+	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751012Ab3ESCqN (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 18 May 2013 22:46:13 -0400
+Received: by mail-pb0-f47.google.com with SMTP id rr4so4342442pbb.6
+        for <backports@vger.kernel.org>; Sat, 18 May 2013 19:46:13 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Wed, 22 May 2013 17:28:04 -0700
-Message-ID: <CAB=NE6UbyVPCXVPj=jMQ3MjanMtH653n3MMsrBz=BELpNBHUTw@mail.gmail.com> (sfid-20130523_022828_066079_97A148BD)
-Subject: Re: [PATCH 3/9] lib/bpgit.py: add git status support
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: backports@vger.kernel.org
+Cc: mricon@kernel.org, "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH v2] rel-html: rename compat-drivers.cfg to backports.cfg
+Date: Sat, 18 May 2013 19:46:02 -0700
+Message-Id: <1368931562-14009-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130519_044615_853675_936ACDE7)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, May 22, 2013 at 5:02 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Wed, 2013-05-22 at 04:34 -0700, Luis R. Rodriguez wrote:
->> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
->>
->> We use --porcelain given that this spits out the results
->> in an easy-to-parse format for scripts and will remain stable
->> across git versions and regardless of user configuration.
->>
->> We will use this later.
->>
->> Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
->> ---
->>  lib/bpgit.py |   12 ++++++++++++
->>  1 file changed, 12 insertions(+)
->>
->> diff --git a/lib/bpgit.py b/lib/bpgit.py
->> index 40523f2..335cc9c 100644
->> --- a/lib/bpgit.py
->> +++ b/lib/bpgit.py
->> @@ -27,6 +27,18 @@ def rev_parse(rev='HEAD', tree=None):
->>          raise SHAError()
->>      return sha
->>
->> +def status(tree=None):
->> +    cmd = ['git', 'status', '--porcelain']
->> +
->> +    process = subprocess.Popen(cmd,
->> +                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
->> +                               close_fds=True, universal_newlines=True, cwd=tree)
->> +    stdout = process.communicate()[0]
->> +    process.wait()
->> +    _check(process)
->> +
->> +    return stdout.strip()
->
-> I think it would make some sense to parse this here into something more
-> "pythonic", like a list of tuples or so.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Sure.
+The compat-drivers project was renamed to backports.
+Rename the project file and also update the config file
+to add the v3.10 kernel as supported.
 
-  Luis
+We also add the ignore_changelogs for this project given
+that we want to skip these moving forward and simply provide
+shortlogs upon releases and refer folks to use git for a full
+changelog.
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+
+This v2 just uses -M for git format-patch to make it
+easiser to read what actually changed after the rename.
+
+ projects/{compat-drivers.cfg => backports.cfg} |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+ rename projects/{compat-drivers.cfg => backports.cfg} (87%)
+
+diff --git a/projects/compat-drivers.cfg b/projects/backports.cfg
+similarity index 87%
+rename from projects/compat-drivers.cfg
+rename to projects/backports.cfg
+index e74046b..ee64a5c 100644
+--- a/projects/compat-drivers.cfg
++++ b/projects/backports.cfg
+@@ -1,15 +1,18 @@
+ [project]
+-rel_html_proj           = compat-drivers
++rel_html_proj		= backports
++rel_html_proj_aliases	= compat-drivers
+ supported =
+ 	3.9
+ 	3.8
+ 	3.7
++	3.10
+ rel_html_url_releases	= http://www.kernel.org/pub/linux/kernel/projects/backports/stable/
+ 			  http://www.kernel.org/pub/linux/kernel/projects/backports/2013/
+ rel_license 		= GPLv2
++ignore_changelogs	= True
+ 
+ [html]
+-title = compat-drivers: Linux kernel backports
++title = backports: Linux kernel backports
+ 
+ nav_01_url = https://backports.wiki.kernel.org/
+ nav_01_txt = Documentation
+@@ -25,7 +28,7 @@ nav_03_txt = Mailing List
+ release_title = Latest stable releases
+ release_title_next = Latest development releases
+ 
+-about_title = About compat-drivers
++about_title = About backports
+ about = We provide drivers released on newer kernels backported for
+ 	usage on older kernels. Both daily snapshots based on
+ 	<a href="http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=summary">linux-next</a>,
+-- 
+1.7.10.4
+
