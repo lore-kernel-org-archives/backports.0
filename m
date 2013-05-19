@@ -1,43 +1,52 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:33917 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966728Ab3E2UNk (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 29 May 2013 16:13:40 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: update output template .gitignore for kconfig move
-Date: Wed, 29 May 2013 22:13:34 +0200
-Message-Id: <1369858414-4066-1-git-send-email-johannes@sipsolutions.net> (sfid-20130529_221341_963629_4BC3E537)
+Received: from mail.nanl.de ([217.115.11.12]:40314 "EHLO mail.nanl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753205Ab3ESSsS (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 19 May 2013 14:48:18 -0400
+From: Jonas Gorski <jogo@openwrt.org>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: backports@vger.kernel.org
+Subject: [PATCH 2/2] compat: handle renaming of random32() to prandom_u32()
+Date: Sun, 19 May 2013 20:47:45 +0200
+Message-Id: <1368989265-15164-3-git-send-email-jogo@openwrt.org> (sfid-20130519_204827_333143_DCA22CD2)
+In-Reply-To: <1368989265-15164-1-git-send-email-jogo@openwrt.org>
+References: <1368989265-15164-1-git-send-email-jogo@openwrt.org>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+496f2f93b1cc286f5a4f4f9acdc1e5314978683f renamed random32() to
+prandom_u32(), so add an appropriate macro for older kernels.
 
-I clearly forgot this during the Kconfig move, the .gitignore
-that is in the output template directory (and used with the
-git-tracker) needs to be updated for the kconf directory move.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Jonas Gorski <jogo@openwrt.org>
 ---
- backport/.gitignore | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/compat-3.10.h |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/backport/.gitignore b/backport/.gitignore
-index c906800..43a3d08 100644
---- a/backport/.gitignore
-+++ b/backport/.gitignore
-@@ -14,8 +14,8 @@ Kconfig.versions
- modules.order
- backport-include/backport/autoconf.h
- modules
--kconfig/mconf
--kconfig/conf
-+kconf/mconf
-+kconf/conf
- .tmp_versions
- Module.symvers
- *.mod.c
+diff --git a/include/linux/compat-3.10.h b/include/linux/compat-3.10.h
+index 9d6e55c..ac1dcfa 100644
+--- a/include/linux/compat-3.10.h
++++ b/include/linux/compat-3.10.h
+@@ -75,6 +75,20 @@ static inline void fb_enable_skip_vt_switch(struct fb_info *info)
+ 	module_driver(__pcmcia_driver, pcmcia_register_driver, \
+ 			pcmcia_unregister_driver)
+ 
++/**
++ * backport of:
++ *
++ * commit 496f2f93b1cc286f5a4f4f9acdc1e5314978683f
++ * Author: Akinobu Mita <akinobu.mita@gmail.com>
++ * Date:   Mon Dec 17 16:04:23 2012 -0800
++ *
++ *    random32: rename random32 to prandom
++ *
++ */
++#define prandom_u32()			random32()
++#define prandom_seed(seed)		srandom32(seed)
++#define	prandom_u32_state(state)	prandom32(state)
++
+ #else /* kernel is >= 3.10 */
+ /*
+  * We'd delete this upstream ever got this, we use our
 -- 
-1.8.0
+1.7.10.4
 
