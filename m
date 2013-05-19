@@ -1,33 +1,23 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:57019 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751188Ab3EHHK7 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 8 May 2013 03:10:59 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.0:DHE_RSA_CAMELLIA_256_CBC_SHA1:256)
-	(Exim 4.80)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1UZyWf-0002G1-Ay
-	for backports@vger.kernel.org; Wed, 08 May 2013 09:10:57 +0200
-Message-ID: <1367997056.8279.10.camel@jlt4.sipsolutions.net> (sfid-20130508_091101_291633_2DA97432)
-Subject: Re: [PATCH] backports: adjust snd_portid patch for nl80211 update
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Date: Wed, 08 May 2013 09:10:56 +0200
-In-Reply-To: <1367997031-11574-1-git-send-email-johannes@sipsolutions.net> (sfid-20130508_091041_345759_FBA0FAA9)
-References: <1367997031-11574-1-git-send-email-johannes@sipsolutions.net>
-	 (sfid-20130508_091041_345759_FBA0FAA9)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-la0-f53.google.com ([209.85.215.53]:58340 "EHLO
+	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753740Ab3ESCar (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 18 May 2013 22:30:47 -0400
+Received: by mail-la0-f53.google.com with SMTP id ea20so1542586lab.12
+        for <backports@vger.kernel.org>; Sat, 18 May 2013 19:30:46 -0700 (PDT)
+MIME-Version: 1.0
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Sat, 18 May 2013 19:30:26 -0700
+Message-ID: <CAB=NE6Wq6mpY0gdMOXivZT3xhScwej9yJ=z4+doZY9P0u_rY+A@mail.gmail.com> (sfid-20130519_043053_222765_A8250C31)
+Subject: New release page for backports
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2013-05-08 at 09:10 +0200, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
-> 
-> The new code for the "critical protocol indication" uses
-> snd_portid and must be adjusted in the backport patches.
+Given the project name change a few updates were needed to rel-html
+which I'll post next. The result:
 
-This will be needed starting from next-20130423.
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
 
-johannes
-
+  Luis
