@@ -1,71 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f41.google.com ([209.85.160.41]:44434 "EHLO
-	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753083Ab3EKSyf (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 11 May 2013 14:54:35 -0400
-Received: by mail-pb0-f41.google.com with SMTP id jt11so1629974pbb.14
-        for <backports@vger.kernel.org>; Sat, 11 May 2013 11:54:34 -0700 (PDT)
+Received: from mail-la0-f51.google.com ([209.85.215.51]:62059 "EHLO
+	mail-la0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754448Ab3ESVAi (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 19 May 2013 17:00:38 -0400
+Received: by mail-la0-f51.google.com with SMTP id lx15so3873759lab.38
+        for <backports@vger.kernel.org>; Sun, 19 May 2013 14:00:36 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1368989265-15164-1-git-send-email-jogo@openwrt.org>
+References: <1368989265-15164-1-git-send-email-jogo@openwrt.org>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH v2 0/5] backports: move us up to next-20130423
-Date: Sat, 11 May 2013 11:54:24 -0700
-Message-Id: <1368298469-29143-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130511_205438_343570_19DD7C0B)
+Date: Sun, 19 May 2013 14:00:16 -0700
+Message-ID: <CAB=NE6X9sxZzp2ExTc=10QJVgKdsX3iFz483qD5VoHsMewS7fQ@mail.gmail.com> (sfid-20130519_230041_537801_1BC60973)
+Subject: Re: [PATCH 0/2] compat: fix compilation for 3.10-rc1 and older
+To: Jonas Gorski <jogo@openwrt.org>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Sun, May 19, 2013 at 11:47 AM, Jonas Gorski <jogo@openwrt.org> wrote:
+> These two patches fix two issues that I encountered/found while
+> compiling (a slightly older) compat-drivers against 3.10-rc1:
+>
+> a) compat-3.10.h was missing an include in the #else branch, causing
+>    build failure.
+>
+> b) random32() was renamed to prandom_u32(), so older kernels were
+>    missing an appropriate alias.
+>
+> Jonas Gorski (2):
+>   compat: add missing include in #else for compat-3.10.h
+>   compat: handle renaming of random32() to prandom_u32()
 
-I've addressed backporting rfkill here in a way that
-I think is more suitable. Let me know what you think.
+Thanks Jonas but for v3.10 we've moved onto a new tree, backports.git:
 
-Johannes Berg (1):
-  backports: adjust snd_portid patch for nl80211 update
+git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/backports.git
 
-Luis R. Rodriguez (4):
-  backports: backport rfkill properly
-  backports: backport vlan ethernet changes
-  backports: address vlan ethernet driver changes
-  backports: refresh patches for next-20130423
+The first v3.10 based release is available for testing:
 
- backport/backport-include/linux/if_vlan.h          |   18 +++++
- backport/backport-include/linux/netdev_features.h  |   23 +++++++
- backport/backport-include/linux/rfkill.h           |   13 ++--
- copy-list                                          |    4 +-
- .../network/0001-netdev_ops/mac80211.patch         |    6 +-
- .../network/0001-netdev_ops/mac80211_hwsim.patch   |    2 +-
- .../mac80211.patch                                 |    4 +-
- .../0005-netlink-portid/mac80211_hwsim.patch       |    4 +-
- .../network/0005-netlink-portid/nl80211.patch      |   69 +++++++++++---------
- .../0006-disable-dump-adjust-on-old-kernels.patch  |    4 +-
- .../network/0007-ksize-orinoco.patch               |    1 +
- .../network/0008-rfkill.patch                      |   34 ++++++----
- .../include_net_cfg80211.patch                     |    2 +-
- .../drivers_net_wireless_iwlegacy_4965-mac.patch   |    2 +-
- .../net_mac80211_tx.patch                          |    4 +-
- .../17-netdev-queue/net_mac80211_iface.patch       |    4 +-
- .../network/22-multiqueue/net_mac80211_tx.patch    |    2 +-
- .../drivers_net_wireless_mwl8k.patch               |   10 +--
- .../include_net_mac80211.patch                     |    2 +-
- .../net_mac80211_ieee80211_i.patch                 |    2 +-
- .../net_mac80211_iface.patch                       |    2 +-
- .../30-bridge-port/net_wireless_nl80211.patch      |    2 +-
- .../network/36-workqueue/net_mac80211_main.patch   |    2 +-
- ...ers_net_ethernet_atheros_atl1c_atl1c_main.patch |   14 ++--
- ...ers_net_ethernet_atheros_atl1e_atl1e_main.patch |    6 +-
- .../drivers_net_ethernet_atheros_atlx_atl1.patch   |    4 +-
- .../drivers_net_ethernet_atheros_atlx_atl2.patch   |   49 ++++++++++----
- .../42-netlink_seq/net_wireless_nl80211.patch      |    2 +-
- .../drivers_net_wireless_rt2x00_rt2500usb.patch    |    2 +-
- .../network/66-uapi-changes/INFO                   |   18 -----
- .../include_linux_rfkill_backport.patch            |   11 ----
- .../69-wowlan-no-socket/net_wireless_nl80211.patch |    2 +-
- 32 files changed, 190 insertions(+), 134 deletions(-)
- create mode 100644 backport/backport-include/linux/if_vlan.h
- delete mode 100644 patches/collateral-evolutions/network/66-uapi-changes/INFO
- delete mode 100644 patches/collateral-evolutions/network/66-uapi-changes/include_linux_rfkill_backport.patch
+https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.10-rc1/backports-3.10-rc1-1.tar.bz2
 
--- 
-1.7.10.4
+The release page:
 
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
+
+The backports tree will have branches for each stable release, so
+there is a linux-3.10.y branch on it. Before applying patches to that
+branch I will however want code comited on the master branch, and then
+refer that sha1sum on the branch.
+
+Please take a look / test and let me know how it goes. Also daily
+snapshots are referenced on the release page.
+
+  Luis
