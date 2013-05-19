@@ -1,30 +1,33 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f49.google.com ([209.85.215.49]:60100 "EHLO
-	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753552Ab3ESBFU (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 18 May 2013 21:05:20 -0400
-Received: by mail-la0-f49.google.com with SMTP id fp13so4779929lab.36
-        for <backports@vger.kernel.org>; Sat, 18 May 2013 18:05:19 -0700 (PDT)
+Received: from mail-la0-f51.google.com ([209.85.215.51]:53295 "EHLO
+	mail-la0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751789Ab3ESVXC (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 19 May 2013 17:23:02 -0400
 MIME-Version: 1.0
+In-Reply-To: <CAB=NE6VxqKBeQReqaNS4CJKt5qk65d5UBPaha_kODSF=W0Qcvw@mail.gmail.com>
+References: <1368981836-6247-1-git-send-email-Larry.Finger@lwfinger.net> <CAB=NE6VxqKBeQReqaNS4CJKt5qk65d5UBPaha_kODSF=W0Qcvw@mail.gmail.com>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Sat, 18 May 2013 18:04:58 -0700
-Message-ID: <CAB=NE6Ukgibio21rgu2xBZwpZrCsKQjwhOMX9sGTAQ5GXBiLjg@mail.gmail.com> (sfid-20130519_030523_200998_B70F8B0C)
-Subject: backports daily snapshots move on
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Sun, 19 May 2013 14:22:40 -0700
+Message-ID: <CAB=NE6WNajDP2AjsxQEMfkEupY7NCwFz0OJ_h-X6cus-avLQ5Q@mail.gmail.com> (sfid-20130519_232305_035722_2DFF0CD2)
+Subject: Re: [PATCH 1/2 V2] backports: Fix menuconfig build
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+	linux-wireless <linux-wireless@vger.kernel.org>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I'm going to keep moving on with daily backports snapshots now that
-we've caught up. First daily snapshot release:
+On Sun, May 19, 2013 at 2:22 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> On Sun, May 19, 2013 at 9:43 AM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
+>> Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+>
+> Thanks Larry, applied and pushed! Also kicked out a new release with these:
+>
+> https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.10-rc1/backports-3.10-rc1-2.tar.bz2
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/2013/05/02/backports-20130502.tar.bz2
-
-The backports.git tree tags for these will match linux-next tags but
-replacing the long RFC 3339 dates (compat-drivers-2012-02-02) with the
-shorter linux-next style dates (backports-20130502). Note that for
-stable releases the tags will simply match Linus' stags with the
-addition of an extra tag release to match the update revision during
-that same release in case we need a fix / update for it.
+I forgot to mention, please Cc backports list for patches, whether or
+not other lists get Cc'd is up to you.
 
   Luis
