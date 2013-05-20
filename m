@@ -1,45 +1,37 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:39485 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753748Ab3ESCe2 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 18 May 2013 22:34:28 -0400
-Received: by mail-pd0-f182.google.com with SMTP id z10so854552pdj.13
-        for <backports@vger.kernel.org>; Sat, 18 May 2013 19:34:27 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:52132 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751648Ab3ETX6Z (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 20 May 2013 19:58:25 -0400
+Message-ID: <519AB89E.1080001@lwfinger.net> (sfid-20130521_015827_047585_481D0002)
+Date: Mon, 20 May 2013 18:58:22 -0500
+From: Larry Finger <Larry.Finger@lwfinger.net>
+MIME-Version: 1.0
 To: backports@vger.kernel.org
-Cc: mricon@kernel.org, "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Jouni Malinen <j@w1.fi>
-Subject: [PATCH 8/8] rel-html: update hostapd releases
-Date: Sat, 18 May 2013 19:33:42 -0700
-Message-Id: <1368930822-13641-9-git-send-email-mcgrof@do-not-panic.com> (sfid-20130519_043429_420126_DFA3810F)
-In-Reply-To: <1368930822-13641-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1368930822-13641-1-git-send-email-mcgrof@do-not-panic.com>
+CC: linux-wireless <linux-wireless@vger.kernel.org>
+Subject: Build problem with current git repo
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Pulling from the git repo today and trying to do a 'make menuconfig' results in 
+the following error:
 
-Jouni released v2.0 of hostapd a while ago in January, update
-the project file for it.
+finger@larrylap:~/backports/backport> make menuconfig
+Makefile.real:1: versions: No such file or directory
+make[1]: *** No rule to make target `versions'.  Stop.
+make: *** [menuconfig] Error 2
 
-Cc: Jouni Malinen <j@w1.fi>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- projects/hostapd.cfg |    1 +
- 1 file changed, 1 insertion(+)
+The first line of Makefile.real contains "include versions", but that file does 
+not exist. It seems as if versions has not been committed to the repo.
 
-diff --git a/projects/hostapd.cfg b/projects/hostapd.cfg
-index 703a120..c2f0c68 100644
---- a/projects/hostapd.cfg
-+++ b/projects/hostapd.cfg
-@@ -2,6 +2,7 @@
- rel_html_proj           = hostapd
- supported =
- 	1.1
-+	2.0
- rel_html_url_releases	= http://hostap.epitest.fi/releases/
- rel_license 		= BSD
- ignore_signatures	= True
--- 
-1.7.10.4
+After I copied that file from a tarball source version, I then get the error
+
+finger@larrylap:~/backports/backport> make menuconfig
+make[2]: `mconf' is up to date.
+Kconfig:27: can't open file "net/wireless/Kconfig"
+make[1]: *** [menuconfig] Error 1
+make: *** [menuconfig] Error 2
+
+Larry
 
