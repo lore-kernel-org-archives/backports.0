@@ -1,33 +1,49 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.nanl.de ([217.115.11.12]:40315 "EHLO mail.nanl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753217Ab3ESSsS (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 19 May 2013 14:48:18 -0400
-From: Jonas Gorski <jogo@openwrt.org>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org
-Subject: [PATCH 0/2] compat: fix compilation for 3.10-rc1 and older
-Date: Sun, 19 May 2013 20:47:43 +0200
-Message-Id: <1368989265-15164-1-git-send-email-jogo@openwrt.org> (sfid-20130519_204831_170445_C3A2BF8E)
+Received: from mail-da0-f48.google.com ([209.85.210.48]:43313 "EHLO
+	mail-da0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755714Ab3EVLfP (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 22 May 2013 07:35:15 -0400
+Received: by mail-da0-f48.google.com with SMTP id h32so1088708dak.35
+        for <backports@vger.kernel.org>; Wed, 22 May 2013 04:35:14 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 6/9] lib/bpgit.py: add support for git paranoia
+Date: Wed, 22 May 2013 04:34:35 -0700
+Message-Id: <1369222478-30577-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20130522_133517_032877_8CD5B8EE)
+In-Reply-To: <1369222478-30577-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1369222478-30577-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-These two patches fix two issues that I encountered/found while
-compiling (a slightly older) compat-drivers against 3.10-rc1:
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-a) compat-3.10.h was missing an include in the #else branch, causing
-   build failure.
+This cleans sanitizes a source tree and ensures
+no content is present from what was intended.
 
-b) random32() was renamed to prandom_u32(), so older kernels were
-   missing an appropriate alias.
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ lib/bpgit.py |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Jonas Gorski (2):
-  compat: add missing include in #else for compat-3.10.h
-  compat: handle renaming of random32() to prandom_u32()
-
- include/linux/compat-3.10.h |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
+diff --git a/lib/bpgit.py b/lib/bpgit.py
+index fe68d8f..1c3ccbf 100644
+--- a/lib/bpgit.py
++++ b/lib/bpgit.py
+@@ -82,6 +82,13 @@ def verify(tree=None):
+ 
+     return dict(r=process.returncode, output=stdout)
+ 
++def paranoia(tree=None):
++    clean(tree)
++    extra = status(tree)
++    if (len(extra) != 0):
++        return dict(r=-1, output=extra)
++    return verify(tree)
++
+ def init(tree=None):
+     process = subprocess.Popen(['git', 'init'],
+                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
 -- 
 1.7.10.4
 
