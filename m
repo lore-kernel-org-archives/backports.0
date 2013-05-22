@@ -1,50 +1,61 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:50310 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754017Ab3E1TRE (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 28 May 2013 15:17:04 -0400
-Received: by mail-ob0-f171.google.com with SMTP id ef5so9516833obb.16
-        for <backports@vger.kernel.org>; Tue, 28 May 2013 12:17:03 -0700 (PDT)
-Message-ID: <51A502AD.1060104@lwfinger.net> (sfid-20130528_211707_085177_DE2DD9E0)
-Date: Tue, 28 May 2013 14:17:01 -0500
-From: Larry Finger <Larry.Finger@lwfinger.net>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-CC: backports@vger.kernel.org
-Subject: Problem with backports git repo
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:51919 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754799Ab3EVLet (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 22 May 2013 07:34:49 -0400
+Received: by mail-pa0-f51.google.com with SMTP id lf10so678759pab.10
+        for <backports@vger.kernel.org>; Wed, 22 May 2013 04:34:49 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 0/9] backports: add kernel uploading support
+Date: Wed, 22 May 2013 04:34:29 -0700
+Message-Id: <1369222478-30577-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130522_133451_974564_1E68E880)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Luis,
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-I just used 'git clone' to get a fresh copy of the repo. When I try 'make 
-menuconfig', I get the following error:
+There were a few scripts left to convert to Python. One
+was git-paranoia and another was gen-release.sh. This
+converts both into the new framework under Python. The
+new option is --kup, this would only be used by whoever
+is maintaining releases for backports.
 
-finger@larrylap:~/backports/backport> make menuconfig
-Generating local configuration database from kernel ...grep: .local-symbols: No 
-such file or directory
-  done.
-Makefile.real:1: versions: No such file or directory
-make[1]: *** No rule to make target `versions'.  Stop.
-make: *** [menuconfig] Error 2
-finger@larrylap:~/backports/backport>
+The Python gpg library didn't have support for
+"--armor --detach-sign" so for now we just add
+our own. For kup we add our own small wrapper.
 
-I have a copy of file 'versions' from a v3.10-rc1 tarball. When I copy that to 
-backport/, then that message is fixed. I think file versions needs to be added 
-to the repo.
+A few thing we could do to help new maintainers or
+later enhancements but we can do that later:
 
-After copying the file, I now get
+  * Add option to import PGP keys from the trees
+    we manage or are reading data from.
 
-finger@larrylap:~/backports/backport> make menuconfig
-Kconfig:27: can't open file "net/wireless/Kconfig"
-make[1]: *** [menuconfig] Error 1
-make: *** [menuconfig] Error 2
-finger@larrylap:~/backports/backport>
+  * Add option to build tarball for non kup usage
 
-I have not yet figured out how to fix this one. My kernel source tree is good, 
-and Kconfig matches the one in the tarball.
+We should just go hack up git paranoia upstream on
+git itself as well.
 
-Thanks,
+Luis R. Rodriguez (9):
+  lib/bpgit.py: make git describe --long optional
+  lib/bpgit.py: add git describe --dirty support
+  lib/bpgit.py: add git status support
+  lib/bpgit.py: add git clean support
+  lib/bpgit.py: add git tree verification support
+  lib/bpgit.py: add support for git paranoia
+  lib/bpgpg.py: add simple gpg helpers for --armor --detach-sign
+  lib/bpkup.py: add or own kernel uploader helper lib
+  gentree.py: add kernel upload support
 
-Larry
+ gentree.py   |  211 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ lib/bpgit.py |   56 +++++++++++++++-
+ lib/bpgpg.py |   12 ++++
+ lib/bpkup.py |   38 +++++++++++
+ 4 files changed, 309 insertions(+), 8 deletions(-)
+ create mode 100644 lib/bpgpg.py
+ create mode 100644 lib/bpkup.py
+
+-- 
+1.7.10.4
+
