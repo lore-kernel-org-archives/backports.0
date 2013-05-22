@@ -1,39 +1,32 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f175.google.com ([209.85.217.175]:45967 "EHLO
-	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753286Ab3EHAUB (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 7 May 2013 20:20:01 -0400
-Received: by mail-lb0-f175.google.com with SMTP id w20so1337864lbh.20
-        for <backports@vger.kernel.org>; Tue, 07 May 2013 17:19:59 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <CAB=NE6WZoKOg2dt8W_Zv5syZyapGf3152x0k_PZyrp=UtYuAZA@mail.gmail.com>
-References: <1367971269-25440-1-git-send-email-mcgrof@do-not-panic.com>
- <1367971269-25440-2-git-send-email-mcgrof@do-not-panic.com>
- <CAB=NE6Wi5B=OSp2BCZr6CqN7WdbBEN699W1KtCLqHoHjCxvknA@mail.gmail.com> <CAB=NE6WZoKOg2dt8W_Zv5syZyapGf3152x0k_PZyrp=UtYuAZA@mail.gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Tue, 7 May 2013 17:19:39 -0700
-Message-ID: <CAB=NE6UD0h0VLTjuHDzuFuE6Z-pVpq2Aaof5KFHBds-iFfTAHA@mail.gmail.com> (sfid-20130508_022004_067878_4FE7E57F)
-Subject: Re: [PATCH 2/2] backports: add pm patch for rtl8188ee
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Content-Type: text/plain; charset=UTF-8
+Received: from s3.sipsolutions.net ([144.76.43.152]:58458 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754799Ab3EVMFK (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 22 May 2013 08:05:10 -0400
+Message-ID: <1369224306.8207.7.camel@jlt4.sipsolutions.net> (sfid-20130522_140511_583011_5B11BF46)
+Subject: Re: [PATCH 6/9] lib/bpgit.py: add support for git paranoia
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org
+Date: Wed, 22 May 2013 14:05:06 +0200
+In-Reply-To: <1369222478-30577-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20130522_133517_032877_8CD5B8EE)
+References: <1369222478-30577-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1369222478-30577-7-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20130522_133517_032877_8CD5B8EE)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, May 7, 2013 at 5:02 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> On Tue, May 7, 2013 at 5:02 PM, Luis R. Rodriguez
-> <mcgrof@do-not-panic.com> wrote:
->> On Tue, May 7, 2013 at 5:01 PM, Luis R. Rodriguez
->> <mcgrof@do-not-panic.com> wrote:
->>> 15  2.6.38              [  FAIL  ]
->>
->> I forgot to mention this was a permission issue on my end so I'm sure
->> it was a fluke.
->
-> In other words, I think this should have passed so please consider merging.
+On Wed, 2013-05-22 at 04:34 -0700, Luis R. Rodriguez wrote:
+> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+> 
+> This cleans sanitizes a source tree and ensures
+> no content is present from what was intended.
 
-And to be technically correct this patch should be merged first.
+All of this (including the previous patches) makes me think
+"--git-revision HEAD" should just be the default instead of trying to
+muck with the working directory of the kernel tree too much?
 
-  Luis
+johannes
+
