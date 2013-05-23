@@ -1,71 +1,63 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:44165 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759245Ab3EBQ2i (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 2 May 2013 12:28:38 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 9A5DC20708
-	for <backports@vger.kernel.org>; Thu,  2 May 2013 16:28:37 +0000 (UTC)
-Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
-	by mail.kernel.org (Postfix) with ESMTP id A6378206F8
-	for <backports@vger.kernel.org>; Thu,  2 May 2013 16:28:35 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 51671] ALX driver unusable on new kernel
-In-Reply-To: <bug-51671-58281@https.bugzilla.kernel.org/>
-References: <bug-51671-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
+Received: from mail-la0-f41.google.com ([209.85.215.41]:53968 "EHLO
+	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755111Ab3EWA2Z (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 22 May 2013 20:28:25 -0400
+Received: by mail-la0-f41.google.com with SMTP id ee20so2626716lab.14
+        for <backports@vger.kernel.org>; Wed, 22 May 2013 17:28:24 -0700 (PDT)
 MIME-Version: 1.0
-Message-Id: <20130502162834.964A911FA07@bugzilla.kernel.org> (sfid-20130502_182844_072515_4BF47082)
-Date: Thu,  2 May 2013 16:28:34 +0000 (UTC)
+In-Reply-To: <1369224166.8207.4.camel@jlt4.sipsolutions.net>
+References: <1369222478-30577-1-git-send-email-mcgrof@do-not-panic.com>
+ <1369222478-30577-4-git-send-email-mcgrof@do-not-panic.com> <1369224166.8207.4.camel@jlt4.sipsolutions.net>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Wed, 22 May 2013 17:28:04 -0700
+Message-ID: <CAB=NE6UbyVPCXVPj=jMQ3MjanMtH653n3MMsrBz=BELpNBHUTw@mail.gmail.com> (sfid-20130523_022828_066079_97A148BD)
+Subject: Re: [PATCH 3/9] lib/bpgit.py: add git status support
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51671
+On Wed, May 22, 2013 at 5:02 AM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> On Wed, 2013-05-22 at 04:34 -0700, Luis R. Rodriguez wrote:
+>> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+>>
+>> We use --porcelain given that this spits out the results
+>> in an easy-to-parse format for scripts and will remain stable
+>> across git versions and regardless of user configuration.
+>>
+>> We will use this later.
+>>
+>> Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+>> ---
+>>  lib/bpgit.py |   12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
+>>
+>> diff --git a/lib/bpgit.py b/lib/bpgit.py
+>> index 40523f2..335cc9c 100644
+>> --- a/lib/bpgit.py
+>> +++ b/lib/bpgit.py
+>> @@ -27,6 +27,18 @@ def rev_parse(rev='HEAD', tree=None):
+>>          raise SHAError()
+>>      return sha
+>>
+>> +def status(tree=None):
+>> +    cmd = ['git', 'status', '--porcelain']
+>> +
+>> +    process = subprocess.Popen(cmd,
+>> +                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+>> +                               close_fds=True, universal_newlines=True, cwd=tree)
+>> +    stdout = process.communicate()[0]
+>> +    process.wait()
+>> +    _check(process)
+>> +
+>> +    return stdout.strip()
+>
+> I think it would make some sense to parse this here into something more
+> "pythonic", like a list of tuples or so.
 
+Sure.
 
-
-
-
---- Comment #15 from QCA Ethernet team <nic-devel@qca.qualcomm.com>  2013-05-02 16:28:34 ---
-(In reply to comment #14)
-
-please remove following lines in alx_resume
-
--    if (!netif_running(netdev))
--        return 0;
--
-
-
-that should fix your issue.
-
-
-
-> Here dmesg:
-> 
-> 
-> 
-> ###### sudo rmmod alx; sudo modprobe alx
-> 
-> 
-> [  102.414400] Qualcomm Atheros(R) AR816x/AR817x PCI-E Ethernet Network Driver
-> [  102.432649] alx 0000:04:00.0: alx(30:85:a9:01:9b:01): Qualcomm Atheros
-> Ethernet Network Connection
-> [  102.451912] systemd-udevd[2839]: renamed network interface eth0 to p3p1
-> [  102.460935] alx 0000:04:00.0: irq 47 for MSI/MSI-X
-> [  102.460958] alx 0000:04:00.0: irq 48 for MSI/MSI-X
-> [  102.460974] alx 0000:04:00.0: irq 49 for MSI/MSI-X
-> [  102.460991] alx 0000:04:00.0: irq 50 for MSI/MSI-X
-> [  102.461007] alx 0000:04:00.0: irq 51 for MSI/MSI-X
-> [  102.461025] alx 0000:04:00.0: irq 52 for MSI/MSI-X
-> [  102.461042] alx 0000:04:00.0: irq 53 for MSI/MSI-X
-> [  102.461059] alx 0000:04:00.0: irq 54 for MSI/MSI-X
-> [  102.461077] alx 0000:04:00.0: irq 55 for MSI/MSI-X
-> [  102.462652] IPv6: ADDRCONF(NETDEV_UP): p3p1: link is not ready
-> [  104.329822] alx 0000:04:00.0 p3p1: NIC Link Up: 1 Gbps Full
-> [  104.330071] IPv6: ADDRCONF(NETDEV_CHANGE): p3p1: link becomes ready
-
--- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+  Luis
