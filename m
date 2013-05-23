@@ -1,41 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:57298 "EHLO
+Received: from s3.sipsolutions.net ([144.76.43.152]:35014 "EHLO
 	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751190Ab3EHJBG (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 8 May 2013 05:01:06 -0400
-Message-ID: <1368003661.8279.17.camel@jlt4.sipsolutions.net> (sfid-20130508_110110_240907_537A1DB8)
-Subject: Re: [PATCH] backports: adjust snd_portid patch for nl80211 update
+	with ESMTP id S1759629Ab3EWP0C (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 23 May 2013 11:26:02 -0400
+Message-ID: <1369322755.12002.21.camel@jlt4.sipsolutions.net> (sfid-20130523_172628_439424_FC398794)
+Subject: Re: [PATCH 6/9] lib/bpgit.py: add support for git paranoia
 From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Wed, 08 May 2013 11:01:01 +0200
-In-Reply-To: <CAB=NE6UiDwf4ojR=XaVF+QqttKxKnNHcLJ9otF2ud3kdkdoddQ@mail.gmail.com> (sfid-20130508_105931_361002_4FDA569A)
-References: <1367997031-11574-1-git-send-email-johannes@sipsolutions.net>
-	 <1367997056.8279.10.camel@jlt4.sipsolutions.net>
-	 <CAB=NE6UiDwf4ojR=XaVF+QqttKxKnNHcLJ9otF2ud3kdkdoddQ@mail.gmail.com>
-	 (sfid-20130508_105931_361002_4FDA569A)
+Date: Thu, 23 May 2013 17:25:55 +0200
+In-Reply-To: <CAB=NE6WxO3tUjuK4gzxPSg+sukHB=ApxLr8F++Y+F2887=DW=Q@mail.gmail.com> (sfid-20130523_023807_543343_5F45C44D)
+References: <1369222478-30577-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1369222478-30577-7-git-send-email-mcgrof@do-not-panic.com>
+	 <1369224306.8207.7.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6WxO3tUjuK4gzxPSg+sukHB=ApxLr8F++Y+F2887=DW=Q@mail.gmail.com>
+	 (sfid-20130523_023807_543343_5F45C44D)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2013-05-08 at 01:59 -0700, Luis R. Rodriguez wrote:
-
-
-> So that's next-20130428 but since that doesn't exist we want to easily
-> branch out into a linux-3.10.y branch by having at least:
+On Wed, 2013-05-22 at 17:37 -0700, Luis R. Rodriguez wrote:
+> On Wed, May 22, 2013 at 5:05 AM, Johannes Berg
+> <johannes@sipsolutions.net> wrote:
+> > On Wed, 2013-05-22 at 04:34 -0700, Luis R. Rodriguez wrote:
+> >> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+> >>
+> >> This cleans sanitizes a source tree and ensures
+> >> no content is present from what was intended.
+> >
+> > All of this (including the previous patches) makes me think
+> > "--git-revision HEAD" should just be the default instead of trying to
+> > muck with the working directory of the kernel tree too much?
 > 
->   * next-20130426
->   * next-20130426
->   * next-20130429
-> 
-> Given that johill has likely time warped us to next-20130423 perhaps
-> its also good to have next-20130424. That would be the full set prior
-> to the merge window for v3.10 (or whatever $linux_deity wants to call
-> it).
+> Not sure I follow, but in any case, I just want to start being able to
+> start making daily releases daily and fast, can we address this later?
 
-I haven't really, I just needed this particular patch for iwlwifi from
-wireless-testing.
+I'm suggesting that you use --git-revision to do so, then you only have
+to verify the tag you passed to --git-revision is signed and not have to
+muck around with the tree. Technically, all the stuff you'd been doing
+there is racy too, if you edit the checkout while the script is running,
+and I think it's a bit pointless. I doubt it's even faster than using
+--git-revision if it checks everything.
+
+IOW, why go to all this complexity? I'd say all you need to do is
+require that not passing --git-revision when --kup is passed is an
+error. Then you can make --kup verify the tag passed to --git-revision
+by just calling "git tag -v ..." for the --git-revision argument. This
+will error out if it's not a tag.
+
+Basically this means you only need patch 4, 6, 7 and a modified version
+of 8.
 
 johannes
 
