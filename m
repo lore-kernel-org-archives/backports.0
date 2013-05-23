@@ -1,62 +1,83 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:51523 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758606Ab3E1WLO (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 28 May 2013 18:11:14 -0400
-Received: by mail-wg0-f42.google.com with SMTP id n12so3561449wgh.1
-        for <backports@vger.kernel.org>; Tue, 28 May 2013 15:11:13 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1369776874.8548.31.camel@jlt4.sipsolutions.net>
-References: <1369773194-17379-1-git-send-email-johannes@sipsolutions.net>
- <51A51E0E.8010803@lwfinger.net> <1369776874.8548.31.camel@jlt4.sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Date: Tue, 28 May 2013 15:10:53 -0700
-Message-ID: <CAB=NE6W0BkpYQNq+jm1JXNmzN-AkOedGXqz+GJ9oe=-=EVL5VQ@mail.gmail.com> (sfid-20130529_001116_884651_A156DDD1)
-Subject: Re: [PATCH] backports: catch make in backport template directory
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:61561 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756623Ab3EWDQk (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 22 May 2013 23:16:40 -0400
+Received: by mail-pa0-f41.google.com with SMTP id rl6so2498453pac.14
+        for <backports@vger.kernel.org>; Wed, 22 May 2013 20:16:40 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH v3 7/8] lib/bpkup.py: add or own kernel uploader helper lib
+Date: Wed, 22 May 2013 20:15:55 -0700
+Message-Id: <1369278956-17550-8-git-send-email-mcgrof@do-not-panic.com> (sfid-20130523_051641_794455_5F166853)
+In-Reply-To: <1369278956-17550-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1369278956-17550-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, May 28, 2013 at 2:34 PM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Tue, 2013-05-28 at 16:13 -0500, Larry Finger wrote:
->> On 05/28/2013 03:33 PM, Johannes Berg wrote:
->> > From: Johannes Berg <johannes.berg@intel.com>
->> >
->> > Catch running make in the backport template directory by
->> > checking for the .local-symbols file. If it isn't there
->> > then we're in the input/template directory rather than in
->> > an output tree, give the user a hint about it instead of
->> > keeling over.
->> >
->> > Signed-off-by: Johannes Berg <johannes.berg@intel.com>
->> > ---
->> >   backport/Makefile | 12 ++++++++++++
->> >   1 file changed, 12 insertions(+)
->> >
->> > diff --git a/backport/Makefile b/backport/Makefile
->> > index 287b27d..f0c7586 100644
->> > --- a/backport/Makefile
->> > +++ b/backport/Makefile
->> > @@ -37,6 +37,18 @@ mrproper:
->> >     @rm -f backport-include/backport/autoconf.h
->> >
->> >   .DEFAULT:
->> > +   @set -e ; test -f .local-symbols || (                                           \
->> > +   echo "/--------------"                                                          ;\
->> > +   echo "| You shouldn't run make in the backports tree, but only in"              ;\
->> > +   echo "| the generated output. This here is only the skeleton code"              ;\
->> > +   echo "| copied into the output directory. To use the backport system"           ;\
->> > +   echo "| from scratch, go into the top-level directoroy and run"                 ;\
->>
->> =======================================================^ Typo here.
->
-> Good catch, thanks. Luis, can you just fix that when you apply or do you
-> want a resend?
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-I've fixed it prior to applying. Thanks, applied and pushed!
+kup is written in perl, add some basic python interfaces
+for it to allow us to upload to kernel.org backport
+releases.
 
-  Luis
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ lib/bpkup.py |   44 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 lib/bpkup.py
+
+diff --git a/lib/bpkup.py b/lib/bpkup.py
+new file mode 100644
+index 0000000..03504bb
+--- /dev/null
++++ b/lib/bpkup.py
+@@ -0,0 +1,44 @@
++import subprocess, os
++
++class KupError(Exception):
++    pass
++class ExecutionError(KupError):
++    def __init__(self, errcode):
++        self.error_code = errcode
++
++def _check(process):
++    if process.returncode != 0:
++        raise ExecutionError(process.returncode)
++
++def mkdir(path):
++    cmd = ['kup', 'mkdir', path]
++    process = subprocess.Popen(cmd,
++                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
++                               close_fds=True, universal_newlines=True)
++    stdout = process.communicate()[0]
++    process.wait()
++    _check(process)
++
++    return stdout
++
++def ls(path=None):
++    cmd = ['kup', 'ls', path]
++    process = subprocess.Popen(cmd,
++                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
++                               close_fds=True, universal_newlines=True)
++    stdout = process.communicate()[0]
++    process.wait()
++    _check(process)
++
++    return stdout
++
++def put(tar_bz2, signed_tar, path):
++    cmd = ['kup', 'put', tar_bz2, signed_tar, path]
++    process = subprocess.Popen(cmd,
++                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
++                               close_fds=True, universal_newlines=True)
++    stdout = process.communicate()[0]
++    process.wait()
++    _check(process)
++
++    return stdout
+-- 
+1.7.10.4
+
