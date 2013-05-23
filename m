@@ -1,76 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f49.google.com ([209.85.215.49]:43920 "EHLO
-	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752620Ab3EMCgq (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 12 May 2013 22:36:46 -0400
-Received: by mail-la0-f49.google.com with SMTP id ee20so2404155lab.36
-        for <backports@vger.kernel.org>; Sun, 12 May 2013 19:36:44 -0700 (PDT)
+Received: from mail-la0-f53.google.com ([209.85.215.53]:54053 "EHLO
+	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751342Ab3EWGZw (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 23 May 2013 02:25:52 -0400
+Received: by mail-la0-f53.google.com with SMTP id ea20so2852527lab.12
+        for <backports@vger.kernel.org>; Wed, 22 May 2013 23:25:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAB=NE6WyvXSUS2PUNFktBVUn4u0rcVwXGQ1sYDbL34d8iU2RYw@mail.gmail.com>
-References: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
- <1368232023-23817-12-git-send-email-mcgrof@do-not-panic.com>
- <CANq1E4Re_uJQqvqEpWzRbVxsxVz3MBvZUqzM3ONFiJ+mXy4rNA@mail.gmail.com>
- <CAB=NE6XrKUSDQbjdeht=Aip-E1=oqPd4D=JmMdEdrJSNXLGukg@mail.gmail.com>
- <CANq1E4RXkYU=PNd-acNT-cp1ARQPR6-2Rq-a8eJGseSbRLCLxg@mail.gmail.com> <CAB=NE6WyvXSUS2PUNFktBVUn4u0rcVwXGQ1sYDbL34d8iU2RYw@mail.gmail.com>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Sun, 12 May 2013 19:36:24 -0700
-Message-ID: <CAB=NE6V0CywQoS0Xn5Xc2-biWeU34HGr7k9F2g+7+0wMZNCNFg@mail.gmail.com> (sfid-20130513_043649_077009_B75C5BE4)
-Subject: Re: [PATCH 11/12] backports: backport new bluetooth hidp session-management
-To: David Herrmann <dh.herrmann@gmail.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Wed, 22 May 2013 23:25:30 -0700
+Message-ID: <CAB=NE6WfdFenyispiH36SZX2wnNhOLBT6+ug001yAvmC-3pkJg@mail.gmail.com> (sfid-20130523_082554_133929_22063A5F)
+Subject: Additional flags to backports releases
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, May 12, 2013 at 6:30 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
->
-> No worries we have a crazy build box for the backports project that
-> lets us test compile these releases across 26 kernels (2.6.24-3.9) in
-> about 30 minutes using our script ckmake, all in RAM, so I just
-> integrated your changes and in 30 minutes we'll know if anything
-> broke, and I can provide the log then.
+Given that we've done a whole full reshuffle of backports I figured
+it'd be a good time to ask how the extra additional flags to releases
+has been for users / distributions / etc. For those unfamiliar please
+check out:
 
-$ time ckmake --allyesconfig
+https://backports.wiki.kernel.org/index.php/Documentation/compat-drivers/additional-patches
 
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.76              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.2.44              [  OK  ]
-20  3.3.8               [  OK  ]
-21  3.4.43              [  OK  ]
-22  3.5.7               [  OK  ]
-23  3.6.11              [  OK  ]
-24  3.7.10              [  OK  ]
-25  3.8.11              [  OK  ]
-26  3.9.0               [  OK  ]
+We use to apply patches from these directories provided you supplied
+either and/or of the arguments: -s -n -p -c.  In short, the legend:
 
-real    30m53.311s
-user    817m3.260s
-sys     127m37.555s
+ * -s - get and apply pending-stable/ from linux-next.git
+ * -n - apply the patches linux-next-cherry-picks/ directory
+ * -p - apply the patches on the linux-next-pending/ directory
+ * -c - apply the patches on the crap/ directory
+ * -u - apply the patches on the unified-drivers/ directory
 
->> The net/bluetooth/hidp/core.c file is attached. It is from the tarball
->> you created above (2013-04-26). I fixed some other small issues.
->
-> Nice, can you provide me a Signed-off-by tag ? With it I'd just amend
-> it to my commit provided everything compiles fine.
+The -u stuff likely is going to fade away given that the alx driver
+now just needs to be upstreamed and that was the only one that tried
+to follow that route. The others were useful to help upkeep release as
+vendors required but by still respending the upstream process and
+highly prioritizing it. Given that we had metrics on each release and
+amount of code / patches from each directory this also gave us a sense
+of what poo we were failing at: not getting code posted at all, not
+getting stable patches merged soon enough, tons of non-critical fixes
+on linux-next giving us an indication of how bad the original code
+could be, etc. I love statistics, and I believe we have yet to compile
+a new set of statistics since the last time this was reviewed, so I
+may go out and try to generate the old code-metrics style file but
+with Python. Apart from that though -- do we like the flags and
+annotations for the different releases?
 
-Just need a Signed-off-by from you and we're good, thanks so much.
+One of the things that proved a bit cumbersome was getting these extra
+patches all tidied up in order. I'm wondering if perhaps instead
+supplying public feeds for each release might make more sense for each
+driver for each PGP signed release on either linux-next or
+linux-stable. These patches would also have to be PGP signed,
+otherwise they could have poo. I think that might be more sustainable
+and provides the flexibility for *anyone* to pull cherry picked
+patches for each tag out there, regardless if this is for backports or
+not -- well I guess this would be a bit more specific to backports
+given at times we do modify the original code slightly.
+
+Thoughts?
 
   Luis
