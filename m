@@ -1,40 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:47354 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755010Ab3EZTxC (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 26 May 2013 15:53:02 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 5/5] backports: BCMA and SSB MIPS drivers are depending on kernel >= 3.3
-Date: Sun, 26 May 2013 21:52:30 +0200
-Message-Id: <1369597950-2926-5-git-send-email-hauke@hauke-m.de> (sfid-20130526_215304_916888_7E40FF8C)
-In-Reply-To: <1369597950-2926-1-git-send-email-hauke@hauke-m.de>
-References: <1369597950-2926-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-pb0-f48.google.com ([209.85.160.48]:34628 "EHLO
+	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756717Ab3EWDQg (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 22 May 2013 23:16:36 -0400
+Received: by mail-pb0-f48.google.com with SMTP id md12so2386231pbc.35
+        for <backports@vger.kernel.org>; Wed, 22 May 2013 20:16:36 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH v3 6/8] lib/bpgpg.py: add simple gpg helper for gpg signing
+Date: Wed, 22 May 2013 20:15:54 -0700
+Message-Id: <1369278956-17550-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20130523_051638_323083_0B7B3BB0)
+In-Reply-To: <1369278956-17550-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1369278956-17550-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The bcma and ssb mips driver are depending on kernel 3.3.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Note that kup expects --armor --detach-sign, we'll pass that
+as part of our extra_args. The python gpg lib doesn't provide
+support for random arguments as this one, so just add our
+own little helper and carry it over.
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- dependencies |    3 +++
- 1 file changed, 3 insertions(+)
+ lib/bpgpg.py |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 lib/bpgpg.py
 
-diff --git a/dependencies b/dependencies
-index ab18807..ea75be8 100644
---- a/dependencies
-+++ b/dependencies
-@@ -175,6 +175,9 @@ BT 2.6.29
- # this is easier.
- BCMA_DRIVER_GPIO 3.0
- 
-+BCMA_DRIVER_MIPS 3.3
-+SSB_DRIVER_MIPS 3.3
+diff --git a/lib/bpgpg.py b/lib/bpgpg.py
+new file mode 100644
+index 0000000..3b5ec78
+--- /dev/null
++++ b/lib/bpgpg.py
+@@ -0,0 +1,22 @@
++import subprocess, os
 +
- # rfkill-regulator uses a kernel header file
- # (rfkill-regulator.h) that we don't backport
- # right now, so make it depend on 3.0
++class GpgError(Exception):
++    pass
++class ExecutionError(GpgError):
++    def __init__(self, errcode):
++        self.error_code = errcode
++
++def sign(input_file, extra_args=[]):
++    cmd = ['gpg', '--sign']
++
++    cmd.extend(extra_args)
++    cmd.append(input_file)
++
++    process = subprocess.Popen(cmd,
++                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
++                               close_fds=True, universal_newlines=True)
++    stdout = process.communicate()[0]
++    process.wait()
++    if process.returncode != 0:
++        raise ExecutionError(process.returncode)
++    return stdout
 -- 
 1.7.10.4
 
