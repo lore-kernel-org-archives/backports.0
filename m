@@ -1,33 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f51.google.com ([209.85.215.51]:53295 "EHLO
-	mail-la0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751789Ab3ESVXC (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 19 May 2013 17:23:02 -0400
-MIME-Version: 1.0
-In-Reply-To: <CAB=NE6VxqKBeQReqaNS4CJKt5qk65d5UBPaha_kODSF=W0Qcvw@mail.gmail.com>
-References: <1368981836-6247-1-git-send-email-Larry.Finger@lwfinger.net> <CAB=NE6VxqKBeQReqaNS4CJKt5qk65d5UBPaha_kODSF=W0Qcvw@mail.gmail.com>
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:34944 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756346Ab3EWDQX (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 22 May 2013 23:16:23 -0400
+Received: by mail-pa0-f48.google.com with SMTP id kp6so2471514pab.35
+        for <backports@vger.kernel.org>; Wed, 22 May 2013 20:16:22 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Sun, 19 May 2013 14:22:40 -0700
-Message-ID: <CAB=NE6WNajDP2AjsxQEMfkEupY7NCwFz0OJ_h-X6cus-avLQ5Q@mail.gmail.com> (sfid-20130519_232305_035722_2DFF0CD2)
-Subject: Re: [PATCH 1/2 V2] backports: Fix menuconfig build
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	linux-wireless <linux-wireless@vger.kernel.org>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH v3 3/8] lib/bpgit.py: add git clean support
+Date: Wed, 22 May 2013 20:15:51 -0700
+Message-Id: <1369278956-17550-4-git-send-email-mcgrof@do-not-panic.com> (sfid-20130523_051624_800329_F6B04AD4)
+In-Reply-To: <1369278956-17550-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1369278956-17550-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, May 19, 2013 at 2:22 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> On Sun, May 19, 2013 at 9:43 AM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
->> Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
->
-> Thanks Larry, applied and pushed! Also kicked out a new release with these:
->
-> https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.10-rc1/backports-3.10-rc1-2.tar.bz2
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-I forgot to mention, please Cc backports list for patches, whether or
-not other lists get Cc'd is up to you.
+We'll use this later.
 
-  Luis
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ lib/bpgit.py |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/lib/bpgit.py b/lib/bpgit.py
+index 3f7eb1b..8ce8568 100644
+--- a/lib/bpgit.py
++++ b/lib/bpgit.py
+@@ -27,6 +27,16 @@ def rev_parse(rev='HEAD', tree=None):
+         raise SHAError()
+     return sha
+ 
++def clean(tree=None):
++    cmd = ['git', 'clean', '-f', '-x', '-d', '-q']
++
++    process = subprocess.Popen(cmd,
++                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
++                               close_fds=True, universal_newlines=True, cwd=tree)
++    stdout = process.communicate()[0]
++    process.wait()
++    _check(process)
++
+ def status(tree=None):
+     '''
+     For interpretation of the porcelain output refer to
+-- 
+1.7.10.4
+
