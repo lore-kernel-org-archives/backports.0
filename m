@@ -1,101 +1,156 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:48823 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754612Ab3EKA2D (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 10 May 2013 20:28:03 -0400
-Received: by mail-ie0-f180.google.com with SMTP id ar20so9085868iec.39
-        for <backports@vger.kernel.org>; Fri, 10 May 2013 17:28:02 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	dh.herrmann@gmail.com
-Subject: [PATCH 11/12] backports: backport new bluetooth hidp session-management
-Date: Fri, 10 May 2013 17:27:02 -0700
-Message-Id: <1368232023-23817-12-git-send-email-mcgrof@do-not-panic.com> (sfid-20130511_022936_253658_F69B18D2)
-In-Reply-To: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:47345 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755011Ab3EZTxD (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 26 May 2013 15:53:03 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 3/5] backports: refresh patches on next-20130523
+Date: Sun, 26 May 2013 21:52:28 +0200
+Message-Id: <1369597950-2926-3-git-send-email-hauke@hauke-m.de> (sfid-20130526_215306_098921_0482AA1C)
+In-Reply-To: <1369597950-2926-1-git-send-email-hauke@hauke-m.de>
+References: <1369597950-2926-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+== ckmake-report.log ==
 
-Commit b4f34d8d9 on next-20130419 added new bluetooth hidp
-session-management helper, then commit 520518 also on
-next-20130419 replaced the old management code with
-the new one.
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.79              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.10-rc1            [  OK  ]
+20  3.2.45              [  OK  ]
+21  3.3.8               [  OK  ]
+22  3.4.46              [  OK  ]
+23  3.5.7               [  OK  ]
+24  3.6.11              [  OK  ]
+25  3.7.10              [  OK  ]
+26  3.8.13              [  OK  ]
+27  3.9.3               [  OK  ]
 
-Someone really needs to run time test this for regressions.
-
-commit b4f34d8d9d26b2428fa7cf7c8f97690a297978e6
-Author: David Herrmann <dh.herrmann@gmail.com>
-Date:   Sat Apr 6 20:28:46 2013 +0200
-
-    Bluetooth: hidp: add new session-management helpers
-
-    This is a rewrite of the HIDP session management. It implements HIDP as an
-    l2cap_user sub-module so we get proper notification when the underlying
-    connection goes away.
-
-    The helpers are not yet used but only added in this commit. The old
-    session management is still used and will be removed in a following patch.
-
-    The old session-management was flawed. Hotplugging is horribly broken and
-    we have no way of getting notified when the underlying connection goes
-    down. The whole idea of removing the HID/input sub-devices from within the
-    session itself is broken and suffers from major dead-locks. We never can
-    guarantee that the session can unregister itself as long as we use
-    synchronous shutdowns. This can only work with asynchronous shutdowns.
-    However, in this case we _must_ be able to unregister the session from the
-    outside as otherwise the l2cap_conn object might be unlinked before we
-    are.
-
-    The new session-management is based on l2cap_user. There is only one
-    way how to add a session and how to delete a session: "probe" and "remove"
-    callbacks from l2cap_user.
-    This guarantees that the session can be registered and unregistered at
-    _any_ time without any synchronous shutdown.
-    On the other hand, much work has been put into proper session-refcounting.
-    We can unregister/unlink the session only if we can guarantee that it will
-    stay alive. But for asynchronous shutdowns we never know when the last
-    user goes away so we must use proper ref-counting.
-
-    The old ->conn field has been renamed to ->hconn so we can reuse ->conn in
-    the new session management. No other existing HIDP code is modified.
-
-    Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
-    Acked-by: Marcel Holtmann <marcel@holtmann.org>
-    Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-commit 5205185d461d5902325e457ca80bd421127b7308
-Author: David Herrmann <dh.herrmann@gmail.com>
-Date:   Sat Apr 6 20:28:47 2013 +0200
-
-    Bluetooth: hidp: remove old session-management
-
-    We have the full new session-management now available so lets switch over
-    and remove all the old code. Few semantics changed, so we need to adjust
-    the sock.c callers a bit. But this mostly simplifies the logic.
-
-    Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
-    Acked-by: Marcel Holtmann <marcel@holtmann.org>
-    Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-Cc: dh.herrmann@gmail.com
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../16-bluetooth/net_bluetooth_hidp_core.patch     |  109 +++++++++-----------
- 1 file changed, 51 insertions(+), 58 deletions(-)
+ .../drivers_gpu_drm_i915_intel_opregion.patch              |    2 +-
+ .../drm/07-intel-gtt/drivers_gpu_drm_i915_i915_gem.patch   |    2 +-
+ .../drivers_gpu_drm_radeon_radeon_bios.patch               |    2 +-
+ .../network/0001-netdev_ops/mwifiex.patch                  |    2 +-
+ .../network/0001-netdev_ops/wil6210.patch                  |    2 +-
+ .../drivers_net_ethernet_atheros_atl1c_atl1c_main.patch    |    2 +-
+ .../drivers_net_ethernet_atheros_atlx_atl1.patch           |    2 +-
+ .../network/16-bluetooth/net_bluetooth_hidp_core.patch     |   12 ++++++------
+ .../26-sdio-quirks/drivers_net_wireless_mwifiex_sdio.patch |    4 ++--
+ .../drivers_net_wireless_mwifiex_sdio.patch                |   10 +++++-----
+ .../drivers_net_ethernet_atheros_atlx_atl1.patch           |    6 ++++--
+ .../drivers_net_wireless_mwifiex_init.patch                |    2 +-
+ .../62-usb_driver_lpm/drivers_bluetooth_btusb.patch        |    2 +-
+ .../drivers_net_wireless_ath_ath9k_debug.patch             |    2 +-
+ 14 files changed, 27 insertions(+), 25 deletions(-)
 
+diff --git a/patches/collateral-evolutions/drm/05-i915-define-acpi-video-class/drivers_gpu_drm_i915_intel_opregion.patch b/patches/collateral-evolutions/drm/05-i915-define-acpi-video-class/drivers_gpu_drm_i915_intel_opregion.patch
+index 2ad5abf..b4dcd2a 100644
+--- a/patches/collateral-evolutions/drm/05-i915-define-acpi-video-class/drivers_gpu_drm_i915_intel_opregion.patch
++++ b/patches/collateral-evolutions/drm/05-i915-define-acpi-video-class/drivers_gpu_drm_i915_intel_opregion.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/gpu/drm/i915/intel_opregion.c
+ +++ b/drivers/gpu/drm/i915/intel_opregion.c
+-@@ -307,6 +307,9 @@ static int intel_opregion_video_event(st
++@@ -250,6 +250,9 @@ static int intel_opregion_video_event(st
+  	struct acpi_bus_event *event = data;
+  	int ret = NOTIFY_OK;
+  
+diff --git a/patches/collateral-evolutions/drm/07-intel-gtt/drivers_gpu_drm_i915_i915_gem.patch b/patches/collateral-evolutions/drm/07-intel-gtt/drivers_gpu_drm_i915_i915_gem.patch
+index a42dd30..091a805 100644
+--- a/patches/collateral-evolutions/drm/07-intel-gtt/drivers_gpu_drm_i915_i915_gem.patch
++++ b/patches/collateral-evolutions/drm/07-intel-gtt/drivers_gpu_drm_i915_i915_gem.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/gpu/drm/i915/i915_gem.c
+ +++ b/drivers/gpu/drm/i915/i915_gem.c
+-@@ -4009,9 +4009,14 @@ i915_gem_init_hw(struct drm_device *dev)
++@@ -4045,9 +4045,14 @@ i915_gem_init_hw(struct drm_device *dev)
+  	drm_i915_private_t *dev_priv = dev->dev_private;
+  	int ret;
+  
+diff --git a/patches/collateral-evolutions/drm/10-radeon-revert-acpi-table-size-check/drivers_gpu_drm_radeon_radeon_bios.patch b/patches/collateral-evolutions/drm/10-radeon-revert-acpi-table-size-check/drivers_gpu_drm_radeon_radeon_bios.patch
+index bf04724..29c2bb8 100644
+--- a/patches/collateral-evolutions/drm/10-radeon-revert-acpi-table-size-check/drivers_gpu_drm_radeon_radeon_bios.patch
++++ b/patches/collateral-evolutions/drm/10-radeon-revert-acpi-table-size-check/drivers_gpu_drm_radeon_radeon_bios.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/gpu/drm/radeon/radeon_bios.c
+ +++ b/drivers/gpu/drm/radeon/radeon_bios.c
+-@@ -577,12 +577,21 @@ static bool radeon_acpi_vfct_bios(struct
++@@ -581,12 +581,21 @@ static bool radeon_acpi_vfct_bios(struct
+  {
+  	bool ret = false;
+  	struct acpi_table_header *hdr;
+diff --git a/patches/collateral-evolutions/network/0001-netdev_ops/mwifiex.patch b/patches/collateral-evolutions/network/0001-netdev_ops/mwifiex.patch
+index 9780e99..860230f 100644
+--- a/patches/collateral-evolutions/network/0001-netdev_ops/mwifiex.patch
++++ b/patches/collateral-evolutions/network/0001-netdev_ops/mwifiex.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/net/wireless/mwifiex/main.c
+ +++ b/drivers/net/wireless/mwifiex/main.c
+-@@ -654,7 +654,7 @@ static const struct net_device_ops mwifi
++@@ -668,7 +668,7 @@ static const struct net_device_ops mwifi
+  void mwifiex_init_priv_params(struct mwifiex_private *priv,
+  						struct net_device *dev)
+  {
+diff --git a/patches/collateral-evolutions/network/0001-netdev_ops/wil6210.patch b/patches/collateral-evolutions/network/0001-netdev_ops/wil6210.patch
+index a2d0329..423ed53 100644
+--- a/patches/collateral-evolutions/network/0001-netdev_ops/wil6210.patch
++++ b/patches/collateral-evolutions/network/0001-netdev_ops/wil6210.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/net/wireless/ath/wil6210/netdev.c
+ +++ b/drivers/net/wireless/ath/wil6210/netdev.c
+-@@ -76,7 +76,7 @@ void *wil_if_alloc(struct device *dev, v
++@@ -125,7 +125,7 @@ void *wil_if_alloc(struct device *dev, v
+  		goto out_priv;
+  	}
+  
+diff --git a/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_atl1c_atl1c_main.patch b/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_atl1c_atl1c_main.patch
+index d3a9134..fa2385a 100644
+--- a/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_atl1c_atl1c_main.patch
++++ b/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_atl1c_atl1c_main.patch
+@@ -22,4 +22,4 @@
+ +#endif
+  };
+  
+- /**
++ module_pci_driver(atl1c_driver);
+diff --git a/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_atlx_atl1.patch b/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_atlx_atl1.patch
+index 7fd2a4d..1395490 100644
+--- a/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_atlx_atl1.patch
++++ b/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_atlx_atl1.patch
+@@ -22,4 +22,4 @@
+ +#endif
+  };
+  
+- /**
++ struct atl1_stats {
 diff --git a/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_hidp_core.patch b/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_hidp_core.patch
-index 60a97e6..01a859a 100644
+index 7333764..0a3051d 100644
 --- a/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_hidp_core.patch
 +++ b/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_hidp_core.patch
 @@ -1,6 +1,6 @@
  --- a/net/bluetooth/hidp/core.c
  +++ b/net/bluetooth/hidp/core.c
--@@ -383,6 +383,7 @@ err:
-+@@ -329,6 +329,7 @@ err:
+-@@ -329,6 +329,7 @@ err:
++@@ -323,6 +323,7 @@ err:
   	return ret;
   }
   
@@ -103,161 +158,171 @@ index 60a97e6..01a859a 100644
   static int hidp_output_raw_report(struct hid_device *hid, unsigned char *data, size_t count,
   		unsigned char report_type)
   {
--@@ -441,6 +442,16 @@ err:
-+@@ -386,6 +387,16 @@ err:
+-@@ -386,6 +387,16 @@ err:
++@@ -380,6 +381,16 @@ err:
   	mutex_unlock(&session->report_mutex);
   	return ret;
   }
-@@ -25,22 +25,7 @@
+@@ -25,7 +25,7 @@
   
   static void hidp_idle_timeout(unsigned long arg)
   {
--@@ -743,8 +754,14 @@ static int hidp_session(void *arg)
-- 	}
-- 
-- 	if (session->hid) {
--+#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,27))
-- 		hid_destroy_device(session->hid);
-- 		session->hid = NULL;
--+#else
--+		if (session->hid->claimed & HID_CLAIMED_INPUT)
--+			hidinput_disconnect(session->hid);
--+		hid_free_device(session->hid);
--+#endif
-- 	}
-- 
-- 	/* Wakeup user-space polling for socket errors */
--@@ -855,6 +872,70 @@ static void hidp_close(struct hid_device
-+@@ -674,6 +685,70 @@ static void hidp_close(struct hid_device
+-@@ -674,6 +685,87 @@ static void hidp_close(struct hid_device
++@@ -668,6 +679,87 @@ static void hidp_close(struct hid_device
   {
   }
   
-@@ -111,8 +96,8 @@
+@@ -113,7 +113,7 @@
   static int hidp_parse(struct hid_device *hid)
   {
   	struct hidp_session *session = hid->driver_data;
--@@ -946,7 +1027,9 @@ static int hidp_setup_hid(struct hidp_se
-- 	hid->dev.parent = &session->conn->dev;
-+@@ -764,13 +839,21 @@ static int hidp_setup_hid(struct hidp_se
-+ 	hid->dev.parent = &session->conn->hcon->dev;
+-@@ -764,7 +856,9 @@ static int hidp_setup_hid(struct hidp_se
++@@ -758,7 +850,9 @@ static int hidp_setup_hid(struct hidp_se
+  	hid->dev.parent = &session->conn->hcon->dev;
   	hid->ll_driver = &hidp_hid_driver;
   
- +#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,38))
-@@ -121,17 +106,46 @@
+@@ -123,7 +123,7 @@
   	hid->hid_output_raw_report = hidp_output_raw_report;
   
   	/* True if device is blacklisted in drivers/hid/hid-core.c */
--@@ -964,6 +1047,7 @@ fault:
-+ 	if (hid_ignore(hid)) {
-++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,27))
-+ 		hid_destroy_device(session->hid);
-+ 		session->hid = NULL;
-++#else
-++		if (session->hid->claimed & HID_CLAIMED_INPUT)
-++			hidinput_disconnect(session->hid);
-++		hid_free_device(session->hid);
-++#endif
-+ 		return -ENODEV;
-+ 	}
-+ 
-+@@ -782,6 +865,7 @@ fault:
+-@@ -782,6 +876,7 @@ fault:
++@@ -776,6 +870,7 @@ fault:
   
   	return err;
   }
- +#endif
+@@ -131,7 +131,7 @@
   
-- int hidp_add_connection(struct hidp_connadd_req *req, struct socket *ctrl_sock, struct socket *intr_sock)
-+ /* initialize session devices */
-+ static int hidp_session_dev_init(struct hidp_session *session,
-+@@ -844,8 +928,15 @@ static int hidp_session_dev_add(struct h
-+ /* remove HID/input devices from their bus systems */
-+ static void hidp_session_dev_del(struct hidp_session *session)
+  /* initialize session devices */
+  static int hidp_session_dev_init(struct hidp_session *session,
+-@@ -844,10 +939,17 @@ static int hidp_session_dev_add(struct h
++@@ -838,10 +933,17 @@ static int hidp_session_dev_add(struct h
+  /* remove HID/input devices from their bus systems */
+  static void hidp_session_dev_del(struct hidp_session *session)
   {
--@@ -981,6 +1065,39 @@ int hidp_add_connection(struct hidp_conn
-- 
-- 	BT_DBG("rd_data %p rd_size %d", req->rd_data, req->rd_size);
-+-	if (session->hid)
-++	if (session->hid) {
-++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,27))
-+ 		hid_destroy_device(session->hid);
-++#else
-++		if (session->hid->claimed & HID_CLAIMED_INPUT)
-++			hidinput_disconnect(session->hid);
-++		hid_free_device(session->hid);
-++#endif
-++	}
-+ 	else if (session->input)
-+ 		input_unregister_device(session->input);
-+ }
-+@@ -1049,6 +1140,39 @@ static int hidp_session_probe(struct l2c
-+ 	struct hidp_session *s;
-+ 	int ret;
-  
- +#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,27))
- +	if (req->rd_size > 0) {
-@@ -168,20 +182,12 @@
- +#endif
-  	down_write(&hidp_session_sem);
-  
-- 	s = __hidp_get_session(&bt_sk(ctrl_sock->sk)->dst);
--@@ -1028,6 +1145,7 @@ int hidp_add_connection(struct hidp_conn
-- 
-- 	__hidp_link_session(session);
-- 
--+#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,27))
-- 	if (req->rd_size > 0) {
-- 		err = hidp_setup_hid(session, req);
-- 		if (err && err != -ENODEV)
--@@ -1039,6 +1157,16 @@ int hidp_add_connection(struct hidp_conn
-- 		if (err < 0)
-- 			goto purge;
-+ 	/* check that no other session for this device exists */
-+@@ -1057,6 +1181,16 @@ static int hidp_session_probe(struct l2c
-+ 		ret = -EEXIST;
-+ 		goto out_unlock;
-  	}
--+#else
-++#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,27))
- +	if (session->input) {
- +		err = hidp_setup_input(session, req);
- +		if (err < 0)
-@@ -192,29 +198,16 @@
- +		hidp_setup_hid(session, req);
+diff --git a/patches/collateral-evolutions/network/26-sdio-quirks/drivers_net_wireless_mwifiex_sdio.patch b/patches/collateral-evolutions/network/26-sdio-quirks/drivers_net_wireless_mwifiex_sdio.patch
+index 07cf4b0..8704889 100644
+--- a/patches/collateral-evolutions/network/26-sdio-quirks/drivers_net_wireless_mwifiex_sdio.patch
++++ b/patches/collateral-evolutions/network/26-sdio-quirks/drivers_net_wireless_mwifiex_sdio.patch
+@@ -8,5 +8,5 @@
+  	func->card->quirks |= MMC_QUIRK_BLKSZ_FOR_BYTE_MODE;
  +#endif
   
-- 	hidp_set_timer(session);
-- 
--@@ -1097,6 +1225,7 @@ unlink:
-- 		session->input = NULL;
-- 	}
-- 
--+#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,27))
-- 	if (session->hid) {
-- 		hid_destroy_device(session->hid);
-- 		session->hid = NULL;
--@@ -1110,10 +1239,15 @@ purge:
-- 
-- 	skb_queue_purge(&session->ctrl_transmit);
-- 	skb_queue_purge(&session->intr_transmit);
--+#endif
-- 
-- failed:
-+ 	ret = hidp_session_start_sync(session);
-+ 	if (ret)
-+@@ -1075,6 +1209,10 @@ out_stop:
-+ 	hidp_session_terminate(session);
-+ out_unlock:
-  	up_write(&hidp_session_sem);
-- 
- +#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,27))
- +	if (session->hid)
- +		hid_free_device(session->hid);
- +#endif
-- 	kfree(session);
-- 	return err;
-+ 	return ret;
+- 	sdio_claim_host(func);
+- 	ret = sdio_enable_func(func);
++ 	if (id->driver_data) {
++ 		struct mwifiex_sdio_device *data = (void *)id->driver_data;
+diff --git a/patches/collateral-evolutions/network/29-sdio_no_suspend/drivers_net_wireless_mwifiex_sdio.patch b/patches/collateral-evolutions/network/29-sdio_no_suspend/drivers_net_wireless_mwifiex_sdio.patch
+index 9ceddc4..06c18bc 100644
+--- a/patches/collateral-evolutions/network/29-sdio_no_suspend/drivers_net_wireless_mwifiex_sdio.patch
++++ b/patches/collateral-evolutions/network/29-sdio_no_suspend/drivers_net_wireless_mwifiex_sdio.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/net/wireless/mwifiex/sdio.c
+ +++ b/drivers/net/wireless/mwifiex/sdio.c
+-@@ -129,8 +129,10 @@ mwifiex_sdio_remove(struct sdio_func *fu
++@@ -140,8 +140,10 @@ mwifiex_sdio_remove(struct sdio_func *fu
+  	wait_for_completion(&adapter->fw_load);
+  
+  	if (user_rmmod) {
+@@ -11,7 +11,7 @@
+  
+  		for (i = 0; i < adapter->priv_num; i++)
+  			if ((GET_BSS_ROLE(adapter->priv[i]) ==
+-@@ -147,6 +149,7 @@ mwifiex_sdio_remove(struct sdio_func *fu
++@@ -158,6 +160,7 @@ mwifiex_sdio_remove(struct sdio_func *fu
+  	kfree(card);
   }
+  
+@@ -19,7 +19,7 @@
+  /*
+   * SDIO suspend.
+   *
+-@@ -246,6 +249,7 @@ static int mwifiex_sdio_resume(struct de
++@@ -257,6 +260,7 @@ static int mwifiex_sdio_resume(struct de
+  
+  	return 0;
+  }
+@@ -27,7 +27,7 @@
+  
+  /* Device ID for SD8786 */
+  #define SDIO_DEVICE_ID_MARVELL_8786   (0x9116)
+-@@ -264,10 +268,12 @@ static const struct sdio_device_id mwifi
++@@ -282,10 +286,12 @@ static const struct sdio_device_id mwifi
+  
+  MODULE_DEVICE_TABLE(sdio, mwifiex_ids);
+  
+@@ -40,7 +40,7 @@
+  
+  static struct sdio_driver mwifiex_sdio = {
+  	.name = "mwifiex_sdio",
+-@@ -276,7 +282,9 @@ static struct sdio_driver mwifiex_sdio =
++@@ -294,7 +300,9 @@ static struct sdio_driver mwifiex_sdio =
+  	.remove = mwifiex_sdio_remove,
+  	.drv = {
+  		.owner = THIS_MODULE,
+diff --git a/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_atlx_atl1.patch b/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_atlx_atl1.patch
+index e8e6108..dc8a73e 100644
+--- a/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_atlx_atl1.patch
++++ b/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_atlx_atl1.patch
+@@ -25,7 +25,7 @@
+  
+  	/*
+  	 * patch for some L1 of old version,
+-@@ -3640,6 +3644,14 @@ static int atl1_set_pauseparam(struct ne
++@@ -3615,6 +3619,14 @@ static int atl1_set_pauseparam(struct ne
+  	return 0;
+  }
+  
+@@ -40,7 +40,7 @@
+  static void atl1_get_strings(struct net_device *netdev, u32 stringset,
+  	u8 *data)
+  {
+-@@ -3712,4 +3724,10 @@ static const struct ethtool_ops atl1_eth
++@@ -3687,6 +3699,12 @@ static const struct ethtool_ops atl1_eth
+  	.nway_reset		= atl1_nway_reset,
+  	.get_ethtool_stats	= atl1_get_ethtool_stats,
+  	.get_sset_count		= atl1_get_sset_count,
+@@ -51,3 +51,5 @@
+ +	.set_tso		= ethtool_op_set_tso,
+ +#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,39)) */
+  };
 + 
++ module_pci_driver(atl1_driver);
+diff --git a/patches/collateral-evolutions/network/47-no_trans_start_on_netdev_queue/drivers_net_wireless_mwifiex_init.patch b/patches/collateral-evolutions/network/47-no_trans_start_on_netdev_queue/drivers_net_wireless_mwifiex_init.patch
+index c8f586c..5a05393 100644
+--- a/patches/collateral-evolutions/network/47-no_trans_start_on_netdev_queue/drivers_net_wireless_mwifiex_init.patch
++++ b/patches/collateral-evolutions/network/47-no_trans_start_on_netdev_queue/drivers_net_wireless_mwifiex_init.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/net/wireless/mwifiex/init.c
+ +++ b/drivers/net/wireless/mwifiex/init.c
+-@@ -369,8 +369,10 @@ void mwifiex_set_trans_start(struct net_
++@@ -366,8 +366,10 @@ void mwifiex_set_trans_start(struct net_
+  {
+  	int i;
+  
+diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_bluetooth_btusb.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_bluetooth_btusb.patch
+index e37f726..495ed1c 100644
+--- a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_bluetooth_btusb.patch
++++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_bluetooth_btusb.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/bluetooth/btusb.c
+ +++ b/drivers/bluetooth/btusb.c
+-@@ -1619,7 +1619,9 @@ static struct usb_driver btusb_driver =
++@@ -1620,7 +1620,9 @@ static struct usb_driver btusb_driver =
+  #endif
+  	.id_table	= btusb_table,
+  	.supports_autosuspend = 1,
+diff --git a/patches/collateral-evolutions/network/70-umode_t-api-change/drivers_net_wireless_ath_ath9k_debug.patch b/patches/collateral-evolutions/network/70-umode_t-api-change/drivers_net_wireless_ath_ath9k_debug.patch
+index c70ca41..e2b1afe 100644
+--- a/patches/collateral-evolutions/network/70-umode_t-api-change/drivers_net_wireless_ath_ath9k_debug.patch
++++ b/patches/collateral-evolutions/network/70-umode_t-api-change/drivers_net_wireless_ath_ath9k_debug.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/net/wireless/ath/ath9k/debug.c
+ +++ b/drivers/net/wireless/ath/ath9k/debug.c
+-@@ -1217,7 +1217,11 @@ static const struct file_operations fops
++@@ -1162,7 +1162,11 @@ static const struct file_operations fops
+  
+  static struct dentry *create_buf_file_handler(const char *filename,
+  					      struct dentry *parent,
 -- 
 1.7.10.4
 
