@@ -1,58 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:33188 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756346Ab3EWDQ1 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 22 May 2013 23:16:27 -0400
-Received: by mail-pd0-f178.google.com with SMTP id w16so2364584pde.23
-        for <backports@vger.kernel.org>; Wed, 22 May 2013 20:16:26 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH v3 4/8] lib/bpgit.py: add git tree verification support
-Date: Wed, 22 May 2013 20:15:52 -0700
-Message-Id: <1369278956-17550-5-git-send-email-mcgrof@do-not-panic.com> (sfid-20130523_051629_011701_D4F9F8F3)
-In-Reply-To: <1369278956-17550-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1369278956-17550-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from s3.sipsolutions.net ([144.76.43.152]:58160 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933805Ab3E1Vek (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 28 May 2013 17:34:40 -0400
+Message-ID: <1369776874.8548.31.camel@jlt4.sipsolutions.net> (sfid-20130528_233447_054806_A943B270)
+Subject: Re: [PATCH] backports: catch make in backport template directory
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: backports@vger.kernel.org
+Date: Tue, 28 May 2013 23:34:34 +0200
+In-Reply-To: <51A51E0E.8010803@lwfinger.net> (sfid-20130528_231354_988207_BF6CF854)
+References: <1369773194-17379-1-git-send-email-johannes@sipsolutions.net>
+	 <51A51E0E.8010803@lwfinger.net> (sfid-20130528_231354_988207_BF6CF854)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Tue, 2013-05-28 at 16:13 -0500, Larry Finger wrote:
+> On 05/28/2013 03:33 PM, Johannes Berg wrote:
+> > From: Johannes Berg <johannes.berg@intel.com>
+> >
+> > Catch running make in the backport template directory by
+> > checking for the .local-symbols file. If it isn't there
+> > then we're in the input/template directory rather than in
+> > an output tree, give the user a hint about it instead of
+> > keeling over.
+> >
+> > Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> > ---
+> >   backport/Makefile | 12 ++++++++++++
+> >   1 file changed, 12 insertions(+)
+> >
+> > diff --git a/backport/Makefile b/backport/Makefile
+> > index 287b27d..f0c7586 100644
+> > --- a/backport/Makefile
+> > +++ b/backport/Makefile
+> > @@ -37,6 +37,18 @@ mrproper:
+> >   	@rm -f backport-include/backport/autoconf.h
+> >
+> >   .DEFAULT:
+> > +	@set -e ; test -f .local-symbols || (						\
+> > +	echo "/--------------"								;\
+> > +	echo "| You shouldn't run make in the backports tree, but only in"		;\
+> > +	echo "| the generated output. This here is only the skeleton code"		;\
+> > +	echo "| copied into the output directory. To use the backport system"		;\
+> > +	echo "| from scratch, go into the top-level directoroy and run"			;\
+> 
+> =======================================================^ Typo here.
 
-This verifies that the tree provided has its last commit
-both tagged and also digitally signed. In short it does:
+Good catch, thanks. Luis, can you just fix that when you apply or do you
+want a resend?
 
-  git tag -v $(git describe --dirty)
-
-This will be used later.
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- lib/bpgit.py |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/lib/bpgit.py b/lib/bpgit.py
-index 8ce8568..da5453c 100644
---- a/lib/bpgit.py
-+++ b/lib/bpgit.py
-@@ -107,6 +107,18 @@ def describe(rev='HEAD', tree=None, extra_args=[]):
- 
-     return stdout.strip()
- 
-+def verify(git_tree):
-+    tag = describe(rev=None, tree=git_tree, extra_args=['--dirty'])
-+    cmd = ['git', 'tag', '-v', tag]
-+
-+    process = subprocess.Popen(cmd,
-+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                               close_fds=True, universal_newlines=True, cwd=git_tree)
-+    stdout = process.communicate()[0]
-+    process.wait()
-+
-+    return dict(r=process.returncode, output=stdout)
-+
- def init(tree=None):
-     process = subprocess.Popen(['git', 'init'],
-                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
--- 
-1.7.10.4
+johannes
 
