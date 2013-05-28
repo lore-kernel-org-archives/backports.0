@@ -1,42 +1,57 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:57659 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751022Ab3EMKF0 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 13 May 2013 06:05:26 -0400
-Received: by mail-la0-f41.google.com with SMTP id lx15so3496747lab.0
-        for <backports@vger.kernel.org>; Mon, 13 May 2013 03:05:24 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1368438795.8300.15.camel@jlt4.sipsolutions.net>
-References: <1368232023-23817-1-git-send-email-mcgrof@do-not-panic.com>
- <1368232023-23817-12-git-send-email-mcgrof@do-not-panic.com>
- <CANq1E4Re_uJQqvqEpWzRbVxsxVz3MBvZUqzM3ONFiJ+mXy4rNA@mail.gmail.com>
- <CAB=NE6XrKUSDQbjdeht=Aip-E1=oqPd4D=JmMdEdrJSNXLGukg@mail.gmail.com>
- <CANq1E4RXkYU=PNd-acNT-cp1ARQPR6-2Rq-a8eJGseSbRLCLxg@mail.gmail.com>
- <CAB=NE6WyvXSUS2PUNFktBVUn4u0rcVwXGQ1sYDbL34d8iU2RYw@mail.gmail.com>
- <CAB=NE6V0CywQoS0Xn5Xc2-biWeU34HGr7k9F2g+7+0wMZNCNFg@mail.gmail.com> <1368438795.8300.15.camel@jlt4.sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Mon, 13 May 2013 03:05:03 -0700
-Message-ID: <CAB=NE6WKOqAM3Zj+S7U3y=j7Kjosq5ef=zcOksc=SYZFfSW5Nw@mail.gmail.com> (sfid-20130513_120532_614532_C651063F)
-Subject: Re: [PATCH 11/12] backports: backport new bluetooth hidp session-management
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: David Herrmann <dh.herrmann@gmail.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from s3.sipsolutions.net ([144.76.43.152]:57962 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755587Ab3E1UXw (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 28 May 2013 16:23:52 -0400
+Message-ID: <1369772615.8548.30.camel@jlt4.sipsolutions.net> (sfid-20130528_222353_671019_DD212D02)
+Subject: Re: [PATCH 6/9] lib/bpgit.py: add support for git paranoia
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Tue, 28 May 2013 22:23:35 +0200
+In-Reply-To: <CAB=NE6Up+L2b_nQoLND4NrSD+J3ydKsnpP=178WhPFMSV4D6kQ@mail.gmail.com> (sfid-20130528_221443_210848_7453C4C7)
+References: <1369222478-30577-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1369222478-30577-7-git-send-email-mcgrof@do-not-panic.com>
+	 <1369224306.8207.7.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6WxO3tUjuK4gzxPSg+sukHB=ApxLr8F++Y+F2887=DW=Q@mail.gmail.com>
+	 <1369322755.12002.21.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6UwkAunmKGLutnHsUjSYXv34zQ2n1eVUc3jTsE=9vWejg@mail.gmail.com>
+	 <CAB=NE6VY=BAxfs9MCXxc8=fabt0bBbmcTwr7rovRG42ZUvEATA@mail.gmail.com>
+	 <CAB=NE6Up+L2b_nQoLND4NrSD+J3ydKsnpP=178WhPFMSV4D6kQ@mail.gmail.com>
+	 (sfid-20130528_221443_210848_7453C4C7)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, May 13, 2013 at 2:53 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Sun, 2013-05-12 at 19:36 -0700, Luis R. Rodriguez wrote:
->
->> >> The net/bluetooth/hidp/core.c file is attached. It is from the tarball
->> >> you created above (2013-04-26). I fixed some other small issues.
->> >
->> > Nice, can you provide me a Signed-off-by tag ? With it I'd just amend
->> > it to my commit provided everything compiles fine.
->
-> You're going to send a new version of patch 11 then?
+On Tue, 2013-05-28 at 13:14 -0700, Luis R. Rodriguez wrote:
 
-Sure, sent.
+> Addressing RELMOD_TYPE seems easy with --git-revision, add arguments
+> additional arguments: -s -n -p -c -u as release mode specifications as
+> arguments to be passed to gentree.py either as:
+> 
+>   a) standalone arguments, or;
+>   b) as a conglomeration of release modification types, ie something
+> like --rel-mod=snpcu
 
-  Luis
+I think this would fit better with the model of a separate tool, that
+calls the gentree code to generate internally. Then you'd have maybe 
+
+./devel/gen-and-kup.py -s -n -p -c -u ...
+
+or something? Overall, that seems cleaner than cluttering gentree.py
+with all these options, although gentree.py would probably (internally
+only?) have to learn about being able to take patches and the skeleton
+code from another directory to address the paranoia for the backport
+tree itself.
+
+> We just need a reasonable way to address RELMOD_UPDATE then. 
+
+That's when you generate a new one for the same tag, due to updates,
+right?
+
+I don't really know how to handle this -- we don't really have a
+canonical database of what we've generated before.
+
+johannes
+
