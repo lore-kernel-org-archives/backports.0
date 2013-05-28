@@ -1,41 +1,37 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:47014 "EHLO
+Received: from s3.sipsolutions.net ([144.76.43.152]:57778 "EHLO
 	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751170Ab3EMMIR (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 13 May 2013 08:08:17 -0400
-Message-ID: <1368446891.8300.25.camel@jlt4.sipsolutions.net> (sfid-20130513_140820_192933_82FDBDF9)
-Subject: Re: [PATCH v2 1/5] backports: backport rfkill properly
+	with ESMTP id S1751655Ab3E1TZa (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 28 May 2013 15:25:30 -0400
+Message-ID: <1369769122.8548.7.camel@jlt4.sipsolutions.net> (sfid-20130528_212531_921012_9500F06E)
+Subject: Re: Problem with backports git repo
 From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: backports@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>
-Date: Mon, 13 May 2013 14:08:11 +0200
-In-Reply-To: <1368298469-29143-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20130511_205441_505600_DB2F8E73)
-References: <1368298469-29143-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1368298469-29143-2-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20130511_205441_505600_DB2F8E73)
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: "Luis R. Rodriguez" <mcgrof@frijolero.org>,
+	backports@vger.kernel.org
+Date: Tue, 28 May 2013 21:25:22 +0200
+In-Reply-To: <51A502AD.1060104@lwfinger.net> (sfid-20130528_211707_085177_DE2DD9E0)
+References: <51A502AD.1060104@lwfinger.net>
+	 (sfid-20130528_211707_085177_DE2DD9E0)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sat, 2013-05-11 at 11:54 -0700, Luis R. Rodriguez wrote:
->   * For kernels >= 2.6.31:
->         o use the standard
->                 /dev/rfkill
->                 /sys/class/rfkill
+Hi Larry,
 
-I think this is wrong. It means that if you build rfkill (e.g. for 3.2)
-then it would conflict with the kernel's rfkill.
+> I just used 'git clone' to get a fresh copy of the repo. When I try 'make 
+> menuconfig', I get the following error:
+> 
+> finger@larrylap:~/backports/backport> make menuconfig
 
-The thing is that *usually*, for >=2.6.31, you just want to use the
-kernel's rfkill. So for that usage, we should backport the rfkill API,
-like we usually backport things.
+The docs haven't been updated, but this is just the skeleton, you're not
+supposed to run anything in there. Go to the top-level first, and run
 
-However, NFC probably requires a backported rfkill, not just backporting
-around rfkill. For this we do need it named rfkill_backport though, I
-think.
+./gentree.py /path/to/linux-next /tmp/output
 
-Maybe we can backport the NFC support in some other way?
+then in /tmp/output you can run the make/menuconfig whatever. The
+versions file and some others are auto-generated.
 
 johannes
 
