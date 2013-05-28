@@ -1,35 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:37591 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753215Ab3EPWaJ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 16 May 2013 18:30:09 -0400
-Received: by mail-pa0-f53.google.com with SMTP id kq12so2930585pab.26
-        for <backports@vger.kernel.org>; Thu, 16 May 2013 15:30:09 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 0/2] backports: take us to next-20130429
-Date: Thu, 16 May 2013 15:30:02 -0700
-Message-Id: <1368743404-30324-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130517_003012_097230_AFAE6E02)
+Received: from mail-oa0-f51.google.com ([209.85.219.51]:39625 "EHLO
+	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753856Ab3E1T44 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 28 May 2013 15:56:56 -0400
+Received: by mail-oa0-f51.google.com with SMTP id f4so10531966oah.38
+        for <backports@vger.kernel.org>; Tue, 28 May 2013 12:56:56 -0700 (PDT)
+Message-ID: <51A50C06.8060503@lwfinger.net> (sfid-20130528_215658_725355_DE2EB11D)
+Date: Tue, 28 May 2013 14:56:54 -0500
+From: Larry Finger <Larry.Finger@lwfinger.net>
+MIME-Version: 1.0
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: "Luis R. Rodriguez" <mcgrof@frijolero.org>,
+	backports@vger.kernel.org
+Subject: Re: Problem with backports git repo
+References: <51A502AD.1060104@lwfinger.net>  (sfid-20130528_211707_085177_DE2DD9E0) <1369769122.8548.7.camel@jlt4.sipsolutions.net>  (sfid-20130528_212531_921012_9500F06E) <1369770189.8548.20.camel@jlt4.sipsolutions.net>
+In-Reply-To: <1369770189.8548.20.camel@jlt4.sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On 05/28/2013 02:43 PM, Johannes Berg wrote:
+> On Tue, 2013-05-28 at 21:25 +0200, Johannes Berg wrote:
+>> Hi Larry,
+>>
+>>> I just used 'git clone' to get a fresh copy of the repo. When I try 'make
+>>> menuconfig', I get the following error:
+>>>
+>>> finger@larrylap:~/backports/backport> make menuconfig
+>>
+>> The docs haven't been updated, but this is just the skeleton, you're not
+>> supposed to run anything in there. Go to the top-level first, and run
+>
+> Oh, n/m me, it seems this was just an accidental resend of your previous
+> mail?
 
-This addresses the rest of the changes required to bring
-backports on to next-20130429.
+It was a resend, but I did not include the backports ML and I got no response.
 
-Luis R. Rodriguez (2):
-  backports: address nouveau file shuffling
-  backports: refresh patches for next-20130429
+Thanks for your input. I was able to build just file.
 
- .../drivers_gpu_drm_drm_proc.patch                          |   10 +++++-----
- .../collateral-evolutions/drm/13-nouveau-include-fix/INFO   |    2 ++
- .../drivers_gpu_drm_nouveau_Makefile.patch                  |   11 +++++++++++
- 3 files changed, 18 insertions(+), 5 deletions(-)
- create mode 100644 patches/collateral-evolutions/drm/13-nouveau-include-fix/INFO
- create mode 100644 patches/collateral-evolutions/drm/13-nouveau-include-fix/drivers_gpu_drm_nouveau_Makefile.patch
+Larry
 
--- 
-1.7.10.4
 
