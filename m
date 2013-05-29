@@ -1,36 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:47357 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755013Ab3EZTxD (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 26 May 2013 15:53:03 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 4/5] backports: add missing include to dma-shared-helpers.c
-Date: Sun, 26 May 2013 21:52:29 +0200
-Message-Id: <1369597950-2926-4-git-send-email-hauke@hauke-m.de> (sfid-20130526_215306_700919_A48724F8)
-In-Reply-To: <1369597950-2926-1-git-send-email-hauke@hauke-m.de>
-References: <1369597950-2926-1-git-send-email-hauke@hauke-m.de>
+Received: from s3.sipsolutions.net ([144.76.43.152]:33917 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966728Ab3E2UNk (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 29 May 2013 16:13:40 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backports: update output template .gitignore for kconfig move
+Date: Wed, 29 May 2013 22:13:34 +0200
+Message-Id: <1369858414-4066-1-git-send-email-johannes@sipsolutions.net> (sfid-20130529_221341_963629_4BC3E537)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/compat/dma-shared-helpers.c |    1 +
- 1 file changed, 1 insertion(+)
+From: Johannes Berg <johannes.berg@intel.com>
 
-diff --git a/backport/compat/dma-shared-helpers.c b/backport/compat/dma-shared-helpers.c
-index e09dd6b..f76cf06 100644
---- a/backport/compat/dma-shared-helpers.c
-+++ b/backport/compat/dma-shared-helpers.c
-@@ -11,6 +11,7 @@
- #include <linux/module.h>
- #include <linux/scatterlist.h>
- #include <linux/dma-attrs.h>
-+#include <linux/device.h>
- #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
- #if LINUX_VERSION_CODE <= KERNEL_VERSION(3,6,0)
- #include <linux/dma-direction.h>
+I clearly forgot this during the Kconfig move, the .gitignore
+that is in the output template directory (and used with the
+git-tracker) needs to be updated for the kconf directory move.
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/.gitignore | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/backport/.gitignore b/backport/.gitignore
+index c906800..43a3d08 100644
+--- a/backport/.gitignore
++++ b/backport/.gitignore
+@@ -14,8 +14,8 @@ Kconfig.versions
+ modules.order
+ backport-include/backport/autoconf.h
+ modules
+-kconfig/mconf
+-kconfig/conf
++kconf/mconf
++kconf/conf
+ .tmp_versions
+ Module.symvers
+ *.mod.c
 -- 
-1.7.10.4
+1.8.0
 
