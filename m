@@ -1,57 +1,74 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:44904 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:33253 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933034Ab3FQNVV (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 17 Jun 2013 09:21:21 -0400
+	id S1751593Ab3FAQAp (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 1 Jun 2013 12:00:45 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/7] backports: remove useless include in USB_VENDOR_AND_INTERFACE_INFO
-Date: Mon, 17 Jun 2013 15:21:02 +0200
-Message-Id: <1371475267-27179-2-git-send-email-hauke@hauke-m.de> (sfid-20130617_152131_858276_85C7DDC3)
-In-Reply-To: <1371475267-27179-1-git-send-email-hauke@hauke-m.de>
-References: <1371475267-27179-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 06/11] backports: do not backport shmem_read_mapping_page_gfp() on RHEL 6.4
+Date: Sat,  1 Jun 2013 18:00:12 +0200
+Message-Id: <1370102417-6711-7-git-send-email-hauke@hauke-m.de> (sfid-20130601_181040_779061_A2453BED)
+In-Reply-To: <1370102417-6711-1-git-send-email-hauke@hauke-m.de>
+References: <1370102417-6711-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This also changes the #if <kernel version> to a ifndef, now it is also
-compatible with kernel already containing this backport.
+shmem_read_mapping_page_gfp() looks different in the RHEL 6.4 source
+code and we should use that version instead.
+This also adds a missing include to prefix this function with backport_.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/usb.h |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ backport/backport-include/linux/shmem_fs.h |    2 ++
+ backport/compat/compat-3.0.c               |    3 +++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
-index 8ea9d75..6d27479 100644
---- a/backport/backport-include/linux/usb.h
-+++ b/backport/backport-include/linux/usb.h
-@@ -18,7 +18,7 @@
- 		       usb_deregister)
+diff --git a/backport/backport-include/linux/shmem_fs.h b/backport/backport-include/linux/shmem_fs.h
+index f32de7a..4d3964e 100644
+--- a/backport/backport-include/linux/shmem_fs.h
++++ b/backport/backport-include/linux/shmem_fs.h
+@@ -3,6 +3,7 @@
+ #include_next <linux/shmem_fs.h>
+ 
+ 
++#if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0)
+ /* This pulls-in a lot of non-exported symbol backports
+  * on kernels older than 2.6.32. There's no harm for not
+@@ -33,5 +34,6 @@ static inline struct page *shmem_read_mapping_page(
+ }
  #endif
+ #endif
++#endif
  
--#if LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
-+#ifndef USB_VENDOR_AND_INTERFACE_INFO
- /**
-  * Backports
-  *
-@@ -28,7 +28,6 @@
-  *
-  * 	USB: add USB_VENDOR_AND_INTERFACE_INFO() macro
-  */
--#include <linux/usb.h>
- #define USB_VENDOR_AND_INTERFACE_INFO(vend, cl, sc, pr) \
-        .match_flags = USB_DEVICE_ID_MATCH_INT_INFO \
-                | USB_DEVICE_ID_MATCH_VENDOR, \
-@@ -36,7 +35,7 @@
-        .bInterfaceClass = (cl), \
-        .bInterfaceSubClass = (sc), \
-        .bInterfaceProtocol = (pr)
--#endif
-+#endif /* USB_VENDOR_AND_INTERFACE_INFO */
+ #endif /* __BACKPORT_LINUX_SHMEM_FS_H */
+diff --git a/backport/compat/compat-3.0.c b/backport/compat/compat-3.0.c
+index e841373..f52392c 100644
+--- a/backport/compat/compat-3.0.c
++++ b/backport/compat/compat-3.0.c
+@@ -12,11 +12,13 @@
+ #include <linux/compat.h>
+ #include <linux/if_ether.h>
  
- #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36)
- #ifdef CPTCFG_BACKPORT_OPTION_USB_URB_THREAD_FIX
++#if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
+ /* This pulls-in a lot of non-exported symbol backports
+  * on kernels older than 2.6.32. There's no harm for not
+  * making this available on kernels < 2.6.32. */
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32))
+ #include <linux/pagemap.h>
++#include <linux/shmem_fs.h>
+ 
+ /* This backports:
+  *
+@@ -34,6 +36,7 @@ struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
+ }
+ EXPORT_SYMBOL_GPL(shmem_read_mapping_page_gfp);
+ #endif
++#endif
+ 
+ int mac_pton(const char *s, u8 *mac)
+ {
 -- 
 1.7.10.4
 
