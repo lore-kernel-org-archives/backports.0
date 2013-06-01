@@ -1,34 +1,70 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:62418 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751285Ab3FZQcS (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 26 Jun 2013 12:32:18 -0400
-Received: by mail-la0-f46.google.com with SMTP id eg20so14038870lab.19
-        for <backports@vger.kernel.org>; Wed, 26 Jun 2013 09:32:17 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1372147016.8372.0.camel@jlt4.sipsolutions.net>
-References: <1369858414-4066-1-git-send-email-johannes@sipsolutions.net> <1372147016.8372.0.camel@jlt4.sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Wed, 26 Jun 2013 09:31:56 -0700
-Message-ID: <CAB=NE6UGi4Mr1syR+=Bb=ewZH00Q1irhn0eiNXUMsD34_BC=PA@mail.gmail.com> (sfid-20130626_183220_700142_97D5101E)
-Subject: Re: [PATCH] backports: update output template .gitignore for kconfig move
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from server19320154104.serverpool.info ([193.201.54.104]:33273 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751593Ab3FAQAy (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 1 Jun 2013 12:00:54 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 11/11] backports: do not backport struct watchdog_device in RHEL 6.4
+Date: Sat,  1 Jun 2013 18:00:17 +0200
+Message-Id: <1370102417-6711-12-git-send-email-hauke@hauke-m.de> (sfid-20130601_182936_450764_3F767212)
+In-Reply-To: <1370102417-6711-1-git-send-email-hauke@hauke-m.de>
+References: <1370102417-6711-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Jun 25, 2013 at 12:56 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Wed, 2013-05-29 at 22:13 +0200, Johannes Berg wrote:
->> From: Johannes Berg <johannes.berg@intel.com>
->>
->> I clearly forgot this during the Kconfig move, the .gitignore
->> that is in the output template directory (and used with the
->> git-tracker) needs to be updated for the kconf directory move.
->
-> Luis, any reason you haven't applied this?
+This is already included in the RHEL 6.4 kernel.
 
-Sorry, nope I just I missed it, applied and pushed!
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.79              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.10-rc1            [  OK  ]
+20  3.2.45              [  OK  ]
+21  3.3.8               [  OK  ]
+22  3.4.46              [  OK  ]
+23  3.5.7               [  OK  ]
+24  3.6.11              [  OK  ]
+25  3.7.10              [  OK  ]
+26  3.8.13              [  OK  ]
+27  3.9.3               [  OK  ]
 
-  Luis
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/watchdog.h |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/backport/backport-include/linux/watchdog.h b/backport/backport-include/linux/watchdog.h
+index 4aae6bb..fb68535 100644
+--- a/backport/backport-include/linux/watchdog.h
++++ b/backport/backport-include/linux/watchdog.h
+@@ -2,9 +2,11 @@
+ #define __BACKPORT_WATCHDOG_H
+ #include_next <linux/watchdog.h>
+ 
++#if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,1,0)
+ struct watchdog_device {
+ };
+ #endif
++#endif
+ 
+ #endif /* __BACKPORT_WATCHDOG_H */
+-- 
+1.7.10.4
+
