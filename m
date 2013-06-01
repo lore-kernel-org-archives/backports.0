@@ -1,71 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.17.21]:49817 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933869Ab3FSR73 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 19 Jun 2013 13:59:29 -0400
-Received: from mailout-de.gmx.net ([10.1.76.16]) by mrigmx.server.lan
- (mrigmx001) with ESMTP (Nemesis) id 0MRhah-1UiOXh1M4X-00Sy5P for
- <backports@vger.kernel.org>; Wed, 19 Jun 2013 19:59:28 +0200
-Message-ID: <51C1F17D.5050604@gmx.de> (sfid-20130619_195931_723430_21C7D67C)
-Date: Wed, 19 Jun 2013 19:59:25 +0200
-From: Lars Zastrow <Lars.Zastrow@gmx.de>
-MIME-Version: 1.0
-To: Stanislaw Gruszka <sgruszka@redhat.com>
-CC: backports@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: Re: bug-report: Ralink corp. Device [1814:539a] - Kernel 3.8
- +
-References: <51BE8008.20302@gmx.de> <20130619131234.GB2580@redhat.com>
-In-Reply-To: <20130619131234.GB2580@redhat.com>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Received: from server19320154104.serverpool.info ([193.201.54.104]:33263 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751593Ab3FAQAu (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 1 Jun 2013 12:00:50 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 08/11] backports: to not backport skb_add_rx_fragi() on RHEL 6.4
+Date: Sat,  1 Jun 2013 18:00:14 +0200
+Message-Id: <1370102417-6711-9-git-send-email-hauke@hauke-m.de> (sfid-20130601_181041_981068_3EC3BD6D)
+In-Reply-To: <1370102417-6711-1-git-send-email-hauke@hauke-m.de>
+References: <1370102417-6711-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Am 19.06.2013 15:12, schrieb Stanislaw Gruszka:
-> On Mon, Jun 17, 2013 at 05:18:32AM +0200, Lars Zastrow wrote:
->> Dear Team,
->>
->> I'am using the following wireless-network-device:
->>
->> Network controller [0280]: Ralink corp. Device [1814:539a]
->> Subsystem: Hewlett-Packard Company Device [103c:1839]
->> Kernel driver in use: rt2800pci
->>
->> I had problems with it since I bought my laptop... The driver was
->> unstable with the kernel I used back in autumn 2012. Howeverer, one
->> kernel-update fixed it. Must be something about 3.4x?
->>
->> It was defenetly working with the Kernels from 3.5 till 3.7 on
->> multible distros. 3.8 was bringing back the old Problems:
->>
->> - extremly low signal
->> - hard to establish a connection to any acess-point.
->>
->> The last "problematic" kernel I have testet was 3.9.5-1 on
->> Arch-Linux. Compiling the compat-drivers manually did not bring any
->> fix.
->>
->> I am currently using 3.7.4-1 wich is working.
-> This most likely is a RT5390 TX power problem I made on 3.8.
->
-> This patch should help:
-> https://git.kernel.org/cgit/linux/kernel/git/linville/wireless.git/commit/?id=8c8d2017ba25c510ddf093419048460db1109bc4
->
-> Stanislaw
-Yes, indeed! It helps.
+The kernel in RHEL 6.4 already ships with skb_add_rx_frag() with 6
+arguments.
 
-Now it was possible to upgrade my kernel, without losing my 
-wireless-device to be usable. Thank you very much.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/skbuff.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'm afraid it is not a "flawless" experience.
+diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
+index 52612ce..94093e2 100644
+--- a/backport/backport-include/linux/skbuff.h
++++ b/backport/backport-include/linux/skbuff.h
+@@ -10,7 +10,7 @@ extern void v2_6_28_skb_add_rx_frag(struct sk_buff *skb, int i,
+ 
+ #define skb_add_rx_frag(skb, i, page, off, size, truesize) \
+ 	v2_6_28_skb_add_rx_frag(skb, i, page, off, size)
+-#elif (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
++#elif (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0)) && (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
+ #define skb_add_rx_frag(skb, i, page, off, size, truesize) \
+ 	skb_add_rx_frag(skb, i, page, off, size)
+ #endif
+-- 
+1.7.10.4
 
-On the git-page you mentioned:
-
- > Once we implement proper TSSI tuning on 5390/3290 we can restore back 
-setting TX power by BBP_R1  register for those chips.
-
-Is there any hope, that the driver will increase its performance one day?
-...there are better chips on the market, that is for sure.
-
-Regards
-
-Lars Zastrow
