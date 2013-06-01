@@ -1,33 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:60225 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751347Ab3FFEl7 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 6 Jun 2013 00:41:59 -0400
-Received: by mail-lb0-f179.google.com with SMTP id w20so2607654lbh.24
-        for <backports@vger.kernel.org>; Wed, 05 Jun 2013 21:41:57 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1370274874-31049-1-git-send-email-johannes@sipsolutions.net>
-References: <1370274874-31049-1-git-send-email-johannes@sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Wed, 5 Jun 2013 21:41:36 -0700
-Message-ID: <CAB=NE6VJvQr_zjv2981-MqSSZ080NzOBT_9YgZkWd0f16zLj3g@mail.gmail.com> (sfid-20130606_064201_210461_2A3ABF6C)
-Subject: Re: [PATCH] backports: use check-lxdialog.sh
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Received: from server19320154104.serverpool.info ([193.201.54.104]:33276 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751901Ab3FAQAz (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 1 Jun 2013 12:00:55 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 10/11] backports: protect pcmcia_enable_device
+Date: Sat,  1 Jun 2013 18:00:16 +0200
+Message-Id: <1370102417-6711-11-git-send-email-hauke@hauke-m.de> (sfid-20130601_182936_606318_359E5D5E)
+In-Reply-To: <1370102417-6711-1-git-send-email-hauke@hauke-m.de>
+References: <1370102417-6711-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Jun 3, 2013 at 8:54 AM, Johannes Berg <johannes@sipsolutions.net> wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
->
-> We ship it, so we should use it. This should fix issues
-> like one distro needing "-lncurses -ltinfo" and others
-> requiring just "-lncurses" and not having "tinfo".
->
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+This is already defined in RHEL 6.4
 
-Thanks, applied and pushed!
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/pcmcia/ds.h |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-  Luis
+diff --git a/backport/backport-include/pcmcia/ds.h b/backport/backport-include/pcmcia/ds.h
+index f0cc5fe..48e8fb4 100644
+--- a/backport/backport-include/pcmcia/ds.h
++++ b/backport/backport-include/pcmcia/ds.h
+@@ -27,7 +27,9 @@
+ #endif
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)
+-#define pcmcia_enable_device(link)	pcmcia_request_configuration(link, &link->conf)
++#ifndef pcmcia_enable_device
++#define pcmcia_enable_device(link)	pcmcia_request_configuration(link, &(link)->conf)
++#endif
+ #endif
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36)
+-- 
+1.7.10.4
+
