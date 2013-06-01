@@ -1,217 +1,57 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:39717 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:33231 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751162Ab3FFNXd (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 6 Jun 2013 09:23:33 -0400
+	id S1751291Ab3FAQAi (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 1 Jun 2013 12:00:38 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/3] backports: backport some memory functions
-Date: Thu,  6 Jun 2013 15:23:21 +0200
-Message-Id: <1370525003-30531-1-git-send-email-hauke@hauke-m.de> (sfid-20130606_152344_500808_2EC2AD0F)
+Subject: [PATCH 03/11] backports: fix DEFINE_DYNAMIC_DEBUG_METADATA for RHEL 6.4
+Date: Sat,  1 Jun 2013 18:00:09 +0200
+Message-Id: <1370102417-6711-4-git-send-email-hauke@hauke-m.de> (sfid-20130601_181038_141600_36680203)
+In-Reply-To: <1370102417-6711-1-git-send-email-hauke@hauke-m.de>
+References: <1370102417-6711-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This includes the following functions needed by some drm drivers:
-arch_phys_wc_add()
-arch_phys_wc_del()
-phys_wc_to_mtrr_index()
-
-This backports the following commit form mainline kernel:
-commit d0d98eedee2178c803dd824bb09f52b0e2ac1811
-Author: Andy Lutomirski <luto@amacapital.net>
-Date:   Mon May 13 23:58:40 2013 +0000
-
-    Add arch_phys_wc_{add, del} to manipulate WC MTRRs if needed
+The struct _ddebug does not have a enabled attribute in RHEL 6.4.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/asm/mtrr.h |   20 ++++++++
- backport/backport-include/linux/io.h |   36 ++++++++++++++
- backport/compat/Makefile             |    1 +
- backport/compat/backport-3.11.c      |   91 ++++++++++++++++++++++++++++++++++
- 4 files changed, 148 insertions(+)
- create mode 100644 backport/backport-include/asm/mtrr.h
- create mode 100644 backport/backport-include/linux/io.h
- create mode 100644 backport/compat/backport-3.11.c
+ backport/backport-include/linux/dynamic_debug.h |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/backport/backport-include/asm/mtrr.h b/backport/backport-include/asm/mtrr.h
-new file mode 100644
-index 0000000..cf0f6fd
---- /dev/null
-+++ b/backport/backport-include/asm/mtrr.h
-@@ -0,0 +1,20 @@
-+#ifndef __BACKPORT_ASM_MTRR_H
-+#define __BACKPORT_ASM_MTRR_H
-+#include_next <asm/mtrr.h>
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0))
-+/*
-+ * The following functions are for use by other drivers that cannot use
-+ * arch_phys_wc_add and arch_phys_wc_del.
-+ */
-+#ifdef CONFIG_MTRR
-+extern int phys_wc_to_mtrr_index(int handle);
+diff --git a/backport/backport-include/linux/dynamic_debug.h b/backport/backport-include/linux/dynamic_debug.h
+index 00ab160..eb6fa81 100644
+--- a/backport/backport-include/linux/dynamic_debug.h
++++ b/backport/backport-include/linux/dynamic_debug.h
+@@ -8,6 +8,7 @@
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
+ /* backports 07613b0b */
+ #if defined(CONFIG_DYNAMIC_DEBUG)
++#if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
+ #define DEFINE_DYNAMIC_DEBUG_METADATA(name, fmt)               \
+ 	static struct _ddebug __used __aligned(8)               \
+ 	__attribute__((section("__verbose"))) name = {          \
+@@ -19,6 +20,18 @@
+ 		.flags =  _DPRINTK_FLAGS_DEFAULT,               \
+ 		.enabled = false,                               \
+ 	}
 +#else
-+static inline int phys_wc_to_mtrr_index(int handle)
-+{
-+	return -1;
-+}
-+#endif /* CONFIG_MTRR */
-+#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)) */
-+
-+#endif /* __BACKPORT_ASM_MTRR_H */
-diff --git a/backport/backport-include/linux/io.h b/backport/backport-include/linux/io.h
-new file mode 100644
-index 0000000..9a5b308
---- /dev/null
-+++ b/backport/backport-include/linux/io.h
-@@ -0,0 +1,36 @@
-+#ifndef __BACKPORT_LINUX_IO_H
-+#define __BACKPORT_LINUX_IO_H
-+#include_next <linux/io.h>
-+
-+/*
-+ * Some systems (x86 without PAT) have a somewhat reliable way to mark a
-+ * physical address range such that uncached mappings will actually
-+ * end up write-combining.  This facility should be used in conjunction
-+ * with pgprot_writecombine, ioremap-wc, or set_memory_wc, since it has
-+ * no effect if the per-page mechanisms are functional.
-+ * (On x86 without PAT, these functions manipulate MTRRs.)
-+ *
-+ * arch_phys_del_wc(0) or arch_phys_del_wc(any error code) is guaranteed
-+ * to have no effect.
-+ */
-+#ifndef arch_phys_wc_add
-+#ifdef CONFIG_MTRR
-+extern int __must_check arch_phys_wc_add(unsigned long base,
-+					 unsigned long size);
-+extern void arch_phys_wc_del(int handle);
-+#else
-+static inline int __must_check arch_phys_wc_add(unsigned long base,
-+						unsigned long size)
-+{
-+	return 0;  /* It worked (i.e. did nothing). */
-+}
-+
-+static inline void arch_phys_wc_del(int handle)
-+{
-+}
-+#endif /* CONFIG_MTRR */
-+
-+#define arch_phys_wc_add arch_phys_wc_add
-+#endif
-+
-+#endif /* __BACKPORT_LINUX_IO_H */
-diff --git a/backport/compat/Makefile b/backport/compat/Makefile
-index 18df156..252290e 100644
---- a/backport/compat/Makefile
-+++ b/backport/compat/Makefile
-@@ -35,6 +35,7 @@ compat-$(CPTCFG_BACKPORT_KERNEL_3_7) += compat-3.7.o
- compat-$(CPTCFG_BACKPORT_KERNEL_3_8) += compat-3.8.o
- compat-$(CPTCFG_BACKPORT_KERNEL_3_9) += compat-3.9.o
- compat-$(CPTCFG_BACKPORT_KERNEL_3_10) += backport-3.10.o
-+compat-$(CPTCFG_BACKPORT_KERNEL_3_11) += backport-3.11.o
++#define DEFINE_DYNAMIC_DEBUG_METADATA(name, fmt)               \
++	static struct _ddebug __used __aligned(8)               \
++	__attribute__((section("__verbose"))) name = {          \
++		.modname = KBUILD_MODNAME,                      \
++		.function = __func__,                           \
++		.filename = __FILE__,                           \
++		.format = (fmt),                                \
++		.lineno = __LINE__,                             \
++		.flags =  _DPRINTK_FLAGS_DEFAULT,               \
++	}
++#endif /* RHEL_RELEASE_CODE < 6.4 */
+ #endif /* defined(CONFIG_DYNAMIC_DEBUG) */
+ #endif /* < 3.2 */
  
- compat-$(CPTCFG_BACKPORT_BUILD_KFIFO) += kfifo.o
- compat-$(CPTCFG_BACKPORT_BUILD_GENERIC_ATOMIC64) += compat_atomic.o
-diff --git a/backport/compat/backport-3.11.c b/backport/compat/backport-3.11.c
-new file mode 100644
-index 0000000..72e0800
---- /dev/null
-+++ b/backport/compat/backport-3.11.c
-@@ -0,0 +1,91 @@
-+/*
-+ * Copyright (c) 2013  Hauke Mehrtens <hauke@hauke-m.de>
-+ *
-+ * Compatibility file for Linux wireless for kernels 3.11.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/export.h>
-+
-+#ifdef CONFIG_MTRR
-+
-+#include <asm/mtrr.h>
-+#include <asm/cpufeature.h>
-+#include <linux/io.h>
-+
-+/* arch_phys_wc_add returns an MTRR register index plus this offset. */
-+#define MTRR_TO_PHYS_WC_OFFSET 1000
-+
-+/**
-+ * arch_phys_wc_add - add a WC MTRR and handle errors if PAT is unavailable
-+ * @base: Physical base address
-+ * @size: Size of region
-+ *
-+ * If PAT is available, this does nothing.  If PAT is unavailable, it
-+ * attempts to add a WC MTRR covering size bytes starting at base and
-+ * logs an error if this fails.
-+ *
-+ * Drivers must store the return value to pass to mtrr_del_wc_if_needed,
-+ * but drivers should not try to interpret that return value.
-+ */
-+int arch_phys_wc_add(unsigned long base, unsigned long size)
-+{
-+	int ret;
-+
-+#if defined(CONFIG_X86_PAT)
-+	if (cpu_has_pat)
-+		return 0;
-+#endif
-+
-+	ret = mtrr_add(base, size, MTRR_TYPE_WRCOMB, true);
-+	if (ret < 0) {
-+		pr_warn("Failed to add WC MTRR for [%p-%p]; performance may suffer.",
-+			(void *)base, (void *)(base + size - 1));
-+		return ret;
-+	}
-+	return ret + MTRR_TO_PHYS_WC_OFFSET;
-+}
-+EXPORT_SYMBOL(arch_phys_wc_add);
-+
-+/*
-+ * arch_phys_wc_del - undoes arch_phys_wc_add
-+ * @handle: Return value from arch_phys_wc_add
-+ *
-+ * This cleans up after mtrr_add_wc_if_needed.
-+ *
-+ * The API guarantees that mtrr_del_wc_if_needed(error code) and
-+ * mtrr_del_wc_if_needed(0) do nothing.
-+ */
-+void arch_phys_wc_del(int handle)
-+{
-+	if (handle >= 1) {
-+		WARN_ON(handle < MTRR_TO_PHYS_WC_OFFSET);
-+		mtrr_del(handle - MTRR_TO_PHYS_WC_OFFSET, 0, 0);
-+	}
-+}
-+EXPORT_SYMBOL(arch_phys_wc_del);
-+
-+/*
-+ * phys_wc_to_mtrr_index - translates arch_phys_wc_add's return value
-+ * @handle: Return value from arch_phys_wc_add
-+ *
-+ * This will turn the return value from arch_phys_wc_add into an mtrr
-+ * index suitable for debugging.
-+ *
-+ * Note: There is no legitimate use for this function, except possibly
-+ * in printk line.  Alas there is an illegitimate use in some ancient
-+ * drm ioctls.
-+ */
-+int phys_wc_to_mtrr_index(int handle)
-+{
-+	if (handle < MTRR_TO_PHYS_WC_OFFSET)
-+		return -1;
-+	else
-+		return handle - MTRR_TO_PHYS_WC_OFFSET;
-+}
-+EXPORT_SYMBOL_GPL(phys_wc_to_mtrr_index);
-+
-+#endif /* CONFIG_MTRR */
 -- 
 1.7.10.4
 
