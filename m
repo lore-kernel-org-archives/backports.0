@@ -1,44 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.15.19]:61909 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755543Ab3FQDSe (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 16 Jun 2013 23:18:34 -0400
-Received: from mailout-de.gmx.net ([10.1.76.34]) by mrigmx.server.lan
- (mrigmx001) with ESMTP (Nemesis) id 0MNfPA-1UhIQN03je-007CzD for
- <backports@vger.kernel.org>; Mon, 17 Jun 2013 05:18:33 +0200
-Message-ID: <51BE8008.20302@gmx.de> (sfid-20130617_051836_550903_12BCA8BC)
-Date: Mon, 17 Jun 2013 05:18:32 +0200
-From: Lars Zastrow <Lars.Zastrow@gmx.de>
-MIME-Version: 1.0
-To: backports@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: bug-report: Ralink corp. Device [1814:539a] - Kernel 3.8 +
-Content-Type: text/plain; charset=ISO-8859-15; format=flowed
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:56903 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750846Ab3FCDTN (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 2 Jun 2013 23:19:13 -0400
+Received: by mail-pa0-f45.google.com with SMTP id bi5so139548pad.4
+        for <backports@vger.kernel.org>; Sun, 02 Jun 2013 20:19:12 -0700 (PDT)
+Date: Mon, 3 Jun 2013 10:18:51 +0700
+From: "Anh K. Huynh" <kyanh@viettug.org>
+To: Johannes Berg <johannes@sipsolutions.net>,
+	backports@vger.kernel.org
+Subject: Re: Buid backports-20130528 on ArchLinux: /usr/bin/ld: cannot find
+ -ltinfo
+Message-ID: <20130603101851.30e174b2@icy> (sfid-20130603_051915_277870_41119FDD)
+In-Reply-To: <1370194899.8366.5.camel@jlt4.sipsolutions.net>
+References: <20130602220934.3079ee4f@icy>
+	<1370194899.8366.5.camel@jlt4.sipsolutions.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Dear Team,
+On Sun, 02 Jun 2013 19:41:39 +0200
+Johannes Berg <johannes@sipsolutions.net> wrote:
 
-I'am using the following wireless-network-device:
+> ...
+> > Is the `tinfo` library really needed to run `make menuconfig` when
+> > building backports drivers?
+> 
+> It was needed on some distros, and not on others. This is probably the
+> best option?
+> 
+> diff --git a/backport/kconf/Makefile b/backport/kconf/Makefile
+> ...
 
-Network controller [0280]: Ralink corp. Device [1814:539a]
-Subsystem: Hewlett-Packard Company Device [103c:1839]
-Kernel driver in use: rt2800pci
+Thank you for the explanation. The patch is a very good option.
 
-I had problems with it since I bought my laptop... The driver was 
-unstable with the kernel I used back in autumn 2012. Howeverer, one 
-kernel-update fixed it. Must be something about 3.4x?
-
-It was defenetly working with the Kernels from 3.5 till 3.7 on multible 
-distros. 3.8 was bringing back the old Problems:
-
-- extremly low signal
-- hard to establish a connection to any acess-point.
-
-The last "problematic" kernel I have testet was 3.9.5-1 on Arch-Linux. 
-Compiling the compat-drivers manually did not bring any fix.
-
-I am currently using 3.7.4-1 wich is working.
-
-Best regards
-
-Lars Zastrow
+--
+I am ... 5 dog years old.
