@@ -1,69 +1,33 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:33245 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751568Ab3FAQAn (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 1 Jun 2013 12:00:43 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 05/11] backports: do not backport netif_set_real_num_rx_queues() on RHEL 6.4
-Date: Sat,  1 Jun 2013 18:00:11 +0200
-Message-Id: <1370102417-6711-6-git-send-email-hauke@hauke-m.de> (sfid-20130601_181040_175043_0E4963E3)
-In-Reply-To: <1370102417-6711-1-git-send-email-hauke@hauke-m.de>
-References: <1370102417-6711-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:41194 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751347Ab3FFEqr (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 6 Jun 2013 00:46:47 -0400
+Received: by mail-lb0-f171.google.com with SMTP id v5so2635915lbc.2
+        for <backports@vger.kernel.org>; Wed, 05 Jun 2013 21:46:45 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1370348512-15068-1-git-send-email-johannes@sipsolutions.net>
+References: <1370348512-15068-1-git-send-email-johannes@sipsolutions.net>
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+Date: Wed, 5 Jun 2013 21:46:25 -0700
+Message-ID: <CAB=NE6VF+3jYea3T6iDJD7aBHCkMnt7=TTi3bXjHQ-twMtojWg@mail.gmail.com> (sfid-20130606_064649_075621_879A86F0)
+Subject: Re: [PATCH] gentree/git-tracker: make python 3 compatible
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The in kernel version of netif_set_real_num_rx_queues() on RHEL 6.4
-accesses some other struct members than our backported version. We
-should use that version instead.
+On Tue, Jun 4, 2013 at 5:21 AM, Johannes Berg <johannes@sipsolutions.net> wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+>
+> Make the python scripting compatible with python 3
+> (as tested with python 3.3). The patch library was
+> a bit tricky.
+>
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/netdevice.h |    2 ++
- backport/compat/compat-2.6.35.c             |    2 ++
- 2 files changed, 4 insertions(+)
+Thanks, applied and pushed!
 
-diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
-index e405c6c..aa1dcd6 100644
---- a/backport/backport-include/linux/netdevice.h
-+++ b/backport/backport-include/linux/netdevice.h
-@@ -233,6 +233,7 @@ static inline int register_netdevice_name(struct net_device *dev)
- #define net_ns_type_operations LINUX_BACKPORT(net_ns_type_operations)
- extern struct kobj_ns_type_operations net_ns_type_operations;
- 
-+#if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
- #ifdef CONFIG_RPS
- extern int netif_set_real_num_rx_queues(struct net_device *dev,
- 					unsigned int rxq);
-@@ -243,6 +244,7 @@ static inline int netif_set_real_num_rx_queues(struct net_device *dev,
- 	return 0;
- }
- #endif
-+#endif
- #endif /* < 2.6.37 */
- 
- #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35)
-diff --git a/backport/compat/compat-2.6.35.c b/backport/compat/compat-2.6.35.c
-index cd556d3..f6e2672 100644
---- a/backport/compat/compat-2.6.35.c
-+++ b/backport/compat/compat-2.6.35.c
-@@ -17,6 +17,7 @@
- #include <linux/uaccess.h>
- #include <net/sch_generic.h>
- 
-+#if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
- #ifdef CONFIG_RPS
- int netif_set_real_num_rx_queues(struct net_device *dev, unsigned int rxq)
- {
-@@ -29,6 +30,7 @@ int netif_set_real_num_rx_queues(struct net_device *dev, unsigned int rxq)
- 	return 0;
- }
- #endif
-+#endif
- 
- /*
-  * Routine to help set real_num_tx_queues. To avoid skbs mapped to queues
--- 
-1.7.10.4
-
+  Luis
