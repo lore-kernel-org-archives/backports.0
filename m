@@ -1,229 +1,217 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from amx141.rev.netart.pl ([85.128.206.141]:60877 "EHLO
-	amx141.rev.netart.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750886Ab3FZGuI (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 26 Jun 2013 02:50:08 -0400
-From: =?iso-8859-2?Q?B=B3a=BFej_Szajrych?= <bs@macrix.pl>
-To: <linux-wireless@vger.kernel.org>, <backports@vger.kernel.org>
-Cc: <daw@macrix.pl>, <pg@macrix.de>
-Subject: ADHOC issue with WL12xx driver 
-Date: Wed, 26 Jun 2013 08:50:08 +0200
-Message-ID: <007501ce7239$65e40df0$31ac29d0$@macrix.pl> (sfid-20130626_085011_339539_9C07B5B8)
-MIME-Version: 1.0
-Content-Type: multipart/mixed;
-	boundary="----=_NextPart_000_0076_01CE724A.29736DA0"
+Received: from server19320154104.serverpool.info ([193.201.54.104]:39717 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751162Ab3FFNXd (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 6 Jun 2013 09:23:33 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 1/3] backports: backport some memory functions
+Date: Thu,  6 Jun 2013 15:23:21 +0200
+Message-Id: <1370525003-30531-1-git-send-email-hauke@hauke-m.de> (sfid-20130606_152344_500808_2EC2AD0F)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is a multipart message in MIME format.
+This includes the following functions needed by some drm drivers:
+arch_phys_wc_add()
+arch_phys_wc_del()
+phys_wc_to_mtrr_index()
 
-------=_NextPart_000_0076_01CE724A.29736DA0
-Content-Type: text/plain;
-	charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+This backports the following commit form mainline kernel:
+commit d0d98eedee2178c803dd824bb09f52b0e2ac1811
+Author: Andy Lutomirski <luto@amacapital.net>
+Date:   Mon May 13 23:58:40 2013 +0000
 
-Hi,
+    Add arch_phys_wc_{add, del} to manipulate WC MTRRs if needed
 
-We are encountering serious AD-HOC problems:
-.	Commands are run successfully
-.	The network is theoretically created
-.	It is not visible for other devices and the DMESG show that an error
-occurs and the firmware reboots
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/asm/mtrr.h |   20 ++++++++
+ backport/backport-include/linux/io.h |   36 ++++++++++++++
+ backport/compat/Makefile             |    1 +
+ backport/compat/backport-3.11.c      |   91 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 148 insertions(+)
+ create mode 100644 backport/backport-include/asm/mtrr.h
+ create mode 100644 backport/backport-include/linux/io.h
+ create mode 100644 backport/compat/backport-3.11.c
 
-More info:
-.	The box running Linux is the VAR SOM OM44
-.	The operation system we are using is Ubuntu 12.04 LTS on the
-3.4.0-1490-omap4 kernel.=20
-.	The processor is in the ARM architecture.
-.	WiFi  card: Murata LBEH59XUHC.
-.	WiFi driver: wl12xx, wlcore firmware wl127x-fw-5-sr.bin with Rev
-6.3.10.0.135.
-.	Network connection through the router is working. Network manager is
-used to configure the connection.
-.	Ad-hoc mode connection is not working - the network is not visible
-to other computers.
-
-Commands used to configure the network in adhoc mode are as follows =
-(wlan0
-is the WiFi interface name):
-
-1.	Using iw:
-.	ifconfig wlan0 down
-.	iw wlan0 set type ibss
-.	ifconfig wlan0 up
-.	iw wlan0 ibss join ADHOC_TEST 2437
-
-2.	Using iwconfig
-.	ifconfig wlan0 down=20
-.	iwconfig wlan0 mode ad-hoc
-.	iwconfig wlan0 channel 6
-.	iwconfig wlan0 essid ADHOC_TEST
-.	ifconfig wlan0 up
-
-
-
-Attached you will find the dmesg messages (dmesg.txt).
-Using the latest backport of Compat Wireless backports-3.10-rc1-2 did =
-not
-help.
-Testing with different WiFI dongles gave different results.
-TP Link WN725N that uses the Realtek 8192cu driver and is based on the
-RTL8188CUS-GR chipset is working correctly in AD-HOC mode.
-
-Could you guide us in anyway in resolving this issue?=20
-
-Pozdrawiam, Best Regards,
-
-B=B3a=BFej Szajrych
-Software Developer
-+48 669 710 648
-
-Macrix Polska Sp. Z o. o. Sp. K.
-ul. Podlaska 15=20
-PL 60-623 Poznan=20
-tel.: +48 61 865 47 23=20
-fax: +48 61 865 47 24
-
-
-------=_NextPart_000_0076_01CE724A.29736DA0
-Content-Type: text/plain;
-	name="dmesg.txt"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
-	filename="dmesg.txt"
-
-[ 5138.270751] ---[ end trace da227214a8249879 ]---=0A=
-[ 5138.270782] wlcore: ERROR failed to initiate cmd role enable=0A=
-[ 5138.278594] wlcore: WARNING cmd join failed -110=0A=
-[ 5138.278625] wlcore: Reading FW panic log=0A=
-[ 5138.278625] ------------[ cut here ]------------=0A=
-[ 5138.278686] WARNING: at =
-/home/variscite/Downloads/backports-3.10-rc1-2/drivers/net/wireless/ti/wl=
-core/cmd.c:63 wlcore_cmd_send_failsafe+0x40/0x3a0 [wlcore]()=0A=
-[ 5138.278686] Modules linked in: rtl8192c_common(O) rtlwifi(O) =
-8192cu(O) omapdrm_pvr(O) wl12xx(O) wlcore(O) mac80211(O) cfg80211(O) =
-joydev omapdce(C) rpmsg_omx bnep(O) omaprpc(C) rfcomm(O) omap_remoteproc =
-rpmsg_resmgr_common ppdev remoteproc bluetooth(O) omap_rpmsg_resmgr =
-rpmsg_resmgr virtio_rpmsg_bus lp virtio virtio_ring parport dm_multipath =
-at24 wlcore_sdio(O) compat(O) hid_apple usbhid hid dm_mirror =
-dm_region_hash dm_log btrfs zlib_deflate libcrc32c=0A=
-[ 5138.278778] [<c001bc38>] (unwind_backtrace+0x0/0xec) from =
-[<c05accd0>] (dump_stack+0x20/0x24)=0A=
-[ 5138.278808] [<c05accd0>] (dump_stack+0x20/0x24) from [<c00458d4>] =
-(warn_slowpath_common+0x5c/0x74)=0A=
-[ 5138.278808] [<c00458d4>] (warn_slowpath_common+0x5c/0x74) from =
-[<c0045918>] (warn_slowpath_null+0x2c/0x34)=0A=
-[ 5138.278839] [<c0045918>] (warn_slowpath_null+0x2c/0x34) from =
-[<bf40c304>] (wlcore_cmd_send_failsafe+0x40/0x3a0 [wlcore])=0A=
-[ 5138.278900] [<bf40c304>] (wlcore_cmd_send_failsafe+0x40/0x3a0 =
-[wlcore]) from [<bf40c690>] (wl1271_cmd_send+0x2c/0x38 [wlcore])=0A=
-[ 5138.278930] [<bf40c690>] (wl1271_cmd_send+0x2c/0x38 [wlcore]) from =
-[<bf40edf4>] (wl12xx_cmd_stop_fwlog+0x7c/0xb8 [wlcore])=0A=
-[ 5138.278991] [<bf40edf4>] (wl12xx_cmd_stop_fwlog+0x7c/0xb8 [wlcore]) =
-from [<bf409908>] (wl1271_recovery_work+0xcc/0x3ac [wlcore])=0A=
-[ 5138.279022] [<bf409908>] (wl1271_recovery_work+0xcc/0x3ac [wlcore]) =
-from [<c0061d0c>] (process_one_work+0x294/0x48c)=0A=
-[ 5138.279022] [<c0061d0c>] (process_one_work+0x294/0x48c) from =
-[<c0062214>] (worker_thread+0x144/0x240)=0A=
-[ 5138.279052] [<c0062214>] (worker_thread+0x144/0x240) from =
-[<c0067090>] (kthread+0x9c/0xa8)=0A=
-[ 5138.279052] [<c0067090>] (kthread+0x9c/0xa8) from [<c00144a4>] =
-(kernel_thread_exit+0x0/0x8)=0A=
-[ 5138.279052] ---[ end trace da227214a824987a ]---=0A=
-[ 5138.279083] ------------[ cut here ]------------=0A=
-[ 5138.279083] WARNING: at =
-/home/variscite/Downloads/backports-3.10-rc1-2/drivers/net/wireless/ti/wl=
-core/main.c:790 wl12xx_queue_recovery_work+0x30/0x6c [wlcore]()=0A=
-[ 5138.279113] Modules linked in: rtl8192c_common(O) rtlwifi(O) =
-8192cu(O) omapdrm_pvr(O) wl12xx(O) wlcore(O) mac80211(O) cfg80211(O) =
-joydev omapdce(C) rpmsg_omx bnep(O) omaprpc(C) rfcomm(O) omap_remoteproc =
-rpmsg_resmgr_common ppdev remoteproc bluetooth(O) omap_rpmsg_resmgr =
-rpmsg_resmgr virtio_rpmsg_bus lp virtio virtio_ring parport dm_multipath =
-at24 wlcore_sdio(O) compat(O) hid_apple usbhid hid dm_mirror =
-dm_region_hash dm_log btrfs zlib_deflate libcrc32c=0A=
-[ 5138.279205] [<c001bc38>] (unwind_backtrace+0x0/0xec) from =
-[<c05accd0>] (dump_stack+0x20/0x24)=0A=
-[ 5138.279205] [<c05accd0>] (dump_stack+0x20/0x24) from [<c00458d4>] =
-(warn_slowpath_common+0x5c/0x74)=0A=
-[ 5138.279235] [<c00458d4>] (warn_slowpath_common+0x5c/0x74) from =
-[<c0045918>] (warn_slowpath_null+0x2c/0x34)=0A=
-[ 5138.279266] [<c0045918>] (warn_slowpath_null+0x2c/0x34) from =
-[<bf4093f8>] (wl12xx_queue_recovery_work+0x30/0x6c [wlcore])=0A=
-[ 5138.279296] [<bf4093f8>] (wl12xx_queue_recovery_work+0x30/0x6c =
-[wlcore]) from [<bf40c644>] (wlcore_cmd_send_failsafe+0x380/0x3a0 =
-[wlcore])=0A=
-[ 5138.279357] [<bf40c644>] (wlcore_cmd_send_failsafe+0x380/0x3a0 =
-[wlcore]) from [<bf40c690>] (wl1271_cmd_send+0x2c/0x38 [wlcore])=0A=
-[ 5138.279388] [<bf40c690>] (wl1271_cmd_send+0x2c/0x38 [wlcore]) from =
-[<bf40edf4>] (wl12xx_cmd_stop_fwlog+0x7c/0xb8 [wlcore])=0A=
-[ 5138.279418] [<bf40edf4>] (wl12xx_cmd_stop_fwlog+0x7c/0xb8 [wlcore]) =
-from [<bf409908>] (wl1271_recovery_work+0xcc/0x3ac [wlcore])=0A=
-[ 5138.279449] [<bf409908>] (wl1271_recovery_work+0xcc/0x3ac [wlcore]) =
-from [<c0061d0c>] (process_one_work+0x294/0x48c)=0A=
-[ 5138.279479] [<c0061d0c>] (process_one_work+0x294/0x48c) from =
-[<c0062214>] (worker_thread+0x144/0x240)=0A=
-[ 5138.279479] [<c0062214>] (worker_thread+0x144/0x240) from =
-[<c0067090>] (kthread+0x9c/0xa8)=0A=
-[ 5138.279510] [<c0067090>] (kthread+0x9c/0xa8) from [<c00144a4>] =
-(kernel_thread_exit+0x0/0x8)=0A=
-[ 5138.279510] ---[ end trace da227214a824987b ]---=0A=
-[ 5138.279510] wlcore: ERROR failed to send stop firmware logger command=0A=
-[ 5138.289611] wlcore: Hardware recovery in progress. FW ver: Rev =
-6.3.10.0.133=0A=
-[ 5138.289916] wlcore: pc: 0x1b6d6, hint_sts: 0x00000000 count: 574=0A=
-[ 5138.290161] wlcore: down=0A=
-[ 5138.292236] ieee80211 phy0: Hardware restart was requested=0A=
-[ 5138.876770] wlcore: firmware booted (Rev 6.3.10.0.133)=0A=
-[ 5140.889648] wlcore: ERROR command complete timeout=0A=
-[ 5140.894653] ------------[ cut here ]------------=0A=
-[ 5140.894714] WARNING: at =
-/home/variscite/Downloads/backports-3.10-rc1-2/drivers/net/wireless/ti/wl=
-core/main.c:790 wl12xx_queue_recovery_work+0x30/0x6c [wlcore]()=0A=
-[ 5140.894714] Modules linked in: rtl8192c_common(O) rtlwifi(O) =
-8192cu(O) omapdrm_pvr(O) wl12xx(O) wlcore(O) mac80211(O) cfg80211(O) =
-joydev omapdce(C) rpmsg_omx bnep(O) omaprpc(C) rfcomm(O) omap_remoteproc =
-rpmsg_resmgr_common ppdev remoteproc bluetooth(O) omap_rpmsg_resmgr =
-rpmsg_resmgr virtio_rpmsg_bus lp virtio virtio_ring parport dm_multipath =
-at24 wlcore_sdio(O) compat(O) hid_apple usbhid hid dm_mirror =
-dm_region_hash dm_log btrfs zlib_deflate libcrc32c=0A=
-[ 5140.894836] [<c001bc38>] (unwind_backtrace+0x0/0xec) from =
-[<c05accd0>] (dump_stack+0x20/0x24)=0A=
-[ 5140.894866] [<c05accd0>] (dump_stack+0x20/0x24) from [<c00458d4>] =
-(warn_slowpath_common+0x5c/0x74)=0A=
-[ 5140.894866] [<c00458d4>] (warn_slowpath_common+0x5c/0x74) from =
-[<c0045918>] (warn_slowpath_null+0x2c/0x34)=0A=
-[ 5140.894897] [<c0045918>] (warn_slowpath_null+0x2c/0x34) from =
-[<bf4093f8>] (wl12xx_queue_recovery_work+0x30/0x6c [wlcore])=0A=
-[ 5140.894958] [<bf4093f8>] (wl12xx_queue_recovery_work+0x30/0x6c =
-[wlcore]) from [<bf40c644>] (wlcore_cmd_send_failsafe+0x380/0x3a0 =
-[wlcore])=0A=
-[ 5140.894989] [<bf40c644>] (wlcore_cmd_send_failsafe+0x380/0x3a0 =
-[wlcore]) from [<bf40c690>] (wl1271_cmd_send+0x2c/0x38 [wlcore])=0A=
-[ 5140.895050] [<bf40c690>] (wl1271_cmd_send+0x2c/0x38 [wlcore]) from =
-[<bf40d6a0>] (wl12xx_cmd_role_start_ibss+0x174/0x1c8 [wlcore])=0A=
-[ 5140.895080] [<bf40d6a0>] (wl12xx_cmd_role_start_ibss+0x174/0x1c8 =
-[wlcore]) from [<bf407e88>] (wl1271_op_bss_info_changed+0x834/0xcb4 =
-[wlcore])=0A=
-[ 5140.895202] [<bf407e88>] (wl1271_op_bss_info_changed+0x834/0xcb4 =
-[wlcore]) from [<bf345be0>] =
-(ieee80211_bss_info_change_notify+0x198/0x240 [mac80211])=0A=
-[ 5140.895416] [<bf345be0>] =
-(ieee80211_bss_info_change_notify+0x198/0x240 [mac80211]) from =
-[<bf36db98>] (ieee80211_reconfig+0x1630/0x1e18 [mac80211])=0A=
-[ 5140.895568] [<bf36db98>] (ieee80211_reconfig+0x1630/0x1e18 =
-[mac80211]) from [<bf34518c>] (ieee80211_restart_work+0x80/0x94 =
-[mac80211])=0A=
-[ 5140.895660] [<bf34518c>] (ieee80211_restart_work+0x80/0x94 =
-[mac80211]) from [<c0061d0c>] (process_one_work+0x294/0x48c)=0A=
-[ 5140.895690] [<c0061d0c>] (process_one_work+0x294/0x48c) from =
-[<c0062214>] (worker_thread+0x144/0x240)=0A=
-[ 5140.895690] [<c0062214>] (worker_thread+0x144/0x240) from =
-[<c0067090>] (kthread+0x9c/0xa8)=0A=
-[ 5140.895721] [<c0067090>] (kthread+0x9c/0xa8) from [<c00144a4>] =
-(kernel_thread_exit+0x0/0x8)=0A=
-[ 5140.895721] ---[ end trace da227214a824987c ]---=0A=
-[ 5140.895751] wlcore: ERROR failed to initiate cmd role enable=0A=
-[ 5140.903717] wlcore: WARNING cmd join failed -110=0A=
-[ 5140.903778] wlcore: Reading FW panic log
-------=_NextPart_000_0076_01CE724A.29736DA0--
+diff --git a/backport/backport-include/asm/mtrr.h b/backport/backport-include/asm/mtrr.h
+new file mode 100644
+index 0000000..cf0f6fd
+--- /dev/null
++++ b/backport/backport-include/asm/mtrr.h
+@@ -0,0 +1,20 @@
++#ifndef __BACKPORT_ASM_MTRR_H
++#define __BACKPORT_ASM_MTRR_H
++#include_next <asm/mtrr.h>
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0))
++/*
++ * The following functions are for use by other drivers that cannot use
++ * arch_phys_wc_add and arch_phys_wc_del.
++ */
++#ifdef CONFIG_MTRR
++extern int phys_wc_to_mtrr_index(int handle);
++#else
++static inline int phys_wc_to_mtrr_index(int handle)
++{
++	return -1;
++}
++#endif /* CONFIG_MTRR */
++#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)) */
++
++#endif /* __BACKPORT_ASM_MTRR_H */
+diff --git a/backport/backport-include/linux/io.h b/backport/backport-include/linux/io.h
+new file mode 100644
+index 0000000..9a5b308
+--- /dev/null
++++ b/backport/backport-include/linux/io.h
+@@ -0,0 +1,36 @@
++#ifndef __BACKPORT_LINUX_IO_H
++#define __BACKPORT_LINUX_IO_H
++#include_next <linux/io.h>
++
++/*
++ * Some systems (x86 without PAT) have a somewhat reliable way to mark a
++ * physical address range such that uncached mappings will actually
++ * end up write-combining.  This facility should be used in conjunction
++ * with pgprot_writecombine, ioremap-wc, or set_memory_wc, since it has
++ * no effect if the per-page mechanisms are functional.
++ * (On x86 without PAT, these functions manipulate MTRRs.)
++ *
++ * arch_phys_del_wc(0) or arch_phys_del_wc(any error code) is guaranteed
++ * to have no effect.
++ */
++#ifndef arch_phys_wc_add
++#ifdef CONFIG_MTRR
++extern int __must_check arch_phys_wc_add(unsigned long base,
++					 unsigned long size);
++extern void arch_phys_wc_del(int handle);
++#else
++static inline int __must_check arch_phys_wc_add(unsigned long base,
++						unsigned long size)
++{
++	return 0;  /* It worked (i.e. did nothing). */
++}
++
++static inline void arch_phys_wc_del(int handle)
++{
++}
++#endif /* CONFIG_MTRR */
++
++#define arch_phys_wc_add arch_phys_wc_add
++#endif
++
++#endif /* __BACKPORT_LINUX_IO_H */
+diff --git a/backport/compat/Makefile b/backport/compat/Makefile
+index 18df156..252290e 100644
+--- a/backport/compat/Makefile
++++ b/backport/compat/Makefile
+@@ -35,6 +35,7 @@ compat-$(CPTCFG_BACKPORT_KERNEL_3_7) += compat-3.7.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_3_8) += compat-3.8.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_3_9) += compat-3.9.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_3_10) += backport-3.10.o
++compat-$(CPTCFG_BACKPORT_KERNEL_3_11) += backport-3.11.o
+ 
+ compat-$(CPTCFG_BACKPORT_BUILD_KFIFO) += kfifo.o
+ compat-$(CPTCFG_BACKPORT_BUILD_GENERIC_ATOMIC64) += compat_atomic.o
+diff --git a/backport/compat/backport-3.11.c b/backport/compat/backport-3.11.c
+new file mode 100644
+index 0000000..72e0800
+--- /dev/null
++++ b/backport/compat/backport-3.11.c
+@@ -0,0 +1,91 @@
++/*
++ * Copyright (c) 2013  Hauke Mehrtens <hauke@hauke-m.de>
++ *
++ * Compatibility file for Linux wireless for kernels 3.11.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/export.h>
++
++#ifdef CONFIG_MTRR
++
++#include <asm/mtrr.h>
++#include <asm/cpufeature.h>
++#include <linux/io.h>
++
++/* arch_phys_wc_add returns an MTRR register index plus this offset. */
++#define MTRR_TO_PHYS_WC_OFFSET 1000
++
++/**
++ * arch_phys_wc_add - add a WC MTRR and handle errors if PAT is unavailable
++ * @base: Physical base address
++ * @size: Size of region
++ *
++ * If PAT is available, this does nothing.  If PAT is unavailable, it
++ * attempts to add a WC MTRR covering size bytes starting at base and
++ * logs an error if this fails.
++ *
++ * Drivers must store the return value to pass to mtrr_del_wc_if_needed,
++ * but drivers should not try to interpret that return value.
++ */
++int arch_phys_wc_add(unsigned long base, unsigned long size)
++{
++	int ret;
++
++#if defined(CONFIG_X86_PAT)
++	if (cpu_has_pat)
++		return 0;
++#endif
++
++	ret = mtrr_add(base, size, MTRR_TYPE_WRCOMB, true);
++	if (ret < 0) {
++		pr_warn("Failed to add WC MTRR for [%p-%p]; performance may suffer.",
++			(void *)base, (void *)(base + size - 1));
++		return ret;
++	}
++	return ret + MTRR_TO_PHYS_WC_OFFSET;
++}
++EXPORT_SYMBOL(arch_phys_wc_add);
++
++/*
++ * arch_phys_wc_del - undoes arch_phys_wc_add
++ * @handle: Return value from arch_phys_wc_add
++ *
++ * This cleans up after mtrr_add_wc_if_needed.
++ *
++ * The API guarantees that mtrr_del_wc_if_needed(error code) and
++ * mtrr_del_wc_if_needed(0) do nothing.
++ */
++void arch_phys_wc_del(int handle)
++{
++	if (handle >= 1) {
++		WARN_ON(handle < MTRR_TO_PHYS_WC_OFFSET);
++		mtrr_del(handle - MTRR_TO_PHYS_WC_OFFSET, 0, 0);
++	}
++}
++EXPORT_SYMBOL(arch_phys_wc_del);
++
++/*
++ * phys_wc_to_mtrr_index - translates arch_phys_wc_add's return value
++ * @handle: Return value from arch_phys_wc_add
++ *
++ * This will turn the return value from arch_phys_wc_add into an mtrr
++ * index suitable for debugging.
++ *
++ * Note: There is no legitimate use for this function, except possibly
++ * in printk line.  Alas there is an illegitimate use in some ancient
++ * drm ioctls.
++ */
++int phys_wc_to_mtrr_index(int handle)
++{
++	if (handle < MTRR_TO_PHYS_WC_OFFSET)
++		return -1;
++	else
++		return handle - MTRR_TO_PHYS_WC_OFFSET;
++}
++EXPORT_SYMBOL_GPL(phys_wc_to_mtrr_index);
++
++#endif /* CONFIG_MTRR */
+-- 
+1.7.10.4
 
