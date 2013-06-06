@@ -1,35 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f54.google.com ([209.85.215.54]:46720 "EHLO
-	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752481Ab3FZQuU (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 26 Jun 2013 12:50:20 -0400
-Received: by mail-la0-f54.google.com with SMTP id ec20so14050727lab.13
-        for <backports@vger.kernel.org>; Wed, 26 Jun 2013 09:50:19 -0700 (PDT)
+Received: from mail-la0-f53.google.com ([209.85.215.53]:35890 "EHLO
+	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756409Ab3FFDst (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 5 Jun 2013 23:48:49 -0400
+Received: by mail-la0-f53.google.com with SMTP id fs12so651290lab.40
+        for <backports@vger.kernel.org>; Wed, 05 Jun 2013 20:48:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAJqaZwzigpvYhzw2i1b9exxXq9RE7KnMY8CzY_k1d1tYR=u1kA@mail.gmail.com>
-References: <CAJqaZwyOqP+2x7tfzd5Q=Ugt4c3Zn-JU_pjOH-6ypqpWdS--hg@mail.gmail.com>
- <CAB=NE6X17uSMo7B_Gf9uTBn4be45HBupvqwXfZHfiOrVxicF=A@mail.gmail.com>
- <CAJqaZwxoKwwXX2ROh2XZ113Fbi+7GO_qnM03ZYvnoGmCBVdXNQ@mail.gmail.com> <CAJqaZwzigpvYhzw2i1b9exxXq9RE7KnMY8CzY_k1d1tYR=u1kA@mail.gmail.com>
+In-Reply-To: <1370027724-22627-3-git-send-email-hauke@hauke-m.de>
+References: <1370027724-22627-1-git-send-email-hauke@hauke-m.de> <1370027724-22627-3-git-send-email-hauke@hauke-m.de>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Wed, 26 Jun 2013 09:49:56 -0700
-Message-ID: <CAB=NE6VhhkRSkXRc1sYDkMXThYi9GDOa8JjRUVu=SgELUdDuQg@mail.gmail.com> (sfid-20130626_185023_240642_C12FFFDD)
-Subject: Re: [PATCH v3] backports: re-introduce make uninstall
-To: ASIC Felix <ic.felix@gmail.com>
-Cc: do-not <mcgrof@kernel.org>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Wed, 5 Jun 2013 20:48:28 -0700
+Message-ID: <CAB=NE6Xn89ViER7mTg_H-ANXkeMpxciN0X91Va8MAt9BR2sKHA@mail.gmail.com> (sfid-20130606_054855_488750_A8BE6FFA)
+Subject: Re: [PATCH 3/3] backports: refresh patches for next-20130531
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Jun 20, 2013 at 10:02 PM, ASIC Felix <ic.felix@gmail.com> wrote:
-> Signed-off-by: Felix Bitterli <ic.felix@gmail.com>
+On Fri, May 31, 2013 at 12:15 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> 1   2.6.24              [  OK  ]
+> 2   2.6.25              [  OK  ]
+> 3   2.6.26              [  OK  ]
+> 4   2.6.27              [  OK  ]
+> 5   2.6.28              [  OK  ]
+> 6   2.6.29              [  OK  ]
+> 7   2.6.30              [  OK  ]
+> 8   2.6.31              [  OK  ]
+> 9   2.6.32              [  OK  ]
+> 10  2.6.33              [  OK  ]
+> 11  2.6.34              [  OK  ]
+> 12  2.6.35              [  OK  ]
+> 13  2.6.36              [  OK  ]
+> 14  2.6.37              [  OK  ]
+> 15  2.6.38              [  OK  ]
+> 16  2.6.39              [  OK  ]
+> 17  3.0.79              [  OK  ]
+> 18  3.1.10              [  OK  ]
+> 19  3.10-rc1            [  OK  ]
+> 20  3.2.45              [  OK  ]
+> 21  3.3.8               [  OK  ]
+> 22  3.4.46              [  OK  ]
+> 23  3.5.7               [  OK  ]
+> 24  3.6.11              [  OK  ]
+> 25  3.7.10              [  OK  ]
+> 26  3.8.13              [  OK  ]
+> 27  3.9.3               [  OK  ]
+>
+> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 
-Great! I just adjusted the commit log with this below, applied and
-pushed! Thanks!
-
-    This approach only uninstalls modules you have built
-    previously on your current build directory for backports.
-    If this requires adjustments then we'll have to just have
-    to use our own new backports KMODDIR.
+Thanks, applied and pushed!
 
   Luis
