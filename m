@@ -1,41 +1,136 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:39354 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:51500 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751048Ab3FOPiW (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 15 Jun 2013 11:38:22 -0400
+	id S1753649Ab3FIOn1 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 9 Jun 2013 10:43:27 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/8] backports: alx driver needs at least kernel 2.6.31
-Date: Sat, 15 Jun 2013 17:37:52 +0200
-Message-Id: <1371310678-26491-3-git-send-email-hauke@hauke-m.de> (sfid-20130615_173824_170541_3E813838)
-In-Reply-To: <1371310678-26491-1-git-send-email-hauke@hauke-m.de>
-References: <1371310678-26491-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH] backprots: add default config with all wifi drivers
+Date: Sun,  9 Jun 2013 16:43:19 +0200
+Message-Id: <1370789000-31032-1-git-send-email-hauke@hauke-m.de> (sfid-20130609_164330_561785_1F7BD70A)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The alx driver uses drivers/net/mdio.c which was added with kernel
-2.6.31. Build the alx driver only on this kernel version or a more
-recent one.
+This default config contains all wifi drivers.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- dependencies |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ backport/defconfigs/wifi |  105 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 105 insertions(+)
+ create mode 100644 backport/defconfigs/wifi
 
-diff --git a/dependencies b/dependencies
-index ea75be8..9c55c69 100644
---- a/dependencies
-+++ b/dependencies
-@@ -15,7 +15,7 @@ ATH6KL 2.6.27
- WIL6210 2.6.31
- 
- ATL1C 2.6.28
--ALX 2.6.28
-+ALX 2.6.31
- 
- LIBERTAS 2.6.27
- LIBERTAS_THINFIRM 2.6.27
+diff --git a/backport/defconfigs/wifi b/backport/defconfigs/wifi
+new file mode 100644
+index 0000000..d55849b
+--- /dev/null
++++ b/backport/defconfigs/wifi
+@@ -0,0 +1,105 @@
++CPTCFG_ADM8211=m
++CPTCFG_AR5523=m
++CPTCFG_AT76C50X_USB=m
++CPTCFG_ATH5K=m
++CPTCFG_ATH6KL=m
++CPTCFG_ATH6KL_SDIO=m
++CPTCFG_ATH6KL_USB=m
++CPTCFG_ATH9K_HTC=m
++CPTCFG_ATH9K=m
++CPTCFG_ATH_CARDS=m
++CPTCFG_B43LEGACY=m
++CPTCFG_B43=m
++CPTCFG_B43_PCMCIA=y
++CPTCFG_B43_PHY_HT=y
++CPTCFG_B43_PHY_N=y
++CPTCFG_B43_SDIO=y
++CPTCFG_BCMA_DRIVER_GPIO=y
++CPTCFG_BCMA_HOST_PCI=y
++CPTCFG_BCMA=m
++CPTCFG_BRCMFMAC=m
++CPTCFG_BRCMFMAC_USB=y
++CPTCFG_BRCMSMAC=m
++CPTCFG_CARL9170=m
++CPTCFG_CFG80211=m
++CPTCFG_CFG80211_WEXT=y
++CPTCFG_HERMES=m
++CPTCFG_HERMES_PRISM=y
++CPTCFG_IPW2100=m
++CPTCFG_IPW2100_MONITOR=y
++CPTCFG_IPW2200=m
++CPTCFG_IPW2200_MONITOR=y
++CPTCFG_IPW2200_PROMISCUOUS=y
++CPTCFG_IPW2200_QOS=y
++CPTCFG_IPW2200_RADIOTAP=y
++CPTCFG_IWL3945=m
++CPTCFG_IWL4965=m
++CPTCFG_IWLDVM=m
++CPTCFG_IWLMVM=m
++CPTCFG_IWLWIFI=m
++CPTCFG_IWLWIFI_P2P=y
++CPTCFG_LIBERTAS_CS=m
++CPTCFG_LIBERTAS=m
++CPTCFG_LIBERTAS_MESH=y
++CPTCFG_LIBERTAS_SDIO=m
++CPTCFG_LIBERTAS_SPI=m
++CPTCFG_LIBERTAS_THINFIRM=m
++CPTCFG_LIBERTAS_THINFIRM_USB=m
++CPTCFG_LIBERTAS_USB=m
++CPTCFG_MAC80211_HWSIM=m
++CPTCFG_MAC80211_LEDS=y
++CPTCFG_MAC80211=m
++CPTCFG_MAC80211_MESH=y
++CPTCFG_MWIFIEX=m
++CPTCFG_MWIFIEX_PCIE=m
++CPTCFG_MWIFIEX_SDIO=m
++CPTCFG_MWIFIEX_USB=m
++CPTCFG_MWL8K=m
++CPTCFG_NORTEL_HERMES=m
++CPTCFG_ORINOCO_USB=m
++CPTCFG_P54_COMMON=m
++CPTCFG_P54_PCI=m
++CPTCFG_P54_SPI=m
++CPTCFG_P54_USB=m
++CPTCFG_PCI_HERMES=m
++CPTCFG_PCMCIA_HERMES=m
++CPTCFG_PCMCIA_SPECTRUM=m
++CPTCFG_PLX_HERMES=m
++CPTCFG_RT2400PCI=m
++CPTCFG_RT2500PCI=m
++CPTCFG_RT2500USB=m
++CPTCFG_RT2800PCI=m
++CPTCFG_RT2800USB=m
++CPTCFG_RT2800USB_RT53XX=y
++CPTCFG_RT2800USB_RT55XX=y
++CPTCFG_RT2800USB_UNKNOWN=y
++CPTCFG_RT2X00=m
++CPTCFG_RT61PCI=m
++CPTCFG_RT73USB=m
++CPTCFG_RTL8180=m
++CPTCFG_RTL8187=m
++CPTCFG_RTL8188EE=m
++CPTCFG_RTL8192C_COMMON=m
++CPTCFG_RTL8192CE=m
++CPTCFG_RTL8192CU=m
++CPTCFG_RTL8192DE=m
++CPTCFG_RTL8192SE=m
++CPTCFG_RTL8723AE=m
++CPTCFG_RTLWIFI=m
++CPTCFG_SSB=m
++CPTCFG_SSB_PCMCIAHOST=y
++CPTCFG_SSB_SDIOHOST=y
++CPTCFG_TMD_HERMES=m
++CPTCFG_USB_NET_RNDIS_WLAN=m
++CPTCFG_WIL6210=m
++CPTCFG_WL1251=m
++CPTCFG_WL1251_SDIO=m
++CPTCFG_WL1251_SPI=m
++CPTCFG_WL12XX=m
++CPTCFG_WL18XX=m
++CPTCFG_WLAN=y
++CPTCFG_WLCORE=m
++CPTCFG_WLCORE_SDIO=m
++CPTCFG_WLCORE_SPI=m
++CPTCFG_WL_TI=y
++CPTCFG_ZD1211RW=m
 -- 
 1.7.10.4
 
