@@ -1,39 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f172.google.com ([209.85.192.172]:32919 "EHLO
-	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755202Ab3FCAAf (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 2 Jun 2013 20:00:35 -0400
-Received: by mail-pd0-f172.google.com with SMTP id t10so1293076pdi.3
-        for <backports@vger.kernel.org>; Sun, 02 Jun 2013 17:00:35 -0700 (PDT)
-Date: Mon, 3 Jun 2013 07:00:14 +0700
-From: "Anh K. Huynh" <kyanh@viettug.org>
-To: Thomas Pedersen <thomas@cozybit.com>, backports@vger.kernel.org
-Subject: Re: [PATCH] backports: specify python2.7 for gentree.py
-Message-ID: <20130603070014.57b6119c@icy> (sfid-20130603_020037_730435_01737C3A)
-In-Reply-To: <1370214733-29993-1-git-send-email-thomas@cozybit.com>
-References: <1370214733-29993-1-git-send-email-thomas@cozybit.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Received: from mms3.broadcom.com ([216.31.210.19]:2029 "EHLO mms3.broadcom.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757669Ab3FMUAh (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 13 Jun 2013 16:00:37 -0400
+Message-ID: <51BA24D8.4090805@broadcom.com> (sfid-20130613_220041_268940_EB2EFFA3)
+Date: Thu, 13 Jun 2013 22:00:24 +0200
+From: "Arend van Spriel" <arend@broadcom.com>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: [PATCH] compat-drivers: do not disable bcma when selecting
+ brcmsmac
+References: <1370806659-2875-1-git-send-email-arend@broadcom.com>
+ <CAB=NE6WOs9+rVAAu0g_19BeXWnJsT2SRNZ6FdTZxAvT7JU5eEw@mail.gmail.com>
+In-Reply-To: <CAB=NE6WOs9+rVAAu0g_19BeXWnJsT2SRNZ6FdTZxAvT7JU5eEw@mail.gmail.com>
+Content-Type: text/plain;
+ charset=utf-8;
+ format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
+On 06/13/2013 09:39 PM, Luis R. Rodriguez wrote:
+> On Sun, Jun 9, 2013 at 12:37 PM, Arend van Spriel <arend@broadcom.com> wrote:
+>> The brcmsmac driver depends on the bcma bus driver these days. However,
+>> the driver-select script disabled bcma when selecting brcmsmac (or
+>> the brcm80211 driver group). This leads to mismatch between kernel
+>> bcma and backport brcmsmac. For the 3.9 backport this result in:
+>>
+>> [10298.323094] brcmsmac: Unknown symbol bcma_pmu_spuravoid_pllupdate (err 0)
+>>
+>> as this function was added to bcma.
+>>
+>> Signed-off-by: Arend van Spriel <arend@broadcom.com>
+>
+> Thanks Arend but we're now using a new tree:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/backports.git
+>
+>    Luis
+>
 
-On Sun,  2 Jun 2013 16:12:13 -0700
-Thomas Pedersen <thomas@cozybit.com> wrote:
+I was wondering about those, but the twiki still referred to the ones on 
+github. So you mean to say this change is already done in the kernel.org 
+repo?
 
-> Apparently gentree.py uses some python2.7 specific syntax. Fixes:
-> 
-> ./gentree.py -h
->   File "./gentree.py", line 72
->     except OSError, e:
->                   ^
-> SyntaxError: invalid syntax
-> 
-> On distros where /usr/bin/python points to python3.
+There are a couple of repositories: backports, compat-drivers, and 
+compat. I followed the backports twiki and it does not mention the 
+backports one or did I overlook?
 
-FYI, on ArchLinux, `/usr/bin/python` is 3.0, and the old Python
-(installed by the package `python2`) uses `/usr/bin/python2`.
+Gr. AvS
 
---
-I am ... 5 dog years old.
