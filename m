@@ -1,74 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:33253 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:39351 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751593Ab3FAQAp (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 1 Jun 2013 12:00:45 -0400
+	id S1751048Ab3FOPiU (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 15 Jun 2013 11:38:20 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 06/11] backports: do not backport shmem_read_mapping_page_gfp() on RHEL 6.4
-Date: Sat,  1 Jun 2013 18:00:12 +0200
-Message-Id: <1370102417-6711-7-git-send-email-hauke@hauke-m.de> (sfid-20130601_181040_779061_A2453BED)
-In-Reply-To: <1370102417-6711-1-git-send-email-hauke@hauke-m.de>
-References: <1370102417-6711-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 0/8] backports: build Ethernet driver on < 3.2 and add ieee802154
+Date: Sat, 15 Jun 2013 17:37:50 +0200
+Message-Id: <1371310678-26491-1-git-send-email-hauke@hauke-m.de> (sfid-20130615_173823_555411_EBD86C1D)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-shmem_read_mapping_page_gfp() looks different in the RHEL 6.4 source
-code and we should use that version instead.
-This also adds a missing include to prefix this function with backport_.
+The first 4 patches are making the Ethernet driver compile on kernel 
+versions < 3.2. The last 4 patches are adding support for ieee802154.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/shmem_fs.h |    2 ++
- backport/compat/compat-3.0.c               |    3 +++
- 2 files changed, 5 insertions(+)
+Hauke Mehrtens (8):
+  backports: move netif_set_real_num_rx_queues() to compat-2.6.37.c
+  backports: alx driver needs at least kernel 2.6.31
+  backports: build ATL1E only on kernel > 2.6.26
+  backports: add NET_CORE config option
+  backports: use the given parameter in NETLINK_CB_PORTID()
+  backports: add module_spi_driver
+  backports: add cast in class_find_device()
+  backports: add ieee802154
 
-diff --git a/backport/backport-include/linux/shmem_fs.h b/backport/backport-include/linux/shmem_fs.h
-index f32de7a..4d3964e 100644
---- a/backport/backport-include/linux/shmem_fs.h
-+++ b/backport/backport-include/linux/shmem_fs.h
-@@ -3,6 +3,7 @@
- #include_next <linux/shmem_fs.h>
- 
- 
-+#if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0)
- /* This pulls-in a lot of non-exported symbol backports
-  * on kernels older than 2.6.32. There's no harm for not
-@@ -33,5 +34,6 @@ static inline struct page *shmem_read_mapping_page(
- }
- #endif
- #endif
-+#endif
- 
- #endif /* __BACKPORT_LINUX_SHMEM_FS_H */
-diff --git a/backport/compat/compat-3.0.c b/backport/compat/compat-3.0.c
-index e841373..f52392c 100644
---- a/backport/compat/compat-3.0.c
-+++ b/backport/compat/compat-3.0.c
-@@ -12,11 +12,13 @@
- #include <linux/compat.h>
- #include <linux/if_ether.h>
- 
-+#if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
- /* This pulls-in a lot of non-exported symbol backports
-  * on kernels older than 2.6.32. There's no harm for not
-  * making this available on kernels < 2.6.32. */
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32))
- #include <linux/pagemap.h>
-+#include <linux/shmem_fs.h>
- 
- /* This backports:
-  *
-@@ -34,6 +36,7 @@ struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
- }
- EXPORT_SYMBOL_GPL(shmem_read_mapping_page_gfp);
- #endif
-+#endif
- 
- int mac_pton(const char *s, u8 *mac)
- {
+ backport/Kconfig                                   |    6 +++
+ backport/Makefile.kernel                           |    4 ++
+ backport/backport-include/linux/device.h           |    2 +-
+ backport/backport-include/linux/if_arp.h           |   10 +++++
+ backport/backport-include/linux/netlink.h          |    4 +-
+ backport/backport-include/linux/spi/spi.h          |   20 ++++++++++
+ backport/compat/compat-2.6.35.c                    |   15 --------
+ backport/compat/compat-2.6.37.c                    |   27 +++++++++++++
+ backport/defconfigs/ieee802154                     |    8 ++++
+ copy-list                                          |   11 ++++++
+ dependencies                                       |    6 ++-
+ .../0001-netlink-portid/ieee802154.patch           |   40 ++++++++++++++++++++
+ 12 files changed, 134 insertions(+), 19 deletions(-)
+ create mode 100644 backport/backport-include/linux/if_arp.h
+ create mode 100644 backport/backport-include/linux/spi/spi.h
+ create mode 100644 backport/defconfigs/ieee802154
+ create mode 100644 patches/collateral-evolutions/ieee802154/0001-netlink-portid/ieee802154.patch
+
 -- 
 1.7.10.4
 
