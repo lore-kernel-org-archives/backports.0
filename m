@@ -1,54 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:61464 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934979Ab3FSV74 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 19 Jun 2013 17:59:56 -0400
-Received: by mail-lb0-f173.google.com with SMTP id v1so5205841lbd.18
-        for <backports@vger.kernel.org>; Wed, 19 Jun 2013 14:59:54 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <CAJqaZwyOqP+2x7tfzd5Q=Ugt4c3Zn-JU_pjOH-6ypqpWdS--hg@mail.gmail.com>
-References: <CAJqaZwyOqP+2x7tfzd5Q=Ugt4c3Zn-JU_pjOH-6ypqpWdS--hg@mail.gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Wed, 19 Jun 2013 14:59:34 -0700
-Message-ID: <CAB=NE6X17uSMo7B_Gf9uTBn4be45HBupvqwXfZHfiOrVxicF=A@mail.gmail.com> (sfid-20130619_235958_393252_1698FB80)
-Subject: Re: [PATCH v2] backports: re-introduce make uninstall
-To: ASIC Felix <ic.felix@gmail.com>
-Cc: do-not <mcgrof@kernel.org>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from server19320154104.serverpool.info ([193.201.54.104]:39381 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751048Ab3FOPim (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 15 Jun 2013 11:38:42 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 7/8] backports: add cast in class_find_device()
+Date: Sat, 15 Jun 2013 17:37:57 +0200
+Message-Id: <1371310678-26491-8-git-send-email-hauke@hauke-m.de> (sfid-20130615_173843_618534_BA1FEF48)
+In-Reply-To: <1371310678-26491-1-git-send-email-hauke@hauke-m.de>
+References: <1371310678-26491-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, Jun 16, 2013 at 4:52 PM, ASIC Felix <ic.felix@gmail.com> wrote:
-> diff --git a/backport/scripts/uninstall.sh b/backport/scripts/uninstall.sh
-> new file mode 100755
-> index 0000000..2dcf4da
-> --- /dev/null
-> +++ b/backport/scripts/uninstall.sh
-> @@ -0,0 +1,17 @@
-> +#!/bin/bash
-> +
-> +set -e
-> +
-> +source ./scripts/mod_helpers.sh
-> +
-> +if test "$(mod_filename mac80211)" = "mac80211.ko.gz" ; then
-> +       compr=".gz"
-> +else
-> +       compr=""
-> +fi
-> +
-> +for driver in $(find -type f -name *.ko); do
+Also type of the 3 parameter of class_find_device() changed from void *
+to const void *, add a cast to prevent a warning.
 
-Looks good except for the path here, as it is this would search from
-the current path, no?
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/device.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +       mod_name=$KLIB"updates/"$driver$compr
+diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
+index 4c0adb7..c2f80e2 100644
+--- a/backport/backport-include/linux/device.h
++++ b/backport/backport-include/linux/device.h
+@@ -15,7 +15,7 @@
+  */
+ typedef int (backport_device_find_function_t)(struct device *, void *);
+ #define class_find_device(cls, start, idx, fun) \
+-	class_find_device((cls), (start), (idx),\
++	class_find_device((cls), (start), (void *)(idx),\
+ 			  (backport_device_find_function_t *)(fun))
+ #endif
+ 
+-- 
+1.7.10.4
 
-and to make things clearer, can you do ${driver}${compr}
-
-> +       echo UNINSTALLING $mod_name
-
-No need for caps please.
-
-  Luis
