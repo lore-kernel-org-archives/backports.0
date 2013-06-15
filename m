@@ -1,38 +1,58 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:52395 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750818Ab3FCHwo (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 3 Jun 2013 03:52:44 -0400
-Message-ID: <1370245958.8227.0.camel@jlt4.sipsolutions.net> (sfid-20130603_095246_302490_335A7949)
-Subject: Re: [PATCH] backports: specify python2.7 for gentree.py
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Thomas Pedersen <thomas@cozybit.com>
-Cc: backports@vger.kernel.org
-Date: Mon, 03 Jun 2013 09:52:38 +0200
-In-Reply-To: <1370214733-29993-1-git-send-email-thomas@cozybit.com> (sfid-20130603_011619_699121_3245A68D)
-References: <1370214733-29993-1-git-send-email-thomas@cozybit.com>
-	 (sfid-20130603_011619_699121_3245A68D)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from server19320154104.serverpool.info ([193.201.54.104]:39379 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751048Ab3FOPik (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 15 Jun 2013 11:38:40 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 6/8] backports: add module_spi_driver
+Date: Sat, 15 Jun 2013 17:37:56 +0200
+Message-Id: <1371310678-26491-7-git-send-email-hauke@hauke-m.de> (sfid-20130615_173842_156192_A5EDED9D)
+In-Reply-To: <1371310678-26491-1-git-send-email-hauke@hauke-m.de>
+References: <1371310678-26491-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, 2013-06-02 at 16:12 -0700, Thomas Pedersen wrote:
-> Apparently gentree.py uses some python2.7 specific syntax. Fixes:
-> 
-> ./gentree.py -h
->   File "./gentree.py", line 72
->     except OSError, e:
+module_spi_driver was added in the following commit to mainline:
+commit 3acbb0142d48713a8f65cde678a54f419801c189
+Author: Lars-Peter Clausen <lars@metafoo.de>
+Date:   Wed Nov 16 10:13:37 2011 +0100
 
-This is curious, it already uses
+    SPI: Add helper macro for spi_driver boilerplate
 
-except OSError as e:
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/spi/spi.h |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100644 backport/backport-include/linux/spi/spi.h
 
-in most places, just not this one.
-
-I think we should just make this compatible with both 2.7+ and 3, which
-shouldn't be too hard. I tried a bit and the patchlib is the biggest
-issue, will try some more after all my meetings.
-
-johannes
+diff --git a/backport/backport-include/linux/spi/spi.h b/backport/backport-include/linux/spi/spi.h
+new file mode 100644
+index 0000000..672cf5b
+--- /dev/null
++++ b/backport/backport-include/linux/spi/spi.h
+@@ -0,0 +1,20 @@
++#ifndef _BACKPORTS_LINUX_SPI_H
++#define _BACKPORTS_LINUX_SPI_H 1
++
++#include_next <linux/spi/spi.h>
++
++#ifndef module_spi_driver
++/**
++ * module_spi_driver() - Helper macro for registering a SPI driver
++ * @__spi_driver: spi_driver struct
++ *
++ * Helper macro for SPI drivers which do not do anything special in module
++ * init/exit. This eliminates a lot of boilerplate. Each module may only
++ * use this macro once, and calling it replaces module_init() and module_exit()
++ */
++#define module_spi_driver(__spi_driver) \
++	module_driver(__spi_driver, spi_register_driver, \
++			spi_unregister_driver)
++#endif
++
++#endif /* _BACKPORTS_LINUX_SPI_H */
+-- 
+1.7.10.4
 
