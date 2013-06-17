@@ -1,39 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:39371 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751048Ab3FOPii (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 15 Jun 2013 11:38:38 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 3/8] backports: build ATL1E only on kernel > 2.6.26
-Date: Sat, 15 Jun 2013 17:37:53 +0200
-Message-Id: <1371310678-26491-4-git-send-email-hauke@hauke-m.de> (sfid-20130615_173839_292318_CDF846AD)
-In-Reply-To: <1371310678-26491-1-git-send-email-hauke@hauke-m.de>
-References: <1371310678-26491-1-git-send-email-hauke@hauke-m.de>
+Received: from mout.gmx.net ([212.227.15.19]:61909 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755543Ab3FQDSe (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 16 Jun 2013 23:18:34 -0400
+Received: from mailout-de.gmx.net ([10.1.76.34]) by mrigmx.server.lan
+ (mrigmx001) with ESMTP (Nemesis) id 0MNfPA-1UhIQN03je-007CzD for
+ <backports@vger.kernel.org>; Mon, 17 Jun 2013 05:18:33 +0200
+Message-ID: <51BE8008.20302@gmx.de> (sfid-20130617_051836_550903_12BCA8BC)
+Date: Mon, 17 Jun 2013 05:18:32 +0200
+From: Lars Zastrow <Lars.Zastrow@gmx.de>
+MIME-Version: 1.0
+To: backports@vger.kernel.org, linux-wireless@vger.kernel.org
+Subject: bug-report: Ralink corp. Device [1814:539a] - Kernel 3.8 +
+Content-Type: text/plain; charset=ISO-8859-15; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The ATL1E driver needs netif_set_gso_max_size() and this is not
-available in older kernel versions.
+Dear Team,
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- dependencies |    1 +
- 1 file changed, 1 insertion(+)
+I'am using the following wireless-network-device:
 
-diff --git a/dependencies b/dependencies
-index 9c55c69..e3b4ed2 100644
---- a/dependencies
-+++ b/dependencies
-@@ -15,6 +15,7 @@ ATH6KL 2.6.27
- WIL6210 2.6.31
- 
- ATL1C 2.6.28
-+ATL1E 2.6.26
- ALX 2.6.31
- 
- LIBERTAS 2.6.27
--- 
-1.7.10.4
+Network controller [0280]: Ralink corp. Device [1814:539a]
+Subsystem: Hewlett-Packard Company Device [103c:1839]
+Kernel driver in use: rt2800pci
 
+I had problems with it since I bought my laptop... The driver was 
+unstable with the kernel I used back in autumn 2012. Howeverer, one 
+kernel-update fixed it. Must be something about 3.4x?
+
+It was defenetly working with the Kernels from 3.5 till 3.7 on multible 
+distros. 3.8 was bringing back the old Problems:
+
+- extremly low signal
+- hard to establish a connection to any acess-point.
+
+The last "problematic" kernel I have testet was 3.9.5-1 on Arch-Linux. 
+Compiling the compat-drivers manually did not bring any fix.
+
+I am currently using 3.7.4-1 wich is working.
+
+Best regards
+
+Lars Zastrow
