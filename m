@@ -1,37 +1,49 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:46838 "EHLO mail.kernel.org"
+Received: from mx1.redhat.com ([209.132.183.28]:33798 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756538Ab3FCCeO (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 2 Jun 2013 22:34:14 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 34CB7203C4
-	for <backports@vger.kernel.org>; Mon,  3 Jun 2013 02:34:13 +0000 (UTC)
-Received: from bugzilla.kernel.org (bugzilla.kernel.org [198.145.19.217])
-	by mail.kernel.org (Postfix) with ESMTP id 817B820397
-	for <backports@vger.kernel.org>; Mon,  3 Jun 2013 02:34:11 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 51751] debug build of ath9k fails.
-In-Reply-To: <bug-51751-58281@https.bugzilla.kernel.org/>
-References: <bug-51751-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
+	id S1756468Ab3FSNKS (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 19 Jun 2013 09:10:18 -0400
+Date: Wed, 19 Jun 2013 15:12:36 +0200
+From: Stanislaw Gruszka <sgruszka@redhat.com>
+To: Lars Zastrow <Lars.Zastrow@gmx.de>
+Cc: backports@vger.kernel.org, linux-wireless@vger.kernel.org
+Subject: Re: bug-report: Ralink corp. Device [1814:539a] - Kernel 3.8 +
+Message-ID: <20130619131234.GB2580@redhat.com> (sfid-20130619_151020_292383_A36F337F)
+References: <51BE8008.20302@gmx.de>
 MIME-Version: 1.0
-Message-Id: <20130603023411.068E011FB08@bugzilla.kernel.org> (sfid-20130603_043416_150416_C7F9A90D)
-Date: Mon,  3 Jun 2013 02:34:11 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <51BE8008.20302@gmx.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51751
+On Mon, Jun 17, 2013 at 05:18:32AM +0200, Lars Zastrow wrote:
+> Dear Team,
+> 
+> I'am using the following wireless-network-device:
+> 
+> Network controller [0280]: Ralink corp. Device [1814:539a]
+> Subsystem: Hewlett-Packard Company Device [103c:1839]
+> Kernel driver in use: rt2800pci
+> 
+> I had problems with it since I bought my laptop... The driver was
+> unstable with the kernel I used back in autumn 2012. Howeverer, one
+> kernel-update fixed it. Must be something about 3.4x?
+> 
+> It was defenetly working with the Kernels from 3.5 till 3.7 on
+> multible distros. 3.8 was bringing back the old Problems:
+> 
+> - extremly low signal
+> - hard to establish a connection to any acess-point.
+> 
+> The last "problematic" kernel I have testet was 3.9.5-1 on
+> Arch-Linux. Compiling the compat-drivers manually did not bring any
+> fix.
+> 
+> I am currently using 3.7.4-1 wich is working.
 
+This most likely is a RT5390 TX power problem I made on 3.8.
 
+This patch should help:
+https://git.kernel.org/cgit/linux/kernel/git/linville/wireless.git/commit/?id=8c8d2017ba25c510ddf093419048460db1109bc4
 
-
-
---- Comment #7 from Sujith <sujith@msujith.org>  2013-06-03 02:34:10 ---
-The releases from the new "backports" project doesn't have this issue. This bug
-can be closed.
-
--- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+Stanislaw
