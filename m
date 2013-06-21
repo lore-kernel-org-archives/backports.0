@@ -1,58 +1,122 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:39379 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751048Ab3FOPik (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 15 Jun 2013 11:38:40 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 6/8] backports: add module_spi_driver
-Date: Sat, 15 Jun 2013 17:37:56 +0200
-Message-Id: <1371310678-26491-7-git-send-email-hauke@hauke-m.de> (sfid-20130615_173842_156192_A5EDED9D)
-In-Reply-To: <1371310678-26491-1-git-send-email-hauke@hauke-m.de>
-References: <1371310678-26491-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-la0-f68.google.com ([209.85.215.68]:55117 "EHLO
+	mail-la0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965549Ab3FUFCx (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 21 Jun 2013 01:02:53 -0400
+Received: by mail-la0-f68.google.com with SMTP id fq12so2500027lab.11
+        for <backports@vger.kernel.org>; Thu, 20 Jun 2013 22:02:52 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAJqaZwxoKwwXX2ROh2XZ113Fbi+7GO_qnM03ZYvnoGmCBVdXNQ@mail.gmail.com>
+References: <CAJqaZwyOqP+2x7tfzd5Q=Ugt4c3Zn-JU_pjOH-6ypqpWdS--hg@mail.gmail.com>
+	<CAB=NE6X17uSMo7B_Gf9uTBn4be45HBupvqwXfZHfiOrVxicF=A@mail.gmail.com>
+	<CAJqaZwxoKwwXX2ROh2XZ113Fbi+7GO_qnM03ZYvnoGmCBVdXNQ@mail.gmail.com>
+Date: Thu, 20 Jun 2013 22:02:52 -0700
+Message-ID: <CAJqaZwzigpvYhzw2i1b9exxXq9RE7KnMY8CzY_k1d1tYR=u1kA@mail.gmail.com> (sfid-20130621_070258_084546_0020F5D2)
+Subject: [PATCH v3] backports: re-introduce make uninstall
+From: ASIC Felix <ic.felix@gmail.com>
+To: do-not <mcgrof@kernel.org>, backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-module_spi_driver was added in the following commit to mainline:
-commit 3acbb0142d48713a8f65cde678a54f419801c189
-Author: Lars-Peter Clausen <lars@metafoo.de>
-Date:   Wed Nov 16 10:13:37 2011 +0100
-
-    SPI: Add helper macro for spi_driver boilerplate
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Felix Bitterli <ic.felix@gmail.com>
 ---
- backport/backport-include/linux/spi/spi.h |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 backport/backport-include/linux/spi/spi.h
+ backport/Makefile.real               |   10 ++++++++++
+ backport/scripts/compress_modules.sh |   13 ++-----------
+ backport/scripts/mod_helpers.sh      |   11 +++++++++++
+ backport/scripts/uninstall.sh        |   17 +++++++++++++++++
+ 4 files changed, 40 insertions(+), 11 deletions(-)
+ create mode 100644 backport/scripts/mod_helpers.sh
+ create mode 100755 backport/scripts/uninstall.sh
 
-diff --git a/backport/backport-include/linux/spi/spi.h b/backport/backport-include/linux/spi/spi.h
+diff --git a/backport/Makefile.real b/backport/Makefile.real
+index 2a1f640..40d91bd 100644
+--- a/backport/Makefile.real
++++ b/backport/Makefile.real
+@@ -101,6 +101,16 @@ install: modules
+ .PHONY: modules_install
+ modules_install: install
+
++.PHONY: uninstall
++uninstall:
++	@./scripts/uninstall.sh
++	@/sbin/depmod -a
++	@./scripts/update-initramfs.sh $(KLIB)
++	@echo
++	@echo Your backported driver modules should be uninstalled now.
++	@echo Reboot.
++	@echo
++	
+ .PHONY: clean
+ clean:
+ 	@$(MAKE) -f Makefile.build clean
+diff --git a/backport/scripts/compress_modules.sh
+b/backport/scripts/compress_modules.sh
+index bbf264f..b2034c2 100755
+--- a/backport/scripts/compress_modules.sh
++++ b/backport/scripts/compress_modules.sh
+@@ -2,20 +2,11 @@
+
+ set -e
+
+-function mod_filename()
+-{
+-	which modinfo > /dev/null 2>&1
+-	if [[ $? -eq 0 ]]; then
+-		MOD_QUERY="modinfo -F filename"
+-	else
+-		MOD_QUERY="modprobe -l"
+-	fi
+-	mod_path="$($MOD_QUERY $1 | tail -1)"
+-	echo $(basename "$mod_path")
+-}
++source ./scripts/mod_helpers.sh
+
+ if test "$(mod_filename mac80211)" = "mac80211.ko.gz" ; then
+ 	for driver in $(find "$1" -type f -name *.ko); do
++		echo COMPRESS $driver
+ 		gzip -9 $driver
+ 	done
+ fi
+diff --git a/backport/scripts/mod_helpers.sh b/backport/scripts/mod_helpers.sh
 new file mode 100644
-index 0000000..672cf5b
+index 0000000..0845b3e
 --- /dev/null
-+++ b/backport/backport-include/linux/spi/spi.h
-@@ -0,0 +1,20 @@
-+#ifndef _BACKPORTS_LINUX_SPI_H
-+#define _BACKPORTS_LINUX_SPI_H 1
++++ b/backport/scripts/mod_helpers.sh
+@@ -0,0 +1,11 @@
++function mod_filename()
++{
++	which modinfo > /dev/null 2>&1
++	if [[ $? -eq 0 ]]; then
++		MOD_QUERY="modinfo -F filename"
++	else
++		MOD_QUERY="modprobe -l"
++	fi
++	mod_path="$($MOD_QUERY $1 | tail -1)"
++	echo $(basename "$mod_path")
++}
+diff --git a/backport/scripts/uninstall.sh b/backport/scripts/uninstall.sh
+new file mode 100755
+index 0000000..7b54d2a
+--- /dev/null
++++ b/backport/scripts/uninstall.sh
+@@ -0,0 +1,17 @@
++#!/bin/bash
 +
-+#include_next <linux/spi/spi.h>
++set -e
 +
-+#ifndef module_spi_driver
-+/**
-+ * module_spi_driver() - Helper macro for registering a SPI driver
-+ * @__spi_driver: spi_driver struct
-+ *
-+ * Helper macro for SPI drivers which do not do anything special in module
-+ * init/exit. This eliminates a lot of boilerplate. Each module may only
-+ * use this macro once, and calling it replaces module_init() and module_exit()
-+ */
-+#define module_spi_driver(__spi_driver) \
-+	module_driver(__spi_driver, spi_register_driver, \
-+			spi_unregister_driver)
-+#endif
++source ./scripts/mod_helpers.sh
 +
-+#endif /* _BACKPORTS_LINUX_SPI_H */
++if test "$(mod_filename mac80211)" = "mac80211.ko.gz" ; then
++	compr=".gz"
++else
++	compr=""
++fi
++
++for driver in $(find ${BACKPORT_PWD} -type f -name *.ko); do
++	mod_name=${KLIB}${KMODDIR}/${driver}${compr}
++	echo "  uninstall" $mod_name
++	rm -f $mod_name
++done
 -- 
-1.7.10.4
-
+1.7.9.5
