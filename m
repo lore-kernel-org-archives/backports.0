@@ -1,40 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:39360 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751048Ab3FOPic (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 15 Jun 2013 11:38:32 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 4/8] backports: add NET_CORE config option
-Date: Sat, 15 Jun 2013 17:37:54 +0200
-Message-Id: <1371310678-26491-5-git-send-email-hauke@hauke-m.de> (sfid-20130615_173833_291932_2650F3E2)
-In-Reply-To: <1371310678-26491-1-git-send-email-hauke@hauke-m.de>
-References: <1371310678-26491-1-git-send-email-hauke@hauke-m.de>
+Received: from s3.sipsolutions.net ([144.76.43.152]:39861 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752693Ab3FYKqt (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 25 Jun 2013 06:46:49 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backport: include printk.h into backport-3.11.c
+Date: Tue, 25 Jun 2013 12:46:44 +0200
+Message-Id: <1372157204-30109-1-git-send-email-johannes@sipsolutions.net> (sfid-20130625_124651_422228_75B53DA1)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-NET_CORE was added with kernel 3.2 and before this patch no Ethernet
-driver was build on older kernel versions.
+From: Johannes Berg <johannes.berg@intel.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+This is needed for pr_warn(), otherwise it's not defined on
+all kernels (it is sometimes pulled in by other headers.)
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/Kconfig |    2 ++
- 1 file changed, 2 insertions(+)
+ backport/compat/backport-3.11.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/backport/Kconfig b/backport/Kconfig
-index d342647..c465ad1 100644
---- a/backport/Kconfig
-+++ b/backport/Kconfig
-@@ -17,6 +17,8 @@ source Kconfig.versions
- # some hacks ...
- config WIRELESS
- 	def_bool y
-+config NET_CORE
-+	def_bool y
- config EXPERT
- 	def_bool y
+diff --git a/backport/compat/backport-3.11.c b/backport/compat/backport-3.11.c
+index dc9073e..332db4a 100644
+--- a/backport/compat/backport-3.11.c
++++ b/backport/compat/backport-3.11.c
+@@ -15,6 +15,7 @@
+ #include <asm/mtrr.h>
+ #include <asm/cpufeature.h>
+ #include <linux/io.h>
++#include <linux/printk.h>
  
+ /* arch_phys_wc_add returns an MTRR register index plus this offset. */
+ #define MTRR_TO_PHYS_WC_OFFSET 1000
 -- 
-1.7.10.4
+1.8.0
 
