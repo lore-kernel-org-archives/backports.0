@@ -1,53 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f44.google.com ([209.85.215.44]:60501 "EHLO
-	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751237Ab3FOXhp (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 15 Jun 2013 19:37:45 -0400
-Received: by mail-la0-f44.google.com with SMTP id er20so1475555lab.3
-        for <backports@vger.kernel.org>; Sat, 15 Jun 2013 16:37:44 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <CAB=NE6V0so0NDQs1z2SCes9G6_jg0gKtM3Yjq6yyjzQ8gdRVOg@mail.gmail.com>
-References: <CAJqaZwyhCxQRqEQ8wKjD96u0avs3Qjjda2u_oxTb3y-Vj7ie8g@mail.gmail.com>
-	<CAB=NE6V0so0NDQs1z2SCes9G6_jg0gKtM3Yjq6yyjzQ8gdRVOg@mail.gmail.com>
-Date: Sat, 15 Jun 2013 16:37:43 -0700
-Message-ID: <CAJqaZwz41Gcu681+3RAcZ0Or7ySXd+R9ZDOsVRS0h2k+CQbJ1Q@mail.gmail.com> (sfid-20130616_013750_634234_1B06579B)
-Subject: Re: [PATCH] backports: re-introduce make uninstall
-From: ASIC Felix <ic.felix@gmail.com>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: do-not <mcgrof@kernel.org>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from s3.sipsolutions.net ([144.76.43.152]:39353 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751092Ab3FYH5F (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 25 Jun 2013 03:57:05 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.0:DHE_RSA_CAMELLIA_256_CBC_SHA1:256)
+	(Exim 4.80)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1UrO7Y-0005kP-01
+	for backports@vger.kernel.org; Tue, 25 Jun 2013 09:57:00 +0200
+Message-ID: <1372147016.8372.0.camel@jlt4.sipsolutions.net> (sfid-20130625_095707_368228_C5CE37C5)
+Subject: Re: [PATCH] backports: update output template .gitignore for
+ kconfig move
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Date: Tue, 25 Jun 2013 09:56:56 +0200
+In-Reply-To: <1369858414-4066-1-git-send-email-johannes@sipsolutions.net> (sfid-20130529_221341_963629_4BC3E537)
+References: <1369858414-4066-1-git-send-email-johannes@sipsolutions.net>
+	 (sfid-20130529_221341_963629_4BC3E537)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Thanks for the feedback!
+On Wed, 2013-05-29 at 22:13 +0200, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+> 
+> I clearly forgot this during the Kconfig move, the .gitignore
+> that is in the output template directory (and used with the
+> git-tracker) needs to be updated for the kconf directory move.
 
-> This is used twice now in two scripts as such perhaps best to stuff
-> this as a helper in a new file of script helpers,
-> scripts/mod_helpers.sh and then both this file and
-> scripts/compress_modules.sh would just:
->
-> source ./mod_helpers.sh
+Luis, any reason you haven't applied this?
 
-Will do.
+johannes
 
->> +if test "$(mod_filename mac80211)" = "mac80211.ko.gz" ; then
->> +    compr=".ko"
->
-> I think what was meant is compr=".gz"
-
-Right.
-
->> +for driver in $(find -type f -name *.ko); do
->
-> and here perhaps you forgot to apply the extension, and perhaps best
-> to just peg the path in the find from the start, otherwise we end up
-> removing other kernel's updates as well:
-
-I may be missing something. IMO the correct list of modules to
-uninstall is the compiled *.ko in the unpacked tarball, and these are
-never compressed. The delete location is $KLIB/updates where make
-install copied them to. If applied compression was on $KLIB/updates as
-well.
-
-Felix
