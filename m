@@ -1,53 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:50047 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754703Ab3FBRlr (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 2 Jun 2013 13:41:47 -0400
-Message-ID: <1370194899.8366.5.camel@jlt4.sipsolutions.net> (sfid-20130602_194149_387937_1A5420EA)
-Subject: Re: Buid backports-20130528 on ArchLinux: /usr/bin/ld: cannot find
- -ltinfo
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Anh K. Huynh" <kyanh@viettug.org>
-Cc: backports@vger.kernel.org
-Date: Sun, 02 Jun 2013 19:41:39 +0200
-In-Reply-To: <20130602220934.3079ee4f@icy> (sfid-20130602_170957_728483_48913C26)
-References: <20130602220934.3079ee4f@icy>
-	 (sfid-20130602_170957_728483_48913C26)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-la0-f54.google.com ([209.85.215.54]:46720 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752481Ab3FZQuU (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 26 Jun 2013 12:50:20 -0400
+Received: by mail-la0-f54.google.com with SMTP id ec20so14050727lab.13
+        for <backports@vger.kernel.org>; Wed, 26 Jun 2013 09:50:19 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAJqaZwzigpvYhzw2i1b9exxXq9RE7KnMY8CzY_k1d1tYR=u1kA@mail.gmail.com>
+References: <CAJqaZwyOqP+2x7tfzd5Q=Ugt4c3Zn-JU_pjOH-6ypqpWdS--hg@mail.gmail.com>
+ <CAB=NE6X17uSMo7B_Gf9uTBn4be45HBupvqwXfZHfiOrVxicF=A@mail.gmail.com>
+ <CAJqaZwxoKwwXX2ROh2XZ113Fbi+7GO_qnM03ZYvnoGmCBVdXNQ@mail.gmail.com> <CAJqaZwzigpvYhzw2i1b9exxXq9RE7KnMY8CzY_k1d1tYR=u1kA@mail.gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Wed, 26 Jun 2013 09:49:56 -0700
+Message-ID: <CAB=NE6VhhkRSkXRc1sYDkMXThYi9GDOa8JjRUVu=SgELUdDuQg@mail.gmail.com> (sfid-20130626_185023_240642_C12FFFDD)
+Subject: Re: [PATCH v3] backports: re-introduce make uninstall
+To: ASIC Felix <ic.felix@gmail.com>
+Cc: do-not <mcgrof@kernel.org>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, 2013-06-02 at 22:09 +0700, Anh K. Huynh wrote:
-> Hello,
-> 
-> I'm building the `backports-20130528` on ArchLinux (kernel = 3.2.46).
-> I see the error as in http://pastie.org/7996763 .
-> 
-> I don't have any problem when building the new Linux kernel. When I
-> remove the `tinfo` support from the file `kconf/Makefile` I can run 
-> `make menuconfig` perfectly.
-> 
-> Is the `tinfo` library really needed to run `make menuconfig` when
-> building backports drivers?
+On Thu, Jun 20, 2013 at 10:02 PM, ASIC Felix <ic.felix@gmail.com> wrote:
+> Signed-off-by: Felix Bitterli <ic.felix@gmail.com>
 
-It was needed on some distros, and not on others. This is probably the
-best option?
+Great! I just adjusted the commit log with this below, applied and
+pushed! Thanks!
 
-diff --git a/backport/kconf/Makefile b/backport/kconf/Makefile
-index ff5c270..dfd793a 100644
---- a/backport/kconf/Makefile
-+++ b/backport/kconf/Makefile
-@@ -3,7 +3,7 @@ CFLAGS=-Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
- LXDIALOG := lxdialog/checklist.o lxdialog/inputbox.o lxdialog/menubox.o lxdialog/textbox.o lxdialog/util.o lxdialog/yesno.o
- 
- conf: conf.o zconf.tab.o
--mconf: LDFLAGS = -Wl,--no-as-needed -lncurses -ltinfo
-+mconf: LDFLAGS = -Wl,--no-as-needed $(shell ./lxdialog/check-lxdialog.sh -ldflags $(CC))
- mconf: CFLAGS += -DCURSES_LOC="<ncurses.h>" -DLOCALE
- mconf: mconf.o zconf.tab.o $(LXDIALOG)
- 
+    This approach only uninstalls modules you have built
+    previously on your current build directory for backports.
+    If this requires adjustments then we'll have to just have
+    to use our own new backports KMODDIR.
 
-johannes
-
-
+  Luis
