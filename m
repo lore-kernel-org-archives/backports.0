@@ -1,77 +1,30 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:61738 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755176Ab3G3J0W (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 30 Jul 2013 05:26:22 -0400
-Received: by mail-pd0-f181.google.com with SMTP id g10so2769855pdj.40
-        for <backports@vger.kernel.org>; Tue, 30 Jul 2013 02:26:22 -0700 (PDT)
+Received: from mail-la0-f52.google.com ([209.85.215.52]:39333 "EHLO
+	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754828Ab3GAVkC (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 1 Jul 2013 17:40:02 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAB=NE6W6oa1Oa9O_s7B_4qKHdEz6S3DhVyvtpzP78XqRM_xk8A@mail.gmail.com>
+References: <CAB=NE6W6oa1Oa9O_s7B_4qKHdEz6S3DhVyvtpzP78XqRM_xk8A@mail.gmail.com>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 04/14] backport: disable unused automatic backports
-Date: Tue, 30 Jul 2013 02:25:49 -0700
-Message-Id: <1375176359-1331-5-git-send-email-mcgrof@do-not-panic.com> (sfid-20130730_112624_104022_5A079253)
-In-Reply-To: <1375176359-1331-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1375176359-1331-1-git-send-email-mcgrof@do-not-panic.com>
+Date: Mon, 1 Jul 2013 14:39:39 -0700
+Message-ID: <CAB=NE6Vf0BO_d=qPrpU=mYAv6DeRPanQqV6BshkVjJ0Tf4ponw@mail.gmail.com> (sfid-20130701_234005_334226_37910F36)
+Subject: Re: backports based on next-20130618
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	linux-wireless <linux-wireless@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Mon, Jul 1, 2013 at 2:25 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> A new backports release has been made based on next-20130618, this has
+> the new upstream alx driver, and the ath10k driver.
+>
+> https://www.kernel.org/pub/linux/kernel/projects/backports/2013/06/18/backports-20130618.tar.bz2
 
-When an automatic backport isn't included due to not
-being used (see commit 6e0475b599217eceb8e01a1e572c,
-"gentree: add automatic backports only if needed"),
-selecting BACKPORT_USERSEL_BUILD_ALL will make the
-build fail. Avoid this by disabling such symbols in
-the Kconfig.
+Sorry it just has alx, ath10k requires a small patch that I think
+someone has sitting somewhere, next release.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- gentree.py |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/gentree.py b/gentree.py
-index 356871d..b6c98e8 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -176,6 +176,7 @@ def automatic_backport_mangle_c_file(name):
- 
- 
- def add_automatic_backports(args):
-+    disable_list = []
-     export = re.compile(r'^EXPORT_SYMBOL(_GPL)?\((?P<sym>[^\)]*)\)')
-     bpi = kconfig.get_backport_info(os.path.join(args.outdir, 'compat', 'Kconfig'))
-     configtree = kconfig.ConfigTree(os.path.join(args.outdir, 'Kconfig'))
-@@ -183,6 +184,7 @@ def add_automatic_backports(args):
-     for sym, vals in bpi.items():
-         if sym.startswith('BACKPORT_BUILD_'):
-             if not sym[15:] in all_selects:
-+                disable_list.append(sym)
-                 continue
-         symtype, module_name, c_files, h_files = vals
- 
-@@ -229,6 +231,7 @@ def add_automatic_backports(args):
-                 outf.write('#define %s LINUX_BACKPORT(%s)\n' % (s, s))
-             outf.write('#include <%s>\n' % (os.path.dirname(f) + '/backport-' + os.path.basename(f), ))
-             outf.write('#endif /* CPTCFG_%s */\n' % sym)
-+    return disable_list
- 
- def git_debug_init(args):
-     """
-@@ -346,7 +349,10 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
- 
-     git_debug_snapshot(args, 'Add driver sources')
- 
--    add_automatic_backports(args)
-+    disable_list = add_automatic_backports(args)
-+    if disable_list:
-+        bpcfg = kconfig.ConfigTree(os.path.join(args.outdir, 'compat', 'Kconfig'))
-+        bpcfg.disable_symbols(disable_list)
-     git_debug_snapshot(args, 'Add automatic backports')
- 
-     logwrite('Apply patches ...')
--- 
-1.7.10.4
-
+  Luis
