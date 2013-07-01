@@ -1,80 +1,103 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f170.google.com ([209.85.217.170]:56085 "EHLO
-	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751574Ab3GSVFI (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 17:05:08 -0400
-Received: by mail-lb0-f170.google.com with SMTP id u10so2350862lbi.15
-        for <backports@vger.kernel.org>; Fri, 19 Jul 2013 14:05:07 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20130719123146.GC9288@cantiga.alporthouse.com>
-References: <1374235209-19782-1-git-send-email-mcgrof@do-not-panic.com>
- <1374235209-19782-7-git-send-email-mcgrof@do-not-panic.com> <20130719123146.GC9288@cantiga.alporthouse.com>
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:58219 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755057Ab3GAUzj (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 1 Jul 2013 16:55:39 -0400
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Fri, 19 Jul 2013 14:04:47 -0700
-Message-ID: <CAB=NE6UEHomQAoQb3cV0Bdtpb5SEGTr0_TaPWTbvF6OHe2bguA@mail.gmail.com> (sfid-20130719_230511_808521_E6B91D03)
-Subject: Re: [RFC 6/9] backports: revert DMI_EXACT_MATCH() for older kernels
-To: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"jani.nikula" <jani.nikula@intel.com>, annndddrr@gmail.com,
-	cpanceac@gmail.com, Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Greg Kroah-Hartman <greg@kroah.com>
-Content-Type: text/plain; charset=UTF-8
+To: backports@vger.kernel.org
+Cc: linux-wireless@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 3/3] backports: add SPEED_UNKNOWN and DUPLEX_UNKNOWN
+Date: Mon,  1 Jul 2013 13:55:20 -0700
+Message-Id: <1372712120-16606-4-git-send-email-mcgrof@do-not-panic.com> (sfid-20130701_225542_522941_437B97CC)
+In-Reply-To: <1372712120-16606-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1372712120-16606-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Jul 19, 2013 at 5:31 AM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
-> On Fri, Jul 19, 2013 at 05:00:06AM -0700, Luis R. Rodriguez wrote:
->> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
->>
->> struct dmi_strmatch was modified on v3.11 with a
->> exact_match member. The DMI_EXACT_MATCH() macro was
->> added as a mod version of DMI_MATCH() to account for
->> dmi strings that look closely like each other. An
->> example is D510MO Vs D510MOV.
->>
->> Since exact_match is is not available on older kernels
->> we can't use it and must revert to the old DMI_MATCH().
->> Addressing the desired behaviour will require a separate
->> change to deal with addressing the difference
->> in the behaviour.
->
-> If you choose not to backport DMI_EXACT_MATCH, then don't backport the
-> two fixes that depend upon it.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Which ones? These two?
+This gets us in synch with next-20130618.
 
-dcf6d294830d46b0e6901477fb4bf455281d90c8 - drm/i915: quirk away
-phantom LVDS on Intel's D525MW mainboard
-e5614f0c2d0f4d7f0b8ef745d34593baf2c5dbf8 - drm/i915: quirk away
-phantom LVDS on Intel's D510MO mainboard
+This was added via uapi/linux/ethtool.h but using
+that file causes some odd issues I simply cannot
+resolve right now. I stuff these definitions into
+the regular include/linux/ethtool.h for now.
 
-Just #ifdef over these for older kernels ifndef DMI_EXACT_MATCH ?
+This backports commit 589665f5 added via v3.2.
 
-> Is there a blocker for not backporting the DMI_EXACT_MATCH feature?
+mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains \
+	589665f5a6008dbce1d0af2cb93e94a80bf78151
+v3.2-rc1~4^2~10
 
-I'm so glad you asked. DMI_EXACT_MATCH uses struct dmi_strmatch's new
-member exact_match:
+commit 589665f5a6008dbce1d0af2cb93e94a80bf78151
+Author: Dan Carpenter <dan.carpenter@oracle.com>
+Date:   Fri Nov 4 08:21:38 2011 +0000
 
-@@ -456,7 +456,8 @@ enum dmi_field {
- };
+    bonding: comparing a u8 with -1 is always false
 
- struct dmi_strmatch {
--       unsigned char slot;
-+       unsigned char slot:7;
-+       unsigned char exact_match:1;
-        char substr[79];
- };
+    slave->duplex is a u8 type so the in bond_info_show_slave() when we
+    check "if (slave->duplex == -1)", it's always false.
 
-Prior to 5017b285 we only had slot so to use DMI_EXACT_MATCH with its
-intent we'd have to do something like slot |= 1 if its called. This
-however assumes though that older code has the sanity check as changed
-in 5017b285 on drivers/firmware/dmi_scan.c. dmi_scan.o gets linked
-with CONFIG_DMI. At least for x86 that gets objects sprinkled on
-arch/x86/, but more importantly CONFIG_DMI is bool. I've argued how I
-envision us being able to backport core components before (see
-0935deab for the hint) but as it is right now we can't. We only
-backport things we can throw in as modular.
+    Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
 
-Please let me know if you see any other way.
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.79              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.10-rc1            [  OK  ]
+20  3.2.45              [  OK  ]
+21  3.3.8               [  OK  ]
+22  3.4.46              [  OK  ]
+23  3.5.7               [  OK  ]
+24  3.6.11              [  OK  ]
+25  3.7.10              [  OK  ]
+26  3.8.13              [  OK  ]
+27  3.9.3               [  OK  ]
 
-  Luis
+real    15m7.262s
+user    335m33.818s
+sys     82m36.486s
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ backport/backport-include/linux/ethtool.h |    8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/backport/backport-include/linux/ethtool.h b/backport/backport-include/linux/ethtool.h
+index 0c1eee6..2f323b0 100644
+--- a/backport/backport-include/linux/ethtool.h
++++ b/backport/backport-include/linux/ethtool.h
+@@ -3,6 +3,14 @@
+ #include_next <linux/ethtool.h>
+ #include <linux/version.h>
+ 
++#ifndef SPEED_UNKNOWN
++#define SPEED_UNKNOWN  -1
++#endif /* SPEED_UNKNOWN */
++
++#ifndef DUPLEX_UNKNOWN
++#define DUPLEX_UNKNOWN 0xff
++#endif /* DUPLEX_UNKNOWN */
++
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
+ #define ethtool_rxfh_indir_default LINUX_BACKPORT(ethtool_rxfh_indir_default)
+ static inline u32 ethtool_rxfh_indir_default(u32 index, u32 n_rx_rings)
+-- 
+1.7.10.4
+
