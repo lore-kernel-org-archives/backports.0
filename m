@@ -1,35 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:51511 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751577Ab3G3OJQ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 30 Jul 2013 10:09:16 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 1A03E20399
-	for <backports@vger.kernel.org>; Tue, 30 Jul 2013 14:09:15 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 8ACB220367
-	for <backports@vger.kernel.org>; Tue, 30 Jul 2013 14:09:10 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 51851] Unable to use alx driver without CONFIG_MDIO
-Date: Tue, 30 Jul 2013 14:09:10 +0000
-Message-ID: <bug-51851-58281-wpQaidTxGx@https.bugzilla.kernel.org/> (sfid-20130730_160917_599797_53898C58)
-In-Reply-To: <bug-51851-58281@https.bugzilla.kernel.org/>
-References: <bug-51851-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Received: from server19320154104.serverpool.info ([193.201.54.104]:44177 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756812Ab3GKWMX (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 11 Jul 2013 18:12:23 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 05/19] backports: BCMA and SSB MIPS drivers are depending on kernel >= 3.3
+Date: Fri, 12 Jul 2013 00:11:28 +0200
+Message-Id: <1373580702-24752-7-git-send-email-hauke@hauke-m.de> (sfid-20130712_001233_763477_7DB40242)
+In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51851
+Upstream commit 1ea075ea8dd98a5cc21d3d79ff0204797bb78eb5
 
-Konstantin Ryabitsev <mricon@kernel.org> changed:
+The bcma and ssb mips driver are depending on kernel 3.3.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |mricon@kernel.org
-          Component|Compat-Drivers              |Backports
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ dependencies |    3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/dependencies b/dependencies
+index ab18807..ea75be8 100644
+--- a/dependencies
++++ b/dependencies
+@@ -175,6 +175,9 @@ BT 2.6.29
+ # this is easier.
+ BCMA_DRIVER_GPIO 3.0
+ 
++BCMA_DRIVER_MIPS 3.3
++SSB_DRIVER_MIPS 3.3
++
+ # rfkill-regulator uses a kernel header file
+ # (rfkill-regulator.h) that we don't backport
+ # right now, so make it depend on 3.0
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+1.7.10.4
+
