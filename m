@@ -1,46 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f52.google.com ([209.85.215.52]:44675 "EHLO
-	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751071Ab3GMRD5 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 13 Jul 2013 13:03:57 -0400
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.10.1307130238190.31878@aurora.sdinet.de>
-References: <CAB=NE6XyC0Svxh8yeVNvnpdkVBTWEAcmi8wZocc6MC=kxLs2iw@mail.gmail.com>
- <alpine.DEB.2.10.1307130238190.31878@aurora.sdinet.de>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Sat, 13 Jul 2013 10:03:35 -0700
-Message-ID: <CAB=NE6UDgme=Y6inA1DSQSPt1j9FtWQPq-j4TK6P7AwhATK6PQ@mail.gmail.com> (sfid-20130713_190359_619335_0B14ECFC)
-Subject: Re: [ANN] backports-v3.10 released - first release!
-To: Sven-Haegar Koch <haegar@sdinet.de>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from server19320154104.serverpool.info ([193.201.54.104]:44217 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756891Ab3GKWMj (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 11 Jul 2013 18:12:39 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 11/19] backports: alx driver needs at least kernel 2.6.31
+Date: Fri, 12 Jul 2013 00:11:34 +0200
+Message-Id: <1373580702-24752-13-git-send-email-hauke@hauke-m.de> (sfid-20130712_001241_922278_A605F674)
+In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Jul 12, 2013 at 5:40 PM, Sven-Haegar Koch <haegar@sdinet.de> wrote:
-> On Fri, 12 Jul 2013, Luis R. Rodriguez wrote:
->
->> Kicked out the first Linux kernel backports release under the new
->> project name, "backports" that hopefully clarifies this a generic
->> backport project now. Backported subsystems in this release:
->
->> [0] http://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.10/backports-3.10-1.tar.bz2
->
-> Did you perhaps re-upload the 3.10-rc1 backports archive?
->
-> haegar@blackhole:~/src/3.2.0$ tar tvf backports-3.10-1.tar.bz2 | head -n 2
-> drwxr-xr-x mcgrof/mcgrof     0 2013-05-19 03:06 backports-3.10-rc1-1/
-> -rw-r--r-- mcgrof/mcgrof  4164 2013-05-18 22:57 backports-3.10-rc1-1/Kconfig.versions
-> ...
->
-> $ cat versions
-> BACKPORTS_VERSION="v3.10-rc1-1-0-g80112f6"
-> BACKPORTED_KERNEL_VERSION="v3.10-rc1-0-gf722406"
-> BACKPORTED_KERNEL_NAME="Linux"
+Upstream commit e256bb71deb06d1276f8774aa95e8501a7462080
 
-Indeed. Pushed out -2 release:
+The alx driver uses drivers/net/mdio.c which was added with kernel
+2.6.31. Build the alx driver only on this kernel version or a more
+recent one.
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.10/backports-3.10-2.tar.bz2
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ dependencies |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  Luis
+diff --git a/dependencies b/dependencies
+index ea75be8..9c55c69 100644
+--- a/dependencies
++++ b/dependencies
+@@ -15,7 +15,7 @@ ATH6KL 2.6.27
+ WIL6210 2.6.31
+ 
+ ATL1C 2.6.28
+-ALX 2.6.28
++ALX 2.6.31
+ 
+ LIBERTAS 2.6.27
+ LIBERTAS_THINFIRM 2.6.27
+-- 
+1.7.10.4
+
