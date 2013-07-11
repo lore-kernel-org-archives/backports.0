@@ -1,46 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:43856 "EHLO
-	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751793Ab3GSVg7 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 17:36:59 -0400
-Date: Fri, 19 Jul 2013 23:27:09 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-cc: Alan Stern <stern@rowland.harvard.edu>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Julia Lawall <julia.lawall@lip6.fr>,
-	USB list <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Jiri Slaby <jslaby@suse.cz>, Jiri Kosina <jkosina@suse.cz>,
-	Felix Fietkau <nbd@openwrt.org>
-Subject: Re: [PATCH] backports: backport drvdata = NULL core driver fixes
-In-Reply-To: <CAB=NE6VHgure2+2VA=XWtaii4Wc_rG7YZ=_ZetgGnvouh7HJPw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.02.1307192326080.2229@localhost6.localdomain6> (sfid-20130719_233702_014136_0F4F2A4D)
-References: <1374191339-10124-1-git-send-email-mcgrof@do-not-panic.com> <Pine.LNX.4.44L0.1307191012330.1055-100000@iolanthe.rowland.org> <CAB=NE6XmxX0UQkbchU_AKJOyENcn0auBGMPzru5C4nohg_v1sQ@mail.gmail.com>
- <CAB=NE6VHgure2+2VA=XWtaii4Wc_rG7YZ=_ZetgGnvouh7HJPw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Received: from server19320154104.serverpool.info ([193.201.54.104]:44232 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756938Ab3GKWMt (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 11 Jul 2013 18:12:49 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 13/19] backports: add NET_CORE config option
+Date: Fri, 12 Jul 2013 00:11:36 +0200
+Message-Id: <1373580702-24752-15-git-send-email-hauke@hauke-m.de> (sfid-20130712_001256_402924_1D9E7C6F)
+In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 19 Jul 2013, Luis R. Rodriguez wrote:
+Upstream commit 01d7e21c43c0255a0f107b18ce05b2350f561f84
 
-> On Fri, Jul 19, 2013 at 2:07 PM, Luis R. Rodriguez
-> <mcgrof@do-not-panic.com> wrote:
-> >> This is not a very good idea.  Although setting drvdata to NULL allowed
-> >> a lot of code to be removed, it also exposed a bunch of hidden bugs --
-> >> drivers were using the drvdata value even after their remove function
-> >> returned.
-> >
-> > Eek, have we not SmPL'ify'd a proof yet to ensure code like this no
-> > longer exists? Julia? :)
-> 
-> Come to think of it, perhaps we should require *proof* with SmPL like
-> this in future to avoid regressions ?
+NET_CORE was added with kernel 3.2 and before this patch no Ethernet
+driver was build on older kernel versions.
 
-Is it a concurrency problem?  SmPL is not so good at that in the general 
-case.  One would have to know a specific case where other functions of the 
-driver can be invoked after remove.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/Kconfig |    2 ++
+ 1 file changed, 2 insertions(+)
 
-julia
+diff --git a/backport/Kconfig b/backport/Kconfig
+index d342647..c465ad1 100644
+--- a/backport/Kconfig
++++ b/backport/Kconfig
+@@ -17,6 +17,8 @@ source Kconfig.versions
+ # some hacks ...
+ config WIRELESS
+ 	def_bool y
++config NET_CORE
++	def_bool y
+ config EXPERT
+ 	def_bool y
+ 
+-- 
+1.7.10.4
+
