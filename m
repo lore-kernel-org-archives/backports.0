@@ -1,33 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:39822 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757910Ab3GOO3N (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 15 Jul 2013 10:29:13 -0400
-To: Ben Guthro <ben@guthro.net>
-Subject: Re: problems building backports-3.10-2
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Mon, 15 Jul 2013 17:28:28 +0300
-From: Johannes Berg <johannes@sipsolutions.net>
-Cc: backports@vger.kernel.org, backports-owner@vger.kernel.org
-In-Reply-To: <CAOvdn6Vs9pUOXwBYTPzvQp0TDKgDxotog-Srv0xF+41i5UXz0Q@mail.gmail.com>
- (sfid-20130715_150813_416070_8649FA88)
-References: <CAOvdn6Vs9pUOXwBYTPzvQp0TDKgDxotog-Srv0xF+41i5UXz0Q@mail.gmail.com>
- (sfid-20130715_150813_416070_8649FA88)
-Message-ID: <ea1994fe7088be3dcc5e03aad6ae3c75@sipsolutions.net>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:44222 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756938Ab3GKWMn (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 11 Jul 2013 18:12:43 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 12/19] backports: build ATL1E only on kernel > 2.6.26
+Date: Fri, 12 Jul 2013 00:11:35 +0200
+Message-Id: <1373580702-24752-14-git-send-email-hauke@hauke-m.de> (sfid-20130712_003606_908409_05C520F5)
+In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 2013-07-15 16:08, Ben Guthro wrote:
-> I'm struggling to integrate the backports-3.10-2 release into my
-> build, and I'm hoping this is the proper venue to get some answers.
+Upstream commit 6f1b6d9b8a662eb3d79711e77879a381bb365036
 
-> Am I doing something wrong - or is something broken in this release?
+The ATL1E driver needs netif_set_gso_max_size() and this is not
+available in older kernel versions.
 
-I (partially) built it today, so it's probably on your end.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ dependencies |    1 +
+ 1 file changed, 1 insertion(+)
 
-I suspect you copied it across systems and didn't copy the file 
-".local-symbols", make sure you have that.
+diff --git a/dependencies b/dependencies
+index 9c55c69..e3b4ed2 100644
+--- a/dependencies
++++ b/dependencies
+@@ -15,6 +15,7 @@ ATH6KL 2.6.27
+ WIL6210 2.6.31
+ 
+ ATL1C 2.6.28
++ATL1E 2.6.26
+ ALX 2.6.31
+ 
+ LIBERTAS 2.6.27
+-- 
+1.7.10.4
 
-johannes
