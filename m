@@ -1,100 +1,49 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:51447 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759134Ab3GaIjM (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 31 Jul 2013 04:39:12 -0400
-Message-ID: <51F8CD2A.2090101@fh-kl.de> (sfid-20130731_103916_691423_45BA8F5F)
-Date: Wed, 31 Jul 2013 10:39:06 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [RFC v2 1/8] backports: disable PCI functions for kernels without
- PCI support
-References: <cover.1375259597.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1375259597.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+Received: from server19320154104.serverpool.info ([193.201.54.104]:44152 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756890Ab3GKWMM (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 11 Jul 2013 18:12:12 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 01/19] backports: do not add the vlan backports for kernel 3.10
+Date: Fri, 12 Jul 2013 00:11:24 +0200
+Message-Id: <1373580702-24752-3-git-send-email-hauke@hauke-m.de> (sfid-20130712_001239_747214_A2C4B5E9)
+In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Upstream commit 3fc43d6f57044d0cf8003dc8bc30749931b6a727
+
+The kernel 3.10 already includes the new versions.
+
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/compat/compat-2.6.25.c | 2 ++
- backport/compat/compat-2.6.28.c | 4 ++++
- 2 files changed, 6 insertions(+)
+ backport/backport-include/linux/if_vlan.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/backport/compat/compat-2.6.25.c b/backport/compat/compat-2.6.25.c
-index b3597ea..37407a4 100644
---- a/backport/compat/compat-2.6.25.c
-+++ b/backport/compat/compat-2.6.25.c
-@@ -210,6 +210,7 @@ EXPORT_SYMBOL_GPL(sg_alloc_table);
-  * to it. We implement a sloppy work around for backporting
-  * this.
-  */
-+#ifdef CONFIG_PCI
- int pci_enable_device_mem(struct pci_dev *dev)
- {
- 	int bars = pci_select_bars(dev, IORESOURCE_MEM);
-@@ -217,6 +218,7 @@ int pci_enable_device_mem(struct pci_dev *dev)
- 	return pci_enable_device_bars(dev, bars);
+diff --git a/backport/backport-include/linux/if_vlan.h b/backport/backport-include/linux/if_vlan.h
+index a5839e8..fea0acc 100644
+--- a/backport/backport-include/linux/if_vlan.h
++++ b/backport/backport-include/linux/if_vlan.h
+@@ -2,6 +2,7 @@
+ #define __BACKPORT_LINUX_IF_VLAN_H_
+ #include_next <linux/if_vlan.h>
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
+ #define vlan_insert_tag(__skb, __vlan_proto, __vlan_tci)	vlan_insert_tag(__skb, __vlan_tci)
+ #define __vlan_put_tag(__skb, __vlan_proto, __vlan_tci)		__vlan_put_tag(__skb, __vlan_tci)
+ #define vlan_put_tag(__skb, __vlan_proto, __vlan_tci)		vlan_put_tag(__skb, __vlan_tci)
+@@ -14,5 +15,6 @@ static inline bool vlan_hw_offload_capable(netdev_features_t features,
+ 		return true;
+ 	return false;
  }
- EXPORT_SYMBOL_GPL(pci_enable_device_mem);
-+#endif
++#endif 
  
- /**
-  * The following things are out of ./lib/vsprintf.c
-diff --git a/backport/compat/compat-2.6.28.c b/backport/compat/compat-2.6.28.c
-index e47626b..9c21de8 100644
---- a/backport/compat/compat-2.6.28.c
-+++ b/backport/compat/compat-2.6.28.c
-@@ -238,6 +238,7 @@ EXPORT_SYMBOL_GPL(usb_anchor_empty);
- #endif /* CONFIG_USB */
- #endif
- 
-+#ifdef CONFIG_PCI
- void __iomem *pci_ioremap_bar(struct pci_dev *pdev, int bar)
- {
- 	/*
-@@ -251,6 +252,7 @@ void __iomem *pci_ioremap_bar(struct pci_dev *pdev, int bar)
- 				     pci_resource_len(pdev, bar));
- }
- EXPORT_SYMBOL_GPL(pci_ioremap_bar);
-+#endif
- 
- static unsigned long round_jiffies_common(unsigned long j, int cpu,
- 		bool force_up)
-@@ -455,6 +457,7 @@ EXPORT_SYMBOL_GPL(n_tty_ioctl_helper);
-  * generating PME# from both D3_hot and D3_cold, and the platform is unable to
-  * enable wake-up power for it.
-  */
-+#ifdef CONFIG_PCI
- int pci_wake_from_d3(struct pci_dev *dev, bool enable)
- {
- 	return pci_pme_capable(dev, PCI_D3cold) ?
-@@ -462,4 +465,5 @@ int pci_wake_from_d3(struct pci_dev *dev, bool enable)
- 			pci_enable_wake(dev, PCI_D3hot, enable);
- }
- EXPORT_SYMBOL_GPL(pci_wake_from_d3);
-+#endif
- 
+ #endif /* __BACKPORT_LINUX_IF_VLAN_H_ */
 -- 
-1.8.1.2
+1.7.10.4
 
-
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
