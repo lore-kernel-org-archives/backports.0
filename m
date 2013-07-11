@@ -1,59 +1,142 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f169.google.com ([209.85.217.169]:45211 "EHLO
-	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750861Ab3GXAYf (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 23 Jul 2013 20:24:35 -0400
-Received: by mail-lb0-f169.google.com with SMTP id d10so6813976lbj.14
-        for <backports@vger.kernel.org>; Tue, 23 Jul 2013 17:24:34 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20130720162718.GA4376@cantiga.alporthouse.com>
-References: <1374235209-19782-1-git-send-email-mcgrof@do-not-panic.com>
- <1374235209-19782-7-git-send-email-mcgrof@do-not-panic.com>
- <20130719123146.GC9288@cantiga.alporthouse.com> <CAB=NE6UEHomQAoQb3cV0Bdtpb5SEGTr0_TaPWTbvF6OHe2bguA@mail.gmail.com>
- <20130720162718.GA4376@cantiga.alporthouse.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Tue, 23 Jul 2013 17:24:13 -0700
-Message-ID: <CAB=NE6WJCRG8Z0nkW=u20ehRXABxngA38GR0cgUUiDR5B0CpnQ@mail.gmail.com> (sfid-20130724_022437_788191_4CDAF0D6)
-Subject: Re: [RFC 6/9] backports: revert DMI_EXACT_MATCH() for older kernels
-To: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"jani.nikula" <jani.nikula@intel.com>,
-	Andrey Li <annndddrr@gmail.com>,
-	cornel panceac <cpanceac@gmail.com>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Greg Kroah-Hartman <greg@kroah.com>
-Content-Type: text/plain; charset=UTF-8
+Received: from server19320154104.serverpool.info ([193.201.54.104]:44214 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756890Ab3GKWMi (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 11 Jul 2013 18:12:38 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 10/19] backprots: add default config with all wifi drivers
+Date: Fri, 12 Jul 2013 00:11:33 +0200
+Message-Id: <1373580702-24752-12-git-send-email-hauke@hauke-m.de> (sfid-20130712_003606_792940_19423CC6)
+In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sat, Jul 20, 2013 at 9:27 AM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
-> On Fri, Jul 19, 2013 at 02:04:47PM -0700, Luis R. Rodriguez wrote:
->> Which ones? These two?
->>
->> dcf6d294830d46b0e6901477fb4bf455281d90c8 - drm/i915: quirk away
->> phantom LVDS on Intel's D525MW mainboard
->> e5614f0c2d0f4d7f0b8ef745d34593baf2c5dbf8 - drm/i915: quirk away
->> phantom LVDS on Intel's D510MO mainboard
->
-> Yes.
+Upstream commit df89d22b5d0998a5689554c9875813e97eab23d9
 
-OK, will do.
+This default config contains all wifi drivers.
 
->> Please let me know if you see any other way.
->
-> An alternative ugly hack would be to encode some metadata into the
-> search string. I am a bit wary of simply converting the DMI_EXACT_MATCH
-> back into DMI_MATCH because that introduces a regression into working
-> machines if we blithely backport fixes like the two above. I'd rather
-> have the compile failure.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ backport/defconfigs/wifi |  105 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 105 insertions(+)
+ create mode 100644 backport/defconfigs/wifi
 
-How about then just backporting like this then:
+diff --git a/backport/defconfigs/wifi b/backport/defconfigs/wifi
+new file mode 100644
+index 0000000..d55849b
+--- /dev/null
++++ b/backport/defconfigs/wifi
+@@ -0,0 +1,105 @@
++CPTCFG_ADM8211=m
++CPTCFG_AR5523=m
++CPTCFG_AT76C50X_USB=m
++CPTCFG_ATH5K=m
++CPTCFG_ATH6KL=m
++CPTCFG_ATH6KL_SDIO=m
++CPTCFG_ATH6KL_USB=m
++CPTCFG_ATH9K_HTC=m
++CPTCFG_ATH9K=m
++CPTCFG_ATH_CARDS=m
++CPTCFG_B43LEGACY=m
++CPTCFG_B43=m
++CPTCFG_B43_PCMCIA=y
++CPTCFG_B43_PHY_HT=y
++CPTCFG_B43_PHY_N=y
++CPTCFG_B43_SDIO=y
++CPTCFG_BCMA_DRIVER_GPIO=y
++CPTCFG_BCMA_HOST_PCI=y
++CPTCFG_BCMA=m
++CPTCFG_BRCMFMAC=m
++CPTCFG_BRCMFMAC_USB=y
++CPTCFG_BRCMSMAC=m
++CPTCFG_CARL9170=m
++CPTCFG_CFG80211=m
++CPTCFG_CFG80211_WEXT=y
++CPTCFG_HERMES=m
++CPTCFG_HERMES_PRISM=y
++CPTCFG_IPW2100=m
++CPTCFG_IPW2100_MONITOR=y
++CPTCFG_IPW2200=m
++CPTCFG_IPW2200_MONITOR=y
++CPTCFG_IPW2200_PROMISCUOUS=y
++CPTCFG_IPW2200_QOS=y
++CPTCFG_IPW2200_RADIOTAP=y
++CPTCFG_IWL3945=m
++CPTCFG_IWL4965=m
++CPTCFG_IWLDVM=m
++CPTCFG_IWLMVM=m
++CPTCFG_IWLWIFI=m
++CPTCFG_IWLWIFI_P2P=y
++CPTCFG_LIBERTAS_CS=m
++CPTCFG_LIBERTAS=m
++CPTCFG_LIBERTAS_MESH=y
++CPTCFG_LIBERTAS_SDIO=m
++CPTCFG_LIBERTAS_SPI=m
++CPTCFG_LIBERTAS_THINFIRM=m
++CPTCFG_LIBERTAS_THINFIRM_USB=m
++CPTCFG_LIBERTAS_USB=m
++CPTCFG_MAC80211_HWSIM=m
++CPTCFG_MAC80211_LEDS=y
++CPTCFG_MAC80211=m
++CPTCFG_MAC80211_MESH=y
++CPTCFG_MWIFIEX=m
++CPTCFG_MWIFIEX_PCIE=m
++CPTCFG_MWIFIEX_SDIO=m
++CPTCFG_MWIFIEX_USB=m
++CPTCFG_MWL8K=m
++CPTCFG_NORTEL_HERMES=m
++CPTCFG_ORINOCO_USB=m
++CPTCFG_P54_COMMON=m
++CPTCFG_P54_PCI=m
++CPTCFG_P54_SPI=m
++CPTCFG_P54_USB=m
++CPTCFG_PCI_HERMES=m
++CPTCFG_PCMCIA_HERMES=m
++CPTCFG_PCMCIA_SPECTRUM=m
++CPTCFG_PLX_HERMES=m
++CPTCFG_RT2400PCI=m
++CPTCFG_RT2500PCI=m
++CPTCFG_RT2500USB=m
++CPTCFG_RT2800PCI=m
++CPTCFG_RT2800USB=m
++CPTCFG_RT2800USB_RT53XX=y
++CPTCFG_RT2800USB_RT55XX=y
++CPTCFG_RT2800USB_UNKNOWN=y
++CPTCFG_RT2X00=m
++CPTCFG_RT61PCI=m
++CPTCFG_RT73USB=m
++CPTCFG_RTL8180=m
++CPTCFG_RTL8187=m
++CPTCFG_RTL8188EE=m
++CPTCFG_RTL8192C_COMMON=m
++CPTCFG_RTL8192CE=m
++CPTCFG_RTL8192CU=m
++CPTCFG_RTL8192DE=m
++CPTCFG_RTL8192SE=m
++CPTCFG_RTL8723AE=m
++CPTCFG_RTLWIFI=m
++CPTCFG_SSB=m
++CPTCFG_SSB_PCMCIAHOST=y
++CPTCFG_SSB_SDIOHOST=y
++CPTCFG_TMD_HERMES=m
++CPTCFG_USB_NET_RNDIS_WLAN=m
++CPTCFG_WIL6210=m
++CPTCFG_WL1251=m
++CPTCFG_WL1251_SDIO=m
++CPTCFG_WL1251_SPI=m
++CPTCFG_WL12XX=m
++CPTCFG_WL18XX=m
++CPTCFG_WLAN=y
++CPTCFG_WLCORE=m
++CPTCFG_WLCORE_SDIO=m
++CPTCFG_WLCORE_SPI=m
++CPTCFG_WL_TI=y
++CPTCFG_ZD1211RW=m
+-- 
+1.7.10.4
 
-#define DMI_EXACT_MATCH(a, b) DMI_MATCH(DMI_PRODUCT_NAME, "BACKPORT_IGNORE")
-
-It'd mean no #ifdef'ing code and at the same time making the run time
-of the code of the mentioned patches skip.
-
-Thoughts?
-
-  Luis
