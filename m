@@ -1,49 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:44143 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756829Ab3GKWME (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 11 Jul 2013 18:12:04 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 01/19] backport: do not add the vlan backports for kernel 3.10
-Date: Fri, 12 Jul 2013 00:11:23 +0200
-Message-Id: <1373580702-24752-2-git-send-email-hauke@hauke-m.de> (sfid-20130712_001209_127925_635FDAC8)
-In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
-References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+Received: from mail.kernel.org ([198.145.19.201]:43770 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756205Ab3GKWxw (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 11 Jul 2013 18:53:52 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id B11A3201ED
+	for <backports@vger.kernel.org>; Thu, 11 Jul 2013 22:53:51 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id CE90E201B7
+	for <backports@vger.kernel.org>; Thu, 11 Jul 2013 22:53:50 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 51851] Unable to use alx driver without CONFIG_MDIO
+Date: Thu, 11 Jul 2013 22:53:50 +0000
+Message-ID: <bug-51851-58281-9T9vkSnn6h@https.bugzilla.kernel.org/> (sfid-20130712_005355_279160_B4A8BC50)
+In-Reply-To: <bug-51851-58281@https.bugzilla.kernel.org/>
+References: <bug-51851-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Upstream commit 3fc43d6f57044d0cf8003dc8bc30749931b6a727
+https://bugzilla.kernel.org/show_bug.cgi?id=51851
 
-The kernel 3.10 already includes the new versions.
+Norman Shulman <norman.shulman@n-dimension.com> changed:
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- backport/backport-include/linux/if_vlan.h |    2 ++
- 1 file changed, 2 insertions(+)
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |norman.shulman@n-dimension.
+                   |                            |com
 
-diff --git a/backport/backport-include/linux/if_vlan.h b/backport/backport-include/linux/if_vlan.h
-index a5839e8..fea0acc 100644
---- a/backport/backport-include/linux/if_vlan.h
-+++ b/backport/backport-include/linux/if_vlan.h
-@@ -2,6 +2,7 @@
- #define __BACKPORT_LINUX_IF_VLAN_H_
- #include_next <linux/if_vlan.h>
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
- #define vlan_insert_tag(__skb, __vlan_proto, __vlan_tci)	vlan_insert_tag(__skb, __vlan_tci)
- #define __vlan_put_tag(__skb, __vlan_proto, __vlan_tci)		__vlan_put_tag(__skb, __vlan_tci)
- #define vlan_put_tag(__skb, __vlan_proto, __vlan_tci)		vlan_put_tag(__skb, __vlan_tci)
-@@ -14,5 +15,6 @@ static inline bool vlan_hw_offload_capable(netdev_features_t features,
- 		return true;
- 	return false;
- }
-+#endif 
- 
- #endif /* __BACKPORT_LINUX_IF_VLAN_H_ */
+--- Comment #3 from Norman Shulman <norman.shulman@n-dimension.com> ---
+Still a problem with
+
+nshulman@nvshp:/usr/src/linux
+$ uname -r
+3.9.5-hardened
+
+and backports-20130618
+
 -- 
-1.7.10.4
-
+You are receiving this mail because:
+You are the assignee for the bug.
