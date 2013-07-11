@@ -1,71 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:37065 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750964Ab3G3MBJ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 30 Jul 2013 08:01:09 -0400
-Message-ID: <51F7A890.7030809@fh-kl.de> (sfid-20130730_140113_092678_8B4DB1F0)
-Date: Tue, 30 Jul 2013 13:50:40 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [RFC 4/8] backports: add usb_translate_errors()
-Content-Type: text/plain; charset="ISO-8859-15"
+Received: from server19320154104.serverpool.info ([193.201.54.104]:44230 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756895Ab3GKWMr (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 11 Jul 2013 18:12:47 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 14/19] backports: add USB_DEVICE_INTERFACE_NUMBER
+Date: Fri, 12 Jul 2013 00:11:37 +0200
+Message-Id: <1373580702-24752-16-git-send-email-hauke@hauke-m.de> (sfid-20130712_001255_792129_CB837E3F)
+In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This inline function is missing for version < 2.6.39 but required by em28xx
-and cdc-wdm device driver.
+Upstream commit 98be7feed42539492bc768ec287b204b186790c4
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+The original version also checked for bInterfaceNumber, which is only
+available in more recent kernel versions.
+
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/usb.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ backport/backport-include/linux/usb.h |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
-index 368da6c..49a5762 100644
+index 8ea9d75..a217d16 100644
 --- a/backport/backport-include/linux/usb.h
 +++ b/backport/backport-include/linux/usb.h
-@@ -145,4 +145,21 @@ extern void usb_unpoison_urb(struct urb *urb);
- extern int usb_anchor_empty(struct usb_anchor *anchor);
- #endif /* 2.6.23-2.6.27 */
+@@ -38,6 +38,22 @@
+        .bInterfaceProtocol = (pr)
+ #endif
  
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,39)
-+#if defined(CONFIG_USB) || defined(CONFIG_USB_MODULE)
-+static inline int usb_translate_errors(int error_code)
-+{
-+	switch (error_code) {
-+	case 0:
-+	case -ENOMEM:
-+	case -ENODEV:
-+	case -EOPNOTSUPP:
-+		return error_code;
-+	default:
-+		return -EIO;
-+	}
-+}
-+#endif /* CONFIG_USB */
-+#endif /* < 2.6.39 */
++#ifndef USB_DEVICE_INTERFACE_NUMBER
++/**
++ * USB_DEVICE_INTERFACE_NUMBER - describe a usb device with a specific interface number
++ * @vend: the 16 bit USB Vendor ID
++ * @prod: the 16 bit USB Product ID
++ * @num: bInterfaceNumber value
++ *
++ * This macro is used to create a struct usb_device_id that matches a
++ * specific interface number of devices.
++ */
++#define USB_DEVICE_INTERFACE_NUMBER(vend, prod, num) \
++	.match_flags = USB_DEVICE_ID_MATCH_DEVICE, \
++	.idVendor = (vend), \
++	.idProduct = (prod)
++#endif /* USB_DEVICE_INTERFACE_NUMBER */
 +
- #endif /* __BACKPORT_USB_H */
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36)
+ #ifdef CPTCFG_BACKPORT_OPTION_USB_URB_THREAD_FIX
+ #define usb_scuttle_anchored_urbs LINUX_BACKPORT(usb_scuttle_anchored_urbs)
 -- 
-1.8.1.2
+1.7.10.4
 
-
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
