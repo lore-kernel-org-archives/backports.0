@@ -1,166 +1,61 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f49.google.com ([209.85.160.49]:41802 "EHLO
-	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752466Ab3GSWPp (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 18:15:45 -0400
-Received: by mail-pb0-f49.google.com with SMTP id jt11so4859946pbb.8
-        for <backports@vger.kernel.org>; Fri, 19 Jul 2013 15:15:44 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: jani.nikula@intel.com,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH v2 05/10] backports: simplify swiotlb_nr_tbl() backport
-Date: Fri, 19 Jul 2013 15:13:24 -0700
-Message-Id: <1374272009-26152-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20130720_001546_974080_441FE81A)
-In-Reply-To: <1374272009-26152-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1374272009-26152-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:44246 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756949Ab3GKWM4 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 11 Jul 2013 18:12:56 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 17/19] backports: add SPEED_UNKNOWN and DUPLEX_UNKNOWN
+Date: Fri, 12 Jul 2013 00:11:40 +0200
+Message-Id: <1373580702-24752-19-git-send-email-hauke@hauke-m.de> (sfid-20130712_001259_131602_739F6241)
+In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-swiotlb_nr_tbl() was available since 3.2 but was exported since 3.3.
-Since it uses an internal global state variable, it is impossible
-to backport it to. Instead of reverting the changes added just
-let this return 0 as the code will not do anything. This simplifies
-the backport.
+Upstream commit 8742a33b63428b13d21be4b79220813d2180752a
+
+This was added via uapi/linux/ethtool.h but using
+that file causes some odd issues I simply cannot
+resolve right now. I stuff these definitions into
+the regular include/linux/ethtool.h for now.
+
+This backports commit 589665f5 added via v3.2.
+
+mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains \
+	589665f5a6008dbce1d0af2cb93e94a80bf78151
+v3.2-rc1~4^2~10
 
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/swiotlb.h          |   17 +++++++
- patches/collateral-evolutions/drm/03-swiotlb/INFO  |    5 ---
- .../drivers_gpu_drm_nouveau_nouveau_bo.patch       |   31 -------------
- .../drivers_gpu_drm_radeon_radeon_ttm.patch        |   47 --------------------
- 4 files changed, 17 insertions(+), 83 deletions(-)
- create mode 100644 backport/backport-include/linux/swiotlb.h
- delete mode 100644 patches/collateral-evolutions/drm/03-swiotlb/INFO
- delete mode 100644 patches/collateral-evolutions/drm/03-swiotlb/drivers_gpu_drm_nouveau_nouveau_bo.patch
- delete mode 100644 patches/collateral-evolutions/drm/03-swiotlb/drivers_gpu_drm_radeon_radeon_ttm.patch
+ backport/backport-include/linux/ethtool.h |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/backport/backport-include/linux/swiotlb.h b/backport/backport-include/linux/swiotlb.h
-new file mode 100644
-index 0000000..836b353
---- /dev/null
-+++ b/backport/backport-include/linux/swiotlb.h
-@@ -0,0 +1,17 @@
-+#ifndef __BACKPORT_LINUX_SWIOTLB_H
-+#define __BACKPORT_LINUX_SWIOTLB_H
+diff --git a/backport/backport-include/linux/ethtool.h b/backport/backport-include/linux/ethtool.h
+index 9ed268b..732a0db 100644
+--- a/backport/backport-include/linux/ethtool.h
++++ b/backport/backport-include/linux/ethtool.h
+@@ -3,6 +3,14 @@
+ #include_next <linux/ethtool.h>
+ #include <linux/version.h>
+ 
++#ifndef SPEED_UNKNOWN
++#define SPEED_UNKNOWN  -1
++#endif /* SPEED_UNKNOWN */
 +
-+#include <linux/version.h>
++#ifndef DUPLEX_UNKNOWN
++#define DUPLEX_UNKNOWN 0xff
++#endif /* DUPLEX_UNKNOWN */
 +
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28))
-+#include_next <linux/swiotlb.h>
-+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28)) */
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0))
-+static inline unsigned long swiotlb_nr_tbl(void)
-+{
-+	return 0;
-+}
-+#endif
-+
-+#endif /* __BACKPORT_LINUX_SWIOTLB_H */
-diff --git a/patches/collateral-evolutions/drm/03-swiotlb/INFO b/patches/collateral-evolutions/drm/03-swiotlb/INFO
-deleted file mode 100644
-index 5b7265f..0000000
---- a/patches/collateral-evolutions/drm/03-swiotlb/INFO
-+++ /dev/null
-@@ -1,5 +0,0 @@
--
--swiotlb_nr_tbl() was available since 3.2 but was exported since 3.3.
--Since it uses an internal global state variable, it is impossible
--to backport it to compat.git. So revert the changes.
--
-diff --git a/patches/collateral-evolutions/drm/03-swiotlb/drivers_gpu_drm_nouveau_nouveau_bo.patch b/patches/collateral-evolutions/drm/03-swiotlb/drivers_gpu_drm_nouveau_nouveau_bo.patch
-deleted file mode 100644
-index 33a68b1..0000000
---- a/patches/collateral-evolutions/drm/03-swiotlb/drivers_gpu_drm_nouveau_nouveau_bo.patch
-+++ /dev/null
-@@ -1,31 +0,0 @@
----- a/drivers/gpu/drm/nouveau/nouveau_bo.c
--+++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
--@@ -1374,11 +1374,13 @@ nouveau_ttm_tt_populate(struct ttm_tt *t
-- 	}
-- #endif
-- 
--+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0))
-- #ifdef CONFIG_SWIOTLB
-- 	if (swiotlb_nr_tbl()) {
-- 		return ttm_dma_populate((void *)ttm, dev->dev);
-- 	}
-- #endif
--+#endif
-- 
-- 	r = ttm_pool_populate(ttm);
-- 	if (r) {
--@@ -1424,12 +1426,14 @@ nouveau_ttm_tt_unpopulate(struct ttm_tt
-- 	}
-- #endif
-- 
--+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0))
-- #ifdef CONFIG_SWIOTLB
-- 	if (swiotlb_nr_tbl()) {
-- 		ttm_dma_unpopulate((void *)ttm, dev->dev);
-- 		return;
-- 	}
-- #endif
--+#endif
-- 
-- 	for (i = 0; i < ttm->num_pages; i++) {
-- 		if (ttm_dma->dma_address[i]) {
-diff --git a/patches/collateral-evolutions/drm/03-swiotlb/drivers_gpu_drm_radeon_radeon_ttm.patch b/patches/collateral-evolutions/drm/03-swiotlb/drivers_gpu_drm_radeon_radeon_ttm.patch
-deleted file mode 100644
-index 5e41878..0000000
---- a/patches/collateral-evolutions/drm/03-swiotlb/drivers_gpu_drm_radeon_radeon_ttm.patch
-+++ /dev/null
-@@ -1,47 +0,0 @@
----- a/drivers/gpu/drm/radeon/radeon_ttm.c
--+++ b/drivers/gpu/drm/radeon/radeon_ttm.c
--@@ -603,11 +603,13 @@ static int radeon_ttm_tt_populate(struct
-- 	}
-- #endif
-- 
--+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0))
-- #ifdef CONFIG_SWIOTLB
-- 	if (swiotlb_nr_tbl()) {
-- 		return ttm_dma_populate(&gtt->ttm, rdev->dev);
-- 	}
-- #endif
--+#endif
-- 
-- 	r = ttm_pool_populate(ttm);
-- 	if (r) {
--@@ -649,12 +651,14 @@ static void radeon_ttm_tt_unpopulate(str
-- 	}
-- #endif
-- 
--+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0))
-- #ifdef CONFIG_SWIOTLB
-- 	if (swiotlb_nr_tbl()) {
-- 		ttm_dma_unpopulate(&gtt->ttm, rdev->dev);
-- 		return;
-- 	}
-- #endif
--+#endif
-- 
-- 	for (i = 0; i < ttm->num_pages; i++) {
-- 		if (gtt->ttm.dma_address[i]) {
--@@ -877,6 +881,7 @@ static int radeon_ttm_debugfs_init(struc
-- 	radeon_mem_types_list[i].show = &ttm_page_alloc_debugfs;
-- 	radeon_mem_types_list[i].driver_features = 0;
-- 	radeon_mem_types_list[i++].data = NULL;
--+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0))
-- #ifdef CONFIG_SWIOTLB
-- 	if (swiotlb_nr_tbl()) {
-- 		sprintf(radeon_mem_types_names[i], "ttm_dma_page_pool");
--@@ -886,6 +891,7 @@ static int radeon_ttm_debugfs_init(struc
-- 		radeon_mem_types_list[i++].data = NULL;
-- 	}
-- #endif
--+#endif
-- 	return radeon_debugfs_add_files(rdev, radeon_mem_types_list, i);
-- 
-- #endif
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
+ static inline u32 ethtool_rxfh_indir_default(u32 index, u32 n_rx_rings)
+ {
 -- 
 1.7.10.4
 
