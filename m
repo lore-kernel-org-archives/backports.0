@@ -1,70 +1,28 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:50810 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754708Ab3GaIPd (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 31 Jul 2013 04:15:33 -0400
-Message-ID: <51F8C79E.8080804@fh-kl.de> (sfid-20130731_101538_478600_872E39D5)
-Date: Wed, 31 Jul 2013 10:15:26 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Received: from mail-la0-f44.google.com ([209.85.215.44]:59853 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753987Ab3GLAaz (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 11 Jul 2013 20:30:55 -0400
+Received: by mail-la0-f44.google.com with SMTP id er20so7392306lab.31
+        for <backports@vger.kernel.org>; Thu, 11 Jul 2013 17:30:54 -0700 (PDT)
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <rodrigue@qca.qualcomm.com>
-CC: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	<backports@vger.kernel.org>
-Subject: Re: [RFC 0/8] backports: add wwan device drivers
-References: <51F7A86E.4040006@fh-kl.de> <20130730210642.GJ17130@pogo>
-In-Reply-To: <20130730210642.GJ17130@pogo>
-Content-Type: text/plain; charset="ISO-8859-15"
+In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+From: "Luis R. Rodriguez" <mcgrof@gmail.com>
+Date: Thu, 11 Jul 2013 17:30:33 -0700
+Message-ID: <CAB=NE6WEvVbVca35NX5==7rkt3YDJ94+vpwpTbT=gAa5Hd7eww@mail.gmail.com> (sfid-20130712_023057_399323_B6DAB245)
+Subject: Re: [PATCH 3.10 00/19] backports for branch linux-3.10.y
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+On Thu, Jul 11, 2013 at 3:11 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> You can also pull this from https://github.com/hauke/backports/commits/linux-3.10.y
 
+Awesome thanks! Applied an pushed, just going to work on some
+cosmetics on README, and Makefile to help with target guidence and
+then push out a new release, thanks so much!!
 
-On 30.07.2013 23:06, Luis R. Rodriguez wrote:
-> On Tue, Jul 30, 2013 at 01:50:06PM +0200, Patrick Ziegler wrote:
->> This adds wwan drivers for mobile broadband devices.
->> Patches 1 to 7 add missing stuff required for the wwan drivers.
->> Patch 8 adds device drivers.
->>
->>
->> Patrick Ziegler (8):
->>   backports: disable PCI functions for kernels without PCI support
->>   backports: add eth_prepare_mac_addr_change() and
->>     eth_commit_mac_addr_change()
->>   backports: define PM_EVENT_AUTO
->>   backports: add usb_translate_errors()
->>   backports: add usb_endpoint_maxp()
->>   backports: include headers directly if math64 header is missing
->>   backports: define phys_addr_t for ARM on kernel version < 2.6.25
->>   backports: add wwan device drivers
-> 
-> Nice! Was this based on top of all my posted patches that take us
-> up to next-20130712 + my last RFCs that take us up to next-20130729 ?
-> If not any chance you can rebase? The patches that take us up to
-> next-20130712 are now merged upstream and the only missing ones are the
-> ones that take us up to next-20130729. You can skip my RFCs as I can
-> adjust those to yours. If you rebase to the master branch that'd be
-> good enough.
-> 
-
-This is based on top of the current master branch fe8230e (refresh 
-patches for next-20130712). But I will prepare a new patch series based
-on your latest RFC (next-20130729)
-
-Patrick
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
+  Luis
