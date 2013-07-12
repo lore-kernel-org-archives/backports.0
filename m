@@ -1,103 +1,119 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:58219 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755057Ab3GAUzj (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 1 Jul 2013 16:55:39 -0400
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:44414 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932209Ab3GLAwb (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 11 Jul 2013 20:52:31 -0400
+Received: by mail-pa0-f43.google.com with SMTP id hz11so8370881pad.30
+        for <backports@vger.kernel.org>; Thu, 11 Jul 2013 17:52:31 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: linux-wireless@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 3/3] backports: add SPEED_UNKNOWN and DUPLEX_UNKNOWN
-Date: Mon,  1 Jul 2013 13:55:20 -0700
-Message-Id: <1372712120-16606-4-git-send-email-mcgrof@do-not-panic.com> (sfid-20130701_225542_522941_437B97CC)
-In-Reply-To: <1372712120-16606-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1372712120-16606-1-git-send-email-mcgrof@do-not-panic.com>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH] backports: add make help and defconfig-help targets
+Date: Thu, 11 Jul 2013 17:52:25 -0700
+Message-Id: <1373590345-13880-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130712_025233_597001_B4C2AB3D)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-This gets us in synch with next-20130618.
+Throw users a bone by helping them compile specific target
+drivers. Hauke did some good work in providing tons of
+defconfigs, provide a command to let users query these
+easily with 'make defconfig-help'. Also provide a more
+generic 'make help' target.
 
-This was added via uapi/linux/ethtool.h but using
-that file causes some odd issues I simply cannot
-resolve right now. I stuff these definitions into
-the regular include/linux/ethtool.h for now.
+Screenshot of make defconfig-help:
 
-This backports commit 589665f5 added via v3.2.
+mcgrof@frijol ~/backports-20130618 $ make defconfig-help
+Driver or subsystem configuration targets:
+  defconfig-alx
+  defconfig-ar5523
+  defconfig-ath5k
+  defconfig-ath6kl
+  defconfig-ath9k
+  defconfig-ath10k
+  defconfig-b43
+  defconfig-b43legacy
+  defconfig-brcmfmac
+  defconfig-brcmsmac
+  defconfig-carl9170
+  defconfig-drm
+  defconfig-ieee802154
+  defconfig-iwlwifi
+  defconfig-media
+  defconfig-nfc
+  defconfig-regulator
+  defconfig-rtlwifi
+  defconfig-wifi
+  defconfig-wil6210
 
-mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains \
-	589665f5a6008dbce1d0af2cb93e94a80bf78151
-v3.2-rc1~4^2~10
-
-commit 589665f5a6008dbce1d0af2cb93e94a80bf78151
-Author: Dan Carpenter <dan.carpenter@oracle.com>
-Date:   Fri Nov 4 08:21:38 2011 +0000
-
-    bonding: comparing a u8 with -1 is always false
-
-    slave->duplex is a u8 type so the in bond_info_show_slave() when we
-    check "if (slave->duplex == -1)", it's always false.
-
-    Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
-
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.79              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.10-rc1            [  OK  ]
-20  3.2.45              [  OK  ]
-21  3.3.8               [  OK  ]
-22  3.4.46              [  OK  ]
-23  3.5.7               [  OK  ]
-24  3.6.11              [  OK  ]
-25  3.7.10              [  OK  ]
-26  3.8.13              [  OK  ]
-27  3.9.3               [  OK  ]
-
-real    15m7.262s
-user    335m33.818s
-sys     82m36.486s
+Running 'make help' will provide the above and in addition to that
+something similar to what the Linux kernel provides with the
+list of supported targets backports provides.
 
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/backport-include/linux/ethtool.h |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ backport/Makefile |   47 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/backport/backport-include/linux/ethtool.h b/backport/backport-include/linux/ethtool.h
-index 0c1eee6..2f323b0 100644
---- a/backport/backport-include/linux/ethtool.h
-+++ b/backport/backport-include/linux/ethtool.h
-@@ -3,6 +3,14 @@
- #include_next <linux/ethtool.h>
- #include <linux/version.h>
+diff --git a/backport/Makefile b/backport/Makefile
+index 421a4f6..ca69f41 100644
+--- a/backport/Makefile
++++ b/backport/Makefile
+@@ -112,6 +112,53 @@ mrproper:
+ 	echo "$(CONFIG_MD5)" > .kernel_config_md5
+ 	@$(MAKE) -f Makefile.real "$@"
  
-+#ifndef SPEED_UNKNOWN
-+#define SPEED_UNKNOWN  -1
-+#endif /* SPEED_UNKNOWN */
++.PHONY: defconfig-help
++defconfig-help:
++	@echo "Driver or subsystem configuration targets:"
++	@set -e						;\
++		bk_configs="$$(ls defconfigs/*)" 	;\
++		for cfg in $$bk_configs; do		\
++			echo "  defconfig-$${cfg##defconfigs/}"	;\
++		done
++	@echo ""
 +
-+#ifndef DUPLEX_UNKNOWN
-+#define DUPLEX_UNKNOWN 0xff
-+#endif /* DUPLEX_UNKNOWN */
-+
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
- #define ethtool_rxfh_indir_default LINUX_BACKPORT(ethtool_rxfh_indir_default)
- static inline u32 ethtool_rxfh_indir_default(u32 index, u32 n_rx_rings)
++.PHONY: help
++help: defconfig-help
++	@echo "Cleaning targets:"
++	@echo "  clean           - Remove most generated files but keep the config and"
++	@echo "                    enough build support to build external modules"
++	@echo "  mrproper        - Remove all generated files + config + various backup files"
++	@echo ""
++	@echo "Driver configuration help:"
++	@echo "  defconfig-help  - List all prearranged defconfig-targets we have"
++	@echo "                    designed for you. You can use this to find"
++	@echo "                    driver specific configs in case all you really"
++	@echo "                    need is to just compile one or a small group "
++	@echo "                    of drivers."
++	@echo ""
++	@echo "Configuration targets:"
++	@echo "  menuconfig      - Update current config utilising a menu based program"
++	@echo "  allyesconfig    - New config where all options are accepted with yes"
++	@echo "  oldconfig       - Update current config utilising a provided .config as base"
++	@echo "  oldaskconfig    - ??"
++	@echo "  silentoldconfig - Same as oldconfig, but quietly, additionally update deps"
++	@echo "  allnoconfig     - New config where all options are answered with no"
++	@echo "  allyesconfig    - New config where all options are accepted with yes"
++	@echo "  allmodconfig    - New config selecting modules when possible"
++	@echo "  alldefconfig    - New config with all symbols set to default"
++	@echo "  randconfig      - New config with random answer to all options"
++	@echo "  listnewconfig   - List new options"
++	@echo "  olddefconfig    - Same as silentoldconfig but sets new symbols to their default value"
++	@echo ""
++	@echo "Other generic targets:"
++	@echo "  all             - Build all targets marked with [*]"
++	@echo "* modules         - Build all modules"
++	@echo ""
++	@echo "Architecture specific targets:"
++	@echo "  install         - Install modules"
++	@echo "  uninstall       - Uninstall modules"
++	@echo ""
++	@echo "Execute "make" or "make all" to build all targets marked with [*]"
+ else
+ include $(BACKPORT_PWD)/Makefile.kernel
+ endif
 -- 
 1.7.10.4
 
