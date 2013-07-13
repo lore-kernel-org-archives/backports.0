@@ -1,97 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f173.google.com ([209.85.192.173]:63308 "EHLO
-	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755057Ab3GAUza (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 1 Jul 2013 16:55:30 -0400
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: linux-wireless@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 1/3] backports: remove alx extra patch
-Date: Mon,  1 Jul 2013 13:55:18 -0700
-Message-Id: <1372712120-16606-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20130701_225532_419902_12984317)
-In-Reply-To: <1372712120-16606-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1372712120-16606-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from blackhole.sdinet.de ([176.9.52.58]:38035 "EHLO mail.sdinet.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757957Ab3GMAtz (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 12 Jul 2013 20:49:55 -0400
+Date: Sat, 13 Jul 2013 02:40:44 +0200 (CEST)
+From: Sven-Haegar Koch <haegar@sdinet.de>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [ANN] backports-v3.10 released - first release!
+In-Reply-To: <CAB=NE6XyC0Svxh8yeVNvnpdkVBTWEAcmi8wZocc6MC=kxLs2iw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.10.1307130238190.31878@aurora.sdinet.de> (sfid-20130713_024957_301429_C68A1620)
+References: <CAB=NE6XyC0Svxh8yeVNvnpdkVBTWEAcmi8wZocc6MC=kxLs2iw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Fri, 12 Jul 2013, Luis R. Rodriguez wrote:
 
-The alx driver was upstreamed by Johannes, so this is
-no longer required. Note that this driver is now GPLv2
-or later, BSD folks will have to look at the old unified
-tree for a permissive licensed port.
+> Kicked out the first Linux kernel backports release under the new
+> project name, "backports" that hopefully clarifies this a generic
+> backport project now. Backported subsystems in this release:
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- .../network/0001-netdev_ops/mwifiex.patch          |    2 +-
- ...drivers_net_wireless_rtlwifi_rtl8192cu_sw.patch |    2 +-
- .../network/0002-alx-make-kconfig/alx.patch        |   32 --------------------
- 3 files changed, 2 insertions(+), 34 deletions(-)
- delete mode 100644 patches/unified-drivers/network/0002-alx-make-kconfig/alx.patch
+> [0] http://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.10/backports-3.10-1.tar.bz2
 
-diff --git a/patches/collateral-evolutions/network/0001-netdev_ops/mwifiex.patch b/patches/collateral-evolutions/network/0001-netdev_ops/mwifiex.patch
-index 0567191..58a38ab 100644
---- a/patches/collateral-evolutions/network/0001-netdev_ops/mwifiex.patch
-+++ b/patches/collateral-evolutions/network/0001-netdev_ops/mwifiex.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/net/wireless/mwifiex/main.c
- +++ b/drivers/net/wireless/mwifiex/main.c
--@@ -750,7 +750,7 @@ static const struct net_device_ops mwifi
-+@@ -749,7 +749,7 @@ static const struct net_device_ops mwifi
-  void mwifiex_init_priv_params(struct mwifiex_private *priv,
-  						struct net_device *dev)
-  {
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_rtlwifi_rtl8192cu_sw.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_rtlwifi_rtl8192cu_sw.patch
-index 28b2173..23181a0 100644
---- a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_rtlwifi_rtl8192cu_sw.patch
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_rtlwifi_rtl8192cu_sw.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/net/wireless/rtlwifi/rtl8192cu/sw.c
- +++ b/drivers/net/wireless/rtlwifi/rtl8192cu/sw.c
--@@ -385,7 +385,9 @@ static struct usb_driver rtl8192cu_drive
-+@@ -386,7 +386,9 @@ static struct usb_driver rtl8192cu_drive
-  #ifdef CONFIG_AUTOSUSPEND
-  	.supports_autosuspend = 1,
-  #endif
-diff --git a/patches/unified-drivers/network/0002-alx-make-kconfig/alx.patch b/patches/unified-drivers/network/0002-alx-make-kconfig/alx.patch
-deleted file mode 100644
-index 465e499..0000000
---- a/patches/unified-drivers/network/0002-alx-make-kconfig/alx.patch
-+++ /dev/null
-@@ -1,32 +0,0 @@
----- a/drivers/net/ethernet/atheros/Kconfig
--+++ b/drivers/net/ethernet/atheros/Kconfig
--@@ -67,4 +67,22 @@ config ATL1C
-- 	  To compile this driver as a module, choose M here.  The module
-- 	  will be called atl1c.
-- 
--+config ALX
--+	tristate "Qualcomm Atheros L1F Gigabit Ethernet support"
--+	depends on PCI
--+	select CRC32
--+	select NET_CORE
--+	select MII
--+	---help---
--+	  This driver supports the Qualcomm Atheros L1F ethernet adapter.
--+	  This driver supports following chipsets:
--+
--+	  1969:1091 - AR8161 Gigabit Ethernet
--+	  1969:1090 - AR8162 Fast Ethernet
--+	  1969:10A1 - AR8171 Gigabit Ethernet
--+	  1969:10A0 - AR8172 Fast Ethernet
--+
--+	  To compile this driver as a module, choose M here.  The module
--+	  will be called alx.
--+
-- endif # NET_VENDOR_ATHEROS
----- a/drivers/net/ethernet/atheros/Makefile
--+++ b/drivers/net/ethernet/atheros/Makefile
--@@ -6,3 +6,4 @@ obj-$(CONFIG_ATL1) += atlx/
-- obj-$(CONFIG_ATL2) += atlx/
-- obj-$(CONFIG_ATL1E) += atl1e/
-- obj-$(CONFIG_ATL1C) += atl1c/
--+obj-$(CONFIG_ALX) += alx/
+Did you perhaps re-upload the 3.10-rc1 backports archive?
+
+haegar@blackhole:~/src/3.2.0$ tar tvf backports-3.10-1.tar.bz2 | head -n 2
+drwxr-xr-x mcgrof/mcgrof     0 2013-05-19 03:06 backports-3.10-rc1-1/
+-rw-r--r-- mcgrof/mcgrof  4164 2013-05-18 22:57 backports-3.10-rc1-1/Kconfig.versions
+...
+
+$ cat versions 
+BACKPORTS_VERSION="v3.10-rc1-1-0-g80112f6"
+BACKPORTED_KERNEL_VERSION="v3.10-rc1-0-gf722406"
+BACKPORTED_KERNEL_NAME="Linux"
+
+c'ya
+sven-haegar
+
 -- 
-1.7.10.4
-
+Three may keep a secret, if two of them are dead.
+- Ben F.
