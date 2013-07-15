@@ -1,34 +1,33 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:51733 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756080Ab3G3OLB (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 30 Jul 2013 10:11:01 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 2242B20360
-	for <backports@vger.kernel.org>; Tue, 30 Jul 2013 14:10:56 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 8219E202CC
-	for <backports@vger.kernel.org>; Tue, 30 Jul 2013 14:10:48 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 51751] debug build of ath9k fails.
-Date: Tue, 30 Jul 2013 14:10:48 +0000
-Message-ID: <bug-51751-58281-XjcCzNBZBC@https.bugzilla.kernel.org/> (sfid-20130730_161119_651213_4CF5004D)
-In-Reply-To: <bug-51751-58281@https.bugzilla.kernel.org/>
-References: <bug-51751-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
+Received: from s3.sipsolutions.net ([144.76.43.152]:39822 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757910Ab3GOO3N (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 15 Jul 2013 10:29:13 -0400
+To: Ben Guthro <ben@guthro.net>
+Subject: Re: problems building backports-3.10-2
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Mon, 15 Jul 2013 17:28:28 +0300
+From: Johannes Berg <johannes@sipsolutions.net>
+Cc: backports@vger.kernel.org, backports-owner@vger.kernel.org
+In-Reply-To: <CAOvdn6Vs9pUOXwBYTPzvQp0TDKgDxotog-Srv0xF+41i5UXz0Q@mail.gmail.com>
+ (sfid-20130715_150813_416070_8649FA88)
+References: <CAOvdn6Vs9pUOXwBYTPzvQp0TDKgDxotog-Srv0xF+41i5UXz0Q@mail.gmail.com>
+ (sfid-20130715_150813_416070_8649FA88)
+Message-ID: <ea1994fe7088be3dcc5e03aad6ae3c75@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51751
+On 2013-07-15 16:08, Ben Guthro wrote:
+> I'm struggling to integrate the backports-3.10-2 release into my
+> build, and I'm hoping this is the proper venue to get some answers.
 
-Konstantin Ryabitsev <mricon@kernel.org> changed:
+> Am I doing something wrong - or is something broken in this release?
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-          Component|Not sure                    |Backports
+I (partially) built it today, so it's probably on your end.
 
--- 
-You are receiving this mail because:
-You are the assignee for the bug.
+I suspect you copied it across systems and didn't copy the file 
+".local-symbols", make sure you have that.
+
+johannes
