@@ -1,231 +1,72 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:51522 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759230Ab3GaIka (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 31 Jul 2013 04:40:30 -0400
-Message-ID: <51F8CD77.6020600@fh-kl.de> (sfid-20130731_104039_873153_EE4376EF)
-Date: Wed, 31 Jul 2013 10:40:23 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Received: from mail-ve0-f181.google.com ([209.85.128.181]:38958 "EHLO
+	mail-ve0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756601Ab3GOOBH (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 15 Jul 2013 10:01:07 -0400
+Received: by mail-ve0-f181.google.com with SMTP id db10so9951180veb.12
+        for <backports@vger.kernel.org>; Mon, 15 Jul 2013 07:01:06 -0700 (PDT)
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [RFC v2 8/8] backports: add wwan device drivers
-References: <cover.1375259597.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1375259597.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+In-Reply-To: <51E3FF49.50301@hauke-m.de>
+References: <CAOvdn6Vs9pUOXwBYTPzvQp0TDKgDxotog-Srv0xF+41i5UXz0Q@mail.gmail.com>
+	<51E3FF49.50301@hauke-m.de>
+Date: Mon, 15 Jul 2013 10:01:06 -0400
+Message-ID: <CAOvdn6UmT+gaEgxfrhNt=fYDs-ikKykEJRJ-GbA3VJWdB3MPgg@mail.gmail.com> (sfid-20130715_160110_503209_38D22411)
+Subject: Re: problems building backports-3.10-2
+From: Ben Guthro <ben@guthro.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Add cdc_mbim, cdc_ncm, sierra_net, qmi_wwan device drivers.
+On Mon, Jul 15, 2013 at 9:55 AM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> On 07/15/2013 03:08 PM, Ben Guthro wrote:
+>> I'm struggling to integrate the backports-3.10-2 release into my
+>> build, and I'm hoping this is the proper venue to get some answers.
+>>
+>> 1. The build is complaining about ./gentree.py and local symbols. I
+>> did not see gentree.py anywhere in the code released.
+>>
+>> Even when removing this section of the Makefile, I am able to get a
+>> bit further, to try to do a 'make menuconfig'
+>> This does not present the options I expected - offering only the
+>> following options:
+>>
+>> Build all compat code
+>> Voltage and Current Regulator Support
+>>
+>>
+>> I also tried the some of the defconfigs (like iwlwifi) - but these
+>> seem to only build the compat.ko, and nothing else.
+>>
+>>
+>> Am I doing something wrong - or is something broken in this release?
+>
+> What source are you using?
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
----
- backport/Kconfig                                           |  2 ++
- backport/Makefile.kernel                                   |  3 +++
- copy-list                                                  | 14 ++++++++++++++
- .../network/0001-netdev_ops/qmi_wwan.patch                 | 11 +++++++++++
- .../network/0001-netdev_ops/sierra_net.patch               | 11 +++++++++++
- .../62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch       | 12 ++++++++++++
- .../62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch        | 12 ++++++++++++
- .../62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch       | 12 ++++++++++++
- .../62-usb_driver_lpm/drivers_net_usb_sierra_net.patch     | 12 ++++++++++++
- .../62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch      | 12 ++++++++++++
- 10 files changed, 101 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch
- create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
-
-diff --git a/backport/Kconfig b/backport/Kconfig
-index 845b233..64a5f8b 100644
---- a/backport/Kconfig
-+++ b/backport/Kconfig
-@@ -48,3 +48,5 @@ source drivers/platform/x86/Kconfig
- source net/ieee802154/Kconfig
- source net/mac802154/Kconfig
- source drivers/net/ieee802154/Kconfig
-+
-+source drivers/usb/class/Kconfig
-diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
-index ac29dea..ca75ce1 100644
---- a/backport/Makefile.kernel
-+++ b/backport/Makefile.kernel
-@@ -40,3 +40,6 @@ obj-$(CPTCFG_INTEL_IPS) += drivers/platform/x86/
- obj-$(CPTCFG_IEEE802154) += net/ieee802154/
- obj-$(CPTCFG_MAC802154) += net/mac802154/
- obj-$(CPTCFG_IEEE802154) += drivers/net/ieee802154/
-+
-+obj-$(CPTCFG_USB_WDM) += drivers/usb/class/
-+obj-$(CPTCFG_USB_USBNET) += drivers/net/usb/
-diff --git a/copy-list b/copy-list
-index aaf5ae9..7da4bb7 100644
---- a/copy-list
-+++ b/copy-list
-@@ -100,6 +100,20 @@ drivers/net/ethernet/broadcom/Makefile
- drivers/net/ethernet/broadcom/b44.c
- drivers/net/ethernet/broadcom/b44.h
- 
-+# wwan drivers
-+include/uapi/linux/usb/cdc.h
-+include/uapi/linux/usb/cdc-wdm.h
-+include/linux/usb/cdc_ncm.h
-+include/linux/usb/cdc-wdm.h
-+
-+drivers/usb/class/Makefile
-+drivers/usb/class/Kconfig
-+drivers/usb/class/cdc-wdm.c
-+drivers/net/usb/cdc_mbim.c
-+drivers/net/usb/cdc_ncm.c
-+drivers/net/usb/sierra_net.c
-+drivers/net/usb/qmi_wwan.c
-+
- # DRM
- include/drm/
- include/uapi/drm/
-diff --git a/patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch b/patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch
-new file mode 100644
-index 0000000..6281c8d
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch
-@@ -0,0 +1,11 @@
-+--- a/drivers/net/usb/qmi_wwan.c
-++++ b/drivers/net/usb/qmi_wwan.c
-+@@ -331,7 +331,7 @@
-+ 		dev->net->dev_addr[0] |= 0x02;	/* set local assignment bit */
-+ 		dev->net->dev_addr[0] &= 0xbf;	/* clear "IP" bit */
-+ 	}
-+-	dev->net->netdev_ops = &qmi_wwan_netdev_ops;
-++	netdev_attach_ops(dev->net, &qmi_wwan_netdev_ops);
-+ err:
-+ 	return status;
-+ }
-diff --git a/patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch b/patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch
-new file mode 100644
-index 0000000..e7ff14b
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch
-@@ -0,0 +1,11 @@
-+--- a/drivers/net/usb/sierra_net.c
-++++ b/drivers/net/usb/sierra_net.c
-+@@ -695,7 +695,7 @@
-+ 
-+ 	priv->usbnet = dev;
-+ 	priv->ifnum = ifacenum;
-+-	dev->net->netdev_ops = &sierra_net_device_ops;
-++	netdev_attach_ops(dev->net, &sierra_net_device_ops);
-+ 
-+ 	/* change MAC addr to include, ifacenum, and to be unique */
-+ 	dev->net->dev_addr[ETH_ALEN-2] = atomic_inc_return(&iface_counter);
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
-new file mode 100644
-index 0000000..0feffc8
---- /dev/null
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/net/usb/cdc_mbim.c
-++++ b/drivers/net/usb/cdc_mbim.c
-+@@ -417,7 +417,9 @@
-+ 	.resume = cdc_mbim_resume,
-+ 	.reset_resume =	cdc_mbim_resume,
-+ 	.supports_autosuspend = 1,
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+ 	.disable_hub_initiated_lpm = 1,
-++#endif
-+ };
-+ module_usb_driver(cdc_mbim_driver);
-+ 
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
-new file mode 100644
-index 0000000..c6419fe
---- /dev/null
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/net/usb/cdc_ncm.c
-++++ b/drivers/net/usb/cdc_ncm.c
-+@@ -1271,7 +1271,9 @@
-+ 	.resume = usbnet_resume,
-+ 	.reset_resume =	usbnet_resume,
-+ 	.supports_autosuspend = 1,
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+ 	.disable_hub_initiated_lpm = 1,
-++#endif
-+ };
-+ 
-+ module_usb_driver(cdc_ncm_driver);
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
-new file mode 100644
-index 0000000..8f3355d
---- /dev/null
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/net/usb/qmi_wwan.c
-++++ b/drivers/net/usb/qmi_wwan.c
-+@@ -672,7 +672,9 @@
-+ 	.resume		      =	qmi_wwan_resume,
-+ 	.reset_resume         = qmi_wwan_resume,
-+ 	.supports_autosuspend = 1,
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+ 	.disable_hub_initiated_lpm = 1,
-++#endif
-+ };
-+ 
-+ module_usb_driver(qmi_wwan_driver);
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
-new file mode 100644
-index 0000000..553f2ca
---- /dev/null
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/net/usb/sierra_net.c
-++++ b/drivers/net/usb/sierra_net.c
-+@@ -959,7 +959,9 @@
-+ 	.suspend = usbnet_suspend,
-+ 	.resume = usbnet_resume,
-+ 	.no_dynamic_id = 1,
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+ 	.disable_hub_initiated_lpm = 1,
-++#endif
-+ };
-+ 
-+ module_usb_driver(sierra_net_driver);
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
-new file mode 100644
-index 0000000..c3af4a1
---- /dev/null
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/usb/class/cdc-wdm.c
-++++ b/drivers/usb/class/cdc-wdm.c
-+@@ -1060,7 +1060,9 @@
-+ 	.post_reset =	wdm_post_reset,
-+ 	.id_table =	wdm_ids,
-+ 	.supports_autosuspend = 1,
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+ 	.disable_hub_initiated_lpm = 1,
-++#endif
-+ };
-+ 
-+ module_usb_driver(wdm_driver);
--- 
-1.8.1.2
+I downloaded the released backports-3.10-2.tar.bz2 file from the
+stable releases page here:
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
 
 
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
 
-University Of Applied Sciences
-Kaiserslautern
+> It looks to me like you are using the code
+> from the git repository, this code is there to *generate* a new tar, but
+> it contains no driver or wireless code, that is fetched by gentree.py
+> from the linux kernel source code. If you just want some code backported
+> from 3.10 take the release [0]. If you want to create your own tar
+> please consult the wiki [1].
 
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
+This is not the case.
 
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
+Thank you for your response.
 
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
+Ben
+
+>
+> Hauke
+>
+> [0]:
+> https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.10/
+> [1]:
+> https://backports.wiki.kernel.org/index.php/Documentation/backports/hacking
