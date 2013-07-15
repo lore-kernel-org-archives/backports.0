@@ -1,45 +1,87 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from blackhole.sdinet.de ([176.9.52.58]:38035 "EHLO mail.sdinet.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757957Ab3GMAtz (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 12 Jul 2013 20:49:55 -0400
-Date: Sat, 13 Jul 2013 02:40:44 +0200 (CEST)
-From: Sven-Haegar Koch <haegar@sdinet.de>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [ANN] backports-v3.10 released - first release!
-In-Reply-To: <CAB=NE6XyC0Svxh8yeVNvnpdkVBTWEAcmi8wZocc6MC=kxLs2iw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.10.1307130238190.31878@aurora.sdinet.de> (sfid-20130713_024957_301429_C68A1620)
-References: <CAB=NE6XyC0Svxh8yeVNvnpdkVBTWEAcmi8wZocc6MC=kxLs2iw@mail.gmail.com>
+Received: from mail-ve0-f181.google.com ([209.85.128.181]:56356 "EHLO
+	mail-ve0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757237Ab3GOOr3 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 15 Jul 2013 10:47:29 -0400
+Received: by mail-ve0-f181.google.com with SMTP id db10so9776669veb.40
+        for <backports@vger.kernel.org>; Mon, 15 Jul 2013 07:47:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <51E403A5.9060607@hauke-m.de>
+References: <CAOvdn6Vs9pUOXwBYTPzvQp0TDKgDxotog-Srv0xF+41i5UXz0Q@mail.gmail.com>
+	<51E3FF49.50301@hauke-m.de>
+	<CAOvdn6UmT+gaEgxfrhNt=fYDs-ikKykEJRJ-GbA3VJWdB3MPgg@mail.gmail.com>
+	<51E403A5.9060607@hauke-m.de>
+Date: Mon, 15 Jul 2013 10:47:28 -0400
+Message-ID: <CAOvdn6XLUq1ypCRGfST1zrA1KDsj+nZw_xz=Yt3YF4fHp2Xz+g@mail.gmail.com> (sfid-20130715_164731_382528_7C915400)
+Subject: Re: problems building backports-3.10-2
+From: Ben Guthro <ben@guthro.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 12 Jul 2013, Luis R. Rodriguez wrote:
+On Mon, Jul 15, 2013 at 10:13 AM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> On 07/15/2013 04:01 PM, Ben Guthro wrote:
+>> On Mon, Jul 15, 2013 at 9:55 AM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+>>> On 07/15/2013 03:08 PM, Ben Guthro wrote:
+>>>> I'm struggling to integrate the backports-3.10-2 release into my
+>>>> build, and I'm hoping this is the proper venue to get some answers.
+>>>>
+>>>> 1. The build is complaining about ./gentree.py and local symbols. I
+>>>> did not see gentree.py anywhere in the code released.
+>>>>
+>>>> Even when removing this section of the Makefile, I am able to get a
+>>>> bit further, to try to do a 'make menuconfig'
+>>>> This does not present the options I expected - offering only the
+>>>> following options:
+>>>>
+>>>> Build all compat code
+>>>> Voltage and Current Regulator Support
+>>>>
+>>>>
+>>>> I also tried the some of the defconfigs (like iwlwifi) - but these
+>>>> seem to only build the compat.ko, and nothing else.
+>>>>
+>>>>
+>>>> Am I doing something wrong - or is something broken in this release?
+>>>
+>>> What source are you using?
+>>
+>> I downloaded the released backports-3.10-2.tar.bz2 file from the
+>> stable releases page here:
+>> http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
+>>
+>
+> Could you please post the error messages you get with a unmodified
+> version of backports-3.10-2.tar.bz2.
 
-> Kicked out the first Linux kernel backports release under the new
-> project name, "backports" that hopefully clarifies this a generic
-> backport project now. Backported subsystems in this release:
+This output is from trying to build against a built, but not installed kernel:
 
-> [0] http://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.10/backports-3.10-1.tar.bz2
+KLIB=/data/home/bguthro/dev/orc-precise/orc-kernel/../linux/build/kernel/lib/modules/3.8.13-orc
+\
+	KLIB_BUILD=/data/home/bguthro/dev/orc-precise/orc-kernel/../linux/build/kernel
+\
+	make -j8 EXTRAVERSION= V=1 -C compat-drivers modules
+make[1]: Entering directory
+`/data/home/bguthro/dev/orc-precise/orc-kernel/compat-drivers'
+/--------------
+| You shouldn't run make in the backports tree, but only in
+| the generated output. This here is only the skeleton code
+| copied into the output directory. To use the backport system
+| from scratch, go into the top-level directory and run
+|	./gentree.py /path/to/linux-next/ /tmp/output
+| and then make menuconfig/... in the output directory. See
+|	./gentree.py --help
+| for more options.
+\--
 
-Did you perhaps re-upload the 3.10-rc1 backports archive?
 
-haegar@blackhole:~/src/3.2.0$ tar tvf backports-3.10-1.tar.bz2 | head -n 2
-drwxr-xr-x mcgrof/mcgrof     0 2013-05-19 03:06 backports-3.10-rc1-1/
--rw-r--r-- mcgrof/mcgrof  4164 2013-05-18 22:57 backports-3.10-rc1-1/Kconfig.versions
-...
+As Johannes posted, I suspect it is something to do with the .local-symbols
+However, I'm not sure how this gets built, in the case of a kernel
+that is not installed.
 
-$ cat versions 
-BACKPORTS_VERSION="v3.10-rc1-1-0-g80112f6"
-BACKPORTED_KERNEL_VERSION="v3.10-rc1-0-gf722406"
-BACKPORTED_KERNEL_NAME="Linux"
 
-c'ya
-sven-haegar
+Any advice is appreciated.
 
--- 
-Three may keep a secret, if two of them are dead.
-- Ben F.
+Ben
