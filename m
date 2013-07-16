@@ -1,61 +1,193 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:44246 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:36685 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756949Ab3GKWM4 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 11 Jul 2013 18:12:56 -0400
+	id S933497Ab3GPTfN (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 16 Jul 2013 15:35:13 -0400
+Message-ID: <51E5A066.8070009@hauke-m.de> (sfid-20130716_213516_694168_DF3D2548)
+Date: Tue, 16 Jul 2013 21:35:02 +0200
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 17/19] backports: add SPEED_UNKNOWN and DUPLEX_UNKNOWN
-Date: Fri, 12 Jul 2013 00:11:40 +0200
-Message-Id: <1373580702-24752-19-git-send-email-hauke@hauke-m.de> (sfid-20130712_001259_131602_739F6241)
-In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
-References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: backports@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
+Subject: Re: [RFC/RFT] backport: backport sprintf-style workqueue naming
+References: <1373979477-11133-1-git-send-email-johannes@sipsolutions.net>
+In-Reply-To: <1373979477-11133-1-git-send-email-johannes@sipsolutions.net>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On 07/16/2013 02:57 PM, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+> 
+> Since kernel version 3.3, workqueue names could be
+> sprintf'ed instead of just pointing to a name. This
+> wasn't used a lot so never needed to be backported,
+> but now it's used everywhere. Backport this API.
+> 
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+>  backport/backport-include/linux/workqueue.h | 47 ++++++++++++++++----
+>  backport/compat/compat-3.3.c                | 69 +++++++++++++++++++++++++++++
+>  2 files changed, 108 insertions(+), 8 deletions(-)
+> 
+> diff --git a/backport/backport-include/linux/workqueue.h b/backport/backport-include/linux/workqueue.h
+> index 9958715..54c9090 100644
+> --- a/backport/backport-include/linux/workqueue.h
+> +++ b/backport/backport-include/linux/workqueue.h
+> @@ -14,16 +14,47 @@ bool mod_delayed_work(struct workqueue_struct *wq, struct delayed_work *dwork,
+>  #define create_freezable_workqueue create_freezeable_workqueue
+>  #endif
+>  
+> -#ifndef alloc_ordered_workqueue
+> -#define alloc_ordered_workqueue(name, flags) create_singlethread_workqueue(name)
+> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
+> +#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36)
 
-Upstream commit 8742a33b63428b13d21be4b79220813d2180752a
+Why not do a check for #ifndef WQ_UNBOUND that way we do not get that
+many problems when someone tries a kernel that already backported this.
 
-This was added via uapi/linux/ethtool.h but using
-that file causes some odd issues I simply cannot
-resolve right now. I stuff these definitions into
-the regular include/linux/ethtool.h for now.
+> +#define WQ_UNBOUND	0
+>  #endif
+> -
+> -#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28)
+> -#define alloc_workqueue(name, flags, max_active) __create_workqueue(name, flags, max_active)
+> +#define __WQ_ORDERED	0
+> +/*
+> + * commit b196be89cdc14a88cc637cdad845a75c5886c82d
+> + * Author: Tejun Heo <tj@kernel.org>
+> + * Date:   Tue Jan 10 15:11:35 2012 -0800
+> + *
+> + *     workqueue: make alloc_workqueue() take printf fmt and args for name
+> + */
+> +struct workqueue_struct *
+> +backport_alloc_workqueue(const char *fmt, unsigned int flags,
+> +			 int max_active, struct lock_class_key *key,
+> +			 const char *lock_name, ...);
+> +#undef alloc_workqueue
+> +#ifdef CONFIG_LOCKDEP
+> +#define alloc_workqueue(fmt, flags, max_active, args...)		\
+> +({									\
+> +	static struct lock_class_key __key;				\
+> +	const char *__lock_name;					\
+> +									\
+> +	if (__builtin_constant_p(fmt))					\
+> +		__lock_name = (fmt);					\
+> +	else								\
+> +		__lock_name = #fmt;					\
+> +									\
+> +	backport_alloc_workqueue((fmt), (flags), (max_active),		\
+> +				 &__key, __lock_name, ##args);		\
+> +})
+> +#else
+> +#define alloc_workqueue(fmt, flags, max_active, args...)		\
+> +	backport_alloc_workqueue((fmt), (flags), (max_active),		\
+> +				 NULL, NULL, ##args)
+>  #endif
+> -
+> -#ifndef alloc_workqueue
+> -#define alloc_workqueue(name, flags, max_active) __create_workqueue(name, flags, max_active, 0)
+> +#undef alloc_ordered_workqueue
+> +#define alloc_ordered_workqueue(fmt, flags, args...) \
+> +	alloc_workqueue(fmt, WQ_UNBOUND | __WQ_ORDERED | (flags), 1, ##args)
+> +#define destroy_workqueue backport_destroy_workqueue
 
-This backports commit 589665f5 added via v3.2.
+The #undef destroy_workqueue in compat-3.3.c does not look nice to me.
 
-mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains \
-	589665f5a6008dbce1d0af2cb93e94a80bf78151
-v3.2-rc1~4^2~10
+What about this and then call orig_destroy_workqueue(wq)?
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/ethtool.h |    8 ++++++++
- 1 file changed, 8 insertions(+)
+static inline void orig_destroy_workqueue(struct workqueue_struct *wq)
+{
+	destroy_workqueue(wq);
+}
+#define destroy_workqueue(wq) backport_destroy_workqueue(wq)
 
-diff --git a/backport/backport-include/linux/ethtool.h b/backport/backport-include/linux/ethtool.h
-index 9ed268b..732a0db 100644
---- a/backport/backport-include/linux/ethtool.h
-+++ b/backport/backport-include/linux/ethtool.h
-@@ -3,6 +3,14 @@
- #include_next <linux/ethtool.h>
- #include <linux/version.h>
- 
-+#ifndef SPEED_UNKNOWN
-+#define SPEED_UNKNOWN  -1
-+#endif /* SPEED_UNKNOWN */
-+
-+#ifndef DUPLEX_UNKNOWN
-+#define DUPLEX_UNKNOWN 0xff
-+#endif /* DUPLEX_UNKNOWN */
-+
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
- static inline u32 ethtool_rxfh_indir_default(u32 index, u32 n_rx_rings)
- {
--- 
-1.7.10.4
+> +void backport_destroy_workqueue(struct workqueue_struct *wq);
+>  #endif
+>  
+>  #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36)
+> diff --git a/backport/compat/compat-3.3.c b/backport/compat/compat-3.3.c
+> index a44f59d..d86b40e 100644
+> --- a/backport/compat/compat-3.3.c
+> +++ b/backport/compat/compat-3.3.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/version.h>
+>  #include <linux/skbuff.h>
+>  #include <linux/module.h>
+> +#include <linux/workqueue.h>
+>  #include <net/dst.h>
+>  #include <net/xfrm.h>
+>  
+> @@ -171,3 +172,71 @@ out:
+>  	return n;
+>  }
+>  EXPORT_SYMBOL_GPL(__pskb_copy);
+> +
+> +static DEFINE_SPINLOCK(wq_name_lock);
+> +static struct list_head wq_name_list;
+> +
+> +struct wq_name {
+> +	struct list_head list;
+> +	struct workqueue_struct *wq;
+> +	char name[24];
+> +};
+> +
+> +struct workqueue_struct *
+> +backport_alloc_workqueue(const char *fmt, unsigned int flags,
+> +			 int max_active, struct lock_class_key *key,
+> +			 const char *lock_name, ...)
+> +{
+> +	struct workqueue_struct *wq;
+> +	struct wq_name *n = kzalloc(sizeof(*n), GFP_KERNEL);
+> +	va_list args;
+> +
+> +	if (!n)
+> +		return NULL;
+> +
+> +	va_start(args, lock_name);
+> +	vsnprintf(n->name, sizeof(n->name), fmt, args);
+> +	va_end(args);
+> +
+> +#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36)
+> +	wq = __create_workqueue_key(n->name, max_active == 1, 0,
+> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28)
+> +				    0,
+> +#endif
+> +				    key, lock_name);
+> +#else	                        
+> +	wq = __alloc_workqueue_key(n->name, flags, max_active, key, lock_name);
+> +#endif
+> +	if (!wq) {
+> +		kfree(n);
+> +		return NULL;
+> +	}
+> +
+> +	n->wq = wq;
+> +	spin_lock(&wq_name_lock);
+> +	list_add(&n->list, &wq_name_list);
+> +	spin_unlock(&wq_name_lock);
+> +
+> +	return wq;
+> +}
+> +EXPORT_SYMBOL_GPL(backport_alloc_workqueue);
+> +
+> +void backport_destroy_workqueue(struct workqueue_struct *wq)
+> +{
+> +	struct wq_name *n, *tmp;
+> +
+> +	/* call original */
+> +#undef destroy_workqueue
+> +	destroy_workqueue(wq);
+> +
+> +	spin_lock(&wq_name_lock);
+> +	list_for_each_entry_safe(n, tmp, &wq_name_list, list) {
+> +		if (n->wq == wq) {
+> +			list_del(&n->list);
+> +			kfree(n);
+> +			break;
+> +		}
+> +	}
+> +	spin_unlock(&wq_name_lock);
+> +}
+> +EXPORT_SYMBOL_GPL(backport_destroy_workqueue);
+> 
 
