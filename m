@@ -1,69 +1,79 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:51512 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759134Ab3GaIkQ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 31 Jul 2013 04:40:16 -0400
-Message-ID: <51F8CD6A.7000606@fh-kl.de> (sfid-20130731_104018_429608_18789ED1)
-Date: Wed, 31 Jul 2013 10:40:10 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Received: from mail-la0-f48.google.com ([209.85.215.48]:44021 "EHLO
+	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933467Ab3GRXtm (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 18 Jul 2013 19:49:42 -0400
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [RFC v2 7/8] backports: define phys_addr_t for ARM on kernel version
- < 2.6.25
-References: <cover.1375259597.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1375259597.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+In-Reply-To: <1337724574-2193-1-git-send-email-hdegoede@redhat.com>
+References: <1337724574-2193-1-git-send-email-hdegoede@redhat.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Thu, 18 Jul 2013 16:49:18 -0700
+Message-ID: <CAB=NE6XHnBZW39bm7u=omHihQxiiwoGWNg9=MRgTLE8zE4Rm4w@mail.gmail.com> (sfid-20130719_014946_861719_DE3C2365)
+Subject: Re: [PATCH] device-core: Ensure drvdata = NULL when no driver is bound
+To: Hans de Goede <hdegoede@redhat.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Felix Fietkau <nbd@openwrt.org>,
+	Julia Lawall <julia.lawall@lip6.fr>,
+	linux-wireless <linux-wireless@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Jiri Slaby <jslaby@suse.cz>, Jiri Kosina <jkosina@suse.cz>,
+	USB list <linux-usb@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-phys_addr_t is not defined on ARM systems if kernel version < 2.6.25.
+On Tue, May 22, 2012 at 3:09 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+> 1) drvdata is for a driver to store a pointer to driver specific data
+> 2) If no driver is bound, there is no driver specific data associated with
+>    the device
+> 3) Thus logically drvdata should be NULL if no driver is bound.
+>
+> But many drivers don't clear drvdata on device_release, or set drvdata
+> early on in probe and leave it set on probe error. Both of which results
+> in a dangling pointer in drvdata.
+>
+> This patch enforce for drvdata to be NULL after device_release or on probe
+> failure.
+>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+>  drivers/base/dd.c |    2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index 1b1cbb5..9a1e970 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -283,6 +283,7 @@ probe_failed:
+>         devres_release_all(dev);
+>         driver_sysfs_remove(dev);
+>         dev->driver = NULL;
+> +       dev_set_drvdata(dev, NULL);
+>
+>         if (ret == -EPROBE_DEFER) {
+>                 /* Driver requested deferred probing */
+> @@ -487,6 +488,7 @@ static void __device_release_driver(struct device *dev)
+>                         drv->remove(dev);
+>                 devres_release_all(dev);
+>                 dev->driver = NULL;
+> +               dev_set_drvdata(dev, NULL);
+>                 klist_remove(&dev->p->knode_driver);
+>                 if (dev->bus)
+>                         blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
----
- backport/backport-include/linux/types.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Just as a heads up for backports:
 
-diff --git a/backport/backport-include/linux/types.h b/backport/backport-include/linux/types.h
-index 504a615..0aadc80 100644
---- a/backport/backport-include/linux/types.h
-+++ b/backport/backport-include/linux/types.h
-@@ -4,7 +4,7 @@
- #include <linux/version.h>
- 
- #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25)
--#if defined(CONFIG_X86) || defined(CONFIG_X86_64)
-+#if defined(CONFIG_X86) || defined(CONFIG_X86_64) || defined(CONFIG_ARM)
- 
- #if defined(CONFIG_64BIT) || defined(CONFIG_X86_PAE) || defined(CONFIG_PHYS_64BIT)
- typedef u64 phys_addr_t;
-@@ -12,7 +12,7 @@ typedef u64 phys_addr_t;
- typedef u32 phys_addr_t;
- #endif
- 
--#endif /* x86 */
-+#endif /* x86 || ARM */
- #elif LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28) /* < 2.6.25 */
- 
- #if defined(CONFIG_X86) || defined(CONFIG_X86_64) || defined(CONFIG_PPC)
--- 
-1.8.1.2
+Because of this patch a huge series of cleanups were made across the
+kernel removing redundant setting of the driver data to NULL that was
+spread out through the kernel. An example type patch is
+785ec305b26ee23e0efb834b5cd0dd24070ba1bf. This is an example type of
+collateral evolution that doesn't cause compilation issues if the
+upstream code is used but if not addressed could potentially cause an
+issue. That is the only way to catch these are by policing /
+proactively reviewing kernel changes.
 
+I'll post a patch that backports this to enable usage of the code
+as-is upstream on older kernels without having to put the code that
+was being removed for each driver specifically shortly.
 
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
+  Luis
