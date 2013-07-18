@@ -1,126 +1,140 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:60247 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758389Ab3G3J0b (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 30 Jul 2013 05:26:31 -0400
-Received: by mail-pa0-f50.google.com with SMTP id fb10so6457208pad.9
-        for <backports@vger.kernel.org>; Tue, 30 Jul 2013 02:26:30 -0700 (PDT)
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:62202 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933467Ab3GRXtM (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 18 Jul 2013 19:49:12 -0400
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 06/14] backports: backport of_get_child_by_name() support
-Date: Tue, 30 Jul 2013 02:25:51 -0700
-Message-Id: <1375176359-1331-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20130730_112632_798634_90FAC740)
-In-Reply-To: <1375176359-1331-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1375176359-1331-1-git-send-email-mcgrof@do-not-panic.com>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Julia Lawall <julia.lawall@lip6.fr>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
+	Jiri Kosina <jkosina@suse.cz>, Felix Fietkau <nbd@openwrt.org>
+Subject: [PATCH] backports: backport drvdata = NULL core driver fixes
+Date: Thu, 18 Jul 2013 16:48:59 -0700
+Message-Id: <1374191339-10124-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130719_014916_187755_28A1ABD7)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-This was added via 9c19761a. While at it clean up the backported
-header a bit to make backporting more OF stuff more manageable.
+The Linux kernel had tons of code which at times cleared the
+drvdata upon probe failure or release. There are however a bunch
+of drivers that didn't clear this.
 
-mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains 9c19761a
-v3.7-rc1~123^2~4
+Commit 0998d063 implmented clearing this upon device_release_driver()
+and dealt with probe failure on driver_probe_device(). After this the
+kernel was cleaned up separately with *tons* of patches to remove all
+these driver specific settings given that the clearing is now done
+internally by the device core.
 
-commit 9c19761a7ecdc86abb2fba0feb81e8952eccc1f1
-Author: Srinivas Kandagatla <srinivas.kandagatla@st.com>
-Date:   Tue Sep 18 08:10:28 2012 +0100
+Instead of ifdef'ing code back in for older code where it was properly
+in place backport this by piggy backing the new required code upon the
+calls used in place. There is a small race here upon device_release_driver()
+but we can live with that theoretical race.
 
-    dt: introduce of_get_child_by_name to get child node by name
+Due to the way we hack this backport we can't use a separate namespace
+as we have with other symbols.
 
-    This patch introduces of_get_child_by_name function to get a child node
-    by its name in a given parent node.
+mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains \
+	0998d0631001288a5974afc0b2a5f568bcdecb4d
+v3.6-rc1~99^2~14^2~17
 
-    Without this patch each driver code has to iterate the parent and do
-    a string compare, However having of_get_child_by_name libary function would
-    avoid code duplication, errors and is more convenient.
+commit 0998d0631001288a5974afc0b2a5f568bcdecb4d
+Author: Hans de Goede <hdegoede@redhat.com>
+Date:   Wed May 23 00:09:34 2012 +0200
 
-    Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@st.com>
-    Signed-off-by: Rob Herring <rob.herring@calxeda.com>
+    device-core: Ensure drvdata = NULL when no driver is bound
 
+    1) drvdata is for a driver to store a pointer to driver specific data
+    2) If no driver is bound, there is no driver specific data associated with
+       the device
+    3) Thus logically drvdata should be NULL if no driver is bound.
+
+    But many drivers don't clear drvdata on device_release, or set drvdata
+    early on in probe and leave it set on probe error. Both of which results
+    in a dangling pointer in drvdata.
+
+    This patch enforce for drvdata to be NULL after device_release or on probe
+    failure.
+
+    Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+Tested with ckmake against next-20130618:
+
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.79              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.10-rc1            [  OK  ]
+20  3.2.45              [  OK  ]
+21  3.3.8               [  OK  ]
+22  3.4.46              [  OK  ]
+23  3.5.7               [  OK  ]
+24  3.6.11              [  OK  ]
+25  3.7.10              [  OK  ]
+26  3.8.13              [  OK  ]
+27  3.9.3               [  OK  ]
+
+real    32m2.332s
+user    860m23.688s
+sys     121m20.840s
+
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Cc: linux-usb@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Jiri Slaby <jslaby@suse.cz>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Felix Fietkau <nbd@openwrt.org>
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/backport-include/linux/of.h |   23 ++++++++++++++++++++---
- backport/compat/compat-3.7.c         |   29 +++++++++++++++++++++++++++++
- 2 files changed, 49 insertions(+), 3 deletions(-)
+ backport/backport-include/linux/device.h |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
-index c5dc87c..93e91dd 100644
---- a/backport/backport-include/linux/of.h
-+++ b/backport/backport-include/linux/of.h
-@@ -4,13 +4,30 @@
- #include <linux/version.h>
+diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
+index c2f80e2..ba55d0e 100644
+--- a/backport/backport-include/linux/device.h
++++ b/backport/backport-include/linux/device.h
+@@ -176,4 +176,23 @@ extern int dev_set_name(struct device *dev, const char *name, ...)
+ 			__attribute__((format(printf, 2, 3)));
+ #endif
  
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
--#include_next <linux/of.h>
--#else
-+#define KERNEL_HAS_OF_SUPPORT 1
-+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34)) */
- 
- #ifdef CONFIG_OF
-+#define KERNEL_HAS_OF_SUPPORT 1
-+#endif /* CONFIG_OF */
++#if LINUX_VERSION_CODE <= KERNEL_VERSION(3,6,0)
++#define driver_probe_device(__drv, __dev)		\
++({							\
++ 	int ret;					\
++ 	ret = (driver_probe_device)(__drv, __dev);	\
++ 	if (ret)					\
++		dev_set_drvdata(__dev, NULL);		\
++ 	return ret;					\
++})
 +
-+#ifdef KERNEL_HAS_OF_SUPPORT
- #include_next <linux/of.h>
++#define device_release_driver(__dev)			\
++({							\
++ 	(device_release_driver)(__dev);			\
++ 	device_lock(__dev);				\
++ 	dev_set_drvdata(__dev, NULL);			\
++ 	device_unlock(__dev);				\
++})
++#endif /* LINUX_VERSION_CODE <= KERNEL_VERSION(3,6,0) */
 +
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0))
-+#ifdef CONFIG_OF
-+extern struct device_node *of_get_child_by_name(const struct device_node *node,
-+						const char *name);
-+#else
-+static inline struct device_node *of_get_child_by_name(
-+					const struct device_node *node,
-+					const char *name)
-+{
-+	return NULL;
-+}
- #endif /* CONFIG_OF */
-+#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)) */
- 
--#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34)) */
-+#endif /* KERNEL_HAS_OF_SUPPORT */
- 
- #endif	/* _COMPAT_LINUX_OF_H */
-diff --git a/backport/compat/compat-3.7.c b/backport/compat/compat-3.7.c
-index 0f2d332..8f5a56c 100644
---- a/backport/compat/compat-3.7.c
-+++ b/backport/compat/compat-3.7.c
-@@ -251,3 +251,32 @@ int pcie_capability_clear_and_set_dword(struct pci_dev *dev, int pos,
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(pcie_capability_clear_and_set_dword);
-+
-+#ifdef KERNEL_HAS_OF_SUPPORT
-+#ifdef CONFIG_OF
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0))
-+/**
-+ *	of_get_child_by_name - Find the child node by name for a given parent
-+ *	@node:	parent node
-+ *	@name:	child name to look for.
-+ *
-+ *      This function looks for child node for given matching name
-+ *
-+ *	Returns a node pointer if found, with refcount incremented, use
-+ *	of_node_put() on it when done.
-+ *	Returns NULL if node is not found.
-+ */
-+struct device_node *of_get_child_by_name(const struct device_node *node,
-+				const char *name)
-+{
-+	struct device_node *child;
-+
-+	for_each_child_of_node(node, child)
-+		if (child->name && (of_node_cmp(child->name, name) == 0))
-+			break;
-+	return child;
-+}
-+EXPORT_SYMBOL_GPL(of_get_child_by_name);
-+#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)) */
-+#endif /* CONFIG_OF */
-+#endif /* KERNEL_HAS_OF_SUPPORT */
+ #endif /* __BACKPORT_DEVICE_H */
 -- 
 1.7.10.4
 
