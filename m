@@ -1,56 +1,80 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f170.google.com ([209.85.217.170]:38872 "EHLO
-	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752034Ab3GSVmA (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 17:42:00 -0400
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.02.1307192326080.2229@localhost6.localdomain6>
-References: <1374191339-10124-1-git-send-email-mcgrof@do-not-panic.com>
- <Pine.LNX.4.44L0.1307191012330.1055-100000@iolanthe.rowland.org>
- <CAB=NE6XmxX0UQkbchU_AKJOyENcn0auBGMPzru5C4nohg_v1sQ@mail.gmail.com>
- <CAB=NE6VHgure2+2VA=XWtaii4Wc_rG7YZ=_ZetgGnvouh7HJPw@mail.gmail.com> <alpine.DEB.2.02.1307192326080.2229@localhost6.localdomain6>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Fri, 19 Jul 2013 14:41:37 -0700
-Message-ID: <CAB=NE6WfbauZnzCT=jgfUtc2Roe7WfY=G7Z5OAobc9YLc0nCvw@mail.gmail.com> (sfid-20130719_234202_803332_20995DAF)
-Subject: Re: [PATCH] backports: backport drvdata = NULL core driver fixes
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	USB list <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+Received: from iolanthe.rowland.org ([192.131.102.54]:50788 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1760478Ab3GSORH (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 10:17:07 -0400
+Date: Fri, 19 Jul 2013 10:17:06 -0400 (EDT)
+From: Alan Stern <stern@rowland.harvard.edu>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+cc: backports@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+	Julia Lawall <julia.lawall@lip6.fr>,
+	<linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	Jiri Slaby <jslaby@suse.cz>, Jiri Kosina <jkosina@suse.cz>,
 	Felix Fietkau <nbd@openwrt.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] backports: backport drvdata = NULL core driver fixes
+In-Reply-To: <1374191339-10124-1-git-send-email-mcgrof@do-not-panic.com>
+Message-ID: <Pine.LNX.4.44L0.1307191012330.1055-100000@iolanthe.rowland.org> (sfid-20130719_161733_324054_D6DD56C3)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Jul 19, 2013 at 2:27 PM, Julia Lawall <julia.lawall@lip6.fr> wrote:
-> On Fri, 19 Jul 2013, Luis R. Rodriguez wrote:
->
->> On Fri, Jul 19, 2013 at 2:07 PM, Luis R. Rodriguez
->> <mcgrof@do-not-panic.com> wrote:
->> >> This is not a very good idea.  Although setting drvdata to NULL allowed
->> >> a lot of code to be removed, it also exposed a bunch of hidden bugs --
->> >> drivers were using the drvdata value even after their remove function
->> >> returned.
->> >
->> > Eek, have we not SmPL'ify'd a proof yet to ensure code like this no
->> > longer exists? Julia? :)
->>
->> Come to think of it, perhaps we should require *proof* with SmPL like
->> this in future to avoid regressions ?
->
-> Is it a concurrency problem?  SmPL is not so good at that in the general
-> case.  One would have to know a specific case where other functions of the
-> driver can be invoked after remove.
+On Thu, 18 Jul 2013, Luis R. Rodriguez wrote:
 
-Thanks Julia. In that case I'm going to just leave this in place given
-that if there's a bug upstream we'll get it fixed as soon as a
-respective patch gets upstream as well. That is, we are not using old
-drivers, we use the same upstream drivers so if a regression was found
-in backports the fix must go upstream s well. This is one of the
-benefits of backporting -- the range of users and testers increases
-and we still benefit from the upstream bandwagon.
+> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+> 
+> The Linux kernel had tons of code which at times cleared the
+> drvdata upon probe failure or release. There are however a bunch
+> of drivers that didn't clear this.
+> 
+> Commit 0998d063 implmented clearing this upon device_release_driver()
+> and dealt with probe failure on driver_probe_device(). After this the
+> kernel was cleaned up separately with *tons* of patches to remove all
+> these driver specific settings given that the clearing is now done
+> internally by the device core.
+> 
+> Instead of ifdef'ing code back in for older code where it was properly
+> in place backport this by piggy backing the new required code upon the
+> calls used in place. There is a small race here upon device_release_driver()
+> but we can live with that theoretical race.
+> 
+> Due to the way we hack this backport we can't use a separate namespace
+> as we have with other symbols.
+> 
+> mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains \
+> 	0998d0631001288a5974afc0b2a5f568bcdecb4d
+> v3.6-rc1~99^2~14^2~17
+> 
+> commit 0998d0631001288a5974afc0b2a5f568bcdecb4d
+> Author: Hans de Goede <hdegoede@redhat.com>
+> Date:   Wed May 23 00:09:34 2012 +0200
+> 
+>     device-core: Ensure drvdata = NULL when no driver is bound
+> 
+>     1) drvdata is for a driver to store a pointer to driver specific data
+>     2) If no driver is bound, there is no driver specific data associated with
+>        the device
+>     3) Thus logically drvdata should be NULL if no driver is bound.
+> 
+>     But many drivers don't clear drvdata on device_release, or set drvdata
+>     early on in probe and leave it set on probe error. Both of which results
+>     in a dangling pointer in drvdata.
+> 
+>     This patch enforce for drvdata to be NULL after device_release or on probe
+>     failure.
+> 
+>     Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-  Luis
+This is not a very good idea.  Although setting drvdata to NULL allowed
+a lot of code to be removed, it also exposed a bunch of hidden bugs --
+drivers were using the drvdata value even after their remove function
+returned.
+
+Several commits have been applied to fix those bugs.  Finding and
+backporting them and their dependencies will not be easy.
+
+I suggest this patch not be applied.
+
+Alan Stern
+
