@@ -1,34 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:55456 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756893Ab3GaQDe (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 31 Jul 2013 12:03:34 -0400
-Received: by mail-pd0-f182.google.com with SMTP id r10so918657pdi.13
-        for <backports@vger.kernel.org>; Wed, 31 Jul 2013 09:03:33 -0700 (PDT)
-Received: from DFTHPEBCREAD (wsip-70-167-188-130.sd.sd.cox.net. [70.167.188.130])
-        by mx.google.com with ESMTPSA id kc8sm2955029pbc.18.2013.07.31.09.03.31
-        for <backports@vger.kernel.org>
-        (version=TLSv1 cipher=RC4-SHA bits=128/128);
-        Wed, 31 Jul 2013 09:03:32 -0700 (PDT)
-From: "Chris R" <chrisrfq@gmail.com>
-To: <backports@vger.kernel.org>
-Subject: Bug with the website: links are broken
-Date: Wed, 31 Jul 2013 09:03:29 -0700
-Message-ID: <000d01ce8e07$80a36430$81ea2c90$@gmail.com> (sfid-20130731_180339_300904_5FDBC3C5)
+Received: from mail-lb0-f170.google.com ([209.85.217.170]:38872 "EHLO
+	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752034Ab3GSVmA (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 17:42:00 -0400
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
+In-Reply-To: <alpine.DEB.2.02.1307192326080.2229@localhost6.localdomain6>
+References: <1374191339-10124-1-git-send-email-mcgrof@do-not-panic.com>
+ <Pine.LNX.4.44L0.1307191012330.1055-100000@iolanthe.rowland.org>
+ <CAB=NE6XmxX0UQkbchU_AKJOyENcn0auBGMPzru5C4nohg_v1sQ@mail.gmail.com>
+ <CAB=NE6VHgure2+2VA=XWtaii4Wc_rG7YZ=_ZetgGnvouh7HJPw@mail.gmail.com> <alpine.DEB.2.02.1307192326080.2229@localhost6.localdomain6>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Fri, 19 Jul 2013 14:41:37 -0700
+Message-ID: <CAB=NE6WfbauZnzCT=jgfUtc2Roe7WfY=G7Z5OAobc9YLc0nCvw@mail.gmail.com> (sfid-20130719_234202_803332_20995DAF)
+Subject: Re: [PATCH] backports: backport drvdata = NULL core driver fixes
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	USB list <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Jiri Slaby <jslaby@suse.cz>, Jiri Kosina <jkosina@suse.cz>,
+	Felix Fietkau <nbd@openwrt.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I'm not sure who to report this to, but it is a problem for me.  The links
-for compat-wireless releases for 3.6 and earlier in this page:
+On Fri, Jul 19, 2013 at 2:27 PM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+> On Fri, 19 Jul 2013, Luis R. Rodriguez wrote:
+>
+>> On Fri, Jul 19, 2013 at 2:07 PM, Luis R. Rodriguez
+>> <mcgrof@do-not-panic.com> wrote:
+>> >> This is not a very good idea.  Although setting drvdata to NULL allowed
+>> >> a lot of code to be removed, it also exposed a bunch of hidden bugs --
+>> >> drivers were using the drvdata value even after their remove function
+>> >> returned.
+>> >
+>> > Eek, have we not SmPL'ify'd a proof yet to ensure code like this no
+>> > longer exists? Julia? :)
+>>
+>> Come to think of it, perhaps we should require *proof* with SmPL like
+>> this in future to avoid regressions ?
+>
+> Is it a concurrency problem?  SmPL is not so good at that in the general
+> case.  One would have to know a specific case where other functions of the
+> driver can be invoked after remove.
 
-            http://wireless.kernel.org/en/users/Download/stable/
+Thanks Julia. In that case I'm going to just leave this in place given
+that if there's a bug upstream we'll get it fixed as soon as a
+respective patch gets upstream as well. That is, we are not using old
+drivers, we use the same upstream drivers so if a regression was found
+in backports the fix must go upstream s well. This is one of the
+benefits of backporting -- the range of users and testers increases
+and we still benefit from the upstream bandwagon.
 
-are broken.  Can they please be fixed.
-
-Thanks,
-
-Chris
-
+  Luis
