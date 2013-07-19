@@ -1,45 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:60918 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758433Ab3G3J01 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 30 Jul 2013 05:26:27 -0400
-Received: by mail-pb0-f46.google.com with SMTP id rq2so2063462pbb.33
-        for <backports@vger.kernel.org>; Tue, 30 Jul 2013 02:26:26 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 05/14] backports: copy over mfd/max8998.h mfd/max8998-private.h
-Date: Tue, 30 Jul 2013 02:25:50 -0700
-Message-Id: <1375176359-1331-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20130730_112629_413606_756651C2)
-In-Reply-To: <1375176359-1331-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1375176359-1331-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:43856 "EHLO
+	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751793Ab3GSVg7 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 17:36:59 -0400
+Date: Fri, 19 Jul 2013 23:27:09 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+cc: Alan Stern <stern@rowland.harvard.edu>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Julia Lawall <julia.lawall@lip6.fr>,
+	USB list <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Jiri Slaby <jslaby@suse.cz>, Jiri Kosina <jkosina@suse.cz>,
+	Felix Fietkau <nbd@openwrt.org>
+Subject: Re: [PATCH] backports: backport drvdata = NULL core driver fixes
+In-Reply-To: <CAB=NE6VHgure2+2VA=XWtaii4Wc_rG7YZ=_ZetgGnvouh7HJPw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.02.1307192326080.2229@localhost6.localdomain6> (sfid-20130719_233702_014136_0F4F2A4D)
+References: <1374191339-10124-1-git-send-email-mcgrof@do-not-panic.com> <Pine.LNX.4.44L0.1307191012330.1055-100000@iolanthe.rowland.org> <CAB=NE6XmxX0UQkbchU_AKJOyENcn0auBGMPzru5C4nohg_v1sQ@mail.gmail.com>
+ <CAB=NE6VHgure2+2VA=XWtaii4Wc_rG7YZ=_ZetgGnvouh7HJPw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Fri, 19 Jul 2013, Luis R. Rodriguez wrote:
 
-This is required by CONFIG_REGULATOR_MAX8998
-which builds drivers/regulator/max8998.c as of
-next-20130703.
+> On Fri, Jul 19, 2013 at 2:07 PM, Luis R. Rodriguez
+> <mcgrof@do-not-panic.com> wrote:
+> >> This is not a very good idea.  Although setting drvdata to NULL allowed
+> >> a lot of code to be removed, it also exposed a bunch of hidden bugs --
+> >> drivers were using the drvdata value even after their remove function
+> >> returned.
+> >
+> > Eek, have we not SmPL'ify'd a proof yet to ensure code like this no
+> > longer exists? Julia? :)
+> 
+> Come to think of it, perhaps we should require *proof* with SmPL like
+> this in future to avoid regressions ?
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- copy-list |    2 ++
- 1 file changed, 2 insertions(+)
+Is it a concurrency problem?  SmPL is not so good at that in the general 
+case.  One would have to know a specific case where other functions of the 
+driver can be invoked after remove.
 
-diff --git a/copy-list b/copy-list
-index 9957811..ab8bb8b 100644
---- a/copy-list
-+++ b/copy-list
-@@ -141,6 +141,8 @@ include/linux/regulator/max8952.h
- include/linux/regulator/max8973-regulator.h
- include/linux/mfd/max77693.h
- include/linux/mfd/max77693-private.h
-+include/linux/mfd/max8998.h
-+include/linux/mfd/max8998-private.h
- include/linux/regulator/of_regulator.h
- include/linux/regulator/tps51632-regulator.h
- include/linux/regulator/tps62360.h
--- 
-1.7.10.4
-
+julia
