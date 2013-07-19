@@ -1,109 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:44165 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756883Ab3GKWMT (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 11 Jul 2013 18:12:19 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
+Received: from mail-pb0-f51.google.com ([209.85.160.51]:41245 "EHLO
+	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751114Ab3GSMAh (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 08:00:37 -0400
+Received: by mail-pb0-f51.google.com with SMTP id um15so4319533pbc.38
+        for <backports@vger.kernel.org>; Fri, 19 Jul 2013 05:00:36 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: jani.nikula@intel.com,
 	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 02/19] backports: add defconfig for broadcom drivers
-Date: Fri, 12 Jul 2013 00:11:25 +0200
-Message-Id: <1373580702-24752-4-git-send-email-hauke@hauke-m.de> (sfid-20130712_001231_410006_C2CF2A98)
-In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
-References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+Subject: [RFC 5/9] backports: copy the max77693-private.h header file
+Date: Fri, 19 Jul 2013 05:00:05 -0700
+Message-Id: <1374235209-19782-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20130719_140041_399869_56AB76E3)
+In-Reply-To: <1374235209-19782-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1374235209-19782-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Upstream commit cc0e72a0d558af1305ef03bbcf48f73ec574a7af
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-This adds a default config for the broadcom wifi drivers.
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/defconfigs/b43       |   21 +++++++++++++++++++++
- backport/defconfigs/b43legacy |   12 ++++++++++++
- backport/defconfigs/brcmfmac  |    6 ++++++
- backport/defconfigs/brcmsmac  |    9 +++++++++
- 4 files changed, 48 insertions(+)
- create mode 100644 backport/defconfigs/b43
- create mode 100644 backport/defconfigs/b43legacy
- create mode 100644 backport/defconfigs/brcmfmac
- create mode 100644 backport/defconfigs/brcmsmac
+ copy-list |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/backport/defconfigs/b43 b/backport/defconfigs/b43
-new file mode 100644
-index 0000000..96354eb
---- /dev/null
-+++ b/backport/defconfigs/b43
-@@ -0,0 +1,21 @@
-+CPTCFG_CFG80211=m
-+CPTCFG_CFG80211_WEXT=y
-+CPTCFG_MAC80211=m
-+CPTCFG_MAC80211_MESH=y
-+CPTCFG_MAC80211_LEDS=y
-+CPTCFG_WLAN=y
-+CPTCFG_B43=m
-+CPTCFG_B43_BCMA=y
-+CPTCFG_B43_BCMA_EXTRA=y
-+CPTCFG_B43_PCMCIA=y
-+CPTCFG_B43_SDIO=y
-+CPTCFG_B43_PHY_N=y
-+CPTCFG_B43_PHY_LP=y
-+CPTCFG_B43_PHY_HT=y
-+CPTCFG_BCMA=m
-+CPTCFG_BCMA_HOST_PCI=y
-+CPTCFG_SSB=m
-+CPTCFG_SSB_PCIHOST=y
-+CPTCFG_SSB_PCMCIAHOST=y
-+CPTCFG_SSB_SDIOHOST=y
-+CPTCFG_SSB_DRIVER_PCICORE=y
-diff --git a/backport/defconfigs/b43legacy b/backport/defconfigs/b43legacy
-new file mode 100644
-index 0000000..9a7fbe9
---- /dev/null
-+++ b/backport/defconfigs/b43legacy
-@@ -0,0 +1,12 @@
-+CPTCFG_CFG80211=m
-+CPTCFG_CFG80211_WEXT=y
-+CPTCFG_MAC80211=m
-+CPTCFG_MAC80211_MESH=y
-+CPTCFG_MAC80211_LEDS=y
-+CPTCFG_WLAN=y
-+CPTCFG_B43LEGACY=m
-+CPTCFG_SSB=m
-+CPTCFG_SSB_PCIHOST=y
-+CPTCFG_SSB_PCMCIAHOST=y
-+CPTCFG_SSB_SDIOHOST=y
-+CPTCFG_SSB_DRIVER_PCICORE=y
-diff --git a/backport/defconfigs/brcmfmac b/backport/defconfigs/brcmfmac
-new file mode 100644
-index 0000000..72b2859
---- /dev/null
-+++ b/backport/defconfigs/brcmfmac
-@@ -0,0 +1,6 @@
-+CPTCFG_CFG80211=m
-+CPTCFG_CFG80211_WEXT=y
-+CPTCFG_WLAN=y
-+CPTCFG_BRCMFMAC=m
-+CPTCFG_BRCMFMAC_SDIO=y
-+CPTCFG_BRCMFMAC_USB=y
-diff --git a/backport/defconfigs/brcmsmac b/backport/defconfigs/brcmsmac
-new file mode 100644
-index 0000000..a1c56bc
---- /dev/null
-+++ b/backport/defconfigs/brcmsmac
-@@ -0,0 +1,9 @@
-+CPTCFG_CFG80211=m
-+CPTCFG_CFG80211_WEXT=y
-+CPTCFG_MAC80211=m
-+CPTCFG_MAC80211_LEDS=y
-+CPTCFG_WLAN=y
-+CPTCFG_BRCMSMAC=m
-+CPTCFG_BCMA=m
-+CPTCFG_BCMA_HOST_PCI=y
-+CPTCFG_BCMA_DRIVER_GPIO=y
+diff --git a/copy-list b/copy-list
+index 5d7acd9..9c7be4a 100644
+--- a/copy-list
++++ b/copy-list
+@@ -139,6 +139,7 @@ include/linux/regulator/max8649.h
+ include/linux/regulator/max8660.h
+ include/linux/regulator/max8952.h
+ include/linux/regulator/max8973-regulator.h
++include/linux/mfd/max77693-private.h
+ include/linux/regulator/of_regulator.h
+ include/linux/regulator/tps51632-regulator.h
+ include/linux/regulator/tps62360.h
 -- 
 1.7.10.4
 
