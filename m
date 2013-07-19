@@ -1,59 +1,92 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:36438 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750921Ab3GUGjq (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 21 Jul 2013 02:39:46 -0400
-Message-ID: <1374388784.8376.5.camel@jlt4.sipsolutions.net> (sfid-20130721_083948_014543_10395CF0)
-Subject: Re: [PATCH v2 02/10] backport: backport sprintf-style workqueue
- naming
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: backports@vger.kernel.org, jani.nikula@intel.com
-Date: Sun, 21 Jul 2013 09:39:44 +0300
-In-Reply-To: <1374272009-26152-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20130720_001420_265127_CD842305)
-References: <1374272009-26152-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1374272009-26152-3-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20130720_001420_265127_CD842305)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-lb0-f175.google.com ([209.85.217.175]:35858 "EHLO
+	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751531Ab3GSVIB (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 17:08:01 -0400
+MIME-Version: 1.0
+In-Reply-To: <Pine.LNX.4.44L0.1307191012330.1055-100000@iolanthe.rowland.org>
+References: <1374191339-10124-1-git-send-email-mcgrof@do-not-panic.com> <Pine.LNX.4.44L0.1307191012330.1055-100000@iolanthe.rowland.org>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Fri, 19 Jul 2013 14:07:39 -0700
+Message-ID: <CAB=NE6XmxX0UQkbchU_AKJOyENcn0auBGMPzru5C4nohg_v1sQ@mail.gmail.com> (sfid-20130719_230821_345093_B5434EF5)
+Subject: Re: [PATCH] backports: backport drvdata = NULL core driver fixes
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Julia Lawall <julia.lawall@lip6.fr>, linux-usb@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Jiri Slaby <jslaby@suse.cz>, Jiri Kosina <jkosina@suse.cz>,
+	Felix Fietkau <nbd@openwrt.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2013-07-19 at 15:13 -0700, Luis R. Rodriguez wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
-> 
-> Since kernel version 3.3, workqueue names could be
-> sprintf'ed instead of just pointing to a name. This
-> wasn't used a lot so never needed to be backported,
-> but now it's used everywhere. Backport this API.
-> 
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> [mcgrof: add WQ_HIGHPRI and WQ_MEM_RECLAIM defines]
+On Fri, Jul 19, 2013 at 7:17 AM, Alan Stern <stern@rowland.harvard.edu> wrote:
+> On Thu, 18 Jul 2013, Luis R. Rodriguez wrote:
+>
+>> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+>>
+>> The Linux kernel had tons of code which at times cleared the
+>> drvdata upon probe failure or release. There are however a bunch
+>> of drivers that didn't clear this.
+>>
+>> Commit 0998d063 implmented clearing this upon device_release_driver()
+>> and dealt with probe failure on driver_probe_device(). After this the
+>> kernel was cleaned up separately with *tons* of patches to remove all
+>> these driver specific settings given that the clearing is now done
+>> internally by the device core.
+>>
+>> Instead of ifdef'ing code back in for older code where it was properly
+>> in place backport this by piggy backing the new required code upon the
+>> calls used in place. There is a small race here upon device_release_driver()
+>> but we can live with that theoretical race.
+>>
+>> Due to the way we hack this backport we can't use a separate namespace
+>> as we have with other symbols.
+>>
+>> mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains \
+>>       0998d0631001288a5974afc0b2a5f568bcdecb4d
+>> v3.6-rc1~99^2~14^2~17
+>>
+>> commit 0998d0631001288a5974afc0b2a5f568bcdecb4d
+>> Author: Hans de Goede <hdegoede@redhat.com>
+>> Date:   Wed May 23 00:09:34 2012 +0200
+>>
+>>     device-core: Ensure drvdata = NULL when no driver is bound
+>>
+>>     1) drvdata is for a driver to store a pointer to driver specific data
+>>     2) If no driver is bound, there is no driver specific data associated with
+>>        the device
+>>     3) Thus logically drvdata should be NULL if no driver is bound.
+>>
+>>     But many drivers don't clear drvdata on device_release, or set drvdata
+>>     early on in probe and leave it set on probe error. Both of which results
+>>     in a dangling pointer in drvdata.
+>>
+>>     This patch enforce for drvdata to be NULL after device_release or on probe
+>>     failure.
+>>
+>>     Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>>     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>
+> This is not a very good idea.  Although setting drvdata to NULL allowed
+> a lot of code to be removed, it also exposed a bunch of hidden bugs --
+> drivers were using the drvdata value even after their remove function
+> returned.
 
-Were they needed somehow? Thye shouldn't have been, since users of this
-don't usually use the flags directly?
+Eek, have we not SmPL'ify'd a proof yet to ensure code like this no
+longer exists? Julia? :)
 
-If they _are_ needed, then we probably need to do something different?
-My patch only backported "regular" and "ordered" workqueue, not the
-other flags, and I suspect the other flags can't actually be backported.
+> Several commits have been applied to fix those bugs.
 
-> +#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,36)
-> +#define WQ_HIGHPRI 0
-> +#define WQ_MEM_RECLAIM 0
->  #endif
+I actualy found *tons* !
 
-Ah, here. I think that would cause problems?
- 
+> Finding and backporting them and their dependencies will not be easy.
 
-> +static DEFINE_SPINLOCK(wq_name_lock);
-> +static struct list_head wq_name_list;
+May the SmPL proof be with us.
 
-FWIW, my patch was [RFC] for a reason, I hadn't tested it... Now that I
-did, I can tell you that this must be
+> I suggest this patch not be applied.
 
-static LIST_HEAD(wq_name_list);
+Thanks for the review Alan!
 
-to get the list properly initialised.
-
-johannes
-
+  Luis
