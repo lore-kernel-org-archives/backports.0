@@ -1,119 +1,86 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:44414 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932209Ab3GLAwb (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 11 Jul 2013 20:52:31 -0400
-Received: by mail-pa0-f43.google.com with SMTP id hz11so8370881pad.30
-        for <backports@vger.kernel.org>; Thu, 11 Jul 2013 17:52:31 -0700 (PDT)
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:53356 "EHLO
+	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752090Ab3GSWNo (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 18:13:44 -0400
+Received: by mail-pb0-f47.google.com with SMTP id rr13so4848342pbb.20
+        for <backports@vger.kernel.org>; Fri, 19 Jul 2013 15:13:43 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH] backports: add make help and defconfig-help targets
-Date: Thu, 11 Jul 2013 17:52:25 -0700
-Message-Id: <1373590345-13880-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130712_025233_597001_B4C2AB3D)
+Cc: jani.nikula@intel.com,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH v2 00/10] backporst: take us to next-20130627
+Date: Fri, 19 Jul 2013 15:13:19 -0700
+Message-Id: <1374272009-26152-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130720_001348_928107_0516DB34)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Throw users a bone by helping them compile specific target
-drivers. Hauke did some good work in providing tons of
-defconfigs, provide a command to let users query these
-easily with 'make defconfig-help'. Also provide a more
-generic 'make help' target.
+This takes us to next-20130627, the patches have been ammended
+where required with feedback and justification to merge. We'll
+deal with the required DMI reverts once advice comes through
+on how to deal with that.
 
-Screenshot of make defconfig-help:
+Johannes Berg (1):
+  backport: backport sprintf-style workqueue naming
 
-mcgrof@frijol ~/backports-20130618 $ make defconfig-help
-Driver or subsystem configuration targets:
-  defconfig-alx
-  defconfig-ar5523
-  defconfig-ath5k
-  defconfig-ath6kl
-  defconfig-ath9k
-  defconfig-ath10k
-  defconfig-b43
-  defconfig-b43legacy
-  defconfig-brcmfmac
-  defconfig-brcmsmac
-  defconfig-carl9170
-  defconfig-drm
-  defconfig-ieee802154
-  defconfig-iwlwifi
-  defconfig-media
-  defconfig-nfc
-  defconfig-regulator
-  defconfig-rtlwifi
-  defconfig-wifi
-  defconfig-wil6210
+Luis R. Rodriguez (9):
+  backports: backport drvdata = NULL core driver fixes
+  backports: fix patches required for next-20130627
+  backports: refresh patches for next-20130627
+  backports: simplify swiotlb_nr_tbl() backport
+  backports: copy the max77693-private.h header file
+  backports: revert DMI_EXACT_MATCH() for older kernels
+  backports: add clock enable/disable on soc_camera_power_[on|off]()
+  backports: enable REGULATOR_MAX77693 on >= 3.6
+  backports: lib/kconfig.py - fix src line regexp
 
-Running 'make help' will provide the above and in addition to that
-something similar to what the Linux kernel provides with the
-list of supported targets backports provides.
+ backport/backport-include/linux/device.h           |   19 ++++++
+ backport/backport-include/linux/mod_devicetable.h  |    4 ++
+ backport/backport-include/linux/swiotlb.h          |   17 +++++
+ backport/backport-include/linux/workqueue.h        |   50 ++++++++++++--
+ .../backport-include/uapi/linux/v4l2-mediabus.h    |    8 ++-
+ backport/compat/compat-3.3.c                       |   69 ++++++++++++++++++++
+ backport/compat/compat-3.4.c                       |   31 +++++++--
+ copy-list                                          |    2 +
+ dependencies                                       |    1 +
+ lib/kconfig.py                                     |    2 +-
+ patches/collateral-evolutions/drm/03-swiotlb/INFO  |    5 --
+ .../drivers_gpu_drm_nouveau_nouveau_bo.patch       |   31 ---------
+ .../drivers_gpu_drm_radeon_radeon_ttm.patch        |   47 -------------
+ .../drivers_gpu_drm_i915_i915_gem.patch            |    2 +-
+ .../14-shrinkers-api/drivers_gpu_drm_i915.patch    |   12 ++--
+ .../network/0001-netdev_ops/ipw2200.patch          |    4 +-
+ .../network/0005-netlink-portid/nl80211.patch      |   60 ++++++++---------
+ .../0006-disable-dump-adjust-on-old-kernels.patch  |    8 +--
+ .../network/05-usb/ath9k_htc.patch                 |    2 +-
+ .../include_net_cfg80211.patch                     |    2 +-
+ .../drivers_net_wireless_iwlwifi_pcie_trans.patch  |    2 +-
+ .../drivers_net_wireless_ti_wlcore_main.patch      |    6 +-
+ .../drivers_net_wireless_ath_ath9k_pci.patch       |    4 +-
+ .../drivers_net_wireless_ti_wlcore_main.patch      |    4 +-
+ .../include_net_mac80211.patch                     |    2 +-
+ ..._wireless_brcm80211_brcmfmac_bcmsdh_sdmmc.patch |    8 +--
+ .../30-bridge-port/net_wireless_nl80211.patch      |    2 +-
+ .../42-netlink_seq/net_wireless_nl80211.patch      |    2 +-
+ .../network/46-use_other_workqueue/INFO            |    4 --
+ .../net_bluetooth_hci_core.patch                   |   27 --------
+ .../drivers_net_wireless_mwifiex_init.patch        |    2 +-
+ .../drivers_bluetooth_ath3k.patch                  |    2 +-
+ .../drivers_bluetooth_btusb.patch                  |    2 +-
+ .../drivers_net_wireless_ath_ath9k_hif_usb.patch   |    2 +-
+ .../drivers_net_wireless_rt2x00_rt73usb.patch      |    2 +-
+ .../69-wowlan-no-socket/net_wireless_nl80211.patch |    2 +-
+ .../drivers_net_wireless_ti_wlcore_main.patch      |    6 +-
+ 37 files changed, 256 insertions(+), 199 deletions(-)
+ create mode 100644 backport/backport-include/linux/swiotlb.h
+ delete mode 100644 patches/collateral-evolutions/drm/03-swiotlb/INFO
+ delete mode 100644 patches/collateral-evolutions/drm/03-swiotlb/drivers_gpu_drm_nouveau_nouveau_bo.patch
+ delete mode 100644 patches/collateral-evolutions/drm/03-swiotlb/drivers_gpu_drm_radeon_radeon_ttm.patch
+ delete mode 100644 patches/collateral-evolutions/network/46-use_other_workqueue/INFO
+ delete mode 100644 patches/collateral-evolutions/network/46-use_other_workqueue/net_bluetooth_hci_core.patch
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- backport/Makefile |   47 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
-
-diff --git a/backport/Makefile b/backport/Makefile
-index 421a4f6..ca69f41 100644
---- a/backport/Makefile
-+++ b/backport/Makefile
-@@ -112,6 +112,53 @@ mrproper:
- 	echo "$(CONFIG_MD5)" > .kernel_config_md5
- 	@$(MAKE) -f Makefile.real "$@"
- 
-+.PHONY: defconfig-help
-+defconfig-help:
-+	@echo "Driver or subsystem configuration targets:"
-+	@set -e						;\
-+		bk_configs="$$(ls defconfigs/*)" 	;\
-+		for cfg in $$bk_configs; do		\
-+			echo "  defconfig-$${cfg##defconfigs/}"	;\
-+		done
-+	@echo ""
-+
-+.PHONY: help
-+help: defconfig-help
-+	@echo "Cleaning targets:"
-+	@echo "  clean           - Remove most generated files but keep the config and"
-+	@echo "                    enough build support to build external modules"
-+	@echo "  mrproper        - Remove all generated files + config + various backup files"
-+	@echo ""
-+	@echo "Driver configuration help:"
-+	@echo "  defconfig-help  - List all prearranged defconfig-targets we have"
-+	@echo "                    designed for you. You can use this to find"
-+	@echo "                    driver specific configs in case all you really"
-+	@echo "                    need is to just compile one or a small group "
-+	@echo "                    of drivers."
-+	@echo ""
-+	@echo "Configuration targets:"
-+	@echo "  menuconfig      - Update current config utilising a menu based program"
-+	@echo "  allyesconfig    - New config where all options are accepted with yes"
-+	@echo "  oldconfig       - Update current config utilising a provided .config as base"
-+	@echo "  oldaskconfig    - ??"
-+	@echo "  silentoldconfig - Same as oldconfig, but quietly, additionally update deps"
-+	@echo "  allnoconfig     - New config where all options are answered with no"
-+	@echo "  allyesconfig    - New config where all options are accepted with yes"
-+	@echo "  allmodconfig    - New config selecting modules when possible"
-+	@echo "  alldefconfig    - New config with all symbols set to default"
-+	@echo "  randconfig      - New config with random answer to all options"
-+	@echo "  listnewconfig   - List new options"
-+	@echo "  olddefconfig    - Same as silentoldconfig but sets new symbols to their default value"
-+	@echo ""
-+	@echo "Other generic targets:"
-+	@echo "  all             - Build all targets marked with [*]"
-+	@echo "* modules         - Build all modules"
-+	@echo ""
-+	@echo "Architecture specific targets:"
-+	@echo "  install         - Install modules"
-+	@echo "  uninstall       - Uninstall modules"
-+	@echo ""
-+	@echo "Execute "make" or "make all" to build all targets marked with [*]"
- else
- include $(BACKPORT_PWD)/Makefile.kernel
- endif
 -- 
 1.7.10.4
 
