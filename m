@@ -1,75 +1,134 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:37066 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751138Ab3G3MBJ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 30 Jul 2013 08:01:09 -0400
-Message-ID: <51F7A898.1090105@fh-kl.de> (sfid-20130730_140113_706598_E681E162)
-Date: Tue, 30 Jul 2013 13:50:48 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [RFC 5/8] backports: add usb_endpoint_maxp()
-Content-Type: text/plain; charset="ISO-8859-15"
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:63725 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752466Ab3GSWPy (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 18:15:54 -0400
+Received: by mail-pa0-f51.google.com with SMTP id lf11so4921208pab.24
+        for <backports@vger.kernel.org>; Fri, 19 Jul 2013 15:15:54 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: jani.nikula@intel.com,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>, annndddrr@gmail.com,
+	chris@chris-wilson.co.uk, cpanceac@gmail.com,
+	daniel.vetter@ffwll.ch, greg@kroah.com
+Subject: [PATCH v2 07/10] backports: revert DMI_EXACT_MATCH() for older kernels
+Date: Fri, 19 Jul 2013 15:13:26 -0700
+Message-Id: <1374272009-26152-8-git-send-email-mcgrof@do-not-panic.com> (sfid-20130720_001556_120207_853081B6)
+In-Reply-To: <1374272009-26152-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1374272009-26152-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This function is missing for kernel version < 3.2 but required by uvc_video
-and cdc-wdm device drivers.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+struct dmi_strmatch was modified on v3.11 with a
+exact_match member. The DMI_EXACT_MATCH() macro was
+added as a mod version of DMI_MATCH() to account for
+dmi strings that look closely like each other. An
+example is D510MO Vs D510MOV.
+
+Since exact_match is is not available on older kernels
+we can't use it and must revert to the old DMI_MATCH().
+Addressing the desired behaviour will require a separate
+change to deal with addressing the difference
+in the behaviour.
+
+Chris Wilson recommends that if we can't use this we should
+also rever the DMI related fixes. I believe these are:
+
+dcf6d294830d46b0e6901477fb4bf455281d90c8 - drm/i915: quirk away phantom LVDS on Intel's D525MW mainboard
+e5614f0c2d0f4d7f0b8ef745d34593baf2c5dbf8 - drm/i915: quirk away phantom LVDS on Intel's D510MO mainboard
+
+Once we get confirmation we can do that.
+
+Proof of why we can't backport DMI_EXACT_MATCH():
+
+DMI_EXACT_MATCH uses struct dmi_strmatch's new
+member exact_match:
+
+	@@ -456,7 +456,8 @@ enum dmi_field {
+	 };
+
+	 struct dmi_strmatch {
+	-       unsigned char slot;
+	+       unsigned char slot:7;
+	+       unsigned char exact_match:1;
+		char substr[79];
+	 };
+
+Prior to 5017b285 we only had slot member so to use
+DMI_EXACT_MATCH() with its intent we'd have to do something
+like:
+	slot |= 1
+
+if its called. This however assumes though that older code has
+the sanity check as changed in 5017b285 on drivers/firmware/dmi_scan.c.
+dmi_scan.o gets linked with CONFIG_DMI. At least for x86 that gets
+objects sprinkled on arch/x86/, but more importantly CONFIG_DMI is
+bool. I've argued how I envision us being able to backport core
+components before (see 0935deab for the hint) but as it is right
+now we can't. We only backport things we can throw in as modular.
+
+mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains 5017b285
+v3.11-rc1~99^2~254
+
+commit 5017b2851373ee15c7035151853bb1448800cae2
+Author: Jani Nikula <jani.nikula@intel.com>
+Date:   Wed Jul 3 15:05:02 2013 -0700
+
+    dmi: add support for exact DMI matches in addition to substring matching
+
+    dmi_match() considers a substring match to be a successful match.  This is
+    not always sufficient to distinguish between DMI data for different
+    systems.  Add support for exact string matching using strcmp() in addition
+    to the substring matching using strstr().
+
+    The specific use case in the i915 driver is to allow us to use an exact
+    match for D510MO, without also incorrectly matching D510MOV:
+
+      {
+        .ident = "Intel D510MO",
+        .matches = {
+                DMI_MATCH(DMI_BOARD_VENDOR, "Intel"),
+                DMI_EXACT_MATCH(DMI_BOARD_NAME, "D510MO"),
+        },
+      }
+
+    Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+    Cc: <annndddrr@gmail.com>
+    Cc: Chris Wilson <chris@chris-wilson.co.uk>
+    Cc: Cornel Panceac <cpanceac@gmail.com>
+    Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+    Cc: Greg KH <greg@kroah.com>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+
+Cc: jani.nikula@intel.com
+Cc: annndddrr@gmail.com
+Cc: chris@chris-wilson.co.uk
+Cc: cpanceac@gmail.com
+Cc: daniel.vetter@ffwll.ch
+Cc: greg@kroah.com
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/backport-include/linux/usb/ch9.h | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 backport/backport-include/linux/usb/ch9.h
+ backport/backport-include/linux/mod_devicetable.h |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/backport/backport-include/linux/usb/ch9.h b/backport/backport-include/linux/usb/ch9.h
-new file mode 100644
-index 0000000..252a6f1
---- /dev/null
-+++ b/backport/backport-include/linux/usb/ch9.h
-@@ -0,0 +1,23 @@
-+#ifndef __BACKPORT__LINUX_USB_CH9_H
-+#define __BACKPORT__LINUX_USB_CH9_H
+diff --git a/backport/backport-include/linux/mod_devicetable.h b/backport/backport-include/linux/mod_devicetable.h
+index 1f85ce6..5b63637 100644
+--- a/backport/backport-include/linux/mod_devicetable.h
++++ b/backport/backport-include/linux/mod_devicetable.h
+@@ -2,6 +2,10 @@
+ #define __BACKPORT_MOD_DEVICETABLE_H
+ #include_next <linux/mod_devicetable.h>
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
++#define DMI_EXACT_MATCH(a, b)  { a, b }
++#endif
 +
-+#include_next <linux/usb/ch9.h>
-+#include <linux/version.h>
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
-+#include <linux/types.h>    /* __u8 etc */
-+#include <asm/byteorder.h>  /* le16_to_cpu */
-+
-+/**
-+ * usb_endpoint_maxp - get endpoint's max packet size
-+ * @epd: endpoint to be checked
-+ *
-+ * Returns @epd's max packet
-+ */
-+static inline int usb_endpoint_maxp(const struct usb_endpoint_descriptor *epd)
-+{
-+	return __le16_to_cpu(epd->wMaxPacketSize);
-+}
-+#endif /* < 3.2 */
-+
-+#endif /* __BACKPORT__LINUX_USB_CH9_H */
+ #ifndef HID_BUS_ANY
+ #define HID_BUS_ANY                            0xffff
+ #endif
 -- 
-1.8.1.2
+1.7.10.4
 
-
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
