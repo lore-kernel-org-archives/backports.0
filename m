@@ -1,98 +1,80 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:36945 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751040Ab3G3L4J (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 30 Jul 2013 07:56:09 -0400
-Message-ID: <51F7A87A.3030902@fh-kl.de> (sfid-20130730_135611_395428_D98A4F59)
-Date: Tue, 30 Jul 2013 13:50:18 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Received: from mail-lb0-f170.google.com ([209.85.217.170]:56085 "EHLO
+	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751574Ab3GSVFI (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 17:05:08 -0400
+Received: by mail-lb0-f170.google.com with SMTP id u10so2350862lbi.15
+        for <backports@vger.kernel.org>; Fri, 19 Jul 2013 14:05:07 -0700 (PDT)
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [RFC 1/8] backports: disable PCI functions for kernels without PCI
- support
-Content-Type: text/plain; charset="ISO-8859-15"
+In-Reply-To: <20130719123146.GC9288@cantiga.alporthouse.com>
+References: <1374235209-19782-1-git-send-email-mcgrof@do-not-panic.com>
+ <1374235209-19782-7-git-send-email-mcgrof@do-not-panic.com> <20130719123146.GC9288@cantiga.alporthouse.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Fri, 19 Jul 2013 14:04:47 -0700
+Message-ID: <CAB=NE6UEHomQAoQb3cV0Bdtpb5SEGTr0_TaPWTbvF6OHe2bguA@mail.gmail.com> (sfid-20130719_230511_808521_E6B91D03)
+Subject: Re: [RFC 6/9] backports: revert DMI_EXACT_MATCH() for older kernels
+To: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"jani.nikula" <jani.nikula@intel.com>, annndddrr@gmail.com,
+	cpanceac@gmail.com, Daniel Vetter <daniel.vetter@ffwll.ch>,
+	Greg Kroah-Hartman <greg@kroah.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
----
- backport/compat/compat-2.6.25.c | 2 ++
- backport/compat/compat-2.6.28.c | 4 ++++
- 2 files changed, 6 insertions(+)
+On Fri, Jul 19, 2013 at 5:31 AM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
+> On Fri, Jul 19, 2013 at 05:00:06AM -0700, Luis R. Rodriguez wrote:
+>> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+>>
+>> struct dmi_strmatch was modified on v3.11 with a
+>> exact_match member. The DMI_EXACT_MATCH() macro was
+>> added as a mod version of DMI_MATCH() to account for
+>> dmi strings that look closely like each other. An
+>> example is D510MO Vs D510MOV.
+>>
+>> Since exact_match is is not available on older kernels
+>> we can't use it and must revert to the old DMI_MATCH().
+>> Addressing the desired behaviour will require a separate
+>> change to deal with addressing the difference
+>> in the behaviour.
+>
+> If you choose not to backport DMI_EXACT_MATCH, then don't backport the
+> two fixes that depend upon it.
 
-diff --git a/backport/compat/compat-2.6.25.c b/backport/compat/compat-2.6.25.c
-index b3597ea..37407a4 100644
---- a/backport/compat/compat-2.6.25.c
-+++ b/backport/compat/compat-2.6.25.c
-@@ -210,6 +210,7 @@ EXPORT_SYMBOL_GPL(sg_alloc_table);
-  * to it. We implement a sloppy work around for backporting
-  * this.
-  */
-+#ifdef CONFIG_PCI
- int pci_enable_device_mem(struct pci_dev *dev)
- {
- 	int bars = pci_select_bars(dev, IORESOURCE_MEM);
-@@ -217,6 +218,7 @@ int pci_enable_device_mem(struct pci_dev *dev)
- 	return pci_enable_device_bars(dev, bars);
- }
- EXPORT_SYMBOL_GPL(pci_enable_device_mem);
-+#endif
- 
- /**
-  * The following things are out of ./lib/vsprintf.c
-diff --git a/backport/compat/compat-2.6.28.c b/backport/compat/compat-2.6.28.c
-index e47626b..9c21de8 100644
---- a/backport/compat/compat-2.6.28.c
-+++ b/backport/compat/compat-2.6.28.c
-@@ -238,6 +238,7 @@ EXPORT_SYMBOL_GPL(usb_anchor_empty);
- #endif /* CONFIG_USB */
- #endif
- 
-+#ifdef CONFIG_PCI
- void __iomem *pci_ioremap_bar(struct pci_dev *pdev, int bar)
- {
- 	/*
-@@ -251,6 +252,7 @@ void __iomem *pci_ioremap_bar(struct pci_dev *pdev, int bar)
- 				     pci_resource_len(pdev, bar));
- }
- EXPORT_SYMBOL_GPL(pci_ioremap_bar);
-+#endif
- 
- static unsigned long round_jiffies_common(unsigned long j, int cpu,
- 		bool force_up)
-@@ -455,6 +457,7 @@ EXPORT_SYMBOL_GPL(n_tty_ioctl_helper);
-  * generating PME# from both D3_hot and D3_cold, and the platform is unable to
-  * enable wake-up power for it.
-  */
-+#ifdef CONFIG_PCI
- int pci_wake_from_d3(struct pci_dev *dev, bool enable)
- {
- 	return pci_pme_capable(dev, PCI_D3cold) ?
-@@ -462,4 +465,5 @@ int pci_wake_from_d3(struct pci_dev *dev, bool enable)
- 			pci_enable_wake(dev, PCI_D3hot, enable);
- }
- EXPORT_SYMBOL_GPL(pci_wake_from_d3);
-+#endif
- 
--- 
-1.8.1.2
+Which ones? These two?
 
+dcf6d294830d46b0e6901477fb4bf455281d90c8 - drm/i915: quirk away
+phantom LVDS on Intel's D525MW mainboard
+e5614f0c2d0f4d7f0b8ef745d34593baf2c5dbf8 - drm/i915: quirk away
+phantom LVDS on Intel's D510MO mainboard
 
+Just #ifdef over these for older kernels ifndef DMI_EXACT_MATCH ?
 
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
+> Is there a blocker for not backporting the DMI_EXACT_MATCH feature?
 
-University Of Applied Sciences
-Kaiserslautern
+I'm so glad you asked. DMI_EXACT_MATCH uses struct dmi_strmatch's new
+member exact_match:
 
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
+@@ -456,7 +456,8 @@ enum dmi_field {
+ };
 
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
+ struct dmi_strmatch {
+-       unsigned char slot;
++       unsigned char slot:7;
++       unsigned char exact_match:1;
+        char substr[79];
+ };
 
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
+Prior to 5017b285 we only had slot so to use DMI_EXACT_MATCH with its
+intent we'd have to do something like slot |= 1 if its called. This
+however assumes though that older code has the sanity check as changed
+in 5017b285 on drivers/firmware/dmi_scan.c. dmi_scan.o gets linked
+with CONFIG_DMI. At least for x86 that gets objects sprinkled on
+arch/x86/, but more importantly CONFIG_DMI is bool. I've argued how I
+envision us being able to backport core components before (see
+0935deab for the hint) but as it is right now we can't. We only
+backport things we can throw in as modular.
+
+Please let me know if you see any other way.
+
+  Luis
