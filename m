@@ -1,128 +1,73 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:51461 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759134Ab3GaIjX (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 31 Jul 2013 04:39:23 -0400
-Message-ID: <51F8CD36.8070602@fh-kl.de> (sfid-20130731_103925_370943_F7DB41FE)
-Date: Wed, 31 Jul 2013 10:39:18 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Received: from mail-lb0-f177.google.com ([209.85.217.177]:39076 "EHLO
+	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759986Ab3GSR2q (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 13:28:46 -0400
+Received: by mail-lb0-f177.google.com with SMTP id 10so3592882lbf.22
+        for <backports@vger.kernel.org>; Fri, 19 Jul 2013 10:28:45 -0700 (PDT)
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [RFC v2 2/8] backports: add eth_prepare_mac_addr_change() and eth_commit_mac_addr_change()
-References: <cover.1375259597.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1375259597.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+In-Reply-To: <1374235209-19782-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1374235209-19782-1-git-send-email-mcgrof@do-not-panic.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Fri, 19 Jul 2013 10:28:24 -0700
+Message-ID: <CAB=NE6Vrg_xcu-JRavoin0KqQ3xYGjG2ZviEgOBqDBzV9pz13Q@mail.gmail.com> (sfid-20130719_192848_492207_F2306463)
+Subject: Re: [RFC 0/9] backports: synch up to next-20130627
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: jani.nikula@intel.com,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-These functions are required by qmi_wwan device driver.
+On Fri, Jul 19, 2013 at 5:00 AM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+>
+> These try to get us caught up to next-20130627.
+> The dmi one is not the best solution but an alternative
+> really should be considered upstream as otherwise we'd
+> end up with shit work arounds all over. Not sure if
+> a reasonable alternative is possible upstream that is
+> easier to backport.
+>
+> I am testing this with ckmake right now but its late so
+> going to crash and report results in the morning. I think
+> this should do it. If someone can take this further to get
+> closer to the date circa v3.11-rc1 that'd help if not
+> I can try to take care of that tomorrow.
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
----
- backport/backport-include/linux/etherdevice.h |  7 ++++++
- backport/backport-include/linux/if.h          |  4 ++++
- backport/compat/compat-3.9.c                  | 33 +++++++++++++++++++++++++++
- 3 files changed, 44 insertions(+)
+I'll address the feedback and then move on with life.
 
-diff --git a/backport/backport-include/linux/etherdevice.h b/backport/backport-include/linux/etherdevice.h
-index 5c82fc4..b6617f0 100644
---- a/backport/backport-include/linux/etherdevice.h
-+++ b/backport/backport-include/linux/etherdevice.h
-@@ -114,6 +114,13 @@ static inline int is_unicast_ether_addr(const u8 *addr)
- }
- #endif
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
-+#define eth_prepare_mac_addr_change LINUX_BACKPORT(eth_prepare_mac_addr_change)
-+extern int eth_prepare_mac_addr_change(struct net_device *dev, void *p);
-+#define eth_commit_mac_addr_change LINUX_BACKPORT(eth_commit_mac_addr_change)
-+extern void eth_commit_mac_addr_change(struct net_device *dev, void *p);
-+#endif /* < 3.9 */
-+
- #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29)
- #define eth_mac_addr LINUX_BACKPORT(eth_mac_addr)
- extern int eth_mac_addr(struct net_device *dev, void *p);
-diff --git a/backport/backport-include/linux/if.h b/backport/backport-include/linux/if.h
-index 7926082..8f85b83 100644
---- a/backport/backport-include/linux/if.h
-+++ b/backport/backport-include/linux/if.h
-@@ -29,4 +29,8 @@
- #define IFF_TX_SKB_SHARING	0x10000
- #endif
- 
-+#ifndef IFF_LIVE_ADDR_CHANGE
-+#define IFF_LIVE_ADDR_CHANGE 0x100000
-+#endif
-+
- #endif	/* _BACKPORT_LINUX_IF_H */
-diff --git a/backport/compat/compat-3.9.c b/backport/compat/compat-3.9.c
-index 03f3af8..1ce2dad 100644
---- a/backport/compat/compat-3.9.c
-+++ b/backport/compat/compat-3.9.c
-@@ -12,6 +12,9 @@
- #include <linux/scatterlist.h>
- #include <linux/device.h>
- #include <linux/err.h>
-+#include <linux/netdevice.h>
-+#include <linux/if.h>
-+#include <linux/if_ether.h>
- 
- #ifdef __sg_page_iter_next
- 
-@@ -64,4 +67,34 @@ void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res)
- }
- EXPORT_SYMBOL_GPL(devm_ioremap_resource);
- 
-+/**
-+ * eth_prepare_mac_addr_change - prepare for mac change
-+ * @dev: network device
-+ * @p: socket address
-+ */
-+int eth_prepare_mac_addr_change(struct net_device *dev, void *p)
-+{
-+	struct sockaddr *addr = p;
-+
-+	if (!(dev->priv_flags & IFF_LIVE_ADDR_CHANGE) && netif_running(dev))
-+		return -EBUSY;
-+	if (!is_valid_ether_addr(addr->sa_data))
-+		return -EADDRNOTAVAIL;
-+	return 0;
-+}
-+EXPORT_SYMBOL(eth_prepare_mac_addr_change);
-+
-+/**
-+ * eth_commit_mac_addr_change - commit mac change
-+ * @dev: network device
-+ * @p: socket address
-+ */
-+void eth_commit_mac_addr_change(struct net_device *dev, void *p)
-+{
-+	struct sockaddr *addr = p;
-+
-+	memcpy(dev->dev_addr, addr->sa_data, ETH_ALEN);
-+}
-+EXPORT_SYMBOL(eth_commit_mac_addr_change);
-+
- #endif /* __sg_page_iter_next */
--- 
-1.8.1.2
+1   2.6.24              [  OK  ]
+2   2.6.25              [  OK  ]
+3   2.6.26              [  OK  ]
+4   2.6.27              [  OK  ]
+5   2.6.28              [  OK  ]
+6   2.6.29              [  OK  ]
+7   2.6.30              [  OK  ]
+8   2.6.31              [  OK  ]
+9   2.6.32              [  OK  ]
+10  2.6.33              [  OK  ]
+11  2.6.34              [  OK  ]
+12  2.6.35              [  OK  ]
+13  2.6.36              [  OK  ]
+14  2.6.37              [  OK  ]
+15  2.6.38              [  OK  ]
+16  2.6.39              [  OK  ]
+17  3.0.79              [  OK  ]
+18  3.1.10              [  OK  ]
+19  3.10-rc1            [  OK  ]
+20  3.2.45              [  OK  ]
+21  3.3.8               [  OK  ]
+22  3.4.46              [  OK  ]
+23  3.5.7               [  OK  ]
+24  3.6.11              [  OK  ]
+25  3.7.10              [  OK  ]
+26  3.8.13              [  OK  ]
+27  3.9.3               [  OK  ]
 
+real    34m5.379s
+user    921m5.112s
+sys     128m8.156s
 
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
+  Luis
