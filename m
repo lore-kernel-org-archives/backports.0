@@ -1,79 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:43639 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933940Ab3GWXtt (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 23 Jul 2013 19:49:49 -0400
-Received: by mail-lb0-f173.google.com with SMTP id v1so6780649lbd.32
-        for <backports@vger.kernel.org>; Tue, 23 Jul 2013 16:49:48 -0700 (PDT)
+Received: from s16502780.onlinehome-server.info ([87.106.93.118]:53781 "EHLO
+	fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751843Ab3GSNRb (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 09:17:31 -0400
+Date: Fri, 19 Jul 2013 13:31:46 +0100
+From: Chris Wilson <chris@chris-wilson.co.uk>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org, jani.nikula@intel.com,
+	annndddrr@gmail.com, cpanceac@gmail.com, daniel.vetter@ffwll.ch,
+	greg@kroah.com
+Subject: Re: [RFC 6/9] backports: revert DMI_EXACT_MATCH() for older kernels
+Message-ID: <20130719123146.GC9288@cantiga.alporthouse.com> (sfid-20130719_151733_930143_3A3136C2)
+References: <1374235209-19782-1-git-send-email-mcgrof@do-not-panic.com>
+ <1374235209-19782-7-git-send-email-mcgrof@do-not-panic.com>
 MIME-Version: 1.0
-In-Reply-To: <1374388784.8376.5.camel@jlt4.sipsolutions.net>
-References: <1374272009-26152-1-git-send-email-mcgrof@do-not-panic.com>
- <1374272009-26152-3-git-send-email-mcgrof@do-not-panic.com> <1374388784.8376.5.camel@jlt4.sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Tue, 23 Jul 2013 16:49:28 -0700
-Message-ID: <CAB=NE6XnwY-JjHzYUsgp3qcVki33MbUyg9FgRvA6Lk5_DyafSA@mail.gmail.com> (sfid-20130724_014952_003601_E867E2CE)
-Subject: Re: [PATCH v2 02/10] backport: backport sprintf-style workqueue naming
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"jani.nikula" <jani.nikula@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1374235209-19782-7-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sat, Jul 20, 2013 at 11:39 PM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Fri, 2013-07-19 at 15:13 -0700, Luis R. Rodriguez wrote:
->> From: Johannes Berg <johannes.berg@intel.com>
->>
->> Since kernel version 3.3, workqueue names could be
->> sprintf'ed instead of just pointing to a name. This
->> wasn't used a lot so never needed to be backported,
->> but now it's used everywhere. Backport this API.
->>
->> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
->> [mcgrof: add WQ_HIGHPRI and WQ_MEM_RECLAIM defines]
->
-> Were they needed somehow? Thye shouldn't have been, since users of this
-> don't usually use the flags directly?
+On Fri, Jul 19, 2013 at 05:00:06AM -0700, Luis R. Rodriguez wrote:
+> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+> 
+> struct dmi_strmatch was modified on v3.11 with a
+> exact_match member. The DMI_EXACT_MATCH() macro was
+> added as a mod version of DMI_MATCH() to account for
+> dmi strings that look closely like each other. An
+> example is D510MO Vs D510MOV.
+> 
+> Since exact_match is is not available on older kernels
+> we can't use it and must revert to the old DMI_MATCH().
+> Addressing the desired behaviour will require a separate
+> change to deal with addressing the difference
+> in the behaviour.
 
-There's not used but at compile time the flags arguments were kept, we
-can surely nuke them if we #ifdef a call for older kernels.
+If you choose not to backport DMI_EXACT_MATCH, then don't backport the
+two fixes that depend upon it.
 
-> If they _are_ needed, then we probably need to do something different?
-> My patch only backported "regular" and "ordered" workqueue, not the
-> other flags, and I suspect the other flags can't actually be backported.
+Is there a blocker for not backporting the DMI_EXACT_MATCH feature?
+-Chris
 
-Indeed they can't, we just ignore them for older kernels, in fact
-perhaps just using create_singlethread_workqueue(name) would suffice
-for older kernels.
-
->> +#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,36)
->> +#define WQ_HIGHPRI 0
->> +#define WQ_MEM_RECLAIM 0
->>  #endif
->
-> Ah, here. I think that would cause problems?
-
-Not necessarily -- these are simply not usable / backportable on older
-kernels. In part of my synch up of patches (see d7608058)  I nuked
-patches/collateral-evolutions/network/46-use_other_workqueue/ which
-used to backport alloc_workqueue() with
-create_singlethread_workqueue() given older kernels do not support
-WQ_HIGHPRI and WQ_MEM_RECLAIM. In your port you make use of
-__create_workqueue_key() but that's available in older kernels as
-well, its just the flags are kept in code, but they are not used per
-se.
-
->> +static DEFINE_SPINLOCK(wq_name_lock);
->> +static struct list_head wq_name_list;
->
-> FWIW, my patch was [RFC] for a reason, I hadn't tested it... Now that I
-> did, I can tell you that this must be
->
-> static LIST_HEAD(wq_name_list);
->
-> to get the list properly initialised.
-
-I'll add that. Sorry for jumping the gun here.
-
-  Luis
+-- 
+Chris Wilson, Intel Open Source Technology Centre
