@@ -1,75 +1,131 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:44237 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756938Ab3GKWMw (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 11 Jul 2013 18:12:52 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 15/19] backports: remove alx extra patch
-Date: Fri, 12 Jul 2013 00:11:38 +0200
-Message-Id: <1373580702-24752-17-git-send-email-hauke@hauke-m.de> (sfid-20130712_001257_054227_C6C7F3C2)
-In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
-References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-pb0-f41.google.com ([209.85.160.41]:60192 "EHLO
+	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751114Ab3GSMAq (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 08:00:46 -0400
+Received: by mail-pb0-f41.google.com with SMTP id rp16so4367640pbb.14
+        for <backports@vger.kernel.org>; Fri, 19 Jul 2013 05:00:45 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: jani.nikula@intel.com,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 7/9] backports: add clock enable/disable on soc_camera_power_[on|off]()
+Date: Fri, 19 Jul 2013 05:00:07 -0700
+Message-Id: <1374235209-19782-8-git-send-email-mcgrof@do-not-panic.com> (sfid-20130719_140047_565444_79E5FA6C)
+In-Reply-To: <1374235209-19782-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1374235209-19782-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Upstream commit e3220f58fc08f986c3b84458d50eee2d3b983690
-
-The alx driver was upstreamed by Johannes, so this is
-no longer required. Note that this driver is now GPLv2
-or later, BSD folks will have to look at the old unified
-tree for a permissive licensed port.
+v4l2-core now supports enabling and disabling its own clock
+on turning the camera on / off. We backport v4l2-core fully
+so just backport the soc calls appropriately to let SOC cameras
+to turn the clock on / off when the v4l2-core clock ops are
+implemented on a device driver.
 
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../network/0002-alx-make-kconfig/alx.patch        |   32 --------------------
- 1 file changed, 32 deletions(-)
- delete mode 100644 patches/unified-drivers/network/0002-alx-make-kconfig/alx.patch
+ .../backport-include/uapi/linux/v4l2-mediabus.h    |    8 +++--
+ backport/compat/compat-3.4.c                       |   31 ++++++++++++++++----
+ 2 files changed, 31 insertions(+), 8 deletions(-)
 
-diff --git a/patches/unified-drivers/network/0002-alx-make-kconfig/alx.patch b/patches/unified-drivers/network/0002-alx-make-kconfig/alx.patch
-deleted file mode 100644
-index 465e499..0000000
---- a/patches/unified-drivers/network/0002-alx-make-kconfig/alx.patch
-+++ /dev/null
-@@ -1,32 +0,0 @@
----- a/drivers/net/ethernet/atheros/Kconfig
--+++ b/drivers/net/ethernet/atheros/Kconfig
--@@ -67,4 +67,22 @@ config ATL1C
-- 	  To compile this driver as a module, choose M here.  The module
-- 	  will be called atl1c.
-- 
--+config ALX
--+	tristate "Qualcomm Atheros L1F Gigabit Ethernet support"
--+	depends on PCI
--+	select CRC32
--+	select NET_CORE
--+	select MII
--+	---help---
--+	  This driver supports the Qualcomm Atheros L1F ethernet adapter.
--+	  This driver supports following chipsets:
--+
--+	  1969:1091 - AR8161 Gigabit Ethernet
--+	  1969:1090 - AR8162 Fast Ethernet
--+	  1969:10A1 - AR8171 Gigabit Ethernet
--+	  1969:10A0 - AR8172 Fast Ethernet
--+
--+	  To compile this driver as a module, choose M here.  The module
--+	  will be called alx.
--+
-- endif # NET_VENDOR_ATHEROS
----- a/drivers/net/ethernet/atheros/Makefile
--+++ b/drivers/net/ethernet/atheros/Makefile
--@@ -6,3 +6,4 @@ obj-$(CONFIG_ATL1) += atlx/
-- obj-$(CONFIG_ATL2) += atlx/
-- obj-$(CONFIG_ATL1E) += atl1e/
-- obj-$(CONFIG_ATL1C) += atl1c/
--+obj-$(CONFIG_ALX) += alx/
+diff --git a/backport/backport-include/uapi/linux/v4l2-mediabus.h b/backport/backport-include/uapi/linux/v4l2-mediabus.h
+index 9979c23..962f044 100644
+--- a/backport/backport-include/uapi/linux/v4l2-mediabus.h
++++ b/backport/backport-include/uapi/linux/v4l2-mediabus.h
+@@ -20,15 +20,19 @@
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
+ #if defined(CPTCFG_VIDEO_DEV_MODULE)
+ 
++#include <media/v4l2-clk.h>
++
+ struct soc_camera_subdev_desc;
+ 
+ #define soc_camera_power_on LINUX_BACKPORT(soc_camera_power_on)
+ int soc_camera_power_on(struct device *dev,
+-			struct soc_camera_subdev_desc *ssdd);
++			struct soc_camera_subdev_desc *ssdd,
++			struct v4l2_clk *clk);
+ 
+ #define soc_camera_power_off LINUX_BACKPORT(soc_camera_power_off)
+ int soc_camera_power_off(struct device *dev,
+-			struct soc_camera_subdev_desc *ssdd);
++			struct soc_camera_subdev_desc *ssdd,
++			struct v4l2_clk *clk);
+ 
+ #endif /* defined(CPTCFG_VIDEO_DEV_MODULE) */
+ #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0)) */
+diff --git a/backport/compat/compat-3.4.c b/backport/compat/compat-3.4.c
+index b72c69c..99dfb0c 100644
+--- a/backport/compat/compat-3.4.c
++++ b/backport/compat/compat-3.4.c
+@@ -38,14 +38,21 @@
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
+ 
+ #if defined(CPTCFG_VIDEO_V4L2_MODULE)
++#include <media/v4l2-clk.h>
+ int soc_camera_power_on(struct device *dev,
+-			struct soc_camera_subdev_desc *ssdd)
++			struct soc_camera_subdev_desc *ssdd,
++			struct v4l2_clk *clk)
+ {
+-	int ret = regulator_bulk_enable(ssdd->num_regulators,
++	int ret = clk ? v4l2_clk_enable(clk) : 0;
++	if (ret < 0) {
++		dev_err(dev, "Cannot enable clock: %d\n", ret);
++		return ret;
++	}
++	ret = regulator_bulk_enable(ssdd->num_regulators,
+ 					ssdd->regulators);
+ 	if (ret < 0) {
+ 		dev_err(dev, "Cannot enable regulators\n");
+-		return ret;
++		goto eregenable;
+ 	}
+ 
+ 	if (ssdd->power) {
+@@ -53,17 +60,26 @@ int soc_camera_power_on(struct device *dev,
+ 		if (ret < 0) {
+ 			dev_err(dev,
+ 				"Platform failed to power-on the camera.\n");
+-			regulator_bulk_disable(ssdd->num_regulators,
+-					       ssdd->regulators);
++			goto epwron;
+ 		}
+ 	}
+ 
++	return 0;
++
++epwron:
++	regulator_bulk_disable(ssdd->num_regulators,
++			       ssdd->regulators);
++eregenable:
++	if (clk)
++		v4l2_clk_disable(clk);
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(soc_camera_power_on);
+ 
+ int soc_camera_power_off(struct device *dev,
+-			 struct soc_camera_subdev_desc *ssdd)
++			 struct soc_camera_subdev_desc *ssdd,
++			 struct v4l2_clk *clk)
+ {
+ 	int ret = 0;
+ 	int err;
+@@ -84,6 +100,9 @@ int soc_camera_power_off(struct device *dev,
+ 		ret = ret ? : err;
+ 	}
+ 
++	if (clk)
++		v4l2_clk_disable(clk);
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(soc_camera_power_off);
 -- 
 1.7.10.4
 
