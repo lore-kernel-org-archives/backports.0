@@ -1,224 +1,214 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f172.google.com ([209.85.192.172]:40584 "EHLO
-	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758542Ab3G3J0p (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 30 Jul 2013 05:26:45 -0400
-Received: by mail-pd0-f172.google.com with SMTP id z10so6486698pdj.31
-        for <backports@vger.kernel.org>; Tue, 30 Jul 2013 02:26:44 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	maarten.lankhorst@canonical.com, jglisse@redhat.com,
-	airlied@redhat.com
-Subject: [PATCH 09/14] backports: backport cross-device reservation support
-Date: Tue, 30 Jul 2013 02:25:54 -0700
-Message-Id: <1375176359-1331-10-git-send-email-mcgrof@do-not-panic.com> (sfid-20130730_112649_947311_37C2A063)
-In-Reply-To: <1375176359-1331-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1375176359-1331-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from mail-la0-f49.google.com ([209.85.215.49]:35156 "EHLO
+	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760278Ab3GSL4F (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 07:56:05 -0400
+Received: by mail-la0-f49.google.com with SMTP id ea20so3289605lab.8
+        for <backports@vger.kernel.org>; Fri, 19 Jul 2013 04:56:04 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <51E5A066.8070009@hauke-m.de>
+References: <1373979477-11133-1-git-send-email-johannes@sipsolutions.net> <51E5A066.8070009@hauke-m.de>
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+Date: Fri, 19 Jul 2013 04:55:44 -0700
+Message-ID: <CAB=NE6XRSYq=_H-h63+A_KfQnt7WnoZeZrq=6tz-zBfjnT-KKQ@mail.gmail.com> (sfid-20130719_135631_796082_3B521B65)
+Subject: Re: [RFC/RFT] backport: backport sprintf-style workqueue naming
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Tue, Jul 16, 2013 at 12:35 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> On 07/16/2013 02:57 PM, Johannes Berg wrote:
+>> From: Johannes Berg <johannes.berg@intel.com>
+>>
+>> Since kernel version 3.3, workqueue names could be
+>> sprintf'ed instead of just pointing to a name. This
+>> wasn't used a lot so never needed to be backported,
+>> but now it's used everywhere. Backport this API.
+>>
+>> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+>> ---
+>>  backport/backport-include/linux/workqueue.h | 47 ++++++++++++++++----
+>>  backport/compat/compat-3.3.c                | 69 +++++++++++++++++++++++++++++
+>>  2 files changed, 108 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/backport/backport-include/linux/workqueue.h b/backport/backport-include/linux/workqueue.h
+>> index 9958715..54c9090 100644
+>> --- a/backport/backport-include/linux/workqueue.h
+>> +++ b/backport/backport-include/linux/workqueue.h
+>> @@ -14,16 +14,47 @@ bool mod_delayed_work(struct workqueue_struct *wq, struct delayed_work *dwork,
+>>  #define create_freezable_workqueue create_freezeable_workqueue
+>>  #endif
+>>
+>> -#ifndef alloc_ordered_workqueue
+>> -#define alloc_ordered_workqueue(name, flags) create_singlethread_workqueue(name)
+>> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
+>> +#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36)
+>
+> Why not do a check for #ifndef WQ_UNBOUND that way we do not get that
+> many problems when someone tries a kernel that already backported this.
 
-This backports cross-device reservation support.
-Given that this feature is built around the
-CONFIG_DMA_SHARED_BUFFER and given that some older kernels
-will have DMA_SHARED_BUFFER without cross device reservation
-support we can't use the c-file and h-file backports Kconfig
-trick to automatically backport this feature from the
-target git tree.
+Not sure I understood this. I tried though.
 
-commit 786d7257e537da0674c02e16e3b30a44665d1cee
-Author: Maarten Lankhorst <m.b.lankhorst@gmail.com>
-Date:   Thu Jun 27 13:48:16 2013 +0200
+>> +#define WQ_UNBOUND   0
+>>  #endif
+>> -
+>> -#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28)
+>> -#define alloc_workqueue(name, flags, max_active) __create_workqueue(name, flags, max_active)
+>> +#define __WQ_ORDERED 0
+>> +/*
+>> + * commit b196be89cdc14a88cc637cdad845a75c5886c82d
+>> + * Author: Tejun Heo <tj@kernel.org>
+>> + * Date:   Tue Jan 10 15:11:35 2012 -0800
+>> + *
+>> + *     workqueue: make alloc_workqueue() take printf fmt and args for name
+>> + */
+>> +struct workqueue_struct *
+>> +backport_alloc_workqueue(const char *fmt, unsigned int flags,
+>> +                      int max_active, struct lock_class_key *key,
+>> +                      const char *lock_name, ...);
+>> +#undef alloc_workqueue
+>> +#ifdef CONFIG_LOCKDEP
+>> +#define alloc_workqueue(fmt, flags, max_active, args...)             \
+>> +({                                                                   \
+>> +     static struct lock_class_key __key;                             \
+>> +     const char *__lock_name;                                        \
+>> +                                                                     \
+>> +     if (__builtin_constant_p(fmt))                                  \
+>> +             __lock_name = (fmt);                                    \
+>> +     else                                                            \
+>> +             __lock_name = #fmt;                                     \
+>> +                                                                     \
+>> +     backport_alloc_workqueue((fmt), (flags), (max_active),          \
+>> +                              &__key, __lock_name, ##args);          \
+>> +})
 
-    reservation: cross-device reservation support, v4
+BTW I believe using (perens)(like)(this) seems to help avoid
+re-dup'ing the define effect see my last patch. Not sure if that helps
+here.
 
-    This adds support for a generic reservations framework that can be
-    hooked up to ttm and dma-buf and allows easy sharing of reservations
-    across devices.
+>> +#else
+>> +#define alloc_workqueue(fmt, flags, max_active, args...)             \
+>> +     backport_alloc_workqueue((fmt), (flags), (max_active),          \
+>> +                              NULL, NULL, ##args)
+>>  #endif
+>> -
+>> -#ifndef alloc_workqueue
+>> -#define alloc_workqueue(name, flags, max_active) __create_workqueue(name, flags, max_active, 0)
+>> +#undef alloc_ordered_workqueue
+>> +#define alloc_ordered_workqueue(fmt, flags, args...) \
+>> +     alloc_workqueue(fmt, WQ_UNBOUND | __WQ_ORDERED | (flags), 1, ##args)
+>> +#define destroy_workqueue backport_destroy_workqueue
+>
+> The #undef destroy_workqueue in compat-3.3.c does not look nice to me.
+>
+> What about this and then call orig_destroy_workqueue(wq)?
+>
+> static inline void orig_destroy_workqueue(struct workqueue_struct *wq)
+> {
+>         destroy_workqueue(wq);
+> }
+> #define destroy_workqueue(wq) backport_destroy_workqueue(wq)
 
-    The idea is that a dma-buf and ttm object both will get a pointer
-    to a struct reservation_object, which has to be reserved before
-    anything is done with the contents of the dma-buf.
+I didn't get this either :(
 
-    Changes since v1:
-     - Fix locking issue in ticket_reserve, which could cause
-       mutex_unlock
-       to be called too many times.
-    Changes since v2:
-     - All fence related calls and members have been taken out for now,
-       what's left is the bare minimum to be useful for ttm locking conversion.
-    Changes since v3:
-     - Removed helper functions too. The documentation has an example
-       implementation for locking. With the move to ww_mutex there is no
-       need to have much logic any more.
+>> +void backport_destroy_workqueue(struct workqueue_struct *wq);
+>>  #endif
+>>
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36)
+>> diff --git a/backport/compat/compat-3.3.c b/backport/compat/compat-3.3.c
+>> index a44f59d..d86b40e 100644
+>> --- a/backport/compat/compat-3.3.c
+>> +++ b/backport/compat/compat-3.3.c
+>> @@ -12,6 +12,7 @@
+>>  #include <linux/version.h>
+>>  #include <linux/skbuff.h>
+>>  #include <linux/module.h>
+>> +#include <linux/workqueue.h>
+>>  #include <net/dst.h>
+>>  #include <net/xfrm.h>
+>>
+>> @@ -171,3 +172,71 @@ out:
+>>       return n;
+>>  }
+>>  EXPORT_SYMBOL_GPL(__pskb_copy);
+>> +
+>> +static DEFINE_SPINLOCK(wq_name_lock);
+>> +static struct list_head wq_name_list;
+>> +
+>> +struct wq_name {
+>> +     struct list_head list;
+>> +     struct workqueue_struct *wq;
+>> +     char name[24];
+>> +};
+>> +
 
-    Signed-off-by: Maarten Lankhorst <maarten.lankhorst@canonical.com>
-    Reviewed-by: Jerome Glisse <jglisse@redhat.com>
-    Signed-off-by: Dave Airlie <airlied@redhat.com>
+Do we really need this on the backport?
 
-Cc: maarten.lankhorst@canonical.com
-Cc: jglisse@redhat.com
-Cc: airlied@redhat.com
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- backport/backport-include/linux/reservation.h |   70 +++++++++++++++++++++++++
- backport/compat/Kconfig                       |    7 +++
- backport/compat/Makefile                      |    1 +
- backport/compat/drivers-base-reservation.c    |   39 ++++++++++++++
- 4 files changed, 117 insertions(+)
- create mode 100644 backport/backport-include/linux/reservation.h
- create mode 100644 backport/compat/drivers-base-reservation.c
+>> +struct workqueue_struct *
+>> +backport_alloc_workqueue(const char *fmt, unsigned int flags,
+>> +                      int max_active, struct lock_class_key *key,
+>> +                      const char *lock_name, ...)
+>> +{
+>> +     struct workqueue_struct *wq;
+>> +     struct wq_name *n = kzalloc(sizeof(*n), GFP_KERNEL);
+>> +     va_list args;
+>> +
+>> +     if (!n)
+>> +             return NULL;
+>> +
+>> +     va_start(args, lock_name);
+>> +     vsnprintf(n->name, sizeof(n->name), fmt, args);
+>> +     va_end(args);
+>> +
+>> +#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36)
+>> +     wq = __create_workqueue_key(n->name, max_active == 1, 0,
+>> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28)
+>> +                                 0,
+>> +#endif
+>> +                                 key, lock_name);
+>> +#else
+>> +     wq = __alloc_workqueue_key(n->name, flags, max_active, key, lock_name);
+>> +#endif
+>> +     if (!wq) {
+>> +             kfree(n);
+>> +             return NULL;
+>> +     }
+>> +
+>> +     n->wq = wq;
+>> +     spin_lock(&wq_name_lock);
+>> +     list_add(&n->list, &wq_name_list);
+>> +     spin_unlock(&wq_name_lock);
+>> +
+>> +     return wq;
+>> +}
+>> +EXPORT_SYMBOL_GPL(backport_alloc_workqueue);
+>> +
+>> +void backport_destroy_workqueue(struct workqueue_struct *wq)
+>> +{
+>> +     struct wq_name *n, *tmp;
+>> +
+>> +     /* call original */
+>> +#undef destroy_workqueue
+>> +     destroy_workqueue(wq);
+>> +
+>> +     spin_lock(&wq_name_lock);
+>> +     list_for_each_entry_safe(n, tmp, &wq_name_list, list) {
+>> +             if (n->wq == wq) {
+>> +                     list_del(&n->list);
+>> +                     kfree(n);
+>> +                     break;
+>> +             }
+>> +     }
+>> +     spin_unlock(&wq_name_lock);
+>> +}
+>> +EXPORT_SYMBOL_GPL(backport_destroy_workqueue);
 
-diff --git a/backport/backport-include/linux/reservation.h b/backport/backport-include/linux/reservation.h
-new file mode 100644
-index 0000000..ff79ae8
---- /dev/null
-+++ b/backport/backport-include/linux/reservation.h
-@@ -0,0 +1,70 @@
-+#ifndef _BACKPORT_LINUX_RESERVATION_H
-+#define _BACKPORT_LINUX_RESERVATION_H
-+
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
-+#include_next <linux/reservation.h>
-+#else
-+#ifdef CPTCFG_BACKPORT_BUILD_CROSS_RESERVATION
-+/*
-+ * Header file for reservations for dma-buf and ttm
-+ *
-+ * Copyright(C) 2011 Linaro Limited. All rights reserved.
-+ * Copyright (C) 2012-2013 Canonical Ltd
-+ * Copyright (C) 2012 Texas Instruments
-+ *
-+ * Authors:
-+ * Rob Clark <rob.clark@linaro.org>
-+ * Maarten Lankhorst <maarten.lankhorst@canonical.com>
-+ * Thomas Hellstrom <thellstrom-at-vmware-dot-com>
-+ *
-+ * Based on bo.c which bears the following copyright notice,
-+ * but is dual licensed:
-+ *
-+ * Copyright (c) 2006-2009 VMware, Inc., Palo Alto, CA., USA
-+ * All Rights Reserved.
-+ *
-+ * Permission is hereby granted, free of charge, to any person obtaining a
-+ * copy of this software and associated documentation files (the
-+ * "Software"), to deal in the Software without restriction, including
-+ * without limitation the rights to use, copy, modify, merge, publish,
-+ * distribute, sub license, and/or sell copies of the Software, and to
-+ * permit persons to whom the Software is furnished to do so, subject to
-+ * the following conditions:
-+ *
-+ * The above copyright notice and this permission notice (including the
-+ * next paragraph) shall be included in all copies or substantial portions
-+ * of the Software.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL
-+ * THE COPYRIGHT HOLDERS, AUTHORS AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM,
-+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-+ * USE OR OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+#include <linux/ww_mutex.h>
-+
-+extern struct ww_class reservation_ww_class;
-+
-+struct reservation_object {
-+	struct ww_mutex lock;
-+};
-+
-+#define reservation_object_init LINUX_BACKPORT(reservation_object_init)
-+static inline void
-+reservation_object_init(struct reservation_object *obj)
-+{
-+	ww_mutex_init(&obj->lock, &reservation_ww_class);
-+}
-+
-+#define reservation_object_fini LINUX_BACKPORT(reservation_object_fini)
-+static inline void
-+reservation_object_fini(struct reservation_object *obj)
-+{
-+	ww_mutex_destroy(&obj->lock);
-+}
-+
-+#endif /* BACKPORT_BUILD_CROSS_RESERVATION */
-+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0) */
-+#endif /* _BACKPORT_LINUX_RESERVATION_H */
-diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
-index f3c1ab3..8377013 100644
---- a/backport/compat/Kconfig
-+++ b/backport/compat/Kconfig
-@@ -139,6 +139,13 @@ config BACKPORT_BUILD_DMA_SHARED_BUFFER
- 	#h-file linux/dma-buf.h
- 	#c-file drivers/base/dma-buf.c
- 
-+config BACKPORT_BUILD_CROSS_RESERVATION
-+	bool
-+	# not possible on kernel < 3.2
-+	depends on !BACKPORT_KERNEL_3_2
-+	depends on BACKPORT_BUILD_DMA_SHARED_BUFFER || DMA_SHARED_BUFFER
-+	default y if BACKPORT_USERSEL_BUILD_ALL
-+
- config BACKPORT_DMA_SHARED_BUFFER
- 	bool
- 
-diff --git a/backport/compat/Makefile b/backport/compat/Makefile
-index fec01c4..80c0294 100644
---- a/backport/compat/Makefile
-+++ b/backport/compat/Makefile
-@@ -42,3 +42,4 @@ compat-$(CPTCFG_BACKPORT_BUILD_GENERIC_ATOMIC64) += compat_atomic.o
- compat-$(CPTCFG_BACKPORT_BUILD_DMA_SHARED_HELPERS) += dma-shared-helpers.o
- compat-$(CPTCFG_BACKPORT_BUILD_RADIX_HELPERS) += lib-radix-tree-helpers.o
- compat-$(CPTCFG_BACKPORT_BUILD_WW_MUTEX) += kernel/ww_mutex.o
-+compat-$(CPTCFG_BACKPORT_BUILD_CROSS_RESERVATION) += drivers-base-reservation.o
-diff --git a/backport/compat/drivers-base-reservation.c b/backport/compat/drivers-base-reservation.c
-new file mode 100644
-index 0000000..840ca1a
---- /dev/null
-+++ b/backport/compat/drivers-base-reservation.c
-@@ -0,0 +1,39 @@
-+/*
-+ * Copyright (C) 2012-2013 Canonical Ltd
-+ *
-+ * Based on bo.c which bears the following copyright notice,
-+ * but is dual licensed:
-+ *
-+ * Copyright (c) 2006-2009 VMware, Inc., Palo Alto, CA., USA
-+ * All Rights Reserved.
-+ *
-+ * Permission is hereby granted, free of charge, to any person obtaining a
-+ * copy of this software and associated documentation files (the
-+ * "Software"), to deal in the Software without restriction, including
-+ * without limitation the rights to use, copy, modify, merge, publish,
-+ * distribute, sub license, and/or sell copies of the Software, and to
-+ * permit persons to whom the Software is furnished to do so, subject to
-+ * the following conditions:
-+ *
-+ * The above copyright notice and this permission notice (including the
-+ * next paragraph) shall be included in all copies or substantial portions
-+ * of the Software.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL
-+ * THE COPYRIGHT HOLDERS, AUTHORS AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM,
-+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-+ * USE OR OTHER DEALINGS IN THE SOFTWARE.
-+ *
-+ **************************************************************************/
-+/*
-+ * Authors: Thomas Hellstrom <thellstrom-at-vmware-dot-com>
-+ */
-+
-+#include <linux/reservation.h>
-+#include <linux/export.h>
-+
-+DEFINE_WW_CLASS(reservation_ww_class);
-+EXPORT_SYMBOL_GPL(reservation_ww_class);
--- 
-1.7.10.4
+For now I'm using a slightly modified version of this to get passed
+through some linux-next tags, sorry I've been caught up. I'll post
+what I have just now.
 
+  Luis
