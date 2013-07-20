@@ -1,73 +1,52 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:51480 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759134Ab3GaIjp (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 31 Jul 2013 04:39:45 -0400
-Message-ID: <51F8CD4B.9050706@fh-kl.de> (sfid-20130731_103947_720809_107C16EB)
-Date: Wed, 31 Jul 2013 10:39:39 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Received: from netrider.rowland.org ([192.131.102.5]:42749 "HELO
+	netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753639Ab3GTDgU (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 23:36:20 -0400
+Date: Fri, 19 Jul 2013 23:36:19 -0400 (EDT)
+From: Alan Stern <stern@rowland.harvard.edu>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+cc: Julia Lawall <julia.lawall@lip6.fr>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	USB list <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Jiri Slaby <jslaby@suse.cz>, Jiri Kosina <jkosina@suse.cz>,
+	Felix Fietkau <nbd@openwrt.org>
+Subject: Re: [PATCH] backports: backport drvdata = NULL core driver fixes
+In-Reply-To: <CAB=NE6WfbauZnzCT=jgfUtc2Roe7WfY=G7Z5OAobc9YLc0nCvw@mail.gmail.com>
+Message-ID: <Pine.LNX.4.44L0.1307192315470.24914-100000@netrider.rowland.org> (sfid-20130720_053704_694012_1DDB2FC3)
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [RFC v2 4/8] backports: add usb_translate_errors()
-References: <cover.1375259597.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1375259597.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This inline function is missing for version < 2.6.39 but required by em28xx
-and cdc-wdm device driver.
+On Fri, 19 Jul 2013, Luis R. Rodriguez wrote:
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
----
- backport/backport-include/linux/usb.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+> Thanks Julia. In that case I'm going to just leave this in place given
+> that if there's a bug upstream we'll get it fixed as soon as a
+> respective patch gets upstream as well. That is, we are not using old
+> drivers, we use the same upstream drivers so if a regression was found
+> in backports the fix must go upstream s well. This is one of the
+> benefits of backporting -- the range of users and testers increases
+> and we still benefit from the upstream bandwagon.
 
-diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
-index 368da6c..49a5762 100644
---- a/backport/backport-include/linux/usb.h
-+++ b/backport/backport-include/linux/usb.h
-@@ -145,4 +145,21 @@ extern void usb_unpoison_urb(struct urb *urb);
- extern int usb_anchor_empty(struct usb_anchor *anchor);
- #endif /* 2.6.23-2.6.27 */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,39)
-+#if defined(CONFIG_USB) || defined(CONFIG_USB_MODULE)
-+static inline int usb_translate_errors(int error_code)
-+{
-+	switch (error_code) {
-+	case 0:
-+	case -ENOMEM:
-+	case -ENODEV:
-+	case -EOPNOTSUPP:
-+		return error_code;
-+	default:
-+		return -EIO;
-+	}
-+}
-+#endif /* CONFIG_USB */
-+#endif /* < 2.6.39 */
-+
- #endif /* __BACKPORT_USB_H */
--- 
-1.8.1.2
+I don't understand.  If you're not using old drivers, and you
+incorporate all the upstream patches, then what's the difference
+between a backport and the current kernel?  In fact, if you're
+incorporating all the upstream driver patches, then why haven't you
+already got the drvdata change?
 
+As one example of the sort of subtle problem exposed by the drvdata
+change, take a look at commit b2ca69907657.
 
+For more examples, see commits bf90ff5f3b8f, 638b9e15233c,
+51ef847df746, 289b076f89c2, 53636555b919, 99a6f73c495c, 003615302a16,
+94ab71ce2889, 3124d1d71d3d, c27f3efc5608, 95940a04bfe8, 5c1a0f418d8d,
+db5c8b524444, 8bf769eb5f6e, 4295fe7791a1, fa919751a2d2, a9556040119a,
+7bdce71822f4, and a1028f0abfb3.  Admittedly, these are all related
+problems in a single subsystem, but it gives you a little idea of how 
+far this goes.
 
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
+Alan Stern
 
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
