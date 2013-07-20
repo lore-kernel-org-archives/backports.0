@@ -1,91 +1,74 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s16502780.onlinehome-server.info ([87.106.93.118]:50227 "EHLO
-	fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754341Ab3GTQ1j (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 20 Jul 2013 12:27:39 -0400
-Date: Sat, 20 Jul 2013 17:27:18 +0100
-From: Chris Wilson <chris@chris-wilson.co.uk>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"jani.nikula" <jani.nikula@intel.com>, annndddrr@gmail.com,
-	cpanceac@gmail.com, Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Greg Kroah-Hartman <greg@kroah.com>
-Subject: Re: [RFC 6/9] backports: revert DMI_EXACT_MATCH() for older kernels
-Message-ID: <20130720162718.GA4376@cantiga.alporthouse.com> (sfid-20130720_182747_205824_8234C585)
-References: <1374235209-19782-1-git-send-email-mcgrof@do-not-panic.com>
- <1374235209-19782-7-git-send-email-mcgrof@do-not-panic.com>
- <20130719123146.GC9288@cantiga.alporthouse.com>
- <CAB=NE6UEHomQAoQb3cV0Bdtpb5SEGTr0_TaPWTbvF6OHe2bguA@mail.gmail.com>
+Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:43076
+	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1753456Ab3GTMxp (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 20 Jul 2013 08:53:45 -0400
+Received: from stuffed.shaftnet.org (localhost [127.0.0.1])
+	by stuffed.shaftnet.org (8.14.7/8.14.5) with ESMTP id r6KCRAlq025674
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO)
+	for <backports@vger.kernel.org>; Sat, 20 Jul 2013 08:27:10 -0400
+Received: (from pizza@localhost)
+	by stuffed.shaftnet.org (8.14.7/8.14.7/Submit) id r6KCR82C025672
+	for backports@vger.kernel.org; Sat, 20 Jul 2013 08:27:08 -0400
+Date: Sat, 20 Jul 2013 08:27:08 -0400
+From: Solomon Peachy <pizza@shaftnet.org>
+To: backports@vger.kernel.org
+Subject: cw1200 and older kernels (newbie question)
+Message-ID: <20130720122708.GA24056@shaftnet.org> (sfid-20130720_145348_911274_05E18D76)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAB=NE6UEHomQAoQb3cV0Bdtpb5SEGTr0_TaPWTbvF6OHe2bguA@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Jul 19, 2013 at 02:04:47PM -0700, Luis R. Rodriguez wrote:
-> On Fri, Jul 19, 2013 at 5:31 AM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
-> > On Fri, Jul 19, 2013 at 05:00:06AM -0700, Luis R. Rodriguez wrote:
-> >> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-> >>
-> >> struct dmi_strmatch was modified on v3.11 with a
-> >> exact_match member. The DMI_EXACT_MATCH() macro was
-> >> added as a mod version of DMI_MATCH() to account for
-> >> dmi strings that look closely like each other. An
-> >> example is D510MO Vs D510MOV.
-> >>
-> >> Since exact_match is is not available on older kernels
-> >> we can't use it and must revert to the old DMI_MATCH().
-> >> Addressing the desired behaviour will require a separate
-> >> change to deal with addressing the difference
-> >> in the behaviour.
-> >
-> > If you choose not to backport DMI_EXACT_MATCH, then don't backport the
-> > two fixes that depend upon it.
-> 
-> Which ones? These two?
-> 
-> dcf6d294830d46b0e6901477fb4bf455281d90c8 - drm/i915: quirk away
-> phantom LVDS on Intel's D525MW mainboard
-> e5614f0c2d0f4d7f0b8ef745d34593baf2c5dbf8 - drm/i915: quirk away
-> phantom LVDS on Intel's D510MO mainboard
 
-Yes.
- 
-> Just #ifdef over these for older kernels ifndef DMI_EXACT_MATCH ?
-> 
-> > Is there a blocker for not backporting the DMI_EXACT_MATCH feature?
-> 
-> I'm so glad you asked. DMI_EXACT_MATCH uses struct dmi_strmatch's new
-> member exact_match:
-> 
-> @@ -456,7 +456,8 @@ enum dmi_field {
->  };
-> 
->  struct dmi_strmatch {
-> -       unsigned char slot;
-> +       unsigned char slot:7;
-> +       unsigned char exact_match:1;
->         char substr[79];
->  };
-> 
-> Prior to 5017b285 we only had slot so to use DMI_EXACT_MATCH with its
-> intent we'd have to do something like slot |= 1 if its called. This
-> however assumes though that older code has the sanity check as changed
-> in 5017b285 on drivers/firmware/dmi_scan.c. dmi_scan.o gets linked
-> with CONFIG_DMI. At least for x86 that gets objects sprinkled on
-> arch/x86/, but more importantly CONFIG_DMI is bool. I've argued how I
-> envision us being able to backport core components before (see
-> 0935deab for the hint) but as it is right now we can't. We only
-> backport things we can throw in as modular.
-> 
-> Please let me know if you see any other way.
+--SUOF0GtieIMvvwua
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-An alternative ugly hack would be to encode some metadata into the
-search string. I am a bit wary of simply converting the DMI_EXACT_MATCH
-back into DMI_MATCH because that introduces a regression into working
-machines if we blithely backport fixes like the two above. I'd rather
-have the compile failure.
--Chris
+As part of the cw1200 mainlining effort, I stripped two chunks out of=20
+the cw1200 driver that only had relevance relevance for older kernels:
 
--- 
-Chris Wilson, Intel Open Source Technology Centre
+1) Workaround for a hardware SDIO bug (needed for < 3.2)
+   * Formal SDIO-level quirk mainlined in 3.2-rc
+   * Absence results in device hang with 512-byte SDIO transfers.
+2) Support for kernels < 2.6.36
+   * Driver utilizes the new workqueue API introduced in 2.6.36, taking
+     advantage of new semantics/features (WQ_HIGHPRI + WQ_CPU_INTENSIVE)
+   * With older kernels we need a dedicated kthread
+
+Backports has an implementation of the new workqueue API, but it is=20
+expressed in terms of the old API, which is inadequate for the cw1200's=20
+needs.
+
+Perhaps it's a lack of sufficient sleep, but I haven't quite wrapped my=20
+head around how the bakports stuff is put together; it's radically=20
+different that compat-wireless, which had nice orderly patch=20
+directories.  :)
+
+Any advice on how I should proceed here?  I want to do this the=20
+RightWay, but I don't know what that is yet -- Should I just=20
+add these two patches to the backports tree under patches/unified-drivers?
+
+(The code chunks in question are wrapped with LINUX_VERSION_CODE tests,=20
+ so they function fine on newer kernels)
+
+ - Solomon
+--=20
+Solomon Peachy        		       pizza at shaftnet dot org	=20
+Delray Beach, FL                          ^^ (email/xmpp) ^^
+Quidquid latine dictum sit, altum viditur.
+
+--SUOF0GtieIMvvwua
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.13 (GNU/Linux)
+
+iD8DBQFR6oIcPuLgii2759ARAjPxAKDElbm+yxJPy/8cPl6nCKQInXsoOQCeOieU
+UIiepXTqVpIuuhyqiBQLxRE=
+=pwY1
+-----END PGP SIGNATURE-----
+
+--SUOF0GtieIMvvwua--
