@@ -1,53 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:56242 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756009Ab3GON4V (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 15 Jul 2013 09:56:21 -0400
-Message-ID: <51E3FF49.50301@hauke-m.de> (sfid-20130715_155623_066395_ADDB137F)
-Date: Mon, 15 Jul 2013 15:55:21 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Ben Guthro <ben@guthro.net>
-CC: backports@vger.kernel.org
-Subject: Re: problems building backports-3.10-2
-References: <CAOvdn6Vs9pUOXwBYTPzvQp0TDKgDxotog-Srv0xF+41i5UXz0Q@mail.gmail.com>
-In-Reply-To: <CAOvdn6Vs9pUOXwBYTPzvQp0TDKgDxotog-Srv0xF+41i5UXz0Q@mail.gmail.com>
-Content-Type: text/plain; charset=ISO-8859-1
+Received: from s3.sipsolutions.net ([144.76.43.152]:36430 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750921Ab3GUGfV (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 21 Jul 2013 02:35:21 -0400
+Message-ID: <1374388514.8376.1.camel@jlt4.sipsolutions.net> (sfid-20130721_083525_753419_550833C2)
+Subject: Re: [RFC/RFT] backport: backport sprintf-style workqueue naming
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org
+Date: Sun, 21 Jul 2013 09:35:14 +0300
+In-Reply-To: <51E5A066.8070009@hauke-m.de>
+References: <1373979477-11133-1-git-send-email-johannes@sipsolutions.net>
+	 <51E5A066.8070009@hauke-m.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 07/15/2013 03:08 PM, Ben Guthro wrote:
-> I'm struggling to integrate the backports-3.10-2 release into my
-> build, and I'm hoping this is the proper venue to get some answers.
-> 
-> 1. The build is complaining about ./gentree.py and local symbols. I
-> did not see gentree.py anywhere in the code released.
-> 
-> Even when removing this section of the Makefile, I am able to get a
-> bit further, to try to do a 'make menuconfig'
-> This does not present the options I expected - offering only the
-> following options:
-> 
-> Build all compat code
-> Voltage and Current Regulator Support
-> 
-> 
-> I also tried the some of the defconfigs (like iwlwifi) - but these
-> seem to only build the compat.ko, and nothing else.
-> 
-> 
-> Am I doing something wrong - or is something broken in this release?
+On Tue, 2013-07-16 at 21:35 +0200, Hauke Mehrtens wrote:
 
-What source are you using? It looks to me like you are using the code
-from the git repository, this code is there to *generate* a new tar, but
-it contains no driver or wireless code, that is fetched by gentree.py
-from the linux kernel source code. If you just want some code backported
-from 3.10 take the release [0]. If you want to create your own tar
-please consult the wiki [1].
+> > -#ifndef alloc_ordered_workqueue
+> > -#define alloc_ordered_workqueue(name, flags) create_singlethread_workqueue(name)
+> > +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
+> > +#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36)
+> 
+> Why not do a check for #ifndef WQ_UNBOUND that way we do not get that
+> many problems when someone tries a kernel that already backported this.
 
-Hauke
+It's an enum, so that won't work.
 
-[0]:
-https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.10/
-[1]:
-https://backports.wiki.kernel.org/index.php/Documentation/backports/hacking
+
+> The #undef destroy_workqueue in compat-3.3.c does not look nice to me.
+> 
+> What about this and then call orig_destroy_workqueue(wq)?
+> 
+> static inline void orig_destroy_workqueue(struct workqueue_struct *wq)
+> {
+> 	destroy_workqueue(wq);
+> }
+> #define destroy_workqueue(wq) backport_destroy_workqueue(wq)
+
+Why? I don't see a reason to expose this to users of the API.
+
+johannes
+
