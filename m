@@ -1,92 +1,71 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f175.google.com ([209.85.217.175]:35858 "EHLO
-	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751531Ab3GSVIB (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 17:08:01 -0400
-MIME-Version: 1.0
-In-Reply-To: <Pine.LNX.4.44L0.1307191012330.1055-100000@iolanthe.rowland.org>
-References: <1374191339-10124-1-git-send-email-mcgrof@do-not-panic.com> <Pine.LNX.4.44L0.1307191012330.1055-100000@iolanthe.rowland.org>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Fri, 19 Jul 2013 14:07:39 -0700
-Message-ID: <CAB=NE6XmxX0UQkbchU_AKJOyENcn0auBGMPzru5C4nohg_v1sQ@mail.gmail.com> (sfid-20130719_230821_345093_B5434EF5)
-Subject: Re: [PATCH] backports: backport drvdata = NULL core driver fixes
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Julia Lawall <julia.lawall@lip6.fr>, linux-usb@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Jiri Slaby <jslaby@suse.cz>, Jiri Kosina <jkosina@suse.cz>,
-	Felix Fietkau <nbd@openwrt.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from s3.sipsolutions.net ([144.76.43.152]:44702 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751994Ab3GWHPl (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 23 Jul 2013 03:15:41 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backport: disable unused automatic backports
+Date: Tue, 23 Jul 2013 09:15:32 +0200
+Message-Id: <1374563732-18562-1-git-send-email-johannes@sipsolutions.net> (sfid-20130723_091543_472126_25738FCF)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Jul 19, 2013 at 7:17 AM, Alan Stern <stern@rowland.harvard.edu> wrote:
-> On Thu, 18 Jul 2013, Luis R. Rodriguez wrote:
->
->> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
->>
->> The Linux kernel had tons of code which at times cleared the
->> drvdata upon probe failure or release. There are however a bunch
->> of drivers that didn't clear this.
->>
->> Commit 0998d063 implmented clearing this upon device_release_driver()
->> and dealt with probe failure on driver_probe_device(). After this the
->> kernel was cleaned up separately with *tons* of patches to remove all
->> these driver specific settings given that the clearing is now done
->> internally by the device core.
->>
->> Instead of ifdef'ing code back in for older code where it was properly
->> in place backport this by piggy backing the new required code upon the
->> calls used in place. There is a small race here upon device_release_driver()
->> but we can live with that theoretical race.
->>
->> Due to the way we hack this backport we can't use a separate namespace
->> as we have with other symbols.
->>
->> mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains \
->>       0998d0631001288a5974afc0b2a5f568bcdecb4d
->> v3.6-rc1~99^2~14^2~17
->>
->> commit 0998d0631001288a5974afc0b2a5f568bcdecb4d
->> Author: Hans de Goede <hdegoede@redhat.com>
->> Date:   Wed May 23 00:09:34 2012 +0200
->>
->>     device-core: Ensure drvdata = NULL when no driver is bound
->>
->>     1) drvdata is for a driver to store a pointer to driver specific data
->>     2) If no driver is bound, there is no driver specific data associated with
->>        the device
->>     3) Thus logically drvdata should be NULL if no driver is bound.
->>
->>     But many drivers don't clear drvdata on device_release, or set drvdata
->>     early on in probe and leave it set on probe error. Both of which results
->>     in a dangling pointer in drvdata.
->>
->>     This patch enforce for drvdata to be NULL after device_release or on probe
->>     failure.
->>
->>     Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->>     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->
-> This is not a very good idea.  Although setting drvdata to NULL allowed
-> a lot of code to be removed, it also exposed a bunch of hidden bugs --
-> drivers were using the drvdata value even after their remove function
-> returned.
+From: Johannes Berg <johannes.berg@intel.com>
 
-Eek, have we not SmPL'ify'd a proof yet to ensure code like this no
-longer exists? Julia? :)
+When an automatic backport isn't included due to not
+being used (see commit 6e0475b599217eceb8e01a1e572c,
+"gentree: add automatic backports only if needed"),
+selecting BACKPORT_USERSEL_BUILD_ALL will make the
+build fail. Avoid this by disabling such symbols in
+the Kconfig.
 
-> Several commits have been applied to fix those bugs.
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ gentree.py | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-I actualy found *tons* !
+diff --git a/gentree.py b/gentree.py
+index 356871d..b6c98e8 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -176,6 +176,7 @@ def automatic_backport_mangle_c_file(name):
+ 
+ 
+ def add_automatic_backports(args):
++    disable_list = []
+     export = re.compile(r'^EXPORT_SYMBOL(_GPL)?\((?P<sym>[^\)]*)\)')
+     bpi = kconfig.get_backport_info(os.path.join(args.outdir, 'compat', 'Kconfig'))
+     configtree = kconfig.ConfigTree(os.path.join(args.outdir, 'Kconfig'))
+@@ -183,6 +184,7 @@ def add_automatic_backports(args):
+     for sym, vals in bpi.items():
+         if sym.startswith('BACKPORT_BUILD_'):
+             if not sym[15:] in all_selects:
++                disable_list.append(sym)
+                 continue
+         symtype, module_name, c_files, h_files = vals
+ 
+@@ -229,6 +231,7 @@ def add_automatic_backports(args):
+                 outf.write('#define %s LINUX_BACKPORT(%s)\n' % (s, s))
+             outf.write('#include <%s>\n' % (os.path.dirname(f) + '/backport-' + os.path.basename(f), ))
+             outf.write('#endif /* CPTCFG_%s */\n' % sym)
++    return disable_list
+ 
+ def git_debug_init(args):
+     """
+@@ -346,7 +349,10 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+ 
+     git_debug_snapshot(args, 'Add driver sources')
+ 
+-    add_automatic_backports(args)
++    disable_list = add_automatic_backports(args)
++    if disable_list:
++        bpcfg = kconfig.ConfigTree(os.path.join(args.outdir, 'compat', 'Kconfig'))
++        bpcfg.disable_symbols(disable_list)
+     git_debug_snapshot(args, 'Add automatic backports')
+ 
+     logwrite('Apply patches ...')
+-- 
+1.8.0
 
-> Finding and backporting them and their dependencies will not be easy.
-
-May the SmPL proof be with us.
-
-> I suggest this patch not be applied.
-
-Thanks for the review Alan!
-
-  Luis
