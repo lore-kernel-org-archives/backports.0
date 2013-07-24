@@ -1,75 +1,70 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f51.google.com ([209.85.160.51]:52562 "EHLO
-	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755256Ab3G3Jbm (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 30 Jul 2013 05:31:42 -0400
-Received: by mail-pb0-f51.google.com with SMTP id jt11so100313pbb.24
-        for <backports@vger.kernel.org>; Tue, 30 Jul 2013 02:31:41 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 1/4] backports: backport adding RW and RO attribute macros
-Date: Tue, 30 Jul 2013 02:31:29 -0700
-Message-Id: <1375176692-1878-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20130730_113144_008222_110E17AF)
-In-Reply-To: <1375176692-1878-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1375176692-1878-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:54358 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750792Ab3GXFJY (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 24 Jul 2013 01:09:24 -0400
+Received: by mail-ob0-f176.google.com with SMTP id v19so11845968obq.7
+        for <backports@vger.kernel.org>; Tue, 23 Jul 2013 22:09:24 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAB=NE6WJCRG8Z0nkW=u20ehRXABxngA38GR0cgUUiDR5B0CpnQ@mail.gmail.com>
+References: <1374235209-19782-1-git-send-email-mcgrof@do-not-panic.com>
+	<1374235209-19782-7-git-send-email-mcgrof@do-not-panic.com>
+	<20130719123146.GC9288@cantiga.alporthouse.com>
+	<CAB=NE6UEHomQAoQb3cV0Bdtpb5SEGTr0_TaPWTbvF6OHe2bguA@mail.gmail.com>
+	<20130720162718.GA4376@cantiga.alporthouse.com>
+	<CAB=NE6WJCRG8Z0nkW=u20ehRXABxngA38GR0cgUUiDR5B0CpnQ@mail.gmail.com>
+Date: Wed, 24 Jul 2013 07:09:24 +0200
+Message-ID: <CAKMK7uHYUvxOLmd0wT0dG7_vZxUEcwFhmL2GB9ggTb-c5F11Eg@mail.gmail.com> (sfid-20130724_070927_374783_08003F7E)
+Subject: Re: [RFC 6/9] backports: revert DMI_EXACT_MATCH() for older kernels
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: Chris Wilson <chris@chris-wilson.co.uk>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"jani.nikula" <jani.nikula@intel.com>,
+	Andrey Li <annndddrr@gmail.com>,
+	cornel panceac <cpanceac@gmail.com>,
+	Greg Kroah-Hartman <greg@kroah.com>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+On Wed, Jul 24, 2013 at 2:24 AM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> On Sat, Jul 20, 2013 at 9:27 AM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
+>> On Fri, Jul 19, 2013 at 02:04:47PM -0700, Luis R. Rodriguez wrote:
+>>> Which ones? These two?
+>>>
+>>> dcf6d294830d46b0e6901477fb4bf455281d90c8 - drm/i915: quirk away
+>>> phantom LVDS on Intel's D525MW mainboard
+>>> e5614f0c2d0f4d7f0b8ef745d34593baf2c5dbf8 - drm/i915: quirk away
+>>> phantom LVDS on Intel's D510MO mainboard
+>>
+>> Yes.
+>
+> OK, will do.
+>
+>>> Please let me know if you see any other way.
+>>
+>> An alternative ugly hack would be to encode some metadata into the
+>> search string. I am a bit wary of simply converting the DMI_EXACT_MATCH
+>> back into DMI_MATCH because that introduces a regression into working
+>> machines if we blithely backport fixes like the two above. I'd rather
+>> have the compile failure.
+>
+> How about then just backporting like this then:
+>
+> #define DMI_EXACT_MATCH(a, b) DMI_MATCH(DMI_PRODUCT_NAME, "BACKPORT_IGNORE")
+>
+> It'd mean no #ifdef'ing code and at the same time making the run time
+> of the code of the mentioned patches skip.
 
-This backports the following commit:
-
-commit ced321bf9151535f85779b0004c93529f860b2a4
-Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date:   Sun Jul 14 16:05:54 2013 -0700
-
-    driver core: device.h: add RW and RO attribute macros
-
-    Make it easier to create attributes without having to always auditthe
-    mode settings.
-
-    Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-    Tested-by: Guenter Roeck <linux@roeck-us.net>
-    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- backport/backport-include/linux/device.h |   23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
-
-diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
-index ba55d0e..13a88ae 100644
---- a/backport/backport-include/linux/device.h
-+++ b/backport/backport-include/linux/device.h
-@@ -195,4 +195,27 @@ extern int dev_set_name(struct device *dev, const char *name, ...)
- })
- #endif /* LINUX_VERSION_CODE <= KERNEL_VERSION(3,6,0) */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,12,0)
-+#define BUS_ATTR_RW(_name) \
-+	struct bus_attribute bus_attr_##_name = __ATTR_RW(_name)
-+#define BUS_ATTR_RO(_name) \
-+	struct bus_attribute bus_attr_##_name = __ATTR_RO(_name)
-+
-+#define DRIVER_ATTR_RW(_name) \
-+	struct driver_attribute driver_attr_##_name = __ATTR_RW(_name)
-+#define DRIVER_ATTR_RO(_name) \
-+	struct driver_attribute driver_attr_##_name = __ATTR_RO(_name)
-+
-+#define CLASS_ATTR_RW(_name) \
-+	struct class_attribute class_attr_##_name = __ATTR_RW(_name)
-+#define CLASS_ATTR_RO(_name) \
-+	struct class_attribute class_attr_##_name = __ATTR_RO(_name)
-+
-+#define DEVICE_ATTR_RW(_name) \
-+	struct device_attribute dev_attr_##_name = __ATTR_RW(_name)
-+#define DEVICE_ATTR_RO(_name) \
-+	struct device_attribute dev_attr_##_name = __ATTR_RO(_name)
-+
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,12,0) */
-+
- #endif /* __BACKPORT_DEVICE_H */
--- 
-1.7.10.4
-
+Yeah, I think as a solution for the backport tree that's a neat hack
+and would allow us to reuse the latest upstream drm/i915 code
+unchanged, without the risk of breaking some machines. Of course we'll
+miss a few quirk entries but the lack of such shouldn't ever cause
+regressions.
+-Daniel
+--
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
