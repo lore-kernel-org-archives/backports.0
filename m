@@ -1,96 +1,126 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-vb0-f47.google.com ([209.85.212.47]:65343 "EHLO
-	mail-vb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932670Ab3GOP12 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 15 Jul 2013 11:27:28 -0400
-Received: by mail-vb0-f47.google.com with SMTP id x14so3172733vbb.6
-        for <backports@vger.kernel.org>; Mon, 15 Jul 2013 08:27:27 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <CAOvdn6XLUq1ypCRGfST1zrA1KDsj+nZw_xz=Yt3YF4fHp2Xz+g@mail.gmail.com>
-References: <CAOvdn6Vs9pUOXwBYTPzvQp0TDKgDxotog-Srv0xF+41i5UXz0Q@mail.gmail.com>
-	<51E3FF49.50301@hauke-m.de>
-	<CAOvdn6UmT+gaEgxfrhNt=fYDs-ikKykEJRJ-GbA3VJWdB3MPgg@mail.gmail.com>
-	<51E403A5.9060607@hauke-m.de>
-	<CAOvdn6XLUq1ypCRGfST1zrA1KDsj+nZw_xz=Yt3YF4fHp2Xz+g@mail.gmail.com>
-Date: Mon, 15 Jul 2013 11:27:26 -0400
-Message-ID: <CAOvdn6XoxhQU5VCn101KUBXxP95=JCwEymXpg0duZSnn_D1W9Q@mail.gmail.com> (sfid-20130715_172742_198453_8FA8D091)
-Subject: Re: problems building backports-3.10-2
-From: Ben Guthro <ben@guthro.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org
-Content-Type: text/plain; charset=ISO-8859-1
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:37510 "EHLO
+	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752870Ab3G1BR0 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 27 Jul 2013 21:17:26 -0400
+Received: by mail-pb0-f47.google.com with SMTP id rr13so3357218pbb.6
+        for <backports@vger.kernel.org>; Sat, 27 Jul 2013 18:17:26 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 6/9] backports: backport of_get_child_by_name() support
+Date: Sat, 27 Jul 2013 18:16:27 -0700
+Message-Id: <1374974190-31561-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20130728_031728_253987_639C88EB)
+In-Reply-To: <1374974190-31561-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1374974190-31561-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Jul 15, 2013 at 10:47 AM, Ben Guthro <ben@guthro.net> wrote:
-> On Mon, Jul 15, 2013 at 10:13 AM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
->> On 07/15/2013 04:01 PM, Ben Guthro wrote:
->>> On Mon, Jul 15, 2013 at 9:55 AM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
->>>> On 07/15/2013 03:08 PM, Ben Guthro wrote:
->>>>> I'm struggling to integrate the backports-3.10-2 release into my
->>>>> build, and I'm hoping this is the proper venue to get some answers.
->>>>>
->>>>> 1. The build is complaining about ./gentree.py and local symbols. I
->>>>> did not see gentree.py anywhere in the code released.
->>>>>
->>>>> Even when removing this section of the Makefile, I am able to get a
->>>>> bit further, to try to do a 'make menuconfig'
->>>>> This does not present the options I expected - offering only the
->>>>> following options:
->>>>>
->>>>> Build all compat code
->>>>> Voltage and Current Regulator Support
->>>>>
->>>>>
->>>>> I also tried the some of the defconfigs (like iwlwifi) - but these
->>>>> seem to only build the compat.ko, and nothing else.
->>>>>
->>>>>
->>>>> Am I doing something wrong - or is something broken in this release?
->>>>
->>>> What source are you using?
->>>
->>> I downloaded the released backports-3.10-2.tar.bz2 file from the
->>> stable releases page here:
->>> http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
->>>
->>
->> Could you please post the error messages you get with a unmodified
->> version of backports-3.10-2.tar.bz2.
->
-> This output is from trying to build against a built, but not installed kernel:
->
-> KLIB=/data/home/bguthro/dev/orc-precise/orc-kernel/../linux/build/kernel/lib/modules/3.8.13-orc
-> \
->         KLIB_BUILD=/data/home/bguthro/dev/orc-precise/orc-kernel/../linux/build/kernel
-> \
->         make -j8 EXTRAVERSION= V=1 -C compat-drivers modules
-> make[1]: Entering directory
-> `/data/home/bguthro/dev/orc-precise/orc-kernel/compat-drivers'
-> /--------------
-> | You shouldn't run make in the backports tree, but only in
-> | the generated output. This here is only the skeleton code
-> | copied into the output directory. To use the backport system
-> | from scratch, go into the top-level directory and run
-> |       ./gentree.py /path/to/linux-next/ /tmp/output
-> | and then make menuconfig/... in the output directory. See
-> |       ./gentree.py --help
-> | for more options.
-> \--
->
->
-> As Johannes posted, I suspect it is something to do with the .local-symbols
-> However, I'm not sure how this gets built, in the case of a kernel
-> that is not installed.
->
->
-> Any advice is appreciated.
->
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-I had an old git tree lying around, that I got confused with the
-unpacked backports-3.10-2 dir
+This was added via 9c19761a. While at it clean up the backported
+header a bit to make backporting more OF stuff more manageable.
 
-I was clearly working in the wrong tree.
-My apologies for the noise.
+mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains 9c19761a
+v3.7-rc1~123^2~4
 
-Ben
+commit 9c19761a7ecdc86abb2fba0feb81e8952eccc1f1
+Author: Srinivas Kandagatla <srinivas.kandagatla@st.com>
+Date:   Tue Sep 18 08:10:28 2012 +0100
+
+    dt: introduce of_get_child_by_name to get child node by name
+
+    This patch introduces of_get_child_by_name function to get a child node
+    by its name in a given parent node.
+
+    Without this patch each driver code has to iterate the parent and do
+    a string compare, However having of_get_child_by_name libary function would
+    avoid code duplication, errors and is more convenient.
+
+    Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@st.com>
+    Signed-off-by: Rob Herring <rob.herring@calxeda.com>
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ backport/backport-include/linux/of.h |   23 ++++++++++++++++++++---
+ backport/compat/compat-3.7.c         |   29 +++++++++++++++++++++++++++++
+ 2 files changed, 49 insertions(+), 3 deletions(-)
+
+diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
+index c5dc87c..93e91dd 100644
+--- a/backport/backport-include/linux/of.h
++++ b/backport/backport-include/linux/of.h
+@@ -4,13 +4,30 @@
+ #include <linux/version.h>
+ 
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
+-#include_next <linux/of.h>
+-#else
++#define KERNEL_HAS_OF_SUPPORT 1
++#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34)) */
+ 
+ #ifdef CONFIG_OF
++#define KERNEL_HAS_OF_SUPPORT 1
++#endif /* CONFIG_OF */
++
++#ifdef KERNEL_HAS_OF_SUPPORT
+ #include_next <linux/of.h>
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0))
++#ifdef CONFIG_OF
++extern struct device_node *of_get_child_by_name(const struct device_node *node,
++						const char *name);
++#else
++static inline struct device_node *of_get_child_by_name(
++					const struct device_node *node,
++					const char *name)
++{
++	return NULL;
++}
+ #endif /* CONFIG_OF */
++#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)) */
+ 
+-#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34)) */
++#endif /* KERNEL_HAS_OF_SUPPORT */
+ 
+ #endif	/* _COMPAT_LINUX_OF_H */
+diff --git a/backport/compat/compat-3.7.c b/backport/compat/compat-3.7.c
+index 0f2d332..8f5a56c 100644
+--- a/backport/compat/compat-3.7.c
++++ b/backport/compat/compat-3.7.c
+@@ -251,3 +251,32 @@ int pcie_capability_clear_and_set_dword(struct pci_dev *dev, int pos,
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(pcie_capability_clear_and_set_dword);
++
++#ifdef KERNEL_HAS_OF_SUPPORT
++#ifdef CONFIG_OF
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0))
++/**
++ *	of_get_child_by_name - Find the child node by name for a given parent
++ *	@node:	parent node
++ *	@name:	child name to look for.
++ *
++ *      This function looks for child node for given matching name
++ *
++ *	Returns a node pointer if found, with refcount incremented, use
++ *	of_node_put() on it when done.
++ *	Returns NULL if node is not found.
++ */
++struct device_node *of_get_child_by_name(const struct device_node *node,
++				const char *name)
++{
++	struct device_node *child;
++
++	for_each_child_of_node(node, child)
++		if (child->name && (of_node_cmp(child->name, name) == 0))
++			break;
++	return child;
++}
++EXPORT_SYMBOL_GPL(of_get_child_by_name);
++#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)) */
++#endif /* CONFIG_OF */
++#endif /* KERNEL_HAS_OF_SUPPORT */
+-- 
+1.7.10.4
+
