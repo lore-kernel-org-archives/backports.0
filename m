@@ -1,61 +1,77 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:44188 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756812Ab3GKWM3 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 11 Jul 2013 18:12:29 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 06/19] backports: catch make in backport template directory
-Date: Fri, 12 Jul 2013 00:11:29 +0200
-Message-Id: <1373580702-24752-8-git-send-email-hauke@hauke-m.de> (sfid-20130712_001236_482728_3B6E3CF3)
-In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
-References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:64769 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752870Ab3G1BRJ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 27 Jul 2013 21:17:09 -0400
+Received: by mail-pa0-f45.google.com with SMTP id bg4so4561289pad.18
+        for <backports@vger.kernel.org>; Sat, 27 Jul 2013 18:17:08 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 4/9] backport: disable unused automatic backports
+Date: Sat, 27 Jul 2013 18:16:25 -0700
+Message-Id: <1374974190-31561-5-git-send-email-mcgrof@do-not-panic.com> (sfid-20130728_031711_195733_9D296F79)
+In-Reply-To: <1374974190-31561-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1374974190-31561-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: Johannes Berg <johannes.berg@intel.com>
 
-Upstream commit a029928078ce7708c4cd54a6b9f1fc0212fc3395
-
-Catch running make in the backport template directory by
-checking for the .local-symbols file. If it isn't there
-then we're in the input/template directory rather than in
-an output tree, give the user a hint about it instead of
-keeling over.
+When an automatic backport isn't included due to not
+being used (see commit 6e0475b599217eceb8e01a1e572c,
+"gentree: add automatic backports only if needed"),
+selecting BACKPORT_USERSEL_BUILD_ALL will make the
+build fail. Avoid this by disabling such symbols in
+the Kconfig.
 
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/Makefile |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ gentree.py |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/backport/Makefile b/backport/Makefile
-index 287b27d..421a4f6 100644
---- a/backport/Makefile
-+++ b/backport/Makefile
-@@ -37,6 +37,18 @@ mrproper:
- 	@rm -f backport-include/backport/autoconf.h
+diff --git a/gentree.py b/gentree.py
+index 356871d..b6c98e8 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -176,6 +176,7 @@ def automatic_backport_mangle_c_file(name):
  
- .DEFAULT:
-+	@set -e ; test -f .local-symbols || (						\
-+	echo "/--------------"								;\
-+	echo "| You shouldn't run make in the backports tree, but only in"		;\
-+	echo "| the generated output. This here is only the skeleton code"		;\
-+	echo "| copied into the output directory. To use the backport system"		;\
-+	echo "| from scratch, go into the top-level directory and run"			;\
-+	echo "|	./gentree.py /path/to/linux-next/ /tmp/output"				;\
-+	echo "| and then make menuconfig/... in the output directory. See"		;\
-+	echo "|	./gentree.py --help"							;\
-+	echo "| for more options."							;\
-+	echo "\\--"									;\
-+	false)
- 	@set -e ; test -f $(KERNEL_CONFIG) || (						\
- 	echo "/--------------"								;\
- 	echo "| Your kernel headers are incomplete/not installed."			;\
+ 
+ def add_automatic_backports(args):
++    disable_list = []
+     export = re.compile(r'^EXPORT_SYMBOL(_GPL)?\((?P<sym>[^\)]*)\)')
+     bpi = kconfig.get_backport_info(os.path.join(args.outdir, 'compat', 'Kconfig'))
+     configtree = kconfig.ConfigTree(os.path.join(args.outdir, 'Kconfig'))
+@@ -183,6 +184,7 @@ def add_automatic_backports(args):
+     for sym, vals in bpi.items():
+         if sym.startswith('BACKPORT_BUILD_'):
+             if not sym[15:] in all_selects:
++                disable_list.append(sym)
+                 continue
+         symtype, module_name, c_files, h_files = vals
+ 
+@@ -229,6 +231,7 @@ def add_automatic_backports(args):
+                 outf.write('#define %s LINUX_BACKPORT(%s)\n' % (s, s))
+             outf.write('#include <%s>\n' % (os.path.dirname(f) + '/backport-' + os.path.basename(f), ))
+             outf.write('#endif /* CPTCFG_%s */\n' % sym)
++    return disable_list
+ 
+ def git_debug_init(args):
+     """
+@@ -346,7 +349,10 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+ 
+     git_debug_snapshot(args, 'Add driver sources')
+ 
+-    add_automatic_backports(args)
++    disable_list = add_automatic_backports(args)
++    if disable_list:
++        bpcfg = kconfig.ConfigTree(os.path.join(args.outdir, 'compat', 'Kconfig'))
++        bpcfg.disable_symbols(disable_list)
+     git_debug_snapshot(args, 'Add automatic backports')
+ 
+     logwrite('Apply patches ...')
 -- 
 1.7.10.4
 
