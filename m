@@ -1,72 +1,71 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ve0-f181.google.com ([209.85.128.181]:38958 "EHLO
-	mail-ve0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756601Ab3GOOBH (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 15 Jul 2013 10:01:07 -0400
-Received: by mail-ve0-f181.google.com with SMTP id db10so9951180veb.12
-        for <backports@vger.kernel.org>; Mon, 15 Jul 2013 07:01:06 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <51E3FF49.50301@hauke-m.de>
-References: <CAOvdn6Vs9pUOXwBYTPzvQp0TDKgDxotog-Srv0xF+41i5UXz0Q@mail.gmail.com>
-	<51E3FF49.50301@hauke-m.de>
-Date: Mon, 15 Jul 2013 10:01:06 -0400
-Message-ID: <CAOvdn6UmT+gaEgxfrhNt=fYDs-ikKykEJRJ-GbA3VJWdB3MPgg@mail.gmail.com> (sfid-20130715_160110_503209_38D22411)
-Subject: Re: problems building backports-3.10-2
-From: Ben Guthro <ben@guthro.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org
-Content-Type: text/plain; charset=ISO-8859-1
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:56780 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752870Ab3G1BQh (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 27 Jul 2013 21:16:37 -0400
+Received: by mail-pd0-f182.google.com with SMTP id r10so4202003pdi.13
+        for <backports@vger.kernel.org>; Sat, 27 Jul 2013 18:16:36 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 0/9] backports: take us to next-20130703
+Date: Sat, 27 Jul 2013 18:16:21 -0700
+Message-Id: <1374974190-31561-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130728_031642_725499_9DCD69B7)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Jul 15, 2013 at 9:55 AM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
-> On 07/15/2013 03:08 PM, Ben Guthro wrote:
->> I'm struggling to integrate the backports-3.10-2 release into my
->> build, and I'm hoping this is the proper venue to get some answers.
->>
->> 1. The build is complaining about ./gentree.py and local symbols. I
->> did not see gentree.py anywhere in the code released.
->>
->> Even when removing this section of the Makefile, I am able to get a
->> bit further, to try to do a 'make menuconfig'
->> This does not present the options I expected - offering only the
->> following options:
->>
->> Build all compat code
->> Voltage and Current Regulator Support
->>
->>
->> I also tried the some of the defconfigs (like iwlwifi) - but these
->> seem to only build the compat.ko, and nothing else.
->>
->>
->> Am I doing something wrong - or is something broken in this release?
->
-> What source are you using?
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-I downloaded the released backports-3.10-2.tar.bz2 file from the
-stable releases page here:
-http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
+We're again a bit behind linux-next but time to push things forward.
+The delta between next-20130627 and next-20130703 had a very special
+feature introduced which was hard to backport: ww_mutex. I have
+just compile tested this stuff. I'd appreciate some tests and
+review on this.
 
+Johannes Berg (1):
+  backport: disable unused automatic backports
 
+Luis R. Rodriguez (8):
+  backports: simplify space regexp for src_line
+  backports: fix wq_name_list initialization
+  backports: fix DMI_EXACT_MATCH() backport
+  backports: copy over mfd/max8998.h mfd/max8998-private.h
+  backports: backport of_get_child_by_name() support
+  backports: backport ww_mutex support
+  backports: backport cross-device reservation support
+  backports: refresh patches for next-20130703
 
-> It looks to me like you are using the code
-> from the git repository, this code is there to *generate* a new tar, but
-> it contains no driver or wireless code, that is fetched by gentree.py
-> from the linux kernel source code. If you just want some code backported
-> from 3.10 take the release [0]. If you want to create your own tar
-> please consult the wiki [1].
+ backport/backport-include/linux/mod_devicetable.h  |    2 +-
+ backport/backport-include/linux/of.h               |   23 +-
+ backport/backport-include/linux/reservation.h      |   70 ++
+ backport/backport-include/linux/ww_mutex.h         |  333 ++++++++++
+ backport/compat/Kconfig                            |   18 +
+ backport/compat/Makefile                           |    2 +
+ backport/compat/compat-3.3.c                       |    4 +-
+ backport/compat/compat-3.7.c                       |   29 +
+ backport/compat/drivers-base-reservation.c         |   39 ++
+ backport/compat/kernel/ww_mutex.c                  |  667 ++++++++++++++++++++
+ copy-list                                          |    2 +
+ gentree.py                                         |    8 +-
+ lib/kconfig.py                                     |    2 +-
+ .../drivers_gpu_drm_i915_i915_gem.patch            |    2 +-
+ .../drivers_gpu_drm_i915_i915_gem.patch            |    2 +-
+ .../drivers_gpu_drm_i915_i915_gem.patch            |    2 +-
+ .../14-shrinkers-api/drivers_gpu_drm_i915.patch    |   12 +-
+ .../network/0001-netdev_ops/alx.patch              |    2 +-
+ .../network/0007-pci_dev_dev_flags/alx.patch       |    2 +-
+ .../drivers_net_wireless_b43_main.patch            |    6 +-
+ .../11-dev-pm-ops/drivers_bcma_host_pci.patch      |    2 +-
+ .../drivers_net_ethernet_atheros_alx_main.patch    |    4 +-
+ .../drivers_net_ethernet_atheros_alx_main.patch    |   10 +-
+ .../drivers_net_wireless_b43_main.patch            |    2 +-
+ .../drivers_net_usb_cdc_ether.patch                |    2 +-
+ 25 files changed, 1215 insertions(+), 32 deletions(-)
+ create mode 100644 backport/backport-include/linux/reservation.h
+ create mode 100644 backport/backport-include/linux/ww_mutex.h
+ create mode 100644 backport/compat/drivers-base-reservation.c
+ create mode 100644 backport/compat/kernel/ww_mutex.c
 
-This is not the case.
+-- 
+1.7.10.4
 
-Thank you for your response.
-
-Ben
-
->
-> Hauke
->
-> [0]:
-> https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.10/
-> [1]:
-> https://backports.wiki.kernel.org/index.php/Documentation/backports/hacking
