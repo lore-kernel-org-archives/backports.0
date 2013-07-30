@@ -1,67 +1,111 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:36948 "EHLO mxz.fh-kl.de"
+Received: from mxz.fh-kl.de ([143.93.17.66]:37075 "EHLO mxz.fh-kl.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751094Ab3G3L4J (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 30 Jul 2013 07:56:09 -0400
-Message-ID: <51F7A86E.4040006@fh-kl.de> (sfid-20130730_135611_998642_2EC4DBCF)
-Date: Tue, 30 Jul 2013 13:50:06 +0200
+	id S1751313Ab3G3MBK (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 30 Jul 2013 08:01:10 -0400
+Message-ID: <51F7A882.2080406@fh-kl.de> (sfid-20130730_140116_148738_8E3E6828)
+Date: Tue, 30 Jul 2013 13:50:26 +0200
 From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 MIME-Version: 1.0
 To: "Luis R. Rodriguez" <mcgrof@kernel.org>
 CC: <backports@vger.kernel.org>
-Subject: [RFC 0/8] backports: add wwan device drivers
+Subject: [RFC 2/8] backports: add eth_prepare_mac_addr_change() and eth_commit_mac_addr_change()
 Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This adds wwan drivers for mobile broadband devices.
-Patches 1 to 7 add missing stuff required for the wwan drivers.
-Patch 8 adds device drivers.
+These functions are required by qmi_wwan device driver.
 
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+---
+ backport/backport-include/linux/etherdevice.h |  7 ++++++
+ backport/backport-include/linux/if.h          |  4 ++++
+ backport/compat/compat-3.9.c                  | 33 +++++++++++++++++++++++++++
+ 3 files changed, 44 insertions(+)
 
-Patrick Ziegler (8):
-  backports: disable PCI functions for kernels without PCI support
-  backports: add eth_prepare_mac_addr_change() and
-    eth_commit_mac_addr_change()
-  backports: define PM_EVENT_AUTO
-  backports: add usb_translate_errors()
-  backports: add usb_endpoint_maxp()
-  backports: include headers directly if math64 header is missing
-  backports: define phys_addr_t for ARM on kernel version < 2.6.25
-  backports: add wwan device drivers
-
- backport/Kconfig                                   |  2 ++
- backport/Makefile.kernel                           |  3 ++
- backport/backport-include/linux/etherdevice.h      |  7 +++++
- backport/backport-include/linux/if.h               |  4 +++
- backport/backport-include/linux/math64.h           |  3 ++
- backport/backport-include/linux/pm.h               |  4 +++
- backport/backport-include/linux/types.h            |  4 +--
- backport/backport-include/linux/usb.h              | 17 +++++++++++
- backport/backport-include/linux/usb/ch9.h          | 23 +++++++++++++++
- backport/compat/compat-2.6.25.c                    |  2 ++
- backport/compat/compat-2.6.28.c                    |  4 +++
- backport/compat/compat-3.9.c                       | 33 ++++++++++++++++++++++
- copy-list                                          | 14 +++++++++
- .../network/0001-netdev_ops/qmi_wwan.patch         | 11 ++++++++
- .../network/0001-netdev_ops/sierra_net.patch       | 11 ++++++++
- .../drivers_net_usb_cdc_mbim.patch                 | 12 ++++++++
- .../drivers_net_usb_cdc_ncm.patch                  | 12 ++++++++
- .../drivers_net_usb_qmi_wwan.patch                 | 12 ++++++++
- .../drivers_net_usb_sierra_net.patch               | 12 ++++++++
- .../drivers_usb_class_cdc-wdm.patch                | 12 ++++++++
- 20 files changed, 200 insertions(+), 2 deletions(-)
- create mode 100644 backport/backport-include/linux/usb/ch9.h
- create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch
- create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
-
+diff --git a/backport/backport-include/linux/etherdevice.h b/backport/backport-include/linux/etherdevice.h
+index 5c82fc4..b6617f0 100644
+--- a/backport/backport-include/linux/etherdevice.h
++++ b/backport/backport-include/linux/etherdevice.h
+@@ -114,6 +114,13 @@ static inline int is_unicast_ether_addr(const u8 *addr)
+ }
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
++#define eth_prepare_mac_addr_change LINUX_BACKPORT(eth_prepare_mac_addr_change)
++extern int eth_prepare_mac_addr_change(struct net_device *dev, void *p);
++#define eth_commit_mac_addr_change LINUX_BACKPORT(eth_commit_mac_addr_change)
++extern void eth_commit_mac_addr_change(struct net_device *dev, void *p);
++#endif /* < 3.9 */
++
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29)
+ #define eth_mac_addr LINUX_BACKPORT(eth_mac_addr)
+ extern int eth_mac_addr(struct net_device *dev, void *p);
+diff --git a/backport/backport-include/linux/if.h b/backport/backport-include/linux/if.h
+index 7926082..8f85b83 100644
+--- a/backport/backport-include/linux/if.h
++++ b/backport/backport-include/linux/if.h
+@@ -29,4 +29,8 @@
+ #define IFF_TX_SKB_SHARING	0x10000
+ #endif
+ 
++#ifndef IFF_LIVE_ADDR_CHANGE
++#define IFF_LIVE_ADDR_CHANGE 0x100000
++#endif
++
+ #endif	/* _BACKPORT_LINUX_IF_H */
+diff --git a/backport/compat/compat-3.9.c b/backport/compat/compat-3.9.c
+index 03f3af8..1ce2dad 100644
+--- a/backport/compat/compat-3.9.c
++++ b/backport/compat/compat-3.9.c
+@@ -12,6 +12,9 @@
+ #include <linux/scatterlist.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
++#include <linux/netdevice.h>
++#include <linux/if.h>
++#include <linux/if_ether.h>
+ 
+ #ifdef __sg_page_iter_next
+ 
+@@ -64,4 +67,34 @@ void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res)
+ }
+ EXPORT_SYMBOL_GPL(devm_ioremap_resource);
+ 
++/**
++ * eth_prepare_mac_addr_change - prepare for mac change
++ * @dev: network device
++ * @p: socket address
++ */
++int eth_prepare_mac_addr_change(struct net_device *dev, void *p)
++{
++	struct sockaddr *addr = p;
++
++	if (!(dev->priv_flags & IFF_LIVE_ADDR_CHANGE) && netif_running(dev))
++		return -EBUSY;
++	if (!is_valid_ether_addr(addr->sa_data))
++		return -EADDRNOTAVAIL;
++	return 0;
++}
++EXPORT_SYMBOL(eth_prepare_mac_addr_change);
++
++/**
++ * eth_commit_mac_addr_change - commit mac change
++ * @dev: network device
++ * @p: socket address
++ */
++void eth_commit_mac_addr_change(struct net_device *dev, void *p)
++{
++	struct sockaddr *addr = p;
++
++	memcpy(dev->dev_addr, addr->sa_data, ETH_ALEN);
++}
++EXPORT_SYMBOL(eth_commit_mac_addr_change);
++
+ #endif /* __sg_page_iter_next */
 -- 
 1.8.1.2
+
 
 
 -- 
