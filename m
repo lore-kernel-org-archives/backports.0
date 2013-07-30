@@ -1,70 +1,98 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:54358 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750792Ab3GXFJY (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 24 Jul 2013 01:09:24 -0400
-Received: by mail-ob0-f176.google.com with SMTP id v19so11845968obq.7
-        for <backports@vger.kernel.org>; Tue, 23 Jul 2013 22:09:24 -0700 (PDT)
+Received: from mxz.fh-kl.de ([143.93.17.66]:36945 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751040Ab3G3L4J (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 30 Jul 2013 07:56:09 -0400
+Message-ID: <51F7A87A.3030902@fh-kl.de> (sfid-20130730_135611_395428_D98A4F59)
+Date: Tue, 30 Jul 2013 13:50:18 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 MIME-Version: 1.0
-In-Reply-To: <CAB=NE6WJCRG8Z0nkW=u20ehRXABxngA38GR0cgUUiDR5B0CpnQ@mail.gmail.com>
-References: <1374235209-19782-1-git-send-email-mcgrof@do-not-panic.com>
-	<1374235209-19782-7-git-send-email-mcgrof@do-not-panic.com>
-	<20130719123146.GC9288@cantiga.alporthouse.com>
-	<CAB=NE6UEHomQAoQb3cV0Bdtpb5SEGTr0_TaPWTbvF6OHe2bguA@mail.gmail.com>
-	<20130720162718.GA4376@cantiga.alporthouse.com>
-	<CAB=NE6WJCRG8Z0nkW=u20ehRXABxngA38GR0cgUUiDR5B0CpnQ@mail.gmail.com>
-Date: Wed, 24 Jul 2013 07:09:24 +0200
-Message-ID: <CAKMK7uHYUvxOLmd0wT0dG7_vZxUEcwFhmL2GB9ggTb-c5F11Eg@mail.gmail.com> (sfid-20130724_070927_374783_08003F7E)
-Subject: Re: [RFC 6/9] backports: revert DMI_EXACT_MATCH() for older kernels
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: Chris Wilson <chris@chris-wilson.co.uk>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"jani.nikula" <jani.nikula@intel.com>,
-	Andrey Li <annndddrr@gmail.com>,
-	cornel panceac <cpanceac@gmail.com>,
-	Greg Kroah-Hartman <greg@kroah.com>
-Content-Type: text/plain; charset=ISO-8859-1
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [RFC 1/8] backports: disable PCI functions for kernels without PCI
+ support
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Jul 24, 2013 at 2:24 AM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> On Sat, Jul 20, 2013 at 9:27 AM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
->> On Fri, Jul 19, 2013 at 02:04:47PM -0700, Luis R. Rodriguez wrote:
->>> Which ones? These two?
->>>
->>> dcf6d294830d46b0e6901477fb4bf455281d90c8 - drm/i915: quirk away
->>> phantom LVDS on Intel's D525MW mainboard
->>> e5614f0c2d0f4d7f0b8ef745d34593baf2c5dbf8 - drm/i915: quirk away
->>> phantom LVDS on Intel's D510MO mainboard
->>
->> Yes.
->
-> OK, will do.
->
->>> Please let me know if you see any other way.
->>
->> An alternative ugly hack would be to encode some metadata into the
->> search string. I am a bit wary of simply converting the DMI_EXACT_MATCH
->> back into DMI_MATCH because that introduces a regression into working
->> machines if we blithely backport fixes like the two above. I'd rather
->> have the compile failure.
->
-> How about then just backporting like this then:
->
-> #define DMI_EXACT_MATCH(a, b) DMI_MATCH(DMI_PRODUCT_NAME, "BACKPORT_IGNORE")
->
-> It'd mean no #ifdef'ing code and at the same time making the run time
-> of the code of the mentioned patches skip.
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+---
+ backport/compat/compat-2.6.25.c | 2 ++
+ backport/compat/compat-2.6.28.c | 4 ++++
+ 2 files changed, 6 insertions(+)
 
-Yeah, I think as a solution for the backport tree that's a neat hack
-and would allow us to reuse the latest upstream drm/i915 code
-unchanged, without the risk of breaking some machines. Of course we'll
-miss a few quirk entries but the lack of such shouldn't ever cause
-regressions.
--Daniel
---
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+diff --git a/backport/compat/compat-2.6.25.c b/backport/compat/compat-2.6.25.c
+index b3597ea..37407a4 100644
+--- a/backport/compat/compat-2.6.25.c
++++ b/backport/compat/compat-2.6.25.c
+@@ -210,6 +210,7 @@ EXPORT_SYMBOL_GPL(sg_alloc_table);
+  * to it. We implement a sloppy work around for backporting
+  * this.
+  */
++#ifdef CONFIG_PCI
+ int pci_enable_device_mem(struct pci_dev *dev)
+ {
+ 	int bars = pci_select_bars(dev, IORESOURCE_MEM);
+@@ -217,6 +218,7 @@ int pci_enable_device_mem(struct pci_dev *dev)
+ 	return pci_enable_device_bars(dev, bars);
+ }
+ EXPORT_SYMBOL_GPL(pci_enable_device_mem);
++#endif
+ 
+ /**
+  * The following things are out of ./lib/vsprintf.c
+diff --git a/backport/compat/compat-2.6.28.c b/backport/compat/compat-2.6.28.c
+index e47626b..9c21de8 100644
+--- a/backport/compat/compat-2.6.28.c
++++ b/backport/compat/compat-2.6.28.c
+@@ -238,6 +238,7 @@ EXPORT_SYMBOL_GPL(usb_anchor_empty);
+ #endif /* CONFIG_USB */
+ #endif
+ 
++#ifdef CONFIG_PCI
+ void __iomem *pci_ioremap_bar(struct pci_dev *pdev, int bar)
+ {
+ 	/*
+@@ -251,6 +252,7 @@ void __iomem *pci_ioremap_bar(struct pci_dev *pdev, int bar)
+ 				     pci_resource_len(pdev, bar));
+ }
+ EXPORT_SYMBOL_GPL(pci_ioremap_bar);
++#endif
+ 
+ static unsigned long round_jiffies_common(unsigned long j, int cpu,
+ 		bool force_up)
+@@ -455,6 +457,7 @@ EXPORT_SYMBOL_GPL(n_tty_ioctl_helper);
+  * generating PME# from both D3_hot and D3_cold, and the platform is unable to
+  * enable wake-up power for it.
+  */
++#ifdef CONFIG_PCI
+ int pci_wake_from_d3(struct pci_dev *dev, bool enable)
+ {
+ 	return pci_pme_capable(dev, PCI_D3cold) ?
+@@ -462,4 +465,5 @@ int pci_wake_from_d3(struct pci_dev *dev, bool enable)
+ 			pci_enable_wake(dev, PCI_D3hot, enable);
+ }
+ EXPORT_SYMBOL_GPL(pci_wake_from_d3);
++#endif
+ 
+-- 
+1.8.1.2
+
+
+
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
