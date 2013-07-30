@@ -1,166 +1,123 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:44147 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756889Ab3GKWMF (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 11 Jul 2013 18:12:05 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 3.10 00/19] backports for branch linux-3.10.y
-Date: Fri, 12 Jul 2013 00:11:22 +0200
-Message-Id: <1373580702-24752-1-git-send-email-hauke@hauke-m.de> (sfid-20130712_001209_803057_83E68DB7)
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:54982 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758434Ab3G3Jbv (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 30 Jul 2013 05:31:51 -0400
+Received: by mail-pa0-f45.google.com with SMTP id bg4so6942290pad.4
+        for <backports@vger.kernel.org>; Tue, 30 Jul 2013 02:31:50 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 3/4] backports: fix patches for next-20130729
+Date: Tue, 30 Jul 2013 02:31:31 -0700
+Message-Id: <1375176692-1878-4-git-send-email-mcgrof@do-not-panic.com> (sfid-20130730_113152_609451_915E8F42)
+In-Reply-To: <1375176692-1878-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1375176692-1878-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This series contains mostly backports from the master branch into the 
-linux-3.10.y branch. Only the last two patches were not cherry-picked 
-from the master branch.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-This backports all the defconfigs, adds alx from the mainline kernel 
-and fixes some other minor problems.
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ .../drivers_gpu_drm_i915_i915_gem.patch            |    6 ++---
+ ...ivers_net_wireless_ath_ath5k_mac80211-ops.patch |    2 +-
+ .../drivers_net_wireless_mwifiex_sdio.patch        |   24 ++++++++++----------
+ 3 files changed, 16 insertions(+), 16 deletions(-)
 
-backports: do not use swiotlb_nr_tbl() in i915 is needed in master 
-branch when we support some more recent linux-next version.
-
-A release based on linux version 3.10 was tested against all supported
-kernel versions:
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.85              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.10.0              [  OK  ]
-20  3.2.48              [  OK  ]
-21  3.3.8               [  OK  ]
-22  3.4.52              [  OK  ]
-23  3.5.7               [  OK  ]
-24  3.6.11              [  OK  ]
-25  3.7.10              [  OK  ]
-26  3.8.13              [  OK  ]
-27  3.9.9               [  OK  ]
-
-You can also pull this from https://github.com/hauke/backports/commits/linux-3.10.y
-
-
-Hauke Mehrtens (14):
-  backports: do not add the vlan backports for kernel 3.10
-  backports: add defconfig for broadcom drivers
-  backports: add CPTCFG_CFG80211_WEXT
-  backports: build NFC_MEI_PHY only on >= 3.10
-  backports: BCMA and SSB MIPS drivers are depending on kernel >= 3.3
-  backports: add defconfigs for Atheros wifi drivers
-  backports: add default config for alx
-  backprots: add default config with all wifi drivers
-  backports: alx driver needs at least kernel 2.6.31
-  backports: build ATL1E only on kernel > 2.6.26
-  backports: add NET_CORE config option
-  backports: add USB_DEVICE_INTERFACE_NUMBER
-  backports: do not use swiotlb_nr_tbl() in i915
-  backports: refresh patches on v3.10
-
-Johannes Berg (2):
-  backports: catch make in backport template directory
-  backports: use check-lxdialog.sh
-
-Luis R. Rodriguez (3):
-  backports: remove alx extra patch
-  backports: add new alx upstream backport
-  backports: add SPEED_UNKNOWN and DUPLEX_UNKNOWN
-
- backport/Kconfig                                   |    2 +
- backport/Makefile                                  |   12 ++
- backport/backport-include/linux/ethtool.h          |    8 ++
- backport/backport-include/linux/if_vlan.h          |    2 +
- backport/backport-include/linux/usb.h              |   16 +++
- backport/defconfigs/alx                            |    1 +
- backport/defconfigs/ar5523                         |    8 ++
- backport/defconfigs/ath5k                          |    8 ++
- backport/defconfigs/ath6kl                         |    7 ++
- backport/defconfigs/ath9k                          |    9 ++
- backport/defconfigs/b43                            |   21 ++++
- backport/defconfigs/b43legacy                      |   12 ++
- backport/defconfigs/brcmfmac                       |    6 +
- backport/defconfigs/brcmsmac                       |    9 ++
- backport/defconfigs/carl9170                       |    8 ++
- backport/defconfigs/iwlwifi                        |    1 +
- backport/defconfigs/rtlwifi                        |    1 +
- backport/defconfigs/wifi                           |  105 +++++++++++++++++
- backport/defconfigs/wil6210                        |    5 +
- backport/kconfig/Makefile                          |    2 +-
- dependencies                                       |    8 +-
- .../drivers_gpu_drm_i915_i915_gem.patch            |    2 +-
- .../03-swiotlb/drivers_gpu_drm_i915_i915_gem.patch |   32 +++++
- .../drivers_gpu_drm_i915_i915_gem.patch            |    2 +-
- .../drivers_gpu_drm_i915_i915_gem.patch            |    2 +-
- .../drivers_gpu_drm_radeon_radeon_bios.patch       |    2 +-
- .../network/0001-netdev_ops/alx.patch              |   11 ++
- .../network/0001-netdev_ops/mac80211.patch         |    6 +-
- .../network/0001-netdev_ops/mwifiex.patch          |    2 +-
- .../mac80211.patch                                 |    4 +-
- .../network/0005-netlink-portid/nl80211.patch      |   54 ++++-----
- .../0006-disable-dump-adjust-on-old-kernels.patch  |    4 +-
- .../network/0007-pci_dev_dev_flags/INFO            |   28 +++++
- .../network/0007-pci_dev_dev_flags/alx.patch       |   13 +++
- .../drivers_net_wireless_b43_main.patch            |    6 +-
- .../net_wireless_core.patch                        |    2 +-
- .../drivers_net_ethernet_atheros_alx_main.patch    |   24 ++++
- .../drivers_net_wireless_iwlegacy_4965-mac.patch   |    2 +-
- .../drivers_net_wireless_iwlegacy_common.patch     |    2 +-
- .../17-netdev-queue/net_mac80211_iface.patch       |    4 +-
- .../drivers_net_ethernet_atheros_alx_main.patch    |   14 +++
- .../drivers_net_wireless_mwifiex_debugfs.patch     |    2 +-
- .../net_mac80211_iface.patch                       |    4 +-
- .../drivers_bluetooth_btmrvl_sdio.patch            |    6 +-
- .../30-bridge-port/net_wireless_nl80211.patch      |    2 +-
- .../drivers_net_ethernet_atheros_alx_main.patch    |   58 +++++++++
- .../42-netlink_seq/net_wireless_nl80211.patch      |    2 +-
- .../net_bluetooth_hci_core.patch                   |    2 +-
- .../drivers_net_wireless_b43_main.patch            |    2 +-
- .../drivers_net_ethernet_atheros_alx_main.patch    |   13 +++
- .../drivers_net_usb_cdc_ether.patch                |    2 +-
- ...drivers_net_wireless_rtlwifi_rtl8192cu_sw.patch |    2 +-
- .../69-wowlan-no-socket/net_wireless_nl80211.patch |    2 +-
- .../network/0001-backport-alx/alx.patch            |  123 --------------------
- .../network/0002-alx-make-kconfig/alx.patch        |   32 -----
- .../0003-alx-deactivate-loopback-test/alx.patch    |   25 ----
- 56 files changed, 502 insertions(+), 242 deletions(-)
- create mode 100644 backport/defconfigs/alx
- create mode 100644 backport/defconfigs/ar5523
- create mode 100644 backport/defconfigs/ath5k
- create mode 100644 backport/defconfigs/ath6kl
- create mode 100644 backport/defconfigs/ath9k
- create mode 100644 backport/defconfigs/b43
- create mode 100644 backport/defconfigs/b43legacy
- create mode 100644 backport/defconfigs/brcmfmac
- create mode 100644 backport/defconfigs/brcmsmac
- create mode 100644 backport/defconfigs/carl9170
- create mode 100644 backport/defconfigs/wifi
- create mode 100644 backport/defconfigs/wil6210
- create mode 100644 patches/collateral-evolutions/drm/03-swiotlb/drivers_gpu_drm_i915_i915_gem.patch
- create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/alx.patch
- create mode 100644 patches/collateral-evolutions/network/0007-pci_dev_dev_flags/INFO
- create mode 100644 patches/collateral-evolutions/network/0007-pci_dev_dev_flags/alx.patch
- create mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_alx_main.patch
- create mode 100644 patches/collateral-evolutions/network/25-multicast-list_head/drivers_net_ethernet_atheros_alx_main.patch
- create mode 100644 patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_alx_main.patch
- create mode 100644 patches/collateral-evolutions/network/61-netdev-addr_assign_type/drivers_net_ethernet_atheros_alx_main.patch
- delete mode 100644 patches/unified-drivers/network/0001-backport-alx/alx.patch
- delete mode 100644 patches/unified-drivers/network/0002-alx-make-kconfig/alx.patch
- delete mode 100644 patches/unified-drivers/network/0003-alx-deactivate-loopback-test/alx.patch
-
+diff --git a/patches/collateral-evolutions/drm/07-intel-gtt/drivers_gpu_drm_i915_i915_gem.patch b/patches/collateral-evolutions/drm/07-intel-gtt/drivers_gpu_drm_i915_i915_gem.patch
+index 486693b..e07a32f 100644
+--- a/patches/collateral-evolutions/drm/07-intel-gtt/drivers_gpu_drm_i915_i915_gem.patch
++++ b/patches/collateral-evolutions/drm/07-intel-gtt/drivers_gpu_drm_i915_i915_gem.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/gpu/drm/i915/i915_gem.c
+ +++ b/drivers/gpu/drm/i915/i915_gem.c
+-@@ -4147,9 +4147,14 @@ i915_gem_init_hw(struct drm_device *dev)
++@@ -4182,9 +4182,14 @@ i915_gem_init_hw(struct drm_device *dev)
+  	drm_i915_private_t *dev_priv = dev->dev_private;
+  	int ret;
+  
+@@ -13,6 +13,6 @@
+ +		return -EIO;
+ +#endif
+ +
+- 	if (IS_HASWELL(dev) && (I915_READ(0x120010) == 1))
+- 		I915_WRITE(0x9008, I915_READ(0x9008) | 0xf0000);
++ 	if (dev_priv->ellc_size)
++ 		I915_WRITE(HSW_IDICR, I915_READ(HSW_IDICR) | IDIHASHMSK(0xf));
+  
+diff --git a/patches/collateral-evolutions/network/25-multicast-list_head/drivers_net_wireless_ath_ath5k_mac80211-ops.patch b/patches/collateral-evolutions/network/25-multicast-list_head/drivers_net_wireless_ath_ath5k_mac80211-ops.patch
+index 485ab8b..741c49a 100644
+--- a/patches/collateral-evolutions/network/25-multicast-list_head/drivers_net_wireless_ath_ath5k_mac80211-ops.patch
++++ b/patches/collateral-evolutions/network/25-multicast-list_head/drivers_net_wireless_ath_ath5k_mac80211-ops.patch
+@@ -19,7 +19,7 @@
+ +#endif
+  
+  	mfilt[0] = 0;
+- 	mfilt[1] = 1;
++ 	mfilt[1] = 0;
+  
+ +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35))
+  	netdev_hw_addr_list_for_each(ha, mc_list) {
+diff --git a/patches/collateral-evolutions/network/29-sdio_no_suspend/drivers_net_wireless_mwifiex_sdio.patch b/patches/collateral-evolutions/network/29-sdio_no_suspend/drivers_net_wireless_mwifiex_sdio.patch
+index 06c18bc..1f9effd 100644
+--- a/patches/collateral-evolutions/network/29-sdio_no_suspend/drivers_net_wireless_mwifiex_sdio.patch
++++ b/patches/collateral-evolutions/network/29-sdio_no_suspend/drivers_net_wireless_mwifiex_sdio.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/net/wireless/mwifiex/sdio.c
+ +++ b/drivers/net/wireless/mwifiex/sdio.c
+-@@ -140,8 +140,10 @@ mwifiex_sdio_remove(struct sdio_func *fu
++@@ -183,8 +183,10 @@ mwifiex_sdio_remove(struct sdio_func *fu
+  	wait_for_completion(&adapter->fw_load);
+  
+  	if (user_rmmod) {
+@@ -11,7 +11,7 @@
+  
+  		for (i = 0; i < adapter->priv_num; i++)
+  			if ((GET_BSS_ROLE(adapter->priv[i]) ==
+-@@ -158,6 +160,7 @@ mwifiex_sdio_remove(struct sdio_func *fu
++@@ -201,6 +203,7 @@ mwifiex_sdio_remove(struct sdio_func *fu
+  	kfree(card);
+  }
+  
+@@ -19,15 +19,7 @@
+  /*
+   * SDIO suspend.
+   *
+-@@ -257,6 +260,7 @@ static int mwifiex_sdio_resume(struct de
+- 
+- 	return 0;
+- }
+-+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34)) */
+- 
+- /* Device ID for SD8786 */
+- #define SDIO_DEVICE_ID_MARVELL_8786   (0x9116)
+-@@ -282,10 +286,12 @@ static const struct sdio_device_id mwifi
++@@ -280,10 +283,12 @@ static const struct sdio_device_id mwifi
+  
+  MODULE_DEVICE_TABLE(sdio, mwifiex_ids);
+  
+@@ -40,7 +32,7 @@
+  
+  static struct sdio_driver mwifiex_sdio = {
+  	.name = "mwifiex_sdio",
+-@@ -294,7 +300,9 @@ static struct sdio_driver mwifiex_sdio =
++@@ -292,7 +297,9 @@ static struct sdio_driver mwifiex_sdio =
+  	.remove = mwifiex_sdio_remove,
+  	.drv = {
+  		.owner = THIS_MODULE,
+@@ -50,3 +42,11 @@
+  	}
+  };
+  
++@@ -304,6 +311,7 @@ mwifiex_write_reg_locked(struct sdio_fun
++ 	sdio_writeb(func, data, reg, &ret);
++ 	return ret;
++ }
+++#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34)) */
++ 
++ /*
++  * This function writes data into SDIO card register.
 -- 
 1.7.10.4
 
