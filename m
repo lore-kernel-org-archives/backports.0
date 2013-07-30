@@ -1,134 +1,75 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:63725 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752466Ab3GSWPy (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 18:15:54 -0400
-Received: by mail-pa0-f51.google.com with SMTP id lf11so4921208pab.24
-        for <backports@vger.kernel.org>; Fri, 19 Jul 2013 15:15:54 -0700 (PDT)
+Received: from mail-pb0-f51.google.com ([209.85.160.51]:52562 "EHLO
+	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755256Ab3G3Jbm (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 30 Jul 2013 05:31:42 -0400
+Received: by mail-pb0-f51.google.com with SMTP id jt11so100313pbb.24
+        for <backports@vger.kernel.org>; Tue, 30 Jul 2013 02:31:41 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: jani.nikula@intel.com,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>, annndddrr@gmail.com,
-	chris@chris-wilson.co.uk, cpanceac@gmail.com,
-	daniel.vetter@ffwll.ch, greg@kroah.com
-Subject: [PATCH v2 07/10] backports: revert DMI_EXACT_MATCH() for older kernels
-Date: Fri, 19 Jul 2013 15:13:26 -0700
-Message-Id: <1374272009-26152-8-git-send-email-mcgrof@do-not-panic.com> (sfid-20130720_001556_120207_853081B6)
-In-Reply-To: <1374272009-26152-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1374272009-26152-1-git-send-email-mcgrof@do-not-panic.com>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC 1/4] backports: backport adding RW and RO attribute macros
+Date: Tue, 30 Jul 2013 02:31:29 -0700
+Message-Id: <1375176692-1878-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20130730_113144_008222_110E17AF)
+In-Reply-To: <1375176692-1878-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1375176692-1878-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-struct dmi_strmatch was modified on v3.11 with a
-exact_match member. The DMI_EXACT_MATCH() macro was
-added as a mod version of DMI_MATCH() to account for
-dmi strings that look closely like each other. An
-example is D510MO Vs D510MOV.
+This backports the following commit:
 
-Since exact_match is is not available on older kernels
-we can't use it and must revert to the old DMI_MATCH().
-Addressing the desired behaviour will require a separate
-change to deal with addressing the difference
-in the behaviour.
+commit ced321bf9151535f85779b0004c93529f860b2a4
+Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date:   Sun Jul 14 16:05:54 2013 -0700
 
-Chris Wilson recommends that if we can't use this we should
-also rever the DMI related fixes. I believe these are:
+    driver core: device.h: add RW and RO attribute macros
 
-dcf6d294830d46b0e6901477fb4bf455281d90c8 - drm/i915: quirk away phantom LVDS on Intel's D525MW mainboard
-e5614f0c2d0f4d7f0b8ef745d34593baf2c5dbf8 - drm/i915: quirk away phantom LVDS on Intel's D510MO mainboard
+    Make it easier to create attributes without having to always auditthe
+    mode settings.
 
-Once we get confirmation we can do that.
+    Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+    Tested-by: Guenter Roeck <linux@roeck-us.net>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Proof of why we can't backport DMI_EXACT_MATCH():
-
-DMI_EXACT_MATCH uses struct dmi_strmatch's new
-member exact_match:
-
-	@@ -456,7 +456,8 @@ enum dmi_field {
-	 };
-
-	 struct dmi_strmatch {
-	-       unsigned char slot;
-	+       unsigned char slot:7;
-	+       unsigned char exact_match:1;
-		char substr[79];
-	 };
-
-Prior to 5017b285 we only had slot member so to use
-DMI_EXACT_MATCH() with its intent we'd have to do something
-like:
-	slot |= 1
-
-if its called. This however assumes though that older code has
-the sanity check as changed in 5017b285 on drivers/firmware/dmi_scan.c.
-dmi_scan.o gets linked with CONFIG_DMI. At least for x86 that gets
-objects sprinkled on arch/x86/, but more importantly CONFIG_DMI is
-bool. I've argued how I envision us being able to backport core
-components before (see 0935deab for the hint) but as it is right
-now we can't. We only backport things we can throw in as modular.
-
-mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains 5017b285
-v3.11-rc1~99^2~254
-
-commit 5017b2851373ee15c7035151853bb1448800cae2
-Author: Jani Nikula <jani.nikula@intel.com>
-Date:   Wed Jul 3 15:05:02 2013 -0700
-
-    dmi: add support for exact DMI matches in addition to substring matching
-
-    dmi_match() considers a substring match to be a successful match.  This is
-    not always sufficient to distinguish between DMI data for different
-    systems.  Add support for exact string matching using strcmp() in addition
-    to the substring matching using strstr().
-
-    The specific use case in the i915 driver is to allow us to use an exact
-    match for D510MO, without also incorrectly matching D510MOV:
-
-      {
-        .ident = "Intel D510MO",
-        .matches = {
-                DMI_MATCH(DMI_BOARD_VENDOR, "Intel"),
-                DMI_EXACT_MATCH(DMI_BOARD_NAME, "D510MO"),
-        },
-      }
-
-    Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-    Cc: <annndddrr@gmail.com>
-    Cc: Chris Wilson <chris@chris-wilson.co.uk>
-    Cc: Cornel Panceac <cpanceac@gmail.com>
-    Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-    Cc: Greg KH <greg@kroah.com>
-    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-
-Cc: jani.nikula@intel.com
-Cc: annndddrr@gmail.com
-Cc: chris@chris-wilson.co.uk
-Cc: cpanceac@gmail.com
-Cc: daniel.vetter@ffwll.ch
-Cc: greg@kroah.com
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/backport-include/linux/mod_devicetable.h |    4 ++++
- 1 file changed, 4 insertions(+)
+ backport/backport-include/linux/device.h |   23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/backport/backport-include/linux/mod_devicetable.h b/backport/backport-include/linux/mod_devicetable.h
-index 1f85ce6..5b63637 100644
---- a/backport/backport-include/linux/mod_devicetable.h
-+++ b/backport/backport-include/linux/mod_devicetable.h
-@@ -2,6 +2,10 @@
- #define __BACKPORT_MOD_DEVICETABLE_H
- #include_next <linux/mod_devicetable.h>
+diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
+index ba55d0e..13a88ae 100644
+--- a/backport/backport-include/linux/device.h
++++ b/backport/backport-include/linux/device.h
+@@ -195,4 +195,27 @@ extern int dev_set_name(struct device *dev, const char *name, ...)
+ })
+ #endif /* LINUX_VERSION_CODE <= KERNEL_VERSION(3,6,0) */
  
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
-+#define DMI_EXACT_MATCH(a, b)  { a, b }
-+#endif
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,12,0)
++#define BUS_ATTR_RW(_name) \
++	struct bus_attribute bus_attr_##_name = __ATTR_RW(_name)
++#define BUS_ATTR_RO(_name) \
++	struct bus_attribute bus_attr_##_name = __ATTR_RO(_name)
 +
- #ifndef HID_BUS_ANY
- #define HID_BUS_ANY                            0xffff
- #endif
++#define DRIVER_ATTR_RW(_name) \
++	struct driver_attribute driver_attr_##_name = __ATTR_RW(_name)
++#define DRIVER_ATTR_RO(_name) \
++	struct driver_attribute driver_attr_##_name = __ATTR_RO(_name)
++
++#define CLASS_ATTR_RW(_name) \
++	struct class_attribute class_attr_##_name = __ATTR_RW(_name)
++#define CLASS_ATTR_RO(_name) \
++	struct class_attribute class_attr_##_name = __ATTR_RO(_name)
++
++#define DEVICE_ATTR_RW(_name) \
++	struct device_attribute dev_attr_##_name = __ATTR_RW(_name)
++#define DEVICE_ATTR_RO(_name) \
++	struct device_attribute dev_attr_##_name = __ATTR_RO(_name)
++
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,12,0) */
++
+ #endif /* __BACKPORT_DEVICE_H */
 -- 
 1.7.10.4
 
