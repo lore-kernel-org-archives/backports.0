@@ -1,36 +1,71 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:44205 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756891Ab3GKWMf (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 11 Jul 2013 18:12:35 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 09/19] backports: add default config for alx
-Date: Fri, 12 Jul 2013 00:11:32 +0200
-Message-Id: <1373580702-24752-11-git-send-email-hauke@hauke-m.de> (sfid-20130712_001240_617658_4CA79D1B)
-In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
-References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+Received: from mxz.fh-kl.de ([143.93.17.66]:37065 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750964Ab3G3MBJ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 30 Jul 2013 08:01:09 -0400
+Message-ID: <51F7A890.7030809@fh-kl.de> (sfid-20130730_140113_092678_8B4DB1F0)
+Date: Tue, 30 Jul 2013 13:50:40 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [RFC 4/8] backports: add usb_translate_errors()
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Upstream commit 95c69b5d45e07b865c13fade1f1d61c6e55c5cfc
+This inline function is missing for version < 2.6.39 but required by em28xx
+and cdc-wdm device driver.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 ---
- backport/defconfigs/alx |    1 +
- 1 file changed, 1 insertion(+)
- create mode 100644 backport/defconfigs/alx
+ backport/backport-include/linux/usb.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/backport/defconfigs/alx b/backport/defconfigs/alx
-new file mode 100644
-index 0000000..b4ae66f
---- /dev/null
-+++ b/backport/defconfigs/alx
-@@ -0,0 +1 @@
-+CPTCFG_ALX=m
+diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
+index 368da6c..49a5762 100644
+--- a/backport/backport-include/linux/usb.h
++++ b/backport/backport-include/linux/usb.h
+@@ -145,4 +145,21 @@ extern void usb_unpoison_urb(struct urb *urb);
+ extern int usb_anchor_empty(struct usb_anchor *anchor);
+ #endif /* 2.6.23-2.6.27 */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,39)
++#if defined(CONFIG_USB) || defined(CONFIG_USB_MODULE)
++static inline int usb_translate_errors(int error_code)
++{
++	switch (error_code) {
++	case 0:
++	case -ENOMEM:
++	case -ENODEV:
++	case -EOPNOTSUPP:
++		return error_code;
++	default:
++		return -EIO;
++	}
++}
++#endif /* CONFIG_USB */
++#endif /* < 2.6.39 */
++
+ #endif /* __BACKPORT_USB_H */
 -- 
-1.7.10.4
+1.8.1.2
 
+
+
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
