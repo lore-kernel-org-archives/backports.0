@@ -1,47 +1,60 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:34387 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760224Ab3GSMAy (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 08:00:54 -0400
-Received: by mail-pa0-f42.google.com with SMTP id rl6so4396090pac.1
-        for <backports@vger.kernel.org>; Fri, 19 Jul 2013 05:00:54 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: jani.nikula@intel.com,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 9/9] backports: lib/kconfig.py - fix src line regexp
-Date: Fri, 19 Jul 2013 05:00:09 -0700
-Message-Id: <1374235209-19782-10-git-send-email-mcgrof@do-not-panic.com> (sfid-20130719_140056_869211_9CEE5D92)
-In-Reply-To: <1374235209-19782-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1374235209-19782-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from mxz.fh-kl.de ([143.93.17.66]:37068 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751094Ab3G3MBJ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 30 Jul 2013 08:01:09 -0400
+Message-ID: <51F7A89F.7080807@fh-kl.de> (sfid-20130730_140112_481254_75EA6AB1)
+Date: Tue, 30 Jul 2013 13:50:55 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [RFC 6/8] backports: include headers directly if math64 header is
+ missing
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+If math64 header is not available, include div64.h directly. It is required for
+do_div() that is used inside the backport version of math64.h.
 
-The source line can be prefixed by spaces and tabs. Without
-this a slew of kconfig options were not being parsed for
-dependency checking and at compile time they'd obviously
-fail.
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 ---
- lib/kconfig.py |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ backport/backport-include/linux/math64.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/lib/kconfig.py b/lib/kconfig.py
-index 880d7c3..8a30ddc 100644
---- a/lib/kconfig.py
-+++ b/lib/kconfig.py
-@@ -4,7 +4,7 @@
+diff --git a/backport/backport-include/linux/math64.h b/backport/backport-include/linux/math64.h
+index 7f3a81b..775c2d3 100644
+--- a/backport/backport-include/linux/math64.h
++++ b/backport/backport-include/linux/math64.h
+@@ -5,6 +5,9 @@
  
- import os, re
+ #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,25))
+ #include_next <linux/math64.h>
++#else
++#include <linux/types.h>
++#include <asm/div64.h>
+ #endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,25)) */
  
--src_line = re.compile(r'^source\s+"?(?P<src>[^\s"]*)"?\s*$')
-+src_line = re.compile(r'^[\s]*source\s+"?(?P<src>[^\s"]*)"?\s*$')
- tri_line = re.compile(r'^(?P<spc>\s+)tristate')
- bool_line = re.compile(r'^(?P<spc>\s+)bool')
- cfg_line = re.compile(r'^(config|menuconfig)\s+(?P<sym>[^\s]*)')
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)
 -- 
-1.7.10.4
+1.8.1.2
 
+
+
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
