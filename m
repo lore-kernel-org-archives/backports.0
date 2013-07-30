@@ -1,56 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:44161 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756812Ab3GKWMR (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 11 Jul 2013 18:12:17 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 03/19] backports: add CPTCFG_CFG80211_WEXT
-Date: Fri, 12 Jul 2013 00:11:26 +0200
-Message-Id: <1373580702-24752-5-git-send-email-hauke@hauke-m.de> (sfid-20130712_001233_144330_72058053)
-In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
-References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:62829 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752735Ab3G3KaP (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 30 Jul 2013 06:30:15 -0400
+Received: by mail-pd0-f171.google.com with SMTP id y14so6534301pdi.2
+        for <backports@vger.kernel.org>; Tue, 30 Jul 2013 03:30:15 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 2/2] rel-html: eol the same Linux releases
+Date: Tue, 30 Jul 2013 03:30:01 -0700
+Message-Id: <1375180201-5274-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20130730_123018_190949_AC8F815D)
+In-Reply-To: <1375180201-5274-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1375180201-5274-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Upstream commit e753851dda4afd9efe5cdd88bc6bf306b550f506
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Without wext support we will get lots of complains about iwconfig
-not working.
+It just so happens that the same releases on Linux that are EOL'd
+are also the old name releases for backports, ie. 'compat-drivers'.
+These are now deprecated and you should be using the release marked
+as supported. These should match the latest supported stable
+kernel releases.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Note that for backports you should be using the *latest* stable
+release. The release will work on *older* kernel releases. That
+is the point.
+
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/defconfigs/iwlwifi |    1 +
- backport/defconfigs/rtlwifi |    1 +
- 2 files changed, 2 insertions(+)
+ projects/backports.cfg |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/backport/defconfigs/iwlwifi b/backport/defconfigs/iwlwifi
-index 6a5f4ba..9563c8b 100644
---- a/backport/defconfigs/iwlwifi
-+++ b/backport/defconfigs/iwlwifi
-@@ -1,6 +1,7 @@
- CPTCFG_CFG80211=m
- CPTCFG_CFG80211_DEFAULT_PS=y
- CPTCFG_CFG80211_DEBUGFS=y
-+CPTCFG_CFG80211_WEXT=y
- CPTCFG_MAC80211=m
- # CPTCFG_MAC80211_RC_PID is not set
- # CPTCFG_MAC80211_RC_MINSTREL is not set
-diff --git a/backport/defconfigs/rtlwifi b/backport/defconfigs/rtlwifi
-index c86d000..d9b5958 100644
---- a/backport/defconfigs/rtlwifi
-+++ b/backport/defconfigs/rtlwifi
-@@ -1,6 +1,7 @@
- CPTCFG_CFG80211=m
- CPTCFG_CFG80211_DEFAULT_PS=y
- CPTCFG_CFG80211_DEBUGFS=y
-+CPTCFG_CFG80211_WEXT=y
- CPTCFG_MAC80211=m
- # CPTCFG_MAC80211_RC_PID is not set
- # CPTCFG_MAC80211_RC_MINSTREL is not set
+diff --git a/projects/backports.cfg b/projects/backports.cfg
+index 13afc71..ba6a275 100644
+--- a/projects/backports.cfg
++++ b/projects/backports.cfg
+@@ -4,6 +4,7 @@ rel_html_proj_aliases	= compat-drivers
+ supported =
+ 	3.11
+ 	3.10
++eol =
+ 	3.9
+ 	3.8
+ 	3.7
 -- 
 1.7.10.4
 
