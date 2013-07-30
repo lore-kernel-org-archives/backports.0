@@ -1,34 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:51621 "EHLO mail.kernel.org"
+Received: from mxz.fh-kl.de ([143.93.17.66]:37069 "EHLO mxz.fh-kl.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753675Ab3G3OKJ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 30 Jul 2013 10:10:09 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id A9A1120315
-	for <backports@vger.kernel.org>; Tue, 30 Jul 2013 14:10:07 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 9E8A920216
-	for <backports@vger.kernel.org>; Tue, 30 Jul 2013 14:10:06 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 51671] ALX driver unusable on new kernel
-Date: Tue, 30 Jul 2013 14:10:06 +0000
-Message-ID: <bug-51671-58281-ZWBvzn1SMp@https.bugzilla.kernel.org/> (sfid-20130730_161011_687531_87D8B94A)
-In-Reply-To: <bug-51671-58281@https.bugzilla.kernel.org/>
-References: <bug-51671-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
+	id S1751275Ab3G3MBJ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 30 Jul 2013 08:01:09 -0400
+Message-ID: <51F7A889.2000500@fh-kl.de> (sfid-20130730_140114_321477_D93D2FD8)
+Date: Tue, 30 Jul 2013 13:50:33 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [RFC 3/8] backports: define PM_EVENT_AUTO
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51671
+This macro is missing for < 2.6.25
 
-Konstantin Ryabitsev <mricon@kernel.org> changed:
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+---
+ backport/backport-include/linux/pm.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-          Component|Compat-Drivers              |Backports
+diff --git a/backport/backport-include/linux/pm.h b/backport/backport-include/linux/pm.h
+index 70f3a21..d217c81 100644
+--- a/backport/backport-include/linux/pm.h
++++ b/backport/backport-include/linux/pm.h
+@@ -2,6 +2,10 @@
+ #define __BACKPORT_PM_H
+ #include_next <linux/pm.h>
+ 
++#ifndef PM_EVENT_AUTO
++#define PM_EVENT_AUTO		0x0400
++#endif
++
+ #ifndef PM_EVENT_SLEEP
+ #define PM_EVENT_SLEEP  (PM_EVENT_SUSPEND)
+ #endif
+-- 
+1.8.1.2
+
+
 
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
