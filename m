@@ -1,45 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:61529 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752870Ab3G1BRQ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 27 Jul 2013 21:17:16 -0400
-Received: by mail-pd0-f171.google.com with SMTP id y14so4181169pdi.2
-        for <backports@vger.kernel.org>; Sat, 27 Jul 2013 18:17:16 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Received: from mail.kernel.org ([198.145.19.201]:51403 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751577Ab3G3OGh (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 30 Jul 2013 10:06:37 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 1D28720371
+	for <backports@vger.kernel.org>; Tue, 30 Jul 2013 14:06:36 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+	by mail.kernel.org (Postfix) with ESMTP id 088152035C
+	for <backports@vger.kernel.org>; Tue, 30 Jul 2013 14:06:35 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 5/9] backports: copy over mfd/max8998.h mfd/max8998-private.h
-Date: Sat, 27 Jul 2013 18:16:26 -0700
-Message-Id: <1374974190-31561-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20130728_031718_211002_A52964B7)
-In-Reply-To: <1374974190-31561-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1374974190-31561-1-git-send-email-mcgrof@do-not-panic.com>
+Subject: [Bug 59041] [PATCH 001/001] Compiling iwlwifi or alx against 3.4.47
+ kernel gives redefinition error
+Date: Tue, 30 Jul 2013 14:06:34 +0000
+Message-ID: <bug-59041-58281-l50BufMRxv@https.bugzilla.kernel.org/> (sfid-20130730_160639_621967_0553FB00)
+In-Reply-To: <bug-59041-58281@https.bugzilla.kernel.org/>
+References: <bug-59041-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+https://bugzilla.kernel.org/show_bug.cgi?id=59041
 
-This is required by CONFIG_REGULATOR_MAX8998
-which builds drivers/regulator/max8998.c as of
-next-20130703.
+Konstantin Ryabitsev <mricon@kernel.org> changed:
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- copy-list |    2 ++
- 1 file changed, 2 insertions(+)
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |mricon@kernel.org
+          Component|Compat-Drivers              |Backports
 
-diff --git a/copy-list b/copy-list
-index 9957811..ab8bb8b 100644
---- a/copy-list
-+++ b/copy-list
-@@ -141,6 +141,8 @@ include/linux/regulator/max8952.h
- include/linux/regulator/max8973-regulator.h
- include/linux/mfd/max77693.h
- include/linux/mfd/max77693-private.h
-+include/linux/mfd/max8998.h
-+include/linux/mfd/max8998-private.h
- include/linux/regulator/of_regulator.h
- include/linux/regulator/tps51632-regulator.h
- include/linux/regulator/tps62360.h
 -- 
-1.7.10.4
-
+You are receiving this mail because:
+You are the assignee for the bug.
