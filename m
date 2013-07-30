@@ -1,40 +1,77 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f49.google.com ([209.85.215.49]:60069 "EHLO
-	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752464Ab3G0RYs (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 27 Jul 2013 13:24:48 -0400
-Received: by mail-la0-f49.google.com with SMTP id ea20so3054352lab.22
-        for <backports@vger.kernel.org>; Sat, 27 Jul 2013 10:24:47 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1369770120.8548.19.camel@jlt4.sipsolutions.net>
-References: <1369278956-17550-1-git-send-email-mcgrof@do-not-panic.com>
- <1369278956-17550-9-git-send-email-mcgrof@do-not-panic.com>
- <1369325176.12002.31.camel@jlt4.sipsolutions.net> <CAB=NE6WG7mYYgWb=Xsx8qc14BwAEdfR6s7bspCegTWg8moi6WQ@mail.gmail.com>
- <1369770120.8548.19.camel@jlt4.sipsolutions.net>
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:61738 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755176Ab3G3J0W (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 30 Jul 2013 05:26:22 -0400
+Received: by mail-pd0-f181.google.com with SMTP id g10so2769855pdj.40
+        for <backports@vger.kernel.org>; Tue, 30 Jul 2013 02:26:22 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Sat, 27 Jul 2013 10:24:26 -0700
-Message-ID: <CAB=NE6URjQzvMCJ2bMDe8xhSD=BtfbBTD8w1pJo9NC4-BYtxKQ@mail.gmail.com> (sfid-20130727_192450_651711_657F25E1)
-Subject: Re: [PATCH v3 8/8] gentree.py: add kernel upload support
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 04/14] backport: disable unused automatic backports
+Date: Tue, 30 Jul 2013 02:25:49 -0700
+Message-Id: <1375176359-1331-5-git-send-email-mcgrof@do-not-panic.com> (sfid-20130730_112624_104022_5A079253)
+In-Reply-To: <1375176359-1331-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1375176359-1331-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, May 28, 2013 at 12:42 PM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> That makes me think that maybe this all should be a wrapper script kinda
-> like git-tracker? A separate tool that just calls into this after doing
-> all the paranoia stuff?
->
-> Although then I'd still recommend using (the equivalent of)
-> --git-revision to avoid all the paranoia stuff and potential races with
-> it.
+From: Johannes Berg <johannes.berg@intel.com>
 
-So far --git-revision proves to be much slower than a git reset --hard
-variant, but both are reasonable options. I'll try to actually instead
-add a --git-revision-reset which would just be an alternative to
---git-revision but that requires the tree to be non-bare, and does a
-tree reset, and git-paranoia.
+When an automatic backport isn't included due to not
+being used (see commit 6e0475b599217eceb8e01a1e572c,
+"gentree: add automatic backports only if needed"),
+selecting BACKPORT_USERSEL_BUILD_ALL will make the
+build fail. Avoid this by disabling such symbols in
+the Kconfig.
 
-  Luis
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ gentree.py |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/gentree.py b/gentree.py
+index 356871d..b6c98e8 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -176,6 +176,7 @@ def automatic_backport_mangle_c_file(name):
+ 
+ 
+ def add_automatic_backports(args):
++    disable_list = []
+     export = re.compile(r'^EXPORT_SYMBOL(_GPL)?\((?P<sym>[^\)]*)\)')
+     bpi = kconfig.get_backport_info(os.path.join(args.outdir, 'compat', 'Kconfig'))
+     configtree = kconfig.ConfigTree(os.path.join(args.outdir, 'Kconfig'))
+@@ -183,6 +184,7 @@ def add_automatic_backports(args):
+     for sym, vals in bpi.items():
+         if sym.startswith('BACKPORT_BUILD_'):
+             if not sym[15:] in all_selects:
++                disable_list.append(sym)
+                 continue
+         symtype, module_name, c_files, h_files = vals
+ 
+@@ -229,6 +231,7 @@ def add_automatic_backports(args):
+                 outf.write('#define %s LINUX_BACKPORT(%s)\n' % (s, s))
+             outf.write('#include <%s>\n' % (os.path.dirname(f) + '/backport-' + os.path.basename(f), ))
+             outf.write('#endif /* CPTCFG_%s */\n' % sym)
++    return disable_list
+ 
+ def git_debug_init(args):
+     """
+@@ -346,7 +349,10 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+ 
+     git_debug_snapshot(args, 'Add driver sources')
+ 
+-    add_automatic_backports(args)
++    disable_list = add_automatic_backports(args)
++    if disable_list:
++        bpcfg = kconfig.ConfigTree(os.path.join(args.outdir, 'compat', 'Kconfig'))
++        bpcfg.disable_symbols(disable_list)
+     git_debug_snapshot(args, 'Add automatic backports')
+ 
+     logwrite('Apply patches ...')
+-- 
+1.7.10.4
+
