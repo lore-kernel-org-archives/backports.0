@@ -1,140 +1,75 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:62202 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933467Ab3GRXtM (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 18 Jul 2013 19:49:12 -0400
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Julia Lawall <julia.lawall@lip6.fr>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-	Jiri Kosina <jkosina@suse.cz>, Felix Fietkau <nbd@openwrt.org>
-Subject: [PATCH] backports: backport drvdata = NULL core driver fixes
-Date: Thu, 18 Jul 2013 16:48:59 -0700
-Message-Id: <1374191339-10124-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130719_014916_187755_28A1ABD7)
+Received: from mxz.fh-kl.de ([143.93.17.66]:37066 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751138Ab3G3MBJ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 30 Jul 2013 08:01:09 -0400
+Message-ID: <51F7A898.1090105@fh-kl.de> (sfid-20130730_140113_706598_E681E162)
+Date: Tue, 30 Jul 2013 13:50:48 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [RFC 5/8] backports: add usb_endpoint_maxp()
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+This function is missing for kernel version < 3.2 but required by uvc_video
+and cdc-wdm device drivers.
 
-The Linux kernel had tons of code which at times cleared the
-drvdata upon probe failure or release. There are however a bunch
-of drivers that didn't clear this.
-
-Commit 0998d063 implmented clearing this upon device_release_driver()
-and dealt with probe failure on driver_probe_device(). After this the
-kernel was cleaned up separately with *tons* of patches to remove all
-these driver specific settings given that the clearing is now done
-internally by the device core.
-
-Instead of ifdef'ing code back in for older code where it was properly
-in place backport this by piggy backing the new required code upon the
-calls used in place. There is a small race here upon device_release_driver()
-but we can live with that theoretical race.
-
-Due to the way we hack this backport we can't use a separate namespace
-as we have with other symbols.
-
-mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains \
-	0998d0631001288a5974afc0b2a5f568bcdecb4d
-v3.6-rc1~99^2~14^2~17
-
-commit 0998d0631001288a5974afc0b2a5f568bcdecb4d
-Author: Hans de Goede <hdegoede@redhat.com>
-Date:   Wed May 23 00:09:34 2012 +0200
-
-    device-core: Ensure drvdata = NULL when no driver is bound
-
-    1) drvdata is for a driver to store a pointer to driver specific data
-    2) If no driver is bound, there is no driver specific data associated with
-       the device
-    3) Thus logically drvdata should be NULL if no driver is bound.
-
-    But many drivers don't clear drvdata on device_release, or set drvdata
-    early on in probe and leave it set on probe error. Both of which results
-    in a dangling pointer in drvdata.
-
-    This patch enforce for drvdata to be NULL after device_release or on probe
-    failure.
-
-    Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-Tested with ckmake against next-20130618:
-
-1   2.6.24              [  OK  ]
-2   2.6.25              [  OK  ]
-3   2.6.26              [  OK  ]
-4   2.6.27              [  OK  ]
-5   2.6.28              [  OK  ]
-6   2.6.29              [  OK  ]
-7   2.6.30              [  OK  ]
-8   2.6.31              [  OK  ]
-9   2.6.32              [  OK  ]
-10  2.6.33              [  OK  ]
-11  2.6.34              [  OK  ]
-12  2.6.35              [  OK  ]
-13  2.6.36              [  OK  ]
-14  2.6.37              [  OK  ]
-15  2.6.38              [  OK  ]
-16  2.6.39              [  OK  ]
-17  3.0.79              [  OK  ]
-18  3.1.10              [  OK  ]
-19  3.10-rc1            [  OK  ]
-20  3.2.45              [  OK  ]
-21  3.3.8               [  OK  ]
-22  3.4.46              [  OK  ]
-23  3.5.7               [  OK  ]
-24  3.6.11              [  OK  ]
-25  3.7.10              [  OK  ]
-26  3.8.13              [  OK  ]
-27  3.9.3               [  OK  ]
-
-real    32m2.332s
-user    860m23.688s
-sys     121m20.840s
-
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Cc: linux-usb@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Jiri Slaby <jslaby@suse.cz>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Felix Fietkau <nbd@openwrt.org>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 ---
- backport/backport-include/linux/device.h |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ backport/backport-include/linux/usb/ch9.h | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 backport/backport-include/linux/usb/ch9.h
 
-diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
-index c2f80e2..ba55d0e 100644
---- a/backport/backport-include/linux/device.h
-+++ b/backport/backport-include/linux/device.h
-@@ -176,4 +176,23 @@ extern int dev_set_name(struct device *dev, const char *name, ...)
- 			__attribute__((format(printf, 2, 3)));
- #endif
- 
-+#if LINUX_VERSION_CODE <= KERNEL_VERSION(3,6,0)
-+#define driver_probe_device(__drv, __dev)		\
-+({							\
-+ 	int ret;					\
-+ 	ret = (driver_probe_device)(__drv, __dev);	\
-+ 	if (ret)					\
-+		dev_set_drvdata(__dev, NULL);		\
-+ 	return ret;					\
-+})
+diff --git a/backport/backport-include/linux/usb/ch9.h b/backport/backport-include/linux/usb/ch9.h
+new file mode 100644
+index 0000000..252a6f1
+--- /dev/null
++++ b/backport/backport-include/linux/usb/ch9.h
+@@ -0,0 +1,23 @@
++#ifndef __BACKPORT__LINUX_USB_CH9_H
++#define __BACKPORT__LINUX_USB_CH9_H
 +
-+#define device_release_driver(__dev)			\
-+({							\
-+ 	(device_release_driver)(__dev);			\
-+ 	device_lock(__dev);				\
-+ 	dev_set_drvdata(__dev, NULL);			\
-+ 	device_unlock(__dev);				\
-+})
-+#endif /* LINUX_VERSION_CODE <= KERNEL_VERSION(3,6,0) */
++#include_next <linux/usb/ch9.h>
++#include <linux/version.h>
 +
- #endif /* __BACKPORT_DEVICE_H */
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
++#include <linux/types.h>    /* __u8 etc */
++#include <asm/byteorder.h>  /* le16_to_cpu */
++
++/**
++ * usb_endpoint_maxp - get endpoint's max packet size
++ * @epd: endpoint to be checked
++ *
++ * Returns @epd's max packet
++ */
++static inline int usb_endpoint_maxp(const struct usb_endpoint_descriptor *epd)
++{
++	return __le16_to_cpu(epd->wMaxPacketSize);
++}
++#endif /* < 3.2 */
++
++#endif /* __BACKPORT__LINUX_USB_CH9_H */
 -- 
-1.7.10.4
+1.8.1.2
 
+
+
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
