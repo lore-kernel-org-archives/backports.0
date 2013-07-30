@@ -1,229 +1,100 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:37067 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751229Ab3G3MBJ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 30 Jul 2013 08:01:09 -0400
-Message-ID: <51F7A8B5.1020209@fh-kl.de> (sfid-20130730_140114_907032_3244BD6B)
-Date: Tue, 30 Jul 2013 13:51:17 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [RFC 8/8] backports: add wwan device drivers
-Content-Type: text/plain; charset="ISO-8859-15"
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:41125 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758473Ab3G3J0f (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 30 Jul 2013 05:26:35 -0400
+Received: by mail-pa0-f54.google.com with SMTP id kx1so6684442pab.41
+        for <backports@vger.kernel.org>; Tue, 30 Jul 2013 02:26:35 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 07/14] backports: enable kconfig language on dependencies file
+Date: Tue, 30 Jul 2013 02:25:52 -0700
+Message-Id: <1375176359-1331-8-git-send-email-mcgrof@do-not-panic.com> (sfid-20130730_112648_152135_F6785B8D)
+In-Reply-To: <1375176359-1331-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1375176359-1331-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Add cdc_mbim, cdc_ncm, sierra_net, qmi_wwan device drivers.
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Certain complex features that are backported may be be
+limitted to a certain target build configuration. An example
+can be if a backported feature is not yet backported with
+support for lockdep. In order to avoid build failures with
+these types of restrictions allow for specifying build
+configuration dependencies on backported upstream kconfig
+symbols other than just kernel versioning contstraints.
+
+This adds support for specifying upstream kconfig constaints
+other than kernel versioning by adding kconfig language
+extensions on the dependencies file. This will update the
+copied over upstream Kconfig file for the symbol specified
+with the kconfig constraints specified.
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/Kconfig                                           |  2 ++
- backport/Makefile.kernel                                   |  3 +++
- copy-list                                                  | 14 ++++++++++++++
- .../network/0001-netdev_ops/qmi_wwan.patch                 | 11 +++++++++++
- .../network/0001-netdev_ops/sierra_net.patch               | 11 +++++++++++
- .../62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch       | 12 ++++++++++++
- .../62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch        | 12 ++++++++++++
- .../62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch       | 12 ++++++++++++
- .../62-usb_driver_lpm/drivers_net_usb_sierra_net.patch     | 12 ++++++++++++
- .../62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch      | 12 ++++++++++++
- 10 files changed, 101 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch
- create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
+ gentree.py |   32 +++++++++++++++++++++++++-------
+ 1 file changed, 25 insertions(+), 7 deletions(-)
 
-diff --git a/backport/Kconfig b/backport/Kconfig
-index 845b233..64a5f8b 100644
---- a/backport/Kconfig
-+++ b/backport/Kconfig
-@@ -48,3 +48,5 @@ source drivers/platform/x86/Kconfig
- source net/ieee802154/Kconfig
- source net/mac802154/Kconfig
- source drivers/net/ieee802154/Kconfig
-+
-+source drivers/usb/class/Kconfig
-diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
-index ac29dea..ca75ce1 100644
---- a/backport/Makefile.kernel
-+++ b/backport/Makefile.kernel
-@@ -40,3 +40,6 @@ obj-$(CPTCFG_INTEL_IPS) += drivers/platform/x86/
- obj-$(CPTCFG_IEEE802154) += net/ieee802154/
- obj-$(CPTCFG_MAC802154) += net/mac802154/
- obj-$(CPTCFG_IEEE802154) += drivers/net/ieee802154/
-+
-+obj-$(CPTCFG_USB_WDM) += drivers/usb/class/
-+obj-$(CPTCFG_USB_USBNET) += drivers/net/usb/
-diff --git a/copy-list b/copy-list
-index aaf5ae9..7da4bb7 100644
---- a/copy-list
-+++ b/copy-list
-@@ -100,6 +100,20 @@ drivers/net/ethernet/broadcom/Makefile
- drivers/net/ethernet/broadcom/b44.c
- drivers/net/ethernet/broadcom/b44.h
+diff --git a/gentree.py b/gentree.py
+index b6c98e8..c480c98 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -41,20 +41,35 @@ def read_dependencies(depfilename):
+     """
+     Read a (the) dependency file and return the list of
+     dependencies as a dictionary, mapping a Kconfig symbol
+-    to a list of kernel version dependencies. While reading
+-    ignore blank/commented lines.
++    to a list of kernel version dependencies.
++    
++    If a backported feature that an upstream backported driver
++    depends on had kconfig limitations (ie, debugging feature not
++    available) a built constaint restriction can be expressed
++    by using a kconfig expression. The kconfig expressions can
++    be specified by using the "kconfig: " prefix.
++    
++    While reading ignore blank or commented lines.
+     """
+     ret = {}
+     depfile = open(depfilename, 'r')
+     for item in depfile:
++        kconfig_exp = ""
+         item = item.strip()
+         if not item or item[0] == '#':
+             continue
+-        sym, dep = item.split()
+-        if not sym in ret:
+-            ret[sym] = [dep, ]
++        if "kconfig:" in item:
++            sym, kconfig_exp = item.split(" ", 1)
++            if not sym in ret:
++                ret[sym] = [kconfig_exp, ]
++            else:
++                ret[sym].append(kconfig_exp)
+         else:
+-            ret[sym].append(dep)
++            sym, dep = item.split()
++            if not sym in ret:
++                ret[sym] = [dep, ]
++            else:
++                ret[sym].append(dep)
+     return ret
  
-+# wwan drivers
-+include/uapi/linux/usb/cdc.h
-+include/uapi/linux/usb/cdc-wdm.h
-+include/linux/usb/cdc_ncm.h
-+include/linux/usb/cdc-wdm.h
-+
-+drivers/usb/class/Makefile
-+drivers/usb/class/Kconfig
-+drivers/usb/class/cdc-wdm.c
-+drivers/net/usb/cdc_mbim.c
-+drivers/net/usb/cdc_ncm.c
-+drivers/net/usb/sierra_net.c
-+drivers/net/usb/qmi_wwan.c
-+
- # DRM
- include/drm/
- include/uapi/drm/
-diff --git a/patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch b/patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch
-new file mode 100644
-index 0000000..6281c8d
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch
-@@ -0,0 +1,11 @@
-+--- a/drivers/net/usb/qmi_wwan.c
-++++ b/drivers/net/usb/qmi_wwan.c
-+@@ -331,7 +331,7 @@
-+ 		dev->net->dev_addr[0] |= 0x02;	/* set local assignment bit */
-+ 		dev->net->dev_addr[0] &= 0xbf;	/* clear "IP" bit */
-+ 	}
-+-	dev->net->netdev_ops = &qmi_wwan_netdev_ops;
-++	netdev_attach_ops(dev->net, &qmi_wwan_netdev_ops);
-+ err:
-+ 	return status;
-+ }
-diff --git a/patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch b/patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch
-new file mode 100644
-index 0000000..e7ff14b
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch
-@@ -0,0 +1,11 @@
-+--- a/drivers/net/usb/sierra_net.c
-++++ b/drivers/net/usb/sierra_net.c
-+@@ -695,7 +695,7 @@
-+ 
-+ 	priv->usbnet = dev;
-+ 	priv->ifnum = ifacenum;
-+-	dev->net->netdev_ops = &sierra_net_device_ops;
-++	netdev_attach_ops(dev->net, &sierra_net_device_ops);
-+ 
-+ 	/* change MAC addr to include, ifacenum, and to be unique */
-+ 	dev->net->dev_addr[ETH_ALEN-2] = atomic_inc_return(&iface_counter);
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
-new file mode 100644
-index 0000000..0feffc8
---- /dev/null
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/net/usb/cdc_mbim.c
-++++ b/drivers/net/usb/cdc_mbim.c
-+@@ -417,7 +417,9 @@
-+ 	.resume = cdc_mbim_resume,
-+ 	.reset_resume =	cdc_mbim_resume,
-+ 	.supports_autosuspend = 1,
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+ 	.disable_hub_initiated_lpm = 1,
-++#endif
-+ };
-+ module_usb_driver(cdc_mbim_driver);
-+ 
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
-new file mode 100644
-index 0000000..c6419fe
---- /dev/null
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/net/usb/cdc_ncm.c
-++++ b/drivers/net/usb/cdc_ncm.c
-+@@ -1271,7 +1271,9 @@
-+ 	.resume = usbnet_resume,
-+ 	.reset_resume =	usbnet_resume,
-+ 	.supports_autosuspend = 1,
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+ 	.disable_hub_initiated_lpm = 1,
-++#endif
-+ };
-+ 
-+ module_usb_driver(cdc_ncm_driver);
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
-new file mode 100644
-index 0000000..8f3355d
---- /dev/null
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/net/usb/qmi_wwan.c
-++++ b/drivers/net/usb/qmi_wwan.c
-+@@ -672,7 +672,9 @@
-+ 	.resume		      =	qmi_wwan_resume,
-+ 	.reset_resume         = qmi_wwan_resume,
-+ 	.supports_autosuspend = 1,
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+ 	.disable_hub_initiated_lpm = 1,
-++#endif
-+ };
-+ 
-+ module_usb_driver(qmi_wwan_driver);
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
-new file mode 100644
-index 0000000..553f2ca
---- /dev/null
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/net/usb/sierra_net.c
-++++ b/drivers/net/usb/sierra_net.c
-+@@ -959,7 +959,9 @@
-+ 	.suspend = usbnet_suspend,
-+ 	.resume = usbnet_resume,
-+ 	.no_dynamic_id = 1,
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+ 	.disable_hub_initiated_lpm = 1,
-++#endif
-+ };
-+ 
-+ module_usb_driver(sierra_net_driver);
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
-new file mode 100644
-index 0000000..c3af4a1
---- /dev/null
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/usb/class/cdc-wdm.c
-++++ b/drivers/usb/class/cdc-wdm.c
-+@@ -1060,7 +1060,9 @@
-+ 	.post_reset =	wdm_post_reset,
-+ 	.id_table =	wdm_ids,
-+ 	.supports_autosuspend = 1,
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+ 	.disable_hub_initiated_lpm = 1,
-++#endif
-+ };
-+ 
-+ module_usb_driver(wdm_driver);
+ 
+@@ -513,7 +528,10 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+     for sym in tuple(deplist.keys()):
+         new = []
+         for dep in deplist[sym]:
+-            if dep == "DISABLE":
++            if "kconfig:" in dep:
++                    kconfig_expr = dep.replace('kconfig: ', '')
++                    new.append(kconfig_expr)
++            elif (dep == "DISABLE"):
+                     new.append('BACKPORT_DISABLED_KCONFIG_OPTION')
+             else:
+                     new.append('!BACKPORT_KERNEL_%s' % dep.replace('.', '_'))
 -- 
-1.8.1.2
+1.7.10.4
 
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
