@@ -1,131 +1,126 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:45797 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752466Ab3GSWQA (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 19 Jul 2013 18:16:00 -0400
-Received: by mail-pd0-f182.google.com with SMTP id r10so4736958pdi.41
-        for <backports@vger.kernel.org>; Fri, 19 Jul 2013 15:16:00 -0700 (PDT)
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:60247 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758389Ab3G3J0b (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 30 Jul 2013 05:26:31 -0400
+Received: by mail-pa0-f50.google.com with SMTP id fb10so6457208pad.9
+        for <backports@vger.kernel.org>; Tue, 30 Jul 2013 02:26:30 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: jani.nikula@intel.com,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH v2 08/10] backports: add clock enable/disable on soc_camera_power_[on|off]()
-Date: Fri, 19 Jul 2013 15:13:27 -0700
-Message-Id: <1374272009-26152-9-git-send-email-mcgrof@do-not-panic.com> (sfid-20130720_001602_208673_97665CBD)
-In-Reply-To: <1374272009-26152-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1374272009-26152-1-git-send-email-mcgrof@do-not-panic.com>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 06/14] backports: backport of_get_child_by_name() support
+Date: Tue, 30 Jul 2013 02:25:51 -0700
+Message-Id: <1375176359-1331-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20130730_112632_798634_90FAC740)
+In-Reply-To: <1375176359-1331-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1375176359-1331-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-v4l2-core now supports enabling and disabling its own clock
-on turning the camera on / off. We backport v4l2-core fully
-so just backport the soc calls appropriately to let SOC cameras
-to turn the clock on / off when the v4l2-core clock ops are
-implemented on a device driver.
+This was added via 9c19761a. While at it clean up the backported
+header a bit to make backporting more OF stuff more manageable.
+
+mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains 9c19761a
+v3.7-rc1~123^2~4
+
+commit 9c19761a7ecdc86abb2fba0feb81e8952eccc1f1
+Author: Srinivas Kandagatla <srinivas.kandagatla@st.com>
+Date:   Tue Sep 18 08:10:28 2012 +0100
+
+    dt: introduce of_get_child_by_name to get child node by name
+
+    This patch introduces of_get_child_by_name function to get a child node
+    by its name in a given parent node.
+
+    Without this patch each driver code has to iterate the parent and do
+    a string compare, However having of_get_child_by_name libary function would
+    avoid code duplication, errors and is more convenient.
+
+    Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@st.com>
+    Signed-off-by: Rob Herring <rob.herring@calxeda.com>
 
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- .../backport-include/uapi/linux/v4l2-mediabus.h    |    8 +++--
- backport/compat/compat-3.4.c                       |   31 ++++++++++++++++----
- 2 files changed, 31 insertions(+), 8 deletions(-)
+ backport/backport-include/linux/of.h |   23 ++++++++++++++++++++---
+ backport/compat/compat-3.7.c         |   29 +++++++++++++++++++++++++++++
+ 2 files changed, 49 insertions(+), 3 deletions(-)
 
-diff --git a/backport/backport-include/uapi/linux/v4l2-mediabus.h b/backport/backport-include/uapi/linux/v4l2-mediabus.h
-index 9979c23..962f044 100644
---- a/backport/backport-include/uapi/linux/v4l2-mediabus.h
-+++ b/backport/backport-include/uapi/linux/v4l2-mediabus.h
-@@ -20,15 +20,19 @@
- #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
- #if defined(CPTCFG_VIDEO_DEV_MODULE)
+diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
+index c5dc87c..93e91dd 100644
+--- a/backport/backport-include/linux/of.h
++++ b/backport/backport-include/linux/of.h
+@@ -4,13 +4,30 @@
+ #include <linux/version.h>
  
-+#include <media/v4l2-clk.h>
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
+-#include_next <linux/of.h>
+-#else
++#define KERNEL_HAS_OF_SUPPORT 1
++#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34)) */
+ 
+ #ifdef CONFIG_OF
++#define KERNEL_HAS_OF_SUPPORT 1
++#endif /* CONFIG_OF */
 +
- struct soc_camera_subdev_desc;
- 
- #define soc_camera_power_on LINUX_BACKPORT(soc_camera_power_on)
- int soc_camera_power_on(struct device *dev,
--			struct soc_camera_subdev_desc *ssdd);
-+			struct soc_camera_subdev_desc *ssdd,
-+			struct v4l2_clk *clk);
- 
- #define soc_camera_power_off LINUX_BACKPORT(soc_camera_power_off)
- int soc_camera_power_off(struct device *dev,
--			struct soc_camera_subdev_desc *ssdd);
-+			struct soc_camera_subdev_desc *ssdd,
-+			struct v4l2_clk *clk);
- 
- #endif /* defined(CPTCFG_VIDEO_DEV_MODULE) */
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0)) */
-diff --git a/backport/compat/compat-3.4.c b/backport/compat/compat-3.4.c
-index b72c69c..99dfb0c 100644
---- a/backport/compat/compat-3.4.c
-+++ b/backport/compat/compat-3.4.c
-@@ -38,14 +38,21 @@
- #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
- 
- #if defined(CPTCFG_VIDEO_V4L2_MODULE)
-+#include <media/v4l2-clk.h>
- int soc_camera_power_on(struct device *dev,
--			struct soc_camera_subdev_desc *ssdd)
-+			struct soc_camera_subdev_desc *ssdd,
-+			struct v4l2_clk *clk)
- {
--	int ret = regulator_bulk_enable(ssdd->num_regulators,
-+	int ret = clk ? v4l2_clk_enable(clk) : 0;
-+	if (ret < 0) {
-+		dev_err(dev, "Cannot enable clock: %d\n", ret);
-+		return ret;
-+	}
-+	ret = regulator_bulk_enable(ssdd->num_regulators,
- 					ssdd->regulators);
- 	if (ret < 0) {
- 		dev_err(dev, "Cannot enable regulators\n");
--		return ret;
-+		goto eregenable;
- 	}
- 
- 	if (ssdd->power) {
-@@ -53,17 +60,26 @@ int soc_camera_power_on(struct device *dev,
- 		if (ret < 0) {
- 			dev_err(dev,
- 				"Platform failed to power-on the camera.\n");
--			regulator_bulk_disable(ssdd->num_regulators,
--					       ssdd->regulators);
-+			goto epwron;
- 		}
- 	}
- 
-+	return 0;
++#ifdef KERNEL_HAS_OF_SUPPORT
+ #include_next <linux/of.h>
 +
-+epwron:
-+	regulator_bulk_disable(ssdd->num_regulators,
-+			       ssdd->regulators);
-+eregenable:
-+	if (clk)
-+		v4l2_clk_disable(clk);
-+
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0))
++#ifdef CONFIG_OF
++extern struct device_node *of_get_child_by_name(const struct device_node *node,
++						const char *name);
++#else
++static inline struct device_node *of_get_child_by_name(
++					const struct device_node *node,
++					const char *name)
++{
++	return NULL;
++}
+ #endif /* CONFIG_OF */
++#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)) */
+ 
+-#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34)) */
++#endif /* KERNEL_HAS_OF_SUPPORT */
+ 
+ #endif	/* _COMPAT_LINUX_OF_H */
+diff --git a/backport/compat/compat-3.7.c b/backport/compat/compat-3.7.c
+index 0f2d332..8f5a56c 100644
+--- a/backport/compat/compat-3.7.c
++++ b/backport/compat/compat-3.7.c
+@@ -251,3 +251,32 @@ int pcie_capability_clear_and_set_dword(struct pci_dev *dev, int pos,
  	return ret;
  }
- EXPORT_SYMBOL_GPL(soc_camera_power_on);
- 
- int soc_camera_power_off(struct device *dev,
--			 struct soc_camera_subdev_desc *ssdd)
-+			 struct soc_camera_subdev_desc *ssdd,
-+			 struct v4l2_clk *clk)
- {
- 	int ret = 0;
- 	int err;
-@@ -84,6 +100,9 @@ int soc_camera_power_off(struct device *dev,
- 		ret = ret ? : err;
- 	}
- 
-+	if (clk)
-+		v4l2_clk_disable(clk);
+ EXPORT_SYMBOL_GPL(pcie_capability_clear_and_set_dword);
 +
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(soc_camera_power_off);
++#ifdef KERNEL_HAS_OF_SUPPORT
++#ifdef CONFIG_OF
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0))
++/**
++ *	of_get_child_by_name - Find the child node by name for a given parent
++ *	@node:	parent node
++ *	@name:	child name to look for.
++ *
++ *      This function looks for child node for given matching name
++ *
++ *	Returns a node pointer if found, with refcount incremented, use
++ *	of_node_put() on it when done.
++ *	Returns NULL if node is not found.
++ */
++struct device_node *of_get_child_by_name(const struct device_node *node,
++				const char *name)
++{
++	struct device_node *child;
++
++	for_each_child_of_node(node, child)
++		if (child->name && (of_node_cmp(child->name, name) == 0))
++			break;
++	return child;
++}
++EXPORT_SYMBOL_GPL(of_get_child_by_name);
++#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)) */
++#endif /* CONFIG_OF */
++#endif /* KERNEL_HAS_OF_SUPPORT */
 -- 
 1.7.10.4
 
