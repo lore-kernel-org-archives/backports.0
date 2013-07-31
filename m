@@ -1,42 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:44232 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756938Ab3GKWMt (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 11 Jul 2013 18:12:49 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 13/19] backports: add NET_CORE config option
-Date: Fri, 12 Jul 2013 00:11:36 +0200
-Message-Id: <1373580702-24752-15-git-send-email-hauke@hauke-m.de> (sfid-20130712_001256_402924_1D9E7C6F)
-In-Reply-To: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
-References: <1373580702-24752-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-pb0-f52.google.com ([209.85.160.52]:47512 "EHLO
+	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753117Ab3GaO1Q (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 31 Jul 2013 10:27:16 -0400
+Received: by mail-pb0-f52.google.com with SMTP id wz12so832094pbc.25
+        for <backports@vger.kernel.org>; Wed, 31 Jul 2013 07:27:16 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH] backports: fix BACKPORT_BUILD_DMA_SHARED_HELPERS 3.9 dependency
+Date: Wed, 31 Jul 2013 07:27:10 -0700
+Message-Id: <1375280830-14278-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130731_162718_842495_B6051302)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Upstream commit 01d7e21c43c0255a0f107b18ce05b2350f561f84
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-NET_CORE was added with kernel 3.2 and before this patch no Ethernet
-driver was build on older kernel versions.
+The expression was reversed. Without this it compiles but
+the compat module will fail to load since a symbol
+dma_common_get_sgtable is already owned by the kernel.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+This should be applied to the linux-3.11.y branch.
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/Kconfig |    2 ++
- 1 file changed, 2 insertions(+)
+ backport/compat/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/backport/Kconfig b/backport/Kconfig
-index d342647..c465ad1 100644
---- a/backport/Kconfig
-+++ b/backport/Kconfig
-@@ -17,6 +17,8 @@ source Kconfig.versions
- # some hacks ...
- config WIRELESS
- 	def_bool y
-+config NET_CORE
-+	def_bool y
- config EXPERT
- 	def_bool y
- 
+diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
+index 8377013..8d51b50 100644
+--- a/backport/compat/Kconfig
++++ b/backport/compat/Kconfig
+@@ -170,7 +170,7 @@ config BACKPORT_BUILD_DMA_SHARED_HELPERS
+ 	depends on HAS_DMA
+ 	# Build on other kernels kernels < 3.9 if HAVE_GENERIC_DMA_COHERENT is
+ 	# not set. Kernels >= 3.8 have this if HAS_DMA is set.
+-	depends on (!HAVE_GENERIC_DMA_COHERENT || BACKPORT_KERNEL_3_9)
++	depends on !BACKPORT_KERNEL_3_9 && HAVE_GENERIC_DMA_COHERENT
+ 	# Always build if on 3.3 - 3.5
+ 	default y if (BACKPORT_KERNEL_3_4 || BACKPORT_KERNEL_3_5 || BACKPORT_KERNEL_3_6)
+ 	# build for testing
 -- 
 1.7.10.4
 
