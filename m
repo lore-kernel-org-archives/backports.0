@@ -1,43 +1,84 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:49199 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752884Ab3G1BQm (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 27 Jul 2013 21:16:42 -0400
-Received: by mail-pa0-f51.google.com with SMTP id lf11so4609733pab.10
-        for <backports@vger.kernel.org>; Sat, 27 Jul 2013 18:16:42 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 1/9] backports: simplify space regexp for src_line
-Date: Sat, 27 Jul 2013 18:16:22 -0700
-Message-Id: <1374974190-31561-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20130728_031644_143134_4143AC5D)
-In-Reply-To: <1374974190-31561-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1374974190-31561-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from mxz.fh-kl.de ([143.93.17.66]:51433 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754862Ab3GaIi5 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 31 Jul 2013 04:38:57 -0400
+Message-ID: <51F8CD1B.8010909@fh-kl.de> (sfid-20130731_103901_425865_415BD9A1)
+Date: Wed, 31 Jul 2013 10:38:51 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [RFC v2 0/8] backports: add wwan device drivers
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+This adds wwan drivers for mobile broadband devices.
+Patches 1 to 7 add missing stuff required for the wwan drivers.
+Patch 8 adds device drivers.
 
-The regexp doesn't require the extra brackets.
+Changes v2: rebased on last RFCs for next-20130729
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- lib/kconfig.py |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/kconfig.py b/lib/kconfig.py
-index 8a30ddc..179121a 100644
---- a/lib/kconfig.py
-+++ b/lib/kconfig.py
-@@ -4,7 +4,7 @@
- 
- import os, re
- 
--src_line = re.compile(r'^[\s]*source\s+"?(?P<src>[^\s"]*)"?\s*$')
-+src_line = re.compile(r'^\s*source\s+"?(?P<src>[^\s"]*)"?\s*$')
- tri_line = re.compile(r'^(?P<spc>\s+)tristate')
- bool_line = re.compile(r'^(?P<spc>\s+)bool')
- cfg_line = re.compile(r'^(config|menuconfig)\s+(?P<sym>[^\s]*)')
+Patrick Ziegler (8):
+  backports: disable PCI functions for kernels without PCI support
+  backports: add eth_prepare_mac_addr_change() and
+    eth_commit_mac_addr_change()
+  backports: define PM_EVENT_AUTO
+  backports: add usb_translate_errors()
+  backports: add usb_endpoint_maxp()
+  backports: include headers directly if math64 header is missing
+  backports: define phys_addr_t for ARM on kernel version < 2.6.25
+  backports: add wwan device drivers
+
+ backport/Kconfig                                   |  2 ++
+ backport/Makefile.kernel                           |  3 ++
+ backport/backport-include/linux/etherdevice.h      |  7 +++++
+ backport/backport-include/linux/if.h               |  4 +++
+ backport/backport-include/linux/math64.h           |  3 ++
+ backport/backport-include/linux/pm.h               |  4 +++
+ backport/backport-include/linux/types.h            |  4 +--
+ backport/backport-include/linux/usb.h              | 17 +++++++++++
+ backport/backport-include/linux/usb/ch9.h          | 23 +++++++++++++++
+ backport/compat/compat-2.6.25.c                    |  2 ++
+ backport/compat/compat-2.6.28.c                    |  4 +++
+ backport/compat/compat-3.9.c                       | 33 ++++++++++++++++++++++
+ copy-list                                          | 14 +++++++++
+ .../network/0001-netdev_ops/qmi_wwan.patch         | 11 ++++++++
+ .../network/0001-netdev_ops/sierra_net.patch       | 11 ++++++++
+ .../drivers_net_usb_cdc_mbim.patch                 | 12 ++++++++
+ .../drivers_net_usb_cdc_ncm.patch                  | 12 ++++++++
+ .../drivers_net_usb_qmi_wwan.patch                 | 12 ++++++++
+ .../drivers_net_usb_sierra_net.patch               | 12 ++++++++
+ .../drivers_usb_class_cdc-wdm.patch                | 12 ++++++++
+ 20 files changed, 200 insertions(+), 2 deletions(-)
+ create mode 100644 backport/backport-include/linux/usb/ch9.h
+ create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch
+ create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch
+ create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
+ create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
+ create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
+ create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
+ create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
+
 -- 
-1.7.10.4
+1.8.1.2
 
+
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
