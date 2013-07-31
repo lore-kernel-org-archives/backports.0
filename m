@@ -1,33 +1,100 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:47295 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753720Ab3G3KaH (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 30 Jul 2013 06:30:07 -0400
-Received: by mail-pd0-f171.google.com with SMTP id y14so6534157pdi.2
-        for <backports@vger.kernel.org>; Tue, 30 Jul 2013 03:30:06 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 0/2] rel-html: update projet list.
-Date: Tue, 30 Jul 2013 03:29:59 -0700
-Message-Id: <1375180201-5274-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130730_123010_850699_42AA6150)
+Received: from mxz.fh-kl.de ([143.93.17.66]:51447 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759134Ab3GaIjM (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 31 Jul 2013 04:39:12 -0400
+Message-ID: <51F8CD2A.2090101@fh-kl.de> (sfid-20130731_103916_691423_45BA8F5F)
+Date: Wed, 31 Jul 2013 10:39:06 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [RFC v2 1/8] backports: disable PCI functions for kernels without
+ PCI support
+References: <cover.1375259597.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1375259597.git.patrick.ziegler@fh-kl.de>
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+---
+ backport/compat/compat-2.6.25.c | 2 ++
+ backport/compat/compat-2.6.28.c | 4 ++++
+ 2 files changed, 6 insertions(+)
 
-This updates rel-html's project release list.
-The compat-drivers releases, the releaes used prior
-to the rename to backports, are now fully deprecated
-and no longer supported.
+diff --git a/backport/compat/compat-2.6.25.c b/backport/compat/compat-2.6.25.c
+index b3597ea..37407a4 100644
+--- a/backport/compat/compat-2.6.25.c
++++ b/backport/compat/compat-2.6.25.c
+@@ -210,6 +210,7 @@ EXPORT_SYMBOL_GPL(sg_alloc_table);
+  * to it. We implement a sloppy work around for backporting
+  * this.
+  */
++#ifdef CONFIG_PCI
+ int pci_enable_device_mem(struct pci_dev *dev)
+ {
+ 	int bars = pci_select_bars(dev, IORESOURCE_MEM);
+@@ -217,6 +218,7 @@ int pci_enable_device_mem(struct pci_dev *dev)
+ 	return pci_enable_device_bars(dev, bars);
+ }
+ EXPORT_SYMBOL_GPL(pci_enable_device_mem);
++#endif
+ 
+ /**
+  * The following things are out of ./lib/vsprintf.c
+diff --git a/backport/compat/compat-2.6.28.c b/backport/compat/compat-2.6.28.c
+index e47626b..9c21de8 100644
+--- a/backport/compat/compat-2.6.28.c
++++ b/backport/compat/compat-2.6.28.c
+@@ -238,6 +238,7 @@ EXPORT_SYMBOL_GPL(usb_anchor_empty);
+ #endif /* CONFIG_USB */
+ #endif
+ 
++#ifdef CONFIG_PCI
+ void __iomem *pci_ioremap_bar(struct pci_dev *pdev, int bar)
+ {
+ 	/*
+@@ -251,6 +252,7 @@ void __iomem *pci_ioremap_bar(struct pci_dev *pdev, int bar)
+ 				     pci_resource_len(pdev, bar));
+ }
+ EXPORT_SYMBOL_GPL(pci_ioremap_bar);
++#endif
+ 
+ static unsigned long round_jiffies_common(unsigned long j, int cpu,
+ 		bool force_up)
+@@ -455,6 +457,7 @@ EXPORT_SYMBOL_GPL(n_tty_ioctl_helper);
+  * generating PME# from both D3_hot and D3_cold, and the platform is unable to
+  * enable wake-up power for it.
+  */
++#ifdef CONFIG_PCI
+ int pci_wake_from_d3(struct pci_dev *dev, bool enable)
+ {
+ 	return pci_pme_capable(dev, PCI_D3cold) ?
+@@ -462,4 +465,5 @@ int pci_wake_from_d3(struct pci_dev *dev, bool enable)
+ 			pci_enable_wake(dev, PCI_D3hot, enable);
+ }
+ EXPORT_SYMBOL_GPL(pci_wake_from_d3);
++#endif
+ 
+-- 
+1.8.1.2
 
-Luis R. Rodriguez (2):
-  rel-html: update linux and backports project releases
-  backports: eol the same Linux releases
 
- projects/backports.cfg |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
 -- 
-1.7.10.4
+Dipl.-Inf. (FH) Patrick Ziegler
 
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
