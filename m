@@ -1,49 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f47.google.com ([209.85.160.47]:60253 "EHLO
-	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932209Ab3GLBHx (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 11 Jul 2013 21:07:53 -0400
-Received: by mail-pb0-f47.google.com with SMTP id rr13so8454091pbb.6
-        for <backports@vger.kernel.org>; Thu, 11 Jul 2013 18:07:52 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH] backports: update README to include new subsystems
-Date: Thu, 11 Jul 2013 18:07:47 -0700
-Message-Id: <1373591267-14719-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130712_030756_318589_4676A2A8)
+Received: from mxz.fh-kl.de ([143.93.17.66]:51506 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759179Ab3GaIkH (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 31 Jul 2013 04:40:07 -0400
+Message-ID: <51F8CD61.9070809@fh-kl.de> (sfid-20130731_104010_270899_CB015896)
+Date: Wed, 31 Jul 2013 10:40:01 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [RFC v2 6/8] backports: include headers directly if math64 header
+ is missing
+References: <cover.1375259597.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1375259597.git.patrick.ziegler@fh-kl.de>
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+If math64 header is not available, include div64.h directly. It is required for
+do_div() that is used inside the backport version of math64.h.
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 ---
- README |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ backport/backport-include/linux/math64.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/README b/README
-index 66e135f..2f03852 100644
---- a/README
-+++ b/README
-@@ -1,12 +1,16 @@
--# Linux driver backports package
-+# Linux kernel backports package
+diff --git a/backport/backport-include/linux/math64.h b/backport/backport-include/linux/math64.h
+index 7f3a81b..775c2d3 100644
+--- a/backport/backport-include/linux/math64.h
++++ b/backport/backport-include/linux/math64.h
+@@ -5,6 +5,9 @@
  
- This package provides backport support for drivers from newer kernels
--down to older kernels. It currently backports 4 subsystems:
-+down to older kernels. It currently backports the following subsystems:
+ #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,25))
+ #include_next <linux/math64.h>
++#else
++#include <linux/types.h>
++#include <asm/div64.h>
+ #endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,25)) */
  
-   * Ethernet
-   * Wireless
-   * Bluetooth
-+  * NFC
-+  * ieee802154
-   * GPU
-+  * Media
-+  * Regulator
- 
- This package provides the latest Linux kernel subsystem enhancements
- for kernels 2.6.24 and above. It is technically possible to support
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)
 -- 
-1.7.10.4
+1.8.1.2
 
+
+
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
