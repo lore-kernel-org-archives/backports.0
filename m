@@ -1,41 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:37610 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933490Ab3HGWyG (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 7 Aug 2013 18:54:06 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 09/10] backports: deactivate REGULATOR_WM8400
-Date: Thu,  8 Aug 2013 00:53:24 +0200
-Message-Id: <1375916005-16411-10-git-send-email-hauke@hauke-m.de> (sfid-20130808_005408_439164_42C4E907)
-In-Reply-To: <1375916005-16411-1-git-send-email-hauke@hauke-m.de>
-References: <1375916005-16411-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-ea0-f173.google.com ([209.85.215.173]:45073 "EHLO
+	mail-ea0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750834Ab3GaXQZ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 31 Jul 2013 19:16:25 -0400
+Received: by mail-ea0-f173.google.com with SMTP id g10so644638eak.32
+        for <backports@vger.kernel.org>; Wed, 31 Jul 2013 16:16:23 -0700 (PDT)
+Received: from [192.168.1.81] (ip503cba31.speed.planet.nl. [80.60.186.49])
+        by mx.google.com with ESMTPSA id n42sm29638eeh.15.2013.07.31.16.16.22
+        for <backports@vger.kernel.org>
+        (version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
+        Wed, 31 Jul 2013 16:16:23 -0700 (PDT)
+Message-ID: <51F99AC6.8080909@gmail.com> (sfid-20130801_011628_506952_B1405F41)
+Date: Thu, 01 Aug 2013 01:16:22 +0200
+From: Leon Woestenberg <sidebranch.linux@gmail.com>
+MIME-Version: 1.0
+To: backports@vger.kernel.org
+Subject: What if kernel CONFIG=Y or CONFIG=N and backports CONFIG=M?
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This needs regulator_map_voltage_linear_range() and
-regulator_list_voltage_linear_range() which are not exported by the
-kernel regulator framework.
+Hello all,
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- dependencies |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+two questions (I am new to the backports project):
 
-diff --git a/dependencies b/dependencies
-index 5c50571..f1e514b 100644
---- a/dependencies
-+++ b/dependencies
-@@ -109,7 +109,7 @@ REGULATOR_TPS6105X 3.6
- REGULATOR_TPS65023 3.6
- REGULATOR_TPS6507X 3.6
- REGULATOR_TPS6524X 3.6
--REGULATOR_WM8400 3.5
-+REGULATOR_WM8400 3.12
- REGULATOR_WM8994 3.8
- 
- # Media
--- 
-1.7.10.4
+If I configure backports to build a driver as a module, whilst the 
+kernel we build against (KLIB/KLIB_BUILD) has this driver built-in, what 
+is supposed to happen?
 
+Obviously I cannot load the backport module into the kernel.
+
+
+Is it possible (within the kernel and backports code) to build a 
+subsystem or driver as a module, if the original kernel did not have 
+this subsystem or driver built at all ("N" in the menu, CONFIG_ 
+commented out in .config)?
+
+Can the kernel always load modules that were defined as =N during the 
+kernel built itself?
+
+(My aim is Yocto/OpenEmbedded support for backports into the build system.)
+
+Thanks,
+
+Leon.
