@@ -1,126 +1,91 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f47.google.com ([209.85.160.47]:37510 "EHLO
-	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752870Ab3G1BR0 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 27 Jul 2013 21:17:26 -0400
-Received: by mail-pb0-f47.google.com with SMTP id rr13so3357218pbb.6
-        for <backports@vger.kernel.org>; Sat, 27 Jul 2013 18:17:26 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [RFC 6/9] backports: backport of_get_child_by_name() support
-Date: Sat, 27 Jul 2013 18:16:27 -0700
-Message-Id: <1374974190-31561-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20130728_031728_253987_639C88EB)
-In-Reply-To: <1374974190-31561-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1374974190-31561-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:55421 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756561Ab3GaOjH (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 31 Jul 2013 10:39:07 -0400
+Message-ID: <51F92183.2010203@hauke-m.de> (sfid-20130731_163910_230883_4B60B6F2)
+Date: Wed, 31 Jul 2013 16:38:59 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
+MIME-Version: 1.0
+To: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+CC: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
+Subject: Re: [RFC v2 1/8] backports: disable PCI functions for kernels without
+ PCI support
+References: <cover.1375259597.git.patrick.ziegler@fh-kl.de> <51F8CD2A.2090101@fh-kl.de>
+In-Reply-To: <51F8CD2A.2090101@fh-kl.de>
+Content-Type: text/plain; charset=ISO-8859-15
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Nice work,
 
-This was added via 9c19761a. While at it clean up the backported
-header a bit to make backporting more OF stuff more manageable.
+what kernel version(s) without PCI support have you tested this against?
 
-mcgrof@frijol ~/linux-stable (git::master)$ git describe --contains 9c19761a
-v3.7-rc1~123^2~4
+There are also PCI(e) functions in backport/compat/compat-3.7.c and
+backport/compat/compat-2.6.27.c
 
-commit 9c19761a7ecdc86abb2fba0feb81e8952eccc1f1
-Author: Srinivas Kandagatla <srinivas.kandagatla@st.com>
-Date:   Tue Sep 18 08:10:28 2012 +0100
+On 07/31/2013 10:39 AM, Patrick Ziegler wrote:
+> Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+> ---
+>  backport/compat/compat-2.6.25.c | 2 ++
+>  backport/compat/compat-2.6.28.c | 4 ++++
+>  2 files changed, 6 insertions(+)
+> 
+> diff --git a/backport/compat/compat-2.6.25.c b/backport/compat/compat-2.6.25.c
+> index b3597ea..37407a4 100644
+> --- a/backport/compat/compat-2.6.25.c
+> +++ b/backport/compat/compat-2.6.25.c
+> @@ -210,6 +210,7 @@ EXPORT_SYMBOL_GPL(sg_alloc_table);
+>   * to it. We implement a sloppy work around for backporting
+>   * this.
+>   */
+> +#ifdef CONFIG_PCI
+>  int pci_enable_device_mem(struct pci_dev *dev)
+>  {
+>  	int bars = pci_select_bars(dev, IORESOURCE_MEM);
+> @@ -217,6 +218,7 @@ int pci_enable_device_mem(struct pci_dev *dev)
+>  	return pci_enable_device_bars(dev, bars);
+>  }
+>  EXPORT_SYMBOL_GPL(pci_enable_device_mem);
+> +#endif
+>  
+>  /**
+>   * The following things are out of ./lib/vsprintf.c
+> diff --git a/backport/compat/compat-2.6.28.c b/backport/compat/compat-2.6.28.c
+> index e47626b..9c21de8 100644
+> --- a/backport/compat/compat-2.6.28.c
+> +++ b/backport/compat/compat-2.6.28.c
+> @@ -238,6 +238,7 @@ EXPORT_SYMBOL_GPL(usb_anchor_empty);
+>  #endif /* CONFIG_USB */
+>  #endif
+>  
+> +#ifdef CONFIG_PCI
+>  void __iomem *pci_ioremap_bar(struct pci_dev *pdev, int bar)
+>  {
+>  	/*
+> @@ -251,6 +252,7 @@ void __iomem *pci_ioremap_bar(struct pci_dev *pdev, int bar)
+>  				     pci_resource_len(pdev, bar));
+>  }
+>  EXPORT_SYMBOL_GPL(pci_ioremap_bar);
+> +#endif
+>  
+>  static unsigned long round_jiffies_common(unsigned long j, int cpu,
+>  		bool force_up)
+> @@ -455,6 +457,7 @@ EXPORT_SYMBOL_GPL(n_tty_ioctl_helper);
+>   * generating PME# from both D3_hot and D3_cold, and the platform is unable to
+>   * enable wake-up power for it.
+>   */
+> +#ifdef CONFIG_PCI
+>  int pci_wake_from_d3(struct pci_dev *dev, bool enable)
+>  {
+>  	return pci_pme_capable(dev, PCI_D3cold) ?
+> @@ -462,4 +465,5 @@ int pci_wake_from_d3(struct pci_dev *dev, bool enable)
+>  			pci_enable_wake(dev, PCI_D3hot, enable);
+>  }
+>  EXPORT_SYMBOL_GPL(pci_wake_from_d3);
+> +#endif
 
-    dt: introduce of_get_child_by_name to get child node by name
+The mainline Linux kernel uses a empty pci_wake_from_d3() function if
+CONFIG_PCI is not set in include/linux/pci.h
 
-    This patch introduces of_get_child_by_name function to get a child node
-    by its name in a given parent node.
-
-    Without this patch each driver code has to iterate the parent and do
-    a string compare, However having of_get_child_by_name libary function would
-    avoid code duplication, errors and is more convenient.
-
-    Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@st.com>
-    Signed-off-by: Rob Herring <rob.herring@calxeda.com>
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- backport/backport-include/linux/of.h |   23 ++++++++++++++++++++---
- backport/compat/compat-3.7.c         |   29 +++++++++++++++++++++++++++++
- 2 files changed, 49 insertions(+), 3 deletions(-)
-
-diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
-index c5dc87c..93e91dd 100644
---- a/backport/backport-include/linux/of.h
-+++ b/backport/backport-include/linux/of.h
-@@ -4,13 +4,30 @@
- #include <linux/version.h>
- 
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
--#include_next <linux/of.h>
--#else
-+#define KERNEL_HAS_OF_SUPPORT 1
-+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34)) */
- 
- #ifdef CONFIG_OF
-+#define KERNEL_HAS_OF_SUPPORT 1
-+#endif /* CONFIG_OF */
-+
-+#ifdef KERNEL_HAS_OF_SUPPORT
- #include_next <linux/of.h>
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0))
-+#ifdef CONFIG_OF
-+extern struct device_node *of_get_child_by_name(const struct device_node *node,
-+						const char *name);
-+#else
-+static inline struct device_node *of_get_child_by_name(
-+					const struct device_node *node,
-+					const char *name)
-+{
-+	return NULL;
-+}
- #endif /* CONFIG_OF */
-+#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)) */
- 
--#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34)) */
-+#endif /* KERNEL_HAS_OF_SUPPORT */
- 
- #endif	/* _COMPAT_LINUX_OF_H */
-diff --git a/backport/compat/compat-3.7.c b/backport/compat/compat-3.7.c
-index 0f2d332..8f5a56c 100644
---- a/backport/compat/compat-3.7.c
-+++ b/backport/compat/compat-3.7.c
-@@ -251,3 +251,32 @@ int pcie_capability_clear_and_set_dword(struct pci_dev *dev, int pos,
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(pcie_capability_clear_and_set_dword);
-+
-+#ifdef KERNEL_HAS_OF_SUPPORT
-+#ifdef CONFIG_OF
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0))
-+/**
-+ *	of_get_child_by_name - Find the child node by name for a given parent
-+ *	@node:	parent node
-+ *	@name:	child name to look for.
-+ *
-+ *      This function looks for child node for given matching name
-+ *
-+ *	Returns a node pointer if found, with refcount incremented, use
-+ *	of_node_put() on it when done.
-+ *	Returns NULL if node is not found.
-+ */
-+struct device_node *of_get_child_by_name(const struct device_node *node,
-+				const char *name)
-+{
-+	struct device_node *child;
-+
-+	for_each_child_of_node(node, child)
-+		if (child->name && (of_node_cmp(child->name, name) == 0))
-+			break;
-+	return child;
-+}
-+EXPORT_SYMBOL_GPL(of_get_child_by_name);
-+#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)) */
-+#endif /* CONFIG_OF */
-+#endif /* KERNEL_HAS_OF_SUPPORT */
--- 
-1.7.10.4
-
+Hauke
