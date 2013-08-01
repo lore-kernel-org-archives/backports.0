@@ -1,51 +1,49 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:35189 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751246Ab3HAUUL (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 1 Aug 2013 16:20:11 -0400
-Message-ID: <51FAC2EF.8080402@hauke-m.de> (sfid-20130801_222014_043575_A7EF835B)
-Date: Thu, 01 Aug 2013 22:19:59 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail.lenbrook.com ([216.94.44.85]:24870 "EHLO mail.lenbrook.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753087Ab3HAT0w (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 1 Aug 2013 15:26:52 -0400
+Message-ID: <51FAB45A.9080306@lenbrook.com> (sfid-20130801_212700_221668_DA9306C0)
+Date: Thu, 01 Aug 2013 15:17:46 -0400
+From: Jonathan Bagg <jbagg@lenbrook.com>
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-CC: Chris R <chrisrfq@gmail.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: Bug with the website: links are broken
-References: <000d01ce8e07$80a36430$81ea2c90$@gmail.com> <CAB=NE6WLPxLpGWOP6fj_FEWk_AA4Tz7UQay1tPxsMJfquRnSmg@mail.gmail.com> <007b01ce8eee$cca32e50$65e98af0$@gmail.com> <CAB=NE6Xg_MHwZAaZHHkL841BHJxFzEeu2oMZJdXpqYoGSHjSgQ@mail.gmail.com>
-In-Reply-To: <CAB=NE6Xg_MHwZAaZHHkL841BHJxFzEeu2oMZJdXpqYoGSHjSgQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+To: backports@vger.kernel.org
+CC: Solomon Peachy <pizza@shaftnet.org>, linux-wireless@vger.kernel.org
+Subject: Re: cross compile backports with LTIB
+References: <1375338204-2021-8-git-send-email-sujith@msujith.org> <1375370826-1387-1-git-send-email-sujith@msujith.org> <51FA8ECD.7070401@lenbrook.com> <20130801174749.GC10904@shaftnet.org> <51FAB31F.6050207@lenbrook.com>
+In-Reply-To: <51FAB31F.6050207@lenbrook.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 08/01/2013 09:43 PM, Luis R. Rodriguez wrote:
-> On Thu, Aug 1, 2013 at 12:39 PM, Chris R <chrisrfq@gmail.com> wrote:
->>> Its back up...
->>
->> Thanks very much!
->>
->>> ...that page has ancient releases, why are you still using them?
->>
->> I'm stuck at kernel version 2.6.37.
-> 
-> So backports is designed so that you use a backports-3.11 say on
-> 2.6.37. That is you don't have to use a backport-3.10 only on 3.10 in
-> fact that'd be pointless. We backport functionality from a kernel as a
-> base and that base is used as the version name for the release.
-> 
-> A few folks have reported misunderstanding this as well so I'm curious
-> apart from the documentation we have on the wiki [0] what else can we
-> do to help with this?
-> 
-> [0] https://backports.wiki.kernel.org
-> 
->   Luis
-
-Users do not read any documentation. ;-)
-I added it to multiple places in the wiki and still there are people in
-the IRC with such problems.
-
-We should make it fail if kernel version > backports version and we
-should also take the minor version into account. If the major version is
-the same we should print a big warning.
-
-Hauke
+On 13-08-01 03:12 PM, Jonathan Bagg wrote:
+> On 13-08-01 01:47 PM, Solomon Peachy wrote:
+>> On Thu, Aug 01, 2013 at 12:37:33PM -0400, Jonathan Bagg wrote:
+>>> I've been cross compiling compat-wireless and now I'm trying
+>>> backports.  It looks like conf.c and zconf.tab.c are being compiled
+>>> as arm and then the build process is trying to run conf on my x86
+>>> host.  Results using the below make parameters I was using for
+>>> compat-wireless......
+> Learned some things....Problem was LTIB (ltib = Freescale tool) 
+> environment.  Outside of LTIB, backports cross compiles fine.  To get 
+> backports happy in LTIB need to use UNSPOOF/SPOOF_PATH to switch 
+> between host and cross environment....
+>
+(this is for the LTIBs spec file for backports = 
+dist/lfs-5.1/backports/backports.spec - forgot to mention in previous post)
+> %Build
+> export PATH=$UNSPOOF_PATH
+>
+> make defconfig-cw1200 make prefix=%{_prefix} 
+> CROSS_COMPILE=${TOOLCHAIN_PATH}/bin/${TOOLCHAIN_PREFIX} ARCH=$LINTARCH 
+> KLIB=${TOP}/rootfs/lib/modules/%{kversion} 
+> KLIB_BUILD=${TOP}/rpm/BUILD/linux
+>
+> export PATH=$SPOOF_PATH
+>
+> make prefix=%{_prefix} 
+> CROSS_COMPILE=${TOOLCHAIN_PATH}/bin/${TOOLCHAIN_PREFIX} ARCH=$LINTARCH 
+> KLIB=${TOP}/rootfs/lib/modules/%{kversion} 
+> KLIB_BUILD=${TOP}/rpm/BUILD/linux
+>
+> Jon 
