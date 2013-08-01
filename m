@@ -1,90 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:49721 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755957Ab3HAP6z (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 1 Aug 2013 11:58:55 -0400
-Message-ID: <51FA85B9.7050502@fh-kl.de> (sfid-20130801_175901_701289_5123DCF0)
-Date: Thu, 1 Aug 2013 17:58:49 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:35189 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751246Ab3HAUUL (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 1 Aug 2013 16:20:11 -0400
+Message-ID: <51FAC2EF.8080402@hauke-m.de> (sfid-20130801_222014_043575_A7EF835B)
+Date: Thu, 01 Aug 2013 22:19:59 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [RFC v3 0/9] backports: add wwan device drivers
-Content-Type: text/plain; charset="ISO-8859-15"
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+CC: Chris R <chrisrfq@gmail.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: Bug with the website: links are broken
+References: <000d01ce8e07$80a36430$81ea2c90$@gmail.com> <CAB=NE6WLPxLpGWOP6fj_FEWk_AA4Tz7UQay1tPxsMJfquRnSmg@mail.gmail.com> <007b01ce8eee$cca32e50$65e98af0$@gmail.com> <CAB=NE6Xg_MHwZAaZHHkL841BHJxFzEeu2oMZJdXpqYoGSHjSgQ@mail.gmail.com>
+In-Reply-To: <CAB=NE6Xg_MHwZAaZHHkL841BHJxFzEeu2oMZJdXpqYoGSHjSgQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This adds wwan drivers for mobile broadband devices.
-Patches 1 to 8 add missing stuff required for the wwan drivers.
-Patch 9 adds device drivers.
+On 08/01/2013 09:43 PM, Luis R. Rodriguez wrote:
+> On Thu, Aug 1, 2013 at 12:39 PM, Chris R <chrisrfq@gmail.com> wrote:
+>>> Its back up...
+>>
+>> Thanks very much!
+>>
+>>> ...that page has ancient releases, why are you still using them?
+>>
+>> I'm stuck at kernel version 2.6.37.
+> 
+> So backports is designed so that you use a backports-3.11 say on
+> 2.6.37. That is you don't have to use a backport-3.10 only on 3.10 in
+> fact that'd be pointless. We backport functionality from a kernel as a
+> base and that base is used as the version name for the release.
+> 
+> A few folks have reported misunderstanding this as well so I'm curious
+> apart from the documentation we have on the wiki [0] what else can we
+> do to help with this?
+> 
+> [0] https://backports.wiki.kernel.org
+> 
+>   Luis
 
-Changes v2:
- - rebased on last RFCs for next-20130729
+Users do not read any documentation. ;-)
+I added it to multiple places in the wiki and still there are people in
+the IRC with such problems.
 
-Changes v3:
- - add new patch to add missing USB_SPEED_SUPER
- - fix PCI build errors in a better way
+We should make it fail if kernel version > backports version and we
+should also take the minor version into account. If the major version is
+the same we should print a big warning.
 
-Patrick Ziegler (9):
-  backports: fix build errors for old kernel versions without PCI
-    support
-  backports: add eth_prepare_mac_addr_change() and
-    eth_commit_mac_addr_change()
-  backports: define PM_EVENT_AUTO
-  backports: add usb_translate_errors()
-  backports: add usb_endpoint_maxp()
-  backports: update enum usb_device_speed with USB_SPEED_SUPER
-  backports: include headers directly if math64 header is missing
-  backports: define phys_addr_t for ARM on kernel version < 2.6.25
-  backports: add wwan device drivers
-
- backport/Kconfig                                   |  2 +
- backport/Makefile.kernel                           |  3 ++
- backport/backport-include/linux/etherdevice.h      |  7 ++++
- backport/backport-include/linux/if.h               |  4 ++
- backport/backport-include/linux/math64.h           |  3 ++
- backport/backport-include/linux/pm.h               |  4 ++
- backport/backport-include/linux/types.h            |  4 +-
- backport/backport-include/linux/usb.h              | 17 ++++++++
- backport/backport-include/linux/usb/ch9.h          | 45 ++++++++++++++++++++++
- backport/compat/compat-2.6.25.c                    |  4 ++
- backport/compat/compat-2.6.28.c                    |  1 +
- backport/compat/compat-3.9.c                       | 33 ++++++++++++++++
- copy-list                                          | 14 +++++++
- .../network/0001-netdev_ops/qmi_wwan.patch         | 11 ++++++
- .../network/0001-netdev_ops/sierra_net.patch       | 11 ++++++
- .../drivers_net_usb_cdc_mbim.patch                 | 12 ++++++
- .../drivers_net_usb_cdc_ncm.patch                  | 12 ++++++
- .../drivers_net_usb_qmi_wwan.patch                 | 12 ++++++
- .../drivers_net_usb_sierra_net.patch               | 12 ++++++
- .../drivers_usb_class_cdc-wdm.patch                | 12 ++++++
- 20 files changed, 221 insertions(+), 2 deletions(-)
- create mode 100644 backport/backport-include/linux/usb/ch9.h
- create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch
- create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
-
--- 
-1.8.1.2
-
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
+Hauke
