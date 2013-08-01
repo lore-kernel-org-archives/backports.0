@@ -1,67 +1,58 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:56418 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756458Ab3HMBSD (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 12 Aug 2013 21:18:03 -0400
-Received: by mail-pd0-f174.google.com with SMTP id y13so4208739pdi.33
-        for <backports@vger.kernel.org>; Mon, 12 Aug 2013 18:18:01 -0700 (PDT)
-Date: Mon, 12 Aug 2013 18:27:01 -0700
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Phillip Moss <phillipmoss12@yahoo.es>
-Cc: backports@vger.kernel.org
-Subject: Re: Signal loss rtl8723ae wifi driver
-Message-ID: <20130813012701.GD6439@garbanzo.do-not-panic.com> (sfid-20130813_031810_728687_539370FF)
-References: <1375972465.52410.YahooMailBasic@web171402.mail.ir2.yahoo.com>
+Received: from mail-lb0-f176.google.com ([209.85.217.176]:53178 "EHLO
+	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750742Ab3HAHyd (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 1 Aug 2013 03:54:33 -0400
+Received: by mail-lb0-f176.google.com with SMTP id w10so1259929lbi.21
+        for <backports@vger.kernel.org>; Thu, 01 Aug 2013 00:54:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CGDBiGfvSTbxKZlW"
-In-Reply-To: <1375972465.52410.YahooMailBasic@web171402.mail.ir2.yahoo.com>
+In-Reply-To: <51F99AC6.8080909@gmail.com>
+References: <51F99AC6.8080909@gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Thu, 1 Aug 2013 00:54:11 -0700
+Message-ID: <CAB=NE6WyGTYtMZ60VPadoCEgur+LV3CKRWTWjzadaJ--2eEj3Q@mail.gmail.com> (sfid-20130801_095435_087679_6A5A1541)
+Subject: Re: What if kernel CONFIG=Y or CONFIG=N and backports CONFIG=M?
+To: Leon Woestenberg <sidebranch.linux@gmail.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+On Wed, Jul 31, 2013 at 4:16 PM, Leon Woestenberg
+<sidebranch.linux@gmail.com> wrote:
+> Hello all,
+>
+> two questions (I am new to the backports project):
+>
+> If I configure backports to build a driver as a module, whilst the kernel we
+> build against (KLIB/KLIB_BUILD) has this driver built-in, what is supposed
+> to happen?
 
---CGDBiGfvSTbxKZlW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Well backports currently only allows =m for itself but non-modular
+support is theoretically possible [0] and should be considered if its
+a requirement.
 
-On Thu, Aug 08, 2013 at 03:34:25PM +0100, Phillip Moss wrote:
-> Hi all,
-> I have a rtl8723ae wifi card on my laptop. When connecting to any wifi
-> Access Point the wifi signal fluctuates from full strength to very
-> low.  In order to connect and stay connected I must be no farther than
-> two meters from my router otherwise I get disconnected.  I have tried
-> the kernel driver on multiple distros as well as the vendor drivers
-> for older kernel versions. All seem to have the same problem. The card
-> works ok on Windows 7 with vendor drivers. I have also tried compiling
-> backports-3.10-rc1-2 with no luck.  During a signal loss period I get
-> no logs but if I take the laptop too far from the AP dmesg reports:
+[0] https://backports.wiki.kernel.org/index.php/Documentation/backports/hacking/todo#Non_modular_backport_support
 
-You should report this on the linux-wireless mailing list and Cc the
-maintainers, specially if using a more up to date release of the
-driver.
+Patches welcome :D lets kill stupid silly branching efforts on kernel
+management efforts.
+
+> Obviously I cannot load the backport module into the kernel.
+>
+>
+> Is it possible (within the kernel and backports code) to build a subsystem
+> or driver as a module, if the original kernel did not have this subsystem or
+> driver built at all ("N" in the menu, CONFIG_ commented out in .config)?
+
+Yes, however if the subsystem required certain requirements those
+requirements will still be required. For example say your backported
+driver needed CONFIG_PCI but you didn't enable it, CONFIG_PCI would
+still be required.
+
+> Can the kernel always load modules that were defined as =N during the kernel
+> built itself?
+
+Yes. Consider the case of *new* modules that were not available in
+older kernels. We support that.
 
   Luis
-
---CGDBiGfvSTbxKZlW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSCYtkAAoJEKwtdpJg+MHGZmoP/jkzlkJHtcStm6pXgpw17OR/
-+8gTNtx/GzajZWIbCck2l+toOyZH39sR8FzeNvDbn6Mucyqoxhg6XA0bRvTyfbZp
-7I8Z9iA/hfSjT8W4EpEP2QuKLNxASGHECpaBDc3J7cX1IwH3Nh9SWfKe7vMOpa7J
-kjuHbIxmZg6ojRTw/P7xcUYaQTznS11DOgH2yBzN4xoxtzajBEfScXYJwJ2/i1mw
-2zt7xNz2FKnw5ncGgbX1srzqor5JYrmEsX+SxbkC6ZuskXa7bl7sdLcHRXdBnn77
-lww0b/gvDLCuEiiFb5mXFDku13XyOwDBfgvKzunhY35PXRXWwEt3BxOMmBSKdX/d
-kZe2df62TVc/ymL0jVZfX+Ac85892fRsKdgxrSUBNtnELkBUvmdpTS77c1jyKQG5
-V1FmCuaNA+i3+2zc4/1NM+ceTmGMUdVvEZStCf04J39dV0L2ctDJSAKUweOvj7uB
-8/OIf8FACFgM30VB75w2E/8jAGdqn/wwJV47op/vAB+Cw30/4pFCFh+ydJ+XnbNT
-QzoEGcFLnAEFXyTlsR7ovlPhRT4TieRjebnKoxVyvjTOKDSuqBeofNrWi9+vVfCG
-hT40XL3MC/BKlvazI3Mnz6VrKr7Wqr80KI0CROrTg39xdiD+Fl+PR9FpvH8D1hJY
-Ti/AWWWfbgGwDK9uUI2c
-=PlsF
------END PGP SIGNATURE-----
-
---CGDBiGfvSTbxKZlW--
