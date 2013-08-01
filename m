@@ -1,56 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:52487 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754353Ab3HOMlL (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 15 Aug 2013 08:41:11 -0400
-Message-ID: <520CCC61.4010405@fh-kl.de> (sfid-20130815_144112_638083_DFCA1630)
-Date: Thu, 15 Aug 2013 14:41:05 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Received: from mail-lb0-f177.google.com ([209.85.217.177]:34009 "EHLO
+	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756085Ab3HATDc (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 1 Aug 2013 15:03:32 -0400
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [PATCH v3 10/10] backports: add defconfig for wwan device drivers
-References: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+In-Reply-To: <20130801174749.GC10904@shaftnet.org>
+References: <1375338204-2021-8-git-send-email-sujith@msujith.org>
+ <1375370826-1387-1-git-send-email-sujith@msujith.org> <51FA8ECD.7070401@lenbrook.com>
+ <20130801174749.GC10904@shaftnet.org>
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+Date: Thu, 1 Aug 2013 12:03:08 -0700
+Message-ID: <CAB=NE6XqfKeddOSu=my3JOZDvg7nQtacZU6o4VeZXTZSLAAEnQ@mail.gmail.com> (sfid-20130801_210335_013281_91C7F445)
+Subject: Re: cross compile backports?
+To: Solomon Peachy <pizza@shaftnet.org>
+Cc: Jonathan Bagg <jbagg@lenbrook.com>,
+	linux-wireless <linux-wireless@vger.kernel.org>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
----
- backport/defconfigs/wwan | 6 ++++++
- 1 file changed, 6 insertions(+)
- create mode 100644 backport/defconfigs/wwan
+On Thu, Aug 1, 2013 at 10:47 AM, Solomon Peachy <pizza@shaftnet.org> wrote:
+> On Thu, Aug 01, 2013 at 12:37:33PM -0400, Jonathan Bagg wrote:
+>> I've been cross compiling compat-wireless and now I'm trying
+>> backports.  It looks like conf.c and zconf.tab.c are being compiled
+>> as arm and then the build process is trying to run conf on my x86
+>> host.  Results using the below make parameters I was using for
+>> compat-wireless......
+>
+> Howdy.  :)
+>
+> (btw, I'm CC'ing the backports mailing list, which is a better place to
+>  ask these sorts of questions)
+>
+> I found that the backports cross-compile process worked much the same
+> way as building compat-wireless.  This is what I'm doing currently in my
+> build script:  (This is using a backports package generated last night
+> using the backports git HEAD code with the cw1200 driver integrated)
+>
+>  set -a
+>  CROSS_COMPILE=${CROSS_COMPILE}
+>  ARCH=${TARGET_CPU}
+>  KLIB_BUILD=${DEV_PATH}/${LINUX_DIR}
+>  KLIB=${TARGET_ROOT_ON_HOST}
+>  set +a
+>  make oldconfig  # menuconfig worked here too
+>  make
+>  make install
+>
+> That said, the 'make install' target isn't currently sane for
+> cross-builds due to the bacport_firmware_install script not respecting
+> prefixes.  I just commented that script (and a few others like initrd
+> updates) out of the Makefiles, and I had a successful build/install.
 
-diff --git a/backport/defconfigs/wwan b/backport/defconfigs/wwan
-new file mode 100644
-index 0000000..5b4d2e7
---- /dev/null
-+++ b/backport/defconfigs/wwan
-@@ -0,0 +1,6 @@
-+CPTCFG_USB_USBNET=m
-+CPTCFG_USB_NET_CDC_NCM=m
-+CPTCFG_USB_NET_CDC_MBIM=m
-+CPTCFG_USB_NET_QMI_WWAN=m
-+CPTCFG_USB_SIERRA_NET=m
-+CPTCFG_USB_WDM=m
--- 
-1.8.1.2
+Thanks, now:
 
+https://backports.wiki.kernel.org/index.php/Documentation#Cross_compiling
 
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
+Patches welcome to help improve the cross compile install target.
 
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
+  Luis
