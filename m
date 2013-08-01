@@ -1,87 +1,84 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:37602 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933530Ab3HGWyB (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 7 Aug 2013 18:54:01 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 07/10] backports: add hid log functions
-Date: Thu,  8 Aug 2013 00:53:22 +0200
-Message-Id: <1375916005-16411-8-git-send-email-hauke@hauke-m.de> (sfid-20130808_005402_610701_01B9AC7B)
-In-Reply-To: <1375916005-16411-1-git-send-email-hauke@hauke-m.de>
-References: <1375916005-16411-1-git-send-email-hauke@hauke-m.de>
+Received: from mxz.fh-kl.de ([143.93.17.66]:49815 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755891Ab3HAQAn (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 1 Aug 2013 12:00:43 -0400
+Message-ID: <51FA8625.9050705@fh-kl.de> (sfid-20130801_180045_211427_F252334C)
+Date: Thu, 1 Aug 2013 18:00:37 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [RFC v3 6/9] backports: update enum usb_device_speed with USB_SPEED_SUPER
+References: <cover.1375372668.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1375372668.git.patrick.ziegler@fh-kl.de>
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This adds some hid log functions like hid_warn().
+USB_SPEED_SUPER is missing for kernel versions < 2.6.30 but used by uvc_video and
+usbnet.
 
-This backports the following commit:
-commit 4291ee305e9bb0699504a66f0e2b7aefcf0512a5
-Author: Joe Perches <joe@perches.com>
-Date:   Thu Dec 9 19:29:03 2010 -0800
-
-    HID: Add and use hid_<level>: dev_<level> equivalents
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 ---
- backport/backport-include/linux/hid.h |   45 +++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ backport/backport-include/linux/usb/ch9.h | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/backport/backport-include/linux/hid.h b/backport/backport-include/linux/hid.h
-index 22ff6f1..2cae9b7 100644
---- a/backport/backport-include/linux/hid.h
-+++ b/backport/backport-include/linux/hid.h
-@@ -34,4 +34,49 @@ extern bool hid_ignore(struct hid_device *);
- 	.bus = BUS_BLUETOOTH, .vendor = (ven), .product = (prod)
- #endif
+diff --git a/backport/backport-include/linux/usb/ch9.h b/backport/backport-include/linux/usb/ch9.h
+index 252a6f1..40d5d3f 100644
+--- a/backport/backport-include/linux/usb/ch9.h
++++ b/backport/backport-include/linux/usb/ch9.h
+@@ -1,9 +1,31 @@
+ #ifndef __BACKPORT__LINUX_USB_CH9_H
+ #define __BACKPORT__LINUX_USB_CH9_H
  
-+#ifndef hid_printk
-+#define hid_printk(level, hid, fmt, arg...)		\
-+	dev_printk(level, &(hid)->dev, fmt, ##arg)
-+#endif
+-#include_next <linux/usb/ch9.h>
+ #include <linux/version.h>
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
++#define usb_device_speed old_usb_device_speed
++#define USB_SPEED_UNKNOWN OLD_USB_SPEED_UNKNOWN
++#define USB_SPEED_LOW OLD_USB_SPEED_LOW
++#define USB_SPEED_FULL OLD_USB_SPEED_FULL
++#define USB_SPEED_HIGH OLD_USB_SPEED_HIGH
++#include_next <linux/usb/ch9.h>
++#undef usb_device_speed
++#undef USB_SPEED_UNKNOWN
++#undef USB_SPEED_LOW
++#undef USB_SPEED_FULL
++#undef USB_SPEED_HIGH
++enum usb_device_speed {
++	USB_SPEED_UNKNOWN = 0,          /* enumerating */
++	USB_SPEED_LOW, USB_SPEED_FULL,      /* usb 1.1 */
++	USB_SPEED_HIGH,             /* usb 2.0 */
++	USB_SPEED_WIRELESS,         /* wireless (usb 2.5) */
++	USB_SPEED_SUPER,            /* usb 3.0 */
++};
++#else
++#include_next <linux/usb/ch9.h>
++#endif /* < 2.6.30 */
 +
-+#ifndef hid_emerg
-+#define hid_emerg(hid, fmt, arg...)			\
-+	dev_emerg(&(hid)->dev, fmt, ##arg)
-+#endif
-+
-+#ifndef hid_crit
-+#define hid_crit(hid, fmt, arg...)			\
-+	dev_crit(&(hid)->dev, fmt, ##arg)
-+#endif
-+
-+#ifndef hid_alert
-+#define hid_alert(hid, fmt, arg...)			\
-+	dev_alert(&(hid)->dev, fmt, ##arg)
-+#endif
-+
-+#ifndef hid_err
-+#define hid_err(hid, fmt, arg...)			\
-+	dev_err(&(hid)->dev, fmt, ##arg)
-+#endif
-+
-+#ifndef hid_notice
-+#define hid_notice(hid, fmt, arg...)			\
-+	dev_notice(&(hid)->dev, fmt, ##arg)
-+#endif
-+
-+#ifndef hid_warn
-+#define hid_warn(hid, fmt, arg...)			\
-+	dev_warn(&(hid)->dev, fmt, ##arg)
-+#endif
-+
-+#ifndef hid_info
-+#define hid_info(hid, fmt, arg...)			\
-+	dev_info(&(hid)->dev, fmt, ##arg)
-+#endif
-+
-+#ifndef hid_dbg
-+#define hid_dbg(hid, fmt, arg...)			\
-+	dev_dbg(&(hid)->dev, fmt, ##arg)
-+#endif
-+
- #endif /* __BACKPORT_HID_H */
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
+ #include <linux/types.h>    /* __u8 etc */
+ #include <asm/byteorder.h>  /* le16_to_cpu */
 -- 
-1.7.10.4
+1.8.1.2
 
+
+
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
