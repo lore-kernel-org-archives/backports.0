@@ -1,78 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:52409 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752860Ab3HOMkG (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 15 Aug 2013 08:40:06 -0400
-Message-ID: <520CCC20.6060806@fh-kl.de> (sfid-20130815_144008_962729_EB568663)
-Date: Thu, 15 Aug 2013 14:40:00 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Received: from mail-la0-f48.google.com ([209.85.215.48]:53352 "EHLO
+	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753087Ab3HAToF (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 1 Aug 2013 15:44:05 -0400
+Received: by mail-la0-f48.google.com with SMTP id hi8so1729468lab.35
+        for <backports@vger.kernel.org>; Thu, 01 Aug 2013 12:44:03 -0700 (PDT)
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [PATCH v3 01/10] backports: fix build errors for old kernel versions
- without PCI support
-References: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+In-Reply-To: <007b01ce8eee$cca32e50$65e98af0$@gmail.com>
+References: <000d01ce8e07$80a36430$81ea2c90$@gmail.com> <CAB=NE6WLPxLpGWOP6fj_FEWk_AA4Tz7UQay1tPxsMJfquRnSmg@mail.gmail.com>
+ <007b01ce8eee$cca32e50$65e98af0$@gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Thu, 1 Aug 2013 12:43:43 -0700
+Message-ID: <CAB=NE6Xg_MHwZAaZHHkL841BHJxFzEeu2oMZJdXpqYoGSHjSgQ@mail.gmail.com> (sfid-20130801_214407_953270_876B32B8)
+Subject: Re: Bug with the website: links are broken
+To: Chris R <chrisrfq@gmail.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
----
- backport/compat/compat-2.6.25.c | 2 ++
- backport/compat/compat-2.6.28.c | 1 +
- 2 files changed, 3 insertions(+)
+On Thu, Aug 1, 2013 at 12:39 PM, Chris R <chrisrfq@gmail.com> wrote:
+>> Its back up...
+>
+> Thanks very much!
+>
+>> ...that page has ancient releases, why are you still using them?
+>
+> I'm stuck at kernel version 2.6.37.
 
-diff --git a/backport/compat/compat-2.6.25.c b/backport/compat/compat-2.6.25.c
-index b3597ea..37407a4 100644
---- a/backport/compat/compat-2.6.25.c
-+++ b/backport/compat/compat-2.6.25.c
-@@ -210,6 +210,7 @@ EXPORT_SYMBOL_GPL(sg_alloc_table);
-  * to it. We implement a sloppy work around for backporting
-  * this.
-  */
-+#ifdef CONFIG_PCI
- int pci_enable_device_mem(struct pci_dev *dev)
- {
- 	int bars = pci_select_bars(dev, IORESOURCE_MEM);
-@@ -217,6 +218,7 @@ int pci_enable_device_mem(struct pci_dev *dev)
- 	return pci_enable_device_bars(dev, bars);
- }
- EXPORT_SYMBOL_GPL(pci_enable_device_mem);
-+#endif
- 
- /**
-  * The following things are out of ./lib/vsprintf.c
-diff --git a/backport/compat/compat-2.6.28.c b/backport/compat/compat-2.6.28.c
-index e47626b..2ff6b1e 100644
---- a/backport/compat/compat-2.6.28.c
-+++ b/backport/compat/compat-2.6.28.c
-@@ -12,6 +12,7 @@
- #include <linux/usb.h>
- #include <linux/tty.h>
- #include <linux/skbuff.h>
-+#include <linux/pci.h>
- #include <asm/poll.h>
- 
- /* 2.6.28 compat code goes here */
--- 
-1.8.1.2
+So backports is designed so that you use a backports-3.11 say on
+2.6.37. That is you don't have to use a backport-3.10 only on 3.10 in
+fact that'd be pointless. We backport functionality from a kernel as a
+base and that base is used as the version name for the release.
 
+A few folks have reported misunderstanding this as well so I'm curious
+apart from the documentation we have on the wiki [0] what else can we
+do to help with this?
 
+[0] https://backports.wiki.kernel.org
 
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
+  Luis
