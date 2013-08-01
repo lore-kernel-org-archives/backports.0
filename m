@@ -1,40 +1,61 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:35805 "EHLO mxz.fh-kl.de"
+Received: from mxz.fh-kl.de ([143.93.17.66]:49763 "EHLO mxz.fh-kl.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756391Ab3HMGyz (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 13 Aug 2013 02:54:55 -0400
-Message-ID: <5209D838.6040009@fh-kl.de> (sfid-20130813_085502_530017_90ED0E56)
-Date: Tue, 13 Aug 2013 08:54:48 +0200
+	id S1755957Ab3HAP7j (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 1 Aug 2013 11:59:39 -0400
+Message-ID: <51FA85E6.4050503@fh-kl.de> (sfid-20130801_175941_227919_291AB349)
+Date: Thu, 1 Aug 2013 17:59:34 +0200
 From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-CC: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	<backports@vger.kernel.org>
-Subject: Re: [PATCH 0/9] backports: add wwan device drivers
-References: <51FB9810.706@fh-kl.de> <20130813012431.GC6439@garbanzo.do-not-panic.com>
-In-Reply-To: <20130813012431.GC6439@garbanzo.do-not-panic.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [RFC v3 4/9] backports: add usb_translate_errors()
+References: <cover.1375372668.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1375372668.git.patrick.ziegler@fh-kl.de>
 Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+This inline function is missing for version < 2.6.39 but required by em28xx
+and cdc-wdm device driver.
+
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+---
+ backport/backport-include/linux/usb.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
+index 368da6c..49a5762 100644
+--- a/backport/backport-include/linux/usb.h
++++ b/backport/backport-include/linux/usb.h
+@@ -145,4 +145,21 @@ extern void usb_unpoison_urb(struct urb *urb);
+ extern int usb_anchor_empty(struct usb_anchor *anchor);
+ #endif /* 2.6.23-2.6.27 */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,39)
++#if defined(CONFIG_USB) || defined(CONFIG_USB_MODULE)
++static inline int usb_translate_errors(int error_code)
++{
++	switch (error_code) {
++	case 0:
++	case -ENOMEM:
++	case -ENODEV:
++	case -EOPNOTSUPP:
++		return error_code;
++	default:
++		return -EIO;
++	}
++}
++#endif /* CONFIG_USB */
++#endif /* < 2.6.39 */
++
+ #endif /* __BACKPORT_USB_H */
+-- 
+1.8.1.2
 
 
 
-On 13.08.2013 03:24, Luis R. Rodriguez wrote:
-> On Fri, Aug 02, 2013 at 01:29:20PM +0200, Patrick Ziegler wrote:
->> This adds wwan drivers for mobile broadband devices.
->> Patches 1 to 8 add missing stuff required for the wwan drivers.
->> Patch 9 adds device drivers.
-> 
-> Thanks! Any chance you can respin addressing Hauke's comments?
-> 
-Yep I will do it today, sorry for the missing responses to his comments.
-
-Patrick
-
-- -- 
+-- 
 Dipl.-Inf. (FH) Patrick Ziegler
 
 University Of Applied Sciences
@@ -50,11 +71,3 @@ PGP KeyID 0xB4796B8C
 
 http://www.fh-kl.de
 http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iEYEARECAAYFAlIJ2DEACgkQzsuA1bR5a4wHrACfaWujbhEKV3lR5Iw94cGnvL7V
-k68Ani8wGNmNuz7Z/JIGgp8lCJm8/mWh
-=Z4sj
------END PGP SIGNATURE-----
