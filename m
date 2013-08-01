@@ -1,59 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:52446 "EHLO mxz.fh-kl.de"
+Received: from mxz.fh-kl.de ([143.93.17.66]:49777 "EHLO mxz.fh-kl.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752860Ab3HOMkc (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 15 Aug 2013 08:40:32 -0400
-Message-ID: <520CCC3A.1050309@fh-kl.de> (sfid-20130815_144034_097616_7F8AF0D4)
-Date: Thu, 15 Aug 2013 14:40:26 +0200
+	id S1755957Ab3HAP77 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 1 Aug 2013 11:59:59 -0400
+Message-ID: <51FA85F9.9000402@fh-kl.de> (sfid-20130801_180000_234975_44C0905F)
+Date: Thu, 1 Aug 2013 17:59:53 +0200
 From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 MIME-Version: 1.0
 To: "Luis R. Rodriguez" <mcgrof@kernel.org>
 CC: <backports@vger.kernel.org>
-Subject: [PATCH v3 05/10] backports: add usb_endpoint_maxp()
-References: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
+Subject: [RFC v3 7/9] backports: include headers directly if math64 header
+ is missing
+References: <cover.1375372668.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1375372668.git.patrick.ziegler@fh-kl.de>
 Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This function is missing for kernel version < 3.2 but required by uvc_video
-and cdc-wdm device drivers.
+If math64 header is not available, include div64.h directly. It is required for
+do_div() that is used inside the backport version of math64.h.
 
 Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 ---
- backport/backport-include/linux/usb/ch9.h | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 backport/backport-include/linux/usb/ch9.h
+ backport/backport-include/linux/math64.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/backport/backport-include/linux/usb/ch9.h b/backport/backport-include/linux/usb/ch9.h
-new file mode 100644
-index 0000000..252a6f1
---- /dev/null
-+++ b/backport/backport-include/linux/usb/ch9.h
-@@ -0,0 +1,23 @@
-+#ifndef __BACKPORT__LINUX_USB_CH9_H
-+#define __BACKPORT__LINUX_USB_CH9_H
-+
-+#include_next <linux/usb/ch9.h>
-+#include <linux/version.h>
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
-+#include <linux/types.h>    /* __u8 etc */
-+#include <asm/byteorder.h>  /* le16_to_cpu */
-+
-+/**
-+ * usb_endpoint_maxp - get endpoint's max packet size
-+ * @epd: endpoint to be checked
-+ *
-+ * Returns @epd's max packet
-+ */
-+static inline int usb_endpoint_maxp(const struct usb_endpoint_descriptor *epd)
-+{
-+	return __le16_to_cpu(epd->wMaxPacketSize);
-+}
-+#endif /* < 3.2 */
-+
-+#endif /* __BACKPORT__LINUX_USB_CH9_H */
+diff --git a/backport/backport-include/linux/math64.h b/backport/backport-include/linux/math64.h
+index 7f3a81b..775c2d3 100644
+--- a/backport/backport-include/linux/math64.h
++++ b/backport/backport-include/linux/math64.h
+@@ -5,6 +5,9 @@
+ 
+ #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,25))
+ #include_next <linux/math64.h>
++#else
++#include <linux/types.h>
++#include <asm/div64.h>
+ #endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,25)) */
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)
 -- 
 1.8.1.2
 
