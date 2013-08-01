@@ -1,69 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:55855 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759447Ab3HNISn (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 14 Aug 2013 04:18:43 -0400
-Message-ID: <520B3D5C.8020805@fh-kl.de> (sfid-20130814_101844_713139_AEE4573A)
-Date: Wed, 14 Aug 2013 10:18:36 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [PATCH v2 8/9] backports: define phys_addr_t for ARM on kernel version
- < 2.6.25
-References: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:40825
+	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1756303Ab3HAOjf (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 1 Aug 2013 10:39:35 -0400
+From: Solomon Peachy <pizza@shaftnet.org>
+To: backports@vger.kernel.org
+Cc: Solomon Peachy <pizza@shaftnet.org>
+Subject: [PATCH 1/2] backports:  Include drivers/net/wireless/cw1200
+Date: Thu,  1 Aug 2013 10:39:25 -0400
+Message-Id: <1375367966-10863-1-git-send-email-pizza@shaftnet.org> (sfid-20130801_163937_315534_89267ABE)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-phys_addr_t is not defined on ARM systems if kernel version < 2.6.25.
-
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
 ---
- backport/backport-include/linux/types.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ copy-list | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/backport/backport-include/linux/types.h b/backport/backport-include/linux/types.h
-index 504a615..0aadc80 100644
---- a/backport/backport-include/linux/types.h
-+++ b/backport/backport-include/linux/types.h
-@@ -4,7 +4,7 @@
- #include <linux/version.h>
+diff --git a/copy-list b/copy-list
+index aaf5ae9..a227f30 100644
+--- a/copy-list
++++ b/copy-list
+@@ -28,7 +28,7 @@ include/linux/usb/usbnet.h
+ include/linux/usb/rndis_host.h
+ include/linux/spi/libertas_spi.h
+ include/linux/platform_data/brcmfmac-sdio.h
+-
++include/linux/platform_data/net-cw1200.h
+ include/uapi/linux/nl80211.h
  
- #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25)
--#if defined(CONFIG_X86) || defined(CONFIG_X86_64)
-+#if defined(CONFIG_X86) || defined(CONFIG_X86_64) || defined(CONFIG_ARM)
- 
- #if defined(CONFIG_64BIT) || defined(CONFIG_X86_PAE) || defined(CONFIG_PHYS_64BIT)
- typedef u64 phys_addr_t;
-@@ -12,7 +12,7 @@ typedef u64 phys_addr_t;
- typedef u32 phys_addr_t;
- #endif
- 
--#endif /* x86 */
-+#endif /* x86 || ARM */
- #elif LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28) /* < 2.6.25 */
- 
- #if defined(CONFIG_X86) || defined(CONFIG_X86_64) || defined(CONFIG_PPC)
+ include/net/cfg80211.h
+@@ -51,6 +51,7 @@ include/linux/bcma/
+ drivers/net/wireless/b43/
+ drivers/net/wireless/b43legacy/
+ drivers/net/wireless/brcm80211/
++drivers/net/wireless/cw1200/
+ drivers/net/wireless/iwlegacy/
+ drivers/net/wireless/iwlwifi/
+ drivers/net/wireless/rt2x00/
 -- 
-1.8.1.2
+1.8.3.1
 
-
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
