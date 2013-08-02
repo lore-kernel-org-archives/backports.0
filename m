@@ -1,53 +1,76 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f52.google.com ([209.85.160.52]:57251 "EHLO
-	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755057Ab3GAUz0 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 1 Jul 2013 16:55:26 -0400
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: linux-wireless@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 0/3] backports: backport alx
-Date: Mon,  1 Jul 2013 13:55:17 -0700
-Message-Id: <1372712120-16606-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130701_225528_514420_BAF51B00)
+Received: from mxz.fh-kl.de ([143.93.17.66]:32773 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750936Ab3HBL3h (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 2 Aug 2013 07:29:37 -0400
+Message-ID: <51FB981B.6010502@fh-kl.de> (sfid-20130802_132938_321298_FA893670)
+Date: Fri, 2 Aug 2013 13:29:31 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [PATCH 1/9] backports: fix build errors for old kernel versions without
+ PCI support
+References: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+---
+ backport/compat/compat-2.6.25.c | 4 ++++
+ backport/compat/compat-2.6.28.c | 1 +
+ 2 files changed, 5 insertions(+)
 
-Johannes threw alx upstream, this fixes the backport based on
-the new shiny code.
+diff --git a/backport/compat/compat-2.6.25.c b/backport/compat/compat-2.6.25.c
+index b3597ea..169a555 100644
+--- a/backport/compat/compat-2.6.25.c
++++ b/backport/compat/compat-2.6.25.c
+@@ -212,9 +212,13 @@ EXPORT_SYMBOL_GPL(sg_alloc_table);
+  */
+ int pci_enable_device_mem(struct pci_dev *dev)
+ {
++#ifdef CONFIG_PCI
+ 	int bars = pci_select_bars(dev, IORESOURCE_MEM);
+ 
+ 	return pci_enable_device_bars(dev, bars);
++#else
++	return 0;
++#endif
+ }
+ EXPORT_SYMBOL_GPL(pci_enable_device_mem);
+ 
+diff --git a/backport/compat/compat-2.6.28.c b/backport/compat/compat-2.6.28.c
+index e47626b..2ff6b1e 100644
+--- a/backport/compat/compat-2.6.28.c
++++ b/backport/compat/compat-2.6.28.c
+@@ -12,6 +12,7 @@
+ #include <linux/usb.h>
+ #include <linux/tty.h>
+ #include <linux/skbuff.h>
++#include <linux/pci.h>
+ #include <asm/poll.h>
+ 
+ /* 2.6.28 compat code goes here */
+-- 
+1.8.1.2
 
-Luis R. Rodriguez (3):
-  backports: remove alx extra patch
-  backports: add new alx upstream backport
-  backports: add SPEED_UNKNOWN and DUPLEX_UNKNOWN
 
- backport/backport-include/linux/ethtool.h          |    8 ++
- .../network/0001-netdev_ops/alx.patch              |   11 ++
- .../network/0001-netdev_ops/mwifiex.patch          |    2 +-
- .../network/0007-pci_dev_dev_flags/INFO            |   28 +++++
- .../network/0007-pci_dev_dev_flags/alx.patch       |   13 +++
- .../drivers_net_ethernet_atheros_alx_main.patch    |   24 ++++
- .../drivers_net_ethernet_atheros_alx_main.patch    |   14 +++
- .../drivers_net_ethernet_atheros_alx_main.patch    |   58 +++++++++
- .../drivers_net_ethernet_atheros_alx_main.patch    |   13 +++
- ...drivers_net_wireless_rtlwifi_rtl8192cu_sw.patch |    2 +-
- .../network/0001-backport-alx/alx.patch            |  123 --------------------
- .../network/0002-alx-make-kconfig/alx.patch        |   32 -----
- .../0003-alx-deactivate-loopback-test/alx.patch    |   25 ----
- 13 files changed, 171 insertions(+), 182 deletions(-)
- create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/alx.patch
- create mode 100644 patches/collateral-evolutions/network/0007-pci_dev_dev_flags/INFO
- create mode 100644 patches/collateral-evolutions/network/0007-pci_dev_dev_flags/alx.patch
- create mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_alx_main.patch
- create mode 100644 patches/collateral-evolutions/network/25-multicast-list_head/drivers_net_ethernet_atheros_alx_main.patch
- create mode 100644 patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_alx_main.patch
- create mode 100644 patches/collateral-evolutions/network/61-netdev-addr_assign_type/drivers_net_ethernet_atheros_alx_main.patch
- delete mode 100644 patches/unified-drivers/network/0001-backport-alx/alx.patch
- delete mode 100644 patches/unified-drivers/network/0002-alx-make-kconfig/alx.patch
- delete mode 100644 patches/unified-drivers/network/0003-alx-deactivate-loopback-test/alx.patch
 
 -- 
-1.7.10.4
+Dipl.-Inf. (FH) Patrick Ziegler
 
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
