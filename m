@@ -1,49 +1,73 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.lenbrook.com ([216.94.44.85]:24870 "EHLO mail.lenbrook.com"
+Received: from mxz.fh-kl.de ([143.93.17.66]:32795 "EHLO mxz.fh-kl.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753087Ab3HAT0w (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 1 Aug 2013 15:26:52 -0400
-Message-ID: <51FAB45A.9080306@lenbrook.com> (sfid-20130801_212700_221668_DA9306C0)
-Date: Thu, 01 Aug 2013 15:17:46 -0400
-From: Jonathan Bagg <jbagg@lenbrook.com>
+	id S1750936Ab3HBL3w (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 2 Aug 2013 07:29:52 -0400
+Message-ID: <51FB982D.9030506@fh-kl.de> (sfid-20130802_132953_927833_DF28B127)
+Date: Fri, 2 Aug 2013 13:29:49 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 MIME-Version: 1.0
-To: backports@vger.kernel.org
-CC: Solomon Peachy <pizza@shaftnet.org>, linux-wireless@vger.kernel.org
-Subject: Re: cross compile backports with LTIB
-References: <1375338204-2021-8-git-send-email-sujith@msujith.org> <1375370826-1387-1-git-send-email-sujith@msujith.org> <51FA8ECD.7070401@lenbrook.com> <20130801174749.GC10904@shaftnet.org> <51FAB31F.6050207@lenbrook.com>
-In-Reply-To: <51FAB31F.6050207@lenbrook.com>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [PATCH 4/9] backports: add usb_translate_errors()
+References: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 13-08-01 03:12 PM, Jonathan Bagg wrote:
-> On 13-08-01 01:47 PM, Solomon Peachy wrote:
->> On Thu, Aug 01, 2013 at 12:37:33PM -0400, Jonathan Bagg wrote:
->>> I've been cross compiling compat-wireless and now I'm trying
->>> backports.  It looks like conf.c and zconf.tab.c are being compiled
->>> as arm and then the build process is trying to run conf on my x86
->>> host.  Results using the below make parameters I was using for
->>> compat-wireless......
-> Learned some things....Problem was LTIB (ltib = Freescale tool) 
-> environment.  Outside of LTIB, backports cross compiles fine.  To get 
-> backports happy in LTIB need to use UNSPOOF/SPOOF_PATH to switch 
-> between host and cross environment....
->
-(this is for the LTIBs spec file for backports = 
-dist/lfs-5.1/backports/backports.spec - forgot to mention in previous post)
-> %Build
-> export PATH=$UNSPOOF_PATH
->
-> make defconfig-cw1200 make prefix=%{_prefix} 
-> CROSS_COMPILE=${TOOLCHAIN_PATH}/bin/${TOOLCHAIN_PREFIX} ARCH=$LINTARCH 
-> KLIB=${TOP}/rootfs/lib/modules/%{kversion} 
-> KLIB_BUILD=${TOP}/rpm/BUILD/linux
->
-> export PATH=$SPOOF_PATH
->
-> make prefix=%{_prefix} 
-> CROSS_COMPILE=${TOOLCHAIN_PATH}/bin/${TOOLCHAIN_PREFIX} ARCH=$LINTARCH 
-> KLIB=${TOP}/rootfs/lib/modules/%{kversion} 
-> KLIB_BUILD=${TOP}/rpm/BUILD/linux
->
-> Jon 
+This inline function is missing for version < 2.6.39 but required by em28xx
+and cdc-wdm device driver.
+
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+---
+ backport/backport-include/linux/usb.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
+index 368da6c..49a5762 100644
+--- a/backport/backport-include/linux/usb.h
++++ b/backport/backport-include/linux/usb.h
+@@ -145,4 +145,21 @@ extern void usb_unpoison_urb(struct urb *urb);
+ extern int usb_anchor_empty(struct usb_anchor *anchor);
+ #endif /* 2.6.23-2.6.27 */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,39)
++#if defined(CONFIG_USB) || defined(CONFIG_USB_MODULE)
++static inline int usb_translate_errors(int error_code)
++{
++	switch (error_code) {
++	case 0:
++	case -ENOMEM:
++	case -ENODEV:
++	case -EOPNOTSUPP:
++		return error_code;
++	default:
++		return -EIO;
++	}
++}
++#endif /* CONFIG_USB */
++#endif /* < 2.6.39 */
++
+ #endif /* __BACKPORT_USB_H */
+-- 
+1.8.1.2
+
+
+
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
