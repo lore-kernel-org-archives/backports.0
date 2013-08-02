@@ -1,66 +1,128 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:60742 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755254Ab3HRXEa (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 18 Aug 2013 19:04:30 -0400
-Message-ID: <521152F7.3040400@hauke-m.de> (sfid-20130819_010432_556014_982420D1)
-Date: Mon, 19 Aug 2013 01:04:23 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mxz.fh-kl.de ([143.93.17.66]:32778 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751154Ab3HBL3n (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 2 Aug 2013 07:29:43 -0400
+Message-ID: <51FB9821.2060302@fh-kl.de> (sfid-20130802_132944_883267_E49ACC0C)
+Date: Fri, 2 Aug 2013 13:29:37 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 MIME-Version: 1.0
-To: Arik Nemtsov <arik@wizery.com>
-CC: mcgrof@gmail.com, backports@vger.kernel.org
-Subject: Re: [PATCH 02/13] backports: fix conditional include of arch_phys_wc_add()
-References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de> <1376674003-5801-2-git-send-email-hauke@hauke-m.de> <CA+XVXfdc9baMQzATby4Hs6ivCgxegyYTzrmosQMC6Hqdft19=g@mail.gmail.com> <CA+XVXfeC1oWU6RiE9BShwsHj8NdA68KiPeW0dRZb_rkc4wfeNw@mail.gmail.com>
-In-Reply-To: <CA+XVXfeC1oWU6RiE9BShwsHj8NdA68KiPeW0dRZb_rkc4wfeNw@mail.gmail.com>
-Content-Type: text/plain; charset=ISO-8859-1
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [PATCH 2/9] backports: add eth_prepare_mac_addr_change() and eth_commit_mac_addr_change()
+References: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 08/18/2013 09:05 AM, Arik Nemtsov wrote:
-> On Fri, Aug 16, 2013 at 10:32 PM, Arik Nemtsov <arik@wizery.com> wrote:
->> On Fri, Aug 16, 2013 at 8:26 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
->>> This fixes a problem introduced in this commit:
->>> commit c871780b5afa182878884bf5ccd8df4817a2660f
->>> Author: Arik Nemtsov <arik@wizery.com>
->>> Date:   Wed Aug 14 10:48:05 2013 +0300
->>>
->>>     backports: rename some mem functions to not break custom kernels
->>>
->>> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
->>> Cc: Arik Nemtsov <arik@wizery.com>
->>
->> Thanks for the fix (again). Indeed it was stupid of me to make the
->> #ifndef redundant.
->> I'll test it on my setup next week.
-> 
-> Ok. This doesn't work for me, and it's pretty obvious why that I look
-> at the code. I'm using a custom 3.9 kernel that contains the patch
-> adding "arch_phys_wc_add".
-> 
-> If indeed "arch_phys_wc_add" is defined (as is my case), we don't
-> enter the clause at all and the LINUX_BACKPORT() definition doesn't
-> happen.
-> But the code in backport-3.11.c does the following anyway:
-> 
-> EXPORT_SYMBOL_GPL(arch_phys_wc_add);
-> 
-> So we still get the exported symbol "arch_phys_wc_add", clashing with
-> the kernel's.
-> Maybe some new define should be added to the backports header file to
-> control when backport-3.11.c exports the symbol?
-> 
-> Something in io.h along the lines of:
-> 
-> #ifndef arch_phys_wc_add
-> #define BACKPORTS_DEFINE_arch_phys_wc_add
-> ...
-> 
-> and then condition the symbol export in the .c file on
-> BACKPORTS_DEFINE_arch_phys_wc_add.
-> 
-> Arik
+These functions are required by qmi_wwan device driver.
 
-Thanks for testing, I will send a new version.
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+---
+ backport/backport-include/linux/etherdevice.h |  7 ++++++
+ backport/backport-include/linux/if.h          |  4 ++++
+ backport/compat/compat-3.9.c                  | 33 +++++++++++++++++++++++++++
+ 3 files changed, 44 insertions(+)
 
-Hauke
+diff --git a/backport/backport-include/linux/etherdevice.h b/backport/backport-include/linux/etherdevice.h
+index 5c82fc4..b6617f0 100644
+--- a/backport/backport-include/linux/etherdevice.h
++++ b/backport/backport-include/linux/etherdevice.h
+@@ -114,6 +114,13 @@ static inline int is_unicast_ether_addr(const u8 *addr)
+ }
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
++#define eth_prepare_mac_addr_change LINUX_BACKPORT(eth_prepare_mac_addr_change)
++extern int eth_prepare_mac_addr_change(struct net_device *dev, void *p);
++#define eth_commit_mac_addr_change LINUX_BACKPORT(eth_commit_mac_addr_change)
++extern void eth_commit_mac_addr_change(struct net_device *dev, void *p);
++#endif /* < 3.9 */
++
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29)
+ #define eth_mac_addr LINUX_BACKPORT(eth_mac_addr)
+ extern int eth_mac_addr(struct net_device *dev, void *p);
+diff --git a/backport/backport-include/linux/if.h b/backport/backport-include/linux/if.h
+index 7926082..8f85b83 100644
+--- a/backport/backport-include/linux/if.h
++++ b/backport/backport-include/linux/if.h
+@@ -29,4 +29,8 @@
+ #define IFF_TX_SKB_SHARING	0x10000
+ #endif
+ 
++#ifndef IFF_LIVE_ADDR_CHANGE
++#define IFF_LIVE_ADDR_CHANGE 0x100000
++#endif
++
+ #endif	/* _BACKPORT_LINUX_IF_H */
+diff --git a/backport/compat/compat-3.9.c b/backport/compat/compat-3.9.c
+index 03f3af8..ba8e3cf 100644
+--- a/backport/compat/compat-3.9.c
++++ b/backport/compat/compat-3.9.c
+@@ -12,6 +12,9 @@
+ #include <linux/scatterlist.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
++#include <linux/netdevice.h>
++#include <linux/if.h>
++#include <linux/if_ether.h>
+ 
+ #ifdef __sg_page_iter_next
+ 
+@@ -64,4 +67,34 @@ void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res)
+ }
+ EXPORT_SYMBOL_GPL(devm_ioremap_resource);
+ 
++/**
++ * eth_prepare_mac_addr_change - prepare for mac change
++ * @dev: network device
++ * @p: socket address
++ */
++int eth_prepare_mac_addr_change(struct net_device *dev, void *p)
++{
++	struct sockaddr *addr = p;
++
++	if (!(dev->priv_flags & IFF_LIVE_ADDR_CHANGE) && netif_running(dev))
++		return -EBUSY;
++	if (!is_valid_ether_addr(addr->sa_data))
++		return -EADDRNOTAVAIL;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(eth_prepare_mac_addr_change);
++
++/**
++ * eth_commit_mac_addr_change - commit mac change
++ * @dev: network device
++ * @p: socket address
++ */
++void eth_commit_mac_addr_change(struct net_device *dev, void *p)
++{
++	struct sockaddr *addr = p;
++
++	memcpy(dev->dev_addr, addr->sa_data, ETH_ALEN);
++}
++EXPORT_SYMBOL_GPL(eth_commit_mac_addr_change);
++
+ #endif /* __sg_page_iter_next */
+-- 
+1.8.1.2
 
+
+
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
