@@ -1,61 +1,64 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:37204 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751879Ab3H0WQo (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 27 Aug 2013 18:16:44 -0400
-Received: by mail-pa0-f50.google.com with SMTP id fb10so5350525pad.23
-        for <backports@vger.kernel.org>; Tue, 27 Aug 2013 15:16:44 -0700 (PDT)
-Date: Tue, 27 Aug 2013 15:26:05 -0700
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: backports@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH] backport: simplify #ifdefs in pci-aspm.h
-Message-ID: <20130827222604.GA22651@garbanzo.do-not-panic.com> (sfid-20130828_001646_884955_F2AE2EE3)
-References: <1377630060-14855-1-git-send-email-johannes@sipsolutions.net>
+Received: from mail.lenbrook.com ([216.94.44.85]:36376 "EHLO mail.lenbrook.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932769Ab3HGUdV (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 7 Aug 2013 16:33:21 -0400
+Message-ID: <5202AF0E.9010201@lenbrook.com> (sfid-20130807_223322_404420_CA68A7F6)
+Date: Wed, 07 Aug 2013 16:33:18 -0400
+From: Jonathan Bagg <jbagg@lenbrook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
-In-Reply-To: <1377630060-14855-1-git-send-email-johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Subject: Re: Issue reading kernel config
+References: <1375338204-2021-8-git-send-email-sujith@msujith.org> <1375370826-1387-1-git-send-email-sujith@msujith.org> <51FA8ECD.7070401@lenbrook.com> <20130801174749.GC10904@shaftnet.org> <51FAB31F.6050207@lenbrook.com> <5202A643.8080404@lenbrook.com>
+In-Reply-To: <5202A643.8080404@lenbrook.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+So I had a look at the Kconfig file and realised it isn't a kernel 
+config.  If I add
 
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+config BT
+     def_bool y
 
-On Tue, Aug 27, 2013 at 09:01:00PM +0200, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
->=20
-> Just use #else instead of two conditionals.
->=20
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+under the "# some hacks ..." section, I can enable BT drivers in 
+backports in the menuconfig.  So if a kconfig depends on an external 
+config, there is no way to feed in a kernel config to backports?  you 
+list external config under "# some hacks ..." section?
 
-Applied and pushed, thanks!
+Jon
 
-  Luis
 
---cNdxnHkX5QqsyA0e
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+On 13-08-07 03:55 PM, Jonathan Bagg wrote:
+> Hello,
+>
+> I am cross compiling backports successful using "alldefconfig".  I 
+> would like use menuconfig and have conf read in options from my kernel 
+> instead of the default.  (CONFIG_BT is not enabled in the default and 
+> I want to enable BT drivers in backports).  It looks like kconf/conf 
+> program is loading a kernel config from the root of backports called 
+> Kconfig.  When I replace this file with my kernel config (from 
+> 2.6.35-3) I get many....
+>
+> Kconfig:1967: syntax error
+> Kconfig:1966: unknown statement "CONFIG_CRC_ITU_T"
+> Kconfig:1967: unknown statement "CONFIG_CRC32"
+> Kconfig:1971: syntax error
+> Kconfig:1970: unknown statement "CONFIG_ZLIB_INFLATE"
+> Kconfig:1971: unknown statement "CONFIG_ZLIB_DEFLATE"
+> Kconfig:1972: unknown statement "CONFIG_LZO_COMPRESS"
+> Kconfig:1973: unknown statement "CONFIG_LZO_DECOMPRESS"
+> Kconfig:1974: unknown statement "CONFIG_GENERIC_ALLOCATOR"
+> Kconfig:1975: unknown statement "CONFIG_HAS_IOMEM"
+> Kconfig:1976: unknown statement "CONFIG_HAS_IOPORT"
+> Kconfig:1977: unknown statement "CONFIG_HAS_DMA"
+> Kconfig:1978: unknown statement "CONFIG_NLATTR"
+> make[1]: *** [menuconfig] Error 1
+> make: *** [menuconfig] Error 2
+>
+> What is the right way to do this?  I could add CONFIG_BT=y to the 
+> default Kconfig file, but that seems hackish.
+>
+> Jon
+>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSHSd8AAoJEKwtdpJg+MHGLgoQAJnSkKcO+CCXXd6Ytd2W66N3
-3BjjdT1SjYfyNKkD1A6AvhHZqdPBBCj6fMtPIhxNk1Z/gQ+J/KQZqJWG9glMKqMF
-ro1Z1zkFdEhUtR8WmEdm190R9sfTLxkNVa22ZuCZUrJvZ2YP2qL2SnQZ+E49zi9/
-VVL8K00FlSl0KeH4/IFsL17MPSa0STLN8jO3gt0c8/hMLC8gHtfyQ7FYMCJQPueV
-5U54oetZt49nThQUhv9CrP8HPk7NTtnkg71wxbCNO9aa40+SJEYT4qRdhweDCiyY
-sYQKIMBqU0/K5XnKkXuFSgVUPDuz1X6NPa5S2jzlIQkzBmCuBrgmEyR0vUyj7gjn
-wlmcYihzGMTdWwCwbqV2Sx1GGpR8ffVKQD4uQN9Nncj6egX/tGwdZv6QjDs6rYTG
-k37cBw1Wpqv+4Dd6TG+gFe8mvmV8oWdicCPt6hkKKkyFiiN/oEAA3aqsZEHeMJRB
-uybXluryjDrL+Fyju59D0iaTX6crIEmNRN8JSUiAIyOe6c/yFX87Y/luTwZAqNOn
-aZSg0av2eq9/Sf34N60Ax2ep+qdp3ufsAnf+14EFqHvXR3WEbWfuN5xltIc4f0+8
-62dBRqYgE773ydRIC3n5UhNZ6rfvqAAmVBGX03RDBrrC+B3+F0kEYOUPkF9BJghs
-/0hf4O+Q5eHb52JOrDw3
-=jEq9
------END PGP SIGNATURE-----
-
---cNdxnHkX5QqsyA0e--
