@@ -1,62 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:52462 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752860Ab3HOMkr (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 15 Aug 2013 08:40:47 -0400
-Message-ID: <520CCC49.2010609@fh-kl.de> (sfid-20130815_144049_053899_A40BACE5)
-Date: Thu, 15 Aug 2013 14:40:41 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [PATCH v3 07/10] backports: include headers directly if math64 header
- is missing
-References: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+Received: from server19320154104.serverpool.info ([193.201.54.104]:37610 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933490Ab3HGWyG (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 7 Aug 2013 18:54:06 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 09/10] backports: deactivate REGULATOR_WM8400
+Date: Thu,  8 Aug 2013 00:53:24 +0200
+Message-Id: <1375916005-16411-10-git-send-email-hauke@hauke-m.de> (sfid-20130808_005408_439164_42C4E907)
+In-Reply-To: <1375916005-16411-1-git-send-email-hauke@hauke-m.de>
+References: <1375916005-16411-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-If math64 header is not available, include div64.h directly. It is required for
-do_div() that is used inside the backport version of math64.h.
+This needs regulator_map_voltage_linear_range() and
+regulator_list_voltage_linear_range() which are not exported by the
+kernel regulator framework.
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/math64.h | 3 +++
- 1 file changed, 3 insertions(+)
+ dependencies |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/backport/backport-include/linux/math64.h b/backport/backport-include/linux/math64.h
-index 7f3a81b..775c2d3 100644
---- a/backport/backport-include/linux/math64.h
-+++ b/backport/backport-include/linux/math64.h
-@@ -5,6 +5,9 @@
+diff --git a/dependencies b/dependencies
+index 5c50571..f1e514b 100644
+--- a/dependencies
++++ b/dependencies
+@@ -109,7 +109,7 @@ REGULATOR_TPS6105X 3.6
+ REGULATOR_TPS65023 3.6
+ REGULATOR_TPS6507X 3.6
+ REGULATOR_TPS6524X 3.6
+-REGULATOR_WM8400 3.5
++REGULATOR_WM8400 3.12
+ REGULATOR_WM8994 3.8
  
- #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,25))
- #include_next <linux/math64.h>
-+#else
-+#include <linux/types.h>
-+#include <asm/div64.h>
- #endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,25)) */
- 
- #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)
+ # Media
 -- 
-1.8.1.2
+1.7.10.4
 
-
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
