@@ -1,49 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:54780 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:37596 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755012Ab3HPR1G (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 16 Aug 2013 13:27:06 -0400
+	id S933530Ab3HGWx7 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 7 Aug 2013 18:53:59 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
-	Patrick Ziegler <patrick.ziegler@fh-kl.de>
-Subject: [PATCH 03/13] backports: usb_translate_errors() is needed for < 3.2
-Date: Fri, 16 Aug 2013 19:26:33 +0200
-Message-Id: <1376674003-5801-3-git-send-email-hauke@hauke-m.de> (sfid-20130816_192737_699285_237F8408)
-In-Reply-To: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
-References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 06/10] backports: try to backport acpi_video_register_with_quirks()
+Date: Thu,  8 Aug 2013 00:53:21 +0200
+Message-Id: <1375916005-16411-7-git-send-email-hauke@hauke-m.de> (sfid-20130808_005400_423672_026833EE)
+In-Reply-To: <1375916005-16411-1-git-send-email-hauke@hauke-m.de>
+References: <1375916005-16411-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-usb_translate_errors() is needed for every kernel < 3.2 and not <
-2.6.39.
+Original the i915 driver called acpi_video_register(), but that was
+replaced with acpi_video_register_with_quirks(), which we can not
+backport easily, replace it with the old call to
+acpi_video_register() again.
 
-This fixes a problem introduced in this commit:
-commit aee2dc1d7fd03d3900e06e88793b519e21049de0
-Author: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-Date:   Thu Aug 15 14:40:20 2013 +0200
+Thos backports the following commit:
+commit 8c5bd7adb2ce47e6aa39d17b2375f69b0c0aa255
+Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Date:   Thu Jul 18 02:08:06 2013 +0200
 
-    backports: add usb_translate_errors()
+    ACPI / video / i915: No ACPI backlight if firmware expects Windows 8
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 ---
- backport/backport-include/linux/usb.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ backport/backport-include/acpi/video.h |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+ create mode 100644 backport/backport-include/acpi/video.h
 
-diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
-index a717b7a..70d89b8 100644
---- a/backport/backport-include/linux/usb.h
-+++ b/backport/backport-include/linux/usb.h
-@@ -145,7 +145,7 @@ extern void usb_unpoison_urb(struct urb *urb);
- extern int usb_anchor_empty(struct usb_anchor *anchor);
- #endif /* 2.6.23-2.6.27 */
- 
--#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,39)
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
- static inline int usb_translate_errors(int error_code)
- {
- 	switch (error_code) {
+diff --git a/backport/backport-include/acpi/video.h b/backport/backport-include/acpi/video.h
+new file mode 100644
+index 0000000..ff5c776
+--- /dev/null
++++ b/backport/backport-include/acpi/video.h
+@@ -0,0 +1,13 @@
++#ifndef __BACKPORT_ACPI_VIDEO_H
++#define __BACKPORT_ACPI_VIDEO_H
++#include_next <acpi/video.h>
++#include <linux/version.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,12,0)
++static inline int acpi_video_register_with_quirks(void)
++{
++	return acpi_video_register();
++}
++#endif
++
++#endif /*  __BACKPORT_ACPI_VIDEO_H */
 -- 
 1.7.10.4
 
