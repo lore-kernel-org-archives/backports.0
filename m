@@ -1,48 +1,63 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:37605 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:37564 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933530Ab3HGWyD (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 7 Aug 2013 18:54:03 -0400
+	id S933530Ab3HGWxm (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 7 Aug 2013 18:53:42 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 08/10] backports: add of_find_node_by_name() if !CONFIG_OF
-Date: Thu,  8 Aug 2013 00:53:23 +0200
-Message-Id: <1375916005-16411-9-git-send-email-hauke@hauke-m.de> (sfid-20130808_005405_654392_B32F2F23)
+Subject: [PATCH 01/10] backports: remove some remaining parts form old alx driver
+Date: Thu,  8 Aug 2013 00:53:16 +0200
+Message-Id: <1375916005-16411-2-git-send-email-hauke@hauke-m.de> (sfid-20130808_005345_238510_FA74FA89)
 In-Reply-To: <1375916005-16411-1-git-send-email-hauke@hauke-m.de>
 References: <1375916005-16411-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The old kernel only exports this function when CONFIG_OF is set, but not
-when CONFIG_OF is not set.
+This removed some old parts remaining from the old alx driver.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/of.h |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ copy-list.alx                                              |   10 ----------
+ .../network/0004-alx-intx-msi-workaround/alx.patch         |   12 ------------
+ 2 files changed, 22 deletions(-)
+ delete mode 100644 copy-list.alx
+ delete mode 100644 patches/unified-drivers/network/0004-alx-intx-msi-workaround/alx.patch
 
-diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
-index 93e91dd..ad852c1 100644
---- a/backport/backport-include/linux/of.h
-+++ b/backport/backport-include/linux/of.h
-@@ -28,6 +28,16 @@ static inline struct device_node *of_get_child_by_name(
- #endif /* CONFIG_OF */
- #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)) */
- 
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0))
-+#ifndef CONFIG_OF
-+static inline struct device_node *of_find_node_by_name(struct device_node *from,
-+	const char *name)
-+{
-+	return NULL;
-+}
-+#endif /* CONFIG_OF */
-+#endif
-+
- #endif /* KERNEL_HAS_OF_SUPPORT */
- 
- #endif	/* _COMPAT_LINUX_OF_H */
+diff --git a/copy-list.alx b/copy-list.alx
+deleted file mode 100644
+index ab1b91d..0000000
+--- a/copy-list.alx
++++ /dev/null
+@@ -1,10 +0,0 @@
+-#
+-# To use this, use the --extra-driver argument to gentree.py,
+-# like this:
+-#	--extra-driver /path/to/alx/ copy-list.alx
+-#
+-# This probably needs to be changed to target/linux/src/
+-# to support "make linux-src" in alx, but then the Makefile
+-# is not good ...
+-#
+-src/ -> drivers/net/ethernet/atheros/alx/
+diff --git a/patches/unified-drivers/network/0004-alx-intx-msi-workaround/alx.patch b/patches/unified-drivers/network/0004-alx-intx-msi-workaround/alx.patch
+deleted file mode 100644
+index 83ed16e..0000000
+--- a/patches/unified-drivers/network/0004-alx-intx-msi-workaround/alx.patch
++++ /dev/null
+@@ -1,12 +0,0 @@
+---- a/drivers/net/ethernet/atheros/alx/alx_main.c
+-+++ b/drivers/net/ethernet/atheros/alx/alx_main.c
+-@@ -1032,6 +1032,9 @@ static int alx_identify_hw(struct alx_ad
+- 		if (rev < ALX_REV_C0) {
+- 			hw->ptrn_ofs = 0x600;
+- 			hw->max_ptrns = 8;
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,24)
+-+			pdev->dev_flags |= PCI_DEV_FLAGS_MSI_INTX_DISABLE_BUG;
+-+#endif
+- 		} else {
+- 			hw->ptrn_ofs = 0x14000;
+- 			hw->max_ptrns = 16;
 -- 
 1.7.10.4
 
