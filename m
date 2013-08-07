@@ -1,86 +1,177 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:42804
-	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1752430Ab3H0Xhd (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 27 Aug 2013 19:37:33 -0400
-Date: Tue, 27 Aug 2013 19:35:19 -0400
-From: Solomon Peachy <pizza@shaftnet.org>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-	backports@vger.kernel.org
-Subject: Re: kernel version management
-Message-ID: <20130827233518.GA30297@shaftnet.org> (sfid-20130828_013735_697925_CD60D09D)
-References: <1377630791.20012.12.camel@jlt4.sipsolutions.net>
- <521D0C11.6090402@hauke-m.de>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:37704 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933530Ab3HGXDw (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 7 Aug 2013 19:03:52 -0400
+Message-ID: <5202D173.4050408@hauke-m.de> (sfid-20130808_010355_530573_D0F4AA5F)
+Date: Thu, 08 Aug 2013 01:00:03 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
-In-Reply-To: <521D0C11.6090402@hauke-m.de>
+To: Arik Nemtsov <arik@wizery.com>
+CC: linux-wireless@vger.kernel.org, mcgrof@kernel.org,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: [PATCH] backports: rename some mem functions to not break custom
+ kernels
+References: <1375865563-1196-1-git-send-email-arik@wizery.com>
+In-Reply-To: <1375865563-1196-1-git-send-email-arik@wizery.com>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+Please add backports mailing list ( backports@vger.kernel.org ) next time.
 
---UlVJffcvxoiEqYs2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 08/07/2013 10:52 AM, Arik Nemtsov wrote:
+> When custom patches are cherry-picked to a kernel, some symbols exported
+> by backports may clash with the built-in ones. Rename the backports
+> symbols using the standard backport_ prefix to prevent that. Backported
+> drivers will resolve to the correct function via a define.
+> 
+> The offending symbols were exported by the patch below:
+> 
+> commit 2ce5c22448bb45998318267c00b5d6ef9cff3170
+> Author: Hauke Mehrtens <hauke@hauke-m.de>
+> Date:   Thu Jun 6 13:48:04 2013 +0200
+> 
+>     backports: backport some memory functions
+> 
+> Signed-off-by: Arik Nemtsov <arik@wizery.com>
+> ---
+>  backport/backport-include/asm/mtrr.h |  7 +++++--
+>  backport/backport-include/linux/io.h | 14 +++++++-------
+>  backport/compat/backport-3.11.c      | 16 ++++++++--------
+>  3 files changed, 20 insertions(+), 17 deletions(-)
+> 
+> diff --git a/backport/backport-include/asm/mtrr.h b/backport/backport-include/asm/mtrr.h
+> index cf0f6fd..c5760b4 100644
+> --- a/backport/backport-include/asm/mtrr.h
+> +++ b/backport/backport-include/asm/mtrr.h
+> @@ -7,14 +7,17 @@
+>   * The following functions are for use by other drivers that cannot use
+>   * arch_phys_wc_add and arch_phys_wc_del.
+>   */
+> +#ifndef phys_wc_to_mtrr_index
+>  #ifdef CONFIG_MTRR
+> -extern int phys_wc_to_mtrr_index(int handle);
+> +extern int backport_phys_wc_to_mtrr_index(int handle);
+>  #else
+> -static inline int phys_wc_to_mtrr_index(int handle)
+> +static inline int backport_phys_wc_to_mtrr_index(int handle)
+>  {
+>  	return -1;
+>  }
+>  #endif /* CONFIG_MTRR */
+> +#define phys_wc_to_mtrr_index LINUX_BACKPORT(phys_wc_to_mtrr_index)
 
-On Tue, Aug 27, 2013 at 10:29:05PM +0200, Hauke Mehrtens wrote:
-> When you look at the users of old backports no one cares about using a
-> supported kernel version. One group are the desktop users which are
-> using Ubuntu, Debian, or some RedHat kernel, these kernels are based on
-> 2.6.32 or some 3.X version. The other big group are the embedded
-> developers which are using any random kernel version with many patches
-> for some specific SoC in it. They do not care about security updates.
+You should put this line before the #ifndef phy_.... and then you do not
+have to use backport_phys_wc_to_mtrr_index with the prefix anywhere in
+backports. This also applies for the other places where you manually add
+backport_.
 
-For what it's worth, this meshes with my experience as well.  I'd even=20
-go so far as to say that the latter group is the more significant.
+> +#endif
+>  #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)) */
+>  
+>  #endif /* __BACKPORT_ASM_MTRR_H */
+> diff --git a/backport/backport-include/linux/io.h b/backport/backport-include/linux/io.h
+> index 9a5b308..5f62c62 100644
+> --- a/backport/backport-include/linux/io.h
+> +++ b/backport/backport-include/linux/io.h
+> @@ -15,22 +15,22 @@
+>   */
+>  #ifndef arch_phys_wc_add
+>  #ifdef CONFIG_MTRR
+> -extern int __must_check arch_phys_wc_add(unsigned long base,
+> -					 unsigned long size);
+> -extern void arch_phys_wc_del(int handle);
+> +extern int __must_check backport_arch_phys_wc_add(unsigned long base,
+> +						  unsigned long size);
+> +extern void backport_arch_phys_wc_del(int handle);
+>  #else
+> -static inline int __must_check arch_phys_wc_add(unsigned long base,
+> -						unsigned long size)
+> +static inline int __must_check backport_arch_phys_wc_add(unsigned long base,
+> +							 unsigned long size)
+>  {
+>  	return 0;  /* It worked (i.e. did nothing). */
+>  }
+>  
+> -static inline void arch_phys_wc_del(int handle)
+> +static inline void backport_arch_phys_wc_del(int handle)
+>  {
+>  }
+>  #endif /* CONFIG_MTRR */
+>  
+> -#define arch_phys_wc_add arch_phys_wc_add
+> +#define arch_phys_wc_add LINUX_BACKPORT(arch_phys_wc_add)
+>  #endif
+>  
+>  #endif /* __BACKPORT_LINUX_IO_H */
+> diff --git a/backport/compat/backport-3.11.c b/backport/compat/backport-3.11.c
+> index c6d5a02..5ff17d1 100644
+> --- a/backport/compat/backport-3.11.c
+> +++ b/backport/compat/backport-3.11.c
+> @@ -21,7 +21,7 @@
+>  #define MTRR_TO_PHYS_WC_OFFSET 1000
+>  
+>  /**
+> - * arch_phys_wc_add - add a WC MTRR and handle errors if PAT is unavailable
+> + * backport_arch_phys_wc_add - add a WC MTRR and handle errors if PAT is unavailable
+>   * @base: Physical base address
+>   * @size: Size of region
+>   *
+> @@ -32,7 +32,7 @@
+>   * Drivers must store the return value to pass to mtrr_del_wc_if_needed,
+>   * but drivers should not try to interpret that return value.
+>   */
+> -int arch_phys_wc_add(unsigned long base, unsigned long size)
+> +int backport_arch_phys_wc_add(unsigned long base, unsigned long size)
+>  {
+>  	int ret;
+>  
+> @@ -49,7 +49,7 @@ int arch_phys_wc_add(unsigned long base, unsigned long size)
+>  	}
+>  	return ret + MTRR_TO_PHYS_WC_OFFSET;
+>  }
+> -EXPORT_SYMBOL_GPL(arch_phys_wc_add);
+> +EXPORT_SYMBOL_GPL(backport_arch_phys_wc_add);
+>  
+>  /*
+>   * arch_phys_wc_del - undoes arch_phys_wc_add
+> @@ -60,17 +60,17 @@ EXPORT_SYMBOL_GPL(arch_phys_wc_add);
+>   * The API guarantees that mtrr_del_wc_if_needed(error code) and
+>   * mtrr_del_wc_if_needed(0) do nothing.
+>   */
+> -void arch_phys_wc_del(int handle)
+> +void backport_arch_phys_wc_del(int handle)
+>  {
+>  	if (handle >= 1) {
+>  		WARN_ON(handle < MTRR_TO_PHYS_WC_OFFSET);
+>  		mtrr_del(handle - MTRR_TO_PHYS_WC_OFFSET, 0, 0);
+>  	}
+>  }
+> -EXPORT_SYMBOL_GPL(arch_phys_wc_del);
+> +EXPORT_SYMBOL_GPL(backport_arch_phys_wc_del);
+>  
+>  /*
+> - * phys_wc_to_mtrr_index - translates arch_phys_wc_add's return value
+> + * backport_phys_wc_to_mtrr_index - translates arch_phys_wc_add's return value
+>   * @handle: Return value from arch_phys_wc_add
+>   *
+>   * This will turn the return value from arch_phys_wc_add into an mtrr
+> @@ -80,13 +80,13 @@ EXPORT_SYMBOL_GPL(arch_phys_wc_del);
+>   * in printk line.  Alas there is an illegitimate use in some ancient
+>   * drm ioctls.
+>   */
+> -int phys_wc_to_mtrr_index(int handle)
+> +int backport_phys_wc_to_mtrr_index(int handle)
+>  {
+>  	if (handle < MTRR_TO_PHYS_WC_OFFSET)
+>  		return -1;
+>  	else
+>  		return handle - MTRR_TO_PHYS_WC_OFFSET;
+>  }
+> -EXPORT_SYMBOL_GPL(phys_wc_to_mtrr_index);
+> +EXPORT_SYMBOL_GPL(backport_phys_wc_to_mtrr_index);
+>  
+>  #endif /* CONFIG_MTRR */
+> 
 
-Whatever kernel a random SoC vendor ships is what will be used until the=20
-end of time.  Encouraging board vendors to upgrade their software stack=20
-to use to newer kernels is a battle that needs to be fought with the SoC=20
-folks (not even considering crap like binary-only drivers), and it'll=20
-subsequently trickle down to the folks craking out boards.  The=20
-devicetree migration is a great help here, but it won't do anything to=20
-migrate the legacy platforms out there..
-
-One particular battle I fought less than a year ago involved someone=20
-unwilling to move from a 2.6.13 (!) kernel, even though I told them in=20
-no uncertain terms that it would cost them an order of magnitude more=20
-money to backport a wifi driver (and mac80211 etc) to that 2.6.13 kernel=20
-than it would be to port their meagre handful of custom drivers to a=20
-modern long-term 3.0/3.2 kernel.
-
-And this was a network-exposed system too.  ${deity}-only knows how many=20
-security holes were in their even-more-ancient userspace.
-
-> The bigger maintenance problem I currently see is the adding for more
-> and more subsystems. The GPU drivers for example are taking about 30% of
-> the time when adding support for a new linux next version.
-
-=2E..Especially when you consider that the GPU/DRM stuff also requires=20
-updated userspace in order to do anything meaningful -- which is another=20
-big speedbump.
-
-I personally think it's a mistake to drop support for older kernels=20
-because of the pain of porting GPU stuffs.  I'm beginning to really miss=20
-the simple "compat-wireless" days...
-
- - Solomon
---=20
-Solomon Peachy        		       pizza at shaftnet dot org
-Delray Beach, FL                          ^^ (email/xmpp) ^^
-Quidquid latine dictum sit, altum viditur.
-
---UlVJffcvxoiEqYs2
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
-
-iD8DBQFSHTe2PuLgii2759ARAuUEAJ46y/GdiRQVjEgBbH3JsKA9atTzVQCgpKwK
-02E5ACyl2OpCDJ6PIFe4fMU=
-=P7X6
------END PGP SIGNATURE-----
-
---UlVJffcvxoiEqYs2--
