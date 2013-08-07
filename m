@@ -1,128 +1,164 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:32778 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751154Ab3HBL3n (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 2 Aug 2013 07:29:43 -0400
-Message-ID: <51FB9821.2060302@fh-kl.de> (sfid-20130802_132944_883267_E49ACC0C)
-Date: Fri, 2 Aug 2013 13:29:37 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [PATCH 2/9] backports: add eth_prepare_mac_addr_change() and eth_commit_mac_addr_change()
-References: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+Received: from server19320154104.serverpool.info ([193.201.54.104]:37574 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933530Ab3HGWxs (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 7 Aug 2013 18:53:48 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 03/10] backports: the shrinkers api did not made it into 3.11
+Date: Thu,  8 Aug 2013 00:53:18 +0200
+Message-Id: <1375916005-16411-4-git-send-email-hauke@hauke-m.de> (sfid-20130808_005349_925646_C0B2A2FD)
+In-Reply-To: <1375916005-16411-1-git-send-email-hauke@hauke-m.de>
+References: <1375916005-16411-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-These functions are required by qmi_wwan device driver.
+Change the conditions to use the backported code also in 3.11
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/etherdevice.h |  7 ++++++
- backport/backport-include/linux/if.h          |  4 ++++
- backport/compat/compat-3.9.c                  | 33 +++++++++++++++++++++++++++
- 3 files changed, 44 insertions(+)
 
-diff --git a/backport/backport-include/linux/etherdevice.h b/backport/backport-include/linux/etherdevice.h
-index 5c82fc4..b6617f0 100644
---- a/backport/backport-include/linux/etherdevice.h
-+++ b/backport/backport-include/linux/etherdevice.h
-@@ -114,6 +114,13 @@ static inline int is_unicast_ether_addr(const u8 *addr)
- }
- #endif
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
-+#define eth_prepare_mac_addr_change LINUX_BACKPORT(eth_prepare_mac_addr_change)
-+extern int eth_prepare_mac_addr_change(struct net_device *dev, void *p);
-+#define eth_commit_mac_addr_change LINUX_BACKPORT(eth_commit_mac_addr_change)
-+extern void eth_commit_mac_addr_change(struct net_device *dev, void *p);
-+#endif /* < 3.9 */
-+
- #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29)
- #define eth_mac_addr LINUX_BACKPORT(eth_mac_addr)
- extern int eth_mac_addr(struct net_device *dev, void *p);
-diff --git a/backport/backport-include/linux/if.h b/backport/backport-include/linux/if.h
-index 7926082..8f85b83 100644
---- a/backport/backport-include/linux/if.h
-+++ b/backport/backport-include/linux/if.h
-@@ -29,4 +29,8 @@
- #define IFF_TX_SKB_SHARING	0x10000
- #endif
- 
-+#ifndef IFF_LIVE_ADDR_CHANGE
-+#define IFF_LIVE_ADDR_CHANGE 0x100000
-+#endif
-+
- #endif	/* _BACKPORT_LINUX_IF_H */
-diff --git a/backport/compat/compat-3.9.c b/backport/compat/compat-3.9.c
-index 03f3af8..ba8e3cf 100644
---- a/backport/compat/compat-3.9.c
-+++ b/backport/compat/compat-3.9.c
-@@ -12,6 +12,9 @@
- #include <linux/scatterlist.h>
- #include <linux/device.h>
- #include <linux/err.h>
-+#include <linux/netdevice.h>
-+#include <linux/if.h>
-+#include <linux/if_ether.h>
- 
- #ifdef __sg_page_iter_next
- 
-@@ -64,4 +67,34 @@ void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res)
- }
- EXPORT_SYMBOL_GPL(devm_ioremap_resource);
- 
-+/**
-+ * eth_prepare_mac_addr_change - prepare for mac change
-+ * @dev: network device
-+ * @p: socket address
-+ */
-+int eth_prepare_mac_addr_change(struct net_device *dev, void *p)
-+{
-+	struct sockaddr *addr = p;
-+
-+	if (!(dev->priv_flags & IFF_LIVE_ADDR_CHANGE) && netif_running(dev))
-+		return -EBUSY;
-+	if (!is_valid_ether_addr(addr->sa_data))
-+		return -EADDRNOTAVAIL;
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(eth_prepare_mac_addr_change);
-+
-+/**
-+ * eth_commit_mac_addr_change - commit mac change
-+ * @dev: network device
-+ * @p: socket address
-+ */
-+void eth_commit_mac_addr_change(struct net_device *dev, void *p)
-+{
-+	struct sockaddr *addr = p;
-+
-+	memcpy(dev->dev_addr, addr->sa_data, ETH_ALEN);
-+}
-+EXPORT_SYMBOL_GPL(eth_commit_mac_addr_change);
-+
- #endif /* __sg_page_iter_next */
+This should also go into the 3.11 branch.
+
+ .../drm/14-shrinkers-api/drivers_gpu_drm_i915.patch    |   16 ++++++++--------
+ .../drm/14-shrinkers-api/drivers_gpu_drm_ttm.patch     |   12 ++++++------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/patches/collateral-evolutions/drm/14-shrinkers-api/drivers_gpu_drm_i915.patch b/patches/collateral-evolutions/drm/14-shrinkers-api/drivers_gpu_drm_i915.patch
+index c00d346..651f2c6 100644
+--- a/patches/collateral-evolutions/drm/14-shrinkers-api/drivers_gpu_drm_i915.patch
++++ b/patches/collateral-evolutions/drm/14-shrinkers-api/drivers_gpu_drm_i915.patch
+@@ -4,7 +4,7 @@
+  	return 0;
+  
+  out_gem_unload:
+-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0))
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0))
+  	if (dev_priv->mm.inactive_shrinker.scan_objects)
+ +#else
+ +	if (dev_priv->mm.inactive_shrinker.shrink)
+@@ -16,7 +16,7 @@
+  
+  	i915_teardown_sysfs(dev);
+  
+-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0))
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0))
+  	if (dev_priv->mm.inactive_shrinker.scan_objects)
+ +#else
+ +	if (dev_priv->mm.inactive_shrinker.shrink)
+@@ -30,7 +30,7 @@
+  					 struct drm_i915_fence_reg *fence,
+  					 bool enable);
+  
+-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0))
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0))
+  static unsigned long i915_gem_inactive_count(struct shrinker *shrinker,
+  					     struct shrink_control *sc);
+  static unsigned long i915_gem_inactive_scan(struct shrinker *shrinker,
+@@ -46,7 +46,7 @@
+  
+  	dev_priv->mm.interruptible = true;
+  
+-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0))
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0))
+  	dev_priv->mm.inactive_shrinker.scan_objects = i915_gem_inactive_scan;
+  	dev_priv->mm.inactive_shrinker.count_objects = i915_gem_inactive_count;
+ +#else
+@@ -59,7 +59,7 @@
+  #endif
+  }
+  
+-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0))
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0))
+  static unsigned long
+  i915_gem_inactive_count(struct shrinker *shrinker, struct shrink_control *sc)
+ +#else
+@@ -74,7 +74,7 @@
+  	struct drm_device *dev = dev_priv->dev;
+  	struct drm_i915_gem_object *obj;
+  	bool unlock = true;
+-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0))
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0))
+  	unsigned long count;
+ +#else
+ +	int nr_to_scan = sc->nr_to_scan;
+@@ -87,7 +87,7 @@
+  		unlock = false;
+  	}
+  
+-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0))
+++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,12,0))
+ +	if (nr_to_scan) {
+ +		nr_to_scan -= i915_gem_purge(dev_priv, nr_to_scan);
+ +		if (nr_to_scan > 0)
+@@ -105,7 +105,7 @@
+  	return count;
+  }
+  
+-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0))
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0))
+  static unsigned long
+  i915_gem_inactive_scan(struct shrinker *shrinker, struct shrink_control *sc)
+  {
+diff --git a/patches/collateral-evolutions/drm/14-shrinkers-api/drivers_gpu_drm_ttm.patch b/patches/collateral-evolutions/drm/14-shrinkers-api/drivers_gpu_drm_ttm.patch
+index d206043..5a8176d 100644
+--- a/patches/collateral-evolutions/drm/14-shrinkers-api/drivers_gpu_drm_ttm.patch
++++ b/patches/collateral-evolutions/drm/14-shrinkers-api/drivers_gpu_drm_ttm.patch
+@@ -14,7 +14,7 @@
+   *
+   * This code is crying out for a shrinker per pool....
+   */
+-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0))
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0))
+  static unsigned long
+  ttm_pool_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+ +#else
+@@ -28,7 +28,7 @@
+  		shrink_pages = ttm_page_pool_free(pool, nr_free);
+  		freed += nr_free - shrink_pages;
+  	}
+-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0))
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0))
+  	return freed;
+ +#else
+ +	/* return estimated number of unused pages in pool */
+@@ -41,7 +41,7 @@
+  
+  static void ttm_pool_mm_shrink_init(struct ttm_pool_manager *manager)
+  {
+-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0))
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0))
+  	manager->mm_shrink.count_objects = ttm_pool_shrink_count;
+  	manager->mm_shrink.scan_objects = ttm_pool_shrink_scan;
+ +#else
+@@ -66,7 +66,7 @@
+   * I'm getting sadder as I hear more pathetical whimpers about needing per-pool
+   * shrinkers
+   */
+-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0))
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0))
+  static unsigned long
+  ttm_dma_pool_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+ +#else
+@@ -81,7 +81,7 @@
+  			 nr_free, shrink_pages);
+  	}
+  	mutex_unlock(&_manager->lock);
+-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0))
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0))
+  	return freed;
+ +#else
+ +	/* return estimated number of unused pages in pool */
+@@ -94,7 +94,7 @@
+  
+  static void ttm_dma_pool_mm_shrink_init(struct ttm_pool_manager *manager)
+  {
+-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0))
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0))
+  	manager->mm_shrink.count_objects = ttm_dma_pool_shrink_count;
+  	manager->mm_shrink.scan_objects = &ttm_dma_pool_shrink_scan;
+ +#else
 -- 
-1.8.1.2
+1.7.10.4
 
-
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
