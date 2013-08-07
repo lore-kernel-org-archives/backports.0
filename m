@@ -1,69 +1,87 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:55039 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:37602 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754147Ab3HPSEX (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 16 Aug 2013 14:04:23 -0400
-Message-ID: <520E699F.8040601@hauke-m.de> (sfid-20130816_200425_780265_E711C857)
-Date: Fri, 16 Aug 2013 20:04:15 +0200
+	id S933530Ab3HGWyB (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 7 Aug 2013 18:54:01 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: mcgrof@gmail.com, backports@vger.kernel.org
-Subject: Re: [PATCH 08/13] backports: revert the sysfs api change
-References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>  <1376674003-5801-8-git-send-email-hauke@hauke-m.de>  (sfid-20130816_192740_585582_63BCDE6E) <1376674550.15299.27.camel@jlt4.sipsolutions.net>
-In-Reply-To: <1376674550.15299.27.camel@jlt4.sipsolutions.net>
-Content-Type: text/plain; charset=UTF-8
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 07/10] backports: add hid log functions
+Date: Thu,  8 Aug 2013 00:53:22 +0200
+Message-Id: <1375916005-16411-8-git-send-email-hauke@hauke-m.de> (sfid-20130808_005402_610701_01B9AC7B)
+In-Reply-To: <1375916005-16411-1-git-send-email-hauke@hauke-m.de>
+References: <1375916005-16411-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 08/16/2013 07:35 PM, Johannes Berg wrote:
-> On Fri, 2013-08-16 at 19:26 +0200, Hauke Mehrtens wrote:
->>  
->> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
->> +#define BUS_ATTR_RW(_name)
->> +#define BUS_ATTR_RO(_name)
->> +#define DRIVER_ATTR_RW(_name)
->> +#define DRIVER_ATTR_RO(_name)
->> +#define CLASS_ATTR_RW(_name)
->> +#define CLASS_ATTR_RO(_name)
->> +#define DEVICE_ATTR_RW(_name)
->> +#define DEVICE_ATTR_RO(_name)
->> +#endif
-> 
-> Is that part really helpful? Seems you'd want it to fail, or am I
-> misunderstanding it?
-> 
-> johannes
-> 
-This is done to eliminate these warnings:
+This adds some hid log functions like hid_warn().
 
-/net/wireless/sysfs.c:36:1: warning: type defaults to ‘int’ in
-declaration of ‘DEVICE_ATTR_RO’ [-Wimplicit-int]
-/net/wireless/sysfs.c:36:1: warning: parameter names (without types) in
-function declaration [enabled by default]
-/net/wireless/sysfs.c:37:1: warning: type defaults to ‘int’ in
-declaration of ‘DEVICE_ATTR_RO’ [-Wimplicit-int]
-/net/wireless/sysfs.c:37:1: warning: parameter names (without types) in
-function declaration [enabled by default]
-/net/wireless/sysfs.c:38:1: warning: type defaults to ‘int’ in
-declaration of ‘DEVICE_ATTR_RO’ [-Wimplicit-int]
-/net/wireless/sysfs.c:38:1: warning: parameter names (without types) in
-function declaration [enabled by default]
-/net/wireless/sysfs.c:46:8: warning: type defaults to ‘int’ in
-declaration of ‘DEVICE_ATTR_RO’ [-Wimplicit-int]
-/net/wireless/sysfs.c:46:1: warning: parameter names (without types) in
-function declaration [enabled by default]
-/net/wireless/sysfs.c:64:8: warning: type defaults to ‘int’ in
-declaration of ‘DEVICE_ATTR_RO’ [-Wimplicit-int]
-/net/wireless/sysfs.c:64:1: warning: parameter names (without types) in
-function declaration [enabled by default]
-/net/wireless/sysfs.c:64:8: warning: ‘DEVICE_ATTR_RO’ declared ‘static’
-but never defined [-Wunused-function]
+This backports the following commit:
+commit 4291ee305e9bb0699504a66f0e2b7aefcf0512a5
+Author: Joe Perches <joe@perches.com>
+Date:   Thu Dec 9 19:29:03 2010 -0800
 
-With this change I get an other warning. ;-)
+    HID: Add and use hid_<level>: dev_<level> equivalents
 
-I do not like this whole patch that much, do you have a better idea to
-backport this change:
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?id=f0bc99c84349ce87af5b35839d19bfb17bb9b27f
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/hid.h |   45 +++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-Hauke
+diff --git a/backport/backport-include/linux/hid.h b/backport/backport-include/linux/hid.h
+index 22ff6f1..2cae9b7 100644
+--- a/backport/backport-include/linux/hid.h
++++ b/backport/backport-include/linux/hid.h
+@@ -34,4 +34,49 @@ extern bool hid_ignore(struct hid_device *);
+ 	.bus = BUS_BLUETOOTH, .vendor = (ven), .product = (prod)
+ #endif
+ 
++#ifndef hid_printk
++#define hid_printk(level, hid, fmt, arg...)		\
++	dev_printk(level, &(hid)->dev, fmt, ##arg)
++#endif
++
++#ifndef hid_emerg
++#define hid_emerg(hid, fmt, arg...)			\
++	dev_emerg(&(hid)->dev, fmt, ##arg)
++#endif
++
++#ifndef hid_crit
++#define hid_crit(hid, fmt, arg...)			\
++	dev_crit(&(hid)->dev, fmt, ##arg)
++#endif
++
++#ifndef hid_alert
++#define hid_alert(hid, fmt, arg...)			\
++	dev_alert(&(hid)->dev, fmt, ##arg)
++#endif
++
++#ifndef hid_err
++#define hid_err(hid, fmt, arg...)			\
++	dev_err(&(hid)->dev, fmt, ##arg)
++#endif
++
++#ifndef hid_notice
++#define hid_notice(hid, fmt, arg...)			\
++	dev_notice(&(hid)->dev, fmt, ##arg)
++#endif
++
++#ifndef hid_warn
++#define hid_warn(hid, fmt, arg...)			\
++	dev_warn(&(hid)->dev, fmt, ##arg)
++#endif
++
++#ifndef hid_info
++#define hid_info(hid, fmt, arg...)			\
++	dev_info(&(hid)->dev, fmt, ##arg)
++#endif
++
++#ifndef hid_dbg
++#define hid_dbg(hid, fmt, arg...)			\
++	dev_dbg(&(hid)->dev, fmt, ##arg)
++#endif
++
+ #endif /* __BACKPORT_HID_H */
+-- 
+1.7.10.4
+
