@@ -1,46 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:54812 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752381Ab3HPR1o (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 16 Aug 2013 13:27:44 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 10/13] backports: do not access hw_features in wil6210
-Date: Fri, 16 Aug 2013 19:26:40 +0200
-Message-Id: <1376674003-5801-10-git-send-email-hauke@hauke-m.de> (sfid-20130816_192746_552406_90C5F83A)
-In-Reply-To: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
-References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
+Received: from s3.sipsolutions.net ([144.76.43.152]:33964 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932858Ab3HHGhd (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 8 Aug 2013 02:37:33 -0400
+Message-ID: <1375943844.8186.0.camel@jlt4.sipsolutions.net> (sfid-20130808_083734_786296_3B87DD26)
+Subject: Re: Issue reading kernel config
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Jonathan Bagg <jbagg@lenbrook.com>
+Cc: backports@vger.kernel.org
+Date: Thu, 08 Aug 2013 08:37:24 +0200
+In-Reply-To: <5202AF0E.9010201@lenbrook.com> (sfid-20130807_223322_404420_CA68A7F6)
+References: <1375338204-2021-8-git-send-email-sujith@msujith.org>
+	 <1375370826-1387-1-git-send-email-sujith@msujith.org>
+	 <51FA8ECD.7070401@lenbrook.com> <20130801174749.GC10904@shaftnet.org>
+	 <51FAB31F.6050207@lenbrook.com> <5202A643.8080404@lenbrook.com>
+	 <5202AF0E.9010201@lenbrook.com> (sfid-20130807_223322_404420_CA68A7F6)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-wil6210 now uses netdev->hw_features which is not available in all
-kernel versions, do not set it then.
+On Wed, 2013-08-07 at 16:33 -0400, Jonathan Bagg wrote:
+> So I had a look at the Kconfig file and realised it isn't a kernel 
+> config.  If I add
+> 
+> config BT
+>      def_bool y
+> 
+> under the "# some hacks ..." section, I can enable BT drivers in 
+> backports in the menuconfig.  So if a kconfig depends on an external 
+> config, there is no way to feed in a kernel config to backports?  you 
+> list external config under "# some hacks ..." section?
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../drivers_net_wireless_ath_wil6210_netdev.patch          |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_wireless_ath_wil6210_netdev.patch
+The script should create a dummy Kconfig.kernel from your
+kernel's .config, and read that for the dependencies from the kernel.
 
-diff --git a/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_wireless_ath_wil6210_netdev.patch b/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_wireless_ath_wil6210_netdev.patch
-new file mode 100644
-index 0000000..5f3e636
---- /dev/null
-+++ b/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_wireless_ath_wil6210_netdev.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/net/wireless/ath/wil6210/netdev.c
-++++ b/drivers/net/wireless/ath/wil6210/netdev.c
-+@@ -127,7 +127,9 @@ void *wil_if_alloc(struct device *dev, v
-+ 
-+ 	netdev_attach_ops(ndev, &wil_netdev_ops);
-+ 	ndev->ieee80211_ptr = wdev;
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,39))
-+ 	ndev->hw_features = NETIF_F_HW_CSUM | NETIF_F_RXCSUM;
-++#endif
-+ 	ndev->features |= NETIF_F_HW_CSUM | NETIF_F_RXCSUM;
-+ 	SET_NETDEV_DEV(ndev, wiphy_dev(wdev->wiphy));
-+ 	wdev->netdev = ndev;
--- 
-1.7.10.4
+johannes
 
