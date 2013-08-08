@@ -1,33 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f44.google.com ([209.85.215.44]:64514 "EHLO
-	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754153Ab3H0Vjd (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 27 Aug 2013 17:39:33 -0400
-Received: by mail-la0-f44.google.com with SMTP id eo20so4082090lab.31
-        for <backports@vger.kernel.org>; Tue, 27 Aug 2013 14:39:32 -0700 (PDT)
+Received: from ironport2-out.teksavvy.com ([206.248.154.182]:49984 "EHLO
+	ironport2-out.teksavvy.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S934143Ab3HHLzN (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 8 Aug 2013 07:55:13 -0400
+Message-ID: <520384E4.1010205@lenbrook.com> (sfid-20130808_135516_458338_4C18209F)
+Date: Thu, 08 Aug 2013 07:45:40 -0400
+From: Jonathan Bagg <jbagg@lenbrook.com>
 MIME-Version: 1.0
-In-Reply-To: <1377639864-25672-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1377639864-25672-1-git-send-email-mcgrof@do-not-panic.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Tue, 27 Aug 2013 14:39:11 -0700
-Message-ID: <CAB=NE6UbRv-29XvMLLmfsxsACMQDXbDM=KeTFcUW+dGPWDx1VQ@mail.gmail.com> (sfid-20130827_233950_363606_587F7449)
-Subject: Re: [PATCH 1/4] backports: fix compilation for 2.6.25 for math64 header
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Content-Type: text/plain; charset=UTF-8
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: backports@vger.kernel.org
+Subject: Re: Issue reading kernel config
+References: <1375338204-2021-8-git-send-email-sujith@msujith.org>  <1375370826-1387-1-git-send-email-sujith@msujith.org>  <51FA8ECD.7070401@lenbrook.com> <20130801174749.GC10904@shaftnet.org>  <51FAB31F.6050207@lenbrook.com> <5202A643.8080404@lenbrook.com>  <5202AF0E.9010201@lenbrook.com> (sfid-20130807_223322_404420_CA68A7F6) <1375943844.8186.0.camel@jlt4.sipsolutions.net>
+In-Reply-To: <1375943844.8186.0.camel@jlt4.sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Aug 27, 2013 at 2:44 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
->
-> We need to ifdef correctly before assuming we can include that
-> header.
->
-> Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+On 13-08-08 02:37 AM, Johannes Berg wrote:
+> On Wed, 2013-08-07 at 16:33 -0400, Jonathan Bagg wrote:
+>> So I had a look at the Kconfig file and realised it isn't a kernel
+>> config.  If I add
+>>
+>> config BT
+>>       def_bool y
+>>
+>> under the "# some hacks ..." section, I can enable BT drivers in
+>> backports in the menuconfig.  So if a kconfig depends on an external
+>> config, there is no way to feed in a kernel config to backports?  you
+>> list external config under "# some hacks ..." section?
+> The script should create a dummy Kconfig.kernel from your
+> kernel's .config, and read that for the dependencies from the kernel.
+I'd like to figure out why it isn't working.  Which script reads the 
+kernel's .config?
 
-Patch was was just Johannes' latest patch, I applied that on top of my
-series but just nuked it from being sent.
-
-  Luis
+Jon
