@@ -1,50 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:54807 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752381Ab3HPR1k (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 16 Aug 2013 13:27:40 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 09/13] backports: add some new regulator drivers to default config
-Date: Fri, 16 Aug 2013 19:26:39 +0200
-Message-Id: <1376674003-5801-9-git-send-email-hauke@hauke-m.de> (sfid-20130816_192741_603107_B825D54D)
-In-Reply-To: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
-References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-pd0-f172.google.com ([209.85.192.172]:35881 "EHLO
+	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751041Ab3HHGpe (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 8 Aug 2013 02:45:34 -0400
+MIME-Version: 1.0
+In-Reply-To: <5202D173.4050408@hauke-m.de>
+References: <1375865563-1196-1-git-send-email-arik@wizery.com> <5202D173.4050408@hauke-m.de>
+From: Arik Nemtsov <arik@wizery.com>
+Date: Thu, 8 Aug 2013 09:45:17 +0300
+Message-ID: <CA+XVXfdAUZGj7FjfRUxT2noa1b35xk1vn0bdcO70Vic6h9yXcg@mail.gmail.com> (sfid-20130808_084536_465253_01CD233B)
+Subject: Re: [PATCH] backports: rename some mem functions to not break custom kernels
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: linux-wireless@vger.kernel.org, mcgrof@kernel.org,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/defconfigs/regulator |    3 +++
- 1 file changed, 3 insertions(+)
+On Thu, Aug 8, 2013 at 2:00 AM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> Please add backports mailing list ( backports@vger.kernel.org ) next time.
 
-diff --git a/backport/defconfigs/regulator b/backport/defconfigs/regulator
-index c080747..0b1bc27 100644
---- a/backport/defconfigs/regulator
-+++ b/backport/defconfigs/regulator
-@@ -1,4 +1,5 @@
- CPTCFG_REGULATOR=y
-+CPTCFG_REGULATOR_88PM800=y
- CPTCFG_REGULATOR_88PM8607=y
- CPTCFG_REGULATOR_AAT2870=y
- CPTCFG_REGULATOR_AB3100=y
-@@ -24,6 +25,7 @@ CPTCFG_REGULATOR_LP8755=y
- CPTCFG_REGULATOR_LP8788=y
- CPTCFG_REGULATOR_MAX1586=y
- CPTCFG_REGULATOR_MAX77686=y
-+CPTCFG_REGULATOR_MAX77693=y
- CPTCFG_REGULATOR_MAX8649=y
- CPTCFG_REGULATOR_MAX8660=y
- CPTCFG_REGULATOR_MAX8907=y
-@@ -38,6 +40,7 @@ CPTCFG_REGULATOR_MC13XXX_CORE=y
- CPTCFG_REGULATOR_PALMAS=y
- CPTCFG_REGULATOR_PCAP=y
- CPTCFG_REGULATOR_PCF50633=y
-+CPTCFG_REGULATOR_PFUZE100=y
- CPTCFG_REGULATOR_RC5T583=y
- CPTCFG_REGULATOR_S2MPS11=y
- CPTCFG_REGULATOR_S5M8767=y
--- 
-1.7.10.4
+Ok. Thanks.
 
+
+>> diff --git a/backport/backport-include/asm/mtrr.h b/backport/backport-include/asm/mtrr.h
+>> index cf0f6fd..c5760b4 100644
+>> --- a/backport/backport-include/asm/mtrr.h
+>> +++ b/backport/backport-include/asm/mtrr.h
+>> @@ -7,14 +7,17 @@
+>>   * The following functions are for use by other drivers that cannot use
+>>   * arch_phys_wc_add and arch_phys_wc_del.
+>>   */
+>> +#ifndef phys_wc_to_mtrr_index
+>>  #ifdef CONFIG_MTRR
+>> -extern int phys_wc_to_mtrr_index(int handle);
+>> +extern int backport_phys_wc_to_mtrr_index(int handle);
+>>  #else
+>> -static inline int phys_wc_to_mtrr_index(int handle)
+>> +static inline int backport_phys_wc_to_mtrr_index(int handle)
+>>  {
+>>       return -1;
+>>  }
+>>  #endif /* CONFIG_MTRR */
+>> +#define phys_wc_to_mtrr_index LINUX_BACKPORT(phys_wc_to_mtrr_index)
+>
+> You should put this line before the #ifndef phy_.... and then you do not
+> have to use backport_phys_wc_to_mtrr_index with the prefix anywhere in
+> backports. This also applies for the other places where you manually add
+> backport_.
+
+The case I'm trying to un-break here is one where the symbol is
+defined by the kernel, even though it's not supposed to. This can
+happen if someone cherry-picks patches containing this symbol into
+their kernel.
+The backported driver is better off using the kernel symbol in that
+case I guess?
+
+Arik
