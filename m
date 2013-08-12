@@ -1,44 +1,80 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:60904 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:59486 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755548Ab3HRXkN (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 18 Aug 2013 19:40:13 -0400
+	id S1755995Ab3HLQYd (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 12 Aug 2013 12:24:33 -0400
+Message-ID: <52090C37.2000103@hauke-m.de> (sfid-20130812_182435_652870_43717F39)
+Date: Mon, 12 Aug 2013 18:24:23 +0200
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH v2 19/19] backports: fix conflict in swiotlb_nr_tbl() on RHEL 6.4
-Date: Mon, 19 Aug 2013 01:38:04 +0200
-Message-Id: <1376869084-16513-20-git-send-email-hauke@hauke-m.de> (sfid-20130819_020909_692539_027A37C5)
-In-Reply-To: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
-References: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+To: Arik Nemtsov <arik@wizery.com>
+CC: linux-wireless@vger.kernel.org, mcgrof@kernel.org,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: [PATCH] backports: rename some mem functions to not break custom
+ kernels
+References: <1375865563-1196-1-git-send-email-arik@wizery.com> <5202D173.4050408@hauke-m.de> <CA+XVXfdAUZGj7FjfRUxT2noa1b35xk1vn0bdcO70Vic6h9yXcg@mail.gmail.com>
+In-Reply-To: <CA+XVXfdAUZGj7FjfRUxT2noa1b35xk1vn0bdcO70Vic6h9yXcg@mail.gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The RedHat kernel also provides a implementation for swiotlb_nr_tbl(),
-us that one on these kernels.
+On 08/08/2013 08:45 AM, Arik Nemtsov wrote:
+> On Thu, Aug 8, 2013 at 2:00 AM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+>> Please add backports mailing list ( backports@vger.kernel.org ) next time.
+> 
+> Ok. Thanks.
+> 
+> 
+>>> diff --git a/backport/backport-include/asm/mtrr.h b/backport/backport-include/asm/mtrr.h
+>>> index cf0f6fd..c5760b4 100644
+>>> --- a/backport/backport-include/asm/mtrr.h
+>>> +++ b/backport/backport-include/asm/mtrr.h
+>>> @@ -7,14 +7,17 @@
+>>>   * The following functions are for use by other drivers that cannot use
+>>>   * arch_phys_wc_add and arch_phys_wc_del.
+>>>   */
+>>> +#ifndef phys_wc_to_mtrr_index
+>>>  #ifdef CONFIG_MTRR
+>>> -extern int phys_wc_to_mtrr_index(int handle);
+>>> +extern int backport_phys_wc_to_mtrr_index(int handle);
+>>>  #else
+>>> -static inline int phys_wc_to_mtrr_index(int handle)
+>>> +static inline int backport_phys_wc_to_mtrr_index(int handle)
+>>>  {
+>>>       return -1;
+>>>  }
+>>>  #endif /* CONFIG_MTRR */
+>>> +#define phys_wc_to_mtrr_index LINUX_BACKPORT(phys_wc_to_mtrr_index)
+>>
+>> You should put this line before the #ifndef phy_.... and then you do not
+>> have to use backport_phys_wc_to_mtrr_index with the prefix anywhere in
+>> backports. This also applies for the other places where you manually add
+>> backport_.
+> 
+> The case I'm trying to un-break here is one where the symbol is
+> defined by the kernel, even though it's not supposed to. This can
+> happen if someone cherry-picks patches containing this symbol into
+> their kernel.
+> The backported driver is better off using the kernel symbol in that
+> case I guess?
+> 
+> Arik
+Hi Arik,
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/swiotlb.h |    2 ++
- 1 file changed, 2 insertions(+)
+adding the LINUX_BACKPORT() line should be enough to rename it
+everywhere in backprots, so you do not have to modify
+backport/compat/backport-3.11.c or manually add the prefix anywhere else.
 
-diff --git a/backport/backport-include/linux/swiotlb.h b/backport/backport-include/linux/swiotlb.h
-index 836b353..d010d0d 100644
---- a/backport/backport-include/linux/swiotlb.h
-+++ b/backport/backport-include/linux/swiotlb.h
-@@ -8,10 +8,12 @@
- #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28)) */
- 
- #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0))
-+#if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
- static inline unsigned long swiotlb_nr_tbl(void)
+Could you try if this fixes your problems with phys_wc_to_mtrr_index:
+
+ ...
++#define phys_wc_to_mtrr_index LINUX_BACKPORT(phys_wc_to_mtrr_index)
+ #ifdef CONFIG_MTRR
+ extern int phys_wc_to_mtrr_index(int handle);
+ #else
+ static inline int phys_wc_to_mtrr_index(int handle)
  {
- 	return 0;
+ 	return -1;
  }
- #endif
-+#endif
- 
- #endif /* __BACKPORT_LINUX_SWIOTLB_H */
--- 
-1.7.10.4
+ #endif /* CONFIG_MTRR */
 
