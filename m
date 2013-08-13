@@ -1,79 +1,67 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.lenbrook.com ([216.94.44.85]:24870 "EHLO mail.lenbrook.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757222Ab3HAT0w (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 1 Aug 2013 15:26:52 -0400
-Message-ID: <51FAB31F.6050207@lenbrook.com> (sfid-20130801_212701_546316_C2FFAA94)
-Date: Thu, 01 Aug 2013 15:12:31 -0400
-From: Jonathan Bagg <jbagg@lenbrook.com>
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:56418 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756458Ab3HMBSD (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 12 Aug 2013 21:18:03 -0400
+Received: by mail-pd0-f174.google.com with SMTP id y13so4208739pdi.33
+        for <backports@vger.kernel.org>; Mon, 12 Aug 2013 18:18:01 -0700 (PDT)
+Date: Mon, 12 Aug 2013 18:27:01 -0700
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: Phillip Moss <phillipmoss12@yahoo.es>
+Cc: backports@vger.kernel.org
+Subject: Re: Signal loss rtl8723ae wifi driver
+Message-ID: <20130813012701.GD6439@garbanzo.do-not-panic.com> (sfid-20130813_031810_728687_539370FF)
+References: <1375972465.52410.YahooMailBasic@web171402.mail.ir2.yahoo.com>
 MIME-Version: 1.0
-To: backports@vger.kernel.org
-CC: Solomon Peachy <pizza@shaftnet.org>, linux-wireless@vger.kernel.org
-Subject: Re: cross compile backports with LTIB
-References: <1375338204-2021-8-git-send-email-sujith@msujith.org> <1375370826-1387-1-git-send-email-sujith@msujith.org> <51FA8ECD.7070401@lenbrook.com> <20130801174749.GC10904@shaftnet.org>
-In-Reply-To: <20130801174749.GC10904@shaftnet.org>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="CGDBiGfvSTbxKZlW"
+In-Reply-To: <1375972465.52410.YahooMailBasic@web171402.mail.ir2.yahoo.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 13-08-01 01:47 PM, Solomon Peachy wrote:
-> On Thu, Aug 01, 2013 at 12:37:33PM -0400, Jonathan Bagg wrote:
->> I've been cross compiling compat-wireless and now I'm trying
->> backports.  It looks like conf.c and zconf.tab.c are being compiled
->> as arm and then the build process is trying to run conf on my x86
->> host.  Results using the below make parameters I was using for
->> compat-wireless......
-Learned some things....Problem was LTIB (ltib = Freescale tool) 
-environment.  Outside of LTIB, backports cross compiles fine.  To get 
-backports happy in LTIB need to use UNSPOOF/SPOOF_PATH to switch between 
-host and cross environment....
 
-%Build
-export PATH=$UNSPOOF_PATH
+--CGDBiGfvSTbxKZlW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-make defconfig-cw1200 make prefix=%{_prefix} 
-CROSS_COMPILE=${TOOLCHAIN_PATH}/bin/${TOOLCHAIN_PREFIX} ARCH=$LINTARCH 
-KLIB=${TOP}/rootfs/lib/modules/%{kversion} KLIB_BUILD=${TOP}/rpm/BUILD/linux
+On Thu, Aug 08, 2013 at 03:34:25PM +0100, Phillip Moss wrote:
+> Hi all,
+> I have a rtl8723ae wifi card on my laptop. When connecting to any wifi
+> Access Point the wifi signal fluctuates from full strength to very
+> low.  In order to connect and stay connected I must be no farther than
+> two meters from my router otherwise I get disconnected.  I have tried
+> the kernel driver on multiple distros as well as the vendor drivers
+> for older kernel versions. All seem to have the same problem. The card
+> works ok on Windows 7 with vendor drivers. I have also tried compiling
+> backports-3.10-rc1-2 with no luck.  During a signal loss period I get
+> no logs but if I take the laptop too far from the AP dmesg reports:
 
-export PATH=$SPOOF_PATH
+You should report this on the linux-wireless mailing list and Cc the
+maintainers, specially if using a more up to date release of the
+driver.
 
-make prefix=%{_prefix} 
-CROSS_COMPILE=${TOOLCHAIN_PATH}/bin/${TOOLCHAIN_PREFIX} ARCH=$LINTARCH 
-KLIB=${TOP}/rootfs/lib/modules/%{kversion} KLIB_BUILD=${TOP}/rpm/BUILD/linux
+  Luis
 
-Jon
+--CGDBiGfvSTbxKZlW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> Howdy.  :)
->
-> (btw, I'm CC'ing the backports mailing list, which is a better place to
->   ask these sorts of questions)
->
-> I found that the backports cross-compile process worked much the same
-> way as building compat-wireless.  This is what I'm doing currently in my
-> build script:  (This is using a backports package generated last night
-> using the backports git HEAD code with the cw1200 driver integrated)
->
->   set -a
->   CROSS_COMPILE=${CROSS_COMPILE}
->   ARCH=${TARGET_CPU}
->   KLIB_BUILD=${DEV_PATH}/${LINUX_DIR}
->   KLIB=${TARGET_ROOT_ON_HOST}
->   set +a
->   make oldconfig  # menuconfig worked here too
->   make
->   make install
->
-> That said, the 'make install' target isn't currently sane for
-> cross-builds due to the bacport_firmware_install script not respecting
-> prefixes.  I just commented that script (and a few others like initrd
-> updates) out of the Makefiles, and I had a successful build/install.
->
->   - Solomon
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
+iQIcBAEBAgAGBQJSCYtkAAoJEKwtdpJg+MHGZmoP/jkzlkJHtcStm6pXgpw17OR/
++8gTNtx/GzajZWIbCck2l+toOyZH39sR8FzeNvDbn6Mucyqoxhg6XA0bRvTyfbZp
+7I8Z9iA/hfSjT8W4EpEP2QuKLNxASGHECpaBDc3J7cX1IwH3Nh9SWfKe7vMOpa7J
+kjuHbIxmZg6ojRTw/P7xcUYaQTznS11DOgH2yBzN4xoxtzajBEfScXYJwJ2/i1mw
+2zt7xNz2FKnw5ncGgbX1srzqor5JYrmEsX+SxbkC6ZuskXa7bl7sdLcHRXdBnn77
+lww0b/gvDLCuEiiFb5mXFDku13XyOwDBfgvKzunhY35PXRXWwEt3BxOMmBSKdX/d
+kZe2df62TVc/ymL0jVZfX+Ac85892fRsKdgxrSUBNtnELkBUvmdpTS77c1jyKQG5
+V1FmCuaNA+i3+2zc4/1NM+ceTmGMUdVvEZStCf04J39dV0L2ctDJSAKUweOvj7uB
+8/OIf8FACFgM30VB75w2E/8jAGdqn/wwJV47op/vAB+Cw30/4pFCFh+ydJ+XnbNT
+QzoEGcFLnAEFXyTlsR7ovlPhRT4TieRjebnKoxVyvjTOKDSuqBeofNrWi9+vVfCG
+hT40XL3MC/BKlvazI3Mnz6VrKr7Wqr80KI0CROrTg39xdiD+Fl+PR9FpvH8D1hJY
+Ti/AWWWfbgGwDK9uUI2c
+=PlsF
+-----END PGP SIGNATURE-----
 
--- 
-Jonathan Bagg
-Software Developer
-NAD Electronics | Lenbrook Industries Limited
-633 Granite Court, Pickering, Ontario, Canada L1W 3K1 | 905-831-0799 ext 4478 | http://www.nadelectronics.com
-
+--CGDBiGfvSTbxKZlW--
