@@ -1,61 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:52433 "EHLO mxz.fh-kl.de"
+Received: from mail.kernel.org ([198.145.19.201]:49341 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753895Ab3HOMkW (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 15 Aug 2013 08:40:22 -0400
-Message-ID: <520CCC2E.90309@fh-kl.de> (sfid-20130815_144023_173378_A403A436)
-Date: Thu, 15 Aug 2013 14:40:14 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+	id S1756482Ab3HMBUz (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 12 Aug 2013 21:20:55 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id B92D02049C
+	for <backports@vger.kernel.org>; Tue, 13 Aug 2013 01:20:54 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id 1956D20466
+	for <backports@vger.kernel.org>; Tue, 13 Aug 2013 01:20:54 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 59041] [PATCH 001/001] Compiling iwlwifi or alx against 3.4.47
+ kernel gives redefinition error
+Date: Tue, 13 Aug 2013 01:20:53 +0000
+Message-ID: <bug-59041-58281-TLQBx6mBhe@https.bugzilla.kernel.org/> (sfid-20130813_032056_959587_FE604D7B)
+In-Reply-To: <bug-59041-58281@https.bugzilla.kernel.org/>
+References: <bug-59041-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [PATCH v3 03/10] backports: define PM_EVENT_AUTO
-References: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This macro is missing for < 2.6.25
+https://bugzilla.kernel.org/show_bug.cgi?id=59041
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
----
- backport/backport-include/linux/pm.h | 4 ++++
- 1 file changed, 4 insertions(+)
+Luis R. Rodriguez <mcgrof@gmail.com> changed:
 
-diff --git a/backport/backport-include/linux/pm.h b/backport/backport-include/linux/pm.h
-index 70f3a21..d217c81 100644
---- a/backport/backport-include/linux/pm.h
-+++ b/backport/backport-include/linux/pm.h
-@@ -2,6 +2,10 @@
- #define __BACKPORT_PM_H
- #include_next <linux/pm.h>
- 
-+#ifndef PM_EVENT_AUTO
-+#define PM_EVENT_AUTO		0x0400
-+#endif
-+
- #ifndef PM_EVENT_SLEEP
- #define PM_EVENT_SLEEP  (PM_EVENT_SUSPEND)
- #endif
--- 
-1.8.1.2
-
-
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |NEEDINFO
 
 -- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
+You are receiving this mail because:
+You are the assignee for the bug.
