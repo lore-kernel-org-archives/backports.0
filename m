@@ -1,49 +1,84 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:60819 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755702Ab3HRXiU (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 18 Aug 2013 19:38:20 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
-	Patrick Ziegler <patrick.ziegler@fh-kl.de>
-Subject: [PATCH v2 02/19] backports: usb_translate_errors() is needed for < 3.2
-Date: Mon, 19 Aug 2013 01:37:47 +0200
-Message-Id: <1376869084-16513-3-git-send-email-hauke@hauke-m.de> (sfid-20130819_013821_513639_4FC900F4)
-In-Reply-To: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
-References: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
+Received: from mxz.fh-kl.de ([143.93.17.66]:55833 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759447Ab3HNISZ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 14 Aug 2013 04:18:25 -0400
+Message-ID: <520B3D4B.5020906@fh-kl.de> (sfid-20130814_101826_773377_4B7DA18D)
+Date: Wed, 14 Aug 2013 10:18:19 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [PATCH v2 6/9] backports: update enum usb_device_speed with USB_SPEED_SUPER
+References: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-usb_translate_errors() is needed for every kernel < 3.2 and not <
-2.6.39.
+USB_SPEED_SUPER is missing for kernel versions < 2.6.30 but used by uvc_video and
+usbnet.
 
-This fixes a problem introduced in this commit:
-commit aee2dc1d7fd03d3900e06e88793b519e21049de0
-Author: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-Date:   Thu Aug 15 14:40:20 2013 +0200
-
-    backports: add usb_translate_errors()
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 ---
- backport/backport-include/linux/usb.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ backport/backport-include/linux/usb/ch9.h | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
-index a717b7a..70d89b8 100644
---- a/backport/backport-include/linux/usb.h
-+++ b/backport/backport-include/linux/usb.h
-@@ -145,7 +145,7 @@ extern void usb_unpoison_urb(struct urb *urb);
- extern int usb_anchor_empty(struct usb_anchor *anchor);
- #endif /* 2.6.23-2.6.27 */
+diff --git a/backport/backport-include/linux/usb/ch9.h b/backport/backport-include/linux/usb/ch9.h
+index 252a6f1..40d5d3f 100644
+--- a/backport/backport-include/linux/usb/ch9.h
++++ b/backport/backport-include/linux/usb/ch9.h
+@@ -1,9 +1,31 @@
+ #ifndef __BACKPORT__LINUX_USB_CH9_H
+ #define __BACKPORT__LINUX_USB_CH9_H
  
--#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,39)
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
- static inline int usb_translate_errors(int error_code)
- {
- 	switch (error_code) {
+-#include_next <linux/usb/ch9.h>
+ #include <linux/version.h>
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
++#define usb_device_speed old_usb_device_speed
++#define USB_SPEED_UNKNOWN OLD_USB_SPEED_UNKNOWN
++#define USB_SPEED_LOW OLD_USB_SPEED_LOW
++#define USB_SPEED_FULL OLD_USB_SPEED_FULL
++#define USB_SPEED_HIGH OLD_USB_SPEED_HIGH
++#include_next <linux/usb/ch9.h>
++#undef usb_device_speed
++#undef USB_SPEED_UNKNOWN
++#undef USB_SPEED_LOW
++#undef USB_SPEED_FULL
++#undef USB_SPEED_HIGH
++enum usb_device_speed {
++	USB_SPEED_UNKNOWN = 0,          /* enumerating */
++	USB_SPEED_LOW, USB_SPEED_FULL,      /* usb 1.1 */
++	USB_SPEED_HIGH,             /* usb 2.0 */
++	USB_SPEED_WIRELESS,         /* wireless (usb 2.5) */
++	USB_SPEED_SUPER,            /* usb 3.0 */
++};
++#else
++#include_next <linux/usb/ch9.h>
++#endif /* < 2.6.30 */
++
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
+ #include <linux/types.h>    /* __u8 etc */
+ #include <asm/byteorder.h>  /* le16_to_cpu */
 -- 
-1.7.10.4
+1.8.1.2
 
+
+
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
