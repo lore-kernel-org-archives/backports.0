@@ -1,55 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:32795 "EHLO mxz.fh-kl.de"
+Received: from mxz.fh-kl.de ([143.93.17.66]:55855 "EHLO mxz.fh-kl.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750936Ab3HBL3w (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 2 Aug 2013 07:29:52 -0400
-Message-ID: <51FB982D.9030506@fh-kl.de> (sfid-20130802_132953_927833_DF28B127)
-Date: Fri, 2 Aug 2013 13:29:49 +0200
+	id S1759447Ab3HNISn (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 14 Aug 2013 04:18:43 -0400
+Message-ID: <520B3D5C.8020805@fh-kl.de> (sfid-20130814_101844_713139_AEE4573A)
+Date: Wed, 14 Aug 2013 10:18:36 +0200
 From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 MIME-Version: 1.0
 To: "Luis R. Rodriguez" <mcgrof@kernel.org>
 CC: <backports@vger.kernel.org>
-Subject: [PATCH 4/9] backports: add usb_translate_errors()
-References: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
+Subject: [PATCH v2 8/9] backports: define phys_addr_t for ARM on kernel version
+ < 2.6.25
+References: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
 Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This inline function is missing for version < 2.6.39 but required by em28xx
-and cdc-wdm device driver.
+phys_addr_t is not defined on ARM systems if kernel version < 2.6.25.
 
 Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 ---
- backport/backport-include/linux/usb.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ backport/backport-include/linux/types.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
-index 368da6c..49a5762 100644
---- a/backport/backport-include/linux/usb.h
-+++ b/backport/backport-include/linux/usb.h
-@@ -145,4 +145,21 @@ extern void usb_unpoison_urb(struct urb *urb);
- extern int usb_anchor_empty(struct usb_anchor *anchor);
- #endif /* 2.6.23-2.6.27 */
+diff --git a/backport/backport-include/linux/types.h b/backport/backport-include/linux/types.h
+index 504a615..0aadc80 100644
+--- a/backport/backport-include/linux/types.h
++++ b/backport/backport-include/linux/types.h
+@@ -4,7 +4,7 @@
+ #include <linux/version.h>
  
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,39)
-+#if defined(CONFIG_USB) || defined(CONFIG_USB_MODULE)
-+static inline int usb_translate_errors(int error_code)
-+{
-+	switch (error_code) {
-+	case 0:
-+	case -ENOMEM:
-+	case -ENODEV:
-+	case -EOPNOTSUPP:
-+		return error_code;
-+	default:
-+		return -EIO;
-+	}
-+}
-+#endif /* CONFIG_USB */
-+#endif /* < 2.6.39 */
-+
- #endif /* __BACKPORT_USB_H */
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25)
+-#if defined(CONFIG_X86) || defined(CONFIG_X86_64)
++#if defined(CONFIG_X86) || defined(CONFIG_X86_64) || defined(CONFIG_ARM)
+ 
+ #if defined(CONFIG_64BIT) || defined(CONFIG_X86_PAE) || defined(CONFIG_PHYS_64BIT)
+ typedef u64 phys_addr_t;
+@@ -12,7 +12,7 @@ typedef u64 phys_addr_t;
+ typedef u32 phys_addr_t;
+ #endif
+ 
+-#endif /* x86 */
++#endif /* x86 || ARM */
+ #elif LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28) /* < 2.6.25 */
+ 
+ #if defined(CONFIG_X86) || defined(CONFIG_X86_64) || defined(CONFIG_PPC)
 -- 
 1.8.1.2
 
