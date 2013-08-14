@@ -1,214 +1,60 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:52482 "EHLO mxz.fh-kl.de"
+Received: from mxz.fh-kl.de ([143.93.17.66]:55790 "EHLO mxz.fh-kl.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754353Ab3HOMlE (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 15 Aug 2013 08:41:04 -0400
-Message-ID: <520CCC58.6050707@fh-kl.de> (sfid-20130815_144106_620786_1171D665)
-Date: Thu, 15 Aug 2013 14:40:56 +0200
+	id S1759447Ab3HNIRs (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 14 Aug 2013 04:17:48 -0400
+Message-ID: <520B3D25.7050600@fh-kl.de> (sfid-20130814_101750_380647_4D57E564)
+Date: Wed, 14 Aug 2013 10:17:41 +0200
 From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 MIME-Version: 1.0
 To: "Luis R. Rodriguez" <mcgrof@kernel.org>
 CC: <backports@vger.kernel.org>
-Subject: [PATCH v3 09/10] backports: add wwan device drivers
-References: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
+Subject: [PATCH v2 1/9] backports: fix build errors for old kernel versions
+ without PCI support
+References: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
 Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Add cdc_mbim, cdc_ncm, sierra_net, qmi_wwan device drivers.
-
 Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 ---
- backport/Kconfig                                           |  2 ++
- backport/Makefile.kernel                                   |  3 +++
- copy-list                                                  | 14 ++++++++++++++
- .../network/0001-netdev_ops/qmi_wwan.patch                 | 11 +++++++++++
- .../network/0001-netdev_ops/sierra_net.patch               | 11 +++++++++++
- .../62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch       | 12 ++++++++++++
- .../62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch        | 12 ++++++++++++
- .../62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch       | 12 ++++++++++++
- .../62-usb_driver_lpm/drivers_net_usb_sierra_net.patch     | 12 ++++++++++++
- .../62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch      | 12 ++++++++++++
- 10 files changed, 101 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch
- create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
+ backport/compat/compat-2.6.25.c | 2 ++
+ backport/compat/compat-2.6.28.c | 1 +
+ 2 files changed, 3 insertions(+)
 
-diff --git a/backport/Kconfig b/backport/Kconfig
-index 845b233..64a5f8b 100644
---- a/backport/Kconfig
-+++ b/backport/Kconfig
-@@ -48,3 +48,5 @@ source drivers/platform/x86/Kconfig
- source net/ieee802154/Kconfig
- source net/mac802154/Kconfig
- source drivers/net/ieee802154/Kconfig
-+
-+source drivers/usb/class/Kconfig
-diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
-index ac29dea..ca75ce1 100644
---- a/backport/Makefile.kernel
-+++ b/backport/Makefile.kernel
-@@ -40,3 +40,6 @@ obj-$(CPTCFG_INTEL_IPS) += drivers/platform/x86/
- obj-$(CPTCFG_IEEE802154) += net/ieee802154/
- obj-$(CPTCFG_MAC802154) += net/mac802154/
- obj-$(CPTCFG_IEEE802154) += drivers/net/ieee802154/
-+
-+obj-$(CPTCFG_USB_WDM) += drivers/usb/class/
-+obj-$(CPTCFG_USB_USBNET) += drivers/net/usb/
-diff --git a/copy-list b/copy-list
-index aaf5ae9..7da4bb7 100644
---- a/copy-list
-+++ b/copy-list
-@@ -100,6 +100,20 @@ drivers/net/ethernet/broadcom/Makefile
- drivers/net/ethernet/broadcom/b44.c
- drivers/net/ethernet/broadcom/b44.h
+diff --git a/backport/compat/compat-2.6.25.c b/backport/compat/compat-2.6.25.c
+index b3597ea..37407a4 100644
+--- a/backport/compat/compat-2.6.25.c
++++ b/backport/compat/compat-2.6.25.c
+@@ -210,6 +210,7 @@ EXPORT_SYMBOL_GPL(sg_alloc_table);
+  * to it. We implement a sloppy work around for backporting
+  * this.
+  */
++#ifdef CONFIG_PCI
+ int pci_enable_device_mem(struct pci_dev *dev)
+ {
+ 	int bars = pci_select_bars(dev, IORESOURCE_MEM);
+@@ -217,6 +218,7 @@ int pci_enable_device_mem(struct pci_dev *dev)
+ 	return pci_enable_device_bars(dev, bars);
+ }
+ EXPORT_SYMBOL_GPL(pci_enable_device_mem);
++#endif
  
-+# wwan drivers
-+include/uapi/linux/usb/cdc.h
-+include/uapi/linux/usb/cdc-wdm.h
-+include/linux/usb/cdc_ncm.h
-+include/linux/usb/cdc-wdm.h
-+
-+drivers/usb/class/Makefile
-+drivers/usb/class/Kconfig
-+drivers/usb/class/cdc-wdm.c
-+drivers/net/usb/cdc_mbim.c
-+drivers/net/usb/cdc_ncm.c
-+drivers/net/usb/sierra_net.c
-+drivers/net/usb/qmi_wwan.c
-+
- # DRM
- include/drm/
- include/uapi/drm/
-diff --git a/patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch b/patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch
-new file mode 100644
-index 0000000..6281c8d
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch
-@@ -0,0 +1,11 @@
-+--- a/drivers/net/usb/qmi_wwan.c
-++++ b/drivers/net/usb/qmi_wwan.c
-+@@ -331,7 +331,7 @@
-+ 		dev->net->dev_addr[0] |= 0x02;	/* set local assignment bit */
-+ 		dev->net->dev_addr[0] &= 0xbf;	/* clear "IP" bit */
-+ 	}
-+-	dev->net->netdev_ops = &qmi_wwan_netdev_ops;
-++	netdev_attach_ops(dev->net, &qmi_wwan_netdev_ops);
-+ err:
-+ 	return status;
-+ }
-diff --git a/patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch b/patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch
-new file mode 100644
-index 0000000..e7ff14b
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch
-@@ -0,0 +1,11 @@
-+--- a/drivers/net/usb/sierra_net.c
-++++ b/drivers/net/usb/sierra_net.c
-+@@ -695,7 +695,7 @@
-+ 
-+ 	priv->usbnet = dev;
-+ 	priv->ifnum = ifacenum;
-+-	dev->net->netdev_ops = &sierra_net_device_ops;
-++	netdev_attach_ops(dev->net, &sierra_net_device_ops);
-+ 
-+ 	/* change MAC addr to include, ifacenum, and to be unique */
-+ 	dev->net->dev_addr[ETH_ALEN-2] = atomic_inc_return(&iface_counter);
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
-new file mode 100644
-index 0000000..0feffc8
---- /dev/null
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/net/usb/cdc_mbim.c
-++++ b/drivers/net/usb/cdc_mbim.c
-+@@ -417,7 +417,9 @@
-+ 	.resume = cdc_mbim_resume,
-+ 	.reset_resume =	cdc_mbim_resume,
-+ 	.supports_autosuspend = 1,
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+ 	.disable_hub_initiated_lpm = 1,
-++#endif
-+ };
-+ module_usb_driver(cdc_mbim_driver);
-+ 
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
-new file mode 100644
-index 0000000..c6419fe
---- /dev/null
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/net/usb/cdc_ncm.c
-++++ b/drivers/net/usb/cdc_ncm.c
-+@@ -1271,7 +1271,9 @@
-+ 	.resume = usbnet_resume,
-+ 	.reset_resume =	usbnet_resume,
-+ 	.supports_autosuspend = 1,
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+ 	.disable_hub_initiated_lpm = 1,
-++#endif
-+ };
-+ 
-+ module_usb_driver(cdc_ncm_driver);
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
-new file mode 100644
-index 0000000..8f3355d
---- /dev/null
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/net/usb/qmi_wwan.c
-++++ b/drivers/net/usb/qmi_wwan.c
-+@@ -672,7 +672,9 @@
-+ 	.resume		      =	qmi_wwan_resume,
-+ 	.reset_resume         = qmi_wwan_resume,
-+ 	.supports_autosuspend = 1,
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+ 	.disable_hub_initiated_lpm = 1,
-++#endif
-+ };
-+ 
-+ module_usb_driver(qmi_wwan_driver);
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
-new file mode 100644
-index 0000000..553f2ca
---- /dev/null
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/net/usb/sierra_net.c
-++++ b/drivers/net/usb/sierra_net.c
-+@@ -959,7 +959,9 @@
-+ 	.suspend = usbnet_suspend,
-+ 	.resume = usbnet_resume,
-+ 	.no_dynamic_id = 1,
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+ 	.disable_hub_initiated_lpm = 1,
-++#endif
-+ };
-+ 
-+ module_usb_driver(sierra_net_driver);
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
-new file mode 100644
-index 0000000..c3af4a1
---- /dev/null
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/usb/class/cdc-wdm.c
-++++ b/drivers/usb/class/cdc-wdm.c
-+@@ -1060,7 +1060,9 @@
-+ 	.post_reset =	wdm_post_reset,
-+ 	.id_table =	wdm_ids,
-+ 	.supports_autosuspend = 1,
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+ 	.disable_hub_initiated_lpm = 1,
-++#endif
-+ };
-+ 
-+ module_usb_driver(wdm_driver);
+ /**
+  * The following things are out of ./lib/vsprintf.c
+diff --git a/backport/compat/compat-2.6.28.c b/backport/compat/compat-2.6.28.c
+index e47626b..2ff6b1e 100644
+--- a/backport/compat/compat-2.6.28.c
++++ b/backport/compat/compat-2.6.28.c
+@@ -12,6 +12,7 @@
+ #include <linux/usb.h>
+ #include <linux/tty.h>
+ #include <linux/skbuff.h>
++#include <linux/pci.h>
+ #include <asm/poll.h>
+ 
+ /* 2.6.28 compat code goes here */
 -- 
 1.8.1.2
 
