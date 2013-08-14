@@ -1,46 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ea0-f173.google.com ([209.85.215.173]:45073 "EHLO
-	mail-ea0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750834Ab3GaXQZ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 31 Jul 2013 19:16:25 -0400
-Received: by mail-ea0-f173.google.com with SMTP id g10so644638eak.32
-        for <backports@vger.kernel.org>; Wed, 31 Jul 2013 16:16:23 -0700 (PDT)
-Received: from [192.168.1.81] (ip503cba31.speed.planet.nl. [80.60.186.49])
-        by mx.google.com with ESMTPSA id n42sm29638eeh.15.2013.07.31.16.16.22
-        for <backports@vger.kernel.org>
-        (version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
-        Wed, 31 Jul 2013 16:16:23 -0700 (PDT)
-Message-ID: <51F99AC6.8080909@gmail.com> (sfid-20130801_011628_506952_B1405F41)
-Date: Thu, 01 Aug 2013 01:16:22 +0200
-From: Leon Woestenberg <sidebranch.linux@gmail.com>
+Received: from mxz.fh-kl.de ([143.93.17.66]:55839 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759447Ab3HNISc (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 14 Aug 2013 04:18:32 -0400
+Message-ID: <520B3D54.6080101@fh-kl.de> (sfid-20130814_101833_835582_BDE3EBC3)
+Date: Wed, 14 Aug 2013 10:18:28 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 MIME-Version: 1.0
-To: backports@vger.kernel.org
-Subject: What if kernel CONFIG=Y or CONFIG=N and backports CONFIG=M?
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [PATCH v2 7/9] backports: include headers directly if math64 header
+ is missing
+References: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hello all,
+If math64 header is not available, include div64.h directly. It is required for
+do_div() that is used inside the backport version of math64.h.
 
-two questions (I am new to the backports project):
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+---
+ backport/backport-include/linux/math64.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-If I configure backports to build a driver as a module, whilst the 
-kernel we build against (KLIB/KLIB_BUILD) has this driver built-in, what 
-is supposed to happen?
+diff --git a/backport/backport-include/linux/math64.h b/backport/backport-include/linux/math64.h
+index 7f3a81b..775c2d3 100644
+--- a/backport/backport-include/linux/math64.h
++++ b/backport/backport-include/linux/math64.h
+@@ -5,6 +5,9 @@
+ 
+ #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,25))
+ #include_next <linux/math64.h>
++#else
++#include <linux/types.h>
++#include <asm/div64.h>
+ #endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,25)) */
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)
+-- 
+1.8.1.2
 
-Obviously I cannot load the backport module into the kernel.
 
 
-Is it possible (within the kernel and backports code) to build a 
-subsystem or driver as a module, if the original kernel did not have 
-this subsystem or driver built at all ("N" in the menu, CONFIG_ 
-commented out in .config)?
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
 
-Can the kernel always load modules that were defined as =N during the 
-kernel built itself?
+University Of Applied Sciences
+Kaiserslautern
 
-(My aim is Yocto/OpenEmbedded support for backports into the build system.)
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
 
-Thanks,
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
 
-Leon.
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
