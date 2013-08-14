@@ -1,59 +1,129 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:54773 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754971Ab3HPR1E (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 16 Aug 2013 13:27:04 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
-	Arik Nemtsov <arik@wizery.com>
-Subject: [PATCH 02/13] backports: fix conditional include of arch_phys_wc_add()
-Date: Fri, 16 Aug 2013 19:26:32 +0200
-Message-Id: <1376674003-5801-2-git-send-email-hauke@hauke-m.de> (sfid-20130816_192737_081197_C4CFF1FF)
-In-Reply-To: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
-References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
+Received: from mxz.fh-kl.de ([143.93.17.66]:55767 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759447Ab3HNIRf (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 14 Aug 2013 04:17:35 -0400
+Message-ID: <520B3D18.4020209@fh-kl.de> (sfid-20130814_101740_159868_2CD8FFD1)
+Date: Wed, 14 Aug 2013 10:17:28 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [PATCH v2 2/9] backports: add eth_prepare_mac_addr_change() and eth_commit_mac_addr_change()
+References: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This fixes a problem introduced in this commit:
-commit c871780b5afa182878884bf5ccd8df4817a2660f
-Author: Arik Nemtsov <arik@wizery.com>
-Date:   Wed Aug 14 10:48:05 2013 +0300
+These functions are required by qmi_wwan device driver.
 
-    backports: rename some mem functions to not break custom kernels
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: Arik Nemtsov <arik@wizery.com>
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 ---
- backport/backport-include/linux/io.h |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ backport/backport-include/linux/etherdevice.h |  8 +++++++
+ backport/backport-include/linux/if.h          |  4 ++++
+ backport/compat/compat-3.9.c                  | 33 +++++++++++++++++++++++++++
+ 3 files changed, 45 insertions(+)
 
-diff --git a/backport/backport-include/linux/io.h b/backport/backport-include/linux/io.h
-index 5447df8..84a8c21 100644
---- a/backport/backport-include/linux/io.h
-+++ b/backport/backport-include/linux/io.h
-@@ -13,10 +13,11 @@
-  * arch_phys_del_wc(0) or arch_phys_del_wc(any error code) is guaranteed
-  * to have no effect.
-  */
-+#ifndef arch_phys_wc_add
-+
- #define arch_phys_wc_add LINUX_BACKPORT(arch_phys_wc_add)
- #define arch_phys_wc_del LINUX_BACKPORT(arch_phys_wc_del)
- 
--#ifndef arch_phys_wc_add
- #ifdef CONFIG_MTRR
- extern int __must_check arch_phys_wc_add(unsigned long base,
- 					 unsigned long size);
-@@ -32,8 +33,6 @@ static inline void arch_phys_wc_del(int handle)
- {
+diff --git a/backport/backport-include/linux/etherdevice.h b/backport/backport-include/linux/etherdevice.h
+index 5c82fc4..6aff244 100644
+--- a/backport/backport-include/linux/etherdevice.h
++++ b/backport/backport-include/linux/etherdevice.h
+@@ -114,6 +114,14 @@ static inline int is_unicast_ether_addr(const u8 *addr)
  }
- #endif /* CONFIG_MTRR */
--
--#define arch_phys_wc_add arch_phys_wc_add
  #endif
  
- #endif /* __BACKPORT_LINUX_IO_H */
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
++#define eth_prepare_mac_addr_change LINUX_BACKPORT(eth_prepare_mac_addr_change)
++extern int eth_prepare_mac_addr_change(struct net_device *dev, void *p);
++
++#define eth_commit_mac_addr_change LINUX_BACKPORT(eth_commit_mac_addr_change)
++extern void eth_commit_mac_addr_change(struct net_device *dev, void *p);
++#endif /* < 3.9 */
++
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29)
+ #define eth_mac_addr LINUX_BACKPORT(eth_mac_addr)
+ extern int eth_mac_addr(struct net_device *dev, void *p);
+diff --git a/backport/backport-include/linux/if.h b/backport/backport-include/linux/if.h
+index 7926082..8f85b83 100644
+--- a/backport/backport-include/linux/if.h
++++ b/backport/backport-include/linux/if.h
+@@ -29,4 +29,8 @@
+ #define IFF_TX_SKB_SHARING	0x10000
+ #endif
+ 
++#ifndef IFF_LIVE_ADDR_CHANGE
++#define IFF_LIVE_ADDR_CHANGE 0x100000
++#endif
++
+ #endif	/* _BACKPORT_LINUX_IF_H */
+diff --git a/backport/compat/compat-3.9.c b/backport/compat/compat-3.9.c
+index 03f3af8..ba8e3cf 100644
+--- a/backport/compat/compat-3.9.c
++++ b/backport/compat/compat-3.9.c
+@@ -12,6 +12,9 @@
+ #include <linux/scatterlist.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
++#include <linux/netdevice.h>
++#include <linux/if.h>
++#include <linux/if_ether.h>
+ 
+ #ifdef __sg_page_iter_next
+ 
+@@ -64,4 +67,34 @@ void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res)
+ }
+ EXPORT_SYMBOL_GPL(devm_ioremap_resource);
+ 
++/**
++ * eth_prepare_mac_addr_change - prepare for mac change
++ * @dev: network device
++ * @p: socket address
++ */
++int eth_prepare_mac_addr_change(struct net_device *dev, void *p)
++{
++	struct sockaddr *addr = p;
++
++	if (!(dev->priv_flags & IFF_LIVE_ADDR_CHANGE) && netif_running(dev))
++		return -EBUSY;
++	if (!is_valid_ether_addr(addr->sa_data))
++		return -EADDRNOTAVAIL;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(eth_prepare_mac_addr_change);
++
++/**
++ * eth_commit_mac_addr_change - commit mac change
++ * @dev: network device
++ * @p: socket address
++ */
++void eth_commit_mac_addr_change(struct net_device *dev, void *p)
++{
++	struct sockaddr *addr = p;
++
++	memcpy(dev->dev_addr, addr->sa_data, ETH_ALEN);
++}
++EXPORT_SYMBOL_GPL(eth_commit_mac_addr_change);
++
+ #endif /* __sg_page_iter_next */
 -- 
-1.7.10.4
+1.8.1.2
 
+
+
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
