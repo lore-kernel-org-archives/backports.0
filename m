@@ -1,48 +1,73 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:54823 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752381Ab3HPR1t (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 16 Aug 2013 13:27:49 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
-	Patrick Ziegler <patrick.ziegler@fh-kl.de>
-Subject: [PATCH 04/13] backports: add missing include for is_valid_ether_addr()
-Date: Fri, 16 Aug 2013 19:26:34 +0200
-Message-Id: <1376674003-5801-4-git-send-email-hauke@hauke-m.de> (sfid-20130816_193909_420802_236C6E3A)
-In-Reply-To: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
-References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
+Received: from mxz.fh-kl.de ([143.93.17.66]:55813 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759447Ab3HNISJ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 14 Aug 2013 04:18:09 -0400
+Message-ID: <520B3D3B.1000104@fh-kl.de> (sfid-20130814_101810_869780_A31C4EAC)
+Date: Wed, 14 Aug 2013 10:18:03 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [PATCH v2 4/9] backports: add usb_translate_errors()
+References: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-is_valid_ether_addr() is used, but the header here it is declared was
-not included.
+This inline function is missing for version < 2.6.39 but required by em28xx
+and cdc-wdm device driver.
 
-This fixes a problem introduced in commit:
-commit 521acfd92f168fc9b8b6a1cefe9a165243f3d872
-Author: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-Date:   Thu Aug 15 14:40:09 2013 +0200
-
-    backports: add eth_prepare_mac_addr_change() and eth_commit_mac_addr_change()
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 ---
- backport/compat/compat-3.9.c |    1 +
- 1 file changed, 1 insertion(+)
+ backport/backport-include/linux/usb.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/backport/compat/compat-3.9.c b/backport/compat/compat-3.9.c
-index ba8e3cf..d85a79f 100644
---- a/backport/compat/compat-3.9.c
-+++ b/backport/compat/compat-3.9.c
-@@ -15,6 +15,7 @@
- #include <linux/netdevice.h>
- #include <linux/if.h>
- #include <linux/if_ether.h>
-+#include <linux/etherdevice.h>
+diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
+index 368da6c..49a5762 100644
+--- a/backport/backport-include/linux/usb.h
++++ b/backport/backport-include/linux/usb.h
+@@ -145,4 +145,21 @@ extern void usb_unpoison_urb(struct urb *urb);
+ extern int usb_anchor_empty(struct usb_anchor *anchor);
+ #endif /* 2.6.23-2.6.27 */
  
- #ifdef __sg_page_iter_next
- 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,39)
++#if defined(CONFIG_USB) || defined(CONFIG_USB_MODULE)
++static inline int usb_translate_errors(int error_code)
++{
++	switch (error_code) {
++	case 0:
++	case -ENOMEM:
++	case -ENODEV:
++	case -EOPNOTSUPP:
++		return error_code;
++	default:
++		return -EIO;
++	}
++}
++#endif /* CONFIG_USB */
++#endif /* < 2.6.39 */
++
+ #endif /* __BACKPORT_USB_H */
 -- 
-1.7.10.4
+1.8.1.2
 
+
+
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
