@@ -1,42 +1,69 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:53352 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753087Ab3HAToF (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 1 Aug 2013 15:44:05 -0400
-Received: by mail-la0-f48.google.com with SMTP id hi8so1729468lab.35
-        for <backports@vger.kernel.org>; Thu, 01 Aug 2013 12:44:03 -0700 (PDT)
+Received: from mxz.fh-kl.de ([143.93.17.66]:51304 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755519Ab3HOLo2 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 15 Aug 2013 07:44:28 -0400
+Message-ID: <520CBF0C.0@fh-kl.de> (sfid-20130815_134430_162549_D42201A2)
+Date: Thu, 15 Aug 2013 13:44:12 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 MIME-Version: 1.0
-In-Reply-To: <007b01ce8eee$cca32e50$65e98af0$@gmail.com>
-References: <000d01ce8e07$80a36430$81ea2c90$@gmail.com> <CAB=NE6WLPxLpGWOP6fj_FEWk_AA4Tz7UQay1tPxsMJfquRnSmg@mail.gmail.com>
- <007b01ce8eee$cca32e50$65e98af0$@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Thu, 1 Aug 2013 12:43:43 -0700
-Message-ID: <CAB=NE6Xg_MHwZAaZHHkL841BHJxFzEeu2oMZJdXpqYoGSHjSgQ@mail.gmail.com> (sfid-20130801_214407_953270_876B32B8)
-Subject: Re: Bug with the website: links are broken
-To: Chris R <chrisrfq@gmail.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: Hauke Mehrtens <hauke@hauke-m.de>
+CC: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+	<backports@vger.kernel.org>
+Subject: Re: [PATCH v2 9/9] backports: add wwan device drivers
+References: <cover.1376467862.git.patrick.ziegler@fh-kl.de> <520B3D66.4080208@fh-kl.de> <520CBD1F.6060106@hauke-m.de>
+In-Reply-To: <520CBD1F.6060106@hauke-m.de>
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Aug 1, 2013 at 12:39 PM, Chris R <chrisrfq@gmail.com> wrote:
->> Its back up...
->
-> Thanks very much!
->
->> ...that page has ancient releases, why are you still using them?
->
-> I'm stuck at kernel version 2.6.37.
 
-So backports is designed so that you use a backports-3.11 say on
-2.6.37. That is you don't have to use a backport-3.10 only on 3.10 in
-fact that'd be pointless. We backport functionality from a kernel as a
-base and that base is used as the version name for the release.
 
-A few folks have reported misunderstanding this as well so I'm curious
-apart from the documentation we have on the wiki [0] what else can we
-do to help with this?
+On 15.08.2013 13:35, Hauke Mehrtens wrote:
+> On 08/14/2013 10:18 AM, Patrick Ziegler wrote:
+>> Add cdc_mbim, cdc_ncm, sierra_net, qmi_wwan device drivers.
+>>
+>> Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+>> ---
+>>  backport/Kconfig                                           |  2 ++
+>>  backport/Makefile.kernel                                   |  3 +++
+>>  copy-list                                                  | 14 ++++++++++++++
+>>  .../network/0001-netdev_ops/qmi_wwan.patch                 | 11 +++++++++++
+>>  .../network/0001-netdev_ops/sierra_net.patch               | 11 +++++++++++
+>>  .../62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch       | 12 ++++++++++++
+>>  .../62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch        | 12 ++++++++++++
+>>  .../62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch       | 12 ++++++++++++
+>>  .../62-usb_driver_lpm/drivers_net_usb_sierra_net.patch     | 12 ++++++++++++
+>>  .../62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch      | 12 ++++++++++++
+>>  10 files changed, 101 insertions(+)
+>>  create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch
+>>  create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch
+>>  create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
+>>  create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
+>>  create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
+>>  create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
+>>  create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
+> 
+> Please add a defconfig/wwan file which activates these drivers.
+> 
 
-[0] https://backports.wiki.kernel.org
+Thanks for reviewing. I will implement your comments.
 
-  Luis
+Patrick
+
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
