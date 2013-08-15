@@ -1,61 +1,94 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:60860 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755803Ab3HRXih (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 18 Aug 2013 19:38:37 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH v2 10/19] backports: backport pci power save for mwifiex
-Date: Mon, 19 Aug 2013 01:37:55 +0200
-Message-Id: <1376869084-16513-11-git-send-email-hauke@hauke-m.de> (sfid-20130819_013909_134407_3CDE3092)
-In-Reply-To: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
-References: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
+Received: from mxz.fh-kl.de ([143.93.17.66]:52400 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752860Ab3HOMj4 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 15 Aug 2013 08:39:56 -0400
+Message-ID: <520CCC15.1090603@fh-kl.de> (sfid-20130815_143959_012850_0C3C8F22)
+Date: Thu, 15 Aug 2013 14:39:49 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [PATCH v3 00/10] backports: add wwan device drivers
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This patch makes mwifiex use the old suspend resume functions on older
-kernels.
+This adds wwan drivers for mobile broadband devices.
+Patches 1 to 8 add missing stuff required for the wwan drivers.
+Patch 9 adds device drivers.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../drivers_net_wireless_mwifiex_pcie.patch        |   27 ++++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_mwifiex_pcie.patch
+Changes v2:
+- cosmetic changes
+- remove pci function when pci was not configured
 
-diff --git a/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_mwifiex_pcie.patch b/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_mwifiex_pcie.patch
-new file mode 100644
-index 0000000..4b76db3
---- /dev/null
-+++ b/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_mwifiex_pcie.patch
-@@ -0,0 +1,27 @@
-+--- a/drivers/net/wireless/mwifiex/pcie.c
-++++ b/drivers/net/wireless/mwifiex/pcie.c
-+@@ -260,6 +260,9 @@ static DEFINE_PCI_DEVICE_TABLE(mwifiex_i
-+ MODULE_DEVICE_TABLE(pci, mwifiex_ids);
-+ 
-+ #ifdef CONFIG_PM_SLEEP
-++compat_pci_suspend(mwifiex_pcie_suspend);
-++compat_pci_resume(mwifiex_pcie_resume);
-++
-+ /* Power Management Hooks */
-+ static SIMPLE_DEV_PM_OPS(mwifiex_pcie_pm_ops, mwifiex_pcie_suspend,
-+ 				mwifiex_pcie_resume);
-+@@ -272,9 +275,14 @@ static struct pci_driver __refdata mwifi
-+ 	.probe    = mwifiex_pcie_probe,
-+ 	.remove   = mwifiex_pcie_remove,
-+ #ifdef CONFIG_PM_SLEEP
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,29))
-+ 	.driver   = {
-+ 		.pm = &mwifiex_pcie_pm_ops,
-+ 	},
-++#else
-++	.suspend    = mwifiex_pcie_suspend_compat,
-++	.resume     = mwifiex_pcie_resume_compat,
-++#endif
-+ #endif
-+ 	.shutdown = mwifiex_pcie_shutdown,
-+ };
+Changes v3:
+- remove needless CONFIG_USB check
+- new defconfig for wwan device drivers
+
+Patrick Ziegler (10):
+  backports: fix build errors for old kernel versions without PCI
+    support
+  backports: add eth_prepare_mac_addr_change() and
+    eth_commit_mac_addr_change()
+  backports: define PM_EVENT_AUTO
+  backports: add usb_translate_errors()
+  backports: add usb_endpoint_maxp()
+  backports: update enum usb_device_speed with USB_SPEED_SUPER
+  backports: include headers directly if math64 header is missing
+  backports: define phys_addr_t for ARM on kernel version < 2.6.25
+  backports: add wwan device drivers
+  backports: add defconfig for wwan device drivers
+
+ backport/Kconfig                                   |  2 +
+ backport/Makefile.kernel                           |  3 ++
+ backport/backport-include/linux/etherdevice.h      |  8 ++++
+ backport/backport-include/linux/if.h               |  4 ++
+ backport/backport-include/linux/math64.h           |  3 ++
+ backport/backport-include/linux/pm.h               |  4 ++
+ backport/backport-include/linux/types.h            |  4 +-
+ backport/backport-include/linux/usb.h              | 15 ++++++++
+ backport/backport-include/linux/usb/ch9.h          | 45 ++++++++++++++++++++++
+ backport/compat/compat-2.6.25.c                    |  2 +
+ backport/compat/compat-2.6.28.c                    |  1 +
+ backport/compat/compat-3.9.c                       | 33 ++++++++++++++++
+ backport/defconfigs/wwan                           |  6 +++
+ copy-list                                          | 14 +++++++
+ .../network/0001-netdev_ops/qmi_wwan.patch         | 11 ++++++
+ .../network/0001-netdev_ops/sierra_net.patch       | 11 ++++++
+ .../drivers_net_usb_cdc_mbim.patch                 | 12 ++++++
+ .../drivers_net_usb_cdc_ncm.patch                  | 12 ++++++
+ .../drivers_net_usb_qmi_wwan.patch                 | 12 ++++++
+ .../drivers_net_usb_sierra_net.patch               | 12 ++++++
+ .../drivers_usb_class_cdc-wdm.patch                | 12 ++++++
+ 21 files changed, 224 insertions(+), 2 deletions(-)
+ create mode 100644 backport/backport-include/linux/usb/ch9.h
+ create mode 100644 backport/defconfigs/wwan
+ create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch
+ create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch
+ create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
+ create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
+ create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
+ create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
+ create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
+
 -- 
-1.7.10.4
+1.8.1.2
 
+
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
