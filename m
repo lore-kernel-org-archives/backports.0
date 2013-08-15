@@ -1,41 +1,52 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:55831 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752996Ab3H0PuH (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 27 Aug 2013 11:50:07 -0400
-Message-ID: <1377618602.20012.10.camel@jlt4.sipsolutions.net> (sfid-20130827_175008_853745_9D7482F0)
-Subject: Re: [RFC] remove support for kernel 2.6.24
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Tue, 27 Aug 2013 17:50:02 +0200
-In-Reply-To: <CAB=NE6VBhHkfFPd-kBKfscy2P=EVQ7jNevYQ5nVU2y_aFsCP-Q@mail.gmail.com> (sfid-20130827_174912_167400_D3372A9F)
-References: <1377258238-3880-1-git-send-email-johannes@sipsolutions.net>
-	 <CAB=NE6VBhHkfFPd-kBKfscy2P=EVQ7jNevYQ5nVU2y_aFsCP-Q@mail.gmail.com>
-	 (sfid-20130827_174912_167400_D3372A9F)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:47829
+	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1755514Ab3HOM4C (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 15 Aug 2013 08:56:02 -0400
+From: Solomon Peachy <pizza@shaftnet.org>
+To: backports@vger.kernel.org
+Cc: Solomon Peachy <pizza@shaftnet.org>
+Subject: [PATCH v2 2/2] backports:  Add patch for cw1200_sdio with kernels < 3.2
+Date: Thu, 15 Aug 2013 08:55:57 -0400
+Message-Id: <1376571357-16506-2-git-send-email-pizza@shaftnet.org> (sfid-20130815_145604_333683_B2B48458)
+In-Reply-To: <1376571357-16506-1-git-send-email-pizza@shaftnet.org>
+References: <1376571357-16506-1-git-send-email-pizza@shaftnet.org>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2013-08-27 at 08:48 -0700, Luis R. Rodriguez wrote:
-> On Fri, Aug 23, 2013 at 4:43 AM, Johannes Berg
-> <johannes@sipsolutions.net> wrote:
-> > From: Johannes Berg <johannes.berg@intel.com>
-> >
-> > By requiring 2.6.25 we can get rid of quite a lot of backport work.
-> > 2.6.25 was released more than five years ago (April 2011) and wasn't
-> > a long-term kernel either, so there's little point in supporting it
-> > now.
-> >
-> > Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> 
-> I'm fine with this, please feel free to send as patch form unless you
-> want me to just accept it as is, I'd test compile it before
-> integration into the public tree.
+Without this patch, the hardware *will* hang on <3.2 kernels when a
+512-byte SDIO transfer occurs.
 
-I think it's ok, the [rfc] was more for the fact of removing it rather
-than the contents.
+3.2-rc added an SDIO quirk to work around this, so this code was
+stripped from the driver when committed to the mainline.
 
-johannes
+Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
+---
+ .../network/75-cw1200-sdio-quirk/cw1200.patch             | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
+
+diff --git a/patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch b/patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
+new file mode 100644
+index 0000000..2533051
+--- /dev/null
++++ b/patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
+@@ -0,0 +1,15 @@
++--- a/drivers/net/wireless/cw1200/cw1200_sdio.c
+++++ b/drivers/net/wireless/cw1200/cw1200_sdio.c
++@@ -253,6 +253,12 @@ static size_t cw1200_sdio_align_size(struct hwbus_priv *self, size_t size)
++ 	else
++ 		size = sdio_align_size(self->func, size);
++ 
+++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0))
+++	/* A quirk to handle this was committed in 3.2-rc */
+++	if (size == SDIO_BLOCK_SIZE)
+++		size += SDIO_BLOCK_SIZE;  /* HW bug; force use of block mode */
+++#endif
+++
++ 	return size;
++ }
++ 
+-- 
+1.8.3.1
 
