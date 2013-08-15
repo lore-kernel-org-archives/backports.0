@@ -1,79 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:52400 "EHLO mxz.fh-kl.de"
+Received: from mxz.fh-kl.de ([143.93.17.66]:52440 "EHLO mxz.fh-kl.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752860Ab3HOMj4 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 15 Aug 2013 08:39:56 -0400
-Message-ID: <520CCC15.1090603@fh-kl.de> (sfid-20130815_143959_012850_0C3C8F22)
-Date: Thu, 15 Aug 2013 14:39:49 +0200
+	id S1753658Ab3HOMk0 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 15 Aug 2013 08:40:26 -0400
+Message-ID: <520CCC34.5010104@fh-kl.de> (sfid-20130815_144027_873326_DEFCC60E)
+Date: Thu, 15 Aug 2013 14:40:20 +0200
 From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 MIME-Version: 1.0
 To: "Luis R. Rodriguez" <mcgrof@kernel.org>
 CC: <backports@vger.kernel.org>
-Subject: [PATCH v3 00/10] backports: add wwan device drivers
+Subject: [PATCH v3 04/10] backports: add usb_translate_errors()
+References: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
 Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This adds wwan drivers for mobile broadband devices.
-Patches 1 to 8 add missing stuff required for the wwan drivers.
-Patch 9 adds device drivers.
+This inline function is missing for version < 2.6.39 but required by em28xx
+and cdc-wdm device driver.
 
-Changes v2:
-- cosmetic changes
-- remove pci function when pci was not configured
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+---
+ backport/backport-include/linux/usb.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Changes v3:
-- remove needless CONFIG_USB check
-- new defconfig for wwan device drivers
-
-Patrick Ziegler (10):
-  backports: fix build errors for old kernel versions without PCI
-    support
-  backports: add eth_prepare_mac_addr_change() and
-    eth_commit_mac_addr_change()
-  backports: define PM_EVENT_AUTO
-  backports: add usb_translate_errors()
-  backports: add usb_endpoint_maxp()
-  backports: update enum usb_device_speed with USB_SPEED_SUPER
-  backports: include headers directly if math64 header is missing
-  backports: define phys_addr_t for ARM on kernel version < 2.6.25
-  backports: add wwan device drivers
-  backports: add defconfig for wwan device drivers
-
- backport/Kconfig                                   |  2 +
- backport/Makefile.kernel                           |  3 ++
- backport/backport-include/linux/etherdevice.h      |  8 ++++
- backport/backport-include/linux/if.h               |  4 ++
- backport/backport-include/linux/math64.h           |  3 ++
- backport/backport-include/linux/pm.h               |  4 ++
- backport/backport-include/linux/types.h            |  4 +-
- backport/backport-include/linux/usb.h              | 15 ++++++++
- backport/backport-include/linux/usb/ch9.h          | 45 ++++++++++++++++++++++
- backport/compat/compat-2.6.25.c                    |  2 +
- backport/compat/compat-2.6.28.c                    |  1 +
- backport/compat/compat-3.9.c                       | 33 ++++++++++++++++
- backport/defconfigs/wwan                           |  6 +++
- copy-list                                          | 14 +++++++
- .../network/0001-netdev_ops/qmi_wwan.patch         | 11 ++++++
- .../network/0001-netdev_ops/sierra_net.patch       | 11 ++++++
- .../drivers_net_usb_cdc_mbim.patch                 | 12 ++++++
- .../drivers_net_usb_cdc_ncm.patch                  | 12 ++++++
- .../drivers_net_usb_qmi_wwan.patch                 | 12 ++++++
- .../drivers_net_usb_sierra_net.patch               | 12 ++++++
- .../drivers_usb_class_cdc-wdm.patch                | 12 ++++++
- 21 files changed, 224 insertions(+), 2 deletions(-)
- create mode 100644 backport/backport-include/linux/usb/ch9.h
- create mode 100644 backport/defconfigs/wwan
- create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch
- create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
-
+diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
+index 368da6c..a717b7a 100644
+--- a/backport/backport-include/linux/usb.h
++++ b/backport/backport-include/linux/usb.h
+@@ -145,4 +145,19 @@ extern void usb_unpoison_urb(struct urb *urb);
+ extern int usb_anchor_empty(struct usb_anchor *anchor);
+ #endif /* 2.6.23-2.6.27 */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,39)
++static inline int usb_translate_errors(int error_code)
++{
++	switch (error_code) {
++	case 0:
++	case -ENOMEM:
++	case -ENODEV:
++	case -EOPNOTSUPP:
++		return error_code;
++	default:
++		return -EIO;
++	}
++}
++#endif /* < 2.6.39 */
++
+ #endif /* __BACKPORT_USB_H */
 -- 
 1.8.1.2
+
 
 
 -- 
