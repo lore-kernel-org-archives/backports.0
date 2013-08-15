@@ -1,61 +1,57 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:32786 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750936Ab3HBL3t (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 2 Aug 2013 07:29:49 -0400
-Message-ID: <51FB9827.6010807@fh-kl.de> (sfid-20130802_132950_767092_706ABE68)
-Date: Fri, 2 Aug 2013 13:29:43 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:48015
+	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1753473Ab3HOM7g (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 15 Aug 2013 08:59:36 -0400
+Date: Thu, 15 Aug 2013 08:59:31 -0400
+From: Solomon Peachy <pizza@shaftnet.org>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org
+Subject: Re: [PATCH 2/2] backports:  Add patch for cw1200_sdio with kernels <
+ 3.2
+Message-ID: <20130815125931.GA15940@shaftnet.org> (sfid-20130815_145937_770029_0079EC3D)
+References: <1375367966-10863-1-git-send-email-pizza@shaftnet.org>
+ <1375367966-10863-2-git-send-email-pizza@shaftnet.org>
+ <520CBDF1.7020406@hauke-m.de>
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [PATCH 3/9] backports: define PM_EVENT_AUTO
-References: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
+In-Reply-To: <520CBDF1.7020406@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This macro is missing for < 2.6.25
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
----
- backport/backport-include/linux/pm.h | 4 ++++
- 1 file changed, 4 insertions(+)
+--4Ckj6UjgE2iN1+kY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/backport/backport-include/linux/pm.h b/backport/backport-include/linux/pm.h
-index 70f3a21..d217c81 100644
---- a/backport/backport-include/linux/pm.h
-+++ b/backport/backport-include/linux/pm.h
-@@ -2,6 +2,10 @@
- #define __BACKPORT_PM_H
- #include_next <linux/pm.h>
- 
-+#ifndef PM_EVENT_AUTO
-+#define PM_EVENT_AUTO		0x0400
-+#endif
-+
- #ifndef PM_EVENT_SLEEP
- #define PM_EVENT_SLEEP  (PM_EVENT_SUSPEND)
- #endif
--- 
-1.8.1.2
+On Thu, Aug 15, 2013 at 01:39:29PM +0200, Hauke Mehrtens wrote:
+> Please move this patch to
+> patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
 
+Done!  And the new patch set should be arriving shortly.
 
+> I can not say anything to the content of this patch, but otherwise these
+> two patches are looking good.
 
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
+I rewrote the patch comments that explain why this patch is necessary.
 
-University Of Applied Sciences
-Kaiserslautern
+ - Solomon
+--=20
+Solomon Peachy        		       pizza at shaftnet dot org
+Delray Beach, FL                          ^^ (email/xmpp) ^^
+Quidquid latine dictum sit, altum viditur.
 
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
+--4Ckj6UjgE2iN1+kY
+Content-Type: application/pgp-signature
 
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.13 (GNU/Linux)
 
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
+iD8DBQFSDNCzPuLgii2759ARAqhVAKD18/00m/eSlsnYnJCyxS+I+JTJXQCg5x2H
+JW45ALMkbVgH3yhClUSfBOg=
+=uxma
+-----END PGP SIGNATURE-----
+
+--4Ckj6UjgE2iN1+kY--
