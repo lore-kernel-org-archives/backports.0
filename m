@@ -1,47 +1,69 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f44.google.com ([209.85.160.44]:44405 "EHLO
-	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753114Ab3H1A4Y (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 27 Aug 2013 20:56:24 -0400
-Received: by mail-pb0-f44.google.com with SMTP id xa7so5543527pbc.31
-        for <backports@vger.kernel.org>; Tue, 27 Aug 2013 17:56:24 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH] backports: add missing returns on ww_mutex backpots
-Date: Tue, 27 Aug 2013 18:05:44 -0700
-Message-Id: <1377651944-1258-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130828_025625_911541_75825707)
+Received: from mxz.fh-kl.de ([143.93.17.66]:52469 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752860Ab3HOMkw (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 15 Aug 2013 08:40:52 -0400
+Message-ID: <520CCC50.50202@fh-kl.de> (sfid-20130815_144053_476668_E730D226)
+Date: Thu, 15 Aug 2013 14:40:48 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [PATCH v3 08/10] backports: define phys_addr_t for ARM on kernel
+ version < 2.6.25
+References: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+phys_addr_t is not defined on ARM systems if kernel version < 2.6.25.
 
-Two returns were missing on the ww_mutex backport, add these.
-The enhancements are not supported on older kernels so just
-bail out early.
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 ---
- backport/compat/kernel/ww_mutex.c |    2 ++
- 1 file changed, 2 insertions(+)
+ backport/backport-include/linux/types.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/backport/compat/kernel/ww_mutex.c b/backport/compat/kernel/ww_mutex.c
-index 257c2a4..204ac8f 100644
---- a/backport/compat/kernel/ww_mutex.c
-+++ b/backport/compat/kernel/ww_mutex.c
-@@ -206,10 +206,12 @@ static void mspin_unlock(struct mspin_node **lock, struct mspin_node *node)
+diff --git a/backport/backport-include/linux/types.h b/backport/backport-include/linux/types.h
+index 504a615..0aadc80 100644
+--- a/backport/backport-include/linux/types.h
++++ b/backport/backport-include/linux/types.h
+@@ -4,7 +4,7 @@
+ #include <linux/version.h>
  
- static inline bool owner_running(struct mutex *lock, struct task_struct *owner)
- {
-+	return false;
- }
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25)
+-#if defined(CONFIG_X86) || defined(CONFIG_X86_64)
++#if defined(CONFIG_X86) || defined(CONFIG_X86_64) || defined(CONFIG_ARM)
  
- int mutex_spin_on_owner(struct mutex *lock, struct task_struct *owner)
- {
-+	return 1;
- }
+ #if defined(CONFIG_64BIT) || defined(CONFIG_X86_PAE) || defined(CONFIG_PHYS_64BIT)
+ typedef u64 phys_addr_t;
+@@ -12,7 +12,7 @@ typedef u64 phys_addr_t;
+ typedef u32 phys_addr_t;
+ #endif
  
- static inline int mutex_can_spin_on_owner(struct mutex *lock)
+-#endif /* x86 */
++#endif /* x86 || ARM */
+ #elif LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28) /* < 2.6.25 */
+ 
+ #if defined(CONFIG_X86) || defined(CONFIG_X86_64) || defined(CONFIG_PPC)
 -- 
-1.7.10.4
+1.8.1.2
 
+
+
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
