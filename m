@@ -1,36 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:63833 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751140Ab3HPWLX (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 16 Aug 2013 18:11:23 -0400
-Received: by mail-pa0-f44.google.com with SMTP id fz6so2363834pac.3
-        for <backports@vger.kernel.org>; Fri, 16 Aug 2013 15:11:23 -0700 (PDT)
+Received: from mxz.fh-kl.de ([143.93.17.66]:52487 "EHLO mxz.fh-kl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754353Ab3HOMlL (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 15 Aug 2013 08:41:11 -0400
+Message-ID: <520CCC61.4010405@fh-kl.de> (sfid-20130815_144112_638083_DFCA1630)
+Date: Thu, 15 Aug 2013 14:41:05 +0200
+From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 MIME-Version: 1.0
-In-Reply-To: <1376674003-5801-2-git-send-email-hauke@hauke-m.de>
-References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de> <1376674003-5801-2-git-send-email-hauke@hauke-m.de>
-From: Arik Nemtsov <arik@wizery.com>
-Date: Fri, 16 Aug 2013 22:32:11 +0300
-Message-ID: <CA+XVXfdc9baMQzATby4Hs6ivCgxegyYTzrmosQMC6Hqdft19=g@mail.gmail.com> (sfid-20130817_001125_318387_25936BA2)
-Subject: Re: [PATCH 02/13] backports: fix conditional include of arch_phys_wc_add()
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: mcgrof@gmail.com, backports@vger.kernel.org
-Content-Type: text/plain; charset=ISO-8859-1
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: [PATCH v3 10/10] backports: add defconfig for wwan device drivers
+References: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
+In-Reply-To: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
+Content-Type: text/plain; charset="ISO-8859-15"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Aug 16, 2013 at 8:26 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
-> This fixes a problem introduced in this commit:
-> commit c871780b5afa182878884bf5ccd8df4817a2660f
-> Author: Arik Nemtsov <arik@wizery.com>
-> Date:   Wed Aug 14 10:48:05 2013 +0300
->
->     backports: rename some mem functions to not break custom kernels
->
-> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-> Cc: Arik Nemtsov <arik@wizery.com>
+Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+---
+ backport/defconfigs/wwan | 6 ++++++
+ 1 file changed, 6 insertions(+)
+ create mode 100644 backport/defconfigs/wwan
 
-Thanks for the fix (again). Indeed it was stupid of me to make the
-#ifndef redundant.
-I'll test it on my setup next week.
+diff --git a/backport/defconfigs/wwan b/backport/defconfigs/wwan
+new file mode 100644
+index 0000000..5b4d2e7
+--- /dev/null
++++ b/backport/defconfigs/wwan
+@@ -0,0 +1,6 @@
++CPTCFG_USB_USBNET=m
++CPTCFG_USB_NET_CDC_NCM=m
++CPTCFG_USB_NET_CDC_MBIM=m
++CPTCFG_USB_NET_QMI_WWAN=m
++CPTCFG_USB_SIERRA_NET=m
++CPTCFG_USB_WDM=m
+-- 
+1.8.1.2
 
-Arik
+
+-- 
+Dipl.-Inf. (FH) Patrick Ziegler
+
+University Of Applied Sciences
+Kaiserslautern
+
+Amerikastrasse 1
+D-66482 Zweibruecken
+Germany
+
+Phone:  +49 631 3724 5526
+Mail:   patrick.ziegler@fh-kl.de
+PGP KeyID 0xB4796B8C
+
+http://www.fh-kl.de
+http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
