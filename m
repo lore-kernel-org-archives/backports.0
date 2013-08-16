@@ -1,39 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:60873 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755664Ab3HRXi7 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 18 Aug 2013 19:38:59 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH v2 13/19] backports: REGULATOR_DA903X does not build on kernel < 3.12
-Date: Mon, 19 Aug 2013 01:37:58 +0200
-Message-Id: <1376869084-16513-14-git-send-email-hauke@hauke-m.de> (sfid-20130819_013908_858644_E818BC09)
-In-Reply-To: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
-References: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
+Received: from s3.sipsolutions.net ([144.76.43.152]:40005 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753444Ab3HPRf7 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 16 Aug 2013 13:35:59 -0400
+Message-ID: <1376674550.15299.27.camel@jlt4.sipsolutions.net> (sfid-20130816_193600_853042_2B7E2229)
+Subject: Re: [PATCH 08/13] backports: revert the sysfs api change
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: mcgrof@gmail.com, backports@vger.kernel.org
+Date: Fri, 16 Aug 2013 19:35:50 +0200
+In-Reply-To: <1376674003-5801-8-git-send-email-hauke@hauke-m.de> (sfid-20130816_192740_585582_63BCDE6E)
+References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
+	 <1376674003-5801-8-git-send-email-hauke@hauke-m.de>
+	 (sfid-20130816_192740_585582_63BCDE6E)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-REGULATOR_DA903X now uses a new struct member added with kernel 3.12
+On Fri, 2013-08-16 at 19:26 +0200, Hauke Mehrtens wrote:
+>  
+> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
+> +#define BUS_ATTR_RW(_name)
+> +#define BUS_ATTR_RO(_name)
+> +#define DRIVER_ATTR_RW(_name)
+> +#define DRIVER_ATTR_RO(_name)
+> +#define CLASS_ATTR_RW(_name)
+> +#define CLASS_ATTR_RO(_name)
+> +#define DEVICE_ATTR_RW(_name)
+> +#define DEVICE_ATTR_RO(_name)
+> +#endif
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- dependencies |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Is that part really helpful? Seems you'd want it to fail, or am I
+misunderstanding it?
 
-diff --git a/dependencies b/dependencies
-index 6b42c4f..66807ae 100644
---- a/dependencies
-+++ b/dependencies
-@@ -76,7 +76,7 @@ REGULATOR_AAT2870 3.6
- REGULATOR_AD5398 3.5
- REGULATOR_ARIZONA 3.8
- REGULATOR_AS3711 3.12
--REGULATOR_DA903X 3.5
-+REGULATOR_DA903X 3.12
- REGULATOR_DA9052 3.9
- REGULATOR_DA9055 3.8
- REGULATOR_FAN53555 3.5
--- 
-1.7.10.4
+johannes
+
 
