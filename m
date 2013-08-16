@@ -1,54 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:45442 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754425Ab3H1G7E (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 28 Aug 2013 02:59:04 -0400
-Received: by mail-pd0-f171.google.com with SMTP id g10so5902542pdj.2
-        for <backports@vger.kernel.org>; Tue, 27 Aug 2013 23:59:02 -0700 (PDT)
-Date: Wed, 28 Aug 2013 00:08:24 -0700
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Subject: backports-20130802 released
-Message-ID: <20130828070823.GC22651@garbanzo.do-not-panic.com> (sfid-20130828_085906_391076_8415AB68)
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qtZFehHsKgwS5rPz"
+Received: from s3.sipsolutions.net ([144.76.43.152]:38654 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752084Ab3HPJ4K (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 16 Aug 2013 05:56:10 -0400
+Message-ID: <1376646844.15299.0.camel@jlt4.sipsolutions.net> (sfid-20130816_115612_466953_70D9F0FC)
+Subject: Re: [PATCH v3 02/10] backports: add eth_prepare_mac_addr_change()
+ and eth_commit_mac_addr_change()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
+Date: Fri, 16 Aug 2013 11:54:04 +0200
+In-Reply-To: <520CCC29.5020007@fh-kl.de> (sfid-20130815_144017_696556_ABF7BBF6)
+References: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
+	 <520CCC29.5020007@fh-kl.de> (sfid-20130815_144017_696556_ABF7BBF6)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+On Thu, 2013-08-15 at 14:40 +0200, Patrick Ziegler wrote:
+> These functions are required by qmi_wwan device driver.
 
---qtZFehHsKgwS5rPz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch is broken.
 
-Its been a while, here's the latest release:
+> --- a/backport/backport-include/linux/etherdevice.h
+> +++ b/backport/backport-include/linux/etherdevice.h
+...
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/2013/08/02/backports-20130802.tar.xz
+> --- a/backport/compat/compat-3.9.c
+> +++ b/backport/compat/compat-3.9.c
+> @@ -12,6 +12,9 @@
+>  #include <linux/scatterlist.h>
+>  #include <linux/device.h>
+>  #include <linux/err.h>
+> +#include <linux/netdevice.h>
+> +#include <linux/if.h>
+> +#include <linux/if_ether.h>
 
-This is based on the latest commit on backports tagged backports-20130802.
+Need to include linux/etherdevice.h here.
 
-  Luis
+johannes
 
---qtZFehHsKgwS5rPz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSHaHnAAoJEKwtdpJg+MHGGxQP/1YI3nTZhOuyiuwcWb3XjXTo
-hruyroTvZt+bO3XWg877XDIppivg6vqCA8tKRGJMUBkygwFsTpPdDWDoMM4/GzOU
-CILZ92HUOyVdoqngj3oDjUIeFxWvYqshvwxEH8wZ9ydffE2XAcSHUjYLoklEw2ib
-KqOpOVLRrXaKHeUrreGnbTkeFVquA5EVAgst7b8VpHgRgb3JlM6PtpIaZj7fHP+M
-wNJCuuakCptrMFU+wJWyvpdn1VSQ0uprj0tSo0j5RlKPEqRRkKN5/7Hv9inB81VK
-6a/39AlSfutjWnOtPbxduiMFr17M/y46E+EC7m9RVX2728dVppNJ80Tzj3ChQZ+M
-LNp7GraQ7PbsXf9RSBb3iU1NuWsCvOFMc3w9vS4Ot8OWFV1RsjKMqJKGXUO8w4pt
-Ca76JtfX46BJy9R+pZXj5M4a8q8Z+F98zJrjo9kv5TQeR6SIQ/nkJFWjk0iJSwzk
-NTTXX1FjoGBl9AUe7hFRcak2vy11YFn50y+v32//ewLClzwGPn/k+nz6ho/mPNnx
-luWRUd/O1OMh2XztVUCnR7TlbCBKPXKv8aaLHBBWa52/sHTspjHOd3+StK5Z1poO
-USqxXF4l3kqJ5XBnfRDkOYGVvud/aFpdadECQeymhadRbL15qqD644GEMpKIb0zK
-gZYHLAgkt+T9Rnog+1TF
-=Gefi
------END PGP SIGNATURE-----
-
---qtZFehHsKgwS5rPz--
