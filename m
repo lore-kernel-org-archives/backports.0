@@ -1,73 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:49763 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755957Ab3HAP7j (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 1 Aug 2013 11:59:39 -0400
-Message-ID: <51FA85E6.4050503@fh-kl.de> (sfid-20130801_175941_227919_291AB349)
-Date: Thu, 1 Aug 2013 17:59:34 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:63833 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751140Ab3HPWLX (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 16 Aug 2013 18:11:23 -0400
+Received: by mail-pa0-f44.google.com with SMTP id fz6so2363834pac.3
+        for <backports@vger.kernel.org>; Fri, 16 Aug 2013 15:11:23 -0700 (PDT)
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [RFC v3 4/9] backports: add usb_translate_errors()
-References: <cover.1375372668.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1375372668.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+In-Reply-To: <1376674003-5801-2-git-send-email-hauke@hauke-m.de>
+References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de> <1376674003-5801-2-git-send-email-hauke@hauke-m.de>
+From: Arik Nemtsov <arik@wizery.com>
+Date: Fri, 16 Aug 2013 22:32:11 +0300
+Message-ID: <CA+XVXfdc9baMQzATby4Hs6ivCgxegyYTzrmosQMC6Hqdft19=g@mail.gmail.com> (sfid-20130817_001125_318387_25936BA2)
+Subject: Re: [PATCH 02/13] backports: fix conditional include of arch_phys_wc_add()
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: mcgrof@gmail.com, backports@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This inline function is missing for version < 2.6.39 but required by em28xx
-and cdc-wdm device driver.
+On Fri, Aug 16, 2013 at 8:26 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> This fixes a problem introduced in this commit:
+> commit c871780b5afa182878884bf5ccd8df4817a2660f
+> Author: Arik Nemtsov <arik@wizery.com>
+> Date:   Wed Aug 14 10:48:05 2013 +0300
+>
+>     backports: rename some mem functions to not break custom kernels
+>
+> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+> Cc: Arik Nemtsov <arik@wizery.com>
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
----
- backport/backport-include/linux/usb.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Thanks for the fix (again). Indeed it was stupid of me to make the
+#ifndef redundant.
+I'll test it on my setup next week.
 
-diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
-index 368da6c..49a5762 100644
---- a/backport/backport-include/linux/usb.h
-+++ b/backport/backport-include/linux/usb.h
-@@ -145,4 +145,21 @@ extern void usb_unpoison_urb(struct urb *urb);
- extern int usb_anchor_empty(struct usb_anchor *anchor);
- #endif /* 2.6.23-2.6.27 */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,39)
-+#if defined(CONFIG_USB) || defined(CONFIG_USB_MODULE)
-+static inline int usb_translate_errors(int error_code)
-+{
-+	switch (error_code) {
-+	case 0:
-+	case -ENOMEM:
-+	case -ENODEV:
-+	case -EOPNOTSUPP:
-+		return error_code;
-+	default:
-+		return -EIO;
-+	}
-+}
-+#endif /* CONFIG_USB */
-+#endif /* < 2.6.39 */
-+
- #endif /* __BACKPORT_USB_H */
--- 
-1.8.1.2
-
-
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
+Arik
