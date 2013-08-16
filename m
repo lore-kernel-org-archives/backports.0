@@ -1,114 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:37737 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933594Ab3HGXEQ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 7 Aug 2013 19:04:16 -0400
-Message-ID: <5202D265.3040401@hauke-m.de> (sfid-20130808_010417_428751_4520717D)
-Date: Thu, 08 Aug 2013 01:04:05 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-CC: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
-Subject: Re: [PATCH 2/9] backports: add eth_prepare_mac_addr_change() and
- eth_commit_mac_addr_change()
-References: <cover.1375442885.git.patrick.ziegler@fh-kl.de> <51FB9821.2060302@fh-kl.de>
-In-Reply-To: <51FB9821.2060302@fh-kl.de>
-Content-Type: text/plain; charset=ISO-8859-15
+Received: from s3.sipsolutions.net ([144.76.43.152]:41109 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752150Ab3HQAJL (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 16 Aug 2013 20:09:11 -0400
+Message-ID: <1376680966.15299.33.camel@jlt4.sipsolutions.net> (sfid-20130817_020916_509112_219B2299)
+Subject: Re: [PATCH 08/13] backports: revert the sysfs api change
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: mcgrof@gmail.com, backports@vger.kernel.org
+Date: Fri, 16 Aug 2013 21:22:46 +0200
+In-Reply-To: <520E699F.8040601@hauke-m.de>
+References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
+	  <1376674003-5801-8-git-send-email-hauke@hauke-m.de>
+	  (sfid-20130816_192740_585582_63BCDE6E) <1376674550.15299.27.camel@jlt4.sipsolutions.net>
+	 <520E699F.8040601@hauke-m.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 08/02/2013 01:29 PM, Patrick Ziegler wrote:
-> These functions are required by qmi_wwan device driver.
-> 
-> Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-> ---
->  backport/backport-include/linux/etherdevice.h |  7 ++++++
->  backport/backport-include/linux/if.h          |  4 ++++
->  backport/compat/compat-3.9.c                  | 33 +++++++++++++++++++++++++++
->  3 files changed, 44 insertions(+)
-> 
-> diff --git a/backport/backport-include/linux/etherdevice.h b/backport/backport-include/linux/etherdevice.h
-> index 5c82fc4..b6617f0 100644
-> --- a/backport/backport-include/linux/etherdevice.h
-> +++ b/backport/backport-include/linux/etherdevice.h
-> @@ -114,6 +114,13 @@ static inline int is_unicast_ether_addr(const u8 *addr)
->  }
->  #endif
->  
-> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
-> +#define eth_prepare_mac_addr_change LINUX_BACKPORT(eth_prepare_mac_addr_change)
-> +extern int eth_prepare_mac_addr_change(struct net_device *dev, void *p);
+On Fri, 2013-08-16 at 20:04 +0200, Hauke Mehrtens wrote:
 
-Please add a empty line here to make it easier to read.
+> This is done to eliminate these warnings:
 
-> +#define eth_commit_mac_addr_change LINUX_BACKPORT(eth_commit_mac_addr_change)
-> +extern void eth_commit_mac_addr_change(struct net_device *dev, void *p);
-> +#endif /* < 3.9 */
-> +
->  #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29)
->  #define eth_mac_addr LINUX_BACKPORT(eth_mac_addr)
->  extern int eth_mac_addr(struct net_device *dev, void *p);
-> diff --git a/backport/backport-include/linux/if.h b/backport/backport-include/linux/if.h
-> index 7926082..8f85b83 100644
-> --- a/backport/backport-include/linux/if.h
-> +++ b/backport/backport-include/linux/if.h
-> @@ -29,4 +29,8 @@
->  #define IFF_TX_SKB_SHARING	0x10000
->  #endif
->  
-> +#ifndef IFF_LIVE_ADDR_CHANGE
-> +#define IFF_LIVE_ADDR_CHANGE 0x100000
-> +#endif
-> +
->  #endif	/* _BACKPORT_LINUX_IF_H */
-> diff --git a/backport/compat/compat-3.9.c b/backport/compat/compat-3.9.c
-> index 03f3af8..ba8e3cf 100644
-> --- a/backport/compat/compat-3.9.c
-> +++ b/backport/compat/compat-3.9.c
-> @@ -12,6 +12,9 @@
->  #include <linux/scatterlist.h>
->  #include <linux/device.h>
->  #include <linux/err.h>
-> +#include <linux/netdevice.h>
-> +#include <linux/if.h>
-> +#include <linux/if_ether.h>
->  
->  #ifdef __sg_page_iter_next
->  
-> @@ -64,4 +67,34 @@ void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res)
->  }
->  EXPORT_SYMBOL_GPL(devm_ioremap_resource);
->  
-> +/**
-> + * eth_prepare_mac_addr_change - prepare for mac change
-> + * @dev: network device
-> + * @p: socket address
-> + */
-> +int eth_prepare_mac_addr_change(struct net_device *dev, void *p)
-> +{
-> +	struct sockaddr *addr = p;
-> +
-> +	if (!(dev->priv_flags & IFF_LIVE_ADDR_CHANGE) && netif_running(dev))
-> +		return -EBUSY;
-> +	if (!is_valid_ether_addr(addr->sa_data))
-> +		return -EADDRNOTAVAIL;
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(eth_prepare_mac_addr_change);
-> +
-> +/**
-> + * eth_commit_mac_addr_change - commit mac change
-> + * @dev: network device
-> + * @p: socket address
-> + */
-> +void eth_commit_mac_addr_change(struct net_device *dev, void *p)
-> +{
-> +	struct sockaddr *addr = p;
-> +
-> +	memcpy(dev->dev_addr, addr->sa_data, ETH_ALEN);
-> +}
-> +EXPORT_SYMBOL_GPL(eth_commit_mac_addr_change);
-> +
->  #endif /* __sg_page_iter_next */
-> 
+Fair enough.
+
+> I do not like this whole patch that much, do you have a better idea to
+> backport this change:
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?id=f0bc99c84349ce87af5b35839d19bfb17bb9b27f
+
+I played with it a bit, and came up with this:
+
+http://p.sipsolutions.net/e3140c53fb57f9ed.txt
+
+It has the small advantage that the patch is smaller and doesn't need to
+know about the attributes ... A disadvantage is the runtime overhead on
+module load and the extra memory.
+
+As we discussed on IRC, the #else part is only needed to not have to
+#ifdef the init_ieee80211_attrs() call, it might very well be better to
+ifdef that and get rid of the #else part to avoid having to copy part of
+the ATTRIBUTE_GROUPS definition. Not really sure.
+
+johannes
 
