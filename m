@@ -1,52 +1,69 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:47829
-	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1755514Ab3HOM4C (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 15 Aug 2013 08:56:02 -0400
-From: Solomon Peachy <pizza@shaftnet.org>
-To: backports@vger.kernel.org
-Cc: Solomon Peachy <pizza@shaftnet.org>
-Subject: [PATCH v2 2/2] backports:  Add patch for cw1200_sdio with kernels < 3.2
-Date: Thu, 15 Aug 2013 08:55:57 -0400
-Message-Id: <1376571357-16506-2-git-send-email-pizza@shaftnet.org> (sfid-20130815_145604_333683_B2B48458)
-In-Reply-To: <1376571357-16506-1-git-send-email-pizza@shaftnet.org>
-References: <1376571357-16506-1-git-send-email-pizza@shaftnet.org>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:55039 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754147Ab3HPSEX (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 16 Aug 2013 14:04:23 -0400
+Message-ID: <520E699F.8040601@hauke-m.de> (sfid-20130816_200425_780265_E711C857)
+Date: Fri, 16 Aug 2013 20:04:15 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
+MIME-Version: 1.0
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: mcgrof@gmail.com, backports@vger.kernel.org
+Subject: Re: [PATCH 08/13] backports: revert the sysfs api change
+References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>  <1376674003-5801-8-git-send-email-hauke@hauke-m.de>  (sfid-20130816_192740_585582_63BCDE6E) <1376674550.15299.27.camel@jlt4.sipsolutions.net>
+In-Reply-To: <1376674550.15299.27.camel@jlt4.sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Without this patch, the hardware *will* hang on <3.2 kernels when a
-512-byte SDIO transfer occurs.
+On 08/16/2013 07:35 PM, Johannes Berg wrote:
+> On Fri, 2013-08-16 at 19:26 +0200, Hauke Mehrtens wrote:
+>>  
+>> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
+>> +#define BUS_ATTR_RW(_name)
+>> +#define BUS_ATTR_RO(_name)
+>> +#define DRIVER_ATTR_RW(_name)
+>> +#define DRIVER_ATTR_RO(_name)
+>> +#define CLASS_ATTR_RW(_name)
+>> +#define CLASS_ATTR_RO(_name)
+>> +#define DEVICE_ATTR_RW(_name)
+>> +#define DEVICE_ATTR_RO(_name)
+>> +#endif
+> 
+> Is that part really helpful? Seems you'd want it to fail, or am I
+> misunderstanding it?
+> 
+> johannes
+> 
+This is done to eliminate these warnings:
 
-3.2-rc added an SDIO quirk to work around this, so this code was
-stripped from the driver when committed to the mainline.
+/net/wireless/sysfs.c:36:1: warning: type defaults to ‘int’ in
+declaration of ‘DEVICE_ATTR_RO’ [-Wimplicit-int]
+/net/wireless/sysfs.c:36:1: warning: parameter names (without types) in
+function declaration [enabled by default]
+/net/wireless/sysfs.c:37:1: warning: type defaults to ‘int’ in
+declaration of ‘DEVICE_ATTR_RO’ [-Wimplicit-int]
+/net/wireless/sysfs.c:37:1: warning: parameter names (without types) in
+function declaration [enabled by default]
+/net/wireless/sysfs.c:38:1: warning: type defaults to ‘int’ in
+declaration of ‘DEVICE_ATTR_RO’ [-Wimplicit-int]
+/net/wireless/sysfs.c:38:1: warning: parameter names (without types) in
+function declaration [enabled by default]
+/net/wireless/sysfs.c:46:8: warning: type defaults to ‘int’ in
+declaration of ‘DEVICE_ATTR_RO’ [-Wimplicit-int]
+/net/wireless/sysfs.c:46:1: warning: parameter names (without types) in
+function declaration [enabled by default]
+/net/wireless/sysfs.c:64:8: warning: type defaults to ‘int’ in
+declaration of ‘DEVICE_ATTR_RO’ [-Wimplicit-int]
+/net/wireless/sysfs.c:64:1: warning: parameter names (without types) in
+function declaration [enabled by default]
+/net/wireless/sysfs.c:64:8: warning: ‘DEVICE_ATTR_RO’ declared ‘static’
+but never defined [-Wunused-function]
 
-Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
----
- .../network/75-cw1200-sdio-quirk/cw1200.patch             | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
+With this change I get an other warning. ;-)
 
-diff --git a/patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch b/patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
-new file mode 100644
-index 0000000..2533051
---- /dev/null
-+++ b/patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
-@@ -0,0 +1,15 @@
-+--- a/drivers/net/wireless/cw1200/cw1200_sdio.c
-++++ b/drivers/net/wireless/cw1200/cw1200_sdio.c
-+@@ -253,6 +253,12 @@ static size_t cw1200_sdio_align_size(struct hwbus_priv *self, size_t size)
-+ 	else
-+ 		size = sdio_align_size(self->func, size);
-+ 
-++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0))
-++	/* A quirk to handle this was committed in 3.2-rc */
-++	if (size == SDIO_BLOCK_SIZE)
-++		size += SDIO_BLOCK_SIZE;  /* HW bug; force use of block mode */
-++#endif
-++
-+ 	return size;
-+ }
-+ 
--- 
-1.8.3.1
+I do not like this whole patch that much, do you have a better idea to
+backport this change:
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?id=f0bc99c84349ce87af5b35839d19bfb17bb9b27f
 
+Hauke
