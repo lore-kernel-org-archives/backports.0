@@ -1,36 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from ironport2-out.teksavvy.com ([206.248.154.182]:49984 "EHLO
-	ironport2-out.teksavvy.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S934143Ab3HHLzN (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 8 Aug 2013 07:55:13 -0400
-Message-ID: <520384E4.1010205@lenbrook.com> (sfid-20130808_135516_458338_4C18209F)
-Date: Thu, 08 Aug 2013 07:45:40 -0400
-From: Jonathan Bagg <jbagg@lenbrook.com>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: backports@vger.kernel.org
-Subject: Re: Issue reading kernel config
-References: <1375338204-2021-8-git-send-email-sujith@msujith.org>  <1375370826-1387-1-git-send-email-sujith@msujith.org>  <51FA8ECD.7070401@lenbrook.com> <20130801174749.GC10904@shaftnet.org>  <51FAB31F.6050207@lenbrook.com> <5202A643.8080404@lenbrook.com>  <5202AF0E.9010201@lenbrook.com> (sfid-20130807_223322_404420_CA68A7F6) <1375943844.8186.0.camel@jlt4.sipsolutions.net>
-In-Reply-To: <1375943844.8186.0.camel@jlt4.sipsolutions.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Received: from server19320154104.serverpool.info ([193.201.54.104]:54807 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752381Ab3HPR1k (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 16 Aug 2013 13:27:40 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 09/13] backports: add some new regulator drivers to default config
+Date: Fri, 16 Aug 2013 19:26:39 +0200
+Message-Id: <1376674003-5801-9-git-send-email-hauke@hauke-m.de> (sfid-20130816_192741_603107_B825D54D)
+In-Reply-To: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
+References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 13-08-08 02:37 AM, Johannes Berg wrote:
-> On Wed, 2013-08-07 at 16:33 -0400, Jonathan Bagg wrote:
->> So I had a look at the Kconfig file and realised it isn't a kernel
->> config.  If I add
->>
->> config BT
->>       def_bool y
->>
->> under the "# some hacks ..." section, I can enable BT drivers in
->> backports in the menuconfig.  So if a kconfig depends on an external
->> config, there is no way to feed in a kernel config to backports?  you
->> list external config under "# some hacks ..." section?
-> The script should create a dummy Kconfig.kernel from your
-> kernel's .config, and read that for the dependencies from the kernel.
-I'd like to figure out why it isn't working.  Which script reads the 
-kernel's .config?
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/defconfigs/regulator |    3 +++
+ 1 file changed, 3 insertions(+)
 
-Jon
+diff --git a/backport/defconfigs/regulator b/backport/defconfigs/regulator
+index c080747..0b1bc27 100644
+--- a/backport/defconfigs/regulator
++++ b/backport/defconfigs/regulator
+@@ -1,4 +1,5 @@
+ CPTCFG_REGULATOR=y
++CPTCFG_REGULATOR_88PM800=y
+ CPTCFG_REGULATOR_88PM8607=y
+ CPTCFG_REGULATOR_AAT2870=y
+ CPTCFG_REGULATOR_AB3100=y
+@@ -24,6 +25,7 @@ CPTCFG_REGULATOR_LP8755=y
+ CPTCFG_REGULATOR_LP8788=y
+ CPTCFG_REGULATOR_MAX1586=y
+ CPTCFG_REGULATOR_MAX77686=y
++CPTCFG_REGULATOR_MAX77693=y
+ CPTCFG_REGULATOR_MAX8649=y
+ CPTCFG_REGULATOR_MAX8660=y
+ CPTCFG_REGULATOR_MAX8907=y
+@@ -38,6 +40,7 @@ CPTCFG_REGULATOR_MC13XXX_CORE=y
+ CPTCFG_REGULATOR_PALMAS=y
+ CPTCFG_REGULATOR_PCAP=y
+ CPTCFG_REGULATOR_PCF50633=y
++CPTCFG_REGULATOR_PFUZE100=y
+ CPTCFG_REGULATOR_RC5T583=y
+ CPTCFG_REGULATOR_S2MPS11=y
+ CPTCFG_REGULATOR_S5M8767=y
+-- 
+1.7.10.4
+
