@@ -1,84 +1,81 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:55833 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759447Ab3HNISZ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 14 Aug 2013 04:18:25 -0400
-Message-ID: <520B3D4B.5020906@fh-kl.de> (sfid-20130814_101826_773377_4B7DA18D)
-Date: Wed, 14 Aug 2013 10:18:19 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Received: from mail-pb0-f42.google.com ([209.85.160.42]:37454 "EHLO
+	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751939Ab3HPCyg (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 15 Aug 2013 22:54:36 -0400
+Received: by mail-pb0-f42.google.com with SMTP id un15so1491106pbc.29
+        for <backports@vger.kernel.org>; Thu, 15 Aug 2013 19:54:35 -0700 (PDT)
+Date: Thu, 15 Aug 2013 20:03:39 -0700
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
+Subject: Re: [PATCH v3 00/10] backports: add wwan device drivers
+Message-ID: <20130816030337.GA9574@garbanzo.do-not-panic.com> (sfid-20130816_045438_990958_F5D0BB5A)
+References: <520CCC15.1090603@fh-kl.de>
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [PATCH v2 6/9] backports: update enum usb_device_speed with USB_SPEED_SUPER
-References: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
+In-Reply-To: <520CCC15.1090603@fh-kl.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-USB_SPEED_SUPER is missing for kernel versions < 2.6.30 but used by uvc_video and
-usbnet.
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
----
- backport/backport-include/linux/usb/ch9.h | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+--YiEDa0DAkWCtVeE4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/backport/backport-include/linux/usb/ch9.h b/backport/backport-include/linux/usb/ch9.h
-index 252a6f1..40d5d3f 100644
---- a/backport/backport-include/linux/usb/ch9.h
-+++ b/backport/backport-include/linux/usb/ch9.h
-@@ -1,9 +1,31 @@
- #ifndef __BACKPORT__LINUX_USB_CH9_H
- #define __BACKPORT__LINUX_USB_CH9_H
- 
--#include_next <linux/usb/ch9.h>
- #include <linux/version.h>
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-+#define usb_device_speed old_usb_device_speed
-+#define USB_SPEED_UNKNOWN OLD_USB_SPEED_UNKNOWN
-+#define USB_SPEED_LOW OLD_USB_SPEED_LOW
-+#define USB_SPEED_FULL OLD_USB_SPEED_FULL
-+#define USB_SPEED_HIGH OLD_USB_SPEED_HIGH
-+#include_next <linux/usb/ch9.h>
-+#undef usb_device_speed
-+#undef USB_SPEED_UNKNOWN
-+#undef USB_SPEED_LOW
-+#undef USB_SPEED_FULL
-+#undef USB_SPEED_HIGH
-+enum usb_device_speed {
-+	USB_SPEED_UNKNOWN = 0,          /* enumerating */
-+	USB_SPEED_LOW, USB_SPEED_FULL,      /* usb 1.1 */
-+	USB_SPEED_HIGH,             /* usb 2.0 */
-+	USB_SPEED_WIRELESS,         /* wireless (usb 2.5) */
-+	USB_SPEED_SUPER,            /* usb 3.0 */
-+};
-+#else
-+#include_next <linux/usb/ch9.h>
-+#endif /* < 2.6.30 */
-+
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
- #include <linux/types.h>    /* __u8 etc */
- #include <asm/byteorder.h>  /* le16_to_cpu */
--- 
-1.8.1.2
+On Thu, Aug 15, 2013 at 02:39:49PM +0200, Patrick Ziegler wrote:
+> This adds wwan drivers for mobile broadband devices.
+> Patches 1 to 8 add missing stuff required for the wwan drivers.
+> Patch 9 adds device drivers.
+>=20
+> Changes v2:
+> - cosmetic changes
+> - remove pci function when pci was not configured
+>=20
+> Changes v3:
+> - remove needless CONFIG_USB check
+> - new defconfig for wwan device drivers
+>=20
+> Patrick Ziegler (10):
+>   backports: fix build errors for old kernel versions without PCI
+>     support
+>   backports: add eth_prepare_mac_addr_change() and
+>     eth_commit_mac_addr_change()
+>   backports: define PM_EVENT_AUTO
+>   backports: add usb_translate_errors()
+>   backports: add usb_endpoint_maxp()
+>   backports: update enum usb_device_speed with USB_SPEED_SUPER
+>   backports: include headers directly if math64 header is missing
+>   backports: define phys_addr_t for ARM on kernel version < 2.6.25
+>   backports: add wwan device drivers
+>   backports: add defconfig for wwan device drivers
 
+Awesome, thanks applied and pushed!
 
+  Luis
 
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
+--YiEDa0DAkWCtVeE4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-University Of Applied Sciences
-Kaiserslautern
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
+iQIcBAEBAgAGBQJSDZaJAAoJEKwtdpJg+MHGC3YQAKamsQxsapL9PCaJ58Qq5v3y
+Tn74XRr8AzXDbdYkxugSCJ9E25eZH5tMIUwFY7CXTfx2ep3SOrmY8MDsoo7K5LaE
+HqTWFJZeGmmz4WhxmlSivx+Qy0gUAS9CejXD9nPOyD1XSQCCMGFVVYIOnwMb0b07
+TQ3nDQXbQP4LNLraSCHEuske+r8y2IRKhJJxydcv0rxhCE5s1sHYFQJWWJeOnaw3
+59kOnbfgXIpEKNpg1ugGsRptqf2ZMiEDHSY5OPyySXmyEMRmbXDiucQg+nkJxE3V
+G8ilhO2SeP0N9lKsHkVv5lfINPzvUJ5NszqpoN7gktnEeCh3XSCQJzsYvf+xgCjl
+6QnxW2VasCDrVteEpyV26YqoU6Ch+Fqw2EdByrHR1qUnmeyrUfpY5SlL/0DbiqBJ
+Yr/E8Wly9nIxce3JrGXEvXjsVZUwD0FhEqbvw8nw9+7C0HkXDvubq4Rd+bzzzTZA
+eh72SxegniaCEc6YDpffwThXE+AqARE+5bZK5BcxJlKi4EGw4SNeJQOMeTHmM/uN
+YU7T5KetXKzo3gOgv2TovwMiEHpncnXCJH5TLCDYHcq7zyarx6dBMf4GIdPUgUTD
+br1tfL6xWrP62tlMjwG/wbf0Na6UX1sUW2ThcRcjebtx9v8H/lSB5+HjHvpQKztR
+nbLeaj2QCkCg3bHF6rFr
+=Rj4o
+-----END PGP SIGNATURE-----
 
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
+--YiEDa0DAkWCtVeE4--
