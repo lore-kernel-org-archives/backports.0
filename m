@@ -1,55 +1,38 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:44872
-	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1750874Ab3HQEXI (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 17 Aug 2013 00:23:08 -0400
-From: Solomon Peachy <pizza@shaftnet.org>
-To: backports@vger.kernel.org
-Cc: Solomon Peachy <pizza@shaftnet.org>
-Subject: [PATCH 1/4] backports: Add an implementation of get_random_int() for <3.10 kernels.
-Date: Sat, 17 Aug 2013 00:23:00 -0400
-Message-Id: <1376713383-2624-1-git-send-email-pizza@shaftnet.org> (sfid-20130817_062314_687020_5A6C9D93)
+Received: from server19320154104.serverpool.info ([193.201.54.104]:54795 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753647Ab3HPR13 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 16 Aug 2013 13:27:29 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 07/13] backports: add include/linux/regulator/pfuze100.h
+Date: Fri, 16 Aug 2013 19:26:37 +0200
+Message-Id: <1376674003-5801-7-git-send-email-hauke@hauke-m.de> (sfid-20130816_192739_487833_B41F6344)
+In-Reply-To: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
+References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-get_random_int() was present, but simply not exported for use in modules
-until 3.10.  Implement it in terms of the more expensive get_random_bytes()
+This is a new driver which needs a new header file.
 
-This is needed by the cw1200 driver.
-
-Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/compat/backport-3.10.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ copy-list |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/backport/compat/backport-3.10.c b/backport/compat/backport-3.10.c
-index 980ed59..5273758 100644
---- a/backport/compat/backport-3.10.c
-+++ b/backport/compat/backport-3.10.c
-@@ -12,6 +12,7 @@
- #include <linux/module.h>
- #include <linux/err.h>
- #include <linux/proc_fs.h>
-+#include <linux/random.h>
- 
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
- #include <linux/init.h>
-@@ -77,3 +78,15 @@ void proc_set_user(struct proc_dir_entry *de, kuid_t uid, kgid_t gid)
- 	de->gid = gid;
- }
- EXPORT_SYMBOL_GPL(proc_set_user);
-+
-+/* get_random_int() was not exported for module use until 3.10-rc.
-+   Implement it here in terms of the more expensive get_random_bytes()
-+ */
-+unsigned int get_random_int(void)
-+{
-+	unsigned int r;
-+	get_random_bytes(&r, sizeof(r));
-+
-+	return r;
-+}
-+EXPORT_SYMBOL_GPL(get_random_int);
+diff --git a/copy-list b/copy-list
+index 534f0b4..89147e8 100644
+--- a/copy-list
++++ b/copy-list
+@@ -151,6 +151,7 @@ include/linux/regulator/max8649.h
+ include/linux/regulator/max8660.h
+ include/linux/regulator/max8952.h
+ include/linux/regulator/max8973-regulator.h
++include/linux/regulator/pfuze100.h
+ include/linux/regulator/tps51632-regulator.h
+ include/linux/regulator/tps62360.h
+ include/linux/regulator/tps6507x.h
 -- 
-1.8.3.1
+1.7.10.4
 
