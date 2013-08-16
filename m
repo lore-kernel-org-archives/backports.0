@@ -1,35 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f54.google.com ([209.85.215.54]:42400 "EHLO
-	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756991Ab3HAUsF (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 1 Aug 2013 16:48:05 -0400
-Received: by mail-la0-f54.google.com with SMTP id ea20so1777265lab.13
-        for <backports@vger.kernel.org>; Thu, 01 Aug 2013 13:48:03 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <51FAC2EF.8080402@hauke-m.de>
-References: <000d01ce8e07$80a36430$81ea2c90$@gmail.com> <CAB=NE6WLPxLpGWOP6fj_FEWk_AA4Tz7UQay1tPxsMJfquRnSmg@mail.gmail.com>
- <007b01ce8eee$cca32e50$65e98af0$@gmail.com> <CAB=NE6Xg_MHwZAaZHHkL841BHJxFzEeu2oMZJdXpqYoGSHjSgQ@mail.gmail.com>
- <51FAC2EF.8080402@hauke-m.de>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Thu, 1 Aug 2013 13:47:43 -0700
-Message-ID: <CAB=NE6XetLDnDSVmkWioNN4RCniqmmpdgSy+oPhAhjcAyhZ3aA@mail.gmail.com> (sfid-20130801_224807_760764_ECEFFA8B)
-Subject: Re: Bug with the website: links are broken
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: Chris R <chrisrfq@gmail.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from server19320154104.serverpool.info ([193.201.54.104]:54773 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754971Ab3HPR1E (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 16 Aug 2013 13:27:04 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
+	Arik Nemtsov <arik@wizery.com>
+Subject: [PATCH 02/13] backports: fix conditional include of arch_phys_wc_add()
+Date: Fri, 16 Aug 2013 19:26:32 +0200
+Message-Id: <1376674003-5801-2-git-send-email-hauke@hauke-m.de> (sfid-20130816_192737_081197_C4CFF1FF)
+In-Reply-To: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
+References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Aug 1, 2013 at 1:19 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
-> Users do not read any documentation. ;-)
-> I added it to multiple places in the wiki and still there are people in
-> the IRC with such problems.
->
-> We should make it fail if kernel version > backports version and we
-> should also take the minor version into account. If the major version is
-> the same we should print a big warning.
+This fixes a problem introduced in this commit:
+commit c871780b5afa182878884bf5ccd8df4817a2660f
+Author: Arik Nemtsov <arik@wizery.com>
+Date:   Wed Aug 14 10:48:05 2013 +0300
 
-I like the idea :D
+    backports: rename some mem functions to not break custom kernels
 
-  Luis
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: Arik Nemtsov <arik@wizery.com>
+---
+ backport/backport-include/linux/io.h |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/backport/backport-include/linux/io.h b/backport/backport-include/linux/io.h
+index 5447df8..84a8c21 100644
+--- a/backport/backport-include/linux/io.h
++++ b/backport/backport-include/linux/io.h
+@@ -13,10 +13,11 @@
+  * arch_phys_del_wc(0) or arch_phys_del_wc(any error code) is guaranteed
+  * to have no effect.
+  */
++#ifndef arch_phys_wc_add
++
+ #define arch_phys_wc_add LINUX_BACKPORT(arch_phys_wc_add)
+ #define arch_phys_wc_del LINUX_BACKPORT(arch_phys_wc_del)
+ 
+-#ifndef arch_phys_wc_add
+ #ifdef CONFIG_MTRR
+ extern int __must_check arch_phys_wc_add(unsigned long base,
+ 					 unsigned long size);
+@@ -32,8 +33,6 @@ static inline void arch_phys_wc_del(int handle)
+ {
+ }
+ #endif /* CONFIG_MTRR */
+-
+-#define arch_phys_wc_add arch_phys_wc_add
+ #endif
+ 
+ #endif /* __BACKPORT_LINUX_IO_H */
+-- 
+1.7.10.4
+
