@@ -1,59 +1,55 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:60946 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751154Ab3HBL0H (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 2 Aug 2013 07:26:07 -0400
-Message-ID: <51FB9748.1020602@fh-kl.de> (sfid-20130802_132609_502172_D9CD8442)
-Date: Fri, 2 Aug 2013 13:26:00 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <rodrigue@qca.qualcomm.com>
-CC: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	<backports@vger.kernel.org>
-Subject: Re: [RFC v3 0/9] backports: add wwan device drivers
-References: <51FA85B9.7050502@fh-kl.de> <20130801171044.GK17130@pogo>
-In-Reply-To: <20130801171044.GK17130@pogo>
-Content-Type: text/plain; charset="ISO-8859-15"
+Received: from server19320154104.serverpool.info ([193.201.54.104]:54829 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753228Ab3HPR1y (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 16 Aug 2013 13:27:54 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 13/13] backports: add defconfig for cw1200
+Date: Fri, 16 Aug 2013 19:26:43 +0200
+Message-Id: <1376674003-5801-13-git-send-email-hauke@hauke-m.de> (sfid-20130816_193909_536829_7FB5C3C1)
+In-Reply-To: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
+References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/defconfigs/cw1200 |    9 +++++++++
+ backport/defconfigs/wifi   |    3 +++
+ 2 files changed, 12 insertions(+)
+ create mode 100644 backport/defconfigs/cw1200
 
-
-On 01.08.2013 19:10, Luis R. Rodriguez wrote:
-> On Thu, Aug 01, 2013 at 05:58:49PM +0200, Patrick Ziegler wrote:
->> This adds wwan drivers for mobile broadband devices.
->> Patches 1 to 8 add missing stuff required for the wwan drivers.
->> Patch 9 adds device drivers.
->>
->> Changes v2:
->>  - rebased on last RFCs for next-20130729
->>
->> Changes v3:
->>  - add new patch to add missing USB_SPEED_SUPER
->>  - fix PCI build errors in a better way
-> 
-> Nice! Looks good to me except for just export symbol stuff. Let me know
-> if you want to respin or want me to try to merge these with the symbol
-> change. Up to you.
-> 
-
-Thanks your having a look on these patches. I will fix that issue and resend.
-
-Patrick
-
+diff --git a/backport/defconfigs/cw1200 b/backport/defconfigs/cw1200
+new file mode 100644
+index 0000000..ba03143
+--- /dev/null
++++ b/backport/defconfigs/cw1200
+@@ -0,0 +1,9 @@
++CPTCFG_CFG80211=m
++CPTCFG_CFG80211_WEXT=y
++CPTCFG_MAC80211=m
++CPTCFG_MAC80211_LEDS=y
++CPTCFG_MAC80211_MESH=y
++CPTCFG_WLAN=y
++CPTCFG_CW1200=m
++CPTCFG_CW1200_WLAN_SDIO=m
++CPTCFG_CW1200_WLAN_SPI=m
+diff --git a/backport/defconfigs/wifi b/backport/defconfigs/wifi
+index d55849b..5c9f293 100644
+--- a/backport/defconfigs/wifi
++++ b/backport/defconfigs/wifi
+@@ -23,6 +23,9 @@ CPTCFG_BRCMSMAC=m
+ CPTCFG_CARL9170=m
+ CPTCFG_CFG80211=m
+ CPTCFG_CFG80211_WEXT=y
++CPTCFG_CW1200=m
++CPTCFG_CW1200_WLAN_SDIO=m
++CPTCFG_CW1200_WLAN_SPI=m
+ CPTCFG_HERMES=m
+ CPTCFG_HERMES_PRISM=y
+ CPTCFG_IPW2100=m
 -- 
-Dipl.-Inf. (FH) Patrick Ziegler
+1.7.10.4
 
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
