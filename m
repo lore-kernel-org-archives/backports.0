@@ -1,45 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:47825
-	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1753473Ab3HOM4B (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 15 Aug 2013 08:56:01 -0400
-From: Solomon Peachy <pizza@shaftnet.org>
-To: backports@vger.kernel.org
-Cc: Solomon Peachy <pizza@shaftnet.org>
-Subject: [PATCH v2 1/2] backports:  Include drivers/net/wireless/cw1200
-Date: Thu, 15 Aug 2013 08:55:56 -0400
-Message-Id: <1376571357-16506-1-git-send-email-pizza@shaftnet.org> (sfid-20130815_145603_734054_208CED02)
+Received: from server19320154104.serverpool.info ([193.201.54.104]:54812 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752381Ab3HPR1o (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 16 Aug 2013 13:27:44 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 10/13] backports: do not access hw_features in wil6210
+Date: Fri, 16 Aug 2013 19:26:40 +0200
+Message-Id: <1376674003-5801-10-git-send-email-hauke@hauke-m.de> (sfid-20130816_192746_552406_90C5F83A)
+In-Reply-To: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
+References: <1376674003-5801-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The cw1200 WLAN driver was added in 3.11-rc; include it in backports.
+wil6210 now uses netdev->hw_features which is not available in all
+kernel versions, do not set it then.
 
-Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- copy-list | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ .../drivers_net_wireless_ath_wil6210_netdev.patch          |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_wireless_ath_wil6210_netdev.patch
 
-diff --git a/copy-list b/copy-list
-index aaf5ae9..a227f30 100644
---- a/copy-list
-+++ b/copy-list
-@@ -28,7 +28,7 @@ include/linux/usb/usbnet.h
- include/linux/usb/rndis_host.h
- include/linux/spi/libertas_spi.h
- include/linux/platform_data/brcmfmac-sdio.h
--
-+include/linux/platform_data/net-cw1200.h
- include/uapi/linux/nl80211.h
- 
- include/net/cfg80211.h
-@@ -51,6 +51,7 @@ include/linux/bcma/
- drivers/net/wireless/b43/
- drivers/net/wireless/b43legacy/
- drivers/net/wireless/brcm80211/
-+drivers/net/wireless/cw1200/
- drivers/net/wireless/iwlegacy/
- drivers/net/wireless/iwlwifi/
- drivers/net/wireless/rt2x00/
+diff --git a/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_wireless_ath_wil6210_netdev.patch b/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_wireless_ath_wil6210_netdev.patch
+new file mode 100644
+index 0000000..5f3e636
+--- /dev/null
++++ b/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_wireless_ath_wil6210_netdev.patch
+@@ -0,0 +1,12 @@
++--- a/drivers/net/wireless/ath/wil6210/netdev.c
+++++ b/drivers/net/wireless/ath/wil6210/netdev.c
++@@ -127,7 +127,9 @@ void *wil_if_alloc(struct device *dev, v
++ 
++ 	netdev_attach_ops(ndev, &wil_netdev_ops);
++ 	ndev->ieee80211_ptr = wdev;
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,39))
++ 	ndev->hw_features = NETIF_F_HW_CSUM | NETIF_F_RXCSUM;
+++#endif
++ 	ndev->features |= NETIF_F_HW_CSUM | NETIF_F_RXCSUM;
++ 	SET_NETDEV_DEV(ndev, wiphy_dev(wdev->wiphy));
++ 	wdev->netdev = ndev;
 -- 
-1.8.3.1
+1.7.10.4
 
