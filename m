@@ -1,59 +1,38 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:45250
-	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1750874Ab3HQE0Y (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 17 Aug 2013 00:26:24 -0400
-Received: from stuffed.shaftnet.org (localhost [127.0.0.1])
-	by stuffed.shaftnet.org (8.14.7/8.14.7) with ESMTP id r7H4QNS6003011
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO)
-	for <backports@vger.kernel.org>; Sat, 17 Aug 2013 00:26:23 -0400
-Received: (from pizza@localhost)
-	by stuffed.shaftnet.org (8.14.7/8.14.7/Submit) id r7H4QNFJ003010
-	for backports@vger.kernel.org; Sat, 17 Aug 2013 00:26:23 -0400
-Date: Sat, 17 Aug 2013 00:26:23 -0400
-From: Solomon Peachy <pizza@shaftnet.org>
-To: backports@vger.kernel.org
-Subject: Re: [PATCH 3/4] backports: cw1200 utilizes kthreads for <= 2.6.35
-Message-ID: <20130817042623.GA29133@shaftnet.org> (sfid-20130817_062626_685215_92A488F2)
-References: <1376713383-2624-1-git-send-email-pizza@shaftnet.org>
- <1376713383-2624-3-git-send-email-pizza@shaftnet.org>
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:34871 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753008Ab3HPDFs (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 15 Aug 2013 23:05:48 -0400
+Date: Thu, 15 Aug 2013 20:14:52 -0700
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: Arik Nemtsov <arik@wizery.com>, backports@vger.kernel.org
+Cc: linux-wireless@vger.kernel.org, mcgrof@kernel.org
+Subject: Re: [PATCH] backports: rename some mem functions to not break custom
+ kernels
+Message-ID: <20130816031450.GC9574@garbanzo.do-not-panic.com> (sfid-20130816_050557_851360_49EA9688)
+References: <1376466485-25796-1-git-send-email-arik@wizery.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
-In-Reply-To: <1376713383-2624-3-git-send-email-pizza@shaftnet.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1376466485-25796-1-git-send-email-arik@wizery.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+On Wed, Aug 14, 2013 at 10:48:05AM +0300, Arik Nemtsov wrote:
+> When custom patches are cherry-picked to a kernel, some symbols exported
+> by backports may clash with the built-in ones. Rename the backports
+> symbols using the standard backport_ prefix to prevent that.
+> 
+> The offending symbols were exported by the patch below:
+> 
+> commit 2ce5c22448bb45998318267c00b5d6ef9cff3170
+> Author: Hauke Mehrtens <hauke@hauke-m.de>
+> Date:   Thu Jun 6 13:48:04 2013 +0200
+> 
+>     backports: backport some memory functions
+> 
+> Signed-off-by: Arik Nemtsov <arik@wizery.com>
 
---zYM0uCDKw75PZbzx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks, applied and pushed. Next time please add
+the backports@vger.kernel.org list.
 
-On Sat, Aug 17, 2013 at 12:23:02AM -0400, Solomon Peachy wrote:
-> The new workqueue APIs in 2.6.36 allowed us to scrap the old kthread work=
-er
-> that had been used; unfortunately the backported API isn't complete so
-> in order to support older kernels, resurrect this patch.
-
-Please ignore this patch; I accidentally committed the wrong file in my=20
-tree.  I think it's time I go to bed.
-
- - Solomon
---=20
-Solomon Peachy        		       pizza at shaftnet dot org
-Delray Beach, FL                          ^^ (email/xmpp) ^^
-Quidquid latine dictum sit, altum viditur.
-
---zYM0uCDKw75PZbzx
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
-
-iD8DBQFSDvtvPuLgii2759ARAndhAJ0Q/0GEMYDuLmzGIbZ6kc1KOU13ygCgyRPu
-sOv40sMp+h8X78DrIEdlUF4=
-=65Ua
------END PGP SIGNATURE-----
-
---zYM0uCDKw75PZbzx--
+  Luis
