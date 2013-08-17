@@ -1,37 +1,66 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f44.google.com ([209.85.215.44]:53575 "EHLO
-	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752130Ab3H0PtN (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 27 Aug 2013 11:49:13 -0400
-Received: by mail-la0-f44.google.com with SMTP id eo20so3671472lab.17
-        for <backports@vger.kernel.org>; Tue, 27 Aug 2013 08:49:12 -0700 (PDT)
+Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:45780
+	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1750882Ab3HQEeg (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 17 Aug 2013 00:34:36 -0400
+Received: from stuffed.shaftnet.org (localhost [127.0.0.1])
+	by stuffed.shaftnet.org (8.14.7/8.14.7) with ESMTP id r7H4YZO8003526
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO)
+	for <backports@vger.kernel.org>; Sat, 17 Aug 2013 00:34:35 -0400
+Received: (from pizza@localhost)
+	by stuffed.shaftnet.org (8.14.7/8.14.7/Submit) id r7H4YZVT003525
+	for backports@vger.kernel.org; Sat, 17 Aug 2013 00:34:35 -0400
+Date: Sat, 17 Aug 2013 00:34:35 -0400
+From: Solomon Peachy <pizza@shaftnet.org>
+To: backports@vger.kernel.org
+Subject: Re: [PATCH 3/4] backports: cw1200 utilizes kthreads for <= 2.6.35
+Message-ID: <20130817043435.GB29133@shaftnet.org> (sfid-20130817_063438_217586_61A4F2A3)
+References: <1376713383-2624-1-git-send-email-pizza@shaftnet.org>
+ <1376713383-2624-3-git-send-email-pizza@shaftnet.org>
+ <20130817042623.GA29133@shaftnet.org>
 MIME-Version: 1.0
-In-Reply-To: <1377258238-3880-1-git-send-email-johannes@sipsolutions.net>
-References: <1377258238-3880-1-git-send-email-johannes@sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Tue, 27 Aug 2013 08:48:51 -0700
-Message-ID: <CAB=NE6VBhHkfFPd-kBKfscy2P=EVQ7jNevYQ5nVU2y_aFsCP-Q@mail.gmail.com> (sfid-20130827_174915_556578_C0A1EA1B)
-Subject: Re: [RFC] remove support for kernel 2.6.24
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="p4qYPpj5QlsIQJ0K"
+In-Reply-To: <20130817042623.GA29133@shaftnet.org>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Aug 23, 2013 at 4:43 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
->
-> By requiring 2.6.25 we can get rid of quite a lot of backport work.
-> 2.6.25 was released more than five years ago (April 2011) and wasn't
-> a long-term kernel either, so there's little point in supporting it
-> now.
->
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 
-I'm fine with this, please feel free to send as patch form unless you
-want me to just accept it as is, I'd test compile it before
-integration into the public tree.
+--p4qYPpj5QlsIQJ0K
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- Luis
+On Sat, Aug 17, 2013 at 12:26:23AM -0400, Solomon Peachy wrote:
+> On Sat, Aug 17, 2013 at 12:23:02AM -0400, Solomon Peachy wrote:
+> > The new workqueue APIs in 2.6.36 allowed us to scrap the old kthread wo=
+rker
+> > that had been used; unfortunately the backported API isn't complete so
+> > in order to support older kernels, resurrect this patch.
+>=20
+> Please ignore this patch; I accidentally committed the wrong file in my=
+=20
+> tree.  I think it's time I go to bed.
+
+=2E.. I just double-faked myself out.  I was mistaken; this patch is=20
+indeed correct.  Sorry about that.  I'm turning this off before I make=20
+any more boneheaded mistakes.
+
+ - Solomon
+--=20
+Solomon Peachy        		       pizza at shaftnet dot org
+Delray Beach, FL                          ^^ (email/xmpp) ^^
+Quidquid latine dictum sit, altum viditur.
+
+--p4qYPpj5QlsIQJ0K
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.14 (GNU/Linux)
+
+iD8DBQFSDv1bPuLgii2759ARAjP0AKDxpn8NVKEqZ77KQMt/YoBwhiMKewCgkpnI
+RguOokFhHnuIF/5y/4zrIJs=
+=u1hA
+-----END PGP SIGNATURE-----
+
+--p4qYPpj5QlsIQJ0K--
