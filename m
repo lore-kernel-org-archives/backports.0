@@ -1,61 +1,57 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:60883 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755685Ab3HRXjf (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 18 Aug 2013 19:39:35 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH v2 14/19] backports: add sysfs api backport for ieee802154
-Date: Mon, 19 Aug 2013 01:37:59 +0200
-Message-Id: <1376869084-16513-15-git-send-email-hauke@hauke-m.de> (sfid-20130819_020909_560551_0D128777)
-In-Reply-To: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
-References: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
+Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:35605
+	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1753229Ab3HQNDD (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 17 Aug 2013 09:03:03 -0400
+From: Solomon Peachy <pizza@shaftnet.org>
+To: backports@vger.kernel.org
+Cc: Solomon Peachy <pizza@shaftnet.org>
+Subject: [PATCH v2 1/4] backport: Add an implementation of get_random_int() for <3.10 kernels.
+Date: Sat, 17 Aug 2013 09:02:56 -0400
+Message-Id: <1376744579-4245-2-git-send-email-pizza@shaftnet.org> (sfid-20130817_150306_255363_4A97EC16)
+In-Reply-To: <1376744579-4245-1-git-send-email-pizza@shaftnet.org>
+References: <1376744579-4245-1-git-send-email-pizza@shaftnet.org>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../76-sysfs-api/net_ieee802154_wpan-class.patch   |   30 ++++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/76-sysfs-api/net_ieee802154_wpan-class.patch
+get_random_int() was present, but simply not exported for use in modules
+until 3.10.  Implement it in terms of the more expensive get_random_bytes()
 
-diff --git a/patches/collateral-evolutions/network/76-sysfs-api/net_ieee802154_wpan-class.patch b/patches/collateral-evolutions/network/76-sysfs-api/net_ieee802154_wpan-class.patch
-new file mode 100644
-index 0000000..a323ad9
---- /dev/null
-+++ b/patches/collateral-evolutions/network/76-sysfs-api/net_ieee802154_wpan-class.patch
-@@ -0,0 +1,30 @@
-+--- a/net/ieee802154/wpan-class.c
-++++ b/net/ieee802154/wpan-class.c
-+@@ -77,6 +77,7 @@ static struct attribute *pmib_attrs[] =
-+ 	&dev_attr_cca_mode.attr,
-+ 	NULL,
-+ };
-++#define BP_ATTR_GRP_STRUCT device_attribute
-+ ATTRIBUTE_GROUPS(pmib);
-+ 
-+ static void wpan_phy_release(struct device *d)
-+@@ -88,7 +89,11 @@ static void wpan_phy_release(struct devi
-+ static struct class wpan_phy_class = {
-+ 	.name = "ieee802154",
-+ 	.dev_release = wpan_phy_release,
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
-+ 	.dev_groups = pmib_groups,
-++#else
-++	.dev_attrs = pmib_dev_attrs,
-++#endif
-+ };
-+ 
-+ static DEFINE_MUTEX(wpan_phy_mutex);
-+@@ -199,6 +204,7 @@ EXPORT_SYMBOL(wpan_phy_free);
-+ static int __init wpan_phy_class_init(void)
-+ {
-+ 	int rc;
-++	init_pmib_attrs();
-+ 	rc = class_register(&wpan_phy_class);
-+ 	if (rc)
-+ 		goto err;
+This is needed by the cw1200 driver.
+
+Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
+---
+ backport/compat/backport-3.10.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/backport/compat/backport-3.10.c b/backport/compat/backport-3.10.c
+index 980ed59..5273758 100644
+--- a/backport/compat/backport-3.10.c
++++ b/backport/compat/backport-3.10.c
+@@ -12,6 +12,7 @@
+ #include <linux/module.h>
+ #include <linux/err.h>
+ #include <linux/proc_fs.h>
++#include <linux/random.h>
+ 
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
+ #include <linux/init.h>
+@@ -77,3 +78,15 @@ void proc_set_user(struct proc_dir_entry *de, kuid_t uid, kgid_t gid)
+ 	de->gid = gid;
+ }
+ EXPORT_SYMBOL_GPL(proc_set_user);
++
++/* get_random_int() was not exported for module use until 3.10-rc.
++   Implement it here in terms of the more expensive get_random_bytes()
++ */
++unsigned int get_random_int(void)
++{
++	unsigned int r;
++	get_random_bytes(&r, sizeof(r));
++
++	return r;
++}
++EXPORT_SYMBOL_GPL(get_random_int);
 -- 
-1.7.10.4
+1.8.3.1
 
