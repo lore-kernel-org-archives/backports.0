@@ -1,45 +1,55 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f52.google.com ([209.85.215.52]:55071 "EHLO
-	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751596Ab3H0PvS (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 27 Aug 2013 11:51:18 -0400
-Received: by mail-la0-f52.google.com with SMTP id ev20so3566330lab.25
-        for <backports@vger.kernel.org>; Tue, 27 Aug 2013 08:51:17 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1377618602.20012.10.camel@jlt4.sipsolutions.net>
-References: <1377258238-3880-1-git-send-email-johannes@sipsolutions.net>
- <CAB=NE6VBhHkfFPd-kBKfscy2P=EVQ7jNevYQ5nVU2y_aFsCP-Q@mail.gmail.com> <1377618602.20012.10.camel@jlt4.sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Tue, 27 Aug 2013 08:50:56 -0700
-Message-ID: <CAB=NE6X8je5=box6DzH0bz2k4NWCvN9a_oZ7XSARLOGmQYiuhA@mail.gmail.com> (sfid-20130827_175119_555657_9AEA6330)
-Subject: Re: [RFC] remove support for kernel 2.6.24
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:44872
+	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1750874Ab3HQEXI (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 17 Aug 2013 00:23:08 -0400
+From: Solomon Peachy <pizza@shaftnet.org>
+To: backports@vger.kernel.org
+Cc: Solomon Peachy <pizza@shaftnet.org>
+Subject: [PATCH 1/4] backports: Add an implementation of get_random_int() for <3.10 kernels.
+Date: Sat, 17 Aug 2013 00:23:00 -0400
+Message-Id: <1376713383-2624-1-git-send-email-pizza@shaftnet.org> (sfid-20130817_062314_687020_5A6C9D93)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Aug 27, 2013 at 8:50 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Tue, 2013-08-27 at 08:48 -0700, Luis R. Rodriguez wrote:
->> On Fri, Aug 23, 2013 at 4:43 AM, Johannes Berg
->> <johannes@sipsolutions.net> wrote:
->> > From: Johannes Berg <johannes.berg@intel.com>
->> >
->> > By requiring 2.6.25 we can get rid of quite a lot of backport work.
->> > 2.6.25 was released more than five years ago (April 2011) and wasn't
->> > a long-term kernel either, so there's little point in supporting it
->> > now.
->> >
->> > Signed-off-by: Johannes Berg <johannes.berg@intel.com>
->>
->> I'm fine with this, please feel free to send as patch form unless you
->> want me to just accept it as is, I'd test compile it before
->> integration into the public tree.
->
-> I think it's ok, the [rfc] was more for the fact of removing it rather
-> than the contents.
+get_random_int() was present, but simply not exported for use in modules
+until 3.10.  Implement it in terms of the more expensive get_random_bytes()
 
-OK I'll apply then, thanks.
+This is needed by the cw1200 driver.
 
- Luis
+Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
+---
+ backport/compat/backport-3.10.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/backport/compat/backport-3.10.c b/backport/compat/backport-3.10.c
+index 980ed59..5273758 100644
+--- a/backport/compat/backport-3.10.c
++++ b/backport/compat/backport-3.10.c
+@@ -12,6 +12,7 @@
+ #include <linux/module.h>
+ #include <linux/err.h>
+ #include <linux/proc_fs.h>
++#include <linux/random.h>
+ 
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
+ #include <linux/init.h>
+@@ -77,3 +78,15 @@ void proc_set_user(struct proc_dir_entry *de, kuid_t uid, kgid_t gid)
+ 	de->gid = gid;
+ }
+ EXPORT_SYMBOL_GPL(proc_set_user);
++
++/* get_random_int() was not exported for module use until 3.10-rc.
++   Implement it here in terms of the more expensive get_random_bytes()
++ */
++unsigned int get_random_int(void)
++{
++	unsigned int r;
++	get_random_bytes(&r, sizeof(r));
++
++	return r;
++}
++EXPORT_SYMBOL_GPL(get_random_int);
+-- 
+1.8.3.1
+
