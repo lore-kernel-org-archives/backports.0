@@ -1,71 +1,71 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f177.google.com ([209.85.192.177]:53581 "EHLO
-	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751652Ab3H0VfM (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 27 Aug 2013 17:35:12 -0400
-Received: by mail-pd0-f177.google.com with SMTP id y10so5359469pdj.8
-        for <backports@vger.kernel.org>; Tue, 27 Aug 2013 14:35:11 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:44878
+	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1750882Ab3HQEXJ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 17 Aug 2013 00:23:09 -0400
+From: Solomon Peachy <pizza@shaftnet.org>
 To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 2/4] backports: add generic semaphore.h
-Date: Tue, 27 Aug 2013 14:44:23 -0700
-Message-Id: <1377639864-25672-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20130827_233525_360124_F3485535)
-In-Reply-To: <1377639864-25672-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1377639864-25672-1-git-send-email-mcgrof@do-not-panic.com>
+Cc: Solomon Peachy <pizza@shaftnet.org>
+Subject: [PATCH 2/4] backports:  move the cw1200 sdio quirk into 26-sdio-quirks
+Date: Sat, 17 Aug 2013 00:23:01 -0400
+Message-Id: <1376713383-2624-2-git-send-email-pizza@shaftnet.org> (sfid-20130817_062315_315129_D1CA5521)
+In-Reply-To: <1376713383-2624-1-git-send-email-pizza@shaftnet.org>
+References: <1376713383-2624-1-git-send-email-pizza@shaftnet.org>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+This way it's with the other sdio quirk-related patches.
 
-Matthew generalized the semaphore implementation and part of
-that collateral evolution consisted of changing the header
-used for the expected routines from asm/semaphore.h to
-linux/semaphore.h.
-
-mcgrof@garbanzo ~/linux-next (git::master)$ git describe --contains \
-	64ac24e738823161693bf791f87adc802cf529ff
-v2.6.26-rc1~1155^2~5
-
-commit 64ac24e738823161693bf791f87adc802cf529ff
-Author: Matthew Wilcox <matthew@wil.cx>
-Date:   Fri Mar 7 21:55:58 2008 -0500
-
-    Generic semaphore implementation
-
-    Semaphores are no longer performance-critical, so a generic C
-    implementation is better for maintainability, debuggability and
-    extensibility.  Thanks to Peter Zijlstra for fixing the lockdep
-    warning.  Thanks to Harvey Harrison for pointing out that the
-    unlikely() was unnecessary.
-
-    Signed-off-by: Matthew Wilcox <willy@linux.intel.com>
-    Acked-by: Ingo Molnar <mingo@elte.hu>
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
 ---
- backport/backport-include/linux/semaphore.h |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 backport/backport-include/linux/semaphore.h
+ .../26-sdio-quirks/drivers_net_wireless_cw1200_sdio.patch | 15 +++++++++++++++
+ .../network/75-cw1200-sdio-quirk/cw1200.patch             | 15 ---------------
+ 2 files changed, 15 insertions(+), 15 deletions(-)
+ create mode 100644 patches/collateral-evolutions/network/26-sdio-quirks/drivers_net_wireless_cw1200_sdio.patch
+ delete mode 100644 patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
 
-diff --git a/backport/backport-include/linux/semaphore.h b/backport/backport-include/linux/semaphore.h
+diff --git a/patches/collateral-evolutions/network/26-sdio-quirks/drivers_net_wireless_cw1200_sdio.patch b/patches/collateral-evolutions/network/26-sdio-quirks/drivers_net_wireless_cw1200_sdio.patch
 new file mode 100644
-index 0000000..d242df4
+index 0000000..2533051
 --- /dev/null
-+++ b/backport/backport-include/linux/semaphore.h
-@@ -0,0 +1,12 @@
-+#ifndef __BACKPORT_LINUX_SEMAPHORE_H
-+#define __BACKPORT_LINUX_SEMAPHORE_H
-+
-+#include <linux/version.h>
-+
-+#if  LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,26)
-+#include_next <linux/semaphore.h>
-+#else
-+#include <asm/semaphore.h>
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26) */
-+
-+#endif /* __BACKPORT_LINUX_SEMAPHORE_H */
++++ b/patches/collateral-evolutions/network/26-sdio-quirks/drivers_net_wireless_cw1200_sdio.patch
+@@ -0,0 +1,15 @@
++--- a/drivers/net/wireless/cw1200/cw1200_sdio.c
+++++ b/drivers/net/wireless/cw1200/cw1200_sdio.c
++@@ -253,6 +253,12 @@ static size_t cw1200_sdio_align_size(struct hwbus_priv *self, size_t size)
++ 	else
++ 		size = sdio_align_size(self->func, size);
++ 
+++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0))
+++	/* A quirk to handle this was committed in 3.2-rc */
+++	if (size == SDIO_BLOCK_SIZE)
+++		size += SDIO_BLOCK_SIZE;  /* HW bug; force use of block mode */
+++#endif
+++
++ 	return size;
++ }
++ 
+diff --git a/patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch b/patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
+deleted file mode 100644
+index 2533051..0000000
+--- a/patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
++++ /dev/null
+@@ -1,15 +0,0 @@
+---- a/drivers/net/wireless/cw1200/cw1200_sdio.c
+-+++ b/drivers/net/wireless/cw1200/cw1200_sdio.c
+-@@ -253,6 +253,12 @@ static size_t cw1200_sdio_align_size(struct hwbus_priv *self, size_t size)
+- 	else
+- 		size = sdio_align_size(self->func, size);
+- 
+-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0))
+-+	/* A quirk to handle this was committed in 3.2-rc */
+-+	if (size == SDIO_BLOCK_SIZE)
+-+		size += SDIO_BLOCK_SIZE;  /* HW bug; force use of block mode */
+-+#endif
+-+
+- 	return size;
+- }
+- 
 -- 
-1.7.10.4
+1.8.3.1
 
