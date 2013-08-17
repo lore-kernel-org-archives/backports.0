@@ -1,129 +1,168 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:55767 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759447Ab3HNIRf (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 14 Aug 2013 04:17:35 -0400
-Message-ID: <520B3D18.4020209@fh-kl.de> (sfid-20130814_101740_159868_2CD8FFD1)
-Date: Wed, 14 Aug 2013 10:17:28 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [PATCH v2 2/9] backports: add eth_prepare_mac_addr_change() and eth_commit_mac_addr_change()
-References: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1376467862.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:44886
+	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1750874Ab3HQEXK (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 17 Aug 2013 00:23:10 -0400
+From: Solomon Peachy <pizza@shaftnet.org>
+To: backports@vger.kernel.org
+Cc: Solomon Peachy <pizza@shaftnet.org>
+Subject: [PATCH 3/4] backports: cw1200 utilizes kthreads for <= 2.6.35
+Date: Sat, 17 Aug 2013 00:23:02 -0400
+Message-Id: <1376713383-2624-3-git-send-email-pizza@shaftnet.org> (sfid-20130817_062315_913218_ED298D85)
+In-Reply-To: <1376713383-2624-1-git-send-email-pizza@shaftnet.org>
+References: <1376713383-2624-1-git-send-email-pizza@shaftnet.org>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-These functions are required by qmi_wwan device driver.
+The new workqueue APIs in 2.6.36 allowed us to scrap the old kthread worker
+that had been used; unfortunately the backported API isn't complete so
+in order to support older kernels, resurrect this patch.
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
 ---
- backport/backport-include/linux/etherdevice.h |  8 +++++++
- backport/backport-include/linux/if.h          |  4 ++++
- backport/compat/compat-3.9.c                  | 33 +++++++++++++++++++++++++++
- 3 files changed, 45 insertions(+)
+ .../75-cw1200-workqueues/cw1200_workqueues.patch   | 133 +++++++++++++++++++++
+ 1 file changed, 133 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/75-cw1200-workqueues/cw1200_workqueues.patch
 
-diff --git a/backport/backport-include/linux/etherdevice.h b/backport/backport-include/linux/etherdevice.h
-index 5c82fc4..6aff244 100644
---- a/backport/backport-include/linux/etherdevice.h
-+++ b/backport/backport-include/linux/etherdevice.h
-@@ -114,6 +114,14 @@ static inline int is_unicast_ether_addr(const u8 *addr)
- }
- #endif
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
-+#define eth_prepare_mac_addr_change LINUX_BACKPORT(eth_prepare_mac_addr_change)
-+extern int eth_prepare_mac_addr_change(struct net_device *dev, void *p);
-+
-+#define eth_commit_mac_addr_change LINUX_BACKPORT(eth_commit_mac_addr_change)
-+extern void eth_commit_mac_addr_change(struct net_device *dev, void *p);
-+#endif /* < 3.9 */
-+
- #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29)
- #define eth_mac_addr LINUX_BACKPORT(eth_mac_addr)
- extern int eth_mac_addr(struct net_device *dev, void *p);
-diff --git a/backport/backport-include/linux/if.h b/backport/backport-include/linux/if.h
-index 7926082..8f85b83 100644
---- a/backport/backport-include/linux/if.h
-+++ b/backport/backport-include/linux/if.h
-@@ -29,4 +29,8 @@
- #define IFF_TX_SKB_SHARING	0x10000
- #endif
- 
-+#ifndef IFF_LIVE_ADDR_CHANGE
-+#define IFF_LIVE_ADDR_CHANGE 0x100000
-+#endif
-+
- #endif	/* _BACKPORT_LINUX_IF_H */
-diff --git a/backport/compat/compat-3.9.c b/backport/compat/compat-3.9.c
-index 03f3af8..ba8e3cf 100644
---- a/backport/compat/compat-3.9.c
-+++ b/backport/compat/compat-3.9.c
-@@ -12,6 +12,9 @@
- #include <linux/scatterlist.h>
- #include <linux/device.h>
- #include <linux/err.h>
-+#include <linux/netdevice.h>
-+#include <linux/if.h>
-+#include <linux/if_ether.h>
- 
- #ifdef __sg_page_iter_next
- 
-@@ -64,4 +67,34 @@ void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res)
- }
- EXPORT_SYMBOL_GPL(devm_ioremap_resource);
- 
-+/**
-+ * eth_prepare_mac_addr_change - prepare for mac change
-+ * @dev: network device
-+ * @p: socket address
-+ */
-+int eth_prepare_mac_addr_change(struct net_device *dev, void *p)
-+{
-+	struct sockaddr *addr = p;
-+
-+	if (!(dev->priv_flags & IFF_LIVE_ADDR_CHANGE) && netif_running(dev))
-+		return -EBUSY;
-+	if (!is_valid_ether_addr(addr->sa_data))
-+		return -EADDRNOTAVAIL;
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(eth_prepare_mac_addr_change);
-+
-+/**
-+ * eth_commit_mac_addr_change - commit mac change
-+ * @dev: network device
-+ * @p: socket address
-+ */
-+void eth_commit_mac_addr_change(struct net_device *dev, void *p)
-+{
-+	struct sockaddr *addr = p;
-+
-+	memcpy(dev->dev_addr, addr->sa_data, ETH_ALEN);
-+}
-+EXPORT_SYMBOL_GPL(eth_commit_mac_addr_change);
-+
- #endif /* __sg_page_iter_next */
+diff --git a/patches/collateral-evolutions/network/75-cw1200-workqueues/cw1200_workqueues.patch b/patches/collateral-evolutions/network/75-cw1200-workqueues/cw1200_workqueues.patch
+new file mode 100644
+index 0000000..3bf3197
+--- /dev/null
++++ b/patches/collateral-evolutions/network/75-cw1200-workqueues/cw1200_workqueues.patch
+@@ -0,0 +1,133 @@
++diff --git a/drivers/net/wireless/cw1200/bh.c b/drivers/net/wireless/cw1200/bh.c
++index c1ec2a4..5dcbb4e 100644
++--- a/drivers/net/wireless/cw1200/bh.c
+++++ b/drivers/net/wireless/cw1200/bh.c
++@@ -48,16 +48,22 @@ enum cw1200_bh_pm_state {
++ typedef int (*cw1200_wsm_handler)(struct cw1200_common *priv,
++ 	u8 *data, size_t size);
++ 
+++#ifndef CW1200_USE_COMPAT_KTHREAD
++ static void cw1200_bh_work(struct work_struct *work)
++ {
++ 	struct cw1200_common *priv =
++ 	container_of(work, struct cw1200_common, bh_work);
++ 	cw1200_bh(priv);
++ }
+++#endif
++ 
++ int cw1200_register_bh(struct cw1200_common *priv)
++ {
++ 	int err = 0;
+++#ifdef CW1200_USE_COMPAT_KTHREAD
+++	struct sched_param param = { .sched_priority = 1 };
+++	BUG_ON(priv->bh_thread);
+++#else
++ 	/* Realtime workqueue */
++ 	priv->bh_workqueue = alloc_workqueue("cw1200_bh",
++ 				WQ_MEM_RECLAIM | WQ_HIGHPRI
++@@ -67,6 +73,7 @@ int cw1200_register_bh(struct cw1200_common *priv)
++ 		return -ENOMEM;
++ 
++ 	INIT_WORK(&priv->bh_work, cw1200_bh_work);
+++#endif
++ 
++ 	pr_debug("[BH] register.\n");
++ 
++@@ -81,20 +88,44 @@ int cw1200_register_bh(struct cw1200_common *priv)
++ 	init_waitqueue_head(&priv->bh_wq);
++ 	init_waitqueue_head(&priv->bh_evt_wq);
++ 
+++#ifdef CW1200_USE_COMPAT_KTHREAD
+++	priv->bh_thread = kthread_create(&cw1200_bh, priv, "cw1200_bh");
+++	if (IS_ERR(priv->bh_thread)) {
+++		err = PTR_ERR(priv->bh_thread);
+++		priv->bh_thread = NULL;
+++	} else {
+++		WARN_ON(sched_setscheduler(priv->bh_thread,
+++					   SCHED_FIFO, &param));
+++		wake_up_process(priv->bh_thread);
+++	}
+++#else
++ 	err = !queue_work(priv->bh_workqueue, &priv->bh_work);
++ 	WARN_ON(err);
+++#endif
+++
++ 	return err;
++ }
++ 
++ void cw1200_unregister_bh(struct cw1200_common *priv)
++ {
+++#ifdef CW1200_USE_COMPAT_KTHREAD
+++	struct task_struct *thread = priv->bh_thread;
+++	if (WARN_ON(!thread))
+++		return;
+++#endif
+++
++ 	atomic_add(1, &priv->bh_term);
++ 	wake_up(&priv->bh_wq);
++ 
+++#ifdef CW1200_USE_COMPAT_KTHREAD
+++	kthread_stop(thread);
+++	priv->bh_thread = NULL;
+++#else
++ 	flush_workqueue(priv->bh_workqueue);
++ 
++ 	destroy_workqueue(priv->bh_workqueue);
++ 	priv->bh_workqueue = NULL;
+++#endif
++ 
++ 	pr_debug("[BH] unregistered.\n");
++ }
++@@ -614,6 +645,16 @@ static int cw1200_bh(void *arg)
++ 		pr_err("[BH] Fatal error, exiting.\n");
++ 		priv->bh_error = 1;
++ 		/* TODO: schedule_work(recovery) */
+++#ifdef CW1200_USE_COMPAT_KTHREAD
+++		for (;;) {
+++			int status = wait_event_interruptible(priv->bh_wq, ({
+++				term = atomic_xchg(&priv->bh_term, 0);
+++				(term);
+++			}));
+++		if (status || term)
+++			break;
+++	}
+++#endif
++ 	}
++ 	return 0;
++ }
++diff --git a/drivers/net/wireless/cw1200/cw1200.h b/drivers/net/wireless/cw1200/cw1200.h
++index 1ad7d36..300dbbb 100644
++--- a/drivers/net/wireless/cw1200/cw1200.h
+++++ b/drivers/net/wireless/cw1200/cw1200.h
++@@ -23,12 +23,18 @@
++ #include <linux/workqueue.h>
++ #include <net/mac80211.h>
++ 
+++#include <linux/version.h>
+++
++ #include "queue.h"
++ #include "wsm.h"
++ #include "scan.h"
++ #include "txrx.h"
++ #include "pm.h"
++ 
+++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 36))
+++#define CW1200_USE_COMPAT_KTHREAD
+++#endif
+++
++ /* Forward declarations */
++ struct hwbus_ops;
++ struct task_struct;
++@@ -190,8 +196,12 @@ struct cw1200_common {
++ 	atomic_t			bh_term;
++ 	atomic_t			bh_suspend;
++ 
+++#ifdef CW1200_USE_COMPAT_KTHREAD
+++	struct task_struct              *bh_thread;
+++#else
++ 	struct workqueue_struct         *bh_workqueue;
++ 	struct work_struct              bh_work;
+++#endif
++ 
++ 	int				bh_error;
++ 	wait_queue_head_t		bh_wq;
 -- 
-1.8.1.2
+1.8.3.1
 
-
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
