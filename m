@@ -1,39 +1,69 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:60899 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755548Ab3HRXkH (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 18 Aug 2013 19:40:07 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH v2 17/19] backports: Atheros atl1c needs build_skb(), do not build on < 3.5
-Date: Mon, 19 Aug 2013 01:38:02 +0200
-Message-Id: <1376869084-16513-18-git-send-email-hauke@hauke-m.de> (sfid-20130819_020909_834290_B5C3E16E)
-In-Reply-To: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
-References: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
+Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:35609
+	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1753239Ab3HQNDE (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 17 Aug 2013 09:03:04 -0400
+From: Solomon Peachy <pizza@shaftnet.org>
+To: backports@vger.kernel.org
+Cc: Solomon Peachy <pizza@shaftnet.org>
+Subject: [PATCH v2 2/4] backports:  move the cw1200 sdio quirk into 26-sdio-quirks
+Date: Sat, 17 Aug 2013 09:02:57 -0400
+Message-Id: <1376744579-4245-3-git-send-email-pizza@shaftnet.org> (sfid-20130817_150306_869637_A2F2AFE3)
+In-Reply-To: <1376744579-4245-1-git-send-email-pizza@shaftnet.org>
+References: <1376744579-4245-1-git-send-email-pizza@shaftnet.org>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The Atheros atl1c driver now uses build_skb() which was added in 3.5.
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
 ---
- dependencies |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../26-sdio-quirks/drivers_net_wireless_cw1200_sdio.patch | 15 +++++++++++++++
+ .../network/75-cw1200-sdio-quirk/cw1200.patch             | 15 ---------------
+ 2 files changed, 15 insertions(+), 15 deletions(-)
+ create mode 100644 patches/collateral-evolutions/network/26-sdio-quirks/drivers_net_wireless_cw1200_sdio.patch
+ delete mode 100644 patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
 
-diff --git a/dependencies b/dependencies
-index 66807ae..8a3b0f6 100644
---- a/dependencies
-+++ b/dependencies
-@@ -15,7 +15,7 @@ ATH6KL 2.6.27
- WIL6210 2.6.31
- ATH10K 2.6.30
- 
--ATL1C 2.6.28
-+ATL1C 3.5
- ATL1E 2.6.26
- ALX 2.6.31
- 
+diff --git a/patches/collateral-evolutions/network/26-sdio-quirks/drivers_net_wireless_cw1200_sdio.patch b/patches/collateral-evolutions/network/26-sdio-quirks/drivers_net_wireless_cw1200_sdio.patch
+new file mode 100644
+index 0000000..2533051
+--- /dev/null
++++ b/patches/collateral-evolutions/network/26-sdio-quirks/drivers_net_wireless_cw1200_sdio.patch
+@@ -0,0 +1,15 @@
++--- a/drivers/net/wireless/cw1200/cw1200_sdio.c
+++++ b/drivers/net/wireless/cw1200/cw1200_sdio.c
++@@ -253,6 +253,12 @@ static size_t cw1200_sdio_align_size(struct hwbus_priv *self, size_t size)
++ 	else
++ 		size = sdio_align_size(self->func, size);
++ 
+++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0))
+++	/* A quirk to handle this was committed in 3.2-rc */
+++	if (size == SDIO_BLOCK_SIZE)
+++		size += SDIO_BLOCK_SIZE;  /* HW bug; force use of block mode */
+++#endif
+++
++ 	return size;
++ }
++ 
+diff --git a/patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch b/patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
+deleted file mode 100644
+index 2533051..0000000
+--- a/patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
++++ /dev/null
+@@ -1,15 +0,0 @@
+---- a/drivers/net/wireless/cw1200/cw1200_sdio.c
+-+++ b/drivers/net/wireless/cw1200/cw1200_sdio.c
+-@@ -253,6 +253,12 @@ static size_t cw1200_sdio_align_size(struct hwbus_priv *self, size_t size)
+- 	else
+- 		size = sdio_align_size(self->func, size);
+- 
+-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0))
+-+	/* A quirk to handle this was committed in 3.2-rc */
+-+	if (size == SDIO_BLOCK_SIZE)
+-+		size += SDIO_BLOCK_SIZE;  /* HW bug; force use of block mode */
+-+#endif
+-+
+- 	return size;
+- }
+- 
 -- 
-1.7.10.4
+1.8.3.1
 
