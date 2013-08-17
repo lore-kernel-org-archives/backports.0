@@ -1,77 +1,168 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:49770 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755957Ab3HAP7t (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 1 Aug 2013 11:59:49 -0400
-Message-ID: <51FA85F0.7010900@fh-kl.de> (sfid-20130801_175951_070734_652A8F63)
-Date: Thu, 1 Aug 2013 17:59:44 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [RFC v3 5/9] backports: add usb_endpoint_maxp()
-References: <cover.1375372668.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1375372668.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:35613
+	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1753239Ab3HQNDG (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 17 Aug 2013 09:03:06 -0400
+From: Solomon Peachy <pizza@shaftnet.org>
+To: backports@vger.kernel.org
+Cc: Solomon Peachy <pizza@shaftnet.org>
+Subject: [PATCH v2 3/4] backports: cw1200 utilizes kthreads for <= 2.6.35
+Date: Sat, 17 Aug 2013 09:02:58 -0400
+Message-Id: <1376744579-4245-4-git-send-email-pizza@shaftnet.org> (sfid-20130817_150307_756861_6C37A008)
+In-Reply-To: <1376744579-4245-1-git-send-email-pizza@shaftnet.org>
+References: <1376744579-4245-1-git-send-email-pizza@shaftnet.org>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This function is missing for kernel version < 3.2 but required by uvc_video
-and cdc-wdm device drivers.
+The new workqueue APIs in 2.6.36 allowed us to scrap the old kthread worker
+that had been used; unfortunately the backported API isn't complete so
+in order to support older kernels, resurrect this patch.
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
 ---
- backport/backport-include/linux/usb/ch9.h | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 backport/backport-include/linux/usb/ch9.h
+ .../75-cw1200-workqueues/cw1200_workqueues.patch   | 133 +++++++++++++++++++++
+ 1 file changed, 133 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/75-cw1200-workqueues/cw1200_workqueues.patch
 
-diff --git a/backport/backport-include/linux/usb/ch9.h b/backport/backport-include/linux/usb/ch9.h
+diff --git a/patches/collateral-evolutions/network/75-cw1200-workqueues/cw1200_workqueues.patch b/patches/collateral-evolutions/network/75-cw1200-workqueues/cw1200_workqueues.patch
 new file mode 100644
-index 0000000..252a6f1
+index 0000000..3bf3197
 --- /dev/null
-+++ b/backport/backport-include/linux/usb/ch9.h
-@@ -0,0 +1,23 @@
-+#ifndef __BACKPORT__LINUX_USB_CH9_H
-+#define __BACKPORT__LINUX_USB_CH9_H
-+
-+#include_next <linux/usb/ch9.h>
-+#include <linux/version.h>
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
-+#include <linux/types.h>    /* __u8 etc */
-+#include <asm/byteorder.h>  /* le16_to_cpu */
-+
-+/**
-+ * usb_endpoint_maxp - get endpoint's max packet size
-+ * @epd: endpoint to be checked
-+ *
-+ * Returns @epd's max packet
-+ */
-+static inline int usb_endpoint_maxp(const struct usb_endpoint_descriptor *epd)
-+{
-+	return __le16_to_cpu(epd->wMaxPacketSize);
-+}
-+#endif /* < 3.2 */
-+
-+#endif /* __BACKPORT__LINUX_USB_CH9_H */
++++ b/patches/collateral-evolutions/network/75-cw1200-workqueues/cw1200_workqueues.patch
+@@ -0,0 +1,133 @@
++diff --git a/drivers/net/wireless/cw1200/bh.c b/drivers/net/wireless/cw1200/bh.c
++index c1ec2a4..5dcbb4e 100644
++--- a/drivers/net/wireless/cw1200/bh.c
+++++ b/drivers/net/wireless/cw1200/bh.c
++@@ -48,16 +48,22 @@ enum cw1200_bh_pm_state {
++ typedef int (*cw1200_wsm_handler)(struct cw1200_common *priv,
++ 	u8 *data, size_t size);
++ 
+++#ifndef CW1200_USE_COMPAT_KTHREAD
++ static void cw1200_bh_work(struct work_struct *work)
++ {
++ 	struct cw1200_common *priv =
++ 	container_of(work, struct cw1200_common, bh_work);
++ 	cw1200_bh(priv);
++ }
+++#endif
++ 
++ int cw1200_register_bh(struct cw1200_common *priv)
++ {
++ 	int err = 0;
+++#ifdef CW1200_USE_COMPAT_KTHREAD
+++	struct sched_param param = { .sched_priority = 1 };
+++	BUG_ON(priv->bh_thread);
+++#else
++ 	/* Realtime workqueue */
++ 	priv->bh_workqueue = alloc_workqueue("cw1200_bh",
++ 				WQ_MEM_RECLAIM | WQ_HIGHPRI
++@@ -67,6 +73,7 @@ int cw1200_register_bh(struct cw1200_common *priv)
++ 		return -ENOMEM;
++ 
++ 	INIT_WORK(&priv->bh_work, cw1200_bh_work);
+++#endif
++ 
++ 	pr_debug("[BH] register.\n");
++ 
++@@ -81,20 +88,44 @@ int cw1200_register_bh(struct cw1200_common *priv)
++ 	init_waitqueue_head(&priv->bh_wq);
++ 	init_waitqueue_head(&priv->bh_evt_wq);
++ 
+++#ifdef CW1200_USE_COMPAT_KTHREAD
+++	priv->bh_thread = kthread_create(&cw1200_bh, priv, "cw1200_bh");
+++	if (IS_ERR(priv->bh_thread)) {
+++		err = PTR_ERR(priv->bh_thread);
+++		priv->bh_thread = NULL;
+++	} else {
+++		WARN_ON(sched_setscheduler(priv->bh_thread,
+++					   SCHED_FIFO, &param));
+++		wake_up_process(priv->bh_thread);
+++	}
+++#else
++ 	err = !queue_work(priv->bh_workqueue, &priv->bh_work);
++ 	WARN_ON(err);
+++#endif
+++
++ 	return err;
++ }
++ 
++ void cw1200_unregister_bh(struct cw1200_common *priv)
++ {
+++#ifdef CW1200_USE_COMPAT_KTHREAD
+++	struct task_struct *thread = priv->bh_thread;
+++	if (WARN_ON(!thread))
+++		return;
+++#endif
+++
++ 	atomic_add(1, &priv->bh_term);
++ 	wake_up(&priv->bh_wq);
++ 
+++#ifdef CW1200_USE_COMPAT_KTHREAD
+++	kthread_stop(thread);
+++	priv->bh_thread = NULL;
+++#else
++ 	flush_workqueue(priv->bh_workqueue);
++ 
++ 	destroy_workqueue(priv->bh_workqueue);
++ 	priv->bh_workqueue = NULL;
+++#endif
++ 
++ 	pr_debug("[BH] unregistered.\n");
++ }
++@@ -614,6 +645,16 @@ static int cw1200_bh(void *arg)
++ 		pr_err("[BH] Fatal error, exiting.\n");
++ 		priv->bh_error = 1;
++ 		/* TODO: schedule_work(recovery) */
+++#ifdef CW1200_USE_COMPAT_KTHREAD
+++		for (;;) {
+++			int status = wait_event_interruptible(priv->bh_wq, ({
+++				term = atomic_xchg(&priv->bh_term, 0);
+++				(term);
+++			}));
+++		if (status || term)
+++			break;
+++	}
+++#endif
++ 	}
++ 	return 0;
++ }
++diff --git a/drivers/net/wireless/cw1200/cw1200.h b/drivers/net/wireless/cw1200/cw1200.h
++index 1ad7d36..300dbbb 100644
++--- a/drivers/net/wireless/cw1200/cw1200.h
+++++ b/drivers/net/wireless/cw1200/cw1200.h
++@@ -23,12 +23,18 @@
++ #include <linux/workqueue.h>
++ #include <net/mac80211.h>
++ 
+++#include <linux/version.h>
+++
++ #include "queue.h"
++ #include "wsm.h"
++ #include "scan.h"
++ #include "txrx.h"
++ #include "pm.h"
++ 
+++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 36))
+++#define CW1200_USE_COMPAT_KTHREAD
+++#endif
+++
++ /* Forward declarations */
++ struct hwbus_ops;
++ struct task_struct;
++@@ -190,8 +196,12 @@ struct cw1200_common {
++ 	atomic_t			bh_term;
++ 	atomic_t			bh_suspend;
++ 
+++#ifdef CW1200_USE_COMPAT_KTHREAD
+++	struct task_struct              *bh_thread;
+++#else
++ 	struct workqueue_struct         *bh_workqueue;
++ 	struct work_struct              bh_work;
+++#endif
++ 
++ 	int				bh_error;
++ 	wait_queue_head_t		bh_wq;
 -- 
-1.8.1.2
+1.8.3.1
 
-
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
