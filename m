@@ -1,84 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:52452 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753473Ab3HOMkk (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 15 Aug 2013 08:40:40 -0400
-Message-ID: <520CCC43.3050305@fh-kl.de> (sfid-20130815_144042_727427_628054B8)
-Date: Thu, 15 Aug 2013 14:40:35 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [PATCH v3 06/10] backports: update enum usb_device_speed with USB_SPEED_SUPER
-References: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+Received: from server19320154104.serverpool.info ([193.201.54.104]:60904 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755548Ab3HRXkN (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 18 Aug 2013 19:40:13 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH v2 19/19] backports: fix conflict in swiotlb_nr_tbl() on RHEL 6.4
+Date: Mon, 19 Aug 2013 01:38:04 +0200
+Message-Id: <1376869084-16513-20-git-send-email-hauke@hauke-m.de> (sfid-20130819_020909_692539_027A37C5)
+In-Reply-To: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
+References: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-USB_SPEED_SUPER is missing for kernel versions < 2.6.30 but used by uvc_video and
-usbnet.
+The RedHat kernel also provides a implementation for swiotlb_nr_tbl(),
+us that one on these kernels.
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/usb/ch9.h | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ backport/backport-include/linux/swiotlb.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/backport/backport-include/linux/usb/ch9.h b/backport/backport-include/linux/usb/ch9.h
-index 252a6f1..40d5d3f 100644
---- a/backport/backport-include/linux/usb/ch9.h
-+++ b/backport/backport-include/linux/usb/ch9.h
-@@ -1,9 +1,31 @@
- #ifndef __BACKPORT__LINUX_USB_CH9_H
- #define __BACKPORT__LINUX_USB_CH9_H
+diff --git a/backport/backport-include/linux/swiotlb.h b/backport/backport-include/linux/swiotlb.h
+index 836b353..d010d0d 100644
+--- a/backport/backport-include/linux/swiotlb.h
++++ b/backport/backport-include/linux/swiotlb.h
+@@ -8,10 +8,12 @@
+ #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28)) */
  
--#include_next <linux/usb/ch9.h>
- #include <linux/version.h>
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0))
++#if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
+ static inline unsigned long swiotlb_nr_tbl(void)
+ {
+ 	return 0;
+ }
+ #endif
++#endif
  
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-+#define usb_device_speed old_usb_device_speed
-+#define USB_SPEED_UNKNOWN OLD_USB_SPEED_UNKNOWN
-+#define USB_SPEED_LOW OLD_USB_SPEED_LOW
-+#define USB_SPEED_FULL OLD_USB_SPEED_FULL
-+#define USB_SPEED_HIGH OLD_USB_SPEED_HIGH
-+#include_next <linux/usb/ch9.h>
-+#undef usb_device_speed
-+#undef USB_SPEED_UNKNOWN
-+#undef USB_SPEED_LOW
-+#undef USB_SPEED_FULL
-+#undef USB_SPEED_HIGH
-+enum usb_device_speed {
-+	USB_SPEED_UNKNOWN = 0,          /* enumerating */
-+	USB_SPEED_LOW, USB_SPEED_FULL,      /* usb 1.1 */
-+	USB_SPEED_HIGH,             /* usb 2.0 */
-+	USB_SPEED_WIRELESS,         /* wireless (usb 2.5) */
-+	USB_SPEED_SUPER,            /* usb 3.0 */
-+};
-+#else
-+#include_next <linux/usb/ch9.h>
-+#endif /* < 2.6.30 */
-+
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
- #include <linux/types.h>    /* __u8 etc */
- #include <asm/byteorder.h>  /* le16_to_cpu */
+ #endif /* __BACKPORT_LINUX_SWIOTLB_H */
 -- 
-1.8.1.2
+1.7.10.4
 
-
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
