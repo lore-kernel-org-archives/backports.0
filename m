@@ -1,46 +1,55 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:60858 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:60865 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755803Ab3HRXif (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 18 Aug 2013 19:38:35 -0400
+	id S1755614Ab3HRXip (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 18 Aug 2013 19:38:45 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH v2 09/19] backports: do not access hw_features in wil6210
-Date: Mon, 19 Aug 2013 01:37:54 +0200
-Message-Id: <1376869084-16513-10-git-send-email-hauke@hauke-m.de> (sfid-20130819_013836_125392_016B2F2B)
+Subject: [PATCH v2 12/19] backports: add defconfig for cw1200
+Date: Mon, 19 Aug 2013 01:37:57 +0200
+Message-Id: <1376869084-16513-13-git-send-email-hauke@hauke-m.de> (sfid-20130819_013909_028065_D035EB0E)
 In-Reply-To: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
 References: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-wil6210 now uses netdev->hw_features which is not available in all
-kernel versions, do not set it then.
-
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../drivers_net_wireless_ath_wil6210_netdev.patch          |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_wireless_ath_wil6210_netdev.patch
+ backport/defconfigs/cw1200 |    9 +++++++++
+ backport/defconfigs/wifi   |    3 +++
+ 2 files changed, 12 insertions(+)
+ create mode 100644 backport/defconfigs/cw1200
 
-diff --git a/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_wireless_ath_wil6210_netdev.patch b/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_wireless_ath_wil6210_netdev.patch
+diff --git a/backport/defconfigs/cw1200 b/backport/defconfigs/cw1200
 new file mode 100644
-index 0000000..5f3e636
+index 0000000..ba03143
 --- /dev/null
-+++ b/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_wireless_ath_wil6210_netdev.patch
-@@ -0,0 +1,12 @@
-+--- a/drivers/net/wireless/ath/wil6210/netdev.c
-++++ b/drivers/net/wireless/ath/wil6210/netdev.c
-+@@ -127,7 +127,9 @@ void *wil_if_alloc(struct device *dev, v
-+ 
-+ 	netdev_attach_ops(ndev, &wil_netdev_ops);
-+ 	ndev->ieee80211_ptr = wdev;
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,39))
-+ 	ndev->hw_features = NETIF_F_HW_CSUM | NETIF_F_RXCSUM;
-++#endif
-+ 	ndev->features |= NETIF_F_HW_CSUM | NETIF_F_RXCSUM;
-+ 	SET_NETDEV_DEV(ndev, wiphy_dev(wdev->wiphy));
-+ 	wdev->netdev = ndev;
++++ b/backport/defconfigs/cw1200
+@@ -0,0 +1,9 @@
++CPTCFG_CFG80211=m
++CPTCFG_CFG80211_WEXT=y
++CPTCFG_MAC80211=m
++CPTCFG_MAC80211_LEDS=y
++CPTCFG_MAC80211_MESH=y
++CPTCFG_WLAN=y
++CPTCFG_CW1200=m
++CPTCFG_CW1200_WLAN_SDIO=m
++CPTCFG_CW1200_WLAN_SPI=m
+diff --git a/backport/defconfigs/wifi b/backport/defconfigs/wifi
+index d55849b..5c9f293 100644
+--- a/backport/defconfigs/wifi
++++ b/backport/defconfigs/wifi
+@@ -23,6 +23,9 @@ CPTCFG_BRCMSMAC=m
+ CPTCFG_CARL9170=m
+ CPTCFG_CFG80211=m
+ CPTCFG_CFG80211_WEXT=y
++CPTCFG_CW1200=m
++CPTCFG_CW1200_WLAN_SDIO=m
++CPTCFG_CW1200_WLAN_SPI=m
+ CPTCFG_HERMES=m
+ CPTCFG_HERMES_PRISM=y
+ CPTCFG_IPW2100=m
 -- 
 1.7.10.4
 
