@@ -1,43 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:47974 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:60873 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751733Ab3HOLjh (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 15 Aug 2013 07:39:37 -0400
-Message-ID: <520CBDF1.7020406@hauke-m.de> (sfid-20130815_133939_472795_06C57CF6)
-Date: Thu, 15 Aug 2013 13:39:29 +0200
+	id S1755664Ab3HRXi7 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 18 Aug 2013 19:38:59 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Solomon Peachy <pizza@shaftnet.org>
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH 2/2] backports:  Add patch for cw1200_sdio with kernels
- < 3.2
-References: <1375367966-10863-1-git-send-email-pizza@shaftnet.org> <1375367966-10863-2-git-send-email-pizza@shaftnet.org>
-In-Reply-To: <1375367966-10863-2-git-send-email-pizza@shaftnet.org>
-Content-Type: text/plain; charset=ISO-8859-1
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH v2 13/19] backports: REGULATOR_DA903X does not build on kernel < 3.12
+Date: Mon, 19 Aug 2013 01:37:58 +0200
+Message-Id: <1376869084-16513-14-git-send-email-hauke@hauke-m.de> (sfid-20130819_013908_858644_E818BC09)
+In-Reply-To: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
+References: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 08/01/2013 04:39 PM, Solomon Peachy wrote:
-> It's probably not feasible to backport the SDIO quirk mechanism, but
-> without the qurik or this patch, the hardware will hang with 512-byte
-> transfers.
-> 
-> Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
-> ---
->  .../network/0001-cw1200-sdio-quirk/cw1200.patch           | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->  create mode 100644 patches/unified-drivers/network/0001-cw1200-sdio-quirk/cw1200.patch
-> 
-> diff --git a/patches/unified-drivers/network/0001-cw1200-sdio-quirk/cw1200.patch b/patches/unified-drivers/network/0001-cw1200-sdio-quirk/cw1200.patch
-> new file mode 100644
-> index 0000000..2533051
-> --- /dev/null
-> +++ b/patches/unified-drivers/network/0001-cw1200-sdio-quirk/cw1200.patch
+REGULATOR_DA903X now uses a new struct member added with kernel 3.12
 
-Please move this patch to
-patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ dependencies |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I can not say anything to the content of this patch, but otherwise these
-two patches are looking good.
+diff --git a/dependencies b/dependencies
+index 6b42c4f..66807ae 100644
+--- a/dependencies
++++ b/dependencies
+@@ -76,7 +76,7 @@ REGULATOR_AAT2870 3.6
+ REGULATOR_AD5398 3.5
+ REGULATOR_ARIZONA 3.8
+ REGULATOR_AS3711 3.12
+-REGULATOR_DA903X 3.5
++REGULATOR_DA903X 3.12
+ REGULATOR_DA9052 3.9
+ REGULATOR_DA9055 3.8
+ REGULATOR_FAN53555 3.5
+-- 
+1.7.10.4
 
-Hauke
