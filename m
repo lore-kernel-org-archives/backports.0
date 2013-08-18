@@ -1,63 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:37564 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:60850 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933530Ab3HGWxm (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 7 Aug 2013 18:53:42 -0400
+	id S1755804Ab3HRXib (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 18 Aug 2013 19:38:31 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 01/10] backports: remove some remaining parts form old alx driver
-Date: Thu,  8 Aug 2013 00:53:16 +0200
-Message-Id: <1375916005-16411-2-git-send-email-hauke@hauke-m.de> (sfid-20130808_005345_238510_FA74FA89)
-In-Reply-To: <1375916005-16411-1-git-send-email-hauke@hauke-m.de>
-References: <1375916005-16411-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH v2 08/19] backports: add some new regulator drivers to default config
+Date: Mon, 19 Aug 2013 01:37:53 +0200
+Message-Id: <1376869084-16513-9-git-send-email-hauke@hauke-m.de> (sfid-20130819_013832_717661_F6397D03)
+In-Reply-To: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
+References: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This removed some old parts remaining from the old alx driver.
-
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- copy-list.alx                                              |   10 ----------
- .../network/0004-alx-intx-msi-workaround/alx.patch         |   12 ------------
- 2 files changed, 22 deletions(-)
- delete mode 100644 copy-list.alx
- delete mode 100644 patches/unified-drivers/network/0004-alx-intx-msi-workaround/alx.patch
+ backport/defconfigs/regulator |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/copy-list.alx b/copy-list.alx
-deleted file mode 100644
-index ab1b91d..0000000
---- a/copy-list.alx
-+++ /dev/null
-@@ -1,10 +0,0 @@
--#
--# To use this, use the --extra-driver argument to gentree.py,
--# like this:
--#	--extra-driver /path/to/alx/ copy-list.alx
--#
--# This probably needs to be changed to target/linux/src/
--# to support "make linux-src" in alx, but then the Makefile
--# is not good ...
--#
--src/ -> drivers/net/ethernet/atheros/alx/
-diff --git a/patches/unified-drivers/network/0004-alx-intx-msi-workaround/alx.patch b/patches/unified-drivers/network/0004-alx-intx-msi-workaround/alx.patch
-deleted file mode 100644
-index 83ed16e..0000000
---- a/patches/unified-drivers/network/0004-alx-intx-msi-workaround/alx.patch
-+++ /dev/null
-@@ -1,12 +0,0 @@
----- a/drivers/net/ethernet/atheros/alx/alx_main.c
--+++ b/drivers/net/ethernet/atheros/alx/alx_main.c
--@@ -1032,6 +1032,9 @@ static int alx_identify_hw(struct alx_ad
-- 		if (rev < ALX_REV_C0) {
-- 			hw->ptrn_ofs = 0x600;
-- 			hw->max_ptrns = 8;
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,24)
--+			pdev->dev_flags |= PCI_DEV_FLAGS_MSI_INTX_DISABLE_BUG;
--+#endif
-- 		} else {
-- 			hw->ptrn_ofs = 0x14000;
-- 			hw->max_ptrns = 16;
+diff --git a/backport/defconfigs/regulator b/backport/defconfigs/regulator
+index c080747..0b1bc27 100644
+--- a/backport/defconfigs/regulator
++++ b/backport/defconfigs/regulator
+@@ -1,4 +1,5 @@
+ CPTCFG_REGULATOR=y
++CPTCFG_REGULATOR_88PM800=y
+ CPTCFG_REGULATOR_88PM8607=y
+ CPTCFG_REGULATOR_AAT2870=y
+ CPTCFG_REGULATOR_AB3100=y
+@@ -24,6 +25,7 @@ CPTCFG_REGULATOR_LP8755=y
+ CPTCFG_REGULATOR_LP8788=y
+ CPTCFG_REGULATOR_MAX1586=y
+ CPTCFG_REGULATOR_MAX77686=y
++CPTCFG_REGULATOR_MAX77693=y
+ CPTCFG_REGULATOR_MAX8649=y
+ CPTCFG_REGULATOR_MAX8660=y
+ CPTCFG_REGULATOR_MAX8907=y
+@@ -38,6 +40,7 @@ CPTCFG_REGULATOR_MC13XXX_CORE=y
+ CPTCFG_REGULATOR_PALMAS=y
+ CPTCFG_REGULATOR_PCAP=y
+ CPTCFG_REGULATOR_PCF50633=y
++CPTCFG_REGULATOR_PFUZE100=y
+ CPTCFG_REGULATOR_RC5T583=y
+ CPTCFG_REGULATOR_S2MPS11=y
+ CPTCFG_REGULATOR_S5M8767=y
 -- 
 1.7.10.4
 
