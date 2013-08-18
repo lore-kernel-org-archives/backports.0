@@ -1,71 +1,61 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:44878
-	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1750882Ab3HQEXJ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 17 Aug 2013 00:23:09 -0400
-From: Solomon Peachy <pizza@shaftnet.org>
-To: backports@vger.kernel.org
-Cc: Solomon Peachy <pizza@shaftnet.org>
-Subject: [PATCH 2/4] backports:  move the cw1200 sdio quirk into 26-sdio-quirks
-Date: Sat, 17 Aug 2013 00:23:01 -0400
-Message-Id: <1376713383-2624-2-git-send-email-pizza@shaftnet.org> (sfid-20130817_062315_315129_D1CA5521)
-In-Reply-To: <1376713383-2624-1-git-send-email-pizza@shaftnet.org>
-References: <1376713383-2624-1-git-send-email-pizza@shaftnet.org>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:60860 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755803Ab3HRXih (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 18 Aug 2013 19:38:37 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH v2 10/19] backports: backport pci power save for mwifiex
+Date: Mon, 19 Aug 2013 01:37:55 +0200
+Message-Id: <1376869084-16513-11-git-send-email-hauke@hauke-m.de> (sfid-20130819_013909_134407_3CDE3092)
+In-Reply-To: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
+References: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This way it's with the other sdio quirk-related patches.
+This patch makes mwifiex use the old suspend resume functions on older
+kernels.
 
-Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../26-sdio-quirks/drivers_net_wireless_cw1200_sdio.patch | 15 +++++++++++++++
- .../network/75-cw1200-sdio-quirk/cw1200.patch             | 15 ---------------
- 2 files changed, 15 insertions(+), 15 deletions(-)
- create mode 100644 patches/collateral-evolutions/network/26-sdio-quirks/drivers_net_wireless_cw1200_sdio.patch
- delete mode 100644 patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
+ .../drivers_net_wireless_mwifiex_pcie.patch        |   27 ++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_mwifiex_pcie.patch
 
-diff --git a/patches/collateral-evolutions/network/26-sdio-quirks/drivers_net_wireless_cw1200_sdio.patch b/patches/collateral-evolutions/network/26-sdio-quirks/drivers_net_wireless_cw1200_sdio.patch
+diff --git a/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_mwifiex_pcie.patch b/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_mwifiex_pcie.patch
 new file mode 100644
-index 0000000..2533051
+index 0000000..4b76db3
 --- /dev/null
-+++ b/patches/collateral-evolutions/network/26-sdio-quirks/drivers_net_wireless_cw1200_sdio.patch
-@@ -0,0 +1,15 @@
-+--- a/drivers/net/wireless/cw1200/cw1200_sdio.c
-++++ b/drivers/net/wireless/cw1200/cw1200_sdio.c
-+@@ -253,6 +253,12 @@ static size_t cw1200_sdio_align_size(struct hwbus_priv *self, size_t size)
-+ 	else
-+ 		size = sdio_align_size(self->func, size);
++++ b/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_mwifiex_pcie.patch
+@@ -0,0 +1,27 @@
++--- a/drivers/net/wireless/mwifiex/pcie.c
+++++ b/drivers/net/wireless/mwifiex/pcie.c
++@@ -260,6 +260,9 @@ static DEFINE_PCI_DEVICE_TABLE(mwifiex_i
++ MODULE_DEVICE_TABLE(pci, mwifiex_ids);
 + 
-++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0))
-++	/* A quirk to handle this was committed in 3.2-rc */
-++	if (size == SDIO_BLOCK_SIZE)
-++		size += SDIO_BLOCK_SIZE;  /* HW bug; force use of block mode */
-++#endif
++ #ifdef CONFIG_PM_SLEEP
+++compat_pci_suspend(mwifiex_pcie_suspend);
+++compat_pci_resume(mwifiex_pcie_resume);
 ++
-+ 	return size;
-+ }
-+ 
-diff --git a/patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch b/patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
-deleted file mode 100644
-index 2533051..0000000
---- a/patches/collateral-evolutions/network/75-cw1200-sdio-quirk/cw1200.patch
-+++ /dev/null
-@@ -1,15 +0,0 @@
----- a/drivers/net/wireless/cw1200/cw1200_sdio.c
--+++ b/drivers/net/wireless/cw1200/cw1200_sdio.c
--@@ -253,6 +253,12 @@ static size_t cw1200_sdio_align_size(struct hwbus_priv *self, size_t size)
-- 	else
-- 		size = sdio_align_size(self->func, size);
-- 
--+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0))
--+	/* A quirk to handle this was committed in 3.2-rc */
--+	if (size == SDIO_BLOCK_SIZE)
--+		size += SDIO_BLOCK_SIZE;  /* HW bug; force use of block mode */
--+#endif
--+
-- 	return size;
-- }
-- 
++ /* Power Management Hooks */
++ static SIMPLE_DEV_PM_OPS(mwifiex_pcie_pm_ops, mwifiex_pcie_suspend,
++ 				mwifiex_pcie_resume);
++@@ -272,9 +275,14 @@ static struct pci_driver __refdata mwifi
++ 	.probe    = mwifiex_pcie_probe,
++ 	.remove   = mwifiex_pcie_remove,
++ #ifdef CONFIG_PM_SLEEP
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,29))
++ 	.driver   = {
++ 		.pm = &mwifiex_pcie_pm_ops,
++ 	},
+++#else
+++	.suspend    = mwifiex_pcie_suspend_compat,
+++	.resume     = mwifiex_pcie_resume_compat,
+++#endif
++ #endif
++ 	.shutdown = mwifiex_pcie_shutdown,
++ };
 -- 
-1.8.3.1
+1.7.10.4
 
