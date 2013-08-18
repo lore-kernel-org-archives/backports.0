@@ -1,168 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:44886
-	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1750874Ab3HQEXK (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 17 Aug 2013 00:23:10 -0400
-From: Solomon Peachy <pizza@shaftnet.org>
-To: backports@vger.kernel.org
-Cc: Solomon Peachy <pizza@shaftnet.org>
-Subject: [PATCH 3/4] backports: cw1200 utilizes kthreads for <= 2.6.35
-Date: Sat, 17 Aug 2013 00:23:02 -0400
-Message-Id: <1376713383-2624-3-git-send-email-pizza@shaftnet.org> (sfid-20130817_062315_913218_ED298D85)
-In-Reply-To: <1376713383-2624-1-git-send-email-pizza@shaftnet.org>
-References: <1376713383-2624-1-git-send-email-pizza@shaftnet.org>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:60858 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755803Ab3HRXif (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 18 Aug 2013 19:38:35 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH v2 09/19] backports: do not access hw_features in wil6210
+Date: Mon, 19 Aug 2013 01:37:54 +0200
+Message-Id: <1376869084-16513-10-git-send-email-hauke@hauke-m.de> (sfid-20130819_013836_125392_016B2F2B)
+In-Reply-To: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
+References: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The new workqueue APIs in 2.6.36 allowed us to scrap the old kthread worker
-that had been used; unfortunately the backported API isn't complete so
-in order to support older kernels, resurrect this patch.
+wil6210 now uses netdev->hw_features which is not available in all
+kernel versions, do not set it then.
 
-Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../75-cw1200-workqueues/cw1200_workqueues.patch   | 133 +++++++++++++++++++++
- 1 file changed, 133 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/75-cw1200-workqueues/cw1200_workqueues.patch
+ .../drivers_net_wireless_ath_wil6210_netdev.patch          |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_wireless_ath_wil6210_netdev.patch
 
-diff --git a/patches/collateral-evolutions/network/75-cw1200-workqueues/cw1200_workqueues.patch b/patches/collateral-evolutions/network/75-cw1200-workqueues/cw1200_workqueues.patch
+diff --git a/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_wireless_ath_wil6210_netdev.patch b/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_wireless_ath_wil6210_netdev.patch
 new file mode 100644
-index 0000000..3bf3197
+index 0000000..5f3e636
 --- /dev/null
-+++ b/patches/collateral-evolutions/network/75-cw1200-workqueues/cw1200_workqueues.patch
-@@ -0,0 +1,133 @@
-+diff --git a/drivers/net/wireless/cw1200/bh.c b/drivers/net/wireless/cw1200/bh.c
-+index c1ec2a4..5dcbb4e 100644
-+--- a/drivers/net/wireless/cw1200/bh.c
-++++ b/drivers/net/wireless/cw1200/bh.c
-+@@ -48,16 +48,22 @@ enum cw1200_bh_pm_state {
-+ typedef int (*cw1200_wsm_handler)(struct cw1200_common *priv,
-+ 	u8 *data, size_t size);
++++ b/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_wireless_ath_wil6210_netdev.patch
+@@ -0,0 +1,12 @@
++--- a/drivers/net/wireless/ath/wil6210/netdev.c
+++++ b/drivers/net/wireless/ath/wil6210/netdev.c
++@@ -127,7 +127,9 @@ void *wil_if_alloc(struct device *dev, v
 + 
-++#ifndef CW1200_USE_COMPAT_KTHREAD
-+ static void cw1200_bh_work(struct work_struct *work)
-+ {
-+ 	struct cw1200_common *priv =
-+ 	container_of(work, struct cw1200_common, bh_work);
-+ 	cw1200_bh(priv);
-+ }
++ 	netdev_attach_ops(ndev, &wil_netdev_ops);
++ 	ndev->ieee80211_ptr = wdev;
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,39))
++ 	ndev->hw_features = NETIF_F_HW_CSUM | NETIF_F_RXCSUM;
 ++#endif
-+ 
-+ int cw1200_register_bh(struct cw1200_common *priv)
-+ {
-+ 	int err = 0;
-++#ifdef CW1200_USE_COMPAT_KTHREAD
-++	struct sched_param param = { .sched_priority = 1 };
-++	BUG_ON(priv->bh_thread);
-++#else
-+ 	/* Realtime workqueue */
-+ 	priv->bh_workqueue = alloc_workqueue("cw1200_bh",
-+ 				WQ_MEM_RECLAIM | WQ_HIGHPRI
-+@@ -67,6 +73,7 @@ int cw1200_register_bh(struct cw1200_common *priv)
-+ 		return -ENOMEM;
-+ 
-+ 	INIT_WORK(&priv->bh_work, cw1200_bh_work);
-++#endif
-+ 
-+ 	pr_debug("[BH] register.\n");
-+ 
-+@@ -81,20 +88,44 @@ int cw1200_register_bh(struct cw1200_common *priv)
-+ 	init_waitqueue_head(&priv->bh_wq);
-+ 	init_waitqueue_head(&priv->bh_evt_wq);
-+ 
-++#ifdef CW1200_USE_COMPAT_KTHREAD
-++	priv->bh_thread = kthread_create(&cw1200_bh, priv, "cw1200_bh");
-++	if (IS_ERR(priv->bh_thread)) {
-++		err = PTR_ERR(priv->bh_thread);
-++		priv->bh_thread = NULL;
-++	} else {
-++		WARN_ON(sched_setscheduler(priv->bh_thread,
-++					   SCHED_FIFO, &param));
-++		wake_up_process(priv->bh_thread);
-++	}
-++#else
-+ 	err = !queue_work(priv->bh_workqueue, &priv->bh_work);
-+ 	WARN_ON(err);
-++#endif
-++
-+ 	return err;
-+ }
-+ 
-+ void cw1200_unregister_bh(struct cw1200_common *priv)
-+ {
-++#ifdef CW1200_USE_COMPAT_KTHREAD
-++	struct task_struct *thread = priv->bh_thread;
-++	if (WARN_ON(!thread))
-++		return;
-++#endif
-++
-+ 	atomic_add(1, &priv->bh_term);
-+ 	wake_up(&priv->bh_wq);
-+ 
-++#ifdef CW1200_USE_COMPAT_KTHREAD
-++	kthread_stop(thread);
-++	priv->bh_thread = NULL;
-++#else
-+ 	flush_workqueue(priv->bh_workqueue);
-+ 
-+ 	destroy_workqueue(priv->bh_workqueue);
-+ 	priv->bh_workqueue = NULL;
-++#endif
-+ 
-+ 	pr_debug("[BH] unregistered.\n");
-+ }
-+@@ -614,6 +645,16 @@ static int cw1200_bh(void *arg)
-+ 		pr_err("[BH] Fatal error, exiting.\n");
-+ 		priv->bh_error = 1;
-+ 		/* TODO: schedule_work(recovery) */
-++#ifdef CW1200_USE_COMPAT_KTHREAD
-++		for (;;) {
-++			int status = wait_event_interruptible(priv->bh_wq, ({
-++				term = atomic_xchg(&priv->bh_term, 0);
-++				(term);
-++			}));
-++		if (status || term)
-++			break;
-++	}
-++#endif
-+ 	}
-+ 	return 0;
-+ }
-+diff --git a/drivers/net/wireless/cw1200/cw1200.h b/drivers/net/wireless/cw1200/cw1200.h
-+index 1ad7d36..300dbbb 100644
-+--- a/drivers/net/wireless/cw1200/cw1200.h
-++++ b/drivers/net/wireless/cw1200/cw1200.h
-+@@ -23,12 +23,18 @@
-+ #include <linux/workqueue.h>
-+ #include <net/mac80211.h>
-+ 
-++#include <linux/version.h>
-++
-+ #include "queue.h"
-+ #include "wsm.h"
-+ #include "scan.h"
-+ #include "txrx.h"
-+ #include "pm.h"
-+ 
-++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 36))
-++#define CW1200_USE_COMPAT_KTHREAD
-++#endif
-++
-+ /* Forward declarations */
-+ struct hwbus_ops;
-+ struct task_struct;
-+@@ -190,8 +196,12 @@ struct cw1200_common {
-+ 	atomic_t			bh_term;
-+ 	atomic_t			bh_suspend;
-+ 
-++#ifdef CW1200_USE_COMPAT_KTHREAD
-++	struct task_struct              *bh_thread;
-++#else
-+ 	struct workqueue_struct         *bh_workqueue;
-+ 	struct work_struct              bh_work;
-++#endif
-+ 
-+ 	int				bh_error;
-+ 	wait_queue_head_t		bh_wq;
++ 	ndev->features |= NETIF_F_HW_CSUM | NETIF_F_RXCSUM;
++ 	SET_NETDEV_DEV(ndev, wiphy_dev(wdev->wiphy));
++ 	wdev->netdev = ndev;
 -- 
-1.8.3.1
+1.7.10.4
 
