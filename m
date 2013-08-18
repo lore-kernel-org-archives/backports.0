@@ -1,43 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:38654 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752084Ab3HPJ4K (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 16 Aug 2013 05:56:10 -0400
-Message-ID: <1376646844.15299.0.camel@jlt4.sipsolutions.net> (sfid-20130816_115612_466953_70D9F0FC)
-Subject: Re: [PATCH v3 02/10] backports: add eth_prepare_mac_addr_change()
- and eth_commit_mac_addr_change()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
-Date: Fri, 16 Aug 2013 11:54:04 +0200
-In-Reply-To: <520CCC29.5020007@fh-kl.de> (sfid-20130815_144017_696556_ABF7BBF6)
-References: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
-	 <520CCC29.5020007@fh-kl.de> (sfid-20130815_144017_696556_ABF7BBF6)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from server19320154104.serverpool.info ([193.201.54.104]:60890 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755468Ab3HRXj7 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 18 Aug 2013 19:39:59 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH v2 15/19] backports: use genl_info_snd_portid() at an other place.
+Date: Mon, 19 Aug 2013 01:38:00 +0200
+Message-Id: <1376869084-16513-16-git-send-email-hauke@hauke-m.de> (sfid-20130819_020909_441870_8232264F)
+In-Reply-To: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
+References: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, 2013-08-15 at 14:40 +0200, Patrick Ziegler wrote:
-> These functions are required by qmi_wwan device driver.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../network/0005-netlink-portid/nl80211.patch               |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-This patch is broken.
-
-> --- a/backport/backport-include/linux/etherdevice.h
-> +++ b/backport/backport-include/linux/etherdevice.h
-...
-
-> --- a/backport/compat/compat-3.9.c
-> +++ b/backport/compat/compat-3.9.c
-> @@ -12,6 +12,9 @@
->  #include <linux/scatterlist.h>
->  #include <linux/device.h>
->  #include <linux/err.h>
-> +#include <linux/netdevice.h>
-> +#include <linux/if.h>
-> +#include <linux/if_ether.h>
-
-Need to include linux/etherdevice.h here.
-
-johannes
+diff --git a/patches/collateral-evolutions/network/0005-netlink-portid/nl80211.patch b/patches/collateral-evolutions/network/0005-netlink-portid/nl80211.patch
+index 4664bc1..478c4e4 100644
+--- a/patches/collateral-evolutions/network/0005-netlink-portid/nl80211.patch
++++ b/patches/collateral-evolutions/network/0005-netlink-portid/nl80211.patch
+@@ -189,7 +189,16 @@
+  			     NL80211_CMD_GET_WOWLAN);
+  	if (!hdr)
+  		goto nla_put_failure;
+-@@ -8098,7 +8098,7 @@ static int nl80211_register_unexpected_f
++@@ -8152,7 +8152,7 @@ static int nl80211_get_coalesce(struct s
++ 	if (!msg)
++ 		return -ENOMEM;
++ 
++-	hdr = nl80211hdr_put(msg, info->snd_portid, info->snd_seq, 0,
+++	hdr = nl80211hdr_put(msg, genl_info_snd_portid(info), info->snd_seq, 0,
++ 			     NL80211_CMD_GET_COALESCE);
++ 	if (!hdr)
++ 		goto nla_put_failure;
++@@ -8405,7 +8405,7 @@ static int nl80211_register_unexpected_f
+  	if (wdev->ap_unexpected_nlportid)
+  		return -EBUSY;
+  
+-- 
+1.7.10.4
 
