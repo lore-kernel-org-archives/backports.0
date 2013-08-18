@@ -1,76 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:32773 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750936Ab3HBL3h (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 2 Aug 2013 07:29:37 -0400
-Message-ID: <51FB981B.6010502@fh-kl.de> (sfid-20130802_132938_321298_FA893670)
-Date: Fri, 2 Aug 2013 13:29:31 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [PATCH 1/9] backports: fix build errors for old kernel versions without
- PCI support
-References: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+Received: from server19320154104.serverpool.info ([193.201.54.104]:60826 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755719Ab3HRXiW (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 18 Aug 2013 19:38:22 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
+	Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Subject: [PATCH v2 03/19] backports: add missing include for is_valid_ether_addr()
+Date: Mon, 19 Aug 2013 01:37:48 +0200
+Message-Id: <1376869084-16513-4-git-send-email-hauke@hauke-m.de> (sfid-20130819_013823_443116_F53D93EA)
+In-Reply-To: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
+References: <1376869084-16513-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+is_valid_ether_addr() is used, but the header here it is declared was
+not included.
+
+This fixes a problem introduced in commit:
+commit 521acfd92f168fc9b8b6a1cefe9a165243f3d872
+Author: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Date:   Thu Aug 15 14:40:09 2013 +0200
+
+    backports: add eth_prepare_mac_addr_change() and eth_commit_mac_addr_change()
+
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: Patrick Ziegler <patrick.ziegler@fh-kl.de>
 ---
- backport/compat/compat-2.6.25.c | 4 ++++
- backport/compat/compat-2.6.28.c | 1 +
- 2 files changed, 5 insertions(+)
+ backport/compat/compat-3.9.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/backport/compat/compat-2.6.25.c b/backport/compat/compat-2.6.25.c
-index b3597ea..169a555 100644
---- a/backport/compat/compat-2.6.25.c
-+++ b/backport/compat/compat-2.6.25.c
-@@ -212,9 +212,13 @@ EXPORT_SYMBOL_GPL(sg_alloc_table);
-  */
- int pci_enable_device_mem(struct pci_dev *dev)
- {
-+#ifdef CONFIG_PCI
- 	int bars = pci_select_bars(dev, IORESOURCE_MEM);
+diff --git a/backport/compat/compat-3.9.c b/backport/compat/compat-3.9.c
+index ba8e3cf..d85a79f 100644
+--- a/backport/compat/compat-3.9.c
++++ b/backport/compat/compat-3.9.c
+@@ -15,6 +15,7 @@
+ #include <linux/netdevice.h>
+ #include <linux/if.h>
+ #include <linux/if_ether.h>
++#include <linux/etherdevice.h>
  
- 	return pci_enable_device_bars(dev, bars);
-+#else
-+	return 0;
-+#endif
- }
- EXPORT_SYMBOL_GPL(pci_enable_device_mem);
+ #ifdef __sg_page_iter_next
  
-diff --git a/backport/compat/compat-2.6.28.c b/backport/compat/compat-2.6.28.c
-index e47626b..2ff6b1e 100644
---- a/backport/compat/compat-2.6.28.c
-+++ b/backport/compat/compat-2.6.28.c
-@@ -12,6 +12,7 @@
- #include <linux/usb.h>
- #include <linux/tty.h>
- #include <linux/skbuff.h>
-+#include <linux/pci.h>
- #include <asm/poll.h>
- 
- /* 2.6.28 compat code goes here */
 -- 
-1.8.1.2
+1.7.10.4
 
-
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
