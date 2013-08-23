@@ -1,36 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from sabertooth01.qualcomm.com ([65.197.215.72]:34491 "EHLO
-	sabertooth01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752667Ab3HARKr (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 1 Aug 2013 13:10:47 -0400
-Date: Thu, 1 Aug 2013 10:10:45 -0700
-From: "Luis R. Rodriguez" <rodrigue@qca.qualcomm.com>
-To: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-CC: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	<backports@vger.kernel.org>
-Subject: Re: [RFC v3 0/9] backports: add wwan device drivers
-Message-ID: <20130801171044.GK17130@pogo> (sfid-20130801_191050_261649_FFF8F001)
-References: <51FA85B9.7050502@fh-kl.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <51FA85B9.7050502@fh-kl.de>
+Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:45460
+	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1753066Ab3HWBGp (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 22 Aug 2013 21:06:45 -0400
+From: Solomon Peachy <pizza@shaftnet.org>
+To: backports@vger.kernel.org
+Cc: Solomon Peachy <pizza@shaftnet.org>
+Subject: [PATCH] backports:  Actually export the 2.6.34 sdio compat symbols
+Date: Thu, 22 Aug 2013 21:06:33 -0400
+Message-Id: <1377219993-3517-1-git-send-email-pizza@shaftnet.org> (sfid-20130823_030647_313762_3E663354)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Aug 01, 2013 at 05:58:49PM +0200, Patrick Ziegler wrote:
-> This adds wwan drivers for mobile broadband devices.
-> Patches 1 to 8 add missing stuff required for the wwan drivers.
-> Patch 9 adds device drivers.
-> 
-> Changes v2:
->  - rebased on last RFCs for next-20130729
-> 
-> Changes v3:
->  - add new patch to add missing USB_SPEED_SUPER
->  - fix PCI build errors in a better way
+sdio_get_host_pm_caps() and sdio_set_host_pm_flags() were defined
+in compat-2.6.34 but not actually exported for other modules to use.
 
-Nice! Looks good to me except for just export symbol stuff. Let me know
-if you want to respin or want me to try to merge these with the symbol
-change. Up to you.
+The cw1200 driver needs sdio_set_host_pm_flags() properly exported.
 
-  Luis
+Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
+---
+ backport/compat/compat-2.6.34.c | 2 ++
+ dependencies                    | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/backport/compat/compat-2.6.34.c b/backport/compat/compat-2.6.34.c
+index b257df1..4ae7f9a 100644
+--- a/backport/compat/compat-2.6.34.c
++++ b/backport/compat/compat-2.6.34.c
+@@ -23,11 +23,13 @@ mmc_pm_flag_t sdio_get_host_pm_caps(struct sdio_func *func)
+ {
+ 	return backport_mmc_pm_flags;
+ }
++EXPORT_SYMBOL_GPL(sdio_get_host_pm_caps);
+ 
+ int sdio_set_host_pm_flags(struct sdio_func *func, mmc_pm_flag_t flags)
+ {
+ 	return -EINVAL;
+ }
++EXPORT_SYMBOL_GPL(sdio_set_host_pm_flags);
+ 
+ /**
+  * seq_hlist_start - start an iteration of a hlist
+diff --git a/dependencies b/dependencies
+index 9bd5763..043a2d5 100644
+--- a/dependencies
++++ b/dependencies
+@@ -36,7 +36,7 @@ P54_SPI 2.6.25
+ WL1251_SDIO 2.6.37
+ WLCORE_SDIO 2.6.38
+ 
+-CW1200_WLAN_SDIO 2.6.34
++CW1200_WLAN_SDIO 2.6.32
+ CW1200_WLAN_SPI 2.6.35
+ 
+ BRCMFMAC 2.6.29
+-- 
+1.8.3.1
+
