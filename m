@@ -1,84 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:32840 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750936Ab3HBLa1 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 2 Aug 2013 07:30:27 -0400
-Message-ID: <51FB984D.2060507@fh-kl.de> (sfid-20130802_133028_483982_51686248)
-Date: Fri, 2 Aug 2013 13:30:21 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [PATCH 6/9] backports: update enum usb_device_speed with USB_SPEED_SUPER
-References: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+Received: from s3.sipsolutions.net ([144.76.43.152]:55831 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752996Ab3H0PuH (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 27 Aug 2013 11:50:07 -0400
+Message-ID: <1377618602.20012.10.camel@jlt4.sipsolutions.net> (sfid-20130827_175008_853745_9D7482F0)
+Subject: Re: [RFC] remove support for kernel 2.6.24
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Tue, 27 Aug 2013 17:50:02 +0200
+In-Reply-To: <CAB=NE6VBhHkfFPd-kBKfscy2P=EVQ7jNevYQ5nVU2y_aFsCP-Q@mail.gmail.com> (sfid-20130827_174912_167400_D3372A9F)
+References: <1377258238-3880-1-git-send-email-johannes@sipsolutions.net>
+	 <CAB=NE6VBhHkfFPd-kBKfscy2P=EVQ7jNevYQ5nVU2y_aFsCP-Q@mail.gmail.com>
+	 (sfid-20130827_174912_167400_D3372A9F)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-USB_SPEED_SUPER is missing for kernel versions < 2.6.30 but used by uvc_video and
-usbnet.
+On Tue, 2013-08-27 at 08:48 -0700, Luis R. Rodriguez wrote:
+> On Fri, Aug 23, 2013 at 4:43 AM, Johannes Berg
+> <johannes@sipsolutions.net> wrote:
+> > From: Johannes Berg <johannes.berg@intel.com>
+> >
+> > By requiring 2.6.25 we can get rid of quite a lot of backport work.
+> > 2.6.25 was released more than five years ago (April 2011) and wasn't
+> > a long-term kernel either, so there's little point in supporting it
+> > now.
+> >
+> > Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> 
+> I'm fine with this, please feel free to send as patch form unless you
+> want me to just accept it as is, I'd test compile it before
+> integration into the public tree.
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
----
- backport/backport-include/linux/usb/ch9.h | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+I think it's ok, the [rfc] was more for the fact of removing it rather
+than the contents.
 
-diff --git a/backport/backport-include/linux/usb/ch9.h b/backport/backport-include/linux/usb/ch9.h
-index 252a6f1..40d5d3f 100644
---- a/backport/backport-include/linux/usb/ch9.h
-+++ b/backport/backport-include/linux/usb/ch9.h
-@@ -1,9 +1,31 @@
- #ifndef __BACKPORT__LINUX_USB_CH9_H
- #define __BACKPORT__LINUX_USB_CH9_H
- 
--#include_next <linux/usb/ch9.h>
- #include <linux/version.h>
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-+#define usb_device_speed old_usb_device_speed
-+#define USB_SPEED_UNKNOWN OLD_USB_SPEED_UNKNOWN
-+#define USB_SPEED_LOW OLD_USB_SPEED_LOW
-+#define USB_SPEED_FULL OLD_USB_SPEED_FULL
-+#define USB_SPEED_HIGH OLD_USB_SPEED_HIGH
-+#include_next <linux/usb/ch9.h>
-+#undef usb_device_speed
-+#undef USB_SPEED_UNKNOWN
-+#undef USB_SPEED_LOW
-+#undef USB_SPEED_FULL
-+#undef USB_SPEED_HIGH
-+enum usb_device_speed {
-+	USB_SPEED_UNKNOWN = 0,          /* enumerating */
-+	USB_SPEED_LOW, USB_SPEED_FULL,      /* usb 1.1 */
-+	USB_SPEED_HIGH,             /* usb 2.0 */
-+	USB_SPEED_WIRELESS,         /* wireless (usb 2.5) */
-+	USB_SPEED_SUPER,            /* usb 3.0 */
-+};
-+#else
-+#include_next <linux/usb/ch9.h>
-+#endif /* < 2.6.30 */
-+
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
- #include <linux/types.h>    /* __u8 etc */
- #include <asm/byteorder.h>  /* le16_to_cpu */
--- 
-1.8.1.2
+johannes
 
-
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
