@@ -1,69 +1,37 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:32818 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750936Ab3HBLaM (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 2 Aug 2013 07:30:12 -0400
-Message-ID: <51FB983E.2090901@fh-kl.de> (sfid-20130802_133014_603075_57238858)
-Date: Fri, 2 Aug 2013 13:30:06 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Received: from mail-la0-f44.google.com ([209.85.215.44]:53575 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752130Ab3H0PtN (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 27 Aug 2013 11:49:13 -0400
+Received: by mail-la0-f44.google.com with SMTP id eo20so3671472lab.17
+        for <backports@vger.kernel.org>; Tue, 27 Aug 2013 08:49:12 -0700 (PDT)
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [PATCH 8/9] backports: define phys_addr_t for ARM on kernel version
- < 2.6.25
-References: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1375442885.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+In-Reply-To: <1377258238-3880-1-git-send-email-johannes@sipsolutions.net>
+References: <1377258238-3880-1-git-send-email-johannes@sipsolutions.net>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Tue, 27 Aug 2013 08:48:51 -0700
+Message-ID: <CAB=NE6VBhHkfFPd-kBKfscy2P=EVQ7jNevYQ5nVU2y_aFsCP-Q@mail.gmail.com> (sfid-20130827_174915_556578_C0A1EA1B)
+Subject: Re: [RFC] remove support for kernel 2.6.24
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-phys_addr_t is not defined on ARM systems if kernel version < 2.6.25.
+On Fri, Aug 23, 2013 at 4:43 AM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+>
+> By requiring 2.6.25 we can get rid of quite a lot of backport work.
+> 2.6.25 was released more than five years ago (April 2011) and wasn't
+> a long-term kernel either, so there's little point in supporting it
+> now.
+>
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
----
- backport/backport-include/linux/types.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I'm fine with this, please feel free to send as patch form unless you
+want me to just accept it as is, I'd test compile it before
+integration into the public tree.
 
-diff --git a/backport/backport-include/linux/types.h b/backport/backport-include/linux/types.h
-index 504a615..0aadc80 100644
---- a/backport/backport-include/linux/types.h
-+++ b/backport/backport-include/linux/types.h
-@@ -4,7 +4,7 @@
- #include <linux/version.h>
- 
- #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25)
--#if defined(CONFIG_X86) || defined(CONFIG_X86_64)
-+#if defined(CONFIG_X86) || defined(CONFIG_X86_64) || defined(CONFIG_ARM)
- 
- #if defined(CONFIG_64BIT) || defined(CONFIG_X86_PAE) || defined(CONFIG_PHYS_64BIT)
- typedef u64 phys_addr_t;
-@@ -12,7 +12,7 @@ typedef u64 phys_addr_t;
- typedef u32 phys_addr_t;
- #endif
- 
--#endif /* x86 */
-+#endif /* x86 || ARM */
- #elif LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28) /* < 2.6.25 */
- 
- #if defined(CONFIG_X86) || defined(CONFIG_X86_64) || defined(CONFIG_PPC)
--- 
-1.8.1.2
-
-
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
+ Luis
