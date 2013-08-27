@@ -1,78 +1,33 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:58760 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932351Ab3HGJkP (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 7 Aug 2013 05:40:15 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: fix device_release_driver
-Date: Wed,  7 Aug 2013 11:40:09 +0200
-Message-Id: <1375868409-26906-1-git-send-email-johannes@sipsolutions.net> (sfid-20130807_114017_756805_355E1309)
+Received: from mail-la0-f44.google.com ([209.85.215.44]:64514 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754153Ab3H0Vjd (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 27 Aug 2013 17:39:33 -0400
+Received: by mail-la0-f44.google.com with SMTP id eo20so4082090lab.31
+        for <backports@vger.kernel.org>; Tue, 27 Aug 2013 14:39:32 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1377639864-25672-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1377639864-25672-1-git-send-email-mcgrof@do-not-panic.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Tue, 27 Aug 2013 14:39:11 -0700
+Message-ID: <CAB=NE6UbRv-29XvMLLmfsxsACMQDXbDM=KeTFcUW+dGPWDx1VQ@mail.gmail.com> (sfid-20130827_233950_363606_587F7449)
+Subject: Re: [PATCH 1/4] backports: fix compilation for 2.6.25 for math64 header
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Tue, Aug 27, 2013 at 2:44 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+>
+> We need to ifdef correctly before assuming we can include that
+> header.
+>
+> Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 
-The new macro, introduced by
+Patch was was just Johannes' latest patch, I applied that on top of my
+series but just nuked it from being sent.
 
-commit 9f5876fa9cfb8cd6f450c200043ca7e31915f976
-Author: Luis R. Rodriguez <mcgrof@do-not-panic.com>
-Date:   Thu Jul 18 16:40:55 2013 -0700
-
-    backports: backport drvdata = NULL core driver fixes
-
-evaluates its argument multiple times, causing crashes as
-there are potential side-effects of the called code and/or
-the arguments.
-
-Fix this by converting it to static inlines.
-
-Also remove the driver_probe_device() macro that has the
-same issue, but tries to wrap a function that isn't even
-available outside the driver core code in any kernel.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/linux/device.h | 25 +++++++++----------------
- 1 file changed, 9 insertions(+), 16 deletions(-)
-
-diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
-index ba55d0e..909a534 100644
---- a/backport/backport-include/linux/device.h
-+++ b/backport/backport-include/linux/device.h
-@@ -177,22 +177,15 @@ extern int dev_set_name(struct device *dev, const char *name, ...)
- #endif
- 
- #if LINUX_VERSION_CODE <= KERNEL_VERSION(3,6,0)
--#define driver_probe_device(__drv, __dev)		\
--({							\
-- 	int ret;					\
-- 	ret = (driver_probe_device)(__drv, __dev);	\
-- 	if (ret)					\
--		dev_set_drvdata(__dev, NULL);		\
-- 	return ret;					\
--})
--
--#define device_release_driver(__dev)			\
--({							\
-- 	(device_release_driver)(__dev);			\
-- 	device_lock(__dev);				\
-- 	dev_set_drvdata(__dev, NULL);			\
-- 	device_unlock(__dev);				\
--})
-+static inline void
-+backport_device_release_driver(struct device *dev)
-+{
-+	device_release_driver(dev);
-+	device_lock(dev);
-+	dev_set_drvdata(dev, NULL);
-+	device_unlock(dev);
-+}
-+#define device_release_driver LINUX_BACKPORT(device_release_driver)
- #endif /* LINUX_VERSION_CODE <= KERNEL_VERSION(3,6,0) */
- 
- #endif /* __BACKPORT_DEVICE_H */
--- 
-1.8.0
-
+  Luis
