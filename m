@@ -1,71 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:52440 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753658Ab3HOMk0 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 15 Aug 2013 08:40:26 -0400
-Message-ID: <520CCC34.5010104@fh-kl.de> (sfid-20130815_144027_873326_DEFCC60E)
-Date: Thu, 15 Aug 2013 14:40:20 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:37432 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754333Ab3H0U3Q (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 27 Aug 2013 16:29:16 -0400
+Message-ID: <521D0C11.6090402@hauke-m.de> (sfid-20130827_222923_347045_E84D9D83)
+Date: Tue, 27 Aug 2013 22:29:05 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [PATCH v3 04/10] backports: add usb_translate_errors()
-References: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
-In-Reply-To: <cover.1376569949.git.patrick.ziegler@fh-kl.de>
-Content-Type: text/plain; charset="ISO-8859-15"
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: backports@vger.kernel.org
+Subject: Re: kernel version management
+References: <1377630791.20012.12.camel@jlt4.sipsolutions.net>
+In-Reply-To: <1377630791.20012.12.camel@jlt4.sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This inline function is missing for version < 2.6.39 but required by em28xx
-and cdc-wdm device driver.
+On 08/27/2013 09:13 PM, Johannes Berg wrote:
+> Hi,
+> 
+> So ... I guess I succeeded in killing off 2.6.24 support, but I think we
+> should talk about when we drop which version?
+> 
+> http://en.wikipedia.org/wiki/Linux_kernel#Maintenance has a handy list
+> of which version was supported until when, telling us that the oldest
+> kernel still supported now is 2.6.32.
+> 
+> What do people think? What kernels do you use? How old is "really far
+> too old to worry about"?
+> 
+> johannes
 
-Signed-off-by: Patrick Ziegler <patrick.ziegler@fh-kl.de>
----
- backport/backport-include/linux/usb.h | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+When you look at the users of old backports no one cares about using a
+supported kernel version. One group are the desktop users which are
+using Ubuntu, Debian, or some RedHat kernel, these kernels are based on
+2.6.32 or some 3.X version. The other big group are the embedded
+developers which are using any random kernel version with many patches
+for some specific SoC in it. They do not care about security updates.
 
-diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
-index 368da6c..a717b7a 100644
---- a/backport/backport-include/linux/usb.h
-+++ b/backport/backport-include/linux/usb.h
-@@ -145,4 +145,19 @@ extern void usb_unpoison_urb(struct urb *urb);
- extern int usb_anchor_empty(struct usb_anchor *anchor);
- #endif /* 2.6.23-2.6.27 */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,39)
-+static inline int usb_translate_errors(int error_code)
-+{
-+	switch (error_code) {
-+	case 0:
-+	case -ENOMEM:
-+	case -ENODEV:
-+	case -EOPNOTSUPP:
-+		return error_code;
-+	default:
-+		return -EIO;
-+	}
-+}
-+#endif /* < 2.6.39 */
-+
- #endif /* __BACKPORT_USB_H */
--- 
-1.8.1.2
+I think we should drop support for some versions if there are some
+thinks that are harder to backport.
 
+The bigger maintenance problem I currently see is the adding for more
+and more subsystems. The GPU drivers for example are taking about 30% of
+the time when adding support for a new linux next version.
 
-
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
-
-University Of Applied Sciences
-Kaiserslautern
-
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
-
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
-
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
+Hauke
