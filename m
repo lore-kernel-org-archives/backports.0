@@ -1,59 +1,63 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f172.google.com ([209.85.192.172]:35881 "EHLO
-	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751041Ab3HHGpe (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 8 Aug 2013 02:45:34 -0400
+Received: from mail-pb0-f41.google.com ([209.85.160.41]:34049 "EHLO
+	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751743Ab3H0Sqo (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 27 Aug 2013 14:46:44 -0400
+Received: by mail-pb0-f41.google.com with SMTP id rp2so5241927pbb.0
+        for <backports@vger.kernel.org>; Tue, 27 Aug 2013 11:46:44 -0700 (PDT)
+Date: Tue, 27 Aug 2013 11:56:05 -0700
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: Solomon Peachy <pizza@shaftnet.org>
+Cc: backports@vger.kernel.org
+Subject: Re: [PATCH] backports:  Actually export the 2.6.34 sdio compat
+ symbols
+Message-ID: <20130827185603.GC7485@garbanzo.do-not-panic.com> (sfid-20130827_204646_564038_F11B7C0E)
+References: <1377219993-3517-1-git-send-email-pizza@shaftnet.org>
 MIME-Version: 1.0
-In-Reply-To: <5202D173.4050408@hauke-m.de>
-References: <1375865563-1196-1-git-send-email-arik@wizery.com> <5202D173.4050408@hauke-m.de>
-From: Arik Nemtsov <arik@wizery.com>
-Date: Thu, 8 Aug 2013 09:45:17 +0300
-Message-ID: <CA+XVXfdAUZGj7FjfRUxT2noa1b35xk1vn0bdcO70Vic6h9yXcg@mail.gmail.com> (sfid-20130808_084536_465253_01CD233B)
-Subject: Re: [PATCH] backports: rename some mem functions to not break custom kernels
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linux-wireless@vger.kernel.org, mcgrof@kernel.org,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ZmUaFz6apKcXQszQ"
+In-Reply-To: <1377219993-3517-1-git-send-email-pizza@shaftnet.org>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Aug 8, 2013 at 2:00 AM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
-> Please add backports mailing list ( backports@vger.kernel.org ) next time.
 
-Ok. Thanks.
+--ZmUaFz6apKcXQszQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Aug 22, 2013 at 09:06:33PM -0400, Solomon Peachy wrote:
+> sdio_get_host_pm_caps() and sdio_set_host_pm_flags() were defined
+> in compat-2.6.34 but not actually exported for other modules to use.
+>=20
+> The cw1200 driver needs sdio_set_host_pm_flags() properly exported.
+>=20
+> Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
 
->> diff --git a/backport/backport-include/asm/mtrr.h b/backport/backport-include/asm/mtrr.h
->> index cf0f6fd..c5760b4 100644
->> --- a/backport/backport-include/asm/mtrr.h
->> +++ b/backport/backport-include/asm/mtrr.h
->> @@ -7,14 +7,17 @@
->>   * The following functions are for use by other drivers that cannot use
->>   * arch_phys_wc_add and arch_phys_wc_del.
->>   */
->> +#ifndef phys_wc_to_mtrr_index
->>  #ifdef CONFIG_MTRR
->> -extern int phys_wc_to_mtrr_index(int handle);
->> +extern int backport_phys_wc_to_mtrr_index(int handle);
->>  #else
->> -static inline int phys_wc_to_mtrr_index(int handle)
->> +static inline int backport_phys_wc_to_mtrr_index(int handle)
->>  {
->>       return -1;
->>  }
->>  #endif /* CONFIG_MTRR */
->> +#define phys_wc_to_mtrr_index LINUX_BACKPORT(phys_wc_to_mtrr_index)
->
-> You should put this line before the #ifndef phy_.... and then you do not
-> have to use backport_phys_wc_to_mtrr_index with the prefix anywhere in
-> backports. This also applies for the other places where you manually add
-> backport_.
+Thanks, applied and pushed!
 
-The case I'm trying to un-break here is one where the symbol is
-defined by the kernel, even though it's not supposed to. This can
-happen if someone cherry-picks patches containing this symbol into
-their kernel.
-The backported driver is better off using the kernel symbol in that
-case I guess?
+  Luis
 
-Arik
+--ZmUaFz6apKcXQszQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSHPZDAAoJEKwtdpJg+MHGqeAQAJj9Y2SXfm4GaPpq9vrQnvZg
+Qtmcv94d0R2Ky92aIPEL8qTNyGta0zpbG4STpUu0Jmcfacp7oIGtKesZLtfyVZZC
+COEPXRdVZPaScQ1TEvmg1jkST9Rxq3YLMdit9PuF6A1TZ5ZZRl5DGZRsFDQR8cnw
+mfZCI/6I8uHSsn+iB2wblJFuGwVaUX74z3vXwApRIUQPfIBpJy7Uv1uvlxNhNTin
+UV8+h2G+8QALC1nuMavcDret3+gVgwKTLvrKZ3wY3EN7S174NlGCqq4YzO+qRS9J
+2JMIRMoiz6psn+8HjE+/b5MnBNdPEWWyxZ3N1R7y+/ofgwiKFmnsVcE/20v5iNGw
+K/jTqjdiSDJoZT7ElT1yyGc/JC1byUGb796qh0rfiLy/eHAJ0qGml2xEjj4+26NG
+Jup/Ghk8KYpFyKaLiCHKdR19NklRFWZ3yq/jtBYz7ff5FKBw0w/QEP0WvpGQvT8g
+MGyfHcuJXRj7PmfAXDt5Q1HeEI/sFaOYPXTqhk8cpbMSpvufFkKILJ6QX4XksTeY
+4+1exJFGVoWSLI+QbsfpQ3LE/3nvXm5J+NAB6gffSgSo9lM6pYvYZwNHPAJ0/E5N
+0a7fKSJOhr90TkuIT4UAGCa2itDiW4C2gBjjKhKjgw3NT7SOHcScHwCSgXPAmpsv
+Ag4x+GMHVWZvz/GA4VH2
+=y6tJ
+-----END PGP SIGNATURE-----
+
+--ZmUaFz6apKcXQszQ--
