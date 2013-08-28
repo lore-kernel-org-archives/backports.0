@@ -1,46 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:44708 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756429Ab3HMBc5 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 12 Aug 2013 21:32:57 -0400
-Received: by mail-pb0-f46.google.com with SMTP id rq2so1436528pbb.5
-        for <backports@vger.kernel.org>; Mon, 12 Aug 2013 18:32:56 -0700 (PDT)
-Date: Mon, 12 Aug 2013 18:41:56 -0700
+Received: from mail-pb0-f44.google.com ([209.85.160.44]:44405 "EHLO
+	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753114Ab3H1A4Y (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 27 Aug 2013 20:56:24 -0400
+Received: by mail-pb0-f44.google.com with SMTP id xa7so5543527pbc.31
+        for <backports@vger.kernel.org>; Tue, 27 Aug 2013 17:56:24 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: backports@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH] backports: fix device_release_driver
-Message-ID: <20130813014155.GE6439@garbanzo.do-not-panic.com> (sfid-20130813_033300_338077_3EAF543C)
-References: <1375868409-26906-1-git-send-email-johannes@sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1375868409-26906-1-git-send-email-johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH] backports: add missing returns on ww_mutex backpots
+Date: Tue, 27 Aug 2013 18:05:44 -0700
+Message-Id: <1377651944-1258-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20130828_025625_911541_75825707)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Aug 07, 2013 at 11:40:09AM +0200, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
-> 
-> The new macro, introduced by
-> 
-> commit 9f5876fa9cfb8cd6f450c200043ca7e31915f976
-> Author: Luis R. Rodriguez <mcgrof@do-not-panic.com>
-> Date:   Thu Jul 18 16:40:55 2013 -0700
-> 
->     backports: backport drvdata = NULL core driver fixes
-> 
-> evaluates its argument multiple times, causing crashes as
-> there are potential side-effects of the called code and/or
-> the arguments.
-> 
-> Fix this by converting it to static inlines.
-> 
-> Also remove the driver_probe_device() macro that has the
-> same issue, but tries to wrap a function that isn't even
-> available outside the driver core code in any kernel.
-> 
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 
-Thanks, applied and pushed!
+Two returns were missing on the ww_mutex backport, add these.
+The enhancements are not supported on older kernels so just
+bail out early.
 
-  Luis
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ backport/compat/kernel/ww_mutex.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/backport/compat/kernel/ww_mutex.c b/backport/compat/kernel/ww_mutex.c
+index 257c2a4..204ac8f 100644
+--- a/backport/compat/kernel/ww_mutex.c
++++ b/backport/compat/kernel/ww_mutex.c
+@@ -206,10 +206,12 @@ static void mspin_unlock(struct mspin_node **lock, struct mspin_node *node)
+ 
+ static inline bool owner_running(struct mutex *lock, struct task_struct *owner)
+ {
++	return false;
+ }
+ 
+ int mutex_spin_on_owner(struct mutex *lock, struct task_struct *owner)
+ {
++	return 1;
+ }
+ 
+ static inline int mutex_can_spin_on_owner(struct mutex *lock)
+-- 
+1.7.10.4
+
