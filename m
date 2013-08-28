@@ -1,83 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mxz.fh-kl.de ([143.93.17.66]:60994 "EHLO mxz.fh-kl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750936Ab3HBL30 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 2 Aug 2013 07:29:26 -0400
-Message-ID: <51FB9810.706@fh-kl.de> (sfid-20130802_132929_186348_DE4FBC5D)
-Date: Fri, 2 Aug 2013 13:29:20 +0200
-From: Patrick Ziegler <patrick.ziegler@fh-kl.de>
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:45442 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754425Ab3H1G7E (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 28 Aug 2013 02:59:04 -0400
+Received: by mail-pd0-f171.google.com with SMTP id g10so5902542pdj.2
+        for <backports@vger.kernel.org>; Tue, 27 Aug 2013 23:59:02 -0700 (PDT)
+Date: Wed, 28 Aug 2013 00:08:24 -0700
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Subject: backports-20130802 released
+Message-ID: <20130828070823.GC22651@garbanzo.do-not-panic.com> (sfid-20130828_085906_391076_8415AB68)
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: [PATCH 0/9] backports: add wwan device drivers
-Content-Type: text/plain; charset="ISO-8859-15"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="qtZFehHsKgwS5rPz"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This adds wwan drivers for mobile broadband devices.
-Patches 1 to 8 add missing stuff required for the wwan drivers.
-Patch 9 adds device drivers.
 
-Patrick Ziegler (9):
-  backports: fix build errors for old kernel versions without PCI
-    support
-  backports: add eth_prepare_mac_addr_change() and
-    eth_commit_mac_addr_change()
-  backports: define PM_EVENT_AUTO
-  backports: add usb_translate_errors()
-  backports: add usb_endpoint_maxp()
-  backports: update enum usb_device_speed with USB_SPEED_SUPER
-  backports: include headers directly if math64 header is missing
-  backports: define phys_addr_t for ARM on kernel version < 2.6.25
-  backports: add wwan device drivers
+--qtZFehHsKgwS5rPz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- backport/Kconfig                                   |  2 +
- backport/Makefile.kernel                           |  3 ++
- backport/backport-include/linux/etherdevice.h      |  7 ++++
- backport/backport-include/linux/if.h               |  4 ++
- backport/backport-include/linux/math64.h           |  3 ++
- backport/backport-include/linux/pm.h               |  4 ++
- backport/backport-include/linux/types.h            |  4 +-
- backport/backport-include/linux/usb.h              | 17 ++++++++
- backport/backport-include/linux/usb/ch9.h          | 45 ++++++++++++++++++++++
- backport/compat/compat-2.6.25.c                    |  4 ++
- backport/compat/compat-2.6.28.c                    |  1 +
- backport/compat/compat-3.9.c                       | 33 ++++++++++++++++
- copy-list                                          | 14 +++++++
- .../network/0001-netdev_ops/qmi_wwan.patch         | 11 ++++++
- .../network/0001-netdev_ops/sierra_net.patch       | 11 ++++++
- .../drivers_net_usb_cdc_mbim.patch                 | 12 ++++++
- .../drivers_net_usb_cdc_ncm.patch                  | 12 ++++++
- .../drivers_net_usb_qmi_wwan.patch                 | 12 ++++++
- .../drivers_net_usb_sierra_net.patch               | 12 ++++++
- .../drivers_usb_class_cdc-wdm.patch                | 12 ++++++
- 20 files changed, 221 insertions(+), 2 deletions(-)
- create mode 100644 backport/backport-include/linux/usb/ch9.h
- create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/qmi_wwan.patch
- create mode 100644 patches/collateral-evolutions/network/0001-netdev_ops/sierra_net.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
+Its been a while, here's the latest release:
 
--- 
-1.8.1.2
+https://www.kernel.org/pub/linux/kernel/projects/backports/2013/08/02/backports-20130802.tar.xz
 
+This is based on the latest commit on backports tagged backports-20130802.
 
--- 
-Dipl.-Inf. (FH) Patrick Ziegler
+  Luis
 
-University Of Applied Sciences
-Kaiserslautern
+--qtZFehHsKgwS5rPz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Amerikastrasse 1
-D-66482 Zweibruecken
-Germany
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-Phone:  +49 631 3724 5526
-Mail:   patrick.ziegler@fh-kl.de
-PGP KeyID 0xB4796B8C
+iQIcBAEBAgAGBQJSHaHnAAoJEKwtdpJg+MHGGxQP/1YI3nTZhOuyiuwcWb3XjXTo
+hruyroTvZt+bO3XWg877XDIppivg6vqCA8tKRGJMUBkygwFsTpPdDWDoMM4/GzOU
+CILZ92HUOyVdoqngj3oDjUIeFxWvYqshvwxEH8wZ9ydffE2XAcSHUjYLoklEw2ib
+KqOpOVLRrXaKHeUrreGnbTkeFVquA5EVAgst7b8VpHgRgb3JlM6PtpIaZj7fHP+M
+wNJCuuakCptrMFU+wJWyvpdn1VSQ0uprj0tSo0j5RlKPEqRRkKN5/7Hv9inB81VK
+6a/39AlSfutjWnOtPbxduiMFr17M/y46E+EC7m9RVX2728dVppNJ80Tzj3ChQZ+M
+LNp7GraQ7PbsXf9RSBb3iU1NuWsCvOFMc3w9vS4Ot8OWFV1RsjKMqJKGXUO8w4pt
+Ca76JtfX46BJy9R+pZXj5M4a8q8Z+F98zJrjo9kv5TQeR6SIQ/nkJFWjk0iJSwzk
+NTTXX1FjoGBl9AUe7hFRcak2vy11YFn50y+v32//ewLClzwGPn/k+nz6ho/mPNnx
+luWRUd/O1OMh2XztVUCnR7TlbCBKPXKv8aaLHBBWa52/sHTspjHOd3+StK5Z1poO
+USqxXF4l3kqJ5XBnfRDkOYGVvud/aFpdadECQeymhadRbL15qqD644GEMpKIb0zK
+gZYHLAgkt+T9Rnog+1TF
+=Gefi
+-----END PGP SIGNATURE-----
 
-http://www.fh-kl.de
-http://www.fh-kl.de/fachbereiche/imst/iuk-knowhow.html
+--qtZFehHsKgwS5rPz--
