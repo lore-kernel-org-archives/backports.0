@@ -1,57 +1,84 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:35605
-	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1753229Ab3HQNDD (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 17 Aug 2013 09:03:03 -0400
-From: Solomon Peachy <pizza@shaftnet.org>
-To: backports@vger.kernel.org
-Cc: Solomon Peachy <pizza@shaftnet.org>
-Subject: [PATCH v2 1/4] backport: Add an implementation of get_random_int() for <3.10 kernels.
-Date: Sat, 17 Aug 2013 09:02:56 -0400
-Message-Id: <1376744579-4245-2-git-send-email-pizza@shaftnet.org> (sfid-20130817_150306_255363_4A97EC16)
-In-Reply-To: <1376744579-4245-1-git-send-email-pizza@shaftnet.org>
-References: <1376744579-4245-1-git-send-email-pizza@shaftnet.org>
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:62300 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753090Ab3H1Ayw (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 27 Aug 2013 20:54:52 -0400
+Received: by mail-pd0-f181.google.com with SMTP id g10so5550138pdj.40
+        for <backports@vger.kernel.org>; Tue, 27 Aug 2013 17:54:52 -0700 (PDT)
+Date: Tue, 27 Aug 2013 18:04:13 -0700
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: ww_mutex compile warning
+Message-ID: <20130828010411.GB22651@garbanzo.do-not-panic.com> (sfid-20130828_025457_635637_C7BCE042)
+References: <520E02B8.5040305@hauke-m.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="St7VIuEGZ6dlpu13"
+In-Reply-To: <520E02B8.5040305@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-get_random_int() was present, but simply not exported for use in modules
-until 3.10.  Implement it in terms of the more expensive get_random_bytes()
 
-This is needed by the cw1200 driver.
+--St7VIuEGZ6dlpu13
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Solomon Peachy <pizza@shaftnet.org>
----
- backport/compat/backport-3.10.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+On Fri, Aug 16, 2013 at 12:45:12PM +0200, Hauke Mehrtens wrote:
+> Hi Luis,
+>=20
+> The empty implementations of owner_running() and mutex_spin_on_owner()
+> in backport/compat/kernel/ww_mutex.c should return something (one an in,
+> one an bool), but they don't. That causes a compile warning about a
+> missing return statement with kernel 3.9. I do not understand that code,
+> could you please have a look into that.
 
-diff --git a/backport/compat/backport-3.10.c b/backport/compat/backport-3.10.c
-index 980ed59..5273758 100644
---- a/backport/compat/backport-3.10.c
-+++ b/backport/compat/backport-3.10.c
-@@ -12,6 +12,7 @@
- #include <linux/module.h>
- #include <linux/err.h>
- #include <linux/proc_fs.h>
-+#include <linux/random.h>
- 
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
- #include <linux/init.h>
-@@ -77,3 +78,15 @@ void proc_set_user(struct proc_dir_entry *de, kuid_t uid, kgid_t gid)
- 	de->gid = gid;
+Sure here's the fix, I'll submit. Thanks for reporting this.
+
+  Luis
+
+diff --git a/backport/compat/kernel/ww_mutex.c b/backport/compat/kernel/ww_=
+mutex.c
+index 257c2a4..204ac8f 100644
+--- a/backport/compat/kernel/ww_mutex.c
++++ b/backport/compat/kernel/ww_mutex.c
+@@ -206,10 +206,12 @@ static void mspin_unlock(struct mspin_node **lock, st=
+ruct mspin_node *node)
+=20
+ static inline bool owner_running(struct mutex *lock, struct task_struct *o=
+wner)
+ {
++	return false;
  }
- EXPORT_SYMBOL_GPL(proc_set_user);
-+
-+/* get_random_int() was not exported for module use until 3.10-rc.
-+   Implement it here in terms of the more expensive get_random_bytes()
-+ */
-+unsigned int get_random_int(void)
-+{
-+	unsigned int r;
-+	get_random_bytes(&r, sizeof(r));
-+
-+	return r;
-+}
-+EXPORT_SYMBOL_GPL(get_random_int);
--- 
-1.8.3.1
+=20
+ int mutex_spin_on_owner(struct mutex *lock, struct task_struct *owner)
+ {
++	return 1;
+ }
+=20
+ static inline int mutex_can_spin_on_owner(struct mutex *lock)
 
+--St7VIuEGZ6dlpu13
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSHUyLAAoJEKwtdpJg+MHG1QEP/jDUUkiuFvNYqGjMFcauU0mv
+m+cNPBtE6hfSTO/qrYDuOnAKytxLRvQPghLFlb339Vkj6V24EhEvD6xzojBnXE2W
+hAVkpseTbjPH/wfKg5hu128SYwO2+ro117ulAIWORG6p1lMXF4eml9UlfftDjV5F
+zsgtNc9p5kiKP/Y4u0lJnKavuDgc0FaeURBAJPzi0/XCF0A9T33FRmUrRLqVMy5K
+3pk6lP2ZSReOuy8AtGBMsvmETmwmCTqWdJIt7n0YCNPBY2IxVdbkrSXDkeiguppc
+It6eKJNFPKNKNoCuQ+5iG9zQK7WEQwVj8Di57VowW9NabdT4MRH3OuBpML9mMr7V
+uOhesQwnBJlHWaINwiQfSMMFtJxUasLYoWuDeeUAIN8ihYSBbPvVEQVrYxoCKPaJ
+9Rzi2/HDfRd9LnFIsjhns8DrME0R6QFwRfKRm50E5Xl8aXo26C/RpyxJFNzSKSIB
+VhBN9tmmcRvOqeKUyjycqfzX9KqtBYQVtsU+3nW+5X7SOrFC9meegby26+EBq9Ae
+jgc0IXT/9Xz7N6H3vYTT/zJ775decm61O1wqp3+gYe6h1awk1LNfTlxfcQogsWBc
+IvUgY1u2SzaYS0zJu/j6S0NiRrbmxAeUa3EG26TUvU55/8wWTE5PBacgaxCbT7Hl
+BblGqvvKIFuA4BaWjTiG
+=snd7
+-----END PGP SIGNATURE-----
+
+--St7VIuEGZ6dlpu13--
