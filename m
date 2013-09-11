@@ -1,50 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s72.web-hosting.com ([198.187.29.21]:41618 "EHLO
-	s72.web-hosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753148Ab3IIMqH (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 9 Sep 2013 08:46:07 -0400
-From: Sujith Manoharan <sujith@msujith.org>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org
-Subject: [PATCH] backports: Add a defconfig for ath9k debugging
-Date: Mon,  9 Sep 2013 18:12:14 +0530
-Message-Id: <1378730534-19736-1-git-send-email-sujith@msujith.org> (sfid-20130909_144610_162519_EED78F18)
+Received: from server19320154104.serverpool.info ([193.201.54.104]:40733 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751716Ab3IKMMb (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 11 Sep 2013 08:12:31 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 09/11] backports: add debugfs_create_x64()
+Date: Wed, 11 Sep 2013 14:11:53 +0200
+Message-Id: <1378901515-14206-10-git-send-email-hauke@hauke-m.de> (sfid-20130911_141232_241575_43FB1F11)
+In-Reply-To: <1378901515-14206-1-git-send-email-hauke@hauke-m.de>
+References: <1378901515-14206-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Sujith Manoharan <c_manoha@qca.qualcomm.com>
+This adds debugfs_create_x64() by calling debugfs_create_u64() instead.
+The 64 bit number is then not hex, but dec formated in debug fs.
 
-Signed-off-by: Sujith Manoharan <c_manoha@qca.qualcomm.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/defconfigs/ath9k-debug | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
- create mode 100644 backport/defconfigs/ath9k-debug
+ backport/backport-include/linux/debugfs.h |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/backport/defconfigs/ath9k-debug b/backport/defconfigs/ath9k-debug
-new file mode 100644
-index 0000000..b7baedd
---- /dev/null
-+++ b/backport/defconfigs/ath9k-debug
-@@ -0,0 +1,19 @@
-+CPTCFG_CFG80211=m
-+CPTCFG_CFG80211_WEXT=y
-+CPTCFG_MAC80211=m
-+CPTCFG_MAC80211_LEDS=y
-+CPTCFG_MAC80211_MESH=y
-+CPTCFG_MAC80211_DEBUGFS=y
-+CPTCFG_MAC80211_DEBUG_MENU=y
-+CPTCFG_MAC80211_VERBOSE_DEBUG=y
-+CPTCFG_MAC80211_MLME_DEBUG=y
-+CPTCFG_MAC80211_STA_DEBUG=y
-+CPTCFG_MAC80211_HT_DEBUG=y
-+CPTCFG_MAC80211_IBSS_DEBUG=y
-+CPTCFG_MAC80211_PS_DEBUG=y
-+CPTCFG_WLAN=y
-+CPTCFG_ATH_CARDS=m
-+CPTCFG_ATH9K=m
-+CPTCFG_ATH9K_HTC=m
-+CPTCFG_ATH_DEBUG=y
-+CPTCFG_ATH9K_DEBUGFS=y
+diff --git a/backport/backport-include/linux/debugfs.h b/backport/backport-include/linux/debugfs.h
+index 16604e3..938eac2 100644
+--- a/backport/backport-include/linux/debugfs.h
++++ b/backport/backport-include/linux/debugfs.h
+@@ -15,4 +15,13 @@ static inline void debugfs_remove_recursive(struct dentry *dentry)
+ #endif
+ #endif /* < 2.6.27 */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35)
++static inline struct dentry *debugfs_create_x64(const char *name, umode_t mode,
++						struct dentry *parent,
++						u64 *value)
++{
++	return debugfs_create_u64(name, mode, parent, value);
++}
++#endif
++
+ #endif /* __BACKPORT_LINUX_DEBUGFS_H */
 -- 
-1.8.4
+1.7.10.4
 
