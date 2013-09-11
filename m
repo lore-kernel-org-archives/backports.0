@@ -1,41 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:57096 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:40738 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752094Ab3IHPme (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 8 Sep 2013 11:42:34 -0400
-Message-ID: <522C9ADF.1020809@hauke-m.de> (sfid-20130908_174238_039299_29E2F83D)
-Date: Sun, 08 Sep 2013 17:42:23 +0200
+	id S1751716Ab3IKMMe (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 11 Sep 2013 08:12:34 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"Luis R. Rodriguez" <mcgrof@gmail.com>,
-	=?UTF-8?B?T3phbiDDh2HEn2xheWFu?= <ozancag@gmail.com>
-Subject: Removing of GPU drivers from backports
-Content-Type: text/plain; charset=UTF-8
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 10/11] backports: do not build REGULATOR_PALMAS on older kernel versions.
+Date: Wed, 11 Sep 2013 14:11:54 +0200
+Message-Id: <1378901515-14206-11-git-send-email-hauke@hauke-m.de> (sfid-20130911_141831_330568_DF99D783)
+In-Reply-To: <1378901515-14206-1-git-send-email-hauke@hauke-m.de>
+References: <1378901515-14206-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi all,
+REGULATOR_PALMASi now needs some symbols form headers of very recent
+kernel versions.
 
-bringing backports to a new version of linux next is a much bigger task
-now that we have lots of more drivers we backport, especially the GPU
-driver need a big effort to be backported. My rough estimation is that
-the GPU driver are taking as much efforts as the wireless drivers and
-subsystem to be maintained, thereby the wireless driver are supported on
-much older kernel versions. There is little code shared between the
-wireless and the GPU drivers expect the build system.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ dependencies |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I tried to use the Intel i915 driver on my device with kernel 3.5 and it
-did not worked (some in kernel errors) and when using kernel 3.7 it also
-failed (kernel oops).
+diff --git a/dependencies b/dependencies
+index a1ec791..142ea6b 100644
+--- a/dependencies
++++ b/dependencies
+@@ -99,7 +99,7 @@ REGULATOR_MAX8998 3.11
+ REGULATOR_MC13783 3.6
+ REGULATOR_MC13892 3.6
+ REGULATOR_MC13XXX_CORE 3.6
+-REGULATOR_PALMAS 3.11
++REGULATOR_PALMAS 3.12
+ REGULATOR_PCAP 3.6
+ REGULATOR_PCF50633 3.8
+ REGULATOR_PFUZE100 3.6
+-- 
+1.7.10.4
 
-Who uses the GPU drivers form backports?
-Which GPU driver were successfully runtime tested by anyone in the last
-few months?
-
-As we do not have that big constant man power I am for removing the GPU
-drivers to make it easier to add support for a new linux next versions.
-Most of the users are using backports to get a recent wireless driver
-for their desktop Linux or their (old) Linux on an embedded device.
-
-Hauke
