@@ -1,111 +1,73 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:49277 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:50864 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754116Ab3J0Nka (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 27 Oct 2013 09:40:30 -0400
+	id S1752390Ab3JEWoc (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 5 Oct 2013 18:44:32 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 3/5] backports: backport new sysfs API for bcma and ssb
-Date: Sun, 27 Oct 2013 14:40:00 +0100
-Message-Id: <1382881202-16709-4-git-send-email-hauke@hauke-m.de> (sfid-20131027_144031_303021_7AE95B40)
-In-Reply-To: <1382881202-16709-1-git-send-email-hauke@hauke-m.de>
-References: <1382881202-16709-1-git-send-email-hauke@hauke-m.de>
+Cc: backports@vger.kernel.org, ozancag@gmail.com,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [RFC 02/15] backports: remove platform drivers
+Date: Sun,  6 Oct 2013 00:43:51 +0200
+Message-Id: <1381013044-7724-3-git-send-email-hauke@hauke-m.de> (sfid-20131006_004436_416494_AAD45D68)
+In-Reply-To: <1381013044-7724-1-git-send-email-hauke@hauke-m.de>
+References: <1381013044-7724-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-bcma and ssb are using the new sysfs API starting with kernel 3.12.
+The platform drivers were only needed by some DRM drivers and are not
+needed any more with the DRM driver being removed.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../network/76-sysfs-api/drivers_bcma.patch        |   35 ++++++++++++++++++++
- .../network/76-sysfs-api/drivers_ssb.patch         |   35 ++++++++++++++++++++
- 2 files changed, 70 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/76-sysfs-api/drivers_bcma.patch
- create mode 100644 patches/collateral-evolutions/network/76-sysfs-api/drivers_ssb.patch
+ backport/Kconfig         |    2 --
+ backport/Makefile.kernel |    1 -
+ copy-list                |    7 -------
+ 3 files changed, 10 deletions(-)
 
-diff --git a/patches/collateral-evolutions/network/76-sysfs-api/drivers_bcma.patch b/patches/collateral-evolutions/network/76-sysfs-api/drivers_bcma.patch
-new file mode 100644
-index 0000000..68214b6
---- /dev/null
-+++ b/patches/collateral-evolutions/network/76-sysfs-api/drivers_bcma.patch
-@@ -0,0 +1,35 @@
-+--- a/drivers/bcma/main.c
-++++ b/drivers/bcma/main.c
-+@@ -60,7 +60,12 @@ static struct attribute *bcma_device_att
-+ 	&dev_attr_class.attr,
-+ 	NULL,
-+ };
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0)
-+ ATTRIBUTE_GROUPS(bcma_device);
-++#else
-++#define BP_ATTR_GRP_STRUCT device_attribute
-++ATTRIBUTE_GROUPS_BACKPORT(bcma_device);
-++#endif
-+ 
-+ static struct bus_type bcma_bus_type = {
-+ 	.name		= "bcma",
-+@@ -68,7 +73,11 @@ static struct bus_type bcma_bus_type = {
-+ 	.probe		= bcma_device_probe,
-+ 	.remove		= bcma_device_remove,
-+ 	.uevent		= bcma_device_uevent,
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0)
-+ 	.dev_groups	= bcma_device_groups,
-++#else
-++	.dev_attrs	= bcma_device_dev_attrs,
-++#endif
-+ };
-+ 
-+ static u16 bcma_cc_core_id(struct bcma_bus *bus)
-+@@ -492,6 +501,7 @@ static int __init bcma_modinit(void)
-+ {
-+ 	int err;
-+ 
-++	init_bcma_device_attrs();
-+ 	err = bus_register(&bcma_bus_type);
-+ 	if (err)
-+ 		return err;
-diff --git a/patches/collateral-evolutions/network/76-sysfs-api/drivers_ssb.patch b/patches/collateral-evolutions/network/76-sysfs-api/drivers_ssb.patch
-new file mode 100644
-index 0000000..36a0464
---- /dev/null
-+++ b/patches/collateral-evolutions/network/76-sysfs-api/drivers_ssb.patch
-@@ -0,0 +1,35 @@
-+--- a/drivers/ssb/main.c
-++++ b/drivers/ssb/main.c
-+@@ -399,7 +399,12 @@ static struct attribute *ssb_device_attr
-+ 	&dev_attr_irq.attr,
-+ 	NULL,
-+ };
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0)
-+ ATTRIBUTE_GROUPS(ssb_device);
-++#else
-++#define BP_ATTR_GRP_STRUCT device_attribute
-++ATTRIBUTE_GROUPS_BACKPORT(ssb_device);
-++#endif
-+ 
-+ static struct bus_type ssb_bustype = {
-+ 	.name		= "ssb",
-+@@ -410,7 +415,11 @@ static struct bus_type ssb_bustype = {
-+ 	.suspend	= ssb_device_suspend,
-+ 	.resume		= ssb_device_resume,
-+ 	.uevent		= ssb_device_uevent,
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0)
-+ 	.dev_groups	= ssb_device_groups,
-++#else
-++	.dev_attrs	= ssb_device_dev_attrs,
-++#endif
-+ };
-+ 
-+ static void ssb_buses_lock(void)
-+@@ -1461,6 +1470,7 @@ static int __init ssb_modinit(void)
-+ {
-+ 	int err;
-+ 
-++	init_ssb_device_attrs();
-+ 	/* See the comment at the ssb_is_early_boot definition */
-+ 	ssb_is_early_boot = 0;
-+ 	err = bus_register(&ssb_bustype);
+diff --git a/backport/Kconfig b/backport/Kconfig
+index 0e24c79..64e9cb9 100644
+--- a/backport/Kconfig
++++ b/backport/Kconfig
+@@ -41,8 +41,6 @@ source net/nfc/Kconfig
+ source drivers/regulator/Kconfig
+ source drivers/media/Kconfig
+ 
+-source drivers/platform/x86/Kconfig
+-
+ source net/ieee802154/Kconfig
+ source net/mac802154/Kconfig
+ source drivers/net/ieee802154/Kconfig
+diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
+index 0a2a569..6a1afc1 100644
+--- a/backport/Makefile.kernel
++++ b/backport/Makefile.kernel
+@@ -33,7 +33,6 @@ obj-$(CPTCFG_NFC) += net/nfc/
+ obj-$(CPTCFG_NFC) += drivers/nfc/
+ obj-$(CPTCFG_REGULATOR) += drivers/regulator/
+ obj-$(CPTCFG_MEDIA_SUPPORT) += drivers/media/
+-obj-$(CPTCFG_INTEL_IPS) += drivers/platform/x86/
+ 
+ obj-$(CPTCFG_IEEE802154) += net/ieee802154/
+ obj-$(CPTCFG_MAC802154) += net/mac802154/
+diff --git a/copy-list b/copy-list
+index b741c5d..6035e36 100644
+--- a/copy-list
++++ b/copy-list
+@@ -171,13 +171,6 @@ include/uapi/linux/videodev2.h
+ 
+ drivers/media/
+ 
+-# Platform
+-drivers/platform/x86/Kconfig
+-drivers/platform/x86/Makefile
+-drivers/platform/x86/intel_ips.c
+-drivers/platform/x86/intel_ips.h
+-include/asm-generic/io-64-nonatomic-lo-hi.h
+-
+ include/net/nl802154.h
+ include/net/mac802154.h
+ include/net/ieee802154.h
 -- 
 1.7.10.4
 
