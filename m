@@ -1,53 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:50159 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:49560 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752195Ab3J0TJz (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 27 Oct 2013 15:09:55 -0400
+	id S1751600Ab3JENYm (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 5 Oct 2013 09:24:42 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/4] backports: add list_first_entry_or_null
-Date: Sun, 27 Oct 2013 20:09:37 +0100
-Message-Id: <1382900980-26610-2-git-send-email-hauke@hauke-m.de> (sfid-20131027_201003_456711_1705DD0E)
-In-Reply-To: <1382900980-26610-1-git-send-email-hauke@hauke-m.de>
-References: <1382900980-26610-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 1/8] backports: add DEVICE_ATTR_RW
+Date: Sat,  5 Oct 2013 15:23:48 +0200
+Message-Id: <1380979435-5430-2-git-send-email-hauke@hauke-m.de> (sfid-20131005_152443_438498_F18B5136)
+In-Reply-To: <1380979435-5430-1-git-send-email-hauke@hauke-m.de>
+References: <1380979435-5430-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This was added in the following upstream commit:
-commit 6d7581e62f8be462440d7b22c6361f7c9fa4902b
-Author: Jiri Pirko <jiri@resnulli.us>
-Date:   Wed May 29 05:02:56 2013 +0000
-
-    list: introduce list_first_entry_or_null
+This is used by drivers/media/v4l2-core/v4l2-dev.c.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/list.h |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ backport/backport-include/linux/device.h |    2 ++
+ backport/backport-include/linux/sysfs.h  |    5 +++++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/backport/backport-include/linux/list.h b/backport/backport-include/linux/list.h
-index fb5ee4b..3835595 100644
---- a/backport/backport-include/linux/list.h
-+++ b/backport/backport-include/linux/list.h
-@@ -115,4 +115,17 @@ static inline void list_splice_tail_init(struct list_head *list,
- }
+diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
+index 8f080cc..2244c62 100644
+--- a/backport/backport-include/linux/device.h
++++ b/backport/backport-include/linux/device.h
+@@ -192,6 +192,8 @@ backport_device_release_driver(struct device *dev)
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
+ #define DEVICE_ATTR_RO(_name) \
+ struct device_attribute dev_attr_ ## _name = __ATTR_RO(_name);
++#define DEVICE_ATTR_RW(_name) \
++struct device_attribute dev_attr_ ## _name = __ATTR_RW(_name)
+ 
+ #define ATTRIBUTE_GROUPS(_name) \
+ static struct BP_ATTR_GRP_STRUCT _name##_dev_attrs[ARRAY_SIZE(_name##_attrs)];\
+diff --git a/backport/backport-include/linux/sysfs.h b/backport/backport-include/linux/sysfs.h
+index a2ef73f..13bab43 100644
+--- a/backport/backport-include/linux/sysfs.h
++++ b/backport/backport-include/linux/sysfs.h
+@@ -31,4 +31,9 @@ do {							\
+ #endif
  #endif
  
-+#ifndef list_first_entry_or_null
-+/**
-+ * list_first_entry_or_null - get the first element from a list
-+ * @ptr:	the list head to take the element from.
-+ * @type:	the type of the struct this is embedded in.
-+ * @member:	the name of the list_struct within the struct.
-+ *
-+ * Note that if the list is empty, it returns NULL.
-+ */
-+#define list_first_entry_or_null(ptr, type, member) \
-+	(!list_empty(ptr) ? list_first_entry(ptr, type, member) : NULL)
-+#endif /* list_first_entry_or_null */
++#ifndef __ATTR_RW
++#define __ATTR_RW(_name) __ATTR(_name, (S_IWUSR | S_IRUGO),		\
++			 _name##_show, _name##_store)
++#endif
 +
- #endif /* __BACKPORT_LIST_H */
+ #endif /* __BACKPORT_LINUX_SYSFS_H */
 -- 
 1.7.10.4
 
