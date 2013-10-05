@@ -1,16 +1,17 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:35149 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:50902 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753203Ab3JWSZG (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 23 Oct 2013 14:25:06 -0400
+	id S1752325Ab3JEWow (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 5 Oct 2013 18:44:52 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 04/18] backports: remove CPTCFG_BACKPORT_BUILD_WW_MUTEX
-Date: Wed, 23 Oct 2013 20:24:11 +0200
-Message-Id: <1382552665-15678-5-git-send-email-hauke@hauke-m.de> (sfid-20131023_202510_036534_30DE4570)
-In-Reply-To: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
-References: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
+Cc: backports@vger.kernel.org, ozancag@gmail.com,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [RFC 08/15] backports: remove some stuff related to MTRR
+Date: Sun,  6 Oct 2013 00:43:57 +0200
+Message-Id: <1381013044-7724-9-git-send-email-hauke@hauke-m.de> (sfid-20131006_004454_113614_3A8D9AB4)
+In-Reply-To: <1381013044-7724-1-git-send-email-hauke@hauke-m.de>
+References: <1381013044-7724-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
@@ -18,1059 +19,196 @@ This was only needed for some of the DRM drivers, remove it.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/ww_mutex.h |  333 --------------
- backport/compat/Kconfig                    |   11 -
- backport/compat/Makefile                   |    1 -
- backport/compat/kernel/ww_mutex.c          |  669 ----------------------------
- 4 files changed, 1014 deletions(-)
- delete mode 100644 backport/backport-include/linux/ww_mutex.h
- delete mode 100644 backport/compat/kernel/ww_mutex.c
+ backport/backport-include/asm/mtrr.h |   21 --------
+ backport/backport-include/linux/io.h |   38 --------------
+ backport/compat/Makefile             |    1 -
+ backport/compat/backport-3.11.c      |   92 ----------------------------------
+ 4 files changed, 152 deletions(-)
+ delete mode 100644 backport/backport-include/asm/mtrr.h
+ delete mode 100644 backport/backport-include/linux/io.h
+ delete mode 100644 backport/compat/backport-3.11.c
 
-diff --git a/backport/backport-include/linux/ww_mutex.h b/backport/backport-include/linux/ww_mutex.h
+diff --git a/backport/backport-include/asm/mtrr.h b/backport/backport-include/asm/mtrr.h
 deleted file mode 100644
-index 0953939..0000000
---- a/backport/backport-include/linux/ww_mutex.h
+index 861438a..0000000
+--- a/backport/backport-include/asm/mtrr.h
 +++ /dev/null
-@@ -1,333 +0,0 @@
--#ifndef __BACKPORT_LINUX_WW_MUTEX_H
--#define __BACKPORT_LINUX_WW_MUTEX_H
+@@ -1,21 +0,0 @@
+-#ifndef __BACKPORT_ASM_MTRR_H
+-#define __BACKPORT_ASM_MTRR_H
+-#include_next <asm/mtrr.h>
 -
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
--#include_next <linux/ww_mutex.h>
--#else
--#ifdef CPTCFG_BACKPORT_BUILD_WW_MUTEX
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0))
 -/*
-- * Wound/Wait Mutexes: blocking mutual exclusion locks with deadlock avoidance
-- *
-- * Original mutex implementation started by Ingo Molnar:
-- *
-- *  Copyright (C) 2004, 2005, 2006 Red Hat, Inc., Ingo Molnar <mingo@redhat.com>
-- *
-- * Wound/wait implementation:
-- *  Copyright (C) 2013 Canonical Ltd.
-- *
-- * This file contains the main data structure and API definitions.
+- * The following functions are for use by other drivers that cannot use
+- * arch_phys_wc_add and arch_phys_wc_del.
 - */
--
--#include <linux/mutex.h>
--
--struct ww_class {
--	atomic_long_t stamp;
--	struct lock_class_key acquire_key;
--	struct lock_class_key mutex_key;
--	const char *acquire_name;
--	const char *mutex_name;
--};
--
--struct ww_acquire_ctx {
--	struct task_struct *task;
--	unsigned long stamp;
--	unsigned acquired;
--};
--
--struct ww_mutex {
--	struct mutex base;
--	struct ww_acquire_ctx *ctx;
--};
--
--# define __WW_CLASS_MUTEX_INITIALIZER(lockname, ww_class)
--
--#define __WW_CLASS_INITIALIZER(ww_class) \
--		{ .stamp = ATOMIC_LONG_INIT(0) \
--		, .acquire_name = #ww_class "_acquire" \
--		, .mutex_name = #ww_class "_mutex" }
--
--#define __WW_MUTEX_INITIALIZER(lockname, class) \
--		{ .base = { \__MUTEX_INITIALIZER(lockname) } \
--		__WW_CLASS_MUTEX_INITIALIZER(lockname, class) }
--
--#define DEFINE_WW_CLASS(classname) \
--	struct ww_class classname = __WW_CLASS_INITIALIZER(classname)
--
--#define DEFINE_WW_MUTEX(mutexname, ww_class) \
--	struct ww_mutex mutexname = __WW_MUTEX_INITIALIZER(mutexname, ww_class)
--
--/**
-- * ww_mutex_init - initialize the w/w mutex
-- * @lock: the mutex to be initialized
-- * @ww_class: the w/w class the mutex should belong to
-- *
-- * Initialize the w/w mutex to unlocked state and associate it with the given
-- * class.
-- *
-- * It is not allowed to initialize an already locked mutex.
-- */
--#define ww_mutex_init LINUX_BACKPORT(ww_mutex_init)
--static inline void ww_mutex_init(struct ww_mutex *lock,
--				 struct ww_class *ww_class)
+-#define phys_wc_to_mtrr_index LINUX_BACKPORT(phys_wc_to_mtrr_index)
+-#ifdef CONFIG_MTRR
+-extern int phys_wc_to_mtrr_index(int handle);
+-#else
+-static inline int phys_wc_to_mtrr_index(int handle)
 -{
--	__mutex_init(&lock->base, ww_class->mutex_name, &ww_class->mutex_key);
--	lock->ctx = NULL;
+-	return -1;
+-}
+-#endif /* CONFIG_MTRR */
+-#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)) */
+-
+-#endif /* __BACKPORT_ASM_MTRR_H */
+diff --git a/backport/backport-include/linux/io.h b/backport/backport-include/linux/io.h
+deleted file mode 100644
+index 84a8c21..0000000
+--- a/backport/backport-include/linux/io.h
++++ /dev/null
+@@ -1,38 +0,0 @@
+-#ifndef __BACKPORT_LINUX_IO_H
+-#define __BACKPORT_LINUX_IO_H
+-#include_next <linux/io.h>
+-
+-/*
+- * Some systems (x86 without PAT) have a somewhat reliable way to mark a
+- * physical address range such that uncached mappings will actually
+- * end up write-combining.  This facility should be used in conjunction
+- * with pgprot_writecombine, ioremap-wc, or set_memory_wc, since it has
+- * no effect if the per-page mechanisms are functional.
+- * (On x86 without PAT, these functions manipulate MTRRs.)
+- *
+- * arch_phys_del_wc(0) or arch_phys_del_wc(any error code) is guaranteed
+- * to have no effect.
+- */
+-#ifndef arch_phys_wc_add
+-
+-#define arch_phys_wc_add LINUX_BACKPORT(arch_phys_wc_add)
+-#define arch_phys_wc_del LINUX_BACKPORT(arch_phys_wc_del)
+-
+-#ifdef CONFIG_MTRR
+-extern int __must_check arch_phys_wc_add(unsigned long base,
+-					 unsigned long size);
+-extern void arch_phys_wc_del(int handle);
+-#else
+-static inline int __must_check arch_phys_wc_add(unsigned long base,
+-						unsigned long size)
+-{
+-	return 0;  /* It worked (i.e. did nothing). */
 -}
 -
--/**
-- * ww_acquire_init - initialize a w/w acquire context
-- * @ctx: w/w acquire context to initialize
-- * @ww_class: w/w class of the context
-- *
-- * Initializes an context to acquire multiple mutexes of the given w/w class.
-- *
-- * Context-based w/w mutex acquiring can be done in any order whatsoever within
-- * a given lock class. Deadlocks will be detected and handled with the
-- * wait/wound logic.
-- *
-- * Mixing of context-based w/w mutex acquiring and single w/w mutex locking can
-- * result in undetected deadlocks and is so forbidden. Mixing different contexts
-- * for the same w/w class when acquiring mutexes can also result in undetected
-- * deadlocks, and is hence also forbidden. Both types of abuse will be caught by
-- * enabling CONFIG_PROVE_LOCKING.
-- *
-- * Nesting of acquire contexts for _different_ w/w classes is possible, subject
-- * to the usual locking rules between different lock classes.
-- *
-- * An acquire context must be released with ww_acquire_fini by the same task
-- * before the memory is freed. It is recommended to allocate the context itself
-- * on the stack.
-- */
--#define ww_acquire_init LINUX_BACKPORT(ww_acquire_init)
--static inline void ww_acquire_init(struct ww_acquire_ctx *ctx,
--				   struct ww_class *ww_class)
--{
--	ctx->task = current;
--	ctx->stamp = atomic_long_inc_return(&ww_class->stamp);
--	ctx->acquired = 0;
--}
--
--/**
-- * ww_acquire_done - marks the end of the acquire phase
-- * @ctx: the acquire context
-- *
-- * Marks the end of the acquire phase, any further w/w mutex lock calls using
-- * this context are forbidden.
-- *
-- * Calling this function is optional, it is just useful to document w/w mutex
-- * code and clearly designated the acquire phase from actually using the locked
-- * data structures.
-- */
--#define ww_acquire_done LINUX_BACKPORT(ww_acquire_done)
--static inline void ww_acquire_done(struct ww_acquire_ctx *ctx)
+-static inline void arch_phys_wc_del(int handle)
 -{
 -}
+-#endif /* CONFIG_MTRR */
+-#endif
 -
--/**
-- * ww_acquire_fini - releases a w/w acquire context
-- * @ctx: the acquire context to free
-- *
-- * Releases a w/w acquire context. This must be called _after_ all acquired w/w
-- * mutexes have been released with ww_mutex_unlock.
-- */
--#define ww_acquire_fini LINUX_BACKPORT(ww_acquire_fini)
--static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx)
--{
--}
--
--#define __ww_mutex_lock LINUX_BACKPORT(__ww_mutex_lock)
--extern int __must_check __ww_mutex_lock(struct ww_mutex *lock,
--					struct ww_acquire_ctx *ctx);
--#define __ww_mutex_lock_interruptible LINUX_BACKPORT(__ww_mutex_lock_interruptible)
--extern int __must_check __ww_mutex_lock_interruptible(struct ww_mutex *lock,
--						      struct ww_acquire_ctx *ctx);
--
--/**
-- * ww_mutex_lock - acquire the w/w mutex
-- * @lock: the mutex to be acquired
-- * @ctx: w/w acquire context, or NULL to acquire only a single lock.
-- *
-- * Lock the w/w mutex exclusively for this task.
-- *
-- * Deadlocks within a given w/w class of locks are detected and handled with the
-- * wait/wound algorithm. If the lock isn't immediately avaiable this function
-- * will either sleep until it is (wait case). Or it selects the current context
-- * for backing off by returning -EDEADLK (wound case). Trying to acquire the
-- * same lock with the same context twice is also detected and signalled by
-- * returning -EALREADY. Returns 0 if the mutex was successfully acquired.
-- *
-- * In the wound case the caller must release all currently held w/w mutexes for
-- * the given context and then wait for this contending lock to be available by
-- * calling ww_mutex_lock_slow. Alternatively callers can opt to not acquire this
-- * lock and proceed with trying to acquire further w/w mutexes (e.g. when
-- * scanning through lru lists trying to free resources).
-- *
-- * The mutex must later on be released by the same task that
-- * acquired it. The task may not exit without first unlocking the mutex. Also,
-- * kernel memory where the mutex resides must not be freed with the mutex still
-- * locked. The mutex must first be initialized (or statically defined) before it
-- * can be locked. memset()-ing the mutex to 0 is not allowed. The mutex must be
-- * of the same w/w lock class as was used to initialize the acquire context.
-- *
-- * A mutex acquired with this function must be released with ww_mutex_unlock.
-- */
--#define ww_mutex_lock LINUX_BACKPORT(ww_mutex_lock)
--static inline int ww_mutex_lock(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
--{
--	if (ctx)
--		return __ww_mutex_lock(lock, ctx);
--
--	mutex_lock(&lock->base);
--	return 0;
--}
--
--/**
-- * ww_mutex_lock_interruptible - acquire the w/w mutex, interruptible
-- * @lock: the mutex to be acquired
-- * @ctx: w/w acquire context
-- *
-- * Lock the w/w mutex exclusively for this task.
-- *
-- * Deadlocks within a given w/w class of locks are detected and handled with the
-- * wait/wound algorithm. If the lock isn't immediately avaiable this function
-- * will either sleep until it is (wait case). Or it selects the current context
-- * for backing off by returning -EDEADLK (wound case). Trying to acquire the
-- * same lock with the same context twice is also detected and signalled by
-- * returning -EALREADY. Returns 0 if the mutex was successfully acquired. If a
-- * signal arrives while waiting for the lock then this function returns -EINTR.
-- *
-- * In the wound case the caller must release all currently held w/w mutexes for
-- * the given context and then wait for this contending lock to be available by
-- * calling ww_mutex_lock_slow_interruptible. Alternatively callers can opt to
-- * not acquire this lock and proceed with trying to acquire further w/w mutexes
-- * (e.g. when scanning through lru lists trying to free resources).
-- *
-- * The mutex must later on be released by the same task that
-- * acquired it. The task may not exit without first unlocking the mutex. Also,
-- * kernel memory where the mutex resides must not be freed with the mutex still
-- * locked. The mutex must first be initialized (or statically defined) before it
-- * can be locked. memset()-ing the mutex to 0 is not allowed. The mutex must be
-- * of the same w/w lock class as was used to initialize the acquire context.
-- *
-- * A mutex acquired with this function must be released with ww_mutex_unlock.
-- */
--#define ww_mutex_lock_interruptible LINUX_BACKPORT(ww_mutex_lock_interruptible)
--static inline int __must_check ww_mutex_lock_interruptible(struct ww_mutex *lock,
--							   struct ww_acquire_ctx *ctx)
--{
--	if (ctx)
--		return __ww_mutex_lock_interruptible(lock, ctx);
--	else
--		return mutex_lock_interruptible(&lock->base);
--}
--
--/**
-- * ww_mutex_lock_slow - slowpath acquiring of the w/w mutex
-- * @lock: the mutex to be acquired
-- * @ctx: w/w acquire context
-- *
-- * Acquires a w/w mutex with the given context after a wound case. This function
-- * will sleep until the lock becomes available.
-- *
-- * The caller must have released all w/w mutexes already acquired with the
-- * context and then call this function on the contended lock.
-- *
-- * Afterwards the caller may continue to (re)acquire the other w/w mutexes it
-- * needs with ww_mutex_lock. Note that the -EALREADY return code from
-- * ww_mutex_lock can be used to avoid locking this contended mutex twice.
-- *
-- * It is forbidden to call this function with any other w/w mutexes associated
-- * with the context held. It is forbidden to call this on anything else than the
-- * contending mutex.
-- *
-- * Note that the slowpath lock acquiring can also be done by calling
-- * ww_mutex_lock directly. This function here is simply to help w/w mutex
-- * locking code readability by clearly denoting the slowpath.
-- */
--#define ww_mutex_lock_slow LINUX_BACKPORT(ww_mutex_lock_slow)
--static inline void
--ww_mutex_lock_slow(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
--{
--	int ret;
--	ret = ww_mutex_lock(lock, ctx);
--	(void)ret;
--}
--
--/**
-- * ww_mutex_lock_slow_interruptible - slowpath acquiring of the w/w mutex, interruptible
-- * @lock: the mutex to be acquired
-- * @ctx: w/w acquire context
-- *
-- * Acquires a w/w mutex with the given context after a wound case. This function
-- * will sleep until the lock becomes available and returns 0 when the lock has
-- * been acquired. If a signal arrives while waiting for the lock then this
-- * function returns -EINTR.
-- *
-- * The caller must have released all w/w mutexes already acquired with the
-- * context and then call this function on the contended lock.
-- *
-- * Afterwards the caller may continue to (re)acquire the other w/w mutexes it
-- * needs with ww_mutex_lock. Note that the -EALREADY return code from
-- * ww_mutex_lock can be used to avoid locking this contended mutex twice.
-- *
-- * It is forbidden to call this function with any other w/w mutexes associated
-- * with the given context held. It is forbidden to call this on anything else
-- * than the contending mutex.
-- *
-- * Note that the slowpath lock acquiring can also be done by calling
-- * ww_mutex_lock_interruptible directly. This function here is simply to help
-- * w/w mutex locking code readability by clearly denoting the slowpath.
-- */
--#define ww_mutex_lock_slow_interruptible LINUX_BACKPORT(ww_mutex_lock_slow_interruptible)
--static inline int __must_check
--ww_mutex_lock_slow_interruptible(struct ww_mutex *lock,
--				 struct ww_acquire_ctx *ctx)
--{
--	return ww_mutex_lock_interruptible(lock, ctx);
--}
--
--#define ww_mutex_unlock LINUX_BACKPORT(ww_mutex_unlock)
--extern void ww_mutex_unlock(struct ww_mutex *lock);
--
--/**
-- * ww_mutex_trylock - tries to acquire the w/w mutex without acquire context
-- * @lock: mutex to lock
-- *
-- * Trylocks a mutex without acquire context, so no deadlock detection is
-- * possible. Returns 1 if the mutex has been acquired successfully, 0 otherwise.
-- */
--#define ww_mutex_trylock LINUX_BACKPORT(ww_mutex_trylock)
--static inline int __must_check ww_mutex_trylock(struct ww_mutex *lock)
--{
--	return mutex_trylock(&lock->base);
--}
--
--/***
-- * ww_mutex_destroy - mark a w/w mutex unusable
-- * @lock: the mutex to be destroyed
-- *
-- * This function marks the mutex uninitialized, and any subsequent
-- * use of the mutex is forbidden. The mutex must not be locked when
-- * this function is called.
-- */
--#define ww_mutex_destroy LINUX_BACKPORT(ww_mutex_destroy)
--static inline void ww_mutex_destroy(struct ww_mutex *lock)
--{
--	mutex_destroy(&lock->base);
--}
--
--/**
-- * ww_mutex_is_locked - is the w/w mutex locked
-- * @lock: the mutex to be queried
-- *
-- * Returns 1 if the mutex is locked, 0 if unlocked.
-- */
--#define ww_mutex_is_locked LINUX_BACKPORT(ww_mutex_is_locked)
--static inline bool ww_mutex_is_locked(struct ww_mutex *lock)
--{
--	return mutex_is_locked(&lock->base);
--}
--
--#endif /* CPTCFG_BACKPORT_BUILD_WW_MUTEX */
--#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0) */
--#endif /* __BACKPORT_LINUX_WW_MUTEX_H */
-diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
-index f3c1ab3..e2f0cdd 100644
---- a/backport/compat/Kconfig
-+++ b/backport/compat/Kconfig
-@@ -185,17 +185,6 @@ config BACKPORT_LEDS_CLASS
- config BACKPORT_LEDS_TRIGGERS
- 	bool
- 
--config BACKPORT_BUILD_WW_MUTEX
--	bool
--	# Build only if on kernels < 3.11
--	# For now only DRM drivers use ww mutexes.
--	depends on DRM && BACKPORT_KERNEL_3_11
--	default y if BACKPORT_USERSEL_BUILD_ALL
--	# probably a bad idea if you have these options given we
--	# ripped those options out.
--	depends on !DEBUG_MUTEXES
--	depends on !DEBUG_LOCK_ALLOC
--
- config BACKPORT_BUILD_RADIX_HELPERS
- 	bool
- 	# You have selected to build backported DRM drivers
+-#endif /* __BACKPORT_LINUX_IO_H */
 diff --git a/backport/compat/Makefile b/backport/compat/Makefile
-index 101d0f3..a74507e 100644
+index 2d4928c..4485552 100644
 --- a/backport/compat/Makefile
 +++ b/backport/compat/Makefile
-@@ -41,4 +41,3 @@ compat-$(CPTCFG_BACKPORT_BUILD_KFIFO) += kfifo.o
- compat-$(CPTCFG_BACKPORT_BUILD_GENERIC_ATOMIC64) += compat_atomic.o
- compat-$(CPTCFG_BACKPORT_BUILD_DMA_SHARED_HELPERS) += dma-shared-helpers.o
- compat-$(CPTCFG_BACKPORT_BUILD_RADIX_HELPERS) += lib-radix-tree-helpers.o
--compat-$(CPTCFG_BACKPORT_BUILD_WW_MUTEX) += kernel/ww_mutex.o
-diff --git a/backport/compat/kernel/ww_mutex.c b/backport/compat/kernel/ww_mutex.c
+@@ -34,7 +34,6 @@ compat-$(CPTCFG_BACKPORT_KERNEL_3_7) += compat-3.7.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_3_8) += compat-3.8.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_3_9) += compat-3.9.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_3_10) += backport-3.10.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_11) += backport-3.11.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_3_12) += backport-3.12.o
+ 
+ compat-$(CPTCFG_BACKPORT_BUILD_KFIFO) += kfifo.o
+diff --git a/backport/compat/backport-3.11.c b/backport/compat/backport-3.11.c
 deleted file mode 100644
-index 204ac8f..0000000
---- a/backport/compat/kernel/ww_mutex.c
+index e7b93fc..0000000
+--- a/backport/compat/backport-3.11.c
 +++ /dev/null
-@@ -1,669 +0,0 @@
+@@ -1,92 +0,0 @@
 -/*
-- * Copyright (c) 2013  Luis R. Rodriguez <mcgrof@do-not-panic.com>
+- * Copyright (c) 2013  Hauke Mehrtens <hauke@hauke-m.de>
 - *
-- * Backport ww mutex for older kernels. This is not supported when
-- * DEBUG_MUTEXES or DEBUG_LOCK_ALLOC is enabled.
+- * Backport functionality introduced in Linux 3.11.
 - *
-- * Taken from: kernel/mutex.c - via linux-stable v3.11-rc2
-- *
-- * Mutexes: blocking mutual exclusion locks
-- *
-- * Started by Ingo Molnar:
-- *
-- *  Copyright (C) 2004, 2005, 2006 Red Hat, Inc., Ingo Molnar <mingo@redhat.com>
-- *
-- * Many thanks to Arjan van de Ven, Thomas Gleixner, Steven Rostedt and
-- * David Howells for suggestions and improvements.
-- *
-- *  - Adaptive spinning for mutexes by Peter Zijlstra. (Ported to mainline
-- *    from the -rt tree, where it was originally implemented for rtmutexes
-- *    by Steven Rostedt, based on work by Gregory Haskins, Peter Morreale
-- *    and Sven Dietrich.
-- *
-- * Also see Documentation/mutex-design.txt.
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
 - */
 -
--#include <linux/mutex.h>
--#include <linux/ww_mutex.h>
--#include <asm/mutex.h>
--#include <linux/sched.h>
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,9,0)
--#include <linux/sched/rt.h>
--#endif
 -#include <linux/export.h>
--#include <linux/spinlock.h>
--#include <linux/interrupt.h>
--#include <linux/debug_locks.h>
--#include <linux/version.h>
 -
--/*
-- * A negative mutex count indicates that waiters are sleeping waiting for the
-- * mutex.
-- */
--#define	MUTEX_SHOW_NO_WAITER(mutex)	(atomic_read(&(mutex)->count) >= 0)
+-#ifdef CONFIG_MTRR
 -
--#define spin_lock_mutex(lock, flags) \
--	do { spin_lock(lock); (void)(flags); } while (0)
--#define spin_unlock_mutex(lock, flags) \
--	do { spin_unlock(lock); (void)(flags); } while (0)
--#define mutex_remove_waiter(lock, waiter, ti) \
--	__list_del((waiter)->list.prev, (waiter)->list.next)
+-#include <asm/mtrr.h>
+-#include <asm/cpufeature.h>
+-#include <linux/io.h>
+-#include <linux/printk.h>
 -
--#ifdef CONFIG_SMP
--static inline void mutex_set_owner(struct mutex *lock)
--{
--	lock->owner = current;
--}
--
--static inline void mutex_clear_owner(struct mutex *lock)
--{
--	lock->owner = NULL;
--}
--#else
--static inline void mutex_set_owner(struct mutex *lock)
--{
--}
--
--static inline void mutex_clear_owner(struct mutex *lock)
--{
--}
--#endif
--
--
--#ifdef CONFIG_MUTEX_SPIN_ON_OWNER
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0) /* 2bd2c92c and 41fcb9f2 */
--/*
-- * In order to avoid a stampede of mutex spinners from acquiring the mutex
-- * more or less simultaneously, the spinners need to acquire a MCS lock
-- * first before spinning on the owner field.
-- *
-- * We don't inline mspin_lock() so that perf can correctly account for the
-- * time spent in this lock function.
-- */
--struct mspin_node {
--	struct mspin_node *next ;
--	int		  locked;	/* 1 if lock acquired */
--};
--#define	MLOCK(mutex)	((struct mspin_node **)&((mutex)->spin_mlock))
--
--static noinline
--void mspin_lock(struct mspin_node **lock, struct mspin_node *node)
--{
--	struct mspin_node *prev;
--
--	/* Init node */
--	node->locked = 0;
--	node->next   = NULL;
--
--	prev = xchg(lock, node);
--	if (likely(prev == NULL)) {
--		/* Lock acquired */
--		node->locked = 1;
--		return;
--	}
--	ACCESS_ONCE(prev->next) = node;
--	smp_wmb();
--	/* Wait until the lock holder passes the lock down */
--	while (!ACCESS_ONCE(node->locked))
--		arch_mutex_cpu_relax();
--}
--
--static void mspin_unlock(struct mspin_node **lock, struct mspin_node *node)
--{
--	struct mspin_node *next = ACCESS_ONCE(node->next);
--
--	if (likely(!next)) {
--		/*
--		 * Release the lock by setting it to NULL
--		 */
--		if (cmpxchg(lock, node, NULL) == node)
--			return;
--		/* Wait until the next pointer is set */
--		while (!(next = ACCESS_ONCE(node->next)))
--			arch_mutex_cpu_relax();
--	}
--	ACCESS_ONCE(next->locked) = 1;
--	smp_wmb();
--}
--
--/*
-- * Mutex spinning code migrated from kernel/sched/core.c
-- */
--
--static inline bool owner_running(struct mutex *lock, struct task_struct *owner)
--{
--	if (lock->owner != owner)
--		return false;
--
--	/*
--	 * Ensure we emit the owner->on_cpu, dereference _after_ checking
--	 * lock->owner still matches owner, if that fails, owner might
--	 * point to free()d memory, if it still matches, the rcu_read_lock()
--	 * ensures the memory stays valid.
--	 */
--	barrier();
--
--	return owner->on_cpu;
--}
--
--/*
-- * Look out! "owner" is an entirely speculative pointer
-- * access and not reliable.
-- */
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
--static noinline
--#endif
--int mutex_spin_on_owner(struct mutex *lock, struct task_struct *owner)
--{
--	rcu_read_lock();
--	while (owner_running(lock, owner)) {
--		if (need_resched())
--			break;
--
--		arch_mutex_cpu_relax();
--	}
--	rcu_read_unlock();
--
--	/*
--	 * We break out the loop above on need_resched() and when the
--	 * owner changed, which is a sign for heavy contention. Return
--	 * success only when lock->owner is NULL.
--	 */
--	return lock->owner == NULL;
--}
--
--/*
-- * Initial check for entering the mutex spinning loop
-- */
--static inline int mutex_can_spin_on_owner(struct mutex *lock)
--{
--	int retval = 1;
--
--	rcu_read_lock();
--	if (lock->owner)
--		retval = lock->owner->on_cpu;
--	rcu_read_unlock();
--	/*
--	 * if lock->owner is not set, the mutex owner may have just acquired
--	 * it and not set the owner yet or the mutex has been released.
--	 */
--	return retval;
--}
--#else /* Backport 2bd2c92c: help keep backport_mutex_lock_common() clean */
--
--struct mspin_node {
--};
--#define	MLOCK(mutex) NULL
--
--static noinline
--void mspin_lock(struct mspin_node **lock, struct mspin_node *node)
--{
--}
--
--static void mspin_unlock(struct mspin_node **lock, struct mspin_node *node)
--{
--}
--
--static inline bool owner_running(struct mutex *lock, struct task_struct *owner)
--{
--	return false;
--}
--
--int mutex_spin_on_owner(struct mutex *lock, struct task_struct *owner)
--{
--	return 1;
--}
--
--static inline int mutex_can_spin_on_owner(struct mutex *lock)
--{
--	return 1;
--}
--#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0) */
--#endif /* CONFIG_MUTEX_SPIN_ON_OWNER */
--
--/*
-- * Release the lock, slowpath:
-- */
--static inline void
--__mutex_unlock_common_slowpath(atomic_t *lock_count, int nested)
--{
--	struct mutex *lock = container_of(lock_count, struct mutex, count);
--	unsigned long flags;
--
--	spin_lock_mutex(&lock->wait_lock, flags);
--	mutex_release(&lock->dep_map, nested, _RET_IP_);
--	/* debug_mutex_unlock(lock); */
--
--	/*
--	 * some architectures leave the lock unlocked in the fastpath failure
--	 * case, others need to leave it locked. In the later case we have to
--	 * unlock it here
--	 */
--	if (__mutex_slowpath_needs_to_unlock())
--		atomic_set(&lock->count, 1);
--
--	if (!list_empty(&lock->wait_list)) {
--		/* get the first entry from the wait-list: */
--		struct mutex_waiter *waiter =
--				list_entry(lock->wait_list.next,
--					   struct mutex_waiter, list);
--
--		/* debug_mutex_wake_waiter(lock, waiter); */
--
--		wake_up_process(waiter->task);
--	}
--
--	spin_unlock_mutex(&lock->wait_lock, flags);
--}
--
--/*
-- * Release the lock, slowpath:
-- */
--static __used noinline void
--__mutex_unlock_slowpath(atomic_t *lock_count)
--{
--	__mutex_unlock_common_slowpath(lock_count, 1);
--}
+-/* arch_phys_wc_add returns an MTRR register index plus this offset. */
+-#define MTRR_TO_PHYS_WC_OFFSET 1000
 -
 -/**
-- * ww_mutex_unlock - release the w/w mutex
-- * @lock: the mutex to be released
+- * arch_phys_wc_add - add a WC MTRR and handle errors if PAT is unavailable
+- * @base: Physical base address
+- * @size: Size of region
 - *
-- * Unlock a mutex that has been locked by this task previously with any of the
-- * ww_mutex_lock* functions (with or without an acquire context). It is
-- * forbidden to release the locks after releasing the acquire context.
+- * If PAT is available, this does nothing.  If PAT is unavailable, it
+- * attempts to add a WC MTRR covering size bytes starting at base and
+- * logs an error if this fails.
 - *
-- * This function must not be used in interrupt context. Unlocking
-- * of a unlocked mutex is not allowed.
+- * Drivers must store the return value to pass to mtrr_del_wc_if_needed,
+- * but drivers should not try to interpret that return value.
 - */
--void __sched ww_mutex_unlock(struct ww_mutex *lock)
+-int backport_arch_phys_wc_add(unsigned long base, unsigned long size)
 -{
--	/*
--	 * The unlocking fastpath is the 0->1 transition from 'locked'
--	 * into 'unlocked' state:
--	 */
--	if (lock->ctx) {
--		if (lock->ctx->acquired > 0)
--			lock->ctx->acquired--;
--		lock->ctx = NULL;
--	}
+-	int ret;
 -
--	__mutex_fastpath_unlock(&lock->base.count, __mutex_unlock_slowpath);
--}
--EXPORT_SYMBOL_GPL(ww_mutex_unlock);
--
--static inline int __sched
--__mutex_lock_check_stamp(struct mutex *lock, struct ww_acquire_ctx *ctx)
--{
--	struct ww_mutex *ww = container_of(lock, struct ww_mutex, base);
--	struct ww_acquire_ctx *hold_ctx = ACCESS_ONCE(ww->ctx);
--
--	if (!hold_ctx)
+-#if defined(CONFIG_X86_PAT)
+-	if (cpu_has_pat)
 -		return 0;
--
--	if (unlikely(ctx == hold_ctx))
--		return -EALREADY;
--
--	if (ctx->stamp - hold_ctx->stamp <= LONG_MAX &&
--	    (ctx->stamp != hold_ctx->stamp || ctx > hold_ctx)) {
--		return -EDEADLK;
--	}
--
--	return 0;
--}
--
--static __always_inline void ww_mutex_lock_acquired(struct ww_mutex *ww,
--						   struct ww_acquire_ctx *ww_ctx)
--{
--	ww_ctx->acquired++;
--}
--
--/*
-- * after acquiring lock with fastpath or when we lost out in contested
-- * slowpath, set ctx and wake up any waiters so they can recheck.
-- *
-- * This function is never called when CONFIG_DEBUG_LOCK_ALLOC is set,
-- * as the fastpath and opportunistic spinning are disabled in that case.
-- */
--static __always_inline void
--ww_mutex_set_context_fastpath(struct ww_mutex *lock,
--			       struct ww_acquire_ctx *ctx)
--{
--	unsigned long flags;
--	struct mutex_waiter *cur;
--
--	ww_mutex_lock_acquired(lock, ctx);
--
--	lock->ctx = ctx;
--
--	/*
--	 * The lock->ctx update should be visible on all cores before
--	 * the atomic read is done, otherwise contended waiters might be
--	 * missed. The contended waiters will either see ww_ctx == NULL
--	 * and keep spinning, or it will acquire wait_lock, add itself
--	 * to waiter list and sleep.
--	 */
--	smp_mb(); /* ^^^ */
--
--	/*
--	 * Check if lock is contended, if not there is nobody to wake up
--	 */
--	if (likely(atomic_read(&lock->base.count) == 0))
--		return;
--
--	/*
--	 * Uh oh, we raced in fastpath, wake up everyone in this case,
--	 * so they can see the new lock->ctx.
--	 */
--	spin_lock_mutex(&lock->base.wait_lock, flags);
--	list_for_each_entry(cur, &lock->base.wait_list, list) {
--		/* debug_mutex_wake_waiter(&lock->base, cur); */
--		wake_up_process(cur->task);
--	}
--	spin_unlock_mutex(&lock->base.wait_lock, flags);
--}
--
--/**
-- * backport_schedule_preempt_disabled - called with preemption disabled
-- *
-- * Backports c5491ea7. This is not exported so we leave it
-- * here as this is the only current core user on backports.
-- * Although available on >= 3.4 its only for in-kernel code so
-- * we provide our own.
-- *
-- * Returns with preemption disabled. Note: preempt_count must be 1
-- */
--static void __sched backport_schedule_preempt_disabled(void)
--{
--	preempt_enable_no_resched();
--	schedule();
--	preempt_disable();
--}
--
--/*
-- * Lock a mutex (possibly interruptible), slowpath:
-- */
--static __always_inline int __sched
--__backport_mutex_lock_common(struct mutex *lock, long state,
--			     unsigned int subclass,
--			     struct lockdep_map *nest_lock, unsigned long ip,
--			     struct ww_acquire_ctx *ww_ctx)
--{
--	struct task_struct *task = current;
--	struct mutex_waiter waiter;
--	unsigned long flags;
--	int ret;
--
--	preempt_disable();
--	mutex_acquire_nest(&lock->dep_map, subclass, 0, nest_lock, ip);
--
--#ifdef CONFIG_MUTEX_SPIN_ON_OWNER
--	/*
--	 * Optimistic spinning.
--	 *
--	 * We try to spin for acquisition when we find that there are no
--	 * pending waiters and the lock owner is currently running on a
--	 * (different) CPU.
--	 *
--	 * The rationale is that if the lock owner is running, it is likely to
--	 * release the lock soon.
--	 *
--	 * Since this needs the lock owner, and this mutex implementation
--	 * doesn't track the owner atomically in the lock field, we need to
--	 * track it non-atomically.
--	 *
--	 * We can't do this for DEBUG_MUTEXES because that relies on wait_lock
--	 * to serialize everything.
--	 *
--	 * The mutex spinners are queued up using MCS lock so that only one
--	 * spinner can compete for the mutex. However, if mutex spinning isn't
--	 * going to happen, there is no point in going through the lock/unlock
--	 * overhead.
--	 */
--	if (!mutex_can_spin_on_owner(lock))
--		goto slowpath;
--
--	for (;;) {
--		struct task_struct *owner;
--		struct mspin_node  node;
--
--		if (!__builtin_constant_p(ww_ctx == NULL) && ww_ctx->acquired > 0) {
--			struct ww_mutex *ww;
--
--			ww = container_of(lock, struct ww_mutex, base);
--			/*
--			 * If ww->ctx is set the contents are undefined, only
--			 * by acquiring wait_lock there is a guarantee that
--			 * they are not invalid when reading.
--			 *
--			 * As such, when deadlock detection needs to be
--			 * performed the optimistic spinning cannot be done.
--			 */
--			if (ACCESS_ONCE(ww->ctx))
--				break;
--		}
--
--		/*
--		 * If there's an owner, wait for it to either
--		 * release the lock or go to sleep.
--		 */
--		mspin_lock(MLOCK(lock), &node);
--		owner = ACCESS_ONCE(lock->owner);
--		if (owner && !mutex_spin_on_owner(lock, owner)) {
--			mspin_unlock(MLOCK(lock), &node);
--			break;
--		}
--
--		if ((atomic_read(&lock->count) == 1) &&
--		    (atomic_cmpxchg(&lock->count, 1, 0) == 1)) {
--			lock_acquired(&lock->dep_map, ip);
--			if (!__builtin_constant_p(ww_ctx == NULL)) {
--				struct ww_mutex *ww;
--				ww = container_of(lock, struct ww_mutex, base);
--
--				ww_mutex_set_context_fastpath(ww, ww_ctx);
--			}
--
--			mutex_set_owner(lock);
--			mspin_unlock(MLOCK(lock), &node);
--			preempt_enable();
--			return 0;
--		}
--		mspin_unlock(MLOCK(lock), &node);
--
--		/*
--		 * When there's no owner, we might have preempted between the
--		 * owner acquiring the lock and setting the owner field. If
--		 * we're an RT task that will live-lock because we won't let
--		 * the owner complete.
--		 */
--		if (!owner && (need_resched() || rt_task(task)))
--			break;
--
--		/*
--		 * The cpu_relax() call is a compiler barrier which forces
--		 * everything in this loop to be re-loaded. We don't need
--		 * memory barriers as we'll eventually observe the right
--		 * values at the cost of a few extra spins.
--		 */
--		arch_mutex_cpu_relax();
--	}
--slowpath:
 -#endif
--	spin_lock_mutex(&lock->wait_lock, flags);
 -
--	/* We don't support DEBUG_MUTEXES on the backport */
--	/* debug_mutex_lock_common(lock, &waiter); */
--	/* debug_mutex_add_waiter(lock, &waiter, task_thread_info(task)); */
--
--	/* add waiting tasks to the end of the waitqueue (FIFO): */
--	list_add_tail(&waiter.list, &lock->wait_list);
--	waiter.task = task;
--
--	if (MUTEX_SHOW_NO_WAITER(lock) && (atomic_xchg(&lock->count, -1) == 1))
--		goto done;
--
--	lock_contended(&lock->dep_map, ip);
--
--	for (;;) {
--		/*
--		 * Lets try to take the lock again - this is needed even if
--		 * we get here for the first time (shortly after failing to
--		 * acquire the lock), to make sure that we get a wakeup once
--		 * it's unlocked. Later on, if we sleep, this is the
--		 * operation that gives us the lock. We xchg it to -1, so
--		 * that when we release the lock, we properly wake up the
--		 * other waiters:
--		 */
--		if (MUTEX_SHOW_NO_WAITER(lock) &&
--		   (atomic_xchg(&lock->count, -1) == 1))
--			break;
--
--		/*
--		 * got a signal? (This code gets eliminated in the
--		 * TASK_UNINTERRUPTIBLE case.)
--		 */
--		if (unlikely(signal_pending_state(state, task))) {
--			ret = -EINTR;
--			goto err;
--		}
--
--		if (!__builtin_constant_p(ww_ctx == NULL) && ww_ctx->acquired > 0) {
--			ret = __mutex_lock_check_stamp(lock, ww_ctx);
--			if (ret)
--				goto err;
--		}
--
--		__set_task_state(task, state);
--
--		/* didn't get the lock, go to sleep: */
--		spin_unlock_mutex(&lock->wait_lock, flags);
--		backport_schedule_preempt_disabled();
--		spin_lock_mutex(&lock->wait_lock, flags);
+-	ret = mtrr_add(base, size, MTRR_TYPE_WRCOMB, true);
+-	if (ret < 0) {
+-		pr_warn("Failed to add WC MTRR for [%p-%p]; performance may suffer.",
+-			(void *)base, (void *)(base + size - 1));
+-		return ret;
 -	}
--
--done:
--	lock_acquired(&lock->dep_map, ip);
--	/* got the lock - rejoice! */
--	mutex_remove_waiter(lock, &waiter, current_thread_info());
--	mutex_set_owner(lock);
--
--	if (!__builtin_constant_p(ww_ctx == NULL)) {
--		struct ww_mutex *ww = container_of(lock,
--						      struct ww_mutex,
--						      base);
--		struct mutex_waiter *cur;
--
--		/*
--		 * This branch gets optimized out for the common case,
--		 * and is only important for ww_mutex_lock.
--		 */
--
--		ww_mutex_lock_acquired(ww, ww_ctx);
--		ww->ctx = ww_ctx;
--
--		/*
--		 * Give any possible sleeping processes the chance to wake up,
--		 * so they can recheck if they have to back off.
--		 */
--		list_for_each_entry(cur, &lock->wait_list, list) {
--			/* debug_mutex_wake_waiter(lock, cur); */
--			wake_up_process(cur->task);
--		}
--	}
--
--	/* set it to 0 if there are no waiters left: */
--	if (likely(list_empty(&lock->wait_list)))
--		atomic_set(&lock->count, 0);
--
--	spin_unlock_mutex(&lock->wait_lock, flags);
--
--	/* debug_mutex_free_waiter(&waiter); */
--	preempt_enable();
--
--	return 0;
--
--err:
--	mutex_remove_waiter(lock, &waiter, task_thread_info(task));
--	spin_unlock_mutex(&lock->wait_lock, flags);
--	/* debug_mutex_free_waiter(&waiter); */
--	mutex_release(&lock->dep_map, 1, ip);
--	preempt_enable();
--	return ret;
+-	return ret + MTRR_TO_PHYS_WC_OFFSET;
 -}
+-EXPORT_SYMBOL_GPL(backport_arch_phys_wc_add);
 -
--static noinline int __sched
--__ww_mutex_lock_slowpath(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
--{
--	return __backport_mutex_lock_common(&lock->base, TASK_UNINTERRUPTIBLE, 0,
--					    NULL, _RET_IP_, ctx);
--}
--
--static noinline int __sched
--__ww_mutex_lock_interruptible_slowpath(struct ww_mutex *lock,
--					    struct ww_acquire_ctx *ctx)
--{
--	return __backport_mutex_lock_common(&lock->base, TASK_INTERRUPTIBLE, 0,
--					    NULL, _RET_IP_, ctx);
--}
--
--/**
-- * __mutex_fastpath_lock_retval - try to take the lock by moving the count
-- *				  from 1 to a 0 value
-- * @count: pointer of type atomic_t
+-/*
+- * arch_phys_wc_del - undoes arch_phys_wc_add
+- * @handle: Return value from arch_phys_wc_add
 - *
-- * For backporting purposes we can't use the older kernel's
-- * __mutex_fastpath_lock_retval() since upon failure of a fastpath
-- * lock we want to call our a failure routine with more than one argument, in
-- * this case the context for ww mutexes. Refer to commit a41b56ef the
-- * argument increase. It'd be painful to backport all asm code for the
-- * supported architectures so instead lets penalize the backport ww mutex
-- * fastpath lock with the not so efficient generic atomic_dec_return()
-- * implementation.
+- * This cleans up after mtrr_add_wc_if_needed.
 - *
-- * Change the count from 1 to a value lower than 1. This function returns 0
-- * if the fastpath succeeds, or -1 otherwise.
+- * The API guarantees that mtrr_del_wc_if_needed(error code) and
+- * mtrr_del_wc_if_needed(0) do nothing.
 - */
--static inline int
--__backport_mutex_fastpath_lock_retval(atomic_t *count)
+-void backport_arch_phys_wc_del(int handle)
 -{
--	if (unlikely(atomic_dec_return(count) < 0))
+-	if (handle >= 1) {
+-		WARN_ON(handle < MTRR_TO_PHYS_WC_OFFSET);
+-		mtrr_del(handle - MTRR_TO_PHYS_WC_OFFSET, 0, 0);
+-	}
+-}
+-EXPORT_SYMBOL_GPL(backport_arch_phys_wc_del);
+-
+-/*
+- * phys_wc_to_mtrr_index - translates arch_phys_wc_add's return value
+- * @handle: Return value from arch_phys_wc_add
+- *
+- * This will turn the return value from arch_phys_wc_add into an mtrr
+- * index suitable for debugging.
+- *
+- * Note: There is no legitimate use for this function, except possibly
+- * in printk line.  Alas there is an illegitimate use in some ancient
+- * drm ioctls.
+- */
+-int phys_wc_to_mtrr_index(int handle)
+-{
+-	if (handle < MTRR_TO_PHYS_WC_OFFSET)
 -		return -1;
--	return 0;
+-	else
+-		return handle - MTRR_TO_PHYS_WC_OFFSET;
 -}
+-EXPORT_SYMBOL_GPL(phys_wc_to_mtrr_index);
 -
--int __sched
--__ww_mutex_lock(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
--{
--	int ret;
--
--	might_sleep();
--
--	ret = __backport_mutex_fastpath_lock_retval(&lock->base.count);
--
--	if (likely(!ret)) {
--		ww_mutex_set_context_fastpath(lock, ctx);
--		mutex_set_owner(&lock->base);
--	} else
--		ret = __ww_mutex_lock_slowpath(lock, ctx);
--	return ret;
--}
--EXPORT_SYMBOL_GPL(__ww_mutex_lock);
--
--int __sched
--__ww_mutex_lock_interruptible(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
--{
--	int ret;
--
--	might_sleep();
--
--	ret = __backport_mutex_fastpath_lock_retval(&lock->base.count);
--
--	if (likely(!ret)) {
--		ww_mutex_set_context_fastpath(lock, ctx);
--		mutex_set_owner(&lock->base);
--	} else
--		ret = __ww_mutex_lock_interruptible_slowpath(lock, ctx);
--	return ret;
--}
--EXPORT_SYMBOL_GPL(__ww_mutex_lock_interruptible);
+-#endif /* CONFIG_MTRR */
 -- 
 1.7.10.4
 
