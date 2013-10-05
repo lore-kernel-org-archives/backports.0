@@ -1,74 +1,61 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:49583 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:49552 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752222Ab3JENYr (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 5 Oct 2013 09:24:47 -0400
+	id S1751600Ab3JENYj (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 5 Oct 2013 09:24:39 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 4/8] backports: add tty_port_tty_wakeup()
-Date: Sat,  5 Oct 2013 15:23:51 +0200
-Message-Id: <1380979435-5430-5-git-send-email-hauke@hauke-m.de> (sfid-20131005_152449_159401_3F0C52CC)
-In-Reply-To: <1380979435-5430-1-git-send-email-hauke@hauke-m.de>
-References: <1380979435-5430-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 0/8] backports: add next-20130822
+Date: Sat,  5 Oct 2013 15:23:47 +0200
+Message-Id: <1380979435-5430-1-git-send-email-hauke@hauke-m.de> (sfid-20131005_152441_002058_B3390936)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is needed by ./net/bluetooth/rfcomm/tty.c
+This makes backports based on next-20130822 compile. The test with 
+kernel version 3.12-rc3 failed, because this kernel is too new and 
+should be supported with a release based on mid September's linux-next.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/tty.h |    4 ++++
- backport/compat/backport-3.10.c       |   19 +++++++++++++++++++
- 2 files changed, 23 insertions(+)
+Hauke Mehrtens (8):
+  backports: add DEVICE_ATTR_RW
+  backports: backport new sysfs api in media
+  backports: copy include/drm/drm_flip_work.h
+  backports: add tty_port_tty_wakeup()
+  backports: add tty_port_tty_hangup()
+  backports: remove reading of consumed energy from sysfs
+  backports: refresh patches on next-20130822
+  backports: update test kernel versions
 
-diff --git a/backport/backport-include/linux/tty.h b/backport/backport-include/linux/tty.h
-index b102645..7b57ca1 100644
---- a/backport/backport-include/linux/tty.h
-+++ b/backport/backport-include/linux/tty.h
-@@ -48,4 +48,8 @@ extern int n_tty_ioctl_helper(struct tty_struct *tty, struct file *file,
- 	tty_register_device(driver, index, device)
- #endif
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
-+extern void tty_port_tty_wakeup(struct tty_port *port);
-+#endif
-+
- #endif /* __BACKPORT_LINUX_TTY_H */
-diff --git a/backport/compat/backport-3.10.c b/backport/compat/backport-3.10.c
-index 5273758..d8b3bc6 100644
---- a/backport/compat/backport-3.10.c
-+++ b/backport/compat/backport-3.10.c
-@@ -13,6 +13,7 @@
- #include <linux/err.h>
- #include <linux/proc_fs.h>
- #include <linux/random.h>
-+#include <linux/tty.h>
- 
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
- #include <linux/init.h>
-@@ -90,3 +91,21 @@ unsigned int get_random_int(void)
- 	return r;
- }
- EXPORT_SYMBOL_GPL(get_random_int);
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28))
-+/**
-+ * tty_port_tty_wakeup - helper to wake up a tty
-+ *
-+ * @port: tty port
-+ */
-+void tty_port_tty_wakeup(struct tty_port *port)
-+{
-+	struct tty_struct *tty = tty_port_tty_get(port);
-+
-+	if (tty) {
-+		tty_wakeup(tty);
-+		tty_kref_put(tty);
-+	}
-+}
-+EXPORT_SYMBOL_GPL(tty_port_tty_wakeup);
-+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28)) */
+ backport/backport-include/linux/device.h           |    2 ++
+ backport/backport-include/linux/sysfs.h            |    5 +++
+ backport/backport-include/linux/tty.h              |    5 +++
+ backport/compat/backport-3.10.c                    |   35 ++++++++++++++++++++
+ copy-list                                          |    1 +
+ devel/get-compat-kernels                           |   11 +++---
+ .../drivers_gpu_drm_drm_bufs.patch                 |    4 +--
+ .../drivers_gpu_drm_i810_i810_dma.patch            |    4 +--
+ .../14-shrinkers-api/drivers_gpu_drm_i915.patch    |   12 +++----
+ .../drm/16-remove-energy-read/i915.patch           |   28 ++++++++++++++++
+ .../media/0004-sysfs-api.patch                     |   32 ++++++++++++++++++
+ .../network/0001-netdev_ops/mac80211_hwsim.patch   |    2 +-
+ .../0005-netlink-portid/mac80211_hwsim.patch       |    4 +--
+ .../network/0005-netlink-portid/nl80211.patch      |   28 ++++++++--------
+ .../include_net_cfg80211.patch                     |    2 +-
+ .../drivers_net_wireless_iwlwifi_pcie_trans.patch  |   18 +++++-----
+ .../net_mac80211_tx.patch                          |    4 +--
+ .../16-bluetooth/net_bluetooth_rfcomm_tty.patch    |    8 ++---
+ .../network/16-bluetooth/net_bluetooth_sco.patch   |    6 ++--
+ .../network/22-multiqueue/net_mac80211_tx.patch    |    2 +-
+ .../include_net_mac80211.patch                     |    2 +-
+ .../net_mac80211_ieee80211_i.patch                 |    2 +-
+ .../drivers_net_wireless_rt2x00_rt2800usb.patch    |    2 +-
+ .../63-tty-termios/net_bluetooth_rfcomm_tty.patch  |    2 +-
+ .../69-wowlan-no-socket/net_wireless_nl80211.patch |    2 +-
+ .../network/77-led-blink-api/mac80211.patch        |    2 +-
+ 26 files changed, 167 insertions(+), 58 deletions(-)
+ create mode 100644 patches/collateral-evolutions/drm/16-remove-energy-read/i915.patch
+ create mode 100644 patches/collateral-evolutions/media/0004-sysfs-api.patch
+
 -- 
 1.7.10.4
 
