@@ -1,1077 +1,545 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:50880 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:49604 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752427Ab3JEWoo (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 5 Oct 2013 18:44:44 -0400
+	id S1752270Ab3JENZA (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 5 Oct 2013 09:25:00 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, ozancag@gmail.com,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [RFC 04/15] backports: remove CPTCFG_BACKPORT_BUILD_WW_MUTEX
-Date: Sun,  6 Oct 2013 00:43:53 +0200
-Message-Id: <1381013044-7724-5-git-send-email-hauke@hauke-m.de> (sfid-20131006_004446_109754_4304DEA1)
-In-Reply-To: <1381013044-7724-1-git-send-email-hauke@hauke-m.de>
-References: <1381013044-7724-1-git-send-email-hauke@hauke-m.de>
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 7/8] backports: refresh patches on next-20130822
+Date: Sat,  5 Oct 2013 15:23:54 +0200
+Message-Id: <1380979435-5430-8-git-send-email-hauke@hauke-m.de> (sfid-20131005_152503_968668_33969139)
+In-Reply-To: <1380979435-5430-1-git-send-email-hauke@hauke-m.de>
+References: <1380979435-5430-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This was only needed for some of the DRM drivers, remove it.
+== ckmake-report.log ==
+
+1   2.6.25              [  OK  ]
+2   2.6.26              [  OK  ]
+3   2.6.27              [  OK  ]
+4   2.6.28              [  OK  ]
+5   2.6.29              [  OK  ]
+6   2.6.30              [  OK  ]
+7   2.6.31              [  OK  ]
+8   2.6.32              [  OK  ]
+9   2.6.33              [  OK  ]
+10  2.6.34              [  OK  ]
+11  2.6.35              [  OK  ]
+12  2.6.36              [  OK  ]
+13  2.6.37              [  OK  ]
+14  2.6.38              [  OK  ]
+15  2.6.39              [  OK  ]
+16  3.0.98              [  OK  ]
+17  3.1.10              [  OK  ]
+18  3.10.14             [  OK  ]
+19  3.11.3              [  OK  ]
+20  3.12-rc3            [  FAIL  ]
+21  3.2.51              [  OK  ]
+22  3.3.8               [  OK  ]
+23  3.4.64              [  OK  ]
+24  3.5.7               [  OK  ]
+25  3.6.11              [  OK  ]
+26  3.7.10              [  OK  ]
+27  3.8.13              [  OK  ]
+28  3.9.11              [  OK  ]
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/ww_mutex.h |  333 --------------
- backport/compat/Kconfig                    |   11 -
- backport/compat/Makefile                   |    1 -
- backport/compat/kernel/ww_mutex.c          |  669 ----------------------------
- 4 files changed, 1014 deletions(-)
- delete mode 100644 backport/backport-include/linux/ww_mutex.h
- delete mode 100644 backport/compat/kernel/ww_mutex.c
+ .../drivers_gpu_drm_drm_bufs.patch                 |    4 +--
+ .../drivers_gpu_drm_i810_i810_dma.patch            |    4 +--
+ .../14-shrinkers-api/drivers_gpu_drm_i915.patch    |   12 ++++-----
+ .../network/0001-netdev_ops/mac80211_hwsim.patch   |    2 +-
+ .../0005-netlink-portid/mac80211_hwsim.patch       |    4 +--
+ .../network/0005-netlink-portid/nl80211.patch      |   28 ++++++++++----------
+ .../include_net_cfg80211.patch                     |    2 +-
+ .../drivers_net_wireless_iwlwifi_pcie_trans.patch  |   18 ++++++-------
+ .../net_mac80211_tx.patch                          |    4 +--
+ .../16-bluetooth/net_bluetooth_rfcomm_tty.patch    |    8 +++---
+ .../network/16-bluetooth/net_bluetooth_sco.patch   |    6 ++---
+ .../network/22-multiqueue/net_mac80211_tx.patch    |    2 +-
+ .../include_net_mac80211.patch                     |    2 +-
+ .../net_mac80211_ieee80211_i.patch                 |    2 +-
+ .../drivers_net_wireless_rt2x00_rt2800usb.patch    |    2 +-
+ .../63-tty-termios/net_bluetooth_rfcomm_tty.patch  |    2 +-
+ .../69-wowlan-no-socket/net_wireless_nl80211.patch |    2 +-
+ .../network/77-led-blink-api/mac80211.patch        |    2 +-
+ 18 files changed, 53 insertions(+), 53 deletions(-)
 
-diff --git a/backport/backport-include/linux/ww_mutex.h b/backport/backport-include/linux/ww_mutex.h
-deleted file mode 100644
-index 0953939..0000000
---- a/backport/backport-include/linux/ww_mutex.h
-+++ /dev/null
-@@ -1,333 +0,0 @@
--#ifndef __BACKPORT_LINUX_WW_MUTEX_H
--#define __BACKPORT_LINUX_WW_MUTEX_H
--
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
--#include_next <linux/ww_mutex.h>
--#else
--#ifdef CPTCFG_BACKPORT_BUILD_WW_MUTEX
--/*
-- * Wound/Wait Mutexes: blocking mutual exclusion locks with deadlock avoidance
-- *
-- * Original mutex implementation started by Ingo Molnar:
-- *
-- *  Copyright (C) 2004, 2005, 2006 Red Hat, Inc., Ingo Molnar <mingo@redhat.com>
-- *
-- * Wound/wait implementation:
-- *  Copyright (C) 2013 Canonical Ltd.
-- *
-- * This file contains the main data structure and API definitions.
-- */
--
--#include <linux/mutex.h>
--
--struct ww_class {
--	atomic_long_t stamp;
--	struct lock_class_key acquire_key;
--	struct lock_class_key mutex_key;
--	const char *acquire_name;
--	const char *mutex_name;
--};
--
--struct ww_acquire_ctx {
--	struct task_struct *task;
--	unsigned long stamp;
--	unsigned acquired;
--};
--
--struct ww_mutex {
--	struct mutex base;
--	struct ww_acquire_ctx *ctx;
--};
--
--# define __WW_CLASS_MUTEX_INITIALIZER(lockname, ww_class)
--
--#define __WW_CLASS_INITIALIZER(ww_class) \
--		{ .stamp = ATOMIC_LONG_INIT(0) \
--		, .acquire_name = #ww_class "_acquire" \
--		, .mutex_name = #ww_class "_mutex" }
--
--#define __WW_MUTEX_INITIALIZER(lockname, class) \
--		{ .base = { \__MUTEX_INITIALIZER(lockname) } \
--		__WW_CLASS_MUTEX_INITIALIZER(lockname, class) }
--
--#define DEFINE_WW_CLASS(classname) \
--	struct ww_class classname = __WW_CLASS_INITIALIZER(classname)
--
--#define DEFINE_WW_MUTEX(mutexname, ww_class) \
--	struct ww_mutex mutexname = __WW_MUTEX_INITIALIZER(mutexname, ww_class)
--
--/**
-- * ww_mutex_init - initialize the w/w mutex
-- * @lock: the mutex to be initialized
-- * @ww_class: the w/w class the mutex should belong to
-- *
-- * Initialize the w/w mutex to unlocked state and associate it with the given
-- * class.
-- *
-- * It is not allowed to initialize an already locked mutex.
-- */
--#define ww_mutex_init LINUX_BACKPORT(ww_mutex_init)
--static inline void ww_mutex_init(struct ww_mutex *lock,
--				 struct ww_class *ww_class)
--{
--	__mutex_init(&lock->base, ww_class->mutex_name, &ww_class->mutex_key);
--	lock->ctx = NULL;
--}
--
--/**
-- * ww_acquire_init - initialize a w/w acquire context
-- * @ctx: w/w acquire context to initialize
-- * @ww_class: w/w class of the context
-- *
-- * Initializes an context to acquire multiple mutexes of the given w/w class.
-- *
-- * Context-based w/w mutex acquiring can be done in any order whatsoever within
-- * a given lock class. Deadlocks will be detected and handled with the
-- * wait/wound logic.
-- *
-- * Mixing of context-based w/w mutex acquiring and single w/w mutex locking can
-- * result in undetected deadlocks and is so forbidden. Mixing different contexts
-- * for the same w/w class when acquiring mutexes can also result in undetected
-- * deadlocks, and is hence also forbidden. Both types of abuse will be caught by
-- * enabling CONFIG_PROVE_LOCKING.
-- *
-- * Nesting of acquire contexts for _different_ w/w classes is possible, subject
-- * to the usual locking rules between different lock classes.
-- *
-- * An acquire context must be released with ww_acquire_fini by the same task
-- * before the memory is freed. It is recommended to allocate the context itself
-- * on the stack.
-- */
--#define ww_acquire_init LINUX_BACKPORT(ww_acquire_init)
--static inline void ww_acquire_init(struct ww_acquire_ctx *ctx,
--				   struct ww_class *ww_class)
--{
--	ctx->task = current;
--	ctx->stamp = atomic_long_inc_return(&ww_class->stamp);
--	ctx->acquired = 0;
--}
--
--/**
-- * ww_acquire_done - marks the end of the acquire phase
-- * @ctx: the acquire context
-- *
-- * Marks the end of the acquire phase, any further w/w mutex lock calls using
-- * this context are forbidden.
-- *
-- * Calling this function is optional, it is just useful to document w/w mutex
-- * code and clearly designated the acquire phase from actually using the locked
-- * data structures.
-- */
--#define ww_acquire_done LINUX_BACKPORT(ww_acquire_done)
--static inline void ww_acquire_done(struct ww_acquire_ctx *ctx)
--{
--}
--
--/**
-- * ww_acquire_fini - releases a w/w acquire context
-- * @ctx: the acquire context to free
-- *
-- * Releases a w/w acquire context. This must be called _after_ all acquired w/w
-- * mutexes have been released with ww_mutex_unlock.
-- */
--#define ww_acquire_fini LINUX_BACKPORT(ww_acquire_fini)
--static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx)
--{
--}
--
--#define __ww_mutex_lock LINUX_BACKPORT(__ww_mutex_lock)
--extern int __must_check __ww_mutex_lock(struct ww_mutex *lock,
--					struct ww_acquire_ctx *ctx);
--#define __ww_mutex_lock_interruptible LINUX_BACKPORT(__ww_mutex_lock_interruptible)
--extern int __must_check __ww_mutex_lock_interruptible(struct ww_mutex *lock,
--						      struct ww_acquire_ctx *ctx);
--
--/**
-- * ww_mutex_lock - acquire the w/w mutex
-- * @lock: the mutex to be acquired
-- * @ctx: w/w acquire context, or NULL to acquire only a single lock.
-- *
-- * Lock the w/w mutex exclusively for this task.
-- *
-- * Deadlocks within a given w/w class of locks are detected and handled with the
-- * wait/wound algorithm. If the lock isn't immediately avaiable this function
-- * will either sleep until it is (wait case). Or it selects the current context
-- * for backing off by returning -EDEADLK (wound case). Trying to acquire the
-- * same lock with the same context twice is also detected and signalled by
-- * returning -EALREADY. Returns 0 if the mutex was successfully acquired.
-- *
-- * In the wound case the caller must release all currently held w/w mutexes for
-- * the given context and then wait for this contending lock to be available by
-- * calling ww_mutex_lock_slow. Alternatively callers can opt to not acquire this
-- * lock and proceed with trying to acquire further w/w mutexes (e.g. when
-- * scanning through lru lists trying to free resources).
-- *
-- * The mutex must later on be released by the same task that
-- * acquired it. The task may not exit without first unlocking the mutex. Also,
-- * kernel memory where the mutex resides must not be freed with the mutex still
-- * locked. The mutex must first be initialized (or statically defined) before it
-- * can be locked. memset()-ing the mutex to 0 is not allowed. The mutex must be
-- * of the same w/w lock class as was used to initialize the acquire context.
-- *
-- * A mutex acquired with this function must be released with ww_mutex_unlock.
-- */
--#define ww_mutex_lock LINUX_BACKPORT(ww_mutex_lock)
--static inline int ww_mutex_lock(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
--{
--	if (ctx)
--		return __ww_mutex_lock(lock, ctx);
--
--	mutex_lock(&lock->base);
--	return 0;
--}
--
--/**
-- * ww_mutex_lock_interruptible - acquire the w/w mutex, interruptible
-- * @lock: the mutex to be acquired
-- * @ctx: w/w acquire context
-- *
-- * Lock the w/w mutex exclusively for this task.
-- *
-- * Deadlocks within a given w/w class of locks are detected and handled with the
-- * wait/wound algorithm. If the lock isn't immediately avaiable this function
-- * will either sleep until it is (wait case). Or it selects the current context
-- * for backing off by returning -EDEADLK (wound case). Trying to acquire the
-- * same lock with the same context twice is also detected and signalled by
-- * returning -EALREADY. Returns 0 if the mutex was successfully acquired. If a
-- * signal arrives while waiting for the lock then this function returns -EINTR.
-- *
-- * In the wound case the caller must release all currently held w/w mutexes for
-- * the given context and then wait for this contending lock to be available by
-- * calling ww_mutex_lock_slow_interruptible. Alternatively callers can opt to
-- * not acquire this lock and proceed with trying to acquire further w/w mutexes
-- * (e.g. when scanning through lru lists trying to free resources).
-- *
-- * The mutex must later on be released by the same task that
-- * acquired it. The task may not exit without first unlocking the mutex. Also,
-- * kernel memory where the mutex resides must not be freed with the mutex still
-- * locked. The mutex must first be initialized (or statically defined) before it
-- * can be locked. memset()-ing the mutex to 0 is not allowed. The mutex must be
-- * of the same w/w lock class as was used to initialize the acquire context.
-- *
-- * A mutex acquired with this function must be released with ww_mutex_unlock.
-- */
--#define ww_mutex_lock_interruptible LINUX_BACKPORT(ww_mutex_lock_interruptible)
--static inline int __must_check ww_mutex_lock_interruptible(struct ww_mutex *lock,
--							   struct ww_acquire_ctx *ctx)
--{
--	if (ctx)
--		return __ww_mutex_lock_interruptible(lock, ctx);
--	else
--		return mutex_lock_interruptible(&lock->base);
--}
--
--/**
-- * ww_mutex_lock_slow - slowpath acquiring of the w/w mutex
-- * @lock: the mutex to be acquired
-- * @ctx: w/w acquire context
-- *
-- * Acquires a w/w mutex with the given context after a wound case. This function
-- * will sleep until the lock becomes available.
-- *
-- * The caller must have released all w/w mutexes already acquired with the
-- * context and then call this function on the contended lock.
-- *
-- * Afterwards the caller may continue to (re)acquire the other w/w mutexes it
-- * needs with ww_mutex_lock. Note that the -EALREADY return code from
-- * ww_mutex_lock can be used to avoid locking this contended mutex twice.
-- *
-- * It is forbidden to call this function with any other w/w mutexes associated
-- * with the context held. It is forbidden to call this on anything else than the
-- * contending mutex.
-- *
-- * Note that the slowpath lock acquiring can also be done by calling
-- * ww_mutex_lock directly. This function here is simply to help w/w mutex
-- * locking code readability by clearly denoting the slowpath.
-- */
--#define ww_mutex_lock_slow LINUX_BACKPORT(ww_mutex_lock_slow)
--static inline void
--ww_mutex_lock_slow(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
--{
--	int ret;
--	ret = ww_mutex_lock(lock, ctx);
--	(void)ret;
--}
--
--/**
-- * ww_mutex_lock_slow_interruptible - slowpath acquiring of the w/w mutex, interruptible
-- * @lock: the mutex to be acquired
-- * @ctx: w/w acquire context
-- *
-- * Acquires a w/w mutex with the given context after a wound case. This function
-- * will sleep until the lock becomes available and returns 0 when the lock has
-- * been acquired. If a signal arrives while waiting for the lock then this
-- * function returns -EINTR.
-- *
-- * The caller must have released all w/w mutexes already acquired with the
-- * context and then call this function on the contended lock.
-- *
-- * Afterwards the caller may continue to (re)acquire the other w/w mutexes it
-- * needs with ww_mutex_lock. Note that the -EALREADY return code from
-- * ww_mutex_lock can be used to avoid locking this contended mutex twice.
-- *
-- * It is forbidden to call this function with any other w/w mutexes associated
-- * with the given context held. It is forbidden to call this on anything else
-- * than the contending mutex.
-- *
-- * Note that the slowpath lock acquiring can also be done by calling
-- * ww_mutex_lock_interruptible directly. This function here is simply to help
-- * w/w mutex locking code readability by clearly denoting the slowpath.
-- */
--#define ww_mutex_lock_slow_interruptible LINUX_BACKPORT(ww_mutex_lock_slow_interruptible)
--static inline int __must_check
--ww_mutex_lock_slow_interruptible(struct ww_mutex *lock,
--				 struct ww_acquire_ctx *ctx)
--{
--	return ww_mutex_lock_interruptible(lock, ctx);
--}
--
--#define ww_mutex_unlock LINUX_BACKPORT(ww_mutex_unlock)
--extern void ww_mutex_unlock(struct ww_mutex *lock);
--
--/**
-- * ww_mutex_trylock - tries to acquire the w/w mutex without acquire context
-- * @lock: mutex to lock
-- *
-- * Trylocks a mutex without acquire context, so no deadlock detection is
-- * possible. Returns 1 if the mutex has been acquired successfully, 0 otherwise.
-- */
--#define ww_mutex_trylock LINUX_BACKPORT(ww_mutex_trylock)
--static inline int __must_check ww_mutex_trylock(struct ww_mutex *lock)
--{
--	return mutex_trylock(&lock->base);
--}
--
--/***
-- * ww_mutex_destroy - mark a w/w mutex unusable
-- * @lock: the mutex to be destroyed
-- *
-- * This function marks the mutex uninitialized, and any subsequent
-- * use of the mutex is forbidden. The mutex must not be locked when
-- * this function is called.
-- */
--#define ww_mutex_destroy LINUX_BACKPORT(ww_mutex_destroy)
--static inline void ww_mutex_destroy(struct ww_mutex *lock)
--{
--	mutex_destroy(&lock->base);
--}
--
--/**
-- * ww_mutex_is_locked - is the w/w mutex locked
-- * @lock: the mutex to be queried
-- *
-- * Returns 1 if the mutex is locked, 0 if unlocked.
-- */
--#define ww_mutex_is_locked LINUX_BACKPORT(ww_mutex_is_locked)
--static inline bool ww_mutex_is_locked(struct ww_mutex *lock)
--{
--	return mutex_is_locked(&lock->base);
--}
--
--#endif /* CPTCFG_BACKPORT_BUILD_WW_MUTEX */
--#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0) */
--#endif /* __BACKPORT_LINUX_WW_MUTEX_H */
-diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
-index f3c1ab3..e2f0cdd 100644
---- a/backport/compat/Kconfig
-+++ b/backport/compat/Kconfig
-@@ -185,17 +185,6 @@ config BACKPORT_LEDS_CLASS
- config BACKPORT_LEDS_TRIGGERS
- 	bool
- 
--config BACKPORT_BUILD_WW_MUTEX
--	bool
--	# Build only if on kernels < 3.11
--	# For now only DRM drivers use ww mutexes.
--	depends on DRM && BACKPORT_KERNEL_3_11
--	default y if BACKPORT_USERSEL_BUILD_ALL
--	# probably a bad idea if you have these options given we
--	# ripped those options out.
--	depends on !DEBUG_MUTEXES
--	depends on !DEBUG_LOCK_ALLOC
--
- config BACKPORT_BUILD_RADIX_HELPERS
- 	bool
- 	# You have selected to build backported DRM drivers
-diff --git a/backport/compat/Makefile b/backport/compat/Makefile
-index 101d0f3..a74507e 100644
---- a/backport/compat/Makefile
-+++ b/backport/compat/Makefile
-@@ -41,4 +41,3 @@ compat-$(CPTCFG_BACKPORT_BUILD_KFIFO) += kfifo.o
- compat-$(CPTCFG_BACKPORT_BUILD_GENERIC_ATOMIC64) += compat_atomic.o
- compat-$(CPTCFG_BACKPORT_BUILD_DMA_SHARED_HELPERS) += dma-shared-helpers.o
- compat-$(CPTCFG_BACKPORT_BUILD_RADIX_HELPERS) += lib-radix-tree-helpers.o
--compat-$(CPTCFG_BACKPORT_BUILD_WW_MUTEX) += kernel/ww_mutex.o
-diff --git a/backport/compat/kernel/ww_mutex.c b/backport/compat/kernel/ww_mutex.c
-deleted file mode 100644
-index 204ac8f..0000000
---- a/backport/compat/kernel/ww_mutex.c
-+++ /dev/null
-@@ -1,669 +0,0 @@
--/*
-- * Copyright (c) 2013  Luis R. Rodriguez <mcgrof@do-not-panic.com>
-- *
-- * Backport ww mutex for older kernels. This is not supported when
-- * DEBUG_MUTEXES or DEBUG_LOCK_ALLOC is enabled.
-- *
-- * Taken from: kernel/mutex.c - via linux-stable v3.11-rc2
-- *
-- * Mutexes: blocking mutual exclusion locks
-- *
-- * Started by Ingo Molnar:
-- *
-- *  Copyright (C) 2004, 2005, 2006 Red Hat, Inc., Ingo Molnar <mingo@redhat.com>
-- *
-- * Many thanks to Arjan van de Ven, Thomas Gleixner, Steven Rostedt and
-- * David Howells for suggestions and improvements.
-- *
-- *  - Adaptive spinning for mutexes by Peter Zijlstra. (Ported to mainline
-- *    from the -rt tree, where it was originally implemented for rtmutexes
-- *    by Steven Rostedt, based on work by Gregory Haskins, Peter Morreale
-- *    and Sven Dietrich.
-- *
-- * Also see Documentation/mutex-design.txt.
-- */
--
--#include <linux/mutex.h>
--#include <linux/ww_mutex.h>
--#include <asm/mutex.h>
--#include <linux/sched.h>
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,9,0)
--#include <linux/sched/rt.h>
--#endif
--#include <linux/export.h>
--#include <linux/spinlock.h>
--#include <linux/interrupt.h>
--#include <linux/debug_locks.h>
--#include <linux/version.h>
--
--/*
-- * A negative mutex count indicates that waiters are sleeping waiting for the
-- * mutex.
-- */
--#define	MUTEX_SHOW_NO_WAITER(mutex)	(atomic_read(&(mutex)->count) >= 0)
--
--#define spin_lock_mutex(lock, flags) \
--	do { spin_lock(lock); (void)(flags); } while (0)
--#define spin_unlock_mutex(lock, flags) \
--	do { spin_unlock(lock); (void)(flags); } while (0)
--#define mutex_remove_waiter(lock, waiter, ti) \
--	__list_del((waiter)->list.prev, (waiter)->list.next)
--
--#ifdef CONFIG_SMP
--static inline void mutex_set_owner(struct mutex *lock)
--{
--	lock->owner = current;
--}
--
--static inline void mutex_clear_owner(struct mutex *lock)
--{
--	lock->owner = NULL;
--}
--#else
--static inline void mutex_set_owner(struct mutex *lock)
--{
--}
--
--static inline void mutex_clear_owner(struct mutex *lock)
--{
--}
--#endif
--
--
--#ifdef CONFIG_MUTEX_SPIN_ON_OWNER
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0) /* 2bd2c92c and 41fcb9f2 */
--/*
-- * In order to avoid a stampede of mutex spinners from acquiring the mutex
-- * more or less simultaneously, the spinners need to acquire a MCS lock
-- * first before spinning on the owner field.
-- *
-- * We don't inline mspin_lock() so that perf can correctly account for the
-- * time spent in this lock function.
-- */
--struct mspin_node {
--	struct mspin_node *next ;
--	int		  locked;	/* 1 if lock acquired */
--};
--#define	MLOCK(mutex)	((struct mspin_node **)&((mutex)->spin_mlock))
--
--static noinline
--void mspin_lock(struct mspin_node **lock, struct mspin_node *node)
--{
--	struct mspin_node *prev;
--
--	/* Init node */
--	node->locked = 0;
--	node->next   = NULL;
--
--	prev = xchg(lock, node);
--	if (likely(prev == NULL)) {
--		/* Lock acquired */
--		node->locked = 1;
--		return;
--	}
--	ACCESS_ONCE(prev->next) = node;
--	smp_wmb();
--	/* Wait until the lock holder passes the lock down */
--	while (!ACCESS_ONCE(node->locked))
--		arch_mutex_cpu_relax();
--}
--
--static void mspin_unlock(struct mspin_node **lock, struct mspin_node *node)
--{
--	struct mspin_node *next = ACCESS_ONCE(node->next);
--
--	if (likely(!next)) {
--		/*
--		 * Release the lock by setting it to NULL
--		 */
--		if (cmpxchg(lock, node, NULL) == node)
--			return;
--		/* Wait until the next pointer is set */
--		while (!(next = ACCESS_ONCE(node->next)))
--			arch_mutex_cpu_relax();
--	}
--	ACCESS_ONCE(next->locked) = 1;
--	smp_wmb();
--}
--
--/*
-- * Mutex spinning code migrated from kernel/sched/core.c
-- */
--
--static inline bool owner_running(struct mutex *lock, struct task_struct *owner)
--{
--	if (lock->owner != owner)
--		return false;
--
--	/*
--	 * Ensure we emit the owner->on_cpu, dereference _after_ checking
--	 * lock->owner still matches owner, if that fails, owner might
--	 * point to free()d memory, if it still matches, the rcu_read_lock()
--	 * ensures the memory stays valid.
--	 */
--	barrier();
--
--	return owner->on_cpu;
--}
--
--/*
-- * Look out! "owner" is an entirely speculative pointer
-- * access and not reliable.
-- */
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
--static noinline
--#endif
--int mutex_spin_on_owner(struct mutex *lock, struct task_struct *owner)
--{
--	rcu_read_lock();
--	while (owner_running(lock, owner)) {
--		if (need_resched())
--			break;
--
--		arch_mutex_cpu_relax();
--	}
--	rcu_read_unlock();
--
--	/*
--	 * We break out the loop above on need_resched() and when the
--	 * owner changed, which is a sign for heavy contention. Return
--	 * success only when lock->owner is NULL.
--	 */
--	return lock->owner == NULL;
--}
--
--/*
-- * Initial check for entering the mutex spinning loop
-- */
--static inline int mutex_can_spin_on_owner(struct mutex *lock)
--{
--	int retval = 1;
--
--	rcu_read_lock();
--	if (lock->owner)
--		retval = lock->owner->on_cpu;
--	rcu_read_unlock();
--	/*
--	 * if lock->owner is not set, the mutex owner may have just acquired
--	 * it and not set the owner yet or the mutex has been released.
--	 */
--	return retval;
--}
--#else /* Backport 2bd2c92c: help keep backport_mutex_lock_common() clean */
--
--struct mspin_node {
--};
--#define	MLOCK(mutex) NULL
--
--static noinline
--void mspin_lock(struct mspin_node **lock, struct mspin_node *node)
--{
--}
--
--static void mspin_unlock(struct mspin_node **lock, struct mspin_node *node)
--{
--}
--
--static inline bool owner_running(struct mutex *lock, struct task_struct *owner)
--{
--	return false;
--}
--
--int mutex_spin_on_owner(struct mutex *lock, struct task_struct *owner)
--{
--	return 1;
--}
--
--static inline int mutex_can_spin_on_owner(struct mutex *lock)
--{
--	return 1;
--}
--#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0) */
--#endif /* CONFIG_MUTEX_SPIN_ON_OWNER */
--
--/*
-- * Release the lock, slowpath:
-- */
--static inline void
--__mutex_unlock_common_slowpath(atomic_t *lock_count, int nested)
--{
--	struct mutex *lock = container_of(lock_count, struct mutex, count);
--	unsigned long flags;
--
--	spin_lock_mutex(&lock->wait_lock, flags);
--	mutex_release(&lock->dep_map, nested, _RET_IP_);
--	/* debug_mutex_unlock(lock); */
--
--	/*
--	 * some architectures leave the lock unlocked in the fastpath failure
--	 * case, others need to leave it locked. In the later case we have to
--	 * unlock it here
--	 */
--	if (__mutex_slowpath_needs_to_unlock())
--		atomic_set(&lock->count, 1);
--
--	if (!list_empty(&lock->wait_list)) {
--		/* get the first entry from the wait-list: */
--		struct mutex_waiter *waiter =
--				list_entry(lock->wait_list.next,
--					   struct mutex_waiter, list);
--
--		/* debug_mutex_wake_waiter(lock, waiter); */
--
--		wake_up_process(waiter->task);
--	}
--
--	spin_unlock_mutex(&lock->wait_lock, flags);
--}
--
--/*
-- * Release the lock, slowpath:
-- */
--static __used noinline void
--__mutex_unlock_slowpath(atomic_t *lock_count)
--{
--	__mutex_unlock_common_slowpath(lock_count, 1);
--}
--
--/**
-- * ww_mutex_unlock - release the w/w mutex
-- * @lock: the mutex to be released
-- *
-- * Unlock a mutex that has been locked by this task previously with any of the
-- * ww_mutex_lock* functions (with or without an acquire context). It is
-- * forbidden to release the locks after releasing the acquire context.
-- *
-- * This function must not be used in interrupt context. Unlocking
-- * of a unlocked mutex is not allowed.
-- */
--void __sched ww_mutex_unlock(struct ww_mutex *lock)
--{
--	/*
--	 * The unlocking fastpath is the 0->1 transition from 'locked'
--	 * into 'unlocked' state:
--	 */
--	if (lock->ctx) {
--		if (lock->ctx->acquired > 0)
--			lock->ctx->acquired--;
--		lock->ctx = NULL;
--	}
--
--	__mutex_fastpath_unlock(&lock->base.count, __mutex_unlock_slowpath);
--}
--EXPORT_SYMBOL_GPL(ww_mutex_unlock);
--
--static inline int __sched
--__mutex_lock_check_stamp(struct mutex *lock, struct ww_acquire_ctx *ctx)
--{
--	struct ww_mutex *ww = container_of(lock, struct ww_mutex, base);
--	struct ww_acquire_ctx *hold_ctx = ACCESS_ONCE(ww->ctx);
--
--	if (!hold_ctx)
--		return 0;
--
--	if (unlikely(ctx == hold_ctx))
--		return -EALREADY;
--
--	if (ctx->stamp - hold_ctx->stamp <= LONG_MAX &&
--	    (ctx->stamp != hold_ctx->stamp || ctx > hold_ctx)) {
--		return -EDEADLK;
--	}
--
--	return 0;
--}
--
--static __always_inline void ww_mutex_lock_acquired(struct ww_mutex *ww,
--						   struct ww_acquire_ctx *ww_ctx)
--{
--	ww_ctx->acquired++;
--}
--
--/*
-- * after acquiring lock with fastpath or when we lost out in contested
-- * slowpath, set ctx and wake up any waiters so they can recheck.
-- *
-- * This function is never called when CONFIG_DEBUG_LOCK_ALLOC is set,
-- * as the fastpath and opportunistic spinning are disabled in that case.
-- */
--static __always_inline void
--ww_mutex_set_context_fastpath(struct ww_mutex *lock,
--			       struct ww_acquire_ctx *ctx)
--{
--	unsigned long flags;
--	struct mutex_waiter *cur;
--
--	ww_mutex_lock_acquired(lock, ctx);
--
--	lock->ctx = ctx;
--
--	/*
--	 * The lock->ctx update should be visible on all cores before
--	 * the atomic read is done, otherwise contended waiters might be
--	 * missed. The contended waiters will either see ww_ctx == NULL
--	 * and keep spinning, or it will acquire wait_lock, add itself
--	 * to waiter list and sleep.
--	 */
--	smp_mb(); /* ^^^ */
--
--	/*
--	 * Check if lock is contended, if not there is nobody to wake up
--	 */
--	if (likely(atomic_read(&lock->base.count) == 0))
--		return;
--
--	/*
--	 * Uh oh, we raced in fastpath, wake up everyone in this case,
--	 * so they can see the new lock->ctx.
--	 */
--	spin_lock_mutex(&lock->base.wait_lock, flags);
--	list_for_each_entry(cur, &lock->base.wait_list, list) {
--		/* debug_mutex_wake_waiter(&lock->base, cur); */
--		wake_up_process(cur->task);
--	}
--	spin_unlock_mutex(&lock->base.wait_lock, flags);
--}
--
--/**
-- * backport_schedule_preempt_disabled - called with preemption disabled
-- *
-- * Backports c5491ea7. This is not exported so we leave it
-- * here as this is the only current core user on backports.
-- * Although available on >= 3.4 its only for in-kernel code so
-- * we provide our own.
-- *
-- * Returns with preemption disabled. Note: preempt_count must be 1
-- */
--static void __sched backport_schedule_preempt_disabled(void)
--{
--	preempt_enable_no_resched();
--	schedule();
--	preempt_disable();
--}
--
--/*
-- * Lock a mutex (possibly interruptible), slowpath:
-- */
--static __always_inline int __sched
--__backport_mutex_lock_common(struct mutex *lock, long state,
--			     unsigned int subclass,
--			     struct lockdep_map *nest_lock, unsigned long ip,
--			     struct ww_acquire_ctx *ww_ctx)
--{
--	struct task_struct *task = current;
--	struct mutex_waiter waiter;
--	unsigned long flags;
--	int ret;
--
--	preempt_disable();
--	mutex_acquire_nest(&lock->dep_map, subclass, 0, nest_lock, ip);
--
--#ifdef CONFIG_MUTEX_SPIN_ON_OWNER
--	/*
--	 * Optimistic spinning.
--	 *
--	 * We try to spin for acquisition when we find that there are no
--	 * pending waiters and the lock owner is currently running on a
--	 * (different) CPU.
--	 *
--	 * The rationale is that if the lock owner is running, it is likely to
--	 * release the lock soon.
--	 *
--	 * Since this needs the lock owner, and this mutex implementation
--	 * doesn't track the owner atomically in the lock field, we need to
--	 * track it non-atomically.
--	 *
--	 * We can't do this for DEBUG_MUTEXES because that relies on wait_lock
--	 * to serialize everything.
--	 *
--	 * The mutex spinners are queued up using MCS lock so that only one
--	 * spinner can compete for the mutex. However, if mutex spinning isn't
--	 * going to happen, there is no point in going through the lock/unlock
--	 * overhead.
--	 */
--	if (!mutex_can_spin_on_owner(lock))
--		goto slowpath;
--
--	for (;;) {
--		struct task_struct *owner;
--		struct mspin_node  node;
--
--		if (!__builtin_constant_p(ww_ctx == NULL) && ww_ctx->acquired > 0) {
--			struct ww_mutex *ww;
--
--			ww = container_of(lock, struct ww_mutex, base);
--			/*
--			 * If ww->ctx is set the contents are undefined, only
--			 * by acquiring wait_lock there is a guarantee that
--			 * they are not invalid when reading.
--			 *
--			 * As such, when deadlock detection needs to be
--			 * performed the optimistic spinning cannot be done.
--			 */
--			if (ACCESS_ONCE(ww->ctx))
--				break;
--		}
--
--		/*
--		 * If there's an owner, wait for it to either
--		 * release the lock or go to sleep.
--		 */
--		mspin_lock(MLOCK(lock), &node);
--		owner = ACCESS_ONCE(lock->owner);
--		if (owner && !mutex_spin_on_owner(lock, owner)) {
--			mspin_unlock(MLOCK(lock), &node);
--			break;
--		}
--
--		if ((atomic_read(&lock->count) == 1) &&
--		    (atomic_cmpxchg(&lock->count, 1, 0) == 1)) {
--			lock_acquired(&lock->dep_map, ip);
--			if (!__builtin_constant_p(ww_ctx == NULL)) {
--				struct ww_mutex *ww;
--				ww = container_of(lock, struct ww_mutex, base);
--
--				ww_mutex_set_context_fastpath(ww, ww_ctx);
--			}
--
--			mutex_set_owner(lock);
--			mspin_unlock(MLOCK(lock), &node);
--			preempt_enable();
--			return 0;
--		}
--		mspin_unlock(MLOCK(lock), &node);
--
--		/*
--		 * When there's no owner, we might have preempted between the
--		 * owner acquiring the lock and setting the owner field. If
--		 * we're an RT task that will live-lock because we won't let
--		 * the owner complete.
--		 */
--		if (!owner && (need_resched() || rt_task(task)))
--			break;
--
--		/*
--		 * The cpu_relax() call is a compiler barrier which forces
--		 * everything in this loop to be re-loaded. We don't need
--		 * memory barriers as we'll eventually observe the right
--		 * values at the cost of a few extra spins.
--		 */
--		arch_mutex_cpu_relax();
--	}
--slowpath:
--#endif
--	spin_lock_mutex(&lock->wait_lock, flags);
--
--	/* We don't support DEBUG_MUTEXES on the backport */
--	/* debug_mutex_lock_common(lock, &waiter); */
--	/* debug_mutex_add_waiter(lock, &waiter, task_thread_info(task)); */
--
--	/* add waiting tasks to the end of the waitqueue (FIFO): */
--	list_add_tail(&waiter.list, &lock->wait_list);
--	waiter.task = task;
--
--	if (MUTEX_SHOW_NO_WAITER(lock) && (atomic_xchg(&lock->count, -1) == 1))
--		goto done;
--
--	lock_contended(&lock->dep_map, ip);
--
--	for (;;) {
--		/*
--		 * Lets try to take the lock again - this is needed even if
--		 * we get here for the first time (shortly after failing to
--		 * acquire the lock), to make sure that we get a wakeup once
--		 * it's unlocked. Later on, if we sleep, this is the
--		 * operation that gives us the lock. We xchg it to -1, so
--		 * that when we release the lock, we properly wake up the
--		 * other waiters:
--		 */
--		if (MUTEX_SHOW_NO_WAITER(lock) &&
--		   (atomic_xchg(&lock->count, -1) == 1))
--			break;
--
--		/*
--		 * got a signal? (This code gets eliminated in the
--		 * TASK_UNINTERRUPTIBLE case.)
--		 */
--		if (unlikely(signal_pending_state(state, task))) {
--			ret = -EINTR;
--			goto err;
--		}
--
--		if (!__builtin_constant_p(ww_ctx == NULL) && ww_ctx->acquired > 0) {
--			ret = __mutex_lock_check_stamp(lock, ww_ctx);
--			if (ret)
--				goto err;
--		}
--
--		__set_task_state(task, state);
--
--		/* didn't get the lock, go to sleep: */
--		spin_unlock_mutex(&lock->wait_lock, flags);
--		backport_schedule_preempt_disabled();
--		spin_lock_mutex(&lock->wait_lock, flags);
--	}
--
--done:
--	lock_acquired(&lock->dep_map, ip);
--	/* got the lock - rejoice! */
--	mutex_remove_waiter(lock, &waiter, current_thread_info());
--	mutex_set_owner(lock);
--
--	if (!__builtin_constant_p(ww_ctx == NULL)) {
--		struct ww_mutex *ww = container_of(lock,
--						      struct ww_mutex,
--						      base);
--		struct mutex_waiter *cur;
--
--		/*
--		 * This branch gets optimized out for the common case,
--		 * and is only important for ww_mutex_lock.
--		 */
--
--		ww_mutex_lock_acquired(ww, ww_ctx);
--		ww->ctx = ww_ctx;
--
--		/*
--		 * Give any possible sleeping processes the chance to wake up,
--		 * so they can recheck if they have to back off.
--		 */
--		list_for_each_entry(cur, &lock->wait_list, list) {
--			/* debug_mutex_wake_waiter(lock, cur); */
--			wake_up_process(cur->task);
--		}
--	}
--
--	/* set it to 0 if there are no waiters left: */
--	if (likely(list_empty(&lock->wait_list)))
--		atomic_set(&lock->count, 0);
--
--	spin_unlock_mutex(&lock->wait_lock, flags);
--
--	/* debug_mutex_free_waiter(&waiter); */
--	preempt_enable();
--
--	return 0;
--
--err:
--	mutex_remove_waiter(lock, &waiter, task_thread_info(task));
--	spin_unlock_mutex(&lock->wait_lock, flags);
--	/* debug_mutex_free_waiter(&waiter); */
--	mutex_release(&lock->dep_map, 1, ip);
--	preempt_enable();
--	return ret;
--}
--
--static noinline int __sched
--__ww_mutex_lock_slowpath(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
--{
--	return __backport_mutex_lock_common(&lock->base, TASK_UNINTERRUPTIBLE, 0,
--					    NULL, _RET_IP_, ctx);
--}
--
--static noinline int __sched
--__ww_mutex_lock_interruptible_slowpath(struct ww_mutex *lock,
--					    struct ww_acquire_ctx *ctx)
--{
--	return __backport_mutex_lock_common(&lock->base, TASK_INTERRUPTIBLE, 0,
--					    NULL, _RET_IP_, ctx);
--}
--
--/**
-- * __mutex_fastpath_lock_retval - try to take the lock by moving the count
-- *				  from 1 to a 0 value
-- * @count: pointer of type atomic_t
-- *
-- * For backporting purposes we can't use the older kernel's
-- * __mutex_fastpath_lock_retval() since upon failure of a fastpath
-- * lock we want to call our a failure routine with more than one argument, in
-- * this case the context for ww mutexes. Refer to commit a41b56ef the
-- * argument increase. It'd be painful to backport all asm code for the
-- * supported architectures so instead lets penalize the backport ww mutex
-- * fastpath lock with the not so efficient generic atomic_dec_return()
-- * implementation.
-- *
-- * Change the count from 1 to a value lower than 1. This function returns 0
-- * if the fastpath succeeds, or -1 otherwise.
-- */
--static inline int
--__backport_mutex_fastpath_lock_retval(atomic_t *count)
--{
--	if (unlikely(atomic_dec_return(count) < 0))
--		return -1;
--	return 0;
--}
--
--int __sched
--__ww_mutex_lock(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
--{
--	int ret;
--
--	might_sleep();
--
--	ret = __backport_mutex_fastpath_lock_retval(&lock->base.count);
--
--	if (likely(!ret)) {
--		ww_mutex_set_context_fastpath(lock, ctx);
--		mutex_set_owner(&lock->base);
--	} else
--		ret = __ww_mutex_lock_slowpath(lock, ctx);
--	return ret;
--}
--EXPORT_SYMBOL_GPL(__ww_mutex_lock);
--
--int __sched
--__ww_mutex_lock_interruptible(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
--{
--	int ret;
--
--	might_sleep();
--
--	ret = __backport_mutex_fastpath_lock_retval(&lock->base.count);
--
--	if (likely(!ret)) {
--		ww_mutex_set_context_fastpath(lock, ctx);
--		mutex_set_owner(&lock->base);
--	} else
--		ret = __ww_mutex_lock_interruptible_slowpath(lock, ctx);
--	return ret;
--}
--EXPORT_SYMBOL_GPL(__ww_mutex_lock_interruptible);
+diff --git a/patches/collateral-evolutions/drm/02-revert-vm_mmap/drivers_gpu_drm_drm_bufs.patch b/patches/collateral-evolutions/drm/02-revert-vm_mmap/drivers_gpu_drm_drm_bufs.patch
+index 5626d43..c1af648 100644
+--- a/patches/collateral-evolutions/drm/02-revert-vm_mmap/drivers_gpu_drm_drm_bufs.patch
++++ b/patches/collateral-evolutions/drm/02-revert-vm_mmap/drivers_gpu_drm_drm_bufs.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/gpu/drm/drm_bufs.c
+ +++ b/drivers/gpu/drm/drm_bufs.c
+-@@ -1551,6 +1551,20 @@ int drm_mapbufs(struct drm_device *dev,
++@@ -1406,6 +1406,20 @@ int drm_mapbufs(struct drm_device *dev,
+  				retcode = -EINVAL;
+  				goto done;
+  			}
+@@ -21,7 +21,7 @@
+  			virtual = vm_mmap(file_priv->filp, 0, map->size,
+  					  PROT_READ | PROT_WRITE,
+  					  MAP_SHARED,
+-@@ -1559,6 +1573,7 @@ int drm_mapbufs(struct drm_device *dev,
++@@ -1414,6 +1428,7 @@ int drm_mapbufs(struct drm_device *dev,
+  			virtual = vm_mmap(file_priv->filp, 0, dma->byte_count,
+  					  PROT_READ | PROT_WRITE,
+  					  MAP_SHARED, 0);
+diff --git a/patches/collateral-evolutions/drm/02-revert-vm_mmap/drivers_gpu_drm_i810_i810_dma.patch b/patches/collateral-evolutions/drm/02-revert-vm_mmap/drivers_gpu_drm_i810_i810_dma.patch
+index ac6a4a0..e3d60b3 100644
+--- a/patches/collateral-evolutions/drm/02-revert-vm_mmap/drivers_gpu_drm_i810_i810_dma.patch
++++ b/patches/collateral-evolutions/drm/02-revert-vm_mmap/drivers_gpu_drm_i810_i810_dma.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/gpu/drm/i810/i810_dma.c
+ +++ b/drivers/gpu/drm/i810/i810_dma.c
+-@@ -135,9 +135,17 @@ static int i810_map_buffer(struct drm_bu
++@@ -134,9 +134,17 @@ static int i810_map_buffer(struct drm_bu
+  	old_fops = file_priv->filp->f_op;
+  	file_priv->filp->f_op = &i810_buffer_fops;
+  	dev_priv->mmap_buffer = buf;
+@@ -18,7 +18,7 @@
+  	dev_priv->mmap_buffer = NULL;
+  	file_priv->filp->f_op = old_fops;
+  	if (IS_ERR(buf_priv->virtual)) {
+-@@ -158,9 +166,15 @@ static int i810_unmap_buffer(struct drm_
++@@ -157,9 +165,15 @@ static int i810_unmap_buffer(struct drm_
+  	if (buf_priv->currently_mapped != I810_BUF_MAPPED)
+  		return -EINVAL;
+  
+diff --git a/patches/collateral-evolutions/drm/14-shrinkers-api/drivers_gpu_drm_i915.patch b/patches/collateral-evolutions/drm/14-shrinkers-api/drivers_gpu_drm_i915.patch
+index aefc83f..1bb5fb2 100644
+--- a/patches/collateral-evolutions/drm/14-shrinkers-api/drivers_gpu_drm_i915.patch
++++ b/patches/collateral-evolutions/drm/14-shrinkers-api/drivers_gpu_drm_i915.patch
+@@ -42,7 +42,7 @@
+  static long i915_gem_purge(struct drm_i915_private *dev_priv, long target);
+  static long i915_gem_shrink_all(struct drm_i915_private *dev_priv);
+  static void i915_gem_object_truncate(struct drm_i915_gem_object *obj);
+-@@ -4554,8 +4559,12 @@ i915_gem_load(struct drm_device *dev)
++@@ -4559,8 +4564,12 @@ i915_gem_load(struct drm_device *dev)
+  
+  	dev_priv->mm.interruptible = true;
+  
+@@ -55,7 +55,7 @@
+  	dev_priv->mm.inactive_shrinker.seeks = DEFAULT_SEEKS;
+  	register_shrinker(&dev_priv->mm.inactive_shrinker);
+  }
+-@@ -4778,8 +4787,14 @@ static bool mutex_is_locked_by(struct mu
++@@ -4783,8 +4792,14 @@ static bool mutex_is_locked_by(struct mu
+  #endif
+  }
+  
+@@ -70,7 +70,7 @@
+  {
+  	struct drm_i915_private *dev_priv =
+  		container_of(shrinker,
+-@@ -4788,7 +4803,12 @@ i915_gem_inactive_count(struct shrinker
++@@ -4793,7 +4808,12 @@ i915_gem_inactive_count(struct shrinker
+  	struct drm_device *dev = dev_priv->dev;
+  	struct drm_i915_gem_object *obj;
+  	bool unlock = true;
+@@ -83,7 +83,7 @@
+  
+  	if (!mutex_trylock(&dev->struct_mutex)) {
+  		if (!mutex_is_locked_by(&dev->struct_mutex, current))
+-@@ -4800,6 +4820,17 @@ i915_gem_inactive_count(struct shrinker
++@@ -4805,6 +4825,17 @@ i915_gem_inactive_count(struct shrinker
+  		unlock = false;
+  	}
+  
+@@ -101,7 +101,7 @@
+  	count = 0;
+  	list_for_each_entry(obj, &dev_priv->mm.unbound_list, global_list)
+  		if (obj->pages_pin_count == 0)
+-@@ -4879,6 +4910,7 @@ unsigned long i915_gem_obj_size(struct d
++@@ -4884,6 +4915,7 @@ unsigned long i915_gem_obj_size(struct d
+  	return 0;
+  }
+  
+@@ -109,7 +109,7 @@
+  static unsigned long
+  i915_gem_inactive_scan(struct shrinker *shrinker, struct shrink_control *sc)
+  {
+-@@ -4912,3 +4944,4 @@ i915_gem_inactive_scan(struct shrinker *
++@@ -4917,3 +4949,4 @@ i915_gem_inactive_scan(struct shrinker *
+  		mutex_unlock(&dev->struct_mutex);
+  	return freed;
+  }
+diff --git a/patches/collateral-evolutions/network/0001-netdev_ops/mac80211_hwsim.patch b/patches/collateral-evolutions/network/0001-netdev_ops/mac80211_hwsim.patch
+index 6eb68e7..dff66ab 100644
+--- a/patches/collateral-evolutions/network/0001-netdev_ops/mac80211_hwsim.patch
++++ b/patches/collateral-evolutions/network/0001-netdev_ops/mac80211_hwsim.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/net/wireless/mac80211_hwsim.c
+ +++ b/drivers/net/wireless/mac80211_hwsim.c
+-@@ -1739,7 +1739,7 @@ static const struct net_device_ops hwsim
++@@ -1740,7 +1740,7 @@ static const struct net_device_ops hwsim
+  
+  static void hwsim_mon_setup(struct net_device *dev)
+  {
+diff --git a/patches/collateral-evolutions/network/0005-netlink-portid/mac80211_hwsim.patch b/patches/collateral-evolutions/network/0005-netlink-portid/mac80211_hwsim.patch
+index e7b9e16..407de9b 100644
+--- a/patches/collateral-evolutions/network/0005-netlink-portid/mac80211_hwsim.patch
++++ b/patches/collateral-evolutions/network/0005-netlink-portid/mac80211_hwsim.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/net/wireless/mac80211_hwsim.c
+ +++ b/drivers/net/wireless/mac80211_hwsim.c
+-@@ -2063,10 +2063,10 @@ static int hwsim_register_received_nl(st
++@@ -2064,10 +2064,10 @@ static int hwsim_register_received_nl(st
+  	if (info == NULL)
+  		goto out;
+  
+@@ -13,7 +13,7 @@
+  
+  	return 0;
+  out:
+-@@ -2103,7 +2103,7 @@ static int mac80211_hwsim_netlink_notify
++@@ -2104,7 +2104,7 @@ static int mac80211_hwsim_netlink_notify
+  	if (state != NETLINK_URELEASE)
+  		return NOTIFY_DONE;
+  
+diff --git a/patches/collateral-evolutions/network/0005-netlink-portid/nl80211.patch b/patches/collateral-evolutions/network/0005-netlink-portid/nl80211.patch
+index 26ddf9f..e72e590 100644
+--- a/patches/collateral-evolutions/network/0005-netlink-portid/nl80211.patch
++++ b/patches/collateral-evolutions/network/0005-netlink-portid/nl80211.patch
+@@ -126,7 +126,7 @@
+  				cb->nlh->nlmsg_seq, NLM_F_MULTI,
+  				wdev->netdev, &survey) < 0)
+  			goto out;
+-@@ -6665,7 +6665,7 @@ static int nl80211_testmode_dump(struct
++@@ -6676,7 +6676,7 @@ static int nl80211_testmode_dump(struct
+  	}
+  
+  	while (1) {
+@@ -135,7 +135,7 @@
+  					   cb->nlh->nlmsg_seq, NLM_F_MULTI,
+  					   NL80211_CMD_TESTMODE);
+  		struct nlattr *tmdata;
+-@@ -6747,7 +6747,7 @@ struct sk_buff *cfg80211_testmode_alloc_
++@@ -6758,7 +6758,7 @@ struct sk_buff *cfg80211_testmode_alloc_
+  		return NULL;
+  
+  	return __cfg80211_testmode_alloc_skb(rdev, approxlen,
+@@ -144,7 +144,7 @@
+  				rdev->testmode_info->snd_seq,
+  				GFP_KERNEL);
+  }
+-@@ -7115,7 +7115,7 @@ static int nl80211_remain_on_channel(str
++@@ -7126,7 +7126,7 @@ static int nl80211_remain_on_channel(str
+  	if (!msg)
+  		return -ENOMEM;
+  
+@@ -153,7 +153,7 @@
+  			     NL80211_CMD_REMAIN_ON_CHANNEL);
+  	if (!hdr) {
+  		err = -ENOBUFS;
+-@@ -7333,7 +7333,7 @@ static int nl80211_register_mgmt(struct
++@@ -7344,7 +7344,7 @@ static int nl80211_register_mgmt(struct
+  	if (!rdev->ops->mgmt_tx)
+  		return -EOPNOTSUPP;
+  
+@@ -162,7 +162,7 @@
+  			nla_data(info->attrs[NL80211_ATTR_FRAME_MATCH]),
+  			nla_len(info->attrs[NL80211_ATTR_FRAME_MATCH]));
+  }
+-@@ -7414,7 +7414,7 @@ static int nl80211_tx_mgmt(struct sk_buf
++@@ -7425,7 +7425,7 @@ static int nl80211_tx_mgmt(struct sk_buf
+  		if (!msg)
+  			return -ENOMEM;
+  
+@@ -171,7 +171,7 @@
+  				     NL80211_CMD_FRAME);
+  		if (!hdr) {
+  			err = -ENOBUFS;
+-@@ -7528,7 +7528,7 @@ static int nl80211_get_power_save(struct
++@@ -7539,7 +7539,7 @@ static int nl80211_get_power_save(struct
+  	if (!msg)
+  		return -ENOMEM;
+  
+@@ -180,7 +180,7 @@
+  			     NL80211_CMD_GET_POWER_SAVE);
+  	if (!hdr) {
+  		err = -ENOBUFS;
+-@@ -7838,7 +7838,7 @@ static int nl80211_get_wowlan(struct sk_
++@@ -7846,7 +7846,7 @@ static int nl80211_get_wowlan(struct sk_
+  	if (!msg)
+  		return -ENOMEM;
+  
+@@ -189,7 +189,7 @@
+  			     NL80211_CMD_GET_WOWLAN);
+  	if (!hdr)
+  		goto nla_put_failure;
+-@@ -8267,7 +8267,7 @@ static int nl80211_get_coalesce(struct s
++@@ -8275,7 +8275,7 @@ static int nl80211_get_coalesce(struct s
+  	if (!msg)
+  		return -ENOMEM;
+  
+@@ -198,7 +198,7 @@
+  			     NL80211_CMD_GET_COALESCE);
+  	if (!hdr)
+  		goto nla_put_failure;
+-@@ -8520,7 +8520,7 @@ static int nl80211_register_unexpected_f
++@@ -8528,7 +8528,7 @@ static int nl80211_register_unexpected_f
+  	if (wdev->ap_unexpected_nlportid)
+  		return -EBUSY;
+  
+@@ -207,7 +207,7 @@
+  	return 0;
+  }
+  
+-@@ -8550,7 +8550,7 @@ static int nl80211_probe_client(struct s
++@@ -8558,7 +8558,7 @@ static int nl80211_probe_client(struct s
+  	if (!msg)
+  		return -ENOMEM;
+  
+@@ -216,7 +216,7 @@
+  			     NL80211_CMD_PROBE_CLIENT);
+  	if (!hdr) {
+  		err = -ENOBUFS;
+-@@ -8593,13 +8593,13 @@ static int nl80211_register_beacons(stru
++@@ -8601,13 +8601,13 @@ static int nl80211_register_beacons(stru
+  	/* First, check if already registered. */
+  	spin_lock_bh(&rdev->beacon_registrations_lock);
+  	list_for_each_entry(reg, &rdev->beacon_registrations, list) {
+@@ -232,7 +232,7 @@
+  	list_add(&nreg->list, &rdev->beacon_registrations);
+  
+  	spin_unlock_bh(&rdev->beacon_registrations_lock);
+-@@ -8666,7 +8666,7 @@ static int nl80211_get_protocol_features
++@@ -8674,7 +8674,7 @@ static int nl80211_get_protocol_features
+  	if (!msg)
+  		return -ENOMEM;
+  
+@@ -241,7 +241,7 @@
+  			     NL80211_CMD_GET_PROTOCOL_FEATURES);
+  	if (!hdr)
+  		goto nla_put_failure;
+-@@ -8741,7 +8741,7 @@ static int nl80211_crit_protocol_start(s
++@@ -8749,7 +8749,7 @@ static int nl80211_crit_protocol_start(s
+  
+  	ret = rdev_crit_proto_start(rdev, wdev, proto, duration);
+  	if (!ret)
+@@ -250,7 +250,7 @@
+  
+  	return ret;
+  }
+-@@ -11140,12 +11140,12 @@ static int nl80211_netlink_notify(struct
++@@ -11148,12 +11148,12 @@ static int nl80211_netlink_notify(struct
+  
+  	list_for_each_entry_rcu(rdev, &cfg80211_rdev_list, list) {
+  		list_for_each_entry_rcu(wdev, &rdev->wdev_list, list)
+diff --git a/patches/collateral-evolutions/network/09-cfg80211-wext-padding/include_net_cfg80211.patch b/patches/collateral-evolutions/network/09-cfg80211-wext-padding/include_net_cfg80211.patch
+index e8cc868..7840152 100644
+--- a/patches/collateral-evolutions/network/09-cfg80211-wext-padding/include_net_cfg80211.patch
++++ b/patches/collateral-evolutions/network/09-cfg80211-wext-padding/include_net_cfg80211.patch
+@@ -1,6 +1,6 @@
+ --- a/include/net/cfg80211.h
+ +++ b/include/net/cfg80211.h
+-@@ -2768,6 +2768,9 @@ struct wiphy_coalesce_support {
++@@ -2769,6 +2769,9 @@ struct wiphy_coalesce_support {
+  struct wiphy {
+  	/* assign these fields before you register the wiphy */
+  
+diff --git a/patches/collateral-evolutions/network/09-threaded-irq/drivers_net_wireless_iwlwifi_pcie_trans.patch b/patches/collateral-evolutions/network/09-threaded-irq/drivers_net_wireless_iwlwifi_pcie_trans.patch
+index 7193f16..d7f2911 100644
+--- a/patches/collateral-evolutions/network/09-threaded-irq/drivers_net_wireless_iwlwifi_pcie_trans.patch
++++ b/patches/collateral-evolutions/network/09-threaded-irq/drivers_net_wireless_iwlwifi_pcie_trans.patch
+@@ -22,20 +22,20 @@
+  	iwl_pcie_free_ict(trans);
+  
+  	pci_disable_msi(trans_pcie->pci_dev);
+-@@ -1491,9 +1500,16 @@ struct iwl_trans *iwl_trans_pcie_alloc(s
++@@ -1493,9 +1502,16 @@ struct iwl_trans *iwl_trans_pcie_alloc(s
+  	if (iwl_pcie_alloc_ict(trans))
+  		goto out_free_cmd_pool;
+  
+ +#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)
+-+	if (compat_request_threaded_irq(&trans_pcie->irq_compat,
+-+					pdev->irq, iwl_pcie_isr_ict,
+-+					iwl_pcie_irq_handler,
+-+					IRQF_SHARED, DRV_NAME, trans)) {
+++	err = compat_request_threaded_irq(&trans_pcie->irq_compat,
+++					  pdev->irq, iwl_pcie_isr_ict,
+++					  iwl_pcie_irq_handler,
+++					  IRQF_SHARED, DRV_NAME, trans);
+ +#else
+- 	if (request_threaded_irq(pdev->irq, iwl_pcie_isr_ict,
+- 				 iwl_pcie_irq_handler,
+- 				 IRQF_SHARED, DRV_NAME, trans)) {
++ 	err = request_threaded_irq(pdev->irq, iwl_pcie_isr_ict,
++ 				   iwl_pcie_irq_handler,
++ 				   IRQF_SHARED, DRV_NAME, trans);
+ +#endif
++ 	if (err) {
+  		IWL_ERR(trans, "Error allocating IRQ %d\n", pdev->irq);
+  		goto out_free_ict;
+- 	}
+diff --git a/patches/collateral-evolutions/network/12-mac80211-disable-tx-status/net_mac80211_tx.patch b/patches/collateral-evolutions/network/12-mac80211-disable-tx-status/net_mac80211_tx.patch
+index 70ea514..2268b00 100644
+--- a/patches/collateral-evolutions/network/12-mac80211-disable-tx-status/net_mac80211_tx.patch
++++ b/patches/collateral-evolutions/network/12-mac80211-disable-tx-status/net_mac80211_tx.patch
+@@ -1,6 +1,6 @@
+ --- a/net/mac80211/tx.c
+ +++ b/net/mac80211/tx.c
+-@@ -1990,6 +1990,7 @@ netdev_tx_t ieee80211_subif_start_xmit(s
++@@ -1992,6 +1992,7 @@ netdev_tx_t ieee80211_subif_start_xmit(s
+  		goto fail_rcu;
+  	}
+  
+@@ -8,7 +8,7 @@
+  	if (unlikely(!multicast && skb->sk &&
+  		     skb_shinfo(skb)->tx_flags & SKBTX_WIFI_STATUS)) {
+  		struct sk_buff *orig_skb = skb;
+-@@ -2018,6 +2019,7 @@ netdev_tx_t ieee80211_subif_start_xmit(s
++@@ -2020,6 +2021,7 @@ netdev_tx_t ieee80211_subif_start_xmit(s
+  			skb = orig_skb;
+  		}
+  	}
+diff --git a/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_rfcomm_tty.patch b/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_rfcomm_tty.patch
+index 52e4945..ee71745 100644
+--- a/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_rfcomm_tty.patch
++++ b/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_rfcomm_tty.patch
+@@ -1,6 +1,6 @@
+ --- a/net/bluetooth/rfcomm/tty.c
+ +++ b/net/bluetooth/rfcomm/tty.c
+-@@ -809,7 +809,11 @@ static int rfcomm_tty_write_room(struct
++@@ -794,7 +794,11 @@ static int rfcomm_tty_write_room(struct
+  	return room;
+  }
+  
+@@ -12,8 +12,8 @@
+  {
+  	BT_DBG("tty %p cmd 0x%02x", tty, cmd);
+  
+-@@ -1068,7 +1072,11 @@ static void rfcomm_tty_hangup(struct tty
+- 	}
++@@ -1047,7 +1051,11 @@ static void rfcomm_tty_hangup(struct tty
++ 		tty_port_put(&dev->port);
+  }
+  
+ +#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,38))
+@@ -24,7 +24,7 @@
+  {
+  	struct rfcomm_dev *dev = (struct rfcomm_dev *) tty->driver_data;
+  
+-@@ -1077,7 +1085,11 @@ static int rfcomm_tty_tiocmget(struct tt
++@@ -1056,7 +1064,11 @@ static int rfcomm_tty_tiocmget(struct tt
+  	return dev->modem_status;
+  }
+  
+diff --git a/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_sco.patch b/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_sco.patch
+index bc63111..bc0c128 100644
+--- a/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_sco.patch
++++ b/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_sco.patch
+@@ -1,6 +1,6 @@
+ --- a/net/bluetooth/sco.c
+ +++ b/net/bluetooth/sco.c
+-@@ -423,8 +423,12 @@ static struct sock *sco_sock_alloc(struc
++@@ -430,8 +430,12 @@ static struct sock *sco_sock_alloc(struc
+  	return sk;
+  }
+  
+@@ -13,7 +13,7 @@
+  {
+  	struct sock *sk;
+  
+-@@ -711,7 +715,11 @@ static int sco_sock_recvmsg(struct kiocb
++@@ -726,7 +730,11 @@ static int sco_sock_recvmsg(struct kiocb
+  	return bt_sock_recvmsg(iocb, sock, msg, len, flags);
+  }
+  
+@@ -24,4 +24,4 @@
+ +#endif
+  {
+  	struct sock *sk = sock->sk;
+- 	int err = 0;
++ 	int len, err = 0;
+diff --git a/patches/collateral-evolutions/network/22-multiqueue/net_mac80211_tx.patch b/patches/collateral-evolutions/network/22-multiqueue/net_mac80211_tx.patch
+index 565f0e2..e0e88ad 100644
+--- a/patches/collateral-evolutions/network/22-multiqueue/net_mac80211_tx.patch
++++ b/patches/collateral-evolutions/network/22-multiqueue/net_mac80211_tx.patch
+@@ -1,6 +1,6 @@
+ --- a/net/mac80211/tx.c
+ +++ b/net/mac80211/tx.c
+-@@ -1473,6 +1473,10 @@ void ieee80211_xmit(struct ieee80211_sub
++@@ -1475,6 +1475,10 @@ void ieee80211_xmit(struct ieee80211_sub
+  		}
+  	}
+  
+diff --git a/patches/collateral-evolutions/network/25-multicast-list_head/include_net_mac80211.patch b/patches/collateral-evolutions/network/25-multicast-list_head/include_net_mac80211.patch
+index a3494e9..43265cf 100644
+--- a/patches/collateral-evolutions/network/25-multicast-list_head/include_net_mac80211.patch
++++ b/patches/collateral-evolutions/network/25-multicast-list_head/include_net_mac80211.patch
+@@ -1,6 +1,6 @@
+ --- a/include/net/mac80211.h
+ +++ b/include/net/mac80211.h
+-@@ -2681,14 +2681,24 @@ struct ieee80211_ops {
++@@ -2694,14 +2694,24 @@ struct ieee80211_ops {
+  	void (*stop_ap)(struct ieee80211_hw *hw, struct ieee80211_vif *vif);
+  
+  	u64 (*prepare_multicast)(struct ieee80211_hw *hw,
+diff --git a/patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_ieee80211_i.patch b/patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_ieee80211_i.patch
+index 3e32c54..1f2540b 100644
+--- a/patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_ieee80211_i.patch
++++ b/patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_ieee80211_i.patch
+@@ -1,6 +1,6 @@
+ --- a/net/mac80211/ieee80211_i.h
+ +++ b/net/mac80211/ieee80211_i.h
+-@@ -964,7 +964,12 @@ struct ieee80211_local {
++@@ -961,7 +961,12 @@ struct ieee80211_local {
+  	struct work_struct reconfig_filter;
+  
+  	/* aggregated multicast list */
+diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_rt2x00_rt2800usb.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_rt2x00_rt2800usb.patch
+index 1674af0..2f0dbf8 100644
+--- a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_rt2x00_rt2800usb.patch
++++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_rt2x00_rt2800usb.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/net/wireless/rt2x00/rt2800usb.c
+ +++ b/drivers/net/wireless/rt2x00/rt2800usb.c
+-@@ -1387,7 +1387,9 @@ static struct usb_driver rt2800usb_drive
++@@ -1378,7 +1378,9 @@ static struct usb_driver rt2800usb_drive
+  	.suspend	= rt2x00usb_suspend,
+  	.resume		= rt2x00usb_resume,
+  	.reset_resume	= rt2x00usb_resume,
+diff --git a/patches/collateral-evolutions/network/63-tty-termios/net_bluetooth_rfcomm_tty.patch b/patches/collateral-evolutions/network/63-tty-termios/net_bluetooth_rfcomm_tty.patch
+index cfc21d5..165577a 100644
+--- a/patches/collateral-evolutions/network/63-tty-termios/net_bluetooth_rfcomm_tty.patch
++++ b/patches/collateral-evolutions/network/63-tty-termios/net_bluetooth_rfcomm_tty.patch
+@@ -1,6 +1,6 @@
+ --- a/net/bluetooth/rfcomm/tty.c
+ +++ b/net/bluetooth/rfcomm/tty.c
+-@@ -860,7 +860,11 @@ static int rfcomm_tty_ioctl(struct tty_s
++@@ -845,7 +845,11 @@ static int rfcomm_tty_ioctl(struct tty_s
+  
+  static void rfcomm_tty_set_termios(struct tty_struct *tty, struct ktermios *old)
+  {
+diff --git a/patches/collateral-evolutions/network/69-wowlan-no-socket/net_wireless_nl80211.patch b/patches/collateral-evolutions/network/69-wowlan-no-socket/net_wireless_nl80211.patch
+index 304ecfe..22e6ac0 100644
+--- a/patches/collateral-evolutions/network/69-wowlan-no-socket/net_wireless_nl80211.patch
++++ b/patches/collateral-evolutions/network/69-wowlan-no-socket/net_wireless_nl80211.patch
+@@ -1,6 +1,6 @@
+ --- a/net/wireless/nl80211.c
+ +++ b/net/wireless/nl80211.c
+-@@ -7982,7 +7982,7 @@ static int nl80211_parse_wowlan_tcp(stru
++@@ -7990,7 +7990,7 @@ static int nl80211_parse_wowlan_tcp(stru
+  		port = nla_get_u16(tb[NL80211_WOWLAN_TCP_SRC_PORT]);
+  	else
+  		port = 0;
+diff --git a/patches/collateral-evolutions/network/77-led-blink-api/mac80211.patch b/patches/collateral-evolutions/network/77-led-blink-api/mac80211.patch
+index c06ba67..72f4248 100644
+--- a/patches/collateral-evolutions/network/77-led-blink-api/mac80211.patch
++++ b/patches/collateral-evolutions/network/77-led-blink-api/mac80211.patch
+@@ -1,6 +1,6 @@
+ --- a/net/mac80211/ieee80211_i.h
+ +++ b/net/mac80211/ieee80211_i.h
+-@@ -1106,6 +1106,9 @@ struct ieee80211_local {
++@@ -1103,6 +1103,9 @@ struct ieee80211_local {
+  	u32 dot11TransmittedFrameCount;
+  
+  #ifdef CONFIG_MAC80211_LEDS
 -- 
 1.7.10.4
 
