@@ -1,15 +1,15 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:50912 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:50936 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752473Ab3JEWo4 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 5 Oct 2013 18:44:56 -0400
+	id S1752494Ab3JEWpI (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 5 Oct 2013 18:45:08 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org, ozancag@gmail.com,
 	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [RFC 10/15] backports: remove ktime_get_monotonic_offset()
-Date: Sun,  6 Oct 2013 00:43:59 +0200
-Message-Id: <1381013044-7724-11-git-send-email-hauke@hauke-m.de> (sfid-20131006_004457_677220_BE8071FF)
+Subject: [RFC 15/15] backports: remove shmem_read_mapping_page_gfp()
+Date: Sun,  6 Oct 2013 00:44:04 +0200
+Message-Id: <1381013044-7724-16-git-send-email-hauke@hauke-m.de> (sfid-20131006_004510_855320_FED30B8E)
 In-Reply-To: <1381013044-7724-1-git-send-email-hauke@hauke-m.de>
 References: <1381013044-7724-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
@@ -19,50 +19,93 @@ This was only needed for some of the DRM drivers, remove it.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/hrtimer.h |   11 -----------
- backport/compat/compat-3.5.c              |   14 --------------
- 2 files changed, 25 deletions(-)
- delete mode 100644 backport/backport-include/linux/hrtimer.h
+ backport/backport-include/linux/shmem_fs.h |   39 ----------------------------
+ backport/compat/compat-3.0.c               |   26 -------------------
+ 2 files changed, 65 deletions(-)
+ delete mode 100644 backport/backport-include/linux/shmem_fs.h
 
-diff --git a/backport/backport-include/linux/hrtimer.h b/backport/backport-include/linux/hrtimer.h
+diff --git a/backport/backport-include/linux/shmem_fs.h b/backport/backport-include/linux/shmem_fs.h
 deleted file mode 100644
-index c099dd4..0000000
---- a/backport/backport-include/linux/hrtimer.h
+index 4d3964e..0000000
+--- a/backport/backport-include/linux/shmem_fs.h
 +++ /dev/null
-@@ -1,11 +0,0 @@
--#ifndef __BACKPORT_LINUX_HRTIMER_H
--#define __BACKPORT_LINUX_HRTIMER_H
--#include_next <linux/hrtimer.h>
--#include <linux/version.h>
+@@ -1,39 +0,0 @@
+-#ifndef __BACKPORT_LINUX_SHMEM_FS_H
+-#define __BACKPORT_LINUX_SHMEM_FS_H
+-#include_next <linux/shmem_fs.h>
 -
--#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
--#define ktime_get_monotonic_offset LINUX_BACKPORT(ktime_get_monotonic_offset)
--extern ktime_t ktime_get_monotonic_offset(void);
+-
+-#if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0)
+-/* This pulls-in a lot of non-exported symbol backports
+- * on kernels older than 2.6.32. There's no harm for not
+- * making this available on kernels < 2.6.32. */
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32))
+-#include <linux/pagemap.h>
+-/* This backports the 2nd part of:
+- *
+- * commit d9d90e5eb70e09903dadff42099b6c948f814050
+- * Author: Hugh Dickins <hughd@google.com>
+- * Date:   Mon Jun 27 16:18:04 2011 -0700
+- *
+- *	tmpfs: add shmem_read_mapping_page_gfp
+- *
+- * First part is in compat-3.0.c.
+- */
+-#define shmem_read_mapping_page_gfp LINUX_BACKPORT(shmem_read_mapping_page_gfp)
+-extern struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
+-						pgoff_t index, gfp_t gfp);
+-
+-
+-#define shmem_read_mapping_page LINUX_BACKPORT(shmem_read_mapping_page)
+-static inline struct page *shmem_read_mapping_page(
+-                               struct address_space *mapping, pgoff_t index)
+-{
+-       return shmem_read_mapping_page_gfp(mapping, index,
+-                                       mapping_gfp_mask(mapping));
+-}
+-#endif
+-#endif
 -#endif
 -
--#endif /* __BACKPORT_LINUX_HRTIMER_H */
-diff --git a/backport/compat/compat-3.5.c b/backport/compat/compat-3.5.c
-index 7068cfb..95f52b9 100644
---- a/backport/compat/compat-3.5.c
-+++ b/backport/compat/compat-3.5.c
-@@ -64,17 +64,3 @@ int overflowgid = DEFAULT_OVERFLOWGID;
- EXPORT_SYMBOL_GPL(overflowuid);
- EXPORT_SYMBOL_GPL(overflowgid);
- #endif
+-#endif /* __BACKPORT_LINUX_SHMEM_FS_H */
+diff --git a/backport/compat/compat-3.0.c b/backport/compat/compat-3.0.c
+index 0a993d7..9841019 100644
+--- a/backport/compat/compat-3.0.c
++++ b/backport/compat/compat-3.0.c
+@@ -12,32 +12,6 @@
+ #include <linux/compat.h>
+ #include <linux/if_ether.h>
+ 
+-#if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
+-/* This pulls-in a lot of non-exported symbol backports
+- * on kernels older than 2.6.32. There's no harm for not
+- * making this available on kernels < 2.6.32. */
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32))
+-#include <linux/pagemap.h>
+-#include <linux/shmem_fs.h>
 -
--/*
-- * We can't access the timekeeper static variable
-- * on older kernels so we're shit out of luck and
-- * have to rely on time that might jump. Upgrade
-- * if you want timestamps that don't jump, this
-- * important for DRM vblank and page flip event
-- * timestamps.
+-/* This backports:
+- *
+- * commit d9d90e5eb70e09903dadff42099b6c948f814050
+- * Author: Hugh Dickins <hughd@google.com>
+- * Date:   Mon Jun 27 16:18:04 2011 -0700
+- *
+- *	tmpfs: add shmem_read_mapping_page_gfp
 - */
--ktime_t ktime_get_monotonic_offset(void)
+-
+-struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
+-                                        pgoff_t index, gfp_t gfp)
 -{
--	return ktime_get();
+-       return read_cache_page_gfp(mapping, index, gfp);
 -}
--EXPORT_SYMBOL_GPL(ktime_get_monotonic_offset);
+-EXPORT_SYMBOL_GPL(shmem_read_mapping_page_gfp);
+-#endif
+-#endif
+-
+ int mac_pton(const char *s, u8 *mac)
+ {
+ 	int i;
 -- 
 1.7.10.4
 
