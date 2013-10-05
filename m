@@ -1,341 +1,74 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:52777 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:49583 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750937Ab3JUUQQ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 21 Oct 2013 16:16:16 -0400
-Message-ID: <52658B85.7040104@hauke-m.de> (sfid-20131021_221618_997055_1EF0492E)
-Date: Mon, 21 Oct 2013 22:16:05 +0200
+	id S1752222Ab3JENYr (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 5 Oct 2013 09:24:47 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH v4 8/8] gentree.py: add kernel upload support
-References: <1382346512-18694-1-git-send-email-mcgrof@do-not-panic.com> <1382346512-18694-9-git-send-email-mcgrof@do-not-panic.com>
-In-Reply-To: <1382346512-18694-9-git-send-email-mcgrof@do-not-panic.com>
-Content-Type: text/plain; charset=ISO-8859-1
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 4/8] backports: add tty_port_tty_wakeup()
+Date: Sat,  5 Oct 2013 15:23:51 +0200
+Message-Id: <1380979435-5430-5-git-send-email-hauke@hauke-m.de> (sfid-20131005_152449_159401_3F0C52CC)
+In-Reply-To: <1380979435-5430-1-git-send-email-hauke@hauke-m.de>
+References: <1380979435-5430-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 10/21/2013 11:08 AM, Luis R. Rodriguez wrote:
-> This streamlines our release process making it easier for
-> transitioning releases onto other backport developers.
-> 
-> Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
-> ---
->  gentree.py | 232 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 228 insertions(+), 4 deletions(-)
-> 
-> diff --git a/gentree.py b/gentree.py
-> index 2451472..42cf37d 100755
-> --- a/gentree.py
-> +++ b/gentree.py
-> @@ -4,6 +4,7 @@
->  #
->  
->  import argparse, sys, os, errno, shutil, re, subprocess
-> +import tarfile, bz2
->  
->  # find self
->  source_dir = os.path.abspath(os.path.dirname(__file__))
-> @@ -11,6 +12,8 @@ sys.path.append(source_dir)
->  # and import libraries we have
->  from lib import kconfig, patch, make
->  from lib import bpgit as git
-> +from lib import bpgpg as gpg
-> +from lib import bpkup as kup
->  
->  def read_copy_list(copyfile):
->      """
-> @@ -268,6 +271,169 @@ def git_debug_snapshot(args, name):
->          return
->      git.commit_all(name, tree=args.outdir)
->  
-> +def get_rel_spec_stable(rel):
-> +    """
-> +    Returns release specs for a linux-stable backports based release.
-> +    """
-> +    if ("rc" in rel):
-> +        m = re.match(r"(?P<VERSION>\d+)\.+" \
-> +                     "(?P<PATCHLEVEL>\d+)[.]*" \
-> +                     "(?P<SUBLEVEL>\d*)" \
-> +                     "[-rc]+(?P<RC_VERSION>\d+)\-+" \
-> +                     "(?P<RELMOD_UPDATE>\d+)[-]*" \
-> +                     "(?P<RELMOD_TYPE>[usnpc]*)", \
-> +                     rel)
-> +    else:
-> +        m = re.match(r"(?P<VERSION>\d+)\.+" \
-> +                     "(?P<PATCHLEVEL>\d+)[.]*" \
-> +                     "(?P<SUBLEVEL>\d*)\-+" \
-> +                     "(?P<RELMOD_UPDATE>\d+)[-]*" \
-> +                     "(?P<RELMOD_TYPE>[usnpc]*)", \
-> +                     rel)
-> +    if (not m):
-> +        return m
-> +    return m.groupdict()
-> +
-> +def get_rel_spec_next(rel):
-> +    """
-> +    Returns release specs for a linux-next backports based release.
-> +    """
-> +    m = re.match(r"(?P<DATE_VERSION>\d+)[-]*" \
-> +                 "(?P<RELMOD_UPDATE>\d*)[-]*" \
-> +                 "(?P<RELMOD_TYPE>[usnpc]*)", \
-> +                 rel)
-> +    if (not m):
-> +        return m
-> +    return m.groupdict()
-> +
-> +def get_rel_prep(rel):
-> +    """
-> +    Returns a dict with prep work details we need prior to
-> +    uploading a backports release to kernel.org
-> +    """
-> +    rel_specs = get_rel_spec_stable(rel)
-> +    is_stable = True
-> +    rel_tag = ""
-> +    paths = list()
-> +    if (not rel_specs):
-> +        rel_specs = get_rel_spec_next(rel)
-> +        if (not rel_specs):
-> +            sys.stdout.write("rel: %s\n" % rel)
-> +            return None
-> +        if (rel_specs['RELMOD_UPDATE'] == '0' or
-> +            rel_specs['RELMOD_UPDATE'] == '1'):
-> +            return None
-> +        is_stable = False
-> +        date = rel_specs['DATE_VERSION']
-> +        year = date[0:4]
-> +        if (len(year) != 4):
-> +            return None
-> +        month = date[4:6]
-> +        if (len(month) != 2):
-> +            return None
-> +        day = date[6:8]
-> +        if (len(day) != 2):
-> +            return None
-> +        paths.append(year)
-> +        paths.append(month)
-> +        paths.append(day)
-> +        rel_tag = "backports-" + rel.replace(rel_specs['RELMOD_TYPE'], "")
-> +    else:
-> +        ignore = "-"
-> +        if (not rel_specs['RELMOD_UPDATE']):
-> +            return None
-> +        if (rel_specs['RELMOD_UPDATE'] == '0'):
-> +            return None
-> +        ignore += rel_specs['RELMOD_UPDATE']
-> +        if (rel_specs['RELMOD_TYPE'] != ''):
-> +            ignore += rel_specs['RELMOD_TYPE']
-> +        base_rel = rel.replace(ignore, "")
-> +        paths.append(base_rel)
-> +        rel_tag = "v" + rel.replace(rel_specs['RELMOD_TYPE'], "")
-> +
-> +    rel_prep = dict(stable = is_stable,
-> +                    expected_tag = rel_tag,
-> +                    paths_to_create = paths)
-> +    return rel_prep
-> +
-> +def create_tar_and_bz2(tar_name, dir_to_tar):
-> +    """
-> +    We need both a tar file and bzip2 for kernel.org, the tar file
-> +    gets signed, then we upload the compressed version, kup-server
-> +    in the backend decompresses and verifies the tarball against
-> +    our signature.
-> +    """
-> +    parent = os.path.dirname(tar_name)
-> +    tar = tarfile.open(tar_name, "w")
-> +    tar.add(dir_to_tar)
+This is needed by ./net/bluetooth/rfcomm/tty.c
 
-This adds the file under its full path, this results in a tar with
-/home/hauke/... and so on in it.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/tty.h |    4 ++++
+ backport/compat/backport-3.10.c       |   19 +++++++++++++++++++
+ 2 files changed, 23 insertions(+)
 
-Use this to only get the basename in the tar:
-tar.add(dir_to_tar, os.path.basename(dir_to_tar))
-
-> +    tar.close()
-> +
-> +    tar_file = open(tar_name, "r")
-> +
-> +    bz2_file = bz2.BZ2File(tar_name + ".bz2", 'wb', compresslevel=9)
-> +    bz2_file.write(tar_file.read())
-> +    bz2_file.close()
-> +
-> +    tar.close()
-
-I think this additional close is not necessary.
-
-> +
-> +def upload_release(args, rel_prep, logwrite=lambda x:None):
-> +    """
-> +    Given a path of a relase make tarball out of it, PGP sign it, and
-> +    then upload it to kernel.org using kup.
-> +
-> +    The linux-next based release do not require a RELMOD_UPDATE
-> +    given that typically only one release is made per day. Using
-> +    RELMOD_UPDATE for these releases is allowed though and if
-> +    present it must be > 1.
-> +
-> +    The linux-stable based releases require a RELMOD_UPDATE.
-> +
-> +    RELMOD_UPDATE must be numeric and > 0 just as the RC releases
-> +    of the Linux kernel.
-> +
-> +    The tree must also be tagged with the respective release, without
-> +    the RELMOD_TYPE. For linux-next based releases this consists of
-> +    backports- followed by DATE_VERSION and if RELMOD_TYPE is present.
-> +    For linux-stable releases this consists of v followed by the
-> +    full release version except the RELMOD_TYPE.
-> +
-> +    Uploads will not be allowed if these rules are not followed.
-> +    """
-> +    korg_path = "/pub/linux/kernel/projects/backports"
-> +
-> +    if (rel_prep['stable']):
-> +        korg_path += "stable"
-> +
-> +    parent = os.path.dirname(args.outdir)
-> +    release = os.path.basename(args.outdir)
-> +    tar_name = parent + '/' + release + ".tar"
-> +    bzip2_name = tar_name + ".bz2"
-> +
-> +    create_tar_and_bz2(tar_name, args.outdir)
-> +
-> +    logwrite(gpg.sign(tar_name, extra_args=['--armor', '--detach-sign']))
-> +
-> +    logwrite("------------------------------------------------------")
-> +
-> +    if (not args.kup_test):
-> +        logwrite("About to upload, current target path contents:")
-> +    else:
-> +        logwrite("kup-test: current target path contents:")
-> +
-> +    logwrite(kup.ls(path=korg_path))
-> +
-> +    for path in rel_prep['paths_to_create']:
-> +        korg_path += '/' + path
-> +        if (not args.kup_test):
-> +            logwrite(kup.mkdir(path))
-> +    if (not args.kup_test):
-> +        logwrite(kup.put(bzip2_name, tar_name + '.asc', korg_path))
-> +        logwrite("\nFinished upload!\n")
-> +        logwrite("Target path contents:")
-> +        logwrite(kup.ls(path=korg_path))
-> +    else:
-> +        kup_cmd = "kup put /\n\t\t%s /\n\t\t%s /\n\t\t%s" % (bzip2_name, tar_name + '.asc', korg_path)
-> +        logwrite("kup-test: skipping cmd: %s" % kup_cmd)
->  
->  def _main():
->      # set up and parse arguments
-> @@ -296,6 +462,15 @@ def _main():
->                          help='Print more verbose information')
->      parser.add_argument('--extra-driver', nargs=2, metavar=('<source dir>', '<copy-list>'), type=str,
->                          action='append', default=[], help='Extra driver directory/copy-list.')
-> +    parser.add_argument('--kup', const=True, default=False, action="store_const",
-> +                        help='For maintainers: upload a release to kernel.org')
-> +    parser.add_argument('--kup-test', const=True, default=False, action="store_const",
-> +                        help='For maintainers: do all the work as if you were about to ' +
-> +                             'upload to kernel.org but do not do the final `kup put` ' +
-> +                             'and also do not run any `kup mkdir` commands. This will ' +
-> +                             'however run `kup ls` on the target paths so ' +
-> +                             'at the very least we test your kup configuration. ' +
-> +                             'If this is your first time uploading use this first!')
->      args = parser.parse_args()
->  
->      def logwrite(msg):
-> @@ -307,16 +482,22 @@ def _main():
->                     git_revision=args.git_revision, clean=args.clean,
->                     refresh=args.refresh, base_name=args.base_name,
->                     gitdebug=args.gitdebug, verbose=args.verbose,
-> -                   extra_driver=args.extra_driver, logwrite=logwrite)
-> +                   extra_driver=args.extra_driver,
-> +                   kup=args.kup,
-> +                   kup_test=args.kup_test,
-> +                   logwrite=logwrite)
->  
->  def process(kerneldir, outdir, copy_list_file, git_revision=None,
->              clean=False, refresh=False, base_name="Linux", gitdebug=False,
-> -            verbose=False, extra_driver=[], logwrite=lambda x:None,
-> +            verbose=False, extra_driver=[], kup=False,
-> +            kup_test=False,
-> +            logwrite=lambda x:None,
->              git_tracked_version=False):
->      class Args(object):
->          def __init__(self, kerneldir, outdir, copy_list_file,
->                       git_revision, clean, refresh, base_name,
-> -                     gitdebug, verbose, extra_driver):
-> +                     gitdebug, verbose, extra_driver, kup,
-> +                     kup_test):
->              self.kerneldir = kerneldir
->              self.outdir = outdir
->              self.copy_list = copy_list_file
-> @@ -327,10 +508,48 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
->              self.gitdebug = gitdebug
->              self.verbose = verbose
->              self.extra_driver = extra_driver
-> +            self.kup = kup
-> +            self.kup_test = kup_test
-> +    def git_paranoia(tree=None, logwrite=lambda x:None):
-> +        data = git.paranoia(tree)
-> +        if (data['r'] != 0):
-> +            logwrite('Cannot use %s' % tree)
-> +            logwrite('%s' % data['output'])
-> +            sys.exit(data['r'])
-> +        else:
-> +            logwrite('Validated tree: %s' % tree)
-> +
->      args = Args(kerneldir, outdir, copy_list_file,
->                  git_revision, clean, refresh, base_name,
-> -                gitdebug, verbose, extra_driver)
-> +                gitdebug, verbose, extra_driver, kup, kup_test)
-> +    rel_prep = None
-> +
->      # start processing ...
-> +    if (args.kup or args.kup_test):
-> +        git_paranoia(source_dir, logwrite)
-> +        git_paranoia(kerneldir, logwrite)
-> +
-> +        rel_describe = git.describe(rev=None, tree=source_dir, extra_args=['--dirty'])
-> +        release = os.path.basename(args.outdir)
-> +        version = release.replace("backports-", "")
-> +
-> +        rel_prep = get_rel_prep(version)
-> +        if (not rel_prep):
-> +            logwrite('Invalid backports release name: %s' % release)
-> +            logwrite('For rules on the release name see upload_release()')
-> +            sys.exit(1)
-> +        rel_type = "linux-stable"
-> +        if (not rel_prep['stable']):
-> +            rel_type = "linux-next"
-> +        if (rel_prep['expected_tag'] != rel_describe):
-> +            logwrite('Unexpected %s based backports release tag on' % rel_type)
-> +            logwrite('the backports tree tree: %s\n' % rel_describe)
-> +            logwrite('You asked to make a release with this ')
-> +            logwrite('directory name: %s' % release)
-> +            logwrite('The actual expected tag we should find on')
-> +            logwrite('the backports tree then is: %s\n' % rel_prep['expected_tag'])
-> +            logwrite('For rules on the release name see upload_release()')
-> +            sys.exit(1)
->  
->      copy_list = read_copy_list(args.copy_list)
->      deplist = read_dependencies(os.path.join(source_dir, 'dependencies'))
-> @@ -360,6 +579,8 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
->  
->      # FIXME: should we add a git version of this (e.g. --git-extra-driver)?
->      for src, copy_list in args.extra_driver:
-> +        if (args.kup or args.kup_test):
-> +            git_paranoia(src)
->          copy_files(src, read_copy_list(open(copy_list, 'r')), args.outdir)
->  
->      git_debug_snapshot(args, 'Add driver sources')
-> @@ -561,6 +782,9 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
->          fo.close()
->      git_debug_snapshot(args, "disable unsatisfied Makefile parts")
->  
-> +    if (args.kup or args.kup_test):
-> +        upload_release(args, rel_prep, logwrite=logwrite)
-> +
->      logwrite('Done!')
->      return 0
->  
-> 
+diff --git a/backport/backport-include/linux/tty.h b/backport/backport-include/linux/tty.h
+index b102645..7b57ca1 100644
+--- a/backport/backport-include/linux/tty.h
++++ b/backport/backport-include/linux/tty.h
+@@ -48,4 +48,8 @@ extern int n_tty_ioctl_helper(struct tty_struct *tty, struct file *file,
+ 	tty_register_device(driver, index, device)
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
++extern void tty_port_tty_wakeup(struct tty_port *port);
++#endif
++
+ #endif /* __BACKPORT_LINUX_TTY_H */
+diff --git a/backport/compat/backport-3.10.c b/backport/compat/backport-3.10.c
+index 5273758..d8b3bc6 100644
+--- a/backport/compat/backport-3.10.c
++++ b/backport/compat/backport-3.10.c
+@@ -13,6 +13,7 @@
+ #include <linux/err.h>
+ #include <linux/proc_fs.h>
+ #include <linux/random.h>
++#include <linux/tty.h>
+ 
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
+ #include <linux/init.h>
+@@ -90,3 +91,21 @@ unsigned int get_random_int(void)
+ 	return r;
+ }
+ EXPORT_SYMBOL_GPL(get_random_int);
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28))
++/**
++ * tty_port_tty_wakeup - helper to wake up a tty
++ *
++ * @port: tty port
++ */
++void tty_port_tty_wakeup(struct tty_port *port)
++{
++	struct tty_struct *tty = tty_port_tty_get(port);
++
++	if (tty) {
++		tty_wakeup(tty);
++		tty_kref_put(tty);
++	}
++}
++EXPORT_SYMBOL_GPL(tty_port_tty_wakeup);
++#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28)) */
+-- 
+1.7.10.4
 
