@@ -1,179 +1,128 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:35134 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:50914 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752008Ab3JWSYw (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 23 Oct 2013 14:24:52 -0400
+	id S1752473Ab3JEWo6 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 5 Oct 2013 18:44:58 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 03/18] backports: remove BACKPORT_BUILD_CROSS_RESERVATION
-Date: Wed, 23 Oct 2013 20:24:10 +0200
-Message-Id: <1382552665-15678-4-git-send-email-hauke@hauke-m.de> (sfid-20131023_202456_305711_3B712806)
-In-Reply-To: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
-References: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
+Cc: backports@vger.kernel.org, ozancag@gmail.com,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [RFC 11/15] backports: remove devm_regmap_init_spi()
+Date: Sun,  6 Oct 2013 00:44:00 +0200
+Message-Id: <1381013044-7724-12-git-send-email-hauke@hauke-m.de> (sfid-20131006_010806_969172_421F6EC0)
+In-Reply-To: <1381013044-7724-1-git-send-email-hauke@hauke-m.de>
+References: <1381013044-7724-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This was only needed for some of the DRM drivers, remove it.
+This is not used by any code in backports, not even a DRM driver.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/reservation.h |   70 -------------------------
- backport/compat/Kconfig                       |    7 ---
- backport/compat/Makefile                      |    1 -
- backport/compat/drivers-base-reservation.c    |   39 --------------
- 4 files changed, 117 deletions(-)
- delete mode 100644 backport/backport-include/linux/reservation.h
- delete mode 100644 backport/compat/drivers-base-reservation.c
+ backport/backport-include/linux/regmap.h |    5 --
+ backport/compat/compat-3.4.c             |   73 ------------------------------
+ 2 files changed, 78 deletions(-)
 
-diff --git a/backport/backport-include/linux/reservation.h b/backport/backport-include/linux/reservation.h
-deleted file mode 100644
-index ff79ae8..0000000
---- a/backport/backport-include/linux/reservation.h
-+++ /dev/null
-@@ -1,70 +0,0 @@
--#ifndef _BACKPORT_LINUX_RESERVATION_H
--#define _BACKPORT_LINUX_RESERVATION_H
+diff --git a/backport/backport-include/linux/regmap.h b/backport/backport-include/linux/regmap.h
+index ac6a3f2..870ea2c 100644
+--- a/backport/backport-include/linux/regmap.h
++++ b/backport/backport-include/linux/regmap.h
+@@ -25,11 +25,6 @@ struct regmap *devm_regmap_init(struct device *dev,
+ struct regmap *devm_regmap_init_i2c(struct i2c_client *i2c,
+ 				    const struct regmap_config *config);
+ #endif /* defined(CONFIG_REGMAP_I2C) */
+-#if defined(CONFIG_REGMAP_SPI)
+-#define devm_regmap_init_spi LINUX_BACKPORT(devm_regmap_init_spi)
+-struct regmap *devm_regmap_init_spi(struct spi_device *dev,
+-				    const struct regmap_config *config);
+-#endif /* defined(CONFIG_REGMAP_SPI) */
+ 
+ /*
+  * We can't backport these unless we try to backport
+diff --git a/backport/compat/compat-3.4.c b/backport/compat/compat-3.4.c
+index 99dfb0c..f6b826d 100644
+--- a/backport/compat/compat-3.4.c
++++ b/backport/compat/compat-3.4.c
+@@ -260,79 +260,6 @@ struct regmap *devm_regmap_init_i2c(struct i2c_client *i2c,
+ EXPORT_SYMBOL_GPL(devm_regmap_init_i2c);
+ #endif /* defined(CONFIG_REGMAP_I2C) */
+ 
+-#if defined(CONFIG_REGMAP_SPI)
+-static int regmap_spi_write(
+-			    struct device *dev,
+-			    const void *data, size_t count)
+-{
+-	struct spi_device *spi = to_spi_device(dev);
 -
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
--#include_next <linux/reservation.h>
--#else
--#ifdef CPTCFG_BACKPORT_BUILD_CROSS_RESERVATION
+-	return spi_write(spi, data, count);
+-}
+-
+-static int regmap_spi_gather_write(
+-				   struct device *dev,
+-				   const void *reg, size_t reg_len,
+-				   const void *val, size_t val_len)
+-{
+-	struct spi_device *spi = to_spi_device(dev);
+-	struct spi_message m;
+-	struct spi_transfer t[2] = { { .tx_buf = reg, .len = reg_len, },
+-				     { .tx_buf = val, .len = val_len, }, };
+-
+-	spi_message_init(&m);
+-	spi_message_add_tail(&t[0], &m);
+-	spi_message_add_tail(&t[1], &m);
+-
+-	return spi_sync(spi, &m);
+-}
+-
+-static int regmap_spi_read(
+-			   struct device *dev,
+-			   const void *reg, size_t reg_size,
+-			   void *val, size_t val_size)
+-{
+-	struct spi_device *spi = to_spi_device(dev);
+-
+-	return spi_write_then_read(spi, reg, reg_size, val, val_size);
+-}
+-
+-static struct regmap_bus regmap_spi = {
+-	.write = regmap_spi_write,
+-	.gather_write = regmap_spi_gather_write,
 -/*
-- * Header file for reservations for dma-buf and ttm
-- *
-- * Copyright(C) 2011 Linaro Limited. All rights reserved.
-- * Copyright (C) 2012-2013 Canonical Ltd
-- * Copyright (C) 2012 Texas Instruments
-- *
-- * Authors:
-- * Rob Clark <rob.clark@linaro.org>
-- * Maarten Lankhorst <maarten.lankhorst@canonical.com>
-- * Thomas Hellstrom <thellstrom-at-vmware-dot-com>
-- *
-- * Based on bo.c which bears the following copyright notice,
-- * but is dual licensed:
-- *
-- * Copyright (c) 2006-2009 VMware, Inc., Palo Alto, CA., USA
-- * All Rights Reserved.
-- *
-- * Permission is hereby granted, free of charge, to any person obtaining a
-- * copy of this software and associated documentation files (the
-- * "Software"), to deal in the Software without restriction, including
-- * without limitation the rights to use, copy, modify, merge, publish,
-- * distribute, sub license, and/or sell copies of the Software, and to
-- * permit persons to whom the Software is furnished to do so, subject to
-- * the following conditions:
-- *
-- * The above copyright notice and this permission notice (including the
-- * next paragraph) shall be included in all copies or substantial portions
-- * of the Software.
-- *
-- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL
-- * THE COPYRIGHT HOLDERS, AUTHORS AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM,
-- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-- * USE OR OTHER DEALINGS IN THE SOFTWARE.
+- * See commit 0d509f2b112b
+- * only 3.9 kernels have this we'll ignore it
+- * given I have not seen drivers use these we
+- * are backporting. We'll -EINVAL these.
 - */
--#include <linux/ww_mutex.h>
+-#if 0
+-	.async_write = regmap_spi_async_write,
+-	.async_alloc = regmap_spi_async_alloc,
+-#endif
+-	.read = regmap_spi_read,
+-	.read_flag_mask = 0x80,
 -
--extern struct ww_class reservation_ww_class;
--
--struct reservation_object {
--	struct ww_mutex lock;
 -};
 -
--#define reservation_object_init LINUX_BACKPORT(reservation_object_init)
--static inline void
--reservation_object_init(struct reservation_object *obj)
--{
--	ww_mutex_init(&obj->lock, &reservation_ww_class);
--}
--
--#define reservation_object_fini LINUX_BACKPORT(reservation_object_fini)
--static inline void
--reservation_object_fini(struct reservation_object *obj)
--{
--	ww_mutex_destroy(&obj->lock);
--}
--
--#endif /* BACKPORT_BUILD_CROSS_RESERVATION */
--#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0) */
--#endif /* _BACKPORT_LINUX_RESERVATION_H */
-diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
-index 8377013..f3c1ab3 100644
---- a/backport/compat/Kconfig
-+++ b/backport/compat/Kconfig
-@@ -139,13 +139,6 @@ config BACKPORT_BUILD_DMA_SHARED_BUFFER
- 	#h-file linux/dma-buf.h
- 	#c-file drivers/base/dma-buf.c
- 
--config BACKPORT_BUILD_CROSS_RESERVATION
--	bool
--	# not possible on kernel < 3.2
--	depends on !BACKPORT_KERNEL_3_2
--	depends on BACKPORT_BUILD_DMA_SHARED_BUFFER || DMA_SHARED_BUFFER
--	default y if BACKPORT_USERSEL_BUILD_ALL
--
- config BACKPORT_DMA_SHARED_BUFFER
- 	bool
- 
-diff --git a/backport/compat/Makefile b/backport/compat/Makefile
-index 14b4076..101d0f3 100644
---- a/backport/compat/Makefile
-+++ b/backport/compat/Makefile
-@@ -42,4 +42,3 @@ compat-$(CPTCFG_BACKPORT_BUILD_GENERIC_ATOMIC64) += compat_atomic.o
- compat-$(CPTCFG_BACKPORT_BUILD_DMA_SHARED_HELPERS) += dma-shared-helpers.o
- compat-$(CPTCFG_BACKPORT_BUILD_RADIX_HELPERS) += lib-radix-tree-helpers.o
- compat-$(CPTCFG_BACKPORT_BUILD_WW_MUTEX) += kernel/ww_mutex.o
--compat-$(CPTCFG_BACKPORT_BUILD_CROSS_RESERVATION) += drivers-base-reservation.o
-diff --git a/backport/compat/drivers-base-reservation.c b/backport/compat/drivers-base-reservation.c
-deleted file mode 100644
-index 840ca1a..0000000
---- a/backport/compat/drivers-base-reservation.c
-+++ /dev/null
-@@ -1,39 +0,0 @@
--/*
-- * Copyright (C) 2012-2013 Canonical Ltd
+-/**
+- * devm_regmap_init_spi(): Initialise register map
 - *
-- * Based on bo.c which bears the following copyright notice,
-- * but is dual licensed:
+- * @spi: Device that will be interacted with
+- * @config: Configuration for register map
 - *
-- * Copyright (c) 2006-2009 VMware, Inc., Palo Alto, CA., USA
-- * All Rights Reserved.
-- *
-- * Permission is hereby granted, free of charge, to any person obtaining a
-- * copy of this software and associated documentation files (the
-- * "Software"), to deal in the Software without restriction, including
-- * without limitation the rights to use, copy, modify, merge, publish,
-- * distribute, sub license, and/or sell copies of the Software, and to
-- * permit persons to whom the Software is furnished to do so, subject to
-- * the following conditions:
-- *
-- * The above copyright notice and this permission notice (including the
-- * next paragraph) shall be included in all copies or substantial portions
-- * of the Software.
-- *
-- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL
-- * THE COPYRIGHT HOLDERS, AUTHORS AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM,
-- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-- * USE OR OTHER DEALINGS IN THE SOFTWARE.
-- *
-- **************************************************************************/
--/*
-- * Authors: Thomas Hellstrom <thellstrom-at-vmware-dot-com>
+- * The return value will be an ERR_PTR() on error or a valid pointer
+- * to a struct regmap.  The map will be automatically freed by the
+- * device management code.
 - */
+-struct regmap *devm_regmap_init_spi(struct spi_device *spi,
+-				    const struct regmap_config *config)
+-{
+-	return devm_regmap_init(&spi->dev, &regmap_spi, config);
+-}
+-EXPORT_SYMBOL_GPL(devm_regmap_init_spi);
+-#endif /* defined(CONFIG_REGMAP_SPI) */
 -
--#include <linux/reservation.h>
--#include <linux/export.h>
--
--DEFINE_WW_CLASS(reservation_ww_class);
--EXPORT_SYMBOL_GPL(reservation_ww_class);
+ #endif /* defined(CONFIG_REGMAP) */
+ #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)) */
+ 
 -- 
 1.7.10.4
 
