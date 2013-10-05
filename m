@@ -1,32 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:42704 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:50889 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753079Ab3J3VME (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 30 Oct 2013 17:12:04 -0400
-Message-ID: <5271761A.7080409@hauke-m.de> (sfid-20131030_221211_786569_EABE47A8)
-Date: Wed, 30 Oct 2013 22:11:54 +0100
+	id S1752231Ab3JEWor (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 5 Oct 2013 18:44:47 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Sujith Manoharan <sujith@msujith.org>
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH] backports: Add a defconfig for ath9k debugging
-References: <1382932554-16727-1-git-send-email-sujith@msujith.org>
-In-Reply-To: <1382932554-16727-1-git-send-email-sujith@msujith.org>
-Content-Type: text/plain; charset=ISO-8859-1
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, ozancag@gmail.com,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [RFC 06/15] backports: remove BACKPORT_BUILD_HDMI
+Date: Sun,  6 Oct 2013 00:43:55 +0200
+Message-Id: <1381013044-7724-7-git-send-email-hauke@hauke-m.de> (sfid-20131006_004448_751865_70F2A5B3)
+In-Reply-To: <1381013044-7724-1-git-send-email-hauke@hauke-m.de>
+References: <1381013044-7724-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 10/28/2013 04:55 AM, Sujith Manoharan wrote:
-> From: Sujith Manoharan <c_manoha@qca.qualcomm.com>
-> 
-> Signed-off-by: Sujith Manoharan <c_manoha@qca.qualcomm.com>
-> ---
->  backport/defconfigs/ath9k-debug | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
->  create mode 100644 backport/defconfigs/ath9k-debug
-> 
-Thank you for the patch I applied it to the master branch, it will be in
-the next release.
+This was only needed for some of the DRM drivers, remove it.
 
-Hauke
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/compat/Kconfig |   16 ----------------
+ 1 file changed, 16 deletions(-)
+
+diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
+index 215de8e..c3e9a04 100644
+--- a/backport/compat/Kconfig
++++ b/backport/compat/Kconfig
+@@ -142,22 +142,6 @@ config BACKPORT_BUILD_DMA_SHARED_BUFFER
+ config BACKPORT_DMA_SHARED_BUFFER
+ 	bool
+ 
+-config BACKPORT_BUILD_HDMI
+-	bool
+-	# not possible on kernel < 3.0
+-	depends on !BACKPORT_KERNEL_3_0
+-	# don't build if base kernel has it, except on kernel < 3.9
+-	depends on !HDMI || BACKPORT_KERNEL_3_9
+-	# build for testing
+-	default y if BACKPORT_USERSEL_BUILD_ALL
+-	# build if a driver needs it
+-	default y if BACKPORT_HDMI
+-	#h-file linux/hdmi.h
+-	#c-file drivers/video/hdmi.c
+-
+-config BACKPORT_HDMI
+-	bool
+-
+ config BACKPORT_BUILD_DMA_SHARED_HELPERS
+ 	bool
+ 	depends on HAS_DMA
+-- 
+1.7.10.4
 
