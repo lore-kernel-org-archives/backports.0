@@ -1,46 +1,37 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:50249 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752141Ab3J0TdG (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 27 Oct 2013 15:33:06 -0400
-Message-ID: <526D6A5E.5000100@hauke-m.de> (sfid-20131027_203309_520698_B581FD35)
-Date: Sun, 27 Oct 2013 20:32:46 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail.kernel.org ([198.145.19.201]:57805 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755166Ab3JHLgS (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 8 Oct 2013 07:36:18 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id C10A620211
+	for <backports@vger.kernel.org>; Tue,  8 Oct 2013 11:36:15 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id C8B0720134
+	for <backports@vger.kernel.org>; Tue,  8 Oct 2013 11:36:14 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 59041] [PATCH 001/001] Compiling iwlwifi or alx against 3.4.47
+ kernel gives redefinition error
+Date: Tue, 08 Oct 2013 11:36:14 +0000
+Message-ID: <bug-59041-58281-QmghzQY1Gx@https.bugzilla.kernel.org/> (sfid-20131008_133622_424847_354155D6)
+In-Reply-To: <bug-59041-58281@https.bugzilla.kernel.org/>
+References: <bug-59041-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [ANN] backports-20131025 released
-Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Finally backports is in sync with linux-next again, we just did the
-backports-20131025 release which is based on linux-next next-20131025.
+https://bugzilla.kernel.org/show_bug.cgi?id=59041
 
-The release can be found here:
-https://www.kernel.org/pub/linux/kernel/projects/backports/2013/10/25/backports-20131025.tar.bz2
+--- Comment #4 from CSS <c.s.sigman@gmail.com> ---
+(In reply to CSS from comment #3)
+> I've tried 3.10.4-1 as well as the latest development release (20130802),
+> and had this issue with kernel 3.6.10 in Fedora 18.  I did not have this
+> issue however in Fedora 19 with kernel 3.9.5
 
-There are also older releases based on older linux-next releases.
+Specifically, I've tried backports 3.10.4-1.
 
-The source code can temporary be found here:
-https://github.com/hauke/backports
-
-Currently Stephen Rothwell, the original author of the linux-next tree,
-is on vacation, but Thierry Reding took over [1] and backports is based
-on his releases [2] now.
-
-Now getting new stable releases based on kernel 3.10, 3.11 and 3.12 is
-the next goal.
-
-This release and further releases will not contain any GPU drivers any
-more, it was too much work to backport them to older kernel versions and
-it looked like that code did not had any users.
-
-More information can be found in our wiki:
-https://backports.wiki.kernel.org/index.php/Main_Page
-
-Hauke
-
-[1]: https://lkml.org/lkml/2013/9/30/179
-[2]: git://gitorious.org/thierryreding/linux-next.git
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
