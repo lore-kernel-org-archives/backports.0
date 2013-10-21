@@ -1,48 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:36211 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753747Ab3JUJIt (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 21 Oct 2013 05:08:49 -0400
-Received: by mail-wg0-f42.google.com with SMTP id n12so4338385wgh.3
-        for <backports@vger.kernel.org>; Mon, 21 Oct 2013 02:08:48 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: hauke@hauke-m.de
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH v4 5/8] lib/bpgit.py: add support for git paranoia
-Date: Mon, 21 Oct 2013 11:08:29 +0200
-Message-Id: <1382346512-18694-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20131021_110852_569484_EA691DF4)
-In-Reply-To: <1382346512-18694-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1382346512-18694-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:53246 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751543Ab3JUW1u (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 21 Oct 2013 18:27:50 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 2/4] gentree.py: fix directory creating
+Date: Tue, 22 Oct 2013 00:27:35 +0200
+Message-Id: <1382394457-25147-3-git-send-email-hauke@hauke-m.de> (sfid-20131022_002751_425161_F7A4FD0A)
+In-Reply-To: <1382394457-25147-1-git-send-email-hauke@hauke-m.de>
+References: <1382394457-25147-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This cleans sanitizes a source tree and ensures
-no content is present from what was intended.
+The full path has to be provided not just the new directory to create.
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- lib/bpgit.py | 7 +++++++
- 1 file changed, 7 insertions(+)
+ gentree.py |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/bpgit.py b/lib/bpgit.py
-index 02f6d8a..6540336 100644
---- a/lib/bpgit.py
-+++ b/lib/bpgit.py
-@@ -119,6 +119,13 @@ def verify(git_tree):
- 
-     return dict(r=process.returncode, output=stdout)
- 
-+def paranoia(tree):
-+    clean(tree)
-+    poo = status(tree)
-+    if (poo):
-+        return dict(r=-1, output=poo)
-+    return verify(tree)
-+
- def init(tree=None):
-     process = subprocess.Popen(['git', 'init'],
-                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+diff --git a/gentree.py b/gentree.py
+index daf9033..d101bdb 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -423,7 +423,7 @@ def upload_release(args, rel_prep, logwrite=lambda x:None):
+     for path in rel_prep['paths_to_create']:
+         korg_path += '/' + path
+         if (not args.kup_test):
+-            logwrite(kup.mkdir(path))
++            logwrite(kup.mkdir(korg_path))
+     if (not args.kup_test):
+         logwrite(kup.put(bzip2_name, tar_name + '.asc', korg_path))
+         logwrite("\nFinished upload!\n")
 -- 
-1.8.4.rc3
+1.7.10.4
 
