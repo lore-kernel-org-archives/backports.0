@@ -1,46 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:50170 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752535Ab3J0TKA (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 27 Oct 2013 15:10:00 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 3/4] backports: add missing header for struct in6_addr
-Date: Sun, 27 Oct 2013 20:09:39 +0100
-Message-Id: <1382900980-26610-4-git-send-email-hauke@hauke-m.de> (sfid-20131027_201006_888748_0E89DDC9)
-In-Reply-To: <1382900980-26610-1-git-send-email-hauke@hauke-m.de>
-References: <1382900980-26610-1-git-send-email-hauke@hauke-m.de>
+Received: from mail.kernel.org ([198.145.19.201]:56462 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752856Ab3JUKrC (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 21 Oct 2013 06:47:02 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 7B2EF201FE
+	for <backports@vger.kernel.org>; Mon, 21 Oct 2013 10:47:01 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+	by mail.kernel.org (Postfix) with ESMTP id 0C0712015D
+	for <backports@vger.kernel.org>; Mon, 21 Oct 2013 10:46:57 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 63381] cpumask.h error
+Date: Mon, 21 Oct 2013 10:46:54 +0000
+Message-ID: <bug-63381-58281-j206eY0SSq@https.bugzilla.kernel.org/> (sfid-20131021_124705_977907_CE611EE7)
+In-Reply-To: <bug-63381-58281@https.bugzilla.kernel.org/>
+References: <bug-63381-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-fw-api-d3.h in the iwlwifi driver uses struct in6_addr and somehow it
-does not get included on all kernel versions like 2.6.25. This patch
-adds the missing include for linux/in6.h to fix the problem.
+https://bugzilla.kernel.org/show_bug.cgi?id=63381
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../06-header-changes/drivers_net_wireless_iwlwifi.patch    |   11 +++++++++++
- 1 file changed, 11 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/06-header-changes/drivers_net_wireless_iwlwifi.patch
+Hauke Mehrtens <hauke@hauke-m.de> changed:
 
-diff --git a/patches/collateral-evolutions/network/06-header-changes/drivers_net_wireless_iwlwifi.patch b/patches/collateral-evolutions/network/06-header-changes/drivers_net_wireless_iwlwifi.patch
-new file mode 100644
-index 0000000..b27869c
---- /dev/null
-+++ b/patches/collateral-evolutions/network/06-header-changes/drivers_net_wireless_iwlwifi.patch
-@@ -0,0 +1,11 @@
-+--- a/drivers/net/wireless/iwlwifi/mvm/fw-api-d3.h
-++++ b/drivers/net/wireless/iwlwifi/mvm/fw-api-d3.h
-+@@ -63,6 +63,8 @@
-+ #ifndef __fw_api_d3_h__
-+ #define __fw_api_d3_h__
-+ 
-++#include <linux/in6.h>
-++
-+ /**
-+  * enum iwl_d3_wakeup_flags - D3 manager wakeup flags
-+  * @IWL_WAKEUP_D3_CONFIG_FW_ERROR: wake up on firmware sysassert
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |hauke@hauke-m.de
+
+--- Comment #1 from Hauke Mehrtens <hauke@hauke-m.de> ---
+What kernel are you compiling against? We only test this with mainline kernels,
+but when you have a patched kernel like one provided by distributions like
+RedHat, they contain many patches which are conflicting with backports.
+
+Are you compiling for x86 or for some other arch?
+
 -- 
-1.7.10.4
-
+You are receiving this mail because:
+You are the assignee for the bug.
