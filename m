@@ -1,55 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:47304 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751971Ab3JaMuq (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 31 Oct 2013 08:50:46 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id BABDA2039F
-	for <backports@vger.kernel.org>; Thu, 31 Oct 2013 12:50:41 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 4EB0620318
-	for <backports@vger.kernel.org>; Thu, 31 Oct 2013 12:50:37 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 64091] backports build error
-Date: Thu, 31 Oct 2013 12:50:37 +0000
-Message-ID: <bug-64091-58281-KQad6RCgMv@https.bugzilla.kernel.org/> (sfid-20131031_135052_185680_A27D29A6)
-In-Reply-To: <bug-64091-58281@https.bugzilla.kernel.org/>
-References: <bug-64091-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Received: from server19320154104.serverpool.info ([193.201.54.104]:53255 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751543Ab3JUW1x (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 21 Oct 2013 18:27:53 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 4/4] gentree.py: add ending slash to upload path
+Date: Tue, 22 Oct 2013 00:27:37 +0200
+Message-Id: <1382394457-25147-5-git-send-email-hauke@hauke-m.de> (sfid-20131022_002754_245118_34FE2563)
+In-Reply-To: <1382394457-25147-1-git-send-email-hauke@hauke-m.de>
+References: <1382394457-25147-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=64091
+the filename in kup put should end with a slash otherwise it tried to
+overwrite this file.
 
---- Comment #3 from DarinV <darin.vancoevering@gmail.com> ---
-#ifndef _LINUX_KERNEL_H
-#define _LINUX_KERNEL_H
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ gentree.py |    1 +
+ 1 file changed, 1 insertion(+)
 
-/*
- * 'kernel.h' contains some often-used function prototypes etc
- */
-
-#ifdef __KERNEL__
-
-#include <stdarg.h>
-#include <linux/linkage.h>
-#include <linux/stddef.h>
-#include <linux/types.h>
-#include <linux/compiler.h>
-#include <linux/bitops.h>
-#include <linux/log2.h>
-#include <linux/typecheck.h>
-#include <linux/ratelimit.h>
-#include <asm/byteorder.h>
-#include <asm/bug.h>
-
-extern const char linux_banner[];
-extern const char linux_proc_banner[];
-
-#define USHORT_MAX    ((u16)(~0U))
-
+diff --git a/gentree.py b/gentree.py
+index cb5431d..bc446d4 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -425,6 +425,7 @@ def upload_release(args, rel_prep, logwrite=lambda x:None):
+         if (not args.kup_test):
+             logwrite("create directory: %s" % korg_path)
+             logwrite(kup.mkdir(korg_path))
++    korg_path += '/'
+     if (not args.kup_test):
+         logwrite("upload file %s to %s" % (bzip2_name, korg_path))
+         logwrite(kup.put(bzip2_name, tar_name + '.asc', korg_path))
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+1.7.10.4
+
