@@ -1,31 +1,29 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:41797 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752536Ab3JWSdB (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 23 Oct 2013 14:33:01 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 1A3A3203E9
-	for <backports@vger.kernel.org>; Wed, 23 Oct 2013 18:33:00 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 5CE7F2038B
-	for <backports@vger.kernel.org>; Wed, 23 Oct 2013 18:32:59 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 63381] cpumask.h error
-Date: Wed, 23 Oct 2013 18:32:57 +0000
-Message-ID: <bug-63381-58281-BUcALOwVBJ@https.bugzilla.kernel.org/> (sfid-20131023_203303_755635_A4C2F683)
-In-Reply-To: <bug-63381-58281@https.bugzilla.kernel.org/>
-References: <bug-63381-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Received: from server19320154104.serverpool.info ([193.201.54.104]:53230 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751543Ab3JUW1p (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 21 Oct 2013 18:27:45 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 0/4] gentree.py: fixes to release upload part
+Date: Tue, 22 Oct 2013 00:27:33 +0200
+Message-Id: <1382394457-25147-1-git-send-email-hauke@hauke-m.de> (sfid-20131022_002747_813443_28E7E8CA)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=63381
+These are some small fixes on top of Luis patch series which are fixing 
+minor problems in the release upload part.
 
---- Comment #3 from Hauke Mehrtens <hauke@hauke-m.de> ---
-Could please post the full error message, you cut of some parts on the top.
+Hauke Mehrtens (4):
+  gentree.py: do not add full path into tar
+  gentree.py: fix directory creating
+  gentree.py: log kup command before executing
+  gentree.py: add ending slash to upload path
+
+ gentree.py |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+1.7.10.4
+
