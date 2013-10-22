@@ -1,39 +1,49 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:53255 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751543Ab3JUW1x (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 21 Oct 2013 18:27:53 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 4/4] gentree.py: add ending slash to upload path
-Date: Tue, 22 Oct 2013 00:27:37 +0200
-Message-Id: <1382394457-25147-5-git-send-email-hauke@hauke-m.de> (sfid-20131022_002754_245118_34FE2563)
-In-Reply-To: <1382394457-25147-1-git-send-email-hauke@hauke-m.de>
-References: <1382394457-25147-1-git-send-email-hauke@hauke-m.de>
+Received: from mail.pindomains.com ([173.248.156.94]:57818 "EHLO
+	mail.pindomains.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750842Ab3JVFKq (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 22 Oct 2013 01:10:46 -0400
+Message-ID: <20131022102512.344258ylonx8mckk@192.168.50.55> (sfid-20131022_071048_958497_93A4A0D7)
+Date: Tue, 22 Oct 2013 10:25:12 +0530
+From: "ravikant patel" <ravikant.patel@matrixcomsec.com>
+To: backports@vger.kernel.org
+Cc: "Ronak Shah" <ronak.shah@matrixcomsec.com>
+Subject: Backports driver not support fragmentation Threshold
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset=;
+	DelSp="Yes";
+	format="flowed"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-the filename in kup put should end with a slash otherwise it tried to
-overwrite this file.
+Hi All,
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- gentree.py |    1 +
- 1 file changed, 1 insertion(+)
+We are using hostapd daemon(2.0)  and Back Ports Wireless  
+driver(3.10.4-1) in our WiFi Access Point.
+In the hostapd daemon configuration file (hostapd.conf)  Fragmentation  
+Threshold parameter is
+available.
+The parameter purpose is that if the data which is sending more then  
+this limit then it will
+fragment the data and send the data in the different frame.
 
-diff --git a/gentree.py b/gentree.py
-index cb5431d..bc446d4 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -425,6 +425,7 @@ def upload_release(args, rel_prep, logwrite=lambda x:None):
-         if (not args.kup_test):
-             logwrite("create directory: %s" % korg_path)
-             logwrite(kup.mkdir(korg_path))
-+    korg_path += '/'
-     if (not args.kup_test):
-         logwrite("upload file %s to %s" % (bzip2_name, korg_path))
-         logwrite(kup.put(bzip2_name, tar_name + '.asc', korg_path))
--- 
-1.7.10.4
+I have configure this Fragmentation Threshold to 500 in my Access Point.
+ From One Wireless client i Ping with data 1000 byte .
+I have capture the Ping Request and Response using network monitor .
+Now according to this Ping Replay must be received in Two packet but I  
+received the Ping replay with 1000 byte in single packet.
+
+So From the test I found that fragmentation is not working that is set  
+in the  the hostapd.
+
+My question :
+Does the fragmentation responsibility of hostapd daemon or back port driver?
+
+Regards,
+
+Ravikant Patel
+
+
+
 
