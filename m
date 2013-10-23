@@ -1,72 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:35121 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:36146 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751719Ab3JWSYo (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 23 Oct 2013 14:24:44 -0400
+	id S1751790Ab3JWVhN (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 23 Oct 2013 17:37:13 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 02/18] backports: remove platform drivers
-Date: Wed, 23 Oct 2013 20:24:09 +0200
-Message-Id: <1382552665-15678-3-git-send-email-hauke@hauke-m.de> (sfid-20131023_202445_888429_B07DF9B9)
-In-Reply-To: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
-References: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 5/8] backports: use correct suspend/resume function for rtl8188ee
+Date: Wed, 23 Oct 2013 23:36:47 +0200
+Message-Id: <1382564210-15230-6-git-send-email-hauke@hauke-m.de> (sfid-20131023_233715_166177_996E5235)
+In-Reply-To: <1382564210-15230-1-git-send-email-hauke@hauke-m.de>
+References: <1382564210-15230-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The platform drivers were only needed by some DRM drivers and are not
-needed any more with the DRM driver being removed.
+The newly created function ends with _compat. This causes compile
+warnings and probably runtime problems on kernel < 2.6.29.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/Kconfig         |    2 --
- backport/Makefile.kernel |    1 -
- copy-list                |    7 -------
- 3 files changed, 10 deletions(-)
+ .../11-dev-pm-ops/drivers_net_wireless_rtlwifi_rtl8188ee_sw.patch  |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/backport/Kconfig b/backport/Kconfig
-index 0e24c79..64e9cb9 100644
---- a/backport/Kconfig
-+++ b/backport/Kconfig
-@@ -41,8 +41,6 @@ source net/nfc/Kconfig
- source drivers/regulator/Kconfig
- source drivers/media/Kconfig
- 
--source drivers/platform/x86/Kconfig
--
- source net/ieee802154/Kconfig
- source net/mac802154/Kconfig
- source drivers/net/ieee802154/Kconfig
-diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
-index 0a2a569..6a1afc1 100644
---- a/backport/Makefile.kernel
-+++ b/backport/Makefile.kernel
-@@ -33,7 +33,6 @@ obj-$(CPTCFG_NFC) += net/nfc/
- obj-$(CPTCFG_NFC) += drivers/nfc/
- obj-$(CPTCFG_REGULATOR) += drivers/regulator/
- obj-$(CPTCFG_MEDIA_SUPPORT) += drivers/media/
--obj-$(CPTCFG_INTEL_IPS) += drivers/platform/x86/
- 
- obj-$(CPTCFG_IEEE802154) += net/ieee802154/
- obj-$(CPTCFG_MAC802154) += net/mac802154/
-diff --git a/copy-list b/copy-list
-index b741c5d..6035e36 100644
---- a/copy-list
-+++ b/copy-list
-@@ -171,13 +171,6 @@ include/uapi/linux/videodev2.h
- 
- drivers/media/
- 
--# Platform
--drivers/platform/x86/Kconfig
--drivers/platform/x86/Makefile
--drivers/platform/x86/intel_ips.c
--drivers/platform/x86/intel_ips.h
--include/asm-generic/io-64-nonatomic-lo-hi.h
--
- include/net/nl802154.h
- include/net/mac802154.h
- include/net/ieee802154.h
+diff --git a/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_rtlwifi_rtl8188ee_sw.patch b/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_rtlwifi_rtl8188ee_sw.patch
+index c377e12..219654d 100644
+--- a/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_rtlwifi_rtl8188ee_sw.patch
++++ b/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_rtlwifi_rtl8188ee_sw.patch
+@@ -17,8 +17,8 @@
+ +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,29))
+  	.driver.pm = &rtlwifi_pm_ops,
+ +#elif defined(CONFIG_PM_SLEEP)
+-+	.suspend = rtl_pci_suspend,
+-+	.resume = rtl_pci_resume,
+++	.suspend = rtl_pci_suspend_compat,
+++	.resume = rtl_pci_resume_compat,
+ +#endif
+  };
+  
 -- 
 1.7.10.4
 
