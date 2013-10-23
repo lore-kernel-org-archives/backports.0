@@ -1,57 +1,111 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:39074
-	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1751447Ab3JWTl5 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 23 Oct 2013 15:41:57 -0400
-Date: Wed, 23 Oct 2013 15:41:49 -0400
-From: Solomon Peachy <pizza@shaftnet.org>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: backports-20130830 released
-Message-ID: <20131023194149.GA14165@shaftnet.org> (sfid-20131023_214159_137029_229C37E6)
-References: <52681718.1020502@hauke-m.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
-In-Reply-To: <52681718.1020502@hauke-m.de>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:35206 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753239Ab3JWSZi (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 23 Oct 2013 14:25:38 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 17/18] backports: remove linux/pagemap.h
+Date: Wed, 23 Oct 2013 20:24:24 +0200
+Message-Id: <1382552665-15678-18-git-send-email-hauke@hauke-m.de> (sfid-20131023_203808_381503_2C846A9F)
+In-Reply-To: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
+References: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+This was just used by some GPU drivers
 
---8t9RHnE3ZwKMSgU+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/pagemap.h |   78 -----------------------------
+ 1 file changed, 78 deletions(-)
+ delete mode 100644 backport/backport-include/linux/pagemap.h
 
-On Wed, Oct 23, 2013 at 08:36:08PM +0200, Hauke Mehrtens wrote:
-> The source code can be found here:
-> https://github.com/hauke/backports
+diff --git a/backport/backport-include/linux/pagemap.h b/backport/backport-include/linux/pagemap.h
+deleted file mode 100644
+index 8f47a53..0000000
+--- a/backport/backport-include/linux/pagemap.h
++++ /dev/null
+@@ -1,78 +0,0 @@
+-#ifndef __BACKPORT_LINUX_PAGEMAP_H
+-#define __BACKPORT_LINUX_PAGEMAP_H
+-#include_next <linux/pagemap.h>
+-#include <linux/version.h>
+-
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
+-#include <asm/uaccess.h>
+-/*
+- * This backports:
+- *
+- * commit f56f821feb7b36223f309e0ec05986bb137ce418
+- * Author: Daniel Vetter <daniel.vetter@ffwll.ch>
+- * Date:   Sun Mar 25 19:47:41 2012 +0200
+- *
+- *     mm: extend prefault helpers to fault in more than PAGE_SIZE
+- *
+- * The new functions are used by drm/i915 driver.
+- *
+- */
+-
+-#define fault_in_multipages_writeable LINUX_BACKPORT(fault_in_multipages_writeable)
+-static inline int fault_in_multipages_writeable(char __user *uaddr, int size)
+-{
+-        int ret = 0;
+-        char __user *end = uaddr + size - 1;
+-
+-        if (unlikely(size == 0))
+-                return ret;
+-
+-        /*
+-         * Writing zeroes into userspace here is OK, because we know that if
+-         * the zero gets there, we'll be overwriting it.
+-         */
+-        while (uaddr <= end) {
+-                ret = __put_user(0, uaddr);
+-                if (ret != 0)
+-                        return ret;
+-                uaddr += PAGE_SIZE;
+-        }
+-
+-        /* Check whether the range spilled into the next page. */
+-        if (((unsigned long)uaddr & PAGE_MASK) ==
+-                        ((unsigned long)end & PAGE_MASK))
+-                ret = __put_user(0, end);
+-
+-        return ret;
+-}
+-
+-#define fault_in_multipages_readable LINUX_BACKPORT(fault_in_multipages_readable)
+-static inline int fault_in_multipages_readable(const char __user *uaddr,
+-                                               int size)
+-{
+-        volatile char c;
+-        int ret = 0;
+-        const char __user *end = uaddr + size - 1;
+-
+-        if (unlikely(size == 0))
+-                return ret;
+-
+-        while (uaddr <= end) {
+-                ret = __get_user(c, uaddr);
+-                if (ret != 0)
+-                        return ret;
+-                uaddr += PAGE_SIZE;
+-        }
+-
+-        /* Check whether the range spilled into the next page. */
+-        if (((unsigned long)uaddr & PAGE_MASK) ==
+-                        ((unsigned long)end & PAGE_MASK)) {
+-                ret = __get_user(c, end);
+-                (void)c;
+-        }
+-
+-        return ret;
+-}
+-#endif /* < 3.5 */
+-
+-#endif /* __BACKPORT_LINUX_PAGEMAP_H */
+-- 
+1.7.10.4
 
-The backports wiki still references a git tree on kernel.org [1] (which=20
-hasn't been updated since early September)
-
-What is considered the canonnical source of backports?  At this point=20
-I'm guessing it's your github tree, since the last couple of releases=20
-have come from it.  If so, the wiki needs to be corrected=20
-appropriately..
-
-[1] git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/backports.git
-
- - Solomon
---=20
-Solomon Peachy        		       pizza at shaftnet dot org
-Delray Beach, FL                          ^^ (email/xmpp) ^^
-Quidquid latine dictum sit, altum viditur.
-
---8t9RHnE3ZwKMSgU+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
-
-iD8DBQFSaCZ9PuLgii2759ARAjLuAJ9ivL6qEZ0KDzltFqjMReFlewt27wCfQtdJ
-BBpQuaQYhFovV0Bep3HvvdY=
-=eEGp
------END PGP SIGNATURE-----
-
---8t9RHnE3ZwKMSgU+--
