@@ -1,73 +1,76 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:50864 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:35211 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752390Ab3JEWoc (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 5 Oct 2013 18:44:32 -0400
+	id S1753239Ab3JWSZl (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 23 Oct 2013 14:25:41 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, ozancag@gmail.com,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [RFC 02/15] backports: remove platform drivers
-Date: Sun,  6 Oct 2013 00:43:51 +0200
-Message-Id: <1381013044-7724-3-git-send-email-hauke@hauke-m.de> (sfid-20131006_004436_416494_AAD45D68)
-In-Reply-To: <1381013044-7724-1-git-send-email-hauke@hauke-m.de>
-References: <1381013044-7724-1-git-send-email-hauke@hauke-m.de>
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 18/18] backports: remove vga_switcheroo.h
+Date: Wed, 23 Oct 2013 20:24:25 +0200
+Message-Id: <1382552665-15678-19-git-send-email-hauke@hauke-m.de> (sfid-20131023_203807_766960_F8AF9BE3)
+In-Reply-To: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
+References: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The platform drivers were only needed by some DRM drivers and are not
-needed any more with the DRM driver being removed.
+This only used by the DRM drivers
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/Kconfig         |    2 --
- backport/Makefile.kernel |    1 -
- copy-list                |    7 -------
- 3 files changed, 10 deletions(-)
+ backport/backport-include/linux/vga_switcheroo.h |   43 ----------------------
+ 1 file changed, 43 deletions(-)
+ delete mode 100644 backport/backport-include/linux/vga_switcheroo.h
 
-diff --git a/backport/Kconfig b/backport/Kconfig
-index 0e24c79..64e9cb9 100644
---- a/backport/Kconfig
-+++ b/backport/Kconfig
-@@ -41,8 +41,6 @@ source net/nfc/Kconfig
- source drivers/regulator/Kconfig
- source drivers/media/Kconfig
- 
--source drivers/platform/x86/Kconfig
+diff --git a/backport/backport-include/linux/vga_switcheroo.h b/backport/backport-include/linux/vga_switcheroo.h
+deleted file mode 100644
+index 698f3f7..0000000
+--- a/backport/backport-include/linux/vga_switcheroo.h
++++ /dev/null
+@@ -1,43 +0,0 @@
+-#ifndef __BACKPORT_VGA_SWITCHEROO_H
+-#define __BACKPORT_VGA_SWITCHEROO_H
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34)
+-#include_next <linux/vga_switcheroo.h>
 -
- source net/ieee802154/Kconfig
- source net/mac802154/Kconfig
- source drivers/net/ieee802154/Kconfig
-diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
-index 0a2a569..6a1afc1 100644
---- a/backport/Makefile.kernel
-+++ b/backport/Makefile.kernel
-@@ -33,7 +33,6 @@ obj-$(CPTCFG_NFC) += net/nfc/
- obj-$(CPTCFG_NFC) += drivers/nfc/
- obj-$(CPTCFG_REGULATOR) += drivers/regulator/
- obj-$(CPTCFG_MEDIA_SUPPORT) += drivers/media/
--obj-$(CPTCFG_INTEL_IPS) += drivers/platform/x86/
- 
- obj-$(CPTCFG_IEEE802154) += net/ieee802154/
- obj-$(CPTCFG_MAC802154) += net/mac802154/
-diff --git a/copy-list b/copy-list
-index b741c5d..6035e36 100644
---- a/copy-list
-+++ b/copy-list
-@@ -171,13 +171,6 @@ include/uapi/linux/videodev2.h
- 
- drivers/media/
- 
--# Platform
--drivers/platform/x86/Kconfig
--drivers/platform/x86/Makefile
--drivers/platform/x86/intel_ips.c
--drivers/platform/x86/intel_ips.h
--include/asm-generic/io-64-nonatomic-lo-hi.h
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
+-/*
+- * This backports:
+- *
+- *   From 26ec685ff9d9c16525d8ec4c97e52fcdb187b302 Mon Sep 17 00:00:00 2001
+- *   From: Takashi Iwai <tiwai@suse.de>
+- *   Date: Fri, 11 May 2012 07:51:17 +0200
+- *   Subject: [PATCH] vga_switcheroo: Introduce struct vga_switcheroo_client_ops
+- *
+- */
 -
- include/net/nl802154.h
- include/net/mac802154.h
- include/net/ieee802154.h
+-struct vga_switcheroo_client_ops {
+-    void (*set_gpu_state)(struct pci_dev *dev, enum vga_switcheroo_state);
+-    void (*reprobe)(struct pci_dev *dev);
+-    bool (*can_switch)(struct pci_dev *dev);
+-};
+-
+-/* Wrap around the old code and redefine vga_switcheroo_register_client()
+- * for older kernels < 3.5.0.
+- */
+-static inline int compat_vga_switcheroo_register_client(struct pci_dev *dev,
+-		const struct vga_switcheroo_client_ops *ops) {
+-
+-	return vga_switcheroo_register_client(dev,
+-					      ops->set_gpu_state,
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38))
+-					      ops->reprobe,
+-#endif
+-					      ops->can_switch);
+-}
+-
+-#define vga_switcheroo_register_client(_dev, _ops) \
+-	compat_vga_switcheroo_register_client(_dev, _ops)
+-
+-#endif /* < 3.5 */
+-
+-#endif /* >= 2.6.34 */
+-#endif /* __BACKPORT_VGA_SWITCHEROO_H */
 -- 
 1.7.10.4
 
