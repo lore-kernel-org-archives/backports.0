@@ -1,163 +1,89 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:50852 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752231Ab3JEWo2 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 5 Oct 2013 18:44:28 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, ozancag@gmail.com,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [RFC 00/15] backports: remove DRM drivers
-Date: Sun,  6 Oct 2013 00:43:49 +0200
-Message-Id: <1381013044-7724-1-git-send-email-hauke@hauke-m.de> (sfid-20131006_004433_311094_C50AE0FB)
+Received: from mms2.broadcom.com ([216.31.210.18]:4213 "EHLO mms2.broadcom.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753110Ab3JWNCU (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 23 Oct 2013 09:02:20 -0400
+Message-ID: <5267C8D1.9050203@broadcom.com> (sfid-20131023_150223_942407_3E7DA376)
+Date: Wed, 23 Oct 2013 15:02:09 +0200
+From: "Arend van Spriel" <arend@broadcom.com>
+MIME-Version: 1.0
+To: "Singh, Gaurav" <gauravps@slingmedia.com>
+cc: "hostap@lists.shmoo.com" <hostap@lists.shmoo.com>,
+	ath9k-devel@lists.ath9k.org,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: ath9k Driver crash
+References: <D5275F3D4773D14CAF5C73B4B03C29464273683E@INWPIEXC01.SATS.CORP>
+In-Reply-To: <D5275F3D4773D14CAF5C73B4B03C29464273683E@INWPIEXC01.SATS.CORP>
+Content-Type: text/plain;
+ charset=iso-8859-1;
+ format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Maintaining the DRM driver takes a lot of recourses as there they are
-depending on many API changes done to the core kernel code and
-currently we do not have that many recourses to follow them. On the
-other side one needs also new userspace drivers to make use of the new
-features added to the DRM kernel drivers and it is not easy to update
-the X drivers. Therefore we came to the conclusion to remove the drm
-drivers for now.
++ ath9k-devel@lists.ath9k.org
++ backports@vger.kernel.org
 
-If someone wants to maintain the DRM drivers I would be very happy with
-that and they should not be removed.
+On 10/23/2013 02:22 PM, Singh, Gaurav wrote:
+> Hi,
+>
+> Setup info:
+>
+> Linux: mips le, 2.6.29 on ViXS XC4200 SoC
+> Ath9k from compat-wireless-3.6.8-1-snpc
+> wpa_supplicant 2.0
+>
+> Only using wpa_supplicant, no network-manager etc.
+>
+> I see a system reboot after following (or similar) (formatted) logs:
+>
+> [Tue Oct 22 19:03:39.828 2013] Debug: Monitor Message :  <3>CTRL-EVENT-BSS-ADDED 89 08:cc:68:5e:d7:41
+> [Tue Oct 22 19:03:39.829 2013] Debug: Monitor Message :  <3>CTRL-EVENT-SCAN-RESULTS
+> [Tue Oct 22 19:03:39.865 2013] Debug: Monitor Message :  <3>WPS-AP-AVAILABLE-PBC
+> [Tue Oct 22 19:03:39.871 2013] Debug: Monitor Message :  <3>SME: Trying to authenticate with 00:23:69:3b:77:9a (SSID='STB Lease Line 1' freq=2422 MHz)
+> [Tue Oct 22 19:03:39.872 2013] Debug: Monitor Message :  <3>Trying to associate with 00:23:69:3b:77:9a (SSID='STB Lease Line 1' freq=2422 MHz)
+> [Tue Oct 22 19:03:40.740 2013] irq 7: nobody cared (try booting with the "irqpoll" option)
+> [Tue Oct 22 19:03:40.746 2013] MIPS5_INTERRUPT 0x00000000
+> [Tue Oct 22 19:03:40.756 2013] MIPS5_INTERRUPT1 0x00000004
+> [Tue Oct 22 19:03:40.764 2013] PPC_INT_STATUS 0x01000000 MASK 0x063000c2
+> [Tue Oct 22 19:03:40.764 2013]
+> [Tue Oct 22 19:03:40.764 2013] Call Trace:
+> [Tue Oct 22 19:03:40.764 2013] [<900484e4>] dump_stack+0x8/0x34
+> [Tue Oct 22 19:03:40.772 2013] [<9009af9c>] __report_bad_irq+0xb4/0x158
+> [Tue Oct 22 19:03:40.773 2013] [<9009b1b4>] note_interrupt+0x174/0x23c
+> [Tue Oct 22 19:03:40.773 2013] [<9009b934>] handle_percpu_irq+0xa8/0xcc
+> [Tue Oct 22 19:03:40.800 2013] [<9004b488>] xcode_ic_dispatch_pci+0x30/0x40
+> [Tue Oct 22 19:03:40.801 2013] [<9004002c>] ret_from_irq+0x0/0x4
+> [Tue Oct 22 19:03:40.832 2013] [<90072ec0>] __do_softirq+0x60/0x130
+> [Tue Oct 22 19:03:40.832 2013] [<90072ffc>] do_softirq+0x6c/0x74
+> [Tue Oct 22 19:03:40.832 2013] [<9004002c>] ret_from_irq+0x0/0x4
+> [Tue Oct 22 19:03:40.832 2013] [<90069de8>] finish_task_switch+0xc0/0x178
+> [Tue Oct 22 19:03:40.833 2013] [<90048dcc>] schedule+0x300/0x440
+> [Tue Oct 22 19:03:40.833 2013] [<9009125c>] futex_wait+0x43c/0x4a4
+> [Tue Oct 22 19:03:40.833 2013] [<9009284c>] do_futex+0x120/0x9c8
+> [Tue Oct 22 19:03:40.833 2013] [<90093180>] sys_futex+0x8c/0x17c
+> [Tue Oct 22 19:03:40.833 2013] [<90041d04>] stack_done+0x20/0x3c
+> [Tue Oct 22 19:03:40.861 2013]
+> [Tue Oct 22 19:03:40.861 2013] handlers:
+> [Tue Oct 22 19:03:40.861 2013] [<c6b8ff74>] (ath_isr+0x0/0x2d0 [ath9k])
+> [Tue Oct 22 19:03:40.861 2013] Disabling IRQ #7
+> [Tue Oct 22 19:03:43.278 2013]
+>
+> Sometimes, a bunch of similar blocks of logs print together.
+>
+> I am not sure what's causing this. *Any* pointers would be helpful.
+>
+> I am no expert in wireless tech, but am tasked with implementing basic wifi feature-set  for the product.
 
-There were also some problems with some DRM drivers, like the Intel
-i915 driver caused kernel panic on some systems and was probably only
-usable on some very recent kernel versions.
+I suspect the ath_isr is not returning a good value to the kernel 
+interrupt framework, but it might be a backports/compat issue.
 
-1   2.6.25              [  OK  ]
-2   2.6.26              [  OK  ]
-3   2.6.27              [  OK  ]
-4   2.6.28              [  OK  ]
-5   2.6.29              [  OK  ]
-6   2.6.30              [  OK  ]
-7   2.6.31              [  OK  ]
-8   2.6.32              [  OK  ]
-9   2.6.33              [  OK  ]
-10  2.6.34              [  OK  ]
-11  2.6.35              [  OK  ]
-12  2.6.36              [  OK  ]
-13  2.6.37              [  OK  ]
-14  2.6.38              [  OK  ]
-15  2.6.39              [  OK  ]
-16  3.0.98              [  OK  ]
-17  3.1.10              [  OK  ]
-18  3.10.14             [  OK  ]
-19  3.11.3              [  OK  ]
-20  3.12-rc3            [  FAIL  ]
-21  3.2.51              [  OK  ]
-22  3.3.8               [  OK  ]
-23  3.4.64              [  OK  ]
-24  3.5.7               [  OK  ]
-25  3.6.11              [  OK  ]
-26  3.7.10              [  OK  ]
-27  3.8.13              [  OK  ]
-28  3.9.11              [  OK  ]
+> Thanks and Regards
+> -Gaurav
+>
+> _______________________________________________
+> HostAP mailing list
+> HostAP@lists.shmoo.com
+> http://lists.shmoo.com/mailman/listinfo/hostap
+>
 
-You can pull it from
-https://github.com/hauke/backports/tree/drm-remove
-
-This is based on the "backports: add next-20130822" patch series.
-
-Hauke Mehrtens (15):
-  backports: remove DRM driver
-  backports: remove platform drivers
-  backports: remove BACKPORT_BUILD_CROSS_RESERVATION
-  backports: remove CPTCFG_BACKPORT_BUILD_WW_MUTEX
-  backports: remove BACKPORT_BUILD_RADIX_HELPERS
-  backports: remove BACKPORT_BUILD_HDMI
-  backports: remove more hdmi stuff
-  backports: remove some stuff related to MTRR
-  backports: remove scatterlist
-  backports: remove ktime_get_monotonic_offset()
-  backports: remove devm_regmap_init_spi()
-  backports: remove compat_wake_up_locked()
-  backports: remove i2c_bit_algo()
-  backports: remove cpufreq_quick_get_max()
-  backports: remove shmem_read_mapping_page_gfp()
-
- backport/Kconfig                                   |    4 -
- backport/Makefile.kernel                           |    3 -
- backport/backport-include/asm/mtrr.h               |   21 -
- backport/backport-include/linux/cpufreq.h          |   13 -
- backport/backport-include/linux/hdmi.h             |   36 --
- backport/backport-include/linux/hrtimer.h          |   11 -
- backport/backport-include/linux/i2c-algo-bit.h     |   12 -
- backport/backport-include/linux/io.h               |   38 --
- backport/backport-include/linux/radix-tree.h       |  218 -------
- backport/backport-include/linux/regmap.h           |    5 -
- backport/backport-include/linux/reservation.h      |   70 --
- backport/backport-include/linux/scatterlist.h      |   69 --
- backport/backport-include/linux/shmem_fs.h         |   39 --
- backport/backport-include/linux/wait.h             |   14 -
- backport/backport-include/linux/ww_mutex.h         |  333 ----------
- backport/compat/Kconfig                            |   41 --
- backport/compat/Makefile                           |    4 -
- backport/compat/backport-3.11.c                    |   92 ---
- backport/compat/backport-3.12.c                    |   51 --
- backport/compat/compat-3.0.c                       |   26 -
- backport/compat/compat-3.1.c                       |   23 -
- backport/compat/compat-3.4.c                       |  543 ----------------
- backport/compat/compat-3.5.c                       |   14 -
- backport/compat/compat-3.9.c                       |   43 --
- backport/compat/drivers-base-reservation.c         |   39 --
- backport/compat/kernel/ww_mutex.c                  |  669 --------------------
- backport/compat/lib-radix-tree-helpers.c           |  266 --------
- backport/defconfigs/drm                            |   49 --
- copy-list                                          |   44 --
- dependencies                                       |   18 -
- .../drm/0001-fb-info-vt_switch/INFO                |   44 --
- .../drivers_gpu_drm_i915_intel_fb.patch            |   11 -
- .../drm/02-revert-vm_mmap/INFO                     |    5 -
- .../drivers_gpu_drm_drm_bufs.patch                 |   31 -
- .../drivers_gpu_drm_i810_i810_dma.patch            |   37 --
- .../10-radeon-revert-acpi-table-size-check/INFO    |    3 -
- .../drivers_gpu_drm_radeon_radeon_bios.patch       |   24 -
- .../drivers_gpu_drm_drm_modes.patch                |   15 -
- .../drm/12-revert-remove_proc_subtree/INFO         |   25 -
- .../drivers_gpu_drm_drm_proc.patch                 |   62 --
- .../drm/13-nouveau-include-fix/INFO                |    2 -
- .../drivers_gpu_drm_nouveau_Makefile.patch         |   11 -
- .../14-shrinkers-api/drivers_gpu_drm_i915.patch    |  116 ----
- .../drm/14-shrinkers-api/drivers_gpu_drm_ttm.patch |  105 ---
- .../drm/15-intel-gtt/drivers_gpu_drm_i915.patch    |   29 -
- .../drm/16-remove-energy-read/i915.patch           |   28 -
- 46 files changed, 3356 deletions(-)
- delete mode 100644 backport/backport-include/asm/mtrr.h
- delete mode 100644 backport/backport-include/linux/cpufreq.h
- delete mode 100644 backport/backport-include/linux/hdmi.h
- delete mode 100644 backport/backport-include/linux/hrtimer.h
- delete mode 100644 backport/backport-include/linux/i2c-algo-bit.h
- delete mode 100644 backport/backport-include/linux/io.h
- delete mode 100644 backport/backport-include/linux/radix-tree.h
- delete mode 100644 backport/backport-include/linux/reservation.h
- delete mode 100644 backport/backport-include/linux/shmem_fs.h
- delete mode 100644 backport/backport-include/linux/ww_mutex.h
- delete mode 100644 backport/compat/backport-3.11.c
- delete mode 100644 backport/compat/drivers-base-reservation.c
- delete mode 100644 backport/compat/kernel/ww_mutex.c
- delete mode 100644 backport/compat/lib-radix-tree-helpers.c
- delete mode 100644 backport/defconfigs/drm
- delete mode 100644 patches/collateral-evolutions/drm/0001-fb-info-vt_switch/INFO
- delete mode 100644 patches/collateral-evolutions/drm/0001-fb-info-vt_switch/drivers_gpu_drm_i915_intel_fb.patch
- delete mode 100644 patches/collateral-evolutions/drm/02-revert-vm_mmap/INFO
- delete mode 100644 patches/collateral-evolutions/drm/02-revert-vm_mmap/drivers_gpu_drm_drm_bufs.patch
- delete mode 100644 patches/collateral-evolutions/drm/02-revert-vm_mmap/drivers_gpu_drm_i810_i810_dma.patch
- delete mode 100644 patches/collateral-evolutions/drm/10-radeon-revert-acpi-table-size-check/INFO
- delete mode 100644 patches/collateral-evolutions/drm/10-radeon-revert-acpi-table-size-check/drivers_gpu_drm_radeon_radeon_bios.patch
- delete mode 100644 patches/collateral-evolutions/drm/11-videomode-includes/drivers_gpu_drm_drm_modes.patch
- delete mode 100644 patches/collateral-evolutions/drm/12-revert-remove_proc_subtree/INFO
- delete mode 100644 patches/collateral-evolutions/drm/12-revert-remove_proc_subtree/drivers_gpu_drm_drm_proc.patch
- delete mode 100644 patches/collateral-evolutions/drm/13-nouveau-include-fix/INFO
- delete mode 100644 patches/collateral-evolutions/drm/13-nouveau-include-fix/drivers_gpu_drm_nouveau_Makefile.patch
- delete mode 100644 patches/collateral-evolutions/drm/14-shrinkers-api/drivers_gpu_drm_i915.patch
- delete mode 100644 patches/collateral-evolutions/drm/14-shrinkers-api/drivers_gpu_drm_ttm.patch
- delete mode 100644 patches/collateral-evolutions/drm/15-intel-gtt/drivers_gpu_drm_i915.patch
- delete mode 100644 patches/collateral-evolutions/drm/16-remove-energy-read/i915.patch
-
--- 
-1.7.10.4
 
