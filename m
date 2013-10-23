@@ -1,64 +1,179 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:49586 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:35134 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752231Ab3JENYt (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 5 Oct 2013 09:24:49 -0400
+	id S1752008Ab3JWSYw (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 23 Oct 2013 14:24:52 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 5/8] backports: add tty_port_tty_hangup()
-Date: Sat,  5 Oct 2013 15:23:52 +0200
-Message-Id: <1380979435-5430-6-git-send-email-hauke@hauke-m.de> (sfid-20131005_152450_465966_2EE4423E)
-In-Reply-To: <1380979435-5430-1-git-send-email-hauke@hauke-m.de>
-References: <1380979435-5430-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 03/18] backports: remove BACKPORT_BUILD_CROSS_RESERVATION
+Date: Wed, 23 Oct 2013 20:24:10 +0200
+Message-Id: <1382552665-15678-4-git-send-email-hauke@hauke-m.de> (sfid-20131023_202456_305711_3B712806)
+In-Reply-To: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
+References: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is needed by ./net/bluetooth/rfcomm/tty.c
+This was only needed for some of the DRM drivers, remove it.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/tty.h |    1 +
- backport/compat/backport-3.10.c       |   16 ++++++++++++++++
- 2 files changed, 17 insertions(+)
+ backport/backport-include/linux/reservation.h |   70 -------------------------
+ backport/compat/Kconfig                       |    7 ---
+ backport/compat/Makefile                      |    1 -
+ backport/compat/drivers-base-reservation.c    |   39 --------------
+ 4 files changed, 117 deletions(-)
+ delete mode 100644 backport/backport-include/linux/reservation.h
+ delete mode 100644 backport/compat/drivers-base-reservation.c
 
-diff --git a/backport/backport-include/linux/tty.h b/backport/backport-include/linux/tty.h
-index 7b57ca1..88fbfd0 100644
---- a/backport/backport-include/linux/tty.h
-+++ b/backport/backport-include/linux/tty.h
-@@ -50,6 +50,7 @@ extern int n_tty_ioctl_helper(struct tty_struct *tty, struct file *file,
+diff --git a/backport/backport-include/linux/reservation.h b/backport/backport-include/linux/reservation.h
+deleted file mode 100644
+index ff79ae8..0000000
+--- a/backport/backport-include/linux/reservation.h
++++ /dev/null
+@@ -1,70 +0,0 @@
+-#ifndef _BACKPORT_LINUX_RESERVATION_H
+-#define _BACKPORT_LINUX_RESERVATION_H
+-
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
+-#include_next <linux/reservation.h>
+-#else
+-#ifdef CPTCFG_BACKPORT_BUILD_CROSS_RESERVATION
+-/*
+- * Header file for reservations for dma-buf and ttm
+- *
+- * Copyright(C) 2011 Linaro Limited. All rights reserved.
+- * Copyright (C) 2012-2013 Canonical Ltd
+- * Copyright (C) 2012 Texas Instruments
+- *
+- * Authors:
+- * Rob Clark <rob.clark@linaro.org>
+- * Maarten Lankhorst <maarten.lankhorst@canonical.com>
+- * Thomas Hellstrom <thellstrom-at-vmware-dot-com>
+- *
+- * Based on bo.c which bears the following copyright notice,
+- * but is dual licensed:
+- *
+- * Copyright (c) 2006-2009 VMware, Inc., Palo Alto, CA., USA
+- * All Rights Reserved.
+- *
+- * Permission is hereby granted, free of charge, to any person obtaining a
+- * copy of this software and associated documentation files (the
+- * "Software"), to deal in the Software without restriction, including
+- * without limitation the rights to use, copy, modify, merge, publish,
+- * distribute, sub license, and/or sell copies of the Software, and to
+- * permit persons to whom the Software is furnished to do so, subject to
+- * the following conditions:
+- *
+- * The above copyright notice and this permission notice (including the
+- * next paragraph) shall be included in all copies or substantial portions
+- * of the Software.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL
+- * THE COPYRIGHT HOLDERS, AUTHORS AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM,
+- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+- * USE OR OTHER DEALINGS IN THE SOFTWARE.
+- */
+-#include <linux/ww_mutex.h>
+-
+-extern struct ww_class reservation_ww_class;
+-
+-struct reservation_object {
+-	struct ww_mutex lock;
+-};
+-
+-#define reservation_object_init LINUX_BACKPORT(reservation_object_init)
+-static inline void
+-reservation_object_init(struct reservation_object *obj)
+-{
+-	ww_mutex_init(&obj->lock, &reservation_ww_class);
+-}
+-
+-#define reservation_object_fini LINUX_BACKPORT(reservation_object_fini)
+-static inline void
+-reservation_object_fini(struct reservation_object *obj)
+-{
+-	ww_mutex_destroy(&obj->lock);
+-}
+-
+-#endif /* BACKPORT_BUILD_CROSS_RESERVATION */
+-#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0) */
+-#endif /* _BACKPORT_LINUX_RESERVATION_H */
+diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
+index 8377013..f3c1ab3 100644
+--- a/backport/compat/Kconfig
++++ b/backport/compat/Kconfig
+@@ -139,13 +139,6 @@ config BACKPORT_BUILD_DMA_SHARED_BUFFER
+ 	#h-file linux/dma-buf.h
+ 	#c-file drivers/base/dma-buf.c
  
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
- extern void tty_port_tty_wakeup(struct tty_port *port);
-+extern void tty_port_tty_hangup(struct tty_port *port, bool check_clocal);
- #endif
+-config BACKPORT_BUILD_CROSS_RESERVATION
+-	bool
+-	# not possible on kernel < 3.2
+-	depends on !BACKPORT_KERNEL_3_2
+-	depends on BACKPORT_BUILD_DMA_SHARED_BUFFER || DMA_SHARED_BUFFER
+-	default y if BACKPORT_USERSEL_BUILD_ALL
+-
+ config BACKPORT_DMA_SHARED_BUFFER
+ 	bool
  
- #endif /* __BACKPORT_LINUX_TTY_H */
-diff --git a/backport/compat/backport-3.10.c b/backport/compat/backport-3.10.c
-index d8b3bc6..4d44960 100644
---- a/backport/compat/backport-3.10.c
-+++ b/backport/compat/backport-3.10.c
-@@ -108,4 +108,20 @@ void tty_port_tty_wakeup(struct tty_port *port)
- 	}
- }
- EXPORT_SYMBOL_GPL(tty_port_tty_wakeup);
-+
-+/**
-+ * tty_port_tty_hangup - helper to hang up a tty
-+ *
-+ * @port: tty port
-+ * @check_clocal: hang only ttys with CLOCAL unset?
-+ */
-+void tty_port_tty_hangup(struct tty_port *port, bool check_clocal)
-+{
-+	struct tty_struct *tty = tty_port_tty_get(port);
-+
-+	if (tty && (!check_clocal || !C_CLOCAL(tty)))
-+		tty_hangup(tty);
-+	tty_kref_put(tty);
-+}
-+EXPORT_SYMBOL_GPL(tty_port_tty_hangup);
- #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28)) */
+diff --git a/backport/compat/Makefile b/backport/compat/Makefile
+index 14b4076..101d0f3 100644
+--- a/backport/compat/Makefile
++++ b/backport/compat/Makefile
+@@ -42,4 +42,3 @@ compat-$(CPTCFG_BACKPORT_BUILD_GENERIC_ATOMIC64) += compat_atomic.o
+ compat-$(CPTCFG_BACKPORT_BUILD_DMA_SHARED_HELPERS) += dma-shared-helpers.o
+ compat-$(CPTCFG_BACKPORT_BUILD_RADIX_HELPERS) += lib-radix-tree-helpers.o
+ compat-$(CPTCFG_BACKPORT_BUILD_WW_MUTEX) += kernel/ww_mutex.o
+-compat-$(CPTCFG_BACKPORT_BUILD_CROSS_RESERVATION) += drivers-base-reservation.o
+diff --git a/backport/compat/drivers-base-reservation.c b/backport/compat/drivers-base-reservation.c
+deleted file mode 100644
+index 840ca1a..0000000
+--- a/backport/compat/drivers-base-reservation.c
++++ /dev/null
+@@ -1,39 +0,0 @@
+-/*
+- * Copyright (C) 2012-2013 Canonical Ltd
+- *
+- * Based on bo.c which bears the following copyright notice,
+- * but is dual licensed:
+- *
+- * Copyright (c) 2006-2009 VMware, Inc., Palo Alto, CA., USA
+- * All Rights Reserved.
+- *
+- * Permission is hereby granted, free of charge, to any person obtaining a
+- * copy of this software and associated documentation files (the
+- * "Software"), to deal in the Software without restriction, including
+- * without limitation the rights to use, copy, modify, merge, publish,
+- * distribute, sub license, and/or sell copies of the Software, and to
+- * permit persons to whom the Software is furnished to do so, subject to
+- * the following conditions:
+- *
+- * The above copyright notice and this permission notice (including the
+- * next paragraph) shall be included in all copies or substantial portions
+- * of the Software.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL
+- * THE COPYRIGHT HOLDERS, AUTHORS AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM,
+- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+- * USE OR OTHER DEALINGS IN THE SOFTWARE.
+- *
+- **************************************************************************/
+-/*
+- * Authors: Thomas Hellstrom <thellstrom-at-vmware-dot-com>
+- */
+-
+-#include <linux/reservation.h>
+-#include <linux/export.h>
+-
+-DEFINE_WW_CLASS(reservation_ww_class);
+-EXPORT_SYMBOL_GPL(reservation_ww_class);
 -- 
 1.7.10.4
 
