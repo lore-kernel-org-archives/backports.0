@@ -1,14 +1,14 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:35168 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:35161 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752609Ab3JWSZS (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 23 Oct 2013 14:25:18 -0400
+	id S1753212Ab3JWSZP (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 23 Oct 2013 14:25:15 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 09/18] backports: remove scatterlist
-Date: Wed, 23 Oct 2013 20:24:16 +0200
-Message-Id: <1382552665-15678-10-git-send-email-hauke@hauke-m.de> (sfid-20131023_202519_922783_8376A6CA)
+Subject: [PATCH 08/18] backports: remove some stuff related to MTRR
+Date: Wed, 23 Oct 2013 20:24:15 +0200
+Message-Id: <1382552665-15678-9-git-send-email-hauke@hauke-m.de> (sfid-20131023_202517_075450_6A76652E)
 In-Reply-To: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
 References: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
@@ -18,153 +18,196 @@ This was only needed for some of the DRM drivers, remove it.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/scatterlist.h |   69 -------------------------
- backport/compat/compat-3.9.c                  |   43 ---------------
- 2 files changed, 112 deletions(-)
+ backport/backport-include/asm/mtrr.h |   21 --------
+ backport/backport-include/linux/io.h |   38 --------------
+ backport/compat/Makefile             |    1 -
+ backport/compat/backport-3.11.c      |   92 ----------------------------------
+ 4 files changed, 152 deletions(-)
+ delete mode 100644 backport/backport-include/asm/mtrr.h
+ delete mode 100644 backport/backport-include/linux/io.h
+ delete mode 100644 backport/compat/backport-3.11.c
 
-diff --git a/backport/backport-include/linux/scatterlist.h b/backport/backport-include/linux/scatterlist.h
-index bb2b5a4..f939e8c 100644
---- a/backport/backport-include/linux/scatterlist.h
-+++ b/backport/backport-include/linux/scatterlist.h
-@@ -12,73 +12,4 @@ int sg_alloc_table_from_pages(struct sg_table *sgt,
- 			      gfp_t gfp_mask);
- #endif /* < 3.6 */
- 
--#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
+diff --git a/backport/backport-include/asm/mtrr.h b/backport/backport-include/asm/mtrr.h
+deleted file mode 100644
+index 861438a..0000000
+--- a/backport/backport-include/asm/mtrr.h
++++ /dev/null
+@@ -1,21 +0,0 @@
+-#ifndef __BACKPORT_ASM_MTRR_H
+-#define __BACKPORT_ASM_MTRR_H
+-#include_next <asm/mtrr.h>
 -
--/* Lets expect distributions might backport this */
--#ifndef for_each_sg_page
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0))
 -/*
-- * sg page iterator
+- * The following functions are for use by other drivers that cannot use
+- * arch_phys_wc_add and arch_phys_wc_del.
+- */
+-#define phys_wc_to_mtrr_index LINUX_BACKPORT(phys_wc_to_mtrr_index)
+-#ifdef CONFIG_MTRR
+-extern int phys_wc_to_mtrr_index(int handle);
+-#else
+-static inline int phys_wc_to_mtrr_index(int handle)
+-{
+-	return -1;
+-}
+-#endif /* CONFIG_MTRR */
+-#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)) */
+-
+-#endif /* __BACKPORT_ASM_MTRR_H */
+diff --git a/backport/backport-include/linux/io.h b/backport/backport-include/linux/io.h
+deleted file mode 100644
+index 84a8c21..0000000
+--- a/backport/backport-include/linux/io.h
++++ /dev/null
+@@ -1,38 +0,0 @@
+-#ifndef __BACKPORT_LINUX_IO_H
+-#define __BACKPORT_LINUX_IO_H
+-#include_next <linux/io.h>
+-
+-/*
+- * Some systems (x86 without PAT) have a somewhat reliable way to mark a
+- * physical address range such that uncached mappings will actually
+- * end up write-combining.  This facility should be used in conjunction
+- * with pgprot_writecombine, ioremap-wc, or set_memory_wc, since it has
+- * no effect if the per-page mechanisms are functional.
+- * (On x86 without PAT, these functions manipulate MTRRs.)
 - *
-- * Iterates over sg entries page-by-page.  On each successful iteration,
-- * @piter->page points to the current page, @piter->sg to the sg holding this
-- * page and @piter->sg_pgoffset to the page's page offset within the sg. The
-- * iteration will stop either when a maximum number of sg entries was reached
-- * or a terminating sg (sg_last(sg) == true) was reached.
+- * arch_phys_del_wc(0) or arch_phys_del_wc(any error code) is guaranteed
+- * to have no effect.
 - */
--struct sg_page_iter {
--	struct page		*page;		/* current page */
--	struct scatterlist	*sg;		/* sg holding the page */
--	unsigned int		sg_pgoffset;	/* page offset within the sg */
+-#ifndef arch_phys_wc_add
 -
--	/* these are internal states, keep away */
--	unsigned int		__nents;	/* remaining sg entries */
--	int			__pg_advance;	/* nr pages to advance at the
--						 * next step */
--};
+-#define arch_phys_wc_add LINUX_BACKPORT(arch_phys_wc_add)
+-#define arch_phys_wc_del LINUX_BACKPORT(arch_phys_wc_del)
 -
--#define __sg_page_iter_next LINUX_BACKPORT(__sg_page_iter_next)
--bool __sg_page_iter_next(struct sg_page_iter *piter);
--#define __sg_page_iter_start LINUX_BACKPORT(__sg_page_iter_start)
--void __sg_page_iter_start(struct sg_page_iter *piter,
--			  struct scatterlist *sglist, unsigned int nents,
--			  unsigned long pgoffset);
--
--/**
-- * for_each_sg_page - iterate over the pages of the given sg list
-- * @sglist:	sglist to iterate over
-- * @piter:	page iterator to hold current page, sg, sg_pgoffset
-- * @nents:	maximum number of sg entries to iterate over
-- * @pgoffset:	starting page offset
-- */
--#define for_each_sg_page(sglist, piter, nents, pgoffset)		   \
--	for (__sg_page_iter_start((piter), (sglist), (nents), (pgoffset)); \
--	     __sg_page_iter_next(piter);)
--
--#endif /* for_each_sg_page assumption */
--#endif /* version < 3.9 */
--
--#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0))
--
--#define sg_page_iter_page LINUX_BACKPORT(sg_page_iter_page)
--/**
-- * sg_page_iter_page - get the current page held by the page iterator
-- * @piter:     page iterator holding the page
-- */
--static inline struct page *sg_page_iter_page(struct sg_page_iter *piter)
+-#ifdef CONFIG_MTRR
+-extern int __must_check arch_phys_wc_add(unsigned long base,
+-					 unsigned long size);
+-extern void arch_phys_wc_del(int handle);
+-#else
+-static inline int __must_check arch_phys_wc_add(unsigned long base,
+-						unsigned long size)
 -{
--	return nth_page(sg_page(piter->sg), piter->sg_pgoffset);
+-	return 0;  /* It worked (i.e. did nothing). */
 -}
 -
--#define sg_page_iter_dma_address LINUX_BACKPORT(sg_page_iter_dma_address)
--/**
-- * sg_page_iter_dma_address - get the dma address of the current page held by
-- * the page iterator.
-- * @piter:     page iterator holding the page
-- */
--static inline dma_addr_t sg_page_iter_dma_address(struct sg_page_iter *piter)
+-static inline void arch_phys_wc_del(int handle)
 -{
--	return sg_dma_address(piter->sg) + (piter->sg_pgoffset << PAGE_SHIFT);
 -}
--#endif /* version < 3.10 */
+-#endif /* CONFIG_MTRR */
+-#endif
 -
- #endif /* __BACKPORT_SCATTERLIST_H */
-diff --git a/backport/compat/compat-3.9.c b/backport/compat/compat-3.9.c
-index d85a79f..df10d7d 100644
---- a/backport/compat/compat-3.9.c
-+++ b/backport/compat/compat-3.9.c
-@@ -9,7 +9,6 @@
-  */
+-#endif /* __BACKPORT_LINUX_IO_H */
+diff --git a/backport/compat/Makefile b/backport/compat/Makefile
+index 2d4928c..4485552 100644
+--- a/backport/compat/Makefile
++++ b/backport/compat/Makefile
+@@ -34,7 +34,6 @@ compat-$(CPTCFG_BACKPORT_KERNEL_3_7) += compat-3.7.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_3_8) += compat-3.8.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_3_9) += compat-3.9.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_3_10) += backport-3.10.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_11) += backport-3.11.o
+ compat-$(CPTCFG_BACKPORT_KERNEL_3_12) += backport-3.12.o
  
- #include <linux/module.h>
--#include <linux/scatterlist.h>
- #include <linux/device.h>
- #include <linux/err.h>
- #include <linux/netdevice.h>
-@@ -17,46 +16,6 @@
- #include <linux/if_ether.h>
- #include <linux/etherdevice.h>
- 
--#ifdef __sg_page_iter_next
+ compat-$(CPTCFG_BACKPORT_BUILD_KFIFO) += kfifo.o
+diff --git a/backport/compat/backport-3.11.c b/backport/compat/backport-3.11.c
+deleted file mode 100644
+index e7b93fc..0000000
+--- a/backport/compat/backport-3.11.c
++++ /dev/null
+@@ -1,92 +0,0 @@
+-/*
+- * Copyright (c) 2013  Hauke Mehrtens <hauke@hauke-m.de>
+- *
+- * Backport functionality introduced in Linux 3.11.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
 -
--void __sg_page_iter_start(struct sg_page_iter *piter,
--			  struct scatterlist *sglist, unsigned int nents,
--			  unsigned long pgoffset)
+-#include <linux/export.h>
+-
+-#ifdef CONFIG_MTRR
+-
+-#include <asm/mtrr.h>
+-#include <asm/cpufeature.h>
+-#include <linux/io.h>
+-#include <linux/printk.h>
+-
+-/* arch_phys_wc_add returns an MTRR register index plus this offset. */
+-#define MTRR_TO_PHYS_WC_OFFSET 1000
+-
+-/**
+- * arch_phys_wc_add - add a WC MTRR and handle errors if PAT is unavailable
+- * @base: Physical base address
+- * @size: Size of region
+- *
+- * If PAT is available, this does nothing.  If PAT is unavailable, it
+- * attempts to add a WC MTRR covering size bytes starting at base and
+- * logs an error if this fails.
+- *
+- * Drivers must store the return value to pass to mtrr_del_wc_if_needed,
+- * but drivers should not try to interpret that return value.
+- */
+-int backport_arch_phys_wc_add(unsigned long base, unsigned long size)
 -{
--	piter->__pg_advance = 0;
--	piter->__nents = nents;
+-	int ret;
 -
--	piter->page = NULL;
--	piter->sg = sglist;
--	piter->sg_pgoffset = pgoffset;
--}
--EXPORT_SYMBOL_GPL(__sg_page_iter_start);
+-#if defined(CONFIG_X86_PAT)
+-	if (cpu_has_pat)
+-		return 0;
+-#endif
 -
--static int sg_page_count(struct scatterlist *sg)
--{
--	return PAGE_ALIGN(sg->offset + sg->length) >> PAGE_SHIFT;
--}
--
--bool __sg_page_iter_next(struct sg_page_iter *piter)
--{
--	if (!piter->__nents || !piter->sg)
--		return false;
--
--	piter->sg_pgoffset += piter->__pg_advance;
--	piter->__pg_advance = 1;
--
--	while (piter->sg_pgoffset >= sg_page_count(piter->sg)) {
--		piter->sg_pgoffset -= sg_page_count(piter->sg);
--		piter->sg = sg_next(piter->sg);
--		if (!--piter->__nents || !piter->sg)
--			return false;
+-	ret = mtrr_add(base, size, MTRR_TYPE_WRCOMB, true);
+-	if (ret < 0) {
+-		pr_warn("Failed to add WC MTRR for [%p-%p]; performance may suffer.",
+-			(void *)base, (void *)(base + size - 1));
+-		return ret;
 -	}
--	piter->page = nth_page(sg_page(piter->sg), piter->sg_pgoffset);
--
--	return true;
+-	return ret + MTRR_TO_PHYS_WC_OFFSET;
 -}
--EXPORT_SYMBOL_GPL(__sg_page_iter_next);
+-EXPORT_SYMBOL_GPL(backport_arch_phys_wc_add);
 -
- void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res)
- {
- 	void __iomem *dest_ptr;
-@@ -97,5 +56,3 @@ void eth_commit_mac_addr_change(struct net_device *dev, void *p)
- 	memcpy(dev->dev_addr, addr->sa_data, ETH_ALEN);
- }
- EXPORT_SYMBOL_GPL(eth_commit_mac_addr_change);
+-/*
+- * arch_phys_wc_del - undoes arch_phys_wc_add
+- * @handle: Return value from arch_phys_wc_add
+- *
+- * This cleans up after mtrr_add_wc_if_needed.
+- *
+- * The API guarantees that mtrr_del_wc_if_needed(error code) and
+- * mtrr_del_wc_if_needed(0) do nothing.
+- */
+-void backport_arch_phys_wc_del(int handle)
+-{
+-	if (handle >= 1) {
+-		WARN_ON(handle < MTRR_TO_PHYS_WC_OFFSET);
+-		mtrr_del(handle - MTRR_TO_PHYS_WC_OFFSET, 0, 0);
+-	}
+-}
+-EXPORT_SYMBOL_GPL(backport_arch_phys_wc_del);
 -
--#endif /* __sg_page_iter_next */
+-/*
+- * phys_wc_to_mtrr_index - translates arch_phys_wc_add's return value
+- * @handle: Return value from arch_phys_wc_add
+- *
+- * This will turn the return value from arch_phys_wc_add into an mtrr
+- * index suitable for debugging.
+- *
+- * Note: There is no legitimate use for this function, except possibly
+- * in printk line.  Alas there is an illegitimate use in some ancient
+- * drm ioctls.
+- */
+-int phys_wc_to_mtrr_index(int handle)
+-{
+-	if (handle < MTRR_TO_PHYS_WC_OFFSET)
+-		return -1;
+-	else
+-		return handle - MTRR_TO_PHYS_WC_OFFSET;
+-}
+-EXPORT_SYMBOL_GPL(phys_wc_to_mtrr_index);
+-
+-#endif /* CONFIG_MTRR */
 -- 
 1.7.10.4
 
