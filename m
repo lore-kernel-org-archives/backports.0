@@ -1,111 +1,67 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:35206 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:35171 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753239Ab3JWSZi (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 23 Oct 2013 14:25:38 -0400
+	id S1752609Ab3JWSZT (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 23 Oct 2013 14:25:19 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 17/18] backports: remove linux/pagemap.h
-Date: Wed, 23 Oct 2013 20:24:24 +0200
-Message-Id: <1382552665-15678-18-git-send-email-hauke@hauke-m.de> (sfid-20131023_203808_381503_2C846A9F)
+Subject: [PATCH 10/18] backports: remove ktime_get_monotonic_offset()
+Date: Wed, 23 Oct 2013 20:24:17 +0200
+Message-Id: <1382552665-15678-11-git-send-email-hauke@hauke-m.de> (sfid-20131023_203807_477853_FD0D015A)
 In-Reply-To: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
 References: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This was just used by some GPU drivers
+This was only needed for some of the DRM drivers, remove it.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/pagemap.h |   78 -----------------------------
- 1 file changed, 78 deletions(-)
- delete mode 100644 backport/backport-include/linux/pagemap.h
+ backport/backport-include/linux/hrtimer.h |   11 -----------
+ backport/compat/compat-3.5.c              |   14 --------------
+ 2 files changed, 25 deletions(-)
+ delete mode 100644 backport/backport-include/linux/hrtimer.h
 
-diff --git a/backport/backport-include/linux/pagemap.h b/backport/backport-include/linux/pagemap.h
+diff --git a/backport/backport-include/linux/hrtimer.h b/backport/backport-include/linux/hrtimer.h
 deleted file mode 100644
-index 8f47a53..0000000
---- a/backport/backport-include/linux/pagemap.h
+index c099dd4..0000000
+--- a/backport/backport-include/linux/hrtimer.h
 +++ /dev/null
-@@ -1,78 +0,0 @@
--#ifndef __BACKPORT_LINUX_PAGEMAP_H
--#define __BACKPORT_LINUX_PAGEMAP_H
--#include_next <linux/pagemap.h>
+@@ -1,11 +0,0 @@
+-#ifndef __BACKPORT_LINUX_HRTIMER_H
+-#define __BACKPORT_LINUX_HRTIMER_H
+-#include_next <linux/hrtimer.h>
 -#include <linux/version.h>
 -
 -#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
--#include <asm/uaccess.h>
+-#define ktime_get_monotonic_offset LINUX_BACKPORT(ktime_get_monotonic_offset)
+-extern ktime_t ktime_get_monotonic_offset(void);
+-#endif
+-
+-#endif /* __BACKPORT_LINUX_HRTIMER_H */
+diff --git a/backport/compat/compat-3.5.c b/backport/compat/compat-3.5.c
+index 7068cfb..95f52b9 100644
+--- a/backport/compat/compat-3.5.c
++++ b/backport/compat/compat-3.5.c
+@@ -64,17 +64,3 @@ int overflowgid = DEFAULT_OVERFLOWGID;
+ EXPORT_SYMBOL_GPL(overflowuid);
+ EXPORT_SYMBOL_GPL(overflowgid);
+ #endif
+-
 -/*
-- * This backports:
-- *
-- * commit f56f821feb7b36223f309e0ec05986bb137ce418
-- * Author: Daniel Vetter <daniel.vetter@ffwll.ch>
-- * Date:   Sun Mar 25 19:47:41 2012 +0200
-- *
-- *     mm: extend prefault helpers to fault in more than PAGE_SIZE
-- *
-- * The new functions are used by drm/i915 driver.
-- *
+- * We can't access the timekeeper static variable
+- * on older kernels so we're shit out of luck and
+- * have to rely on time that might jump. Upgrade
+- * if you want timestamps that don't jump, this
+- * important for DRM vblank and page flip event
+- * timestamps.
 - */
--
--#define fault_in_multipages_writeable LINUX_BACKPORT(fault_in_multipages_writeable)
--static inline int fault_in_multipages_writeable(char __user *uaddr, int size)
+-ktime_t ktime_get_monotonic_offset(void)
 -{
--        int ret = 0;
--        char __user *end = uaddr + size - 1;
--
--        if (unlikely(size == 0))
--                return ret;
--
--        /*
--         * Writing zeroes into userspace here is OK, because we know that if
--         * the zero gets there, we'll be overwriting it.
--         */
--        while (uaddr <= end) {
--                ret = __put_user(0, uaddr);
--                if (ret != 0)
--                        return ret;
--                uaddr += PAGE_SIZE;
--        }
--
--        /* Check whether the range spilled into the next page. */
--        if (((unsigned long)uaddr & PAGE_MASK) ==
--                        ((unsigned long)end & PAGE_MASK))
--                ret = __put_user(0, end);
--
--        return ret;
+-	return ktime_get();
 -}
--
--#define fault_in_multipages_readable LINUX_BACKPORT(fault_in_multipages_readable)
--static inline int fault_in_multipages_readable(const char __user *uaddr,
--                                               int size)
--{
--        volatile char c;
--        int ret = 0;
--        const char __user *end = uaddr + size - 1;
--
--        if (unlikely(size == 0))
--                return ret;
--
--        while (uaddr <= end) {
--                ret = __get_user(c, uaddr);
--                if (ret != 0)
--                        return ret;
--                uaddr += PAGE_SIZE;
--        }
--
--        /* Check whether the range spilled into the next page. */
--        if (((unsigned long)uaddr & PAGE_MASK) ==
--                        ((unsigned long)end & PAGE_MASK)) {
--                ret = __get_user(c, end);
--                (void)c;
--        }
--
--        return ret;
--}
--#endif /* < 3.5 */
--
--#endif /* __BACKPORT_LINUX_PAGEMAP_H */
+-EXPORT_SYMBOL_GPL(ktime_get_monotonic_offset);
 -- 
 1.7.10.4
 
