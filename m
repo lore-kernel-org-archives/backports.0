@@ -1,111 +1,55 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:50936 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:35333 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752494Ab3JEWpI (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 5 Oct 2013 18:45:08 -0400
+	id S1752831Ab3JWS1v (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 23 Oct 2013 14:27:51 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, ozancag@gmail.com,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [RFC 15/15] backports: remove shmem_read_mapping_page_gfp()
-Date: Sun,  6 Oct 2013 00:44:04 +0200
-Message-Id: <1381013044-7724-16-git-send-email-hauke@hauke-m.de> (sfid-20131006_004510_855320_FED30B8E)
-In-Reply-To: <1381013044-7724-1-git-send-email-hauke@hauke-m.de>
-References: <1381013044-7724-1-git-send-email-hauke@hauke-m.de>
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 1/5] backports: fix kernel dependencies for regulator drivers
+Date: Wed, 23 Oct 2013 20:27:28 +0200
+Message-Id: <1382552852-15916-2-git-send-email-hauke@hauke-m.de> (sfid-20131023_202752_481575_D6A8F64C)
+In-Reply-To: <1382552852-15916-1-git-send-email-hauke@hauke-m.de>
+References: <1382552852-15916-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This was only needed for some of the DRM drivers, remove it.
+These drivers are depending on changes of the regulator core driver
+which are not in the specific kernel versions.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/shmem_fs.h |   39 ----------------------------
- backport/compat/compat-3.0.c               |   26 -------------------
- 2 files changed, 65 deletions(-)
- delete mode 100644 backport/backport-include/linux/shmem_fs.h
+ dependencies |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/backport/backport-include/linux/shmem_fs.h b/backport/backport-include/linux/shmem_fs.h
-deleted file mode 100644
-index 4d3964e..0000000
---- a/backport/backport-include/linux/shmem_fs.h
-+++ /dev/null
-@@ -1,39 +0,0 @@
--#ifndef __BACKPORT_LINUX_SHMEM_FS_H
--#define __BACKPORT_LINUX_SHMEM_FS_H
--#include_next <linux/shmem_fs.h>
--
--
--#if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
--#if LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0)
--/* This pulls-in a lot of non-exported symbol backports
-- * on kernels older than 2.6.32. There's no harm for not
-- * making this available on kernels < 2.6.32. */
--#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32))
--#include <linux/pagemap.h>
--/* This backports the 2nd part of:
-- *
-- * commit d9d90e5eb70e09903dadff42099b6c948f814050
-- * Author: Hugh Dickins <hughd@google.com>
-- * Date:   Mon Jun 27 16:18:04 2011 -0700
-- *
-- *	tmpfs: add shmem_read_mapping_page_gfp
-- *
-- * First part is in compat-3.0.c.
-- */
--#define shmem_read_mapping_page_gfp LINUX_BACKPORT(shmem_read_mapping_page_gfp)
--extern struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
--						pgoff_t index, gfp_t gfp);
--
--
--#define shmem_read_mapping_page LINUX_BACKPORT(shmem_read_mapping_page)
--static inline struct page *shmem_read_mapping_page(
--                               struct address_space *mapping, pgoff_t index)
--{
--       return shmem_read_mapping_page_gfp(mapping, index,
--                                       mapping_gfp_mask(mapping));
--}
--#endif
--#endif
--#endif
--
--#endif /* __BACKPORT_LINUX_SHMEM_FS_H */
-diff --git a/backport/compat/compat-3.0.c b/backport/compat/compat-3.0.c
-index 0a993d7..9841019 100644
---- a/backport/compat/compat-3.0.c
-+++ b/backport/compat/compat-3.0.c
-@@ -12,32 +12,6 @@
- #include <linux/compat.h>
- #include <linux/if_ether.h>
- 
--#if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
--/* This pulls-in a lot of non-exported symbol backports
-- * on kernels older than 2.6.32. There's no harm for not
-- * making this available on kernels < 2.6.32. */
--#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32))
--#include <linux/pagemap.h>
--#include <linux/shmem_fs.h>
--
--/* This backports:
-- *
-- * commit d9d90e5eb70e09903dadff42099b6c948f814050
-- * Author: Hugh Dickins <hughd@google.com>
-- * Date:   Mon Jun 27 16:18:04 2011 -0700
-- *
-- *	tmpfs: add shmem_read_mapping_page_gfp
-- */
--
--struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
--                                        pgoff_t index, gfp_t gfp)
--{
--       return read_cache_page_gfp(mapping, index, gfp);
--}
--EXPORT_SYMBOL_GPL(shmem_read_mapping_page_gfp);
--#endif
--#endif
--
- int mac_pton(const char *s, u8 *mac)
- {
- 	int i;
+diff --git a/dependencies b/dependencies
+index dd3428d..1d835d9 100644
+--- a/dependencies
++++ b/dependencies
+@@ -53,6 +53,7 @@ MWIFIEX 2.6.27
+ REGULATOR 3.4
+ # requires some work
+ REGULATOR_88PM800 3.12
++REGULATOR_88PM8607 3.10
+ REGULATOR_AAT2870 3.6
+ REGULATOR_AD5398 3.5
+ REGULATOR_ARIZONA 3.8
+@@ -67,6 +68,7 @@ REGULATOR_GPIO 3.6
+ REGULATOR_ISL6271A 3.5
+ REGULATOR_LP3971 3.6
+ REGULATOR_LP3972 3.6
++REGULATOR_LP872X 3.6
+ REGULATOR_LP8755 3.6
+ REGULATOR_MAX1586 3.6
+ REGULATOR_MAX77686 3.7
+@@ -100,6 +102,7 @@ REGULATOR_TPS6524X 3.6
+ REGULATOR_TPS6586X 3.9
+ REGULATOR_TPS65910 3.6
+ REGULATOR_TPS65912 3.12
++REGULATOR_TWL4030 3.11
+ REGULATOR_WM831X 3.12
+ REGULATOR_WM8350 3.12
+ REGULATOR_WM8400 3.12
 -- 
 1.7.10.4
 
