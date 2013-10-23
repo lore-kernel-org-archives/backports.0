@@ -1,46 +1,57 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:47106 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751594Ab3JZKNV (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 26 Oct 2013 06:13:21 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/4] backports: add VLAN_PRIO_MASK and VLAN_PRIO_SHIFT
-Date: Sat, 26 Oct 2013 12:13:06 +0200
-Message-Id: <1382782389-4859-2-git-send-email-hauke@hauke-m.de> (sfid-20131026_121323_310509_A5E90A66)
-In-Reply-To: <1382782389-4859-1-git-send-email-hauke@hauke-m.de>
-References: <1382782389-4859-1-git-send-email-hauke@hauke-m.de>
+Received: from 162-17-110-37-static.hfc.comcastbusiness.net ([162.17.110.37]:39074
+	"EHLO stuffed.shaftnet.org" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1751447Ab3JWTl5 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 23 Oct 2013 15:41:57 -0400
+Date: Wed, 23 Oct 2013 15:41:49 -0400
+From: Solomon Peachy <pizza@shaftnet.org>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: backports-20130830 released
+Message-ID: <20131023194149.GA14165@shaftnet.org> (sfid-20131023_214159_137029_229C37E6)
+References: <52681718.1020502@hauke-m.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
+In-Reply-To: <52681718.1020502@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-It should be safe to add them for older kernel versions, there these
-values were hard coded in other places.
 
-This was added in linux-2.6.33.
+--8t9RHnE3ZwKMSgU+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/if_vlan.h |    8 ++++++++
- 1 file changed, 8 insertions(+)
+On Wed, Oct 23, 2013 at 08:36:08PM +0200, Hauke Mehrtens wrote:
+> The source code can be found here:
+> https://github.com/hauke/backports
 
-diff --git a/backport/backport-include/linux/if_vlan.h b/backport/backport-include/linux/if_vlan.h
-index fea0acc..2d996fa 100644
---- a/backport/backport-include/linux/if_vlan.h
-+++ b/backport/backport-include/linux/if_vlan.h
-@@ -17,4 +17,12 @@ static inline bool vlan_hw_offload_capable(netdev_features_t features,
- }
- #endif 
- 
-+#ifndef VLAN_PRIO_MASK
-+#define VLAN_PRIO_MASK		0xe000 /* Priority Code Point */
-+#endif
-+
-+#ifndef VLAN_PRIO_SHIFT
-+#define VLAN_PRIO_SHIFT		13
-+#endif
-+
- #endif /* __BACKPORT_LINUX_IF_VLAN_H_ */
--- 
-1.7.10.4
+The backports wiki still references a git tree on kernel.org [1] (which=20
+hasn't been updated since early September)
 
+What is considered the canonnical source of backports?  At this point=20
+I'm guessing it's your github tree, since the last couple of releases=20
+have come from it.  If so, the wiki needs to be corrected=20
+appropriately..
+
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/backports.git
+
+ - Solomon
+--=20
+Solomon Peachy        		       pizza at shaftnet dot org
+Delray Beach, FL                          ^^ (email/xmpp) ^^
+Quidquid latine dictum sit, altum viditur.
+
+--8t9RHnE3ZwKMSgU+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.14 (GNU/Linux)
+
+iD8DBQFSaCZ9PuLgii2759ARAjLuAJ9ivL6qEZ0KDzltFqjMReFlewt27wCfQtdJ
+BBpQuaQYhFovV0Bep3HvvdY=
+=eEGp
+-----END PGP SIGNATURE-----
+
+--8t9RHnE3ZwKMSgU+--
