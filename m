@@ -1,40 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:48852 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754621Ab3JRQwn (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 18 Oct 2013 12:52:43 -0400
-Message-ID: <1382115154.14393.18.camel@jlt4.sipsolutions.net> (sfid-20131018_185245_177909_119E917F)
-Subject: Re: [RFC] backports: replace netlink portid by semantic patch
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org
-Date: Fri, 18 Oct 2013 18:52:34 +0200
-In-Reply-To: <5261585F.8020000@hauke-m.de>
-References: <1382110139-23344-1-git-send-email-johannes@sipsolutions.net>
-	 <5261585F.8020000@hauke-m.de>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from server19320154104.serverpool.info ([193.201.54.104]:35151 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753210Ab3JWSZG (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 23 Oct 2013 14:25:06 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 06/18] backports: remove BACKPORT_BUILD_HDMI
+Date: Wed, 23 Oct 2013 20:24:13 +0200
+Message-Id: <1382552665-15678-7-git-send-email-hauke@hauke-m.de> (sfid-20131023_202508_465188_77417D10)
+In-Reply-To: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
+References: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2013-10-18 at 17:48 +0200, Hauke Mehrtens wrote:
+This was only needed for some of the DRM drivers, remove it.
 
-> There are two more patches doing the same thing for other subsystems, I
-> hope we could also replace the patches with this semantic patch:
-> 
-> patches/collateral-evolutions/nfc/01-netlink-portid/net_nfc_netlink.patch
-> patches/collateral-evolutions/ieee802154/0001-netlink-portid/ieee802154.patch
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/compat/Kconfig |   16 ----------------
+ 1 file changed, 16 deletions(-)
 
-Indeed, those can just be deleted now.
-
-> How fast would it be when one more semantic patch would be added would
-> it increase in the same way? I am wondering if this is a constant
-> increase or does it depend on the number of patches.
-
-I believe it's # of patches because the slowest part seems to be
-searching all files for matches.
-
-We might be able to concatenate the patches, but ...
-
-johannes
+diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
+index 215de8e..c3e9a04 100644
+--- a/backport/compat/Kconfig
++++ b/backport/compat/Kconfig
+@@ -142,22 +142,6 @@ config BACKPORT_BUILD_DMA_SHARED_BUFFER
+ config BACKPORT_DMA_SHARED_BUFFER
+ 	bool
+ 
+-config BACKPORT_BUILD_HDMI
+-	bool
+-	# not possible on kernel < 3.0
+-	depends on !BACKPORT_KERNEL_3_0
+-	# don't build if base kernel has it, except on kernel < 3.9
+-	depends on !HDMI || BACKPORT_KERNEL_3_9
+-	# build for testing
+-	default y if BACKPORT_USERSEL_BUILD_ALL
+-	# build if a driver needs it
+-	default y if BACKPORT_HDMI
+-	#h-file linux/hdmi.h
+-	#c-file drivers/video/hdmi.c
+-
+-config BACKPORT_HDMI
+-	bool
+-
+ config BACKPORT_BUILD_DMA_SHARED_HELPERS
+ 	bool
+ 	depends on HAS_DMA
+-- 
+1.7.10.4
 
