@@ -1,82 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-we0-f170.google.com ([74.125.82.170]:53025 "EHLO
-	mail-we0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753126Ab3JUJIz (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 21 Oct 2013 05:08:55 -0400
-Received: by mail-we0-f170.google.com with SMTP id u57so6314977wes.1
-        for <backports@vger.kernel.org>; Mon, 21 Oct 2013 02:08:54 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: hauke@hauke-m.de
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH v4 7/8] lib/bpkup.py: add or own kernel uploader helper lib
-Date: Mon, 21 Oct 2013 11:08:31 +0200
-Message-Id: <1382346512-18694-8-git-send-email-mcgrof@do-not-panic.com> (sfid-20131021_110905_568651_3907C43A)
-In-Reply-To: <1382346512-18694-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1382346512-18694-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:36132 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751531Ab3JWVhE (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 23 Oct 2013 17:37:04 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 2/8] backports: remove addr_assign_type from usbnet
+Date: Wed, 23 Oct 2013 23:36:44 +0200
+Message-Id: <1382564210-15230-3-git-send-email-hauke@hauke-m.de> (sfid-20131023_233708_007553_A2CA7AF9)
+In-Reply-To: <1382564210-15230-1-git-send-email-hauke@hauke-m.de>
+References: <1382564210-15230-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-kup is written in perl, add some basic python interfaces
-for it to allow us to upload to kernel.org backport
-releases.
+addr_assign_type was added with kernel 2.6.36. This is just used to
+inform userspace, so removing it is no problem.
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- lib/bpkup.py | 44 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 lib/bpkup.py
+ .../network/61-netdev-addr_assign_type/usbnet.patch      |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/61-netdev-addr_assign_type/usbnet.patch
 
-diff --git a/lib/bpkup.py b/lib/bpkup.py
+diff --git a/patches/collateral-evolutions/network/61-netdev-addr_assign_type/usbnet.patch b/patches/collateral-evolutions/network/61-netdev-addr_assign_type/usbnet.patch
 new file mode 100644
-index 0000000..03504bb
+index 0000000..a82c478
 --- /dev/null
-+++ b/lib/bpkup.py
-@@ -0,0 +1,44 @@
-+import subprocess, os
-+
-+class KupError(Exception):
-+    pass
-+class ExecutionError(KupError):
-+    def __init__(self, errcode):
-+        self.error_code = errcode
-+
-+def _check(process):
-+    if process.returncode != 0:
-+        raise ExecutionError(process.returncode)
-+
-+def mkdir(path):
-+    cmd = ['kup', 'mkdir', path]
-+    process = subprocess.Popen(cmd,
-+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                               close_fds=True, universal_newlines=True)
-+    stdout = process.communicate()[0]
-+    process.wait()
-+    _check(process)
-+
-+    return stdout
-+
-+def ls(path=None):
-+    cmd = ['kup', 'ls', path]
-+    process = subprocess.Popen(cmd,
-+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                               close_fds=True, universal_newlines=True)
-+    stdout = process.communicate()[0]
-+    process.wait()
-+    _check(process)
-+
-+    return stdout
-+
-+def put(tar_bz2, signed_tar, path):
-+    cmd = ['kup', 'put', tar_bz2, signed_tar, path]
-+    process = subprocess.Popen(cmd,
-+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                               close_fds=True, universal_newlines=True)
-+    stdout = process.communicate()[0]
-+    process.wait()
-+    _check(process)
-+
-+    return stdout
++++ b/patches/collateral-evolutions/network/61-netdev-addr_assign_type/usbnet.patch
+@@ -0,0 +1,14 @@
++--- a/drivers/net/usb/usbnet.c
+++++ b/drivers/net/usb/usbnet.c
++@@ -1669,9 +1669,11 @@ usbnet_probe (struct usb_interface *udev
++ 		dev->rx_urb_size = dev->hard_mtu;
++ 	dev->maxpacket = usb_maxpacket (dev->udev, dev->out, 1);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,36)
++ 	/* let userspace know we have a random address */
++ 	if (ether_addr_equal(net->dev_addr, node_id))
++ 		net->addr_assign_type = NET_ADDR_RANDOM;
+++#endif
++ 
++ 	if ((dev->driver_info->flags & FLAG_WLAN) != 0)
++ 		SET_NETDEV_DEVTYPE(net, &wlan_type);
 -- 
-1.8.4.rc3
+1.7.10.4
 
