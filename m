@@ -1,81 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:35189 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:41554 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752986Ab3JWSZ1 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 23 Oct 2013 14:25:27 -0400
+	id S1755859Ab3JXVEh (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 24 Oct 2013 17:04:37 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 14/18] backports: remove cpufreq_quick_get_max()
-Date: Wed, 23 Oct 2013 20:24:21 +0200
-Message-Id: <1382552665-15678-15-git-send-email-hauke@hauke-m.de> (sfid-20131023_203808_227020_CDF4BBD8)
-In-Reply-To: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
-References: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 2/3] backports: add backport prefix to devm_regulator_register()
+Date: Thu, 24 Oct 2013 23:04:23 +0200
+Message-Id: <1382648664-17110-3-git-send-email-hauke@hauke-m.de> (sfid-20131024_230438_750055_03013414)
+In-Reply-To: <1382648664-17110-1-git-send-email-hauke@hauke-m.de>
+References: <1382648664-17110-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This was only needed for some of the DRM drivers, remove it.
+Use LINUX_BACKPORT() to prevent a collision with some backported
+patches in the kernel backports is being compiled against.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/cpufreq.h |   13 -------------
- backport/compat/compat-3.1.c              |   23 -----------------------
- 2 files changed, 36 deletions(-)
- delete mode 100644 backport/backport-include/linux/cpufreq.h
+ backport/backport-include/linux/regulator/driver.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/backport/backport-include/linux/cpufreq.h b/backport/backport-include/linux/cpufreq.h
-deleted file mode 100644
-index dbf234d..0000000
---- a/backport/backport-include/linux/cpufreq.h
-+++ /dev/null
-@@ -1,13 +0,0 @@
--#ifndef __BACKPORT_INCLUDE_CPUFREQ_H
--#define __BACKPORT_INCLUDE_CPUFREQ_H
--#include_next <linux/cpufreq.h>
--#include <linux/version.h>
--
--#if LINUX_VERSION_CODE < KERNEL_VERSION(3,1,0)
--#ifdef CONFIG_CPU_FREQ
--#define cpufreq_quick_get_max LINUX_BACKPORT(cpufreq_quick_get_max)
--unsigned int cpufreq_quick_get_max(unsigned int cpu);
--#endif
--#endif
--
--#endif /* __BACKPORT_INCLUDE_CPUFREQ_H */
-diff --git a/backport/compat/compat-3.1.c b/backport/compat/compat-3.1.c
-index b876329..0d9c3a2 100644
---- a/backport/compat/compat-3.1.c
-+++ b/backport/compat/compat-3.1.c
-@@ -11,29 +11,6 @@
- #include <linux/idr.h>
- #include <linux/cpufreq.h>
+diff --git a/backport/backport-include/linux/regulator/driver.h b/backport/backport-include/linux/regulator/driver.h
+index f56990b..e1604bf 100644
+--- a/backport/backport-include/linux/regulator/driver.h
++++ b/backport/backport-include/linux/regulator/driver.h
+@@ -25,10 +25,12 @@ int regulator_map_voltage_ascend(struct regulator_dev *rdev,
  
--/* This backports:
-- * commit 3d73710880afa3d61cf57b5d4eb192e812eb7e4f
-- * Author: Jesse Barnes <jbarnes@virtuousgeek.org>
-- * Date:   Tue Jun 28 10:59:12 2011 -0700
-- *
-- * 	cpufreq: expose a cpufreq_quick_get_max routine
-- */
--#ifdef CONFIG_CPU_FREQ
--unsigned int cpufreq_quick_get_max(unsigned int cpu)
--{
--	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
--	unsigned int ret_freq = 0;
--
--	if (policy) {
--		ret_freq = policy->max;
--		cpufreq_cpu_put(policy);
--	}
--
--	return ret_freq;
--}
--EXPORT_SYMBOL_GPL(cpufreq_quick_get_max);
--#endif
--
- static DEFINE_SPINLOCK(compat_simple_ida_lock);
- 
- /**
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)) && \
+     (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
++#define devm_regulator_register LINUX_BACKPORT(devm_regulator_register)
+ struct regulator_dev *
+ devm_regulator_register(struct device *dev,
+ 			const struct regulator_desc *regulator_desc,
+ 			const struct regulator_config *config);
++#define devm_regulator_unregister LINUX_BACKPORT(devm_regulator_unregister)
+ void devm_regulator_unregister(struct device *dev, struct regulator_dev *rdev);
+ #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)) &&
+ 	  (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)) */
 -- 
 1.7.10.4
 
