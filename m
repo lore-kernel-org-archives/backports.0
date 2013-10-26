@@ -1,34 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:41907 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:47106 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753934Ab3JXWSZ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 24 Oct 2013 18:18:25 -0400
-Received: from localhost (localhost [127.0.0.1])
-	by hauke-m.de (Postfix) with ESMTP id 6D02285EA
-	for <backports@vger.kernel.org>; Fri, 25 Oct 2013 00:18:24 +0200 (CEST)
-Received: from hauke-m.de ([127.0.0.1])
-	by localhost (hauke-m.de [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id GVCbgUjOvx-f for <backports@vger.kernel.org>;
-	Fri, 25 Oct 2013 00:18:19 +0200 (CEST)
-Received: from [IPv6:2001:470:1f0b:447:5ce8:2a80:fd49:39c0] (unknown [IPv6:2001:470:1f0b:447:5ce8:2a80:fd49:39c0])
-	by hauke-m.de (Postfix) with ESMTPSA id 45CD5857F
-	for <backports@vger.kernel.org>; Fri, 25 Oct 2013 00:18:19 +0200 (CEST)
-Message-ID: <52699CA9.3050502@hauke-m.de> (sfid-20131025_001826_948304_014B7156)
-Date: Fri, 25 Oct 2013 00:18:17 +0200
+	id S1751594Ab3JZKNV (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 26 Oct 2013 06:13:21 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: backports-20130927 released
-Content-Type: text/plain; charset=ISO-8859-1
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 1/4] backports: add VLAN_PRIO_MASK and VLAN_PRIO_SHIFT
+Date: Sat, 26 Oct 2013 12:13:06 +0200
+Message-Id: <1382782389-4859-2-git-send-email-hauke@hauke-m.de> (sfid-20131026_121323_310509_A5E90A66)
+In-Reply-To: <1382782389-4859-1-git-send-email-hauke@hauke-m.de>
+References: <1382782389-4859-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backports-20130920 and backports-20130927 was released. This is based on
-linux-next next-20130920 and next-20130927.
+It should be safe to add them for older kernel versions, there these
+values were hard coded in other places.
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/2013/09/27/backports-20130927.tar.bz2
+This was added in linux-2.6.33.
 
-The source code can be found here:
-https://github.com/hauke/backports
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/if_vlan.h |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Hauke
+diff --git a/backport/backport-include/linux/if_vlan.h b/backport/backport-include/linux/if_vlan.h
+index fea0acc..2d996fa 100644
+--- a/backport/backport-include/linux/if_vlan.h
++++ b/backport/backport-include/linux/if_vlan.h
+@@ -17,4 +17,12 @@ static inline bool vlan_hw_offload_capable(netdev_features_t features,
+ }
+ #endif 
+ 
++#ifndef VLAN_PRIO_MASK
++#define VLAN_PRIO_MASK		0xe000 /* Priority Code Point */
++#endif
++
++#ifndef VLAN_PRIO_SHIFT
++#define VLAN_PRIO_SHIFT		13
++#endif
++
+ #endif /* __BACKPORT_LINUX_IF_VLAN_H_ */
+-- 
+1.7.10.4
+
