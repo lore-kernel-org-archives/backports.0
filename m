@@ -1,67 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:36235 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:47096 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751501Ab3JWVzX (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 23 Oct 2013 17:55:23 -0400
-Message-ID: <526845C4.5080504@hauke-m.de> (sfid-20131023_235527_750958_975B93CD)
-Date: Wed, 23 Oct 2013 23:55:16 +0200
+	id S1751558Ab3JZKNS (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 26 Oct 2013 06:13:18 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Solomon Peachy <pizza@shaftnet.org>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: backports-20130830 released
-References: <52681718.1020502@hauke-m.de> <20131023194149.GA14165@shaftnet.org>
-In-Reply-To: <20131023194149.GA14165@shaftnet.org>
-Content-Type: text/plain; charset=ISO-8859-1
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 0/4] backports: update to next-20131011
+Date: Sat, 26 Oct 2013 12:13:05 +0200
+Message-Id: <1382782389-4859-1-git-send-email-hauke@hauke-m.de> (sfid-20131026_121320_423692_D3A3C100)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+This brings backports to linux-next version next-20131011
 
-On 10/23/2013 09:41 PM, Solomon Peachy wrote:
-> On Wed, Oct 23, 2013 at 08:36:08PM +0200, Hauke Mehrtens wrote:
->> The source code can be found here: 
->> https://github.com/hauke/backports
-> 
-> The backports wiki still references a git tree on kernel.org [1]
-> (which hasn't been updated since early September)
-> 
-> What is considered the canonnical source of backports?  At this
-> point I'm guessing it's your github tree, since the last couple of
-> releases have come from it.  If so, the wiki needs to be corrected
->  appropriately..
-> 
-> [1]
-> git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/backports.git
-> 
-> - Solomon
-> 
-Thanks,
+Hauke Mehrtens (4):
+  backports: add VLAN_PRIO_MASK and VLAN_PRIO_SHIFT
+  backports: add resource_size()
+  backports: remove struct platform_device_id from wcn36xx
+  backports: refresh patches on next-20131011
 
-I forgot about the wiki. ;-)
+ backport/backport-include/linux/if_vlan.h          |    8 +++++
+ backport/backport-include/linux/ioport.h           |    7 +++++
+ .../network/0001-netdev_ops/mac80211.patch         |    6 ++--
+ .../mac80211.patch                                 |    4 +--
+ .../network/0005-netlink-portid/nl80211.patch      |   32 ++++++++++----------
+ .../include_net_cfg80211.patch                     |    2 +-
+ .../11-dev-pm-ops/drivers_bcma_host_pci.patch      |    4 +--
+ .../drivers_net_wireless_iwlwifi_pcie_drv.patch    |    4 +--
+ .../net_mac80211_tx.patch                          |    4 +--
+ .../16-bluetooth/net_bluetooth_hci_sock.patch      |    4 +--
+ .../16-bluetooth/net_bluetooth_l2cap_sock.patch    |    6 ++--
+ .../17-netdev-queue/net_mac80211_iface.patch       |    4 +--
+ .../network/22-multiqueue/net_mac80211_tx.patch    |    2 +-
+ .../24-pcmcia/drivers_bluetooth_bluecard_cs.patch  |   18 +++++------
+ .../24-pcmcia/drivers_bluetooth_bt3c_cs.patch      |   14 ++++-----
+ .../24-pcmcia/drivers_bluetooth_btuart_cs.patch    |   18 +++++------
+ .../24-pcmcia/drivers_bluetooth_dtl1_cs.patch      |   18 +++++------
+ .../include_net_mac80211.patch                     |    2 +-
+ .../net_mac80211_iface.patch                       |    4 +--
+ .../drivers_bluetooth_btmrvl_sdio.patch            |    6 ++--
+ .../network/30-bridge-port/net_wireless_util.patch |    2 +-
+ .../42-netlink_seq/net_wireless_nl80211.patch      |    2 +-
+ .../drivers_net_wireless_ath_wcn36xx_main.patch    |   28 +++++++++++++++++
+ .../drivers_bluetooth_bfusb.patch                  |    2 +-
+ .../drivers_bluetooth_bpa10x.patch                 |    2 +-
+ .../69-wowlan-no-socket/net_wireless_nl80211.patch |    2 +-
+ 26 files changed, 124 insertions(+), 81 deletions(-)
+ create mode 100644 patches/collateral-evolutions/network/45-remove-platform-id-table/drivers_net_wireless_ath_wcn36xx_main.patch
 
-I changed this page:
-https://backports.wiki.kernel.org/index.php/Documentation/backports/hacking
+-- 
+1.7.10.4
 
-I hope my git repository is just a temporary solution.
-
-Hauke
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJSaEW8AAoJEIZ0px9YPRMytcwP/2BYite4AN+l60K1yWql7gfh
-+WTMHccf1mhDu7B4jWt4KuZln/E/mrV9X1UprFmxVpho0M77vZHEfd7udWY2i8wl
-y4YHurnKCnFFw2Q+u5MGdC7KtFBimUqm+JgrD0bbH/mKNyPkh4E0P4fO+CCnWmCb
-LZkpiaON5TNXR1bGxLMfZsAyVzOOyB5jiRvgRG3Boh/rLukpzxw1JTyaON41mZZX
-vU/hpB+WICuay5jTJjluW3rrIR8puoj3gQRXH30XBAcS04Ocjct7RDIogjMGxQ3B
-nzc9Dbz7h72PF46R4EbGRh/mtLyEs0DlQC6B2hVCGtECpXqjFPa8sgUMvLri640s
-+O5Vg+87346C6NUV4tk6FEkym/8Oh14aNojJrnNrOWWi1m1ZhYhHrkFk+wrVRMka
-boZNcuUI/L/PCUPrKCMMSM2mCUwg2w5oSSA43tU3P9qKp3zUHfuiXGgNrym6hI+b
-mJVarXmhalO5XYrz3yg8m+V1kTFbIc0MKlUeZxsB0dHKTQOJnROp1zIiuWrYKncu
-jQrIyN25h9xeZsKwQjRxV4UTka04q8eXoI7g1tf72oc32IAmd03rDEFfgLphUL/b
-0ghZRKg0kkHQ8fR9YGs49/JHoR+i7tb9DwwLTt80gTcgCL0RXDvutmd79YCd7Kej
-Uu1O1iNe1smzUbwF2o3K
-=N9TO
------END PGP SIGNATURE-----
