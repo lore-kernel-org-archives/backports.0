@@ -1,151 +1,111 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:41284 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:49277 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754380Ab3JXTsR (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 24 Oct 2013 15:48:17 -0400
+	id S1754116Ab3J0Nka (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 27 Oct 2013 09:40:30 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 3/3] backports: refresh patches on next-20130920
-Date: Thu, 24 Oct 2013 21:48:02 +0200
-Message-Id: <1382644082-14032-4-git-send-email-hauke@hauke-m.de> (sfid-20131024_214819_009130_FCA255AE)
-In-Reply-To: <1382644082-14032-1-git-send-email-hauke@hauke-m.de>
-References: <1382644082-14032-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 3/5] backports: backport new sysfs API for bcma and ssb
+Date: Sun, 27 Oct 2013 14:40:00 +0100
+Message-Id: <1382881202-16709-4-git-send-email-hauke@hauke-m.de> (sfid-20131027_144031_303021_7AE95B40)
+In-Reply-To: <1382881202-16709-1-git-send-email-hauke@hauke-m.de>
+References: <1382881202-16709-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-1   2.6.25              [  OK  ]
-2   2.6.26              [  OK  ]
-3   2.6.27              [  OK  ]
-4   2.6.28              [  OK  ]
-5   2.6.29              [  OK  ]
-6   2.6.30              [  OK  ]
-7   2.6.31              [  OK  ]
-8   2.6.32              [  OK  ]
-9   2.6.33              [  OK  ]
-10  2.6.34              [  OK  ]
-11  2.6.35              [  OK  ]
-12  2.6.36              [  OK  ]
-13  2.6.37              [  OK  ]
-14  2.6.38              [  OK  ]
-15  2.6.39              [  OK  ]
-16  3.0.98              [  OK  ]
-17  3.1.10              [  OK  ]
-18  3.10.14             [  OK  ]
-19  3.11.3              [  OK  ]
-20  3.12-rc3            [  OK  ]
-21  3.2.51              [  OK  ]
-22  3.3.8               [  OK  ]
-23  3.4.64              [  OK  ]
-24  3.5.7               [  OK  ]
-25  3.6.11              [  OK  ]
-26  3.7.10              [  OK  ]
-27  3.8.13              [  OK  ]
-28  3.9.11              [  OK  ]
+bcma and ssb are using the new sysfs API starting with kernel 3.12.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- patches/collateral-evolutions/network/0001-netdev_ops/alx.patch    |    2 +-
- .../11-dev-pm-ops/drivers_net_ethernet_atheros_alx_main.patch      |    4 ++--
- .../network/16-bluetooth/net_bluetooth_l2cap_sock.patch            |    4 ++--
- .../network/16-bluetooth/net_bluetooth_rfcomm_sock.patch           |    2 +-
- .../drivers_net_ethernet_atheros_alx_main.patch                    |    2 +-
- .../network/62-usb_driver_lpm/drivers_net_usb_cdc_ether.patch      |    2 +-
- 6 files changed, 8 insertions(+), 8 deletions(-)
+ .../network/76-sysfs-api/drivers_bcma.patch        |   35 ++++++++++++++++++++
+ .../network/76-sysfs-api/drivers_ssb.patch         |   35 ++++++++++++++++++++
+ 2 files changed, 70 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/76-sysfs-api/drivers_bcma.patch
+ create mode 100644 patches/collateral-evolutions/network/76-sysfs-api/drivers_ssb.patch
 
-diff --git a/patches/collateral-evolutions/network/0001-netdev_ops/alx.patch b/patches/collateral-evolutions/network/0001-netdev_ops/alx.patch
-index 465c4de..a0eca03 100644
---- a/patches/collateral-evolutions/network/0001-netdev_ops/alx.patch
-+++ b/patches/collateral-evolutions/network/0001-netdev_ops/alx.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/net/ethernet/atheros/alx/main.c
- +++ b/drivers/net/ethernet/atheros/alx/main.c
--@@ -1261,7 +1261,7 @@ static int alx_probe(struct pci_dev *pde
-+@@ -1256,7 +1256,7 @@ static int alx_probe(struct pci_dev *pde
-  		goto out_free_netdev;
-  	}
-  
-diff --git a/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_alx_main.patch b/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_alx_main.patch
-index 318cc34..d2d6c0d 100644
---- a/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_alx_main.patch
-+++ b/patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_alx_main.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/net/ethernet/atheros/alx/main.c
- +++ b/drivers/net/ethernet/atheros/alx/main.c
--@@ -1401,6 +1401,9 @@ static int alx_resume(struct device *dev
-+@@ -1396,6 +1396,9 @@ static int alx_resume(struct device *dev
-  	return __alx_open(alx, true);
-  }
-  
-@@ -10,7 +10,7 @@
-  static SIMPLE_DEV_PM_OPS(alx_pm_ops, alx_suspend, alx_resume);
-  #define ALX_PM_OPS      (&alx_pm_ops)
-  #else
--@@ -1503,7 +1506,12 @@ static struct pci_driver alx_driver = {
-+@@ -1498,7 +1501,12 @@ static struct pci_driver alx_driver = {
-  	.probe       = alx_probe,
-  	.remove      = alx_remove,
-  	.err_handler = &alx_err_handlers,
-diff --git a/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_l2cap_sock.patch b/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_l2cap_sock.patch
-index 16bcee3..ff615f8 100644
---- a/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_l2cap_sock.patch
-+++ b/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_l2cap_sock.patch
-@@ -14,7 +14,7 @@
-  {
-  	struct sock *sk = sock->sk;
-  	struct l2cap_chan *chan = l2cap_pi(sk)->chan;
--@@ -1231,8 +1236,12 @@ static struct sock *l2cap_sock_alloc(str
-+@@ -1237,8 +1242,12 @@ static struct sock *l2cap_sock_alloc(str
-  	return sk;
-  }
-  
-@@ -27,7 +27,7 @@
-  {
-  	struct sock *sk;
-  
--@@ -1244,7 +1253,11 @@ static int l2cap_sock_create(struct net
-+@@ -1250,7 +1259,11 @@ static int l2cap_sock_create(struct net
-  	    sock->type != SOCK_DGRAM && sock->type != SOCK_RAW)
-  		return -ESOCKTNOSUPPORT;
-  
-diff --git a/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_rfcomm_sock.patch b/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_rfcomm_sock.patch
-index 8fe9af5..a370d93 100644
---- a/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_rfcomm_sock.patch
-+++ b/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_rfcomm_sock.patch
-@@ -14,7 +14,7 @@
-  {
-  	struct sock *sk;
-  
--@@ -661,7 +666,11 @@ static int rfcomm_sock_setsockopt_old(st
-+@@ -666,7 +671,11 @@ static int rfcomm_sock_setsockopt_old(st
-  	return err;
-  }
-  
-diff --git a/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_alx_main.patch b/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_alx_main.patch
-index 742ae0f..5360471 100644
---- a/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_alx_main.patch
-+++ b/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_alx_main.patch
-@@ -44,7 +44,7 @@
-  #ifdef CONFIG_NET_POLL_CONTROLLER
-  	.ndo_poll_controller    = alx_poll_controller,
-  #endif
--@@ -1303,7 +1317,11 @@ static int alx_probe(struct pci_dev *pde
-+@@ -1298,7 +1312,11 @@ static int alx_probe(struct pci_dev *pde
-  		}
-  	}
-  
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ether.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ether.patch
-index 2fd4eed..467d4c6 100644
---- a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ether.patch
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ether.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/net/usb/cdc_ether.c
- +++ b/drivers/net/usb/cdc_ether.c
--@@ -757,7 +757,9 @@ static struct usb_driver cdc_driver = {
-+@@ -726,7 +726,9 @@ static struct usb_driver cdc_driver = {
-  	.resume =	usbnet_resume,
-  	.reset_resume =	usbnet_resume,
-  	.supports_autosuspend = 1,
+diff --git a/patches/collateral-evolutions/network/76-sysfs-api/drivers_bcma.patch b/patches/collateral-evolutions/network/76-sysfs-api/drivers_bcma.patch
+new file mode 100644
+index 0000000..68214b6
+--- /dev/null
++++ b/patches/collateral-evolutions/network/76-sysfs-api/drivers_bcma.patch
+@@ -0,0 +1,35 @@
++--- a/drivers/bcma/main.c
+++++ b/drivers/bcma/main.c
++@@ -60,7 +60,12 @@ static struct attribute *bcma_device_att
++ 	&dev_attr_class.attr,
++ 	NULL,
++ };
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0)
++ ATTRIBUTE_GROUPS(bcma_device);
+++#else
+++#define BP_ATTR_GRP_STRUCT device_attribute
+++ATTRIBUTE_GROUPS_BACKPORT(bcma_device);
+++#endif
++ 
++ static struct bus_type bcma_bus_type = {
++ 	.name		= "bcma",
++@@ -68,7 +73,11 @@ static struct bus_type bcma_bus_type = {
++ 	.probe		= bcma_device_probe,
++ 	.remove		= bcma_device_remove,
++ 	.uevent		= bcma_device_uevent,
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0)
++ 	.dev_groups	= bcma_device_groups,
+++#else
+++	.dev_attrs	= bcma_device_dev_attrs,
+++#endif
++ };
++ 
++ static u16 bcma_cc_core_id(struct bcma_bus *bus)
++@@ -492,6 +501,7 @@ static int __init bcma_modinit(void)
++ {
++ 	int err;
++ 
+++	init_bcma_device_attrs();
++ 	err = bus_register(&bcma_bus_type);
++ 	if (err)
++ 		return err;
+diff --git a/patches/collateral-evolutions/network/76-sysfs-api/drivers_ssb.patch b/patches/collateral-evolutions/network/76-sysfs-api/drivers_ssb.patch
+new file mode 100644
+index 0000000..36a0464
+--- /dev/null
++++ b/patches/collateral-evolutions/network/76-sysfs-api/drivers_ssb.patch
+@@ -0,0 +1,35 @@
++--- a/drivers/ssb/main.c
+++++ b/drivers/ssb/main.c
++@@ -399,7 +399,12 @@ static struct attribute *ssb_device_attr
++ 	&dev_attr_irq.attr,
++ 	NULL,
++ };
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0)
++ ATTRIBUTE_GROUPS(ssb_device);
+++#else
+++#define BP_ATTR_GRP_STRUCT device_attribute
+++ATTRIBUTE_GROUPS_BACKPORT(ssb_device);
+++#endif
++ 
++ static struct bus_type ssb_bustype = {
++ 	.name		= "ssb",
++@@ -410,7 +415,11 @@ static struct bus_type ssb_bustype = {
++ 	.suspend	= ssb_device_suspend,
++ 	.resume		= ssb_device_resume,
++ 	.uevent		= ssb_device_uevent,
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0)
++ 	.dev_groups	= ssb_device_groups,
+++#else
+++	.dev_attrs	= ssb_device_dev_attrs,
+++#endif
++ };
++ 
++ static void ssb_buses_lock(void)
++@@ -1461,6 +1470,7 @@ static int __init ssb_modinit(void)
++ {
++ 	int err;
++ 
+++	init_ssb_device_attrs();
++ 	/* See the comment at the ssb_is_early_boot definition */
++ 	ssb_is_early_boot = 0;
++ 	err = bus_register(&ssb_bustype);
 -- 
 1.7.10.4
 
