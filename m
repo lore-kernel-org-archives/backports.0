@@ -1,110 +1,85 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:35197 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752986Ab3JWSZb (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 23 Oct 2013 14:25:31 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 15/18] backports: remove shmem_read_mapping_page_gfp()
-Date: Wed, 23 Oct 2013 20:24:22 +0200
-Message-Id: <1382552665-15678-16-git-send-email-hauke@hauke-m.de> (sfid-20131023_203807_345014_7A27141D)
-In-Reply-To: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
-References: <1382552665-15678-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-lb0-f179.google.com ([209.85.217.179]:37401 "EHLO
+	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756656Ab3J1QuZ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 28 Oct 2013 12:50:25 -0400
+Received: by mail-lb0-f179.google.com with SMTP id w6so3134699lbh.10
+        for <backports@vger.kernel.org>; Mon, 28 Oct 2013 09:50:23 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1382969837.17956.20.camel@jlt4.sipsolutions.net>
+References: <1382552852-15916-1-git-send-email-hauke@hauke-m.de>
+ <1382552852-15916-2-git-send-email-hauke@hauke-m.de> <1382690097.4461.0.camel@jlt4.sipsolutions.net>
+ <526AE34E.5020300@hauke-m.de> <CAB=NE6XpXqo09-vpkPaY=qMgpJfywS61oNjZ0nkm1Mpd1PrdHA@mail.gmail.com>
+ <1382969837.17956.20.camel@jlt4.sipsolutions.net>
+From: "Luis R. Rodriguez" <mcgrof@gmail.com>
+Date: Mon, 28 Oct 2013 17:50:03 +0100
+Message-ID: <CAB=NE6XT7JfWubdZeCiJJMVVVhYtPmd4rYGwrwWLQNoX3Ld5jw@mail.gmail.com> (sfid-20131028_175027_289145_D8653C90)
+Subject: Re: [PATCH 1/5] backports: fix kernel dependencies for regulator drivers
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>,
+	Mauro Carvalho Chehab <m.chehab@samsung.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This was only needed for some of the DRM drivers, remove it.
+On Mon, Oct 28, 2013 at 3:17 PM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> On Sat, 2013-10-26 at 11:45 +0200, Luis R. Rodriguez wrote:
+>
+>> > Yes moving the dependencies is easier than backporting the code which
+>> > does not work any more. ;-) The problem here is that the regulator core
+>> > can not be backported, because it is always build into the kernel and
+>> > not as a module.
+>
+>> As for the issues with some functionality on the regulator
+>> drivers requiring functionality from future kernels as its always
+>> built-in, that can be addressed if we add support for non-modular
+>> solutions on backports.
+>
+> I don't think that's actually true - the regulator drivers may require
+> being built-in,
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/shmem_fs.h |   39 ----------------------------
- backport/compat/compat-3.0.c               |   26 -------------------
- 2 files changed, 65 deletions(-)
- delete mode 100644 backport/backport-include/linux/shmem_fs.h
+Sorry I didn't mean to say they require, I mean they are typically
+used in that way, the core of the subsystem is built-in and does
+require to be built in, but the drivers do not. What I'm saying is
+that if we had built-in target support we'd be able to backport a more
+rich feature set of the functionality.
 
-diff --git a/backport/backport-include/linux/shmem_fs.h b/backport/backport-include/linux/shmem_fs.h
-deleted file mode 100644
-index 4d3964e..0000000
---- a/backport/backport-include/linux/shmem_fs.h
-+++ /dev/null
-@@ -1,39 +0,0 @@
--#ifndef __BACKPORT_LINUX_SHMEM_FS_H
--#define __BACKPORT_LINUX_SHMEM_FS_H
--#include_next <linux/shmem_fs.h>
--
--
--#if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
--#if LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0)
--/* This pulls-in a lot of non-exported symbol backports
-- * on kernels older than 2.6.32. There's no harm for not
-- * making this available on kernels < 2.6.32. */
--#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32))
--#include <linux/pagemap.h>
--/* This backports the 2nd part of:
-- *
-- * commit d9d90e5eb70e09903dadff42099b6c948f814050
-- * Author: Hugh Dickins <hughd@google.com>
-- * Date:   Mon Jun 27 16:18:04 2011 -0700
-- *
-- *	tmpfs: add shmem_read_mapping_page_gfp
-- *
-- * First part is in compat-3.0.c.
-- */
--#define shmem_read_mapping_page_gfp LINUX_BACKPORT(shmem_read_mapping_page_gfp)
--extern struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
--						pgoff_t index, gfp_t gfp);
--
--
--#define shmem_read_mapping_page LINUX_BACKPORT(shmem_read_mapping_page)
--static inline struct page *shmem_read_mapping_page(
--                               struct address_space *mapping, pgoff_t index)
--{
--       return shmem_read_mapping_page_gfp(mapping, index,
--                                       mapping_gfp_mask(mapping));
--}
--#endif
--#endif
--#endif
--
--#endif /* __BACKPORT_LINUX_SHMEM_FS_H */
-diff --git a/backport/compat/compat-3.0.c b/backport/compat/compat-3.0.c
-index 0a993d7..9841019 100644
---- a/backport/compat/compat-3.0.c
-+++ b/backport/compat/compat-3.0.c
-@@ -12,32 +12,6 @@
- #include <linux/compat.h>
- #include <linux/if_ether.h>
- 
--#if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
--/* This pulls-in a lot of non-exported symbol backports
-- * on kernels older than 2.6.32. There's no harm for not
-- * making this available on kernels < 2.6.32. */
--#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32))
--#include <linux/pagemap.h>
--#include <linux/shmem_fs.h>
--
--/* This backports:
-- *
-- * commit d9d90e5eb70e09903dadff42099b6c948f814050
-- * Author: Hugh Dickins <hughd@google.com>
-- * Date:   Mon Jun 27 16:18:04 2011 -0700
-- *
-- *	tmpfs: add shmem_read_mapping_page_gfp
-- */
--
--struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
--                                        pgoff_t index, gfp_t gfp)
--{
--       return read_cache_page_gfp(mapping, index, gfp);
--}
--EXPORT_SYMBOL_GPL(shmem_read_mapping_page_gfp);
--#endif
--#endif
--
- int mac_pton(const char *s, u8 *mac)
- {
- 	int i;
--- 
-1.7.10.4
+> but there are probably good reasons for that like
+> multiple other modules accessing them.
 
+Yeap that too.
+
+  So updating them in a backport
+> and building them in wouldn't really help since now you'd have two
+> identical regulators that conflict and have different users.
+
+Its a great point and sets up the expectations of the requirements for
+how to properly backport this -- not only its users but all of the
+regulator's users.
+
+> And if you tried to backport it into the tree and make it the only
+> regulator driver, you'd now have to forward-port all the remaining
+> in-tree users as well, which seems unreasonable too.
+
+I'm not sure that's too unreasonable, what other users are there of
+the regulator subsystem for drivers other than media ? Answering that
+will answer this question and define the scope of the requirements if
+this is desirable.
+
+> The only usage would seem to be building it including *all* users as
+> part of the backport, but that seems somewhat unlikely?
+
+Ah, yeap, well that's what I mean. This will depend on motivation if
+the architecture we provide helps with someone's requirements. I
+contend that backporting in-kernel will be easier given you can
+backport more features, the major challenge will be having to also
+include something like module namespaces or backport all dependencies
+on a core component. Possible -- and IMHO if you look at the way
+things are currently backported -- its much worse and the gains of
+alternative approaches are frankly dismal. I see long term
+architectural gains to just backport automatically, but it does
+require a bit of kick off work.
+
+  Luis
