@@ -1,65 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:49164 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751743Ab3JaWDd (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 31 Oct 2013 18:03:33 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 3/3] backports: refresh on next-20131031
-Date: Thu, 31 Oct 2013 23:03:18 +0100
-Message-Id: <1383256998-32371-3-git-send-email-hauke@hauke-m.de> (sfid-20131031_230335_085304_E5F57A79)
-In-Reply-To: <1383256998-32371-1-git-send-email-hauke@hauke-m.de>
-References: <1383256998-32371-1-git-send-email-hauke@hauke-m.de>
+Received: from s3.sipsolutions.net ([144.76.43.152]:34247 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756367Ab3J1ORX (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 28 Oct 2013 10:17:23 -0400
+Message-ID: <1382969837.17956.20.camel@jlt4.sipsolutions.net> (sfid-20131028_151725_328513_064B896F)
+Subject: Re: [PATCH 1/5] backports: fix kernel dependencies for regulator
+ drivers
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@gmail.com>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>,
+	Mauro Carvalho Chehab <m.chehab@samsung.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Mon, 28 Oct 2013 15:17:17 +0100
+In-Reply-To: <CAB=NE6XpXqo09-vpkPaY=qMgpJfywS61oNjZ0nkm1Mpd1PrdHA@mail.gmail.com> (sfid-20131026_114537_978407_8571F2FA)
+References: <1382552852-15916-1-git-send-email-hauke@hauke-m.de>
+	 <1382552852-15916-2-git-send-email-hauke@hauke-m.de>
+	 <1382690097.4461.0.camel@jlt4.sipsolutions.net>
+	 <526AE34E.5020300@hauke-m.de>
+	 <CAB=NE6XpXqo09-vpkPaY=qMgpJfywS61oNjZ0nkm1Mpd1PrdHA@mail.gmail.com>
+	 (sfid-20131026_114537_978407_8571F2FA)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-1   2.6.25              [  OK  ]
-2   2.6.26              [  OK  ]
-3   2.6.27              [  OK  ]
-4   2.6.28              [  OK  ]
-5   2.6.29              [  OK  ]
-6   2.6.30              [  OK  ]
-7   2.6.31              [  OK  ]
-8   2.6.32              [  OK  ]
-9   2.6.33              [  OK  ]
-10  2.6.34              [  OK  ]
-11  2.6.35              [  OK  ]
-12  2.6.36              [  OK  ]
-13  2.6.37              [  OK  ]
-14  2.6.38              [  OK  ]
-15  2.6.39              [  OK  ]
-16  3.0.101             [  OK  ]
-17  3.1.10              [  OK  ]
-18  3.10.17             [  OK  ]
-19  3.11.6              [  OK  ]
-20  3.12-rc7            [  OK  ]
-21  3.2.52              [  OK  ]
-22  3.3.8               [  OK  ]
-23  3.4.67              [  OK  ]
-24  3.5.7               [  OK  ]
-25  3.6.11              [  OK  ]
-26  3.7.10              [  OK  ]
-27  3.8.13              [  OK  ]
-28  3.9.11              [  OK  ]
+On Sat, 2013-10-26 at 11:45 +0200, Luis R. Rodriguez wrote:
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch        |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > Yes moving the dependencies is easier than backporting the code which
+> > does not work any more. ;-) The problem here is that the regulator core
+> > can not be backported, because it is always build into the kernel and
+> > not as a module.
 
-diff --git a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
-index a75e993..f0ca2a9 100644
---- a/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
-+++ b/patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/usb/class/cdc-wdm.c
- +++ b/drivers/usb/class/cdc-wdm.c
--@@ -1065,7 +1065,9 @@ static struct usb_driver wdm_driver = {
-+@@ -1099,7 +1099,9 @@ static struct usb_driver wdm_driver = {
-  	.post_reset =	wdm_post_reset,
-  	.id_table =	wdm_ids,
-  	.supports_autosuspend = 1,
--- 
-1.7.10.4
+> As for the issues with some functionality on the regulator
+> drivers requiring functionality from future kernels as its always
+> built-in, that can be addressed if we add support for non-modular
+> solutions on backports.
+
+I don't think that's actually true - the regulator drivers may require
+being built-in, but there are probably good reasons for that like
+multiple other modules accessing them. So updating them in a backport
+and building them in wouldn't really help since now you'd have two
+identical regulators that conflict and have different users.
+
+And if you tried to backport it into the tree and make it the only
+regulator driver, you'd now have to forward-port all the remaining
+in-tree users as well, which seems unreasonable too.
+
+The only usage would seem to be building it including *all* users as
+part of the backport, but that seems somewhat unlikely?
+
+johannes
 
