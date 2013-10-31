@@ -1,43 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:41540 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:49160 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755344Ab3JXVEd (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 24 Oct 2013 17:04:33 -0400
+	id S1751743Ab3JaWDc (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 31 Oct 2013 18:03:32 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/3] backports: add dev_get_platdata()
-Date: Thu, 24 Oct 2013 23:04:22 +0200
-Message-Id: <1382648664-17110-2-git-send-email-hauke@hauke-m.de> (sfid-20131024_230435_499259_1348FF39)
-In-Reply-To: <1382648664-17110-1-git-send-email-hauke@hauke-m.de>
-References: <1382648664-17110-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 1/3] backports: do not add debugfs_create_x64() on RHEL 6.4
+Date: Thu, 31 Oct 2013 23:03:16 +0100
+Message-Id: <1383256998-32371-1-git-send-email-hauke@hauke-m.de> (sfid-20131031_230333_860650_7EBEA355)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This adds dev_get_platdata() function.
+debugfs_create_x64() is provided by the RHEL 6.4 kernel and should not
+be added to the build on such a kernel.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/device.h |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ backport/backport-include/linux/debugfs.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
-index 2244c62..e659c0c 100644
---- a/backport/backport-include/linux/device.h
-+++ b/backport/backport-include/linux/device.h
-@@ -216,4 +216,12 @@ static inline void init_##_name##_attrs(void) {}		\
- __ATTRIBUTE_GROUPS(_name)
- #endif
+diff --git a/backport/backport-include/linux/debugfs.h b/backport/backport-include/linux/debugfs.h
+index 938eac2..d2e6b38 100644
+--- a/backport/backport-include/linux/debugfs.h
++++ b/backport/backport-include/linux/debugfs.h
+@@ -16,6 +16,7 @@ static inline void debugfs_remove_recursive(struct dentry *dentry)
+ #endif /* < 2.6.27 */
  
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,32)
-+#define dev_get_platdata LINUX_BACKPORT(dev_get_platdata)
-+static inline void *dev_get_platdata(const struct device *dev)
-+{
-+	return dev->platform_data;
-+}
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35)
++#if RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4)
+ static inline struct dentry *debugfs_create_x64(const char *name, umode_t mode,
+ 						struct dentry *parent,
+ 						u64 *value)
+@@ -23,5 +24,6 @@ static inline struct dentry *debugfs_create_x64(const char *name, umode_t mode,
+ 	return debugfs_create_u64(name, mode, parent, value);
+ }
+ #endif
 +#endif
-+
- #endif /* __BACKPORT_DEVICE_H */
+ 
+ #endif /* __BACKPORT_LINUX_DEBUGFS_H */
 -- 
 1.7.10.4
 
