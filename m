@@ -1,40 +1,55 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:41281 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754380Ab3JXTsO (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 24 Oct 2013 15:48:14 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/3] backports: fixed regulator driver depends on kernel >= 3.13
-Date: Thu, 24 Oct 2013 21:48:01 +0200
-Message-Id: <1382644082-14032-3-git-send-email-hauke@hauke-m.de> (sfid-20131024_214815_984520_150C7E4B)
-In-Reply-To: <1382644082-14032-1-git-send-email-hauke@hauke-m.de>
-References: <1382644082-14032-1-git-send-email-hauke@hauke-m.de>
+Received: from mail.kernel.org ([198.145.19.201]:47304 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751971Ab3JaMuq (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 31 Oct 2013 08:50:46 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id BABDA2039F
+	for <backports@vger.kernel.org>; Thu, 31 Oct 2013 12:50:41 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id 4EB0620318
+	for <backports@vger.kernel.org>; Thu, 31 Oct 2013 12:50:37 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 64091] backports build error
+Date: Thu, 31 Oct 2013 12:50:37 +0000
+Message-ID: <bug-64091-58281-KQad6RCgMv@https.bugzilla.kernel.org/> (sfid-20131031_135052_185680_A27D29A6)
+In-Reply-To: <bug-64091-58281@https.bugzilla.kernel.org/>
+References: <bug-64091-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The fixed voltage regulator depends now on kernel >= 3.13,
-it uses regulator_desc.fixed_uV.
+https://bugzilla.kernel.org/show_bug.cgi?id=64091
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- dependencies |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--- Comment #3 from DarinV <darin.vancoevering@gmail.com> ---
+#ifndef _LINUX_KERNEL_H
+#define _LINUX_KERNEL_H
 
-diff --git a/dependencies b/dependencies
-index c575404..ae8cdc6 100644
---- a/dependencies
-+++ b/dependencies
-@@ -63,7 +63,7 @@ REGULATOR_DA9052 3.9
- REGULATOR_DA9055 3.8
- REGULATOR_DA9210 3.5
- REGULATOR_FAN53555 3.5
--REGULATOR_FIXED_VOLTAGE 3.6
-+REGULATOR_FIXED_VOLTAGE 3.13
- REGULATOR_GPIO 3.6
- REGULATOR_ISL6271A 3.5
- REGULATOR_LP3971 3.6
+/*
+ * 'kernel.h' contains some often-used function prototypes etc
+ */
+
+#ifdef __KERNEL__
+
+#include <stdarg.h>
+#include <linux/linkage.h>
+#include <linux/stddef.h>
+#include <linux/types.h>
+#include <linux/compiler.h>
+#include <linux/bitops.h>
+#include <linux/log2.h>
+#include <linux/typecheck.h>
+#include <linux/ratelimit.h>
+#include <asm/byteorder.h>
+#include <asm/bug.h>
+
+extern const char linux_banner[];
+extern const char linux_proc_banner[];
+
+#define USHORT_MAX    ((u16)(~0U))
+
 -- 
-1.7.10.4
-
+You are receiving this mail because:
+You are the assignee for the bug.
