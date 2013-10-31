@@ -1,55 +1,60 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:35333 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:49005 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752831Ab3JWS1v (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 23 Oct 2013 14:27:51 -0400
+	id S1754060Ab3JaV4k (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 31 Oct 2013 17:56:40 -0400
+Message-ID: <5272D20E.7040201@hauke-m.de> (sfid-20131031_225642_837802_7BD8BEC1)
+Date: Thu, 31 Oct 2013 22:56:30 +0100
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/5] backports: fix kernel dependencies for regulator drivers
-Date: Wed, 23 Oct 2013 20:27:28 +0200
-Message-Id: <1382552852-15916-2-git-send-email-hauke@hauke-m.de> (sfid-20131023_202752_481575_D6A8F64C)
-In-Reply-To: <1382552852-15916-1-git-send-email-hauke@hauke-m.de>
-References: <1382552852-15916-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+To: Johannes Berg <johannes@sipsolutions.net>,
+	backports@vger.kernel.org
+CC: Johannes Berg <johannes.berg@intel.com>
+Subject: Re: [PATCH] backports: replace netlink portid by semantic patch
+References: <1383167629-22457-1-git-send-email-johannes@sipsolutions.net>
+In-Reply-To: <1383167629-22457-1-git-send-email-johannes@sipsolutions.net>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-These drivers are depending on changes of the regulator core driver
-which are not in the specific kernel versions.
+On 10/30/2013 10:13 PM, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+> 
+> Introduce the infrastructure to apply semantic patches
+> and make use of it for the (frequently breaking) portid
+> patch for netlink.
+> 
+> Unfortunately this is significantly slower:
+> 
+> before:
+> real    0m14.312s
+> user    0m12.144s
+> sys     0m1.784s
+> 
+> after:
+> real    0m25.932s
+> user    0m21.768s
+> sys     0m2.932s
+> 
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+>  gentree.py                                         |  36 +++
+>  .../0001-netlink-portid/ieee802154.patch           |  40 ---
+>  .../network/0005-netlink-portid.cocci              |  25 ++
+>  .../network/0005-netlink-portid/INFO               |  42 ----
+>  .../0005-netlink-portid/mac80211_hwsim.patch       |  24 --
+>  .../network/0005-netlink-portid/nl80211.patch      | 267 ---------------------
+>  .../nfc/01-netlink-portid/INFO                     |  42 ----
+>  .../nfc/01-netlink-portid/net_nfc_netlink.patch    |  71 ------
+>  8 files changed, 61 insertions(+), 486 deletions(-)
+>  delete mode 100644 patches/collateral-evolutions/ieee802154/0001-netlink-portid/ieee802154.patch
+>  create mode 100644 patches/collateral-evolutions/network/0005-netlink-portid.cocci
+>  delete mode 100644 patches/collateral-evolutions/network/0005-netlink-portid/INFO
+>  delete mode 100644 patches/collateral-evolutions/network/0005-netlink-portid/mac80211_hwsim.patch
+>  delete mode 100644 patches/collateral-evolutions/network/0005-netlink-portid/nl80211.patch
+>  delete mode 100644 patches/collateral-evolutions/nfc/01-netlink-portid/INFO
+>  delete mode 100644 patches/collateral-evolutions/nfc/01-netlink-portid/net_nfc_netlink.patch
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- dependencies |    3 +++
- 1 file changed, 3 insertions(+)
+Thank you for the patch, it was applied and a new released is being pushed.
 
-diff --git a/dependencies b/dependencies
-index dd3428d..1d835d9 100644
---- a/dependencies
-+++ b/dependencies
-@@ -53,6 +53,7 @@ MWIFIEX 2.6.27
- REGULATOR 3.4
- # requires some work
- REGULATOR_88PM800 3.12
-+REGULATOR_88PM8607 3.10
- REGULATOR_AAT2870 3.6
- REGULATOR_AD5398 3.5
- REGULATOR_ARIZONA 3.8
-@@ -67,6 +68,7 @@ REGULATOR_GPIO 3.6
- REGULATOR_ISL6271A 3.5
- REGULATOR_LP3971 3.6
- REGULATOR_LP3972 3.6
-+REGULATOR_LP872X 3.6
- REGULATOR_LP8755 3.6
- REGULATOR_MAX1586 3.6
- REGULATOR_MAX77686 3.7
-@@ -100,6 +102,7 @@ REGULATOR_TPS6524X 3.6
- REGULATOR_TPS6586X 3.9
- REGULATOR_TPS65910 3.6
- REGULATOR_TPS65912 3.12
-+REGULATOR_TWL4030 3.11
- REGULATOR_WM831X 3.12
- REGULATOR_WM8350 3.12
- REGULATOR_WM8400 3.12
--- 
-1.7.10.4
-
+Hauke
