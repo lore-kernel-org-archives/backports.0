@@ -1,154 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:41274 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:49115 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754380Ab3JXTsL (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 24 Oct 2013 15:48:11 -0400
+	id S1751743Ab3JaWCP (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 31 Oct 2013 18:02:15 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@gmail.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/3] backports: add devm_regulator_register()
-Date: Thu, 24 Oct 2013 21:48:00 +0200
-Message-Id: <1382644082-14032-2-git-send-email-hauke@hauke-m.de> (sfid-20131024_214814_064944_DF0C9DA2)
-In-Reply-To: <1382644082-14032-1-git-send-email-hauke@hauke-m.de>
-References: <1382644082-14032-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH] backports: update test kernel versions
+Date: Thu, 31 Oct 2013 23:02:09 +0100
+Message-Id: <1383256929-32291-1-git-send-email-hauke@hauke-m.de> (sfid-20131031_230217_156918_02EE1EA8)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This backports the following commit from mainline:
-commit b33e46bcdc4e598d738ed12a5a7906be4e11d786
-Author: Mark Brown <broonie@linaro.org>
-Date:   Sat Aug 31 11:58:26 2013 +0100
-
-regulator: core: Provide managed regulator registration
+This brings the kernels test test against to the latest versions.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/regulator/driver.h |   10 +++
- backport/compat/Makefile                           |    1 +
- backport/compat/backport-3.13.c                    |   83 ++++++++++++++++++++
- 3 files changed, 94 insertions(+)
- create mode 100644 backport/compat/backport-3.13.c
+ devel/get-compat-kernels |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/backport/backport-include/linux/regulator/driver.h b/backport/backport-include/linux/regulator/driver.h
-index fbd9845..f56990b 100644
---- a/backport/backport-include/linux/regulator/driver.h
-+++ b/backport/backport-include/linux/regulator/driver.h
-@@ -23,4 +23,14 @@ int regulator_map_voltage_ascend(struct regulator_dev *rdev,
- 				 int min_uV, int max_uV);
- #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)) */
+diff --git a/devel/get-compat-kernels b/devel/get-compat-kernels
+index dc8de90..31f5e9c 100755
+--- a/devel/get-compat-kernels
++++ b/devel/get-compat-kernels
+@@ -54,19 +54,19 @@ KERNELS="$KERNELS ${KPATH}/v2.6.36.4-natty/linux-headers-2.6.36-02063604_2.6.36-
+ KERNELS="$KERNELS ${KPATH}/v2.6.37.6-natty/linux-headers-2.6.37-02063706_2.6.37-02063706.201103281005_all.deb"
+ KERNELS="$KERNELS ${KPATH}/v2.6.38.8-natty/linux-headers-2.6.38-02063808_2.6.38-02063808.201106040910_all.deb"
+ KERNELS="$KERNELS ${KPATH}/v2.6.39.4-oneiric/linux-headers-2.6.39-02063904_2.6.39-02063904.201108040905_all.deb"
+-KERNELS="$KERNELS ${KPATH}/v3.0.98-oneiric/linux-headers-3.0.98-030098_3.0.98-030098.201310011235_all.deb"
++KERNELS="$KERNELS ${KPATH}/v3.0.101-oneiric/linux-headers-3.0.101-0300101_3.0.101-0300101.201310220446_all.deb"
+ KERNELS="$KERNELS ${KPATH}/v3.1.10-precise/linux-headers-3.1.10-030110_3.1.10-030110.201201181135_all.deb"
+-KERNELS="$KERNELS ${KPATH}/v3.2.51-precise/linux-headers-3.2.51-030251_3.2.51-030251.201309101035_all.deb"
++KERNELS="$KERNELS ${KPATH}/v3.2.52-precise/linux-headers-3.2.52-030252_3.2.52-030252.201310262335_all.deb"
+ KERNELS="$KERNELS ${KPATH}/v3.3.8-quantal/linux-headers-3.3.8-030308_3.3.8-030308.201206041356_all.deb"
+-KERNELS="$KERNELS ${KPATH}/v3.4.64-quantal/linux-headers-3.4.64-030464_3.4.64-030464.201310011353_all.deb"
++KERNELS="$KERNELS ${KPATH}/v3.4.67-quantal/linux-headers-3.4.67-030467_3.4.67-030467.201310220531_all.deb"
+ KERNELS="$KERNELS ${KPATH}/v3.5.7.12-quantal/linux-headers-3.5.7-03050712_3.5.7-03050712.201305111435_all.deb"
+ KERNELS="$KERNELS ${KPATH}/v3.6.11-raring/linux-headers-3.6.11-030611_3.6.11-030611.201212171335_all.deb"
+ KERNELS="$KERNELS ${KPATH}/v3.7.10-raring/linux-headers-3.7.10-030710_3.7.10-030710.201302271235_all.deb"
+ KERNELS="$KERNELS ${KPATH}/v3.8.13-raring/linux-headers-3.8.13-030813_3.8.13-030813.201305111843_all.deb"
+ KERNELS="$KERNELS ${KPATH}/v3.9.11-saucy/linux-headers-3.9.11-030911_3.9.11-030911.201307202035_all.deb"
+-KERNELS="$KERNELS ${KPATH}/v3.10.14-saucy/linux-headers-3.10.14-031014_3.10.14-031014.201310011335_all.deb"
+-KERNELS="$KERNELS ${KPATH}/v3.11.3-saucy/linux-headers-3.11.3-031103_3.11.3-031103.201310011421_all.deb"
+-KERNELS="$KERNELS ${KPATH}/v3.12-rc3-saucy/linux-headers-3.12.0-031200rc3_3.12.0-031200rc3.201309291835_all.deb"
++KERNELS="$KERNELS ${KPATH}/v3.10.17-saucy/linux-headers-3.10.17-031017_3.10.17-031017.201310181435_all.deb"
++KERNELS="$KERNELS ${KPATH}/v3.11.6-saucy/linux-headers-3.11.6-031106_3.11.6-031106.201310181453_all.deb"
++KERNELS="$KERNELS ${KPATH}/v3.12-rc7-saucy/linux-headers-3.12.0-031200rc7_3.12.0-031200rc7.201310271935_all.deb"
  
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)) && \
-+    (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+struct regulator_dev *
-+devm_regulator_register(struct device *dev,
-+			const struct regulator_desc *regulator_desc,
-+			const struct regulator_config *config);
-+void devm_regulator_unregister(struct device *dev, struct regulator_dev *rdev);
-+#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)) &&
-+	  (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)) */
-+
- #endif /* __BACKPORT_LINUX_REGULATOR_DRIVER_H_ */
-diff --git a/backport/compat/Makefile b/backport/compat/Makefile
-index 4485552..dbf2bff 100644
---- a/backport/compat/Makefile
-+++ b/backport/compat/Makefile
-@@ -35,6 +35,7 @@ compat-$(CPTCFG_BACKPORT_KERNEL_3_8) += compat-3.8.o
- compat-$(CPTCFG_BACKPORT_KERNEL_3_9) += compat-3.9.o
- compat-$(CPTCFG_BACKPORT_KERNEL_3_10) += backport-3.10.o
- compat-$(CPTCFG_BACKPORT_KERNEL_3_12) += backport-3.12.o
-+compat-$(CPTCFG_BACKPORT_KERNEL_3_13) += backport-3.13.o
- 
- compat-$(CPTCFG_BACKPORT_BUILD_KFIFO) += kfifo.o
- compat-$(CPTCFG_BACKPORT_BUILD_GENERIC_ATOMIC64) += compat_atomic.o
-diff --git a/backport/compat/backport-3.13.c b/backport/compat/backport-3.13.c
-new file mode 100644
-index 0000000..c99625f
---- /dev/null
-+++ b/backport/compat/backport-3.13.c
-@@ -0,0 +1,83 @@
-+/*
-+ * Copyright (c) 2013  Hauke Mehrtens <hauke@hauke-m.de>
-+ *
-+ * Backport functionality introduced in Linux 3.13.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#include <linux/version.h>
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/regulator/driver.h>
-+#include <linux/device.h>
-+
-+static void devm_rdev_release(struct device *dev, void *res)
-+{
-+	regulator_unregister(*(struct regulator_dev **)res);
-+}
-+
-+/**
-+ * devm_regulator_register - Resource managed regulator_register()
-+ * @regulator_desc: regulator to register
-+ * @config: runtime configuration for regulator
-+ *
-+ * Called by regulator drivers to register a regulator.  Returns a
-+ * valid pointer to struct regulator_dev on success or an ERR_PTR() on
-+ * error.  The regulator will automatically be released when the device
-+ * is unbound.
-+ */
-+struct regulator_dev *devm_regulator_register(struct device *dev,
-+				  const struct regulator_desc *regulator_desc,
-+				  const struct regulator_config *config)
-+{
-+	struct regulator_dev **ptr, *rdev;
-+
-+	ptr = devres_alloc(devm_rdev_release, sizeof(*ptr),
-+			   GFP_KERNEL);
-+	if (!ptr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	rdev = regulator_register(regulator_desc, config);
-+	if (!IS_ERR(rdev)) {
-+		*ptr = rdev;
-+		devres_add(dev, ptr);
-+	} else {
-+		devres_free(ptr);
-+	}
-+
-+	return rdev;
-+}
-+EXPORT_SYMBOL_GPL(devm_regulator_register);
-+
-+static int devm_rdev_match(struct device *dev, void *res, void *data)
-+{
-+	struct regulator_dev **r = res;
-+	if (!r || !*r) {
-+		WARN_ON(!r || !*r);
-+		return 0;
-+	}
-+	return *r == data;
-+}
-+
-+/**
-+ * devm_regulator_unregister - Resource managed regulator_unregister()
-+ * @regulator: regulator to free
-+ *
-+ * Unregister a regulator registered with devm_regulator_register().
-+ * Normally this function will not need to be called and the resource
-+ * management code will ensure that the resource is freed.
-+ */
-+void devm_regulator_unregister(struct device *dev, struct regulator_dev *rdev)
-+{
-+	int rc;
-+
-+	rc = devres_release(dev, devm_rdev_release, devm_rdev_match, rdev);
-+	if (rc != 0)
-+		WARN_ON(rc);
-+}
-+EXPORT_SYMBOL_GPL(devm_regulator_unregister);
-+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)) */
+ # Number of kernels
+ NUM_KERNELS=$(echo $KERNELS | wc -w)
 -- 
 1.7.10.4
 
