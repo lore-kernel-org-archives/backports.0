@@ -1,46 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:47437 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:37306 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752667Ab3KXRSU (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 24 Nov 2013 12:18:20 -0500
-Received: from localhost (localhost [127.0.0.1])
-	by hauke-m.de (Postfix) with ESMTP id 53F2485EA
-	for <backports@vger.kernel.org>; Sun, 24 Nov 2013 18:18:19 +0100 (CET)
-Received: from hauke-m.de ([127.0.0.1])
-	by localhost (hauke-m.de [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id UNe4XLcbV8zC for <backports@vger.kernel.org>;
-	Sun, 24 Nov 2013 18:18:15 +0100 (CET)
-Received: from [IPv6:2001:470:1f0b:447:bca0:87a2:4b79:74ce] (unknown [IPv6:2001:470:1f0b:447:bca0:87a2:4b79:74ce])
-	by hauke-m.de (Postfix) with ESMTPSA id DD59D857F
-	for <backports@vger.kernel.org>; Sun, 24 Nov 2013 18:18:14 +0100 (CET)
-Message-ID: <529234D0.2000406@hauke-m.de> (sfid-20131124_181824_758415_89452F11)
-Date: Sun, 24 Nov 2013 18:18:08 +0100
+	id S1750957Ab3KDW24 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 4 Nov 2013 17:28:56 -0500
+Message-ID: <52781F9D.1090900@hauke-m.de> (sfid-20131104_232857_713208_D6360078)
+Date: Mon, 04 Nov 2013 23:28:45 +0100
 From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: [ANN] backports-20131122 + v3.12.1-1 + v3.13-rc1-1 released
+To: James Hilliard <james.hilliard1@gmail.com>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: Backporting codel
+References: <CADvTj4oYwoF=hRo4WYGHBar9-trR7iJ32EtD_dHCLFYC49ruog@mail.gmail.com>
+In-Reply-To: <CADvTj4oYwoF=hRo4WYGHBar9-trR7iJ32EtD_dHCLFYC49ruog@mail.gmail.com>
 Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backports-20131122 was released. This is based on linux-next
-next-20131122. This version should contain all the patches posted on the
-mailing list.
+On 11/04/2013 05:50 PM, James Hilliard wrote:
+> I was wondering if you might have any suggestions on how to backport the
+> sch_codel and sch_fq_codel modules to kernel version 2.6.22, it looks
+> like it is only compatible down to 2.6.25 so far. This would be useful
+> for broadcom routers running on firmware variants based on the broadcom
+> SDK kernel.
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/2013/11/22/backports-20131122.tar.bz2
+Hi James,
 
+backports currently does not support any kernel older than 2.6.25. There
+was support for kernel 2.6.24 some time ago, and it could be that it is
+not too hard to make sch_codel and sch_fq_codel work with kernel 2.6.22.
 
-In addition backports-3.12.1-1 and backports-3.13-rc1-1 based on the
-corresponding linux stables release were released.
-
-http://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.12.1/backports-3.12.1-1.tar.bz2
-
-http://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.13-rc1/backports-3.13-rc1-1.tar.bz2
-
-The source code can be found here:
-https://github.com/hauke/backports
-
-All the latest releases are listed here:
-http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
+You should try to build it against that old kernel and try to fix the
+problems you get. You should remove all the other stuff you do not need
+like wireless from backports.
 
 Hauke
