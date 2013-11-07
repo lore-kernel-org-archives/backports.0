@@ -1,45 +1,37 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:46829 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:56402 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752373Ab3KXN2J (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 24 Nov 2013 08:28:09 -0500
+	id S1752205Ab3KGV5H (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 7 Nov 2013 16:57:07 -0500
+Received: from localhost (localhost [127.0.0.1])
+	by hauke-m.de (Postfix) with ESMTP id 90B938F61
+	for <backports@vger.kernel.org>; Thu,  7 Nov 2013 22:57:05 +0100 (CET)
+Received: from hauke-m.de ([127.0.0.1])
+	by localhost (hauke-m.de [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id zhgjm54MlqPn for <backports@vger.kernel.org>;
+	Thu,  7 Nov 2013 22:56:56 +0100 (CET)
+Received: from [IPv6:2001:470:1f0b:447:94ba:8ba6:b706:38c5] (unknown [IPv6:2001:470:1f0b:447:94ba:8ba6:b706:38c5])
+	by hauke-m.de (Postfix) with ESMTPSA id 181F8857F
+	for <backports@vger.kernel.org>; Thu,  7 Nov 2013 22:56:55 +0100 (CET)
+Message-ID: <527C0CA5.2070800@hauke-m.de> (sfid-20131107_225709_225065_6BDE9DEB)
+Date: Thu, 07 Nov 2013 22:56:53 +0100
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/3] backports: add current_user_ns()
-Date: Sun, 24 Nov 2013 14:27:45 +0100
-Message-Id: <1385299666-18712-2-git-send-email-hauke@hauke-m.de> (sfid-20131124_142811_772630_2AE577BF)
-In-Reply-To: <1385299666-18712-1-git-send-email-hauke@hauke-m.de>
-References: <1385299666-18712-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: [ANN] backports-20131107 + stable v3.12 released
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-current_user_ns() is used by seq_user_ns() if CONFIG_USER_NS is set and
-kernel version <= 2.6.38.
-This was added to the kernel in version 2.6.29.
+backports-20131107 was released, this is based on linux-next
+next-20131107. In addition backports-3.12 based on linux-stable release
+v3.12 was also released.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/cred.h |   10 ++++++++++
- 1 file changed, 10 insertions(+)
- create mode 100644 backport/backport-include/linux/cred.h
+https://www.kernel.org/pub/linux/kernel/projects/backports/2013/11/07/backports-20131107.tar.bz2
 
-diff --git a/backport/backport-include/linux/cred.h b/backport/backport-include/linux/cred.h
-new file mode 100644
-index 0000000..2fbcf01
---- /dev/null
-+++ b/backport/backport-include/linux/cred.h
-@@ -0,0 +1,10 @@
-+#ifndef __BACKPORT_LINUX_CRED_H
-+#define __BACKPORT_LINUX_CRED_H
-+#include_next <linux/cred.h>
-+#include <linux/version.h>
-+
-+#ifndef current_user_ns
-+#define current_user_ns()	(current->nsproxy->user_ns)
-+#endif
-+
-+#endif /* __BACKPORT_LINUX_CRED_H */
--- 
-1.7.10.4
+https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.12/backports-3.12-1.tar.bz2
 
+The source code can temporary be found here:
+https://github.com/hauke/backports
+
+Hauke
