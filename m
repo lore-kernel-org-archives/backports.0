@@ -1,145 +1,81 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:50202 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751624Ab3KYXBu (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 25 Nov 2013 18:01:50 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 19B742034B
-	for <backports@vger.kernel.org>; Mon, 25 Nov 2013 23:01:49 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id D764A2018A
-	for <backports@vger.kernel.org>; Mon, 25 Nov 2013 23:01:47 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 63381] cpumask.h error
-Date: Mon, 25 Nov 2013 23:01:45 +0000
-Message-ID: <bug-63381-58281-1rIdvcJfPQ@https.bugzilla.kernel.org/> (sfid-20131126_000152_010942_B301900C)
-In-Reply-To: <bug-63381-58281@https.bugzilla.kernel.org/>
-References: <bug-63381-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Received: from server19320154104.serverpool.info ([193.201.54.104]:55816 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753032Ab3KGU2K (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 7 Nov 2013 15:28:10 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 00/11] backports: bring it to next-20131107
+Date: Thu,  7 Nov 2013 21:27:47 +0100
+Message-Id: <1383856078-19823-1-git-send-email-hauke@hauke-m.de> (sfid-20131107_212811_885802_FA598E04)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=63381
+The first patch fixes a problem theta some regulator code is referenced 
+in backport-3.13.c when the regulator framework is not compiled into 
+the kernel. The other patches are mostly needed to bring it to 
+next-20131107.
 
---- Comment #5 from DarinV <darin.vancoevering@gmail.com> ---
-Well I still get an error. I am attaching the whole terminal output so you guys
-can see all of it.
+Hauke Mehrtens (11):
+  backports: only add regulator code when regulator is activated in
+    kernel
+  backports: do not build tty backport if it is not in the kernel
+  backports: always activate the of.h backports
+  backports: add of_property_read_u8_array()
+  backports: add ipv6_addr_is_solict_mult()
+  backports: fix signature of __vlan_find_dev_deep()
+  backports: update kfifo
+  backports: fix kfifo_put()
+  backports: remove usage of ipv6_stub
+  backports: remove soc_camera_power_{on,off}()
+  backports: refresh on next-20131107
 
-supergamer://home/supervl/Desktop/backports-20131122-2
-root:# make menuconfig
-Generating local configuration database from kernel ... done.
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
--DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o mconf.o mconf.c
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
--DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o zconf.tab.o zconf.tab.c
-menu.c: In function `get_symbol_str':
-menu.c:515: warning: 'jump' might be used uninitialized in this function
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
--DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o lxdialog/checklist.o
-lxdialog/checklist.ccc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2
--fomit-frame-pointer -DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o
-lxdialog/inputbox.o lxdialog/inputbox.c
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
--DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o lxdialog/menubox.o
-lxdialog/menubox.c
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
--DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o lxdialog/textbox.o
-lxdialog/textbox.c
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
--DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o lxdialog/util.o lxdialog/util.c
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
--DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o lxdialog/yesno.o lxdialog/yesno.c
-cc -Wl,--no-as-needed -lncursesw  mconf.o zconf.tab.o lxdialog/checklist.o
-lxdialog/inputbox.o lxdialog/menubox.o lxdialog/textbox.o lxdialog/util.o
-lxdialog/yesno.o   -o mconf
-
-
-*** End of the configuration.
-*** Execute 'make' to start the build or try 'make help'.
-
-supergamer://home/supervl/Desktop/backports-20131122-2
-root:# make
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer   -c
--o conf.o conf.c
-cc   conf.o zconf.tab.o   -o conf
-#
-# configuration written to .config
-#
-Building backport-include/backport/autoconf.h ... done.
-
-  WARNING: Symbol version dump /usr/src/linux-2.6.27.57/Module.symvers
-           is missing; modules will have no dependencies and modversions.
-
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/main.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.28.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.29.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.32.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.33.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.34.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.35.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.36.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.37.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.39.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/kstrtox.o
-In file included from include/linux/cpumask.h:139,
-                 from include/asm/processor.h:25,
-                 from include/asm/atomic_32.h:5,
-                 from include/asm/atomic.h:2,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/asm/atomic.h:3,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/linux/types.h:37,
-                 from include/linux/kernel.h:13,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/linux/kernel.h:3,
-                 from
-/home/supervl/Desktop/backports-20131122-2/compat/kstrtox.c:14:
-include/linux/bitmap.h: In function `bitmap_zero':
-include/linux/bitmap.h:145: error: implicit declaration of function
-`DIV_ROUND_UP'
-In file included from include/asm/processor.h:25,
-                 from include/asm/atomic_32.h:5,
-                 from include/asm/atomic.h:2,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/asm/atomic.h:3,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/linux/types.h:37,
-                 from include/linux/kernel.h:13,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/linux/kernel.h:3,
-                 from
-/home/supervl/Desktop/backports-20131122-2/compat/kstrtox.c:14:
-include/linux/cpumask.h: At top level:
-include/linux/cpumask.h:141: error: variable-size type declared outside of any
-function
-include/linux/cpumask.h:276: error: variable-size type declared outside of any
-function
-In file included from include/asm/atomic_32.h:5,
-                 from include/asm/atomic.h:2,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/asm/atomic.h:3,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/linux/types.h:37,
-                 from include/linux/kernel.h:13,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/linux/kernel.h:3,
-                 from
-/home/supervl/Desktop/backports-20131122-2/compat/kstrtox.c:14:
-include/asm/processor.h: In function `native_get_debugreg':
-include/asm/processor.h:443: error: implicit declaration of function `BUG'
-make[6]: *** [/home/supervl/Desktop/backports-20131122-2/compat/kstrtox.o]
-Error 1
-make[5]: *** [/home/supervl/Desktop/backports-20131122-2/compat] Error 2
-make[4]: *** [_module_/home/supervl/Desktop/backports-20131122-2] Error 2
-make[3]: *** [modules] Error 2
-make[2]: *** [modules] Error 2
-make[1]: *** [modules] Error 2
-make: *** [default] Error 2
-supergamer://home/supervl/Desktop/backports-20131122-2
-root:#
+ backport/backport-include/linux/if_vlan.h          |    2 +
+ backport/backport-include/linux/kfifo.h            |   93 +++++++++++++-------
+ backport/backport-include/linux/of.h               |   34 ++++---
+ backport/backport-include/net/addrconf.h           |   25 ++++++
+ .../backport-include/uapi/linux/v4l2-mediabus.h    |   43 ---------
+ backport/compat/backport-3.10.c                    |    4 +
+ backport/compat/backport-3.13.c                    |    2 +
+ backport/compat/compat-2.6.28.c                    |    2 +
+ backport/compat/compat-2.6.39.c                    |    2 +
+ backport/compat/compat-3.4.c                       |   91 -------------------
+ backport/compat/compat-3.7.c                       |    2 -
+ backport/compat/compat-3.8.c                       |   63 +++++++++++++
+ backport/compat/kfifo.c                            |   13 ++-
+ .../network/0001-netdev_ops/mac80211.patch         |    2 +-
+ .../network/0001-netdev_ops/mac80211_hwsim.patch   |    2 +-
+ .../network/0001-netdev_ops/qmi_wwan.patch         |    2 +-
+ .../mac80211.patch                                 |    4 +-
+ .../0006-disable-dump-adjust-on-old-kernels.patch  |    4 +-
+ .../include_net_cfg80211.patch                     |    2 +-
+ .../drivers_net_wireless_ti_wlcore_main.patch      |    6 +-
+ .../drivers_net_wireless_ti_wlcore_wlcore.patch    |    2 +-
+ .../net_mac80211_tx.patch                          |    4 +-
+ .../17-netdev-queue/net_mac80211_iface.patch       |    4 +-
+ .../network/22-multiqueue/net_mac80211_tx.patch    |    2 +-
+ .../drivers_net_wireless_ti_wlcore_main.patch      |    4 +-
+ .../include_net_mac80211.patch                     |    2 +-
+ .../net_mac80211_ieee80211_i.patch                 |    2 +-
+ .../drivers_bluetooth_btmrvl_sdio.patch            |    6 +-
+ .../30-bridge-port/net_wireless_nl80211.patch      |    2 +-
+ .../42-netlink_seq/net_wireless_nl80211.patch      |    2 +-
+ .../drivers_net_wireless_ti_wl12xx_main.patch      |    2 +-
+ .../drivers_bluetooth_ath3k.patch                  |    2 +-
+ .../drivers_net_usb_cdc_mbim.patch                 |    2 +-
+ .../drivers_net_usb_cdc_ncm.patch                  |    2 +-
+ .../drivers_net_usb_qmi_wwan.patch                 |    2 +-
+ .../69-wowlan-no-socket/net_wireless_nl80211.patch |    2 +-
+ .../network/77-led-blink-api/mac80211.patch        |    2 +-
+ .../network/80-ipv6_stub/INFO                      |    9 ++
+ .../network/80-ipv6_stub/cdc_mbim.patch            |   29 ++++++
+ 39 files changed, 257 insertions(+), 223 deletions(-)
+ create mode 100644 backport/backport-include/net/addrconf.h
+ delete mode 100644 backport/backport-include/uapi/linux/v4l2-mediabus.h
+ create mode 100644 patches/collateral-evolutions/network/80-ipv6_stub/INFO
+ create mode 100644 patches/collateral-evolutions/network/80-ipv6_stub/cdc_mbim.patch
 
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+1.7.10.4
+
