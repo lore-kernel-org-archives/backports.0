@@ -1,110 +1,67 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:60408 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751540Ab3K3NmO (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 30 Nov 2013 08:42:14 -0500
-Message-Id: <1385818933.2275.53803445.141AB4C1@webmail.messagingengine.com> (sfid-20131130_144216_917023_0AE35457)
-From: "Nikita N." <nikitan@operamail.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
-Cc: linux-wireless@vger.kernel.org
-MIME-Version: 1.0
-Content-Type: text/plain
-In-Reply-To: <5299E184.1020302@hauke-m.de>
-References: <1385815530.23776.53787977.56B183FC@webmail.messagingengine.com>
- <5299E184.1020302@hauke-m.de>
-Subject: Re: 3.13 various backports bugs
-Date: Sat, 30 Nov 2013 05:42:13 -0800
+Received: from server19320154104.serverpool.info ([193.201.54.104]:55811 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752841Ab3KGU2I (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 7 Nov 2013 15:28:08 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 01/11] backports: only add regulator code when regulator is activated in kernel
+Date: Thu,  7 Nov 2013 21:27:48 +0100
+Message-Id: <1383856078-19823-2-git-send-email-hauke@hauke-m.de> (sfid-20131107_212811_202941_5C6121E4)
+In-Reply-To: <1383856078-19823-1-git-send-email-hauke@hauke-m.de>
+References: <1383856078-19823-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-follow answers
+The backported parts of the regulator subsystem are depending on the
+regulator subsystem being build into the kernel, deactivate them if the
+regulator subsystem was not activated in the kernel config.
 
-On Sat, Nov 30, 2013, at 05:00 AM, Hauke Mehrtens wrote:
-> On 11/30/2013 01:45 PM, Nikita N. wrote:
-> > Hi dear maintainers of backports :) I have few bugs to report, Ill try
-> > to be as fast as I can.
-> > 
-> > - Bug #1:
-> > Im running on standard Slitaz4, kernel 2.6.37-slitaz, updating modules,
-> > the following script:
-> > ./backports-3.13-rc1-1/scripts/compress_modules.sh
-> > the "if" is not able to detect the present compression, as result the
-> > new modules are not compressed, and get mixed with the old ones
-> > compressed, resulting in lots of errors.
-> > My actual workaround is just to delete the "if" line.
-> > The issue is present systematically in all backports releases, since the
-> > switch from compat-drivers.
-> > The compress_modules script into 3.9 is instead working good.
-> 
-> What distribution are you using? I want to reproduce the issue.
->
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/compat/backport-3.10.c |    2 ++
+ backport/compat/backport-3.13.c |    2 ++
+ 2 files changed, 4 insertions(+)
 
-sure thing! you can get Slitaz4 here:
-http://mirror.slitaz.org/iso/4.0/slitaz-4.0.iso
+diff --git a/backport/compat/backport-3.10.c b/backport/compat/backport-3.10.c
+index 4d44960..f445250 100644
+--- a/backport/compat/backport-3.10.c
++++ b/backport/compat/backport-3.10.c
+@@ -34,6 +34,7 @@
+ #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)) */
  
-> > - Bug #2:
-> > eeprom modules are missing into 3.13.
-> > This issue is present systematically in all backports releases, since
-> > the switch from compat-drivers.
-> > It could be a wireless bug only, or a backports bug only, or both.
-> > Anyway, eeprom module is vital for correct interface detection.
-> > Into 3.9 the eeprom modules are located in
-> > ./compat-drivers-3.9-rc4-2-su/drivers/misc/eeprom/
-> 
-> This should be included in your kernel you are compiling against
-> otherwise you wouldn't be able to build rtl8187.
-> 
-> There was a bug in backports regarding EEPROM_93CX6, could you please
-> try backports-20131122-2 and report back if the problem is still there.
-
-We are already discussing that with Larry on wireless mailist, Ill
-forward the mails here FYI. 
-
-> 
-> > - Bug #3:
-> > New dependance has been added, CRYPTO_CCM, which denies all modules
-> > compilation based on MAC80211.
-> > The dependance is set in ./backports-3.13-rc1-1/net/mac80211/Kconfig
-> > On Slitaz4, such kernel config is not set, hence its needed to edit
-> > manually the kernel .config in order to enable it.
-> > After enabling, modules compilation goes all right.
-> > Hence, or CRYPTO_CCM is useless, or its needed to show a warning to the
-> > user at Kconfig runtime, in order to take the necessary measures.
-> > It took forever (even for me!) to find that bug, which btw was denying
-> > the compilation of my Realtek modules.
-> 
-> Yes that dependency was added to mac80211 in the mainline kernel some
-> weeks ago. After you activated CRYPTO_CCM in your kernel config you have
-> to recompile your kernel otherwise you will get problems at least when
-> you use WPA2.
-
-..damn.. I dont know how many Slitaz4 users will be happy about that..
-:(
-
-> 
-> > - Bug #4:
-> > Repeated back-slashes "//" are present into script-makefile files, you
-> > can see them appear for example running "make alldefconfig & make
-> > install":
-> > [...]
-> > COMPRESS /lib/modules/2.6.37-slitaz//updates/compat/compat.ko
-> > gzip: can't open
-> > '/lib/modules/2.6.37-slitaz//updates/compat/compat.ko.gz': File exists
-> > [...]
-> 
-> Probably a different error is causing this problem, Linux is fine with
-> repeated back-slahes, it just does not look nice.
-
-agree, forgot adding "cosmetic" as below
-
-> 
-> > - Bug #5:
-> > Cosmetic bug, in file ./backports-3.13-rc1-1/Makefile, the following
-> > line is duplicated:
-> > @echo "  allyesconfig    - New config where all options are accepted
-> > with yes"
-
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
++#ifdef CONFIG_REGULATOR
+ /**
+  * regulator_map_voltage_ascend - map_voltage() for ascendant voltage list
+  *
+@@ -65,6 +66,7 @@ int regulator_map_voltage_ascend(struct regulator_dev *rdev,
+ }
+ EXPORT_SYMBOL_GPL(regulator_map_voltage_ascend);
+ 
++#endif /* CONFIG_REGULATOR */
+ #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)) */
+ 
+ void proc_set_size(struct proc_dir_entry *de, loff_t size)
+diff --git a/backport/compat/backport-3.13.c b/backport/compat/backport-3.13.c
+index c99625f..91fb480 100644
+--- a/backport/compat/backport-3.13.c
++++ b/backport/compat/backport-3.13.c
+@@ -10,6 +10,7 @@
+ #include <linux/version.h>
+ 
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
++#ifdef CONFIG_REGULATOR
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/regulator/driver.h>
+@@ -80,4 +81,5 @@ void devm_regulator_unregister(struct device *dev, struct regulator_dev *rdev)
+ 		WARN_ON(rc);
+ }
+ EXPORT_SYMBOL_GPL(devm_regulator_unregister);
++#endif /* CONFIG_REGULATOR */
+ #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)) */
 -- 
-http://www.fastmail.fm - One of many happy users:
-  http://www.fastmail.fm/help/overview_quotes.html
+1.7.10.4
 
