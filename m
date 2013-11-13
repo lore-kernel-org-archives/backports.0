@@ -1,50 +1,52 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:36097 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751521Ab3KSXTv (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 19 Nov 2013 18:19:51 -0500
-Received: by mail-pa0-f50.google.com with SMTP id kp14so7480403pab.37
-        for <backports@vger.kernel.org>; Tue, 19 Nov 2013 15:19:50 -0800 (PST)
-From: Jason Mobarak <jam@cozybit.com>
-To: backports@vger.kernel.org
-Cc: wcn36xx@lists.infradead.org, Jason Mobarak <jam@cozybit.com>
-Subject: [PATCH v3] backports: add defconfig for wcn36xx
-Date: Tue, 19 Nov 2013 15:19:38 -0800
-Message-Id: <1384903178-27357-1-git-send-email-jam@cozybit.com> (sfid-20131120_001953_045660_E3922DC5)
-In-Reply-To: <528BF081.5060201@hauke-m.de>
-References: <528BF081.5060201@hauke-m.de>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:57406 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755987Ab3KMQIq (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 13 Nov 2013 11:08:46 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 1/2] backports: add replace_fops()
+Date: Wed, 13 Nov 2013 17:08:37 +0100
+Message-Id: <1384358918-20477-1-git-send-email-hauke@hauke-m.de> (sfid-20131113_170848_768504_CFD84AAF)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Jason Mobarak <jam@cozybit.com>
+This is needed by drivers/media/dvb-core/dvbdev.c and was added in:
+commit e84f9e57b90ca89664d733a7cef19aa7ccd832f3
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Sun Sep 22 14:17:15 2013 -0400
+
+    consolidate the reassignments of ->f_op in ->open() instances
+
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
+ backport/backport-include/linux/fs.h |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-v2: Added CPTCFG_CFG80211_WEXT and Signed-of-by line.
-v3: Alternate version without CPTCFG_CFG80211_WEXT.
-
- backport/defconfigs/wcn36xx |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
- create mode 100644 backport/defconfigs/wcn36xx
-
-diff --git a/backport/defconfigs/wcn36xx b/backport/defconfigs/wcn36xx
-new file mode 100644
-index 0000000..374eb11
---- /dev/null
-+++ b/backport/defconfigs/wcn36xx
-@@ -0,0 +1,13 @@
-+CPTCFG_CFG80211=m
-+CPTCFG_CFG80211_DEFAULT_PS=y
-+CPTCFG_CFG80211_DEBUGFS=y
-+CPTCFG_MAC80211=m
-+# CPTCFG_MAC80211_RC_PID is not set
-+# CPTCFG_MAC80211_RC_MINSTREL is not set
-+# CPTCFG_MAC80211_RC_DEFAULT_MINSTREL is not set
-+CPTCFG_MAC80211_DEBUGFS=y
-+CPTCFG_MAC80211_MESSAGE_TRACING=y
-+CPTCFG_WLAN=y
-+CPTCFG_ATH_CARDS=m
-+CPTCFG_WCN36XX=m
-+CPTCFG_WCN36XX_DEBUGFS=y
+diff --git a/backport/backport-include/linux/fs.h b/backport/backport-include/linux/fs.h
+index 9de5109..9874f81 100644
+--- a/backport/backport-include/linux/fs.h
++++ b/backport/backport-include/linux/fs.h
+@@ -38,4 +38,18 @@ extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
+ 		const void __user *from, size_t count);
+ #endif
+ 
++#ifndef replace_fops
++/*
++ * This one is to be used *ONLY* from ->open() instances.
++ * fops must be non-NULL, pinned down *and* module dependencies
++ * should be sufficient to pin the caller down as well.
++ */
++#define replace_fops(f, fops) \
++	do {	\
++		struct file *__file = (f); \
++		fops_put(__file->f_op); \
++		BUG_ON(!(__file->f_op = (fops))); \
++	} while(0)
++#endif /* replace_fops */
++
+ #endif	/* _COMPAT_LINUX_FS_H */
 -- 
 1.7.10.4
 
