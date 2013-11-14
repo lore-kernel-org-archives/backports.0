@@ -1,67 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mms1.broadcom.com ([216.31.210.17]:2976 "EHLO mms1.broadcom.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750867Ab3KYLI3 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 25 Nov 2013 06:08:29 -0500
-From: "Arend van Spriel" <arend@broadcom.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-cc: backports@vger.kernel.org, "Arend van Spriel" <arend@broadcom.com>,
-	linux-wireless@vger.kernel.org
-Subject: [PATCH] backport: need reinit_completion() for kernel before
- v3.13
-Date: Mon, 25 Nov 2013 12:07:56 +0100
-Message-ID: <1385377676-5106-1-git-send-email-arend@broadcom.com> (sfid-20131125_120832_098462_367F48C0)
+Received: from server19320154104.serverpool.info ([193.201.54.104]:33792 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752939Ab3KNMJU (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 14 Nov 2013 07:09:20 -0500
+Received: from localhost (localhost [127.0.0.1])
+	by hauke-m.de (Postfix) with ESMTP id DD62A8F61
+	for <backports@vger.kernel.org>; Thu, 14 Nov 2013 13:09:18 +0100 (CET)
+Received: from hauke-m.de ([127.0.0.1])
+	by localhost (hauke-m.de [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id kQiLdA36-alU for <backports@vger.kernel.org>;
+	Thu, 14 Nov 2013 13:09:13 +0100 (CET)
+Received: from [IPv6:2001:638:708:30da:8a6:43d1:b06c:2131] (unknown [IPv6:2001:638:708:30da:8a6:43d1:b06c:2131])
+	by hauke-m.de (Postfix) with ESMTPSA id 824AB857F
+	for <backports@vger.kernel.org>; Thu, 14 Nov 2013 13:09:13 +0100 (CET)
+Message-ID: <5284BD68.7010500@hauke-m.de> (sfid-20131114_130922_485351_160D489E)
+Date: Thu, 14 Nov 2013 13:09:12 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: [ANN] backports-20131113 + stable v3.10.19 + v3.11.8 released
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The use of INIT_COMPLETION() has been replaced by reinit_completion()
-in v3.13-rc1. This patch backports that inline function.
+backports-20131113 was released, this is based on linux-next
+next-20131113. In addition backports-3.10.19 and backports-3.11.8 based
+on linux-stable were also released.
 
-Cc: <linux-wireless@vger.kernel.org>
-Signed-off-by: Arend van Spriel <arend@broadcom.com>
----
- backport/backport-include/linux/completion.h |   29 ++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
- create mode 100644 backport/backport-include/linux/completion.h
+https://www.kernel.org/pub/linux/kernel/projects/backports/2013/11/13/backports-20131113.tar.bz2
 
-diff --git a/backport/backport-include/linux/completion.h b/backport/backport-include/linux/completion.h
-new file mode 100644
-index 0000000..ed30d8a
---- /dev/null
-+++ b/backport/backport-include/linux/completion.h
-@@ -0,0 +1,29 @@
-+#ifndef _BACKPORTS_LINUX_COMPLETION_H
-+#define _BACKPORTS_LINUX_COMPLETION_H
-+#include_next <linux/completion.h>
-+#include <linux/version.h>
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0))
-+/**
-+ * backport of:
-+ *
-+ * commit c32f74ab2872994bc8336ed367313da3139350ca
-+ * Author: Wolfram Sang <wsa@the-dreams.de>
-+ * Date:   Thu Nov 14 14:32:01 2013 -0800
-+ *
-+ *   sched: replace INIT_COMPLETION with reinit_completion
-+ */
-+/**
-+ * reinit_completion - reinitialize a completion structure
-+ * @x:  pointer to completion structure that is to be reinitialized
-+ *
-+ * This inline function should be used to reinitialize a completion structure so it can
-+ * be reused. This is especially important after complete_all() is used.
-+ */
-+static inline void reinit_completion(struct completion *x)
-+{
-+	x->done = 0;
-+}
-+#endif
-+
-+#endif /* _BACKPORTS_LINUX_COMPLETION_H */
--- 
-1.7.10.4
+https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.11.8/backports-3.11.8-1.tar.bz2
 
+https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.10.19/backports-3.10.19-1.tar.bz2
 
+The source code can temporary be found here:
+https://github.com/hauke/backports
+
+Hauke
