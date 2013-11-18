@@ -1,86 +1,244 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:55852 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752448Ab3KGU2b (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 7 Nov 2013 15:28:31 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 08/11] backports: fix kfifo_put()
-Date: Thu,  7 Nov 2013 21:27:55 +0100
-Message-Id: <1383856078-19823-9-git-send-email-hauke@hauke-m.de> (sfid-20131107_212837_228427_C9C8B05D)
-In-Reply-To: <1383856078-19823-1-git-send-email-hauke@hauke-m.de>
-References: <1383856078-19823-1-git-send-email-hauke@hauke-m.de>
+Received: from mx1.redhat.com ([209.132.183.28]:8273 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751243Ab3KRO2O (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 18 Nov 2013 09:28:14 -0500
+From: Stefan Assmann <sassmann@kpanic.de>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH] backports: remove obsolete linux/bitops.h header
+Date: Mon, 18 Nov 2013 15:26:43 +0100
+Message-Id: <1384784803-16935-1-git-send-email-sassmann@kpanic.de> (sfid-20131118_152816_303005_4293608A)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-kfifo_put() now gets the second parameter by value and not by reference
-any more. This replaces the in kernel implementation of kfifo_put()
-with a version which is compatible to the in kernel structures but
-takes the value and not a reference to the value. We wanted to do this:
- #define kfifo_put(fifo, val) kfifo_put(fifo, &val)
+The header seems to be obsolete. Removing it and running devel/ckmake didn't
+reveal any errors. Missing parts can always be re-added in the new
+include_next fashion if necessary.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
 ---
- backport/backport-include/linux/kfifo.h |   45 +++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ backport/backport-include/linux/bitops.h | 211 -------------------------------
+ 1 file changed, 211 deletions(-)
+ delete mode 100644 backport/backport-include/linux/bitops.h
 
-diff --git a/backport/backport-include/linux/kfifo.h b/backport/backport-include/linux/kfifo.h
-index 1850038..379c1cb 100644
---- a/backport/backport-include/linux/kfifo.h
-+++ b/backport/backport-include/linux/kfifo.h
-@@ -5,6 +5,51 @@
- #else
- #include <linux/kfifo-new.h>
- #endif
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)
-+#undef kfifo_put
-+/**
-+ * kfifo_put - put data into the fifo
-+ * @fifo: address of the fifo to be used
-+ * @val: the data to be added
-+ *
-+ * This macro copies the given value into the fifo.
-+ * It returns 0 if the fifo was full. Otherwise it returns the number
-+ * processed elements.
-+ *
-+ * Note that with only one concurrent reader and one concurrent
-+ * writer, you don't need extra locking to use these macro.
-+ */
-+#define	kfifo_put(fifo, val) \
-+({ \
-+	typeof((fifo) + 1) __tmp = (fifo); \
-+	typeof((&val) + 1) __val = (&val); \
-+	unsigned int __ret; \
-+	const size_t __recsize = sizeof(*__tmp->rectype); \
-+	struct __kfifo *__kfifo = &__tmp->kfifo; \
-+	if (0) { \
-+		typeof(__tmp->ptr_const) __dummy __attribute__ ((unused)); \
-+		__dummy = (typeof(__val))NULL; \
-+	} \
-+	if (__recsize) \
-+		__ret = __kfifo_in_r(__kfifo, __val, sizeof(*__val), \
-+			__recsize); \
-+	else { \
-+		__ret = !kfifo_is_full(__tmp); \
-+		if (__ret) { \
-+			(__is_kfifo_ptr(__tmp) ? \
-+			((typeof(__tmp->type))__kfifo->data) : \
-+			(__tmp->buf) \
-+			)[__kfifo->in & __tmp->kfifo.mask] = \
-+				*(typeof(__tmp->type))__val; \
-+			smp_wmb(); \
-+			__kfifo->in++; \
-+		} \
-+	} \
-+	__ret; \
-+})
-+#endif
-+
- #else
- /*
-  * A generic kernel FIFO implementation
+diff --git a/backport/backport-include/linux/bitops.h b/backport/backport-include/linux/bitops.h
+deleted file mode 100644
+index aa76af1..0000000
+--- a/backport/backport-include/linux/bitops.h
++++ /dev/null
+@@ -1,211 +0,0 @@
+-#ifndef _LINUX_BITOPS_H
+-#define _LINUX_BITOPS_H
+-#include <asm/types.h>
+-
+-#ifdef	__KERNEL__
+-#define BIT(nr)			(1UL << (nr))
+-#define BIT_MASK(nr)		(1UL << ((nr) % BITS_PER_LONG))
+-#define BIT_WORD(nr)		((nr) / BITS_PER_LONG)
+-#define BITS_PER_BYTE		8
+-#ifndef BITS_TO_LONGS /* Older kernels define this already */
+-#define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
+-#endif
+-#endif
+-
+-extern unsigned int __sw_hweight8(unsigned int w);
+-extern unsigned int __sw_hweight16(unsigned int w);
+-extern unsigned int __sw_hweight32(unsigned int w);
+-extern unsigned long __sw_hweight64(__u64 w);
+-
+-/*
+- * Include this here because some architectures need generic_ffs/fls in
+- * scope
+- */
+-#include <asm/bitops.h>
+-
+-#define for_each_set_bit(bit, addr, size) \
+-	for ((bit) = find_first_bit((addr), (size)); \
+-	     (bit) < (size); \
+-	     (bit) = find_next_bit((addr), (size), (bit) + 1))
+-
+-static __inline__ int get_bitmask_order(unsigned int count)
+-{
+-	int order;
+-
+-	order = fls(count);
+-	return order;	/* We could be slightly more clever with -1 here... */
+-}
+-
+-static __inline__ int get_count_order(unsigned int count)
+-{
+-	int order;
+-
+-	order = fls(count) - 1;
+-	if (count & (count - 1))
+-		order++;
+-	return order;
+-}
+-
+-static inline unsigned long hweight_long(unsigned long w)
+-{
+-	return sizeof(w) == 4 ? hweight32(w) : hweight64(w);
+-}
+-
+-/**
+- * rol32 - rotate a 32-bit value left
+- * @word: value to rotate
+- * @shift: bits to roll
+- */
+-static inline __u32 rol32(__u32 word, unsigned int shift)
+-{
+-	return (word << shift) | (word >> (32 - shift));
+-}
+-
+-/**
+- * ror32 - rotate a 32-bit value right
+- * @word: value to rotate
+- * @shift: bits to roll
+- */
+-static inline __u32 ror32(__u32 word, unsigned int shift)
+-{
+-	return (word >> shift) | (word << (32 - shift));
+-}
+-
+-/**
+- * rol16 - rotate a 16-bit value left
+- * @word: value to rotate
+- * @shift: bits to roll
+- */
+-static inline __u16 rol16(__u16 word, unsigned int shift)
+-{
+-	return (word << shift) | (word >> (16 - shift));
+-}
+-
+-/**
+- * ror16 - rotate a 16-bit value right
+- * @word: value to rotate
+- * @shift: bits to roll
+- */
+-static inline __u16 ror16(__u16 word, unsigned int shift)
+-{
+-	return (word >> shift) | (word << (16 - shift));
+-}
+-
+-/**
+- * rol8 - rotate an 8-bit value left
+- * @word: value to rotate
+- * @shift: bits to roll
+- */
+-static inline __u8 rol8(__u8 word, unsigned int shift)
+-{
+-	return (word << shift) | (word >> (8 - shift));
+-}
+-
+-/**
+- * ror8 - rotate an 8-bit value right
+- * @word: value to rotate
+- * @shift: bits to roll
+- */
+-static inline __u8 ror8(__u8 word, unsigned int shift)
+-{
+-	return (word >> shift) | (word << (8 - shift));
+-}
+-
+-/**
+- * sign_extend32 - sign extend a 32-bit value using specified bit as sign-bit
+- * @value: value to sign extend
+- * @index: 0 based bit index (0<=index<32) to sign bit
+- */
+-static inline __s32 sign_extend32(__u32 value, int index)
+-{
+-	__u8 shift = 31 - index;
+-	return (__s32)(value << shift) >> shift;
+-}
+-
+-static inline unsigned fls_long(unsigned long l)
+-{
+-	if (sizeof(l) == 4)
+-		return fls(l);
+-	return fls64(l);
+-}
+-
+-/**
+- * __ffs64 - find first set bit in a 64 bit word
+- * @word: The 64 bit word
+- *
+- * On 64 bit arches this is a synomyn for __ffs
+- * The result is not defined if no bits are set, so check that @word
+- * is non-zero before calling this.
+- */
+-static inline unsigned long __ffs64(u64 word)
+-{
+-#if BITS_PER_LONG == 32
+-	if (((u32)word) == 0UL)
+-		return __ffs((u32)(word >> 32)) + 32;
+-#elif BITS_PER_LONG != 64
+-#error BITS_PER_LONG not 32 or 64
+-#endif
+-	return __ffs((unsigned long)word);
+-}
+-
+-#ifdef __KERNEL__
+-#ifdef CONFIG_GENERIC_FIND_FIRST_BIT
+-
+-/**
+- * find_first_bit - find the first set bit in a memory region
+- * @addr: The address to start the search at
+- * @size: The maximum size to search
+- *
+- * Returns the bit number of the first set bit.
+- */
+-extern unsigned long find_first_bit(const unsigned long *addr,
+-				    unsigned long size);
+-
+-/**
+- * find_first_zero_bit - find the first cleared bit in a memory region
+- * @addr: The address to start the search at
+- * @size: The maximum size to search
+- *
+- * Returns the bit number of the first cleared bit.
+- */
+-extern unsigned long find_first_zero_bit(const unsigned long *addr,
+-					 unsigned long size);
+-#endif /* CONFIG_GENERIC_FIND_FIRST_BIT */
+-
+-#ifdef CONFIG_GENERIC_FIND_LAST_BIT
+-/**
+- * find_last_bit - find the last set bit in a memory region
+- * @addr: The address to start the search at
+- * @size: The maximum size to search
+- *
+- * Returns the bit number of the first set bit, or size.
+- */
+-extern unsigned long find_last_bit(const unsigned long *addr,
+-				   unsigned long size);
+-#endif /* CONFIG_GENERIC_FIND_LAST_BIT */
+-
+-#ifdef CONFIG_GENERIC_FIND_NEXT_BIT
+-
+-/**
+- * find_next_bit - find the next set bit in a memory region
+- * @addr: The address to base the search on
+- * @offset: The bitnumber to start searching at
+- * @size: The bitmap size in bits
+- */
+-extern unsigned long find_next_bit(const unsigned long *addr,
+-				   unsigned long size, unsigned long offset);
+-
+-/**
+- * find_next_zero_bit - find the next cleared bit in a memory region
+- * @addr: The address to base the search on
+- * @offset: The bitnumber to start searching at
+- * @size: The bitmap size in bits
+- */
+-
+-extern unsigned long find_next_zero_bit(const unsigned long *addr,
+-					unsigned long size,
+-					unsigned long offset);
+-
+-#endif /* CONFIG_GENERIC_FIND_NEXT_BIT */
+-#endif /* __KERNEL__ */
+-#endif
 -- 
-1.7.10.4
+1.8.3.1
 
