@@ -1,39 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:37743 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753983Ab3KUWlk (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 21 Nov 2013 17:41:40 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/3] backports: activate REGULATOR_ARIZONA only on >= 3.12
-Date: Thu, 21 Nov 2013 23:41:28 +0100
-Message-Id: <1385073689-10441-2-git-send-email-hauke@hauke-m.de> (sfid-20131121_234141_904603_3D375F09)
-In-Reply-To: <1385073689-10441-1-git-send-email-hauke@hauke-m.de>
-References: <1385073689-10441-1-git-send-email-hauke@hauke-m.de>
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:57748 "EHLO
+	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752102Ab3KSWxo convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 19 Nov 2013 17:53:44 -0500
+From: "Malinen, Jouni" <jouni@qca.qualcomm.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>, Jason Mobarak <jam@cozybit.com>
+CC: "wcn36xx@lists.infradead.org" <wcn36xx@lists.infradead.org>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: [PATCH] backports: add support for wcn36xx
+Date: Tue, 19 Nov 2013 22:53:39 +0000
+Message-ID: <CEB1B7E3.2FE54%jouni@qca.qualcomm.com> (sfid-20131119_235346_399770_A87F020A)
+In-Reply-To: <528BDDF9.7080400@hauke-m.de>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-ARIZONA needs struct regulator_linear_range which was added in kernel 3.12.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- dependencies |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/dependencies b/dependencies
-index ae8cdc6..31de845 100644
---- a/dependencies
-+++ b/dependencies
-@@ -56,7 +56,7 @@ REGULATOR_88PM800 3.12
- REGULATOR_88PM8607 3.10
- REGULATOR_AAT2870 3.6
- REGULATOR_AD5398 3.5
--REGULATOR_ARIZONA 3.8
-+REGULATOR_ARIZONA 3.12
- REGULATOR_AS3711 3.12
- REGULATOR_DA903X 3.12
- REGULATOR_DA9052 3.9
--- 
-1.7.10.4
+On 19/11/13 11:54 pm, "Hauke Mehrtens" <hauke@hauke-m.de> wrote:
+
+>On 11/19/2013 09:45 PM, Jason Mobarak wrote:
+>>  backport/defconfigs/wcn36xx |   13 +++++++++++++
+
+>Could you add CPTCFG_CFG80211_WEXT=y please otherwise we will get bug
+>reports where people are complaining that iwconfig does not work.
+
+Which device has wcn36xx and includes iwconfig in the build? Android moved
+to nl80211-based design quite some time ago.. Would someone really look at
+using wcn36xx in something else than Android and to do that with WEXT?
+Making iwconfig not work sounds more like a feature than bug in this
+specific case.
+
+- Jouni
 
