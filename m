@@ -1,48 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-qc0-f172.google.com ([209.85.216.172]:55321 "EHLO
-	mail-qc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751618Ab3KRX3H (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 18 Nov 2013 18:29:07 -0500
-Received: by mail-qc0-f172.google.com with SMTP id l13so1170211qcy.31
-        for <backports@vger.kernel.org>; Mon, 18 Nov 2013 15:29:06 -0800 (PST)
-MIME-Version: 1.0
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:36097 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751521Ab3KSXTv (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 19 Nov 2013 18:19:51 -0500
+Received: by mail-pa0-f50.google.com with SMTP id kp14so7480403pab.37
+        for <backports@vger.kernel.org>; Tue, 19 Nov 2013 15:19:50 -0800 (PST)
 From: Jason Mobarak <jam@cozybit.com>
-Date: Mon, 18 Nov 2013 15:28:46 -0800
-Message-ID: <CANkDkvwBGyonC3JPvEh59bvfYxEix0N_21=5avX8RiCvyLpiOA@mail.gmail.com> (sfid-20131119_002909_500477_424F846A)
-Subject: How to detect when module dependencies have changed?
 To: backports@vger.kernel.org
-Content-Type: text/plain; charset=ISO-8859-1
+Cc: wcn36xx@lists.infradead.org, Jason Mobarak <jam@cozybit.com>
+Subject: [PATCH v3] backports: add defconfig for wcn36xx
+Date: Tue, 19 Nov 2013 15:19:38 -0800
+Message-Id: <1384903178-27357-1-git-send-email-jam@cozybit.com> (sfid-20131120_001953_045660_E3922DC5)
+In-Reply-To: <528BF081.5060201@hauke-m.de>
+References: <528BF081.5060201@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hello--
+Signed-off-by: Jason Mobarak <jam@cozybit.com>
+---
 
-I recently ran into an issue where the module dependencies changed
-between the versions of backports that I was using and I had a hard
-time determining what was going wrong with compiling the driver
-against backports.
+v2: Added CPTCFG_CFG80211_WEXT and Signed-of-by line.
+v3: Alternate version without CPTCFG_CFG80211_WEXT.
 
-Basically the situation was this:
-  - Worked on a driver using a 2013.08 development snapshot of kernel backports
-  - I wanted to compile the driver against the latest backports (based
-on next-20131113)
-  - Discovered that the module was not being compiled, because the
-CPTCFG_MAC80211 flag could not be enabled
+ backport/defconfigs/wcn36xx |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+ create mode 100644 backport/defconfigs/wcn36xx
 
-The problem, I think, was that CRYPTO_CCM was added as a dependency of
-of MAC80211 in the meantime.  I discovered this by using menuconfig to
-figure out what config flags where causing MAC80211 to be disabled...
+diff --git a/backport/defconfigs/wcn36xx b/backport/defconfigs/wcn36xx
+new file mode 100644
+index 0000000..374eb11
+--- /dev/null
++++ b/backport/defconfigs/wcn36xx
+@@ -0,0 +1,13 @@
++CPTCFG_CFG80211=m
++CPTCFG_CFG80211_DEFAULT_PS=y
++CPTCFG_CFG80211_DEBUGFS=y
++CPTCFG_MAC80211=m
++# CPTCFG_MAC80211_RC_PID is not set
++# CPTCFG_MAC80211_RC_MINSTREL is not set
++# CPTCFG_MAC80211_RC_DEFAULT_MINSTREL is not set
++CPTCFG_MAC80211_DEBUGFS=y
++CPTCFG_MAC80211_MESSAGE_TRACING=y
++CPTCFG_WLAN=y
++CPTCFG_ATH_CARDS=m
++CPTCFG_WCN36XX=m
++CPTCFG_WCN36XX_DEBUGFS=y
+-- 
+1.7.10.4
 
-At first, to address this, I tried adding "crypto/" and
-"drivers/crypto/" to "copy-list" and regenerating (which also
-requiring some sed manipulation of the CONFIG_ flags)...
-
-However, the more "correct" solution (which didn't require any changes
-to backports) was to just enable CYPTO_CCM as a module in the kernel
-backports was being compiled against.
-
-So... my question is, is this a bug?  And/or is there a better way to
-detect this situation in the future?
-
-Thanks,
--Jason M
