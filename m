@@ -1,145 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:35690 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752692Ab3KZGiJ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 26 Nov 2013 01:38:09 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 742DE2037B
-	for <backports@vger.kernel.org>; Tue, 26 Nov 2013 06:38:08 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 7653F20378
-	for <backports@vger.kernel.org>; Tue, 26 Nov 2013 06:38:07 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:53478 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751745Ab3KSXQt (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 19 Nov 2013 18:16:49 -0500
+Received: by mail-pa0-f44.google.com with SMTP id fa1so161418pad.31
+        for <backports@vger.kernel.org>; Tue, 19 Nov 2013 15:16:49 -0800 (PST)
+From: Jason Mobarak <jam@cozybit.com>
 To: backports@vger.kernel.org
-Subject: [Bug 64091] backports build error
-Date: Tue, 26 Nov 2013 06:38:06 +0000
-Message-ID: <bug-64091-58281-pVW7JogjdF@https.bugzilla.kernel.org/> (sfid-20131126_073812_339857_2FA4FA70)
-In-Reply-To: <bug-64091-58281@https.bugzilla.kernel.org/>
-References: <bug-64091-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: wcn36xx@lists.infradead.org, Jason Mobarak <jam@cozybit.com>
+Subject: [PATCH v2] backports: add defconfig for wcn36xx
+Date: Tue, 19 Nov 2013 15:16:15 -0800
+Message-Id: <1384902975-26870-1-git-send-email-jam@cozybit.com> (sfid-20131120_001655_038936_E8220E79)
+In-Reply-To: <528BDDF9.7080400@hauke-m.de>
+References: <528BDDF9.7080400@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=64091
+Signed-off-by: Jason Mobarak <jam@cozybit.com>
+---
 
---- Comment #6 from DarinV <darin.vancoevering@gmail.com> ---
-Well I still get an error. I am attaching the whole terminal output so you guys
-can see all of it.
+v2: Added CPTCFG_CFG80211_WEXT and Signed-of-by line.
 
-supergamer://home/supervl/Desktop/backports-20131122-2
-root:# make menuconfig
-Generating local configuration database from kernel ... done.
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
--DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o mconf.o mconf.c
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
--DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o zconf.tab.o zconf.tab.c
-menu.c: In function `get_symbol_str':
-menu.c:515: warning: 'jump' might be used uninitialized in this function
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
--DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o lxdialog/checklist.o
-lxdialog/checklist.ccc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2
--fomit-frame-pointer -DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o
-lxdialog/inputbox.o lxdialog/inputbox.c
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
--DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o lxdialog/menubox.o
-lxdialog/menubox.c
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
--DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o lxdialog/textbox.o
-lxdialog/textbox.c
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
--DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o lxdialog/util.o lxdialog/util.c
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
--DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o lxdialog/yesno.o lxdialog/yesno.c
-cc -Wl,--no-as-needed -lncursesw  mconf.o zconf.tab.o lxdialog/checklist.o
-lxdialog/inputbox.o lxdialog/menubox.o lxdialog/textbox.o lxdialog/util.o
-lxdialog/yesno.o   -o mconf
+ backport/defconfigs/wcn36xx |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 backport/defconfigs/wcn36xx
 
-
-*** End of the configuration.
-*** Execute 'make' to start the build or try 'make help'.
-
-supergamer://home/supervl/Desktop/backports-20131122-2
-root:# make
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer   -c
--o conf.o conf.c
-cc   conf.o zconf.tab.o   -o conf
-#
-# configuration written to .config
-#
-Building backport-include/backport/autoconf.h ... done.
-
-  WARNING: Symbol version dump /usr/src/linux-2.6.27.57/Module.symvers
-           is missing; modules will have no dependencies and modversions.
-
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/main.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.28.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.29.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.32.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.33.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.34.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.35.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.36.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.37.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/compat-2.6.39.o
-  CC [M]  /home/supervl/Desktop/backports-20131122-2/compat/kstrtox.o
-In file included from include/linux/cpumask.h:139,
-                 from include/asm/processor.h:25,
-                 from include/asm/atomic_32.h:5,
-                 from include/asm/atomic.h:2,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/asm/atomic.h:3,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/linux/types.h:37,
-                 from include/linux/kernel.h:13,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/linux/kernel.h:3,
-                 from
-/home/supervl/Desktop/backports-20131122-2/compat/kstrtox.c:14:
-include/linux/bitmap.h: In function `bitmap_zero':
-include/linux/bitmap.h:145: error: implicit declaration of function
-`DIV_ROUND_UP'
-In file included from include/asm/processor.h:25,
-                 from include/asm/atomic_32.h:5,
-                 from include/asm/atomic.h:2,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/asm/atomic.h:3,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/linux/types.h:37,
-                 from include/linux/kernel.h:13,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/linux/kernel.h:3,
-                 from
-/home/supervl/Desktop/backports-20131122-2/compat/kstrtox.c:14:
-include/linux/cpumask.h: At top level:
-include/linux/cpumask.h:141: error: variable-size type declared outside of any
-function
-include/linux/cpumask.h:276: error: variable-size type declared outside of any
-function
-In file included from include/asm/atomic_32.h:5,
-                 from include/asm/atomic.h:2,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/asm/atomic.h:3,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/linux/types.h:37,
-                 from include/linux/kernel.h:13,
-                 from
-/home/supervl/Desktop/backports-20131122-2/backport-include/linux/kernel.h:3,
-                 from
-/home/supervl/Desktop/backports-20131122-2/compat/kstrtox.c:14:
-include/asm/processor.h: In function `native_get_debugreg':
-include/asm/processor.h:443: error: implicit declaration of function `BUG'
-make[6]: *** [/home/supervl/Desktop/backports-20131122-2/compat/kstrtox.o]
-Error 1
-make[5]: *** [/home/supervl/Desktop/backports-20131122-2/compat] Error 2
-make[4]: *** [_module_/home/supervl/Desktop/backports-20131122-2] Error 2
-make[3]: *** [modules] Error 2
-make[2]: *** [modules] Error 2
-make[1]: *** [modules] Error 2
-make: *** [default] Error 2
-supergamer://home/supervl/Desktop/backports-20131122-2
-root:#
-
+diff --git a/backport/defconfigs/wcn36xx b/backport/defconfigs/wcn36xx
+new file mode 100644
+index 0000000..9430ff1
+--- /dev/null
++++ b/backport/defconfigs/wcn36xx
+@@ -0,0 +1,14 @@
++CPTCFG_CFG80211=m
++CPTCFG_CFG80211_DEFAULT_PS=y
++CPTCFG_CFG80211_DEBUGFS=y
++CPTCFG_MAC80211=m
++# CPTCFG_MAC80211_RC_PID is not set
++# CPTCFG_MAC80211_RC_MINSTREL is not set
++# CPTCFG_MAC80211_RC_DEFAULT_MINSTREL is not set
++CPTCFG_MAC80211_DEBUGFS=y
++CPTCFG_MAC80211_MESSAGE_TRACING=y
++CPTCFG_WLAN=y
++CPTCFG_ATH_CARDS=m
++CPTCFG_WCN36XX=m
++CPTCFG_WCN36XX_DEBUGFS=y
++CPTCFG_CFG80211_WEXT=y
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+1.7.10.4
+
