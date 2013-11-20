@@ -1,43 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:36146 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752836Ab3KSUpw (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 19 Nov 2013 15:45:52 -0500
-Received: by mail-pa0-f44.google.com with SMTP id fb1so7282756pad.3
-        for <backports@vger.kernel.org>; Tue, 19 Nov 2013 12:45:51 -0800 (PST)
-From: Jason Mobarak <jam@cozybit.com>
-To: backports@vger.kernel.org
-Cc: wcn36xx@lists.infradead.org, Jason Mobarak <jam@cozybit.com>
-Subject: [PATCH] backports: add support for wcn36xx
-Date: Tue, 19 Nov 2013 12:45:31 -0800
-Message-Id: <1384893931-21178-1-git-send-email-jam@cozybit.com> (sfid-20131119_214554_495405_35ACC795)
+Received: from s3.sipsolutions.net ([144.76.43.152]:44964 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750855Ab3KTIgh (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 20 Nov 2013 03:36:37 -0500
+Message-ID: <1384936585.14295.2.camel@jlt4.sipsolutions.net> (sfid-20131120_093639_368795_ACD04545)
+Subject: Re: [PATCH] backports: remove obsolete linux/bitops.h header
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Stefan Assmann <sassmann@kpanic.de>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, mcgrof@kernel.org,
+	backports@vger.kernel.org
+Date: Wed, 20 Nov 2013 09:36:25 +0100
+In-Reply-To: <528C7302.5030501@kpanic.de>
+References: <1384784803-16935-1-git-send-email-sassmann@kpanic.de>
+	 <528BEB63.3080600@hauke-m.de> <528C7302.5030501@kpanic.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
----
- backport/defconfigs/wcn36xx |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
- create mode 100644 backport/defconfigs/wcn36xx
+On Wed, 2013-11-20 at 09:29 +0100, Stefan Assmann wrote:
+> On 19.11.2013 23:51, Hauke Mehrtens wrote:
+> > On 11/18/2013 03:26 PM, Stefan Assmann wrote:
+> >> The header seems to be obsolete. Removing it and running devel/ckmake didn't
+> >> reveal any errors. Missing parts can always be re-added in the new
+> >> include_next fashion if necessary.
+> >>
+> >> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+> > 
+> > Some of these functions are needed, because they are not provided by old
+> > kernel versions.
+> 
+> Let me know what's a good way of figuring out what's still needed and
+> I'll replace the old header the way that Johannes suggested.
 
-diff --git a/backport/defconfigs/wcn36xx b/backport/defconfigs/wcn36xx
-new file mode 100644
-index 0000000..374eb11
---- /dev/null
-+++ b/backport/defconfigs/wcn36xx
-@@ -0,0 +1,13 @@
-+CPTCFG_CFG80211=m
-+CPTCFG_CFG80211_DEFAULT_PS=y
-+CPTCFG_CFG80211_DEBUGFS=y
-+CPTCFG_MAC80211=m
-+# CPTCFG_MAC80211_RC_PID is not set
-+# CPTCFG_MAC80211_RC_MINSTREL is not set
-+# CPTCFG_MAC80211_RC_DEFAULT_MINSTREL is not set
-+CPTCFG_MAC80211_DEBUGFS=y
-+CPTCFG_MAC80211_MESSAGE_TRACING=y
-+CPTCFG_WLAN=y
-+CPTCFG_ATH_CARDS=m
-+CPTCFG_WCN36XX=m
-+CPTCFG_WCN36XX_DEBUGFS=y
--- 
-1.7.10.4
+Easiest is probably to try compiling against the oldest kernel we still
+support - that would be 2.6.25 - until all the drivers compile :)
+
+johannes
 
