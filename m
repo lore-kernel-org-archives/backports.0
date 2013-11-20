@@ -1,76 +1,64 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:55509 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932219Ab3KZP5M convert rfc822-to-8bit (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 26 Nov 2013 10:57:12 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 94DFB20149
-	for <backports@vger.kernel.org>; Tue, 26 Nov 2013 15:57:10 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 73D5C20124
-	for <backports@vger.kernel.org>; Tue, 26 Nov 2013 15:57:09 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 65881] New: errors compiling after make defconfig-alx
-Date: Tue, 26 Nov 2013 15:57:09 +0000
-Message-ID: <bug-65881-58281@https.bugzilla.kernel.org/> (sfid-20131126_165714_214991_CEF0C822)
-Content-Type: text/plain; charset="UTF-8"
+Received: from server19320154104.serverpool.info ([193.201.54.104]:56949 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750834Ab3KTLhG (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 20 Nov 2013 06:37:06 -0500
+Message-ID: <528C9ED5.2070103@hauke-m.de> (sfid-20131120_123708_781739_FB9A8142)
+Date: Wed, 20 Nov 2013 12:36:53 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
+To: Stefan Assmann <sassmann@kpanic.de>,
+	Johannes Berg <johannes@sipsolutions.net>
+CC: mcgrof@kernel.org, backports@vger.kernel.org
+Subject: Re: [PATCH] backports: remove obsolete linux/bitops.h header
+References: <1384784803-16935-1-git-send-email-sassmann@kpanic.de>	 <528BEB63.3080600@hauke-m.de> <528C7302.5030501@kpanic.de> <1384936585.14295.2.camel@jlt4.sipsolutions.net> <528C9C76.8060108@kpanic.de>
+In-Reply-To: <528C9C76.8060108@kpanic.de>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=65881
+On 11/20/2013 12:26 PM, Stefan Assmann wrote:
+> On 20.11.2013 09:36, Johannes Berg wrote:
+>> On Wed, 2013-11-20 at 09:29 +0100, Stefan Assmann wrote:
+>>> On 19.11.2013 23:51, Hauke Mehrtens wrote:
+>>>> On 11/18/2013 03:26 PM, Stefan Assmann wrote:
+>>>>> The header seems to be obsolete. Removing it and running devel/ckmake didn't
+>>>>> reveal any errors. Missing parts can always be re-added in the new
+>>>>> include_next fashion if necessary.
+>>>>>
+>>>>> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+>>>>
+>>>> Some of these functions are needed, because they are not provided by old
+>>>> kernel versions.
+>>>
+>>> Let me know what's a good way of figuring out what's still needed and
+>>> I'll replace the old header the way that Johannes suggested.
+>>
+>> Easiest is probably to try compiling against the oldest kernel we still
+>> support - that would be 2.6.25 - until all the drivers compile :)
+>>
+>> johannes
+>>
+> 
+> OK, to get started I tried:
+> ./gentree.py --clean --git-revision v2.6.25 ~/linux /dev/shm/2.6.25
+> Get original source files from git ...
+> Apply patches ...
+> Failed to apply changes from collateral-evolutions/network/0001-netdev_ops/bluetooth_bnep.patch
+>  patching file net/bluetooth/bnep/netdev.c
+>  Hunk #1 FAILED at 223.
+>  1 out of 1 hunk FAILED -- saving rejects to file net/bluetooth/bnep/netdev.c.rej
+> 
+> Sorry if I'm missing something there. Or do I have to do it another way?
+> 
+>   Stefan
+> 
 
-            Bug ID: 65881
-           Summary: errors compiling after make defconfig-alx
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: 3.0.76-0.11-default
-          Hardware: i386
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: Backports
-          Assignee: backports@vger.kernel.org
-          Reporter: kolson@wsd1.org
-        Regression: No
+You should generate a release based on linux-next like:
+./gentree.py --clean --git-revision next-20131113 ~/linux /dev/shm/next
 
-Just trying to compile the alx driver for my kernel (3.0.76-0.11-default). Ran
-make defconfig-alx, then make and got the following:
+and test compile that against kernel 2.6.25.
 
-=======================================================================
-In file included from /usr/src/linux-3.0.76-0.11/include/linux/cache.h:4,
-                 from /usr/src/linux-3.0.76-0.11/include/linux/time.h:7,
-                 from
-/root/Documents/Downloads/backports-3.13-rc1-1/backport-include/linux/time.h:3,
-                 from /usr/src/linux-3.0.76-0.11/include/linux/stat.h:60,
-                 from /usr/src/linux-3.0.76-0.11/include/linux/module.h:10,
-                 from
-/root/Documents/Downloads/backports-3.13-rc1-1/backport-include/linux/module.h:3,
-                 from
-/root/Documents/Downloads/backports-3.13-rc1-1/compat/main.c:1:
-/root/Documents/Downloads/backports-3.13-rc1-1/backport-include/linux/kernel.h:35:
-error: redefinition of ‘hex_byte_pack’
-/usr/src/linux-3.0.76-0.11/include/linux/kernel.h:402: error: previous
-definition of ‘hex_byte_pack’ was here
-make[8]: *** [/root/Documents/Downloads/backports-3.13-rc1-1/compat/main.o]
-Error 1
-make[7]: *** [/root/Documents/Downloads/backports-3.13-rc1-1/compat] Error 2
-make[6]: *** [_module_/root/Documents/Downloads/backports-3.13-rc1-1] Error 2
-make[5]: *** [sub-make] Error 2
-make[4]: *** [all] Error 2
-make[3]: *** [modules] Error 2
-make[2]: *** [modules] Error 2
-make[1]: *** [modules] Error 2
-make: *** [default] Error 2
-=======================================================================
+make KLIB=/home/XXXX/kernels/linux-2.6.25
 
-My apologies is this is a newbie mistake on my part, but I couldn't find any
-forums with this error in it. Or perhaps it's a problem with my kernel?
-Recently moved from SLES 11.2 TO 11.3.
-
--- 
-You are receiving this mail because:
-You are the assignee for the bug.
+Hauke
