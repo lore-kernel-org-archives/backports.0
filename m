@@ -1,44 +1,68 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:48291 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752847Ab3KXVYD (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 24 Nov 2013 16:24:03 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 09/15] backports: remove vlan_hw_offload_capable()
-Date: Sun, 24 Nov 2013 22:23:12 +0100
-Message-Id: <1385328198-28520-10-git-send-email-hauke@hauke-m.de> (sfid-20131124_222404_325302_6A3FBE8D)
-In-Reply-To: <1385328198-28520-1-git-send-email-hauke@hauke-m.de>
-References: <1385328198-28520-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-vc0-f178.google.com ([209.85.220.178]:47555 "EHLO
+	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750792Ab3KTHCR (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 20 Nov 2013 02:02:17 -0500
+Received: by mail-vc0-f178.google.com with SMTP id lh4so487655vcb.9
+        for <backports@vger.kernel.org>; Tue, 19 Nov 2013 23:02:16 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1384903178-27357-1-git-send-email-jam@cozybit.com>
+References: <528BF081.5060201@hauke-m.de>
+	<1384903178-27357-1-git-send-email-jam@cozybit.com>
+Date: Wed, 20 Nov 2013 07:02:16 +0000
+Message-ID: <CAFSJ42Z4kJUuN4H=QbAPaK8SZ6tboCT3naRt9c8=Qb8=3n-DLA@mail.gmail.com> (sfid-20131120_080221_027251_45529A20)
+Subject: Re: [PATCH v3] backports: add defconfig for wcn36xx
+From: Eugene Krasnikov <k.eugene.e@gmail.com>
+To: Jason Mobarak <jam@cozybit.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	wcn36xx <wcn36xx@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-vlan_hw_offload_capable() was never called by any code.
+Without CPTCFG_CFG80211_WEXT looks better to me.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/if_vlan.h |    7 -------
- 1 file changed, 7 deletions(-)
+On Tue, Nov 19, 2013 at 11:19 PM, Jason Mobarak <jam@cozybit.com> wrote:
+> Signed-off-by: Jason Mobarak <jam@cozybit.com>
+> ---
+>
+> v2: Added CPTCFG_CFG80211_WEXT and Signed-of-by line.
+> v3: Alternate version without CPTCFG_CFG80211_WEXT.
+>
+>  backport/defconfigs/wcn36xx |   13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>  create mode 100644 backport/defconfigs/wcn36xx
+>
+> diff --git a/backport/defconfigs/wcn36xx b/backport/defconfigs/wcn36xx
+> new file mode 100644
+> index 0000000..374eb11
+> --- /dev/null
+> +++ b/backport/defconfigs/wcn36xx
+> @@ -0,0 +1,13 @@
+> +CPTCFG_CFG80211=m
+> +CPTCFG_CFG80211_DEFAULT_PS=y
+> +CPTCFG_CFG80211_DEBUGFS=y
+> +CPTCFG_MAC80211=m
+> +# CPTCFG_MAC80211_RC_PID is not set
+> +# CPTCFG_MAC80211_RC_MINSTREL is not set
+> +# CPTCFG_MAC80211_RC_DEFAULT_MINSTREL is not set
+> +CPTCFG_MAC80211_DEBUGFS=y
+> +CPTCFG_MAC80211_MESSAGE_TRACING=y
+> +CPTCFG_WLAN=y
+> +CPTCFG_ATH_CARDS=m
+> +CPTCFG_WCN36XX=m
+> +CPTCFG_WCN36XX_DEBUGFS=y
+> --
+> 1.7.10.4
+>
+>
+> _______________________________________________
+> wcn36xx mailing list
+> wcn36xx@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/wcn36xx
 
-diff --git a/backport/backport-include/linux/if_vlan.h b/backport/backport-include/linux/if_vlan.h
-index e2d77ef..6fae150 100644
---- a/backport/backport-include/linux/if_vlan.h
-+++ b/backport/backport-include/linux/if_vlan.h
-@@ -10,13 +10,6 @@
- 
- #define __vlan_find_dev_deep(__real_dev, __vlan_proto, __vlan_id) __vlan_find_dev_deep(__real_dev, __vlan_id) 
- 
--static inline bool vlan_hw_offload_capable(netdev_features_t features,
--					   __be16 proto)
--{
--	if (proto == htons(ETH_P_8021Q) && features & NETIF_F_HW_VLAN_CTAG_TX)
--		return true;
--	return false;
--}
- #endif 
- 
- #ifndef VLAN_PRIO_MASK
+
+
 -- 
-1.7.10.4
-
+Best regards,
+Eugene
