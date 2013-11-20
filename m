@@ -1,72 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:48272 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752753Ab3KXVXn (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 24 Nov 2013 16:23:43 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 04/15] backports: remove atomic_inc_not_zero_hint()
-Date: Sun, 24 Nov 2013 22:23:07 +0100
-Message-Id: <1385328198-28520-5-git-send-email-hauke@hauke-m.de> (sfid-20131124_222345_330736_FA5486CF)
-In-Reply-To: <1385328198-28520-1-git-send-email-hauke@hauke-m.de>
-References: <1385328198-28520-1-git-send-email-hauke@hauke-m.de>
+Received: from s3.sipsolutions.net ([144.76.43.152]:44900 "EHLO
+	sipsolutions.net" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750855Ab3KTIUo (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 20 Nov 2013 03:20:44 -0500
+Message-ID: <1384935617.14295.1.camel@jlt4.sipsolutions.net> (sfid-20131120_092046_403402_60DBC56F)
+Subject: Re: [PATCH] backports: remove obsolete linux/bitops.h header
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: Stefan Assmann <sassmann@kpanic.de>, mcgrof@kernel.org,
+	backports@vger.kernel.org
+Date: Wed, 20 Nov 2013 09:20:17 +0100
+In-Reply-To: <528BEB63.3080600@hauke-m.de> (sfid-20131119_235133_050957_98574914)
+References: <1384784803-16935-1-git-send-email-sassmann@kpanic.de>
+	 <528BEB63.3080600@hauke-m.de> (sfid-20131119_235133_050957_98574914)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-atomic_inc_not_zero_hint() was never called by any code.
+On Tue, 2013-11-19 at 23:51 +0100, Hauke Mehrtens wrote:
+> On 11/18/2013 03:26 PM, Stefan Assmann wrote:
+> > The header seems to be obsolete. Removing it and running devel/ckmake didn't
+> > reveal any errors. Missing parts can always be re-added in the new
+> > include_next fashion if necessary.
+> > 
+> > Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+> 
+> Some of these functions are needed, because they are not provided by old
+> kernel versions.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/atomic.h |   34 ------------------------------
- 1 file changed, 34 deletions(-)
+Overall the idea seems right though - we should have something like
 
-diff --git a/backport/backport-include/linux/atomic.h b/backport/backport-include/linux/atomic.h
-index 378b748..41b769b 100644
---- a/backport/backport-include/linux/atomic.h
-+++ b/backport/backport-include/linux/atomic.h
-@@ -6,41 +6,7 @@
- #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,36))
- #include_next <linux/atomic.h>
- #else
--
- #include <asm/atomic.h>
--
--/**
-- * atomic_inc_not_zero_hint - increment if not null
-- * @v: pointer of type atomic_t
-- * @hint: probable value of the atomic before the increment
-- *
-- * This version of atomic_inc_not_zero() gives a hint of probable
-- * value of the atomic. This helps processor to not read the memory
-- * before doing the atomic read/modify/write cycle, lowering
-- * number of bus transactions on some arches.
-- *
-- * Returns: 0 if increment was not done, 1 otherwise.
-- */
--#ifndef atomic_inc_not_zero_hint
--static inline int atomic_inc_not_zero_hint(atomic_t *v, int hint)
--{
--	int val, c = hint;
--
--	/* sanity test, should be removed by compiler if hint is a constant */
--	if (!hint)
--		return atomic_inc_not_zero(v);
--
--	do {
--		val = atomic_cmpxchg(v, c, c + 1);
--		if (val == c)
--			return 1;
--		c = val;
--	} while (c);
--
--	return 0;
--}
--#endif
--
- #endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,36)) */
- 
- #endif	/* _COMPAT_LINUX_ATOMIC_H */
--- 
-1.7.10.4
+#ifndef __BACKPORT_BITOPS_H
+#define __BACKPORT_BITOPS_H
+#include_next <linux/bitops.h>
+
+#ifndef for_each_set_bit
+#define for_each_set_bit(...) \
+	...
+#endif
+
+#if kernel_version < 2.6.38
+static inline __s32 sign_extend32(...) { ... }
+#endif
+
+etc.
+
+#endif /* __BACKPORT_BITOPS_H */
+
+I think.
+
+johannes
 
