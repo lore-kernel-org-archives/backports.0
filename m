@@ -1,72 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:48300 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752742Ab3KXVYI (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 24 Nov 2013 16:24:08 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 10/15] backports: remove hex_byte_pack()
-Date: Sun, 24 Nov 2013 22:23:13 +0100
-Message-Id: <1385328198-28520-11-git-send-email-hauke@hauke-m.de> (sfid-20131124_223807_503591_1151DBCB)
-In-Reply-To: <1385328198-28520-1-git-send-email-hauke@hauke-m.de>
-References: <1385328198-28520-1-git-send-email-hauke@hauke-m.de>
+Received: from mail.xlhost.de ([84.200.252.118]:56032 "EHLO app1b.xlhost.de"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750834Ab3KTL0s (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 20 Nov 2013 06:26:48 -0500
+Message-ID: <528C9C76.8060108@kpanic.de> (sfid-20131120_122650_308506_7B5FE515)
+Date: Wed, 20 Nov 2013 12:26:46 +0100
+From: Stefan Assmann <sassmann@kpanic.de>
+MIME-Version: 1.0
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: Hauke Mehrtens <hauke@hauke-m.de>, mcgrof@kernel.org,
+	backports@vger.kernel.org
+Subject: Re: [PATCH] backports: remove obsolete linux/bitops.h header
+References: <1384784803-16935-1-git-send-email-sassmann@kpanic.de>	 <528BEB63.3080600@hauke-m.de> <528C7302.5030501@kpanic.de> <1384936585.14295.2.camel@jlt4.sipsolutions.net>
+In-Reply-To: <1384936585.14295.2.camel@jlt4.sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-hex_byte_pack() was never called by any code.
+On 20.11.2013 09:36, Johannes Berg wrote:
+> On Wed, 2013-11-20 at 09:29 +0100, Stefan Assmann wrote:
+>> On 19.11.2013 23:51, Hauke Mehrtens wrote:
+>>> On 11/18/2013 03:26 PM, Stefan Assmann wrote:
+>>>> The header seems to be obsolete. Removing it and running devel/ckmake didn't
+>>>> reveal any errors. Missing parts can always be re-added in the new
+>>>> include_next fashion if necessary.
+>>>>
+>>>> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+>>>
+>>> Some of these functions are needed, because they are not provided by old
+>>> kernel versions.
+>>
+>> Let me know what's a good way of figuring out what's still needed and
+>> I'll replace the old header the way that Johannes suggested.
+> 
+> Easiest is probably to try compiling against the oldest kernel we still
+> support - that would be 2.6.25 - until all the drivers compile :)
+> 
+> johannes
+> 
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/kernel.h |   20 --------------------
- backport/compat/compat-2.6.26.c          |    3 ---
- 2 files changed, 23 deletions(-)
+OK, to get started I tried:
+./gentree.py --clean --git-revision v2.6.25 ~/linux /dev/shm/2.6.25
+Get original source files from git ...
+Apply patches ...
+Failed to apply changes from collateral-evolutions/network/0001-netdev_ops/bluetooth_bnep.patch
+ patching file net/bluetooth/bnep/netdev.c
+ Hunk #1 FAILED at 223.
+ 1 out of 1 hunk FAILED -- saving rejects to file net/bluetooth/bnep/netdev.c.rej
 
-diff --git a/backport/backport-include/linux/kernel.h b/backport/backport-include/linux/kernel.h
-index 4e249db..01e2e9a 100644
---- a/backport/backport-include/linux/kernel.h
-+++ b/backport/backport-include/linux/kernel.h
-@@ -20,26 +20,6 @@
- #define SIZE_MAX    (~(size_t)0)
- #endif
- 
--#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)
--extern const char hex_asc[];
--#endif
--
--#ifndef hex_asc_hi
--#define hex_asc_hi(x)	hex_asc[((x) & 0xf0) >> 4]
--#endif
--#ifndef hex_asc_lo
--#define hex_asc_lo(x)	hex_asc[((x) & 0x0f)]
--#endif
--
--#if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
--static inline char *hex_byte_pack(char *buf, u8 byte)
--{
--	*buf++ = hex_asc_hi(byte);
--	*buf++ = hex_asc_lo(byte);
--	return buf;
--}
--#endif
--
- /* This backports:
-  *
-  * commit 36a26c69b4c70396ef569c3452690fba0c1dec08
-diff --git a/backport/compat/compat-2.6.26.c b/backport/compat/compat-2.6.26.c
-index 72b1707..9ff1f76 100644
---- a/backport/compat/compat-2.6.26.c
-+++ b/backport/compat/compat-2.6.26.c
-@@ -17,9 +17,6 @@
- #include <net/sock.h>
- #include <net/compat.h>
- 
--const char hex_asc[] = "0123456789abcdef";
--EXPORT_SYMBOL_GPL(hex_asc);
--
- /**
-  * kobject_set_name_vargs - Set the name of an kobject
-  * @kobj: struct kobject to set the name of
--- 
-1.7.10.4
+Sorry if I'm missing something there. Or do I have to do it another way?
 
+  Stefan
