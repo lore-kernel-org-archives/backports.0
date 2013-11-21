@@ -1,29 +1,26 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:34819 "EHLO
+Received: from s3.sipsolutions.net ([144.76.43.152]:50406 "EHLO
 	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753128Ab3KXSgo (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 24 Nov 2013 13:36:44 -0500
-Message-ID: <1385318202.23961.1.camel@jlt4.sipsolutions.net> (sfid-20131124_193645_951104_570EDB1A)
-Subject: Re: [PATCH 3/3] backports: refresh on next-20131122
+	with ESMTP id S1753916Ab3KUO4r (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 21 Nov 2013 09:56:47 -0500
+Message-ID: <1385045801.14273.7.camel@jlt4.sipsolutions.net> (sfid-20131121_155649_101491_7341DE59)
+Subject: Re: [PATCH v2] backports: replace linux/bitops.h header
 From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: mcgrof@gmail.com, backports@vger.kernel.org
-Date: Sun, 24 Nov 2013 19:36:42 +0100
-In-Reply-To: <1385299666-18712-3-git-send-email-hauke@hauke-m.de> (sfid-20131124_142817_764648_78EE0130)
-References: <1385299666-18712-1-git-send-email-hauke@hauke-m.de>
-	 <1385299666-18712-3-git-send-email-hauke@hauke-m.de>
-	 (sfid-20131124_142817_764648_78EE0130)
+To: Stefan Assmann <sassmann@kpanic.de>
+Cc: mcgrof@kernel.org, backports@vger.kernel.org, hauke@hauke-m.de
+Date: Thu, 21 Nov 2013 15:56:41 +0100
+In-Reply-To: <1385045517-15868-1-git-send-email-sassmann@kpanic.de>
+References: <1385045517-15868-1-git-send-email-sassmann@kpanic.de>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, 2013-11-24 at 14:27 +0100, Hauke Mehrtens wrote:
-> == ckmake-report.log ==
-> 
-> 1   2.6.24              [  FAIL  ]
+On Thu, 2013-11-21 at 15:51 +0100, Stefan Assmann wrote:
+> Instead of copying bitops.h from upstream just add what's missing in
+> older kernel.
 
-That was kinda expected, why are you even still trying? :)
+Looks good to me.
 
 johannes
 
