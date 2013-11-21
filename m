@@ -1,39 +1,31 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:33792 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:37810 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752939Ab3KNMJU (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 14 Nov 2013 07:09:20 -0500
-Received: from localhost (localhost [127.0.0.1])
-	by hauke-m.de (Postfix) with ESMTP id DD62A8F61
-	for <backports@vger.kernel.org>; Thu, 14 Nov 2013 13:09:18 +0100 (CET)
-Received: from hauke-m.de ([127.0.0.1])
-	by localhost (hauke-m.de [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id kQiLdA36-alU for <backports@vger.kernel.org>;
-	Thu, 14 Nov 2013 13:09:13 +0100 (CET)
-Received: from [IPv6:2001:638:708:30da:8a6:43d1:b06c:2131] (unknown [IPv6:2001:638:708:30da:8a6:43d1:b06c:2131])
-	by hauke-m.de (Postfix) with ESMTPSA id 824AB857F
-	for <backports@vger.kernel.org>; Thu, 14 Nov 2013 13:09:13 +0100 (CET)
-Message-ID: <5284BD68.7010500@hauke-m.de> (sfid-20131114_130922_485351_160D489E)
-Date: Thu, 14 Nov 2013 13:09:12 +0100
+	id S1754073Ab3KUWoS (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 21 Nov 2013 17:44:18 -0500
+Message-ID: <528E8CBA.9000302@hauke-m.de> (sfid-20131121_234419_399705_604ADE74)
+Date: Thu, 21 Nov 2013 23:44:10 +0100
 From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: [ANN] backports-20131113 + stable v3.10.19 + v3.11.8 released
+To: Stefan Assmann <sassmann@kpanic.de>, mcgrof@kernel.org
+CC: backports@vger.kernel.org, johannes@sipsolutions.net
+Subject: Re: [PATCH v2] backports: replace linux/bitops.h header
+References: <1385045517-15868-1-git-send-email-sassmann@kpanic.de>
+In-Reply-To: <1385045517-15868-1-git-send-email-sassmann@kpanic.de>
 Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backports-20131113 was released, this is based on linux-next
-next-20131113. In addition backports-3.10.19 and backports-3.11.8 based
-on linux-stable were also released.
+On 11/21/2013 03:51 PM, Stefan Assmann wrote:
+> Instead of copying bitops.h from upstream just add what's missing in
+> older kernel.
+> 
+> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+> ---
+>  backport/backport-include/linux/bitops.h | 217 +++----------------------------
+>  1 file changed, 20 insertions(+), 197 deletions(-)
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/2013/11/13/backports-20131113.tar.bz2
-
-https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.11.8/backports-3.11.8-1.tar.bz2
-
-https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.10.19/backports-3.10.19-1.tar.bz2
-
-The source code can temporary be found here:
-https://github.com/hauke/backports
+Thank you for the patch, it was applied and a new version of backports
+was pushed out.
 
 Hauke
