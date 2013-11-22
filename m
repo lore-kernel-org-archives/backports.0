@@ -1,31 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:52974 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752742Ab3KXVfE (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 24 Nov 2013 16:35:04 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id DFB0D2037F
-	for <backports@vger.kernel.org>; Sun, 24 Nov 2013 21:35:03 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 3454720379
-	for <backports@vger.kernel.org>; Sun, 24 Nov 2013 21:35:03 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+Received: from s3.sipsolutions.net ([144.76.43.152]:55244 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755619Ab3KVTVv (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 22 Nov 2013 14:21:51 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Subject: [Bug 64091] backports build error
-Date: Sun, 24 Nov 2013 21:35:03 +0000
-Message-ID: <bug-64091-58281-Sqlh7qNxHB@https.bugzilla.kernel.org/> (sfid-20131124_223506_703060_A4FFFF80)
-In-Reply-To: <bug-64091-58281@https.bugzilla.kernel.org/>
-References: <bug-64091-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backports: fix genetlink backport
+Date: Fri, 22 Nov 2013 20:21:42 +0100
+Message-Id: <1385148102-1224-1-git-send-email-johannes@sipsolutions.net> (sfid-20131122_202152_961432_33A5BC28)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=64091
+From: Johannes Berg <johannes.berg@intel.com>
 
---- Comment #5 from Hauke Mehrtens <hauke@hauke-m.de> ---
-Please try backports-20131122-2, it could have fixed your problem.
+On kernels that already have pre_doit/post_doit, we don't
+fake them by re-assigning all ops and their doit, but then
+we clearly need to copy the pointers. Fix that oversight.
 
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/compat/backport-3.13.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/backport/compat/backport-3.13.c b/backport/compat/backport-3.13.c
+index 77eefef..d5b7029 100644
+--- a/backport/compat/backport-3.13.c
++++ b/backport/compat/backport-3.13.c
+@@ -159,6 +159,10 @@ int __backport_genl_register_family(struct genl_family *family)
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32)
+ 	__copy(netnsok);
+ #endif
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,37)
++	__copy(pre_doit);
++	__copy(post_doit);
++#endif
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
+ 	__copy(parallel_ops);
+ #endif
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+1.8.4.rc3
+
