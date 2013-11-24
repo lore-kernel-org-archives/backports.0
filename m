@@ -1,49 +1,99 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:55582 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751913Ab3K3OV7 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 30 Nov 2013 09:21:59 -0500
-Message-Id: <1385821318.11810.53811117.0E0E19AF@webmail.messagingengine.com> (sfid-20131130_152201_709680_88F3BA5C)
-From: "Nikita N." <nikitan@operamail.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
-Cc: linux-wireless@vger.kernel.org
-MIME-Version: 1.0
-Content-Type: text/plain
-Subject: Re: 3.13 various backports bugs
-Date: Sat, 30 Nov 2013 06:21:58 -0800
-In-Reply-To: <5299E184.1020302@hauke-m.de>
-References: <1385815530.23776.53787977.56B183FC@webmail.messagingengine.com>
- <5299E184.1020302@hauke-m.de>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:48285 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752817Ab3KXVXz (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 24 Nov 2013 16:23:55 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 06/15] backports: remove efi
+Date: Sun, 24 Nov 2013 22:23:09 +0100
+Message-Id: <1385328198-28520-7-git-send-email-hauke@hauke-m.de> (sfid-20131124_222357_152618_C4FCAF1A)
+In-Reply-To: <1385328198-28520-1-git-send-email-hauke@hauke-m.de>
+References: <1385328198-28520-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-follow answers
-On Sat, Nov 30, 2013, at 05:00 AM, Hauke Mehrtens wrote:
-> > - Bug #2:
-> > eeprom modules are missing into 3.13.
-> > This issue is present systematically in all backports releases, since
-> > the switch from compat-drivers.
-> > It could be a wireless bug only, or a backports bug only, or both.
-> > Anyway, eeprom module is vital for correct interface detection.
-> > Into 3.9 the eeprom modules are located in
-> > ./compat-drivers-3.9-rc4-2-su/drivers/misc/eeprom/
-> 
-> This should be included in your kernel you are compiling against
-> otherwise you wouldn't be able to build rtl8187.
-> 
-> There was a bug in backports regarding EEPROM_93CX6, could you please
-> try backports-20131122-2 and report back if the problem is still there.
+Non of these defines or functions where used by any code.
 
-just did it, same issue.
-also in backports-20131122-2 eeprom modules are missing.
-At this point I have the suspect that eeprom libraries builtin Slitaz4
-are bugged, and the bug is capable of persistent damage.. probably the
-bad frames filter in monitor mode im suffering on my two rtl8187, is
-caused by that..? 
-If that would be confirmed, Slitaz4 community has to be warned asap!
-If I can help more, please fell free to ask :)
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/efi.h |   66 ---------------------------------
+ 1 file changed, 66 deletions(-)
+ delete mode 100644 backport/backport-include/linux/efi.h
 
+diff --git a/backport/backport-include/linux/efi.h b/backport/backport-include/linux/efi.h
+deleted file mode 100644
+index 2fc40e5..0000000
+--- a/backport/backport-include/linux/efi.h
++++ /dev/null
+@@ -1,66 +0,0 @@
+-#ifndef __BACKPORT_EFI_H
+-#define __BACKPORT_EFI_H
+-#include_next <linux/efi.h>
+-#include <linux/version.h>
+-
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0))
+-
+-/* This backports:
+- *
+- * commit 83e68189745ad931c2afd45d8ee3303929233e7f
+- * Author: Matt Fleming <matt.fleming@intel.com>
+- * Date:   Wed Nov 14 09:42:35 2012 +0000
+- *
+- *     efi: Make 'efi_enabled' a function to query EFI facilities
+- *
+- */
+-/* check first if this was already backported */
+-#ifndef EFI_BOOT
+-/*
+- * We play games with efi_enabled so that the compiler will, if
+- * possible, remove EFI-related code altogether.
+- */
+-#define EFI_BOOT		0	/* Were we booted from EFI? */
+-#define EFI_SYSTEM_TABLES	1	/* Can we use EFI system tables? */
+-#define EFI_CONFIG_TABLES	2	/* Can we use EFI config tables? */
+-#define EFI_RUNTIME_SERVICES	3	/* Can we use runtime services? */
+-#define EFI_MEMMAP		4	/* Can we use EFI memory map? */
+-#define EFI_64BIT		5	/* Is the firmware 64-bit? */
+-
+-#ifdef CONFIG_EFI
+-# ifdef CONFIG_X86
+-static inline int compat_efi_enabled(int facility)
+-{
+-	switch (facility) {
+-	case EFI_BOOT:
+-		return efi_enabled;
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0))
+-	case EFI_64BIT:
+-		return efi_64bit;
+-#endif
+-	default:
+-		printk(KERN_ERR "can not translate efi_enabled() to old values completly\n");
+-		return efi_enabled;
+-	}
+-}
+-# else
+-static inline int compat_efi_enabled(int facility)
+-{
+-	return 1;
+-}
+-# endif
+-#else
+-static inline int compat_efi_enabled(int facility)
+-{
+-	return 0;
+-}
+-#endif
+-#ifdef efi_enabled
+-#undef efi_enabled
+-#endif
+-#define efi_enabled(facility) compat_efi_enabled(facility)
+-#endif /* EFI_BOOT */
+-
+-#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)) */
+-
+-#endif /* __BACKPORT_EFI_H */
 -- 
-http://www.fastmail.fm - Accessible with your email software
-                          or over the web
+1.7.10.4
 
