@@ -1,43 +1,75 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:51137 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752296Ab3KXT30 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 24 Nov 2013 14:29:26 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 90D9A203F4
-	for <backports@vger.kernel.org>; Sun, 24 Nov 2013 19:29:25 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id BBE562010E
-	for <backports@vger.kernel.org>; Sun, 24 Nov 2013 19:29:23 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 51851] [TRIVIAL]Unable to use alx driver without CONFIG_MDIO
-Date: Sun, 24 Nov 2013 19:29:23 +0000
-Message-ID: <bug-51851-58281-m2k0IuH0Y9@https.bugzilla.kernel.org/> (sfid-20131124_202928_880441_ADD2B5B1)
-In-Reply-To: <bug-51851-58281@https.bugzilla.kernel.org/>
-References: <bug-51851-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Received: from server19320154104.serverpool.info ([193.201.54.104]:48308 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752742Ab3KXVYT (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 24 Nov 2013 16:24:19 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 12/15] backports: remove usb_unlink_anchored_urbs()
+Date: Sun, 24 Nov 2013 22:23:15 +0100
+Message-Id: <1385328198-28520-13-git-send-email-hauke@hauke-m.de> (sfid-20131124_223808_108249_7A5C2379)
+In-Reply-To: <1385328198-28520-1-git-send-email-hauke@hauke-m.de>
+References: <1385328198-28520-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=51851
+kref_get_unless_zero() was never called by any code.
 
-Hauke Mehrtens <hauke@hauke-m.de> changed:
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/usb.h |    2 --
+ backport/compat/compat-2.6.36.c       |   23 -----------------------
+ 2 files changed, 25 deletions(-)
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |hauke@hauke-m.de
-
---- Comment #5 from Hauke Mehrtens <hauke@hauke-m.de> ---
-The ALX driver needs MDIO and we do not provide that in backports. When you do
-not use a normal distribution kernel with lots of modules activate you have to
-activate some dependencies in your kernel by yourself. Sadly CONFIG_MDIO is a
-hidden option so you have to build some other Ethernet driver which depends on
-that option.
-
-We do ot want to fix this in backports.
-
+diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
+index 70d89b8..a5c2f2b 100644
+--- a/backport/backport-include/linux/usb.h
++++ b/backport/backport-include/linux/usb.h
+@@ -57,9 +57,7 @@
+ #ifdef CPTCFG_BACKPORT_OPTION_USB_URB_THREAD_FIX
+ #define usb_scuttle_anchored_urbs LINUX_BACKPORT(usb_scuttle_anchored_urbs)
+ #define usb_get_from_anchor LINUX_BACKPORT(usb_get_from_anchor)
+-#define usb_unlink_anchored_urbs LINUX_BACKPORT(usb_unlink_anchored_urbs)
+ 
+-extern void usb_unlink_anchored_urbs(struct usb_anchor *anchor);
+ extern struct urb *usb_get_from_anchor(struct usb_anchor *anchor);
+ extern void usb_scuttle_anchored_urbs(struct usb_anchor *anchor);
+ #endif
+diff --git a/backport/compat/compat-2.6.36.c b/backport/compat/compat-2.6.36.c
+index ea6443d..331e991 100644
+--- a/backport/compat/compat-2.6.36.c
++++ b/backport/compat/compat-2.6.36.c
+@@ -23,29 +23,6 @@ static void __usb_unanchor_urb(struct urb *urb, struct usb_anchor *anchor)
+ }
+ 
+ /**
+- * usb_unlink_anchored_urbs - asynchronously cancel transfer requests en masse
+- * @anchor: anchor the requests are bound to
+- *
+- * this allows all outstanding URBs to be unlinked starting
+- * from the back of the queue. This function is asynchronous.
+- * The unlinking is just tiggered. It may happen after this
+- * function has returned.
+- *
+- * This routine should not be called by a driver after its disconnect
+- * method has returned.
+- */
+-void usb_unlink_anchored_urbs(struct usb_anchor *anchor)
+-{
+-	struct urb *victim;
+-
+-	while ((victim = usb_get_from_anchor(anchor)) != NULL) {
+-		usb_unlink_urb(victim);
+-		usb_put_urb(victim);
+-	}
+-}
+-EXPORT_SYMBOL_GPL(usb_unlink_anchored_urbs);
+-
+-/**
+  * usb_get_from_anchor - get an anchor's oldest urb
+  * @anchor: the anchor whose urb you want
+  *
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+1.7.10.4
+
