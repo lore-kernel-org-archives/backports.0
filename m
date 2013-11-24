@@ -1,54 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:44900 "EHLO
-	sipsolutions.net" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750855Ab3KTIUo (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 20 Nov 2013 03:20:44 -0500
-Message-ID: <1384935617.14295.1.camel@jlt4.sipsolutions.net> (sfid-20131120_092046_403402_60DBC56F)
-Subject: Re: [PATCH] backports: remove obsolete linux/bitops.h header
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: Stefan Assmann <sassmann@kpanic.de>, mcgrof@kernel.org,
-	backports@vger.kernel.org
-Date: Wed, 20 Nov 2013 09:20:17 +0100
-In-Reply-To: <528BEB63.3080600@hauke-m.de> (sfid-20131119_235133_050957_98574914)
-References: <1384784803-16935-1-git-send-email-sassmann@kpanic.de>
-	 <528BEB63.3080600@hauke-m.de> (sfid-20131119_235133_050957_98574914)
+Received: from mail.kernel.org ([198.145.19.201]:51137 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752296Ab3KXT30 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 24 Nov 2013 14:29:26 -0500
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 90D9A203F4
+	for <backports@vger.kernel.org>; Sun, 24 Nov 2013 19:29:25 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id BBE562010E
+	for <backports@vger.kernel.org>; Sun, 24 Nov 2013 19:29:23 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 51851] [TRIVIAL]Unable to use alx driver without CONFIG_MDIO
+Date: Sun, 24 Nov 2013 19:29:23 +0000
+Message-ID: <bug-51851-58281-m2k0IuH0Y9@https.bugzilla.kernel.org/> (sfid-20131124_202928_880441_ADD2B5B1)
+In-Reply-To: <bug-51851-58281@https.bugzilla.kernel.org/>
+References: <bug-51851-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2013-11-19 at 23:51 +0100, Hauke Mehrtens wrote:
-> On 11/18/2013 03:26 PM, Stefan Assmann wrote:
-> > The header seems to be obsolete. Removing it and running devel/ckmake didn't
-> > reveal any errors. Missing parts can always be re-added in the new
-> > include_next fashion if necessary.
-> > 
-> > Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
-> 
-> Some of these functions are needed, because they are not provided by old
-> kernel versions.
+https://bugzilla.kernel.org/show_bug.cgi?id=51851
 
-Overall the idea seems right though - we should have something like
+Hauke Mehrtens <hauke@hauke-m.de> changed:
 
-#ifndef __BACKPORT_BITOPS_H
-#define __BACKPORT_BITOPS_H
-#include_next <linux/bitops.h>
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |hauke@hauke-m.de
 
-#ifndef for_each_set_bit
-#define for_each_set_bit(...) \
-	...
-#endif
+--- Comment #5 from Hauke Mehrtens <hauke@hauke-m.de> ---
+The ALX driver needs MDIO and we do not provide that in backports. When you do
+not use a normal distribution kernel with lots of modules activate you have to
+activate some dependencies in your kernel by yourself. Sadly CONFIG_MDIO is a
+hidden option so you have to build some other Ethernet driver which depends on
+that option.
 
-#if kernel_version < 2.6.38
-static inline __s32 sign_extend32(...) { ... }
-#endif
+We do ot want to fix this in backports.
 
-etc.
-
-#endif /* __BACKPORT_BITOPS_H */
-
-I think.
-
-johannes
-
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
