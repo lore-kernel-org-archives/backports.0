@@ -1,50 +1,72 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:51592 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:48300 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750812Ab3KSVyM (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 19 Nov 2013 16:54:12 -0500
-Message-ID: <528BDDF9.7080400@hauke-m.de> (sfid-20131119_225414_935209_919A664E)
-Date: Tue, 19 Nov 2013 22:54:01 +0100
+	id S1752742Ab3KXVYI (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 24 Nov 2013 16:24:08 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Jason Mobarak <jam@cozybit.com>
-CC: backports@vger.kernel.org, wcn36xx@lists.infradead.org
-Subject: Re: [PATCH] backports: add support for wcn36xx
-References: <1384893931-21178-1-git-send-email-jam@cozybit.com>
-In-Reply-To: <1384893931-21178-1-git-send-email-jam@cozybit.com>
-Content-Type: text/plain; charset=ISO-8859-1
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 10/15] backports: remove hex_byte_pack()
+Date: Sun, 24 Nov 2013 22:23:13 +0100
+Message-Id: <1385328198-28520-11-git-send-email-hauke@hauke-m.de> (sfid-20131124_223807_503591_1151DBCB)
+In-Reply-To: <1385328198-28520-1-git-send-email-hauke@hauke-m.de>
+References: <1385328198-28520-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 11/19/2013 09:45 PM, Jason Mobarak wrote:
-> ---
->  backport/defconfigs/wcn36xx |   13 +++++++++++++
->  1 file changed, 13 insertions(+)
->  create mode 100644 backport/defconfigs/wcn36xx
-> 
-> diff --git a/backport/defconfigs/wcn36xx b/backport/defconfigs/wcn36xx
-> new file mode 100644
-> index 0000000..374eb11
-> --- /dev/null
-> +++ b/backport/defconfigs/wcn36xx
-> @@ -0,0 +1,13 @@
-> +CPTCFG_CFG80211=m
-> +CPTCFG_CFG80211_DEFAULT_PS=y
-> +CPTCFG_CFG80211_DEBUGFS=y
-> +CPTCFG_MAC80211=m
-> +# CPTCFG_MAC80211_RC_PID is not set
-> +# CPTCFG_MAC80211_RC_MINSTREL is not set
-> +# CPTCFG_MAC80211_RC_DEFAULT_MINSTREL is not set
-> +CPTCFG_MAC80211_DEBUGFS=y
-> +CPTCFG_MAC80211_MESSAGE_TRACING=y
-> +CPTCFG_WLAN=y
-> +CPTCFG_ATH_CARDS=m
-> +CPTCFG_WCN36XX=m
-> +CPTCFG_WCN36XX_DEBUGFS=y
-> 
+hex_byte_pack() was never called by any code.
 
-Could you add CPTCFG_CFG80211_WEXT=y please otherwise we will get bug
-reports where people are complaining that iwconfig does not work.
-And please add a Signed-off-by line.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/kernel.h |   20 --------------------
+ backport/compat/compat-2.6.26.c          |    3 ---
+ 2 files changed, 23 deletions(-)
 
-Hauke
+diff --git a/backport/backport-include/linux/kernel.h b/backport/backport-include/linux/kernel.h
+index 4e249db..01e2e9a 100644
+--- a/backport/backport-include/linux/kernel.h
++++ b/backport/backport-include/linux/kernel.h
+@@ -20,26 +20,6 @@
+ #define SIZE_MAX    (~(size_t)0)
+ #endif
+ 
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26)
+-extern const char hex_asc[];
+-#endif
+-
+-#ifndef hex_asc_hi
+-#define hex_asc_hi(x)	hex_asc[((x) & 0xf0) >> 4]
+-#endif
+-#ifndef hex_asc_lo
+-#define hex_asc_lo(x)	hex_asc[((x) & 0x0f)]
+-#endif
+-
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
+-static inline char *hex_byte_pack(char *buf, u8 byte)
+-{
+-	*buf++ = hex_asc_hi(byte);
+-	*buf++ = hex_asc_lo(byte);
+-	return buf;
+-}
+-#endif
+-
+ /* This backports:
+  *
+  * commit 36a26c69b4c70396ef569c3452690fba0c1dec08
+diff --git a/backport/compat/compat-2.6.26.c b/backport/compat/compat-2.6.26.c
+index 72b1707..9ff1f76 100644
+--- a/backport/compat/compat-2.6.26.c
++++ b/backport/compat/compat-2.6.26.c
+@@ -17,9 +17,6 @@
+ #include <net/sock.h>
+ #include <net/compat.h>
+ 
+-const char hex_asc[] = "0123456789abcdef";
+-EXPORT_SYMBOL_GPL(hex_asc);
+-
+ /**
+  * kobject_set_name_vargs - Set the name of an kobject
+  * @kobj: struct kobject to set the name of
+-- 
+1.7.10.4
+
