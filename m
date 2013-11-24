@@ -1,38 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:55247 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750965Ab3K3Ty4 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 30 Nov 2013 14:54:56 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 3/5] backports: remove duplicate allyesconfig from help
-Date: Sat, 30 Nov 2013 20:54:41 +0100
-Message-Id: <1385841283-10277-3-git-send-email-hauke@hauke-m.de> (sfid-20131130_205501_389985_AF55D045)
-In-Reply-To: <1385841283-10277-1-git-send-email-hauke@hauke-m.de>
-References: <1385841283-10277-1-git-send-email-hauke@hauke-m.de>
+Received: from mail.kernel.org ([198.145.19.201]:51194 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752296Ab3KXT37 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 24 Nov 2013 14:29:59 -0500
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 3D487203F4
+	for <backports@vger.kernel.org>; Sun, 24 Nov 2013 19:29:58 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+	by mail.kernel.org (Postfix) with ESMTP id C36652010E
+	for <backports@vger.kernel.org>; Sun, 24 Nov 2013 19:29:56 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 51851] [TRIVIAL]Unable to use alx driver without CONFIG_MDIO
+Date: Sun, 24 Nov 2013 19:29:56 +0000
+Message-ID: <bug-51851-58281-vwrc2edP47@https.bugzilla.kernel.org/> (sfid-20131124_203000_817235_3A52373F)
+In-Reply-To: <bug-51851-58281@https.bugzilla.kernel.org/>
+References: <bug-51851-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-allyesconfig was mentioned in the help dialog twice.
+https://bugzilla.kernel.org/show_bug.cgi?id=51851
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/Makefile |    1 -
- 1 file changed, 1 deletion(-)
+Johannes Berg <johannes@sipsolutions.net> changed:
 
-diff --git a/backport/Makefile b/backport/Makefile
-index ca69f41..ea3982b 100644
---- a/backport/Makefile
-+++ b/backport/Makefile
-@@ -138,7 +138,6 @@ help: defconfig-help
- 	@echo ""
- 	@echo "Configuration targets:"
- 	@echo "  menuconfig      - Update current config utilising a menu based program"
--	@echo "  allyesconfig    - New config where all options are accepted with yes"
- 	@echo "  oldconfig       - Update current config utilising a provided .config as base"
- 	@echo "  oldaskconfig    - ??"
- 	@echo "  silentoldconfig - Same as oldconfig, but quietly, additionally update deps"
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |RESOLVED
+         Resolution|---                         |WILL_NOT_FIX
+
 -- 
-1.7.10.4
-
+You are receiving this mail because:
+You are the assignee for the bug.
