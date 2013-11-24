@@ -1,38 +1,32 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:55498 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751277Ab3K3Wqr (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 30 Nov 2013 17:46:47 -0500
-Message-ID: <529A6ACA.8030402@hauke-m.de> (sfid-20131130_234649_554437_E2A76CB1)
-Date: Sat, 30 Nov 2013 23:46:34 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail.kernel.org ([198.145.19.201]:52988 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752742Ab3KXVfu (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 24 Nov 2013 16:35:50 -0500
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 3C6482037F
+	for <backports@vger.kernel.org>; Sun, 24 Nov 2013 21:35:49 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+	by mail.kernel.org (Postfix) with ESMTP id 8D09A20379
+	for <backports@vger.kernel.org>; Sun, 24 Nov 2013 21:35:48 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 63381] cpumask.h error
+Date: Sun, 24 Nov 2013 21:35:48 +0000
+Message-ID: <bug-63381-58281-6Lgj0eEnSS@https.bugzilla.kernel.org/> (sfid-20131124_223551_748904_8AC6C8BA)
+In-Reply-To: <bug-63381-58281@https.bugzilla.kernel.org/>
+References: <bug-63381-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-Subject: [ANN] backports-20131129 + v3.12.2-1 + v3.13-rc2-1 released
-Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backports-20131129 was released. This is based on linux-next
-next-20131129. This version should contain all the patches posted on the
-mailing list.
+https://bugzilla.kernel.org/show_bug.cgi?id=63381
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/2013/11/29/backports-20131129.tar.bz2
+--- Comment #4 from Hauke Mehrtens <hauke@hauke-m.de> ---
+This was probably fixed in backports-20131122-2, please try that version and
+report back.
 
-
-In addition backports-3.12.2-1 and backports-3.13-rc2-1 based on the
-corresponding linux stables release were released.
-
-http://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.12.2/backports-3.12.2-1.tar.bz2
-
-http://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.13-rc2/backports-3.13-rc2-1.tar.bz2
-
-
-The source code can be found here:
-https://github.com/hauke/backports
-
-All the latest releases are listed here:
-http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
-
-Hauke
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
