@@ -1,51 +1,67 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:52765 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754591Ab3KYQwd (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 25 Nov 2013 11:52:33 -0500
-Message-ID: <52938049.5070701@hauke-m.de> (sfid-20131125_175236_161267_3D0D4C02)
-Date: Mon, 25 Nov 2013 17:52:25 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Arend van Spriel <arend@broadcom.com>,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: backports@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH] backport: need reinit_completion() for kernel before
+Received: from mms1.broadcom.com ([216.31.210.17]:2976 "EHLO mms1.broadcom.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750867Ab3KYLI3 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 25 Nov 2013 06:08:29 -0500
+From: "Arend van Spriel" <arend@broadcom.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+cc: backports@vger.kernel.org, "Arend van Spriel" <arend@broadcom.com>,
+	linux-wireless@vger.kernel.org
+Subject: [PATCH] backport: need reinit_completion() for kernel before
  v3.13
-References: <1385377676-5106-1-git-send-email-arend@broadcom.com> <52933600.4020406@hauke-m.de> <52937F77.9090701@broadcom.com>
-In-Reply-To: <52937F77.9090701@broadcom.com>
-Content-Type: text/plain; charset=ISO-8859-1
+Date: Mon, 25 Nov 2013 12:07:56 +0100
+Message-ID: <1385377676-5106-1-git-send-email-arend@broadcom.com> (sfid-20131125_120832_098462_367F48C0)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 11/25/2013 05:48 PM, Arend van Spriel wrote:
-> On 11/25/2013 12:35 PM, Hauke Mehrtens wrote:
->> On 11/25/2013 12:07 PM, Arend van Spriel wrote:
->>> The use of INIT_COMPLETION() has been replaced by reinit_completion()
->>> in v3.13-rc1. This patch backports that inline function.
->>>
->>> Cc: <linux-wireless@vger.kernel.org>
->>> Signed-off-by: Arend van Spriel <arend@broadcom.com>
->>> ---
->>>   backport/backport-include/linux/completion.h |   29
->>> ++++++++++++++++++++++++++
->>>   1 file changed, 29 insertions(+)
->>>   create mode 100644 backport/backport-include/linux/completion.h
->>>
->>
->> This was already added in this commit:
->> https://github.com/hauke/backports/commit/d9cb7a967513482c399d44e390429cea3de1d86d
->>
->>
->> You should use backports for this repository:
->> https://github.com/hauke/backports.git
-> 
-> Ok. With my fingers crossed: Did you also solve the whole genl patch
-> series that Johannes did in net-next?
-> 
-> Gr. AvS
+The use of INIT_COMPLETION() has been replaced by reinit_completion()
+in v3.13-rc1. This patch backports that inline function.
 
-Yes, Johannes solved that already. It works with current linux-next and
-3.13-rc1.
+Cc: <linux-wireless@vger.kernel.org>
+Signed-off-by: Arend van Spriel <arend@broadcom.com>
+---
+ backport/backport-include/linux/completion.h |   29 ++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 backport/backport-include/linux/completion.h
 
-Hauke
+diff --git a/backport/backport-include/linux/completion.h b/backport/backport-include/linux/completion.h
+new file mode 100644
+index 0000000..ed30d8a
+--- /dev/null
++++ b/backport/backport-include/linux/completion.h
+@@ -0,0 +1,29 @@
++#ifndef _BACKPORTS_LINUX_COMPLETION_H
++#define _BACKPORTS_LINUX_COMPLETION_H
++#include_next <linux/completion.h>
++#include <linux/version.h>
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0))
++/**
++ * backport of:
++ *
++ * commit c32f74ab2872994bc8336ed367313da3139350ca
++ * Author: Wolfram Sang <wsa@the-dreams.de>
++ * Date:   Thu Nov 14 14:32:01 2013 -0800
++ *
++ *   sched: replace INIT_COMPLETION with reinit_completion
++ */
++/**
++ * reinit_completion - reinitialize a completion structure
++ * @x:  pointer to completion structure that is to be reinitialized
++ *
++ * This inline function should be used to reinitialize a completion structure so it can
++ * be reused. This is especially important after complete_all() is used.
++ */
++static inline void reinit_completion(struct completion *x)
++{
++	x->done = 0;
++}
++#endif
++
++#endif /* _BACKPORTS_LINUX_COMPLETION_H */
+-- 
+1.7.10.4
+
+
