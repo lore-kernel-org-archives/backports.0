@@ -1,49 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:55579 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751786Ab3KQI4g (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 17 Nov 2013 03:56:36 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 33910202F8
-	for <backports@vger.kernel.org>; Sun, 17 Nov 2013 08:56:35 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id A1DE42013A
-	for <backports@vger.kernel.org>; Sun, 17 Nov 2013 08:56:33 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 65031] iwlwif driver crahes while connecting from wifi display
- source
-Date: Sun, 17 Nov 2013 08:56:33 +0000
-Message-ID: <bug-65031-58281-a9U8RmLkKe@https.bugzilla.kernel.org/> (sfid-20131117_095641_969375_A256D6D7)
-In-Reply-To: <bug-65031-58281@https.bugzilla.kernel.org/>
-References: <bug-65031-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
+Received: from mail-wi0-f169.google.com ([209.85.212.169]:37971 "EHLO
+	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751443Ab3K2AAT (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 28 Nov 2013 19:00:19 -0500
 MIME-Version: 1.0
+Date: Thu, 28 Nov 2013 19:00:17 -0500
+Message-ID: <CA+X2d=AuAm3ENDbrfk7L5fXoSiLwVU5xxKVo+MbbCf_aWu=cyg@mail.gmail.com> (sfid-20131129_010021_720869_7921D146)
+Subject: [Patch] Fix for so that recent Elantech touchpads are recognized as such
+From: Matt Walker <matt.g.d.walker@gmail.com>
+To: backports@vger.kernel.org, linux-input@vger.kernel.org
+Content-Type: multipart/mixed; boundary=047d7bd6b9acf5373904ec458348
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=65031
+--047d7bd6b9acf5373904ec458348
+Content-Type: text/plain; charset=ISO-8859-1
 
-Johannes Berg <johannes@sipsolutions.net> changed:
+Hello,
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-                 CC|                            |ilw@linux.intel.com
-         Resolution|---                         |WILL_NOT_FIX
+Attached is a patch for drivers/input/mouse/elantech.c.  It allows
+recent Elantech touchpads to be detected.  I have tested it on the
+touchpad that comes with the Acer Aspire S7-392 (released ~August
+2013)
 
---- Comment #1 from Johannes Berg <johannes@sipsolutions.net> ---
-The P2P support in iwlwifi/dvm is known buggy, we've decided to remove it
-instead of attempting to fix it -- too many firmware issues. This particular
-issue looks like a mac80211 or driver issue though.
+I figure it could be backported with little effort and no danger,
+since all it does it add one to the number of values that were
+previously recognized as valid "firmware version numbers".
 
-If you wanted to debug this, then the first thing to do is probably to get
-tracing data
+Begin Patch:
+1315a1316
+>         case 8:
+End Patch
 
- sudo trace-cmd record -e iwlwifi -e mac80211
+Best,
+Matt
 
-and check which scan/roc overlaps.
+--047d7bd6b9acf5373904ec458348
+Content-Type: text/x-patch; charset=US-ASCII; name="elantech.patch"
+Content-Disposition: attachment; filename="elantech.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_hoknzxnr0
 
--- 
-You are receiving this mail because:
-You are the assignee for the bug.
+MTMxNWExMzE2Cj4gCQljYXNlIDg6Cg==
+--047d7bd6b9acf5373904ec458348--
