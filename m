@@ -1,76 +1,38 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:58177 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751874Ab3K3Mpb (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 30 Nov 2013 07:45:31 -0500
-Message-Id: <1385815530.23776.53787977.56B183FC@webmail.messagingengine.com> (sfid-20131130_134604_226430_5795A20A)
-From: "Nikita N." <nikitan@operamail.com>
-To: backports@vger.kernel.org
-Cc: linux-wireless@vger.kernel.org
-MIME-Version: 1.0
-Content-Type: text/plain
-Subject: 3.13 various backports bugs
-Date: Sat, 30 Nov 2013 04:45:30 -0800
+Received: from server19320154104.serverpool.info ([193.201.54.104]:55247 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750965Ab3K3Ty4 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 30 Nov 2013 14:54:56 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 3/5] backports: remove duplicate allyesconfig from help
+Date: Sat, 30 Nov 2013 20:54:41 +0100
+Message-Id: <1385841283-10277-3-git-send-email-hauke@hauke-m.de> (sfid-20131130_205501_389985_AF55D045)
+In-Reply-To: <1385841283-10277-1-git-send-email-hauke@hauke-m.de>
+References: <1385841283-10277-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi dear maintainers of backports :) I have few bugs to report, Ill try
-to be as fast as I can.
+allyesconfig was mentioned in the help dialog twice.
 
-- Bug #1:
-Im running on standard Slitaz4, kernel 2.6.37-slitaz, updating modules,
-the following script:
-./backports-3.13-rc1-1/scripts/compress_modules.sh
-the "if" is not able to detect the present compression, as result the
-new modules are not compressed, and get mixed with the old ones
-compressed, resulting in lots of errors.
-My actual workaround is just to delete the "if" line.
-The issue is present systematically in all backports releases, since the
-switch from compat-drivers.
-The compress_modules script into 3.9 is instead working good.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/Makefile |    1 -
+ 1 file changed, 1 deletion(-)
 
-- Bug #2:
-eeprom modules are missing into 3.13.
-This issue is present systematically in all backports releases, since
-the switch from compat-drivers.
-It could be a wireless bug only, or a backports bug only, or both.
-Anyway, eeprom module is vital for correct interface detection.
-Into 3.9 the eeprom modules are located in
-./compat-drivers-3.9-rc4-2-su/drivers/misc/eeprom/
-
-- Bug #3:
-New dependance has been added, CRYPTO_CCM, which denies all modules
-compilation based on MAC80211.
-The dependance is set in ./backports-3.13-rc1-1/net/mac80211/Kconfig
-On Slitaz4, such kernel config is not set, hence its needed to edit
-manually the kernel .config in order to enable it.
-After enabling, modules compilation goes all right.
-Hence, or CRYPTO_CCM is useless, or its needed to show a warning to the
-user at Kconfig runtime, in order to take the necessary measures.
-It took forever (even for me!) to find that bug, which btw was denying
-the compilation of my Realtek modules.
-
-- Bug #4:
-Repeated back-slashes "//" are present into script-makefile files, you
-can see them appear for example running "make alldefconfig & make
-install":
-[...]
-COMPRESS /lib/modules/2.6.37-slitaz//updates/compat/compat.ko
-gzip: can't open
-'/lib/modules/2.6.37-slitaz//updates/compat/compat.ko.gz': File exists
-[...]
-
-- Bug #5:
-Cosmetic bug, in file ./backports-3.13-rc1-1/Makefile, the following
-line is duplicated:
-@echo "  allyesconfig    - New config where all options are accepted
-with yes"
-
-Hope all is clear, now I have to leave you because my baby sh*t the
-diapers so much all is getting out and my wife is shouting at me!
-aaargh! :D
-Thanks for your attention :)
-
+diff --git a/backport/Makefile b/backport/Makefile
+index ca69f41..ea3982b 100644
+--- a/backport/Makefile
++++ b/backport/Makefile
+@@ -138,7 +138,6 @@ help: defconfig-help
+ 	@echo ""
+ 	@echo "Configuration targets:"
+ 	@echo "  menuconfig      - Update current config utilising a menu based program"
+-	@echo "  allyesconfig    - New config where all options are accepted with yes"
+ 	@echo "  oldconfig       - Update current config utilising a provided .config as base"
+ 	@echo "  oldaskconfig    - ??"
+ 	@echo "  silentoldconfig - Same as oldconfig, but quietly, additionally update deps"
 -- 
-http://www.fastmail.fm - The professional email service
+1.7.10.4
 
