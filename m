@@ -1,46 +1,49 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:48265 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752817Ab3KXVXk (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 24 Nov 2013 16:23:40 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 03/15] backports: remove acpi_video_register_with_quirks()
-Date: Sun, 24 Nov 2013 22:23:06 +0100
-Message-Id: <1385328198-28520-4-git-send-email-hauke@hauke-m.de> (sfid-20131124_222341_903076_C5D3D6FB)
-In-Reply-To: <1385328198-28520-1-git-send-email-hauke@hauke-m.de>
-References: <1385328198-28520-1-git-send-email-hauke@hauke-m.de>
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:55582 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751913Ab3K3OV7 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 30 Nov 2013 09:21:59 -0500
+Message-Id: <1385821318.11810.53811117.0E0E19AF@webmail.messagingengine.com> (sfid-20131130_152201_709680_88F3BA5C)
+From: "Nikita N." <nikitan@operamail.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
+Cc: linux-wireless@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain
+Subject: Re: 3.13 various backports bugs
+Date: Sat, 30 Nov 2013 06:21:58 -0800
+In-Reply-To: <5299E184.1020302@hauke-m.de>
+References: <1385815530.23776.53787977.56B183FC@webmail.messagingengine.com>
+ <5299E184.1020302@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-acpi_video_register_with_quirks() was never called by any code.
+follow answers
+On Sat, Nov 30, 2013, at 05:00 AM, Hauke Mehrtens wrote:
+> > - Bug #2:
+> > eeprom modules are missing into 3.13.
+> > This issue is present systematically in all backports releases, since
+> > the switch from compat-drivers.
+> > It could be a wireless bug only, or a backports bug only, or both.
+> > Anyway, eeprom module is vital for correct interface detection.
+> > Into 3.9 the eeprom modules are located in
+> > ./compat-drivers-3.9-rc4-2-su/drivers/misc/eeprom/
+> 
+> This should be included in your kernel you are compiling against
+> otherwise you wouldn't be able to build rtl8187.
+> 
+> There was a bug in backports regarding EEPROM_93CX6, could you please
+> try backports-20131122-2 and report back if the problem is still there.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/acpi/video.h |   13 -------------
- 1 file changed, 13 deletions(-)
- delete mode 100644 backport/backport-include/acpi/video.h
+just did it, same issue.
+also in backports-20131122-2 eeprom modules are missing.
+At this point I have the suspect that eeprom libraries builtin Slitaz4
+are bugged, and the bug is capable of persistent damage.. probably the
+bad frames filter in monitor mode im suffering on my two rtl8187, is
+caused by that..? 
+If that would be confirmed, Slitaz4 community has to be warned asap!
+If I can help more, please fell free to ask :)
 
-diff --git a/backport/backport-include/acpi/video.h b/backport/backport-include/acpi/video.h
-deleted file mode 100644
-index ff5c776..0000000
---- a/backport/backport-include/acpi/video.h
-+++ /dev/null
-@@ -1,13 +0,0 @@
--#ifndef __BACKPORT_ACPI_VIDEO_H
--#define __BACKPORT_ACPI_VIDEO_H
--#include_next <acpi/video.h>
--#include <linux/version.h>
--
--#if LINUX_VERSION_CODE < KERNEL_VERSION(3,12,0)
--static inline int acpi_video_register_with_quirks(void)
--{
--	return acpi_video_register();
--}
--#endif
--
--#endif /*  __BACKPORT_ACPI_VIDEO_H */
 -- 
-1.7.10.4
+http://www.fastmail.fm - Accessible with your email software
+                          or over the web
 
