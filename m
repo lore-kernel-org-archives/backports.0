@@ -1,62 +1,76 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:47515 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751711Ab3KOGwY (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 15 Nov 2013 01:52:24 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id AF0A320997
-	for <backports@vger.kernel.org>; Fri, 15 Nov 2013 06:52:23 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 0FDC520995
-	for <backports@vger.kernel.org>; Fri, 15 Nov 2013 06:52:23 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:58177 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751874Ab3K3Mpb (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 30 Nov 2013 07:45:31 -0500
+Message-Id: <1385815530.23776.53787977.56B183FC@webmail.messagingengine.com> (sfid-20131130_134604_226430_5795A20A)
+From: "Nikita N." <nikitan@operamail.com>
 To: backports@vger.kernel.org
-Subject: [Bug 65031] New: iwlwif driver crahes while connecting from wifi
- display source
-Date: Fri, 15 Nov 2013 06:52:22 +0000
-Message-ID: <bug-65031-58281@https.bugzilla.kernel.org/> (sfid-20131115_075226_868253_C8109B40)
-Content-Type: text/plain; charset="UTF-8"
+Cc: linux-wireless@vger.kernel.org
 MIME-Version: 1.0
+Content-Type: text/plain
+Subject: 3.13 various backports bugs
+Date: Sat, 30 Nov 2013 04:45:30 -0800
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=65031
+Hi dear maintainers of backports :) I have few bugs to report, Ill try
+to be as fast as I can.
 
-            Bug ID: 65031
-           Summary: iwlwif driver crahes while connecting from wifi
-                    display source
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: 3.5.0.17-generic kernel
-          Hardware: i386
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: high
-          Priority: P1
-         Component: Backports
-          Assignee: backports@vger.kernel.org
-          Reporter: vaisakh.n@allgosystems.com
-        Regression: No
+- Bug #1:
+Im running on standard Slitaz4, kernel 2.6.37-slitaz, updating modules,
+the following script:
+./backports-3.13-rc1-1/scripts/compress_modules.sh
+the "if" is not able to detect the present compression, as result the
+new modules are not compressed, and get mixed with the old ones
+compressed, resulting in lots of errors.
+My actual workaround is just to delete the "if" line.
+The issue is present systematically in all backports releases, since the
+switch from compat-drivers.
+The compress_modules script into 3.9 is instead working good.
 
-Created attachment 114831
-  --> https://bugzilla.kernel.org/attachment.cgi?id=114831&action=edit
-dmesg with crash lo9g
+- Bug #2:
+eeprom modules are missing into 3.13.
+This issue is present systematically in all backports releases, since
+the switch from compat-drivers.
+It could be a wireless bug only, or a backports bug only, or both.
+Anyway, eeprom module is vital for correct interface detection.
+Into 3.9 the eeprom modules are located in
+./compat-drivers-3.9-rc4-2-su/drivers/misc/eeprom/
 
-Hi, 
-iwlwif Wifi driver is crashing while connecting to it from phone via wifi
-direct.
+- Bug #3:
+New dependance has been added, CRYPTO_CCM, which denies all modules
+compilation based on MAC80211.
+The dependance is set in ./backports-3.13-rc1-1/net/mac80211/Kconfig
+On Slitaz4, such kernel config is not set, hence its needed to edit
+manually the kernel .config in order to enable it.
+After enabling, modules compilation goes all right.
+Hence, or CRYPTO_CCM is useless, or its needed to show a warning to the
+user at Kconfig runtime, in order to take the necessary measures.
+It took forever (even for me!) to find that bug, which btw was denying
+the compilation of my Realtek modules.
 
-My platform details follows
-Kernel : 3.5.0.17-generic kernel
-Wifi Chip :  INTEL  Centrino Advanced 6235 AGN,REV=0xB  
-OS: ubuntu  12.10  (32bit)
-iwlwifi driver :  backports-3.11.6-1 . ( p2p enabled )
-Wpa supplicant :2.0-devel-3.4.0.171
-Wifi Firmware loaded : 18.168.6.1
+- Bug #4:
+Repeated back-slashes "//" are present into script-makefile files, you
+can see them appear for example running "make alldefconfig & make
+install":
+[...]
+COMPRESS /lib/modules/2.6.37-slitaz//updates/compat/compat.ko
+gzip: can't open
+'/lib/modules/2.6.37-slitaz//updates/compat/compat.ko.gz': File exists
+[...]
 
-Full dmesg log attached with this bug
+- Bug #5:
+Cosmetic bug, in file ./backports-3.13-rc1-1/Makefile, the following
+line is duplicated:
+@echo "  allyesconfig    - New config where all options are accepted
+with yes"
+
+Hope all is clear, now I have to leave you because my baby sh*t the
+diapers so much all is getting out and my wife is shouting at me!
+aaargh! :D
+Thanks for your attention :)
 
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+http://www.fastmail.fm - The professional email service
+
