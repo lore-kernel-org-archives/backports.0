@@ -1,68 +1,72 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-vc0-f178.google.com ([209.85.220.178]:47555 "EHLO
-	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750792Ab3KTHCR (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 20 Nov 2013 02:02:17 -0500
-Received: by mail-vc0-f178.google.com with SMTP id lh4so487655vcb.9
-        for <backports@vger.kernel.org>; Tue, 19 Nov 2013 23:02:16 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1384903178-27357-1-git-send-email-jam@cozybit.com>
-References: <528BF081.5060201@hauke-m.de>
-	<1384903178-27357-1-git-send-email-jam@cozybit.com>
-Date: Wed, 20 Nov 2013 07:02:16 +0000
-Message-ID: <CAFSJ42Z4kJUuN4H=QbAPaK8SZ6tboCT3naRt9c8=Qb8=3n-DLA@mail.gmail.com> (sfid-20131120_080221_027251_45529A20)
-Subject: Re: [PATCH v3] backports: add defconfig for wcn36xx
-From: Eugene Krasnikov <k.eugene.e@gmail.com>
-To: Jason Mobarak <jam@cozybit.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	wcn36xx <wcn36xx@lists.infradead.org>
-Content-Type: text/plain; charset=ISO-8859-1
+Received: from server19320154104.serverpool.info ([193.201.54.104]:55234 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750965Ab3K3Tyw (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 30 Nov 2013 14:54:52 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 2/5] backports: add backport_ prefix in front of BQL functions
+Date: Sat, 30 Nov 2013 20:54:40 +0100
+Message-Id: <1385841283-10277-2-git-send-email-hauke@hauke-m.de> (sfid-20131130_205500_699503_C84D8DFC)
+In-Reply-To: <1385841283-10277-1-git-send-email-hauke@hauke-m.de>
+References: <1385841283-10277-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Without CPTCFG_CFG80211_WEXT looks better to me.
+Sometimes these functions are backported in the kernel, add the
+backports_ prefix to prevent the names from colliding.
 
-On Tue, Nov 19, 2013 at 11:19 PM, Jason Mobarak <jam@cozybit.com> wrote:
-> Signed-off-by: Jason Mobarak <jam@cozybit.com>
-> ---
->
-> v2: Added CPTCFG_CFG80211_WEXT and Signed-of-by line.
-> v3: Alternate version without CPTCFG_CFG80211_WEXT.
->
->  backport/defconfigs/wcn36xx |   13 +++++++++++++
->  1 file changed, 13 insertions(+)
->  create mode 100644 backport/defconfigs/wcn36xx
->
-> diff --git a/backport/defconfigs/wcn36xx b/backport/defconfigs/wcn36xx
-> new file mode 100644
-> index 0000000..374eb11
-> --- /dev/null
-> +++ b/backport/defconfigs/wcn36xx
-> @@ -0,0 +1,13 @@
-> +CPTCFG_CFG80211=m
-> +CPTCFG_CFG80211_DEFAULT_PS=y
-> +CPTCFG_CFG80211_DEBUGFS=y
-> +CPTCFG_MAC80211=m
-> +# CPTCFG_MAC80211_RC_PID is not set
-> +# CPTCFG_MAC80211_RC_MINSTREL is not set
-> +# CPTCFG_MAC80211_RC_DEFAULT_MINSTREL is not set
-> +CPTCFG_MAC80211_DEBUGFS=y
-> +CPTCFG_MAC80211_MESSAGE_TRACING=y
-> +CPTCFG_WLAN=y
-> +CPTCFG_ATH_CARDS=m
-> +CPTCFG_WCN36XX=m
-> +CPTCFG_WCN36XX_DEBUGFS=y
-> --
-> 1.7.10.4
->
->
-> _______________________________________________
-> wcn36xx mailing list
-> wcn36xx@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/wcn36xx
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/netdevice.h |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-
-
+diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+index f97e9e1..3d6b7b3 100644
+--- a/backport/backport-include/linux/netdevice.h
++++ b/backport/backport-include/linux/netdevice.h
+@@ -157,34 +157,40 @@ static inline int ndo_do_ioctl(struct net_device *dev,
+  */
+ #ifndef CONFIG_BQL
+ #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,26))
++#define netdev_tx_sent_queue LINUX_BACKPORT(netdev_tx_sent_queue)
+ static inline void netdev_tx_sent_queue(struct netdev_queue *dev_queue,
+ 					unsigned int bytes)
+ {
+ }
+ #endif
+ 
++#define netdev_sent_queue LINUX_BACKPORT(netdev_sent_queue)
+ static inline void netdev_sent_queue(struct net_device *dev, unsigned int bytes)
+ {
+ }
+ 
+ #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,26))
++#define netdev_tx_completed_queue LINUX_BACKPORT(netdev_tx_completed_queue)
+ static inline void netdev_tx_completed_queue(struct netdev_queue *dev_queue,
+ 					     unsigned pkts, unsigned bytes)
+ {
+ }
+ #endif
+ 
++#define netdev_completed_queue LINUX_BACKPORT(netdev_completed_queue)
+ static inline void netdev_completed_queue(struct net_device *dev,
+ 					  unsigned pkts, unsigned bytes)
+ {
+ }
+ 
+ #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,26))
++#define netdev_tx_reset_queue LINUX_BACKPORT(netdev_tx_reset_queue)
+ static inline void netdev_tx_reset_queue(struct netdev_queue *q)
+ {
+ }
+ #endif
+ 
++#define netdev_reset_queue LINUX_BACKPORT(netdev_reset_queue)
+ static inline void netdev_reset_queue(struct net_device *dev_queue)
+ {
+ }
 -- 
-Best regards,
-Eugene
+1.7.10.4
+
