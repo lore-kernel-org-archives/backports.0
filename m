@@ -1,215 +1,85 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:43095 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751140Ab3LRUfR (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 18 Dec 2013 15:35:17 -0500
-Message-ID: <52B206F9.3020702@hauke-m.de> (sfid-20131218_213523_727756_5D6AD754)
-Date: Wed, 18 Dec 2013 21:35:05 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Stefan Assmann <sassmann@kpanic.de>, mcgrof@kernel.org
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH RFC v2 06/11] backports: igb fixes for linux-3.5
-References: <1387382905-14274-1-git-send-email-sassmann@kpanic.de> <1387382905-14274-7-git-send-email-sassmann@kpanic.de>
-In-Reply-To: <1387382905-14274-7-git-send-email-sassmann@kpanic.de>
-Content-Type: text/plain; charset=ISO-8859-1
+Received: from s3.sipsolutions.net ([144.76.43.152]:43459 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753449Ab3LCOG0 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 3 Dec 2013 09:06:26 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Subject: [PATCH v2] backports: add support for prandom_bytes
+Date: Tue,  3 Dec 2013 15:06:21 +0100
+Message-Id: <1386079581-7858-1-git-send-email-johannes@sipsolutions.net> (sfid-20131203_150629_868873_E522C814)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 12/18/2013 05:08 PM, Stefan Assmann wrote:
-> - add EEE defines
-> - add struct ethtool_eee
-> - backport __skb_alloc_page and __skb_alloc_pages
-> - add patches/collateral-evolutions/network/82-ethernet/0006-igb_eee.patch
-> 
-> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
-> ---
->  backport/backport-include/linux/ethtool.h          | 31 +++++++++++++++
->  backport/backport-include/linux/gfp.h              | 10 +++++
->  backport/backport-include/linux/mdio.h             | 23 ++++++++++-
->  backport/backport-include/linux/skbuff.h           | 46 ++++++++++++++++++++++
->  .../network/82-ethernet/0006-igb_eee.patch         | 15 +++++++
->  5 files changed, 124 insertions(+), 1 deletion(-)
->  create mode 100644 backport/backport-include/linux/gfp.h
->  create mode 100644 patches/collateral-evolutions/network/82-ethernet/0006-igb_eee.patch
-> 
-> diff --git a/backport/backport-include/linux/ethtool.h b/backport/backport-include/linux/ethtool.h
-> index 647fbf6..4f13cb9 100644
-> --- a/backport/backport-include/linux/ethtool.h
-> +++ b/backport/backport-include/linux/ethtool.h
-> @@ -42,4 +42,35 @@ static inline __u32 ethtool_cmd_speed(const struct ethtool_cmd *ep)
->  }
->  #endif
->  
-> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
-> +/**
-> + * struct ethtool_eee - Energy Efficient Ethernet information
-> + * @cmd: ETHTOOL_{G,S}EEE
-> + * @supported: Mask of %SUPPORTED_* flags for the speed/duplex combinations
-> + *	for which there is EEE support.
-> + * @advertised: Mask of %ADVERTISED_* flags for the speed/duplex combinations
-> + *	advertised as eee capable.
-> + * @lp_advertised: Mask of %ADVERTISED_* flags for the speed/duplex
-> + *	combinations advertised by the link partner as eee capable.
-> + * @eee_active: Result of the eee auto negotiation.
-> + * @eee_enabled: EEE configured mode (enabled/disabled).
-> + * @tx_lpi_enabled: Whether the interface should assert its tx lpi, given
-> + *	that eee was negotiated.
-> + * @tx_lpi_timer: Time in microseconds the interface delays prior to asserting
-> + *	its tx lpi (after reaching 'idle' state). Effective only when eee
-> + *	was negotiated and tx_lpi_enabled was set.
-> + */
-> +struct ethtool_eee {
-> +	__u32	cmd;
-> +	__u32	supported;
-> +	__u32	advertised;
-> +	__u32	lp_advertised;
-> +	__u32	eee_active;
-> +	__u32	eee_enabled;
-> +	__u32	tx_lpi_enabled;
-> +	__u32	tx_lpi_timer;
-> +	__u32	reserved[2];
-> +};
-> +#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0) */
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-The get_eee and set_eee callbacks in struct ethtool_ops are not
-available on this kernel, you could also add a #ifdef <kernel version>
-around igb_get_eee() and igb_set_eee() and remove the struct here.
+This was added in 3.8 and not used until now.
+Since it it being used by the wireless stack, backport it.
 
-> +
->  #endif /* __BACKPORT_LINUX_ETHTOOL_H */
-> diff --git a/backport/backport-include/linux/gfp.h b/backport/backport-include/linux/gfp.h
-> new file mode 100644
-> index 0000000..2962290
-> --- /dev/null
-> +++ b/backport/backport-include/linux/gfp.h
-> @@ -0,0 +1,10 @@
-> +#ifndef __BACKPORT_LINUX_GFP_H
-> +#define __BACKPORT_LINUX_GFP_H
-> +#include_next <linux/gfp.h>
-> +
-> +#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0))
-> +#define ___GFP_MEMALLOC		0x2000u
-> +#define __GFP_MEMALLOC	((__force gfp_t)___GFP_MEMALLOC)/* Allow access to emergency reserves */
-> +#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)) */
-> +
-> +#endif /* __BACKPORT_LINUX_GFP_H */
-> diff --git a/backport/backport-include/linux/mdio.h b/backport/backport-include/linux/mdio.h
-> index 2a38121..838958a 100644
-> --- a/backport/backport-include/linux/mdio.h
-> +++ b/backport/backport-include/linux/mdio.h
-> @@ -2,6 +2,28 @@
->  #define __BACKPORT_LINUX_MDIO_H
->  #include_next <linux/mdio.h>
->  
-> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
-> +/* EEE Supported/Advertisement/LP Advertisement registers.
-> + *
-> + * EEE capability Register (3.20), Advertisement (7.60) and
-> + * Link partner ability (7.61) registers have and can use the same identical
-> + * bit masks.
-> + */
-> +#define MDIO_AN_EEE_ADV_100TX	0x0002	/* Advertise 100TX EEE cap */
-> +#define MDIO_AN_EEE_ADV_1000T	0x0004	/* Advertise 1000T EEE cap */
-> +/* Note: the two defines above can be potentially used by the user-land
-> + * and cannot remove them now.
-> + * So, we define the new generic MDIO_EEE_100TX and MDIO_EEE_1000T macros
-> + * using the previous ones (that can be considered obsolete).
-> + */
-> +#define MDIO_EEE_100TX		MDIO_AN_EEE_ADV_100TX	/* 100TX EEE cap */
-> +#define MDIO_EEE_1000T		MDIO_AN_EEE_ADV_1000T	/* 1000T EEE cap */
-> +#define MDIO_EEE_10GT		0x0008	/* 10GT EEE cap */
-> +#define MDIO_EEE_1000KX		0x0010	/* 1000KX EEE cap */
-> +#define MDIO_EEE_10GKX4		0x0020	/* 10G KX4 EEE cap */
-> +#define MDIO_EEE_10GKR		0x0040	/* 10G KR EEE cap */
-> +#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0) */
-> +
->  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
->  /**
->   * mmd_eee_adv_to_ethtool_adv_t
-> @@ -31,5 +53,4 @@ static inline u32 mmd_eee_adv_to_ethtool_adv_t(u16 eee_adv)
->  	return adv;
->  }
->  #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0) */
-> -
->  #endif /* __BACKPORT_LINUX_MDIO_H */
-> diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
-> index 7d04b54..c1b2753 100644
-> --- a/backport/backport-include/linux/skbuff.h
-> +++ b/backport/backport-include/linux/skbuff.h
-> @@ -224,6 +224,52 @@ static inline void skb_queue_splice_tail(const struct sk_buff_head *list,
->  		     skb = skb->next)
->  #endif /* < 2.6.28 */
->  
-> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
-> +/**
-> + *	__skb_alloc_pages - allocate pages for ps-rx on a skb and preserve pfmemalloc data
-> + *	@gfp_mask: alloc_pages_node mask. Set __GFP_NOMEMALLOC if not for network packet RX
-> + *	@skb: skb to set pfmemalloc on if __GFP_MEMALLOC is used
-> + *	@order: size of the allocation
-> + *
-> + * 	Allocate a new page.
-> + *
-> + * 	%NULL is returned if there is no free memory.
-> +*/
-> +static inline struct page *__skb_alloc_pages(gfp_t gfp_mask,
-> +					      struct sk_buff *skb,
-> +					      unsigned int order)
-> +{
-> +	struct page *page;
-> +
-> +	gfp_mask |= __GFP_COLD;
-> +#if 0
-> +	if (!(gfp_mask & __GFP_NOMEMALLOC))
-> +		gfp_mask |= __GFP_MEMALLOC;
-> +#endif
-> +	page = alloc_pages_node(NUMA_NO_NODE, gfp_mask, order);
-> +#if 0
-> +	if (skb && page && page->pfmemalloc)
-> +		skb->pfmemalloc = true;
-> +#endif
-> +	return page;
-> +}
-> +
-> +/**
-> + *	__skb_alloc_page - allocate a page for ps-rx for a given skb and preserve pfmemalloc data
-> + *	@gfp_mask: alloc_pages_node mask. Set __GFP_NOMEMALLOC if not for network packet RX
-> + *	@skb: skb to set pfmemalloc on if __GFP_MEMALLOC is used
-> + *
-> + * 	Allocate a new page.
-> + *
-> + * 	%NULL is returned if there is no free memory.
-> + */
-> +static inline struct page *__skb_alloc_page(gfp_t gfp_mask,
-> +					     struct sk_buff *skb)
-> +{
-> +	return __skb_alloc_pages(gfp_mask, skb, 0);
-> +}
-> +#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0) */
-> +
->  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
->  #ifndef NETDEV_FRAG_PAGE_MAX_ORDER
->  #define NETDEV_FRAG_PAGE_MAX_ORDER get_order(32768)
-> diff --git a/patches/collateral-evolutions/network/82-ethernet/0006-igb_eee.patch b/patches/collateral-evolutions/network/82-ethernet/0006-igb_eee.patch
-> new file mode 100644
-> index 0000000..67068f5
-> --- /dev/null
-> +++ b/patches/collateral-evolutions/network/82-ethernet/0006-igb_eee.patch
-> @@ -0,0 +1,15 @@
-> +diff --git a/drivers/net/ethernet/intel/igb/igb_ethtool.c b/drivers/net/ethernet/intel/igb/igb_ethtool.c
-> +index 05fd6f8..43ee8d0 100644
-> +--- a/drivers/net/ethernet/intel/igb/igb_ethtool.c
-> ++++ b/drivers/net/ethernet/intel/igb/igb_ethtool.c
-> +@@ -3002,8 +3002,10 @@ static const struct ethtool_ops igb_ethtool_ops = {
-> + 	.get_ts_info		= igb_get_ts_info,
-> + 	.get_rxnfc		= igb_get_rxnfc,
-> + 	.set_rxnfc		= igb_set_rxnfc,
-> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-> + 	.get_eee		= igb_get_eee,
-> + 	.set_eee		= igb_set_eee,
-> ++#endif
-> + 	.get_module_info	= igb_get_module_info,
-> + 	.get_module_eeprom	= igb_get_module_eeprom,
-> + 	.get_rxfh_indir_size	= igb_get_rxfh_indir_size,
-> 
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/backport-include/linux/random.h |  3 +++
+ backport/compat/compat-3.8.c             | 31 +++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
+
+diff --git a/backport/backport-include/linux/random.h b/backport/backport-include/linux/random.h
+index 812ce7f..e915106 100644
+--- a/backport/backport-include/linux/random.h
++++ b/backport/backport-include/linux/random.h
+@@ -8,6 +8,9 @@
+ #define prandom_seed(_seed)		srandom32(_seed)
+ #define prandom_u32()			random32()
+ #define prandom_u32_state(_state)	prandom32(_state)
++/* backport 6582c665d6b882dad8329e05749fbcf119f1ab88 */
++#define prandom_bytes LINUX_BACKPORT(prandom_bytes)
++void prandom_bytes(void *buf, int bytes);
+ #endif
+ 
+ #endif /* __BACKPORT_RANDOM_H */
+diff --git a/backport/compat/compat-3.8.c b/backport/compat/compat-3.8.c
+index d43d386..538f51d 100644
+--- a/backport/compat/compat-3.8.c
++++ b/backport/compat/compat-3.8.c
+@@ -419,6 +419,37 @@ int vm_iomap_memory(struct vm_area_struct *vma, phys_addr_t start, unsigned long
+ }
+ EXPORT_SYMBOL_GPL(vm_iomap_memory);
+ 
++/**
++ *	prandom_bytes - get the requested number of pseudo-random bytes
++ *	@buf: where to copy the pseudo-random bytes to
++ *	@bytes: the requested number of bytes
++ */
++void prandom_bytes(void *buf, int bytes)
++{
++	unsigned char *p = buf;
++	int i;
++
++	for (i = 0; i < round_down(bytes, sizeof(u32)); i += sizeof(u32)) {
++		u32 random = random32();
++		int j;
++
++		for (j = 0; j < sizeof(u32); j++) {
++			p[i + j] = random;
++			random >>= BITS_PER_BYTE;
++		}
++	}
++
++	if (i < bytes) {
++		u32 random = random32();
++
++		for (; i < bytes; i++) {
++			p[i] = random;
++			random >>= BITS_PER_BYTE;
++		}
++	}
++}
++EXPORT_SYMBOL_GPL(prandom_bytes_state);
++
+ #ifdef CONFIG_OF
+ /**
+  * of_find_property_value_of_size
+-- 
+1.8.4.rc3
 
