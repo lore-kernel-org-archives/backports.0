@@ -1,115 +1,86 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:26809 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751523Ab3LLJ3N (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 12 Dec 2013 04:29:13 -0500
-From: Stefan Assmann <sassmann@kpanic.de>
-To: mcgrof@kernel.org
-Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH RFC 09/10] backports: igb fixes for linux-3.2
-Date: Thu, 12 Dec 2013 10:28:01 +0100
-Message-Id: <1386840482-585-10-git-send-email-sassmann@kpanic.de> (sfid-20131212_102915_296594_48115A6A)
-In-Reply-To: <1386840482-585-1-git-send-email-sassmann@kpanic.de>
-References: <1386840482-585-1-git-send-email-sassmann@kpanic.de>
+Received: from s3.sipsolutions.net ([144.76.43.152]:43457 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752866Ab3LCOFV (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 3 Dec 2013 09:05:21 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Subject: [PATCH] backports: add support for prandom_bytes
+Date: Tue,  3 Dec 2013 15:05:15 +0100
+Message-Id: <1386079515-7792-1-git-send-email-johannes@sipsolutions.net> (sfid-20131203_150543_652413_A53547AD)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-- handle struct ethtool_ops changes
-- add patches/collateral-evolutions/network/82-ethernet/igb_vlan_rx_vid.patch
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+This was added in 3.8 and not used until now.
+Since it it being used by the wireless stack, backport it.
+
+Change-Id: I061a55e0af96464dfda53a0ad60a00e2c42d07f2
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/linux/ethtool.h          |  5 ++
- .../network/82-ethernet/igb_vlan_rx_vid.patch      | 64 ++++++++++++++++++++++
- 2 files changed, 69 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/82-ethernet/igb_vlan_rx_vid.patch
+ backport/backport-include/linux/random.h |  3 +++
+ backport/compat/compat-3.8.c             | 31 +++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
-diff --git a/backport/backport-include/linux/ethtool.h b/backport/backport-include/linux/ethtool.h
-index 9a7575f..c2ab04d 100644
---- a/backport/backport-include/linux/ethtool.h
-+++ b/backport/backport-include/linux/ethtool.h
-@@ -224,6 +224,11 @@ struct backport_ethtool_ops {
- 				     struct ethtool_eeprom *, u8 *);
- 	int	(*get_eee)(struct net_device *, struct ethtool_eee *);
- 	int	(*set_eee)(struct net_device *, struct ethtool_eee *);
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
-+	u32	(*get_rx_csum)(struct net_device *);
-+	u32	(*get_flags)(struct net_device *);
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0) */
- };
- #define ethtool_ops LINUX_BACKPORT(ethtool_ops)
+diff --git a/backport/backport-include/linux/random.h b/backport/backport-include/linux/random.h
+index 812ce7f..e915106 100644
+--- a/backport/backport-include/linux/random.h
++++ b/backport/backport-include/linux/random.h
+@@ -8,6 +8,9 @@
+ #define prandom_seed(_seed)		srandom32(_seed)
+ #define prandom_u32()			random32()
+ #define prandom_u32_state(_state)	prandom32(_state)
++/* backport 6582c665d6b882dad8329e05749fbcf119f1ab88 */
++#define prandom_bytes LINUX_BACKPORT(prandom_bytes)
++void prandom_bytes(void *buf, int bytes);
+ #endif
  
-diff --git a/patches/collateral-evolutions/network/82-ethernet/igb_vlan_rx_vid.patch b/patches/collateral-evolutions/network/82-ethernet/igb_vlan_rx_vid.patch
-new file mode 100644
-index 0000000..44ea22e
---- /dev/null
-+++ b/patches/collateral-evolutions/network/82-ethernet/igb_vlan_rx_vid.patch
-@@ -0,0 +1,64 @@
-+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-+index 37e6062..6bf0a88 100644
-+--- a/drivers/net/ethernet/intel/igb/igb_main.c
-++++ b/drivers/net/ethernet/intel/igb/igb_main.c
-+@@ -164,10 +164,13 @@ static void igb_vlan_mode(struct net_device *netdev, netdev_features_t features)
-+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
-+ static int igb_vlan_rx_add_vid(struct net_device *, __be16, u16);
-+ static int igb_vlan_rx_kill_vid(struct net_device *, __be16, u16);
-+-#else
-++#elif LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
-+ static int igb_vlan_rx_add_vid(struct net_device *, u16);
-+ static int igb_vlan_rx_kill_vid(struct net_device *, u16);
-+-#endif
-++#else
-++static void igb_vlan_rx_add_vid(struct net_device *, u16);
-++static void igb_vlan_rx_kill_vid(struct net_device *, u16);
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0) */
-+ static void igb_restore_vlan(struct igb_adapter *);
-+ static void igb_rar_set_qsel(struct igb_adapter *, u8 *, u32 , u8);
-+ static void igb_ping_all_vfs(struct igb_adapter *);
-+@@ -6974,8 +6977,10 @@ static void igb_vlan_mode(struct net_device *netdev, netdev_features_t features)
-+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
-+ static int igb_vlan_rx_add_vid(struct net_device *netdev,
-+ 			       __be16 proto, u16 vid)
-+-#else
-++#elif LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
-+ static int igb_vlan_rx_add_vid(struct net_device *netdev, u16 vid)
-++#else
-++static void igb_vlan_rx_add_vid(struct net_device *netdev, u16 vid)
-+ #endif
-+ {
-+ 	struct igb_adapter *adapter = netdev_priv(netdev);
-+@@ -6990,15 +6995,19 @@ static int igb_vlan_rx_add_vid(struct net_device *netdev, u16 vid)
-+ 
-+ 	set_bit(vid, adapter->active_vlans);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
-+ 	return 0;
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) */
-+ }
-+ 
-+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
-+ static int igb_vlan_rx_kill_vid(struct net_device *netdev,
-+ 				__be16 proto, u16 vid)
-+-#else
-++#elif LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
-+ static int igb_vlan_rx_kill_vid(struct net_device *netdev, u16 vid)
-+-#endif
-++#else
-++static void igb_vlan_rx_kill_vid(struct net_device *netdev, u16 vid)
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0) */
-+ {
-+ 	struct igb_adapter *adapter = netdev_priv(netdev);
-+ 	struct e1000_hw *hw = &adapter->hw;
-+@@ -7014,7 +7023,9 @@ static int igb_vlan_rx_kill_vid(struct net_device *netdev, u16 vid)
-+ 
-+ 	clear_bit(vid, adapter->active_vlans);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
-+ 	return 0;
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) */
-+ }
-+ 
-+ static void igb_restore_vlan(struct igb_adapter *adapter)
+ #endif /* __BACKPORT_RANDOM_H */
+diff --git a/backport/compat/compat-3.8.c b/backport/compat/compat-3.8.c
+index d43d386..538f51d 100644
+--- a/backport/compat/compat-3.8.c
++++ b/backport/compat/compat-3.8.c
+@@ -419,6 +419,37 @@ int vm_iomap_memory(struct vm_area_struct *vma, phys_addr_t start, unsigned long
+ }
+ EXPORT_SYMBOL_GPL(vm_iomap_memory);
+ 
++/**
++ *	prandom_bytes - get the requested number of pseudo-random bytes
++ *	@buf: where to copy the pseudo-random bytes to
++ *	@bytes: the requested number of bytes
++ */
++void prandom_bytes(void *buf, int bytes)
++{
++	unsigned char *p = buf;
++	int i;
++
++	for (i = 0; i < round_down(bytes, sizeof(u32)); i += sizeof(u32)) {
++		u32 random = random32();
++		int j;
++
++		for (j = 0; j < sizeof(u32); j++) {
++			p[i + j] = random;
++			random >>= BITS_PER_BYTE;
++		}
++	}
++
++	if (i < bytes) {
++		u32 random = random32();
++
++		for (; i < bytes; i++) {
++			p[i] = random;
++			random >>= BITS_PER_BYTE;
++		}
++	}
++}
++EXPORT_SYMBOL_GPL(prandom_bytes_state);
++
+ #ifdef CONFIG_OF
+ /**
+  * of_find_property_value_of_size
 -- 
-1.8.3.1
+1.8.4.rc3
 
