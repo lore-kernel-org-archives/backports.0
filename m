@@ -1,150 +1,93 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:56176 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754849Ab3LRQJI (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 18 Dec 2013 11:09:08 -0500
-From: Stefan Assmann <sassmann@kpanic.de>
-To: mcgrof@kernel.org
-Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH RFC v2 10/11] backports: igb fixes for linux-3.1
-Date: Wed, 18 Dec 2013 17:08:24 +0100
-Message-Id: <1387382905-14274-11-git-send-email-sassmann@kpanic.de> (sfid-20131218_170912_278937_001C2258)
-In-Reply-To: <1387382905-14274-1-git-send-email-sassmann@kpanic.de>
-References: <1387382905-14274-1-git-send-email-sassmann@kpanic.de>
+Received: from s3.sipsolutions.net ([144.76.43.152]:43468 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753402Ab3LCOK5 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 3 Dec 2013 09:10:57 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Subject: [PATCH v3] backports: add support for prandom_bytes
+Date: Tue,  3 Dec 2013 15:10:52 +0100
+Message-Id: <1386079852-8248-1-git-send-email-johannes@sipsolutions.net> (sfid-20131203_151059_241798_6B8851B8)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-- add IFF_UNICAST_FLT define
-- add PCI_DEV_FLAGS_ASSIGNED define
-- add skb_frag_size_sub()
-- add skb_frag_address()
-- add patches/collateral-evolutions/network/82-ethernet/0011-igb_ethtool_ops.patch
-- add patches/collateral-evolutions/network/82-ethernet/0012-igb_ndo_set_vf_spoofchk.patch
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+This was added in 3.8 and not used until now.
+Since it it being used by the wireless stack, backport it.
+
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/linux/if.h               |  4 ++++
- backport/backport-include/linux/pci.h              |  8 ++++++++
- backport/backport-include/linux/skbuff.h           | 19 +++++++++++++++++
- .../network/82-ethernet/0011-igb_ethtool_ops.patch | 15 ++++++++++++++
- .../82-ethernet/0012-igb_ndo_set_vf_spoofchk.patch | 24 ++++++++++++++++++++++
- 5 files changed, 70 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/82-ethernet/0011-igb_ethtool_ops.patch
- create mode 100644 patches/collateral-evolutions/network/82-ethernet/0012-igb_ndo_set_vf_spoofchk.patch
+ backport/backport-include/linux/random.h |  3 +++
+ backport/compat/compat-3.8.c             | 32 ++++++++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+)
 
-diff --git a/backport/backport-include/linux/if.h b/backport/backport-include/linux/if.h
-index f23d2b8..a072579 100644
---- a/backport/backport-include/linux/if.h
-+++ b/backport/backport-include/linux/if.h
-@@ -37,4 +37,8 @@
- #define IFF_SUPP_NOFCS	0x80000		/* device supports sending custom FCS */
+diff --git a/backport/backport-include/linux/random.h b/backport/backport-include/linux/random.h
+index 812ce7f..e915106 100644
+--- a/backport/backport-include/linux/random.h
++++ b/backport/backport-include/linux/random.h
+@@ -8,6 +8,9 @@
+ #define prandom_seed(_seed)		srandom32(_seed)
+ #define prandom_u32()			random32()
+ #define prandom_u32_state(_state)	prandom32(_state)
++/* backport 6582c665d6b882dad8329e05749fbcf119f1ab88 */
++#define prandom_bytes LINUX_BACKPORT(prandom_bytes)
++void prandom_bytes(void *buf, int bytes);
  #endif
  
-+#ifndef IFF_UNICAST_FLT
-+#define IFF_UNICAST_FLT	0x20000		/* Supports unicast filtering	*/
-+#endif
-+
- #endif	/* _BACKPORT_LINUX_IF_H */
-diff --git a/backport/backport-include/linux/pci.h b/backport/backport-include/linux/pci.h
-index c3360f1..511e015 100644
---- a/backport/backport-include/linux/pci.h
-+++ b/backport/backport-include/linux/pci.h
-@@ -178,6 +178,14 @@ bool pci_pme_capable(struct pci_dev *dev, pci_power_t state);
- 	.subvendor = (subvend), .subdevice = (subdev)
- #endif /* PCI_DEVICE_SUB */
+ #endif /* __BACKPORT_RANDOM_H */
+diff --git a/backport/compat/compat-3.8.c b/backport/compat/compat-3.8.c
+index d43d386..70d3375 100644
+--- a/backport/compat/compat-3.8.c
++++ b/backport/compat/compat-3.8.c
+@@ -16,6 +16,7 @@
+ #include <linux/module.h>
+ #include "hid-ids.h"
+ #include <linux/netdevice.h>
++#include <linux/random.h>
  
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
-+enum backport_pci_dev_flags {
-+	/* Provide indication device is assigned by a Virtual Machine Manager */
-+	PCI_DEV_FLAGS_ASSIGNED = (__force pci_dev_flags_t) 4,
-+};
-+#define pci_dev_flags LINUX_BACKPORT(pci_dev_flags);
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0) */
-+
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)
- int pci_sriov_set_totalvfs(struct pci_dev *dev, u16 numvfs);
- #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0) */
-diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
-index c1b2753..2207e7e 100644
---- a/backport/backport-include/linux/skbuff.h
-+++ b/backport/backport-include/linux/skbuff.h
-@@ -224,6 +224,25 @@ static inline void skb_queue_splice_tail(const struct sk_buff_head *list,
- 		     skb = skb->next)
- #endif /* < 2.6.28 */
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,8))
+ void netdev_set_default_ethtool_ops(struct net_device *dev,
+@@ -419,6 +420,37 @@ int vm_iomap_memory(struct vm_area_struct *vma, phys_addr_t start, unsigned long
+ }
+ EXPORT_SYMBOL_GPL(vm_iomap_memory);
  
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
-+static inline void skb_frag_size_sub(skb_frag_t *frag, int delta)
-+{
-+	frag->size -= delta;
-+}
-+
 +/**
-+ * skb_frag_address - gets the address of the data contained in a paged fragment
-+ * @frag: the paged fragment buffer
-+ *
-+ * Returns the address of the data within @frag. The page must already
-+ * be mapped.
++ *	prandom_bytes - get the requested number of pseudo-random bytes
++ *	@buf: where to copy the pseudo-random bytes to
++ *	@bytes: the requested number of bytes
 + */
-+static inline void *skb_frag_address(const skb_frag_t *frag)
++void prandom_bytes(void *buf, int bytes)
 +{
-+	return page_address(skb_frag_page(frag)) + frag->page_offset;
-+}
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0) */
++	unsigned char *p = buf;
++	int i;
 +
- #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
++	for (i = 0; i < round_down(bytes, sizeof(u32)); i += sizeof(u32)) {
++		u32 random = random32();
++		int j;
++
++		for (j = 0; j < sizeof(u32); j++) {
++			p[i + j] = random;
++			random >>= BITS_PER_BYTE;
++		}
++	}
++
++	if (i < bytes) {
++		u32 random = random32();
++
++		for (; i < bytes; i++) {
++			p[i] = random;
++			random >>= BITS_PER_BYTE;
++		}
++	}
++}
++EXPORT_SYMBOL_GPL(prandom_bytes_state);
++
+ #ifdef CONFIG_OF
  /**
-  *	__skb_alloc_pages - allocate pages for ps-rx on a skb and preserve pfmemalloc data
-diff --git a/patches/collateral-evolutions/network/82-ethernet/0011-igb_ethtool_ops.patch b/patches/collateral-evolutions/network/82-ethernet/0011-igb_ethtool_ops.patch
-new file mode 100644
-index 0000000..293405d
---- /dev/null
-+++ b/patches/collateral-evolutions/network/82-ethernet/0011-igb_ethtool_ops.patch
-@@ -0,0 +1,15 @@
-+diff --git a/drivers/net/ethernet/intel/igb/igb_ethtool.c b/drivers/net/ethernet/intel/igb/igb_ethtool.c
-+index fcc7eb1..5989862 100644
-+--- a/drivers/net/ethernet/intel/igb/igb_ethtool.c
-++++ b/drivers/net/ethernet/intel/igb/igb_ethtool.c
-+@@ -3002,8 +3002,10 @@ static const struct ethtool_ops igb_ethtool_ops = {
-+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ 	.get_ts_info		= igb_get_ts_info,
-+ #endif
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)
-+ 	.get_rxnfc		= igb_get_rxnfc,
-+ 	.set_rxnfc		= igb_set_rxnfc,
-++#endif
-+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ 	.get_eee		= igb_get_eee,
-+ 	.set_eee		= igb_set_eee,
-diff --git a/patches/collateral-evolutions/network/82-ethernet/0012-igb_ndo_set_vf_spoofchk.patch b/patches/collateral-evolutions/network/82-ethernet/0012-igb_ndo_set_vf_spoofchk.patch
-new file mode 100644
-index 0000000..84b7fe2
---- /dev/null
-+++ b/patches/collateral-evolutions/network/82-ethernet/0012-igb_ndo_set_vf_spoofchk.patch
-@@ -0,0 +1,24 @@
-+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-+index 6bf0a88..90fd4d6 100644
-+--- a/drivers/net/ethernet/intel/igb/igb_main.c
-++++ b/drivers/net/ethernet/intel/igb/igb_main.c
-+@@ -1932,7 +1932,9 @@ static const struct net_device_ops igb_netdev_ops = {
-+ 	.ndo_set_vf_mac		= igb_ndo_set_vf_mac,
-+ 	.ndo_set_vf_vlan	= igb_ndo_set_vf_vlan,
-+ 	.ndo_set_vf_tx_rate	= igb_ndo_set_vf_bw,
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)
-+ 	.ndo_set_vf_spoofchk	= igb_ndo_set_vf_spoofchk,
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0) */
-+ 	.ndo_get_vf_config	= igb_ndo_get_vf_config,
-+ #ifdef CONFIG_NET_POLL_CONTROLLER
-+ 	.ndo_poll_controller	= igb_netpoll,
-+@@ -7676,7 +7678,9 @@ static int igb_ndo_get_vf_config(struct net_device *netdev,
-+ 	ivi->tx_rate = adapter->vf_data[vf].tx_rate;
-+ 	ivi->vlan = adapter->vf_data[vf].pf_vlan;
-+ 	ivi->qos = adapter->vf_data[vf].pf_qos;
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)
-+ 	ivi->spoofchk = adapter->vf_data[vf].spoofchk_enabled;
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0) */
-+ 	return 0;
-+ }
-+ 
+  * of_find_property_value_of_size
 -- 
-1.8.3.1
+1.8.4.rc3
 
