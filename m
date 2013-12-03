@@ -1,55 +1,64 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:38195 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753747Ab3LHPI1 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 8 Dec 2013 10:08:27 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/8] backports: add missing include for linux/of.h
-Date: Sun,  8 Dec 2013 16:08:08 +0100
-Message-Id: <1386515294-26231-3-git-send-email-hauke@hauke-m.de> (sfid-20131208_160829_182069_474D95E8)
-In-Reply-To: <1386515294-26231-1-git-send-email-hauke@hauke-m.de>
-References: <1386515294-26231-1-git-send-email-hauke@hauke-m.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Received: from s3.sipsolutions.net ([144.76.43.152]:42731 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752003Ab3LCKCp (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 3 Dec 2013 05:02:45 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] ckmake: sort kernel releases properly
+Date: Tue,  3 Dec 2013 11:02:41 +0100
+Message-Id: <1386064961-852-1-git-send-email-johannes@sipsolutions.net> (sfid-20131203_110248_745901_9AB0D0C5)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This fixes a compile error with some config options.
-Closes bug: https://bugzilla.kernel.org/show_bug.cgi?id=66601
+From: Johannes Berg <johannes.berg@intel.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-Reported-by: Richard Röjfors <richard.rojfors@gmail.com>
+Ever since 3.10, kernel releases weren't sorted properly.
+Put them into a parsed list first and then sort them to
+get the 3.10/11/12 etc. to the bottom of the list.
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/compat/compat-3.7.c |    1 +
- backport/compat/compat-3.8.c |    1 +
- 2 files changed, 2 insertions(+)
+ devel/ckmake | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/backport/compat/compat-3.7.c b/backport/compat/compat-3.7.c
-index b21b8ac..2d739f9 100644
---- a/backport/compat/compat-3.7.c
-+++ b/backport/compat/compat-3.7.c
-@@ -12,6 +12,7 @@
- #include <linux/export.h>
- #include <linux/pci.h>
- #include <linux/pci_regs.h>
-+#include <linux/of.h>
+diff --git a/devel/ckmake b/devel/ckmake
+index 7c0ab5a..8c44051 100755
+--- a/devel/ckmake
++++ b/devel/ckmake
+@@ -419,7 +419,7 @@ class kernel_set():
+ 	def parse_releases(self, target_kranges):
+ 		self.target_kranges = target_kranges
+ 		for dirname, dirnames, filenames in os.walk(modules):
+-			dirnames.sort()
++		        rels = []
+ 			for subdirname in dirnames:
+ 				specifics = get_rel_spec_ubuntu(subdirname)
+ 				if (not specifics):
+@@ -439,8 +439,7 @@ class kernel_set():
+ 					ver = ver + '.' + specifics['SUBLEVEL']
  
- bool mod_delayed_work(struct workqueue_struct *wq, struct delayed_work *dwork,
- 		      unsigned long delay)
-diff --git a/backport/compat/compat-3.8.c b/backport/compat/compat-3.8.c
-index a018ea9..c6824bf 100644
---- a/backport/compat/compat-3.8.c
-+++ b/backport/compat/compat-3.8.c
-@@ -17,6 +17,7 @@
- #include "hid-ids.h"
- #include <linux/netdevice.h>
- #include <linux/random.h>
-+#include <linux/of.h>
- 
- #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,8))
- void netdev_set_default_ethtool_ops(struct net_device *dev,
+ 				get_rel_spec_base(subdirname)
+-				rel = dict(idx=len(self.releases),
+-					   name=subdirname,
++				rel = dict(name=subdirname,
+ 					   full_path=dirname + '/' +
+ 							 subdirname,
+ 					   version=ver,
+@@ -454,6 +453,12 @@ class kernel_set():
+ 					   processed=False,
+ 					   log='',
+ 					   status=1234)
++                                rels.append(rel)
++			def relsort(rel):
++				return int(rel['ver']), int(rel['pat']), int(rel['sub'])
++			rels.sort(key=relsort)
++			for rel in rels:
++				rel['idx'] = len(self.releases)
+ 				self.evaluate_new_rel(rel)
+ 		self.refresh()
+ 	def setup_screen(self):
 -- 
-1.7.10.4
+1.8.4.rc3
 
