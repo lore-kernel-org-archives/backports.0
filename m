@@ -1,19 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ie0-f178.google.com ([209.85.223.178]:44959 "EHLO
-	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752122Ab3LNAaw (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 13 Dec 2013 19:30:52 -0500
-Received: by mail-ie0-f178.google.com with SMTP id lx4so3871291iec.37
-        for <backports@vger.kernel.org>; Fri, 13 Dec 2013 16:30:52 -0800 (PST)
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:47670 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752943Ab3LEUl5 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 5 Dec 2013 15:41:57 -0500
+Date: Thu, 5 Dec 2013 12:41:51 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Matt Walker <matt.g.d.walker@gmail.com>
+Cc: backports@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2] drivers/input/mouse: add support for newer elantech
+ touchpads (released ca. August 2013);
+Message-ID: <20131205204150.GA2761@core.coreip.homeip.net> (sfid-20131205_214214_578053_9DA14CA1)
+References: <CA+X2d=AHdivGF+s_uOC2ns5okoOdZHX1kEg4iuB32zUkBjsszg@mail.gmail.com>
 MIME-Version: 1.0
-Date: Fri, 13 Dec 2013 16:25:05 -0800
-Message-ID: <CAEsx0Y91qo99v=QNW4evOcCZmi5i9SupmtqVUkoHVcDKh9vEWw@mail.gmail.com> (sfid-20131214_013055_753203_6822EDBF)
-Subject: List of drivers available through backports
-From: Daniel Schultze <kinglag@gmail.com>
-To: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CA+X2d=AHdivGF+s_uOC2ns5okoOdZHX1kEg4iuB32zUkBjsszg@mail.gmail.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Is there or how can I make a list of all the available drivers for a
-given kernel version?
+On Wed, Dec 04, 2013 at 12:57:15PM -0500, Matt Walker wrote:
+> From: Matt Walker <matt.g.d.walker@gmail.com>
+> 
+> Added detection for newer Elantech touchpads, so that kernel doesn't
+> fall-back to default PS/2 driver. Supports touchpads released after
+> ~August 2013.  Fixes bug:
+> https://lists.launchpad.net/kernel-packages/msg18481.html
+> 
+> Signed-off by: Matt Walker <matt.g.d.walker@gmail.com> on an Acer
+> Aspire S7-392-6302
+
+Applied, thank you.
+
+> 
+> ----
+> 
+> Thanks to Hauke for the reference on how to submit a patch properly.
+> Thanks to Dmitry for correction to Signed-off line.
+> 
+> Diff Output:
+> 
+> --- linux-3.13-rc1/drivers/input/
+> mouse/elantech.c.orig    2013-12-03
+> 12:14:52.829173656 -0500
+> +++ linux-3.13-rc1/drivers/input/mouse/elantech.c    2013-12-03
+> 12:15:11.833173880 -0500
+> @@ -1313,6 +1313,7 @@ static int elantech_set_properties(struc
+>              break;
+>          case 6:
+>          case 7:
+> +        case 8:
+>              etd->hw_version = 4;
+>              break;
+>          default:
+
+
+
+-- 
+Dmitry
