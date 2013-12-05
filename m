@@ -1,47 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:64351 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751101Ab3LVL5W (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 22 Dec 2013 06:57:22 -0500
-From: Arend van Spriel <arend@broadcom.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>, Arend van Spriel <arend@broadcom.com>
-Subject: [PATCH] backports: random: add prandom_bytes macro for pre-3.8 kernels
-Date: Sun, 22 Dec 2013 12:57:14 +0100
-Message-ID: <1387713434-20109-1-git-send-email-arend@broadcom.com> (sfid-20131222_125724_927172_10481688)
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:53330 "EHLO
+	out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750737Ab3LEH6V (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 5 Dec 2013 02:58:21 -0500
+Message-Id: <1386230300.25703.55774821.4CE09797@webmail.messagingengine.com> (sfid-20131205_085828_456916_D86E7B29)
+From: "Nikita N." <nikitan@operamail.com>
+To: Daniel Schultze <kinglag@gmail.com>, backports@vger.kernel.org
 MIME-Version: 1.0
 Content-Type: text/plain
+Subject: Re: menuconfig
+Date: Wed, 04 Dec 2013 23:58:20 -0800
+In-Reply-To: <CAEsx0Y_RwZSks_EqBYY7XxUgiRaX4qP-yrSK4Lx4Mbdi1iqNtQ@mail.gmail.com>
+References: <CAEsx0Y_RwZSks_EqBYY7XxUgiRaX4qP-yrSK4Lx4Mbdi1iqNtQ@mail.gmail.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Map prandom_bytes() calls to get_random_bytes() for kernels before
-3.8 kernel. This patch is needed by mac80211 rate control code
-since following:
+Hi Daniel :) Im not a backports maintainer, but I got similar issue with
+encryption dependent devices, in fact my kernel was missing ccm option..
+maybe you could try to cross-check your kernel options with kconfig
+dependance?
 
-commit f7d8ad81ca8c447124821e58f876d1aff996c85f
-Author: Karl Beldan <karl.beldan@rivierawaves.com>
-Date:   Wed Nov 13 10:54:19 2013 +0100
+On Wed, Dec 4, 2013, at 03:12 PM, Daniel Schultze wrote:
+> Hello Developers,
+> 
+> I'm trying to use backports for its updated Bluetooth drivers on
+> Kernel 2.6.31. When I make menu config in LTIB the line for Bluetooth
+> support does not appear, however when I make menuconfig for the host
+> the line for Bluetooth appears, I'm using the same source archive from
+> backports-3.13-rc2-1 and I also tried backports-3.11.8-1 with the same
+> result. What should I check to make the Bluetooth line appear?
+> 
+> -Dan
+> --
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-    mac80211: minstrels: spare numerous useless calls to get_random_bytes
-
-Signed-off-by: Arend van Spriel <arend@broadcom.com>
----
- backport/backport-include/linux/random.h |    2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/backport/backport-include/linux/random.h b/backport/backport-include/linux/random.h
-index 812ce7f..3adde28 100644
---- a/backport/backport-include/linux/random.h
-+++ b/backport/backport-include/linux/random.h
-@@ -8,6 +8,8 @@
- #define prandom_seed(_seed)		srandom32(_seed)
- #define prandom_u32()			random32()
- #define prandom_u32_state(_state)	prandom32(_state)
-+/* use get_random_bytes() for lack of prandom_bytes() */
-+#define prandom_bytes(a, b)		get_random_bytes(a, b)
- #endif
- 
- #endif /* __BACKPORT_RANDOM_H */
 -- 
-1.7.10.4
+http://www.fastmail.fm - mmm... Fastmail...
 
