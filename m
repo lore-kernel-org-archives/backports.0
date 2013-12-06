@@ -1,93 +1,68 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:43468 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753402Ab3LCOK5 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 3 Dec 2013 09:10:57 -0500
-From: Johannes Berg <johannes@sipsolutions.net>
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:51116 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754641Ab3LFSaD (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 6 Dec 2013 13:30:03 -0500
+Received: by mail-wg0-f44.google.com with SMTP id a1so1026875wgh.23
+        for <backports@vger.kernel.org>; Fri, 06 Dec 2013 10:30:02 -0800 (PST)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Subject: [PATCH v3] backports: add support for prandom_bytes
-Date: Tue,  3 Dec 2013 15:10:52 +0100
-Message-Id: <1386079852-8248-1-git-send-email-johannes@sipsolutions.net> (sfid-20131203_151059_241798_6B8851B8)
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 1/3] backports: backport ktime_to_ms()
+Date: Fri,  6 Dec 2013 19:29:28 +0100
+Message-Id: <1386354570-23940-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20131206_193005_974323_C82194FD)
+In-Reply-To: <1386354570-23940-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1386354570-23940-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+This backports ktime_to_ms()
 
-This was added in 3.8 and not used until now.
-Since it it being used by the wireless stack, backport it.
+mcgrof@cerro ~/linux-next (git::master)$ git describe --contains f56916b9
+v2.6.35-rc1~490^2~16
 
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+commit f56916b97fe2031761ca611f0a342efd913afb33
+Author: Chuck Lever <chuck.lever@oracle.com>
+Date:   Fri May 7 13:34:37 2010 -0400
+
+    ktime: introduce ktime_to_ms()
+
+    To report ktime statistics to user space in milliseconds, a new helper
+    is required.
+
+    When considering how to do this conversion, I didn't immediately see
+    why the extra step of converting ktime to a timeval was needed.  To
+    make that more clear, introduce a couple of large comments.
+
+    Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+    Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/backport-include/linux/random.h |  3 +++
- backport/compat/compat-3.8.c             | 32 ++++++++++++++++++++++++++++++++
- 2 files changed, 35 insertions(+)
+ backport/backport-include/linux/ktime.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 backport/backport-include/linux/ktime.h
 
-diff --git a/backport/backport-include/linux/random.h b/backport/backport-include/linux/random.h
-index 812ce7f..e915106 100644
---- a/backport/backport-include/linux/random.h
-+++ b/backport/backport-include/linux/random.h
-@@ -8,6 +8,9 @@
- #define prandom_seed(_seed)		srandom32(_seed)
- #define prandom_u32()			random32()
- #define prandom_u32_state(_state)	prandom32(_state)
-+/* backport 6582c665d6b882dad8329e05749fbcf119f1ab88 */
-+#define prandom_bytes LINUX_BACKPORT(prandom_bytes)
-+void prandom_bytes(void *buf, int bytes);
- #endif
- 
- #endif /* __BACKPORT_RANDOM_H */
-diff --git a/backport/compat/compat-3.8.c b/backport/compat/compat-3.8.c
-index d43d386..70d3375 100644
---- a/backport/compat/compat-3.8.c
-+++ b/backport/compat/compat-3.8.c
-@@ -16,6 +16,7 @@
- #include <linux/module.h>
- #include "hid-ids.h"
- #include <linux/netdevice.h>
-+#include <linux/random.h>
- 
- #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,8))
- void netdev_set_default_ethtool_ops(struct net_device *dev,
-@@ -419,6 +420,37 @@ int vm_iomap_memory(struct vm_area_struct *vma, phys_addr_t start, unsigned long
- }
- EXPORT_SYMBOL_GPL(vm_iomap_memory);
- 
-+/**
-+ *	prandom_bytes - get the requested number of pseudo-random bytes
-+ *	@buf: where to copy the pseudo-random bytes to
-+ *	@bytes: the requested number of bytes
-+ */
-+void prandom_bytes(void *buf, int bytes)
+diff --git a/backport/backport-include/linux/ktime.h b/backport/backport-include/linux/ktime.h
+new file mode 100644
+index 0000000..741be25
+--- /dev/null
++++ b/backport/backport-include/linux/ktime.h
+@@ -0,0 +1,14 @@
++#ifndef __BACKPORT_LINUX_KTIME_H
++#define __BACKPORT_LINUX_KTIME_H
++#include_next <linux/ktime.h>
++#include <linux/version.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35)
++static inline s64 ktime_to_ms(const ktime_t kt)
 +{
-+	unsigned char *p = buf;
-+	int i;
-+
-+	for (i = 0; i < round_down(bytes, sizeof(u32)); i += sizeof(u32)) {
-+		u32 random = random32();
-+		int j;
-+
-+		for (j = 0; j < sizeof(u32); j++) {
-+			p[i + j] = random;
-+			random >>= BITS_PER_BYTE;
-+		}
-+	}
-+
-+	if (i < bytes) {
-+		u32 random = random32();
-+
-+		for (; i < bytes; i++) {
-+			p[i] = random;
-+			random >>= BITS_PER_BYTE;
-+		}
-+	}
++	struct timeval tv = ktime_to_timeval(kt);
++	return (s64) tv.tv_sec * MSEC_PER_SEC + tv.tv_usec / USEC_PER_MSEC;
 +}
-+EXPORT_SYMBOL_GPL(prandom_bytes_state);
++#endif /* #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35) */
 +
- #ifdef CONFIG_OF
- /**
-  * of_find_property_value_of_size
++#endif
 -- 
-1.8.4.rc3
+1.8.4.3
 
