@@ -1,66 +1,30 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:25620 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754837Ab3LRQJA (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 18 Dec 2013 11:09:00 -0500
-From: Stefan Assmann <sassmann@kpanic.de>
-To: mcgrof@kernel.org
-Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH RFC v2 08/11] backports: igb fixes for linux-3.3
-Date: Wed, 18 Dec 2013 17:08:22 +0100
-Message-Id: <1387382905-14274-9-git-send-email-sassmann@kpanic.de> (sfid-20131218_170911_025321_6D54C74E)
-In-Reply-To: <1387382905-14274-1-git-send-email-sassmann@kpanic.de>
-References: <1387382905-14274-1-git-send-email-sassmann@kpanic.de>
+Received: from mail-we0-f179.google.com ([74.125.82.179]:45516 "EHLO
+	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754784Ab3LHOyj (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 8 Dec 2013 09:54:39 -0500
+Received: by mail-we0-f179.google.com with SMTP id q59so2409082wes.24
+        for <backports@vger.kernel.org>; Sun, 08 Dec 2013 06:54:37 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <52A48629.6050905@hauke-m.de>
+References: <1386354570-23940-1-git-send-email-mcgrof@do-not-panic.com>
+ <1386354570-23940-2-git-send-email-mcgrof@do-not-panic.com> <52A48629.6050905@hauke-m.de>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Sun, 8 Dec 2013 15:54:17 +0100
+Message-ID: <CAB=NE6XTAW88aUVuF71B1p1H+M2MqVXepf45z9a47pwWbbS3gQ@mail.gmail.com> (sfid-20131208_155441_389480_A5059D70)
+Subject: Re: [PATCH 1/3] backports: backport ktime_to_ms()
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-- add IFF_SUPP_NOFCS define
-- add patches/collateral-evolutions/network/82-ethernet/0008-igb_no_fcs.patch
+On Sun, Dec 8, 2013 at 3:46 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+>> +#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35)
+>
+> Add this line here, otherwise we get problems with RHEL.
+> #define ktime_to_ms LINUX_BACKPORT(ktime_to_ms)
 
-Is there a better way to handle struct sk_buff changes?
+Doh, thanks, I've amended it.
 
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
----
- backport/backport-include/linux/if.h                     |  4 ++++
- .../network/82-ethernet/0008-igb_no_fcs.patch            | 16 ++++++++++++++++
- 2 files changed, 20 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/82-ethernet/0008-igb_no_fcs.patch
-
-diff --git a/backport/backport-include/linux/if.h b/backport/backport-include/linux/if.h
-index 8f85b83..f23d2b8 100644
---- a/backport/backport-include/linux/if.h
-+++ b/backport/backport-include/linux/if.h
-@@ -33,4 +33,8 @@
- #define IFF_LIVE_ADDR_CHANGE 0x100000
- #endif
- 
-+#ifndef IFF_SUPP_NOFCS
-+#define IFF_SUPP_NOFCS	0x80000		/* device supports sending custom FCS */
-+#endif
-+
- #endif	/* _BACKPORT_LINUX_IF_H */
-diff --git a/patches/collateral-evolutions/network/82-ethernet/0008-igb_no_fcs.patch b/patches/collateral-evolutions/network/82-ethernet/0008-igb_no_fcs.patch
-new file mode 100644
-index 0000000..f196f2d
---- /dev/null
-+++ b/patches/collateral-evolutions/network/82-ethernet/0008-igb_no_fcs.patch
-@@ -0,0 +1,16 @@
-+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-+index fd6a103..a919cfa 100644
-+--- a/drivers/net/ethernet/intel/igb/igb_main.c
-++++ b/drivers/net/ethernet/intel/igb/igb_main.c
-+@@ -4480,9 +4480,10 @@ static u32 igb_tx_cmd_type(struct sk_buff *skb, u32 tx_flags)
-+ 	cmd_type |= IGB_SET_FLAG(tx_flags, IGB_TX_FLAGS_TSTAMP,
-+ 				 (E1000_ADVTXD_MAC_TSTAMP));
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0)
-+ 	/* insert frame checksum */
-+ 	cmd_type ^= IGB_SET_FLAG(skb->no_fcs, 1, E1000_ADVTXD_DCMD_IFCS);
-+-
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0) */
-+ 	return cmd_type;
-+ }
-+ 
--- 
-1.8.3.1
-
+  Luis
