@@ -1,64 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:40363 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753929Ab3LBT2S (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 2 Dec 2013 14:28:18 -0500
-Date: Mon, 2 Dec 2013 20:28:13 +0100
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [ANN v2] New central Linux backports tree for development
-Message-ID: <20131202192813.GB15791@cerro.do-not-panic.com> (sfid-20131202_202841_457905_28B68DFF)
+Received: from mga02.intel.com ([134.134.136.20]:22085 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752468Ab3LHH2z convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 8 Dec 2013 02:28:55 -0500
+From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	Johannes Berg <johannes@sipsolutions.net>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: RE: [PATCH v3] backports: add support for prandom_bytes
+Date: Sun, 8 Dec 2013 07:28:51 +0000
+Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB303D19754@HASMSX103.ger.corp.intel.com> (sfid-20131208_082858_039193_139FE040)
+References: <1386079852-8248-1-git-send-email-johannes@sipsolutions.net>
+ <20131206161531.GB8196@cerro.do-not-panic.com>
+ <20131206182601.GC8196@cerro.do-not-panic.com>
+In-Reply-To: <20131206182601.GC8196@cerro.do-not-panic.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zx4FCpZtqtKETZ7O"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+> From: Luis R. Rodriguez [mailto:mcgrof@gmail.com] On Behalf Of Luis R.
+> Rodriguez
+> Sent: Friday, December 06, 2013 8:26 PM
+> To: Johannes Berg
+> Cc: backports@vger.kernel.org; Grumbach, Emmanuel
+> Subject: Re: [PATCH v3] backports: add support for prandom_bytes
+> 
+> On Fri, Dec 06, 2013 at 05:15:31PM +0100, Luis R. Rodriguez wrote:
+> > On Tue, Dec 03, 2013 at 03:10:52PM +0100, Johannes Berg wrote:
+> > > +EXPORT_SYMBOL_GPL(prandom_bytes_state);
+> >
+> > Where is prandom_bytes_state defined? Did you mean prandom_bytes ?
+> > This breaks compilation right now.
+> 
+> I'll fix this upon merge, modifying this without _state fixed things.
+>
 
---zx4FCpZtqtKETZ7O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Well... the patch was suggested by Johannes, of course I fixed it before I applied it in our internal tree, and apparently, I should have told him that I had to fix it before asking him to send upstream...
+Thanks Luis.
 
-[ first e-mail made a typo on a mailing list ]
-
-First, thanks *tons* to Hauke for taking over the tree maintenance
-while I was shackled. I'm back now though and ready to help
-out again, so keep 'em patches 'comin.
-
-It was convenient to switch maintenance between me and Hauke but
-it was an *inconvenience* to tell developers about a different repo
-switch during development, as such we now have a central repository
-which you should use and update your trees *one last time*:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git
-
-Please use this moving forward, if we ever need to switch who is
-maintaining the trees this should hopefully be fully transparent to
-development.
-
-  Luis
-
---zx4FCpZtqtKETZ7O
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSnN9NAAoJELt3oFG5aZ5Lp2UQAI671er0Pwvem09LtS6JTBap
-W5v4dPW3UsO2jMj8y0EjcUAif4/ugwqHs2lCVZRUqhkth10ZuzQyXnPifgsGmmjw
-sXbA/ahaakr+upDErRJp/HCUwvuChOmdmjK0cEWZlIC5ipfR3y11UUPtAKYH/wzT
-6Q5HDnVItkmus7Hc9Chugyocbp+QD43qiLnyK8OaBkoYRVjfasKNRFRboHcDGyzl
-ZxBAsmXqrbIFSh8zGSwh4WbxxncxBwshJ0AuCfjx7BrOZ31nJwsT/0WLWLtTpBrh
-00/TvxU88fJOKfHq9J1S6mAkztmKnTJEoripALUHhUksSBCP9sBcf2MBZXw4hsws
-bYHCa2si6oNC5RE4J9MQtCL+RcRBWBbKdZ5lYV/tbZm0+bqYaHC/9MFeHmIokUys
-kTtNB1d+T/OT5qsOyguhak9oN5XIW0UAqphJCzv1TWK7CdeSMkrNb0QTu79AUaJH
-Pl+0lkgsPsWa9/GY6rjEmbM7gnq/1aRaFGyemBOQ0zrLJLBFmARuRKOJrSkFSXEm
-f6+8Gz/ki0F+KCh5xaFnAbOi6R0TsE9wMkCWN7tLbPuPLqFahN10C6xRIOjWkI8l
-yoVSIzUEYg70d3ZhnulO1M2g/DC7pPHEVNgfWRqdbc2y043AJZH8INsh+A7itkJF
-F1vrL8+K6GXQThzXngj+
-=xiBj
------END PGP SIGNATURE-----
-
---zx4FCpZtqtKETZ7O--
