@@ -1,67 +1,72 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:33500 "EHLO
-	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S933259Ab3LIV5a (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 9 Dec 2013 16:57:30 -0500
-Date: Mon, 9 Dec 2013 22:57:27 +0100 (CET)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-cc: Johannes Berg <johannes@sipsolutions.net>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Peter Senna <peter.senna@gmail.com>,
-	Gilles Muller <Gilles.Muller@lip6.fr>
-Subject: Re: [PATCH 1/3] backports: convert the 62-usb_driver_lpm patch series
- to SmPL
-In-Reply-To: <CAB=NE6VHM3bSXb_3eeEOJ4QLQd3MKkABE=Ky1BdJLZqhjdmFxg@mail.gmail.com>
-Message-ID: <alpine.DEB.2.02.1312092252140.2041@localhost6.localdomain6> (sfid-20131209_225740_497376_87721DCA)
-References: <1386613665-11656-1-git-send-email-mcgrof@do-not-panic.com> <1386613665-11656-2-git-send-email-mcgrof@do-not-panic.com> <1386617105.5042.0.camel@jlt4.sipsolutions.net> <CAB=NE6VHM3bSXb_3eeEOJ4QLQd3MKkABE=Ky1BdJLZqhjdmFxg@mail.gmail.com>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:38077 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758807Ab3LHOqL (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 8 Dec 2013 09:46:11 -0500
+Message-ID: <52A48629.6050905@hauke-m.de> (sfid-20131208_154614_420988_A63100AD)
+Date: Sun, 08 Dec 2013 15:46:01 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	backports@vger.kernel.org
+Subject: Re: [PATCH 1/3] backports: backport ktime_to_ms()
+References: <1386354570-23940-1-git-send-email-mcgrof@do-not-panic.com> <1386354570-23940-2-git-send-email-mcgrof@do-not-panic.com>
+In-Reply-To: <1386354570-23940-2-git-send-email-mcgrof@do-not-panic.com>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 9 Dec 2013, Luis R. Rodriguez wrote:
-
-> On Mon, Dec 9, 2013 at 8:25 PM, Johannes Berg <johannes@sipsolutions.net> wrote:
-> > On Mon, 2013-12-09 at 19:27 +0100, Luis R. Rodriguez wrote:
-> >
-> >> +++ b/patches/collateral-evolutions/network/62-usb_driver_lpm.cocci
-> >> @@ -0,0 +1,9 @@
-> >> +@@
-> >> +identifier backport_driver;
-> >> +@@
-> >> +struct usb_driver backport_driver = {
-> >
-> > You don't need "..." here?
+On 12/06/2013 07:29 PM, Luis R. Rodriguez wrote:
+> This backports ktime_to_ms()
 > 
-> Not in this case, it works, adding it actually doesn't work right now as I wish.
-
-Structure initializers are a little bit special.  The programmer can put 
-them in any order and all of them are optional.  So in a semantic patch, 
-you can put only the ones that are relevant to the patch, in any order 
-that you want.  All of them have to appear, but others can appear as well.
-
-The only time when you would want to put ... in this case is when you are 
-adding a new field initializer (note that Luis's patch only adds 
-decoration round an existing field initializer).  In that case, if you put 
-..., before the added field initializer, the addition will be at the end, 
-and if you put ..., after the field initializer, the addition will be at 
-the beginning.
-
-Note that this is completely different than the declaration of the 
-structure type itself.  In that case, the fields are ordered, so ... is 
-needed.
-
-julia
-
-
-
+> mcgrof@cerro ~/linux-next (git::master)$ git describe --contains f56916b9
+> v2.6.35-rc1~490^2~16
 > 
-> >> ++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-> >> +     .disable_hub_initiated_lpm = 1,
-> >> ++#endif
-> >> +...
-> >> +};
+> commit f56916b97fe2031761ca611f0a342efd913afb33
+> Author: Chuck Lever <chuck.lever@oracle.com>
+> Date:   Fri May 7 13:34:37 2010 -0400
 > 
->   Luis
+>     ktime: introduce ktime_to_ms()
 > 
+>     To report ktime statistics to user space in milliseconds, a new helper
+>     is required.
+> 
+>     When considering how to do this conversion, I didn't immediately see
+>     why the extra step of converting ktime to a timeval was needed.  To
+>     make that more clear, introduce a couple of large comments.
+> 
+>     Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+>     Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
+> 
+> Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+> ---
+>  backport/backport-include/linux/ktime.h | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>  create mode 100644 backport/backport-include/linux/ktime.h
+> 
+> diff --git a/backport/backport-include/linux/ktime.h b/backport/backport-include/linux/ktime.h
+> new file mode 100644
+> index 0000000..741be25
+> --- /dev/null
+> +++ b/backport/backport-include/linux/ktime.h
+> @@ -0,0 +1,14 @@
+> +#ifndef __BACKPORT_LINUX_KTIME_H
+> +#define __BACKPORT_LINUX_KTIME_H
+> +#include_next <linux/ktime.h>
+> +#include <linux/version.h>
+> +
+> +#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35)
+
+Add this line here, otherwise we get problems with RHEL.
+#define ktime_to_ms LINUX_BACKPORT(ktime_to_ms)
+
+> +static inline s64 ktime_to_ms(const ktime_t kt)
+> +{
+> +	struct timeval tv = ktime_to_timeval(kt);
+> +	return (s64) tv.tv_sec * MSEC_PER_SEC + tv.tv_usec / USEC_PER_MSEC;
+> +}
+> +#endif /* #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35) */
+> +
+> +#endif
+> 
+
