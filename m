@@ -1,59 +1,55 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:47670 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752943Ab3LEUl5 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 5 Dec 2013 15:41:57 -0500
-Date: Thu, 5 Dec 2013 12:41:51 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Matt Walker <matt.g.d.walker@gmail.com>
-Cc: backports@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2] drivers/input/mouse: add support for newer elantech
- touchpads (released ca. August 2013);
-Message-ID: <20131205204150.GA2761@core.coreip.homeip.net> (sfid-20131205_214214_578053_9DA14CA1)
-References: <CA+X2d=AHdivGF+s_uOC2ns5okoOdZHX1kEg4iuB32zUkBjsszg@mail.gmail.com>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:38195 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753747Ab3LHPI1 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 8 Dec 2013 10:08:27 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 2/8] backports: add missing include for linux/of.h
+Date: Sun,  8 Dec 2013 16:08:08 +0100
+Message-Id: <1386515294-26231-3-git-send-email-hauke@hauke-m.de> (sfid-20131208_160829_182069_474D95E8)
+In-Reply-To: <1386515294-26231-1-git-send-email-hauke@hauke-m.de>
+References: <1386515294-26231-1-git-send-email-hauke@hauke-m.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CA+X2d=AHdivGF+s_uOC2ns5okoOdZHX1kEg4iuB32zUkBjsszg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Dec 04, 2013 at 12:57:15PM -0500, Matt Walker wrote:
-> From: Matt Walker <matt.g.d.walker@gmail.com>
-> 
-> Added detection for newer Elantech touchpads, so that kernel doesn't
-> fall-back to default PS/2 driver. Supports touchpads released after
-> ~August 2013.  Fixes bug:
-> https://lists.launchpad.net/kernel-packages/msg18481.html
-> 
-> Signed-off by: Matt Walker <matt.g.d.walker@gmail.com> on an Acer
-> Aspire S7-392-6302
+This fixes a compile error with some config options.
+Closes bug: https://bugzilla.kernel.org/show_bug.cgi?id=66601
 
-Applied, thank you.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Reported-by: Richard Röjfors <richard.rojfors@gmail.com>
+---
+ backport/compat/compat-3.7.c |    1 +
+ backport/compat/compat-3.8.c |    1 +
+ 2 files changed, 2 insertions(+)
 
-> 
-> ----
-> 
-> Thanks to Hauke for the reference on how to submit a patch properly.
-> Thanks to Dmitry for correction to Signed-off line.
-> 
-> Diff Output:
-> 
-> --- linux-3.13-rc1/drivers/input/
-> mouse/elantech.c.orig    2013-12-03
-> 12:14:52.829173656 -0500
-> +++ linux-3.13-rc1/drivers/input/mouse/elantech.c    2013-12-03
-> 12:15:11.833173880 -0500
-> @@ -1313,6 +1313,7 @@ static int elantech_set_properties(struc
->              break;
->          case 6:
->          case 7:
-> +        case 8:
->              etd->hw_version = 4;
->              break;
->          default:
-
-
-
+diff --git a/backport/compat/compat-3.7.c b/backport/compat/compat-3.7.c
+index b21b8ac..2d739f9 100644
+--- a/backport/compat/compat-3.7.c
++++ b/backport/compat/compat-3.7.c
+@@ -12,6 +12,7 @@
+ #include <linux/export.h>
+ #include <linux/pci.h>
+ #include <linux/pci_regs.h>
++#include <linux/of.h>
+ 
+ bool mod_delayed_work(struct workqueue_struct *wq, struct delayed_work *dwork,
+ 		      unsigned long delay)
+diff --git a/backport/compat/compat-3.8.c b/backport/compat/compat-3.8.c
+index a018ea9..c6824bf 100644
+--- a/backport/compat/compat-3.8.c
++++ b/backport/compat/compat-3.8.c
+@@ -17,6 +17,7 @@
+ #include "hid-ids.h"
+ #include <linux/netdevice.h>
+ #include <linux/random.h>
++#include <linux/of.h>
+ 
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,8))
+ void netdev_set_default_ethtool_ops(struct net_device *dev,
 -- 
-Dmitry
+1.7.10.4
+
