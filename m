@@ -1,117 +1,136 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:45380 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:38200 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754668Ab3LVS4p (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 22 Dec 2013 13:56:45 -0500
-Message-ID: <52B735E4.5080309@hauke-m.de> (sfid-20131222_195651_311057_09650058)
-Date: Sun, 22 Dec 2013 19:56:36 +0100
+	id S1753747Ab3LHPI3 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 8 Dec 2013 10:08:29 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Stefan Assmann <sassmann@kpanic.de>, mcgrof@kernel.org
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH RFC v2 06/11] backports: igb fixes for linux-3.5
-References: <1387382905-14274-1-git-send-email-sassmann@kpanic.de> <1387382905-14274-7-git-send-email-sassmann@kpanic.de> <52B206F9.3020702@hauke-m.de> <52B2C2AA.2070407@kpanic.de>
-In-Reply-To: <52B2C2AA.2070407@kpanic.de>
-Content-Type: text/plain; charset=windows-1252
+To: mcgrof@gmail.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 3/8] backports: add LINUX_BACKPORT infront of functions
+Date: Sun,  8 Dec 2013 16:08:09 +0100
+Message-Id: <1386515294-26231-4-git-send-email-hauke@hauke-m.de> (sfid-20131208_160830_934639_30C590B4)
+In-Reply-To: <1386515294-26231-1-git-send-email-hauke@hauke-m.de>
+References: <1386515294-26231-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 12/19/2013 10:55 AM, Stefan Assmann wrote:
-> On 18.12.2013 21:35, Hauke Mehrtens wrote:
->> On 12/18/2013 05:08 PM, Stefan Assmann wrote:
->>> - add EEE defines
->>> - add struct ethtool_eee
->>> - backport __skb_alloc_page and __skb_alloc_pages
->>> - add patches/collateral-evolutions/network/82-ethernet/0006-igb_eee.patch
->>>
->>> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
->>> ---
->>>  backport/backport-include/linux/ethtool.h          | 31 +++++++++++++++
->>>  backport/backport-include/linux/gfp.h              | 10 +++++
->>>  backport/backport-include/linux/mdio.h             | 23 ++++++++++-
->>>  backport/backport-include/linux/skbuff.h           | 46 ++++++++++++++++++++++
->>>  .../network/82-ethernet/0006-igb_eee.patch         | 15 +++++++
->>>  5 files changed, 124 insertions(+), 1 deletion(-)
->>>  create mode 100644 backport/backport-include/linux/gfp.h
->>>  create mode 100644 patches/collateral-evolutions/network/82-ethernet/0006-igb_eee.patch
->>>
->>> diff --git a/backport/backport-include/linux/ethtool.h b/backport/backport-include/linux/ethtool.h
->>> index 647fbf6..4f13cb9 100644
->>> --- a/backport/backport-include/linux/ethtool.h
->>> +++ b/backport/backport-include/linux/ethtool.h
->>> @@ -42,4 +42,35 @@ static inline __u32 ethtool_cmd_speed(const struct ethtool_cmd *ep)
->>>  }
->>>  #endif
->>>  
->>> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
->>> +/**
->>> + * struct ethtool_eee - Energy Efficient Ethernet information
->>> + * @cmd: ETHTOOL_{G,S}EEE
->>> + * @supported: Mask of %SUPPORTED_* flags for the speed/duplex combinations
->>> + *	for which there is EEE support.
->>> + * @advertised: Mask of %ADVERTISED_* flags for the speed/duplex combinations
->>> + *	advertised as eee capable.
->>> + * @lp_advertised: Mask of %ADVERTISED_* flags for the speed/duplex
->>> + *	combinations advertised by the link partner as eee capable.
->>> + * @eee_active: Result of the eee auto negotiation.
->>> + * @eee_enabled: EEE configured mode (enabled/disabled).
->>> + * @tx_lpi_enabled: Whether the interface should assert its tx lpi, given
->>> + *	that eee was negotiated.
->>> + * @tx_lpi_timer: Time in microseconds the interface delays prior to asserting
->>> + *	its tx lpi (after reaching 'idle' state). Effective only when eee
->>> + *	was negotiated and tx_lpi_enabled was set.
->>> + */
->>> +struct ethtool_eee {
->>> +	__u32	cmd;
->>> +	__u32	supported;
->>> +	__u32	advertised;
->>> +	__u32	lp_advertised;
->>> +	__u32	eee_active;
->>> +	__u32	eee_enabled;
->>> +	__u32	tx_lpi_enabled;
->>> +	__u32	tx_lpi_timer;
->>> +	__u32	reserved[2];
->>> +};
->>> +#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0) */
->>
->> The get_eee and set_eee callbacks in struct ethtool_ops are not
->> available on this kernel, you could also add a #ifdef <kernel version>
->> around igb_get_eee() and igb_set_eee() and remove the struct here.
-> 
-> True, but that would result in more ifdefs in igb and I'd like to keep
-> the number at a minimum. Results in less maintenance work if upstream
-> changes.
+This is needed to add support for SLES 11 SP3 support.
 
-Yes, but on the other side I am getting some build warnings, because
-these function are static and not used. I do not think this will break
-often because the order of function isn't changed often and if that is
-the case it is easy to fix.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/pci.h      |    4 ++++
+ backport/backport-include/linux/usb.h      |    1 +
+ backport/backport-include/linux/usb/ch9.h  |    1 +
+ backport/backport-include/linux/watchdog.h |    1 +
+ backport/compat/compat-3.7.c               |    9 +++------
+ 5 files changed, 10 insertions(+), 6 deletions(-)
 
-Hauke
-
-  CC [M]
-/home/hauke/compat-wireless/backports-20131206/drivers/net/ethernet/intel/igb/igb_main.o
-/home/hauke/compat-wireless/backports-20131206/drivers/net/ethernet/intel/igb/igb_main.c:7359:12:
-warning: ‘igb_pci_sriov_configure’ defined but not used [-Wunused-function]
-  CC [M]
-/home/hauke/compat-wireless/backports-20131206/drivers/net/ethernet/intel/igb/igb_ethtool.o
-/home/hauke/compat-wireless/backports-20131206/drivers/net/ethernet/intel/igb/igb_ethtool.c:2354:12:
-warning: ‘igb_get_ts_info’ defined but not used [-Wunused-function]
-/home/hauke/compat-wireless/backports-20131206/drivers/net/ethernet/intel/igb/igb_ethtool.c:2660:12:
-warning: ‘igb_set_eee’ defined but not used [-Wunused-function]
-/home/hauke/compat-wireless/backports-20131206/drivers/net/ethernet/intel/igb/igb_ethtool.c:2718:12:
-warning: ‘igb_get_module_info’ defined but not used [-Wunused-function]
-/home/hauke/compat-wireless/backports-20131206/drivers/net/ethernet/intel/igb/igb_ethtool.c:2760:12:
-warning: ‘igb_get_module_eeprom’ defined but not used [-Wunused-function]
-/home/hauke/compat-wireless/backports-20131206/drivers/net/ethernet/intel/igb/igb_ethtool.c:2810:12:
-warning: ‘igb_get_rxfh_indir_size’ defined but not used [-Wunused-function]
-/home/hauke/compat-wireless/backports-20131206/drivers/net/ethernet/intel/igb/igb_ethtool.c:2815:12:
-warning: ‘igb_get_rxfh_indir’ defined but not used [-Wunused-function]
-/home/hauke/compat-wireless/backports-20131206/drivers/net/ethernet/intel/igb/igb_ethtool.c:2861:12:
-warning: ‘igb_set_rxfh_indir’ defined but not used [-Wunused-function]
-  CC [M]
-/home/hauke/compat-wireless/backports-20131206/drivers/net/ethernet/intel/igb/e1000_82575.o
-  CC [M]
-/home/hauke/compat-wireless/backports-20131206/drivers/net/ethernet/intel/igb/e1000_mac.o
-
+diff --git a/backport/backport-include/linux/pci.h b/backport/backport-include/linux/pci.h
+index 208278d..3a1815a 100644
+--- a/backport/backport-include/linux/pci.h
++++ b/backport/backport-include/linux/pci.h
+@@ -100,24 +100,28 @@ int pcie_capability_clear_and_set_word(struct pci_dev *dev, int pos,
+ int pcie_capability_clear_and_set_dword(struct pci_dev *dev, int pos,
+ 					u32 clear, u32 set);
+ 
++#define pcie_capability_set_word LINUX_BACKPORT(pcie_capability_set_word)
+ static inline int pcie_capability_set_word(struct pci_dev *dev, int pos,
+ 					   u16 set)
+ {
+ 	return pcie_capability_clear_and_set_word(dev, pos, 0, set);
+ }
+ 
++#define pcie_capability_set_dword LINUX_BACKPORT(pcie_capability_set_dword)
+ static inline int pcie_capability_set_dword(struct pci_dev *dev, int pos,
+ 					    u32 set)
+ {
+ 	return pcie_capability_clear_and_set_dword(dev, pos, 0, set);
+ }
+ 
++#define pcie_capability_clear_word LINUX_BACKPORT(pcie_capability_clear_word)
+ static inline int pcie_capability_clear_word(struct pci_dev *dev, int pos,
+ 					     u16 clear)
+ {
+ 	return pcie_capability_clear_and_set_word(dev, pos, clear, 0);
+ }
+ 
++#define pcie_capability_clear_dword LINUX_BACKPORT(pcie_capability_clear_dword)
+ static inline int pcie_capability_clear_dword(struct pci_dev *dev, int pos,
+ 					      u32 clear)
+ {
+diff --git a/backport/backport-include/linux/usb.h b/backport/backport-include/linux/usb.h
+index 7f5ba20..08ae0f2 100644
+--- a/backport/backport-include/linux/usb.h
++++ b/backport/backport-include/linux/usb.h
+@@ -144,6 +144,7 @@ extern int usb_anchor_empty(struct usb_anchor *anchor);
+ #endif /* 2.6.23-2.6.27 */
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
++#define usb_translate_errors LINUX_BACKPORT(usb_translate_errors)
+ static inline int usb_translate_errors(int error_code)
+ {
+ 	switch (error_code) {
+diff --git a/backport/backport-include/linux/usb/ch9.h b/backport/backport-include/linux/usb/ch9.h
+index 222b3f9..33c5959 100644
+--- a/backport/backport-include/linux/usb/ch9.h
++++ b/backport/backport-include/linux/usb/ch9.h
+@@ -36,6 +36,7 @@ enum usb_device_speed {
+  *
+  * Returns @epd's max packet
+  */
++#define usb_endpoint_maxp LINUX_BACKPORT(usb_endpoint_maxp)
+ static inline int usb_endpoint_maxp(const struct usb_endpoint_descriptor *epd)
+ {
+ 	return __le16_to_cpu(epd->wMaxPacketSize);
+diff --git a/backport/backport-include/linux/watchdog.h b/backport/backport-include/linux/watchdog.h
+index fb68535..49f6669 100644
+--- a/backport/backport-include/linux/watchdog.h
++++ b/backport/backport-include/linux/watchdog.h
+@@ -4,6 +4,7 @@
+ 
+ #if (RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,4))
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,1,0)
++#define watchdog_device LINUX_BACKPORT(watchdog_device)
+ struct watchdog_device {
+ };
+ #endif
+diff --git a/backport/compat/compat-3.7.c b/backport/compat/compat-3.7.c
+index 2d739f9..f7e7848 100644
+--- a/backport/compat/compat-3.7.c
++++ b/backport/compat/compat-3.7.c
+@@ -47,21 +47,18 @@ static inline u16 pcie_flags_reg(struct pci_dev *dev)
+ 	return reg16;
+ }
+ 
++#define pci_pcie_type LINUX_BACKPORT(pci_pcie_type)
+ static inline int pci_pcie_type(struct pci_dev *dev)
+ {
+ 	return (pcie_flags_reg(dev) & PCI_EXP_FLAGS_TYPE) >> 4;
+ }
+ 
++#define pcie_cap_version LINUX_BACKPORT(pcie_cap_version)
+ static inline int pcie_cap_version(struct pci_dev *dev)
+ {
+ 	return pcie_flags_reg(dev) & PCI_EXP_FLAGS_VERS;
+ }
+ 
+-static inline bool pcie_cap_has_devctl(const struct pci_dev *dev)
+-{
+-	return true;
+-}
+-
+ static inline bool pcie_cap_has_lnkctl(struct pci_dev *dev)
+ {
+ 	int type = pci_pcie_type(dev);
+@@ -102,7 +99,7 @@ static bool pcie_capability_reg_implemented(struct pci_dev *dev, int pos)
+ 	case PCI_EXP_DEVCAP:
+ 	case PCI_EXP_DEVCTL:
+ 	case PCI_EXP_DEVSTA:
+-		return pcie_cap_has_devctl(dev);
++		return true;
+ 	case PCI_EXP_LNKCAP:
+ 	case PCI_EXP_LNKCTL:
+ 	case PCI_EXP_LNKSTA:
+-- 
+1.7.10.4
 
