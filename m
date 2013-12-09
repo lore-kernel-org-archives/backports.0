@@ -1,125 +1,166 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:35849 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760593Ab3LIS1x (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 9 Dec 2013 13:27:53 -0500
-Received: by mail-we0-f174.google.com with SMTP id q58so3895871wes.33
-        for <backports@vger.kernel.org>; Mon, 09 Dec 2013 10:27:52 -0800 (PST)
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:43462 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761468Ab3LIS2A (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 9 Dec 2013 13:28:00 -0500
+Received: by mail-wg0-f44.google.com with SMTP id a1so3773231wgh.11
+        for <backports@vger.kernel.org>; Mon, 09 Dec 2013 10:27:59 -0800 (PST)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
 Cc: peter.senna@gmail.com, julia.lawall@lip6.fr, Gilles.Muller@lip6.fr,
 	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 0/3] backports: add two more SmPL patches
-Date: Mon,  9 Dec 2013 19:27:42 +0100
-Message-Id: <1386613665-11656-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20131209_192759_253444_F40875A4)
+Subject: [PATCH 3/3] backports: refresh patches for next-20131206 a second time
+Date: Mon,  9 Dec 2013 19:27:45 +0100
+Message-Id: <1386613665-11656-4-git-send-email-mcgrof@do-not-panic.com> (sfid-20131209_192804_024505_48EF7551)
+In-Reply-To: <1386613665-11656-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1386613665-11656-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This adds two more SmPL patches (spatches) replacing tons of
-patches files. The improvements on run time in Coccinelle make
-it reasonable to integrate these changes due to the gains this
-provides for automatic porting of collateral evolutions for
-any new random driver.
+After a few changes were made we need a refresh of patches
+against next-20131206, this refreshes the patches and test
+compiles against all supported kernels again.
 
-Luis R. Rodriguez (3):
-  backports: convert the 62-usb_driver_lpm patch series to SmPL
-  backports: convert 11-dev-pm-ops patch series to SmPL
-  backports: refresh patches for next-20131206 a second time
+$ time ckmake --allyesconfig
+1   2.6.25              [  OK  ]
+2   2.6.26              [  OK  ]
+3   2.6.27              [  OK  ]
+4   2.6.28              [  OK  ]
+5   2.6.29              [  OK  ]
+6   2.6.30              [  OK  ]
+7   2.6.31              [  OK  ]
+8   2.6.32              [  OK  ]
+9   2.6.33              [  OK  ]
+10  2.6.34              [  OK  ]
+11  2.6.35              [  OK  ]
+12  2.6.36              [  OK  ]
+13  2.6.37              [  OK  ]
+14  2.6.38              [  OK  ]
+15  2.6.39              [  OK  ]
+16  3.0.101             [  OK  ]
+17  3.1.10              [  OK  ]
+18  3.2.52              [  OK  ]
+19  3.3.8               [  OK  ]
+20  3.4.70              [  OK  ]
+21  3.5.7               [  OK  ]
+22  3.6.11              [  OK  ]
+23  3.7.10              [  OK  ]
+24  3.8.13              [  OK  ]
+25  3.9.11              [  OK  ]
+26  3.10.20             [  OK  ]
+27  3.11.9              [  OK  ]
+28  3.12.1              [  OK  ]
+29  3.13-rc1            [  OK  ]
 
- .../network/11-dev-pm-ops.cocci                    | 42 ++++++++++++++++++++++
- .../network/11-dev-pm-ops/INFO                     |  9 -----
- .../11-dev-pm-ops/drivers_bcma_host_pci.patch      | 25 -------------
- .../drivers_net_ethernet_atheros_alx_main.patch    | 25 -------------
- ...ers_net_ethernet_atheros_atl1c_atl1c_main.patch | 25 -------------
- .../drivers_net_ethernet_atheros_atlx_atl1.patch   | 25 -------------
- .../drivers_net_wireless_ath_ath5k_pci.patch       | 25 -------------
- .../drivers_net_wireless_ath_ath9k_pci.patch       | 25 -------------
- .../drivers_net_wireless_iwlegacy_common.patch     |  8 ++---
- .../drivers_net_wireless_iwlwifi_pcie_drv.patch    | 25 -------------
- .../drivers_net_wireless_mwifiex_pcie.patch        | 12 +------
- .../drivers_net_wireless_p54_p54pci.patch          | 25 -------------
- ...drivers_net_wireless_rtlwifi_rtl8188ee_sw.patch | 25 -------------
- ...drivers_net_wireless_rtlwifi_rtl8192ce_sw.patch | 25 -------------
- ...drivers_net_wireless_rtlwifi_rtl8192de_sw.patch | 25 -------------
- ...drivers_net_wireless_rtlwifi_rtl8192se_sw.patch | 25 -------------
- ...drivers_net_wireless_rtlwifi_rtl8723ae_sw.patch | 25 -------------
- .../drivers_net_ethernet_atheros_atlx_atl1.patch   |  8 ++---
- .../drivers_net_ethernet_atheros_atlx_atl1.patch   |  2 +-
- .../network/62-usb_driver_lpm.cocci                |  9 +++++
- .../drivers_bluetooth_ath3k.patch                  | 12 -------
- .../drivers_bluetooth_bcm203x.patch                | 12 -------
- .../drivers_bluetooth_bfusb.patch                  | 12 -------
- .../drivers_bluetooth_bpa10x.patch                 | 12 -------
- .../drivers_bluetooth_btusb.patch                  | 12 -------
- .../drivers_net_usb_cdc_ether.patch                | 12 -------
- .../drivers_net_usb_cdc_mbim.patch                 | 12 -------
- .../drivers_net_usb_cdc_ncm.patch                  | 12 -------
- .../drivers_net_usb_qmi_wwan.patch                 | 12 -------
- .../drivers_net_usb_rndis_host.patch               | 12 -------
- .../drivers_net_usb_sierra_net.patch               | 12 -------
- .../drivers_net_wireless_at76c50x-usb.patch        | 12 -------
- .../drivers_net_wireless_ath_ath6kl_usb.patch      | 12 -------
- .../drivers_net_wireless_ath_ath9k_hif_usb.patch   | 12 -------
- .../drivers_net_wireless_ath_carl9170_usb.patch    | 12 -------
- ...ivers_net_wireless_brcm80211_brcmfmac_usb.patch | 12 -------
- .../drivers_net_wireless_libertas_if_usb.patch     | 12 -------
- .../drivers_net_wireless_libertas_tf_if_usb.patch  | 12 -------
- .../drivers_net_wireless_orinoco_orinoco_usb.patch | 12 -------
- .../drivers_net_wireless_p54_p54usb.patch          | 12 -------
- .../drivers_net_wireless_rndis_wlan.patch          | 12 -------
- .../drivers_net_wireless_rt2x00_rt2500usb.patch    | 12 -------
- .../drivers_net_wireless_rt2x00_rt2800usb.patch    | 12 -------
- .../drivers_net_wireless_rt2x00_rt73usb.patch      | 12 -------
- .../drivers_net_wireless_rtl818x_rtl8187_dev.patch | 12 -------
- ...drivers_net_wireless_rtlwifi_rtl8192cu_sw.patch | 12 -------
- .../drivers_net_wireless_zd1211rw_zd_usb.patch     | 12 -------
- .../drivers_usb_class_cdc-wdm.patch                | 12 -------
- 48 files changed, 60 insertions(+), 691 deletions(-)
- create mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops.cocci
- delete mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/INFO
- delete mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_bcma_host_pci.patch
- delete mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_alx_main.patch
- delete mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_atl1c_atl1c_main.patch
- delete mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_ethernet_atheros_atlx_atl1.patch
- delete mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_ath_ath5k_pci.patch
- delete mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_ath_ath9k_pci.patch
- delete mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_iwlwifi_pcie_drv.patch
- delete mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_p54_p54pci.patch
- delete mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_rtlwifi_rtl8188ee_sw.patch
- delete mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_rtlwifi_rtl8192ce_sw.patch
- delete mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_rtlwifi_rtl8192de_sw.patch
- delete mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_rtlwifi_rtl8192se_sw.patch
- delete mode 100644 patches/collateral-evolutions/network/11-dev-pm-ops/drivers_net_wireless_rtlwifi_rtl8723ae_sw.patch
- create mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm.cocci
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_bluetooth_ath3k.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_bluetooth_bcm203x.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_bluetooth_bfusb.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_bluetooth_bpa10x.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_bluetooth_btusb.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ether.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_mbim.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_cdc_ncm.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_qmi_wwan.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_rndis_host.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_usb_sierra_net.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_at76c50x-usb.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_ath_ath6kl_usb.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_ath_ath9k_hif_usb.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_ath_carl9170_usb.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_brcm80211_brcmfmac_usb.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_libertas_if_usb.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_libertas_tf_if_usb.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_orinoco_orinoco_usb.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_p54_p54usb.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_rndis_wlan.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_rt2x00_rt2500usb.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_rt2x00_rt2800usb.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_rt2x00_rt73usb.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_rtl818x_rtl8187_dev.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_rtlwifi_rtl8192cu_sw.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_net_wireless_zd1211rw_zd_usb.patch
- delete mode 100644 patches/collateral-evolutions/network/62-usb_driver_lpm/drivers_usb_class_cdc-wdm.patch
+real    33m3.982s
+user    892m21.988s
+sys     128m11.492s
 
+Current run time *without* the last two cocci patches applied:
+
+mcgrof@drvbp1 ~/backports (git::master)$ time ./gentree.py \
+	--verbose \
+	--clean \
+	--refresh \
+	/home/mcgrof/linux-next/ \
+	/home/mcgrof/build/next-20131206
+
+real    3m13.530s
+user    2m56.104s
+sys     0m16.180s
+
+With the last two cocci patch files applied and spatch version 1.0.0-rc17:
+
+mcgrof@drvbp1 ~/backports (git::master)$ time ./gentree.py \
+	--verbose \
+	--clean \
+	--refresh \
+	/home/mcgrof/linux-next/ \
+	/home/mcgrof/build/next-20131206
+
+real    23m2.521s
+user    19m19.436s
+sys     3m3.840s
+
+With the last two cocci patch files applied and spatch version 1.0.0-rc19:
+
+mcgrof@drvbp1 ~/backports (git::master)$ time ./gentree.py \
+	--verbose \
+	--clean \
+	--refresh \
+	/home/mcgrof/linux-next/ \
+	/home/mcgrof/build/next-20131206
+
+real    8m6.077s
+user    7m46.076s
+sys     0m18.124s
+
+Moving forward please make sure to have present at least spatch
+1.0.0-rc19 on your system to generate releases. The gains of extending
+how we do backports more automatically with Coccinelle for the
+short cost observed on 1.0.0-rc19 makes it worth it to continue to
+embrace SmPL to backport further collateral evolutions.
+
+Cc: Peter Senna <peter.senna@gmail.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Gilles Muller <Gilles.Muller@lip6.fr>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ .../drivers_net_ethernet_atheros_atlx_atl1.patch                  | 8 ++++----
+ .../drivers_net_ethernet_atheros_atlx_atl1.patch                  | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_atlx_atl1.patch b/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_atlx_atl1.patch
+index dc8a73e..f7f943b 100644
+--- a/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_atlx_atl1.patch
++++ b/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_atlx_atl1.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/net/ethernet/atheros/atlx/atl1.c
+ +++ b/drivers/net/ethernet/atheros/atlx/atl1.c
+-@@ -2912,8 +2912,10 @@ static const struct net_device_ops atl1_
++@@ -2909,8 +2909,10 @@ static const struct net_device_ops atl1_
+  	.ndo_validate_addr	= eth_validate_addr,
+  	.ndo_set_mac_address	= atl1_set_mac,
+  	.ndo_change_mtu		= atl1_change_mtu,
+@@ -11,7 +11,7 @@
+  	.ndo_do_ioctl		= atlx_ioctl,
+  	.ndo_tx_timeout		= atlx_tx_timeout,
+  #ifdef CONFIG_NET_POLL_CONTROLLER
+-@@ -3023,11 +3025,13 @@ static int atl1_probe(struct pci_dev *pd
++@@ -3020,11 +3022,13 @@ static int atl1_probe(struct pci_dev *pd
+  	netdev->features |= NETIF_F_SG;
+  	netdev->features |= (NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_CTAG_RX);
+  
+@@ -25,7 +25,7 @@
+  
+  	/*
+  	 * patch for some L1 of old version,
+-@@ -3615,6 +3619,14 @@ static int atl1_set_pauseparam(struct ne
++@@ -3607,6 +3611,14 @@ static int atl1_set_pauseparam(struct ne
+  	return 0;
+  }
+  
+@@ -40,7 +40,7 @@
+  static void atl1_get_strings(struct net_device *netdev, u32 stringset,
+  	u8 *data)
+  {
+-@@ -3687,6 +3699,12 @@ static const struct ethtool_ops atl1_eth
++@@ -3679,6 +3691,12 @@ static const struct ethtool_ops atl1_eth
+  	.nway_reset		= atl1_nway_reset,
+  	.get_ethtool_stats	= atl1_get_ethtool_stats,
+  	.get_sset_count		= atl1_get_sset_count,
+diff --git a/patches/collateral-evolutions/network/61-netdev-addr_assign_type/drivers_net_ethernet_atheros_atlx_atl1.patch b/patches/collateral-evolutions/network/61-netdev-addr_assign_type/drivers_net_ethernet_atheros_atlx_atl1.patch
+index c09ad69..2584d87 100644
+--- a/patches/collateral-evolutions/network/61-netdev-addr_assign_type/drivers_net_ethernet_atheros_atlx_atl1.patch
++++ b/patches/collateral-evolutions/network/61-netdev-addr_assign_type/drivers_net_ethernet_atheros_atlx_atl1.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/net/ethernet/atheros/atlx/atl1.c
+ +++ b/drivers/net/ethernet/atheros/atlx/atl1.c
+-@@ -3055,7 +3055,9 @@ static int atl1_probe(struct pci_dev *pd
++@@ -3052,7 +3052,9 @@ static int atl1_probe(struct pci_dev *pd
+  	/* copy the MAC address out of the EEPROM */
+  	if (atl1_read_mac_addr(&adapter->hw)) {
+  		/* mark random mac */
 -- 
 1.8.4.3
 
