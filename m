@@ -1,93 +1,67 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.xlhost.de ([84.200.252.118]:54868 "EHLO app1b.xlhost.de"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751738Ab3LSI4t (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 19 Dec 2013 03:56:49 -0500
-Message-ID: <52B2B4CE.1080207@kpanic.de> (sfid-20131219_095652_010374_15D50B14)
-Date: Thu, 19 Dec 2013 09:56:46 +0100
-From: Stefan Assmann <sassmann@kpanic.de>
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:33500 "EHLO
+	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S933259Ab3LIV5a (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 9 Dec 2013 16:57:30 -0500
+Date: Mon, 9 Dec 2013 22:57:27 +0100 (CET)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+cc: Johannes Berg <johannes@sipsolutions.net>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Peter Senna <peter.senna@gmail.com>,
+	Gilles Muller <Gilles.Muller@lip6.fr>
+Subject: Re: [PATCH 1/3] backports: convert the 62-usb_driver_lpm patch series
+ to SmPL
+In-Reply-To: <CAB=NE6VHM3bSXb_3eeEOJ4QLQd3MKkABE=Ky1BdJLZqhjdmFxg@mail.gmail.com>
+Message-ID: <alpine.DEB.2.02.1312092252140.2041@localhost6.localdomain6> (sfid-20131209_225740_497376_87721DCA)
+References: <1386613665-11656-1-git-send-email-mcgrof@do-not-panic.com> <1386613665-11656-2-git-send-email-mcgrof@do-not-panic.com> <1386617105.5042.0.camel@jlt4.sipsolutions.net> <CAB=NE6VHM3bSXb_3eeEOJ4QLQd3MKkABE=Ky1BdJLZqhjdmFxg@mail.gmail.com>
 MIME-Version: 1.0
-To: Hauke Mehrtens <hauke@hauke-m.de>, mcgrof@kernel.org
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH RFC v2 02/11] backports: igb fixes for linux-3.9
-References: <1387382905-14274-1-git-send-email-sassmann@kpanic.de> <1387382905-14274-3-git-send-email-sassmann@kpanic.de> <52B2034D.3020100@hauke-m.de>
-In-Reply-To: <52B2034D.3020100@hauke-m.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 18.12.2013 21:19, Hauke Mehrtens wrote:
-> On 12/18/2013 05:08 PM, Stefan Assmann wrote:
->> - add struct pci_sriov
->> - add pci_vfs_assigned()
->> - add PCI_SRIOV defines
->> - add patches/collateral-evolutions/network/82-ethernet/0001-igb_net_device_ops.patch
->>
->> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
->> ---
->>  backport/backport-include/linux/pci.h              | 25 ++++++++++
->>  backport/backport-include/linux/pci_regs.h         |  8 ++++
->>  backport/compat/backport-3.10.c                    | 46 ++++++++++++++++++
->>  .../82-ethernet/0001-igb_net_device_ops.patch      | 56 ++++++++++++++++++++++
->>  4 files changed, 135 insertions(+)
->>  create mode 100644 patches/collateral-evolutions/network/82-ethernet/0001-igb_net_device_ops.patch
->>
->> diff --git a/backport/backport-include/linux/pci.h b/backport/backport-include/linux/pci.h
->> index 3a1815a..b56761f 100644
->> --- a/backport/backport-include/linux/pci.h
->> +++ b/backport/backport-include/linux/pci.h
->> @@ -178,4 +178,29 @@ bool pci_pme_capable(struct pci_dev *dev, pci_power_t state);
->>  	.subvendor = (subvend), .subdevice = (subdev)
->>  #endif /* PCI_DEVICE_SUB */
->>  
->> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
->> +/* Taken from drivers/pci/pci.h */
->> +struct pci_sriov {
->> +	int pos;		/* capability position */
->> +	int nres;		/* number of resources */
->> +	u32 cap;		/* SR-IOV Capabilities */
->> +	u16 ctrl;		/* SR-IOV Control */
->> +	u16 total_VFs;		/* total VFs associated with the PF */
->> +	u16 initial_VFs;	/* initial VFs associated with the PF */
->> +	u16 num_VFs;		/* number of VFs available */
->> +	u16 offset;		/* first VF Routing ID offset */
->> +	u16 stride;		/* following VF stride */
->> +	u32 pgsz;		/* page size for BAR alignment */
->> +	u8 link;		/* Function Dependency Link */
->> +	u16 driver_max_VFs;	/* max num VFs driver supports */
->> +	struct pci_dev *dev;	/* lowest numbered PF */
->> +	struct pci_dev *self;	/* this PF */
->> +	struct mutex lock;	/* lock for VF bus */
->> +	struct work_struct mtask; /* VF Migration task */
->> +	u8 __iomem *mstate;	/* VF Migration State Array */
->> +};
-> 
-> where is this struct used?
+On Mon, 9 Dec 2013, Luis R. Rodriguez wrote:
 
-/dev/shm/next/compat/backport-3.10.c: In function pci_vfs_assigned:
-/dev/shm/next/compat/backport-3.10.c:156: error: dereferencing pointer to incomplete type
-pci_read_config_word(dev, dev->sriov->pos + PCI_SRIOV_VF_DID, &dev_id);
+> On Mon, Dec 9, 2013 at 8:25 PM, Johannes Berg <johannes@sipsolutions.net> wrote:
+> > On Mon, 2013-12-09 at 19:27 +0100, Luis R. Rodriguez wrote:
+> >
+> >> +++ b/patches/collateral-evolutions/network/62-usb_driver_lpm.cocci
+> >> @@ -0,0 +1,9 @@
+> >> +@@
+> >> +identifier backport_driver;
+> >> +@@
+> >> +struct usb_driver backport_driver = {
+> >
+> > You don't need "..." here?
+> 
+> Not in this case, it works, adding it actually doesn't work right now as I wish.
+
+Structure initializers are a little bit special.  The programmer can put 
+them in any order and all of them are optional.  So in a semantic patch, 
+you can put only the ones that are relevant to the patch, in any order 
+that you want.  All of them have to appear, but others can appear as well.
+
+The only time when you would want to put ... in this case is when you are 
+adding a new field initializer (note that Luis's patch only adds 
+decoration round an existing field initializer).  In that case, if you put 
+..., before the added field initializer, the addition will be at the end, 
+and if you put ..., after the field initializer, the addition will be at 
+the beginning.
+
+Note that this is completely different than the declaration of the 
+structure type itself.  In that case, the fields are ordered, so ... is 
+needed.
+
+julia
+
+
 
 > 
->> +extern int pci_vfs_assigned(struct pci_dev *dev);
-> The extern is not needed.
-
-Yes, my bad. Going to fix that.
-
+> >> ++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
+> >> +     .disable_hub_initiated_lpm = 1,
+> >> ++#endif
+> >> +...
+> >> +};
 > 
-> If CONFIG_PCI_IOV is not set backports will not include the
-> implementation of this function, you should add something like this in
-> the header:
+>   Luis
 > 
-> #ifdef CONFIG_PCI_IOV
-> int pci_vfs_assigned(struct pci_dev *dev);
-> #else
-> static inline int pci_vfs_assigned(struct pci_dev *dev)
-> {
-> 	return 0;
-> }
-> #endif
-
-Agreed.
-
-  Stefan
