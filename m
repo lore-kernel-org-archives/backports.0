@@ -1,45 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:51867 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752400Ab3LMQ0z (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 13 Dec 2013 11:26:55 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 7BF402056E
-	for <backports@vger.kernel.org>; Fri, 13 Dec 2013 16:26:50 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 7111120561
-	for <backports@vger.kernel.org>; Fri, 13 Dec 2013 16:26:44 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 65881] errors compiling after make defconfig-alx
-Date: Fri, 13 Dec 2013 16:26:44 +0000
-Message-ID: <bug-65881-58281-yB1lYm0jaT@https.bugzilla.kernel.org/> (sfid-20131213_172657_461503_15EAD2A9)
-In-Reply-To: <bug-65881-58281@https.bugzilla.kernel.org/>
-References: <bug-65881-58281@https.bugzilla.kernel.org/>
+Received: from s3.sipsolutions.net ([144.76.43.152]:41267 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755833Ab3LITZI (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 9 Dec 2013 14:25:08 -0500
+Message-ID: <1386617105.5042.0.camel@jlt4.sipsolutions.net> (sfid-20131209_202511_007518_CB71FBD1)
+Subject: Re: [PATCH 1/3] backports: convert the 62-usb_driver_lpm patch
+ series to SmPL
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org, peter.senna@gmail.com,
+	julia.lawall@lip6.fr, Gilles.Muller@lip6.fr
+Date: Mon, 09 Dec 2013 20:25:05 +0100
+In-Reply-To: <1386613665-11656-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20131209_192800_083965_BD70A433)
+References: <1386613665-11656-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1386613665-11656-2-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20131209_192800_083965_BD70A433)
 Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=65881
+On Mon, 2013-12-09 at 19:27 +0100, Luis R. Rodriguez wrote:
 
---- Comment #6 from Kenn <kolson@wsd1.org> ---
-(In reply to Hauke Mehrtens from comment #5)
-> There are some fixes for problems with SLES 11 SP3 in the latest release,
-> please try backports-20131206 and report your results.
+> +++ b/patches/collateral-evolutions/network/62-usb_driver_lpm.cocci
+> @@ -0,0 +1,9 @@
+> +@@
+> +identifier backport_driver;
+> +@@
+> +struct usb_driver backport_driver = {
 
-Thanks! That compiled without any errors!
+You don't need "..." here?
 
-Unfortunately, the driver did not work for the laptop we were trying to get on
-the network. It's an Alienware 17 with Qualcomm LAN Killer E2201 wireless.
-Vendor ID 1969 Device ID E091. Unfortunately, I no longer have the device in my
-office, so testing any further updates requires extra steps from my colleagues.
+> ++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
+> +	.disable_hub_initiated_lpm = 1,
+> ++#endif
+> +...
+> +};
 
-However, I will monitor backports releases and try new ones periodically.
-Hopefully the NIC in the Alienware notebook will be supported soon.
+johannes
 
-Thanks again for your help!
-
--- 
-You are receiving this mail because:
-You are the assignee for the bug.
