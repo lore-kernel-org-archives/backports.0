@@ -1,84 +1,67 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.xlhost.de ([84.200.252.118]:39045 "EHLO app1b.xlhost.de"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751627Ab3LSJz4 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 19 Dec 2013 04:55:56 -0500
-Message-ID: <52B2C2AA.2070407@kpanic.de> (sfid-20131219_105601_937417_51D5262B)
-Date: Thu, 19 Dec 2013 10:55:54 +0100
-From: Stefan Assmann <sassmann@kpanic.de>
-MIME-Version: 1.0
-To: Hauke Mehrtens <hauke@hauke-m.de>, mcgrof@kernel.org
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH RFC v2 06/11] backports: igb fixes for linux-3.5
-References: <1387382905-14274-1-git-send-email-sassmann@kpanic.de> <1387382905-14274-7-git-send-email-sassmann@kpanic.de> <52B206F9.3020702@hauke-m.de>
-In-Reply-To: <52B206F9.3020702@hauke-m.de>
-Content-Type: text/plain; charset=ISO-8859-1
+Received: from mail-la0-f42.google.com ([209.85.215.42]:47744 "EHLO
+	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752816Ab3LJPgP (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 10 Dec 2013 10:36:15 -0500
+Received: by mail-la0-f42.google.com with SMTP id ec20so2822629lab.1
+        for <backports@vger.kernel.org>; Tue, 10 Dec 2013 07:36:14 -0800 (PST)
+Received: from [192.168.1.20] ([193.15.182.253])
+        by mx.google.com with ESMTPSA id e10sm22485342laa.6.2013.12.10.07.36.13
+        for <backports@vger.kernel.org>
+        (version=TLSv1 cipher=RC4-SHA bits=128/128);
+        Tue, 10 Dec 2013 07:36:13 -0800 (PST)
+Message-ID: <1386689770.5956.4.camel@asus> (sfid-20131210_163617_710999_14F5BF21)
+Subject: [PATCH] compat.3.7, compat.3.8: Adds missing of.h include
+From: Richard =?ISO-8859-1?Q?R=F6jfors?= <richard.rojfors@gmail.com>
+To: backports@vger.kernel.org
+Date: Tue, 10 Dec 2013 16:36:10 +0100
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 18.12.2013 21:35, Hauke Mehrtens wrote:
-> On 12/18/2013 05:08 PM, Stefan Assmann wrote:
->> - add EEE defines
->> - add struct ethtool_eee
->> - backport __skb_alloc_page and __skb_alloc_pages
->> - add patches/collateral-evolutions/network/82-ethernet/0006-igb_eee.patch
->>
->> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
->> ---
->>  backport/backport-include/linux/ethtool.h          | 31 +++++++++++++++
->>  backport/backport-include/linux/gfp.h              | 10 +++++
->>  backport/backport-include/linux/mdio.h             | 23 ++++++++++-
->>  backport/backport-include/linux/skbuff.h           | 46 ++++++++++++++++++++++
->>  .../network/82-ethernet/0006-igb_eee.patch         | 15 +++++++
->>  5 files changed, 124 insertions(+), 1 deletion(-)
->>  create mode 100644 backport/backport-include/linux/gfp.h
->>  create mode 100644 patches/collateral-evolutions/network/82-ethernet/0006-igb_eee.patch
->>
->> diff --git a/backport/backport-include/linux/ethtool.h b/backport/backport-include/linux/ethtool.h
->> index 647fbf6..4f13cb9 100644
->> --- a/backport/backport-include/linux/ethtool.h
->> +++ b/backport/backport-include/linux/ethtool.h
->> @@ -42,4 +42,35 @@ static inline __u32 ethtool_cmd_speed(const struct ethtool_cmd *ep)
->>  }
->>  #endif
->>  
->> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
->> +/**
->> + * struct ethtool_eee - Energy Efficient Ethernet information
->> + * @cmd: ETHTOOL_{G,S}EEE
->> + * @supported: Mask of %SUPPORTED_* flags for the speed/duplex combinations
->> + *	for which there is EEE support.
->> + * @advertised: Mask of %ADVERTISED_* flags for the speed/duplex combinations
->> + *	advertised as eee capable.
->> + * @lp_advertised: Mask of %ADVERTISED_* flags for the speed/duplex
->> + *	combinations advertised by the link partner as eee capable.
->> + * @eee_active: Result of the eee auto negotiation.
->> + * @eee_enabled: EEE configured mode (enabled/disabled).
->> + * @tx_lpi_enabled: Whether the interface should assert its tx lpi, given
->> + *	that eee was negotiated.
->> + * @tx_lpi_timer: Time in microseconds the interface delays prior to asserting
->> + *	its tx lpi (after reaching 'idle' state). Effective only when eee
->> + *	was negotiated and tx_lpi_enabled was set.
->> + */
->> +struct ethtool_eee {
->> +	__u32	cmd;
->> +	__u32	supported;
->> +	__u32	advertised;
->> +	__u32	lp_advertised;
->> +	__u32	eee_active;
->> +	__u32	eee_enabled;
->> +	__u32	tx_lpi_enabled;
->> +	__u32	tx_lpi_timer;
->> +	__u32	reserved[2];
->> +};
->> +#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0) */
-> 
-> The get_eee and set_eee callbacks in struct ethtool_ops are not
-> available on this kernel, you could also add a #ifdef <kernel version>
-> around igb_get_eee() and igb_set_eee() and remove the struct here.
+This applies to 3.13-rc2
 
-True, but that would result in more ifdefs in igb and I'd like to keep
-the number at a minimum. Results in less maintenance work if upstream
-changes.
+The compat-3.7.c och compat-3.8.c uses of-functions if supported by the
+kernel, but there is a missing include for linux/of.h.
 
-  Stefan
+This patch fixes the compile error which looks like this:
+
+| NOTE: make -j 8 ARCH=arm KLIB_BUILD=/path/usr/src/kernel KLIB=/path/image
+|   CC [M]  /path/backports-3.13-rc2-1/compat/compat-3.7.o
+| /path/backports-3.13-rc2-1/compat/compat-3.7.c: In function 'of_get_child_by_name':
+| /path/backports-3.13-rc2-1/compat/compat-3.7.c:274:1: error: unknown type name 'z'
+| /path/backports-3.13-rc2-1/compat/compat-3.7.c:276:3: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'if'
+| make[6]: *** [/path/backports-3.13-rc2-1/compat/compat-3.7.o] Error 1
+| make[5]: *** [/path/backports-3.13-rc2-1/compat] Error 2
+| make[4]: *** [_module_/path/backports/3.13-rc2-1-r0/backports-3.13-rc2-1] Error 2
+| make[3]: *** [modules] Error 2
+| make[2]: *** [modules] Error 2
+| make[1]: *** [modules] Error 2
+| make: *** [default] Error 2
+
+Signed-off-by: Richard Röjfors <richard.rojfors@gmail.com>
+---
+--- backports-3.13-rc2-1.org/compat/compat-3.7.c	2013-12-05 12:19:56.161016836 +0100
++++ backports-3.13-rc2-1.new/compat/compat-3.7.c	2013-12-05 12:18:40.257012431 +0100
+@@ -256,6 +256,8 @@
+ 
+ #ifdef CONFIG_OF
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0))
++#include <linux/of.h>
++
+ /**
+  *	of_get_child_by_name - Find the child node by name for a given parent
+  *	@node:	parent node
+--- backports-3.13-rc2-1.org/compat/compat-3.8.c	2013-12-05 12:17:53.093009694 +0100
++++ backports-3.13-rc2-1.new/compat/compat-3.8.c	2013-12-05 12:18:42.745012576 +0100
+@@ -420,6 +420,8 @@
+ EXPORT_SYMBOL_GPL(vm_iomap_memory);
+ 
+ #ifdef CONFIG_OF
++#include <linux/of.h>
++
+ /**
+  * of_find_property_value_of_size
+  *
+
