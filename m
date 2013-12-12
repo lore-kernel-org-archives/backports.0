@@ -1,91 +1,115 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:38184 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753747Ab3LHPIY (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 8 Dec 2013 10:08:24 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 0/8] backports: fixes for distribution kernels
-Date: Sun,  8 Dec 2013 16:08:06 +0100
-Message-Id: <1386515294-26231-1-git-send-email-hauke@hauke-m.de> (sfid-20131208_160826_564343_C502BC00)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Received: from mx1.redhat.com ([209.132.183.28]:26809 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751523Ab3LLJ3N (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 12 Dec 2013 04:29:13 -0500
+From: Stefan Assmann <sassmann@kpanic.de>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH RFC 09/10] backports: igb fixes for linux-3.2
+Date: Thu, 12 Dec 2013 10:28:01 +0100
+Message-Id: <1386840482-585-10-git-send-email-sassmann@kpanic.de> (sfid-20131212_102915_296594_48115A6A)
+In-Reply-To: <1386840482-585-1-git-send-email-sassmann@kpanic.de>
+References: <1386840482-585-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-These patches are mostly containing fixes for the RHEL 6.5 and for the 
-SLES 11 SP3 kernel. With these changes I was able to compile it on both 
-distribution. The first patch fixes a problem with mainline kernel 
-3.10.21 and upwards and the second something when device tree support 
-is activated as it was reported in the bugzilla bugreport.
+- handle struct ethtool_ops changes
+- add patches/collateral-evolutions/network/82-ethernet/igb_vlan_rx_vid.patch
 
-If we want to support SLES 11 SP3 and RHEL 6.5 with backports 3.13.X 
-the last 6 patches should go into that branch, but I haven't tested 
-that, this was only tested with linux-next.
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+---
+ backport/backport-include/linux/ethtool.h          |  5 ++
+ .../network/82-ethernet/igb_vlan_rx_vid.patch      | 64 ++++++++++++++++++++++
+ 2 files changed, 69 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/igb_vlan_rx_vid.patch
 
-These patches are based on the backports patches already posted on the 
-mailing list.
-
-1   2.6.25              [  OK  ]
-2   2.6.26              [  OK  ]
-3   2.6.27              [  OK  ]
-4   2.6.28              [  OK  ]
-5   2.6.29              [  OK  ]
-6   2.6.30              [  OK  ]
-7   2.6.31              [  OK  ]
-8   2.6.32              [  OK  ]
-9   2.6.33              [  OK  ]
-10  2.6.34              [  OK  ]
-11  2.6.35              [  OK  ]
-12  2.6.36              [  OK  ]
-13  2.6.37              [  OK  ]
-14  2.6.38              [  OK  ]
-15  2.6.39              [  OK  ]
-16  3.0.101             [  OK  ]
-17  3.1.10              [  OK  ]
-18  3.2.52              [  OK  ]
-19  3.3.8               [  OK  ]
-20  3.4.70              [  OK  ]
-21  3.5.7               [  OK  ]
-22  3.6.11              [  OK  ]
-23  3.7.10              [  OK  ]
-24  3.8.13              [  OK  ]
-25  3.9.11              [  OK  ]
-26  3.10.20             [  OK  ]
-27  3.11.9              [  OK  ]
-28  3.12.1              [  OK  ]
-29  3.13-rc1            [  OK  ]
-
-
-Hauke Mehrtens (8):
-  backports: remove DMI_EXACT_MATCH
-  backports: add missing include for linux/of.h
-  backports: add LINUX_BACKPORT infront of functions
-  backports: remove unused workqueue backports
-  backports: so not add netdev_features_t on RHEL 6.5
-  backports: add missing LINUX_BACKPORT() on various places
-  backports: fix skb_add_rx_fragi() for SLES 11 SP3
-  backports: do not call dev_hw_addr_random()
-
- backport/backport-include/linux/device.h          |    3 ++
- backport/backport-include/linux/err.h             |    1 +
- backport/backport-include/linux/etherdevice.h     |    6 ++-
- backport/backport-include/linux/mod_devicetable.h |    4 --
- backport/backport-include/linux/netdev_features.h |    2 +
- backport/backport-include/linux/pci.h             |    4 ++
- backport/backport-include/linux/proc_fs.h         |    2 +
- backport/backport-include/linux/skbuff.h          |    5 ++-
- backport/backport-include/linux/usb.h             |    1 +
- backport/backport-include/linux/usb/ch9.h         |    1 +
- backport/backport-include/linux/watchdog.h        |    1 +
- backport/backport-include/linux/workqueue.h       |   15 --------
- backport/backport-include/net/netlink.h           |   11 ++++++
- backport/compat/compat-2.6.36.c                   |   42 ---------------------
- backport/compat/compat-3.7.c                      |   10 ++---
- backport/compat/compat-3.8.c                      |    1 +
- 16 files changed, 40 insertions(+), 69 deletions(-)
-
+diff --git a/backport/backport-include/linux/ethtool.h b/backport/backport-include/linux/ethtool.h
+index 9a7575f..c2ab04d 100644
+--- a/backport/backport-include/linux/ethtool.h
++++ b/backport/backport-include/linux/ethtool.h
+@@ -224,6 +224,11 @@ struct backport_ethtool_ops {
+ 				     struct ethtool_eeprom *, u8 *);
+ 	int	(*get_eee)(struct net_device *, struct ethtool_eee *);
+ 	int	(*set_eee)(struct net_device *, struct ethtool_eee *);
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
++	u32	(*get_rx_csum)(struct net_device *);
++	u32	(*get_flags)(struct net_device *);
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0) */
+ };
+ #define ethtool_ops LINUX_BACKPORT(ethtool_ops)
+ 
+diff --git a/patches/collateral-evolutions/network/82-ethernet/igb_vlan_rx_vid.patch b/patches/collateral-evolutions/network/82-ethernet/igb_vlan_rx_vid.patch
+new file mode 100644
+index 0000000..44ea22e
+--- /dev/null
++++ b/patches/collateral-evolutions/network/82-ethernet/igb_vlan_rx_vid.patch
+@@ -0,0 +1,64 @@
++diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
++index 37e6062..6bf0a88 100644
++--- a/drivers/net/ethernet/intel/igb/igb_main.c
+++++ b/drivers/net/ethernet/intel/igb/igb_main.c
++@@ -164,10 +164,13 @@ static void igb_vlan_mode(struct net_device *netdev, netdev_features_t features)
++ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
++ static int igb_vlan_rx_add_vid(struct net_device *, __be16, u16);
++ static int igb_vlan_rx_kill_vid(struct net_device *, __be16, u16);
++-#else
+++#elif LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
++ static int igb_vlan_rx_add_vid(struct net_device *, u16);
++ static int igb_vlan_rx_kill_vid(struct net_device *, u16);
++-#endif
+++#else
+++static void igb_vlan_rx_add_vid(struct net_device *, u16);
+++static void igb_vlan_rx_kill_vid(struct net_device *, u16);
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0) */
++ static void igb_restore_vlan(struct igb_adapter *);
++ static void igb_rar_set_qsel(struct igb_adapter *, u8 *, u32 , u8);
++ static void igb_ping_all_vfs(struct igb_adapter *);
++@@ -6974,8 +6977,10 @@ static void igb_vlan_mode(struct net_device *netdev, netdev_features_t features)
++ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
++ static int igb_vlan_rx_add_vid(struct net_device *netdev,
++ 			       __be16 proto, u16 vid)
++-#else
+++#elif LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
++ static int igb_vlan_rx_add_vid(struct net_device *netdev, u16 vid)
+++#else
+++static void igb_vlan_rx_add_vid(struct net_device *netdev, u16 vid)
++ #endif
++ {
++ 	struct igb_adapter *adapter = netdev_priv(netdev);
++@@ -6990,15 +6995,19 @@ static int igb_vlan_rx_add_vid(struct net_device *netdev, u16 vid)
++ 
++ 	set_bit(vid, adapter->active_vlans);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
++ 	return 0;
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) */
++ }
++ 
++ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
++ static int igb_vlan_rx_kill_vid(struct net_device *netdev,
++ 				__be16 proto, u16 vid)
++-#else
+++#elif LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
++ static int igb_vlan_rx_kill_vid(struct net_device *netdev, u16 vid)
++-#endif
+++#else
+++static void igb_vlan_rx_kill_vid(struct net_device *netdev, u16 vid)
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0) */
++ {
++ 	struct igb_adapter *adapter = netdev_priv(netdev);
++ 	struct e1000_hw *hw = &adapter->hw;
++@@ -7014,7 +7023,9 @@ static int igb_vlan_rx_kill_vid(struct net_device *netdev, u16 vid)
++ 
++ 	clear_bit(vid, adapter->active_vlans);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
++ 	return 0;
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) */
++ }
++ 
++ static void igb_restore_vlan(struct igb_adapter *adapter)
 -- 
-1.7.10.4
+1.8.3.1
 
