@@ -1,32 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-qa0-f45.google.com ([209.85.216.45]:56274 "EHLO
-	mail-qa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755271Ab3KUWqt (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 21 Nov 2013 17:46:49 -0500
-Received: by mail-qa0-f45.google.com with SMTP id o15so4297120qap.18
-        for <backports@vger.kernel.org>; Thu, 21 Nov 2013 14:46:48 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <528E8C87.1000605@hauke-m.de>
-References: <528BF081.5060201@hauke-m.de> <1384903178-27357-1-git-send-email-jam@cozybit.com>
- <528E8C87.1000605@hauke-m.de>
-From: Jason Mobarak <jam@cozybit.com>
-Date: Thu, 21 Nov 2013 14:46:27 -0800
-Message-ID: <CANkDkvx0aVkFT+2LF3UF6JmeKP8kpM0wGnUCu9U21Qa9ZcaZJQ@mail.gmail.com> (sfid-20131121_234650_834129_C23D4790)
-Subject: Re: [PATCH v3] backports: add defconfig for wcn36xx
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org, wcn36xx <wcn36xx@lists.infradead.org>
-Content-Type: text/plain; charset=ISO-8859-1
+Received: from mx1.redhat.com ([209.132.183.28]:2291 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751396Ab3LLJ26 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 12 Dec 2013 04:28:58 -0500
+From: Stefan Assmann <sassmann@kpanic.de>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH RFC 03/10] backports: igb fixes for linux-3.8
+Date: Thu, 12 Dec 2013 10:27:55 +0100
+Message-Id: <1386840482-585-4-git-send-email-sassmann@kpanic.de> (sfid-20131212_102900_754779_0F38BEE3)
+In-Reply-To: <1386840482-585-1-git-send-email-sassmann@kpanic.de>
+References: <1386840482-585-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Nov 21, 2013 at 2:43 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
-[..]
-> Thank you for the patch, I applied this version and a new version was
-> pushed out.
->
-> You do not have to send pull request over github, I will ignore then,
-> sending a patch to the mailing list is the correct way.
+- add missing NETDEV_FRAG defines
 
-OK, thanks for clarifying!
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+---
+ backport/backport-include/linux/skbuff.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
--Jason M
+diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
+index 43d33ca..7d04b54 100644
+--- a/backport/backport-include/linux/skbuff.h
++++ b/backport/backport-include/linux/skbuff.h
+@@ -224,4 +224,13 @@ static inline void skb_queue_splice_tail(const struct sk_buff_head *list,
+ 		     skb = skb->next)
+ #endif /* < 2.6.28 */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
++#ifndef NETDEV_FRAG_PAGE_MAX_ORDER
++#define NETDEV_FRAG_PAGE_MAX_ORDER get_order(32768)
++#endif
++#ifndef NETDEV_FRAG_PAGE_MAX_SIZE
++#define NETDEV_FRAG_PAGE_MAX_SIZE  (PAGE_SIZE << NETDEV_FRAG_PAGE_MAX_ORDER)
++#endif
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0) */
++
+ #endif /* __BACKPORT_SKBUFF_H */
+-- 
+1.8.3.1
+
