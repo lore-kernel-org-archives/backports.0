@@ -1,209 +1,208 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.xlhost.de ([84.200.252.118]:56234 "EHLO app1b.xlhost.de"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751651Ab3LXLTj (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 24 Dec 2013 06:19:39 -0500
-Message-ID: <52B96DC6.7020500@kpanic.de> (sfid-20131224_121945_410255_BFA83A27)
-Date: Tue, 24 Dec 2013 12:19:34 +0100
+Received: from mx1.redhat.com ([209.132.183.28]:30541 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751526Ab3LLJ3R (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 12 Dec 2013 04:29:17 -0500
 From: Stefan Assmann <sassmann@kpanic.de>
-MIME-Version: 1.0
-To: Hauke Mehrtens <hauke@hauke-m.de>, mcgrof@kernel.org
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH RFC v2 07/11] backports: igb fixes for linux-3.4
-References: <1387382905-14274-1-git-send-email-sassmann@kpanic.de> <1387382905-14274-8-git-send-email-sassmann@kpanic.de> <52B221A6.6070109@hauke-m.de> <52B2CC7D.60602@kpanic.de> <52B84193.4060000@hauke-m.de>
-In-Reply-To: <52B84193.4060000@hauke-m.de>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH RFC 02/10] backports: igb fixes for linux-3.9
+Date: Thu, 12 Dec 2013 10:27:54 +0100
+Message-Id: <1386840482-585-3-git-send-email-sassmann@kpanic.de> (sfid-20131212_102920_130708_FBE277C0)
+In-Reply-To: <1386840482-585-1-git-send-email-sassmann@kpanic.de>
+References: <1386840482-585-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 23.12.2013 14:58, Hauke Mehrtens wrote:
-> On 12/19/2013 11:37 AM, Stefan Assmann wrote:
->> On 18.12.2013 23:28, Hauke Mehrtens wrote:
->>> On 12/18/2013 05:08 PM, Stefan Assmann wrote:
->>>> - add struct ethtool_ts_info
->>>> - add struct ethtool_modinfo
->>>> - add struct timestamp_event_queue
->>>> - add struct ptp_clock
->>>> - add ptp_clock_index()
->>>> - add patches/collateral-evolutions/network/82-ethernet/0007-igb_ethtool_ops.patch
->>>>
->>>> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
->>>> ---
->>>>   backport/backport-include/linux/ethtool.h          | 48 ++++++++++++++++++++++
->>>>   backport/backport-include/linux/ptp_clock_kernel.h | 35 ++++++++++++++++
->>>>   backport/compat/compat-3.5.c                       | 11 +++++
->>>>   .../network/82-ethernet/0007-igb_ethtool_ops.patch | 24 +++++++++++
->>>>   4 files changed, 118 insertions(+)
->>>>   create mode 100644 backport/backport-include/linux/ptp_clock_kernel.h
->>>>   create mode 100644 patches/collateral-evolutions/network/82-ethernet/0007-igb_ethtool_ops.patch
->>>>
->>>> diff --git a/backport/backport-include/linux/ethtool.h b/backport/backport-include/linux/ethtool.h
->>>> index 4f13cb9..38882de 100644
->>>> --- a/backport/backport-include/linux/ethtool.h
->>>> +++ b/backport/backport-include/linux/ethtool.h
->>>> @@ -42,6 +42,54 @@ static inline __u32 ethtool_cmd_speed(const struct ethtool_cmd *ep)
->>>>   }
->>>>   #endif
->>>>
->>>> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
->>>> +/* EEPROM Standards for plug in modules */
->>>> +#define ETH_MODULE_SFF_8079		0x1
->>>> +#define ETH_MODULE_SFF_8079_LEN		256
->>>> +#define ETH_MODULE_SFF_8472		0x2
->>>> +#define ETH_MODULE_SFF_8472_LEN		512
->>>> +
->>>> +/**
->>>> + * struct ethtool_ts_info - holds a device's timestamping and PHC association
->>>> + * @cmd: command number = %ETHTOOL_GET_TS_INFO
->>>> + * @so_timestamping: bit mask of the sum of the supported SO_TIMESTAMPING flags
->>>> + * @phc_index: device index of the associated PHC, or -1 if there is none
->>>> + * @tx_types: bit mask of the supported hwtstamp_tx_types enumeration values
->>>> + * @rx_filters: bit mask of the supported hwtstamp_rx_filters enumeration values
->>>> + *
->>>> + * The bits in the 'tx_types' and 'rx_filters' fields correspond to
->>>> + * the 'hwtstamp_tx_types' and 'hwtstamp_rx_filters' enumeration values,
->>>> + * respectively.  For example, if the device supports HWTSTAMP_TX_ON,
->>>> + * then (1 << HWTSTAMP_TX_ON) in 'tx_types' will be set.
->>>> + */
->>>> +struct ethtool_ts_info {
->>>> +	__u32	cmd;
->>>> +	__u32	so_timestamping;
->>>> +	__s32	phc_index;
->>>> +	__u32	tx_types;
->>>> +	__u32	tx_reserved[3];
->>>> +	__u32	rx_filters;
->>>> +	__u32	rx_reserved[3];
->>>> +};
->>>> +
->>>> +/**
->>>> + * struct ethtool_modinfo - plugin module eeprom information
->>>> + * @cmd: %ETHTOOL_GMODULEINFO
->>>> + * @type: Standard the module information conforms to %ETH_MODULE_SFF_xxxx
->>>> + * @eeprom_len: Length of the eeprom
->>>> + *
->>>> + * This structure is used to return the information to
->>>> + * properly size memory for a subsequent call to %ETHTOOL_GMODULEEEPROM.
->>>> + * The type code indicates the eeprom data format
->>>> + */
->>>> +struct ethtool_modinfo {
->>>> +	__u32   cmd;
->>>> +	__u32   type;
->>>> +	__u32   eeprom_len;
->>>> +	__u32   reserved[8];
->>>> +};
->>>> +#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0) */
->>>> +
->>>>   #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
->>>>   /**
->>>>    * struct ethtool_eee - Energy Efficient Ethernet information
->>>> diff --git a/backport/backport-include/linux/ptp_clock_kernel.h b/backport/backport-include/linux/ptp_clock_kernel.h
->>>> new file mode 100644
->>>> index 0000000..b455517
->>>> --- /dev/null
->>>> +++ b/backport/backport-include/linux/ptp_clock_kernel.h
->>>> @@ -0,0 +1,35 @@
->>>> +#ifndef __BACKPORT_PTP_CLOCK_KERNEL_H
->>>> +#define __BACKPORT_PTP_CLOCK_KERNEL_H
->>>> +#include_next <linux/ptp_clock_kernel.h>
->>>> +
->>>> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
->>>> +#include <linux/posix-clock.h>
->>>> +
->>>> +#define PTP_MAX_TIMESTAMPS 128
->>>> +#define PTP_BUF_TIMESTAMPS 30
->>>> +
->>>> +struct timestamp_event_queue {
->>>> +	struct ptp_extts_event buf[PTP_MAX_TIMESTAMPS];
->>>> +	int head;
->>>> +	int tail;
->>>> +	spinlock_t lock;
->>>> +};
->>>> +
->>>> +struct ptp_clock {
->>>> +	struct posix_clock clock;
->>>> +	struct device *dev;
->>>> +	struct ptp_clock_info *info;
->>>> +	dev_t devid;
->>>> +	int index; /* index into clocks.map */
->>>> +	struct pps_device *pps_source;
->>>> +	long dialed_frequency; /* remembers the frequency adjustment */
->>>> +	struct timestamp_event_queue tsevq; /* simple fifo for time stamps */
->>>> +	struct mutex tsevq_mux; /* one process at a time reading the fifo */
->>>> +	wait_queue_head_t tsev_wq;
->>>> +	int defunct; /* tells readers to go away when clock is being removed */
->>>> +};
->>>> +
->>>> +extern int ptp_clock_index(struct ptp_clock *ptp);
->>>> +#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0) */
->>>> +
->>>> +#endif /* __BACKPORT_PTP_CLOCK_KERNEL_H */
->>>> diff --git a/backport/compat/compat-3.5.c b/backport/compat/compat-3.5.c
->>>> index 95f52b9..0a4aaba 100644
->>>> --- a/backport/compat/compat-3.5.c
->>>> +++ b/backport/compat/compat-3.5.c
->>>> @@ -12,6 +12,9 @@
->>>>   #include <linux/highuid.h>
->>>>   #include <linux/ktime.h>
->>>>   #include <linux/hrtimer.h>
->>>> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0)
->>>> +#include <linux/ptp_clock_kernel.h>
->>>> +#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) */
->>>>
->>>>   #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
->>>>   #include <linux/device.h>
->>>> @@ -64,3 +67,11 @@ int overflowgid = DEFAULT_OVERFLOWGID;
->>>>   EXPORT_SYMBOL_GPL(overflowuid);
->>>>   EXPORT_SYMBOL_GPL(overflowgid);
->>>>   #endif
->>>> +
->>>> +#ifdef CONFIG_PTP_1588_CLOCK
->>>> +int ptp_clock_index(struct ptp_clock *ptp)
->>>> +{
->>>> +	return ptp->index;
->>>> +}
->>>> +EXPORT_SYMBOL(ptp_clock_index);
->>>
->>> ptp_clock_index() is only used in igb_get_ts_info() which which is never
->>> called in kernel < 3.5 because this operation does not exist in
->>> ethtool_ops there.
->>> Backporting this is not so easy as it looks here, because you added
->>> struct ptp_clock here and there is also a version in the kernel, if they
->>> differ it could be that this index does not point to the same offset the
->>> kernel used as index variable. I would also ifdef the igb_get_ts_info()
->>> itself and remove the stuff related to ptp_clock_index(), you are seeing
->>> a unused function warning as well.
->>
->> So how about we take the original struct ptp_clock? There's only been
->> one single change introduced in 3.7 to the struct. No harm should come
->> from that code then.
->
-> Yes adding that struct should work.
->
->> As stated earlier I'm trying to keep the changes to igb itself as small
->> as possible and the unused function warnings are also a good indicator
->> for what is actually missing in the driver. There's already a bunch of
->> them if you compile against 3.0:
->> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_main.c:7643: warning: igb_ndo_set_vf_spoofchk defined but not used
->> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_main.c:7359: warning: igb_pci_sriov_configure defined but not used
->> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2354: warning: igb_get_ts_info defined but not used
->> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2448: warning: igb_get_rxnfc defined but not used
->> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2573: warning: igb_set_rxnfc defined but not used
->> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2660: warning: igb_set_eee defined but not used
->> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2718: warning: igb_get_module_info defined but not used
->> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2760: warning: igb_get_module_eeprom defined but not used
->> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2810: warning: igb_get_rxfh_indir_size defined but not used
->> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2815: warning: igb_get_rxfh_indir defined but not used
->> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2861: warning: igb_set_rxfh_indir defined but not used
->> The bottom line is, I'd like to keep them if you're not strictly opposed
->> to it.
->
-> These warnings do no harm, but it could be that we will miss some
-> serious warnings. Could you eliminate these warnings please.
+- add struct pci_sriov
+- add pci_vfs_assigned()
+- add PCI_SRIOV defines
+- add patches/collateral-evolutions/network/82-ethernet/igb_net_device_ops.patch
 
-OK, I'll see to that beginning of next year.
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+---
+ backport/backport-include/linux/pci.h              | 25 ++++++++++
+ backport/backport-include/linux/pci_regs.h         |  8 ++++
+ backport/compat/backport-3.10.c                    | 46 ++++++++++++++++++
+ .../network/82-ethernet/igb_net_device_ops.patch   | 56 ++++++++++++++++++++++
+ 4 files changed, 135 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/igb_net_device_ops.patch
 
-> By the way, with which kernel versions have you done runtime tests?
+diff --git a/backport/backport-include/linux/pci.h b/backport/backport-include/linux/pci.h
+index 3a1815a..b56761f 100644
+--- a/backport/backport-include/linux/pci.h
++++ b/backport/backport-include/linux/pci.h
+@@ -178,4 +178,29 @@ bool pci_pme_capable(struct pci_dev *dev, pci_power_t state);
+ 	.subvendor = (subvend), .subdevice = (subdev)
+ #endif /* PCI_DEVICE_SUB */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
++/* Taken from drivers/pci/pci.h */
++struct pci_sriov {
++	int pos;		/* capability position */
++	int nres;		/* number of resources */
++	u32 cap;		/* SR-IOV Capabilities */
++	u16 ctrl;		/* SR-IOV Control */
++	u16 total_VFs;		/* total VFs associated with the PF */
++	u16 initial_VFs;	/* initial VFs associated with the PF */
++	u16 num_VFs;		/* number of VFs available */
++	u16 offset;		/* first VF Routing ID offset */
++	u16 stride;		/* following VF stride */
++	u32 pgsz;		/* page size for BAR alignment */
++	u8 link;		/* Function Dependency Link */
++	u16 driver_max_VFs;	/* max num VFs driver supports */
++	struct pci_dev *dev;	/* lowest numbered PF */
++	struct pci_dev *self;	/* this PF */
++	struct mutex lock;	/* lock for VF bus */
++	struct work_struct mtask; /* VF Migration task */
++	u8 __iomem *mstate;	/* VF Migration State Array */
++};
++
++extern int pci_vfs_assigned(struct pci_dev *dev);
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0) */
++
+ #endif /* _BACKPORT_LINUX_PCI_H */
+diff --git a/backport/backport-include/linux/pci_regs.h b/backport/backport-include/linux/pci_regs.h
+index 5cfa742..b52c4a5 100644
+--- a/backport/backport-include/linux/pci_regs.h
++++ b/backport/backport-include/linux/pci_regs.h
+@@ -125,4 +125,12 @@
+ #define PCI_PM_CAP_PME_SHIFT	11
+ #endif
+ 
++#ifndef PCI_SRIOV_VF_DID
++#define PCI_SRIOV_VF_DID	0x1a	/* VF Device ID */
++#endif
++
++#ifndef PCI_SRIOV_CTRL_VFE
++#define PCI_SRIOV_CTRL_VFE	0x01	/* VF Enable */
++#endif
++
+ #endif /* __BACKPORT_UAPI_PCI_REGS_H */
+diff --git a/backport/compat/backport-3.10.c b/backport/compat/backport-3.10.c
+index 07a8dac..a9f74ed 100644
+--- a/backport/compat/backport-3.10.c
++++ b/backport/compat/backport-3.10.c
+@@ -14,6 +14,8 @@
+ #include <linux/proc_fs.h>
+ #include <linux/random.h>
+ #include <linux/tty.h>
++#include <linux/pci.h>
++#include <linux/pci_regs.h>
+ 
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
+ #include <linux/init.h>
+@@ -128,4 +130,48 @@ void tty_port_tty_hangup(struct tty_port *port, bool check_clocal)
+ }
+ EXPORT_SYMBOL_GPL(tty_port_tty_hangup);
+ #endif /* CONFIG_TTY */
++
++#ifdef CONFIG_PCI_IOV
++/*
++ * pci_vfs_assigned - returns number of VFs are assigned to a guest
++ * @dev: the PCI device
++ *
++ * Returns number of VFs belonging to this device that are assigned to a guest.
++ * If device is not a physical function returns -ENODEV.
++ */
++int pci_vfs_assigned(struct pci_dev *dev)
++{
++	struct pci_dev *vfdev;
++	unsigned int vfs_assigned = 0;
++	unsigned short dev_id;
++
++	/* only search if we are a PF */
++	if (!dev->is_physfn)
++		return 0;
++
++	/*
++	 * determine the device ID for the VFs, the vendor ID will be the
++	 * same as the PF so there is no need to check for that one
++	 */
++	pci_read_config_word(dev, dev->sriov->pos + PCI_SRIOV_VF_DID, &dev_id);
++
++	/* loop through all the VFs to see if we own any that are assigned */
++	vfdev = pci_get_device(dev->vendor, dev_id, NULL);
++	while (vfdev) {
++		/*
++		 * It is considered assigned if it is a virtual function with
++		 * our dev as the physical function and the assigned bit is set
++		 */
++		if (vfdev->is_virtfn && (vfdev->physfn == dev) &&
++		    (vfdev->dev_flags & PCI_DEV_FLAGS_ASSIGNED))
++			vfs_assigned++;
++
++		vfdev = pci_get_device(dev->vendor, dev_id, vfdev);
++	}
++
++	return vfs_assigned;
++}
++EXPORT_SYMBOL_GPL(pci_vfs_assigned);
++#endif /* CONFIG_PCI_IOV */
++
+ #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28)) */
+diff --git a/patches/collateral-evolutions/network/82-ethernet/igb_net_device_ops.patch b/patches/collateral-evolutions/network/82-ethernet/igb_net_device_ops.patch
+new file mode 100644
+index 0000000..981b89e
+--- /dev/null
++++ b/patches/collateral-evolutions/network/82-ethernet/igb_net_device_ops.patch
+@@ -0,0 +1,56 @@
++diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
++index 14ad4c7..f2a5abf 100644
++--- a/drivers/net/ethernet/intel/igb/igb_main.c
+++++ b/drivers/net/ethernet/intel/igb/igb_main.c
++@@ -161,8 +161,13 @@ static int igb_ioctl(struct net_device *, struct ifreq *, int cmd);
++ static void igb_tx_timeout(struct net_device *);
++ static void igb_reset_task(struct work_struct *);
++ static void igb_vlan_mode(struct net_device *netdev, netdev_features_t features);
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
++ static int igb_vlan_rx_add_vid(struct net_device *, __be16, u16);
++ static int igb_vlan_rx_kill_vid(struct net_device *, __be16, u16);
+++#else
+++static int igb_vlan_rx_add_vid(struct net_device *, u16);
+++static int igb_vlan_rx_kill_vid(struct net_device *, u16);
+++#endif
++ static void igb_restore_vlan(struct igb_adapter *);
++ static void igb_rar_set_qsel(struct igb_adapter *, u8 *, u32 , u8);
++ static void igb_ping_all_vfs(struct igb_adapter *);
++@@ -6959,8 +6964,12 @@ static void igb_vlan_mode(struct net_device *netdev, netdev_features_t features)
++ 	igb_rlpml_set(adapter);
++ }
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
++ static int igb_vlan_rx_add_vid(struct net_device *netdev,
++ 			       __be16 proto, u16 vid)
+++#else
+++static int igb_vlan_rx_add_vid(struct net_device *netdev, u16 vid)
+++#endif
++ {
++ 	struct igb_adapter *adapter = netdev_priv(netdev);
++ 	struct e1000_hw *hw = &adapter->hw;
++@@ -6977,8 +6986,12 @@ static int igb_vlan_rx_add_vid(struct net_device *netdev,
++ 	return 0;
++ }
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
++ static int igb_vlan_rx_kill_vid(struct net_device *netdev,
++ 				__be16 proto, u16 vid)
+++#else
+++static int igb_vlan_rx_kill_vid(struct net_device *netdev, u16 vid)
+++#endif
++ {
++ 	struct igb_adapter *adapter = netdev_priv(netdev);
++ 	struct e1000_hw *hw = &adapter->hw;
++@@ -7004,7 +7017,11 @@ static void igb_restore_vlan(struct igb_adapter *adapter)
++ 	igb_vlan_mode(adapter->netdev, adapter->netdev->features);
++ 
++ 	for_each_set_bit(vid, adapter->active_vlans, VLAN_N_VID)
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
++ 		igb_vlan_rx_add_vid(adapter->netdev, htons(ETH_P_8021Q), vid);
+++#else
+++		igb_vlan_rx_add_vid(adapter->netdev, vid);
+++#endif
++ }
++ 
++ int igb_set_spd_dplx(struct igb_adapter *adapter, u32 spd, u8 dplx)
+-- 
+1.8.3.1
 
-I tested the oldest supported kernel, which is 3.0.
-
-   Stefan
