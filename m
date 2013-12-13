@@ -1,251 +1,105 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:38544 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:38449 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751717Ab3LMArJ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 12 Dec 2013 19:47:09 -0500
-Message-ID: <52AA5901.2060601@hauke-m.de> (sfid-20131213_014712_359716_3EDCAB6D)
-Date: Fri, 13 Dec 2013 01:46:57 +0100
+	id S1751571Ab3LMA14 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 12 Dec 2013 19:27:56 -0500
+Message-ID: <52AA5485.50001@hauke-m.de> (sfid-20131213_012758_615369_5164BC6A)
+Date: Fri, 13 Dec 2013 01:27:49 +0100
 From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
 To: Stefan Assmann <sassmann@kpanic.de>
 CC: mcgrof@kernel.org, backports@vger.kernel.org
-Subject: Re: [PATCH RFC 05/10] backports: igb fixes for linux-3.6
-References: <1386840482-585-1-git-send-email-sassmann@kpanic.de> <1386840482-585-6-git-send-email-sassmann@kpanic.de>
-In-Reply-To: <1386840482-585-6-git-send-email-sassmann@kpanic.de>
+Subject: Re: [PATCH RFC 01/10] backports: add igb ethernet network driver
+References: <1386840482-585-1-git-send-email-sassmann@kpanic.de> <1386840482-585-2-git-send-email-sassmann@kpanic.de>
+In-Reply-To: <1386840482-585-2-git-send-email-sassmann@kpanic.de>
 Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 On 12/12/2013 10:27 AM, Stefan Assmann wrote:
-> - backport ethtool_cmd
-> - backport ethtool_ops
-> - backport mmd_eee_adv_to_ethtool_adv_t
-> - add patches/collateral-evolutions/network/82-ethernet/igb_ptp.patch
-> - add patches/collateral-evolutions/network/82-ethernet/igb_err_handler.patch
+> - add igb to copy-list
+> - add igb defconfig
+> - refactor u64_stats_sync.h a bit
+> - add u64_stats_init define
 > 
 > Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
 > ---
->  backport/backport-include/linux/ethtool.h          | 107 +++++++++++++++++++++
->  backport/backport-include/linux/mdio.h             |  35 +++++++
->  .../network/82-ethernet/igb_err_handler.patch      |  16 +++
->  .../network/82-ethernet/igb_ptp.patch              |  17 ++++
->  4 files changed, 175 insertions(+)
->  create mode 100644 backport/backport-include/linux/mdio.h
->  create mode 100644 patches/collateral-evolutions/network/82-ethernet/igb_err_handler.patch
->  create mode 100644 patches/collateral-evolutions/network/82-ethernet/igb_ptp.patch
+>  backport/backport-include/linux/u64_stats_sync.h | 16 ++++++++++++++--
+>  backport/defconfigs/igb                          |  7 +++++++
+>  copy-list                                        |  4 ++++
+>  3 files changed, 25 insertions(+), 2 deletions(-)
+>  create mode 100644 backport/defconfigs/igb
 > 
-> diff --git a/backport/backport-include/linux/ethtool.h b/backport/backport-include/linux/ethtool.h
-> index 647fbf6..ccbec11 100644
-> --- a/backport/backport-include/linux/ethtool.h
-> +++ b/backport/backport-include/linux/ethtool.h
-> @@ -42,4 +42,111 @@ static inline __u32 ethtool_cmd_speed(const struct ethtool_cmd *ep)
->  }
->  #endif
+> diff --git a/backport/backport-include/linux/u64_stats_sync.h b/backport/backport-include/linux/u64_stats_sync.h
+> index f15116c..ce6b778 100644
+> --- a/backport/backport-include/linux/u64_stats_sync.h
+> +++ b/backport/backport-include/linux/u64_stats_sync.h
+> @@ -1,6 +1,17 @@
+> -#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
+> +#ifndef __BACKPORT_LINUX_U64_STATS_SYNC_H
+> +#define __BACKPORT_LINUX_U64_STATS_SYNC_H
+> +
+>  #include_next <linux/u64_stats_sync.h>
+> +
+> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)
+> +#if BITS_PER_LONG == 32 && defined(CONFIG_SMP)
+> +# define u64_stats_init(syncp)	seqcount_init(syncp.seq)
+>  #else
+> +# define u64_stats_init(syncp)	do { } while (0)
+> +#endif
+> +#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0) */
+> +
+> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
+>  #ifndef _LINUX_U64_STATS_SYNC_H
+>  #define _LINUX_U64_STATS_SYNC_H
 >  
-> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
-> +#define ETH_TP_MDI_AUTO		0x03 /*                  control: auto-select */
-> +
-> +/* This should work for both 32 and 64 bit userland. */
-> +struct backport_ethtool_cmd {
-> +	__u32	cmd;
-> +	__u32	supported;	/* Features this interface supports */
-> +	__u32	advertising;	/* Features this interface advertises */
-> +	__u16	speed;	        /* The forced speed (lower bits) in
-> +				 * Mbps. Please use
-> +				 * ethtool_cmd_speed()/_set() to
-> +				 * access it */
-> +	__u8	duplex;		/* Duplex, half or full */
-> +	__u8	port;		/* Which connector port */
-> +	__u8	phy_address;	/* MDIO PHY address (PRTAD for clause 45).
-> +				 * May be read-only or read-write
-> +				 * depending on the driver.
-> +				 */
-> +	__u8	transceiver;	/* Which transceiver to use */
-> +	__u8	autoneg;	/* Enable or disable autonegotiation */
-> +	__u8	mdio_support;	/* MDIO protocols supported.  Read-only.
-> +				 * Not set by all drivers.
-> +				 */
-> +	__u32	maxtxpkt;	/* Tx pkts before generating tx int */
-> +	__u32	maxrxpkt;	/* Rx pkts before generating rx int */
-> +	__u16	speed_hi;       /* The forced speed (upper
-> +				 * bits) in Mbps. Please use
-> +				 * ethtool_cmd_speed()/_set() to
-> +				 * access it */
-> +	__u8	eth_tp_mdix;	/* twisted pair MDI-X status */
-> +	__u8    eth_tp_mdix_ctrl; /* twisted pair MDI-X control, when set,
-> +				   * link should be renegotiated if necessary
-> +				   */
-> +	__u32	lp_advertising;	/* Features the link partner advertises */
-> +	__u32	reserved[2];
-> +};
-> +#define ethtool_cmd LINUX_BACKPORT(ethtool_cmd)
-> +
-> +static inline __u32 backport_ethtool_cmd_speed(const struct ethtool_cmd *ep)
-> +{
-> +        return (ep->speed_hi << 16) | ep->speed;
-> +}
-> +#define ethtool_cmd_speed LINUX_BACKPORT(ethtool_cmd_speed)
-> +
-> +struct backport_ethtool_ops {
-> +	int	(*get_settings)(struct net_device *, struct ethtool_cmd *);
-> +	int	(*set_settings)(struct net_device *, struct ethtool_cmd *);
-> +	void	(*get_drvinfo)(struct net_device *, struct ethtool_drvinfo *);
-> +	int	(*get_regs_len)(struct net_device *);
-> +	void	(*get_regs)(struct net_device *, struct ethtool_regs *, void *);
-> +	void	(*get_wol)(struct net_device *, struct ethtool_wolinfo *);
-> +	int	(*set_wol)(struct net_device *, struct ethtool_wolinfo *);
-> +	u32	(*get_msglevel)(struct net_device *);
-> +	void	(*set_msglevel)(struct net_device *, u32);
-> +	int	(*nway_reset)(struct net_device *);
-> +	u32	(*get_link)(struct net_device *);
-> +	int	(*get_eeprom_len)(struct net_device *);
-> +	int	(*get_eeprom)(struct net_device *,
-> +			      struct ethtool_eeprom *, u8 *);
-> +	int	(*set_eeprom)(struct net_device *,
-> +			      struct ethtool_eeprom *, u8 *);
-> +	int	(*get_coalesce)(struct net_device *, struct ethtool_coalesce *);
-> +	int	(*set_coalesce)(struct net_device *, struct ethtool_coalesce *);
-> +	void	(*get_ringparam)(struct net_device *,
-> +				 struct ethtool_ringparam *);
-> +	int	(*set_ringparam)(struct net_device *,
-> +				 struct ethtool_ringparam *);
-> +	void	(*get_pauseparam)(struct net_device *,
-> +				  struct ethtool_pauseparam*);
-> +	int	(*set_pauseparam)(struct net_device *,
-> +				  struct ethtool_pauseparam*);
-> +	void	(*self_test)(struct net_device *, struct ethtool_test *, u64 *);
-> +	void	(*get_strings)(struct net_device *, u32 stringset, u8 *);
-> +	int	(*set_phys_id)(struct net_device *, enum ethtool_phys_id_state);
-> +	void	(*get_ethtool_stats)(struct net_device *,
-> +				     struct ethtool_stats *, u64 *);
-> +	int	(*begin)(struct net_device *);
-> +	void	(*complete)(struct net_device *);
-> +	u32	(*get_priv_flags)(struct net_device *);
-> +	int	(*set_priv_flags)(struct net_device *, u32);
-> +	int	(*get_sset_count)(struct net_device *, int);
-> +	int	(*get_rxnfc)(struct net_device *,
-> +			     struct ethtool_rxnfc *, u32 *rule_locs);
-> +	int	(*set_rxnfc)(struct net_device *, struct ethtool_rxnfc *);
-> +	int	(*flash_device)(struct net_device *, struct ethtool_flash *);
-> +	int	(*reset)(struct net_device *, u32 *);
-> +	u32	(*get_rxfh_indir_size)(struct net_device *);
-> +	int	(*get_rxfh_indir)(struct net_device *, u32 *);
-> +	int	(*set_rxfh_indir)(struct net_device *, const u32 *);
-> +	void	(*get_channels)(struct net_device *, struct ethtool_channels *);
-> +	int	(*set_channels)(struct net_device *, struct ethtool_channels *);
-> +	int	(*get_dump_flag)(struct net_device *, struct ethtool_dump *);
-> +	int	(*get_dump_data)(struct net_device *,
-> +				 struct ethtool_dump *, void *);
-> +	int	(*set_dump)(struct net_device *, struct ethtool_dump *);
-> +	int	(*get_ts_info)(struct net_device *, struct ethtool_ts_info *);
-> +	int     (*get_module_info)(struct net_device *,
-> +				   struct ethtool_modinfo *);
-> +	int     (*get_module_eeprom)(struct net_device *,
-> +				     struct ethtool_eeprom *, u8 *);
-> +	int	(*get_eee)(struct net_device *, struct ethtool_eee *);
-> +	int	(*set_eee)(struct net_device *, struct ethtool_eee *);
-> +};
-> +#define ethtool_ops LINUX_BACKPORT(ethtool_ops)
+> @@ -141,4 +152,5 @@ static inline bool u64_stats_fetch_retry_bh(const struct u64_stats_sync *syncp,
+>  }
+>  
+>  #endif /* _LINUX_U64_STATS_SYNC_H */
+> -#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)) */
+> +#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0) */
+> +#endif /* __BACKPORT_LINUX_U64_STATS_SYNC_H */
+> diff --git a/backport/defconfigs/igb b/backport/defconfigs/igb
+> new file mode 100644
+> index 0000000..1f85f18
+> --- /dev/null
+> +++ b/backport/defconfigs/igb
+> @@ -0,0 +1,7 @@
+> +CPTCFG_NETDEVICES=y
+> +CPTCFG_NET_ETHERNET=y
+> +CPTCFG_NETDEV_1000=y
+> +CPTCFG_ETHERNET=y
+> +CPTCFG_NET_VENDOR_INTEL=y
+> +CPTCFG_PCI=y
+> +CPTCFG_IGB=m
 
-Backporting ethtool_ops does not work so easily. The network stack is in
-the old kernel which want to call some function with a pointer from this
-strcut, but it accesses this option not by its name but by the offset in
-this struct it was compiled with. If the kernel and backports are
-getting compiled with a different version of this struct then they could
-have a different opinion on where a certain function pointer is placed
-which will lead to the kernel calling the wrong function. You have to be
-careful when you want to change some structs in backports, this normally
-only works when all users of this strut are in backports.
+PCI should not be selected here, because it has to be selected in the
+kernel you are compiling against. I have not analyzed this, but I thing
+the defconfig should just contain these two options, the others should
+be already activated in the kernel:
 
+CPTCFG_NET_VENDOR_INTEL=y
+CPTCFG_IGB=m
+
+> diff --git a/copy-list b/copy-list
+> index 9444aff..2b2e177 100644
+> --- a/copy-list
+> +++ b/copy-list
+> @@ -100,6 +100,10 @@ drivers/net/ethernet/broadcom/Makefile
+>  drivers/net/ethernet/broadcom/b44.c
+>  drivers/net/ethernet/broadcom/b44.h
+>  
+> +drivers/net/ethernet/intel/Kconfig
+> +drivers/net/ethernet/intel/Makefile
+> +drivers/net/ethernet/intel/igb/
 > +
-> +#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0) */
-> +
->  #endif /* __BACKPORT_LINUX_ETHTOOL_H */
-> diff --git a/backport/backport-include/linux/mdio.h b/backport/backport-include/linux/mdio.h
-> new file mode 100644
-> index 0000000..2a38121
-> --- /dev/null
-> +++ b/backport/backport-include/linux/mdio.h
-> @@ -0,0 +1,35 @@
-> +#ifndef __BACKPORT_LINUX_MDIO_H
-> +#define __BACKPORT_LINUX_MDIO_H
-> +#include_next <linux/mdio.h>
-> +
-> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
-> +/**
-> + * mmd_eee_adv_to_ethtool_adv_t
-> + * @eee_adv: value of the MMD EEE Advertisement/Link Partner Ability registers
-> + *
-> + * A small helper function that translates the MMD EEE Advertisment (7.60)
-> + * and MMD EEE Link Partner Ability (7.61) bits to ethtool advertisement
-> + * settings.
-> + */
-> +static inline u32 mmd_eee_adv_to_ethtool_adv_t(u16 eee_adv)
-> +{
-> +	u32 adv = 0;
-> +
-> +	if (eee_adv & MDIO_EEE_100TX)
-> +		adv |= ADVERTISED_100baseT_Full;
-> +	if (eee_adv & MDIO_EEE_1000T)
-> +		adv |= ADVERTISED_1000baseT_Full;
-> +	if (eee_adv & MDIO_EEE_10GT)
-> +		adv |= ADVERTISED_10000baseT_Full;
-> +	if (eee_adv & MDIO_EEE_1000KX)
-> +		adv |= ADVERTISED_1000baseKX_Full;
-> +	if (eee_adv & MDIO_EEE_10GKX4)
-> +		adv |= ADVERTISED_10000baseKX4_Full;
-> +	if (eee_adv & MDIO_EEE_10GKR)
-> +		adv |= ADVERTISED_10000baseKR_Full;
-> +
-> +	return adv;
-> +}
-> +#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0) */
-> +
-> +#endif /* __BACKPORT_LINUX_MDIO_H */
-> diff --git a/patches/collateral-evolutions/network/82-ethernet/igb_err_handler.patch b/patches/collateral-evolutions/network/82-ethernet/igb_err_handler.patch
-> new file mode 100644
-> index 0000000..393e8b5
-> --- /dev/null
-> +++ b/patches/collateral-evolutions/network/82-ethernet/igb_err_handler.patch
-> @@ -0,0 +1,16 @@
-> +diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-> +index 67441f2..4df7bce 100644
-> +--- a/drivers/net/ethernet/intel/igb/igb_main.c
-> ++++ b/drivers/net/ethernet/intel/igb/igb_main.c
-> +@@ -232,7 +232,11 @@ static pci_ers_result_t igb_io_error_detected(struct pci_dev *,
-> + static pci_ers_result_t igb_io_slot_reset(struct pci_dev *);
-> + static void igb_io_resume(struct pci_dev *);
-> + 
-> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-> + static const struct pci_error_handlers igb_err_handler = {
-> ++#else
-> ++static struct pci_error_handlers igb_err_handler = {
-> ++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-> + 	.error_detected = igb_io_error_detected,
-> + 	.slot_reset = igb_io_slot_reset,
-> + 	.resume = igb_io_resume,
-> diff --git a/patches/collateral-evolutions/network/82-ethernet/igb_ptp.patch b/patches/collateral-evolutions/network/82-ethernet/igb_ptp.patch
-> new file mode 100644
-> index 0000000..9799466
-> --- /dev/null
-> +++ b/patches/collateral-evolutions/network/82-ethernet/igb_ptp.patch
-> @@ -0,0 +1,17 @@
-> +diff --git a/drivers/net/ethernet/intel/igb/igb_ptp.c b/drivers/net/ethernet/intel/igb/igb_ptp.c
-> +index 5a54e3d..97bb1cf 100644
-> +--- a/drivers/net/ethernet/intel/igb/igb_ptp.c
-> ++++ b/drivers/net/ethernet/intel/igb/igb_ptp.c
-> +@@ -802,8 +802,12 @@ void igb_ptp_init(struct igb_adapter *adapter)
-> + 		wr32(E1000_IMS, E1000_IMS_TS);
-> + 	}
-> + 
-> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-> + 	adapter->ptp_clock = ptp_clock_register(&adapter->ptp_caps,
-> + 						&adapter->pdev->dev);
-> ++#else
-> ++	adapter->ptp_clock = ptp_clock_register(&adapter->ptp_caps);
-> ++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-> + 	if (IS_ERR(adapter->ptp_clock)) {
-> + 		adapter->ptp_clock = NULL;
-> + 		dev_err(&adapter->pdev->dev, "ptp_clock_register failed\n");
+
+This should be added in the last patch otherwise backports will not
+compile between this patch and the last one, becaise some parts are missing.
+
+>  # wwan drivers
+>  include/uapi/linux/usb/cdc.h
+>  include/uapi/linux/usb/cdc-wdm.h
 > 
 
