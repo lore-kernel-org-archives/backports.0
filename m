@@ -1,43 +1,33 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:38179 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753747Ab3LHPIX (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 8 Dec 2013 10:08:23 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/8] backports: remove DMI_EXACT_MATCH
-Date: Sun,  8 Dec 2013 16:08:07 +0100
-Message-Id: <1386515294-26231-2-git-send-email-hauke@hauke-m.de> (sfid-20131208_160825_999455_35D19C1A)
-In-Reply-To: <1386515294-26231-1-git-send-email-hauke@hauke-m.de>
-References: <1386515294-26231-1-git-send-email-hauke@hauke-m.de>
+Received: from mail.kernel.org ([198.145.19.201]:33968 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752172Ab3LPIjL (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 16 Dec 2013 03:39:11 -0500
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 8B67920353
+	for <backports@vger.kernel.org>; Mon, 16 Dec 2013 08:39:10 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+	by mail.kernel.org (Postfix) with ESMTP id 84FB320328
+	for <backports@vger.kernel.org>; Mon, 16 Dec 2013 08:39:09 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 65881] errors compiling after make defconfig-alx
+Date: Mon, 16 Dec 2013 08:39:09 +0000
+Message-ID: <bug-65881-58281-JfegD74ZCY@https.bugzilla.kernel.org/> (sfid-20131216_093914_003882_CB5949AB)
+In-Reply-To: <bug-65881-58281@https.bugzilla.kernel.org/>
+References: <bug-65881-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-DMI_EXACT_MATCH was only used by the Intel gpu driver which was removed.
-Kernel 3.10.21 also has DMI_EXACT_MATCH which collides with backports
-definition.
+https://bugzilla.kernel.org/show_bug.cgi?id=65881
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/mod_devicetable.h |    4 ----
- 1 file changed, 4 deletions(-)
+--- Comment #7 from Johannes Berg <johannes@sipsolutions.net> ---
+FWIW, it probably won't be supported unless somebody like you actually works on
+it - I upstreamed the alx driver but Qualcomm never picked up maintenance and
+don't seem to be even thinking about helping with the driver.
 
-diff --git a/backport/backport-include/linux/mod_devicetable.h b/backport/backport-include/linux/mod_devicetable.h
-index c09793b..1f85ce6 100644
---- a/backport/backport-include/linux/mod_devicetable.h
-+++ b/backport/backport-include/linux/mod_devicetable.h
-@@ -2,10 +2,6 @@
- #define __BACKPORT_MOD_DEVICETABLE_H
- #include_next <linux/mod_devicetable.h>
- 
--#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
--#define DMI_EXACT_MATCH(a, b)  DMI_MATCH(DMI_PRODUCT_NAME, "BACKPORT_IGNORE")
--#endif
--
- #ifndef HID_BUS_ANY
- #define HID_BUS_ANY                            0xffff
- #endif
 -- 
-1.7.10.4
-
+You are receiving this mail because:
+You are the assignee for the bug.
