@@ -1,127 +1,92 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:38208 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754628Ab3LHPIc (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 8 Dec 2013 10:08:32 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@gmail.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 4/8] backports: remove unused workqueue backports
-Date: Sun,  8 Dec 2013 16:08:10 +0100
-Message-Id: <1386515294-26231-5-git-send-email-hauke@hauke-m.de> (sfid-20131208_160833_684895_2B124EB4)
-In-Reply-To: <1386515294-26231-1-git-send-email-hauke@hauke-m.de>
-References: <1386515294-26231-1-git-send-email-hauke@hauke-m.de>
+Received: from mx1.redhat.com ([209.132.183.28]:64382 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753388Ab3LRQIt (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 18 Dec 2013 11:08:49 -0500
+From: Stefan Assmann <sassmann@kpanic.de>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH RFC v2 00/11] backports: add igb driver
+Date: Wed, 18 Dec 2013 17:08:14 +0100
+Message-Id: <1387382905-14274-1-git-send-email-sassmann@kpanic.de> (sfid-20131218_170857_578377_60F78A1B)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-These backports are not used by any driver code and some of them are
-conflicting with code from RHEL 6.5 headers.
+This is a RFC for inclusion of the Intel igb wired ethernet driver.
+Patches are split per kernel release that makes it easier to review
+the changes and gives a nice history of what was necessary for each
+release. Also the igb driver changes have been split up into individual
+patches in patches/collateral-evolutions/network/82-ethernet. This and
+file names are up for discussion, suggestions welcome.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/workqueue.h |   15 ----------
- backport/compat/compat-2.6.36.c             |   42 ---------------------------
- 2 files changed, 57 deletions(-)
+v2:
+Instead of backporting struct ethtool_ops the code in igb has been
+wrapped in if LINUX_VERSION_CODE statements. This will result in higher
+maintenance because of conflicts with future upstream igb changes but it
+seems there's no better solution so far.
+The patches in patches/collateral-evolutions/network/82-ethernet have
+been kept separate but with a leading number to make sure they get
+applied in the correct order.
+The code that activates igb has been pushed to the end of the series to
+not break any bisecting.
 
-diff --git a/backport/backport-include/linux/workqueue.h b/backport/backport-include/linux/workqueue.h
-index 1e9ca71..1949876 100644
---- a/backport/backport-include/linux/workqueue.h
-+++ b/backport/backport-include/linux/workqueue.h
-@@ -75,27 +75,12 @@ void backport_system_workqueue_destroy(void);
- 
- #define schedule_work LINUX_BACKPORT(schedule_work)
- int schedule_work(struct work_struct *work);
--#define schedule_work_on LINUX_BACKPORT(schedule_work_on)
--int schedule_work_on(int cpu, struct work_struct *work);
- #define schedule_delayed_work LINUX_BACKPORT(schedule_delayed_work)
- int schedule_delayed_work(struct delayed_work *dwork,
- 			  unsigned long delay);
--#define schedule_delayed_work_on LINUX_BACKPORT(schedule_delayed_work_on)
--int schedule_delayed_work_on(int cpu,
--			     struct delayed_work *dwork,
--			     unsigned long delay);
- #define flush_scheduled_work LINUX_BACKPORT(flush_scheduled_work)
- void flush_scheduled_work(void);
- 
--enum {
--	/* bit mask for work_busy() return values */
--	WORK_BUSY_PENDING       = 1 << 0,
--	WORK_BUSY_RUNNING       = 1 << 1,
--};
--
--#define work_busy LINUX_BACKPORT(work_busy)
--extern unsigned int work_busy(struct work_struct *work);
--
- #else
- 
- static inline void backport_system_workqueue_create(void)
-diff --git a/backport/compat/compat-2.6.36.c b/backport/compat/compat-2.6.36.c
-index 331e991..2c00bc7 100644
---- a/backport/compat/compat-2.6.36.c
-+++ b/backport/compat/compat-2.6.36.c
-@@ -85,16 +85,6 @@ int schedule_work(struct work_struct *work)
- }
- EXPORT_SYMBOL_GPL(schedule_work);
- 
--int schedule_work_on(int cpu, struct work_struct *work)
--{
--#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27))
--	return queue_work_on(cpu, system_wq, work);
--#else
--	return queue_work(system_wq, work);
--#endif
--}
--EXPORT_SYMBOL_GPL(schedule_work_on);
--
- int schedule_delayed_work(struct delayed_work *dwork,
-                                  unsigned long delay)
- {
-@@ -102,14 +92,6 @@ int schedule_delayed_work(struct delayed_work *dwork,
- }
- EXPORT_SYMBOL_GPL(schedule_delayed_work);
- 
--int schedule_delayed_work_on(int cpu,
--                                    struct delayed_work *dwork,
--                                    unsigned long delay)
--{
--	return queue_delayed_work_on(cpu, system_wq, dwork, delay);
--}
--EXPORT_SYMBOL_GPL(schedule_delayed_work_on);
--
- void flush_scheduled_work(void)
- {
- 	/*
-@@ -122,30 +104,6 @@ void flush_scheduled_work(void)
- }
- EXPORT_SYMBOL_GPL(flush_scheduled_work);
- 
--/**
-- * work_busy - test whether a work is currently pending or running
-- * @work: the work to be tested
-- *
-- * Test whether @work is currently pending or running.  There is no
-- * synchronization around this function and the test result is
-- * unreliable and only useful as advisory hints or for debugging.
-- * Especially for reentrant wqs, the pending state might hide the
-- * running state.
-- *
-- * RETURNS:
-- * OR'd bitmask of WORK_BUSY_* bits.
-- */
--unsigned int work_busy(struct work_struct *work)
--{
--	unsigned int ret = 0;
--
--	if (work_pending(work))
--		ret |= WORK_BUSY_PENDING;
--
--	return ret;
--}
--EXPORT_SYMBOL_GPL(work_busy);
--
- void backport_system_workqueue_create(void)
- {
- 	system_wq = alloc_workqueue("events", 0, 0);
+Stefan Assmann (11):
+  backports: igb fixes for linux-3.12
+  backports: igb fixes for linux-3.9
+  backports: igb fixes for linux-3.8
+  backports: igb fixes for linux-3.7
+  backports: igb fixes for linux-3.6
+  backports: igb fixes for linux-3.5
+  backports: igb fixes for linux-3.4
+  backports: igb fixes for linux-3.3
+  backports: igb fixes for linux-3.2
+  backports: igb fixes for linux-3.1
+  backports: enable igb and add defconfig
+
+ backport/backport-include/linux/ethtool.h          | 79 ++++++++++++++++++++++
+ backport/backport-include/linux/gfp.h              | 10 +++
+ backport/backport-include/linux/if.h               |  8 +++
+ backport/backport-include/linux/mdio.h             | 56 +++++++++++++++
+ backport/backport-include/linux/pci.h              | 36 ++++++++++
+ backport/backport-include/linux/pci_regs.h         |  8 +++
+ backport/backport-include/linux/ptp_clock_kernel.h | 35 ++++++++++
+ backport/backport-include/linux/skbuff.h           | 74 ++++++++++++++++++++
+ backport/backport-include/linux/u64_stats_sync.h   | 16 ++++-
+ backport/compat/backport-3.10.c                    | 46 +++++++++++++
+ backport/compat/compat-3.5.c                       | 11 +++
+ backport/compat/compat-3.8.c                       | 34 ++++++++++
+ backport/defconfigs/igb                            |  2 +
+ copy-list                                          |  4 ++
+ .../82-ethernet/0001-igb_net_device_ops.patch      | 56 +++++++++++++++
+ .../82-ethernet/0002-igb_pci_sriov_configure.patch | 14 ++++
+ .../network/82-ethernet/0003-igb_ptp.patch         | 17 +++++
+ .../network/82-ethernet/0004-igb_err_handler.patch | 16 +++++
+ .../network/82-ethernet/0005-igb_mdi.patch         | 49 ++++++++++++++
+ .../network/82-ethernet/0006-igb_eee.patch         | 15 ++++
+ .../network/82-ethernet/0007-igb_ethtool_ops.patch | 24 +++++++
+ .../network/82-ethernet/0008-igb_no_fcs.patch      | 16 +++++
+ .../network/82-ethernet/0009-igb_vlan_rx_vid.patch | 64 ++++++++++++++++++
+ .../network/82-ethernet/0010-igb_ethtool_ops.patch | 16 +++++
+ .../network/82-ethernet/0011-igb_ethtool_ops.patch | 15 ++++
+ .../82-ethernet/0012-igb_ndo_set_vf_spoofchk.patch | 24 +++++++
+ 26 files changed, 743 insertions(+), 2 deletions(-)
+ create mode 100644 backport/backport-include/linux/gfp.h
+ create mode 100644 backport/backport-include/linux/mdio.h
+ create mode 100644 backport/backport-include/linux/ptp_clock_kernel.h
+ create mode 100644 backport/defconfigs/igb
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/0001-igb_net_device_ops.patch
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/0002-igb_pci_sriov_configure.patch
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/0003-igb_ptp.patch
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/0004-igb_err_handler.patch
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/0005-igb_mdi.patch
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/0006-igb_eee.patch
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/0007-igb_ethtool_ops.patch
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/0008-igb_no_fcs.patch
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/0009-igb_vlan_rx_vid.patch
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/0010-igb_ethtool_ops.patch
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/0011-igb_ethtool_ops.patch
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/0012-igb_ndo_set_vf_spoofchk.patch
+
 -- 
-1.7.10.4
+1.8.3.1
 
