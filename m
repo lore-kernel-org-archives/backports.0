@@ -1,32 +1,57 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wg0-f50.google.com ([74.125.82.50]:38206 "EHLO
-	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758003Ab3LFS0I (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 6 Dec 2013 13:26:08 -0500
-Received: by mail-wg0-f50.google.com with SMTP id a1so1015087wgh.17
-        for <backports@vger.kernel.org>; Fri, 06 Dec 2013 10:26:07 -0800 (PST)
-Date: Fri, 6 Dec 2013 19:26:01 +0100
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: backports@vger.kernel.org,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Subject: Re: [PATCH v3] backports: add support for prandom_bytes
-Message-ID: <20131206182601.GC8196@cerro.do-not-panic.com> (sfid-20131206_192615_471346_E4205926)
-References: <1386079852-8248-1-git-send-email-johannes@sipsolutions.net>
- <20131206161531.GB8196@cerro.do-not-panic.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20131206161531.GB8196@cerro.do-not-panic.com>
+Received: from mx1.redhat.com ([209.132.183.28]:48909 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754748Ab3LRQIt (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 18 Dec 2013 11:08:49 -0500
+From: Stefan Assmann <sassmann@kpanic.de>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH RFC v2 01/11] backports: igb fixes for linux-3.12
+Date: Wed, 18 Dec 2013 17:08:15 +0100
+Message-Id: <1387382905-14274-2-git-send-email-sassmann@kpanic.de> (sfid-20131218_170858_245401_ACB1C23A)
+In-Reply-To: <1387382905-14274-1-git-send-email-sassmann@kpanic.de>
+References: <1387382905-14274-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Dec 06, 2013 at 05:15:31PM +0100, Luis R. Rodriguez wrote:
-> On Tue, Dec 03, 2013 at 03:10:52PM +0100, Johannes Berg wrote:
-> > +EXPORT_SYMBOL_GPL(prandom_bytes_state);
-> 
-> Where is prandom_bytes_state defined? Did you mean prandom_bytes ?
-> This breaks compilation right now.
+- refactor u64_stats_sync.h a bit
+- add u64_stats_init define
 
-I'll fix this upon merge, modifying this without _state fixed things.
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+---
+ backport/backport-include/linux/u64_stats_sync.h | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-  Luis
+diff --git a/backport/backport-include/linux/u64_stats_sync.h b/backport/backport-include/linux/u64_stats_sync.h
+index f15116c..ce6b778 100644
+--- a/backport/backport-include/linux/u64_stats_sync.h
++++ b/backport/backport-include/linux/u64_stats_sync.h
+@@ -1,6 +1,17 @@
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
++#ifndef __BACKPORT_LINUX_U64_STATS_SYNC_H
++#define __BACKPORT_LINUX_U64_STATS_SYNC_H
++
+ #include_next <linux/u64_stats_sync.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)
++#if BITS_PER_LONG == 32 && defined(CONFIG_SMP)
++# define u64_stats_init(syncp)	seqcount_init(syncp.seq)
+ #else
++# define u64_stats_init(syncp)	do { } while (0)
++#endif
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0) */
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
+ #ifndef _LINUX_U64_STATS_SYNC_H
+ #define _LINUX_U64_STATS_SYNC_H
+ 
+@@ -141,4 +152,5 @@ static inline bool u64_stats_fetch_retry_bh(const struct u64_stats_sync *syncp,
+ }
+ 
+ #endif /* _LINUX_U64_STATS_SYNC_H */
+-#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)) */
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0) */
++#endif /* __BACKPORT_LINUX_U64_STATS_SYNC_H */
+-- 
+1.8.3.1
+
