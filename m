@@ -1,46 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-we0-f176.google.com ([74.125.82.176]:47365 "EHLO
-	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756013Ab3LIULz (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 9 Dec 2013 15:11:55 -0500
-Received: by mail-we0-f176.google.com with SMTP id w62so3942378wes.21
-        for <backports@vger.kernel.org>; Mon, 09 Dec 2013 12:11:54 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1386617105.5042.0.camel@jlt4.sipsolutions.net>
-References: <1386613665-11656-1-git-send-email-mcgrof@do-not-panic.com>
- <1386613665-11656-2-git-send-email-mcgrof@do-not-panic.com> <1386617105.5042.0.camel@jlt4.sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Mon, 9 Dec 2013 21:11:33 +0100
-Message-ID: <CAB=NE6VHM3bSXb_3eeEOJ4QLQd3MKkABE=Ky1BdJLZqhjdmFxg@mail.gmail.com> (sfid-20131209_211157_084172_4AC51D1E)
-Subject: Re: [PATCH 1/3] backports: convert the 62-usb_driver_lpm patch series
- to SmPL
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Peter Senna <peter.senna@gmail.com>,
-	Julia Lawall <julia.lawall@lip6.fr>,
-	Gilles Muller <Gilles.Muller@lip6.fr>
-Content-Type: text/plain; charset=UTF-8
+Received: from mx1.redhat.com ([209.132.183.28]:42949 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754785Ab3LRQJH (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 18 Dec 2013 11:09:07 -0500
+From: Stefan Assmann <sassmann@kpanic.de>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH RFC v2 11/11] backports: enable igb and add defconfig
+Date: Wed, 18 Dec 2013 17:08:25 +0100
+Message-Id: <1387382905-14274-12-git-send-email-sassmann@kpanic.de> (sfid-20131218_170911_667663_EED898C8)
+In-Reply-To: <1387382905-14274-1-git-send-email-sassmann@kpanic.de>
+References: <1387382905-14274-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Dec 9, 2013 at 8:25 PM, Johannes Berg <johannes@sipsolutions.net> wrote:
-> On Mon, 2013-12-09 at 19:27 +0100, Luis R. Rodriguez wrote:
->
->> +++ b/patches/collateral-evolutions/network/62-usb_driver_lpm.cocci
->> @@ -0,0 +1,9 @@
->> +@@
->> +identifier backport_driver;
->> +@@
->> +struct usb_driver backport_driver = {
->
-> You don't need "..." here?
+Add defconfig and add necessary files to copy-list.
 
-Not in this case, it works, adding it actually doesn't work right now as I wish.
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+---
+ backport/defconfigs/igb | 2 ++
+ copy-list               | 4 ++++
+ 2 files changed, 6 insertions(+)
+ create mode 100644 backport/defconfigs/igb
 
->> ++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
->> +     .disable_hub_initiated_lpm = 1,
->> ++#endif
->> +...
->> +};
+diff --git a/backport/defconfigs/igb b/backport/defconfigs/igb
+new file mode 100644
+index 0000000..8045257
+--- /dev/null
++++ b/backport/defconfigs/igb
+@@ -0,0 +1,2 @@
++CPTCFG_NET_VENDOR_INTEL=y
++CPTCFG_IGB=m
+diff --git a/copy-list b/copy-list
+index 9444aff..2b2e177 100644
+--- a/copy-list
++++ b/copy-list
+@@ -100,6 +100,10 @@ drivers/net/ethernet/broadcom/Makefile
+ drivers/net/ethernet/broadcom/b44.c
+ drivers/net/ethernet/broadcom/b44.h
+ 
++drivers/net/ethernet/intel/Kconfig
++drivers/net/ethernet/intel/Makefile
++drivers/net/ethernet/intel/igb/
++
+ # wwan drivers
+ include/uapi/linux/usb/cdc.h
+ include/uapi/linux/usb/cdc-wdm.h
+-- 
+1.8.3.1
 
-  Luis
