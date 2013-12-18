@@ -1,75 +1,192 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:63679 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754120Ab3LFS3n (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 6 Dec 2013 13:29:43 -0500
-Received: by mail-wi0-f171.google.com with SMTP id bz8so1156595wib.16
-        for <backports@vger.kernel.org>; Fri, 06 Dec 2013 10:29:42 -0800 (PST)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 0/3] backports: synch up to next-20131206
-Date: Fri,  6 Dec 2013 19:29:27 +0100
-Message-Id: <1386354570-23940-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20131206_192945_651575_DBD3D137)
+Received: from mx1.redhat.com ([209.132.183.28]:12120 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754861Ab3LRQJR (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 18 Dec 2013 11:09:17 -0500
+From: Stefan Assmann <sassmann@kpanic.de>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH RFC v2 07/11] backports: igb fixes for linux-3.4
+Date: Wed, 18 Dec 2013 17:08:21 +0100
+Message-Id: <1387382905-14274-8-git-send-email-sassmann@kpanic.de> (sfid-20131218_170921_183816_6FF5CEE6)
+In-Reply-To: <1387382905-14274-1-git-send-email-sassmann@kpanic.de>
+References: <1387382905-14274-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I'm back! These changes are needed to let us use next-20131206.
-Compilation worked fine, I'll let the patches sit and see if
-anyone has comments. I haven't merged the python script
-replacement as I figured I'd replace the other shell script
-get-compat-trees as well and just merge it into the new
-Python script to do that as well. I'll send a v3 later as
-soon as its done.
+- add struct ethtool_ts_info
+- add struct ethtool_modinfo
+- add struct timestamp_event_queue
+- add struct ptp_clock
+- add ptp_clock_index()
+- add patches/collateral-evolutions/network/82-ethernet/0007-igb_ethtool_ops.patch
 
-As we start embracing Coccinelle lets please try to keep
-track of the run time and version of coccinelle used. This
-can later be used to graph things as we advance. Metrics
-are of course attached to the system we use to generate things
-but the folks doing the generation and generic built tests
-are using the same system so this should be fine. The hope is
-that things will get faster with time.
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+---
+ backport/backport-include/linux/ethtool.h          | 48 ++++++++++++++++++++++
+ backport/backport-include/linux/ptp_clock_kernel.h | 35 ++++++++++++++++
+ backport/compat/compat-3.5.c                       | 11 +++++
+ .../network/82-ethernet/0007-igb_ethtool_ops.patch | 24 +++++++++++
+ 4 files changed, 118 insertions(+)
+ create mode 100644 backport/backport-include/linux/ptp_clock_kernel.h
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/0007-igb_ethtool_ops.patch
 
-Luis R. Rodriguez (3):
-  backports: backport ktime_to_ms()
-  backports: backport getrawmonotonic() with
-    do_posix_clock_monotonic_gettime()
-  backports: refresh patches for next-20131206
-
- backport/backport-include/linux/ktime.h                    | 14 ++++++++++++++
- backport/backport-include/linux/time.h                     |  4 ++++
- .../0003-netdev-needed_headroom_tailroom/mac80211.patch    |  4 ++--
- .../network/0006-disable-dump-adjust-on-old-kernels.patch  |  4 ++--
- .../09-cfg80211-wext-padding/include_net_cfg80211.patch    |  2 +-
- .../drivers_net_wireless_iwlwifi_pcie_trans.patch          |  4 ++--
- .../drivers_net_wireless_ti_wlcore_main.patch              |  6 +++---
- .../10-add-wext-handlers-to-netdev/net_wireless_core.patch |  2 +-
- .../network/11-dev-pm-ops/drivers_bcma_host_pci.patch      |  4 ++--
- .../11-dev-pm-ops/drivers_net_wireless_ath_ath9k_pci.patch |  4 ++--
- .../drivers_net_wireless_iwlegacy_3945-mac.patch           |  2 +-
- .../drivers_net_wireless_iwlwifi_pcie_drv.patch            |  4 ++--
- .../drivers_net_wireless_libertas_if_spi.patch             |  6 +++---
- .../12-mac80211-disable-tx-status/net_mac80211_tx.patch    |  4 ++--
- .../network/16-bluetooth/net_bluetooth_l2cap_sock.patch    |  6 +++---
- .../network/17-netdev-queue/net_mac80211_iface.patch       |  4 ++--
- .../network/22-multiqueue/net_mac80211_tx.patch            |  2 +-
- .../drivers_net_wireless_ti_wlcore_main.patch              |  4 ++--
- .../25-multicast-list_head/include_net_mac80211.patch      |  2 +-
- .../25-multicast-list_head/net_mac80211_ieee80211_i.patch  |  2 +-
- .../25-multicast-list_head/net_mac80211_iface.patch        |  4 ++--
- ...vers_net_wireless_brcm80211_brcmfmac_bcmsdh_sdmmc.patch |  4 ++--
- .../network/30-bridge-port/net_wireless_nl80211.patch      |  2 +-
- .../network/36-workqueue/net_mac80211_main.patch           |  2 +-
- .../network/42-netlink_seq/net_wireless_nl80211.patch      |  2 +-
- .../drivers_net_wireless_ath_wcn36xx_main.patch            |  6 +++---
- .../drivers_net_wireless_rtlwifi_rtl8192cu_sw.patch        |  2 +-
- .../network/69-wowlan-no-socket/net_wireless_nl80211.patch |  2 +-
- .../network/77-led-blink-api/mac80211.patch                |  2 +-
- .../network/81-genl-const/hwsim.patch                      |  2 +-
- .../network/81-genl-const/nl80211.patch                    |  6 +++---
- 31 files changed, 68 insertions(+), 50 deletions(-)
- create mode 100644 backport/backport-include/linux/ktime.h
-
+diff --git a/backport/backport-include/linux/ethtool.h b/backport/backport-include/linux/ethtool.h
+index 4f13cb9..38882de 100644
+--- a/backport/backport-include/linux/ethtool.h
++++ b/backport/backport-include/linux/ethtool.h
+@@ -42,6 +42,54 @@ static inline __u32 ethtool_cmd_speed(const struct ethtool_cmd *ep)
+ }
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
++/* EEPROM Standards for plug in modules */
++#define ETH_MODULE_SFF_8079		0x1
++#define ETH_MODULE_SFF_8079_LEN		256
++#define ETH_MODULE_SFF_8472		0x2
++#define ETH_MODULE_SFF_8472_LEN		512
++
++/**
++ * struct ethtool_ts_info - holds a device's timestamping and PHC association
++ * @cmd: command number = %ETHTOOL_GET_TS_INFO
++ * @so_timestamping: bit mask of the sum of the supported SO_TIMESTAMPING flags
++ * @phc_index: device index of the associated PHC, or -1 if there is none
++ * @tx_types: bit mask of the supported hwtstamp_tx_types enumeration values
++ * @rx_filters: bit mask of the supported hwtstamp_rx_filters enumeration values
++ *
++ * The bits in the 'tx_types' and 'rx_filters' fields correspond to
++ * the 'hwtstamp_tx_types' and 'hwtstamp_rx_filters' enumeration values,
++ * respectively.  For example, if the device supports HWTSTAMP_TX_ON,
++ * then (1 << HWTSTAMP_TX_ON) in 'tx_types' will be set.
++ */
++struct ethtool_ts_info {
++	__u32	cmd;
++	__u32	so_timestamping;
++	__s32	phc_index;
++	__u32	tx_types;
++	__u32	tx_reserved[3];
++	__u32	rx_filters;
++	__u32	rx_reserved[3];
++};
++
++/**
++ * struct ethtool_modinfo - plugin module eeprom information
++ * @cmd: %ETHTOOL_GMODULEINFO
++ * @type: Standard the module information conforms to %ETH_MODULE_SFF_xxxx
++ * @eeprom_len: Length of the eeprom
++ *
++ * This structure is used to return the information to
++ * properly size memory for a subsequent call to %ETHTOOL_GMODULEEEPROM.
++ * The type code indicates the eeprom data format
++ */
++struct ethtool_modinfo {
++	__u32   cmd;
++	__u32   type;
++	__u32   eeprom_len;
++	__u32   reserved[8];
++};
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0) */
++
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
+ /**
+  * struct ethtool_eee - Energy Efficient Ethernet information
+diff --git a/backport/backport-include/linux/ptp_clock_kernel.h b/backport/backport-include/linux/ptp_clock_kernel.h
+new file mode 100644
+index 0000000..b455517
+--- /dev/null
++++ b/backport/backport-include/linux/ptp_clock_kernel.h
+@@ -0,0 +1,35 @@
++#ifndef __BACKPORT_PTP_CLOCK_KERNEL_H
++#define __BACKPORT_PTP_CLOCK_KERNEL_H
++#include_next <linux/ptp_clock_kernel.h>
++
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
++#include <linux/posix-clock.h>
++
++#define PTP_MAX_TIMESTAMPS 128
++#define PTP_BUF_TIMESTAMPS 30
++
++struct timestamp_event_queue {
++	struct ptp_extts_event buf[PTP_MAX_TIMESTAMPS];
++	int head;
++	int tail;
++	spinlock_t lock;
++};
++
++struct ptp_clock {
++	struct posix_clock clock;
++	struct device *dev;
++	struct ptp_clock_info *info;
++	dev_t devid;
++	int index; /* index into clocks.map */
++	struct pps_device *pps_source;
++	long dialed_frequency; /* remembers the frequency adjustment */
++	struct timestamp_event_queue tsevq; /* simple fifo for time stamps */
++	struct mutex tsevq_mux; /* one process at a time reading the fifo */
++	wait_queue_head_t tsev_wq;
++	int defunct; /* tells readers to go away when clock is being removed */
++};
++
++extern int ptp_clock_index(struct ptp_clock *ptp);
++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0) */
++
++#endif /* __BACKPORT_PTP_CLOCK_KERNEL_H */
+diff --git a/backport/compat/compat-3.5.c b/backport/compat/compat-3.5.c
+index 95f52b9..0a4aaba 100644
+--- a/backport/compat/compat-3.5.c
++++ b/backport/compat/compat-3.5.c
+@@ -12,6 +12,9 @@
+ #include <linux/highuid.h>
+ #include <linux/ktime.h>
+ #include <linux/hrtimer.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0)
++#include <linux/ptp_clock_kernel.h>
++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) */
+ 
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
+ #include <linux/device.h>
+@@ -64,3 +67,11 @@ int overflowgid = DEFAULT_OVERFLOWGID;
+ EXPORT_SYMBOL_GPL(overflowuid);
+ EXPORT_SYMBOL_GPL(overflowgid);
+ #endif
++
++#ifdef CONFIG_PTP_1588_CLOCK
++int ptp_clock_index(struct ptp_clock *ptp)
++{
++	return ptp->index;
++}
++EXPORT_SYMBOL(ptp_clock_index);
++#endif /* CONFIG_PTP_1588_CLOCK */
+diff --git a/patches/collateral-evolutions/network/82-ethernet/0007-igb_ethtool_ops.patch b/patches/collateral-evolutions/network/82-ethernet/0007-igb_ethtool_ops.patch
+new file mode 100644
+index 0000000..ff0c95a
+--- /dev/null
++++ b/patches/collateral-evolutions/network/82-ethernet/0007-igb_ethtool_ops.patch
+@@ -0,0 +1,24 @@
++diff --git a/drivers/net/ethernet/intel/igb/igb_ethtool.c b/drivers/net/ethernet/intel/igb/igb_ethtool.c
++index 43ee8d0..b3c07d1 100644
++--- a/drivers/net/ethernet/intel/igb/igb_ethtool.c
+++++ b/drivers/net/ethernet/intel/igb/igb_ethtool.c
++@@ -2999,15 +2999,19 @@ static const struct ethtool_ops igb_ethtool_ops = {
++ 	.get_ethtool_stats	= igb_get_ethtool_stats,
++ 	.get_coalesce		= igb_get_coalesce,
++ 	.set_coalesce		= igb_set_coalesce,
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
++ 	.get_ts_info		= igb_get_ts_info,
+++#endif
++ 	.get_rxnfc		= igb_get_rxnfc,
++ 	.set_rxnfc		= igb_set_rxnfc,
++ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
++ 	.get_eee		= igb_get_eee,
++ 	.set_eee		= igb_set_eee,
++ #endif
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
++ 	.get_module_info	= igb_get_module_info,
++ 	.get_module_eeprom	= igb_get_module_eeprom,
+++#endif
++ 	.get_rxfh_indir_size	= igb_get_rxfh_indir_size,
++ 	.get_rxfh_indir		= igb_get_rxfh_indir,
++ 	.set_rxfh_indir		= igb_set_rxfh_indir,
 -- 
-1.8.4.3
+1.8.3.1
 
