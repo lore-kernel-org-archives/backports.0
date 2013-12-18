@@ -1,99 +1,208 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:53170 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758006Ab3LFQPk (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 6 Dec 2013 11:15:40 -0500
-Received: by mail-wg0-f44.google.com with SMTP id a1so843246wgh.11
-        for <backports@vger.kernel.org>; Fri, 06 Dec 2013 08:15:39 -0800 (PST)
-Date: Fri, 6 Dec 2013 17:15:31 +0100
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: backports@vger.kernel.org,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Subject: Re: [PATCH v3] backports: add support for prandom_bytes
-Message-ID: <20131206161531.GB8196@cerro.do-not-panic.com> (sfid-20131206_171542_576304_21B189D9)
-References: <1386079852-8248-1-git-send-email-johannes@sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1386079852-8248-1-git-send-email-johannes@sipsolutions.net>
+Received: from mx1.redhat.com ([209.132.183.28]:20681 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754754Ab3LRQIx (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 18 Dec 2013 11:08:53 -0500
+From: Stefan Assmann <sassmann@kpanic.de>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH RFC v2 02/11] backports: igb fixes for linux-3.9
+Date: Wed, 18 Dec 2013 17:08:16 +0100
+Message-Id: <1387382905-14274-3-git-send-email-sassmann@kpanic.de> (sfid-20131218_170858_874529_4971EC97)
+In-Reply-To: <1387382905-14274-1-git-send-email-sassmann@kpanic.de>
+References: <1387382905-14274-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Dec 03, 2013 at 03:10:52PM +0100, Johannes Berg wrote:
-> From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-> 
-> This was added in 3.8 and not used until now.
-> Since it it being used by the wireless stack, backport it.
-> 
-> Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> ---
->  backport/backport-include/linux/random.h |  3 +++
->  backport/compat/compat-3.8.c             | 32 ++++++++++++++++++++++++++++++++
->  2 files changed, 35 insertions(+)
-> 
-> diff --git a/backport/backport-include/linux/random.h b/backport/backport-include/linux/random.h
-> index 812ce7f..e915106 100644
-> --- a/backport/backport-include/linux/random.h
-> +++ b/backport/backport-include/linux/random.h
-> @@ -8,6 +8,9 @@
->  #define prandom_seed(_seed)		srandom32(_seed)
->  #define prandom_u32()			random32()
->  #define prandom_u32_state(_state)	prandom32(_state)
-> +/* backport 6582c665d6b882dad8329e05749fbcf119f1ab88 */
-> +#define prandom_bytes LINUX_BACKPORT(prandom_bytes)
-> +void prandom_bytes(void *buf, int bytes);
->  #endif
->  
->  #endif /* __BACKPORT_RANDOM_H */
-> diff --git a/backport/compat/compat-3.8.c b/backport/compat/compat-3.8.c
-> index d43d386..70d3375 100644
-> --- a/backport/compat/compat-3.8.c
-> +++ b/backport/compat/compat-3.8.c
-> @@ -16,6 +16,7 @@
->  #include <linux/module.h>
->  #include "hid-ids.h"
->  #include <linux/netdevice.h>
-> +#include <linux/random.h>
->  
->  #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,8))
->  void netdev_set_default_ethtool_ops(struct net_device *dev,
-> @@ -419,6 +420,37 @@ int vm_iomap_memory(struct vm_area_struct *vma, phys_addr_t start, unsigned long
->  }
->  EXPORT_SYMBOL_GPL(vm_iomap_memory);
->  
-> +/**
-> + *	prandom_bytes - get the requested number of pseudo-random bytes
-> + *	@buf: where to copy the pseudo-random bytes to
-> + *	@bytes: the requested number of bytes
-> + */
-> +void prandom_bytes(void *buf, int bytes)
-> +{
-> +	unsigned char *p = buf;
-> +	int i;
-> +
-> +	for (i = 0; i < round_down(bytes, sizeof(u32)); i += sizeof(u32)) {
-> +		u32 random = random32();
-> +		int j;
-> +
-> +		for (j = 0; j < sizeof(u32); j++) {
-> +			p[i + j] = random;
-> +			random >>= BITS_PER_BYTE;
-> +		}
-> +	}
-> +
-> +	if (i < bytes) {
-> +		u32 random = random32();
-> +
-> +		for (; i < bytes; i++) {
-> +			p[i] = random;
-> +			random >>= BITS_PER_BYTE;
-> +		}
-> +	}
-> +}
-> +EXPORT_SYMBOL_GPL(prandom_bytes_state);
+- add struct pci_sriov
+- add pci_vfs_assigned()
+- add PCI_SRIOV defines
+- add patches/collateral-evolutions/network/82-ethernet/0001-igb_net_device_ops.patch
 
-Where is prandom_bytes_state defined? Did you mean prandom_bytes ?
-This breaks compilation right now.
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+---
+ backport/backport-include/linux/pci.h              | 25 ++++++++++
+ backport/backport-include/linux/pci_regs.h         |  8 ++++
+ backport/compat/backport-3.10.c                    | 46 ++++++++++++++++++
+ .../82-ethernet/0001-igb_net_device_ops.patch      | 56 ++++++++++++++++++++++
+ 4 files changed, 135 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/0001-igb_net_device_ops.patch
 
-  Luis
+diff --git a/backport/backport-include/linux/pci.h b/backport/backport-include/linux/pci.h
+index 3a1815a..b56761f 100644
+--- a/backport/backport-include/linux/pci.h
++++ b/backport/backport-include/linux/pci.h
+@@ -178,4 +178,29 @@ bool pci_pme_capable(struct pci_dev *dev, pci_power_t state);
+ 	.subvendor = (subvend), .subdevice = (subdev)
+ #endif /* PCI_DEVICE_SUB */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
++/* Taken from drivers/pci/pci.h */
++struct pci_sriov {
++	int pos;		/* capability position */
++	int nres;		/* number of resources */
++	u32 cap;		/* SR-IOV Capabilities */
++	u16 ctrl;		/* SR-IOV Control */
++	u16 total_VFs;		/* total VFs associated with the PF */
++	u16 initial_VFs;	/* initial VFs associated with the PF */
++	u16 num_VFs;		/* number of VFs available */
++	u16 offset;		/* first VF Routing ID offset */
++	u16 stride;		/* following VF stride */
++	u32 pgsz;		/* page size for BAR alignment */
++	u8 link;		/* Function Dependency Link */
++	u16 driver_max_VFs;	/* max num VFs driver supports */
++	struct pci_dev *dev;	/* lowest numbered PF */
++	struct pci_dev *self;	/* this PF */
++	struct mutex lock;	/* lock for VF bus */
++	struct work_struct mtask; /* VF Migration task */
++	u8 __iomem *mstate;	/* VF Migration State Array */
++};
++
++extern int pci_vfs_assigned(struct pci_dev *dev);
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0) */
++
+ #endif /* _BACKPORT_LINUX_PCI_H */
+diff --git a/backport/backport-include/linux/pci_regs.h b/backport/backport-include/linux/pci_regs.h
+index 5cfa742..b52c4a5 100644
+--- a/backport/backport-include/linux/pci_regs.h
++++ b/backport/backport-include/linux/pci_regs.h
+@@ -125,4 +125,12 @@
+ #define PCI_PM_CAP_PME_SHIFT	11
+ #endif
+ 
++#ifndef PCI_SRIOV_VF_DID
++#define PCI_SRIOV_VF_DID	0x1a	/* VF Device ID */
++#endif
++
++#ifndef PCI_SRIOV_CTRL_VFE
++#define PCI_SRIOV_CTRL_VFE	0x01	/* VF Enable */
++#endif
++
+ #endif /* __BACKPORT_UAPI_PCI_REGS_H */
+diff --git a/backport/compat/backport-3.10.c b/backport/compat/backport-3.10.c
+index 07a8dac..a9f74ed 100644
+--- a/backport/compat/backport-3.10.c
++++ b/backport/compat/backport-3.10.c
+@@ -14,6 +14,8 @@
+ #include <linux/proc_fs.h>
+ #include <linux/random.h>
+ #include <linux/tty.h>
++#include <linux/pci.h>
++#include <linux/pci_regs.h>
+ 
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
+ #include <linux/init.h>
+@@ -128,4 +130,48 @@ void tty_port_tty_hangup(struct tty_port *port, bool check_clocal)
+ }
+ EXPORT_SYMBOL_GPL(tty_port_tty_hangup);
+ #endif /* CONFIG_TTY */
++
++#ifdef CONFIG_PCI_IOV
++/*
++ * pci_vfs_assigned - returns number of VFs are assigned to a guest
++ * @dev: the PCI device
++ *
++ * Returns number of VFs belonging to this device that are assigned to a guest.
++ * If device is not a physical function returns -ENODEV.
++ */
++int pci_vfs_assigned(struct pci_dev *dev)
++{
++	struct pci_dev *vfdev;
++	unsigned int vfs_assigned = 0;
++	unsigned short dev_id;
++
++	/* only search if we are a PF */
++	if (!dev->is_physfn)
++		return 0;
++
++	/*
++	 * determine the device ID for the VFs, the vendor ID will be the
++	 * same as the PF so there is no need to check for that one
++	 */
++	pci_read_config_word(dev, dev->sriov->pos + PCI_SRIOV_VF_DID, &dev_id);
++
++	/* loop through all the VFs to see if we own any that are assigned */
++	vfdev = pci_get_device(dev->vendor, dev_id, NULL);
++	while (vfdev) {
++		/*
++		 * It is considered assigned if it is a virtual function with
++		 * our dev as the physical function and the assigned bit is set
++		 */
++		if (vfdev->is_virtfn && (vfdev->physfn == dev) &&
++		    (vfdev->dev_flags & PCI_DEV_FLAGS_ASSIGNED))
++			vfs_assigned++;
++
++		vfdev = pci_get_device(dev->vendor, dev_id, vfdev);
++	}
++
++	return vfs_assigned;
++}
++EXPORT_SYMBOL_GPL(pci_vfs_assigned);
++#endif /* CONFIG_PCI_IOV */
++
+ #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28)) */
+diff --git a/patches/collateral-evolutions/network/82-ethernet/0001-igb_net_device_ops.patch b/patches/collateral-evolutions/network/82-ethernet/0001-igb_net_device_ops.patch
+new file mode 100644
+index 0000000..981b89e
+--- /dev/null
++++ b/patches/collateral-evolutions/network/82-ethernet/0001-igb_net_device_ops.patch
+@@ -0,0 +1,56 @@
++diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
++index 14ad4c7..f2a5abf 100644
++--- a/drivers/net/ethernet/intel/igb/igb_main.c
+++++ b/drivers/net/ethernet/intel/igb/igb_main.c
++@@ -161,8 +161,13 @@ static int igb_ioctl(struct net_device *, struct ifreq *, int cmd);
++ static void igb_tx_timeout(struct net_device *);
++ static void igb_reset_task(struct work_struct *);
++ static void igb_vlan_mode(struct net_device *netdev, netdev_features_t features);
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
++ static int igb_vlan_rx_add_vid(struct net_device *, __be16, u16);
++ static int igb_vlan_rx_kill_vid(struct net_device *, __be16, u16);
+++#else
+++static int igb_vlan_rx_add_vid(struct net_device *, u16);
+++static int igb_vlan_rx_kill_vid(struct net_device *, u16);
+++#endif
++ static void igb_restore_vlan(struct igb_adapter *);
++ static void igb_rar_set_qsel(struct igb_adapter *, u8 *, u32 , u8);
++ static void igb_ping_all_vfs(struct igb_adapter *);
++@@ -6959,8 +6964,12 @@ static void igb_vlan_mode(struct net_device *netdev, netdev_features_t features)
++ 	igb_rlpml_set(adapter);
++ }
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
++ static int igb_vlan_rx_add_vid(struct net_device *netdev,
++ 			       __be16 proto, u16 vid)
+++#else
+++static int igb_vlan_rx_add_vid(struct net_device *netdev, u16 vid)
+++#endif
++ {
++ 	struct igb_adapter *adapter = netdev_priv(netdev);
++ 	struct e1000_hw *hw = &adapter->hw;
++@@ -6977,8 +6986,12 @@ static int igb_vlan_rx_add_vid(struct net_device *netdev,
++ 	return 0;
++ }
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
++ static int igb_vlan_rx_kill_vid(struct net_device *netdev,
++ 				__be16 proto, u16 vid)
+++#else
+++static int igb_vlan_rx_kill_vid(struct net_device *netdev, u16 vid)
+++#endif
++ {
++ 	struct igb_adapter *adapter = netdev_priv(netdev);
++ 	struct e1000_hw *hw = &adapter->hw;
++@@ -7004,7 +7017,11 @@ static void igb_restore_vlan(struct igb_adapter *adapter)
++ 	igb_vlan_mode(adapter->netdev, adapter->netdev->features);
++ 
++ 	for_each_set_bit(vid, adapter->active_vlans, VLAN_N_VID)
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
++ 		igb_vlan_rx_add_vid(adapter->netdev, htons(ETH_P_8021Q), vid);
+++#else
+++		igb_vlan_rx_add_vid(adapter->netdev, vid);
+++#endif
++ }
++ 
++ int igb_set_spd_dplx(struct igb_adapter *adapter, u32 spd, u8 dplx)
+-- 
+1.8.3.1
+
