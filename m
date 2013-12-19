@@ -1,87 +1,109 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:50433 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751396Ab3LLJ24 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 12 Dec 2013 04:28:56 -0500
+Received: from mail.xlhost.de ([84.200.252.118]:46555 "EHLO app1b.xlhost.de"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750875Ab3LSJu6 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 19 Dec 2013 04:50:58 -0500
+Message-ID: <52B2C17F.9080409@kpanic.de> (sfid-20131219_105101_466929_790645EE)
+Date: Thu, 19 Dec 2013 10:50:55 +0100
 From: Stefan Assmann <sassmann@kpanic.de>
-To: mcgrof@kernel.org
-Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH RFC 00/10] backports: add igb driver
-Date: Thu, 12 Dec 2013 10:27:52 +0100
-Message-Id: <1386840482-585-1-git-send-email-sassmann@kpanic.de> (sfid-20131212_102900_853020_2509AC03)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+To: Hauke Mehrtens <hauke@hauke-m.de>, mcgrof@kernel.org
+CC: backports@vger.kernel.org
+Subject: Re: [PATCH RFC v2 05/11] backports: igb fixes for linux-3.6
+References: <1387382905-14274-1-git-send-email-sassmann@kpanic.de> <1387382905-14274-6-git-send-email-sassmann@kpanic.de> <52B20530.2040204@hauke-m.de>
+In-Reply-To: <52B20530.2040204@hauke-m.de>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is a RFC for inclusion of the Intel igb wired ethernet driver.
-Patches are split per kernel release that makes it easier to review
-the changes and gives a nice history of what was necessary for each
-release. Also the igb driver changes have been split up into individual
-patches in patches/collateral-evolutions/network/82-ethernet. This and
-file names are up for discussion, suggestions welcome.
+On 18.12.2013 21:27, Hauke Mehrtens wrote:
+> On 12/18/2013 05:08 PM, Stefan Assmann wrote:
+>> - backport ethtool_cmd
+>> - backport ethtool_ops
+>> - backport mmd_eee_adv_to_ethtool_adv_t
+>> - add patches/collateral-evolutions/network/82-ethernet/0003-igb_ptp.patch
+>> - add patches/collateral-evolutions/network/82-ethernet/0004-igb_err_handler.patch
+>> - add patches/collateral-evolutions/network/82-ethernet/0005-igb_mdi.patch
+>>
+>> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+>> ---
+>>  backport/backport-include/linux/mdio.h             | 35 ++++++++++++++++
+>>  .../network/82-ethernet/0003-igb_ptp.patch         | 17 ++++++++
+>>  .../network/82-ethernet/0004-igb_err_handler.patch | 16 +++++++
+>>  .../network/82-ethernet/0005-igb_mdi.patch         | 49 ++++++++++++++++++++++
+>>  4 files changed, 117 insertions(+)
+>>  create mode 100644 backport/backport-include/linux/mdio.h
+>>  create mode 100644 patches/collateral-evolutions/network/82-ethernet/0003-igb_ptp.patch
+>>  create mode 100644 patches/collateral-evolutions/network/82-ethernet/0004-igb_err_handler.patch
+>>  create mode 100644 patches/collateral-evolutions/network/82-ethernet/0005-igb_mdi.patch
+>>
+>> diff --git a/backport/backport-include/linux/mdio.h b/backport/backport-include/linux/mdio.h
+>> new file mode 100644
+>> index 0000000..2a38121
+>> --- /dev/null
+>> +++ b/backport/backport-include/linux/mdio.h
+>> @@ -0,0 +1,35 @@
+>> +#ifndef __BACKPORT_LINUX_MDIO_H
+>> +#define __BACKPORT_LINUX_MDIO_H
+>> +#include_next <linux/mdio.h>
+>> +
+>> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
+>> +/**
+>> + * mmd_eee_adv_to_ethtool_adv_t
+>> + * @eee_adv: value of the MMD EEE Advertisement/Link Partner Ability registers
+>> + *
+>> + * A small helper function that translates the MMD EEE Advertisment (7.60)
+>> + * and MMD EEE Link Partner Ability (7.61) bits to ethtool advertisement
+>> + * settings.
+>> + */
+>> +static inline u32 mmd_eee_adv_to_ethtool_adv_t(u16 eee_adv)
+>> +{
+>> +	u32 adv = 0;
+>> +
+>> +	if (eee_adv & MDIO_EEE_100TX)
+>> +		adv |= ADVERTISED_100baseT_Full;
+>> +	if (eee_adv & MDIO_EEE_1000T)
+>> +		adv |= ADVERTISED_1000baseT_Full;
+>> +	if (eee_adv & MDIO_EEE_10GT)
+>> +		adv |= ADVERTISED_10000baseT_Full;
+>> +	if (eee_adv & MDIO_EEE_1000KX)
+>> +		adv |= ADVERTISED_1000baseKX_Full;
+>> +	if (eee_adv & MDIO_EEE_10GKX4)
+>> +		adv |= ADVERTISED_10000baseKX4_Full;
+>> +	if (eee_adv & MDIO_EEE_10GKR)
+>> +		adv |= ADVERTISED_10000baseKR_Full;
+>> +
+>> +	return adv;
+>> +}
+>> +#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0) */
+>> +
+>> +#endif /* __BACKPORT_LINUX_MDIO_H */
+>> diff --git a/patches/collateral-evolutions/network/82-ethernet/0003-igb_ptp.patch b/patches/collateral-evolutions/network/82-ethernet/0003-igb_ptp.patch
+>> new file mode 100644
+>> index 0000000..9799466
+>> --- /dev/null
+>> +++ b/patches/collateral-evolutions/network/82-ethernet/0003-igb_ptp.patch
+>> @@ -0,0 +1,17 @@
+>> +diff --git a/drivers/net/ethernet/intel/igb/igb_ptp.c b/drivers/net/ethernet/intel/igb/igb_ptp.c
+>> +index 5a54e3d..97bb1cf 100644
+>> +--- a/drivers/net/ethernet/intel/igb/igb_ptp.c
+>> ++++ b/drivers/net/ethernet/intel/igb/igb_ptp.c
+>> +@@ -802,8 +802,12 @@ void igb_ptp_init(struct igb_adapter *adapter)
+>> + 		wr32(E1000_IMS, E1000_IMS_TS);
+>> + 	}
+>> + 
+>> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
+>> + 	adapter->ptp_clock = ptp_clock_register(&adapter->ptp_caps,
+>> + 						&adapter->pdev->dev);
+>> ++#else
+>> ++	adapter->ptp_clock = ptp_clock_register(&adapter->ptp_caps);
+>> ++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
+> 
+> This could be replaced with in a header file:
+> #if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
+> #define ptp_clock_register(info,parent) ptp_clock_register(info)
+> #endif
 
-Support goes back to kernel 3.0 since current igb relies on ptp support
-which got introduced in 3.0. Currently the patches still break for
-kernel before 3.0 but I wanted to get the RFC out, this should be fixed
-next time.
+Yes that's better, going to be included in next version.
 
-One thing I'm not sure how to fix is the following HWMON warning.
-make KLIB=/lib/modules/3.0.0 defconfig-igb
-make[2]: `conf' is up to date.
-boolean symbol HWMON tested for 'm'? test forced to 'n'
-boolean symbol HWMON tested for 'm'? test forced to 'n'
-
-Patches apply against tag backports-20131206, feedback is very welcome.
-
-Stefan Assmann (10):
-  backports: add igb ethernet network driver
-  backports: igb fixes for linux-3.9
-  backports: igb fixes for linux-3.8
-  backports: igb fixes for linux-3.7
-  backports: igb fixes for linux-3.6
-  backports: igb fixes for linux-3.5
-  backports: igb fixes for linux-3.4
-  backports: igb fixes for linux-3.3
-  backports: igb fixes for linux-3.2
-  backports: igb fixes for linux-3.1
-
- backport/backport-include/linux/ethtool.h          | 192 +++++++++++++++++++++
- backport/backport-include/linux/gfp.h              |  10 ++
- backport/backport-include/linux/if.h               |   8 +
- backport/backport-include/linux/if_link.h          |  17 ++
- backport/backport-include/linux/mdio.h             |  56 ++++++
- backport/backport-include/linux/pci.h              |  36 ++++
- backport/backport-include/linux/pci_regs.h         |   8 +
- backport/backport-include/linux/ptp_clock_kernel.h |  35 ++++
- backport/backport-include/linux/skbuff.h           |  74 ++++++++
- backport/backport-include/linux/u64_stats_sync.h   |  16 +-
- backport/compat/backport-3.10.c                    |  46 +++++
- backport/compat/compat-3.5.c                       |   7 +
- backport/compat/compat-3.8.c                       |  32 ++++
- backport/defconfigs/igb                            |   7 +
- copy-list                                          |   4 +
- .../network/82-ethernet/igb_err_handler.patch      |  16 ++
- .../82-ethernet/igb_ndo_set_vf_spoofchk.patch      |  14 ++
- .../network/82-ethernet/igb_net_device_ops.patch   |  56 ++++++
- .../network/82-ethernet/igb_no_fcs.patch           |  16 ++
- .../82-ethernet/igb_pci_sriov_configure.patch      |  14 ++
- .../network/82-ethernet/igb_ptp.patch              |  17 ++
- .../network/82-ethernet/igb_vlan_rx_vid.patch      |  64 +++++++
- 22 files changed, 743 insertions(+), 2 deletions(-)
- create mode 100644 backport/backport-include/linux/gfp.h
- create mode 100644 backport/backport-include/linux/if_link.h
- create mode 100644 backport/backport-include/linux/mdio.h
- create mode 100644 backport/backport-include/linux/ptp_clock_kernel.h
- create mode 100644 backport/defconfigs/igb
- create mode 100644 patches/collateral-evolutions/network/82-ethernet/igb_err_handler.patch
- create mode 100644 patches/collateral-evolutions/network/82-ethernet/igb_ndo_set_vf_spoofchk.patch
- create mode 100644 patches/collateral-evolutions/network/82-ethernet/igb_net_device_ops.patch
- create mode 100644 patches/collateral-evolutions/network/82-ethernet/igb_no_fcs.patch
- create mode 100644 patches/collateral-evolutions/network/82-ethernet/igb_pci_sriov_configure.patch
- create mode 100644 patches/collateral-evolutions/network/82-ethernet/igb_ptp.patch
- create mode 100644 patches/collateral-evolutions/network/82-ethernet/igb_vlan_rx_vid.patch
-
--- 
-1.8.3.1
-
+  Stefan
