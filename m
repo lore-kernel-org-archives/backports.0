@@ -1,96 +1,197 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:60622 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754219Ab3LCRmf (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 3 Dec 2013 12:42:35 -0500
+Received: from mail.xlhost.de ([84.200.252.118]:39655 "EHLO app1b.xlhost.de"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751455Ab3LSKhw (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 19 Dec 2013 05:37:52 -0500
+Message-ID: <52B2CC7D.60602@kpanic.de> (sfid-20131219_113813_568204_0F8D270B)
+Date: Thu, 19 Dec 2013 11:37:49 +0100
+From: Stefan Assmann <sassmann@kpanic.de>
 MIME-Version: 1.0
-Date: Tue, 3 Dec 2013 12:42:34 -0500
-Message-ID: <CA+X2d=Ar93dXujLt8xNeh9tNmEX9HU+VgVSqWsdGtKLvk=Rdyg@mail.gmail.com> (sfid-20131203_184238_235843_51BEEC40)
-Subject: [PATCH] drivers/input/mouse: add support for newer elantech touchpads
- (released ca. August 2013);
-From: Matt Walker <matt.g.d.walker@gmail.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Content-Type: multipart/mixed; boundary=089e0102fb5c5378c104eca4d2b8
+To: Hauke Mehrtens <hauke@hauke-m.de>, mcgrof@kernel.org
+CC: backports@vger.kernel.org
+Subject: Re: [PATCH RFC v2 07/11] backports: igb fixes for linux-3.4
+References: <1387382905-14274-1-git-send-email-sassmann@kpanic.de> <1387382905-14274-8-git-send-email-sassmann@kpanic.de> <52B221A6.6070109@hauke-m.de>
+In-Reply-To: <52B221A6.6070109@hauke-m.de>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
---089e0102fb5c5378c104eca4d2b8
-Content-Type: text/plain; charset=ISO-8859-1
-
-From: Matt Walker <matt.g.d.walker@gmail.com>
-
-Added detection for newer Elantech touchpads, so that kernel doesn't
-fall-back to default PS/2 driver. Supports touchpads released after
-~August 2013.  Fixes bug:
-https://lists.launchpad.net/kernel-packages/msg18481.html
-
-Tested-by: Matt Walker <matt.g.d.walker@gmail.com> on an Acer Aspire S7-392-6302
-
-----
-
-Thanks to Hauke for the reference on how to submit a patch properly.
-Please let me know if additional modifications are required.
-
-Diff Output:
-
---- linux-3.13-rc1/drivers/input/mouse/elantech.c.orig    2013-12-03
-12:14:52.829173656 -0500
-+++ linux-3.13-rc1/drivers/input/mouse/elantech.c    2013-12-03
-12:15:11.833173880 -0500
-@@ -1313,6 +1313,7 @@ static int elantech_set_properties(struc
-             break;
-         case 6:
-         case 7:
-+        case 8:
-             etd->hw_version = 4;
-             break;
-         default:
-
-
-On Fri, Nov 29, 2013 at 4:26 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
-> On 11/29/2013 01:00 AM, Matt Walker wrote:
->> Hello,
+On 18.12.2013 23:28, Hauke Mehrtens wrote:
+> On 12/18/2013 05:08 PM, Stefan Assmann wrote:
+>> - add struct ethtool_ts_info
+>> - add struct ethtool_modinfo
+>> - add struct timestamp_event_queue
+>> - add struct ptp_clock
+>> - add ptp_clock_index()
+>> - add patches/collateral-evolutions/network/82-ethernet/0007-igb_ethtool_ops.patch
 >>
->> Attached is a patch for drivers/input/mouse/elantech.c.  It allows
->> recent Elantech touchpads to be detected.  I have tested it on the
->> touchpad that comes with the Acer Aspire S7-392 (released ~August
->> 2013)
+>> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+>> ---
+>>  backport/backport-include/linux/ethtool.h          | 48 ++++++++++++++++++++++
+>>  backport/backport-include/linux/ptp_clock_kernel.h | 35 ++++++++++++++++
+>>  backport/compat/compat-3.5.c                       | 11 +++++
+>>  .../network/82-ethernet/0007-igb_ethtool_ops.patch | 24 +++++++++++
+>>  4 files changed, 118 insertions(+)
+>>  create mode 100644 backport/backport-include/linux/ptp_clock_kernel.h
+>>  create mode 100644 patches/collateral-evolutions/network/82-ethernet/0007-igb_ethtool_ops.patch
 >>
->> I figure it could be backported with little effort and no danger,
->> since all it does it add one to the number of values that were
->> previously recognized as valid "firmware version numbers".
->>
->> Begin Patch:
->> 1315a1316
->>>         case 8:
->> End Patch
->>
->> Best,
->> Matt
->>
-> This is not a patch, I do not know what you want to do.
->
-> This is the documentation for hacking on backprts:
-> https://backports.wiki.kernel.org/index.php/Documentation/backports/hacking
->
-> This is the guideline for patch submission to the linux kernel which
-> mostly also applies for backports:
-> https://www.kernel.org/doc/Documentation/SubmittingPatches
->
-> Hauke
+>> diff --git a/backport/backport-include/linux/ethtool.h b/backport/backport-include/linux/ethtool.h
+>> index 4f13cb9..38882de 100644
+>> --- a/backport/backport-include/linux/ethtool.h
+>> +++ b/backport/backport-include/linux/ethtool.h
+>> @@ -42,6 +42,54 @@ static inline __u32 ethtool_cmd_speed(const struct ethtool_cmd *ep)
+>>  }
+>>  #endif
+>>  
+>> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
+>> +/* EEPROM Standards for plug in modules */
+>> +#define ETH_MODULE_SFF_8079		0x1
+>> +#define ETH_MODULE_SFF_8079_LEN		256
+>> +#define ETH_MODULE_SFF_8472		0x2
+>> +#define ETH_MODULE_SFF_8472_LEN		512
+>> +
+>> +/**
+>> + * struct ethtool_ts_info - holds a device's timestamping and PHC association
+>> + * @cmd: command number = %ETHTOOL_GET_TS_INFO
+>> + * @so_timestamping: bit mask of the sum of the supported SO_TIMESTAMPING flags
+>> + * @phc_index: device index of the associated PHC, or -1 if there is none
+>> + * @tx_types: bit mask of the supported hwtstamp_tx_types enumeration values
+>> + * @rx_filters: bit mask of the supported hwtstamp_rx_filters enumeration values
+>> + *
+>> + * The bits in the 'tx_types' and 'rx_filters' fields correspond to
+>> + * the 'hwtstamp_tx_types' and 'hwtstamp_rx_filters' enumeration values,
+>> + * respectively.  For example, if the device supports HWTSTAMP_TX_ON,
+>> + * then (1 << HWTSTAMP_TX_ON) in 'tx_types' will be set.
+>> + */
+>> +struct ethtool_ts_info {
+>> +	__u32	cmd;
+>> +	__u32	so_timestamping;
+>> +	__s32	phc_index;
+>> +	__u32	tx_types;
+>> +	__u32	tx_reserved[3];
+>> +	__u32	rx_filters;
+>> +	__u32	rx_reserved[3];
+>> +};
+>> +
+>> +/**
+>> + * struct ethtool_modinfo - plugin module eeprom information
+>> + * @cmd: %ETHTOOL_GMODULEINFO
+>> + * @type: Standard the module information conforms to %ETH_MODULE_SFF_xxxx
+>> + * @eeprom_len: Length of the eeprom
+>> + *
+>> + * This structure is used to return the information to
+>> + * properly size memory for a subsequent call to %ETHTOOL_GMODULEEEPROM.
+>> + * The type code indicates the eeprom data format
+>> + */
+>> +struct ethtool_modinfo {
+>> +	__u32   cmd;
+>> +	__u32   type;
+>> +	__u32   eeprom_len;
+>> +	__u32   reserved[8];
+>> +};
+>> +#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0) */
+>> +
+>>  #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
+>>  /**
+>>   * struct ethtool_eee - Energy Efficient Ethernet information
+>> diff --git a/backport/backport-include/linux/ptp_clock_kernel.h b/backport/backport-include/linux/ptp_clock_kernel.h
+>> new file mode 100644
+>> index 0000000..b455517
+>> --- /dev/null
+>> +++ b/backport/backport-include/linux/ptp_clock_kernel.h
+>> @@ -0,0 +1,35 @@
+>> +#ifndef __BACKPORT_PTP_CLOCK_KERNEL_H
+>> +#define __BACKPORT_PTP_CLOCK_KERNEL_H
+>> +#include_next <linux/ptp_clock_kernel.h>
+>> +
+>> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
+>> +#include <linux/posix-clock.h>
+>> +
+>> +#define PTP_MAX_TIMESTAMPS 128
+>> +#define PTP_BUF_TIMESTAMPS 30
+>> +
+>> +struct timestamp_event_queue {
+>> +	struct ptp_extts_event buf[PTP_MAX_TIMESTAMPS];
+>> +	int head;
+>> +	int tail;
+>> +	spinlock_t lock;
+>> +};
+>> +
+>> +struct ptp_clock {
+>> +	struct posix_clock clock;
+>> +	struct device *dev;
+>> +	struct ptp_clock_info *info;
+>> +	dev_t devid;
+>> +	int index; /* index into clocks.map */
+>> +	struct pps_device *pps_source;
+>> +	long dialed_frequency; /* remembers the frequency adjustment */
+>> +	struct timestamp_event_queue tsevq; /* simple fifo for time stamps */
+>> +	struct mutex tsevq_mux; /* one process at a time reading the fifo */
+>> +	wait_queue_head_t tsev_wq;
+>> +	int defunct; /* tells readers to go away when clock is being removed */
+>> +};
+>> +
+>> +extern int ptp_clock_index(struct ptp_clock *ptp);
+>> +#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0) */
+>> +
+>> +#endif /* __BACKPORT_PTP_CLOCK_KERNEL_H */
+>> diff --git a/backport/compat/compat-3.5.c b/backport/compat/compat-3.5.c
+>> index 95f52b9..0a4aaba 100644
+>> --- a/backport/compat/compat-3.5.c
+>> +++ b/backport/compat/compat-3.5.c
+>> @@ -12,6 +12,9 @@
+>>  #include <linux/highuid.h>
+>>  #include <linux/ktime.h>
+>>  #include <linux/hrtimer.h>
+>> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0)
+>> +#include <linux/ptp_clock_kernel.h>
+>> +#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) */
+>>  
+>>  #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
+>>  #include <linux/device.h>
+>> @@ -64,3 +67,11 @@ int overflowgid = DEFAULT_OVERFLOWGID;
+>>  EXPORT_SYMBOL_GPL(overflowuid);
+>>  EXPORT_SYMBOL_GPL(overflowgid);
+>>  #endif
+>> +
+>> +#ifdef CONFIG_PTP_1588_CLOCK
+>> +int ptp_clock_index(struct ptp_clock *ptp)
+>> +{
+>> +	return ptp->index;
+>> +}
+>> +EXPORT_SYMBOL(ptp_clock_index);
+> 
+> ptp_clock_index() is only used in igb_get_ts_info() which which is never
+> called in kernel < 3.5 because this operation does not exist in
+> ethtool_ops there.
+> Backporting this is not so easy as it looks here, because you added
+> struct ptp_clock here and there is also a version in the kernel, if they
+> differ it could be that this index does not point to the same offset the
+> kernel used as index variable. I would also ifdef the igb_get_ts_info()
+> itself and remove the stuff related to ptp_clock_index(), you are seeing
+> a unused function warning as well.
 
---089e0102fb5c5378c104eca4d2b8
-Content-Type: application/octet-stream; name=patch
-Content-Disposition: attachment; filename=patch
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_horexehc0
+So how about we take the original struct ptp_clock? There's only been
+one single change introduced in 3.7 to the struct. No harm should come
+from that code then.
+As stated earlier I'm trying to keep the changes to igb itself as small
+as possible and the unused function warnings are also a good indicator
+for what is actually missing in the driver. There's already a bunch of
+them if you compile against 3.0:
+/dev/shm/next/drivers/net/ethernet/intel/igb/igb_main.c:7643: warning: igb_ndo_set_vf_spoofchk defined but not used
+/dev/shm/next/drivers/net/ethernet/intel/igb/igb_main.c:7359: warning: igb_pci_sriov_configure defined but not used
+/dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2354: warning: igb_get_ts_info defined but not used
+/dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2448: warning: igb_get_rxnfc defined but not used
+/dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2573: warning: igb_set_rxnfc defined but not used
+/dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2660: warning: igb_set_eee defined but not used
+/dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2718: warning: igb_get_module_info defined but not used
+/dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2760: warning: igb_get_module_eeprom defined but not used
+/dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2810: warning: igb_get_rxfh_indir_size defined but not used
+/dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2815: warning: igb_get_rxfh_indir defined but not used
+/dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2861: warning: igb_set_rxfh_indir defined but not used
+The bottom line is, I'd like to keep them if you're not strictly opposed
+to it.
 
-LS0tIGxpbnV4LTMuMTMtcmMxL2RyaXZlcnMvaW5wdXQvbW91c2UvZWxhbnRlY2guYy5vcmlnCTIw
-MTMtMTItMDMgMTI6MTQ6NTIuODI5MTczNjU2IC0wNTAwCisrKyBsaW51eC0zLjEzLXJjMS9kcml2
-ZXJzL2lucHV0L21vdXNlL2VsYW50ZWNoLmMJMjAxMy0xMi0wMyAxMjoxNToxMS44MzMxNzM4ODAg
-LTA1MDAKQEAgLTEzMTMsNiArMTMxMyw3IEBAIHN0YXRpYyBpbnQgZWxhbnRlY2hfc2V0X3Byb3Bl
-cnRpZXMoc3RydWMKIAkJCWJyZWFrOwogCQljYXNlIDY6CiAJCWNhc2UgNzoKKwkJY2FzZSA4Ogog
-CQkJZXRkLT5od192ZXJzaW9uID0gNDsKIAkJCWJyZWFrOwogCQlkZWZhdWx0Ogo=
---089e0102fb5c5378c104eca4d2b8--
+Thanks for the thorough review, I appreciate that!
+
+  Stefan
