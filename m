@@ -1,41 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:22085 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752468Ab3LHH2z convert rfc822-to-8bit (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 8 Dec 2013 02:28:55 -0500
-From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Johannes Berg <johannes@sipsolutions.net>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: RE: [PATCH v3] backports: add support for prandom_bytes
-Date: Sun, 8 Dec 2013 07:28:51 +0000
-Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB303D19754@HASMSX103.ger.corp.intel.com> (sfid-20131208_082858_039193_139FE040)
-References: <1386079852-8248-1-git-send-email-johannes@sipsolutions.net>
- <20131206161531.GB8196@cerro.do-not-panic.com>
- <20131206182601.GC8196@cerro.do-not-panic.com>
-In-Reply-To: <20131206182601.GC8196@cerro.do-not-panic.com>
-Content-Type: text/plain; charset="us-ascii"
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:64433 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754170Ab3LVR1G (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 22 Dec 2013 12:27:06 -0500
+Message-ID: <52B720E6.3070809@broadcom.com> (sfid-20131222_182711_900287_D07CE78C)
+Date: Sun, 22 Dec 2013 18:27:02 +0100
+From: Arend van Spriel <arend@broadcom.com>
 MIME-Version: 1.0
+To: Hauke Mehrtens <hauke@hauke-m.de>,
+	Johannes Berg <johannes@sipsolutions.net>
+CC: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+	<backports@vger.kernel.org>
+Subject: Re: [PATCH] backports: random: add prandom_bytes macro for pre-3.8
+ kernels
+References: <1387713434-20109-1-git-send-email-arend@broadcom.com>	 (sfid-20131222_125724_927172_10481688) <1387715284.4346.2.camel@jlt4.sipsolutions.net> <52B71E44.7040600@hauke-m.de>
+In-Reply-To: <52B71E44.7040600@hauke-m.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-> From: Luis R. Rodriguez [mailto:mcgrof@gmail.com] On Behalf Of Luis R.
-> Rodriguez
-> Sent: Friday, December 06, 2013 8:26 PM
-> To: Johannes Berg
-> Cc: backports@vger.kernel.org; Grumbach, Emmanuel
-> Subject: Re: [PATCH v3] backports: add support for prandom_bytes
+On 12/22/2013 06:15 PM, Hauke Mehrtens wrote:
+> On 12/22/2013 01:28 PM, Johannes Berg wrote:
+>> On Sun, 2013-12-22 at 12:57 +0100, Arend van Spriel wrote:
+>>> Map prandom_bytes() calls to get_random_bytes() for kernels before
+>>> 3.8 kernel. This patch is needed by mac80211 rate control code
+>>> since following:
+>>
+>>> +/* use get_random_bytes() for lack of prandom_bytes() */
+>>> +#define prandom_bytes(a, b)		get_random_bytes(a, b)
+>>
+>> I don't think this is a good idea, it's a completely different interface
+>> (get_random_bytes is much higher "quality".)
+>>
+>> We had a different patch for this fairly recently and I thought Luis
+>> applied it?
 > 
-> On Fri, Dec 06, 2013 at 05:15:31PM +0100, Luis R. Rodriguez wrote:
-> > On Tue, Dec 03, 2013 at 03:10:52PM +0100, Johannes Berg wrote:
-> > > +EXPORT_SYMBOL_GPL(prandom_bytes_state);
-> >
-> > Where is prandom_bytes_state defined? Did you mean prandom_bytes ?
-> > This breaks compilation right now.
-> 
-> I'll fix this upon merge, modifying this without _state fixed things.
->
+> Yes a different patch is already in backports:
+> https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/commit/?id=40ab1bac8c3680d726ee31fbdb590584ae99756f
 
-Well... the patch was suggested by Johannes, of course I fixed it before I applied it in our internal tree, and apparently, I should have told him that I had to fix it before asking him to send upstream...
-Thanks Luis.
+I was looking at your github repo, because kernel.org did not work for
+3.13 a while ago. Distributed version control can be a curse as well as
+a blessing.
+
+Gr. AvS
 
