@@ -1,137 +1,209 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:12053 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751101Ab3LVKvM (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 22 Dec 2013 05:51:12 -0500
-From: Arend van Spriel <arend@broadcom.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>, Arend van Spriel <arend@broadcom.com>
-Subject: [PATCH V2] network: mac80211: rework multicast patches for mac80211
-Date: Sun, 22 Dec 2013 11:51:05 +0100
-Message-ID: <1387709465-19004-1-git-send-email-arend@broadcom.com> (sfid-20131222_115118_445771_D29DAA5F)
+Received: from mail.xlhost.de ([84.200.252.118]:56234 "EHLO app1b.xlhost.de"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751651Ab3LXLTj (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 24 Dec 2013 06:19:39 -0500
+Message-ID: <52B96DC6.7020500@kpanic.de> (sfid-20131224_121945_410255_BFA83A27)
+Date: Tue, 24 Dec 2013 12:19:34 +0100
+From: Stefan Assmann <sassmann@kpanic.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Hauke Mehrtens <hauke@hauke-m.de>, mcgrof@kernel.org
+CC: backports@vger.kernel.org
+Subject: Re: [PATCH RFC v2 07/11] backports: igb fixes for linux-3.4
+References: <1387382905-14274-1-git-send-email-sassmann@kpanic.de> <1387382905-14274-8-git-send-email-sassmann@kpanic.de> <52B221A6.6070109@hauke-m.de> <52B2CC7D.60602@kpanic.de> <52B84193.4060000@hauke-m.de>
+In-Reply-To: <52B84193.4060000@hauke-m.de>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Fixing up the patches for mac80211 that were located under
-collateral-evolutions/network/25-multicast-list_head.
+On 23.12.2013 14:58, Hauke Mehrtens wrote:
+> On 12/19/2013 11:37 AM, Stefan Assmann wrote:
+>> On 18.12.2013 23:28, Hauke Mehrtens wrote:
+>>> On 12/18/2013 05:08 PM, Stefan Assmann wrote:
+>>>> - add struct ethtool_ts_info
+>>>> - add struct ethtool_modinfo
+>>>> - add struct timestamp_event_queue
+>>>> - add struct ptp_clock
+>>>> - add ptp_clock_index()
+>>>> - add patches/collateral-evolutions/network/82-ethernet/0007-igb_ethtool_ops.patch
+>>>>
+>>>> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+>>>> ---
+>>>>   backport/backport-include/linux/ethtool.h          | 48 ++++++++++++++++++++++
+>>>>   backport/backport-include/linux/ptp_clock_kernel.h | 35 ++++++++++++++++
+>>>>   backport/compat/compat-3.5.c                       | 11 +++++
+>>>>   .../network/82-ethernet/0007-igb_ethtool_ops.patch | 24 +++++++++++
+>>>>   4 files changed, 118 insertions(+)
+>>>>   create mode 100644 backport/backport-include/linux/ptp_clock_kernel.h
+>>>>   create mode 100644 patches/collateral-evolutions/network/82-ethernet/0007-igb_ethtool_ops.patch
+>>>>
+>>>> diff --git a/backport/backport-include/linux/ethtool.h b/backport/backport-include/linux/ethtool.h
+>>>> index 4f13cb9..38882de 100644
+>>>> --- a/backport/backport-include/linux/ethtool.h
+>>>> +++ b/backport/backport-include/linux/ethtool.h
+>>>> @@ -42,6 +42,54 @@ static inline __u32 ethtool_cmd_speed(const struct ethtool_cmd *ep)
+>>>>   }
+>>>>   #endif
+>>>>
+>>>> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
+>>>> +/* EEPROM Standards for plug in modules */
+>>>> +#define ETH_MODULE_SFF_8079		0x1
+>>>> +#define ETH_MODULE_SFF_8079_LEN		256
+>>>> +#define ETH_MODULE_SFF_8472		0x2
+>>>> +#define ETH_MODULE_SFF_8472_LEN		512
+>>>> +
+>>>> +/**
+>>>> + * struct ethtool_ts_info - holds a device's timestamping and PHC association
+>>>> + * @cmd: command number = %ETHTOOL_GET_TS_INFO
+>>>> + * @so_timestamping: bit mask of the sum of the supported SO_TIMESTAMPING flags
+>>>> + * @phc_index: device index of the associated PHC, or -1 if there is none
+>>>> + * @tx_types: bit mask of the supported hwtstamp_tx_types enumeration values
+>>>> + * @rx_filters: bit mask of the supported hwtstamp_rx_filters enumeration values
+>>>> + *
+>>>> + * The bits in the 'tx_types' and 'rx_filters' fields correspond to
+>>>> + * the 'hwtstamp_tx_types' and 'hwtstamp_rx_filters' enumeration values,
+>>>> + * respectively.  For example, if the device supports HWTSTAMP_TX_ON,
+>>>> + * then (1 << HWTSTAMP_TX_ON) in 'tx_types' will be set.
+>>>> + */
+>>>> +struct ethtool_ts_info {
+>>>> +	__u32	cmd;
+>>>> +	__u32	so_timestamping;
+>>>> +	__s32	phc_index;
+>>>> +	__u32	tx_types;
+>>>> +	__u32	tx_reserved[3];
+>>>> +	__u32	rx_filters;
+>>>> +	__u32	rx_reserved[3];
+>>>> +};
+>>>> +
+>>>> +/**
+>>>> + * struct ethtool_modinfo - plugin module eeprom information
+>>>> + * @cmd: %ETHTOOL_GMODULEINFO
+>>>> + * @type: Standard the module information conforms to %ETH_MODULE_SFF_xxxx
+>>>> + * @eeprom_len: Length of the eeprom
+>>>> + *
+>>>> + * This structure is used to return the information to
+>>>> + * properly size memory for a subsequent call to %ETHTOOL_GMODULEEEPROM.
+>>>> + * The type code indicates the eeprom data format
+>>>> + */
+>>>> +struct ethtool_modinfo {
+>>>> +	__u32   cmd;
+>>>> +	__u32   type;
+>>>> +	__u32   eeprom_len;
+>>>> +	__u32   reserved[8];
+>>>> +};
+>>>> +#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0) */
+>>>> +
+>>>>   #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
+>>>>   /**
+>>>>    * struct ethtool_eee - Energy Efficient Ethernet information
+>>>> diff --git a/backport/backport-include/linux/ptp_clock_kernel.h b/backport/backport-include/linux/ptp_clock_kernel.h
+>>>> new file mode 100644
+>>>> index 0000000..b455517
+>>>> --- /dev/null
+>>>> +++ b/backport/backport-include/linux/ptp_clock_kernel.h
+>>>> @@ -0,0 +1,35 @@
+>>>> +#ifndef __BACKPORT_PTP_CLOCK_KERNEL_H
+>>>> +#define __BACKPORT_PTP_CLOCK_KERNEL_H
+>>>> +#include_next <linux/ptp_clock_kernel.h>
+>>>> +
+>>>> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
+>>>> +#include <linux/posix-clock.h>
+>>>> +
+>>>> +#define PTP_MAX_TIMESTAMPS 128
+>>>> +#define PTP_BUF_TIMESTAMPS 30
+>>>> +
+>>>> +struct timestamp_event_queue {
+>>>> +	struct ptp_extts_event buf[PTP_MAX_TIMESTAMPS];
+>>>> +	int head;
+>>>> +	int tail;
+>>>> +	spinlock_t lock;
+>>>> +};
+>>>> +
+>>>> +struct ptp_clock {
+>>>> +	struct posix_clock clock;
+>>>> +	struct device *dev;
+>>>> +	struct ptp_clock_info *info;
+>>>> +	dev_t devid;
+>>>> +	int index; /* index into clocks.map */
+>>>> +	struct pps_device *pps_source;
+>>>> +	long dialed_frequency; /* remembers the frequency adjustment */
+>>>> +	struct timestamp_event_queue tsevq; /* simple fifo for time stamps */
+>>>> +	struct mutex tsevq_mux; /* one process at a time reading the fifo */
+>>>> +	wait_queue_head_t tsev_wq;
+>>>> +	int defunct; /* tells readers to go away when clock is being removed */
+>>>> +};
+>>>> +
+>>>> +extern int ptp_clock_index(struct ptp_clock *ptp);
+>>>> +#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0) */
+>>>> +
+>>>> +#endif /* __BACKPORT_PTP_CLOCK_KERNEL_H */
+>>>> diff --git a/backport/compat/compat-3.5.c b/backport/compat/compat-3.5.c
+>>>> index 95f52b9..0a4aaba 100644
+>>>> --- a/backport/compat/compat-3.5.c
+>>>> +++ b/backport/compat/compat-3.5.c
+>>>> @@ -12,6 +12,9 @@
+>>>>   #include <linux/highuid.h>
+>>>>   #include <linux/ktime.h>
+>>>>   #include <linux/hrtimer.h>
+>>>> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0)
+>>>> +#include <linux/ptp_clock_kernel.h>
+>>>> +#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) */
+>>>>
+>>>>   #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
+>>>>   #include <linux/device.h>
+>>>> @@ -64,3 +67,11 @@ int overflowgid = DEFAULT_OVERFLOWGID;
+>>>>   EXPORT_SYMBOL_GPL(overflowuid);
+>>>>   EXPORT_SYMBOL_GPL(overflowgid);
+>>>>   #endif
+>>>> +
+>>>> +#ifdef CONFIG_PTP_1588_CLOCK
+>>>> +int ptp_clock_index(struct ptp_clock *ptp)
+>>>> +{
+>>>> +	return ptp->index;
+>>>> +}
+>>>> +EXPORT_SYMBOL(ptp_clock_index);
+>>>
+>>> ptp_clock_index() is only used in igb_get_ts_info() which which is never
+>>> called in kernel < 3.5 because this operation does not exist in
+>>> ethtool_ops there.
+>>> Backporting this is not so easy as it looks here, because you added
+>>> struct ptp_clock here and there is also a version in the kernel, if they
+>>> differ it could be that this index does not point to the same offset the
+>>> kernel used as index variable. I would also ifdef the igb_get_ts_info()
+>>> itself and remove the stuff related to ptp_clock_index(), you are seeing
+>>> a unused function warning as well.
+>>
+>> So how about we take the original struct ptp_clock? There's only been
+>> one single change introduced in 3.7 to the struct. No harm should come
+>> from that code then.
+>
+> Yes adding that struct should work.
+>
+>> As stated earlier I'm trying to keep the changes to igb itself as small
+>> as possible and the unused function warnings are also a good indicator
+>> for what is actually missing in the driver. There's already a bunch of
+>> them if you compile against 3.0:
+>> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_main.c:7643: warning: igb_ndo_set_vf_spoofchk defined but not used
+>> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_main.c:7359: warning: igb_pci_sriov_configure defined but not used
+>> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2354: warning: igb_get_ts_info defined but not used
+>> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2448: warning: igb_get_rxnfc defined but not used
+>> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2573: warning: igb_set_rxnfc defined but not used
+>> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2660: warning: igb_set_eee defined but not used
+>> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2718: warning: igb_get_module_info defined but not used
+>> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2760: warning: igb_get_module_eeprom defined but not used
+>> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2810: warning: igb_get_rxfh_indir_size defined but not used
+>> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2815: warning: igb_get_rxfh_indir defined but not used
+>> /dev/shm/next/drivers/net/ethernet/intel/igb/igb_ethtool.c:2861: warning: igb_set_rxfh_indir defined but not used
+>> The bottom line is, I'd like to keep them if you're not strictly opposed
+>> to it.
+>
+> These warnings do no harm, but it could be that we will miss some
+> serious warnings. Could you eliminate these warnings please.
 
-Signed-off-by: Arend van Spriel <arend@broadcom.com>
----
- .../include_net_mac80211.patch                     |   14 +--------
- .../net_mac80211_driver-ops.patch                  |   33 +-------------------
- .../net_mac80211_iface.patch                       |   16 +++-------
- 3 files changed, 6 insertions(+), 57 deletions(-)
+OK, I'll see to that beginning of next year.
 
-diff --git a/patches/collateral-evolutions/network/25-multicast-list_head/include_net_mac80211.patch b/patches/collateral-evolutions/network/25-multicast-list_head/include_net_mac80211.patch
-index 1635cd0..ae30fe1 100644
---- a/patches/collateral-evolutions/network/25-multicast-list_head/include_net_mac80211.patch
-+++ b/patches/collateral-evolutions/network/25-multicast-list_head/include_net_mac80211.patch
-@@ -1,6 +1,6 @@
- --- a/include/net/mac80211.h
- +++ b/include/net/mac80211.h
--@@ -2719,14 +2719,24 @@ struct ieee80211_ops {
-+@@ -2719,8 +2719,12 @@ struct ieee80211_ops {
-  	void (*stop_ap)(struct ieee80211_hw *hw, struct ieee80211_vif *vif);
-  
-  	u64 (*prepare_multicast)(struct ieee80211_hw *hw,
-@@ -13,15 +13,3 @@
-  				 unsigned int changed_flags,
-  				 unsigned int *total_flags,
-  				 u64 multicast);
--+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35))
-- 	void (*set_multicast_list)(struct ieee80211_hw *hw,
-- 				   struct ieee80211_vif *vif, bool allmulti,
-- 				   struct netdev_hw_addr_list *mc_list);
--+#else
--+	void (*set_multicast_list)(struct ieee80211_hw *hw,
--+				   struct ieee80211_vif *vif, bool allmulti,
--+				   int mc_count, struct dev_addr_list *ha);
--+#endif
-- 
-- 	int (*set_tim)(struct ieee80211_hw *hw, struct ieee80211_sta *sta,
-- 		       bool set);
-diff --git a/patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_driver-ops.patch b/patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_driver-ops.patch
-index 042cca7..0332c91 100644
---- a/patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_driver-ops.patch
-+++ b/patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_driver-ops.patch
-@@ -1,6 +1,6 @@
- --- a/net/mac80211/driver-ops.h
- +++ b/net/mac80211/driver-ops.h
--@@ -228,20 +228,35 @@ static inline void drv_bss_info_changed(
-+@@ -228,14 +228,28 @@ static inline void drv_bss_info_changed(
-  }
-  
-  static inline u64 drv_prepare_multicast(struct ieee80211_local *local,
-@@ -29,34 +29,3 @@
-  
-  	trace_drv_return_u64(local, ret);
-  
-- 	return ret;
-- }
-- 
--+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35))
-- static inline void drv_set_multicast_list(struct ieee80211_local *local,
-- 					  struct ieee80211_sub_if_data *sdata,
-- 					  struct netdev_hw_addr_list *mc_list)
--@@ -257,6 +272,23 @@ static inline void drv_set_multicast_lis
-- 					       allmulti, mc_list);
-- 	trace_drv_return_void(local);
-- }
--+#else
--+static inline void drv_set_multicast_list(struct ieee80211_local *local,
--+					  struct ieee80211_sub_if_data *sdata,
--+					  int mc_count, struct dev_addr_list *ha)
--+{
--+	bool allmulti = sdata->flags & IEEE80211_SDATA_ALLMULTI;
--+
--+	trace_drv_set_multicast_list(local, sdata, mc_count);
--+
--+	check_sdata_in_driver(sdata);
--+
--+	if (local->ops->set_multicast_list)
--+		local->ops->set_multicast_list(&local->hw, &sdata->vif,
--+					       allmulti, mc_count, ha);
--+	trace_drv_return_void(local);
--+}
--+#endif
-- 
-- static inline void drv_configure_filter(struct ieee80211_local *local,
-- 					unsigned int changed_flags,
-diff --git a/patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_iface.patch b/patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_iface.patch
-index d196bca..e03645b 100644
---- a/patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_iface.patch
-+++ b/patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_iface.patch
-@@ -1,6 +1,6 @@
- --- a/net/mac80211/iface.c
- +++ b/net/mac80211/iface.c
--@@ -807,8 +807,13 @@ static void ieee80211_do_stop(struct iee
-+@@ -808,8 +808,13 @@ static void ieee80211_do_stop(struct ieee80211_sub_if_data *sdata,
-  	if (sdata->dev) {
-  		netif_addr_lock_bh(sdata->dev);
-  		spin_lock_bh(&local->filter_lock);
-@@ -14,17 +14,9 @@
-  		spin_unlock_bh(&local->filter_lock);
-  		netif_addr_unlock_bh(sdata->dev);
-  	}
--@@ -1022,10 +1027,20 @@ static void ieee80211_set_multicast_list
-- 	if (sdata->vif.type != NL80211_IFTYPE_MONITOR &&
-- 	    sdata->vif.type != NL80211_IFTYPE_AP_VLAN &&
-- 	    sdata->vif.type != NL80211_IFTYPE_AP)
--+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35))
-- 		drv_set_multicast_list(local, sdata, &dev->mc);
--+#else
--+		drv_set_multicast_list(local, sdata, dev->mc_count,
--+				       dev->mc_list);
--+#endif
-- 
-+@@ -1009,7 +1014,12 @@ static void ieee80211_set_multicast_list(struct net_device *dev)
-+ 		sdata->flags ^= IEEE80211_SDATA_PROMISC;
-+ 	}
-  	spin_lock_bh(&local->filter_lock);
- +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35))
-  	__hw_addr_sync(&local->mc_list, &dev->mc, dev->addr_len);
--- 
-1.7.10.4
+> By the way, with which kernel versions have you done runtime tests?
 
+I tested the oldest supported kernel, which is 3.0.
+
+   Stefan
