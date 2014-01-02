@@ -1,45 +1,52 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:36612 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752647AbaAXWr0 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 24 Jan 2014 17:47:26 -0500
-Received: by mail-pa0-f42.google.com with SMTP id kl14so3770512pab.15
-        for <backports@vger.kernel.org>; Fri, 24 Jan 2014 14:47:26 -0800 (PST)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 00/11] rel-html: synch up to new project requirements
-Date: Fri, 24 Jan 2014 14:47:05 -0800
-Message-Id: <1390603636-27841-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20140125_000006_531136_DCDADF5C)
+Received: from mail-wg0-f48.google.com ([74.125.82.48]:53141 "EHLO
+	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751740AbaABTeM (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 2 Jan 2014 14:34:12 -0500
+Received: by mail-wg0-f48.google.com with SMTP id z12so12615907wgg.3
+        for <backports@vger.kernel.org>; Thu, 02 Jan 2014 11:34:11 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1388688031.4326.3.camel@jlt4.sipsolutions.net>
+References: <CAOzu-jgfXjXt-_YQmcZqiD2zKiZkgT_VD8dMoi-WqW=Jw8QX_w@mail.gmail.com>
+	<1388688031.4326.3.camel@jlt4.sipsolutions.net>
+Date: Thu, 2 Jan 2014 14:34:11 -0500
+Message-ID: <CAOzu-jgPRK9Q5_g=A9aPBvHe8XGuRZDQ=vyKk0dTPp_+-=bL3w@mail.gmail.com> (sfid-20140102_203414_390345_38E73E26)
+Subject: Re: problems building iwlwifi for kernel 2.6.32
+From: Kurt Bodiker <kebodiker@gmail.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: backports <backports@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The 3.13 kernel is out, and we are also in 2014, this patch set
-addresses the new project requirements, changes, and also improves
-parsing / inferences of releases. The json thing still needs to be
-done. This also embraces the new shiny DCO.
+when searching for IWLWIFI in the .config, it states the following
+dependencies: "Depends on: WLAN [=y] && m && <choice> && PCI [=y] &&
+MAC80211 [=n] && HAS_IOMEM [=y] ". Shouldn't MAC80211 be listed as 'm'
+instead of 'n' as it is in the .config for my kernel build?
 
-Luis R. Rodriguez (11):
-  rel-html: run autopep8 on rel-html.py
-  rel-html: change default file extension to tar.xz
-  rel-html: update Linux project file
-  rel-html: add 3.14 for backports project release file
-  rel-html: use system's date to determine current year
-  rel-html: add the 2014 URL backports snapshot releases
-  rel-html: revise stable releases prior to display
-  rel-html: add copyleft-next URL reference
-  rel-html: add 3.14 release to iw project
-  rel-html: update CRDA project file
-  rel-html: update documentation on contribution process using the DCO
-
- CONTRIBUTING           |   54 +-
- projects/backports.cfg |    2 +
- projects/crda.cfg      |    5 +-
- projects/iw.cfg        |    1 +
- rel-html.cfg           |    3 +-
- rel-html.py            | 2497 +++++++++++++++++++++++++-----------------------
- 6 files changed, 1382 insertions(+), 1180 deletions(-)
-
--- 
-1.8.5.2
-
+On Thu, Jan 2, 2014 at 1:40 PM, Johannes Berg <johannes@sipsolutions.net> wrote:
+> On Thu, 2014-01-02 at 12:54 -0500, Kurt Bodiker wrote:
+>> I'm trying to build iwlwifi for a compiled 2.6.32 kernel for use in
+>> Citrix XenClient XT v3.1.2. Using backports 3.10-2, no problem,
+>> iwlwifi, mac80211, cfg80211, etc... build. If I use the release file
+>> for 3.13-rc2, then only kernel modules that are built are compat and
+>> cfg80211.
+>>
+>> Here are the commands I run and the output:
+>> root@debian-build:/usr/src/backports/backports-3.13-rc2-1# make
+>> KLIB_BUILD=/usr/src/linux-xenclient-ndvm_2.6.32-r0 KLIB=/fakeroot
+>> defconfig-iwlwifi
+>> Generating local configuration database from kernel ... done.
+>> cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2
+>> -fomit-frame-pointer   -c -o conf.o conf.c
+>> cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2
+>> -fomit-frame-pointer   -c -o zconf.tab.o zconf.tab.c
+>> cc   conf.o zconf.tab.o   -o conf
+>> #
+>> # configuration written to .config
+>
+> maybe check dependencies for iwlwifi in 'make KLIB_BUILD=... menuconfig'
+> by hitting '/' key and typing IWLWIFI or so
+>
+> johannes
+>
