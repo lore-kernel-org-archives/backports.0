@@ -1,39 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:60293 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752172AbaASXup (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 19 Jan 2014 18:50:45 -0500
-Received: from localhost (localhost [127.0.0.1])
-	by hauke-m.de (Postfix) with ESMTP id 9C9458F61
-	for <backports@vger.kernel.org>; Mon, 20 Jan 2014 00:50:43 +0100 (CET)
-Received: from hauke-m.de ([127.0.0.1])
-	by localhost (hauke-m.de [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id sqreUpcAzqWq for <backports@vger.kernel.org>;
-	Mon, 20 Jan 2014 00:50:29 +0100 (CET)
-Received: from [192.168.1.178] (spit-414.wohnheim.uni-bremen.de [134.102.133.158])
-	by hauke-m.de (Postfix) with ESMTPSA id 8F066857F
-	for <backports@vger.kernel.org>; Mon, 20 Jan 2014 00:50:28 +0100 (CET)
-Message-ID: <52DC64C1.8070509@hauke-m.de> (sfid-20140120_005052_179684_7B307DD7)
-Date: Mon, 20 Jan 2014 00:50:25 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:44637 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751136AbaABT6G (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 2 Jan 2014 14:58:06 -0500
+Message-ID: <52C5C4C9.30203@broadcom.com> (sfid-20140102_205808_872751_B46FAB8E)
+Date: Thu, 2 Jan 2014 20:58:01 +0100
+From: Arend van Spriel <arend@broadcom.com>
 MIME-Version: 1.0
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: backports-3.13-rc8-1 and backports-3.12.8-1 is out
-Content-Type: text/plain; charset=ISO-8859-1
+To: Hauke Mehrtens <hauke@hauke-m.de>,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>
+Subject: Re: [PATCH V2] network: mac80211: rework multicast patches for mac80211
+References: <1387709465-19004-1-git-send-email-arend@broadcom.com> <52C46B63.50207@hauke-m.de>
+In-Reply-To: <52C46B63.50207@hauke-m.de>
+Content-Type: text/plain; charset="ISO-8859-1"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backports-3.13-rc8-1 was released. This is based on linux 3.13-rc8.
-https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.13-rc8/backports-3.13-rc8-1.tar.xz
+On 01/01/2014 08:24 PM, Hauke Mehrtens wrote:
+> On 12/22/2013 11:51 AM, Arend van Spriel wrote:
+>> Fixing up the patches for mac80211 that were located under
+>> collateral-evolutions/network/25-multicast-list_head.
+>>
+>> Signed-off-by: Arend van Spriel <arend@broadcom.com>
+>> ---
+>>  .../include_net_mac80211.patch                     |   14 +--------
+>>  .../net_mac80211_driver-ops.patch                  |   33 +-------------------
+>>  .../net_mac80211_iface.patch                       |   16 +++-------
+>>  3 files changed, 6 insertions(+), 57 deletions(-)
+> 
+> This patch does not apply for me on current master:
+> 
+> hauke@hauke-desktop:~/compat-wireless/backports$ patch -p1 < tmp.patch
+> patching file
+> patches/collateral-evolutions/network/25-multicast-list_head/include_net_mac80211.patch
+> Hunk #1 FAILED at 1.
+> 1 out of 2 hunks FAILED -- saving rejects to file
+> patches/collateral-evolutions/network/25-multicast-list_head/include_net_mac80211.patch.rej
+> patching file
+> patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_driver-ops.patch
+> patching file
+> patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_iface.patch
+> Hunk #1 FAILED at 1.
+> Hunk #2 FAILED at 14.
+> 2 out of 2 hunks FAILED -- saving rejects to file
+> patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_iface.patch.rej
+> 
+> 
+> Is it based on master of this repository:
+> git://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git
 
-backports-3.12.8-1 was released. This is based on linux-stable 3.12.8.
-https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.12.8/backports-3.12.8-1.tar.xz
+Had a good vacation so .... let me check. Oh, and best wishes ;-)
 
+Gr. AvS
 
-The source code can be found here:
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
-
-All the latest releases are listed here:
-http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
-
-Hauke
