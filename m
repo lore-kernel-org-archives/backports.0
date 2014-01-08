@@ -1,169 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:60150 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:46734 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753729AbaAIVNq (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 9 Jan 2014 16:13:46 -0500
-Message-ID: <52CF1100.7090708@hauke-m.de> (sfid-20140109_221349_549574_BC964E42)
-Date: Thu, 09 Jan 2014 22:13:36 +0100
+	id S1754281AbaAHAfd (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 7 Jan 2014 19:35:33 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Stefan Assmann <sassmann@kpanic.de>, mcgrof@kernel.org
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH v3 04/11] backports: igb fixes for linux-3.7
-References: <1389177854-24292-1-git-send-email-sassmann@kpanic.de> <1389177854-24292-5-git-send-email-sassmann@kpanic.de>
-In-Reply-To: <1389177854-24292-5-git-send-email-sassmann@kpanic.de>
-Content-Type: text/plain; charset=ISO-8859-1
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 13/17] backports: build some regulator drivers only with recent kernels
+Date: Wed,  8 Jan 2014 01:34:30 +0100
+Message-Id: <1389141274-2002-14-git-send-email-hauke@hauke-m.de> (sfid-20140108_013534_577647_199D2C1E)
+In-Reply-To: <1389141274-2002-1-git-send-email-hauke@hauke-m.de>
+References: <1389141274-2002-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 01/08/2014 11:44 AM, Stefan Assmann wrote:
-> - add pci_sriov_set_totalvfs()
-> - add patches/collateral-evolutions/network/82-ethernet/0002-igb_pci_sriov_configure.patch
-> 
-> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
-> ---
->  backport/backport-include/linux/pci.h              |  5 +-
->  backport/compat/compat-3.8.c                       | 34 +++++++++++++
->  .../82-ethernet/0002-igb_pci_sriov_configure.patch | 57 ++++++++++++++++++++++
->  3 files changed, 95 insertions(+), 1 deletion(-)
->  create mode 100644 patches/collateral-evolutions/network/82-ethernet/0002-igb_pci_sriov_configure.patch
-> 
-> diff --git a/backport/backport-include/linux/pci.h b/backport/backport-include/linux/pci.h
-> index 9083255..65a76a1 100644
-> --- a/backport/backport-include/linux/pci.h
-> +++ b/backport/backport-include/linux/pci.h
-> @@ -178,6 +178,10 @@ bool pci_pme_capable(struct pci_dev *dev, pci_power_t state);
->  	.subvendor = (subvend), .subdevice = (subdev)
->  #endif /* PCI_DEVICE_SUB */
->  
-> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)
+When these drivers are build with older kernel versions we get build
+errors.
 
-Please add this here:
-#define pci_sriov_set_totalvfs LINUX_BACKPORT(pci_sriov_set_totalvfs)
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ dependencies |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> +int pci_sriov_set_totalvfs(struct pci_dev *dev, u16 numvfs);
-> +#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0) */
-> +
->  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
->  /* Taken from drivers/pci/pci.h */
->  struct pci_sriov {
-> @@ -210,5 +214,4 @@ static inline int pci_vfs_assigned(struct pci_dev *dev)
->  #endif
->  
->  #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0) */
-> -
->  #endif /* _BACKPORT_LINUX_PCI_H */
-> diff --git a/backport/compat/compat-3.8.c b/backport/compat/compat-3.8.c
-> index c6824bf..9d96b36 100644
-> --- a/backport/compat/compat-3.8.c
-> +++ b/backport/compat/compat-3.8.c
-> @@ -18,6 +18,8 @@
->  #include <linux/netdevice.h>
->  #include <linux/random.h>
->  #include <linux/of.h>
-> +#include <linux/pci.h>
-> +#include <linux/pci_regs.h>
->  
->  #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,8))
->  void netdev_set_default_ethtool_ops(struct net_device *dev,
-> @@ -514,3 +516,35 @@ int of_property_read_u8_array(const struct device_node *np,
->  }
->  EXPORT_SYMBOL_GPL(of_property_read_u8_array);
->  #endif /* CONFIG_OF */
-> +
-> +#ifdef CONFIG_PCI_IOV
-> +/**
-> + * pci_sriov_set_totalvfs -- reduce the TotalVFs available
-> + * @dev: the PCI PF device
-> + * @numvfs: number that should be used for TotalVFs supported
-> + *
-> + * Should be called from PF driver's probe routine with
-> + * device's mutex held.
-> + *
-> + * Returns 0 if PF is an SRIOV-capable device and
-> + * value of numvfs valid. If not a PF return -ENOSYS;
-> + * if numvfs is invalid return -EINVAL;
-> + * if VFs already enabled, return -EBUSY.
-> + */
-> +int pci_sriov_set_totalvfs(struct pci_dev *dev, u16 numvfs)
-> +{
-> +	if (!dev->is_physfn)
-> +		return -ENOSYS;
-> +	if (numvfs > dev->sriov->total_VFs)
-> +		return -EINVAL;
-> +
-> +	/* Shouldn't change if VFs already enabled */
-> +	if (dev->sriov->ctrl & PCI_SRIOV_CTRL_VFE)
-> +		return -EBUSY;
-> +	else
-> +		dev->sriov->driver_max_VFs = numvfs;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(pci_sriov_set_totalvfs);
-> +#endif /* CONFIG_PCI_IOV */
-> diff --git a/patches/collateral-evolutions/network/82-ethernet/0002-igb_pci_sriov_configure.patch b/patches/collateral-evolutions/network/82-ethernet/0002-igb_pci_sriov_configure.patch
-> new file mode 100644
-> index 0000000..47722cc
-> --- /dev/null
-> +++ b/patches/collateral-evolutions/network/82-ethernet/0002-igb_pci_sriov_configure.patch
-> @@ -0,0 +1,57 @@
-> +diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-> +index f2a5abf..dd878b6 100644
-> +--- a/drivers/net/ethernet/intel/igb/igb_main.c
-> ++++ b/drivers/net/ethernet/intel/igb/igb_main.c
-> +@@ -207,7 +207,9 @@ static const struct dev_pm_ops igb_pm_ops = {
-> + };
-> + #endif
-> + static void igb_shutdown(struct pci_dev *);
-> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0)
-> + static int igb_pci_sriov_configure(struct pci_dev *dev, int num_vfs);
-> ++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0) */
-> + #ifdef CONFIG_IGB_DCA
-> + static int igb_notify_dca(struct notifier_block *, unsigned long, void *);
-> + static struct notifier_block dca_notifier = {
-> +@@ -249,7 +251,9 @@ static struct pci_driver igb_driver = {
-> + 	.driver.pm = &igb_pm_ops,
-> + #endif
-> + 	.shutdown = igb_shutdown,
-> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0)
-> + 	.sriov_configure = igb_pci_sriov_configure,
-> ++#endif
-> + 	.err_handler = &igb_err_handler
-> + };
-> + 
-> +@@ -7310,6 +7314,7 @@ static int igb_sriov_reinit(struct pci_dev *dev)
-> + 	return 0;
-> + }
-> + 
-> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0)
-> + static int igb_pci_disable_sriov(struct pci_dev *dev)
-> + {
-> + 	int err = igb_disable_sriov(dev);
-> +@@ -7319,6 +7324,7 @@ static int igb_pci_disable_sriov(struct pci_dev *dev)
-> + 
-> + 	return err;
-> + }
-> ++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0) */
-> + 
-> + static int igb_pci_enable_sriov(struct pci_dev *dev, int num_vfs)
-> + {
-> +@@ -7336,6 +7342,8 @@ out:
-> + }
-> + 
-> + #endif
-> ++
-> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0)
-> + static int igb_pci_sriov_configure(struct pci_dev *dev, int num_vfs)
-> + {
-> + #ifdef CONFIG_PCI_IOV
-> +@@ -7346,6 +7354,7 @@ static int igb_pci_sriov_configure(struct pci_dev *dev, int num_vfs)
-> + #endif
-> + 	return 0;
-> + }
-> ++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0) */
-> + 
-> + #ifdef CONFIG_NET_POLL_CONTROLLER
-> + /* Polling 'interrupt' - used by things like netconsole to send skbs
-> 
+diff --git a/dependencies b/dependencies
+index e4c1cb7..bd577c2 100644
+--- a/dependencies
++++ b/dependencies
+@@ -91,8 +91,8 @@ REGULATOR_PCAP 3.6
+ REGULATOR_PCF50633 3.8
+ REGULATOR_PFUZE100 3.6
+ REGULATOR_RC5T583 3.6
+-REGULATOR_S2MPS11 3.12
+-REGULATOR_S5M8767 3.9
++REGULATOR_S2MPS11 3.13
++REGULATOR_S5M8767 3.14
+ REGULATOR_TPS51632 3.8
+ REGULATOR_TPS6105X 3.6
+ REGULATOR_TPS62360 3.6
+@@ -102,8 +102,8 @@ REGULATOR_TPS6507X 3.6
+ REGULATOR_TPS65090 3.9
+ REGULATOR_TPS65217 3.12
+ REGULATOR_TPS6524X 3.6
+-REGULATOR_TPS6586X 3.9
+-REGULATOR_TPS65910 3.6
++REGULATOR_TPS6586X 3.14
++REGULATOR_TPS65910 3.14
+ REGULATOR_TPS65912 3.12
+ REGULATOR_TWL4030 3.11
+ REGULATOR_WM831X 3.12
+-- 
+1.7.10.4
 
