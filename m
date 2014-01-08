@@ -1,171 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:53105 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:52728 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752932AbaAHKon (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 8 Jan 2014 05:44:43 -0500
+	id S1755337AbaAHKox (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 8 Jan 2014 05:44:53 -0500
 From: Stefan Assmann <sassmann@kpanic.de>
 To: mcgrof@kernel.org
 Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH v3 05/11] backports: igb fixes for linux-3.6
-Date: Wed,  8 Jan 2014 11:44:08 +0100
-Message-Id: <1389177854-24292-6-git-send-email-sassmann@kpanic.de> (sfid-20140108_114445_026670_DC67031E)
+Subject: [PATCH v3 11/11] backports: enable igb and add defconfig
+Date: Wed,  8 Jan 2014 11:44:14 +0100
+Message-Id: <1389177854-24292-12-git-send-email-sassmann@kpanic.de> (sfid-20140108_120435_726611_EC7A1E05)
 In-Reply-To: <1389177854-24292-1-git-send-email-sassmann@kpanic.de>
 References: <1389177854-24292-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-- backport ethtool_cmd
-- backport ethtool_ops
-- backport mmd_eee_adv_to_ethtool_adv_t
-- add define to map ptp_clock_register() to old version
-- add patches/collateral-evolutions/network/82-ethernet/0004-igb_err_handler.patch
-- add patches/collateral-evolutions/network/82-ethernet/0005-igb_mdi.patch
+Add defconfig and necessary files to copy-list.
 
 Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
 ---
- backport/backport-include/linux/mdio.h             | 35 ++++++++++++++++
- backport/backport-include/linux/ptp_clock_kernel.h |  9 ++++
- .../network/82-ethernet/0004-igb_err_handler.patch | 16 +++++++
- .../network/82-ethernet/0005-igb_mdi.patch         | 49 ++++++++++++++++++++++
- 4 files changed, 109 insertions(+)
- create mode 100644 backport/backport-include/linux/mdio.h
- create mode 100644 backport/backport-include/linux/ptp_clock_kernel.h
- create mode 100644 patches/collateral-evolutions/network/82-ethernet/0004-igb_err_handler.patch
- create mode 100644 patches/collateral-evolutions/network/82-ethernet/0005-igb_mdi.patch
+ backport/defconfigs/igb | 2 ++
+ copy-list               | 4 ++++
+ 2 files changed, 6 insertions(+)
+ create mode 100644 backport/defconfigs/igb
 
-diff --git a/backport/backport-include/linux/mdio.h b/backport/backport-include/linux/mdio.h
+diff --git a/backport/defconfigs/igb b/backport/defconfigs/igb
 new file mode 100644
-index 0000000..2a38121
+index 0000000..8045257
 --- /dev/null
-+++ b/backport/backport-include/linux/mdio.h
-@@ -0,0 +1,35 @@
-+#ifndef __BACKPORT_LINUX_MDIO_H
-+#define __BACKPORT_LINUX_MDIO_H
-+#include_next <linux/mdio.h>
++++ b/backport/defconfigs/igb
+@@ -0,0 +1,2 @@
++CPTCFG_NET_VENDOR_INTEL=y
++CPTCFG_IGB=m
+diff --git a/copy-list b/copy-list
+index 9444aff..2b2e177 100644
+--- a/copy-list
++++ b/copy-list
+@@ -100,6 +100,10 @@ drivers/net/ethernet/broadcom/Makefile
+ drivers/net/ethernet/broadcom/b44.c
+ drivers/net/ethernet/broadcom/b44.h
+ 
++drivers/net/ethernet/intel/Kconfig
++drivers/net/ethernet/intel/Makefile
++drivers/net/ethernet/intel/igb/
 +
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
-+/**
-+ * mmd_eee_adv_to_ethtool_adv_t
-+ * @eee_adv: value of the MMD EEE Advertisement/Link Partner Ability registers
-+ *
-+ * A small helper function that translates the MMD EEE Advertisment (7.60)
-+ * and MMD EEE Link Partner Ability (7.61) bits to ethtool advertisement
-+ * settings.
-+ */
-+static inline u32 mmd_eee_adv_to_ethtool_adv_t(u16 eee_adv)
-+{
-+	u32 adv = 0;
-+
-+	if (eee_adv & MDIO_EEE_100TX)
-+		adv |= ADVERTISED_100baseT_Full;
-+	if (eee_adv & MDIO_EEE_1000T)
-+		adv |= ADVERTISED_1000baseT_Full;
-+	if (eee_adv & MDIO_EEE_10GT)
-+		adv |= ADVERTISED_10000baseT_Full;
-+	if (eee_adv & MDIO_EEE_1000KX)
-+		adv |= ADVERTISED_1000baseKX_Full;
-+	if (eee_adv & MDIO_EEE_10GKX4)
-+		adv |= ADVERTISED_10000baseKX4_Full;
-+	if (eee_adv & MDIO_EEE_10GKR)
-+		adv |= ADVERTISED_10000baseKR_Full;
-+
-+	return adv;
-+}
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0) */
-+
-+#endif /* __BACKPORT_LINUX_MDIO_H */
-diff --git a/backport/backport-include/linux/ptp_clock_kernel.h b/backport/backport-include/linux/ptp_clock_kernel.h
-new file mode 100644
-index 0000000..f64e705
---- /dev/null
-+++ b/backport/backport-include/linux/ptp_clock_kernel.h
-@@ -0,0 +1,9 @@
-+#ifndef __BACKPORT_PTP_CLOCK_KERNEL_H
-+#define __BACKPORT_PTP_CLOCK_KERNEL_H
-+#include_next <linux/ptp_clock_kernel.h>
-+
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
-+#define ptp_clock_register(info,parent) ptp_clock_register(info)
-+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0) */
-+
-+#endif /* __BACKPORT_PTP_CLOCK_KERNEL_H */
-diff --git a/patches/collateral-evolutions/network/82-ethernet/0004-igb_err_handler.patch b/patches/collateral-evolutions/network/82-ethernet/0004-igb_err_handler.patch
-new file mode 100644
-index 0000000..393e8b5
---- /dev/null
-+++ b/patches/collateral-evolutions/network/82-ethernet/0004-igb_err_handler.patch
-@@ -0,0 +1,16 @@
-+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-+index 67441f2..4df7bce 100644
-+--- a/drivers/net/ethernet/intel/igb/igb_main.c
-++++ b/drivers/net/ethernet/intel/igb/igb_main.c
-+@@ -232,7 +232,11 @@ static pci_ers_result_t igb_io_error_detected(struct pci_dev *,
-+ static pci_ers_result_t igb_io_slot_reset(struct pci_dev *);
-+ static void igb_io_resume(struct pci_dev *);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-+ static const struct pci_error_handlers igb_err_handler = {
-++#else
-++static struct pci_error_handlers igb_err_handler = {
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-+ 	.error_detected = igb_io_error_detected,
-+ 	.slot_reset = igb_io_slot_reset,
-+ 	.resume = igb_io_resume,
-diff --git a/patches/collateral-evolutions/network/82-ethernet/0005-igb_mdi.patch b/patches/collateral-evolutions/network/82-ethernet/0005-igb_mdi.patch
-new file mode 100644
-index 0000000..7b381c9
---- /dev/null
-+++ b/patches/collateral-evolutions/network/82-ethernet/0005-igb_mdi.patch
-@@ -0,0 +1,49 @@
-+diff --git a/drivers/net/ethernet/intel/igb/igb_ethtool.c b/drivers/net/ethernet/intel/igb/igb_ethtool.c
-+index c3143da..05fd6f8 100644
-+--- a/drivers/net/ethernet/intel/igb/igb_ethtool.c
-++++ b/drivers/net/ethernet/intel/igb/igb_ethtool.c
-+@@ -249,10 +249,12 @@ static int igb_get_settings(struct net_device *netdev, struct ethtool_cmd *ecmd)
-+ 	else
-+ 		ecmd->eth_tp_mdix = ETH_TP_MDI_INVALID;
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-+ 	if (hw->phy.mdix == AUTO_ALL_MODES)
-+ 		ecmd->eth_tp_mdix_ctrl = ETH_TP_MDI_AUTO;
-+ 	else
-+ 		ecmd->eth_tp_mdix_ctrl = hw->phy.mdix;
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-+ 
-+ 	return 0;
-+ }
-+@@ -271,6 +273,7 @@ static int igb_set_settings(struct net_device *netdev, struct ethtool_cmd *ecmd)
-+ 		return -EINVAL;
-+ 	}
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-+ 	/* MDI setting is only allowed when autoneg enabled because
-+ 	 * some hardware doesn't allow MDI setting when speed or
-+ 	 * duplex is forced.
-+@@ -285,6 +288,7 @@ static int igb_set_settings(struct net_device *netdev, struct ethtool_cmd *ecmd)
-+ 			return -EINVAL;
-+ 		}
-+ 	}
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-+ 
-+ 	while (test_and_set_bit(__IGB_RESETTING, &adapter->state))
-+ 		msleep(1);
-+@@ -328,6 +332,7 @@ static int igb_set_settings(struct net_device *netdev, struct ethtool_cmd *ecmd)
-+ 		}
-+ 	}
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-+ 	/* MDI-X => 2; MDI => 1; Auto => 3 */
-+ 	if (ecmd->eth_tp_mdix_ctrl) {
-+ 		/* fix up the value for auto (3 => 0) as zero is mapped
-+@@ -338,6 +343,7 @@ static int igb_set_settings(struct net_device *netdev, struct ethtool_cmd *ecmd)
-+ 		else
-+ 			hw->phy.mdix = ecmd->eth_tp_mdix_ctrl;
-+ 	}
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-+ 
-+ 	/* reset the link */
-+ 	if (netif_running(adapter->netdev)) {
+ # wwan drivers
+ include/uapi/linux/usb/cdc.h
+ include/uapi/linux/usb/cdc-wdm.h
 -- 
 1.8.4.2
 
