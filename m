@@ -1,42 +1,49 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:57299 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752034AbaASVIr (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 19 Jan 2014 16:08:47 -0500
-Message-ID: <1390165721.4336.10.camel@jlt4.sipsolutions.net> (sfid-20140119_220849_520140_F0245518)
-Subject: Re: [PATCH 2/2] backports: add support for testing only a single
- Coccinelle SmPL patch
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org, Peter Senna <peter.senna@gmail.com>,
-	Julia Lawall <julia.lawall@lip6.fr>,
-	Gilles Muller <Gilles.Muller@lip6.fr>
-Date: Sun, 19 Jan 2014 22:08:41 +0100
-In-Reply-To: <52DC063B.4070801@hauke-m.de> (sfid-20140119_180720_012738_EE2F3704)
-References: <1386851914-5241-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1386851914-5241-2-git-send-email-mcgrof@do-not-panic.com>
-	 <52DC063B.4070801@hauke-m.de> (sfid-20140119_180720_012738_EE2F3704)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from server19320154104.serverpool.info ([193.201.54.104]:46684 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753751AbaAHAex (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 7 Jan 2014 19:34:53 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 02/17] backports: add netdev_notify_peers()
+Date: Wed,  8 Jan 2014 01:34:19 +0100
+Message-Id: <1389141274-2002-3-git-send-email-hauke@hauke-m.de> (sfid-20140108_013454_469269_C731C813)
+In-Reply-To: <1389141274-2002-1-git-send-email-hauke@hauke-m.de>
+References: <1389141274-2002-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, 2014-01-19 at 18:07 +0100, Hauke Mehrtens wrote:
+netif_notify_peers() was renamed to netdev_notify_peers() in kernel
+3.7. Replace the calls to netdev_notify_peers() with
+netif_notify_peers().
 
-> > $ time ./gentree.py --clean --verbose --test-cocci \
-> > 	patches/collateral-evolutions/network/11-dev-pm-ops.cocci \
-> > 	/home/mcgrof/linux-next/ \
-> > 	/home/mcgrof/build/backports-20131206
+Some older kernel versions do not even have netif_notify_peers(), there
+we just remove the call, currently it is only used in the 6lowpan code
+and I assume it will still work, but not so good.
 
-I'm not really convinced that adding profile options for spatch is a
-good thing in gentree anyway. It's complicated enough as is, and running
-the spatch manually isn't all that difficult. If you use the --gitdebug
-option to gentree, you could even roll back to just before the patch was
-applied before running it manually.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/netdevice.h |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Now, I don't want to control what goes into backports, but this way I
-might end up having to rewrite it again ;-)
-
-johannes
+diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+index 3d6b7b3..f99ea02 100644
+--- a/backport/backport-include/linux/netdevice.h
++++ b/backport/backport-include/linux/netdevice.h
+@@ -475,4 +475,12 @@ struct net *dev_net(const struct net_device *dev)
+ #define netdev_notifier_info_to_dev(ndev) ndev
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34) && \
++    LINUX_VERSION_CODE != KERNEL_VERSION(2,6,32)
++/* there is no equivalent function to update arp table */
++#define netdev_notify_peers(dev)
++#elif LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
++#define netdev_notify_peers(dev) netif_notify_peers(dev)
++#endif
++
+ #endif /* __BACKPORT_NETDEVICE_H */
+-- 
+1.7.10.4
 
