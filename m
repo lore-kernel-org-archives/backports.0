@@ -1,66 +1,76 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:14988 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750925AbaA2JXa (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 29 Jan 2014 04:23:30 -0500
-From: Stefan Assmann <sassmann@kpanic.de>
-To: mcgrof@kernel.org
-Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH v4 09/12] backports: igb fixes for linux-3.3
-Date: Wed, 29 Jan 2014 10:19:06 +0100
-Message-Id: <1390987149-11171-10-git-send-email-sassmann@kpanic.de> (sfid-20140129_103456_084537_5FA0AE8A)
-In-Reply-To: <1390987149-11171-1-git-send-email-sassmann@kpanic.de>
-References: <1390987149-11171-1-git-send-email-sassmann@kpanic.de>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:46703 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753751AbaAHAfK (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 7 Jan 2014 19:35:10 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 07/17] backports: remove usage of members of struct property for kernel < 2.6.39
+Date: Wed,  8 Jan 2014 01:34:24 +0100
+Message-Id: <1389141274-2002-8-git-send-email-hauke@hauke-m.de> (sfid-20140108_013512_807339_FC62C815)
+In-Reply-To: <1389141274-2002-1-git-send-email-hauke@hauke-m.de>
+References: <1389141274-2002-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-- add IFF_SUPP_NOFCS define
-- add patches/collateral-evolutions/network/84-ethernet/0008-igb_no_fcs.patch
+struct property is missing in the general header files in older kernel
+versions. There are different versions of this header depending on the
+architecture code in use. This removed the access to any members of
+struct property for older kernel version when CONFIG_OF is not set.
 
-Is there a better way to handle struct sk_buff changes?
-
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/if.h               |    4 ++++
- .../network/84-ethernet/0008-igb_no_fcs.patch      |   16 ++++++++++++++++
- 2 files changed, 20 insertions(+), 0 deletions(-)
- create mode 100644 patches/collateral-evolutions/network/84-ethernet/0008-igb_no_fcs.patch
+ .../network/82-struct_property_missing/INFO        |    4 +++
+ .../82-struct_property_missing/mwifiex.patch       |   28 ++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/82-struct_property_missing/INFO
+ create mode 100644 patches/collateral-evolutions/network/82-struct_property_missing/mwifiex.patch
 
-diff --git a/backport/backport-include/linux/if.h b/backport/backport-include/linux/if.h
-index 8f85b83..f23d2b8 100644
---- a/backport/backport-include/linux/if.h
-+++ b/backport/backport-include/linux/if.h
-@@ -33,4 +33,8 @@
- #define IFF_LIVE_ADDR_CHANGE 0x100000
- #endif
- 
-+#ifndef IFF_SUPP_NOFCS
-+#define IFF_SUPP_NOFCS	0x80000		/* device supports sending custom FCS */
-+#endif
-+
- #endif	/* _BACKPORT_LINUX_IF_H */
-diff --git a/patches/collateral-evolutions/network/84-ethernet/0008-igb_no_fcs.patch b/patches/collateral-evolutions/network/84-ethernet/0008-igb_no_fcs.patch
+diff --git a/patches/collateral-evolutions/network/82-struct_property_missing/INFO b/patches/collateral-evolutions/network/82-struct_property_missing/INFO
 new file mode 100644
-index 0000000..f196f2d
+index 0000000..b3e0ced
 --- /dev/null
-+++ b/patches/collateral-evolutions/network/84-ethernet/0008-igb_no_fcs.patch
-@@ -0,0 +1,16 @@
-+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-+index fd6a103..a919cfa 100644
-+--- a/drivers/net/ethernet/intel/igb/igb_main.c
-++++ b/drivers/net/ethernet/intel/igb/igb_main.c
-+@@ -4480,9 +4480,10 @@ static u32 igb_tx_cmd_type(struct sk_buff *skb, u32 tx_flags)
-+ 	cmd_type |= IGB_SET_FLAG(tx_flags, IGB_TX_FLAGS_TSTAMP,
-+ 				 (E1000_ADVTXD_MAC_TSTAMP));
++++ b/patches/collateral-evolutions/network/82-struct_property_missing/INFO
+@@ -0,0 +1,4 @@
++struct property is missing in the general header files in older kernel 
++versions. There are different versions of this header depending on the 
++architecture code in use. This removed the access to any members of 
++struct property
+diff --git a/patches/collateral-evolutions/network/82-struct_property_missing/mwifiex.patch b/patches/collateral-evolutions/network/82-struct_property_missing/mwifiex.patch
+new file mode 100644
+index 0000000..d3712db
+--- /dev/null
++++ b/patches/collateral-evolutions/network/82-struct_property_missing/mwifiex.patch
+@@ -0,0 +1,28 @@
++--- a/drivers/net/wireless/mwifiex/sta_cmd.c
+++++ b/drivers/net/wireless/mwifiex/sta_cmd.c
++@@ -25,6 +25,7 @@
++ #include "wmm.h"
++ #include "11n.h"
++ #include "11ac.h"
+++#include <linux/of.h>
 + 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0)
-+ 	/* insert frame checksum */
-+ 	cmd_type ^= IGB_SET_FLAG(skb->no_fcs, 1, E1000_ADVTXD_DCMD_IFCS);
-+-
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0) */
-+ 	return cmd_type;
-+ }
++ /*
++  * This function prepares command to set/get RSSI information.
++@@ -1194,6 +1195,7 @@ static int mwifiex_cmd_cfg_data(struct m
++ 	int ret;
 + 
++ 	if (prop) {
+++#if defined(CONFIG_OF) || (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,39))
++ 		len = prop->length;
++ 		ret = of_property_read_u8_array(adapter->dt_node, prop->name,
++ 						data, len);
++@@ -1201,6 +1203,9 @@ static int mwifiex_cmd_cfg_data(struct m
++ 			return ret;
++ 		dev_dbg(adapter->dev,
++ 			"download cfg_data from device tree: %s\n", prop->name);
+++#else
+++		return -1;
+++#endif
++ 	} else if (adapter->cal_data->data && adapter->cal_data->size > 0) {
++ 		len = mwifiex_parse_cal_cfg((u8 *)adapter->cal_data->data,
++ 					    adapter->cal_data->size, data);
 -- 
-1.7.1
+1.7.10.4
 
