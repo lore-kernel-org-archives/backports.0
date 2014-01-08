@@ -1,35 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:49031 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:22302 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750938AbaA2JUn (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 29 Jan 2014 04:20:43 -0500
+	id S1755099AbaAHKou (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 8 Jan 2014 05:44:50 -0500
 From: Stefan Assmann <sassmann@kpanic.de>
 To: mcgrof@kernel.org
 Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH v4 10/12] backports: igb fixes for linux-3.2
-Date: Wed, 29 Jan 2014 10:19:07 +0100
-Message-Id: <1390987149-11171-11-git-send-email-sassmann@kpanic.de> (sfid-20140129_102045_291478_E46EB7A1)
-In-Reply-To: <1390987149-11171-1-git-send-email-sassmann@kpanic.de>
-References: <1390987149-11171-1-git-send-email-sassmann@kpanic.de>
+Subject: [PATCH v3 09/11] backports: igb fixes for linux-3.2
+Date: Wed,  8 Jan 2014 11:44:12 +0100
+Message-Id: <1389177854-24292-10-git-send-email-sassmann@kpanic.de> (sfid-20140108_114451_662938_9EB496F6)
+In-Reply-To: <1389177854-24292-1-git-send-email-sassmann@kpanic.de>
+References: <1389177854-24292-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-- add patches/collateral-evolutions/network/84-ethernet/0009-igb_vlan_rx_vid.patch
-- add patches/collateral-evolutions/network/84-ethernet/0010-igb_ethtool_ops.patch
+- add patches/collateral-evolutions/network/82-ethernet/0009-igb_vlan_rx_vid.patch
+- add patches/collateral-evolutions/network/82-ethernet/0010-igb_ethtool_ops.patch
 
 Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
 ---
- .../network/84-ethernet/0009-igb_vlan_rx_vid.patch |   64 ++++++++++++++++++++
- .../network/84-ethernet/0010-igb_ethtool_ops.patch |   48 +++++++++++++++
- 2 files changed, 112 insertions(+), 0 deletions(-)
- create mode 100644 patches/collateral-evolutions/network/84-ethernet/0009-igb_vlan_rx_vid.patch
- create mode 100644 patches/collateral-evolutions/network/84-ethernet/0010-igb_ethtool_ops.patch
+ .../network/82-ethernet/0009-igb_vlan_rx_vid.patch | 64 ++++++++++++++++++++++
+ .../network/82-ethernet/0010-igb_ethtool_ops.patch | 48 ++++++++++++++++
+ 2 files changed, 112 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/0009-igb_vlan_rx_vid.patch
+ create mode 100644 patches/collateral-evolutions/network/82-ethernet/0010-igb_ethtool_ops.patch
 
-diff --git a/patches/collateral-evolutions/network/84-ethernet/0009-igb_vlan_rx_vid.patch b/patches/collateral-evolutions/network/84-ethernet/0009-igb_vlan_rx_vid.patch
+diff --git a/patches/collateral-evolutions/network/82-ethernet/0009-igb_vlan_rx_vid.patch b/patches/collateral-evolutions/network/82-ethernet/0009-igb_vlan_rx_vid.patch
 new file mode 100644
 index 0000000..44ea22e
 --- /dev/null
-+++ b/patches/collateral-evolutions/network/84-ethernet/0009-igb_vlan_rx_vid.patch
++++ b/patches/collateral-evolutions/network/82-ethernet/0009-igb_vlan_rx_vid.patch
 @@ -0,0 +1,64 @@
 +diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
 +index 37e6062..6bf0a88 100644
@@ -95,11 +95,11 @@ index 0000000..44ea22e
 + }
 + 
 + static void igb_restore_vlan(struct igb_adapter *adapter)
-diff --git a/patches/collateral-evolutions/network/84-ethernet/0010-igb_ethtool_ops.patch b/patches/collateral-evolutions/network/84-ethernet/0010-igb_ethtool_ops.patch
+diff --git a/patches/collateral-evolutions/network/82-ethernet/0010-igb_ethtool_ops.patch b/patches/collateral-evolutions/network/82-ethernet/0010-igb_ethtool_ops.patch
 new file mode 100644
 index 0000000..9035d92
 --- /dev/null
-+++ b/patches/collateral-evolutions/network/84-ethernet/0010-igb_ethtool_ops.patch
++++ b/patches/collateral-evolutions/network/82-ethernet/0010-igb_ethtool_ops.patch
 @@ -0,0 +1,48 @@
 +diff --git a/drivers/net/ethernet/intel/igb/igb_ethtool.c b/drivers/net/ethernet/intel/igb/igb_ethtool.c
 +index 3cf9600..5e519ce 100644
@@ -150,5 +150,5 @@ index 0000000..9035d92
 + 	.set_channels		= igb_set_channels,
 + 	.begin			= igb_ethtool_begin,
 -- 
-1.7.1
+1.8.4.2
 
