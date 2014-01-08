@@ -1,43 +1,57 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:51551 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751410AbaAaKeA (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 31 Jan 2014 05:34:00 -0500
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: backport power efficient workqueues
-Date: Fri, 31 Jan 2014 11:33:52 +0100
-Message-Id: <1391164432-8699-1-git-send-email-johannes@sipsolutions.net> (sfid-20140131_113402_405090_F308635E)
+Received: from mx1.redhat.com ([209.132.183.28]:38829 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752932AbaAHKoj (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 8 Jan 2014 05:44:39 -0500
+From: Stefan Assmann <sassmann@kpanic.de>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH v3 01/11] backports: igb fixes for linux-3.12
+Date: Wed,  8 Jan 2014 11:44:04 +0100
+Message-Id: <1389177854-24292-2-git-send-email-sassmann@kpanic.de> (sfid-20140108_114442_502803_2D0AD41F)
+In-Reply-To: <1389177854-24292-1-git-send-email-sassmann@kpanic.de>
+References: <1389177854-24292-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+- refactor u64_stats_sync.h a bit
+- add u64_stats_init define
 
-These only exist starting from 3.11, and wireless code will
-start using them soon. Backport them as simple defines using
-the corresponding non-power-efficient workqueues.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
 ---
- backport/backport-include/linux/workqueue.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ backport/backport-include/linux/u64_stats_sync.h | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/backport/backport-include/linux/workqueue.h b/backport/backport-include/linux/workqueue.h
-index 1949876..63a3b17 100644
---- a/backport/backport-include/linux/workqueue.h
-+++ b/backport/backport-include/linux/workqueue.h
-@@ -117,4 +117,10 @@ static inline void flush_delayed_work(struct delayed_work *dwork)
- }
- #endif
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
-+/* power efficient workqueues were added in commit 0668106ca386. */
-+#define system_power_efficient_wq system_wq
-+#define system_freezable_power_efficient_wq system_freezable_wq
-+#endif
+diff --git a/backport/backport-include/linux/u64_stats_sync.h b/backport/backport-include/linux/u64_stats_sync.h
+index f15116c..ce6b778 100644
+--- a/backport/backport-include/linux/u64_stats_sync.h
++++ b/backport/backport-include/linux/u64_stats_sync.h
+@@ -1,6 +1,17 @@
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
++#ifndef __BACKPORT_LINUX_U64_STATS_SYNC_H
++#define __BACKPORT_LINUX_U64_STATS_SYNC_H
 +
- #endif /* __BACKPORT_LINUX_WORKQUEUE_H */
+ #include_next <linux/u64_stats_sync.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)
++#if BITS_PER_LONG == 32 && defined(CONFIG_SMP)
++# define u64_stats_init(syncp)	seqcount_init(syncp.seq)
+ #else
++# define u64_stats_init(syncp)	do { } while (0)
++#endif
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0) */
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
+ #ifndef _LINUX_U64_STATS_SYNC_H
+ #define _LINUX_U64_STATS_SYNC_H
+ 
+@@ -141,4 +152,5 @@ static inline bool u64_stats_fetch_retry_bh(const struct u64_stats_sync *syncp,
+ }
+ 
+ #endif /* _LINUX_U64_STATS_SYNC_H */
+-#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)) */
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0) */
++#endif /* __BACKPORT_LINUX_U64_STATS_SYNC_H */
 -- 
-1.8.5.2
+1.8.4.2
 
