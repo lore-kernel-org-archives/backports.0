@@ -1,97 +1,55 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:29478 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750829AbaA2JTg (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 29 Jan 2014 04:19:36 -0500
-From: Stefan Assmann <sassmann@kpanic.de>
-To: mcgrof@kernel.org
-Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH v4 00/12] backports: add igb driver
-Date: Wed, 29 Jan 2014 10:18:57 +0100
-Message-Id: <1390987149-11171-1-git-send-email-sassmann@kpanic.de> (sfid-20140129_101939_949837_637F7F32)
+Received: from server19320154104.serverpool.info ([193.201.54.104]:46749 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754342AbaAHAfr (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 7 Jan 2014 19:35:47 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 16/17] backports: update kernel versions
+Date: Wed,  8 Jan 2014 01:34:33 +0100
+Message-Id: <1389141274-2002-17-git-send-email-hauke@hauke-m.de> (sfid-20140108_013549_308956_71475FD3)
+In-Reply-To: <1389141274-2002-1-git-send-email-hauke@hauke-m.de>
+References: <1389141274-2002-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is a patchset for inclusion of the Intel igb wired ethernet driver.
-Patches are split per kernel release that makes it easier to review
-the changes and gives a nice history of what was necessary for each
-release. Also the igb driver changes have been split up into individual
-patches in patches/collateral-evolutions/network/84-ethernet. This and
-file names are up for discussion, suggestions welcome.
+Update to current versions.
 
-v2:
-Instead of backporting struct ethtool_ops the code in igb has been
-wrapped in if LINUX_VERSION_CODE statements. This will result in higher
-maintenance because of conflicts with future upstream igb changes but it
-seems there's no better solution so far.
-The patches in patches/collateral-evolutions/network/84-ethernet have
-been kept separate but with a leading number to make sure they get
-applied in the correct order.
-The code that activates igb has been pushed to the end of the series to
-not break any bisecting.
-v3:
-Use original struct ptp_clock and handle ptp_clock_register() with a
-define. Also removed unused function warnings by wrapping the code
-in if LINUX_VERSION_CODE statements.
-v4:
-Add several LINUX_BACKPORT defines to prevent possible clashes with
-distro backports. Patches rebased and tested against next-20140124.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ devel/backports-update-manager |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Stefan Assmann (12):
-  backports: igb fixes for linux-3.13
-  backports: igb fixes for linux-3.12
-  backports: igb fixes for linux-3.9
-  backports: igb fixes for linux-3.8
-  backports: igb fixes for linux-3.7
-  backports: igb fixes for linux-3.6
-  backports: igb fixes for linux-3.5
-  backports: igb fixes for linux-3.4
-  backports: igb fixes for linux-3.3
-  backports: igb fixes for linux-3.2
-  backports: igb fixes for linux-3.1
-  backports: enable igb and add defconfig
-
- backport/backport-include/linux/ethtool.h          |   79 ++++++++++++++++++++
- backport/backport-include/linux/gfp.h              |   10 +++
- backport/backport-include/linux/if.h               |    8 ++
- backport/backport-include/linux/mdio.h             |   56 ++++++++++++++
- backport/backport-include/linux/pci.h              |   46 +++++++++++
- backport/backport-include/linux/pci_regs.h         |    8 ++
- backport/backport-include/linux/ptp_clock_kernel.h |   38 ++++++++++
- backport/backport-include/linux/skbuff.h           |   74 ++++++++++++++++++
- backport/backport-include/linux/u64_stats_sync.h   |   16 ++++-
- backport/compat/backport-3.10.c                    |   46 +++++++++++
- backport/compat/compat-3.5.c                       |   11 +++
- backport/compat/compat-3.8.c                       |   34 +++++++++
- backport/defconfigs/igb                            |    2 +
- copy-list                                          |    4 +
- .../84-ethernet/0001-igb_net_device_ops.patch      |   56 ++++++++++++++
- .../84-ethernet/0002-igb_pci_sriov_configure.patch |   57 ++++++++++++++
- .../network/84-ethernet/0004-igb_err_handler.patch |   16 ++++
- .../network/84-ethernet/0005-igb_mdi.patch         |   49 ++++++++++++
- .../network/84-ethernet/0006-igb_eee.patch         |   31 ++++++++
- .../network/84-ethernet/0007-igb_ethtool_ops.patch |   56 ++++++++++++++
- .../network/84-ethernet/0008-igb_no_fcs.patch      |   16 ++++
- .../network/84-ethernet/0009-igb_vlan_rx_vid.patch |   64 ++++++++++++++++
- .../network/84-ethernet/0010-igb_ethtool_ops.patch |   48 ++++++++++++
- .../network/84-ethernet/0011-igb_ethtool_ops.patch |   31 ++++++++
- .../84-ethernet/0012-igb_ndo_set_vf_spoofchk.patch |   51 +++++++++++++
- .../network/84-ethernet/0013-igb_hwmon.patch       |   30 ++++++++
- 26 files changed, 935 insertions(+), 2 deletions(-)
- create mode 100644 backport/backport-include/linux/gfp.h
- create mode 100644 backport/backport-include/linux/mdio.h
- create mode 100644 backport/backport-include/linux/ptp_clock_kernel.h
- create mode 100644 backport/defconfigs/igb
- create mode 100644 patches/collateral-evolutions/network/84-ethernet/0001-igb_net_device_ops.patch
- create mode 100644 patches/collateral-evolutions/network/84-ethernet/0002-igb_pci_sriov_configure.patch
- create mode 100644 patches/collateral-evolutions/network/84-ethernet/0004-igb_err_handler.patch
- create mode 100644 patches/collateral-evolutions/network/84-ethernet/0005-igb_mdi.patch
- create mode 100644 patches/collateral-evolutions/network/84-ethernet/0006-igb_eee.patch
- create mode 100644 patches/collateral-evolutions/network/84-ethernet/0007-igb_ethtool_ops.patch
- create mode 100644 patches/collateral-evolutions/network/84-ethernet/0008-igb_no_fcs.patch
- create mode 100644 patches/collateral-evolutions/network/84-ethernet/0009-igb_vlan_rx_vid.patch
- create mode 100644 patches/collateral-evolutions/network/84-ethernet/0010-igb_ethtool_ops.patch
- create mode 100644 patches/collateral-evolutions/network/84-ethernet/0011-igb_ethtool_ops.patch
- create mode 100644 patches/collateral-evolutions/network/84-ethernet/0012-igb_ndo_set_vf_spoofchk.patch
- create mode 100644 patches/collateral-evolutions/network/84-ethernet/0013-igb_hwmon.patch
+diff --git a/devel/backports-update-manager b/devel/backports-update-manager
+index c0365cc..7c2a59b 100755
+--- a/devel/backports-update-manager
++++ b/devel/backports-update-manager
+@@ -39,18 +39,18 @@ KERNEL_URLS = [
+     KPATH + "v2.6.39.4-oneiric/linux-headers-2.6.39-02063904_2.6.39-02063904.201108040905_all.deb",
+     KPATH + "v3.0.101-oneiric/linux-headers-3.0.101-0300101_3.0.101-0300101.201310220446_all.deb",
+     KPATH + "v3.1.10-precise/linux-headers-3.1.10-030110_3.1.10-030110.201201181135_all.deb",
+-    KPATH + "v3.2.52-precise/linux-headers-3.2.52-030252_3.2.52-030252.201310262335_all.deb",
++    KPATH + "v3.2.54-precise/linux-headers-3.2.54-030254_3.2.54-030254.201401030035_all.deb",
+     KPATH + "v3.3.8-quantal/linux-headers-3.3.8-030308_3.3.8-030308.201206041356_all.deb",
+-    KPATH + "v3.4.70-quantal/linux-headers-3.4.70-030470_3.4.70-030470.201311201436_all.deb",
++    KPATH + "v3.4.75-quantal/linux-headers-3.4.75-030475_3.4.75-030475.201312201255_all.deb",
+     KPATH + "v3.5.7.12-quantal/linux-headers-3.5.7-03050712_3.5.7-03050712.201305111435_all.deb",
+     KPATH + "v3.6.11-raring/linux-headers-3.6.11-030611_3.6.11-030611.201212171335_all.deb",
+     KPATH + "v3.7.10-raring/linux-headers-3.7.10-030710_3.7.10-030710.201302271235_all.deb",
+     KPATH + "v3.8.13-raring/linux-headers-3.8.13-030813_3.8.13-030813.201305111843_all.deb",
+     KPATH + "v3.9.11-saucy/linux-headers-3.9.11-030911_3.9.11-030911.201307202035_all.deb",
+-    KPATH + "v3.10.20-saucy/linux-headers-3.10.20-031020_3.10.20-031020.201311201536_all.deb",
+-    KPATH + "v3.11.9-saucy/linux-headers-3.11.9-031109_3.11.9-031109.201311201635_all.deb",
+-    KPATH + "v3.12.1-trusty/linux-headers-3.12.1-031201_3.12.1-031201.201311201654_all.deb",
+-    KPATH + "v3.13-rc1-trusty/linux-headers-3.13.0-031300rc1_3.13.0-031300rc1.201311221535_all.deb",
++    KPATH + "v3.10.25-saucy/linux-headers-3.10.25-031025_3.10.25-031025.201312201135_all.deb",
++    KPATH + "v3.11.10-saucy/linux-headers-3.11.10-031110_3.11.10-031110.201311291453_all.deb",
++    KPATH + "v3.12.6-trusty/linux-headers-3.12.6-031206_3.12.6-031206.201312201218_all.deb",
++    KPATH + "v3.13-rc7-trusty/linux-headers-3.13.0-031300rc7_3.13.0-031300rc7.201401041835_all.deb",
+ ]
+ 
+ NUM_KERNELS=len(KERNEL_URLS)
+-- 
+1.7.10.4
 
