@@ -1,84 +1,71 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f181.google.com ([209.85.217.181]:54763 "EHLO
-	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750868AbaATIIR (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 20 Jan 2014 03:08:17 -0500
+Received: from server19320154104.serverpool.info ([193.201.54.104]:51574 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751812AbaAQVbd (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 17 Jan 2014 16:31:33 -0500
+Message-ID: <52D9A12C.5080500@hauke-m.de> (sfid-20140117_223136_988524_43C19DFC)
+Date: Fri, 17 Jan 2014 22:31:24 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-In-Reply-To: <52DC3AF7.4060606@hauke-m.de>
-References: <52DC3AF7.4060606@hauke-m.de>
-Date: Mon, 20 Jan 2014 10:08:15 +0200
-Message-ID: <CANUX_P3UNX9ygW6smT8HhUCqQfDvChnMHMKOq2FvMZ9WX077OA@mail.gmail.com> (sfid-20140120_090819_625484_6FA1DFDC)
-Subject: Re: kernel freezes when insmoding iwldvm.ko from backports-20140117
-From: Emmanuel Grumbach <egrumbach@gmail.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"ilw@linux.intel.com" <ilw@linux.intel.com>
-Content-Type: multipart/mixed; boundary=089e01176b29d4204704f06264d0
+To: =?UTF-8?B?UmljaGFyZCBSw7ZqZm9ycw==?= <richard.rojfors@gmail.com>,
+	backports@vger.kernel.org
+Subject: Re: [PATCH] compat.3.7, compat.3.8: Adds missing of.h include
+References: <1386689770.5956.4.camel@asus>
+In-Reply-To: <1386689770.5956.4.camel@asus>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
---089e01176b29d4204704f06264d0
-Content-Type: text/plain; charset=ISO-8859-1
+On 12/10/2013 04:36 PM, Richard Röjfors wrote:
+> This applies to 3.13-rc2
+> 
+> The compat-3.7.c och compat-3.8.c uses of-functions if supported by the
+> kernel, but there is a missing include for linux/of.h.
+> 
+> This patch fixes the compile error which looks like this:
+> 
+> | NOTE: make -j 8 ARCH=arm KLIB_BUILD=/path/usr/src/kernel KLIB=/path/image
+> |   CC [M]  /path/backports-3.13-rc2-1/compat/compat-3.7.o
+> | /path/backports-3.13-rc2-1/compat/compat-3.7.c: In function 'of_get_child_by_name':
+> | /path/backports-3.13-rc2-1/compat/compat-3.7.c:274:1: error: unknown type name 'z'
+> | /path/backports-3.13-rc2-1/compat/compat-3.7.c:276:3: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'if'
+> | make[6]: *** [/path/backports-3.13-rc2-1/compat/compat-3.7.o] Error 1
+> | make[5]: *** [/path/backports-3.13-rc2-1/compat] Error 2
+> | make[4]: *** [_module_/path/backports/3.13-rc2-1-r0/backports-3.13-rc2-1] Error 2
+> | make[3]: *** [modules] Error 2
+> | make[2]: *** [modules] Error 2
+> | make[1]: *** [modules] Error 2
+> | make: *** [default] Error 2
+> 
+> Signed-off-by: Richard Röjfors <richard.rojfors@gmail.com>
+> ---
+> --- backports-3.13-rc2-1.org/compat/compat-3.7.c	2013-12-05 12:19:56.161016836 +0100
+> +++ backports-3.13-rc2-1.new/compat/compat-3.7.c	2013-12-05 12:18:40.257012431 +0100
+> @@ -256,6 +256,8 @@
+>  
+>  #ifdef CONFIG_OF
+>  #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0))
+> +#include <linux/of.h>
+> +
+>  /**
+>   *	of_get_child_by_name - Find the child node by name for a given parent
+>   *	@node:	parent node
+> --- backports-3.13-rc2-1.org/compat/compat-3.8.c	2013-12-05 12:17:53.093009694 +0100
+> +++ backports-3.13-rc2-1.new/compat/compat-3.8.c	2013-12-05 12:18:42.745012576 +0100
+> @@ -420,6 +420,8 @@
+>  EXPORT_SYMBOL_GPL(vm_iomap_memory);
+>  
+>  #ifdef CONFIG_OF
+> +#include <linux/of.h>
+> +
+>  /**
+>   * of_find_property_value_of_size
+>   *
+> 
+In backports-20131206 linux/of.h already gets included in
+compat/compat-3.7.c and compat/compat-3.8.c.
 
-On Sun, Jan 19, 2014 at 10:52 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
-> Hi,
->
-> when I insmoding iwldvm.ko from backports-201400117 my kernel freezes
-> and does not show any error message. This problem started with
-> backports-20140106, backports-20131224 works for me.
->
-> I am using the Ubuntu kernel 3.5.0-45 someone else with the same problem
-> uses kernel 3.2.0. I am using a Intel 6300.
-> Someone reported that an Atheros card worked, so this is probably a
-> problem in iwlwifi.
->
+Could you check if this work for you.
 
-patch attached
+Hauke
 
---089e01176b29d4204704f06264d0
-Content-Type: text/x-patch; charset=US-ASCII;
-	name="0001-iwlwifi-pcie-don-t-panic-on-host-commands-in-iwldvm.patch"
-Content-Disposition: attachment;
-	filename="0001-iwlwifi-pcie-don-t-panic-on-host-commands-in-iwldvm.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_hqng9ynd0
-
-RnJvbSAyODFlNmJlZGRmM2Q0NjY2MWI2YzFkZDdhNGRlZGZkZTc4YmRmNmVkIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBFbW1hbnVlbCBHcnVtYmFjaCA8ZW1tYW51ZWwuZ3J1bWJhY2hA
-aW50ZWwuY29tPgpEYXRlOiBNb24sIDIwIEphbiAyMDE0IDA5OjUwOjI5ICswMjAwClN1YmplY3Q6
-IFtQQVRDSF0gaXdsd2lmaTogcGNpZTogZG9uJ3QgcGFuaWMgb24gaG9zdCBjb21tYW5kcyBpbiBp
-d2xkdm0KCk15IGNvbW1pdDoKCk5vbmUgb2YgdGhlIGRldmljZXMgc3VwcG9ydGVkIGJ5IGl3bGR2
-bSBoYXZlIHN1cHBvcnQgZm9yCnNoYWRvdyByZWdpc3RlcnMuIFRoaXMgbWVhbnMgdGhhdCB3ZSB3
-YWtlIHRoZSBOSUMgd2hlbiB3ZQpzZW5kIGhvc3QgY29tbWFuZHMgd2hlbiB3ZSBpbmNyZW1lbnQg
-dGhlIHdyaXRlIHBvaW50ZXIgb24KdGhlIGhvc3QgY29tbWFuZHMgcmluZy4gVGhpcyBoYXBwZW5l
-ZCBldmVuIGJlZm9yZSBteSBiYWQKY29tbWl0IG1lbnRpb25uZWQgYmVsb3cuClNpbmNlIG15IGNv
-bW1pdCBiZWxvdywgd2Ugd2FrZSB1cCB0aGUgTklDIHJlZ2FyZGxlc3Mgb2YKc2hhZG93IHJlZ2lz
-dGVyIHN1cHBvcnQuIFRoaXMgbWVhbnMgdGhhdCBpbiBpd2xkdm0gKHdoZW4KdGhlIE5JQyBkb2Vz
-bid0IHN1cHBvcnQgc2hhZG93IHJlZ2lzdGVyKSwgd2Ugd2FrZSB1cCB0aGUKTklDIHR3aWNlOgoK
-cGNpZV9lbnF1ZXVlX2hjbWQ6Cgl3YWtlIHVwIHRoZSBOSUMKCWl3bF9wY2llX3R4cV9pbmNfd3Jf
-cHRyOgoJCXdha2UgdXAgdGhlIE5JQyAtIG5vIHNoYWRvdyByZWcgc3VwcG9ydAoKU2luY2Ugd2Fr
-aW5nIHVwIHRoZSBOSUMgbWVhbnMgdGhhdCB3ZSBuZWVkIHRvIGEgc3BpbmxvY2ssCnRoaXMgb2J2
-aW91c2x5IGxlYWRzIHRvIGEgcmVjdXJzaXZlIHNwaW5sb2NrIGFuZCBoZW5jZSBhCmZyZWV6ZS4K
-CkZpeGVzOiBiOTQzOTQ5MTA1NWEgKCJpd2x3aWZpOiBwY2llOiBrZWVwIHRoZSBOSUMgYXdha2Ug
-d2hlbiBjb21tYW5kcyBhcmUgaW4gZmxpZ2h0IikKUmVwb3J0ZWQtYnk6IEphbnVzeiBEemllZHpp
-YyA8amFudXN6LmR6aWVkemljQGdtYWlsLmNvbT4KU2lnbmVkLW9mZi1ieTogRW1tYW51ZWwgR3J1
-bWJhY2ggPGVtbWFudWVsLmdydW1iYWNoQGludGVsLmNvbT4KLS0tCiBkcml2ZXJzL25ldC93aXJl
-bGVzcy9pd2x3aWZpL3BjaWUvdHguYyB8IDMgKystCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRp
-b25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvd2lyZWxlc3Mv
-aXdsd2lmaS9wY2llL3R4LmMgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9pd2x3aWZpL3BjaWUvdHgu
-YwppbmRleCAyNzA1MDllLi4wYjFhOTNlIDEwMDY0NAotLS0gYS9kcml2ZXJzL25ldC93aXJlbGVz
-cy9pd2x3aWZpL3BjaWUvdHguYworKysgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9pd2x3aWZpL3Bj
-aWUvdHguYwpAQCAtMjk0LDEzICsyOTQsMTQgQEAgc3RhdGljIHZvaWQgaXdsX3BjaWVfdHhxX2lu
-dmFsX2J5dGVfY250X3RibChzdHJ1Y3QgaXdsX3RyYW5zICp0cmFucywKICAqLwogdm9pZCBpd2xf
-cGNpZV90eHFfaW5jX3dyX3B0cihzdHJ1Y3QgaXdsX3RyYW5zICp0cmFucywgc3RydWN0IGl3bF90
-eHEgKnR4cSkKIHsKKwlzdHJ1Y3QgaXdsX3RyYW5zX3BjaWUgKnRyYW5zX3BjaWUgPSBJV0xfVFJB
-TlNfR0VUX1BDSUVfVFJBTlModHJhbnMpOwogCXUzMiByZWcgPSAwOwogCWludCB0eHFfaWQgPSB0
-eHEtPnEuaWQ7CiAKIAlpZiAodHhxLT5uZWVkX3VwZGF0ZSA9PSAwKQogCQlyZXR1cm47CiAKLQlp
-ZiAodHJhbnMtPmNmZy0+YmFzZV9wYXJhbXMtPnNoYWRvd19yZWdfZW5hYmxlKSB7CisJaWYgKHRy
-YW5zLT5jZmctPmJhc2VfcGFyYW1zLT5zaGFkb3dfcmVnX2VuYWJsZSB8fCB0eHFfaWQgPT0gdHJh
-bnNfcGNpZS0+Y21kX3F1ZXVlKSB7CiAJCS8qIHNoYWRvdyByZWdpc3RlciBlbmFibGVkICovCiAJ
-CWl3bF93cml0ZTMyKHRyYW5zLCBIQlVTX1RBUkdfV1JQVFIsCiAJCQkgICAgdHhxLT5xLndyaXRl
-X3B0ciB8ICh0eHFfaWQgPDwgOCkpOwotLSAKMS44LjMuMgoK
---089e01176b29d4204704f06264d0--
