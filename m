@@ -1,224 +1,55 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:27443 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751583AbaA2JTm (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 29 Jan 2014 04:19:42 -0500
-From: Stefan Assmann <sassmann@kpanic.de>
-To: mcgrof@kernel.org
-Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH v4 07/12] backports: igb fixes for linux-3.5
-Date: Wed, 29 Jan 2014 10:19:04 +0100
-Message-Id: <1390987149-11171-8-git-send-email-sassmann@kpanic.de> (sfid-20140129_101944_448362_FCDC55B3)
-In-Reply-To: <1390987149-11171-1-git-send-email-sassmann@kpanic.de>
-References: <1390987149-11171-1-git-send-email-sassmann@kpanic.de>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:54617 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751347AbaARUEJ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 18 Jan 2014 15:04:09 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH v2] backports: update kernel versions
+Date: Sat, 18 Jan 2014 21:01:47 +0100
+Message-Id: <1390075307-6746-1-git-send-email-hauke@hauke-m.de> (sfid-20140118_210410_639620_A65E5C95)
+In-Reply-To: <1389141274-2002-17-git-send-email-hauke@hauke-m.de>
+References: <1389141274-2002-17-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-- add EEE defines
-- add struct ethtool_eee
-- backport __skb_alloc_page and __skb_alloc_pages
-- add patches/collateral-evolutions/network/84-ethernet/0006-igb_eee.patch
+Update to current versions.
 
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/ethtool.h          |   31 +++++++++++++
- backport/backport-include/linux/gfp.h              |   10 ++++
- backport/backport-include/linux/mdio.h             |   23 +++++++++-
- backport/backport-include/linux/skbuff.h           |   46 ++++++++++++++++++++
- .../network/84-ethernet/0006-igb_eee.patch         |   31 +++++++++++++
- 5 files changed, 140 insertions(+), 1 deletions(-)
- create mode 100644 backport/backport-include/linux/gfp.h
- create mode 100644 patches/collateral-evolutions/network/84-ethernet/0006-igb_eee.patch
+ devel/backports-update-manager |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/backport/backport-include/linux/ethtool.h b/backport/backport-include/linux/ethtool.h
-index 647fbf6..4f13cb9 100644
---- a/backport/backport-include/linux/ethtool.h
-+++ b/backport/backport-include/linux/ethtool.h
-@@ -42,4 +42,35 @@ static inline __u32 ethtool_cmd_speed(const struct ethtool_cmd *ep)
- }
- #endif
+diff --git a/devel/backports-update-manager b/devel/backports-update-manager
+index c0365cc..584309b 100755
+--- a/devel/backports-update-manager
++++ b/devel/backports-update-manager
+@@ -39,18 +39,18 @@ KERNEL_URLS = [
+     KPATH + "v2.6.39.4-oneiric/linux-headers-2.6.39-02063904_2.6.39-02063904.201108040905_all.deb",
+     KPATH + "v3.0.101-oneiric/linux-headers-3.0.101-0300101_3.0.101-0300101.201310220446_all.deb",
+     KPATH + "v3.1.10-precise/linux-headers-3.1.10-030110_3.1.10-030110.201201181135_all.deb",
+-    KPATH + "v3.2.52-precise/linux-headers-3.2.52-030252_3.2.52-030252.201310262335_all.deb",
++    KPATH + "v3.2.54-precise/linux-headers-3.2.54-030254_3.2.54-030254.201401030035_all.deb",
+     KPATH + "v3.3.8-quantal/linux-headers-3.3.8-030308_3.3.8-030308.201206041356_all.deb",
+-    KPATH + "v3.4.70-quantal/linux-headers-3.4.70-030470_3.4.70-030470.201311201436_all.deb",
++    KPATH + "v3.4.77-quantal/linux-headers-3.4.77-030477_3.4.77-030477.201401151835_all.deb",
+     KPATH + "v3.5.7.12-quantal/linux-headers-3.5.7-03050712_3.5.7-03050712.201305111435_all.deb",
+     KPATH + "v3.6.11-raring/linux-headers-3.6.11-030611_3.6.11-030611.201212171335_all.deb",
+     KPATH + "v3.7.10-raring/linux-headers-3.7.10-030710_3.7.10-030710.201302271235_all.deb",
+     KPATH + "v3.8.13-raring/linux-headers-3.8.13-030813_3.8.13-030813.201305111843_all.deb",
+     KPATH + "v3.9.11-saucy/linux-headers-3.9.11-030911_3.9.11-030911.201307202035_all.deb",
+-    KPATH + "v3.10.20-saucy/linux-headers-3.10.20-031020_3.10.20-031020.201311201536_all.deb",
+-    KPATH + "v3.11.9-saucy/linux-headers-3.11.9-031109_3.11.9-031109.201311201635_all.deb",
+-    KPATH + "v3.12.1-trusty/linux-headers-3.12.1-031201_3.12.1-031201.201311201654_all.deb",
+-    KPATH + "v3.13-rc1-trusty/linux-headers-3.13.0-031300rc1_3.13.0-031300rc1.201311221535_all.deb",
++    KPATH + "v3.10.27-saucy/linux-headers-3.10.27-031027_3.10.27-031027.201401151935_all.deb",
++    KPATH + "v3.11.10-saucy/linux-headers-3.11.10-031110_3.11.10-031110.201311291453_all.deb",
++    KPATH + "v3.12.8-trusty/linux-headers-3.12.8-031208_3.12.8-031208.201401151952_all.deb",
++    KPATH + "v3.13-rc8-trusty/linux-headers-3.13.0-031300rc8_3.13.0-031300rc8.201401120535_all.deb",
+ ]
  
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
-+/**
-+ * struct ethtool_eee - Energy Efficient Ethernet information
-+ * @cmd: ETHTOOL_{G,S}EEE
-+ * @supported: Mask of %SUPPORTED_* flags for the speed/duplex combinations
-+ *	for which there is EEE support.
-+ * @advertised: Mask of %ADVERTISED_* flags for the speed/duplex combinations
-+ *	advertised as eee capable.
-+ * @lp_advertised: Mask of %ADVERTISED_* flags for the speed/duplex
-+ *	combinations advertised by the link partner as eee capable.
-+ * @eee_active: Result of the eee auto negotiation.
-+ * @eee_enabled: EEE configured mode (enabled/disabled).
-+ * @tx_lpi_enabled: Whether the interface should assert its tx lpi, given
-+ *	that eee was negotiated.
-+ * @tx_lpi_timer: Time in microseconds the interface delays prior to asserting
-+ *	its tx lpi (after reaching 'idle' state). Effective only when eee
-+ *	was negotiated and tx_lpi_enabled was set.
-+ */
-+struct ethtool_eee {
-+	__u32	cmd;
-+	__u32	supported;
-+	__u32	advertised;
-+	__u32	lp_advertised;
-+	__u32	eee_active;
-+	__u32	eee_enabled;
-+	__u32	tx_lpi_enabled;
-+	__u32	tx_lpi_timer;
-+	__u32	reserved[2];
-+};
-+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0) */
-+
- #endif /* __BACKPORT_LINUX_ETHTOOL_H */
-diff --git a/backport/backport-include/linux/gfp.h b/backport/backport-include/linux/gfp.h
-new file mode 100644
-index 0000000..2962290
---- /dev/null
-+++ b/backport/backport-include/linux/gfp.h
-@@ -0,0 +1,10 @@
-+#ifndef __BACKPORT_LINUX_GFP_H
-+#define __BACKPORT_LINUX_GFP_H
-+#include_next <linux/gfp.h>
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0))
-+#define ___GFP_MEMALLOC		0x2000u
-+#define __GFP_MEMALLOC	((__force gfp_t)___GFP_MEMALLOC)/* Allow access to emergency reserves */
-+#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)) */
-+
-+#endif /* __BACKPORT_LINUX_GFP_H */
-diff --git a/backport/backport-include/linux/mdio.h b/backport/backport-include/linux/mdio.h
-index 2a38121..838958a 100644
---- a/backport/backport-include/linux/mdio.h
-+++ b/backport/backport-include/linux/mdio.h
-@@ -2,6 +2,28 @@
- #define __BACKPORT_LINUX_MDIO_H
- #include_next <linux/mdio.h>
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
-+/* EEE Supported/Advertisement/LP Advertisement registers.
-+ *
-+ * EEE capability Register (3.20), Advertisement (7.60) and
-+ * Link partner ability (7.61) registers have and can use the same identical
-+ * bit masks.
-+ */
-+#define MDIO_AN_EEE_ADV_100TX	0x0002	/* Advertise 100TX EEE cap */
-+#define MDIO_AN_EEE_ADV_1000T	0x0004	/* Advertise 1000T EEE cap */
-+/* Note: the two defines above can be potentially used by the user-land
-+ * and cannot remove them now.
-+ * So, we define the new generic MDIO_EEE_100TX and MDIO_EEE_1000T macros
-+ * using the previous ones (that can be considered obsolete).
-+ */
-+#define MDIO_EEE_100TX		MDIO_AN_EEE_ADV_100TX	/* 100TX EEE cap */
-+#define MDIO_EEE_1000T		MDIO_AN_EEE_ADV_1000T	/* 1000T EEE cap */
-+#define MDIO_EEE_10GT		0x0008	/* 10GT EEE cap */
-+#define MDIO_EEE_1000KX		0x0010	/* 1000KX EEE cap */
-+#define MDIO_EEE_10GKX4		0x0020	/* 10G KX4 EEE cap */
-+#define MDIO_EEE_10GKR		0x0040	/* 10G KR EEE cap */
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0) */
-+
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
- /**
-  * mmd_eee_adv_to_ethtool_adv_t
-@@ -31,5 +53,4 @@ static inline u32 mmd_eee_adv_to_ethtool_adv_t(u16 eee_adv)
- 	return adv;
- }
- #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0) */
--
- #endif /* __BACKPORT_LINUX_MDIO_H */
-diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
-index 7d04b54..c1b2753 100644
---- a/backport/backport-include/linux/skbuff.h
-+++ b/backport/backport-include/linux/skbuff.h
-@@ -224,6 +224,52 @@ static inline void skb_queue_splice_tail(const struct sk_buff_head *list,
- 		     skb = skb->next)
- #endif /* < 2.6.28 */
- 
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
-+/**
-+ *	__skb_alloc_pages - allocate pages for ps-rx on a skb and preserve pfmemalloc data
-+ *	@gfp_mask: alloc_pages_node mask. Set __GFP_NOMEMALLOC if not for network packet RX
-+ *	@skb: skb to set pfmemalloc on if __GFP_MEMALLOC is used
-+ *	@order: size of the allocation
-+ *
-+ * 	Allocate a new page.
-+ *
-+ * 	%NULL is returned if there is no free memory.
-+*/
-+static inline struct page *__skb_alloc_pages(gfp_t gfp_mask,
-+					      struct sk_buff *skb,
-+					      unsigned int order)
-+{
-+	struct page *page;
-+
-+	gfp_mask |= __GFP_COLD;
-+#if 0
-+	if (!(gfp_mask & __GFP_NOMEMALLOC))
-+		gfp_mask |= __GFP_MEMALLOC;
-+#endif
-+	page = alloc_pages_node(NUMA_NO_NODE, gfp_mask, order);
-+#if 0
-+	if (skb && page && page->pfmemalloc)
-+		skb->pfmemalloc = true;
-+#endif
-+	return page;
-+}
-+
-+/**
-+ *	__skb_alloc_page - allocate a page for ps-rx for a given skb and preserve pfmemalloc data
-+ *	@gfp_mask: alloc_pages_node mask. Set __GFP_NOMEMALLOC if not for network packet RX
-+ *	@skb: skb to set pfmemalloc on if __GFP_MEMALLOC is used
-+ *
-+ * 	Allocate a new page.
-+ *
-+ * 	%NULL is returned if there is no free memory.
-+ */
-+static inline struct page *__skb_alloc_page(gfp_t gfp_mask,
-+					     struct sk_buff *skb)
-+{
-+	return __skb_alloc_pages(gfp_mask, skb, 0);
-+}
-+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0) && LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0) */
-+
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
- #ifndef NETDEV_FRAG_PAGE_MAX_ORDER
- #define NETDEV_FRAG_PAGE_MAX_ORDER get_order(32768)
-diff --git a/patches/collateral-evolutions/network/84-ethernet/0006-igb_eee.patch b/patches/collateral-evolutions/network/84-ethernet/0006-igb_eee.patch
-new file mode 100644
-index 0000000..f9927bf
---- /dev/null
-+++ b/patches/collateral-evolutions/network/84-ethernet/0006-igb_eee.patch
-@@ -0,0 +1,31 @@
-+diff --git a/drivers/net/ethernet/intel/igb/igb_ethtool.c b/drivers/net/ethernet/intel/igb/igb_ethtool.c
-+index 9b15820..9767f11 100644
-+--- a/drivers/net/ethernet/intel/igb/igb_ethtool.c
-++++ b/drivers/net/ethernet/intel/igb/igb_ethtool.c
-+@@ -2585,6 +2585,7 @@ static int igb_set_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd)
-+ 	return ret;
-+ }
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ static int igb_get_eee(struct net_device *netdev, struct ethtool_eee *edata)
-+ {
-+ 	struct igb_adapter *adapter = netdev_priv(netdev);
-+@@ -2713,6 +2714,7 @@ static int igb_set_eee(struct net_device *netdev,
-+ 
-+ 	return 0;
-+ }
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0) */
-+ 
-+ static int igb_get_module_info(struct net_device *netdev,
-+ 			       struct ethtool_modinfo *modinfo)
-+@@ -3001,8 +3003,10 @@ static const struct ethtool_ops igb_ethtool_ops = {
-+ 	.get_ts_info		= igb_get_ts_info,
-+ 	.get_rxnfc		= igb_get_rxnfc,
-+ 	.set_rxnfc		= igb_set_rxnfc,
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ 	.get_eee		= igb_get_eee,
-+ 	.set_eee		= igb_set_eee,
-++#endif
-+ 	.get_module_info	= igb_get_module_info,
-+ 	.get_module_eeprom	= igb_get_module_eeprom,
-+ 	.get_rxfh_indir_size	= igb_get_rxfh_indir_size,
+ NUM_KERNELS=len(KERNEL_URLS)
 -- 
-1.7.1
+1.7.10.4
 
