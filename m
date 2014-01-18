@@ -1,27 +1,37 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s72.web-hosting.com ([198.187.29.21]:55472 "EHLO
-	s72.web-hosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751520AbaAPJqi (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 16 Jan 2014 04:46:38 -0500
-Received: from [117.199.130.12] (port=34927 helo=nako)
-	by server72.web-hosting.com with esmtpsa (UNKNOWN:AES128-GCM-SHA256:128)
-	(Exim 4.80.1)
-	(envelope-from <sujith@msujith.org>)
-	id 1W3jX3-001aHs-1c
-	for backports@vger.kernel.org; Thu, 16 Jan 2014 04:46:38 -0500
-From: Sujith Manoharan <sujith@msujith.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Message-ID: <21207.43332.189769.58159@gargle.gargle.HOWL> (sfid-20140116_104725_345281_5F619293)
-Date: Thu, 16 Jan 2014 15:11:24 +0530
-To: backports@vger.kernel.org
-Subject: Releases
+Received: from server19320154104.serverpool.info ([193.201.54.104]:54573 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751347AbaARUAR (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 18 Jan 2014 15:00:17 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH] backports: add missing include
+Date: Sat, 18 Jan 2014 21:00:00 +0100
+Message-Id: <1390075200-6639-1-git-send-email-hauke@hauke-m.de> (sfid-20140118_210033_578664_09556F1C)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
+A user reported that the linux/mm.h header was missing on his mips
+device with kernel 2.6.26.
 
-Will bleeding-edge/stable releases be resumed ?
-The packages that Hauke was releasing were really useful...
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/compat/compat-3.8.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-Sujith
+diff --git a/backport/compat/compat-3.8.c b/backport/compat/compat-3.8.c
+index c6824bf..6741989 100644
+--- a/backport/compat/compat-3.8.c
++++ b/backport/compat/compat-3.8.c
+@@ -18,6 +18,7 @@
+ #include <linux/netdevice.h>
+ #include <linux/random.h>
+ #include <linux/of.h>
++#include <linux/mm.h>
+ 
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,8))
+ void netdev_set_default_ethtool_ops(struct net_device *dev,
+-- 
+1.7.10.4
+
