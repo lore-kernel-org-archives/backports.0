@@ -1,45 +1,99 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ie0-f178.google.com ([209.85.223.178]:51715 "EHLO
-	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752762AbaATXNK (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 20 Jan 2014 18:13:10 -0500
-Received: by mail-ie0-f178.google.com with SMTP id x13so9151963ief.37
-        for <backports@vger.kernel.org>; Mon, 20 Jan 2014 15:13:09 -0800 (PST)
+Received: from server19320154104.serverpool.info ([193.201.54.104]:58385 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752366AbaASQsm (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 19 Jan 2014 11:48:42 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 15/16] backports: fix unused hidp_get_raw_report() warning
+Date: Sun, 19 Jan 2014 17:47:36 +0100
+Message-Id: <1390150057-11652-16-git-send-email-hauke@hauke-m.de> (sfid-20140119_174921_903557_675A60E1)
+In-Reply-To: <1390150057-11652-1-git-send-email-hauke@hauke-m.de>
+References: <1390150057-11652-1-git-send-email-hauke@hauke-m.de>
 MIME-Version: 1.0
-In-Reply-To: <CAEsx0Y8ro45a3sWckyOc-vhTCqqCL6UkZYK=ME10zCLv5C3byQ@mail.gmail.com>
-References: <CAEsx0Y8ro45a3sWckyOc-vhTCqqCL6UkZYK=ME10zCLv5C3byQ@mail.gmail.com>
-Date: Mon, 20 Jan 2014 15:13:09 -0800
-Message-ID: <CAEsx0Y8GqLQyQPpuBZkZEG5mWoh32Dx=jLdz1cKHaN4UQG305g@mail.gmail.com> (sfid-20140121_001312_460345_5522FAD9)
-Subject: Re: backport module can't see built in kernel symbol
-From: Daniel Schultze <kinglag@gmail.com>
-To: backports@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Developers,
+This fixes the following warning:
 
-I have been able to answer my own question, remember to reload the
-kernel image not just the file system image.
+/net/bluetooth/hidp/core.c:271:12: warning: ‘hidp_get_raw_report’ defined but not used [-Wunused-function]
+ static int hidp_get_raw_report(struct hid_device *hid,
+            ^
 
-Thank you,
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../16-bluetooth/net_bluetooth_hidp_core.patch     |   22 ++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
--Dan
+diff --git a/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_hidp_core.patch b/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_hidp_core.patch
+index 4e861f9..29dca32 100644
+--- a/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_hidp_core.patch
++++ b/patches/collateral-evolutions/network/16-bluetooth/net_bluetooth_hidp_core.patch
+@@ -1,14 +1,24 @@
+ --- a/net/bluetooth/hidp/core.c
+ +++ b/net/bluetooth/hidp/core.c
+-@@ -353,6 +353,7 @@ err:
++@@ -268,6 +268,7 @@ static int hidp_hidinput_event(struct in
++ 	return hidp_send_report(session, field->report);
++ }
++ 
+++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,38))
++ static int hidp_get_raw_report(struct hid_device *hid,
++ 		unsigned char report_number,
++ 		unsigned char *data, size_t count,
++@@ -352,7 +353,9 @@ err:
++ 	mutex_unlock(&session->report_mutex);
+  	return ret;
+  }
+++#endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,38)) */
+  
+ +#if defined(CPTCFG_BACKPORT_OPTION_BT_SOCK_CREATE_NEEDS_KERN)
+  static int hidp_output_raw_report(struct hid_device *hid, unsigned char *data, size_t count,
+  		unsigned char report_type)
+  {
+-@@ -410,6 +411,16 @@ err:
++@@ -410,6 +413,16 @@ err:
+  	mutex_unlock(&session->report_mutex);
+  	return ret;
+  }
+@@ -25,7 +35,7 @@
+  
+  static void hidp_idle_timeout(unsigned long arg)
+  {
+-@@ -698,6 +709,87 @@ static void hidp_close(struct hid_device
++@@ -698,6 +711,87 @@ static void hidp_close(struct hid_device
+  {
+  }
+  
+@@ -113,7 +123,7 @@
+  static int hidp_parse(struct hid_device *hid)
+  {
+  	struct hidp_session *session = hid->driver_data;
+-@@ -775,7 +867,9 @@ static int hidp_setup_hid(struct hidp_se
++@@ -775,7 +869,9 @@ static int hidp_setup_hid(struct hidp_se
+  	hid->dev.parent = &session->conn->hcon->dev;
+  	hid->ll_driver = &hidp_hid_driver;
+  
+@@ -123,7 +133,7 @@
+  	hid->hid_output_raw_report = hidp_output_raw_report;
+  
+  	/* True if device is blacklisted in drivers/hid/hid-core.c */
+-@@ -793,6 +887,7 @@ fault:
++@@ -793,6 +889,7 @@ fault:
+  
+  	return err;
+  }
+@@ -131,7 +141,7 @@
+  
+  /* initialize session devices */
+  static int hidp_session_dev_init(struct hidp_session *session,
+-@@ -855,10 +950,17 @@ static int hidp_session_dev_add(struct h
++@@ -855,10 +952,17 @@ static int hidp_session_dev_add(struct h
+  /* remove HID/input devices from their bus systems */
+  static void hidp_session_dev_del(struct hidp_session *session)
+  {
+-- 
+1.7.10.4
 
-On Mon, Jan 20, 2014 at 12:59 PM, Daniel Schultze <kinglag@gmail.com> wrote:
-> Developers,
->
-> I am having some trouble getting my cross compiled backport working
-> with my kernel. I am getting the error message:
->
->     bluetooth: Unknown symbol crypto_shash_setkey
->
-> I ran nm on the kernel file vmLinux and grep'ed System.map which does show:
->
->     c0153d40 T crypto_shash_setkey
->
->
-> So I'm a bit confused as to why bluetooth.ko can't "see" it. Any help
-> you could give would be appreciated.
->
-> -Dan
