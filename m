@@ -1,47 +1,112 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:46714 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:56595 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753751AbaAHAfS (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 7 Jan 2014 19:35:18 -0500
+	id S1752075AbaASNFe (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 19 Jan 2014 08:05:34 -0500
+Message-ID: <52DBCD8D.6020408@hauke-m.de> (sfid-20140119_140542_160657_952D729D)
+Date: Sun, 19 Jan 2014 14:05:17 +0100
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 09/17] backports: remove usage of addr_assign_type in 6lowpan.c
-Date: Wed,  8 Jan 2014 01:34:26 +0100
-Message-Id: <1389141274-2002-10-git-send-email-hauke@hauke-m.de> (sfid-20140108_013520_220077_55E86614)
-In-Reply-To: <1389141274-2002-1-git-send-email-hauke@hauke-m.de>
-References: <1389141274-2002-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+To: Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	backports@vger.kernel.org
+Subject: Re: [PATCH] backports: add support for
+References: <1390122363-27130-1-git-send-email-emmanuel.grumbach@intel.com>
+In-Reply-To: <1390122363-27130-1-git-send-email-emmanuel.grumbach@intel.com>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The bluetooth 6lowpan code now accesses the addr_assign_type member of
-struct netdev, which is not available in older kernel versions.
+On 01/19/2014 10:06 AM, Emmanuel Grumbach wrote:
+> commit f663dd9aaf9ed124f25f0f8452edf238f087ad50
+> Author: Jason Wang <jasowang@redhat.com>
+> Date:   Fri Jan 10 16:18:26 2014 +0800
+> 
+>     net: core: explicitly select a txq before doing l2 forwarding
+> 
+> Change-Id: I0a03c7ddc29acef9e573b70232e51c512f65e453
+> Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+> ---
+> I am not a backport expert - and there might be other nicer ways to do this.
+> At least it worked for me.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-kernel versions.
----
- .../61-netdev-addr_assign_type/net_bluetooth_6lowpan.patch |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/61-netdev-addr_assign_type/net_bluetooth_6lowpan.patch
+Thanks for the patch. I also came across this change yesterday and was
+working on a patch.
 
-diff --git a/patches/collateral-evolutions/network/61-netdev-addr_assign_type/net_bluetooth_6lowpan.patch b/patches/collateral-evolutions/network/61-netdev-addr_assign_type/net_bluetooth_6lowpan.patch
-new file mode 100644
-index 0000000..ad2618f
---- /dev/null
-+++ b/patches/collateral-evolutions/network/61-netdev-addr_assign_type/net_bluetooth_6lowpan.patch
-@@ -0,0 +1,12 @@
-+--- a/net/bluetooth/6lowpan.c
-++++ b/net/bluetooth/6lowpan.c
-+@@ -632,7 +632,9 @@ static void set_addr(u8 *eui, u8 *addr,
-+ static void set_dev_addr(struct net_device *netdev, bdaddr_t *addr,
-+ 		         u8 addr_type)
-+ {
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,36)
-+ 	netdev->addr_assign_type = NET_ADDR_PERM;
-++#endif
-+ 	set_addr(netdev->dev_addr, addr->b, addr_type);
-+ 	netdev->dev_addr[0] ^= 2;
-+ }
--- 
-1.7.10.4
+> ---
+>  backport/backport-include/linux/netdevice.h        |  3 +-
+>  .../network/22-multiqueue/net_mac80211_tx.patch    |  2 +-
+>  .../82-l2-fwd_offload/net_mac80211_iface.patch     | 32 ++++++++++++++++++++++
+>  3 files changed, 35 insertions(+), 2 deletions(-)
+>  create mode 100644 patches/collateral-evolutions/network/82-l2-fwd_offload/net_mac80211_iface.patch
+> 
+> diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+> index 3d6b7b3..137aa77 100644
+> --- a/backport/backport-include/linux/netdevice.h
+> +++ b/backport/backport-include/linux/netdevice.h
+> @@ -47,7 +47,8 @@ struct net_device_ops {
+>  	netdev_tx_t		(*ndo_start_xmit) (struct sk_buff *skb,
+>  						   struct net_device *dev);
+>  	u16			(*ndo_select_queue)(struct net_device *dev,
+> -						    struct sk_buff *skb);
+> +						    struct sk_buff *skb,
+> +						    void *accel_priv);
+
+This is wrong, this struct has to match the callback functions in kernel
+2.6.27 to 2.6.29.
+
+>  	void			(*ndo_change_rx_flags)(struct net_device *dev,
+>  						       int flags);
+>  	void			(*ndo_set_rx_mode)(struct net_device *dev);
+> diff --git a/patches/collateral-evolutions/network/22-multiqueue/net_mac80211_tx.patch b/patches/collateral-evolutions/network/22-multiqueue/net_mac80211_tx.patch
+> index 23e3c9b..179d797 100644
+> --- a/patches/collateral-evolutions/network/22-multiqueue/net_mac80211_tx.patch
+> +++ b/patches/collateral-evolutions/network/22-multiqueue/net_mac80211_tx.patch
+> @@ -6,7 +6,7 @@
+>   
+>  +#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,27))
+>  +	/* Older kernels do not have the select_queue callback */
+> -+	skb_set_queue_mapping(skb, ieee80211_select_queue(sdata, skb));
+> ++	skb_set_queue_mapping(skb, ieee80211_select_queue(sdata, skb, NULL));
+>  +#endif
+>   	ieee80211_set_qos_hdr(sdata, skb);
+>   	ieee80211_tx(sdata, skb, false, band);
+> diff --git a/patches/collateral-evolutions/network/82-l2-fwd_offload/net_mac80211_iface.patch b/patches/collateral-evolutions/network/82-l2-fwd_offload/net_mac80211_iface.patch
+> new file mode 100644
+> index 0000000..124e841
+> --- /dev/null
+> +++ b/patches/collateral-evolutions/network/82-l2-fwd_offload/net_mac80211_iface.patch
+> @@ -0,0 +1,32 @@
+> +diff --git a/net/mac80211/iface.c b/net/mac80211/iface.c
+> +index 0fd2e9f..6af9bbf 100644
+> +--- a/net/mac80211/iface.c
+> ++++ b/net/mac80211/iface.c
+> +@@ -1050,8 +1050,12 @@ static void ieee80211_uninit(struct net_device *dev)
+> + }
+> + 
+> + static u16 ieee80211_netdev_select_queue(struct net_device *dev,
+> ++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,14, 0)
+> ++					 struct sk_buff *skb)
+> ++#else
+> + 					 struct sk_buff *skb,
+> + 					 void *accel_priv)
+> ++#endif
+> + {
+> + 	return ieee80211_select_queue(IEEE80211_DEV_TO_SUB_IF(dev), skb);
+> + }
+> +@@ -1068,8 +1072,12 @@ static const struct net_device_ops ieee80211_dataif_ops = {
+> + };
+> + 
+> + static u16 ieee80211_monitor_select_queue(struct net_device *dev,
+> +-					  struct sk_buff *skb,
+> +-					  void *accel_priv)
+> ++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,14, 0)
+> ++					 struct sk_buff *skb)
+> ++#else
+> ++					 struct sk_buff *skb,
+> ++					 void *accel_priv)
+> ++#endif
+> + {
+> + 	struct ieee80211_sub_if_data *sdata = IEEE80211_DEV_TO_SUB_IF(dev);
+> + 	struct ieee80211_local *local = sdata->local;
+> 
 
