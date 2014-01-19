@@ -1,67 +1,38 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:54670 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751347AbaARUId (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 18 Jan 2014 15:08:33 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/5] backports: add ether_addr_equal_64bits()
-Date: Sat, 18 Jan 2014 21:05:20 +0100
-Message-Id: <1390075524-6924-2-git-send-email-hauke@hauke-m.de> (sfid-20140118_210834_502437_71496DD8)
-In-Reply-To: <1390075524-6924-1-git-send-email-hauke@hauke-m.de>
-References: <1390075524-6924-1-git-send-email-hauke@hauke-m.de>
+Received: from mga09.intel.com ([134.134.136.24]:61518 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751068AbaASRAV convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 19 Jan 2014 12:00:21 -0500
+From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>,
+	"mcgrof@do-not-panic.com" <mcgrof@do-not-panic.com>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: RE: [PATCH 01/16] backports: adapt to changes in netdev
+ select_queue call
+Date: Sun, 19 Jan 2014 17:00:16 +0000
+Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB303D40C23@HASMSX103.ger.corp.intel.com> (sfid-20140119_180023_234921_FA287070)
+References: <1390150057-11652-1-git-send-email-hauke@hauke-m.de>
+ <1390150057-11652-2-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1390150057-11652-2-git-send-email-hauke@hauke-m.de>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is used by some drivers now
+> Subject: [PATCH 01/16] backports: adapt to changes in netdev select_queue
+> call
+> 
+> This patch reverts the changes done in the following commit for older kernel
+> versions:
+> commit f663dd9aaf9ed124f25f0f8452edf238f087ad50
+> Author: Jason Wang <jasowang@redhat.com>
+> Date:   Fri Jan 10 16:18:26 2014 +0800
+> 
+>     net: core: explicitly select a txq before doing l2 forwarding
+> 
+> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+> CC: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/etherdevice.h |   32 +++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
-
-diff --git a/backport/backport-include/linux/etherdevice.h b/backport/backport-include/linux/etherdevice.h
-index 5a6096d..cf02852 100644
---- a/backport/backport-include/linux/etherdevice.h
-+++ b/backport/backport-include/linux/etherdevice.h
-@@ -158,4 +158,36 @@ static inline void eth_hw_addr_inherit(struct net_device *dst,
- }
- #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0) */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
-+/**
-+ * ether_addr_equal_64bits - Compare two Ethernet addresses
-+ * @addr1: Pointer to an array of 8 bytes
-+ * @addr2: Pointer to an other array of 8 bytes
-+ *
-+ * Compare two Ethernet addresses, returns true if equal, false otherwise.
-+ *
-+ * The function doesn't need any conditional branches and possibly uses
-+ * word memory accesses on CPU allowing cheap unaligned memory reads.
-+ * arrays = { byte1, byte2, byte3, byte4, byte5, byte6, pad1, pad2 }
-+ *
-+ * Please note that alignment of addr1 & addr2 are only guaranteed to be 16 bits.
-+ */
-+
-+static inline bool ether_addr_equal_64bits(const u8 addr1[6+2],
-+					   const u8 addr2[6+2])
-+{
-+#if defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) && BITS_PER_LONG == 64
-+	u64 fold = (*(const u64 *)addr1) ^ (*(const u64 *)addr2);
-+
-+#ifdef __BIG_ENDIAN
-+	return (fold >> 16) == 0;
-+#else
-+	return (fold << 16) == 0;
-+#endif
-+#else
-+	return ether_addr_equal(addr1, addr2);
-+#endif
-+}
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0) */
-+
- #endif /* _BACKPORT_LINUX_ETHERDEVICE_H */
--- 
-1.7.10.4
+This is obviously much better than my version :)
+Thanks!
 
