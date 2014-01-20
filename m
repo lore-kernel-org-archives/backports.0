@@ -1,96 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:58380 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752421AbaASQsj (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 19 Jan 2014 11:48:39 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 14/16] backports: fix unused atl1e_rx_mode() warning
-Date: Sun, 19 Jan 2014 17:47:35 +0100
-Message-Id: <1390150057-11652-15-git-send-email-hauke@hauke-m.de> (sfid-20140119_174922_073912_47FDFCF1)
-In-Reply-To: <1390150057-11652-1-git-send-email-hauke@hauke-m.de>
-References: <1390150057-11652-1-git-send-email-hauke@hauke-m.de>
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:54804 "EHLO
+	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750733AbaATHCH (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 20 Jan 2014 02:02:07 -0500
+Date: Mon, 20 Jan 2014 08:02:04 +0100 (CET)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Johannes Berg <johannes@sipsolutions.net>
+cc: Hauke Mehrtens <hauke@hauke-m.de>,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	backports@vger.kernel.org, Peter Senna <peter.senna@gmail.com>,
+	Julia Lawall <julia.lawall@lip6.fr>,
+	Gilles Muller <Gilles.Muller@lip6.fr>
+Subject: Re: [PATCH 2/2] backports: add support for testing only a single
+ Coccinelle SmPL patch
+In-Reply-To: <1390165721.4336.10.camel@jlt4.sipsolutions.net>
+Message-ID: <alpine.DEB.2.02.1401200800010.1971@localhost6.localdomain6> (sfid-20140120_080209_462937_C391F6EC)
+References: <1386851914-5241-1-git-send-email-mcgrof@do-not-panic.com>  <1386851914-5241-2-git-send-email-mcgrof@do-not-panic.com>  <52DC063B.4070801@hauke-m.de> (sfid-20140119_180720_012738_EE2F3704) <1390165721.4336.10.camel@jlt4.sipsolutions.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This fixes the following warning:
+On Sun, 19 Jan 2014, Johannes Berg wrote:
 
-/drivers/net/ethernet/atheros/atl1e/atl1e_main.c:328:13: warning: ‘atl1e_rx_mode’ defined but not used [-Wunused-function]
- static void atl1e_rx_mode(struct net_device *netdev,
-             ^
+> On Sun, 2014-01-19 at 18:07 +0100, Hauke Mehrtens wrote:
+> 
+> > > $ time ./gentree.py --clean --verbose --test-cocci \
+> > > 	patches/collateral-evolutions/network/11-dev-pm-ops.cocci \
+> > > 	/home/mcgrof/linux-next/ \
+> > > 	/home/mcgrof/build/backports-20131206
+> 
+> I'm not really convinced that adding profile options for spatch is a
+> good thing in gentree anyway. It's complicated enough as is, and running
+> the spatch manually isn't all that difficult. If you use the --gitdebug
+> option to gentree, you could even roll back to just before the patch was
+> applied before running it manually.
+> 
+> Now, I don't want to control what goes into backports, but this way I
+> might end up having to rewrite it again ;-)
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- ...ers_net_ethernet_atheros_atl1e_atl1e_main.patch |   26 ++++++++++++++++----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+I'm not sure to understand the issue.  Spatch has a --profile option, but 
+I don't see it in the above code.  From my point of view, it could be nice 
+if people are somehow encouraged to use that option from time to time, 
+because it increases the chance that they will report back on performance 
+problems.  But there is no need for it to bein the default execution path.
 
-diff --git a/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_atl1e_atl1e_main.patch b/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_atl1e_atl1e_main.patch
-index 6927a57..72488f9 100644
---- a/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_atl1e_atl1e_main.patch
-+++ b/patches/collateral-evolutions/network/40-netdev-hw-features/drivers_net_ethernet_atheros_atl1e_atl1e_main.patch
-@@ -1,6 +1,22 @@
- --- a/drivers/net/ethernet/atheros/atl1e/atl1e_main.c
- +++ b/drivers/net/ethernet/atheros/atl1e/atl1e_main.c
--@@ -399,6 +399,7 @@ static int atl1e_set_mac_addr(struct net
-+@@ -313,6 +313,7 @@ static void atl1e_set_multi(struct net_d
-+ 	}
-+ }
-+ 
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,39))
-+ static void __atl1e_rx_mode(netdev_features_t features, u32 *mac_ctrl_data)
-+ {
-+ 
-+@@ -339,6 +340,7 @@ static void atl1e_rx_mode(struct net_dev
-+ 	AT_WRITE_REG(&adapter->hw, REG_MAC_CTRL, mac_ctrl_data);
-+ 	atl1e_irq_enable(adapter);
-+ }
-++#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,39)) */
-+ 
-+ 
-+ static void __atl1e_vlan_mode(netdev_features_t features, u32 *mac_ctrl_data)
-+@@ -399,6 +401,7 @@ static int atl1e_set_mac_addr(struct net
-  	return 0;
-  }
-  
-@@ -8,7 +24,7 @@
-  static netdev_features_t atl1e_fix_features(struct net_device *netdev,
-  	netdev_features_t features)
-  {
--@@ -428,6 +429,7 @@ static int atl1e_set_features(struct net
-+@@ -428,6 +431,7 @@ static int atl1e_set_features(struct net
-  
-  	return 0;
-  }
-@@ -16,7 +32,7 @@
-  
-  /**
-   * atl1e_change_mtu - Change the Maximum Transfer Unit
--@@ -1987,7 +1989,11 @@ void atl1e_down(struct atl1e_adapter *ad
-+@@ -1995,7 +1999,11 @@ void atl1e_down(struct atl1e_adapter *ad
-  	 * reschedule our watchdog timer */
-  	set_bit(__AT_DOWN, &adapter->flags);
-  
-@@ -28,7 +44,7 @@
-  
-  	/* reset MAC to disable all RX/TX */
-  	atl1e_reset_hw(&adapter->hw);
--@@ -2257,8 +2263,10 @@ static const struct net_device_ops atl1e
-+@@ -2265,8 +2273,10 @@ static const struct net_device_ops atl1e
-  	.ndo_set_rx_mode	= atl1e_set_multi,
-  	.ndo_validate_addr	= eth_validate_addr,
-  	.ndo_set_mac_address	= atl1e_set_mac_addr,
-@@ -39,7 +55,7 @@
-  	.ndo_change_mtu		= atl1e_change_mtu,
-  	.ndo_do_ioctl		= atl1e_ioctl,
-  	.ndo_tx_timeout		= atl1e_tx_timeout,
--@@ -2278,12 +2286,17 @@ static int atl1e_init_netdev(struct net_
-+@@ -2286,12 +2296,17 @@ static int atl1e_init_netdev(struct net_
-  	netdev->watchdog_timeo = AT_TX_WATCHDOG;
-  	atl1e_set_ethtool_ops(netdev);
-  
--- 
-1.7.10.4
-
+julia
