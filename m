@@ -1,56 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:44637 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751136AbaABT6G (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 2 Jan 2014 14:58:06 -0500
-Message-ID: <52C5C4C9.30203@broadcom.com> (sfid-20140102_205808_872751_B46FAB8E)
-Date: Thu, 2 Jan 2014 20:58:01 +0100
-From: Arend van Spriel <arend@broadcom.com>
-MIME-Version: 1.0
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>
-Subject: Re: [PATCH V2] network: mac80211: rework multicast patches for mac80211
-References: <1387709465-19004-1-git-send-email-arend@broadcom.com> <52C46B63.50207@hauke-m.de>
-In-Reply-To: <52C46B63.50207@hauke-m.de>
-Content-Type: text/plain; charset="ISO-8859-1"
+Received: from server19320154104.serverpool.info ([193.201.54.104]:38692 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751939AbaAXUjp (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 24 Jan 2014 15:39:45 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 3/5] backports: always access net/ieee802154/ with make
+Date: Fri, 24 Jan 2014 21:38:50 +0100
+Message-Id: <1390595932-21877-4-git-send-email-hauke@hauke-m.de> (sfid-20140124_213946_472946_AF302766)
+In-Reply-To: <1390595932-21877-1-git-send-email-hauke@hauke-m.de>
+References: <1390595932-21877-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 01/01/2014 08:24 PM, Hauke Mehrtens wrote:
-> On 12/22/2013 11:51 AM, Arend van Spriel wrote:
->> Fixing up the patches for mac80211 that were located under
->> collateral-evolutions/network/25-multicast-list_head.
->>
->> Signed-off-by: Arend van Spriel <arend@broadcom.com>
->> ---
->>  .../include_net_mac80211.patch                     |   14 +--------
->>  .../net_mac80211_driver-ops.patch                  |   33 +-------------------
->>  .../net_mac80211_iface.patch                       |   16 +++-------
->>  3 files changed, 6 insertions(+), 57 deletions(-)
-> 
-> This patch does not apply for me on current master:
-> 
-> hauke@hauke-desktop:~/compat-wireless/backports$ patch -p1 < tmp.patch
-> patching file
-> patches/collateral-evolutions/network/25-multicast-list_head/include_net_mac80211.patch
-> Hunk #1 FAILED at 1.
-> 1 out of 2 hunks FAILED -- saving rejects to file
-> patches/collateral-evolutions/network/25-multicast-list_head/include_net_mac80211.patch.rej
-> patching file
-> patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_driver-ops.patch
-> patching file
-> patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_iface.patch
-> Hunk #1 FAILED at 1.
-> Hunk #2 FAILED at 14.
-> 2 out of 2 hunks FAILED -- saving rejects to file
-> patches/collateral-evolutions/network/25-multicast-list_head/net_mac80211_iface.patch.rej
-> 
-> 
-> Is it based on master of this repository:
-> git://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git
+In the kernel make will always access net/ieee802154/, we should do the
+same.
 
-Had a good vacation so .... let me check. Oh, and best wishes ;-)
+This was changes in the kenrel in this commit:
+commit a53d34c3465b8a840f7400932ae1b0a9f9ed6bef
+Author: Dmitry Eremin-Solenikov <dmitry_eremin@mentor.com>
+Date:   Wed Jan 15 02:50:40 2014 +0400
 
-Gr. AvS
+    net: move 6lowpan compression code to separate module
+
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/Makefile.kernel |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
+index 6a1afc1..0f5ed6c 100644
+--- a/backport/Makefile.kernel
++++ b/backport/Makefile.kernel
+@@ -34,7 +34,7 @@ obj-$(CPTCFG_NFC) += drivers/nfc/
+ obj-$(CPTCFG_REGULATOR) += drivers/regulator/
+ obj-$(CPTCFG_MEDIA_SUPPORT) += drivers/media/
+ 
+-obj-$(CPTCFG_IEEE802154) += net/ieee802154/
++obj-y += net/ieee802154/
+ obj-$(CPTCFG_MAC802154) += net/mac802154/
+ obj-$(CPTCFG_IEEE802154) += drivers/net/ieee802154/
+ 
+-- 
+1.7.10.4
 
