@@ -1,39 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:54675 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751347AbaARUIh (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 18 Jan 2014 15:08:37 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 3/5] backports: do not build ACT8865 with kernel < 3.12
-Date: Sat, 18 Jan 2014 21:05:22 +0100
-Message-Id: <1390075524-6924-4-git-send-email-hauke@hauke-m.de> (sfid-20140118_210838_673076_70BF72B9)
-In-Reply-To: <1390075524-6924-1-git-send-email-hauke@hauke-m.de>
-References: <1390075524-6924-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-pb0-f54.google.com ([209.85.160.54]:39242 "EHLO
+	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753084AbaAXWro (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 24 Jan 2014 17:47:44 -0500
+Received: by mail-pb0-f54.google.com with SMTP id uo5so3742651pbc.41
+        for <backports@vger.kernel.org>; Fri, 24 Jan 2014 14:47:43 -0800 (PST)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 04/11] rel-html: add 3.14 for backports project release file
+Date: Fri, 24 Jan 2014 14:47:09 -0800
+Message-Id: <1390603636-27841-5-git-send-email-mcgrof@do-not-panic.com> (sfid-20140124_234752_747270_ACFF7BFD)
+In-Reply-To: <1390603636-27841-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1390603636-27841-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This driver uses some members of struct regulator_desc which were added
-in kernel 3.12.
+This is in preparation for the 3.14-rc1 release.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- dependencies |    1 +
+ projects/backports.cfg | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/dependencies b/dependencies
-index bd577c2..4eabc25 100644
---- a/dependencies
-+++ b/dependencies
-@@ -58,6 +58,7 @@ REGULATOR 3.4
- REGULATOR_88PM800 3.12
- REGULATOR_88PM8607 3.10
- REGULATOR_AAT2870 3.6
-+REGULATOR_ACT8865 3.12
- REGULATOR_AD5398 3.5
- REGULATOR_ARIZONA 3.12
- REGULATOR_AS3711 3.12
+diff --git a/projects/backports.cfg b/projects/backports.cfg
+index 2ea2ca3..ae9cdac 100644
+--- a/projects/backports.cfg
++++ b/projects/backports.cfg
+@@ -2,6 +2,7 @@
+ rel_html_proj		= backports
+ rel_html_proj_aliases	= compat-drivers
+ supported =
++	3.14
+ 	3.13
+ 	3.12
+ 	3.11
 -- 
-1.7.10.4
+1.8.5.2
 
