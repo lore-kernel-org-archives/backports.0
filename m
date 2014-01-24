@@ -1,48 +1,68 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:54804 "EHLO
-	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750733AbaATHCH (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 20 Jan 2014 02:02:07 -0500
-Date: Mon, 20 Jan 2014 08:02:04 +0100 (CET)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Johannes Berg <johannes@sipsolutions.net>
-cc: Hauke Mehrtens <hauke@hauke-m.de>,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org, Peter Senna <peter.senna@gmail.com>,
-	Julia Lawall <julia.lawall@lip6.fr>,
-	Gilles Muller <Gilles.Muller@lip6.fr>
-Subject: Re: [PATCH 2/2] backports: add support for testing only a single
- Coccinelle SmPL patch
-In-Reply-To: <1390165721.4336.10.camel@jlt4.sipsolutions.net>
-Message-ID: <alpine.DEB.2.02.1401200800010.1971@localhost6.localdomain6> (sfid-20140120_080209_462937_C391F6EC)
-References: <1386851914-5241-1-git-send-email-mcgrof@do-not-panic.com>  <1386851914-5241-2-git-send-email-mcgrof@do-not-panic.com>  <52DC063B.4070801@hauke-m.de> (sfid-20140119_180720_012738_EE2F3704) <1390165721.4336.10.camel@jlt4.sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Received: from server19320154104.serverpool.info ([193.201.54.104]:38644 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751939AbaAXUjA (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 24 Jan 2014 15:39:00 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 0/5] backports: bring it to next-20140124
+Date: Fri, 24 Jan 2014 21:38:47 +0100
+Message-Id: <1390595932-21877-1-git-send-email-hauke@hauke-m.de> (sfid-20140124_213903_637119_F2B8AF79)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, 19 Jan 2014, Johannes Berg wrote:
 
-> On Sun, 2014-01-19 at 18:07 +0100, Hauke Mehrtens wrote:
-> 
-> > > $ time ./gentree.py --clean --verbose --test-cocci \
-> > > 	patches/collateral-evolutions/network/11-dev-pm-ops.cocci \
-> > > 	/home/mcgrof/linux-next/ \
-> > > 	/home/mcgrof/build/backports-20131206
-> 
-> I'm not really convinced that adding profile options for spatch is a
-> good thing in gentree anyway. It's complicated enough as is, and running
-> the spatch manually isn't all that difficult. If you use the --gitdebug
-> option to gentree, you could even roll back to just before the patch was
-> applied before running it manually.
-> 
-> Now, I don't want to control what goes into backports, but this way I
-> might end up having to rewrite it again ;-)
+This brings backports to next-20140124 and fixes uninstalling.
 
-I'm not sure to understand the issue.  Spatch has a --profile option, but 
-I don't see it in the above code.  From my point of view, it could be nice 
-if people are somehow encouraged to use that option from time to time, 
-because it increases the chance that they will report back on performance 
-problems.  But there is no need for it to bein the default execution path.
+1   2.6.25              [  OK  ]
+2   2.6.26              [  OK  ]
+3   2.6.27              [  OK  ]
+4   2.6.28              [  OK  ]
+5   2.6.29              [  OK  ]
+6   2.6.30              [  OK  ]
+7   2.6.31              [  OK  ]
+8   2.6.32              [  OK  ]
+9   2.6.33              [  OK  ]
+10  2.6.34              [  OK  ]
+11  2.6.35              [  OK  ]
+12  2.6.36              [  OK  ]
+13  2.6.37              [  OK  ]
+14  2.6.38              [  OK  ]
+15  2.6.39              [  OK  ]
+16  3.0.101             [  OK  ]
+17  3.1.10              [  OK  ]
+18  3.2.54              [  OK  ]
+19  3.3.8               [  OK  ]
+20  3.4.77              [  OK  ]
+21  3.5.7               [  OK  ]
+22  3.6.11              [  OK  ]
+23  3.7.10              [  OK  ]
+24  3.8.13              [  OK  ]
+25  3.9.11              [  OK  ]
+26  3.10.27             [  OK  ]
+27  3.11.10             [  OK  ]
+28  3.12.8              [  OK  ]
+29  3.13-rc8            [  OK  ]
 
-julia
+Hauke Mehrtens (5):
+  backports: add DECLARE_SOCKADDR
+  backports: add __sockaddr_check_size()
+  backports: always access net/ieee802154/ with make
+  backports: refresh on next-20140124
+  backports: fix uninstall filename
+
+ backport/Makefile.kernel                           |    2 +-
+ backport/backport-include/linux/net.h              |    5 ++++
+ backport/backport-include/linux/socket.h           |    5 ++++
+ backport/scripts/uninstall.sh                      |    2 +-
+ .../24-pcmcia/drivers_bluetooth_bluecard_cs.patch  |   26 ++++++++++----------
+ .../24-pcmcia/drivers_bluetooth_bt3c_cs.patch      |   18 +++++++-------
+ .../24-pcmcia/drivers_bluetooth_btuart_cs.patch    |   22 ++++++++---------
+ .../24-pcmcia/drivers_bluetooth_dtl1_cs.patch      |   22 ++++++++---------
+ .../regulator/0001-bt8xx-rename-dst-ops.patch      |   12 ++++-----
+ 9 files changed, 62 insertions(+), 52 deletions(-)
+
+-- 
+1.7.10.4
+
