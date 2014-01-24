@@ -1,53 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:46734 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:38651 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754281AbaAHAfd (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 7 Jan 2014 19:35:33 -0500
+	id S1751939AbaAXUjD (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 24 Jan 2014 15:39:03 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 13/17] backports: build some regulator drivers only with recent kernels
-Date: Wed,  8 Jan 2014 01:34:30 +0100
-Message-Id: <1389141274-2002-14-git-send-email-hauke@hauke-m.de> (sfid-20140108_013534_577647_199D2C1E)
-In-Reply-To: <1389141274-2002-1-git-send-email-hauke@hauke-m.de>
-References: <1389141274-2002-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 1/5] backports: add DECLARE_SOCKADDR
+Date: Fri, 24 Jan 2014 21:38:48 +0100
+Message-Id: <1390595932-21877-2-git-send-email-hauke@hauke-m.de> (sfid-20140124_213904_844504_21EA9F00)
+In-Reply-To: <1390595932-21877-1-git-send-email-hauke@hauke-m.de>
+References: <1390595932-21877-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-When these drivers are build with older kernel versions we get build
-errors.
+This is used by net/bluetooth/l2cap_sock.c
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- dependencies |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ backport/backport-include/linux/net.h |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/dependencies b/dependencies
-index e4c1cb7..bd577c2 100644
---- a/dependencies
-+++ b/dependencies
-@@ -91,8 +91,8 @@ REGULATOR_PCAP 3.6
- REGULATOR_PCF50633 3.8
- REGULATOR_PFUZE100 3.6
- REGULATOR_RC5T583 3.6
--REGULATOR_S2MPS11 3.12
--REGULATOR_S5M8767 3.9
-+REGULATOR_S2MPS11 3.13
-+REGULATOR_S5M8767 3.14
- REGULATOR_TPS51632 3.8
- REGULATOR_TPS6105X 3.6
- REGULATOR_TPS62360 3.6
-@@ -102,8 +102,8 @@ REGULATOR_TPS6507X 3.6
- REGULATOR_TPS65090 3.9
- REGULATOR_TPS65217 3.12
- REGULATOR_TPS6524X 3.6
--REGULATOR_TPS6586X 3.9
--REGULATOR_TPS65910 3.6
-+REGULATOR_TPS6586X 3.14
-+REGULATOR_TPS65910 3.14
- REGULATOR_TPS65912 3.12
- REGULATOR_TWL4030 3.11
- REGULATOR_WM831X 3.12
+diff --git a/backport/backport-include/linux/net.h b/backport/backport-include/linux/net.h
+index 9d7cbf5..07981da 100644
+--- a/backport/backport-include/linux/net.h
++++ b/backport/backport-include/linux/net.h
+@@ -41,4 +41,9 @@ do {								\
+ 	net_ratelimited_function(pr_debug, fmt, ##__VA_ARGS__)
+ #endif
+ 
++#ifndef DECLARE_SOCKADDR
++#define DECLARE_SOCKADDR(type, dst, src)	\
++	type dst = ({ __sockaddr_check_size(sizeof(*dst)); (type) src; })
++#endif
++
+ #endif /* __BACKPORT_LINUX_NET_H */
 -- 
 1.7.10.4
 
