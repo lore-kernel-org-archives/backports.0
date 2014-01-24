@@ -1,55 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:54617 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:38656 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751347AbaARUEJ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 18 Jan 2014 15:04:09 -0500
+	id S1751939AbaAXUjG (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 24 Jan 2014 15:39:06 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: mcgrof@do-not-panic.com
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH v2] backports: update kernel versions
-Date: Sat, 18 Jan 2014 21:01:47 +0100
-Message-Id: <1390075307-6746-1-git-send-email-hauke@hauke-m.de> (sfid-20140118_210410_639620_A65E5C95)
-In-Reply-To: <1389141274-2002-17-git-send-email-hauke@hauke-m.de>
-References: <1389141274-2002-17-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 2/5] backports: add __sockaddr_check_size()
+Date: Fri, 24 Jan 2014 21:38:49 +0100
+Message-Id: <1390595932-21877-3-git-send-email-hauke@hauke-m.de> (sfid-20140124_213907_620942_6D42EDBF)
+In-Reply-To: <1390595932-21877-1-git-send-email-hauke@hauke-m.de>
+References: <1390595932-21877-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Update to current versions.
+This is used by net/bluetooth/l2cap_sock.c
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- devel/backports-update-manager |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ backport/backport-include/linux/socket.h |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/devel/backports-update-manager b/devel/backports-update-manager
-index c0365cc..584309b 100755
---- a/devel/backports-update-manager
-+++ b/devel/backports-update-manager
-@@ -39,18 +39,18 @@ KERNEL_URLS = [
-     KPATH + "v2.6.39.4-oneiric/linux-headers-2.6.39-02063904_2.6.39-02063904.201108040905_all.deb",
-     KPATH + "v3.0.101-oneiric/linux-headers-3.0.101-0300101_3.0.101-0300101.201310220446_all.deb",
-     KPATH + "v3.1.10-precise/linux-headers-3.1.10-030110_3.1.10-030110.201201181135_all.deb",
--    KPATH + "v3.2.52-precise/linux-headers-3.2.52-030252_3.2.52-030252.201310262335_all.deb",
-+    KPATH + "v3.2.54-precise/linux-headers-3.2.54-030254_3.2.54-030254.201401030035_all.deb",
-     KPATH + "v3.3.8-quantal/linux-headers-3.3.8-030308_3.3.8-030308.201206041356_all.deb",
--    KPATH + "v3.4.70-quantal/linux-headers-3.4.70-030470_3.4.70-030470.201311201436_all.deb",
-+    KPATH + "v3.4.77-quantal/linux-headers-3.4.77-030477_3.4.77-030477.201401151835_all.deb",
-     KPATH + "v3.5.7.12-quantal/linux-headers-3.5.7-03050712_3.5.7-03050712.201305111435_all.deb",
-     KPATH + "v3.6.11-raring/linux-headers-3.6.11-030611_3.6.11-030611.201212171335_all.deb",
-     KPATH + "v3.7.10-raring/linux-headers-3.7.10-030710_3.7.10-030710.201302271235_all.deb",
-     KPATH + "v3.8.13-raring/linux-headers-3.8.13-030813_3.8.13-030813.201305111843_all.deb",
-     KPATH + "v3.9.11-saucy/linux-headers-3.9.11-030911_3.9.11-030911.201307202035_all.deb",
--    KPATH + "v3.10.20-saucy/linux-headers-3.10.20-031020_3.10.20-031020.201311201536_all.deb",
--    KPATH + "v3.11.9-saucy/linux-headers-3.11.9-031109_3.11.9-031109.201311201635_all.deb",
--    KPATH + "v3.12.1-trusty/linux-headers-3.12.1-031201_3.12.1-031201.201311201654_all.deb",
--    KPATH + "v3.13-rc1-trusty/linux-headers-3.13.0-031300rc1_3.13.0-031300rc1.201311221535_all.deb",
-+    KPATH + "v3.10.27-saucy/linux-headers-3.10.27-031027_3.10.27-031027.201401151935_all.deb",
-+    KPATH + "v3.11.10-saucy/linux-headers-3.11.10-031110_3.11.10-031110.201311291453_all.deb",
-+    KPATH + "v3.12.8-trusty/linux-headers-3.12.8-031208_3.12.8-031208.201401151952_all.deb",
-+    KPATH + "v3.13-rc8-trusty/linux-headers-3.13.0-031300rc8_3.13.0-031300rc8.201401120535_all.deb",
- ]
+diff --git a/backport/backport-include/linux/socket.h b/backport/backport-include/linux/socket.h
+index 4187af2..8b6453e 100644
+--- a/backport/backport-include/linux/socket.h
++++ b/backport/backport-include/linux/socket.h
+@@ -10,4 +10,9 @@
+ #define SOL_NFC		280
+ #endif
  
- NUM_KERNELS=len(KERNEL_URLS)
++#ifndef __sockaddr_check_size
++#define __sockaddr_check_size(size)	\
++	BUILD_BUG_ON(((size) > sizeof(struct __kernel_sockaddr_storage)))
++#endif
++
+ #endif /* __BACKPORT_SOCKET_H */
 -- 
 1.7.10.4
 
