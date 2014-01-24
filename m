@@ -1,37 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:54573 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:39306 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751347AbaARUAR (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 18 Jan 2014 15:00:17 -0500
+	id S1751927AbaAXWeE (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 24 Jan 2014 17:34:04 -0500
+Received: from localhost (localhost [127.0.0.1])
+	by hauke-m.de (Postfix) with ESMTP id 9AECD8F63
+	for <backports@vger.kernel.org>; Fri, 24 Jan 2014 23:34:01 +0100 (CET)
+Received: from hauke-m.de ([127.0.0.1])
+	by localhost (hauke-m.de [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id EdzTyWMUzKRn for <backports@vger.kernel.org>;
+	Fri, 24 Jan 2014 23:33:55 +0100 (CET)
+Received: from [192.168.1.178] (spit-414.wohnheim.uni-bremen.de [134.102.133.158])
+	by hauke-m.de (Postfix) with ESMTPSA id 51B678F62
+	for <backports@vger.kernel.org>; Fri, 24 Jan 2014 23:33:55 +0100 (CET)
+Message-ID: <52E2EA50.3020100@hauke-m.de> (sfid-20140124_233406_504578_6A886577)
+Date: Fri, 24 Jan 2014 23:33:52 +0100
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH] backports: add missing include
-Date: Sat, 18 Jan 2014 21:00:00 +0100
-Message-Id: <1390075200-6639-1-git-send-email-hauke@hauke-m.de> (sfid-20140118_210033_578664_09556F1C)
+MIME-Version: 1.0
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: backports-20140124 is out
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-A user reported that the linux/mm.h header was missing on his mips
-device with kernel 2.6.26.
+backports-20140124 was released. This is based on linux-next
+next-20140124.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/compat/compat-3.8.c |    1 +
- 1 file changed, 1 insertion(+)
+https://www.kernel.org/pub/linux/kernel/projects/backports/2014/01/24/backports-20140124.tar.xz
 
-diff --git a/backport/compat/compat-3.8.c b/backport/compat/compat-3.8.c
-index c6824bf..6741989 100644
---- a/backport/compat/compat-3.8.c
-+++ b/backport/compat/compat-3.8.c
-@@ -18,6 +18,7 @@
- #include <linux/netdevice.h>
- #include <linux/random.h>
- #include <linux/of.h>
-+#include <linux/mm.h>
- 
- #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,8))
- void netdev_set_default_ethtool_ops(struct net_device *dev,
--- 
-1.7.10.4
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
 
+All the latest releases are listed here:
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
+
+New stable release will be made soon.
+
+Hauke
