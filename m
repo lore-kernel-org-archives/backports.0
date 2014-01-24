@@ -1,51 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:52728 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755337AbaAHKox (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 8 Jan 2014 05:44:53 -0500
-From: Stefan Assmann <sassmann@kpanic.de>
-To: mcgrof@kernel.org
-Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH v3 11/11] backports: enable igb and add defconfig
-Date: Wed,  8 Jan 2014 11:44:14 +0100
-Message-Id: <1389177854-24292-12-git-send-email-sassmann@kpanic.de> (sfid-20140108_120435_726611_EC7A1E05)
-In-Reply-To: <1389177854-24292-1-git-send-email-sassmann@kpanic.de>
-References: <1389177854-24292-1-git-send-email-sassmann@kpanic.de>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:38667 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751939AbaAXUjO (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 24 Jan 2014 15:39:14 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 5/5] backports: fix uninstall filename
+Date: Fri, 24 Jan 2014 21:38:52 +0100
+Message-Id: <1390595932-21877-6-git-send-email-hauke@hauke-m.de> (sfid-20140124_213915_713693_04986217)
+In-Reply-To: <1390595932-21877-1-git-send-email-hauke@hauke-m.de>
+References: <1390595932-21877-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Add defconfig and necessary files to copy-list.
+The uninstall script calculated the filename in the wrong way. It added
+the current working dir into the file name, this resulted in names like
+this:
+/lib/modules/2.6.32-431.3.1.el6.x86_64/updates//home/hauke/backports-20140124/drivers/net/wireless/ipw2x00/ipw2100.ko
+The correct one would be this
+/lib/modules/2.6.32-431.3.1.el6.x86_64/updates/drivers/net/wireless/ipw2x00/ipw2100.ko
 
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/defconfigs/igb | 2 ++
- copy-list               | 4 ++++
- 2 files changed, 6 insertions(+)
- create mode 100644 backport/defconfigs/igb
+ backport/scripts/uninstall.sh |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/backport/defconfigs/igb b/backport/defconfigs/igb
-new file mode 100644
-index 0000000..8045257
---- /dev/null
-+++ b/backport/defconfigs/igb
-@@ -0,0 +1,2 @@
-+CPTCFG_NET_VENDOR_INTEL=y
-+CPTCFG_IGB=m
-diff --git a/copy-list b/copy-list
-index 9444aff..2b2e177 100644
---- a/copy-list
-+++ b/copy-list
-@@ -100,6 +100,10 @@ drivers/net/ethernet/broadcom/Makefile
- drivers/net/ethernet/broadcom/b44.c
- drivers/net/ethernet/broadcom/b44.h
+diff --git a/backport/scripts/uninstall.sh b/backport/scripts/uninstall.sh
+index 99f74ab..1eb42b0 100755
+--- a/backport/scripts/uninstall.sh
++++ b/backport/scripts/uninstall.sh
+@@ -11,7 +11,7 @@ else
+ fi
  
-+drivers/net/ethernet/intel/Kconfig
-+drivers/net/ethernet/intel/Makefile
-+drivers/net/ethernet/intel/igb/
-+
- # wwan drivers
- include/uapi/linux/usb/cdc.h
- include/uapi/linux/usb/cdc-wdm.h
+ for driver in $(find ${BACKPORT_PWD} -type f -name *.ko); do
+-	mod_name=${KLIB}${KMODDIR}/${driver}${compr}
++	mod_name=${driver/${BACKPORT_PWD}/${KLIB}${KMODDIR}}${compr}
+ 	echo "  uninstall" $mod_name
+ 	rm -f $mod_name
+ done
 -- 
-1.8.4.2
+1.7.10.4
 
