@@ -1,78 +1,77 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:58365 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752421AbaASQs3 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 19 Jan 2014 11:48:29 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 11/16] backports: fix led_trigger warning with old kernel versions
-Date: Sun, 19 Jan 2014 17:47:32 +0100
-Message-Id: <1390150057-11652-12-git-send-email-hauke@hauke-m.de> (sfid-20140119_174922_216064_E335BE7B)
-In-Reply-To: <1390150057-11652-1-git-send-email-hauke@hauke-m.de>
-References: <1390150057-11652-1-git-send-email-hauke@hauke-m.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:59496 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753084AbaAXWru (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 24 Jan 2014 17:47:50 -0500
+Received: by mail-pd0-f170.google.com with SMTP id p10so3639290pdj.29
+        for <backports@vger.kernel.org>; Fri, 24 Jan 2014 14:47:50 -0800 (PST)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 05/11] rel-html: use system's date to determine current year
+Date: Fri, 24 Jan 2014 14:47:10 -0800
+Message-Id: <1390603636-27841-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20140124_234753_335667_BB156147)
+In-Reply-To: <1390603636-27841-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1390603636-27841-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This fixes the following warning:
+This is used for the software that does snapshot / next type of
+releases based on dates.
 
-/drivers/net/wireless/at76c50x-usb.c: In function ‘at76_mod_init’:
-/drivers/net/wireless/at76c50x-usb.c:2472:2: warning: passing argument 2 of ‘led_trigger_register_simple’ from incompatible pointer type [enabled by default]
-  led_trigger_register_simple("at76_usb-tx", &ledtrig_tx);
-  ^
-In file included from /backport-include/linux/leds.h:3:0,
-                 from /drivers/net/wireless/at76c50x-usb.c:45:
-include/linux/leds.h:97:13: note: expected ‘struct led_trigger **’ but argument is of type ‘struct backport_led_trigger **’
- extern void led_trigger_register_simple(const char *name,
-             ^
-/drivers/net/wireless/at76c50x-usb.c: In function ‘at76_mod_exit’:
-/drivers/net/wireless/at76c50x-usb.c:2484:2: warning: passing argument 1 of ‘led_trigger_unregister_simple’ from incompatible pointer type [enabled by default]
-  led_trigger_unregister_simple(ledtrig_tx);
-  ^
-In file included from /backport-include/linux/leds.h:3:0,
-                 from /drivers/net/wireless/at76c50x-usb.c:45:
-include/linux/leds.h:99:13: note: expected ‘struct led_trigger *’ but argument is of type ‘struct backport_led_trigger *’
- extern void led_trigger_unregister_simple(struct led_trigger *trigger);
-             ^
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/backport-include/backport/leds-disabled.h |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ rel-html.py | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/backport/backport-include/backport/leds-disabled.h b/backport/backport-include/backport/leds-disabled.h
-index 1a9abec..634b62f 100644
---- a/backport/backport-include/backport/leds-disabled.h
-+++ b/backport/backport-include/backport/leds-disabled.h
-@@ -99,6 +99,10 @@ struct led_trigger {
- #define led_trigger_register LINUX_BACKPORT(led_trigger_register)
- #undef led_trigger_unregister
- #define led_trigger_unregister LINUX_BACKPORT(led_trigger_unregister)
-+#undef led_trigger_register_simple
-+#define led_trigger_register_simple LINUX_BACKPORT(led_trigger_register_simple)
-+#undef led_trigger_unregister_simple
-+#define led_trigger_unregister_simple LINUX_BACKPORT(led_trigger_unregister_simple)
- #undef led_trigger_event
- #define led_trigger_event LINUX_BACKPORT(led_trigger_event)
+diff --git a/rel-html.py b/rel-html.py
+index d787b92..ae61187 100755
+--- a/rel-html.py
++++ b/rel-html.py
+@@ -3,7 +3,7 @@
+ # Provided an index URL and a few project hints page this
+ # will spit out a shiny HTML 5 W3C compliant releases page.
  
-@@ -115,6 +119,15 @@ static inline void led_classdev_unregister(struct led_classdev *led_cdev)
- {
- }
+-# Copyright (C) 2012-2013 Luis R. Rodriguez <mcgrof@do-not-panic.com>
++# Copyright (C) 2012-2014 Luis R. Rodriguez <mcgrof@do-not-panic.com>
+ #
+ # This program is free software: you can redistribute it and/or modify
+ # it under the terms of the GNU Affero General Public License as
+@@ -27,13 +27,14 @@ import sys
+ import os
+ import getopt
+ from operator import itemgetter
++from datetime import date
  
-+static inline void led_trigger_register_simple(const char *name,
-+					       struct led_trigger **trigger)
-+{
-+}
-+
-+static inline void led_trigger_unregister_simple(struct led_trigger *trigger)
-+{
-+}
-+
- static inline void led_blink_set(struct led_classdev *led_cdev,
- 				 unsigned long *delay_on,
- 				 unsigned long *delay_off)
+ debug = 0
+ 
+ 
+ def rel_html_license_verbose():
+     print '-----------------------------------------------------------------------'
+-    print 'Copyright (C) 2012-2013 Luis R. Rodriguez <mcgrof@do-not-panic.com>'
++    print 'Copyright (C) 2012-2014 Luis R. Rodriguez <mcgrof@do-not-panic.com>'
+     print ''
+     print 'This program is free software: you can redistribute it and/or modify'
+     print 'it under the terms of the GNU Affero General Public License as'
+@@ -859,8 +860,7 @@ class index_parser(HTMLParser):
+             url + self.next_rel_month)
+         self.next_rel_url   = url + \
+             self.next_rel_month + '/' + self.next_rel_day
+-        # XXX: automatically look for the largest year
+-        self.next_rel_date_rfc3339  = '2013' + '-' + \
++        self.next_rel_date_rfc3339  = str(date.today().year) + '-' + \
+             self.next_rel_month + '-' + self.next_rel_day
+         self.next_rel_date = self.next_rel_date_rfc3339.replace("-", "")
+         self.next_rel_dates.append(self.next_rel_date_rfc3339)
+@@ -884,7 +884,7 @@ class index_parser(HTMLParser):
+             if url.endswith('stable/'):
+                 self.get_stable_ext_urls(url)
+                 self.evaluate_stable_ext_urls()
+-            elif url.endswith('2013/'):
++            elif url.endswith(str(date.today().year) + '/'):
+                 self.get_next_url(url)
+                 self.evaluate_next_url()
+             else:
 -- 
-1.7.10.4
+1.8.5.2
 
