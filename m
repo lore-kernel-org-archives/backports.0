@@ -1,50 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:46693 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753751AbaAHAfB (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 7 Jan 2014 19:35:01 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 05/17] backports: fix number of arguments of phy_connect()
-Date: Wed,  8 Jan 2014 01:34:22 +0100
-Message-Id: <1389141274-2002-6-git-send-email-hauke@hauke-m.de> (sfid-20140108_013503_864592_DE8FCFD1)
-In-Reply-To: <1389141274-2002-1-git-send-email-hauke@hauke-m.de>
-References: <1389141274-2002-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:41358 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751853AbaAXWsS (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 24 Jan 2014 17:48:18 -0500
+Received: by mail-pa0-f52.google.com with SMTP id bj1so3776379pad.39
+        for <backports@vger.kernel.org>; Fri, 24 Jan 2014 14:48:18 -0800 (PST)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 10/11] rel-html: update CRDA project file
+Date: Fri, 24 Jan 2014 14:47:15 -0800
+Message-Id: <1390603636-27841-11-git-send-email-mcgrof@do-not-panic.com> (sfid-20140125_000006_748885_3E863F48)
+In-Reply-To: <1390603636-27841-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1390603636-27841-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The flags argument was removed from phy_connect in this commit:
+CRDA is now licensed under the copyleft-next project.
 
-commit f9a8f83b04e0c362a2fc660dbad980d24af209fc
-Author: Florian Fainelli <florian@openwrt.org>
-Date:   Mon Jan 14 00:52:52 2013 +0000
-
-    net: phy: remove flags argument from phy_{attach, connect, connect_direct}
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/backport-include/linux/phy.h |   11 +++++++++++
- 1 file changed, 11 insertions(+)
- create mode 100644 backport/backport-include/linux/phy.h
+ projects/crda.cfg | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/backport/backport-include/linux/phy.h b/backport/backport-include/linux/phy.h
-new file mode 100644
-index 0000000..4473e4e
---- /dev/null
-+++ b/backport/backport-include/linux/phy.h
-@@ -0,0 +1,11 @@
-+#ifndef __BACKPORT_LINUX_PHY_H
-+#define __BACKPORT_LINUX_PHY_H
-+#include_next <linux/phy.h>
-+#include <linux/version.h>
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0))
-+#define phy_connect(dev, bus_id, handler, interface) \
-+	phy_connect(dev, bus_id, handler, 0, interface)
-+#endif
-+
-+#endif /* __BACKPORT_LINUX_PHY_H */
+diff --git a/projects/crda.cfg b/projects/crda.cfg
+index c52bb6b..33c2c66 100644
+--- a/projects/crda.cfg
++++ b/projects/crda.cfg
+@@ -1,9 +1,10 @@
+ [project]
+ rel_html_proj           = crda
+ supported =
+-	1.1
++	3.13
++	3.14
+ rel_html_url_releases	= http://kernel.org/pub/software/network/crda/
+-rel_license 		= ISC
++rel_license 		= copyleft-next
+ ignore_changelogs	= True
+ 
+ [html]
 -- 
-1.7.10.4
+1.8.5.2
 
