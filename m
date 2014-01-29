@@ -1,273 +1,154 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:46724 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754266AbaAHAf0 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 7 Jan 2014 19:35:26 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 11/17] backports: remove CRC8 backport
-Date: Wed,  8 Jan 2014 01:34:28 +0100
-Message-Id: <1389141274-2002-12-git-send-email-hauke@hauke-m.de> (sfid-20140108_013529_409040_2A5785BB)
-In-Reply-To: <1389141274-2002-1-git-send-email-hauke@hauke-m.de>
-References: <1389141274-2002-1-git-send-email-hauke@hauke-m.de>
+Received: from mx1.redhat.com ([209.132.183.28]:49031 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750938AbaA2JUn (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 29 Jan 2014 04:20:43 -0500
+From: Stefan Assmann <sassmann@kpanic.de>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH v4 10/12] backports: igb fixes for linux-3.2
+Date: Wed, 29 Jan 2014 10:19:07 +0100
+Message-Id: <1390987149-11171-11-git-send-email-sassmann@kpanic.de> (sfid-20140129_102045_291478_E46EB7A1)
+In-Reply-To: <1390987149-11171-1-git-send-email-sassmann@kpanic.de>
+References: <1390987149-11171-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is not used by any driver any more. brcmsmac was the only driver
-selecting this, but did not used it since some months, now it does not
-even select it any more.
+- add patches/collateral-evolutions/network/84-ethernet/0009-igb_vlan_rx_vid.patch
+- add patches/collateral-evolutions/network/84-ethernet/0010-igb_ethtool_ops.patch
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
 ---
- backport/backport-include/linux/crc8.h |  109 --------------------------------
- backport/compat/Kconfig                |    9 ---
- backport/compat/Makefile               |    1 -
- backport/compat/crc8.c                 |   87 -------------------------
- 4 files changed, 206 deletions(-)
- delete mode 100644 backport/backport-include/linux/crc8.h
- delete mode 100644 backport/compat/crc8.c
+ .../network/84-ethernet/0009-igb_vlan_rx_vid.patch |   64 ++++++++++++++++++++
+ .../network/84-ethernet/0010-igb_ethtool_ops.patch |   48 +++++++++++++++
+ 2 files changed, 112 insertions(+), 0 deletions(-)
+ create mode 100644 patches/collateral-evolutions/network/84-ethernet/0009-igb_vlan_rx_vid.patch
+ create mode 100644 patches/collateral-evolutions/network/84-ethernet/0010-igb_ethtool_ops.patch
 
-diff --git a/backport/backport-include/linux/crc8.h b/backport/backport-include/linux/crc8.h
-deleted file mode 100644
-index 611ba0d..0000000
---- a/backport/backport-include/linux/crc8.h
-+++ /dev/null
-@@ -1,109 +0,0 @@
--/*
-- * Copyright (c) 2011 Broadcom Corporation
-- *
-- * Permission to use, copy, modify, and/or distribute this software for any
-- * purpose with or without fee is hereby granted, provided that the above
-- * copyright notice and this permission notice appear in all copies.
-- *
-- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-- */
--#ifndef CPTCFG_BACKPORT_BUILD_CRC8_MODULE
--#include_next <linux/crc8.h>
--#else
--
--#ifndef __CRC8_H_
--#define __CRC8_H_
--
--#include <linux/types.h>
--
--/* see usage of this value in crc8() description */
--#define CRC8_INIT_VALUE		0xFF
--
--/*
-- * Return value of crc8() indicating valid message+crc. This is true
-- * if a CRC is inverted before transmission. The CRC computed over the
-- * whole received bitstream is _table[x], where x is the bit pattern
-- * of the modification (almost always 0xff).
-- */
--#define CRC8_GOOD_VALUE(_table)	(_table[0xFF])
--
--/* required table size for crc8 algorithm */
--#define CRC8_TABLE_SIZE			256
--
--/* helper macro assuring right table size is used */
--#define DECLARE_CRC8_TABLE(_table) \
--	static u8 _table[CRC8_TABLE_SIZE]
--
--/**
-- * crc8_populate_lsb - fill crc table for given polynomial in regular bit order.
-- *
-- * @table:	table to be filled.
-- * @polynomial:	polynomial for which table is to be filled.
-- *
-- * This function fills the provided table according the polynomial provided for
-- * regular bit order (lsb first). Polynomials in CRC algorithms are typically
-- * represented as shown below.
-- *
-- *	poly = x^8 + x^7 + x^6 + x^4 + x^2 + 1
-- *
-- * For lsb first direction x^7 maps to the lsb. So the polynomial is as below.
-- *
-- * - lsb first: poly = 10101011(1) = 0xAB
-- */
--#define crc8_populate_lsb LINUX_BACKPORT(crc8_populate_lsb)
--void crc8_populate_lsb(u8 table[CRC8_TABLE_SIZE], u8 polynomial);
--
--/**
-- * crc8_populate_msb - fill crc table for given polynomial in reverse bit order.
-- *
-- * @table:	table to be filled.
-- * @polynomial:	polynomial for which table is to be filled.
-- *
-- * This function fills the provided table according the polynomial provided for
-- * reverse bit order (msb first). Polynomials in CRC algorithms are typically
-- * represented as shown below.
-- *
-- *	poly = x^8 + x^7 + x^6 + x^4 + x^2 + 1
-- *
-- * For msb first direction x^7 maps to the msb. So the polynomial is as below.
-- *
-- * - msb first: poly = (1)11010101 = 0xD5
-- */
--#define crc8_populate_msb LINUX_BACKPORT(crc8_populate_msb)
--void crc8_populate_msb(u8 table[CRC8_TABLE_SIZE], u8 polynomial);
--
--/**
-- * crc8() - calculate a crc8 over the given input data.
-- *
-- * @table:	crc table used for calculation.
-- * @pdata:	pointer to data buffer.
-- * @nbytes:	number of bytes in data buffer.
-- * @crc:	previous returned crc8 value.
-- *
-- * The CRC8 is calculated using the polynomial given in crc8_populate_msb()
-- * or crc8_populate_lsb().
-- *
-- * The caller provides the initial value (either %CRC8_INIT_VALUE
-- * or the previous returned value) to allow for processing of
-- * discontiguous blocks of data.  When generating the CRC the
-- * caller is responsible for complementing the final return value
-- * and inserting it into the byte stream.  When validating a byte
-- * stream (including CRC8), a final return value of %CRC8_GOOD_VALUE
-- * indicates the byte stream data can be considered valid.
-- *
-- * Reference:
-- * "A Painless Guide to CRC Error Detection Algorithms", ver 3, Aug 1993
-- * Williams, Ross N., ross<at>ross.net
-- * (see URL http://www.ross.net/crc/download/crc_v3.txt).
-- */
--#define crc8 LINUX_BACKPORT(crc8)
--u8 crc8(const u8 table[CRC8_TABLE_SIZE], u8 *pdata, size_t nbytes, u8 crc);
--
--#endif /* __CRC8_H_ */
--#endif /* BACKPORT_BUILD_CRC8_MODULE */
-diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
-index c3e9a04..2dda9ac 100644
---- a/backport/compat/Kconfig
-+++ b/backport/compat/Kconfig
-@@ -93,15 +93,6 @@ config BACKPORT_BUILD_CORDIC
- config BACKPORT_CORDIC
- 	bool
- 
--config BACKPORT_BUILD_CRC8
--	tristate
--	depends on !CRC8
--	default m if BACKPORT_CRC8
--	default m if BACKPORT_USERSEL_BUILD_ALL
--
--config BACKPORT_CRC8
--	bool
--
- config BACKPORT_BUILD_GENERIC_ATOMIC64
- 	bool
- 	default y if !64BIT && !GENERIC_ATOMIC64
-diff --git a/backport/compat/Makefile b/backport/compat/Makefile
-index dbf2bff..94eda5f 100644
---- a/backport/compat/Makefile
-+++ b/backport/compat/Makefile
-@@ -10,7 +10,6 @@ sch_fq_codel-y = sch_fq_codel_core.o flow_dissector.o
- obj-$(CPTCFG_BACKPORT_USERSEL_NET_SCH_FQ_CODEL) += sch_fq_codel.o
- 
- obj-$(CPTCFG_BACKPORT_BUILD_CORDIC) += cordic.o
--obj-$(CPTCFG_BACKPORT_BUILD_CRC8) += crc8.o
- 
- # Compat kernel compatibility code
- compat-$(CPTCFG_BACKPORT_KERNEL_2_6_26) += compat-2.6.26.o
-diff --git a/backport/compat/crc8.c b/backport/compat/crc8.c
-deleted file mode 100644
-index 5878171..0000000
---- a/backport/compat/crc8.c
-+++ /dev/null
-@@ -1,87 +0,0 @@
--/*
-- * Copyright (c) 2011 Broadcom Corporation
-- *
-- * Permission to use, copy, modify, and/or distribute this software for any
-- * purpose with or without fee is hereby granted, provided that the above
-- * copyright notice and this permission notice appear in all copies.
-- *
-- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-- */
--
--#undef pr_fmt
--#define pr_fmt(fmt)		KBUILD_MODNAME ": " fmt
--
--#include <linux/module.h>
--#include <linux/crc8.h>
--#include <linux/printk.h>
--
--/*
-- * crc8_populate_msb - fill crc table for given polynomial in reverse bit order.
-- *
-- * table:	table to be filled.
-- * polynomial:	polynomial for which table is to be filled.
-- */
--void crc8_populate_msb(u8 table[CRC8_TABLE_SIZE], u8 polynomial)
--{
--	int i, j;
--	const u8 msbit = 0x80;
--	u8 t = msbit;
--
--	table[0] = 0;
--
--	for (i = 1; i < CRC8_TABLE_SIZE; i *= 2) {
--		t = (t << 1) ^ (t & msbit ? polynomial : 0);
--		for (j = 0; j < i; j++)
--			table[i+j] = table[j] ^ t;
--	}
--}
--EXPORT_SYMBOL_GPL(crc8_populate_msb);
--
--/*
-- * crc8_populate_lsb - fill crc table for given polynomial in regular bit order.
-- *
-- * table:	table to be filled.
-- * polynomial:	polynomial for which table is to be filled.
-- */
--void crc8_populate_lsb(u8 table[CRC8_TABLE_SIZE], u8 polynomial)
--{
--	int i, j;
--	u8 t = 1;
--
--	table[0] = 0;
--
--	for (i = (CRC8_TABLE_SIZE >> 1); i; i >>= 1) {
--		t = (t >> 1) ^ (t & 1 ? polynomial : 0);
--		for (j = 0; j < CRC8_TABLE_SIZE; j += 2*i)
--			table[i+j] = table[j] ^ t;
--	}
--}
--EXPORT_SYMBOL_GPL(crc8_populate_lsb);
--
--/*
-- * crc8 - calculate a crc8 over the given input data.
-- *
-- * table: crc table used for calculation.
-- * pdata: pointer to data buffer.
-- * nbytes: number of bytes in data buffer.
-- * crc:	previous returned crc8 value.
-- */
--u8 crc8(const u8 table[CRC8_TABLE_SIZE], u8 *pdata, size_t nbytes, u8 crc)
--{
--	/* loop over the buffer data */
--	while (nbytes-- > 0)
--		crc = table[(crc ^ *pdata++) & 0xff];
--
--	return crc;
--}
--EXPORT_SYMBOL_GPL(crc8);
--
--MODULE_DESCRIPTION("CRC8 (by Williams, Ross N.) function");
--MODULE_AUTHOR("Broadcom Corporation");
--MODULE_LICENSE("Dual BSD/GPL");
+diff --git a/patches/collateral-evolutions/network/84-ethernet/0009-igb_vlan_rx_vid.patch b/patches/collateral-evolutions/network/84-ethernet/0009-igb_vlan_rx_vid.patch
+new file mode 100644
+index 0000000..44ea22e
+--- /dev/null
++++ b/patches/collateral-evolutions/network/84-ethernet/0009-igb_vlan_rx_vid.patch
+@@ -0,0 +1,64 @@
++diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
++index 37e6062..6bf0a88 100644
++--- a/drivers/net/ethernet/intel/igb/igb_main.c
+++++ b/drivers/net/ethernet/intel/igb/igb_main.c
++@@ -164,10 +164,13 @@ static void igb_vlan_mode(struct net_device *netdev, netdev_features_t features)
++ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
++ static int igb_vlan_rx_add_vid(struct net_device *, __be16, u16);
++ static int igb_vlan_rx_kill_vid(struct net_device *, __be16, u16);
++-#else
+++#elif LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
++ static int igb_vlan_rx_add_vid(struct net_device *, u16);
++ static int igb_vlan_rx_kill_vid(struct net_device *, u16);
++-#endif
+++#else
+++static void igb_vlan_rx_add_vid(struct net_device *, u16);
+++static void igb_vlan_rx_kill_vid(struct net_device *, u16);
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0) */
++ static void igb_restore_vlan(struct igb_adapter *);
++ static void igb_rar_set_qsel(struct igb_adapter *, u8 *, u32 , u8);
++ static void igb_ping_all_vfs(struct igb_adapter *);
++@@ -6974,8 +6977,10 @@ static void igb_vlan_mode(struct net_device *netdev, netdev_features_t features)
++ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
++ static int igb_vlan_rx_add_vid(struct net_device *netdev,
++ 			       __be16 proto, u16 vid)
++-#else
+++#elif LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
++ static int igb_vlan_rx_add_vid(struct net_device *netdev, u16 vid)
+++#else
+++static void igb_vlan_rx_add_vid(struct net_device *netdev, u16 vid)
++ #endif
++ {
++ 	struct igb_adapter *adapter = netdev_priv(netdev);
++@@ -6990,15 +6995,19 @@ static int igb_vlan_rx_add_vid(struct net_device *netdev, u16 vid)
++ 
++ 	set_bit(vid, adapter->active_vlans);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
++ 	return 0;
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) */
++ }
++ 
++ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
++ static int igb_vlan_rx_kill_vid(struct net_device *netdev,
++ 				__be16 proto, u16 vid)
++-#else
+++#elif LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
++ static int igb_vlan_rx_kill_vid(struct net_device *netdev, u16 vid)
++-#endif
+++#else
+++static void igb_vlan_rx_kill_vid(struct net_device *netdev, u16 vid)
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0) */
++ {
++ 	struct igb_adapter *adapter = netdev_priv(netdev);
++ 	struct e1000_hw *hw = &adapter->hw;
++@@ -7014,7 +7023,9 @@ static int igb_vlan_rx_kill_vid(struct net_device *netdev, u16 vid)
++ 
++ 	clear_bit(vid, adapter->active_vlans);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
++ 	return 0;
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) */
++ }
++ 
++ static void igb_restore_vlan(struct igb_adapter *adapter)
+diff --git a/patches/collateral-evolutions/network/84-ethernet/0010-igb_ethtool_ops.patch b/patches/collateral-evolutions/network/84-ethernet/0010-igb_ethtool_ops.patch
+new file mode 100644
+index 0000000..9035d92
+--- /dev/null
++++ b/patches/collateral-evolutions/network/84-ethernet/0010-igb_ethtool_ops.patch
+@@ -0,0 +1,48 @@
++diff --git a/drivers/net/ethernet/intel/igb/igb_ethtool.c b/drivers/net/ethernet/intel/igb/igb_ethtool.c
++index 3cf9600..5e519ce 100644
++--- a/drivers/net/ethernet/intel/igb/igb_ethtool.c
+++++ b/drivers/net/ethernet/intel/igb/igb_ethtool.c
++@@ -2812,6 +2812,7 @@ static void igb_ethtool_complete(struct net_device *netdev)
++ 	pm_runtime_put(&adapter->pdev->dev);
++ }
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
++ static u32 igb_get_rxfh_indir_size(struct net_device *netdev)
++ {
++ 	return IGB_RETA_SIZE;
++@@ -2827,6 +2828,7 @@ static int igb_get_rxfh_indir(struct net_device *netdev, u32 *indir)
++ 
++ 	return 0;
++ }
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) */
++ 
++ void igb_write_rss_indir_tbl(struct igb_adapter *adapter)
++ {
++@@ -2863,6 +2865,7 @@ void igb_write_rss_indir_tbl(struct igb_adapter *adapter)
++ 	}
++ }
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
++ static int igb_set_rxfh_indir(struct net_device *netdev, const u32 *indir)
++ {
++ 	struct igb_adapter *adapter = netdev_priv(netdev);
++@@ -2895,6 +2898,7 @@ static int igb_set_rxfh_indir(struct net_device *netdev, const u32 *indir)
++ 
++ 	return 0;
++ }
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) */
++ 
++ static unsigned int igb_max_channels(struct igb_adapter *adapter)
++ {
++@@ -3017,9 +3021,11 @@ static const struct ethtool_ops igb_ethtool_ops = {
++ 	.get_module_info	= igb_get_module_info,
++ 	.get_module_eeprom	= igb_get_module_eeprom,
++ #endif
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0)
++ 	.get_rxfh_indir_size	= igb_get_rxfh_indir_size,
++ 	.get_rxfh_indir		= igb_get_rxfh_indir,
++ 	.set_rxfh_indir		= igb_set_rxfh_indir,
+++#endif
++ 	.get_channels		= igb_get_channels,
++ 	.set_channels		= igb_set_channels,
++ 	.begin			= igb_ethtool_begin,
 -- 
-1.7.10.4
+1.7.1
 
