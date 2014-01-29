@@ -1,38 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:54680 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751347AbaARUIk (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 18 Jan 2014 15:08:40 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 4/5] backports: add missing header file
-Date: Sat, 18 Jan 2014 21:05:23 +0100
-Message-Id: <1390075524-6924-5-git-send-email-hauke@hauke-m.de> (sfid-20140118_210841_730860_32CD1895)
-In-Reply-To: <1390075524-6924-1-git-send-email-hauke@hauke-m.de>
-References: <1390075524-6924-1-git-send-email-hauke@hauke-m.de>
+Received: from mx1.redhat.com ([209.132.183.28]:9539 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751724AbaA2JUR (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 29 Jan 2014 04:20:17 -0500
+From: Stefan Assmann <sassmann@kpanic.de>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH v4 12/12] backports: enable igb and add defconfig
+Date: Wed, 29 Jan 2014 10:19:09 +0100
+Message-Id: <1390987149-11171-13-git-send-email-sassmann@kpanic.de> (sfid-20140129_102020_182850_969FEFB7)
+In-Reply-To: <1390987149-11171-1-git-send-email-sassmann@kpanic.de>
+References: <1390987149-11171-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The act8865 regulator driver needs this header file.
+Add defconfig and necessary files to copy-list.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
 ---
- copy-list |    1 +
- 1 file changed, 1 insertion(+)
+ backport/defconfigs/igb |    2 ++
+ copy-list               |    4 ++++
+ 2 files changed, 6 insertions(+), 0 deletions(-)
+ create mode 100644 backport/defconfigs/igb
 
+diff --git a/backport/defconfigs/igb b/backport/defconfigs/igb
+new file mode 100644
+index 0000000..8045257
+--- /dev/null
++++ b/backport/defconfigs/igb
+@@ -0,0 +1,2 @@
++CPTCFG_NET_VENDOR_INTEL=y
++CPTCFG_IGB=m
 diff --git a/copy-list b/copy-list
-index 9ec4f4b..307ab00 100644
+index c516135..bde95a1 100644
 --- a/copy-list
 +++ b/copy-list
-@@ -133,6 +133,7 @@ include/linux/platform_data/pn544.h
- # regulator routines are defined via the header file
- # include/linux/regulator/consumer.h and dummy.h
- include/linux/regulator/ab8500.h
-+include/linux/regulator/act8865.h
- include/linux/regulator/db8500-prcmu.h
- include/linux/regulator/fan53555.h
- include/linux/regulator/gpio-regulator.h
+@@ -101,6 +101,10 @@ drivers/net/ethernet/broadcom/Makefile
+ drivers/net/ethernet/broadcom/b44.c
+ drivers/net/ethernet/broadcom/b44.h
+ 
++drivers/net/ethernet/intel/Kconfig
++drivers/net/ethernet/intel/Makefile
++drivers/net/ethernet/intel/igb/
++
+ # wwan drivers
+ include/uapi/linux/usb/cdc.h
+ include/uapi/linux/usb/cdc-wdm.h
 -- 
-1.7.10.4
+1.7.1
 
