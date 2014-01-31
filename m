@@ -1,41 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:48367 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751853AbaAXWsL (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 24 Jan 2014 17:48:11 -0500
-Received: by mail-pa0-f50.google.com with SMTP id kp14so3770797pab.23
-        for <backports@vger.kernel.org>; Fri, 24 Jan 2014 14:48:11 -0800 (PST)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Received: from s3.sipsolutions.net ([144.76.43.152]:51551 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751410AbaAaKeA (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 31 Jan 2014 05:34:00 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 09/11] rel-html: add 3.14 release to iw project
-Date: Fri, 24 Jan 2014 14:47:14 -0800
-Message-Id: <1390603636-27841-10-git-send-email-mcgrof@do-not-panic.com> (sfid-20140124_234813_395734_A642796F)
-In-Reply-To: <1390603636-27841-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1390603636-27841-1-git-send-email-mcgrof@do-not-panic.com>
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backports: backport power efficient workqueues
+Date: Fri, 31 Jan 2014 11:33:52 +0100
+Message-Id: <1391164432-8699-1-git-send-email-johannes@sipsolutions.net> (sfid-20140131_113402_405090_F308635E)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This prepares rel-html to make 3.14 based releases, which
-are not yet released.
+From: Johannes Berg <johannes.berg@intel.com>
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+These only exist starting from 3.11, and wireless code will
+start using them soon. Backport them as simple defines using
+the corresponding non-power-efficient workqueues.
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- projects/iw.cfg | 1 +
- 1 file changed, 1 insertion(+)
+ backport/backport-include/linux/workqueue.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/projects/iw.cfg b/projects/iw.cfg
-index c019bca..23f2944 100644
---- a/projects/iw.cfg
-+++ b/projects/iw.cfg
-@@ -6,6 +6,7 @@ supported =
- 	3.11
- 	3.12
- 	3.13
-+	3.14
- rel_html_testing_ver	= latest
- rel_html_url_releases	= https://www.kernel.org/pub/software/network/iw/
- rel_license 		= ISC
+diff --git a/backport/backport-include/linux/workqueue.h b/backport/backport-include/linux/workqueue.h
+index 1949876..63a3b17 100644
+--- a/backport/backport-include/linux/workqueue.h
++++ b/backport/backport-include/linux/workqueue.h
+@@ -117,4 +117,10 @@ static inline void flush_delayed_work(struct delayed_work *dwork)
+ }
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
++/* power efficient workqueues were added in commit 0668106ca386. */
++#define system_power_efficient_wq system_wq
++#define system_freezable_power_efficient_wq system_freezable_wq
++#endif
++
+ #endif /* __BACKPORT_LINUX_WORKQUEUE_H */
 -- 
 1.8.5.2
 
