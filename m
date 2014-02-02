@@ -1,52 +1,58 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:45664 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751889AbaBJM02 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 10 Feb 2014 07:26:28 -0500
-Received: by sipsolutions.net with esmtpsa (TLS1.1:RSA_AES_128_CBC_SHA1:128)
-	(Exim 4.82)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1WCpwR-0008CW-S1
-	for backports@vger.kernel.org; Mon, 10 Feb 2014 13:26:28 +0100
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Subject: [PATCH v2] backports: conditionally access net/ieee802154/ with make
-Date: Mon, 10 Feb 2014 13:26:26 +0100
-Message-Id: <1392035186-12434-1-git-send-email-johannes@sipsolutions.net> (sfid-20140210_132630_911174_13325CC0)
+Received: from mail.xlhost.de ([84.200.252.118]:52773 "EHLO app1b.xlhost.de"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752445AbaBBV1g (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 2 Feb 2014 16:27:36 -0500
+Message-ID: <52EEB5EF.1060106@kpanic.de> (sfid-20140202_222738_692411_3C28B123)
+Date: Sun, 02 Feb 2014 22:17:35 +0100
+From: Stefan Assmann <sassmann@kpanic.de>
+MIME-Version: 1.0
+To: Hauke Mehrtens <hauke@hauke-m.de>, mcgrof@kernel.org
+CC: backports@vger.kernel.org
+Subject: Re: [PATCH v4 00/12] backports: add igb driver
+References: <1390987149-11171-1-git-send-email-sassmann@kpanic.de> <52EC370B.3090103@hauke-m.de>
+In-Reply-To: <52EC370B.3090103@hauke-m.de>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On 01.02.2014 00:51, Hauke Mehrtens wrote:
+> On 01/29/2014 10:18 AM, Stefan Assmann wrote:
+>> This is a patchset for inclusion of the Intel igb wired ethernet driver.
+>> Patches are split per kernel release that makes it easier to review
+>> the changes and gives a nice history of what was necessary for each
+>> release. Also the igb driver changes have been split up into individual
+>> patches in patches/collateral-evolutions/network/84-ethernet. This and
+>> file names are up for discussion, suggestions welcome.
+>>
+>> v2:
+>> Instead of backporting struct ethtool_ops the code in igb has been
+>> wrapped in if LINUX_VERSION_CODE statements. This will result in higher
+>> maintenance because of conflicts with future upstream igb changes but it
+>> seems there's no better solution so far.
+>> The patches in patches/collateral-evolutions/network/84-ethernet have
+>> been kept separate but with a leading number to make sure they get
+>> applied in the correct order.
+>> The code that activates igb has been pushed to the end of the series to
+>> not break any bisecting.
+>> v3:
+>> Use original struct ptp_clock and handle ptp_clock_register() with a
+>> define. Also removed unused function warnings by wrapping the code
+>> in if LINUX_VERSION_CODE statements.
+>> v4:
+>> Add several LINUX_BACKPORT defines to prevent possible clashes with
+>> distro backports. Patches rebased and tested against next-20140124.
+>>
+>
+> Thank you Stefan for the patches.
+>
+> I applied them with some changes. backports did not compile on some
+> older kernels, because include/linux/u64_stats_sync.h was missing there.
+> I also fixed some problems on CentOS 6.5 and Suse SLES 11 SP3. Some
+> strutes that are not used were removed too.
 
-This essentially reverts commit cb6f08d3c38c as that caused
-issues with copy-list - the scripting when generating the
-backport can't prove that net/ieee802154/ isn't needed and
-will try to go into it even if it wasn't copied.
+Great! Thanks a lot. I'll take a look at the changes. I didn't see any
+trouble when running ckmake which makes me wonder if I missed out on
+any testing I could've run.
 
-Instead, make net/ieee802154/ be entered whenever it might
-be needed - which is for CPTCFG_IEEE802154 and CPTCFG_BT.
-This is harmless if the directory ends up listed twice but
-will cause this problem to disappear.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/Makefile.kernel | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
-index 0f5ed6c..ada6dec 100644
---- a/backport/Makefile.kernel
-+++ b/backport/Makefile.kernel
-@@ -34,7 +34,8 @@ obj-$(CPTCFG_NFC) += drivers/nfc/
- obj-$(CPTCFG_REGULATOR) += drivers/regulator/
- obj-$(CPTCFG_MEDIA_SUPPORT) += drivers/media/
- 
--obj-y += net/ieee802154/
-+obj-$(CPTCFG_IEEE802154) += net/ieee802154/
-+obj-$(CPTCFG_BT) += net/ieee802154/
- obj-$(CPTCFG_MAC802154) += net/mac802154/
- obj-$(CPTCFG_IEEE802154) += drivers/net/ieee802154/
- 
--- 
-1.8.5.3
-
+   Stefan
