@@ -1,32 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:39138 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750985AbaBHWIg (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 8 Feb 2014 17:08:36 -0500
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: Re: [PATCH 4/6] backports: update =?UTF-8?Q?sch=5Ffq=5Fcodel=5Fco?=  =?UTF-8?Q?re=2Ec?=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Sat, 08 Feb 2014 14:08:27 -0800
-From: Johannes Berg <johannes@sipsolutions.net>
-Cc: mcgrof@do-not-panic.com, backports@vger.kernel.org,
-	backports-owner@vger.kernel.org
-In-Reply-To: <1391867070-20031-5-git-send-email-hauke@hauke-m.de>
- (sfid-20140208_144450_603555_AE8C0E77)
+Received: from server19320154104.serverpool.info ([193.201.54.104]:60051 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751170AbaBHNom (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 8 Feb 2014 08:44:42 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 1/6] backports: add led_trigger_blink{_oneshot}()
+Date: Sat,  8 Feb 2014 14:44:25 +0100
+Message-Id: <1391867070-20031-2-git-send-email-hauke@hauke-m.de> (sfid-20140208_144444_761299_A9DD81DA)
+In-Reply-To: <1391867070-20031-1-git-send-email-hauke@hauke-m.de>
 References: <1391867070-20031-1-git-send-email-hauke@hauke-m.de>
- <1391867070-20031-5-git-send-email-hauke@hauke-m.de>
- (sfid-20140208_144450_603555_AE8C0E77)
-Message-ID: <fb08310d63963083bbe3ba8f98536def@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 2014-02-08 05:44, Hauke Mehrtens wrote:
-> This brings sch_fq_codel_core.c to the version used in kernel 3.14-rc1.
-> Most of the changes were done many kernel versions before 3.14-rc1, but
-> in kernel 3.14-rc1 net_random() was removed and not it does not even
-> compile any more.
+When led support is deactivated in the kernel and
+CPTCFG_BACKPORT_BUILD_LEDS is set mac80211 references
+led_trigger_blink_oneshot() but it is not declared anywhere.
 
-I wonder if we should instead copy it while generating the backport?
+This fixes the following build error:
+net/mac80211/led.c: In function 'ieee80211_led_rx':
+net/mac80211/led.c:25:2: error: implicit declaration of function 'led_trigger_blink_oneshot' [-Werror=implicit-function-declaration]
 
-johannes
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/backport/leds-disabled.h |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/backport/backport-include/backport/leds-disabled.h b/backport/backport-include/backport/leds-disabled.h
+index 634b62f..501f2a0 100644
+--- a/backport/backport-include/backport/leds-disabled.h
++++ b/backport/backport-include/backport/leds-disabled.h
+@@ -163,6 +163,19 @@ static inline void led_trigger_event(struct led_trigger *trigger,
+ 				     enum led_brightness event)
+ {
+ }
++
++static inline void led_trigger_blink(struct led_trigger *trigger,
++				     unsigned long *delay_on,
++				     unsigned long *delay_off)
++{
++}
++
++static inline void led_trigger_blink_oneshot(struct led_trigger *trigger,
++					     unsigned long *delay_on,
++					     unsigned long *delay_off,
++					     int invert)
++{
++}
+ #endif
+ 
+ #endif /* __BACKPORT_LED_DISABLED_SUPPORT */
+-- 
+1.7.10.4
+
