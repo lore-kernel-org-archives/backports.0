@@ -1,43 +1,32 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:47210 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:45019 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752223AbaBJWst (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 10 Feb 2014 17:48:49 -0500
+	id S1751807AbaBJQzS (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 10 Feb 2014 11:55:18 -0500
+Message-ID: <52F90469.9070207@hauke-m.de> (sfid-20140210_175520_657907_19CAFC5E)
+Date: Mon, 10 Feb 2014 17:55:05 +0100
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 3/6] backports: add ETH_P_TEB and ETH_P_8021AD
-Date: Mon, 10 Feb 2014 23:47:31 +0100
-Message-Id: <1392072454-18538-4-git-send-email-hauke@hauke-m.de> (sfid-20140210_234850_358965_1B3F327B)
-In-Reply-To: <1392072454-18538-1-git-send-email-hauke@hauke-m.de>
-References: <1392072454-18538-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: mcgrof@do-not-panic.com, backports@vger.kernel.org,
+	backports-owner@vger.kernel.org
+Subject: Re: [PATCH 4/6] backports: update sch_fq_codel_core.c
+References: <1391867070-20031-1-git-send-email-hauke@hauke-m.de> <1391867070-20031-5-git-send-email-hauke@hauke-m.de> (sfid-20140208_144450_603555_AE8C0E77) <fb08310d63963083bbe3ba8f98536def@sipsolutions.net>
+In-Reply-To: <fb08310d63963083bbe3ba8f98536def@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is needed by net-core-flow_dissector.c.
+On 02/08/2014 11:08 PM, Johannes Berg wrote:
+> On 2014-02-08 05:44, Hauke Mehrtens wrote:
+>> This brings sch_fq_codel_core.c to the version used in kernel 3.14-rc1.
+>> Most of the changes were done many kernel versions before 3.14-rc1, but
+>> in kernel 3.14-rc1 net_random() was removed and not it does not even
+>> compile any more.
+> 
+> I wonder if we should instead copy it while generating the backport?
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/if_ether.h |    8 ++++++++
- 1 file changed, 8 insertions(+)
+Yes that should be possible and that is the better solution than
+manually coping them.
 
-diff --git a/backport/backport-include/linux/if_ether.h b/backport/backport-include/linux/if_ether.h
-index 8581283..d9a1464 100644
---- a/backport/backport-include/linux/if_ether.h
-+++ b/backport/backport-include/linux/if_ether.h
-@@ -31,4 +31,12 @@ int mac_pton(const char *s, u8 *mac);
- #define ETH_P_PAE 0x888E      /* Port Access Entity (IEEE 802.1X) */
- #endif
- 
-+#ifndef ETH_P_TEB
-+#define ETH_P_TEB	0x6558		/* Trans Ether Bridging		*/
-+#endif
-+
-+#ifndef ETH_P_8021AD
-+#define ETH_P_8021AD	0x88A8          /* 802.1ad Service VLAN		*/
-+#endif
-+
- #endif /* __BACKPORT_IF_ETHER_H */
--- 
-1.7.10.4
-
+Hauke
