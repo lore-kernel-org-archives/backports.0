@@ -1,56 +1,79 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:35016 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750871AbaBXAqc (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 23 Feb 2014 19:46:32 -0500
-Received: from localhost (localhost [127.0.0.1])
-	by hauke-m.de (Postfix) with ESMTP id 589AB7E57
-	for <backports@vger.kernel.org>; Mon, 24 Feb 2014 01:46:31 +0100 (CET)
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mga09.intel.com ([134.134.136.24]:10867 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750753AbaBKGmN (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 11 Feb 2014 01:42:13 -0500
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 04/12] backports: add snd_card_new()
-Date: Mon, 24 Feb 2014 01:45:46 +0100
-Message-Id: <1393202754-12919-5-git-send-email-hauke@hauke-m.de> (sfid-20140224_014634_045087_D5850465)
-In-Reply-To: <1393202754-12919-1-git-send-email-hauke@hauke-m.de>
-References: <1393202754-12919-1-git-send-email-hauke@hauke-m.de>
+Cc: Ido Yariv <ido@wizery.com>, Ido Yariv <idox.yariv@intel.com>,
+	Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Subject: [PATCH] backports: backport ACPI_HANDLE(dev)
+Date: Tue, 11 Feb 2014 08:40:08 +0200
+Message-Id: <1392100808-3075-1-git-send-email-emmanuel.grumbach@intel.com> (sfid-20140211_074217_013735_C640FAA3)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is needed by drivers/media/pci/cx18/cx18-alsa-main.c
+From: Ido Yariv <ido@wizery.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Depending on the kernel version it might either be defined in
+linux/device.h or not at all, in which case DEVICE_ACPI_HANDLE is used
+instead.
+
+ACPI_HANDLE(dev) will be used by iwlwifi very soon.
+
+Signed-off-by: Ido Yariv <idox.yariv@intel.com>
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 ---
- backport/backport-include/sound/core.h |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 backport/backport-include/sound/core.h
+ backport/backport-include/linux/acpi.h | 40 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 backport/backport-include/linux/acpi.h
 
-diff --git a/backport/backport-include/sound/core.h b/backport/backport-include/sound/core.h
+diff --git a/backport/backport-include/linux/acpi.h b/backport/backport-include/linux/acpi.h
 new file mode 100644
-index 0000000..beb8935
+index 0000000..8a79143
 --- /dev/null
-+++ b/backport/backport-include/sound/core.h
-@@ -0,0 +1,20 @@
-+#ifndef _BACKPORT_SOUND_CORE_H
-+#define _BACKPORT_SOUND_CORE_H
-+#include_next <sound/core.h>
++++ b/backport/backport-include/linux/acpi.h
+@@ -0,0 +1,40 @@
++#ifndef __BACKPORT_LINUX_ACPI_H
++#define __BACKPORT_LINUX_ACPI_H
++#include_next <linux/acpi.h>
++#include_next <linux/device.h>
++#include <linux/version.h>
 +
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0)
-+#define snd_card_new LINUX_BACKPORT(snd_card_new)
-+static inline
-+int snd_card_new(struct device *parent, int idx, const char *xid,
-+		 struct module *module, int extra_size,
-+		 struct snd_card **card_ret)
-+{
-+	int ret;
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)
++/*
++ * Backports
++ *
++ * commit 95f8a082b9b1ead0c2859f2a7b1ac91ff63d8765
++ * Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
++ * Date:   Wed Nov 21 00:21:50 2012 +0100
++ *
++ *     ACPI / driver core: Introduce struct acpi_dev_node and related macros
++ *
++ *     To avoid adding an ACPI handle pointer to struct device on
++ *     architectures that don't use ACPI, or generally when CONFIG_ACPI is
++ *     not set, in which cases that pointer is useless, define struct
++ *     acpi_dev_node that will contain the handle pointer if CONFIG_ACPI is
++ *     set and will be empty otherwise and use it to represent the ACPI
++ *     device node field in struct device.
++ *
++ *     In addition to that define macros for reading and setting the ACPI
++ *     handle of a device that don't generate code when CONFIG_ACPI is
++ *     unset.  Modify the ACPI subsystem to use those macros instead of
++ *     referring to the given device's ACPI handle directly.
++ *
++ *     Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
++ *     Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
++ *     Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
++ */
++#ifdef CONFIG_ACPI
++#define ACPI_HANDLE(dev) DEVICE_ACPI_HANDLE(dev)
++#else
++#define ACPI_HANDLE(dev) (NULL)
++#endif /* CONFIG_ACPI */
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0) */
 +
-+	ret = snd_card_create(idx, xid, module, extra_size, card_ret);
-+	snd_card_set_dev(*card_ret, parent);
-+	return ret;
-+}
-+#endif
-+
-+#endif /* _BACKPORT_SOUND_CORE_H */
++#endif /* __BACKPORT_LINUX_ACPI_H */
 -- 
-1.7.10.4
+1.8.3.2
 
