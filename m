@@ -1,134 +1,81 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:35254 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751157AbaB0Qgu (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 27 Feb 2014 11:36:50 -0500
-From: Johannes Berg <johannes@sipsolutions.net>
+Received: from mail-qc0-f178.google.com ([209.85.216.178]:39310 "EHLO
+	mail-qc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752144AbaBMS3H (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 13 Feb 2014 13:29:07 -0500
+Received: by mail-qc0-f178.google.com with SMTP id m20so18196525qcx.23
+        for <backports@vger.kernel.org>; Thu, 13 Feb 2014 10:29:06 -0800 (PST)
+From: Ido Yariv <ido@wizery.com>
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: fix compilation with CONFIG_OF
-Date: Thu, 27 Feb 2014 17:36:43 +0100
-Message-Id: <1393519003-15535-1-git-send-email-johannes@sipsolutions.net> (sfid-20140227_173652_664179_E5A8755E)
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	Ido Yariv <idox.yariv@intel.com>, Ido Yariv <ido@wizery.com>
+Subject: [PATCH v2] backports: backport ACPI_HANDLE(dev)
+Date: Thu, 13 Feb 2014 13:28:38 -0500
+Message-Id: <1392316118-25957-1-git-send-email-ido@wizery.com> (sfid-20140213_192910_128651_97410D1B)
+In-Reply-To: <1392277496.4150.1.camel@jlt4.sipsolutions.net>
+References: <1392277496.4150.1.camel@jlt4.sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+In earlier kernel versions the define for retrieving the acpi handle was
+called DEVICE_ACPI_HANDLE, so just use it.
 
-There are two users of of_find_property_value_of_size() which is
-originally static in the kernel, but we need it exposed (but not
-exported) so that multiple backport files can use it; do that.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Ido Yariv <idox.yariv@intel.com>
 ---
- backport/backport-include/linux/of.h |  3 +++
- backport/compat/compat-3.10.c        | 44 ++++++++++++++++++++++++++++++++++++
- backport/compat/compat-3.8.c         | 28 -----------------------
- 3 files changed, 47 insertions(+), 28 deletions(-)
- create mode 100644 backport/compat/compat-3.10.c
+Changes from v1:
+- device.h is implicitly included by acpi.h in earlier kernel versions as well,
+  so no need to include it at all
 
-diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
-index e60005540e12..e7f7ea741b93 100644
---- a/backport/backport-include/linux/of.h
-+++ b/backport/backport-include/linux/of.h
-@@ -52,6 +52,9 @@ static inline int of_property_read_u8_array(const struct device_node *np,
- extern int of_property_read_u32_index(const struct device_node *np,
- 				       const char *propname,
- 				       u32 index, u32 *out_value);
-+/* This is static in the kernel, but we need it in multiple places */
-+void *of_find_property_value_of_size(const struct device_node *np,
-+				     const char *propname, u32 len);
- #else
- static inline int of_property_read_u32_index(const struct device_node *np,
- 			const char *propname, u32 index, u32 *out_value)
-diff --git a/backport/compat/compat-3.10.c b/backport/compat/compat-3.10.c
+ backport/backport-include/linux/acpi.h | 39 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+ create mode 100644 backport/backport-include/linux/acpi.h
+
+diff --git a/backport/backport-include/linux/acpi.h b/backport/backport-include/linux/acpi.h
 new file mode 100644
-index 000000000000..affc85f32445
+index 0000000..506df15
 --- /dev/null
-+++ b/backport/compat/compat-3.10.c
-@@ -0,0 +1,44 @@
++++ b/backport/backport-include/linux/acpi.h
+@@ -0,0 +1,39 @@
++#ifndef __BACKPORT_LINUX_ACPI_H
++#define __BACKPORT_LINUX_ACPI_H
++#include_next <linux/acpi.h>
++#include <linux/version.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)
 +/*
-+ * Copyright (c) 1999 Andreas Gal
-+ * Copyright (c) 2000-2005 Vojtech Pavlik <vojtech@suse.cz>
-+ * Copyright (c) 2005 Michael Haboustak <mike-@cinci.rr.com> for Concept2, Inc
-+ * Copyright (c) 2006-2012 Jiri Kosina
-+ * Copyright (c) 2012  Luis R. Rodriguez <mcgrof@do-not-panic.com>
++ * Backports
 + *
-+ * Backport functionality introduced in Linux 3.10.
++ * commit 95f8a082b9b1ead0c2859f2a7b1ac91ff63d8765
++ * Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
++ * Date:   Wed Nov 21 00:21:50 2012 +0100
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++ *     ACPI / driver core: Introduce struct acpi_dev_node and related macros
++ *
++ *     To avoid adding an ACPI handle pointer to struct device on
++ *     architectures that don't use ACPI, or generally when CONFIG_ACPI is
++ *     not set, in which cases that pointer is useless, define struct
++ *     acpi_dev_node that will contain the handle pointer if CONFIG_ACPI is
++ *     set and will be empty otherwise and use it to represent the ACPI
++ *     device node field in struct device.
++ *
++ *     In addition to that define macros for reading and setting the ACPI
++ *     handle of a device that don't generate code when CONFIG_ACPI is
++ *     unset.  Modify the ACPI subsystem to use those macros instead of
++ *     referring to the given device's ACPI handle directly.
++ *
++ *     Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
++ *     Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
++ *     Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 + */
-+#include <linux/of.h>
++#ifdef CONFIG_ACPI
++#define ACPI_HANDLE(dev) DEVICE_ACPI_HANDLE(dev)
++#else
++#define ACPI_HANDLE(dev) (NULL)
++#endif /* CONFIG_ACPI */
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0) */
 +
-+#ifdef CONFIG_OF
-+/**
-+ * of_find_property_value_of_size
-+ *
-+ * @np:		device node from which the property value is to be read.
-+ * @propname:	name of the property to be searched.
-+ * @len:	requested length of property value
-+ *
-+ * Search for a property in a device node and valid the requested size.
-+ * Returns the property value on success, -EINVAL if the property does not
-+ *  exist, -ENODATA if property does not have a value, and -EOVERFLOW if the
-+ * property data isn't large enough.
-+ *
-+ */
-+void *of_find_property_value_of_size(const struct device_node *np,
-+				     const char *propname, u32 len)
-+{
-+	struct property *prop = of_find_property(np, propname, NULL);
-+
-+	if (!prop)
-+		return ERR_PTR(-EINVAL);
-+	if (!prop->value)
-+		return ERR_PTR(-ENODATA);
-+	if (len > prop->length)
-+		return ERR_PTR(-EOVERFLOW);
-+
-+	return prop->value;
-+}
-+#endif /* CONFIG_OF */
-diff --git a/backport/compat/compat-3.8.c b/backport/compat/compat-3.8.c
-index d39e8d6728c9..49dc44bd4664 100644
---- a/backport/compat/compat-3.8.c
-+++ b/backport/compat/compat-3.8.c
-@@ -457,34 +457,6 @@ EXPORT_SYMBOL_GPL(prandom_bytes);
- 
- #ifdef CONFIG_OF
- /**
-- * of_find_property_value_of_size
-- *
-- * @np:		device node from which the property value is to be read.
-- * @propname:	name of the property to be searched.
-- * @len:	requested length of property value
-- *
-- * Search for a property in a device node and valid the requested size.
-- * Returns the property value on success, -EINVAL if the property does not
-- *  exist, -ENODATA if property does not have a value, and -EOVERFLOW if the
-- * property data isn't large enough.
-- *
-- */
--static void *of_find_property_value_of_size(const struct device_node *np,
--			const char *propname, u32 len)
--{
--	struct property *prop = of_find_property(np, propname, NULL);
--
--	if (!prop)
--		return ERR_PTR(-EINVAL);
--	if (!prop->value)
--		return ERR_PTR(-ENODATA);
--	if (len > prop->length)
--		return ERR_PTR(-EOVERFLOW);
--
--	return prop->value;
--}
--
--/**
-  * of_property_read_u8_array - Find and read an array of u8 from a property.
-  *
-  * @np:		device node from which the property value is to be read.
++#endif /* __BACKPORT_LINUX_ACPI_H */
 -- 
 1.8.5.3
 
