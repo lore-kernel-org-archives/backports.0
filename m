@@ -1,53 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:45929 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:35101 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753713AbaAaXvx (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 31 Jan 2014 18:51:53 -0500
-Message-ID: <52EC370B.3090103@hauke-m.de> (sfid-20140201_005157_006083_F31F2562)
-Date: Sat, 01 Feb 2014 00:51:39 +0100
+	id S1751550AbaBXAtN (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 23 Feb 2014 19:49:13 -0500
+Received: from localhost (localhost [127.0.0.1])
+	by hauke-m.de (Postfix) with ESMTP id 59D717E23
+	for <backports@vger.kernel.org>; Mon, 24 Feb 2014 01:49:12 +0100 (CET)
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Stefan Assmann <sassmann@kpanic.de>, mcgrof@kernel.org
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH v4 00/12] backports: add igb driver
-References: <1390987149-11171-1-git-send-email-sassmann@kpanic.de>
-In-Reply-To: <1390987149-11171-1-git-send-email-sassmann@kpanic.de>
-Content-Type: text/plain; charset=ISO-8859-1
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 03/12] backports: add VHCI_MINOR
+Date: Mon, 24 Feb 2014 01:45:45 +0100
+Message-Id: <1393202754-12919-4-git-send-email-hauke@hauke-m.de> (sfid-20140224_014917_248159_D80E5409)
+In-Reply-To: <1393202754-12919-1-git-send-email-hauke@hauke-m.de>
+References: <1393202754-12919-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 01/29/2014 10:18 AM, Stefan Assmann wrote:
-> This is a patchset for inclusion of the Intel igb wired ethernet driver.
-> Patches are split per kernel release that makes it easier to review
-> the changes and gives a nice history of what was necessary for each
-> release. Also the igb driver changes have been split up into individual
-> patches in patches/collateral-evolutions/network/84-ethernet. This and
-> file names are up for discussion, suggestions welcome.
-> 
-> v2:
-> Instead of backporting struct ethtool_ops the code in igb has been
-> wrapped in if LINUX_VERSION_CODE statements. This will result in higher
-> maintenance because of conflicts with future upstream igb changes but it
-> seems there's no better solution so far.
-> The patches in patches/collateral-evolutions/network/84-ethernet have
-> been kept separate but with a leading number to make sure they get
-> applied in the correct order.
-> The code that activates igb has been pushed to the end of the series to
-> not break any bisecting.
-> v3:
-> Use original struct ptp_clock and handle ptp_clock_register() with a
-> define. Also removed unused function warnings by wrapping the code
-> in if LINUX_VERSION_CODE statements.
-> v4:
-> Add several LINUX_BACKPORT defines to prevent possible clashes with
-> distro backports. Patches rebased and tested against next-20140124.
-> 
+This is needed by drivers/bluetooth/hci_vhci.c
 
-Thank you Stefan for the patches.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/miscdevice.h |    9 +++++++++
+ 1 file changed, 9 insertions(+)
+ create mode 100644 backport/backport-include/linux/miscdevice.h
 
-I applied them with some changes. backports did not compile on some
-older kernels, because include/linux/u64_stats_sync.h was missing there.
-I also fixed some problems on CentOS 6.5 and Suse SLES 11 SP3. Some
-strutes that are not used were removed too.
+diff --git a/backport/backport-include/linux/miscdevice.h b/backport/backport-include/linux/miscdevice.h
+new file mode 100644
+index 0000000..9c27334
+--- /dev/null
++++ b/backport/backport-include/linux/miscdevice.h
+@@ -0,0 +1,9 @@
++#ifndef _BACKPORT_LINUX_MISCDEVICE_H
++#define _BACKPORT_LINUX_MISCDEVICE_H
++#include_next <linux/miscdevice.h>
++
++#ifndef VHCI_MINOR
++#define VHCI_MINOR		137
++#endif
++
++#endif /* _BACKPORT_LINUX_MISCDEVICE_H */
+-- 
+1.7.10.4
 
-Hauke
