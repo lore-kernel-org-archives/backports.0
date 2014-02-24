@@ -1,58 +1,126 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.xlhost.de ([84.200.252.118]:52773 "EHLO app1b.xlhost.de"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752445AbaBBV1g (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 2 Feb 2014 16:27:36 -0500
-Message-ID: <52EEB5EF.1060106@kpanic.de> (sfid-20140202_222738_692411_3C28B123)
-Date: Sun, 02 Feb 2014 22:17:35 +0100
-From: Stefan Assmann <sassmann@kpanic.de>
-MIME-Version: 1.0
-To: Hauke Mehrtens <hauke@hauke-m.de>, mcgrof@kernel.org
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH v4 00/12] backports: add igb driver
-References: <1390987149-11171-1-git-send-email-sassmann@kpanic.de> <52EC370B.3090103@hauke-m.de>
-In-Reply-To: <52EC370B.3090103@hauke-m.de>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Received: from server19320154104.serverpool.info ([193.201.54.104]:35032 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750897AbaBXAq4 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 23 Feb 2014 19:46:56 -0500
+Received: from localhost (localhost [127.0.0.1])
+	by hauke-m.de (Postfix) with ESMTP id 1AA947E58
+	for <backports@vger.kernel.org>; Mon, 24 Feb 2014 01:46:55 +0100 (CET)
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 08/12] backports: add of_property_count_u32_elems()
+Date: Mon, 24 Feb 2014 01:45:50 +0100
+Message-Id: <1393202754-12919-9-git-send-email-hauke@hauke-m.de> (sfid-20140224_014657_147244_B3B95A67)
+In-Reply-To: <1393202754-12919-1-git-send-email-hauke@hauke-m.de>
+References: <1393202754-12919-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 01.02.2014 00:51, Hauke Mehrtens wrote:
-> On 01/29/2014 10:18 AM, Stefan Assmann wrote:
->> This is a patchset for inclusion of the Intel igb wired ethernet driver.
->> Patches are split per kernel release that makes it easier to review
->> the changes and gives a nice history of what was necessary for each
->> release. Also the igb driver changes have been split up into individual
->> patches in patches/collateral-evolutions/network/84-ethernet. This and
->> file names are up for discussion, suggestions welcome.
->>
->> v2:
->> Instead of backporting struct ethtool_ops the code in igb has been
->> wrapped in if LINUX_VERSION_CODE statements. This will result in higher
->> maintenance because of conflicts with future upstream igb changes but it
->> seems there's no better solution so far.
->> The patches in patches/collateral-evolutions/network/84-ethernet have
->> been kept separate but with a leading number to make sure they get
->> applied in the correct order.
->> The code that activates igb has been pushed to the end of the series to
->> not break any bisecting.
->> v3:
->> Use original struct ptp_clock and handle ptp_clock_register() with a
->> define. Also removed unused function warnings by wrapping the code
->> in if LINUX_VERSION_CODE statements.
->> v4:
->> Add several LINUX_BACKPORT defines to prevent possible clashes with
->> distro backports. Patches rebased and tested against next-20140124.
->>
->
-> Thank you Stefan for the patches.
->
-> I applied them with some changes. backports did not compile on some
-> older kernels, because include/linux/u64_stats_sync.h was missing there.
-> I also fixed some problems on CentOS 6.5 and Suse SLES 11 SP3. Some
-> strutes that are not used were removed too.
+This is needed by drivers/regulator/gpio-regulator.c
 
-Great! Thanks a lot. I'll take a look at the changes. I didn't see any
-trouble when running ckmake which makes me wonder if I missed out on
-any testing I could've run.
+This also adds of_property_count_elems_of_size()
 
-   Stefan
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/of.h |   35 ++++++++++++++++++++++++++++++++++
+ backport/compat/backport-3.15.c      |   35 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 70 insertions(+)
+
+diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
+index a4189bb..10a3d11 100644
+--- a/backport/backport-include/linux/of.h
++++ b/backport/backport-include/linux/of.h
+@@ -46,4 +46,39 @@ static inline int of_property_read_u8_array(const struct device_node *np,
+ #endif /* CONFIG_OF */
+ #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0) */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0)
++#define of_property_count_elems_of_size LINUX_BACKPORT(of_property_count_elems_of_size)
++#ifdef CONFIG_OF
++extern int of_property_count_elems_of_size(const struct device_node *np,
++				const char *propname, int elem_size);
++#else
++static inline int of_property_count_elems_of_size(const struct device_node *np,
++			const char *propname, int elem_size)
++{
++	return -ENOSYS;
++}
++#endif /* CONFIG_OF */
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0) */
++
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0)
++/**
++ * of_property_count_u32_elems - Count the number of u32 elements in a property
++ *
++ * @np:		device node from which the property value is to be read.
++ * @propname:	name of the property to be searched.
++ *
++ * Search for a property in a device node and count the number of u32 elements
++ * in it. Returns number of elements on sucess, -EINVAL if the property does
++ * not exist or its length does not match a multiple of u32 and -ENODATA if the
++ * property does not have a value.
++ */
++#define of_property_count_u32_elems LINUX_BACKPORT(of_property_count_u32_elems)
++static inline int of_property_count_u32_elems(const struct device_node *np,
++				const char *propname)
++{
++	return of_property_count_elems_of_size(np, propname, sizeof(u32));
++}
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0) */
++
+ #endif	/* _COMPAT_LINUX_OF_H */
+diff --git a/backport/compat/backport-3.15.c b/backport/compat/backport-3.15.c
+index 367ff9d..67d672b 100644
+--- a/backport/compat/backport-3.15.c
++++ b/backport/compat/backport-3.15.c
+@@ -10,6 +10,7 @@
+ #include <linux/version.h>
+ #include <linux/kernel.h>
+ #include <linux/device.h>
++#include <linux/of.h>
+ 
+ /**
+  * devm_kstrdup - Allocate resource managed space and
+@@ -36,3 +37,37 @@ char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
+ 	return buf;
+ }
+ EXPORT_SYMBOL_GPL(devm_kstrdup);
++
++#ifdef CONFIG_OF
++/**
++ * of_property_count_elems_of_size - Count the number of elements in a property
++ *
++ * @np:		device node from which the property value is to be read.
++ * @propname:	name of the property to be searched.
++ * @elem_size:	size of the individual element
++ *
++ * Search for a property in a device node and count the number of elements of
++ * size elem_size in it. Returns number of elements on sucess, -EINVAL if the
++ * property does not exist or its length does not match a multiple of elem_size
++ * and -ENODATA if the property does not have a value.
++ */
++int of_property_count_elems_of_size(const struct device_node *np,
++				const char *propname, int elem_size)
++{
++	struct property *prop = of_find_property(np, propname, NULL);
++
++	if (!prop)
++		return -EINVAL;
++	if (!prop->value)
++		return -ENODATA;
++
++	if (prop->length % elem_size != 0) {
++		pr_err("size of %s in node %s is not a multiple of %d\n",
++		       propname, np->full_name, elem_size);
++		return -EINVAL;
++	}
++
++	return prop->length / elem_size;
++}
++EXPORT_SYMBOL_GPL(of_property_count_elems_of_size);
++#endif
+-- 
+1.7.10.4
+
