@@ -1,56 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:60051 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751170AbaBHNom (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 8 Feb 2014 08:44:42 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/6] backports: add led_trigger_blink{_oneshot}()
-Date: Sat,  8 Feb 2014 14:44:25 +0100
-Message-Id: <1391867070-20031-2-git-send-email-hauke@hauke-m.de> (sfid-20140208_144444_761299_A9DD81DA)
-In-Reply-To: <1391867070-20031-1-git-send-email-hauke@hauke-m.de>
-References: <1391867070-20031-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-qc0-f196.google.com ([209.85.216.196]:52342 "EHLO
+	mail-qc0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753179AbaBYQo7 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 25 Feb 2014 11:44:59 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAL6TERTJPPF0tMDeUQMqqPqdc4fo00K-GmpiTeWAu6tfH_H-xA@mail.gmail.com>
+References: <CAL6TERTJPPF0tMDeUQMqqPqdc4fo00K-GmpiTeWAu6tfH_H-xA@mail.gmail.com>
+Date: Tue, 25 Feb 2014 11:44:54 -0500
+Message-ID: <CAL6TERTfnnHT6XuwZ3UhXoDyBdV+u8PknrGKTfymmanMZAkT3A@mail.gmail.com> (sfid-20140225_174503_268984_4953C828)
+Subject: Re: backports-3.13.2-1 ath9k defconfig fails
+From: Joe Kodweis <kodweisdev@gmail.com>
+To: backports@vger.kernel.org, linux-wireless@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-When led support is deactivated in the kernel and
-CPTCFG_BACKPORT_BUILD_LEDS is set mac80211 references
-led_trigger_blink_oneshot() but it is not declared anywhere.
+Running make with defconfig-ath9k produces .config that does not
+actually build ATH9K. This is observed on 3.13.2-1 and also
+development retrieved 2014-02-25.
 
-This fixes the following build error:
-net/mac80211/led.c: In function 'ieee80211_led_rx':
-net/mac80211/led.c:25:2: error: implicit declaration of function 'led_trigger_blink_oneshot' [-Werror=implicit-function-declaration]
+The previous stable version 3.12.8-1 does actually build ATH9K.
+Something happened between 3.12.8-1 and 3.13.2-1 that is preventing
+ATH9K from being built properly.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/backport/leds-disabled.h |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+See the difference in resulting .config files after running "make
+defconfig-ath9k" in these two versions of stable releases:
 
-diff --git a/backport/backport-include/backport/leds-disabled.h b/backport/backport-include/backport/leds-disabled.h
-index 634b62f..501f2a0 100644
---- a/backport/backport-include/backport/leds-disabled.h
-+++ b/backport/backport-include/backport/leds-disabled.h
-@@ -163,6 +163,19 @@ static inline void led_trigger_event(struct led_trigger *trigger,
- 				     enum led_brightness event)
- {
- }
-+
-+static inline void led_trigger_blink(struct led_trigger *trigger,
-+				     unsigned long *delay_on,
-+				     unsigned long *delay_off)
-+{
-+}
-+
-+static inline void led_trigger_blink_oneshot(struct led_trigger *trigger,
-+					     unsigned long *delay_on,
-+					     unsigned long *delay_off,
-+					     int invert)
-+{
-+}
- #endif
- 
- #endif /* __BACKPORT_LED_DISABLED_SUPPORT */
--- 
-1.7.10.4
+grep ATH  backports-3.13.2-1/.config
+CPTCFG_ATH_CARDS=m
+# CPTCFG_ATH_DEBUG is not set
+# CPTCFG_ATH6KL is not set
 
+grep ATH backports-3.12.8-1/.config
+CPTCFG_ATH_COMMON=m
+CPTCFG_ATH_CARDS=m
+# CPTCFG_ATH_DEBUG is not set
+CPTCFG_ATH9K_HW=m
+CPTCFG_ATH9K_COMMON=m
+CPTCFG_ATH9K_BTCOEX_SUPPORT=y
+CPTCFG_ATH9K=m
+# CPTCFG_ATH9K_AHB is not set
+# CPTCFG_ATH9K_LEGACY_RATE_CONTROL is not set
+CPTCFG_ATH9K_HTC=m
+# CPTCFG_ATH9K_HTC_DEBUGFS is not set
+# CPTCFG_ATH6KL is not set
+# CPTCFG_ATH10K is not set
