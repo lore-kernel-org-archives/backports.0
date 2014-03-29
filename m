@@ -1,45 +1,21 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from [89.91.64.97] ([89.91.64.97]:57814 "EHLO
-	mailhost.actiasodielec.fr" rhost-flags-FAIL-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1753005AbaCaHsi convert rfc822-to-8bit
-	(ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 31 Mar 2014 03:48:38 -0400
-From: Vu Hai NGUYEN <vh.nguyen@actiasodielec.fr>
-To: Hauke Mehrtens <hauke@hauke-m.de>,
+Received: from server19320154104.serverpool.info ([193.201.54.104]:58374 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751663AbaC2Red (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 29 Mar 2014 13:34:33 -0400
+Message-ID: <5337041A.70506@hauke-m.de> (sfid-20140329_183442_774692_E4083B62)
+Date: Sat, 29 Mar 2014 18:34:18 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
+MIME-Version: 1.0
+To: Vu Hai NGUYEN <vh.nguyen@actiasodielec.fr>,
 	"backports@vger.kernel.org" <backports@vger.kernel.org>
 CC: Patrick CARNEIRO RODRIGUEZ <p.carneiro@actiasodielec.fr>
-Date: Mon, 31 Mar 2014 09:46:49 +0200
-Subject: RE : RE : Compilation backport ath10k on kernel 3.2.36
-Message-ID: <EE97821C81277E459BEA5C6384C6F241012F06CC4836@srvexch01.SODIELEC.local> (sfid-20140331_094841_352240_0B8B6954)
-References: <EE97821C81277E459BEA5C6384C6F241012D6BF72CC8@srvexch01.SODIELEC.local>,<87lhvy3ewa.fsf@kamboji.qca.qualcomm.com>,<EE97821C81277E459BEA5C6384C6F241012D6BF72CC9@srvexch01.SODIELEC.local>
- <EE97821C81277E459BEA5C6384C6F241012D6BF72CCA@srvexch01.SODIELEC.local>,<5332B428.30500@hauke-m.de>
- <EE97821C81277E459BEA5C6384C6F241012D76253EC8@srvexch01.SODIELEC.local>,<5337041A.70506@hauke-m.de>
-In-Reply-To: <5337041A.70506@hauke-m.de>
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
+Subject: Re: RE : Compilation backport ath10k on kernel 3.2.36
+References: <EE97821C81277E459BEA5C6384C6F241012D6BF72CC8@srvexch01.SODIELEC.local>,<87lhvy3ewa.fsf@kamboji.qca.qualcomm.com>,<EE97821C81277E459BEA5C6384C6F241012D6BF72CC9@srvexch01.SODIELEC.local> <EE97821C81277E459BEA5C6384C6F241012D6BF72CCA@srvexch01.SODIELEC.local>,<5332B428.30500@hauke-m.de> <EE97821C81277E459BEA5C6384C6F241012D76253EC8@srvexch01.SODIELEC.local>
+In-Reply-To: <EE97821C81277E459BEA5C6384C6F241012D76253EC8@srvexch01.SODIELEC.local>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
-
-Hi,
-If i desactivated the symbol CONFIG_AVERAGE and I look in the file Module.symsvers (output after compilation backport) , I saw backport_ewma_add and backport_ewma_init.
-I thought if I didn't desactivatedf that symbol, it would use ewma_add and ewma_init?
-I didn't rebuild the kernel , I just change the menuconfig and then re-compile the backports.
-Should I look for the way to desactivate it from the menuconfig or just leave it, because it may create bugs or errors later?
-Sincerely,
-
-
-NGUYEN Vu Hai
-Acita-Sodielec
-Route de Mayres - B.P. 9
-12100 St GEORGES DE LUZENCON
-FRANCE
-
-________________________________________
-De : Hauke Mehrtens [hauke@hauke-m.de]
-Date d'envoi : samedi 29 mars 2014 18:34
-À : Vu Hai NGUYEN; backports@vger.kernel.org
-Cc : Patrick CARNEIRO RODRIGUEZ
-Objet : Re: RE : Compilation backport ath10k on kernel 3.2.36
 
 Hi,
 
@@ -69,38 +45,38 @@ On 03/26/2014 03:35 PM, Vu Hai NGUYEN wrote:
 > But I'm not sure that it won't create errors or bugs later because it doesn't know the function "ewma_init" and "ewma_add". I think by desactivating the symbol, I ignore that warning.
 > Thank you in advanced for your response.
 > Sincerely,
->
->
+> 
+> 
 > NGUYEN Vu Hai
 > Acita-Sodielec
 > Route de Mayres - B.P. 9
 > 12100 St GEORGES DE LUZENCON
 > FRANCE
->
+> 
 > ________________________________________
 > De : Hauke Mehrtens [hauke@hauke-m.de]
 > Date d'envoi : mercredi 26 mars 2014 12:04
 > À : Vu Hai NGUYEN; backports@vger.kernel.org
 > Cc : Patrick CARNEIRO RODRIGUEZ
 > Objet : Re: Compilation backport ath10k on kernel 3.2.36
->
+> 
 > On 03/25/2014 10:44 AM, Vu Hai NGUYEN wrote:
 >> Hello everyone,
 >> My PC run ubuntu 12.04 which has linux 3.2.0-60-generic-pae. But I need to cross compile the driver ath10k to put it on a PC cible (which has linux 3.2.36).
->
+> 
 > This looks fine,
->
+> 
 >> First I try to compile the backports-3.13.2-1 on kernel 3.2.55, I do it like below:
 >> 1) I download backports-3.13.2-1 from http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/  and kernel 3.2.55 from https://www.kernel.org/
 >> 2) I build the kernel 3.2.55 by running make "menuconfig" and then "make".
 >> 3) In the directory of backports-3.13.2-1 I run: "make defconfig-ath10k"  and "make ARCH=arm CROSS_COMPILE=/home/alberix2/Cross-Compiler/Marvell_toolchain_201201/armv7-marvell-linux-gnueabi-softfp_i686/bin/arm-marvell-linux-gnueabi- KLIB=/home/alberix2/Desktop/linux-3.2.55/ KLIB_BUILD=/home/alberix2/Desktop/linux-3.2.55/ -j 10"
->
+> 
 > You should add the cross compile options also to the make
 > defconfig-ath10k command, because you want a config based on the kernel
 > your are cross compiling against and not your local kernel.
->
+> 
 > CONFIG_CRYPTO_CCM has to be activates in your marvell kernel.
->
+> 
 >> (If I don't do the 2 step (building  kernel 3.2.55) there are errors when I run make so I think it is mandatory to build the kernel before compile ath10 from backports?)
 >> After 3 steps above I can obtain 6 module .ko of the driver ath10k which have vermagic: 3.2.55
 >> Now when I try to compile ath10k on the kernel 3.2.36 (provided by marvell for my pc cible), I repeat 3  steps above but there is some warnings in 3th step when I run the command make (you can see it below my signature) and I obtain only 2 modules:
@@ -306,5 +282,5 @@ On 03/26/2014 03:35 PM, Vu Hai NGUYEN wrote:
 >> the body of a message to majordomo@vger.kernel.org
 >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >>
->
+> 
 
