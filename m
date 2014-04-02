@@ -1,45 +1,32 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:42764 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932482AbaDIL4Y (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 9 Apr 2014 07:56:24 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: add hwsim defconfig
-Date: Wed,  9 Apr 2014 13:56:12 +0200
-Message-Id: <1397044572-28066-1-git-send-email-johannes@sipsolutions.net> (sfid-20140409_135626_232234_08671C9E)
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:61975 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756617AbaDBCeT (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 1 Apr 2014 22:34:19 -0400
+MIME-Version: 1.0
+In-Reply-To: <1423990.vA4A9XhDx1@tijs>
+References: <1423990.vA4A9XhDx1@tijs>
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+Date: Tue, 1 Apr 2014 19:33:57 -0700
+Message-ID: <CAB=NE6UeCQD9WmbyZH_asJLHS_tOGHvfF49XBqfSb-_WOZaY0w@mail.gmail.com> (sfid-20140402_043422_682592_F5052088)
+Subject: Re: [wireless] [b43] [brcmsmac] [3.3.8]: backport bcma_core_pci_up/down
+ from 3.12
+To: tvb@able.be
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	linux-wireless <linux-wireless@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Fri, Mar 14, 2014 at 12:51 PM, Tijs Van Buggenhout <tvb@able.be> wrote:
+>
+> +       bcma_core_pci_extend_L1timer(pc, true);
 
-This can be useful for pure testing scenarios.
+This is is a static routine defined elsewhere in the kernel and will
+break compilation. This patch breaks compilation, please try reading
+drivers/bcma/driver_pci.c and look for a better way to backport this.
+Also please try to test patches with 'ckmake --allyesconfig' for
+patches like this after first having used backports-update-manager to
+update your system.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/defconfigs/hwsim | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 backport/defconfigs/hwsim
-
-diff --git a/backport/defconfigs/hwsim b/backport/defconfigs/hwsim
-new file mode 100644
-index 000000000000..9d8006eaf4aa
---- /dev/null
-+++ b/backport/defconfigs/hwsim
-@@ -0,0 +1,12 @@
-+CPTCFG_CFG80211=m
-+CPTCFG_CFG80211_DEFAULT_PS=y
-+CPTCFG_CFG80211_DEBUGFS=y
-+CPTCFG_CFG80211_WEXT=y
-+CPTCFG_MAC80211=m
-+# CPTCFG_MAC80211_RC_PID is not set
-+# CPTCFG_MAC80211_RC_MINSTREL is not set
-+# CPTCFG_MAC80211_RC_DEFAULT_MINSTREL is not set
-+CPTCFG_MAC80211_DEBUGFS=y
-+CPTCFG_MAC80211_MESSAGE_TRACING=y
-+CPTCFG_WLAN=y
-+CPTCFG_MAC80211_HWSIM=m
--- 
-1.9.0
-
+  Luis
