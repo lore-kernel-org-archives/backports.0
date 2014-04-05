@@ -1,49 +1,129 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f178.google.com ([209.85.217.178]:56225 "EHLO
-	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933342AbaDIUBq (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 9 Apr 2014 16:01:46 -0400
-MIME-Version: 1.0
-In-Reply-To: <20140409191225.GA10560@kroah.com>
-References: <CAB=NE6VvyBKzEg=ErZzQMktY8eLytQ21JCPrOQbxvZ9m-nqHkw@mail.gmail.com>
- <53451077.2030102@openwrt.org> <CAB=NE6UUN4vQd3SpsvO5tcgaYq3YXQeE0KtZGki7p7OnR=J4RA@mail.gmail.com>
- <20140409191225.GA10560@kroah.com>
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:60396 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752685AbaDEMm5 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 5 Apr 2014 08:42:57 -0400
+Received: by mail-pa0-f43.google.com with SMTP id bj1so4665164pad.2
+        for <backports@vger.kernel.org>; Sat, 05 Apr 2014 05:42:56 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Wed, 9 Apr 2014 13:01:23 -0700
-Message-ID: <CAB=NE6VqY8yXoYuE0o01vq86imY8EtqLdkPa4bGMvR3bTaj5KQ@mail.gmail.com> (sfid-20140409_220209_285050_D5247BEE)
-Subject: Re: Bumping required kernels to 3.0 for Linux backports ?
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Felix Fietkau <nbd@openwrt.org>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Jiri Slaby <jslaby@suse.cz>,
-	Mauro Carvalho Chehab <m.chehab@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	Jesper Dangaard Brouer <brouer@redhat.com>,
+	Alexander Smirnov <alex.bluesman.smirnov@gmail.com>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	linux-zigbee-devel@lists.sourceforge.net
+Subject: [PATCH 22/27] backports: 6lowpan domain specific backport of inet_frag_lru_move()
+Date: Sat,  5 Apr 2014 05:40:56 -0700
+Message-Id: <1396701662-15165-23-git-send-email-mcgrof@do-not-panic.com> (sfid-20140405_144449_757061_7601B9E1)
+In-Reply-To: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Apr 9, 2014 at 12:12 PM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Wed, Apr 09, 2014 at 11:28:55AM -0700, Luis R. Rodriguez wrote:
->> On Wed, Apr 9, 2014 at 2:18 AM, Felix Fietkau <nbd@openwrt.org> wrote:
->> > The oldest kernel in OpenWrt that we're still supporting with updates of
->> > the backports tree is 3.3, so raising the minimum requirement to 3.0 is
->> > completely fine with me.
->>
->> OK note that 3.3 is not listed on kernel.org as supported. I'm fine in
->> carrying the stuff for those for now but ultimately it'd also be nice
->> if we didn't even have to test the kernels in between which are not
->> listed. This does however raise the question of how often a kernel in
->> between a list of supported kernels gets picked up to be supported
->> eventually. Greg, Jiri, do you happen to know what the likelyhood of
->> that can be?
->
-> I don't know of anything ever getting picked up after I have said it
-> would not be supported anymore.
+We can't generalize a backport of inet_frag_lru_move() as
+it requires modifying an internal struct netns_frags struct.
+We work around this by extending the parent struct used within
+6lowpan. We have two changes, one data structure change
+and then a domain specific defines. Other subsystems which
+require similar work can backport usage through similar
+techniques.
 
-Great! How soon after a release do you mention whether or not it will
-be supported? Like say, 3.14, which was just released. Also, as of
-late are you aware any distribution picking an unsupported kernel for
-their next choice of kernel?
+The respective change upstream that put the lock on
+struct netns_frags is commit 3ef0eb0db4 added by
+through v3.9.
 
-  Luis
+mcgrof@ergon ~/linux-next (git::master)$ git describe --contains 3ef0eb0db4
+v3.9-rc1~139^2~232^2
+
+commit 3ef0eb0db4bf92c6d2510fe5c4dc51852746f206
+Author: Jesper Dangaard Brouer <brouer@redhat.com>
+Date:   Mon Jan 28 23:45:51 2013 +0000
+
+    net: frag, move LRU list maintenance outside of rwlock
+
+    Updating the fragmentation queues LRU (Least-Recently-Used) list,
+    required taking the hash writer lock.  However, the LRU list isn't
+    tied to the hash at all, so we can use a separate lock for it.
+
+    Original-idea-by: Florian Westphal <fw@strlen.de>
+    Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+
+Cc: Jesper Dangaard Brouer <brouer@redhat.com>
+Cc: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: linux-zigbee-devel@lists.sourceforge.net
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ .../network/0013-lowpan-inet_frag_lru_move.patch   | 59 ++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0013-lowpan-inet_frag_lru_move.patch
+
+diff --git a/patches/collateral-evolutions/network/0013-lowpan-inet_frag_lru_move.patch b/patches/collateral-evolutions/network/0013-lowpan-inet_frag_lru_move.patch
+new file mode 100644
+index 0000000..9f1f0c1
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0013-lowpan-inet_frag_lru_move.patch
+@@ -0,0 +1,59 @@
++Domain specific backport for inet_frag_lru_move()
++This requires two parts, the data structure changes
++and then domain specific inet_frag_lru_move() define.
++
++--- a/net/ieee802154/reassembly.c
+++++ b/net/ieee802154/reassembly.c
++@@ -81,6 +81,9 @@ void lowpan_frag_init(struct inet_frag_q
++ 	fq->d_size = arg->d_size;
++ 	fq->saddr = *arg->src;
++ 	fq->daddr = *arg->dst;
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
+++	spin_lock_init(&fq->lru_lock);
+++#endif
++ }
++ EXPORT_SYMBOL(lowpan_frag_init);
++ 
++--- a/net/ieee802154/reassembly.h
+++++ b/net/ieee802154/reassembly.h
++@@ -2,6 +2,7 @@
++ #define __IEEE802154_6LOWPAN_REASSEMBLY_H__
++ 
++ #include <net/inet_frag.h>
+++#include <linux/spinlock.h>
++ 
++ struct lowpan_create_arg {
++ 	__be16 tag;
++@@ -19,8 +20,32 @@ struct lowpan_frag_queue {
++ 	u16			d_size;
++ 	struct ieee802154_addr	saddr;
++ 	struct ieee802154_addr	daddr;
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
+++	spinlock_t		lru_lock;
+++#endif
++ };
++ 
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
+++/*
+++ * XXX: this is a *domain* specific inet_frag_lru_move backport,
+++ * note the added lowpan_ prefix, this requires a respective patch
+++ * which extends struct lowpan_frag_queue with an lru_lock and
+++ * initializes it. We add this helper here to reduce the backport.
+++ * There is no way to generalize the other changes in the patch.
+++ */
+++#define inet_frag_lru_move LINUX_BACKPORT(lowpan_inet_frag_lru_move)
+++static inline void inet_frag_lru_move(struct inet_frag_queue *q)
+++{
+++	struct lowpan_frag_queue *fq;
+++
+++	fq = container_of(q, struct lowpan_frag_queue, q);
+++
+++	spin_lock(&fq->lru_lock);
+++	list_move_tail(&q->lru_list, &q->net->lru_list);
+++	spin_unlock(&fq->lru_lock);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0) */
+++
++ static inline u32 ieee802154_addr_hash(const struct ieee802154_addr *a)
++ {
++ 	switch (a->addr_type) {
+-- 
+1.8.5.3
+
