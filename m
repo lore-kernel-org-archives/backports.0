@@ -1,141 +1,128 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f49.google.com ([209.85.215.49]:65183 "EHLO
-	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758712AbaDJRLc (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 10 Apr 2014 13:11:32 -0400
-MIME-Version: 1.0
-In-Reply-To: <5346CF27.3070406@broadcom.com>
-References: <CAB=NE6VvyBKzEg=ErZzQMktY8eLytQ21JCPrOQbxvZ9m-nqHkw@mail.gmail.com>
- <53451077.2030102@openwrt.org> <CAB=NE6UUN4vQd3SpsvO5tcgaYq3YXQeE0KtZGki7p7OnR=J4RA@mail.gmail.com>
- <20140409191225.GA10560@kroah.com> <CAB=NE6VqY8yXoYuE0o01vq86imY8EtqLdkPa4bGMvR3bTaj5KQ@mail.gmail.com>
- <20140409202224.GA12953@kroah.com> <CAB=NE6XY5++p7hJQpQdwrFNUcGbUsKpC+oJiZQciXNduo+8j8A@mail.gmail.com>
- <20140409210613.GA14392@kroah.com> <s5heh15pr18.wl%tiwai@suse.de>
- <CAB=NE6VeNTFeGxKXpYunkU-W=JPLMpOnrehttvsqB+yXkdz5fg@mail.gmail.com> <5346CF27.3070406@broadcom.com>
+Received: from mail-pd0-f169.google.com ([209.85.192.169]:64845 "EHLO
+	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752596AbaDEMnU (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 5 Apr 2014 08:43:20 -0400
+Received: by mail-pd0-f169.google.com with SMTP id fp1so4539643pdb.0
+        for <backports@vger.kernel.org>; Sat, 05 Apr 2014 05:43:20 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Thu, 10 Apr 2014 10:11:09 -0700
-Message-ID: <CAB=NE6VibNJC6OW1sw+rdhrBke3PqYYmRM+29tp7y6kSbDMowQ@mail.gmail.com> (sfid-20140410_191159_409591_1DF41CFF)
-Subject: Re: Bumping required kernels to 3.0 for Linux backports ?
-To: Arend van Spriel <arend@broadcom.com>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Felix Fietkau <nbd@openwrt.org>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Jiri Slaby <jslaby@suse.cz>,
-	Mauro Carvalho Chehab <m.chehab@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	Peter Senna <peter.senna@gmail.com>,
+	Julia Lawall <julia.lawall@lip6.fr>,
+	Gilles Muller <Gilles.Muller@lip6.fr>
+Subject: [PATCH 27/27] backports: enhance 0001-netdev_ops.cocci with data structure specifics
+Date: Sat,  5 Apr 2014 05:41:01 -0700
+Message-Id: <1396701662-15165-28-git-send-email-mcgrof@do-not-panic.com> (sfid-20140405_144449_145708_D16248BC)
+In-Reply-To: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Apr 10, 2014 at 10:04 AM, Arend van Spriel <arend@broadcom.com> wrote:
-> On 04/10/14 18:59, Luis R. Rodriguez wrote:
->>
->> On Thu, Apr 10, 2014 at 12:44 AM, Takashi Iwai<tiwai@suse.de>  wrote:
->>>
->>> At Wed, 9 Apr 2014 14:06:13 -0700,
->>> Greg Kroah-Hartman wrote:
->>>>
->>>>
->>>> On Wed, Apr 09, 2014 at 01:52:29PM -0700, Luis R. Rodriguez wrote:
->>>>>
->>>>> On Wed, Apr 9, 2014 at 1:22 PM, Greg Kroah-Hartman
->>>>> <gregkh@linuxfoundation.org>  wrote:
->>>>>>
->>>>>> On Wed, Apr 09, 2014 at 01:01:23PM -0700, Luis R. Rodriguez wrote:
->>>>>>>
->>>>>>> On Wed, Apr 9, 2014 at 12:12 PM, Greg Kroah-Hartman
->>>>>>> <gregkh@linuxfoundation.org>  wrote:
->>>>>>>>
->>>>>>>> On Wed, Apr 09, 2014 at 11:28:55AM -0700, Luis R. Rodriguez wrote:
->>>>>>>>>
->>>>>>>>> On Wed, Apr 9, 2014 at 2:18 AM, Felix Fietkau<nbd@openwrt.org>
->>>>>>>>> wrote:
->>>>>>>>>>
->>>>>>>>>> The oldest kernel in OpenWrt that we're still supporting with
->>>>>>>>>> updates of
->>>>>>>>>> the backports tree is 3.3, so raising the minimum requirement to
->>>>>>>>>> 3.0 is
->>>>>>>>>> completely fine with me.
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> OK note that 3.3 is not listed on kernel.org as supported. I'm fine
->>>>>>>>> in
->>>>>>>>> carrying the stuff for those for now but ultimately it'd also be
->>>>>>>>> nice
->>>>>>>>> if we didn't even have to test the kernels in between which are not
->>>>>>>>> listed. This does however raise the question of how often a kernel
->>>>>>>>> in
->>>>>>>>> between a list of supported kernels gets picked up to be supported
->>>>>>>>> eventually. Greg, Jiri, do you happen to know what the likelyhood
->>>>>>>>> of
->>>>>>>>> that can be?
->>>>>>>>
->>>>>>>>
->>>>>>>> I don't know of anything ever getting picked up after I have said it
->>>>>>>> would not be supported anymore.
->>>>>>>
->>>>>>>
->>>>>>> Great! How soon after a release do you mention whether or not it will
->>>>>>> be supported? Like say, 3.14, which was just released.
->>>>>>
->>>>>>
->>>>>> I only mention it around the time that it would normally go
->>>>>> end-of-life.
->>>>>>
->>>>>> For example, if 3.13 were to be a release that was going to be "long
->>>>>> term", I would only say something around the normal time I would be no
->>>>>> longer supporting it.  Like in 2-3 weeks from now.
->>>>>>
->>>>>> So for 3.14, I'll not say anything about that until 3.16-rc1 is out,
->>>>>> give or take a week or two.
->>>>>>
->>>>>>> Also, as of late are you aware any distribution picking an
->>>>>>> unsupported
->>>>>>> kernel for their next choice of kernel?
->>>>>>
->>>>>>
->>>>>> Sure, lots do, as they don't line up with my release cycles (I only
->>>>>> pick
->>>>>> 1 long term kernel to maintain each year).  Look at the Ubuntu
->>>>>> releases
->>>>>> for examples of that.  Also openSUSE and Fedora (although Fedora does
->>>>>> rev their kernel pretty regularly) don't usually line up.  The
->>>>>> "enterprise" distros are different, but even then, they don't always
->>>>>> line up either (which is why Jiri is maintaining 3.12...)
->>>>>>
->>>>>> Hope this helps,
->>>>>
->>>>>
->>>>> It does! Unless I don't hear any complaints then given that some
->>>>> distributions might choose a kernel in between and given also your
->>>>> great documented story behind the gains on trying to steer folks
->>>>> together on the 'ol 2.6.32 [0] and this now being faded, I'll be
->>>>> bumping backports to only support>= 3.0 soon, but we'll include all
->>>>> the series from 3.0 up to the latest. That should shrink compile /
->>>>> test time / support time on backports to 1/2.
->>>>
->>>>
->>>> Why 3.0?  That's not supported by anyone anymore for "new hardware", I'd
->>>> move to 3.2 if you could, as that's the Debian stable release that will
->>>> be maintained for quite some time yet:
->>>>        https://www.kernel.org/category/releases.html
->>>
->>>
->>> Well, the support for "new hardware" is what backports project itself
->>> does, isn't it?
->>>
->>> Besides, SLES11 is still supported, so yes, including 3.0.x would be
->>> helpful.
->>
->>
->> That's two stakeholders for 3.0 -- but nothing is voiced for anything
->> older than that. Today I will rip the older kernels into oblivion.
->> Thanks for all the feedback!
->
->
-> Ok, I guess my voice was cracking when I mentioned 2.6.38 as being used over
-> here. I am probably alone in that desert.
+The 0001-netdev_ops.cocci is fine but is uses Expression which
+makes the interpretation loose. We can reduce the namespace of
+the change by using struct. We have to keep expression on the
+right hand side as that can even be macros.
 
-That's better than 2.6.25 :) what drivers do you need?
+For a full example test coverage of this change see the test netdev-ops
+github tree and run:
 
- Luis
+make test1
+
+git checkout -f
+
+make test2
+
+The benefits should be clear, we are *not* modifying data structures
+that have similar names. This increases accuracy and security of our
+changes. The added run time penalty however is 50 seconds since we had
+to use --recursive-includes. The time penatly is worth it for the
+accuracy provided and since we'll likley need this flag elsewhere for
+other rules.
+
+mcgrof@drvbp1 ~/backports (git::master)$ time \
+	./gentree.py --clean --refresh \
+	/home/mcgrof/linux-next \
+	/home/mcgrof/build/next-20140311
+Copy original source files ...
+Apply patches ...
+Modify Kconfig tree ...
+Rewrite Makefiles and Kconfig files ...
+Done!
+
+real    1m56.339s
+user    19m31.428s
+sys     0m50.100s
+
+1   2.6.25              [  OK  ]
+2   2.6.26              [  OK  ]
+3   2.6.27              [  OK  ]
+4   2.6.28              [  OK  ]
+5   2.6.29              [  OK  ]
+6   2.6.30              [  OK  ]
+7   2.6.31              [  OK  ]
+8   2.6.32              [  OK  ]
+9   2.6.33              [  OK  ]
+10  2.6.34              [  OK  ]
+11  2.6.35              [  OK  ]
+12  2.6.36              [  OK  ]
+13  2.6.37              [  OK  ]
+14  2.6.38              [  OK  ]
+15  2.6.39              [  OK  ]
+16  3.0.101             [  OK  ]
+17  3.1.10              [  OK  ]
+18  3.2.54              [  OK  ]
+19  3.3.8               [  OK  ]
+20  3.4.79              [  OK  ]
+21  3.5.7               [  OK  ]
+22  3.6.11              [  OK  ]
+23  3.7.10              [  OK  ]
+24  3.8.13              [  OK  ]
+25  3.9.11              [  OK  ]
+26  3.10.29             [  OK  ]
+27  3.11.10             [  OK  ]
+28  3.12.10             [  OK  ]
+29  3.13.2              [  OK  ]
+30  3.14-rc1            [  OK  ]
+
+[0] https://github.com/mcgrof/netdev-ops
+
+Cc: Peter Senna <peter.senna@gmail.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Gilles Muller <Gilles.Muller@lip6.fr>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ lib/bpcoccinelle.py                                         | 1 +
+ patches/collateral-evolutions/network/0001-netdev_ops.cocci | 8 ++++----
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/lib/bpcoccinelle.py b/lib/bpcoccinelle.py
+index 37307d2..a71f425 100644
+--- a/lib/bpcoccinelle.py
++++ b/lib/bpcoccinelle.py
+@@ -32,6 +32,7 @@ class ExecutionErrorThread(CoccinelleError):
+ def spatch(cocci_file, outdir,
+            max_threads, thread_id, temp_dir, ret_q, extra_args=[]):
+     cmd = ['spatch', '--sp-file', cocci_file, '--in-place',
++            '--recursive-includes',
+             '--backup-suffix', '.cocci_backup', '--dir', '.']
+ 
+     if (max_threads > 1):
+diff --git a/patches/collateral-evolutions/network/0001-netdev_ops.cocci b/patches/collateral-evolutions/network/0001-netdev_ops.cocci
+index f3d2e63..7c3d03a 100644
+--- a/patches/collateral-evolutions/network/0001-netdev_ops.cocci
++++ b/patches/collateral-evolutions/network/0001-netdev_ops.cocci
+@@ -1,6 +1,6 @@
+ @@
+-expression dev;
+-expression ops;
++struct net_device *dev;
++struct net_device_ops ops;
+ @@
+--dev->netdev_ops = ops;
+-+netdev_attach_ops(dev, ops);
++-dev->netdev_ops = &ops;
+++netdev_attach_ops(dev, &ops);
+-- 
+1.8.5.3
+
