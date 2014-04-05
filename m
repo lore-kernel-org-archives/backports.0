@@ -1,52 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f48.google.com ([209.85.160.48]:51062 "EHLO
-	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752375AbaDEMmS (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 5 Apr 2014 08:42:18 -0400
-Received: by mail-pb0-f48.google.com with SMTP id md12so4646488pbc.21
-        for <backports@vger.kernel.org>; Sat, 05 Apr 2014 05:42:17 -0700 (PDT)
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:63322 "EHLO
+	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752365AbaDEMlY (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 5 Apr 2014 08:41:24 -0400
+Received: by mail-pb0-f47.google.com with SMTP id up15so4658219pbc.34
+        for <backports@vger.kernel.org>; Sat, 05 Apr 2014 05:41:24 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 14/27] backports: use --ignore-removal for git add
-Date: Sat,  5 Apr 2014 05:40:48 -0700
-Message-Id: <1396701662-15165-15-git-send-email-mcgrof@do-not-panic.com> (sfid-20140405_144449_522302_5F58E05F)
+Cc: Eliad Peller <eliad@wizery.com>,
+	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 03/27] backports: ifdef some pci functions
+Date: Sat,  5 Apr 2014 05:40:37 -0700
+Message-Id: <1396701662-15165-4-git-send-email-mcgrof@do-not-panic.com> (sfid-20140405_144125_927872_5F960D34)
 In-Reply-To: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
 References: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-As of git 2.0 --ignore-removal is no longer default so just
-make it default tool, without which git will warn us about
-this change.
+From: Eliad Peller <eliad@wizery.com>
 
+struct msix_entry entry is defined only when CONFIG_PCI
+is defined, resulting in warnings like:
+
+backport-include/linux/pci.h:256:16: warning: 'struct msix_entry' declared inside parameter list [enabled by default]
+backport-include/linux/pci.h:256:16: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+
+wrap (also the mock function) with appropriate ifdef CONFIG_PCI.
+
+Signed-off-by: Eliad Peller <eliad@wizery.com>
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- lib/bpgit.py | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ backport/backport-include/linux/pci.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/lib/bpgit.py b/lib/bpgit.py
-index 15089d7..f56e377 100644
---- a/lib/bpgit.py
-+++ b/lib/bpgit.py
-@@ -142,7 +142,7 @@ def init(tree=None):
-     _check(process)
+diff --git a/backport/backport-include/linux/pci.h b/backport/backport-include/linux/pci.h
+index 9eeb09b..e438f14 100644
+--- a/backport/backport-include/linux/pci.h
++++ b/backport/backport-include/linux/pci.h
+@@ -245,6 +245,7 @@ static inline int pci_enable_msi_range(struct pci_dev *dev, int minvec,
+ #endif
+ #endif
  
- def add(path, tree=None):
--    process = subprocess.Popen(['git', 'add', path],
-+    process = subprocess.Popen(['git', 'add', '--ignore-removal', path],
-                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                close_fds=True, universal_newlines=True, cwd=tree)
-     stdout = process.communicate()[0]
-@@ -266,7 +266,7 @@ def ls_remote(branch, tree=None, remote='origin'):
-     return sha
++#ifdef CONFIG_PCI
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,14,0)
+ #define pci_enable_msix_range LINUX_BACKPORT(pci_enable_msix_range)
+ #ifdef CONFIG_PCI_MSI
+@@ -256,5 +257,6 @@ static inline int pci_enable_msix_range(struct pci_dev *dev,
+ { return -ENOSYS; }
+ #endif
+ #endif
++#endif
  
- def add(fn, tree=None):
--    process = subprocess.Popen(['git', 'add', fn], cwd=tree,
-+    process = subprocess.Popen(['git', 'add', '--ignore-removal', fn], cwd=tree,
-                                close_fds=True, universal_newlines=True)
-     process.wait()
-     _check(process)
+ #endif /* _BACKPORT_LINUX_PCI_H */
 -- 
 1.8.5.3
 
