@@ -1,89 +1,65 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:47207 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754665AbaDHDc5 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 7 Apr 2014 23:32:57 -0400
-Received: by mail-pd0-f174.google.com with SMTP id y13so385129pdi.19
-        for <backports@vger.kernel.org>; Mon, 07 Apr 2014 20:32:56 -0700 (PDT)
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:52084 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752528AbaDEMmh (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 5 Apr 2014 08:42:37 -0400
+Received: by mail-pd0-f181.google.com with SMTP id p10so4454351pdj.26
+        for <backports@vger.kernel.org>; Sat, 05 Apr 2014 05:42:37 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
 Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ben Hutchings <bhutchings@solarflare.com>
-Subject: [PATCH 06/12] backports: add GRO_* enums, and its new gro_result_t typedef
-Date: Mon,  7 Apr 2014 20:32:17 -0700
-Message-Id: <1396927943-25589-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20140408_053258_631540_229C7CA4)
-In-Reply-To: <1396927943-25589-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1396927943-25589-1-git-send-email-mcgrof@do-not-panic.com>
+	Alexander Aring <alex.aring@gmail.com>,
+	Alexander Smirnov <alex.bluesman.smirnov@gmail.com>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	linux-zigbee-devel@lists.sourceforge.net
+Subject: [PATCH 18/27] backports: add include/net/6lowpan.h to copy-list
+Date: Sat,  5 Apr 2014 05:40:52 -0700
+Message-Id: <1396701662-15165-19-git-send-email-mcgrof@do-not-panic.com> (sfid-20140405_144449_403955_3A090270)
+In-Reply-To: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This backports commit d1c76af9e added by Herbert which added the first
-enums and then commit 5b252f0c2 added by Ben which gave the enums a
-label and then pegged a typedef onto these. This backports these commits
-in a forward compatible way upkeeping the introduction and then the
-typedef. In order to make this work we use make backported code use
-enums with the BACKPORT_prefix but upkeep the same values, this lets
-us declare the typedef and peg it to a similar set.
+We backport both the bluetooth and ieee802154 subsystems
+and commit cefc8c8a7c moved the 6lowpan it out under from
+net/ieee802154/6lowpan.h to include/net/6lowpan.h as bluetooth
+now uses it. Since we backport both subsystems just copy the
+header over.
 
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Ben Hutchings <bhutchings@solarflare.com>
+commit cefc8c8a7c9e4867c45407f7f9a44fe80c5ea58a
+Author: Alexander Aring <alex.aring@gmail.com>
+Date:   Wed Mar 5 14:29:05 2014 +0100
+
+    6lowpan: move 6lowpan header to include/net
+
+    This header is used by bluetooth and ieee802154 branch. This patch
+    move this header to the include/net directory to avoid a use of a
+    relative path in include.
+
+    Signed-off-by: Alexander Aring <alex.aring@gmail.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+
+Cc: Alexander Aring <alex.aring@gmail.com>
+Cc: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: linux-zigbee-devel@lists.sourceforge.net
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/backport-include/linux/netdevice.h | 40 +++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ copy-list | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
-index f99ea02..f77e3eb 100644
---- a/backport/backport-include/linux/netdevice.h
-+++ b/backport/backport-include/linux/netdevice.h
-@@ -20,6 +20,46 @@ struct inet6_dev;
-  */
- #include <linux/hardirq.h>
+diff --git a/copy-list b/copy-list
+index bec17a5..ceb80ba 100644
+--- a/copy-list
++++ b/copy-list
+@@ -180,6 +180,7 @@ drivers/media/
+ include/linux/platform_data/vsp1.h
+ include/linux/platform_data/camera-rcar.h
  
-+/* d1c76af9e */
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-+enum { /* backport: provide the enum name already */
-+	GRO_MERGED,
-+	GRO_MERGED_FREE,
-+	GRO_HELD,
-+	GRO_NORMAL,
-+	GRO_DROP,
-+};
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30) */
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,33)
-+
-+/*
-+ * We can count on the enum definitions being present so
-+ * but since we cannot dedeclare the enum but we have to
-+ * peg the typedef to a similar enum we can just use the
-+ * same values and then use the #defines below to modify
-+ * code for older kernels to use the new enum we define
-+ * here. This works even for switch statements and gcc -Wall.
-+ * This backports 5b252f0c2
-+ */
-+enum gro_result {
-+	BACKPORT_GRO_MERGED 		= GRO_MERGED,
-+	BACKPORT_GRO_MERGED_FREE 	= GRO_MERGED_FREE,
-+	BACKPORT_GRO_HELD 		= GRO_HELD,
-+	BACKPORT_GRO_NORMAL		= GRO_NORMAL,
-+	BACKPORT_GRO_DROP		= GRO_DROP,
-+};
-+
-+#define GRO_MERGED	BACKPORT_GRO_MERGED
-+#define GRO_MERGED_FREE	BACKPORT_GRO_MERGED_FREE
-+#define GRO_HELD	BACKPORT_GRO_HELD
-+#define GRO_NORMAL	BACKPORT_GRO_NORMAL
-+#define GRO_DROP	BACKPORT_GRO_DROP
-+
-+typedef enum gro_result gro_result_t;
-+
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0) */
-+
- #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,32)
- #define dev_change_net_namespace(a, b, c) (-EOPNOTSUPP)
- 
++include/net/6lowpan.h
+ include/net/nl802154.h
+ include/net/mac802154.h
+ include/net/ieee802154.h
 -- 
 1.8.5.3
 
