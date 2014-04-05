@@ -1,73 +1,66 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:2931 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750886AbaDYHPE (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 25 Apr 2014 03:15:04 -0400
-From: Stefan Assmann <sassmann@kpanic.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, sassmann@kpanic.de
-Subject: [PATCH 3/3] backports: ifdef code already present in RHEL7.0
-Date: Fri, 25 Apr 2014 09:14:30 +0200
-Message-Id: <1398410070-30529-4-git-send-email-sassmann@kpanic.de> (sfid-20140425_091507_709950_C58F6126)
-In-Reply-To: <1398410070-30529-1-git-send-email-sassmann@kpanic.de>
-References: <1398410070-30529-1-git-send-email-sassmann@kpanic.de>
+Received: from mail-pb0-f43.google.com ([209.85.160.43]:57438 "EHLO
+	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752375AbaDEMl6 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 5 Apr 2014 08:41:58 -0400
+Received: by mail-pb0-f43.google.com with SMTP id um1so4671671pbc.2
+        for <backports@vger.kernel.org>; Sat, 05 Apr 2014 05:41:58 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	Pravin B Shelar <pshelar@nicira.com>
+Subject: [PATCH 10/27] backports: backport skb_unclone()
+Date: Sat,  5 Apr 2014 05:40:44 -0700
+Message-Id: <1396701662-15165-11-git-send-email-mcgrof@do-not-panic.com> (sfid-20140405_144450_452383_5666FCF2)
+In-Reply-To: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Avoid conflicts with RHEL7.0 as DEVICE_ATTR_* defines,
-enum pkt_hash_types, skb_set_hash(), dma_common_get_sgtable()
-are already present.
+Pravin added this via commit 14bbd6a565 through v3.9. This is
+a straight forward backport using the LINUX_BACKPORT() namespace.
 
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+mcgrof@ergon ~/linux-next (git::master)$ git describe --contains 14bbd6a565
+v3.9-rc1~139^2~56
+
+commit 14bbd6a565e1bcdc240d44687edb93f721cfdf99
+Author: Pravin B Shelar <pshelar@nicira.com>
+Date:   Thu Feb 14 09:44:49 2013 +0000
+
+    net: Add skb_unclone() helper function.
+
+    This function will be used in next GRE_GSO patch. This patch does
+    not change any functionality.
+
+    Signed-off-by: Pravin B Shelar <pshelar@nicira.com>
+    Acked-by: Eric Dumazet <edumazet@google.com>
+
+Cc: Pravin B Shelar <pshelar@nicira.com>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/backport-include/linux/device.h | 2 +-
- backport/backport-include/linux/skbuff.h | 2 +-
- backport/compat/dma-shared-helpers.c     | 2 ++
- 3 files changed, 4 insertions(+), 2 deletions(-)
+ backport/backport-include/linux/skbuff.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
-index 3f57bd9..d6226ab 100644
---- a/backport/backport-include/linux/device.h
-+++ b/backport/backport-include/linux/device.h
-@@ -102,7 +102,7 @@ backport_device_release_driver(struct device *dev)
- #define device_release_driver LINUX_BACKPORT(device_release_driver)
- #endif /* LINUX_VERSION_CODE <= KERNEL_VERSION(3,6,0) */
- 
--#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0) && RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(7,0)
- #ifndef DEVICE_ATTR_RO
- #define DEVICE_ATTR_RO(_name) \
- struct device_attribute dev_attr_ ## _name = __ATTR_RO(_name);
 diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
-index fae13b7..2576faf 100644
+index 7ea44f5..2a63e95 100644
 --- a/backport/backport-include/linux/skbuff.h
 +++ b/backport/backport-include/linux/skbuff.h
-@@ -327,7 +327,7 @@ static inline void skb_frag_set_page(struct sk_buff *skb, int f,
- }
- #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0) */
+@@ -300,4 +300,15 @@ static inline struct page *__skb_alloc_page(gfp_t gfp_mask,
+ #endif
+ #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0) */
  
--#if LINUX_VERSION_CODE < KERNEL_VERSION(3,14,0)
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,14,0) && RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(7,0)
- /*
-  * Packet hash types specify the type of hash in skb_set_hash.
-  *
-diff --git a/backport/compat/dma-shared-helpers.c b/backport/compat/dma-shared-helpers.c
-index f76cf06..2ada681 100644
---- a/backport/compat/dma-shared-helpers.c
-+++ b/backport/compat/dma-shared-helpers.c
-@@ -20,6 +20,7 @@
- #endif /* LINUX_VERSION_CODE <= KERNEL_VERSION(3,6,0) */
- #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) */
- 
-+#if RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(7,0)
- /*
-  * Create scatter-list for the already allocated DMA buffer.
-  */
-@@ -37,3 +38,4 @@ int dma_common_get_sgtable(struct device *dev, struct sg_table *sgt,
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(dma_common_get_sgtable);
-+#endif /* RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(7,0) */
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
++#define skb_unclone LINUX_BACKPORT(skb_unclone)
++static inline int skb_unclone(struct sk_buff *skb, gfp_t pri)
++{
++	might_sleep_if(pri & __GFP_WAIT);
++	if (skb_cloned(skb))
++		return pskb_expand_head(skb, 0, 0, pri);
++       return 0;
++}
++#endif
++
+ #endif /* __BACKPORT_SKBUFF_H */
 -- 
-1.9.0
+1.8.5.3
 
