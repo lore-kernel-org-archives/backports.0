@@ -1,55 +1,31 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from app1b.xlhost.de ([84.200.252.162]:52658 "EHLO app1b.xlhost.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752854AbaDWK1f (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 23 Apr 2014 06:27:35 -0400
-Message-ID: <53579593.40306@kpanic.de> (sfid-20140423_122737_920373_E36F87A8)
-Date: Wed, 23 Apr 2014 12:27:31 +0200
-From: Stefan Assmann <sassmann@kpanic.de>
-MIME-Version: 1.0
-To: Julia Lawall <julia.lawall@lip6.fr>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: cocci: multiple versions of function with different arguments
-Content-Type: text/plain; charset=ISO-8859-1
+Received: from s3.sipsolutions.net ([144.76.43.152]:33470 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750740AbaDGKbw (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 7 Apr 2014 06:31:52 -0400
+Message-ID: <1396866692.6270.0.camel@jlt4.sipsolutions.net> (sfid-20140407_123154_387943_B25BF6A9)
+Subject: Re: [PATCH 26/27] backports: convert threaded IRQ suport into an
+ SmPL patch
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org, Peter Senna <peter.senna@gmail.com>,
+	Julia Lawall <julia.lawall@lip6.fr>,
+	Gilles Muller <Gilles.Muller@lip6.fr>
+Date: Mon, 07 Apr 2014 12:31:32 +0200
+In-Reply-To: <1396701662-15165-27-git-send-email-mcgrof@do-not-panic.com> (sfid-20140405_144448_987470_7649D5E2)
+References: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1396701662-15165-27-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20140405_144448_987470_7649D5E2)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi Julia,
+On Sat, 2014-04-05 at 05:41 -0700, Luis R. Rodriguez wrote:
 
-I'm trying to generate a patch to define a function with different
-arguments depending on the kernel version. I'm having some difficulties,
-maybe you can tell me what's wrong with the following approach.
+> ++ret = compat_request_threaded_irq(&private->irq_compat,
 
-@ rule1 @
-struct net_device_ops ops;
-identifier vlan_rx_add_vid_func;
-@@
-ops.ndo_vlan_rx_add_vid = vlan_rx_add_vid_func;
+Whhy not go to backport namespace too?
 
-@ rule2 @
-identifier rule1.vlan_rx_add_vid_func;
-expression a,b,c;
-@@
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
-        vlan_rx_add_vid_func(a, b, c)
-+#else
-+       vlan_rx_add_vid_func(a, c)
-+#endif
+johannes
 
-
-This results in
-spatch --sp-file test3.cocci drivers/net/ethernet/intel/igb/igb_main.c
-init_defs_builtins: /usr/local/share/coccinelle/standard.h
-282 302
-Fatal error: exception Failure("plus: parse error:
- = File "test3.cocci", line 14, column 2,  charpos = 282
-    around = 'vlan_rx_add_vid_func', whole content = +  vlan_rx_add_vid_func(a, c)
-")
-
-
-If I remove "vlan_rx_add_vid_func(a, c)" it works, but that defeats the
-whole idea.
-
-Thanks!
-
-  Stefan
