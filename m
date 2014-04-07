@@ -1,59 +1,91 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:9054 "EHLO
-	mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752714AbaDWMOf (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 23 Apr 2014 08:14:35 -0400
-Date: Wed, 23 Apr 2014 14:14:34 +0200 (CEST)
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:46561
+	"EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754274AbaDGNNo (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 7 Apr 2014 09:13:44 -0400
+Date: Mon, 7 Apr 2014 15:13:31 +0200 (CEST)
 From: Julia Lawall <julia.lawall@lip6.fr>
-To: Johannes Berg <johannes@sipsolutions.net>
-cc: Stefan Assmann <sassmann@kpanic.de>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: cocci: multiple versions of function with different arguments
-In-Reply-To: <1398254986.4173.8.camel@jlt4.sipsolutions.net>
-Message-ID: <alpine.DEB.2.10.1404231412450.3422@hadrien> (sfid-20140423_141444_805698_7BB34D29)
-References: <53579593.40306@kpanic.de>   (sfid-20140423_122737_920373_E36F87A8) <1398249715.4173.3.camel@jlt4.sipsolutions.net>  <5357A065.3020400@kpanic.de> <alpine.DEB.2.10.1404231405130.3422@hadrien> <1398254986.4173.8.camel@jlt4.sipsolutions.net>
+To: Stefan Assmann <sassmann@kpanic.de>
+cc: backports@vger.kernel.org
+Subject: Re: coccinelle-1.0.0-rc20 compile issue
+In-Reply-To: <53427B88.50606@kpanic.de>
+Message-ID: <alpine.DEB.2.10.1404071511510.2187@hadrien> (sfid-20140407_151346_253698_6843B59A)
+References: <534268E2.6060305@kpanic.de> <alpine.DEB.2.10.1404071128260.3433@hadrien> <53427B88.50606@kpanic.de>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: MULTIPART/MIXED; BOUNDARY="8323329-963924992-1396876412=:2187"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-963924992-1396876412=:2187
+Content-Type: TEXT/PLAIN; charset=windows-1252
+Content-Transfer-Encoding: 8BIT
 
 
-On Wed, 23 Apr 2014, Johannes Berg wrote:
 
-> On Wed, 2014-04-23 at 14:07 +0200, Julia Lawall wrote:
+On Mon, 7 Apr 2014, Stefan Assmann wrote:
+
+> On 07.04.2014 11:29, Julia Lawall wrote:
+> >
+> >
+> > On Mon, 7 Apr 2014, Stefan Assmann wrote:
+> >
+> > > Hi Julia,
+> > >
+> > > when trying to compile coccinelle rc20 on RHEL6 I ran into the following
+> > > issue.
+> > > ./configure
+> > > make all
+> > > [...]
+> > > /usr/bin/ocamlc.opt -g  -I ../commons -I ../commons/ocamlextra -I
+> > > ../commons/ocollection -I ../globals -I  ../parsing_cocci  -c
+> > > type_annoter_c.mli
+> > > /usr/bin/ocamlc.opt -g  -I ../commons -I ../commons/ocamlextra -I
+> > > ../commons/ocollection -I ../globals -I  ../parsing_cocci  -c
+> > > type_annoter_c.ml
+> > > File "type_annoter_c.ml", line 204, characters 4-23:
+> > > Error: Unbound value StringMap.singleton
+> > > make[5]: *** [type_annoter_c.cmo] Error 2
+> > > This doesn't happen with rc19.
+> >
+> > What is the verion of OCaml?  Indeed, I believe that the use of maps is
+> > new.
 >
-> > I think that the problem is that the SmPL parser doesn't really understand
-> > about the ifdef.  So it sees one expression right after another one, which
-> > it is not happy about.  It would be fine if there were semicolons after
-> > the function call.  If you can move up to the statement level in each
-> > possible case, that might be a solution, but it might be too awkward in
-> > practice.  If the macro solution is feasible, that could be better.  Fewer
-> > changes to the source code as well.
+> # rpm -qa |grep ocaml
+> ocaml-ocamldoc-3.11.2-2.el6.x86_64
+> ocaml-3.11.2-2.el6.x86_64
+> ocaml-findlib-1.2.5-5.el6.x86_64
+> ocaml-camlp4-3.11.2-2.el6.x86_64
+> ocaml-camlp4-devel-3.11.2-2.el6.x86_64
+> ocaml-runtime-3.11.2-2.el6.x86_64
 >
-> Yeah I was confused about all this as well - turns out that he's not
-> trying to do function calls but rather function declarations:
+> >
+> > > When compiling on Fedora 20 there's no error but when I run
+> > > make install
+> > > [...]
+> > > cp ocaml/coccilib.cmi ocaml/coccilib/coccilib.cmi
+> > > cp: cannot create regular file ‘ocaml/coccilib/coccilib.cmi’: No such
+> > > file or directory
+> > > make: *** [ocaml/coccilib/coccilib.cmi] Error 1
+> > >
+> > > The Makefile is probably just missing a 'mkdir ocaml/coccilib'.
+> >
+> > Did you have any error on the configure?  I have some version of Fedora,
+> > so i may be able to test this later today.
 >
-> #if ...
-> static int foo(void *a, int b, char c)
-> #else
-> static int foo(void *a, char c)
-> #endif
-> {
->  ...
-> }
->
-> or such.
->
-> I'm not sure how that would compile (it would require "b" being unused),
-> but still.
+> I didn't spot any errors. Here's a paste.
+> http://fpaste.org/92207/39686580/
 
-I can think  about it, but it is pretty far from the vision of Coccinelle,
-which is that the combination of context code and + code should be a valid
-syntactic unit, and on the side that we don't think much about ifdefs.
+Did you get it from github?  I think there is a problem that github
+doesn't preserve empty directories.  It exists in the tgz available on
+out web page:
 
-But I will think about it, because I can see that it is not a solvable
-problem with the current technology.
+http://coccinelle.lip6.fr/download.php
 
-thanks,
+I think that the problem was discussed, so I'm a bit surprised that it was
+not fixed.  I will look into it.
+
 julia
+--8323329-963924992-1396876412=:2187--
