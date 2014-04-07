@@ -1,48 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:39168 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758317AbaDIK7q (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 9 Apr 2014 06:59:46 -0400
-Message-ID: <53452817.5060502@broadcom.com> (sfid-20140409_125948_482296_E2FE4840)
-Date: Wed, 9 Apr 2014 12:59:35 +0200
-From: Arend van Spriel <arend@broadcom.com>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.cz>, Felix Fietkau <nbd@openwrt.org>,
-	Mauro Carvalho Chehab <m.chehab@samsung.com>
-Subject: Re: Bumping required kernels to 3.0 for Linux backports ?
-References: <CAB=NE6VvyBKzEg=ErZzQMktY8eLytQ21JCPrOQbxvZ9m-nqHkw@mail.gmail.com>
-In-Reply-To: <CAB=NE6VvyBKzEg=ErZzQMktY8eLytQ21JCPrOQbxvZ9m-nqHkw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Received: from s3.sipsolutions.net ([144.76.43.152]:34696 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753057AbaDGRZd (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 7 Apr 2014 13:25:33 -0400
+Message-ID: <1396891524.6270.3.camel@jlt4.sipsolutions.net> (sfid-20140407_192535_606543_32BEFA21)
+Subject: Re: [PATCH 26/27] backports: convert threaded IRQ suport into an
+ SmPL patch
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Peter Senna <peter.senna@gmail.com>,
+	Julia Lawall <julia.lawall@lip6.fr>,
+	Gilles Muller <Gilles.Muller@lip6.fr>
+Date: Mon, 07 Apr 2014 19:25:24 +0200
+In-Reply-To: <CAB=NE6VWRcVwMjWJEJNVfHCuEwvA94u4p-W+JHEXOU74MtLtSA@mail.gmail.com> (sfid-20140407_192155_711729_741FD1C6)
+References: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1396701662-15165-27-git-send-email-mcgrof@do-not-panic.com>
+	 <1396866692.6270.0.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6VWRcVwMjWJEJNVfHCuEwvA94u4p-W+JHEXOU74MtLtSA@mail.gmail.com>
+	 (sfid-20140407_192155_711729_741FD1C6)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 09/04/14 03:03, Luis R. Rodriguez wrote:
-> Folks,
->
+On Mon, 2014-04-07 at 10:19 -0700, Luis R. Rodriguez wrote:
+> On Mon, Apr 7, 2014 at 3:31 AM, Johannes Berg <johannes@sipsolutions.net> wrote:
+> > On Sat, 2014-04-05 at 05:41 -0700, Luis R. Rodriguez wrote:
+> >
+> >> ++ret = compat_request_threaded_irq(&private->irq_compat,
+> >
+> > Whhy not go to backport namespace too?
+> 
+> Sure, how about as a second patch?
 
-[...]
+Sure, I was just wondering if there was a particular reason you didn't
+while you rewrote the whole thing anyway.
 
-> To start off -- what's the *last* kernel you realistically need for
-> your users to use backports right now? Is it really 2.6.25? Would
-> anyone kick and scream if for the backports-3.15 release try take
-> things up to support only down to least 3.0 *right now* ?
-
-A lot of test teams in broadcom wlan are still using Fedora 15 running a 
-2.6.38 kernel. We are pushing them to move to Fedora 19.
-
-Regards,
-Arend
-
-> [0] http://www.do-not-panic.com/2014/04/automatic-linux-kernel-backporting-with-coccinelle.html
->
->    Luis
-> --
-> To unsubscribe from this list: send the line "unsubscribe backports" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+johannes
 
