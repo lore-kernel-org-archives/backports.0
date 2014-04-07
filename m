@@ -1,68 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:52699
-	"EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753854AbaDJTcj (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 10 Apr 2014 15:32:39 -0400
-Date: Thu, 10 Apr 2014 21:32:34 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: "Luis R. Rodriguez" <mcgrof@suse.com>
-cc: Johannes Berg <johannes@sipsolutions.net>,
-	linux-kernel@vger.kernel.org, backports@vger.kernel.org,
-	cocci@systeme.lip6.fr
-Subject: Re: [Cocci] [PATCH] coccinelle: add pycocci wrapper for	multithreaded
- support
-In-Reply-To: <20140410175748.GK14815@wotan.suse.de>
-Message-ID: <alpine.DEB.2.02.1404102131390.2201@localhost6.localdomain6> (sfid-20140410_213242_209010_D656EE9B)
-References: <1397152097-315-1-git-send-email-mcgrof@do-not-panic.com> <1397152289.4757.28.camel@jlt4.sipsolutions.net> <20140410175748.GK14815@wotan.suse.de>
+Received: from app1b.xlhost.de ([84.200.252.162]:49695 "EHLO app1b.xlhost.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754182AbaDGJFG (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 7 Apr 2014 05:05:06 -0400
+Message-ID: <534268E2.6060305@kpanic.de> (sfid-20140407_110509_167067_A7032F79)
+Date: Mon, 07 Apr 2014 10:59:14 +0200
+From: Stefan Assmann <sassmann@kpanic.de>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+To: julia.lawall@lip6.fr
+CC: backports@vger.kernel.org
+Subject: coccinelle-1.0.0-rc20 compile issue
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+Hi Julia,
 
+when trying to compile coccinelle rc20 on RHEL6 I ran into the following
+issue.
+./configure
+make all
+[...]
+/usr/bin/ocamlc.opt -g  -I ../commons -I ../commons/ocamlextra -I
+../commons/ocollection -I ../globals -I  ../parsing_cocci  -c
+type_annoter_c.mli
+/usr/bin/ocamlc.opt -g  -I ../commons -I ../commons/ocamlextra -I
+../commons/ocollection -I ../globals -I  ../parsing_cocci  -c
+type_annoter_c.ml
+File "type_annoter_c.ml", line 204, characters 4-23:
+Error: Unbound value StringMap.singleton
+make[5]: *** [type_annoter_c.cmo] Error 2
+This doesn't happen with rc19.
 
-On Thu, 10 Apr 2014, Luis R. Rodriguez wrote:
+When compiling on Fedora 20 there's no error but when I run
+make install
+[...]
+cp ocaml/coccilib.cmi ocaml/coccilib/coccilib.cmi
+cp: cannot create regular file ‘ocaml/coccilib/coccilib.cmi’: No such
+file or directory
+make: *** [ocaml/coccilib/coccilib.cmi] Error 1
 
-> On Thu, Apr 10, 2014 at 07:51:29PM +0200, Johannes Berg wrote:
-> > On Thu, 2014-04-10 at 10:48 -0700, Luis R. Rodriguez wrote:
-> > 
-> > > You just pass it a cocci file, a target dir, and in git environments
-> > > you always want --in-place enabled. Experiments and profiling random
-> > > cocci files with the Linux kernel show that using just using number of
-> > > CPUs doesn't scale well given that lots of buckets of files don't require
-> > > work, as such this uses 10 * number of CPUs for its number of threads.
-> > > For work that define more general ruler 3 * number of CPUs works better,
-> > > but for smaller cocci files 3 * number of CPUs performs best right now.
-> > > To experiment more with what's going on with the multithreading one can enable
-> > > htop while kicking off a cocci task on the kernel, we want to keep
-> > > these CPUs busy as much as possible. 
-> > 
-> > That's not really a good benchmark, you want to actually check how
-> > quickly it finishes ... If you have some IO issues then just keeping the
-> > CPUs busy trying to do IO won't help at all.
-> 
-> I checked the profile results, the reason the jobs finish is some threads
-> had no work or little work. Hence why I increased the number of threads,
-> depending on the context (long or short cocci expected, in backports
-> at least, the long being all cocci files in one, the short being --test-cocci
-> flag to gentree.py). This wrapper uses the short assumption with 10 * num_cpus
-> 
-> > > Since its just a helper I toss it into the python directory but don't
-> > > install it. Hope is that we can evolve it there instead of carrying this
-> > > helper within backports.
-> > 
-> > If there's a plan to make coccinelle itself multi-threaded, what's the
-> > point?
-> 
-> To be clear, Coccinelle *has* a form of multithreaded support but requires manual
-> spawning of jobs with references to the max count and also the number thread
-> that this new process you are spawning belongs to. There's plans to consider
-> reworking things to handle all this internally but as I discussed with Julia
-> the changes required would require some structural changes, and as such we
-> need to live with this for a bit longer. I need to use Coccinelle daily now,
-> so figured I'd punt this out there in case others might make use of it.
+The Makefile is probably just missing a 'mkdir ocaml/coccilib'.
 
-I agree with Luis.  Multithreading inside Coccinelle is currently a 
-priority task, but not a highest priority one.
-
-julia
+  Stefan
