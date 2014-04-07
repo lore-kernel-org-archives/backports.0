@@ -1,77 +1,65 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:44244 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754665AbaDHDdH (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 7 Apr 2014 23:33:07 -0400
-Received: by mail-pa0-f49.google.com with SMTP id lj1so398468pab.22
-        for <backports@vger.kernel.org>; Mon, 07 Apr 2014 20:33:07 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Antti Palosaari <crope@iki.fi>,
-	Mauro Carvalho Chehab <m.chehab@samsung.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 08/12] backports: disable DVB_RTL2832 and DVB_USB_RTL28XXU
-Date: Mon,  7 Apr 2014 20:32:19 -0700
-Message-Id: <1396927943-25589-9-git-send-email-mcgrof@do-not-panic.com> (sfid-20140408_053309_638559_9804A31F)
-In-Reply-To: <1396927943-25589-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1396927943-25589-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:48977 "EHLO
+	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754182AbaDGJaC (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 7 Apr 2014 05:30:02 -0400
+Date: Mon, 7 Apr 2014 11:29:49 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Stefan Assmann <sassmann@kpanic.de>
+cc: backports@vger.kernel.org
+Subject: Re: coccinelle-1.0.0-rc20 compile issue
+In-Reply-To: <534268E2.6060305@kpanic.de>
+Message-ID: <alpine.DEB.2.10.1404071128260.3433@hadrien> (sfid-20140407_113005_437420_9BB9C440)
+References: <534268E2.6060305@kpanic.de>
+MIME-Version: 1.0
+Content-Type: MULTIPART/MIXED; BOUNDARY="8323329-867819879-1396862989=:3433"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Commit bcf43393 as of linux-next next-20140320 added this Makefile
-header extension:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-ccflags-y += -I$(srctree)/drivers/staging/media/rtl2832u_sdr
+--8323329-867819879-1396862989=:3433
+Content-Type: TEXT/PLAIN; charset=windows-1252
+Content-Transfer-Encoding: 8BIT
 
-This ends up calling a staging exported symbol rtl2832_sdr_attach().
-Let's not pollute driver code with staging code or dependencies.
 
-Folks, can this be cleaned up? This sets a precedent for doing more
-of this, and this can get hairy. Its also not fair for folks who
-don't want to carry over any staging code. This forces them to, and
-its not just a header file, its a full exported symbol. What about
-synchronization with differen trees? Was this addressed with Greg?
 
-commit bcf43393579e3d4069e75a9200a87703185bcf11
-Author: Antti Palosaari <crope@iki.fi>
-Date:   Tue Sep 10 00:13:57 2013 -0300
+On Mon, 7 Apr 2014, Stefan Assmann wrote:
 
-    [media] rtl28xxu: attach SDR extension module
+> Hi Julia,
+>
+> when trying to compile coccinelle rc20 on RHEL6 I ran into the following
+> issue.
+> ./configure
+> make all
+> [...]
+> /usr/bin/ocamlc.opt -g  -I ../commons -I ../commons/ocamlextra -I
+> ../commons/ocollection -I ../globals -I  ../parsing_cocci  -c
+> type_annoter_c.mli
+> /usr/bin/ocamlc.opt -g  -I ../commons -I ../commons/ocamlextra -I
+> ../commons/ocollection -I ../globals -I  ../parsing_cocci  -c
+> type_annoter_c.ml
+> File "type_annoter_c.ml", line 204, characters 4-23:
+> Error: Unbound value StringMap.singleton
+> make[5]: *** [type_annoter_c.cmo] Error 2
+> This doesn't happen with rc19.
 
-    With that extension module it supports SDR.
+What is the verion of OCaml?  Indeed, I believe that the use of maps is
+new.
 
-    Signed-off-by: Antti Palosaari <crope@iki.fi>
-    Signed-off-by: Mauro Carvalho Chehab <m.chehab@samsung.com>
+> When compiling on Fedora 20 there's no error but when I run
+> make install
+> [...]
+> cp ocaml/coccilib.cmi ocaml/coccilib/coccilib.cmi
+> cp: cannot create regular file ‘ocaml/coccilib/coccilib.cmi’: No such
+> file or directory
+> make: *** [ocaml/coccilib/coccilib.cmi] Error 1
+>
+> The Makefile is probably just missing a 'mkdir ocaml/coccilib'.
 
-Cc: Antti Palosaari <crope@iki.fi>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- dependencies | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Did you have any error on the configure?  I have some version of Fedora,
+so i may be able to test this later today.
 
-diff --git a/dependencies b/dependencies
-index 6193ed1..b85268d 100644
---- a/dependencies
-+++ b/dependencies
-@@ -185,8 +185,13 @@ VIDEO_RENESAS_VSP1 3.6
- # This was added as of 3.7. Although we should be able to only enable
- # this for 3.7 DVB_USB_RTL28XXU ends up selecting DVB_RTL2832 and
- # that seems to currently require pegging both.
--DVB_RTL2832 3.7
--DVB_USB_RTL28XXU 3.7
-+#
-+# DVB_USB_RTL28XXU has a nasty ccflag usage thoug that includes staging
-+# headers introduced via commit bcf43393:
-+# ccflags-y += -I$(srctree)/drivers/staging/media/rtl2832u_sdr
-+# Let's not support this nastiness.
-+DVB_RTL2832 DISABLE
-+DVB_USB_RTL28XXU DISABLE
- 
- # struct gpio_chip only got the required members in 2.6.28
- BCMA_DRIVER_GPIO 2.6.28
--- 
-1.8.5.3
-
+julia
+--8323329-867819879-1396862989=:3433--
