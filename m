@@ -1,41 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:46581 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751744AbaDWKmZ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 23 Apr 2014 06:42:25 -0400
-Message-ID: <1398249715.4173.3.camel@jlt4.sipsolutions.net> (sfid-20140423_124238_271545_1B490183)
-Subject: Re: cocci: multiple versions of function with different arguments
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Stefan Assmann <sassmann@kpanic.de>
-Cc: Julia Lawall <julia.lawall@lip6.fr>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Wed, 23 Apr 2014 12:41:55 +0200
-In-Reply-To: <53579593.40306@kpanic.de> (sfid-20140423_122737_920373_E36F87A8)
-References: <53579593.40306@kpanic.de>
-	 (sfid-20140423_122737_920373_E36F87A8)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from app1b.xlhost.de ([84.200.252.162]:49895 "EHLO app1b.xlhost.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754274AbaDGN5p (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 7 Apr 2014 09:57:45 -0400
+Message-ID: <5342AED7.5080505@kpanic.de> (sfid-20140407_155747_621390_17998CA3)
+Date: Mon, 07 Apr 2014 15:57:43 +0200
+From: Stefan Assmann <sassmann@kpanic.de>
+MIME-Version: 1.0
+To: backports@vger.kernel.org
+CC: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: ckmake build issue with undefined symbol mcount
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2014-04-23 at 12:27 +0200, Stefan Assmann wrote:
+Tree generated with
+./gentree.py --clean --verbose --git-revision next-20140221 /root/linux-next /tmp/next
 
-> I'm trying to generate a patch to define a function with different
-> arguments depending on the kernel version. I'm having some difficulties,
-> maybe you can tell me what's wrong with the following approach.
+When running devel/ckmake I see the following
+[...]
+23  3.7.10              [  LINK  ]
+24  3.8.13              [  LINK  ]
+25  3.9.11              [  LINK  ]
+26  3.10.29             [  LINK  ]
+27  3.11.10             [  LINK  ]
+28  3.12.10             [  LINK  ]
+29  3.13.2              [  LINK  ]
+30  3.14-rc1            [  LINK  ]
 
-I can't answer that, but given the premise
+Looking at ckmake.log there seems to be a problem with mcount.
+Building backport-include/backport/autoconf.h ... done.
+/root/ksrc-backports/usr/src/linux-headers-3.7.10-030710-generic/arch/x86/Makefile:103: CONFIG_X86_X32 enabled but no binutils support
+  CC [M]  /tmp/next/.tmp.ckmake/3.7.10/compat/lib-cordic.o
+  LD [M]  /tmp/next/.tmp.ckmake/3.7.10/compat/compat.o
+  LD [M]  /tmp/next/.tmp.ckmake/3.7.10/compat/cordic.o
+  Building modules, stage 2.
+  MODPOST 2 modules
+WARNING: "mcount" [/tmp/next/.tmp.ckmake/3.7.10/compat/cordic.ko] undefined!
+WARNING: "mcount" [/tmp/next/.tmp.ckmake/3.7.10/compat/compat.ko] undefined!
 
-> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
->         vlan_rx_add_vid_func(a, b, c)
-> +#else
-> +       vlan_rx_add_vid_func(a, c)
-> +#endif
+This is also the case for every kernel mentioned above.
 
-and the fact that later kernel versions add an argument, wouldn't it be
-much easier to provide a macro in the appropriate header file:
-
-#define vlan_rx_add_vid_func(a,b,c) vlan_rx_add_vid_func(a,c)
-
-johannes
-
+  Stefan
