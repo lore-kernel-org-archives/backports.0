@@ -1,67 +1,73 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:63665 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752584AbaDQSF3 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 17 Apr 2014 14:05:29 -0400
-Received: by mail-pd0-f182.google.com with SMTP id y10so610464pdj.41
-        for <backports@vger.kernel.org>; Thu, 17 Apr 2014 11:05:28 -0700 (PDT)
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:45491 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754665AbaDHDdD (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 7 Apr 2014 23:33:03 -0400
+Received: by mail-pa0-f45.google.com with SMTP id kl14so398925pab.32
+        for <backports@vger.kernel.org>; Mon, 07 Apr 2014 20:33:02 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Peter Senna <peter.senna@gmail.com>,
-	Julia Lawall <julia.lawall@lip6.fr>,
-	Gilles Muller <Gilles.Muller@lip6.fr>
-Subject: [PATCH 4/8] backports: Use Coccinelle --relax-include-path
-Date: Thu, 17 Apr 2014 11:04:52 -0700
-Message-Id: <1397757896-32558-5-git-send-email-mcgrof@do-not-panic.com> (sfid-20140417_200813_984378_FCD20ECA)
-In-Reply-To: <1397757896-32558-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1397757896-32558-1-git-send-email-mcgrof@do-not-panic.com>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 07/12] backports: bump kernel requirements for drivers that use s2mps14.h
+Date: Mon,  7 Apr 2014 20:32:18 -0700
+Message-Id: <1396927943-25589-8-git-send-email-mcgrof@do-not-panic.com> (sfid-20140408_053305_794944_6C19DAEE)
+In-Reply-To: <1396927943-25589-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1396927943-25589-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This will provide wider coverage on include paths for our Coccinelle
-rule interpretation, at a very lower cost incurred, about 1 second,
-for code generation. Coccinelle makes an effort to infer types but
-with a wider coverage of header files it can do a better job at that.
-You want to use both --recursive-includes (which we already enable) and
---relax-include-path to get the most possible type information.
+These depend on include/linux/mfd/samsung/s2mps14.h which
+other mfd drivers / platform code can depend on, skip
+unless we backport all the dependencies which we don't
+right now.
 
-You will want at least Coccinelle 1.0.0-rc20 which had an increase
-of performance of over 30% when using both  --recursive-includes and
---relax-include path.
+The affected drivers are:
 
-mcgrof@drvbp1 ~/backports (git::master)$ time ./gentree.py --clean
-/home/mcgrof/linux-next /home/mcgrof/build/next-20140411
-Copy original source files ...
-Apply patches ...
-Modify Kconfig tree ...
-Rewrite Makefiles and Kconfig files ...
-Done!
+  * REGULATOR_S2MPS11
+  * REGULATOR_S2MPA01
+  * REGULATOR_TPS65217
 
-real    1m15.370s
-user    10m47.232s
-sys     0m36.980s
+The mfd files which we don't backport that uses this are:
 
-Cc: Peter Senna <peter.senna@gmail.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Gilles Muller <Gilles.Muller@lip6.fr>
+  * drivers/mfd/sec-core.c
+  * drivers/mfd/sec-irq.c
+
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- lib/bpcoccinelle.py | 1 +
- 1 file changed, 1 insertion(+)
+ dependencies | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/lib/bpcoccinelle.py b/lib/bpcoccinelle.py
-index bd276c7..75a0b37 100644
---- a/lib/bpcoccinelle.py
-+++ b/lib/bpcoccinelle.py
-@@ -33,6 +33,7 @@ def spatch(cocci_file, outdir,
-            max_threads, thread_id, temp_dir, ret_q, extra_args=[]):
-     cmd = ['spatch', '--sp-file', cocci_file, '--in-place',
-             '--recursive-includes',
-+            '--relax-include-path',
-             '--use-coccigrep',
-             '--backup-suffix', '.cocci_backup', '--dir', '.']
- 
+diff --git a/dependencies b/dependencies
+index f5f7229..6193ed1 100644
+--- a/dependencies
++++ b/dependencies
+@@ -96,7 +96,14 @@ REGULATOR_PCAP 3.6
+ REGULATOR_PCF50633 3.8
+ REGULATOR_PFUZE100 3.6
+ REGULATOR_RC5T583 3.6
+-REGULATOR_S2MPS11 3.13
++
++# These depend on include/linux/mfd/samsung/s2mps14.h which
++# other mfd drivers / platform code can depend on, skip
++# unless we backport all the dependencies which we don't
++# right now.
++REGULATOR_S2MPS11 3.15
++REGULATOR_S2MPA01 3.15
++
+ REGULATOR_S5M8767 3.15
+ REGULATOR_TPS51632 3.8
+ REGULATOR_TPS6105X 3.6
+@@ -105,7 +112,9 @@ REGULATOR_TPS62360 3.6
+ REGULATOR_TPS65023 3.9
+ REGULATOR_TPS6507X 3.6
+ REGULATOR_TPS65090 3.9
+-REGULATOR_TPS65217 3.12
++# depnds on include/linux/mfd/samsung/s2mps14.h which
++# other mfd drivers / platform code can depend on, skip
++REGULATOR_TPS65217 3.15
+ REGULATOR_TPS6524X 3.6
+ REGULATOR_TPS6586X 3.14
+ REGULATOR_TPS65910 3.14
 -- 
-1.9.1
+1.8.5.3
 
