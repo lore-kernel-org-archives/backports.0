@@ -1,30 +1,29 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:34121 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751208AbaDRBYy (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 17 Apr 2014 21:24:54 -0400
+Received: from mail-la0-f45.google.com ([209.85.215.45]:64701 "EHLO
+	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753765AbaDHAiG (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 7 Apr 2014 20:38:06 -0400
+Received: by mail-la0-f45.google.com with SMTP id hr17so175748lab.32
+        for <backports@vger.kernel.org>; Mon, 07 Apr 2014 17:38:04 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <5342AED7.5080505@kpanic.de>
+References: <5342AED7.5080505@kpanic.de>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: m.chehab@samsung.com, felipensp@gmail.com, mkrufky@linuxtv.org,
-	linux-media@vger.kernel.org
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 0/2] media: make drivers use their own namespace
-Date: Thu, 17 Apr 2014 18:24:42 -0700
-Message-Id: <1397784284-15946-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20140418_032456_839425_9E7139C3)
+Date: Mon, 7 Apr 2014 17:37:44 -0700
+Message-ID: <CAB=NE6WdU4fLKz9eMbVFqiD-r4YE2Hz8fo2cH9A18R7ap=hvDA@mail.gmail.com> (sfid-20140408_023809_287491_00F187FA)
+Subject: Re: ckmake build issue with undefined symbol mcount
+To: Stefan Assmann <sassmann@kpanic.de>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Couple of changes to help with backports, both to help with ensuring
-drivers use their own namespace.
+On Mon, Apr 7, 2014 at 6:57 AM, Stefan Assmann <sassmann@kpanic.de> wrote:
+> next-20140221
 
-Luis R. Rodriguez (2):
-  technisat-usb2: rename led enums to be specific to driver
-  bt8xx: make driver routines fit into its own namespcae
+Did you git reset --hard backports-20140221 ? The respective dated tag
+for backports must be used for a specific dated tag for linux-next.
+Likewise for the stable releases.
 
- drivers/media/pci/bt8xx/dst.c              | 20 ++++++++++----------
- drivers/media/usb/dvb-usb/technisat-usb2.c | 28 ++++++++++++++--------------
- 2 files changed, 24 insertions(+), 24 deletions(-)
-
--- 
-1.9.1
-
+  Luis
