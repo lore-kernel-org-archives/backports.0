@@ -1,57 +1,71 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from nbd.name ([46.4.11.11]:41127 "EHLO nbd.name"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932358AbaDIJSv (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 9 Apr 2014 05:18:51 -0400
-Message-ID: <53451077.2030102@openwrt.org> (sfid-20140409_111854_192527_B5A21A7B)
-Date: Wed, 09 Apr 2014 11:18:47 +0200
-From: Felix Fietkau <nbd@openwrt.org>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37760 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933342AbaDIUTw (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 9 Apr 2014 16:19:52 -0400
+Date: Wed, 9 Apr 2014 13:22:24 -0700
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: Felix Fietkau <nbd@openwrt.org>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	Jiri Slaby <jslaby@suse.cz>,
 	Mauro Carvalho Chehab <m.chehab@samsung.com>
 Subject: Re: Bumping required kernels to 3.0 for Linux backports ?
+Message-ID: <20140409202224.GA12953@kroah.com> (sfid-20140409_221955_165411_E2A78D22)
 References: <CAB=NE6VvyBKzEg=ErZzQMktY8eLytQ21JCPrOQbxvZ9m-nqHkw@mail.gmail.com>
-In-Reply-To: <CAB=NE6VvyBKzEg=ErZzQMktY8eLytQ21JCPrOQbxvZ9m-nqHkw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+ <53451077.2030102@openwrt.org>
+ <CAB=NE6UUN4vQd3SpsvO5tcgaYq3YXQeE0KtZGki7p7OnR=J4RA@mail.gmail.com>
+ <20140409191225.GA10560@kroah.com>
+ <CAB=NE6VqY8yXoYuE0o01vq86imY8EtqLdkPa4bGMvR3bTaj5KQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAB=NE6VqY8yXoYuE0o01vq86imY8EtqLdkPa4bGMvR3bTaj5KQ@mail.gmail.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 2014-04-09 03:03, Luis R. Rodriguez wrote:
-> Folks,
+On Wed, Apr 09, 2014 at 01:01:23PM -0700, Luis R. Rodriguez wrote:
+> On Wed, Apr 9, 2014 at 12:12 PM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > On Wed, Apr 09, 2014 at 11:28:55AM -0700, Luis R. Rodriguez wrote:
+> >> On Wed, Apr 9, 2014 at 2:18 AM, Felix Fietkau <nbd@openwrt.org> wrote:
+> >> > The oldest kernel in OpenWrt that we're still supporting with updates of
+> >> > the backports tree is 3.3, so raising the minimum requirement to 3.0 is
+> >> > completely fine with me.
+> >>
+> >> OK note that 3.3 is not listed on kernel.org as supported. I'm fine in
+> >> carrying the stuff for those for now but ultimately it'd also be nice
+> >> if we didn't even have to test the kernels in between which are not
+> >> listed. This does however raise the question of how often a kernel in
+> >> between a list of supported kernels gets picked up to be supported
+> >> eventually. Greg, Jiri, do you happen to know what the likelyhood of
+> >> that can be?
+> >
+> > I don't know of anything ever getting picked up after I have said it
+> > would not be supported anymore.
 > 
-> we have a age old dance of random parties, in particular the embedded
-> folks, ending up with random ancient kernels on embedded devices. I've
-> tried to carefully document a few ideas on why and how I believe we
-> can make automatic kernel backporting scale [0] and part of this will
-> be to try to bring consensus about a unified front to persuade users,
-> partners, customers, whatever, to be at least on a kernel listed as
-> supported on kernel.org. Today we backport down to the last 30
-> kernels, from 2.6.24 up to 3.14 and while this is manageable right now
-> I expect the number of supported drivers and features to keep
-> increasing (I've stopped counting). I am very aware of the reasons to
-> support a slew of old kernels, but its nothing but our own fault for
-> not educating enough about the importance on upgrading. I realize this
-> is an age old issue, but since I think we need scale backports and
-> wish to remove older kernels from it fast, I wanted to see if any
-> folks might have ideas on what can help here other than saying, 'if
-> you use Linux backports, your drivers will be automatically backported
-> and supported'.
-> 
-> To start off -- what's the *last* kernel you realistically need for
-> your users to use backports right now? Is it really 2.6.25? Would
-> anyone kick and scream if for the backports-3.15 release try take
-> things up to support only down to least 3.0 *right now* ?
-> 
-> [0] http://www.do-not-panic.com/2014/04/automatic-linux-kernel-backporting-with-coccinelle.html
-The oldest kernel in OpenWrt that we're still supporting with updates of
-the backports tree is 3.3, so raising the minimum requirement to 3.0 is
-completely fine with me.
+> Great! How soon after a release do you mention whether or not it will
+> be supported? Like say, 3.14, which was just released.
 
-I'm looking forward to getting rid of patches for older kernels that
-often get in the way when using various wireless-testing versions ;)
+I only mention it around the time that it would normally go end-of-life.
 
-- Felix
+For example, if 3.13 were to be a release that was going to be "long
+term", I would only say something around the normal time I would be no
+longer supporting it.  Like in 2-3 weeks from now.
+
+So for 3.14, I'll not say anything about that until 3.16-rc1 is out,
+give or take a week or two.
+
+> Also, as of late are you aware any distribution picking an unsupported
+> kernel for their next choice of kernel?
+
+Sure, lots do, as they don't line up with my release cycles (I only pick
+1 long term kernel to maintain each year).  Look at the Ubuntu releases
+for examples of that.  Also openSUSE and Fedora (although Fedora does
+rev their kernel pretty regularly) don't usually line up.  The
+"enterprise" distros are different, but even then, they don't always
+line up either (which is why Jiri is maintaining 3.12...)
+
+Hope this helps,
+
+greg k-h
