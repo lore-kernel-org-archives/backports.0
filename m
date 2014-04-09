@@ -1,105 +1,139 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:46348 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752375AbaDEMmH (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 5 Apr 2014 08:42:07 -0400
-Received: by mail-pa0-f50.google.com with SMTP id kq14so4671068pab.37
-        for <backports@vger.kernel.org>; Sat, 05 Apr 2014 05:42:07 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
+Received: from mail.kapsi.fi ([217.30.184.167]:50982 "EHLO mail.kapsi.fi"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933342AbaDIQOz (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 9 Apr 2014 12:14:55 -0400
+From: Antti Palosaari <crope@iki.fi>
+To: linux-media@vger.kernel.org
 Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Hannes Frederic Sowa <hannes@stressinduktion.org>
-Subject: [PATCH 12/27] backports: backport inet_frag_maybe_warn_overflow()
-Date: Sat,  5 Apr 2014 05:40:46 -0700
-Message-Id: <1396701662-15165-13-git-send-email-mcgrof@do-not-panic.com> (sfid-20140405_144449_631093_E7C8823F)
-In-Reply-To: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
+	Antti Palosaari <crope@iki.fi>, backports@vger.kernel.org
+Subject: [PATCH] rtl28xxu: do not hard depend on staging SDR module
+Date: Wed,  9 Apr 2014 19:14:29 +0300
+Message-Id: <1397060069-12757-1-git-send-email-crope@iki.fi> (sfid-20140409_181502_454105_850782FA)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is used by the ieee802154 reassembly code. This is
-a straight forward backport.
+RTL2832 SDR extension module is currently on staging. SDR module
+headers were included from staging causing direct dependency staging
+directory. As a solution, add needed headers to main driver.
+Motivation of that change comes from Luis / driver backports project.
 
-mcgrof@ergon ~/linux-next (git::master)$ git describe --contains 5a3da1fe95
-v3.9-rc4~27^2
+Another issues was a little too heavy looking error log "DVB: Unable
+to find symbol rtl2832_sdr_attach()" when staging module was disabled.
+Get rid of it too by introducing own version of dvb_attach() macro
+without the error text.
 
-commit 5a3da1fe9561828d0ca7eca664b16ec2b9bf0055
-Author: Hannes Frederic Sowa <hannes@stressinduktion.org>
-Date:   Fri Mar 15 11:32:30 2013 +0000
-
-    inet: limit length of fragment queue hash table bucket lists
-
-    This patch introduces a constant limit of the fragment queue hash
-    table bucket list lengths. Currently the limit 128 is choosen somewhat
-    arbitrary and just ensures that we can fill up the fragment cache with
-    empty packets up to the default ip_frag_high_thresh limits. It should
-    just protect from list iteration eating considerable amounts of cpu.
-
-    If we reach the maximum length in one hash bucket a warning is printed.
-    This is implemented on the caller side of inet_frag_find to distinguish
-    between the different users of inet_fragment.c.
-
-    I dropped the out of memory warning in the ipv4 fragment lookup path,
-    because we already get a warning by the slab allocator.
-
-    Cc: Eric Dumazet <eric.dumazet@gmail.com>
-    Cc: Jesper Dangaard Brouer <jbrouer@redhat.com>
-    Signed-off-by: Hannes Frederic Sowa <hannes@stressinduktion.org>
-    Acked-by: Eric Dumazet <edumazet@google.com>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
-
-Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Reported-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org
+Signed-off-by: Antti Palosaari <crope@iki.fi>
 ---
- backport/backport-include/net/inet_frag.h |  5 +++++
- backport/compat/compat-3.9.c              | 14 ++++++++++++++
- 2 files changed, 19 insertions(+)
+ drivers/media/usb/dvb-usb-v2/Makefile   |  1 -
+ drivers/media/usb/dvb-usb-v2/rtl28xxu.c | 48 +++++++++++++++++++++++++++++----
+ 2 files changed, 43 insertions(+), 6 deletions(-)
 
-diff --git a/backport/backport-include/net/inet_frag.h b/backport/backport-include/net/inet_frag.h
-index 167792b..3c9e11a 100644
---- a/backport/backport-include/net/inet_frag.h
-+++ b/backport/backport-include/net/inet_frag.h
-@@ -34,6 +34,11 @@ static inline int sum_frag_mem_limit(struct netns_frags *nf)
- {
- 	return atomic_read(&nf->mem);
- }
-+
-+#define inet_frag_maybe_warn_overflow LINUX_BACKPORT(inet_frag_maybe_warn_overflow)
-+void inet_frag_maybe_warn_overflow(struct inet_frag_queue *q,
-+				   const char *prefix);
- #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0) */
+diff --git a/drivers/media/usb/dvb-usb-v2/Makefile b/drivers/media/usb/dvb-usb-v2/Makefile
+index 7407b83..bc38f03 100644
+--- a/drivers/media/usb/dvb-usb-v2/Makefile
++++ b/drivers/media/usb/dvb-usb-v2/Makefile
+@@ -41,4 +41,3 @@ ccflags-y += -I$(srctree)/drivers/media/dvb-core
+ ccflags-y += -I$(srctree)/drivers/media/dvb-frontends
+ ccflags-y += -I$(srctree)/drivers/media/tuners
+ ccflags-y += -I$(srctree)/drivers/media/common
+-ccflags-y += -I$(srctree)/drivers/staging/media/rtl2832u_sdr
+diff --git a/drivers/media/usb/dvb-usb-v2/rtl28xxu.c b/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
+index c83c16c..f58a952 100644
+--- a/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
++++ b/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
+@@ -24,7 +24,6 @@
  
-+
- #endif /* __BACKPORT__NET_FRAG_H__ */
-diff --git a/backport/compat/compat-3.9.c b/backport/compat/compat-3.9.c
-index df10d7d..5a4f523 100644
---- a/backport/compat/compat-3.9.c
-+++ b/backport/compat/compat-3.9.c
-@@ -15,6 +15,8 @@
- #include <linux/if.h>
- #include <linux/if_ether.h>
- #include <linux/etherdevice.h>
-+#include <net/inet_frag.h>
-+#include <net/sock.h>
+ #include "rtl2830.h"
+ #include "rtl2832.h"
+-#include "rtl2832_sdr.h"
  
- void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res)
- {
-@@ -56,3 +58,15 @@ void eth_commit_mac_addr_change(struct net_device *dev, void *p)
- 	memcpy(dev->dev_addr, addr->sa_data, ETH_ALEN);
- }
- EXPORT_SYMBOL_GPL(eth_commit_mac_addr_change);
+ #include "qt1010.h"
+ #include "mt2060.h"
+@@ -36,6 +35,45 @@
+ #include "tua9001.h"
+ #include "r820t.h"
+ 
++/*
++ * RTL2832_SDR module is in staging. That logic is added in order to avoid any
++ * hard dependency to drivers/staging/ directory as we want compile mainline
++ * driver even whole staging directory is missing.
++ */
++#include <media/v4l2-subdev.h>
 +
-+void inet_frag_maybe_warn_overflow(struct inet_frag_queue *q,
-+				   const char *prefix)
++#ifdef CONFIG_MEDIA_ATTACH
++#define dvb_attach_sdr(FUNCTION, ARGS...) ({ \
++	void *__r = NULL; \
++	typeof(&FUNCTION) __a = symbol_request(FUNCTION); \
++	if (__a) { \
++		__r = (void *) __a(ARGS); \
++		if (__r == NULL) \
++			symbol_put(FUNCTION); \
++	} \
++	__r; \
++})
++
++#else
++#define dvb_attach_sdr(FUNCTION, ARGS...) ({ \
++	FUNCTION(ARGS); \
++})
++
++#endif
++
++#if IS_ENABLED(CONFIG_DVB_RTL2832_SDR)
++extern struct dvb_frontend *rtl2832_sdr_attach(struct dvb_frontend *fe,
++	struct i2c_adapter *i2c, const struct rtl2832_config *cfg,
++	struct v4l2_subdev *sd);
++#else
++static inline struct dvb_frontend *rtl2832_sdr_attach(struct dvb_frontend *fe,
++	struct i2c_adapter *i2c, const struct rtl2832_config *cfg,
++	struct v4l2_subdev *sd)
 +{
-+	static const char msg[] = "inet_frag_find: Fragment hash bucket"
-+		" list length grew over limit " __stringify(INETFRAGS_MAXDEPTH)
-+		". Dropping fragment.\n";
-+
-+	if (PTR_ERR(q) == -ENOBUFS)
-+		LIMIT_NETDEBUG(KERN_WARNING "%s%s", prefix, msg);
++	return NULL;
 +}
-+EXPORT_SYMBOL_GPL(inet_frag_maybe_warn_overflow);
++#endif
++
+ static int rtl28xxu_disable_rc;
+ module_param_named(disable_rc, rtl28xxu_disable_rc, int, 0644);
+ MODULE_PARM_DESC(disable_rc, "disable RTL2832U remote controller");
+@@ -908,7 +946,7 @@ static int rtl2832u_tuner_attach(struct dvb_usb_adapter *adap)
+ 				adap->fe[0]->ops.tuner_ops.get_rf_strength;
+ 
+ 		/* attach SDR */
+-		dvb_attach(rtl2832_sdr_attach, adap->fe[0], &d->i2c_adap,
++		dvb_attach_sdr(rtl2832_sdr_attach, adap->fe[0], &d->i2c_adap,
+ 				&rtl28xxu_rtl2832_fc0012_config, NULL);
+ 		break;
+ 	case TUNER_RTL2832_FC0013:
+@@ -920,7 +958,7 @@ static int rtl2832u_tuner_attach(struct dvb_usb_adapter *adap)
+ 				adap->fe[0]->ops.tuner_ops.get_rf_strength;
+ 
+ 		/* attach SDR */
+-		dvb_attach(rtl2832_sdr_attach, adap->fe[0], &d->i2c_adap,
++		dvb_attach_sdr(rtl2832_sdr_attach, adap->fe[0], &d->i2c_adap,
+ 				&rtl28xxu_rtl2832_fc0013_config, NULL);
+ 		break;
+ 	case TUNER_RTL2832_E4000: {
+@@ -951,7 +989,7 @@ static int rtl2832u_tuner_attach(struct dvb_usb_adapter *adap)
+ 			i2c_set_adapdata(i2c_adap_internal, d);
+ 
+ 			/* attach SDR */
+-			dvb_attach(rtl2832_sdr_attach, adap->fe[0],
++			dvb_attach_sdr(rtl2832_sdr_attach, adap->fe[0],
+ 					i2c_adap_internal,
+ 					&rtl28xxu_rtl2832_e4000_config, sd);
+ 		}
+@@ -982,7 +1020,7 @@ static int rtl2832u_tuner_attach(struct dvb_usb_adapter *adap)
+ 				adap->fe[0]->ops.tuner_ops.get_rf_strength;
+ 
+ 		/* attach SDR */
+-		dvb_attach(rtl2832_sdr_attach, adap->fe[0], &d->i2c_adap,
++		dvb_attach_sdr(rtl2832_sdr_attach, adap->fe[0], &d->i2c_adap,
+ 				&rtl28xxu_rtl2832_r820t_config, NULL);
+ 		break;
+ 	case TUNER_RTL2832_R828D:
 -- 
-1.8.5.3
+1.9.0
 
