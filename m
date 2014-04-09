@@ -1,188 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f42.google.com ([209.85.160.42]:37884 "EHLO
-	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751179AbaDRBXL (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 17 Apr 2014 21:23:11 -0400
+Received: from mail-la0-f45.google.com ([209.85.215.45]:63329 "EHLO
+	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932847AbaDISVv (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 9 Apr 2014 14:21:51 -0400
+Received: by mail-la0-f45.google.com with SMTP id hr17so1445071lab.4
+        for <backports@vger.kernel.org>; Wed, 09 Apr 2014 11:21:50 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1397044495.4964.5.camel@jlt4.sipsolutions.net>
+References: <1396927943-25589-1-git-send-email-mcgrof@do-not-panic.com>
+ <CAB=NE6VzqUpt+SpuW8vB0HWmces8EMJpQr-L8RyG3P76WfAtUA@mail.gmail.com>
+ <CAB=NE6Ut3YLiY_NhGJyVeS2ePiQyMuppDJ+1LjS_XFj=FBTBvQ@mail.gmail.com> <1397044495.4964.5.camel@jlt4.sipsolutions.net>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: alex.bluesman.smirnov@gmail.com, dbaryshkov@gmail.com,
-	linux-zigbee-devel@lists.sourceforge.net, davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	backports@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH 1/3] 6lowpan: add helper to get 6lowpan namespace
-Date: Thu, 17 Apr 2014 18:22:54 -0700
-Message-Id: <1397784176-15809-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20140418_032412_117495_4585013B)
-In-Reply-To: <1397784176-15809-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1397784176-15809-1-git-send-email-mcgrof@do-not-panic.com>
+Date: Wed, 9 Apr 2014 11:21:30 -0700
+Message-ID: <CAB=NE6USQiJdEQbwVbVM9b3q7euWdc802zSJKK7z5G5+DBSrNg@mail.gmail.com> (sfid-20140409_202153_932597_7DCA3FA1)
+Subject: Re: [PATCH 00/12] backports: cath up to next-20140320
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+On Wed, Apr 9, 2014 at 4:54 AM, Johannes Berg <johannes@sipsolutions.net> wrote:
+> On Tue, 2014-04-08 at 18:26 -0700, Luis R. Rodriguez wrote:
+>> On Tue, Apr 8, 2014 at 6:20 PM, Luis R. Rodriguez
+>> <mcgrof@do-not-panic.com> wrote:
+>> >
+>> > OK I had to address just one more change which I just posted. Since it
+>> > compiles fine I'm going to push now. Tomorrow is release day.
+>>
+>> Alright, all pushed out. Please fetch.
+>
+> Can you clarify which tree you're using now? It seems you're updating
+> mcgrof/backports.git but I thought the intent was to switch over to
+> backports/backports.git so you can share maintenance with Hauke...
 
-This will simplify the new reassembly backport
-with no code changes being required.
+Yeap sorry just pushed onto the shared repo. The canonical repo therefore is:
 
-CC: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
-Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: linux-zigbee-devel@lists.sourceforge.net
-Cc: David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
----
- include/net/net_namespace.h | 15 +++++++++++++++
- net/ieee802154/reassembly.c | 46 +++++++++++++++++++++++++++++----------------
- 2 files changed, 45 insertions(+), 16 deletions(-)
+git://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git
 
-diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
-index 5f9eb26..bc4118e 100644
---- a/include/net/net_namespace.h
-+++ b/include/net/net_namespace.h
-@@ -373,6 +373,21 @@ static inline void rt_genid_bump_ipv6(struct net *net)
- }
- #endif
- 
-+#if IS_ENABLED(CONFIG_IEEE802154_6LOWPAN)
-+static inline struct netns_ieee802154_lowpan *
-+net_ieee802154_lowpan(struct net *net)
-+{
-+	return &net->ieee802154_lowpan;
-+}
-+#else
-+static inline struct netns_ieee802154_lowpan *
-+net_ieee802154_lowpan(struct net *net)
-+{
-+	return NULL;
-+}
-+#endif
-+
-+
- /* For callers who don't really care about whether it's IPv4 or IPv6 */
- static inline void rt_genid_bump_all(struct net *net)
- {
-diff --git a/net/ieee802154/reassembly.c b/net/ieee802154/reassembly.c
-index ef2d543..132b65b 100644
---- a/net/ieee802154/reassembly.c
-+++ b/net/ieee802154/reassembly.c
-@@ -120,6 +120,8 @@ fq_find(struct net *net, const struct lowpan_frag_info *frag_info,
- 	struct inet_frag_queue *q;
- 	struct lowpan_create_arg arg;
- 	unsigned int hash;
-+	struct netns_ieee802154_lowpan *ieee802154_lowpan =
-+		net_ieee802154_lowpan(net);
- 
- 	arg.tag = frag_info->d_tag;
- 	arg.d_size = frag_info->d_size;
-@@ -129,7 +131,7 @@ fq_find(struct net *net, const struct lowpan_frag_info *frag_info,
- 	read_lock(&lowpan_frags.lock);
- 	hash = lowpan_hash_frag(frag_info->d_tag, frag_info->d_size, src, dst);
- 
--	q = inet_frag_find(&net->ieee802154_lowpan.frags,
-+	q = inet_frag_find(&ieee802154_lowpan->frags,
- 			   &lowpan_frags, &arg, hash);
- 	if (IS_ERR_OR_NULL(q)) {
- 		inet_frag_maybe_warn_overflow(q, pr_fmt());
-@@ -357,6 +359,8 @@ int lowpan_frag_rcv(struct sk_buff *skb, const u8 frag_type)
- 	struct net *net = dev_net(skb->dev);
- 	struct lowpan_frag_info *frag_info = lowpan_cb(skb);
- 	struct ieee802154_addr source, dest;
-+	struct netns_ieee802154_lowpan *ieee802154_lowpan =
-+		net_ieee802154_lowpan(net);
- 	int err;
- 
- 	source = mac_cb(skb)->source;
-@@ -366,10 +370,10 @@ int lowpan_frag_rcv(struct sk_buff *skb, const u8 frag_type)
- 	if (err < 0)
- 		goto err;
- 
--	if (frag_info->d_size > net->ieee802154_lowpan.max_dsize)
-+	if (frag_info->d_size > ieee802154_lowpan->max_dsize)
- 		goto err;
- 
--	inet_frag_evictor(&net->ieee802154_lowpan.frags, &lowpan_frags, false);
-+	inet_frag_evictor(&ieee802154_lowpan->frags, &lowpan_frags, false);
- 
- 	fq = fq_find(net, frag_info, &source, &dest);
- 	if (fq != NULL) {
-@@ -436,6 +440,8 @@ static int __net_init lowpan_frags_ns_sysctl_register(struct net *net)
- {
- 	struct ctl_table *table;
- 	struct ctl_table_header *hdr;
-+	struct netns_ieee802154_lowpan *ieee802154_lowpan =
-+		net_ieee802154_lowpan(net);
- 
- 	table = lowpan_frags_ns_ctl_table;
- 	if (!net_eq(net, &init_net)) {
-@@ -444,10 +450,10 @@ static int __net_init lowpan_frags_ns_sysctl_register(struct net *net)
- 		if (table == NULL)
- 			goto err_alloc;
- 
--		table[0].data = &net->ieee802154_lowpan.frags.high_thresh;
--		table[1].data = &net->ieee802154_lowpan.frags.low_thresh;
--		table[2].data = &net->ieee802154_lowpan.frags.timeout;
--		table[3].data = &net->ieee802154_lowpan.max_dsize;
-+		table[0].data = &ieee802154_lowpan->frags.high_thresh;
-+		table[1].data = &ieee802154_lowpan->frags.low_thresh;
-+		table[2].data = &ieee802154_lowpan->frags.timeout;
-+		table[3].data = &ieee802154_lowpan->max_dsize;
- 
- 		/* Don't export sysctls to unprivileged users */
- 		if (net->user_ns != &init_user_ns)
-@@ -458,7 +464,7 @@ static int __net_init lowpan_frags_ns_sysctl_register(struct net *net)
- 	if (hdr == NULL)
- 		goto err_reg;
- 
--	net->ieee802154_lowpan.sysctl.frags_hdr = hdr;
-+	ieee802154_lowpan->sysctl.frags_hdr = hdr;
- 	return 0;
- 
- err_reg:
-@@ -471,9 +477,11 @@ err_alloc:
- static void __net_exit lowpan_frags_ns_sysctl_unregister(struct net *net)
- {
- 	struct ctl_table *table;
-+	struct netns_ieee802154_lowpan *ieee802154_lowpan =
-+		net_ieee802154_lowpan(net);
- 
--	table = net->ieee802154_lowpan.sysctl.frags_hdr->ctl_table_arg;
--	unregister_net_sysctl_table(net->ieee802154_lowpan.sysctl.frags_hdr);
-+	table = ieee802154_lowpan->sysctl.frags_hdr->ctl_table_arg;
-+	unregister_net_sysctl_table(ieee802154_lowpan->sysctl.frags_hdr);
- 	if (!net_eq(net, &init_net))
- 		kfree(table);
- }
-@@ -514,20 +522,26 @@ static inline void lowpan_frags_sysctl_unregister(void)
- 
- static int __net_init lowpan_frags_init_net(struct net *net)
- {
--	net->ieee802154_lowpan.frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
--	net->ieee802154_lowpan.frags.low_thresh = IPV6_FRAG_LOW_THRESH;
--	net->ieee802154_lowpan.frags.timeout = IPV6_FRAG_TIMEOUT;
--	net->ieee802154_lowpan.max_dsize = 0xFFFF;
-+	struct netns_ieee802154_lowpan *ieee802154_lowpan =
-+		net_ieee802154_lowpan(net);
- 
--	inet_frags_init_net(&net->ieee802154_lowpan.frags);
-+	ieee802154_lowpan->frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
-+	ieee802154_lowpan->frags.low_thresh = IPV6_FRAG_LOW_THRESH;
-+	ieee802154_lowpan->frags.timeout = IPV6_FRAG_TIMEOUT;
-+	ieee802154_lowpan->max_dsize = 0xFFFF;
-+
-+	inet_frags_init_net(&ieee802154_lowpan->frags);
- 
- 	return lowpan_frags_ns_sysctl_register(net);
- }
- 
- static void __net_exit lowpan_frags_exit_net(struct net *net)
- {
-+	struct netns_ieee802154_lowpan *ieee802154_lowpan =
-+		net_ieee802154_lowpan(net);
-+
- 	lowpan_frags_ns_sysctl_unregister(net);
--	inet_frags_exit_net(&net->ieee802154_lowpan.frags, &lowpan_frags);
-+	inet_frags_exit_net(&ieee802154_lowpan->frags, &lowpan_frags);
- }
- 
- static struct pernet_operations lowpan_frags_ops = {
--- 
-1.9.1
-
+  Luis
