@@ -1,37 +1,34 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:64772 "EHLO
-	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750805AbaDKGBH (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 11 Apr 2014 02:01:07 -0400
-Date: Fri, 11 Apr 2014 08:01:04 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-cc: "Luis R. Rodriguez" <mcgrof@suse.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	linux-kernel@vger.kernel.org, backports@vger.kernel.org,
-	cocci@systeme.lip6.fr
-Subject: Re: [Cocci] [PATCH] coccinelle: add pycocci wrapper for	multithreaded
- support
-In-Reply-To: <534783DB.4080200@users.sourceforge.net>
-Message-ID: <alpine.DEB.2.02.1404110800120.2032@localhost6.localdomain6> (sfid-20140411_080110_794728_F9A1E6A5)
-References: <1397152097-315-1-git-send-email-mcgrof@do-not-panic.com> <1397152289.4757.28.camel@jlt4.sipsolutions.net> <20140410175748.GK14815@wotan.suse.de> <534783DB.4080200@users.sourceforge.net>
+Received: from mail-lb0-f181.google.com ([209.85.217.181]:50963 "EHLO
+	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933251AbaDIXjR (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 9 Apr 2014 19:39:17 -0400
+Received: by mail-lb0-f181.google.com with SMTP id c11so1725445lbj.12
+        for <backports@vger.kernel.org>; Wed, 09 Apr 2014 16:39:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <CAB=NE6VnNNfRDO488S65Cjo1JfdonZ7tF6pmqQFE=5y0WhMLwg@mail.gmail.com>
+References: <CAE5JcOWEv65JjjhV0LyvTSBPYKrEyZem_+Wy07Cz4qaLP7218A@mail.gmail.com>
+ <CAB=NE6VnNNfRDO488S65Cjo1JfdonZ7tF6pmqQFE=5y0WhMLwg@mail.gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@gmail.com>
+Date: Wed, 9 Apr 2014 16:38:56 -0700
+Message-ID: <CAB=NE6UnMAuxkkE08U+B6VJYjMnKGw9q6PZ0QGya2Yoa=4SVOg@mail.gmail.com> (sfid-20140410_013918_846981_7167A055)
+Subject: Re: Back ports question
+To: Shridatt Sugrim <ssugrim@winlab.rutgers.edu>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+On Wed, Apr 9, 2014 at 4:38 PM, Luis R. Rodriguez <mcgrof@gmail.com> wrote:
+>
+> Another option is for you to wait for a release to be kicked out on
+> the release page:
 
+Oops that page is:
 
-On Fri, 11 Apr 2014, SF Markus Elfring wrote:
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
 
-> > I checked the profile results, the reason the jobs finish is some threads
-> > had no work or little work.
-> 
-> Could you find out during the data processing which parts or files
-> result in a special application behaviour you would like to point out here?
+Right now we don't have a v3.14 release yet or the latest tag'd
+linux-next release but I'm working on that.
 
-I don't understand the question at all, but since the various files have 
-different properties, it is hard to determine automatically in advance how 
-much work Coccinelle will need to do on each one.
-
-julia
+  Luis
