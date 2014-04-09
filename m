@@ -1,37 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:26991 "EHLO
-	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755182AbaDGN0o (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 7 Apr 2014 09:26:44 -0400
-Date: Mon, 7 Apr 2014 15:26:32 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Johannes Berg <johannes@sipsolutions.net>
-cc: Stefan Assmann <sassmann@kpanic.de>, backports@vger.kernel.org
-Subject: Re: coccinelle-1.0.0-rc20 compile issue
-In-Reply-To: <1396876968.6270.1.camel@jlt4.sipsolutions.net>
-Message-ID: <alpine.DEB.2.10.1404071525480.2187@hadrien> (sfid-20140407_152646_464809_102389F6)
-References: <534268E2.6060305@kpanic.de>  <alpine.DEB.2.10.1404071128260.3433@hadrien> <53427B88.50606@kpanic.de>  <alpine.DEB.2.10.1404071511510.2187@hadrien>  (sfid-20140407_151346_253698_6843B59A) <1396876968.6270.1.camel@jlt4.sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Received: from mga09.intel.com ([134.134.136.24]:44213 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932560AbaDIMHm (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 9 Apr 2014 08:07:42 -0400
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+To: backports@vger.kernel.org
+Cc: Arik Nemtsov <arik@wizery.com>,
+	Arik Nemtsov <arikx.nemtsov@intel.com>,
+	Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Subject: [PATCH] backports: device: don't redefine DEVICE_ATTR_RO
+Date: Wed,  9 Apr 2014 15:04:13 +0300
+Message-Id: <1397045053-22585-1-git-send-email-emmanuel.grumbach@intel.com> (sfid-20140409_140744_610643_511C94CB)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+From: Arik Nemtsov <arik@wizery.com>
 
+Some old custom kernels have it defined.
 
-On Mon, 7 Apr 2014, Johannes Berg wrote:
+Signed-off-by: Arik Nemtsov <arikx.nemtsov@intel.com>
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+---
+ backport/backport-include/linux/device.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> On Mon, 2014-04-07 at 15:13 +0200, Julia Lawall wrote:
->
-> > > I didn't spot any errors. Here's a paste.
-> > > http://fpaste.org/92207/39686580/
-> >
-> > Did you get it from github?  I think there is a problem that github
-> > doesn't preserve empty directories.
->
-> git in general doesn't, I believe - you should put a dummy file into the
-> directory or so.
+diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
+index ebfc01a..a54756a 100644
+--- a/backport/backport-include/linux/device.h
++++ b/backport/backport-include/linux/device.h
+@@ -193,8 +193,10 @@ backport_device_release_driver(struct device *dev)
+ #endif /* LINUX_VERSION_CODE <= KERNEL_VERSION(3,6,0) */
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
++#ifndef DEVICE_ATTR_RO
+ #define DEVICE_ATTR_RO(_name) \
+ struct device_attribute dev_attr_ ## _name = __ATTR_RO(_name);
++#endif
+ #define DEVICE_ATTR_RW(_name) \
+ struct device_attribute dev_attr_ ## _name = __ATTR_RW(_name)
+ #endif
+-- 
+1.8.3.2
 
-Luis already proposed to change the makefile to make the directory, if
-needed.  I have made that change and sent Stefan a pointer to a patch.
-
-julia
