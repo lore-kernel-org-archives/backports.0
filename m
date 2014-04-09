@@ -1,42 +1,49 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:15280 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750805AbaDKHvn (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 11 Apr 2014 03:51:43 -0400
-Message-ID: <53479F0B.6070909@broadcom.com> (sfid-20140411_095146_046984_6413AAEA)
-Date: Fri, 11 Apr 2014 09:51:39 +0200
-From: Arend van Spriel <arend@broadcom.com>
+Received: from mail-lb0-f178.google.com ([209.85.217.178]:56225 "EHLO
+	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933342AbaDIUBq (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 9 Apr 2014 16:01:46 -0400
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-CC: Takashi Iwai <tiwai@suse.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Felix Fietkau <nbd@openwrt.org>,
+In-Reply-To: <20140409191225.GA10560@kroah.com>
+References: <CAB=NE6VvyBKzEg=ErZzQMktY8eLytQ21JCPrOQbxvZ9m-nqHkw@mail.gmail.com>
+ <53451077.2030102@openwrt.org> <CAB=NE6UUN4vQd3SpsvO5tcgaYq3YXQeE0KtZGki7p7OnR=J4RA@mail.gmail.com>
+ <20140409191225.GA10560@kroah.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Wed, 9 Apr 2014 13:01:23 -0700
+Message-ID: <CAB=NE6VqY8yXoYuE0o01vq86imY8EtqLdkPa4bGMvR3bTaj5KQ@mail.gmail.com> (sfid-20140409_220209_285050_D5247BEE)
+Subject: Re: Bumping required kernels to 3.0 for Linux backports ?
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Felix Fietkau <nbd@openwrt.org>,
 	"backports@vger.kernel.org" <backports@vger.kernel.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	Jiri Slaby <jslaby@suse.cz>,
 	Mauro Carvalho Chehab <m.chehab@samsung.com>
-Subject: Re: Bumping required kernels to 3.0 for Linux backports ?
-References: <CAB=NE6VvyBKzEg=ErZzQMktY8eLytQ21JCPrOQbxvZ9m-nqHkw@mail.gmail.com> <53451077.2030102@openwrt.org> <CAB=NE6UUN4vQd3SpsvO5tcgaYq3YXQeE0KtZGki7p7OnR=J4RA@mail.gmail.com> <20140409191225.GA10560@kroah.com> <CAB=NE6VqY8yXoYuE0o01vq86imY8EtqLdkPa4bGMvR3bTaj5KQ@mail.gmail.com> <20140409202224.GA12953@kroah.com> <CAB=NE6XY5++p7hJQpQdwrFNUcGbUsKpC+oJiZQciXNduo+8j8A@mail.gmail.com> <20140409210613.GA14392@kroah.com> <s5heh15pr18.wl%tiwai@suse.de> <CAB=NE6VeNTFeGxKXpYunkU-W=JPLMpOnrehttvsqB+yXkdz5fg@mail.gmail.com> <5346CF27.3070406@broadcom.com> <CAB=NE6Wpa4gG14+XYVkT_=_t-cZXvO0FD_Q1T7tB1yiSmNBraw@mail.gmail.com>
-In-Reply-To: <CAB=NE6Wpa4gG14+XYVkT_=_t-cZXvO0FD_Q1T7tB1yiSmNBraw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 10/04/14 20:56, Luis R. Rodriguez wrote:
-> On Thu, Apr 10, 2014 at 10:04 AM, Arend van Spriel <arend@broadcom.com> wrote:
->> Ok, I guess my voice was cracking when I mentioned 2.6.38 as being used over
->> here. I am probably alone in that desert.
+On Wed, Apr 9, 2014 at 12:12 PM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Wed, Apr 09, 2014 at 11:28:55AM -0700, Luis R. Rodriguez wrote:
+>> On Wed, Apr 9, 2014 at 2:18 AM, Felix Fietkau <nbd@openwrt.org> wrote:
+>> > The oldest kernel in OpenWrt that we're still supporting with updates of
+>> > the backports tree is 3.3, so raising the minimum requirement to 3.0 is
+>> > completely fine with me.
+>>
+>> OK note that 3.3 is not listed on kernel.org as supported. I'm fine in
+>> carrying the stuff for those for now but ultimately it'd also be nice
+>> if we didn't even have to test the kernels in between which are not
+>> listed. This does however raise the question of how often a kernel in
+>> between a list of supported kernels gets picked up to be supported
+>> eventually. Greg, Jiri, do you happen to know what the likelyhood of
+>> that can be?
 >
-> I thought broadcom didn't use backports? If they do can you explain
-> how? Also what drivers do you need enabled for your use case ?
+> I don't know of anything ever getting picked up after I have said it
+> would not be supported anymore.
 
-That was 2 years ago when you asked me ;-) Since then I have been using 
-it to backport the brcm80211 mainline drivers to 1) Android kernel, ie. 
-3.4 kernel, and 2) Fedora 19 which is actually fixed to 3.11 kernel.
+Great! How soon after a release do you mention whether or not it will
+be supported? Like say, 3.14, which was just released. Also, as of
+late are you aware any distribution picking an unsupported kernel for
+their next choice of kernel?
 
-So we use backports these days for enabling brcm80211 drivers on various 
-test equipment that uses older kernels.
-
-Regards,
-Arend
-
+  Luis
