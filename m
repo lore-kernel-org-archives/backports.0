@@ -1,44 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f43.google.com ([209.85.215.43]:41928 "EHLO
-	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755431AbaDGR1A (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 7 Apr 2014 13:27:00 -0400
-Received: by mail-la0-f43.google.com with SMTP id e16so5092454lan.16
-        for <backports@vger.kernel.org>; Mon, 07 Apr 2014 10:26:58 -0700 (PDT)
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37459 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933354AbaDITJy (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 9 Apr 2014 15:09:54 -0400
+Date: Wed, 9 Apr 2014 12:12:25 -0700
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: Felix Fietkau <nbd@openwrt.org>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Jiri Slaby <jslaby@suse.cz>,
+	Mauro Carvalho Chehab <m.chehab@samsung.com>
+Subject: Re: Bumping required kernels to 3.0 for Linux backports ?
+Message-ID: <20140409191225.GA10560@kroah.com> (sfid-20140409_210956_188774_9E6E45EA)
+References: <CAB=NE6VvyBKzEg=ErZzQMktY8eLytQ21JCPrOQbxvZ9m-nqHkw@mail.gmail.com>
+ <53451077.2030102@openwrt.org>
+ <CAB=NE6UUN4vQd3SpsvO5tcgaYq3YXQeE0KtZGki7p7OnR=J4RA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1396891524.6270.3.camel@jlt4.sipsolutions.net>
-References: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
- <1396701662-15165-27-git-send-email-mcgrof@do-not-panic.com>
- <1396866692.6270.0.camel@jlt4.sipsolutions.net> <CAB=NE6VWRcVwMjWJEJNVfHCuEwvA94u4p-W+JHEXOU74MtLtSA@mail.gmail.com>
- <1396891524.6270.3.camel@jlt4.sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Mon, 7 Apr 2014 10:26:38 -0700
-Message-ID: <CAB=NE6XQzqs5MfyAj8eUZm4n5ahTwCij3Cd+uCJoKS=28DfoqA@mail.gmail.com> (sfid-20140407_192702_124132_EE23BD09)
-Subject: Re: [PATCH 26/27] backports: convert threaded IRQ suport into an SmPL patch
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Peter Senna <peter.senna@gmail.com>,
-	Julia Lawall <julia.lawall@lip6.fr>,
-	Gilles Muller <Gilles.Muller@lip6.fr>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAB=NE6UUN4vQd3SpsvO5tcgaYq3YXQeE0KtZGki7p7OnR=J4RA@mail.gmail.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Apr 7, 2014 at 10:25 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Mon, 2014-04-07 at 10:19 -0700, Luis R. Rodriguez wrote:
->> On Mon, Apr 7, 2014 at 3:31 AM, Johannes Berg <johannes@sipsolutions.net> wrote:
->> > On Sat, 2014-04-05 at 05:41 -0700, Luis R. Rodriguez wrote:
->> >
->> >> ++ret = compat_request_threaded_irq(&private->irq_compat,
->> >
->> > Whhy not go to backport namespace too?
->>
->> Sure, how about as a second patch?
->
-> Sure, I was just wondering if there was a particular reason you didn't
-> while you rewrote the whole thing anyway.
+On Wed, Apr 09, 2014 at 11:28:55AM -0700, Luis R. Rodriguez wrote:
+> On Wed, Apr 9, 2014 at 2:18 AM, Felix Fietkau <nbd@openwrt.org> wrote:
+> > The oldest kernel in OpenWrt that we're still supporting with updates of
+> > the backports tree is 3.3, so raising the minimum requirement to 3.0 is
+> > completely fine with me.
+> 
+> OK note that 3.3 is not listed on kernel.org as supported. I'm fine in
+> carrying the stuff for those for now but ultimately it'd also be nice
+> if we didn't even have to test the kernels in between which are not
+> listed. This does however raise the question of how often a kernel in
+> between a list of supported kernels gets picked up to be supported
+> eventually. Greg, Jiri, do you happen to know what the likelyhood of
+> that can be?
 
-Well this patch didn't touch the header files, just the usage, that's all.
+I don't know of anything ever getting picked up after I have said it
+would not be supported anymore.
 
-  Luis
+thanks,
+
+greg k-h
