@@ -1,128 +1,171 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:64845 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752596AbaDEMnU (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 5 Apr 2014 08:43:20 -0400
-Received: by mail-pd0-f169.google.com with SMTP id fp1so4539643pdb.0
-        for <backports@vger.kernel.org>; Sat, 05 Apr 2014 05:43:20 -0700 (PDT)
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:56258 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756235AbaDIBTN (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 8 Apr 2014 21:19:13 -0400
+Received: by mail-pb0-f46.google.com with SMTP id rq2so1791281pbb.5
+        for <backports@vger.kernel.org>; Tue, 08 Apr 2014 18:19:13 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
 Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Peter Senna <peter.senna@gmail.com>,
-	Julia Lawall <julia.lawall@lip6.fr>,
-	Gilles Muller <Gilles.Muller@lip6.fr>
-Subject: [PATCH 27/27] backports: enhance 0001-netdev_ops.cocci with data structure specifics
-Date: Sat,  5 Apr 2014 05:41:01 -0700
-Message-Id: <1396701662-15165-28-git-send-email-mcgrof@do-not-panic.com> (sfid-20140405_144449_145708_D16248BC)
-In-Reply-To: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
+	Viresh Kumar <viresh.kumar@st.com>,
+	Wolfram Sang <w.sang@pengutronix.de>,
+	Sergei Shtylyov <sshtylyov@ru.mvista.com>
+Subject: [PATCH] backports: backport 3.6 fix on non CONFIG_COMMON_CLK kernels
+Date: Tue,  8 Apr 2014 18:19:07 -0700
+Message-Id: <1397006347-7822-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20140409_031916_049628_FBEE78CC)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The 0001-netdev_ops.cocci is fine but is uses Expression which
-makes the interpretation loose. We can reduce the namespace of
-the change by using struct. We have to keep expression on the
-right hand side as that can even be macros.
+Commit 93abe8e4 by Viresh added non CONFIG_COMMON_CLK static inlines
+that should have gone in for 3.5 as 3.5 assumed some declared routines
+would be exproted by the architecture, which was not true. We backport
+only the non CONFIG_COMMON_CLK case as CONFIG_COMMON_CLK requires
+core kernel architecture specific backport support which we currently do
+not support (and perhaps shouldn't). Since 3.5 is not a supported kernel
+there is no need to fix this there upstream but this then does require
+a paper wrap work around for those kernels of providing an export symbol
+for clk_enable() and clk_disable() for the !CONFIG_COMMON_CLK case which
+older kernels failed to address.
 
-For a full example test coverage of this change see the test netdev-ops
-github tree and run:
+mcgrof@ergon ~/linux-next (git::master)$ git describe --contains 93abe8e4
+v3.6-rc1~41^2~117
 
-make test1
-
-git checkout -f
-
-make test2
-
-The benefits should be clear, we are *not* modifying data structures
-that have similar names. This increases accuracy and security of our
-changes. The added run time penalty however is 50 seconds since we had
-to use --recursive-includes. The time penatly is worth it for the
-accuracy provided and since we'll likley need this flag elsewhere for
-other rules.
-
-mcgrof@drvbp1 ~/backports (git::master)$ time \
-	./gentree.py --clean --refresh \
-	/home/mcgrof/linux-next \
-	/home/mcgrof/build/next-20140311
-Copy original source files ...
-Apply patches ...
-Modify Kconfig tree ...
-Rewrite Makefiles and Kconfig files ...
-Done!
-
-real    1m56.339s
-user    19m31.428s
-sys     0m50.100s
-
-1   2.6.25              [  OK  ]
-2   2.6.26              [  OK  ]
-3   2.6.27              [  OK  ]
-4   2.6.28              [  OK  ]
-5   2.6.29              [  OK  ]
-6   2.6.30              [  OK  ]
-7   2.6.31              [  OK  ]
-8   2.6.32              [  OK  ]
-9   2.6.33              [  OK  ]
-10  2.6.34              [  OK  ]
-11  2.6.35              [  OK  ]
-12  2.6.36              [  OK  ]
-13  2.6.37              [  OK  ]
-14  2.6.38              [  OK  ]
-15  2.6.39              [  OK  ]
-16  3.0.101             [  OK  ]
-17  3.1.10              [  OK  ]
-18  3.2.54              [  OK  ]
-19  3.3.8               [  OK  ]
-20  3.4.79              [  OK  ]
-21  3.5.7               [  OK  ]
-22  3.6.11              [  OK  ]
-23  3.7.10              [  OK  ]
-24  3.8.13              [  OK  ]
-25  3.9.11              [  OK  ]
-26  3.10.29             [  OK  ]
-27  3.11.10             [  OK  ]
-28  3.12.10             [  OK  ]
-29  3.13.2              [  OK  ]
-30  3.14-rc1            [  OK  ]
-
-[0] https://github.com/mcgrof/netdev-ops
-
-Cc: Peter Senna <peter.senna@gmail.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Gilles Muller <Gilles.Muller@lip6.fr>
+Cc: Viresh Kumar <viresh.kumar@st.com>
+Cc: Wolfram Sang <w.sang@pengutronix.de>
+Cc: Sergei Shtylyov <sshtylyov@ru.mvista.com>
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- lib/bpcoccinelle.py                                         | 1 +
- patches/collateral-evolutions/network/0001-netdev_ops.cocci | 8 ++++----
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ backport/backport-include/linux/clk.h | 89 +++++++++++++++++++++++++++++++++++
+ backport/compat/compat-3.6.c          | 15 ++++++
+ 2 files changed, 104 insertions(+)
+ create mode 100644 backport/backport-include/linux/clk.h
 
-diff --git a/lib/bpcoccinelle.py b/lib/bpcoccinelle.py
-index 37307d2..a71f425 100644
---- a/lib/bpcoccinelle.py
-+++ b/lib/bpcoccinelle.py
-@@ -32,6 +32,7 @@ class ExecutionErrorThread(CoccinelleError):
- def spatch(cocci_file, outdir,
-            max_threads, thread_id, temp_dir, ret_q, extra_args=[]):
-     cmd = ['spatch', '--sp-file', cocci_file, '--in-place',
-+            '--recursive-includes',
-             '--backup-suffix', '.cocci_backup', '--dir', '.']
+diff --git a/backport/backport-include/linux/clk.h b/backport/backport-include/linux/clk.h
+new file mode 100644
+index 0000000..a619b66
+--- /dev/null
++++ b/backport/backport-include/linux/clk.h
+@@ -0,0 +1,89 @@
++#ifndef __BACKPORT_LINUX_CLK_H
++#define __BACKPORT_LINUX_CLK_H
++#include_next <linux/clk.h>
++#include <linux/version.h>
++
++/*
++ * commit 93abe8e4 - we only backport the non CONFIG_COMMON_CLK
++ * case as the CONFIG_COMMON_CLK case requires arch support. By
++ * using the backport_ namespace for older kernels we force usage
++ * of these helpers and that's required given that 3.5 added some
++ * of these helpers expecting a few exported symbols for the non
++ * CONFIG_COMMON_CLK case. The 3.5 kernel is not supported as
++ * per kernel.org so we don't send a fix upstream for that.
++ */
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
++
++#ifndef CONFIG_COMMON_CLK
++
++/*
++ * Whoopsie!
++ *
++ * clk_enable() and clk_disable() have been left without
++ * a nop export symbols when !CONFIG_COMMON_CLK since its
++ * introduction on v2.6.16, but fixed until 3.6.
++ */
++#if 0
++#define clk_enable LINUX_BACKPORT(clk_enable)
++static inline int clk_enable(struct clk *clk)
++{
++	return 0;
++}
++
++#define clk_disable LINUX_BACKPORT(clk_disable)
++static inline void clk_disable(struct clk *clk) {}
++#endif
++
++
++#define clk_get LINUX_BACKPORT(clk_get)
++static inline struct clk *clk_get(struct device *dev, const char *id)
++{
++	return NULL;
++}
++
++#define devm_clk_get LINUX_BACKPORT(devm_clk_get)
++static inline struct clk *devm_clk_get(struct device *dev, const char *id)
++{
++	return NULL;
++}
++
++#define clk_put LINUX_BACKPORT(clk_put)
++static inline void clk_put(struct clk *clk) {}
++
++#define devm_clk_put LINUX_BACKPORT(devm_clk_put)
++static inline void devm_clk_put(struct device *dev, struct clk *clk) {}
++
++#define clk_get_rate LINUX_BACKPORT(clk_get_rate)
++static inline unsigned long clk_get_rate(struct clk *clk)
++{
++	return 0;
++}
++
++#define clk_set_rate LINUX_BACKPORT(clk_set_rate)
++static inline int clk_set_rate(struct clk *clk, unsigned long rate)
++{
++	return 0;
++}
++
++#define clk_round_rate LINUX_BACKPORT(clk_round_rate)
++static inline long clk_round_rate(struct clk *clk, unsigned long rate)
++{
++	return 0;
++}
++
++#define clk_set_parent LINUX_BACKPORT(clk_set_parent)
++static inline int clk_set_parent(struct clk *clk, struct clk *parent)
++{
++	return 0;
++}
++
++#define clk_get_parent LINUX_BACKPORT(clk_get_parent)
++static inline struct clk *clk_get_parent(struct clk *clk)
++{
++	return NULL;
++}
++#endif /* CONFIG_COMMON_CLK */
++
++#endif /* #if LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0) */
++
++#endif /* __LINUX_CLK_H */
+diff --git a/backport/compat/compat-3.6.c b/backport/compat/compat-3.6.c
+index 53991ee..c82bfb8 100644
+--- a/backport/compat/compat-3.6.c
++++ b/backport/compat/compat-3.6.c
+@@ -14,6 +14,7 @@
+ #include <linux/bug.h>
+ #include <linux/bitmap.h>
+ #include <linux/i2c.h>
++#include <linux/clk.h>
  
-     if (max_threads > 1):
-diff --git a/patches/collateral-evolutions/network/0001-netdev_ops.cocci b/patches/collateral-evolutions/network/0001-netdev_ops.cocci
-index f3d2e63..7c3d03a 100644
---- a/patches/collateral-evolutions/network/0001-netdev_ops.cocci
-+++ b/patches/collateral-evolutions/network/0001-netdev_ops.cocci
-@@ -1,6 +1,6 @@
- @@
--expression dev;
--expression ops;
-+struct net_device *dev;
-+struct net_device_ops ops;
- @@
---dev->netdev_ops = ops;
--+netdev_attach_ops(dev, ops);
-+-dev->netdev_ops = &ops;
-++netdev_attach_ops(dev, &ops);
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
+ /**
+@@ -146,3 +147,17 @@ int sg_alloc_table_from_pages(struct sg_table *sgt,
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(sg_alloc_table_from_pages);
++
++/* whoopsie ! */
++#ifndef CONFIG_COMMON_CLK
++int clk_enable(struct clk *clk)
++{
++	return 0;
++}
++EXPORT_SYMBOL_GPL(clk_enable);
++
++void clk_disable(struct clk *clk)
++{
++}
++EXPORT_SYMBOL_GPL(clk_disable);
++#endif
 -- 
 1.8.5.3
 
