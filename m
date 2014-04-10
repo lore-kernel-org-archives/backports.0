@@ -1,54 +1,68 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f53.google.com ([209.85.215.53]:34696 "EHLO
-	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758758AbaDJRQo (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 10 Apr 2014 13:16:44 -0400
-Received: by mail-la0-f53.google.com with SMTP id b8so2596978lan.12
-        for <backports@vger.kernel.org>; Thu, 10 Apr 2014 10:16:42 -0700 (PDT)
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:52699
+	"EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753854AbaDJTcj (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 10 Apr 2014 15:32:39 -0400
+Date: Thu, 10 Apr 2014 21:32:34 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: "Luis R. Rodriguez" <mcgrof@suse.com>
+cc: Johannes Berg <johannes@sipsolutions.net>,
+	linux-kernel@vger.kernel.org, backports@vger.kernel.org,
+	cocci@systeme.lip6.fr
+Subject: Re: [Cocci] [PATCH] coccinelle: add pycocci wrapper for	multithreaded
+ support
+In-Reply-To: <20140410175748.GK14815@wotan.suse.de>
+Message-ID: <alpine.DEB.2.02.1404102131390.2201@localhost6.localdomain6> (sfid-20140410_213242_209010_D656EE9B)
+References: <1397152097-315-1-git-send-email-mcgrof@do-not-panic.com> <1397152289.4757.28.camel@jlt4.sipsolutions.net> <20140410175748.GK14815@wotan.suse.de>
 MIME-Version: 1.0
-In-Reply-To: <CAE5JcOUSAQhHR82+M10kOwSaC53RB3B0d8oudwbFDuCPh_rwbA@mail.gmail.com>
-References: <CAE5JcOWEv65JjjhV0LyvTSBPYKrEyZem_+Wy07Cz4qaLP7218A@mail.gmail.com>
- <CAB=NE6VnNNfRDO488S65Cjo1JfdonZ7tF6pmqQFE=5y0WhMLwg@mail.gmail.com> <CAE5JcOUSAQhHR82+M10kOwSaC53RB3B0d8oudwbFDuCPh_rwbA@mail.gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@gmail.com>
-Date: Thu, 10 Apr 2014 10:16:22 -0700
-Message-ID: <CAB=NE6UbppvnpFnMtCLCOTnDSm53u+WoEXYQYnAiZ-QTNKT3Cw@mail.gmail.com> (sfid-20140410_191647_886818_ECBA4320)
-Subject: Re: Back ports question
-To: Shridatt Sugrim <ssugrim@winlab.rutgers.edu>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Apr 10, 2014 at 8:43 AM, Shridatt Sugrim
-<ssugrim@winlab.rutgers.edu> wrote:
-> Thanks Luis, and Backports :)
->
-> I'm pretty sure I've cloned that repo because I was reading the docs from
-> back ports wiki. I guess I should build the 3.2.y that's in the similarly
-> branch instead of trying to keep my tree?
 
-I'm under the impression you have a backports on a linux-3.2.y branch
-(maybe we should rename these branches to backports-3.2.y for emphasis
-and to distinguish from Linux names), if so my objective was to try to
-convince you that that branch is only for backporting 3.2 kernel code.
-In other words it would produce a backports-3.2 sort of release, and
-that release can be used for *any* supported kernel below 3.2, it *is
-not* mean to be used when you are on the 3.2 kernel on your Debian
-box. You want the latest and greatest backports releases, either the
-latest stable release or one based on linux-next.
 
-We've struggled with trying to educate a bit better on this buts its
-unclear what we can do to help with this mild but very important
-difference.
+On Thu, 10 Apr 2014, Luis R. Rodriguez wrote:
 
-> I'll give the update manager a
-> shot and see what happens, if not I'll try to build what is in the 3.2.y
-> branch with my running config, and hope that it works.
+> On Thu, Apr 10, 2014 at 07:51:29PM +0200, Johannes Berg wrote:
+> > On Thu, 2014-04-10 at 10:48 -0700, Luis R. Rodriguez wrote:
+> > 
+> > > You just pass it a cocci file, a target dir, and in git environments
+> > > you always want --in-place enabled. Experiments and profiling random
+> > > cocci files with the Linux kernel show that using just using number of
+> > > CPUs doesn't scale well given that lots of buckets of files don't require
+> > > work, as such this uses 10 * number of CPUs for its number of threads.
+> > > For work that define more general ruler 3 * number of CPUs works better,
+> > > but for smaller cocci files 3 * number of CPUs performs best right now.
+> > > To experiment more with what's going on with the multithreading one can enable
+> > > htop while kicking off a cocci task on the kernel, we want to keep
+> > > these CPUs busy as much as possible. 
+> > 
+> > That's not really a good benchmark, you want to actually check how
+> > quickly it finishes ... If you have some IO issues then just keeping the
+> > CPUs busy trying to do IO won't help at all.
+> 
+> I checked the profile results, the reason the jobs finish is some threads
+> had no work or little work. Hence why I increased the number of threads,
+> depending on the context (long or short cocci expected, in backports
+> at least, the long being all cocci files in one, the short being --test-cocci
+> flag to gentree.py). This wrapper uses the short assumption with 10 * num_cpus
+> 
+> > > Since its just a helper I toss it into the python directory but don't
+> > > install it. Hope is that we can evolve it there instead of carrying this
+> > > helper within backports.
+> > 
+> > If there's a plan to make coccinelle itself multi-threaded, what's the
+> > point?
+> 
+> To be clear, Coccinelle *has* a form of multithreaded support but requires manual
+> spawning of jobs with references to the max count and also the number thread
+> that this new process you are spawning belongs to. There's plans to consider
+> reworking things to handle all this internally but as I discussed with Julia
+> the changes required would require some structural changes, and as such we
+> need to live with this for a bit longer. I need to use Coccinelle daily now,
+> so figured I'd punt this out there in case others might make use of it.
 
-You don't want to use the 3.2.y branch on either linux or backports,
-you want to use the 3.14.y branch on both, or if daring try the master
-branch on backports and a respective linux-next tag. That or you can
-wait for a public backports-3.14.y release or a new linux-next based
-release.
+I agree with Luis.  Multithreading inside Coccinelle is currently a 
+priority task, but not a highest priority one.
 
-  Luis
+julia
