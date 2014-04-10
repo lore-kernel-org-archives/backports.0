@@ -1,254 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:32994 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750893AbaDRBoN (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 17 Apr 2014 21:44:13 -0400
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: cocci@systeme.lip6.fr
-Cc: "Luis R. Rodriguez" <mcgrof@suse.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	backports@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] coccinelle: add pycocci wrapper for multithreaded support
-Date: Thu, 17 Apr 2014 18:44:02 -0700
-Message-Id: <1397785442-17005-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20140418_034416_939041_66919FC5)
+Received: from mail-la0-f53.google.com ([209.85.215.53]:34696 "EHLO
+	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758758AbaDJRQo (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 10 Apr 2014 13:16:44 -0400
+Received: by mail-la0-f53.google.com with SMTP id b8so2596978lan.12
+        for <backports@vger.kernel.org>; Thu, 10 Apr 2014 10:16:42 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAE5JcOUSAQhHR82+M10kOwSaC53RB3B0d8oudwbFDuCPh_rwbA@mail.gmail.com>
+References: <CAE5JcOWEv65JjjhV0LyvTSBPYKrEyZem_+Wy07Cz4qaLP7218A@mail.gmail.com>
+ <CAB=NE6VnNNfRDO488S65Cjo1JfdonZ7tF6pmqQFE=5y0WhMLwg@mail.gmail.com> <CAE5JcOUSAQhHR82+M10kOwSaC53RB3B0d8oudwbFDuCPh_rwbA@mail.gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@gmail.com>
+Date: Thu, 10 Apr 2014 10:16:22 -0700
+Message-ID: <CAB=NE6UbppvnpFnMtCLCOTnDSm53u+WoEXYQYnAiZ-QTNKT3Cw@mail.gmail.com> (sfid-20140410_191647_886818_ECBA4320)
+Subject: Re: Back ports question
+To: Shridatt Sugrim <ssugrim@winlab.rutgers.edu>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+On Thu, Apr 10, 2014 at 8:43 AM, Shridatt Sugrim
+<ssugrim@winlab.rutgers.edu> wrote:
+> Thanks Luis, and Backports :)
+>
+> I'm pretty sure I've cloned that repo because I was reading the docs from
+> back ports wiki. I guess I should build the 3.2.y that's in the similarly
+> branch instead of trying to keep my tree?
 
-This is a wrapper for folks which by work on git trees, specifically
-the linux kernel with lots of files and with random task Cocci files.
-The assumption is all you need is multithreaded support and currently only
-a shell script is lying around, but that isn't easily extensible, nor
-is it dynamic. This uses Python to add Coccinelle's mechanisms for
-multithreaded support but also enables all sorts of defaults which
-you'd expect to be enabled when using Coccinelle for Linux kernel
-development.
+I'm under the impression you have a backports on a linux-3.2.y branch
+(maybe we should rename these branches to backports-3.2.y for emphasis
+and to distinguish from Linux names), if so my objective was to try to
+convince you that that branch is only for backporting 3.2 kernel code.
+In other words it would produce a backports-3.2 sort of release, and
+that release can be used for *any* supported kernel below 3.2, it *is
+not* mean to be used when you are on the 3.2 kernel on your Debian
+box. You want the latest and greatest backports releases, either the
+latest stable release or one based on linux-next.
 
-The Linux kernel backports project makes use of this tool on a daily
-basis and as such you can expect more tuning to it. All this is being
-done as Coccinelle's multithreaded support is being revamped but
-that will take a while so we want something easy to use that is
-extensible in the meantime.
+We've struggled with trying to educate a bit better on this buts its
+unclear what we can do to help with this mild but very important
+difference.
 
-The purpose of putting this into Coccinelle is to make the tool generic
-and usable outside of backports. If this tool gets merged into
-Coccinelle we'll just drop this copy and help evolve it within
-Coccinelle.
+> I'll give the update manager a
+> shot and see what happens, if not I'll try to build what is in the 3.2.y
+> branch with my running config, and hope that it works.
 
-You just pass it a cocci file, a target dir, and that's it.
+You don't want to use the 3.2.y branch on either linux or backports,
+you want to use the 3.14.y branch on both, or if daring try the master
+branch on backports and a respective linux-next tag. That or you can
+wait for a public backports-3.14.y release or a new linux-next based
+release.
 
-Cc: Johannes Berg <johannes.berg@intel.com>
-Cc: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: cocci@systeme.lip6.fr
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
----
-
-This v2 has taken quite a bit of consideration into some additional flags
-to make default, in particular --coccigrep is now used which proved in
-the general case to not require increasing the number of threads depending
-on the type of Cocci patch you produce. This patch also now puts pycocci
-under tool tools/ directory. If I get an ACK I can commit and push.
-
-If you'd like to downlaod this tool I'll try to keep an updated version
-here:
-
-http://drvbp1.linux-foundation.org/~mcgrof/coccinelle/
-
-Its also currently available under the backports project -- until and only
-if Coccinelle does wish to carry this internally in its own repo / releases.
-
- tools/pycocci | 180 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 180 insertions(+)
- create mode 100755 tools/pycocci
-
-diff --git a/tools/pycocci b/tools/pycocci
-new file mode 100755
-index 0000000..fde8190
---- /dev/null
-+++ b/tools/pycocci
-@@ -0,0 +1,180 @@
-+#!/usr/bin/env python
-+#
-+# Copyright (c) 2014 Luis R. Rodriguez  <mcgrof@suse.com>
-+# Copyright (c) 2013 Johannes Berg <johannes@sipsolutions.net>
-+#
-+# This file is released under the GPLv2.
-+#
-+# Python wrapper for Coccinelle for multithreaded support,
-+# designed to be used for working on a git tree, and with sensible
-+# defaults, specifically for kernel developers.
-+
-+from multiprocessing import Process, cpu_count, Queue
-+import argparse, subprocess, os, sys
-+import tempfile, shutil
-+
-+# simple tempdir wrapper object for 'with' statement
-+#
-+# Usage:
-+# with tempdir.tempdir() as tmpdir:
-+#     os.chdir(tmpdir)
-+#     do something
-+#
-+class tempdir(object):
-+    def __init__(self, suffix='', prefix='', dir=None, nodelete=False):
-+        self.suffix = ''
-+        self.prefix = ''
-+        self.dir = dir
-+        self.nodelete = nodelete
-+
-+    def __enter__(self):
-+        self._name = tempfile.mkdtemp(suffix=self.suffix,
-+                                      prefix=self.prefix,
-+                                      dir=self.dir)
-+        return self._name
-+
-+    def __exit__(self, type, value, traceback):
-+        if self.nodelete:
-+            print('not deleting directory %s!' % self._name)
-+        else:
-+            shutil.rmtree(self._name)
-+
-+class CoccinelleError(Exception):
-+    pass
-+class ExecutionError(CoccinelleError):
-+    def __init__(self, cmd, errcode):
-+        self.error_code = errcode
-+        print('Failed command:')
-+        print(' '.join(cmd))
-+
-+class ExecutionErrorThread(CoccinelleError):
-+    def __init__(self, errcode, fn, cocci_file, threads, t, logwrite, print_name):
-+        self.error_code = errcode
-+        logwrite("Failed to apply changes from %s" % print_name)
-+
-+        logwrite("Specific log output from change that failed using %s" % print_name)
-+        tf = open(fn, 'r')
-+        for line in tf.read():
-+            logwrite('> %s' % line)
-+        tf.close()
-+
-+        logwrite("Full log using %s" % print_name)
-+        for num in range(threads):
-+            fn = os.path.join(t, '.tmp_spatch_worker.' + str(num))
-+            if (not os.path.isfile(fn)):
-+                continue
-+            tf = open(fn, 'r')
-+            for line in tf.read():
-+                logwrite('> %s' % line)
-+            tf.close()
-+            os.unlink(fn)
-+
-+def spatch(cocci_file, outdir,
-+           max_threads, thread_id, temp_dir, ret_q, extra_args=[]):
-+    cmd = ['spatch',
-+            '--sp-file', cocci_file,
-+            '--in-place',
-+            '--recursive-includes',
-+            '--relax-include-path',
-+            '--use-coccigrep',
-+            '--timeout', '120',
-+            '--dir', outdir ]
-+
-+    if (max_threads > 1):
-+        cmd.extend(['-max', str(max_threads), '-index', str(thread_id)])
-+
-+    cmd.extend(extra_args)
-+
-+    fn = os.path.join(temp_dir, '.tmp_spatch_worker.' + str(thread_id))
-+    outfile = open(fn, 'w')
-+
-+    sprocess = subprocess.Popen(cmd,
-+                               stdout=outfile, stderr=subprocess.STDOUT,
-+                               close_fds=True, universal_newlines=True)
-+    sprocess.wait()
-+    if sprocess.returncode != 0:
-+        raise ExecutionError(cmd, sprocess.returncode)
-+    outfile.close()
-+    ret_q.put((sprocess.returncode, fn))
-+
-+def threaded_spatch(cocci_file, outdir, logwrite, num_jobs,
-+                    print_name, extra_args=[]):
-+    num_cpus = cpu_count()
-+    if num_jobs:
-+        threads = int(num_jobs)
-+    else:
-+        threads = num_cpus
-+    jobs = list()
-+    output = ""
-+    ret_q = Queue()
-+    with tempdir() as t:
-+        for num in range(threads):
-+            p = Process(target=spatch, args=(cocci_file, outdir,
-+                                             threads, num, t, ret_q,
-+                                             extra_args))
-+            jobs.append(p)
-+        for p in jobs:
-+            p.start()
-+
-+        for num in range(threads):
-+            ret, fn = ret_q.get()
-+            if ret != 0:
-+                raise ExecutionErrorThread(ret, fn, cocci_file, threads, t,
-+                                           logwrite, print_name)
-+        for job in jobs:
-+            p.join()
-+
-+        for num in range(threads):
-+            fn = os.path.join(t, '.tmp_spatch_worker.' + str(num))
-+            tf = open(fn, 'r')
-+            output = output + tf.read()
-+            tf.close()
-+            os.unlink(fn)
-+        return output
-+
-+def logwrite(msg):
-+    sys.stdout.write(msg)
-+    sys.stdout.flush()
-+
-+def _main():
-+    parser = argparse.ArgumentParser(description='Multithreaded Python wrapper for Coccinelle ' +
-+                                     'with sensible defaults, targetted specifically ' +
-+                                     'for git development environments')
-+    parser.add_argument('cocci_file', metavar='<Coccinelle SmPL rules file>', type=str,
-+                        help='This is the Coccinelle file you want to use')
-+    parser.add_argument('target_dir', metavar='<target directory>', type=str,
-+                        help='Target source directory to modify')
-+    parser.add_argument('-p', '--profile-cocci', const=True, default=False, action="store_const",
-+                        help='Enable profile, this will pass --profile  to Coccinelle.')
-+    parser.add_argument('-j', '--jobs', metavar='<jobs>', type=str, default=None,
-+                        help='Only use the cocci file passed for Coccinelle, don\'t do anything else, ' +
-+                        'also creates a git repo on the target directory for easy inspection ' +
-+                        'of changes done by Coccinelle.')
-+    parser.add_argument('-v', '--verbose', const=True, default=False, action="store_const",
-+                        help='Enable output from Coccinelle')
-+    args = parser.parse_args()
-+
-+    if not os.path.isfile(args.cocci_file):
-+        return -2
-+
-+    extra_spatch_args = []
-+    if args.profile_cocci:
-+        extra_spatch_args.append('--profile')
-+    jobs = 0
-+    if args.jobs > 0:
-+        jobs = args.jobs
-+
-+    output = threaded_spatch(args.cocci_file,
-+                             args.target_dir,
-+                             logwrite,
-+                             jobs,
-+                             os.path.basename(args.cocci_file),
-+                             extra_args=extra_spatch_args)
-+    if args.verbose:
-+        logwrite(output)
-+    return 0
-+
-+if __name__ == '__main__':
-+    ret = _main()
-+    if ret:
-+        sys.exit(ret)
--- 
-1.9.1
-
+  Luis
