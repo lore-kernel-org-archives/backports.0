@@ -3,22 +3,25 @@ MIME-Version: 1.0
 In-Reply-To: <CAB=NE6VnNNfRDO488S65Cjo1JfdonZ7tF6pmqQFE=5y0WhMLwg@mail.gmail.com>
 References: <CAE5JcOWEv65JjjhV0LyvTSBPYKrEyZem_+Wy07Cz4qaLP7218A@mail.gmail.com>
 	<CAB=NE6VnNNfRDO488S65Cjo1JfdonZ7tF6pmqQFE=5y0WhMLwg@mail.gmail.com>
-Date: Thu, 10 Apr 2014 13:44:31 -0400
-Message-ID: <CAE5JcOUYyWY2j7GYtNRSa9AQHL_0QXQ=WOkO++SnhjDCDtq_hA@mail.gmail.com>
+Date: Thu, 10 Apr 2014 11:43:23 -0400
+Message-ID: <CAE5JcOUSAQhHR82+M10kOwSaC53RB3B0d8oudwbFDuCPh_rwbA@mail.gmail.com>
 Subject: Re: Back ports question
 From: Shridatt Sugrim <ssugrim@winlab.rutgers.edu>
 To: "Luis R. Rodriguez" <mcgrof@gmail.com>
 Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: multipart/alternative; boundary=047d7b5d5b0a02e9be04f6b3c51a
+Content-Type: multipart/alternative; boundary=047d7b2e49d0d2cbca04f6b213c3
 List-ID: <backports@vger.kernel.org>
 
---047d7b5d5b0a02e9be04f6b3c51a
+--047d7b2e49d0d2cbca04f6b213c3
 Content-Type: text/plain; charset=ISO-8859-1
 
-Ok, I see what I'm supposed to do. I'll re-clone to get a fresh copy (just
-neater).
+Thanks Luis, and Backports :)
 
-Thanks Luis!
+I'm pretty sure I've cloned that repo because I was reading the docs from
+back ports wiki. I guess I should build the 3.2.y that's in the similarly
+branch instead of trying to keep my tree? I'll give the update manager a
+shot and see what happens, if not I'll try to build what is in the 3.2.y
+branch with my running config, and hope that it works.
 
 -James
 
@@ -106,19 +109,22 @@ Technology Centre of New Jersey
 North Brunswick, NJ 08902-3390
 732-932-6857 - Phone    732-932-6882 - Fax
 
---047d7b5d5b0a02e9be04f6b3c51a
+--047d7b2e49d0d2cbca04f6b213c3
 Content-Type: text/html; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr">Ok, I see what I&#39;m supposed to do. I&#39;ll re-clone t=
-o get a fresh copy (just neater). =A0<div><br></div><div>Thanks Luis!</div>=
+<div dir=3D"ltr">Thanks Luis, and Backports :)<div><br></div><div>I&#39;m p=
+retty sure I&#39;ve cloned that repo because I was reading the docs from ba=
+ck ports wiki. I guess I should build the 3.2.y that&#39;s in the similarly=
+ branch instead of trying to keep my tree? I&#39;ll give the update manager=
+ a shot and see what happens, if not I&#39;ll try to build what is in the 3=
+.2.y branch with my running config, and hope that it works.</div>
 <div><br></div><div>-James</div></div><div class=3D"gmail_extra"><br><br><d=
-iv class=3D"gmail_quote">
-On Wed, Apr 9, 2014 at 7:38 PM, Luis R. Rodriguez <span dir=3D"ltr">&lt;<a =
-href=3D"mailto:mcgrof@gmail.com" target=3D"_blank">mcgrof@gmail.com</a>&gt;=
-</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .=
-8ex;border-left:1px #ccc solid;padding-left:1ex">
-Cc&#39;ing backports.<br>
+iv class=3D"gmail_quote">On Wed, Apr 9, 2014 at 7:38 PM, Luis R. Rodriguez =
+<span dir=3D"ltr">&lt;<a href=3D"mailto:mcgrof@gmail.com" target=3D"_blank"=
+>mcgrof@gmail.com</a>&gt;</span> wrote:<br>
+<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
+x #ccc solid;padding-left:1ex">Cc&#39;ing backports.<br>
 <br>
 On Wed, Apr 9, 2014 at 4:11 PM, Shridatt Sugrim<br>
 &lt;<a href=3D"mailto:ssugrim@winlab.rutgers.edu">ssugrim@winlab.rutgers.ed=
@@ -225,4 +231,4 @@ ize:11px;text-align:-webkit-center">
 -6882 -=A0Fax</span><br></div>
 </div>
 
---047d7b5d5b0a02e9be04f6b3c51a--
+--047d7b2e49d0d2cbca04f6b213c3--
