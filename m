@@ -1,102 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f182.google.com ([209.85.217.182]:58826 "EHLO
-	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934663AbaDJQ7q (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 10 Apr 2014 12:59:46 -0400
+Received: from mail.kernel.org ([198.145.19.201]:42817 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753288AbaDKR6n (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 11 Apr 2014 13:58:43 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 53E6C2015E
+	for <backports@vger.kernel.org>; Fri, 11 Apr 2014 17:58:42 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id 5AEA820154
+	for <backports@vger.kernel.org>; Fri, 11 Apr 2014 17:58:41 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 73861] New: AWUS 036NHR v.2 8188RU cant associate and cant
+ capture handshake.
+Date: Fri, 11 Apr 2014 17:58:40 +0000
+Message-ID: <bug-73861-58281@https.bugzilla.kernel.org/> (sfid-20140411_195845_654859_03FB5ACB)
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-In-Reply-To: <s5heh15pr18.wl%tiwai@suse.de>
-References: <CAB=NE6VvyBKzEg=ErZzQMktY8eLytQ21JCPrOQbxvZ9m-nqHkw@mail.gmail.com>
- <53451077.2030102@openwrt.org> <CAB=NE6UUN4vQd3SpsvO5tcgaYq3YXQeE0KtZGki7p7OnR=J4RA@mail.gmail.com>
- <20140409191225.GA10560@kroah.com> <CAB=NE6VqY8yXoYuE0o01vq86imY8EtqLdkPa4bGMvR3bTaj5KQ@mail.gmail.com>
- <20140409202224.GA12953@kroah.com> <CAB=NE6XY5++p7hJQpQdwrFNUcGbUsKpC+oJiZQciXNduo+8j8A@mail.gmail.com>
- <20140409210613.GA14392@kroah.com> <s5heh15pr18.wl%tiwai@suse.de>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Thu, 10 Apr 2014 09:59:24 -0700
-Message-ID: <CAB=NE6VeNTFeGxKXpYunkU-W=JPLMpOnrehttvsqB+yXkdz5fg@mail.gmail.com> (sfid-20140410_185949_298494_7C0EB84F)
-Subject: Re: Bumping required kernels to 3.0 for Linux backports ?
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Felix Fietkau <nbd@openwrt.org>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Jiri Slaby <jslaby@suse.cz>,
-	Mauro Carvalho Chehab <m.chehab@samsung.com>
-Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Apr 10, 2014 at 12:44 AM, Takashi Iwai <tiwai@suse.de> wrote:
-> At Wed, 9 Apr 2014 14:06:13 -0700,
-> Greg Kroah-Hartman wrote:
->>
->> On Wed, Apr 09, 2014 at 01:52:29PM -0700, Luis R. Rodriguez wrote:
->> > On Wed, Apr 9, 2014 at 1:22 PM, Greg Kroah-Hartman
->> > <gregkh@linuxfoundation.org> wrote:
->> > > On Wed, Apr 09, 2014 at 01:01:23PM -0700, Luis R. Rodriguez wrote:
->> > >> On Wed, Apr 9, 2014 at 12:12 PM, Greg Kroah-Hartman
->> > >> <gregkh@linuxfoundation.org> wrote:
->> > >> > On Wed, Apr 09, 2014 at 11:28:55AM -0700, Luis R. Rodriguez wrote:
->> > >> >> On Wed, Apr 9, 2014 at 2:18 AM, Felix Fietkau <nbd@openwrt.org> wrote:
->> > >> >> > The oldest kernel in OpenWrt that we're still supporting with updates of
->> > >> >> > the backports tree is 3.3, so raising the minimum requirement to 3.0 is
->> > >> >> > completely fine with me.
->> > >> >>
->> > >> >> OK note that 3.3 is not listed on kernel.org as supported. I'm fine in
->> > >> >> carrying the stuff for those for now but ultimately it'd also be nice
->> > >> >> if we didn't even have to test the kernels in between which are not
->> > >> >> listed. This does however raise the question of how often a kernel in
->> > >> >> between a list of supported kernels gets picked up to be supported
->> > >> >> eventually. Greg, Jiri, do you happen to know what the likelyhood of
->> > >> >> that can be?
->> > >> >
->> > >> > I don't know of anything ever getting picked up after I have said it
->> > >> > would not be supported anymore.
->> > >>
->> > >> Great! How soon after a release do you mention whether or not it will
->> > >> be supported? Like say, 3.14, which was just released.
->> > >
->> > > I only mention it around the time that it would normally go end-of-life.
->> > >
->> > > For example, if 3.13 were to be a release that was going to be "long
->> > > term", I would only say something around the normal time I would be no
->> > > longer supporting it.  Like in 2-3 weeks from now.
->> > >
->> > > So for 3.14, I'll not say anything about that until 3.16-rc1 is out,
->> > > give or take a week or two.
->> > >
->> > >> Also, as of late are you aware any distribution picking an unsupported
->> > >> kernel for their next choice of kernel?
->> > >
->> > > Sure, lots do, as they don't line up with my release cycles (I only pick
->> > > 1 long term kernel to maintain each year).  Look at the Ubuntu releases
->> > > for examples of that.  Also openSUSE and Fedora (although Fedora does
->> > > rev their kernel pretty regularly) don't usually line up.  The
->> > > "enterprise" distros are different, but even then, they don't always
->> > > line up either (which is why Jiri is maintaining 3.12...)
->> > >
->> > > Hope this helps,
->> >
->> > It does! Unless I don't hear any complaints then given that some
->> > distributions might choose a kernel in between and given also your
->> > great documented story behind the gains on trying to steer folks
->> > together on the 'ol 2.6.32 [0] and this now being faded, I'll be
->> > bumping backports to only support >= 3.0 soon, but we'll include all
->> > the series from 3.0 up to the latest. That should shrink compile /
->> > test time / support time on backports to 1/2.
->>
->> Why 3.0?  That's not supported by anyone anymore for "new hardware", I'd
->> move to 3.2 if you could, as that's the Debian stable release that will
->> be maintained for quite some time yet:
->>       https://www.kernel.org/category/releases.html
->
-> Well, the support for "new hardware" is what backports project itself
-> does, isn't it?
->
-> Besides, SLES11 is still supported, so yes, including 3.0.x would be
-> helpful.
+https://bugzilla.kernel.org/show_bug.cgi?id=73861
 
-That's two stakeholders for 3.0 -- but nothing is voiced for anything
-older than that. Today I will rip the older kernels into oblivion.
-Thanks for all the feedback!
+            Bug ID: 73861
+           Summary: AWUS 036NHR v.2 8188RU cant associate and cant capture
+                    handshake.
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: Linux kali 3.12-kali1-686-pae #1 SMP Debian
+                    3.12.6-2kali1 (2014-01-06) i686 GNU
+          Hardware: i386
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: high
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: youlold@gmail.com
+        Regression: No
 
- Luis
+https://monosnap.com/image/XYdmelapIpF6Q84vsStXLGjqok1Rc3.png
+ CH  2 ][ Elapsed: 32 s ][ 2014-04-11 21:55                                     
+
+ BSSID              STATION            PWR   Rate    Lost    Frames  Probe      
+
+ (not associated)   08:ED:B9:B4:03:11  -73    0 - 1      0        2             
+ (not associated)   10:08:C1:5D:55:46  -73    0 - 1      0        1 
+katerina1950                                                           
+ (not associated)   14:F4:2A:6C:47:34  -53    0 - 1      0       11  Wive-RTNL  
+ (not associated)   50:B7:C3:1A:9C:7F  -59    0 - 1      0        3             
+ (not associated)   EC:55:F9:7A:6B:2E  -65    0 - 1      0        1  X-ZIBIT    
+ (not associated)   BC:0F:2B:6B:10:0D  -65    0 - 1     77        6             
+ (not associated)   C0:F8:DA:B0:FD:41  -67    0 - 1      0        3             
+ (not associated)   C0:18:85:79:3F:1B  -69    0 - 1      0        1             
+ (not associated)   B8:03:05:7F:7E:61  -73    0 - 1      0        1             
+ (not associated)   E8:03:9A:CD:49:EC  -73    0 - 1      0        1
+
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
