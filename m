@@ -1,48 +1,38 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:48193 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753322AbaDJRvx (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 10 Apr 2014 13:51:53 -0400
-Message-ID: <1397152289.4757.28.camel@jlt4.sipsolutions.net> (sfid-20140410_195156_155985_046BD935)
-Subject: Re: [PATCH] coccinelle: add pycocci wrapper for multithreaded
+Received: from mout.web.de ([212.227.15.3]:57007 "EHLO mout.web.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752192AbaDKGPO (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 11 Apr 2014 02:15:14 -0400
+Message-ID: <5347886F.8070307@users.sourceforge.net> (sfid-20140411_081537_194367_B754D06D)
+Date: Fri, 11 Apr 2014 08:15:11 +0200
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+MIME-Version: 1.0
+To: Julia Lawall <julia.lawall@lip6.fr>
+CC: "Luis R. Rodriguez" <mcgrof@suse.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	linux-kernel@vger.kernel.org, backports@vger.kernel.org,
+	cocci@systeme.lip6.fr
+Subject: Re: [Cocci] [PATCH] coccinelle: add pycocci wrapper for multithreaded
  support
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: cocci@systeme.lip6.fr, "Luis R. Rodriguez" <mcgrof@suse.com>,
-	backports@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 10 Apr 2014 19:51:29 +0200
-In-Reply-To: <1397152097-315-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20140410_194829_100293_32EF0060)
-References: <1397152097-315-1-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20140410_194829_100293_32EF0060)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+References: <1397152097-315-1-git-send-email-mcgrof@do-not-panic.com> <1397152289.4757.28.camel@jlt4.sipsolutions.net> <20140410175748.GK14815@wotan.suse.de> <534783DB.4080200@users.sourceforge.net> <alpine.DEB.2.02.1404110800120.2032@localhost6.localdomain6>
+In-Reply-To: <alpine.DEB.2.02.1404110800120.2032@localhost6.localdomain6>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, 2014-04-10 at 10:48 -0700, Luis R. Rodriguez wrote:
+>> Could you find out during the data processing which parts or files
+>> result in a special application behaviour you would like to point out here?
+> I don't understand the question at all, but since the various files have 
+> different properties, it is hard to determine automatically in advance how 
+> much work Coccinelle will need to do on each one.
 
-> You just pass it a cocci file, a target dir, and in git environments
-> you always want --in-place enabled. Experiments and profiling random
-> cocci files with the Linux kernel show that using just using number of
-> CPUs doesn't scale well given that lots of buckets of files don't require
-> work, as such this uses 10 * number of CPUs for its number of threads.
-> For work that define more general ruler 3 * number of CPUs works better,
-> but for smaller cocci files 3 * number of CPUs performs best right now.
-> To experiment more with what's going on with the multithreading one can enable
-> htop while kicking off a cocci task on the kernel, we want to keep
-> these CPUs busy as much as possible. 
+It was reported that a system utilisation did not fit to some
+expectations. I am curious if any more details or patterns can be
+determined for an observed situation.
 
-That's not really a good benchmark, you want to actually check how
-quickly it finishes ... If you have some IO issues then just keeping the
-CPUs busy trying to do IO won't help at all.
+Do the involved files need also another look?
+- semantic patches
+- source directories
 
-
-> Since its just a helper I toss it into the python directory but don't
-> install it. Hope is that we can evolve it there instead of carrying this
-> helper within backports.
-
-If there's a plan to make coccinelle itself multi-threaded, what's the
-point?
-
-johannes
-
+Regards,
+Markus
