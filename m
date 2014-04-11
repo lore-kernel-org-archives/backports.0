@@ -1,47 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:52818 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754626AbaDKSpY (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 11 Apr 2014 14:45:24 -0400
-Message-ID: <1397241908.4643.1.camel@jlt4.sipsolutions.net> (sfid-20140411_204533_380332_5E8C101A)
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:15280 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750805AbaDKHvn (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 11 Apr 2014 03:51:43 -0400
+Message-ID: <53479F0B.6070909@broadcom.com> (sfid-20140411_095146_046984_6413AAEA)
+Date: Fri, 11 Apr 2014 09:51:39 +0200
+From: Arend van Spriel <arend@broadcom.com>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+CC: Takashi Iwai <tiwai@suse.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Felix Fietkau <nbd@openwrt.org>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Jiri Slaby <jslaby@suse.cz>,
+	Mauro Carvalho Chehab <m.chehab@samsung.com>
 Subject: Re: Bumping required kernels to 3.0 for Linux backports ?
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Cc: Harrison Lee <harrisonl@tme-inc.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Fri, 11 Apr 2014 20:45:08 +0200
-In-Reply-To: <CAB=NE6WpApJ7dn7GNYM0K7B6dyLeQVM+PRn1Ly=KXfy_96GSVA@mail.gmail.com> (sfid-20140411_202409_632105_7926309A)
-References: <CAB=NE6VvyBKzEg=ErZzQMktY8eLytQ21JCPrOQbxvZ9m-nqHkw@mail.gmail.com>
-	 <53451077.2030102@openwrt.org>
-	 <CAB=NE6UUN4vQd3SpsvO5tcgaYq3YXQeE0KtZGki7p7OnR=J4RA@mail.gmail.com>
-	 <20140409191225.GA10560@kroah.com>
-	 <CAB=NE6VqY8yXoYuE0o01vq86imY8EtqLdkPa4bGMvR3bTaj5KQ@mail.gmail.com>
-	 <20140409202224.GA12953@kroah.com>
-	 <CAB=NE6XY5++p7hJQpQdwrFNUcGbUsKpC+oJiZQciXNduo+8j8A@mail.gmail.com>
-	 <20140409210613.GA14392@kroah.com> <s5heh15pr18.wl%tiwai@suse.de>
-	 <CAB=NE6VeNTFeGxKXpYunkU-W=JPLMpOnrehttvsqB+yXkdz5fg@mail.gmail.com>
-	 <006d01cf5591$694ee230$3beca690$@com>
-	 <CAB=NE6WpApJ7dn7GNYM0K7B6dyLeQVM+PRn1Ly=KXfy_96GSVA@mail.gmail.com>
-	 (sfid-20140411_202409_632105_7926309A)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+References: <CAB=NE6VvyBKzEg=ErZzQMktY8eLytQ21JCPrOQbxvZ9m-nqHkw@mail.gmail.com> <53451077.2030102@openwrt.org> <CAB=NE6UUN4vQd3SpsvO5tcgaYq3YXQeE0KtZGki7p7OnR=J4RA@mail.gmail.com> <20140409191225.GA10560@kroah.com> <CAB=NE6VqY8yXoYuE0o01vq86imY8EtqLdkPa4bGMvR3bTaj5KQ@mail.gmail.com> <20140409202224.GA12953@kroah.com> <CAB=NE6XY5++p7hJQpQdwrFNUcGbUsKpC+oJiZQciXNduo+8j8A@mail.gmail.com> <20140409210613.GA14392@kroah.com> <s5heh15pr18.wl%tiwai@suse.de> <CAB=NE6VeNTFeGxKXpYunkU-W=JPLMpOnrehttvsqB+yXkdz5fg@mail.gmail.com> <5346CF27.3070406@broadcom.com> <CAB=NE6Wpa4gG14+XYVkT_=_t-cZXvO0FD_Q1T7tB1yiSmNBraw@mail.gmail.com>
+In-Reply-To: <CAB=NE6Wpa4gG14+XYVkT_=_t-cZXvO0FD_Q1T7tB1yiSmNBraw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2014-04-11 at 11:23 -0700, Luis R. Rodriguez wrote:
+On 10/04/14 20:56, Luis R. Rodriguez wrote:
+> On Thu, Apr 10, 2014 at 10:04 AM, Arend van Spriel <arend@broadcom.com> wrote:
+>> Ok, I guess my voice was cracking when I mentioned 2.6.38 as being used over
+>> here. I am probably alone in that desert.
+>
+> I thought broadcom didn't use backports? If they do can you explain
+> how? Also what drivers do you need enabled for your use case ?
 
-> compat-drivers is ancient as well, the new project is backports and we
-> will be deprecating older kernels to help us scale better.
+That was 2 years ago when you asked me ;-) Since then I have been using 
+it to backport the brcm80211 mainline drivers to 1) Android kernel, ie. 
+3.4 kernel, and 2) Fedora 19 which is actually fixed to 3.11 kernel.
 
-I know I pushed for the 2.6.24 deprecation, but do you see any
-particular issue with other kernels < 3.0? The 2.6.24 was big and ugly,
-but none of the other ones seem particularly big/ugly, and there aren't
-a ton of patches either ...
+So we use backports these days for enabling brcm80211 drivers on various 
+test equipment that uses older kernels.
 
-Now, I'm all for dropping support if it really makes a difference, and
-we might want to drop them from the ckmake tests to reduce the pain, but
-I'm not entirely sure we should wholesale remove things if there are
-still users for them out there.
-
-johannes
+Regards,
+Arend
 
