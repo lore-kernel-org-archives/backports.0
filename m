@@ -1,43 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:46761 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753198AbaDWLRJ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 23 Apr 2014 07:17:09 -0400
-Message-ID: <1398251810.4173.6.camel@jlt4.sipsolutions.net> (sfid-20140423_131717_800333_F9DB6926)
-Subject: Re: cocci: multiple versions of function with different arguments
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Stefan Assmann <sassmann@kpanic.de>
-Cc: Julia Lawall <julia.lawall@lip6.fr>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Wed, 23 Apr 2014 13:16:50 +0200
-In-Reply-To: <5357A065.3020400@kpanic.de>
-References: <53579593.40306@kpanic.de>
-		 (sfid-20140423_122737_920373_E36F87A8) <1398249715.4173.3.camel@jlt4.sipsolutions.net>
-	 <5357A065.3020400@kpanic.de>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-pb0-f54.google.com ([209.85.160.54]:47935 "EHLO
+	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755055AbaDLBfA (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 11 Apr 2014 21:35:00 -0400
+Received: by mail-pb0-f54.google.com with SMTP id ma3so6031363pbc.41
+        for <backports@vger.kernel.org>; Fri, 11 Apr 2014 18:35:00 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 04/10] backports: drop display output class support
+Date: Fri, 11 Apr 2014 18:34:29 -0700
+Message-Id: <1397266475-14442-5-git-send-email-mcgrof@do-not-panic.com> (sfid-20140412_033502_094280_EA661E01)
+In-Reply-To: <1397266475-14442-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1397266475-14442-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2014-04-23 at 13:13 +0200, Stefan Assmann wrote:
+Jean nuked display output class support so we won't
+be needing the respective headers for compilation on
+backports now. This is as seen on next-20140409.
 
-> > #define vlan_rx_add_vid_func(a,b,c) vlan_rx_add_vid_func(a,c)
+commit f167a64e9d67ebd03d304e369c12011cf2bffaf5
+Author: Jean Delvare <jdelvare@suse.de>
+Date:   Mon Mar 17 15:49:10 2014 +0100
 
-> That's one way to handle it but I'm sure there will be other cases where
-> we might use coccinelle similarly, where a define might be tricky.
-> Luis asked me to do some cleanup on igb, so I'm exploring ways to make
-> it easier for other network drivers as well.
-> 
-> If for some reason cocci should have a problem with this the fallback
-> to a define is a good idea.
+    video / output: Drop display output class support
 
-I don't disagree that we might have to solve this cocci problem, but I
-would much prefer the define over the cocci patch as it leaves the
-output code closer to the input code, which can be important for some
-use cases (e.g. ours - development based on a backport tree.)
+    It was only ever used by the ACPI video driver, and that only use case
+    vanished over 3 years ago (see commit 677bd810, "ACPI video: remove
+    output switching control".) So this is dead code and I guess we can
+    remove it now.
 
-So even if we can figure out how to make such a thing work with cocci,
-I'd argue that we should pick the define (in this particular case.)
+    Signed-off-by: Jean Delvare <jdelvare@suse.de>
+    Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-johannes
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ copy-list | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/copy-list b/copy-list
+index 76ce1c3..2794c0c 100644
+--- a/copy-list
++++ b/copy-list
+@@ -163,7 +163,6 @@ drivers/regulator/
+ include/media/
+ 
+ include/linux/videodev2.h
+-include/linux/video_output.h
+ 
+ include/uapi/linux/media.h
+ include/uapi/linux/dvb/
+-- 
+1.9.1
 
