@@ -1,45 +1,81 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ee0-f47.google.com ([74.125.83.47]:44856 "EHLO
-	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755041AbaDVJxL (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 22 Apr 2014 05:53:11 -0400
-Date: Tue, 22 Apr 2014 11:53:03 +0200
-From: Alexander Aring <alex.aring@gmail.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	alex.bluesman.smirnov@gmail.com, dbaryshkov@gmail.com,
-	linux-zigbee-devel@lists.sourceforge.net, davem@davemloft.net,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	backports@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: Re: [PATCH 1/3] 6lowpan: add helper to get 6lowpan namespace
-Message-ID: <20140422095300.GA9241@omega> (sfid-20140422_115339_495656_A38EF9BD)
-References: <1397784176-15809-1-git-send-email-mcgrof@do-not-panic.com>
- <1397784176-15809-2-git-send-email-mcgrof@do-not-panic.com>
- <1398159886.4211.1.camel@jlt4.sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1398159886.4211.1.camel@jlt4.sipsolutions.net>
+Received: from mail-pb0-f44.google.com ([209.85.160.44]:47385 "EHLO
+	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755055AbaDLBfT (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 11 Apr 2014 21:35:19 -0400
+Received: by mail-pb0-f44.google.com with SMTP id rp16so6114281pbb.3
+        for <backports@vger.kernel.org>; Fri, 11 Apr 2014 18:35:18 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 08/10] backports: bump bluetooth reqs to 3.2
+Date: Fri, 11 Apr 2014 18:34:33 -0700
+Message-Id: <1397266475-14442-9-git-send-email-mcgrof@do-not-panic.com> (sfid-20140412_033520_593996_4468DCA6)
+In-Reply-To: <1397266475-14442-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1397266475-14442-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
+As a prep to bump general requirements lets bump bluetooth
+minimum kernel requirements to at least 3.2.
 
-On Tue, Apr 22, 2014 at 11:44:46AM +0200, Johannes Berg wrote:
-> On Thu, 2014-04-17 at 18:22 -0700, Luis R. Rodriguez wrote:
-> 
-> > +#if IS_ENABLED(CONFIG_IEEE802154_6LOWPAN)
-> > [...]
-> > +#else
-> > +static inline struct netns_ieee802154_lowpan *
-> > +net_ieee802154_lowpan(struct net *net)
-> > +{
-> > +	return NULL;
-> > +}
-> > +#endif
-> 
-> Why would that be needed? If nobody compiles 802.15.4 then it seems
-> nothing should reference it?
-> 
-Indeed I think this is unnecessary, also.
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ dependencies | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
 
-- Alex
+diff --git a/dependencies b/dependencies
+index 36c0b87..c5f727d 100644
+--- a/dependencies
++++ b/dependencies
+@@ -3,10 +3,12 @@
+ 
+ # platform_get_device_id()
+ ATH9K_AHB 2.6.30
+-BT 2.6.27
+-BT_RFCOMM_TTY 2.6.33
+-BT_HIDP 2.6.28
+-BT_WILINK 2.6.39
++
++BT 3.2
++BT_RFCOMM_TTY 3.2
++BT_HIDP 3.2
++BT_WILINK 3.2
++BT_HIDP 3.2
+ 
+ MAC80211_HWSIM 2.6.31
+ 
+@@ -29,7 +31,6 @@ USB_NET_RNDIS_WLAN 2.6.29
+ 
+ CARL9170 2.6.29
+ 
+-
+ # depends on -EPROBE_DEFER and others now
+ WL1251_SPI 3.5
+ 
+@@ -197,9 +198,6 @@ DVB_USB_RTL28XXU DISABLE
+ BCMA_DRIVER_GPIO 2.6.28
+ SSB_DRIVER_GPIO 2.6.28
+ 
+-# shash was only added in 2.6.29
+-BT 2.6.29
+-
+ # GPIOF_OUT_INIT_HIGH definitions were only moved
+ # out of #ifdef in kernel 3.0. These are required
+ # by some users of BCMA_DRIVER_GPIO. We'd better
+@@ -231,12 +229,6 @@ REGULATOR_AB3100 3.9
+ # only introduced in kernel 2.6.30.
+ BRCMDBG 2.6.30
+ 
+-# HID_QUIRK_NO_INIT_REPORTS was only introduced in
+-# kernel 2.6.33, so depend on that. We could instead
+-# backport it, but I can't test that and this is a
+-# lot easier right now.
+-BT_HIDP 2.6.33
+-
+ # NFC core needs PF_NFC defined in socket.h which was
+ # only introduced in kernel 3.1
+ NFC 3.1
+-- 
+1.9.1
+
