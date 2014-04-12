@@ -1,30 +1,30 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f47.google.com ([209.85.215.47]:47770 "EHLO
-	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933143AbaDISY6 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 9 Apr 2014 14:24:58 -0400
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:46046 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755724AbaDLBru (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 11 Apr 2014 21:47:50 -0400
+Received: by mail-pd0-f174.google.com with SMTP id y13so5971451pdi.33
+        for <backports@vger.kernel.org>; Fri, 11 Apr 2014 18:47:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1397060069-12757-1-git-send-email-crope@iki.fi>
-References: <1397060069-12757-1-git-send-email-crope@iki.fi>
+In-Reply-To: <1397266475-14442-9-git-send-email-mcgrof@do-not-panic.com>
+References: <1397266475-14442-1-git-send-email-mcgrof@do-not-panic.com> <1397266475-14442-9-git-send-email-mcgrof@do-not-panic.com>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Wed, 9 Apr 2014 11:24:36 -0700
-Message-ID: <CAB=NE6W-X9cvN8mKsoeF5=_FA9X54AYxB41TZawEE3JhB=o7bw@mail.gmail.com> (sfid-20140409_202500_617406_DE0C6EC4)
-Subject: Re: [PATCH] rtl28xxu: do not hard depend on staging SDR module
-To: Antti Palosaari <crope@iki.fi>, Joe Perches <joe@perches.com>
-Cc: linux-media@vger.kernel.org,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Fri, 11 Apr 2014 18:41:35 -0700
+Message-ID: <CAB=NE6XbzG-AURbRnXpPLFi7+C0pOJLJOUmZAMWb9LupUa4-Ww@mail.gmail.com> (sfid-20140412_034752_472888_E5E4AFCF)
+Subject: Re: [PATCH 08/10] backports: bump bluetooth reqs to 3.2
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Apr 9, 2014 at 9:14 AM, Antti Palosaari <crope@iki.fi> wrote:
-> +extern struct dvb_frontend *rtl2832_sdr_attach(struct dvb_frontend *fe,
-> +       struct i2c_adapter *i2c, const struct rtl2832_config *cfg,
-> +       struct v4l2_subdev *sd);
+On Fri, Apr 11, 2014 at 6:34 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> As a prep to bump general requirements lets bump bluetooth
+> minimum kernel requirements to at least 3.2.
 
-
-Thanks for the patch! Joe has been going on a crusade to remove
-externs as they are not needed, if we can avoid adding new ones
-that'll prevent another followp cleanup patch.
+Ignore this, it gets on 3.0 as the minimum requirements as I later
+removed this line, and that means it default to the oldest supported
+kernel, which is 3.0 now.
 
   Luis
