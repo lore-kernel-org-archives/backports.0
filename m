@@ -1,50 +1,37 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f48.google.com ([209.85.160.48]:54051 "EHLO
-	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755055AbaDLBez (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 11 Apr 2014 21:34:55 -0400
-Received: by mail-pb0-f48.google.com with SMTP id md12so6057384pbc.21
-        for <backports@vger.kernel.org>; Fri, 11 Apr 2014 18:34:55 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Received: from mail.kernel.org ([198.145.19.201]:37198 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750855AbaDOHSZ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 15 Apr 2014 03:18:25 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id C752920200
+	for <backports@vger.kernel.org>; Tue, 15 Apr 2014 07:18:23 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+	by mail.kernel.org (Postfix) with ESMTP id DBA40201BF
+	for <backports@vger.kernel.org>; Tue, 15 Apr 2014 07:18:22 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Cc: Arik Nemtsov <arik@wizery.com>,
-	Arik Nemtsov <arikx.nemtsov@intel.com>,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 03/10] backports: device: don't redefine DEVICE_ATTR_RO
-Date: Fri, 11 Apr 2014 18:34:28 -0700
-Message-Id: <1397266475-14442-4-git-send-email-mcgrof@do-not-panic.com> (sfid-20140412_033457_346870_4B6ECDC9)
-In-Reply-To: <1397266475-14442-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1397266475-14442-1-git-send-email-mcgrof@do-not-panic.com>
+Subject: [Bug 73861] AWUS 036NHR v.2 8188RU cant associate and cant capture
+ handshake.
+Date: Tue, 15 Apr 2014 07:18:22 +0000
+Message-ID: <bug-73861-58281-Hhmd0oWOtl@https.bugzilla.kernel.org/> (sfid-20140415_091827_603693_CD6A4CC1)
+In-Reply-To: <bug-73861-58281@https.bugzilla.kernel.org/>
+References: <bug-73861-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Arik Nemtsov <arik@wizery.com>
+https://bugzilla.kernel.org/show_bug.cgi?id=73861
 
-Some old custom kernels have it defined.
+--- Comment #4 from youlold@gmail.com ---
+(In reply to Larry Finger from comment #1)
+> There were a lot of changes in kernel 3.14 for this driver that could not be
+> backported to 3.12. Does Debian supply a 3.14 kernel?
 
-Signed-off-by: Arik Nemtsov <arikx.nemtsov@intel.com>
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- backport/backport-include/linux/device.h | 2 ++
- 1 file changed, 2 insertions(+)
+Anytime i configure backports-2014022 with key defconfig-wifi. Today i wanna
+test it with archlinux kernel 3.15
 
-diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
-index ebfc01a..a54756a 100644
---- a/backport/backport-include/linux/device.h
-+++ b/backport/backport-include/linux/device.h
-@@ -193,8 +193,10 @@ backport_device_release_driver(struct device *dev)
- #endif /* LINUX_VERSION_CODE <= KERNEL_VERSION(3,6,0) */
- 
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
-+#ifndef DEVICE_ATTR_RO
- #define DEVICE_ATTR_RO(_name) \
- struct device_attribute dev_attr_ ## _name = __ATTR_RO(_name);
-+#endif
- #define DEVICE_ATTR_RW(_name) \
- struct device_attribute dev_attr_ ## _name = __ATTR_RW(_name)
- #endif
 -- 
-1.9.1
-
+You are receiving this mail because:
+You are the assignee for the bug.
