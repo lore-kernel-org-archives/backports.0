@@ -1,306 +1,243 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f47.google.com ([209.85.160.47]:47530 "EHLO
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:44960 "EHLO
 	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752528AbaDEMmq (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 5 Apr 2014 08:42:46 -0400
-Received: by mail-pb0-f47.google.com with SMTP id up15so4671088pbc.20
-        for <backports@vger.kernel.org>; Sat, 05 Apr 2014 05:42:46 -0700 (PDT)
+	with ESMTP id S1753925AbaDQSFn (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 17 Apr 2014 14:05:43 -0400
+Received: by mail-pb0-f47.google.com with SMTP id up15so632169pbc.20
+        for <backports@vger.kernel.org>; Thu, 17 Apr 2014 11:05:42 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
 Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Ingo Molnar <mingo@elte.hu>, Jason Baron <jbaron@redhat.com>,
-	Hannes Frederic Sowa <hannes@stressinduktion.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Alexander Smirnov <alex.bluesman.smirnov@gmail.com>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	linux-zigbee-devel@lists.sourceforge.net
-Subject: [PATCH 20/27] backports: address jump label and static key support
-Date: Sat,  5 Apr 2014 05:40:54 -0700
-Message-Id: <1396701662-15165-21-git-send-email-mcgrof@do-not-panic.com> (sfid-20140405_144450_705310_00884BD1)
-In-Reply-To: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
+	"David S. Miller" <davem@davemloft.net>,
+	Peter Senna <peter.senna@gmail.com>,
+	Julia Lawall <julia.lawall@lip6.fr>,
+	Gilles Muller <Gilles.Muller@lip6.fr>
+Subject: [PATCH 7/8] backports: formalize struct sock sk_data_ready() backport with SmPL
+Date: Thu, 17 Apr 2014 11:04:55 -0700
+Message-Id: <1397757896-32558-8-git-send-email-mcgrof@do-not-panic.com> (sfid-20140417_200612_543090_05BF0E0B)
+In-Reply-To: <1397757896-32558-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1397757896-32558-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The ieee802154 subsystem, which we backport, makes use of
-net_get_random_once() through net/ieee802154/reassembly.c
-and this in turn makes use of the static keys. Static keys
-were split out from the jump label support via commit c5905afb
-by Ingo through kernel v3.3 -- note that git describe --contains
-will disagree and say its v3.5. Jump label support was added by
-Jason via commit bf5438fc through kernel v2.6.37 but later
-Jason provided static branch optimizations via commit d430d3d7e
-added through v3.0. static_key_initialized and STATIC_KEY_CHECK_USE()
-were last added by Hannes through kernel v3.13 throughy c4b2c0c5f.
+Commit 676d2369 by David removed the skb->len arguments passed onto
+the struct sock sk_data_ready() callback. This was done as its racy,
+a few drivers were passing 0 to it, and it was not really used.
+By removing it the raciness is addresed but to backport this we are
+going to have to deal with the races as-is on older kernels. This was
+merged as of v3.15:
 
-In order to backport static keys and jump label we need to
-provide name mapping for kernels that only had jump label support,
-but due to the static branch optimizations and since these are
-architecture specific we cannot backport them unless we start carrying
-around architecture replacement code -- or do some other trickery.
-For kernels that lacked jump label support and that don't have the
-static branch optimizations we simply carry in the kernel implmentation
-that assumes you have no architecture support for jump label which
-treats the labels as simply atomic drivers for branches. For older
-kernels then we don't backport usage of static_key_initialized and
-usage of STATIC_KEY_CHECK_USE().
+mcgrof@ergon ~/linux-next (git::master)$ git describe --contains 676d2369
+v3.15-rc1~8^2~10
 
-This does leave a gap of kernels without static key / jump label
-support, I tried backporting it but ran into issues quickly. Those
-daring to continue to embark on this journey can pick up where
-I left off:
+Since this is not a define or static inline we can't easily replace this with
+the backports module or header files, instead we use SmPL grammar to generalize
+the backport for all use cases. Note that in order to backport this we won't
+know what older kernel drivers were using before this change, it could have
+been 0 or skb->len for the length parameter, since we have to infer something
+we choose skb->len *iff* skb_queue_tail() was used right before it, otherwise
+we infer to throw 0.
 
-[0] drvbp1.linux-foundation.org/~mcgrof/examples/2014/04/01/backport-static-keys.patch
+Adding this SmPL patch to our series only incurs an additional ~9 seconds
+on run time code generation.
 
-I will note that properly backporting this can have implications on how
-we backport tracing support as that is the main usage for jump labels.
-Real enthusiasts can go ahead an extend this with architecture / kernel
-revision specific changes -- but be warned -- we will have hard litmus
-test for compilation on backports using ckmake --allyesconfig on all
-supported kernels we carry.
+mcgrof@drvbp1 ~/backports (git::master)$ time ./gentree.py --clean
+/home/mcgrof/linux-next /home/mcgrof/build/next-20140415-clean
+Copy original source files ...
+Apply patches ...
+Modify Kconfig tree ...
+Rewrite Makefiles and Kconfig files ...
+Done!
 
-This is a long way of saying -- we require at least 3.5 for static
-key support, we also support kernels older than 2.6.37 but this goes
-untested.
+real    1m25.128s
+user    12m49.380s
+sys     0m44.892s
 
-mcgrof@ergon ~/linux (git::master)$ git describe --contains bf5438fc
-v2.6.37-rc1~214^2~33^2~8
+1   3.0.101             [  OK  ]
+2   3.1.10              [  OK  ]
+3   3.2.54              [  OK  ]
+4   3.3.8               [  OK  ]
+5   3.4.79              [  OK  ]
+6   3.5.7               [  OK  ]
+7   3.6.11              [  OK  ]
+8   3.7.10              [  OK  ]
+9   3.8.13              [  OK  ]
+10  3.9.11              [  OK  ]
+11  3.10.29             [  OK  ]
+12  3.11.10             [  OK  ]
+13  3.12.10             [  OK  ]
+14  3.13.2              [  OK  ]
+15  3.14-rc1            [  OK  ]
 
-mcgrof@ergon ~/linux (git::master)$ git describe --contains d430d3d7e
-v3.0-rc1~404^2~18^2~2
+real    18m42.577s
+user    498m48.572s
+sys     64m0.560s
 
-mcgrof@ergon ~/linux (git::master)$ git describe --contains c5905afb
-v3.5-rc1~120^3~76^2 -- wrong! Its actually v3.3 try:
-  git checkout -b static-changes c5905afb; git describe
+commit 676d23690fb62b5d51ba5d659935e9f7d9da9f8e
+Author: David S. Miller <davem@davemloft.net>
+Date:   Fri Apr 11 16:15:36 2014 -0400
 
-mcgrof@ergon ~/linux (git::master)$ git describe --contains c4b2c0c5f
-v3.13-rc1~105^2~157^2~6
+    net: Fix use after free by removing length arg from sk_data_ready callbacks.
 
-Cc: Ingo Molnar <mingo@elte.hu>
-Cc: Jason Baron <jbaron@redhat.com>
-CC: Jason Baron <jbaron@redhat.com>
-Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
-Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: linux-zigbee-devel@lists.sourceforge.net
+    Several spots in the kernel perform a sequence like:
+
+        skb_queue_tail(&sk->s_receive_queue, skb);
+        sk->sk_data_ready(sk, skb->len);
+
+    But at the moment we place the SKB onto the socket receive queue it
+    can be consumed and freed up.  So this skb->len access is potentially
+    to freed up memory.
+
+    Furthermore, the skb->len can be modified by the consumer so it is
+    possible that the value isn't accurate.
+
+    And finally, no actual implementation of this callback actually uses
+    the length argument.  And since nobody actually cared about it's
+    value, lots of call sites pass arbitrary values in such as '0' and
+    even '1'.
+
+    So just remove the length argument from the callback, that way there
+    is no confusion whatsoever and all of these use-after-free cases get
+    fixed as a side effect.
+
+    Based upon a patch by Eric Dumazet and his suggestion to audit this
+    issue tree-wide.
+
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Peter Senna <peter.senna@gmail.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Gilles Muller <Gilles.Muller@lip6.fr>
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- backport/backport-include/linux/static_key.h | 186 +++++++++++++++++++++++++++
- backport/backport-include/linux/tracepoint.h |   7 +
- 2 files changed, 193 insertions(+)
- create mode 100644 backport/backport-include/linux/static_key.h
+ .../network/0031-sk_data_ready.cocci               | 117 +++++++++++++++++++++
+ 1 file changed, 117 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0031-sk_data_ready.cocci
 
-diff --git a/backport/backport-include/linux/static_key.h b/backport/backport-include/linux/static_key.h
+diff --git a/patches/collateral-evolutions/network/0031-sk_data_ready.cocci b/patches/collateral-evolutions/network/0031-sk_data_ready.cocci
 new file mode 100644
-index 0000000..0bbb61e
+index 0000000..3dc218c
 --- /dev/null
-+++ b/backport/backport-include/linux/static_key.h
-@@ -0,0 +1,186 @@
-+#ifndef _BACKPORTS_LINUX_STATIC_KEY_H
-+#define _BACKPORTS_LINUX_STATIC_KEY_H 1
-+
-+#include <linux/version.h>
-+
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) /* kernels >= 3.3 */
++++ b/patches/collateral-evolutions/network/0031-sk_data_ready.cocci
+@@ -0,0 +1,117 @@
 +/*
-+ * XXX: NOTE!
-+ *
-+ * Some 3.3 kernels carry <linux/static.h> but some don't even though its
-+ * its including <linux/jump_label.h>. What makes it more confusing is that
-+ * later all this got shuffled. The safe thing to do then is to just assume
-+ * kernels 3.3..3.4 don't have it and include <linux/jump_label.h> instead,
-+ * and for newer kernels include <linux/static_key.h>.
-+ */
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+#include_next <linux/static_key.h>
-+#else
-+#include <linux/jump_label.h>
-+#endif
++Commit 676d2369 by David removed the skb->len arguments passed onto
++the struct sock sk_data_ready() callback. This was done as its racy,
++a few drivers were passing 0 to it, and it was not really used.
++By removing it the raciness is addresed but to backport this we are
++going to have to deal with the races as-is on older kernels. This was
++merged as of v3.15:
 +
-+#else /* kernels < 3.3 */
-+/*
-+ * in between 2.6.37 - 3.5 there's a slew of changes that make
-+ * it hard to backport this properly. If you are interested in
-+ * trying you can use this as reference:
-+ *
-+ * http://drvbp1.linux-foundation.org/~mcgrof/examples/2014/04/01/backport-static-keys.patch
-+ *
-+ * And these notes:
-+ *
-+ *           < v2.6.37 - No tracing support
-+ * bf5438fc  - v2.6.37 - Jump label support added primarily for tracing but
-+ *                       tracing was broken, later kernels started sporting
-+ *                       functional tracing.
-+ * d430d3d7e - v3.0    - Static branch optimizations for jump labels
-+ * c5905afb  - v3.3    - Static keys split out, note on the below issue
-+ * c5905afb  - v3.5    - git describe --contains c5905afb claims but not true!
-+ * c4b2c0c5f - v3.13   - Adds static_key_initialized(), STATIC_KEY_CHECK_USE()
-+ *
-+ * Because all of this we skip 2.6.37 - 3.3 but and adding support for older
-+ * can be done by of carrying over the non-architecture optimized code.
-+ * Carrying new changes into this file is a burden though so if we really
-+ * find use for this we could just split the non optimized versions upstream
-+ * and copy that through an automatic process.
-+ */
++mcgrof@ergon ~/linux-next (git::master)$ git describe --contains 676d2369
++v3.15-rc1~8^2~10
 +
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)
-+/*
-+ * For kernels older than 2.6.37 we just take on the
-+ * implementation in the kernel that assumes you have
-+ * either no toolchain or architecture kernel support
-+ * for the jump labels. Daring folks who wish to embark
-+ * on a nutty journey may wish to see if they can backport
-+ * architectural specific changes here.
-+ *
-+ * Jump label support was added via commit
-+ * bf5438fca2950b03c21ad868090cc1a8fcd49536 through kernel
-+ * v2.6.37-rc1~214^2~33^2~8
-+ */
++Since this is not a define or static inline we can't easily replace this with
++the backports module or header files, instead we use SmPL grammar to generalize
++the backport for all use cases. Note that in order to backport this we won't
++know what older kernel drivers were using before this change, it could have
++been 0 or skb->len for the length parameter, since we have to infer something
++we choose skb->len *iff* skb_queue_tail() was used right before it, otherwise
++we infer to throw 0.
 +
-+/*
-+ * Jump label support
-+ *
-+ * Copyright (C) 2009-2012 Jason Baron <jbaron@redhat.com>
-+ * Copyright (C) 2011-2012 Peter Zijlstra <pzijlstr@redhat.com>
-+ *
-+ * Jump labels provide an interface to generate dynamic branches using
-+ * self-modifying code. Assuming toolchain and architecture support the result
-+ * of a "if (static_key_false(&key))" statement is a unconditional branch (which
-+ * defaults to false - and the true block is placed out of line).
-+ *
-+ * However at runtime we can change the branch target using
-+ * static_key_slow_{inc,dec}(). These function as a 'reference' count on the key
-+ * object and for as long as there are references all branches referring to
-+ * that particular key will point to the (out of line) true block.
-+ *
-+ * Since this relies on modifying code the static_key_slow_{inc,dec}() functions
-+ * must be considered absolute slow paths (machine wide synchronization etc.).
-+ * OTOH, since the affected branches are unconditional their runtime overhead
-+ * will be absolutely minimal, esp. in the default (off) case where the total
-+ * effect is a single NOP of appropriate size. The on case will patch in a jump
-+ * to the out-of-line block.
-+ *
-+ * When the control is directly exposed to userspace it is prudent to delay the
-+ * decrement to avoid high frequency code modifications which can (and do)
-+ * cause significant performance degradation. Struct static_key_deferred and
-+ * static_key_slow_dec_deferred() provide for this.
-+ *
-+ * Lacking toolchain and or architecture support, it falls back to a simple
-+ * conditional branch.
-+ *
-+ * struct static_key my_key = STATIC_KEY_INIT_TRUE;
-+ *
-+ *   if (static_key_true(&my_key)) {
-+ *   }
-+ *
-+ * will result in the true case being in-line and starts the key with a single
-+ * reference. Mixing static_key_true() and static_key_false() on the same key is not
-+ * allowed.
-+ *
-+ * Not initializing the key (static data is initialized to 0s anyway) is the
-+ * same as using STATIC_KEY_INIT_FALSE.
-+ *
++commit 676d23690fb62b5d51ba5d659935e9f7d9da9f8e
++Author: David S. Miller <davem@davemloft.net>
++Date:   Fri Apr 11 16:15:36 2014 -0400
++
++    net: Fix use after free by removing length arg from sk_data_ready callbacks.
++    
++    Several spots in the kernel perform a sequence like:
++    
++        skb_queue_tail(&sk->s_receive_queue, skb);
++        sk->sk_data_ready(sk, skb->len);
++    
++    But at the moment we place the SKB onto the socket receive queue it
++    can be consumed and freed up.  So this skb->len access is potentially
++    to freed up memory.
++    
++    Furthermore, the skb->len can be modified by the consumer so it is
++    possible that the value isn't accurate.
++    
++    And finally, no actual implementation of this callback actually uses
++    the length argument.  And since nobody actually cared about it's
++    value, lots of call sites pass arbitrary values in such as '0' and
++    even '1'.
++    
++    So just remove the length argument from the callback, that way there
++    is no confusion whatsoever and all of these use-after-free cases get
++    fixed as a side effect.
++    
++    Based upon a patch by Eric Dumazet and his suggestion to audit this
++    issue tree-wide.
++    
++    Signed-off-by: David S. Miller <davem@davemloft.net>
 +*/
 +
-+#include <linux/types.h>
-+#include <linux/compiler.h>
-+#include <linux/bug.h>
++@ sk_data_ready_assigned @
++expression E;
++identifier drv_data_ready;
++@@
 +
-+/*
-+ * For the backport we leave out static_key_initialized as
-+ * no architecture code is provided to support jump labels, so
-+ * we treat jump labels as simply atomic values which drive
-+ * branches. Since we don't backport static_key_initialized
-+ * we leave out all STATIC_KEY_CHECK_USE() uses.
-+ */
++	E->sk_data_ready = drv_data_ready;
 +
-+enum jump_label_type {
-+	JUMP_LABEL_DISABLE = 0,
-+	JUMP_LABEL_ENABLE,
-+};
++@ sk_data_ready_declared depends on sk_data_ready_assigned @
++identifier sk;
++identifier sk_data_ready_assigned.drv_data_ready;
++fresh identifier backport_drv_data_ready = "backport_" ## drv_data_ready;
++@@
 +
-+struct module;
-+
-+#include <linux/atomic.h>
-+
-+struct static_key {
-+	atomic_t enabled;
-+};
-+
-+static __always_inline bool static_key_false(struct static_key *key)
++drv_data_ready(struct sock *sk)
 +{
-+	if (unlikely(atomic_read(&key->enabled) > 0))
-+		return true;
-+	return false;
++	...
 +}
 +
-+static __always_inline bool static_key_true(struct static_key *key)
-+{
-+	if (likely(atomic_read(&key->enabled) > 0))
-+		return true;
-+	return false;
-+}
+++static void backport_drv_data_ready(struct sock *sk, int unused)
+++{
+++	drv_data_ready(sk);
+++}
 +
-+static inline void static_key_slow_inc(struct static_key *key)
-+{
-+	atomic_inc(&key->enabled);
-+}
++@ sk_data_ready_assigned_mod_e depends on sk_data_ready_assigned @
++expression E;
++identifier sk_data_ready_assigned.drv_data_ready;
++fresh identifier backport_drv_data_ready = "backport_" ## drv_data_ready;
++@@
 +
-+static inline void static_key_slow_dec(struct static_key *key)
-+{
-+	atomic_dec(&key->enabled);
-+}
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,15,0)
++	E->sk_data_ready = drv_data_ready;
+++#else
+++	E->sk_data_ready = backport_drv_data_ready;
+++#endif
 +
-+static inline int jump_label_text_reserved(void *start, void *end)
-+{
-+	return 0;
-+}
++@ sk_data_ready_found @
++expression E;
++struct sock *sk;
++@@
 +
-+static inline void jump_label_lock(void) {}
-+static inline void jump_label_unlock(void) {}
++	E->sk_data_ready(sk);
 +
-+static inline int jump_label_apply_nops(struct module *mod)
-+{
-+	return 0;
-+}
++@ sk_data_ready_skips_skb_queue_tail_E depends on sk_data_ready_found @
++expression E;
++@@
 +
-+#define STATIC_KEY_INIT_TRUE ((struct static_key) \
-+		{ .enabled = ATOMIC_INIT(1) })
-+#define STATIC_KEY_INIT_FALSE ((struct static_key) \
-+		{ .enabled = ATOMIC_INIT(0) })
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,15,0)
++	E->sk_data_ready(E);
+++#else
+++	E->sk_data_ready(E, 0);
+++#endif
 +
++@ sk_data_ready_uses_skb_queue_tail depends on sk_data_ready_found && !sk_data_ready_skips_skb_queue_tail_E @
++struct sock *sk;
++struct sk_buff *skb;
++identifier sk_data_ready;
++@@
 +
-+#define STATIC_KEY_INIT STATIC_KEY_INIT_FALSE
-+#define jump_label_enabled static_key_enabled
++	skb_queue_tail(&sk->sk_receive_queue, skb);
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,15,0)
++	sk->sk_data_ready(sk);
+++#else
+++	sk->sk_data_ready(sk, skb->len);
+++#endif
 +
-+static inline bool static_key_enabled(struct static_key *key)
-+{
-+	return (atomic_read(&key->enabled) > 0);
-+}
-+
-+#endif /* kernels older than 2.6.37  */
-+#endif /* kernels < 3.3 */
-+
-+#endif /* _BACKPORTS_LINUX_STATIC_KEY_H */
-diff --git a/backport/backport-include/linux/tracepoint.h b/backport/backport-include/linux/tracepoint.h
-index f67d8d3..0ed65b7 100644
---- a/backport/backport-include/linux/tracepoint.h
-+++ b/backport/backport-include/linux/tracepoint.h
-@@ -10,6 +10,13 @@
-  * 2.6.27		had broken tracing
-  * 2.6.28-2.6.32	didn't have anything like DECLARE_EVENT_CLASS
-  *			and faking it would be extremely difficult
-+ * 2.6.37		moved to using jump labels
-+ * 3.0			static branch optimiziations through d430d3d7e
-+ * 3.3			Ingo splits up static key from jump labels,
-+ *                      Note that git sees this as in v3.5 though!
-+ * 3.5                  We can start relying on the static_key.h file
-+ * 3.13			static_key_initialized() STATIC_KEY_CHECK_USE()
-+ * 			added via commit c4b2c0c5f
-  */
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28))
- /*
 -- 
-1.8.5.3
+1.9.1
 
