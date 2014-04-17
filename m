@@ -1,56 +1,60 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f180.google.com ([209.85.217.180]:51139 "EHLO
-	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755706AbaDLD2M (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 11 Apr 2014 23:28:12 -0400
-Received: by mail-lb0-f180.google.com with SMTP id 10so4046526lbg.39
-        for <backports@vger.kernel.org>; Fri, 11 Apr 2014 20:28:11 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <CAB=NE6XbzG-AURbRnXpPLFi7+C0pOJLJOUmZAMWb9LupUa4-Ww@mail.gmail.com>
-References: <1397266475-14442-1-git-send-email-mcgrof@do-not-panic.com>
- <1397266475-14442-9-git-send-email-mcgrof@do-not-panic.com> <CAB=NE6XbzG-AURbRnXpPLFi7+C0pOJLJOUmZAMWb9LupUa4-Ww@mail.gmail.com>
+Received: from mail-pb0-f44.google.com ([209.85.160.44]:63226 "EHLO
+	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752332AbaDQSFd (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 17 Apr 2014 14:05:33 -0400
+Received: by mail-pb0-f44.google.com with SMTP id rp16so632749pbb.3
+        for <backports@vger.kernel.org>; Thu, 17 Apr 2014 11:05:33 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Fri, 11 Apr 2014 20:27:50 -0700
-Message-ID: <CAB=NE6XnF5Ya1dAm7ZB+hKgOJdB_zn3HL96y6WU+tCqV9Yi6Sg@mail.gmail.com> (sfid-20140412_052814_667245_3264FE2E)
-Subject: Re: [PATCH 08/10] backports: bump bluetooth reqs to 3.2
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Content-Type: text/plain; charset=UTF-8
+To: backports@vger.kernel.org
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	Peter Senna <peter.senna@gmail.com>,
+	Julia Lawall <julia.lawall@lip6.fr>,
+	Gilles Muller <Gilles.Muller@lip6.fr>
+Subject: [PATCH 5/8] backports: add a 120 second timeout rule to Coccinelle
+Date: Thu, 17 Apr 2014 11:04:53 -0700
+Message-Id: <1397757896-32558-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20140417_200656_766705_AEDF191C)
+In-Reply-To: <1397757896-32558-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1397757896-32558-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Apr 11, 2014 at 6:41 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> On Fri, Apr 11, 2014 at 6:34 PM, Luis R. Rodriguez
-> <mcgrof@do-not-panic.com> wrote:
->> As a prep to bump general requirements lets bump bluetooth
->> minimum kernel requirements to at least 3.2.
->
-> Ignore this, it gets on 3.0 as the minimum requirements as I later
-> removed this line, and that means it default to the oldest supported
-> kernel, which is 3.0 now.
+Our current overall run time is less than 120 seconds so lets
+add a trigger to fail if we have a rule taking longer. Adding
+this has no extra incurred overhead cost.
 
-As expected removing this patch yields no issues:
+mcgrof@drvbp1 ~/backports (git::master)$ time ./gentree.py --clean
+/home/mcgrof/linux-next /home/mcgrof/build/next-20140411
+Copy original source files ...
+Apply patches ...
+Modify Kconfig tree ...
+Rewrite Makefiles and Kconfig files ...
+Done!
 
-1   3.0.101             [  OK  ]
-2   3.1.10              [  OK  ]
-3   3.2.54              [  OK  ]
-4   3.3.8               [  OK  ]
-5   3.4.79              [  OK  ]
-6   3.5.7               [  OK  ]
-7   3.6.11              [  OK  ]
-8   3.7.10              [  OK  ]
-9   3.8.13              [  OK  ]
-10  3.9.11              [  OK  ]
-11  3.10.29             [  OK  ]
-12  3.11.10             [  OK  ]
-13  3.12.10             [  OK  ]
-14  3.13.2              [  OK  ]
-15  3.14-rc1            [  OK  ]
+real    1m15.463s
+user    10m49.100s
+sys     0m37.100s
 
-real    28m19.343s
-user    785m0.188s
-sys     86m24.716s
+Cc: Peter Senna <peter.senna@gmail.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Gilles Muller <Gilles.Muller@lip6.fr>
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ lib/bpcoccinelle.py | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/lib/bpcoccinelle.py b/lib/bpcoccinelle.py
+index 75a0b37..2e0153e 100644
+--- a/lib/bpcoccinelle.py
++++ b/lib/bpcoccinelle.py
+@@ -35,6 +35,7 @@ def spatch(cocci_file, outdir,
+             '--recursive-includes',
+             '--relax-include-path',
+             '--use-coccigrep',
++            '--timeout', '120',
+             '--backup-suffix', '.cocci_backup', '--dir', '.']
+ 
+     if (max_threads > 1):
+-- 
+1.9.1
 
-  Luis
