@@ -1,118 +1,29 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:56206 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751208AbaDRBY6 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 17 Apr 2014 21:24:58 -0400
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: m.chehab@samsung.com, felipensp@gmail.com, mkrufky@linuxtv.org,
-	linux-media@vger.kernel.org
-Cc: backports@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH 1/2] technisat-usb2: rename led enums to be specific to driver
-Date: Thu, 17 Apr 2014 18:24:43 -0700
-Message-Id: <1397784284-15946-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20140418_032501_149245_A7F9E76B)
-In-Reply-To: <1397784284-15946-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1397784284-15946-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from mail-la0-f46.google.com ([209.85.215.46]:51426 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750970AbaDRCMp (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 17 Apr 2014 22:12:45 -0400
+Received: by mail-la0-f46.google.com with SMTP id hr17so971544lab.33
+        for <backports@vger.kernel.org>; Thu, 17 Apr 2014 19:12:42 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAB=NE6VtA11u_drZrJrq0v5Q4Qo=oiej+drkYc77E2zsc60g2A@mail.gmail.com>
+References: <1397571929-29929-1-git-send-email-arend@broadcom.com> <CAB=NE6VtA11u_drZrJrq0v5Q4Qo=oiej+drkYc77E2zsc60g2A@mail.gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+Date: Thu, 17 Apr 2014 19:12:22 -0700
+Message-ID: <CAB=NE6WhbqxSJJ=jaq-4F77SMsgeimc2KvRLvA97Z-YGwa==Ww@mail.gmail.com> (sfid-20140418_041248_244706_3ABB7089)
+Subject: Re: [PATCH] backports: patches: fix flow_dissector patch for 3.15-rc1
+To: Arend van Spriel <arend@broadcom.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+On Thu, Apr 17, 2014 at 5:03 PM, Luis R. Rodriguez <mcgrof@frijolero.org> wrote:
+> The other changes I pushed out today are
+> needed for a full v3.15 branch, it seems things are compiling for
+> v3.15 now, will poke the list with details once verified completely.
 
-The current names clash with include/linux/leds.h namespace,
-although there is no compile issue currently this does affect
-backports. Drivers should also try to avoid generic namespaces
-for things like this.
+New branch created now.
 
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: Felipe Pena <felipensp@gmail.com>
-Cc: Michael Krufky <mkrufky@linuxtv.org>
-Cc: linux-media@vger.kernel.org
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
----
- drivers/media/usb/dvb-usb/technisat-usb2.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/media/usb/dvb-usb/technisat-usb2.c b/drivers/media/usb/dvb-usb/technisat-usb2.c
-index 98d24ae..d947e03 100644
---- a/drivers/media/usb/dvb-usb/technisat-usb2.c
-+++ b/drivers/media/usb/dvb-usb/technisat-usb2.c
-@@ -214,10 +214,10 @@ static void technisat_usb2_frontend_reset(struct usb_device *udev)
- 
- /* LED control */
- enum technisat_usb2_led_state {
--	LED_OFF,
--	LED_BLINK,
--	LED_ON,
--	LED_UNDEFINED
-+	TECH_LED_OFF,
-+	TECH_LED_BLINK,
-+	TECH_LED_ON,
-+	TECH_LED_UNDEFINED
- };
- 
- static int technisat_usb2_set_led(struct dvb_usb_device *d, int red, enum technisat_usb2_led_state state)
-@@ -229,14 +229,14 @@ static int technisat_usb2_set_led(struct dvb_usb_device *d, int red, enum techni
- 		0
- 	};
- 
--	if (disable_led_control && state != LED_OFF)
-+	if (disable_led_control && state != TECH_LED_OFF)
- 		return 0;
- 
- 	switch (state) {
--	case LED_ON:
-+	case TECH_LED_ON:
- 		led[1] = 0x82;
- 		break;
--	case LED_BLINK:
-+	case TECH_LED_BLINK:
- 		led[1] = 0x82;
- 		if (red) {
- 			led[2] = 0x02;
-@@ -251,7 +251,7 @@ static int technisat_usb2_set_led(struct dvb_usb_device *d, int red, enum techni
- 		break;
- 
- 	default:
--	case LED_OFF:
-+	case TECH_LED_OFF:
- 		led[1] = 0x80;
- 		break;
- 	}
-@@ -310,11 +310,11 @@ static void technisat_usb2_green_led_control(struct work_struct *work)
- 				goto schedule;
- 
- 			if (ber > 1000)
--				technisat_usb2_set_led(state->dev, 0, LED_BLINK);
-+				technisat_usb2_set_led(state->dev, 0, TECH_LED_BLINK);
- 			else
--				technisat_usb2_set_led(state->dev, 0, LED_ON);
-+				technisat_usb2_set_led(state->dev, 0, TECH_LED_ON);
- 		} else
--			technisat_usb2_set_led(state->dev, 0, LED_OFF);
-+			technisat_usb2_set_led(state->dev, 0, TECH_LED_OFF);
- 	}
- 
- schedule:
-@@ -365,9 +365,9 @@ static int technisat_usb2_power_ctrl(struct dvb_usb_device *d, int level)
- 		return 0;
- 
- 	/* green led is turned off in any case - will be turned on when tuning */
--	technisat_usb2_set_led(d, 0, LED_OFF);
-+	technisat_usb2_set_led(d, 0, TECH_LED_OFF);
- 	/* red led is turned on all the time */
--	technisat_usb2_set_led(d, 1, LED_ON);
-+	technisat_usb2_set_led(d, 1, TECH_LED_ON);
- 	return 0;
- }
- 
-@@ -667,7 +667,7 @@ static int technisat_usb2_rc_query(struct dvb_usb_device *d)
- 		return 0;
- 
- 	if (!disable_led_control)
--		technisat_usb2_set_led(d, 1, LED_BLINK);
-+		technisat_usb2_set_led(d, 1, TECH_LED_BLINK);
- 
- 	return 0;
- }
--- 
-1.9.1
-
+  Luis
