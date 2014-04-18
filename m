@@ -1,28 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:53960 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751266AbaDTWVD (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 20 Apr 2014 18:21:03 -0400
-Date: Sun, 20 Apr 2014 18:21:02 -0400 (EDT)
-Message-Id: <20140420.182102.175207647021494785.davem@davemloft.net> (sfid-20140421_002107_282993_26DDE64F)
-To: mcgrof@do-not-panic.com
-Cc: alex.bluesman.smirnov@gmail.com, dbaryshkov@gmail.com,
-	linux-zigbee-devel@lists.sourceforge.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, backports@vger.kernel.org
-Subject: Re: [PATCH 0/3] 6lowpan: few changes to help with backports
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1397784176-15809-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1397784176-15809-1-git-send-email-mcgrof@do-not-panic.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Received: from mail-lb0-f180.google.com ([209.85.217.180]:52372 "EHLO
+	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750970AbaDRBxH (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 17 Apr 2014 21:53:07 -0400
+MIME-Version: 1.0
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Thu, 17 Apr 2014 18:52:44 -0700
+Message-ID: <CAB=NE6WD0AB4qk7t=bszdv61F2g2NvDei_tcx2o98=kQvUuh-Q@mail.gmail.com> (sfid-20140418_035334_084042_DFA7603E)
+Subject: 3 linux-next based backports releases
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-media@vger.kernel.org,
+	linux-wireless <linux-wireless@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	linux-zigbee-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Thu, 17 Apr 2014 18:22:53 -0700
+3 new linux backports release are now available based on linux-next
+tags next-20140320 [0] next-20140411 [1] and next-20140417 [2]. This
+should mean that we can keep things in synch now almost daily, and
+drivers can be tested with the latest code as-is on linux-next. We've
+shaved off kernel support for kernels older than 3.0 in order to help
+scale the project. We've also have added 2 new SmPL patches to help
+backports backport two pain in the ass collateral evolutions
+automatically. Please note that the patches/ directory is now all
+tidied up -- folks interested in playing with SmPL can try to help by
+seeing if they can use SmPL grammer to formalize a collateral
+evolution backport. We have a bit of examples now. For more details
+please refer to the wiki [3] or git tree.
 
-> Here's a few changes that can help automate the backport of 6lowpan.
-> I've been carrying them around for a while, I think its best to just
-> merge these upstream as its nothing controversial.
+[0] http://www.kernel.org/pub/linux/kernel/projects/backports/2014/03/20/backports-20140320.tar.xz
+[1] https://www.kernel.org/pub/linux/kernel/projects/backports/2014/04/11/backports-20140411.tar.xz
+[2] https://www.kernel.org/pub/linux/kernel/projects/backports/2014/04/17/backports-20140417.tar.xz
+[3] http://backports.wiki.kernel.org
 
-Series applied.
+  Luis
