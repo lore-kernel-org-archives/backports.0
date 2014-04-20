@@ -1,44 +1,28 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:44213 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932560AbaDIMHm (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 9 Apr 2014 08:07:42 -0400
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-To: backports@vger.kernel.org
-Cc: Arik Nemtsov <arik@wizery.com>,
-	Arik Nemtsov <arikx.nemtsov@intel.com>,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Subject: [PATCH] backports: device: don't redefine DEVICE_ATTR_RO
-Date: Wed,  9 Apr 2014 15:04:13 +0300
-Message-Id: <1397045053-22585-1-git-send-email-emmanuel.grumbach@intel.com> (sfid-20140409_140744_610643_511C94CB)
+Received: from shards.monkeyblade.net ([149.20.54.216]:53960 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751266AbaDTWVD (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 20 Apr 2014 18:21:03 -0400
+Date: Sun, 20 Apr 2014 18:21:02 -0400 (EDT)
+Message-Id: <20140420.182102.175207647021494785.davem@davemloft.net> (sfid-20140421_002107_282993_26DDE64F)
+To: mcgrof@do-not-panic.com
+Cc: alex.bluesman.smirnov@gmail.com, dbaryshkov@gmail.com,
+	linux-zigbee-devel@lists.sourceforge.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, backports@vger.kernel.org
+Subject: Re: [PATCH 0/3] 6lowpan: few changes to help with backports
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1397784176-15809-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1397784176-15809-1-git-send-email-mcgrof@do-not-panic.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Arik Nemtsov <arik@wizery.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Thu, 17 Apr 2014 18:22:53 -0700
 
-Some old custom kernels have it defined.
+> Here's a few changes that can help automate the backport of 6lowpan.
+> I've been carrying them around for a while, I think its best to just
+> merge these upstream as its nothing controversial.
 
-Signed-off-by: Arik Nemtsov <arikx.nemtsov@intel.com>
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
----
- backport/backport-include/linux/device.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
-index ebfc01a..a54756a 100644
---- a/backport/backport-include/linux/device.h
-+++ b/backport/backport-include/linux/device.h
-@@ -193,8 +193,10 @@ backport_device_release_driver(struct device *dev)
- #endif /* LINUX_VERSION_CODE <= KERNEL_VERSION(3,6,0) */
- 
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
-+#ifndef DEVICE_ATTR_RO
- #define DEVICE_ATTR_RO(_name) \
- struct device_attribute dev_attr_ ## _name = __ATTR_RO(_name);
-+#endif
- #define DEVICE_ATTR_RW(_name) \
- struct device_attribute dev_attr_ ## _name = __ATTR_RW(_name)
- #endif
--- 
-1.8.3.2
-
+Series applied.
