@@ -1,39 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:43551 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754297AbaDKSLK (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 11 Apr 2014 14:11:10 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 7307C2018A
-	for <backports@vger.kernel.org>; Fri, 11 Apr 2014 18:11:09 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 48AAD20171
-	for <backports@vger.kernel.org>; Fri, 11 Apr 2014 18:11:08 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 73861] AWUS 036NHR v.2 8188RU cant associate and cant capture
- handshake.
-Date: Fri, 11 Apr 2014 18:11:07 +0000
-Message-ID: <bug-73861-58281-XkBO3f1eua@https.bugzilla.kernel.org/> (sfid-20140411_201112_839086_1DD7E728)
-In-Reply-To: <bug-73861-58281@https.bugzilla.kernel.org/>
-References: <bug-73861-58281@https.bugzilla.kernel.org/>
+Received: from s3.sipsolutions.net ([144.76.43.152]:43550 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751220AbaDVSpk (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 22 Apr 2014 14:45:40 -0400
+Message-ID: <1398192315.4211.25.camel@jlt4.sipsolutions.net> (sfid-20140422_204633_108126_ADEFA901)
+Subject: Re: [PATCH 1/3] 6lowpan: add helper to get 6lowpan namespace
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@suse.com>
+Cc: Alexander Aring <alex.aring@gmail.com>,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	alex.bluesman.smirnov@gmail.com, dbaryshkov@gmail.com,
+	linux-zigbee-devel@lists.sourceforge.net, davem@davemloft.net,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	backports@vger.kernel.org
+Date: Tue, 22 Apr 2014 20:45:15 +0200
+In-Reply-To: <20140422175818.GN27882@wotan.suse.de>
+References: <1397784176-15809-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1397784176-15809-2-git-send-email-mcgrof@do-not-panic.com>
+	 <1398159886.4211.1.camel@jlt4.sipsolutions.net>
+	 <20140422095300.GA9241@omega> <20140422175818.GN27882@wotan.suse.de>
 Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=73861
+On Tue, 2014-04-22 at 19:58 +0200, Luis R. Rodriguez wrote:
 
-Larry Finger <Larry.Finger@lwfinger.net> changed:
+> > > > +#if IS_ENABLED(CONFIG_IEEE802154_6LOWPAN)
+> > > > [...]
+> > > > +#else
+> > > > +static inline struct netns_ieee802154_lowpan *
+> > > > +net_ieee802154_lowpan(struct net *net)
+> > > > +{
+> > > > +	return NULL;
+> > > > +}
+> > > > +#endif
+> > > 
+> > > Why would that be needed? If nobody compiles 802.15.4 then it seems
+> > > nothing should reference it?
+> > > 
+> > Indeed I think this is unnecessary, also.
+> 
+> I wanted to be sure, and I was not. Right now 6lowpan does not depend
+> on CONFIG_NET_NS, is this intentional? I think its fine without it
+> but I was not sure.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |Larry.Finger@lwfinger.net
+I fail to see how !CONFIG_LOWPAN is related CONFIG_NET_NS?
 
---- Comment #1 from Larry Finger <Larry.Finger@lwfinger.net> ---
-There were a lot of changes in kernel 3.14 for this driver that could not be
-backported to 3.12. Does Debian supply a 3.14 kernel?
+johannes
 
--- 
-You are receiving this mail because:
-You are the assignee for the bug.
