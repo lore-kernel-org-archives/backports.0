@@ -1,81 +1,80 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kapsi.fi ([217.30.184.167]:37832 "EHLO mail.kapsi.fi"
+Received: from cantor2.suse.de ([195.135.220.15]:45013 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933717AbaDIVc7 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 9 Apr 2014 17:32:59 -0400
-From: Antti Palosaari <crope@iki.fi>
-To: linux-media@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Antti Palosaari <crope@iki.fi>, backports@vger.kernel.org
-Subject: [PATCHv2 1/2] rtl28xxu: do not hard depend on staging SDR module
-Date: Thu, 10 Apr 2014 00:32:40 +0300
-Message-Id: <1397079161-24144-2-git-send-email-crope@iki.fi> (sfid-20140409_233307_225088_D0672709)
-In-Reply-To: <1397079161-24144-1-git-send-email-crope@iki.fi>
-References: <1397079161-24144-1-git-send-email-crope@iki.fi>
+	id S932850AbaDVR6U (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 22 Apr 2014 13:58:20 -0400
+Date: Tue, 22 Apr 2014 19:58:18 +0200
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
+To: Alexander Aring <alex.aring@gmail.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	alex.bluesman.smirnov@gmail.com, dbaryshkov@gmail.com,
+	linux-zigbee-devel@lists.sourceforge.net, davem@davemloft.net,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	backports@vger.kernel.org
+Subject: Re: [PATCH 1/3] 6lowpan: add helper to get 6lowpan namespace
+Message-ID: <20140422175818.GN27882@wotan.suse.de> (sfid-20140422_195823_499948_C457B17D)
+References: <1397784176-15809-1-git-send-email-mcgrof@do-not-panic.com> <1397784176-15809-2-git-send-email-mcgrof@do-not-panic.com> <1398159886.4211.1.camel@jlt4.sipsolutions.net> <20140422095300.GA9241@omega>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="EemXnrF2ob+xzFeB"
+In-Reply-To: <20140422095300.GA9241@omega>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-RTL2832 SDR extension module is currently on staging. SDR module
-headers were included from staging causing direct dependency staging
-directory. As a solution, add needed headers to main driver.
-Motivation of that change comes from Luis / driver backports project.
 
-Reported-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
-Cc: backports@vger.kernel.org
-Signed-off-by: Antti Palosaari <crope@iki.fi>
----
- drivers/media/usb/dvb-usb-v2/Makefile   |  1 -
- drivers/media/usb/dvb-usb-v2/rtl28xxu.c | 21 ++++++++++++++++++++-
- 2 files changed, 20 insertions(+), 2 deletions(-)
+--EemXnrF2ob+xzFeB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/media/usb/dvb-usb-v2/Makefile b/drivers/media/usb/dvb-usb-v2/Makefile
-index 7407b83..bc38f03 100644
---- a/drivers/media/usb/dvb-usb-v2/Makefile
-+++ b/drivers/media/usb/dvb-usb-v2/Makefile
-@@ -41,4 +41,3 @@ ccflags-y += -I$(srctree)/drivers/media/dvb-core
- ccflags-y += -I$(srctree)/drivers/media/dvb-frontends
- ccflags-y += -I$(srctree)/drivers/media/tuners
- ccflags-y += -I$(srctree)/drivers/media/common
--ccflags-y += -I$(srctree)/drivers/staging/media/rtl2832u_sdr
-diff --git a/drivers/media/usb/dvb-usb-v2/rtl28xxu.c b/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
-index c83c16c..af43183 100644
---- a/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
-+++ b/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
-@@ -24,7 +24,6 @@
- 
- #include "rtl2830.h"
- #include "rtl2832.h"
--#include "rtl2832_sdr.h"
- 
- #include "qt1010.h"
- #include "mt2060.h"
-@@ -36,6 +35,26 @@
- #include "tua9001.h"
- #include "r820t.h"
- 
-+/*
-+ * RTL2832_SDR module is in staging. That logic is added in order to avoid any
-+ * hard dependency to drivers/staging/ directory as we want compile mainline
-+ * driver even whole staging directory is missing.
-+ */
-+#include <media/v4l2-subdev.h>
-+
-+#if IS_ENABLED(CONFIG_DVB_RTL2832_SDR)
-+extern struct dvb_frontend *rtl2832_sdr_attach(struct dvb_frontend *fe,
-+	struct i2c_adapter *i2c, const struct rtl2832_config *cfg,
-+	struct v4l2_subdev *sd);
-+#else
-+static inline struct dvb_frontend *rtl2832_sdr_attach(struct dvb_frontend *fe,
-+	struct i2c_adapter *i2c, const struct rtl2832_config *cfg,
-+	struct v4l2_subdev *sd)
-+{
-+	return NULL;
-+}
-+#endif
-+
- static int rtl28xxu_disable_rc;
- module_param_named(disable_rc, rtl28xxu_disable_rc, int, 0644);
- MODULE_PARM_DESC(disable_rc, "disable RTL2832U remote controller");
--- 
-1.9.0
+On Tue, Apr 22, 2014 at 11:53:03AM +0200, Alexander Aring wrote:
+> Hi,
+>=20
+> On Tue, Apr 22, 2014 at 11:44:46AM +0200, Johannes Berg wrote:
+> > On Thu, 2014-04-17 at 18:22 -0700, Luis R. Rodriguez wrote:
+> >=20
+> > > +#if IS_ENABLED(CONFIG_IEEE802154_6LOWPAN)
+> > > [...]
+> > > +#else
+> > > +static inline struct netns_ieee802154_lowpan *
+> > > +net_ieee802154_lowpan(struct net *net)
+> > > +{
+> > > +	return NULL;
+> > > +}
+> > > +#endif
+> >=20
+> > Why would that be needed? If nobody compiles 802.15.4 then it seems
+> > nothing should reference it?
+> >=20
+> Indeed I think this is unnecessary, also.
 
+I wanted to be sure, and I was not. Right now 6lowpan does not depend
+on CONFIG_NET_NS, is this intentional? I think its fine without it
+but I was not sure.
+
+  Luis
+
+--EemXnrF2ob+xzFeB
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.9 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTVq26AAoJEPep4JnvMe6zdF8P/i5ERmEO5yxPrcpRwJuOn+UV
+H3GInw94Q7rqvTKna+fSZ4UWqB+DSZKSmEbHXKRk1ClLfpDNj2eP/k//cDdJrKJg
+veYWp3Sbng8qGvvqPVGWnzJGJfXCSUrBYFpNy9+SGpxkBPLTqm6IlB0HC3a+mxwm
+n+mvjVp6SNPEdNWVPCjspFM7QkVDeMw3Xbr5Kg9Q5/z0xahzfw1GaSdgJ3jer/84
+lvtEdiImRq7G89FrGcDXxiHpzowOOnncuxPj4KuMz+DTKa2IBCtflBI9flfo+i6D
+fK/pgw+ftQR/x7kt/Lj8gU7DYlVibsb/idirPTFHgKrqtsIU0guX0iX27nwMjm5X
+D2P+/ZBfS4GFFmjW1UTxUKLk92NqaVv//i+te6SQLWS6N6pIojBxOTYnleG/UQgz
+CPF7dTSUlViY2HA3QCIyjPa0PYzWOHMS7ZnvisPoVtxrr+OHCeMoGcXCmUEKrLda
+xB+jXA/PkT1kOJ1tghAFW2xpilVHY4ppNH9oZnnI3q93doKX1kLS1wcFSumo1+bc
+TrXmOmwav6VMgoz3AIHEgLr7/WcisPjHAO4EcEpIoiKkerMQT9PyqvkoTuYDnajt
+K7Kuk8eFSHh45S2vf4dF+0ErMHoX8hubWUtQUssjPwZOUiFcqtLkwfqZYOZEdKte
+Ot7NN2/6VeLiAa3uA2AZ
+=UZIb
+-----END PGP SIGNATURE-----
+
+--EemXnrF2ob+xzFeB--
