@@ -1,36 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:42760 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932482AbaDILzJ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 9 Apr 2014 07:55:09 -0400
-Message-ID: <1397044495.4964.5.camel@jlt4.sipsolutions.net> (sfid-20140409_135520_463691_330F06BF)
-Subject: Re: [PATCH 00/12] backports: cath up to next-20140320
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Wed, 09 Apr 2014 13:54:55 +0200
-In-Reply-To: <CAB=NE6Ut3YLiY_NhGJyVeS2ePiQyMuppDJ+1LjS_XFj=FBTBvQ@mail.gmail.com> (sfid-20140409_032717_670097_2C2C6666)
-References: <1396927943-25589-1-git-send-email-mcgrof@do-not-panic.com>
-	 <CAB=NE6VzqUpt+SpuW8vB0HWmces8EMJpQr-L8RyG3P76WfAtUA@mail.gmail.com>
-	 <CAB=NE6Ut3YLiY_NhGJyVeS2ePiQyMuppDJ+1LjS_XFj=FBTBvQ@mail.gmail.com>
-	 (sfid-20140409_032717_670097_2C2C6666)
+Received: from mail.kernel.org ([198.145.19.201]:52540 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751310AbaDVN7J (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 22 Apr 2014 09:59:09 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id EF6332025B
+	for <backports@vger.kernel.org>; Tue, 22 Apr 2014 13:59:03 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id 674CD20211
+	for <backports@vger.kernel.org>; Tue, 22 Apr 2014 13:58:57 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 74661] Backports did not support properly RTL8188RU
+Date: Tue, 22 Apr 2014 13:58:57 +0000
+Message-ID: <bug-74661-58281-oSUnqdZTkX@https.bugzilla.kernel.org/> (sfid-20140422_155912_329919_8651095F)
+In-Reply-To: <bug-74661-58281@https.bugzilla.kernel.org/>
+References: <bug-74661-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2014-04-08 at 18:26 -0700, Luis R. Rodriguez wrote:
-> On Tue, Apr 8, 2014 at 6:20 PM, Luis R. Rodriguez
-> <mcgrof@do-not-panic.com> wrote:
-> >
-> > OK I had to address just one more change which I just posted. Since it
-> > compiles fine I'm going to push now. Tomorrow is release day.
-> 
-> Alright, all pushed out. Please fetch.
+https://bugzilla.kernel.org/show_bug.cgi?id=74661
 
-Can you clarify which tree you're using now? It seems you're updating
-mcgrof/backports.git but I thought the intent was to switch over to
-backports/backports.git so you can share maintenance with Hauke...
+John W. Linville <linville@tuxdriver.com> changed:
 
-johannes
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |linville@tuxdriver.com
+          Component|Wireless                    |Backports
+            Version|2.5                         |unspecified
+           Assignee|networking_wireless@kernel- |backports@vger.kernel.org
+                   |bugs.osdl.org               |
+            Product|Networking                  |Backports project
 
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
