@@ -1,43 +1,33 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:39806 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752357AbaD1MHJ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 28 Apr 2014 08:07:09 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
+Received: from mail.kernel.org ([198.145.19.201]:44381 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753728AbaDWGhi (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 23 Apr 2014 02:37:38 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 8BADB201F2
+	for <backports@vger.kernel.org>; Wed, 23 Apr 2014 06:37:37 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+	by mail.kernel.org (Postfix) with ESMTP id 14D71201F7
+	for <backports@vger.kernel.org>; Wed, 23 Apr 2014 06:37:36 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: remove mac80211.h
-Date: Mon, 28 Apr 2014 14:06:58 +0200
-Message-Id: <1398686818-16234-1-git-send-email-johannes@sipsolutions.net> (sfid-20140428_140711_600977_952F89BD)
+Subject: [Bug 73861] AWUS 036NHR v.2 8188RU cant associate and cant capture
+ handshake.
+Date: Wed, 23 Apr 2014 06:37:35 +0000
+Message-ID: <bug-73861-58281-HuSJRRA9dJ@https.bugzilla.kernel.org/> (sfid-20140423_083744_263614_FC3F3F41)
+In-Reply-To: <bug-73861-58281@https.bugzilla.kernel.org/>
+References: <bug-73861-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+https://bugzilla.kernel.org/show_bug.cgi?id=73861
 
-As support for old kernels has been removed, there's no need to keep
-around the mac80211.h file that redefines the ieee80211_rx() symbol;
-In 2.6.32 this name was changed to belong to mac80211.
+--- Comment #5 from youlold@gmail.com ---
+On kernel 3.15rc2 card do associating(not good, but do), but cant properly
+connect and make WPS transaction.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/net/mac80211.h | 8 --------
- 1 file changed, 8 deletions(-)
- delete mode 100644 backport/backport-include/net/mac80211.h
-
-diff --git a/backport/backport-include/net/mac80211.h b/backport/backport-include/net/mac80211.h
-deleted file mode 100644
-index c31b46298d85..000000000000
---- a/backport/backport-include/net/mac80211.h
-+++ /dev/null
-@@ -1,8 +0,0 @@
--#ifndef __BACKPORT_NET_MAC80211_H
--#define __BACKPORT_NET_MAC80211_H
--
--/* on some kernels, libipw also uses this, so override */
--#define ieee80211_rx mac80211_ieee80211_rx
--#include_next <net/mac80211.h>
--
--#endif /* __BACKPORT_NET_MAC80211_H */
 -- 
-1.9.0
-
+You are receiving this mail because:
+You are the assignee for the bug.
