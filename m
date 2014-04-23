@@ -1,32 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:44858 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754367AbaDWPcA (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 23 Apr 2014 11:32:00 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 64E7E20211
-	for <backports@vger.kernel.org>; Wed, 23 Apr 2014 15:31:59 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 7B6882017A
-	for <backports@vger.kernel.org>; Wed, 23 Apr 2014 15:31:58 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 73861] AWUS 036NHR v.2 8188RU cant associate and cant capture
- handshake.
-Date: Wed, 23 Apr 2014 15:31:58 +0000
-Message-ID: <bug-73861-58281-NMQeSYNa68@https.bugzilla.kernel.org/> (sfid-20140423_173210_480765_CA30BDFD)
-In-Reply-To: <bug-73861-58281@https.bugzilla.kernel.org/>
-References: <bug-73861-58281@https.bugzilla.kernel.org/>
+Received: from s3.sipsolutions.net ([144.76.43.152]:46761 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753198AbaDWLRJ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 23 Apr 2014 07:17:09 -0400
+Message-ID: <1398251810.4173.6.camel@jlt4.sipsolutions.net> (sfid-20140423_131717_800333_F9DB6926)
+Subject: Re: cocci: multiple versions of function with different arguments
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Stefan Assmann <sassmann@kpanic.de>
+Cc: Julia Lawall <julia.lawall@lip6.fr>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Wed, 23 Apr 2014 13:16:50 +0200
+In-Reply-To: <5357A065.3020400@kpanic.de>
+References: <53579593.40306@kpanic.de>
+		 (sfid-20140423_122737_920373_E36F87A8) <1398249715.4173.3.camel@jlt4.sipsolutions.net>
+	 <5357A065.3020400@kpanic.de>
 Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=73861
+On Wed, 2014-04-23 at 13:13 +0200, Stefan Assmann wrote:
 
---- Comment #7 from Larry Finger <Larry.Finger@lwfinger.net> ---
-WPS is not tested and probably doesn't work.
+> > #define vlan_rx_add_vid_func(a,b,c) vlan_rx_add_vid_func(a,c)
 
--- 
-You are receiving this mail because:
-You are the assignee for the bug.
+> That's one way to handle it but I'm sure there will be other cases where
+> we might use coccinelle similarly, where a define might be tricky.
+> Luis asked me to do some cleanup on igb, so I'm exploring ways to make
+> it easier for other network drivers as well.
+> 
+> If for some reason cocci should have a problem with this the fallback
+> to a define is a good idea.
+
+I don't disagree that we might have to solve this cocci problem, but I
+would much prefer the define over the cocci patch as it leaves the
+output code closer to the input code, which can be important for some
+use cases (e.g. ours - development based on a backport tree.)
+
+So even if we can figure out how to make such a thing work with cocci,
+I'd argue that we should pick the define (in this particular case.)
+
+johannes
+
