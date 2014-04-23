@@ -1,49 +1,55 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:39088 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752375AbaDEMmW (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 5 Apr 2014 08:42:22 -0400
-Received: by mail-pd0-f169.google.com with SMTP id fp1so4539018pdb.0
-        for <backports@vger.kernel.org>; Sat, 05 Apr 2014 05:42:22 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 15/27] backports: add git diff support to lib/bpgit.py
-Date: Sat,  5 Apr 2014 05:40:49 -0700
-Message-Id: <1396701662-15165-16-git-send-email-mcgrof@do-not-panic.com> (sfid-20140405_144449_881567_814B8369)
-In-Reply-To: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from app1b.xlhost.de ([84.200.252.162]:52658 "EHLO app1b.xlhost.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752854AbaDWK1f (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 23 Apr 2014 06:27:35 -0400
+Message-ID: <53579593.40306@kpanic.de> (sfid-20140423_122737_920373_E36F87A8)
+Date: Wed, 23 Apr 2014 12:27:31 +0200
+From: Stefan Assmann <sassmann@kpanic.de>
+MIME-Version: 1.0
+To: Julia Lawall <julia.lawall@lip6.fr>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: cocci: multiple versions of function with different arguments
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This will be used later for proving SmPL patches against
-legacy patch series.
+Hi Julia,
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- lib/bpgit.py | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+I'm trying to generate a patch to define a function with different
+arguments depending on the kernel version. I'm having some difficulties,
+maybe you can tell me what's wrong with the following approach.
 
-diff --git a/lib/bpgit.py b/lib/bpgit.py
-index f56e377..f4b53c4 100644
---- a/lib/bpgit.py
-+++ b/lib/bpgit.py
-@@ -328,3 +328,15 @@ def reset(opts=[], tree=None):
-                                close_fds=True, universal_newlines=True, cwd=tree)
-     process.wait()
-     _check(process)
-+
-+def diff(tree=None, extra_args=None):
-+    cmd = ['git', 'diff', '--color=always'] + extra_args
-+
-+    process = subprocess.Popen(cmd,
-+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                               close_fds=True, universal_newlines=True, cwd=tree)
-+    stdout = process.communicate()[0]
-+    process.wait()
-+    _check(process)
-+
-+    return stdout
--- 
-1.8.5.3
+@ rule1 @
+struct net_device_ops ops;
+identifier vlan_rx_add_vid_func;
+@@
+ops.ndo_vlan_rx_add_vid = vlan_rx_add_vid_func;
 
+@ rule2 @
+identifier rule1.vlan_rx_add_vid_func;
+expression a,b,c;
+@@
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
+        vlan_rx_add_vid_func(a, b, c)
++#else
++       vlan_rx_add_vid_func(a, c)
++#endif
+
+
+This results in
+spatch --sp-file test3.cocci drivers/net/ethernet/intel/igb/igb_main.c
+init_defs_builtins: /usr/local/share/coccinelle/standard.h
+282 302
+Fatal error: exception Failure("plus: parse error:
+ = File "test3.cocci", line 14, column 2,  charpos = 282
+    around = 'vlan_rx_add_vid_func', whole content = +  vlan_rx_add_vid_func(a, c)
+")
+
+
+If I remove "vlan_rx_add_vid_func(a, c)" it works, but that defeats the
+whole idea.
+
+Thanks!
+
+  Stefan
