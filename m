@@ -1,47 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-bk0-f53.google.com ([209.85.214.53]:42479 "EHLO
-	mail-bk0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756416AbaDIBDt (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 8 Apr 2014 21:03:49 -0400
+Received: from app1b.xlhost.de ([84.200.252.162]:53136 "EHLO app1b.xlhost.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753834AbaDWMgn (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 23 Apr 2014 08:36:43 -0400
+Message-ID: <5357B3D8.1040400@kpanic.de> (sfid-20140423_144250_128795_AF8D0CA5)
+Date: Wed, 23 Apr 2014 14:36:40 +0200
+From: Stefan Assmann <sassmann@kpanic.de>
 MIME-Version: 1.0
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Tue, 8 Apr 2014 18:03:27 -0700
-Message-ID: <CAB=NE6VvyBKzEg=ErZzQMktY8eLytQ21JCPrOQbxvZ9m-nqHkw@mail.gmail.com> (sfid-20140409_030356_669885_56C7A3AD)
-Subject: Bumping required kernels to 3.0 for Linux backports ?
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.cz>, Felix Fietkau <nbd@openwrt.org>,
-	Mauro Carvalho Chehab <m.chehab@samsung.com>
+To: Johannes Berg <johannes@sipsolutions.net>,
+	Julia Lawall <julia.lawall@lip6.fr>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: cocci: multiple versions of function with different arguments
+References: <53579593.40306@kpanic.de>	   (sfid-20140423_122737_920373_E36F87A8) <1398249715.4173.3.camel@jlt4.sipsolutions.net>	  <5357A065.3020400@kpanic.de> <alpine.DEB.2.10.1404231405130.3422@hadrien>	 <1398254986.4173.8.camel@jlt4.sipsolutions.net>	 <alpine.DEB.2.10.1404231412450.3422@hadrien> <1398255513.4173.9.camel@jlt4.sipsolutions.net>
+In-Reply-To: <1398255513.4173.9.camel@jlt4.sipsolutions.net>
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Folks,
+On 23.04.2014 14:18, Johannes Berg wrote:
+> On Wed, 2014-04-23 at 14:14 +0200, Julia Lawall wrote:
+> 
+>> I can think  about it, but it is pretty far from the vision of Coccinelle,
+>> which is that the combination of context code and + code should be a valid
+>> syntactic unit, and on the side that we don't think much about ifdefs.
+>>
+>> But I will think about it, because I can see that it is not a solvable
+>> problem with the current technology.
+> 
+> Luis kinda solved it by introducing an intermediate function that would
+> call the original, and then #ifdef'ing the assignment of the function
+> instead.
+> 
+> (This is only a problem when there's a function assignment to start
+> with, otherwise there's likely no need to modify the function
+> declaration - this only comes up with function pointer APIs)
+> 
+> johannes
+> 
 
-we have a age old dance of random parties, in particular the embedded
-folks, ending up with random ancient kernels on embedded devices. I've
-tried to carefully document a few ideas on why and how I believe we
-can make automatic kernel backporting scale [0] and part of this will
-be to try to bring consensus about a unified front to persuade users,
-partners, customers, whatever, to be at least on a kernel listed as
-supported on kernel.org. Today we backport down to the last 30
-kernels, from 2.6.24 up to 3.14 and while this is manageable right now
-I expect the number of supported drivers and features to keep
-increasing (I've stopped counting). I am very aware of the reasons to
-support a slew of old kernels, but its nothing but our own fault for
-not educating enough about the importance on upgrading. I realize this
-is an age old issue, but since I think we need scale backports and
-wish to remove older kernels from it fast, I wanted to see if any
-folks might have ideas on what can help here other than saying, 'if
-you use Linux backports, your drivers will be automatically backported
-and supported'.
+Thanks Johannes and Julia. I think the missing semicolon is what caused
+the issue. I'll do some tests and report back.
 
-To start off -- what's the *last* kernel you realistically need for
-your users to use backports right now? Is it really 2.6.25? Would
-anyone kick and scream if for the backports-3.15 release try take
-things up to support only down to least 3.0 *right now* ?
-
-[0] http://www.do-not-panic.com/2014/04/automatic-linux-kernel-backporting-with-coccinelle.html
-
-  Luis
+  Stefan
