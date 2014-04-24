@@ -1,36 +1,61 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f169.google.com ([209.85.217.169]:44589 "EHLO
-	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754623AbaDFWTy (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 6 Apr 2014 18:19:54 -0400
-Received: by mail-lb0-f169.google.com with SMTP id q8so4100582lbi.14
-        for <backports@vger.kernel.org>; Sun, 06 Apr 2014 15:19:52 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1396701662-15165-22-git-send-email-mcgrof@do-not-panic.com>
-References: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com> <1396701662-15165-22-git-send-email-mcgrof@do-not-panic.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Sun, 6 Apr 2014 15:19:32 -0700
-Message-ID: <CAB=NE6XKDDhZAJgHEZFH7J6tSAw9LpOoHc5dwYvow08fUiZfMA@mail.gmail.com> (sfid-20140407_002009_659021_BAB20196)
-Subject: Re: [PATCH 21/27] backports: backport net_get_random_once()
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Hannes Frederic Sowa <hannes@stressinduktion.org>,
-	Alexander Smirnov <alex.bluesman.smirnov@gmail.com>,
+Received: from mail-ee0-f48.google.com ([74.125.83.48]:57628 "EHLO
+	mail-ee0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758534AbaDXRdn (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 24 Apr 2014 13:33:43 -0400
+Date: Thu, 24 Apr 2014 19:33:35 +0200
+From: Alexander Aring <alex.aring@gmail.com>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>,
 	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	linux-zigbee-devel@lists.sourceforge.net
-Content-Type: text/plain; charset=UTF-8
+	linux-zigbee-devel@lists.sourceforge.net,
+	David Miller <davem@davemloft.net>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [Linux-zigbee-devel] [PATCH] 6lowpan: nuke
+ net_ieee802154_lowpan() accessor when 6lowpan is disabled
+Message-ID: <20140424173333.GA21799@omega> (sfid-20140424_193346_528080_8C6BD547)
+References: <1398193438-23805-1-git-send-email-mcgrof@do-not-panic.com>
+ <20140424164445.GA4675@omega>
+ <CAB=NE6XS9-Zu9sb5geO2WTnnvv6KqyT+QnL5bRf1fiRx3=ocrg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAB=NE6XS9-Zu9sb5geO2WTnnvv6KqyT+QnL5bRf1fiRx3=ocrg@mail.gmail.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sat, Apr 5, 2014 at 5:40 AM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> +#define net_get_random_once LINUX_BACKPORT(net_get_random_once)
-> +#define net_get_random_once(buf, nbytes)                               \
+Hi Luis,
 
-I had to remove the first define as its a double define, that means
-unless we use a static inline we'll have a clash with folks who decide
-to backport this on their own as well. I'd rather wait until we hit a
-clash to see who backported this, the static keys and if differently
-from our solution ;)
+On Thu, Apr 24, 2014 at 10:25:58AM -0700, Luis R. Rodriguez wrote:
+> On Thu, Apr 24, 2014 at 9:44 AM, Alexander Aring <alex.aring@gmail.com> wrote:
+> > Hi,
+> >
+> > On Tue, Apr 22, 2014 at 12:03:58PM -0700, Luis R. Rodriguez wrote:
+> >> From: "Luis R. Rodriguez" <mcgrof@suse.com>
+> >>
+> >> Johannes noted this is not needed, all of the fragment
+> >> accessors don't need CONFIG_NET_NS. This goes test compiled with
+> >> CONFIG_BT_6LOWPAN=y and a disabled CONFIG_NET_NS.
+> >>
+> >
+> > a little note about this here. There exists two 6LoWPAN standard. One
+> > for bluetooth low energy and one for IEEE 802.15.4.
+> >
+> > The actual namespace is only for IEEE 802.15.4, because we need
+> > fragmentation there. 6LoWPAN fragmentation for bluetooth low energy is
+> > already handled by the MAC-Layer. So this has nothing to do with
+> > CONFIG_BT_6LOWPAN.
+> 
+> Thanks for the clarification, I actually did mean
+> CONFIG_IEEE802154_6LOWPAN however, I goofed that on the commit log.
+> 
 
-  Luis
+ok. But I need to say thanks for sending this patch! :-)
+
+It's nice to see that the community helps to improving the code which I
+produced and it's really not perfect at the moment. (I was a little bit
+shocked that somebody makes the effort to making a backport about that).
+
+- Alex
