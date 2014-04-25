@@ -1,51 +1,31 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pb0-f48.google.com ([209.85.160.48]:39790 "EHLO
-	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755055AbaDLBer (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 11 Apr 2014 21:34:47 -0400
-Received: by mail-pb0-f48.google.com with SMTP id md12so6087643pbc.35
-        for <backports@vger.kernel.org>; Fri, 11 Apr 2014 18:34:46 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 01/10] backports: add hwsim defconfig
-Date: Fri, 11 Apr 2014 18:34:26 -0700
-Message-Id: <1397266475-14442-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20140412_033452_422151_62C1500C)
-In-Reply-To: <1397266475-14442-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1397266475-14442-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from mx1.redhat.com ([209.132.183.28]:25055 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750886AbaDYHPD (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 25 Apr 2014 03:15:03 -0400
+From: Stefan Assmann <sassmann@kpanic.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, sassmann@kpanic.de
+Subject: [PATCH 0/3] backports: fixes for RHEL7.0
+Date: Fri, 25 Apr 2014 09:14:27 +0200
+Message-Id: <1398410070-30529-1-git-send-email-sassmann@kpanic.de> (sfid-20140425_091506_291877_A332F708)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+Get backports ready for RHEL7.0.
 
-This can be useful for pure testing scenarios.
+Stefan Assmann (3):
+  backports: wrap dma_set_mask_and_coherent in LINUX_BACKPORT()
+  backports: add linux/of_graph.h to copy-list
+  backports: ifdef code already present in RHEL7.0
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- backport/defconfigs/hwsim | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 backport/defconfigs/hwsim
+ backport/backport-include/linux/device.h      | 2 +-
+ backport/backport-include/linux/dma-mapping.h | 1 +
+ backport/backport-include/linux/skbuff.h      | 2 +-
+ backport/compat/dma-shared-helpers.c          | 2 ++
+ copy-list                                     | 1 +
+ 5 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/backport/defconfigs/hwsim b/backport/defconfigs/hwsim
-new file mode 100644
-index 0000000..9d8006e
---- /dev/null
-+++ b/backport/defconfigs/hwsim
-@@ -0,0 +1,12 @@
-+CPTCFG_CFG80211=m
-+CPTCFG_CFG80211_DEFAULT_PS=y
-+CPTCFG_CFG80211_DEBUGFS=y
-+CPTCFG_CFG80211_WEXT=y
-+CPTCFG_MAC80211=m
-+# CPTCFG_MAC80211_RC_PID is not set
-+# CPTCFG_MAC80211_RC_MINSTREL is not set
-+# CPTCFG_MAC80211_RC_DEFAULT_MINSTREL is not set
-+CPTCFG_MAC80211_DEBUGFS=y
-+CPTCFG_MAC80211_MESSAGE_TRACING=y
-+CPTCFG_WLAN=y
-+CPTCFG_MAC80211_HWSIM=m
 -- 
-1.9.1
+1.9.0
 
