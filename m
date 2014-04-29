@@ -1,29 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f45.google.com ([209.85.215.45]:64701 "EHLO
-	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753765AbaDHAiG (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 7 Apr 2014 20:38:06 -0400
-Received: by mail-la0-f45.google.com with SMTP id hr17so175748lab.32
-        for <backports@vger.kernel.org>; Mon, 07 Apr 2014 17:38:04 -0700 (PDT)
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:25127 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754865AbaD2J6Z (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 29 Apr 2014 05:58:25 -0400
+From: Arend van Spriel <arend@broadcom.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>, Arend van Spriel <arend@broadcom.com>
+Subject: [PATCH V2] backports: lib: remove raising ExecutionError exception
+Date: Tue, 29 Apr 2014 11:58:18 +0200
+Message-ID: <1398765498-6957-1-git-send-email-arend@broadcom.com> (sfid-20140429_115827_636549_1BD58575)
+In-Reply-To: <1398422668-11735-1-git-send-email-arend@broadcom.com>
+References: <1398422668-11735-1-git-send-email-arend@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <5342AED7.5080505@kpanic.de>
-References: <5342AED7.5080505@kpanic.de>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Mon, 7 Apr 2014 17:37:44 -0700
-Message-ID: <CAB=NE6WdU4fLKz9eMbVFqiD-r4YE2Hz8fo2cH9A18R7ap=hvDA@mail.gmail.com> (sfid-20140408_023809_287491_00F187FA)
-Subject: Re: ckmake build issue with undefined symbol mcount
-To: Stefan Assmann <sassmann@kpanic.de>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Apr 7, 2014 at 6:57 AM, Stefan Assmann <sassmann@kpanic.de> wrote:
-> next-20140221
+In spatch a ExecutionError was raised, but that causes the thread
+to finish without closing the outfile and more importantly without
+putting (ret, fn) tuple on the return queue. This results in the
+threaded_spatch routine to get stuck on the ret_q.get() call. This
+patch removes raising the ExecutionError and just return the tuple.
+The non-zero return code will result in ExecutionErrorThread exception
+anyway.
 
-Did you git reset --hard backports-20140221 ? The respective dated tag
-for backports must be used for a specific dated tag for linux-next.
-Likewise for the stable releases.
+Signed-off-by: Arend van Spriel <arend@broadcom.com>
+---
+A bit late but here is the rebased version.
 
-  Luis
+Regards,
+Arend
+---
+ lib/bpcoccinelle.py |    5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/lib/bpcoccinelle.py b/lib/bpcoccinelle.py
+index a71f425..fc503f1 100644
+--- a/lib/bpcoccinelle.py
++++ b/lib/bpcoccinelle.py
+@@ -4,9 +4,6 @@ from lib.tempdir import tempdir
+ 
+ class CoccinelleError(Exception):
+     pass
+-class ExecutionError(CoccinelleError):
+-    def __init__(self, errcode):
+-        self.error_code = errcode
+ class ExecutionErrorThread(CoccinelleError):
+     def __init__(self, errcode, fn, cocci_file, threads, t, logwrite, print_name):
+         self.error_code = errcode
+@@ -48,8 +45,6 @@ def spatch(cocci_file, outdir,
+                                close_fds=True, universal_newlines=True,
+                                cwd=outdir)
+     sprocess.wait()
+-    if sprocess.returncode != 0:
+-        raise ExecutionError(sprocess.returncode)
+     outfile.close()
+     ret_q.put((sprocess.returncode, fn))
+ 
+-- 
+1.7.9.5
+
