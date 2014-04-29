@@ -1,80 +1,73 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:52081 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752375AbaDEMlm (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 5 Apr 2014 08:41:42 -0400
-Received: by mail-pa0-f49.google.com with SMTP id lj1so4644382pab.22
-        for <backports@vger.kernel.org>; Sat, 05 Apr 2014 05:41:41 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Received: from s3.sipsolutions.net ([144.76.43.152]:43874 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932736AbaD2Jvk (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 29 Apr 2014 05:51:40 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Jean Delvare <khali@linux-fr.org>
-Subject: [PATCH 07/27] backports: bump drivers dependency that require I2C bus classes
-Date: Sat,  5 Apr 2014 05:40:41 -0700
-Message-Id: <1396701662-15165-8-git-send-email-mcgrof@do-not-panic.com> (sfid-20140405_144144_483423_2EFAAAC2)
-In-Reply-To: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1396701662-15165-1-git-send-email-mcgrof@do-not-panic.com>
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 2/2] gentree: strip useless defconfig files
+Date: Tue, 29 Apr 2014 11:31:28 +0200
+Message-Id: <1398763888-20688-2-git-send-email-johannes@sipsolutions.net> (sfid-20140429_115142_198852_F1188375)
+In-Reply-To: <1398763888-20688-1-git-send-email-johannes@sipsolutions.net>
+References: <1398763888-20688-1-git-send-email-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Drivers that depend on I2C bus segments behind multiplexers to
-have a class require quite a bit of collateral changes that I
-don't have time to address. For those interested in trying to backport
-this see commit eee543e8. This bumps the drivers that depend on this
-that we carry to require at least v3.7 when this collateral evolution
-was introduced. One driver is affected, rtl2832 -- defined under
-CONFIG_DVB_RTL2832.
+From: Johannes Berg <johannes.berg@intel.com>
 
-mcgrof@ergon ~/linux (git::master)$ git describe --contains eee543e82481
-v3.7-rc1~92^2~14
+If a defconfig file has symbols that can't be satisfied
+with the given copy-list file, then there's no point in
+shipping it, so just copy selectively the ones needed.
 
-commit eee543e8248150e8fb833943c71f40c7b1724600
-Author: Jean Delvare <khali@linux-fr.org>
-Date:   Fri Oct 5 22:23:51 2012 +0200
-
-    i2c-mux: Add support for device auto-detection
-
-    Let I2C bus segments behind multiplexers have a class. This allows for
-    device auto-detection on these segments. As long as parent segments
-    don't share the same class, it should be fine.
-
-    I implemented support in drivers i2c-mux-gpio and i2c-mux-pca954x. I
-    left i2c-mux-pca9541 and i2c-mux-pinctrl alone for the moment as I
-    don't know if this feature makes sense for the use cases of these
-    drivers.
-
-    Signed-off-by: Jean Delvare <khali@linux-fr.org>
-    Cc: Peter Korsgaard <peter.korsgaard@barco.com>
-    Cc: David Daney <david.daney@cavium.com>
-    Cc: Michael Lawnick <ml.lawnick@gmx.de>
-    Cc: Rodolfo Giometti <giometti@linux.it>
-
-Cc: Jean Delvare <khali@linux-fr.org>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- dependencies | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ gentree.py | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 
-diff --git a/dependencies b/dependencies
-index 91bf503..ec8348b 100644
---- a/dependencies
-+++ b/dependencies
-@@ -170,6 +170,15 @@ USB_GSPCA DISABLE
- VIDEO_MXB DISABLE
- VIDEO_RENESAS_VSP1 3.6
+diff --git a/gentree.py b/gentree.py
+index 44acb9a1250e..10588842fdfa 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -581,7 +581,7 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+     # do the copy
+     backport_files = [(x, x) for x in [
+         'Kconfig', 'Makefile', 'Makefile.build', 'Makefile.kernel', '.gitignore',
+-        'Makefile.real', 'compat/', 'backport-include/', 'kconf/', 'defconfigs/',
++        'Makefile.real', 'compat/', 'backport-include/', 'kconf/',
+         'scripts/', '.blacklist.map',
+     ]]
+     if not args.git_revision:
+@@ -785,6 +785,29 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
  
-+# Drivers that depend on I2C bus segments behind multiplexers to
-+# have a clas, see eee543e8. This requires quite a bit of collateral,
-+# folks involved in this and who want it can backport if it they wish.
-+# This was added as of 3.7. Although we should be able to only enable
-+# this for 3.7 DVB_USB_RTL28XXU ends up selecting DVB_RTL2832 and
-+# that seems to currently require pegging both.
-+DVB_RTL2832 3.7
-+DVB_USB_RTL28XXU 3.7
+     git_debug_snapshot(args, "add versions/symbols files")
+ 
++    # add defconfigs that we want
++    defconfigs_dir = os.path.join(source_dir, 'backport', 'defconfigs')
++    os.mkdir(os.path.join(args.outdir, 'defconfigs'))
++    for dfbase in os.listdir(defconfigs_dir):
++        copy_defconfig = True
++        dfsrc = os.path.join(defconfigs_dir, dfbase)
++        for line in open(dfsrc, 'r'):
++            if not '=' in line:
++                continue
++            line_ok = False
++            for sym in symbols:
++                if sym + '=' in line:
++                    line_ok = True
++                    break
++            if not line_ok:
++                print dfbase, line
++                copy_defconfig = False
++                break
++        if copy_defconfig:
++            shutil.copy(dfsrc, os.path.join(args.outdir, 'defconfigs', dfbase))
 +
- # struct gpio_chip only got the required members in 2.6.28
- BCMA_DRIVER_GPIO 2.6.28
- SSB_DRIVER_GPIO 2.6.28
++    git_debug_snapshot(args, "add (useful) defconfig files")
++
+     logwrite('Rewrite Makefiles and Kconfig files ...')
+ 
+     # rewrite Makefile and source symbols
 -- 
-1.8.5.3
+1.9.0
 
