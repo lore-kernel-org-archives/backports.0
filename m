@@ -1,31 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f49.google.com ([209.85.215.49]:49840 "EHLO
-	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933411AbaDIS0S (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 9 Apr 2014 14:26:18 -0400
-MIME-Version: 1.0
-In-Reply-To: <53452817.5060502@broadcom.com>
-References: <CAB=NE6VvyBKzEg=ErZzQMktY8eLytQ21JCPrOQbxvZ9m-nqHkw@mail.gmail.com>
- <53452817.5060502@broadcom.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Wed, 9 Apr 2014 11:25:56 -0700
-Message-ID: <CAB=NE6Udgtpbht+TJox1yt4AVAHw8RUZ=aZsA29neT41N2vJxg@mail.gmail.com> (sfid-20140409_202708_805565_0BD0CD68)
-Subject: Re: Bumping required kernels to 3.0 for Linux backports ?
-To: Arend van Spriel <arend@broadcom.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.cz>, Felix Fietkau <nbd@openwrt.org>,
-	Mauro Carvalho Chehab <m.chehab@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Received: from mail-qc0-f202.google.com ([209.85.216.202]:47568 "EHLO
+	mail-qc0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753366AbaD3B3T (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 29 Apr 2014 21:29:19 -0400
+Received: by mail-qc0-f202.google.com with SMTP id x13so168403qcv.3
+        for <backports@vger.kernel.org>; Tue, 29 Apr 2014 18:29:18 -0700 (PDT)
+From: Avery Pennarun <apenwarr@gmail.com>
+To: "Luis R . Rodriguez" <mcgrof@kernel.org>
+Cc: backports@vger.kernel.org, Avery Pennarun <apenwarr@gmail.com>
+Subject: [PATCH] Makefile: add savedefconfig target.
+Date: Tue, 29 Apr 2014 21:29:06 -0400
+Message-Id: <1398821346-17344-1-git-send-email-apenwarr@gmail.com> (sfid-20140430_032926_415137_C2BA5FEE)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Apr 9, 2014 at 3:59 AM, Arend van Spriel <arend@broadcom.com> wrote:
->
-> A lot of test teams in broadcom wlan are still using Fedora 15 running a
-> 2.6.38 kernel. We are pushing them to move to Fedora 19.
+This writes a file called 'defconfig' which contains only the deltas from
+the default configuration.  It's suitable for use as an input defconfig file
+for later builds.
 
-Fedora 19 seems to be on 3.13, neat!
+Signed-off-by: Avery Pennarun <apenwarr@gmail.com>
+---
+ backport/Makefile.real | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-  Luis
+diff --git a/backport/Makefile.real b/backport/Makefile.real
+index b010dd7..f60d5ca 100644
+--- a/backport/Makefile.real
++++ b/backport/Makefile.real
+@@ -32,6 +32,11 @@ usedefconfig:
+ 	@$(MAKE) -C kconf conf
+ 	@./kconf/conf --defconfig=defconfig Kconfig
+ 
++.PHONY: savedefconfig
++savedefconfig:
++	@$(MAKE) -C kconf conf
++	@./kconf/conf --savedefconfig=defconfig Kconfig
++
+ defconfig-%::
+ 	@$(MAKE) -C kconf conf
+ 	@./kconf/conf --defconfig=defconfigs/$(@:defconfig-%=%) Kconfig
+-- 
+1.9.1.423.g4596e3a
+
