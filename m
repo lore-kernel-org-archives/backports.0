@@ -1,73 +1,55 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-we0-f178.google.com ([74.125.82.178]:58482 "EHLO
-	mail-we0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755585AbaEHUkY (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 8 May 2014 16:40:24 -0400
-Received: by mail-we0-f178.google.com with SMTP id u56so2988493wes.23
-        for <backports@vger.kernel.org>; Thu, 08 May 2014 13:40:23 -0700 (PDT)
-From: Samuel Martin <s.martin49@gmail.com>
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:33641 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752692AbaEAX1J (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 1 May 2014 19:27:09 -0400
+Received: by mail-pa0-f49.google.com with SMTP id kq14so4406923pab.8
+        for <backports@vger.kernel.org>; Thu, 01 May 2014 16:27:09 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: Samuel Martin <s.martin49@gmail.com>
-Subject: [PATCH 05/10] backports: check_depmod.sh: support install root not in /
-Date: Thu,  8 May 2014 22:39:28 +0200
-Message-Id: <1399581573-12072-6-git-send-email-s.martin49@gmail.com> (sfid-20140508_224025_987691_96125E77)
-In-Reply-To: <1399581573-12072-1-git-send-email-s.martin49@gmail.com>
-References: <1399581573-12072-1-git-send-email-s.martin49@gmail.com>
+Cc: "Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: [PATCH 2/8] backports: add backports-update-manager binary requirements
+Date: Thu,  1 May 2014 16:26:45 -0700
+Message-Id: <1398986811-25649-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20140502_012711_507918_756D81CE)
+In-Reply-To: <1398986811-25649-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1398986811-25649-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Samuel Martin <s.martin49@gmail.com>
----
- backport/Makefile.real           | 6 ++++--
- backport/scripts/check_depmod.sh | 7 ++++---
- 2 files changed, 8 insertions(+), 5 deletions(-)
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-diff --git a/backport/Makefile.real b/backport/Makefile.real
-index 5a25db4..a12a0db 100644
---- a/backport/Makefile.real
-+++ b/backport/Makefile.real
-@@ -6,6 +6,8 @@ else
- export BACKPORTS_GIT_TRACKER_DEF=
- endif
+Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
+---
+ devel/backports-update-manager | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/devel/backports-update-manager b/devel/backports-update-manager
+index 8d2cd08..fc146c6 100755
+--- a/devel/backports-update-manager
++++ b/devel/backports-update-manager
+@@ -8,6 +8,7 @@ source_dir = os.path.abspath(os.path.dirname(__file__))
+ sys.path.append(source_dir + '/../')
+ from lib import bpar as ar
+ from lib import bpgit as git
++from lib import bpreqs as reqs
  
-+DEPMOD ?= /sbin/depmod
+ KPATH="http://kernel.ubuntu.com/~kernel-ppa/mainline/"
+ BACKPORTS_KSRC_DIR="ksrc-backports"
+@@ -562,6 +563,14 @@ def bk_tar_members(members):
+             yield tarinfo
+ 
+ def _main():
++    req = reqs.Req()
++    req.require_hint('ar', 'binutils')
++    req.require('make')
++    req.require('gcc')
++    req.require('git')
++    if not req.reqs_match():
++        sys.exit(1)
 +
- # disable built-in rules for this file
- .SUFFIXES:
- 
-@@ -94,8 +96,8 @@ install: modules
- 		modules_install
- 	@./scripts/blacklist.sh $(KLIB)/ $(KLIB)/$(KMODDIR) $(KROOT)
- 	@./scripts/compress_modules.sh $(KLIB)/$(KMODDIR)
--	@./scripts/check_depmod.sh
--	@/sbin/depmod -a
-+	@./scripts/check_depmod.sh $(DEPMOD) $(KROOT)
-+	@$(DEPMOD) -a
- 	@./scripts/update-initramfs.sh $(KLIB)
- 	@echo
- 	@echo Your backported driver modules should be installed now.
-diff --git a/backport/scripts/check_depmod.sh b/backport/scripts/check_depmod.sh
-index 6123894..9f2e238 100755
---- a/backport/scripts/check_depmod.sh
-+++ b/backport/scripts/check_depmod.sh
-@@ -6,13 +6,14 @@
- 
- # Seems Mandriva has an $DEPMOD_DIR but it doesn't have any files,
- # so lets deal with those distributions.
--DEPMOD_CONF="/etc/depmod.conf"
-+DEPMOD_CMD="${1:-depmod}"
-+KROOT="${2:-/}"
-+DEPMOD_CONF="$KROOT/etc/depmod.conf"
- DEPMOD_CONF_TMP="$DEPMOD_CONF.backports.old"
--DEPMOD_DIR="/etc/depmod.d/"
-+DEPMOD_DIR="$KROOT/etc/depmod.d/"
- BACKPORT_DEPMOD_FILE="backports.conf"
- GREP_REGEX_UPDATES="^[[:space:]]*search.*[[:space:]]updates\([[:space:]]\|$\)"
- GREP_REGEX_SEARCH="^[[:space:]]*search[[:space:]].\+$"
--DEPMOD_CMD="depmod"
- 
- function add_compat_depmod_conf {
- 	echo "NOTE: Your distribution lacks an $DEPMOD_DIR directory with "
+     parser = argparse.ArgumentParser(description='Linux kernel backports update manager')
+     parser.add_argument('--force', const=True, default=False, action="store_const",
+                         help='Force run without sanity or careful user checks')
 -- 
-1.9.2
+1.9.1
 
