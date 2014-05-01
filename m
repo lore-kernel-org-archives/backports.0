@@ -1,72 +1,65 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:40637 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932139AbaEEMqP (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 5 May 2014 08:46:15 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:56391 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752692AbaEAX1O (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 1 May 2014 19:27:14 -0400
+Received: by mail-pa0-f54.google.com with SMTP id lf10so4410643pab.41
+        for <backports@vger.kernel.org>; Thu, 01 May 2014 16:27:13 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: provide net_ieee802154_lowpan only when needed
-Date: Mon,  5 May 2014 14:46:11 +0200
-Message-Id: <1399293971-8037-1-git-send-email-johannes@sipsolutions.net> (sfid-20140505_144619_709539_92A43EE0)
+Cc: "Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: [PATCH 3/8] backports: add gentree.py binary requirements
+Date: Thu,  1 May 2014 16:26:46 -0700
+Message-Id: <1398986811-25649-4-git-send-email-mcgrof@do-not-panic.com> (sfid-20140502_012715_433283_ED719584)
+In-Reply-To: <1398986811-25649-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1398986811-25649-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-If 802.15.4 isn't configured, there's no need to provide the
-network namespace support for it, so don't.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
 ---
- backport/backport-include/net/net_namespace.h | 5 ++++-
- backport/compat/backport-3.15.c               | 2 ++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ gentree.py | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/backport/backport-include/net/net_namespace.h b/backport/backport-include/net/net_namespace.h
-index 3ea5d4662c27..ad0f03096361 100644
---- a/backport/backport-include/net/net_namespace.h
-+++ b/backport/backport-include/net/net_namespace.h
-@@ -1,9 +1,11 @@
- #ifndef _COMPAT_NET_NET_NAMESPACE_H
- #define _COMPAT_NET_NET_NAMESPACE_H 1
+diff --git a/gentree.py b/gentree.py
+index 1058884..8a8f6b6 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -15,6 +15,7 @@ from lib import bpgit as git
+ from lib import bpgpg as gpg
+ from lib import bpkup as kup
+ from lib.tempdir import tempdir
++from lib import bpreqs as reqs
  
-+#include_next <net/net_namespace.h>
+ def read_copy_list(copyfile):
+     """
+@@ -438,6 +439,13 @@ def upload_release(args, rel_prep, logwrite=lambda x:None):
+         logwrite("kup-test: skipping cmd: %s" % kup_cmd)
+ 
+ def _main():
++    # Our binary requirements go here
++    req = reqs.Req()
++    req.require('git')
++    req.coccinelle('1.0.0-rc21')
++    if not req.reqs_match():
++        sys.exit(1)
 +
-+#ifdef CPTCFG_IEEE802154_6LOWPAN
- #include <linux/version.h>
- #include <net/netns/ieee802154_6lowpan.h>
--#include_next <net/net_namespace.h>
+     # set up and parse arguments
+     parser = argparse.ArgumentParser(description='generate backport tree')
+     parser.add_argument('kerneldir', metavar='<kernel tree>', type=str,
+@@ -880,6 +888,10 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+     git_debug_snapshot(args, "disable unsatisfied Makefile parts")
  
- #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0))
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
-@@ -22,5 +24,6 @@ net_ieee802154_lowpan(struct net *net)
- 	return &net->ieee802154_lowpan;
- }
- #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0) */
-+#endif /* CPTCFG_IEEE802154_6LOWPAN */
+     if (args.kup or args.kup_test):
++        req = reqs.Req()
++        req.kup()
++        if not req.reqs_match():
++            sys.exit(1)
+         upload_release(args, rel_prep, logwrite=logwrite)
  
- #endif	/* _COMPAT_NET_NET_NAMESPACE_H */
-diff --git a/backport/compat/backport-3.15.c b/backport/compat/backport-3.15.c
-index 545e0c297ea6..767722e8ac6d 100644
---- a/backport/compat/backport-3.15.c
-+++ b/backport/compat/backport-3.15.c
-@@ -14,6 +14,7 @@
- #include <linux/of.h>
- #include <net/net_namespace.h>
- 
-+#ifdef CPTCFG_IEEE802154_6LOWPAN
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
- /* the above kernel dependency is set to match the dependencies file */
- struct netns_ieee802154_lowpan ieee802154_lowpan;
-@@ -25,6 +26,7 @@ struct netns_ieee802154_lowpan *net_ieee802154_lowpan(struct net *net)
- }
- EXPORT_SYMBOL_GPL(net_ieee802154_lowpan);
- #endif
-+#endif /* CPTCFG_IEEE802154_6LOWPAN */
- 
- /**
-  * devm_kstrdup - Allocate resource managed space and
+     logwrite('Done!')
 -- 
-2.0.0.rc0
+1.9.1
 
