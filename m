@@ -1,61 +1,74 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:50150 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753734AbaD3WLL (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 30 Apr 2014 18:11:11 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: select_queue patch: fix callback kernel version
-Date: Thu,  1 May 2014 00:10:25 +0200
-Message-Id: <1398895825-18420-1-git-send-email-johannes@sipsolutions.net> (sfid-20140501_001125_849085_C578BA53)
+Received: from mail-wg0-f43.google.com ([74.125.82.43]:34924 "EHLO
+	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751222AbaEBIgc (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 2 May 2014 04:36:32 -0400
+Received: by mail-wg0-f43.google.com with SMTP id l18so3227191wgh.2
+        for <backports@vger.kernel.org>; Fri, 02 May 2014 01:36:30 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20140502013948.GH957@garbanzo.do-not-panic.com>
+References: <CAFjWW+ZsCZpmh-CVWX9Y+73tOAS5JG5f7mvrr8biAVgN_a+Fng@mail.gmail.com>
+	<20140502013948.GH957@garbanzo.do-not-panic.com>
+Date: Fri, 2 May 2014 01:36:30 -0700
+Message-ID: <CAFjWW+ZzSvWzAWOC3dzDPujszXYs-pHkSr7wNiLJwwc3a-+-wQ@mail.gmail.com> (sfid-20140502_103635_395744_B87B3AFC)
+Subject: Re: 3.14-1 Compile Problem for 2.6.39.4 Kernel
+From: Aaron Hamilton <aaron@logicdatasystems.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+If I recall correctly, I was able to get this to compile by enabling
+CONFIG_CRYPTO_CCM in my kernel. Without it, it won't compile.
 
-The callback argument has been passed since kernel 3.14, not
-only 3.15 - fix that.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- .../collateral-evolutions/network/0028-select_queue/mac80211.patch    | 4 ++--
- stack-auto.ini                                                        | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/patches/collateral-evolutions/network/0028-select_queue/mac80211.patch b/patches/collateral-evolutions/network/0028-select_queue/mac80211.patch
-index 2e695f5b05f7..d21a56b7201b 100644
---- a/patches/collateral-evolutions/network/0028-select_queue/mac80211.patch
-+++ b/patches/collateral-evolutions/network/0028-select_queue/mac80211.patch
-@@ -6,7 +6,7 @@ index 088111a..dcf149a 100644
-  	ieee80211_teardown_sdata(IEEE80211_DEV_TO_SUB_IF(dev));
-  }
-  
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,15,0)
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)
-  static u16 ieee80211_netdev_select_queue(struct net_device *dev,
-  					 struct sk_buff *skb,
-  					 void *accel_priv,
-@@ -26,7 +26,7 @@ index 088111a..dcf149a 100644
-  	.ndo_select_queue	= ieee80211_netdev_select_queue,
-  };
-  
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,15,0)
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)
-  static u16 ieee80211_monitor_select_queue(struct net_device *dev,
-  					  struct sk_buff *skb,
-  					  void *accel_priv,
-diff --git a/stack-auto.ini b/stack-auto.ini
-index 0412f8df60e4..4679a5cd52a7 100644
---- a/stack-auto.ini
-+++ b/stack-auto.ini
-@@ -1,5 +1,5 @@
- [DEFAULT]
--cachedir = .
-+cachedir = /home/johannes/tmp/work/
- 
- [iwlwifi]
- 
--- 
-1.9.0
-
+On Thu, May 1, 2014 at 6:39 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> On Tue, Apr 29, 2014 at 02:39:11AM -0700, Aaron Hamilton wrote:
+>> In trying to compile backports-3.14-1 with a 2.6.39.4 kernel, I get
+>> the following compilation errors:
+>>
+>> backport-include/linux/compat.h:18: error: expected ';', ',' or ')'
+>> before '*' token
+>>
+>> If I comment out line 18 in compat.h which just reads "extern int
+>> compat_put_timespec(const struct timespec*, void __user *)", then I
+>> get past that error.
+>>
+>> Next, things get stuck on compat/crypto-ccm.c on lines 250 and 255,
+>> stating "too few arguments to function 'scatterwalk_map'" and "too few
+>> arguments to function 'scatterwalk_unmap'".
+>>
+>> My kernel headers indicate this function takes two parameters and I
+>> can't find anything in backports that specify otherwise. Am I missing
+>> something?
+>
+> Yeah odd, I see what you are seeing but then I looked at upstream
+> v3.14.2 code and see only one argument.
+>
+> The commit that caused this change:
+>
+> mcgrof@ergon ~/linux-stable (git::linux-3.14.y)$ git describe --contains f0dfc0b0
+> v3.4-rc1~174^2~50
+>
+> So its been there for a while now, so surprised we haven't had to
+> resolve this earlier, we also don't have patches that modify this so
+> its a bit unclear how this has happened. The backports file versions
+> does have:
+>
+> BACKPORTS_VERSION="v3.14-1-0-g369d49a"
+> BACKPORTED_KERNEL_VERSION="v3.14-0-g455c6fd"
+> BACKPORTED_KERNEL_NAME="Linux"
+>
+> And v3.14-0-g455c6fd is == v3.14
+>
+> The upstream code for v3.14 on crypto/ccm.c has scatterwalk_map() with
+> one argument. What we do is copy it over directly from the upstream
+> source the only patch we have to modify it is within the backports
+> git tree we use patches/backport-adjustments/crypto-ccm.patch, this
+> however does not touch scatterwalk_map() usage...
+>
+> This *should* have triggered a compile failure when we had tested this..
+> Going to run another test now.
+>
+>   Luis
