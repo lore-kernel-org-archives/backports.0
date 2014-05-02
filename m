@@ -1,44 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:55991 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751206AbaEaRQk (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 31 May 2014 13:16:40 -0400
-Received: from localhost (localhost [127.0.0.1])
-	by hauke-m.de (Postfix) with ESMTP id 773267E39
-	for <backports@vger.kernel.org>; Sat, 31 May 2014 19:16:39 +0200 (CEST)
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 03/13] backports: select_queue patch: fix callback kernel version
-Date: Sat, 31 May 2014 19:16:00 +0200
-Message-Id: <1401556570-3363-4-git-send-email-hauke@hauke-m.de> (sfid-20140531_191642_570871_0A0B2F19)
-In-Reply-To: <1401556570-3363-1-git-send-email-hauke@hauke-m.de>
-References: <1401556570-3363-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:63238 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751321AbaEBBGV (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 1 May 2014 21:06:21 -0400
+Received: by mail-pd0-f170.google.com with SMTP id x10so3915119pdj.29
+        for <backports@vger.kernel.org>; Thu, 01 May 2014 18:06:20 -0700 (PDT)
+Date: Thu, 1 May 2014 18:06:15 -0700
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: Arend van Spriel <arend@broadcom.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
+Subject: Re: [PATCH V2] backports: lib: remove raising ExecutionError
+ exception
+Message-ID: <20140502010615.GC957@garbanzo.do-not-panic.com> (sfid-20140502_030623_428485_0E334B26)
+References: <1398422668-11735-1-git-send-email-arend@broadcom.com>
+ <1398765498-6957-1-git-send-email-arend@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1398765498-6957-1-git-send-email-arend@broadcom.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The patch changing the callback function signature was backported to
-kernel 3.14, this was already fixed in backports for mac80211, but that
-commit missed mwifiex.
+On Tue, Apr 29, 2014 at 11:58:18AM +0200, Arend van Spriel wrote:
+> In spatch a ExecutionError was raised, but that causes the thread
+> to finish without closing the outfile and more importantly without
+> putting (ret, fn) tuple on the return queue. This results in the
+> threaded_spatch routine to get stuck on the ret_q.get() call. This
+> patch removes raising the ExecutionError and just return the tuple.
+> The non-zero return code will result in ExecutionErrorThread exception
+> anyway.
+> 
+> Signed-off-by: Arend van Spriel <arend@broadcom.com>
+> ---
+> A bit late but here is the rebased version.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks! Perhaps you're on an outdated tree, the latest tree is:
 
-diff --git a/patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch b/patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch
-index 215a0f4..e53683e 100644
---- a/patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch
-+++ b/patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch
-@@ -6,7 +6,7 @@ index 9d3d275..f8b16f4 100644
-  	return &priv->stats;
-  }
-  
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,15,0)
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)
-  static u16
-  mwifiex_netdev_select_wmm_queue(struct net_device *dev, struct sk_buff *skb,
-  				void *accel_priv, select_queue_fallback_t fallback)
--- 
-1.9.1
+git://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git
 
+I rebased your patch to fit on top of that though so no need to send
+another patch, thanks a lot!
+
+  Luis
