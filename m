@@ -1,44 +1,31 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:56005 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751578AbaEaRQr (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 31 May 2014 13:16:47 -0400
-Received: from localhost (localhost [127.0.0.1])
-	by hauke-m.de (Postfix) with ESMTP id 1165A7E52
-	for <backports@vger.kernel.org>; Sat, 31 May 2014 19:16:46 +0200 (CEST)
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 06/13] backports: only add net_get_random_once() when not available
-Date: Sat, 31 May 2014 19:16:03 +0200
-Message-Id: <1401556570-3363-7-git-send-email-hauke@hauke-m.de> (sfid-20140531_191648_264226_6A147AC7)
-In-Reply-To: <1401556570-3363-1-git-send-email-hauke@hauke-m.de>
-References: <1401556570-3363-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:45343 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751664AbaEBBIE (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 1 May 2014 21:08:04 -0400
+Received: by mail-pa0-f51.google.com with SMTP id fb1so4502161pad.24
+        for <backports@vger.kernel.org>; Thu, 01 May 2014 18:08:02 -0700 (PDT)
+Date: Thu, 1 May 2014 18:07:57 -0700
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: backports@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
+Subject: Re: [PATCH 1/2] backports: remove IWLWIFI_P2P from iwlwifi defconfig
+Message-ID: <20140502010757.GF957@garbanzo.do-not-panic.com> (sfid-20140502_030805_690122_00A0FAE6)
+References: <1398763888-20688-1-git-send-email-johannes@sipsolutions.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1398763888-20688-1-git-send-email-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-net_get_random_once() was added unconditionally also when the kernel we
-are compiling against already provided this function, this patch checks
-that first.
+On Tue, Apr 29, 2014 at 11:31:27AM +0200, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+> 
+> This symbol is obsolete, it was removed upstream, so just
+> remove it from the defconfig file as well.
+> 
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/net.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks, applied!
 
-diff --git a/backport/backport-include/linux/net.h b/backport/backport-include/linux/net.h
-index 385f807..0e436d4 100644
---- a/backport/backport-include/linux/net.h
-+++ b/backport/backport-include/linux/net.h
-@@ -64,7 +64,7 @@ do {								\
-  * may affect tracing. My recommendation is that if you have a need for
-  * static keys you just require at least 3.5 to remain sane.
-  */
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) && !defined(net_get_random_once)
- #define __BACKPORT_NET_GET_RANDOM_ONCE 1
- #endif
- #endif /* ___NET_RANDOM_STATIC_KEY_INIT */
--- 
-1.9.1
-
+  Luis
