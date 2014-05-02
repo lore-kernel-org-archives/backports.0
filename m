@@ -1,195 +1,37 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:51843 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752692AbaEAX12 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 1 May 2014 19:27:28 -0400
-Received: by mail-pd0-f175.google.com with SMTP id fp1so3763537pdb.20
-        for <backports@vger.kernel.org>; Thu, 01 May 2014 16:27:27 -0700 (PDT)
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:48558 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751285AbaEBA6E (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 1 May 2014 20:58:04 -0400
+Received: by mail-pa0-f49.google.com with SMTP id kq14so4512044pab.22
+        for <backports@vger.kernel.org>; Thu, 01 May 2014 17:58:03 -0700 (PDT)
+Date: Thu, 1 May 2014 17:57:57 -0700
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH 6/8] backports: remove two upstream patches
-Date: Thu,  1 May 2014 16:26:49 -0700
-Message-Id: <1398986811-25649-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20140502_012729_643249_215A9B0E)
-In-Reply-To: <1398986811-25649-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1398986811-25649-1-git-send-email-mcgrof@do-not-panic.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: [PATCH] git-tracker: restrict shortlog to existing files
+Message-ID: <20140502005757.GA957@garbanzo.do-not-panic.com> (sfid-20140502_025806_844826_B4103A15)
+References: <1398367178.4154.3.camel@jlt4.sipsolutions.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1398367178.4154.3.camel@jlt4.sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+On Thu, Apr 24, 2014 at 09:19:38PM +0200, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+> 
+> When the git-tracker updates through a merge commit or
+> otherwise multiple kernel commits, it appends a shortlog
+> of all the changes. That's fine, but is often unhelpful
+> since it's so large - restrict it to the files that are
+> actually backported to make it more readable.
+> 
+> While at it, rewrite the bpgit.status() helper function
+> to actually do something useful.
+> 
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 
-Two changes to help with backports were merged upstream so nuke 'em.
+Applied, thanks!
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
----
- .../0001-6lowpan-namespace.patch                   | 138 ---------------------
- .../0002-include-new-netns-headers.patch           |  12 --
- 2 files changed, 150 deletions(-)
- delete mode 100644 patches/0000-upstream-backport-changes/0001-6lowpan-namespace.patch
- delete mode 100644 patches/0000-upstream-backport-changes/0002-include-new-netns-headers.patch
-
-diff --git a/patches/0000-upstream-backport-changes/0001-6lowpan-namespace.patch b/patches/0000-upstream-backport-changes/0001-6lowpan-namespace.patch
-deleted file mode 100644
-index 6205752..0000000
---- a/patches/0000-upstream-backport-changes/0001-6lowpan-namespace.patch
-+++ /dev/null
-@@ -1,138 +0,0 @@
--This will be sent upstream, then we can remove this.
--The first hunk however was removed as it doesn't apply to
--our backport framework which declared net_ieee802154_lowpan(),
--for now we carry that for older and newer kernels in our own
--backport/backport-include/net/net_namespace.h file.
--
--From 2e509dac53558fda87061b06f081fde5a7cb8051 Mon Sep 17 00:00:00 2001
--From: "Luis R. Rodriguez" <mcgrof@suse.com>
--Date: Mon, 31 Mar 2014 01:53:22 -0700
--Subject: [PATCH] 6lowpan: add helper to get 6lowpan namespace
--
--This will simplify the new reassembly backport
--with no code changes.
--
--Cc:Alexander Aring <alex.aring@gmail.com>
--Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
----- a/net/ieee802154/reassembly.c
--+++ b/net/ieee802154/reassembly.c
--@@ -120,6 +120,8 @@ fq_find(struct net *net, const struct lo
-- 	struct inet_frag_queue *q;
-- 	struct lowpan_create_arg arg;
-- 	unsigned int hash;
--+	struct netns_ieee802154_lowpan *ieee802154_lowpan =
--+		net_ieee802154_lowpan(net);
-- 
-- 	arg.tag = frag_info->d_tag;
-- 	arg.d_size = frag_info->d_size;
--@@ -129,7 +131,7 @@ fq_find(struct net *net, const struct lo
-- 	read_lock(&lowpan_frags.lock);
-- 	hash = lowpan_hash_frag(frag_info->d_tag, frag_info->d_size, src, dst);
-- 
---	q = inet_frag_find(&net->ieee802154_lowpan.frags,
--+	q = inet_frag_find(&ieee802154_lowpan->frags,
-- 			   &lowpan_frags, &arg, hash);
-- 	if (IS_ERR_OR_NULL(q)) {
-- 		inet_frag_maybe_warn_overflow(q, pr_fmt());
--@@ -357,6 +359,8 @@ int lowpan_frag_rcv(struct sk_buff *skb,
-- 	struct net *net = dev_net(skb->dev);
-- 	struct lowpan_frag_info *frag_info = lowpan_cb(skb);
-- 	struct ieee802154_addr source, dest;
--+	struct netns_ieee802154_lowpan *ieee802154_lowpan =
--+		net_ieee802154_lowpan(net);
-- 	int err;
-- 
-- 	source = mac_cb(skb)->source;
--@@ -366,10 +370,10 @@ int lowpan_frag_rcv(struct sk_buff *skb,
-- 	if (err < 0)
-- 		goto err;
-- 
---	if (frag_info->d_size > net->ieee802154_lowpan.max_dsize)
--+	if (frag_info->d_size > ieee802154_lowpan->max_dsize)
-- 		goto err;
-- 
---	inet_frag_evictor(&net->ieee802154_lowpan.frags, &lowpan_frags, false);
--+	inet_frag_evictor(&ieee802154_lowpan->frags, &lowpan_frags, false);
-- 
-- 	fq = fq_find(net, frag_info, &source, &dest);
-- 	if (fq != NULL) {
--@@ -436,6 +440,8 @@ static int __net_init lowpan_frags_ns_sy
-- {
-- 	struct ctl_table *table;
-- 	struct ctl_table_header *hdr;
--+	struct netns_ieee802154_lowpan *ieee802154_lowpan =
--+		net_ieee802154_lowpan(net);
-- 
-- 	table = lowpan_frags_ns_ctl_table;
-- 	if (!net_eq(net, &init_net)) {
--@@ -444,10 +450,10 @@ static int __net_init lowpan_frags_ns_sy
-- 		if (table == NULL)
-- 			goto err_alloc;
-- 
---		table[0].data = &net->ieee802154_lowpan.frags.high_thresh;
---		table[1].data = &net->ieee802154_lowpan.frags.low_thresh;
---		table[2].data = &net->ieee802154_lowpan.frags.timeout;
---		table[3].data = &net->ieee802154_lowpan.max_dsize;
--+		table[0].data = &ieee802154_lowpan->frags.high_thresh;
--+		table[1].data = &ieee802154_lowpan->frags.low_thresh;
--+		table[2].data = &ieee802154_lowpan->frags.timeout;
--+		table[3].data = &ieee802154_lowpan->max_dsize;
-- 
-- 		/* Don't export sysctls to unprivileged users */
-- 		if (net->user_ns != &init_user_ns)
--@@ -458,7 +464,7 @@ static int __net_init lowpan_frags_ns_sy
-- 	if (hdr == NULL)
-- 		goto err_reg;
-- 
---	net->ieee802154_lowpan.sysctl.frags_hdr = hdr;
--+	ieee802154_lowpan->sysctl.frags_hdr = hdr;
-- 	return 0;
-- 
-- err_reg:
--@@ -471,9 +477,11 @@ err_alloc:
-- static void __net_exit lowpan_frags_ns_sysctl_unregister(struct net *net)
-- {
-- 	struct ctl_table *table;
--+	struct netns_ieee802154_lowpan *ieee802154_lowpan =
--+		net_ieee802154_lowpan(net);
-- 
---	table = net->ieee802154_lowpan.sysctl.frags_hdr->ctl_table_arg;
---	unregister_net_sysctl_table(net->ieee802154_lowpan.sysctl.frags_hdr);
--+	table = ieee802154_lowpan->sysctl.frags_hdr->ctl_table_arg;
--+	unregister_net_sysctl_table(ieee802154_lowpan->sysctl.frags_hdr);
-- 	if (!net_eq(net, &init_net))
-- 		kfree(table);
-- }
--@@ -514,20 +522,26 @@ static inline void lowpan_frags_sysctl_u
-- 
-- static int __net_init lowpan_frags_init_net(struct net *net)
-- {
---	net->ieee802154_lowpan.frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
---	net->ieee802154_lowpan.frags.low_thresh = IPV6_FRAG_LOW_THRESH;
---	net->ieee802154_lowpan.frags.timeout = IPV6_FRAG_TIMEOUT;
---	net->ieee802154_lowpan.max_dsize = 0xFFFF;
--+	struct netns_ieee802154_lowpan *ieee802154_lowpan =
--+		net_ieee802154_lowpan(net);
-- 
---	inet_frags_init_net(&net->ieee802154_lowpan.frags);
--+	ieee802154_lowpan->frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
--+	ieee802154_lowpan->frags.low_thresh = IPV6_FRAG_LOW_THRESH;
--+	ieee802154_lowpan->frags.timeout = IPV6_FRAG_TIMEOUT;
--+	ieee802154_lowpan->max_dsize = 0xFFFF;
--+
--+	inet_frags_init_net(&ieee802154_lowpan->frags);
-- 
-- 	return lowpan_frags_ns_sysctl_register(net);
-- }
-- 
-- static void __net_exit lowpan_frags_exit_net(struct net *net)
-- {
--+	struct netns_ieee802154_lowpan *ieee802154_lowpan =
--+		net_ieee802154_lowpan(net);
--+
-- 	lowpan_frags_ns_sysctl_unregister(net);
---	inet_frags_exit_net(&net->ieee802154_lowpan.frags, &lowpan_frags);
--+	inet_frags_exit_net(&ieee802154_lowpan->frags, &lowpan_frags);
-- }
-- 
-- static struct pernet_operations lowpan_frags_ops = {
-diff --git a/patches/0000-upstream-backport-changes/0002-include-new-netns-headers.patch b/patches/0000-upstream-backport-changes/0002-include-new-netns-headers.patch
-deleted file mode 100644
-index 3b00450..0000000
---- a/patches/0000-upstream-backport-changes/0002-include-new-netns-headers.patch
-+++ /dev/null
-@@ -1,12 +0,0 @@
--This can reasonably be sent upstream.
--
----- a/include/net/6lowpan.h
--+++ b/include/net/6lowpan.h
--@@ -54,6 +54,7 @@
-- #define __6LOWPAN_H__
-- 
-- #include <net/ipv6.h>
--+#include <net/net_namespace.h>
-- 
-- #define UIP_802154_SHORTADDR_LEN	2  /* compressed ipv6 address length */
-- #define UIP_IPH_LEN			40 /* ipv6 fixed header size */
--- 
-1.9.1
-
+  Luis
