@@ -1,48 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:48812 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751149AbaEBIIn (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 2 May 2014 04:08:43 -0400
-Message-ID: <53635288.1090701@broadcom.com> (sfid-20140502_100846_959641_CBA4E52C)
-Date: Fri, 2 May 2014 10:08:40 +0200
-From: Arend van Spriel <arend@broadcom.com>
-MIME-Version: 1.0
+Received: from s3.sipsolutions.net ([144.76.43.152]:56551 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751387AbaEBM6K (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 2 May 2014 08:58:10 -0400
+Message-ID: <1399035482.5487.0.camel@jlt4.sipsolutions.net> (sfid-20140502_145812_684742_BC94704B)
+Subject: Re: [PATCH] backports: select_queue patch: fix callback kernel
+ version
+From: Johannes Berg <johannes@sipsolutions.net>
 To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-CC: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	<backports@vger.kernel.org>
-Subject: Re: [PATCH V2] backports: lib: remove raising ExecutionError exception
-References: <1398422668-11735-1-git-send-email-arend@broadcom.com> <1398765498-6957-1-git-send-email-arend@broadcom.com> <20140502010615.GC957@garbanzo.do-not-panic.com>
-In-Reply-To: <20140502010615.GC957@garbanzo.do-not-panic.com>
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Cc: backports@vger.kernel.org
+Date: Fri, 02 May 2014 14:58:02 +0200
+In-Reply-To: <20140502015017.GA3994@garbanzo.do-not-panic.com> (sfid-20140502_035024_735654_B890241B)
+References: <1398895825-18420-1-git-send-email-johannes@sipsolutions.net>
+	 <20140502015017.GA3994@garbanzo.do-not-panic.com>
+	 (sfid-20140502_035024_735654_B890241B)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 05/02/14 03:06, Luis R. Rodriguez wrote:
-> On Tue, Apr 29, 2014 at 11:58:18AM +0200, Arend van Spriel wrote:
->> In spatch a ExecutionError was raised, but that causes the thread
->> to finish without closing the outfile and more importantly without
->> putting (ret, fn) tuple on the return queue. This results in the
->> threaded_spatch routine to get stuck on the ret_q.get() call. This
->> patch removes raising the ExecutionError and just return the tuple.
->> The non-zero return code will result in ExecutionErrorThread exception
->> anyway.
->>
->> Signed-off-by: Arend van Spriel<arend@broadcom.com>
->> ---
->> A bit late but here is the rebased version.
->
-> Thanks! Perhaps you're on an outdated tree, the latest tree is:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git
+On Thu, 2014-05-01 at 18:50 -0700, Luis R. Rodriguez wrote:
+> On Thu, May 01, 2014 at 12:10:25AM +0200, Johannes Berg wrote:
+> > diff --git a/stack-auto.ini b/stack-auto.ini
+> > index 0412f8df60e4..4679a5cd52a7 100644
+> > --- a/stack-auto.ini
+> > +++ b/stack-auto.ini
+> > @@ -1,5 +1,5 @@
+> >  [DEFAULT]
+> > -cachedir = .
+> > +cachedir = /home/johannes/tmp/work/
+> >  
+> >  [iwlwifi]
+> >  
+> 
+> Thanks! I'll just ignore this hunk as it likely just slipped. Applied!
 
-Definitely barking up the wrong tree ;-)
+Err, yes, sorry about that and thanks.
 
-$ git remote show origin
-* remote origin
-   Fetch URL: 
-git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/backports.git
+johannes
 
-> I rebased your patch to fit on top of that though so no need to send
-> another patch, thanks a lot!
-
-Gr. AvS
