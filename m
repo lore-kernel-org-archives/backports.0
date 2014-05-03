@@ -1,50 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:59188 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753348AbaEHUkT (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 8 May 2014 16:40:19 -0400
-Received: by mail-wi0-f174.google.com with SMTP id r20so330353wiv.13
-        for <backports@vger.kernel.org>; Thu, 08 May 2014 13:40:18 -0700 (PDT)
-From: Samuel Martin <s.martin49@gmail.com>
+Received: from mail-la0-f43.google.com ([209.85.215.43]:61893 "EHLO
+	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751148AbaECOJl (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 3 May 2014 10:09:41 -0400
+Received: by mail-la0-f43.google.com with SMTP id c6so3577093lan.2
+        for <backports@vger.kernel.org>; Sat, 03 May 2014 07:09:40 -0700 (PDT)
+Received: from [192.168.1.75] (c-107ae455.213-3-64736c14.cust.bredbandsbolaget.se. [85.228.122.16])
+        by mx.google.com with ESMTPSA id g8sm2169601laf.0.2014.05.03.07.09.38
+        for <backports@vger.kernel.org>
+        (version=TLSv1 cipher=RC4-SHA bits=128/128);
+        Sat, 03 May 2014 07:09:39 -0700 (PDT)
+Message-ID: <1399126177.28281.6.camel@lillan> (sfid-20140503_160942_797174_9E06271E)
+Subject: [PATCH v2] backports: backport-3.15: Include fix
+From: Richard =?ISO-8859-1?Q?R=F6jfors?= <richard.rojfors@gmail.com>
 To: backports@vger.kernel.org
-Cc: Samuel Martin <s.martin49@gmail.com>
-Subject: [PATCH 02/10] backports: Makefile: introduce KVERSION and rework KLIB definition
-Date: Thu,  8 May 2014 22:39:25 +0200
-Message-Id: <1399581573-12072-3-git-send-email-s.martin49@gmail.com> (sfid-20140508_224021_406093_EDAAF47B)
-In-Reply-To: <1399581573-12072-1-git-send-email-s.martin49@gmail.com>
-References: <1399581573-12072-1-git-send-email-s.martin49@gmail.com>
+Date: Sat, 03 May 2014 16:09:37 +0200
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Samuel Martin <s.martin49@gmail.com>
----
- backport/Makefile | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+In this version the correct linux string.h is included.
 
-diff --git a/backport/Makefile b/backport/Makefile
-index 3ff74d9..e9256e4 100644
---- a/backport/Makefile
-+++ b/backport/Makefile
-@@ -12,10 +12,18 @@ KMODDIR ?= updates
- ifneq ($(origin KROOT), undefined)
- KMODPATH_ARG := "INSTALL_MOD_PATH=$(KROOT)"
- else
--KLIB := /lib/modules/$(shell uname -r)/
- KROOT := /
- KMODPATH_ARG :=
- endif
-+
-+ifneq ($(origin KLIB_BUILD), undefined)
-+KVERSION := $(shell $(MAKE) -C $(KLIB_BUILD) $(if $(ARCH),ARCH=$(ARCH)) \
-+	--no-print-directory -s kernelrelease)
-+else
-+KVERSION := $(shell uname -r)
-+endif
-+
-+KLIB := $(KROOT)/lib/modules/$(KVERSION)
- KLIB_BUILD ?= $(KLIB)/build/
- KERNEL_CONFIG := $(KLIB_BUILD)/.config
- KERNEL_MAKEFILE := $(KLIB_BUILD)/Makefile
--- 
-1.9.2
+Include string.h to avoid compile issues if warnings are treated as errors:
+
+backports-3.14-1/compat/backport-3.15.c: In function 'backport_devm_kstrdup':
+backports-3.14-1/compat/backport-3.15.c:33:2: error: implicit declaration of function 'strlen' [-Werror=implicit-function-declaration]
+   size = strlen(s) + 1;
+   ^
+backports-3.14-1/compat/backport-3.15.c:33:9: warning: incompatible implicit declaration of built-in function 'strlen' [enabled by default]
+   size = strlen(s) + 1;
+          ^
+backports-3.14-1/compat/backport-3.15.c:36:3: error: implicit declaration of function 'memcpy' [-Werror=implicit-function-declaration]
+    memcpy(buf, s, size);
+    ^
+backports-3.14-1/compat/backport-3.15.c:36:3: warning: incompatible implicit declaration of built-in function 'memcpy' [enabled by default]
+
+Signed-off-by: Richard Röjfors <richard@puffinpack.se>
+---
+--- a/compat/backport-3.15.c	2014-05-03 15:43:46.229481458 +0200
++++ b/compat/backport-3.15.c	2014-05-03 15:43:59.541481079 +0200
+@@ -11,6 +11,7 @@
+ #include <linux/kernel.h>
+ #include <linux/device.h>
+ #include <linux/of.h>
++#include <linux/string.h>
+ 
+ /**
+  * devm_kstrdup - Allocate resource managed space and
 
