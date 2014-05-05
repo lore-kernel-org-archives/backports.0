@@ -1,84 +1,72 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:47300 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932318AbaEPLWa (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 16 May 2014 07:22:30 -0400
-From: Stefan Assmann <sassmann@kpanic.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, sassmann@kpanic.de
-Subject: [PATCH 10/13] backports: handle argument type change of get_rxnfc in struct ethtool_ops
-Date: Fri, 16 May 2014 13:21:21 +0200
-Message-Id: <1400239284-2916-11-git-send-email-sassmann@kpanic.de> (sfid-20140516_132234_330887_B4047D82)
-In-Reply-To: <1400239284-2916-1-git-send-email-sassmann@kpanic.de>
-References: <1400239284-2916-1-git-send-email-sassmann@kpanic.de>
+Received: from s3.sipsolutions.net ([144.76.43.152]:40637 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932139AbaEEMqP (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 5 May 2014 08:46:15 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backports: provide net_ieee802154_lowpan only when needed
+Date: Mon,  5 May 2014 14:46:11 +0200
+Message-Id: <1399293971-8037-1-git-send-email-johannes@sipsolutions.net> (sfid-20140505_144619_709539_92A43EE0)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-In kernel 3.2 an argument type of function pointer get_rxnfc in
-struct ethtool_ops changed from void to u32.
-Address this by putting ifdef around the code.
+From: Johannes Berg <johannes.berg@intel.com>
 
-commit 815c7db5c809ea3d5735de3131ecdf758b0e14ff
-Author: Ben Hutchings <bhutchings@solarflare.com>
-Date:   Tue Sep 6 13:49:12 2011 +0000
+If 802.15.4 isn't configured, there's no need to provide the
+network namespace support for it, so don't.
 
-    ethtool: Clean up definitions of rule location arrays in RX NFC
-
-git describe --contains 815c7db5c809ea3d5735de3131ecdf758b0e14ff
-v3.2-rc1~129^2~272
-
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- .../network/0039-ethtool_rxnfc/INFO                    | 14 ++++++++++++++
- .../network/0039-ethtool_rxnfc/igb_rxnfc.patch         | 18 ++++++++++++++++++
- 2 files changed, 32 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0039-ethtool_rxnfc/INFO
- create mode 100644 patches/collateral-evolutions/network/0039-ethtool_rxnfc/igb_rxnfc.patch
+ backport/backport-include/net/net_namespace.h | 5 ++++-
+ backport/compat/backport-3.15.c               | 2 ++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/patches/collateral-evolutions/network/0039-ethtool_rxnfc/INFO b/patches/collateral-evolutions/network/0039-ethtool_rxnfc/INFO
-new file mode 100644
-index 0000000..55ad380
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0039-ethtool_rxnfc/INFO
-@@ -0,0 +1,14 @@
-+In kernel 3.2 an argument type of function pointer get_rxnfc in
-+struct ethtool_ops changed from void to u32.
-+Address this by putting ifdef around the code.
+diff --git a/backport/backport-include/net/net_namespace.h b/backport/backport-include/net/net_namespace.h
+index 3ea5d4662c27..ad0f03096361 100644
+--- a/backport/backport-include/net/net_namespace.h
++++ b/backport/backport-include/net/net_namespace.h
+@@ -1,9 +1,11 @@
+ #ifndef _COMPAT_NET_NET_NAMESPACE_H
+ #define _COMPAT_NET_NET_NAMESPACE_H 1
+ 
++#include_next <net/net_namespace.h>
 +
-+
-+commit 815c7db5c809ea3d5735de3131ecdf758b0e14ff
-+Author: Ben Hutchings <bhutchings@solarflare.com>
-+Date:   Tue Sep 6 13:49:12 2011 +0000
-+
-+    ethtool: Clean up definitions of rule location arrays in RX NFC
-+
-+git describe --contains 815c7db5c809ea3d5735de3131ecdf758b0e14ff
-+v3.2-rc1~129^2~272
-+
-diff --git a/patches/collateral-evolutions/network/0039-ethtool_rxnfc/igb_rxnfc.patch b/patches/collateral-evolutions/network/0039-ethtool_rxnfc/igb_rxnfc.patch
-new file mode 100644
-index 0000000..875b97a
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0039-ethtool_rxnfc/igb_rxnfc.patch
-@@ -0,0 +1,18 @@
-+diff --git a/drivers/net/ethernet/intel/igb/igb_ethtool.c b/drivers/net/ethernet/intel/igb/igb_ethtool.c
-+index 03fe81a..f561b7b 100644
-+--- a/drivers/net/ethernet/intel/igb/igb_ethtool.c
-++++ b/drivers/net/ethernet/intel/igb/igb_ethtool.c
-+@@ -2450,8 +2450,13 @@ static int igb_get_rss_hash_opts(struct igb_adapter *adapter,
-+ 	return 0;
-+ }
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)
-+ static int igb_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd,
-+ 			 u32 *rule_locs)
-++#else
-++static int igb_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd,
-++			 void *rule_locs)
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0) */
-+ {
-+ 	struct igb_adapter *adapter = netdev_priv(dev);
-+ 	int ret = -EOPNOTSUPP;
++#ifdef CPTCFG_IEEE802154_6LOWPAN
+ #include <linux/version.h>
+ #include <net/netns/ieee802154_6lowpan.h>
+-#include_next <net/net_namespace.h>
+ 
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0))
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
+@@ -22,5 +24,6 @@ net_ieee802154_lowpan(struct net *net)
+ 	return &net->ieee802154_lowpan;
+ }
+ #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0) */
++#endif /* CPTCFG_IEEE802154_6LOWPAN */
+ 
+ #endif	/* _COMPAT_NET_NET_NAMESPACE_H */
+diff --git a/backport/compat/backport-3.15.c b/backport/compat/backport-3.15.c
+index 545e0c297ea6..767722e8ac6d 100644
+--- a/backport/compat/backport-3.15.c
++++ b/backport/compat/backport-3.15.c
+@@ -14,6 +14,7 @@
+ #include <linux/of.h>
+ #include <net/net_namespace.h>
+ 
++#ifdef CPTCFG_IEEE802154_6LOWPAN
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
+ /* the above kernel dependency is set to match the dependencies file */
+ struct netns_ieee802154_lowpan ieee802154_lowpan;
+@@ -25,6 +26,7 @@ struct netns_ieee802154_lowpan *net_ieee802154_lowpan(struct net *net)
+ }
+ EXPORT_SYMBOL_GPL(net_ieee802154_lowpan);
+ #endif
++#endif /* CPTCFG_IEEE802154_6LOWPAN */
+ 
+ /**
+  * devm_kstrdup - Allocate resource managed space and
 -- 
-1.9.0
+2.0.0.rc0
 
