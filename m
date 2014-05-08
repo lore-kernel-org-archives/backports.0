@@ -1,65 +1,73 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:56391 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752692AbaEAX1O (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 1 May 2014 19:27:14 -0400
-Received: by mail-pa0-f54.google.com with SMTP id lf10so4410643pab.41
-        for <backports@vger.kernel.org>; Thu, 01 May 2014 16:27:13 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Received: from mail-we0-f178.google.com ([74.125.82.178]:58482 "EHLO
+	mail-we0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755585AbaEHUkY (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 8 May 2014 16:40:24 -0400
+Received: by mail-we0-f178.google.com with SMTP id u56so2988493wes.23
+        for <backports@vger.kernel.org>; Thu, 08 May 2014 13:40:23 -0700 (PDT)
+From: Samuel Martin <s.martin49@gmail.com>
 To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH 3/8] backports: add gentree.py binary requirements
-Date: Thu,  1 May 2014 16:26:46 -0700
-Message-Id: <1398986811-25649-4-git-send-email-mcgrof@do-not-panic.com> (sfid-20140502_012715_433283_ED719584)
-In-Reply-To: <1398986811-25649-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1398986811-25649-1-git-send-email-mcgrof@do-not-panic.com>
+Cc: Samuel Martin <s.martin49@gmail.com>
+Subject: [PATCH 05/10] backports: check_depmod.sh: support install root not in /
+Date: Thu,  8 May 2014 22:39:28 +0200
+Message-Id: <1399581573-12072-6-git-send-email-s.martin49@gmail.com> (sfid-20140508_224025_987691_96125E77)
+In-Reply-To: <1399581573-12072-1-git-send-email-s.martin49@gmail.com>
+References: <1399581573-12072-1-git-send-email-s.martin49@gmail.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
+Signed-off-by: Samuel Martin <s.martin49@gmail.com>
 ---
- gentree.py | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ backport/Makefile.real           | 6 ++++--
+ backport/scripts/check_depmod.sh | 7 ++++---
+ 2 files changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/gentree.py b/gentree.py
-index 1058884..8a8f6b6 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -15,6 +15,7 @@ from lib import bpgit as git
- from lib import bpgpg as gpg
- from lib import bpkup as kup
- from lib.tempdir import tempdir
-+from lib import bpreqs as reqs
+diff --git a/backport/Makefile.real b/backport/Makefile.real
+index 5a25db4..a12a0db 100644
+--- a/backport/Makefile.real
++++ b/backport/Makefile.real
+@@ -6,6 +6,8 @@ else
+ export BACKPORTS_GIT_TRACKER_DEF=
+ endif
  
- def read_copy_list(copyfile):
-     """
-@@ -438,6 +439,13 @@ def upload_release(args, rel_prep, logwrite=lambda x:None):
-         logwrite("kup-test: skipping cmd: %s" % kup_cmd)
- 
- def _main():
-+    # Our binary requirements go here
-+    req = reqs.Req()
-+    req.require('git')
-+    req.coccinelle('1.0.0-rc21')
-+    if not req.reqs_match():
-+        sys.exit(1)
++DEPMOD ?= /sbin/depmod
 +
-     # set up and parse arguments
-     parser = argparse.ArgumentParser(description='generate backport tree')
-     parser.add_argument('kerneldir', metavar='<kernel tree>', type=str,
-@@ -880,6 +888,10 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
-     git_debug_snapshot(args, "disable unsatisfied Makefile parts")
+ # disable built-in rules for this file
+ .SUFFIXES:
  
-     if (args.kup or args.kup_test):
-+        req = reqs.Req()
-+        req.kup()
-+        if not req.reqs_match():
-+            sys.exit(1)
-         upload_release(args, rel_prep, logwrite=logwrite)
+@@ -94,8 +96,8 @@ install: modules
+ 		modules_install
+ 	@./scripts/blacklist.sh $(KLIB)/ $(KLIB)/$(KMODDIR) $(KROOT)
+ 	@./scripts/compress_modules.sh $(KLIB)/$(KMODDIR)
+-	@./scripts/check_depmod.sh
+-	@/sbin/depmod -a
++	@./scripts/check_depmod.sh $(DEPMOD) $(KROOT)
++	@$(DEPMOD) -a
+ 	@./scripts/update-initramfs.sh $(KLIB)
+ 	@echo
+ 	@echo Your backported driver modules should be installed now.
+diff --git a/backport/scripts/check_depmod.sh b/backport/scripts/check_depmod.sh
+index 6123894..9f2e238 100755
+--- a/backport/scripts/check_depmod.sh
++++ b/backport/scripts/check_depmod.sh
+@@ -6,13 +6,14 @@
  
-     logwrite('Done!')
+ # Seems Mandriva has an $DEPMOD_DIR but it doesn't have any files,
+ # so lets deal with those distributions.
+-DEPMOD_CONF="/etc/depmod.conf"
++DEPMOD_CMD="${1:-depmod}"
++KROOT="${2:-/}"
++DEPMOD_CONF="$KROOT/etc/depmod.conf"
+ DEPMOD_CONF_TMP="$DEPMOD_CONF.backports.old"
+-DEPMOD_DIR="/etc/depmod.d/"
++DEPMOD_DIR="$KROOT/etc/depmod.d/"
+ BACKPORT_DEPMOD_FILE="backports.conf"
+ GREP_REGEX_UPDATES="^[[:space:]]*search.*[[:space:]]updates\([[:space:]]\|$\)"
+ GREP_REGEX_SEARCH="^[[:space:]]*search[[:space:]].\+$"
+-DEPMOD_CMD="depmod"
+ 
+ function add_compat_depmod_conf {
+ 	echo "NOTE: Your distribution lacks an $DEPMOD_DIR directory with "
 -- 
-1.9.1
+1.9.2
 
