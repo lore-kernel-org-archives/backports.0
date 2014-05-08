@@ -1,94 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:42851 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932327AbaEPLWg (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 16 May 2014 07:22:36 -0400
-From: Stefan Assmann <sassmann@kpanic.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, sassmann@kpanic.de
-Subject: [PATCH 12/13] backports: handle hwmon_device_register_with_groups API calls
-Date: Fri, 16 May 2014 13:21:23 +0200
-Message-Id: <1400239284-2916-13-git-send-email-sassmann@kpanic.de> (sfid-20140516_135147_868326_1B927B9C)
-In-Reply-To: <1400239284-2916-1-git-send-email-sassmann@kpanic.de>
-References: <1400239284-2916-1-git-send-email-sassmann@kpanic.de>
+Received: from mail-wg0-f51.google.com ([74.125.82.51]:38504 "EHLO
+	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753348AbaEHUkW (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 8 May 2014 16:40:22 -0400
+Received: by mail-wg0-f51.google.com with SMTP id x13so3085685wgg.22
+        for <backports@vger.kernel.org>; Thu, 08 May 2014 13:40:21 -0700 (PDT)
+From: Samuel Martin <s.martin49@gmail.com>
+To: backports@vger.kernel.org
+Cc: Samuel Martin <s.martin49@gmail.com>
+Subject: [PATCH 04/10] backports: blacklist.sh: support install root not in /
+Date: Thu,  8 May 2014 22:39:27 +0200
+Message-Id: <1399581573-12072-5-git-send-email-s.martin49@gmail.com> (sfid-20140508_224023_901135_F307B002)
+In-Reply-To: <1399581573-12072-1-git-send-email-s.martin49@gmail.com>
+References: <1399581573-12072-1-git-send-email-s.martin49@gmail.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The new hwmon_device_register_with_groups API has not been backported yet.
-Address this by putting ifdef around the code using the API.
-
-commit 74188cba088192e14cd7fd5433876e8c947bcdd8
-Author: Guenter Roeck <linux@roeck-us.net>
-Date:   Thu Jul 11 20:00:12 2013 -0700
-
-    hwmon: Provide managed hwmon registration
-
-git describe --contains 74188cba088192e14cd7fd5433876e8c947bcdd8
-v3.13-rc1~126^2~30
-
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+Signed-off-by: Samuel Martin <s.martin49@gmail.com>
 ---
- .../INFO                                           | 13 ++++++++++
- ...gb-devm_hwmon_device_register_with_groups.patch | 30 ++++++++++++++++++++++
- 2 files changed, 43 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/INFO
- create mode 100644 patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch
+ backport/Makefile.real        | 2 +-
+ backport/scripts/blacklist.sh | 7 ++++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/INFO b/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/INFO
-new file mode 100644
-index 0000000..9169f68
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/INFO
-@@ -0,0 +1,13 @@
-+The new hwmon_device_register_with_groups API has not been backported yet.
-+Address this by putting ifdef around the code using the API.
+diff --git a/backport/Makefile.real b/backport/Makefile.real
+index f60d5ca..5a25db4 100644
+--- a/backport/Makefile.real
++++ b/backport/Makefile.real
+@@ -92,7 +92,7 @@ install: modules
+ 	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_PWD)			\
+ 		INSTALL_MOD_DIR=$(KMODDIR) $(KMODPATH_ARG)		\
+ 		modules_install
+-	@./scripts/blacklist.sh $(KLIB)/ $(KLIB)/$(KMODDIR)
++	@./scripts/blacklist.sh $(KLIB)/ $(KLIB)/$(KMODDIR) $(KROOT)
+ 	@./scripts/compress_modules.sh $(KLIB)/$(KMODDIR)
+ 	@./scripts/check_depmod.sh
+ 	@/sbin/depmod -a
+diff --git a/backport/scripts/blacklist.sh b/backport/scripts/blacklist.sh
+index f941c4a..f995f11 100755
+--- a/backport/scripts/blacklist.sh
++++ b/backport/scripts/blacklist.sh
+@@ -1,10 +1,11 @@
+ #!/bin/bash
+ 
+-BLACKLIST_CONF="/etc/modprobe.d/backports.conf"
+-BLACKLIST_MAP=".blacklist.map"
+-
+ MODULE_DIR=$1
+ MODULE_UPDATES=$2
++KROOT=$3
 +
-+
-+commit 74188cba088192e14cd7fd5433876e8c947bcdd8
-+Author: Guenter Roeck <linux@roeck-us.net>
-+Date:   Thu Jul 11 20:00:12 2013 -0700
-+
-+    hwmon: Provide managed hwmon registration
-+
-+git describe --contains 74188cba088192e14cd7fd5433876e8c947bcdd8
-+v3.13-rc1~126^2~30
-+
-diff --git a/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch b/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch
-new file mode 100644
-index 0000000..9f4f40e
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch
-@@ -0,0 +1,30 @@
-+diff --git a/drivers/net/ethernet/intel/igb/igb_hwmon.c b/drivers/net/ethernet/intel/igb/igb_hwmon.c
-+index 2eee9bb..ad08b1f 100644
-+--- a/drivers/net/ethernet/intel/igb/igb_hwmon.c
-++++ b/drivers/net/ethernet/intel/igb/igb_hwmon.c
-+@@ -173,7 +173,9 @@ int igb_sysfs_init(struct igb_adapter *adapter)
-+ {
-+ 	struct hwmon_buff *igb_hwmon;
-+ 	struct i2c_client *client;
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
-+ 	struct device *hwmon_dev;
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0) */
-+ 	unsigned int i;
-+ 	int rc = 0;
-+ 
-+@@ -230,6 +232,7 @@ int igb_sysfs_init(struct igb_adapter *adapter)
-+ 	igb_hwmon->groups[0] = &igb_hwmon->group;
-+ 	igb_hwmon->group.attrs = igb_hwmon->attrs;
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
-+ 	hwmon_dev = devm_hwmon_device_register_with_groups(&adapter->pdev->dev,
-+ 							   client->name,
-+ 							   igb_hwmon,
-+@@ -242,6 +245,7 @@ int igb_sysfs_init(struct igb_adapter *adapter)
-+ 	goto exit;
-+ 
-+ err:
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0) */
-+ 	igb_sysfs_del_adapter(adapter);
-+ exit:
-+ 	return rc;
++BLACKLIST_CONF="$KROOT/etc/modprobe.d/backports.conf"
++BLACKLIST_MAP=".blacklist.map"
+ 
+ if [[ ! -d $MODULE_DIR ]]; then
+ 	exit
 -- 
-1.9.0
+1.9.2
 
