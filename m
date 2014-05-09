@@ -1,53 +1,32 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-we0-f177.google.com ([74.125.82.177]:64123 "EHLO
-	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755681AbaEHUkj (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 8 May 2014 16:40:39 -0400
-Received: by mail-we0-f177.google.com with SMTP id x48so3088983wes.36
-        for <backports@vger.kernel.org>; Thu, 08 May 2014 13:40:38 -0700 (PDT)
-From: Samuel Martin <s.martin49@gmail.com>
-To: backports@vger.kernel.org
-Cc: Samuel Martin <s.martin49@gmail.com>
-Subject: [PATCH 10/10] backports: Makefile: update help text
-Date: Thu,  8 May 2014 22:39:33 +0200
-Message-Id: <1399581573-12072-11-git-send-email-s.martin49@gmail.com> (sfid-20140508_224041_107989_5018A8BE)
-In-Reply-To: <1399581573-12072-1-git-send-email-s.martin49@gmail.com>
-References: <1399581573-12072-1-git-send-email-s.martin49@gmail.com>
+Received: from mail-la0-f53.google.com ([209.85.215.53]:65282 "EHLO
+	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757098AbaEIThu (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 9 May 2014 15:37:50 -0400
+Received: by mail-la0-f53.google.com with SMTP id ec20so211322lab.12
+        for <backports@vger.kernel.org>; Fri, 09 May 2014 12:37:48 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1399616596-12805-1-git-send-email-johannes@sipsolutions.net>
+References: <1399616596-12805-1-git-send-email-johannes@sipsolutions.net>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Fri, 9 May 2014 12:37:28 -0700
+Message-ID: <CAB=NE6Ua=H0HjyaL3c812rXFZHbcTaWatecP7u27hWdREjmqVg@mail.gmail.com> (sfid-20140509_213753_075712_052B7066)
+Subject: Re: [PATCH] backports: fix class/bus attribute group spatch conversion
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Samuel Martin <s.martin49@gmail.com>
----
- backport/Makefile | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+On Thu, May 8, 2014 at 11:23 PM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+>
+> The spatch conversion (commit 05d44557c6a83b4ecb935cb6306f62,
+> "backports: transform group attribute backport to SmPL form")
+> added an #ifdef that shouldn't be there - remove it.
 
-diff --git a/backport/Makefile b/backport/Makefile
-index 2f446e6..acc0e15 100644
---- a/backport/Makefile
-+++ b/backport/Makefile
-@@ -62,11 +62,17 @@ mrproper:
- 	echo "/--------------"								;\
- 	echo "| Your kernel headers are incomplete/not installed."			;\
- 	echo "| Please install kernel headers, including a .config"			;\
--	echo "| file or use the KLIB/KLIB_BUILD make variables to"			;\
--	echo "| set the kernel to build against, e.g."					;\
--	echo "|   make KLIB=/lib/modules/3.1.7/"					;\
--	echo "| to compile/install for the installed kernel 3.1.7"			;\
--	echo "| (that isn't currently running.)"					;\
-+	echo "| file or use the KROOT/KLIB_BUILD make variables to"			;\
-+	echo "| set the kernel to build against, e.g.:"					;\
-+	echo "| * to compile/install for the installed kernel 3.1.7"			;\
-+	echo "|   (that isn't currently running.):"					;\
-+	echo "|   $$ make KLIB_BUILD=/lib/modules/3.1.7/build"				;\
-+	echo "| * to cross-compile/install for an arm target in /opt/arm-dev/rootfs:"	;\
-+	echo "|   $$ make \\"								;\
-+	echo "|        ARCH=arm	\\"							;\
-+	echo "|        CROSS_COMPILE=/opt/ct-ng/arm-linux/bin/arm-linux- \\"		;\
-+	echo "|        KROOT=/opt/arm-dev/rootfs \\"					;\
-+	echo "|        KLIB_BUILD=/opt/arm-dev/linux"					;\
- 	echo "\\--"									;\
- 	false)
- 	@set -e ; if [ "$$(cat .kernel_config_md5 2>/dev/null)" != "$(CONFIG_MD5)" ]	;\
--- 
-1.9.2
+When re-doing this I did make this change on purpose as I could not
+see how those were being defined for newer kernels, where is that?
 
+ Luis
