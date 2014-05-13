@@ -1,38 +1,74 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:39844 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751330AbaEBA7H (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 1 May 2014 20:59:07 -0400
-Received: by mail-pd0-f169.google.com with SMTP id z10so2578598pdj.28
-        for <backports@vger.kernel.org>; Thu, 01 May 2014 17:59:05 -0700 (PDT)
-Date: Thu, 1 May 2014 17:59:00 -0700
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Stefan Assmann <sassmann@kpanic.de>
-Cc: backports@vger.kernel.org
-Subject: Re: [PATCH 0/3] backports: fixes for RHEL7.0
-Message-ID: <20140502005900.GB957@garbanzo.do-not-panic.com> (sfid-20140502_025909_412624_47960CC1)
-References: <1398410070-30529-1-git-send-email-sassmann@kpanic.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1398410070-30529-1-git-send-email-sassmann@kpanic.de>
+Received: from mga02.intel.com ([134.134.136.20]:1975 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754170AbaEMNWD (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 13 May 2014 09:22:03 -0400
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+To: backports@vger.kernel.org
+Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Subject: [PATCH] backport: update drivers_net_wireless_iwlwifi_iwl-debug.patch
+Date: Tue, 13 May 2014 16:19:12 +0300
+Message-Id: <1399987152-20197-1-git-send-email-emmanuel.grumbach@intel.com> (sfid-20140513_152205_973395_8252570E)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Apr 25, 2014 at 09:14:27AM +0200, Stefan Assmann wrote:
-> Get backports ready for RHEL7.0.
-> 
-> Stefan Assmann (3):
->   backports: wrap dma_set_mask_and_coherent in LINUX_BACKPORT()
->   backports: add linux/of_graph.h to copy-list
->   backports: ifdef code already present in RHEL7.0
-> 
->  backport/backport-include/linux/device.h      | 2 +-
->  backport/backport-include/linux/dma-mapping.h | 1 +
->  backport/backport-include/linux/skbuff.h      | 2 +-
->  backport/compat/dma-shared-helpers.c          | 2 ++
->  copy-list                                     | 1 +
->  5 files changed, 6 insertions(+), 2 deletions(-)
+The driver was updated - need to update the patch accordingly
 
-Thanks, applied!
+commit 7f715626a9ddfa7df13f076f59fc62e3c99066cf
+Author: Liad Kaufman <liad.kaufman@intel.com>
+Date:   Thu May 8 15:24:54 2014 +0300
 
-  Luis
+    iwlwifi: use dev_printk instead of dev_dbg for debug logs
+
+Change-Id: I4006303e36bc170c3e91bbb9e5d9437a1f345b9f
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+---
+ .../drivers_net_wireless_iwlwifi_iwl-debug.patch             | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/patches/collateral-evolutions/network/0018-pv-trace-fixes/drivers_net_wireless_iwlwifi_iwl-debug.patch b/patches/collateral-evolutions/network/0018-pv-trace-fixes/drivers_net_wireless_iwlwifi_iwl-debug.patch
+index 3e454e2..6530cbb 100644
+--- a/patches/collateral-evolutions/network/0018-pv-trace-fixes/drivers_net_wireless_iwlwifi_iwl-debug.patch
++++ b/patches/collateral-evolutions/network/0018-pv-trace-fixes/drivers_net_wireless_iwlwifi_iwl-debug.patch
+@@ -1,6 +1,8 @@
++diff --git a/drivers/net/wireless/iwlwifi/iwl-debug.c b/drivers/net/wireless/iwlwifi/iwl-debug.c
++index 09feff4..c201d09 100644
+ --- a/drivers/net/wireless/iwlwifi/iwl-debug.c
+ +++ b/drivers/net/wireless/iwlwifi/iwl-debug.c
+-@@ -76,13 +76,16 @@ void __iwl_ ##fn(struct device *dev, con
++@@ -74,13 +74,16 @@ void __iwl_ ##fn(struct device *dev, const char *fmt, ...)	\
+  	struct va_format vaf = {				\
+  		.fmt = fmt,					\
+  	};							\
+@@ -21,7 +23,7 @@
+  }
+  
+  __iwl_fn(warn)
+-@@ -101,13 +104,18 @@ void __iwl_err(struct device *dev, bool
++@@ -99,13 +102,18 @@ void __iwl_err(struct device *dev, bool rfkill_prefix, bool trace_only,
+  	va_list args;
+  
+  	va_start(args, fmt);
+@@ -41,7 +43,7 @@
+  	trace_iwlwifi_err(&vaf);
+  	va_end(args);
+  }
+-@@ -124,13 +132,19 @@ void __iwl_dbg(struct device *dev,
++@@ -122,13 +130,19 @@ void __iwl_dbg(struct device *dev,
+  	va_list args;
+  
+  	va_start(args, fmt);
+@@ -54,8 +56,8 @@
+ +
+ +		va_copy(args2, args);
+ +		vaf.va = &args2;
+- 		dev_dbg(dev, "%c %s %pV", in_interrupt() ? 'I' : 'U',
+- 			function, &vaf);
++ 		dev_printk(KERN_DEBUG, dev, "%c %s %pV",
++ 			   in_interrupt() ? 'I' : 'U', function, &vaf);
+ +		va_end(args2);
+ +	}
+  #endif
+-- 
+1.8.3.2
+
