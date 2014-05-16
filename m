@@ -1,81 +1,113 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:33188 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752692AbaEAX1i (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 1 May 2014 19:27:38 -0400
-Received: by mail-pa0-f50.google.com with SMTP id rd3so4361760pab.23
-        for <backports@vger.kernel.org>; Thu, 01 May 2014 16:27:38 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH 8/8] backports: fix igb patch for next-20140501
-Date: Thu,  1 May 2014 16:26:51 -0700
-Message-Id: <1398986811-25649-9-git-send-email-mcgrof@do-not-panic.com> (sfid-20140502_012740_363651_F833E194)
-In-Reply-To: <1398986811-25649-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1398986811-25649-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from mx1.redhat.com ([209.132.183.28]:59935 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932319AbaEPLWc (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 16 May 2014 07:22:32 -0400
+From: Stefan Assmann <sassmann@kpanic.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, sassmann@kpanic.de
+Subject: [PATCH 11/13] backports: handle struct ethtool_cmd MDI changes
+Date: Fri, 16 May 2014 13:21:22 +0200
+Message-Id: <1400239284-2916-12-git-send-email-sassmann@kpanic.de> (sfid-20140516_132235_618010_E0FF4A6A)
+In-Reply-To: <1400239284-2916-1-git-send-email-sassmann@kpanic.de>
+References: <1400239284-2916-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+In kernel 3.7 struct ethtool_cmd received eth_tp_mdix and eth_tp_mdix_ctrl.
+Address this by putting ifdef around the code using these struct components.
 
-Manual fixes were needed for:
+commit 6f6bbc186dc8e4e0c628db7decbd1a5e02cb5fd8
+Author: Jesse Brandeburg <jesse.brandeburg@intel.com>
+Date:   Thu Jul 26 02:30:53 2012 +0000
 
-patches/the-way-not-to-do-backports/0001-ethernet-igb/0001-igb_net_device_ops.patch
+    ethtool.h: MDI setting support
 
-We currently hit a compile error as of next-20140501 because of the
-introduction of smp_mb__after_atomic(). This is not yet addressed.
+git describe --contains 6f6bbc186dc8e4e0c628db7decbd1a5e02cb5fd8
+v3.7-rc1~145^2~300^2~5
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
 ---
- .../0001-ethernet-igb/0001-igb_net_device_ops.patch        | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ .../network/0040-ethtool_cmd_mdix/INFO             | 13 ++++++
+ .../igb_ethtool_cmd_mdix.patch                     | 49 ++++++++++++++++++++++
+ 2 files changed, 62 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/INFO
+ create mode 100644 patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/igb_ethtool_cmd_mdix.patch
 
-diff --git a/patches/the-way-not-to-do-backports/0001-ethernet-igb/0001-igb_net_device_ops.patch b/patches/the-way-not-to-do-backports/0001-ethernet-igb/0001-igb_net_device_ops.patch
-index 97ad8aa..e464283 100644
---- a/patches/the-way-not-to-do-backports/0001-ethernet-igb/0001-igb_net_device_ops.patch
-+++ b/patches/the-way-not-to-do-backports/0001-ethernet-igb/0001-igb_net_device_ops.patch
-@@ -1,11 +1,9 @@
--diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
--index 14ad4c7..f2a5abf 100644
- --- a/drivers/net/ethernet/intel/igb/igb_main.c
- +++ b/drivers/net/ethernet/intel/igb/igb_main.c
--@@ -160,8 +160,13 @@ static int igb_ioctl(struct net_device *
-- static void igb_tx_timeout(struct net_device *);
-+@@ -157,8 +157,13 @@ static void igb_tx_timeout(struct net_de
-  static void igb_reset_task(struct work_struct *);
-- static void igb_vlan_mode(struct net_device *netdev, netdev_features_t features);
-+ static void igb_vlan_mode(struct net_device *netdev,
-+ 			  netdev_features_t features);
- +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
-  static int igb_vlan_rx_add_vid(struct net_device *, __be16, u16);
-  static int igb_vlan_rx_kill_vid(struct net_device *, __be16, u16);
-@@ -16,7 +14,7 @@ index 14ad4c7..f2a5abf 100644
-  static void igb_restore_vlan(struct igb_adapter *);
-  static void igb_rar_set_qsel(struct igb_adapter *, u8 *, u32 , u8);
-  static void igb_ping_all_vfs(struct igb_adapter *);
--@@ -7249,8 +7254,12 @@ static void igb_vlan_mode(struct net_dev
-+@@ -7257,8 +7262,12 @@ static void igb_vlan_mode(struct net_dev
-  	igb_rlpml_set(adapter);
-  }
-  
-@@ -29,7 +27,7 @@ index 14ad4c7..f2a5abf 100644
-  {
-  	struct igb_adapter *adapter = netdev_priv(netdev);
-  	struct e1000_hw *hw = &adapter->hw;
--@@ -7267,8 +7276,12 @@ static int igb_vlan_rx_add_vid(struct ne
-+@@ -7275,8 +7284,12 @@ static int igb_vlan_rx_add_vid(struct ne
-  	return 0;
-  }
-  
-@@ -42,7 +40,7 @@ index 14ad4c7..f2a5abf 100644
-  {
-  	struct igb_adapter *adapter = netdev_priv(netdev);
-  	struct e1000_hw *hw = &adapter->hw;
--@@ -7294,7 +7307,11 @@ static void igb_restore_vlan(struct igb_
-+@@ -7302,7 +7315,11 @@ static void igb_restore_vlan(struct igb_
-  	igb_vlan_mode(adapter->netdev, adapter->netdev->features);
-  
-  	for_each_set_bit(vid, adapter->active_vlans, VLAN_N_VID)
+diff --git a/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/INFO b/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/INFO
+new file mode 100644
+index 0000000..21e4add
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/INFO
+@@ -0,0 +1,13 @@
++In kernel 3.7 struct ethtool_cmd received eth_tp_mdix and eth_tp_mdix_ctrl.
++Address this by putting ifdef around the code using these struct components.
++
++
++commit 6f6bbc186dc8e4e0c628db7decbd1a5e02cb5fd8
++Author: Jesse Brandeburg <jesse.brandeburg@intel.com>
++Date:   Thu Jul 26 02:30:53 2012 +0000
++
++    ethtool.h: MDI setting support
++
++git describe --contains 6f6bbc186dc8e4e0c628db7decbd1a5e02cb5fd8
++v3.7-rc1~145^2~300^2~5
++
+diff --git a/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/igb_ethtool_cmd_mdix.patch b/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/igb_ethtool_cmd_mdix.patch
+new file mode 100644
+index 0000000..5783b3f
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/igb_ethtool_cmd_mdix.patch
+@@ -0,0 +1,49 @@
++diff --git a/drivers/net/ethernet/intel/igb/igb_ethtool.c b/drivers/net/ethernet/intel/igb/igb_ethtool.c
++index f561b7b..b611f5b 100644
++--- a/drivers/net/ethernet/intel/igb/igb_ethtool.c
+++++ b/drivers/net/ethernet/intel/igb/igb_ethtool.c
++@@ -245,10 +245,12 @@ static int igb_get_settings(struct net_device *netdev, struct ethtool_cmd *ecmd)
++ 	else
++ 		ecmd->eth_tp_mdix = ETH_TP_MDI_INVALID;
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
++ 	if (hw->phy.mdix == AUTO_ALL_MODES)
++ 		ecmd->eth_tp_mdix_ctrl = ETH_TP_MDI_AUTO;
++ 	else
++ 		ecmd->eth_tp_mdix_ctrl = hw->phy.mdix;
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
++ 
++ 	return 0;
++ }
++@@ -267,6 +269,7 @@ static int igb_set_settings(struct net_device *netdev, struct ethtool_cmd *ecmd)
++ 		return -EINVAL;
++ 	}
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
++ 	/* MDI setting is only allowed when autoneg enabled because
++ 	 * some hardware doesn't allow MDI setting when speed or
++ 	 * duplex is forced.
++@@ -281,6 +284,7 @@ static int igb_set_settings(struct net_device *netdev, struct ethtool_cmd *ecmd)
++ 			return -EINVAL;
++ 		}
++ 	}
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
++ 
++ 	while (test_and_set_bit(__IGB_RESETTING, &adapter->state))
++ 		usleep_range(1000, 2000);
++@@ -324,6 +328,7 @@ static int igb_set_settings(struct net_device *netdev, struct ethtool_cmd *ecmd)
++ 		}
++ 	}
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
++ 	/* MDI-X => 2; MDI => 1; Auto => 3 */
++ 	if (ecmd->eth_tp_mdix_ctrl) {
++ 		/* fix up the value for auto (3 => 0) as zero is mapped
++@@ -334,6 +339,7 @@ static int igb_set_settings(struct net_device *netdev, struct ethtool_cmd *ecmd)
++ 		else
++ 			hw->phy.mdix = ecmd->eth_tp_mdix_ctrl;
++ 	}
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
++ 
++ 	/* reset the link */
++ 	if (netif_running(adapter->netdev)) {
 -- 
-1.9.1
+1.9.0
 
