@@ -1,62 +1,73 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f180.google.com ([209.85.192.180]:62324 "EHLO
-	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752692AbaEAX1X (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 1 May 2014 19:27:23 -0400
-Received: by mail-pd0-f180.google.com with SMTP id x10so3774458pdj.25
-        for <backports@vger.kernel.org>; Thu, 01 May 2014 16:27:22 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH 5/8] backports: add ckmake binary requirements
-Date: Thu,  1 May 2014 16:26:48 -0700
-Message-Id: <1398986811-25649-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20140502_012724_646776_D87703E8)
-In-Reply-To: <1398986811-25649-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1398986811-25649-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from mx1.redhat.com ([209.132.183.28]:33932 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932321AbaEPLWe (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 16 May 2014 07:22:34 -0400
+From: Stefan Assmann <sassmann@kpanic.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, sassmann@kpanic.de
+Subject: [PATCH 07/13] backports: handle new get_ts_info pointer in struct ethtool_ops
+Date: Fri, 16 May 2014 13:21:18 +0200
+Message-Id: <1400239284-2916-8-git-send-email-sassmann@kpanic.de> (sfid-20140516_132237_571671_2AEB89D8)
+In-Reply-To: <1400239284-2916-1-git-send-email-sassmann@kpanic.de>
+References: <1400239284-2916-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+In kernel 3.5 struct ethtool_ops received a new function pointer
+get_ts_info. Address this by putting ifdef around the code.
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
+commit c8f3a8c31069137fe0100e6920558f1a7487ef3c
+Author: Richard Cochran <richardcochran@gmail.com>
+Date:   Tue Apr 3 22:59:17 2012 +0000
+
+    ethtool: Introduce a method for getting time stamping capabilities.
+
+git describe --contains c8f3a8c31069137fe0100e6920558f1a7487ef3c
+v3.5-rc1~109^2~632
+
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
 ---
- devel/ckmake | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
- mode change 100644 => 100755 devel/ckmake
+ .../network/0017-get_ts_info/igb_get_ts_info.patch | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0017-get_ts_info/igb_get_ts_info.patch
 
-diff --git a/devel/ckmake b/devel/ckmake
-old mode 100644
-new mode 100755
-index 3e3d95e..0c238a6
---- a/devel/ckmake
-+++ b/devel/ckmake
-@@ -25,6 +25,14 @@ from threading import Thread, Lock
- from shutil import copytree, ignore_patterns, rmtree, copyfileobj
- from time import sleep
- 
-+# find self
-+source_dir = os.path.abspath(os.path.dirname(__file__))
-+source_dir = os.path.dirname(source_dir)
-+# add parent directory to path to get to lib/
-+sys.path.append(source_dir)
-+# import libraries we need
-+from lib import bpreqs as reqs
-+
- releases_processed = []
- releases_baking = []
- processed_lock = Lock()
-@@ -580,6 +588,11 @@ def build_krange(krange_list):
-     return {}
- 
- if __name__ == "__main__":
-+    req = reqs.Req()
-+    req.require('make')
-+    req.require('gcc')
-+    if not req.reqs_match():
-+        sys.exit(1)
-     parser = argparse.ArgumentParser(
-         description='compile against all kernels you have')
-     parser.add_argument(
+diff --git a/patches/collateral-evolutions/network/0017-get_ts_info/igb_get_ts_info.patch b/patches/collateral-evolutions/network/0017-get_ts_info/igb_get_ts_info.patch
+new file mode 100644
+index 0000000..1409834
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0017-get_ts_info/igb_get_ts_info.patch
+@@ -0,0 +1,30 @@
++diff --git a/drivers/net/ethernet/intel/igb/igb_ethtool.c b/drivers/net/ethernet/intel/igb/igb_ethtool.c
++index 7c8b9bf..75606be 100644
++--- a/drivers/net/ethernet/intel/igb/igb_ethtool.c
+++++ b/drivers/net/ethernet/intel/igb/igb_ethtool.c
++@@ -2350,6 +2350,7 @@ static void igb_get_strings(struct net_device *netdev, u32 stringset, u8 *data)
++ 	}
++ }
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
++ static int igb_get_ts_info(struct net_device *dev,
++ 			   struct ethtool_ts_info *info)
++ {
++@@ -2405,6 +2406,7 @@ static int igb_get_ts_info(struct net_device *dev,
++ 		return -EOPNOTSUPP;
++ 	}
++ }
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
++ 
++ static int igb_get_rss_hash_opts(struct igb_adapter *adapter,
++ 				 struct ethtool_rxnfc *cmd)
++@@ -3019,7 +3021,9 @@ static const struct ethtool_ops igb_ethtool_ops = {
++ 	.get_ethtool_stats	= igb_get_ethtool_stats,
++ 	.get_coalesce		= igb_get_coalesce,
++ 	.set_coalesce		= igb_set_coalesce,
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
++ 	.get_ts_info		= igb_get_ts_info,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
++ 	.get_rxnfc		= igb_get_rxnfc,
++ 	.set_rxnfc		= igb_set_rxnfc,
++ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
 -- 
-1.9.1
+1.9.0
 
