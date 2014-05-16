@@ -1,42 +1,94 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:55329 "EHLO sipsolutions.net"
+Received: from mx1.redhat.com ([209.132.183.28]:42851 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754861AbaEJMTd (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 10 May 2014 08:19:33 -0400
-Message-ID: <1399724370.4291.5.camel@jlt4.sipsolutions.net> (sfid-20140510_141935_313413_06E9BB20)
-Subject: Re: [PATCH] backports: fix class/bus attribute group spatch
- conversion
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Sat, 10 May 2014 14:19:30 +0200
-In-Reply-To: <CAB=NE6Ua=H0HjyaL3c812rXFZHbcTaWatecP7u27hWdREjmqVg@mail.gmail.com> (sfid-20140509_213749_918649_800A6B8F)
-References: <1399616596-12805-1-git-send-email-johannes@sipsolutions.net>
-	 <CAB=NE6Ua=H0HjyaL3c812rXFZHbcTaWatecP7u27hWdREjmqVg@mail.gmail.com>
-	 (sfid-20140509_213749_918649_800A6B8F)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+	id S932327AbaEPLWg (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 16 May 2014 07:22:36 -0400
+From: Stefan Assmann <sassmann@kpanic.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, sassmann@kpanic.de
+Subject: [PATCH 12/13] backports: handle hwmon_device_register_with_groups API calls
+Date: Fri, 16 May 2014 13:21:23 +0200
+Message-Id: <1400239284-2916-13-git-send-email-sassmann@kpanic.de> (sfid-20140516_135147_868326_1B927B9C)
+In-Reply-To: <1400239284-2916-1-git-send-email-sassmann@kpanic.de>
+References: <1400239284-2916-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2014-05-09 at 12:37 -0700, Luis R. Rodriguez wrote:
-> On Thu, May 8, 2014 at 11:23 PM, Johannes Berg
-> <johannes@sipsolutions.net> wrote:
-> >
-> > The spatch conversion (commit 05d44557c6a83b4ecb935cb6306f62,
-> > "backports: transform group attribute backport to SmPL form")
-> > added an #ifdef that shouldn't be there - remove it.
-> 
-> When re-doing this I did make this change on purpose as I could not
-> see how those were being defined for newer kernels, where is that?
+The new hwmon_device_register_with_groups API has not been backported yet.
+Address this by putting ifdef around the code using the API.
 
-Arguably you just got the ifdefs wrong - it should be < not >=. However,
-the backport header file backport/backport-include/linux/device.h
-#undef's ATTRIBUTE_GROUPS and redefines it so that we can call the init
-function unconditionally. That's not strictly needed, but if we wanted
-to do it differently we'd need to rewrite the header file a bit. I
-originally did it this way to make the patch smaller, now that it's an
-spatch it doesn't matter much.
+commit 74188cba088192e14cd7fd5433876e8c947bcdd8
+Author: Guenter Roeck <linux@roeck-us.net>
+Date:   Thu Jul 11 20:00:12 2013 -0700
 
-johannes
+    hwmon: Provide managed hwmon registration
+
+git describe --contains 74188cba088192e14cd7fd5433876e8c947bcdd8
+v3.13-rc1~126^2~30
+
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+---
+ .../INFO                                           | 13 ++++++++++
+ ...gb-devm_hwmon_device_register_with_groups.patch | 30 ++++++++++++++++++++++
+ 2 files changed, 43 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/INFO
+ create mode 100644 patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch
+
+diff --git a/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/INFO b/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/INFO
+new file mode 100644
+index 0000000..9169f68
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/INFO
+@@ -0,0 +1,13 @@
++The new hwmon_device_register_with_groups API has not been backported yet.
++Address this by putting ifdef around the code using the API.
++
++
++commit 74188cba088192e14cd7fd5433876e8c947bcdd8
++Author: Guenter Roeck <linux@roeck-us.net>
++Date:   Thu Jul 11 20:00:12 2013 -0700
++
++    hwmon: Provide managed hwmon registration
++
++git describe --contains 74188cba088192e14cd7fd5433876e8c947bcdd8
++v3.13-rc1~126^2~30
++
+diff --git a/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch b/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch
+new file mode 100644
+index 0000000..9f4f40e
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch
+@@ -0,0 +1,30 @@
++diff --git a/drivers/net/ethernet/intel/igb/igb_hwmon.c b/drivers/net/ethernet/intel/igb/igb_hwmon.c
++index 2eee9bb..ad08b1f 100644
++--- a/drivers/net/ethernet/intel/igb/igb_hwmon.c
+++++ b/drivers/net/ethernet/intel/igb/igb_hwmon.c
++@@ -173,7 +173,9 @@ int igb_sysfs_init(struct igb_adapter *adapter)
++ {
++ 	struct hwmon_buff *igb_hwmon;
++ 	struct i2c_client *client;
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
++ 	struct device *hwmon_dev;
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0) */
++ 	unsigned int i;
++ 	int rc = 0;
++ 
++@@ -230,6 +232,7 @@ int igb_sysfs_init(struct igb_adapter *adapter)
++ 	igb_hwmon->groups[0] = &igb_hwmon->group;
++ 	igb_hwmon->group.attrs = igb_hwmon->attrs;
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
++ 	hwmon_dev = devm_hwmon_device_register_with_groups(&adapter->pdev->dev,
++ 							   client->name,
++ 							   igb_hwmon,
++@@ -242,6 +245,7 @@ int igb_sysfs_init(struct igb_adapter *adapter)
++ 	goto exit;
++ 
++ err:
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0) */
++ 	igb_sysfs_del_adapter(adapter);
++ exit:
++ 	return rc;
+-- 
+1.9.0
 
