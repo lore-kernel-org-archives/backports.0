@@ -1,49 +1,79 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f176.google.com ([209.85.217.176]:57454 "EHLO
-	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751152AbaECOF2 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 3 May 2014 10:05:28 -0400
-Received: by mail-lb0-f176.google.com with SMTP id w7so3990843lbi.7
-        for <backports@vger.kernel.org>; Sat, 03 May 2014 07:05:26 -0700 (PDT)
-Received: from [192.168.1.75] (c-107ae455.213-3-64736c14.cust.bredbandsbolaget.se. [85.228.122.16])
-        by mx.google.com with ESMTPSA id qf1sm2598850lbc.8.2014.05.03.07.05.24
-        for <backports@vger.kernel.org>
-        (version=TLSv1 cipher=RC4-SHA bits=128/128);
-        Sat, 03 May 2014 07:05:25 -0700 (PDT)
-Message-ID: <1399125923.28281.3.camel@lillan> (sfid-20140503_160530_618637_ADBB7579)
-Subject: [PATCH] backports: backport-3.15: Include fix
-From: Richard =?ISO-8859-1?Q?R=F6jfors?= <richard.rojfors@gmail.com>
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Sat, 03 May 2014 16:05:23 +0200
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mx1.redhat.com ([209.132.183.28]:29220 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932308AbaEPLW3 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 16 May 2014 07:22:29 -0400
+From: Stefan Assmann <sassmann@kpanic.de>
+To: mcgrof@do-not-panic.com
+Cc: backports@vger.kernel.org, sassmann@kpanic.de
+Subject: [PATCH 05/13] backports: handle no_fcs change in struct sk_buff
+Date: Fri, 16 May 2014 13:21:16 +0200
+Message-Id: <1400239284-2916-6-git-send-email-sassmann@kpanic.de> (sfid-20140516_132233_024997_965B70E9)
+In-Reply-To: <1400239284-2916-1-git-send-email-sassmann@kpanic.de>
+References: <1400239284-2916-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Include string.h to avoid compile issues if warnings are treated as errors:
+In kernel 3.4 a new field no_fcs was introduced to struct sk_buff.
+Address this by putting ifdef around the code.
 
-backports-3.14-1/compat/backport-3.15.c: In function 'backport_devm_kstrdup':
-backports-3.14-1/compat/backport-3.15.c:33:2: error: implicit declaration of function 'strlen' [-Werror=implicit-function-declaration]
-   size = strlen(s) + 1;
-   ^
-backports-3.14-1/compat/backport-3.15.c:33:9: warning: incompatible implicit declaration of built-in function 'strlen' [enabled by default]
-   size = strlen(s) + 1;
-          ^
-backports-3.14-1/compat/backport-3.15.c:36:3: error: implicit declaration of function 'memcpy' [-Werror=implicit-function-declaration]
-    memcpy(buf, s, size);
-    ^
-backports-3.14-1/compat/backport-3.15.c:36:3: warning: incompatible implicit declaration of built-in function 'memcpy' [enabled by default]
+commit 3bdc0eba0b8b47797f4a76e377dd8360f317450f
+Author: Ben Greear <greearb@candelatech.com>
+Date:   Sat Feb 11 15:39:30 2012 +0000
 
-Signed-off-by: Richard Röjfors <richard@puffinpack.se>
+    net: Add framework to allow sending packets with customized CRC.
+
+git describe --contains 3bdc0eba0b8b47797f4a76e377dd8360f317450f
+v3.4-rc1~177^2~207
+
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
 ---
---- a/compat/backport-3.15.c	2014-05-03 15:43:46.229481458 +0200
-+++ b/compat/backport-3.15.c	2014-05-03 15:43:59.541481079 +0200
-@@ -11,6 +11,7 @@
- #include <linux/kernel.h>
- #include <linux/device.h>
- #include <linux/of.h>
-+#include <string.h>
- 
- /**
-  * devm_kstrdup - Allocate resource managed space and
+ .../collateral-evolutions/network/0035-skb_no_fcs/INFO   | 12 ++++++++++++
+ .../network/0035-skb_no_fcs/igb_skb_no_fcs.patch         | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0035-skb_no_fcs/INFO
+ create mode 100644 patches/collateral-evolutions/network/0035-skb_no_fcs/igb_skb_no_fcs.patch
+
+diff --git a/patches/collateral-evolutions/network/0035-skb_no_fcs/INFO b/patches/collateral-evolutions/network/0035-skb_no_fcs/INFO
+new file mode 100644
+index 0000000..a242c97
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0035-skb_no_fcs/INFO
+@@ -0,0 +1,12 @@
++In kernel 3.4 a new field no_fcs was introduced to struct sk_buff.
++Address this by putting ifdef around the code.
++
++
++commit 3bdc0eba0b8b47797f4a76e377dd8360f317450f
++Author: Ben Greear <greearb@candelatech.com>
++Date:   Sat Feb 11 15:39:30 2012 +0000
++
++    net: Add framework to allow sending packets with customized CRC.
++
++git describe --contains 3bdc0eba0b8b47797f4a76e377dd8360f317450f
++v3.4-rc1~177^2~207
+diff --git a/patches/collateral-evolutions/network/0035-skb_no_fcs/igb_skb_no_fcs.patch b/patches/collateral-evolutions/network/0035-skb_no_fcs/igb_skb_no_fcs.patch
+new file mode 100644
+index 0000000..d4aee27
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0035-skb_no_fcs/igb_skb_no_fcs.patch
+@@ -0,0 +1,16 @@
++diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
++index ccd8f36..132cef8 100644
++--- a/drivers/net/ethernet/intel/igb/igb_main.c
+++++ b/drivers/net/ethernet/intel/igb/igb_main.c
++@@ -4768,9 +4768,10 @@ static u32 igb_tx_cmd_type(struct sk_buff *skb, u32 tx_flags)
++ 	cmd_type |= IGB_SET_FLAG(tx_flags, IGB_TX_FLAGS_TSTAMP,
++ 				 (E1000_ADVTXD_MAC_TSTAMP));
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0)
++ 	/* insert frame checksum */
++ 	cmd_type ^= IGB_SET_FLAG(skb->no_fcs, 1, E1000_ADVTXD_DCMD_IFCS);
++-
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0) */
++ 	return cmd_type;
++ }
++ 
+-- 
+1.9.0
 
