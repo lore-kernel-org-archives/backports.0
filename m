@@ -1,88 +1,71 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:37602 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752692AbaEAX1e (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 1 May 2014 19:27:34 -0400
-Received: by mail-pa0-f42.google.com with SMTP id bj1so4443966pad.29
-        for <backports@vger.kernel.org>; Thu, 01 May 2014 16:27:33 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Received: from s3.sipsolutions.net ([5.9.151.49]:39890 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750987AbaEUHo4 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 21 May 2014 03:44:56 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: "Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH 7/8] backports: devel/backports-update-manager: fix for older shutil.move
-Date: Thu,  1 May 2014 16:26:50 -0700
-Message-Id: <1398986811-25649-8-git-send-email-mcgrof@do-not-panic.com> (sfid-20140502_012735_327217_B99F7ACD)
-In-Reply-To: <1398986811-25649-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1398986811-25649-1-git-send-email-mcgrof@do-not-panic.com>
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] git-tracker: remove shortlog for empty changes
+Date: Wed, 21 May 2014 09:44:43 +0200
+Message-Id: <1400658283-28439-1-git-send-email-johannes@sipsolutions.net> (sfid-20140521_094458_510085_8BFAB9C8)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-Older shutil.move does not seem to like it when there are
-symlinks on a target, to account for this and to make things
-clearer just split up the work on the lib/modules and usr/src
-directory.
+When the input tree had changes but the output doesn't get
+any changes at all, then the shortlog was being generated
+over all commits since no files were specified.
 
-This fixes running devel/backports-update-manager on OpenSUSE 13.1
-base install.
+Catch this special case and instead of generating a shortlog
+just add a note that no commits changed generated code.
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- devel/backports-update-manager | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ devel/git-tracker.py | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/devel/backports-update-manager b/devel/backports-update-manager
-index fc146c6..0676421 100755
---- a/devel/backports-update-manager
-+++ b/devel/backports-update-manager
-@@ -429,7 +429,7 @@ class backport_kernel_updater:
-             self.increase_kver_count(url)
-             self.all_new_kernels.append(url)
-         sys.stdout.write("\n")
--    def fix_and_install_header_lib_modules(self, dir_path):
-+    def fix_header_lib_modules(self, dir_path):
-         """
-         Relink lib/modules/*/build/ directories relatively to make it work
-         for regular user based workflows
-@@ -438,16 +438,22 @@ class backport_kernel_updater:
-             if "generic" not in kernel:
-                 continue
-             kver = self.get_kver(kernel)
--            sys.stdout.write("%s - adjusting build symlink for non-root installation ...\n" % (kver.get('ver')))
--            build_target = os.path.join(dir_path, kernel + '/build')
-+            sys.stdout.write("%s - creating lib/modules/$kernel/build symlink for non-root installation ...\n" % (kver.get('ver')))
-+            src = os.path.join(dir_path, kernel)
-+            dst = os.path.join(self.ksrc_prefix, 'lib/modules/' + kernel)
-+            build_target = os.path.join(src, 'build')
-             usr_src_sym = "../../../usr/src/linux-headers-" + kernel
-             os.unlink(build_target)
-             os.symlink(usr_src_sym, build_target)
-+            shutil.move(src, dst)
-+    def install_headers(self, dir_path):
-         for kernel in os.listdir(dir_path):
-             src = os.path.join(dir_path, kernel)
--            dst = os.path.join(self.ksrc_prefix, 'lib/modules/' + kernel)
-+            dst = os.path.join(self.ksrc_prefix, 'usr/src/' + kernel)
-             kver = self.get_kver(kernel)
--            sys.stdout.write("%s - installing lib/modules/ ...\n" % (kver.get('ver')))
-+            sys.stdout.write("%s - installing usr/src/ ...\n" % (kver.get('ver')))
-+            sys.stdout.write("src: %s\n" % src)
-+            sys.stdout.write("dst: %s\n" % dst)
-             self.rm_clean_dir(dst)
-             shutil.move(src, dst)
-     def fix_makefile_old_kernels(self, makefile):
-@@ -463,8 +469,10 @@ class backport_kernel_updater:
-     def sanitize_and_install_kernel_dirs(self, dir_path):
-         d_lib_modules = os.path.join(dir_path, "lib/modules")
-         d_usr_src     = os.path.join(dir_path, "usr/src")
-+        if os.path.isdir(d_usr_src):
-+            self.install_headers(d_usr_src)
-         if os.path.isdir(d_lib_modules):
--            self.fix_and_install_header_lib_modules(d_lib_modules)
-+            self.fix_header_lib_modules(d_lib_modules)
-     def extract_backport_pkgs(self):
-         tmp_prefix = BACKPORTS_KSRC_DIR + '_'
-         tmpdir_path = tempfile.mkdtemp(prefix=tmp_prefix)
+diff --git a/devel/git-tracker.py b/devel/git-tracker.py
+index 05e915021c96..2820c61efae0 100755
+--- a/devel/git-tracker.py
++++ b/devel/git-tracker.py
+@@ -93,8 +93,12 @@ def handle_commit(args, msg, branch, treename, kernelobjdir, tmpdir, wgitdir, ba
+                 files = []
+                 for d in git.status(tree=wdir):
+                     files.extend(d[1:])
+-                msg += git.shortlog(append_shortlog[0], append_shortlog[1],
+-                                    tree=kernelobjdir, files=files)
++                if files:
++                    msg += '\n' + append_shortlog[2] + '\n\n'
++                    msg += git.shortlog(append_shortlog[0], append_shortlog[1],
++                                        tree=kernelobjdir, files=files)
++                else:
++                    msg += "\nNo commits changed the generated code.\n\n"
+ 
+             msg += '''%(newline)s
+ %(PREFIX)sbackport: %(bprev)s
+@@ -242,16 +246,16 @@ if __name__ == '__main__':
+                             try:
+                                 # add information about commits that went into this
+                                 git.rev_parse('%s^2' % commit, tree=kernelobjdir)
+-                                msg += "\nCommits in this merge:\n\n"
+-                                append_shortlog = (prev, '%s^2' % commit)
++                                append_shortlog = (prev, '%s^2' % commit,
++                                                   "Commits in this merge:")
+                             except git.ExecutionError as e:
+                                 # will fail if it wasn't a merge commit
+                                 pass
+                         else:
+                             # multiple commits
+                             env = backport_author_env
+-                            msg = "update multiple kernel commits\n\nCommits taken:\n\n"
+-                            append_shortlog = (prev, commit)
++                            msg = "update multiple kernel commits\n"
++                            append_shortlog = (prev, commit, "Commits taken:")
+                         failure = handle_commit(args, msg, branch, tree, kernelobjdir, branch_tmpdir,
+                                                 wgitdir, backport_rev, commit, env=env,
+                                                 prev_kernel_rev=prev, defconfig=defconfig,
 -- 
-1.9.1
+2.0.0.rc0
 
