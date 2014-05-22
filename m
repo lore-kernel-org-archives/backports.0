@@ -1,79 +1,32 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:38481 "EHLO mx1.redhat.com"
+Received: from s3.sipsolutions.net ([5.9.151.49]:43362 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932330AbaEPLWg (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 16 May 2014 07:22:36 -0400
-From: Stefan Assmann <sassmann@kpanic.de>
-To: mcgrof@do-not-panic.com
-Cc: backports@vger.kernel.org, sassmann@kpanic.de
-Subject: [PATCH 13/13] backports: handle pci_error_handlers change to const
-Date: Fri, 16 May 2014 13:21:24 +0200
-Message-Id: <1400239284-2916-14-git-send-email-sassmann@kpanic.de> (sfid-20140516_135147_721775_9799097B)
-In-Reply-To: <1400239284-2916-1-git-send-email-sassmann@kpanic.de>
-References: <1400239284-2916-1-git-send-email-sassmann@kpanic.de>
+	id S1751187AbaEVGii (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 22 May 2014 02:38:38 -0400
+Message-ID: <1400740701.4174.2.camel@jlt4.sipsolutions.net> (sfid-20140522_083839_921506_4BBE0ACD)
+Subject: Re: Building Backports Without the Kernel Config
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Daniel Schultze <kinglag@gmail.com>
+Cc: backports@vger.kernel.org
+Date: Thu, 22 May 2014 08:38:21 +0200
+In-Reply-To: <CAEsx0Y9sRSEvnx533s+1HjD7MQtVJVxAnn7wyHfw7zQoNgdfCw@mail.gmail.com> (sfid-20140522_081835_166336_273366FA)
+References: <CAEsx0Y9sRSEvnx533s+1HjD7MQtVJVxAnn7wyHfw7zQoNgdfCw@mail.gmail.com>
+	 (sfid-20140522_081835_166336_273366FA)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-In kernel 3.7 struct pci_driver changed pci_error_handlers to const.
-Address this by putting ifdef around the code.
+On Wed, 2014-05-21 at 23:18 -0700, Daniel Schultze wrote:
+> I need a driver that is available in backports but I do not have the
+> original kernel's source or config. I do have a vanilla kernel of the
+> same version and can approximate the config to some degree.
+> 
+> Given these conditions can I have a reasonable stable module for a
+> production system?
 
-commit 494530284f16298050ab99f54b7b12dd7d1418a1
-Author: Stephen Hemminger <shemminger@vyatta.com>
-Date:   Fri Sep 7 09:33:14 2012 -0700
+No. This might work but it doesn't seem likely to be very reliable. If
+you have module versioning enabled then it will probably not even load.
 
-    PCI: Make pci_error_handlers const
-
-git describe --contains 494530284f16298050ab99f54b7b12dd7d1418a1
-v3.7-rc1~177^2~9^2~3
-
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
----
- .../network/0042-pci_error_handlers/INFO                 | 12 ++++++++++++
- .../0042-pci_error_handlers/igb_pci_error_handlers.patch | 16 ++++++++++++++++
- 2 files changed, 28 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0042-pci_error_handlers/INFO
- create mode 100644 patches/collateral-evolutions/network/0042-pci_error_handlers/igb_pci_error_handlers.patch
-
-diff --git a/patches/collateral-evolutions/network/0042-pci_error_handlers/INFO b/patches/collateral-evolutions/network/0042-pci_error_handlers/INFO
-new file mode 100644
-index 0000000..ffb183c
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0042-pci_error_handlers/INFO
-@@ -0,0 +1,12 @@
-+In kernel 3.7 struct pci_driver changed pci_error_handlers to const.
-+Address this by putting ifdef around the code.
-+
-+
-+commit 494530284f16298050ab99f54b7b12dd7d1418a1
-+Author: Stephen Hemminger <shemminger@vyatta.com>
-+Date:   Fri Sep 7 09:33:14 2012 -0700
-+
-+    PCI: Make pci_error_handlers const
-+
-+git describe --contains 494530284f16298050ab99f54b7b12dd7d1418a1
-+v3.7-rc1~177^2~9^2~3
-diff --git a/patches/collateral-evolutions/network/0042-pci_error_handlers/igb_pci_error_handlers.patch b/patches/collateral-evolutions/network/0042-pci_error_handlers/igb_pci_error_handlers.patch
-new file mode 100644
-index 0000000..cedff12
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0042-pci_error_handlers/igb_pci_error_handlers.patch
-@@ -0,0 +1,16 @@
-+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-+index 132cef8..0e616a7 100644
-+--- a/drivers/net/ethernet/intel/igb/igb_main.c
-++++ b/drivers/net/ethernet/intel/igb/igb_main.c
-+@@ -234,7 +234,11 @@ static pci_ers_result_t igb_io_error_detected(struct pci_dev *,
-+ static pci_ers_result_t igb_io_slot_reset(struct pci_dev *);
-+ static void igb_io_resume(struct pci_dev *);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-+ static const struct pci_error_handlers igb_err_handler = {
-++#else
-++static struct pci_error_handlers igb_err_handler = {
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-+ 	.error_detected = igb_io_error_detected,
-+ 	.slot_reset = igb_io_slot_reset,
-+ 	.resume = igb_io_resume,
--- 
-1.9.0
+johannes
 
