@@ -1,37 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f172.google.com ([209.85.192.172]:39591 "EHLO
-	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751297AbaEBBuX (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 1 May 2014 21:50:23 -0400
-Received: by mail-pd0-f172.google.com with SMTP id g10so3989971pdj.3
-        for <backports@vger.kernel.org>; Thu, 01 May 2014 18:50:22 -0700 (PDT)
-Date: Thu, 1 May 2014 18:50:17 -0700
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: backports@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH] backports: select_queue patch: fix callback kernel
- version
-Message-ID: <20140502015017.GA3994@garbanzo.do-not-panic.com> (sfid-20140502_035025_262929_4D616FD2)
-References: <1398895825-18420-1-git-send-email-johannes@sipsolutions.net>
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:17009 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752079AbaEZNoV (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 26 May 2014 09:44:21 -0400
+Message-ID: <53834533.8030800@broadcom.com> (sfid-20140526_154423_747475_7D28322D)
+Date: Mon, 26 May 2014 15:44:19 +0200
+From: Arend van Spriel <arend@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1398895825-18420-1-git-send-email-johannes@sipsolutions.net>
+To: Fariya <fariyaf@gmail.com>
+CC: <backports@vger.kernel.org>
+Subject: Re: Procedure to make the driver into the backports project
+References: <CAG+h2qgoudEKwwL7pwYAaSbwvtJw4efi3e_or1yq0YOLm98fuQ@mail.gmail.com>
+In-Reply-To: <CAG+h2qgoudEKwwL7pwYAaSbwvtJw4efi3e_or1yq0YOLm98fuQ@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, May 01, 2014 at 12:10:25AM +0200, Johannes Berg wrote:
-> diff --git a/stack-auto.ini b/stack-auto.ini
-> index 0412f8df60e4..4679a5cd52a7 100644
-> --- a/stack-auto.ini
-> +++ b/stack-auto.ini
-> @@ -1,5 +1,5 @@
->  [DEFAULT]
-> -cachedir = .
-> +cachedir = /home/johannes/tmp/work/
->  
->  [iwlwifi]
->  
+On 05/26/14 11:47, Fariya wrote:
+> Hi,
+>
+> My company's wireless driver is a part of the latest 3.15-rc kernel.
+> My question is pertaining to the backports project. How does the
+> procedure at backports work? Will my driver be picked up and
+> backported by the backports group now that it is part of the kernel or
+> the owner of the driver needs to backport the driver [for various
+> kernels] and provide it on to this mailing list initially?
 
-Thanks! I'll just ignore this hunk as it likely just slipped. Applied!
+The backport repo does not hold a backported driver, but a framework to 
+create a package of the latest drivers which can be automatically 
+backported to various kernels.
 
-  Luis
+When you check out the backports repository on kernel.org there is a 
+copy-list file which lists everything that is copied from the kernel 
+tree to be included in the backport package. First step would be to add 
+you driver to that list. If you are lucky that might be sufficient.
+
+Regards,
+Arend
+
+> Regards,
+> Fariya
+> --
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
