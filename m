@@ -1,39 +1,68 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:41333 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933011AbaEEO6o (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 5 May 2014 10:58:44 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:56023 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751919AbaEaRQ4 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 31 May 2014 13:16:56 -0400
+Received: from localhost (localhost [127.0.0.1])
+	by hauke-m.de (Postfix) with ESMTP id EB6CB7E5E
+	for <backports@vger.kernel.org>; Sat, 31 May 2014 19:16:55 +0200 (CEST)
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] gentree: remove stray print
-Date: Mon,  5 May 2014 16:58:38 +0200
-Message-Id: <1399301918-30691-1-git-send-email-johannes@sipsolutions.net> (sfid-20140505_165848_475267_B488D3F5)
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 11/13] backports: remove unused functions from bluetooth
+Date: Sat, 31 May 2014 19:16:08 +0200
+Message-Id: <1401556570-3363-12-git-send-email-hauke@hauke-m.de> (sfid-20140531_192147_655415_3BF2FBF3)
+In-Reply-To: <1401556570-3363-1-git-send-email-hauke@hauke-m.de>
+References: <1401556570-3363-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+hidp_set_raw_report() and hidp_output_report() are not used with kernel
+< 3.15.
 
-My previous commit to restrict the defconfig files left
-a debugging print statement, remove it.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- gentree.py | 1 -
- 1 file changed, 1 deletion(-)
+ .../net_bluetooth_hidp_core.patch                    | 20 ++------------------
+ 1 file changed, 2 insertions(+), 18 deletions(-)
 
-diff --git a/gentree.py b/gentree.py
-index 8a8f6b6a22a4..5fe699650916 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -808,7 +808,6 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
-                     line_ok = True
-                     break
-             if not line_ok:
--                print dfbase, line
-                 copy_defconfig = False
-                 break
-         if copy_defconfig:
+diff --git a/patches/collateral-evolutions/network/0029-struct_hid_ll_driver-extensions/net_bluetooth_hidp_core.patch b/patches/collateral-evolutions/network/0029-struct_hid_ll_driver-extensions/net_bluetooth_hidp_core.patch
+index 4d452bd..af487b3 100644
+--- a/patches/collateral-evolutions/network/0029-struct_hid_ll_driver-extensions/net_bluetooth_hidp_core.patch
++++ b/patches/collateral-evolutions/network/0029-struct_hid_ll_driver-extensions/net_bluetooth_hidp_core.patch
+@@ -8,23 +8,7 @@
+  static int hidp_get_raw_report(struct hid_device *hid,
+  		unsigned char report_number,
+  		unsigned char *data, size_t count,
+-@@ -307,6 +308,7 @@ err:
+- 	mutex_unlock(&session->report_mutex);
+- 	return ret;
+- }
+-+#endif
+- 
+- static int hidp_set_raw_report(struct hid_device *hid, unsigned char reportnum,
+- 			       unsigned char *data, size_t count,
+-@@ -382,6 +384,7 @@ static int hidp_output_report(struct hid
+- 				      data, count);
+- }
+- 
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,15,0)
+- static int hidp_raw_request(struct hid_device *hid, unsigned char reportnum,
+- 			    __u8 *buf, size_t len, unsigned char rtype,
+- 			    int reqtype)
+-@@ -395,6 +398,7 @@ static int hidp_raw_request(struct hid_d
++@@ -395,6 +396,7 @@ static int hidp_raw_request(struct hid_d
+  		return -EIO;
+  	}
+  }
+@@ -32,7 +16,7 @@
+  
+  static void hidp_idle_timeout(unsigned long arg)
+  {
+-@@ -724,8 +728,10 @@ static struct hid_ll_driver hidp_hid_dri
++@@ -724,8 +726,10 @@ static struct hid_ll_driver hidp_hid_dri
+  	.stop = hidp_stop,
+  	.open  = hidp_open,
+  	.close = hidp_close,
 -- 
-2.0.0.rc0
+1.9.1
 
