@@ -1,47 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:17009 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752079AbaEZNoV (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 26 May 2014 09:44:21 -0400
-Message-ID: <53834533.8030800@broadcom.com> (sfid-20140526_154423_747475_7D28322D)
-Date: Mon, 26 May 2014 15:44:19 +0200
-From: Arend van Spriel <arend@broadcom.com>
-MIME-Version: 1.0
-To: Fariya <fariyaf@gmail.com>
-CC: <backports@vger.kernel.org>
-Subject: Re: Procedure to make the driver into the backports project
-References: <CAG+h2qgoudEKwwL7pwYAaSbwvtJw4efi3e_or1yq0YOLm98fuQ@mail.gmail.com>
-In-Reply-To: <CAG+h2qgoudEKwwL7pwYAaSbwvtJw4efi3e_or1yq0YOLm98fuQ@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Received: from server19320154104.serverpool.info ([193.201.54.104]:55991 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751206AbaEaRQk (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 31 May 2014 13:16:40 -0400
+Received: from localhost (localhost [127.0.0.1])
+	by hauke-m.de (Postfix) with ESMTP id 773267E39
+	for <backports@vger.kernel.org>; Sat, 31 May 2014 19:16:39 +0200 (CEST)
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 03/13] backports: select_queue patch: fix callback kernel version
+Date: Sat, 31 May 2014 19:16:00 +0200
+Message-Id: <1401556570-3363-4-git-send-email-hauke@hauke-m.de> (sfid-20140531_191642_570871_0A0B2F19)
+In-Reply-To: <1401556570-3363-1-git-send-email-hauke@hauke-m.de>
+References: <1401556570-3363-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 05/26/14 11:47, Fariya wrote:
-> Hi,
->
-> My company's wireless driver is a part of the latest 3.15-rc kernel.
-> My question is pertaining to the backports project. How does the
-> procedure at backports work? Will my driver be picked up and
-> backported by the backports group now that it is part of the kernel or
-> the owner of the driver needs to backport the driver [for various
-> kernels] and provide it on to this mailing list initially?
+The patch changing the callback function signature was backported to
+kernel 3.14, this was already fixed in backports for mac80211, but that
+commit missed mwifiex.
 
-The backport repo does not hold a backported driver, but a framework to 
-create a package of the latest drivers which can be automatically 
-backported to various kernels.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-When you check out the backports repository on kernel.org there is a 
-copy-list file which lists everything that is copied from the kernel 
-tree to be included in the backport package. First step would be to add 
-you driver to that list. If you are lucky that might be sufficient.
-
-Regards,
-Arend
-
-> Regards,
-> Fariya
-> --
-> To unsubscribe from this list: send the line "unsubscribe backports" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch b/patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch
+index 215a0f4..e53683e 100644
+--- a/patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch
++++ b/patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch
+@@ -6,7 +6,7 @@ index 9d3d275..f8b16f4 100644
+  	return &priv->stats;
+  }
+  
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,15,0)
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)
+  static u16
+  mwifiex_netdev_select_wmm_queue(struct net_device *dev, struct sk_buff *skb,
+  				void *accel_priv, select_queue_fallback_t fallback)
+-- 
+1.9.1
 
