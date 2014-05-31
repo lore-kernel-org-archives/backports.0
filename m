@@ -1,51 +1,103 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f43.google.com ([209.85.215.43]:61893 "EHLO
-	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751148AbaECOJl (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 3 May 2014 10:09:41 -0400
-Received: by mail-la0-f43.google.com with SMTP id c6so3577093lan.2
-        for <backports@vger.kernel.org>; Sat, 03 May 2014 07:09:40 -0700 (PDT)
-Received: from [192.168.1.75] (c-107ae455.213-3-64736c14.cust.bredbandsbolaget.se. [85.228.122.16])
-        by mx.google.com with ESMTPSA id g8sm2169601laf.0.2014.05.03.07.09.38
-        for <backports@vger.kernel.org>
-        (version=TLSv1 cipher=RC4-SHA bits=128/128);
-        Sat, 03 May 2014 07:09:39 -0700 (PDT)
-Message-ID: <1399126177.28281.6.camel@lillan> (sfid-20140503_160942_797174_9E06271E)
-Subject: [PATCH v2] backports: backport-3.15: Include fix
-From: Richard =?ISO-8859-1?Q?R=F6jfors?= <richard.rojfors@gmail.com>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:55962 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750970AbaEaRQY (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 31 May 2014 13:16:24 -0400
+Received: from localhost (localhost [127.0.0.1])
+	by hauke-m.de (Postfix) with ESMTP id 5BD2E7E58
+	for <backports@vger.kernel.org>; Sat, 31 May 2014 19:16:22 +0200 (CEST)
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Date: Sat, 03 May 2014 16:09:37 +0200
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 00/13] backports: various fixes needed for next-20140501
+Date: Sat, 31 May 2014 19:15:57 +0200
+Message-Id: <1401556570-3363-1-git-send-email-hauke@hauke-m.de> (sfid-20140531_191627_381733_5A6E0A61)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-In this version the correct linux string.h is included.
+These are some patches needed for next-20140501. These patches are 
+based on top of most of the patches on the mainline list.
 
-Include string.h to avoid compile issues if warnings are treated as errors:
+== ckmake-report.log ==
 
-backports-3.14-1/compat/backport-3.15.c: In function 'backport_devm_kstrdup':
-backports-3.14-1/compat/backport-3.15.c:33:2: error: implicit declaration of function 'strlen' [-Werror=implicit-function-declaration]
-   size = strlen(s) + 1;
-   ^
-backports-3.14-1/compat/backport-3.15.c:33:9: warning: incompatible implicit declaration of built-in function 'strlen' [enabled by default]
-   size = strlen(s) + 1;
-          ^
-backports-3.14-1/compat/backport-3.15.c:36:3: error: implicit declaration of function 'memcpy' [-Werror=implicit-function-declaration]
-    memcpy(buf, s, size);
-    ^
-backports-3.14-1/compat/backport-3.15.c:36:3: warning: incompatible implicit declaration of built-in function 'memcpy' [enabled by default]
+1   3.0.101             [  OK  ]
+2   3.1.10              [  OK  ]
+3   3.2.59              [  OK  ]
+4   3.3.8               [  OK  ]
+5   3.4.91              [  OK  ]
+6   3.5.7               [  OK  ]
+7   3.6.11              [  OK  ]
+8   3.7.10              [  OK  ]
+9   3.8.13              [  OK  ]
+10  3.9.11              [  OK  ]
+11  3.10.40             [  OK  ]
+12  3.11.10             [  OK  ]
+13  3.12.20             [  OK  ]
+14  3.13.11             [  OK  ]
+15  3.14.4              [  OK  ]
+16  3.15-rc7            [  OK  ]
 
-Signed-off-by: Richard Röjfors <richard@puffinpack.se>
----
---- a/compat/backport-3.15.c	2014-05-03 15:43:46.229481458 +0200
-+++ b/compat/backport-3.15.c	2014-05-03 15:43:59.541481079 +0200
-@@ -11,6 +11,7 @@
- #include <linux/kernel.h>
- #include <linux/device.h>
- #include <linux/of.h>
-+#include <linux/string.h>
- 
- /**
-  * devm_kstrdup - Allocate resource managed space and
+
+Hauke Mehrtens (13):
+  backports: add smp_mb__after_atomic()
+  backports: fix build if CPTCFG_IEEE802154_6LOWPAN=m
+  backports: select_queue patch: fix callback kernel version
+  backports: raise kernel minimal kernel version for some regulator
+    drivers
+  backports: fix build when CONFIG_PTP_1588_CLOCK=m
+  backports: only add net_get_random_once() when not available
+  backports: move net_device_priv_flags
+  backports: add patch to prevent section mismatch again
+  backports: add devm_gpio_request{_one}()
+  backports: add irq_get_trigger_type()
+  backports: remove unused functions from bluetooth
+  backports: refresh patches on next-20140501
+  backports: update test kernel versions
+
+ backport/backport-include/asm/atomic.h             |  6 +-
+ backport/backport-include/linux/gpio.h             | 29 ++++++++
+ backport/backport-include/linux/if.h               | 27 --------
+ backport/backport-include/linux/irq.h              | 13 ++++
+ backport/backport-include/linux/net.h              |  2 +-
+ backport/backport-include/linux/netdevice.h        | 12 ++++
+ backport/backport-include/net/net_namespace.h      |  2 +-
+ backport/compat/backport-3.15.c                    |  2 +-
+ backport/compat/compat-3.5.c                       | 79 +++++++++++++++++++++-
+ dependencies                                       |  7 +-
+ devel/backports-update-manager                     | 13 ++--
+ .../0002-disable-dump-adjust-on-old-kernels.patch  |  4 +-
+ .../include_net_cfg80211.patch                     |  2 +-
+ .../net_wireless_core.patch                        |  2 +-
+ .../network/0004-disable-wext-kconfig.patch        |  2 +-
+ .../net_wireless_core.patch                        |  4 +-
+ .../0014-netlink_seq/net_wireless_nl80211.patch    |  2 +-
+ .../network/0017-get_ts_info/igb_get_ts_info.patch |  8 +--
+ .../network/0024-led-blink-api/mac80211.patch      |  2 +-
+ .../network/0027-genl-const/hwsim.patch            |  2 +-
+ .../network/0027-genl-const/nl80211.patch          |  6 +-
+ .../network/0028-select_queue/mac80211.patch       |  4 +-
+ .../network/0028-select_queue/mwifiex.patch        |  4 +-
+ .../net_bluetooth_hidp_core.patch                  | 20 +-----
+ .../0032-sriov_configure/igb_sriov_configure.patch |  8 +--
+ .../0033-ndo_vlan_rx_vid/igb_ndo_vlan_rx_vid.patch | 10 +--
+ .../igb_ndo_set_vf_spoofchk.patch                  | 10 +--
+ .../network/0035-skb_no_fcs/igb_skb_no_fcs.patch   |  2 +-
+ .../network/0036-ethtool_eee/igb_ethtool_eee.patch |  8 +--
+ .../0037-ethtool_get_module/igb_get_module.patch   |  6 +-
+ .../0038-ethtool_rxfh_indir/igb_rxfh_indir.patch   | 10 +--
+ .../network/0039-ethtool_rxnfc/igb_rxnfc.patch     |  2 +-
+ .../igb_ethtool_cmd_mdix.patch                     | 10 +--
+ ...gb-devm_hwmon_device_register_with_groups.patch |  6 +-
+ .../igb_pci_error_handlers.patch                   |  2 +-
+ .../network/67-fix-section-mismatch/INFO           |  9 +++
+ .../drivers_net_wireless_ath_ath5k_led.patch       | 11 +++
+ 37 files changed, 230 insertions(+), 118 deletions(-)
+ create mode 100644 backport/backport-include/linux/gpio.h
+ delete mode 100644 backport/backport-include/linux/if.h
+ create mode 100644 backport/backport-include/linux/irq.h
+ create mode 100644 patches/collateral-evolutions/network/67-fix-section-mismatch/INFO
+ create mode 100644 patches/collateral-evolutions/network/67-fix-section-mismatch/drivers_net_wireless_ath_ath5k_led.patch
+
+-- 
+1.9.1
 
