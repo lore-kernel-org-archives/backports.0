@@ -1,43 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:63238 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751321AbaEBBGV (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 1 May 2014 21:06:21 -0400
-Received: by mail-pd0-f170.google.com with SMTP id x10so3915119pdj.29
-        for <backports@vger.kernel.org>; Thu, 01 May 2014 18:06:20 -0700 (PDT)
-Date: Thu, 1 May 2014 18:06:15 -0700
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Arend van Spriel <arend@broadcom.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
-Subject: Re: [PATCH V2] backports: lib: remove raising ExecutionError
- exception
-Message-ID: <20140502010615.GC957@garbanzo.do-not-panic.com> (sfid-20140502_030623_428485_0E334B26)
-References: <1398422668-11735-1-git-send-email-arend@broadcom.com>
- <1398765498-6957-1-git-send-email-arend@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1398765498-6957-1-git-send-email-arend@broadcom.com>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:55965 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750970AbaEaRQ1 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 31 May 2014 13:16:27 -0400
+Received: from localhost (localhost [127.0.0.1])
+	by hauke-m.de (Postfix) with ESMTP id 183FC7E32
+	for <backports@vger.kernel.org>; Sat, 31 May 2014 19:16:26 +0200 (CEST)
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 01/13] backports: add smp_mb__after_atomic()
+Date: Sat, 31 May 2014 19:15:58 +0200
+Message-Id: <1401556570-3363-2-git-send-email-hauke@hauke-m.de> (sfid-20140531_191629_158803_80B52219)
+In-Reply-To: <1401556570-3363-1-git-send-email-hauke@hauke-m.de>
+References: <1401556570-3363-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Apr 29, 2014 at 11:58:18AM +0200, Arend van Spriel wrote:
-> In spatch a ExecutionError was raised, but that causes the thread
-> to finish without closing the outfile and more importantly without
-> putting (ret, fn) tuple on the return queue. This results in the
-> threaded_spatch routine to get stuck on the ret_q.get() call. This
-> patch removes raising the ExecutionError and just return the tuple.
-> The non-zero return code will result in ExecutionErrorThread exception
-> anyway.
-> 
-> Signed-off-by: Arend van Spriel <arend@broadcom.com>
-> ---
-> A bit late but here is the rebased version.
+smp_mb__after_clear_bit() was renamed to smp_mb__after_atomic() in more
+recent kernel version, this patch adds compatibility for older kernel
+versions.
+In addition it also removes a useless include of asm/atomic.h which
+would include this same file.
 
-Thanks! Perhaps you're on an outdated tree, the latest tree is:
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/asm/atomic.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git
+diff --git a/backport/backport-include/asm/atomic.h b/backport/backport-include/asm/atomic.h
+index 1dc93a3..c2a46d2 100644
+--- a/backport/backport-include/asm/atomic.h
++++ b/backport/backport-include/asm/atomic.h
+@@ -10,11 +10,13 @@
+  * asm-generic/atomic64_t.
+  * Detect and handle this here.
+  */
+-#include <asm/atomic.h>
+-
+ #if (!defined(ATOMIC64_INIT) && !defined(CONFIG_X86) && !(defined(CONFIG_ARM) && !defined(CONFIG_GENERIC_ATOMIC64)))
+ #include <asm-generic/atomic64.h>
+ #endif
+ #endif
+ 
++#ifndef smp_mb__after_atomic
++#define smp_mb__after_atomic smp_mb__after_clear_bit
++#endif
++
+ #endif /* __BACKPORT_ASM_ATOMIC_H */
+-- 
+1.9.1
 
-I rebased your patch to fit on top of that though so no need to send
-another patch, thanks a lot!
-
-  Luis
