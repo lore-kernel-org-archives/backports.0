@@ -1,52 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:35246 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:59615 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752927AbaFGT3q (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 7 Jun 2014 15:29:46 -0400
-Received: from localhost (localhost [127.0.0.1])
-	by hauke-m.de (Postfix) with ESMTP id 49D9D7E74
-	for <backports@vger.kernel.org>; Sat,  7 Jun 2014 21:29:45 +0200 (CEST)
+	id S1751058AbaFAWeM (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 1 Jun 2014 18:34:12 -0400
+Message-ID: <538BAA5D.4080109@hauke-m.de> (sfid-20140602_003413_967474_3EBC342E)
+Date: Mon, 02 Jun 2014 00:34:05 +0200
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 5/7] backports: add mmc_card_hs()
-Date: Sat,  7 Jun 2014 21:29:14 +0200
-Message-Id: <1402169356-1267-6-git-send-email-hauke@hauke-m.de> (sfid-20140607_212947_602199_3594D7A7)
-In-Reply-To: <1402169356-1267-1-git-send-email-hauke@hauke-m.de>
-References: <1402169356-1267-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+To: Johannes Berg <johannes@sipsolutions.net>,
+	backports@vger.kernel.org
+Subject: Re: [PATCH] backport: CCM: set correct dependencies
+References: <1400145726-16520-1-git-send-email-johannes@sipsolutions.net>	 (sfid-20140515_112220_823082_F95EE84B) <1400145942.4146.0.camel@jlt4.sipsolutions.net>
+In-Reply-To: <1400145942.4146.0.camel@jlt4.sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is needed by the RSI driver.
+On 05/15/2014 11:25 AM, Johannes Berg wrote:
+> On Thu, 2014-05-15 at 11:22 +0200, Johannes Berg wrote:
+>> From: Johannes Berg <johannes.berg@intel.com>
+>>
+>> If these aren't actually compiled in, then the mac80211
+>> code will fail at runtime. Add these dependencies so we
+>> at least get a warning at compile time about this.
+> 
+> The possibly preferable alternative would be to rip out the CCM backport
+> again - if we want to have all those dependencies we'll quickly end up
+> including the entire crypto subsystem (which would probably even be
+> possible!) but it doesn't seem worth it.
+> 
+> johannes
+> 
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/mmc/host.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
- create mode 100644 backport/backport-include/linux/mmc/host.h
+Thank you for the patch, is was applied, pushed and is included in the
+backports-20140501 release.
 
-diff --git a/backport/backport-include/linux/mmc/host.h b/backport/backport-include/linux/mmc/host.h
-new file mode 100644
-index 0000000..49d7049
---- /dev/null
-+++ b/backport/backport-include/linux/mmc/host.h
-@@ -0,0 +1,16 @@
-+#ifndef _BACKPORTLINUX_MMC_HOST_H
-+#define _BACKPORTLINUX_MMC_HOST_H
-+#include_next <linux/mmc/host.h>
-+#include <linux/version.h>
-+#include <linux/mmc/card.h>
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
-+#define mmc_card_hs LINUX_BACKPORT(mmc_card_hs)
-+static inline int mmc_card_hs(struct mmc_card *card)
-+{
-+	return card->host->ios.timing == MMC_TIMING_SD_HS ||
-+		card->host->ios.timing == MMC_TIMING_MMC_HS;
-+}
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0) */
-+
-+#endif /* _BACKPORTLINUX_MMC_HOST_H */
--- 
-1.9.1
+The best solution would be to just depend on the stuff needed for
+mac80211 in older kernel versions.
 
+Hauke
