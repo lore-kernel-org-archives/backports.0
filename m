@@ -1,58 +1,37 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from ironport2-out.teksavvy.com ([206.248.154.181]:59527 "EHLO
-	ironport2-out.teksavvy.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751349AbaFZVS0 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 26 Jun 2014 17:18:26 -0400
-Message-ID: <4ac8f03450ae2022eef8615c04ce6221.squirrel@www.infidigm.net> (sfid-20140626_231828_521465_50D0B85D)
-In-Reply-To: <53AC8517.5040806@hauke-m.de>
-References: <335443813713531dd3a660617ee65022.squirrel@www.infidigm.net>
-    <53AC8517.5040806@hauke-m.de>
-Date: Thu, 26 Jun 2014 16:57:22 -0400
-Subject: Re: mac80211 menu option missing in backports using kernel with
- imx_v6_v7_defconfig
-From: drwho@infidigm.net
-To: "Hauke Mehrtens" <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org, linux-wireless@vger.kernel.org
+Received: from server19320154104.serverpool.info ([193.201.54.104]:59534 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751058AbaFAW2Z (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 1 Jun 2014 18:28:25 -0400
+Received: from localhost (localhost [127.0.0.1])
+	by hauke-m.de (Postfix) with ESMTP id 708F57E6A
+	for <backports@vger.kernel.org>; Mon,  2 Jun 2014 00:28:22 +0200 (CEST)
+Received: from hauke-m.de ([127.0.0.1])
+	by localhost (hauke-m.de [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id WDM74ODWlOge for <backports@vger.kernel.org>;
+	Mon,  2 Jun 2014 00:28:16 +0200 (CEST)
+Received: from [IPv6:2001:470:7259:0:d8b3:11bf:4f50:ee29] (unknown [IPv6:2001:470:7259:0:d8b3:11bf:4f50:ee29])
+	by hauke-m.de (Postfix) with ESMTPSA id C2D677E69
+	for <backports@vger.kernel.org>; Mon,  2 Jun 2014 00:28:16 +0200 (CEST)
+Message-ID: <538BA8FF.7070706@hauke-m.de> (sfid-20140602_002829_414869_52E50B4A)
+Date: Mon, 02 Jun 2014 00:28:15 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: backports-20140501 is out
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
->> when I run the backports menuconfig mac80211 is hidden....
->> make menuconfig
->> CROSS_COMPILE=/home/xxx/gcc-linaro-arm-linux-gnueabi-2012.04-20120426_linux/bin/arm-linux-gnueabi-
->> ARCH=arm KLIB_BUILD=/home/xxx/imx_linux-3.10/ KLIB=~/home/xxx/rootfs/
->>
->> Searching for mac80211 in backport's menuconfig shows its dependences
->> are met
->> Symbol: MAC80211 [=n]
->> Type  : tristate
->> Prompt: Generic IEEE 802.11 Networking Stack (mac80211)
->>    Defined at net/mac80211/Kconfig:1
->>    Depends on: m && <choice> && CFG80211 [=m] && CRYPTO [=y] &&
->> CRYPTO_ARC4 && CRYPTO_AES [=y] && CRYPTO_CCM && CRC32 [=y]
->>    Selects: BACKPORT_AVERAGE [=n]
->>
->> If I point backports to an x86 kernel mac80211 magically appears
->> make menuconfig KLIB_BUILD=/home/xxx/x86_linux-3.10/
->> KLIB=/home/xxx/rootfs/
->>
->> Something in the imx_v6_v7_defconfig making backports unhappy?
->> backports
->> broken? Am I missing something for the cross compile?
->>
->> using backports-3.13.2-1
->>
->> Jon
->
-> Have you set CONFIG_CRYPTO_CCM in your kernel config? This is needed for
-> mac80211 in backports.
->
-> Hauke
+backports-20140501 was released. This is based on linux-next
+next-20140501.
 
-Enabling crypto_ccm and crypto_arc4 in the kernel fixed it. Thanks.  I
-guess I was looking for [=n] and didn't even see they were disabled.
+https://www.kernel.org/pub/linux/kernel/projects/backports/2014/05/01/backports-20140501.tar.xz
 
-Jon
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
 
+All the latest releases are listed here:
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
 
+Hauke
