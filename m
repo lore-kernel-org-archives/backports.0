@@ -1,111 +1,225 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:35252 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753158AbaFGT3t (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 7 Jun 2014 15:29:49 -0400
-Received: from localhost (localhost [127.0.0.1])
-	by hauke-m.de (Postfix) with ESMTP id B295B7E6F
-	for <backports@vger.kernel.org>; Sat,  7 Jun 2014 21:29:48 +0200 (CEST)
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 7/7] backports: refresh patches on next-20140516
-Date: Sat,  7 Jun 2014 21:29:16 +0200
-Message-Id: <1402169356-1267-8-git-send-email-hauke@hauke-m.de> (sfid-20140607_212951_986707_CA1E7DAE)
-In-Reply-To: <1402169356-1267-1-git-send-email-hauke@hauke-m.de>
-References: <1402169356-1267-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-ve0-f169.google.com ([209.85.128.169]:36447 "EHLO
+	mail-ve0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751494AbaFEX7J (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 5 Jun 2014 19:59:09 -0400
+Received: by mail-ve0-f169.google.com with SMTP id jx11so2199701veb.0
+        for <backports@vger.kernel.org>; Thu, 05 Jun 2014 16:59:08 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <5390E76A.1000205@broadcom.com>
+References: <CAG+h2qgoudEKwwL7pwYAaSbwvtJw4efi3e_or1yq0YOLm98fuQ@mail.gmail.com>
+	<53834533.8030800@broadcom.com>
+	<53834C8E.5020903@broadcom.com>
+	<CAG+h2qgsK5LMaK768sVgpv5e08dPdH0QLoBraRhPDxA7yV2Kfw@mail.gmail.com>
+	<53874684.5070907@broadcom.com>
+	<CAG+h2qjirPQYDnajR-3VBvZgr+TxBkMwS3q5xXUrNC+YQmfuog@mail.gmail.com>
+	<CAG+h2qgi_bwyiC0YPSAkeXda7hTffVk6VbR8wA+gh5ztuTYQKQ@mail.gmail.com>
+	<5390E76A.1000205@broadcom.com>
+Date: Fri, 6 Jun 2014 05:29:07 +0530
+Message-ID: <CAG+h2qi4b7OJwj+0X=M1sFC3GzfZ70EMc2tLTHW9YKoPw7gAeg@mail.gmail.com> (sfid-20140606_015911_268556_8849B381)
+Subject: Re: Procedure to make the driver into the backports project
+From: Fariya <fariyaf@gmail.com>
+To: Arend van Spriel <arend@broadcom.com>, backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-== ckmake-report.log ==
+Hi Arend,
 
-1   3.0.101             [  OK  ]
-2   3.1.10              [  OK  ]
-3   3.2.59              [  OK  ]
-4   3.3.8               [  OK  ]
-5   3.4.91              [  OK  ]
-6   3.5.7               [  OK  ]
-7   3.6.11              [  OK  ]
-8   3.7.10              [  OK  ]
-9   3.8.13              [  OK  ]
-10  3.9.11              [  OK  ]
-11  3.10.40             [  OK  ]
-12  3.11.10             [  OK  ]
-13  3.12.20             [  OK  ]
-14  3.13.11             [  OK  ]
-15  3.14.4              [  OK  ]
-16  3.15-rc7            [  OK  ]
+Considering that my driver doesn't compile on kernel versions < the
+latest one, I wanted to submit a patch/patches to handle all kernel
+versions. My question was relating to this - do I need to submit a
+patch [which handles kernel versions from 3.0 to 3.14] or patches for
+each kernel version from 3.0 to 3.14, which when applied on the latest
+driver of mine, would make it compilable for all kernel versions?
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../collateral-evolutions/network/0024-led-blink-api/mac80211.patch | 2 +-
- patches/collateral-evolutions/network/0026-ipv6_stub/cdc_mbim.patch | 6 +++---
- .../network/0030-qdisc_tx_busylock/ieee802154.patch                 | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+On Fri, Jun 6, 2014 at 3:25 AM, Arend van Spriel <arend@broadcom.com> wrote:
+> On 05-06-14 23:30, Fariya wrote:
+>>
+>> Hello,
+>>
+>> Thanks for answering all my queries so far. I just wanted to clarify
+>> one important thing - The latest backport release is of the kernel
+>> 3.15-rc1-1.
+>> [http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/]
+>> So this means I need to submit my patch(es) for this kernel or the
+>> latest kernel available on kernel.org which is 3.15-rc8? Also, can I
+>> send like a single patch which handles all kernels or do I need to
+>> submit patches for each kernel from 3.0 to 3.14?
+>
+>
+> Let's try once more. the release page contains stable releases and
+> development release. The development release is a snapshot taken from
+> linux-next (so including wireless-next) so it has everything you throw at
+> John and gets applied by him. The package can be used to build drivers for a
+> particular target kernel, ie. 3.0 to 3.14. So you don't need to submit any
+> driver patches as the backport packaging script will get simply copy the
+> driver sources from linux-next repository.
+>
+> Regards,
+> Arend
+>
+>
+>> Regards,
+>> Fariya
+>>
+>>
+>> On Thu, Jun 5, 2014 at 3:57 AM, Fariya <fariyaf@gmail.com> wrote:
+>>
+>>> On Thu, May 29, 2014 at 8:09 PM, Arend van Spriel <arend@broadcom.com>
+>>> wrote:
+>>>>
+>>>> On 05/29/14 12:03, Fariya wrote:
+>>>>>
+>>>>>
+>>>>> Hello Arend,
+>>>>>
+>>>>> Thanks for the reply. I do have a few more questions:
+>>>>> a) I kind of went through the existing drivers in the backport release
+>>>>> and found that the framework that you are talking of is more of #ifdef
+>>>>> LINUX_VERSION_CODE>= KERNEL_VERSION() handling for various kernels.
+>>>>> Please correct me if I am wrong.
+>>>>
+>>>>
+>>>>
+>>>> Kind of correct. A backport release is done taking a snapshot of
+>>>> linux-stable and patch it with those ifdef and other tricks. The script
+>>>> taking the snapshot and the patches is what is in the backport repo.
+>>>>
+>>>> Basically, the drivers are copied as is and the kernel functions these
+>>>> driver use are subject to being backported when these functions are not
+>>>> available in the older kernels.
+>>>>
+>>>>
+>>>>> b) How do I ensure that my driver gets into backport repo. Do I need
+>>>>> to send patches [the patch will contain code for various kernels,
+>>>>> handled via the #ifdef LINUX_VERSION_CODE>= .... code?] for my latest
+>>>>> driver onto this e-mail list?
+>>>>
+>>>>
+>>>>
+>>>> The backport takes a snapshot from linux-stable and linux-next so
+>>>> anything
+>>>> you send to John will end up in the backport releases. So you only need
+>>>> to
+>>>> submit something if the backport driver code would not compile, which
+>>>> means
+>>>> some function called in the driver needs backporting.
+>>>>
+>>>>
+>>>>> c) Assuming my driver gets into the backport repo soon, I am wondering
+>>>>> how the future versions of my driver will be backported? [considering
+>>>>> that I would be submitting code compatible to the latest kernel onto
+>>>>> the linux-wireless mailing list] Do I need to send a patch to the
+>>>>> backports mailing list, for any submission that I make to the
+>>>>> linux-wireless mailing list?
+>>>>
+>>>>
+>>>>
+>>>> As mentioned above there is no need unless you want to contribute to the
+>>>> code in the backports repo, ie. the stuff that creates the backport
+>>>> releases.
+>>>>
+>>>> Regards,
+>>>> Arend
+>>>>
+>>>>
+>>>>> On Mon, May 26, 2014 at 7:45 PM, Arend van Spriel<arend@broadcom.com>
+>>>>> wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 05/26/14 15:44, Arend van Spriel wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> On 05/26/14 11:47, Fariya wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> Hi,
+>>>>>>>>
+>>>>>>>> My company's wireless driver is a part of the latest 3.15-rc kernel.
+>>>>>>>> My question is pertaining to the backports project. How does the
+>>>>>>>> procedure at backports work? Will my driver be picked up and
+>>>>>>>> backported by the backports group now that it is part of the kernel
+>>>>>>>> or
+>>>>>>>> the owner of the driver needs to backport the driver [for various
+>>>>>>>> kernels] and provide it on to this mailing list initially?
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> The backport repo does not hold a backported driver, but a framework
+>>>>>>> to
+>>>>>>> create a package of the latest drivers which can be automatically
+>>>>>>> backported to various kernels.
+>>>>>>>
+>>>>>>> When you check out the backports repository on kernel.org there is a
+>>>>>>> copy-list file which lists everything that is copied from the kernel
+>>>>>>> tree to be included in the backport package. First step would be to
+>>>>>>> add
+>>>>>>> you driver to that list. If you are lucky that might be sufficient.
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> However, a quick try over here shows not :-p
+>>>>>>
+>>>>>> /tmp/backporst-rsi/drivers/net/wireless/rsi/rsi_91x_mac80211.c: In
+>>>>>> function
+>>>>>> rsi_mac80211_attach:
+>>>>>> /tmp/backporst-rsi/drivers/net/wireless/rsi/rsi_91x_mac80211.c:988:2:
+>>>>>> error:
+>>>>>> implicit declaration of function ether_addr_copy
+>>>>>> [-Werror=implicit-function-declaration]
+>>>>>> cc1: some warnings being treated as errors
+>>>>>> make[7]: ***
+>>>>>> [/tmp/backporst-rsi/drivers/net/wireless/rsi/rsi_91x_mac80211.o] Error
+>>>>>> 1
+>>>>>>
+>>>>>> Regards,
+>>>>>> Arend
+>>>>>>
+>>>>>>
+>>>>>>> Regards,
+>>>>>>> Arend
+>>>>>>>
+>>>>>>>> Regards,
+>>>>>>>> Fariya
+>>>>>>>> --
+>>>>>>>> To unsubscribe from this list: send the line "unsubscribe backports"
+>>>>>>>> in
+>>>>>>>> the body of a message to majordomo@vger.kernel.org
+>>>>>>>> More majordomo info at http://vger.kernel.org/majordomo-info.html
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> --
+>>>>>>> To unsubscribe from this list: send the line "unsubscribe backports"
+>>>>>>> in
+>>>>>>> the body of a message to majordomo@vger.kernel.org
+>>>>>>> More majordomo info at http://vger.kernel.org/majordomo-info.html
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>
+>>>
+>>>
+>>>
+>>> --
+>>> -Fariya Fatima
+>>
+>>
+>>
+>>
+>
 
-diff --git a/patches/collateral-evolutions/network/0024-led-blink-api/mac80211.patch b/patches/collateral-evolutions/network/0024-led-blink-api/mac80211.patch
-index fa5fa3d..a724ee7 100644
---- a/patches/collateral-evolutions/network/0024-led-blink-api/mac80211.patch
-+++ b/patches/collateral-evolutions/network/0024-led-blink-api/mac80211.patch
-@@ -1,6 +1,6 @@
- --- a/net/mac80211/ieee80211_i.h
- +++ b/net/mac80211/ieee80211_i.h
--@@ -1170,6 +1170,9 @@ struct ieee80211_local {
-+@@ -1171,6 +1171,9 @@ struct ieee80211_local {
-  	u32 dot11TransmittedFrameCount;
-  
-  #ifdef CONFIG_MAC80211_LEDS
-diff --git a/patches/collateral-evolutions/network/0026-ipv6_stub/cdc_mbim.patch b/patches/collateral-evolutions/network/0026-ipv6_stub/cdc_mbim.patch
-index 5c8b62e..bece5b0 100644
---- a/patches/collateral-evolutions/network/0026-ipv6_stub/cdc_mbim.patch
-+++ b/patches/collateral-evolutions/network/0026-ipv6_stub/cdc_mbim.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/net/usb/cdc_mbim.c
- +++ b/drivers/net/usb/cdc_mbim.c
--@@ -184,6 +184,7 @@ error:
-+@@ -301,6 +301,7 @@ error:
-  	return NULL;
-  }
-  
-@@ -8,7 +8,7 @@
-  /* Some devices are known to send Neigbor Solicitation messages and
-   * require Neigbor Advertisement replies.  The IPv6 core will not
-   * respond since IFF_NOARP is set, so we must handle them ourselves.
--@@ -236,6 +237,7 @@ static bool is_neigh_solicit(u8 *buf, si
-+@@ -361,6 +362,7 @@ static bool is_neigh_solicit(u8 *buf, si
-  		msg->icmph.icmp6_code == 0 &&
-  		msg->icmph.icmp6_type == NDISC_NEIGHBOUR_SOLICITATION);
-  }
-@@ -16,7 +16,7 @@
-  
-  
-  static struct sk_buff *cdc_mbim_process_dgram(struct usbnet *dev, u8 *buf, size_t len, u16 tci)
--@@ -252,8 +254,10 @@ static struct sk_buff *cdc_mbim_process_
-+@@ -377,8 +379,10 @@ static struct sk_buff *cdc_mbim_process_
-  			proto = htons(ETH_P_IP);
-  			break;
-  		case 0x60:
-diff --git a/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/ieee802154.patch b/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/ieee802154.patch
-index 039fa6f..3478546 100644
---- a/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/ieee802154.patch
-+++ b/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/ieee802154.patch
-@@ -1,6 +1,6 @@
- --- a/net/ieee802154/6lowpan_rtnl.c
- +++ b/net/ieee802154/6lowpan_rtnl.c
--@@ -384,7 +384,9 @@ static struct header_ops lowpan_header_o
-+@@ -393,7 +393,9 @@ static struct header_ops lowpan_header_o
-  	.create	= lowpan_header_create,
-  };
-  
-@@ -10,7 +10,7 @@
-  static struct lock_class_key lowpan_netdev_xmit_lock_key;
-  
-  static void lowpan_set_lockdep_class_one(struct net_device *dev,
--@@ -399,7 +401,9 @@ static void lowpan_set_lockdep_class_one
-+@@ -408,7 +410,9 @@ static void lowpan_set_lockdep_class_one
-  static int lowpan_dev_init(struct net_device *dev)
-  {
-  	netdev_for_each_tx_queue(dev, lowpan_set_lockdep_class_one, NULL);
+
+
 -- 
-1.9.1
-
+-Fariya Fatima
