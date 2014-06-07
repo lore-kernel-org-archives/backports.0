@@ -1,56 +1,111 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:44110 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:35252 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751867AbaFOQfk (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 15 Jun 2014 12:35:40 -0400
+	id S1753158AbaFGT3t (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 7 Jun 2014 15:29:49 -0400
 Received: from localhost (localhost [127.0.0.1])
-	by hauke-m.de (Postfix) with ESMTP id 99E747E59
-	for <backports@vger.kernel.org>; Sun, 15 Jun 2014 18:35:37 +0200 (CEST)
+	by hauke-m.de (Postfix) with ESMTP id B295B7E6F
+	for <backports@vger.kernel.org>; Sat,  7 Jun 2014 21:29:48 +0200 (CEST)
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 0/6] backports: remove DMA shared buffer backport
-Date: Sun, 15 Jun 2014 18:35:17 +0200
-Message-Id: <1402850123-22382-1-git-send-email-hauke@hauke-m.de> (sfid-20140615_183553_057246_858B1DB5)
+Subject: [PATCH 7/7] backports: refresh patches on next-20140516
+Date: Sat,  7 Jun 2014 21:29:16 +0200
+Message-Id: <1402169356-1267-8-git-send-email-hauke@hauke-m.de> (sfid-20140607_212951_986707_CA1E7DAE)
+In-Reply-To: <1402169356-1267-1-git-send-email-hauke@hauke-m.de>
+References: <1402169356-1267-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The DMA shared buffer backport is only used by v4l2 and this works also 
-with the in kernel API of kernel >= 3.5. In the next backports version 
-some bigger changes to the DMA shared buffer backport would be needed, 
-but I would more like to remove it.
+== ckmake-report.log ==
 
-Hauke Mehrtens (6):
-  backports: disable DMA shared buffer support for kernel < 3.5 in v4l2
-  backports: remove backport of DMA shared buffers
-  backports: add i2c_add_mux_adapter()
-  backports: add I2C_CLIENT_SCCB
-  backports: fix a compile warning in devnode
-  backports: activate some more media drivers
+1   3.0.101             [  OK  ]
+2   3.1.10              [  OK  ]
+3   3.2.59              [  OK  ]
+4   3.3.8               [  OK  ]
+5   3.4.91              [  OK  ]
+6   3.5.7               [  OK  ]
+7   3.6.11              [  OK  ]
+8   3.7.10              [  OK  ]
+9   3.8.13              [  OK  ]
+10  3.9.11              [  OK  ]
+11  3.10.40             [  OK  ]
+12  3.11.10             [  OK  ]
+13  3.12.20             [  OK  ]
+14  3.13.11             [  OK  ]
+15  3.14.4              [  OK  ]
+16  3.15-rc7            [  OK  ]
 
- backport/backport-include/linux/dma-buf.h          |   8 +
- backport/backport-include/linux/i2c-mux.h          |   5 +-
- backport/backport-include/linux/i2c.h              |   5 +
- backport/compat/Kconfig                            |  13 -
- backport/compat/backports.h                        |   8 -
- backport/compat/main.c                             |   2 -
- copy-list                                          |   3 +
- dependencies                                       |  61 +---
- patches/backport-adjustments/dma-buf.patch         |  73 ----
- .../media/0002-no_dmabuf/v4l2.patch                | 375 +++++++++++++++++++++
- .../media/0004-devnode_param_type/INFO             |   8 +
- .../media/0004-devnode_param_type/ddbridge.patch   |  14 +
- .../media/0004-devnode_param_type/dvb-core.patch   |  14 +
- .../media/0004-devnode_param_type/rc.patch         |  14 +
- 14 files changed, 451 insertions(+), 152 deletions(-)
- create mode 100644 backport/backport-include/linux/dma-buf.h
- delete mode 100644 patches/backport-adjustments/dma-buf.patch
- create mode 100644 patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
- create mode 100644 patches/collateral-evolutions/media/0004-devnode_param_type/INFO
- create mode 100644 patches/collateral-evolutions/media/0004-devnode_param_type/ddbridge.patch
- create mode 100644 patches/collateral-evolutions/media/0004-devnode_param_type/dvb-core.patch
- create mode 100644 patches/collateral-evolutions/media/0004-devnode_param_type/rc.patch
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../collateral-evolutions/network/0024-led-blink-api/mac80211.patch | 2 +-
+ patches/collateral-evolutions/network/0026-ipv6_stub/cdc_mbim.patch | 6 +++---
+ .../network/0030-qdisc_tx_busylock/ieee802154.patch                 | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
+diff --git a/patches/collateral-evolutions/network/0024-led-blink-api/mac80211.patch b/patches/collateral-evolutions/network/0024-led-blink-api/mac80211.patch
+index fa5fa3d..a724ee7 100644
+--- a/patches/collateral-evolutions/network/0024-led-blink-api/mac80211.patch
++++ b/patches/collateral-evolutions/network/0024-led-blink-api/mac80211.patch
+@@ -1,6 +1,6 @@
+ --- a/net/mac80211/ieee80211_i.h
+ +++ b/net/mac80211/ieee80211_i.h
+-@@ -1170,6 +1170,9 @@ struct ieee80211_local {
++@@ -1171,6 +1171,9 @@ struct ieee80211_local {
+  	u32 dot11TransmittedFrameCount;
+  
+  #ifdef CONFIG_MAC80211_LEDS
+diff --git a/patches/collateral-evolutions/network/0026-ipv6_stub/cdc_mbim.patch b/patches/collateral-evolutions/network/0026-ipv6_stub/cdc_mbim.patch
+index 5c8b62e..bece5b0 100644
+--- a/patches/collateral-evolutions/network/0026-ipv6_stub/cdc_mbim.patch
++++ b/patches/collateral-evolutions/network/0026-ipv6_stub/cdc_mbim.patch
+@@ -1,6 +1,6 @@
+ --- a/drivers/net/usb/cdc_mbim.c
+ +++ b/drivers/net/usb/cdc_mbim.c
+-@@ -184,6 +184,7 @@ error:
++@@ -301,6 +301,7 @@ error:
+  	return NULL;
+  }
+  
+@@ -8,7 +8,7 @@
+  /* Some devices are known to send Neigbor Solicitation messages and
+   * require Neigbor Advertisement replies.  The IPv6 core will not
+   * respond since IFF_NOARP is set, so we must handle them ourselves.
+-@@ -236,6 +237,7 @@ static bool is_neigh_solicit(u8 *buf, si
++@@ -361,6 +362,7 @@ static bool is_neigh_solicit(u8 *buf, si
+  		msg->icmph.icmp6_code == 0 &&
+  		msg->icmph.icmp6_type == NDISC_NEIGHBOUR_SOLICITATION);
+  }
+@@ -16,7 +16,7 @@
+  
+  
+  static struct sk_buff *cdc_mbim_process_dgram(struct usbnet *dev, u8 *buf, size_t len, u16 tci)
+-@@ -252,8 +254,10 @@ static struct sk_buff *cdc_mbim_process_
++@@ -377,8 +379,10 @@ static struct sk_buff *cdc_mbim_process_
+  			proto = htons(ETH_P_IP);
+  			break;
+  		case 0x60:
+diff --git a/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/ieee802154.patch b/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/ieee802154.patch
+index 039fa6f..3478546 100644
+--- a/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/ieee802154.patch
++++ b/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/ieee802154.patch
+@@ -1,6 +1,6 @@
+ --- a/net/ieee802154/6lowpan_rtnl.c
+ +++ b/net/ieee802154/6lowpan_rtnl.c
+-@@ -384,7 +384,9 @@ static struct header_ops lowpan_header_o
++@@ -393,7 +393,9 @@ static struct header_ops lowpan_header_o
+  	.create	= lowpan_header_create,
+  };
+  
+@@ -10,7 +10,7 @@
+  static struct lock_class_key lowpan_netdev_xmit_lock_key;
+  
+  static void lowpan_set_lockdep_class_one(struct net_device *dev,
+-@@ -399,7 +401,9 @@ static void lowpan_set_lockdep_class_one
++@@ -408,7 +410,9 @@ static void lowpan_set_lockdep_class_one
+  static int lowpan_dev_init(struct net_device *dev)
+  {
+  	netdev_for_each_tx_queue(dev, lowpan_set_lockdep_class_one, NULL);
 -- 
 1.9.1
 
