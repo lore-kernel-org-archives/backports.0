@@ -1,51 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from ironport2-out.teksavvy.com ([206.248.154.181]:3862 "EHLO
-	ironport2-out.teksavvy.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754550AbaFYVIQ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 25 Jun 2014 17:08:16 -0400
-Received: from localhost ([127.0.0.1] helo=www.infidigm.net)
-	by freiheit with esmtp (Exim 4.72)
-	(envelope-from <drwho@infidigm.net>)
-	id 1Wztwu-0002hQ-Jh
-	for backports@vger.kernel.org; Wed, 25 Jun 2014 16:37:44 -0400
-Message-ID: <c07041cc8dc2076d4fd4f10d8cf9ad33.squirrel@www.infidigm.net> (sfid-20140625_230818_748597_83650BE0)
-Date: Wed, 25 Jun 2014 16:37:44 -0400
-Subject: enable mac80211 config help?
-From: drwho@infidigm.net
+Received: from server19320154104.serverpool.info ([193.201.54.104]:35230 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752407AbaFGT3h (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 7 Jun 2014 15:29:37 -0400
+Received: from localhost (localhost [127.0.0.1])
+	by hauke-m.de (Postfix) with ESMTP id EFDD47E57
+	for <backports@vger.kernel.org>; Sat,  7 Jun 2014 21:29:35 +0200 (CEST)
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 3/7] backports: rename irq_get_trigger_type()
+Date: Sat,  7 Jun 2014 21:29:12 +0200
+Message-Id: <1402169356-1267-4-git-send-email-hauke@hauke-m.de> (sfid-20140607_212938_661252_EBE4D38B)
+In-Reply-To: <1402169356-1267-1-git-send-email-hauke@hauke-m.de>
+References: <1402169356-1267-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I am cross compiling backports-3.13.2-1 and I can not enable mac80211
-config to build drivers that depend on it.  In the backports src dir, when
-I run
+This should avoid possible name conflicts.
 
-make menuconfig
-CROSS_COMPILE=/opt/freescale/usr/local/gcc-4.4.4-glibc-2.11.1-multilib-1.0/arm-fsl-linux-gnueabi/bin/arm-none-linux-gnueabi-
-ARCH=arm KLIB_BUILD=/edit/ltibs/c390/rpm/BUILD/linux/
-KLIB=/edit/ltibs/c390/rootfs/lib/modules/2.6.35.3-998-ga1cd8a7/
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/irq.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-and search for mac80211 is shows it disabled.  I've run my kernel's
-menuconfig to change mac80211 to n, m and y.  Running the backports
-menuconfig afterwords shows mac80211 is disabled for all three states. 
-The only way I can get the drivers that depend on mac80211 to appear is to
-add
-
-config MAC80211
-	def_bool y
-
-in the backports Kconfig file.  Then when I run the make I get....
-
-/xxx/backports-3.13.2-1/backport-include/backport/checks.h:9:2: error:
-#error "You must not have mac80211 built into your kernel if you want to
-enable it"
-
-Am I doing something wrong or is this a problem with backports against
-2.6.35-3?
-
-Am I correct in assuming mac80211 should be disabled in the kernel config?
-
-Jon
+diff --git a/backport/backport-include/linux/irq.h b/backport/backport-include/linux/irq.h
+index 8b2804d..1738e9b 100644
+--- a/backport/backport-include/linux/irq.h
++++ b/backport/backport-include/linux/irq.h
+@@ -3,6 +3,7 @@
+ #include_next <linux/irq.h>
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
++#define irq_get_trigger_type LINUX_BACKPORT(irq_get_trigger_type)
+ static inline u32 irq_get_trigger_type(unsigned int irq)
+ {
+ 	struct irq_data *d = irq_get_irq_data(irq);
+-- 
+1.9.1
 
