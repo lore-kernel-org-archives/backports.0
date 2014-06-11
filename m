@@ -1,44 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:44862 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752114AbaFOVWS (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 15 Jun 2014 17:22:18 -0400
-Received: from localhost (localhost [127.0.0.1])
-	by hauke-m.de (Postfix) with ESMTP id 436137E58
-	for <backports@vger.kernel.org>; Sun, 15 Jun 2014 23:22:17 +0200 (CEST)
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from poseidon.ceid.upatras.gr ([150.140.141.169]:43363 "EHLO
+	poseidon.ceid.upatras.gr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751510AbaFKMYd (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 11 Jun 2014 08:24:33 -0400
+Received: from mail.ceid.upatras.gr (mail.ceid.upatras.gr [10.1.0.174])
+	by poseidon.ceid.upatras.gr (Postfix) with ESMTP id 1E04D7FFC7
+	for <backports@vger.kernel.org>; Wed, 11 Jun 2014 15:15:45 +0300 (EEST)
+Received: from webmail.ceid.upatras.gr (web.ceid.upatras.gr [10.1.0.173])
+	(Authenticated sender: stathopou)
+	by mail.ceid.upatras.gr (Postfix) with ESMTPSA id 07DE91FFA0
+	for <backports@vger.kernel.org>; Wed, 11 Jun 2014 15:15:44 +0300 (EEST)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Wed, 11 Jun 2014 15:15:43 +0300
+From: Stathopoulos Nikolaos <stathopou@ceid.upatras.gr>
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 08/19] backports: add of_match_ptr()
-Date: Sun, 15 Jun 2014 23:21:36 +0200
-Message-Id: <1402867307-31337-9-git-send-email-hauke@hauke-m.de> (sfid-20140615_232219_520385_84DD8023)
-In-Reply-To: <1402867307-31337-1-git-send-email-hauke@hauke-m.de>
-References: <1402867307-31337-1-git-send-email-hauke@hauke-m.de>
+Subject: Disabling minstrel rate control
+Message-ID: <3293ee4ecc5bff7849dcb0de06d58cc0@ceid.upatras.gr> (sfid-20140611_142436_609442_20E2823F)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/of.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Hello,
 
-diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
-index 69664de..f2a8ab4 100644
---- a/backport/backport-include/linux/of.h
-+++ b/backport/backport-include/linux/of.h
-@@ -106,4 +106,12 @@ static inline void of_node_put(struct device_node *node) { }
- #endif /* CONFIG_OF */
- #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0) */
- 
-+#ifndef of_match_ptr
-+#ifdef CONFIG_OF
-+#define of_match_ptr(_ptr)	(_ptr)
-+#else
-+#define of_match_ptr(_ptr)	NULL
-+#endif /* CONFIG_OF */
-+#endif /* of_match_ptr */
-+
- #endif	/* _COMPAT_LINUX_OF_H */
--- 
-1.9.1
+While doing some measurements regarding bit rate and SNR using iperf, I 
+noticed that at ceratin distances tha bit rate
+is reduced. I suppose this is a result of minstrel reducing tha data 
+rate. However, I don't want the rate to be adjusted, I need it to be at 
+a fixed value, regardless of the consequences. To sum up, how can I 
+disable the rate control algorithms? In my experiments I use adapters 
+working with ath9k_htc drivers.
 
+Thank you in advance,
+Nikos
