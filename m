@@ -1,415 +1,116 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:44113 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:44887 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751698AbaFOQfl (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 15 Jun 2014 12:35:41 -0400
+	id S1752307AbaFOVWa (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 15 Jun 2014 17:22:30 -0400
 Received: from localhost (localhost [127.0.0.1])
-	by hauke-m.de (Postfix) with ESMTP id 57FBE7E24
-	for <backports@vger.kernel.org>; Sun, 15 Jun 2014 18:35:39 +0200 (CEST)
+	by hauke-m.de (Postfix) with ESMTP id B396F7E5E
+	for <backports@vger.kernel.org>; Sun, 15 Jun 2014 23:22:28 +0200 (CEST)
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/6] backports: disable DMA shared buffer support for kernel < 3.5 in v4l2
-Date: Sun, 15 Jun 2014 18:35:18 +0200
-Message-Id: <1402850123-22382-2-git-send-email-hauke@hauke-m.de> (sfid-20140615_183553_907087_7ECE8893)
-In-Reply-To: <1402850123-22382-1-git-send-email-hauke@hauke-m.de>
-References: <1402850123-22382-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 14/19] backports: remove const from pci error handlers on kernel < 3.7
+Date: Sun, 15 Jun 2014 23:21:42 +0200
+Message-Id: <1402867307-31337-15-git-send-email-hauke@hauke-m.de> (sfid-20140615_233457_399215_47D3ADEB)
+In-Reply-To: <1402867307-31337-1-git-send-email-hauke@hauke-m.de>
+References: <1402867307-31337-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-v4l2 uses the DMA shared buffers API of kernel >= 3.5. When the v4l2
-backport is be compiled against older kernel versions a backport of the
-DMA shared buffers is used. Instead of using this backport this patch
-will remove usage of the DMA shared buffers on these old kernel
-versions. This allows us to remove DMA shared buffers from backports.
+This fixes a warning on these older kernel versions.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../media/0002-no_dmabuf/v4l2.patch                | 375 +++++++++++++++++++++
- 1 file changed, 375 insertions(+)
- create mode 100644 patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
+ .../network/0042-pci_error_handlers/alx.patch              | 14 ++++++++++++++
+ .../network/0042-pci_error_handlers/atl1c.patch            | 14 ++++++++++++++
+ .../network/0042-pci_error_handlers/atl1e.patch            | 14 ++++++++++++++
+ .../network/0042-pci_error_handlers/ngene.patch            | 14 ++++++++++++++
+ 4 files changed, 56 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0042-pci_error_handlers/alx.patch
+ create mode 100644 patches/collateral-evolutions/network/0042-pci_error_handlers/atl1c.patch
+ create mode 100644 patches/collateral-evolutions/network/0042-pci_error_handlers/atl1e.patch
+ create mode 100644 patches/collateral-evolutions/network/0042-pci_error_handlers/ngene.patch
 
-diff --git a/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch b/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
+diff --git a/patches/collateral-evolutions/network/0042-pci_error_handlers/alx.patch b/patches/collateral-evolutions/network/0042-pci_error_handlers/alx.patch
 new file mode 100644
-index 0000000..a535c2d
+index 0000000..c26efa2
 --- /dev/null
-+++ b/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
-@@ -0,0 +1,375 @@
-+--- a/drivers/media/v4l2-core/Kconfig
-++++ b/drivers/media/v4l2-core/Kconfig
-+@@ -59,7 +59,7 @@ config VIDEOBUF_DVB
-+ 
-+ # Used by drivers that need Videobuf2 modules
-+ config VIDEOBUF2_CORE
-+-	select DMA_SHARED_BUFFER
-++	select DMA_SHARED_BUFFER if !BACKPORT_KERNEL_3_5
-+ 	tristate
-+ 
-+ config VIDEOBUF2_MEMOPS
-+@@ -70,13 +70,13 @@ config VIDEOBUF2_DMA_CONTIG
-+ 	depends on HAS_DMA
-+ 	select VIDEOBUF2_CORE
-+ 	select VIDEOBUF2_MEMOPS
-+-	select DMA_SHARED_BUFFER
-++	select DMA_SHARED_BUFFER if !BACKPORT_KERNEL_3_5
-+ 
-+ config VIDEOBUF2_VMALLOC
-+ 	tristate
-+ 	select VIDEOBUF2_CORE
-+ 	select VIDEOBUF2_MEMOPS
-+-	select DMA_SHARED_BUFFER
-++	select DMA_SHARED_BUFFER if !BACKPORT_KERNEL_3_5
-+ 
-+ config VIDEOBUF2_DMA_SG
-+ 	tristate
-+--- a/drivers/media/v4l2-core/v4l2-mem2mem.c
-++++ b/drivers/media/v4l2-core/v4l2-mem2mem.c
-+@@ -439,6 +439,7 @@ int v4l2_m2m_create_bufs(struct file *fi
-+ }
-+ EXPORT_SYMBOL_GPL(v4l2_m2m_create_bufs);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ /**
-+  * v4l2_m2m_expbuf() - export a source or destination buffer, depending on
-+  * the type
-+@@ -452,6 +453,7 @@ int v4l2_m2m_expbuf(struct file *file, s
-+ 	return vb2_expbuf(vq, eb);
-+ }
-+ EXPORT_SYMBOL_GPL(v4l2_m2m_expbuf);
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ /**
-+  * v4l2_m2m_streamon() - turn on streaming for a video queue
-+  */
-+@@ -798,6 +800,7 @@ int v4l2_m2m_ioctl_dqbuf(struct file *fi
-+ }
-+ EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_dqbuf);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ int v4l2_m2m_ioctl_expbuf(struct file *file, void *priv,
-+ 				struct v4l2_exportbuffer *eb)
-+ {
-+@@ -806,6 +809,7 @@ int v4l2_m2m_ioctl_expbuf(struct file *f
-+ 	return v4l2_m2m_expbuf(file, fh->m2m_ctx, eb);
-+ }
-+ EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_expbuf);
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 
-+ int v4l2_m2m_ioctl_streamon(struct file *file, void *priv,
-+ 				enum v4l2_buf_type type)
-+--- a/drivers/media/v4l2-core/videobuf2-core.c
-++++ b/drivers/media/v4l2-core/videobuf2-core.c
-+@@ -250,6 +250,7 @@ static void __vb2_buf_userptr_put(struct
-+ 	}
++++ b/patches/collateral-evolutions/network/0042-pci_error_handlers/alx.patch
+@@ -0,0 +1,14 @@
++--- a/drivers/net/ethernet/atheros/alx/main.c
+++++ b/drivers/net/ethernet/atheros/alx/main.c
++@@ -1521,7 +1521,11 @@ static void alx_pci_error_resume(struct
++ 	rtnl_unlock();
 + }
 + 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ /**
-+  * __vb2_plane_dmabuf_put() - release memory associated with
-+  * a DMABUF shared plane
-+@@ -278,6 +279,7 @@ static void __vb2_buf_dmabuf_put(struct
-+ 	for (plane = 0; plane < vb->num_planes; ++plane)
-+ 		__vb2_plane_dmabuf_put(vb, &vb->planes[plane]);
-+ }
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 
-+ /**
-+  * __setup_lengths() - setup initial lengths for every plane in
-+@@ -421,8 +423,10 @@ static void __vb2_free_mem(struct vb2_qu
-+ 		/* Free MMAP buffers or release USERPTR buffers */
-+ 		if (q->memory == V4L2_MEMORY_MMAP)
-+ 			__vb2_buf_mem_free(vb);
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ 		else if (q->memory == V4L2_MEMORY_DMABUF)
-+ 			__vb2_buf_dmabuf_put(vb);
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 		else
-+ 			__vb2_buf_userptr_put(vb);
-+ 	}
-+@@ -777,6 +781,7 @@ static int __verify_mmap_ops(struct vb2_
-+ 	return 0;
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
++ static const struct pci_error_handlers alx_err_handlers = {
+++#else
+++static struct pci_error_handlers alx_err_handlers = {
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
++ 	.error_detected = alx_pci_error_detected,
++ 	.slot_reset     = alx_pci_error_slot_reset,
++ 	.resume         = alx_pci_error_resume,
+diff --git a/patches/collateral-evolutions/network/0042-pci_error_handlers/atl1c.patch b/patches/collateral-evolutions/network/0042-pci_error_handlers/atl1c.patch
+new file mode 100644
+index 0000000..239d1b9
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0042-pci_error_handlers/atl1c.patch
+@@ -0,0 +1,14 @@
++--- a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
+++++ b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
++@@ -2782,7 +2782,11 @@ static void atl1c_io_resume(struct pci_d
++ 	netif_device_attach(netdev);
 + }
 + 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ /**
-+  * __verify_dmabuf_ops() - verify that all memory operations required for
-+  * DMABUF queue type have been provided
-+@@ -790,6 +795,7 @@ static int __verify_dmabuf_ops(struct vb
-+ 
-+ 	return 0;
-+ }
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 
-+ /**
-+  * __verify_memory_type() - Check whether the memory type and buffer type
-+@@ -823,10 +829,12 @@ static int __verify_memory_type(struct v
-+ 		return -EINVAL;
-+ 	}
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ 	if (memory == V4L2_MEMORY_DMABUF && __verify_dmabuf_ops(q)) {
-+ 		dprintk(1, "DMABUF for current setup unsupported\n");
-+ 		return -EINVAL;
-+ 	}
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 
-+ 	/*
-+ 	 * Place the busy tests at the end: -EBUSY can be ignored when
-+@@ -1421,6 +1429,7 @@ err:
-+ 	return ret;
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
++ static const struct pci_error_handlers atl1c_err_handler = {
+++#else
+++static struct pci_error_handlers atl1c_err_handler = {
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
++ 	.error_detected = atl1c_io_error_detected,
++ 	.slot_reset = atl1c_io_slot_reset,
++ 	.resume = atl1c_io_resume,
+diff --git a/patches/collateral-evolutions/network/0042-pci_error_handlers/atl1e.patch b/patches/collateral-evolutions/network/0042-pci_error_handlers/atl1e.patch
+new file mode 100644
+index 0000000..3ef2f93
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0042-pci_error_handlers/atl1e.patch
+@@ -0,0 +1,14 @@
++--- a/drivers/net/ethernet/atheros/atl1e/atl1e_main.c
+++++ b/drivers/net/ethernet/atheros/atl1e/atl1e_main.c
++@@ -2559,7 +2559,11 @@ static void atl1e_io_resume(struct pci_d
++ 	netif_device_attach(netdev);
 + }
 + 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ /**
-+  * __qbuf_dmabuf() - handle qbuf of a DMABUF buffer
-+  */
-+@@ -1538,6 +1547,7 @@ err:
-+ 
-+ 	return ret;
-+ }
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 
-+ /**
-+  * __enqueue_in_driver() - enqueue a vb2_buffer in driver for processing
-+@@ -1613,9 +1623,11 @@ static int __buf_prepare(struct vb2_buff
-+ 
-+ 		up_read(mmap_sem);
-+ 		break;
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ 	case V4L2_MEMORY_DMABUF:
-+ 		ret = __qbuf_dmabuf(vb, b);
-+ 		break;
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 	default:
-+ 		WARN(1, "Invalid queue type\n");
-+ 		ret = -EINVAL;
-+@@ -1980,8 +1992,10 @@ EXPORT_SYMBOL_GPL(vb2_wait_for_all_buffe
-+  */
-+ static void __vb2_dqbuf(struct vb2_buffer *vb)
-+ {
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ 	struct vb2_queue *q = vb->vb2_queue;
-+ 	unsigned int i;
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 
-+ 	/* nothing to do if the buffer is already dequeued */
-+ 	if (vb->state == VB2_BUF_STATE_DEQUEUED)
-+@@ -1989,6 +2003,7 @@ static void __vb2_dqbuf(struct vb2_buffe
-+ 
-+ 	vb->state = VB2_BUF_STATE_DEQUEUED;
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ 	/* unmap DMABUF buffer */
-+ 	if (q->memory == V4L2_MEMORY_DMABUF)
-+ 		for (i = 0; i < vb->num_planes; ++i) {
-+@@ -1997,6 +2012,7 @@ static void __vb2_dqbuf(struct vb2_buffe
-+ 			call_void_memop(vb, unmap_dmabuf, vb->planes[i].mem_priv);
-+ 			vb->planes[i].dbuf_mapped = 0;
-+ 		}
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
++ static const struct pci_error_handlers atl1e_err_handler = {
+++#else
+++static struct pci_error_handlers atl1e_err_handler = {
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
++ 	.error_detected = atl1e_io_error_detected,
++ 	.slot_reset = atl1e_io_slot_reset,
++ 	.resume = atl1e_io_resume,
+diff --git a/patches/collateral-evolutions/network/0042-pci_error_handlers/ngene.patch b/patches/collateral-evolutions/network/0042-pci_error_handlers/ngene.patch
+new file mode 100644
+index 0000000..620dbbe
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0042-pci_error_handlers/ngene.patch
+@@ -0,0 +1,14 @@
++--- a/drivers/media/pci/ngene/ngene-cards.c
+++++ b/drivers/media/pci/ngene/ngene-cards.c
++@@ -798,7 +798,11 @@ static void ngene_resume(struct pci_dev
++ 	printk(KERN_INFO DEVICE_NAME ": resume\n");
 + }
 + 
-+ static int vb2_internal_dqbuf(struct vb2_queue *q, struct v4l2_buffer *b, bool nonblocking)
-+@@ -2277,6 +2293,7 @@ static int __find_plane_by_offset(struct
-+ 	return -EINVAL;
-+ }
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ /**
-+  * vb2_expbuf() - Export a buffer as a file descriptor
-+  * @q:		videobuf2 queue
-+@@ -2354,6 +2371,7 @@ int vb2_expbuf(struct vb2_queue *q, stru
-+ 	return 0;
-+ }
-+ EXPORT_SYMBOL_GPL(vb2_expbuf);
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 
-+ /**
-+  * vb2_mmap() - map video buffers into application address space
-+@@ -3269,6 +3287,7 @@ int vb2_ioctl_streamoff(struct file *fil
-+ }
-+ EXPORT_SYMBOL_GPL(vb2_ioctl_streamoff);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ int vb2_ioctl_expbuf(struct file *file, void *priv, struct v4l2_exportbuffer *p)
-+ {
-+ 	struct video_device *vdev = video_devdata(file);
-+@@ -3278,6 +3297,7 @@ int vb2_ioctl_expbuf(struct file *file,
-+ 	return vb2_expbuf(vdev->queue, p);
-+ }
-+ EXPORT_SYMBOL_GPL(vb2_ioctl_expbuf);
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 
-+ /* v4l2_file_operations helpers */
-+ 
-+--- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
-++++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
-+@@ -267,6 +267,7 @@ static int vb2_dc_mmap(void *buf_priv, s
-+ }
-+ #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)) */
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ /*********************************************/
-+ /*         DMABUF ops for exporters          */
-+ /*********************************************/
-+@@ -460,6 +461,7 @@ static struct dma_buf *vb2_dc_get_dmabuf
-+ 
-+ 	return dbuf;
-+ }
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 
-+ /*********************************************/
-+ /*       callbacks for USERPTR buffers       */
-+@@ -744,6 +746,7 @@ fail_buf:
-+ 	return ERR_PTR(ret);
-+ }
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ /*********************************************/
-+ /*       callbacks for DMABUF buffers        */
-+ /*********************************************/
-+@@ -849,6 +852,7 @@ static void *vb2_dc_attach_dmabuf(void *
-+ 
-+ 	return buf;
-+ }
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 
-+ /*********************************************/
-+ /*       DMA CONTIG exported functions       */
-+@@ -857,7 +861,9 @@ static void *vb2_dc_attach_dmabuf(void *
-+ const struct vb2_mem_ops vb2_dma_contig_memops = {
-+ 	.alloc		= vb2_dc_alloc,
-+ 	.put		= vb2_dc_put,
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ 	.get_dmabuf	= vb2_dc_get_dmabuf,
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 	.cookie		= vb2_dc_cookie,
-+ 	.vaddr		= vb2_dc_vaddr,
-+ 	.mmap		= vb2_dc_mmap,
-+@@ -865,10 +871,12 @@ const struct vb2_mem_ops vb2_dma_contig_
-+ 	.put_userptr	= vb2_dc_put_userptr,
-+ 	.prepare	= vb2_dc_prepare,
-+ 	.finish		= vb2_dc_finish,
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ 	.map_dmabuf	= vb2_dc_map_dmabuf,
-+ 	.unmap_dmabuf	= vb2_dc_unmap_dmabuf,
-+ 	.attach_dmabuf	= vb2_dc_attach_dmabuf,
-+ 	.detach_dmabuf	= vb2_dc_detach_dmabuf,
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 	.num_users	= vb2_dc_num_users,
-+ };
-+ EXPORT_SYMBOL_GPL(vb2_dma_contig_memops);
-+--- a/drivers/media/v4l2-core/videobuf2-vmalloc.c
-++++ b/drivers/media/v4l2-core/videobuf2-vmalloc.c
-+@@ -30,7 +30,9 @@ struct vb2_vmalloc_buf {
-+ 	unsigned int			n_pages;
-+ 	atomic_t			refcount;
-+ 	struct vb2_vmarea_handler	handler;
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ 	struct dma_buf			*dbuf;
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ };
-+ 
-+ static void vb2_vmalloc_put(void *buf_priv);
-+@@ -208,6 +210,7 @@ static int vb2_vmalloc_mmap(void *buf_pr
-+ 	return 0;
-+ }
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ /*********************************************/
-+ /*       callbacks for DMABUF buffers        */
-+ /*********************************************/
-+@@ -257,6 +260,7 @@ static void *vb2_vmalloc_attach_dmabuf(v
-+ 
-+ 	return buf;
-+ }
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 
-+ 
-+ const struct vb2_mem_ops vb2_vmalloc_memops = {
-+@@ -264,10 +268,12 @@ const struct vb2_mem_ops vb2_vmalloc_mem
-+ 	.put		= vb2_vmalloc_put,
-+ 	.get_userptr	= vb2_vmalloc_get_userptr,
-+ 	.put_userptr	= vb2_vmalloc_put_userptr,
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ 	.map_dmabuf	= vb2_vmalloc_map_dmabuf,
-+ 	.unmap_dmabuf	= vb2_vmalloc_unmap_dmabuf,
-+ 	.attach_dmabuf	= vb2_vmalloc_attach_dmabuf,
-+ 	.detach_dmabuf	= vb2_vmalloc_detach_dmabuf,
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 	.vaddr		= vb2_vmalloc_vaddr,
-+ 	.mmap		= vb2_vmalloc_mmap,
-+ 	.num_users	= vb2_vmalloc_num_users,
-+--- a/include/media/v4l2-mem2mem.h
-++++ b/include/media/v4l2-mem2mem.h
-+@@ -117,8 +117,10 @@ int v4l2_m2m_dqbuf(struct file *file, st
-+ int v4l2_m2m_create_bufs(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
-+ 			 struct v4l2_create_buffers *create);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ int v4l2_m2m_expbuf(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
-+ 		   struct v4l2_exportbuffer *eb);
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 
-+ int v4l2_m2m_streamon(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
-+ 		      enum v4l2_buf_type type);
-+@@ -240,8 +242,10 @@ int v4l2_m2m_ioctl_create_bufs(struct fi
-+ 				struct v4l2_create_buffers *create);
-+ int v4l2_m2m_ioctl_querybuf(struct file *file, void *fh,
-+ 				struct v4l2_buffer *buf);
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ int v4l2_m2m_ioctl_expbuf(struct file *file, void *fh,
-+ 				struct v4l2_exportbuffer *eb);
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ int v4l2_m2m_ioctl_qbuf(struct file *file, void *fh,
-+ 				struct v4l2_buffer *buf);
-+ int v4l2_m2m_ioctl_dqbuf(struct file *file, void *fh,
-+--- a/include/media/videobuf2-core.h
-++++ b/include/media/videobuf2-core.h
-+@@ -84,7 +84,9 @@ struct vb2_threadio_data;
-+ struct vb2_mem_ops {
-+ 	void		*(*alloc)(void *alloc_ctx, unsigned long size, gfp_t gfp_flags);
-+ 	void		(*put)(void *buf_priv);
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ 	struct dma_buf *(*get_dmabuf)(void *buf_priv, unsigned long flags);
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 
-+ 	void		*(*get_userptr)(void *alloc_ctx, unsigned long vaddr,
-+ 					unsigned long size, int write);
-+@@ -93,11 +95,13 @@ struct vb2_mem_ops {
-+ 	void		(*prepare)(void *buf_priv);
-+ 	void		(*finish)(void *buf_priv);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ 	void		*(*attach_dmabuf)(void *alloc_ctx, struct dma_buf *dbuf,
-+ 				unsigned long size, int write);
-+ 	void		(*detach_dmabuf)(void *buf_priv);
-+ 	int		(*map_dmabuf)(void *buf_priv);
-+ 	void		(*unmap_dmabuf)(void *buf_priv);
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 
-+ 	void		*(*vaddr)(void *buf_priv);
-+ 	void		*(*cookie)(void *buf_priv);
-+@@ -445,7 +449,9 @@ int __must_check vb2_queue_init(struct v
-+ void vb2_queue_release(struct vb2_queue *q);
-+ 
-+ int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b);
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ int vb2_expbuf(struct vb2_queue *q, struct v4l2_exportbuffer *eb);
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ int vb2_dqbuf(struct vb2_queue *q, struct v4l2_buffer *b, bool nonblocking);
-+ 
-+ int vb2_streamon(struct vb2_queue *q, enum v4l2_buf_type type);
-+@@ -601,8 +607,10 @@ int vb2_ioctl_qbuf(struct file *file, vo
-+ int vb2_ioctl_dqbuf(struct file *file, void *priv, struct v4l2_buffer *p);
-+ int vb2_ioctl_streamon(struct file *file, void *priv, enum v4l2_buf_type i);
-+ int vb2_ioctl_streamoff(struct file *file, void *priv, enum v4l2_buf_type i);
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-+ int vb2_ioctl_expbuf(struct file *file, void *priv,
-+ 	struct v4l2_exportbuffer *p);
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0) */
-+ 
-+ /* struct v4l2_file_operations helpers */
-+ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
++ static const struct pci_error_handlers ngene_errors = {
+++#else
+++static struct pci_error_handlers ngene_errors = {
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
++ 	.error_detected = ngene_error_detected,
++ 	.link_reset = ngene_link_reset,
++ 	.slot_reset = ngene_slot_reset,
 -- 
 1.9.1
 
