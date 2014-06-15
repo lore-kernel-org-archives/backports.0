@@ -1,88 +1,55 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:58147 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:44853 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756899AbaFAMfA (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 1 Jun 2014 08:35:00 -0400
-Message-ID: <538B1DDE.9020702@hauke-m.de> (sfid-20140601_143502_541294_CC97D820)
-Date: Sun, 01 Jun 2014 14:34:38 +0200
+	id S1752018AbaFOVWO (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 15 Jun 2014 17:22:14 -0400
+Received: from localhost (localhost [127.0.0.1])
+	by hauke-m.de (Postfix) with ESMTP id 2B82C7E3B
+	for <backports@vger.kernel.org>; Sun, 15 Jun 2014 23:22:13 +0200 (CEST)
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Samuel Martin <s.martin49@gmail.com>
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH 0/10] Cross-compilation support improvement
-References: <1399581573-12072-1-git-send-email-s.martin49@gmail.com> <5389BD34.4010006@hauke-m.de> <CAHXCMMKJRmx88Qp=MP4Oir8rX2w8QNNAQsSg8mvdmXEWDErRWg@mail.gmail.com>
-In-Reply-To: <CAHXCMMKJRmx88Qp=MP4Oir8rX2w8QNNAQsSg8mvdmXEWDErRWg@mail.gmail.com>
-Content-Type: text/plain; charset=ISO-8859-1
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 05/19] backports: add crc7_be()
+Date: Sun, 15 Jun 2014 23:21:33 +0200
+Message-Id: <1402867307-31337-6-git-send-email-hauke@hauke-m.de> (sfid-20140615_232216_294543_C35D8017)
+In-Reply-To: <1402867307-31337-1-git-send-email-hauke@hauke-m.de>
+References: <1402867307-31337-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 06/01/2014 10:47 AM, Samuel Martin wrote:
-> Hi Hauke,
-> 
-> On Sat, May 31, 2014 at 1:29 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
->> On 05/08/2014 10:39 PM, Samuel Martin wrote:
-> [...]
->>> Samuel Martin (10):
->>>   backports: Makefile: introduce KROOT and fix INSTALL_MOD_PATH
->>>     definition
->>>   backports: Makefile: introduce KVERSION and rework KLIB definition
->>>   backports: Makefile: export KROOT and KVERSION variables
->>>   backports: blacklist.sh: support install root not in /
->>>   backports: check_depmod.sh: support install root not in /
->>>   backports: Makefile.real: use depmod.sh instead of the depmod program
->>>   backports: Makefile.real: disable update-initramfs.sh execution when
->>>     cross-compiling
->>>   backports: Makefile.real: silent reboot message when cross-compiling
->>>   backports: compress_module.sh: gzip silently overrides existing
->>>     compressed modules
->>>   backports: Makefile: update help text
->>>
->>>  backport/Makefile                    | 33 ++++++++++++++++++++++++---------
->>>  backport/Makefile.real               | 24 ++++++++++++++++--------
->>>  backport/scripts/blacklist.sh        |  7 ++++---
->>>  backport/scripts/check_depmod.sh     |  7 ++++---
->>>  backport/scripts/compress_modules.sh |  2 +-
->>>  5 files changed, 49 insertions(+), 24 deletions(-)
->>>
->>> --
->>> 1.9.2
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe backports" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>
->> Hi,
->>
->> I am getting some errors when using a configuration generated with
->> allyesconfig on an ubuntu 14.04 AMD64 system.
->>
->> Hauke
->>
->> hauke@hauke-desktop:~/compat-wireless/tmp$ ionice -c 3 nice -n 20 make -j5
->> /usr/src/linux-headers-3.13.0-27-generic/arch/x86/Makefile:113:
->> CONFIG_X86_X32 enabled but no binutils support
->> scripts/basic/fixdep.c:462:1: fatal error: opening dependency file
->> scripts/basic/.fixdep.d: Permission denied
->>  }
->>  ^
->> compilation terminated.
->> make[3]: *** [scripts/basic/fixdep] Error 1
->> make[2]: *** [scripts_basic] Error 2
->> /usr/src/linux-headers-3.13.0-27-generic/arch/x86/Makefile:113:
->> CONFIG_X86_X32 enabled but no binutils support
->> scripts/basic/fixdep.c:462:1: fatal error: opening dependency file
->> scripts/basic/.fixdep.d: Permission denied
->>  }
-> 
-> I don't really see how this is related to this series.
-> It seems coming from the kernel sources itself, not the backport ones
+This was added in:
+commit 1836eea209546b870dd83f3f4ef234d6598a560d
+Author: George Spelvin <linux@horizon.com>
+Date:   Sat May 10 10:32:57 2014 -0400
 
-Git bisect showed me that this commit is causing the problem:
-backports: Makefile: introduce KVERSION and rework KLIB definition
+    lib/crc7: Shift crc7() output left 1 bit
 
-I ran the following commands to build backports:
-make -j4 allyesconfig
-make -j4
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/crc7.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 backport/backport-include/linux/crc7.h
 
-Hauke
+diff --git a/backport/backport-include/linux/crc7.h b/backport/backport-include/linux/crc7.h
+new file mode 100644
+index 0000000..12747f8
+--- /dev/null
++++ b/backport/backport-include/linux/crc7.h
+@@ -0,0 +1,14 @@
++#ifndef _BACKPORT_LINUX_CRC7_H
++#define _BACKPORT_LINUX_CRC7_H
++#include_next <linux/crc7.h>
++#include <linux/version.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
++#define crc7_be LINUX_BACKPORT(crc7_be)
++static inline u8 crc7_be(u8 crc, const u8 *buffer, size_t len)
++{
++	return crc7(crc, buffer, len) << 1;
++}
++#endif /* < 3.16 */
++
++#endif /* _BACKPORT_LINUX_CRC7_H */
+-- 
+1.9.1
+
