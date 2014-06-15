@@ -1,60 +1,87 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from test.hauke-m.de ([5.39.93.123]:45054 "EHLO test.hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751189AbaFZUry (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 26 Jun 2014 16:47:54 -0400
-Message-ID: <53AC8517.5040806@hauke-m.de> (sfid-20140626_224756_823100_E5AD8D26)
-Date: Thu, 26 Jun 2014 22:39:51 +0200
+Received: from server19320154104.serverpool.info ([193.201.54.104]:44803 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751133AbaFOVV0 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 15 Jun 2014 17:21:26 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: drwho@infidigm.net, backports@vger.kernel.org,
-	linux-wireless@vger.kernel.org
-Subject: Re: mac80211 menu option missing in backports using kernel with imx_v6_v7_defconfig
-References: <335443813713531dd3a660617ee65022.squirrel@www.infidigm.net>
-In-Reply-To: <335443813713531dd3a660617ee65022.squirrel@www.infidigm.net>
-Content-Type: text/plain; charset=ISO-8859-1
+To: backports@vger.kernel.org
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Subject: [PATCH] MIPS: Reimplement get_cycles().
+Date: Sun, 15 Jun 2014 23:21:11 +0200
+Message-Id: <1402867271-31207-1-git-send-email-hauke@hauke-m.de> (sfid-20140615_232130_194767_48EFFDDD)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 06/26/2014 09:23 PM, drwho@infidigm.net wrote:
-> mac80211 menu option is missing in backports using a kernel with
-> imx_v6_v7_defconfig but is fine with x86 kernel config.  This causes all
-> the wifi drivers that depend on mac80211 to be hidden.
-> 
-> I built the kernel with the default imx config...
-> export
-> PATH=/home/xxx/gcc-linaro-arm-linux-gnueabi-2012.04-20120426_linux/bin/:$PATH
-> export
-> CROSS_COMPILE=/home/xxx/gcc-linaro-arm-linux-gnueabi-2012.04-20120426_linux/bin/arm-linux-gnueabi-
-> export ARCH=arm
-> make imx_v6_v7_defconfig
-> make uImage LOADADDR=0x70008000
-> 
-> when I run the backports menuconfig mac80211 is hidden....
-> make menuconfig
-> CROSS_COMPILE=/home/xxx/gcc-linaro-arm-linux-gnueabi-2012.04-20120426_linux/bin/arm-linux-gnueabi-
-> ARCH=arm KLIB_BUILD=/home/xxx/imx_linux-3.10/ KLIB=~/home/xxx/rootfs/
-> 
-> Searching for mac80211 in backport's menuconfig shows its dependences are met
-> Symbol: MAC80211 [=n]
-> Type  : tristate
-> Prompt: Generic IEEE 802.11 Networking Stack (mac80211)
->    Defined at net/mac80211/Kconfig:1
->    Depends on: m && <choice> && CFG80211 [=m] && CRYPTO [=y] &&
-> CRYPTO_ARC4 && CRYPTO_AES [=y] && CRYPTO_CCM && CRC32 [=y]
->    Selects: BACKPORT_AVERAGE [=n]
-> 
-> If I point backports to an x86 kernel mac80211 magically appears
-> make menuconfig KLIB_BUILD=/home/xxx/x86_linux-3.10/ KLIB=/home/xxx/rootfs/
-> 
-> Something in the imx_v6_v7_defconfig making backports unhappy?  backports
-> broken? Am I missing something for the cross compile?
-> 
-> using backports-3.13.2-1
-> 
-> Jon
+From: Ralf Baechle <ralf@linux-mips.org>
 
-Have you set CONFIG_CRYPTO_CCM in your kernel config? This is needed for
-mac80211 in backports.
+This essentially reverts commit efb9ca08b5a2374b29938cdcab417ce4feb14b54
+(kernel.org) / 58020a106879a8b372068741c81f0015c9b0b96dbv [[MIPS] Change
+get_cycles to always return 0.]
 
-Hauke
+Most users of get_cycles() invoke it as a timing interface.  That's why
+in modern kernels it was never very much missed for.  /dev/random however
+uses get_cycles() in the how the jitter in the interrupt timing contains
+some useful entropy.
+
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+---
+ arch/mips/include/asm/timex.h |   33 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 32 insertions(+), 1 deletion(-)
+
+diff --git a/arch/mips/include/asm/timex.h b/arch/mips/include/asm/timex.h
+index 6529704..c542475 100644
+--- a/arch/mips/include/asm/timex.h
++++ b/arch/mips/include/asm/timex.h
+@@ -10,7 +10,9 @@
+ 
+ #ifdef __KERNEL__
+ 
++#include <asm/cpu-features.h>
+ #include <asm/mipsregs.h>
++#include <asm/cpu-type.h>
+ 
+ /*
+  * This is the clock rate of the i8253 PIT.  A MIPS system may not have
+@@ -33,9 +35,38 @@
+ 
+ typedef unsigned int cycles_t;
+ 
++/*
++ * On R4000/R4400 before version 5.0 an erratum exists such that if the
++ * cycle counter is read in the exact moment that it is matching the
++ * compare register, no interrupt will be generated.
++ *
++ * There is a suggested workaround and also the erratum can't strike if
++ * the compare interrupt isn't being used as the clock source device.
++ * However for now the implementaton of this function doesn't get these
++ * fine details right.
++ */
+ static inline cycles_t get_cycles(void)
+ {
+-	return 0;
++	switch (boot_cpu_type()) {
++	case CPU_R4400PC:
++	case CPU_R4400SC:
++	case CPU_R4400MC:
++		if ((read_c0_prid() & 0xff) >= 0x0050)
++			return read_c0_count();
++		break;
++
++        case CPU_R4000PC:
++        case CPU_R4000SC:
++        case CPU_R4000MC:
++		break;
++
++	default:
++		if (cpu_has_counter)
++			return read_c0_count();
++		break;
++	}
++
++	return 0;	/* no usable counter */
+ }
+ 
+ #endif /* __KERNEL__ */
+-- 
+1.7.10.4
+
