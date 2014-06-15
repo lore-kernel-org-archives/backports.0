@@ -1,47 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:59593 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:44861 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752008AbaFAWdA (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 1 Jun 2014 18:33:00 -0400
-Message-ID: <538BAA15.7040407@hauke-m.de> (sfid-20140602_003301_692387_BA9B8A1A)
-Date: Mon, 02 Jun 2014 00:32:53 +0200
+	id S1752114AbaFOVWR (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 15 Jun 2014 17:22:17 -0400
+Received: from localhost (localhost [127.0.0.1])
+	by hauke-m.de (Postfix) with ESMTP id 2AFFC7E52
+	for <backports@vger.kernel.org>; Sun, 15 Jun 2014 23:22:16 +0200 (CEST)
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>,
-	backports@vger.kernel.org
-CC: Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH] gentree: remove stray print
-References: <1399301918-30691-1-git-send-email-johannes@sipsolutions.net>
-In-Reply-To: <1399301918-30691-1-git-send-email-johannes@sipsolutions.net>
-Content-Type: text/plain; charset=ISO-8859-1
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 07/19] backports: add of_node_put()
+Date: Sun, 15 Jun 2014 23:21:35 +0200
+Message-Id: <1402867307-31337-8-git-send-email-hauke@hauke-m.de> (sfid-20140615_232218_605720_7B9119E9)
+In-Reply-To: <1402867307-31337-1-git-send-email-hauke@hauke-m.de>
+References: <1402867307-31337-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 05/05/2014 04:58 PM, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
-> 
-> My previous commit to restrict the defconfig files left
-> a debugging print statement, remove it.
-> 
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> ---
->  gentree.py | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/gentree.py b/gentree.py
-> index 8a8f6b6a22a4..5fe699650916 100755
-> --- a/gentree.py
-> +++ b/gentree.py
-> @@ -808,7 +808,6 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
->                      line_ok = True
->                      break
->              if not line_ok:
-> -                print dfbase, line
->                  copy_defconfig = False
->                  break
->          if copy_defconfig:
-> 
-Thank you for the patch, is was applied, pushed and is included in the
-backports-20140501 release.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/of.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Hauke
+diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
+index c1ce91c..69664de 100644
+--- a/backport/backport-include/linux/of.h
++++ b/backport/backport-include/linux/of.h
+@@ -94,4 +94,16 @@ static inline int of_property_count_u32_elems(const struct device_node *np,
+ }
+ #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0) */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
++#ifndef CONFIG_OF
++#define of_node_get LINUX_BACKPORT(of_node_get)
++/* Dummy ref counting routines - to be implemented later */
++static inline struct device_node *of_node_get(struct device_node *node)
++{
++	return node;
++}
++static inline void of_node_put(struct device_node *node) { }
++#endif /* CONFIG_OF */
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0) */
++
+ #endif	/* _COMPAT_LINUX_OF_H */
+-- 
+1.9.1
+
