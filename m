@@ -1,45 +1,63 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:35221 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:44847 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752407AbaFGT3d (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 7 Jun 2014 15:29:33 -0400
+	id S1752018AbaFOVWM (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 15 Jun 2014 17:22:12 -0400
 Received: from localhost (localhost [127.0.0.1])
-	by hauke-m.de (Postfix) with ESMTP id 42EE37E72
-	for <backports@vger.kernel.org>; Sat,  7 Jun 2014 21:29:32 +0200 (CEST)
+	by hauke-m.de (Postfix) with ESMTP id 5F6557E65
+	for <backports@vger.kernel.org>; Sun, 15 Jun 2014 23:22:11 +0200 (CEST)
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 0/7] backports: update to next-20140516, add RSI driver
-Date: Sat,  7 Jun 2014 21:29:09 +0200
-Message-Id: <1402169356-1267-1-git-send-email-hauke@hauke-m.de> (sfid-20140607_212938_010145_D578954C)
+Subject: [PATCH 04/19] backports: add prandom_u32_max()
+Date: Sun, 15 Jun 2014 23:21:32 +0200
+Message-Id: <1402867307-31337-5-git-send-email-hauke@hauke-m.de> (sfid-20140615_232215_637957_B9F6A619)
+In-Reply-To: <1402867307-31337-1-git-send-email-hauke@hauke-m.de>
+References: <1402867307-31337-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This brings backports to next-20140516 and adds the RSI driver.
+This was added in:
+commit f337db64af059c9a94278a8b0ab97d87259ff62f
+Author: Daniel Borkmann <dborkman@redhat.com>
+Date:   Wed Jan 22 02:29:39 2014 +0100
 
-Hauke Mehrtens (7):
-  backports: revert rename of __vlan_find_dev_deep()
-  backports: handle changes to vlan_rx_add/kill pointers in cdc_mbim.c
-  backports: rename irq_get_trigger_type()
-  backports: add ether_addr_copy()
-  backports: add mmc_card_hs()
-  backports: add RSI driver
-  backports: refresh patches on next-20140516
+    random32: add prandom_u32_max and convert open coded users
 
- backport/backport-include/linux/etherdevice.h      | 23 ++++++++++
- backport/backport-include/linux/if_vlan.h          |  4 ++
- backport/backport-include/linux/irq.h              |  1 +
- backport/backport-include/linux/mmc/host.h         | 16 +++++++
- backport/defconfigs/wifi                           |  1 +
- copy-list                                          |  1 +
- .../network/0024-led-blink-api/mac80211.patch      |  2 +-
- .../network/0026-ipv6_stub/cdc_mbim.patch          |  6 +--
- .../0030-qdisc_tx_busylock/ieee802154.patch        |  4 +-
- .../network/0033-ndo_vlan_rx_vid/cdc_mbim.patch    | 50 ++++++++++++++++++++++
- 10 files changed, 102 insertions(+), 6 deletions(-)
- create mode 100644 backport/backport-include/linux/mmc/host.h
- create mode 100644 patches/collateral-evolutions/network/0033-ndo_vlan_rx_vid/cdc_mbim.patch
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/random.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
+diff --git a/backport/backport-include/linux/random.h b/backport/backport-include/linux/random.h
+index e915106..dd5f377 100644
+--- a/backport/backport-include/linux/random.h
++++ b/backport/backport-include/linux/random.h
+@@ -13,4 +13,24 @@
+ void prandom_bytes(void *buf, int bytes);
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,14,0)
++/**
++ * prandom_u32_max - returns a pseudo-random number in interval [0, ep_ro)
++ * @ep_ro: right open interval endpoint
++ *
++ * Returns a pseudo-random number that is in interval [0, ep_ro). Note
++ * that the result depends on PRNG being well distributed in [0, ~0U]
++ * u32 space. Here we use maximally equidistributed combined Tausworthe
++ * generator, that is, prandom_u32(). This is useful when requesting a
++ * random index of an array containing ep_ro elements, for example.
++ *
++ * Returns: pseudo-random number in interval [0, ep_ro)
++ */
++#define prandom_u32_max LINUX_BACKPORT(prandom_u32_max)
++static inline u32 prandom_u32_max(u32 ep_ro)
++{
++	return (u32)(((u64) prandom_u32() * ep_ro) >> 32);
++}
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,14,0) */
++
+ #endif /* __BACKPORT_RANDOM_H */
 -- 
 1.9.1
 
