@@ -1,45 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from merlin1991.at ([188.40.39.11]:33956 "EHLO merlin1991.at"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751471AbaFEXLe (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 5 Jun 2014 19:11:34 -0400
-Received: from chris-laptop3.wien.local (chello084114178111.5.15.vie.surfer.at [84.114.178.111])
-	by merlin1991.at (Postfix) with ESMTPSA id CE60D23C00C3
-	for <backports@vger.kernel.org>; Fri,  6 Jun 2014 01:02:35 +0200 (CEST)
-From: Christian Ratzenhofer <christian.ratzenhofer@cdnm.at>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:44862 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752114AbaFOVWS (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 15 Jun 2014 17:22:18 -0400
+Received: from localhost (localhost [127.0.0.1])
+	by hauke-m.de (Postfix) with ESMTP id 436137E58
+	for <backports@vger.kernel.org>; Sun, 15 Jun 2014 23:22:17 +0200 (CEST)
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Subject: [PATCH linux-3.15.y] backports: wrap dma_set_mask_and_coherent in LINUX_BACKPORT()
-Date: Fri,  6 Jun 2014 01:02:42 +0200
-Message-Id: <1402009362-25432-1-git-send-email-christian.ratzenhofer@cdnm.at> (sfid-20140606_011136_655225_7AC2EF29)
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 08/19] backports: add of_match_ptr()
+Date: Sun, 15 Jun 2014 23:21:36 +0200
+Message-Id: <1402867307-31337-9-git-send-email-hauke@hauke-m.de> (sfid-20140615_232219_520385_84DD8023)
+In-Reply-To: <1402867307-31337-1-git-send-email-hauke@hauke-m.de>
+References: <1402867307-31337-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Stefan Assmann <sassmann@kpanic.de>
-
-Upstream commit: 3443187edd32767c838e5d4f654df474e77fb7ce
-
-To avoid conflicts with any distribution kernel wrap
-dma_set_mask_and_coherent with LINUX_BACKPORT().
-
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
-Signed-off-by: Christian Ratzenhofer <christian.ratzenhofer@cdnm.at>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/dma-mapping.h |    1 +
- 1 file changed, 1 insertion(+)
+ backport/backport-include/linux/of.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/backport/backport-include/linux/dma-mapping.h b/backport/backport-include/linux/dma-mapping.h
-index 9b2bc90..fdc3331 100644
---- a/backport/backport-include/linux/dma-mapping.h
-+++ b/backport/backport-include/linux/dma-mapping.h
-@@ -22,6 +22,7 @@ static inline void *dma_zalloc_coherent(struct device *dev, size_t size,
-  * as the DMA API guarantees that the coherent DMA mask can be set to
-  * the same or smaller than the streaming DMA mask.
-  */
-+#define dma_set_mask_and_coherent LINUX_BACKPORT(dma_set_mask_and_coherent)
- static inline int dma_set_mask_and_coherent(struct device *dev, u64 mask)
- {
- 	int rc = dma_set_mask(dev, mask);
+diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
+index 69664de..f2a8ab4 100644
+--- a/backport/backport-include/linux/of.h
++++ b/backport/backport-include/linux/of.h
+@@ -106,4 +106,12 @@ static inline void of_node_put(struct device_node *node) { }
+ #endif /* CONFIG_OF */
+ #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0) */
+ 
++#ifndef of_match_ptr
++#ifdef CONFIG_OF
++#define of_match_ptr(_ptr)	(_ptr)
++#else
++#define of_match_ptr(_ptr)	NULL
++#endif /* CONFIG_OF */
++#endif /* of_match_ptr */
++
+ #endif	/* _COMPAT_LINUX_OF_H */
 -- 
-1.7.10.4
+1.9.1
 
