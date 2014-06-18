@@ -1,50 +1,33 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:52128 "EHLO
+Received: from server19320154104.serverpool.info ([193.201.54.104]:37848 "EHLO
 	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932590AbaFPWcU (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 16 Jun 2014 18:32:20 -0400
+	id S1755408AbaFRVbU (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 18 Jun 2014 17:31:20 -0400
 Received: from localhost (localhost [127.0.0.1])
-	by hauke-m.de (Postfix) with ESMTP id 2A2F77E24
-	for <backports@vger.kernel.org>; Tue, 17 Jun 2014 00:32:19 +0200 (CEST)
+	by hauke-m.de (Postfix) with ESMTP id 29CBB7E24
+	for <backports@vger.kernel.org>; Wed, 18 Jun 2014 23:31:18 +0200 (CEST)
+Received: from hauke-m.de ([127.0.0.1])
+	by localhost (hauke-m.de [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id F+EL8YE+BEpL for <backports@vger.kernel.org>;
+	Wed, 18 Jun 2014 23:31:09 +0200 (CEST)
+Received: from [IPv6:2001:470:7259:0:7de5:7e5a:bc38:e5af] (unknown [IPv6:2001:470:7259:0:7de5:7e5a:bc38:e5af])
+	by hauke-m.de (Postfix) with ESMTPSA id 74F6E7E23
+	for <backports@vger.kernel.org>; Wed, 18 Jun 2014 23:31:09 +0200 (CEST)
+Message-ID: <53A2051C.2040101@hauke-m.de> (sfid-20140618_233122_788577_9AC2087B)
+Date: Wed, 18 Jun 2014 23:31:08 +0200
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/5] backports: Revert "remove parameter from dma_buf_export()"
-Date: Tue, 17 Jun 2014 00:31:56 +0200
-Message-Id: <1402957919-31374-3-git-send-email-hauke@hauke-m.de> (sfid-20140617_003223_447963_55D7FF45)
-In-Reply-To: <1402957919-31374-1-git-send-email-hauke@hauke-m.de>
-References: <1402957919-31374-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: backports-3.16-rc1-1 is out
+References: <53A1F295.1010307@hauke-m.de>
+In-Reply-To: <53A1F295.1010307@hauke-m.de>
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The linux commit which made backports need this patch was removed from
-linux-next.
+I also made a backports-3.16-rc1-1 release. This version is based on
+linux-stable 3.16-rc1 and is very similar to backports-20140616.
 
-This reverts commit 6e1b080e83f1537d8d198917180d0a8bdfd7e0c9.
+https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.16-rc1/backports-3.16-rc1-1.tar.xz
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/dma-buf.h | 9 ---------
- 1 file changed, 9 deletions(-)
-
-diff --git a/backport/backport-include/linux/dma-buf.h b/backport/backport-include/linux/dma-buf.h
-index 85a1531..363b86f 100644
---- a/backport/backport-include/linux/dma-buf.h
-+++ b/backport/backport-include/linux/dma-buf.h
-@@ -5,13 +5,4 @@
- #include_next <linux/dma-buf.h>
- #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) */
- 
--#if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
--#define dma_buf_export(priv, ops, size, flags, resv)	\
--	dma_buf_export(priv, ops, size, flags)
--#elif LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
--#undef dma_buf_export
--#define dma_buf_export(priv, ops, size, flags, resv)	\
--	dma_buf_export_named(priv, ops, size, flags, KBUILD_MODNAME)
--#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) */
--
- #endif /* _BACKPORT_DMA_BUF_H__ */
--- 
-1.9.1
-
+Hauke
