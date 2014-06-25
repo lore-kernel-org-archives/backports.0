@@ -1,33 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:37848 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755408AbaFRVbU (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 18 Jun 2014 17:31:20 -0400
-Received: from localhost (localhost [127.0.0.1])
-	by hauke-m.de (Postfix) with ESMTP id 29CBB7E24
-	for <backports@vger.kernel.org>; Wed, 18 Jun 2014 23:31:18 +0200 (CEST)
-Received: from hauke-m.de ([127.0.0.1])
-	by localhost (hauke-m.de [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id F+EL8YE+BEpL for <backports@vger.kernel.org>;
-	Wed, 18 Jun 2014 23:31:09 +0200 (CEST)
-Received: from [IPv6:2001:470:7259:0:7de5:7e5a:bc38:e5af] (unknown [IPv6:2001:470:7259:0:7de5:7e5a:bc38:e5af])
-	by hauke-m.de (Postfix) with ESMTPSA id 74F6E7E23
-	for <backports@vger.kernel.org>; Wed, 18 Jun 2014 23:31:09 +0200 (CEST)
-Message-ID: <53A2051C.2040101@hauke-m.de> (sfid-20140618_233122_788577_9AC2087B)
-Date: Wed, 18 Jun 2014 23:31:08 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from ironport2-out.teksavvy.com ([206.248.154.181]:3862 "EHLO
+	ironport2-out.teksavvy.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754550AbaFYVIQ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 25 Jun 2014 17:08:16 -0400
+Received: from localhost ([127.0.0.1] helo=www.infidigm.net)
+	by freiheit with esmtp (Exim 4.72)
+	(envelope-from <drwho@infidigm.net>)
+	id 1Wztwu-0002hQ-Jh
+	for backports@vger.kernel.org; Wed, 25 Jun 2014 16:37:44 -0400
+Message-ID: <c07041cc8dc2076d4fd4f10d8cf9ad33.squirrel@www.infidigm.net> (sfid-20140625_230818_748597_83650BE0)
+Date: Wed, 25 Jun 2014 16:37:44 -0400
+Subject: enable mac80211 config help?
+From: drwho@infidigm.net
+To: backports@vger.kernel.org
 MIME-Version: 1.0
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: backports-3.16-rc1-1 is out
-References: <53A1F295.1010307@hauke-m.de>
-In-Reply-To: <53A1F295.1010307@hauke-m.de>
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I also made a backports-3.16-rc1-1 release. This version is based on
-linux-stable 3.16-rc1 and is very similar to backports-20140616.
+I am cross compiling backports-3.13.2-1 and I can not enable mac80211
+config to build drivers that depend on it.  In the backports src dir, when
+I run
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.16-rc1/backports-3.16-rc1-1.tar.xz
+make menuconfig
+CROSS_COMPILE=/opt/freescale/usr/local/gcc-4.4.4-glibc-2.11.1-multilib-1.0/arm-fsl-linux-gnueabi/bin/arm-none-linux-gnueabi-
+ARCH=arm KLIB_BUILD=/edit/ltibs/c390/rpm/BUILD/linux/
+KLIB=/edit/ltibs/c390/rootfs/lib/modules/2.6.35.3-998-ga1cd8a7/
 
-Hauke
+and search for mac80211 is shows it disabled.  I've run my kernel's
+menuconfig to change mac80211 to n, m and y.  Running the backports
+menuconfig afterwords shows mac80211 is disabled for all three states. 
+The only way I can get the drivers that depend on mac80211 to appear is to
+add
+
+config MAC80211
+	def_bool y
+
+in the backports Kconfig file.  Then when I run the make I get....
+
+/xxx/backports-3.13.2-1/backport-include/backport/checks.h:9:2: error:
+#error "You must not have mac80211 built into your kernel if you want to
+enable it"
+
+Am I doing something wrong or is this a problem with backports against
+2.6.35-3?
+
+Am I correct in assuming mac80211 should be disabled in the kernel config?
+
+Jon
+
