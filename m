@@ -1,48 +1,57 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:40595 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750730AbaFFGJb (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 6 Jun 2014 02:09:31 -0400
-Message-ID: <1402034962.4158.1.camel@jlt4.sipsolutions.net> (sfid-20140606_080933_070797_D7FF597C)
-Subject: Re: Procedure to make the driver into the backports project
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Fariya <fariyaf@gmail.com>
-Cc: Arend van Spriel <arend@broadcom.com>, backports@vger.kernel.org
-Date: Fri, 06 Jun 2014 08:09:22 +0200
-In-Reply-To: <CAG+h2qi4b7OJwj+0X=M1sFC3GzfZ70EMc2tLTHW9YKoPw7gAeg@mail.gmail.com> (sfid-20140606_015911_268556_8849B381)
-References: <CAG+h2qgoudEKwwL7pwYAaSbwvtJw4efi3e_or1yq0YOLm98fuQ@mail.gmail.com>
-	 <53834533.8030800@broadcom.com> <53834C8E.5020903@broadcom.com>
-	 <CAG+h2qgsK5LMaK768sVgpv5e08dPdH0QLoBraRhPDxA7yV2Kfw@mail.gmail.com>
-	 <53874684.5070907@broadcom.com>
-	 <CAG+h2qjirPQYDnajR-3VBvZgr+TxBkMwS3q5xXUrNC+YQmfuog@mail.gmail.com>
-	 <CAG+h2qgi_bwyiC0YPSAkeXda7hTffVk6VbR8wA+gh5ztuTYQKQ@mail.gmail.com>
-	 <5390E76A.1000205@broadcom.com>
-	 <CAG+h2qi4b7OJwj+0X=M1sFC3GzfZ70EMc2tLTHW9YKoPw7gAeg@mail.gmail.com>
-	 (sfid-20140606_015911_268556_8849B381)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from ironport2-out.teksavvy.com ([206.248.154.181]:22410 "EHLO
+	ironport2-out.teksavvy.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750844AbaFZToq (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 26 Jun 2014 15:44:46 -0400
+Message-ID: <335443813713531dd3a660617ee65022.squirrel@www.infidigm.net> (sfid-20140626_214448_620015_3CD3C4E6)
+Date: Thu, 26 Jun 2014 15:23:42 -0400
+Subject: mac80211 menu option missing in backports using kernel with
+ imx_v6_v7_defconfig
+From: drwho@infidigm.net
+To: backports@vger.kernel.org, linux-wireless@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2014-06-06 at 05:29 +0530, Fariya wrote:
+mac80211 menu option is missing in backports using a kernel with
+imx_v6_v7_defconfig but is fine with x86 kernel config.  This causes all
+the wifi drivers that depend on mac80211 to be hidden.
 
-> Considering that my driver doesn't compile on kernel versions < the
-> latest one, I wanted to submit a patch/patches to handle all kernel
-> versions. My question was relating to this - do I need to submit a
-> patch [which handles kernel versions from 3.0 to 3.14] or patches for
-> each kernel version from 3.0 to 3.14, which when applied on the latest
-> driver of mine, would make it compilable for all kernel versions?
+I built the kernel with the default imx config...
+export
+PATH=/home/xxx/gcc-linaro-arm-linux-gnueabi-2012.04-20120426_linux/bin/:$PATH
+export
+CROSS_COMPILE=/home/xxx/gcc-linaro-arm-linux-gnueabi-2012.04-20120426_linux/bin/arm-linux-gnueabi-
+export ARCH=arm
+make imx_v6_v7_defconfig
+make uImage LOADADDR=0x70008000
 
-You need a single patch - hopefully much is already handled by the
-backports project?
+when I run the backports menuconfig mac80211 is hidden....
+make menuconfig
+CROSS_COMPILE=/home/xxx/gcc-linaro-arm-linux-gnueabi-2012.04-20120426_linux/bin/arm-linux-gnueabi-
+ARCH=arm KLIB_BUILD=/home/xxx/imx_linux-3.10/ KLIB=~/home/xxx/rootfs/
 
-Ideally, you don't patch your driver at all, but extend the backport
-(include files, compat.ko module) to provide the APIs that your driver
-needs but that don't exist on older kernels. Sometimes, patching (the)
-driver(s) is unavoidable, in which case semantic patches would be
-preferred.
+Searching for mac80211 in backport's menuconfig shows its dependences are met
+Symbol: MAC80211 [=n]
+Type  : tristate
+Prompt: Generic IEEE 802.11 Networking Stack (mac80211)
+   Defined at net/mac80211/Kconfig:1
+   Depends on: m && <choice> && CFG80211 [=m] && CRYPTO [=y] &&
+CRYPTO_ARC4 && CRYPTO_AES [=y] && CRYPTO_CCM && CRC32 [=y]
+   Selects: BACKPORT_AVERAGE [=n]
 
-However, you can start with a patch and we can help you disentangle it.
+If I point backports to an x86 kernel mac80211 magically appears
+make menuconfig KLIB_BUILD=/home/xxx/x86_linux-3.10/ KLIB=/home/xxx/rootfs/
 
-johannes
+Something in the imx_v6_v7_defconfig making backports unhappy?  backports
+broken? Am I missing something for the cross compile?
+
+using backports-3.13.2-1
+
+Jon
+
+
+
+
 
