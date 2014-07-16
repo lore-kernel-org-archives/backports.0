@@ -1,38 +1,30 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:34756 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750902AbaG1Db3 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 27 Jul 2014 23:31:29 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 0CC632012B
-	for <backports@vger.kernel.org>; Mon, 28 Jul 2014 03:31:28 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 4887220115
-	for <backports@vger.kernel.org>; Mon, 28 Jul 2014 03:31:27 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 65881] errors compiling after make defconfig-alx
-Date: Mon, 28 Jul 2014 03:31:27 +0000
-Message-ID: <bug-65881-58281-1AMO5Vj7kj@https.bugzilla.kernel.org/> (sfid-20140728_053131_318277_A3B7AD0D)
-In-Reply-To: <bug-65881-58281@https.bugzilla.kernel.org/>
-References: <bug-65881-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:47238 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752695AbaGPXZr (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 16 Jul 2014 19:25:47 -0400
+Received: by mail-lb0-f171.google.com with SMTP id l4so1149033lbv.2
+        for <backports@vger.kernel.org>; Wed, 16 Jul 2014 16:25:46 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <20140715154756.GB11952@qca.qualcomm.com>
+References: <20140715154756.GB11952@qca.qualcomm.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Wed, 16 Jul 2014 16:25:25 -0700
+Message-ID: <CAB=NE6U2p+mXW4kLaRkVtL0ytk+eMarsOHhzJh8VEeCjr5M8pg@mail.gmail.com> (sfid-20140717_012550_349694_EF765D19)
+Subject: Re: Backports based on 3.16.0-rc4
+To: Rajkumar Manoharan <rmanohar@qti.qualcomm.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=65881
+On Tue, Jul 15, 2014 at 8:47 AM, Rajkumar Manoharan
+<rmanohar@qti.qualcomm.com> wrote:
+> I am in need of the latest backports release based on 3.16.0-rc4. I do
+> not find it in public server. Please help me to get latest backports
+> build.
 
-xerofoify@gmail.com changed:
+I'm afraid backports-3.16-rc1-1 is the latest release. Hopefully Hauke
+or I can get to an update soon.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |xerofoify@gmail.com
-
---- Comment #9 from xerofoify@gmail.com ---
-Is this bug still open , if not I would recommend closing it.
-Cheers Nick
-
--- 
-You are receiving this mail because:
-You are the assignee for the bug.
+ Luis
