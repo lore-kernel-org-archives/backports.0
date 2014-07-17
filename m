@@ -1,22 +1,34 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f177.google.com ([209.85.217.177]:32933 "EHLO
-	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755085AbaGQUiQ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 17 Jul 2014 16:38:16 -0400
-Received: by mail-lb0-f177.google.com with SMTP id s7so2164153lbd.36
-        for <backports@vger.kernel.org>; Thu, 17 Jul 2014 13:38:15 -0700 (PDT)
+Received: from boosthardware.com ([88.198.122.139]:33608 "EHLO
+	boosthardware.localdomain" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1756534AbaGQQB6 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 17 Jul 2014 12:01:58 -0400
+Message-ID: <53203.108.179.34.114.1405611022.squirrel@boosthardware.com> (sfid-20140717_180159_779141_831E65FB)
+Date: Fri, 18 Jul 2014 01:30:22 +1000 (EST)
+Subject: backport 3.12 to 3.4
+From: "Patrick Shirkey" <pshirkey@boosthardware.com>
+To: backports@vger.kernel.org
 MIME-Version: 1.0
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Thu, 17 Jul 2014 13:37:55 -0700
-Message-ID: <CAB=NE6VwTSjv1WoZzd8XwhVwOPn3aSUQfD_cNCQcow3GuZQabA@mail.gmail.com> (sfid-20140717_223818_938444_DC9D640F)
-Subject: [ANN] backports-3.16-rc5-1 is out
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backports based on v3.15-rc5 is out:
+Hi,
 
-http://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.16-rc5/backports-3.16-rc5-1.tar.xz
+I am running 3.4.39 on an arm platform which I cannot easily upgrade to a
+newer kernel.
 
-  Luis
+I would like like to test an experimental driver for the nfc chipset pn532
+which is written against 3.12
+
+Unfortunately the chipset is different enough from pn533 that it needs
+it's own driver.
+
+Is there a backport of 3.12 nfc codebase to 3.4.39 available somewhere?
+
+
+
+
+--
+Patrick Shirkey
+Boost Hardware Ltd
