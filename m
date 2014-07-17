@@ -1,111 +1,64 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from test.hauke-m.de ([5.39.93.123]:33995 "EHLO test.hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752675AbaG0WKy (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 27 Jul 2014 18:10:54 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/9] backports: fix bit_wait() and bit_wait_io()
-Date: Mon, 28 Jul 2014 00:10:31 +0200
-Message-Id: <1406499039-16212-2-git-send-email-hauke@hauke-m.de> (sfid-20140728_001059_038026_82E08C52)
-In-Reply-To: <1406499039-16212-1-git-send-email-hauke@hauke-m.de>
-References: <1406499039-16212-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-pd0-f180.google.com ([209.85.192.180]:56964 "EHLO
+	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750926AbaGQUX1 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 17 Jul 2014 16:23:27 -0400
+Received: by mail-pd0-f180.google.com with SMTP id y13so3752786pdi.39
+        for <backports@vger.kernel.org>; Thu, 17 Jul 2014 13:23:27 -0700 (PDT)
+Date: Thu, 17 Jul 2014 13:23:22 -0700
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: Stefan Assmann <sassmann@kpanic.de>
+Cc: backports@vger.kernel.org
+Subject: Re: [PATCH] backports: include gpio consumer.h
+Message-ID: <20140717202322.GV1390@garbanzo.do-not-panic.com> (sfid-20140717_222330_122288_A4E87382)
+References: <1404999110-13791-1-git-send-email-sassmann@kpanic.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="s/l3CgOIzMHHjg/5"
+In-Reply-To: <1404999110-13791-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-In kernel version < 3.17 wait_on_bit() takes an action as a parameter,
-which contains a schedule() or io_schedule() call in most cases. For
-such calls wait_on_bit() was changed to not take an action but execute
-schedule() action. This patch backports the new behavior to old kernel
-versions.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/wait.h | 26 ++++++++++++++++++++++++++
- backport/compat/Makefile               |  1 +
- backport/compat/backport-3.17.c        | 27 +++++++++++++++++++++++++++
- 3 files changed, 54 insertions(+)
- create mode 100644 backport/backport-include/linux/wait.h
- create mode 100644 backport/compat/backport-3.17.c
+--s/l3CgOIzMHHjg/5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/backport/backport-include/linux/wait.h b/backport/backport-include/linux/wait.h
-new file mode 100644
-index 0000000..dfb111d
---- /dev/null
-+++ b/backport/backport-include/linux/wait.h
-@@ -0,0 +1,26 @@
-+#ifndef __BACKPORT_LINUX_WAIT_H
-+#define __BACKPORT_LINUX_WAIT_H
-+#include_next <linux/wait.h>
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,17,0)
-+extern int bit_wait(void *);
-+extern int bit_wait_io(void *);
-+
-+static inline int
-+backport_wait_on_bit(void *word, int bit, unsigned mode)
-+{
-+	return wait_on_bit(word, bit, bit_wait, mode);
-+}
-+
-+static inline int
-+backport_wait_on_bit_io(void *word, int bit, unsigned mode)
-+{
-+	return wait_on_bit(word, bit, bit_wait_io, mode);
-+}
-+
-+#define wait_on_bit LINUX_BACKPORT(wait_on_bit)
-+#define wait_on_bit_io LINUX_BACKPORT(wait_on_bit_io)
-+
-+#endif
-+
-+#endif /* __BACKPORT_LINUX_WAIT_H */
-diff --git a/backport/compat/Makefile b/backport/compat/Makefile
-index 353a71d..d648982 100644
---- a/backport/compat/Makefile
-+++ b/backport/compat/Makefile
-@@ -18,6 +18,7 @@ compat-$(CPTCFG_BACKPORT_KERNEL_3_12) += backport-3.12.o
- compat-$(CPTCFG_BACKPORT_KERNEL_3_13) += backport-3.13.o
- compat-$(CPTCFG_BACKPORT_KERNEL_3_14) += backport-3.14.o
- compat-$(CPTCFG_BACKPORT_KERNEL_3_15) += backport-3.15.o
-+compat-$(CPTCFG_BACKPORT_KERNEL_3_17) += backport-3.17.o
- 
- compat-$(CPTCFG_BACKPORT_BUILD_CRYPTO_CCM) += crypto-ccm.o
- compat-$(CPTCFG_BACKPORT_BUILD_DMA_SHARED_HELPERS) += dma-shared-helpers.o
-diff --git a/backport/compat/backport-3.17.c b/backport/compat/backport-3.17.c
-new file mode 100644
-index 0000000..9cc0a82
---- /dev/null
-+++ b/backport/compat/backport-3.17.c
-@@ -0,0 +1,27 @@
-+/*
-+ * Copyright (c) 2014  Hauke Mehrtens <hauke@hauke-m.de>
-+ *
-+ * Backport functionality introduced in Linux 3.17.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#include <linux/wait.h>
-+#include <linux/sched.h>
-+#include <linux/export.h>
-+
-+int bit_wait(void *word)
-+{
-+	schedule();
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(bit_wait);
-+
-+int bit_wait_io(void *word)
-+{
-+	io_schedule();
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(bit_wait_io);
-+
--- 
-1.9.1
+On Thu, Jul 10, 2014 at 03:31:50PM +0200, Stefan Assmann wrote:
+> While doing a make allmodconfig I noticed the following:
+>   CC [M]  /dev/shm/backports-next/drivers/media/i2c/adv7604.o
+> /dev/shm/backports-next/drivers/media/i2c/adv7604.c:31:33: fatal error: l=
+inux/gpio/consumer.h: No such file or directory
+>=20
+> Including the header fixes the error.
+>=20
+> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
 
+Applied and pushed, thanks!
+
+  Luis
+
+--s/l3CgOIzMHHjg/5
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJTyDC6AAoJEKwtdpJg+MHGKDIP/A9H98hAWz/Nph1cRsE9O27T
+rVUwB14E8pPxucFxIwINblaXzPcdeBbEwF+uOQX3TG4GiY9+xcB68N7H4BV5MUid
+muwPxrtcA+KtCnrZwjtwomtqeDMy7p+noi3rIecmZL8Od2b8dykWL5cRiWM4ZA9n
+tho0LmKU8TrPKpiumYy5q6VhLP3YPCW1zQUnabHIHObXhwTOR/2YBoLpdxgeD9Qy
+mR4AmltPU/jAYNnof+P2OyXA/GQn0qnFUR7jXfCyiFztaApzAnbQriDY4dYE9j9T
+wsujWPrmjln25g7FMuEnvtS7kn8uq/G1WXIC4gXFr3XmcWxfhR3UzYyjY3IUZ6MH
+FvKtD/4VBXBnLmkxgNPcJipb92hBniOJLmPpgoWIMWgRRxk/z6SwdtgGwl7VOrNK
+kfGRzHdcQwj34LRtbRY562s82AoLAyn1CN9PTJl1Oj22fgP7izpqt3uVAEKmNK9U
+TExipzLDP7LV6xgy+ulI4xQnZRBVtbnnNzg3QM0OcuQjtheKyjr70RjtZh8qSWkX
+40mNE8VrJgcgtqaaZWPRddRZq1QLEPXodu1Bsi+yrcq/zB1v9w38y1upCHH3vLrb
+ef7vv8Ofnrx9nnQ4MkgH53TyeEzsoXoAA4k6lWBYYz0wfQBXCt46i/7QGiyBds+Z
+hQrkJ/IzpkZC7UINkSM5
+=/T+I
+-----END PGP SIGNATURE-----
+
+--s/l3CgOIzMHHjg/5--
