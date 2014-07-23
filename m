@@ -1,57 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:33846 "EHLO mail.kernel.org"
+Received: from mx1.redhat.com ([209.132.183.28]:14451 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751449AbaGZRCt (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 26 Jul 2014 13:02:49 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id AC42D2015D
-	for <backports@vger.kernel.org>; Sat, 26 Jul 2014 17:02:48 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 926F32015A
-	for <backports@vger.kernel.org>; Sat, 26 Jul 2014 17:02:47 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1751347AbaGWIir (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 23 Jul 2014 04:38:47 -0400
+From: Stefan Assmann <sassmann@kpanic.de>
 To: backports@vger.kernel.org
-Subject: [Bug 81151] New: backports installs /etc/depmod.conf to prefer
- updates/ over kernel/ - should be /etc/depmod.d/updates.conf
-Date: Sat, 26 Jul 2014 17:02:47 +0000
-Message-ID: <bug-81151-58281@https.bugzilla.kernel.org/> (sfid-20140726_190252_002357_D286EB74)
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: mcgrof@do-not-panic.com, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH] backports: bump minimum kernel version for ADV7604 to 3.13
+Date: Wed, 23 Jul 2014 10:38:02 +0200
+Message-Id: <1406104682-4529-1-git-send-email-sassmann@kpanic.de> (sfid-20140723_103849_885608_207BBE96)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=81151
+While doing a make allmodconfig I noticed the following:
+  CC [M]  /dev/shm/backports-next/drivers/media/i2c/adv7604.o
+/dev/shm/backports-next/drivers/media/i2c/adv7604.c:31:33: fatal error: linux/gpio/consumer.h: No such file or directory
 
-            Bug ID: 81151
-           Summary: backports installs /etc/depmod.conf to prefer updates/
-                    over kernel/ - should be /etc/depmod.d/updates.conf
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: 3.12.21
-          Hardware: All
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: low
-          Priority: P1
-         Component: Backports
-          Assignee: backports@vger.kernel.org
-          Reporter: doktor5000@arcor.de
-        Regression: No
+linux/gpio/consumer.h cannot be backported currently, as functions rely
+on in-kernel functionality (GPIO_DEVRES). Bumping the minimum required
+kernel version for ADV7604 to 3.13 where the header got introduced.
 
-make install creates /etc/depmod.conf to prefer updates/ over kernel/ modules.
-According to depmod manpage, /etc/depmod.conf is not even considered.
-This is valid for at least
-http://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.15.1/backports-3.15.1-1.tar.xz
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+---
+ dependencies | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Had to move /etc/depmod.conf to /etc/depmod.d/backports.conf (and changed it to
-"search updates built-in").
-After next depmod -a module from updates/ tree got preferred, before it was
-ignored.
-
-
-Please fix.
-
+diff --git a/dependencies b/dependencies
+index c38098c..119d5ca 100644
+--- a/dependencies
++++ b/dependencies
+@@ -101,7 +101,7 @@ VIDEO_RENESAS_VSP1 3.4
+ VIDEO_MEM2MEM_DEINTERLACE 3.3
+ MEDIA_TUNER_E4000 3.4
+ DVB_USB_RTL28XXU 3.4
+-VIDEO_ADV7604 3.3
++VIDEO_ADV7604 3.13
+ 
+ BCMA_DRIVER_MIPS 3.3
+ SSB_DRIVER_MIPS 3.3
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+1.9.3
+
