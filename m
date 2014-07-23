@@ -1,103 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from test.hauke-m.de ([5.39.93.123]:51381 "EHLO test.hauke-m.de"
+Received: from test.hauke-m.de ([5.39.93.123]:55558 "EHLO test.hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755281AbaGSQRS (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 19 Jul 2014 12:17:18 -0400
-Message-ID: <53CA9A08.8020809@hauke-m.de> (sfid-20140719_181723_415323_15591055)
-Date: Sat, 19 Jul 2014 18:17:12 +0200
+	id S933640AbaGWW1X (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 23 Jul 2014 18:27:23 -0400
+Message-ID: <53D036C9.7080508@hauke-m.de> (sfid-20140724_002724_962808_CC478F1A)
+Date: Thu, 24 Jul 2014 00:27:21 +0200
 From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-To: Stefan Assmann <sassmann@kpanic.de>,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: [PATCH] backports: include gpio consumer.h
-References: <1404999110-13791-1-git-send-email-sassmann@kpanic.de> <53C83544.7030306@hauke-m.de> <CAB=NE6VYf61WM094=QaY9+wMe7z_mk8eZeZVgkhr9=9AWrNpFQ@mail.gmail.com> <53C8CFBE.1030208@kpanic.de>
-In-Reply-To: <53C8CFBE.1030208@kpanic.de>
-Content-Type: text/plain; charset=UTF-8
+To: Stefan Assmann <sassmann@kpanic.de>, backports@vger.kernel.org
+CC: mcgrof@do-not-panic.com
+Subject: Re: [PATCH] backports: bump minimum kernel version for ADV7604 to
+ 3.13
+References: <1406104682-4529-1-git-send-email-sassmann@kpanic.de>
+In-Reply-To: <1406104682-4529-1-git-send-email-sassmann@kpanic.de>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 07/18/2014 09:41 AM, Stefan Assmann wrote:
-> On 17.07.2014 23:27, Luis R. Rodriguez wrote:
->> On Thu, Jul 17, 2014 at 1:42 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
->>> On 07/10/2014 03:31 PM, Stefan Assmann wrote:
->>>> While doing a make allmodconfig I noticed the following:
->>>>    CC [M]  /dev/shm/backports-next/drivers/media/i2c/adv7604.o
->>>> /dev/shm/backports-next/drivers/media/i2c/adv7604.c:31:33: fatal
->>>> error: linux/gpio/consumer.h: No such file or directory
->>>>
->>>> Including the header fixes the error.
->>>>
->>>> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
->>>> ---
->>>>   copy-list | 4 ++++
->>>>   1 file changed, 4 insertions(+)
->>>>
->>>> diff --git a/copy-list b/copy-list
->>>> index 7ad8972..b52e9f2 100644
->>>> --- a/copy-list
->>>> +++ b/copy-list
->>>> @@ -107,6 +107,10 @@ drivers/net/ethernet/intel/Kconfig
->>>>   drivers/net/ethernet/intel/Makefile
->>>>   drivers/net/ethernet/intel/igb/
->>>>
->>>> +# gpio
->>>> +include/linux/gpio/
->>>> +include/linux/gpio/consumer.h
->>>> +
->>>>   # wwan drivers
->>>>   include/uapi/linux/usb/cdc.h
->>>>   include/uapi/linux/usb/cdc-wdm.h
->>>>
->>> Is this correct? backports does not provide the implementation of the
->>> functions in include/linux/gpio/consumer.h and it will result in hard to
->>> debug problems with some function signature is different in our version
->>> of consumer.h and the version in the kernel.
->>>
->>> I am against backporting this and would add an empty version of this
->>> header.
->>
->> config GPIO_DEVRES
->>          def_bool y
->>          depends on HAS_IOMEM
->>
->> Indeed, we can't backport this yet as we have no support for in-kernel
->> functionality to be backported yet.
->>
->> Reverted.
-> 
-> So, with just an empty header we get:
+On 07/23/2014 10:38 AM, Stefan Assmann wrote:
+> While doing a make allmodconfig I noticed the following:
 >   CC [M]  /dev/shm/backports-next/drivers/media/i2c/adv7604.o
-> /dev/shm/backports-next/drivers/media/i2c/adv7604.c: In function
-> ‘adv7604_set_hpd’:
-> /dev/shm/backports-next/drivers/media/i2c/adv7604.c:613:3: error:
-> implicit declaration of function ‘gpiod_set_value_cansleep’
-> [-Werror=implicit-function-declaration]
->    gpiod_set_value_cansleep(state->hpd_gpio[i], hpd & BIT(i));
->    ^
-> /dev/shm/backports-next/drivers/media/i2c/adv7604.c: In function
-> ‘adv7604_probe’:
-> /dev/shm/backports-next/drivers/media/i2c/adv7604.c:2797:4: error:
-> implicit declaration of function ‘devm_gpiod_get_index’
-> [-Werror=implicit-function-declaration]
->     devm_gpiod_get_index(&client->dev, "hpd", i);
->     ^
-> /dev/shm/backports-next/drivers/media/i2c/adv7604.c:2796:22: warning:
-> assignment makes pointer from integer without a cast [enabled by default]
->    state->hpd_gpio[i] =
->                       ^
-> /dev/shm/backports-next/drivers/media/i2c/adv7604.c:2801:3: error:
-> implicit declaration of function ‘gpiod_direction_output’
-> [-Werror=implicit-function-declaration]
->    gpiod_direction_output(state->hpd_gpio[i], 0);
+> /dev/shm/backports-next/drivers/media/i2c/adv7604.c:31:33: fatal error: linux/gpio/consumer.h: No such file or directory
 > 
-> If we can't backport these, what do we do? Disable the module for now?
+> linux/gpio/consumer.h cannot be backported currently, as functions rely
+> on in-kernel functionality (GPIO_DEVRES). Bumping the minimum required
+> kernel version for ADV7604 to 3.13 where the header got introduced.
 > 
->   Stefan
-
-Hi,
-
-if you do not need this driver removing it or make it depend on kernel
-3.13 in which the header was added should be fine.
+> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+> ---
+>  dependencies | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/dependencies b/dependencies
+> index c38098c..119d5ca 100644
+> --- a/dependencies
+> +++ b/dependencies
+> @@ -101,7 +101,7 @@ VIDEO_RENESAS_VSP1 3.4
+>  VIDEO_MEM2MEM_DEINTERLACE 3.3
+>  MEDIA_TUNER_E4000 3.4
+>  DVB_USB_RTL28XXU 3.4
+> -VIDEO_ADV7604 3.3
+> +VIDEO_ADV7604 3.13
+>  
+>  BCMA_DRIVER_MIPS 3.3
+>  SSB_DRIVER_MIPS 3.3
+> 
+Thank you for the patch, it was applied and is included in
+backports-20140710
 
 Hauke
