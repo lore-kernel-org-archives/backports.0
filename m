@@ -1,181 +1,52 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mailout4.w2.samsung.com ([211.189.100.14]:20358 "EHLO
-	usmailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932697AbaGWR5b (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 23 Jul 2014 13:57:31 -0400
-Date: Wed, 23 Jul 2014 14:57:24 -0300
-From: Mauro Carvalho Chehab <m.chehab@samsung.com>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	linux-media@vger.kernel.org
-Subject: Re: Removal of regulator framework
-Message-id: <20140723145724.3102ae3a.m.chehab@samsung.com> (sfid-20140723_195746_937607_385E5F65)
-In-reply-to: <CAB=NE6WvY1ZnwogYR0YLuiMUOeRvqeEjhhnLHUpeJjteSTwfGA@mail.gmail.com>
-References: <53CA9A77.6060409@hauke-m.de>
- <CAB=NE6WvY1ZnwogYR0YLuiMUOeRvqeEjhhnLHUpeJjteSTwfGA@mail.gmail.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=US-ASCII
+Received: from test.hauke-m.de ([5.39.93.123]:55528 "EHLO test.hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933651AbaGWWLe (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 23 Jul 2014 18:11:34 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 01/11] backports: remove parameter from dma_buf_export()
+Date: Thu, 24 Jul 2014 00:11:18 +0200
+Message-Id: <1406153488-23896-2-git-send-email-hauke@hauke-m.de> (sfid-20140724_001136_863851_019C4662)
+In-Reply-To: <1406153488-23896-1-git-send-email-hauke@hauke-m.de>
+References: <1406153488-23896-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Em Wed, 23 Jul 2014 10:13:28 -0700
-"Luis R. Rodriguez" <mcgrof@do-not-panic.com> escreveu:
+dma_buf_export() got a new parameter which is not available in older
+kernel versions.
 
-> On Sat, Jul 19, 2014 at 9:19 AM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
-> > Maintaining the regulator drivers in backports costs some time and I do
-> > not need them. Is anybody using the regulator drivers from backports? I
-> > would like to remove them.
-> 
-> That came simply from collateral of backporting media drivers,
-> eventually I started running into device drivers that used the
-> regulator framework. Since we have tons of media drivers perhaps the
-> more sensible thing to do is to white list a set of media divers that
-> people actually care and then we just nuke both regulator and media
-> drivers that no one cares for. For that though I'd like to ask media
-> folks.
+This was once removed in this commit and is needed again:
+commit 9981d1abf4b52e84a432fc9bdfbdd30d1838819d
+Author: Hauke Mehrtens <hauke@hauke-m.de>
+Date:   Mon Jun 16 21:02:25 2014 +0200
 
-Hi Luis,
+    backports: Revert "remove parameter from dma_buf_export()"
 
-The drivers that currently use regulators are mostly the ones at
-drivers/media/platform, plus the corresponding I2C drivers for their
-webcam sensors, under drivers/media/i2c.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/dma-buf.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-I think that there's one exception though: em28xx. This driver can use
-some sensor drivers, as it supports a few webcams. This is one of
-the most used USB media driver, as there are lots of USB supported
-on it, supporting 4 types of devices on it: analog TV, capture card,
-digital TV and webcam.
+diff --git a/backport/backport-include/linux/dma-buf.h b/backport/backport-include/linux/dma-buf.h
+index 363b86f..13a225e 100644
+--- a/backport/backport-include/linux/dma-buf.h
++++ b/backport/backport-include/linux/dma-buf.h
+@@ -5,4 +5,13 @@
+ #include_next <linux/dma-buf.h>
+ #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
++#define dma_buf_export(priv, ops, size, flags, resv)	\
++	dma_buf_export(priv, ops, size, flags)
++#elif LINUX_VERSION_CODE < KERNEL_VERSION(3,17,0)
++#undef dma_buf_export
++#define dma_buf_export(priv, ops, size, flags, resv)	\
++	dma_buf_export_named(priv, ops, size, flags, KBUILD_MODNAME)
++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) */
++
+ #endif /* _BACKPORT_DMA_BUF_H__ */
+-- 
+1.9.1
 
-The webcam part of em28xx is not that relevant, as there are very few
-models using it. However, currently, it is not possible to just
-disable webcam support. It shouldn't be hard to make webcam support
-optional on it, as it has already sub-drivers for V4L2, DVB, ALSA and
-remote controller. One additional driver for webcam, that could be
-disabled at the backport tree shouldn't be hard to do. If you want it,
-patches are welcome.
-
-> Here's a list of media drivers I know SUSE does support, in case that
-> helps. Right now backports carries all of drivers/media though.
-> 
->                 drivers/media/common/btcx-risc                  # some
-> code shared by bttv and cx88xx drivers
->                 drivers/media/common/cx2341x
->                 drivers/media/common/saa7146/saa7146
->                 drivers/media/common/saa7146/saa7146_vv
->                 drivers/media/common/tveeprom
->                 drivers/media/i2c/adv7170                       #
-> Analog Devices ADV7170 video encoder driver
->                 drivers/media/i2c/adv7175                       #
-> Analog Devices ADV7175 video encoder driver
->                 drivers/media/i2c/bt819                         #
-> Brooktree-819 video decoder driver
->                 drivers/media/i2c/bt856                         #
-> Brooktree-856A video encoder driver
->                 drivers/media/i2c/cs5345
->                 drivers/media/i2c/cs53l32a                      #
-> cs53l32a (Adaptec AVC-2010 and AVC-2410) i2c ivtv driver
->                 drivers/media/i2c/cx25840/cx25840               #
-> Conexant CX25840 audio/video decoder driver
->                 drivers/media/i2c/ir-kbd-i2c                    #
-> input driver for i2c IR remote controls
->                 drivers/media/i2c/ks0127
->                 drivers/media/i2c/m52790
->                 drivers/media/i2c/msp3400                       #
-> device driver for msp34xx TV sound processor
->                 drivers/media/i2c/saa6588                       #
-> Philips SAA6588 RDS decoder
->                 drivers/media/i2c/saa7110                       #
-> Philips SAA7110 video decoder driver
->                 drivers/media/i2c/saa7115                       #
-> Philips SAA7111/13/14/15/18 video decoder driver
->                 drivers/media/i2c/saa7127                       #
-> Philips SAA7127/SAA7129 video encoder driver
->                 drivers/media/i2c/saa717x
->                 drivers/media/i2c/saa7185                       #
-> Philips SAA7185 video encoder driver
->                 drivers/media/i2c/tda7432                       # bttv
-> driver for the tda7432 audio processor chip
->                 drivers/media/i2c/tda9840
->                 drivers/media/i2c/tea6415c
->                 drivers/media/i2c/tea6420
->                 drivers/media/i2c/tvaudio                       #
-> device driver for various i2c TV sound decoder / audiomux chips
->                 drivers/media/i2c/tvp5150                       #
-> Texas Instruments TVP5150A(M) video decoder driver
->                 drivers/media/i2c/upd64031a
->                 drivers/media/i2c/upd64083
->                 drivers/media/i2c/vp27smpx
->                 drivers/media/i2c/vpx3220                       #
-> vpx3220a/vpx3216b/vpx3214c video encoder driver
->                 drivers/media/i2c/wm8739
->                 drivers/media/i2c/wm8775
->                 drivers/media/pci/bt8xx/bttv
->                 drivers/media/pci/cx88/cx88-alsa
->                 drivers/media/pci/cx88/cx88-blackbird
->                 drivers/media/pci/cx88/cx8800
->                 drivers/media/pci/cx88/cx8802
->                 drivers/media/pci/cx88/cx88xx
->                 drivers/media/pci/ivtv/ivtv
->                 drivers/media/pci/ivtv/ivtvfb
->                 drivers/media/pci/meye/meye
->                 drivers/media/pci/saa7134/saa6752hs             #
-> device driver for saa6752hs MPEG2 encoder
->                 drivers/media/pci/saa7134/saa7134
->                 drivers/media/pci/saa7134/saa7134-alsa
->                 drivers/media/pci/saa7134/saa7134-empress
->                 drivers/media/pci/saa7146/hexium_gemini
->                 drivers/media/pci/saa7146/hexium_orion
->                 drivers/media/pci/saa7146/mxb                   #
-> video4linux-2 driver for the Siemens-Nixdorf 'Multimedia eXtension
-> board'
->                 drivers/media/pci/zoran/videocodec              #
-> Intermediate API module for video codecs
->                 drivers/media/pci/zoran/zr36016
->                 drivers/media/pci/zoran/zr36050
->                 drivers/media/pci/zoran/zr36060
->                 drivers/media/pci/zoran/zr36067
->                 drivers/media/platform/vivi
->                 drivers/media/radio/dsbr100
->                 drivers/media/radio/radio-maxiradio             #
-> Radio driver for the Guillemot Maxi Radio FM2000 radio.
->                 drivers/media/radio/si470x/radio-usb-si470x
->                 drivers/media/radio/tea575x
->                 drivers/media/rc/ati_remote
->                 drivers/media/rc/rc_core
->                 drivers/media/rc/winbond-cir
->                 drivers/media/tuners/mt2060
->                 drivers/media/tuners/mt20xx
->                 drivers/media/tuners/mt2131
->                 drivers/media/tuners/mt2266
->                 drivers/media/tuners/mxl5005s
->                 drivers/media/tuners/mxl5007t
->                 drivers/media/tuners/qt1010
->                 drivers/media/tuners/tda18271
->                 drivers/media/tuners/tda827x
->                 drivers/media/tuners/tda8290
->                 drivers/media/tuners/tda9887
->                 drivers/media/tuners/tea5761
->                 drivers/media/tuners/tea5767
->                 drivers/media/tuners/tuner-simple
->                 drivers/media/tuners/tuner-types
->                 drivers/media/tuners/tuner-xc2028
->                 drivers/media/tuners/xc5000
->                 drivers/media/usb/em28xx/em28xx                 #
-> driver for Empia EM2800/EM2820/2840 USB video capture device
->                 drivers/media/usb/em28xx/em28xx-alsa
->                 drivers/media/usb/usbvision/usbvision
->                 drivers/media/usb/uvc/uvcvideo
->                 drivers/media/v4l2-core/tuner                   #
-> device driver for various TV and TV+FM radio tuners
->                 drivers/media/v4l2-core/v4l2-common
->                 drivers/media/v4l2-core/videobuf-core
->                 drivers/media/v4l2-core/videobuf-dma-sg
->                 drivers/media/v4l2-core/videobuf-vmalloc
->                 drivers/media/v4l2-core/videobuf2_core
->                 drivers/media/v4l2-core/videobuf2_memops
->                 drivers/media/v4l2-core/videobuf2_vmalloc
->                 drivers/media/v4l2-core/videodev                #
-> Device registrar for Video4Linux drivers
-> 
->  Luis
