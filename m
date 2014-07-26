@@ -1,51 +1,57 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from test.hauke-m.de ([5.39.93.123]:55558 "EHLO test.hauke-m.de"
+Received: from mail.kernel.org ([198.145.19.201]:33846 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933640AbaGWW1X (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 23 Jul 2014 18:27:23 -0400
-Message-ID: <53D036C9.7080508@hauke-m.de> (sfid-20140724_002724_962808_CC478F1A)
-Date: Thu, 24 Jul 2014 00:27:21 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
+	id S1751449AbaGZRCt (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 26 Jul 2014 13:02:49 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id AC42D2015D
+	for <backports@vger.kernel.org>; Sat, 26 Jul 2014 17:02:48 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+	by mail.kernel.org (Postfix) with ESMTP id 926F32015A
+	for <backports@vger.kernel.org>; Sat, 26 Jul 2014 17:02:47 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 81151] New: backports installs /etc/depmod.conf to prefer
+ updates/ over kernel/ - should be /etc/depmod.d/updates.conf
+Date: Sat, 26 Jul 2014 17:02:47 +0000
+Message-ID: <bug-81151-58281@https.bugzilla.kernel.org/> (sfid-20140726_190252_002357_D286EB74)
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-To: Stefan Assmann <sassmann@kpanic.de>, backports@vger.kernel.org
-CC: mcgrof@do-not-panic.com
-Subject: Re: [PATCH] backports: bump minimum kernel version for ADV7604 to
- 3.13
-References: <1406104682-4529-1-git-send-email-sassmann@kpanic.de>
-In-Reply-To: <1406104682-4529-1-git-send-email-sassmann@kpanic.de>
-Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 07/23/2014 10:38 AM, Stefan Assmann wrote:
-> While doing a make allmodconfig I noticed the following:
->   CC [M]  /dev/shm/backports-next/drivers/media/i2c/adv7604.o
-> /dev/shm/backports-next/drivers/media/i2c/adv7604.c:31:33: fatal error: linux/gpio/consumer.h: No such file or directory
-> 
-> linux/gpio/consumer.h cannot be backported currently, as functions rely
-> on in-kernel functionality (GPIO_DEVRES). Bumping the minimum required
-> kernel version for ADV7604 to 3.13 where the header got introduced.
-> 
-> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
-> ---
->  dependencies | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/dependencies b/dependencies
-> index c38098c..119d5ca 100644
-> --- a/dependencies
-> +++ b/dependencies
-> @@ -101,7 +101,7 @@ VIDEO_RENESAS_VSP1 3.4
->  VIDEO_MEM2MEM_DEINTERLACE 3.3
->  MEDIA_TUNER_E4000 3.4
->  DVB_USB_RTL28XXU 3.4
-> -VIDEO_ADV7604 3.3
-> +VIDEO_ADV7604 3.13
->  
->  BCMA_DRIVER_MIPS 3.3
->  SSB_DRIVER_MIPS 3.3
-> 
-Thank you for the patch, it was applied and is included in
-backports-20140710
+https://bugzilla.kernel.org/show_bug.cgi?id=81151
 
-Hauke
+            Bug ID: 81151
+           Summary: backports installs /etc/depmod.conf to prefer updates/
+                    over kernel/ - should be /etc/depmod.d/updates.conf
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: 3.12.21
+          Hardware: All
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: low
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: doktor5000@arcor.de
+        Regression: No
+
+make install creates /etc/depmod.conf to prefer updates/ over kernel/ modules.
+According to depmod manpage, /etc/depmod.conf is not even considered.
+This is valid for at least
+http://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.15.1/backports-3.15.1-1.tar.xz
+
+Had to move /etc/depmod.conf to /etc/depmod.d/backports.conf (and changed it to
+"search updates built-in").
+After next depmod -a module from updates/ tree got preferred, before it was
+ignored.
+
+
+Please fix.
+
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
