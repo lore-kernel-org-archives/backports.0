@@ -1,41 +1,58 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f51.google.com ([209.85.215.51]:39901 "EHLO
-	mail-la0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932514AbaGWTJp (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 23 Jul 2014 15:09:45 -0400
+Received: from test.hauke-m.de ([5.39.93.123]:34008 "EHLO test.hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752712AbaG0WKz (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 27 Jul 2014 18:10:55 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 8/9] backports: add missing linux/mm.h to airspy
+Date: Mon, 28 Jul 2014 00:10:38 +0200
+Message-Id: <1406499039-16212-9-git-send-email-hauke@hauke-m.de> (sfid-20140728_001059_698025_4CD5E6B3)
+In-Reply-To: <1406499039-16212-1-git-send-email-hauke@hauke-m.de>
+References: <1406499039-16212-1-git-send-email-hauke@hauke-m.de>
 MIME-Version: 1.0
-In-Reply-To: <53D00578.3090906@hauke-m.de>
-References: <53CA9A77.6060409@hauke-m.de> <CAB=NE6WvY1ZnwogYR0YLuiMUOeRvqeEjhhnLHUpeJjteSTwfGA@mail.gmail.com>
- <20140723145724.3102ae3a.m.chehab@samsung.com> <CAB=NE6W3+fRQkxe-TEKVyPSMXWNVr44TNhCwd6g-7nH+83jx=Q@mail.gmail.com>
- <53D00578.3090906@hauke-m.de>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Wed, 23 Jul 2014 12:09:24 -0700
-Message-ID: <CAB=NE6V+T1H1Eoem_C7RoKU_LYYbd7fXL47QbfJ=E_Ur5J7=SA@mail.gmail.com> (sfid-20140723_210947_967243_17838520)
-Subject: Re: Removal of regulator framework
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	linux-media@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Jul 23, 2014 at 11:56 AM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
-> carrying some regularity drivers which are needed for some specific
-> media driver does not look like a big problem. The current problem from
-> my side is that we carry all regularity drivers by default and that
-> causes some problems. Many of these driver are used only on one specific
-> SoC product line and uses their often changing interface, so they break
-> often.
->
-> When all the regulator drivers are only needed for the media driver I
-> would add just add the driver which are actually used by a shipped media
-> driver and nothing more.
+Without this patch I get the following error message when compiling
+against kernel 3.2, all other kernel versions work:
 
-Makes sense. I'm suggesting we can trim even more by only keeping
-media drivers we really should care for and its dependencies. We need
-a white list then, do we want to start off with perhaps the list I
-posted? Media folks, is there anything else we should carry that would
-help the media folks?
+3.2.60/drivers/media/usb/airspy/airspy.c: In function ‘airspy_queue_setup’:
+3.2.60/drivers/media/usb/airspy/airspy.c:506:2: error: implicit declaration of function ‘PAGE_ALIGN’ [-Werror=implicit-function-declaration]
+sizes[0] = PAGE_ALIGN(s->buffersize);
 
-  Luis
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../media/0004-missing-include/airspy.patch            | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+ create mode 100644 patches/collateral-evolutions/media/0004-missing-include/airspy.patch
+
+diff --git a/patches/collateral-evolutions/media/0004-missing-include/airspy.patch b/patches/collateral-evolutions/media/0004-missing-include/airspy.patch
+new file mode 100644
+index 0000000..ee31d01
+--- /dev/null
++++ b/patches/collateral-evolutions/media/0004-missing-include/airspy.patch
+@@ -0,0 +1,18 @@
++Without this patch I get the following error message when compiling 
++against kernel 3.2, all other kernel versions work:
++
++3.2.60/drivers/media/usb/airspy/airspy.c: In function ‘airspy_queue_setup’:
++3.2.60/drivers/media/usb/airspy/airspy.c:506:2: error: implicit declaration of function ‘PAGE_ALIGN’ [-Werror=implicit-function-declaration]
++sizes[0] = PAGE_ALIGN(s->buffersize);
++
++
++--- a/drivers/media/usb/airspy/airspy.c
+++++ b/drivers/media/usb/airspy/airspy.c
++@@ -16,6 +16,7 @@
++ 
++ #include <linux/module.h>
++ #include <linux/slab.h>
+++#include <linux/mm.h>
++ #include <linux/usb.h>
++ #include <media/v4l2-device.h>
++ #include <media/v4l2-ioctl.h>
+-- 
+1.9.1
+
