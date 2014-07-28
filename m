@@ -1,84 +1,38 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from app1b.xlhost.de ([84.200.252.162]:36772 "EHLO app1b.xlhost.de"
+Received: from mail.kernel.org ([198.145.19.201]:34781 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750777AbaGRHuG (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 18 Jul 2014 03:50:06 -0400
-Message-ID: <53C8CFBE.1030208@kpanic.de> (sfid-20140718_095008_999150_BA77BCE6)
-Date: Fri, 18 Jul 2014 09:41:50 +0200
-From: Stefan Assmann <sassmann@kpanic.de>
+	id S1750862AbaG1Dc1 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 27 Jul 2014 23:32:27 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 10CC320123
+	for <backports@vger.kernel.org>; Mon, 28 Jul 2014 03:32:26 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+	by mail.kernel.org (Postfix) with ESMTP id 52DAC20115
+	for <backports@vger.kernel.org>; Mon, 28 Jul 2014 03:32:24 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 64091] backports build error
+Date: Mon, 28 Jul 2014 03:32:24 +0000
+Message-ID: <bug-64091-58281-KIRPzMLpay@https.bugzilla.kernel.org/> (sfid-20140728_053228_587333_5F6616A4)
+In-Reply-To: <bug-64091-58281@https.bugzilla.kernel.org/>
+References: <bug-64091-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: [PATCH] backports: include gpio consumer.h
-References: <1404999110-13791-1-git-send-email-sassmann@kpanic.de> <53C83544.7030306@hauke-m.de> <CAB=NE6VYf61WM094=QaY9+wMe7z_mk8eZeZVgkhr9=9AWrNpFQ@mail.gmail.com>
-In-Reply-To: <CAB=NE6VYf61WM094=QaY9+wMe7z_mk8eZeZVgkhr9=9AWrNpFQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 17.07.2014 23:27, Luis R. Rodriguez wrote:
-> On Thu, Jul 17, 2014 at 1:42 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
->> On 07/10/2014 03:31 PM, Stefan Assmann wrote:
->>> While doing a make allmodconfig I noticed the following:
->>>    CC [M]  /dev/shm/backports-next/drivers/media/i2c/adv7604.o
->>> /dev/shm/backports-next/drivers/media/i2c/adv7604.c:31:33: fatal error: linux/gpio/consumer.h: No such file or directory
->>>
->>> Including the header fixes the error.
->>>
->>> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
->>> ---
->>>   copy-list | 4 ++++
->>>   1 file changed, 4 insertions(+)
->>>
->>> diff --git a/copy-list b/copy-list
->>> index 7ad8972..b52e9f2 100644
->>> --- a/copy-list
->>> +++ b/copy-list
->>> @@ -107,6 +107,10 @@ drivers/net/ethernet/intel/Kconfig
->>>   drivers/net/ethernet/intel/Makefile
->>>   drivers/net/ethernet/intel/igb/
->>>
->>> +# gpio
->>> +include/linux/gpio/
->>> +include/linux/gpio/consumer.h
->>> +
->>>   # wwan drivers
->>>   include/uapi/linux/usb/cdc.h
->>>   include/uapi/linux/usb/cdc-wdm.h
->>>
->> Is this correct? backports does not provide the implementation of the
->> functions in include/linux/gpio/consumer.h and it will result in hard to
->> debug problems with some function signature is different in our version
->> of consumer.h and the version in the kernel.
->>
->> I am against backporting this and would add an empty version of this header.
->
-> config GPIO_DEVRES
->          def_bool y
->          depends on HAS_IOMEM
->
-> Indeed, we can't backport this yet as we have no support for in-kernel
-> functionality to be backported yet.
->
-> Reverted.
+https://bugzilla.kernel.org/show_bug.cgi?id=64091
 
-So, with just an empty header we get:
-   CC [M]  /dev/shm/backports-next/drivers/media/i2c/adv7604.o
-/dev/shm/backports-next/drivers/media/i2c/adv7604.c: In function ‘adv7604_set_hpd’:
-/dev/shm/backports-next/drivers/media/i2c/adv7604.c:613:3: error: implicit declaration of function ‘gpiod_set_value_cansleep’ [-Werror=implicit-function-declaration]
-    gpiod_set_value_cansleep(state->hpd_gpio[i], hpd & BIT(i));
-    ^
-/dev/shm/backports-next/drivers/media/i2c/adv7604.c: In function ‘adv7604_probe’:
-/dev/shm/backports-next/drivers/media/i2c/adv7604.c:2797:4: error: implicit declaration of function ‘devm_gpiod_get_index’ [-Werror=implicit-function-declaration]
-     devm_gpiod_get_index(&client->dev, "hpd", i);
-     ^
-/dev/shm/backports-next/drivers/media/i2c/adv7604.c:2796:22: warning: assignment makes pointer from integer without a cast [enabled by default]
-    state->hpd_gpio[i] =
-                       ^
-/dev/shm/backports-next/drivers/media/i2c/adv7604.c:2801:3: error: implicit declaration of function ‘gpiod_direction_output’ [-Werror=implicit-function-declaration]
-    gpiod_direction_output(state->hpd_gpio[i], 0);
+xerofoify@gmail.com changed:
 
-If we can't backport these, what do we do? Disable the module for now?
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |xerofoify@gmail.com
 
-   Stefan
+--- Comment #7 from xerofoify@gmail.com ---
+Is this bug still open on newest rc kernel , if not can we close it now.
+Nick
+
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
