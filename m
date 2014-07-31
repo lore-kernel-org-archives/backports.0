@@ -1,40 +1,411 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f42.google.com ([209.85.215.42]:33681 "EHLO
-	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751582AbaGQUiz (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 17 Jul 2014 16:38:55 -0400
-Received: by mail-la0-f42.google.com with SMTP id pv20so1700956lab.29
-        for <backports@vger.kernel.org>; Thu, 17 Jul 2014 13:38:54 -0700 (PDT)
+Received: from mail-ig0-f179.google.com ([209.85.213.179]:34513 "EHLO
+	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751349AbaGaQ5Z (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 31 Jul 2014 12:57:25 -0400
+Received: by mail-ig0-f179.google.com with SMTP id h18so5404145igc.0
+        for <backports@vger.kernel.org>; Thu, 31 Jul 2014 09:57:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20140717040223.GA3420@qca.qualcomm.com>
-References: <20140715154756.GB11952@qca.qualcomm.com> <CAB=NE6U2p+mXW4kLaRkVtL0ytk+eMarsOHhzJh8VEeCjr5M8pg@mail.gmail.com>
- <20140717040223.GA3420@qca.qualcomm.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Thu, 17 Jul 2014 13:38:33 -0700
-Message-ID: <CAB=NE6W8dMMXCSrFw5i+XvHjZxo44Cc67SUhp0cxdJa3yDJmKw@mail.gmail.com> (sfid-20140717_223857_385522_FAFE04A9)
-Subject: Re: Backports based on 3.16.0-rc4
-To: Rajkumar Manoharan <rmanohar@qti.qualcomm.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+In-Reply-To: <53D9FD41.2030403@broadcom.com>
+References: <CAEsx0Y-CM-HW5F6K7SoOSn0dgReSakvOt_CX_=OV=XoVnerfDw@mail.gmail.com>
+	<53D9FD41.2030403@broadcom.com>
+Date: Thu, 31 Jul 2014 09:57:24 -0700
+Message-ID: <CAEsx0Y-5tArybyciDDHszocp6y1gyFt9B59dCv7S7CBfmQvqkQ@mail.gmail.com> (sfid-20140731_185731_517013_F6EE77A3)
+Subject: Re: defconfig-ath9k build
+From: Daniel Schultze <kinglag@gmail.com>
+To: Arend van Spriel <arend@broadcom.com>
+Cc: backports@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Jul 16, 2014 at 9:02 PM, Rajkumar Manoharan
-<rmanohar@qti.qualcomm.com> wrote:
-> On Wed, Jul 16, 2014 at 04:25:25PM -0700, Luis R. Rodriguez wrote:
->> On Tue, Jul 15, 2014 at 8:47 AM, Rajkumar Manoharan
->> <rmanohar@qti.qualcomm.com> wrote:
->> > I am in need of the latest backports release based on 3.16.0-rc4. I do
->> > not find it in public server. Please help me to get latest backports
->> > build.
->>
->> I'm afraid backports-3.16-rc1-1 is the latest release. Hopefully Hauke
->> or I can get to an update soon.
->>
-> Thanks Luis. multichannel concurrency support in ath9k is merged in
-> 3.16.0-rc4. For upgrading backports package in QSDK, we need the latest
-> backports build.
+Yes, I'm trying to build directly on the 'Pi and yes kernel headers
+are installed.
 
-Pushed out a 3.16-rc5-1 release just now.
-
- Luis
+On Thu, Jul 31, 2014 at 1:24 AM, Arend van Spriel <arend@broadcom.com> wrote:
+> On 30-07-14 22:32, Daniel Schultze wrote:
+>> Hey guys I was trying to build ath9k drivers for pidora 20 on my
+>> Raspberry Pi but ran into these errors. I don't have any Idea what do
+>> to with them, could you tell me how I could resolve them:
+>
+> Are you trying to build this on your raspberry pi? Do you have kernel
+> headers installed?
+>
+> Regards,
+> Arend
+>
+>> uname -r
+>> 3.12.23-2.20140626git25673c3.rpfr20.armv6hl.bcm2708
+>> make defconfig-ath9k
+>> make
+>> make[5]: `conf' is up to date.
+>> boolean symbol HWMON tested for 'm'? test forced to 'n'
+>> boolean symbol HWMON tested for 'm'? test forced to 'n'
+>> #
+>> # configuration written to .config
+>> #
+>> Building backport-include/backport/autoconf.h ... done.
+>>   CC [M]  /home/dschultze/Downloads/backports-3.15.1-1/compat/main.o
+>> In file included from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/backport/backport.h:4:0,
+>>                  from <command-line>:0:
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/kconfig.h:4:5:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0)
+>>      ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/kconfig.h:4:27:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0)
+>>                            ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/kconfig.h:4:41:
+>> error: missing binary operator before token "("
+>>  #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0)
+>>                                          ^
+>> In file included from include/linux/module.h:9:0,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/module.h:3,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/compat/main.c:1:
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/list.h:6:5:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
+>>      ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/list.h:6:26:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
+>>                           ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/list.h:6:40:
+>> error: missing binary operator before token "("
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
+>>                                         ^
+>> In file included from include/linux/linkage.h:6:0,
+>>                  from include/linux/kernel.h:6,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/kernel.h:3,
+>>                  from include/linux/cache.h:4,
+>>                  from include/linux/time.h:4,
+>>                  from include/linux/stat.h:18,
+>>                  from include/linux/module.h:10,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/module.h:3,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/compat/main.c:1:
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/export.h:7:6:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
+>>       ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/export.h:7:28:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
+>>                             ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/export.h:7:42:
+>> error: missing binary operator before token "("
+>>  #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
+>>                                           ^
+>> In file included from include/linux/dynamic_debug.h:111:0,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/dynamic_debug.h:4,
+>>                  from include/linux/printk.h:236,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/printk.h:5,
+>>                  from include/linux/kernel.h:13,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/kernel.h:3,
+>>                  from include/linux/cache.h:4,
+>>                  from include/linux/time.h:4,
+>>                  from include/linux/stat.h:18,
+>>                  from include/linux/module.h:10,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/module.h:3,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/compat/main.c:1:
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/string.h:6:6:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0))
+>>       ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/string.h:6:27:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0))
+>>                            ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/string.h:6:41:
+>> error: missing binary operator before token "("
+>>  #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0))
+>>                                          ^
+>> In file included from include/linux/printk.h:236:0,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/printk.h:5,
+>>                  from include/linux/kernel.h:13,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/kernel.h:3,
+>>                  from include/linux/cache.h:4,
+>>                  from include/linux/time.h:4,
+>>                  from include/linux/stat.h:18,
+>>                  from include/linux/module.h:10,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/module.h:3,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/compat/main.c:1:
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/dynamic_debug.h:6:5:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
+>>      ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/dynamic_debug.h:6:26:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
+>>                           ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/dynamic_debug.h:6:40:
+>> error: missing binary operator before token "("
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
+>>                                         ^
+>> In file included from include/linux/kernel.h:13:0,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/kernel.h:3,
+>>                  from include/linux/cache.h:4,
+>>                  from include/linux/time.h:4,
+>>                  from include/linux/stat.h:18,
+>>                  from include/linux/module.h:10,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/module.h:3,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/compat/main.c:1:
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/printk.h:9:5:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
+>>      ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/printk.h:9:26:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
+>>                           ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/printk.h:9:40:
+>> error: missing binary operator before token "("
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
+>>                                         ^
+>> In file included from include/linux/cache.h:4:0,
+>>                  from include/linux/time.h:4,
+>>                  from include/linux/stat.h:18,
+>>                  from include/linux/module.h:10,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/module.h:3,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/compat/main.c:1:
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/kernel.h:114:5:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
+>>      ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/kernel.h:114:26:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
+>>                           ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/kernel.h:114:40:
+>> error: missing binary operator before token "("
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,2,0)
+>>                                         ^
+>> In file included from include/linux/atomic.h:4:0,
+>>                  from include/linux/spinlock.h:392,
+>>                  from include/linux/seqlock.h:35,
+>>                  from include/linux/time.h:5,
+>>                  from include/linux/stat.h:18,
+>>                  from include/linux/module.h:10,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/module.h:3,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/compat/main.c:1:
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/asm/atomic.h:6:5:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,1,0)
+>>      ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/asm/atomic.h:6:26:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,1,0)
+>>                           ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/asm/atomic.h:6:40:
+>> error: missing binary operator before token "("
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,1,0)
+>>                                         ^
+>> In file included from include/linux/stat.h:19:0,
+>>                  from include/linux/module.h:10,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/module.h:3,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/compat/main.c:1:
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/uidgid.h:1:6:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
+>>       ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/uidgid.h:1:28:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
+>>                             ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/uidgid.h:1:42:
+>> error: missing binary operator before token "("
+>>  #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
+>>                                           ^
+>> In file included from include/linux/rcupdate.h:43:0,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/rcupdate.h:3,
+>>                  from include/linux/srcu.h:33,
+>>                  from include/linux/notifier.h:15,
+>>                  from include/linux/memory_hotplug.h:6,
+>>                  from include/linux/mmzone.h:797,
+>>                  from include/linux/gfp.h:4,
+>>                  from include/linux/kmod.h:22,
+>>                  from include/linux/module.h:13,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/module.h:3,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/compat/main.c:1:
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/completion.h:6:5:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)
+>>      ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/completion.h:6:26:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)
+>>                           ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/completion.h:6:40:
+>> error: missing binary operator before token "("
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)
+>>                                         ^
+>> In file included from include/linux/srcu.h:33:0,
+>>                  from include/linux/notifier.h:15,
+>>                  from include/linux/memory_hotplug.h:6,
+>>                  from include/linux/mmzone.h:797,
+>>                  from include/linux/gfp.h:4,
+>>                  from include/linux/kmod.h:22,
+>>                  from include/linux/module.h:13,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/module.h:3,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/compat/main.c:1:
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/rcupdate.h:44:5:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34)
+>>      ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/rcupdate.h:44:26:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34)
+>>                           ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/rcupdate.h:44:40:
+>> error: missing binary operator before token "("
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34)
+>>                                         ^
+>> In file included from include/linux/srcu.h:34:0,
+>>                  from include/linux/notifier.h:15,
+>>                  from include/linux/memory_hotplug.h:6,
+>>                  from include/linux/mmzone.h:797,
+>>                  from include/linux/gfp.h:4,
+>>                  from include/linux/kmod.h:22,
+>>                  from include/linux/module.h:13,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/module.h:3,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/compat/main.c:1:
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/workqueue.h:6:6:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0))
+>>       ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/workqueue.h:6:27:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0))
+>>                            ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/workqueue.h:6:41:
+>> error: missing binary operator before token "("
+>>  #if (LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0))
+>>                                          ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/workqueue.h:17:5:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
+>>      ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/workqueue.h:17:26:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
+>>                           ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/workqueue.h:17:40:
+>> error: missing binary operator before token "("
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
+>>                                         ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/workqueue.h:57:5:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
+>>      ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/workqueue.h:57:26:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
+>>                           ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/workqueue.h:57:40:
+>> error: missing binary operator before token "("
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
+>>                                         ^
+>> In file included from include/linux/tracepoint.h:20:0,
+>>                  from include/linux/module.h:18,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/module.h:3,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/compat/main.c:1:
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/static_key.h:6:5:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) /* kernels >= 3.3 */
+>>      ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/static_key.h:6:27:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) /* kernels >= 3.3 */
+>>                            ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/static_key.h:6:41:
+>> error: missing binary operator before token "("
+>>  #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0) /* kernels >= 3.3 */
+>>                                          ^
+>> In file included from include/linux/module.h:18:0,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/module.h:3,
+>>                  from
+>> /home/dschultze/Downloads/backports-3.15.1-1/compat/main.c:1:
+>> include/linux/tracepoint.h:32:20: error: field 'key' has incomplete type
+>>   struct static_key key;
+>>                     ^
+>> In file included from
+>> /home/dschultze/Downloads/backports-3.15.1-1/compat/main.c:1:0:
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/module.h:62:5:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
+>>      ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/module.h:62:26:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
+>>                           ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/module.h:62:40:
+>> error: missing binary operator before token "("
+>>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
+>>                                         ^
+>> In file included from
+>> /home/dschultze/Downloads/backports-3.15.1-1/compat/main.c:4:0:
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/pm_qos.h:6:6:
+>> warning: "LINUX_VERSION_CODE" is not defined [-Wundef]
+>>  #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
+>>       ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/pm_qos.h:6:28:
+>> warning: "KERNEL_VERSION" is not defined [-Wundef]
+>>  #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
+>>                             ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/pm_qos.h:6:42:
+>> error: missing binary operator before token "("
+>>  #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
+>>                                           ^
+>> /home/dschultze/Downloads/backports-3.15.1-1/backport-include/linux/pm_qos.h:9:33:
+>> fatal error: linux/pm_qos_params.h: No such file or directory
+>>  #include <linux/pm_qos_params.h>
+>>                                  ^
+>> compilation terminated.
+>> make[6]: *** [/home/dschultze/Downloads/backports-3.15.1-1/compat/main.o]
+>> Error 1
+>> make[5]: *** [/home/dschultze/Downloads/backports-3.15.1-1/compat] Error 2
+>> make[4]: *** [_module_/home/dschultze/Downloads/backports-3.15.1-1] Error 2
+>> make[3]: *** [modules] Error 2
+>> make[2]: *** [modules] Error 2
+>> make[1]: *** [modules] Error 2
+>> make: *** [default] Error 2
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe backports" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>
