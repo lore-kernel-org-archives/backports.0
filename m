@@ -1,39 +1,71 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:37841 "EHLO mail.kernel.org"
+Received: from test.hauke-m.de ([5.39.93.123]:44935 "EHLO test.hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752962AbaHUO4X (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 21 Aug 2014 10:56:23 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 3BD54201BA
-	for <backports@vger.kernel.org>; Thu, 21 Aug 2014 14:56:22 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 89F7420172
-	for <backports@vger.kernel.org>; Thu, 21 Aug 2014 14:56:21 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1751687AbaHIOrq (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 9 Aug 2014 10:47:46 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Subject: [Bug 73861] AWUS 036NHR v.2 8188RU cant associate and cant capture
- handshake.
-Date: Thu, 21 Aug 2014 14:56:21 +0000
-Message-ID: <bug-73861-58281-hxR4yqwFRl@https.bugzilla.kernel.org/> (sfid-20140821_165628_520859_3B9299FE)
-In-Reply-To: <bug-73861-58281@https.bugzilla.kernel.org/>
-References: <bug-73861-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 1/6] backports: add ktime_get_raw()
+Date: Sat,  9 Aug 2014 16:47:34 +0200
+Message-Id: <1407595659-10396-2-git-send-email-hauke@hauke-m.de> (sfid-20140809_164751_266688_44776432)
+In-Reply-To: <1407595659-10396-1-git-send-email-hauke@hauke-m.de>
+References: <1407595659-10396-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=73861
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/ktime.h | 12 ++++++++++++
+ backport/compat/backport-3.17.c         | 12 ++++++++++++
+ 2 files changed, 24 insertions(+)
+ create mode 100644 backport/backport-include/linux/ktime.h
 
-Alan <alan@lxorguk.ukuu.org.uk> changed:
-
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |alan@lxorguk.ukuu.org.uk
-     Kernel Version|Linux kali                  |3.12.6-2
-                   |3.12-kali1-686-pae #1 SMP   |
-                   |Debian 3.12.6-2kali1        |
-                   |(2014-01-06) i686 GNU       |
-
+diff --git a/backport/backport-include/linux/ktime.h b/backport/backport-include/linux/ktime.h
+new file mode 100644
+index 0000000..adefc27
+--- /dev/null
++++ b/backport/backport-include/linux/ktime.h
+@@ -0,0 +1,12 @@
++#ifndef __BACKPORT_LINUX_KTIME_H
++#define __BACKPORT_LINUX_KTIME_H
++#include_next <linux/ktime.h>
++#include <linux/version.h>
++
++#if  LINUX_VERSION_CODE < KERNEL_VERSION(3,17,0)
++#define ktime_get_raw LINUX_BACKPORT(ktime_get_raw)
++extern ktime_t ktime_get_raw(void);
++
++#endif /* < 3.17 */
++
++#endif /* __BACKPORT_LINUX_KTIME_H */
+diff --git a/backport/compat/backport-3.17.c b/backport/compat/backport-3.17.c
+index 9cc0a82..567f0c3 100644
+--- a/backport/compat/backport-3.17.c
++++ b/backport/compat/backport-3.17.c
+@@ -10,6 +10,7 @@
+ #include <linux/wait.h>
+ #include <linux/sched.h>
+ #include <linux/export.h>
++#include <linux/ktime.h>
+ 
+ int bit_wait(void *word)
+ {
+@@ -25,3 +26,14 @@ int bit_wait_io(void *word)
+ }
+ EXPORT_SYMBOL_GPL(bit_wait_io);
+ 
++/**
++ * ktime_get_raw - Returns the raw monotonic time in ktime_t format
++ */
++ktime_t ktime_get_raw(void)
++{
++	struct timespec ts;
++
++	getrawmonotonic(&ts);
++	return timespec_to_ktime(ts);
++}
++EXPORT_SYMBOL_GPL(ktime_get_raw);
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+1.9.1
+
