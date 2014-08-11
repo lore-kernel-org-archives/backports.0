@@ -1,50 +1,28 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:64426 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756008AbaHHMBW (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 8 Aug 2014 08:01:22 -0400
-From: Stefan Assmann <sassmann@kpanic.de>
+Received: from vms173023pub.verizon.net ([206.46.173.23]:65007 "EHLO
+	vms173023pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751429AbaHKUVb (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 11 Aug 2014 16:21:31 -0400
+Received: from [192.168.1.4] ([unknown] [173.66.161.182])
+ by vms173023.mailsrvcs.net
+ (Sun Java(tm) System Messaging Server 7u2-7.02 32bit (built Apr 16 2009))
+ with ESMTPA id <0NA50000XPRFNRR0@vms173023.mailsrvcs.net> for
+ backports@vger.kernel.org; Mon, 11 Aug 2014 14:21:16 -0500 (CDT)
+Message-id: <53E917AB.3020002@verizon.net> (sfid-20140811_222133_279913_89FD0CDC)
+Date: Mon, 11 Aug 2014 15:21:15 -0400
+From: "C. McPherson" <ccmcphe@verizon.net>
+MIME-version: 1.0
 To: backports@vger.kernel.org
-Cc: mcgrof@do-not-panic.com, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH] backports: irq_get_trigger_type requires CONFIG_HAVE_GENERIC_HARDIRQS=y
-Date: Fri,  8 Aug 2014 14:00:26 +0200
-Message-Id: <1407499226-24011-1-git-send-email-sassmann@kpanic.de> (sfid-20140808_140125_548190_F1D8047A)
+Subject: Netlink Question
+Content-type: text/plain; charset=utf-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Only backport irq_get_trigger_type on architectures that have
-CONFIG_HAVE_GENERIC_HARDIRQS=y. Otherwise we end up with:
+I have some private WiFi ioctl's that are associated with a couple of 
+drivers and I would like to convert those private ioctl's into netlink. 
+Does anyone know if there is any documentation on this or a URL that I 
+could reference before I attempt?
 
-In file included from drivers/pci/msi.c:11:0:
-backport/backport-include/linux/irq.h: In function 'irq_get_trigger_type':
-backport/backport-include/linux/irq.h:9:9: error: implicit declaration
-of function 'irq_get_irq_data' [-Werror=implicit-function-declaration]
-  struct irq_data *d = irq_get_irq_data(irq);
-
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
----
- backport/backport-include/linux/irq.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/backport/backport-include/linux/irq.h b/backport/backport-include/linux/irq.h
-index 1738e9b..29b543b 100644
---- a/backport/backport-include/linux/irq.h
-+++ b/backport/backport-include/linux/irq.h
-@@ -2,6 +2,7 @@
- #define __BACKPORT_LINUX_IRQ_H
- #include_next <linux/irq.h>
- 
-+#ifdef CONFIG_HAVE_GENERIC_HARDIRQS
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
- #define irq_get_trigger_type LINUX_BACKPORT(irq_get_trigger_type)
- static inline u32 irq_get_trigger_type(unsigned int irq)
-@@ -10,5 +11,6 @@ static inline u32 irq_get_trigger_type(unsigned int irq)
- 	return d ? irqd_get_trigger_type(d) : 0;
- }
- #endif
-+#endif /* CONFIG_HAVE_GENERIC_HARDIRQS */
- 
- #endif /* __BACKPORT_LINUX_IRQ_H */
--- 
-1.9.3
+Thanks in advance
+Clyde
 
