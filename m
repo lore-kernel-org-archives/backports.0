@@ -1,42 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mailout01.c03.mtsvc.net ([72.47.247.113]:50955 "EHLO
-	mailout01.c03.mtsvc.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752198AbaHSOoS (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 19 Aug 2014 10:44:18 -0400
-From: Jacob Siverskog <jacob@teenageengineering.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org,
-	Jacob Siverskog <jacob@teenageengineering.com>
-Subject: [PATCH] backports: always use absolute path to output directory, less probability of pycocci failure.
-Date: Tue, 19 Aug 2014 16:26:12 +0200
-Message-Id: <1408458372-17508-1-git-send-email-jacob@teenageengineering.com> (sfid-20140819_164420_597616_51B14F1F)
+Received: from s3.sipsolutions.net ([5.9.151.49]:53672 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752034AbaHKGiV (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 11 Aug 2014 02:38:21 -0400
+Message-ID: <1407739093.1718.0.camel@jlt4.sipsolutions.net> (sfid-20140811_083823_481212_C030DBDF)
+Subject: Re: [PATCH] backports: fix mconf compilation on OpenSUSE factory
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: hauke@hauke-m.de, backports@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Date: Mon, 11 Aug 2014 08:38:13 +0200
+In-Reply-To: <1407597803-11371-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20140809_172333_446755_55AB6E1D)
+References: <1407597803-11371-1-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20140809_172333_446755_55AB6E1D)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-While running gentree.py I got error messages such as 'Failed to
-process SmPL patch
-collateral-evolutions/generic/0001-group-attr/0001-group_attr_class.cocci',
-due to incorrect path handling. This patch always makes gentree always
-call pycocci with the absolute path to the output directory.
+On Sat, 2014-08-09 at 08:23 -0700, Luis R. Rodriguez wrote:
+> From: "Luis R. Rodriguez" <mcgrof@suse.com>
+> 
+> On OpenSUSE factory 'make menuconfig' fails to compile with:
+> 
+> cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2
+> -fomit-frame-pointer -DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o
+> lxdialog/yesno.o lxdialog/yesno.c
+> cc -Wl,--no-as-needed -lncursesw  mconf.o zconf.tab.o
+> lxdialog/checklist.o lxdialog/inputbox.o lxdialog/menubox.o
+> lxdialog/textbox.o lxdialog/util.o lxdialog/yesno.o   -o mconf
+> /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../x86_64-suse-linux/bin/ld:
+> /lib64/libncursesw.so.5: undefined reference to symbol 'acs_map'
+> /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/libtinfo.so:
+> error adding symbols: DSO missing from command line
+> collect2: error: ld returned 1 exit status
+> 
+> This is fixed by linking with -ltinfo. I've test builded this on
+> Debian and OpenSUSE factory.
 
-Signed-off-by: Jacob Siverskog <jacob@teenageengineering.com>
----
- gentree.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I have a vague feeling that we used to have this and it broke somewhere
+else, and it was supposed to get added via check-lxdialog.sh...
 
-diff --git a/gentree.py b/gentree.py
-index 5fe6996..9b4db98 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -725,7 +725,7 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
-         extra_spatch_args = []
-         if args.profile_cocci:
-             cmd.append('--profile-cocci')
--        cmd.append(args.outdir)
-+        cmd.append(os.path.abspath(args.outdir))
-         print_name = cocci_file[prefix_len:]
-         if args.verbose:
-             logwrite("Applying SmPL patch %s" % print_name)
--- 
-1.8.3.2
+Please look in the list archives for this, I'm not convinced this is
+right.
+
+johannes
 
