@@ -1,32 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from test.hauke-m.de ([5.39.93.123]:45613 "EHLO test.hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751271AbaHJWKJ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 10 Aug 2014 18:10:09 -0400
-Received: from [IPv6:2001:470:7259:0:f44f:fbb9:1b8d:d958] (unknown [IPv6:2001:470:7259:0:f44f:fbb9:1b8d:d958])
-	by test.hauke-m.de (Postfix) with ESMTPSA id 1A1382000B
-	for <backports@vger.kernel.org>; Mon, 11 Aug 2014 00:10:08 +0200 (CEST)
-Message-ID: <53E7EDBB.5020606@hauke-m.de> (sfid-20140811_001010_719878_FA2E6B00)
-Date: Mon, 11 Aug 2014 00:10:03 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail-wg0-f46.google.com ([74.125.82.46]:58462 "EHLO
+	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751852AbaHLJci convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 12 Aug 2014 05:32:38 -0400
 MIME-Version: 1.0
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: backports-3.16-1 and backports-3.15.9-1 are out
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <53E9D38B.1060509@broadcom.com>
+References: <53E917AB.3020002@verizon.net> <53E9D38B.1060509@broadcom.com>
+From: Krishna Chaitanya <chaitanya.mgit@gmail.com>
+Date: Tue, 12 Aug 2014 15:02:16 +0530
+Message-ID: <CABPxzYK3wwGigXnPL7ZoQYTyenqf0kcNs4naxB2+8bsdeARj9g@mail.gmail.com> (sfid-20140812_113240_974171_E6BA839C)
+Subject: Re: Netlink Question
+To: Arend van Spriel <arend@broadcom.com>
+Cc: "C. McPherson" <ccmcphe@verizon.net>, backports@vger.kernel.org,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backports-3.16-1 and backports-3.15.9-1, based on kernel 3.16 and 3.15.9
-are out now.
-
-http://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.16/backports-3.16-1.tar.xz
-
-http://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.15.9/backports-3.15.9-1.tar.xz
-
-The source code can be found here:
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
-
-All the latest releases are listed here:
-http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
-
-Hauke
+On Tue, Aug 12, 2014 at 2:12 PM, Arend van Spriel <arend@broadcom.com> wrote:
+>
+> + linux-wireless
+>
+> Not really a backports question so adding linux-wireless
+>
+> On 08/11/2014 09:21 PM, C. McPherson wrote:
+>>
+>> I have some private WiFi ioctl's that are associated with a couple of
+>> drivers and I would like to convert those private ioctl's into netlink.
+>> Does anyone know if there is any documentation on this or a URL that I
+>> could reference before I attempt?
+>
+>
+> I guess the "private WiFi ioctl's" you are referring to are the ones used in Android wpa_supplicant driver_cmd lib? There is no real cookbook on how to add nl80211 commands (maybe I am wrong here), but there are sufficient patches to be found in the linux-wireless archive. A recent one about key management offload adds a couple of commands and attributes which may give an idea what is needed:
+>
+> http://mid.gmane.org/1406076875-8549-1-git-send-email-clanctot@qca.qualcomm.com
+>
+> Obviously, you need to modify the "couple of drivers" to deal with the nl80211 netlink commands.
+>
+We had same requirement in our driver,  we have patched the iw to send
+custom commands specific to our hardware and used NL80211_CMD_TESTMODE
+to process and send it to driver.
