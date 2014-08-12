@@ -1,44 +1,52 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from test.hauke-m.de ([5.39.93.123]:44932 "EHLO test.hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751670AbaHIOrq (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 9 Aug 2014 10:47:46 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/6] backports: add devm_kmalloc_array()
-Date: Sat,  9 Aug 2014 16:47:35 +0200
-Message-Id: <1407595659-10396-3-git-send-email-hauke@hauke-m.de> (sfid-20140809_164749_861734_24C1EE24)
-In-Reply-To: <1407595659-10396-1-git-send-email-hauke@hauke-m.de>
-References: <1407595659-10396-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:62726 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752247AbaHLImy (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 12 Aug 2014 04:42:54 -0400
+Message-ID: <53E9D38B.1060509@broadcom.com> (sfid-20140812_104257_295041_52868F2F)
+Date: Tue, 12 Aug 2014 10:42:51 +0200
+From: Arend van Spriel <arend@broadcom.com>
+MIME-Version: 1.0
+To: "C. McPherson" <ccmcphe@verizon.net>
+CC: <backports@vger.kernel.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Subject: Re: Netlink Question
+References: <53E917AB.3020002@verizon.net>
+In-Reply-To: <53E917AB.3020002@verizon.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/device.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
++ linux-wireless
 
-diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
-index 9ed7398..830105d 100644
---- a/backport/backport-include/linux/device.h
-+++ b/backport/backport-include/linux/device.h
-@@ -160,4 +160,15 @@ __ATTRIBUTE_GROUPS(_name)
- extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp);
- #endif
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)
-+#define devm_kmalloc_array LINUX_BACKPORT(devm_kmalloc_array)
-+static inline void *devm_kmalloc_array(struct device *dev,
-+				       size_t n, size_t size, gfp_t flags)
-+{
-+	if (size != 0 && n > SIZE_MAX / size)
-+		return NULL;
-+	return devm_kmalloc(dev, n * size, flags);
-+}
-+#endif
-+
- #endif /* __BACKPORT_DEVICE_H */
--- 
-1.9.1
+Not really a backports question so adding linux-wireless
+
+On 08/11/2014 09:21 PM, C. McPherson wrote:
+> I have some private WiFi ioctl's that are associated with a couple of
+> drivers and I would like to convert those private ioctl's into netlink.
+> Does anyone know if there is any documentation on this or a URL that I
+> could reference before I attempt?
+
+I guess the "private WiFi ioctl's" you are referring to are the ones 
+used in Android wpa_supplicant driver_cmd lib? There is no real cookbook 
+on how to add nl80211 commands (maybe I am wrong here), but there are 
+sufficient patches to be found in the linux-wireless archive. A recent 
+one about key management offload adds a couple of commands and 
+attributes which may give an idea what is needed:
+
+http://mid.gmane.org/1406076875-8549-1-git-send-email-clanctot@qca.qualcomm.com
+
+Obviously, you need to modify the "couple of drivers" to deal with the 
+nl80211 netlink commands.
+
+Regards,
+Arend
+
+> Thanks in advance
+> Clyde
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
