@@ -1,24 +1,58 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f43.google.com ([209.85.215.43]:62949 "EHLO
-	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756192AbaH0ABb (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 26 Aug 2014 20:01:31 -0400
-Received: by mail-la0-f43.google.com with SMTP id gi9so13177886lab.2
-        for <backports@vger.kernel.org>; Tue, 26 Aug 2014 17:01:30 -0700 (PDT)
-MIME-Version: 1.0
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Tue, 26 Aug 2014 19:01:10 -0500
-Message-ID: <CAB=NE6UsUHZx0rxDe-zAxFE7_4CGP8Sk+iYpu39NtOd9XFyybQ@mail.gmail.com> (sfid-20140827_020134_279322_41833326)
-Subject: Slides from backporting with SmPL talk - Linuxcon 2014
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: Yoshitake Kobayashi <yoshitake.kobayashi@toshiba.co.jp>
-Content-Type: text/plain; charset=UTF-8
+Received: from vms173025pub.verizon.net ([206.46.173.25]:60828 "EHLO
+	vms173025pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751899AbaHMTBh (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 13 Aug 2014 15:01:37 -0400
+Message-id: <53EBB602.7060901@verizon.net> (sfid-20140813_210139_761268_DB27301B)
+Date: Wed, 13 Aug 2014 15:01:22 -0400
+From: "C. McPherson" <ccmcphe@verizon.net>
+MIME-version: 1.0
+To: Krishna Chaitanya <chaitanya.mgit@gmail.com>,
+	Arend van Spriel <arend@broadcom.com>
+Cc: backports@vger.kernel.org,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Subject: Re: Netlink Question
+References: <53E917AB.3020002@verizon.net> <53E9D38B.1060509@broadcom.com>
+ <CABPxzYK3wwGigXnPL7ZoQYTyenqf0kcNs4naxB2+8bsdeARj9g@mail.gmail.com>
+In-reply-to: <CABPxzYK3wwGigXnPL7ZoQYTyenqf0kcNs4naxB2+8bsdeARj9g@mail.gmail.com>
+Content-type: text/plain; charset=windows-1252; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Some folks asked for slides for the talk I gave at Linuxcon in
-Chicago. Here they are:
 
-https://docs.google.com/presentation/d/1sRyl36l6TQneDODA3uuGFFpCYKMyEq15JtAW5G0Sbgk/pub?start=false&loop=false&delayms=3000
+On 08/12/2014 05:32 AM, Krishna Chaitanya wrote:
+> On Tue, Aug 12, 2014 at 2:12 PM, Arend van Spriel <arend@broadcom.com> wrote:
+>> + linux-wireless
+>>
+>> Not really a backports question so adding linux-wireless
+>>
+>> On 08/11/2014 09:21 PM, C. McPherson wrote:
+>>> I have some private WiFi ioctl's that are associated with a couple of
+>>> drivers and I would like to convert those private ioctl's into netlink.
+>>> Does anyone know if there is any documentation on this or a URL that I
+>>> could reference before I attempt?
+>>
+>> I guess the "private WiFi ioctl's" you are referring to are the ones used in Android wpa_supplicant driver_cmd lib? There is no real cookbook on how to add nl80211 commands (maybe I am wrong here), but there are sufficient patches to be found in the linux-wireless archive. A recent one about key management offload adds a couple of commands and attributes which may give an idea what is needed:
+>>
+>> http://mid.gmane.org/1406076875-8549-1-git-send-email-clanctot@qca.qualcomm.com
+>>
+>> Obviously, you need to modify the "couple of drivers" to deal with the nl80211 netlink commands.
+>>
+> We had same requirement in our driver,  we have patched the iw to send
+> custom commands specific to our hardware and used NL80211_CMD_TESTMODE
+> to process and send it to driver.
+> --
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+Yeah thanks a lot, I could use NL80211_CMD_TESTMODE, I'll have to check 
+that out. I was also thinking about using NL80211_CMD_VENDOR. These 
+IOCTL's are not and will not be used by wpa_supplicant (but I will check 
+out the URL you sent), they are just some custom commands we use with 
+several chipsets.
 
-  Luis
+-Clyde
+
+
+
