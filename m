@@ -1,52 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:62726 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752247AbaHLImy (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 12 Aug 2014 04:42:54 -0400
-Message-ID: <53E9D38B.1060509@broadcom.com> (sfid-20140812_104257_295041_52868F2F)
-Date: Tue, 12 Aug 2014 10:42:51 +0200
-From: Arend van Spriel <arend@broadcom.com>
+Received: from mail.kernel.org ([198.145.19.201]:37841 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752962AbaHUO4X (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 21 Aug 2014 10:56:23 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 3BD54201BA
+	for <backports@vger.kernel.org>; Thu, 21 Aug 2014 14:56:22 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id 89F7420172
+	for <backports@vger.kernel.org>; Thu, 21 Aug 2014 14:56:21 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 73861] AWUS 036NHR v.2 8188RU cant associate and cant capture
+ handshake.
+Date: Thu, 21 Aug 2014 14:56:21 +0000
+Message-ID: <bug-73861-58281-hxR4yqwFRl@https.bugzilla.kernel.org/> (sfid-20140821_165628_520859_3B9299FE)
+In-Reply-To: <bug-73861-58281@https.bugzilla.kernel.org/>
+References: <bug-73861-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-To: "C. McPherson" <ccmcphe@verizon.net>
-CC: <backports@vger.kernel.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-Subject: Re: Netlink Question
-References: <53E917AB.3020002@verizon.net>
-In-Reply-To: <53E917AB.3020002@verizon.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-+ linux-wireless
+https://bugzilla.kernel.org/show_bug.cgi?id=73861
 
-Not really a backports question so adding linux-wireless
+Alan <alan@lxorguk.ukuu.org.uk> changed:
 
-On 08/11/2014 09:21 PM, C. McPherson wrote:
-> I have some private WiFi ioctl's that are associated with a couple of
-> drivers and I would like to convert those private ioctl's into netlink.
-> Does anyone know if there is any documentation on this or a URL that I
-> could reference before I attempt?
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |alan@lxorguk.ukuu.org.uk
+     Kernel Version|Linux kali                  |3.12.6-2
+                   |3.12-kali1-686-pae #1 SMP   |
+                   |Debian 3.12.6-2kali1        |
+                   |(2014-01-06) i686 GNU       |
 
-I guess the "private WiFi ioctl's" you are referring to are the ones 
-used in Android wpa_supplicant driver_cmd lib? There is no real cookbook 
-on how to add nl80211 commands (maybe I am wrong here), but there are 
-sufficient patches to be found in the linux-wireless archive. A recent 
-one about key management offload adds a couple of commands and 
-attributes which may give an idea what is needed:
-
-http://mid.gmane.org/1406076875-8549-1-git-send-email-clanctot@qca.qualcomm.com
-
-Obviously, you need to modify the "couple of drivers" to deal with the 
-nl80211 netlink commands.
-
-Regards,
-Arend
-
-> Thanks in advance
-> Clyde
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe backports" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
