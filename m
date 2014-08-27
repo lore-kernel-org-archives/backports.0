@@ -1,43 +1,24 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from test.hauke-m.de ([5.39.93.123]:44936 "EHLO test.hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751642AbaHIOrq (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 9 Aug 2014 10:47:46 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 3/6] backports: add list_next_entry()
-Date: Sat,  9 Aug 2014 16:47:36 +0200
-Message-Id: <1407595659-10396-4-git-send-email-hauke@hauke-m.de> (sfid-20140809_164749_265469_E33CB3F1)
-In-Reply-To: <1407595659-10396-1-git-send-email-hauke@hauke-m.de>
-References: <1407595659-10396-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-la0-f43.google.com ([209.85.215.43]:62949 "EHLO
+	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756192AbaH0ABb (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 26 Aug 2014 20:01:31 -0400
+Received: by mail-la0-f43.google.com with SMTP id gi9so13177886lab.2
+        for <backports@vger.kernel.org>; Tue, 26 Aug 2014 17:01:30 -0700 (PDT)
+MIME-Version: 1.0
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Tue, 26 Aug 2014 19:01:10 -0500
+Message-ID: <CAB=NE6UsUHZx0rxDe-zAxFE7_4CGP8Sk+iYpu39NtOd9XFyybQ@mail.gmail.com> (sfid-20140827_020134_279322_41833326)
+Subject: Slides from backporting with SmPL talk - Linuxcon 2014
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: Yoshitake Kobayashi <yoshitake.kobayashi@toshiba.co.jp>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/list.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Some folks asked for slides for the talk I gave at Linuxcon in
+Chicago. Here they are:
 
-diff --git a/backport/backport-include/linux/list.h b/backport/backport-include/linux/list.h
-index 4e1b3ca..9042830 100644
---- a/backport/backport-include/linux/list.h
-+++ b/backport/backport-include/linux/list.h
-@@ -63,4 +63,14 @@
- 	(!list_empty(ptr) ? list_first_entry(ptr, type, member) : NULL)
- #endif /* list_first_entry_or_null */
- 
-+#ifndef list_next_entry
-+/**
-+ * list_next_entry - get the next element in list
-+ * @pos:	the type * to cursor
-+ * @member:	the name of the list_struct within the struct.
-+ */
-+#define list_next_entry(pos, member) \
-+	list_entry((pos)->member.next, typeof(*(pos)), member)
-+#endif /* list_next_entry */
-+
- #endif /* __BACKPORT_LIST_H */
--- 
-1.9.1
+https://docs.google.com/presentation/d/1sRyl36l6TQneDODA3uuGFFpCYKMyEq15JtAW5G0Sbgk/pub?start=false&loop=false&delayms=3000
 
+  Luis
