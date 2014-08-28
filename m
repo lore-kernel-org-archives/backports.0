@@ -1,73 +1,82 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:50199 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751243AbaHNISX (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 14 Aug 2014 04:18:23 -0400
-Message-ID: <53EC70C7.2030008@broadcom.com> (sfid-20140814_101835_966564_FCB20332)
-Date: Thu, 14 Aug 2014 10:18:15 +0200
-From: Arend van Spriel <arend@broadcom.com>
+Received: from cantor2.suse.de ([195.135.220.15]:33879 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751540AbaH1UCo (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 28 Aug 2014 16:02:44 -0400
+Date: Thu, 28 Aug 2014 22:02:42 +0200
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	linux-kernel@vger.kernel.org, backports@vger.kernel.org,
+	cocci@systeme.lip6.fr
+Subject: Re: [Cocci] [PATCH] coccinelle: add pycocci wrapper for
+	multithreaded support
+Message-ID: <20140828200242.GI3347@wotan.suse.de> (sfid-20140828_220246_714240_C0265028)
+References: <1397152097-315-1-git-send-email-mcgrof@do-not-panic.com> <1397152289.4757.28.camel@jlt4.sipsolutions.net> <20140410175748.GK14815@wotan.suse.de> <alpine.DEB.2.02.1404102131390.2201@localhost6.localdomain6> <20140828034613.GD3347@wotan.suse.de> <alpine.DEB.2.02.1408282014550.2226@localhost6.localdomain6>
 MIME-Version: 1.0
-To: "C. McPherson" <ccmcphe@verizon.net>,
-	Krishna Chaitanya <chaitanya.mgit@gmail.com>
-CC: <backports@vger.kernel.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-Subject: Re: Netlink Question
-References: <53E917AB.3020002@verizon.net> <53E9D38B.1060509@broadcom.com> <CABPxzYK3wwGigXnPL7ZoQYTyenqf0kcNs4naxB2+8bsdeARj9g@mail.gmail.com> <53EBB602.7060901@verizon.net>
-In-Reply-To: <53EBB602.7060901@verizon.net>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <alpine.DEB.2.02.1408282014550.2226@localhost6.localdomain6>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 08/13/2014 09:01 PM, C. McPherson wrote:
->
-> On 08/12/2014 05:32 AM, Krishna Chaitanya wrote:
->> On Tue, Aug 12, 2014 at 2:12 PM, Arend van Spriel <arend@broadcom.com>
->> wrote:
->>> + linux-wireless
->>>
->>> Not really a backports question so adding linux-wireless
->>>
->>> On 08/11/2014 09:21 PM, C. McPherson wrote:
->>>> I have some private WiFi ioctl's that are associated with a couple of
->>>> drivers and I would like to convert those private ioctl's into netlink.
->>>> Does anyone know if there is any documentation on this or a URL that I
->>>> could reference before I attempt?
->>>
->>> I guess the "private WiFi ioctl's" you are referring to are the ones
->>> used in Android wpa_supplicant driver_cmd lib? There is no real
->>> cookbook on how to add nl80211 commands (maybe I am wrong here), but
->>> there are sufficient patches to be found in the linux-wireless
->>> archive. A recent one about key management offload adds a couple of
->>> commands and attributes which may give an idea what is needed:
->>>
->>> http://mid.gmane.org/1406076875-8549-1-git-send-email-clanctot@qca.qualcomm.com
->>>
->>>
->>> Obviously, you need to modify the "couple of drivers" to deal with
->>> the nl80211 netlink commands.
->>>
->> We had same requirement in our driver,  we have patched the iw to send
->> custom commands specific to our hardware and used NL80211_CMD_TESTMODE
->> to process and send it to driver.
->> --
->> To unsubscribe from this list: send the line "unsubscribe backports" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-> Yeah thanks a lot, I could use NL80211_CMD_TESTMODE, I'll have to check
-> that out. I was also thinking about using NL80211_CMD_VENDOR. These
-> IOCTL's are not and will not be used by wpa_supplicant (but I will check
-> out the URL you sent), they are just some custom commands we use with
-> several chipsets.
+On Thu, Aug 28, 2014 at 08:15:16PM +0200, Julia Lawall wrote:
+> 
+> 
+> On Thu, 28 Aug 2014, Luis R. Rodriguez wrote:
+> 
+> > On Thu, Apr 10, 2014 at 09:32:34PM +0200, Julia Lawall wrote:
+> > > 
+> > > 
+> > > On Thu, 10 Apr 2014, Luis R. Rodriguez wrote:
+> > > 
+> > > > On Thu, Apr 10, 2014 at 07:51:29PM +0200, Johannes Berg wrote:
+> > > > > On Thu, 2014-04-10 at 10:48 -0700, Luis R. Rodriguez wrote:
+> > > > > 
+> > > > > > You just pass it a cocci file, a target dir, and in git environments
+> > > > > > you always want --in-place enabled. Experiments and profiling random
+> > > > > > cocci files with the Linux kernel show that using just using number of
+> > > > > > CPUs doesn't scale well given that lots of buckets of files don't require
+> > > > > > work, as such this uses 10 * number of CPUs for its number of threads.
+> > > > > > For work that define more general ruler 3 * number of CPUs works better,
+> > > > > > but for smaller cocci files 3 * number of CPUs performs best right now.
+> > > > > > To experiment more with what's going on with the multithreading one can enable
+> > > > > > htop while kicking off a cocci task on the kernel, we want to keep
+> > > > > > these CPUs busy as much as possible. 
+> > > > > 
+> > > > > That's not really a good benchmark, you want to actually check how
+> > > > > quickly it finishes ... If you have some IO issues then just keeping the
+> > > > > CPUs busy trying to do IO won't help at all.
+> > > > 
+> > > > I checked the profile results, the reason the jobs finish is some threads
+> > > > had no work or little work. Hence why I increased the number of threads,
+> > > > depending on the context (long or short cocci expected, in backports
+> > > > at least, the long being all cocci files in one, the short being --test-cocci
+> > > > flag to gentree.py). This wrapper uses the short assumption with 10 * num_cpus
+> > > > 
+> > > > > > Since its just a helper I toss it into the python directory but don't
+> > > > > > install it. Hope is that we can evolve it there instead of carrying this
+> > > > > > helper within backports.
+> > > > > 
+> > > > > If there's a plan to make coccinelle itself multi-threaded, what's the
+> > > > > point?
+> > > > 
+> > > > To be clear, Coccinelle *has* a form of multithreaded support but requires manual
+> > > > spawning of jobs with references to the max count and also the number thread
+> > > > that this new process you are spawning belongs to. There's plans to consider
+> > > > reworking things to handle all this internally but as I discussed with Julia
+> > > > the changes required would require some structural changes, and as such we
+> > > > need to live with this for a bit longer. I need to use Coccinelle daily now,
+> > > > so figured I'd punt this out there in case others might make use of it.
+> > > 
+> > > I agree with Luis.  Multithreading inside Coccinelle is currently a 
+> > > priority task, but not a highest priority one.
+> > 
+> > Folks, anyone object to merging pycocci in the meantime? I keep using it outside
+> > of backports and it does what I think most kernel developers expect. This would
+> > be until we get proper parallelism support in place.
+> 
+> Merge away...
 
-If you are using recent kernel or backports package, I would say go for 
-the vendor command. It is quite similar to TESTMODE except that it is 
-always enabled, ie. not depending on kernel config.
+Pushed.
 
-However, if the custom commands would add functionality that might be 
-interesting to linux-wireless drivers in general you may consider adding 
-them as nl80211 commands.
-
-Regards,
-Arend
-
+  Luis
