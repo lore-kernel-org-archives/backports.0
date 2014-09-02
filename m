@@ -1,71 +1,64 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:8701 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752072AbaIBH2A (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 2 Sep 2014 03:28:00 -0400
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Received: from [178.33.119.222] ([178.33.119.222]:32440 "EHLO mail.wifense.com"
+	rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+	id S1754172AbaIBQ5y (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 2 Sep 2014 12:57:54 -0400
+Received: from localhost (unknown [127.0.0.1])
+	by mail.wifense.com (Postfix) with ESMTP id 6DB732C0857
+	for <backports@vger.kernel.org>; Tue,  2 Sep 2014 16:52:25 +0000 (UTC)
+Received: from mail.wifense.com ([127.0.0.1])
+	by localhost (mail.wifense.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id oxbSkx6gPj94 for <backports@vger.kernel.org>;
+	Tue,  2 Sep 2014 18:52:12 +0200 (CEST)
+Received: from [172.30.200.107] (230.red-80-28-132.adsl.static.ccgg.telefonica.net [80.28.132.230])
+	(Authenticated sender: jcasas@wifense.com)
+	by mail.wifense.com (Postfix) with ESMTPSA id AA4C82C084D
+	for <backports@vger.kernel.org>; Tue,  2 Sep 2014 18:52:12 +0200 (CEST)
+Message-ID: <5405F4F1.1050808@wifense.com> (sfid-20140902_185756_416367_1528858B)
+Date: Tue, 02 Sep 2014 18:48:49 +0200
+From: Javier Casas Marin <jcasas@wifense.com>
+MIME-Version: 1.0
 To: backports@vger.kernel.org
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Subject: [PATCH] backport: add support for kernel 3.17
-Date: Tue,  2 Sep 2014 10:24:04 +0300
-Message-Id: <1409642644-13313-1-git-send-email-emmanuel.grumbach@intel.com> (sfid-20140902_092802_287731_7D218781)
+Subject: Error compiling backports-3.16-1 on a device with a 2.6.30 kernel
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backport upstream's
 
-commit c835a677331495cf137a7f8a023463afd9f032f8
-Author: Tom Gundersen <teg@jklm.no>
-Date:   Mon Jul 14 16:37:24 2014 +0200
+I am trying to compile backports-3.16-1 on a device with a 2.6.30 linux 
+kernel and I get this error:
+$ make
+   CC [M]  /root/modules/backports-3.16-1/compat/main.o
+In file included from 
+/root/modules/backports-3.16-1/backport-include/linux/kernel.h:9,
+                  from 
+/mnt/cfdata/src/linux-2.6.30/arch/x86/include/asm/system.h:10,
+                  from 
+/mnt/cfdata/src/linux-2.6.30/arch/x86/include/asm/processor.h:17,
+                  from include/linux/prefetch.h:14,
+                  from include/linux/list.h:6,
+                  from 
+/root/modules/backports-3.16-1/backport-include/linux/list.h:3,
+                  from include/linux/module.h:9,
+                  from 
+/root/modules/backports-3.16-1/backport-include/linux/module.h:3,
+                  from /root/modules/backports-3.16-1/compat/main.c:1:
+/root/modules/backports-3.16-1/backport-include/linux/printk.h:5:31: 
+error: linux/printk.h: No such file or directory
+make[6]: *** [/root/modules/backports-3.16-1/compat/main.o] Error 1
+make[5]: *** [/root/modules/backports-3.16-1/compat] Error 2
+make[4]: *** [_module_/root/modules/backports-3.16-1] Error 2
+make[3]: *** [modules] Error 2
+make[2]: *** [modules] Error 2
+make[1]: *** [modules] Error 2
+make: *** [default] Error 2
 
-    net: set name_assign_type in alloc_netdev()
+it looks like I can't compile it for kernel 2.6.30 because some headers 
+files are missing (printk.h was inside kernel.h in previous kernel 
+versions like in 2.6.30). But the documentation says that kernels 2.6.27 
+and older are supported, so what am I doing wrong?
 
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
----
- backport/backport-include/linux/netdevice.h | 32 +++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
 
-diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
-index 6979758..1935f78 100644
---- a/backport/backport-include/linux/netdevice.h
-+++ b/backport/backport-include/linux/netdevice.h
-@@ -157,4 +157,36 @@ static inline void netdev_reset_queue(struct net_device *dev_queue)
- #define IFF_UNICAST_FLT	0x20000		/* Supports unicast filtering	*/
- #endif
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,17,0)
-+
-+/* interface name assignment types (sysfs name_assign_type attribute) */
-+#define NET_NAME_UNKNOWN	0	/* unknown origin (not exposed to userspace) */
-+#define NET_NAME_ENUM		1	/* enumerated by kernel */
-+#define NET_NAME_PREDICTABLE	2	/* predictably named by the kernel */
-+#define NET_NAME_USER		3	/* provided by user-space */
-+#define NET_NAME_RENAMED	4	/* renamed by user-space */
-+
-+static inline struct net_device *
-+backport_alloc_netdev_mqs(int sizeof_priv, const char *name,
-+			  unsigned char name_assign_type,
-+			  void (*setup)(struct net_device *),
-+			  unsigned int txqs, unsigned int rxqs)
-+{
-+	return alloc_netdev_mqs(sizeof_priv, name, setup, txqs, rxqs);
-+}
-+
-+#define alloc_netdev_mqs LINUX_BACKPORT(alloc_netdev_mqs)
-+
-+#undef alloc_netdev
-+static inline struct net_device *
-+backport_alloc_netdev(int sizeof_priv, const char *name,
-+		      unsigned char name_assign_type,
-+		      void (*setup)(struct net_device *))
-+{
-+	return backport_alloc_netdev_mqs(sizeof_priv, name, name_assign_type,
-+					 setup, 1, 1);
-+}
-+#define alloc_netdev LINUX_BACKPORT(alloc_netdev)
-+#endif
-+
- #endif /* __BACKPORT_NETDEVICE_H */
--- 
-1.9.1
+please, I'm stuck, any hint or information will be very appreciated!
 
+Thanks
