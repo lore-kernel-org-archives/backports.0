@@ -1,39 +1,58 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:43654 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:48147 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754183AbaIBVtB (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 2 Sep 2014 17:49:01 -0400
-Message-ID: <54063B49.2030700@hauke-m.de> (sfid-20140902_234902_906557_FE567DE3)
-Date: Tue, 02 Sep 2014 23:48:57 +0200
+	id S1751930AbaIFXX6 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 6 Sep 2014 19:23:58 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: tony <tony.makkiel@convergeddevices.net>, backports@vger.kernel.org
-Subject: Re: Compiling error
-References: <5405F05E.2090909@convergeddevices.net> <5405F832.8080406@convergeddevices.net>
-In-Reply-To: <5405F832.8080406@convergeddevices.net>
-Content-Type: text/plain; charset=utf-8
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 3/4] backports: remove usage of skbuff->xmit_more
+Date: Sun,  7 Sep 2014 01:23:36 +0200
+Message-Id: <1410045817-4112-4-git-send-email-hauke@hauke-m.de> (sfid-20140907_012403_592266_E9E87452)
+In-Reply-To: <1410045817-4112-1-git-send-email-hauke@hauke-m.de>
+References: <1410045817-4112-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 09/02/2014 07:02 PM, tony wrote:
-> Hi,
->     I am trying to build "backports-3.12.8-1" for my kernel 3.1.10. I am
-> following the instructions in the backports wiki to cross compile for
-> arm. But the compilation fails complaining "‘THIS_MODULE’ undeclared".
-> As suggested by one of the earlier posts in the forum, I tried including
-> #include <linux/module.h>
-> before
-> #include <linux/skbuff.h>
->  But it did not make any difference.Attached is a error log.
-> 
-> Thank you in advance for any help.
+This is a revet of these two upstream commits:
+commit c1ebf46c1f72fe542853fc00f059a7d15259379d
+Author: David S. Miller <davem@davemloft.net>
+Date:   Fri Aug 22 17:24:49 2014 -0700
 
-This looks strange. You have to compile your kernel with CONFIG_MODULES
-activated, backports needs that.
+    igb: Support netdev_ops->ndo_xmit_flush()
 
-compat/main.c includes linux/module.h and that file contains
-EXPORT_SYMBOL_GPL(), but that is not found in your build.
+commit 0b725a2ca61bedc33a2a63d0451d528b268cf975
+Author: David S. Miller <davem@davemloft.net>
+Date:   Mon Aug 25 15:51:53 2014 -0700
 
-Why are you using version 3.12, the current stable version is 3.16?
+    net: Remove ndo_xmit_flush netdev operation, use signalling instead.
 
-Hauke
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../network/0048-no_ndo_xmit_flush/igb.patch               | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0048-no_ndo_xmit_flush/igb.patch
+
+diff --git a/patches/collateral-evolutions/network/0048-no_ndo_xmit_flush/igb.patch b/patches/collateral-evolutions/network/0048-no_ndo_xmit_flush/igb.patch
+new file mode 100644
+index 0000000..f3ed217
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0048-no_ndo_xmit_flush/igb.patch
+@@ -0,0 +1,14 @@
++--- a/drivers/net/ethernet/intel/igb/igb_main.c
+++++ b/drivers/net/ethernet/intel/igb/igb_main.c
++@@ -4982,7 +4982,10 @@ static void igb_tx_map(struct igb_ring *
++ 	/* Make sure there is space in the ring for the next send. */
++ 	igb_maybe_stop_tx(tx_ring, DESC_NEEDED);
++ 
++-	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more) {
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0)
+++	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more)
+++#endif
+++	{
++ 		writel(i, tx_ring->tail);
++ 
++ 		/* we need this if more than one processor can write to our tail
+-- 
+1.9.1
+
