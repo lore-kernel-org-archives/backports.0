@@ -1,71 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from [178.33.119.222] ([178.33.119.222]:38155 "EHLO mail.wifense.com"
-	rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-	id S1753231AbaIHIeb (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 8 Sep 2014 04:34:31 -0400
-Received: from localhost (unknown [127.0.0.1])
-	by mail.wifense.com (Postfix) with ESMTP id 858CD2C084C
-	for <backports@vger.kernel.org>; Mon,  8 Sep 2014 08:37:54 +0000 (UTC)
-Received: from mail.wifense.com ([127.0.0.1])
-	by localhost (mail.wifense.com [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id IPtXMc4KQLJQ for <backports@vger.kernel.org>;
-	Mon,  8 Sep 2014 10:37:41 +0200 (CEST)
-Received: from [172.30.200.107] (230.red-80-28-132.adsl.static.ccgg.telefonica.net [80.28.132.230])
-	(Authenticated sender: jcasas@wifense.com)
-	by mail.wifense.com (Postfix) with ESMTPSA id D38462C0840
-	for <backports@vger.kernel.org>; Mon,  8 Sep 2014 10:37:41 +0200 (CEST)
-Message-ID: <540D6A0A.30609@wifense.com> (sfid-20140908_103435_474263_1E24BCB7)
-Date: Mon, 08 Sep 2014 10:34:18 +0200
-From: Javier Casas Marin <jcasas@wifense.com>
-MIME-Version: 1.0
+Received: from hauke-m.de ([5.39.93.123]:48144 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751980AbaIFXX6 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 6 Sep 2014 19:23:58 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Subject: error compiling backports-3.14-1: too many arguments to function
- 'request_firmware_nowait'
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 1/4] backports: adapt api change of rchan_callbacks->create_buf_file in ath10k
+Date: Sun,  7 Sep 2014 01:23:34 +0200
+Message-Id: <1410045817-4112-2-git-send-email-hauke@hauke-m.de> (sfid-20140907_012406_434367_BCA9A38B)
+In-Reply-To: <1410045817-4112-1-git-send-email-hauke@hauke-m.de>
+References: <1410045817-4112-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../network/0021-umode_t-api-change/ath10k.patch           | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0021-umode_t-api-change/ath10k.patch
 
-Hi,
-when I try to compile backports-3.14-1 in a 2.6.30 kernel I get this error:
+diff --git a/patches/collateral-evolutions/network/0021-umode_t-api-change/ath10k.patch b/patches/collateral-evolutions/network/0021-umode_t-api-change/ath10k.patch
+new file mode 100644
+index 0000000..09b82ed
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0021-umode_t-api-change/ath10k.patch
+@@ -0,0 +1,14 @@
++--- a/drivers/net/wireless/ath/ath10k/spectral.c
+++++ b/drivers/net/wireless/ath/ath10k/spectral.c
++@@ -482,7 +482,11 @@ static const struct file_operations fops
++ 
++ static struct dentry *create_buf_file_handler(const char *filename,
++ 					      struct dentry *parent,
+++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0))
++ 					      umode_t mode,
+++#else
+++					      int mode,
+++#endif
++ 					      struct rchan_buf *buf,
++ 					      int *is_global)
++ {
+-- 
+1.9.1
 
-/root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c: In 
-function 'ath9k_eeprom_request':
-/root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:647: warning: 
-passing argument 5 of 'request_firmware_nowait' makes pointer from 
-integer without a cast
-/root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:647: warning: 
-passing argument 6 of 'request_firmware_nowait' from incompatible 
-pointer type
-/root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:647: error: 
-too many arguments to function 'request_firmware_nowait'
-make[8]: *** 
-[/root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.o] 
-Error 1
-make[7]: *** 
-[/root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k] Error 2
-make[6]: *** [/root/modules/backports-3.14-1/drivers/net/wireless/ath] 
-Error 2
-make[5]: *** [/root/modules/backports-3.14-1/drivers/net/wireless] Error 2
-make[4]: *** [_module_/root/modules/backports-3.14-1] Error 2
-make[3]: *** [modules] Error 2
-make[2]: *** [modules] Error 2
-make[1]: *** [modules] Error 2
-make: *** [default] Error 2
-
-I saw that in backport-include/linux/firmware.h there is a pre-compiler 
-directive to use the backport's version of request_firmware_nowait function:
-
-#if defined(CPTCFG_BACKPORT_BUILD_FW_LOADER_MODULE)
-#define request_firmware_nowait LINUX_BACKPORT(request_firmware_nowait)
-
-But I haven't found where the CPTCFG_BACKPORT_BUILD_FW_LOADER_MODULE is 
-defined.
-
-I just ran:
-make defconfig-ath9k
-make
-
-Am I missing a previous configuration step?
-
-Thanks!
