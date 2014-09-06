@@ -1,58 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:48147 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:48146 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751930AbaIFXX6 (ORCPT <rfc822;backports@vger.kernel.org>);
+	id S1751953AbaIFXX6 (ORCPT <rfc822;backports@vger.kernel.org>);
 	Sat, 6 Sep 2014 19:23:58 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 3/4] backports: remove usage of skbuff->xmit_more
-Date: Sun,  7 Sep 2014 01:23:36 +0200
-Message-Id: <1410045817-4112-4-git-send-email-hauke@hauke-m.de> (sfid-20140907_012403_592266_E9E87452)
-In-Reply-To: <1410045817-4112-1-git-send-email-hauke@hauke-m.de>
-References: <1410045817-4112-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 0/4] backports: bring backports to next-20140905
+Date: Sun,  7 Sep 2014 01:23:33 +0200
+Message-Id: <1410045817-4112-1-git-send-email-hauke@hauke-m.de> (sfid-20140907_012405_794096_CB023EA4)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is a revet of these two upstream commits:
-commit c1ebf46c1f72fe542853fc00f059a7d15259379d
-Author: David S. Miller <davem@davemloft.net>
-Date:   Fri Aug 22 17:24:49 2014 -0700
+Just some small changes needed to get it to next-20130905.
 
-    igb: Support netdev_ops->ndo_xmit_flush()
+Hauke Mehrtens (4):
+  backports: adapt api change of rchan_callbacks->create_buf_file in
+    ath10k
+  backports: bluetooth revert patch adding write_iter
+  backports: remove usage of skbuff->xmit_more
+  backports: refresh patches on next-20140905
 
-commit 0b725a2ca61bedc33a2a63d0451d528b268cf975
-Author: David S. Miller <davem@davemloft.net>
-Date:   Mon Aug 25 15:51:53 2014 -0700
-
-    net: Remove ndo_xmit_flush netdev operation, use signalling instead.
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../network/0048-no_ndo_xmit_flush/igb.patch               | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ .../include_net_cfg80211.patch                     |  2 +-
+ .../0006-ieee802154-6lowpan-namespace.patch        | 13 +---
+ .../network/0008-net-user-ns.patch                 |  4 +-
+ .../net_wireless_core.patch                        |  2 +-
+ .../net_mac80211_tx.patch                          |  4 +-
+ .../0014-netlink_seq/net_wireless_nl80211.patch    |  2 +-
+ .../network/0021-umode_t-api-change/ath10k.patch   | 14 ++++
+ .../network/0027-genl-const/nl80211.patch          |  6 +-
+ .../0032-sriov_configure/igb_sriov_configure.patch |  8 +--
+ .../0033-ndo_vlan_rx_vid/igb_ndo_vlan_rx_vid.patch |  8 +--
+ .../igb_ndo_set_vf_spoofchk.patch                  |  6 +-
+ .../network/0043-ndo_set_vf_rate/igb.patch         |  8 +--
+ .../network/0047-write_iter/bluetooth.patch        | 83 ++++++++++++++++++++++
+ .../network/0048-no_ndo_xmit_flush/igb.patch       | 14 ++++
+ 14 files changed, 137 insertions(+), 37 deletions(-)
+ create mode 100644 patches/collateral-evolutions/network/0021-umode_t-api-change/ath10k.patch
+ create mode 100644 patches/collateral-evolutions/network/0047-write_iter/bluetooth.patch
  create mode 100644 patches/collateral-evolutions/network/0048-no_ndo_xmit_flush/igb.patch
 
-diff --git a/patches/collateral-evolutions/network/0048-no_ndo_xmit_flush/igb.patch b/patches/collateral-evolutions/network/0048-no_ndo_xmit_flush/igb.patch
-new file mode 100644
-index 0000000..f3ed217
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0048-no_ndo_xmit_flush/igb.patch
-@@ -0,0 +1,14 @@
-+--- a/drivers/net/ethernet/intel/igb/igb_main.c
-++++ b/drivers/net/ethernet/intel/igb/igb_main.c
-+@@ -4982,7 +4982,10 @@ static void igb_tx_map(struct igb_ring *
-+ 	/* Make sure there is space in the ring for the next send. */
-+ 	igb_maybe_stop_tx(tx_ring, DESC_NEEDED);
-+ 
-+-	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more) {
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0)
-++	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more)
-++#endif
-++	{
-+ 		writel(i, tx_ring->tail);
-+ 
-+ 		/* we need this if more than one processor can write to our tail
 -- 
 1.9.1
 
