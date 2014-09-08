@@ -1,64 +1,128 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:48078 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751911AbaIFToi (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 6 Sep 2014 15:44:38 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from [178.33.119.222] ([178.33.119.222]:38211 "EHLO mail.wifense.com"
+	rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+	id S1754458AbaIHJoT (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 8 Sep 2014 05:44:19 -0400
+Received: from localhost (unknown [127.0.0.1])
+	by mail.wifense.com (Postfix) with ESMTP id B047D2C084C
+	for <backports@vger.kernel.org>; Mon,  8 Sep 2014 09:47:42 +0000 (UTC)
+Received: from mail.wifense.com ([127.0.0.1])
+	by localhost (mail.wifense.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id qDwclC5ngKPr for <backports@vger.kernel.org>;
+	Mon,  8 Sep 2014 11:47:29 +0200 (CEST)
+Received: from [172.30.200.107] (230.red-80-28-132.adsl.static.ccgg.telefonica.net [80.28.132.230])
+	(Authenticated sender: jcasas@wifense.com)
+	by mail.wifense.com (Postfix) with ESMTPSA id B687B2C0840
+	for <backports@vger.kernel.org>; Mon,  8 Sep 2014 11:47:29 +0200 (CEST)
+Message-ID: <540D7A66.5060802@wifense.com> (sfid-20140908_114422_372199_BD3A2E90)
+Date: Mon, 08 Sep 2014 11:44:06 +0200
+From: Javier Casas Marin <jcasas@wifense.com>
+MIME-Version: 1.0
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 5/5] backports: refresh patches on next-20140822
-Date: Sat,  6 Sep 2014 21:44:19 +0200
-Message-Id: <1410032659-30404-6-git-send-email-hauke@hauke-m.de> (sfid-20140906_214442_059917_3CF33453)
-In-Reply-To: <1410032659-30404-1-git-send-email-hauke@hauke-m.de>
-References: <1410032659-30404-1-git-send-email-hauke@hauke-m.de>
+Subject: Re: error compiling backports-3.14-1: too many arguments to function
+ 'request_firmware_nowait'
+References: <540D6A0A.30609@wifense.com>
+In-Reply-To: <540D6A0A.30609@wifense.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-1   3.0.101             [  OK  ]
-2   3.1.10              [  OK  ]
-3   3.2.62              [  OK  ]
-4   3.3.8               [  OK  ]
-5   3.4.103             [  OK  ]
-6   3.5.7               [  OK  ]
-7   3.6.11              [  OK  ]
-8   3.7.10              [  OK  ]
-9   3.8.13              [  OK  ]
-10  3.9.11              [  OK  ]
-11  3.10.54             [  OK  ]
-12  3.11.10             [  OK  ]
-13  3.12.27             [  OK  ]
-14  3.13.11             [  OK  ]
-15  3.14.18             [  OK  ]
-16  3.15.10             [  OK  ]
-17  3.16.2              [  OK  ]
-18  3.17-rc3            [  OK  ]
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../network/0030-qdisc_tx_busylock/ieee802154.patch                   | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi,
+after a bit more investigation I  found this:
 
-diff --git a/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/ieee802154.patch b/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/ieee802154.patch
-index 893ac4f..62e743c 100644
---- a/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/ieee802154.patch
-+++ b/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/ieee802154.patch
-@@ -1,6 +1,6 @@
- --- a/net/ieee802154/6lowpan_rtnl.c
- +++ b/net/ieee802154/6lowpan_rtnl.c
--@@ -397,7 +397,9 @@ static struct header_ops lowpan_header_o
-+@@ -389,7 +389,9 @@ static struct header_ops lowpan_header_o
-  	.create	= lowpan_header_create,
-  };
-  
-@@ -10,7 +10,7 @@
-  static struct lock_class_key lowpan_netdev_xmit_lock_key;
-  
-  static void lowpan_set_lockdep_class_one(struct net_device *dev,
--@@ -412,7 +414,9 @@ static void lowpan_set_lockdep_class_one
-+@@ -404,7 +406,9 @@ static void lowpan_set_lockdep_class_one
-  static int lowpan_dev_init(struct net_device *dev)
-  {
-  	netdev_for_each_tx_queue(dev, lowpan_set_lockdep_class_one, NULL);
--- 
-1.9.1
+wsos-sdk:~/modules/backports-3.14-1# grep compat_firmware_class 
+compat/Makefile
+obj-$(CPTCFG_BACKPORT_BUILD_FW_LOADER) += compat_firmware_class.o
+
+so I looked in compat/Kconfig and found this (I didn't find it before 
+because I grep with the CPTCFG_ header):
+
+config BACKPORT_BUILD_FW_LOADER
+     tristate
+     depends on m
+     # RHEL6, starting from 6.0, backports the FW loader already
+     depends on !BACKPORT_RHEL_KERNEL_6_0
+     depends on !FW_LOADER || BACKPORT_KERNEL_2_6_33
+     default m if BACKPORT_FW_LOADER
+     default m if BACKPORT_USERSEL_BUILD_ALL
+
+config BACKPORT_FW_LOADER
+     bool
+
+from here I understand that I have to enable de BACKPORT_FW_LOADER option.
+I haven't found it in menuconfig so I changed it manually in 
+compat/Kconfig to 'def_bool y'
+
+Now the error went away but a new one appeared:
+
+   CC [M]  /root/modules/backports-3.14-1/net/mac80211/key.o
+/root/modules/backports-3.14-1/net/mac80211/key.c: In function 
+'ieee80211_set_key_tx_seq':
+/root/modules/backports-3.14-1/net/mac80211/key.c:813: error: implicit 
+declaration of function 'atomic64_set'
+make[6]: *** [/root/modules/backports-3.14-1/net/mac80211/key.o] Error 1
+make[5]: *** [/root/modules/backports-3.14-1/net/mac80211] Error 2
+make[4]: *** [_module_/root/modules/backports-3.14-1] Error 2
+make[3]: *** [modules] Error 2
+make[2]: *** [modules] Error 2
+make[1]: *** [modules] Error 2
+make: *** [default] Error 2
+
+I'll try to figure out what happens this time
+
+Javi
+
+El 08/09/2014 10:34, Javier Casas Marin escribió:
+>
+> Hi,
+> when I try to compile backports-3.14-1 in a 2.6.30 kernel I get this 
+> error:
+>
+> /root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c: 
+> In function 'ath9k_eeprom_request':
+> /root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:647: 
+> warning: passing argument 5 of 'request_firmware_nowait' makes pointer 
+> from integer without a cast
+> /root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:647: 
+> warning: passing argument 6 of 'request_firmware_nowait' from 
+> incompatible pointer type
+> /root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:647: 
+> error: too many arguments to function 'request_firmware_nowait'
+> make[8]: *** 
+> [/root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.o] 
+> Error 1
+> make[7]: *** 
+> [/root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k] Error 2
+> make[6]: *** [/root/modules/backports-3.14-1/drivers/net/wireless/ath] 
+> Error 2
+> make[5]: *** [/root/modules/backports-3.14-1/drivers/net/wireless] 
+> Error 2
+> make[4]: *** [_module_/root/modules/backports-3.14-1] Error 2
+> make[3]: *** [modules] Error 2
+> make[2]: *** [modules] Error 2
+> make[1]: *** [modules] Error 2
+> make: *** [default] Error 2
+>
+> I saw that in backport-include/linux/firmware.h there is a 
+> pre-compiler directive to use the backport's version of 
+> request_firmware_nowait function:
+>
+> #if defined(CPTCFG_BACKPORT_BUILD_FW_LOADER_MODULE)
+> #define request_firmware_nowait LINUX_BACKPORT(request_firmware_nowait)
+>
+> But I haven't found where the CPTCFG_BACKPORT_BUILD_FW_LOADER_MODULE 
+> is defined.
+>
+> I just ran:
+> make defconfig-ath9k
+> make
+>
+> Am I missing a previous configuration step?
+>
+> Thanks!
+> -- 
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
