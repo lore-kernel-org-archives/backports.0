@@ -1,112 +1,208 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-bl2lp0209.outbound.protection.outlook.com ([207.46.163.209]:5345
-	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754692AbaIBRDH (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 2 Sep 2014 13:03:07 -0400
-Message-ID: <5405F832.8080406@convergeddevices.net> (sfid-20140902_190310_198603_39B00C23)
-Date: Tue, 2 Sep 2014 18:02:42 +0100
-From: tony <tony.makkiel@convergeddevices.net>
+Received: from [178.33.119.222] ([178.33.119.222]:39172 "EHLO mail.wifense.com"
+	rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+	id S932089AbaIIHr1 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 9 Sep 2014 03:47:27 -0400
+Message-ID: <540EB07D.9050100@wifense.com> (sfid-20140909_094730_403697_FE40BCA2)
+Date: Tue, 09 Sep 2014 09:47:09 +0200
+From: Javier Casas Marin <jcasas@wifense.com>
 MIME-Version: 1.0
-To: <backports@vger.kernel.org>
-Subject: Compiling error
-References: <5405F05E.2090909@convergeddevices.net>
-In-Reply-To: <5405F05E.2090909@convergeddevices.net>
-Content-Type: multipart/mixed;
-	boundary="------------070104080401000909020309"
+To: Arend van Spriel <arend@broadcom.com>
+CC: backports@vger.kernel.org
+Subject: Re: error compiling backports-3.14-1: too many arguments to function
+ 'request_firmware_nowait'
+References: <540D6A0A.30609@wifense.com> <540D7A66.5060802@wifense.com> <540D8563.8020403@wifense.com> <540EAE19.8010509@broadcom.com>
+In-Reply-To: <540EAE19.8010509@broadcom.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
---------------070104080401000909020309
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
 
-Hi,
-	I am trying to build "backports-3.12.8-1" for my kernel 3.1.10. I am 
-following the instructions in the backports wiki to cross compile for 
-arm. But the compilation fails complaining "â€˜THIS_MODULEâ€™ undeclared". 
-As suggested by one of the earlier posts in the forum, I tried including
-#include <linux/module.h>
-before
-#include <linux/skbuff.h>
-  But it did not make any difference.Attached is a error log.
+Yes, I just figured it out, that was the problem  :)
 
-Thank you in advance for any help.
+Thanks Arend
 
-Tony
+El 09/09/2014 9:36, Arend van Spriel escribió:
+> On 09/08/14 12:30, Javier Casas Marin wrote:
+>> This time I don't understand what is going on with the error:
+>>
+>> /root/modules/backports-3.14-1/net/mac80211/key.c:813: error: implicit
+>> declaration of function 'atomic64_set'
+>>
+>> If I search for this function definition I see it is in compat_atomic.c
+>> file:
+>>
+>> wsos-sdk:~/modules/backports-3.14-1# grep -r --include="*.c" 
+>> atomic64_set .
+>> ./net/mac80211/key.c: atomic64_set(&key->u.ccmp.tx_pn, pn64);
+>> ./net/mac80211/key.c: atomic64_set(&key->u.aes_cmac.tx_pn, pn64);
+>> ./compat/compat_atomic.c:void atomic64_set(atomic64_t *v, long long i)
+>> ./compat/compat_atomic.c:EXPORT_SYMBOL_GPL(atomic64_set);
+>>
+>> Now I search for it in the compat Makefile:
+>> wsos-sdk:~/modules/backports-3.14-1# grep compat_atomic.o 
+>> compat/Makefile
+>> compat-$(CPTCFG_BACKPORT_BUILD_GENERIC_ATOMIC64) += compat_atomic.o
+>>
+>> And I see in .config that I do have that config option enabled:
+>> wsos-sdk:~/modules/backports-3.14-1# grep
+>> BACKPORT_BUILD_GENERIC_ATOMIC64 .config
+>> CPTCFG_BACKPORT_BUILD_GENERIC_ATOMIC64=y
+>>
+>> and it works because I see tha the compat_atomic.o is generated during
+>> the compilation so, I guess that the problem is exporting the symbol
+>> with EXPORT_SYMBOL_GPL(atomic64_set)
+>>
+>> any clue about how to solve this?
+>
+> Seems to me you need the function prototype in some backports header 
+> file. Try the patch below. Probably not the right way to do it. By the 
+> way, it would help if you would mention the target kernel for which 
+> you want to make the build.
+>
+> Regards,
+> Arend
+>
+> ---
+> diff --git a/backport/backport-include/asm/atomic.h 
+> b/backport/backport-include/
+> index cabdcfd..6bf9467 100644
+> --- a/backport/backport-include/asm/atomic.h
+> +++ b/backport/backport-include/asm/atomic.h
+> @@ -34,4 +34,8 @@ extern long long atomic64_add_return(long long a, 
+> atomic64_t *
+>  #endif
+>  #endif
+>
+> +#ifdef CPTCFG_BACKPORT_BUILD_GENERIC_ATOMIC64
+> +void atomic64_set(atomic64_t *v, long long i);
+> +#endif
+> +
+>  #endif /* __BACKPORT_ASM_ATOMIC_H */
+>
+>> Javi
+>>
+>> El 08/09/2014 11:44, Javier Casas Marin escribió:
+>>>
+>>> Hi,
+>>> after a bit more investigation I found this:
+>>>
+>>> wsos-sdk:~/modules/backports-3.14-1# grep compat_firmware_class
+>>> compat/Makefile
+>>> obj-$(CPTCFG_BACKPORT_BUILD_FW_LOADER) += compat_firmware_class.o
+>>>
+>>> so I looked in compat/Kconfig and found this (I didn't find it before
+>>> because I grep with the CPTCFG_ header):
+>>>
+>>> config BACKPORT_BUILD_FW_LOADER
+>>> tristate
+>>> depends on m
+>>> # RHEL6, starting from 6.0, backports the FW loader already
+>>> depends on !BACKPORT_RHEL_KERNEL_6_0
+>>> depends on !FW_LOADER || BACKPORT_KERNEL_2_6_33
+>>> default m if BACKPORT_FW_LOADER
+>>> default m if BACKPORT_USERSEL_BUILD_ALL
+>>>
+>>> config BACKPORT_FW_LOADER
+>>> bool
+>>>
+>>> from here I understand that I have to enable de BACKPORT_FW_LOADER
+>>> option.
+>>> I haven't found it in menuconfig so I changed it manually in
+>>> compat/Kconfig to 'def_bool y'
+>>>
+>>> Now the error went away but a new one appeared:
+>>>
+>>> CC [M] /root/modules/backports-3.14-1/net/mac80211/key.o
+>>> /root/modules/backports-3.14-1/net/mac80211/key.c: In function
+>>> 'ieee80211_set_key_tx_seq':
+>>> /root/modules/backports-3.14-1/net/mac80211/key.c:813: error: implicit
+>>> declaration of function 'atomic64_set'
+>>> make[6]: *** [/root/modules/backports-3.14-1/net/mac80211/key.o] 
+>>> Error 1
+>>> make[5]: *** [/root/modules/backports-3.14-1/net/mac80211] Error 2
+>>> make[4]: *** [_module_/root/modules/backports-3.14-1] Error 2
+>>> make[3]: *** [modules] Error 2
+>>> make[2]: *** [modules] Error 2
+>>> make[1]: *** [modules] Error 2
+>>> make: *** [default] Error 2
+>>>
+>>> I'll try to figure out what happens this time
+>>>
+>>> Javi
+>>>
+>>> El 08/09/2014 10:34, Javier Casas Marin escribió:
+>>>>
+>>>> Hi,
+>>>> when I try to compile backports-3.14-1 in a 2.6.30 kernel I get this
+>>>> error:
+>>>>
+>>>> /root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:
+>>>> In function 'ath9k_eeprom_request':
+>>>> /root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:647: 
+>>>>
+>>>> warning: passing argument 5 of 'request_firmware_nowait' makes
+>>>> pointer from integer without a cast
+>>>> /root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:647: 
+>>>>
+>>>> warning: passing argument 6 of 'request_firmware_nowait' from
+>>>> incompatible pointer type
+>>>> /root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:647: 
+>>>>
+>>>> error: too many arguments to function 'request_firmware_nowait'
+>>>> make[8]: ***
+>>>> [/root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.o] 
+>>>> Error
+>>>> 1
+>>>> make[7]: ***
+>>>> [/root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k] 
+>>>> Error 2
+>>>> make[6]: ***
+>>>> [/root/modules/backports-3.14-1/drivers/net/wireless/ath] Error 2
+>>>> make[5]: *** [/root/modules/backports-3.14-1/drivers/net/wireless]
+>>>> Error 2
+>>>> make[4]: *** [_module_/root/modules/backports-3.14-1] Error 2
+>>>> make[3]: *** [modules] Error 2
+>>>> make[2]: *** [modules] Error 2
+>>>> make[1]: *** [modules] Error 2
+>>>> make: *** [default] Error 2
+>>>>
+>>>> I saw that in backport-include/linux/firmware.h there is a
+>>>> pre-compiler directive to use the backport's version of
+>>>> request_firmware_nowait function:
+>>>>
+>>>> #if defined(CPTCFG_BACKPORT_BUILD_FW_LOADER_MODULE)
+>>>> #define request_firmware_nowait 
+>>>> LINUX_BACKPORT(request_firmware_nowait)
+>>>>
+>>>> But I haven't found where the CPTCFG_BACKPORT_BUILD_FW_LOADER_MODULE
+>>>> is defined.
+>>>>
+>>>> I just ran:
+>>>> make defconfig-ath9k
+>>>> make
+>>>>
+>>>> Am I missing a previous configuration step?
+>>>>
+>>>> Thanks!
+>>>> -- 
+>>>> To unsubscribe from this list: send the line "unsubscribe 
+>>>> backports" in
+>>>> the body of a message to majordomo@vger.kernel.org
+>>>> More majordomo info at http://vger.kernel.org/majordomo-info.html
+>>>
+>>> -- 
+>>> To unsubscribe from this list: send the line "unsubscribe backports" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at http://vger.kernel.org/majordomo-info.html
+>>
+>> -- 
+>> To unsubscribe from this list: send the line "unsubscribe backports" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at http://vger.kernel.org/majordomo-info.html
+>
+> -- 
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
---------------070104080401000909020309
-Content-Type: text/plain; charset="UTF-8"; name="log.txt"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="log.txt"
-
-KioqKioqKioqKioqKioqKioqKiBFbnZpcm9ubWVudCAmIFRvb2xzIGxvZyAqKioqKioqKioq
-KioqKioqKioqKioqKioqKioqKioqKgoKZWNobyAkQ1JPU1NfQ09NUElMRQphcm0tbGludXgt
-Z251ZWFiaWhmLQplY2hvICRBUkNICmFybQplY2hvICRLTElCX0JVSUxECi9tZWRpYS93b3Jr
-L2dpdC9ic3AvTGludXhfZm9yX1RlZ3JhL2tlcm5lbC9saW51eC10ZWdyYQplY2hvICRLTElC
-Ci9tZWRpYS93b3JrL2dpdC9ic3AvTGludXhfZm9yX1RlZ3JhL3Jvb3Rmcwphcm0tbGludXgt
-Z251ZWFiaWhmLWdjYyAtLXZlcnNpb24KYXJtLWxpbnV4LWdudWVhYmloZi1nY2MgKFVidW50
-dS9MaW5hcm8gNC42LjMtMXVidW50dTUpIDQuNi4zCgoKCgoKCioqKioqKioqKioqKioqKioq
-KioqKioqKioqKiBCdWlsZCBMb2cgKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKgoKbWFrZSBkZWZjb25maWctbWVkaWEKbWFrZVsyXTogYGNvbmYnIGlzIHVwIHRv
-IGRhdGUuCiMKIyBjb25maWd1cmF0aW9uIHdyaXR0ZW4gdG8gLmNvbmZpZwojCnRvbnlAdG9u
-eS1ONTZWSjp+L0Rlc2t0b3AvYmFja3BvcnRzLTMuMTIuOC0xJCBtYWtlCm1ha2VbNV06IGBj
-b25mJyBpcyB1cCB0byBkYXRlLgojCiMgY29uZmlndXJhdGlvbiB3cml0dGVuIHRvIC5jb25m
-aWcKIwpCdWlsZGluZyBiYWNrcG9ydC1pbmNsdWRlL2JhY2twb3J0L2F1dG9jb25mLmggLi4u
-IGRvbmUuCiAgQ0MgW01dICAvaG9tZS90b255L0Rlc2t0b3AvYmFja3BvcnRzLTMuMTIuOC0x
-L2NvbXBhdC9tYWluLm8KL2hvbWUvdG9ueS9EZXNrdG9wL2JhY2twb3J0cy0zLjEyLjgtMS9j
-b21wYXQvbWFpbi5jOjUyOjE6IHdhcm5pbmc6IGRhdGEgZGVmaW5pdGlvbiBoYXMgbm8gdHlw
-ZSBvciBzdG9yYWdlIGNsYXNzIFtlbmFibGVkIGJ5IGRlZmF1bHRdCi9ob21lL3RvbnkvRGVz
-a3RvcC9iYWNrcG9ydHMtMy4xMi44LTEvY29tcGF0L21haW4uYzo1MjoxOiB3YXJuaW5nOiB0
-eXBlIGRlZmF1bHRzIHRvIOKAmGludOKAmSBpbiBkZWNsYXJhdGlvbiBvZiDigJhFWFBPUlRf
-U1lNQk9MX0dQTOKAmSBbLVdpbXBsaWNpdC1pbnRdCi9ob21lL3RvbnkvRGVza3RvcC9iYWNr
-cG9ydHMtMy4xMi44LTEvY29tcGF0L21haW4uYzo1MjoxOiB3YXJuaW5nOiBwYXJhbWV0ZXIg
-bmFtZXMgKHdpdGhvdXQgdHlwZXMpIGluIGZ1bmN0aW9uIGRlY2xhcmF0aW9uIFtlbmFibGVk
-IGJ5IGRlZmF1bHRdCiAgQ0MgW01dICAvaG9tZS90b255L0Rlc2t0b3AvYmFja3BvcnRzLTMu
-MTIuOC0xL2NvbXBhdC9jb21wYXQtMy4zLm8KSW4gZmlsZSBpbmNsdWRlZCBmcm9tIC9ob21l
-L3RvbnkvRGVza3RvcC9iYWNrcG9ydHMtMy4xMi44LTEvYmFja3BvcnQtaW5jbHVkZS9saW51
-eC9kZXZpY2UuaDo0OjAsCiAgICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRlL2xpbnV4L2Rt
-YWVuZ2luZS5oOjI0LAogICAgICAgICAgICAgICAgIGZyb20gaW5jbHVkZS9saW51eC9za2J1
-ZmYuaDozMCwKICAgICAgICAgICAgICAgICBmcm9tIC9ob21lL3RvbnkvRGVza3RvcC9iYWNr
-cG9ydHMtMy4xMi44LTEvYmFja3BvcnQtaW5jbHVkZS9saW51eC9za2J1ZmYuaDozLAogICAg
-ICAgICAgICAgICAgIGZyb20gL2hvbWUvdG9ueS9EZXNrdG9wL2JhY2twb3J0cy0zLjEyLjgt
-MS9jb21wYXQvY29tcGF0LTMuMy5jOjEzOgppbmNsdWRlL2xpbnV4L2RldmljZS5oOiBJbiBm
-dW5jdGlvbiDigJhyb290X2RldmljZV9yZWdpc3RlcuKAmToKaW5jbHVkZS9saW51eC9kZXZp
-Y2UuaDo3MjQ6Mzg6IGVycm9yOiDigJhUSElTX01PRFVMReKAmSB1bmRlY2xhcmVkIChmaXJz
-dCB1c2UgaW4gdGhpcyBmdW5jdGlvbikKaW5jbHVkZS9saW51eC9kZXZpY2UuaDo3MjQ6Mzg6
-IG5vdGU6IGVhY2ggdW5kZWNsYXJlZCBpZGVudGlmaWVyIGlzIHJlcG9ydGVkIG9ubHkgb25j
-ZSBmb3IgZWFjaCBmdW5jdGlvbiBpdCBhcHBlYXJzIGluCi9ob21lL3RvbnkvRGVza3RvcC9i
-YWNrcG9ydHMtMy4xMi44LTEvY29tcGF0L2NvbXBhdC0zLjMuYzogQXQgdG9wIGxldmVsOgov
-aG9tZS90b255L0Rlc2t0b3AvYmFja3BvcnRzLTMuMTIuOC0xL2NvbXBhdC9jb21wYXQtMy4z
-LmM6MTc0OjE6IHdhcm5pbmc6IGRhdGEgZGVmaW5pdGlvbiBoYXMgbm8gdHlwZSBvciBzdG9y
-YWdlIGNsYXNzIFtlbmFibGVkIGJ5IGRlZmF1bHRdCi9ob21lL3RvbnkvRGVza3RvcC9iYWNr
-cG9ydHMtMy4xMi44LTEvY29tcGF0L2NvbXBhdC0zLjMuYzoxNzQ6MTogd2FybmluZzogdHlw
-ZSBkZWZhdWx0cyB0byDigJhpbnTigJkgaW4gZGVjbGFyYXRpb24gb2Yg4oCYRVhQT1JUX1NZ
-TUJPTF9HUEzigJkgWy1XaW1wbGljaXQtaW50XQovaG9tZS90b255L0Rlc2t0b3AvYmFja3Bv
-cnRzLTMuMTIuOC0xL2NvbXBhdC9jb21wYXQtMy4zLmM6MTc0OjE6IHdhcm5pbmc6IHBhcmFt
-ZXRlciBuYW1lcyAod2l0aG91dCB0eXBlcykgaW4gZnVuY3Rpb24gZGVjbGFyYXRpb24gW2Vu
-YWJsZWQgYnkgZGVmYXVsdF0KL2hvbWUvdG9ueS9EZXNrdG9wL2JhY2twb3J0cy0zLjEyLjgt
-MS9jb21wYXQvY29tcGF0LTMuMy5jOjIyMjoxOiB3YXJuaW5nOiBkYXRhIGRlZmluaXRpb24g
-aGFzIG5vIHR5cGUgb3Igc3RvcmFnZSBjbGFzcyBbZW5hYmxlZCBieSBkZWZhdWx0XQovaG9t
-ZS90b255L0Rlc2t0b3AvYmFja3BvcnRzLTMuMTIuOC0xL2NvbXBhdC9jb21wYXQtMy4zLmM6
-MjIyOjE6IHdhcm5pbmc6IHR5cGUgZGVmYXVsdHMgdG8g4oCYaW504oCZIGluIGRlY2xhcmF0
-aW9uIG9mIOKAmEVYUE9SVF9TWU1CT0xfR1BM4oCZIFstV2ltcGxpY2l0LWludF0KL2hvbWUv
-dG9ueS9EZXNrdG9wL2JhY2twb3J0cy0zLjEyLjgtMS9jb21wYXQvY29tcGF0LTMuMy5jOjIy
-MjoxOiB3YXJuaW5nOiBwYXJhbWV0ZXIgbmFtZXMgKHdpdGhvdXQgdHlwZXMpIGluIGZ1bmN0
-aW9uIGRlY2xhcmF0aW9uIFtlbmFibGVkIGJ5IGRlZmF1bHRdCi9ob21lL3RvbnkvRGVza3Rv
-cC9iYWNrcG9ydHMtMy4xMi44LTEvY29tcGF0L2NvbXBhdC0zLjMuYzoyNDI6MTogd2Fybmlu
-ZzogZGF0YSBkZWZpbml0aW9uIGhhcyBubyB0eXBlIG9yIHN0b3JhZ2UgY2xhc3MgW2VuYWJs
-ZWQgYnkgZGVmYXVsdF0KL2hvbWUvdG9ueS9EZXNrdG9wL2JhY2twb3J0cy0zLjEyLjgtMS9j
-b21wYXQvY29tcGF0LTMuMy5jOjI0MjoxOiB3YXJuaW5nOiB0eXBlIGRlZmF1bHRzIHRvIOKA
-mGludOKAmSBpbiBkZWNsYXJhdGlvbiBvZiDigJhFWFBPUlRfU1lNQk9MX0dQTOKAmSBbLVdp
-bXBsaWNpdC1pbnRdCi9ob21lL3RvbnkvRGVza3RvcC9iYWNrcG9ydHMtMy4xMi44LTEvY29t
-cGF0L2NvbXBhdC0zLjMuYzoyNDI6MTogd2FybmluZzogcGFyYW1ldGVyIG5hbWVzICh3aXRo
-b3V0IHR5cGVzKSBpbiBmdW5jdGlvbiBkZWNsYXJhdGlvbiBbZW5hYmxlZCBieSBkZWZhdWx0
-XQptYWtlWzZdOiAqKiogWy9ob21lL3RvbnkvRGVza3RvcC9iYWNrcG9ydHMtMy4xMi44LTEv
-Y29tcGF0L2NvbXBhdC0zLjMub10gRXJyb3IgMQptYWtlWzVdOiAqKiogWy9ob21lL3Rvbnkv
-RGVza3RvcC9iYWNrcG9ydHMtMy4xMi44LTEvY29tcGF0XSBFcnJvciAyCm1ha2VbNF06ICoq
-KiBbX21vZHVsZV8vaG9tZS90b255L0Rlc2t0b3AvYmFja3BvcnRzLTMuMTIuOC0xXSBFcnJv
-ciAyCm1ha2VbM106ICoqKiBbbW9kdWxlc10gRXJyb3IgMgptYWtlWzJdOiAqKiogW21vZHVs
-ZXNdIEVycm9yIDIKbWFrZVsxXTogKioqIFttb2R1bGVzXSBFcnJvciAyCm1ha2U6ICoqKiBb
-ZGVmYXVsdF0gRXJyb3IgMgo=
---------------070104080401000909020309--
