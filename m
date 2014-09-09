@@ -1,55 +1,187 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:48076 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751930AbaIFTog (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 6 Sep 2014 15:44:36 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 3/5] backports: update test kernel versions
-Date: Sat,  6 Sep 2014 21:44:17 +0200
-Message-Id: <1410032659-30404-4-git-send-email-hauke@hauke-m.de> (sfid-20140906_214439_915468_32BAF6D2)
-In-Reply-To: <1410032659-30404-1-git-send-email-hauke@hauke-m.de>
-References: <1410032659-30404-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:16507 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932166AbaIIHhA (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 9 Sep 2014 03:37:00 -0400
+Message-ID: <540EAE19.8010509@broadcom.com> (sfid-20140909_093702_469178_F96A031A)
+Date: Tue, 9 Sep 2014 09:36:57 +0200
+From: Arend van Spriel <arend@broadcom.com>
+MIME-Version: 1.0
+To: Javier Casas Marin <jcasas@wifense.com>
+CC: <backports@vger.kernel.org>
+Subject: Re: error compiling backports-3.14-1: too many arguments to function
+ 'request_firmware_nowait'
+References: <540D6A0A.30609@wifense.com> <540D7A66.5060802@wifense.com> <540D8563.8020403@wifense.com>
+In-Reply-To: <540D8563.8020403@wifense.com>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- devel/backports-update-manager | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+On 09/08/14 12:30, Javier Casas Marin wrote:
+> This time I don't understand what is going on with the error:
+>
+> /root/modules/backports-3.14-1/net/mac80211/key.c:813: error: implicit
+> declaration of function 'atomic64_set'
+>
+> If I search for this function definition I see it is in compat_atomic.c
+> file:
+>
+> wsos-sdk:~/modules/backports-3.14-1# grep -r --include="*.c" atomic64_set .
+> ./net/mac80211/key.c: atomic64_set(&key->u.ccmp.tx_pn, pn64);
+> ./net/mac80211/key.c: atomic64_set(&key->u.aes_cmac.tx_pn, pn64);
+> ./compat/compat_atomic.c:void atomic64_set(atomic64_t *v, long long i)
+> ./compat/compat_atomic.c:EXPORT_SYMBOL_GPL(atomic64_set);
+>
+> Now I search for it in the compat Makefile:
+> wsos-sdk:~/modules/backports-3.14-1# grep compat_atomic.o compat/Makefile
+> compat-$(CPTCFG_BACKPORT_BUILD_GENERIC_ATOMIC64) += compat_atomic.o
+>
+> And I see in .config that I do have that config option enabled:
+> wsos-sdk:~/modules/backports-3.14-1# grep
+> BACKPORT_BUILD_GENERIC_ATOMIC64 .config
+> CPTCFG_BACKPORT_BUILD_GENERIC_ATOMIC64=y
+>
+> and it works because I see tha the compat_atomic.o is generated during
+> the compilation so, I guess that the problem is exporting the symbol
+> with EXPORT_SYMBOL_GPL(atomic64_set)
+>
+> any clue about how to solve this?
 
-diff --git a/devel/backports-update-manager b/devel/backports-update-manager
-index b584ca0..50f8005 100755
---- a/devel/backports-update-manager
-+++ b/devel/backports-update-manager
-@@ -27,19 +27,20 @@ KERNEL_URLS = [
-     KPATH + "v3.1.10-precise/linux-headers-3.1.10-030110_3.1.10-030110.201201181135_all.deb",
-     KPATH + "v3.2.62-precise/linux-headers-3.2.62-030262_3.2.62-030262.201408061435_all.deb",
-     KPATH + "v3.3.8-quantal/linux-headers-3.3.8-030308_3.3.8-030308.201206041356_all.deb",
--    KPATH + "v3.4.102-quantal/linux-headers-3.4.102-0304102_3.4.102-0304102.201408071853_all.deb",
-+    KPATH + "v3.4.103-quantal/linux-headers-3.4.103-0304103_3.4.103-0304103.201408132135_all.deb",
-     KPATH + "v3.5.7.12-quantal/linux-headers-3.5.7-03050712_3.5.7-03050712.201305111435_all.deb",
-     KPATH + "v3.6.11-raring/linux-headers-3.6.11-030611_3.6.11-030611.201212171335_all.deb",
-     KPATH + "v3.7.10-raring/linux-headers-3.7.10-030710_3.7.10-030710.201302271235_all.deb",
-     KPATH + "v3.8.13-raring/linux-headers-3.8.13-030813_3.8.13-030813.201305111843_all.deb",
-     KPATH + "v3.9.11-saucy/linux-headers-3.9.11-030911_3.9.11-030911.201307202035_all.deb",
--    KPATH + "v3.10.52-saucy/linux-headers-3.10.52-031052_3.10.52-031052.201408071835_all.deb",
-+    KPATH + "v3.10.54-saucy/linux-headers-3.10.54-031054_3.10.54-031054.201409060145_all.deb",
-     KPATH + "v3.11.10-saucy/linux-headers-3.11.10-031110_3.11.10-031110.201311291453_all.deb",
--    KPATH + "v3.12.26-trusty/linux-headers-3.12.26-031226_3.12.26-031226.201408011335_all.deb",
-+    KPATH + "v3.12.27-trusty/linux-headers-3.12.27-031227_3.12.27-031227.201408271535_all.deb",
-     KPATH + "v3.13.11-trusty/linux-headers-3.13.11-031311_3.13.11-031311.201404222035_all.deb",
--    KPATH + "v3.14.16-utopic/linux-headers-3.14.16-031416_3.14.16-031416.201408072035_all.deb",
--    KPATH + "v3.15.7-utopic/linux-headers-3.15.7-031507_3.15.7-031507.201407281235_all.deb",
--    KPATH + "v3.16-utopic/linux-headers-3.16.0-031600_3.16.0-031600.201408031935_all.deb"
-+    KPATH + "v3.14.18-utopic/linux-headers-3.14.18-031418_3.14.18-031418.201409060201_all.deb",
-+    KPATH + "v3.15.10-utopic/linux-headers-3.15.10-031510_3.15.10-031510.201408132333_all.deb",
-+    KPATH + "v3.16.2-utopic/linux-headers-3.16.2-031602_3.16.2-031602.201409052035_all.deb",
-+    KPATH + "v3.17-rc3-utopic/linux-headers-3.17.0-031700rc3_3.17.0-031700rc3.201409031132_all.deb"
- ]
- 
- NUM_KERNELS=len(KERNEL_URLS)
--- 
-1.9.1
+Seems to me you need the function prototype in some backports header 
+file. Try the patch below. Probably not the right way to do it. By the 
+way, it would help if you would mention the target kernel for which you 
+want to make the build.
+
+Regards,
+Arend
+
+---
+diff --git a/backport/backport-include/asm/atomic.h 
+b/backport/backport-include/
+index cabdcfd..6bf9467 100644
+--- a/backport/backport-include/asm/atomic.h
++++ b/backport/backport-include/asm/atomic.h
+@@ -34,4 +34,8 @@ extern long long atomic64_add_return(long long a, 
+atomic64_t *
+  #endif
+  #endif
+
++#ifdef CPTCFG_BACKPORT_BUILD_GENERIC_ATOMIC64
++void atomic64_set(atomic64_t *v, long long i);
++#endif
++
+  #endif /* __BACKPORT_ASM_ATOMIC_H */
+
+> Javi
+>
+> El 08/09/2014 11:44, Javier Casas Marin escribió:
+>>
+>> Hi,
+>> after a bit more investigation I found this:
+>>
+>> wsos-sdk:~/modules/backports-3.14-1# grep compat_firmware_class
+>> compat/Makefile
+>> obj-$(CPTCFG_BACKPORT_BUILD_FW_LOADER) += compat_firmware_class.o
+>>
+>> so I looked in compat/Kconfig and found this (I didn't find it before
+>> because I grep with the CPTCFG_ header):
+>>
+>> config BACKPORT_BUILD_FW_LOADER
+>> tristate
+>> depends on m
+>> # RHEL6, starting from 6.0, backports the FW loader already
+>> depends on !BACKPORT_RHEL_KERNEL_6_0
+>> depends on !FW_LOADER || BACKPORT_KERNEL_2_6_33
+>> default m if BACKPORT_FW_LOADER
+>> default m if BACKPORT_USERSEL_BUILD_ALL
+>>
+>> config BACKPORT_FW_LOADER
+>> bool
+>>
+>> from here I understand that I have to enable de BACKPORT_FW_LOADER
+>> option.
+>> I haven't found it in menuconfig so I changed it manually in
+>> compat/Kconfig to 'def_bool y'
+>>
+>> Now the error went away but a new one appeared:
+>>
+>> CC [M] /root/modules/backports-3.14-1/net/mac80211/key.o
+>> /root/modules/backports-3.14-1/net/mac80211/key.c: In function
+>> 'ieee80211_set_key_tx_seq':
+>> /root/modules/backports-3.14-1/net/mac80211/key.c:813: error: implicit
+>> declaration of function 'atomic64_set'
+>> make[6]: *** [/root/modules/backports-3.14-1/net/mac80211/key.o] Error 1
+>> make[5]: *** [/root/modules/backports-3.14-1/net/mac80211] Error 2
+>> make[4]: *** [_module_/root/modules/backports-3.14-1] Error 2
+>> make[3]: *** [modules] Error 2
+>> make[2]: *** [modules] Error 2
+>> make[1]: *** [modules] Error 2
+>> make: *** [default] Error 2
+>>
+>> I'll try to figure out what happens this time
+>>
+>> Javi
+>>
+>> El 08/09/2014 10:34, Javier Casas Marin escribió:
+>>>
+>>> Hi,
+>>> when I try to compile backports-3.14-1 in a 2.6.30 kernel I get this
+>>> error:
+>>>
+>>> /root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:
+>>> In function 'ath9k_eeprom_request':
+>>> /root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:647:
+>>> warning: passing argument 5 of 'request_firmware_nowait' makes
+>>> pointer from integer without a cast
+>>> /root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:647:
+>>> warning: passing argument 6 of 'request_firmware_nowait' from
+>>> incompatible pointer type
+>>> /root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:647:
+>>> error: too many arguments to function 'request_firmware_nowait'
+>>> make[8]: ***
+>>> [/root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.o] Error
+>>> 1
+>>> make[7]: ***
+>>> [/root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k] Error 2
+>>> make[6]: ***
+>>> [/root/modules/backports-3.14-1/drivers/net/wireless/ath] Error 2
+>>> make[5]: *** [/root/modules/backports-3.14-1/drivers/net/wireless]
+>>> Error 2
+>>> make[4]: *** [_module_/root/modules/backports-3.14-1] Error 2
+>>> make[3]: *** [modules] Error 2
+>>> make[2]: *** [modules] Error 2
+>>> make[1]: *** [modules] Error 2
+>>> make: *** [default] Error 2
+>>>
+>>> I saw that in backport-include/linux/firmware.h there is a
+>>> pre-compiler directive to use the backport's version of
+>>> request_firmware_nowait function:
+>>>
+>>> #if defined(CPTCFG_BACKPORT_BUILD_FW_LOADER_MODULE)
+>>> #define request_firmware_nowait LINUX_BACKPORT(request_firmware_nowait)
+>>>
+>>> But I haven't found where the CPTCFG_BACKPORT_BUILD_FW_LOADER_MODULE
+>>> is defined.
+>>>
+>>> I just ran:
+>>> make defconfig-ath9k
+>>> make
+>>>
+>>> Am I missing a previous configuration step?
+>>>
+>>> Thanks!
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe backports" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at http://vger.kernel.org/majordomo-info.html
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe backports" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at http://vger.kernel.org/majordomo-info.html
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at http://vger.kernel.org/majordomo-info.html
 
