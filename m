@@ -1,104 +1,180 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:56684 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751565AbaIWHkX (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 23 Sep 2014 03:40:23 -0400
-Date: Tue, 23 Sep 2014 09:40:21 +0200
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>, hauke@hauke-m.de,
-	backports@vger.kernel.org
-Subject: Re: [PATCH] backports: fix mconf compilation on OpenSUSE factory
-Message-ID: <20140923074021.GZ17349@wotan.suse.de> (sfid-20140923_094031_691746_37D76359)
-References: <1407597803-11371-1-git-send-email-mcgrof@do-not-panic.com> <1407739093.1718.0.camel@jlt4.sipsolutions.net> <1407739647.1718.1.camel@jlt4.sipsolutions.net> <20140914142007.GC17349@wotan.suse.de> <1410869589.2335.1.camel@jlt4.sipsolutions.net>
+Received: from [178.33.119.222] ([178.33.119.222]:39150 "EHLO mail.wifense.com"
+	rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+	id S1754035AbaIIHaO (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 9 Sep 2014 03:30:14 -0400
+Received: from localhost (unknown [127.0.0.1])
+	by mail.wifense.com (Postfix) with ESMTP id 5E9EF2C0859
+	for <backports@vger.kernel.org>; Tue,  9 Sep 2014 07:33:38 +0000 (UTC)
+Received: from mail.wifense.com ([127.0.0.1])
+	by localhost (mail.wifense.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id SF1NLV4tBkgM for <backports@vger.kernel.org>;
+	Tue,  9 Sep 2014 09:33:25 +0200 (CEST)
+Received: from [172.30.200.107] (230.red-80-28-132.adsl.static.ccgg.telefonica.net [80.28.132.230])
+	(Authenticated sender: jcasas@wifense.com)
+	by mail.wifense.com (Postfix) with ESMTPSA id 4C3712C078B
+	for <backports@vger.kernel.org>; Tue,  9 Sep 2014 09:33:25 +0200 (CEST)
+Message-ID: <540EAC7A.70507@wifense.com> (sfid-20140909_093017_609484_5B1046F6)
+Date: Tue, 09 Sep 2014 09:30:02 +0200
+From: Javier Casas Marin <jcasas@wifense.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1410869589.2335.1.camel@jlt4.sipsolutions.net>
+To: backports@vger.kernel.org
+Subject: Re: error compiling backports-3.14-1: too many arguments to function
+ 'request_firmware_nowait'
+References: <540D6A0A.30609@wifense.com> <540D7A66.5060802@wifense.com> <540D8563.8020403@wifense.com>
+In-Reply-To: <540D8563.8020403@wifense.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Sep 16, 2014 at 02:13:09PM +0200, Johannes Berg wrote:
-> On Sun, 2014-09-14 at 16:20 +0200, Luis R. Rodriguez wrote:
-> > On Mon, Aug 11, 2014 at 08:47:27AM +0200, Johannes Berg wrote:
-> > > On Mon, 2014-08-11 at 08:38 +0200, Johannes Berg wrote:
-> > > 
-> > > > I have a vague feeling that we used to have this and it broke somewhere
-> > > > else, and it was supposed to get added via check-lxdialog.sh...
-> > > 
-> > > commit d58be321df286371d50ed54e835efeea087a9fac
-> > > Author: Johannes Berg <johannes.berg@intel.com>
-> > > Date:   Mon Jun 3 17:54:33 2013 +0200
-> > > 
-> > >     backports: use check-lxdialog.sh
-> > 
-> > I've narrowed this down a bit further. The upstream check-lxdialog.sh
-> > has not changed but I noticed we also used a bit different strategy for
-> > linking and it seems there are some shortcomings with that that I guess
-> > could be a bug. This fixes it at least for me.
-> > 
-> > Thoughts?
-> > 
-> > From 3d8941817e410a546ad6f3f71c1a1d09926c246e Mon Sep 17 00:00:00 2001
-> > From: "Luis R. Rodriguez" <mcgrof@suse.com>
-> > Date: Sun, 14 Sep 2014 06:05:29 -0700
-> > Subject: [PATCH] backports: fix mconf compilation library assumptions
-> > 
-> > On OpenSUSE factory 'make menuconfig' fails to compile with:
-> > 
-> > cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2
-> > -fomit-frame-pointer -DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o
-> > lxdialog/yesno.o lxdialog/yesno.c
-> > cc -Wl,--no-as-needed -lncursesw  mconf.o zconf.tab.o
-> > lxdialog/checklist.o lxdialog/inputbox.o lxdialog/menubox.o
-> > lxdialog/textbox.o lxdialog/util.o lxdialog/yesno.o   -o mconf
-> > /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../x86_64-suse-linux/bin/ld:
-> > /lib64/libncursesw.so.5: undefined reference to symbol 'acs_map'
-> > /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/libtinfo.so:
-> > error adding symbols: DSO missing from command line
-> > collect2: error: ld returned 1 exit status
-> > 
-> > Although this can be fixed by linking with -ltinfo after a bit
-> > further investigation I've traced this issue down to how we speak
-> > to the linker and ask it to link and when. For instance if one
-> > were to compile and link mconf by specifying the linker requirements
-> > before the final object file things fail and if we ask for it after
-> > things work. For instance if we ask for the libraries before:
-> > 
-> > gcc  -lncursesw -o
-> > 	kconf/mconf
-> > 	kconf/mconf.o
-> > 	kconf/zconf.tab.o
-> > 	kconf/lxdialog/checklist.o
-> > 	kconf/lxdialog/util.o
-> > 	kconf/lxdialog/inputbox.o
-> > 	kconf/lxdialog/textbox.o
-> > 	kconf/lxdialog/yesno.o
-> > 	kconf/lxdialog/menubox.o  -lncursesw
-> > 
-> > Passing the linker requirements at the end makes the gcc happy:
-> > 
-> > gcc  -o kconf/mconf
-> > 	kconf/mconf.o
-> > 	kconf/zconf.tab.o
-> > 	kconf/lxdialog/checklist.o
-> > 	kconf/lxdialog/util.o
-> > 	kconf/lxdialog/inputbox.o
-> > 	kconf/lxdialog/textbox.o
-> > 	kconf/lxdialog/yesno.o
-> > 	kconf/lxdialog/menubox.o  -lncursesw
-> > 
-> > It seems that using -Wl,--no-as-needed does not do what we wish with regards
-> > to the above requirements, this could be a bug but the kernel treats things
-> > a bit differently so we need to adopt, fix this by being explicit by
-> > using -Wl,--add-needed and letting it figure things out automagically.
-> > 
-> > This has been tested on Debian and OpenSUSE factory.
-> 
-> I have no idea what's going on, but it works for me here. I don't
-> remember which distro originally wanted this differently, but hey ...
-> this at least doesn't unconditionally try to link something that's not
-> there.
 
-OK pushed.
+I solved this adding the extern atomic64_set prototype in 
+backport-include/asm/atomic.h, atomic64_read and atomic64_add_return 
+were defined there but atomic64_set was missing
 
-  Luis
+Javi
+
+El 08/09/2014 12:30, Javier Casas Marin escribió:
+> This time I don't understand what is going on with the error:
+>
+> /root/modules/backports-3.14-1/net/mac80211/key.c:813: error: implicit 
+> declaration of function 'atomic64_set'
+>
+> If I search for this function definition I see it is in 
+> compat_atomic.c file:
+>
+> wsos-sdk:~/modules/backports-3.14-1# grep -r --include="*.c" 
+> atomic64_set .
+> ./net/mac80211/key.c: atomic64_set(&key->u.ccmp.tx_pn, pn64);
+> ./net/mac80211/key.c: atomic64_set(&key->u.aes_cmac.tx_pn, pn64);
+> ./compat/compat_atomic.c:void atomic64_set(atomic64_t *v, long long i)
+> ./compat/compat_atomic.c:EXPORT_SYMBOL_GPL(atomic64_set);
+>
+> Now I search for it in the compat Makefile:
+> wsos-sdk:~/modules/backports-3.14-1# grep compat_atomic.o compat/Makefile
+> compat-$(CPTCFG_BACKPORT_BUILD_GENERIC_ATOMIC64) += compat_atomic.o
+>
+> And I see in .config that I do have that config option enabled:
+> wsos-sdk:~/modules/backports-3.14-1# grep 
+> BACKPORT_BUILD_GENERIC_ATOMIC64 .config
+> CPTCFG_BACKPORT_BUILD_GENERIC_ATOMIC64=y
+>
+> and it works because I see tha the compat_atomic.o is generated during 
+> the compilation so, I guess that the problem is exporting the symbol 
+> with EXPORT_SYMBOL_GPL(atomic64_set)
+>
+> any clue about how to solve this?
+>
+> Javi
+>
+> El 08/09/2014 11:44, Javier Casas Marin escribió:
+>>
+>> Hi,
+>> after a bit more investigation I  found this:
+>>
+>> wsos-sdk:~/modules/backports-3.14-1# grep compat_firmware_class 
+>> compat/Makefile
+>> obj-$(CPTCFG_BACKPORT_BUILD_FW_LOADER) += compat_firmware_class.o
+>>
+>> so I looked in compat/Kconfig and found this (I didn't find it before 
+>> because I grep with the CPTCFG_ header):
+>>
+>> config BACKPORT_BUILD_FW_LOADER
+>>     tristate
+>>     depends on m
+>>     # RHEL6, starting from 6.0, backports the FW loader already
+>>     depends on !BACKPORT_RHEL_KERNEL_6_0
+>>     depends on !FW_LOADER || BACKPORT_KERNEL_2_6_33
+>>     default m if BACKPORT_FW_LOADER
+>>     default m if BACKPORT_USERSEL_BUILD_ALL
+>>
+>> config BACKPORT_FW_LOADER
+>>     bool
+>>
+>> from here I understand that I have to enable de BACKPORT_FW_LOADER 
+>> option.
+>> I haven't found it in menuconfig so I changed it manually in 
+>> compat/Kconfig to 'def_bool y'
+>>
+>> Now the error went away but a new one appeared:
+>>
+>>   CC [M]  /root/modules/backports-3.14-1/net/mac80211/key.o
+>> /root/modules/backports-3.14-1/net/mac80211/key.c: In function 
+>> 'ieee80211_set_key_tx_seq':
+>> /root/modules/backports-3.14-1/net/mac80211/key.c:813: error: 
+>> implicit declaration of function 'atomic64_set'
+>> make[6]: *** [/root/modules/backports-3.14-1/net/mac80211/key.o] Error 1
+>> make[5]: *** [/root/modules/backports-3.14-1/net/mac80211] Error 2
+>> make[4]: *** [_module_/root/modules/backports-3.14-1] Error 2
+>> make[3]: *** [modules] Error 2
+>> make[2]: *** [modules] Error 2
+>> make[1]: *** [modules] Error 2
+>> make: *** [default] Error 2
+>>
+>> I'll try to figure out what happens this time
+>>
+>> Javi
+>>
+>> El 08/09/2014 10:34, Javier Casas Marin escribió:
+>>>
+>>> Hi,
+>>> when I try to compile backports-3.14-1 in a 2.6.30 kernel I get this 
+>>> error:
+>>>
+>>> /root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c: In 
+>>> function 'ath9k_eeprom_request':
+>>> /root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:647: 
+>>> warning: passing argument 5 of 'request_firmware_nowait' makes 
+>>> pointer from integer without a cast
+>>> /root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:647: 
+>>> warning: passing argument 6 of 'request_firmware_nowait' from 
+>>> incompatible pointer type
+>>> /root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.c:647: 
+>>> error: too many arguments to function 'request_firmware_nowait'
+>>> make[8]: *** 
+>>> [/root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k/init.o] 
+>>> Error 1
+>>> make[7]: *** 
+>>> [/root/modules/backports-3.14-1/drivers/net/wireless/ath/ath9k] Error 2
+>>> make[6]: *** 
+>>> [/root/modules/backports-3.14-1/drivers/net/wireless/ath] Error 2
+>>> make[5]: *** [/root/modules/backports-3.14-1/drivers/net/wireless] 
+>>> Error 2
+>>> make[4]: *** [_module_/root/modules/backports-3.14-1] Error 2
+>>> make[3]: *** [modules] Error 2
+>>> make[2]: *** [modules] Error 2
+>>> make[1]: *** [modules] Error 2
+>>> make: *** [default] Error 2
+>>>
+>>> I saw that in backport-include/linux/firmware.h there is a 
+>>> pre-compiler directive to use the backport's version of 
+>>> request_firmware_nowait function:
+>>>
+>>> #if defined(CPTCFG_BACKPORT_BUILD_FW_LOADER_MODULE)
+>>> #define request_firmware_nowait LINUX_BACKPORT(request_firmware_nowait)
+>>>
+>>> But I haven't found where the CPTCFG_BACKPORT_BUILD_FW_LOADER_MODULE 
+>>> is defined.
+>>>
+>>> I just ran:
+>>> make defconfig-ath9k
+>>> make
+>>>
+>>> Am I missing a previous configuration step?
+>>>
+>>> Thanks!
+>>> -- 
+>>> To unsubscribe from this list: send the line "unsubscribe backports" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at http://vger.kernel.org/majordomo-info.html
+>>
+>> -- 
+>> To unsubscribe from this list: send the line "unsubscribe backports" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at http://vger.kernel.org/majordomo-info.html
+>
+> -- 
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
