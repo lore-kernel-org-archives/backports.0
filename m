@@ -1,66 +1,106 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:48071 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:36967 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751932AbaIFTog (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 6 Sep 2014 15:44:36 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/5] backports: remove ath5k section mismatch patch
-Date: Sat,  6 Sep 2014 21:44:15 +0200
-Message-Id: <1410032659-30404-2-git-send-email-hauke@hauke-m.de> (sfid-20140906_214440_510611_34924B23)
-In-Reply-To: <1410032659-30404-1-git-send-email-hauke@hauke-m.de>
-References: <1410032659-30404-1-git-send-email-hauke@hauke-m.de>
+	id S1752951AbaIPMNS (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 16 Sep 2014 08:13:18 -0400
+Message-ID: <1410869589.2335.1.camel@jlt4.sipsolutions.net> (sfid-20140916_141321_913459_599E3D7F)
+Subject: Re: [PATCH] backports: fix mconf compilation on OpenSUSE factory
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@suse.com>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>, hauke@hauke-m.de,
+	backports@vger.kernel.org
+Date: Tue, 16 Sep 2014 14:13:09 +0200
+In-Reply-To: <20140914142007.GC17349@wotan.suse.de> (sfid-20140914_162012_323135_B1D91681)
+References: <1407597803-11371-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1407739093.1718.0.camel@jlt4.sipsolutions.net>
+	 <1407739647.1718.1.camel@jlt4.sipsolutions.net>
+	 <20140914142007.GC17349@wotan.suse.de>
+	 (sfid-20140914_162012_323135_B1D91681)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This change was merge upstream in this commit:
-commit 9baa3c34ac4e27f7e062f266f50cc5dbea26a6c1
-Author: Benoit Taine <benoit.taine@lip6.fr>
-Date:   Fri Aug 8 15:56:03 2014 +0200
+On Sun, 2014-09-14 at 16:20 +0200, Luis R. Rodriguez wrote:
+> On Mon, Aug 11, 2014 at 08:47:27AM +0200, Johannes Berg wrote:
+> > On Mon, 2014-08-11 at 08:38 +0200, Johannes Berg wrote:
+> > 
+> > > I have a vague feeling that we used to have this and it broke somewhere
+> > > else, and it was supposed to get added via check-lxdialog.sh...
+> > 
+> > commit d58be321df286371d50ed54e835efeea087a9fac
+> > Author: Johannes Berg <johannes.berg@intel.com>
+> > Date:   Mon Jun 3 17:54:33 2013 +0200
+> > 
+> >     backports: use check-lxdialog.sh
+> 
+> I've narrowed this down a bit further. The upstream check-lxdialog.sh
+> has not changed but I noticed we also used a bit different strategy for
+> linking and it seems there are some shortcomings with that that I guess
+> could be a bug. This fixes it at least for me.
+> 
+> Thoughts?
+> 
+> From 3d8941817e410a546ad6f3f71c1a1d09926c246e Mon Sep 17 00:00:00 2001
+> From: "Luis R. Rodriguez" <mcgrof@suse.com>
+> Date: Sun, 14 Sep 2014 06:05:29 -0700
+> Subject: [PATCH] backports: fix mconf compilation library assumptions
+> 
+> On OpenSUSE factory 'make menuconfig' fails to compile with:
+> 
+> cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2
+> -fomit-frame-pointer -DCURSES_LOC="<ncurses.h>" -DLOCALE   -c -o
+> lxdialog/yesno.o lxdialog/yesno.c
+> cc -Wl,--no-as-needed -lncursesw  mconf.o zconf.tab.o
+> lxdialog/checklist.o lxdialog/inputbox.o lxdialog/menubox.o
+> lxdialog/textbox.o lxdialog/util.o lxdialog/yesno.o   -o mconf
+> /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../x86_64-suse-linux/bin/ld:
+> /lib64/libncursesw.so.5: undefined reference to symbol 'acs_map'
+> /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/libtinfo.so:
+> error adding symbols: DSO missing from command line
+> collect2: error: ld returned 1 exit status
+> 
+> Although this can be fixed by linking with -ltinfo after a bit
+> further investigation I've traced this issue down to how we speak
+> to the linker and ask it to link and when. For instance if one
+> were to compile and link mconf by specifying the linker requirements
+> before the final object file things fail and if we ask for it after
+> things work. For instance if we ask for the libraries before:
+> 
+> gcc  -lncursesw -o
+> 	kconf/mconf
+> 	kconf/mconf.o
+> 	kconf/zconf.tab.o
+> 	kconf/lxdialog/checklist.o
+> 	kconf/lxdialog/util.o
+> 	kconf/lxdialog/inputbox.o
+> 	kconf/lxdialog/textbox.o
+> 	kconf/lxdialog/yesno.o
+> 	kconf/lxdialog/menubox.o  -lncursesw
+> 
+> Passing the linker requirements at the end makes the gcc happy:
+> 
+> gcc  -o kconf/mconf
+> 	kconf/mconf.o
+> 	kconf/zconf.tab.o
+> 	kconf/lxdialog/checklist.o
+> 	kconf/lxdialog/util.o
+> 	kconf/lxdialog/inputbox.o
+> 	kconf/lxdialog/textbox.o
+> 	kconf/lxdialog/yesno.o
+> 	kconf/lxdialog/menubox.o  -lncursesw
+> 
+> It seems that using -Wl,--no-as-needed does not do what we wish with regards
+> to the above requirements, this could be a bug but the kernel treats things
+> a bit differently so we need to adopt, fix this by being explicit by
+> using -Wl,--add-needed and letting it figure things out automagically.
+> 
+> This has been tested on Debian and OpenSUSE factory.
 
-    PCI: Remove DEFINE_PCI_DEVICE_TABLE macro use
+I have no idea what's going on, but it works for me here. I don't
+remember which distro originally wanted this differently, but hey ...
+this at least doesn't unconditionally try to link something that's not
+there.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../network/67-fix-section-mismatch/INFO                      |  9 ---------
- .../drivers_net_wireless_ath_ath5k_led.patch                  | 11 -----------
- 2 files changed, 20 deletions(-)
- delete mode 100644 patches/collateral-evolutions/network/67-fix-section-mismatch/INFO
- delete mode 100644 patches/collateral-evolutions/network/67-fix-section-mismatch/drivers_net_wireless_ath_ath5k_led.patch
-
-diff --git a/patches/collateral-evolutions/network/67-fix-section-mismatch/INFO b/patches/collateral-evolutions/network/67-fix-section-mismatch/INFO
-deleted file mode 100644
-index b545417..0000000
---- a/patches/collateral-evolutions/network/67-fix-section-mismatch/INFO
-+++ /dev/null
-@@ -1,9 +0,0 @@
--Without this patch backports will generate a section mismatch on kernel
--<= 3.3. This results in this error message:
--
--WARNING: drivers/net/wireless/ath/ath5k/ath5k.o(.text+0x157e8): Section mismatch in reference from the function ath5k_init_leds() to the variable .devinit.rodata:ath5k_led_devices
--The function ath5k_init_leds() references
--the variable __devinitconst ath5k_led_devices.
--This is often because ath5k_init_leds lacks a __devinitconst 
--annotation or the annotation of ath5k_led_devices is wrong.
--
-diff --git a/patches/collateral-evolutions/network/67-fix-section-mismatch/drivers_net_wireless_ath_ath5k_led.patch b/patches/collateral-evolutions/network/67-fix-section-mismatch/drivers_net_wireless_ath_ath5k_led.patch
-deleted file mode 100644
-index 5b9583d..0000000
---- a/patches/collateral-evolutions/network/67-fix-section-mismatch/drivers_net_wireless_ath_ath5k_led.patch
-+++ /dev/null
-@@ -1,11 +0,0 @@
----- a/drivers/net/wireless/ath/ath5k/led.c
--+++ b/drivers/net/wireless/ath/ath5k/led.c
--@@ -53,7 +53,7 @@
-- #define ATH_POLARITY(data) ((data) & 0xff)
-- 
-- /* Devices we match on for LED config info (typically laptops) */
---static DEFINE_PCI_DEVICE_TABLE(ath5k_led_devices) = {
--+static const struct pci_device_id ath5k_led_devices[] = {
-- 	/* AR5211 */
-- 	{ PCI_VDEVICE(ATHEROS, PCI_DEVICE_ID_ATHEROS_AR5211), ATH_LED(0, 0) },
-- 	/* HP Compaq nc6xx, nc4000, nx6000 */
--- 
-1.9.1
+johannes
 
