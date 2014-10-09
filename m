@@ -1,38 +1,161 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:40664 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:58430 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752094AbaJYSp4 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 25 Oct 2014 14:45:56 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
+	id S1751372AbaJIO5v (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 9 Oct 2014 10:57:51 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 01/11] backports: add wil6210_uapi.h
-Date: Sat, 25 Oct 2014 11:19:20 +0200
-Message-Id: <1414228770-20047-2-git-send-email-hauke@hauke-m.de> (sfid-20141025_211321_394252_D13E7FBD)
-In-Reply-To: <1414228770-20047-1-git-send-email-hauke@hauke-m.de>
-References: <1414228770-20047-1-git-send-email-hauke@hauke-m.de>
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backports: add device coredump framework
+Date: Thu,  9 Oct 2014 16:57:45 +0200
+Message-Id: <1412866665-31445-1-git-send-email-johannes@sipsolutions.net> (sfid-20141009_165753_508429_C3F2A6E9)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This file is needed by the wil6210 driver now.
+From: Johannes Berg <johannes.berg@intel.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+As drivers will start requiring the new framework and it has
+been merged to linux/master during the 3.18 merge window, we
+can include it into backports to compile if needed.
+
+On kernels that do already have it but didn't want it built
+honor that, but if building otherwise don't. This may need
+to be revisited in the future.
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- copy-list | 1 +
- 1 file changed, 1 insertion(+)
+ backport/compat/Kconfig                        | 11 +++++
+ backport/compat/backports.h                    | 10 +++++
+ backport/compat/main.c                         |  7 ++++
+ patches/backport-adjustments/devcoredump.patch | 57 ++++++++++++++++++++++++++
+ 4 files changed, 85 insertions(+)
+ create mode 100644 patches/backport-adjustments/devcoredump.patch
 
-diff --git a/copy-list b/copy-list
-index b821718..75ef52f 100644
---- a/copy-list
-+++ b/copy-list
-@@ -25,6 +25,7 @@ include/linux/ieee80211.h
- include/linux/pci_ids.h
- include/linux/mmc/sdio_ids.h
- include/linux/ath9k_platform.h
-+include/uapi/linux/wil6210_uapi.h
- include/linux/wl12xx.h
- include/linux/rndis.h
- include/linux/bcm47xx_wdt.h
+diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
+index 7581758b1e3c..49699bda251a 100644
+--- a/backport/compat/Kconfig
++++ b/backport/compat/Kconfig
+@@ -124,3 +124,14 @@ config BACKPORT_BUILD_CRYPTO_CCM
+ 	default n if CRYPTO_CCM
+ 	default y if BACKPORT_CRYPTO_CCM
+ 	#c-file crypto/ccm.c
++
++config BACKPORT_WANT_DEV_COREDUMP
++	bool
++
++config BACKPORT_BUILD_WANT_DEV_COREDUMP
++	bool
++	default n if DEV_COREDUMP
++	default n if DISABLE_DEV_COREDUMP
++	default y if BACKPORT_WANT_DEV_COREDUMP
++	#h-file linux/devcoredump.h
++	#c-file drivers/base/devcoredump.c
+diff --git a/backport/compat/backports.h b/backport/compat/backports.h
+index ed946b5ba108..c9094ac42c1f 100644
+--- a/backport/compat/backports.h
++++ b/backport/compat/backports.h
+@@ -13,4 +13,14 @@ static inline void crypto_ccm_module_exit(void)
+ {}
+ #endif
+ 
++#ifdef CPTCFG_BACKPORT_BUILD_WANT_DEV_COREDUMP
++int devcoredump_init(void);
++void devcoredump_exit(void);
++#else
++static inline int devcoredump_init(void)
++{ return 0; }
++static inline void devcoredump_exit(void)
++{}
++#endif
++
+ #endif /* LINUX_BACKPORTS_PRIVATE_H */
+diff --git a/backport/compat/main.c b/backport/compat/main.c
+index e38eed3d56d5..d3f8944913e8 100644
+--- a/backport/compat/main.c
++++ b/backport/compat/main.c
+@@ -57,6 +57,12 @@ static int __init backport_init(void)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = devcoredump_init();
++	if (ret) {
++		crypto_ccm_module_exit();
++		return ret;
++	}
++
+ 	printk(KERN_INFO "Loading modules backported from " BACKPORTED_KERNEL_NAME
+ #ifndef BACKPORTS_GIT_TRACKED
+ 		" version " BACKPORTED_KERNEL_VERSION
+@@ -75,5 +81,6 @@ subsys_initcall(backport_init);
+ static void __exit backport_exit(void)
+ {
+ 	crypto_ccm_module_exit();
++	devcoredump_exit();
+ }
+ module_exit(backport_exit);
+diff --git a/patches/backport-adjustments/devcoredump.patch b/patches/backport-adjustments/devcoredump.patch
+new file mode 100644
+index 000000000000..b0d97f94cc3e
+--- /dev/null
++++ b/patches/backport-adjustments/devcoredump.patch
+@@ -0,0 +1,57 @@
++diff --git a/compat/drivers-base-devcoredump.c b/compat/drivers-base-devcoredump.c
++index 96614b04544c..bd7a9ca71bdc 100644
++--- a/compat/drivers-base-devcoredump.c
+++++ b/compat/drivers-base-devcoredump.c
++@@ -30,6 +30,7 @@
++ #include <linux/slab.h>
++ #include <linux/fs.h>
++ #include <linux/workqueue.h>
+++#include "backports.h"
++ 
++ /* if data isn't read by userspace after 5 minutes then delete it */
++ #define DEVCD_TIMEOUT	(HZ * 60 * 5)
++@@ -243,11 +244,10 @@ void dev_coredumpm(struct device *dev, struct module *owner,
++ }
++ EXPORT_SYMBOL_GPL(dev_coredumpm);
++ 
++-static int __init devcoredump_init(void)
+++int __init devcoredump_init(void)
++ {
++ 	return class_register(&devcd_class);
++ }
++-__initcall(devcoredump_init);
++ 
++ static int devcd_free(struct device *dev, void *data)
++ {
++@@ -257,9 +257,8 @@ static int devcd_free(struct device *dev, void *data)
++ 	return 0;
++ }
++ 
++-static void __exit devcoredump_exit(void)
+++void __exit devcoredump_exit(void)
++ {
++ 	class_for_each_device(&devcd_class, NULL, NULL, devcd_free);
++ 	class_unregister(&devcd_class);
++ }
++-__exitcall(devcoredump_exit);
++diff --git a/include/linux/backport-devcoredump.h b/include/linux/backport-devcoredump.h
++index c0a360e99f64..da20e61f6c06 100644
++--- a/include/linux/backport-devcoredump.h
+++++ b/include/linux/backport-devcoredump.h
++@@ -5,7 +5,7 @@
++ #include <linux/module.h>
++ #include <linux/vmalloc.h>
++ 
++-#ifdef CONFIG_DEV_COREDUMP
+++#ifdef CPTCFG_BACKPORT_BUILD_WANT_DEV_COREDUMP
++ void dev_coredumpv(struct device *dev, const void *data, size_t datalen,
++ 		   gfp_t gfp);
++ 
++@@ -30,6 +30,6 @@ dev_coredumpm(struct device *dev, struct module *owner,
++ {
++ 	free(data);
++ }
++-#endif /* CONFIG_DEV_COREDUMP */
+++#endif /* CPTCFG_BACKPORT_BUILD_WANT_DEV_COREDUMP */
++ 
++ #endif /* __DEVCOREDUMP_H */
 -- 
-1.9.1
+2.1.0
 
