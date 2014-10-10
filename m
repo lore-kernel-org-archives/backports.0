@@ -1,63 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:54021 "EHLO sipsolutions.net"
+Received: from s3.sipsolutions.net ([5.9.151.49]:34927 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750710AbaJaUW3 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 31 Oct 2014 16:22:29 -0400
-Message-ID: <1414786943.3014.37.camel@jlt4.sipsolutions.net> (sfid-20141031_212231_842299_8FC8B9F5)
-Subject: Re: [RFC v2 1/4] backports: replace CPTCFG prefix for
- CONFIG_BACKPORT
+	id S1751884AbaJJNHq (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 10 Oct 2014 09:07:46 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	(Exim 4.84)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1XcZv5-00013v-PT
+	for backports@vger.kernel.org; Fri, 10 Oct 2014 15:07:43 +0200
+Message-ID: <1412946459.3206.0.camel@jlt4.sipsolutions.net> (sfid-20141010_150748_356813_372DEBC7)
+Subject: Re: [PATCH] backports: add device coredump framework
 From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@suse.com>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
-Date: Fri, 31 Oct 2014 21:22:23 +0100
-In-Reply-To: <20141031193408.GA12953@wotan.suse.de>
-References: <1414570902-5675-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1414570902-5675-2-git-send-email-mcgrof@do-not-panic.com>
-	 <1414741273.3014.3.camel@jlt4.sipsolutions.net>
-	 <20141031193408.GA12953@wotan.suse.de>
+To: backports@vger.kernel.org
+Date: Fri, 10 Oct 2014 15:07:39 +0200
+In-Reply-To: <1412866665-31445-1-git-send-email-johannes@sipsolutions.net> (sfid-20141009_165753_508429_C3F2A6E9)
+References: <1412866665-31445-1-git-send-email-johannes@sipsolutions.net>
+	 (sfid-20141009_165753_508429_C3F2A6E9)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2014-10-31 at 20:34 +0100, Luis R. Rodriguez wrote:
-
-> > I really think you need to make this optional for the in-tree
-> > generation, otherwise it will complicate things a lot for anyone who's
-> > already using backports in a way that doesn't have it regenerated all
-> > the time.
+On Thu, 2014-10-09 at 16:57 +0200, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
 > 
-> Logistically I do agree this will implicate tons of merge conflicts
-> if a git tree was used for development based on backports, however
-> functionally I don't expect this this to create divergence.
-
-Agree, but it's going to be a nightmare from the merge point of view,
-and also the CPTCFG_ is nicer to replace back and forth between
-backports-based development and the kernel, due to this:
-
-> > Additionally, CPTCFG_ had the advantage of having the same length as
-> > CONFIG_, so code style wise it was nicer to replace.
-
-
-
-> > Please make this a post-process step that runs on everything, including
-> > the backport stuff, rather than running only on the source and assuming
-> > the backport stuff already uses this convention.
+> As drivers will start requiring the new framework and it has
+> been merged to linux/master during the 3.18 merge window, we
+> can include it into backports to compile if needed.
 > 
-> I want to but lets consider the amount of work to maintain the two
-> separate approaches, is it worth it?
+> On kernels that do already have it but didn't want it built
+> honor that, but if building otherwise don't. This may need
+> to be revisited in the future.
+> 
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+>  backport/compat/Kconfig                        | 11 +++++
+>  backport/compat/backports.h                    | 10 +++++
+>  backport/compat/main.c                         |  7 ++++
+>  patches/backport-adjustments/devcoredump.patch | 57 ++++++++++++++++++++++++++
 
-I don't see why it'd be maintaining two approaches? Right now we have
-scripting to replace CONFIG_ with CPTCFG_, so couldn't we just add more
-scripting to replace CPTCFG_ with CONFIG_BACKPORT_ ?
-
-That also makes me think of something else - we currently use BACKPORT_
-as a prefix for some of the other stuff under compat/Kconfig, and in
-fact rename some things (like CONFIG_BACKPORT_AVERAGE) so maybe also
-using CONFIG_BACKPORT_ here isn't a great idea? Might want to use
-something else, say CONFIG_BPT_ or so.
+Apparently this needs to be extended to compile on other kernels due to
+the dev attr stuff... will have a new version eventually.
 
 johannes
 
