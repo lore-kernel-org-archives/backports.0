@@ -1,62 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:40648 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751846AbaJYSpx (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 25 Oct 2014 14:45:53 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 02/11] backports: add some missing header files
-Date: Sat, 25 Oct 2014 11:19:21 +0200
-Message-Id: <1414228770-20047-3-git-send-email-hauke@hauke-m.de> (sfid-20141025_204555_621021_D41E60F3)
-In-Reply-To: <1414228770-20047-1-git-send-email-hauke@hauke-m.de>
-References: <1414228770-20047-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:1064 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751347AbaJJKNK (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 10 Oct 2014 06:13:10 -0400
+From: Arend van Spriel <arend@broadcom.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>, Arend van Spriel <arend@broadcom.com>
+Subject: [PATCH] defconfigs: enable PCIe support in brcmfmac defconfig
+Date: Fri, 10 Oct 2014 12:13:05 +0200
+Message-ID: <1412935985-6665-1-git-send-email-arend@broadcom.com> (sfid-20141010_121312_894873_E8461661)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The hackrf driver needs PAGE_ALIGN() from mm.h.
-The ir-hix5hd2 driver needs of_get_property() from of.h.
+In 3.17 kernel the brcmfmac supports PCIe host interface. So enable
+support when selecting defconfig-brcmfmac.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Arend van Spriel <arend@broadcom.com>
 ---
- .../media/0004-missing-include/hackrf.patch                    | 10 ++++++++++
- .../media/0004-missing-include/ir-hix5hd2.patch                | 10 ++++++++++
- 2 files changed, 20 insertions(+)
- create mode 100644 patches/collateral-evolutions/media/0004-missing-include/hackrf.patch
- create mode 100644 patches/collateral-evolutions/media/0004-missing-include/ir-hix5hd2.patch
+ backport/defconfigs/brcmfmac | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/patches/collateral-evolutions/media/0004-missing-include/hackrf.patch b/patches/collateral-evolutions/media/0004-missing-include/hackrf.patch
-new file mode 100644
-index 0000000..ac0b501
---- /dev/null
-+++ b/patches/collateral-evolutions/media/0004-missing-include/hackrf.patch
-@@ -0,0 +1,10 @@
-+--- a/drivers/media/usb/hackrf/hackrf.c
-++++ b/drivers/media/usb/hackrf/hackrf.c
-+@@ -22,6 +22,7 @@
-+ #include <media/v4l2-ctrls.h>
-+ #include <media/v4l2-event.h>
-+ #include <media/videobuf2-vmalloc.h>
-++#include <linux/mm.h>
-+ 
-+ /* HackRF USB API commands (from HackRF Library) */
-+ enum {
-diff --git a/patches/collateral-evolutions/media/0004-missing-include/ir-hix5hd2.patch b/patches/collateral-evolutions/media/0004-missing-include/ir-hix5hd2.patch
-new file mode 100644
-index 0000000..e7891f8
---- /dev/null
-+++ b/patches/collateral-evolutions/media/0004-missing-include/ir-hix5hd2.patch
-@@ -0,0 +1,10 @@
-+--- a/drivers/media/rc/ir-hix5hd2.c
-++++ b/drivers/media/rc/ir-hix5hd2.c
-+@@ -15,6 +15,7 @@
-+ #include <linux/of_device.h>
-+ #include <linux/regmap.h>
-+ #include <media/rc-core.h>
-++#include <linux/of.h>
-+ 
-+ /* Allow the driver to compile on all architectures */
-+ #ifndef writel_relaxed
+diff --git a/backport/defconfigs/brcmfmac b/backport/defconfigs/brcmfmac
+index 72b2859..f4657c7 100644
+--- a/backport/defconfigs/brcmfmac
++++ b/backport/defconfigs/brcmfmac
+@@ -4,3 +4,4 @@ CPTCFG_WLAN=y
+ CPTCFG_BRCMFMAC=m
+ CPTCFG_BRCMFMAC_SDIO=y
+ CPTCFG_BRCMFMAC_USB=y
++CPTCFG_BRCMFMAC_PCIE=y
 -- 
 1.9.1
 
