@@ -1,35 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mailgate2.neusoft.com ([59.44.43.254]:22806 "EHLO
-	mailgate2.neusoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751268AbaJIMur (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 9 Oct 2014 08:50:47 -0400
-Message-ID: <543682C4.1060803@neusoft.com> (sfid-20141009_145049_086976_39DE9220)
-Date: Thu, 9 Oct 2014 20:42:44 +0800
-From: =?UTF-8?B?5YiY56uL5Z2k?= <liu.lk@neusoft.com>
-MIME-Version: 1.0
-To: <backports@vger.kernel.org>
-Subject: Questions
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Received: from hauke-m.de ([5.39.93.123]:58019 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753260AbaJTVeQ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 20 Oct 2014 17:34:16 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 4/5] backports: these drivers need a new function
+Date: Mon, 20 Oct 2014 23:33:46 +0200
+Message-Id: <1413840827-9142-5-git-send-email-hauke@hauke-m.de> (sfid-20141020_233419_745845_665038BD)
+In-Reply-To: <1413840827-9142-1-git-send-email-hauke@hauke-m.de>
+References: <1413840827-9142-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-RGVhciBCYWNrcG9ydHMgVGVhbToKICAgICAgICAgSSB3YXMgdGhlIFNXIGVuZ2luZWVyIG9mIE5l
-dXNvZnQgaW4gQ2hpbmEsICBJIHdhbnQgdG8gZG93bmxvYWQgCmJhY2twb3J0Ki4gV2hpY2ggdmVy
-c2lvbiBvZiBzdGFibGUgcmVsZWFzZSAgc2hvdWxkIEkgY2hvb3NlIGZvciBsaW51eCAKa2VybmVs
-IDIuNi4zMiBpbiBDZW5PUyA1LjUgPwoKQmVzdCB3aXNoZXMhCi0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDb25maWRlbnRpYWxpdHkgTm90aWNlOiBUaGUgaW5mb3Jt
-YXRpb24gY29udGFpbmVkIGluIHRoaXMgZS1tYWlsIGFuZCBhbnkgYWNjb21wYW55aW5nIGF0dGFj
-aG1lbnQocykgCmlzIGludGVuZGVkIG9ubHkgZm9yIHRoZSB1c2Ugb2YgdGhlIGludGVuZGVkIHJl
-Y2lwaWVudCBhbmQgbWF5IGJlIGNvbmZpZGVudGlhbCBhbmQvb3IgcHJpdmlsZWdlZCBvZiAKTmV1
-c29mdCBDb3Jwb3JhdGlvbiwgaXRzIHN1YnNpZGlhcmllcyBhbmQvb3IgaXRzIGFmZmlsaWF0ZXMu
-IElmIGFueSByZWFkZXIgb2YgdGhpcyBjb21tdW5pY2F0aW9uIGlzIApub3QgdGhlIGludGVuZGVk
-IHJlY2lwaWVudCwgdW5hdXRob3JpemVkIHVzZSwgZm9yd2FyZGluZywgcHJpbnRpbmcsICBzdG9y
-aW5nLCBkaXNjbG9zdXJlIG9yIGNvcHlpbmcgCmlzIHN0cmljdGx5IHByb2hpYml0ZWQsIGFuZCBt
-YXkgYmUgdW5sYXdmdWwuSWYgeW91IGhhdmUgcmVjZWl2ZWQgdGhpcyBjb21tdW5pY2F0aW9uIGlu
-IGVycm9yLHBsZWFzZSAKaW1tZWRpYXRlbHkgbm90aWZ5IHRoZSBzZW5kZXIgYnkgcmV0dXJuIGUt
-bWFpbCwgYW5kIGRlbGV0ZSB0aGUgb3JpZ2luYWwgbWVzc2FnZSBhbmQgYWxsIGNvcGllcyBmcm9t
-IAp5b3VyIHN5c3RlbS4gVGhhbmsgeW91LiAKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tCg==
+These drivers need regmap_bulk_write(), which was added in 3.4
+
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ dependencies | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/dependencies b/dependencies
+index a6a9700..86f1931 100644
+--- a/dependencies
++++ b/dependencies
+@@ -44,6 +44,11 @@ VIDEO_S5C73M3 3.3
+ VIDEO_LM3646 3.3
+ VIDEO_LM3560 3.3
+ 
++# missing regmap_bulk_write
++MEDIA_TUNER_E4000 3.4
++MEDIA_TUNER_M88TS2022 3.4
++VIDEO_EM28XX_DVB 3.4
++
+ # missing spi_finalize_current_message() and struct spi_master.transfer_one_message
+ USB_MSI2500 3.4
+ 
+-- 
+1.9.1
 
