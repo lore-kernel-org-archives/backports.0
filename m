@@ -1,113 +1,225 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f172.google.com ([209.85.217.172]:52851 "EHLO
-	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752283AbaJ2HQX (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 29 Oct 2014 03:16:23 -0400
-Received: by mail-lb0-f172.google.com with SMTP id n15so1965971lbi.3
-        for <backports@vger.kernel.org>; Wed, 29 Oct 2014 00:16:21 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <0BA3FCBA62E2DC44AF3030971E174FB31B558C59@hasmsx107.ger.corp.intel.com>
-References: <0BA3FCBA62E2DC44AF3030971E174FB31B55873E@hasmsx107.ger.corp.intel.com>
- <CAB=NE6XBgHMNyLLS3wwYUh70sugbY0+YrKoBckk5O-tXF68t4Q@mail.gmail.com>
- <0BA3FCBA62E2DC44AF3030971E174FB31B5587F6@hasmsx107.ger.corp.intel.com>
- <CAB=NE6Wh=yhFnxbsTwKun2t8SCbatHYGNYb95sk5ro9qdVGn3A@mail.gmail.com> <0BA3FCBA62E2DC44AF3030971E174FB31B558C59@hasmsx107.ger.corp.intel.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Wed, 29 Oct 2014 00:16:01 -0700
-Message-ID: <CAB=NE6WEv=sege5OPZ_Fb69e=kcM0_HPX9JYikBJ1bEBQ+OS8A@mail.gmail.com> (sfid-20141029_081625_686171_158A5D8E)
-Subject: Re: failure to build backports on ubuntu
-To: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from s3.sipsolutions.net ([5.9.151.49]:44575 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932452AbaJUQfr (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 21 Oct 2014 12:35:47 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH v3] backports: add device coredump framework
+Date: Tue, 21 Oct 2014 18:35:37 +0200
+Message-Id: <1413909337-8938-1-git-send-email-johannes@sipsolutions.net> (sfid-20141021_183555_595199_551FB14B)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Oct 28, 2014 at 11:57 PM, Grumbach, Emmanuel
-<emmanuel.grumbach@intel.com> wrote:
->>
->> On Tue, Oct 28, 2014 at 1:07 PM, Grumbach, Emmanuel
->> <emmanuel.grumbach@intel.com> wrote:
->> >>
->> >> On Tue, Oct 28, 2014 at 10:08 AM, Grumbach, Emmanuel
->> >> <emmanuel.grumbach@intel.com> wrote:
->> >> >
->> >> > I can't make menuconfig. Reverting this patch fixes it.
->> >>
->> >> There's no context provided here, gcc version, Linux distribution,
->> >> etc. With some of that it would help.
->> >>
->> >
->> > * Ubuntu 14.04
->> > *  gcc -v
->> > Using built-in specs.
->> > COLLECT_GCC=/usr/bin/gcc
->> > COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/4.8/lto-wrapper
->> > Target: x86_64-linux-gnu
->> > Configured with: ../src/configure -v --with-pkgversion='Ubuntu
->> > 4.8.2-19ubuntu1'
->> > --with-bugurl=file:///usr/share/doc/gcc-4.8/README.Bugs
->> > --enable-languages=c,c++,java,go,d,fortran,objc,obj-c++ --prefix=/usr
->> > --program-suffix=-4.8 --enable-shared --enable-linker-build-id
->> > --libexecdir=/usr/lib --without-included-gettext
->> > --enable-threads=posix --with-gxx-include-dir=/usr/include/c++/4.8
->> > --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu
->> > --enable-libstdcxx-debug --enable-libstdcxx-time=yes
->> > --enable-gnu-unique-object --disable-libmudflap --enable-plugin
->> > --with-system-zlib --disable-browser-plugin --enable-java-awt=gtk
->> > --enable-gtk-cairo
->> > --with-java-home=/usr/lib/jvm/java-1.5.0-gcj-4.8-amd64/jre
->> > --enable-java-home
->> > --with-jvm-root-dir=/usr/lib/jvm/java-1.5.0-gcj-4.8-amd64
->> > --with-jvm-jar-dir=/usr/lib/jvm-exports/java-1.5.0-gcj-4.8-amd64
->> > --with-arch-directory=amd64
->> > --with-ecj-jar=/usr/share/java/eclipse-ecj.jar --enable-objc-gc
->> > --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64
->> > --with-multilib-list=m32,m64,mx32 --with-tune=generic
->> > --enable-checking=release --build=x86_64-linux-gnu
->> > --host=x86_64-linux-gnu --target=x86_64-linux-gnu Thread model: posix
->> > gcc version 4.8.2 (Ubuntu 4.8.2-19ubuntu1)
->> >
->> > I am compiling against 3.16.1
->> >
->> > Please let me know what else you want to know.
->>
->> The kernel solution to this uses an internal kernel variables to prefix flags for
->> the linker, the solution I provided is supposed to do that but perhaps for
->> some older linker it doesn't do that, I'm afraid that since we don't have the
->> internal variable solution and that porting it would be hard (probably
->> pointless) we'll have to work around this then as mimicking that won't be
->> easy
->>
->> Can you try a solution on the backport/kconf/Makefile that see's if
->> lsb_release is available and use that for older releases of Ubuntu?
->> I'd try it but since you have the system I figure it'd be easier.
->>
->
-> This works for me:
->
->
-> diff --git a/backport/kconf/Makefile b/backport/kconf/Makefile
-> index dfd793a..8398f35 100644
-> --- a/backport/kconf/Makefile
-> +++ b/backport/kconf/Makefile
-> @@ -3,7 +3,15 @@ CFLAGS=-Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
->  LXDIALOG := lxdialog/checklist.o lxdialog/inputbox.o lxdialog/menubox.o lxdialog/textbox.o lxdialog/util.o lxdialog/yesno.o
->
->  conf: conf.o zconf.tab.o
-> -mconf: LDFLAGS = -Wl,--no-as-needed $(shell ./lxdialog/check-lxdialog.sh -ldflags $(CC))
-> +
-> +RELEASE=$(shell lsb_release -si)
-> +ifeq ($(RELEASE), Ubuntu)
-> +       AS_NEEDED=--no-as-needed
-> +else
-> +       AS_NEEDED=--add-needed
-> +endif
-> +mconf: LDFLAGS = -Wl,$(AS_NEEDED) $(shell ./lxdialog/check-lxdialog.sh -ldflags $(CC))
-> +
->  mconf: CFLAGS += -DCURSES_LOC="<ncurses.h>" -DLOCALE
->  mconf: mconf.o zconf.tab.o $(LXDIALOG)
+From: Johannes Berg <johannes.berg@intel.com>
 
-Thanks for doing this, any chance this can be reduced down to <
-version match? I'm in hope that this is only an issue with old
-releases otherwise we should look for another solution.
+As drivers will start requiring the new framework and it has
+been merged to linux/master during the 3.18 merge window, we
+can include it into backports to compile if needed.
 
- Luis
+On kernels that do already have it but didn't want it built
+honor that, but if building otherwise don't. This may need
+to be revisited in the future.
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/compat/Kconfig                        |  11 +++
+ backport/compat/backports.h                    |  10 ++
+ backport/compat/main.c                         |   7 ++
+ patches/backport-adjustments/devcoredump.patch | 121 +++++++++++++++++++++++++
+ 4 files changed, 149 insertions(+)
+ create mode 100644 patches/backport-adjustments/devcoredump.patch
+
+diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
+index 7581758b1e3c..49699bda251a 100644
+--- a/backport/compat/Kconfig
++++ b/backport/compat/Kconfig
+@@ -124,3 +124,14 @@ config BACKPORT_BUILD_CRYPTO_CCM
+ 	default n if CRYPTO_CCM
+ 	default y if BACKPORT_CRYPTO_CCM
+ 	#c-file crypto/ccm.c
++
++config BACKPORT_WANT_DEV_COREDUMP
++	bool
++
++config BACKPORT_BUILD_WANT_DEV_COREDUMP
++	bool
++	default n if DEV_COREDUMP
++	default n if DISABLE_DEV_COREDUMP
++	default y if BACKPORT_WANT_DEV_COREDUMP
++	#h-file linux/devcoredump.h
++	#c-file drivers/base/devcoredump.c
+diff --git a/backport/compat/backports.h b/backport/compat/backports.h
+index ed946b5ba108..c9094ac42c1f 100644
+--- a/backport/compat/backports.h
++++ b/backport/compat/backports.h
+@@ -13,4 +13,14 @@ static inline void crypto_ccm_module_exit(void)
+ {}
+ #endif
+ 
++#ifdef CPTCFG_BACKPORT_BUILD_WANT_DEV_COREDUMP
++int devcoredump_init(void);
++void devcoredump_exit(void);
++#else
++static inline int devcoredump_init(void)
++{ return 0; }
++static inline void devcoredump_exit(void)
++{}
++#endif
++
+ #endif /* LINUX_BACKPORTS_PRIVATE_H */
+diff --git a/backport/compat/main.c b/backport/compat/main.c
+index e38eed3d56d5..d3f8944913e8 100644
+--- a/backport/compat/main.c
++++ b/backport/compat/main.c
+@@ -57,6 +57,12 @@ static int __init backport_init(void)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = devcoredump_init();
++	if (ret) {
++		crypto_ccm_module_exit();
++		return ret;
++	}
++
+ 	printk(KERN_INFO "Loading modules backported from " BACKPORTED_KERNEL_NAME
+ #ifndef BACKPORTS_GIT_TRACKED
+ 		" version " BACKPORTED_KERNEL_VERSION
+@@ -75,5 +81,6 @@ subsys_initcall(backport_init);
+ static void __exit backport_exit(void)
+ {
+ 	crypto_ccm_module_exit();
++	devcoredump_exit();
+ }
+ module_exit(backport_exit);
+diff --git a/patches/backport-adjustments/devcoredump.patch b/patches/backport-adjustments/devcoredump.patch
+new file mode 100644
+index 000000000000..3378884db77a
+--- /dev/null
++++ b/patches/backport-adjustments/devcoredump.patch
+@@ -0,0 +1,121 @@
++diff --git a/compat/drivers-base-devcoredump.c b/compat/drivers-base-devcoredump.c
++index 96614b04544c..600af2623230 100644
++--- a/compat/drivers-base-devcoredump.c
+++++ b/compat/drivers-base-devcoredump.c
++@@ -30,10 +30,15 @@
++ #include <linux/slab.h>
++ #include <linux/fs.h>
++ #include <linux/workqueue.h>
+++#include "backports.h"
++ 
++ /* if data isn't read by userspace after 5 minutes then delete it */
++ #define DEVCD_TIMEOUT	(HZ * 60 * 5)
++ 
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
+++static struct bin_attribute devcd_attr_data;
+++#endif
+++
++ struct devcd_entry {
++ 	struct device devcd_dev;
++ 	const void *data;
++@@ -63,8 +68,7 @@ static void devcd_dev_release(struct device *dev)
++ 	 * a struct device to know when it goes away?
++ 	 */
++ 	if (devcd->failing_dev->kobj.sd)
++-		sysfs_delete_link(&devcd->failing_dev->kobj, &dev->kobj,
++-				  "devcoredump");
+++		sysfs_remove_link(&devcd->failing_dev->kobj, "devcoredump");
++ 
++ 	put_device(devcd->failing_dev);
++ 	kfree(devcd);
++@@ -76,6 +80,9 @@ static void devcd_del(struct work_struct *wk)
++ 
++ 	devcd = container_of(wk, struct devcd_entry, del_wk.work);
++ 
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
+++	device_remove_bin_file(&devcd->devcd_dev, &devcd_attr_data);
+++#endif
++ 	device_del(&devcd->devcd_dev);
++ 	put_device(&devcd->devcd_dev);
++ }
++@@ -109,6 +116,7 @@ static struct bin_attribute devcd_attr_data = {
++ 	.write = devcd_data_write,
++ };
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
++ static struct bin_attribute *devcd_dev_bin_attrs[] = {
++ 	&devcd_attr_data, NULL,
++ };
++@@ -120,12 +128,15 @@ static const struct attribute_group devcd_dev_group = {
++ static const struct attribute_group *devcd_dev_groups[] = {
++ 	&devcd_dev_group, NULL,
++ };
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0) */
++ 
++ static struct class devcd_class = {
++ 	.name		= "devcoredump",
++ 	.owner		= THIS_MODULE,
++ 	.dev_release	= devcd_dev_release,
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
++ 	.dev_groups	= devcd_dev_groups,
+++#endif
++ };
++ 
++ static ssize_t devcd_readv(char *buffer, loff_t offset, size_t count,
++@@ -222,6 +233,11 @@ void dev_coredumpm(struct device *dev, struct module *owner,
++ 	if (device_add(&devcd->devcd_dev))
++ 		goto put_device;
++ 
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
+++	if (device_create_bin_file(&devcd->devcd_dev, &devcd_attr_data))
+++		goto put_device;
+++#endif
+++
++ 	if (sysfs_create_link(&devcd->devcd_dev.kobj, &dev->kobj,
++ 			      "failing_device"))
++ 		/* nothing - symlink will be missing */;
++@@ -243,11 +259,10 @@ void dev_coredumpm(struct device *dev, struct module *owner,
++ }
++ EXPORT_SYMBOL_GPL(dev_coredumpm);
++ 
++-static int __init devcoredump_init(void)
+++int __init devcoredump_init(void)
++ {
++ 	return class_register(&devcd_class);
++ }
++-__initcall(devcoredump_init);
++ 
++ static int devcd_free(struct device *dev, void *data)
++ {
++@@ -257,9 +272,8 @@ static int devcd_free(struct device *dev, void *data)
++ 	return 0;
++ }
++ 
++-static void __exit devcoredump_exit(void)
+++void __exit devcoredump_exit(void)
++ {
++ 	class_for_each_device(&devcd_class, NULL, NULL, devcd_free);
++ 	class_unregister(&devcd_class);
++ }
++-__exitcall(devcoredump_exit);
++diff --git a/include/linux/backport-devcoredump.h b/include/linux/backport-devcoredump.h
++index c0a360e99f64..da20e61f6c06 100644
++--- a/include/linux/backport-devcoredump.h
+++++ b/include/linux/backport-devcoredump.h
++@@ -5,7 +5,7 @@
++ #include <linux/module.h>
++ #include <linux/vmalloc.h>
++ 
++-#ifdef CONFIG_DEV_COREDUMP
+++#ifdef CPTCFG_BACKPORT_BUILD_WANT_DEV_COREDUMP
++ void dev_coredumpv(struct device *dev, const void *data, size_t datalen,
++ 		   gfp_t gfp);
++ 
++@@ -30,6 +30,6 @@ dev_coredumpm(struct device *dev, struct module *owner,
++ {
++ 	free(data);
++ }
++-#endif /* CONFIG_DEV_COREDUMP */
+++#endif /* CPTCFG_BACKPORT_BUILD_WANT_DEV_COREDUMP */
++ 
++ #endif /* __DEVCOREDUMP_H */
+-- 
+2.1.0
+
