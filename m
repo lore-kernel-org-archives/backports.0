@@ -1,44 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:40693 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751682AbaJYTAw (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 25 Oct 2014 15:00:52 -0400
-Message-ID: <544B8EDE.8080901@hauke-m.de> (sfid-20141025_210055_092128_6FD0BB40)
-Date: Sat, 25 Oct 2014 13:51:58 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:44867 "EHLO
+	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752181AbaJWUvq (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 23 Oct 2014 16:51:46 -0400
+Date: Thu, 23 Oct 2014 13:51:40 -0700 (PDT)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: Tag to help count manual patch fixes
+In-Reply-To: <54496879.3030406@hauke-m.de>
+Message-ID: <alpine.DEB.2.10.1410231351220.2833@hadrien> (sfid-20141023_225153_368878_703B61D2)
+References: <CAB=NE6V=-Ef08L+7fA66a3DdZUa-WYUKBnhiuHE0bWH2VhDPbA@mail.gmail.com> <54496879.3030406@hauke-m.de>
 MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>,
-	backports@vger.kernel.org
-CC: Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH v3] backports: add device coredump framework
-References: <1413909337-8938-1-git-send-email-johannes@sipsolutions.net>
-In-Reply-To: <1413909337-8938-1-git-send-email-johannes@sipsolutions.net>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 10/21/2014 06:35 PM, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
-> 
-> As drivers will start requiring the new framework and it has
-> been merged to linux/master during the 3.18 merge window, we
-> can include it into backports to compile if needed.
-> 
-> On kernels that do already have it but didn't want it built
-> honor that, but if building otherwise don't. This may need
-> to be revisited in the future.
-> 
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> ---
->  backport/compat/Kconfig                        |  11 +++
->  backport/compat/backports.h                    |  10 ++
->  backport/compat/main.c                         |   7 ++
->  patches/backport-adjustments/devcoredump.patch | 121 +++++++++++++++++++++++++
->  4 files changed, 149 insertions(+)
->  create mode 100644 patches/backport-adjustments/devcoredump.patch
-> 
+On Thu, 23 Oct 2014, Hauke Mehrtens wrote:
 
-Thank you for the patches, both are applied and pushed out.
+> On 10/23/2014 10:26 PM, Luis R. Rodriguez wrote:
+> > I propose we we a tag to help count the amount of times we actually
+> > have to do work in between release to fix patch manually. Not sure
+> > what to use though, any ideas?
+> >
+> > Manually-fixed ?
+> >
+> > The use case? Well it would help us let keep count for starters and
+> > see if things increase / decrease over time. This can also be used I
+> > suppose by some tool to extract these patches and perhaps in the
+> > future see if there's way to address these sorts of patches
+> > automatically somehow.
+> >
+> > Are the possible gains worth it?
+> >
+> >   Luis
+>
+> From my experience making the patches apply isn't a big problem any
+> more. All the patches that broke often in the early days are now using
+> coccinelle or are removed because they were only needed for the older
+> kernel versions.
 
-hauke
+This is a really nice comment :)
 
+julia
+
+> For the last releases I needed most of the time for backporting new some
+> functions which are newly used and for understanding why some stuff
+> breaks with some older kernels.
+>
+> Hauke
+>
