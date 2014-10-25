@@ -1,39 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:40636 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:40648 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750798AbaJYSZx (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 25 Oct 2014 14:25:53 -0400
-Received: from [IPv6:2001:470:7259:0:2871:2eed:3dea:7eed] (unknown [IPv6:2001:470:7259:0:2871:2eed:3dea:7eed])
-	by hauke-m.de (Postfix) with ESMTPSA id 2D033200BD
-	for <backports@vger.kernel.org>; Sat, 25 Oct 2014 18:00:10 +0200 (CEST)
-Message-ID: <544BC908.70704@hauke-m.de> (sfid-20141025_202557_357863_D58D922A)
-Date: Sat, 25 Oct 2014 18:00:08 +0200
+	id S1751846AbaJYSpx (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 25 Oct 2014 14:45:53 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
 To: backports@vger.kernel.org
-Subject: backports-3.18-rc1-1 and backports-3.17.1-1 and backports-3.14.22-1
- are out
-Content-Type: text/plain; charset=utf-8
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 02/11] backports: add some missing header files
+Date: Sat, 25 Oct 2014 11:19:21 +0200
+Message-Id: <1414228770-20047-3-git-send-email-hauke@hauke-m.de> (sfid-20141025_204555_621021_D41E60F3)
+In-Reply-To: <1414228770-20047-1-git-send-email-hauke@hauke-m.de>
+References: <1414228770-20047-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Some backports versions based on stable kernel were released today.
+The hackrf driver needs PAGE_ALIGN() from mm.h.
+The ir-hix5hd2 driver needs of_get_property() from of.h.
 
-backports-3.18-rc1-1 based on linux version 3.18-rc1:
-https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.18-rc1/backports-3.18-rc1-1.tar.xz
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../media/0004-missing-include/hackrf.patch                    | 10 ++++++++++
+ .../media/0004-missing-include/ir-hix5hd2.patch                | 10 ++++++++++
+ 2 files changed, 20 insertions(+)
+ create mode 100644 patches/collateral-evolutions/media/0004-missing-include/hackrf.patch
+ create mode 100644 patches/collateral-evolutions/media/0004-missing-include/ir-hix5hd2.patch
 
-backports-3.17.1-1 based on stable linux version 3.17.1:
-https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.17.1/backports-3.17.1-1.tar.xz
-
-backports-3.14.22-1 based on stable linux version 3.14.22:
-https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v3.14.22/backports-3.14.22-1.tar.xz
-
-
-The source code can be found here:
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
-
-All the latest releases are listed here:
-http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
-
-Hauke
+diff --git a/patches/collateral-evolutions/media/0004-missing-include/hackrf.patch b/patches/collateral-evolutions/media/0004-missing-include/hackrf.patch
+new file mode 100644
+index 0000000..ac0b501
+--- /dev/null
++++ b/patches/collateral-evolutions/media/0004-missing-include/hackrf.patch
+@@ -0,0 +1,10 @@
++--- a/drivers/media/usb/hackrf/hackrf.c
+++++ b/drivers/media/usb/hackrf/hackrf.c
++@@ -22,6 +22,7 @@
++ #include <media/v4l2-ctrls.h>
++ #include <media/v4l2-event.h>
++ #include <media/videobuf2-vmalloc.h>
+++#include <linux/mm.h>
++ 
++ /* HackRF USB API commands (from HackRF Library) */
++ enum {
+diff --git a/patches/collateral-evolutions/media/0004-missing-include/ir-hix5hd2.patch b/patches/collateral-evolutions/media/0004-missing-include/ir-hix5hd2.patch
+new file mode 100644
+index 0000000..e7891f8
+--- /dev/null
++++ b/patches/collateral-evolutions/media/0004-missing-include/ir-hix5hd2.patch
+@@ -0,0 +1,10 @@
++--- a/drivers/media/rc/ir-hix5hd2.c
+++++ b/drivers/media/rc/ir-hix5hd2.c
++@@ -15,6 +15,7 @@
++ #include <linux/of_device.h>
++ #include <linux/regmap.h>
++ #include <media/rc-core.h>
+++#include <linux/of.h>
++ 
++ /* Allow the driver to compile on all architectures */
++ #ifndef writel_relaxed
+-- 
+1.9.1
 
