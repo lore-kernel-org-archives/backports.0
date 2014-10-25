@@ -1,52 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-qg0-f48.google.com ([209.85.192.48]:41868 "EHLO
-	mail-qg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751417AbaJaSkJ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 31 Oct 2014 14:40:09 -0400
-Received: by mail-qg0-f48.google.com with SMTP id q108so6001524qgd.7
-        for <backports@vger.kernel.org>; Fri, 31 Oct 2014 11:40:08 -0700 (PDT)
-MIME-Version: 1.0
-Date: Fri, 31 Oct 2014 16:40:08 -0200
-Message-ID: <CAG_2TMdYXqO5bRC7gmjY-yZzw-KJQDc2bzsGKj6cdygYPGW1Jw@mail.gmail.com> (sfid-20141031_194011_516886_C6A25938)
-Subject: compat-drivers-3.8.3-2-snpu with kernel 2.6.24
-From: Renato <renatoriolino@gmail.com>
+Received: from hauke-m.de ([5.39.93.123]:40650 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751667AbaJYSpx (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 25 Oct 2014 14:45:53 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 0/2] backports: bring it to next-20141023
+Date: Sat, 25 Oct 2014 13:39:37 +0200
+Message-Id: <1414237179-10199-1-git-send-email-hauke@hauke-m.de> (sfid-20141025_204555_016193_9856EF5C)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
+This brings backports to next-20141023
 
-I have and old Linux system built from scratch based on kernel 2.6.24
-and I need to add support on it for an Atheros ethernet card that
-doesnt have driver for kernel 2.6.24.
+1   3.0.101             [  OK  ]
+2   3.1.10              [  OK  ]
+3   3.2.62              [  OK  ]
+4   3.3.8               [  OK  ]
+5   3.4.104             [  OK  ]
+6   3.5.7               [  OK  ]
+7   3.6.11              [  OK  ]
+8   3.7.10              [  OK  ]
+9   3.8.13              [  OK  ]
+10  3.9.11              [  OK  ]
+11  3.10.58             [  OK  ]
+12  3.11.10             [  OK  ]
+13  3.12.31             [  OK  ]
+14  3.13.11             [  OK  ]
+15  3.14.22             [  OK  ]
+16  3.15.10             [  OK  ]
+17  3.16.6              [  OK  ]
+18  3.17.1              [  OK  ]
+19  3.18-rc1            [  OK  ]
 
-Unfortunately we can't update the kernel because my client has a
-control hardware that only have binary e propertery driver for 2.6.24.
+Hauke Mehrtens (2):
+  devel: update the test kernels
+  backports: refresh patches on next-20141023
 
-Because of that, I'm trying to use compat-drivers to do that.
+ devel/backports-update-manager                              | 13 +++++++------
+ .../network/0006-ieee802154-6lowpan-namespace.patch         |  2 +-
+ .../network/0007-lowpan-inet_frag_lru_move.patch            |  2 +-
+ .../collateral-evolutions/network/0008-net-user-ns.patch    |  2 +-
+ .../network/0030-qdisc_tx_busylock/ieee802154.patch         |  4 ++--
+ .../network/0032-sriov_configure/igb_sriov_configure.patch  |  8 ++++----
+ .../network/0033-ndo_vlan_rx_vid/igb_ndo_vlan_rx_vid.patch  |  8 ++++----
+ .../0034-ndo_set_vf_spoofchk/igb_ndo_set_vf_spoofchk.patch  |  6 +++---
+ .../network/0043-ndo_set_vf_rate/igb.patch                  |  8 ++++----
+ 9 files changed, 27 insertions(+), 26 deletions(-)
 
-What I did so far was:
+-- 
+1.9.1
 
-Downloaded compat-drivers-3.8.3-2-snpu and extraceted it.
-Compiled it using:
-
-./scripts/driver-select alx
-make
-make install
-
-After rebooting, I loaded the compat driver with:
-
-modprobe compat
-
-I can see the following on dmesg:
-
-Compat-drivers backport release: compat-drivers-v3.8.3-2-snpu
-Backport based on linux-stable.git v3.8.3
-compat.git: linux-stable.git
-
-Nothing more. And no eth yet.
-
-What I am missing?
-
-Thanks
