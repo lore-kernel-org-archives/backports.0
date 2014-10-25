@@ -1,33 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:54809 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753490AbaJWU01 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 23 Oct 2014 16:26:27 -0400
-Received: by mail-la0-f48.google.com with SMTP id gi9so1521051lab.21
-        for <backports@vger.kernel.org>; Thu, 23 Oct 2014 13:26:26 -0700 (PDT)
-MIME-Version: 1.0
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Thu, 23 Oct 2014 13:26:05 -0700
-Message-ID: <CAB=NE6V=-Ef08L+7fA66a3DdZUa-WYUKBnhiuHE0bWH2VhDPbA@mail.gmail.com> (sfid-20141023_222630_026286_02FA12E0)
-Subject: Tag to help count manual patch fixes
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Content-Type: text/plain; charset=UTF-8
+Received: from hauke-m.de ([5.39.93.123]:40654 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752068AbaJYSpy (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 25 Oct 2014 14:45:54 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 04/11] dependencies: deactivate tracing in ath10k and ath with < 3.4
+Date: Sat, 25 Oct 2014 11:19:23 +0200
+Message-Id: <1414228770-20047-5-git-send-email-hauke@hauke-m.de> (sfid-20141025_204558_915655_8DC12F96)
+In-Reply-To: <1414228770-20047-1-git-send-email-hauke@hauke-m.de>
+References: <1414228770-20047-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I propose we we a tag to help count the amount of times we actually
-have to do work in between release to fix patch manually. Not sure
-what to use though, any ideas?
+On kernel < 3.4 compiling ath10k with tracing results in huge compile
+errors. Just deactivate it till someone fixes the problems. The same
+compile error occurs in ath module with kernel 3.0.
 
-Manually-fixed ?
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ dependencies | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-The use case? Well it would help us let keep count for starters and
-see if things increase / decrease over time. This can also be used I
-suppose by some tool to extract these patches and perhaps in the
-future see if there's way to address these sorts of patches
-automatically somehow.
+diff --git a/dependencies b/dependencies
+index 86f1931..327c115 100644
+--- a/dependencies
++++ b/dependencies
+@@ -80,3 +80,7 @@ IEEE802154_AT86RF230 3.4
+ IEEE802154_CC2520 3.5
+ 
+ IR_IMG 3.5
++
++# tracing results in compile errors
++ATH10K_TRACING 3.4
++ATH_TRACEPOINTS 3.1
+-- 
+1.9.1
 
-Are the possible gains worth it?
-
-  Luis
