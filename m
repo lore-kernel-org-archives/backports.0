@@ -1,51 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:50336 "EHLO mga03.intel.com"
+Received: from hauke-m.de ([5.39.93.123]:40693 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751067AbaJ1UKj (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 28 Oct 2014 16:10:39 -0400
-From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: RE: failure to build backports on ubuntu
-Date: Tue, 28 Oct 2014 20:07:17 +0000
-Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB31B5587F6@hasmsx107.ger.corp.intel.com> (sfid-20141028_211041_633891_E2DC7D9E)
-References: <0BA3FCBA62E2DC44AF3030971E174FB31B55873E@hasmsx107.ger.corp.intel.com>
- <CAB=NE6XBgHMNyLLS3wwYUh70sugbY0+YrKoBckk5O-tXF68t4Q@mail.gmail.com>
-In-Reply-To: <CAB=NE6XBgHMNyLLS3wwYUh70sugbY0+YrKoBckk5O-tXF68t4Q@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+	id S1751682AbaJYTAw (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 25 Oct 2014 15:00:52 -0400
+Message-ID: <544B8EDE.8080901@hauke-m.de> (sfid-20141025_210055_092128_6FD0BB40)
+Date: Sat, 25 Oct 2014 13:51:58 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
+To: Johannes Berg <johannes@sipsolutions.net>,
+	backports@vger.kernel.org
+CC: Johannes Berg <johannes.berg@intel.com>
+Subject: Re: [PATCH v3] backports: add device coredump framework
+References: <1413909337-8938-1-git-send-email-johannes@sipsolutions.net>
+In-Reply-To: <1413909337-8938-1-git-send-email-johannes@sipsolutions.net>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-PiANCj4gT24gVHVlLCBPY3QgMjgsIDIwMTQgYXQgMTA6MDggQU0sIEdydW1iYWNoLCBFbW1hbnVl
-bA0KPiA8ZW1tYW51ZWwuZ3J1bWJhY2hAaW50ZWwuY29tPiB3cm90ZToNCj4gPg0KPiA+IEkgY2Fu
-J3QgbWFrZSBtZW51Y29uZmlnLiBSZXZlcnRpbmcgdGhpcyBwYXRjaCBmaXhlcyBpdC4NCj4gDQo+
-IFRoZXJlJ3Mgbm8gY29udGV4dCBwcm92aWRlZCBoZXJlLCBnY2MgdmVyc2lvbiwgTGludXggZGlz
-dHJpYnV0aW9uLCBldGMuIFdpdGgNCj4gc29tZSBvZiB0aGF0IGl0IHdvdWxkIGhlbHAuDQo+IA0K
-DQoqIFVidW50dSAxNC4wNA0KKiAgZ2NjIC12DQpVc2luZyBidWlsdC1pbiBzcGVjcy4NCkNPTExF
-Q1RfR0NDPS91c3IvYmluL2djYw0KQ09MTEVDVF9MVE9fV1JBUFBFUj0vdXNyL2xpYi9nY2MveDg2
-XzY0LWxpbnV4LWdudS80LjgvbHRvLXdyYXBwZXINClRhcmdldDogeDg2XzY0LWxpbnV4LWdudQ0K
-Q29uZmlndXJlZCB3aXRoOiAuLi9zcmMvY29uZmlndXJlIC12IC0td2l0aC1wa2d2ZXJzaW9uPSdV
-YnVudHUgNC44LjItMTl1YnVudHUxJyAtLXdpdGgtYnVndXJsPWZpbGU6Ly8vdXNyL3NoYXJlL2Rv
-Yy9nY2MtNC44L1JFQURNRS5CdWdzIC0tZW5hYmxlLWxhbmd1YWdlcz1jLGMrKyxqYXZhLGdvLGQs
-Zm9ydHJhbixvYmpjLG9iai1jKysgLS1wcmVmaXg9L3VzciAtLXByb2dyYW0tc3VmZml4PS00Ljgg
-LS1lbmFibGUtc2hhcmVkIC0tZW5hYmxlLWxpbmtlci1idWlsZC1pZCAtLWxpYmV4ZWNkaXI9L3Vz
-ci9saWIgLS13aXRob3V0LWluY2x1ZGVkLWdldHRleHQgLS1lbmFibGUtdGhyZWFkcz1wb3NpeCAt
-LXdpdGgtZ3h4LWluY2x1ZGUtZGlyPS91c3IvaW5jbHVkZS9jKysvNC44IC0tbGliZGlyPS91c3Iv
-bGliIC0tZW5hYmxlLW5scyAtLXdpdGgtc3lzcm9vdD0vIC0tZW5hYmxlLWNsb2NhbGU9Z251IC0t
-ZW5hYmxlLWxpYnN0ZGN4eC1kZWJ1ZyAtLWVuYWJsZS1saWJzdGRjeHgtdGltZT15ZXMgLS1lbmFi
-bGUtZ251LXVuaXF1ZS1vYmplY3QgLS1kaXNhYmxlLWxpYm11ZGZsYXAgLS1lbmFibGUtcGx1Z2lu
-IC0td2l0aC1zeXN0ZW0temxpYiAtLWRpc2FibGUtYnJvd3Nlci1wbHVnaW4gLS1lbmFibGUtamF2
-YS1hd3Q9Z3RrIC0tZW5hYmxlLWd0ay1jYWlybyAtLXdpdGgtamF2YS1ob21lPS91c3IvbGliL2p2
-bS9qYXZhLTEuNS4wLWdjai00LjgtYW1kNjQvanJlIC0tZW5hYmxlLWphdmEtaG9tZSAtLXdpdGgt
-anZtLXJvb3QtZGlyPS91c3IvbGliL2p2bS9qYXZhLTEuNS4wLWdjai00LjgtYW1kNjQgLS13aXRo
-LWp2bS1qYXItZGlyPS91c3IvbGliL2p2bS1leHBvcnRzL2phdmEtMS41LjAtZ2NqLTQuOC1hbWQ2
-NCAtLXdpdGgtYXJjaC1kaXJlY3Rvcnk9YW1kNjQgLS13aXRoLWVjai1qYXI9L3Vzci9zaGFyZS9q
-YXZhL2VjbGlwc2UtZWNqLmphciAtLWVuYWJsZS1vYmpjLWdjIC0tZW5hYmxlLW11bHRpYXJjaCAt
-LWRpc2FibGUtd2Vycm9yIC0td2l0aC1hcmNoLTMyPWk2ODYgLS13aXRoLWFiaT1tNjQgLS13aXRo
-LW11bHRpbGliLWxpc3Q9bTMyLG02NCxteDMyIC0td2l0aC10dW5lPWdlbmVyaWMgLS1lbmFibGUt
-Y2hlY2tpbmc9cmVsZWFzZSAtLWJ1aWxkPXg4Nl82NC1saW51eC1nbnUgLS1ob3N0PXg4Nl82NC1s
-aW51eC1nbnUgLS10YXJnZXQ9eDg2XzY0LWxpbnV4LWdudQ0KVGhyZWFkIG1vZGVsOiBwb3NpeA0K
-Z2NjIHZlcnNpb24gNC44LjIgKFVidW50dSA0LjguMi0xOXVidW50dTEpDQoNCkkgYW0gY29tcGls
-aW5nIGFnYWluc3QgMy4xNi4xDQoNClBsZWFzZSBsZXQgbWUga25vdyB3aGF0IGVsc2UgeW91IHdh
-bnQgdG8ga25vdy4NCg==
+On 10/21/2014 06:35 PM, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+> 
+> As drivers will start requiring the new framework and it has
+> been merged to linux/master during the 3.18 merge window, we
+> can include it into backports to compile if needed.
+> 
+> On kernels that do already have it but didn't want it built
+> honor that, but if building otherwise don't. This may need
+> to be revisited in the future.
+> 
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+>  backport/compat/Kconfig                        |  11 +++
+>  backport/compat/backports.h                    |  10 ++
+>  backport/compat/main.c                         |   7 ++
+>  patches/backport-adjustments/devcoredump.patch | 121 +++++++++++++++++++++++++
+>  4 files changed, 149 insertions(+)
+>  create mode 100644 patches/backport-adjustments/devcoredump.patch
+> 
+
+Thank you for the patches, both are applied and pushed out.
+
+hauke
+
