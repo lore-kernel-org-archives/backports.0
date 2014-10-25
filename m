@@ -1,69 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail01.echostar.com ([139.85.4.20]:41278 "EHLO
-	chapzsmtp1.echostar.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751163AbaJ1JCh convert rfc822-to-8bit (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 28 Oct 2014 05:02:37 -0400
-From: "Paramahamsa, Viplav" <Viplav.Paramaham@slingmedia.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-CC: "Raikar, Yatish" <yatishjnr@slingmedia.com>
-Subject: RE: Backports - v3.18-rc1 build problems
-Date: Tue, 28 Oct 2014 09:02:35 +0000
-Message-ID: <65B68BAF3C31D54B9A10B0592C9E025B9050F9B2@CHWPIEXC10.SATS.CORP> (sfid-20141028_100242_103244_A7AD9F06)
-References: <65B68BAF3C31D54B9A10B0592C9E025B9050D73C@CHWPIEXC10.SATS.CORP>
- <544F56D1.6040603@hauke-m.de>
-In-Reply-To: <544F56D1.6040603@hauke-m.de>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Received: from hauke-m.de ([5.39.93.123]:40657 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752081AbaJYSpy (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 25 Oct 2014 14:45:54 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 1/2] devel: update the test kernels
+Date: Sat, 25 Oct 2014 13:39:38 +0200
+Message-Id: <1414237179-10199-2-git-send-email-hauke@hauke-m.de> (sfid-20141025_204600_106189_1E04ED30)
+In-Reply-To: <1414237179-10199-1-git-send-email-hauke@hauke-m.de>
+References: <1414237179-10199-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi Hauke,
-	I am actually trying to find a driver for vendor ID : 625, product ID : 1026 & firmware 3.0 for linux kernel version - 2.6.35.
-Backports-3.14.22-1 & earlier releases doesn't support this product ID. Backports - v3.18-rc1 seem to have the support for the device but doesn't seem to be building for 2.6.35.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ devel/backports-update-manager | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-Is there a plan to support this kernel version for this device?
+diff --git a/devel/backports-update-manager b/devel/backports-update-manager
+index 50f8005..b6c7e07 100755
+--- a/devel/backports-update-manager
++++ b/devel/backports-update-manager
+@@ -27,20 +27,21 @@ KERNEL_URLS = [
+     KPATH + "v3.1.10-precise/linux-headers-3.1.10-030110_3.1.10-030110.201201181135_all.deb",
+     KPATH + "v3.2.62-precise/linux-headers-3.2.62-030262_3.2.62-030262.201408061435_all.deb",
+     KPATH + "v3.3.8-quantal/linux-headers-3.3.8-030308_3.3.8-030308.201206041356_all.deb",
+-    KPATH + "v3.4.103-quantal/linux-headers-3.4.103-0304103_3.4.103-0304103.201408132135_all.deb",
++    KPATH + "v3.4.104-quantal/linux-headers-3.4.104-0304104_3.4.104-0304104.201409250437_all.deb",
+     KPATH + "v3.5.7.12-quantal/linux-headers-3.5.7-03050712_3.5.7-03050712.201305111435_all.deb",
+     KPATH + "v3.6.11-raring/linux-headers-3.6.11-030611_3.6.11-030611.201212171335_all.deb",
+     KPATH + "v3.7.10-raring/linux-headers-3.7.10-030710_3.7.10-030710.201302271235_all.deb",
+     KPATH + "v3.8.13-raring/linux-headers-3.8.13-030813_3.8.13-030813.201305111843_all.deb",
+     KPATH + "v3.9.11-saucy/linux-headers-3.9.11-030911_3.9.11-030911.201307202035_all.deb",
+-    KPATH + "v3.10.54-saucy/linux-headers-3.10.54-031054_3.10.54-031054.201409060145_all.deb",
++    KPATH + "v3.10.58-saucy/linux-headers-3.10.58-031058_3.10.58-031058.201410150335_all.deb",
+     KPATH + "v3.11.10-saucy/linux-headers-3.11.10-031110_3.11.10-031110.201311291453_all.deb",
+-    KPATH + "v3.12.27-trusty/linux-headers-3.12.27-031227_3.12.27-031227.201408271535_all.deb",
++    KPATH + "v3.12.31-trusty/linux-headers-3.12.31-031231_3.12.31-031231.201410240535_all.deb",
+     KPATH + "v3.13.11-trusty/linux-headers-3.13.11-031311_3.13.11-031311.201404222035_all.deb",
+-    KPATH + "v3.14.18-utopic/linux-headers-3.14.18-031418_3.14.18-031418.201409060201_all.deb",
++    KPATH + "v3.14.22-utopic/linux-headers-3.14.22-031422_3.14.22-031422.201410150835_all.deb",
+     KPATH + "v3.15.10-utopic/linux-headers-3.15.10-031510_3.15.10-031510.201408132333_all.deb",
+-    KPATH + "v3.16.2-utopic/linux-headers-3.16.2-031602_3.16.2-031602.201409052035_all.deb",
+-    KPATH + "v3.17-rc3-utopic/linux-headers-3.17.0-031700rc3_3.17.0-031700rc3.201409031132_all.deb"
++    KPATH + "v3.16.6-utopic/linux-headers-3.16.6-031606_3.16.6-031606.201410150635_all.deb",
++    KPATH + "v3.17.1-utopic/linux-headers-3.17.1-031701_3.17.1-031701.201410150735_all.deb",
++    KPATH + "v3.18-rc1-utopic/linux-headers-3.18.0-031800rc1_3.18.0-031800rc1.201410192135_all.deb"
+ ]
+ 
+ NUM_KERNELS=len(KERNEL_URLS)
+-- 
+1.9.1
 
-Is there any restrictions or compatibility issues on 2.6.x kernels to support this device?
-
-Regards,
-Viplav
-
------Original Message-----
-From: Hauke Mehrtens [mailto:hauke@hauke-m.de] 
-Sent: Tuesday, October 28, 2014 2:12 PM
-To: Paramahamsa, Viplav; backports@vger.kernel.org
-Cc: Raikar, Yatish
-Subject: Re: Backports - v3.18-rc1 build problems
-
-On 10/27/2014 02:39 PM, Paramahamsa, Viplav wrote:
-> Hi All,
->                 I am facing build problems with latest release of backports - v3.18-rc1.
-> 
-> I am trying to cross compile with Freescale's LTIB. These are the details of the platform on which I am trying to build:
-> Linux kernel version : 2.6.35
-> ARCH : ARM
-> Freescale BSP : L2.6.35_1.1.0_130130
-> 
-> This is the build command I am using : make 
-> CROSS_COMPILE=/opt/freescale/usr/local/gcc-4.4.4-glibc-2.11.1-multilib
-> -1.0/arm-fsl-linux-gnueabi/bin/arm-none-linux-gnueabi- ARCH=arm KLIB= 
-> ${TOP}/rootfs/lib/modules/2.6.35.3-571-gcca29a0/ KLIB_BUILD= 
-> ${TOP}/rpm/BUILD/linux/
-> 
-> PFA file which has compilation errors I am getting.
-> I tried fixing these. But I was getting more errors in compat-3.x.x.c file compilation.
-> 
-> I am able to successfully compile an older version of backports - 3.10.17.
-> 
-> Please suggest how can I fix these errors. Is there any patch I need to apply to get rid of these? If yes, can you please provide the link for the same.
-> 
-> Regards,
-> Viplav
-> 
-
-Hi Viplav,
-
-starting with backports-3.15 we only support kernel versions >= 3.0. For kernel 3.6.35 you should try bcackports-3.14.22-1.
-
-Hauke
