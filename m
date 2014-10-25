@@ -1,65 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:40651 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:40655 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752067AbaJYSpx (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 25 Oct 2014 14:45:53 -0400
+	id S1751846AbaJYSpy (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 25 Oct 2014 14:45:54 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 03/11] backports: add freezable_schedule_hrtimeout_range()
-Date: Sat, 25 Oct 2014 11:19:22 +0200
-Message-Id: <1414228770-20047-4-git-send-email-hauke@hauke-m.de> (sfid-20141025_204556_210225_303982E2)
+Subject: [PATCH 07/11] dependencies: deactivate SOC_CAMERA on < 3.5
+Date: Sat, 25 Oct 2014 11:19:26 +0200
+Message-Id: <1414228770-20047-8-git-send-email-hauke@hauke-m.de> (sfid-20141025_204558_321910_FFBCCDBE)
 In-Reply-To: <1414228770-20047-1-git-send-email-hauke@hauke-m.de>
 References: <1414228770-20047-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is used by the pt3 driver.
+Deactivate SOC_CAMERA because of missing backport for vb2_expbuf() in
+kernel < 3.5.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/freezer.h | 32 +++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 backport/backport-include/linux/freezer.h
+ dependencies | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/backport/backport-include/linux/freezer.h b/backport/backport-include/linux/freezer.h
-new file mode 100644
-index 0000000..6bd6985
---- /dev/null
-+++ b/backport/backport-include/linux/freezer.h
-@@ -0,0 +1,32 @@
-+#ifndef __BACKPORT_FREEZER_H_INCLUDED
-+#define __BACKPORT_FREEZER_H_INCLUDED
-+#include_next <linux/freezer.h>
+diff --git a/dependencies b/dependencies
+index 874f1a3..e24febf 100644
+--- a/dependencies
++++ b/dependencies
+@@ -61,6 +61,9 @@ DVB_PT3 3.3
+ # missing spi_finalize_current_message() and struct spi_master.transfer_one_message
+ USB_MSI2500 3.4
+ 
++# missing vb2_expbuf()
++SOC_CAMERA 3.5
 +
-+#ifdef CONFIG_FREEZER
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
-+/*
-+ * Like schedule_hrtimeout_range(), but should not block the freezer.  Do not
-+ * call this with locks held.
-+ */
-+#define freezable_schedule_hrtimeout_range LINUX_BACKPORT(freezable_schedule_hrtimeout_range)
-+static inline int freezable_schedule_hrtimeout_range(ktime_t *expires,
-+		unsigned long delta, const enum hrtimer_mode mode)
-+{
-+	int __retval;
-+	freezer_do_not_count();
-+	__retval = schedule_hrtimeout_range(expires, delta, mode);
-+	freezer_count();
-+	return __retval;
-+}
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0) */
-+
-+#else /* !CONFIG_FREEZER */
-+
-+#ifndef freezable_schedule_hrtimeout_range
-+#define freezable_schedule_hrtimeout_range(expires, delta, mode)	\
-+	schedule_hrtimeout_range(expires, delta, mode)
-+#endif
-+
-+#endif /* !CONFIG_FREEZER */
-+
-+#endif /* __BACKPORT_FREEZER_H_INCLUDED */
+ BCMA_DRIVER_MIPS 3.3
+ SSB_DRIVER_MIPS 3.3
+ 
 -- 
 1.9.1
 
