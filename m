@@ -1,65 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:59646 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757351AbaJaTDS (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 31 Oct 2014 15:03:18 -0400
-Message-ID: <5453DCF4.9040101@broadcom.com> (sfid-20141031_200320_380602_111DE3FB)
-Date: Fri, 31 Oct 2014 20:03:16 +0100
-From: Arend van Spriel <arend@broadcom.com>
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:44932 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751356AbaJ1UV3 convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 28 Oct 2014 16:21:29 -0400
+Received: by mail-lb0-f173.google.com with SMTP id l4so1320821lbv.32
+        for <backports@vger.kernel.org>; Tue, 28 Oct 2014 13:21:27 -0700 (PDT)
 MIME-Version: 1.0
-To: Renato <renatoriolino@gmail.com>
-CC: <backports@vger.kernel.org>
-Subject: Re: compat-drivers-3.8.3-2-snpu with kernel 2.6.24
-References: <CAG_2TMdYXqO5bRC7gmjY-yZzw-KJQDc2bzsGKj6cdygYPGW1Jw@mail.gmail.com>
-In-Reply-To: <CAG_2TMdYXqO5bRC7gmjY-yZzw-KJQDc2bzsGKj6cdygYPGW1Jw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+In-Reply-To: <0BA3FCBA62E2DC44AF3030971E174FB31B5587F6@hasmsx107.ger.corp.intel.com>
+References: <0BA3FCBA62E2DC44AF3030971E174FB31B55873E@hasmsx107.ger.corp.intel.com>
+ <CAB=NE6XBgHMNyLLS3wwYUh70sugbY0+YrKoBckk5O-tXF68t4Q@mail.gmail.com> <0BA3FCBA62E2DC44AF3030971E174FB31B5587F6@hasmsx107.ger.corp.intel.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Tue, 28 Oct 2014 13:21:07 -0700
+Message-ID: <CAB=NE6Wh=yhFnxbsTwKun2t8SCbatHYGNYb95sk5ro9qdVGn3A@mail.gmail.com> (sfid-20141028_212131_516929_4FA8FF11)
+Subject: Re: failure to build backports on ubuntu
+To: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 10/31/14 19:40, Renato wrote:
-> Hi,
+On Tue, Oct 28, 2014 at 1:07 PM, Grumbach, Emmanuel
+<emmanuel.grumbach@intel.com> wrote:
+>>
+>> On Tue, Oct 28, 2014 at 10:08 AM, Grumbach, Emmanuel
+>> <emmanuel.grumbach@intel.com> wrote:
+>> >
+>> > I can't make menuconfig. Reverting this patch fixes it.
+>>
+>> There's no context provided here, gcc version, Linux distribution, etc. With
+>> some of that it would help.
+>>
 >
-> I have and old Linux system built from scratch based on kernel 2.6.24
-> and I need to add support on it for an Atheros ethernet card that
-> doesnt have driver for kernel 2.6.24.
+> * Ubuntu 14.04
+> *  gcc -v
+> Using built-in specs.
+> COLLECT_GCC=/usr/bin/gcc
+> COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/4.8/lto-wrapper
+> Target: x86_64-linux-gnu
+> Configured with: ../src/configure -v --with-pkgversion='Ubuntu 4.8.2-19ubuntu1' --with-bugurl=file:///usr/share/doc/gcc-4.8/README.Bugs --enable-languages=c,c++,java,go,d,fortran,objc,obj-c++ --prefix=/usr --program-suffix=-4.8 --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --with-gxx-include-dir=/usr/include/c++/4.8 --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --enable-gnu-unique-object --disable-libmudflap --enable-plugin --with-system-zlib --disable-browser-plugin --enable-java-awt=gtk --enable-gtk-cairo --with-java-home=/usr/lib/jvm/java-1.5.0-gcj-4.8-amd64/jre --enable-java-home --with-jvm-root-dir=/usr/lib/jvm/java-1.5.0-gcj-4.8-amd64 --with-jvm-jar-dir=/usr/lib/jvm-exports/java-1.5.0-gcj-4.8-amd64 --with-arch-directory=amd64 --with-ecj-jar=/usr/share/java/eclipse-ecj.jar --enable-objc-gc --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --with-tune=generic --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+> Thread model: posix
+> gcc version 4.8.2 (Ubuntu 4.8.2-19ubuntu1)
 >
-> Unfortunately we can't update the kernel because my client has a
-> control hardware that only have binary e propertery driver for 2.6.24.
+> I am compiling against 3.16.1
 >
-> Because of that, I'm trying to use compat-drivers to do that.
->
-> What I did so far was:
->
-> Downloaded compat-drivers-3.8.3-2-snpu and extraceted it.
-> Compiled it using:
->
-> ./scripts/driver-select alx
-> make
-> make install
->
-> After rebooting, I loaded the compat driver with:
->
-> modprobe compat
->
-> I can see the following on dmesg:
->
-> Compat-drivers backport release: compat-drivers-v3.8.3-2-snpu
-> Backport based on linux-stable.git v3.8.3
-> compat.git: linux-stable.git
->
-> Nothing more. And no eth yet.
->
-> What I am missing?
+> Please let me know what else you want to know.
 
-After loading compat you have the glue layer in place to load the actual 
-3.8.3 drivers on 2.6.24. So your next step would be to modprobe the alx 
-driver or whatever it is called.
+The kernel solution to this uses an internal kernel variables to
+prefix flags for the linker, the solution I provided is supposed to do
+that but perhaps for some older linker it doesn't do that, I'm afraid
+that since we don't have the internal variable solution and that
+porting it would be hard (probably pointless) we'll have to work
+around this then as mimicking that won't be easy
 
-Regards,
-Arend
-> Thanks
-> --
-> To unsubscribe from this list: send the line "unsubscribe backports" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Can you try a solution on the backport/kconf/Makefile that see's if
+lsb_release is available and use that for older releases of Ubuntu?
+I'd try it but since you have the system I figure it'd be easier.
 
+ Luis
