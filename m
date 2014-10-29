@@ -1,98 +1,113 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:25902 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752283AbaJ2HSr (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 29 Oct 2014 03:18:47 -0400
-From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: RE: failure to build backports on ubuntu
-Date: Wed, 29 Oct 2014 07:18:23 +0000
-Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB31B558C8B@hasmsx107.ger.corp.intel.com> (sfid-20141029_081850_769875_EE17B65B)
+Received: from mail-lb0-f172.google.com ([209.85.217.172]:52851 "EHLO
+	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752283AbaJ2HQX (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 29 Oct 2014 03:16:23 -0400
+Received: by mail-lb0-f172.google.com with SMTP id n15so1965971lbi.3
+        for <backports@vger.kernel.org>; Wed, 29 Oct 2014 00:16:21 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <0BA3FCBA62E2DC44AF3030971E174FB31B558C59@hasmsx107.ger.corp.intel.com>
 References: <0BA3FCBA62E2DC44AF3030971E174FB31B55873E@hasmsx107.ger.corp.intel.com>
  <CAB=NE6XBgHMNyLLS3wwYUh70sugbY0+YrKoBckk5O-tXF68t4Q@mail.gmail.com>
  <0BA3FCBA62E2DC44AF3030971E174FB31B5587F6@hasmsx107.ger.corp.intel.com>
- <CAB=NE6Wh=yhFnxbsTwKun2t8SCbatHYGNYb95sk5ro9qdVGn3A@mail.gmail.com>
- <0BA3FCBA62E2DC44AF3030971E174FB31B558C59@hasmsx107.ger.corp.intel.com>
- <CAB=NE6WEv=sege5OPZ_Fb69e=kcM0_HPX9JYikBJ1bEBQ+OS8A@mail.gmail.com>
-In-Reply-To: <CAB=NE6WEv=sege5OPZ_Fb69e=kcM0_HPX9JYikBJ1bEBQ+OS8A@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+ <CAB=NE6Wh=yhFnxbsTwKun2t8SCbatHYGNYb95sk5ro9qdVGn3A@mail.gmail.com> <0BA3FCBA62E2DC44AF3030971E174FB31B558C59@hasmsx107.ger.corp.intel.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Wed, 29 Oct 2014 00:16:01 -0700
+Message-ID: <CAB=NE6WEv=sege5OPZ_Fb69e=kcM0_HPX9JYikBJ1bEBQ+OS8A@mail.gmail.com> (sfid-20141029_081625_686171_158A5D8E)
+Subject: Re: failure to build backports on ubuntu
+To: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-PiANCj4gT24gVHVlLCBPY3QgMjgsIDIwMTQgYXQgMTE6NTcgUE0sIEdydW1iYWNoLCBFbW1hbnVl
-bA0KPiA8ZW1tYW51ZWwuZ3J1bWJhY2hAaW50ZWwuY29tPiB3cm90ZToNCj4gPj4NCj4gPj4gT24g
-VHVlLCBPY3QgMjgsIDIwMTQgYXQgMTowNyBQTSwgR3J1bWJhY2gsIEVtbWFudWVsDQo+ID4+IDxl
-bW1hbnVlbC5ncnVtYmFjaEBpbnRlbC5jb20+IHdyb3RlOg0KPiA+PiA+Pg0KPiA+PiA+PiBPbiBU
-dWUsIE9jdCAyOCwgMjAxNCBhdCAxMDowOCBBTSwgR3J1bWJhY2gsIEVtbWFudWVsDQo+ID4+ID4+
-IDxlbW1hbnVlbC5ncnVtYmFjaEBpbnRlbC5jb20+IHdyb3RlOg0KPiA+PiA+PiA+DQo+ID4+ID4+
-ID4gSSBjYW4ndCBtYWtlIG1lbnVjb25maWcuIFJldmVydGluZyB0aGlzIHBhdGNoIGZpeGVzIGl0
-Lg0KPiA+PiA+Pg0KPiA+PiA+PiBUaGVyZSdzIG5vIGNvbnRleHQgcHJvdmlkZWQgaGVyZSwgZ2Nj
-IHZlcnNpb24sIExpbnV4IGRpc3RyaWJ1dGlvbiwNCj4gPj4gPj4gZXRjLiBXaXRoIHNvbWUgb2Yg
-dGhhdCBpdCB3b3VsZCBoZWxwLg0KPiA+PiA+Pg0KPiA+PiA+DQo+ID4+ID4gKiBVYnVudHUgMTQu
-MDQNCj4gPj4gPiAqICBnY2MgLXYNCj4gPj4gPiBVc2luZyBidWlsdC1pbiBzcGVjcy4NCj4gPj4g
-PiBDT0xMRUNUX0dDQz0vdXNyL2Jpbi9nY2MNCj4gPj4gPiBDT0xMRUNUX0xUT19XUkFQUEVSPS91
-c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzQuOC9sdG8tDQo+IHdyYXBwZXINCj4gPj4gPiBU
-YXJnZXQ6IHg4Nl82NC1saW51eC1nbnUNCj4gPj4gPiBDb25maWd1cmVkIHdpdGg6IC4uL3NyYy9j
-b25maWd1cmUgLXYgLS13aXRoLXBrZ3ZlcnNpb249J1VidW50dQ0KPiA+PiA+IDQuOC4yLTE5dWJ1
-bnR1MScNCj4gPj4gPiAtLXdpdGgtYnVndXJsPWZpbGU6Ly8vdXNyL3NoYXJlL2RvYy9nY2MtNC44
-L1JFQURNRS5CdWdzDQo+ID4+ID4gLS1lbmFibGUtbGFuZ3VhZ2VzPWMsYysrLGphdmEsZ28sZCxm
-b3J0cmFuLG9iamMsb2JqLWMrKw0KPiA+PiA+IC0tcHJlZml4PS91c3INCj4gPj4gPiAtLXByb2dy
-YW0tc3VmZml4PS00LjggLS1lbmFibGUtc2hhcmVkIC0tZW5hYmxlLWxpbmtlci1idWlsZC1pZA0K
-PiA+PiA+IC0tbGliZXhlY2Rpcj0vdXNyL2xpYiAtLXdpdGhvdXQtaW5jbHVkZWQtZ2V0dGV4dA0K
-PiA+PiA+IC0tZW5hYmxlLXRocmVhZHM9cG9zaXggLS13aXRoLWd4eC1pbmNsdWRlLWRpcj0vdXNy
-L2luY2x1ZGUvYysrLzQuOA0KPiA+PiA+IC0tbGliZGlyPS91c3IvbGliIC0tZW5hYmxlLW5scyAt
-LXdpdGgtc3lzcm9vdD0vDQo+ID4+ID4gLS1lbmFibGUtY2xvY2FsZT1nbnUgLS1lbmFibGUtbGli
-c3RkY3h4LWRlYnVnDQo+ID4+ID4gLS1lbmFibGUtbGlic3RkY3h4LXRpbWU9eWVzIC0tZW5hYmxl
-LWdudS11bmlxdWUtb2JqZWN0DQo+ID4+ID4gLS1kaXNhYmxlLWxpYm11ZGZsYXAgLS1lbmFibGUt
-cGx1Z2luIC0td2l0aC1zeXN0ZW0temxpYg0KPiA+PiA+IC0tZGlzYWJsZS1icm93c2VyLXBsdWdp
-biAtLWVuYWJsZS1qYXZhLWF3dD1ndGsgLS1lbmFibGUtZ3RrLWNhaXJvDQo+ID4+ID4gLS13aXRo
-LWphdmEtaG9tZT0vdXNyL2xpYi9qdm0vamF2YS0xLjUuMC1nY2otNC44LWFtZDY0L2pyZQ0KPiA+
-PiA+IC0tZW5hYmxlLWphdmEtaG9tZQ0KPiA+PiA+IC0td2l0aC1qdm0tcm9vdC1kaXI9L3Vzci9s
-aWIvanZtL2phdmEtMS41LjAtZ2NqLTQuOC1hbWQ2NA0KPiA+PiA+IC0td2l0aC1qdm0tamFyLWRp
-cj0vdXNyL2xpYi9qdm0tZXhwb3J0cy9qYXZhLTEuNS4wLWdjai00LjgtYW1kNjQNCj4gPj4gPiAt
-LXdpdGgtYXJjaC1kaXJlY3Rvcnk9YW1kNjQNCj4gPj4gPiAtLXdpdGgtZWNqLWphcj0vdXNyL3No
-YXJlL2phdmEvZWNsaXBzZS1lY2ouamFyIC0tZW5hYmxlLW9iamMtZ2MNCj4gPj4gPiAtLWVuYWJs
-ZS1tdWx0aWFyY2ggLS1kaXNhYmxlLXdlcnJvciAtLXdpdGgtYXJjaC0zMj1pNjg2DQo+ID4+ID4g
-LS13aXRoLWFiaT1tNjQNCj4gPj4gPiAtLXdpdGgtbXVsdGlsaWItbGlzdD1tMzIsbTY0LG14MzIg
-LS13aXRoLXR1bmU9Z2VuZXJpYw0KPiA+PiA+IC0tZW5hYmxlLWNoZWNraW5nPXJlbGVhc2UgLS1i
-dWlsZD14ODZfNjQtbGludXgtZ251DQo+ID4+ID4gLS1ob3N0PXg4Nl82NC1saW51eC1nbnUgLS10
-YXJnZXQ9eDg2XzY0LWxpbnV4LWdudSBUaHJlYWQgbW9kZWw6DQo+ID4+ID4gcG9zaXggZ2NjIHZl
-cnNpb24gNC44LjIgKFVidW50dSA0LjguMi0xOXVidW50dTEpDQo+ID4+ID4NCj4gPj4gPiBJIGFt
-IGNvbXBpbGluZyBhZ2FpbnN0IDMuMTYuMQ0KPiA+PiA+DQo+ID4+ID4gUGxlYXNlIGxldCBtZSBr
-bm93IHdoYXQgZWxzZSB5b3Ugd2FudCB0byBrbm93Lg0KPiA+Pg0KPiA+PiBUaGUga2VybmVsIHNv
-bHV0aW9uIHRvIHRoaXMgdXNlcyBhbiBpbnRlcm5hbCBrZXJuZWwgdmFyaWFibGVzIHRvDQo+ID4+
-IHByZWZpeCBmbGFncyBmb3IgdGhlIGxpbmtlciwgdGhlIHNvbHV0aW9uIEkgcHJvdmlkZWQgaXMg
-c3VwcG9zZWQgdG8NCj4gPj4gZG8gdGhhdCBidXQgcGVyaGFwcyBmb3Igc29tZSBvbGRlciBsaW5r
-ZXIgaXQgZG9lc24ndCBkbyB0aGF0LCBJJ20NCj4gPj4gYWZyYWlkIHRoYXQgc2luY2Ugd2UgZG9u
-J3QgaGF2ZSB0aGUgaW50ZXJuYWwgdmFyaWFibGUgc29sdXRpb24gYW5kDQo+ID4+IHRoYXQgcG9y
-dGluZyBpdCB3b3VsZCBiZSBoYXJkIChwcm9iYWJseQ0KPiA+PiBwb2ludGxlc3MpIHdlJ2xsIGhh
-dmUgdG8gd29yayBhcm91bmQgdGhpcyB0aGVuIGFzIG1pbWlja2luZyB0aGF0DQo+ID4+IHdvbid0
-IGJlIGVhc3kNCj4gPj4NCj4gPj4gQ2FuIHlvdSB0cnkgYSBzb2x1dGlvbiBvbiB0aGUgYmFja3Bv
-cnQva2NvbmYvTWFrZWZpbGUgdGhhdCBzZWUncyBpZg0KPiA+PiBsc2JfcmVsZWFzZSBpcyBhdmFp
-bGFibGUgYW5kIHVzZSB0aGF0IGZvciBvbGRlciByZWxlYXNlcyBvZiBVYnVudHU/DQo+ID4+IEkn
-ZCB0cnkgaXQgYnV0IHNpbmNlIHlvdSBoYXZlIHRoZSBzeXN0ZW0gSSBmaWd1cmUgaXQnZCBiZSBl
-YXNpZXIuDQo+ID4+DQo+ID4NCj4gPiBUaGlzIHdvcmtzIGZvciBtZToNCj4gPg0KPiA+DQo+ID4g
-ZGlmZiAtLWdpdCBhL2JhY2twb3J0L2tjb25mL01ha2VmaWxlIGIvYmFja3BvcnQva2NvbmYvTWFr
-ZWZpbGUgaW5kZXgNCj4gPiBkZmQ3OTNhLi44Mzk4ZjM1IDEwMDY0NA0KPiA+IC0tLSBhL2JhY2tw
-b3J0L2tjb25mL01ha2VmaWxlDQo+ID4gKysrIGIvYmFja3BvcnQva2NvbmYvTWFrZWZpbGUNCj4g
-PiBAQCAtMyw3ICszLDE1IEBAIENGTEFHUz0tV2FsbCAtV21pc3NpbmctcHJvdG90eXBlcyAtV3N0
-cmljdC0NCj4gcHJvdG90eXBlcw0KPiA+IC1PMiAtZm9taXQtZnJhbWUtcG9pbnRlciAgTFhESUFM
-T0cgOj0gbHhkaWFsb2cvY2hlY2tsaXN0Lm8NCj4gPiBseGRpYWxvZy9pbnB1dGJveC5vIGx4ZGlh
-bG9nL21lbnVib3gubyBseGRpYWxvZy90ZXh0Ym94Lm8NCj4gPiBseGRpYWxvZy91dGlsLm8gbHhk
-aWFsb2cveWVzbm8ubw0KPiA+DQo+ID4gIGNvbmY6IGNvbmYubyB6Y29uZi50YWIubw0KPiA+IC1t
-Y29uZjogTERGTEFHUyA9IC1XbCwtLW5vLWFzLW5lZWRlZCAkKHNoZWxsDQo+ID4gLi9seGRpYWxv
-Zy9jaGVjay1seGRpYWxvZy5zaCAtbGRmbGFncyAkKENDKSkNCj4gPiArDQo+ID4gK1JFTEVBU0U9
-JChzaGVsbCBsc2JfcmVsZWFzZSAtc2kpDQo+ID4gK2lmZXEgKCQoUkVMRUFTRSksIFVidW50dSkN
-Cj4gPiArICAgICAgIEFTX05FRURFRD0tLW5vLWFzLW5lZWRlZA0KPiA+ICtlbHNlDQo+ID4gKyAg
-ICAgICBBU19ORUVERUQ9LS1hZGQtbmVlZGVkDQo+ID4gK2VuZGlmDQo+ID4gK21jb25mOiBMREZM
-QUdTID0gLVdsLCQoQVNfTkVFREVEKSAkKHNoZWxsDQo+ID4gKy4vbHhkaWFsb2cvY2hlY2stbHhk
-aWFsb2cuc2ggLWxkZmxhZ3MgJChDQykpDQo+ID4gKw0KPiA+ICBtY29uZjogQ0ZMQUdTICs9IC1E
-Q1VSU0VTX0xPQz0iPG5jdXJzZXMuaD4iIC1ETE9DQUxFDQo+ID4gIG1jb25mOiBtY29uZi5vIHpj
-b25mLnRhYi5vICQoTFhESUFMT0cpDQo+IA0KPiBUaGFua3MgZm9yIGRvaW5nIHRoaXMsIGFueSBj
-aGFuY2UgdGhpcyBjYW4gYmUgcmVkdWNlZCBkb3duIHRvIDwgdmVyc2lvbg0KPiBtYXRjaD8gSSdt
-IGluIGhvcGUgdGhhdCB0aGlzIGlzIG9ubHkgYW4gaXNzdWUgd2l0aCBvbGQgcmVsZWFzZXMgb3Ro
-ZXJ3aXNlIHdlDQo+IHNob3VsZCBsb29rIGZvciBhbm90aGVyIHNvbHV0aW9uLg0KPiANCg0KSSBj
-YW4gdHJ5IGJ1dCBJIG9ubHkgaGF2ZSAxNC4wNCA6KSB3aGljaCBoYXBwZW5zIHRvIGJlIHRoZSBs
-YXRlc3Qgc3RhYmxlIHJlbGVhc2UuDQo=
+On Tue, Oct 28, 2014 at 11:57 PM, Grumbach, Emmanuel
+<emmanuel.grumbach@intel.com> wrote:
+>>
+>> On Tue, Oct 28, 2014 at 1:07 PM, Grumbach, Emmanuel
+>> <emmanuel.grumbach@intel.com> wrote:
+>> >>
+>> >> On Tue, Oct 28, 2014 at 10:08 AM, Grumbach, Emmanuel
+>> >> <emmanuel.grumbach@intel.com> wrote:
+>> >> >
+>> >> > I can't make menuconfig. Reverting this patch fixes it.
+>> >>
+>> >> There's no context provided here, gcc version, Linux distribution,
+>> >> etc. With some of that it would help.
+>> >>
+>> >
+>> > * Ubuntu 14.04
+>> > *  gcc -v
+>> > Using built-in specs.
+>> > COLLECT_GCC=/usr/bin/gcc
+>> > COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/4.8/lto-wrapper
+>> > Target: x86_64-linux-gnu
+>> > Configured with: ../src/configure -v --with-pkgversion='Ubuntu
+>> > 4.8.2-19ubuntu1'
+>> > --with-bugurl=file:///usr/share/doc/gcc-4.8/README.Bugs
+>> > --enable-languages=c,c++,java,go,d,fortran,objc,obj-c++ --prefix=/usr
+>> > --program-suffix=-4.8 --enable-shared --enable-linker-build-id
+>> > --libexecdir=/usr/lib --without-included-gettext
+>> > --enable-threads=posix --with-gxx-include-dir=/usr/include/c++/4.8
+>> > --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu
+>> > --enable-libstdcxx-debug --enable-libstdcxx-time=yes
+>> > --enable-gnu-unique-object --disable-libmudflap --enable-plugin
+>> > --with-system-zlib --disable-browser-plugin --enable-java-awt=gtk
+>> > --enable-gtk-cairo
+>> > --with-java-home=/usr/lib/jvm/java-1.5.0-gcj-4.8-amd64/jre
+>> > --enable-java-home
+>> > --with-jvm-root-dir=/usr/lib/jvm/java-1.5.0-gcj-4.8-amd64
+>> > --with-jvm-jar-dir=/usr/lib/jvm-exports/java-1.5.0-gcj-4.8-amd64
+>> > --with-arch-directory=amd64
+>> > --with-ecj-jar=/usr/share/java/eclipse-ecj.jar --enable-objc-gc
+>> > --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64
+>> > --with-multilib-list=m32,m64,mx32 --with-tune=generic
+>> > --enable-checking=release --build=x86_64-linux-gnu
+>> > --host=x86_64-linux-gnu --target=x86_64-linux-gnu Thread model: posix
+>> > gcc version 4.8.2 (Ubuntu 4.8.2-19ubuntu1)
+>> >
+>> > I am compiling against 3.16.1
+>> >
+>> > Please let me know what else you want to know.
+>>
+>> The kernel solution to this uses an internal kernel variables to prefix flags for
+>> the linker, the solution I provided is supposed to do that but perhaps for
+>> some older linker it doesn't do that, I'm afraid that since we don't have the
+>> internal variable solution and that porting it would be hard (probably
+>> pointless) we'll have to work around this then as mimicking that won't be
+>> easy
+>>
+>> Can you try a solution on the backport/kconf/Makefile that see's if
+>> lsb_release is available and use that for older releases of Ubuntu?
+>> I'd try it but since you have the system I figure it'd be easier.
+>>
+>
+> This works for me:
+>
+>
+> diff --git a/backport/kconf/Makefile b/backport/kconf/Makefile
+> index dfd793a..8398f35 100644
+> --- a/backport/kconf/Makefile
+> +++ b/backport/kconf/Makefile
+> @@ -3,7 +3,15 @@ CFLAGS=-Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
+>  LXDIALOG := lxdialog/checklist.o lxdialog/inputbox.o lxdialog/menubox.o lxdialog/textbox.o lxdialog/util.o lxdialog/yesno.o
+>
+>  conf: conf.o zconf.tab.o
+> -mconf: LDFLAGS = -Wl,--no-as-needed $(shell ./lxdialog/check-lxdialog.sh -ldflags $(CC))
+> +
+> +RELEASE=$(shell lsb_release -si)
+> +ifeq ($(RELEASE), Ubuntu)
+> +       AS_NEEDED=--no-as-needed
+> +else
+> +       AS_NEEDED=--add-needed
+> +endif
+> +mconf: LDFLAGS = -Wl,$(AS_NEEDED) $(shell ./lxdialog/check-lxdialog.sh -ldflags $(CC))
+> +
+>  mconf: CFLAGS += -DCURSES_LOC="<ncurses.h>" -DLOCALE
+>  mconf: mconf.o zconf.tab.o $(LXDIALOG)
+
+Thanks for doing this, any chance this can be reduced down to <
+version match? I'm in hope that this is only an issue with old
+releases otherwise we should look for another solution.
+
+ Luis
