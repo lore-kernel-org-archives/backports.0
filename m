@@ -1,88 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:50343 "EHLO sipsolutions.net"
+Received: from s3.sipsolutions.net ([5.9.151.49]:36297 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752478AbaJaHqF (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 31 Oct 2014 03:46:05 -0400
-Message-ID: <1414741562.3014.8.camel@jlt4.sipsolutions.net> (sfid-20141031_084608_811875_CEEEFDAE)
-Subject: Re: [RFC v2 3/4] backports: use BACKPORT_DIR prefix on kconfig
- sources
+	id S1752843AbaJ2ICb (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 29 Oct 2014 04:02:31 -0400
+Message-ID: <1414569744.1827.0.camel@jlt4.sipsolutions.net> (sfid-20141029_090236_109541_5480F150)
+Subject: Re: failure to build backports on ubuntu
 From: Johannes Berg <johannes@sipsolutions.net>
 To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Date: Fri, 31 Oct 2014 08:46:02 +0100
-In-Reply-To: <1414570902-5675-4-git-send-email-mcgrof@do-not-panic.com> (sfid-20141029_092321_193267_F4A1051E)
-References: <1414570902-5675-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1414570902-5675-4-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20141029_092321_193267_F4A1051E)
+Cc: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Wed, 29 Oct 2014 09:02:24 +0100
+In-Reply-To: <CAB=NE6Wh=yhFnxbsTwKun2t8SCbatHYGNYb95sk5ro9qdVGn3A@mail.gmail.com> (sfid-20141028_212131_516929_4FA8FF11)
+References: <0BA3FCBA62E2DC44AF3030971E174FB31B55873E@hasmsx107.ger.corp.intel.com>
+	 <CAB=NE6XBgHMNyLLS3wwYUh70sugbY0+YrKoBckk5O-tXF68t4Q@mail.gmail.com>
+	 <0BA3FCBA62E2DC44AF3030971E174FB31B5587F6@hasmsx107.ger.corp.intel.com>
+	 <CAB=NE6Wh=yhFnxbsTwKun2t8SCbatHYGNYb95sk5ro9qdVGn3A@mail.gmail.com>
+	 (sfid-20141028_212131_516929_4FA8FF11)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2014-10-29 at 01:21 -0700, Luis R. Rodriguez wrote:
+On Tue, 2014-10-28 at 13:21 -0700, Luis R. Rodriguez wrote:
 
->  src_line = re.compile(r'^\s*source\s+"?(?P<src>[^\s"]*)"?\s*$')
-> +bk_src_line = re.compile(r'^\s*source\s+"?\$BACKPORT_DIR/(?P<src>[^\s"]*)"?\s*$')
->  tri_line = re.compile(r'^(?P<spc>\s+)tristate')
->  bool_line = re.compile(r'^(?P<spc>\s+)bool')
->  cfg_line = re.compile(r'^(?P<opt>config|menuconfig)\s+(?P<sym>[^\s]*)')
-> @@ -21,23 +22,47 @@ class ConfigTree(object):
->          yield f
->          for l in open(os.path.join(self.basedir, f), 'r'):
->              m = src_line.match(l)
-> -            if m and os.path.exists(os.path.join(self.basedir, m.group('src'))):
-> -                for i in self._walk(m.group('src')):
-> -                    yield i
-> +            if m:
-> +                bm = bk_src_line.match(l)
-> +                if bm:
-> +                    if os.path.exists(os.path.join(self.basedir, bm.group('src'))):
-> +                        for i in self._walk(os.path.join(self.basedir, bm.group('src'))):
-> +                            yield i
-> +                    elif os.path.exists(os.path.join(self.basedir, 'backports/' + bm.group('src'))):
-> +                        for i in self._walk(os.path.join(self.basedir, 'backports/' + bm.group('src'))):
-> +                            yield i
-> +                else:
-> +                    if os.path.exists(os.path.join(self.basedir, m.group('src'))):
-> +                        for i in self._walk(m.group('src')):
-> +                            yield i
+> The kernel solution to this uses an internal kernel variables to
+> prefix flags for the linker,
 
-Are you even using the src_line regular expression any more? Seems like
-you could just modify it though to make the (\$BACKPORT_DIR/) part
-optional.
+Can't we just figure out how the kernel derives that variable and do the
+same?
 
->      def _prune_sources(self, f, ignore):
->          for nf in self._walk(f):
->              out = ''
->              for l in open(os.path.join(self.basedir, nf), 'r'):
-> -                m = src_line.match(l)
-> -                if not m:
-> -                    out += l
-> -                    continue
-> -                src = m.group('src')
-> -                if src in ignore or os.path.exists(os.path.join(self.basedir, src)):
-> -                    out += l
-> +                bm = bk_src_line.match(l)
-> +                if bm:
-> +                    bp_src = bm.group('src')
-> +                    if bp_src in ignore or \
-> +                       os.path.exists(os.path.join(self.basedir, bp_src)) or \
-> +                       os.path.exists(os.path.join(self.basedir, 'backports/' + bp_src)):
-
-I'd prefer parentheses instead of \ line continuations :)
-
-the backports/ part seems to be for integration only?
-
-> +                    m = src_line.match(l)
-> +                    # we should consider disallowing these as it could mean
-> +                    # someone forgot to add the BACKPORT_DIR prefix to
-> +                    # the kconfig source entries which we will need to
-> +                    # support built-in integration.
-
-If you put it in the same RE then you can just print a warning on this
-if detected but skip it otherwise.
+After all, the kernel doesn't do magic ... not more than we do in
+backports anyway :)
 
 johannes
 
