@@ -1,294 +1,98 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:40652 "EHLO hauke-m.de"
+Received: from mga03.intel.com ([134.134.136.65]:25902 "EHLO mga03.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751378AbaJYSpx (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 25 Oct 2014 14:45:53 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 09/11] backports: refresh patches on next-20141003
-Date: Sat, 25 Oct 2014 11:19:28 +0200
-Message-Id: <1414228770-20047-10-git-send-email-hauke@hauke-m.de> (sfid-20141025_204557_122783_CAFD3CA2)
-In-Reply-To: <1414228770-20047-1-git-send-email-hauke@hauke-m.de>
-References: <1414228770-20047-1-git-send-email-hauke@hauke-m.de>
+	id S1752283AbaJ2HSr (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 29 Oct 2014 03:18:47 -0400
+From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: RE: failure to build backports on ubuntu
+Date: Wed, 29 Oct 2014 07:18:23 +0000
+Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB31B558C8B@hasmsx107.ger.corp.intel.com> (sfid-20141029_081850_769875_EE17B65B)
+References: <0BA3FCBA62E2DC44AF3030971E174FB31B55873E@hasmsx107.ger.corp.intel.com>
+ <CAB=NE6XBgHMNyLLS3wwYUh70sugbY0+YrKoBckk5O-tXF68t4Q@mail.gmail.com>
+ <0BA3FCBA62E2DC44AF3030971E174FB31B5587F6@hasmsx107.ger.corp.intel.com>
+ <CAB=NE6Wh=yhFnxbsTwKun2t8SCbatHYGNYb95sk5ro9qdVGn3A@mail.gmail.com>
+ <0BA3FCBA62E2DC44AF3030971E174FB31B558C59@hasmsx107.ger.corp.intel.com>
+ <CAB=NE6WEv=sege5OPZ_Fb69e=kcM0_HPX9JYikBJ1bEBQ+OS8A@mail.gmail.com>
+In-Reply-To: <CAB=NE6WEv=sege5OPZ_Fb69e=kcM0_HPX9JYikBJ1bEBQ+OS8A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-1   3.0.101             [  OK  ]
-2   3.1.10              [  OK  ]
-3   3.2.62              [  OK  ]
-4   3.3.8               [  OK  ]
-5   3.4.103             [  OK  ]
-6   3.5.7               [  OK  ]
-7   3.6.11              [  OK  ]
-8   3.7.10              [  OK  ]
-9   3.8.13              [  OK  ]
-10  3.9.11              [  OK  ]
-11  3.10.54             [  OK  ]
-12  3.11.10             [  OK  ]
-13  3.12.27             [  OK  ]
-14  3.13.11             [  OK  ]
-15  3.14.18             [  OK  ]
-16  3.15.10             [  OK  ]
-17  3.16.2              [  OK  ]
-18  3.17-rc3            [  OK  ]
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../media/0002-no_dmabuf/v4l2.patch                | 30 +++++++++++-----------
- .../0017-get_ts_info/drivers_net_usb_usbnet.patch  |  2 +-
- .../network/0025-usb-sg/usbnet.patch               | 12 ++++-----
- .../network/0028-select_queue/mwifiex.patch        |  2 +-
- .../0030-qdisc_tx_busylock/ieee802154.patch        |  4 +--
- .../network/0046-mmc_rescan_entered/mwifiex.patch  |  2 +-
- 6 files changed, 26 insertions(+), 26 deletions(-)
-
-diff --git a/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch b/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
-index 7947b57..02d042a 100644
---- a/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
-+++ b/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/media/v4l2-core/Kconfig
- +++ b/drivers/media/v4l2-core/Kconfig
--@@ -67,7 +67,7 @@ config VIDEOBUF_DVB
-+@@ -68,7 +68,7 @@ config VIDEOBUF_DVB
-  
-  # Used by drivers that need Videobuf2 modules
-  config VIDEOBUF2_CORE
-@@ -9,7 +9,7 @@
-  	tristate
-  
-  config VIDEOBUF2_MEMOPS
--@@ -78,13 +78,13 @@ config VIDEOBUF2_DMA_CONTIG
-+@@ -79,13 +79,13 @@ config VIDEOBUF2_DMA_CONTIG
-  	depends on HAS_DMA
-  	select VIDEOBUF2_CORE
-  	select VIDEOBUF2_MEMOPS
-@@ -117,7 +117,7 @@
-  
-  	/*
-  	 * Place the busy tests at the end: -EBUSY can be ignored when
--@@ -1452,6 +1460,7 @@ err:
-+@@ -1451,6 +1459,7 @@ err:
-  	return ret;
-  }
-  
-@@ -125,7 +125,7 @@
-  /**
-   * __qbuf_dmabuf() - handle qbuf of a DMABUF buffer
-   */
--@@ -1569,6 +1578,7 @@ err:
-+@@ -1568,6 +1577,7 @@ err:
-  
-  	return ret;
-  }
-@@ -133,9 +133,9 @@
-  
-  /**
-   * __enqueue_in_driver() - enqueue a vb2_buffer in driver for processing
--@@ -1629,9 +1639,11 @@ static int __buf_prepare(struct vb2_buff
-- 	case V4L2_MEMORY_USERPTR:
-+@@ -1630,9 +1640,11 @@ static int __buf_prepare(struct vb2_buff
-  		ret = __qbuf_userptr(vb, b);
-+ 		up_read(&current->mm->mmap_sem);
-  		break;
- +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
-  	case V4L2_MEMORY_DMABUF:
-@@ -145,7 +145,7 @@
-  	default:
-  		WARN(1, "Invalid queue type\n");
-  		ret = -EINVAL;
--@@ -2004,8 +2016,10 @@ EXPORT_SYMBOL_GPL(vb2_wait_for_all_buffe
-+@@ -2018,8 +2030,10 @@ EXPORT_SYMBOL_GPL(vb2_wait_for_all_buffe
-   */
-  static void __vb2_dqbuf(struct vb2_buffer *vb)
-  {
-@@ -156,7 +156,7 @@
-  
-  	/* nothing to do if the buffer is already dequeued */
-  	if (vb->state == VB2_BUF_STATE_DEQUEUED)
--@@ -2013,6 +2027,7 @@ static void __vb2_dqbuf(struct vb2_buffe
-+@@ -2027,6 +2041,7 @@ static void __vb2_dqbuf(struct vb2_buffe
-  
-  	vb->state = VB2_BUF_STATE_DEQUEUED;
-  
-@@ -164,7 +164,7 @@
-  	/* unmap DMABUF buffer */
-  	if (q->memory == V4L2_MEMORY_DMABUF)
-  		for (i = 0; i < vb->num_planes; ++i) {
--@@ -2021,6 +2036,7 @@ static void __vb2_dqbuf(struct vb2_buffe
-+@@ -2035,6 +2050,7 @@ static void __vb2_dqbuf(struct vb2_buffe
-  			call_void_memop(vb, unmap_dmabuf, vb->planes[i].mem_priv);
-  			vb->planes[i].dbuf_mapped = 0;
-  		}
-@@ -172,7 +172,7 @@
-  }
-  
-  static int vb2_internal_dqbuf(struct vb2_queue *q, struct v4l2_buffer *b, bool nonblocking)
--@@ -2320,6 +2336,7 @@ static int __find_plane_by_offset(struct
-+@@ -2341,6 +2357,7 @@ static int __find_plane_by_offset(struct
-  	return -EINVAL;
-  }
-  
-@@ -180,7 +180,7 @@
-  /**
-   * vb2_expbuf() - Export a buffer as a file descriptor
-   * @q:		videobuf2 queue
--@@ -2397,6 +2414,7 @@ int vb2_expbuf(struct vb2_queue *q, stru
-+@@ -2418,6 +2435,7 @@ int vb2_expbuf(struct vb2_queue *q, stru
-  	return 0;
-  }
-  EXPORT_SYMBOL_GPL(vb2_expbuf);
-@@ -188,7 +188,7 @@
-  
-  /**
-   * vb2_mmap() - map video buffers into application address space
--@@ -3333,6 +3351,7 @@ int vb2_ioctl_streamoff(struct file *fil
-+@@ -3361,6 +3379,7 @@ int vb2_ioctl_streamoff(struct file *fil
-  }
-  EXPORT_SYMBOL_GPL(vb2_ioctl_streamoff);
-  
-@@ -196,7 +196,7 @@
-  int vb2_ioctl_expbuf(struct file *file, void *priv, struct v4l2_exportbuffer *p)
-  {
-  	struct video_device *vdev = video_devdata(file);
--@@ -3342,6 +3361,7 @@ int vb2_ioctl_expbuf(struct file *file,
-+@@ -3370,6 +3389,7 @@ int vb2_ioctl_expbuf(struct file *file,
-  	return vb2_expbuf(vdev->queue, p);
-  }
-  EXPORT_SYMBOL_GPL(vb2_ioctl_expbuf);
-@@ -363,7 +363,7 @@
-  
-  	void		*(*vaddr)(void *buf_priv);
-  	void		*(*cookie)(void *buf_priv);
--@@ -455,7 +459,9 @@ void vb2_queue_release(struct vb2_queue
-+@@ -459,7 +463,9 @@ void vb2_queue_release(struct vb2_queue
-  void vb2_queue_error(struct vb2_queue *q);
-  
-  int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b);
-@@ -373,7 +373,7 @@
-  int vb2_dqbuf(struct vb2_queue *q, struct v4l2_buffer *b, bool nonblocking);
-  
-  int vb2_streamon(struct vb2_queue *q, enum v4l2_buf_type type);
--@@ -611,8 +617,10 @@ int vb2_ioctl_qbuf(struct file *file, vo
-+@@ -624,8 +630,10 @@ int vb2_ioctl_qbuf(struct file *file, vo
-  int vb2_ioctl_dqbuf(struct file *file, void *priv, struct v4l2_buffer *p);
-  int vb2_ioctl_streamon(struct file *file, void *priv, enum v4l2_buf_type i);
-  int vb2_ioctl_streamoff(struct file *file, void *priv, enum v4l2_buf_type i);
-diff --git a/patches/collateral-evolutions/network/0017-get_ts_info/drivers_net_usb_usbnet.patch b/patches/collateral-evolutions/network/0017-get_ts_info/drivers_net_usb_usbnet.patch
-index c19f6b1..68d22e5 100644
---- a/patches/collateral-evolutions/network/0017-get_ts_info/drivers_net_usb_usbnet.patch
-+++ b/patches/collateral-evolutions/network/0017-get_ts_info/drivers_net_usb_usbnet.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/net/usb/usbnet.c
- +++ b/drivers/net/usb/usbnet.c
--@@ -1022,7 +1022,9 @@ static const struct ethtool_ops usbnet_e
-+@@ -1023,7 +1023,9 @@ static const struct ethtool_ops usbnet_e
-  	.get_drvinfo		= usbnet_get_drvinfo,
-  	.get_msglevel		= usbnet_get_msglevel,
-  	.set_msglevel		= usbnet_set_msglevel,
-diff --git a/patches/collateral-evolutions/network/0025-usb-sg/usbnet.patch b/patches/collateral-evolutions/network/0025-usb-sg/usbnet.patch
-index 6e2cdfe..f928dbe 100644
---- a/patches/collateral-evolutions/network/0025-usb-sg/usbnet.patch
-+++ b/patches/collateral-evolutions/network/0025-usb-sg/usbnet.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/net/usb/usbnet.c
- +++ b/drivers/net/usb/usbnet.c
--@@ -1231,6 +1231,7 @@ EXPORT_SYMBOL_GPL(usbnet_tx_timeout);
-+@@ -1233,6 +1233,7 @@ EXPORT_SYMBOL_GPL(usbnet_tx_timeout);
-  
-  /*-------------------------------------------------------------------------*/
-  
-@@ -8,7 +8,7 @@
-  static int build_dma_sg(const struct sk_buff *skb, struct urb *urb)
-  {
-  	unsigned num_sgs, total_len = 0;
--@@ -1263,6 +1264,12 @@ static int build_dma_sg(const struct sk_
-+@@ -1265,6 +1266,12 @@ static int build_dma_sg(const struct sk_
-  
-  	return 1;
-  }
-@@ -21,7 +21,7 @@
-  
-  netdev_tx_t usbnet_start_xmit (struct sk_buff *skb,
-  				     struct net_device *net)
--@@ -1319,12 +1326,19 @@ netdev_tx_t usbnet_start_xmit (struct sk
-+@@ -1321,12 +1328,19 @@ netdev_tx_t usbnet_start_xmit (struct sk
-  		if (!(info->flags & FLAG_SEND_ZLP)) {
-  			if (!(info->flags & FLAG_MULTI_PACKET)) {
-  				length++;
-@@ -41,7 +41,7 @@
-  			}
-  		} else
-  			urb->transfer_flags |= URB_ZERO_PACKET;
--@@ -1379,7 +1393,9 @@ not_drop:
-+@@ -1381,7 +1395,9 @@ not_drop:
-  		if (skb)
-  			dev_kfree_skb_any (skb);
-  		if (urb) {
-@@ -51,7 +51,7 @@
-  			usb_free_urb(urb);
-  		}
-  	} else
--@@ -1432,7 +1448,9 @@ static void usbnet_bh (unsigned long par
-+@@ -1434,7 +1450,9 @@ static void usbnet_bh (unsigned long par
-  			rx_process (dev, skb);
-  			continue;
-  		case tx_done:
-@@ -61,7 +61,7 @@
-  		case rx_cleanup:
-  			usb_free_urb (entry->urb);
-  			dev_kfree_skb (skb);
--@@ -1787,7 +1805,9 @@ int usbnet_resume (struct usb_interface
-+@@ -1789,7 +1807,9 @@ int usbnet_resume (struct usb_interface
-  			retval = usb_submit_urb(res, GFP_ATOMIC);
-  			if (retval < 0) {
-  				dev_kfree_skb_any(skb);
-diff --git a/patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch b/patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch
-index c10d3b0..919a960 100644
---- a/patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch
-+++ b/patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/net/wireless/mwifiex/main.c
- +++ b/drivers/net/wireless/mwifiex/main.c
--@@ -717,9 +717,19 @@ static struct net_device_stats *mwifiex_
-+@@ -714,9 +714,19 @@ static struct net_device_stats *mwifiex_
-  	return &priv->stats;
-  }
-  
-diff --git a/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/ieee802154.patch b/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/ieee802154.patch
-index 62e743c..0533c20 100644
---- a/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/ieee802154.patch
-+++ b/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/ieee802154.patch
-@@ -1,6 +1,6 @@
- --- a/net/ieee802154/6lowpan_rtnl.c
- +++ b/net/ieee802154/6lowpan_rtnl.c
--@@ -389,7 +389,9 @@ static struct header_ops lowpan_header_o
-+@@ -442,7 +442,9 @@ static struct header_ops lowpan_header_o
-  	.create	= lowpan_header_create,
-  };
-  
-@@ -10,7 +10,7 @@
-  static struct lock_class_key lowpan_netdev_xmit_lock_key;
-  
-  static void lowpan_set_lockdep_class_one(struct net_device *dev,
--@@ -404,7 +406,9 @@ static void lowpan_set_lockdep_class_one
-+@@ -457,7 +459,9 @@ static void lowpan_set_lockdep_class_one
-  static int lowpan_dev_init(struct net_device *dev)
-  {
-  	netdev_for_each_tx_queue(dev, lowpan_set_lockdep_class_one, NULL);
-diff --git a/patches/collateral-evolutions/network/0046-mmc_rescan_entered/mwifiex.patch b/patches/collateral-evolutions/network/0046-mmc_rescan_entered/mwifiex.patch
-index 89de2fb..bf21470 100644
---- a/patches/collateral-evolutions/network/0046-mmc_rescan_entered/mwifiex.patch
-+++ b/patches/collateral-evolutions/network/0046-mmc_rescan_entered/mwifiex.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/net/wireless/mwifiex/sdio.c
- +++ b/drivers/net/wireless/mwifiex/sdio.c
--@@ -1954,7 +1954,9 @@ static void mwifiex_sdio_card_reset_work
-+@@ -1958,7 +1958,9 @@ static void mwifiex_sdio_card_reset_work
-  	mmc_remove_host(target);
-  	/* 20ms delay is based on experiment with sdhci controller */
-  	mdelay(20);
--- 
-1.9.1
-
+PiANCj4gT24gVHVlLCBPY3QgMjgsIDIwMTQgYXQgMTE6NTcgUE0sIEdydW1iYWNoLCBFbW1hbnVl
+bA0KPiA8ZW1tYW51ZWwuZ3J1bWJhY2hAaW50ZWwuY29tPiB3cm90ZToNCj4gPj4NCj4gPj4gT24g
+VHVlLCBPY3QgMjgsIDIwMTQgYXQgMTowNyBQTSwgR3J1bWJhY2gsIEVtbWFudWVsDQo+ID4+IDxl
+bW1hbnVlbC5ncnVtYmFjaEBpbnRlbC5jb20+IHdyb3RlOg0KPiA+PiA+Pg0KPiA+PiA+PiBPbiBU
+dWUsIE9jdCAyOCwgMjAxNCBhdCAxMDowOCBBTSwgR3J1bWJhY2gsIEVtbWFudWVsDQo+ID4+ID4+
+IDxlbW1hbnVlbC5ncnVtYmFjaEBpbnRlbC5jb20+IHdyb3RlOg0KPiA+PiA+PiA+DQo+ID4+ID4+
+ID4gSSBjYW4ndCBtYWtlIG1lbnVjb25maWcuIFJldmVydGluZyB0aGlzIHBhdGNoIGZpeGVzIGl0
+Lg0KPiA+PiA+Pg0KPiA+PiA+PiBUaGVyZSdzIG5vIGNvbnRleHQgcHJvdmlkZWQgaGVyZSwgZ2Nj
+IHZlcnNpb24sIExpbnV4IGRpc3RyaWJ1dGlvbiwNCj4gPj4gPj4gZXRjLiBXaXRoIHNvbWUgb2Yg
+dGhhdCBpdCB3b3VsZCBoZWxwLg0KPiA+PiA+Pg0KPiA+PiA+DQo+ID4+ID4gKiBVYnVudHUgMTQu
+MDQNCj4gPj4gPiAqICBnY2MgLXYNCj4gPj4gPiBVc2luZyBidWlsdC1pbiBzcGVjcy4NCj4gPj4g
+PiBDT0xMRUNUX0dDQz0vdXNyL2Jpbi9nY2MNCj4gPj4gPiBDT0xMRUNUX0xUT19XUkFQUEVSPS91
+c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzQuOC9sdG8tDQo+IHdyYXBwZXINCj4gPj4gPiBU
+YXJnZXQ6IHg4Nl82NC1saW51eC1nbnUNCj4gPj4gPiBDb25maWd1cmVkIHdpdGg6IC4uL3NyYy9j
+b25maWd1cmUgLXYgLS13aXRoLXBrZ3ZlcnNpb249J1VidW50dQ0KPiA+PiA+IDQuOC4yLTE5dWJ1
+bnR1MScNCj4gPj4gPiAtLXdpdGgtYnVndXJsPWZpbGU6Ly8vdXNyL3NoYXJlL2RvYy9nY2MtNC44
+L1JFQURNRS5CdWdzDQo+ID4+ID4gLS1lbmFibGUtbGFuZ3VhZ2VzPWMsYysrLGphdmEsZ28sZCxm
+b3J0cmFuLG9iamMsb2JqLWMrKw0KPiA+PiA+IC0tcHJlZml4PS91c3INCj4gPj4gPiAtLXByb2dy
+YW0tc3VmZml4PS00LjggLS1lbmFibGUtc2hhcmVkIC0tZW5hYmxlLWxpbmtlci1idWlsZC1pZA0K
+PiA+PiA+IC0tbGliZXhlY2Rpcj0vdXNyL2xpYiAtLXdpdGhvdXQtaW5jbHVkZWQtZ2V0dGV4dA0K
+PiA+PiA+IC0tZW5hYmxlLXRocmVhZHM9cG9zaXggLS13aXRoLWd4eC1pbmNsdWRlLWRpcj0vdXNy
+L2luY2x1ZGUvYysrLzQuOA0KPiA+PiA+IC0tbGliZGlyPS91c3IvbGliIC0tZW5hYmxlLW5scyAt
+LXdpdGgtc3lzcm9vdD0vDQo+ID4+ID4gLS1lbmFibGUtY2xvY2FsZT1nbnUgLS1lbmFibGUtbGli
+c3RkY3h4LWRlYnVnDQo+ID4+ID4gLS1lbmFibGUtbGlic3RkY3h4LXRpbWU9eWVzIC0tZW5hYmxl
+LWdudS11bmlxdWUtb2JqZWN0DQo+ID4+ID4gLS1kaXNhYmxlLWxpYm11ZGZsYXAgLS1lbmFibGUt
+cGx1Z2luIC0td2l0aC1zeXN0ZW0temxpYg0KPiA+PiA+IC0tZGlzYWJsZS1icm93c2VyLXBsdWdp
+biAtLWVuYWJsZS1qYXZhLWF3dD1ndGsgLS1lbmFibGUtZ3RrLWNhaXJvDQo+ID4+ID4gLS13aXRo
+LWphdmEtaG9tZT0vdXNyL2xpYi9qdm0vamF2YS0xLjUuMC1nY2otNC44LWFtZDY0L2pyZQ0KPiA+
+PiA+IC0tZW5hYmxlLWphdmEtaG9tZQ0KPiA+PiA+IC0td2l0aC1qdm0tcm9vdC1kaXI9L3Vzci9s
+aWIvanZtL2phdmEtMS41LjAtZ2NqLTQuOC1hbWQ2NA0KPiA+PiA+IC0td2l0aC1qdm0tamFyLWRp
+cj0vdXNyL2xpYi9qdm0tZXhwb3J0cy9qYXZhLTEuNS4wLWdjai00LjgtYW1kNjQNCj4gPj4gPiAt
+LXdpdGgtYXJjaC1kaXJlY3Rvcnk9YW1kNjQNCj4gPj4gPiAtLXdpdGgtZWNqLWphcj0vdXNyL3No
+YXJlL2phdmEvZWNsaXBzZS1lY2ouamFyIC0tZW5hYmxlLW9iamMtZ2MNCj4gPj4gPiAtLWVuYWJs
+ZS1tdWx0aWFyY2ggLS1kaXNhYmxlLXdlcnJvciAtLXdpdGgtYXJjaC0zMj1pNjg2DQo+ID4+ID4g
+LS13aXRoLWFiaT1tNjQNCj4gPj4gPiAtLXdpdGgtbXVsdGlsaWItbGlzdD1tMzIsbTY0LG14MzIg
+LS13aXRoLXR1bmU9Z2VuZXJpYw0KPiA+PiA+IC0tZW5hYmxlLWNoZWNraW5nPXJlbGVhc2UgLS1i
+dWlsZD14ODZfNjQtbGludXgtZ251DQo+ID4+ID4gLS1ob3N0PXg4Nl82NC1saW51eC1nbnUgLS10
+YXJnZXQ9eDg2XzY0LWxpbnV4LWdudSBUaHJlYWQgbW9kZWw6DQo+ID4+ID4gcG9zaXggZ2NjIHZl
+cnNpb24gNC44LjIgKFVidW50dSA0LjguMi0xOXVidW50dTEpDQo+ID4+ID4NCj4gPj4gPiBJIGFt
+IGNvbXBpbGluZyBhZ2FpbnN0IDMuMTYuMQ0KPiA+PiA+DQo+ID4+ID4gUGxlYXNlIGxldCBtZSBr
+bm93IHdoYXQgZWxzZSB5b3Ugd2FudCB0byBrbm93Lg0KPiA+Pg0KPiA+PiBUaGUga2VybmVsIHNv
+bHV0aW9uIHRvIHRoaXMgdXNlcyBhbiBpbnRlcm5hbCBrZXJuZWwgdmFyaWFibGVzIHRvDQo+ID4+
+IHByZWZpeCBmbGFncyBmb3IgdGhlIGxpbmtlciwgdGhlIHNvbHV0aW9uIEkgcHJvdmlkZWQgaXMg
+c3VwcG9zZWQgdG8NCj4gPj4gZG8gdGhhdCBidXQgcGVyaGFwcyBmb3Igc29tZSBvbGRlciBsaW5r
+ZXIgaXQgZG9lc24ndCBkbyB0aGF0LCBJJ20NCj4gPj4gYWZyYWlkIHRoYXQgc2luY2Ugd2UgZG9u
+J3QgaGF2ZSB0aGUgaW50ZXJuYWwgdmFyaWFibGUgc29sdXRpb24gYW5kDQo+ID4+IHRoYXQgcG9y
+dGluZyBpdCB3b3VsZCBiZSBoYXJkIChwcm9iYWJseQ0KPiA+PiBwb2ludGxlc3MpIHdlJ2xsIGhh
+dmUgdG8gd29yayBhcm91bmQgdGhpcyB0aGVuIGFzIG1pbWlja2luZyB0aGF0DQo+ID4+IHdvbid0
+IGJlIGVhc3kNCj4gPj4NCj4gPj4gQ2FuIHlvdSB0cnkgYSBzb2x1dGlvbiBvbiB0aGUgYmFja3Bv
+cnQva2NvbmYvTWFrZWZpbGUgdGhhdCBzZWUncyBpZg0KPiA+PiBsc2JfcmVsZWFzZSBpcyBhdmFp
+bGFibGUgYW5kIHVzZSB0aGF0IGZvciBvbGRlciByZWxlYXNlcyBvZiBVYnVudHU/DQo+ID4+IEkn
+ZCB0cnkgaXQgYnV0IHNpbmNlIHlvdSBoYXZlIHRoZSBzeXN0ZW0gSSBmaWd1cmUgaXQnZCBiZSBl
+YXNpZXIuDQo+ID4+DQo+ID4NCj4gPiBUaGlzIHdvcmtzIGZvciBtZToNCj4gPg0KPiA+DQo+ID4g
+ZGlmZiAtLWdpdCBhL2JhY2twb3J0L2tjb25mL01ha2VmaWxlIGIvYmFja3BvcnQva2NvbmYvTWFr
+ZWZpbGUgaW5kZXgNCj4gPiBkZmQ3OTNhLi44Mzk4ZjM1IDEwMDY0NA0KPiA+IC0tLSBhL2JhY2tw
+b3J0L2tjb25mL01ha2VmaWxlDQo+ID4gKysrIGIvYmFja3BvcnQva2NvbmYvTWFrZWZpbGUNCj4g
+PiBAQCAtMyw3ICszLDE1IEBAIENGTEFHUz0tV2FsbCAtV21pc3NpbmctcHJvdG90eXBlcyAtV3N0
+cmljdC0NCj4gcHJvdG90eXBlcw0KPiA+IC1PMiAtZm9taXQtZnJhbWUtcG9pbnRlciAgTFhESUFM
+T0cgOj0gbHhkaWFsb2cvY2hlY2tsaXN0Lm8NCj4gPiBseGRpYWxvZy9pbnB1dGJveC5vIGx4ZGlh
+bG9nL21lbnVib3gubyBseGRpYWxvZy90ZXh0Ym94Lm8NCj4gPiBseGRpYWxvZy91dGlsLm8gbHhk
+aWFsb2cveWVzbm8ubw0KPiA+DQo+ID4gIGNvbmY6IGNvbmYubyB6Y29uZi50YWIubw0KPiA+IC1t
+Y29uZjogTERGTEFHUyA9IC1XbCwtLW5vLWFzLW5lZWRlZCAkKHNoZWxsDQo+ID4gLi9seGRpYWxv
+Zy9jaGVjay1seGRpYWxvZy5zaCAtbGRmbGFncyAkKENDKSkNCj4gPiArDQo+ID4gK1JFTEVBU0U9
+JChzaGVsbCBsc2JfcmVsZWFzZSAtc2kpDQo+ID4gK2lmZXEgKCQoUkVMRUFTRSksIFVidW50dSkN
+Cj4gPiArICAgICAgIEFTX05FRURFRD0tLW5vLWFzLW5lZWRlZA0KPiA+ICtlbHNlDQo+ID4gKyAg
+ICAgICBBU19ORUVERUQ9LS1hZGQtbmVlZGVkDQo+ID4gK2VuZGlmDQo+ID4gK21jb25mOiBMREZM
+QUdTID0gLVdsLCQoQVNfTkVFREVEKSAkKHNoZWxsDQo+ID4gKy4vbHhkaWFsb2cvY2hlY2stbHhk
+aWFsb2cuc2ggLWxkZmxhZ3MgJChDQykpDQo+ID4gKw0KPiA+ICBtY29uZjogQ0ZMQUdTICs9IC1E
+Q1VSU0VTX0xPQz0iPG5jdXJzZXMuaD4iIC1ETE9DQUxFDQo+ID4gIG1jb25mOiBtY29uZi5vIHpj
+b25mLnRhYi5vICQoTFhESUFMT0cpDQo+IA0KPiBUaGFua3MgZm9yIGRvaW5nIHRoaXMsIGFueSBj
+aGFuY2UgdGhpcyBjYW4gYmUgcmVkdWNlZCBkb3duIHRvIDwgdmVyc2lvbg0KPiBtYXRjaD8gSSdt
+IGluIGhvcGUgdGhhdCB0aGlzIGlzIG9ubHkgYW4gaXNzdWUgd2l0aCBvbGQgcmVsZWFzZXMgb3Ro
+ZXJ3aXNlIHdlDQo+IHNob3VsZCBsb29rIGZvciBhbm90aGVyIHNvbHV0aW9uLg0KPiANCg0KSSBj
+YW4gdHJ5IGJ1dCBJIG9ubHkgaGF2ZSAxNC4wNCA6KSB3aGljaCBoYXBwZW5zIHRvIGJlIHRoZSBs
+YXRlc3Qgc3RhYmxlIHJlbGVhc2UuDQo=
