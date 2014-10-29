@@ -1,29 +1,84 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f49.google.com ([209.85.215.49]:44947 "EHLO
-	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757540AbaJ2XW1 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 29 Oct 2014 19:22:27 -0400
+Received: from mga09.intel.com ([134.134.136.24]:17224 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752219AbaJ2G5j (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 29 Oct 2014 02:57:39 -0400
+From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: RE: failure to build backports on ubuntu
+Date: Wed, 29 Oct 2014 06:57:32 +0000
+Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB31B558C59@hasmsx107.ger.corp.intel.com> (sfid-20141029_075741_297843_3342D1B8)
+References: <0BA3FCBA62E2DC44AF3030971E174FB31B55873E@hasmsx107.ger.corp.intel.com>
+ <CAB=NE6XBgHMNyLLS3wwYUh70sugbY0+YrKoBckk5O-tXF68t4Q@mail.gmail.com>
+ <0BA3FCBA62E2DC44AF3030971E174FB31B5587F6@hasmsx107.ger.corp.intel.com>
+ <CAB=NE6Wh=yhFnxbsTwKun2t8SCbatHYGNYb95sk5ro9qdVGn3A@mail.gmail.com>
+In-Reply-To: <CAB=NE6Wh=yhFnxbsTwKun2t8SCbatHYGNYb95sk5ro9qdVGn3A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CAB=NE6UcT9suZDfnTY09rOoqOSoYEqV2fryCSo7BjJyqXKXewQ@mail.gmail.com>
-References: <CAB=NE6UcT9suZDfnTY09rOoqOSoYEqV2fryCSo7BjJyqXKXewQ@mail.gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Wed, 29 Oct 2014 16:22:04 -0700
-Message-ID: <CAB=NE6WW5zAD_4Jqwaf2pyy5RVtt-tSAQQfDK4MFr+R+KQNi_Q@mail.gmail.com> (sfid-20141030_002229_517015_5833A677)
-Subject: Re: Tool to match kernel C file to CONFIG symbol
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Julia Lawall <julia.lawall@lip6.fr>
-Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Oct 29, 2014 at 4:15 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> Anyone familiar with a tool to match a specific C file to a respective
-> CONFIG symbol on the kernel? I'd prefer if its written in C or Python.
-> This should be easy to write if we don't have it yet.
-
-Peter, didn't you have such tool already?
-
- Luis
+PiANCj4gT24gVHVlLCBPY3QgMjgsIDIwMTQgYXQgMTowNyBQTSwgR3J1bWJhY2gsIEVtbWFudWVs
+DQo+IDxlbW1hbnVlbC5ncnVtYmFjaEBpbnRlbC5jb20+IHdyb3RlOg0KPiA+Pg0KPiA+PiBPbiBU
+dWUsIE9jdCAyOCwgMjAxNCBhdCAxMDowOCBBTSwgR3J1bWJhY2gsIEVtbWFudWVsDQo+ID4+IDxl
+bW1hbnVlbC5ncnVtYmFjaEBpbnRlbC5jb20+IHdyb3RlOg0KPiA+PiA+DQo+ID4+ID4gSSBjYW4n
+dCBtYWtlIG1lbnVjb25maWcuIFJldmVydGluZyB0aGlzIHBhdGNoIGZpeGVzIGl0Lg0KPiA+Pg0K
+PiA+PiBUaGVyZSdzIG5vIGNvbnRleHQgcHJvdmlkZWQgaGVyZSwgZ2NjIHZlcnNpb24sIExpbnV4
+IGRpc3RyaWJ1dGlvbiwNCj4gPj4gZXRjLiBXaXRoIHNvbWUgb2YgdGhhdCBpdCB3b3VsZCBoZWxw
+Lg0KPiA+Pg0KPiA+DQo+ID4gKiBVYnVudHUgMTQuMDQNCj4gPiAqICBnY2MgLXYNCj4gPiBVc2lu
+ZyBidWlsdC1pbiBzcGVjcy4NCj4gPiBDT0xMRUNUX0dDQz0vdXNyL2Jpbi9nY2MNCj4gPiBDT0xM
+RUNUX0xUT19XUkFQUEVSPS91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzQuOC9sdG8td3Jh
+cHBlcg0KPiA+IFRhcmdldDogeDg2XzY0LWxpbnV4LWdudQ0KPiA+IENvbmZpZ3VyZWQgd2l0aDog
+Li4vc3JjL2NvbmZpZ3VyZSAtdiAtLXdpdGgtcGtndmVyc2lvbj0nVWJ1bnR1DQo+ID4gNC44LjIt
+MTl1YnVudHUxJw0KPiA+IC0td2l0aC1idWd1cmw9ZmlsZTovLy91c3Ivc2hhcmUvZG9jL2djYy00
+LjgvUkVBRE1FLkJ1Z3MNCj4gPiAtLWVuYWJsZS1sYW5ndWFnZXM9YyxjKyssamF2YSxnbyxkLGZv
+cnRyYW4sb2JqYyxvYmotYysrIC0tcHJlZml4PS91c3INCj4gPiAtLXByb2dyYW0tc3VmZml4PS00
+LjggLS1lbmFibGUtc2hhcmVkIC0tZW5hYmxlLWxpbmtlci1idWlsZC1pZA0KPiA+IC0tbGliZXhl
+Y2Rpcj0vdXNyL2xpYiAtLXdpdGhvdXQtaW5jbHVkZWQtZ2V0dGV4dA0KPiA+IC0tZW5hYmxlLXRo
+cmVhZHM9cG9zaXggLS13aXRoLWd4eC1pbmNsdWRlLWRpcj0vdXNyL2luY2x1ZGUvYysrLzQuOA0K
+PiA+IC0tbGliZGlyPS91c3IvbGliIC0tZW5hYmxlLW5scyAtLXdpdGgtc3lzcm9vdD0vIC0tZW5h
+YmxlLWNsb2NhbGU9Z251DQo+ID4gLS1lbmFibGUtbGlic3RkY3h4LWRlYnVnIC0tZW5hYmxlLWxp
+YnN0ZGN4eC10aW1lPXllcw0KPiA+IC0tZW5hYmxlLWdudS11bmlxdWUtb2JqZWN0IC0tZGlzYWJs
+ZS1saWJtdWRmbGFwIC0tZW5hYmxlLXBsdWdpbg0KPiA+IC0td2l0aC1zeXN0ZW0temxpYiAtLWRp
+c2FibGUtYnJvd3Nlci1wbHVnaW4gLS1lbmFibGUtamF2YS1hd3Q9Z3RrDQo+ID4gLS1lbmFibGUt
+Z3RrLWNhaXJvDQo+ID4gLS13aXRoLWphdmEtaG9tZT0vdXNyL2xpYi9qdm0vamF2YS0xLjUuMC1n
+Y2otNC44LWFtZDY0L2pyZQ0KPiA+IC0tZW5hYmxlLWphdmEtaG9tZQ0KPiA+IC0td2l0aC1qdm0t
+cm9vdC1kaXI9L3Vzci9saWIvanZtL2phdmEtMS41LjAtZ2NqLTQuOC1hbWQ2NA0KPiA+IC0td2l0
+aC1qdm0tamFyLWRpcj0vdXNyL2xpYi9qdm0tZXhwb3J0cy9qYXZhLTEuNS4wLWdjai00LjgtYW1k
+NjQNCj4gPiAtLXdpdGgtYXJjaC1kaXJlY3Rvcnk9YW1kNjQNCj4gPiAtLXdpdGgtZWNqLWphcj0v
+dXNyL3NoYXJlL2phdmEvZWNsaXBzZS1lY2ouamFyIC0tZW5hYmxlLW9iamMtZ2MNCj4gPiAtLWVu
+YWJsZS1tdWx0aWFyY2ggLS1kaXNhYmxlLXdlcnJvciAtLXdpdGgtYXJjaC0zMj1pNjg2IC0td2l0
+aC1hYmk9bTY0DQo+ID4gLS13aXRoLW11bHRpbGliLWxpc3Q9bTMyLG02NCxteDMyIC0td2l0aC10
+dW5lPWdlbmVyaWMNCj4gPiAtLWVuYWJsZS1jaGVja2luZz1yZWxlYXNlIC0tYnVpbGQ9eDg2XzY0
+LWxpbnV4LWdudQ0KPiA+IC0taG9zdD14ODZfNjQtbGludXgtZ251IC0tdGFyZ2V0PXg4Nl82NC1s
+aW51eC1nbnUgVGhyZWFkIG1vZGVsOiBwb3NpeA0KPiA+IGdjYyB2ZXJzaW9uIDQuOC4yIChVYnVu
+dHUgNC44LjItMTl1YnVudHUxKQ0KPiA+DQo+ID4gSSBhbSBjb21waWxpbmcgYWdhaW5zdCAzLjE2
+LjENCj4gPg0KPiA+IFBsZWFzZSBsZXQgbWUga25vdyB3aGF0IGVsc2UgeW91IHdhbnQgdG8ga25v
+dy4NCj4gDQo+IFRoZSBrZXJuZWwgc29sdXRpb24gdG8gdGhpcyB1c2VzIGFuIGludGVybmFsIGtl
+cm5lbCB2YXJpYWJsZXMgdG8gcHJlZml4IGZsYWdzIGZvcg0KPiB0aGUgbGlua2VyLCB0aGUgc29s
+dXRpb24gSSBwcm92aWRlZCBpcyBzdXBwb3NlZCB0byBkbyB0aGF0IGJ1dCBwZXJoYXBzIGZvcg0K
+PiBzb21lIG9sZGVyIGxpbmtlciBpdCBkb2Vzbid0IGRvIHRoYXQsIEknbSBhZnJhaWQgdGhhdCBz
+aW5jZSB3ZSBkb24ndCBoYXZlIHRoZQ0KPiBpbnRlcm5hbCB2YXJpYWJsZSBzb2x1dGlvbiBhbmQg
+dGhhdCBwb3J0aW5nIGl0IHdvdWxkIGJlIGhhcmQgKHByb2JhYmx5DQo+IHBvaW50bGVzcykgd2Un
+bGwgaGF2ZSB0byB3b3JrIGFyb3VuZCB0aGlzIHRoZW4gYXMgbWltaWNraW5nIHRoYXQgd29uJ3Qg
+YmUNCj4gZWFzeQ0KPiANCj4gQ2FuIHlvdSB0cnkgYSBzb2x1dGlvbiBvbiB0aGUgYmFja3BvcnQv
+a2NvbmYvTWFrZWZpbGUgdGhhdCBzZWUncyBpZg0KPiBsc2JfcmVsZWFzZSBpcyBhdmFpbGFibGUg
+YW5kIHVzZSB0aGF0IGZvciBvbGRlciByZWxlYXNlcyBvZiBVYnVudHU/DQo+IEknZCB0cnkgaXQg
+YnV0IHNpbmNlIHlvdSBoYXZlIHRoZSBzeXN0ZW0gSSBmaWd1cmUgaXQnZCBiZSBlYXNpZXIuDQo+
+IA0KDQpUaGlzIHdvcmtzIGZvciBtZToNCg0KDQpkaWZmIC0tZ2l0IGEvYmFja3BvcnQva2NvbmYv
+TWFrZWZpbGUgYi9iYWNrcG9ydC9rY29uZi9NYWtlZmlsZQ0KaW5kZXggZGZkNzkzYS4uODM5OGYz
+NSAxMDA2NDQNCi0tLSBhL2JhY2twb3J0L2tjb25mL01ha2VmaWxlDQorKysgYi9iYWNrcG9ydC9r
+Y29uZi9NYWtlZmlsZQ0KQEAgLTMsNyArMywxNSBAQCBDRkxBR1M9LVdhbGwgLVdtaXNzaW5nLXBy
+b3RvdHlwZXMgLVdzdHJpY3QtcHJvdG90eXBlcyAtTzIgLWZvbWl0LWZyYW1lLXBvaW50ZXINCiBM
+WERJQUxPRyA6PSBseGRpYWxvZy9jaGVja2xpc3QubyBseGRpYWxvZy9pbnB1dGJveC5vIGx4ZGlh
+bG9nL21lbnVib3gubyBseGRpYWxvZy90ZXh0Ym94Lm8gbHhkaWFsb2cvdXRpbC5vIGx4ZGlhbG9n
+L3llc25vLm8NCiANCiBjb25mOiBjb25mLm8gemNvbmYudGFiLm8NCi1tY29uZjogTERGTEFHUyA9
+IC1XbCwtLW5vLWFzLW5lZWRlZCAkKHNoZWxsIC4vbHhkaWFsb2cvY2hlY2stbHhkaWFsb2cuc2gg
+LWxkZmxhZ3MgJChDQykpDQorDQorUkVMRUFTRT0kKHNoZWxsIGxzYl9yZWxlYXNlIC1zaSkNCitp
+ZmVxICgkKFJFTEVBU0UpLCBVYnVudHUpDQorICAgICAgIEFTX05FRURFRD0tLW5vLWFzLW5lZWRl
+ZA0KK2Vsc2UNCisgICAgICAgQVNfTkVFREVEPS0tYWRkLW5lZWRlZA0KK2VuZGlmDQorbWNvbmY6
+IExERkxBR1MgPSAtV2wsJChBU19ORUVERUQpICQoc2hlbGwgLi9seGRpYWxvZy9jaGVjay1seGRp
+YWxvZy5zaCAtbGRmbGFncyAkKENDKSkNCisNCiBtY29uZjogQ0ZMQUdTICs9IC1EQ1VSU0VTX0xP
+Qz0iPG5jdXJzZXMuaD4iIC1ETE9DQUxFDQogbWNvbmY6IG1jb25mLm8gemNvbmYudGFiLm8gJChM
+WERJQUxPRykNCg0KDQoNCg0K
