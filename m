@@ -1,161 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:58430 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751372AbaJIO5v (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 9 Oct 2014 10:57:51 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: add device coredump framework
-Date: Thu,  9 Oct 2014 16:57:45 +0200
-Message-Id: <1412866665-31445-1-git-send-email-johannes@sipsolutions.net> (sfid-20141009_165753_508429_C3F2A6E9)
+Received: from mail-la0-f54.google.com ([209.85.215.54]:59119 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755636AbaJ2IXx (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 29 Oct 2014 04:23:53 -0400
+Received: by mail-la0-f54.google.com with SMTP id gm9so2077432lab.27
+        for <backports@vger.kernel.org>; Wed, 29 Oct 2014 01:23:52 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1414569744.1827.0.camel@jlt4.sipsolutions.net>
+References: <0BA3FCBA62E2DC44AF3030971E174FB31B55873E@hasmsx107.ger.corp.intel.com>
+ <CAB=NE6XBgHMNyLLS3wwYUh70sugbY0+YrKoBckk5O-tXF68t4Q@mail.gmail.com>
+ <0BA3FCBA62E2DC44AF3030971E174FB31B5587F6@hasmsx107.ger.corp.intel.com>
+ <CAB=NE6Wh=yhFnxbsTwKun2t8SCbatHYGNYb95sk5ro9qdVGn3A@mail.gmail.com> <1414569744.1827.0.camel@jlt4.sipsolutions.net>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Wed, 29 Oct 2014 01:23:31 -0700
+Message-ID: <CAB=NE6UTD9YqpbR3Cu0bmSf0iKyjgfUUGKFkCD49nMU12dfLig@mail.gmail.com> (sfid-20141029_092400_633178_444A4706)
+Subject: Re: failure to build backports on ubuntu
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Wed, Oct 29, 2014 at 1:02 AM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> On Tue, 2014-10-28 at 13:21 -0700, Luis R. Rodriguez wrote:
+>
+>> The kernel solution to this uses an internal kernel variables to
+>> prefix flags for the linker,
+>
+> Can't we just figure out how the kernel derives that variable and do the
+> same?
 
-As drivers will start requiring the new framework and it has
-been merged to linux/master during the 3.18 merge window, we
-can include it into backports to compile if needed.
+I had and it relies on an internal practice on flags, I don't recall
+the details but I remember determining we'd have to do a major hack of
+our own.
 
-On kernels that do already have it but didn't want it built
-honor that, but if building otherwise don't. This may need
-to be revisited in the future.
+> After all, the kernel doesn't do magic ... not more than we do in
+> backports anyway :)
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/compat/Kconfig                        | 11 +++++
- backport/compat/backports.h                    | 10 +++++
- backport/compat/main.c                         |  7 ++++
- patches/backport-adjustments/devcoredump.patch | 57 ++++++++++++++++++++++++++
- 4 files changed, 85 insertions(+)
- create mode 100644 patches/backport-adjustments/devcoredump.patch
+I actually think this is a linker bug... but too lazy to prove it
+other than my commit log on it.
 
-diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
-index 7581758b1e3c..49699bda251a 100644
---- a/backport/compat/Kconfig
-+++ b/backport/compat/Kconfig
-@@ -124,3 +124,14 @@ config BACKPORT_BUILD_CRYPTO_CCM
- 	default n if CRYPTO_CCM
- 	default y if BACKPORT_CRYPTO_CCM
- 	#c-file crypto/ccm.c
-+
-+config BACKPORT_WANT_DEV_COREDUMP
-+	bool
-+
-+config BACKPORT_BUILD_WANT_DEV_COREDUMP
-+	bool
-+	default n if DEV_COREDUMP
-+	default n if DISABLE_DEV_COREDUMP
-+	default y if BACKPORT_WANT_DEV_COREDUMP
-+	#h-file linux/devcoredump.h
-+	#c-file drivers/base/devcoredump.c
-diff --git a/backport/compat/backports.h b/backport/compat/backports.h
-index ed946b5ba108..c9094ac42c1f 100644
---- a/backport/compat/backports.h
-+++ b/backport/compat/backports.h
-@@ -13,4 +13,14 @@ static inline void crypto_ccm_module_exit(void)
- {}
- #endif
- 
-+#ifdef CPTCFG_BACKPORT_BUILD_WANT_DEV_COREDUMP
-+int devcoredump_init(void);
-+void devcoredump_exit(void);
-+#else
-+static inline int devcoredump_init(void)
-+{ return 0; }
-+static inline void devcoredump_exit(void)
-+{}
-+#endif
-+
- #endif /* LINUX_BACKPORTS_PRIVATE_H */
-diff --git a/backport/compat/main.c b/backport/compat/main.c
-index e38eed3d56d5..d3f8944913e8 100644
---- a/backport/compat/main.c
-+++ b/backport/compat/main.c
-@@ -57,6 +57,12 @@ static int __init backport_init(void)
- 	if (ret)
- 		return ret;
- 
-+	ret = devcoredump_init();
-+	if (ret) {
-+		crypto_ccm_module_exit();
-+		return ret;
-+	}
-+
- 	printk(KERN_INFO "Loading modules backported from " BACKPORTED_KERNEL_NAME
- #ifndef BACKPORTS_GIT_TRACKED
- 		" version " BACKPORTED_KERNEL_VERSION
-@@ -75,5 +81,6 @@ subsys_initcall(backport_init);
- static void __exit backport_exit(void)
- {
- 	crypto_ccm_module_exit();
-+	devcoredump_exit();
- }
- module_exit(backport_exit);
-diff --git a/patches/backport-adjustments/devcoredump.patch b/patches/backport-adjustments/devcoredump.patch
-new file mode 100644
-index 000000000000..b0d97f94cc3e
---- /dev/null
-+++ b/patches/backport-adjustments/devcoredump.patch
-@@ -0,0 +1,57 @@
-+diff --git a/compat/drivers-base-devcoredump.c b/compat/drivers-base-devcoredump.c
-+index 96614b04544c..bd7a9ca71bdc 100644
-+--- a/compat/drivers-base-devcoredump.c
-++++ b/compat/drivers-base-devcoredump.c
-+@@ -30,6 +30,7 @@
-+ #include <linux/slab.h>
-+ #include <linux/fs.h>
-+ #include <linux/workqueue.h>
-++#include "backports.h"
-+ 
-+ /* if data isn't read by userspace after 5 minutes then delete it */
-+ #define DEVCD_TIMEOUT	(HZ * 60 * 5)
-+@@ -243,11 +244,10 @@ void dev_coredumpm(struct device *dev, struct module *owner,
-+ }
-+ EXPORT_SYMBOL_GPL(dev_coredumpm);
-+ 
-+-static int __init devcoredump_init(void)
-++int __init devcoredump_init(void)
-+ {
-+ 	return class_register(&devcd_class);
-+ }
-+-__initcall(devcoredump_init);
-+ 
-+ static int devcd_free(struct device *dev, void *data)
-+ {
-+@@ -257,9 +257,8 @@ static int devcd_free(struct device *dev, void *data)
-+ 	return 0;
-+ }
-+ 
-+-static void __exit devcoredump_exit(void)
-++void __exit devcoredump_exit(void)
-+ {
-+ 	class_for_each_device(&devcd_class, NULL, NULL, devcd_free);
-+ 	class_unregister(&devcd_class);
-+ }
-+-__exitcall(devcoredump_exit);
-+diff --git a/include/linux/backport-devcoredump.h b/include/linux/backport-devcoredump.h
-+index c0a360e99f64..da20e61f6c06 100644
-+--- a/include/linux/backport-devcoredump.h
-++++ b/include/linux/backport-devcoredump.h
-+@@ -5,7 +5,7 @@
-+ #include <linux/module.h>
-+ #include <linux/vmalloc.h>
-+ 
-+-#ifdef CONFIG_DEV_COREDUMP
-++#ifdef CPTCFG_BACKPORT_BUILD_WANT_DEV_COREDUMP
-+ void dev_coredumpv(struct device *dev, const void *data, size_t datalen,
-+ 		   gfp_t gfp);
-+ 
-+@@ -30,6 +30,6 @@ dev_coredumpm(struct device *dev, struct module *owner,
-+ {
-+ 	free(data);
-+ }
-+-#endif /* CONFIG_DEV_COREDUMP */
-++#endif /* CPTCFG_BACKPORT_BUILD_WANT_DEV_COREDUMP */
-+ 
-+ #endif /* __DEVCOREDUMP_H */
--- 
-2.1.0
-
+  Luis
