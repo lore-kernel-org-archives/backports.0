@@ -1,48 +1,99 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:47235 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932513AbaJ3UIa (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 30 Oct 2014 16:08:30 -0400
-Message-ID: <1414699706.1823.10.camel@jlt4.sipsolutions.net> (sfid-20141030_210832_445883_49F44E01)
-Subject: Re: [PATCH] backports: fix mconf compilation on Ubuntu
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>,
+Received: from mail02.echostar.com ([139.85.4.21]:41242 "EHLO
+	chapzsmtp1.echostar.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751002AbaJ2GIk convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 29 Oct 2014 02:08:40 -0400
+From: "Paramahamsa, Viplav" <Viplav.Paramaham@slingmedia.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>,
 	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Thu, 30 Oct 2014 21:08:26 +0100
-In-Reply-To: <1414698595.1823.9.camel@jlt4.sipsolutions.net> (sfid-20141030_205005_438044_6CF53457)
-References: <1414568971-13987-1-git-send-email-emmanuel.grumbach@intel.com>
-	 <CAB=NE6WiR0SnfQxr36wPFnA=xbbJR8-sGFS_kexrAoyt45qvug@mail.gmail.com>
-	 <0BA3FCBA62E2DC44AF3030971E174FB31B55A15A@hasmsx107.ger.corp.intel.com>
-	 <1414680732.1823.8.camel@jlt4.sipsolutions.net>
-	 <CAB=NE6XuLCtFMtEYvaFHV2okFhJEXbWH3Y0LuJ43g+w5SZWSsg@mail.gmail.com>
-	 (sfid-20141030_173627_657531_6E4113C7) <1414698595.1823.9.camel@jlt4.sipsolutions.net>
-	 (sfid-20141030_205005_438044_6CF53457)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+CC: "Raikar, Yatish" <yatishjnr@slingmedia.com>
+Subject: RE: Backports - v3.18-rc1 build problems
+Date: Wed, 29 Oct 2014 06:08:38 +0000
+Message-ID: <65B68BAF3C31D54B9A10B0592C9E025B9050FD06@CHWPIEXC10.SATS.CORP> (sfid-20141029_070842_843083_8750D361)
+References: <65B68BAF3C31D54B9A10B0592C9E025B9050D73C@CHWPIEXC10.SATS.CORP>
+ <544F56D1.6040603@hauke-m.de>
+ <65B68BAF3C31D54B9A10B0592C9E025B9050F9B2@CHWPIEXC10.SATS.CORP>
+ <54501203.1090900@hauke-m.de>
+In-Reply-To: <54501203.1090900@hauke-m.de>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, 2014-10-30 at 20:49 +0100, Johannes Berg wrote:
-> On Thu, 2014-10-30 at 09:36 -0700, Luis R. Rodriguez wrote:
-> > On Thu, Oct 30, 2014 at 7:52 AM, Johannes Berg
-> > <johannes@sipsolutions.net> wrote:
-> > > On Thu, 2014-10-30 at 14:36 +0000, Grumbach, Emmanuel wrote:
-> > >
-> > >> +GCC_VERSION=$(shell gcc --version | head -1 | awk '{print $4}')
-> > >> +ifeq ($(GCC_VERSION), 4.8.2)
-> > >
-> > > Luis, I can't really figure out why you think the *compiler* version
-> > > matters? Maybe the linker version, but ...?
-> > 
-> > You're right, and that's provided by libc. Well any other ideas?
+Hi Hauke,
+I am trying to use Qualcom's QCA6104 chip which is based on ath6kl(AR6004) driver. This uses SDIO interface. 
+
+Please let me know if someone has added support for this kernel version.
+
+Also can you briefly let me know what are the changes required for adding support for older kernel versions.
+
+Regards,
+Viplav
+
+-----Original Message-----
+From: Hauke Mehrtens [mailto:hauke@hauke-m.de] 
+Sent: Wednesday, October 29, 2014 3:31 AM
+To: Paramahamsa, Viplav; backports@vger.kernel.org
+Cc: Raikar, Yatish
+Subject: Re: Backports - v3.18-rc1 build problems
+
+Hi Viplav,
+
+On 10/28/2014 10:02 AM, Paramahamsa, Viplav wrote:
+> Hi Hauke,
+> 	I am actually trying to find a driver for vendor ID : 625, product ID : 1026 & firmware 3.0 for linux kernel version - 2.6.35.
+> Backports-3.14.22-1 & earlier releases doesn't support this product ID. Backports - v3.18-rc1 seem to have the support for the device but doesn't seem to be building for 2.6.35.
+
+What device/chip are you talking about and what driver do you want to use?
+
+> Is there a plan to support this kernel version for this device?
+
+Currently there is no plan to add compatibility for kernel versions older than 3.0 from my side, someone else planed to add support for older kernel versions for B.A.T.M.A.N. Advanced, but I do not think this will automatically cover your device driver.
+
+> Is there any restrictions or compatibility issues on 2.6.x kernels to support this device?
+
+We removed support for older kernel versions because we did not have the recourses to support compatibility with so many kernel versions, technically it should be possible to add support for kernel 3.6.25 again.
+
+Hauke
+
+> -----Original Message-----
+> From: Hauke Mehrtens [mailto:hauke@hauke-m.de]
+> Sent: Tuesday, October 28, 2014 2:12 PM
+> To: Paramahamsa, Viplav; backports@vger.kernel.org
+> Cc: Raikar, Yatish
+> Subject: Re: Backports - v3.18-rc1 build problems
 > 
-> The only difference I can really find is that somehow we don't use the
-> CFLAGS correctly from check-lxdialog.sh?
-
-Well, why don't we do it like the kernel does?
-
-http://p.sipsolutions.net/0e9267afce20addd.txt
-
-johannes
+> On 10/27/2014 02:39 PM, Paramahamsa, Viplav wrote:
+>> Hi All,
+>>                 I am facing build problems with latest release of backports - v3.18-rc1.
+>>
+>> I am trying to cross compile with Freescale's LTIB. These are the details of the platform on which I am trying to build:
+>> Linux kernel version : 2.6.35
+>> ARCH : ARM
+>> Freescale BSP : L2.6.35_1.1.0_130130
+>>
+>> This is the build command I am using : make 
+>> CROSS_COMPILE=/opt/freescale/usr/local/gcc-4.4.4-glibc-2.11.1-multili
+>> b
+>> -1.0/arm-fsl-linux-gnueabi/bin/arm-none-linux-gnueabi- ARCH=arm KLIB= 
+>> ${TOP}/rootfs/lib/modules/2.6.35.3-571-gcca29a0/ KLIB_BUILD= 
+>> ${TOP}/rpm/BUILD/linux/
+>>
+>> PFA file which has compilation errors I am getting.
+>> I tried fixing these. But I was getting more errors in compat-3.x.x.c file compilation.
+>>
+>> I am able to successfully compile an older version of backports - 3.10.17.
+>>
+>> Please suggest how can I fix these errors. Is there any patch I need to apply to get rid of these? If yes, can you please provide the link for the same.
+>>
+>> Regards,
+>> Viplav
+>>
+> 
+> Hi Viplav,
+> 
+> starting with backports-3.15 we only support kernel versions >= 3.0. For kernel 3.6.35 you should try bcackports-3.14.22-1.
+> 
+> Hauke
+> 
 
