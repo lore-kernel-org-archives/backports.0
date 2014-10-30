@@ -1,38 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:34625 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933994AbaJ2Qgu (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 29 Oct 2014 12:36:50 -0400
-Received: by mail-wi0-f180.google.com with SMTP id hi2so5101958wib.13
-        for <backports@vger.kernel.org>; Wed, 29 Oct 2014 09:36:48 -0700 (PDT)
-Received: from [192.168.1.171] ([109.160.179.192])
-        by mx.google.com with ESMTPSA id fu5sm5720861wjb.26.2014.10.29.09.36.46
-        for <backports@vger.kernel.org>
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Oct 2014 09:36:47 -0700 (PDT)
-Message-ID: <5451179D.6020009@trego.co.il> (sfid-20141029_173700_652943_FC9D8B2D)
-Date: Wed, 29 Oct 2014 18:36:45 +0200
-From: Eyal Ben-Sasson <eyal@trego.co.il>
-MIME-Version: 1.0
-To: backports@vger.kernel.org
-Subject: build backports-20140905 against 2.6.39 kernel failure
-Content-Type: text/plain; charset=utf-8; format=flowed
+Received: from s3.sipsolutions.net ([5.9.151.49]:47156 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759470AbaJ3TuA (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 30 Oct 2014 15:50:00 -0400
+Message-ID: <1414698595.1823.9.camel@jlt4.sipsolutions.net> (sfid-20141030_205005_438044_6CF53457)
+Subject: Re: [PATCH] backports: fix mconf compilation on Ubuntu
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Thu, 30 Oct 2014 20:49:55 +0100
+In-Reply-To: <CAB=NE6XuLCtFMtEYvaFHV2okFhJEXbWH3Y0LuJ43g+w5SZWSsg@mail.gmail.com> (sfid-20141030_173627_657531_6E4113C7)
+References: <1414568971-13987-1-git-send-email-emmanuel.grumbach@intel.com>
+	 <CAB=NE6WiR0SnfQxr36wPFnA=xbbJR8-sGFS_kexrAoyt45qvug@mail.gmail.com>
+	 <0BA3FCBA62E2DC44AF3030971E174FB31B55A15A@hasmsx107.ger.corp.intel.com>
+	 <1414680732.1823.8.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6XuLCtFMtEYvaFHV2okFhJEXbWH3Y0LuJ43g+w5SZWSsg@mail.gmail.com>
+	 (sfid-20141030_173627_657531_6E4113C7)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I am trying to build backports-20140905 against 2.6.39 kernel and the 
-build fails on compat-3.0.c with the following:
+On Thu, 2014-10-30 at 09:36 -0700, Luis R. Rodriguez wrote:
+> On Thu, Oct 30, 2014 at 7:52 AM, Johannes Berg
+> <johannes@sipsolutions.net> wrote:
+> > On Thu, 2014-10-30 at 14:36 +0000, Grumbach, Emmanuel wrote:
+> >
+> >> +GCC_VERSION=$(shell gcc --version | head -1 | awk '{print $4}')
+> >> +ifeq ($(GCC_VERSION), 4.8.2)
+> >
+> > Luis, I can't really figure out why you think the *compiler* version
+> > matters? Maybe the linker version, but ...?
+> 
+> You're right, and that's provided by libc. Well any other ideas?
 
-backport-include/linux/compat.h:18:69: error: expected ‘;’, ‘,’ or ‘)’ 
-before ‘*’ token
+The only difference I can really find is that somehow we don't use the
+CFLAGS correctly from check-lxdialog.sh?
 
-If I comment out the line in compat.h I get error on compat-3.5.c
+johannes
 
-ptp_clock_kernel.h:5:41: fatal error: linux/ptp_clock_kernel.h: No such 
-file or directory
-
-I saw a previous Thread " 3.14-1 Compile Problem for 2.6.39.4 Kernel" 
-which looks similar, but in my case I have CRYPTO_CCM=m.
-Any new suggestions?
-I understand the backports is tested against 2.6.39 successfully. Where 
-can I see the 2.6.39 .config file?
