@@ -1,71 +1,74 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:40659 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752088AbaJYSpy (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 25 Oct 2014 14:45:54 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 00/11] backports: bring it to next-20141003
-Date: Sat, 25 Oct 2014 11:19:19 +0200
-Message-Id: <1414228770-20047-1-git-send-email-hauke@hauke-m.de> (sfid-20141025_211320_531033_1D77EDC5)
+Received: from mail-wg0-f47.google.com ([74.125.82.47]:53590 "EHLO
+	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932595AbaJ3KK3 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 30 Oct 2014 06:10:29 -0400
+Received: by mail-wg0-f47.google.com with SMTP id a1so3833891wgh.34
+        for <backports@vger.kernel.org>; Thu, 30 Oct 2014 03:10:27 -0700 (PDT)
+Message-ID: <54520E90.6060401@einserver.de> (sfid-20141030_111755_877650_76788C91)
+Date: Thu, 30 Oct 2014 11:10:24 +0100
+From: Andreas Ruprecht <rupran@einserver.de>
+MIME-Version: 1.0
+To: Julia Lawall <julia.lawall@lip6.fr>,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Peter Senna Tschudin <peter.senna@gmail.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	stefan.hengelein@fau.de, valentinrothberg@gmail.com
+Subject: Re: Re: Tool to match kernel C file to CONFIG symbol
+References: <CAB=NE6UcT9suZDfnTY09rOoqOSoYEqV2fryCSo7BjJyqXKXewQ@mail.gmail.com> <CAB=NE6WW5zAD_4Jqwaf2pyy5RVtt-tSAQQfDK4MFr+R+KQNi_Q@mail.gmail.com> <alpine.DEB.2.02.1410300714090.2374@localhost6.localdomain6>
+In-Reply-To: <alpine.DEB.2.02.1410300714090.2374@localhost6.localdomain6>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This mainly adds changes needed for next-20141003 and updates some of 
-the default configs.
+Hi all,
 
-1   3.0.101             [  OK  ]
-2   3.1.10              [  OK  ]
-3   3.2.62              [  OK  ]
-4   3.3.8               [  OK  ]
-5   3.4.103             [  OK  ]
-6   3.5.7               [  OK  ]
-7   3.6.11              [  OK  ]
-8   3.7.10              [  OK  ]
-9   3.8.13              [  OK  ]
-10  3.9.11              [  OK  ]
-11  3.10.54             [  OK  ]
-12  3.11.10             [  OK  ]
-13  3.12.27             [  OK  ]
-14  3.13.11             [  OK  ]
-15  3.14.18             [  OK  ]
-16  3.15.10             [  OK  ]
-17  3.16.2              [  OK  ]
-18  3.17-rc3            [  OK  ]
+actually the problem isn't that easy... some of the information from the
+Kbuild files is not entirely straight-forward to extract.
 
-Hauke Mehrtens (11):
-  backports: add wil6210_uapi.h
-  backports: add some missing header files
-  backports: add freezable_schedule_hrtimeout_range()
-  dependencies: deactivate tracing in ath10k and ath with < 3.4
-  dependencies: deactivate some media drivers on < 3.4
-  dependencies: deactivate pt3 on kernel < 3.3
-  dependencies: deactivate SOC_CAMERA on < 3.5
-  dependencies: deactivate IR_HIX5HD2 on < 3.7
-  backports: refresh patches on next-20141003
-  defconfig: update media defconfig
-  defconfig: add some new wifi drivers
+If you're interested in the former (that is, what config symbols have to
+be enabled to have a file compiled), there is a Python tool called
+"golem" in the toolsuite[0] from our group which determines the
+preconditions for files to be built (called with parameter "-i"). Sadly
+it currently takes a few hours to finish as it probes the build system
+with changing partial configurations.
 
- backport/backport-include/linux/freezer.h          | 32 +++++++++++
- backport/defconfigs/media                          | 64 +++++++++++-----------
- backport/defconfigs/rtlwifi                        |  2 +
- backport/defconfigs/wifi                           |  9 ++-
- copy-list                                          |  1 +
- dependencies                                       | 22 +++++++-
- .../media/0002-no_dmabuf/v4l2.patch                | 30 +++++-----
- .../media/0004-missing-include/hackrf.patch        | 10 ++++
- .../media/0004-missing-include/ir-hix5hd2.patch    | 10 ++++
- .../0017-get_ts_info/drivers_net_usb_usbnet.patch  |  2 +-
- .../network/0025-usb-sg/usbnet.patch               | 12 ++--
- .../network/0028-select_queue/mwifiex.patch        |  2 +-
- .../0030-qdisc_tx_busylock/ieee802154.patch        |  4 +-
- .../network/0046-mmc_rescan_entered/mwifiex.patch  |  2 +-
- 14 files changed, 140 insertions(+), 62 deletions(-)
- create mode 100644 backport/backport-include/linux/freezer.h
- create mode 100644 patches/collateral-evolutions/media/0004-missing-include/hackrf.patch
- create mode 100644 patches/collateral-evolutions/media/0004-missing-include/ir-hix5hd2.patch
+I'm currently working on a faster combined parsing/probing approach and
+could make an early development snapshot of the parser available to you,
+please contact me directly if you want to have a look at that.
 
--- 
-1.9.1
+For something similar to the latter problem (which files get compiled
+from a specific configuration) golem can be called with the "-c"
+parameter and a source file to determine if the file is compiled with
+the current configuration. You could use that to match a configuration
+option to a file. Alternatively, you can use the "-l" parameter to see a
+list of all files compiled with the current configuration.
 
+Hope this helps,
+
+Andreas
+
+[0] https://undertaker.cs.fau.de
+
+On 30.10.2014 07:16, Julia Lawall wrote:
+> 
+> 
+> On Wed, 29 Oct 2014, Luis R. Rodriguez wrote:
+> 
+>> On Wed, Oct 29, 2014 at 4:15 PM, Luis R. Rodriguez
+>> <mcgrof@do-not-panic.com> wrote:
+>>> Anyone familiar with a tool to match a specific C file to a respective
+>>> CONFIG symbol on the kernel? I'd prefer if its written in C or Python.
+>>> This should be easy to write if we don't have it yet.
+>>
+>> Peter, didn't you have such tool already?
+> 
+> I think that the Erlangen people can help you (added to CC).
+> 
+> I'm not sure which way you want to go: What config symbol will get my file 
+> compiled, or if I turn on this config symbol, what files will I get.  I 
+> think that Stefan's Vampyr tool can help with the first.
+> 
+> julia
+> 
