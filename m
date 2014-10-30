@@ -1,72 +1,37 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:61127 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759227AbaJaUeD (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 31 Oct 2014 16:34:03 -0400
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:46902 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753575AbaJ3IrV (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 30 Oct 2014 04:47:21 -0400
+Received: by mail-wi0-f177.google.com with SMTP id ex7so6691498wid.4
+        for <backports@vger.kernel.org>; Thu, 30 Oct 2014 01:47:20 -0700 (PDT)
+Message-ID: <5451FB15.80404@trego.co.il> (sfid-20141030_094724_685295_5B25874D)
+Date: Thu, 30 Oct 2014 10:47:17 +0200
+From: Eyal Ben-Sasson <eyal@trego.co.il>
 MIME-Version: 1.0
-In-Reply-To: <1414786943.3014.37.camel@jlt4.sipsolutions.net>
-References: <1414570902-5675-1-git-send-email-mcgrof@do-not-panic.com>
- <1414570902-5675-2-git-send-email-mcgrof@do-not-panic.com>
- <1414741273.3014.3.camel@jlt4.sipsolutions.net> <20141031193408.GA12953@wotan.suse.de>
- <1414786943.3014.37.camel@jlt4.sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-Date: Fri, 31 Oct 2014 13:33:40 -0700
-Message-ID: <CAB=NE6UVca47FyZv54pED3C_1go+-Ra_AbSwW1+=Gj5YWP0GHw@mail.gmail.com> (sfid-20141031_213432_225232_06D6BC2E)
-Subject: Re: [RFC v2 1/4] backports: replace CPTCFG prefix for CONFIG_BACKPORT
 To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Yann E. MORIN" <yann.morin.1998@free.fr>,
-	Michal Marek <mmarek@suse.cz>,
-	Stefan Assmann <sassmann@kpanic.de>
-Content-Type: text/plain; charset=UTF-8
+CC: backports@vger.kernel.org
+Subject: Re: build backports-20140905 against 2.6.39 kernel failure
+References: <5451179D.6020009@trego.co.il>	 (sfid-20141029_173700_652943_FC9D8B2D) <1414604671.1827.30.camel@jlt4.sipsolutions.net>
+In-Reply-To: <1414604671.1827.30.camel@jlt4.sipsolutions.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Oct 31, 2014 at 1:22 PM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Fri, 2014-10-31 at 20:34 +0100, Luis R. Rodriguez wrote:
+OK. Now I see it. I will go back to backports-3.14 and try it.
+Thanx.
+
+Eyal
+
+
+On 10/29/2014 07:44 PM, Johannes Berg wrote:
+> On Wed, 2014-10-29 at 18:36 +0200, Eyal Ben-Sasson wrote:
 >
->> > Please make this a post-process step that runs on everything, including
->> > the backport stuff, rather than running only on the source and assuming
->> > the backport stuff already uses this convention.
->>
->> I want to but lets consider the amount of work to maintain the two
->> separate approaches, is it worth it?
+>> I understand the backports is tested against 2.6.39 successfully. Where
+>> can I see the 2.6.39 .config file?
+> This is no longer the case, the oldest supported kernel is now 3.0.
 >
-> I don't see why it'd be maintaining two approaches? Right now we have
-> scripting to replace CONFIG_ with CPTCFG_, so couldn't we just add more
-> scripting to replace CPTCFG_ with CONFIG_BACKPORT_ ?
+> johannes
+>
+>
 
-Hm, OK well let me give it a shot, at compilation time which approach
-are we going to use? I don't like the idea of having two different
-sets of naming approaching for packaging and integration, however I
-can see how that might be useful for determining where some code might
-come from or how backports was used, but other than that we would need
-to pick if we're going to support the integration naming scheme also
-for packaging as an option or just use CPTCFG for it. If the same
-naming scheme is an option then that means we either have to test both
-or leave one untested. This is why I ultimately would prefer we just
-stick to one approach for both.
-
-The fact that CPTCFG has same length as CONFIG really has no empirical
-value, its just cosmetic, meanwhile I am however more concerned with
-the above and I think its worth some serious consideration.
-
-> That also makes me think of something else - we currently use BACKPORT_
-> as a prefix for some of the other stuff under compat/Kconfig, and in
-> fact rename some things (like CONFIG_BACKPORT_AVERAGE) so maybe also
-> using CONFIG_BACKPORT_ here isn't a great idea? Might want to use
-> something else, say CONFIG_BPT_ or so.
-
-That's a good point, I take it that it does not matter which one we
-pick for each, so long as its different? If so I think CONFIG_BACKPORT
-is pretty clear for things we carry over like device drivers, but this
-is just subjective and so long as we pick something I think it'll be
-fine.
-
-I do believe the harder thing to decide is the above possible
-divergence thing and if we can agree on that I think the rest of the
-series is not as controversial.
-
-  Luis
