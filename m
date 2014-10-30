@@ -1,49 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:58017 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753163AbaJTVeQ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 20 Oct 2014 17:34:16 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/5] backports: add S8_MIN
-Date: Mon, 20 Oct 2014 23:33:43 +0200
-Message-Id: <1413840827-9142-2-git-send-email-hauke@hauke-m.de> (sfid-20141020_233420_337498_B527672F)
-In-Reply-To: <1413840827-9142-1-git-send-email-hauke@hauke-m.de>
-References: <1413840827-9142-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-qa0-f42.google.com ([209.85.216.42]:43188 "EHLO
+	mail-qa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758311AbaJ3JG3 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 30 Oct 2014 05:06:29 -0400
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.02.1410300714090.2374@localhost6.localdomain6>
+References: <CAB=NE6UcT9suZDfnTY09rOoqOSoYEqV2fryCSo7BjJyqXKXewQ@mail.gmail.com>
+	<CAB=NE6WW5zAD_4Jqwaf2pyy5RVtt-tSAQQfDK4MFr+R+KQNi_Q@mail.gmail.com>
+	<alpine.DEB.2.02.1410300714090.2374@localhost6.localdomain6>
+Date: Thu, 30 Oct 2014 10:06:28 +0100
+Message-ID: <CA+MoWDpwwSvC7kbKiPpcD8qAeP93COtWb7OUAaJbaKUnDSBM+A@mail.gmail.com> (sfid-20141030_100634_935843_E70C8907)
+Subject: Re: Tool to match kernel C file to CONFIG symbol
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	stefan.hengelein@fau.de,
+	Valentin Rothberg <valentinrothberg@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is needed by the iwlwifi river.
+I have a dirty and ugly Perl script that return source files for a
+given set of Kconfig symbols:
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/kernel.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+https://gist.github.com/petersenna/6329591
 
-diff --git a/backport/backport-include/linux/kernel.h b/backport/backport-include/linux/kernel.h
-index 160689a..9d31d0f 100644
---- a/backport/backport-include/linux/kernel.h
-+++ b/backport/backport-include/linux/kernel.h
-@@ -45,6 +45,18 @@
- #define SHRT_MIN       ((s16)(-SHRT_MAX - 1))
- #endif
- 
-+#ifndef U8_MAX
-+#define U8_MAX		((u8)~0U)
-+#endif
-+
-+#ifndef S8_MAX
-+#define S8_MAX		((s8)(U8_MAX>>1))
-+#endif
-+
-+#ifndef S8_MIN
-+#define S8_MIN		((s8)(-S8_MAX - 1))
-+#endif
-+
- #ifndef U16_MAX
- #define U16_MAX		((u16)~0U)
- #endif
+On Thu, Oct 30, 2014 at 7:16 AM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+>
+>
+> On Wed, 29 Oct 2014, Luis R. Rodriguez wrote:
+>
+>> On Wed, Oct 29, 2014 at 4:15 PM, Luis R. Rodriguez
+>> <mcgrof@do-not-panic.com> wrote:
+>> > Anyone familiar with a tool to match a specific C file to a respective
+>> > CONFIG symbol on the kernel? I'd prefer if its written in C or Python.
+>> > This should be easy to write if we don't have it yet.
+>>
+>> Peter, didn't you have such tool already?
+>
+> I think that the Erlangen people can help you (added to CC).
+>
+> I'm not sure which way you want to go: What config symbol will get my file
+> compiled, or if I turn on this config symbol, what files will I get.  I
+> think that Stefan's Vampyr tool can help with the first.
+>
+> julia
+
+
+
 -- 
-1.9.1
-
+Peter
