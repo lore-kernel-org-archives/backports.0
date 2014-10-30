@@ -1,30 +1,67 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:40692 "EHLO hauke-m.de"
+Received: from mga14.intel.com ([192.55.52.115]:38884 "EHLO mga14.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751511AbaJYTAw (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 25 Oct 2014 15:00:52 -0400
-Received: from [IPv6:2001:470:7259:0:2871:2eed:3dea:7eed] (unknown [IPv6:2001:470:7259:0:2871:2eed:3dea:7eed])
-	by hauke-m.de (Postfix) with ESMTPSA id D06472072A
-	for <backports@vger.kernel.org>; Sat, 25 Oct 2014 13:51:28 +0200 (CEST)
-Message-ID: <544B8EBF.9080905@hauke-m.de> (sfid-20141025_210054_468157_69582DCB)
-Date: Sat, 25 Oct 2014 13:51:27 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
+	id S1759765AbaJ3Oi0 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 30 Oct 2014 10:38:26 -0400
+From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: RE: [PATCH] backports: fix mconf compilation on Ubuntu
+Date: Thu, 30 Oct 2014 14:36:28 +0000
+Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB31B55A15A@hasmsx107.ger.corp.intel.com> (sfid-20141030_153828_295813_CF5BCA92)
+References: <1414568971-13987-1-git-send-email-emmanuel.grumbach@intel.com>
+ <CAB=NE6WiR0SnfQxr36wPFnA=xbbJR8-sGFS_kexrAoyt45qvug@mail.gmail.com>
+In-Reply-To: <CAB=NE6WiR0SnfQxr36wPFnA=xbbJR8-sGFS_kexrAoyt45qvug@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: backports@vger.kernel.org
-Subject: backports-20141023 is out
-Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backports-20141023 was released. This is based on linux-next next-20141023.
-
-https://www.kernel.org/pub/linux/kernel/projects/backports/2014/10/23/backports-20141023.tar.xz
-
-The source code can be found here:
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
-
-All the latest releases are listed here:
-http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
-
-Hauke
-
+PiANCj4gT24gV2VkLCBPY3QgMjksIDIwMTQgYXQgMTI6NDkgQU0sIEVtbWFudWVsIEdydW1iYWNo
+DQo+IDxlbW1hbnVlbC5ncnVtYmFjaEBpbnRlbC5jb20+IHdyb3RlOg0KPiA+IFNpbmNlDQo+ID4N
+Cj4gPiBjb21taXQgZGU0Mjc4NTc4NTJlNzE5NGI5YWU4MDU3MTQyNWJhMGQyYzI5ZWY1NQ0KPiA+
+IEF1dGhvcjogTHVpcyBSLiBSb2RyaWd1ZXogPG1jZ3JvZkBzdXNlLmNvbT4NCj4gPiBEYXRlOiAg
+IFN1biBTZXAgMTQgMDY6MDU6MjkgMjAxNCAtMDcwMA0KPiA+DQo+ID4gICAgIGJhY2twb3J0czog
+Zml4IG1jb25mIGNvbXBpbGF0aW9uIGxpYnJhcnkgYXNzdW1wdGlvbnMNCj4gPg0KPiA+IEkgY2Fu
+J3QgY29tcGlsZSBtY29uZiBvbiBteSBVYnVudHUgdHJ1c3R5IG1hY2hpbmUuDQo+ID4gVGhpcyBm
+aXhlcyB0aGF0IGJ5IG1ha2luZyBMdWlzJ3MgcGF0Y2ggY29uZGl0aW9uYWwuDQo+ID4NCj4gPiBT
+aWduZWQtb2ZmLWJ5OiBFbW1hbnVlbCBHcnVtYmFjaCA8ZW1tYW51ZWwuZ3J1bWJhY2hAaW50ZWwu
+Y29tPg0KPiA+IC0tLQ0KPiA+ICBiYWNrcG9ydC9rY29uZi9NYWtlZmlsZSB8IDEwICsrKysrKysr
+Ky0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0K
+PiA+DQo+ID4gZGlmZiAtLWdpdCBhL2JhY2twb3J0L2tjb25mL01ha2VmaWxlIGIvYmFja3BvcnQv
+a2NvbmYvTWFrZWZpbGUgaW5kZXgNCj4gPiBkZmQ3OTNhLi44Mzk4ZjM1IDEwMDY0NA0KPiA+IC0t
+LSBhL2JhY2twb3J0L2tjb25mL01ha2VmaWxlDQo+ID4gKysrIGIvYmFja3BvcnQva2NvbmYvTWFr
+ZWZpbGUNCj4gPiBAQCAtMyw3ICszLDE1IEBAIENGTEFHUz0tV2FsbCAtV21pc3NpbmctcHJvdG90
+eXBlcyAtV3N0cmljdC0NCj4gcHJvdG90eXBlcw0KPiA+IC1PMiAtZm9taXQtZnJhbWUtcG9pbnRl
+ciAgTFhESUFMT0cgOj0gbHhkaWFsb2cvY2hlY2tsaXN0Lm8NCj4gPiBseGRpYWxvZy9pbnB1dGJv
+eC5vIGx4ZGlhbG9nL21lbnVib3gubyBseGRpYWxvZy90ZXh0Ym94Lm8NCj4gPiBseGRpYWxvZy91
+dGlsLm8gbHhkaWFsb2cveWVzbm8ubw0KPiA+DQo+ID4gIGNvbmY6IGNvbmYubyB6Y29uZi50YWIu
+bw0KPiA+IC1tY29uZjogTERGTEFHUyA9IC1XbCwtLW5vLWFzLW5lZWRlZCAkKHNoZWxsDQo+ID4g
+Li9seGRpYWxvZy9jaGVjay1seGRpYWxvZy5zaCAtbGRmbGFncyAkKENDKSkNCj4gPiArDQo+ID4g
+K1JFTEVBU0U9JChzaGVsbCBsc2JfcmVsZWFzZSAtc2kpDQo+IA0KPiBJIHRoaW5rIHdlJ2xsIG5l
+ZWQgdG8gaGF2ZSB0aGlzIHdvcmsgZm9yIGNhc2VzIHdoZXJlIGxzYl9yZWxlYXNlIGRvZXMgbm90
+DQo+IGV4aXN0IHRvby4gU2luY2UgeW91J3JlIGlzc3VlIGlzIHdpdGggZ2NjIDQuOC4yIG9uIHVi
+dW50dSBhbmQgc2luY2UgSSBrbm93IGdjYw0KPiA0LjguMyAob3BlbnN1c2UpIGFuZCBnY2MgNC45
+LjEtMTUgKGRlYmlhbiB0ZXN0aW5nKSB3b3JrcyB3aXRoIHRoZSBzb2x1dGlvbiBJDQo+IHByb3Zp
+ZGVkIEkgc2F5IHdlIHVzZSB0aGUgb3B0aW9ucyBJIHNwZWNpZmllZCBpbiB0aGUgb3JpZ2luYWwg
+cGF0Y2ggYXMgdGhlDQo+IGRlZmF1bHQuIElmIHNvbWVvbmUgaGFzIGEgZ2NjIG9sZGVyIHRoYW4g
+b3IgZXF1YWwgdGhhbiBnY2MgNC44LjIgYnV0IG5vdCBvbg0KPiBVYnVudHUgaXQnZCBiZSBnb29k
+IHRvIGtub3cgaWYgdGhpcyBpc3N1ZSBpcyB0aGVyZSBhcyB3ZWxsIGFzIHRoZW4gd2UgY291bGQg
+anVzdA0KPiBtYXRjaCB0aGlzIHRvIHRoZSBnY2MgdmVyc2lvbi4NCj4gDQoNCkJvdHRvbSBsaW5l
+IHlvdSdkIHByZWZlciBzb21ldGhpbmcgbGlrZSB0aGlzPw0KKHN0aWxsIG5lZWQgdG8gY2hlY2sg
+aG93IHRvIGNvbXBhcmUpDQoNCmRpZmYgLS1naXQgYS9iYWNrcG9ydC9rY29uZi9NYWtlZmlsZSBi
+L2JhY2twb3J0L2tjb25mL01ha2VmaWxlDQppbmRleCBkZmQ3OTNhLi41Zjc2ZWYyIDEwMDY0NA0K
+LS0tIGEvYmFja3BvcnQva2NvbmYvTWFrZWZpbGUNCisrKyBiL2JhY2twb3J0L2tjb25mL01ha2Vm
+aWxlDQpAQCAtMyw3ICszLDE1IEBAIENGTEFHUz0tV2FsbCAtV21pc3NpbmctcHJvdG90eXBlcyAt
+V3N0cmljdC1wcm90b3R5cGVzIC1PMiAtZm9taXQtZnJhbWUtcG9pbnRlcg0KIExYRElBTE9HIDo9
+IGx4ZGlhbG9nL2NoZWNrbGlzdC5vIGx4ZGlhbG9nL2lucHV0Ym94Lm8gbHhkaWFsb2cvbWVudWJv
+eC5vIGx4ZGlhbG9nL3RleHRib3gubyBseGRpYWxvZy91dGlsLm8gbHhkaWFsb2cveWVzbm8ubw0K
+IA0KIGNvbmY6IGNvbmYubyB6Y29uZi50YWIubw0KLW1jb25mOiBMREZMQUdTID0gLVdsLC0tbm8t
+YXMtbmVlZGVkICQoc2hlbGwgLi9seGRpYWxvZy9jaGVjay1seGRpYWxvZy5zaCAtbGRmbGFncyAk
+KENDKSkNCisNCitHQ0NfVkVSU0lPTj0kKHNoZWxsIGdjYyAtLXZlcnNpb24gfCBoZWFkIC0xIHwg
+YXdrICd7cHJpbnQgJDR9JykNCitpZmVxICgkKEdDQ19WRVJTSU9OKSwgNC44LjIpDQorICAgICAg
+IEFTX05FRURFRD0tLW5vLWFzLW5lZWRlZA0KK2Vsc2UNCisgICAgICAgQVNfTkVFREVEPS0tYWRk
+LW5lZWRlZA0KK2VuZGlmDQorbWNvbmY6IExERkxBR1MgPSAtV2wsJChBU19ORUVERUQpICQoc2hl
+bGwgLi9seGRpYWxvZy9jaGVjay1seGRpYWxvZy5zaCAtbGRmbGFncyAkKENDKSkNCisNCiBtY29u
+ZjogQ0ZMQUdTICs9IC1EQ1VSU0VTX0xPQz0iPG5jdXJzZXMuaD4iIC1ETE9DQUxFDQogbWNvbmY6
+IG1jb25mLm8gemNvbmYudGFiLm8gJChMWERJQUxPRykNCg0K
