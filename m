@@ -1,42 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:58019 "EHLO hauke-m.de"
+Received: from cantor2.suse.de ([195.135.220.15]:46592 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753260AbaJTVeQ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 20 Oct 2014 17:34:16 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 4/5] backports: these drivers need a new function
-Date: Mon, 20 Oct 2014 23:33:46 +0200
-Message-Id: <1413840827-9142-5-git-send-email-hauke@hauke-m.de> (sfid-20141020_233419_745845_665038BD)
-In-Reply-To: <1413840827-9142-1-git-send-email-hauke@hauke-m.de>
-References: <1413840827-9142-1-git-send-email-hauke@hauke-m.de>
+	id S1751708AbaJaTeK (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 31 Oct 2014 15:34:10 -0400
+Date: Fri, 31 Oct 2014 20:34:08 +0100
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
+Subject: Re: [RFC v2 1/4] backports: replace CPTCFG prefix for
+	CONFIG_BACKPORT
+Message-ID: <20141031193408.GA12953@wotan.suse.de> (sfid-20141031_203413_009536_2AB4115F)
+References: <1414570902-5675-1-git-send-email-mcgrof@do-not-panic.com> <1414570902-5675-2-git-send-email-mcgrof@do-not-panic.com> <1414741273.3014.3.camel@jlt4.sipsolutions.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1414741273.3014.3.camel@jlt4.sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-These drivers need regmap_bulk_write(), which was added in 3.4
+On Fri, Oct 31, 2014 at 08:41:13AM +0100, Johannes Berg wrote:
+> On Wed, 2014-10-29 at 01:21 -0700, Luis R. Rodriguez wrote:
+> > From: "Luis R. Rodriguez" <mcgrof@suse.com>
+> > 
+> > In order to support built-in kernel integration we want to use
+> > a more generic approach to defining symbols, CPTCFG was nice as
+> > it was short and relied on the fact that kconfig can work with
+> > a getenv(CONFIG_) but for kernel integration this doesn't work
+> > so well. Instead let's just stick to the regular CONFIG_
+> > namespace and add the BACKPORT prefix to it.
+> > 
+> > Apart from these expected changes:
+> > 
+> > for i in $(find ./  | grep -v "\.git"); do perl -pi -e'$_ =~ s|CPTCFG|CONFIG_BACKPORT|gs;' $i; done
+> 
+> I really think you need to make this optional for the in-tree
+> generation, otherwise it will complicate things a lot for anyone who's
+> already using backports in a way that doesn't have it regenerated all
+> the time.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- dependencies | 5 +++++
- 1 file changed, 5 insertions(+)
+Logistically I do agree this will implicate tons of merge conflicts
+if a git tree was used for development based on backports, however
+functionally I don't expect this this to create divergence.
 
-diff --git a/dependencies b/dependencies
-index a6a9700..86f1931 100644
---- a/dependencies
-+++ b/dependencies
-@@ -44,6 +44,11 @@ VIDEO_S5C73M3 3.3
- VIDEO_LM3646 3.3
- VIDEO_LM3560 3.3
- 
-+# missing regmap_bulk_write
-+MEDIA_TUNER_E4000 3.4
-+MEDIA_TUNER_M88TS2022 3.4
-+VIDEO_EM28XX_DVB 3.4
-+
- # missing spi_finalize_current_message() and struct spi_master.transfer_one_message
- USB_MSI2500 3.4
- 
--- 
-1.9.1
+> Additionally, CPTCFG_ had the advantage of having the same length as
+> CONFIG_, so code style wise it was nicer to replace.
+> 
+> Please make this a post-process step that runs on everything, including
+> the backport stuff, rather than running only on the source and assuming
+> the backport stuff already uses this convention.
 
+I want to but lets consider the amount of work to maintain the two
+separate approaches, is it worth it?
+
+  Luis
