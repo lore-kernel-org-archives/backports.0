@@ -1,55 +1,100 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:58018 "EHLO hauke-m.de"
+Received: from cantor2.suse.de ([195.135.220.15]:46903 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753125AbaJTVeQ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 20 Oct 2014 17:34:16 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 0/5] backports: bring it to next-20140919
-Date: Mon, 20 Oct 2014 23:33:42 +0200
-Message-Id: <1413840827-9142-1-git-send-email-hauke@hauke-m.de> (sfid-20141020_233419_137757_BAA2C0C9)
+	id S932270AbaJaUDS (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 31 Oct 2014 16:03:18 -0400
+Date: Fri, 31 Oct 2014 21:03:16 +0100
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
+Subject: Re: [RFC v2 3/4] backports: use BACKPORT_DIR prefix on kconfig
+	sources
+Message-ID: <20141031200316.GC12953@wotan.suse.de> (sfid-20141031_210348_673585_9845EB94)
+References: <1414570902-5675-1-git-send-email-mcgrof@do-not-panic.com> <1414570902-5675-4-git-send-email-mcgrof@do-not-panic.com> <1414741562.3014.8.camel@jlt4.sipsolutions.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1414741562.3014.8.camel@jlt4.sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This brings backports to next-20140919.
+On Fri, Oct 31, 2014 at 08:46:02AM +0100, Johannes Berg wrote:
+> On Wed, 2014-10-29 at 01:21 -0700, Luis R. Rodriguez wrote:
+> 
+> >  src_line = re.compile(r'^\s*source\s+"?(?P<src>[^\s"]*)"?\s*$')
+> > +bk_src_line = re.compile(r'^\s*source\s+"?\$BACKPORT_DIR/(?P<src>[^\s"]*)"?\s*$')
+> >  tri_line = re.compile(r'^(?P<spc>\s+)tristate')
+> >  bool_line = re.compile(r'^(?P<spc>\s+)bool')
+> >  cfg_line = re.compile(r'^(?P<opt>config|menuconfig)\s+(?P<sym>[^\s]*)')
+> > @@ -21,23 +22,47 @@ class ConfigTree(object):
+> >          yield f
+> >          for l in open(os.path.join(self.basedir, f), 'r'):
+> >              m = src_line.match(l)
+> > -            if m and os.path.exists(os.path.join(self.basedir, m.group('src'))):
+> > -                for i in self._walk(m.group('src')):
+> > -                    yield i
+> > +            if m:
+> > +                bm = bk_src_line.match(l)
+> > +                if bm:
+> > +                    if os.path.exists(os.path.join(self.basedir, bm.group('src'))):
+> > +                        for i in self._walk(os.path.join(self.basedir, bm.group('src'))):
+> > +                            yield i
+> > +                    elif os.path.exists(os.path.join(self.basedir, 'backports/' + bm.group('src'))):
+> > +                        for i in self._walk(os.path.join(self.basedir, 'backports/' + bm.group('src'))):
+> > +                            yield i
+> > +                else:
+> > +                    if os.path.exists(os.path.join(self.basedir, m.group('src'))):
+> > +                        for i in self._walk(m.group('src')):
+> > +                            yield i
+> 
+> Are you even using the src_line regular expression any more? Seems like
+> you could just modify it though to make the (\$BACKPORT_DIR/) part
+> optional.
 
-Hauke Mehrtens (5):
-  backports: add S8_MIN
-  backports: add eth_get_headlen()
-  backports: add skb_clone_sk()
-  backports: these drivers need a new function
-  backports: refresh on next-20140919
+Sure make sense. I suppose we should be consistant too and use $BACKPORT_DIR.
 
- backport/backport-include/linux/etherdevice.h      |   5 +
- backport/backport-include/linux/kernel.h           |  12 ++
- backport/backport-include/linux/skbuff.h           |  10 ++
- backport/compat/Makefile                           |   1 +
- backport/compat/backport-3.18.c                    | 196 +++++++++++++++++++++
- dependencies                                       |   5 +
- .../media/0002-no_dmabuf/v4l2.patch                |  32 ++--
- .../media/0003-devnode_param_type/ddbridge.patch   |   2 +-
- .../0002-disable-dump-adjust-on-old-kernels.patch  |   4 +-
- .../include_net_cfg80211.patch                     |   2 +-
- .../net_wireless_core.patch                        |   2 +-
- .../net_wireless_core.patch                        |   4 +-
- .../net_mac80211_tx.patch                          |   6 +-
- .../0014-netlink_seq/net_wireless_nl80211.patch    |   2 +-
- .../network/0017-get_ts_info/igb_get_ts_info.patch |   2 +-
- .../network/0024-led-blink-api/mac80211.patch      |   2 +-
- .../network/0027-genl-const/nl80211.patch          |  14 +-
- .../network/0028-select_queue/mac80211.patch       |   4 +-
- .../network/0028-select_queue/mwifiex.patch        |   2 +-
- .../0032-sriov_configure/igb_sriov_configure.patch |   8 +-
- .../0033-ndo_vlan_rx_vid/igb_ndo_vlan_rx_vid.patch |   8 +-
- .../igb_ndo_set_vf_spoofchk.patch                  |   6 +-
- .../network/0036-ethtool_eee/igb_ethtool_eee.patch |   4 +-
- .../0037-ethtool_get_module/igb_get_module.patch   |   6 +-
- .../0038-ethtool_rxfh_indir/igb_rxfh_indir.patch   |  10 +-
- .../network/0043-ndo_set_vf_rate/igb.patch         |   8 +-
- 26 files changed, 293 insertions(+), 64 deletions(-)
- create mode 100644 backport/compat/backport-3.18.c
+> >      def _prune_sources(self, f, ignore):
+> >          for nf in self._walk(f):
+> >              out = ''
+> >              for l in open(os.path.join(self.basedir, nf), 'r'):
+> > -                m = src_line.match(l)
+> > -                if not m:
+> > -                    out += l
+> > -                    continue
+> > -                src = m.group('src')
+> > -                if src in ignore or os.path.exists(os.path.join(self.basedir, src)):
+> > -                    out += l
+> > +                bm = bk_src_line.match(l)
+> > +                if bm:
+> > +                    bp_src = bm.group('src')
+> > +                    if bp_src in ignore or \
+> > +                       os.path.exists(os.path.join(self.basedir, bp_src)) or \
+> > +                       os.path.exists(os.path.join(self.basedir, 'backports/' + bp_src)):
+> 
+> I'd prefer parentheses instead of \ line continuations :)
 
--- 
-1.9.1
+OK :)
 
+> the backports/ part seems to be for integration only?
+
+I think I went trigger happy since the bk_src_line should have picked
+up on the fact that backports directory prefix would already have been
+used. I'll re-test and remove not needed thing and try to consolidate
+the regexp.
+
+> > +                    m = src_line.match(l)
+> > +                    # we should consider disallowing these as it could mean
+> > +                    # someone forgot to add the BACKPORT_DIR prefix to
+> > +                    # the kconfig source entries which we will need to
+> > +                    # support built-in integration.
+> 
+> If you put it in the same RE then you can just print a warning on this
+> if detected but skip it otherwise.
+
+What I meant by this was more of the things that could go into a Kconfig
+which we perhaps are not parsing yet which might depend on a path, so
+its not clear to me what regexp to use. Right now it will just leave
+the lines intact and I guess that's fine for now.
+
+  Luis
