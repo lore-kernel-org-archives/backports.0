@@ -1,87 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:40661 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:50289 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751573AbaJYSpz (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 25 Oct 2014 14:45:55 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 11/11] defconfig: add some new wifi drivers
-Date: Sat, 25 Oct 2014 11:19:30 +0200
-Message-Id: <1414228770-20047-12-git-send-email-hauke@hauke-m.de> (sfid-20141025_211320_748645_404129CD)
-In-Reply-To: <1414228770-20047-1-git-send-email-hauke@hauke-m.de>
-References: <1414228770-20047-1-git-send-email-hauke@hauke-m.de>
+	id S1751930AbaJaHlX (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 31 Oct 2014 03:41:23 -0400
+Message-ID: <1414741273.3014.3.camel@jlt4.sipsolutions.net> (sfid-20141031_084125_082446_CA3E4C12)
+Subject: Re: [RFC v2 1/4] backports: replace CPTCFG prefix for
+ CONFIG_BACKPORT
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Date: Fri, 31 Oct 2014 08:41:13 +0100
+In-Reply-To: <1414570902-5675-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20141029_092323_908667_855CE841)
+References: <1414570902-5675-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1414570902-5675-2-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20141029_092323_908667_855CE841)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/defconfigs/rtlwifi | 2 ++
- backport/defconfigs/wifi    | 9 ++++++---
- 2 files changed, 8 insertions(+), 3 deletions(-)
+On Wed, 2014-10-29 at 01:21 -0700, Luis R. Rodriguez wrote:
+> From: "Luis R. Rodriguez" <mcgrof@suse.com>
+> 
+> In order to support built-in kernel integration we want to use
+> a more generic approach to defining symbols, CPTCFG was nice as
+> it was short and relied on the fact that kconfig can work with
+> a getenv(CONFIG_) but for kernel integration this doesn't work
+> so well. Instead let's just stick to the regular CONFIG_
+> namespace and add the BACKPORT prefix to it.
+> 
+> Apart from these expected changes:
+> 
+> for i in $(find ./  | grep -v "\.git"); do perl -pi -e'$_ =~ s|CPTCFG|CONFIG_BACKPORT|gs;' $i; done
 
-diff --git a/backport/defconfigs/rtlwifi b/backport/defconfigs/rtlwifi
-index 20f22c6..6c465fc 100644
---- a/backport/defconfigs/rtlwifi
-+++ b/backport/defconfigs/rtlwifi
-@@ -19,3 +19,5 @@ CPTCFG_RTL8723BE=m
- CPTCFG_RTL8188EE=m
- CPTCFG_RTL8192CU=m
- CPTCFG_RTL8192C_COMMON=m
-+CPTCFG_RTL8192EE=m
-+CPTCFG_RTL8821AE=m
-diff --git a/backport/defconfigs/wifi b/backport/defconfigs/wifi
-index 4202055..96496ed 100644
---- a/backport/defconfigs/wifi
-+++ b/backport/defconfigs/wifi
-@@ -1,14 +1,14 @@
- CPTCFG_ADM8211=m
- CPTCFG_AR5523=m
- CPTCFG_AT76C50X_USB=m
-+CPTCFG_ATH10K=m
-+CPTCFG_ATH10K_PCI=m
- CPTCFG_ATH5K=m
- CPTCFG_ATH6KL=m
- CPTCFG_ATH6KL_SDIO=m
- CPTCFG_ATH6KL_USB=m
- CPTCFG_ATH9K_HTC=m
- CPTCFG_ATH9K=m
--CPTCFG_ATH10K=m
--CPTCFG_ATH10K_PCI=m
- CPTCFG_ATH_CARDS=m
- CPTCFG_B43LEGACY=m
- CPTCFG_B43=m
-@@ -20,6 +20,7 @@ CPTCFG_BCMA_DRIVER_GPIO=y
- CPTCFG_BCMA_HOST_PCI=y
- CPTCFG_BCMA=m
- CPTCFG_BRCMFMAC=m
-+CPTCFG_BRCMFMAC_PCIE=y
- CPTCFG_BRCMFMAC_USB=y
- CPTCFG_BRCMSMAC=m
- CPTCFG_CARL9170=m
-@@ -75,9 +76,9 @@ CPTCFG_RT2500PCI=m
- CPTCFG_RT2500USB=m
- CPTCFG_RT2800PCI=m
- CPTCFG_RT2800USB=m
-+CPTCFG_RT2800USB_RT3573=y
- CPTCFG_RT2800USB_RT53XX=y
- CPTCFG_RT2800USB_RT55XX=y
--CPTCFG_RT2800USB_RT3573=y
- CPTCFG_RT2800USB_UNKNOWN=y
- CPTCFG_RT2X00=m
- CPTCFG_RT61PCI=m
-@@ -89,9 +90,11 @@ CPTCFG_RTL8192C_COMMON=m
- CPTCFG_RTL8192CE=m
- CPTCFG_RTL8192CU=m
- CPTCFG_RTL8192DE=m
-+CPTCFG_RTL8192EE=m
- CPTCFG_RTL8192SE=m
- CPTCFG_RTL8723AE=m
- CPTCFG_RTL8723BE=m
-+CPTCFG_RTL8821AE=m
- CPTCFG_RTLWIFI=m
- CPTCFG_SSB=m
- CPTCFG_SSB_PCMCIAHOST=y
--- 
-1.9.1
+I really think you need to make this optional for the in-tree
+generation, otherwise it will complicate things a lot for anyone who's
+already using backports in a way that doesn't have it regenerated all
+the time.
+
+Additionally, CPTCFG_ had the advantage of having the same length as
+CONFIG_, so code style wise it was nicer to replace.
+
+Please make this a post-process step that runs on everything, including
+the backport stuff, rather than running only on the source and assuming
+the backport stuff already uses this convention.
+
+johannes
 
