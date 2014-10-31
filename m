@@ -1,36 +1,52 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:1064 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751347AbaJJKNK (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 10 Oct 2014 06:13:10 -0400
-From: Arend van Spriel <arend@broadcom.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>, Arend van Spriel <arend@broadcom.com>
-Subject: [PATCH] defconfigs: enable PCIe support in brcmfmac defconfig
-Date: Fri, 10 Oct 2014 12:13:05 +0200
-Message-ID: <1412935985-6665-1-git-send-email-arend@broadcom.com> (sfid-20141010_121312_894873_E8461661)
+Received: from mail-qg0-f48.google.com ([209.85.192.48]:41868 "EHLO
+	mail-qg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751417AbaJaSkJ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 31 Oct 2014 14:40:09 -0400
+Received: by mail-qg0-f48.google.com with SMTP id q108so6001524qgd.7
+        for <backports@vger.kernel.org>; Fri, 31 Oct 2014 11:40:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+Date: Fri, 31 Oct 2014 16:40:08 -0200
+Message-ID: <CAG_2TMdYXqO5bRC7gmjY-yZzw-KJQDc2bzsGKj6cdygYPGW1Jw@mail.gmail.com> (sfid-20141031_194011_516886_C6A25938)
+Subject: compat-drivers-3.8.3-2-snpu with kernel 2.6.24
+From: Renato <renatoriolino@gmail.com>
+To: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-In 3.17 kernel the brcmfmac supports PCIe host interface. So enable
-support when selecting defconfig-brcmfmac.
+Hi,
 
-Signed-off-by: Arend van Spriel <arend@broadcom.com>
----
- backport/defconfigs/brcmfmac | 1 +
- 1 file changed, 1 insertion(+)
+I have and old Linux system built from scratch based on kernel 2.6.24
+and I need to add support on it for an Atheros ethernet card that
+doesnt have driver for kernel 2.6.24.
 
-diff --git a/backport/defconfigs/brcmfmac b/backport/defconfigs/brcmfmac
-index 72b2859..f4657c7 100644
---- a/backport/defconfigs/brcmfmac
-+++ b/backport/defconfigs/brcmfmac
-@@ -4,3 +4,4 @@ CPTCFG_WLAN=y
- CPTCFG_BRCMFMAC=m
- CPTCFG_BRCMFMAC_SDIO=y
- CPTCFG_BRCMFMAC_USB=y
-+CPTCFG_BRCMFMAC_PCIE=y
--- 
-1.9.1
+Unfortunately we can't update the kernel because my client has a
+control hardware that only have binary e propertery driver for 2.6.24.
 
+Because of that, I'm trying to use compat-drivers to do that.
+
+What I did so far was:
+
+Downloaded compat-drivers-3.8.3-2-snpu and extraceted it.
+Compiled it using:
+
+./scripts/driver-select alx
+make
+make install
+
+After rebooting, I loaded the compat driver with:
+
+modprobe compat
+
+I can see the following on dmesg:
+
+Compat-drivers backport release: compat-drivers-v3.8.3-2-snpu
+Backport based on linux-stable.git v3.8.3
+compat.git: linux-stable.git
+
+Nothing more. And no eth yet.
+
+What I am missing?
+
+Thanks
