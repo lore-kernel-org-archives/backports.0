@@ -1,58 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from one.firstfloor.org ([193.170.194.197]:43418 "EHLO
-	one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750926AbaKEXbn (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 5 Nov 2014 18:31:43 -0500
-Date: Thu, 6 Nov 2014 00:31:40 +0100
-From: Andi Kleen <andi@firstfloor.org>
+Received: from s3.sipsolutions.net ([5.9.151.49]:48559 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752517AbaKCUYv (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 3 Nov 2014 15:24:51 -0500
+Message-ID: <1415046288.2726.7.camel@sipsolutions.net> (sfid-20141103_212453_506614_C5B1EAED)
+Subject: Re: [RFC v2 1/4] backports: replace CPTCFG prefix for
+ CONFIG_BACKPORT
+From: Johannes Berg <johannes@sipsolutions.net>
 To: "Luis R. Rodriguez" <mcgrof@suse.com>
-Cc: Andi Kleen <andi@firstfloor.org>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	"Yann E. MORIN" <yann.morin.1998@free.fr>,
 	Michal Marek <mmarek@suse.cz>,
 	Stefan Assmann <sassmann@kpanic.de>
-Subject: Re: [PATCH v2 03/13] backports: allow for different backport prefix
-Message-ID: <20141105233140.GE12538@two.firstfloor.org> (sfid-20141106_003202_995902_CE68BBC6)
-References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
- <1415157517-15442-4-git-send-email-mcgrof@do-not-panic.com>
- <1415173596.2589.3.camel@sipsolutions.net>
- <20141105091610.GM12953@wotan.suse.de>
- <1415179364.2589.13.camel@sipsolutions.net>
- <20141105194215.GN12953@wotan.suse.de>
- <1415222258.7485.10.camel@sipsolutions.net>
- <20141105222159.GS12953@wotan.suse.de>
- <20141105230907.GD12538@two.firstfloor.org>
- <CAB=NE6Wu7gFh+_1ebiaWCq2cUt_SnCMB-+1Xv9ZuZtBafdg0Vg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAB=NE6Wu7gFh+_1ebiaWCq2cUt_SnCMB-+1Xv9ZuZtBafdg0Vg@mail.gmail.com>
+Date: Mon, 03 Nov 2014 21:24:48 +0100
+In-Reply-To: <CAB=NE6V1JViQyKRdEnaK=Ek4HC4qt_mdyrtk8kT_CG=YkxS+6w@mail.gmail.com> (sfid-20141103_212216_214883_B63B5778)
+References: <1414570902-5675-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1414570902-5675-2-git-send-email-mcgrof@do-not-panic.com>
+	 <1414741273.3014.3.camel@jlt4.sipsolutions.net>
+	 <20141031193408.GA12953@wotan.suse.de>
+	 <1414786943.3014.37.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6UVca47FyZv54pED3C_1go+-Ra_AbSwW1+=Gj5YWP0GHw@mail.gmail.com>
+	 <CAB=NE6U7-TE9Oe_aTvjr4Y1iGALMeRohmx-ekbzmRuzAbbqTTA@mail.gmail.com>
+	 <1415043615.2726.4.camel@sipsolutions.net>
+	 <CAB=NE6XWWcmRb-3r28obFmChzW1mnynG0LkVDr2-y+QVpq=y9Q@mail.gmail.com>
+	 <1415046029.2726.6.camel@sipsolutions.net>
+	 <CAB=NE6V1JViQyKRdEnaK=Ek4HC4qt_mdyrtk8kT_CG=YkxS+6w@mail.gmail.com>
+	 (sfid-20141103_212216_214883_B63B5778)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-> The only thing that was not clear to me from reviewing the module
-> namespace stuff a while ago was the original intent, but I confess I
-> actually only looked at the technical details to see if it was
-> applicable to the backports case, do you recall the original
-> motivation ?
+On Mon, 2014-11-03 at 12:21 -0800, Luis R. Rodriguez wrote:
 
-The original intent was to provide a cleaner export symbol API.
+> OK I'll prefix the stuff we copy over with something else then, BPAUTO.
 
-There are roughly two classes of exported symbols:
+I still want to keep CPTCFG though :)
 
-- Generally usable, well designed, interfaces intended to be used by multiple
-modules (e.g. functions for drivers to register themselves or
-library functions)
+johannes
 
-- Special purpose exports that are only really for a single
-module, but are not intended as a general interface. These interfaces
-are usually not really clean and reusable.
-
-The idea was to mark the later special purpose exports with the name of the
-module that is supposed to them. They wouldn't be available
-to everybody else and wouldn't become part of the general
-kernel module API.
-
--Andi
 
