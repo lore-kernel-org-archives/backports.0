@@ -1,331 +1,60 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:55436 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753335AbaKEDSt (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 4 Nov 2014 22:18:49 -0500
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
-	mmarek@suse.cz, sassmann@kpanic.de,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH v2 01/13] backports: move legacy and SmPL patch application into helper
-Date: Tue,  4 Nov 2014 19:18:25 -0800
-Message-Id: <1415157517-15442-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20141105_041901_617370_27584486)
-In-Reply-To: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from mail-lb0-f181.google.com ([209.85.217.181]:59952 "EHLO
+	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752458AbaKCUWQ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 3 Nov 2014 15:22:16 -0500
+MIME-Version: 1.0
+In-Reply-To: <1415046029.2726.6.camel@sipsolutions.net>
+References: <1414570902-5675-1-git-send-email-mcgrof@do-not-panic.com>
+ <1414570902-5675-2-git-send-email-mcgrof@do-not-panic.com>
+ <1414741273.3014.3.camel@jlt4.sipsolutions.net> <20141031193408.GA12953@wotan.suse.de>
+ <1414786943.3014.37.camel@jlt4.sipsolutions.net> <CAB=NE6UVca47FyZv54pED3C_1go+-Ra_AbSwW1+=Gj5YWP0GHw@mail.gmail.com>
+ <CAB=NE6U7-TE9Oe_aTvjr4Y1iGALMeRohmx-ekbzmRuzAbbqTTA@mail.gmail.com>
+ <1415043615.2726.4.camel@sipsolutions.net> <CAB=NE6XWWcmRb-3r28obFmChzW1mnynG0LkVDr2-y+QVpq=y9Q@mail.gmail.com>
+ <1415046029.2726.6.camel@sipsolutions.net>
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
+Date: Mon, 3 Nov 2014 12:21:54 -0800
+Message-ID: <CAB=NE6V1JViQyKRdEnaK=Ek4HC4qt_mdyrtk8kT_CG=YkxS+6w@mail.gmail.com> (sfid-20141103_212219_169409_D5B440BB)
+Subject: Re: [RFC v2 1/4] backports: replace CPTCFG prefix for CONFIG_BACKPORT
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Yann E. MORIN" <yann.morin.1998@free.fr>,
+	Michal Marek <mmarek@suse.cz>,
+	Stefan Assmann <sassmann@kpanic.de>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+On Mon, Nov 3, 2014 at 12:20 PM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> On Mon, 2014-11-03 at 11:56 -0800, Luis R. Rodriguez wrote:
+>
+>> With my current code I end up with on a package (not integration):
+>>
+>> config BACKPORT_BUILD_AVERAGE
+>>         bool
+>>         depends on !AVERAGE
+>>         default y if BACKPORT_USERSEL_BUILD_ALL
+>>         default y if BACKPORT_AVERAGE
+>>         #h-file linux/average.h
+>>         #c-file lib/average.c
+>>
+>> config BACKPORT_AVERAGE
+>>         bool
+>>
+>>
+>> I do see I on the package with this on the Makfile though:
+>>
+>>
+>> compat-$(CONFIG_BACKPORT_BACKPORT_BUILD_AVERAGE) += lib-average.o
+>>
+>> Would it not suffice to just ensure we don't have BACKPORT_BACKPORT_
+>> here and just BACKPORT_ once ?
+>
+> The BACKPORT_BACKPORT_ is actually correct ... but it'll be really hard
+> to make sense of :-)
 
-This allows us to extend how backports uses patches for
-different types of applications. This will later be used
-for kernel integration support, for example.
+OK I'll prefix the stuff we copy over with something else then, BPAUTO.
 
-This should have no functional change.
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
----
- gentree.py | 279 +++++++++++++++++++++++++++++++------------------------------
- 1 file changed, 144 insertions(+), 135 deletions(-)
-
-diff --git a/gentree.py b/gentree.py
-index 9b4db98..59ae19d 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -438,6 +438,149 @@ def upload_release(args, rel_prep, logwrite=lambda x:None):
-         kup_cmd = "kup put /\n\t\t%s /\n\t\t%s /\n\t\t%s" % (gzip_name, tar_name + '.asc', korg_path)
-         logwrite("kup-test: skipping cmd: %s" % kup_cmd)
- 
-+def apply_patches(args, desc, source_dir, patch_src, target_dir, logwrite=lambda x:None):
-+    """
-+    Given a path of a directories of patches and SmPL patches apply
-+    them on the target directory. If requested refresh patches, or test
-+    a specific SmPL patch.
-+    """
-+    logwrite('Applying patches from %s to %s ...' % (patch_src, target_dir))
-+    test_cocci = args.test_cocci or args.profile_cocci
-+    test_cocci_found = False
-+    patches = []
-+    sempatches = []
-+    for root, dirs, files in os.walk(os.path.join(source_dir, patch_src)):
-+        for f in files:
-+            if not test_cocci and f.endswith('.patch'):
-+                patches.append(os.path.join(root, f))
-+            if f.endswith('.cocci'):
-+                if test_cocci:
-+                    if f not in test_cocci:
-+                        continue
-+                    test_cocci_found = True
-+                    if args.test_cocci:
-+                        logwrite("Testing Coccinelle SmPL patch: %s" % test_cocci)
-+                    elif args.profile_cocci:
-+                        logwrite("Profiling Coccinelle SmPL patch: %s" % test_cocci)
-+                sempatches.append(os.path.join(root, f))
-+    patches.sort()
-+    prefix_len = len(os.path.join(source_dir, patch_src)) + 1
-+    for pfile in patches:
-+        print_name = pfile[prefix_len:]
-+        # read the patch file
-+        p = patch.fromfile(pfile)
-+        # complain if it's not a patch
-+        if not p:
-+            raise Exception('No patch content found in %s' % print_name)
-+        # leading / seems to be stripped?
-+        if 'dev/null' in p.items[0].source:
-+            raise Exception('Patches creating files are not supported (in %s)' % print_name)
-+        # check if the first file the patch touches exists, if so
-+        # assume the patch needs to be applied -- otherwise continue
-+        patched_file = '/'.join(p.items[0].source.split('/')[1:])
-+        fullfn = os.path.join(target_dir, patched_file)
-+        if not os.path.exists(fullfn):
-+            if args.verbose:
-+                logwrite("Not applying %s, not needed" % print_name)
-+            continue
-+        if args.verbose:
-+            logwrite("Applying patch %s" % print_name)
-+
-+        if args.refresh:
-+            # but for refresh, of course look at all files the patch touches
-+            for patchitem in p.items:
-+                patched_file = '/'.join(patchitem.source.split('/')[1:])
-+                fullfn = os.path.join(target_dir, patched_file)
-+                shutil.copyfile(fullfn, fullfn + '.orig_file')
-+
-+        process = subprocess.Popen(['patch', '-p1'], stdout=subprocess.PIPE,
-+                                   stderr=subprocess.STDOUT, stdin=subprocess.PIPE,
-+                                   close_fds=True, universal_newlines=True,
-+                                   cwd=target_dir)
-+        output = process.communicate(input=open(pfile, 'r').read())[0]
-+        output = output.split('\n')
-+        if output[-1] == '':
-+            output = output[:-1]
-+        if args.verbose:
-+            for line in output:
-+                logwrite('> %s' % line)
-+        if process.returncode != 0:
-+            if not args.verbose:
-+                logwrite("Failed to apply changes from %s" % print_name)
-+                for line in output:
-+                    logwrite('> %s' % line)
-+            raise Exception('Patch failed')
-+
-+        if args.refresh:
-+            pfilef = open(pfile + '.tmp', 'a')
-+            pfilef.write(p.top_header)
-+            pfilef.flush()
-+            for patchitem in p.items:
-+                patched_file = '/'.join(patchitem.source.split('/')[1:])
-+                fullfn = os.path.join(target_dir, patched_file)
-+                process = subprocess.Popen(['diff', '-p', '-u', patched_file + '.orig_file', patched_file,
-+                                            '--label', 'a/' + patched_file,
-+                                            '--label', 'b/' + patched_file],
-+                                           stdout=pfilef, close_fds=True,
-+                                           universal_newlines=True, cwd=target_dir)
-+                process.wait()
-+                os.unlink(fullfn + '.orig_file')
-+                if not process.returncode in (0, 1):
-+                    logwrite("Failed to diff to refresh %s" % print_name)
-+                    pfilef.close()
-+                    os.unlink(pfile + '.tmp')
-+                    raise Exception('Refresh failed')
-+            pfilef.close()
-+            os.rename(pfile + '.tmp', pfile)
-+
-+        # remove orig/rej files that patch sometimes creates
-+        for root, dirs, files in os.walk(target_dir):
-+            for f in files:
-+                if f[-5:] == '.orig' or f[-4:] == '.rej':
-+                    os.unlink(os.path.join(root, f))
-+        git_debug_snapshot(args, "apply %s patch %s" % (desc, print_name))
-+
-+    sempatches.sort()
-+    prefix_len = len(os.path.join(source_dir, patch_src)) + 1
-+
-+    for cocci_file in sempatches:
-+        # Until Coccinelle picks this up
-+        pycocci = os.path.join(source_dir, 'devel/pycocci')
-+        cmd = [pycocci, cocci_file]
-+        extra_spatch_args = []
-+        if args.profile_cocci:
-+            cmd.append('--profile-cocci')
-+        cmd.append(os.path.abspath(target_dir))
-+        print_name = cocci_file[prefix_len:]
-+        if args.verbose:
-+            logwrite("Applying SmPL patch %s" % print_name)
-+        sprocess = subprocess.Popen(cmd,
-+                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                                    close_fds=True, universal_newlines=True,
-+                                    cwd=target_dir)
-+        output = sprocess.communicate()[0]
-+        sprocess.wait()
-+        if sprocess.returncode != 0:
-+            logwrite("Failed to process SmPL patch %s" % print_name)
-+            raise Exception('SmPL patch failed')
-+        output = output.split('\n')
-+        if output[-1] == '':
-+            output = output[:-1]
-+        if args.verbose:
-+            for line in output:
-+                logwrite('> %s' % line)
-+
-+        # remove cocci_backup files
-+        for root, dirs, files in os.walk(target_dir):
-+            for f in files:
-+                if f.endswith('.cocci_backup'):
-+                    os.unlink(os.path.join(root, f))
-+        git_debug_snapshot(args, "apply %s SmPL patch %s" % (desc, print_name))
-+
-+    if test_cocci and test_cocci_found:
-+        logwrite('Done!')
-+        sys.exit(0)
-+
- def _main():
-     # Our binary requirements go here
-     req = reqs.Req()
-@@ -620,141 +763,7 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
-         bpcfg.disable_symbols(disable_list)
-     git_debug_snapshot(args, 'Add automatic backports')
- 
--    test_cocci = args.test_cocci or args.profile_cocci
--
--    logwrite('Apply patches ...')
--    patches = []
--    sempatches = []
--    for root, dirs, files in os.walk(os.path.join(source_dir, 'patches')):
--        for f in files:
--            if not test_cocci and f.endswith('.patch'):
--                patches.append(os.path.join(root, f))
--            if f.endswith('.cocci'):
--                if test_cocci:
--                    if f not in test_cocci:
--                        continue
--                    if args.test_cocci:
--                        logwrite("Testing Coccinelle SmPL patch: %s" % test_cocci)
--                    elif args.profile_cocci:
--                        logwrite("Profiling Coccinelle SmPL patch: %s" % test_cocci)
--                sempatches.append(os.path.join(root, f))
--    patches.sort()
--    prefix_len = len(os.path.join(source_dir, 'patches')) + 1
--    for pfile in patches:
--        print_name = pfile[prefix_len:]
--        # read the patch file
--        p = patch.fromfile(pfile)
--        # complain if it's not a patch
--        if not p:
--            raise Exception('No patch content found in %s' % print_name)
--        # leading / seems to be stripped?
--        if 'dev/null' in p.items[0].source:
--            raise Exception('Patches creating files are not supported (in %s)' % print_name)
--        # check if the first file the patch touches exists, if so
--        # assume the patch needs to be applied -- otherwise continue
--        patched_file = '/'.join(p.items[0].source.split('/')[1:])
--        fullfn = os.path.join(args.outdir, patched_file)
--        if not os.path.exists(fullfn):
--            if args.verbose:
--                logwrite("Not applying %s, not needed" % print_name)
--            continue
--        if args.verbose:
--            logwrite("Applying patch %s" % print_name)
--
--        if args.refresh:
--            # but for refresh, of course look at all files the patch touches
--            for patchitem in p.items:
--                patched_file = '/'.join(patchitem.source.split('/')[1:])
--                fullfn = os.path.join(args.outdir, patched_file)
--                shutil.copyfile(fullfn, fullfn + '.orig_file')
--
--        process = subprocess.Popen(['patch', '-p1'], stdout=subprocess.PIPE,
--                                   stderr=subprocess.STDOUT, stdin=subprocess.PIPE,
--                                   close_fds=True, universal_newlines=True,
--                                   cwd=args.outdir)
--        output = process.communicate(input=open(pfile, 'r').read())[0]
--        output = output.split('\n')
--        if output[-1] == '':
--            output = output[:-1]
--        if args.verbose:
--            for line in output:
--                logwrite('> %s' % line)
--        if process.returncode != 0:
--            if not args.verbose:
--                logwrite("Failed to apply changes from %s" % print_name)
--                for line in output:
--                    logwrite('> %s' % line)
--            return 2
--
--        if args.refresh:
--            pfilef = open(pfile + '.tmp', 'a')
--            pfilef.write(p.top_header)
--            pfilef.flush()
--            for patchitem in p.items:
--                patched_file = '/'.join(patchitem.source.split('/')[1:])
--                fullfn = os.path.join(args.outdir, patched_file)
--                process = subprocess.Popen(['diff', '-p', '-u', patched_file + '.orig_file', patched_file,
--                                            '--label', 'a/' + patched_file,
--                                            '--label', 'b/' + patched_file],
--                                           stdout=pfilef, close_fds=True,
--                                           universal_newlines=True, cwd=args.outdir)
--                process.wait()
--                os.unlink(fullfn + '.orig_file')
--                if not process.returncode in (0, 1):
--                    logwrite("Failed to diff to refresh %s" % print_name)
--                    pfilef.close()
--                    os.unlink(pfile + '.tmp')
--                    return 3
--            pfilef.close()
--            os.rename(pfile + '.tmp', pfile)
--
--        # remove orig/rej files that patch sometimes creates
--        for root, dirs, files in os.walk(args.outdir):
--            for f in files:
--                if f[-5:] == '.orig' or f[-4:] == '.rej':
--                    os.unlink(os.path.join(root, f))
--        git_debug_snapshot(args, "apply backport patch %s" % print_name)
--
--    sempatches.sort()
--    prefix_len = len(os.path.join(source_dir, 'patches')) + 1
--
--    for cocci_file in sempatches:
--        # Until Coccinelle picks this up
--        pycocci = os.path.join(source_dir, 'devel/pycocci')
--        cmd = [pycocci, cocci_file]
--        extra_spatch_args = []
--        if args.profile_cocci:
--            cmd.append('--profile-cocci')
--        cmd.append(os.path.abspath(args.outdir))
--        print_name = cocci_file[prefix_len:]
--        if args.verbose:
--            logwrite("Applying SmPL patch %s" % print_name)
--        sprocess = subprocess.Popen(cmd,
--                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
--                                    close_fds=True, universal_newlines=True,
--                                    cwd=args.outdir)
--        output = sprocess.communicate()[0]
--        sprocess.wait()
--        if sprocess.returncode != 0:
--            logwrite("Failed to process SmPL patch %s" % print_name)
--            return 3
--        output = output.split('\n')
--        if output[-1] == '':
--            output = output[:-1]
--        if args.verbose:
--            for line in output:
--                logwrite('> %s' % line)
--
--        # remove cocci_backup files
--        for root, dirs, files in os.walk(args.outdir):
--            for f in files:
--                if f.endswith('.cocci_backup'):
--                    os.unlink(os.path.join(root, f))
--        git_debug_snapshot(args, "apply backport SmPL patch %s" % print_name)
--
--    if test_cocci:
--        logwrite('Done!')
--        return 0
-+    apply_patches(args, "backport", source_dir, 'patches', args.outdir, logwrite)
- 
-     # some post-processing is required
-     configtree = kconfig.ConfigTree(os.path.join(args.outdir, 'Kconfig'))
--- 
-2.1.1
-
+ Luis
