@@ -1,41 +1,61 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:34299 "EHLO mx2.suse.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:48551 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752815AbaKDVvN (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 4 Nov 2014 16:51:13 -0500
-Date: Tue, 4 Nov 2014 22:51:11 +0100
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
-Subject: Re: [PATCH v1 09/11] backports: use Kconfig for backport version
-	information
-Message-ID: <20141104215111.GG12953@wotan.suse.de> (sfid-20141104_225132_701510_84E30D2A)
-References: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com> <1415090582-14129-10-git-send-email-mcgrof@do-not-panic.com> <1415095985.2064.12.camel@sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1415095985.2064.12.camel@sipsolutions.net>
+	id S1753191AbaKCUUd (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 3 Nov 2014 15:20:33 -0500
+Message-ID: <1415046029.2726.6.camel@sipsolutions.net> (sfid-20141103_212036_922871_E0A1A089)
+Subject: Re: [RFC v2 1/4] backports: replace CPTCFG prefix for
+ CONFIG_BACKPORT
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@suse.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Yann E. MORIN" <yann.morin.1998@free.fr>,
+	Michal Marek <mmarek@suse.cz>,
+	Stefan Assmann <sassmann@kpanic.de>
+Date: Mon, 03 Nov 2014 21:20:29 +0100
+In-Reply-To: <CAB=NE6XWWcmRb-3r28obFmChzW1mnynG0LkVDr2-y+QVpq=y9Q@mail.gmail.com> (sfid-20141103_205706_499759_FE8EC472)
+References: <1414570902-5675-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1414570902-5675-2-git-send-email-mcgrof@do-not-panic.com>
+	 <1414741273.3014.3.camel@jlt4.sipsolutions.net>
+	 <20141031193408.GA12953@wotan.suse.de>
+	 <1414786943.3014.37.camel@jlt4.sipsolutions.net>
+	 <CAB=NE6UVca47FyZv54pED3C_1go+-Ra_AbSwW1+=Gj5YWP0GHw@mail.gmail.com>
+	 <CAB=NE6U7-TE9Oe_aTvjr4Y1iGALMeRohmx-ekbzmRuzAbbqTTA@mail.gmail.com>
+	 <1415043615.2726.4.camel@sipsolutions.net>
+	 <CAB=NE6XWWcmRb-3r28obFmChzW1mnynG0LkVDr2-y+QVpq=y9Q@mail.gmail.com>
+	 (sfid-20141103_205706_499759_FE8EC472)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Nov 04, 2014 at 11:13:05AM +0100, Johannes Berg wrote:
-> On Tue, 2014-11-04 at 00:43 -0800, Luis R. Rodriguez wrote:
-> > From: "Luis R. Rodriguez" <mcgrof@suse.com>
-> > 
-> > Instead of relying on Makefile hacks just use Kconfig for
-> > defining the variables needed. We can do this since these
-> > variables are all known at packaging time. The exception
-> > is BACKPORTS_GIT_TRACKED, but for that we can define a
-> > kconfig variable which only if set will we rely on the
-> > environment for picking it up and later exporting it through
-> > Kconfig. Since Kconfig doesn't keep config variables defined
-> > with option env we use a secondary config entry for that.
+On Mon, 2014-11-03 at 11:56 -0800, Luis R. Rodriguez wrote:
+
+> With my current code I end up with on a package (not integration):
 > 
-> I'd prefer you didn't do this. When we track the backports in a git tree
-> this will mean constant changes to these files, where currently the
-> changes are constrained to just the "versions" file.
+> config BACKPORT_BUILD_AVERAGE
+>         bool
+>         depends on !AVERAGE
+>         default y if BACKPORT_USERSEL_BUILD_ALL
+>         default y if BACKPORT_AVERAGE
+>         #h-file linux/average.h
+>         #c-file lib/average.c
+> 
+> config BACKPORT_AVERAGE
+>         bool
+> 
+> 
+> I do see I on the package with this on the Makfile though:
+> 
+> 
+> compat-$(CONFIG_BACKPORT_BACKPORT_BUILD_AVERAGE) += lib-average.o
+> 
+> Would it not suffice to just ensure we don't have BACKPORT_BACKPORT_
+> here and just BACKPORT_ once ?
 
-OK.
+The BACKPORT_BACKPORT_ is actually correct ... but it'll be really hard
+to make sense of :-)
 
- Luis
+johannes
+
