@@ -1,86 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:59566 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752509AbaKDIng (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 4 Nov 2014 03:43:36 -0500
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
-	mmarek@suse.cz, sassmann@kpanic.de,
+Received: from s3.sipsolutions.net ([5.9.151.49]:52671 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751496AbaKDKO5 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 4 Nov 2014 05:14:57 -0500
+Message-ID: <1415096092.2064.13.camel@sipsolutions.net> (sfid-20141104_111500_070635_2132780A)
+Subject: Re: [PATCH v1 10/11] backports: prefix c-file / h-file auto
+ backport with BPAUTO
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de,
 	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH v1 06/11] backports: update dependencies map file
-Date: Tue,  4 Nov 2014 00:42:57 -0800
-Message-Id: <1415090582-14129-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20141104_094355_048406_31001020)
-In-Reply-To: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com>
+Date: Tue, 04 Nov 2014 11:14:52 +0100
+In-Reply-To: <1415090582-14129-11-git-send-email-mcgrof@do-not-panic.com> (sfid-20141104_094716_255472_7B15EC6D)
 References: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1415090582-14129-11-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20141104_094716_255472_7B15EC6D)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+On Tue, 2014-11-04 at 00:43 -0800, Luis R. Rodriguez wrote:
 
-During development of kernel integration support using CONFIG_BACKPORT
-was evaluated as a prefix over CPTCFG even for packaging backports,
-for some reason this change lifted some restrictions one some device
-drivers which was present before and as such requires some changes to
-the dependencies map file to ensure correct compilation for respective
-kernel versions.
+> -            mf.write('compat-$(%s%s) += %s\n' % (bp_prefix, sym, ' '.join(o_files)))
+> +            if bp_prefix not in sym:
+> +                mf.write('compat-$(%s%s) += %s\n' % (bp_prefix, sym, ' '.join(o_files)))
+> +            else:
+> +                mf.write('compat-$(%s) += %s\n' % (sym, ' '.join(o_files)))
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
----
- dependencies | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
+I don't think these changes are correct, the bp_prefix is needed anyway,
+and there's no way it could already be. Looks like this comes from a
+previous attempt where you misunderstood and thought
+CONFIG_BACKPORT_BACKPORT_... was actually wrong, when in fact it is
+correct (and would now be CONFIG_BACKPORT_BPAUTO_...)
 
-diff --git a/dependencies b/dependencies
-index 4964aa6..64903dc 100644
---- a/dependencies
-+++ b/dependencies
-@@ -16,6 +16,8 @@ USB_GSPCA_OV534 3.5
- # we only support on >= 3.4 give that reguatory itself depends
- # on -EPROBE_DEFER.
- SOC_CAMERA 3.4
-+VIDEO_S5K5BAF 3.4
-+VIDEO_S5K4ECGX 3.4
- # 49920bc6 and 1003cab8 and while it seems there is a
- # one to one map DMA_FROM_DEVICE to DMA_DEV_TO_MEM
- # I can't verify this fully yet.
-@@ -29,16 +31,29 @@ DVB_USB_RTL28XXU 3.4
- # missing linux/gpio/consumer.h
- VIDEO_ADV7604 3.13
- # missing function clk_prepare_enable(), clk_disable_unprepare() and devm_regulator_bulk_get()
--VIDEO_MT9P031 3.3
--VIDEO_MT9T001 3.3
- VIDEO_MT9V032 3.3
--VIDEO_NOON010PC30 3.3
--VIDEO_S5K6A3 3.3
- VIDEO_S5K6AA 3.3
--VIDEO_S5K5BAF 3.3
--VIDEO_S5K4ECGX 3.3
--VIDEO_M5MOLS 3.3
--VIDEO_S5C73M3 3.3
-+
-+# missing devm_regulator_bulk_get
-+VIDEO_MT9T001 3.5
-+VIDEO_NOON010PC30 3.5
-+VIDEO_MT9P031 3.5
-+
-+# missing of_property_read_bool() added via fa4d34cc on v3.4-rc1~71, backport
-+# that attomically and you can enable this for older kernels.
-+VIDEO_ADV7343 3.4
-+
-+# for whoever wants to backport this: GPIOF_EXPORT was redefined via commit
-+# 79a9becd on v3.13-rc1~120^2~15, before this it was redefined via commit
-+# f567fde2 on v3.5-rc7~32^2~4 and finally added via commit fc3a1f04 on
-+# v3.5-rc1~93^2~25. We don't address any of these changes yet so we require
-+# the latest interpretation.
-+VIDEO_S5K6AA 3.13
-+VIDEO_S5K6A3 3.13
-+
-+# missing linux/sizes.h
-+VIDEO_M5MOLS 3.6
-+VIDEO_S5C73M3 3.6
- 
- # missing function devm_regmap_init_i2c()
- VIDEO_LM3646 3.3
--- 
-2.1.1
+johannes
 
