@@ -1,29 +1,37 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:37729 "EHLO hauke-m.de"
+Received: from cantor2.suse.de ([195.135.220.15]:34251 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750725AbaKPVDJ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 16 Nov 2014 16:03:09 -0500
-Received: from [IPv6:2001:470:7259:0:ccb7:cf83:eee4:753d] (unknown [IPv6:2001:470:7259:0:ccb7:cf83:eee4:753d])
-	by hauke-m.de (Postfix) with ESMTPSA id 85FF620117
-	for <backports@vger.kernel.org>; Sun, 16 Nov 2014 22:03:07 +0100 (CET)
-Message-ID: <5469110A.5070106@hauke-m.de> (sfid-20141116_220311_198747_ECEDB959)
-Date: Sun, 16 Nov 2014 22:03:06 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
+	id S1751324AbaKDVpQ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 4 Nov 2014 16:45:16 -0500
+Date: Tue, 4 Nov 2014 22:45:13 +0100
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
+Subject: Re: [PATCH v1 03/11] backports: allow for different backport prefix
+Message-ID: <20141104214513.GE12953@wotan.suse.de> (sfid-20141104_224518_372451_475F62B6)
+References: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com> <1415090582-14129-4-git-send-email-mcgrof@do-not-panic.com> <1415095517.2064.10.camel@sipsolutions.net>
 MIME-Version: 1.0
-To: backports@vger.kernel.org
-Subject: backports-20141114 is out
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1415095517.2064.10.camel@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backports-20141114 was released. This is based on linux-next next-20141114.
+On Tue, Nov 04, 2014 at 11:05:17AM +0100, Johannes Berg wrote:
+> On Tue, 2014-11-04 at 00:42 -0800, Luis R. Rodriguez wrote:
+> 
+> > --- a/devel/ckmake
+> > +++ b/devel/ckmake
+> > @@ -165,6 +165,7 @@ def process_kernel(num, kset, cmdline_args):
+> >          all_config_name = os.path.join(work_dir, 'all.config')
+> >          all_config = open(all_config_name, 'w')
+> >          all_config.write("CPTCFG_CFG80211_INTERNAL_REGDB=n\n")
+> > +        all_config.write("CONFIG_BACKPORT_CFG80211_INTERNAL_REGDB=n\n")
+> 
+> don't you know the prefix here?
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/2014/11/14/backports-20141114.tar.xz
+Yeah, good point, for built-in I suppose we'll need something different or if
+ckmake is extended it would know that too. Dropping this.
 
-The source code can be found here:
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
-
-All the latest releases are listed here:
-http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
-
-Hauke
+  Luis
