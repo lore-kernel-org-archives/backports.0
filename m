@@ -1,76 +1,206 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f178.google.com ([209.85.217.178]:62160 "EHLO
-	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752335AbaKCT5H (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 3 Nov 2014 14:57:07 -0500
-MIME-Version: 1.0
-In-Reply-To: <1415043615.2726.4.camel@sipsolutions.net>
-References: <1414570902-5675-1-git-send-email-mcgrof@do-not-panic.com>
- <1414570902-5675-2-git-send-email-mcgrof@do-not-panic.com>
- <1414741273.3014.3.camel@jlt4.sipsolutions.net> <20141031193408.GA12953@wotan.suse.de>
- <1414786943.3014.37.camel@jlt4.sipsolutions.net> <CAB=NE6UVca47FyZv54pED3C_1go+-Ra_AbSwW1+=Gj5YWP0GHw@mail.gmail.com>
- <CAB=NE6U7-TE9Oe_aTvjr4Y1iGALMeRohmx-ekbzmRuzAbbqTTA@mail.gmail.com> <1415043615.2726.4.camel@sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-Date: Mon, 3 Nov 2014 11:56:44 -0800
-Message-ID: <CAB=NE6XWWcmRb-3r28obFmChzW1mnynG0LkVDr2-y+QVpq=y9Q@mail.gmail.com> (sfid-20141103_205710_169775_4A4E53E3)
-Subject: Re: [RFC v2 1/4] backports: replace CPTCFG prefix for CONFIG_BACKPORT
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Yann E. MORIN" <yann.morin.1998@free.fr>,
-	Michal Marek <mmarek@suse.cz>,
-	Stefan Assmann <sassmann@kpanic.de>
-Content-Type: text/plain; charset=UTF-8
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:62818 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752399AbaKDInl (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 4 Nov 2014 03:43:41 -0500
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
+	mmarek@suse.cz, sassmann@kpanic.de,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: [PATCH v1 07/11] backports: split Kconfig into Kconfig.package and Kconfig.sources
+Date: Tue,  4 Nov 2014 00:42:58 -0800
+Message-Id: <1415090582-14129-8-git-send-email-mcgrof@do-not-panic.com> (sfid-20141104_094351_978862_A814C8D0)
+In-Reply-To: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Nov 3, 2014 at 11:40 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Mon, 2014-11-03 at 11:30 -0800, Luis R. Rodriguez wrote:
->> On Fri, Oct 31, 2014 at 1:33 PM, Luis R. Rodriguez <mcgrof@suse.com> wrote:
->> >> That also makes me think of something else - we currently use BACKPORT_
->> >> as a prefix for some of the other stuff under compat/Kconfig, and in
->> >> fact rename some things (like CONFIG_BACKPORT_AVERAGE) so maybe also
->> >> using CONFIG_BACKPORT_ here isn't a great idea? Might want to use
->> >> something else, say CONFIG_BPT_ or so.
->> >
->> > That's a good point, I take it that it does not matter which one we
->> > pick for each, so long as its different? If so I think CONFIG_BACKPORT
->> > is pretty clear for things we carry over like device drivers, but this
->> > is just subjective and so long as we pick something I think it'll be
->> > fine.
->>
->> Thought about this some more, the stuff under compat/ is just
->> backported through a slightly different strategy -- the Kconfig
->> copy-file stuff but yet its very similar to the copy-list mechanism,
->> where it ends up is different but I am not sure if it makes sense to
->> keep a different naming scheme for each backport strategy.
->
-> Yes, but the stuff under compat/ is also treated specially by the
-> scripting - config symbols there automatically replace the ones in the
-> rest of the tree for example (see "config AVERAGE" for example, you get
-> "depends on BACKPORT_AVERAGE" and some BUILD_PACKPORT_AVERAGE magic)
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-With my current code I end up with on a package (not integration):
+This splits up the Kconfig from things which are needed due to
+our copy of code from the kernel and things which we need
+specifically only for packaging backports. We will later then
+share the Kconfig.souce for instance for kernel integration.
 
-config BACKPORT_BUILD_AVERAGE
-        bool
-        depends on !AVERAGE
-        default y if BACKPORT_USERSEL_BUILD_ALL
-        default y if BACKPORT_AVERAGE
-        #h-file linux/average.h
-        #c-file lib/average.c
+While at it, split up the list of files that we need to copy
+into what we know could be shared for integration. The the
+case of backport packaging Kconfig.package will be copied to
+the package's Kconfig when building the package with gentree.py.
 
-config BACKPORT_AVERAGE
-        bool
+Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
+---
+ backport/Kconfig         | 54 ------------------------------------------------
+ backport/Kconfig.package | 32 ++++++++++++++++++++++++++++
+ backport/Kconfig.sources | 23 +++++++++++++++++++++
+ gentree.py               | 22 +++++++++++++++++---
+ 4 files changed, 74 insertions(+), 57 deletions(-)
+ delete mode 100644 backport/Kconfig
+ create mode 100644 backport/Kconfig.package
+ create mode 100644 backport/Kconfig.sources
 
+diff --git a/backport/Kconfig b/backport/Kconfig
+deleted file mode 100644
+index c523323..0000000
+--- a/backport/Kconfig
++++ /dev/null
+@@ -1,54 +0,0 @@
+-mainmenu "Linux Backports from $BACKPORTED_KERNEL_NAME $BACKPORTED_KERNEL_VERSION (with backports $BACKPORTS_VERSION)"
+-
+-config BACKPORT_DIR
+-	string
+-	option env="BACKPORT_DIR"
+-config BACKPORTS_VERSION
+-	string
+-	option env="BACKPORTS_VERSION"
+-config BACKPORTED_KERNEL_VERSION
+-	string
+-	option env="BACKPORTED_KERNEL_VERSION"
+-config BACKPORTED_KERNEL_NAME
+-	string
+-	option env="BACKPORTED_KERNEL_NAME"
+-
+-# these will be generated
+-source "$BACKPORT_DIR/Kconfig.kernel"
+-source "$BACKPORT_DIR/Kconfig.versions"
+-
+-# some hacks for when we use backports to generate a package
+-# to build modules out of tree.
+-#ignore-parser-package
+-config WIRELESS
+-	def_bool y
+-#ignore-parser-package
+-config NET_CORE
+-	def_bool y
+-#ignore-parser-package
+-config EXPERT
+-	def_bool y
+-
+-# this has the configuration for the backport code
+-source "$BACKPORT_DIR/compat/Kconfig"
+-
+-# these are copied from the kernel
+-source "$BACKPORT_DIR/net/wireless/Kconfig"
+-source "$BACKPORT_DIR/net/mac80211/Kconfig"
+-source "$BACKPORT_DIR/net/bluetooth/Kconfig"
+-source "$BACKPORT_DIR/drivers/net/wireless/Kconfig"
+-source "$BACKPORT_DIR/drivers/net/ethernet/Kconfig"
+-source "$BACKPORT_DIR/drivers/net/usb/Kconfig"
+-
+-source "$BACKPORT_DIR/drivers/ssb/Kconfig"
+-source "$BACKPORT_DIR/drivers/bcma/Kconfig"
+-
+-source "$BACKPORT_DIR/net/nfc/Kconfig"
+-
+-source "$BACKPORT_DIR/drivers/media/Kconfig"
+-
+-source "$BACKPORT_DIR/net/ieee802154/Kconfig"
+-source "$BACKPORT_DIR/net/mac802154/Kconfig"
+-source "$BACKPORT_DIR/drivers/net/ieee802154/Kconfig"
+-
+-source "$BACKPORT_DIR/drivers/usb/class/Kconfig"
+diff --git a/backport/Kconfig.package b/backport/Kconfig.package
+new file mode 100644
+index 0000000..c507de4
+--- /dev/null
++++ b/backport/Kconfig.package
+@@ -0,0 +1,32 @@
++mainmenu "Backports from $BACKPORTED_KERNEL_NAME $BACKPORTED_KERNEL_VERSION (backports $BACKPORTS_VERSION)"
++
++config BACKPORT_DIR
++	string
++	option env="BACKPORT_DIR"
++config BACKPORTS_VERSION
++	string
++	option env="BACKPORTS_VERSION"
++config BACKPORTED_KERNEL_VERSION
++	string
++	option env="BACKPORTED_KERNEL_VERSION"
++config BACKPORTED_KERNEL_NAME
++	string
++	option env="BACKPORTED_KERNEL_NAME"
++
++# some hacks for when we use backports to generate a package
++# to build modules out of tree.
++#ignore-parser-package
++config WIRELESS
++	def_bool y
++#ignore-parser-package
++config NET_CORE
++	def_bool y
++#ignore-parser-package
++config EXPERT
++	def_bool y
++
++source "$BACKPORT_DIR/Kconfig.sources"
++
++# these will be generated
++source "$BACKPORT_DIR/Kconfig.kernel"
++source "$BACKPORT_DIR/Kconfig.versions"
+diff --git a/backport/Kconfig.sources b/backport/Kconfig.sources
+new file mode 100644
+index 0000000..cdf993c
+--- /dev/null
++++ b/backport/Kconfig.sources
+@@ -0,0 +1,23 @@
++# this has the configuration for the backport code
++source "$BACKPORT_DIR/compat/Kconfig"
++
++# these are copied from the kernel
++source "$BACKPORT_DIR/net/wireless/Kconfig"
++source "$BACKPORT_DIR/net/mac80211/Kconfig"
++source "$BACKPORT_DIR/net/bluetooth/Kconfig"
++source "$BACKPORT_DIR/drivers/net/wireless/Kconfig"
++source "$BACKPORT_DIR/drivers/net/ethernet/Kconfig"
++source "$BACKPORT_DIR/drivers/net/usb/Kconfig"
++
++source "$BACKPORT_DIR/drivers/ssb/Kconfig"
++source "$BACKPORT_DIR/drivers/bcma/Kconfig"
++
++source "$BACKPORT_DIR/net/nfc/Kconfig"
++
++source "$BACKPORT_DIR/drivers/media/Kconfig"
++
++source "$BACKPORT_DIR/net/ieee802154/Kconfig"
++source "$BACKPORT_DIR/net/mac802154/Kconfig"
++source "$BACKPORT_DIR/drivers/net/ieee802154/Kconfig"
++
++source "$BACKPORT_DIR/drivers/usb/class/Kconfig"
+diff --git a/gentree.py b/gentree.py
+index 3d4a8b4..860bb71 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -746,11 +746,27 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+     check_output_dir(args.outdir, args.clean)
+ 
+     # do the copy
++    backport_package_files = [(x, x) for x in [
++        'Makefile',
++        'kconf/',
++        'Makefile.real',
++        'Makefile.kernel',
++        'scripts/',
++        '.blacklist.map',
++        '.gitignore',
++        'Makefile.build'] ]
++    backport_package_files += [
++            ('Kconfig.package', 'Kconfig'),
++            ]
+     backport_files = [(x, x) for x in [
+-        'Kconfig', 'Makefile', 'Makefile.build', 'Makefile.kernel', '.gitignore',
+-        'Makefile.real', 'compat/', 'backport-include/', 'kconf/',
+-        'scripts/', '.blacklist.map',
++        'Kconfig.sources',
++        'compat/',
++        'backport-include/',
+     ]]
++
++    if not integrate:
++        backport_files += backport_package_files
++
+     if not args.git_revision:
+         logwrite('Copy original source files ...')
+     else:
+-- 
+2.1.1
 
-I do see I on the package with this on the Makfile though:
-
-
-compat-$(CONFIG_BACKPORT_BACKPORT_BUILD_AVERAGE) += lib-average.o
-
-Would it not suffice to just ensure we don't have BACKPORT_BACKPORT_
-here and just BACKPORT_ once ?
-
-  Luis
