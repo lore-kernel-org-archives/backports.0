@@ -1,41 +1,86 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f182.google.com ([209.85.217.182]:37564 "EHLO
-	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161933AbaKNUxS (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 14 Nov 2014 15:53:18 -0500
-MIME-Version: 1.0
-In-Reply-To: <1415998228.1847.3.camel@sipsolutions.net>
-References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com> <1415998228.1847.3.camel@sipsolutions.net>
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:59566 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752509AbaKDIng (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 4 Nov 2014 03:43:36 -0500
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Fri, 14 Nov 2014 12:52:56 -0800
-Message-ID: <CAB=NE6X_d68Wc=CFAMb_suWJJQgSOSNafHiMwAmC6YhJFEtP1w@mail.gmail.com> (sfid-20141114_215321_415749_E78B5BF4)
-Subject: Re: [PATCH v3 00/21] backports: add kernel integration support
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Yann E. MORIN" <yann.morin.1998@free.fr>,
-	Michal Marek <mmarek@suse.cz>,
-	Stefan Assmann <sassmann@kpanic.de>
-Content-Type: text/plain; charset=UTF-8
+To: backports@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
+	mmarek@suse.cz, sassmann@kpanic.de,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: [PATCH v1 06/11] backports: update dependencies map file
+Date: Tue,  4 Nov 2014 00:42:57 -0800
+Message-Id: <1415090582-14129-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20141104_094355_048406_31001020)
+In-Reply-To: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Nov 14, 2014 at 12:50 PM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Tue, 2014-11-11 at 00:14 -0800, Luis R. Rodriguez wrote:
->> From: "Luis R. Rodriguez" <mcgrof@suse.com>
->>
->> This third series should hopefully address all pending feedback.
->> I've split out patches even more, but more importantly have
->> made the parser simpler by both integrating the logic required
->> to understand a backport by identifying the backport by type
->> and strategy, sharing that, and then providing ignore lists on
->> the parsers.
->
-> I think from a code change POV I should be OK with this, but I'll
-> definitely want to run it and see the differences. I'll have to do that
-> next week, it's getting late here.
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-OK. So I shouldn't merge yet?
+During development of kernel integration support using CONFIG_BACKPORT
+was evaluated as a prefix over CPTCFG even for packaging backports,
+for some reason this change lifted some restrictions one some device
+drivers which was present before and as such requires some changes to
+the dependencies map file to ensure correct compilation for respective
+kernel versions.
 
-  Luis
+Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
+---
+ dependencies | 31 +++++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
+
+diff --git a/dependencies b/dependencies
+index 4964aa6..64903dc 100644
+--- a/dependencies
++++ b/dependencies
+@@ -16,6 +16,8 @@ USB_GSPCA_OV534 3.5
+ # we only support on >= 3.4 give that reguatory itself depends
+ # on -EPROBE_DEFER.
+ SOC_CAMERA 3.4
++VIDEO_S5K5BAF 3.4
++VIDEO_S5K4ECGX 3.4
+ # 49920bc6 and 1003cab8 and while it seems there is a
+ # one to one map DMA_FROM_DEVICE to DMA_DEV_TO_MEM
+ # I can't verify this fully yet.
+@@ -29,16 +31,29 @@ DVB_USB_RTL28XXU 3.4
+ # missing linux/gpio/consumer.h
+ VIDEO_ADV7604 3.13
+ # missing function clk_prepare_enable(), clk_disable_unprepare() and devm_regulator_bulk_get()
+-VIDEO_MT9P031 3.3
+-VIDEO_MT9T001 3.3
+ VIDEO_MT9V032 3.3
+-VIDEO_NOON010PC30 3.3
+-VIDEO_S5K6A3 3.3
+ VIDEO_S5K6AA 3.3
+-VIDEO_S5K5BAF 3.3
+-VIDEO_S5K4ECGX 3.3
+-VIDEO_M5MOLS 3.3
+-VIDEO_S5C73M3 3.3
++
++# missing devm_regulator_bulk_get
++VIDEO_MT9T001 3.5
++VIDEO_NOON010PC30 3.5
++VIDEO_MT9P031 3.5
++
++# missing of_property_read_bool() added via fa4d34cc on v3.4-rc1~71, backport
++# that attomically and you can enable this for older kernels.
++VIDEO_ADV7343 3.4
++
++# for whoever wants to backport this: GPIOF_EXPORT was redefined via commit
++# 79a9becd on v3.13-rc1~120^2~15, before this it was redefined via commit
++# f567fde2 on v3.5-rc7~32^2~4 and finally added via commit fc3a1f04 on
++# v3.5-rc1~93^2~25. We don't address any of these changes yet so we require
++# the latest interpretation.
++VIDEO_S5K6AA 3.13
++VIDEO_S5K6A3 3.13
++
++# missing linux/sizes.h
++VIDEO_M5MOLS 3.6
++VIDEO_S5C73M3 3.6
+ 
+ # missing function devm_regmap_init_i2c()
+ VIDEO_LM3646 3.3
+-- 
+2.1.1
+
