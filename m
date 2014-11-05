@@ -1,72 +1,76 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:37694 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751221AbaKPUtl (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 16 Nov 2014 15:49:41 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:53099 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752039AbaKEDSo (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 4 Nov 2014 22:18:44 -0500
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 13/20] backports: add genl_notify()
-Date: Sun, 16 Nov 2014 21:49:13 +0100
-Message-Id: <1416170960-12868-14-git-send-email-hauke@hauke-m.de> (sfid-20141116_221347_348461_96405E67)
-In-Reply-To: <1416170960-12868-1-git-send-email-hauke@hauke-m.de>
-References: <1416170960-12868-1-git-send-email-hauke@hauke-m.de>
+Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
+	mmarek@suse.cz, sassmann@kpanic.de,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: [PATCH v2 00/13] backports: add kernel integration support
+Date: Tue,  4 Nov 2014 19:18:24 -0800
+Message-Id: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20141105_041847_129162_4AE6DFE9)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is needed by mac80211_hwsim.
-The code was copied from kernel 3.4.
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/net/genetlink.h |  5 +++++
- backport/compat/compat-3.3.c              | 13 +++++++++++++
- 2 files changed, 18 insertions(+)
+Here's a v2 series on kernel integration support. This addresses
+the expresed concerns over killing the versions file for packaging.
+While at it it also addresses avoiding the double prefix issue
+by prefixing the things we carry over with the copy trick with
+BPAUTO, and removing the BACKPORT prefix all together from the
+kernel versions we backport.
 
-diff --git a/backport/backport-include/net/genetlink.h b/backport/backport-include/net/genetlink.h
-index fc7eff4..0535b0f 100644
---- a/backport/backport-include/net/genetlink.h
-+++ b/backport/backport-include/net/genetlink.h
-@@ -1,6 +1,7 @@
- #ifndef __BACKPORT_NET_GENETLINK_H
- #define __BACKPORT_NET_GENETLINK_H
- #include_next <net/genetlink.h>
-+#include <linux/version.h>
- 
- /* this is for patches we apply */
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
-@@ -85,6 +86,10 @@ _genl_register_family_with_ops_grps(struct genl_family *family,
- #define genl_unregister_family backport_genl_unregister_family
- int genl_unregister_family(struct genl_family *family);
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
-+extern void genl_notify(struct sk_buff *skb, struct net *net, u32 pid,
-+			u32 group, struct nlmsghdr *nlh, gfp_t flags);
-+#endif
- #define genl_notify(_fam, _skb, _net, _portid, _group, _nlh, _flags)	\
- 	genl_notify(_skb, _net, _portid, (_fam)->mcgrps[_group].id,	\
- 		    _nlh, _flags)
-diff --git a/backport/compat/compat-3.3.c b/backport/compat/compat-3.3.c
-index 7ddc2bd..490c29b 100644
---- a/backport/compat/compat-3.3.c
-+++ b/backport/compat/compat-3.3.c
-@@ -224,3 +224,16 @@ void backport_destroy_workqueue(struct workqueue_struct *wq)
- 	spin_unlock(&wq_name_lock);
- }
- EXPORT_SYMBOL_GPL(backport_destroy_workqueue);
-+
-+void genl_notify(struct sk_buff *skb, struct net *net, u32 pid, u32 group,
-+		 struct nlmsghdr *nlh, gfp_t flags)
-+{
-+	struct sock *sk = net->genl_sock;
-+	int report = 0;
-+
-+	if (nlh)
-+		report = nlmsg_report(nlh);
-+
-+	nlmsg_notify(sk, skb, pid, group, report, flags);
-+}
-+EXPORT_SYMBOL_GPL(genl_notify);
+Luis R. Rodriguez (13):
+  backports: move legacy and SmPL patch application into helper
+  backports: ifdef around module_init() module_exit() for modules
+  backports: allow for different backport prefix
+  backports: replace BACKPORT_PWD with BACKPORT_DIR
+  backports: use BACKPORT_DIR prefix on kconfig sources
+  backports: update dependencies map file
+  backports: split Kconfig into Kconfig.package and Kconfig.sources
+  backports: move version file generation to run earlier
+  backports: define C code backport version info using CPTCFG_
+  backports: add backport version parsing for kernel integration
+  backports: prefix c-file / h-file auto backport with BPAUTO
+  backports: remove extra BACKPORT_ prefix from kernel versioning
+  backports: add full kernel integration support
+
+ backport/Kconfig                                   |  47 --
+ backport/Kconfig.integrate                         |  36 ++
+ backport/Kconfig.package                           |  32 ++
+ backport/Kconfig.sources                           |  23 +
+ backport/Makefile                                  |   8 +-
+ backport/Makefile.build                            |   4 +-
+ backport/Makefile.kernel                           |  19 +-
+ backport/Makefile.real                             |   2 +-
+ backport/backport-include/asm/dma-mapping.h        |   4 +-
+ backport/backport-include/backport/backport.h      |   5 +
+ backport/backport-include/backport/leds-disabled.h |   2 +-
+ backport/backport-include/linux/module.h           |   8 +-
+ backport/compat/Kconfig                            |  84 ++--
+ backport/compat/Makefile                           |  42 +-
+ backport/compat/backports.h                        |   4 +-
+ backport/compat/main.c                             |  40 +-
+ backport/scripts/uninstall.sh                      |   4 +-
+ dependencies                                       |  31 +-
+ devel/doc/kconfig-operation                        |  13 +-
+ gentree.py                                         | 487 +++++++++++++--------
+ .../0001-enable-backports-built-in.patch           |  40 ++
+ lib/bpversion.py                                   |  48 ++
+ lib/kconfig.py                                     | 164 ++++++-
+ patches/backport-adjustments/devcoredump.patch     |   4 +-
+ .../media/0002-no_dmabuf/v4l2.patch                |   6 +-
+ 25 files changed, 800 insertions(+), 357 deletions(-)
+ delete mode 100644 backport/Kconfig
+ create mode 100644 backport/Kconfig.integrate
+ create mode 100644 backport/Kconfig.package
+ create mode 100644 backport/Kconfig.sources
+ create mode 100644 integration-patches/0001-enable-backports/0001-enable-backports-built-in.patch
+ create mode 100644 lib/bpversion.py
+
 -- 
-1.9.1
+2.1.1
 
