@@ -1,44 +1,64 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:35967 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751151AbaKEWWr (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 5 Nov 2014 17:22:47 -0500
-Date: Wed, 5 Nov 2014 23:22:46 +0100
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
-Subject: Re: [PATCH v2 05/13] backports: use BACKPORT_DIR prefix on kconfig
-	sources
-Message-ID: <20141105222246.GT12953@wotan.suse.de> (sfid-20141105_232249_591794_B46D8CB6)
-References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com> <1415157517-15442-6-git-send-email-mcgrof@do-not-panic.com> <1415173905.2589.5.camel@sipsolutions.net> <20141105201105.GO12953@wotan.suse.de> <1415222354.7485.12.camel@sipsolutions.net>
+Received: from mail-lb0-f179.google.com ([209.85.217.179]:60151 "EHLO
+	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750796AbaKEXQL (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 5 Nov 2014 18:16:11 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1415222354.7485.12.camel@sipsolutions.net>
+In-Reply-To: <20141105230907.GD12538@two.firstfloor.org>
+References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
+ <1415157517-15442-4-git-send-email-mcgrof@do-not-panic.com>
+ <1415173596.2589.3.camel@sipsolutions.net> <20141105091610.GM12953@wotan.suse.de>
+ <1415179364.2589.13.camel@sipsolutions.net> <20141105194215.GN12953@wotan.suse.de>
+ <1415222258.7485.10.camel@sipsolutions.net> <20141105222159.GS12953@wotan.suse.de>
+ <20141105230907.GD12538@two.firstfloor.org>
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
+Date: Wed, 5 Nov 2014 15:15:48 -0800
+Message-ID: <CAB=NE6Wu7gFh+_1ebiaWCq2cUt_SnCMB-+1Xv9ZuZtBafdg0Vg@mail.gmail.com> (sfid-20141106_001613_575163_74A99C6D)
+Subject: Re: [PATCH v2 03/13] backports: allow for different backport prefix
+To: Andi Kleen <andi@firstfloor.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Yann E. MORIN" <yann.morin.1998@free.fr>,
+	Michal Marek <mmarek@suse.cz>,
+	Stefan Assmann <sassmann@kpanic.de>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Nov 05, 2014 at 10:19:14PM +0100, Johannes Berg wrote:
-> On Wed, 2014-11-05 at 21:11 +0100, Luis R. Rodriguez wrote:
-> 
-> > This does mean that bp_prefix topic *can* also be tied down
-> > with this other directory prefix as a form of 'builder' for
-> > integration. Making the prefix configurable would make sense
-> > then only if also making the directory prefix should be
-> > configurable.
-> 
-> Indeed.
-> 
-> > I think we're better off right now with just supporting two
-> > approaches with their own directory prefix, and prefixes
-> > for variables.
-> 
-> Sure, that's fine. I have no issues with either, but I'd like to see the
-> two cases actually combined and separated, in the sense that you don't
-> have magic code that tries both and just succeeds on one, but only have
-> code that tries the right thing.
+On Wed, Nov 5, 2014 at 3:09 PM, Andi Kleen <andi@firstfloor.org> wrote:
+>> You know, this use case seems unavoidable so I'll just proceed with the
+>> configurability of it. But note that it seems we're both in agreement
+>> that right now what you described requires more work before in any way
+>> shape or form folks start using it for the exact purpose you described.
+>> I also think Andi Kleen's module namespace might be a much better solution to
+>> that problem [0], we'd just have to carry the code ourselves as I am not
+>
+> Just to clarify. My name spaces didn't really provide different
+> name spaces (like C++), it just added a ACL to exports to make it possible
+> to do "export only to module N". But the name space itself
+> was still flat
 
-Fair enough.
+Indeed that is how I understood it and the use case in mind for
+backporting different subsystems from different future versions of
+Linux to an older one might be a use case here (although insane).
+
+> On the linker side doing real name spaces is probably not too hard,
+> but it would be difficult for linked in code without special linker
+> support.
+
+Good to know, perhaps useful for folks who really do consider
+embarking on this strategy with backports (although I don't recommend
+it).
+
+>> sure if this is ever going to get upstream as it was originally nacked.
+>
+> May need to revisit that.
+
+The only thing that was not clear to me from reviewing the module
+namespace stuff a while ago was the original intent, but I confess I
+actually only looked at the technical details to see if it was
+applicable to the backports case, do you recall the original
+motivation ?
 
  Luis
