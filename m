@@ -1,54 +1,49 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:37145 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750857AbaKPNO1 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 16 Nov 2014 08:14:27 -0500
-Message-ID: <5468A330.70802@hauke-m.de> (sfid-20141116_141430_694335_0BBAABFB)
-Date: Sun, 16 Nov 2014 14:14:24 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from one.firstfloor.org ([193.170.194.197]:43376 "EHLO
+	one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750879AbaKEXJK (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 5 Nov 2014 18:09:10 -0500
+Date: Thu, 6 Nov 2014 00:09:07 +0100
+From: Andi Kleen <andi@firstfloor.org>
+To: "Luis R. Rodriguez" <mcgrof@suse.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>, andi@firstfloor.org,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
+Subject: Re: [PATCH v2 03/13] backports: allow for different backport prefix
+Message-ID: <20141105230907.GD12538@two.firstfloor.org> (sfid-20141106_000912_421030_CF41C434)
+References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
+ <1415157517-15442-4-git-send-email-mcgrof@do-not-panic.com>
+ <1415173596.2589.3.camel@sipsolutions.net>
+ <20141105091610.GM12953@wotan.suse.de>
+ <1415179364.2589.13.camel@sipsolutions.net>
+ <20141105194215.GN12953@wotan.suse.de>
+ <1415222258.7485.10.camel@sipsolutions.net>
+ <20141105222159.GS12953@wotan.suse.de>
 MIME-Version: 1.0
-To: Felix Fietkau <nbd@openwrt.org>, backports@vger.kernel.org
-Subject: Re: [PATCH 3/3] backports: backport devm_kmemdup
-References: <1415911780-52533-1-git-send-email-nbd@openwrt.org> <1415911780-52533-3-git-send-email-nbd@openwrt.org>
-In-Reply-To: <1415911780-52533-3-git-send-email-nbd@openwrt.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20141105222159.GS12953@wotan.suse.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 11/13/2014 09:49 PM, Felix Fietkau wrote:
-> Signed-off-by: Felix Fietkau <nbd@openwrt.org>
-> ---
->  backport/backport-include/linux/device.h | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
-> index 41f06c3..429df37 100644
-> --- a/backport/backport-include/linux/device.h
-> +++ b/backport/backport-include/linux/device.h
-> @@ -177,4 +177,20 @@ static inline void *devm_kmalloc_array(struct device *dev,
->  }
->  #endif
->  
-> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0)
+> You know, this use case seems unavoidable so I'll just proceed with the
+> configurability of it. But note that it seems we're both in agreement
+> that right now what you described requires more work before in any way
+> shape or form folks start using it for the exact purpose you described.
+> I also think Andi Kleen's module namespace might be a much better solution to
+> that problem [0], we'd just have to carry the code ourselves as I am not
 
-devm_kmemdup() is not available in kernel 3.15, you should use
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+Just to clarify. My name spaces didn't really provide different
+name spaces (like C++), it just added a ACL to exports to make it possible
+to do "export only to module N". But the name space itself
+was still flat
 
-> +#define devm_kmemdup LINUX_BACKPORT(devm_kmemdup)
-> +static inline void *devm_kmemdup(struct device *dev, const void *src,
-> +				 size_t len, gfp_t gfp)
-> +{
-> +	void *p;
-> +
-> +	p = devm_kmalloc(dev, len, gfp);
-> +	if (p)
-> +		memcpy(p, src, len);
-> +
-> +	return p;
-> +}
-> +#endif
-> +
-> +
->  #endif /* __BACKPORT_DEVICE_H */
-> 
+On the linker side doing real name spaces is probably not too hard,
+but it would be difficult for linked in code without special linker
+support.
 
+> sure if this is ever going to get upstream as it was originally nacked.
+
+May need to revisit that.
+
+-Andi
