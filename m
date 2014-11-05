@@ -1,97 +1,151 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:60186 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752976AbaKKIQP (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 11 Nov 2014 03:16:15 -0500
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
-	mmarek@suse.cz, sassmann@kpanic.de,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH v3 12/21] backports: make kconfig src_line backport / ConfigTree specific
-Date: Tue, 11 Nov 2014 00:15:03 -0800
-Message-Id: <1415693712-23743-13-git-send-email-mcgrof@do-not-panic.com> (sfid-20141111_091846_569513_8A5D4FE2)
-In-Reply-To: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from cantor2.suse.de ([195.135.220.15]:60681 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751322AbaKETmR (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 5 Nov 2014 14:42:17 -0500
+Date: Wed, 5 Nov 2014 20:42:15 +0100
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
+Subject: Re: [PATCH v2 03/13] backports: allow for different backport prefix
+Message-ID: <20141105194215.GN12953@wotan.suse.de> (sfid-20141105_204219_800058_8E20DD1A)
+References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com> <1415157517-15442-4-git-send-email-mcgrof@do-not-panic.com> <1415173596.2589.3.camel@sipsolutions.net> <20141105091610.GM12953@wotan.suse.de> <1415179364.2589.13.camel@sipsolutions.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1415179364.2589.13.camel@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+On Wed, Nov 05, 2014 at 10:22:44AM +0100, Johannes Berg wrote:
+> On Wed, 2014-11-05 at 10:16 +0100, Luis R. Rodriguez wrote:
+> 
+> > > IMHO this would be better handled in the code that uses the return value
+> > > to add things to the Kconfig dependencies, there you could just go
+> > >   if integrate:
+> > >     deplist[sym] = ["BACKPORT_" + x for x in new]
+> > >   else:
+> > >     deplist[sym] = new
+> > 
+> > I like it, thanks.
+> > 
+> > I will note how you still provided "BACKPORT_" here rather than the prefix,
+> > that's why I did the sub thing, but I'm more inclined to remove the dynamic
+> > nature of the prefix for integration. Not sure why that'd be a good idea
+> > and could only make things harder to support / change in the future as
+> > we are learning with CPTCFG_.
+> > 
+> > Thoughts?
+> 
+> I think the splitting of bp_kconf_prefix and bp_prefix I suggested would
+> help. Now that I look at it again, the names don't really make sense
+> though.
+> 
+> > > > @@ -838,7 +863,7 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+> > > >          for f in files:
+> > > >              data = open(os.path.join(root, f), 'r').read()
+> > > >              for r in regexes:
+> > > > -                data = r.sub(r'CPTCFG_\1', data)
+> > > > +                data = r.sub(r'' + bp_prefix + '\\1', data)
+> > > 
+> > > technically, that should be re.escape(bp_prefix)
+> > 
+> > We want to support bp_prefix having a regexp ? Sorry I didn't get that.
+> 
+> No, I mean if bp_prefix were to contain some special character like [.
+> This can't actually happen though.
 
-The kconfig source line used on a backport project is very
-project specific. For backport packaging the source line simply
-should follow the full path of the project but for integration
-this will vary depending on the backport prefix directory used.
-We'll add support for that next.
+OK if that can't happen then I don't see the point.
 
-$ time /home/mcgrof/backports/devel/ckmake --allyesconfig
-1   3.0.101             [  OK  ]
-2   3.1.10              [  OK  ]
-3   3.2.62              [  OK  ]
-4   3.3.8               [  OK  ]
-5   3.4.104             [  OK  ]
-6   3.5.7               [  OK  ]
-7   3.6.11              [  OK  ]
-8   3.7.10              [  OK  ]
-9   3.8.13              [  OK  ]
-10  3.9.11              [  OK  ]
-11  3.10.58             [  OK  ]
-12  3.11.10             [  OK  ]
-13  3.12.31             [  OK  ]
-14  3.13.11             [  OK  ]
-15  3.14.22             [  OK  ]
-16  3.15.10             [  OK  ]
-17  3.16.6              [  OK  ]
-18  3.17.1              [  OK  ]
-19  3.18-rc1            [  OK  ]
+> > > (btw, it might be clearer if you used %s instead of +'ing the bp_prefix
+> > > in)
+> > 
+> > Wasn't quite sure how'd well that'd look with the r'' prefix thing, and
+> > still not sure, r.sub(r"%s\\1" % bp_prefix, data) ? If so that looks rather
+> > like hell to me.
+> 
+> Ok sure :) + is fine with me.
 
-real    43m56.439s
-user    1187m4.516s
-sys     138m53.328s
+:)
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
----
- lib/kconfig.py | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> > > > +    def _mod_kconfig_line(self, l, orig_symbols, bp_prefix):
+> > > > +        if bp_prefix != 'CPTCFG_':
+> > > > +            prefix = re.sub(r'^CONFIG_(.*)', r'\1', bp_prefix)
+> > > 
+> > > Another case like above ... maybe you should have bp_prefix and
+> > > bp_kconf_prefix separately. Actually that seems like a good idea.
+> > > bp_kconf_prefix is empty for the backport package case, so you could add
+> > > it in unconditionally, and bp_prefix would be CONFIG_
+> > 
+> > You mean CONFIG_BACKPORT_ ?
+> 
+> No, I did mean CONFIG_. One prefix for kconfig, and one prefix for
+> "additional renaming".
+> 
+> The names I gave them here were really bad though. Maybe
+> bp_prefix = "CONFIG_"
+> additional_prefix = "BACKPORT_"
+>
+> (or bp_prefix = "CPTCFG_" / additional_prefix = "")
+> 
+> or so?
 
-diff --git a/lib/kconfig.py b/lib/kconfig.py
-index f348d4a..ac96613 100644
---- a/lib/kconfig.py
-+++ b/lib/kconfig.py
-@@ -4,7 +4,6 @@
- 
- import os, re
- 
--src_line = re.compile(r'^\s*source\s+"(?P<src>[^\s"]*)"?\s*$')
- src_line_rel = re.compile(r'^\s*source\s+(?P<src>[^\s"]*)"?\s*$')
- tri_line = re.compile(r'^(?P<spc>\s+)tristate')
- bool_line = re.compile(r'^(?P<spc>\s+)bool')
-@@ -16,6 +15,7 @@ class ConfigTree(object):
-     def __init__(self, rootfile, bpid):
-         self.bpid = bpid
-         self.rootfile = os.path.basename(rootfile)
-+        self.src_line = re.compile(r'^\s*source\s+"(?P<src>[^\s"]*)"?\s*$')
- 
-     def _check_relative_source(self, f, l):
-     #
-@@ -31,7 +31,7 @@ class ConfigTree(object):
-     def _walk(self, f):
-         yield f
-         for l in open(os.path.join(self.bpid.target_dir, f), 'r'):
--            m = src_line.match(l)
-+            m = self.src_line.match(l)
-             if m and os.path.exists(os.path.join(self.bpid.target_dir, m.group('src'))):
-                 for i in self._walk(m.group('src')):
-                     yield i
-@@ -42,7 +42,7 @@ class ConfigTree(object):
-         for nf in self._walk(f):
-             out = ''
-             for l in open(os.path.join(self.bpid.target_dir, nf), 'r'):
--                m = src_line.match(l)
-+                m = self.src_line.match(l)
-                 if not m:
-                     self._check_relative_source(nf, l)
-                     out += l
--- 
-2.1.1
+How about:
 
+if integrate:
+	kconfig_prefix = "CONFIG_"
+	project_prefix = "BACKPORT_"
+else:
+	kconfig_prefix = "CPTCFG_"
+	# implied by kconfig_prefix
+	project_prefix = ""
+full_prefix = kconfig_prefix + project_prefix
+
+But note that we special case things all over for when the bp_prefix is 'CPTCFG'
+and the reason is that it is used when the kconfig getenv trick is used. I suppose
+we can infer that the kconfig trick is used when kconfig_prefix != 'CONFIG_' though.
+But the question still stands: why do we want to make these configurable? As it
+stands I actually hard code things mostly, I can clean this up but would prefer
+to deal with just the above.
+
+Also note that in some places we use BACKPORT vs BACKPORT_ so a sub or another
+variable would be needed.
+
+> > > or CPTCFG_ for the
+> > > two cases. Yes, I think that would make a lot of sense and allow you to
+> > > get rid of this regular expression magic while making the code easier to
+> > > read/understand.
+> > 
+> > Once this is clear sure, I do prefer it but only once we evaluate if we
+> > really need to make the prefixes configurable.
+> 
+> Yeah I guess we don't really, but I'd also hate to hardcode BACKPORT_
+> everywhere?
+
+As it stands in the v2 series packaging gets no BACKPORT_ prefix as the
+kconfig getenv() CTPCFG_ trick is used, however for integration we
+do add the prefix everywhere as we are carrying code into the kernel,
+we then use this to easily make this symbol depend on the non backported
+respective symbol making them mutually exclusive. Because of these two
+things I think a BACKPORT_ prefix for things we carry in is proper. This
+applies to the BACKPORT_BPAUTO and versioning entries, BACKPORT_KERNEL_3_18
+and so on.
+
+I am not sure what other prefix we could possibly use here for integration.
+
+> > > > +    def adjust_backported_configs(self, integrate, orig_symbols, bp_prefix):
+> > > 
+> > > This is only used for integrated though, no?
+> > 
+> > Right now yes, but I'm hinting that perhaps it should also be used for
+> > packaging since it deals with negating a symbol if its built-in on
+> > the kernel already. There should be other ways to do this for packaging,
+> > the checks.h does it but that's just for two modules, we should be doing
+> > this for much other symbols as well.
+> 
+> Yeah that might be worthwhile.
+
+If CPTCFG was dropped, as I had orignally proposed this would be shared :)
+
+  Luis
