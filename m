@@ -1,39 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ie0-f169.google.com ([209.85.223.169]:65407 "EHLO
-	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757848AbaKSWIG convert rfc822-to-8bit (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 19 Nov 2014 17:08:06 -0500
-Received: by mail-ie0-f169.google.com with SMTP id y20so1538121ier.14
-        for <backports@vger.kernel.org>; Wed, 19 Nov 2014 14:08:06 -0800 (PST)
+Received: from cantor2.suse.de ([195.135.220.15]:35998 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750873AbaKEWX7 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 5 Nov 2014 17:23:59 -0500
+Date: Wed, 5 Nov 2014 23:23:58 +0100
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
+Subject: Re: [PATCH v2 06/13] backports: update dependencies map file
+Message-ID: <20141105222357.GU12953@wotan.suse.de> (sfid-20141105_232401_501598_72FC495C)
+References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com> <1415157517-15442-7-git-send-email-mcgrof@do-not-panic.com> <1415174051.2589.6.camel@sipsolutions.net> <20141105201326.GP12953@wotan.suse.de> <1415222401.7485.13.camel@sipsolutions.net>
 MIME-Version: 1.0
-Date: Wed, 19 Nov 2014 23:08:06 +0100
-Message-ID: <CACna6rxs6BOJh7dxBKYAeee-vtgr7s9iU5_MiEMc3-3Tf4S4zg@mail.gmail.com> (sfid-20141119_230810_768858_EA0418D4)
-Subject: Including a comparable backported kernel version (number)?
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-To: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1415222401.7485.13.camel@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hello!
+On Wed, Nov 05, 2014 at 10:20:01PM +0100, Johannes Berg wrote:
+> On Wed, 2014-11-05 at 21:13 +0100, Luis R. Rodriguez wrote:
+> > On Wed, Nov 05, 2014 at 08:54:11AM +0100, Johannes Berg wrote:
+> > > On Tue, 2014-11-04 at 19:18 -0800, Luis R. Rodriguez wrote:
+> > > > From: "Luis R. Rodriguez" <mcgrof@suse.com>
+> > > > 
+> > > > During development of kernel integration support using CONFIG_BACKPORT
+> > > > was evaluated as a prefix over CPTCFG even for packaging backports,
+> > > > for some reason this change lifted some restrictions one some device
+> > > > drivers which was present before and as such requires some changes to
+> > > > the dependencies map file to ensure correct compilation for respective
+> > > > kernel versions.
+> > > 
+> > > This is confusing ... I think what you're trying to say is that you
+> > > noticed it because your integration system was broken and not honouring
+> > > restrictions properly?
+> > 
+> > No I verified each reported case I got and verified the issues found
+> > were valid. For some reason some of these drivers were not allowed to
+> > compile on some older versions, and from what me and Hauke could tell
+> > they should, but they weren't. So the new annotations on requirements
+> > are valid.
+> 
+> Right, ok, it's just a roundabout way of describing that you audited the
+> dependencies and found some unnecessary ones :-)
 
-As you know, Linux includes such a lovely define called
-LINUX_VERSION_CODE. It allows writing out-of-tree drivers that can
-compile against few different kernel versions.
+But I didn't do anything other than use a new prefix, and its not clear to
+me why this happened, the only thing that comes to mind is perhaps the use
+of the orig_symbols thing.
 
-While this is surely a rare case, some ppl may want to develop &
-compile out-of-tree drivers against... backports. Since there is
-cfg80211/mac80211 in backports, out-of-tree drivers may want to check
-for backported kernel version to decide which API version to use.
-
-An example may be acx100/acx-mac80211 driver and OpenWrt project.
-OpenWrt uses backports and acx code may need to be adjusted depending
-on the version of backported mac80211.
-
-Would it be sane/possible to add something like a LINUX_VERSION_CODE
-for backports? I noticed we already have BACKPORTS_VERSION,
-BACKPORTED_KERNEL_VERSION and BACKPORTED_KERNEL_NAME but they are all
-strings.
-
--- 
-Rafał
+ Luis
