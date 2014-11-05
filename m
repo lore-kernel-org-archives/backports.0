@@ -1,101 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:61947 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753107AbaKKIQd (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 11 Nov 2014 03:16:33 -0500
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
-	mmarek@suse.cz, sassmann@kpanic.de,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH v3 16/21] backports: move version file generation to run earlier
-Date: Tue, 11 Nov 2014 00:15:07 -0800
-Message-Id: <1415693712-23743-17-git-send-email-mcgrof@do-not-panic.com> (sfid-20141111_091803_315027_29763C8A)
-In-Reply-To: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from s3.sipsolutions.net ([5.9.151.49]:60492 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751477AbaKEIMJ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 5 Nov 2014 03:12:09 -0500
+Message-ID: <1415175123.2589.10.camel@sipsolutions.net> (sfid-20141105_091212_563647_DB4E07AD)
+Subject: Re: [PATCH v1 10/11] backports: prefix c-file / h-file auto
+ backport with BPAUTO
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@suse.com>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
+Date: Wed, 05 Nov 2014 09:12:03 +0100
+In-Reply-To: <20141105080252.GK12953@wotan.suse.de>
+References: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1415090582-14129-11-git-send-email-mcgrof@do-not-panic.com>
+	 <1415096092.2064.13.camel@sipsolutions.net>
+	 <20141104215002.GF12953@wotan.suse.de>
+	 <1415137850.2064.23.camel@sipsolutions.net>
+	 <20141105002147.GJ12953@wotan.suse.de>
+	 <1415172590.2589.1.camel@sipsolutions.net>
+	 <20141105080252.GK12953@wotan.suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+On Wed, 2014-11-05 at 09:02 +0100, Luis R. Rodriguez wrote:
 
-The version file contains:
+> > But the *code* changes
+> > you're making here that check whether bp_prefix is being duplicated
+> > aren't necessary for that, and are in fact confusing and dangerous.
+> 
+> Understood, thanks for the review, hopefully this is addressed with the
+> latest series.
 
-  * BACKPORTS_VERSION
-  * BACKPORTED_KERNEL_VERSION
-  * BACKPORTED_KERNEL_NAME
+Actually, maybe you wanted these changes because you didn't want to end
+up with CONFIG_BACKPORT_BPAUTO_ for integration? I think that's a small
+price to pay though for code complexity trade-off, IMHO you should
+accept CONFIG_BACKPORT_BPAUTO_ and remove the code changes.
 
-This file is used by the Makefile to export variable
-definitions used to identify the backport. For kernel
-integration we'll be using a generated Kconfig file
-instead and since these are needed when processing
-kconfig logic this will need to be defined earlier.
-
-Just move the generation of the version file for packaging
-up early to match where we will generate the Kconfig with
-the backports versioning identification.
-
-This change has no real functional change other than the
-move of some code running earlier.
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
----
- gentree.py | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
-
-diff --git a/gentree.py b/gentree.py
-index 71e52e4..afa4967 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -843,6 +843,24 @@ def process(kerneldir, copy_list_file, git_revision=None,
-     git_debug_snapshot(args, 'Add driver sources')
- 
-     disable_list = add_automatic_backports(args)
-+    if git_tracked_version:
-+        backports_version = "(see git)"
-+        kernel_version = "(see git)"
-+    else:
-+        backports_version = git.describe(tree=source_dir, extra_args=['--long'])
-+        kernel_version = git.describe(rev=args.git_revision or 'HEAD',
-+                                      tree=args.kerneldir,
-+                                      extra_args=['--long'])
-+
-+    if not bpid.integrate:
-+        f = open(os.path.join(bpid.target_dir, 'versions'), 'w')
-+        f.write('BACKPORTS_VERSION="%s"\n' % backports_version)
-+        f.write('BACKPORTED_KERNEL_VERSION="%s"\n' % kernel_version)
-+        f.write('BACKPORTED_KERNEL_NAME="%s"\n' % args.base_name)
-+        if git_tracked_version:
-+            f.write('BACKPORTS_GIT_TRACKED="backport tracker ID: $(shell git rev-parse HEAD 2>/dev/null || echo \'not built in git tree\')"\n')
-+        f.close()
-+        git_debug_snapshot(args, "add versions files")
- 
-     if disable_list:
-         # No need to verify_sources() as compat's Kconfig has no 'source' call
-@@ -872,24 +890,6 @@ def process(kerneldir, copy_list_file, git_revision=None,
-     configtree.modify_selects()
-     git_debug_snapshot(args, "convert select to depends on")
- 
--    # write the versioning file
--    if git_tracked_version:
--        backports_version = "(see git)"
--        kernel_version = "(see git)"
--    else:
--        backports_version = git.describe(tree=source_dir, extra_args=['--long'])
--        kernel_version = git.describe(rev=args.git_revision or 'HEAD',
--                                      tree=args.kerneldir,
--                                      extra_args=['--long'])
--    f = open(os.path.join(bpid.target_dir, 'versions'), 'w')
--    f.write('BACKPORTS_VERSION="%s"\n' % backports_version)
--    f.write('BACKPORTED_KERNEL_VERSION="%s"\n' % kernel_version)
--    f.write('BACKPORTED_KERNEL_NAME="%s"\n' % args.base_name)
--    if git_tracked_version:
--        f.write('BACKPORTS_GIT_TRACKED="backport tracker ID: $(shell git rev-parse HEAD 2>/dev/null || echo \'not built in git tree\')"\n')
--    f.close()
--    git_debug_snapshot(args, "add versions files")
--
-     symbols = configtree.symbols()
- 
-     # write local symbol list -- needed during packaging build
--- 
-2.1.1
+johannes
 
