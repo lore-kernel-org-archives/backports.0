@@ -1,34 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:41363 "EHLO sipsolutions.net"
+Received: from s3.sipsolutions.net ([5.9.151.49]:38050 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750794AbaKPUIM (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 16 Nov 2014 15:08:12 -0500
-Message-ID: <1416168488.3624.0.camel@sipsolutions.net> (sfid-20141116_210814_054355_7B16D738)
-Subject: Re: [PATCH] backport: genl: add __genl_const for new hwsim mcast
- group
+	id S1751350AbaKEVVD (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 5 Nov 2014 16:21:03 -0500
+Message-ID: <1415222458.7485.14.camel@sipsolutions.net> (sfid-20141105_222106_014782_E89DEAC3)
+Subject: Re: [PATCH v2 09/13] backports: define C code backport version info
+ using CPTCFG_
 From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org
-Date: Sun, 16 Nov 2014 21:08:08 +0100
-In-Reply-To: <5467AFF9.5060809@hauke-m.de>
-References: <1415271730-19194-1-git-send-email-johannes@sipsolutions.net>
-	 <5467AFF9.5060809@hauke-m.de>
+To: "Luis R. Rodriguez" <mcgrof@suse.com>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
+Date: Wed, 05 Nov 2014 22:20:58 +0100
+In-Reply-To: <20141105202923.GR12953@wotan.suse.de>
+References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1415157517-15442-10-git-send-email-mcgrof@do-not-panic.com>
+	 <1415174245.2589.9.camel@sipsolutions.net>
+	 <20141105202923.GR12953@wotan.suse.de>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sat, 2014-11-15 at 20:56 +0100, Hauke Mehrtens wrote:
+On Wed, 2014-11-05 at 21:29 +0100, Luis R. Rodriguez wrote:
 
-> > +--- a/drivers/net/wireless/mac80211_hwsim.c
-> > ++++ b/drivers/net/wireless/mac80211_hwsim.c
+> > What difference does this make? It'll break some scripting that we have
+> > for sure (assuming the BACKPORTED_ prefix), so naturally I'd like to see
+> > why it is necessary.
 > 
-> The last two lines are wrong, now we have to of these in the patch.
+> Sure, let me explain. So if we don't unify we will have to end up with defines
+> for some packaging version scheme to another. The approach I took here was to
+> minimize impact on on userspace side generation side of things and only
+> affect the target C code by modifying the Makefile to define variables
+> we can share. That's pretty much it. I ended up defining things with
+> CPTCFG_ as that will get morphed to the other bp_prefix later for us
+> when integrating. That lets us share it.
+> 
+> Addressing this on scripts that do rely on touching C / H files should
+> just be a matter of doing a direct translation to 3 variables.
 
-Sorry, I guess patch was happy with it nonetheless, probably patching
-the file twice...
+In this particular case I'm not really sure I see why it needs to be
+morphed at all?
 
-Thanks for fixing it up.
+Anyway, I realized that the whole thing doesn't matter as much to me as
+I thought it does, we just have to adjust the one place that changes our
+versions file.
 
 johannes
 
