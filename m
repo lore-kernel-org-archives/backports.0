@@ -1,91 +1,85 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:38017 "EHLO sipsolutions.net"
+Received: from s3.sipsolutions.net ([5.9.151.49]:60084 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751827AbaKEVRo (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 5 Nov 2014 16:17:44 -0500
-Message-ID: <1415222258.7485.10.camel@sipsolutions.net> (sfid-20141105_221749_455378_7E19FA38)
-Subject: Re: [PATCH v2 03/13] backports: allow for different backport prefix
+	id S1751172AbaKEHvu (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 5 Nov 2014 02:51:50 -0500
+Message-ID: <1415173905.2589.5.camel@sipsolutions.net> (sfid-20141105_085152_879360_BDC027E6)
+Subject: Re: [PATCH v2 05/13] backports: use BACKPORT_DIR prefix on kconfig
+ sources
 From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@suse.com>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
-Date: Wed, 05 Nov 2014 22:17:38 +0100
-In-Reply-To: <20141105194215.GN12953@wotan.suse.de>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Date: Wed, 05 Nov 2014 08:51:45 +0100
+In-Reply-To: <1415157517-15442-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20141105_042146_840615_9D542D35)
 References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1415157517-15442-4-git-send-email-mcgrof@do-not-panic.com>
-	 <1415173596.2589.3.camel@sipsolutions.net>
-	 <20141105091610.GM12953@wotan.suse.de>
-	 <1415179364.2589.13.camel@sipsolutions.net>
-	 <20141105194215.GN12953@wotan.suse.de>
+	 <1415157517-15442-6-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20141105_042146_840615_9D542D35)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2014-11-05 at 20:42 +0100, Luis R. Rodriguez wrote:
+On Tue, 2014-11-04 at 19:18 -0800, Luis R. Rodriguez wrote:
 
-> > No, I mean if bp_prefix were to contain some special character like [.
-> > This can't actually happen though.
-> 
-> OK if that can't happen then I don't see the point.
+> @@ -21,23 +22,53 @@ class ConfigTree(object):
+>          yield f
+>          for l in open(os.path.join(self.basedir, f), 'r'):
+>              m = src_line.match(l)
+> -            if m and os.path.exists(os.path.join(self.basedir, m.group('src'))):
+> -                for i in self._walk(m.group('src')):
+> -                    yield i
+> +            if m:
+> +                bm = bk_src_line.match(l)
+> +                if bm:
+> +                    if os.path.exists(os.path.join(self.basedir, bm.group('src'))):
+> +                        for i in self._walk(os.path.join(self.basedir, bm.group('src'))):
+> +                            yield i
+> +                    elif os.path.exists(os.path.join(self.basedir, 'backports/' + bm.group('src'))):
+> +                        for i in self._walk(os.path.join(self.basedir, 'backports/' + bm.group('src'))):
+> +                            yield i
+> +                else:
+> +                    if os.path.exists(os.path.join(self.basedir, m.group('src'))):
+> +                        for i in self._walk(m.group('src')):
+> +                            yield i
 
-Where by "can't happen" I mean that Kconfig probably wouldn't be happy
-about it :-)
+Shouldn't this depend on "integrate" rather than on existence?
 
-> How about:
-> 
-> if integrate:
-> 	kconfig_prefix = "CONFIG_"
-> 	project_prefix = "BACKPORT_"
-> else:
-> 	kconfig_prefix = "CPTCFG_"
-> 	# implied by kconfig_prefix
-> 	project_prefix = ""
-> full_prefix = kconfig_prefix + project_prefix
+Ah, this is what you were alluding to in the commit log? The fact that
+you hardcode "backports/" into this? IMHO it would make more sense to
+pass in the "base" directory (either "backports/" or "") though, instead
+of making *that* depend on the existence of the directory as well.
 
-Yeah, this seems like decent naming.
+Remember, the existence check here serves to remove includes that cannot
+be satisfied; your existence check mixes in the differentiation between
+packaged and integrated, which doesn't seem right.
 
-> But note that we special case things all over for when the bp_prefix is 'CPTCFG'
-> and the reason is that it is used when the kconfig getenv trick is used. I suppose
-> we can infer that the kconfig trick is used when kconfig_prefix != 'CONFIG_' though.
-> But the question still stands: why do we want to make these configurable? As it
-> stands I actually hard code things mostly, I can clean this up but would prefer
-> to deal with just the above.
+Regardless of whether you make the "backports/" prefix configurable or
+not, you should pass it to this library function and use it
+unconditionally instead of trying to determine package vs. integrated
+from the existence of directories.
 
-I'm not sure where that's really the case? The one thing you did was use
-CPTCFG_ in some places like the version, but that was independent of
-this and could just be hardcoded there?
+ 
+>      def _prune_sources(self, f, ignore):
+>          for nf in self._walk(f):
+>              out = ''
+>              for l in open(os.path.join(self.basedir, nf), 'r'):
+> -                m = src_line.match(l)
+> -                if not m:
+> -                    out += l
+> -                    continue
+> -                src = m.group('src')
+> -                if src in ignore or os.path.exists(os.path.join(self.basedir, src)):
+> -                    out += l
+> +                bm = bk_src_line.match(l)
+> +                if bm:
+> +                    bp_src = bm.group('src')
+> +                    if bp_src in ignore or \
+> +                       os.path.exists(os.path.join(self.basedir, bp_src)) or \
+> +                       os.path.exists(os.path.join(self.basedir, 'backports/' + bp_src)):
 
-> Also note that in some places we use BACKPORT vs BACKPORT_ so a sub or another
-> variable would be needed.
-
-I also didn't see that, why would that ever be needed?
-
-> As it stands in the v2 series packaging gets no BACKPORT_ prefix as the
-> kconfig getenv() CTPCFG_ trick is used, however for integration we
-> do add the prefix everywhere as we are carrying code into the kernel,
-> we then use this to easily make this symbol depend on the non backported
-> respective symbol making them mutually exclusive. Because of these two
-> things I think a BACKPORT_ prefix for things we carry in is proper. This
-> applies to the BACKPORT_BPAUTO and versioning entries, BACKPORT_KERNEL_3_18
-> and so on.
-
-Sure.
-
-> I am not sure what other prefix we could possibly use here for integration.
-
-Well, in theory you could imagine having two people backport different
-subsystems and trying to integrate them both into a backport kernel ...
-seems unlikely and will conflict on other levels (e.g. compat.ko) but
-still.
-
-Anyway, I don't really care if you don't make this configurable, but I
-don't like the way you're doing string manipulation to figure out what
-you want :-) That was really the reason for suggesting to split the
-existing prefix variable into two pieces. You have it today, after all,
-in theory you could have gotten rid of it completely and just pass the
-"integrate" flag around.
+same here.
 
 johannes
 
