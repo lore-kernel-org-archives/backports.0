@@ -1,206 +1,108 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:62818 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752399AbaKDInl (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 4 Nov 2014 03:43:41 -0500
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:40508 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932069AbaKEDTD (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 4 Nov 2014 22:19:03 -0500
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
 	mmarek@suse.cz, sassmann@kpanic.de,
 	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH v1 07/11] backports: split Kconfig into Kconfig.package and Kconfig.sources
-Date: Tue,  4 Nov 2014 00:42:58 -0800
-Message-Id: <1415090582-14129-8-git-send-email-mcgrof@do-not-panic.com> (sfid-20141104_094351_978862_A814C8D0)
-In-Reply-To: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com>
+Subject: [PATCH v2 04/13] backports: replace BACKPORT_PWD with BACKPORT_DIR
+Date: Tue,  4 Nov 2014 19:18:28 -0800
+Message-Id: <1415157517-15442-5-git-send-email-mcgrof@do-not-panic.com> (sfid-20141105_042156_051689_44F897C7)
+In-Reply-To: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-This splits up the Kconfig from things which are needed due to
-our copy of code from the kernel and things which we need
-specifically only for packaging backports. We will later then
-share the Kconfig.souce for instance for kernel integration.
+This will also be used for built-in kernel integration, by
+using this we can share more code with the built-in kernel
+approach.
 
-While at it, split up the list of files that we need to copy
-into what we know could be shared for integration. The the
-case of backport packaging Kconfig.package will be copied to
-the package's Kconfig when building the package with gentree.py.
-
+Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
 Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
 ---
- backport/Kconfig         | 54 ------------------------------------------------
- backport/Kconfig.package | 32 ++++++++++++++++++++++++++++
- backport/Kconfig.sources | 23 +++++++++++++++++++++
- gentree.py               | 22 +++++++++++++++++---
- 4 files changed, 74 insertions(+), 57 deletions(-)
- delete mode 100644 backport/Kconfig
- create mode 100644 backport/Kconfig.package
- create mode 100644 backport/Kconfig.sources
+ backport/Makefile             | 6 +++---
+ backport/Makefile.build       | 4 ++--
+ backport/Makefile.real        | 2 +-
+ backport/scripts/uninstall.sh | 4 ++--
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/backport/Kconfig b/backport/Kconfig
-deleted file mode 100644
-index c523323..0000000
---- a/backport/Kconfig
-+++ /dev/null
-@@ -1,54 +0,0 @@
--mainmenu "Linux Backports from $BACKPORTED_KERNEL_NAME $BACKPORTED_KERNEL_VERSION (with backports $BACKPORTS_VERSION)"
--
--config BACKPORT_DIR
--	string
--	option env="BACKPORT_DIR"
--config BACKPORTS_VERSION
--	string
--	option env="BACKPORTS_VERSION"
--config BACKPORTED_KERNEL_VERSION
--	string
--	option env="BACKPORTED_KERNEL_VERSION"
--config BACKPORTED_KERNEL_NAME
--	string
--	option env="BACKPORTED_KERNEL_NAME"
--
--# these will be generated
--source "$BACKPORT_DIR/Kconfig.kernel"
--source "$BACKPORT_DIR/Kconfig.versions"
--
--# some hacks for when we use backports to generate a package
--# to build modules out of tree.
--#ignore-parser-package
--config WIRELESS
--	def_bool y
--#ignore-parser-package
--config NET_CORE
--	def_bool y
--#ignore-parser-package
--config EXPERT
--	def_bool y
--
--# this has the configuration for the backport code
--source "$BACKPORT_DIR/compat/Kconfig"
--
--# these are copied from the kernel
--source "$BACKPORT_DIR/net/wireless/Kconfig"
--source "$BACKPORT_DIR/net/mac80211/Kconfig"
--source "$BACKPORT_DIR/net/bluetooth/Kconfig"
--source "$BACKPORT_DIR/drivers/net/wireless/Kconfig"
--source "$BACKPORT_DIR/drivers/net/ethernet/Kconfig"
--source "$BACKPORT_DIR/drivers/net/usb/Kconfig"
--
--source "$BACKPORT_DIR/drivers/ssb/Kconfig"
--source "$BACKPORT_DIR/drivers/bcma/Kconfig"
--
--source "$BACKPORT_DIR/net/nfc/Kconfig"
--
--source "$BACKPORT_DIR/drivers/media/Kconfig"
--
--source "$BACKPORT_DIR/net/ieee802154/Kconfig"
--source "$BACKPORT_DIR/net/mac802154/Kconfig"
--source "$BACKPORT_DIR/drivers/net/ieee802154/Kconfig"
--
--source "$BACKPORT_DIR/drivers/usb/class/Kconfig"
-diff --git a/backport/Kconfig.package b/backport/Kconfig.package
-new file mode 100644
-index 0000000..c507de4
---- /dev/null
-+++ b/backport/Kconfig.package
-@@ -0,0 +1,32 @@
-+mainmenu "Backports from $BACKPORTED_KERNEL_NAME $BACKPORTED_KERNEL_VERSION (backports $BACKPORTS_VERSION)"
-+
-+config BACKPORT_DIR
-+	string
-+	option env="BACKPORT_DIR"
-+config BACKPORTS_VERSION
-+	string
-+	option env="BACKPORTS_VERSION"
-+config BACKPORTED_KERNEL_VERSION
-+	string
-+	option env="BACKPORTED_KERNEL_VERSION"
-+config BACKPORTED_KERNEL_NAME
-+	string
-+	option env="BACKPORTED_KERNEL_NAME"
-+
-+# some hacks for when we use backports to generate a package
-+# to build modules out of tree.
-+#ignore-parser-package
-+config WIRELESS
-+	def_bool y
-+#ignore-parser-package
-+config NET_CORE
-+	def_bool y
-+#ignore-parser-package
-+config EXPERT
-+	def_bool y
-+
-+source "$BACKPORT_DIR/Kconfig.sources"
-+
-+# these will be generated
-+source "$BACKPORT_DIR/Kconfig.kernel"
-+source "$BACKPORT_DIR/Kconfig.versions"
-diff --git a/backport/Kconfig.sources b/backport/Kconfig.sources
-new file mode 100644
-index 0000000..cdf993c
---- /dev/null
-+++ b/backport/Kconfig.sources
-@@ -0,0 +1,23 @@
-+# this has the configuration for the backport code
-+source "$BACKPORT_DIR/compat/Kconfig"
-+
-+# these are copied from the kernel
-+source "$BACKPORT_DIR/net/wireless/Kconfig"
-+source "$BACKPORT_DIR/net/mac80211/Kconfig"
-+source "$BACKPORT_DIR/net/bluetooth/Kconfig"
-+source "$BACKPORT_DIR/drivers/net/wireless/Kconfig"
-+source "$BACKPORT_DIR/drivers/net/ethernet/Kconfig"
-+source "$BACKPORT_DIR/drivers/net/usb/Kconfig"
-+
-+source "$BACKPORT_DIR/drivers/ssb/Kconfig"
-+source "$BACKPORT_DIR/drivers/bcma/Kconfig"
-+
-+source "$BACKPORT_DIR/net/nfc/Kconfig"
-+
-+source "$BACKPORT_DIR/drivers/media/Kconfig"
-+
-+source "$BACKPORT_DIR/net/ieee802154/Kconfig"
-+source "$BACKPORT_DIR/net/mac802154/Kconfig"
-+source "$BACKPORT_DIR/drivers/net/ieee802154/Kconfig"
-+
-+source "$BACKPORT_DIR/drivers/usb/class/Kconfig"
-diff --git a/gentree.py b/gentree.py
-index 3d4a8b4..860bb71 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -746,11 +746,27 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
-     check_output_dir(args.outdir, args.clean)
+diff --git a/backport/Makefile b/backport/Makefile
+index ea3982b..fcf2f01 100644
+--- a/backport/Makefile
++++ b/backport/Makefile
+@@ -6,7 +6,7 @@ ifeq ($(KERNELRELEASE),)
  
-     # do the copy
-+    backport_package_files = [(x, x) for x in [
-+        'Makefile',
-+        'kconf/',
-+        'Makefile.real',
-+        'Makefile.kernel',
-+        'scripts/',
-+        '.blacklist.map',
-+        '.gitignore',
-+        'Makefile.build'] ]
-+    backport_package_files += [
-+            ('Kconfig.package', 'Kconfig'),
-+            ]
-     backport_files = [(x, x) for x in [
--        'Kconfig', 'Makefile', 'Makefile.build', 'Makefile.kernel', '.gitignore',
--        'Makefile.real', 'compat/', 'backport-include/', 'kconf/',
--        'scripts/', '.blacklist.map',
-+        'Kconfig.sources',
-+        'compat/',
-+        'backport-include/',
-     ]]
-+
-+    if not integrate:
-+        backport_files += backport_package_files
-+
-     if not args.git_revision:
-         logwrite('Copy original source files ...')
-     else:
+ MAKEFLAGS += --no-print-directory
+ SHELL := /bin/bash
+-BACKPORT_PWD := $(shell pwd)
++BACKPORT_DIR := $(shell pwd)
+ 
+ KMODDIR ?= updates
+ ifneq ($(origin KLIB), undefined)
+@@ -20,7 +20,7 @@ KERNEL_CONFIG := $(KLIB_BUILD)/.config
+ KERNEL_MAKEFILE := $(KLIB_BUILD)/Makefile
+ CONFIG_MD5 := $(shell md5sum $(KERNEL_CONFIG) 2>/dev/null | sed 's/\s.*//')
+ 
+-export KLIB KLIB_BUILD BACKPORT_PWD KMODDIR KMODPATH_ARG
++export KLIB KLIB_BUILD BACKPORT_DIR KMODDIR KMODPATH_ARG
+ 
+ # disable built-in rules for this file
+ .SUFFIXES:
+@@ -159,5 +159,5 @@ help: defconfig-help
+ 	@echo ""
+ 	@echo "Execute "make" or "make all" to build all targets marked with [*]"
+ else
+-include $(BACKPORT_PWD)/Makefile.kernel
++include $(BACKPORT_DIR)/Makefile.kernel
+ endif
+diff --git a/backport/Makefile.build b/backport/Makefile.build
+index d209041..a848b37 100644
+--- a/backport/Makefile.build
++++ b/backport/Makefile.build
+@@ -3,8 +3,8 @@ export
+ 
+ .PHONY: modules
+ modules:
+-	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_PWD) modules
++	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_DIR) modules
+ 
+ .PHONY: clean
+ clean:
+-	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_PWD) clean
++	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_DIR) clean
+diff --git a/backport/Makefile.real b/backport/Makefile.real
+index f60d5ca..a0f4916 100644
+--- a/backport/Makefile.real
++++ b/backport/Makefile.real
+@@ -89,7 +89,7 @@ modules: backport-include/backport/autoconf.h
+ 
+ .PHONY: install
+ install: modules
+-	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_PWD)			\
++	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_DIR)			\
+ 		INSTALL_MOD_DIR=$(KMODDIR) $(KMODPATH_ARG)		\
+ 		modules_install
+ 	@./scripts/blacklist.sh $(KLIB)/ $(KLIB)/$(KMODDIR)
+diff --git a/backport/scripts/uninstall.sh b/backport/scripts/uninstall.sh
+index 1eb42b0..b46d3fe 100755
+--- a/backport/scripts/uninstall.sh
++++ b/backport/scripts/uninstall.sh
+@@ -10,8 +10,8 @@ else
+ 	compr=""
+ fi
+ 
+-for driver in $(find ${BACKPORT_PWD} -type f -name *.ko); do
+-	mod_name=${driver/${BACKPORT_PWD}/${KLIB}${KMODDIR}}${compr}
++for driver in $(find ${BACKPORT_DIR} -type f -name *.ko); do
++	mod_name=${driver/${BACKPORT_DIR}/${KLIB}${KMODDIR}}${compr}
+ 	echo "  uninstall" $mod_name
+ 	rm -f $mod_name
+ done
 -- 
 2.1.1
 
