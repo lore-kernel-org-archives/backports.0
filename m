@@ -1,208 +1,58 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:47080 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753137AbaKKIQv (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 11 Nov 2014 03:16:51 -0500
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
-	mmarek@suse.cz, sassmann@kpanic.de,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH v3 20/21] backports: remove extra BACKPORT_ prefix from kernel versioning
-Date: Tue, 11 Nov 2014 00:15:11 -0800
-Message-Id: <1415693712-23743-21-git-send-email-mcgrof@do-not-panic.com> (sfid-20141111_091730_375788_5D908103)
-In-Reply-To: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from one.firstfloor.org ([193.170.194.197]:43418 "EHLO
+	one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750926AbaKEXbn (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 5 Nov 2014 18:31:43 -0500
+Date: Thu, 6 Nov 2014 00:31:40 +0100
+From: Andi Kleen <andi@firstfloor.org>
+To: "Luis R. Rodriguez" <mcgrof@suse.com>
+Cc: Andi Kleen <andi@firstfloor.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Yann E. MORIN" <yann.morin.1998@free.fr>,
+	Michal Marek <mmarek@suse.cz>,
+	Stefan Assmann <sassmann@kpanic.de>
+Subject: Re: [PATCH v2 03/13] backports: allow for different backport prefix
+Message-ID: <20141105233140.GE12538@two.firstfloor.org> (sfid-20141106_003202_995902_CE68BBC6)
+References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
+ <1415157517-15442-4-git-send-email-mcgrof@do-not-panic.com>
+ <1415173596.2589.3.camel@sipsolutions.net>
+ <20141105091610.GM12953@wotan.suse.de>
+ <1415179364.2589.13.camel@sipsolutions.net>
+ <20141105194215.GN12953@wotan.suse.de>
+ <1415222258.7485.10.camel@sipsolutions.net>
+ <20141105222159.GS12953@wotan.suse.de>
+ <20141105230907.GD12538@two.firstfloor.org>
+ <CAB=NE6Wu7gFh+_1ebiaWCq2cUt_SnCMB-+1Xv9ZuZtBafdg0Vg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAB=NE6Wu7gFh+_1ebiaWCq2cUt_SnCMB-+1Xv9ZuZtBafdg0Vg@mail.gmail.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+> The only thing that was not clear to me from reviewing the module
+> namespace stuff a while ago was the original intent, but I confess I
+> actually only looked at the technical details to see if it was
+> applicable to the backports case, do you recall the original
+> motivation ?
 
-The CPTCFG_ prefix already implies backport, when integration
-is used we'd end up with a double BACKPORT_ prefix, so just
-remove the existing one as its not needed.
+The original intent was to provide a cleaner export symbol API.
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
----
- backport/Makefile                                  |  2 +-
- backport/compat/Kconfig                            | 10 +++----
- backport/compat/Makefile                           | 34 +++++++++++-----------
- devel/doc/kconfig-operation                        |  6 ++--
- gentree.py                                         |  2 +-
- .../media/0002-no_dmabuf/v4l2.patch                |  6 ++--
- 6 files changed, 30 insertions(+), 30 deletions(-)
+There are roughly two classes of exported symbols:
 
-diff --git a/backport/Makefile b/backport/Makefile
-index fcf2f01..c21b813 100644
---- a/backport/Makefile
-+++ b/backport/Makefile
-@@ -93,7 +93,7 @@ mrproper:
- 		print=0									;\
- 		for v in $$kvers ; do							\
- 			if [ "$$print" = "1" ] ; then					\
--				echo config BACKPORT_KERNEL_$$(echo $$v | tr . _)	;\
-+				echo config KERNEL_$$(echo $$v | tr . _)	;\
- 				echo "    def_bool y"					;\
- 			fi								;\
- 			if [ "$$v" = "$$kver" ] ; then print=1 ; fi			;\
-diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
-index 06ef8d5..aadf246 100644
---- a/backport/compat/Kconfig
-+++ b/backport/compat/Kconfig
-@@ -16,14 +16,14 @@
- #
- #	# not possible on kernel < X.Y, build will fail if any
- #	# drivers are allowed to build on kernels < X.Y
--#	depends on BACKPORT_KERNEL_X_Y
-+#	depends on KERNEL_X_Y
- #
- #	# don't build the backport code if FOO is in the kernel
- #	# already, but only if the kernel version is also >= X.Z;
- #	# this is an example of backporting where the version of
- #	# the FOO subsystem that we need is only available from
- #	# kernel version X.Z
--#	depends on !FOO || BACKPORT_KERNEL_X_Z
-+#	depends on !FOO || KERNEL_X_Z
- #
- #	# build if driver needs it (it selects BPAUTO_FOO)
- #	default m if BPAUTO_FOO
-@@ -43,7 +43,7 @@
- #
- # config BPAUTO_BUILD_KFIFO
- #	def_bool y
--#	depends on BACKPORT_KERNEL_2_6_36
-+#	depends on KERNEL_2_6_36
- #
- #
- # C) similarly, a kconfig symbol for an option, e.g.
-@@ -83,9 +83,9 @@ config BPAUTO_BUILD_DMA_SHARED_HELPERS
- 	depends on HAS_DMA
- 	# Build on other kernels kernels < 3.9 if HAVE_GENERIC_DMA_COHERENT is
- 	# not set. Kernels >= 3.8 have this if HAS_DMA is set.
--	depends on (!HAVE_GENERIC_DMA_COHERENT || BACKPORT_KERNEL_3_9)
-+	depends on (!HAVE_GENERIC_DMA_COHERENT || KERNEL_3_9)
- 	# Always build if on 3.3 - 3.5
--	default y if (BACKPORT_KERNEL_3_4 || BACKPORT_KERNEL_3_5 || BACKPORT_KERNEL_3_6)
-+	default y if (KERNEL_3_4 || KERNEL_3_5 || KERNEL_3_6)
- 	# build for testing
- 	default y if BPAUTO_USERSEL_BUILD_ALL
- 
-diff --git a/backport/compat/Makefile b/backport/compat/Makefile
-index 0dd69fe..e787763 100644
---- a/backport/compat/Makefile
-+++ b/backport/compat/Makefile
-@@ -3,23 +3,23 @@ obj-m += compat.o
- compat-y += main.o
- 
- # Kernel backport compatibility code
--compat-$(CPTCFG_BACKPORT_KERNEL_3_0) += compat-3.0.o
--compat-$(CPTCFG_BACKPORT_KERNEL_3_1) += compat-3.1.o
--compat-$(CPTCFG_BACKPORT_KERNEL_3_2) += backport-3.2.o
--compat-$(CPTCFG_BACKPORT_KERNEL_3_3) += compat-3.3.o
--compat-$(CPTCFG_BACKPORT_KERNEL_3_4) += compat-3.4.o
--compat-$(CPTCFG_BACKPORT_KERNEL_3_5) += compat-3.5.o user_namespace.o
--compat-$(CPTCFG_BACKPORT_KERNEL_3_6) += compat-3.6.o
--compat-$(CPTCFG_BACKPORT_KERNEL_3_7) += compat-3.7.o
--compat-$(CPTCFG_BACKPORT_KERNEL_3_8) += compat-3.8.o
--compat-$(CPTCFG_BACKPORT_KERNEL_3_9) += compat-3.9.o
--compat-$(CPTCFG_BACKPORT_KERNEL_3_10) += backport-3.10.o
--compat-$(CPTCFG_BACKPORT_KERNEL_3_12) += backport-3.12.o
--compat-$(CPTCFG_BACKPORT_KERNEL_3_13) += backport-3.13.o
--compat-$(CPTCFG_BACKPORT_KERNEL_3_14) += backport-3.14.o
--compat-$(CPTCFG_BACKPORT_KERNEL_3_15) += backport-3.15.o
--compat-$(CPTCFG_BACKPORT_KERNEL_3_17) += backport-3.17.o
--compat-$(CPTCFG_BACKPORT_KERNEL_3_18) += backport-3.18.o
-+compat-$(CPTCFG_KERNEL_3_0) += compat-3.0.o
-+compat-$(CPTCFG_KERNEL_3_1) += compat-3.1.o
-+compat-$(CPTCFG_KERNEL_3_2) += backport-3.2.o
-+compat-$(CPTCFG_KERNEL_3_3) += compat-3.3.o
-+compat-$(CPTCFG_KERNEL_3_4) += compat-3.4.o
-+compat-$(CPTCFG_KERNEL_3_5) += compat-3.5.o user_namespace.o
-+compat-$(CPTCFG_KERNEL_3_6) += compat-3.6.o
-+compat-$(CPTCFG_KERNEL_3_7) += compat-3.7.o
-+compat-$(CPTCFG_KERNEL_3_8) += compat-3.8.o
-+compat-$(CPTCFG_KERNEL_3_9) += compat-3.9.o
-+compat-$(CPTCFG_KERNEL_3_10) += backport-3.10.o
-+compat-$(CPTCFG_KERNEL_3_12) += backport-3.12.o
-+compat-$(CPTCFG_KERNEL_3_13) += backport-3.13.o
-+compat-$(CPTCFG_KERNEL_3_14) += backport-3.14.o
-+compat-$(CPTCFG_KERNEL_3_15) += backport-3.15.o
-+compat-$(CPTCFG_KERNEL_3_17) += backport-3.17.o
-+compat-$(CPTCFG_KERNEL_3_18) += backport-3.18.o
- 
- compat-$(CPTCFG_BPAUTO_BUILD_CRYPTO_CCM) += crypto-ccm.o
- compat-$(CPTCFG_BPAUTO_BUILD_DMA_SHARED_HELPERS) += dma-shared-helpers.o
-diff --git a/devel/doc/kconfig-operation b/devel/doc/kconfig-operation
-index f1ecf60..ddb4de7 100644
---- a/devel/doc/kconfig-operation
-+++ b/devel/doc/kconfig-operation
-@@ -53,12 +53,12 @@ The second file (Kconfig.versions) is generated from just the version of
- the kernel and also contains invisible and unselectable boolean options
- like
- 
--config BACKPORT_KERNEL_X
-+config KERNEL_X
-     def_bool y
- 
- to indicate that APIs introduced in kernel version X (e.g. 3_3 for 3.3
- or 2_6_24 for 2.6.24) must be backported. Essentially, the presence of
--a symbol BACKPORT_KERNEL_X indicates that the kernel that the code is
-+a symbol KERNEL_X indicates that the kernel that the code is
- being compiled against is older than X.
- 
- All together, this allows the correct options to be selected by the user.
-@@ -121,7 +121,7 @@ These are the problems and their solutions:
-     requires at least 2.6.29 due to the shash crypto code. This cannot be
-     determined easily automatically, so the 'dependencies' file is read
-     and options that are listed there are rewritten to include
--        depends on !BACKPORT_KERNEL_X_Y
-+        depends on !KERNEL_X_Y
-     (where X_Y is the listed kernel version), which makes them available
-     only on kernels >= X.Y.
- 
-diff --git a/gentree.py b/gentree.py
-index bf2112b..90334ef 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -988,7 +988,7 @@ def process(kerneldir, copy_list_file, git_revision=None,
-             elif (dep == "DISABLE"):
-                     new.append('BACKPORT_DISABLED_KCONFIG_OPTION')
-             else:
--                    new.append('!BACKPORT_KERNEL_%s' % dep.replace('.', '_'))
-+                    new.append('!KERNEL_%s' % dep.replace('.', '_'))
-         if bpid.integrate:
-             deplist[sym] = ["BACKPORT_" + x for x in new]
-         else:
-diff --git a/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch b/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
-index 02d042a..7f88c3e 100644
---- a/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
-+++ b/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
-@@ -5,7 +5,7 @@
-  # Used by drivers that need Videobuf2 modules
-  config VIDEOBUF2_CORE
- -	select DMA_SHARED_BUFFER
--+	select DMA_SHARED_BUFFER if !BACKPORT_KERNEL_3_5
-++	select DMA_SHARED_BUFFER if !KERNEL_3_5
-  	tristate
-  
-  config VIDEOBUF2_MEMOPS
-@@ -14,14 +14,14 @@
-  	select VIDEOBUF2_CORE
-  	select VIDEOBUF2_MEMOPS
- -	select DMA_SHARED_BUFFER
--+	select DMA_SHARED_BUFFER if !BACKPORT_KERNEL_3_5
-++	select DMA_SHARED_BUFFER if !KERNEL_3_5
-  
-  config VIDEOBUF2_VMALLOC
-  	tristate
-  	select VIDEOBUF2_CORE
-  	select VIDEOBUF2_MEMOPS
- -	select DMA_SHARED_BUFFER
--+	select DMA_SHARED_BUFFER if !BACKPORT_KERNEL_3_5
-++	select DMA_SHARED_BUFFER if !KERNEL_3_5
-  
-  config VIDEOBUF2_DMA_SG
-  	tristate
--- 
-2.1.1
+- Generally usable, well designed, interfaces intended to be used by multiple
+modules (e.g. functions for drivers to register themselves or
+library functions)
+
+- Special purpose exports that are only really for a single
+module, but are not intended as a general interface. These interfaces
+are usually not really clean and reusable.
+
+The idea was to mark the later special purpose exports with the name of the
+module that is supposed to them. They wouldn't be available
+to everybody else and wouldn't become part of the general
+kernel module API.
+
+-Andi
 
