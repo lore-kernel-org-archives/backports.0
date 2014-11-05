@@ -1,45 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:37690 "EHLO hauke-m.de"
+Received: from cantor2.suse.de ([195.135.220.15]:40328 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750823AbaKPUtk (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 16 Nov 2014 15:49:40 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 10/20] dependencies: fix media dependencies
-Date: Sun, 16 Nov 2014 21:49:10 +0100
-Message-Id: <1416170960-12868-11-git-send-email-hauke@hauke-m.de> (sfid-20141116_214945_785747_5D5E6558)
-In-Reply-To: <1416170960-12868-1-git-send-email-hauke@hauke-m.de>
-References: <1416170960-12868-1-git-send-email-hauke@hauke-m.de>
+	id S1751298AbaKEICy (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 5 Nov 2014 03:02:54 -0500
+Date: Wed, 5 Nov 2014 09:02:52 +0100
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
+Subject: Re: [PATCH v1 10/11] backports: prefix c-file / h-file auto
+	backport with BPAUTO
+Message-ID: <20141105080252.GK12953@wotan.suse.de> (sfid-20141105_090256_767744_0F59DFC4)
+References: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com> <1415090582-14129-11-git-send-email-mcgrof@do-not-panic.com> <1415096092.2064.13.camel@sipsolutions.net> <20141104215002.GF12953@wotan.suse.de> <1415137850.2064.23.camel@sipsolutions.net> <20141105002147.GJ12953@wotan.suse.de> <1415172590.2589.1.camel@sipsolutions.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1415172590.2589.1.camel@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-MEDIA_TUNER_M88RS6000T now uses devm_regmap_init_i2c()
-One of the tuners DVB_SMIPCIE selects uses regmap_bulk_write()
+On Wed, Nov 05, 2014 at 08:29:50AM +0100, Johannes Berg wrote:
+> On Wed, 2014-11-05 at 01:21 +0100, Luis R. Rodriguez wrote:
+> 
+> > > > I did at one point have BACKPORT_BPAUTO_* stuff on the compat/Kconfig for
+> > > > the auto stuff but figured that was superfluous. I'll respin with it.
+> > > 
+> > > Not sure what you mean? It seems to me you should just drop the changes
+> > > like the one I quoted above.
+> > 
+> > If we keep BACKPORT_BPAUTO as prefix on compat/Kconfig for auto backport
+> > stuff we'll end up with BACKPORT_BACKPORT_BPAUTO, while technically correct
+> > as you have pointed out, I find it personally superfluous. If we however
+> > only use BPAUTO_ prefix on the compat/Kconfig we'll end up with BACKPORT_BPAUTO.
+> 
+> Correct.
+> 
+> > Its subjective then, but I was opting in to prefer to just keep BPAUTO_ prefix
+> > with the resulting CPTCFG_BPAUTO for packaging and CONFIG_BACKPORT_BPAUTO for
+> > integration for these, if you however feel its best to double the BACKPORT
+> > prefix that's fine too, it just seemed odd (although I realize correct).
+> 
+> No, I'm perfectly happy with CPTCFG_BPAUTO.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- dependencies | 2 ++
- 1 file changed, 2 insertions(+)
+OK cool.
 
-diff --git a/dependencies b/dependencies
-index 64903dc..3d02980 100644
---- a/dependencies
-+++ b/dependencies
-@@ -58,11 +58,13 @@ VIDEO_S5C73M3 3.6
- # missing function devm_regmap_init_i2c()
- VIDEO_LM3646 3.3
- VIDEO_LM3560 3.3
-+MEDIA_TUNER_M88RS6000T 3.3
- 
- # missing regmap_bulk_write()
- DVB_USB_AF9035 3.4
- DVB_USB_ANYSEE 3.4
- DVB_USB_DVBSKY 3.4
-+DVB_SMIPCIE 3.4
- MEDIA_TUNER_E4000 3.4
- MEDIA_TUNER_M88TS2022 3.4
- MEDIA_TUNER_TDA18212 3.4
--- 
-1.9.1
+> But the *code* changes
+> you're making here that check whether bp_prefix is being duplicated
+> aren't necessary for that, and are in fact confusing and dangerous.
 
+Understood, thanks for the review, hopefully this is addressed with the
+latest series.
+
+  Luis
