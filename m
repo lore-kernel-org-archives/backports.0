@@ -1,53 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:62155 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752214AbaKKIQG (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 11 Nov 2014 03:16:06 -0500
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
-	mmarek@suse.cz, sassmann@kpanic.de,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH v3 10/21] backports: avoid git tree reinitialization
-Date: Tue, 11 Nov 2014 00:15:01 -0800
-Message-Id: <1415693712-23743-11-git-send-email-mcgrof@do-not-panic.com> (sfid-20141111_091920_022089_D2F879DA)
-In-Reply-To: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from cantor2.suse.de ([195.135.220.15]:33744 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751301AbaKEUOG (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 5 Nov 2014 15:14:06 -0500
+Date: Wed, 5 Nov 2014 21:14:05 +0100
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
+Subject: Re: [PATCH v2 07/13] backports: split Kconfig into Kconfig.package
+	and Kconfig.sources
+Message-ID: <20141105201405.GQ12953@wotan.suse.de> (sfid-20141105_211409_629339_FF248B7A)
+References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com> <1415157517-15442-8-git-send-email-mcgrof@do-not-panic.com> <1415174133.2589.7.camel@sipsolutions.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1415174133.2589.7.camel@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+On Wed, Nov 05, 2014 at 08:55:33AM +0100, Johannes Berg wrote:
+> On Tue, 2014-11-04 at 19:18 -0800, Luis R. Rodriguez wrote:
+> 
+> > +++ b/backport/Kconfig.package
+> > @@ -0,0 +1,32 @@
+> > +mainmenu "Backports from $BACKPORTED_KERNEL_NAME $BACKPORTED_KERNEL_VERSION (backports $BACKPORTS_VERSION)"
+> > +
+> > +config BACKPORT_DIR
+> > +	string
+> > +	option env="BACKPORT_DIR"
+> > +config BACKPORTS_VERSION
+> > +	string
+> > +	option env="BACKPORTS_VERSION"
+> > +config BACKPORTED_KERNEL_VERSION
+> > +	string
+> > +	option env="BACKPORTED_KERNEL_VERSION"
+> > +config BACKPORTED_KERNEL_NAME
+> > +	string
+> > +	option env="BACKPORTED_KERNEL_NAME"
+> > +
+> > +# some hacks for when we use backports to generate a package
+> > +# to build modules out of tree.
+> > +#ignore-parser-package
+> 
+> Here you're splitting it, and I think you should just add something to
+> this file to ignore it instead of the "#ignore-parser-package" thing.
 
-When using backports against for packaging with --gitdebug you either
-have to use --clean or assume the directory is empty already. In either
-case you start fresh. With integration this will be a bit different, you
-could end up with a project directory where the git tree was present but
-only the target directory was empty.
+Agreed, done.
 
-Calling git init on an already existing git directory will reinitialize
-your git tree, that can reset some config stuff, let's avoid that.
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
----
- gentree.py | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/gentree.py b/gentree.py
-index 04e8f5e..68efce9 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -288,7 +288,10 @@ def git_debug_init(args):
-     """
-     if not args.gitdebug:
-         return
--    git.init(tree=args.bpid.project_dir)
-+    # Git supports re-initialization, although not well documented it can
-+    # reset config stuff, lets avoid that if the tree already exists.
-+    if not os.path.exists(os.path.join(args.bpid.project_dir, '.git')):
-+        git.init(tree=args.bpid.project_dir)
-     git.commit_all("Copied backport", tree=args.bpid.project_dir)
- 
- 
--- 
-2.1.1
-
+ Luis
