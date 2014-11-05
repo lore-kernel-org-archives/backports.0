@@ -1,206 +1,116 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:46978 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753722AbaKEDTS (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 4 Nov 2014 22:19:18 -0500
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
-	mmarek@suse.cz, sassmann@kpanic.de,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH v2 07/13] backports: split Kconfig into Kconfig.package and Kconfig.sources
-Date: Tue,  4 Nov 2014 19:18:31 -0800
-Message-Id: <1415157517-15442-8-git-send-email-mcgrof@do-not-panic.com> (sfid-20141105_042130_254010_EF0D1758)
-In-Reply-To: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from s3.sipsolutions.net ([5.9.151.49]:33744 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753936AbaKEJWw (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 5 Nov 2014 04:22:52 -0500
+Message-ID: <1415179364.2589.13.camel@sipsolutions.net> (sfid-20141105_102255_958023_D2F6F931)
+Subject: Re: [PATCH v2 03/13] backports: allow for different backport prefix
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@suse.com>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
+Date: Wed, 05 Nov 2014 10:22:44 +0100
+In-Reply-To: <20141105091610.GM12953@wotan.suse.de>
 References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1415157517-15442-4-git-send-email-mcgrof@do-not-panic.com>
+	 <1415173596.2589.3.camel@sipsolutions.net>
+	 <20141105091610.GM12953@wotan.suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+On Wed, 2014-11-05 at 10:16 +0100, Luis R. Rodriguez wrote:
 
-This splits up the Kconfig from things which are needed due to
-our copy of code from the kernel and things which we need
-specifically only for packaging backports. We will later then
-share the Kconfig.souce for instance for kernel integration.
+> > IMHO this would be better handled in the code that uses the return value
+> > to add things to the Kconfig dependencies, there you could just go
+> >   if integrate:
+> >     deplist[sym] = ["BACKPORT_" + x for x in new]
+> >   else:
+> >     deplist[sym] = new
+> 
+> I like it, thanks.
+> 
+> I will note how you still provided "BACKPORT_" here rather than the prefix,
+> that's why I did the sub thing, but I'm more inclined to remove the dynamic
+> nature of the prefix for integration. Not sure why that'd be a good idea
+> and could only make things harder to support / change in the future as
+> we are learning with CPTCFG_.
+> 
+> Thoughts?
 
-While at it, split up the list of files that we need to copy
-into what we know could be shared for integration. The the
-case of backport packaging Kconfig.package will be copied to
-the package's Kconfig when building the package with gentree.py.
+I think the splitting of bp_kconf_prefix and bp_prefix I suggested would
+help. Now that I look at it again, the names don't really make sense
+though.
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
----
- backport/Kconfig         | 54 ------------------------------------------------
- backport/Kconfig.package | 32 ++++++++++++++++++++++++++++
- backport/Kconfig.sources | 23 +++++++++++++++++++++
- gentree.py               | 22 +++++++++++++++++---
- 4 files changed, 74 insertions(+), 57 deletions(-)
- delete mode 100644 backport/Kconfig
- create mode 100644 backport/Kconfig.package
- create mode 100644 backport/Kconfig.sources
+> > > @@ -838,7 +863,7 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+> > >          for f in files:
+> > >              data = open(os.path.join(root, f), 'r').read()
+> > >              for r in regexes:
+> > > -                data = r.sub(r'CPTCFG_\1', data)
+> > > +                data = r.sub(r'' + bp_prefix + '\\1', data)
+> > 
+> > technically, that should be re.escape(bp_prefix)
+> 
+> We want to support bp_prefix having a regexp ? Sorry I didn't get that.
 
-diff --git a/backport/Kconfig b/backport/Kconfig
-deleted file mode 100644
-index c523323..0000000
---- a/backport/Kconfig
-+++ /dev/null
-@@ -1,54 +0,0 @@
--mainmenu "Linux Backports from $BACKPORTED_KERNEL_NAME $BACKPORTED_KERNEL_VERSION (with backports $BACKPORTS_VERSION)"
--
--config BACKPORT_DIR
--	string
--	option env="BACKPORT_DIR"
--config BACKPORTS_VERSION
--	string
--	option env="BACKPORTS_VERSION"
--config BACKPORTED_KERNEL_VERSION
--	string
--	option env="BACKPORTED_KERNEL_VERSION"
--config BACKPORTED_KERNEL_NAME
--	string
--	option env="BACKPORTED_KERNEL_NAME"
--
--# these will be generated
--source "$BACKPORT_DIR/Kconfig.kernel"
--source "$BACKPORT_DIR/Kconfig.versions"
--
--# some hacks for when we use backports to generate a package
--# to build modules out of tree.
--#ignore-parser-package
--config WIRELESS
--	def_bool y
--#ignore-parser-package
--config NET_CORE
--	def_bool y
--#ignore-parser-package
--config EXPERT
--	def_bool y
--
--# this has the configuration for the backport code
--source "$BACKPORT_DIR/compat/Kconfig"
--
--# these are copied from the kernel
--source "$BACKPORT_DIR/net/wireless/Kconfig"
--source "$BACKPORT_DIR/net/mac80211/Kconfig"
--source "$BACKPORT_DIR/net/bluetooth/Kconfig"
--source "$BACKPORT_DIR/drivers/net/wireless/Kconfig"
--source "$BACKPORT_DIR/drivers/net/ethernet/Kconfig"
--source "$BACKPORT_DIR/drivers/net/usb/Kconfig"
--
--source "$BACKPORT_DIR/drivers/ssb/Kconfig"
--source "$BACKPORT_DIR/drivers/bcma/Kconfig"
--
--source "$BACKPORT_DIR/net/nfc/Kconfig"
--
--source "$BACKPORT_DIR/drivers/media/Kconfig"
--
--source "$BACKPORT_DIR/net/ieee802154/Kconfig"
--source "$BACKPORT_DIR/net/mac802154/Kconfig"
--source "$BACKPORT_DIR/drivers/net/ieee802154/Kconfig"
--
--source "$BACKPORT_DIR/drivers/usb/class/Kconfig"
-diff --git a/backport/Kconfig.package b/backport/Kconfig.package
-new file mode 100644
-index 0000000..c507de4
---- /dev/null
-+++ b/backport/Kconfig.package
-@@ -0,0 +1,32 @@
-+mainmenu "Backports from $BACKPORTED_KERNEL_NAME $BACKPORTED_KERNEL_VERSION (backports $BACKPORTS_VERSION)"
-+
-+config BACKPORT_DIR
-+	string
-+	option env="BACKPORT_DIR"
-+config BACKPORTS_VERSION
-+	string
-+	option env="BACKPORTS_VERSION"
-+config BACKPORTED_KERNEL_VERSION
-+	string
-+	option env="BACKPORTED_KERNEL_VERSION"
-+config BACKPORTED_KERNEL_NAME
-+	string
-+	option env="BACKPORTED_KERNEL_NAME"
-+
-+# some hacks for when we use backports to generate a package
-+# to build modules out of tree.
-+#ignore-parser-package
-+config WIRELESS
-+	def_bool y
-+#ignore-parser-package
-+config NET_CORE
-+	def_bool y
-+#ignore-parser-package
-+config EXPERT
-+	def_bool y
-+
-+source "$BACKPORT_DIR/Kconfig.sources"
-+
-+# these will be generated
-+source "$BACKPORT_DIR/Kconfig.kernel"
-+source "$BACKPORT_DIR/Kconfig.versions"
-diff --git a/backport/Kconfig.sources b/backport/Kconfig.sources
-new file mode 100644
-index 0000000..cdf993c
---- /dev/null
-+++ b/backport/Kconfig.sources
-@@ -0,0 +1,23 @@
-+# this has the configuration for the backport code
-+source "$BACKPORT_DIR/compat/Kconfig"
-+
-+# these are copied from the kernel
-+source "$BACKPORT_DIR/net/wireless/Kconfig"
-+source "$BACKPORT_DIR/net/mac80211/Kconfig"
-+source "$BACKPORT_DIR/net/bluetooth/Kconfig"
-+source "$BACKPORT_DIR/drivers/net/wireless/Kconfig"
-+source "$BACKPORT_DIR/drivers/net/ethernet/Kconfig"
-+source "$BACKPORT_DIR/drivers/net/usb/Kconfig"
-+
-+source "$BACKPORT_DIR/drivers/ssb/Kconfig"
-+source "$BACKPORT_DIR/drivers/bcma/Kconfig"
-+
-+source "$BACKPORT_DIR/net/nfc/Kconfig"
-+
-+source "$BACKPORT_DIR/drivers/media/Kconfig"
-+
-+source "$BACKPORT_DIR/net/ieee802154/Kconfig"
-+source "$BACKPORT_DIR/net/mac802154/Kconfig"
-+source "$BACKPORT_DIR/drivers/net/ieee802154/Kconfig"
-+
-+source "$BACKPORT_DIR/drivers/usb/class/Kconfig"
-diff --git a/gentree.py b/gentree.py
-index 3d4a8b4..860bb71 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -746,11 +746,27 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
-     check_output_dir(args.outdir, args.clean)
- 
-     # do the copy
-+    backport_package_files = [(x, x) for x in [
-+        'Makefile',
-+        'kconf/',
-+        'Makefile.real',
-+        'Makefile.kernel',
-+        'scripts/',
-+        '.blacklist.map',
-+        '.gitignore',
-+        'Makefile.build'] ]
-+    backport_package_files += [
-+            ('Kconfig.package', 'Kconfig'),
-+            ]
-     backport_files = [(x, x) for x in [
--        'Kconfig', 'Makefile', 'Makefile.build', 'Makefile.kernel', '.gitignore',
--        'Makefile.real', 'compat/', 'backport-include/', 'kconf/',
--        'scripts/', '.blacklist.map',
-+        'Kconfig.sources',
-+        'compat/',
-+        'backport-include/',
-     ]]
-+
-+    if not integrate:
-+        backport_files += backport_package_files
-+
-     if not args.git_revision:
-         logwrite('Copy original source files ...')
-     else:
--- 
-2.1.1
+No, I mean if bp_prefix were to contain some special character like [.
+This can't actually happen though.
+
+> > (btw, it might be clearer if you used %s instead of +'ing the bp_prefix
+> > in)
+> 
+> Wasn't quite sure how'd well that'd look with the r'' prefix thing, and
+> still not sure, r.sub(r"%s\\1" % bp_prefix, data) ? If so that looks rather
+> like hell to me.
+
+Ok sure :) + is fine with me.
+
+> > > +    def _mod_kconfig_line(self, l, orig_symbols, bp_prefix):
+> > > +        if bp_prefix != 'CPTCFG_':
+> > > +            prefix = re.sub(r'^CONFIG_(.*)', r'\1', bp_prefix)
+> > 
+> > Another case like above ... maybe you should have bp_prefix and
+> > bp_kconf_prefix separately. Actually that seems like a good idea.
+> > bp_kconf_prefix is empty for the backport package case, so you could add
+> > it in unconditionally, and bp_prefix would be CONFIG_
+> 
+> You mean CONFIG_BACKPORT_ ?
+
+No, I did mean CONFIG_. One prefix for kconfig, and one prefix for
+"additional renaming".
+
+The names I gave them here were really bad though. Maybe
+bp_prefix = "CONFIG_"
+additional_prefix = "BACKPORT_"
+
+(or bp_prefix = "CPTCFG_" / additional_prefix = "")
+
+or so?
+
+> > or CPTCFG_ for the
+> > two cases. Yes, I think that would make a lot of sense and allow you to
+> > get rid of this regular expression magic while making the code easier to
+> > read/understand.
+> 
+> Once this is clear sure, I do prefer it but only once we evaluate if we
+> really need to make the prefixes configurable.
+
+Yeah I guess we don't really, but I'd also hate to hardcode BACKPORT_
+everywhere?
+
+> > > +    def adjust_backported_configs(self, integrate, orig_symbols, bp_prefix):
+> > 
+> > This is only used for integrated though, no?
+> 
+> Right now yes, but I'm hinting that perhaps it should also be used for
+> packaging since it deals with negating a symbol if its built-in on
+> the kernel already. There should be other ways to do this for packaging,
+> the checks.h does it but that's just for two modules, we should be doing
+> this for much other symbols as well.
+
+Yeah that might be worthwhile.
+
+johannes
 
