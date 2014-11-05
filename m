@@ -1,55 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f175.google.com ([209.85.217.175]:60121 "EHLO
-	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754470AbaKOBVT (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 14 Nov 2014 20:21:19 -0500
-MIME-Version: 1.0
-In-Reply-To: <CAB=NE6XVsZaUebqpKWZhPXncDY-5NRXorYSGQQZC00a9ezJouQ@mail.gmail.com>
-References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
- <1415998228.1847.3.camel@sipsolutions.net> <CAB=NE6X_d68Wc=CFAMb_suWJJQgSOSNafHiMwAmC6YhJFEtP1w@mail.gmail.com>
- <1415998465.1847.4.camel@sipsolutions.net> <CAB=NE6XVsZaUebqpKWZhPXncDY-5NRXorYSGQQZC00a9ezJouQ@mail.gmail.com>
+Received: from mail-pd0-f176.google.com ([209.85.192.176]:46935 "EHLO
+	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753251AbaKEDTe (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 4 Nov 2014 22:19:34 -0500
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Fri, 14 Nov 2014 17:20:57 -0800
-Message-ID: <CAB=NE6VYK72LsdPfcaY1vjMtr-kRq-6vMwfV7bmzT5y1bX3i1A@mail.gmail.com> (sfid-20141115_022122_345101_3AC57EA6)
-Subject: Re: [PATCH v3 00/21] backports: add kernel integration support
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Yann E. MORIN" <yann.morin.1998@free.fr>,
-	Michal Marek <mmarek@suse.cz>,
-	Stefan Assmann <sassmann@kpanic.de>
-Content-Type: text/plain; charset=UTF-8
+To: backports@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
+	mmarek@suse.cz, sassmann@kpanic.de,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: [PATCH v2 10/13] backports: add backport version parsing for kernel integration
+Date: Tue,  4 Nov 2014 19:18:34 -0800
+Message-Id: <1415157517-15442-11-git-send-email-mcgrof@do-not-panic.com> (sfid-20141105_042054_414499_316D3917)
+In-Reply-To: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Nov 14, 2014 at 1:10 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> On Fri, Nov 14, 2014 at 12:54 PM, Johannes Berg
-> <johannes@sipsolutions.net> wrote:
->> On Fri, 2014-11-14 at 12:52 -0800, Luis R. Rodriguez wrote:
->>> On Fri, Nov 14, 2014 at 12:50 PM, Johannes Berg
->>> <johannes@sipsolutions.net> wrote:
->>> > On Tue, 2014-11-11 at 00:14 -0800, Luis R. Rodriguez wrote:
->>> >> From: "Luis R. Rodriguez" <mcgrof@suse.com>
->>> >>
->>> >> This third series should hopefully address all pending feedback.
->>> >> I've split out patches even more, but more importantly have
->>> >> made the parser simpler by both integrating the logic required
->>> >> to understand a backport by identifying the backport by type
->>> >> and strategy, sharing that, and then providing ignore lists on
->>> >> the parsers.
->>> >
->>> > I think from a code change POV I should be OK with this, but I'll
->>> > definitely want to run it and see the differences. I'll have to do that
->>> > next week, it's getting late here.
->>>
->>> OK. So I shouldn't merge yet?
->>
->> I would prefer you didn't, but OTOH we can always fix up issues later as
->> well.
->
-> I'll wait.
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-Pushed.
+The way we'll define backports versioning information for
+kernel integration is slightly different, we'll rely completely
+on Kconfig for the job, but in the end share the same C code
+defines.
 
- Luis
+Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
+---
+ gentree.py | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/gentree.py b/gentree.py
+index 1b6dc89..55abe6d 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -807,6 +807,24 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+             f.write('BACKPORTS_GIT_TRACKED="backport tracker ID: $(shell git rev-parse HEAD 2>/dev/null || echo \'not built in git tree\')"\n')
+         f.close()
+         git_debug_snapshot(args, "generate kernel version info file: version")
++    else:
++        kconf_regexes = [
++                (re.compile(r'.*(?P<key>%%BACKPORT_DIR%%)'), '%%BACKPORT_DIR%%', 'backports/'),
++                (re.compile(r'.*(?P<key>%%BACKPORTS_VERSION%%).*'), '%%BACKPORTS_VERSION%%', backports_version),
++                (re.compile(r'.*(?P<key>%%BACKPORTED_KERNEL_VERSION%%).*'), '%%BACKPORTED_KERNEL_VERSION%%', kernel_version),
++                (re.compile(r'.*(?P<key>%%BACKPORTED_KERNEL_NAME%%).*'), '%%BACKPORTED_KERNEL_NAME%%', args.base_name),
++        ]
++        out = ''
++        for l in open(os.path.join(args.outdir, 'Kconfig'), 'r'):
++            for r in kconf_regexes:
++                m = r[0].match(l)
++                if m:
++                    l = re.sub(r'(' + r[1] + ')', r'' + r[2] + '', l)
++            out += l
++        outf = open(os.path.join(args.outdir, 'Kconfig'), 'w')
++        outf.write(out)
++        outf.close()
++        git_debug_snapshot(args, "modify top level backports/Kconfig with backports identity")
+ 
+     disable_list = add_automatic_backports(args, bp_prefix)
+     if disable_list:
+-- 
+2.1.1
+
