@@ -1,48 +1,86 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:52599 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752557AbaKDKFv (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 4 Nov 2014 05:05:51 -0500
-Message-ID: <1415095517.2064.10.camel@sipsolutions.net> (sfid-20141104_110553_789077_A6DB6FF5)
-Subject: Re: [PATCH v1 03/11] backports: allow for different backport prefix
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de,
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:40092 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932109AbaKEDTN (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 4 Nov 2014 22:19:13 -0500
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
+	mmarek@suse.cz, sassmann@kpanic.de,
 	"Luis R. Rodriguez" <mcgrof@suse.com>
-Date: Tue, 04 Nov 2014 11:05:17 +0100
-In-Reply-To: <1415090582-14129-4-git-send-email-mcgrof@do-not-panic.com> (sfid-20141104_094338_661432_D1F2BC2E)
-References: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1415090582-14129-4-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20141104_094338_661432_D1F2BC2E)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Subject: [PATCH v2 06/13] backports: update dependencies map file
+Date: Tue,  4 Nov 2014 19:18:30 -0800
+Message-Id: <1415157517-15442-7-git-send-email-mcgrof@do-not-panic.com> (sfid-20141105_042137_742710_12F2DE3B)
+In-Reply-To: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2014-11-04 at 00:42 -0800, Luis R. Rodriguez wrote:
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-> --- a/devel/ckmake
-> +++ b/devel/ckmake
-> @@ -165,6 +165,7 @@ def process_kernel(num, kset, cmdline_args):
->          all_config_name = os.path.join(work_dir, 'all.config')
->          all_config = open(all_config_name, 'w')
->          all_config.write("CPTCFG_CFG80211_INTERNAL_REGDB=n\n")
-> +        all_config.write("CONFIG_BACKPORT_CFG80211_INTERNAL_REGDB=n\n")
+During development of kernel integration support using CONFIG_BACKPORT
+was evaluated as a prefix over CPTCFG even for packaging backports,
+for some reason this change lifted some restrictions one some device
+drivers which was present before and as such requires some changes to
+the dependencies map file to ensure correct compilation for respective
+kernel versions.
 
-don't you know the prefix here?
+Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
+---
+ dependencies | 31 +++++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
 
->          config_name = 'allnoconfig'
->          if cmdline_args.allyesconfig:
->              config_name = 'allyesconfig'
-> @@ -173,6 +174,7 @@ def process_kernel(num, kset, cmdline_args):
->                  open(os.path.join(work_dir, 'defconfigs', cmdline_args.defconfig)).read())
->          else:
->              all_config.write("CPTCFG_BACKPORT_USERSEL_BUILD_ALL=y\n")
-> +            all_config.write("CONFIG_BACKPORT_CFG80211_INTERNAL_REGDB=y\n")
->          all_config.close()
-
-Not sure this part is right?
-
-johannes
+diff --git a/dependencies b/dependencies
+index 4964aa6..64903dc 100644
+--- a/dependencies
++++ b/dependencies
+@@ -16,6 +16,8 @@ USB_GSPCA_OV534 3.5
+ # we only support on >= 3.4 give that reguatory itself depends
+ # on -EPROBE_DEFER.
+ SOC_CAMERA 3.4
++VIDEO_S5K5BAF 3.4
++VIDEO_S5K4ECGX 3.4
+ # 49920bc6 and 1003cab8 and while it seems there is a
+ # one to one map DMA_FROM_DEVICE to DMA_DEV_TO_MEM
+ # I can't verify this fully yet.
+@@ -29,16 +31,29 @@ DVB_USB_RTL28XXU 3.4
+ # missing linux/gpio/consumer.h
+ VIDEO_ADV7604 3.13
+ # missing function clk_prepare_enable(), clk_disable_unprepare() and devm_regulator_bulk_get()
+-VIDEO_MT9P031 3.3
+-VIDEO_MT9T001 3.3
+ VIDEO_MT9V032 3.3
+-VIDEO_NOON010PC30 3.3
+-VIDEO_S5K6A3 3.3
+ VIDEO_S5K6AA 3.3
+-VIDEO_S5K5BAF 3.3
+-VIDEO_S5K4ECGX 3.3
+-VIDEO_M5MOLS 3.3
+-VIDEO_S5C73M3 3.3
++
++# missing devm_regulator_bulk_get
++VIDEO_MT9T001 3.5
++VIDEO_NOON010PC30 3.5
++VIDEO_MT9P031 3.5
++
++# missing of_property_read_bool() added via fa4d34cc on v3.4-rc1~71, backport
++# that attomically and you can enable this for older kernels.
++VIDEO_ADV7343 3.4
++
++# for whoever wants to backport this: GPIOF_EXPORT was redefined via commit
++# 79a9becd on v3.13-rc1~120^2~15, before this it was redefined via commit
++# f567fde2 on v3.5-rc7~32^2~4 and finally added via commit fc3a1f04 on
++# v3.5-rc1~93^2~25. We don't address any of these changes yet so we require
++# the latest interpretation.
++VIDEO_S5K6AA 3.13
++VIDEO_S5K6A3 3.13
++
++# missing linux/sizes.h
++VIDEO_M5MOLS 3.6
++VIDEO_S5C73M3 3.6
+ 
+ # missing function devm_regmap_init_i2c()
+ VIDEO_LM3646 3.3
+-- 
+2.1.1
 
