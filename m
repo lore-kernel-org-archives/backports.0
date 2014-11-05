@@ -1,50 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from static.88-198-24-112.clients.your-server.de ([88.198.24.112]:34420
-	"EHLO nbd.name" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932767AbaKMUtq (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 13 Nov 2014 15:49:46 -0500
-From: Felix Fietkau <nbd@openwrt.org>
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:64781 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753335AbaKEDSx (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 4 Nov 2014 22:18:53 -0500
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: hauke@hauke-m.de
-Subject: [PATCH 1/3] backports: add GENMASK and GENMASK_ULL
-Date: Thu, 13 Nov 2014 21:49:38 +0100
-Message-Id: <1415911780-52533-1-git-send-email-nbd@openwrt.org> (sfid-20141113_214947_498003_1E69C325)
+Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
+	mmarek@suse.cz, sassmann@kpanic.de,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: [PATCH v2 02/13] backports: ifdef around module_init() module_exit() for modules
+Date: Tue,  4 Nov 2014 19:18:26 -0800
+Message-Id: <1415157517-15442-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20141105_042221_148675_6252699F)
+In-Reply-To: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I intend to use this for a new driver
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+We only need this for modules.
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
 ---
- backport/backport-include/linux/bitops.h | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
- create mode 100644 backport/backport-include/linux/bitops.h
+ backport/backport-include/linux/module.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/backport/backport-include/linux/bitops.h b/backport/backport-include/linux/bitops.h
-new file mode 100644
-index 0000000..d8aec05
---- /dev/null
-+++ b/backport/backport-include/linux/bitops.h
-@@ -0,0 +1,19 @@
-+#ifndef __BACKPORT_BITOPS_H
-+#define __BACKPORT_BITOPS_H
-+#include_next <linux/bitops.h>
-+#include <linux/version.h>
-+#include <generated/utsrelease.h>
-+
-+#ifndef GENMASK
-+
-+/*
-+ * Create a contiguous bitmask starting at bit position @l and ending at
-+ * position @h. For example
-+ * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
-+ */
-+#define GENMASK(h, l)          (((U32_C(1) << ((h) - (l) + 1)) - 1) << (l))
-+#define GENMASK_ULL(h, l)      (((U64_C(1) << ((h) - (l) + 1)) - 1) << (l))
-+
+diff --git a/backport/backport-include/linux/module.h b/backport/backport-include/linux/module.h
+index 82c96bd..e8f28b1 100644
+--- a/backport/backport-include/linux/module.h
++++ b/backport/backport-include/linux/module.h
+@@ -25,6 +25,7 @@ extern void backport_dependency_symbol(void);
+ 		       " using backports " BACKPORTS_VERSION);
+ #endif
+ 
++#ifdef MODULE
+ #undef module_init
+ #define module_init(initfn)						\
+ 	static int __init __init_backport(void)				\
+@@ -58,6 +59,7 @@ extern void backport_dependency_symbol(void);
+ 		rcu_barrier();						\
+ 	}								\
+ 	void cleanup_module(void) __attribute__((alias("__exit_compat")));
 +#endif
-+
-+#endif /* __BACKPORT_BITOPS_H */
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
+ #undef param_check_bool
 -- 
-2.1.2
+2.1.1
 
