@@ -1,51 +1,52 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:34860 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754335AbaKNVLH (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 14 Nov 2014 16:11:07 -0500
-MIME-Version: 1.0
-In-Reply-To: <1415998465.1847.4.camel@sipsolutions.net>
-References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
- <1415998228.1847.3.camel@sipsolutions.net> <CAB=NE6X_d68Wc=CFAMb_suWJJQgSOSNafHiMwAmC6YhJFEtP1w@mail.gmail.com>
- <1415998465.1847.4.camel@sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Fri, 14 Nov 2014 13:10:44 -0800
-Message-ID: <CAB=NE6XVsZaUebqpKWZhPXncDY-5NRXorYSGQQZC00a9ezJouQ@mail.gmail.com> (sfid-20141114_221129_883949_7130CF0B)
-Subject: Re: [PATCH v3 00/21] backports: add kernel integration support
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Yann E. MORIN" <yann.morin.1998@free.fr>,
-	Michal Marek <mmarek@suse.cz>,
-	Stefan Assmann <sassmann@kpanic.de>
-Content-Type: text/plain; charset=UTF-8
+Received: from s3.sipsolutions.net ([5.9.151.49]:59441 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751096AbaKEH34 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 5 Nov 2014 02:29:56 -0500
+Message-ID: <1415172590.2589.1.camel@sipsolutions.net> (sfid-20141105_082958_098801_A2A17082)
+Subject: Re: [PATCH v1 10/11] backports: prefix c-file / h-file auto
+ backport with BPAUTO
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@suse.com>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
+Date: Wed, 05 Nov 2014 08:29:50 +0100
+In-Reply-To: <20141105002147.GJ12953@wotan.suse.de>
+References: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1415090582-14129-11-git-send-email-mcgrof@do-not-panic.com>
+	 <1415096092.2064.13.camel@sipsolutions.net>
+	 <20141104215002.GF12953@wotan.suse.de>
+	 <1415137850.2064.23.camel@sipsolutions.net>
+	 <20141105002147.GJ12953@wotan.suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Nov 14, 2014 at 12:54 PM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Fri, 2014-11-14 at 12:52 -0800, Luis R. Rodriguez wrote:
->> On Fri, Nov 14, 2014 at 12:50 PM, Johannes Berg
->> <johannes@sipsolutions.net> wrote:
->> > On Tue, 2014-11-11 at 00:14 -0800, Luis R. Rodriguez wrote:
->> >> From: "Luis R. Rodriguez" <mcgrof@suse.com>
->> >>
->> >> This third series should hopefully address all pending feedback.
->> >> I've split out patches even more, but more importantly have
->> >> made the parser simpler by both integrating the logic required
->> >> to understand a backport by identifying the backport by type
->> >> and strategy, sharing that, and then providing ignore lists on
->> >> the parsers.
->> >
->> > I think from a code change POV I should be OK with this, but I'll
->> > definitely want to run it and see the differences. I'll have to do that
->> > next week, it's getting late here.
->>
->> OK. So I shouldn't merge yet?
->
-> I would prefer you didn't, but OTOH we can always fix up issues later as
-> well.
+On Wed, 2014-11-05 at 01:21 +0100, Luis R. Rodriguez wrote:
 
-I'll wait.
+> > > I did at one point have BACKPORT_BPAUTO_* stuff on the compat/Kconfig for
+> > > the auto stuff but figured that was superfluous. I'll respin with it.
+> > 
+> > Not sure what you mean? It seems to me you should just drop the changes
+> > like the one I quoted above.
+> 
+> If we keep BACKPORT_BPAUTO as prefix on compat/Kconfig for auto backport
+> stuff we'll end up with BACKPORT_BACKPORT_BPAUTO, while technically correct
+> as you have pointed out, I find it personally superfluous. If we however
+> only use BPAUTO_ prefix on the compat/Kconfig we'll end up with BACKPORT_BPAUTO.
 
- Luis
+Correct.
+
+> Its subjective then, but I was opting in to prefer to just keep BPAUTO_ prefix
+> with the resulting CPTCFG_BPAUTO for packaging and CONFIG_BACKPORT_BPAUTO for
+> integration for these, if you however feel its best to double the BACKPORT
+> prefix that's fine too, it just seemed odd (although I realize correct).
+
+No, I'm perfectly happy with CPTCFG_BPAUTO. But the *code* changes
+you're making here that check whether bp_prefix is being duplicated
+aren't necessary for that, and are in fact confusing and dangerous.
+
+johannes
+
