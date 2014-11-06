@@ -1,41 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:40906 "EHLO mx2.suse.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:40762 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750860AbaKEIUb (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 5 Nov 2014 03:20:31 -0500
-Date: Wed, 5 Nov 2014 09:20:29 +0100
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
-Subject: Re: [PATCH v1 10/11] backports: prefix c-file / h-file auto
-	backport with BPAUTO
-Message-ID: <20141105082029.GL12953@wotan.suse.de> (sfid-20141105_092035_831491_16BED521)
-References: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com> <1415090582-14129-11-git-send-email-mcgrof@do-not-panic.com> <1415096092.2064.13.camel@sipsolutions.net> <20141104215002.GF12953@wotan.suse.de> <1415137850.2064.23.camel@sipsolutions.net> <20141105002147.GJ12953@wotan.suse.de> <1415172590.2589.1.camel@sipsolutions.net> <20141105080252.GK12953@wotan.suse.de> <1415175123.2589.10.camel@sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1415175123.2589.10.camel@sipsolutions.net>
+	id S1750926AbaKFLCQ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 6 Nov 2014 06:02:16 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backport: genl: add __genl_const for new hwsim mcast group
+Date: Thu,  6 Nov 2014 12:02:10 +0100
+Message-Id: <1415271730-19194-1-git-send-email-johannes@sipsolutions.net> (sfid-20141106_120218_843030_933E108E)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Nov 05, 2014 at 09:12:03AM +0100, Johannes Berg wrote:
-> On Wed, 2014-11-05 at 09:02 +0100, Luis R. Rodriguez wrote:
-> 
-> > > But the *code* changes
-> > > you're making here that check whether bp_prefix is being duplicated
-> > > aren't necessary for that, and are in fact confusing and dangerous.
-> > 
-> > Understood, thanks for the review, hopefully this is addressed with the
-> > latest series.
-> 
-> Actually, maybe you wanted these changes because you didn't want to end
-> up with CONFIG_BACKPORT_BPAUTO_ for integration? I think that's a small
-> price to pay though for code complexity trade-off, IMHO you should
-> accept CONFIG_BACKPORT_BPAUTO_ and remove the code changes.
+From: Johannes Berg <johannes.berg@intel.com>
 
-Quite the contrary, I did this to get CONFIG_BACKPORT_BPAUTO_ and not
-CONFIG_BACKPORT_BACKPORT_. So right now I do get CONFIG_BACKPORT_BPAUTO_
-for integration (with the v2 patch series).
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ .../collateral-evolutions/network/0027-genl-const/hwsim.patch | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-  Luis
+diff --git a/patches/collateral-evolutions/network/0027-genl-const/hwsim.patch b/patches/collateral-evolutions/network/0027-genl-const/hwsim.patch
+index 33cba175dda6..d6cb0350f1d1 100644
+--- a/patches/collateral-evolutions/network/0027-genl-const/hwsim.patch
++++ b/patches/collateral-evolutions/network/0027-genl-const/hwsim.patch
+@@ -1,5 +1,16 @@
+ --- a/drivers/net/wireless/mac80211_hwsim.c
+ +++ b/drivers/net/wireless/mac80211_hwsim.c
++@@ -491,7 +491,7 @@ enum hwsim_multicast_groups {
++ 	HWSIM_MCGRP_CONFIG,
++ };
++ 
++-static const struct genl_multicast_group hwsim_mcgrps[] = {
+++static __genl_const struct genl_multicast_group hwsim_mcgrps[] = {
++ 	[HWSIM_MCGRP_CONFIG] = { .name = "config", },
++ };
++ 
++--- a/drivers/net/wireless/mac80211_hwsim.c
+++++ b/drivers/net/wireless/mac80211_hwsim.c
+ @@ -2483,7 +2483,7 @@ static int hwsim_destroy_radio_nl(struct
+  }
+  
+-- 
+2.1.1
+
