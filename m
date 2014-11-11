@@ -1,40 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:53570 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754484AbaKNUrf (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 14 Nov 2014 15:47:35 -0500
-Message-ID: <1415998051.1847.2.camel@sipsolutions.net> (sfid-20141114_214737_999627_2DABED79)
-Subject: Re: [PATCH v3 10/21] backports: avoid git tree reinitialization
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de,
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:62155 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752214AbaKKIQG (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 11 Nov 2014 03:16:06 -0500
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
+	mmarek@suse.cz, sassmann@kpanic.de,
 	"Luis R. Rodriguez" <mcgrof@suse.com>
-Date: Fri, 14 Nov 2014 21:47:31 +0100
-In-Reply-To: <1415693712-23743-11-git-send-email-mcgrof@do-not-panic.com> (sfid-20141111_091920_022089_D2F879DA)
+Subject: [PATCH v3 10/21] backports: avoid git tree reinitialization
+Date: Tue, 11 Nov 2014 00:15:01 -0800
+Message-Id: <1415693712-23743-11-git-send-email-mcgrof@do-not-panic.com> (sfid-20141111_091920_022089_D2F879DA)
+In-Reply-To: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
 References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1415693712-23743-11-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20141111_091920_022089_D2F879DA)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2014-11-11 at 00:15 -0800, Luis R. Rodriguez wrote:
-> From: "Luis R. Rodriguez" <mcgrof@suse.com>
-> 
-> When using backports against for packaging with --gitdebug you either
-> have to use --clean or assume the directory is empty already. In either
-> case you start fresh. With integration this will be a bit different, you
-> could end up with a project directory where the git tree was present but
-> only the target directory was empty.
-> 
-> Calling git init on an already existing git directory will reinitialize
-> your git tree, that can reset some config stuff, let's avoid that.
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-I guess I don't care much, but it seems strange to me that you'd use
---gitdebug in this case, you'd end up committing crappy patches to the
-top-level kernel tree?
+When using backports against for packaging with --gitdebug you either
+have to use --clean or assume the directory is empty already. In either
+case you start fresh. With integration this will be a bit different, you
+could end up with a project directory where the git tree was present but
+only the target directory was empty.
 
-johannes
+Calling git init on an already existing git directory will reinitialize
+your git tree, that can reset some config stuff, let's avoid that.
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
+---
+ gentree.py | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/gentree.py b/gentree.py
+index 04e8f5e..68efce9 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -288,7 +288,10 @@ def git_debug_init(args):
+     """
+     if not args.gitdebug:
+         return
+-    git.init(tree=args.bpid.project_dir)
++    # Git supports re-initialization, although not well documented it can
++    # reset config stuff, lets avoid that if the tree already exists.
++    if not os.path.exists(os.path.join(args.bpid.project_dir, '.git')):
++        git.init(tree=args.bpid.project_dir)
+     git.commit_all("Copied backport", tree=args.bpid.project_dir)
+ 
+ 
+-- 
+2.1.1
 
