@@ -1,95 +1,208 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:50642 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751544AbaKKIPT (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 11 Nov 2014 03:15:19 -0500
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:47080 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753137AbaKKIQv (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 11 Nov 2014 03:16:51 -0500
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
 	mmarek@suse.cz, sassmann@kpanic.de,
 	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH v3 00/21] backports: add kernel integration support
-Date: Tue, 11 Nov 2014 00:14:51 -0800
-Message-Id: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20141111_091522_244502_9EA6DBD4)
+Subject: [PATCH v3 20/21] backports: remove extra BACKPORT_ prefix from kernel versioning
+Date: Tue, 11 Nov 2014 00:15:11 -0800
+Message-Id: <1415693712-23743-21-git-send-email-mcgrof@do-not-panic.com> (sfid-20141111_091730_375788_5D908103)
+In-Reply-To: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-This third series should hopefully address all pending feedback.
-I've split out patches even more, but more importantly have
-made the parser simpler by both integrating the logic required
-to understand a backport by identifying the backport by type
-and strategy, sharing that, and then providing ignore lists on
-the parsers.
+The CPTCFG_ prefix already implies backport, when integration
+is used we'd end up with a double BACKPORT_ prefix, so just
+remove the existing one as its not needed.
 
-The more complex change was dealing with the recursive _walk() in such
-a way that we can have a modified src_line regexp depending on the type
-of backport we are using. The parser will use a regexp that requires a
-full path for the sources, it will also allow for using a variable for
-the backport project directory if such is defined, and also provide a
-verification helper which ensures backported will be used rather than
-the older kernel code.
+Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
+---
+ backport/Makefile                                  |  2 +-
+ backport/compat/Kconfig                            | 10 +++----
+ backport/compat/Makefile                           | 34 +++++++++++-----------
+ devel/doc/kconfig-operation                        |  6 ++--
+ gentree.py                                         |  2 +-
+ .../media/0002-no_dmabuf/v4l2.patch                |  6 ++--
+ 6 files changed, 30 insertions(+), 30 deletions(-)
 
-Luis R. Rodriguez (21):
-  backports: move legacy and SmPL patch application into helper
-  backports: ifdef around module_init() module_exit() for modules
-  backports: move packaging kconfig hacks to its own file
-  backports: grant parsers access to kconfig config and menuconfig
-  backports: keep track of original backported source symbols early on
-  backports: allow for different backport prefix and simple integration
-    support
-  backports: add prefix for integration on dependencies
-  backports: replace BACKPORT_PWD with BACKPORT_DIR
-  backports: fold outdir as a backport identity target
-  backports: avoid git tree reinitialization
-  backports: modify kconfig parser to use bpid and target_dir
-  backports: make kconfig src_line backport / ConfigTree specific
-  backports: use BACKPORT_DIR prefix on kconfig sources
-  backports: update dependencies map file
-  backports: split Kconfig into Kconfig.package and Kconfig.sources
-  backports: move version file generation to run earlier
-  backports: define C code backport version info using CPTCFG_
-  backports: add backport version parsing for kernel integration
-  backports: prefix c-file / h-file auto backport with BPAUTO
-  backports: remove extra BACKPORT_ prefix from kernel versioning
-  backports: add full kernel integration support
-
- backport/Kconfig                                   |  47 --
- backport/Kconfig.integrate                         |  36 ++
- backport/Kconfig.package                           |  24 +
- backport/Kconfig.package.hacks                     |   8 +
- backport/Kconfig.sources                           |  23 +
- backport/Makefile                                  |   8 +-
- backport/Makefile.build                            |   4 +-
- backport/Makefile.kernel                           |  19 +-
- backport/Makefile.real                             |   2 +-
- backport/backport-include/asm/dma-mapping.h        |   4 +-
- backport/backport-include/backport/backport.h      |   5 +
- backport/backport-include/backport/leds-disabled.h |   2 +-
- backport/backport-include/linux/module.h           |   8 +-
- backport/compat/Kconfig                            |  84 +--
- backport/compat/Makefile                           |  42 +-
- backport/compat/backports.h                        |   4 +-
- backport/compat/main.c                             |  40 +-
- backport/scripts/uninstall.sh                      |   4 +-
- dependencies                                       |  31 +-
- devel/doc/kconfig-operation                        |  13 +-
- gentree.py                                         | 599 ++++++++++++++-------
- .../0001-enable-backports-built-in.patch           |  40 ++
- lib/bpversion.py                                   |  48 ++
- lib/kconfig.py                                     | 196 ++++++-
- patches/backport-adjustments/devcoredump.patch     |   4 +-
- .../media/0002-no_dmabuf/v4l2.patch                |   6 +-
- 26 files changed, 910 insertions(+), 391 deletions(-)
- delete mode 100644 backport/Kconfig
- create mode 100644 backport/Kconfig.integrate
- create mode 100644 backport/Kconfig.package
- create mode 100644 backport/Kconfig.package.hacks
- create mode 100644 backport/Kconfig.sources
- create mode 100644 integration-patches/0001-enable-backports/0001-enable-backports-built-in.patch
- create mode 100644 lib/bpversion.py
-
+diff --git a/backport/Makefile b/backport/Makefile
+index fcf2f01..c21b813 100644
+--- a/backport/Makefile
++++ b/backport/Makefile
+@@ -93,7 +93,7 @@ mrproper:
+ 		print=0									;\
+ 		for v in $$kvers ; do							\
+ 			if [ "$$print" = "1" ] ; then					\
+-				echo config BACKPORT_KERNEL_$$(echo $$v | tr . _)	;\
++				echo config KERNEL_$$(echo $$v | tr . _)	;\
+ 				echo "    def_bool y"					;\
+ 			fi								;\
+ 			if [ "$$v" = "$$kver" ] ; then print=1 ; fi			;\
+diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
+index 06ef8d5..aadf246 100644
+--- a/backport/compat/Kconfig
++++ b/backport/compat/Kconfig
+@@ -16,14 +16,14 @@
+ #
+ #	# not possible on kernel < X.Y, build will fail if any
+ #	# drivers are allowed to build on kernels < X.Y
+-#	depends on BACKPORT_KERNEL_X_Y
++#	depends on KERNEL_X_Y
+ #
+ #	# don't build the backport code if FOO is in the kernel
+ #	# already, but only if the kernel version is also >= X.Z;
+ #	# this is an example of backporting where the version of
+ #	# the FOO subsystem that we need is only available from
+ #	# kernel version X.Z
+-#	depends on !FOO || BACKPORT_KERNEL_X_Z
++#	depends on !FOO || KERNEL_X_Z
+ #
+ #	# build if driver needs it (it selects BPAUTO_FOO)
+ #	default m if BPAUTO_FOO
+@@ -43,7 +43,7 @@
+ #
+ # config BPAUTO_BUILD_KFIFO
+ #	def_bool y
+-#	depends on BACKPORT_KERNEL_2_6_36
++#	depends on KERNEL_2_6_36
+ #
+ #
+ # C) similarly, a kconfig symbol for an option, e.g.
+@@ -83,9 +83,9 @@ config BPAUTO_BUILD_DMA_SHARED_HELPERS
+ 	depends on HAS_DMA
+ 	# Build on other kernels kernels < 3.9 if HAVE_GENERIC_DMA_COHERENT is
+ 	# not set. Kernels >= 3.8 have this if HAS_DMA is set.
+-	depends on (!HAVE_GENERIC_DMA_COHERENT || BACKPORT_KERNEL_3_9)
++	depends on (!HAVE_GENERIC_DMA_COHERENT || KERNEL_3_9)
+ 	# Always build if on 3.3 - 3.5
+-	default y if (BACKPORT_KERNEL_3_4 || BACKPORT_KERNEL_3_5 || BACKPORT_KERNEL_3_6)
++	default y if (KERNEL_3_4 || KERNEL_3_5 || KERNEL_3_6)
+ 	# build for testing
+ 	default y if BPAUTO_USERSEL_BUILD_ALL
+ 
+diff --git a/backport/compat/Makefile b/backport/compat/Makefile
+index 0dd69fe..e787763 100644
+--- a/backport/compat/Makefile
++++ b/backport/compat/Makefile
+@@ -3,23 +3,23 @@ obj-m += compat.o
+ compat-y += main.o
+ 
+ # Kernel backport compatibility code
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_0) += compat-3.0.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_1) += compat-3.1.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_2) += backport-3.2.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_3) += compat-3.3.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_4) += compat-3.4.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_5) += compat-3.5.o user_namespace.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_6) += compat-3.6.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_7) += compat-3.7.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_8) += compat-3.8.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_9) += compat-3.9.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_10) += backport-3.10.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_12) += backport-3.12.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_13) += backport-3.13.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_14) += backport-3.14.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_15) += backport-3.15.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_17) += backport-3.17.o
+-compat-$(CPTCFG_BACKPORT_KERNEL_3_18) += backport-3.18.o
++compat-$(CPTCFG_KERNEL_3_0) += compat-3.0.o
++compat-$(CPTCFG_KERNEL_3_1) += compat-3.1.o
++compat-$(CPTCFG_KERNEL_3_2) += backport-3.2.o
++compat-$(CPTCFG_KERNEL_3_3) += compat-3.3.o
++compat-$(CPTCFG_KERNEL_3_4) += compat-3.4.o
++compat-$(CPTCFG_KERNEL_3_5) += compat-3.5.o user_namespace.o
++compat-$(CPTCFG_KERNEL_3_6) += compat-3.6.o
++compat-$(CPTCFG_KERNEL_3_7) += compat-3.7.o
++compat-$(CPTCFG_KERNEL_3_8) += compat-3.8.o
++compat-$(CPTCFG_KERNEL_3_9) += compat-3.9.o
++compat-$(CPTCFG_KERNEL_3_10) += backport-3.10.o
++compat-$(CPTCFG_KERNEL_3_12) += backport-3.12.o
++compat-$(CPTCFG_KERNEL_3_13) += backport-3.13.o
++compat-$(CPTCFG_KERNEL_3_14) += backport-3.14.o
++compat-$(CPTCFG_KERNEL_3_15) += backport-3.15.o
++compat-$(CPTCFG_KERNEL_3_17) += backport-3.17.o
++compat-$(CPTCFG_KERNEL_3_18) += backport-3.18.o
+ 
+ compat-$(CPTCFG_BPAUTO_BUILD_CRYPTO_CCM) += crypto-ccm.o
+ compat-$(CPTCFG_BPAUTO_BUILD_DMA_SHARED_HELPERS) += dma-shared-helpers.o
+diff --git a/devel/doc/kconfig-operation b/devel/doc/kconfig-operation
+index f1ecf60..ddb4de7 100644
+--- a/devel/doc/kconfig-operation
++++ b/devel/doc/kconfig-operation
+@@ -53,12 +53,12 @@ The second file (Kconfig.versions) is generated from just the version of
+ the kernel and also contains invisible and unselectable boolean options
+ like
+ 
+-config BACKPORT_KERNEL_X
++config KERNEL_X
+     def_bool y
+ 
+ to indicate that APIs introduced in kernel version X (e.g. 3_3 for 3.3
+ or 2_6_24 for 2.6.24) must be backported. Essentially, the presence of
+-a symbol BACKPORT_KERNEL_X indicates that the kernel that the code is
++a symbol KERNEL_X indicates that the kernel that the code is
+ being compiled against is older than X.
+ 
+ All together, this allows the correct options to be selected by the user.
+@@ -121,7 +121,7 @@ These are the problems and their solutions:
+     requires at least 2.6.29 due to the shash crypto code. This cannot be
+     determined easily automatically, so the 'dependencies' file is read
+     and options that are listed there are rewritten to include
+-        depends on !BACKPORT_KERNEL_X_Y
++        depends on !KERNEL_X_Y
+     (where X_Y is the listed kernel version), which makes them available
+     only on kernels >= X.Y.
+ 
+diff --git a/gentree.py b/gentree.py
+index bf2112b..90334ef 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -988,7 +988,7 @@ def process(kerneldir, copy_list_file, git_revision=None,
+             elif (dep == "DISABLE"):
+                     new.append('BACKPORT_DISABLED_KCONFIG_OPTION')
+             else:
+-                    new.append('!BACKPORT_KERNEL_%s' % dep.replace('.', '_'))
++                    new.append('!KERNEL_%s' % dep.replace('.', '_'))
+         if bpid.integrate:
+             deplist[sym] = ["BACKPORT_" + x for x in new]
+         else:
+diff --git a/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch b/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
+index 02d042a..7f88c3e 100644
+--- a/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
++++ b/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
+@@ -5,7 +5,7 @@
+  # Used by drivers that need Videobuf2 modules
+  config VIDEOBUF2_CORE
+ -	select DMA_SHARED_BUFFER
+-+	select DMA_SHARED_BUFFER if !BACKPORT_KERNEL_3_5
+++	select DMA_SHARED_BUFFER if !KERNEL_3_5
+  	tristate
+  
+  config VIDEOBUF2_MEMOPS
+@@ -14,14 +14,14 @@
+  	select VIDEOBUF2_CORE
+  	select VIDEOBUF2_MEMOPS
+ -	select DMA_SHARED_BUFFER
+-+	select DMA_SHARED_BUFFER if !BACKPORT_KERNEL_3_5
+++	select DMA_SHARED_BUFFER if !KERNEL_3_5
+  
+  config VIDEOBUF2_VMALLOC
+  	tristate
+  	select VIDEOBUF2_CORE
+  	select VIDEOBUF2_MEMOPS
+ -	select DMA_SHARED_BUFFER
+-+	select DMA_SHARED_BUFFER if !BACKPORT_KERNEL_3_5
+++	select DMA_SHARED_BUFFER if !KERNEL_3_5
+  
+  config VIDEOBUF2_DMA_SG
+  	tristate
 -- 
 2.1.1
 
