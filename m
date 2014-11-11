@@ -1,41 +1,57 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:52631 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750985AbaKDKNL (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 4 Nov 2014 05:13:11 -0500
-Message-ID: <1415095985.2064.12.camel@sipsolutions.net> (sfid-20141104_111314_176104_01B94C7C)
-Subject: Re: [PATCH v1 09/11] backports: use Kconfig for backport version
- information
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de,
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:62847 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752644AbaKKIPl (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 11 Nov 2014 03:15:41 -0500
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
+	mmarek@suse.cz, sassmann@kpanic.de,
 	"Luis R. Rodriguez" <mcgrof@suse.com>
-Date: Tue, 04 Nov 2014 11:13:05 +0100
-In-Reply-To: <1415090582-14129-10-git-send-email-mcgrof@do-not-panic.com> (sfid-20141104_094402_127361_9E36D521)
-References: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1415090582-14129-10-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20141104_094402_127361_9E36D521)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Subject: [PATCH v3 05/21] backports: keep track of original backported source symbols early on
+Date: Tue, 11 Nov 2014 00:14:56 -0800
+Message-Id: <1415693712-23743-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20141111_092019_874494_89E0847B)
+In-Reply-To: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2014-11-04 at 00:43 -0800, Luis R. Rodriguez wrote:
-> From: "Luis R. Rodriguez" <mcgrof@suse.com>
-> 
-> Instead of relying on Makefile hacks just use Kconfig for
-> defining the variables needed. We can do this since these
-> variables are all known at packaging time. The exception
-> is BACKPORTS_GIT_TRACKED, but for that we can define a
-> kconfig variable which only if set will we rely on the
-> environment for picking it up and later exporting it through
-> Kconfig. Since Kconfig doesn't keep config variables defined
-> with option env we use a secondary config entry for that.
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-I'd prefer you didn't do this. When we track the backports in a git tree
-this will mean constant changes to these files, where currently the
-changes are constrained to just the "versions" file.
+We'll later want to do some modifications of symbols we backport
+when integrating, but before we do any modification on kconfig
+files we should keep track of the original source symbols.
 
-johannes
+This commit introduces no functional changes right now, it will
+become more useful after we start adjusting kconfig entries
+for integration.
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
+---
+ gentree.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/gentree.py b/gentree.py
+index 7a6deef..cb39a3f 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -768,6 +768,7 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+ 
+     # some post-processing is required
+     configtree = kconfig.ConfigTree(os.path.join(args.outdir, 'Kconfig'))
++    orig_symbols = configtree.symbols()
+     logwrite('Modify Kconfig tree ...')
+     configtree.prune_sources(ignore=['Kconfig.kernel', 'Kconfig.versions'])
+     git_debug_snapshot(args, "prune Kconfig tree")
+@@ -829,7 +830,7 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
+ 
+     # rewrite Makefile and source symbols
+     regexes = []
+-    for some_symbols in [symbols[i:i + 50] for i in range(0, len(symbols), 50)]:
++    for some_symbols in [orig_symbols[i:i + 50] for i in range(0, len(orig_symbols), 50)]:
+         r = 'CONFIG_((' + '|'.join([s + '(_MODULE)?' for s in some_symbols]) + ')([^A-Za-z0-9_]|$))'
+         regexes.append(re.compile(r, re.MULTILINE))
+     for root, dirs, files in os.walk(args.outdir):
+-- 
+2.1.1
 
