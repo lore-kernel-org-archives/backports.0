@@ -1,46 +1,207 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:37687 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750943AbaKPUtl (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 16 Nov 2014 15:49:41 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:54831 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753060AbaKKIQ2 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 11 Nov 2014 03:16:28 -0500
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 16/20] patches: disable qdisc_tx_busylock in bluetooth
-Date: Sun, 16 Nov 2014 21:49:16 +0100
-Message-Id: <1416170960-12868-17-git-send-email-hauke@hauke-m.de> (sfid-20141116_221347_584476_4E65E9F4)
-In-Reply-To: <1416170960-12868-1-git-send-email-hauke@hauke-m.de>
-References: <1416170960-12868-1-git-send-email-hauke@hauke-m.de>
+Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
+	mmarek@suse.cz, sassmann@kpanic.de,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: [PATCH v3 15/21] backports: split Kconfig into Kconfig.package and Kconfig.sources
+Date: Tue, 11 Nov 2014 00:15:06 -0800
+Message-Id: <1415693712-23743-16-git-send-email-mcgrof@do-not-panic.com> (sfid-20141111_091810_972183_F566E63D)
+In-Reply-To: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The qdisc_tx_busylock member in struct net_device is not available in
-kernel < 3.7.
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+This splits up the Kconfig from things which are needed due to
+our copy of code from the kernel and things which we need
+specifically only for packaging backports. We will later then
+share the Kconfig.souce for instance for kernel integration.
+
+While at it, split up the list of files that we need to copy
+into what we know could be shared for integration. The the
+case of backport packaging Kconfig.package will be copied to
+the package's Kconfig when building the package with gentree.py.
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
 ---
- .../network/0030-qdisc_tx_busylock/bluetooth.patch           | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0030-qdisc_tx_busylock/bluetooth.patch
+ backport/Kconfig         | 44 --------------------------------------------
+ backport/Kconfig.package | 24 ++++++++++++++++++++++++
+ backport/Kconfig.sources | 23 +++++++++++++++++++++++
+ gentree.py               | 27 ++++++++++++++++++++++-----
+ 4 files changed, 69 insertions(+), 49 deletions(-)
+ delete mode 100644 backport/Kconfig
+ create mode 100644 backport/Kconfig.package
+ create mode 100644 backport/Kconfig.sources
 
-diff --git a/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/bluetooth.patch b/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/bluetooth.patch
+diff --git a/backport/Kconfig b/backport/Kconfig
+deleted file mode 100644
+index b729d47..0000000
+--- a/backport/Kconfig
++++ /dev/null
+@@ -1,44 +0,0 @@
+-mainmenu "Linux Backports from $BACKPORTED_KERNEL_NAME $BACKPORTED_KERNEL_VERSION (with backports $BACKPORTS_VERSION)"
+-
+-config BACKPORT_DIR
+-	string
+-	option env="BACKPORT_DIR"
+-config BACKPORTS_VERSION
+-	string
+-	option env="BACKPORTS_VERSION"
+-config BACKPORTED_KERNEL_VERSION
+-	string
+-	option env="BACKPORTED_KERNEL_VERSION"
+-config BACKPORTED_KERNEL_NAME
+-	string
+-	option env="BACKPORTED_KERNEL_NAME"
+-
+-source "$BACKPORT_DIR/Kconfig.kernel"
+-source "$BACKPORT_DIR/Kconfig.versions"
+-
+-# Packaging hacks
+-source "$BACKPORT_DIR/Kconfig.package.hacks"
+-
+-# this has the configuration for the backport code
+-source "$BACKPORT_DIR/compat/Kconfig"
+-
+-# these are copied from the kernel
+-source "$BACKPORT_DIR/net/wireless/Kconfig"
+-source "$BACKPORT_DIR/net/mac80211/Kconfig"
+-source "$BACKPORT_DIR/net/bluetooth/Kconfig"
+-source "$BACKPORT_DIR/drivers/net/wireless/Kconfig"
+-source "$BACKPORT_DIR/drivers/net/ethernet/Kconfig"
+-source "$BACKPORT_DIR/drivers/net/usb/Kconfig"
+-
+-source "$BACKPORT_DIR/drivers/ssb/Kconfig"
+-source "$BACKPORT_DIR/drivers/bcma/Kconfig"
+-
+-source "$BACKPORT_DIR/net/nfc/Kconfig"
+-
+-source "$BACKPORT_DIR/drivers/media/Kconfig"
+-
+-source "$BACKPORT_DIR/net/ieee802154/Kconfig"
+-source "$BACKPORT_DIR/net/mac802154/Kconfig"
+-source "$BACKPORT_DIR/drivers/net/ieee802154/Kconfig"
+-
+-source "$BACKPORT_DIR/drivers/usb/class/Kconfig"
+diff --git a/backport/Kconfig.package b/backport/Kconfig.package
 new file mode 100644
-index 0000000..0c63a67
+index 0000000..9684574
 --- /dev/null
-+++ b/patches/collateral-evolutions/network/0030-qdisc_tx_busylock/bluetooth.patch
-@@ -0,0 +1,12 @@
-+--- a/net/bluetooth/6lowpan.c
-++++ b/net/bluetooth/6lowpan.c
-+@@ -663,7 +663,9 @@ static void bt_set_lockdep_class_one(str
-+ static int bt_dev_init(struct net_device *dev)
-+ {
-+ 	netdev_for_each_tx_queue(dev, bt_set_lockdep_class_one, NULL);
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-+ 	dev->qdisc_tx_busylock = &bt_tx_busylock;
-++#endif
-+ 
-+ 	return 0;
-+ }
++++ b/backport/Kconfig.package
+@@ -0,0 +1,24 @@
++mainmenu "Backports from $BACKPORTED_KERNEL_NAME $BACKPORTED_KERNEL_VERSION (backports $BACKPORTS_VERSION)"
++
++config BACKPORT_DIR
++	string
++	option env="BACKPORT_DIR"
++config BACKPORTS_VERSION
++	string
++	option env="BACKPORTS_VERSION"
++config BACKPORTED_KERNEL_VERSION
++	string
++	option env="BACKPORTED_KERNEL_VERSION"
++config BACKPORTED_KERNEL_NAME
++	string
++	option env="BACKPORTED_KERNEL_NAME"
++
++# Packaging hacks
++source "$BACKPORT_DIR/Kconfig.package.hacks"
++
++# Code we backport
++source "$BACKPORT_DIR/Kconfig.sources"
++
++# these will be generated
++source "$BACKPORT_DIR/Kconfig.kernel"
++source "$BACKPORT_DIR/Kconfig.versions"
+diff --git a/backport/Kconfig.sources b/backport/Kconfig.sources
+new file mode 100644
+index 0000000..cdf993c
+--- /dev/null
++++ b/backport/Kconfig.sources
+@@ -0,0 +1,23 @@
++# this has the configuration for the backport code
++source "$BACKPORT_DIR/compat/Kconfig"
++
++# these are copied from the kernel
++source "$BACKPORT_DIR/net/wireless/Kconfig"
++source "$BACKPORT_DIR/net/mac80211/Kconfig"
++source "$BACKPORT_DIR/net/bluetooth/Kconfig"
++source "$BACKPORT_DIR/drivers/net/wireless/Kconfig"
++source "$BACKPORT_DIR/drivers/net/ethernet/Kconfig"
++source "$BACKPORT_DIR/drivers/net/usb/Kconfig"
++
++source "$BACKPORT_DIR/drivers/ssb/Kconfig"
++source "$BACKPORT_DIR/drivers/bcma/Kconfig"
++
++source "$BACKPORT_DIR/net/nfc/Kconfig"
++
++source "$BACKPORT_DIR/drivers/media/Kconfig"
++
++source "$BACKPORT_DIR/net/ieee802154/Kconfig"
++source "$BACKPORT_DIR/net/mac802154/Kconfig"
++source "$BACKPORT_DIR/drivers/net/ieee802154/Kconfig"
++
++source "$BACKPORT_DIR/drivers/usb/class/Kconfig"
+diff --git a/gentree.py b/gentree.py
+index 7632b90..71e52e4 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -798,12 +798,28 @@ def process(kerneldir, copy_list_file, git_revision=None,
+     check_output_dir(bpid.target_dir, args.clean)
+ 
+     # do the copy
++    backport_package_files = [(x, x) for x in [
++        'Makefile',
++        'kconf/',
++        'Makefile.real',
++        'Makefile.kernel',
++        'Kconfig.package.hacks',
++        'scripts/',
++        '.blacklist.map',
++        '.gitignore',
++        'Makefile.build'] ]
++    backport_package_files += [
++            ('Kconfig.package', 'Kconfig'),
++            ]
+     backport_files = [(x, x) for x in [
+-        'Kconfig', 'Kconfig.package.hacks',
+-        'Makefile', 'Makefile.build', 'Makefile.kernel', '.gitignore',
+-        'Makefile.real', 'compat/', 'backport-include/', 'kconf/',
+-        'scripts/', '.blacklist.map',
++        'Kconfig.sources',
++        'compat/',
++        'backport-include/',
+     ]]
++
++    if not bpid.integrate:
++        backport_files += backport_package_files
++
+     if not args.git_revision:
+         logwrite('Copy original source files ...')
+     else:
+@@ -827,6 +843,7 @@ def process(kerneldir, copy_list_file, git_revision=None,
+     git_debug_snapshot(args, 'Add driver sources')
+ 
+     disable_list = add_automatic_backports(args)
++
+     if disable_list:
+         # No need to verify_sources() as compat's Kconfig has no 'source' call
+         bpcfg = kconfig.ConfigTree(os.path.join(bpid.target_dir, 'compat', 'Kconfig'), bpid)
+@@ -877,7 +894,7 @@ def process(kerneldir, copy_list_file, git_revision=None,
+ 
+     # write local symbol list -- needed during packaging build
+     if not bpid.integrate:
+-        f = open(os.path.join(bpid.project_dir, '.local-symbols'), 'w')
++        f = open(os.path.join(bpid.target_dir, '.local-symbols'), 'w')
+         for sym in symbols:
+             f.write('%s=\n' % sym)
+         f.close()
 -- 
-1.9.1
+2.1.1
 
