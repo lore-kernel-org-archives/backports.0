@@ -1,48 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:37691 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750944AbaKPUtk (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 16 Nov 2014 15:49:40 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:34481 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752644AbaKKIP1 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 11 Nov 2014 03:15:27 -0500
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 11/20] dependencies: make IEEE802154 depend on 3.19
-Date: Sun, 16 Nov 2014 21:49:11 +0100
-Message-Id: <1416170960-12868-12-git-send-email-hauke@hauke-m.de> (sfid-20141116_221347_067151_B8F27285)
-In-Reply-To: <1416170960-12868-1-git-send-email-hauke@hauke-m.de>
-References: <1416170960-12868-1-git-send-email-hauke@hauke-m.de>
+Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
+	mmarek@suse.cz, sassmann@kpanic.de,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: [PATCH v3 02/21] backports: ifdef around module_init() module_exit() for modules
+Date: Tue, 11 Nov 2014 00:14:53 -0800
+Message-Id: <1415693712-23743-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20141111_092050_815840_EF442FD4)
+In-Reply-To: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-It looks hard to backport IEEE802154 to older kernels, because it now
-uses the new member ieee802154_ptr in struct net_device. This code was
-added in upstream commit 98a18b6ffc7 "netdevice: add ieee802154_ptr to
-net_device"
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-If someone knows how to backport this stuff please do so and revert
-this patch.
+We only need this for modules.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
 ---
- dependencies | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ backport/backport-include/linux/module.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/dependencies b/dependencies
-index 3d02980..1ca9061 100644
---- a/dependencies
-+++ b/dependencies
-@@ -100,8 +100,10 @@ INTEL_IPS 3.2
+diff --git a/backport/backport-include/linux/module.h b/backport/backport-include/linux/module.h
+index 82c96bd..e8f28b1 100644
+--- a/backport/backport-include/linux/module.h
++++ b/backport/backport-include/linux/module.h
+@@ -25,6 +25,7 @@ extern void backport_dependency_symbol(void);
+ 		       " using backports " BACKPORTS_VERSION);
+ #endif
  
- NFC_MEI_PHY 3.10
++#ifdef MODULE
+ #undef module_init
+ #define module_init(initfn)						\
+ 	static int __init __init_backport(void)				\
+@@ -58,6 +59,7 @@ extern void backport_dependency_symbol(void);
+ 		rcu_barrier();						\
+ 	}								\
+ 	void cleanup_module(void) __attribute__((alias("__exit_compat")));
++#endif
  
-+# can not backport ieee802154_ptr in struct net_device wich was added in
-+# 98a18b6ffc7 "netdevice: add ieee802154_ptr to net_device"
-+IEEE802154 3.19
- IEEE802154_MRF24J40 3.5
--IEEE802154 3.1
- IEEE802154_6LOWPAN 3.5
- # needs devm_regmap_init_spi()
- IEEE802154_AT86RF230 3.4
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
+ #undef param_check_bool
 -- 
-1.9.1
+2.1.1
 
