@@ -1,177 +1,108 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:37685 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751085AbaKPUtl (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 16 Nov 2014 15:49:41 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:56774 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752413AbaKKIPz (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 11 Nov 2014 03:15:55 -0500
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 18/20] headers: remove pci_regs.h
-Date: Sun, 16 Nov 2014 21:49:18 +0100
-Message-Id: <1416170960-12868-19-git-send-email-hauke@hauke-m.de> (sfid-20141116_221346_689343_E481A183)
-In-Reply-To: <1416170960-12868-1-git-send-email-hauke@hauke-m.de>
-References: <1416170960-12868-1-git-send-email-hauke@hauke-m.de>
+Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
+	mmarek@suse.cz, sassmann@kpanic.de,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: [PATCH v3 08/21] backports: replace BACKPORT_PWD with BACKPORT_DIR
+Date: Tue, 11 Nov 2014 00:14:59 -0800
+Message-Id: <1415693712-23743-9-git-send-email-mcgrof@do-not-panic.com> (sfid-20141111_091607_088807_C83CA873)
+In-Reply-To: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This file is now copied from the kernel and we do not have to ship an
-own version. Coping this from the kernel is safe because it only
-contains constants.
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-commit bda1096b3dfe00f19b30fc85f282b2a9ad2f67f0
-Author: Felix Fietkau <nbd@openwrt.org>
-Date:   Sun Nov 16 14:39:58 2014 +0100
+This will also be used for built-in kernel integration, by
+using this we can share more code with the built-in kernel
+approach.
 
-    backports: add include/uapi/linux/pci_regs.h to copy-list
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
+Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
 ---
- backport/backport-include/linux/pci_regs.h | 136 -----------------------------
- 1 file changed, 136 deletions(-)
- delete mode 100644 backport/backport-include/linux/pci_regs.h
+ backport/Makefile             | 6 +++---
+ backport/Makefile.build       | 4 ++--
+ backport/Makefile.real        | 2 +-
+ backport/scripts/uninstall.sh | 4 ++--
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/backport/backport-include/linux/pci_regs.h b/backport/backport-include/linux/pci_regs.h
-deleted file mode 100644
-index b52c4a5..0000000
---- a/backport/backport-include/linux/pci_regs.h
-+++ /dev/null
-@@ -1,136 +0,0 @@
--#ifndef __BACKPORT_UAPI_PCI_REGS_H
--#define __BACKPORT_UAPI_PCI_REGS_H
--#include_next <linux/pci_regs.h>
--
--#ifndef PCI_EXP_LNKCTL_ASPM_L0S
--#define  PCI_EXP_LNKCTL_ASPM_L0S  0x01 /* L0s Enable */
--#endif
--
--#ifndef PCI_EXP_LNKCTL_ASPM_L1
--#define  PCI_EXP_LNKCTL_ASPM_L1   0x02 /* L1 Enable */
--#endif
--
--/* This backports:
-- *
-- * commit 130f1b8f35f14d27c43da755f3c9226318c17f57
-- * Author: Bjorn Helgaas <bhelgaas@google.com>
-- * Date:   Wed Dec 26 10:39:23 2012 -0700
-- *
-- *     PCI: Add PCIe Link Capability link speed and width names
-- */
--#ifndef PCI_EXP_LNKCAP_SLS_2_5GB
--#define  PCI_EXP_LNKCAP_SLS_2_5GB 0x1	/* LNKCAP2 SLS Vector bit 0 (2.5GT/s) */
--#endif
--
--#ifndef PCI_EXP_LNKCAP_SLS_5_0GB
--#define  PCI_EXP_LNKCAP_SLS_5_0GB 0x2	/* LNKCAP2 SLS Vector bit 1 (5.0GT/s) */
--#endif
--
--#ifndef PCI_EXP_LNKSTA2
--#define PCI_EXP_LNKSTA2			50      /* Link Status 2 */
--#endif
--
--/**
-- * Backports
-- *
-- * commit cdcac9cd7741af2c2b9255cbf060f772596907bb
-- * Author: Dave Airlie <airlied@redhat.com>
-- * Date:   Wed Jun 27 08:35:52 2012 +0100
-- *
-- * 	pci_regs: define LNKSTA2 pcie cap + bits.
-- *
-- * 	We need these for detecting the max link speed for drm drivers.
-- *
-- * 	Acked-by: Bjorn Helgaas <bhelgass@google.com>
-- * 	Signed-off-by: Dave Airlie <airlied@redhat.com>
-- */
--#ifndef PCI_EXP_LNKCAP2
--#define  PCI_EXP_LNKCAP2 		44	/* Link Capability 2 */
--#endif
--
--#ifndef PCI_EXP_LNKCAP2_SLS_2_5GB
--#define  PCI_EXP_LNKCAP2_SLS_2_5GB 	0x01	/* Current Link Speed 2.5GT/s */
--#endif
--
--#ifndef PCI_EXP_LNKCAP2_SLS_5_0GB
--#define  PCI_EXP_LNKCAP2_SLS_5_0GB 	0x02	/* Current Link Speed 5.0GT/s */
--#endif
--
--#ifndef PCI_EXP_LNKCAP2_SLS_8_0GB
--#define  PCI_EXP_LNKCAP2_SLS_8_0GB 	0x04	/* Current Link Speed 8.0GT/s */
--#endif
--
--#ifndef PCI_EXP_LNKCAP2_CROSSLINK
--#define  PCI_EXP_LNKCAP2_CROSSLINK 	0x100 /* Crosslink supported */
--#endif
--
--/*
-- * PCI_EXP_TYPE_RC_EC was added via 1b6b8ce2 on v2.6.30-rc4~20 :
-- *
-- * mcgrof@frijol ~/linux-next (git::master)$ git describe --contains 1b6b8ce2
-- * v2.6.30-rc4~20^2
-- *
-- * but the fix for its definition was merged on v3.3-rc1~101^2~67
-- *
-- * mcgrof@frijol ~/linux-next (git::master)$ git describe --contains 1830ea91
-- * v3.3-rc1~101^2~67
-- *
-- * while we can assume it got merged and backported on v3.2.28 (which it did
-- * see c1c3cd9) we cannot assume every kernel has it fixed so lets just undef
-- * it here and redefine it.
-- */
--#undef PCI_EXP_TYPE_RC_EC
--#define  PCI_EXP_TYPE_RC_EC    0xa     /* Root Complex Event Collector */
--
--#ifndef PCI_MSIX_ENTRY_CTRL_MASKBIT
--#define PCI_MSIX_ENTRY_CTRL_MASKBIT  1
--#endif
--
--/* MSI-X entry's format */
--#ifndef PCI_MSIX_ENTRY_SIZE
--#define PCI_MSIX_ENTRY_SIZE            16
--#define  PCI_MSIX_ENTRY_LOWER_ADDR     0
--#define  PCI_MSIX_ENTRY_UPPER_ADDR     4
--#define  PCI_MSIX_ENTRY_DATA           8
--#define  PCI_MSIX_ENTRY_VECTOR_CTRL    12
--#endif
--
--#ifndef PCI_EXP_LNKCTL2
--#define PCI_EXP_LNKCTL2			48      /* Link Control 2 */
--#endif
--
--#ifndef PCI_EXP_SLTCTL2
--#define PCI_EXP_SLTCTL2			56      /* Slot Control 2 */
--#endif
--
--#ifndef PCI_EXP_LNKCTL_ES
--#define PCI_EXP_LNKCTL_ES     0x0080  /* Extended Synch */
--#endif
--
--#ifndef PCI_EXP_SLTSTA_PDS
--#define PCI_EXP_SLTSTA_PDS	0x0040  /* Presence Detect State */
--#endif
--
--#ifndef PCI_EXP_DEVCAP2
--#define PCI_EXP_DEVCAP2		36      /* Device Capabilities 2 */
--#define  PCI_EXP_DEVCAP2_ARI  	0x20    /* Alternative Routing-ID */
--#endif
--
--#ifndef PCI_EXP_DEVCTL2
--#define PCI_EXP_DEVCTL2		40      /* Device Control 2 */
--#define  PCI_EXP_DEVCTL2_ARI	0x20    /* Alternative Routing-ID */
--#endif
--
--#ifndef PCI_PM_CAP_PME_SHIFT
--#define PCI_PM_CAP_PME_SHIFT	11
--#endif
--
--#ifndef PCI_SRIOV_VF_DID
--#define PCI_SRIOV_VF_DID	0x1a	/* VF Device ID */
--#endif
--
--#ifndef PCI_SRIOV_CTRL_VFE
--#define PCI_SRIOV_CTRL_VFE	0x01	/* VF Enable */
--#endif
--
--#endif /* __BACKPORT_UAPI_PCI_REGS_H */
+diff --git a/backport/Makefile b/backport/Makefile
+index ea3982b..fcf2f01 100644
+--- a/backport/Makefile
++++ b/backport/Makefile
+@@ -6,7 +6,7 @@ ifeq ($(KERNELRELEASE),)
+ 
+ MAKEFLAGS += --no-print-directory
+ SHELL := /bin/bash
+-BACKPORT_PWD := $(shell pwd)
++BACKPORT_DIR := $(shell pwd)
+ 
+ KMODDIR ?= updates
+ ifneq ($(origin KLIB), undefined)
+@@ -20,7 +20,7 @@ KERNEL_CONFIG := $(KLIB_BUILD)/.config
+ KERNEL_MAKEFILE := $(KLIB_BUILD)/Makefile
+ CONFIG_MD5 := $(shell md5sum $(KERNEL_CONFIG) 2>/dev/null | sed 's/\s.*//')
+ 
+-export KLIB KLIB_BUILD BACKPORT_PWD KMODDIR KMODPATH_ARG
++export KLIB KLIB_BUILD BACKPORT_DIR KMODDIR KMODPATH_ARG
+ 
+ # disable built-in rules for this file
+ .SUFFIXES:
+@@ -159,5 +159,5 @@ help: defconfig-help
+ 	@echo ""
+ 	@echo "Execute "make" or "make all" to build all targets marked with [*]"
+ else
+-include $(BACKPORT_PWD)/Makefile.kernel
++include $(BACKPORT_DIR)/Makefile.kernel
+ endif
+diff --git a/backport/Makefile.build b/backport/Makefile.build
+index d209041..a848b37 100644
+--- a/backport/Makefile.build
++++ b/backport/Makefile.build
+@@ -3,8 +3,8 @@ export
+ 
+ .PHONY: modules
+ modules:
+-	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_PWD) modules
++	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_DIR) modules
+ 
+ .PHONY: clean
+ clean:
+-	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_PWD) clean
++	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_DIR) clean
+diff --git a/backport/Makefile.real b/backport/Makefile.real
+index f60d5ca..a0f4916 100644
+--- a/backport/Makefile.real
++++ b/backport/Makefile.real
+@@ -89,7 +89,7 @@ modules: backport-include/backport/autoconf.h
+ 
+ .PHONY: install
+ install: modules
+-	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_PWD)			\
++	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_DIR)			\
+ 		INSTALL_MOD_DIR=$(KMODDIR) $(KMODPATH_ARG)		\
+ 		modules_install
+ 	@./scripts/blacklist.sh $(KLIB)/ $(KLIB)/$(KMODDIR)
+diff --git a/backport/scripts/uninstall.sh b/backport/scripts/uninstall.sh
+index 1eb42b0..b46d3fe 100755
+--- a/backport/scripts/uninstall.sh
++++ b/backport/scripts/uninstall.sh
+@@ -10,8 +10,8 @@ else
+ 	compr=""
+ fi
+ 
+-for driver in $(find ${BACKPORT_PWD} -type f -name *.ko); do
+-	mod_name=${driver/${BACKPORT_PWD}/${KLIB}${KMODDIR}}${compr}
++for driver in $(find ${BACKPORT_DIR} -type f -name *.ko); do
++	mod_name=${driver/${BACKPORT_DIR}/${KLIB}${KMODDIR}}${compr}
+ 	echo "  uninstall" $mod_name
+ 	rm -f $mod_name
+ done
 -- 
-1.9.1
+2.1.1
 
