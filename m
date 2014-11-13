@@ -1,49 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from one.firstfloor.org ([193.170.194.197]:43376 "EHLO
-	one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750879AbaKEXJK (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 5 Nov 2014 18:09:10 -0500
-Date: Thu, 6 Nov 2014 00:09:07 +0100
-From: Andi Kleen <andi@firstfloor.org>
-To: "Luis R. Rodriguez" <mcgrof@suse.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, andi@firstfloor.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
-Subject: Re: [PATCH v2 03/13] backports: allow for different backport prefix
-Message-ID: <20141105230907.GD12538@two.firstfloor.org> (sfid-20141106_000912_421030_CF41C434)
-References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
- <1415157517-15442-4-git-send-email-mcgrof@do-not-panic.com>
- <1415173596.2589.3.camel@sipsolutions.net>
- <20141105091610.GM12953@wotan.suse.de>
- <1415179364.2589.13.camel@sipsolutions.net>
- <20141105194215.GN12953@wotan.suse.de>
- <1415222258.7485.10.camel@sipsolutions.net>
- <20141105222159.GS12953@wotan.suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20141105222159.GS12953@wotan.suse.de>
+Received: from static.88-198-24-112.clients.your-server.de ([88.198.24.112]:34420
+	"EHLO nbd.name" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932767AbaKMUtq (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 13 Nov 2014 15:49:46 -0500
+From: Felix Fietkau <nbd@openwrt.org>
+To: backports@vger.kernel.org
+Cc: hauke@hauke-m.de
+Subject: [PATCH 1/3] backports: add GENMASK and GENMASK_ULL
+Date: Thu, 13 Nov 2014 21:49:38 +0100
+Message-Id: <1415911780-52533-1-git-send-email-nbd@openwrt.org> (sfid-20141113_214947_498003_1E69C325)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-> You know, this use case seems unavoidable so I'll just proceed with the
-> configurability of it. But note that it seems we're both in agreement
-> that right now what you described requires more work before in any way
-> shape or form folks start using it for the exact purpose you described.
-> I also think Andi Kleen's module namespace might be a much better solution to
-> that problem [0], we'd just have to carry the code ourselves as I am not
+I intend to use this for a new driver
 
-Just to clarify. My name spaces didn't really provide different
-name spaces (like C++), it just added a ACL to exports to make it possible
-to do "export only to module N". But the name space itself
-was still flat
+Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+---
+ backport/backport-include/linux/bitops.h | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+ create mode 100644 backport/backport-include/linux/bitops.h
 
-On the linker side doing real name spaces is probably not too hard,
-but it would be difficult for linked in code without special linker
-support.
+diff --git a/backport/backport-include/linux/bitops.h b/backport/backport-include/linux/bitops.h
+new file mode 100644
+index 0000000..d8aec05
+--- /dev/null
++++ b/backport/backport-include/linux/bitops.h
+@@ -0,0 +1,19 @@
++#ifndef __BACKPORT_BITOPS_H
++#define __BACKPORT_BITOPS_H
++#include_next <linux/bitops.h>
++#include <linux/version.h>
++#include <generated/utsrelease.h>
++
++#ifndef GENMASK
++
++/*
++ * Create a contiguous bitmask starting at bit position @l and ending at
++ * position @h. For example
++ * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
++ */
++#define GENMASK(h, l)          (((U32_C(1) << ((h) - (l) + 1)) - 1) << (l))
++#define GENMASK_ULL(h, l)      (((U64_C(1) << ((h) - (l) + 1)) - 1) << (l))
++
++#endif
++
++#endif /* __BACKPORT_BITOPS_H */
+-- 
+2.1.2
 
-> sure if this is ever going to get upstream as it was originally nacked.
-
-May need to revisit that.
-
--Andi
