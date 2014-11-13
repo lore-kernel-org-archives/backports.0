@@ -1,86 +1,49 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:64359 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753031AbaKKIQY (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 11 Nov 2014 03:16:24 -0500
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Received: from static.88-198-24-112.clients.your-server.de ([88.198.24.112]:34423
+	"EHLO nbd.name" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932767AbaKMUtp (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 13 Nov 2014 15:49:45 -0500
+From: Felix Fietkau <nbd@openwrt.org>
 To: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
-	mmarek@suse.cz, sassmann@kpanic.de,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH v3 14/21] backports: update dependencies map file
-Date: Tue, 11 Nov 2014 00:15:05 -0800
-Message-Id: <1415693712-23743-15-git-send-email-mcgrof@do-not-panic.com> (sfid-20141111_091827_971521_914CACD9)
-In-Reply-To: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
+Cc: hauke@hauke-m.de
+Subject: [PATCH 3/3] backports: backport devm_kmemdup
+Date: Thu, 13 Nov 2014 21:49:40 +0100
+Message-Id: <1415911780-52533-3-git-send-email-nbd@openwrt.org> (sfid-20141113_214946_826854_4EACF9A9)
+In-Reply-To: <1415911780-52533-1-git-send-email-nbd@openwrt.org>
+References: <1415911780-52533-1-git-send-email-nbd@openwrt.org>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-
-During development of kernel integration support using CONFIG_BACKPORT
-was evaluated as a prefix over CPTCFG even for packaging backports,
-for some reason this change lifted some restrictions one some device
-drivers which was present before and as such requires some changes to
-the dependencies map file to ensure correct compilation for respective
-kernel versions.
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
+Signed-off-by: Felix Fietkau <nbd@openwrt.org>
 ---
- dependencies | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
+ backport/backport-include/linux/device.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/dependencies b/dependencies
-index 4964aa6..64903dc 100644
---- a/dependencies
-+++ b/dependencies
-@@ -16,6 +16,8 @@ USB_GSPCA_OV534 3.5
- # we only support on >= 3.4 give that reguatory itself depends
- # on -EPROBE_DEFER.
- SOC_CAMERA 3.4
-+VIDEO_S5K5BAF 3.4
-+VIDEO_S5K4ECGX 3.4
- # 49920bc6 and 1003cab8 and while it seems there is a
- # one to one map DMA_FROM_DEVICE to DMA_DEV_TO_MEM
- # I can't verify this fully yet.
-@@ -29,16 +31,29 @@ DVB_USB_RTL28XXU 3.4
- # missing linux/gpio/consumer.h
- VIDEO_ADV7604 3.13
- # missing function clk_prepare_enable(), clk_disable_unprepare() and devm_regulator_bulk_get()
--VIDEO_MT9P031 3.3
--VIDEO_MT9T001 3.3
- VIDEO_MT9V032 3.3
--VIDEO_NOON010PC30 3.3
--VIDEO_S5K6A3 3.3
- VIDEO_S5K6AA 3.3
--VIDEO_S5K5BAF 3.3
--VIDEO_S5K4ECGX 3.3
--VIDEO_M5MOLS 3.3
--VIDEO_S5C73M3 3.3
-+
-+# missing devm_regulator_bulk_get
-+VIDEO_MT9T001 3.5
-+VIDEO_NOON010PC30 3.5
-+VIDEO_MT9P031 3.5
-+
-+# missing of_property_read_bool() added via fa4d34cc on v3.4-rc1~71, backport
-+# that attomically and you can enable this for older kernels.
-+VIDEO_ADV7343 3.4
-+
-+# for whoever wants to backport this: GPIOF_EXPORT was redefined via commit
-+# 79a9becd on v3.13-rc1~120^2~15, before this it was redefined via commit
-+# f567fde2 on v3.5-rc7~32^2~4 and finally added via commit fc3a1f04 on
-+# v3.5-rc1~93^2~25. We don't address any of these changes yet so we require
-+# the latest interpretation.
-+VIDEO_S5K6AA 3.13
-+VIDEO_S5K6A3 3.13
-+
-+# missing linux/sizes.h
-+VIDEO_M5MOLS 3.6
-+VIDEO_S5C73M3 3.6
+diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
+index 41f06c3..429df37 100644
+--- a/backport/backport-include/linux/device.h
++++ b/backport/backport-include/linux/device.h
+@@ -177,4 +177,20 @@ static inline void *devm_kmalloc_array(struct device *dev,
+ }
+ #endif
  
- # missing function devm_regmap_init_i2c()
- VIDEO_LM3646 3.3
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0)
++#define devm_kmemdup LINUX_BACKPORT(devm_kmemdup)
++static inline void *devm_kmemdup(struct device *dev, const void *src,
++				 size_t len, gfp_t gfp)
++{
++	void *p;
++
++	p = devm_kmalloc(dev, len, gfp);
++	if (p)
++		memcpy(p, src, len);
++
++	return p;
++}
++#endif
++
++
+ #endif /* __BACKPORT_DEVICE_H */
 -- 
-2.1.1
+2.1.2
 
