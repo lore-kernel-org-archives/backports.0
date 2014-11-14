@@ -1,43 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:48559 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752517AbaKCUYv (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 3 Nov 2014 15:24:51 -0500
-Message-ID: <1415046288.2726.7.camel@sipsolutions.net> (sfid-20141103_212453_506614_C5B1EAED)
-Subject: Re: [RFC v2 1/4] backports: replace CPTCFG prefix for
- CONFIG_BACKPORT
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@suse.com>
+Received: from mail-la0-f44.google.com ([209.85.215.44]:34593 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754921AbaKNUvu (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 14 Nov 2014 15:51:50 -0500
+MIME-Version: 1.0
+In-Reply-To: <1415998051.1847.2.camel@sipsolutions.net>
+References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
+ <1415693712-23743-11-git-send-email-mcgrof@do-not-panic.com> <1415998051.1847.2.camel@sipsolutions.net>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Fri, 14 Nov 2014 12:51:27 -0800
+Message-ID: <CAB=NE6XLKFfHqga_1kc0fYGxj5Y2o32NSqD3=idyT7+pXUsSpA@mail.gmail.com> (sfid-20141114_215152_768039_D99F3D7B)
+Subject: Re: [PATCH v3 10/21] backports: avoid git tree reinitialization
+To: Johannes Berg <johannes@sipsolutions.net>
 Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	"Yann E. MORIN" <yann.morin.1998@free.fr>,
 	Michal Marek <mmarek@suse.cz>,
 	Stefan Assmann <sassmann@kpanic.de>
-Date: Mon, 03 Nov 2014 21:24:48 +0100
-In-Reply-To: <CAB=NE6V1JViQyKRdEnaK=Ek4HC4qt_mdyrtk8kT_CG=YkxS+6w@mail.gmail.com> (sfid-20141103_212216_214883_B63B5778)
-References: <1414570902-5675-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1414570902-5675-2-git-send-email-mcgrof@do-not-panic.com>
-	 <1414741273.3014.3.camel@jlt4.sipsolutions.net>
-	 <20141031193408.GA12953@wotan.suse.de>
-	 <1414786943.3014.37.camel@jlt4.sipsolutions.net>
-	 <CAB=NE6UVca47FyZv54pED3C_1go+-Ra_AbSwW1+=Gj5YWP0GHw@mail.gmail.com>
-	 <CAB=NE6U7-TE9Oe_aTvjr4Y1iGALMeRohmx-ekbzmRuzAbbqTTA@mail.gmail.com>
-	 <1415043615.2726.4.camel@sipsolutions.net>
-	 <CAB=NE6XWWcmRb-3r28obFmChzW1mnynG0LkVDr2-y+QVpq=y9Q@mail.gmail.com>
-	 <1415046029.2726.6.camel@sipsolutions.net>
-	 <CAB=NE6V1JViQyKRdEnaK=Ek4HC4qt_mdyrtk8kT_CG=YkxS+6w@mail.gmail.com>
-	 (sfid-20141103_212216_214883_B63B5778)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 2014-11-03 at 12:21 -0800, Luis R. Rodriguez wrote:
+On Fri, Nov 14, 2014 at 12:47 PM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> On Tue, 2014-11-11 at 00:15 -0800, Luis R. Rodriguez wrote:
+>> From: "Luis R. Rodriguez" <mcgrof@suse.com>
+>>
+>> When using backports against for packaging with --gitdebug you either
+>> have to use --clean or assume the directory is empty already. In either
+>> case you start fresh. With integration this will be a bit different, you
+>> could end up with a project directory where the git tree was present but
+>> only the target directory was empty.
+>>
+>> Calling git init on an already existing git directory will reinitialize
+>> your git tree, that can reset some config stuff, let's avoid that.
+>
+> I guess I don't care much, but it seems strange to me that you'd use
+> --gitdebug in this case, you'd end up committing crappy patches to the
+> top-level kernel tree?
 
-> OK I'll prefix the stuff we copy over with something else then, BPAUTO.
+It was very useful to me when debugging, hence --gitdebug. Also, each
+step is actually what some folks may want to see done / committed as
+that may have been work done manually before for each kernel release
+bump, now its just automated.
 
-I still want to keep CPTCFG though :)
-
-johannes
-
-
+ Luis
