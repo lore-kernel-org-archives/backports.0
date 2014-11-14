@@ -1,64 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:36127 "EHLO mx2.suse.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:53570 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751502AbaKEAVt (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 4 Nov 2014 19:21:49 -0500
-Date: Wed, 5 Nov 2014 01:21:47 +0100
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
-Subject: Re: [PATCH v1 10/11] backports: prefix c-file / h-file auto
-	backport with BPAUTO
-Message-ID: <20141105002147.GJ12953@wotan.suse.de> (sfid-20141105_012151_561751_25BB5CAF)
-References: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com> <1415090582-14129-11-git-send-email-mcgrof@do-not-panic.com> <1415096092.2064.13.camel@sipsolutions.net> <20141104215002.GF12953@wotan.suse.de> <1415137850.2064.23.camel@sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1415137850.2064.23.camel@sipsolutions.net>
+	id S1754484AbaKNUrf (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 14 Nov 2014 15:47:35 -0500
+Message-ID: <1415998051.1847.2.camel@sipsolutions.net> (sfid-20141114_214737_999627_2DABED79)
+Subject: Re: [PATCH v3 10/21] backports: avoid git tree reinitialization
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Date: Fri, 14 Nov 2014 21:47:31 +0100
+In-Reply-To: <1415693712-23743-11-git-send-email-mcgrof@do-not-panic.com> (sfid-20141111_091920_022089_D2F879DA)
+References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1415693712-23743-11-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20141111_091920_022089_D2F879DA)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Nov 04, 2014 at 10:50:50PM +0100, Johannes Berg wrote:
-> On Tue, 2014-11-04 at 22:50 +0100, Luis R. Rodriguez wrote:
-> > On Tue, Nov 04, 2014 at 11:14:52AM +0100, Johannes Berg wrote:
-> > > On Tue, 2014-11-04 at 00:43 -0800, Luis R. Rodriguez wrote:
-> > > 
-> > > > -            mf.write('compat-$(%s%s) += %s\n' % (bp_prefix, sym, ' '.join(o_files)))
-> > > > +            if bp_prefix not in sym:
-> > > > +                mf.write('compat-$(%s%s) += %s\n' % (bp_prefix, sym, ' '.join(o_files)))
-> > > > +            else:
-> > > > +                mf.write('compat-$(%s) += %s\n' % (sym, ' '.join(o_files)))
-> > > 
-> > > I don't think these changes are correct, the bp_prefix is needed anyway,
-> > > and there's no way it could already be. Looks like this comes from a
-> > > previous attempt where you misunderstood and thought
-> > > CONFIG_BACKPORT_BACKPORT_... was actually wrong, when in fact it is
-> > > correct (and would now be CONFIG_BACKPORT_BPAUTO_...)
-> > 
-> > I did at one point have BACKPORT_BPAUTO_* stuff on the compat/Kconfig for
-> > the auto stuff but figured that was superfluous. I'll respin with it.
+On Tue, 2014-11-11 at 00:15 -0800, Luis R. Rodriguez wrote:
+> From: "Luis R. Rodriguez" <mcgrof@suse.com>
 > 
-> Not sure what you mean? It seems to me you should just drop the changes
-> like the one I quoted above.
+> When using backports against for packaging with --gitdebug you either
+> have to use --clean or assume the directory is empty already. In either
+> case you start fresh. With integration this will be a bit different, you
+> could end up with a project directory where the git tree was present but
+> only the target directory was empty.
+> 
+> Calling git init on an already existing git directory will reinitialize
+> your git tree, that can reset some config stuff, let's avoid that.
 
-If we keep BACKPORT_BPAUTO as prefix on compat/Kconfig for auto backport
-stuff we'll end up with BACKPORT_BACKPORT_BPAUTO, while technically correct
-as you have pointed out, I find it personally superfluous. If we however
-only use BPAUTO_ prefix on the compat/Kconfig we'll end up with BACKPORT_BPAUTO.
-Its subjective then, but I was opting in to prefer to just keep BPAUTO_ prefix
-with the resulting CPTCFG_BPAUTO for packaging and CONFIG_BACKPORT_BPAUTO for
-integration for these, if you however feel its best to double the BACKPORT
-prefix that's fine too, it just seemed odd (although I realize correct).
+I guess I don't care much, but it seems strange to me that you'd use
+--gitdebug in this case, you'd end up committing crappy patches to the
+top-level kernel tree?
 
-To do what I just described I think you're right will try removing that,
-testing that now. The other case that I ran into issues was the backport
-versioning variables but I have solved that through other non intrusive means
-to packaging (just use the C define with CPTCFG_ prefix, keeping the original
-Makefile variables) which will be part of my next respin.
+johannes
 
-We still do need to decide if we want double BACKPORT_ prefix for BPAUTO
-though, that remains subjective and I don't feel strongly about any way
-we go.
-
-  Luis
