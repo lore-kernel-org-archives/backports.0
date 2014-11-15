@@ -1,59 +1,55 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:36562 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754397AbaKOT5w (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 15 Nov 2014 14:57:52 -0500
-Message-ID: <5467B03E.9000407@hauke-m.de> (sfid-20141115_205753_937561_39AA2A18)
-Date: Sat, 15 Nov 2014 20:57:50 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail-lb0-f175.google.com ([209.85.217.175]:60121 "EHLO
+	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754470AbaKOBVT (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 14 Nov 2014 20:21:19 -0500
 MIME-Version: 1.0
-To: Felix Fietkau <nbd@openwrt.org>, backports@vger.kernel.org
-Subject: Re: [PATCH 1/3] backports: add GENMASK and GENMASK_ULL
-References: <1415911780-52533-1-git-send-email-nbd@openwrt.org>
-In-Reply-To: <1415911780-52533-1-git-send-email-nbd@openwrt.org>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <CAB=NE6XVsZaUebqpKWZhPXncDY-5NRXorYSGQQZC00a9ezJouQ@mail.gmail.com>
+References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
+ <1415998228.1847.3.camel@sipsolutions.net> <CAB=NE6X_d68Wc=CFAMb_suWJJQgSOSNafHiMwAmC6YhJFEtP1w@mail.gmail.com>
+ <1415998465.1847.4.camel@sipsolutions.net> <CAB=NE6XVsZaUebqpKWZhPXncDY-5NRXorYSGQQZC00a9ezJouQ@mail.gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Fri, 14 Nov 2014 17:20:57 -0800
+Message-ID: <CAB=NE6VYK72LsdPfcaY1vjMtr-kRq-6vMwfV7bmzT5y1bX3i1A@mail.gmail.com> (sfid-20141115_022122_345101_3AC57EA6)
+Subject: Re: [PATCH v3 00/21] backports: add kernel integration support
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Yann E. MORIN" <yann.morin.1998@free.fr>,
+	Michal Marek <mmarek@suse.cz>,
+	Stefan Assmann <sassmann@kpanic.de>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 11/13/2014 09:49 PM, Felix Fietkau wrote:
-> I intend to use this for a new driver
-> 
-> Signed-off-by: Felix Fietkau <nbd@openwrt.org>
-> ---
->  backport/backport-include/linux/bitops.h | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
->  create mode 100644 backport/backport-include/linux/bitops.h
-> 
-> diff --git a/backport/backport-include/linux/bitops.h b/backport/backport-include/linux/bitops.h
-> new file mode 100644
-> index 0000000..d8aec05
-> --- /dev/null
-> +++ b/backport/backport-include/linux/bitops.h
-> @@ -0,0 +1,19 @@
-> +#ifndef __BACKPORT_BITOPS_H
-> +#define __BACKPORT_BITOPS_H
-> +#include_next <linux/bitops.h>
-> +#include <linux/version.h>
-> +#include <generated/utsrelease.h>
+On Fri, Nov 14, 2014 at 1:10 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> On Fri, Nov 14, 2014 at 12:54 PM, Johannes Berg
+> <johannes@sipsolutions.net> wrote:
+>> On Fri, 2014-11-14 at 12:52 -0800, Luis R. Rodriguez wrote:
+>>> On Fri, Nov 14, 2014 at 12:50 PM, Johannes Berg
+>>> <johannes@sipsolutions.net> wrote:
+>>> > On Tue, 2014-11-11 at 00:14 -0800, Luis R. Rodriguez wrote:
+>>> >> From: "Luis R. Rodriguez" <mcgrof@suse.com>
+>>> >>
+>>> >> This third series should hopefully address all pending feedback.
+>>> >> I've split out patches even more, but more importantly have
+>>> >> made the parser simpler by both integrating the logic required
+>>> >> to understand a backport by identifying the backport by type
+>>> >> and strategy, sharing that, and then providing ignore lists on
+>>> >> the parsers.
+>>> >
+>>> > I think from a code change POV I should be OK with this, but I'll
+>>> > definitely want to run it and see the differences. I'll have to do that
+>>> > next week, it's getting late here.
+>>>
+>>> OK. So I shouldn't merge yet?
+>>
+>> I would prefer you didn't, but OTOH we can always fix up issues later as
+>> well.
+>
+> I'll wait.
 
-These two includes are not needed.
+Pushed.
 
-> +
-> +#ifndef GENMASK
-> +
-> +/*
-> + * Create a contiguous bitmask starting at bit position @l and ending at
-> + * position @h. For example
-> + * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
-> + */
-> +#define GENMASK(h, l)          (((U32_C(1) << ((h) - (l) + 1)) - 1) << (l))
-> +#define GENMASK_ULL(h, l)      (((U64_C(1) << ((h) - (l) + 1)) - 1) << (l))
-
-You should use tabs here and not spaces.
-
-> +
-> +#endif
-> +
-> +#endif /* __BACKPORT_BITOPS_H */
-> 
-
+ Luis
