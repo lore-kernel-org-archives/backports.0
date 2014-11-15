@@ -1,61 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:48551 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:36562 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753191AbaKCUUd (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 3 Nov 2014 15:20:33 -0500
-Message-ID: <1415046029.2726.6.camel@sipsolutions.net> (sfid-20141103_212036_922871_E0A1A089)
-Subject: Re: [RFC v2 1/4] backports: replace CPTCFG prefix for
- CONFIG_BACKPORT
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@suse.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Yann E. MORIN" <yann.morin.1998@free.fr>,
-	Michal Marek <mmarek@suse.cz>,
-	Stefan Assmann <sassmann@kpanic.de>
-Date: Mon, 03 Nov 2014 21:20:29 +0100
-In-Reply-To: <CAB=NE6XWWcmRb-3r28obFmChzW1mnynG0LkVDr2-y+QVpq=y9Q@mail.gmail.com> (sfid-20141103_205706_499759_FE8EC472)
-References: <1414570902-5675-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1414570902-5675-2-git-send-email-mcgrof@do-not-panic.com>
-	 <1414741273.3014.3.camel@jlt4.sipsolutions.net>
-	 <20141031193408.GA12953@wotan.suse.de>
-	 <1414786943.3014.37.camel@jlt4.sipsolutions.net>
-	 <CAB=NE6UVca47FyZv54pED3C_1go+-Ra_AbSwW1+=Gj5YWP0GHw@mail.gmail.com>
-	 <CAB=NE6U7-TE9Oe_aTvjr4Y1iGALMeRohmx-ekbzmRuzAbbqTTA@mail.gmail.com>
-	 <1415043615.2726.4.camel@sipsolutions.net>
-	 <CAB=NE6XWWcmRb-3r28obFmChzW1mnynG0LkVDr2-y+QVpq=y9Q@mail.gmail.com>
-	 (sfid-20141103_205706_499759_FE8EC472)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+	id S1754397AbaKOT5w (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 15 Nov 2014 14:57:52 -0500
+Message-ID: <5467B03E.9000407@hauke-m.de> (sfid-20141115_205753_937561_39AA2A18)
+Date: Sat, 15 Nov 2014 20:57:50 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
+MIME-Version: 1.0
+To: Felix Fietkau <nbd@openwrt.org>, backports@vger.kernel.org
+Subject: Re: [PATCH 1/3] backports: add GENMASK and GENMASK_ULL
+References: <1415911780-52533-1-git-send-email-nbd@openwrt.org>
+In-Reply-To: <1415911780-52533-1-git-send-email-nbd@openwrt.org>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 2014-11-03 at 11:56 -0800, Luis R. Rodriguez wrote:
+On 11/13/2014 09:49 PM, Felix Fietkau wrote:
+> I intend to use this for a new driver
+> 
+> Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+> ---
+>  backport/backport-include/linux/bitops.h | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>  create mode 100644 backport/backport-include/linux/bitops.h
+> 
+> diff --git a/backport/backport-include/linux/bitops.h b/backport/backport-include/linux/bitops.h
+> new file mode 100644
+> index 0000000..d8aec05
+> --- /dev/null
+> +++ b/backport/backport-include/linux/bitops.h
+> @@ -0,0 +1,19 @@
+> +#ifndef __BACKPORT_BITOPS_H
+> +#define __BACKPORT_BITOPS_H
+> +#include_next <linux/bitops.h>
+> +#include <linux/version.h>
+> +#include <generated/utsrelease.h>
 
-> With my current code I end up with on a package (not integration):
-> 
-> config BACKPORT_BUILD_AVERAGE
->         bool
->         depends on !AVERAGE
->         default y if BACKPORT_USERSEL_BUILD_ALL
->         default y if BACKPORT_AVERAGE
->         #h-file linux/average.h
->         #c-file lib/average.c
-> 
-> config BACKPORT_AVERAGE
->         bool
-> 
-> 
-> I do see I on the package with this on the Makfile though:
-> 
-> 
-> compat-$(CONFIG_BACKPORT_BACKPORT_BUILD_AVERAGE) += lib-average.o
-> 
-> Would it not suffice to just ensure we don't have BACKPORT_BACKPORT_
-> here and just BACKPORT_ once ?
+These two includes are not needed.
 
-The BACKPORT_BACKPORT_ is actually correct ... but it'll be really hard
-to make sense of :-)
+> +
+> +#ifndef GENMASK
+> +
+> +/*
+> + * Create a contiguous bitmask starting at bit position @l and ending at
+> + * position @h. For example
+> + * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
+> + */
+> +#define GENMASK(h, l)          (((U32_C(1) << ((h) - (l) + 1)) - 1) << (l))
+> +#define GENMASK_ULL(h, l)      (((U64_C(1) << ((h) - (l) + 1)) - 1) << (l))
 
-johannes
+You should use tabs here and not spaces.
+
+> +
+> +#endif
+> +
+> +#endif /* __BACKPORT_BITOPS_H */
+> 
 
