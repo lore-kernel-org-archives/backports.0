@@ -1,37 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:34251 "EHLO mx2.suse.de"
+Received: from hauke-m.de ([5.39.93.123]:36559 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751324AbaKDVpQ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 4 Nov 2014 16:45:16 -0500
-Date: Tue, 4 Nov 2014 22:45:13 +0100
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
-Subject: Re: [PATCH v1 03/11] backports: allow for different backport prefix
-Message-ID: <20141104214513.GE12953@wotan.suse.de> (sfid-20141104_224518_372451_475F62B6)
-References: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com> <1415090582-14129-4-git-send-email-mcgrof@do-not-panic.com> <1415095517.2064.10.camel@sipsolutions.net>
+	id S932114AbaKOT4o (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 15 Nov 2014 14:56:44 -0500
+Message-ID: <5467AFF9.5060809@hauke-m.de> (sfid-20141115_205646_354719_989E725A)
+Date: Sat, 15 Nov 2014 20:56:41 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1415095517.2064.10.camel@sipsolutions.net>
+To: Johannes Berg <johannes@sipsolutions.net>,
+	backports@vger.kernel.org
+CC: Johannes Berg <johannes.berg@intel.com>
+Subject: Re: [PATCH] backport: genl: add __genl_const for new hwsim mcast
+ group
+References: <1415271730-19194-1-git-send-email-johannes@sipsolutions.net>
+In-Reply-To: <1415271730-19194-1-git-send-email-johannes@sipsolutions.net>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Nov 04, 2014 at 11:05:17AM +0100, Johannes Berg wrote:
-> On Tue, 2014-11-04 at 00:42 -0800, Luis R. Rodriguez wrote:
+On 11/06/2014 12:02 PM, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
 > 
-> > --- a/devel/ckmake
-> > +++ b/devel/ckmake
-> > @@ -165,6 +165,7 @@ def process_kernel(num, kset, cmdline_args):
-> >          all_config_name = os.path.join(work_dir, 'all.config')
-> >          all_config = open(all_config_name, 'w')
-> >          all_config.write("CPTCFG_CFG80211_INTERNAL_REGDB=n\n")
-> > +        all_config.write("CONFIG_BACKPORT_CFG80211_INTERNAL_REGDB=n\n")
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+>  .../collateral-evolutions/network/0027-genl-const/hwsim.patch | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 > 
-> don't you know the prefix here?
+> diff --git a/patches/collateral-evolutions/network/0027-genl-const/hwsim.patch b/patches/collateral-evolutions/network/0027-genl-const/hwsim.patch
+> index 33cba175dda6..d6cb0350f1d1 100644
+> --- a/patches/collateral-evolutions/network/0027-genl-const/hwsim.patch
+> +++ b/patches/collateral-evolutions/network/0027-genl-const/hwsim.patch
+> @@ -1,5 +1,16 @@
+>  --- a/drivers/net/wireless/mac80211_hwsim.c
+>  +++ b/drivers/net/wireless/mac80211_hwsim.c
+> +@@ -491,7 +491,7 @@ enum hwsim_multicast_groups {
+> + 	HWSIM_MCGRP_CONFIG,
+> + };
+> + 
+> +-static const struct genl_multicast_group hwsim_mcgrps[] = {
+> ++static __genl_const struct genl_multicast_group hwsim_mcgrps[] = {
+> + 	[HWSIM_MCGRP_CONFIG] = { .name = "config", },
+> + };
+> + 
+> +--- a/drivers/net/wireless/mac80211_hwsim.c
+> ++++ b/drivers/net/wireless/mac80211_hwsim.c
 
-Yeah, good point, for built-in I suppose we'll need something different or if
-ckmake is extended it would know that too. Dropping this.
+The last two lines are wrong, now we have to of these in the patch.
 
-  Luis
+>  @@ -2483,7 +2483,7 @@ static int hwsim_destroy_radio_nl(struct
+>   }
+>   
+> 
+
