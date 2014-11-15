@@ -1,63 +1,60 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:52577 "EHLO sipsolutions.net"
+Received: from narfation.org ([79.140.41.39]:50647 "EHLO v3-1039.vlinux.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751999AbaKDKCq (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 4 Nov 2014 05:02:46 -0500
-Message-ID: <1415095355.2064.9.camel@sipsolutions.net> (sfid-20141104_110252_552594_76BB1752)
-Subject: Re: [PATCH v1 02/11] backports: extend module_init() module_exit()
- for built-in
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Date: Tue, 04 Nov 2014 11:02:35 +0100
-In-Reply-To: <1415090582-14129-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20141104_094850_244065_E63B2A7F)
-References: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1415090582-14129-3-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20141104_094850_244065_E63B2A7F)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+	id S1754447AbaKOTIb (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 15 Nov 2014 14:08:31 -0500
+From: Sven Eckelmann <sven@narfation.org>
+To: backports@vger.kernel.org
+Cc: Sven Eckelmann <sven@narfation.org>
+Subject: [PATCH-resend] backports: Fix double fetch in hlist_for_each_entry*_rcu
+Date: Sat, 15 Nov 2014 20:07:39 +0100
+Message-Id: <1416078459-29315-1-git-send-email-sven@narfation.org> (sfid-20141115_201539_634385_A643B761)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2014-11-04 at 00:42 -0800, Luis R. Rodriguez wrote:
+The backported (<3.9) version of hlist_for_each_entry_rcu and
+hlist_for_each_entry_safe uses the new macro hlist_entry_safe. It is called
+with an ACCESS_ONCE parameter for the first parameter ptr. This disallows
+merging of the two loads which the current version of the macro uses.
 
-> +#ifndef MODULE
-> +/*
-> + * Forcing the backports module to load allows us to easily
-> + * identify the backport.
-> + */
+This is problematic because this macro must only generate one load. Otherwise
+with two contexts (or CPUs) following could happen:
 
-That comment is wrong really, making the dependency on the symbol forced
-the backport module to load but if it's built-in that makes no sense.
+1. context 1 fetches the ptr to the last entry in hlist_entry_safe() and
+   accepts this non-NULL ptr
 
-> +#undef module_init
-> +#define module_init(fn)							\
-> +	static int __init __init_backport_##fn(void)			\
-> +	{								\
-> +		backport_dependency_symbol();				\
+2. context 2 deletes the last entry and terminates the list with NULL
 
-That won't do anything at all after all.
+3. context 1 re-fetches the pointer, doesn't check for zero, calculates the
+   entry based on a NULL pointer
 
-> +		return fn();						\
-> +	}								\
-> +	__initcall(__init_backport_##fn);
-> +
-> +#undef module_exit
-> +#define module_exit(fn)							\
-> +	static void __exit __exit_backport_##fn(void)			\
-> +	{								\
-> +		fn();							\
-> +		rcu_barrier();						\
-> +	}								\
-> +	__exitcall(__exit_backport_##fn);
+4. context 1 crashes because it tries to load/write data from/to the invalid
+   address
 
-This is also pointless if it's built-in.
+Instead use a single load to a temporary variable and do the NULL-check and
+calculation based on that one. This is also the approach used in the current
+Linux versions and was introduced by Paul E. McKenney.
 
-I don't think this patch makes sense, you just want to add the "#ifdef
-MODULE" I guess.
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+---
+ backport/backport-include/linux/list.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-johannes
-
+diff --git a/backport/backport-include/linux/list.h b/backport/backport-include/linux/list.h
+index 9042830..5ac2615 100644
+--- a/backport/backport-include/linux/list.h
++++ b/backport/backport-include/linux/list.h
+@@ -17,7 +17,9 @@
+ 
+ #undef hlist_entry_safe
+ #define hlist_entry_safe(ptr, type, member) \
+-	(ptr) ? hlist_entry(ptr, type, member) : NULL
++	({ typeof(ptr) ____ptr = (ptr); \
++	   ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
++	})
+ 
+ #define hlist_for_each_entry4(tpos, pos, head, member)			\
+ 	for (pos = (head)->first;					\
+-- 
+2.1.3
 
