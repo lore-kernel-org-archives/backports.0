@@ -1,47 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f44.google.com ([209.85.215.44]:34593 "EHLO
-	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754921AbaKNUvu (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 14 Nov 2014 15:51:50 -0500
+Received: from hauke-m.de ([5.39.93.123]:37145 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750857AbaKPNO1 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 16 Nov 2014 08:14:27 -0500
+Message-ID: <5468A330.70802@hauke-m.de> (sfid-20141116_141430_694335_0BBAABFB)
+Date: Sun, 16 Nov 2014 14:14:24 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-In-Reply-To: <1415998051.1847.2.camel@sipsolutions.net>
-References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
- <1415693712-23743-11-git-send-email-mcgrof@do-not-panic.com> <1415998051.1847.2.camel@sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Fri, 14 Nov 2014 12:51:27 -0800
-Message-ID: <CAB=NE6XLKFfHqga_1kc0fYGxj5Y2o32NSqD3=idyT7+pXUsSpA@mail.gmail.com> (sfid-20141114_215152_768039_D99F3D7B)
-Subject: Re: [PATCH v3 10/21] backports: avoid git tree reinitialization
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Yann E. MORIN" <yann.morin.1998@free.fr>,
-	Michal Marek <mmarek@suse.cz>,
-	Stefan Assmann <sassmann@kpanic.de>
-Content-Type: text/plain; charset=UTF-8
+To: Felix Fietkau <nbd@openwrt.org>, backports@vger.kernel.org
+Subject: Re: [PATCH 3/3] backports: backport devm_kmemdup
+References: <1415911780-52533-1-git-send-email-nbd@openwrt.org> <1415911780-52533-3-git-send-email-nbd@openwrt.org>
+In-Reply-To: <1415911780-52533-3-git-send-email-nbd@openwrt.org>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Nov 14, 2014 at 12:47 PM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Tue, 2014-11-11 at 00:15 -0800, Luis R. Rodriguez wrote:
->> From: "Luis R. Rodriguez" <mcgrof@suse.com>
->>
->> When using backports against for packaging with --gitdebug you either
->> have to use --clean or assume the directory is empty already. In either
->> case you start fresh. With integration this will be a bit different, you
->> could end up with a project directory where the git tree was present but
->> only the target directory was empty.
->>
->> Calling git init on an already existing git directory will reinitialize
->> your git tree, that can reset some config stuff, let's avoid that.
->
-> I guess I don't care much, but it seems strange to me that you'd use
-> --gitdebug in this case, you'd end up committing crappy patches to the
-> top-level kernel tree?
+On 11/13/2014 09:49 PM, Felix Fietkau wrote:
+> Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+> ---
+>  backport/backport-include/linux/device.h | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
+> index 41f06c3..429df37 100644
+> --- a/backport/backport-include/linux/device.h
+> +++ b/backport/backport-include/linux/device.h
+> @@ -177,4 +177,20 @@ static inline void *devm_kmalloc_array(struct device *dev,
+>  }
+>  #endif
+>  
+> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0)
 
-It was very useful to me when debugging, hence --gitdebug. Also, each
-step is actually what some folks may want to see done / committed as
-that may have been work done manually before for each kernel release
-bump, now its just automated.
+devm_kmemdup() is not available in kernel 3.15, you should use
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
 
- Luis
+> +#define devm_kmemdup LINUX_BACKPORT(devm_kmemdup)
+> +static inline void *devm_kmemdup(struct device *dev, const void *src,
+> +				 size_t len, gfp_t gfp)
+> +{
+> +	void *p;
+> +
+> +	p = devm_kmalloc(dev, len, gfp);
+> +	if (p)
+> +		memcpy(p, src, len);
+> +
+> +	return p;
+> +}
+> +#endif
+> +
+> +
+>  #endif /* __BACKPORT_DEVICE_H */
+> 
+
