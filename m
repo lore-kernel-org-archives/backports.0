@@ -1,57 +1,34 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:62847 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752644AbaKKIPl (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 11 Nov 2014 03:15:41 -0500
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
-	mmarek@suse.cz, sassmann@kpanic.de,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH v3 05/21] backports: keep track of original backported source symbols early on
-Date: Tue, 11 Nov 2014 00:14:56 -0800
-Message-Id: <1415693712-23743-6-git-send-email-mcgrof@do-not-panic.com> (sfid-20141111_092019_874494_89E0847B)
-In-Reply-To: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from s3.sipsolutions.net ([5.9.151.49]:41363 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750794AbaKPUIM (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 16 Nov 2014 15:08:12 -0500
+Message-ID: <1416168488.3624.0.camel@sipsolutions.net> (sfid-20141116_210814_054355_7B16D738)
+Subject: Re: [PATCH] backport: genl: add __genl_const for new hwsim mcast
+ group
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org
+Date: Sun, 16 Nov 2014 21:08:08 +0100
+In-Reply-To: <5467AFF9.5060809@hauke-m.de>
+References: <1415271730-19194-1-git-send-email-johannes@sipsolutions.net>
+	 <5467AFF9.5060809@hauke-m.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+On Sat, 2014-11-15 at 20:56 +0100, Hauke Mehrtens wrote:
 
-We'll later want to do some modifications of symbols we backport
-when integrating, but before we do any modification on kconfig
-files we should keep track of the original source symbols.
+> > +--- a/drivers/net/wireless/mac80211_hwsim.c
+> > ++++ b/drivers/net/wireless/mac80211_hwsim.c
+> 
+> The last two lines are wrong, now we have to of these in the patch.
 
-This commit introduces no functional changes right now, it will
-become more useful after we start adjusting kconfig entries
-for integration.
+Sorry, I guess patch was happy with it nonetheless, probably patching
+the file twice...
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
----
- gentree.py | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks for fixing it up.
 
-diff --git a/gentree.py b/gentree.py
-index 7a6deef..cb39a3f 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -768,6 +768,7 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
- 
-     # some post-processing is required
-     configtree = kconfig.ConfigTree(os.path.join(args.outdir, 'Kconfig'))
-+    orig_symbols = configtree.symbols()
-     logwrite('Modify Kconfig tree ...')
-     configtree.prune_sources(ignore=['Kconfig.kernel', 'Kconfig.versions'])
-     git_debug_snapshot(args, "prune Kconfig tree")
-@@ -829,7 +830,7 @@ def process(kerneldir, outdir, copy_list_file, git_revision=None,
- 
-     # rewrite Makefile and source symbols
-     regexes = []
--    for some_symbols in [symbols[i:i + 50] for i in range(0, len(symbols), 50)]:
-+    for some_symbols in [orig_symbols[i:i + 50] for i in range(0, len(orig_symbols), 50)]:
-         r = 'CONFIG_((' + '|'.join([s + '(_MODULE)?' for s in some_symbols]) + ')([^A-Za-z0-9_]|$))'
-         regexes.append(re.compile(r, re.MULTILINE))
-     for root, dirs, files in os.walk(args.outdir):
--- 
-2.1.1
+johannes
 
