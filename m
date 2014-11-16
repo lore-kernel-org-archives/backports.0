@@ -1,108 +1,29 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:40508 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932069AbaKEDTD (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 4 Nov 2014 22:19:03 -0500
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Received: from hauke-m.de ([5.39.93.123]:37729 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750725AbaKPVDJ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 16 Nov 2014 16:03:09 -0500
+Received: from [IPv6:2001:470:7259:0:ccb7:cf83:eee4:753d] (unknown [IPv6:2001:470:7259:0:ccb7:cf83:eee4:753d])
+	by hauke-m.de (Postfix) with ESMTPSA id 85FF620117
+	for <backports@vger.kernel.org>; Sun, 16 Nov 2014 22:03:07 +0100 (CET)
+Message-ID: <5469110A.5070106@hauke-m.de> (sfid-20141116_220311_198747_ECEDB959)
+Date: Sun, 16 Nov 2014 22:03:06 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
+MIME-Version: 1.0
 To: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
-	mmarek@suse.cz, sassmann@kpanic.de,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH v2 04/13] backports: replace BACKPORT_PWD with BACKPORT_DIR
-Date: Tue,  4 Nov 2014 19:18:28 -0800
-Message-Id: <1415157517-15442-5-git-send-email-mcgrof@do-not-panic.com> (sfid-20141105_042156_051689_44F897C7)
-In-Reply-To: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com>
+Subject: backports-20141114 is out
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+backports-20141114 was released. This is based on linux-next next-20141114.
 
-This will also be used for built-in kernel integration, by
-using this we can share more code with the built-in kernel
-approach.
+https://www.kernel.org/pub/linux/kernel/projects/backports/2014/11/14/backports-20141114.tar.xz
 
-Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
----
- backport/Makefile             | 6 +++---
- backport/Makefile.build       | 4 ++--
- backport/Makefile.real        | 2 +-
- backport/scripts/uninstall.sh | 4 ++--
- 4 files changed, 8 insertions(+), 8 deletions(-)
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
 
-diff --git a/backport/Makefile b/backport/Makefile
-index ea3982b..fcf2f01 100644
---- a/backport/Makefile
-+++ b/backport/Makefile
-@@ -6,7 +6,7 @@ ifeq ($(KERNELRELEASE),)
- 
- MAKEFLAGS += --no-print-directory
- SHELL := /bin/bash
--BACKPORT_PWD := $(shell pwd)
-+BACKPORT_DIR := $(shell pwd)
- 
- KMODDIR ?= updates
- ifneq ($(origin KLIB), undefined)
-@@ -20,7 +20,7 @@ KERNEL_CONFIG := $(KLIB_BUILD)/.config
- KERNEL_MAKEFILE := $(KLIB_BUILD)/Makefile
- CONFIG_MD5 := $(shell md5sum $(KERNEL_CONFIG) 2>/dev/null | sed 's/\s.*//')
- 
--export KLIB KLIB_BUILD BACKPORT_PWD KMODDIR KMODPATH_ARG
-+export KLIB KLIB_BUILD BACKPORT_DIR KMODDIR KMODPATH_ARG
- 
- # disable built-in rules for this file
- .SUFFIXES:
-@@ -159,5 +159,5 @@ help: defconfig-help
- 	@echo ""
- 	@echo "Execute "make" or "make all" to build all targets marked with [*]"
- else
--include $(BACKPORT_PWD)/Makefile.kernel
-+include $(BACKPORT_DIR)/Makefile.kernel
- endif
-diff --git a/backport/Makefile.build b/backport/Makefile.build
-index d209041..a848b37 100644
---- a/backport/Makefile.build
-+++ b/backport/Makefile.build
-@@ -3,8 +3,8 @@ export
- 
- .PHONY: modules
- modules:
--	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_PWD) modules
-+	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_DIR) modules
- 
- .PHONY: clean
- clean:
--	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_PWD) clean
-+	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_DIR) clean
-diff --git a/backport/Makefile.real b/backport/Makefile.real
-index f60d5ca..a0f4916 100644
---- a/backport/Makefile.real
-+++ b/backport/Makefile.real
-@@ -89,7 +89,7 @@ modules: backport-include/backport/autoconf.h
- 
- .PHONY: install
- install: modules
--	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_PWD)			\
-+	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_DIR)			\
- 		INSTALL_MOD_DIR=$(KMODDIR) $(KMODPATH_ARG)		\
- 		modules_install
- 	@./scripts/blacklist.sh $(KLIB)/ $(KLIB)/$(KMODDIR)
-diff --git a/backport/scripts/uninstall.sh b/backport/scripts/uninstall.sh
-index 1eb42b0..b46d3fe 100755
---- a/backport/scripts/uninstall.sh
-+++ b/backport/scripts/uninstall.sh
-@@ -10,8 +10,8 @@ else
- 	compr=""
- fi
- 
--for driver in $(find ${BACKPORT_PWD} -type f -name *.ko); do
--	mod_name=${driver/${BACKPORT_PWD}/${KLIB}${KMODDIR}}${compr}
-+for driver in $(find ${BACKPORT_DIR} -type f -name *.ko); do
-+	mod_name=${driver/${BACKPORT_DIR}/${KLIB}${KMODDIR}}${compr}
- 	echo "  uninstall" $mod_name
- 	rm -f $mod_name
- done
--- 
-2.1.1
+All the latest releases are listed here:
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
 
+Hauke
