@@ -1,42 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:33728 "EHLO mx2.suse.de"
+Received: from hauke-m.de ([5.39.93.123]:37684 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751757AbaKEUN1 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 5 Nov 2014 15:13:27 -0500
-Date: Wed, 5 Nov 2014 21:13:26 +0100
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
-Subject: Re: [PATCH v2 06/13] backports: update dependencies map file
-Message-ID: <20141105201326.GP12953@wotan.suse.de> (sfid-20141105_211329_844756_B62DCB19)
-References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com> <1415157517-15442-7-git-send-email-mcgrof@do-not-panic.com> <1415174051.2589.6.camel@sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1415174051.2589.6.camel@sipsolutions.net>
+	id S1750944AbaKPUti (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 16 Nov 2014 15:49:38 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 04/20] headers: snd_pcm_stop_xrun()
+Date: Sun, 16 Nov 2014 21:49:04 +0100
+Message-Id: <1416170960-12868-5-git-send-email-hauke@hauke-m.de> (sfid-20141116_214942_188177_884D1A55)
+In-Reply-To: <1416170960-12868-1-git-send-email-hauke@hauke-m.de>
+References: <1416170960-12868-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Nov 05, 2014 at 08:54:11AM +0100, Johannes Berg wrote:
-> On Tue, 2014-11-04 at 19:18 -0800, Luis R. Rodriguez wrote:
-> > From: "Luis R. Rodriguez" <mcgrof@suse.com>
-> > 
-> > During development of kernel integration support using CONFIG_BACKPORT
-> > was evaluated as a prefix over CPTCFG even for packaging backports,
-> > for some reason this change lifted some restrictions one some device
-> > drivers which was present before and as such requires some changes to
-> > the dependencies map file to ensure correct compilation for respective
-> > kernel versions.
-> 
-> This is confusing ... I think what you're trying to say is that you
-> noticed it because your integration system was broken and not honouring
-> restrictions properly?
+This is used by the saa7134-alsa.c driver.
 
-No I verified each reported case I got and verified the issues found
-were valid. For some reason some of these drivers were not allowed to
-compile on some older versions, and from what me and Hauke could tell
-they should, but they weren't. So the new annotations on requirements
-are valid.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/sound/pcm.h | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 backport/backport-include/sound/pcm.h
 
- Luis
+diff --git a/backport/backport-include/sound/pcm.h b/backport/backport-include/sound/pcm.h
+new file mode 100644
+index 0000000..469e871
+--- /dev/null
++++ b/backport/backport-include/sound/pcm.h
+@@ -0,0 +1,29 @@
++#ifndef __BACKPORT_SOUND_PCM_H
++#define __BACKPORT_SOUND_PCM_H
++#include_next <sound/pcm.h>
++#include <linux/version.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
++/**
++ * snd_pcm_stop_xrun - stop the running streams as XRUN
++ * @substream: the PCM substream instance
++ *
++ * This stops the given running substream (and all linked substreams) as XRUN.
++ * Unlike snd_pcm_stop(), this function takes the substream lock by itself.
++ *
++ * Return: Zero if successful, or a negative error code.
++ */
++static inline int snd_pcm_stop_xrun(struct snd_pcm_substream *substream)
++{
++	unsigned long flags;
++	int ret = 0;
++
++	snd_pcm_stream_lock_irqsave(substream, flags);
++	if (snd_pcm_running(substream))
++		ret = snd_pcm_stop(substream, SNDRV_PCM_STATE_XRUN);
++	snd_pcm_stream_unlock_irqrestore(substream, flags);
++	return ret;
++}
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0) */
++
++#endif /* __BACKPORT_SOUND_PCM_H */
+-- 
+1.9.1
+
