@@ -1,55 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:37687 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751085AbaKPUtj (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 16 Nov 2014 15:49:39 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 07/20] headers: add list_first_or_null_rcu()
-Date: Sun, 16 Nov 2014 21:49:07 +0100
-Message-Id: <1416170960-12868-8-git-send-email-hauke@hauke-m.de> (sfid-20141116_214943_974426_496FA966)
-In-Reply-To: <1416170960-12868-1-git-send-email-hauke@hauke-m.de>
-References: <1416170960-12868-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-la0-f45.google.com ([209.85.215.45]:41332 "EHLO
+	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753848AbaKRSV3 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 18 Nov 2014 13:21:29 -0500
+MIME-Version: 1.0
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Tue, 18 Nov 2014 10:21:05 -0800
+Message-ID: <CAB=NE6Wwec_sq4muj7kshhyLJttcf1CytTPWkjc_+Ub3dqn0tw@mail.gmail.com> (sfid-20141118_192158_453974_490B4C25)
+Subject: [ANN] Kernel integration now merged on backports
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-wireless <linux-wireless@vger.kernel.org>,
+	linux-media@vger.kernel.org,
+	linux-bluetooth <linux-bluetooth@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	linux-wpan@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is needed by bluetooth.
+Full kernel integration is now merged as part of Linux
+backports-20141114. I've written a bit about it [0] [1], what we need
+now are users and developer to give this a good spin as we wind down
+for the v3.19 release, which will be the first release that will
+support kernel integration down to any kernel >= 3.0 -- for now you
+can use the backports-20141114 tag which uses as base supported
+drivers from next-20141114. What this will mean is that you can opt in
+to integrate any device driver we support from any future backports
+release into any of >= 3.0 kernel with full kconfig support, enabling
+you to build everything as built-in. For all this you won't be using
+the packaged releases [2], instead you'll use the git tree directly as
+documented.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/rculist.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+[0] http://www.do-not-panic.com/2014/11/automating-backport-kernel-integration.html
+[1] https://backports.wiki.kernel.org/index.php/Documentation/integration
+[2] https://backports.wiki.kernel.org/index.php/Documentation/packaging
 
-diff --git a/backport/backport-include/linux/rculist.h b/backport/backport-include/linux/rculist.h
-index eb3bcfe..74009ab 100644
---- a/backport/backport-include/linux/rculist.h
-+++ b/backport/backport-include/linux/rculist.h
-@@ -34,4 +34,24 @@
- 	container_of(rcu_dereference(ptr), type, member)
- #endif
- 
-+#ifndef list_first_or_null_rcu
-+/**
-+ * list_first_or_null_rcu - get the first element from a list
-+ * @ptr:        the list head to take the element from.
-+ * @type:       the type of the struct this is embedded in.
-+ * @member:     the name of the list_struct within the struct.
-+ *
-+ * Note that if the list is empty, it returns NULL.
-+ *
-+ * This primitive may safely run concurrently with the _rcu list-mutation
-+ * primitives such as list_add_rcu() as long as it's guarded by rcu_read_lock().
-+ */
-+#define list_first_or_null_rcu(ptr, type, member) \
-+({ \
-+	struct list_head *__ptr = (ptr); \
-+	struct list_head *__next = ACCESS_ONCE(__ptr->next); \
-+	likely(__ptr != __next) ? list_entry_rcu(__next, type, member) : NULL; \
-+})
-+#endif /* list_first_or_null_rcu */
-+
- #endif /* __BACKPORT_RCULIST_H */
--- 
-1.9.1
-
+  Luis
