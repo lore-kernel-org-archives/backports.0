@@ -1,108 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:45504 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752265AbaKDIn1 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 4 Nov 2014 03:43:27 -0500
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Received: from mail-ie0-f169.google.com ([209.85.223.169]:65407 "EHLO
+	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757848AbaKSWIG convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 19 Nov 2014 17:08:06 -0500
+Received: by mail-ie0-f169.google.com with SMTP id y20so1538121ier.14
+        for <backports@vger.kernel.org>; Wed, 19 Nov 2014 14:08:06 -0800 (PST)
+MIME-Version: 1.0
+Date: Wed, 19 Nov 2014 23:08:06 +0100
+Message-ID: <CACna6rxs6BOJh7dxBKYAeee-vtgr7s9iU5_MiEMc3-3Tf4S4zg@mail.gmail.com> (sfid-20141119_230810_768858_EA0418D4)
+Subject: Including a comparable backported kernel version (number)?
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
 To: backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
-	mmarek@suse.cz, sassmann@kpanic.de,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH v1 04/11] backports: replace BACKPORT_PWD with BACKPORT_DIR
-Date: Tue,  4 Nov 2014 00:42:55 -0800
-Message-Id: <1415090582-14129-5-git-send-email-mcgrof@do-not-panic.com> (sfid-20141104_094844_281516_B53B748C)
-In-Reply-To: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1415090582-14129-1-git-send-email-mcgrof@do-not-panic.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+Hello!
 
-This will also be used for built-in kernel integration, by
-using this we can share more code with the built-in kernel
-approach.
+As you know, Linux includes such a lovely define called
+LINUX_VERSION_CODE. It allows writing out-of-tree drivers that can
+compile against few different kernel versions.
 
-Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
----
- backport/Makefile             | 6 +++---
- backport/Makefile.build       | 4 ++--
- backport/Makefile.real        | 2 +-
- backport/scripts/uninstall.sh | 4 ++--
- 4 files changed, 8 insertions(+), 8 deletions(-)
+While this is surely a rare case, some ppl may want to develop &
+compile out-of-tree drivers against... backports. Since there is
+cfg80211/mac80211 in backports, out-of-tree drivers may want to check
+for backported kernel version to decide which API version to use.
 
-diff --git a/backport/Makefile b/backport/Makefile
-index ea3982b..fcf2f01 100644
---- a/backport/Makefile
-+++ b/backport/Makefile
-@@ -6,7 +6,7 @@ ifeq ($(KERNELRELEASE),)
- 
- MAKEFLAGS += --no-print-directory
- SHELL := /bin/bash
--BACKPORT_PWD := $(shell pwd)
-+BACKPORT_DIR := $(shell pwd)
- 
- KMODDIR ?= updates
- ifneq ($(origin KLIB), undefined)
-@@ -20,7 +20,7 @@ KERNEL_CONFIG := $(KLIB_BUILD)/.config
- KERNEL_MAKEFILE := $(KLIB_BUILD)/Makefile
- CONFIG_MD5 := $(shell md5sum $(KERNEL_CONFIG) 2>/dev/null | sed 's/\s.*//')
- 
--export KLIB KLIB_BUILD BACKPORT_PWD KMODDIR KMODPATH_ARG
-+export KLIB KLIB_BUILD BACKPORT_DIR KMODDIR KMODPATH_ARG
- 
- # disable built-in rules for this file
- .SUFFIXES:
-@@ -159,5 +159,5 @@ help: defconfig-help
- 	@echo ""
- 	@echo "Execute "make" or "make all" to build all targets marked with [*]"
- else
--include $(BACKPORT_PWD)/Makefile.kernel
-+include $(BACKPORT_DIR)/Makefile.kernel
- endif
-diff --git a/backport/Makefile.build b/backport/Makefile.build
-index d209041..a848b37 100644
---- a/backport/Makefile.build
-+++ b/backport/Makefile.build
-@@ -3,8 +3,8 @@ export
- 
- .PHONY: modules
- modules:
--	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_PWD) modules
-+	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_DIR) modules
- 
- .PHONY: clean
- clean:
--	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_PWD) clean
-+	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_DIR) clean
-diff --git a/backport/Makefile.real b/backport/Makefile.real
-index f60d5ca..a0f4916 100644
---- a/backport/Makefile.real
-+++ b/backport/Makefile.real
-@@ -89,7 +89,7 @@ modules: backport-include/backport/autoconf.h
- 
- .PHONY: install
- install: modules
--	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_PWD)			\
-+	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_DIR)			\
- 		INSTALL_MOD_DIR=$(KMODDIR) $(KMODPATH_ARG)		\
- 		modules_install
- 	@./scripts/blacklist.sh $(KLIB)/ $(KLIB)/$(KMODDIR)
-diff --git a/backport/scripts/uninstall.sh b/backport/scripts/uninstall.sh
-index 1eb42b0..b46d3fe 100755
---- a/backport/scripts/uninstall.sh
-+++ b/backport/scripts/uninstall.sh
-@@ -10,8 +10,8 @@ else
- 	compr=""
- fi
- 
--for driver in $(find ${BACKPORT_PWD} -type f -name *.ko); do
--	mod_name=${driver/${BACKPORT_PWD}/${KLIB}${KMODDIR}}${compr}
-+for driver in $(find ${BACKPORT_DIR} -type f -name *.ko); do
-+	mod_name=${driver/${BACKPORT_DIR}/${KLIB}${KMODDIR}}${compr}
- 	echo "  uninstall" $mod_name
- 	rm -f $mod_name
- done
+An example may be acx100/acx-mac80211 driver and OpenWrt project.
+OpenWrt uses backports and acx code may need to be adjusted depending
+on the version of backported mac80211.
+
+Would it be sane/possible to add something like a LINUX_VERSION_CODE
+for backports? I noticed we already have BACKPORTS_VERSION,
+BACKPORTED_KERNEL_VERSION and BACKPORTED_KERNEL_NAME but they are all
+strings.
+
 -- 
-2.1.1
-
+Rafał
