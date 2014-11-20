@@ -1,53 +1,73 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:36029 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750796AbaKEW1j (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 5 Nov 2014 17:27:39 -0500
-Date: Wed, 5 Nov 2014 23:27:37 +0100
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
-Subject: Re: [PATCH v2 09/13] backports: define C code backport version
-	info using CPTCFG_
-Message-ID: <20141105222737.GV12953@wotan.suse.de> (sfid-20141105_232741_293347_022DC0C8)
-References: <1415157517-15442-1-git-send-email-mcgrof@do-not-panic.com> <1415157517-15442-10-git-send-email-mcgrof@do-not-panic.com> <1415174245.2589.9.camel@sipsolutions.net> <20141105202923.GR12953@wotan.suse.de> <1415222458.7485.14.camel@sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1415222458.7485.14.camel@sipsolutions.net>
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:55228 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756873AbaKTVQi (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 20 Nov 2014 16:16:38 -0500
+Received: by mail-pa0-f54.google.com with SMTP id fb1so3305016pad.41
+        for <backports@vger.kernel.org>; Thu, 20 Nov 2014 13:16:37 -0800 (PST)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: julia.lawall@lip6.fr, oblinger@gmail.com,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: [PATCH 2/5] backports: address splitting of v4l2-mediabus.h to two files
+Date: Thu, 20 Nov 2014 13:16:20 -0800
+Message-Id: <1416518183-7347-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20141120_221639_649322_4322FE46)
+In-Reply-To: <1416518183-7347-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1416518183-7347-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Nov 05, 2014 at 10:20:58PM +0100, Johannes Berg wrote:
-> On Wed, 2014-11-05 at 21:29 +0100, Luis R. Rodriguez wrote:
-> 
-> > > What difference does this make? It'll break some scripting that we have
-> > > for sure (assuming the BACKPORTED_ prefix), so naturally I'd like to see
-> > > why it is necessary.
-> > 
-> > Sure, let me explain. So if we don't unify we will have to end up with defines
-> > for some packaging version scheme to another. The approach I took here was to
-> > minimize impact on on userspace side generation side of things and only
-> > affect the target C code by modifying the Makefile to define variables
-> > we can share. That's pretty much it. I ended up defining things with
-> > CPTCFG_ as that will get morphed to the other bp_prefix later for us
-> > when integrating. That lets us share it.
-> > 
-> > Addressing this on scripts that do rely on touching C / H files should
-> > just be a matter of doing a direct translation to 3 variables.
-> 
-> In this particular case I'm not really sure I see why it needs to be
-> morphed at all?
-> 
-> Anyway, I realized that the whole thing doesn't matter as much to me as
-> I thought it does, we just have to adjust the one place that changes our
-> versions file.
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-If you don't mind the collateral I hope you'd trust me that the alternative
-is ugglier. I will note now, since we'll prbably forget later, that this
-will also require quite a bit of thought when and if multiple integrations
-will be supported. For now sharing the versioning info for packaging and
-integration is at least making the code generic between the two.
+The new file media-bus-format.h was derived from contents from
+v4l2-mediabus.h, this change might be a bit harder to infer
+exactly what to do but based on some contextual examination of
+the file, if content integrity has not changed it should be
+relatively easy to infer what to do with changes like this.
 
- Luis
+commit edcf58bc031e621f519c9dfce3c7e1ea6880c70a
+Author: Boris BREZILLON <boris.brezillon@free-electrons.com>
+Date:   Mon Nov 10 14:28:26 2014 -0300
+
+    [media] Move mediabus format definition to a more standard place
+
+    Define MEDIA_BUS_FMT macros (re-using the values defined in the
+    v4l2_mbus_pixelcode enum) into a separate header file so that they can be
+    used from the DRM/KMS subsystem without any reference to the V4L2
+    subsystem.
+
+    Then set V4L2_MBUS_FMT definitions to the MEDIA_BUS_FMT values using the
+    V4L2_MBUS_FROM_MEDIA_BUS_FMT macro.
+
+    Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+    Acked-by: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+    Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+    Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+    Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+    Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+
+ include/uapi/linux/Kbuild             |   1 +
+ include/uapi/linux/media-bus-format.h | 125 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/v4l2-mediabus.h    | 184 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++-------------------------------------------------------------------------
+ 3 files changed, 206 insertions(+), 104 deletions(-)
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
+---
+ copy-list | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/copy-list b/copy-list
+index b7ac165..19017af 100644
+--- a/copy-list
++++ b/copy-list
+@@ -145,6 +145,7 @@ include/uapi/linux/v4l2-common.h
+ include/uapi/linux/v4l2-controls.h
+ include/uapi/linux/v4l2-dv-timings.h
+ include/uapi/linux/v4l2-mediabus.h
++include/uapi/linux/media-bus-format.h
+ include/uapi/linux/v4l2-subdev.h
+ include/uapi/linux/videodev2.h
+ include/uapi/linux/vsp1.h
+-- 
+2.1.1
+
