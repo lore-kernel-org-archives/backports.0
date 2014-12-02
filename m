@@ -1,48 +1,60 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:36590 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752972AbaLURgl (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 21 Dec 2014 12:36:41 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH v2 03/16] header: add empty of_find_compatible_node()
-Date: Sun, 21 Dec 2014 18:36:17 +0100
-Message-Id: <1419183390-22169-4-git-send-email-hauke@hauke-m.de> (sfid-20141221_183644_574443_AAFEB398)
-In-Reply-To: <1419183390-22169-1-git-send-email-hauke@hauke-m.de>
-References: <1419183390-22169-1-git-send-email-hauke@hauke-m.de>
+Received: from aserp1040.oracle.com ([141.146.126.69]:33854 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754484AbaLBSfc (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 2 Dec 2014 13:35:32 -0500
+Date: Tue, 2 Dec 2014 21:35:09 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Julia Lawall <julia.lawall@lip6.fr>,
+	SF Markus Elfring <elfring@users.sourceforge.net>,
+	Lino Sanfilippo <LinoSanfilippo@gmx.de>,
+	Olof Johansson <olof@lixom.net>, netdev@vger.kernel.org,
+	backports@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: Re: net-PA Semi: Deletion of unnecessary checks before the function
+ call "pci_dev_put"
+Message-ID: <20141202183509.GI4994@mwanda> (sfid-20141202_193535_592533_7058871C)
+References: <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <547BC5AD.6090500@users.sourceforge.net>
+ <1417465745.28610.0.camel@sipsolutions.net>
+ <alpine.DEB.2.02.1412012134290.2076@localhost6.localdomain6>
+ <1417539208.1841.1.camel@sipsolutions.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1417539208.1841.1.camel@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-of_find_compatible_node() is not defined when CONFIG_OF is not set on
-kernel < 3.3.
+On Tue, Dec 02, 2014 at 05:53:28PM +0100, Johannes Berg wrote:
+> On Mon, 2014-12-01 at 21:34 +0100, Julia Lawall wrote:
+> 
+> > > So this kind of evolution is no problem for the (automated) backports
+> > > using the backports project - although it can be difficult to detect
+> > > such a thing is needed.
+> > 
+> > That is exactly the problem...
+> 
+> I'm not convinced though that it should stop such progress in mainline.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/of.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Is it progress?  These patches match the code look simpler by passing
+hiding the NULL check inside a function call.  Calling pci_dev_put(NULL)
+doesn't make sense.  Just because a sanity check exists doesn't mean we
+should do insane things.
 
-diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
-index 6d0be53..32ccf19 100644
---- a/backport/backport-include/linux/of.h
-+++ b/backport/backport-include/linux/of.h
-@@ -120,4 +120,16 @@ static inline void of_node_put(struct device_node *node) { }
- 	     dn = of_find_compatible_node(dn, type, compatible))
- #endif /* for_each_compatible_node */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
-+#ifndef CONFIG_OF
-+static inline struct device_node *of_find_compatible_node(
-+						struct device_node *from,
-+						const char *type,
-+						const char *compat)
-+{
-+	return NULL;
-+}
-+#endif
-+#endif
-+
- #endif	/* _COMPAT_LINUX_OF_H */
--- 
-1.9.1
+It's easy enough to store which functions have a sanity check in a
+database, but to rememember all that as a human being trying to read the
+code is impossible.
+
+If we really wanted to make this code cleaner we would introduce more
+error labels with better names.
+
+regards,
+dan carpenter
 
