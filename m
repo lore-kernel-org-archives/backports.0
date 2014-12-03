@@ -1,51 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:43364 "EHLO hauke-m.de"
+Received: from mout.web.de ([212.227.17.11]:55572 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751756AbaL3KEP (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 30 Dec 2014 05:04:15 -0500
-Message-ID: <54A2789C.7050407@hauke-m.de> (sfid-20141230_110418_103655_500B8D6D)
-Date: Tue, 30 Dec 2014 11:04:12 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
+	id S1751322AbaLCQBH (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 3 Dec 2014 11:01:07 -0500
+Message-ID: <547F33AC.50002@users.sourceforge.net> (sfid-20141203_170109_993398_2F71E9CF)
+Date: Wed, 03 Dec 2014 17:00:44 +0100
+From: SF Markus Elfring <elfring@users.sourceforge.net>
 MIME-Version: 1.0
-To: Ash Charles <ashcharles@gmail.com>, backports@vger.kernel.org
-Subject: Re: Providing Platform Data to Backported Module
-References: <CAK8F28=6-rCCbAwA20OvW3VMFG8yBV7oZpvgRcNL1s=snR33Sg@mail.gmail.com>
-In-Reply-To: <CAK8F28=6-rCCbAwA20OvW3VMFG8yBV7oZpvgRcNL1s=snR33Sg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+To: Arend van Spriel <arend@broadcom.com>
+CC: Dan Carpenter <dan.carpenter@oracle.com>,
+	Julia Lawall <julia.lawall@lip6.fr>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Coccinelle <cocci@systeme.lip6.fr>, backports@vger.kernel.org,
+	Johannes Berg <johannes@sipsolutions.net>,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: Re: [patch] CodingStyle: add some more error handling guidelines
+References: <20141202085950.GA13434@mwanda> <547F0297.6030202@users.sourceforge.net> <20141203124511.GR5048@mwanda> <547F0977.7090908@users.sourceforge.net> <20141203132002.GT5048@mwanda> <547F0F2A.3060708@users.sourceforge.net> <547F1942.5060502@broadcom.com>
+In-Reply-To: <547F1942.5060502@broadcom.com>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 12/30/2014 02:54 AM, Ash Charles wrote:
-> Hello,
+>> Which name pattern do you find more appropriate in such
+>> an use case?
 > 
-> I'm trying to get add support for a wl18xx wireless device to my
-> omap3-based board running a 3.2 kernel.  Using backports (package, not
-> direct integration), I can compile the required drivers and load them
-> onto my system.  The driver needs some platform-specific data to
-> control the wireless device.  Normally, I'd pass this as platform data
-> from a board file (I'm not using device tree on this 3.2 kernel) but
-> as the required structures come from the backport, I can't.  How can I
-> provide this data to the module?
-> 
-> Things that come to mind but don't seem quite right:
-> 1. Hard-code this setup data into the driver for my particular board
-> (seem a little heavy-handed)
-> 2. Add a backport to support a board file/pdata-quirks. (nothing else
-> in the arch tree is backported...seems to indicate this is not the
-> right way)
-> 3. Use the backports with direct integration as I think I could just
-> make the changes to the board file directly in this case (I'm using a
-> TI backport tree that doesn't support integration yet)
-> 4. Add a device tree blob or some shim such that the target kernel can
-> provide the module the data.
-> 
-> Many thanks in advance for any advice or insight.
+> I think Dan wants the label to be descriptive about the tasks
+> needed in the exception handling itself.
 
-You could remove the platform data header file from backports and use
-the one from your kernel, just delete the header file in backports. If
-this version does not have all the needed members just copy the header
-file from backpots into your kernel. Then you can register the device
-like any other device in your board file and fill the platform data with
-the needed data.
+I would usually prefer also such a target-oriented labelling
+for the affected identifiers.
+How are the chances to express an expectation in this direction
+unambiguously for the proposed coding style update?
 
-Hauke
+
+> This makes sense as the exception handling steps may be reused
+> for different failures in the code.
+
+I would stress a different reason from my point of view.
+
+Regards,
+Markus
