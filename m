@@ -1,50 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:48059 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752866AbaLUN12 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 21 Dec 2014 08:27:28 -0500
-Message-ID: <5496CABD.7060405@broadcom.com> (sfid-20141221_142729_558083_E893A124)
-Date: Sun, 21 Dec 2014 14:27:25 +0100
-From: Arend van Spriel <arend@broadcom.com>
+Received: from aserp1040.oracle.com ([141.146.126.69]:36212 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751149AbaLCNUX (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 3 Dec 2014 08:20:23 -0500
+Date: Wed, 3 Dec 2014 16:20:02 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Coccinelle <cocci@systeme.lip6.fr>, backports@vger.kernel.org,
+	Johannes Berg <johannes@sipsolutions.net>,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: Re: [patch] CodingStyle: add some more error handling guidelines
+Message-ID: <20141203132002.GT5048@mwanda> (sfid-20141203_142025_681748_917CAF9F)
+References: <20141202085950.GA13434@mwanda>
+ <547F0297.6030202@users.sourceforge.net>
+ <20141203124511.GR5048@mwanda>
+ <547F0977.7090908@users.sourceforge.net>
 MIME-Version: 1.0
-To: Hauke Mehrtens <hauke@hauke-m.de>
-CC: <backports@vger.kernel.org>
-Subject: Re: [PATCH 06/14] backport: add debugfs_create_devm_seqfile()
-References: <1419111577-22174-1-git-send-email-hauke@hauke-m.de> <1419111577-22174-7-git-send-email-hauke@hauke-m.de> <549684B0.1000308@broadcom.com> <5496BD3F.5010500@hauke-m.de>
-In-Reply-To: <5496BD3F.5010500@hauke-m.de>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <547F0977.7090908@users.sourceforge.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 12/21/14 13:29, Hauke Mehrtens wrote:
-> On 12/21/2014 09:28 AM, Arend van Spriel wrote:
->> On 12/20/14 22:39, Hauke Mehrtens wrote:
->>> This new functions is used by ath9k.
->>
->> Are you sure? In the driver-core repo the ath9k patch adding this was
->> reverted as I made a stupid mistake with driver data. I have the revised
->> patch ready, but it will be for 3.20.
->
-> I was using the next-20141201 snapshot and there it was included.
-> Thanks for the heads up, I will cherry pick your revert commit.
-> This problem was in the ath9k driver and not in the code in
-> fs/debugfs/file.c is that right?
+Sorry.  I misread your email.  If the code looks like this:
 
-Yeah, that is what I get from tweaking in drivers that I know next to 
-nothing about ;-) So indeed the debugfs change is fine and I will start 
-using it in the brcm80211 drivers as well for next release so no harm in 
-keeping it.
+	foo = kmalloc();
+	if (!foo)
+		goto kmalloc_failed;
 
-Regards,
-Arend
+The "kmalloc_failed" doesn't add any information.  We can see that
+kmalloc failed from the context.
 
->> Regards,
->> Arend
->>
->>> Signed-off-by: Hauke Mehrtens<hauke@hauke-m.de>
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe backports" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+regards,
+dan carpenter
 
