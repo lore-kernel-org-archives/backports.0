@@ -1,25 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s72.web-hosting.com ([198.187.29.22]:50591 "EHLO
-	s72.web-hosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753363AbaLVAEn (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 21 Dec 2014 19:04:43 -0500
-From: Sujith Manoharan <sujith@msujith.org>
+Received: from mout.web.de ([212.227.17.12]:63885 "EHLO mout.web.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751738AbaLCMva (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 3 Dec 2014 07:51:30 -0500
+Message-ID: <547F0741.1090808@users.sourceforge.net> (sfid-20141203_135148_155989_DCF167C9)
+Date: Wed, 03 Dec 2014 13:51:13 +0100
+From: SF Markus Elfring <elfring@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Message-ID: <21655.22053.827966.200739@gargle.gargle.HOWL> (sfid-20141222_010445_101710_A73926A5)
-Date: Mon, 22 Dec 2014 04:52:13 +0530
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org
-Subject: Re: backports-20141201 and backports-20141221 are out
-In-Reply-To: <54972D36.2040002@hauke-m.de>
-References: <54972D36.2040002@hauke-m.de>
+To: Arend van Spriel <arend@broadcom.com>
+CC: Dan Carpenter <dan.carpenter@oracle.com>,
+	Julia Lawall <julia.lawall@lip6.fr>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Coccinelle <cocci@systeme.lip6.fr>, backports@vger.kernel.org,
+	Johannes Berg <johannes@sipsolutions.net>,
+	"Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: Re: [patch] CodingStyle: add some more error handling guidelines
+References: <20141202085950.GA13434@mwanda> <547F0297.6030202@users.sourceforge.net> <547F0465.407@broadcom.com>
+In-Reply-To: <547F0465.407@broadcom.com>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hauke Mehrtens wrote:
-> backports-20141201 and backports-20141221 were released. They are  based
-> on linux-next next-20141201 and next-20141221.
+>> * To which source code place should the word "location" refer to?
+>>    - jump source
+>>    - jump target
+> 
+> I think you digested the paragraph in too small bits.
 
-Thanks !
+I would prefer to reduce the probability for misunderstandings of the 
+proposed wording a bit more.
 
-Sujith
+
+> The term "goto location" looks synonymous to "jump source" to me.
+
+I would interpret it differently because of the specific placement of this key word
+before an other term.
+
+Regards,
+Markus
