@@ -1,59 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:33854 "EHLO
+Received: from aserp1040.oracle.com ([141.146.126.69]:18180 "EHLO
 	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754484AbaLBSfc (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 2 Dec 2014 13:35:32 -0500
-Date: Tue, 2 Dec 2014 21:35:09 +0300
+	with ESMTP id S1752058AbaLCMph (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 3 Dec 2014 07:45:37 -0500
+Date: Wed, 3 Dec 2014 15:45:11 +0300
 From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Julia Lawall <julia.lawall@lip6.fr>,
-	SF Markus Elfring <elfring@users.sourceforge.net>,
-	Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-	Olof Johansson <olof@lixom.net>, netdev@vger.kernel.org,
-	backports@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org,
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Coccinelle <cocci@systeme.lip6.fr>, backports@vger.kernel.org,
+	Johannes Berg <johannes@sipsolutions.net>,
 	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: Re: net-PA Semi: Deletion of unnecessary checks before the function
- call "pci_dev_put"
-Message-ID: <20141202183509.GI4994@mwanda> (sfid-20141202_193535_592533_7058871C)
-References: <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <547BC5AD.6090500@users.sourceforge.net>
- <1417465745.28610.0.camel@sipsolutions.net>
- <alpine.DEB.2.02.1412012134290.2076@localhost6.localdomain6>
- <1417539208.1841.1.camel@sipsolutions.net>
+Subject: Re: [patch] CodingStyle: add some more error handling guidelines
+Message-ID: <20141203124511.GR5048@mwanda> (sfid-20141203_134554_254635_593F2867)
+References: <20141202085950.GA13434@mwanda>
+ <547F0297.6030202@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1417539208.1841.1.camel@sipsolutions.net>
+In-Reply-To: <547F0297.6030202@users.sourceforge.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Dec 02, 2014 at 05:53:28PM +0100, Johannes Berg wrote:
-> On Mon, 2014-12-01 at 21:34 +0100, Julia Lawall wrote:
+On Wed, Dec 03, 2014 at 01:31:19PM +0100, SF Markus Elfring wrote:
 > 
-> > > So this kind of evolution is no problem for the (automated) backports
-> > > using the backports project - although it can be difficult to detect
-> > > such a thing is needed.
-> > 
-> > That is exactly the problem...
-> 
-> I'm not convinced though that it should stop such progress in mainline.
+> * To which source code place should the word "location" refer to?
+>   - jump source
+>   - jump target
 
-Is it progress?  These patches match the code look simpler by passing
-hiding the NULL check inside a function call.  Calling pci_dev_put(NULL)
-doesn't make sense.  Just because a sanity check exists doesn't mean we
-should do insane things.
-
-It's easy enough to store which functions have a sanity check in a
-database, but to rememember all that as a human being trying to read the
-code is impossible.
-
-If we really wanted to make this code cleaner we would introduce more
-error labels with better names.
+jump target.
 
 regards,
 dan carpenter
