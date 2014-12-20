@@ -1,45 +1,119 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:36603 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:35255 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753142AbaLURgn (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 21 Dec 2014 12:36:43 -0500
+	id S1751884AbaLTVjw (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 20 Dec 2014 16:39:52 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH v2 13/16] patches: adapt api change of rchan_callbacks->create_buf_file in ath9k
-Date: Sun, 21 Dec 2014 18:36:27 +0100
-Message-Id: <1419183390-22169-14-git-send-email-hauke@hauke-m.de> (sfid-20141221_184348_185320_19645F15)
-In-Reply-To: <1419183390-22169-1-git-send-email-hauke@hauke-m.de>
-References: <1419183390-22169-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 08/14] backport: add of_property_read_u32()
+Date: Sat, 20 Dec 2014 22:39:31 +0100
+Message-Id: <1419111577-22174-9-git-send-email-hauke@hauke-m.de> (sfid-20141220_223957_849481_3E8FEC4B)
+In-Reply-To: <1419111577-22174-1-git-send-email-hauke@hauke-m.de>
+References: <1419111577-22174-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../network/0021-umode_t-api-change/ath9k.patch            | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0021-umode_t-api-change/ath9k.patch
+ backport/backport-include/linux/of.h | 27 ++++++++++++++++++++++++++-
+ backport/compat/compat-3.1.c         | 34 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 60 insertions(+), 1 deletion(-)
 
-diff --git a/patches/collateral-evolutions/network/0021-umode_t-api-change/ath9k.patch b/patches/collateral-evolutions/network/0021-umode_t-api-change/ath9k.patch
-new file mode 100644
-index 0000000..5275415
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0021-umode_t-api-change/ath9k.patch
-@@ -0,0 +1,14 @@
-+--- a/drivers/net/wireless/ath/ath9k/common-spectral.c
-++++ b/drivers/net/wireless/ath/ath9k/common-spectral.c
-+@@ -552,7 +552,11 @@ static const struct file_operations fops
-+ 
-+ static struct dentry *create_buf_file_handler(const char *filename,
-+ 					      struct dentry *parent,
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0))
-+ 					      umode_t mode,
-++#else
-++					      int mode,
-++#endif
-+ 					      struct rchan_buf *buf,
-+ 					      int *is_global)
-+ {
+diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
+index 32ccf19..b289bcb 100644
+--- a/backport/backport-include/linux/of.h
++++ b/backport/backport-include/linux/of.h
+@@ -29,6 +29,7 @@ static inline struct device_node *of_find_node_by_name(struct device_node *from,
+ #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0) */
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)
++#define of_property_read_u8_array LINUX_BACKPORT(of_property_read_u8_array)
+ #ifdef CONFIG_OF
+ extern int of_property_read_u8_array(const struct device_node *np,
+ 			const char *propname, u8 *out_values, size_t sz);
+@@ -39,7 +40,31 @@ static inline int of_property_read_u8_array(const struct device_node *np,
+ 	return -ENOSYS;
+ }
+ #endif /* CONFIG_OF */
+-#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0) */
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0) */
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,1,0)
++#define of_property_read_u32_array LINUX_BACKPORT(of_property_read_u32_array)
++#ifdef CONFIG_OF
++extern int of_property_read_u32_array(const struct device_node *np,
++				      const char *propname,
++				      u32 *out_values,
++				      size_t sz);
++#else
++static inline int of_property_read_u32_array(const struct device_node *np,
++					     const char *propname,
++					     u32 *out_values, size_t sz)
++{
++	return -ENOSYS;
++}
++#endif /* CONFIG_OF */
++#define of_property_read_u32 LINUX_BACKPORT(of_property_read_u32)
++static inline int of_property_read_u32(const struct device_node *np,
++				       const char *propname,
++				       u32 *out_value)
++{
++	return of_property_read_u32_array(np, propname, out_value, 1);
++}
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,1,0) */
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
+ #define of_property_read_u32_index LINUX_BACKPORT(of_property_read_u32_index)
+diff --git a/backport/compat/compat-3.1.c b/backport/compat/compat-3.1.c
+index 0d9c3a2..2618780 100644
+--- a/backport/compat/compat-3.1.c
++++ b/backport/compat/compat-3.1.c
+@@ -10,6 +10,7 @@
+ 
+ #include <linux/idr.h>
+ #include <linux/cpufreq.h>
++#include <linux/of.h>
+ 
+ static DEFINE_SPINLOCK(compat_simple_ida_lock);
+ 
+@@ -82,3 +83,36 @@ void ida_simple_remove(struct ida *ida, unsigned int id)
+ EXPORT_SYMBOL_GPL(ida_simple_remove);
+ /* source lib/idr.c */
+ 
++#ifdef CONFIG_OF
++/**
++ * of_property_read_u32_array - Find and read an array of 32 bit integers
++ * from a property.
++ *
++ * @np:		device node from which the property value is to be read.
++ * @propname:	name of the property to be searched.
++ * @out_values:	pointer to return value, modified only if return value is 0.
++ * @sz:		number of array elements to read
++ *
++ * Search for a property in a device node and read 32-bit value(s) from
++ * it. Returns 0 on success, -EINVAL if the property does not exist,
++ * -ENODATA if property does not have a value, and -EOVERFLOW if the
++ * property data isn't large enough.
++ *
++ * The out_values is modified only if a valid u32 value can be decoded.
++ */
++int of_property_read_u32_array(const struct device_node *np,
++			       const char *propname, u32 *out_values,
++			       size_t sz)
++{
++	const __be32 *val = of_find_property_value_of_size(np, propname,
++						(sz * sizeof(*out_values)));
++
++	if (IS_ERR(val))
++		return PTR_ERR(val);
++
++	while (sz--)
++		*out_values++ = be32_to_cpup(val++);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(of_property_read_u32_array);
++#endif
 -- 
 1.9.1
 
