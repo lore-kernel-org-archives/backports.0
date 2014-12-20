@@ -1,44 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.11]:57714 "EHLO mout.web.de"
+Received: from hauke-m.de ([5.39.93.123]:35254 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752167AbaLABes (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 30 Nov 2014 20:34:48 -0500
-Message-ID: <547BC5AD.6090500@users.sourceforge.net> (sfid-20141201_023451_153915_6CFB474F)
-Date: Mon, 01 Dec 2014 02:34:37 +0100
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-MIME-Version: 1.0
-To: Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-	Olof Johansson <olof@lixom.net>, netdev@vger.kernel.org,
-	backports@vger.kernel.org
-CC: LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	Julia Lawall <julia.lawall@lip6.fr>,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: Re: net-PA Semi: Deletion of unnecessary checks before the function
- call "pci_dev_put"
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <547A09B1.9090102@users.sourceforge.net> <547B579F.10709@gmx.de>
-In-Reply-To: <547B579F.10709@gmx.de>
-Content-Type: text/plain; charset=windows-1252
+	id S1751446AbaLTVjx (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 20 Dec 2014 16:39:53 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 14/14] devel: update the test kernels
+Date: Sat, 20 Dec 2014 22:39:37 +0100
+Message-Id: <1419111577-22174-15-git-send-email-hauke@hauke-m.de> (sfid-20141220_224347_077684_62EB617F)
+In-Reply-To: <1419111577-22174-1-git-send-email-hauke@hauke-m.de>
+References: <1419111577-22174-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-> I know there has been some criticism about those kind of "code
-> improvements" already but i would like to point out just one more thing:
-> 
-> Some of those NULL pointer checks on input parameters may have been
-> added subsequently to functions. So there may be older kernel versions
-> out there in which those checks dont exists in some cases. If some of
-> the now "cleaned up" code is backported to such a kernel chances are
-> good that those missing checks are overseen. And then neither caller nor
-> callee is doing the NULL pointer check.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ devel/backports-update-manager | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-I guess that the Coccinelle software can also help you in this use case.
-How do you think about to shield against "unwanted" or unexpected collateral
-evolutions with additional inline functions?
+diff --git a/devel/backports-update-manager b/devel/backports-update-manager
+index b6c7e07..90d8df2 100755
+--- a/devel/backports-update-manager
++++ b/devel/backports-update-manager
+@@ -25,23 +25,23 @@ SPACE_PER_KERNEL_DEB=13
+ KERNEL_URLS = [
+     KPATH + "v3.0.101-oneiric/linux-headers-3.0.101-0300101_3.0.101-0300101.201310220446_all.deb",
+     KPATH + "v3.1.10-precise/linux-headers-3.1.10-030110_3.1.10-030110.201201181135_all.deb",
+-    KPATH + "v3.2.62-precise/linux-headers-3.2.62-030262_3.2.62-030262.201408061435_all.deb",
++    KPATH + "v3.2.65-precise/linux-headers-3.2.65-030265_3.2.65-030265.201412141435_all.deb",
+     KPATH + "v3.3.8-quantal/linux-headers-3.3.8-030308_3.3.8-030308.201206041356_all.deb",
+-    KPATH + "v3.4.104-quantal/linux-headers-3.4.104-0304104_3.4.104-0304104.201409250437_all.deb",
++    KPATH + "v3.4.105-quantal/linux-headers-3.4.105-0304105_3.4.105-0304105.201412012335_all.deb",
+     KPATH + "v3.5.7.12-quantal/linux-headers-3.5.7-03050712_3.5.7-03050712.201305111435_all.deb",
+     KPATH + "v3.6.11-raring/linux-headers-3.6.11-030611_3.6.11-030611.201212171335_all.deb",
+     KPATH + "v3.7.10-raring/linux-headers-3.7.10-030710_3.7.10-030710.201302271235_all.deb",
+     KPATH + "v3.8.13-raring/linux-headers-3.8.13-030813_3.8.13-030813.201305111843_all.deb",
+     KPATH + "v3.9.11-saucy/linux-headers-3.9.11-030911_3.9.11-030911.201307202035_all.deb",
+-    KPATH + "v3.10.58-saucy/linux-headers-3.10.58-031058_3.10.58-031058.201410150335_all.deb",
++    KPATH + "v3.10.63-saucy/linux-headers-3.10.63-031063_3.10.63-031063.201412170822_all.deb",
+     KPATH + "v3.11.10-saucy/linux-headers-3.11.10-031110_3.11.10-031110.201311291453_all.deb",
+-    KPATH + "v3.12.31-trusty/linux-headers-3.12.31-031231_3.12.31-031231.201410240535_all.deb",
++    KPATH + "v3.12.35-trusty/linux-headers-3.12.35-031235_3.12.35-031235.201412101835_all.deb",
+     KPATH + "v3.13.11-trusty/linux-headers-3.13.11-031311_3.13.11-031311.201404222035_all.deb",
+-    KPATH + "v3.14.22-utopic/linux-headers-3.14.22-031422_3.14.22-031422.201410150835_all.deb",
++    KPATH + "v3.14.27-utopic/linux-headers-3.14.27-031427_3.14.27-031427.201412170558_all.deb",
+     KPATH + "v3.15.10-utopic/linux-headers-3.15.10-031510_3.15.10-031510.201408132333_all.deb",
+     KPATH + "v3.16.6-utopic/linux-headers-3.16.6-031606_3.16.6-031606.201410150635_all.deb",
+-    KPATH + "v3.17.1-utopic/linux-headers-3.17.1-031701_3.17.1-031701.201410150735_all.deb",
+-    KPATH + "v3.18-rc1-utopic/linux-headers-3.18.0-031800rc1_3.18.0-031800rc1.201410192135_all.deb"
++    KPATH + "v3.17.7-vivid/linux-headers-3.17.7-031707_3.17.7-031707.201412170731_all.deb",
++    KPATH + "v3.18.1-vivid/linux-headers-3.18.1-031801_3.18.1-031801.201412170637_all.deb"
+ ]
+ 
+ NUM_KERNELS=len(KERNEL_URLS)
+-- 
+1.9.1
 
-I assume that a few backporters can tell you more about their corresponding
-software development experiences.
-http://www.do-not-panic.com/2014/04/automatic-linux-kernel-backporting-with-coccinelle.html
-
-Regards,
-Markus
