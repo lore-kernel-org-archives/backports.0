@@ -1,55 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:10499 "EHLO
-	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932112AbaLAUet (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 1 Dec 2014 15:34:49 -0500
-Date: Mon, 1 Dec 2014 21:34:45 +0100 (CET)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Johannes Berg <johannes@sipsolutions.net>
-cc: SF Markus Elfring <elfring@users.sourceforge.net>,
-	Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-	Olof Johansson <olof@lixom.net>, netdev@vger.kernel.org,
-	backports@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: Re: net-PA Semi: Deletion of unnecessary checks before the function
- call "pci_dev_put"
-In-Reply-To: <1417465745.28610.0.camel@sipsolutions.net>
-Message-ID: <alpine.DEB.2.02.1412012134290.2076@localhost6.localdomain6> (sfid-20141201_213529_637667_EFA8973A)
-References: <5307CAA2.8060406@users.sourceforge.net>  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>  <530A086E.8010901@users.sourceforge.net>  <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>  <530A72AA.3000601@users.sourceforge.net>
-  <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>  <530B5FB6.6010207@users.sourceforge.net>  <alpine.DEB.2.10.1402241710370.2074@hadrien>  <530C5E18.1020800@users.sourceforge.net>  <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>  <alpine.DEB.2.10.1402251840450.7035@hadrien>  <530CF8FF.8080600@users.sourceforge.net>  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>  <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>  <5317A59D.4@users.sourceforge.net> <547BC5AD.6090500@users.sourceforge.net>  (sfid-20141201_023451_153915_6CFB474F) <1417465745.28610.0.camel@sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Received: from hauke-m.de ([5.39.93.123]:35247 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751502AbaLTVju (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 20 Dec 2014 16:39:50 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 02/14] header: add memcpy_from_msg()
+Date: Sat, 20 Dec 2014 22:39:25 +0100
+Message-Id: <1419111577-22174-3-git-send-email-hauke@hauke-m.de> (sfid-20141220_223955_514979_79F061FC)
+In-Reply-To: <1419111577-22174-1-git-send-email-hauke@hauke-m.de>
+References: <1419111577-22174-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+This was added in kernel 3.19.
 
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/skbuff.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-On Mon, 1 Dec 2014, Johannes Berg wrote:
+diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
+index 4cab6e1..53c1aa4 100644
+--- a/backport/backport-include/linux/skbuff.h
++++ b/backport/backport-include/linux/skbuff.h
+@@ -263,6 +263,12 @@ static inline int skb_copy_datagram_msg(const struct sk_buff *from, int offset,
+ {
+ 	return skb_copy_datagram_iovec(from, offset, msg->msg_iov, size);
+ }
++
++#define memcpy_from_msg LINUX_BACKPORT(memcpy_from_msg)
++static inline int memcpy_from_msg(void *data, struct msghdr *msg, int len)
++{
++	return memcpy_fromiovec(data, msg->msg_iov, len);
++}
+ #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0) */
+ 
+ #endif /* __BACKPORT_SKBUFF_H */
+-- 
+1.9.1
 
-> On Mon, 2014-12-01 at 02:34 +0100, SF Markus Elfring wrote:
-> 
-> > > Some of those NULL pointer checks on input parameters may have been
-> > > added subsequently to functions. So there may be older kernel versions
-> > > out there in which those checks dont exists in some cases. If some of
-> > > the now "cleaned up" code is backported to such a kernel chances are
-> > > good that those missing checks are overseen. And then neither caller nor
-> > > callee is doing the NULL pointer check.
-> 
-> > I assume that a few backporters can tell you more about their corresponding
-> > software development experiences.
-> > http://www.do-not-panic.com/2014/04/automatic-linux-kernel-backporting-with-coccinelle.html
-> 
-> In such cases we just provide an appropriate wrapper and replace callers
-> of the original function by callers of the wrapper, typically with a
-> #define.
-> 
-> So this kind of evolution is no problem for the (automated) backports
-> using the backports project - although it can be difficult to detect
-> such a thing is needed.
-
-That is exactly the problem...
-
-julia
