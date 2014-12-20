@@ -1,42 +1,99 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:36599 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:35258 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753120AbaLURgn (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 21 Dec 2014 12:36:43 -0500
+	id S1752024AbaLTVjw (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 20 Dec 2014 16:39:52 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH v2 09/16] backport: do not call coredump when it was not build
-Date: Sun, 21 Dec 2014 18:36:23 +0100
-Message-Id: <1419183390-22169-10-git-send-email-hauke@hauke-m.de> (sfid-20141221_184347_949935_38A464B0)
-In-Reply-To: <1419183390-22169-1-git-send-email-hauke@hauke-m.de>
-References: <1419183390-22169-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 11/14] patches: do not use DMA_ATTR_SKIP_CPU_SYNC
+Date: Sat, 20 Dec 2014 22:39:34 +0100
+Message-Id: <1419111577-22174-12-git-send-email-hauke@hauke-m.de> (sfid-20141220_224348_924553_C0B7C2B3)
+In-Reply-To: <1419111577-22174-1-git-send-email-hauke@hauke-m.de>
+References: <1419111577-22174-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-When coredump was included in the kernel backports is build against
-then it could be that the prototype are used, which caused a undefined
-references linking problem. This patch fixes the problem by only using
-this when the driver is actually compiled in.
+DMA_ATTR_SKIP_CPU_SYNC was added to the enum with kernel 3.6. This
+patch removes all calls to dma_set_attr() with this value on
+kernel < 3.6.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/compat/backports.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../media/0005-dma-no-sync/v4l2.patch              | 64 ++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+ create mode 100644 patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
 
-diff --git a/backport/compat/backports.h b/backport/compat/backports.h
-index 323c908..ccc8972 100644
---- a/backport/compat/backports.h
-+++ b/backport/compat/backports.h
-@@ -13,7 +13,7 @@ static inline void crypto_ccm_module_exit(void)
- {}
- #endif
- 
--#ifdef CPTCFG_BPAUTO_WANT_DEV_COREDUMP
-+#ifdef CPTCFG_BPAUTO_BUILD_WANT_DEV_COREDUMP
- int devcoredump_init(void);
- void devcoredump_exit(void);
- #else
+diff --git a/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch b/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
+new file mode 100644
+index 0000000..bdb2ff3
+--- /dev/null
++++ b/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
+@@ -0,0 +1,64 @@
++--- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
+++++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
++@@ -564,7 +564,9 @@ static void vb2_dc_put_userptr(void *buf
++ 	if (sgt) {
++ 		DEFINE_DMA_ATTRS(attrs);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
++ 		dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+++#endif
++ 		/*
++ 		 * No need to sync to CPU, it's already synced to the CPU
++ 		 * since the finish() memop will have been called before this.
++@@ -629,7 +631,9 @@ static void *vb2_dc_get_userptr(void *al
++ 	unsigned long dma_align = dma_get_cache_alignment();
++ 	DEFINE_DMA_ATTRS(attrs);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
++ 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+++#endif
++ 
++ 	/* Only cache aligned DMA transfers are reliable */
++ 	if (!IS_ALIGNED(vaddr | size, dma_align)) {
++--- a/drivers/media/v4l2-core/videobuf2-dma-sg.c
+++++ b/drivers/media/v4l2-core/videobuf2-dma-sg.c
++@@ -109,7 +109,9 @@ static void *vb2_dma_sg_alloc(void *allo
++ 	int num_pages;
++ 	DEFINE_DMA_ATTRS(attrs);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
++ 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+++#endif
++ 
++ 	if (WARN_ON(alloc_ctx == NULL))
++ 		return NULL;
++@@ -184,7 +186,9 @@ static void vb2_dma_sg_put(void *buf_pri
++ 	if (atomic_dec_and_test(&buf->refcount)) {
++ 		DEFINE_DMA_ATTRS(attrs);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
++ 		dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+++#endif
++ 		dprintk(1, "%s: Freeing buffer of %d pages\n", __func__,
++ 			buf->num_pages);
++ 		dma_unmap_sg_attrs(buf->dev, sgt->sgl, sgt->nents,
++@@ -241,7 +245,9 @@ static void *vb2_dma_sg_get_userptr(void
++ 	struct sg_table *sgt;
++ 	DEFINE_DMA_ATTRS(attrs);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
++ 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+++#endif
++ 
++ 	buf = kzalloc(sizeof *buf, GFP_KERNEL);
++ 	if (!buf)
++@@ -347,7 +353,9 @@ static void vb2_dma_sg_put_userptr(void
++ 	int i = buf->num_pages;
++ 	DEFINE_DMA_ATTRS(attrs);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
++ 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+++#endif
++ 
++ 	dprintk(1, "%s: Releasing userspace buffer of %d pages\n",
++ 	       __func__, buf->num_pages);
 -- 
 1.9.1
 
