@@ -1,90 +1,76 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:42161 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754560AbaLBSpt (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 2 Dec 2014 13:45:49 -0500
-MIME-Version: 1.0
-In-Reply-To: <1417539208.1841.1.camel@sipsolutions.net>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <547BC5AD.6090500@users.sourceforge.net>
- <1417465745.28610.0.camel@sipsolutions.net> <alpine.DEB.2.02.1412012134290.2076@localhost6.localdomain6>
- <1417539208.1841.1.camel@sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-Date: Tue, 2 Dec 2014 13:45:26 -0500
-Message-ID: <CAB=NE6VUiWoiTe+uM=0NrhPx3fVDwXYaAKSZjzK3wT8sh7cazw@mail.gmail.com> (sfid-20141202_194611_225532_D05A00E7)
-Subject: Re: net-PA Semi: Deletion of unnecessary checks before the function
- call "pci_dev_put"
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Julia Lawall <julia.lawall@lip6.fr>,
-	SF Markus Elfring <elfring@users.sourceforge.net>,
-	Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-	Olof Johansson <olof@lixom.net>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from hauke-m.de ([5.39.93.123]:35249 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751446AbaLTVju (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 20 Dec 2014 16:39:50 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 00/14] backports: updates for next-20141201
+Date: Sat, 20 Dec 2014 22:39:23 +0100
+Message-Id: <1419111577-22174-1-git-send-email-hauke@hauke-m.de> (sfid-20141220_223954_844382_FCFF5490)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Dec 2, 2014 at 11:53 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Mon, 2014-12-01 at 21:34 +0100, Julia Lawall wrote:
->
->> > So this kind of evolution is no problem for the (automated) backports
->> > using the backports project - although it can be difficult to detect
->> > such a thing is needed.
->>
->> That is exactly the problem...
->
-> I'm not convinced though that it should stop such progress in mainline.
+This contains some patches needed to make backports compatible with
+next-20141201.
 
-I believe this case requires a bit more information explained as to
-why it was explained. The "form" of change this patch has is of the
-type that can crash systems if the NULL pointer check on the caller
-implementation was only added later. We might be able to grammatically
-check for this situation in the future if we had a white list / black
-list / kernel revision where the NULL check was added but for now we
-don't have that and as such care is just required on the developer in
-consideration for backports.
+Hauke Mehrtens (14):
+  header: add for_each_compatible_node()
+  header: add memcpy_from_msg()
+  header: add empty of_find_compatible_node()
+  header: include some other dma headers in dma-buf.h
+  header: backport drain_workqueue() by calling flush_workqueue()
+  backport: add debugfs_create_devm_seqfile()
+  backport: add pci_device_is_present()
+  backport: add of_property_read_u32()
+  patches: disable tx status support in mwifiex
+  patches: fix some v4l2 dma stuff
+  patches: do not use DMA_ATTR_SKIP_CPU_SYNC
+  patches: adapt api change of rchan_callbacks->create_buf_file in ath9k
+  patches: refresh on next-20141201
+  devel: update the test kernels
 
-It should be up to the maintainer to appreciate the gains of doing
-something differently to make it easier for backporting. I obviously
-think its a good thing to consider, its extra work though, so only if
-the maintainer has some appreciation for backporting would this make
-sense.
+ backport/backport-include/linux/debugfs.h          |  23 +++
+ backport/backport-include/linux/dma-buf.h          |   3 +
+ backport/backport-include/linux/of.h               |  45 +++++-
+ backport/backport-include/linux/pci.h              |   5 +
+ backport/backport-include/linux/skbuff.h           |   6 +
+ backport/backport-include/linux/workqueue.h        |   4 +
+ backport/compat/backport-3.13.c                    |  52 +++++++
+ backport/compat/backport-3.19.c                    |  56 ++++++++
+ backport/compat/compat-3.1.c                       |  34 +++++
+ devel/backports-update-manager                     |  14 +-
+ patches/backport-adjustments/crypto-ccm.patch      |   7 +-
+ patches/backport-adjustments/devcoredump.patch     |  35 ++---
+ .../media/0001-dma_mmap_coherent-revert.patch      |   4 +-
+ .../media/0002-no_dmabuf/v4l2.patch                | 158 ++++++++++++++++-----
+ .../media/0005-dma-no-sync/v4l2.patch              |  64 +++++++++
+ .../0002-disable-dump-adjust-on-old-kernels.patch  |   4 +-
+ .../include_net_cfg80211.patch                     |   2 +-
+ .../net_wireless_core.patch                        |   2 +-
+ .../0011-mac80211-disable-tx-status/mwifiex.patch  |  28 ++++
+ .../net_mac80211_tx.patch                          |   6 +-
+ .../0014-netlink_seq/net_wireless_nl80211.patch    |   2 +-
+ .../network/0021-umode_t-api-change/ath9k.patch    |  14 ++
+ .../network/0024-led-blink-api/mac80211.patch      |   2 +-
+ .../network/0027-genl-const/hwsim.patch            |   4 +-
+ .../network/0027-genl-const/nl80211.patch          |   6 +-
+ .../network/0028-select_queue/mwifiex.patch        |   2 +-
+ .../0032-sriov_configure/igb_sriov_configure.patch |   8 +-
+ .../0033-ndo_vlan_rx_vid/igb_ndo_vlan_rx_vid.patch |   8 +-
+ .../igb_ndo_set_vf_spoofchk.patch                  |   8 +-
+ .../network/0035-skb_no_fcs/igb_skb_no_fcs.patch   |   2 +-
+ .../network/0043-ndo_set_vf_rate/igb.patch         |  10 +-
+ .../network/0046-mmc_rescan_entered/mwifiex.patch  |   2 +-
+ .../network/0048-no_ndo_xmit_flush/igb.patch       |   2 +-
+ .../network/0049-no-pfmemalloc/igb.patch           |   4 +-
+ 34 files changed, 518 insertions(+), 108 deletions(-)
+ create mode 100644 backport/backport-include/linux/debugfs.h
+ create mode 100644 patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
+ create mode 100644 patches/collateral-evolutions/network/0011-mac80211-disable-tx-status/mwifiex.patch
+ create mode 100644 patches/collateral-evolutions/network/0021-umode_t-api-change/ath9k.patch
 
-In this particular case I've reviewed Julia's concern and I've
-determined that the patch is safe up to at least v2.6.12-rc2 (which is
-where our git history begins on Linus' tree), this is because the
-check for NULL has been there since then:
+-- 
+1.9.1
 
-git show 1da177e drivers/pci/pci-driver.c
-
-+void pci_dev_put(struct pci_dev *dev)
-+{
-+       if (dev)
-+               put_device(&dev->dev);
-+}
-
-So this type of wide collateral evolution should not cause panics.
-Because of this:
-
-Acked-by: Luis R. Rodriguez <mcgrof@suse.com>
-
-But note -- I still think its only good for us to vet these, if we
-can't why not? If the maintainer doesn't give a shit that's different,
-but if there are folks out there willing to help with vetting then
-well, why not :)
-
-PS. Including something like historical vetting as I did above on the
-commit log should help folks.
-
- Luis
