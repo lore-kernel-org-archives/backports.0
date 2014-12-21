@@ -1,48 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:35250 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:36380 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751331AbaLTVju (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 20 Dec 2014 16:39:50 -0500
+	id S1753425AbaLUM3x (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 21 Dec 2014 07:29:53 -0500
+Message-ID: <5496BD3F.5010500@hauke-m.de> (sfid-20141221_132955_347429_4938D64D)
+Date: Sun, 21 Dec 2014 13:29:51 +0100
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 03/14] header: add empty of_find_compatible_node()
-Date: Sat, 20 Dec 2014 22:39:26 +0100
-Message-Id: <1419111577-22174-4-git-send-email-hauke@hauke-m.de> (sfid-20141220_223953_693708_63A87A03)
-In-Reply-To: <1419111577-22174-1-git-send-email-hauke@hauke-m.de>
-References: <1419111577-22174-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+To: Arend van Spriel <arend@broadcom.com>
+CC: backports@vger.kernel.org
+Subject: Re: [PATCH 06/14] backport: add debugfs_create_devm_seqfile()
+References: <1419111577-22174-1-git-send-email-hauke@hauke-m.de> <1419111577-22174-7-git-send-email-hauke@hauke-m.de> <549684B0.1000308@broadcom.com>
+In-Reply-To: <549684B0.1000308@broadcom.com>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-of_find_compatible_node() is not defined when CONFIG_OF is not set on
-kernel < 3.3.
+On 12/21/2014 09:28 AM, Arend van Spriel wrote:
+> On 12/20/14 22:39, Hauke Mehrtens wrote:
+>> This new functions is used by ath9k.
+> 
+> Are you sure? In the driver-core repo the ath9k patch adding this was
+> reverted as I made a stupid mistake with driver data. I have the revised
+> patch ready, but it will be for 3.20.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/of.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+I was using the next-20141201 snapshot and there it was included.
+Thanks for the heads up, I will cherry pick your revert commit.
+This problem was in the ath9k driver and not in the code in
+fs/debugfs/file.c is that right?
 
-diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
-index 6d0be53..32ccf19 100644
---- a/backport/backport-include/linux/of.h
-+++ b/backport/backport-include/linux/of.h
-@@ -120,4 +120,16 @@ static inline void of_node_put(struct device_node *node) { }
- 	     dn = of_find_compatible_node(dn, type, compatible))
- #endif /* for_each_compatible_node */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,3,0)
-+#ifndef CONFIG_OF
-+static inline struct device_node *of_find_compatible_node(
-+						struct device_node *from,
-+						const char *type,
-+						const char *compat)
-+{
-+	return NULL;
-+}
-+#endif
-+#endif
-+
- #endif	/* _COMPAT_LINUX_OF_H */
--- 
-1.9.1
+> Regards,
+> Arend
+> 
+>> Signed-off-by: Hauke Mehrtens<hauke@hauke-m.de>
 
