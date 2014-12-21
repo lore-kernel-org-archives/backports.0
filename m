@@ -1,99 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:35258 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:36630 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752024AbaLTVjw (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 20 Dec 2014 16:39:52 -0500
+	id S1752938AbaLURwB (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 21 Dec 2014 12:52:01 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 11/14] patches: do not use DMA_ATTR_SKIP_CPU_SYNC
-Date: Sat, 20 Dec 2014 22:39:34 +0100
-Message-Id: <1419111577-22174-12-git-send-email-hauke@hauke-m.de> (sfid-20141220_224348_924553_C0B7C2B3)
-In-Reply-To: <1419111577-22174-1-git-send-email-hauke@hauke-m.de>
-References: <1419111577-22174-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 3/8] header: add eth_skb_pad()
+Date: Sun, 21 Dec 2014 18:51:49 +0100
+Message-Id: <1419184314-1938-4-git-send-email-hauke@hauke-m.de> (sfid-20141221_185204_793433_43958CE4)
+In-Reply-To: <1419184314-1938-1-git-send-email-hauke@hauke-m.de>
+References: <1419184314-1938-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-DMA_ATTR_SKIP_CPU_SYNC was added to the enum with kernel 3.6. This
-patch removes all calls to dma_set_attr() with this value on
-kernel < 3.6.
+eth_skb_pad() is used by the igb driver.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../media/0005-dma-no-sync/v4l2.patch              | 64 ++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
+ backport/backport-include/linux/etherdevice.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch b/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
-new file mode 100644
-index 0000000..bdb2ff3
---- /dev/null
-+++ b/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
-@@ -0,0 +1,64 @@
-+--- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
-++++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
-+@@ -564,7 +564,9 @@ static void vb2_dc_put_userptr(void *buf
-+ 	if (sgt) {
-+ 		DEFINE_DMA_ATTRS(attrs);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ 		dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
-++#endif
-+ 		/*
-+ 		 * No need to sync to CPU, it's already synced to the CPU
-+ 		 * since the finish() memop will have been called before this.
-+@@ -629,7 +631,9 @@ static void *vb2_dc_get_userptr(void *al
-+ 	unsigned long dma_align = dma_get_cache_alignment();
-+ 	DEFINE_DMA_ATTRS(attrs);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
-++#endif
-+ 
-+ 	/* Only cache aligned DMA transfers are reliable */
-+ 	if (!IS_ALIGNED(vaddr | size, dma_align)) {
-+--- a/drivers/media/v4l2-core/videobuf2-dma-sg.c
-++++ b/drivers/media/v4l2-core/videobuf2-dma-sg.c
-+@@ -109,7 +109,9 @@ static void *vb2_dma_sg_alloc(void *allo
-+ 	int num_pages;
-+ 	DEFINE_DMA_ATTRS(attrs);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
-++#endif
-+ 
-+ 	if (WARN_ON(alloc_ctx == NULL))
-+ 		return NULL;
-+@@ -184,7 +186,9 @@ static void vb2_dma_sg_put(void *buf_pri
-+ 	if (atomic_dec_and_test(&buf->refcount)) {
-+ 		DEFINE_DMA_ATTRS(attrs);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ 		dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
-++#endif
-+ 		dprintk(1, "%s: Freeing buffer of %d pages\n", __func__,
-+ 			buf->num_pages);
-+ 		dma_unmap_sg_attrs(buf->dev, sgt->sgl, sgt->nents,
-+@@ -241,7 +245,9 @@ static void *vb2_dma_sg_get_userptr(void
-+ 	struct sg_table *sgt;
-+ 	DEFINE_DMA_ATTRS(attrs);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
-++#endif
-+ 
-+ 	buf = kzalloc(sizeof *buf, GFP_KERNEL);
-+ 	if (!buf)
-+@@ -347,7 +353,9 @@ static void vb2_dma_sg_put_userptr(void
-+ 	int i = buf->num_pages;
-+ 	DEFINE_DMA_ATTRS(attrs);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
-++#endif
-+ 
-+ 	dprintk(1, "%s: Releasing userspace buffer of %d pages\n",
-+ 	       __func__, buf->num_pages);
+diff --git a/backport/backport-include/linux/etherdevice.h b/backport/backport-include/linux/etherdevice.h
+index 70decd2..34dbf65 100644
+--- a/backport/backport-include/linux/etherdevice.h
++++ b/backport/backport-include/linux/etherdevice.h
+@@ -178,4 +178,19 @@ static inline void ether_addr_copy(u8 *dst, const u8 *src)
+ int eth_get_headlen(unsigned char *data, unsigned int max_len);
+ #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,18,0) */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
++#define eth_skb_pad LINUX_BACKPORT(eth_skb_pad)
++/**
++ * eth_skb_pad - Pad buffer to mininum number of octets for Ethernet frame
++ * @skb: Buffer to pad
++ *
++ * An Ethernet frame should have a minimum size of 60 bytes.  This function
++ * takes short frames and pads them with zeros up to the 60 byte limit.
++ */
++static inline int eth_skb_pad(struct sk_buff *skb)
++{
++	return skb_put_padto(skb, ETH_ZLEN);
++}
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0) */
++
+ #endif /* _BACKPORT_LINUX_ETHERDEVICE_H */
 -- 
 1.9.1
 
