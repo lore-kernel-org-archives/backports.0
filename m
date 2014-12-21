@@ -1,76 +1,99 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:35249 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:36602 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751446AbaLTVju (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 20 Dec 2014 16:39:50 -0500
+	id S1753126AbaLURgn (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 21 Dec 2014 12:36:43 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 00/14] backports: updates for next-20141201
-Date: Sat, 20 Dec 2014 22:39:23 +0100
-Message-Id: <1419111577-22174-1-git-send-email-hauke@hauke-m.de> (sfid-20141220_223954_844382_FCFF5490)
+Subject: [PATCH v2 12/16] patches: do not use DMA_ATTR_SKIP_CPU_SYNC
+Date: Sun, 21 Dec 2014 18:36:26 +0100
+Message-Id: <1419183390-22169-13-git-send-email-hauke@hauke-m.de> (sfid-20141221_184347_640371_6A419C35)
+In-Reply-To: <1419183390-22169-1-git-send-email-hauke@hauke-m.de>
+References: <1419183390-22169-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This contains some patches needed to make backports compatible with
-next-20141201.
+DMA_ATTR_SKIP_CPU_SYNC was added to the enum with kernel 3.6. This
+patch removes all calls to dma_set_attr() with this value on
+kernel < 3.6.
 
-Hauke Mehrtens (14):
-  header: add for_each_compatible_node()
-  header: add memcpy_from_msg()
-  header: add empty of_find_compatible_node()
-  header: include some other dma headers in dma-buf.h
-  header: backport drain_workqueue() by calling flush_workqueue()
-  backport: add debugfs_create_devm_seqfile()
-  backport: add pci_device_is_present()
-  backport: add of_property_read_u32()
-  patches: disable tx status support in mwifiex
-  patches: fix some v4l2 dma stuff
-  patches: do not use DMA_ATTR_SKIP_CPU_SYNC
-  patches: adapt api change of rchan_callbacks->create_buf_file in ath9k
-  patches: refresh on next-20141201
-  devel: update the test kernels
-
- backport/backport-include/linux/debugfs.h          |  23 +++
- backport/backport-include/linux/dma-buf.h          |   3 +
- backport/backport-include/linux/of.h               |  45 +++++-
- backport/backport-include/linux/pci.h              |   5 +
- backport/backport-include/linux/skbuff.h           |   6 +
- backport/backport-include/linux/workqueue.h        |   4 +
- backport/compat/backport-3.13.c                    |  52 +++++++
- backport/compat/backport-3.19.c                    |  56 ++++++++
- backport/compat/compat-3.1.c                       |  34 +++++
- devel/backports-update-manager                     |  14 +-
- patches/backport-adjustments/crypto-ccm.patch      |   7 +-
- patches/backport-adjustments/devcoredump.patch     |  35 ++---
- .../media/0001-dma_mmap_coherent-revert.patch      |   4 +-
- .../media/0002-no_dmabuf/v4l2.patch                | 158 ++++++++++++++++-----
- .../media/0005-dma-no-sync/v4l2.patch              |  64 +++++++++
- .../0002-disable-dump-adjust-on-old-kernels.patch  |   4 +-
- .../include_net_cfg80211.patch                     |   2 +-
- .../net_wireless_core.patch                        |   2 +-
- .../0011-mac80211-disable-tx-status/mwifiex.patch  |  28 ++++
- .../net_mac80211_tx.patch                          |   6 +-
- .../0014-netlink_seq/net_wireless_nl80211.patch    |   2 +-
- .../network/0021-umode_t-api-change/ath9k.patch    |  14 ++
- .../network/0024-led-blink-api/mac80211.patch      |   2 +-
- .../network/0027-genl-const/hwsim.patch            |   4 +-
- .../network/0027-genl-const/nl80211.patch          |   6 +-
- .../network/0028-select_queue/mwifiex.patch        |   2 +-
- .../0032-sriov_configure/igb_sriov_configure.patch |   8 +-
- .../0033-ndo_vlan_rx_vid/igb_ndo_vlan_rx_vid.patch |   8 +-
- .../igb_ndo_set_vf_spoofchk.patch                  |   8 +-
- .../network/0035-skb_no_fcs/igb_skb_no_fcs.patch   |   2 +-
- .../network/0043-ndo_set_vf_rate/igb.patch         |  10 +-
- .../network/0046-mmc_rescan_entered/mwifiex.patch  |   2 +-
- .../network/0048-no_ndo_xmit_flush/igb.patch       |   2 +-
- .../network/0049-no-pfmemalloc/igb.patch           |   4 +-
- 34 files changed, 518 insertions(+), 108 deletions(-)
- create mode 100644 backport/backport-include/linux/debugfs.h
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../media/0005-dma-no-sync/v4l2.patch              | 64 ++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
  create mode 100644 patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
- create mode 100644 patches/collateral-evolutions/network/0011-mac80211-disable-tx-status/mwifiex.patch
- create mode 100644 patches/collateral-evolutions/network/0021-umode_t-api-change/ath9k.patch
 
+diff --git a/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch b/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
+new file mode 100644
+index 0000000..bdb2ff3
+--- /dev/null
++++ b/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
+@@ -0,0 +1,64 @@
++--- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
+++++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
++@@ -564,7 +564,9 @@ static void vb2_dc_put_userptr(void *buf
++ 	if (sgt) {
++ 		DEFINE_DMA_ATTRS(attrs);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
++ 		dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+++#endif
++ 		/*
++ 		 * No need to sync to CPU, it's already synced to the CPU
++ 		 * since the finish() memop will have been called before this.
++@@ -629,7 +631,9 @@ static void *vb2_dc_get_userptr(void *al
++ 	unsigned long dma_align = dma_get_cache_alignment();
++ 	DEFINE_DMA_ATTRS(attrs);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
++ 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+++#endif
++ 
++ 	/* Only cache aligned DMA transfers are reliable */
++ 	if (!IS_ALIGNED(vaddr | size, dma_align)) {
++--- a/drivers/media/v4l2-core/videobuf2-dma-sg.c
+++++ b/drivers/media/v4l2-core/videobuf2-dma-sg.c
++@@ -109,7 +109,9 @@ static void *vb2_dma_sg_alloc(void *allo
++ 	int num_pages;
++ 	DEFINE_DMA_ATTRS(attrs);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
++ 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+++#endif
++ 
++ 	if (WARN_ON(alloc_ctx == NULL))
++ 		return NULL;
++@@ -184,7 +186,9 @@ static void vb2_dma_sg_put(void *buf_pri
++ 	if (atomic_dec_and_test(&buf->refcount)) {
++ 		DEFINE_DMA_ATTRS(attrs);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
++ 		dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+++#endif
++ 		dprintk(1, "%s: Freeing buffer of %d pages\n", __func__,
++ 			buf->num_pages);
++ 		dma_unmap_sg_attrs(buf->dev, sgt->sgl, sgt->nents,
++@@ -241,7 +245,9 @@ static void *vb2_dma_sg_get_userptr(void
++ 	struct sg_table *sgt;
++ 	DEFINE_DMA_ATTRS(attrs);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
++ 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+++#endif
++ 
++ 	buf = kzalloc(sizeof *buf, GFP_KERNEL);
++ 	if (!buf)
++@@ -347,7 +353,9 @@ static void vb2_dma_sg_put_userptr(void
++ 	int i = buf->num_pages;
++ 	DEFINE_DMA_ATTRS(attrs);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
++ 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+++#endif
++ 
++ 	dprintk(1, "%s: Releasing userspace buffer of %d pages\n",
++ 	       __func__, buf->num_pages);
 -- 
 1.9.1
 
