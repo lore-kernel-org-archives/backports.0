@@ -1,65 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:60008 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:36593 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932158AbaLAU3S (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 1 Dec 2014 15:29:18 -0500
-Message-ID: <1417465745.28610.0.camel@sipsolutions.net> (sfid-20141201_212936_903275_A5C47BF6)
-Subject: Re: net-PA Semi: Deletion of unnecessary checks before the function
- call "pci_dev_put"
-From: Johannes Berg <johannes@sipsolutions.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-	Olof Johansson <olof@lixom.net>, netdev@vger.kernel.org,
-	backports@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	Julia Lawall <julia.lawall@lip6.fr>,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Date: Mon, 01 Dec 2014 21:29:05 +0100
-In-Reply-To: <547BC5AD.6090500@users.sourceforge.net> (sfid-20141201_023451_153915_6CFB474F)
-References: <5307CAA2.8060406@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	 <530A086E.8010901@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	 <530A72AA.3000601@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	 <530B5FB6.6010207@users.sourceforge.net>
-	 <alpine.DEB.2.10.1402241710370.2074@hadrien>
-	 <530C5E18.1020800@users.sourceforge.net>
-	 <alpine.DEB.2.10.1402251014170.2080@hadrien>
-	 <530CD2C4.4050903@users.sourceforge.net>
-	 <alpine.DEB.2.10.1402251840450.7035@hadrien>
-	 <530CF8FF.8080600@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	 <530DD06F.4090703@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	 <5317A59D.4@users.sourceforge.net> <547A09B1.9090102@users.sourceforge.net>
-	 <547B579F.10709@gmx.de> <547BC5AD.6090500@users.sourceforge.net>
-	 (sfid-20141201_023451_153915_6CFB474F)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+	id S1753004AbaLURgl (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 21 Dec 2014 12:36:41 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH v2 01/16] header: add for_each_compatible_node()
+Date: Sun, 21 Dec 2014 18:36:15 +0100
+Message-Id: <1419183390-22169-2-git-send-email-hauke@hauke-m.de> (sfid-20141221_183643_975865_A09098E0)
+In-Reply-To: <1419183390-22169-1-git-send-email-hauke@hauke-m.de>
+References: <1419183390-22169-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 2014-12-01 at 02:34 +0100, SF Markus Elfring wrote:
+for_each_compatible_node() is defined in a CONFIG_OF condition on older
+kernel versions. Now some drivers are use it when CONFIG_OF is not set,
+add it always when it is not already there.
 
-> > Some of those NULL pointer checks on input parameters may have been
-> > added subsequently to functions. So there may be older kernel versions
-> > out there in which those checks dont exists in some cases. If some of
-> > the now "cleaned up" code is backported to such a kernel chances are
-> > good that those missing checks are overseen. And then neither caller nor
-> > callee is doing the NULL pointer check.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/of.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> I assume that a few backporters can tell you more about their corresponding
-> software development experiences.
-> http://www.do-not-panic.com/2014/04/automatic-linux-kernel-backporting-with-coccinelle.html
-
-In such cases we just provide an appropriate wrapper and replace callers
-of the original function by callers of the wrapper, typically with a
-#define.
-
-So this kind of evolution is no problem for the (automated) backports
-using the backports project - although it can be difficult to detect
-such a thing is needed.
-
-johannes
+diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
+index f2a8ab4..6d0be53 100644
+--- a/backport/backport-include/linux/of.h
++++ b/backport/backport-include/linux/of.h
+@@ -114,4 +114,10 @@ static inline void of_node_put(struct device_node *node) { }
+ #endif /* CONFIG_OF */
+ #endif /* of_match_ptr */
+ 
++#ifndef for_each_compatible_node
++#define for_each_compatible_node(dn, type, compatible) \
++	for (dn = of_find_compatible_node(NULL, type, compatible); dn; \
++	     dn = of_find_compatible_node(dn, type, compatible))
++#endif /* for_each_compatible_node */
++
+ #endif	/* _COMPAT_LINUX_OF_H */
+-- 
+1.9.1
 
