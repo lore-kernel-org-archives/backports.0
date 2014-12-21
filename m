@@ -1,16 +1,16 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:35254 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:36597 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751885AbaLTVjw (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 20 Dec 2014 16:39:52 -0500
+	id S1753084AbaLURgn (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 21 Dec 2014 12:36:43 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 07/14] backport: add pci_device_is_present()
-Date: Sat, 20 Dec 2014 22:39:30 +0100
-Message-Id: <1419111577-22174-8-git-send-email-hauke@hauke-m.de> (sfid-20141220_223956_692437_5DE6BEAE)
-In-Reply-To: <1419111577-22174-1-git-send-email-hauke@hauke-m.de>
-References: <1419111577-22174-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH v2 07/16] backport: add pci_device_is_present()
+Date: Sun, 21 Dec 2014 18:36:21 +0100
+Message-Id: <1419183390-22169-8-git-send-email-hauke@hauke-m.de> (sfid-20141221_183647_801165_0EE46211)
+In-Reply-To: <1419183390-22169-1-git-send-email-hauke@hauke-m.de>
+References: <1419183390-22169-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
