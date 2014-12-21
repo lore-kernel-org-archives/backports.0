@@ -1,16 +1,16 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:35259 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:36603 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752032AbaLTVjw (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 20 Dec 2014 16:39:52 -0500
+	id S1753142AbaLURgn (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 21 Dec 2014 12:36:43 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 12/14] patches: adapt api change of rchan_callbacks->create_buf_file in ath9k
-Date: Sat, 20 Dec 2014 22:39:35 +0100
-Message-Id: <1419111577-22174-13-git-send-email-hauke@hauke-m.de> (sfid-20141220_224346_887401_13F59143)
-In-Reply-To: <1419111577-22174-1-git-send-email-hauke@hauke-m.de>
-References: <1419111577-22174-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH v2 13/16] patches: adapt api change of rchan_callbacks->create_buf_file in ath9k
+Date: Sun, 21 Dec 2014 18:36:27 +0100
+Message-Id: <1419183390-22169-14-git-send-email-hauke@hauke-m.de> (sfid-20141221_184348_185320_19645F15)
+In-Reply-To: <1419183390-22169-1-git-send-email-hauke@hauke-m.de>
+References: <1419183390-22169-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
