@@ -1,46 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:33886 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751746AbaLCNQN (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 3 Dec 2014 08:16:13 -0500
-Date: Wed, 3 Dec 2014 16:15:49 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	Coccinelle <cocci@systeme.lip6.fr>, backports@vger.kernel.org,
-	Johannes Berg <johannes@sipsolutions.net>,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: Re: [patch] CodingStyle: add some more error handling guidelines
-Message-ID: <20141203131549.GS5048@mwanda> (sfid-20141203_141629_083300_45CBCAD3)
-References: <20141202085950.GA13434@mwanda>
- <547F0297.6030202@users.sourceforge.net>
- <20141203124511.GR5048@mwanda>
- <alpine.DEB.2.10.1412031352120.2373@hadrien>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <alpine.DEB.2.10.1412031352120.2373@hadrien>
+Received: from hauke-m.de ([5.39.93.123]:36627 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752041AbaLURwA (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 21 Dec 2014 12:52:00 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 1/8] header: add napi_alloc_skb()
+Date: Sun, 21 Dec 2014 18:51:47 +0100
+Message-Id: <1419184314-1938-2-git-send-email-hauke@hauke-m.de> (sfid-20141221_185203_587786_B5B39D26)
+In-Reply-To: <1419184314-1938-1-git-send-email-hauke@hauke-m.de>
+References: <1419184314-1938-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Dec 03, 2014 at 01:52:53PM +0100, Julia Lawall wrote:
-> On Wed, 3 Dec 2014, Dan Carpenter wrote:
-> 
-> > On Wed, Dec 03, 2014 at 01:31:19PM +0100, SF Markus Elfring wrote:
-> > >
-> > > * To which source code place should the word "location" refer to?
-> > >   - jump source
-> > >   - jump target
-> >
-> > jump target.
-> 
-> I think you mean source?  Or it really is ambiguous.  The example was
-> err_kmalloc_failed, which seems source-related.
+napi_alloc_skb() is now used by some Ethernet drivers instead of
+netdev_alloc_skb_ip_align(). It can not be placed into backport-
+include/linux/skbuff.h because it accesses a member of struct
+napi_struct which is not possible in skbuff.h, placing it into
+netdevice.h worked in my tests.
 
-Yeah.  You're right.  I misread Markus's email.  The goto location is
-where the goto is.  The label location is where the label is.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/netdevice.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-regards,
-dan carpenter
+diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+index 0469fdd..961450a 100644
+--- a/backport/backport-include/linux/netdevice.h
++++ b/backport/backport-include/linux/netdevice.h
+@@ -225,4 +225,13 @@ extern u8 netdev_rss_key[NETDEV_RSS_KEY_LEN];
+ void netdev_rss_key_fill(void *buffer, size_t len);
+ #endif /* __BACKPORT_NETDEV_RSS_KEY_FILL */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
++#define napi_alloc_skb LINUX_BACKPORT(napi_alloc_skb)
++static inline struct sk_buff *napi_alloc_skb(struct napi_struct *napi,
++					     unsigned int length)
++{
++	return netdev_alloc_skb_ip_align(napi->dev, length);
++}
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0) */
++
+ #endif /* __BACKPORT_NETDEVICE_H */
+-- 
+1.9.1
+
