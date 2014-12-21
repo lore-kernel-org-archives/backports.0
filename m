@@ -1,61 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:36600 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753119AbaLURgn (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 21 Dec 2014 12:36:43 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH v2 10/16] patches: disable tx status support in mwifiex
-Date: Sun, 21 Dec 2014 18:36:24 +0100
-Message-Id: <1419183390-22169-11-git-send-email-hauke@hauke-m.de> (sfid-20141221_183648_439522_C002099D)
-In-Reply-To: <1419183390-22169-1-git-send-email-hauke@hauke-m.de>
-References: <1419183390-22169-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:48059 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752866AbaLUN12 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 21 Dec 2014 08:27:28 -0500
+Message-ID: <5496CABD.7060405@broadcom.com> (sfid-20141221_142729_558083_E893A124)
+Date: Sun, 21 Dec 2014 14:27:25 +0100
+From: Arend van Spriel <arend@broadcom.com>
+MIME-Version: 1.0
+To: Hauke Mehrtens <hauke@hauke-m.de>
+CC: <backports@vger.kernel.org>
+Subject: Re: [PATCH 06/14] backport: add debugfs_create_devm_seqfile()
+References: <1419111577-22174-1-git-send-email-hauke@hauke-m.de> <1419111577-22174-7-git-send-email-hauke@hauke-m.de> <549684B0.1000308@broadcom.com> <5496BD3F.5010500@hauke-m.de>
+In-Reply-To: <5496BD3F.5010500@hauke-m.de>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This feature is not support with older kernels, just deactivate it.
+On 12/21/14 13:29, Hauke Mehrtens wrote:
+> On 12/21/2014 09:28 AM, Arend van Spriel wrote:
+>> On 12/20/14 22:39, Hauke Mehrtens wrote:
+>>> This new functions is used by ath9k.
+>>
+>> Are you sure? In the driver-core repo the ath9k patch adding this was
+>> reverted as I made a stupid mistake with driver data. I have the revised
+>> patch ready, but it will be for 3.20.
+>
+> I was using the next-20141201 snapshot and there it was included.
+> Thanks for the heads up, I will cherry pick your revert commit.
+> This problem was in the ath9k driver and not in the code in
+> fs/debugfs/file.c is that right?
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../0011-mac80211-disable-tx-status/mwifiex.patch  | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0011-mac80211-disable-tx-status/mwifiex.patch
+Yeah, that is what I get from tweaking in drivers that I know next to 
+nothing about ;-) So indeed the debugfs change is fine and I will start 
+using it in the brcm80211 drivers as well for next release so no harm in 
+keeping it.
 
-diff --git a/patches/collateral-evolutions/network/0011-mac80211-disable-tx-status/mwifiex.patch b/patches/collateral-evolutions/network/0011-mac80211-disable-tx-status/mwifiex.patch
-new file mode 100644
-index 0000000..551ae4e
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0011-mac80211-disable-tx-status/mwifiex.patch
-@@ -0,0 +1,28 @@
-+--- a/drivers/net/wireless/mwifiex/main.c
-++++ b/drivers/net/wireless/mwifiex/main.c
-+@@ -659,7 +659,9 @@ mwifiex_hard_start_xmit(struct sk_buff *
-+ 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(dev);
-+ 	struct sk_buff *new_skb;
-+ 	struct mwifiex_txinfo *tx_info;
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0))
-+ 	bool multicast;
-++#endif
-+ 
-+ 	dev_dbg(priv->adapter->dev, "data: %lu BSS(%d-%d): Data <= kernel\n",
-+ 		jiffies, priv->bss_type, priv->bss_num);
-+@@ -700,6 +702,7 @@ mwifiex_hard_start_xmit(struct sk_buff *
-+ 	tx_info->bss_type = priv->bss_type;
-+ 	tx_info->pkt_len = skb->len;
-+ 
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0))
-+ 	multicast = is_multicast_ether_addr(skb->data);
-+ 
-+ 	if (unlikely(!multicast && skb->sk &&
-+@@ -708,6 +711,7 @@ mwifiex_hard_start_xmit(struct sk_buff *
-+ 		skb = mwifiex_clone_skb_for_tx_status(priv,
-+ 						      skb,
-+ 					MWIFIEX_BUF_FLAG_EAPOL_TX_STATUS, NULL);
-++#endif
-+ 
-+ 	/* Record the current time the packet was queued; used to
-+ 	 * determine the amount of time the packet was queued in
--- 
-1.9.1
+Regards,
+Arend
+
+>> Regards,
+>> Arend
+>>
+>>> Signed-off-by: Hauke Mehrtens<hauke@hauke-m.de>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
