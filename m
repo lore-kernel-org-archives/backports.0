@@ -1,44 +1,81 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.11]:55572 "EHLO mout.web.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751322AbaLCQBH (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 3 Dec 2014 11:01:07 -0500
-Message-ID: <547F33AC.50002@users.sourceforge.net> (sfid-20141203_170109_993398_2F71E9CF)
-Date: Wed, 03 Dec 2014 17:00:44 +0100
-From: SF Markus Elfring <elfring@users.sourceforge.net>
+Received: from mail-ie0-f178.google.com ([209.85.223.178]:41232 "EHLO
+	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751321AbaL3TRo (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 30 Dec 2014 14:17:44 -0500
+Received: by mail-ie0-f178.google.com with SMTP id vy18so12235085iec.37
+        for <backports@vger.kernel.org>; Tue, 30 Dec 2014 11:17:43 -0800 (PST)
 MIME-Version: 1.0
-To: Arend van Spriel <arend@broadcom.com>
-CC: Dan Carpenter <dan.carpenter@oracle.com>,
-	Julia Lawall <julia.lawall@lip6.fr>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	Coccinelle <cocci@systeme.lip6.fr>, backports@vger.kernel.org,
-	Johannes Berg <johannes@sipsolutions.net>,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: Re: [patch] CodingStyle: add some more error handling guidelines
-References: <20141202085950.GA13434@mwanda> <547F0297.6030202@users.sourceforge.net> <20141203124511.GR5048@mwanda> <547F0977.7090908@users.sourceforge.net> <20141203132002.GT5048@mwanda> <547F0F2A.3060708@users.sourceforge.net> <547F1942.5060502@broadcom.com>
-In-Reply-To: <547F1942.5060502@broadcom.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <54A2789C.7050407@hauke-m.de>
+References: <CAK8F28=6-rCCbAwA20OvW3VMFG8yBV7oZpvgRcNL1s=snR33Sg@mail.gmail.com>
+ <54A2789C.7050407@hauke-m.de>
+From: Ash Charles <ashcharles@gmail.com>
+Date: Tue, 30 Dec 2014 11:17:13 -0800
+Message-ID: <CAK8F28mGHbPPjcd_7vwH2D8m9qqBqgEkQbY9AnemMwOJjFG+pw@mail.gmail.com> (sfid-20141230_201746_826261_9C7C5BCA)
+Subject: Re: Providing Platform Data to Backported Module
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
->> Which name pattern do you find more appropriate in such
->> an use case?
-> 
-> I think Dan wants the label to be descriptive about the tasks
-> needed in the exception handling itself.
+Hi Hauke,
 
-I would usually prefer also such a target-oriented labelling
-for the affected identifiers.
-How are the chances to express an expectation in this direction
-unambiguously for the proposed coding style update?
+Thanks for the response---this makes sense and led me to a (hopefully
+correct) understanding of what's happening.
 
+Unfortunately, this particular driver uses a special built-in function
+rather than the generic platform_device to set platform data.  For
+reference, this is the wl12xx_set_platform_data and
+wl12xx_get_platform_data functions found in
+drivers/net/wireless/ti/wilink_platform_data.c file in new kernels.
+The setter function is built-in and called directly from the board
+file.
 
-> This makes sense as the exception handling steps may be reused
-> for different failures in the code.
+After a little more digging, it looks like the adopted solution checks
+if the target kernel has these getter/setter functions (i.e.
+CONFIG_WL12XX_PLATFORM_DATA or CONFIG_WILINK_PLATFORM_DATA enables
+CPTCFG_UNIFIED_WILNK_PLATFORM_DATA).  If it does, then the board file
+can just call the setter--totally built-in behaviour---and the
+backported driver can call the built-in getter to fetch this data.
+Otherwise, we need to rely on a device tree blob or some hard coding
+to provide the data.
 
-I would stress a different reason from my point of view.
+Thanks again,
+--Ash
 
-Regards,
-Markus
+On Tue, Dec 30, 2014 at 2:04 AM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> On 12/30/2014 02:54 AM, Ash Charles wrote:
+>> Hello,
+>>
+>> I'm trying to get add support for a wl18xx wireless device to my
+>> omap3-based board running a 3.2 kernel.  Using backports (package, not
+>> direct integration), I can compile the required drivers and load them
+>> onto my system.  The driver needs some platform-specific data to
+>> control the wireless device.  Normally, I'd pass this as platform data
+>> from a board file (I'm not using device tree on this 3.2 kernel) but
+>> as the required structures come from the backport, I can't.  How can I
+>> provide this data to the module?
+>>
+>> Things that come to mind but don't seem quite right:
+>> 1. Hard-code this setup data into the driver for my particular board
+>> (seem a little heavy-handed)
+>> 2. Add a backport to support a board file/pdata-quirks. (nothing else
+>> in the arch tree is backported...seems to indicate this is not the
+>> right way)
+>> 3. Use the backports with direct integration as I think I could just
+>> make the changes to the board file directly in this case (I'm using a
+>> TI backport tree that doesn't support integration yet)
+>> 4. Add a device tree blob or some shim such that the target kernel can
+>> provide the module the data.
+>>
+>> Many thanks in advance for any advice or insight.
+>
+> You could remove the platform data header file from backports and use
+> the one from your kernel, just delete the header file in backports. If
+> this version does not have all the needed members just copy the header
+> file from backpots into your kernel. Then you can register the device
+> like any other device in your board file and fill the platform data with
+> the needed data.
+>
+> Hauke
