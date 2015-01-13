@@ -1,44 +1,130 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:60014 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755745AbbA0Hjg (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 27 Jan 2015 02:39:36 -0500
-Message-ID: <1422344369.1890.43.camel@sipsolutions.net> (sfid-20150127_083938_143760_59A55E2F)
-Subject: Re: cfg80211: Unknown symbol get_net_ns_by_fd (err 0)
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend van Spriel <arend@broadcom.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-Date: Tue, 27 Jan 2015 08:39:29 +0100
-In-Reply-To: <54C6A717.5050804@broadcom.com> (sfid-20150126_214412_608526_308C1470)
-References: <54C6A717.5050804@broadcom.com>
-	 (sfid-20150126_214412_608526_308C1470)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from sabertooth02.qualcomm.com ([65.197.215.38]:3337 "EHLO
+	sabertooth02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753399AbbAMCSc (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 12 Jan 2015 21:18:32 -0500
+From: Mathieu Olivari <mathieu@qca.qualcomm.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>,
+	Mathieu Olivari <mathieu@qca.qualcomm.com>
+Subject: [PATCH 2/2] backport: add hwmon group registration functions
+Date: Mon, 12 Jan 2015 18:17:56 -0800
+Message-ID: <1421115476-11855-2-git-send-email-mathieu@qca.qualcomm.com> (sfid-20150113_031834_987465_2795DB4E)
+In-Reply-To: <1421115476-11855-1-git-send-email-mathieu@qca.qualcomm.com>
+References: <1421115476-11855-1-git-send-email-mathieu@qca.qualcomm.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 2015-01-26 at 21:44 +0100, Arend van Spriel wrote:
-> Hi Hauke,
-> 
-> The commit below causes the error mentioned in the Subject: field. I 
-> would like to fix this, but could use a bit of help here how to do this 
-> type of things.
-> 
-> commit 4b681c82d2f9bef121c912ffcaac89a004af3f2c
-> Author: Vadim Kochan <vadim4j@gmail.com>
-> Date:   Mon Jan 12 16:34:05 2015 +0200
-> 
->      nl80211: Allow set network namespace by fd
+hwmon group registration functions have been added in 3.13 kernel.
+Latest ath10k patches make use of this mechanism, therefore the
+need for the backport.
 
-I don't think you can fix it in backports - it required exporting the
-get_net_ns_by_fd() function, which cannot be gotten to otherwise and
-cannot be backported since it internally uses a number of non-exported
-symbols.
+Signed-off-by: Mathieu Olivari <mathieu@qca.qualcomm.com>
+---
+ backport/backport-include/linux/hwmon.h |   36 +++++++++++++++++++++++
+ backport/compat/backport-3.13.c         |   47 +++++++++++++++++++++++++++++++
+ 2 files changed, 83 insertions(+)
+ create mode 100644 backport/backport-include/linux/hwmon.h
 
-You'll probably just have to provide a backported version of
-get_net_ns_by_fd() that always returns ERR_PTR(-EOPNOTSUPP) or so.
-
-johannes
+diff --git a/backport/backport-include/linux/hwmon.h b/backport/backport-include/linux/hwmon.h
+new file mode 100644
+index 0000000..961e979
+--- /dev/null
++++ b/backport/backport-include/linux/hwmon.h
+@@ -0,0 +1,36 @@
++#ifndef __BACKPORT_LINUX_HWMON_H
++#define __BACKPORT_LINUX_HWMON_H
++#include_next <linux/hwmon.h>
++#include <linux/version.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)
++/*
++ * Backports
++ *
++ * commit bab2243ce1897865e31ea6d59b0478391f51812b
++ * Author: Guenter Roeck <linux@roeck-us.net>
++ * Date:   Sat Jul 6 13:57:23 2013 -0700
++ *
++ *     hwmon: Introduce hwmon_device_register_with_groups
++ *
++ *     hwmon_device_register_with_groups() lets callers register a hwmon device
++ *     together with all sysfs attributes in a single call.
++ *
++ *     When using hwmon_device_register_with_groups(), hwmon attributes are attached
++ *     to the hwmon device directly and no longer with its parent device.
++ *
++ * Signed-off-by: Guenter Roeck <linux@roeck-us.net>
++ */
++struct device *
++hwmon_device_register_with_groups(struct device *dev, const char *name,
++				  void *drvdata,
++				  const struct attribute_group **groups);
++struct device *
++devm_hwmon_device_register_with_groups(struct device *dev, const char *name,
++				       void *drvdata,
++				       const struct attribute_group **groups);
++void devm_hwmon_release(struct device *dev, void *res);
++
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0) */
++
++#endif /* __BACKPORT_LINUX_HWMON_H */
+diff --git a/backport/compat/backport-3.13.c b/backport/compat/backport-3.13.c
+index 553ed8f..89100a2 100644
+--- a/backport/compat/backport-3.13.c
++++ b/backport/compat/backport-3.13.c
+@@ -252,3 +252,50 @@ bool pci_device_is_present(struct pci_dev *pdev)
+ }
+ EXPORT_SYMBOL_GPL(pci_device_is_present);
+ #endif /* CONFIG_PCI */
++
++#ifdef CONFIG_HWMON
++#include <linux/device.h>
++#include <linux/hwmon.h>
++struct device*
++hwmon_device_register_with_groups(struct device *dev, const char *name,
++				  void *drvdata,
++				  const struct attribute_group **groups)
++{
++	return hwmon_device_register(dev);
++}
++
++struct device *
++devm_hwmon_device_register_with_groups(struct device *dev, const char *name,
++				       void *drvdata,
++				       const struct attribute_group **groups)
++{
++	struct device **ptr, *hwdev;
++
++	if (!dev)
++		return ERR_PTR(-EINVAL);
++
++	ptr = devres_alloc(devm_hwmon_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	hwdev = hwmon_device_register_with_groups(dev, name, drvdata, groups);
++	if (IS_ERR(hwdev))
++		goto error;
++
++	*ptr = hwdev;
++	devres_add(dev, ptr);
++	return hwdev;
++
++error:
++	devres_free(ptr);
++	return hwdev;
++}
++EXPORT_SYMBOL_GPL(devm_hwmon_device_register_with_groups);
++
++void devm_hwmon_release(struct device *dev, void *res)
++{
++	struct device *hwdev = *(struct device **)res;
++
++	hwmon_device_unregister(hwdev);
++}
++#endif
+-- 
+1.7.10.4
 
