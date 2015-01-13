@@ -1,67 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:36729 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1763285AbbA3WkJ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 30 Jan 2015 17:40:09 -0500
-Message-ID: <54CC0846.7000103@hauke-m.de> (sfid-20150130_234014_563371_D71C98AF)
-Date: Fri, 30 Jan 2015 23:40:06 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from sabertooth01.qualcomm.com ([65.197.215.72]:46246 "EHLO
+	sabertooth01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752423AbbAMCSb (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 12 Jan 2015 21:18:31 -0500
+From: Mathieu Olivari <mathieu@qca.qualcomm.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>,
+	Mathieu Olivari <mathieu@qca.qualcomm.com>
+Subject: [PATCH 1/2] backports: explicitely include string.h from device.h
+Date: Mon, 12 Jan 2015 18:17:55 -0800
+Message-ID: <1421115476-11855-1-git-send-email-mathieu@qca.qualcomm.com> (sfid-20150113_031834_365149_7A2ECD09)
 MIME-Version: 1.0
-To: Arend van Spriel <arend@broadcom.com>,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH V2] backport: add backport for get_net_ns_by_fd()
-References: <1422651176-5433-1-git-send-email-arend@broadcom.com>
-In-Reply-To: <1422651176-5433-1-git-send-email-arend@broadcom.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+string.h is usually included from the asm/ folder in most configuration,
+but on some older kernels and non-x86 architecture, this inclusion is
+not necessarily happening. As we're using memcpy() in the code
+below, we need to be safe and make sure string.h is indeed there.
 
+This issue has been observed on a 3.4 vendor kernels, but may be
+applicable to other configurations.
 
-On 01/30/2015 09:52 PM, Arend van Spriel wrote:
-> In mac80211-next a call to get_net_ns_by_fd() has been added in cfg80211
-> which resides in networking core. This function has been backported
-> such that it will always fail, ie. as it would when CONFIG_NET_NS
-> is not defined. The call was added by:
-> 
->    commit 4b681c82d2f9bef121c912ffcaac89a004af3f2c
->    Author: Vadim Kochan <vadim4j@gmail.com>
->    Date: Mon Jan 12 16:34:05 2015 +0200
-> 
->      nl80211: Allow set network namespace by fd
-> 
-> Signed-off-by: Arend van Spriel <arend@broadcom.com>
-> ---
-> This patch replaces the commit
-> "backport: add backport file for the next kernel release" which
-> has Message-ID: <1422648758-31361-2-git-send-email-arend@broadcom.com>
-> 
-> Changes:
->  V2
->   - solve backport using LINUX_BACKPORT macro (Johannes Berg)
-> ---
->  backport/backport-include/net/net_namespace.h | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/backport/backport-include/net/net_namespace.h b/backport/backport-include/net/net_namespace.h
-> index e83b103..8927af7 100644
-> --- a/backport/backport-include/net/net_namespace.h
-> +++ b/backport/backport-include/net/net_namespace.h
-> @@ -24,4 +24,10 @@ net_ieee802154_lowpan(struct net *net)
->  #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0) */
->  #endif /* CPTCFG_IEEE802154_6LOWPAN */
->  
+Signed-off-by: Mathieu Olivari <mathieu@qca.qualcomm.com>
+---
+ backport/backport-include/linux/device.h |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-When we are on a kernel which exports this function like 3.20, this code
-should not get compiled in. Your should add something like this:
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,20,0)
+diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
+index 29dc077..03ca1f1 100644
+--- a/backport/backport-include/linux/device.h
++++ b/backport/backport-include/linux/device.h
+@@ -5,6 +5,13 @@
+ 
+ #include <linux/version.h>
+ 
++/*
++ * string.h is usually included from the asm/ folder in most configuration,
++ * but on some older kernels it doesn't. As we're using memcpy() in the code
++ * below, we need to be safe and make sure string.h is indeed there.
++ */
++#include <linux/string.h>
++
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
+ /* backport
+  * commit 9f3b795a626ee79574595e06d1437fe0c7d51d29
+-- 
+1.7.10.4
 
-> +#define get_net_ns_by_fd	LINUX_BACKPORT(get_net_ns_by_fd)
-> +static inline struct net *get_net_ns_by_fd(int fd)
-> +{
-> +	return ERR_PTR(-EINVAL);
-> +}
-> +
->  #endif	/* _COMPAT_NET_NET_NAMESPACE_H */
-> 
