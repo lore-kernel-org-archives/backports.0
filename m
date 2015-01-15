@@ -1,74 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:2433 "EHLO
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:3196 "EHLO
 	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753675AbbA3XBD (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 30 Jan 2015 18:01:03 -0500
-Message-ID: <54CC0D2C.106@broadcom.com> (sfid-20150131_000105_546400_B15D4D4A)
-Date: Sat, 31 Jan 2015 00:01:00 +0100
+	with ESMTP id S1752843AbbAOUPt (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 15 Jan 2015 15:15:49 -0500
 From: Arend van Spriel <arend@broadcom.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>, Arend van Spriel <arend@broadcom.com>
+Subject: [PATCH V2] patches: genl-const: fix nl80211.patch
+Date: Thu, 15 Jan 2015 21:15:42 +0100
+Message-ID: <1421352942-21625-1-git-send-email-arend@broadcom.com> (sfid-20150115_211552_467265_F71FCF92)
 MIME-Version: 1.0
-To: Hauke Mehrtens <hauke@hauke-m.de>
-CC: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	<backports@vger.kernel.org>
-Subject: Re: [PATCH V2] backport: add backport for get_net_ns_by_fd()
-References: <1422651176-5433-1-git-send-email-arend@broadcom.com> <54CC0846.7000103@hauke-m.de>
-In-Reply-To: <54CC0846.7000103@hauke-m.de>
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 01/30/15 23:40, Hauke Mehrtens wrote:
->
->
-> On 01/30/2015 09:52 PM, Arend van Spriel wrote:
->> In mac80211-next a call to get_net_ns_by_fd() has been added in cfg80211
->> which resides in networking core. This function has been backported
->> such that it will always fail, ie. as it would when CONFIG_NET_NS
->> is not defined. The call was added by:
->>
->>     commit 4b681c82d2f9bef121c912ffcaac89a004af3f2c
->>     Author: Vadim Kochan<vadim4j@gmail.com>
->>     Date: Mon Jan 12 16:34:05 2015 +0200
->>
->>       nl80211: Allow set network namespace by fd
->>
->> Signed-off-by: Arend van Spriel<arend@broadcom.com>
->> ---
->> This patch replaces the commit
->> "backport: add backport file for the next kernel release" which
->> has Message-ID:<1422648758-31361-2-git-send-email-arend@broadcom.com>
->>
->> Changes:
->>   V2
->>    - solve backport using LINUX_BACKPORT macro (Johannes Berg)
->> ---
->>   backport/backport-include/net/net_namespace.h | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/backport/backport-include/net/net_namespace.h b/backport/backport-include/net/net_namespace.h
->> index e83b103..8927af7 100644
->> --- a/backport/backport-include/net/net_namespace.h
->> +++ b/backport/backport-include/net/net_namespace.h
->> @@ -24,4 +24,10 @@ net_ieee802154_lowpan(struct net *net)
->>   #endif /* LINUX_VERSION_CODE<  KERNEL_VERSION(3,15,0) */
->>   #endif /* CPTCFG_IEEE802154_6LOWPAN */
->>
->
-> When we are on a kernel which exports this function like 3.20, this code
-> should not get compiled in. Your should add something like this:
-> #if LINUX_VERSION_CODE<  KERNEL_VERSION(3,20,0)
+nl80211.c recently changed using defined strings instead of hard-coded in
+multi-cast group definitions:
 
-That indeed makes sense. Thanks.
+  commit 71b836eca7f380fbd4c025f8c4371f9a071bc909
+  Author: Johannes Berg <johannes.berg@intel.com>
+  Date:   Tue Dec 23 17:17:38 2014 +0100
 
-Regards,
-Arend
+      nl80211: define multicast group names in header
 
->> +#define get_net_ns_by_fd	LINUX_BACKPORT(get_net_ns_by_fd)
->> +static inline struct net *get_net_ns_by_fd(int fd)
->> +{
->> +	return ERR_PTR(-EINVAL);
->> +}
->> +
->>   #endif	/* _COMPAT_NET_NET_NAMESPACE_H */
->>
+Signed-off-by: Arend van Spriel <arend@broadcom.com>
+---
+V2:
+ - remove whitespace changes.
+---
+ patches/collateral-evolutions/network/0027-genl-const/nl80211.patch | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/patches/collateral-evolutions/network/0027-genl-const/nl80211.patch b/patches/collateral-evolutions/network/0027-genl-const/nl80211.patch
+index d8d67bb..21c2a86 100644
+--- a/patches/collateral-evolutions/network/0027-genl-const/nl80211.patch
++++ b/patches/collateral-evolutions/network/0027-genl-const/nl80211.patch
+@@ -18,9 +18,9 @@
+  
+ -static const struct genl_multicast_group nl80211_mcgrps[] = {
+ +static __genl_const struct genl_multicast_group nl80211_mcgrps[] = {
+- 	[NL80211_MCGRP_CONFIG] = { .name = "config", },
+- 	[NL80211_MCGRP_SCAN] = { .name = "scan", },
+- 	[NL80211_MCGRP_REGULATORY] = { .name = "regulatory", },
++ 	[NL80211_MCGRP_CONFIG] = { .name = NL80211_MULTICAST_GROUP_CONFIG },
++ 	[NL80211_MCGRP_SCAN] = { .name = NL80211_MULTICAST_GROUP_SCAN },
++ 	[NL80211_MCGRP_REGULATORY] = { .name = NL80211_MULTICAST_GROUP_REG },
+ @@ -9938,7 +9938,7 @@ static int nl80211_tdls_cancel_channel_s
+  					 NL80211_FLAG_CHECK_NETDEV_UP)
+  #define NL80211_FLAG_CLEAR_SKB		0x20
+-- 
+1.9.1
 
