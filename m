@@ -1,29 +1,91 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:36629 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932762AbbA3UBp (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 30 Jan 2015 15:01:45 -0500
-Received: from [10.37.111.209] (unknown [89.204.155.209])
-	by hauke-m.de (Postfix) with ESMTPSA id B4B0520425
-	for <backports@vger.kernel.org>; Fri, 30 Jan 2015 21:01:43 +0100 (CET)
-Message-ID: <54CBE2A4.2040705@hauke-m.de> (sfid-20150130_210204_187684_13657C3A)
-Date: Fri, 30 Jan 2015 20:59:32 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:36479 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752882AbbAOUCp (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 15 Jan 2015 15:02:45 -0500
+From: Arend van Spriel <arend@broadcom.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>, Arend van Spriel <arend@broadcom.com>
+Subject: [PATCH] patches: genl-const: fix nl80211.patch
+Date: Thu, 15 Jan 2015 21:02:38 +0100
+Message-ID: <1421352158-20594-1-git-send-email-arend@broadcom.com> (sfid-20150115_210247_698921_CA70996C)
 MIME-Version: 1.0
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: backports-20150108 is out
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backports-20150108 was released. This is based on linux-next next-20150108.
+nl80211.c recently changed using defined strings instead of hard-coded in
+multi-cast group definitions:
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/2015/01/08/backports-20150108.tar.xz
+  commit 71b836eca7f380fbd4c025f8c4371f9a071bc909
+  Author: Johannes Berg <johannes.berg@intel.com>
+  Date:   Tue Dec 23 17:17:38 2014 +0100
 
-The source code can be found here:
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
+      nl80211: define multicast group names in header
 
-All the latest releases are listed here:
-http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
+Signed-off-by: Arend van Spriel <arend@broadcom.com>
+---
+ .../network/0027-genl-const/nl80211.patch              | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-Hauke
+diff --git a/patches/collateral-evolutions/network/0027-genl-const/nl80211.patch b/patches/collateral-evolutions/network/0027-genl-const/nl80211.patch
+index d8d67bb..51dead3 100644
+--- a/patches/collateral-evolutions/network/0027-genl-const/nl80211.patch
++++ b/patches/collateral-evolutions/network/0027-genl-const/nl80211.patch
+@@ -3,28 +3,28 @@
+ @@ -31,9 +31,9 @@ static int nl80211_crypto_settings(struc
+  				   struct cfg80211_crypto_settings *settings,
+  				   int cipher_limit);
+- 
++
+ -static int nl80211_pre_doit(const struct genl_ops *ops, struct sk_buff *skb,
+ +static int nl80211_pre_doit(__genl_const struct genl_ops *ops, struct sk_buff *skb,
+  			    struct genl_info *info);
+ -static void nl80211_post_doit(const struct genl_ops *ops, struct sk_buff *skb,
+ +static void nl80211_post_doit(__genl_const struct genl_ops *ops, struct sk_buff *skb,
+  			      struct genl_info *info);
+- 
++
+  /* the netlink family */
+ @@ -58,7 +58,7 @@ enum nl80211_multicast_groups {
+  	NL80211_MCGRP_TESTMODE /* keep last - ifdef! */
+  };
+- 
++
+ -static const struct genl_multicast_group nl80211_mcgrps[] = {
+ +static __genl_const struct genl_multicast_group nl80211_mcgrps[] = {
+- 	[NL80211_MCGRP_CONFIG] = { .name = "config", },
+- 	[NL80211_MCGRP_SCAN] = { .name = "scan", },
+- 	[NL80211_MCGRP_REGULATORY] = { .name = "regulatory", },
++ 	[NL80211_MCGRP_CONFIG] = { .name = NL80211_MULTICAST_GROUP_CONFIG },
++ 	[NL80211_MCGRP_SCAN] = { .name = NL80211_MULTICAST_GROUP_SCAN },
++ 	[NL80211_MCGRP_REGULATORY] = { .name = NL80211_MULTICAST_GROUP_REG },
+ @@ -9938,7 +9938,7 @@ static int nl80211_tdls_cancel_channel_s
+  					 NL80211_FLAG_CHECK_NETDEV_UP)
+  #define NL80211_FLAG_CLEAR_SKB		0x20
+- 
++
+ -static int nl80211_pre_doit(const struct genl_ops *ops, struct sk_buff *skb,
+ +static int nl80211_pre_doit(__genl_const struct genl_ops *ops, struct sk_buff *skb,
+  			    struct genl_info *info)
+@@ -33,7 +33,7 @@
+ @@ -10007,7 +10007,7 @@ static int nl80211_pre_doit(const struct
+  	return 0;
+  }
+- 
++
+ -static void nl80211_post_doit(const struct genl_ops *ops, struct sk_buff *skb,
+ +static void nl80211_post_doit(__genl_const struct genl_ops *ops, struct sk_buff *skb,
+  			      struct genl_info *info)
+@@ -42,7 +42,7 @@
+ @@ -10036,7 +10036,7 @@ static void nl80211_post_doit(const stru
+  	}
+  }
+- 
++
+ -static const struct genl_ops nl80211_ops[] = {
+ +static __genl_const struct genl_ops nl80211_ops[] = {
+  	{
+-- 
+1.9.1
+
