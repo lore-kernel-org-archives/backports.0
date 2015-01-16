@@ -1,40 +1,37 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:36235 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:41330 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752926AbbA3K6v (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 30 Jan 2015 05:58:51 -0500
-Message-ID: <54CB63E9.3090504@hauke-m.de> (sfid-20150130_115904_402687_8928D095)
-Date: Fri, 30 Jan 2015 11:58:49 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH 2/3] header: add linux/hdmi.h
-References: <1422055240-4753-1-git-send-email-hauke@hauke-m.de>	 <1422055240-4753-3-git-send-email-hauke@hauke-m.de>	 (sfid-20150124_002050_356021_E7A9E878) <1422261618.1890.11.camel@sipsolutions.net>
-In-Reply-To: <1422261618.1890.11.camel@sipsolutions.net>
-Content-Type: text/plain; charset=utf-8
+	id S1753241AbbAPLIK (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 16 Jan 2015 06:08:10 -0500
+Message-ID: <1421406483.9214.5.camel@sipsolutions.net> (sfid-20150116_120812_376627_498E565A)
+Subject: Re: [PATCH V2] patches: genl-const: fix nl80211.patch
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend van Spriel <arend@broadcom.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
+Date: Fri, 16 Jan 2015 12:08:03 +0100
+In-Reply-To: <1421352942-21625-1-git-send-email-arend@broadcom.com> (sfid-20150115_211552_467265_F71FCF92)
+References: <1421352942-21625-1-git-send-email-arend@broadcom.com>
+	 (sfid-20150115_211552_467265_F71FCF92)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 01/26/2015 09:40 AM, Johannes Berg wrote:
-> On Sat, 2015-01-24 at 00:20 +0100, Hauke Mehrtens wrote:
->> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
->> ---
->>  backport/backport-include/linux/hdmi.h | 41 ++++++++++++++++++++++++++++++++++
->>  1 file changed, 41 insertions(+)
->>  create mode 100644 backport/backport-include/linux/hdmi.h
->>
->> diff --git a/backport/backport-include/linux/hdmi.h b/backport/backport-include/linux/hdmi.h
->> new file mode 100644
->> index 0000000..a6d6880
->> --- /dev/null
->> +++ b/backport/backport-include/linux/hdmi.h
+On Thu, 2015-01-15 at 21:15 +0100, Arend van Spriel wrote:
+> nl80211.c recently changed using defined strings instead of hard-coded in
+> multi-cast group definitions:
 > 
-> Would it make sense to automatically copy & slightly patch this file in
-> case it gets extended later?
+>   commit 71b836eca7f380fbd4c025f8c4371f9a071bc909
+>   Author: Johannes Berg <johannes.berg@intel.com>
+>   Date:   Tue Dec 23 17:17:38 2014 +0100
+> 
+>       nl80211: define multicast group names in header
+> 
+> Signed-off-by: Arend van Spriel <arend@broadcom.com>
 
-Yes that would be better, this file only contains some enums for things
-defined in the hdmi standard and no interfaces to other in kernel
-subsystems, it should be safe to just copy the file.
+Thanks Arend!
 
-Hauke
+Acked-by: Johannes Berg <johannes@sipsolutions.net>
+
+johannes
+
