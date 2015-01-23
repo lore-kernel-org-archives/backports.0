@@ -1,33 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:36584 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751798AbbA3Sis (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 30 Jan 2015 13:38:48 -0500
-Message-ID: <54CBCFB6.2030003@broadcom.com> (sfid-20150130_193850_855908_3048A8D9)
-Date: Fri, 30 Jan 2015 19:38:46 +0100
-From: Arend van Spriel <arend@broadcom.com>
-MIME-Version: 1.0
-To: Hauke Mehrtens <hauke@hauke-m.de>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-Subject: Re: cfg80211: Unknown symbol get_net_ns_by_fd (err 0)
-References: <54C6A717.5050804@broadcom.com> <54CBCADA.4050801@broadcom.com> <54CBCE5A.9080404@hauke-m.de>
-In-Reply-To: <54CBCE5A.9080404@hauke-m.de>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Received: from hauke-m.de ([5.39.93.123]:40565 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751227AbbAWXUr (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 23 Jan 2015 18:20:47 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 1/3] header: add linux/timecounter.h
+Date: Sat, 24 Jan 2015 00:20:38 +0100
+Message-Id: <1422055240-4753-2-git-send-email-hauke@hauke-m.de> (sfid-20150124_002049_720713_05341FFF)
+In-Reply-To: <1422055240-4753-1-git-send-email-hauke@hauke-m.de>
+References: <1422055240-4753-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 01/30/15 19:32, Hauke Mehrtens wrote:
-> Or we just backport this version every time:
->
-> struct net *get_net_ns_by_fd(int fd)
-> {
-> 	return ERR_PTR(-EINVAL);
-> }
->
+This file was newly added to the kernel. It was extracted from
+linux/clocksource.h.
 
-I was going for the easy way out over here. Either way is fine by me, 
-but is net namespace support can not be properly backported I would say 
-got for the version above.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/timecounter.h | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 backport/backport-include/linux/timecounter.h
 
-Gr. AvS
+diff --git a/backport/backport-include/linux/timecounter.h b/backport/backport-include/linux/timecounter.h
+new file mode 100644
+index 0000000..92fafb9
+--- /dev/null
++++ b/backport/backport-include/linux/timecounter.h
+@@ -0,0 +1,25 @@
++#ifndef __BACKPORT_LINUX_TIMECOUNTER_H
++#define __BACKPORT_LINUX_TIMECOUNTER_H
++
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,20,0)
++#include_next <linux/timecounter.h>
++#else
++#include <linux/clocksource.h>
++
++/**
++ * timecounter_adjtime - Shifts the time of the clock.
++ * @delta:	Desired change in nanoseconds.
++ */
++#define timecounter_adjtime LINUX_BACKPORT(timecounter_adjtime)
++static inline void timecounter_adjtime(struct timecounter *tc, s64 delta)
++{
++	tc->nsec += delta;
++}
++#endif
++
++#ifndef CYCLECOUNTER_MASK
++/* simplify initialization of mask field */
++#define CYCLECOUNTER_MASK(bits) (cycle_t)((bits) < 64 ? ((1ULL<<(bits))-1) : -1)
++#endif
++
++#endif /* __BACKPORT_LINUX_TIMECOUNTER_H */
+-- 
+1.9.1
+
