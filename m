@@ -1,59 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:40565 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751227AbbAWXUr (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 23 Jan 2015 18:20:47 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/3] header: add linux/timecounter.h
-Date: Sat, 24 Jan 2015 00:20:38 +0100
-Message-Id: <1422055240-4753-2-git-send-email-hauke@hauke-m.de> (sfid-20150124_002049_720713_05341FFF)
-In-Reply-To: <1422055240-4753-1-git-send-email-hauke@hauke-m.de>
-References: <1422055240-4753-1-git-send-email-hauke@hauke-m.de>
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:44490 "EHLO
+	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753976AbbAYRqJ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 25 Jan 2015 12:46:09 -0500
+From: Mathieu Olivari <mathieu@qca.qualcomm.com>
+To: <mcgrof@kernel.org>, <hauke@hauke-m.de>
+CC: <backports@vger.kernel.org>, <kvalo@qca.qualcomm.com>,
+	Mathieu Olivari <mathieu@qca.qualcomm.com>
+Subject: [PATCH v2 1/2] backports: explicitely include string.h from device.h
+Date: Sun, 25 Jan 2015 09:46:01 -0800
+Message-ID: <1422207962-23988-1-git-send-email-mathieu@qca.qualcomm.com> (sfid-20150125_184613_348075_5AE4AF95)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This file was newly added to the kernel. It was extracted from
-linux/clocksource.h.
+string.h is usually included from the asm/ folder in most configuration,
+but on some older kernels and non-x86 architecture, this inclusion is
+not necessarily happening. As we're using memcpy() in the code
+below, we need to be safe and make sure string.h is indeed there.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+This issue has been observed on a 3.4 vendor kernels, but may be
+applicable to other configurations.
+
+Signed-off-by: Mathieu Olivari <mathieu@qca.qualcomm.com>
+
 ---
- backport/backport-include/linux/timecounter.h | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 backport/backport-include/linux/timecounter.h
+ backport/backport-include/linux/device.h |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/backport/backport-include/linux/timecounter.h b/backport/backport-include/linux/timecounter.h
-new file mode 100644
-index 0000000..92fafb9
---- /dev/null
-+++ b/backport/backport-include/linux/timecounter.h
-@@ -0,0 +1,25 @@
-+#ifndef __BACKPORT_LINUX_TIMECOUNTER_H
-+#define __BACKPORT_LINUX_TIMECOUNTER_H
-+
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,20,0)
-+#include_next <linux/timecounter.h>
-+#else
-+#include <linux/clocksource.h>
-+
-+/**
-+ * timecounter_adjtime - Shifts the time of the clock.
-+ * @delta:	Desired change in nanoseconds.
+Notes:
+    v2: no changes
+diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
+index 29dc077..03ca1f1 100644
+--- a/backport/backport-include/linux/device.h
++++ b/backport/backport-include/linux/device.h
+@@ -5,6 +5,13 @@
+ 
+ #include <linux/version.h>
+ 
++/*
++ * string.h is usually included from the asm/ folder in most configuration,
++ * but on some older kernels it doesn't. As we're using memcpy() in the code
++ * below, we need to be safe and make sure string.h is indeed there.
 + */
-+#define timecounter_adjtime LINUX_BACKPORT(timecounter_adjtime)
-+static inline void timecounter_adjtime(struct timecounter *tc, s64 delta)
-+{
-+	tc->nsec += delta;
-+}
-+#endif
++#include <linux/string.h>
 +
-+#ifndef CYCLECOUNTER_MASK
-+/* simplify initialization of mask field */
-+#define CYCLECOUNTER_MASK(bits) (cycle_t)((bits) < 64 ? ((1ULL<<(bits))-1) : -1)
-+#endif
-+
-+#endif /* __BACKPORT_LINUX_TIMECOUNTER_H */
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
+ /* backport
+  * commit 9f3b795a626ee79574595e06d1437fe0c7d51d29
 -- 
-1.9.1
+1.7.10.4
 
