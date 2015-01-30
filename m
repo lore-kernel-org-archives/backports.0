@@ -1,37 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:41330 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753241AbbAPLIK (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 16 Jan 2015 06:08:10 -0500
-Message-ID: <1421406483.9214.5.camel@sipsolutions.net> (sfid-20150116_120812_376627_498E565A)
-Subject: Re: [PATCH V2] patches: genl-const: fix nl80211.patch
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend van Spriel <arend@broadcom.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
-Date: Fri, 16 Jan 2015 12:08:03 +0100
-In-Reply-To: <1421352942-21625-1-git-send-email-arend@broadcom.com> (sfid-20150115_211552_467265_F71FCF92)
-References: <1421352942-21625-1-git-send-email-arend@broadcom.com>
-	 (sfid-20150115_211552_467265_F71FCF92)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:47014 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751759AbbA3SSJ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 30 Jan 2015 13:18:09 -0500
+Message-ID: <54CBCADA.4050801@broadcom.com> (sfid-20150130_191811_843999_01B530B2)
+Date: Fri, 30 Jan 2015 19:18:02 +0100
+From: Arend van Spriel <arend@broadcom.com>
+MIME-Version: 1.0
+To: Hauke Mehrtens <hauke@hauke-m.de>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Subject: Re: cfg80211: Unknown symbol get_net_ns_by_fd (err 0)
+References: <54C6A717.5050804@broadcom.com>
+In-Reply-To: <54C6A717.5050804@broadcom.com>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, 2015-01-15 at 21:15 +0100, Arend van Spriel wrote:
-> nl80211.c recently changed using defined strings instead of hard-coded in
-> multi-cast group definitions:
-> 
->   commit 71b836eca7f380fbd4c025f8c4371f9a071bc909
->   Author: Johannes Berg <johannes.berg@intel.com>
->   Date:   Tue Dec 23 17:17:38 2014 +0100
-> 
->       nl80211: define multicast group names in header
-> 
-> Signed-off-by: Arend van Spriel <arend@broadcom.com>
+On 01/26/15 21:44, Arend van Spriel wrote:
+> Hi Hauke,
+>
+> The commit below causes the error mentioned in the Subject: field. I
+> would like to fix this, but could use a bit of help here how to do this
+> type of things.
+>
+> commit 4b681c82d2f9bef121c912ffcaac89a004af3f2c
+> Author: Vadim Kochan <vadim4j@gmail.com>
+> Date: Mon Jan 12 16:34:05 2015 +0200
+>
+> nl80211: Allow set network namespace by fd
 
-Thanks Arend!
+Hi Hauke,
 
-Acked-by: Johannes Berg <johannes@sipsolutions.net>
+I looked into my issue a bit more. So my target kernel is 
+3.11.1-200.fc19.x86_64 and checking lxr found that 3.11 has this 
+function, but it does not have EXPORT_SYMBOL(). That was added by the 
+same commit above. Any clues how to fix this?
 
-johannes
+Regards,
+Arend
+
+> Regards,
+> Arend
 
