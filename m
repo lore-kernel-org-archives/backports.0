@@ -1,45 +1,68 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:57927 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753248AbbAZVPc (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 26 Jan 2015 16:15:32 -0500
-Date: Mon, 26 Jan 2015 23:04:48 +0200
-From: Vadim Kochan <vadim4j@gmail.com>
+Received: from s3.sipsolutions.net ([5.9.151.49]:55999 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756264AbbA3UV4 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 30 Jan 2015 15:21:56 -0500
+Message-ID: <1422649309.1919.42.camel@sipsolutions.net> (sfid-20150130_212158_969698_EE3100E5)
+Subject: Re: [PATCH 2/2] backport: add backport file for the next kernel
+ release
+From: Johannes Berg <johannes@sipsolutions.net>
 To: Arend van Spriel <arend@broadcom.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-Subject: Re: cfg80211: Unknown symbol get_net_ns_by_fd (err 0)
-Message-ID: <20150126210448.GA987@angus-think.lan> (sfid-20150126_221535_168533_72C73FD4)
-References: <54C6A717.5050804@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <54C6A717.5050804@broadcom.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
+Date: Fri, 30 Jan 2015 21:21:49 +0100
+In-Reply-To: <1422648758-31361-2-git-send-email-arend@broadcom.com> (sfid-20150130_211248_858610_757440B4)
+References: <1422648758-31361-1-git-send-email-arend@broadcom.com>
+	 <1422648758-31361-2-git-send-email-arend@broadcom.com>
+	 (sfid-20150130_211248_858610_757440B4)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Jan 26, 2015 at 09:44:07PM +0100, Arend van Spriel wrote:
-> Hi Hauke,
-> 
-> The commit below causes the error mentioned in the Subject: field. I would
-> like to fix this, but could use a bit of help here how to do this type of
-> things.
-> 
-> commit 4b681c82d2f9bef121c912ffcaac89a004af3f2c
-> Author: Vadim Kochan <vadim4j@gmail.com>
-> Date:   Mon Jan 12 16:34:05 2015 +0200
-> 
->     nl80211: Allow set network namespace by fd
-> 
-> Regards,
-> Arend
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Fri, 2015-01-30 at 21:12 +0100, Arend van Spriel wrote:
 
-Hi,
+> --- /dev/null
+> +++ b/backport/compat/backport-3.20.c
+> @@ -0,0 +1,17 @@
+> +/*
+> + * Copyright (c) 2014  Hauke Mehrtens <hauke@hauke-m.de>
 
-Did you compile it on mac80211-next master branch ?
+Speaking of copy/paste errors ... :)
 
-Regards,
+> + * Backport functionality introduced in Linux 3.19.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +#include <linux/export.h>
+> +#include <linux/net.h>
+> +
+> +struct net *get_net_ns_by_fd(int fd)
+> +{
+> +	return ERR_PTR(-EINVAL);
+> +}
+> +EXPORT_SYMBOL_GPL(get_net_ns_by_fd);
+
+Interesting approach - you're relying on a previously existing
+definition in some existing header file I guess? But does it always
+exist?
+
+I think it'd probably be better to have this in
+backports-include/net/net_namespace.h, like so:
+
+#define get_net_ns_by_fd LINUX_BACKPORT(get_net_ns_by_fd)
+static inline struct net *get_net_ns_by_fd(int fd)
+{
+	return ERR_PTR(-EINVAL);
+}
+
+because that not only saves the huge EXPORT_SYMBOL thing (that's like a
+few hundred bytes IIRC!) but also makes sure that the definition is
+always really there?
+
+Anyway as long as this was there on 3.0 already both approaches work, of
+course.
+
+johannes
+
