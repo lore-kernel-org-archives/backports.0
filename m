@@ -1,76 +1,74 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:3328 "EHLO
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:29248 "EHLO
 	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753005AbbA3U2Z (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 30 Jan 2015 15:28:25 -0500
-Message-ID: <54CBE966.7030600@broadcom.com> (sfid-20150130_212827_372895_EBF94334)
-Date: Fri, 30 Jan 2015 21:28:22 +0100
+	with ESMTP id S1763110AbbA3UMq (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 30 Jan 2015 15:12:46 -0500
 From: Arend van Spriel <arend@broadcom.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>, Arend van Spriel <arend@broadcom.com>
+Subject: [PATCH 2/2] backport: add backport file for the next kernel release
+Date: Fri, 30 Jan 2015 21:12:38 +0100
+Message-ID: <1422648758-31361-2-git-send-email-arend@broadcom.com> (sfid-20150130_211248_858610_757440B4)
+In-Reply-To: <1422648758-31361-1-git-send-email-arend@broadcom.com>
+References: <1422648758-31361-1-git-send-email-arend@broadcom.com>
 MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	<backports@vger.kernel.org>
-Subject: Re: [PATCH 2/2] backport: add backport file for the next kernel release
-References: <1422648758-31361-1-git-send-email-arend@broadcom.com>	 <1422648758-31361-2-git-send-email-arend@broadcom.com>	 (sfid-20150130_211248_858610_757440B4) <1422649309.1919.42.camel@sipsolutions.net>
-In-Reply-To: <1422649309.1919.42.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 01/30/15 21:21, Johannes Berg wrote:
-> On Fri, 2015-01-30 at 21:12 +0100, Arend van Spriel wrote:
->
->> --- /dev/null
->> +++ b/backport/compat/backport-3.20.c
->> @@ -0,0 +1,17 @@
->> +/*
->> + * Copyright (c) 2014  Hauke Mehrtens<hauke@hauke-m.de>
->
-> Speaking of copy/paste errors ... :)
+In mac80211-next a call to get_net_ns_by_fd() has been added in cfg80211
+which resides in networking core. This function has been backported
+such that it will always fail, ie. as it would when CONFIG_NET_NS
+is not defined. The call was added by:
 
-Hah! :-D Will fix that and the year.
+   commit 4b681c82d2f9bef121c912ffcaac89a004af3f2c
+   Author: Vadim Kochan <vadim4j@gmail.com>
+   Date: Mon Jan 12 16:34:05 2015 +0200
 
->> + * Backport functionality introduced in Linux 3.19.
+     nl80211: Allow set network namespace by fd
 
-And this one.
+Signed-off-by: Arend van Spriel <arend@broadcom.com>
+---
+ backport/compat/Makefile        |  1 +
+ backport/compat/backport-3.20.c | 17 +++++++++++++++++
+ 2 files changed, 18 insertions(+)
+ create mode 100644 backport/compat/backport-3.20.c
 
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +#include<linux/export.h>
->> +#include<linux/net.h>
->> +
->> +struct net *get_net_ns_by_fd(int fd)
->> +{
->> +	return ERR_PTR(-EINVAL);
->> +}
->> +EXPORT_SYMBOL_GPL(get_net_ns_by_fd);
->
-> Interesting approach - you're relying on a previously existing
-> definition in some existing header file I guess? But does it always
-> exist?
->
-> I think it'd probably be better to have this in
-> backports-include/net/net_namespace.h, like so:
->
-> #define get_net_ns_by_fd LINUX_BACKPORT(get_net_ns_by_fd)
-> static inline struct net *get_net_ns_by_fd(int fd)
-> {
-> 	return ERR_PTR(-EINVAL);
-> }
+diff --git a/backport/compat/Makefile b/backport/compat/Makefile
+index 3d905ed..b6f1d12 100644
+--- a/backport/compat/Makefile
++++ b/backport/compat/Makefile
+@@ -25,6 +25,7 @@ compat-$(CPTCFG_KERNEL_3_15) += backport-3.15.o
+ compat-$(CPTCFG_KERNEL_3_17) += backport-3.17.o
+ compat-$(CPTCFG_KERNEL_3_18) += backport-3.18.o
+ compat-$(CPTCFG_KERNEL_3_19) += backport-3.19.o
++compat-$(CPTCFG_KERNEL_3_20) += backport-3.20.o
+ 
+ compat-$(CPTCFG_BPAUTO_BUILD_CRYPTO_CCM) += crypto-ccm.o
+ compat-$(CPTCFG_BPAUTO_BUILD_DMA_SHARED_HELPERS) += dma-shared-helpers.o
+diff --git a/backport/compat/backport-3.20.c b/backport/compat/backport-3.20.c
+new file mode 100644
+index 0000000..ce119fd
+--- /dev/null
++++ b/backport/compat/backport-3.20.c
+@@ -0,0 +1,17 @@
++/*
++ * Copyright (c) 2014  Hauke Mehrtens <hauke@hauke-m.de>
++ *
++ * Backport functionality introduced in Linux 3.19.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#include <linux/export.h>
++#include <linux/net.h>
++
++struct net *get_net_ns_by_fd(int fd)
++{
++	return ERR_PTR(-EINVAL);
++}
++EXPORT_SYMBOL_GPL(get_net_ns_by_fd);
+-- 
+1.9.1
 
-This was indeed the trick that I was looking for.
-
-> because that not only saves the huge EXPORT_SYMBOL thing (that's like a
-> few hundred bytes IIRC!) but also makes sure that the definition is
-> always really there?
-
-Is that a question? Guess not. I will make a V2.
-
-Regards,
-Arend
-
-> Anyway as long as this was there on 3.0 already both approaches work, of
-> course.
