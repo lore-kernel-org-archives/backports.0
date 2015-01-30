@@ -1,54 +1,63 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from wolverine01.qualcomm.com ([199.106.114.254]:44490 "EHLO
-	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753976AbbAYRqJ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 25 Jan 2015 12:46:09 -0500
-From: Mathieu Olivari <mathieu@qca.qualcomm.com>
-To: <mcgrof@kernel.org>, <hauke@hauke-m.de>
-CC: <backports@vger.kernel.org>, <kvalo@qca.qualcomm.com>,
-	Mathieu Olivari <mathieu@qca.qualcomm.com>
-Subject: [PATCH v2 1/2] backports: explicitely include string.h from device.h
-Date: Sun, 25 Jan 2015 09:46:01 -0800
-Message-ID: <1422207962-23988-1-git-send-email-mathieu@qca.qualcomm.com> (sfid-20150125_184613_348075_5AE4AF95)
+Received: from hauke-m.de ([5.39.93.123]:36575 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932982AbbA3SdC (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 30 Jan 2015 13:33:02 -0500
+Message-ID: <54CBCE5A.9080404@hauke-m.de> (sfid-20150130_193309_666313_584486BD)
+Date: Fri, 30 Jan 2015 19:32:58 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Arend van Spriel <arend@broadcom.com>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Subject: Re: cfg80211: Unknown symbol get_net_ns_by_fd (err 0)
+References: <54C6A717.5050804@broadcom.com> <54CBCADA.4050801@broadcom.com>
+In-Reply-To: <54CBCADA.4050801@broadcom.com>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-string.h is usually included from the asm/ folder in most configuration,
-but on some older kernels and non-x86 architecture, this inclusion is
-not necessarily happening. As we're using memcpy() in the code
-below, we need to be safe and make sure string.h is indeed there.
 
-This issue has been observed on a 3.4 vendor kernels, but may be
-applicable to other configurations.
 
-Signed-off-by: Mathieu Olivari <mathieu@qca.qualcomm.com>
+On 01/30/2015 07:18 PM, Arend van Spriel wrote:
+> On 01/26/15 21:44, Arend van Spriel wrote:
+>> Hi Hauke,
+>>
+>> The commit below causes the error mentioned in the Subject: field. I
+>> would like to fix this, but could use a bit of help here how to do this
+>> type of things.
+>>
+>> commit 4b681c82d2f9bef121c912ffcaac89a004af3f2c
+>> Author: Vadim Kochan <vadim4j@gmail.com>
+>> Date: Mon Jan 12 16:34:05 2015 +0200
+>>
+>> nl80211: Allow set network namespace by fd
+> 
+> Hi Hauke,
+> 
+> I looked into my issue a bit more. So my target kernel is
+> 3.11.1-200.fc19.x86_64 and checking lxr found that 3.11 has this
+> function, but it does not have EXPORT_SYMBOL(). That was added by the
+> same commit above. Any clues how to fix this?
 
----
- backport/backport-include/linux/device.h |    7 +++++++
- 1 file changed, 7 insertions(+)
+Hi Arend
 
-Notes:
-    v2: no changes
-diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
-index 29dc077..03ca1f1 100644
---- a/backport/backport-include/linux/device.h
-+++ b/backport/backport-include/linux/device.h
-@@ -5,6 +5,13 @@
- 
- #include <linux/version.h>
- 
-+/*
-+ * string.h is usually included from the asm/ folder in most configuration,
-+ * but on some older kernels it doesn't. As we're using memcpy() in the code
-+ * below, we need to be safe and make sure string.h is indeed there.
-+ */
-+#include <linux/string.h>
-+
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
- /* backport
-  * commit 9f3b795a626ee79574595e06d1437fe0c7d51d29
--- 
-1.7.10.4
+As Johannes said it is probably not possible to backport
+get_net_ns_by_fd() correctly. You can not access any symbols which are
+not exported in a kernel. To backport it we have to access
+netns_operations which is also not exported.
 
+We could  copy this function it into backports and remove this check
+from the original function:
+if (ei->ns_ops == &netns_operations)
+..
+
+
+Or we just backport this version every time:
+
+struct net *get_net_ns_by_fd(int fd)
+{
+	return ERR_PTR(-EINVAL);
+}
+
+Hauke
