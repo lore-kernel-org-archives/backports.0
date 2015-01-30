@@ -1,53 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:3196 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752843AbbAOUPt (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 15 Jan 2015 15:15:49 -0500
-From: Arend van Spriel <arend@broadcom.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>, Arend van Spriel <arend@broadcom.com>
-Subject: [PATCH V2] patches: genl-const: fix nl80211.patch
-Date: Thu, 15 Jan 2015 21:15:42 +0100
-Message-ID: <1421352942-21625-1-git-send-email-arend@broadcom.com> (sfid-20150115_211552_467265_F71FCF92)
-MIME-Version: 1.0
-Content-Type: text/plain
+Received: from s3.sipsolutions.net ([5.9.151.49]:55334 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753121AbbA3RO6 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 30 Jan 2015 12:14:58 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backports: add IFF_TX_SKB_SHARING
+Date: Fri, 30 Jan 2015 18:14:50 +0100
+Message-Id: <1422638090-20059-1-git-send-email-johannes@sipsolutions.net> (sfid-20150130_181459_631263_CE06F7D7)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-nl80211.c recently changed using defined strings instead of hard-coded in
-multi-cast group definitions:
+From: Johannes Berg <johannes.berg@intel.com>
 
-  commit 71b836eca7f380fbd4c025f8c4371f9a071bc909
-  Author: Johannes Berg <johannes.berg@intel.com>
-  Date:   Tue Dec 23 17:17:38 2014 +0100
+This was introduced on kernel version 3.1, so a kernel (3.0) without
+it is still just within the support window. Define this constant if
+it isn't defined.
 
-      nl80211: define multicast group names in header
-
-Signed-off-by: Arend van Spriel <arend@broadcom.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
-V2:
- - remove whitespace changes.
----
- patches/collateral-evolutions/network/0027-genl-const/nl80211.patch | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ backport/backport-include/linux/if.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+ create mode 100644 backport/backport-include/linux/if.h
 
-diff --git a/patches/collateral-evolutions/network/0027-genl-const/nl80211.patch b/patches/collateral-evolutions/network/0027-genl-const/nl80211.patch
-index d8d67bb..21c2a86 100644
---- a/patches/collateral-evolutions/network/0027-genl-const/nl80211.patch
-+++ b/patches/collateral-evolutions/network/0027-genl-const/nl80211.patch
-@@ -18,9 +18,9 @@
-  
- -static const struct genl_multicast_group nl80211_mcgrps[] = {
- +static __genl_const struct genl_multicast_group nl80211_mcgrps[] = {
-- 	[NL80211_MCGRP_CONFIG] = { .name = "config", },
-- 	[NL80211_MCGRP_SCAN] = { .name = "scan", },
-- 	[NL80211_MCGRP_REGULATORY] = { .name = "regulatory", },
-+ 	[NL80211_MCGRP_CONFIG] = { .name = NL80211_MULTICAST_GROUP_CONFIG },
-+ 	[NL80211_MCGRP_SCAN] = { .name = NL80211_MULTICAST_GROUP_SCAN },
-+ 	[NL80211_MCGRP_REGULATORY] = { .name = NL80211_MULTICAST_GROUP_REG },
- @@ -9938,7 +9938,7 @@ static int nl80211_tdls_cancel_channel_s
-  					 NL80211_FLAG_CHECK_NETDEV_UP)
-  #define NL80211_FLAG_CLEAR_SKB		0x20
+diff --git a/backport/backport-include/linux/if.h b/backport/backport-include/linux/if.h
+new file mode 100644
+index 000000000000..d471340490ca
+--- /dev/null
++++ b/backport/backport-include/linux/if.h
+@@ -0,0 +1,9 @@
++#ifndef __BACKPORT_IF_H
++#define __BACKPORT_IF_H
++#include_next <linux/if.h>
++
++#ifndef IFF_TX_SKB_SHARING
++#define IFF_TX_SKB_SHARING 0
++#endif
++
++#endif /* __BACKPORT_IF_H */
 -- 
-1.9.1
+2.1.4
 
