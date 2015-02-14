@@ -1,49 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:58771 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751876AbbBVBmU (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 21 Feb 2015 20:42:20 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail2.candelatech.com ([208.74.158.173]:59275 "EHLO
+	mail2.candelatech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752878AbbBNAcr (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 13 Feb 2015 19:32:47 -0500
+Received: from [192.168.100.236] (unknown [50.251.239.81])
+	(using TLSv1 with cipher DHE-RSA-CAMELLIA256-SHA (256/256 bits))
+	(No client certificate requested)
+	by mail2.candelatech.com (Postfix) with ESMTPSA id 8AD3440EA33
+	for <backports@vger.kernel.org>; Fri, 13 Feb 2015 16:27:44 -0800 (PST)
+Message-ID: <54DE9680.5090900@candelatech.com> (sfid-20150214_013249_911229_DCB524AF)
+Date: Fri, 13 Feb 2015 16:27:44 -0800
+From: Ben Greear <greearb@candelatech.com>
+MIME-Version: 1.0
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 4/6] header: add of_get_property() for 3.0
-Date: Sun, 22 Feb 2015 02:42:06 +0100
-Message-Id: <1424569328-12514-5-git-send-email-hauke@hauke-m.de> (sfid-20150222_024224_229684_D1B78707)
-In-Reply-To: <1424569328-12514-1-git-send-email-hauke@hauke-m.de>
-References: <1424569328-12514-1-git-send-email-hauke@hauke-m.de>
+Subject: What distribution supports recent-enough spatch for backports project?
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-In kernel 3.0 the function prototype is only present when CONFIG_OF is
-selected, if that is not selected the prototype is not there. This adds
-an empty implementation for that case.
+It seems Fedora-21 has packages that are tool old, and I had very poor
+luck trying to build coccinelle, ocaml and all the other dependencies
+from source.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/of.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+So, if there is a distribution that just works, please let me know.
 
-diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
-index b289bcb..ef9c6aa 100644
---- a/backport/backport-include/linux/of.h
-+++ b/backport/backport-include/linux/of.h
-@@ -64,6 +64,16 @@ static inline int of_property_read_u32(const struct device_node *np,
- {
- 	return of_property_read_u32_array(np, propname, out_value, 1);
- }
-+#ifndef CONFIG_OF
-+#define of_get_property LINUX_BACKPORT(of_get_property)
-+static inline const void *of_get_property(const struct device_node *node,
-+				const char *name,
-+				int *lenp)
-+{
-+	return NULL;
-+}
-+
-+#endif
- #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,1,0) */
- 
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
+My goal is to generate backports builds based on my own modified
+3.17 and 3.19 kernels.
+
+Thanks,
+Ben
+
 -- 
-1.9.1
+Ben Greear <greearb@candelatech.com>
+Candela Technologies Inc  http://www.candelatech.com
 
