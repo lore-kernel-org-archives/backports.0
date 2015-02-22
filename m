@@ -1,39 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:57046 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932194AbbBZNNo (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 26 Feb 2015 08:13:44 -0500
-Message-ID: <54EF1C05.2000901@broadcom.com> (sfid-20150226_141347_089387_4D1D062C)
-Date: Thu, 26 Feb 2015 14:13:41 +0100
-From: Arend van Spriel <arend@broadcom.com>
+Received: from hauke-m.de ([5.39.93.123]:58792 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751707AbbBVCFD (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 21 Feb 2015 21:05:03 -0500
+Message-ID: <54E9394D.1030104@hauke-m.de> (sfid-20150222_030506_138332_1C16DAF3)
+Date: Sun, 22 Feb 2015 03:05:01 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	<backports@vger.kernel.org>
-Subject: Re: [PATCH] backports: allow building backports package on 4.0+ kernel
-References: <1424954998-31984-1-git-send-email-arend@broadcom.com>	 (sfid-20150226_135011_981321_0099BE5A) <1424955956.1885.23.camel@sipsolutions.net>
-In-Reply-To: <1424955956.1885.23.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To: Johannes Berg <johannes@sipsolutions.net>,
+	Arend van Spriel <arend@broadcom.com>
+CC: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
+Subject: Re: [PATCH V2] patches: genl-const: fix nl80211.patch
+References: <1421352942-21625-1-git-send-email-arend@broadcom.com>	 (sfid-20150115_211552_467265_F71FCF92) <1421406483.9214.5.camel@sipsolutions.net>
+In-Reply-To: <1421406483.9214.5.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 02/26/15 14:05, Johannes Berg wrote:
-> On Thu, 2015-02-26 at 13:49 +0100, Arend van Spriel wrote:
->> When attempting to build backport package the error message
->> "Kernel version parse failed" popped up. Realizing the machine
->> was already running a 4.0-rc1 kernel, this patch fixes the
->> issue. At least until kernel 9.x it will.
->
-> Is this really enough? we also generate those kernel version Kconfig
-> symbols for dependencies - I htink that needs to be adjusted as well.
-
-Will double-check the results. Building it worked without issues, but it 
-could be due to the fact that backport and target kernel versions are 
-the same. You made me a bit wary to actually load the modules, but I 
-will do it anyway ;-)
-
-Arend
-
+On 01/16/2015 12:08 PM, Johannes Berg wrote:
+> On Thu, 2015-01-15 at 21:15 +0100, Arend van Spriel wrote:
+>> nl80211.c recently changed using defined strings instead of hard-coded in
+>> multi-cast group definitions:
+>>
+>>   commit 71b836eca7f380fbd4c025f8c4371f9a071bc909
+>>   Author: Johannes Berg <johannes.berg@intel.com>
+>>   Date:   Tue Dec 23 17:17:38 2014 +0100
+>>
+>>       nl80211: define multicast group names in header
+>>
+>> Signed-off-by: Arend van Spriel <arend@broadcom.com>
+> 
+> Thanks Arend!
+> 
+> Acked-by: Johannes Berg <johannes@sipsolutions.net>
+> 
 > johannes
->
+Thank you for the patch, it was applied to backports.
+
+Hauke
 
