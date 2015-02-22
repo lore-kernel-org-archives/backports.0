@@ -1,130 +1,63 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from sabertooth02.qualcomm.com ([65.197.215.38]:3337 "EHLO
-	sabertooth02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753399AbbAMCSc (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 12 Jan 2015 21:18:32 -0500
-From: Mathieu Olivari <mathieu@qca.qualcomm.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>,
-	Mathieu Olivari <mathieu@qca.qualcomm.com>
-Subject: [PATCH 2/2] backport: add hwmon group registration functions
-Date: Mon, 12 Jan 2015 18:17:56 -0800
-Message-ID: <1421115476-11855-2-git-send-email-mathieu@qca.qualcomm.com> (sfid-20150113_031834_987465_2795DB4E)
-In-Reply-To: <1421115476-11855-1-git-send-email-mathieu@qca.qualcomm.com>
-References: <1421115476-11855-1-git-send-email-mathieu@qca.qualcomm.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Received: from hauke-m.de ([5.39.93.123]:58764 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751744AbbBVBmU (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 21 Feb 2015 20:42:20 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 0/6] backports: make backports compatible with next-20150129
+Date: Sun, 22 Feb 2015 02:42:02 +0100
+Message-Id: <1424569328-12514-1-git-send-email-hauke@hauke-m.de> (sfid-20150222_024223_636815_27721660)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-hwmon group registration functions have been added in 3.13 kernel.
-Latest ath10k patches make use of this mechanism, therefore the
-need for the backport.
+This brings backports to next-20150129.
 
-Signed-off-by: Mathieu Olivari <mathieu@qca.qualcomm.com>
----
- backport/backport-include/linux/hwmon.h |   36 +++++++++++++++++++++++
- backport/compat/backport-3.13.c         |   47 +++++++++++++++++++++++++++++++
- 2 files changed, 83 insertions(+)
- create mode 100644 backport/backport-include/linux/hwmon.h
+This adds some missing small functions and removes a feature from igb.
 
-diff --git a/backport/backport-include/linux/hwmon.h b/backport/backport-include/linux/hwmon.h
-new file mode 100644
-index 0000000..961e979
---- /dev/null
-+++ b/backport/backport-include/linux/hwmon.h
-@@ -0,0 +1,36 @@
-+#ifndef __BACKPORT_LINUX_HWMON_H
-+#define __BACKPORT_LINUX_HWMON_H
-+#include_next <linux/hwmon.h>
-+#include <linux/version.h>
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)
-+/*
-+ * Backports
-+ *
-+ * commit bab2243ce1897865e31ea6d59b0478391f51812b
-+ * Author: Guenter Roeck <linux@roeck-us.net>
-+ * Date:   Sat Jul 6 13:57:23 2013 -0700
-+ *
-+ *     hwmon: Introduce hwmon_device_register_with_groups
-+ *
-+ *     hwmon_device_register_with_groups() lets callers register a hwmon device
-+ *     together with all sysfs attributes in a single call.
-+ *
-+ *     When using hwmon_device_register_with_groups(), hwmon attributes are attached
-+ *     to the hwmon device directly and no longer with its parent device.
-+ *
-+ * Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-+ */
-+struct device *
-+hwmon_device_register_with_groups(struct device *dev, const char *name,
-+				  void *drvdata,
-+				  const struct attribute_group **groups);
-+struct device *
-+devm_hwmon_device_register_with_groups(struct device *dev, const char *name,
-+				       void *drvdata,
-+				       const struct attribute_group **groups);
-+void devm_hwmon_release(struct device *dev, void *res);
-+
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0) */
-+
-+#endif /* __BACKPORT_LINUX_HWMON_H */
-diff --git a/backport/compat/backport-3.13.c b/backport/compat/backport-3.13.c
-index 553ed8f..89100a2 100644
---- a/backport/compat/backport-3.13.c
-+++ b/backport/compat/backport-3.13.c
-@@ -252,3 +252,50 @@ bool pci_device_is_present(struct pci_dev *pdev)
- }
- EXPORT_SYMBOL_GPL(pci_device_is_present);
- #endif /* CONFIG_PCI */
-+
-+#ifdef CONFIG_HWMON
-+#include <linux/device.h>
-+#include <linux/hwmon.h>
-+struct device*
-+hwmon_device_register_with_groups(struct device *dev, const char *name,
-+				  void *drvdata,
-+				  const struct attribute_group **groups)
-+{
-+	return hwmon_device_register(dev);
-+}
-+
-+struct device *
-+devm_hwmon_device_register_with_groups(struct device *dev, const char *name,
-+				       void *drvdata,
-+				       const struct attribute_group **groups)
-+{
-+	struct device **ptr, *hwdev;
-+
-+	if (!dev)
-+		return ERR_PTR(-EINVAL);
-+
-+	ptr = devres_alloc(devm_hwmon_release, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	hwdev = hwmon_device_register_with_groups(dev, name, drvdata, groups);
-+	if (IS_ERR(hwdev))
-+		goto error;
-+
-+	*ptr = hwdev;
-+	devres_add(dev, ptr);
-+	return hwdev;
-+
-+error:
-+	devres_free(ptr);
-+	return hwdev;
-+}
-+EXPORT_SYMBOL_GPL(devm_hwmon_device_register_with_groups);
-+
-+void devm_hwmon_release(struct device *dev, void *res)
-+{
-+	struct device *hwdev = *(struct device **)res;
-+
-+	hwmon_device_unregister(hwdev);
-+}
-+#endif
+Hauke Mehrtens (6):
+  header: add get_user_pages_unlocked()
+  header: add skb_vlan_tag_{present,get,get_id}
+  patches: igb: remove access to programmable ptp pins
+  header: add of_get_property() for 3.0
+  devel: update the test kernels
+  patches: refresh patches on next-20150129
+
+ backport/backport-include/linux/if_vlan.h          |  12 ++
+ backport/backport-include/linux/mm.h               |  17 +++
+ backport/backport-include/linux/of.h               |  10 ++
+ devel/backports-update-manager                     |  18 +--
+ .../media/0002-no_dmabuf/v4l2.patch                |   4 +-
+ .../0002-disable-dump-adjust-on-old-kernels.patch  |   4 +-
+ .../include_net_cfg80211.patch                     |   2 +-
+ .../net_wireless_core.patch                        |   2 +-
+ .../net_wireless_core.patch                        |   4 +-
+ .../0014-netlink_seq/net_wireless_nl80211.patch    |   2 +-
+ .../0017-get_ts_info/drivers_net_usb_usbnet.patch  |   2 +-
+ .../network/0021-umode_t-api-change/ath10k.patch   |   2 +-
+ .../network/0024-led-blink-api/mac80211.patch      |   2 +-
+ .../network/0025-usb-sg/usbnet.patch               |  12 +-
+ .../network/0027-genl-const/hwsim.patch            |   2 +-
+ .../network/0027-genl-const/ieee802154.patch       |   6 +-
+ .../network/0027-genl-const/nfc.patch              |   2 +-
+ .../network/0027-genl-const/nl80211.patch          |   6 +-
+ .../network/0028-select_queue/mwifiex.patch        |   2 +-
+ .../network/0030-qdisc_tx_busylock/bluetooth.patch |   2 +-
+ .../0032-sriov_configure/igb_sriov_configure.patch |   8 +-
+ .../0033-ndo_vlan_rx_vid/igb_ndo_vlan_rx_vid.patch |   8 +-
+ .../igb_ndo_set_vf_spoofchk.patch                  |   6 +-
+ .../network/0042-pci_error_handlers/alx.patch      |   2 +-
+ .../network/0043-ndo_set_vf_rate/igb.patch         |   8 +-
+ .../network/0046-mmc_rescan_entered/mwifiex.patch  |   2 +-
+ .../network/0049-no-pfmemalloc/igb.patch           |  28 ++---
+ .../network/0050-iov_iter/bluetooth.patch          |  16 +--
+ .../network/0052-deactivate-ptp-pin/INFO           |  20 +++
+ .../network/0052-deactivate-ptp-pin/igb.patch      | 136 +++++++++++++++++++++
+ 30 files changed, 264 insertions(+), 83 deletions(-)
+ create mode 100644 patches/collateral-evolutions/network/0052-deactivate-ptp-pin/INFO
+ create mode 100644 patches/collateral-evolutions/network/0052-deactivate-ptp-pin/igb.patch
+
 -- 
-1.7.10.4
+1.9.1
 
