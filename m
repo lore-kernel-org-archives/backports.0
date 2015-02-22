@@ -1,104 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:47002 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753192AbbBYOWO (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 25 Feb 2015 09:22:14 -0500
-From: Stefan Assmann <sassmann@kpanic.de>
-To: backports@vger.kernel.org
-Cc: mcgrof@do-not-panic.com, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH 00/10] backports: replace igb patches with generic cocci patches
-Date: Wed, 25 Feb 2015 15:20:44 +0100
-Message-Id: <1424874054-22956-1-git-send-email-sassmann@kpanic.de> (sfid-20150225_152222_572849_46E67CB1)
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:58298 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751289AbbBVHg1 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 22 Feb 2015 02:36:27 -0500
+Message-ID: <54E986F8.8030608@broadcom.com> (sfid-20150222_083630_039049_9951B605)
+Date: Sun, 22 Feb 2015 08:36:24 +0100
+From: Arend van Spriel <arend@broadcom.com>
+MIME-Version: 1.0
+To: Hauke Mehrtens <hauke@hauke-m.de>
+CC: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+	<backports@vger.kernel.org>
+Subject: Re: [PATCH 1/2] backport: small copy&paste error fixed
+References: <1422648758-31361-1-git-send-email-arend@broadcom.com> <54E939A3.5050202@hauke-m.de>
+In-Reply-To: <54E939A3.5050202@hauke-m.de>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-With these patches we replace several of the igb network driver specific
-patches with more generalized coccinelle patches. Thus the patches are
-no longer igb specific but apply to every wired ethernet driver we may
-choose to backport in the future.
+On 02/22/15 03:06, Hauke Mehrtens wrote:
+> On 01/30/2015 09:12 PM, Arend van Spriel wrote:
+>> Changed the version number in the file header comment.
+>>
+>> Signed-off-by: Arend van Spriel<arend@broadcom.com>
+>> ---
+>>   backport/compat/backport-3.19.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/backport/compat/backport-3.19.c b/backport/compat/backport-3.19.c
+>> index c633f38..0b59bef 100644
+>> --- a/backport/compat/backport-3.19.c
+>> +++ b/backport/compat/backport-3.19.c
+>> @@ -1,7 +1,7 @@
+>>   /*
+>>    * Copyright (c) 2014  Hauke Mehrtens<hauke@hauke-m.de>
+>>    *
+>> - * Backport functionality introduced in Linux 3.18.
+>> + * Backport functionality introduced in Linux 3.19.
+>>    *
+>>    * This program is free software; you can redistribute it and/or modify
+>>    * it under the terms of the GNU General Public License version 2 as
+>>
+>
+> Thank you for the patch, it was applied to backports, somehow I missed
+> the second one I will take care of it later.
 
-Some of the new cocci patches required some fixes to coccinelle, thus
-the last patch bumps the required version number.
+I think I cause confusion renaming the patch subject to "backport: add 
+backport for get_net_ns_by_fd()" [1].
 
-Hopefully this will ease the work of adding new network drivers to the
-project. Comments and suggestions welcome.
+Regards,
+Arend
 
-  Stefan
-
-
-Stefan Assmann (10):
-  backports: replace struct ethtool_ops get_ts_info changes with smpl
-    patch
-  backports: replace struct ethtool_ops get/set_eee changes with smpl
-    patch
-  backports: replace struct ethtool_ops get_module changes with smpl
-    patch
-  backports: replace struct pci_driver sriov_configure changes with smpl
-    patch
-  backports: replace struct pci_error_handlers changes with smpl patch
-  backports: replace struct ethtool_ops get_rxnfc changes with smpl
-    patch
-  backports: replace struct net_device_ops set_vf_spoofchk changes with
-    smpl patch
-  backports: replace struct net_device_ops set_vf_rate changes with smpl
-    patch
-  backports: remove devm_hwmon_device_register_with_groups references
-    with smpl patch
-  backports: require coccinelle version 1.0.0-rc24
-
- gentree.py                                         |  2 +-
- .../network/0017-get_ts_info/cdc_ncm.patch         | 12 ----
- .../0017-get_ts_info/drivers_net_usb_usbnet.patch  | 12 ----
- .../network/0017-get_ts_info/get_ts_info.cocci     | 19 ++++++
- .../network/0017-get_ts_info/igb_get_ts_info.patch | 28 --------
- .../0032-sriov_configure/igb_sriov_configure.patch | 40 +----------
- .../0032-sriov_configure/sriov_configure.cocci     | 19 ++++++
- .../igb_ndo_set_vf_spoofchk.patch                  | 49 --------------
- .../0034-ndo_set_vf_spoofchk/set_vf_spoofchk.cocci | 41 ++++++++++++
- .../network/0036-ethtool_eee/ethtool_eee.cocci     | 37 ++++++++++
- .../network/0036-ethtool_eee/igb_ethtool_eee.patch | 29 --------
- .../0037-ethtool_get_module/get_module.cocci       | 37 ++++++++++
- .../0037-ethtool_get_module/igb_get_module.patch   | 29 --------
- .../0038-ethtool_rxfh_indir/igb_rxfh_indir.patch   |  2 +-
- .../network/0039-ethtool_rxnfc/igb_rxnfc.patch     | 16 -----
- .../network/0039-ethtool_rxnfc/rxnfc.cocci         | 22 ++++++
- ...m_hwmon_device_register_with_groups.patch.cocci | 40 +++++++++++
- ...gb-devm_hwmon_device_register_with_groups.patch | 28 --------
- .../network/0042-pci_error_handlers/alx.patch      | 14 ----
- .../network/0042-pci_error_handlers/atl1c.patch    | 14 ----
- .../igb_pci_error_handlers.cocci                   |  9 +++
- .../igb_pci_error_handlers.patch                   | 14 ----
- .../network/0042-pci_error_handlers/ngene.patch    | 14 ----
- .../network/0043-ndo_set_vf_rate/INFO              | 17 +++++
- .../network/0043-ndo_set_vf_rate/igb.patch         | 78 ----------------------
- .../0043-ndo_set_vf_rate/igb_set_vf_rate.patch     | 28 ++++++++
- .../network/0043-ndo_set_vf_rate/set_vf_rate.cocci | 50 ++++++++++++++
- 27 files changed, 323 insertions(+), 377 deletions(-)
- delete mode 100644 patches/collateral-evolutions/network/0017-get_ts_info/cdc_ncm.patch
- delete mode 100644 patches/collateral-evolutions/network/0017-get_ts_info/drivers_net_usb_usbnet.patch
- create mode 100644 patches/collateral-evolutions/network/0017-get_ts_info/get_ts_info.cocci
- delete mode 100644 patches/collateral-evolutions/network/0017-get_ts_info/igb_get_ts_info.patch
- create mode 100644 patches/collateral-evolutions/network/0032-sriov_configure/sriov_configure.cocci
- delete mode 100644 patches/collateral-evolutions/network/0034-ndo_set_vf_spoofchk/igb_ndo_set_vf_spoofchk.patch
- create mode 100644 patches/collateral-evolutions/network/0034-ndo_set_vf_spoofchk/set_vf_spoofchk.cocci
- create mode 100644 patches/collateral-evolutions/network/0036-ethtool_eee/ethtool_eee.cocci
- delete mode 100644 patches/collateral-evolutions/network/0036-ethtool_eee/igb_ethtool_eee.patch
- create mode 100644 patches/collateral-evolutions/network/0037-ethtool_get_module/get_module.cocci
- delete mode 100644 patches/collateral-evolutions/network/0037-ethtool_get_module/igb_get_module.patch
- delete mode 100644 patches/collateral-evolutions/network/0039-ethtool_rxnfc/igb_rxnfc.patch
- create mode 100644 patches/collateral-evolutions/network/0039-ethtool_rxnfc/rxnfc.cocci
- create mode 100644 patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/devm_hwmon_device_register_with_groups.patch.cocci
- delete mode 100644 patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch
- delete mode 100644 patches/collateral-evolutions/network/0042-pci_error_handlers/alx.patch
- delete mode 100644 patches/collateral-evolutions/network/0042-pci_error_handlers/atl1c.patch
- create mode 100644 patches/collateral-evolutions/network/0042-pci_error_handlers/igb_pci_error_handlers.cocci
- delete mode 100644 patches/collateral-evolutions/network/0042-pci_error_handlers/igb_pci_error_handlers.patch
- delete mode 100644 patches/collateral-evolutions/network/0042-pci_error_handlers/ngene.patch
- create mode 100644 patches/collateral-evolutions/network/0043-ndo_set_vf_rate/INFO
- delete mode 100644 patches/collateral-evolutions/network/0043-ndo_set_vf_rate/igb.patch
- create mode 100644 patches/collateral-evolutions/network/0043-ndo_set_vf_rate/igb_set_vf_rate.patch
- create mode 100644 patches/collateral-evolutions/network/0043-ndo_set_vf_rate/set_vf_rate.cocci
-
--- 
-2.1.0
-
+[1] http://mid.gmane.org/1422659632-8673-1-git-send-email-arend@broadcom.com
