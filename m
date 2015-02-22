@@ -1,77 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:38740 "EHLO mx1.redhat.com"
+Received: from hauke-m.de ([5.39.93.123]:58786 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753259AbbBYOWD (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 25 Feb 2015 09:22:03 -0500
-From: Stefan Assmann <sassmann@kpanic.de>
-To: backports@vger.kernel.org
-Cc: mcgrof@do-not-panic.com, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH 06/10] backports: replace struct ethtool_ops get_rxnfc changes with smpl patch
-Date: Wed, 25 Feb 2015 15:20:50 +0100
-Message-Id: <1424874054-22956-7-git-send-email-sassmann@kpanic.de> (sfid-20150225_152216_092477_0B46EC3A)
-In-Reply-To: <1424874054-22956-1-git-send-email-sassmann@kpanic.de>
-References: <1424874054-22956-1-git-send-email-sassmann@kpanic.de>
+	id S1751837AbbBVCCo (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 21 Feb 2015 21:02:44 -0500
+Message-ID: <54E938C1.1070606@hauke-m.de> (sfid-20150222_030246_089927_F10713D9)
+Date: Sun, 22 Feb 2015 03:02:41 +0100
+From: Hauke Mehrtens <hauke@hauke-m.de>
+MIME-Version: 1.0
+To: Johannes Berg <johannes@sipsolutions.net>,
+	backports@vger.kernel.org
+CC: Johannes Berg <johannes.berg@intel.com>
+Subject: Re: [PATCH] backports: remove patches for SKBTX_WIFI_STATUS
+References: <1422638605-11633-1-git-send-email-johannes@sipsolutions.net>
+In-Reply-To: <1422638605-11633-1-git-send-email-johannes@sipsolutions.net>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
----
- .../network/0039-ethtool_rxnfc/igb_rxnfc.patch     | 16 ----------------
- .../network/0039-ethtool_rxnfc/rxnfc.cocci         | 22 ++++++++++++++++++++++
- 2 files changed, 22 insertions(+), 16 deletions(-)
- delete mode 100644 patches/collateral-evolutions/network/0039-ethtool_rxnfc/igb_rxnfc.patch
- create mode 100644 patches/collateral-evolutions/network/0039-ethtool_rxnfc/rxnfc.cocci
+On 01/30/2015 06:23 PM, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+> 
+> The tx_flags haven't been a union since 2.6.37, so since we
+> no longer support that kernel the '&' operation will now be
+> possible on all supported kernels. Use that fact to get rid
+> of the patch by defining SKBTX_WIFI_STATUS to 0 so the code
+> also disappears, but doesn't have to be patched.
+> 
+> While at it, clean up a double #if.
+> 
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 
-diff --git a/patches/collateral-evolutions/network/0039-ethtool_rxnfc/igb_rxnfc.patch b/patches/collateral-evolutions/network/0039-ethtool_rxnfc/igb_rxnfc.patch
-deleted file mode 100644
-index 86425c6..0000000
---- a/patches/collateral-evolutions/network/0039-ethtool_rxnfc/igb_rxnfc.patch
-+++ /dev/null
-@@ -1,16 +0,0 @@
----- a/drivers/net/ethernet/intel/igb/igb_ethtool.c
--+++ b/drivers/net/ethernet/intel/igb/igb_ethtool.c
--@@ -2452,8 +2452,13 @@ static int igb_get_rss_hash_opts(struct
-- 	return 0;
-- }
-- 
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)
-- static int igb_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd,
-- 			 u32 *rule_locs)
--+#else
--+static int igb_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd,
--+			 void *rule_locs)
--+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0) */
-- {
-- 	struct igb_adapter *adapter = netdev_priv(dev);
-- 	int ret = -EOPNOTSUPP;
-diff --git a/patches/collateral-evolutions/network/0039-ethtool_rxnfc/rxnfc.cocci b/patches/collateral-evolutions/network/0039-ethtool_rxnfc/rxnfc.cocci
-new file mode 100644
-index 0000000..e546f4d
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0039-ethtool_rxnfc/rxnfc.cocci
-@@ -0,0 +1,22 @@
-+@r@
-+identifier s,func;
-+@@
-+
-+struct ethtool_ops s = {
-+.get_rxnfc = func,
-+};
-+
-+@@
-+identifier r.func,rule_locs;
-+typedef u32;
-+@@
-+
-+// ----------------------------------------------------------------------
-+
-+func(...
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)
-+,u32 *rule_locs
-++#else
-++,void *rule_locs
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0) */
-+ ) { ... }
--- 
-2.1.0
+Thank you for the patch it was applied to backports.
+
+Hauke
 
