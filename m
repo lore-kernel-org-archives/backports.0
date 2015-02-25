@@ -1,63 +1,107 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:58764 "EHLO hauke-m.de"
+Received: from mx1.redhat.com ([209.132.183.28]:37255 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751744AbbBVBmU (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 21 Feb 2015 20:42:20 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
+	id S1753274AbbBYOWL (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 25 Feb 2015 09:22:11 -0500
+From: Stefan Assmann <sassmann@kpanic.de>
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 0/6] backports: make backports compatible with next-20150129
-Date: Sun, 22 Feb 2015 02:42:02 +0100
-Message-Id: <1424569328-12514-1-git-send-email-hauke@hauke-m.de> (sfid-20150222_024223_636815_27721660)
+Cc: mcgrof@do-not-panic.com, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH 09/10] backports: remove devm_hwmon_device_register_with_groups references with smpl patch
+Date: Wed, 25 Feb 2015 15:20:53 +0100
+Message-Id: <1424874054-22956-10-git-send-email-sassmann@kpanic.de> (sfid-20150225_152220_305523_2CADC12C)
+In-Reply-To: <1424874054-22956-1-git-send-email-sassmann@kpanic.de>
+References: <1424874054-22956-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This brings backports to next-20150129.
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+---
+ ...m_hwmon_device_register_with_groups.patch.cocci | 40 ++++++++++++++++++++++
+ ...gb-devm_hwmon_device_register_with_groups.patch | 28 ---------------
+ 2 files changed, 40 insertions(+), 28 deletions(-)
+ create mode 100644 patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/devm_hwmon_device_register_with_groups.patch.cocci
+ delete mode 100644 patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch
 
-This adds some missing small functions and removes a feature from igb.
-
-Hauke Mehrtens (6):
-  header: add get_user_pages_unlocked()
-  header: add skb_vlan_tag_{present,get,get_id}
-  patches: igb: remove access to programmable ptp pins
-  header: add of_get_property() for 3.0
-  devel: update the test kernels
-  patches: refresh patches on next-20150129
-
- backport/backport-include/linux/if_vlan.h          |  12 ++
- backport/backport-include/linux/mm.h               |  17 +++
- backport/backport-include/linux/of.h               |  10 ++
- devel/backports-update-manager                     |  18 +--
- .../media/0002-no_dmabuf/v4l2.patch                |   4 +-
- .../0002-disable-dump-adjust-on-old-kernels.patch  |   4 +-
- .../include_net_cfg80211.patch                     |   2 +-
- .../net_wireless_core.patch                        |   2 +-
- .../net_wireless_core.patch                        |   4 +-
- .../0014-netlink_seq/net_wireless_nl80211.patch    |   2 +-
- .../0017-get_ts_info/drivers_net_usb_usbnet.patch  |   2 +-
- .../network/0021-umode_t-api-change/ath10k.patch   |   2 +-
- .../network/0024-led-blink-api/mac80211.patch      |   2 +-
- .../network/0025-usb-sg/usbnet.patch               |  12 +-
- .../network/0027-genl-const/hwsim.patch            |   2 +-
- .../network/0027-genl-const/ieee802154.patch       |   6 +-
- .../network/0027-genl-const/nfc.patch              |   2 +-
- .../network/0027-genl-const/nl80211.patch          |   6 +-
- .../network/0028-select_queue/mwifiex.patch        |   2 +-
- .../network/0030-qdisc_tx_busylock/bluetooth.patch |   2 +-
- .../0032-sriov_configure/igb_sriov_configure.patch |   8 +-
- .../0033-ndo_vlan_rx_vid/igb_ndo_vlan_rx_vid.patch |   8 +-
- .../igb_ndo_set_vf_spoofchk.patch                  |   6 +-
- .../network/0042-pci_error_handlers/alx.patch      |   2 +-
- .../network/0043-ndo_set_vf_rate/igb.patch         |   8 +-
- .../network/0046-mmc_rescan_entered/mwifiex.patch  |   2 +-
- .../network/0049-no-pfmemalloc/igb.patch           |  28 ++---
- .../network/0050-iov_iter/bluetooth.patch          |  16 +--
- .../network/0052-deactivate-ptp-pin/INFO           |  20 +++
- .../network/0052-deactivate-ptp-pin/igb.patch      | 136 +++++++++++++++++++++
- 30 files changed, 264 insertions(+), 83 deletions(-)
- create mode 100644 patches/collateral-evolutions/network/0052-deactivate-ptp-pin/INFO
- create mode 100644 patches/collateral-evolutions/network/0052-deactivate-ptp-pin/igb.patch
-
+diff --git a/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/devm_hwmon_device_register_with_groups.patch.cocci b/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/devm_hwmon_device_register_with_groups.patch.cocci
+new file mode 100644
+index 0000000..15c4064
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/devm_hwmon_device_register_with_groups.patch.cocci
+@@ -0,0 +1,40 @@
++// This requires the IS_ERR test to come right after the call
++
++@r@
++identifier hwmon_dev;
++statement S;
++@@
++
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
++hwmon_dev = devm_hwmon_device_register_with_groups(...);
++if (IS_ERR(hwmon_dev)) S
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0) */
++
++@checkid@
++identifier r.hwmon_dev;
++position p1,p2,p3;
++@@
++
++hwmon_dev@p1 = devm_hwmon_device_register_with_groups(...);
++if (IS_ERR(hwmon_dev@p2)) { <... hwmon_dev@p3 ...> }
++
++// ----------------------------------------------------------------------
++
++@@
++identifier r.hwmon_dev;
++position checkid.p1,checkid.p2,checkid.p3;
++type T;
++@@
++
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
++  T hwmon_dev;
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0) */
++  <... when != hwmon_dev
++(
++   hwmon_dev@p1
++|
++   hwmon_dev@p2
++|
++   hwmon_dev@p3
++)
++  ...>
+diff --git a/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch b/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch
+deleted file mode 100644
+index cd83953..0000000
+--- a/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch
++++ /dev/null
+@@ -1,28 +0,0 @@
+---- a/drivers/net/ethernet/intel/igb/igb_hwmon.c
+-+++ b/drivers/net/ethernet/intel/igb/igb_hwmon.c
+-@@ -173,7 +173,9 @@ int igb_sysfs_init(struct igb_adapter *a
+- {
+- 	struct hwmon_buff *igb_hwmon;
+- 	struct i2c_client *client;
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
+- 	struct device *hwmon_dev;
+-+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0) */
+- 	unsigned int i;
+- 	int rc = 0;
+- 
+-@@ -230,6 +232,7 @@ int igb_sysfs_init(struct igb_adapter *a
+- 	igb_hwmon->groups[0] = &igb_hwmon->group;
+- 	igb_hwmon->group.attrs = igb_hwmon->attrs;
+- 
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
+- 	hwmon_dev = devm_hwmon_device_register_with_groups(&adapter->pdev->dev,
+- 							   client->name,
+- 							   igb_hwmon,
+-@@ -242,6 +245,7 @@ int igb_sysfs_init(struct igb_adapter *a
+- 	goto exit;
+- 
+- err:
+-+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0) */
+- 	igb_sysfs_del_adapter(adapter);
+- exit:
+- 	return rc;
 -- 
-1.9.1
+2.1.0
 
