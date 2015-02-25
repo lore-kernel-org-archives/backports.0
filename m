@@ -1,128 +1,116 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:37269 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:54579 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753192AbbBYOWO (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 25 Feb 2015 09:22:14 -0500
+	id S1752783AbbBYOWC (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 25 Feb 2015 09:22:02 -0500
 From: Stefan Assmann <sassmann@kpanic.de>
 To: backports@vger.kernel.org
 Cc: mcgrof@do-not-panic.com, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH 05/10] backports: replace struct pci_error_handlers changes with smpl patch
-Date: Wed, 25 Feb 2015 15:20:49 +0100
-Message-Id: <1424874054-22956-6-git-send-email-sassmann@kpanic.de> (sfid-20150225_152219_091899_06997400)
+Subject: [PATCH 04/10] backports: replace struct pci_driver sriov_configure changes with smpl patch
+Date: Wed, 25 Feb 2015 15:20:48 +0100
+Message-Id: <1424874054-22956-5-git-send-email-sassmann@kpanic.de> (sfid-20150225_152216_702963_91F510D8)
 In-Reply-To: <1424874054-22956-1-git-send-email-sassmann@kpanic.de>
 References: <1424874054-22956-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+There's still some manual patching done because igb_pci_disable_sriov()
+will not be used on kernel older than 3.8, which would generate a
+compile warning.
+
 Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
 ---
- .../network/0042-pci_error_handlers/alx.patch              | 14 --------------
- .../network/0042-pci_error_handlers/atl1c.patch            | 14 --------------
- .../0042-pci_error_handlers/igb_pci_error_handlers.cocci   |  9 +++++++++
- .../0042-pci_error_handlers/igb_pci_error_handlers.patch   | 14 --------------
- .../network/0042-pci_error_handlers/ngene.patch            | 14 --------------
- 5 files changed, 9 insertions(+), 56 deletions(-)
- delete mode 100644 patches/collateral-evolutions/network/0042-pci_error_handlers/alx.patch
- delete mode 100644 patches/collateral-evolutions/network/0042-pci_error_handlers/atl1c.patch
- create mode 100644 patches/collateral-evolutions/network/0042-pci_error_handlers/igb_pci_error_handlers.cocci
- delete mode 100644 patches/collateral-evolutions/network/0042-pci_error_handlers/igb_pci_error_handlers.patch
- delete mode 100644 patches/collateral-evolutions/network/0042-pci_error_handlers/ngene.patch
+ .../0032-sriov_configure/igb_sriov_configure.patch | 40 ++--------------------
+ .../0032-sriov_configure/sriov_configure.cocci     | 19 ++++++++++
+ 2 files changed, 21 insertions(+), 38 deletions(-)
+ create mode 100644 patches/collateral-evolutions/network/0032-sriov_configure/sriov_configure.cocci
 
-diff --git a/patches/collateral-evolutions/network/0042-pci_error_handlers/alx.patch b/patches/collateral-evolutions/network/0042-pci_error_handlers/alx.patch
-deleted file mode 100644
-index 97b7d4a..0000000
---- a/patches/collateral-evolutions/network/0042-pci_error_handlers/alx.patch
-+++ /dev/null
-@@ -1,14 +0,0 @@
----- a/drivers/net/ethernet/atheros/alx/main.c
--+++ b/drivers/net/ethernet/atheros/alx/main.c
--@@ -1523,7 +1523,11 @@ static void alx_pci_error_resume(struct
-- 	rtnl_unlock();
+diff --git a/patches/collateral-evolutions/network/0032-sriov_configure/igb_sriov_configure.patch b/patches/collateral-evolutions/network/0032-sriov_configure/igb_sriov_configure.patch
+index cd2b268..c6bcbd2 100644
+--- a/patches/collateral-evolutions/network/0032-sriov_configure/igb_sriov_configure.patch
++++ b/patches/collateral-evolutions/network/0032-sriov_configure/igb_sriov_configure.patch
+@@ -1,26 +1,6 @@
+ --- a/drivers/net/ethernet/intel/igb/igb_main.c
+ +++ b/drivers/net/ethernet/intel/igb/igb_main.c
+-@@ -196,7 +196,9 @@ static const struct dev_pm_ops igb_pm_op
+- };
+- #endif
+- static void igb_shutdown(struct pci_dev *);
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0)
+- static int igb_pci_sriov_configure(struct pci_dev *dev, int num_vfs);
+-+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0) */
+- #ifdef CONFIG_IGB_DCA
+- static int igb_notify_dca(struct notifier_block *, unsigned long, void *);
+- static struct notifier_block dca_notifier = {
+-@@ -237,7 +239,9 @@ static struct pci_driver igb_driver = {
+- 	.driver.pm = &igb_pm_ops,
+- #endif
+- 	.shutdown = igb_shutdown,
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0)
+- 	.sriov_configure = igb_pci_sriov_configure,
+-+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0) */
+- 	.err_handler = &igb_err_handler
+- };
+- 
+-@@ -7567,6 +7571,7 @@ static int igb_sriov_reinit(struct pci_d
++@@ -7572,6 +7572,7 @@ static int igb_sriov_reinit(struct pci_dev *dev)
+  	return 0;
+  }
+  
+@@ -28,7 +8,7 @@
+  static int igb_pci_disable_sriov(struct pci_dev *dev)
+  {
+  	int err = igb_disable_sriov(dev);
+-@@ -7576,6 +7581,7 @@ static int igb_pci_disable_sriov(struct
++@@ -7581,6 +7582,7 @@ static int igb_pci_disable_sriov(struct pci_dev *dev)
+  
+  	return err;
+  }
+@@ -36,19 +16,3 @@
+  
+  static int igb_pci_enable_sriov(struct pci_dev *dev, int num_vfs)
+  {
+-@@ -7593,6 +7599,7 @@ out:
 - }
 - 
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-- static const struct pci_error_handlers alx_err_handlers = {
--+#else
--+static struct pci_error_handlers alx_err_handlers = {
--+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-- 	.error_detected = alx_pci_error_detected,
-- 	.slot_reset     = alx_pci_error_slot_reset,
-- 	.resume         = alx_pci_error_resume,
-diff --git a/patches/collateral-evolutions/network/0042-pci_error_handlers/atl1c.patch b/patches/collateral-evolutions/network/0042-pci_error_handlers/atl1c.patch
-deleted file mode 100644
-index 239d1b9..0000000
---- a/patches/collateral-evolutions/network/0042-pci_error_handlers/atl1c.patch
-+++ /dev/null
-@@ -1,14 +0,0 @@
----- a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
--+++ b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
--@@ -2782,7 +2782,11 @@ static void atl1c_io_resume(struct pci_d
-- 	netif_device_attach(netdev);
+- #endif
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0)
+- static int igb_pci_sriov_configure(struct pci_dev *dev, int num_vfs)
+- {
+- #ifdef CONFIG_PCI_IOV
+-@@ -7603,6 +7610,7 @@ static int igb_pci_sriov_configure(struc
+- #endif
+- 	return 0;
 - }
+-+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0) */
 - 
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-- static const struct pci_error_handlers atl1c_err_handler = {
--+#else
--+static struct pci_error_handlers atl1c_err_handler = {
--+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-- 	.error_detected = atl1c_io_error_detected,
-- 	.slot_reset = atl1c_io_slot_reset,
-- 	.resume = atl1c_io_resume,
-diff --git a/patches/collateral-evolutions/network/0042-pci_error_handlers/igb_pci_error_handlers.cocci b/patches/collateral-evolutions/network/0042-pci_error_handlers/igb_pci_error_handlers.cocci
+- #ifdef CONFIG_NET_POLL_CONTROLLER
+- /* Polling 'interrupt' - used by things like netconsole to send skbs
+diff --git a/patches/collateral-evolutions/network/0032-sriov_configure/sriov_configure.cocci b/patches/collateral-evolutions/network/0032-sriov_configure/sriov_configure.cocci
 new file mode 100644
-index 0000000..19147e9
+index 0000000..52920b8
 --- /dev/null
-+++ b/patches/collateral-evolutions/network/0042-pci_error_handlers/igb_pci_error_handlers.cocci
-@@ -0,0 +1,9 @@
-+@@
-+identifier s;
++++ b/patches/collateral-evolutions/network/0032-sriov_configure/sriov_configure.cocci
+@@ -0,0 +1,19 @@
++@r1@
++identifier s, func;
 +@@
 +
-+static
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-+const
-++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-+struct pci_error_handlers s = { ... };
-diff --git a/patches/collateral-evolutions/network/0042-pci_error_handlers/igb_pci_error_handlers.patch b/patches/collateral-evolutions/network/0042-pci_error_handlers/igb_pci_error_handlers.patch
-deleted file mode 100644
-index 9064edb..0000000
---- a/patches/collateral-evolutions/network/0042-pci_error_handlers/igb_pci_error_handlers.patch
-+++ /dev/null
-@@ -1,14 +0,0 @@
----- a/drivers/net/ethernet/intel/igb/igb_main.c
--+++ b/drivers/net/ethernet/intel/igb/igb_main.c
--@@ -232,7 +232,11 @@ static pci_ers_result_t igb_io_error_det
-- static pci_ers_result_t igb_io_slot_reset(struct pci_dev *);
-- static void igb_io_resume(struct pci_dev *);
-- 
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-- static const struct pci_error_handlers igb_err_handler = {
--+#else
--+static struct pci_error_handlers igb_err_handler = {
--+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-- 	.error_detected = igb_io_error_detected,
-- 	.slot_reset = igb_io_slot_reset,
-- 	.resume = igb_io_resume,
-diff --git a/patches/collateral-evolutions/network/0042-pci_error_handlers/ngene.patch b/patches/collateral-evolutions/network/0042-pci_error_handlers/ngene.patch
-deleted file mode 100644
-index 620dbbe..0000000
---- a/patches/collateral-evolutions/network/0042-pci_error_handlers/ngene.patch
-+++ /dev/null
-@@ -1,14 +0,0 @@
----- a/drivers/media/pci/ngene/ngene-cards.c
--+++ b/drivers/media/pci/ngene/ngene-cards.c
--@@ -798,7 +798,11 @@ static void ngene_resume(struct pci_dev
-- 	printk(KERN_INFO DEVICE_NAME ": resume\n");
-- }
-- 
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-- static const struct pci_error_handlers ngene_errors = {
--+#else
--+static struct pci_error_handlers ngene_errors = {
--+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-- 	.error_detected = ngene_error_detected,
-- 	.link_reset = ngene_link_reset,
-- 	.slot_reset = ngene_slot_reset,
++struct pci_driver s = {
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0)
++.sriov_configure = func,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0) */
++};
++
++// ----------------------------------------------------------------------
++
++@@
++identifier r1.func;
++@@
++
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0)
++func(...) { ... }
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0) */
 -- 
 2.1.0
 
