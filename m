@@ -1,50 +1,77 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:55131 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751216AbbBZNSe (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 26 Feb 2015 08:18:34 -0500
-Message-ID: <54EF1D28.8020503@broadcom.com> (sfid-20150226_141836_645996_FC0E06CD)
-Date: Thu, 26 Feb 2015 14:18:32 +0100
-From: Arend van Spriel <arend@broadcom.com>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	<backports@vger.kernel.org>
-Subject: Re: [PATCH] backports: allow building backports package on 4.0+ kernel
-References: <1424954998-31984-1-git-send-email-arend@broadcom.com>	 (sfid-20150226_135011_981321_0099BE5A) <1424955956.1885.23.camel@sipsolutions.net> <54EF1C05.2000901@broadcom.com>
-In-Reply-To: <54EF1C05.2000901@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Received: from mx1.redhat.com ([209.132.183.28]:38740 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753259AbbBYOWD (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 25 Feb 2015 09:22:03 -0500
+From: Stefan Assmann <sassmann@kpanic.de>
+To: backports@vger.kernel.org
+Cc: mcgrof@do-not-panic.com, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH 06/10] backports: replace struct ethtool_ops get_rxnfc changes with smpl patch
+Date: Wed, 25 Feb 2015 15:20:50 +0100
+Message-Id: <1424874054-22956-7-git-send-email-sassmann@kpanic.de> (sfid-20150225_152216_092477_0B46EC3A)
+In-Reply-To: <1424874054-22956-1-git-send-email-sassmann@kpanic.de>
+References: <1424874054-22956-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 02/26/15 14:13, Arend van Spriel wrote:
-> On 02/26/15 14:05, Johannes Berg wrote:
->> On Thu, 2015-02-26 at 13:49 +0100, Arend van Spriel wrote:
->>> When attempting to build backport package the error message
->>> "Kernel version parse failed" popped up. Realizing the machine
->>> was already running a 4.0-rc1 kernel, this patch fixes the
->>> issue. At least until kernel 9.x it will.
->>
->> Is this really enough? we also generate those kernel version Kconfig
->> symbols for dependencies - I htink that needs to be adjusted as well.
->
-> Will double-check the results. Building it worked without issues, but it
-> could be due to the fact that backport and target kernel versions are
-> the same. You made me a bit wary to actually load the modules, but I
-> will do it anyway ;-)
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+---
+ .../network/0039-ethtool_rxnfc/igb_rxnfc.patch     | 16 ----------------
+ .../network/0039-ethtool_rxnfc/rxnfc.cocci         | 22 ++++++++++++++++++++++
+ 2 files changed, 22 insertions(+), 16 deletions(-)
+ delete mode 100644 patches/collateral-evolutions/network/0039-ethtool_rxnfc/igb_rxnfc.patch
+ create mode 100644 patches/collateral-evolutions/network/0039-ethtool_rxnfc/rxnfc.cocci
 
-Seems to be really enough for this (unlikely) scenario.
-
-Regards,
-Arend
-
-> Arend
->
->> johannes
->>
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe backports" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at http://vger.kernel.org/majordomo-info.html
+diff --git a/patches/collateral-evolutions/network/0039-ethtool_rxnfc/igb_rxnfc.patch b/patches/collateral-evolutions/network/0039-ethtool_rxnfc/igb_rxnfc.patch
+deleted file mode 100644
+index 86425c6..0000000
+--- a/patches/collateral-evolutions/network/0039-ethtool_rxnfc/igb_rxnfc.patch
++++ /dev/null
+@@ -1,16 +0,0 @@
+---- a/drivers/net/ethernet/intel/igb/igb_ethtool.c
+-+++ b/drivers/net/ethernet/intel/igb/igb_ethtool.c
+-@@ -2452,8 +2452,13 @@ static int igb_get_rss_hash_opts(struct
+- 	return 0;
+- }
+- 
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)
+- static int igb_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd,
+- 			 u32 *rule_locs)
+-+#else
+-+static int igb_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd,
+-+			 void *rule_locs)
+-+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0) */
+- {
+- 	struct igb_adapter *adapter = netdev_priv(dev);
+- 	int ret = -EOPNOTSUPP;
+diff --git a/patches/collateral-evolutions/network/0039-ethtool_rxnfc/rxnfc.cocci b/patches/collateral-evolutions/network/0039-ethtool_rxnfc/rxnfc.cocci
+new file mode 100644
+index 0000000..e546f4d
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0039-ethtool_rxnfc/rxnfc.cocci
+@@ -0,0 +1,22 @@
++@r@
++identifier s,func;
++@@
++
++struct ethtool_ops s = {
++.get_rxnfc = func,
++};
++
++@@
++identifier r.func,rule_locs;
++typedef u32;
++@@
++
++// ----------------------------------------------------------------------
++
++func(...
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)
++,u32 *rule_locs
+++#else
+++,void *rule_locs
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0) */
++ ) { ... }
+-- 
+2.1.0
 
