@@ -1,46 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:54764 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755264AbbBOURz (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 15 Feb 2015 15:17:55 -0500
-Message-ID: <54E0FEEF.9070502@hauke-m.de> (sfid-20150215_211759_244274_28F14B0F)
-Date: Sun, 15 Feb 2015 21:17:51 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:55131 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751216AbbBZNSe (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 26 Feb 2015 08:18:34 -0500
+Message-ID: <54EF1D28.8020503@broadcom.com> (sfid-20150226_141836_645996_FC0E06CD)
+Date: Thu, 26 Feb 2015 14:18:32 +0100
+From: Arend van Spriel <arend@broadcom.com>
 MIME-Version: 1.0
-To: Ben Greear <greearb@candelatech.com>, backports@vger.kernel.org
-Subject: Re: What distribution supports recent-enough spatch for backports
- project?
-References: <54DE9680.5090900@candelatech.com>
-In-Reply-To: <54DE9680.5090900@candelatech.com>
-Content-Type: text/plain; charset=windows-1252
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+	<backports@vger.kernel.org>
+Subject: Re: [PATCH] backports: allow building backports package on 4.0+ kernel
+References: <1424954998-31984-1-git-send-email-arend@broadcom.com>	 (sfid-20150226_135011_981321_0099BE5A) <1424955956.1885.23.camel@sipsolutions.net> <54EF1C05.2000901@broadcom.com>
+In-Reply-To: <54EF1C05.2000901@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 02/14/2015 01:27 AM, Ben Greear wrote:
-> It seems Fedora-21 has packages that are tool old, and I had very poor
-> luck trying to build coccinelle, ocaml and all the other dependencies
-> from source.
-> 
-> So, if there is a distribution that just works, please let me know.
-> 
-> My goal is to generate backports builds based on my own modified
-> 3.17 and 3.19 kernels.
-> 
-> Thanks,
-> Ben
-> 
-Hi Ben,
+On 02/26/15 14:13, Arend van Spriel wrote:
+> On 02/26/15 14:05, Johannes Berg wrote:
+>> On Thu, 2015-02-26 at 13:49 +0100, Arend van Spriel wrote:
+>>> When attempting to build backport package the error message
+>>> "Kernel version parse failed" popped up. Realizing the machine
+>>> was already running a 4.0-rc1 kernel, this patch fixes the
+>>> issue. At least until kernel 9.x it will.
+>>
+>> Is this really enough? we also generate those kernel version Kconfig
+>> symbols for dependencies - I htink that needs to be adjusted as well.
+>
+> Will double-check the results. Building it worked without issues, but it
+> could be due to the fact that backport and target kernel versions are
+> the same. You made me a bit wary to actually load the modules, but I
+> will do it anyway ;-)
 
-I am using Ubuntu 14.04 and it ships with coccinelle 1.0.0~rc21, Debian
-testing also has a recent enough version and here [0] it says that
-Fedora 22 will have a recent enough version. Isn't it possible to
-install a library from a more recent fedora version on your fedora 21?
+Seems to be really enough for this (unlikely) scenario.
 
-I do not know what features from 1.0.0~rc21 are used have you tried to
-remove the check for that version any try it with version 1.0.0-rc20
-which is in fedora 21?
+Regards,
+Arend
 
+> Arend
+>
+>> johannes
+>>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at http://vger.kernel.org/majordomo-info.html
 
-Hauke
-
-[0]: https://apps.fedoraproject.org/packages/coccinelle
