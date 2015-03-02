@@ -1,78 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:37859 "EHLO mail.kernel.org"
+Received: from s3.sipsolutions.net ([5.9.151.49]:49102 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752618AbbCLUGo (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 12 Mar 2015 16:06:44 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id F1D5820320
-	for <backports@vger.kernel.org>; Thu, 12 Mar 2015 20:06:42 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 2F921202F8
-	for <backports@vger.kernel.org>; Thu, 12 Mar 2015 20:06:42 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1751868AbbCBIsg (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 2 Mar 2015 03:48:36 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Subject: [Bug 94811] Backport kernel integration fails
-Date: Thu, 12 Mar 2015 20:06:41 +0000
-Message-ID: <bug-94811-58281-e1c6R8K4rU@https.bugzilla.kernel.org/> (sfid-20150312_210646_339245_66885D8B)
-In-Reply-To: <bug-94811-58281@https.bugzilla.kernel.org/>
-References: <bug-94811-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH v2] backports: backport recent wext change
+Date: Mon,  2 Mar 2015 09:48:32 +0100
+Message-Id: <1425286112-6369-1-git-send-email-johannes@sipsolutions.net> (sfid-20150302_094838_221884_52982544)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=94811
+From: Johannes Berg <johannes.berg@intel.com>
 
---- Comment #1 from Mike McElroy <mikem388@gmail.com> ---
-My mistake. I didn't have the backports tree set to the right tag. Now I have
-the backports tree and the linux-next tree set to the same tag. All the patches
-get applied but it still fails on the main Makefile. 
+backport the commit 36ef906ee8fefbfac3844206e66d8450e6221c69
+("wext: add checked wrappers for adding events/points to streams")
 
-ike@mikes-laptop:~/backports$ ./gentree.py --integrate --clean --gitdebug
-~/devel/integrate/linux-next/ ~/devel/integrate/linux-stable/
-Copy original source files ...
-Applying patches from patches to
-/home/mike/devel/integrate/linux-stable/backports/ ...
-Modify Kconfig tree ...
-Rewrite Makefiles and Kconfig files ...
-Applying patches from integration-patches/ to
-/home/mike/devel/integrate/linux-stable/ ...
-Failed to apply changes from
-001-enable-backports/0001-enable-backports-built-in.patch
-> patching file Makefile
-> Hunk #1 succeeded at 506 (offset -36 lines).
-> Hunk #2 succeeded at 715 (offset -106 lines).
-> Hunk #3 FAILED at 841.
-> 1 out of 3 hunks FAILED -- saving rejects to file Makefile.rej
-Traceback (most recent call last):
-  File "./gentree.py", line 1091, in <module>
-    ret = _main()
-  File "./gentree.py", line 724, in _main
-    logwrite=logwrite)
-  File "./gentree.py", line 1078, in process
-    bpid.project_dir, logwrite)
-  File "./gentree.py", line 552, in apply_patches
-    raise Exception('Patch failed')
-Exception: Patch failed
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/backport-include/net/iw_handler.h | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 backport/backport-include/net/iw_handler.h
 
-On the backports tree:
-detached from backports-20150129
-
-integration-patches/0001-enable-backports
-0001-enable-backports-built-in.patch
-@@ -837,7 +841,7 @@ libs-y              := $(libs-y1) $(libs-y2)
-
- # Externally visible symbols (used by link-vmlinux.sh)
- export KBUILD_VMLINUX_INIT := $(head-y) $(init-y)
--export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y) $(drivers-y) $(net-y)
-+export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y) $(drivers-y) $(net-y)
-$(backports-y)
- export KBUILD_LDS          := arch/$(SRCARCH)/kernel/vmlinux.lds
- export LDFLAGS_vmlinux
- # used by scripts/pacmage/Makefile
-
-This doesn't exist in the linux-3.4.t Makefile.
-
+diff --git a/backport/backport-include/net/iw_handler.h b/backport/backport-include/net/iw_handler.h
+new file mode 100644
+index 000000000000..11135c898b83
+--- /dev/null
++++ b/backport/backport-include/net/iw_handler.h
+@@ -0,0 +1,28 @@
++#ifndef __BACKPORT_IW_HANDLER_H
++#define __BACKPORT_IW_HANDLER_H
++#include_next <net/iw_handler.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
++static inline char *
++iwe_stream_add_event_check(struct iw_request_info *info, char *stream,
++			   char *ends, struct iw_event *iwe, int event_len)
++{
++	char *res = iwe_stream_add_event(info, stream, ends, iwe, event_len);
++
++	if (res == stream)
++		return ERR_PTR(-E2BIG);
++	return res;
++}
++
++static inline char *
++iwe_stream_add_point_check(struct iw_request_info *info, char *stream,
++			   char *ends, struct iw_event *iwe, char *extra)
++{
++	char *res = iwe_stream_add_point(info, stream, ends, iwe, extra);
++
++	if (res == stream)
++		return ERR_PTR(-E2BIG);
++	return res;
++}
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
++#endif /* __BACKPORT_IW_HANDLER_H */
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+2.1.4
+
