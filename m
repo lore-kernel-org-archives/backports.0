@@ -1,41 +1,38 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:44941 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753314AbbCSN6y (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 19 Mar 2015 09:58:54 -0400
-From: Arend van Spriel <arend@broadcom.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>, Arend van Spriel <arend@broadcom.com>
-Subject: [PATCH] backport-include: map possible_net_t to struct net *
-Date: Thu, 19 Mar 2015 14:58:50 +0100
-Message-ID: <1426773530-21723-1-git-send-email-arend@broadcom.com> (sfid-20150319_145900_526307_6F546B4E)
-MIME-Version: 1.0
-Content-Type: text/plain
+Received: from s3.sipsolutions.net ([5.9.151.49]:48697 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750834AbbCBICT (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 2 Mar 2015 03:02:19 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backports: update cfg80211 wext Kconfig disable patch
+Date: Mon,  2 Mar 2015 09:02:15 +0100
+Message-Id: <1425283335-4079-1-git-send-email-johannes@sipsolutions.net> (sfid-20150302_090221_486984_A7E42190)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-commit 0c5c9fb55106 (net: Introduce possible_net_t) changed
-use of write_pnet and read_pnet. This patch will map possible_net_t
-back to struct net * to use old api.
+From: Johannes Berg <johannes.berg@intel.com>
 
-Signed-off-by: Arend van Spriel <arend@broadcom.com>
+The context change, update the patch.
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/net/net_namespace.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ patches/collateral-evolutions/network/0004-disable-wext-kconfig.patch | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/backport/backport-include/net/net_namespace.h b/backport/backport-include/net/net_namespace.h
-index 8927af7..085bce7 100644
---- a/backport/backport-include/net/net_namespace.h
-+++ b/backport/backport-include/net/net_namespace.h
-@@ -30,4 +30,8 @@ static inline struct net *get_net_ns_by_fd(int fd)
- 	return ERR_PTR(-EINVAL);
- }
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
-+#define possible_net_t struct net *
-+#endif
-+
- #endif	/* _COMPAT_NET_NET_NAMESPACE_H */
+diff --git a/patches/collateral-evolutions/network/0004-disable-wext-kconfig.patch b/patches/collateral-evolutions/network/0004-disable-wext-kconfig.patch
+index a6b09b39c3b4..658f2d81dcc3 100644
+--- a/patches/collateral-evolutions/network/0004-disable-wext-kconfig.patch
++++ b/patches/collateral-evolutions/network/0004-disable-wext-kconfig.patch
+@@ -31,6 +31,6 @@ so remove the Kconfig options for them.
+  	depends on CFG80211
+ -	select WEXT_CORE
+ +	depends on WEXT_CORE
++ 	default y if CFG80211_WEXT_EXPORT
+  	help
+  	  Enable this option if you need old userspace for wireless
+- 	  extensions with cfg80211-based drivers.
 -- 
-1.9.1
+2.1.4
 
