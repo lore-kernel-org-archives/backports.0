@@ -1,41 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:48849 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750929AbbCBITZ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 2 Mar 2015 03:19:25 -0500
-From: Johannes Berg <johannes@sipsolutions.net>
+Received: from dedo.coelho.fi ([88.198.205.34]:60504 "EHLO dedo.coelho.fi"
+	rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+	id S932480AbbCDJZS (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 4 Mar 2015 04:25:18 -0500
+From: Luca Coelho <luca@coelho.fi>
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] git-tracker: ask for verbose messages from per-commit processing
-Date: Mon,  2 Mar 2015 09:19:22 +0100
-Message-Id: <1425284362-5250-1-git-send-email-johannes@sipsolutions.net> (sfid-20150302_091927_537712_7841987D)
+Cc: johannes@sipsolutions.net, arend@broadcom.com, mcgrof@suse.com
+Date: Wed,  4 Mar 2015 11:06:50 +0200
+Message-Id: <1425460010-16275-1-git-send-email-luca@coelho.fi> (sfid-20150304_102522_917082_0206987A)
+In-Reply-To: <1424956829.1885.27.camel@sipsolutions.net>
+References: <1424956829.1885.27.camel@sipsolutions.net>
+Subject: [PATCH] backports: add support for 4.x kernels
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Luciano Coelho <luciano.coelho@intel.com>
 
-The messages are only printed if something fails anyway, so
-better ask for verbose messages to be able to better identify
-what failed.
+Adjust the kernel version parsing and list of backport files
+generation for 4.x kernels.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Luciano Coelho <luciano.coelho@intel.com>
 ---
- devel/git-tracker.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I was working on the same thing and Johannes told me that Arend had a
+similar patch.  Maybe this one can be used?
 
-diff --git a/devel/git-tracker.py b/devel/git-tracker.py
-index 7a89ba051f6f..9ce6ce455f95 100755
---- a/devel/git-tracker.py
-+++ b/devel/git-tracker.py
-@@ -69,7 +69,7 @@ def handle_commit(args, msg, branch, treename, kernelobjdir, tmpdir, wgitdir, ba
-         failure = gentree.process(kernelobjdir, open(args.copy_list, 'r'),
-                                   bpid=bpid, git_revision=kernel_rev,
-                                   base_name=tree, logwrite=logwrite,
--                                  git_tracked_version=True)
-+                                  verbose=True, git_tracked_version=True)
- 
-         newline = '\n'
-         if failure:
+ backport/Makefile | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/backport/Makefile b/backport/Makefile
+index ea3982b..c4962c9 100644
+--- a/backport/Makefile
++++ b/backport/Makefile
+@@ -85,11 +85,12 @@ mrproper:
+ 			done								\
+ 		) > Kconfig.kernel							;\
+ 		kver=$$($(MAKE) --no-print-directory -C $(KLIB_BUILD) kernelversion |	\
+-			sed 's/^\(\(3\|2\.6\)\.[0-9]\+\).*/\1/;t;d')			;\
++			sed 's/^\(\([3-4]\|2\.6\)\.[0-9]\+\).*/\1/;t;d')		;\
+ 		test "$$kver" != "" || echo "Kernel version parse failed!"		;\
+ 		test "$$kver" != ""							;\
+ 		kvers="$$(seq 14 39 | sed 's/^/2.6./')"					;\
+-		kvers="$$kvers $$(seq 0 99 | sed 's/^/3./')"				;\
++		kvers="$$kvers $$(seq 0 19 | sed 's/^/3./')"				;\
++		kvers="$$kvers $$(seq 0 99 | sed 's/^/4./')"				;\
+ 		print=0									;\
+ 		for v in $$kvers ; do							\
+ 			if [ "$$print" = "1" ] ; then					\
 -- 
 2.1.4
 
