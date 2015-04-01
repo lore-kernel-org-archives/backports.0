@@ -1,47 +1,75 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:49647 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:59174 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751472AbbDYOBd (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 25 Apr 2015 10:01:33 -0400
-Message-ID: <553B9E3B.8050100@hauke-m.de> (sfid-20150425_160135_150628_03672053)
-Date: Sat, 25 Apr 2015 16:01:31 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>,
-	backports@vger.kernel.org
-CC: Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH] backports: use spatch for __genl_const change
-References: <1428404334-32289-1-git-send-email-johannes@sipsolutions.net>
-In-Reply-To: <1428404334-32289-1-git-send-email-johannes@sipsolutions.net>
-Content-Type: text/plain; charset=windows-1252
+	id S1751533AbbDAPbq (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 1 Apr 2015 11:31:46 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 2/5] backports: backport netlink IP/IPv6 address accessors
+Date: Wed,  1 Apr 2015 17:31:36 +0200
+Message-Id: <1427902299-24079-2-git-send-email-johannes@sipsolutions.net> (sfid-20150401_173148_834404_66B0D88E)
+In-Reply-To: <1427902299-24079-1-git-send-email-johannes@sipsolutions.net>
+References: <1427902299-24079-1-git-send-email-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 04/07/2015 12:58 PM, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
-> 
-> As newer versions of spatch are now capable of declaring an
-> attribute, use that feature to create an spatch for the change
-> that changes const to __genl_const.
-> 
-> This bumps the required version of coccinelle to 1.0.0-rc23
-> (which was released over three months ago.)
-> 
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> ---
->  gentree.py                                         |  2 +-
->  .../network/0027-genl-const/genl-const.cocci       | 10 +++++
->  .../network/0027-genl-const/hwsim.patch            | 20 ---------
->  .../network/0027-genl-const/ieee802154.patch       | 20 ---------
->  .../network/0027-genl-const/nfc.patch              | 20 ---------
->  .../network/0027-genl-const/nl80211.patch          | 50 ----------------------
->  6 files changed, 11 insertions(+), 111 deletions(-)
->  create mode 100644 patches/collateral-evolutions/network/0027-genl-const/genl-const.cocci
->  delete mode 100644 patches/collateral-evolutions/network/0027-genl-const/hwsim.patch
->  delete mode 100644 patches/collateral-evolutions/network/0027-genl-const/ieee802154.patch
->  delete mode 100644 patches/collateral-evolutions/network/0027-genl-const/nfc.patch
->  delete mode 100644 patches/collateral-evolutions/network/0027-genl-const/nl80211.patch
-> 
-Thank you for the patch, I applied and pushed it out.
+From: Johannes Berg <johannes.berg@intel.com>
 
-Hauke
+These were introduced upstream in commits 67b61f6c130a
+and 930345ea6304.
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/backport-include/net/netlink.h | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/backport/backport-include/net/netlink.h b/backport/backport-include/net/netlink.h
+index 9324d02d2c86..35d9260ff29b 100644
+--- a/backport/backport-include/net/netlink.h
++++ b/backport/backport-include/net/netlink.h
+@@ -2,6 +2,7 @@
+ #define __BACKPORT_NET_NETLINK_H
+ #include_next <net/netlink.h>
+ #include <linux/version.h>
++#include <linux/in6.h>
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
+ /**
+@@ -137,4 +138,33 @@ static inline int nla_put_be64(struct sk_buff *skb, int attrtype, __be64 value)
+ #define NLA_TYPE_MAX (__NLA_TYPE_MAX - 1)
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
++#define nla_put_in_addr LINUX_BACKPORT(nla_put_in_addr)
++static inline int nla_put_in_addr(struct sk_buff *skb, int attrtype,
++				  __be32 addr)
++{
++	return nla_put_be32(skb, attrtype, addr);
++}
++
++#define nla_put_in6_addr LINUX_BACKPORT(nla_put_in6_addr)
++static inline int nla_put_in6_addr(struct sk_buff *skb, int attrtype,
++				   const struct in6_addr *addr)
++{
++	return nla_put(skb, attrtype, sizeof(*addr), addr);
++}
++
++static inline __be32 nla_get_in_addr(const struct nlattr *nla)
++{
++	return *(__be32 *) nla_data(nla);
++}
++
++static inline struct in6_addr nla_get_in6_addr(const struct nlattr *nla)
++{
++	struct in6_addr tmp;
++
++	nla_memcpy(&tmp, nla, sizeof(tmp));
++	return tmp;
++}
++#endif /* < 4.1 */
++
+ #endif /* __BACKPORT_NET_NETLINK_H */
+-- 
+2.1.4
+
