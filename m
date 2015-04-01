@@ -1,34 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:51956 "EHLO mail.kernel.org"
+Received: from s3.sipsolutions.net ([5.9.151.49]:59172 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753338AbbDMJ1l (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 13 Apr 2015 05:27:41 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id A7F402017D
-	for <backports@vger.kernel.org>; Mon, 13 Apr 2015 09:27:40 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id B587D201CE
-	for <backports@vger.kernel.org>; Mon, 13 Apr 2015 09:27:37 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1751702AbbDAPbq (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 1 Apr 2015 11:31:46 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Subject: [Bug 96581] A kernel built from >gentoo-sources-3.10.63, not starts.
- The  kernel 3.10.63 works fine. sys-kernel/gentoo-sources-3.10.73 - ?
-Date: Mon, 13 Apr 2015 09:27:37 +0000
-Message-ID: <bug-96581-58281-sDDbyLLeSI@https.bugzilla.kernel.org/> (sfid-20150413_112744_042684_8484330F)
-In-Reply-To: <bug-96581-58281@https.bugzilla.kernel.org/>
-References: <bug-96581-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 1/5] backports: include rhashtable
+Date: Wed,  1 Apr 2015 17:31:35 +0200
+Message-Id: <1427902299-24079-1-git-send-email-johannes@sipsolutions.net> (sfid-20150401_173149_445100_86395FEE)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=96581
+From: Johannes Berg <johannes.berg@intel.com>
 
---- Comment #2 from Yuriy <strangers495@ymail.com> ---
-Created attachment 173881
-  --> https://bugzilla.kernel.org/attachment.cgi?id=173881&action=edit
-Output command emerge --info gentoo-sources
+As mac80211 now needs rhashtable, include it in backports.
+For now, it actually depends on mac80211 and is selected
+for kernels < 4.1 -- it existed in previous kernels but
+with different API, so cannot be used from there easily.
 
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/compat/Kconfig | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
+index aadf246896e9..8fcdb8a96bb3 100644
+--- a/backport/compat/Kconfig
++++ b/backport/compat/Kconfig
+@@ -135,3 +135,12 @@ config BPAUTO_BUILD_WANT_DEV_COREDUMP
+ 	default y if BPAUTO_WANT_DEV_COREDUMP
+ 	#h-file linux/devcoredump.h
+ 	#c-file drivers/base/devcoredump.c
++
++config BPAUTO_RHASHTABLE
++	bool
++	# current API of rhashtable was introduced in version 4.1
++	depends on KERNEL_4_1
++	# not very nice - but better than always having it
++	default y if MAC80211
++	#h-file linux/rhashtable.h
++	#c-file lib/rhashtable.c
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+2.1.4
+
