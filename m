@@ -1,38 +1,38 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:48050 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:39187 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752475AbbDUUox (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 21 Apr 2015 16:44:53 -0400
-Message-ID: <5536B6C2.90105@hauke-m.de> (sfid-20150421_224455_083892_F6F39DC6)
-Date: Tue, 21 Apr 2015 22:44:50 +0200
+	id S1751262AbbDCRY0 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 3 Apr 2015 13:24:26 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Stefan Assmann <sassmann@kpanic.de>, backports@vger.kernel.org
-CC: mcgrof@do-not-panic.com
-Subject: Re: [PATCH 09/10] backports: remove devm_hwmon_device_register_with_groups
- references with smpl patch
-References: <1424874054-22956-1-git-send-email-sassmann@kpanic.de> <1424874054-22956-10-git-send-email-sassmann@kpanic.de>
-In-Reply-To: <1424874054-22956-10-git-send-email-sassmann@kpanic.de>
-Content-Type: text/plain; charset=windows-1252
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 01/11] copy: remove include/linux/platform_data/vsp1.h
+Date: Fri,  3 Apr 2015 19:15:32 +0200
+Message-Id: <1428081342-5933-2-git-send-email-hauke@hauke-m.de> (sfid-20150403_192429_940694_44A1B254)
+In-Reply-To: <1428081342-5933-1-git-send-email-hauke@hauke-m.de>
+References: <1428081342-5933-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 02/25/2015 03:20 PM, Stefan Assmann wrote:
-> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
-> ---
->  ...m_hwmon_device_register_with_groups.patch.cocci | 40 ++++++++++++++++++++++
->  ...gb-devm_hwmon_device_register_with_groups.patch | 28 ---------------
->  2 files changed, 40 insertions(+), 28 deletions(-)
->  create mode 100644 patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/devm_hwmon_device_register_with_groups.patch.cocci
->  delete mode 100644 patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch
-> 
+This file was removed from the kernel in commit 32d17597.
 
-I think this patch and this spatch is not needed.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ copy-list | 1 -
+ 1 file changed, 1 deletion(-)
 
-devm_hwmon_device_register_with_groups() gets backported in
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/commit/?id=69dbc7cf6d34b903c1dc80f1d4f880fc9acfe6fb
-
-I haven't tested igb without this patch.
-
-Hauke
+diff --git a/copy-list b/copy-list
+index 295cac1..b581e26 100644
+--- a/copy-list
++++ b/copy-list
+@@ -157,7 +157,6 @@ include/uapi/linux/meye.h
+ include/linux/hdmi.h
+ 
+ drivers/media/
+-include/linux/platform_data/vsp1.h
+ include/linux/platform_data/camera-rcar.h
+ include/linux/of_graph.h
+ 
+-- 
+1.9.1
 
