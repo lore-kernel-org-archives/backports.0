@@ -1,41 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:40004 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:39189 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752561AbbDEWNa (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 5 Apr 2015 18:13:30 -0400
+	id S1751448AbbDCRY0 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 3 Apr 2015 13:24:26 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/7] headers: add sock_skb_cb_check_size()
-Date: Mon,  6 Apr 2015 00:13:14 +0200
-Message-Id: <1428272000-19929-2-git-send-email-hauke@hauke-m.de> (sfid-20150406_001335_043181_317FF2D9)
-In-Reply-To: <1428272000-19929-1-git-send-email-hauke@hauke-m.de>
-References: <1428272000-19929-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 07/11] patches: add missing include in ath10k
+Date: Fri,  3 Apr 2015 19:15:38 +0200
+Message-Id: <1428081342-5933-8-git-send-email-hauke@hauke-m.de> (sfid-20150403_192430_516212_5F53609D)
+In-Reply-To: <1428081342-5933-1-git-send-email-hauke@hauke-m.de>
+References: <1428081342-5933-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The bluetooth code needs this function. It was introduced in upstream
-commit b4772ef87.
+drivers/net/wireless/ath/ath10k/htt.h uses "struct idr" since commit
+89d6d83. This stricture does not get included on kernel 3.0. This adds
+the missing include.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/net/sock.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../network/0013-fix-makefile-includes/ath10k.patch            | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0013-fix-makefile-includes/ath10k.patch
 
-diff --git a/backport/backport-include/net/sock.h b/backport/backport-include/net/sock.h
-index ec67b9e..1a0a415 100644
---- a/backport/backport-include/net/sock.h
-+++ b/backport/backport-include/net/sock.h
-@@ -38,4 +38,9 @@
- #define SOCK_SELECT_ERR_QUEUE (SOCK_QUEUE_SHRUNK + 14)
- #endif
- 
-+#ifndef sock_skb_cb_check_size
-+#define sock_skb_cb_check_size(size) \
-+	BUILD_BUG_ON((size) > FIELD_SIZEOF(struct sk_buff, cb))
-+#endif
-+
- #endif /* __BACKPORT_NET_SOCK_H */
+diff --git a/patches/collateral-evolutions/network/0013-fix-makefile-includes/ath10k.patch b/patches/collateral-evolutions/network/0013-fix-makefile-includes/ath10k.patch
+new file mode 100644
+index 0000000..5bae024
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0013-fix-makefile-includes/ath10k.patch
+@@ -0,0 +1,10 @@
++--- a/drivers/net/wireless/ath/ath10k/htt.h
+++++ b/drivers/net/wireless/ath/ath10k/htt.h
++@@ -19,6 +19,7 @@
++ #define _HTT_H_
++ 
++ #include <linux/bug.h>
+++#include <linux/idr.h>
++ #include <linux/interrupt.h>
++ #include <linux/dmapool.h>
++ #include <linux/hashtable.h>
 -- 
 1.9.1
 
