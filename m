@@ -1,40 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:34088 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753465AbbDQSWX (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 17 Apr 2015 14:22:23 -0400
-Received: by obfe9 with SMTP id e9so76503084obf.1
-        for <backports@vger.kernel.org>; Fri, 17 Apr 2015 11:22:22 -0700 (PDT)
-Message-ID: <55314F5C.3000907@lwfinger.net> (sfid-20150417_202225_365977_EA02E43C)
-Date: Fri, 17 Apr 2015 13:22:20 -0500
-From: Larry Finger <Larry.Finger@lwfinger.net>
+Received: from hauke-m.de ([5.39.93.123]:39452 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751327AbbDCVlS (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 3 Apr 2015 17:41:18 -0400
+Message-ID: <551F08FB.2060600@hauke-m.de> (sfid-20150403_234120_209483_2063A4E9)
+Date: Fri, 03 Apr 2015 23:41:15 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Johannes Berg <johannes@sipsolutions.net>
-CC: Petr Vorel <petr.vorel@gmail.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: Possible to build-in backports modules into kernel
-References: <20150417133004.GC16380@vorel-pc> <5531314D.1000706@lwfinger.net> <1429291720.1885.5.camel@sipsolutions.net> <CAB=NE6X=-PQR3=uxmHZL+Jf8muX6QmmTjKkBnKXUWDk1Bkeccw@mail.gmail.com>
-In-Reply-To: <CAB=NE6X=-PQR3=uxmHZL+Jf8muX6QmmTjKkBnKXUWDk1Bkeccw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+To: Johannes Berg <johannes@sipsolutions.net>,
+	backports@vger.kernel.org
+CC: Johannes Berg <johannes.berg@intel.com>
+Subject: Re: [PATCH 5/5] backports: backport kvfree
+References: <1427902299-24079-1-git-send-email-johannes@sipsolutions.net> <1427902299-24079-5-git-send-email-johannes@sipsolutions.net>
+In-Reply-To: <1427902299-24079-5-git-send-email-johannes@sipsolutions.net>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 04/17/2015 01:03 PM, Luis R. Rodriguez wrote:
-> On Fri, Apr 17, 2015 at 10:28 AM, Johannes Berg
-> <johannes@sipsolutions.net> wrote:
->> Technically this is not true any more - the backports gentree.py script
->> now supports kernel integration where it copies the backport into
->> another kernel tree :)
->
-> Indeed:
->
-> https://backports.wiki.kernel.org/index.php/Documentation/integration
+On 04/01/2015 05:31 PM, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+> 
+> This has been in the kernel for a long time, but wasn't
+> used by anyone. Now it's used by rhashtable, so add it.
+> 
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+>  backport/backport-include/linux/mm.h |  5 +++++
+>  backport/compat/backport-3.15.c      | 11 +++++++++++
+>  2 files changed, 16 insertions(+)
+> 
 
-Just to clarify, the entire kernel will need to be built from some tree. In my 
-reading of the original post, I got the impression that Petr wanted to use a 
-pre-built kernel.
+Thank you for the patches. I applied the patch 3, 4 and 5, the other
+patches will be applied for the next version.
 
-Larry
-
-
+Hauke
