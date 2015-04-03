@@ -1,60 +1,29 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:33959 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932169AbbD0JTT (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 27 Apr 2015 05:19:19 -0400
-Received: by wicmx19 with SMTP id mx19so79281997wic.1
-        for <backports@vger.kernel.org>; Mon, 27 Apr 2015 02:19:18 -0700 (PDT)
-Received: from localhost.localdomain ([93.172.48.98])
-        by mx.google.com with ESMTPSA id g5sm20645062wjq.6.2015.04.27.02.19.15
-        for <backports@vger.kernel.org>
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 27 Apr 2015 02:19:16 -0700 (PDT)
-From: Eliad Peller <eliad@wizery.com>
-To: <backports@vger.kernel.org>
-Subject: [PATCH] backports: fix coccinelle version check
-Date: Mon, 27 Apr 2015 12:19:04 +0300
-Message-Id: <1430126344-1068-1-git-send-email-eliad@wizery.com> (sfid-20150427_111921_425569_2821B03C)
+Received: from hauke-m.de ([5.39.93.123]:39393 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751327AbbDCVTM (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 3 Apr 2015 17:19:12 -0400
+Received: from [192.168.178.22] (ip-109-43-19-230.web.vodafone.de [109.43.19.230])
+	by hauke-m.de (Postfix) with ESMTPSA id 6F3E0200D1
+	for <backports@vger.kernel.org>; Fri,  3 Apr 2015 23:19:10 +0200 (CEST)
+Message-ID: <551F03CD.6020409@hauke-m.de> (sfid-20150403_231913_791335_BEED8283)
+Date: Fri, 03 Apr 2015 23:19:09 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
+MIME-Version: 1.0
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: backports-20150222 is out
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-bpreqs.py assumes the max rc level is 20. However,
-backports currently requires coccinelle 1.0.0-rc24
-(which is the latest rc before 1.0.0).
+backports-20150222 was released. This is based on linux-next next-20150222.
 
-This resulted in 1.0.0-rc24 getting higher weight
-than 1.0.0, which failed the dependency check.
+https://www.kernel.org/pub/linux/kernel/projects/backports/2015/02/22/backports-20150222.tar.xz
 
-Fix it by increasing the max rc to 25 (and use
-a constant for it)
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
 
-Signed-off-by: Eliad Peller <eliad@wizery.com>
----
- lib/bpreqs.py | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+All the latest releases are listed here:
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
 
-diff --git a/lib/bpreqs.py b/lib/bpreqs.py
-index 6c46670..1325fd2 100644
---- a/lib/bpreqs.py
-+++ b/lib/bpreqs.py
-@@ -78,6 +78,8 @@ class Req:
-             sys.stdout.write("You are using for version: %s\n" % stdout.split()[version_pos])
-             sys.stdout.write("Specifically your idx, element: %s\n" % ([[i, x] for i, x in enumerate(stdout.split())][version_pos]))
-         return stdout.split()[version_pos]
-+
-+    MAX_RC = 25
-     def __compute_rel_weight(self, rel_specs):
-         weight = 0
-         extra = 0
-@@ -98,7 +100,7 @@ class Req:
-                 if (rc == ""):
-                     rc = 0
-                 else:
--                    rc = int(rc) - 20
-+                    rc = int(rc) - (Req.MAX_RC + 1)
-                 extra = int(rc)
-             else:
-                 extra = int(rel_specs['EXTRAVERSION']) + 10
--- 
-1.8.5.2.229.g4448466.dirty
-
+Hauke
