@@ -1,46 +1,29 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:50102 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:40024 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750980AbbDZVEe (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 26 Apr 2015 17:04:34 -0400
+	id S1752602AbbDEXHh (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 5 Apr 2015 19:07:37 -0400
+Received: from [192.168.178.22] (ip-77-24-179-249.web.vodafone.de [77.24.179.249])
+	by hauke-m.de (Postfix) with ESMTPSA id 6028A20036
+	for <backports@vger.kernel.org>; Mon,  6 Apr 2015 01:07:35 +0200 (CEST)
+Message-ID: <5521C035.7060805@hauke-m.de> (sfid-20150406_010738_845145_40A091FA)
+Date: Mon, 06 Apr 2015 01:07:33 +0200
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 6/7] patches: do not use EPROBE_DEFER in media
-Date: Sun, 26 Apr 2015 23:04:23 +0200
-Message-Id: <1430082264-11808-7-git-send-email-hauke@hauke-m.de> (sfid-20150426_230438_832652_13AD613C)
-In-Reply-To: <1430082264-11808-1-git-send-email-hauke@hauke-m.de>
-References: <1430082264-11808-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: backports-20150313 is out
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This was added in commit 4f528afc.
+backports-20150313 was released. This is based on linux-next next-20150313.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../media/0006-no-eprobe_defer/v4l2-clk.patch               | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
- create mode 100644 patches/collateral-evolutions/media/0006-no-eprobe_defer/v4l2-clk.patch
+https://www.kernel.org/pub/linux/kernel/projects/backports/2015/03/13/backports-20150313.tar.xz
 
-diff --git a/patches/collateral-evolutions/media/0006-no-eprobe_defer/v4l2-clk.patch b/patches/collateral-evolutions/media/0006-no-eprobe_defer/v4l2-clk.patch
-new file mode 100644
-index 0000000..592f5e1
---- /dev/null
-+++ b/patches/collateral-evolutions/media/0006-no-eprobe_defer/v4l2-clk.patch
-@@ -0,0 +1,13 @@
-+--- a/drivers/media/v4l2-core/v4l2-clk.c
-++++ b/drivers/media/v4l2-core/v4l2-clk.c
-+@@ -40,8 +40,10 @@ struct v4l2_clk *v4l2_clk_get(struct dev
-+ 	struct v4l2_clk *clk;
-+ 	struct clk *ccf_clk = clk_get(dev, id);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0)
-+ 	if (PTR_ERR(ccf_clk) == -EPROBE_DEFER)
-+ 		return ERR_PTR(-EPROBE_DEFER);
-++#endif
-+ 
-+ 	if (!IS_ERR_OR_NULL(ccf_clk)) {
-+ 		clk = kzalloc(sizeof(*clk), GFP_KERNEL);
--- 
-1.9.1
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
 
+All the latest releases are listed here:
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
+
+Hauke
