@@ -1,45 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:39189 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:40009 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751448AbbDCRY0 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 3 Apr 2015 13:24:26 -0400
+	id S1752602AbbDEWNc (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 5 Apr 2015 18:13:32 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 07/11] patches: add missing include in ath10k
-Date: Fri,  3 Apr 2015 19:15:38 +0200
-Message-Id: <1428081342-5933-8-git-send-email-hauke@hauke-m.de> (sfid-20150403_192430_516212_5F53609D)
-In-Reply-To: <1428081342-5933-1-git-send-email-hauke@hauke-m.de>
-References: <1428081342-5933-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 6/7] backports: add USB ZD1201 driver
+Date: Mon,  6 Apr 2015 00:13:19 +0200
+Message-Id: <1428272000-19929-7-git-send-email-hauke@hauke-m.de> (sfid-20150406_001338_659330_5E08FF46)
+In-Reply-To: <1428272000-19929-1-git-send-email-hauke@hauke-m.de>
+References: <1428272000-19929-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-drivers/net/wireless/ath/ath10k/htt.h uses "struct idr" since commit
-89d6d83. This stricture does not get included on kernel 3.0. This adds
-the missing include.
+This wifi driver was missing before.
+This driver uses the cfg80211 so we should ship it.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../network/0013-fix-makefile-includes/ath10k.patch            | 10 ++++++++++
- 1 file changed, 10 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0013-fix-makefile-includes/ath10k.patch
+ backport/defconfigs/wifi | 1 +
+ copy-list                | 2 ++
+ 2 files changed, 3 insertions(+)
 
-diff --git a/patches/collateral-evolutions/network/0013-fix-makefile-includes/ath10k.patch b/patches/collateral-evolutions/network/0013-fix-makefile-includes/ath10k.patch
-new file mode 100644
-index 0000000..5bae024
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0013-fix-makefile-includes/ath10k.patch
-@@ -0,0 +1,10 @@
-+--- a/drivers/net/wireless/ath/ath10k/htt.h
-++++ b/drivers/net/wireless/ath/ath10k/htt.h
-+@@ -19,6 +19,7 @@
-+ #define _HTT_H_
-+ 
-+ #include <linux/bug.h>
-++#include <linux/idr.h>
-+ #include <linux/interrupt.h>
-+ #include <linux/dmapool.h>
-+ #include <linux/hashtable.h>
+diff --git a/backport/defconfigs/wifi b/backport/defconfigs/wifi
+index e329440..3d26444 100644
+--- a/backport/defconfigs/wifi
++++ b/backport/defconfigs/wifi
+@@ -106,6 +106,7 @@ CPTCFG_SSB_PCMCIAHOST=y
+ CPTCFG_SSB_SDIOHOST=y
+ CPTCFG_TMD_HERMES=m
+ CPTCFG_USB_NET_RNDIS_WLAN=m
++CPTCFG_USB_ZD1201=m
+ CPTCFG_WCN36XX=m
+ CPTCFG_WIL6210=m
+ CPTCFG_WL1251=m
+diff --git a/copy-list b/copy-list
+index 3c94979..ed9c26a 100644
+--- a/copy-list
++++ b/copy-list
+@@ -87,6 +87,8 @@ drivers/net/wireless/mac80211_hwsim.h
+ drivers/net/wireless/mwl8k.c
+ drivers/net/wireless/rsi/
+ drivers/net/wireless/rndis_wlan.c
++drivers/net/wireless/zd1201.c
++drivers/net/wireless/zd1201.h
+ # rndis also requires some of the USB networking
+ drivers/net/usb/Makefile
+ drivers/net/usb/Kconfig
 -- 
 1.9.1
 
