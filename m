@@ -1,123 +1,204 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from app1b.xlhost.de ([84.200.252.162]:57301 "EHLO app1b.xlhost.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:38113 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933725AbbDVO6H (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 22 Apr 2015 10:58:07 -0400
-Message-ID: <5537B6F8.2010900@kpanic.de> (sfid-20150422_165809_904821_3B27DC67)
-Date: Wed, 22 Apr 2015 16:58:00 +0200
-From: Stefan Assmann <sassmann@kpanic.de>
-MIME-Version: 1.0
-To: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
-CC: mcgrof@do-not-panic.com
-Subject: Re: [PATCH 09/10] backports: remove devm_hwmon_device_register_with_groups
- references with smpl patch
-References: <1424874054-22956-1-git-send-email-sassmann@kpanic.de> <1424874054-22956-10-git-send-email-sassmann@kpanic.de> <5536B6C2.90105@hauke-m.de>
-In-Reply-To: <5536B6C2.90105@hauke-m.de>
-Content-Type: text/plain; charset=windows-1252
+	id S1753196AbbDGK7E (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 7 Apr 2015 06:59:04 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backports: use spatch for __genl_const change
+Date: Tue,  7 Apr 2015 12:58:54 +0200
+Message-Id: <1428404334-32289-1-git-send-email-johannes@sipsolutions.net> (sfid-20150407_125906_831027_ECEDEA8B)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 21.04.2015 22:44, Hauke Mehrtens wrote:
-> On 02/25/2015 03:20 PM, Stefan Assmann wrote:
->> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
->> ---
->>  ...m_hwmon_device_register_with_groups.patch.cocci | 40 ++++++++++++++++++++++
->>  ...gb-devm_hwmon_device_register_with_groups.patch | 28 ---------------
->>  2 files changed, 40 insertions(+), 28 deletions(-)
->>  create mode 100644 patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/devm_hwmon_device_register_with_groups.patch.cocci
->>  delete mode 100644 patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch
->>
-> 
-> I think this patch and this spatch is not needed.
-> 
-> devm_hwmon_device_register_with_groups() gets backported in
-> https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/commit/?id=69dbc7cf6d34b903c1dc80f1d4f880fc9acfe6fb
-> 
-> I haven't tested igb without this patch.
+From: Johannes Berg <johannes.berg@intel.com>
 
-You're right, I didn't notice this being backported. Please drop this
-patch and let's remove the old patch as well.
+As newer versions of spatch are now capable of declaring an
+attribute, use that feature to create an spatch for the change
+that changes const to __genl_const.
 
-  Stefan
+This bumps the required version of coccinelle to 1.0.0-rc23
+(which was released over three months ago.)
 
->From fba5eaf9c6bf19d3c4ee98a217efc21e6cddbe91 Mon Sep 17 00:00:00 2001
-From: Stefan Assmann <sassmann@kpanic.de>
-Date: Wed, 22 Apr 2015 16:50:50 +0200
-Subject: [PATCH] backports: remove
- igb-devm_hwmon_device_register_with_groups.patch
-
-This patch is no longer needed due to commit
-
-commit 69dbc7cf6d34b903c1dc80f1d4f880fc9acfe6fb
-Author: Mathieu Olivari <mathieu@qca.qualcomm.com>
-Date:   Sun Jan 25 09:46:02 2015 -0800
-
-    backport: add hwmon group registration functions
-
-which provides the missing functionality now
-
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- .../INFO                                           | 13 ----------
- ...gb-devm_hwmon_device_register_with_groups.patch | 28 ----------------------
- 2 files changed, 41 deletions(-)
- delete mode 100644 patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/INFO
- delete mode 100644 patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch
+ gentree.py                                         |  2 +-
+ .../network/0027-genl-const/genl-const.cocci       | 10 +++++
+ .../network/0027-genl-const/hwsim.patch            | 20 ---------
+ .../network/0027-genl-const/ieee802154.patch       | 20 ---------
+ .../network/0027-genl-const/nfc.patch              | 20 ---------
+ .../network/0027-genl-const/nl80211.patch          | 50 ----------------------
+ 6 files changed, 11 insertions(+), 111 deletions(-)
+ create mode 100644 patches/collateral-evolutions/network/0027-genl-const/genl-const.cocci
+ delete mode 100644 patches/collateral-evolutions/network/0027-genl-const/hwsim.patch
+ delete mode 100644 patches/collateral-evolutions/network/0027-genl-const/ieee802154.patch
+ delete mode 100644 patches/collateral-evolutions/network/0027-genl-const/nfc.patch
+ delete mode 100644 patches/collateral-evolutions/network/0027-genl-const/nl80211.patch
 
-diff --git a/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/INFO b/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/INFO
+diff --git a/gentree.py b/gentree.py
+index 8df390636e34..3ab2b0a4733e 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -625,7 +625,7 @@ def _main():
+     # Our binary requirements go here
+     req = reqs.Req()
+     req.require('git')
+-    req.coccinelle('1.0.0-rc21')
++    req.coccinelle('1.0.0-rc23')
+     if not req.reqs_match():
+         sys.exit(1)
+ 
+diff --git a/patches/collateral-evolutions/network/0027-genl-const/genl-const.cocci b/patches/collateral-evolutions/network/0027-genl-const/genl-const.cocci
+new file mode 100644
+index 000000000000..36c71d62c650
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0027-genl-const/genl-const.cocci
+@@ -0,0 +1,10 @@
++@@
++attribute __genl_const;
++@@
++(
++-const struct genl_multicast_group
+++__genl_const struct genl_multicast_group
++|
++-const struct genl_ops
+++__genl_const struct genl_ops
++)
+diff --git a/patches/collateral-evolutions/network/0027-genl-const/hwsim.patch b/patches/collateral-evolutions/network/0027-genl-const/hwsim.patch
 deleted file mode 100644
-index 9169f68..0000000
---- a/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/INFO
+index 0383c30eeaf6..000000000000
+--- a/patches/collateral-evolutions/network/0027-genl-const/hwsim.patch
 +++ /dev/null
-@@ -1,13 +0,0 @@
--The new hwmon_device_register_with_groups API has not been backported yet.
--Address this by putting ifdef around the code using the API.
--
--
--commit 74188cba088192e14cd7fd5433876e8c947bcdd8
--Author: Guenter Roeck <linux@roeck-us.net>
--Date:   Thu Jul 11 20:00:12 2013 -0700
--
--    hwmon: Provide managed hwmon registration
--
--git describe --contains 74188cba088192e14cd7fd5433876e8c947bcdd8
--v3.13-rc1~126^2~30
--
-diff --git a/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch
-b/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch
+@@ -1,20 +0,0 @@
+---- a/drivers/net/wireless/mac80211_hwsim.c
+-+++ b/drivers/net/wireless/mac80211_hwsim.c
+-@@ -493,7 +493,7 @@ enum hwsim_multicast_groups {
+- 	HWSIM_MCGRP_CONFIG,
+- };
+- 
+--static const struct genl_multicast_group hwsim_mcgrps[] = {
+-+static __genl_const struct genl_multicast_group hwsim_mcgrps[] = {
+- 	[HWSIM_MCGRP_CONFIG] = { .name = "config", },
+- };
+- 
+-@@ -2945,7 +2945,7 @@ done:
+- }
+- 
+- /* Generic Netlink operations array */
+--static const struct genl_ops hwsim_ops[] = {
+-+static __genl_const struct genl_ops hwsim_ops[] = {
+- 	{
+- 		.cmd = HWSIM_CMD_REGISTER,
+- 		.policy = hwsim_genl_policy,
+diff --git a/patches/collateral-evolutions/network/0027-genl-const/ieee802154.patch b/patches/collateral-evolutions/network/0027-genl-const/ieee802154.patch
 deleted file mode 100644
-index cd83953..0000000
---- a/patches/collateral-evolutions/network/0041-devm_hwmon_device_register_with_groups/igb-devm_hwmon_device_register_with_groups.patch
+index b543c06ab2d7..000000000000
+--- a/patches/collateral-evolutions/network/0027-genl-const/ieee802154.patch
 +++ /dev/null
-@@ -1,28 +0,0 @@
----- a/drivers/net/ethernet/intel/igb/igb_hwmon.c
--+++ b/drivers/net/ethernet/intel/igb/igb_hwmon.c
--@@ -173,7 +173,9 @@ int igb_sysfs_init(struct igb_adapter *a
+@@ -1,20 +0,0 @@
+---- a/net/ieee802154/netlink.c
+-+++ b/net/ieee802154/netlink.c
+-@@ -97,7 +97,7 @@ int ieee802154_nl_reply(struct sk_buff *
+- 	return genlmsg_reply(msg, info);
+- }
+- 
+--static const struct genl_ops ieee8021154_ops[] = {
+-+static __genl_const struct genl_ops ieee8021154_ops[] = {
+- 	/* see nl-phy.c */
+- 	IEEE802154_DUMP(IEEE802154_LIST_PHY, ieee802154_list_phy,
+- 			ieee802154_dump_phy),
+-@@ -134,7 +134,7 @@ static const struct genl_ops ieee8021154
+- 		      ieee802154_llsec_del_seclevel),
+- };
+- 
+--static const struct genl_multicast_group ieee802154_mcgrps[] = {
+-+static __genl_const struct genl_multicast_group ieee802154_mcgrps[] = {
+- 	[IEEE802154_COORD_MCGRP] = { .name = IEEE802154_MCAST_COORD_NAME, },
+- 	[IEEE802154_BEACON_MCGRP] = { .name = IEEE802154_MCAST_BEACON_NAME, },
+- };
+diff --git a/patches/collateral-evolutions/network/0027-genl-const/nfc.patch b/patches/collateral-evolutions/network/0027-genl-const/nfc.patch
+deleted file mode 100644
+index 22a98ab1feea..000000000000
+--- a/patches/collateral-evolutions/network/0027-genl-const/nfc.patch
++++ /dev/null
+@@ -1,20 +0,0 @@
+---- a/net/nfc/netlink.c
+-+++ b/net/nfc/netlink.c
+-@@ -28,7 +28,7 @@
+- #include "nfc.h"
+- #include "llcp.h"
+- 
+--static const struct genl_multicast_group nfc_genl_mcgrps[] = {
+-+static __genl_const struct genl_multicast_group nfc_genl_mcgrps[] = {
+- 	{ .name = NFC_GENL_MCAST_EVENT_NAME, },
+- };
+- 
+-@@ -1489,7 +1489,7 @@ static int nfc_genl_se_io(struct sk_buff
+- 	return nfc_se_io(dev, se_idx, apdu, apdu_len, se_io_cb, ctx);
+- }
+- 
+--static const struct genl_ops nfc_genl_ops[] = {
+-+static __genl_const struct genl_ops nfc_genl_ops[] = {
+- 	{
+- 		.cmd = NFC_CMD_GET_DEVICE,
+- 		.doit = nfc_genl_get_device,
+diff --git a/patches/collateral-evolutions/network/0027-genl-const/nl80211.patch b/patches/collateral-evolutions/network/0027-genl-const/nl80211.patch
+deleted file mode 100644
+index eb822b70edf3..000000000000
+--- a/patches/collateral-evolutions/network/0027-genl-const/nl80211.patch
++++ /dev/null
+@@ -1,50 +0,0 @@
+---- a/net/wireless/nl80211.c
+-+++ b/net/wireless/nl80211.c
+-@@ -31,9 +31,9 @@ static int nl80211_crypto_settings(struc
+- 				   struct cfg80211_crypto_settings *settings,
+- 				   int cipher_limit);
+- 
+--static int nl80211_pre_doit(const struct genl_ops *ops, struct sk_buff *skb,
+-+static int nl80211_pre_doit(__genl_const struct genl_ops *ops, struct sk_buff *skb,
+- 			    struct genl_info *info);
+--static void nl80211_post_doit(const struct genl_ops *ops, struct sk_buff *skb,
+-+static void nl80211_post_doit(__genl_const struct genl_ops *ops, struct sk_buff *skb,
+- 			      struct genl_info *info);
+- 
+- /* the netlink family */
+-@@ -58,7 +58,7 @@ enum nl80211_multicast_groups {
+- 	NL80211_MCGRP_TESTMODE /* keep last - ifdef! */
+- };
+- 
+--static const struct genl_multicast_group nl80211_mcgrps[] = {
+-+static __genl_const struct genl_multicast_group nl80211_mcgrps[] = {
+- 	[NL80211_MCGRP_CONFIG] = { .name = NL80211_MULTICAST_GROUP_CONFIG },
+- 	[NL80211_MCGRP_SCAN] = { .name = NL80211_MULTICAST_GROUP_SCAN },
+- 	[NL80211_MCGRP_REGULATORY] = { .name = NL80211_MULTICAST_GROUP_REG },
+-@@ -10168,7 +10168,7 @@ static int nl80211_tdls_cancel_channel_s
+- 					 NL80211_FLAG_CHECK_NETDEV_UP)
+- #define NL80211_FLAG_CLEAR_SKB		0x20
+- 
+--static int nl80211_pre_doit(const struct genl_ops *ops, struct sk_buff *skb,
+-+static int nl80211_pre_doit(__genl_const struct genl_ops *ops, struct sk_buff *skb,
+- 			    struct genl_info *info)
 - {
-- 	struct hwmon_buff *igb_hwmon;
-- 	struct i2c_client *client;
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
-- 	struct device *hwmon_dev;
--+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0) */
-- 	unsigned int i;
-- 	int rc = 0;
--
--@@ -230,6 +232,7 @@ int igb_sysfs_init(struct igb_adapter *a
-- 	igb_hwmon->groups[0] = &igb_hwmon->group;
-- 	igb_hwmon->group.attrs = igb_hwmon->attrs;
--
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
-- 	hwmon_dev = devm_hwmon_device_register_with_groups(&adapter->pdev->dev,
-- 							   client->name,
-- 							   igb_hwmon,
--@@ -242,6 +245,7 @@ int igb_sysfs_init(struct igb_adapter *a
-- 	goto exit;
--
-- err:
--+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0) */
-- 	igb_sysfs_del_adapter(adapter);
-- exit:
-- 	return rc;
+- 	struct cfg80211_registered_device *rdev;
+-@@ -10237,7 +10237,7 @@ static int nl80211_pre_doit(const struct
+- 	return 0;
+- }
+- 
+--static void nl80211_post_doit(const struct genl_ops *ops, struct sk_buff *skb,
+-+static void nl80211_post_doit(__genl_const struct genl_ops *ops, struct sk_buff *skb,
+- 			      struct genl_info *info)
+- {
+- 	if (info->user_ptr[1]) {
+-@@ -10266,7 +10266,7 @@ static void nl80211_post_doit(const stru
+- 	}
+- }
+- 
+--static const struct genl_ops nl80211_ops[] = {
+-+static __genl_const struct genl_ops nl80211_ops[] = {
+- 	{
+- 		.cmd = NL80211_CMD_GET_WIPHY,
+- 		.doit = nl80211_get_wiphy,
 -- 
-2.1.0
+2.1.4
 
