@@ -1,42 +1,33 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:39191 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751923AbbDCRY0 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 3 Apr 2015 13:24:26 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 05/11] dependencies: deactivate NFC_PN544_I2C
-Date: Fri,  3 Apr 2015 19:15:36 +0200
-Message-Id: <1428081342-5933-6-git-send-email-hauke@hauke-m.de> (sfid-20150403_192431_072004_50C0A288)
-In-Reply-To: <1428081342-5933-1-git-send-email-hauke@hauke-m.de>
-References: <1428081342-5933-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-ig0-f172.google.com ([209.85.213.172]:35318 "EHLO
+	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754460AbbDQSDn (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 17 Apr 2015 14:03:43 -0400
+Received: by igbyr2 with SMTP id yr2so18246400igb.0
+        for <backports@vger.kernel.org>; Fri, 17 Apr 2015 11:03:42 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1429291720.1885.5.camel@sipsolutions.net>
+References: <20150417133004.GC16380@vorel-pc> <5531314D.1000706@lwfinger.net> <1429291720.1885.5.camel@sipsolutions.net>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Fri, 17 Apr 2015 11:03:22 -0700
+Message-ID: <CAB=NE6X=-PQR3=uxmHZL+Jf8muX6QmmTjKkBnKXUWDk1Bkeccw@mail.gmail.com> (sfid-20150417_200345_537662_DA1414AC)
+Subject: Re: Possible to build-in backports modules into kernel
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>,
+	Petr Vorel <petr.vorel@gmail.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-drivers/nfc/pn544/i2c.c includes linux/gpio/consumer.h since commit
-0a5942c8, which we can not backport. Deactivate this driver on affected
-kernel versions for now.
+On Fri, Apr 17, 2015 at 10:28 AM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> Technically this is not true any more - the backports gentree.py script
+> now supports kernel integration where it copies the backport into
+> another kernel tree :)
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- dependencies | 3 +++
- 1 file changed, 3 insertions(+)
+Indeed:
 
-diff --git a/dependencies b/dependencies
-index 9f7166c..c5d8084 100644
---- a/dependencies
-+++ b/dependencies
-@@ -111,6 +111,9 @@ INTEL_IPS 3.2
- 
- NFC_MEI_PHY 3.10
- 
-+# missing linux/gpio/consumer.h
-+NFC_PN544_I2C 3.13
-+
- # can not backport ieee802154_ptr in struct net_device wich was added in
- # 98a18b6ffc7 "netdevice: add ieee802154_ptr to net_device"
- IEEE802154 3.19
--- 
-1.9.1
+https://backports.wiki.kernel.org/index.php/Documentation/integration
 
+ Luis
