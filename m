@@ -1,45 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.sablalik.us ([74.111.177.26]:62207 "EHLO mail.sablalik.us"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750766AbbD3NRr convert rfc822-to-8bit (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 30 Apr 2015 09:17:47 -0400
-Date: Thu, 30 Apr 2015 09:17:42 -0400
-Subject: Re: trouble building ath10k on newer versions
-From: Peter Sabat <pete@sablalik.us>
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: <backports@vger.kernel.org>
-Message-ID: <D167A39A.1821B0%pete@sablalik.us> (sfid-20150430_151749_353557_F62F38D6)
-References: <D166E367.18190A%pete@sablalik.us>
- <1430377731.1963.0.camel@sipsolutions.net>
-In-Reply-To: <1430377731.1963.0.camel@sipsolutions.net>
-Mime-version: 1.0
-Content-type: text/plain;
-	charset="EUC-KR"
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:35902 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932410AbbDQQOJ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 17 Apr 2015 12:14:09 -0400
+Received: by oift201 with SMTP id t201so80883137oif.3
+        for <backports@vger.kernel.org>; Fri, 17 Apr 2015 09:14:08 -0700 (PDT)
+Message-ID: <5531314D.1000706@lwfinger.net> (sfid-20150417_181411_559997_6D84A8C0)
+Date: Fri, 17 Apr 2015 11:14:05 -0500
+From: Larry Finger <Larry.Finger@lwfinger.net>
+MIME-Version: 1.0
+To: Petr Vorel <petr.vorel@gmail.com>, backports@vger.kernel.org
+Subject: Re: Possible to build-in backports modules into kernel
+References: <20150417133004.GC16380@vorel-pc>
+In-Reply-To: <20150417133004.GC16380@vorel-pc>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-That would explain it.  ;-)
-
-Cheers
-
-On 4/30/15, 3:08 AM, "Johannes Berg" <johannes@sipsolutions.net> wrote:
-
->On Wed, 2015-04-29 at 19:37 -0400, Peter Sabat wrote:
->> Just wondering if something has changed since backports-20150129 that
->> would only allow compat and cfg80211 build ?
->> 
->> I noticed that mac80211 isn©öt in the menuconfig now, but the build
->>worked
->> fine before.
->> 
->> 
->> 
->> I do have CONFIG_CRYPTO_CCM in my kernel config :
+On 04/17/2015 08:30 AM, Petr Vorel wrote:
+> Hi there,
 >
->You also need _GCM now.
->
->johannes
->
+> is it possible to build-in to backports modules into kernel (link them into kernel, not
+> build them as separate modules).
 
+It is possible to build most drivers into the kernel, but it must be done when 
+the kernel is compiled and linked. Once the kernel is built, you can only build 
+new drivers as modules.
+
+The short answer is no for the backports code. If you want them built-in, grab 
+the mainline 4.0 or 3.19.4 source, configure, and build a complete new kernel.
+
+Larry
 
 
