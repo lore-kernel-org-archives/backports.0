@@ -1,48 +1,32 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:52580 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:42547 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751085AbbD3RKZ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 30 Apr 2015 13:10:25 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@kernel.org
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/2] rel-html: update backports versions
-Date: Thu, 30 Apr 2015 19:10:14 +0200
-Message-Id: <1430413814-4817-2-git-send-email-hauke@hauke-m.de> (sfid-20150430_191027_504052_BC337E43)
-In-Reply-To: <1430413814-4817-1-git-send-email-hauke@hauke-m.de>
-References: <1430413814-4817-1-git-send-email-hauke@hauke-m.de>
+	id S1752264AbbDUGQy (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 21 Apr 2015 02:16:54 -0400
+Message-ID: <1429597009.2045.0.camel@sipsolutions.net> (sfid-20150421_081657_290311_9CA38DBB)
+Subject: Re: [PATCH 10/10] backports: require coccinelle version 1.0.0-rc24
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: Stefan Assmann <sassmann@kpanic.de>, backports@vger.kernel.org,
+	mcgrof@do-not-panic.com
+Date: Tue, 21 Apr 2015 08:16:49 +0200
+In-Reply-To: <55356F36.9070408@hauke-m.de>
+References: <1424874054-22956-1-git-send-email-sassmann@kpanic.de>
+	 <1424874054-22956-11-git-send-email-sassmann@kpanic.de>
+	 <55356F36.9070408@hauke-m.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This adds version 4.0 and 4.1 to the list of stable versions and adds
-the 2015 next versions.
+On Mon, 2015-04-20 at 23:27 +0200, Hauke Mehrtens wrote:
+> On 02/25/2015 03:20 PM, Stefan Assmann wrote:
+> > The new more generic ethernet patches require spatch 1.0.0-rc24.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- projects/backports.cfg | 3 +++
- 1 file changed, 3 insertions(+)
+> do you need coccinelle 1.0.0-rc24 or would rc23 also work? Johannes
+> added a patch raising minimum coccinelle to rc23.
 
-diff --git a/projects/backports.cfg b/projects/backports.cfg
-index d1406ba..97f5a98 100644
---- a/projects/backports.cfg
-+++ b/projects/backports.cfg
-@@ -2,6 +2,8 @@
- rel_html_proj		= backports
- rel_html_proj_aliases	= compat-drivers
- supported =
-+	4.1
-+	4.0
- 	3.19
- 	3.18
- 	3.17
-@@ -14,6 +16,7 @@ supported =
- rel_html_url_releases	= http://www.kernel.org/pub/linux/kernel/projects/backports/stable/
- 			  http://www.kernel.org/pub/linux/kernel/projects/backports/2013/
- 			  http://www.kernel.org/pub/linux/kernel/projects/backports/2014/
-+			  http://www.kernel.org/pub/linux/kernel/projects/backports/2015/
- rel_license 		= GPLv2
- ignore_changelogs	= True
- 
--- 
-1.9.1
+I believe his changes do require rc24.
+
+johannes
 
