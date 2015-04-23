@@ -1,65 +1,73 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:40008 "EHLO hauke-m.de"
+Received: from mx1.redhat.com ([209.132.183.28]:48455 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752588AbbDEWNc (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 5 Apr 2015 18:13:32 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
+	id S933900AbbDWLe1 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 23 Apr 2015 07:34:27 -0400
+From: Stefan Assmann <sassmann@kpanic.de>
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 5/7] backports: add Atmel at76c50x PCI and PCMCIA driver
-Date: Mon,  6 Apr 2015 00:13:18 +0200
-Message-Id: <1428272000-19929-6-git-send-email-hauke@hauke-m.de> (sfid-20150406_001338_103219_0E4E6421)
-In-Reply-To: <1428272000-19929-1-git-send-email-hauke@hauke-m.de>
-References: <1428272000-19929-1-git-send-email-hauke@hauke-m.de>
+Cc: mcgrof@do-not-panic.com, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH 1/4] backports: handle ndo_gso_check() to ndo_features_check() changes
+Date: Thu, 23 Apr 2015 13:33:42 +0200
+Message-Id: <1429788825-18466-2-git-send-email-sassmann@kpanic.de> (sfid-20150423_133429_138894_3B1C14E6)
+In-Reply-To: <1429788825-18466-1-git-send-email-sassmann@kpanic.de>
+References: <1429788825-18466-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This wifi driver was missing before.
-This driver uses the cfg80211 so we should ship it.
+In kernel 3.19 function pointer ndo_gso_check is changed into
+ndo_features_check in struct net_device_ops.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
 ---
- backport/defconfigs/wifi | 3 +++
- copy-list                | 4 ++++
- 2 files changed, 7 insertions(+)
+ .../network/0056-ndo_features_check/INFO              | 12 ++++++++++++
+ .../0056-ndo_features_check/features_check.cocci      | 19 +++++++++++++++++++
+ 2 files changed, 31 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0056-ndo_features_check/INFO
+ create mode 100644 patches/collateral-evolutions/network/0056-ndo_features_check/features_check.cocci
 
-diff --git a/backport/defconfigs/wifi b/backport/defconfigs/wifi
-index 7e79612..e329440 100644
---- a/backport/defconfigs/wifi
-+++ b/backport/defconfigs/wifi
-@@ -12,6 +12,7 @@ CPTCFG_ATH6KL_USB=m
- CPTCFG_ATH9K_HTC=m
- CPTCFG_ATH9K=m
- CPTCFG_ATH_CARDS=m
-+CPTCFG_ATMEL=m
- CPTCFG_B43LEGACY=m
- CPTCFG_B43=m
- CPTCFG_B43_PCMCIA=y
-@@ -68,7 +69,9 @@ CPTCFG_P54_COMMON=m
- CPTCFG_P54_PCI=m
- CPTCFG_P54_SPI=m
- CPTCFG_P54_USB=m
-+CPTCFG_PCI_ATMEL=m
- CPTCFG_PCI_HERMES=m
-+CPTCFG_PCMCIA_ATMEL=m
- CPTCFG_PCMCIA_HERMES=m
- CPTCFG_PCMCIA_SPECTRUM=m
- CPTCFG_PLX_HERMES=m
-diff --git a/copy-list b/copy-list
-index 7c01a43..3c94979 100644
---- a/copy-list
-+++ b/copy-list
-@@ -57,6 +57,10 @@ include/linux/bcma/
- drivers/net/wireless/airo.c
- drivers/net/wireless/airo_cs.c
- drivers/net/wireless/airo.h
-+drivers/net/wireless/atmel.c
-+drivers/net/wireless/atmel_cs.c
-+drivers/net/wireless/atmel.h
-+drivers/net/wireless/atmel_pci.c
- drivers/net/wireless/b43/
- drivers/net/wireless/b43legacy/
- drivers/net/wireless/brcm80211/
+diff --git a/patches/collateral-evolutions/network/0056-ndo_features_check/INFO b/patches/collateral-evolutions/network/0056-ndo_features_check/INFO
+new file mode 100644
+index 0000000..c3f7a92
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0056-ndo_features_check/INFO
+@@ -0,0 +1,12 @@
++In kernel 3.19 function pointer ndo_gso_check is changed into
++ndo_features_check in struct net_device_ops.
++Address this by putting ifdef around the code.
++
++commit 5f35227ea34bb616c436d9da47fc325866c428f3
++Author: Jesse Gross <jesse@nicira.com>
++Date:   Tue Dec 23 22:37:26 2014 -0800
++
++    net: Generalize ndo_gso_check to ndo_features_check
++
++git describe --contains 5f35227ea34bb616c436d9da47fc325866c428f3
++v3.19-rc3~16^2~7
+diff --git a/patches/collateral-evolutions/network/0056-ndo_features_check/features_check.cocci b/patches/collateral-evolutions/network/0056-ndo_features_check/features_check.cocci
+new file mode 100644
+index 0000000..7956e5c
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0056-ndo_features_check/features_check.cocci
+@@ -0,0 +1,19 @@
++@r1@
++identifier s, func;
++@@
++
++struct net_device_ops s = {
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,19,0)
++.ndo_features_check = func,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,19,0) */
++};
++
++// ----------------------------------------------------------------------
++
++@r2@
++identifier r1.func;
++@@
++
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,19,0)
++func(...) { ... }
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,19,0) */
 -- 
-1.9.1
+2.1.0
 
