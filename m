@@ -1,36 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:39425 "EHLO hauke-m.de"
+Received: from mx1.redhat.com ([209.132.183.28]:39014 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751430AbbDCVeV (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 3 Apr 2015 17:34:21 -0400
-Message-ID: <551F075A.4050900@hauke-m.de> (sfid-20150403_233423_488430_BE1794B6)
-Date: Fri, 03 Apr 2015 23:34:18 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Mathieu Olivari <mathieu@qca.qualcomm.com>, mcgrof@kernel.org
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH] headers: support pre-3.9 (5-args) hashtable macros
-References: <1427418083-7987-1-git-send-email-mathieu@qca.qualcomm.com>
-In-Reply-To: <1427418083-7987-1-git-send-email-mathieu@qca.qualcomm.com>
-Content-Type: text/plain; charset=windows-1252
+	id S933975AbbDWLe7 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 23 Apr 2015 07:34:59 -0400
+From: Stefan Assmann <sassmann@kpanic.de>
+To: backports@vger.kernel.org
+Cc: mcgrof@do-not-panic.com, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH 0/4] backports: deal with timespec64 changes
+Date: Thu, 23 Apr 2015 13:33:41 +0200
+Message-Id: <1429788825-18466-1-git-send-email-sassmann@kpanic.de> (sfid-20150423_133500_494621_7677B177)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 03/27/2015 02:01 AM, Mathieu Olivari wrote:
-> Last ath10k makes use of hash tables, which changed in the upstream
-> commit:
->  * commit 0bbacca7c3911451cea923b0ad6389d58e3d9ce9
->  * Author: Sasha Levin <sasha.levin@oracle.com>
->  * Date:   Thu Feb 7 12:32:18 2013 +1100
->  *
->  *     hlist: drop the node parameter from iterators
-> 
-> The list portion of this commit has already been backported, but the
-> hashtable part has not. So this change evens it up. It fixes a build
-> issue when selecting ath10k on a kernel before 3.9
-> 
-> Signed-off-by: Mathieu Olivari <mathieu@qca.qualcomm.com>
+This series adds cocci patches to deal with struct timespec64 changes
+and also has several other bits to get igb working again. Patches have
+been tested against next-20150402.
 
-Thank you for the patch it was applied to backports.
+The struct timespec64 patches are not perfect, but they should get us
+started. There are still some warnings, which we can fix along the way.
 
-Hauke
+Stefan Assmann (4):
+  backports: handle ndo_gso_check() to ndo_features_check() changes
+  backports: add passthru_features_check()
+  backports: deal with struct timespec64 changes
+  backports: deal with struct struct ptp_clock_info get/settime64
+    changes
+
+ backport/backport-include/linux/netdevice.h        |  6 ++
+ backport/compat/Makefile                           |  1 +
+ backport/compat/backport-4.1.c                     | 19 +++++
+ .../network/0056-ndo_features_check/INFO           | 12 ++++
+ .../0056-ndo_features_check/features_check.cocci   | 19 +++++
+ .../network/0057-timespec64/INFO                   | 11 +++
+ .../network/0057-timespec64/igb.patch              | 16 +++++
+ .../network/0057-timespec64/timespec64.cocci       | 83 ++++++++++++++++++++++
+ .../network/0058-ptp_getsettime64/INFO             | 11 +++
+ .../0058-ptp_getsettime64/ptp_getsettime64.cocci   | 33 +++++++++
+ 10 files changed, 211 insertions(+)
+ create mode 100644 backport/compat/backport-4.1.c
+ create mode 100644 patches/collateral-evolutions/network/0056-ndo_features_check/INFO
+ create mode 100644 patches/collateral-evolutions/network/0056-ndo_features_check/features_check.cocci
+ create mode 100644 patches/collateral-evolutions/network/0057-timespec64/INFO
+ create mode 100644 patches/collateral-evolutions/network/0057-timespec64/igb.patch
+ create mode 100644 patches/collateral-evolutions/network/0057-timespec64/timespec64.cocci
+ create mode 100644 patches/collateral-evolutions/network/0058-ptp_getsettime64/INFO
+ create mode 100644 patches/collateral-evolutions/network/0058-ptp_getsettime64/ptp_getsettime64.cocci
+
+-- 
+2.1.0
+
