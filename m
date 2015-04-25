@@ -1,30 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:48074 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:49626 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752647AbbDQR2o (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 17 Apr 2015 13:28:44 -0400
-Message-ID: <1429291720.1885.5.camel@sipsolutions.net> (sfid-20150417_192845_996116_0E63EA54)
-Subject: Re: Possible to build-in backports modules into kernel
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Petr Vorel <petr.vorel@gmail.com>, backports@vger.kernel.org
-Date: Fri, 17 Apr 2015 19:28:40 +0200
-In-Reply-To: <5531314D.1000706@lwfinger.net> (sfid-20150417_181411_559997_6D84A8C0)
-References: <20150417133004.GC16380@vorel-pc>
-	 <5531314D.1000706@lwfinger.net> (sfid-20150417_181411_559997_6D84A8C0)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+	id S1751975AbbDYNvV (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 25 Apr 2015 09:51:21 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 5/9] header: add module_pnp_driver()
+Date: Sat, 25 Apr 2015 15:51:00 +0200
+Message-Id: <1429969864-16831-6-git-send-email-hauke@hauke-m.de> (sfid-20150425_155126_211563_04247480)
+In-Reply-To: <1429969864-16831-1-git-send-email-hauke@hauke-m.de>
+References: <1429969864-16831-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2015-04-17 at 11:14 -0500, Larry Finger wrote:
+This macro is used by some media drivers and was added to the kernel in
+commit 95c0fd457.
 
-> The short answer is no for the backports code. If you want them built-in, grab 
-> the mainline 4.0 or 3.19.4 source, configure, and build a complete new kernel.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/pnp.h | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+ create mode 100644 backport/backport-include/linux/pnp.h
 
-Technically this is not true any more - the backports gentree.py script
-now supports kernel integration where it copies the backport into
-another kernel tree :)
-
-johannes
+diff --git a/backport/backport-include/linux/pnp.h b/backport/backport-include/linux/pnp.h
+new file mode 100644
+index 0000000..0a88455
+--- /dev/null
++++ b/backport/backport-include/linux/pnp.h
+@@ -0,0 +1,19 @@
++#ifndef __BACKPORT_LINUX_PNP_H
++#define __BACKPORT_LINUX_PNP_H
++#include_next <linux/pnp.h>
++
++#ifndef module_pnp_driver
++/**
++ * module_pnp_driver() - Helper macro for registering a PnP driver
++ * @__pnp_driver: pnp_driver struct
++ *
++ * Helper macro for PnP drivers which do not do anything special in module
++ * init/exit. This eliminates a lot of boilerplate. Each module may only
++ * use this macro once, and calling it replaces module_init() and module_exit()
++ */
++#define module_pnp_driver(__pnp_driver) \
++	module_driver(__pnp_driver, pnp_register_driver, \
++				    pnp_unregister_driver)
++#endif
++
++#endif /* __BACKPORT_LINUX_PNP_H */
+-- 
+1.9.1
 
