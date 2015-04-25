@@ -1,38 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:49625 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:49655 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751975AbbDYNvW (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 25 Apr 2015 09:51:22 -0400
+	id S1751586AbbDYODS (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 25 Apr 2015 10:03:18 -0400
+Message-ID: <553B9EA4.8000101@hauke-m.de> (sfid-20150425_160319_704268_DB66F947)
+Date: Sat, 25 Apr 2015 16:03:16 +0200
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 7/9] header: add LINUX_BACKPORT() macro to reinit_completion()
-Date: Sat, 25 Apr 2015 15:51:02 +0200
-Message-Id: <1429969864-16831-8-git-send-email-hauke@hauke-m.de> (sfid-20150425_155127_785903_5245E967)
-In-Reply-To: <1429969864-16831-1-git-send-email-hauke@hauke-m.de>
-References: <1429969864-16831-1-git-send-email-hauke@hauke-m.de>
+MIME-Version: 1.0
+To: Johannes Berg <johannes@sipsolutions.net>,
+	backports@vger.kernel.org
+CC: Johannes Berg <johannes.berg@intel.com>
+Subject: Re: [PATCH 5/5] backports: backport kvfree
+References: <1427902299-24079-1-git-send-email-johannes@sipsolutions.net> <1427902299-24079-5-git-send-email-johannes@sipsolutions.net> <551F08FB.2060600@hauke-m.de>
+In-Reply-To: <551F08FB.2060600@hauke-m.de>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This fixes compalation on RHEL 7.1
+On 04/03/2015 11:41 PM, Hauke Mehrtens wrote:
+> On 04/01/2015 05:31 PM, Johannes Berg wrote:
+>> From: Johannes Berg <johannes.berg@intel.com>
+>>
+>> This has been in the kernel for a long time, but wasn't
+>> used by anyone. Now it's used by rhashtable, so add it.
+>>
+>> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+>> ---
+>>  backport/backport-include/linux/mm.h |  5 +++++
+>>  backport/compat/backport-3.15.c      | 11 +++++++++++
+>>  2 files changed, 16 insertions(+)
+>>
+> 
+> Thank you for the patches. I applied the patch 3, 4 and 5, the other
+> patches will be applied for the next version.
+> 
+> Hauke
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/completion.h | 1 +
- 1 file changed, 1 insertion(+)
+Thank you for the patches, I now also applied and pushed the remaining
+patches.
 
-diff --git a/backport/backport-include/linux/completion.h b/backport/backport-include/linux/completion.h
-index 399430d..477530d 100644
---- a/backport/backport-include/linux/completion.h
-+++ b/backport/backport-include/linux/completion.h
-@@ -11,6 +11,7 @@
-  * This inline function should be used to reinitialize a completion structure so it can
-  * be reused. This is especially important after complete_all() is used.
-  */
-+#define reinit_completion LINUX_BACKPORT(reinit_completion)
- static inline void reinit_completion(struct completion *x)
- {
- 	x->done = 0;
--- 
-1.9.1
-
+Hauke
