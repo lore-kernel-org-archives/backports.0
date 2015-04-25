@@ -1,34 +1,65 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:51923 "EHLO mail.kernel.org"
+Received: from hauke-m.de ([5.39.93.123]:49638 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753404AbbDMJ0y (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 13 Apr 2015 05:26:54 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 046F2201BB
-	for <backports@vger.kernel.org>; Mon, 13 Apr 2015 09:26:53 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 2C2D1201CE
-	for <backports@vger.kernel.org>; Mon, 13 Apr 2015 09:26:50 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 96581] A kernel built from >gentoo-sources-3.10.63, not starts.
- The  kernel 3.10.63 works fine. sys-kernel/gentoo-sources-3.10.73 - ?
-Date: Mon, 13 Apr 2015 09:26:49 +0000
-Message-ID: <bug-96581-58281-5q9A53M6RX@https.bugzilla.kernel.org/> (sfid-20150413_112656_505468_5D6E1195)
-In-Reply-To: <bug-96581-58281@https.bugzilla.kernel.org/>
-References: <bug-96581-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
+	id S1751007AbbDYOAc (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 25 Apr 2015 10:00:32 -0400
+Message-ID: <553B9DFA.5010308@hauke-m.de> (sfid-20150425_160034_319557_C5A25262)
+Date: Sat, 25 Apr 2015 16:00:26 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
+To: Stefan Assmann <sassmann@kpanic.de>, backports@vger.kernel.org
+CC: mcgrof@do-not-panic.com
+Subject: Re: [PATCH 0/4] backports: deal with timespec64 changes
+References: <1429788825-18466-1-git-send-email-sassmann@kpanic.de>
+In-Reply-To: <1429788825-18466-1-git-send-email-sassmann@kpanic.de>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=96581
+On 04/23/2015 01:33 PM, Stefan Assmann wrote:
+> This series adds cocci patches to deal with struct timespec64 changes
+> and also has several other bits to get igb working again. Patches have
+> been tested against next-20150402.
+> 
+> The struct timespec64 patches are not perfect, but they should get us
+> started. There are still some warnings, which we can fix along the way.
+> 
+> Stefan Assmann (4):
+>   backports: handle ndo_gso_check() to ndo_features_check() changes
+>   backports: add passthru_features_check()
+>   backports: deal with struct timespec64 changes
+>   backports: deal with struct struct ptp_clock_info get/settime64
+>     changes
+> 
+>  backport/backport-include/linux/netdevice.h        |  6 ++
+>  backport/compat/Makefile                           |  1 +
+>  backport/compat/backport-4.1.c                     | 19 +++++
+>  .../network/0056-ndo_features_check/INFO           | 12 ++++
+>  .../0056-ndo_features_check/features_check.cocci   | 19 +++++
+>  .../network/0057-timespec64/INFO                   | 11 +++
+>  .../network/0057-timespec64/igb.patch              | 16 +++++
+>  .../network/0057-timespec64/timespec64.cocci       | 83 ++++++++++++++++++++++
+>  .../network/0058-ptp_getsettime64/INFO             | 11 +++
+>  .../0058-ptp_getsettime64/ptp_getsettime64.cocci   | 33 +++++++++
+>  10 files changed, 211 insertions(+)
+>  create mode 100644 backport/compat/backport-4.1.c
+>  create mode 100644 patches/collateral-evolutions/network/0056-ndo_features_check/INFO
+>  create mode 100644 patches/collateral-evolutions/network/0056-ndo_features_check/features_check.cocci
+>  create mode 100644 patches/collateral-evolutions/network/0057-timespec64/INFO
+>  create mode 100644 patches/collateral-evolutions/network/0057-timespec64/igb.patch
+>  create mode 100644 patches/collateral-evolutions/network/0057-timespec64/timespec64.cocci
+>  create mode 100644 patches/collateral-evolutions/network/0058-ptp_getsettime64/INFO
+>  create mode 100644 patches/collateral-evolutions/network/0058-ptp_getsettime64/ptp_getsettime64.cocci
+> 
+Thank you for the patches, I applied and pushed them.
 
---- Comment #1 from Yuriy <strangers495@ymail.com> ---
-Created attachment 173871
-  --> https://bugzilla.kernel.org/attachment.cgi?id=173871&action=edit
-Output command lspci -k
+In the patch "backports: add passthru_features_check()" I change the
+EXPORT_SYMBOL() to a EXPORT_SYMBOL_GPL().
 
--- 
-You are receiving this mail because:
-You are the assignee for the bug.
+In "backports: deal with struct timespec64 changes" v2 I moved the
+defines into the header files with the same name as where they are
+defined in the kernel. If later some code is including time64.h directly
+this will now work. In addition I removed some ktime_* defines, because
+they are already in all supported kernel versions.
+
+Hauke
