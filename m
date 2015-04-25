@@ -1,45 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:49660 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:49627 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759465AbbDYOFH (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 25 Apr 2015 10:05:07 -0400
-Message-ID: <553B9F11.9090104@hauke-m.de> (sfid-20150425_160509_824245_04F4B144)
-Date: Sat, 25 Apr 2015 16:05:05 +0200
+	id S1756627AbbDYNvV (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 25 Apr 2015 09:51:21 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>,
-	backports@vger.kernel.org
-CC: Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH] backports: update cfg80211 wext Kconfig disable patch
-References: <1425283335-4079-1-git-send-email-johannes@sipsolutions.net>
-In-Reply-To: <1425283335-4079-1-git-send-email-johannes@sipsolutions.net>
-Content-Type: text/plain; charset=windows-1252
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 6/9] header: lockdep_assert_held is already in kernel 3.0
+Date: Sat, 25 Apr 2015 15:51:01 +0200
+Message-Id: <1429969864-16831-7-git-send-email-hauke@hauke-m.de> (sfid-20150425_155127_219176_9750A704)
+In-Reply-To: <1429969864-16831-1-git-send-email-hauke@hauke-m.de>
+References: <1429969864-16831-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 03/02/2015 09:02 AM, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
-> 
-> The context change, update the patch.
-> 
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> ---
->  patches/collateral-evolutions/network/0004-disable-wext-kconfig.patch | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/patches/collateral-evolutions/network/0004-disable-wext-kconfig.patch b/patches/collateral-evolutions/network/0004-disable-wext-kconfig.patch
-> index a6b09b39c3b4..658f2d81dcc3 100644
-> --- a/patches/collateral-evolutions/network/0004-disable-wext-kconfig.patch
-> +++ b/patches/collateral-evolutions/network/0004-disable-wext-kconfig.patch
-> @@ -31,6 +31,6 @@ so remove the Kconfig options for them.
->   	depends on CFG80211
->  -	select WEXT_CORE
->  +	depends on WEXT_CORE
-> + 	default y if CFG80211_WEXT_EXPORT
->   	help
->   	  Enable this option if you need old userspace for wireless
-> - 	  extensions with cfg80211-based drivers.
-> 
-Thank you for the patch, it was applied and pushed out.
+This backport is not needed because it is already provided by all
+supported kernel versions.
 
-Hauke
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/lockdep.h | 10 ----------
+ 1 file changed, 10 deletions(-)
+ delete mode 100644 backport/backport-include/linux/lockdep.h
+
+diff --git a/backport/backport-include/linux/lockdep.h b/backport/backport-include/linux/lockdep.h
+deleted file mode 100644
+index 1d4aa65..0000000
+--- a/backport/backport-include/linux/lockdep.h
++++ /dev/null
+@@ -1,10 +0,0 @@
+-#ifndef __BACKPORT_LINUX_LOCKDEP_H
+-#define __BACKPORT_LINUX_LOCKDEP_H
+-#include_next <linux/lockdep.h>
+-#include <linux/version.h>
+-
+-#ifndef lockdep_assert_held
+-#define lockdep_assert_held(l)			do { } while (0)
+-#endif
+-
+-#endif /* __BACKPORT_LINUX_LOCKDEP_H */
+-- 
+1.9.1
+
