@@ -1,57 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:51855 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753243AbbDMJZR (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 13 Apr 2015 05:25:17 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id AD54220149
-	for <backports@vger.kernel.org>; Mon, 13 Apr 2015 09:25:16 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 09E8920173
-	for <backports@vger.kernel.org>; Mon, 13 Apr 2015 09:25:15 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 96581] New: A kernel built from >gentoo-sources-3.10.63, not
- starts. The  kernel 3.10.63 works fine. sys-kernel/gentoo-sources-3.10.73 - ?
-Date: Mon, 13 Apr 2015 09:25:14 +0000
-Message-ID: <bug-96581-58281@https.bugzilla.kernel.org/> (sfid-20150413_112520_542122_2BF8A600)
-Content-Type: text/plain; charset="UTF-8"
+Received: from mail-wi0-f173.google.com ([209.85.212.173]:35913 "EHLO
+	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933020AbbD0X46 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 27 Apr 2015 19:56:58 -0400
+Received: by wizk4 with SMTP id k4so119129852wiz.1
+        for <backports@vger.kernel.org>; Mon, 27 Apr 2015 16:56:56 -0700 (PDT)
+Message-ID: <553ECCC6.2060604@gmail.com> (sfid-20150428_015701_951543_96E0A665)
+Date: Tue, 28 Apr 2015 01:56:54 +0200
+From: Mathy Vanhoef <vanhoefm@gmail.com>
 MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: backports@vger.kernel.org
+Subject: [PATCH] backports: fix high RC version parsing in dependency library
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=96581
+This updates the dependency library to handle RC versions up to 39. For
+example, coccinelle version "1.0.0" is now correctly treated as being higher
+than version "1.0.0-rc24".
 
-            Bug ID: 96581
-           Summary: A kernel built from >gentoo-sources-3.10.63, not
-                    starts. The  kernel 3.10.63 works fine.
-                    sys-kernel/gentoo-sources-3.10.73 - ?
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: >3.10.63
-          Hardware: All
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: Backports
-          Assignee: backports@vger.kernel.org
-          Reporter: strangers495@ymail.com
-                CC: other_other@kernel-bugs.osdl.org
-        Regression: No
+Signed-off-by: Mathy Vanhoef <vanhoefm@gmail.com>
+---
+ lib/bpreqs.py |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Created attachment 173861
-  --> https://bugzilla.kernel.org/attachment.cgi?id=173861&action=edit
-Kernel .config
-
-All kernels built from the stable branch of gentoo-sources version of the above
-3.10.63 when booting stops on the first step when determining the type of
-processor. Kernel version 3.10.63 is operating normally, the kernel parameters
-were not changed. This is a repeated message (
-https://bugs.gentoo.org/show_bug.cgi?id=539846) after a complete system
-upgrade.
-
+diff --git a/lib/bpreqs.py b/lib/bpreqs.py
+index 6c46670..4399c6d 100644
+--- a/lib/bpreqs.py
++++ b/lib/bpreqs.py
+@@ -98,7 +98,7 @@ class Req:
+                 if (rc == ""):
+                     rc = 0
+                 else:
+-                    rc = int(rc) - 20
++                    rc = int(rc) - 40
+                 extra = int(rc)
+             else:
+                 extra = int(rel_specs['EXTRAVERSION']) + 10
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+1.7.10.4
+
