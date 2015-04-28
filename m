@@ -1,178 +1,65 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:48907 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758297AbbDWUKM (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 23 Apr 2015 16:10:12 -0400
-Message-ID: <553951A1.3070108@hauke-m.de> (sfid-20150423_221014_619654_B75AF04F)
-Date: Thu, 23 Apr 2015 22:10:09 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:33283 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932657AbbD1K0z (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 28 Apr 2015 06:26:55 -0400
+Received: by pacwv17 with SMTP id wv17so138424071pac.0
+        for <backports@vger.kernel.org>; Tue, 28 Apr 2015 03:26:55 -0700 (PDT)
 MIME-Version: 1.0
-To: Stefan Assmann <sassmann@kpanic.de>, backports@vger.kernel.org
-CC: mcgrof@do-not-panic.com
-Subject: Re: [PATCH 3/4] backports: deal with struct timespec64 changes
-References: <1429788825-18466-1-git-send-email-sassmann@kpanic.de> <1429788825-18466-4-git-send-email-sassmann@kpanic.de>
-In-Reply-To: <1429788825-18466-4-git-send-email-sassmann@kpanic.de>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <553F4460.8000505@broadcom.com>
+References: <553ECCC6.2060604@gmail.com> <553F4460.8000505@broadcom.com>
+From: Mathy Vanhoef <vanhoefm@gmail.com>
+Date: Tue, 28 Apr 2015 12:26:34 +0200
+Message-ID: <CAFXAJYzqao1QJc46XmdSohW=7ROo2DXWFT6DBDVmUd=wS+1dPQ@mail.gmail.com> (sfid-20150428_122657_777692_71C2E47A)
+Subject: Re: [PATCH] backports: fix high RC version parsing in dependency library
+To: Arend van Spriel <arend@broadcom.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 04/23/2015 01:33 PM, Stefan Assmann wrote:
-> igb now makes use of struct timespec64. Deal with the required
-> changes via cocci patches where possible. There's one occasion
-> where coccinelle is not able to deal with defining a struct and
-> assigning another struct on the same line.
-> Example:
-> struct timespec64 now, then = ns_to_timespec64(delta);
-> Deal with this in a separate patch for now.
+On Tue, Apr 28, 2015 at 10:27 AM, Arend van Spriel <arend@broadcom.com> wrote:
+> On 04/28/15 01:56, Mathy Vanhoef wrote:
+>>
+>> This updates the dependency library to handle RC versions up to 39. For
+>> example, coccinelle version "1.0.0" is now correctly treated as being
+>> higher
+>> than version "1.0.0-rc24".
+>
+>
+> This one is duplicate to the patch Eliad submitted [1]. Any reason for
+> choosing rc 40?
 
-I think it would be easier if you just replace timespec64 with timespec
-in the header files.
+I missed that patched. My reasoning was that previously at least the Linux
+kernel went up to rc 39 with 2.6.39. So 40 should be a good limit to support
+most cases.
 
-Like:
-#define ns_to_timespec64 ns_to_timespec
-#define timespec64 timespec
+Kr,
+Mathy
 
-Then cocci is only needed to replace the settime64 members with settime
-and so on.
-
-
-> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
-> ---
->  .../network/0057-timespec64/INFO                   | 11 +++
->  .../network/0057-timespec64/igb.patch              | 16 +++++
->  .../network/0057-timespec64/timespec64.cocci       | 83 ++++++++++++++++++++++
->  3 files changed, 110 insertions(+)
->  create mode 100644 patches/collateral-evolutions/network/0057-timespec64/INFO
->  create mode 100644 patches/collateral-evolutions/network/0057-timespec64/igb.patch
->  create mode 100644 patches/collateral-evolutions/network/0057-timespec64/timespec64.cocci
-> 
-> diff --git a/patches/collateral-evolutions/network/0057-timespec64/INFO b/patches/collateral-evolutions/network/0057-timespec64/INFO
-> new file mode 100644
-> index 0000000..681c1df
-> --- /dev/null
-> +++ b/patches/collateral-evolutions/network/0057-timespec64/INFO
-> @@ -0,0 +1,11 @@
-> +In kernel 3.17 struct timespec64 was introduced.
-> +Address this with cocci patches where possible.
-> +
-> +commit 361a3bf00582469877f8d18ff20f1efa6b781274
-> +Author: John Stultz <john.stultz@linaro.org>
-> +Date:   Wed Jul 16 21:03:58 2014 +0000
-> +
-> +    time64: Add time64.h header and define struct timespec64
-> +
-> +git describe --contains 361a3bf00582469877f8d18ff20f1efa6b781274
-> +v3.17-rc1~109^2~62
-> diff --git a/patches/collateral-evolutions/network/0057-timespec64/igb.patch b/patches/collateral-evolutions/network/0057-timespec64/igb.patch
-> new file mode 100644
-> index 0000000..559199f
-> --- /dev/null
-> +++ b/patches/collateral-evolutions/network/0057-timespec64/igb.patch
-> @@ -0,0 +1,16 @@
-> +diff --git a/drivers/net/ethernet/intel/igb/igb_ptp.c b/drivers/net/ethernet/intel/igb/igb_ptp.c
-> +index 060aa75..a660d39 100644
-> +--- a/drivers/net/ethernet/intel/igb/igb_ptp.c
-> ++++ b/drivers/net/ethernet/intel/igb/igb_ptp.c
-> +@@ -285,7 +285,11 @@ static int igb_ptp_adjtime_i210(struct ptp_clock_info *ptp, s64 delta)
-> + 	struct igb_adapter *igb = container_of(ptp, struct igb_adapter,
-> + 					       ptp_caps);
-> + 	unsigned long flags;
-> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
-> + 	struct timespec64 now, then = ns_to_timespec64(delta);
-> ++#else
-> ++	struct timespec now, then = ns_to_timespec(delta);
-> ++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0) */
-> + 
-> + 	spin_lock_irqsave(&igb->tmreg_lock, flags);
-> + 
-> diff --git a/patches/collateral-evolutions/network/0057-timespec64/timespec64.cocci b/patches/collateral-evolutions/network/0057-timespec64/timespec64.cocci
-> new file mode 100644
-> index 0000000..4f568cb
-> --- /dev/null
-> +++ b/patches/collateral-evolutions/network/0057-timespec64/timespec64.cocci
-> @@ -0,0 +1,83 @@
-> +// ----------------------------------------------------------------------------
-> +// handle struct timespec64 to timespec conversion in prototypes
-> +@r1@
-> +identifier func, I1;
-> +@@
-> + func(...
-> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
-> +      ,struct timespec64 *I1
-> ++#else
-> ++     ,struct timespec *I1
-> ++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0) */
-> + ) {...}
-> +
-> +// ----------------------------------------------------------------------------
-> +// handle struct timespec64 to timespec conversion in functions
-> +@r2@
-> +identifier I1;
-> +@@
-> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
-> + struct timespec64 I1;
-> ++#else
-> ++struct timespec I1;
-> ++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0) */
-> +
-> +// ----------------------------------------------------------------------------
-> +// handle struct timespec64 to timespec conversion with assignment
-> +@r3@
-> +identifier I1;
-> +expression E1;
-> +@@
-> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
-> + struct timespec64 I1 = E1;
-> ++#else
-> ++struct timespec I1 = E1;
-> ++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0) */
-> +
-> +// ----------------------------------------------------------------------------
-> +// handle struct timespec64 to timespec casts
-> +@r4@
-> +identifier func;
-> +expression E1, E2;
-> +@@
-> + func(E1
-> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
-> +      ,(const struct timespec64 *) E2
-> ++#else
-> ++     ,(const struct timespec *) E2
-> ++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0) */
-> + );
-> +
-> +// ----------------------------------------------------------------------------
-> +// handle timespec64_add to timespec_add function rename
-> +@r5@
-> +identifier I1;
-> +expression E1, E2;
-> +@@
-> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
-> + I1 = timespec64_add(E1, E2);
-> ++#else
-> ++I1 = timespec_add(E1, E2);
-> ++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0) */
-> +
-> +// ----------------------------------------------------------------------------
-> +// handle ns_to_timespec64 to ns_to_timespec function rename
-> +@r6@
-> +expression E1, E2;
-> +@@
-> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
-> + E1 = ns_to_timespec64(E2);
-> ++#else
-> ++E1 = ns_to_timespec(E2);
-> ++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0) */
-> +
-> +// ----------------------------------------------------------------------------
-> +// handle timespec64_to_ns to timespec_to_ns function rename
-> +@r7@
-> +expression E1, E2;
-> +@@
-> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
-> + E1 = timespec64_to_ns(E2);
-> ++#else
-> ++E1 = timespec_to_ns(E2);
-> ++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0) */
-> 
-
+> Regards,
+> Arend
+>
+> [1] http://mid.gmane.org/1430126344-1068-1-git-send-email-eliad@wizery.com
+>
+>
+>> Signed-off-by: Mathy Vanhoef<vanhoefm@gmail.com>
+>> ---
+>>   lib/bpreqs.py |    2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/lib/bpreqs.py b/lib/bpreqs.py
+>> index 6c46670..4399c6d 100644
+>> --- a/lib/bpreqs.py
+>> +++ b/lib/bpreqs.py
+>> @@ -98,7 +98,7 @@ class Req:
+>>                   if (rc == ""):
+>>                       rc = 0
+>>                   else:
+>> -                    rc = int(rc) - 20
+>> +                    rc = int(rc) - 40
+>>                   extra = int(rc)
+>>               else:
+>>                   extra = int(rel_specs['EXTRAVERSION']) + 10
+>
+>
