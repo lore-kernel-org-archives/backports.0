@@ -1,24 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:47394 "EHLO hauke-m.de"
+Received: from mail.sablalik.us ([74.111.177.26]:62207 "EHLO mail.sablalik.us"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752040AbbDTVcZ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 20 Apr 2015 17:32:25 -0400
-Message-ID: <55357066.1080405@hauke-m.de> (sfid-20150420_233227_850455_27471B9C)
-Date: Mon, 20 Apr 2015 23:32:22 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Stefan Assmann <sassmann@kpanic.de>, backports@vger.kernel.org
-Subject: struct timespec64 in igb
-Content-Type: text/plain; charset=utf-8
+	id S1750766AbbD3NRr convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 30 Apr 2015 09:17:47 -0400
+Date: Thu, 30 Apr 2015 09:17:42 -0400
+Subject: Re: trouble building ath10k on newer versions
+From: Peter Sabat <pete@sablalik.us>
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: <backports@vger.kernel.org>
+Message-ID: <D167A39A.1821B0%pete@sablalik.us> (sfid-20150430_151749_353557_F62F38D6)
+References: <D166E367.18190A%pete@sablalik.us>
+ <1430377731.1963.0.camel@sipsolutions.net>
+In-Reply-To: <1430377731.1963.0.camel@sipsolutions.net>
+Mime-version: 1.0
+Content-type: text/plain;
+	charset="EUC-KR"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi Stefan,
+That would explain it.  ;-)
 
-igb makes use of "struct timespec64" now, which was added with kernel
-3.17. are you able to create a nice coccinelle patch for this?
+Cheers
 
-The commit in question is this:
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=d4c496fe45de9dc33ace3a5796e4211e2e809231
+On 4/30/15, 3:08 AM, "Johannes Berg" <johannes@sipsolutions.net> wrote:
 
-Hauke
+>On Wed, 2015-04-29 at 19:37 -0400, Peter Sabat wrote:
+>> Just wondering if something has changed since backports-20150129 that
+>> would only allow compat and cfg80211 build ?
+>> 
+>> I noticed that mac80211 isn©öt in the menuconfig now, but the build
+>>worked
+>> fine before.
+>> 
+>> 
+>> 
+>> I do have CONFIG_CRYPTO_CCM in my kernel config :
+>
+>You also need _GCM now.
+>
+>johannes
+>
+
+
+
