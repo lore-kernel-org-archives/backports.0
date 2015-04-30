@@ -1,36 +1,34 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:39440 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:47444 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751817AbbDCVhv (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 3 Apr 2015 17:37:51 -0400
-Message-ID: <551F082C.5060802@hauke-m.de> (sfid-20150403_233752_778549_6A002BD6)
-Date: Fri, 03 Apr 2015 23:37:48 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>,
-	backports@vger.kernel.org
-CC: Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH] git-tracker: ask for verbose messages from per-commit
- processing
-References: <1425284362-5250-1-git-send-email-johannes@sipsolutions.net>
-In-Reply-To: <1425284362-5250-1-git-send-email-johannes@sipsolutions.net>
-Content-Type: text/plain; charset=windows-1252
+	id S1750749AbbD3HIz (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 30 Apr 2015 03:08:55 -0400
+Message-ID: <1430377731.1963.0.camel@sipsolutions.net> (sfid-20150430_090857_056743_E7498972)
+Subject: Re: trouble building ath10k on newer versions
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Peter Sabat <pete@sablalik.us>
+Cc: backports@vger.kernel.org
+Date: Thu, 30 Apr 2015 09:08:51 +0200
+In-Reply-To: <D166E367.18190A%pete@sablalik.us> (sfid-20150430_023826_856464_5621F96E)
+References: <D166E367.18190A%pete@sablalik.us>
+	 (sfid-20150430_023826_856464_5621F96E)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 03/02/2015 09:19 AM, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
+On Wed, 2015-04-29 at 19:37 -0400, Peter Sabat wrote:
+> Just wondering if something has changed since backports-20150129 that
+> would only allow compat and cfg80211 build ?
 > 
-> The messages are only printed if something fails anyway, so
-> better ask for verbose messages to be able to better identify
-> what failed.
+> I noticed that mac80211 isn¹t in the menuconfig now, but the build worked
+> fine before.
 > 
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> ---
->  devel/git-tracker.py | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> 
+> I do have CONFIG_CRYPTO_CCM in my kernel config :
 
-Thank you for the patch it was applied to backports.
+You also need _GCM now.
 
-Hauke
+johannes
 
