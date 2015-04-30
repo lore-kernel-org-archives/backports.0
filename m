@@ -1,46 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:59172 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:52580 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751702AbbDAPbq (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 1 Apr 2015 11:31:46 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 1/5] backports: include rhashtable
-Date: Wed,  1 Apr 2015 17:31:35 +0200
-Message-Id: <1427902299-24079-1-git-send-email-johannes@sipsolutions.net> (sfid-20150401_173149_445100_86395FEE)
+	id S1751085AbbD3RKZ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 30 Apr 2015 13:10:25 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 2/2] rel-html: update backports versions
+Date: Thu, 30 Apr 2015 19:10:14 +0200
+Message-Id: <1430413814-4817-2-git-send-email-hauke@hauke-m.de> (sfid-20150430_191027_504052_BC337E43)
+In-Reply-To: <1430413814-4817-1-git-send-email-hauke@hauke-m.de>
+References: <1430413814-4817-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+This adds version 4.0 and 4.1 to the list of stable versions and adds
+the 2015 next versions.
 
-As mac80211 now needs rhashtable, include it in backports.
-For now, it actually depends on mac80211 and is selected
-for kernels < 4.1 -- it existed in previous kernels but
-with different API, so cannot be used from there easily.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/compat/Kconfig | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ projects/backports.cfg | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
-index aadf246896e9..8fcdb8a96bb3 100644
---- a/backport/compat/Kconfig
-+++ b/backport/compat/Kconfig
-@@ -135,3 +135,12 @@ config BPAUTO_BUILD_WANT_DEV_COREDUMP
- 	default y if BPAUTO_WANT_DEV_COREDUMP
- 	#h-file linux/devcoredump.h
- 	#c-file drivers/base/devcoredump.c
-+
-+config BPAUTO_RHASHTABLE
-+	bool
-+	# current API of rhashtable was introduced in version 4.1
-+	depends on KERNEL_4_1
-+	# not very nice - but better than always having it
-+	default y if MAC80211
-+	#h-file linux/rhashtable.h
-+	#c-file lib/rhashtable.c
+diff --git a/projects/backports.cfg b/projects/backports.cfg
+index d1406ba..97f5a98 100644
+--- a/projects/backports.cfg
++++ b/projects/backports.cfg
+@@ -2,6 +2,8 @@
+ rel_html_proj		= backports
+ rel_html_proj_aliases	= compat-drivers
+ supported =
++	4.1
++	4.0
+ 	3.19
+ 	3.18
+ 	3.17
+@@ -14,6 +16,7 @@ supported =
+ rel_html_url_releases	= http://www.kernel.org/pub/linux/kernel/projects/backports/stable/
+ 			  http://www.kernel.org/pub/linux/kernel/projects/backports/2013/
+ 			  http://www.kernel.org/pub/linux/kernel/projects/backports/2014/
++			  http://www.kernel.org/pub/linux/kernel/projects/backports/2015/
+ rel_license 		= GPLv2
+ ignore_changelogs	= True
+ 
 -- 
-2.1.4
+1.9.1
 
