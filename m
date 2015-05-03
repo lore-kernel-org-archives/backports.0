@@ -1,43 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:51891 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1423394AbbEENTw (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 5 May 2015 09:19:52 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: include missing device.h
-Date: Tue,  5 May 2015 15:19:49 +0200
-Message-Id: <1430831989-2716-1-git-send-email-johannes@sipsolutions.net> (sfid-20150505_151955_603507_0792B8E6)
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:42484 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751193AbbECTti (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 3 May 2015 15:49:38 -0400
+Message-ID: <55467BCF.8040705@broadcom.com> (sfid-20150503_214939_997709_11397E55)
+Date: Sun, 3 May 2015 21:49:35 +0200
+From: Arend van Spriel <arend@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+	<backports@vger.kernel.org>
+Subject: Re: [PATCH] backports: mac80211: revert to old stats behaviour for
+ older kernels
+References: <1430487994-20598-1-git-send-email-arend@broadcom.com>	 (sfid-20150501_154642_126166_7597CA83) <1430680059.3276.1.camel@sipsolutions.net>
+In-Reply-To: <1430680059.3276.1.camel@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On 05/03/15 21:07, Johannes Berg wrote:
+> On Fri, 2015-05-01 at 15:46 +0200, Arend van Spriel wrote:
+>> Commit 5a490510ba5f ("mac80211: use per-CPU TX/RX statistics") introduced
+>> the use of per-cpu statistics, ie. struct netdevice::tstats. This is not
+>> supported in kernel 3.14 and older.
+>>
+>> Signed-off-by: Arend van Spriel<arend@broadcom.com>
+>> ---
+>> I am not entirely sure whether 3.14 is the correct version to check for. The
+>> functionality seems introduced there but there were some subsequent patches
+>> on the per-cpu netdev stats functionality.
+>
+> I don't really like just reverting to the old behaviour - that'll make
+> this very hard to port.
 
-debugfs.h needs device.h, otherwise you get a warning
+I don't either, but I had a bunch of test systems that I wanted to get 
+going.
 
-backport-include/linux/debugfs.h:11:10: warning: ‘struct device’ declared inside parameter list
+> What part of this isn't supported? Is there no pointer whatsoever that
+> we can use? We still implement the ndo_getstats64 [or whatever it's
+> called] ourselves anyway, so we don't really use any API here apart from
+>   * netdev_alloc_pcpu_stats, which is trivially backported
+>   * dev->tstats, which is just a single pointer and we could use anything
+> else,
+>     even perhaps in sdata
 
-Change-Id: Ic669c855d47a8114649d1d319fcb1bcdc024415c
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/linux/debugfs.h | 1 +
- 1 file changed, 1 insertion(+)
+I have to learn about the per-cpu operations someday so why not now 
+while spending two weeks vacation ;-)
 
-diff --git a/backport/backport-include/linux/debugfs.h b/backport/backport-include/linux/debugfs.h
-index 77b2e642e228..ef9b6e45d217 100644
---- a/backport/backport-include/linux/debugfs.h
-+++ b/backport/backport-include/linux/debugfs.h
-@@ -2,6 +2,7 @@
- #define __BACKPORT_DEBUGFS_H_
- #include_next <linux/debugfs.h>
- #include <linux/version.h>
-+#include <linux/device.h>
- #include <generated/utsrelease.h>
- 
- #if defined(CONFIG_DEBUG_FS)
--- 
-2.1.4
-
+Thanks,
+Arend
