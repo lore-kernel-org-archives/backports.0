@@ -1,57 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from imap.thunk.org ([74.207.234.97]:37148 "EHLO imap.thunk.org"
+Received: from s3.sipsolutions.net ([5.9.151.49]:44528 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756345AbbE2RgP (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 29 May 2015 13:36:15 -0400
-Date: Fri, 29 May 2015 13:36:09 -0400
-From: Theodore Ts'o <tytso@mit.edu>
-To: Richard Weinberger <richard.weinberger@gmail.com>
-Cc: "Enrico Weigelt, metux IT consult" <weigelt@melag.de>,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: Uses of Linux backports in the industry
-Message-ID: <20150529173609.GF18540@thunk.org> (sfid-20150529_193629_438206_A9232E8A)
-References: <CAB=NE6UUTmMMB0La3OFe+hXpaZzdAwTs0QKBsTLSyrsSMFxJRg@mail.gmail.com>
- <55687D72.3070904@melag.de>
- <CAFLxGvz1-2sm74dmWZ4QpyC4TSubP4OHj=6Z8aVhvjqA2+WkZw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAFLxGvz1-2sm74dmWZ4QpyC4TSubP4OHj=6Z8aVhvjqA2+WkZw@mail.gmail.com>
+	id S1751232AbbEDHnU (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 4 May 2015 03:43:20 -0400
+Message-ID: <1430725394.2013.5.camel@sipsolutions.net> (sfid-20150504_094322_680800_A624D2F9)
+Subject: Re: [PATCH] backports: mac80211: revert to old stats behaviour for
+ older kernels
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend van Spriel <arend@broadcom.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
+Date: Mon, 04 May 2015 09:43:14 +0200
+In-Reply-To: <55467BCF.8040705@broadcom.com>
+References: <1430487994-20598-1-git-send-email-arend@broadcom.com>
+		 (sfid-20150501_154642_126166_7597CA83) <1430680059.3276.1.camel@sipsolutions.net>
+	 <55467BCF.8040705@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, May 29, 2015 at 05:01:00PM +0200, Richard Weinberger wrote:
-> On Fri, May 29, 2015 at 4:53 PM, Enrico Weigelt, metux IT consult
-> <weigelt@melag.de> wrote:
-> > Am 29.05.2015 um 04:54 schrieb Luis R. Rodriguez:
-> > Actually, I really wonder why folks are sticking to ancient kernels on
-> > newer hardware.
+On Sun, 2015-05-03 at 21:49 +0200, Arend van Spriel wrote:
+
+> I don't either, but I had a bunch of test systems that I wanted to get 
+> going.
+
+While on vacation? :)
+
+> > What part of this isn't supported? Is there no pointer whatsoever that
+> > we can use? We still implement the ndo_getstats64 [or whatever it's
+> > called] ourselves anyway, so we don't really use any API here apart from
+> >   * netdev_alloc_pcpu_stats, which is trivially backported
+> >   * dev->tstats, which is just a single pointer and we could use anything
+> > else,
+> >     even perhaps in sdata
 > 
-> Enterprise distribution kernels. Or "special" kernels like PREEMPT_RT.
-> Sometimes the vendor BSP is that horrid that a customer cannot afford
-> to forward port it
-> but wants recent stuff. So you need to backport...
+> I have to learn about the per-cpu operations someday so why not now 
+> while spending two weeks vacation ;-)
 
-Yep.  The technique I used for the backporting ext4 encryption into
-the 3.10 android-common git tree in AOSP was to drop in the 3.18
-versions of fs/ext4 and fs/jbd2 into the 3.10 tree (along with the
-associaed include files in include/linux and include/trace/events, of
-course), and then fix things up until they built correctly (using
-cherry-picks and in some cases, reverting some changes in the 3.18
-version of fs/ext4).  After I was sure the transplant of the 3.18
-version of ext4 had "taken" correctly, with no test regressions, only
-then did I cherry-pick all of the ext4 encryption changes on top of
-3.10.
+Heh. Go enjoy your vacation, I can handle this :)
 
-The backport of ext4 encryption to the 3.18 version of android-common
-should be much easier.  :-)   Unfortunately, I also have to do a
-backport to the 3.14 android-common branch as well.   <sigh>
+I think you arrived at kernel 3.14 due to 8f84985fec10d. However, I
+think we can just do the following
 
-Yes, it's ugly, but there still are some SOC and drivers that aren't
-available on newer kernels.  Basically, the handset vendors need to
-lean a lot harder on the SOC and other peripheral (cell radios, GPS,
-etc., etc.).  :-(
+ * backport "struct pcpu_sw_netstats" (needed on < 3.14)
+ * backport "netdev_alloc_pcpu_stats" (needed on < 3.15)
+ * make an spatch replacing dev->tstats with ((struct pcpu_sw_netstats *)dev->ml_priv)
+   (since ml_priv has existed for a long time, and they're in a union)
 
-    	  	     	   	   	      - Ted
+johannes
+
