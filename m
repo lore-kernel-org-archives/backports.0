@@ -1,39 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:36813 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752189AbbE2HAj (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 29 May 2015 03:00:39 -0400
-Message-ID: <1432882836.2104.1.camel@sipsolutions.net> (sfid-20150529_090040_772261_8AB015ED)
-Subject: Re: Uses of Linux backports in the industry
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 29 May 2015 09:00:36 +0200
-In-Reply-To: <CAB=NE6UUTmMMB0La3OFe+hXpaZzdAwTs0QKBsTLSyrsSMFxJRg@mail.gmail.com> (sfid-20150529_045521_094351_3FF15D30)
-References: <CAB=NE6UUTmMMB0La3OFe+hXpaZzdAwTs0QKBsTLSyrsSMFxJRg@mail.gmail.com>
-	 (sfid-20150529_045521_094351_3FF15D30)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:30003 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751530AbbEDIFH (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 4 May 2015 04:05:07 -0400
+Message-ID: <55472830.5030905@broadcom.com> (sfid-20150504_100511_180682_53453057)
+Date: Mon, 4 May 2015 10:05:04 +0200
+From: Arend van Spriel <arend@broadcom.com>
+MIME-Version: 1.0
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+	<backports@vger.kernel.org>
+Subject: Re: [PATCH] backports: mac80211: revert to old stats behaviour for
+ older kernels
+References: <1430487994-20598-1-git-send-email-arend@broadcom.com>		 (sfid-20150501_154642_126166_7597CA83) <1430680059.3276.1.camel@sipsolutions.net>	 <55467BCF.8040705@broadcom.com> <1430725394.2013.5.camel@sipsolutions.net>
+In-Reply-To: <1430725394.2013.5.camel@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
--lkml, that list is overfull anyway ...
+On 05/04/15 09:43, Johannes Berg wrote:
+> On Sun, 2015-05-03 at 21:49 +0200, Arend van Spriel wrote:
+>
+>> I don't either, but I had a bunch of test systems that I wanted to get
+>> going.
+>
+> While on vacation? :)
 
-On Thu, 2015-05-28 at 19:54 -0700, Luis R. Rodriguez wrote:
-> Me and Julia are working on a paper which evaluates use of Coccinelle
-> on backports, a preliminary draft of such paper can be found on github
-> [0]. We are making some tweaks to this, one of which is covering the
-> uses of Linux backports [1] in the industry, for this we'd like to try
-> to get feedback as to where and how folks are using backports. Please
-> let me and Julia know -- or if the information is not sensitive please
-> feel free to just reply to this thread and share with others. All
-> feedback is greatly appreciated. If you are OK in having us list or
-> generalize your usage please indicate so.
+It happened just before as such things tend to do. There is probably 
+some law for this ;-)
 
-We've just published one of our internal git trees that is actually
-based on backports:
-https://git.kernel.org/cgit/linux/kernel/git/iwlwifi/backport-iwlwifi.git/
+>>> What part of this isn't supported? Is there no pointer whatsoever that
+>>> we can use? We still implement the ndo_getstats64 [or whatever it's
+>>> called] ourselves anyway, so we don't really use any API here apart from
+>>>    * netdev_alloc_pcpu_stats, which is trivially backported
+>>>    * dev->tstats, which is just a single pointer and we could use anything
+>>> else,
+>>>      even perhaps in sdata
+>>
+>> I have to learn about the per-cpu operations someday so why not now
+>> while spending two weeks vacation ;-)
+>
+> Heh. Go enjoy your vacation, I can handle this :)
 
-johannes
+no doubt.
 
+> I think you arrived at kernel 3.14 due to 8f84985fec10d. However, I
+> think we can just do the following
+>
+>   * backport "struct pcpu_sw_netstats" (needed on<  3.14)
+>   * backport "netdev_alloc_pcpu_stats" (needed on<  3.15)
+>   * make an spatch replacing dev->tstats with ((struct pcpu_sw_netstats *)dev->ml_priv)
+>     (since ml_priv has existed for a long time, and they're in a union)
+
+That will work. Guess you will drop the mac80211 patch I sent using 
+sdata instead. Fine by me.
+
+Regards,
+Arend
