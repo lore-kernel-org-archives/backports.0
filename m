@@ -1,43 +1,33 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:49138 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:35571 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751531AbbEKV51 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 11 May 2015 17:57:27 -0400
-Message-ID: <555125C5.8050306@hauke-m.de> (sfid-20150511_235728_769991_D49B0F92)
-Date: Mon, 11 May 2015 23:57:25 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>,
-	backports@vger.kernel.org
-CC: arend@broadcom.com, Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH] backports: handle netdev->tstats
-References: <1430832125-3195-1-git-send-email-johannes@sipsolutions.net>
-In-Reply-To: <1430832125-3195-1-git-send-email-johannes@sipsolutions.net>
-Content-Type: text/plain; charset=windows-1252
+	id S1752939AbbEGLsq (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 7 May 2015 07:48:46 -0400
+Message-ID: <1430999320.11214.0.camel@sipsolutions.net> (sfid-20150507_134847_773087_3749A601)
+Subject: Re: problem with enabling config options
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Stefan Assmann <sassmann@kpanic.de>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Thu, 07 May 2015 13:48:40 +0200
+In-Reply-To: <554B4966.5090808@kpanic.de> (sfid-20150507_131558_070018_C564096D)
+References: <554B4966.5090808@kpanic.de>
+	 (sfid-20150507_131558_070018_C564096D)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 05/05/2015 03:22 PM, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
-> 
-> This adds the necessary backporting to handle netdev->tstats which
-> was introduced in 3.14 (and some helper macros in 3.15).
-> 
-> For some reason my spatch isn't reliably patching the occurrence
-> in net/mac80211/tx.c, so for now I'm including a manual patch.
-> 
-> Change-Id: Ib22e307a9bd31f6c31372ef8cc2828ca6e14fce4
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> ---
->  backport/backport-include/linux/netdevice.h        | 30 ++++++++++++++++++++++
->  .../network/0055-netdev-tstats-assign.cocci        | 10 ++++++++
->  .../network/0055-netdev-tstats-tx.patch            | 11 ++++++++
->  .../network/0056-netdev-tstats.cocci               |  9 +++++++
->  4 files changed, 60 insertions(+)
->  create mode 100644 patches/collateral-evolutions/network/0055-netdev-tstats-assign.cocci
->  create mode 100644 patches/collateral-evolutions/network/0055-netdev-tstats-tx.patch
->  create mode 100644 patches/collateral-evolutions/network/0056-netdev-tstats.cocci
-> 
-Thank you for the patch, it was applied and pushed out.
+On Thu, 2015-05-07 at 13:15 +0200, Stefan Assmann wrote:
+> I'm looking into enabling more wired network drivers and ran into the
+> issue that I could not enable CONFIG_E1000 for example. The problem
+> seems to be that because CONFIG_E100 is disabled you cannot enable
+> anything CONFIG_E100*. It looks like a bug in gentree.py, but my python
+> foo didn't suffice to get it sorted out. Problem should be located
+> somewhere around line 1060 where the CONFIG variable regex stuff
+> happens.
 
-Hauke
+I think you can try to add \W to the very end of the regex there.
+
+johannes
+
