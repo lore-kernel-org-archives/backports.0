@@ -1,28 +1,28 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:35599 "EHLO sipsolutions.net"
+Received: from app1b.xlhost.de ([84.200.252.162]:51479 "EHLO app1b.xlhost.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750794AbbETI1t (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 20 May 2015 04:27:49 -0400
-Message-ID: <1432110463.2174.2.camel@sipsolutions.net> (sfid-20150520_102751_696775_F518E947)
-Subject: Re: [PATCH] backport: allow compilation with Ubuntu's 3.13
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Cc: backports@vger.kernel.org
-Date: Wed, 20 May 2015 10:27:43 +0200
-In-Reply-To: <1432042936-23733-1-git-send-email-emmanuel.grumbach@intel.com> (sfid-20150519_154230_230935_983C6CAB)
-References: <1432042936-23733-1-git-send-email-emmanuel.grumbach@intel.com>
-	 (sfid-20150519_154230_230935_983C6CAB)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+	id S1752241AbbEGLP4 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 7 May 2015 07:15:56 -0400
+Message-ID: <554B4966.5090808@kpanic.de> (sfid-20150507_131558_070018_C564096D)
+Date: Thu, 07 May 2015 13:15:50 +0200
+From: Stefan Assmann <sassmann@kpanic.de>
+MIME-Version: 1.0
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+CC: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: problem with enabling config options
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2015-05-19 at 16:42 +0300, Emmanuel Grumbach wrote:
+I'm looking into enabling more wired network drivers and ran into the
+issue that I could not enable CONFIG_E1000 for example. The problem
+seems to be that because CONFIG_E100 is disabled you cannot enable
+anything CONFIG_E100*. It looks like a bug in gentree.py, but my python
+foo didn't suffice to get it sorted out. Problem should be located
+somewhere around line 1060 where the CONFIG variable regex stuff
+happens.
 
-> +#if (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI < 24)
+Luis, could you have a look?
+Thanks!
 
-Now that I look at this again, I'm confused - shouldn't this whole thing
-have a ! in front?
-
-johannes
-
+  Stefan
