@@ -1,43 +1,100 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:49115 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753050AbbEKVq6 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 11 May 2015 17:46:58 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: mcgrof@kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Subject: [PATCH 1/4] header: add possible_{write,read}_pnet() on kernel >= 4.1
-Date: Mon, 11 May 2015 23:46:45 +0200
-Message-Id: <1431380808-28885-1-git-send-email-hauke@hauke-m.de> (sfid-20150511_234700_661165_B7B38521)
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:36274 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753433AbbEHUnF (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 8 May 2015 16:43:05 -0400
+From: Arend van Spriel <arend@broadcom.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>, Arend van Spriel <arend@broadcom.com>
+Subject: [PATCH] network: led-blink: update mac80211 patch
+Date: Fri, 8 May 2015 22:42:59 +0200
+Message-ID: <1431117779-21388-1-git-send-email-arend@broadcom.com> (sfid-20150508_224307_242020_AB5455B2)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backports only adds the possible_{write,read}_pnet() functions for
-kernel < 4.1. This results in a compile error on kernel 4.1. This patch
-make it use the original functions on these kernel versions. This fixes
-a problem introduced in 3d418885971.
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Arend van Spriel <arend@broadcom.com>
 ---
- backport/backport-include/net/net_namespace.h | 3 +++
- 1 file changed, 3 insertions(+)
+ .../network/0024-led-blink-api/mac80211.patch      | 36 ++++++++++++----------
+ 1 file changed, 20 insertions(+), 16 deletions(-)
 
-diff --git a/backport/backport-include/net/net_namespace.h b/backport/backport-include/net/net_namespace.h
-index 90c044f..4d0b721 100644
---- a/backport/backport-include/net/net_namespace.h
-+++ b/backport/backport-include/net/net_namespace.h
-@@ -57,6 +57,9 @@ static inline struct net *possible_read_pnet(const possible_net_t *pnet)
- 	return &init_net;
- #endif
- }
-+#else
-+#define possible_write_pnet(pnet, net) write_pnet(pnet, net)
-+#define possible_read_pnet(pnet) read_pnet(pnet)
- #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
- 
- #endif	/* _COMPAT_NET_NET_NAMESPACE_H */
+diff --git a/patches/collateral-evolutions/network/0024-led-blink-api/mac80211.patch b/patches/collateral-evolutions/network/0024-led-blink-api/mac80211.patch
+index de7f5b2..0f443f1 100644
+--- a/patches/collateral-evolutions/network/0024-led-blink-api/mac80211.patch
++++ b/patches/collateral-evolutions/network/0024-led-blink-api/mac80211.patch
+@@ -1,51 +1,55 @@
+ --- a/net/mac80211/ieee80211_i.h
+ +++ b/net/mac80211/ieee80211_i.h
+-@@ -1277,6 +1277,9 @@ struct ieee80211_local {
+- 	u32 dot11TransmittedFrameCount;
++@@ -1260,6 +1260,9 @@ struct ieee80211_local {
++ 	struct mutex chanctx_mtx;
+  
+  #ifdef CONFIG_MAC80211_LEDS
+ +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
+ +	int tx_led_counter, rx_led_counter;
+ +#endif
+- 	struct led_trigger *tx_led, *rx_led, *assoc_led, *radio_led;
+- 	struct tpt_led_trigger *tpt_led_trigger;
+- 	char tx_led_name[32], rx_led_name[32],
+---- a/net/mac80211/led.c
+-+++ b/net/mac80211/led.c
+-@@ -16,18 +16,36 @@
+- 
+- void ieee80211_led_rx(struct ieee80211_local *local)
++ 	struct led_trigger tx_led, rx_led, assoc_led, radio_led;
++ 	struct led_trigger tpt_led;
++ 	atomic_t tx_led_active, rx_led_active, assoc_led_active;
++--- a/net/mac80211/led.h
+++++ b/net/mac80211/led.h
++@@ -16,22 +16,38 @@
++ static inline void ieee80211_led_rx(struct ieee80211_local *local)
+  {
++ #ifdef CONFIG_MAC80211_LEDS
+ +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
+  	unsigned long led_delay = MAC80211_BLINK_DELAY;
++-
+ +#endif
+- 	if (unlikely(!local->rx_led))
++ 	if (!atomic_read(&local->rx_led_active))
+  		return;
+ +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
+- 	led_trigger_blink_oneshot(local->rx_led, &led_delay, &led_delay, 0);
++ 	led_trigger_blink_oneshot(&local->rx_led, &led_delay, &led_delay, 0);
+ +#else
+ +	if (local->rx_led_counter++ % 2 == 0)
+ +		led_trigger_event(local->rx_led, LED_OFF);
+ +	else
+ +		led_trigger_event(local->rx_led, LED_FULL);
+ +#endif
++ #endif
+  }
+  
+- void ieee80211_led_tx(struct ieee80211_local *local)
++ static inline void ieee80211_led_tx(struct ieee80211_local *local)
+  {
++ #ifdef CONFIG_MAC80211_LEDS
+ +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
+  	unsigned long led_delay = MAC80211_BLINK_DELAY;
++-
+ +#endif
+- 	if (unlikely(!local->tx_led))
++ 	if (!atomic_read(&local->tx_led_active))
+  		return;
+ +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
+- 	led_trigger_blink_oneshot(local->tx_led, &led_delay, &led_delay, 0);
++ 	led_trigger_blink_oneshot(&local->tx_led, &led_delay, &led_delay, 0);
+ +#else
+ +	if (local->tx_led_counter++ % 2 == 0)
+ +		led_trigger_event(local->tx_led, LED_OFF);
+ +	else
+ +		led_trigger_event(local->tx_led, LED_FULL);
+ +#endif
++ #endif
+  }
+  
+- void ieee80211_led_assoc(struct ieee80211_local *local, bool associated)
 -- 
-2.1.4
+1.9.1
 
