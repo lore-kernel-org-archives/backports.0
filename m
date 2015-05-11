@@ -1,35 +1,30 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:49133 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:48980 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751531AbbEKV5Q (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 11 May 2015 17:57:16 -0400
-Message-ID: <555125BA.5040205@hauke-m.de> (sfid-20150511_235719_178375_C07F6AB7)
-Date: Mon, 11 May 2015 23:57:14 +0200
+	id S1753324AbbEKSTh (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 11 May 2015 14:19:37 -0400
+Message-ID: <5550F2B6.3090202@hauke-m.de> (sfid-20150511_201940_347975_39B6FCB3)
+Date: Mon, 11 May 2015 20:19:34 +0200
 From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>,
-	backports@vger.kernel.org
-CC: Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH] backports: include missing device.h
-References: <1430831989-2716-1-git-send-email-johannes@sipsolutions.net>
-In-Reply-To: <1430831989-2716-1-git-send-email-johannes@sipsolutions.net>
-Content-Type: text/plain; charset=utf-8
+To: Arend van Spriel <arend@broadcom.com>,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: backports@vger.kernel.org,
+	Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: [PATCH] network: led-blink: update mac80211 patch
+References: <1431117779-21388-1-git-send-email-arend@broadcom.com>
+In-Reply-To: <1431117779-21388-1-git-send-email-arend@broadcom.com>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 05/05/2015 03:19 PM, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
-> 
-> debugfs.h needs device.h, otherwise you get a warning
-> 
-> backport-include/linux/debugfs.h:11:10: warning: ‘struct device’ declared inside parameter list
-> 
-> Change-Id: Ic669c855d47a8114649d1d319fcb1bcdc024415c
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+On 05/08/2015 10:42 PM, Arend van Spriel wrote:
+> Signed-off-by: Arend van Spriel <arend@broadcom.com>
 > ---
->  backport/backport-include/linux/debugfs.h | 1 +
->  1 file changed, 1 insertion(+)
+>  .../network/0024-led-blink-api/mac80211.patch      | 36 ++++++++++++----------
+>  1 file changed, 20 insertions(+), 16 deletions(-)
 > 
-Thank you for the patch, it was applied and pushed out.
+This looks like the patch "backports: update mac80211 LED patch"
+Johannes send at 5.5.2015.
 
 Hauke
