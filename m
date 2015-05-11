@@ -1,62 +1,58 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:40281 "EHLO mga09.intel.com"
+Received: from hauke-m.de ([5.39.93.123]:49143 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753271AbbETQmj (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 20 May 2015 12:42:39 -0400
-From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-To: "Larry.Finger@lwfinger.net" <Larry.Finger@lwfinger.net>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"johannes@sipsolutions.net" <johannes@sipsolutions.net>
-Subject: Re: [PATCH] backport: allow compilation with Ubuntu's 3.13
-Date: Wed, 20 May 2015 16:42:35 +0000
-Message-ID: <1432140155.11332.3.camel@intel.com> (sfid-20150520_184241_649353_4600F054)
-References: <1432042936-23733-1-git-send-email-emmanuel.grumbach@intel.com>
-		 (sfid-20150519_154230_230935_983C6CAB)
- <1432110463.2174.2.camel@sipsolutions.net>
-		 <1432110664.5612.6.camel@intel.com>
-		 <1432110893.2174.3.camel@sipsolutions.net>
-	 <1432111194.8314.1.camel@intel.com> <555CA897.4010606@lwfinger.net>
-In-Reply-To: <555CA897.4010606@lwfinger.net>
-Content-Type: text/plain; charset="utf-8"
+	id S1752671AbbEKV5h (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 11 May 2015 17:57:37 -0400
+Message-ID: <555125CF.6090004@hauke-m.de> (sfid-20150511_235738_441273_3F022752)
+Date: Mon, 11 May 2015 23:57:35 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
+To: Stefan Assmann <sassmann@kpanic.de>,
+	Johannes Berg <johannes@sipsolutions.net>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: Re: problem with enabling config options
+References: <554B4966.5090808@kpanic.de>	 (sfid-20150507_131558_070018_C564096D) <1430999320.11214.0.camel@sipsolutions.net> <554B586D.8070805@kpanic.de>
+In-Reply-To: <554B586D.8070805@kpanic.de>
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-T24gV2VkLCAyMDE1LTA1LTIwIGF0IDEwOjMwIC0wNTAwLCBMYXJyeSBGaW5nZXIgd3JvdGU6DQo+
-IE9uIDA1LzIwLzIwMTUgMDM6MzkgQU0sIEdydW1iYWNoLCBFbW1hbnVlbCB3cm90ZToNCj4gPiBP
-biBXZWQsIDIwMTUtMDUtMjAgYXQgMTA6MzQgKzAyMDAsIEpvaGFubmVzIEJlcmcgd3JvdGU6DQo+
-ID4+IE9uIFdlZCwgMjAxNS0wNS0yMCBhdCAwODozMSArMDAwMCwgR3J1bWJhY2gsIEVtbWFudWVs
-IHdyb3RlOg0KPiA+Pj4gT24gV2VkLCAyMDE1LTA1LTIwIGF0IDEwOjI3ICswMjAwLCBKb2hhbm5l
-cyBCZXJnIHdyb3RlOg0KPiA+Pj4+IE9uIFR1ZSwgMjAxNS0wNS0xOSBhdCAxNjo0MiArMDMwMCwg
-RW1tYW51ZWwgR3J1bWJhY2ggd3JvdGU6DQo+ID4+Pj4NCj4gPj4+Pj4gKyNpZiAoTElOVVhfVkVS
-U0lPTl9DT0RFID09IEtFUk5FTF9WRVJTSU9OKDMsMTMsMTEpICYmIFVUU19VQlVOVFVfUkVMRUFT
-RV9BQkkgPCAyNCkNCj4gPj4+Pg0KPiA+Pj4+IE5vdyB0aGF0IEkgbG9vayBhdCB0aGlzIGFnYWlu
-LCBJJ20gY29uZnVzZWQgLSBzaG91bGRuJ3QgdGhpcyB3aG9sZSB0aGluZw0KPiA+Pj4+IGhhdmUg
-YSAhIGluIGZyb250Pw0KPiA+Pj4+DQo+ID4+Pg0KPiA+Pj4gd2h5Pw0KPiA+Pj4gSSBuZWVkIHRo
-aXMgZGVmaW5pdGlvbiBvbmx5IGZvciBVYnVudHUgcmVsZWFzZXMgdGhhdCBhcmUgYmVsb3cgMjQu
-DQo+ID4+PiBDYW5vbmljYWwgcG9ydGVkIHRoYXQgc3RhcnRpbmcgMjQuDQo+ID4+PiBXaGF0IGFt
-IEkgbWlzc2luZz8NCj4gPj4NCj4gPj4gQnV0IGV2ZXJ5IG1haW5saW5lIGtlcm5lbCwgc2F5IDMu
-MTAsIGFsc28gbmVlZHMgaXQuIEFsc28gVWJ1bnR1IHdpdGgNCj4gPj4gMy4xMCwgZm9yIGV4YW1w
-bGUuDQo+ID4+DQo+ID4NCj4gPiBZb3UgYXJlIHJpZ2h0IG9idmlvdXNseS4NCj4gDQo+IFdoYXQg
-aGFwcGVucyBpZiB0aGUgdXNlciBpcyBub3QgcnVubmluZyBhIFVidW50dSBrZXJuZWwgYW5kIA0K
-PiBVVFNfVUJVTlRVX1JFTEVBU0VfQUJJIGlzIHVuZGVmaW5lZD8NCj4gDQoNCnRoZW4gaXQgZ2V0
-cyBkZWZpbmVkIHRvIDAuDQoNCj4gSSBhbSByZWFsbHkgcGlzc2VkIG9mZiBhYm91dCBVYnVudHUn
-cyBiYWNrcG9ydGluZyBBUEkgY2hhbmdlcyBzbyB0aGF0IHRlc3RpbmcgDQo+IExJTlVYX1ZFUlNJ
-T05fQ09ERSBpcyBubyBsb25nZXIgc3VmZmljaWVudC4gSW4gZmFjdCB3aGVuIHNvbWVvbmUgY29t
-cGxhaW5zIHRoZSANCj4gb25lIG9mIHRoZSBvdXQtb2Yta2VybmVsIGRyaXZlcnMgdGhhdCBJIG1h
-aW50YWluIGRvZXMgbm90IGJ1aWxkIHdpdGgga2VybmVsIFguWSwgDQo+IEkgY2hlY2sgdGhhdCB2
-ZXJzaW9uIG91dCBpbiBtYWlubGluZSwgYnVpbGQgdGhlIGRyaXZlciB0byBtYWtlIHN1cmUgdGhl
-IHByb2JsZW0gDQo+IGlzIG5vdCBtaW5lLCBhbmQgdGhlbiB0ZWxsIHRoZW0gdG8gY29tcGxhaW4g
-dG8gdGhlaXIgdmVuZG9yLiBJIG5vIGxvbmdlciBmaXggDQo+IHRob3NlIHByb2JsZW1zLiBJIHRo
-aW5rIFJIRUwgaXMgYWxzbyBkb2luZyB0aGUgc2FtZSBraW5kIG9mIHRoaW5nIC0gYXQgbGVhc3Qg
-SSANCj4gZGlkIGdldCBvbmUgY29tcGxhaW50IGFib3V0IGEgYnVpbGQgcHJvYmxlbSB0aGF0IHNl
-ZW1lZCB0byBiZSBkdWUgdG8gYW4gQVBJIA0KPiBiYWNrcG9ydC4gV2hlcmUgZG8gd2Ugc3RvcD8N
-Cg0KR29vZCBxdWVzdGlvbi4uLiBJIGRvbid0IGtub3cuIE9UT0gsIGRpc3Ryb3MgZG9uJ3QgcmVh
-bGx5IHN1cHBvcnQNCmJhY2twb3J0LiBZb3UgY2FuJ3QgcmVhbGx5IGJsYW1lIHRoZW0gaWYgdGhl
-eSBicmVhayBiYWNrcG9ydCwgd2h5IHNob3VsZA0KdGhleSBjYXJlPw0KSSBhZ3JlZS4gSXQgaXMg
-YW5ub3lpbmcuIFdlIGNhbiB0cnkgdG8gY29udmluY2UgdGhlbSwgYnV0IEkgZG9uJ3QgdGhpbmsN
-CnRoYXQgc2F5aW5nICJ5b3UgYXJlIGFsbCB3cm9uZyIgaXMgdGhlIHJpZ2h0IHBhdGguIE1heWJl
-IHdlIHNob3VsZCB0cnkNCnRvIGhhdmUgdGhlbSBtb3JlIGludm9sdmVkIGluIGJhY2twb3J0IHRv
-IGZpeCBpdCB0aGVtc2VsdmVzPw0KQW5kIGV4cGxhaW4gdG8gdGhlbSBob3cgaW1wb3J0YW50IGl0
-IGlzIHRvIGJlIGFibGUgdG8gcnVuIGJhY2twb3J0IG9uDQp0b3Agb2YgYWxsIHRoZWlyIHNoaXBw
-ZWQga2VybmVscz8NCg0KPiANCj4gTGFycnkNCj4gDQo+IA0KPiANCj4gDQoNCg==
+On 05/07/2015 02:19 PM, Stefan Assmann wrote:
+> On 07.05.2015 13:48, Johannes Berg wrote:
+>> On Thu, 2015-05-07 at 13:15 +0200, Stefan Assmann wrote:
+>>> I'm looking into enabling more wired network drivers and ran into the
+>>> issue that I could not enable CONFIG_E1000 for example. The problem
+>>> seems to be that because CONFIG_E100 is disabled you cannot enable
+>>> anything CONFIG_E100*. It looks like a bug in gentree.py, but my python
+>>> foo didn't suffice to get it sorted out. Problem should be located
+>>> somewhere around line 1060 where the CONFIG variable regex stuff
+>>> happens.
+>>
+>> I think you can try to add \W to the very end of the regex there.
+>>
+>> johannes
+>>
+> 
+> Thanks Johannes, that worked. Proposing patch and Cc Hauke.
+> 
+>   Stefan
+> 
+> From da662be25373468dac47234f2f164fcc8503ebb4 Mon Sep 17 00:00:00 2001
+> From: Stefan Assmann <sassmann@kpanic.de>
+> Date: Thu, 7 May 2015 14:08:56 +0200
+> Subject: [PATCH] backports: fix incorrect disabling of CONFIG options
+> 
+> gentree.py incorrectly disabled CONFIG options that share part of the
+> name with another already disabled CONFIG option.
+> For example if CONFIG_E100 was disabled you no longer could enable
+> CONFIG_E1000 or CONFIG_E1000E.
+> 
+> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+> ---
+>  gentree.py | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+Thank you for the patch, it was applied and pushed out.
+
+Hauke
