@@ -1,78 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ig0-f182.google.com ([209.85.213.182]:37980 "EHLO
-	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757167AbbE2RwJ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 29 May 2015 13:52:09 -0400
+Received: from mga09.intel.com ([134.134.136.24]:40281 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753271AbbETQmj (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 20 May 2015 12:42:39 -0400
+From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+To: "Larry.Finger@lwfinger.net" <Larry.Finger@lwfinger.net>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"johannes@sipsolutions.net" <johannes@sipsolutions.net>
+Subject: Re: [PATCH] backport: allow compilation with Ubuntu's 3.13
+Date: Wed, 20 May 2015 16:42:35 +0000
+Message-ID: <1432140155.11332.3.camel@intel.com> (sfid-20150520_184241_649353_4600F054)
+References: <1432042936-23733-1-git-send-email-emmanuel.grumbach@intel.com>
+		 (sfid-20150519_154230_230935_983C6CAB)
+ <1432110463.2174.2.camel@sipsolutions.net>
+		 <1432110664.5612.6.camel@intel.com>
+		 <1432110893.2174.3.camel@sipsolutions.net>
+	 <1432111194.8314.1.camel@intel.com> <555CA897.4010606@lwfinger.net>
+In-Reply-To: <555CA897.4010606@lwfinger.net>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20150529173609.GF18540@thunk.org>
-References: <CAB=NE6UUTmMMB0La3OFe+hXpaZzdAwTs0QKBsTLSyrsSMFxJRg@mail.gmail.com>
- <55687D72.3070904@melag.de> <CAFLxGvz1-2sm74dmWZ4QpyC4TSubP4OHj=6Z8aVhvjqA2+WkZw@mail.gmail.com>
- <20150529173609.GF18540@thunk.org>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Fri, 29 May 2015 10:51:48 -0700
-Message-ID: <CAB=NE6VX_Op5O7Xu5xZcqwWsCCfHO-VauuJyGguV5b5EJC05Cw@mail.gmail.com> (sfid-20150529_195214_147583_FDCB95BA)
-Subject: Re: Uses of Linux backports in the industry
-To: "Theodore Ts'o" <tytso@mit.edu>,
-	Richard Weinberger <richard.weinberger@gmail.com>,
-	"Enrico Weigelt, metux IT consult" <weigelt@melag.de>,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Julia Lawall <julia.lawall@lip6.fr>
-Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, May 29, 2015 at 10:36 AM, Theodore Ts'o <tytso@mit.edu> wrote:
-> On Fri, May 29, 2015 at 05:01:00PM +0200, Richard Weinberger wrote:
->> On Fri, May 29, 2015 at 4:53 PM, Enrico Weigelt, metux IT consult
->> <weigelt@melag.de> wrote:
->> > Am 29.05.2015 um 04:54 schrieb Luis R. Rodriguez:
-
-Just to clarify the original goal was to hear how folks use the Linux
-backports project out there in the industry for purposes of the paper
-being edited, hearing how folks might do their own backports is
-certainly useful but I am also in hopes they might consider using
-Linux backports for future work to help, well automatically backport
-Linux.
-
->> > Actually, I really wonder why folks are sticking to ancient kernels on
->> > newer hardware.
->>
->> Enterprise distribution kernels. Or "special" kernels like PREEMPT_RT.
->> Sometimes the vendor BSP is that horrid that a customer cannot afford
->> to forward port it
->> but wants recent stuff. So you need to backport...
->
-> Yep.  The technique I used for the backporting ext4 encryption into
-> the 3.10 android-common git tree in AOSP was to drop in the 3.18
-> versions of fs/ext4 and fs/jbd2 into the 3.10 tree (along with the
-> associaed include files in include/linux and include/trace/events, of
-> course), and then fix things up until they built correctly (using
-> cherry-picks and in some cases, reverting some changes in the 3.18
-> version of fs/ext4).  After I was sure the transplant of the 3.18
-> version of ext4 had "taken" correctly, with no test regressions, only
-> then did I cherry-pick all of the ext4 encryption changes on top of
-> 3.10.
-
-FWIW, if the Linux backports project started carrying ext4 into it,
-you'd likely have less work to do and we'd enable use of ext4 to be
-used on the range of supported kernels.
-
-> The backport of ext4 encryption to the 3.18 version of android-common
-> should be much easier.  :-)   Unfortunately, I also have to do a
-> backport to the 3.14 android-common branch as well.   <sigh>
->
-> Yes, it's ugly, but there still are some SOC and drivers that aren't
-> available on newer kernels.  Basically, the handset vendors need to
-> lean a lot harder on the SOC and other peripheral (cell radios, GPS,
-> etc., etc.).  :-(
-
-Yeah we dealt with a lot of those dependencies when backporting the
-regulator subsystem for Media drivers, it was hard but hey we did
-quite a bit of the work. Now that we have in-kernel integration
-support the options on what to backport should be easier [1].
-
-[1] https://backports.wiki.kernel.org/index.php/Documentation/integration
-
- Luis
+T24gV2VkLCAyMDE1LTA1LTIwIGF0IDEwOjMwIC0wNTAwLCBMYXJyeSBGaW5nZXIgd3JvdGU6DQo+
+IE9uIDA1LzIwLzIwMTUgMDM6MzkgQU0sIEdydW1iYWNoLCBFbW1hbnVlbCB3cm90ZToNCj4gPiBP
+biBXZWQsIDIwMTUtMDUtMjAgYXQgMTA6MzQgKzAyMDAsIEpvaGFubmVzIEJlcmcgd3JvdGU6DQo+
+ID4+IE9uIFdlZCwgMjAxNS0wNS0yMCBhdCAwODozMSArMDAwMCwgR3J1bWJhY2gsIEVtbWFudWVs
+IHdyb3RlOg0KPiA+Pj4gT24gV2VkLCAyMDE1LTA1LTIwIGF0IDEwOjI3ICswMjAwLCBKb2hhbm5l
+cyBCZXJnIHdyb3RlOg0KPiA+Pj4+IE9uIFR1ZSwgMjAxNS0wNS0xOSBhdCAxNjo0MiArMDMwMCwg
+RW1tYW51ZWwgR3J1bWJhY2ggd3JvdGU6DQo+ID4+Pj4NCj4gPj4+Pj4gKyNpZiAoTElOVVhfVkVS
+U0lPTl9DT0RFID09IEtFUk5FTF9WRVJTSU9OKDMsMTMsMTEpICYmIFVUU19VQlVOVFVfUkVMRUFT
+RV9BQkkgPCAyNCkNCj4gPj4+Pg0KPiA+Pj4+IE5vdyB0aGF0IEkgbG9vayBhdCB0aGlzIGFnYWlu
+LCBJJ20gY29uZnVzZWQgLSBzaG91bGRuJ3QgdGhpcyB3aG9sZSB0aGluZw0KPiA+Pj4+IGhhdmUg
+YSAhIGluIGZyb250Pw0KPiA+Pj4+DQo+ID4+Pg0KPiA+Pj4gd2h5Pw0KPiA+Pj4gSSBuZWVkIHRo
+aXMgZGVmaW5pdGlvbiBvbmx5IGZvciBVYnVudHUgcmVsZWFzZXMgdGhhdCBhcmUgYmVsb3cgMjQu
+DQo+ID4+PiBDYW5vbmljYWwgcG9ydGVkIHRoYXQgc3RhcnRpbmcgMjQuDQo+ID4+PiBXaGF0IGFt
+IEkgbWlzc2luZz8NCj4gPj4NCj4gPj4gQnV0IGV2ZXJ5IG1haW5saW5lIGtlcm5lbCwgc2F5IDMu
+MTAsIGFsc28gbmVlZHMgaXQuIEFsc28gVWJ1bnR1IHdpdGgNCj4gPj4gMy4xMCwgZm9yIGV4YW1w
+bGUuDQo+ID4+DQo+ID4NCj4gPiBZb3UgYXJlIHJpZ2h0IG9idmlvdXNseS4NCj4gDQo+IFdoYXQg
+aGFwcGVucyBpZiB0aGUgdXNlciBpcyBub3QgcnVubmluZyBhIFVidW50dSBrZXJuZWwgYW5kIA0K
+PiBVVFNfVUJVTlRVX1JFTEVBU0VfQUJJIGlzIHVuZGVmaW5lZD8NCj4gDQoNCnRoZW4gaXQgZ2V0
+cyBkZWZpbmVkIHRvIDAuDQoNCj4gSSBhbSByZWFsbHkgcGlzc2VkIG9mZiBhYm91dCBVYnVudHUn
+cyBiYWNrcG9ydGluZyBBUEkgY2hhbmdlcyBzbyB0aGF0IHRlc3RpbmcgDQo+IExJTlVYX1ZFUlNJ
+T05fQ09ERSBpcyBubyBsb25nZXIgc3VmZmljaWVudC4gSW4gZmFjdCB3aGVuIHNvbWVvbmUgY29t
+cGxhaW5zIHRoZSANCj4gb25lIG9mIHRoZSBvdXQtb2Yta2VybmVsIGRyaXZlcnMgdGhhdCBJIG1h
+aW50YWluIGRvZXMgbm90IGJ1aWxkIHdpdGgga2VybmVsIFguWSwgDQo+IEkgY2hlY2sgdGhhdCB2
+ZXJzaW9uIG91dCBpbiBtYWlubGluZSwgYnVpbGQgdGhlIGRyaXZlciB0byBtYWtlIHN1cmUgdGhl
+IHByb2JsZW0gDQo+IGlzIG5vdCBtaW5lLCBhbmQgdGhlbiB0ZWxsIHRoZW0gdG8gY29tcGxhaW4g
+dG8gdGhlaXIgdmVuZG9yLiBJIG5vIGxvbmdlciBmaXggDQo+IHRob3NlIHByb2JsZW1zLiBJIHRo
+aW5rIFJIRUwgaXMgYWxzbyBkb2luZyB0aGUgc2FtZSBraW5kIG9mIHRoaW5nIC0gYXQgbGVhc3Qg
+SSANCj4gZGlkIGdldCBvbmUgY29tcGxhaW50IGFib3V0IGEgYnVpbGQgcHJvYmxlbSB0aGF0IHNl
+ZW1lZCB0byBiZSBkdWUgdG8gYW4gQVBJIA0KPiBiYWNrcG9ydC4gV2hlcmUgZG8gd2Ugc3RvcD8N
+Cg0KR29vZCBxdWVzdGlvbi4uLiBJIGRvbid0IGtub3cuIE9UT0gsIGRpc3Ryb3MgZG9uJ3QgcmVh
+bGx5IHN1cHBvcnQNCmJhY2twb3J0LiBZb3UgY2FuJ3QgcmVhbGx5IGJsYW1lIHRoZW0gaWYgdGhl
+eSBicmVhayBiYWNrcG9ydCwgd2h5IHNob3VsZA0KdGhleSBjYXJlPw0KSSBhZ3JlZS4gSXQgaXMg
+YW5ub3lpbmcuIFdlIGNhbiB0cnkgdG8gY29udmluY2UgdGhlbSwgYnV0IEkgZG9uJ3QgdGhpbmsN
+CnRoYXQgc2F5aW5nICJ5b3UgYXJlIGFsbCB3cm9uZyIgaXMgdGhlIHJpZ2h0IHBhdGguIE1heWJl
+IHdlIHNob3VsZCB0cnkNCnRvIGhhdmUgdGhlbSBtb3JlIGludm9sdmVkIGluIGJhY2twb3J0IHRv
+IGZpeCBpdCB0aGVtc2VsdmVzPw0KQW5kIGV4cGxhaW4gdG8gdGhlbSBob3cgaW1wb3J0YW50IGl0
+IGlzIHRvIGJlIGFibGUgdG8gcnVuIGJhY2twb3J0IG9uDQp0b3Agb2YgYWxsIHRoZWlyIHNoaXBw
+ZWQga2VybmVscz8NCg0KPiANCj4gTGFycnkNCj4gDQo+IA0KPiANCj4gDQoNCg==
