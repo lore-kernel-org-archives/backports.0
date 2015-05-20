@@ -1,47 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.melag.de ([217.6.74.107]:43945 "EHLO mail.melag.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751854AbbE2Oxl convert rfc822-to-8bit (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 29 May 2015 10:53:41 -0400
-Message-ID: <55687D72.3070904@melag.de> (sfid-20150529_165344_187627_D49A4807)
-Date: Fri, 29 May 2015 16:53:38 +0200
-From: "Enrico Weigelt, metux IT consult" <weigelt@melag.de>
-MIME-Version: 1.0
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+Received: from dedo.coelho.fi ([88.198.205.34]:48459 "EHLO dedo.coelho.fi"
+	rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752531AbbETJLH (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 20 May 2015 05:11:07 -0400
+Message-ID: <1432110968.2142.14.camel@coelho.fi> (sfid-20150520_111111_316248_C759B759)
+From: Luca Coelho <luca@coelho.fi>
+To: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+Cc: "johannes@sipsolutions.net" <johannes@sipsolutions.net>,
 	"backports@vger.kernel.org" <backports@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: Uses of Linux backports in the industry
-References: <CAB=NE6UUTmMMB0La3OFe+hXpaZzdAwTs0QKBsTLSyrsSMFxJRg@mail.gmail.com>
-In-Reply-To: <CAB=NE6UUTmMMB0La3OFe+hXpaZzdAwTs0QKBsTLSyrsSMFxJRg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Date: Wed, 20 May 2015 11:36:08 +0300
+In-Reply-To: <1432110664.5612.6.camel@intel.com>
+References: <1432042936-23733-1-git-send-email-emmanuel.grumbach@intel.com>
+	 (sfid-20150519_154230_230935_983C6CAB) <1432110463.2174.2.camel@sipsolutions.net>
+	 <1432110664.5612.6.camel@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: [PATCH] backport: allow compilation with Ubuntu's 3.13
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Am 29.05.2015 um 04:54 schrieb Luis R. Rodriguez:
+On Wed, 2015-05-20 at 08:31 +0000, Grumbach, Emmanuel wrote:
+> On Wed, 2015-05-20 at 10:27 +0200, Johannes Berg wrote:
+> > On Tue, 2015-05-19 at 16:42 +0300, Emmanuel Grumbach wrote:
+> > 
+> > > +#if (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI < 24)
+> > 
+> > Now that I look at this again, I'm confused - shouldn't this whole thing
+> > have a ! in front?
+> > 
+> 
+> why?
+> I need this definition only for Ubuntu releases that are below 24.
+> Canonical ported that starting 24.
+> What am I missing?
 
-Hi,
-
-<snip>
-
-let me add some personal views for backports issue in general - or,
-more precisely, the opposite - forward porting:
-
-Silicon vendors often just provide drivers for very old kernels, even
-worse: proprietary drivers, which need ugly kernel hacks (eg. Freescale
-is one of the worst). So I'll have to forward-port drivers to newer
-kernels - but I never had the practical need to backport one.
-
-Actually, I really wonder why folks are sticking to ancient kernels on
-newer hardware.
-
-
---mtx
+At least the code as is doesn't work for me on Ubuntu 12.04 with 3.10
+kernel...
 
 --
-Enrico Weigelt, metux IT consult
-+49-151-27565287
-MELAG Medizintechnik oHG Sitz Berlin Registergericht AG Charlottenburg HRA 21333 B
+Luca
 
-Wichtiger Hinweis: Diese Nachricht kann vertrauliche oder nur für einen begrenzten Personenkreis bestimmte Informationen enthalten. Sie ist ausschließlich für denjenigen bestimmt, an den sie gerichtet worden ist. Wenn Sie nicht der Adressat dieser E-Mail sind, dürfen Sie diese nicht kopieren, weiterleiten, weitergeben oder sie ganz oder teilweise in irgendeiner Weise nutzen. Sollten Sie diese E-Mail irrtümlich erhalten haben, so benachrichtigen Sie bitte den Absender, indem Sie auf diese Nachricht antworten. Bitte löschen Sie in diesem Fall diese Nachricht und alle Anhänge, ohne eine Kopie zu behalten.
-Important Notice: This message may contain confidential or privileged information. It is intended only for the person it was addressed to. If you are not the intended recipient of this email you may not copy, forward, disclose or otherwise use it or any part of it in any form whatsoever. If you received this email in error please notify the sender by replying and delete this message and any attachments without retaining a copy.
