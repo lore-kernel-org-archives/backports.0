@@ -1,51 +1,61 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:44528 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751232AbbEDHnU (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 4 May 2015 03:43:20 -0400
-Message-ID: <1430725394.2013.5.camel@sipsolutions.net> (sfid-20150504_094322_680800_A624D2F9)
-Subject: Re: [PATCH] backports: mac80211: revert to old stats behaviour for
- older kernels
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend van Spriel <arend@broadcom.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
-Date: Mon, 04 May 2015 09:43:14 +0200
-In-Reply-To: <55467BCF.8040705@broadcom.com>
-References: <1430487994-20598-1-git-send-email-arend@broadcom.com>
-		 (sfid-20150501_154642_126166_7597CA83) <1430680059.3276.1.camel@sipsolutions.net>
-	 <55467BCF.8040705@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:35286 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754131AbbETPae (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 20 May 2015 11:30:34 -0400
+Received: by oign205 with SMTP id n205so38783748oig.2
+        for <backports@vger.kernel.org>; Wed, 20 May 2015 08:30:34 -0700 (PDT)
+Message-ID: <555CA897.4010606@lwfinger.net> (sfid-20150520_173041_428688_BF5D2835)
+Date: Wed, 20 May 2015 10:30:31 -0500
+From: Larry Finger <Larry.Finger@lwfinger.net>
+MIME-Version: 1.0
+To: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>,
+	"johannes@sipsolutions.net" <johannes@sipsolutions.net>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: [PATCH] backport: allow compilation with Ubuntu's 3.13
+References: <1432042936-23733-1-git-send-email-emmanuel.grumbach@intel.com>	 (sfid-20150519_154230_230935_983C6CAB) <1432110463.2174.2.camel@sipsolutions.net>	 <1432110664.5612.6.camel@intel.com>	 <1432110893.2174.3.camel@sipsolutions.net> <1432111194.8314.1.camel@intel.com>
+In-Reply-To: <1432111194.8314.1.camel@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, 2015-05-03 at 21:49 +0200, Arend van Spriel wrote:
+On 05/20/2015 03:39 AM, Grumbach, Emmanuel wrote:
+> On Wed, 2015-05-20 at 10:34 +0200, Johannes Berg wrote:
+>> On Wed, 2015-05-20 at 08:31 +0000, Grumbach, Emmanuel wrote:
+>>> On Wed, 2015-05-20 at 10:27 +0200, Johannes Berg wrote:
+>>>> On Tue, 2015-05-19 at 16:42 +0300, Emmanuel Grumbach wrote:
+>>>>
+>>>>> +#if (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI < 24)
+>>>>
+>>>> Now that I look at this again, I'm confused - shouldn't this whole thing
+>>>> have a ! in front?
+>>>>
+>>>
+>>> why?
+>>> I need this definition only for Ubuntu releases that are below 24.
+>>> Canonical ported that starting 24.
+>>> What am I missing?
+>>
+>> But every mainline kernel, say 3.10, also needs it. Also Ubuntu with
+>> 3.10, for example.
+>>
+>
+> You are right obviously.
 
-> I don't either, but I had a bunch of test systems that I wanted to get 
-> going.
+What happens if the user is not running a Ubuntu kernel and 
+UTS_UBUNTU_RELEASE_ABI is undefined?
 
-While on vacation? :)
+I am really pissed off about Ubuntu's backporting API changes so that testing 
+LINUX_VERSION_CODE is no longer sufficient. In fact when someone complains the 
+one of the out-of-kernel drivers that I maintain does not build with kernel X.Y, 
+I check that version out in mainline, build the driver to make sure the problem 
+is not mine, and then tell them to complain to their vendor. I no longer fix 
+those problems. I think RHEL is also doing the same kind of thing - at least I 
+did get one complaint about a build problem that seemed to be due to an API 
+backport. Where do we stop?
 
-> > What part of this isn't supported? Is there no pointer whatsoever that
-> > we can use? We still implement the ndo_getstats64 [or whatever it's
-> > called] ourselves anyway, so we don't really use any API here apart from
-> >   * netdev_alloc_pcpu_stats, which is trivially backported
-> >   * dev->tstats, which is just a single pointer and we could use anything
-> > else,
-> >     even perhaps in sdata
-> 
-> I have to learn about the per-cpu operations someday so why not now 
-> while spending two weeks vacation ;-)
+Larry
 
-Heh. Go enjoy your vacation, I can handle this :)
 
-I think you arrived at kernel 3.14 due to 8f84985fec10d. However, I
-think we can just do the following
 
- * backport "struct pcpu_sw_netstats" (needed on < 3.14)
- * backport "netdev_alloc_pcpu_stats" (needed on < 3.15)
- * make an spatch replacing dev->tstats with ((struct pcpu_sw_netstats *)dev->ml_priv)
-   (since ml_priv has existed for a long time, and they're in a union)
-
-johannes
 
