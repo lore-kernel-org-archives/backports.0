@@ -1,112 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:51716 "EHLO sipsolutions.net"
+Received: from mga03.intel.com ([134.134.136.65]:55246 "EHLO mga03.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1422667AbbEEMiC (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 5 May 2015 08:38:02 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: update mac80211 LED patch
-Date: Tue,  5 May 2015 14:37:58 +0200
-Message-Id: <1430829478-13959-1-git-send-email-johannes@sipsolutions.net> (sfid-20150505_143804_674789_96E0A16D)
+	id S1751818AbbETQzx (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 20 May 2015 12:55:53 -0400
+From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+To: "Larry.Finger@lwfinger.net" <Larry.Finger@lwfinger.net>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"johannes@sipsolutions.net" <johannes@sipsolutions.net>
+Subject: Re: [PATCH] backport: allow compilation with Ubuntu's 3.13
+Date: Wed, 20 May 2015 16:55:31 +0000
+Message-ID: <1432140931.11332.6.camel@intel.com> (sfid-20150520_185555_080756_5B1D28D3)
+References: <1432042936-23733-1-git-send-email-emmanuel.grumbach@intel.com>
+			 (sfid-20150519_154230_230935_983C6CAB)
+ <1432110463.2174.2.camel@sipsolutions.net>
+			 <1432110664.5612.6.camel@intel.com>
+			 <1432110893.2174.3.camel@sipsolutions.net>
+		 <1432111194.8314.1.camel@intel.com> <555CA897.4010606@lwfinger.net>
+	 <1432140155.11332.3.camel@intel.com> <555CBC12.4020800@lwfinger.net>
+In-Reply-To: <555CBC12.4020800@lwfinger.net>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
-
-The recent mac80211 LED changes broke the patch, fix it
-up and make it apply again.
-
-Change-Id: I4bf9595fb947886e68fa08592bd2cd3b7965f223
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- .../network/0024-led-blink-api/mac80211.patch      | 56 +++++++++++-----------
- 1 file changed, 28 insertions(+), 28 deletions(-)
-
-diff --git a/patches/collateral-evolutions/network/0024-led-blink-api/mac80211.patch b/patches/collateral-evolutions/network/0024-led-blink-api/mac80211.patch
-index dd0de8f957dd..9683522f62a7 100644
---- a/patches/collateral-evolutions/network/0024-led-blink-api/mac80211.patch
-+++ b/patches/collateral-evolutions/network/0024-led-blink-api/mac80211.patch
-@@ -1,51 +1,51 @@
- --- a/net/mac80211/ieee80211_i.h
- +++ b/net/mac80211/ieee80211_i.h
--@@ -1276,6 +1276,9 @@ struct ieee80211_local {
-- 	u32 dot11TransmittedFrameCount;
-+@@ -1260,6 +1260,7 @@ struct ieee80211_local {
-+ 	struct mutex chanctx_mtx;
-  
-  #ifdef CONFIG_MAC80211_LEDS
--+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
- +	int tx_led_counter, rx_led_counter;
--+#endif
-- 	struct led_trigger *tx_led, *rx_led, *assoc_led, *radio_led;
-- 	struct tpt_led_trigger *tpt_led_trigger;
-- 	char tx_led_name[32], rx_led_name[32],
----- a/net/mac80211/led.c
--+++ b/net/mac80211/led.c
--@@ -16,18 +16,36 @@
-- 
-- void ieee80211_led_rx(struct ieee80211_local *local)
-+ 	struct led_trigger tx_led, rx_led, assoc_led, radio_led;
-+ 	struct led_trigger tpt_led;
-+ 	atomic_t tx_led_active, rx_led_active, assoc_led_active;
-+--- a/net/mac80211/led.h
-++++ b/net/mac80211/led.h
-+@@ -16,22 +16,36 @@
-+ static inline void ieee80211_led_rx(struct ieee80211_local *local)
-  {
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-- 	unsigned long led_delay = MAC80211_BLINK_DELAY;
--+#endif
-- 	if (unlikely(!local->rx_led))
-+ #ifdef CONFIG_MAC80211_LEDS
-+-	unsigned long led_delay = MAC80211_BLINK_DELAY;
-++	unsigned long led_delay __maybe_unused = MAC80211_BLINK_DELAY;
-+ 
-+ 	if (!atomic_read(&local->rx_led_active))
-  		return;
- +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-- 	led_trigger_blink_oneshot(local->rx_led, &led_delay, &led_delay, 0);
-+ 	led_trigger_blink_oneshot(&local->rx_led, &led_delay, &led_delay, 0);
- +#else
- +	if (local->rx_led_counter++ % 2 == 0)
--+		led_trigger_event(local->rx_led, LED_OFF);
-++		led_trigger_event(&local->rx_led, LED_OFF);
- +	else
--+		led_trigger_event(local->rx_led, LED_FULL);
-++		led_trigger_event(&local->rx_led, LED_FULL);
- +#endif
-+ #endif
-  }
-  
-- void ieee80211_led_tx(struct ieee80211_local *local)
-+ static inline void ieee80211_led_tx(struct ieee80211_local *local)
-  {
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-- 	unsigned long led_delay = MAC80211_BLINK_DELAY;
--+#endif
-- 	if (unlikely(!local->tx_led))
-+ #ifdef CONFIG_MAC80211_LEDS
-+-	unsigned long led_delay = MAC80211_BLINK_DELAY;
-++	unsigned long led_delay __maybe_unused = MAC80211_BLINK_DELAY;
-+ 
-+ 	if (!atomic_read(&local->tx_led_active))
-  		return;
- +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-- 	led_trigger_blink_oneshot(local->tx_led, &led_delay, &led_delay, 0);
-+ 	led_trigger_blink_oneshot(&local->tx_led, &led_delay, &led_delay, 0);
- +#else
- +	if (local->tx_led_counter++ % 2 == 0)
--+		led_trigger_event(local->tx_led, LED_OFF);
-++		led_trigger_event(&local->tx_led, LED_OFF);
- +	else
--+		led_trigger_event(local->tx_led, LED_FULL);
-++		led_trigger_event(&local->tx_led, LED_FULL);
- +#endif
-+ #endif
-  }
-  
-- void ieee80211_led_assoc(struct ieee80211_local *local, bool associated)
--- 
-2.1.4
-
+T24gV2VkLCAyMDE1LTA1LTIwIGF0IDExOjUzIC0wNTAwLCBMYXJyeSBGaW5nZXIgd3JvdGU6DQo+
+IE9uIDA1LzIwLzIwMTUgMTE6NDIgQU0sIEdydW1iYWNoLCBFbW1hbnVlbCB3cm90ZToNCj4gPg0K
+PiA+IEdvb2QgcXVlc3Rpb24uLi4gSSBkb24ndCBrbm93LiBPVE9ILCBkaXN0cm9zIGRvbid0IHJl
+YWxseSBzdXBwb3J0DQo+ID4gYmFja3BvcnQuIFlvdSBjYW4ndCByZWFsbHkgYmxhbWUgdGhlbSBp
+ZiB0aGV5IGJyZWFrIGJhY2twb3J0LCB3aHkgc2hvdWxkDQo+ID4gdGhleSBjYXJlPw0KPiA+IEkg
+YWdyZWUuIEl0IGlzIGFubm95aW5nLiBXZSBjYW4gdHJ5IHRvIGNvbnZpbmNlIHRoZW0sIGJ1dCBJ
+IGRvbid0IHRoaW5rDQo+ID4gdGhhdCBzYXlpbmcgInlvdSBhcmUgYWxsIHdyb25nIiBpcyB0aGUg
+cmlnaHQgcGF0aC4gTWF5YmUgd2Ugc2hvdWxkIHRyeQ0KPiA+IHRvIGhhdmUgdGhlbSBtb3JlIGlu
+dm9sdmVkIGluIGJhY2twb3J0IHRvIGZpeCBpdCB0aGVtc2VsdmVzPw0KPiA+IEFuZCBleHBsYWlu
+IHRvIHRoZW0gaG93IGltcG9ydGFudCBpdCBpcyB0byBiZSBhYmxlIHRvIHJ1biBiYWNrcG9ydCBv
+bg0KPiA+IHRvcCBvZiBhbGwgdGhlaXIgc2hpcHBlZCBrZXJuZWxzPw0KPiANCj4gU3VwcG9ydGlu
+ZyBiYWNrcG9ydCB3b3VsZCBiZSBhIGZpcnN0IHN0ZXAsIGJ1dCB0aGF0IHdvbid0IGhlbHAgYWxs
+IG9mIHRoZSBydGw4KiANCj4gcmVwb3MgdGhhdCBJIGhhdmUgYXQgR2l0SHViLiBNb3N0IG9mIHRo
+b3NlIGRvIG5vdCBoYXZlIGRyaXZlcnMgaW4gdGhlIGtlcm5lbCwgDQo+IHRodXMgdGhlIHVzZXJz
+IGFyZSBkZXBlbmRlbnQgb24gdGhhdCBraW5kIG9mIGV4dGVybmFsIHJlcG87IGhvd2V2ZXIsIEkg
+ZG8gbm90IA0KPiBoYXZlIGFueSBkZXNpcmUgdG8gZmluZCBvdXQgd2hhdCBtYWNybyBuZWVkcyB0
+byBiZSB0ZXN0ZWQgc28gdGhhdCB0aGVzZSBkcml2ZXJzIA0KPiB3aWxsIGJ1aWxkIG9uIGRpc3Ry
+b3MgdGhhdCBJIGRvIG5vdCB1c2UuDQo+IA0KPiBJIGd1ZXNzIEkgc2hvdWxkIHJlcG9ydCBhIGJ1
+ZyB0byB3aGF0ZXZlciBkaXN0byBicmVha3MgbXkgZHJpdmVyIGFuZCByZXF1ZXN0IA0KPiB0aGF0
+IHRoZXkgZml4IGl0LiBJIGFscmVhZHkga25vdyBob3cgbXVjaCB0aGF0IHdpbGwgaGVscCA6KQ0K
+PiANCg0KSGVoIC0geWVhaC4gSSBjYW4gdGVsbCBJIHRyeSB0byBiZSAqdmVyeSogcmVzcG9uc2l2
+ZSB3aGVuIHBlb3BsZSBhZGQNCmJ1Z3Mgb24gYnVnemlsbGEua2VybmVsLm9yZyBhYm91dCBpd2x3
+aWZpLiBTb21lIHBlb3BsZSBhcmUgc3VycHJpc2VkIHRvDQpzZWUgdGhhdCB0aGUgaXNzdWUgaXMg
+YWN0dWFsbHkgaGFuZGxlZCBhbmQgdGhhdCBzb21lb25lIHRha2VzIGNhcmUgb2YNCml0LiBUaGF0
+IHRlYWNoZXMgbWUgd2hhdCBoYXBwZW5zIHRvIHRoZSBvdGhlciBpc3N1ZXMuLi4gOikNCg0KPiBM
+YXJyeQ0KPiANCj4gDQoNCg==
