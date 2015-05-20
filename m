@@ -1,55 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:15899 "EHLO mga01.intel.com"
+Received: from s3.sipsolutions.net ([5.9.151.49]:35639 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751532AbbESNmY (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 19 May 2015 09:42:24 -0400
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-To: backports@vger.kernel.org
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Subject: [PATCH] backport: allow compilation with Ubuntu's 3.13
-Date: Tue, 19 May 2015 16:42:16 +0300
-Message-Id: <1432042936-23733-1-git-send-email-emmanuel.grumbach@intel.com> (sfid-20150519_154230_230935_983C6CAB)
+	id S1751876AbbETIez (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 20 May 2015 04:34:55 -0400
+Message-ID: <1432110893.2174.3.camel@sipsolutions.net> (sfid-20150520_103457_283448_8B556FB1)
+Subject: Re: [PATCH] backport: allow compilation with Ubuntu's 3.13
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Wed, 20 May 2015 10:34:53 +0200
+In-Reply-To: <1432110664.5612.6.camel@intel.com>
+References: <1432042936-23733-1-git-send-email-emmanuel.grumbach@intel.com>
+	 (sfid-20150519_154230_230935_983C6CAB) <1432110463.2174.2.camel@sipsolutions.net>
+	 <1432110664.5612.6.camel@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Canonical backported:
+On Wed, 2015-05-20 at 08:31 +0000, Grumbach, Emmanuel wrote:
+> On Wed, 2015-05-20 at 10:27 +0200, Johannes Berg wrote:
+> > On Tue, 2015-05-19 at 16:42 +0300, Emmanuel Grumbach wrote:
+> > 
+> > > +#if (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI < 24)
+> > 
+> > Now that I look at this again, I'm confused - shouldn't this whole thing
+> > have a ! in front?
+> > 
+> 
+> why?
+> I need this definition only for Ubuntu releases that are below 24.
+> Canonical ported that starting 24.
+> What am I missing?
 
-Author: Or Gerlitz <ogerlitz@mellanox.com>
-Date:   Mon Jan 20 13:59:19 2014 +0200
+But every mainline kernel, say 3.10, also needs it. Also Ubuntu with
+3.10, for example.
 
-    net: Add GRO support for UDP encapsulating protocols
-
-This is commit 2da204a8f67fbe25816cbce8cc8551f03d5b951a in their
-tree.
-Cope with that.
-
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
----
-Touch compiled only. And I don't really know how the UTS thing goes :)
----
- backport/backport-include/linux/netdevice.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
-index bb3fefb..61ac95c 100644
---- a/backport/backport-include/linux/netdevice.h
-+++ b/backport/backport-include/linux/netdevice.h
-@@ -81,6 +81,7 @@ static inline void dev_consume_skb_any(struct sk_buff *skb)
- 	dev_kfree_skb_any(skb);
- }
- 
-+#if (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI < 24)
- struct pcpu_sw_netstats {
- 	u64     rx_packets;
- 	u64     rx_bytes;
-@@ -88,6 +89,7 @@ struct pcpu_sw_netstats {
- 	u64     tx_bytes;
- 	struct u64_stats_sync   syncp;
- };
-+#endif
- 
- #define netdev_tstats(dev)	((struct pcpu_sw_netstats *)dev->ml_priv)
- #define netdev_assign_tstats(dev, e)	dev->ml_priv = (e);
--- 
-2.1.4
+johannes
 
