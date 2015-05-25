@@ -1,42 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from dedo.coelho.fi ([88.198.205.34]:48459 "EHLO dedo.coelho.fi"
-	rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752531AbbETJLH (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 20 May 2015 05:11:07 -0400
-Message-ID: <1432110968.2142.14.camel@coelho.fi> (sfid-20150520_111111_316248_C759B759)
-From: Luca Coelho <luca@coelho.fi>
-To: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-Cc: "johannes@sipsolutions.net" <johannes@sipsolutions.net>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Wed, 20 May 2015 11:36:08 +0300
-In-Reply-To: <1432110664.5612.6.camel@intel.com>
-References: <1432042936-23733-1-git-send-email-emmanuel.grumbach@intel.com>
-	 (sfid-20150519_154230_230935_983C6CAB) <1432110463.2174.2.camel@sipsolutions.net>
-	 <1432110664.5612.6.camel@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [PATCH] backport: allow compilation with Ubuntu's 3.13
+Received: from hauke-m.de ([5.39.93.123]:57962 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750949AbbEYVoP (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 25 May 2015 17:44:15 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: mcgrof@kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 3/4] header: handler new parameter net in sock_create_kern()
+Date: Mon, 25 May 2015 23:44:03 +0200
+Message-Id: <1432590244-4101-3-git-send-email-hauke@hauke-m.de> (sfid-20150525_234418_923911_8652B8B5)
+In-Reply-To: <1432590244-4101-1-git-send-email-hauke@hauke-m.de>
+References: <1432590244-4101-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2015-05-20 at 08:31 +0000, Grumbach, Emmanuel wrote:
-> On Wed, 2015-05-20 at 10:27 +0200, Johannes Berg wrote:
-> > On Tue, 2015-05-19 at 16:42 +0300, Emmanuel Grumbach wrote:
-> > 
-> > > +#if (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI < 24)
-> > 
-> > Now that I look at this again, I'm confused - shouldn't this whole thing
-> > have a ! in front?
-> > 
-> 
-> why?
-> I need this definition only for Ubuntu releases that are below 24.
-> Canonical ported that starting 24.
-> What am I missing?
+Linux commit eeb1bd5c4 added a new parameter to sock_create_kern(). In
+the original function it was replaced with &init_net every time, now it
+is taken from the parameter.
 
-At least the code as is doesn't work for me on Ubuntu 12.04 with 3.10
-kernel...
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/net.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---
-Luca
+diff --git a/backport/backport-include/linux/net.h b/backport/backport-include/linux/net.h
+index 0e436d4..4d9250b 100644
+--- a/backport/backport-include/linux/net.h
++++ b/backport/backport-include/linux/net.h
+@@ -97,4 +97,9 @@ bool __net_get_random_once(void *buf, int nbytes, bool *done,
+ 
+ #endif /* __BACKPORT_NET_GET_RANDOM_ONCE */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0)
++#define sock_create_kern(net, family, type, proto, res) \
++	__sock_create(net, family, type, proto, res, 1)
++#endif
++
+ #endif /* __BACKPORT_LINUX_NET_H */
+-- 
+2.1.4
 
