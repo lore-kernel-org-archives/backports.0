@@ -1,89 +1,57 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:55711 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S964849AbbENTYp (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 14 May 2015 15:24:45 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: fix netdev->tstats backport
-Date: Thu, 14 May 2015 21:24:42 +0200
-Message-Id: <1431631482-5810-1-git-send-email-johannes@sipsolutions.net> (sfid-20150514_212447_623176_FA10FB2E)
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:56045 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755511AbbE2IIZ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 29 May 2015 04:08:25 -0400
+Message-ID: <55681E76.4070401@broadcom.com> (sfid-20150529_100828_564182_4F48AFCE)
+Date: Fri, 29 May 2015 10:08:22 +0200
+From: Arend van Spriel <arend@broadcom.com>
+MIME-Version: 1.0
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Julia Lawall <julia.lawall@lip6.fr>
+Subject: Re: Uses of Linux backports in the industry
+References: <CAB=NE6UUTmMMB0La3OFe+hXpaZzdAwTs0QKBsTLSyrsSMFxJRg@mail.gmail.com>	 (sfid-20150529_045521_094351_3FF15D30) <1432882836.2104.1.camel@sipsolutions.net>
+In-Reply-To: <1432882836.2104.1.camel@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On 05/29/15 09:00, Johannes Berg wrote:
+> -lkml, that list is overfull anyway ...
+>
+> On Thu, 2015-05-28 at 19:54 -0700, Luis R. Rodriguez wrote:
+>> Me and Julia are working on a paper which evaluates use of Coccinelle
+>> on backports, a preliminary draft of such paper can be found on github
+>> [0]. We are making some tweaks to this, one of which is covering the
+>> uses of Linux backports [1] in the industry, for this we'd like to try
+>> to get feedback as to where and how folks are using backports. Please
+>> let me and Julia know -- or if the information is not sensitive please
+>> feel free to just reply to this thread and share with others. All
+>> feedback is greatly appreciated.
 
-Given a correct spatch, there's no need for the other manual
-patch. Thanks to Julia for pointing out my error in building
-the original spatch, and how to fix it.
+We use the backports project solely for testing. We build and test 
+nightly for a number of lab machines. Some are running recent 
+wireless-testing kernel, but a number of those run a relatively old FC19 
+kernel (3.11.1) for which we build backport brcm80211 drivers. We do 
+that for our internal tree and for the wireless-testing tree.
 
-Change-Id: I0226a6c4d0fb7630abee315f1839ba63534aacbb
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- .../collateral-evolutions/network/0055-netdev-tstats-tx.patch | 11 -----------
- ...55-netdev-tstats-assign.cocci => 0055-netdev-tstats.cocci} |  9 +++++----
- .../collateral-evolutions/network/0056-netdev-tstats.cocci    |  9 ---------
- 3 files changed, 5 insertions(+), 24 deletions(-)
- delete mode 100644 patches/collateral-evolutions/network/0055-netdev-tstats-tx.patch
- rename patches/collateral-evolutions/network/{0055-netdev-tstats-assign.cocci => 0055-netdev-tstats.cocci} (61%)
- delete mode 100644 patches/collateral-evolutions/network/0056-netdev-tstats.cocci
+>> If you are OK in having us list or
+>> generalize your usage please indicate so.
 
-diff --git a/patches/collateral-evolutions/network/0055-netdev-tstats-tx.patch b/patches/collateral-evolutions/network/0055-netdev-tstats-tx.patch
-deleted file mode 100644
-index aa79e0298cb1..000000000000
---- a/patches/collateral-evolutions/network/0055-netdev-tstats-tx.patch
-+++ /dev/null
-@@ -1,11 +0,0 @@
----- a/net/mac80211/tx.c
--+++ b/net/mac80211/tx.c
--@@ -39,7 +39,7 @@
-- 
-- static inline void ieee80211_tx_stats(struct net_device *dev, u32 len)
-- {
---	struct pcpu_sw_netstats *tstats = this_cpu_ptr(dev->tstats);
--+	struct pcpu_sw_netstats *tstats = this_cpu_ptr(netdev_tstats(dev));
-- 
-- 	u64_stats_update_begin(&tstats->syncp);
-- 	tstats->tx_packets++;
-diff --git a/patches/collateral-evolutions/network/0055-netdev-tstats-assign.cocci b/patches/collateral-evolutions/network/0055-netdev-tstats.cocci
-similarity index 61%
-rename from patches/collateral-evolutions/network/0055-netdev-tstats-assign.cocci
-rename to patches/collateral-evolutions/network/0055-netdev-tstats.cocci
-index b41b4f17e654..d7500b61140e 100644
---- a/patches/collateral-evolutions/network/0055-netdev-tstats-assign.cocci
-+++ b/patches/collateral-evolutions/network/0055-netdev-tstats.cocci
-@@ -1,10 +1,11 @@
--@nd@
--identifier dev;
- @@
- struct net_device *dev;
--@@
--identifier nd.dev;
- expression E;
- @@
- -dev->tstats = E;
- +netdev_assign_tstats(dev, E);
-+@@
-+struct net_device *dev;
-+@@
-+-dev->tstats
-++netdev_tstats(dev)
-diff --git a/patches/collateral-evolutions/network/0056-netdev-tstats.cocci b/patches/collateral-evolutions/network/0056-netdev-tstats.cocci
-deleted file mode 100644
-index 99d71c05713e..000000000000
---- a/patches/collateral-evolutions/network/0056-netdev-tstats.cocci
-+++ /dev/null
-@@ -1,9 +0,0 @@
--@nd@
--identifier dev;
--@@
--struct net_device *dev;
--@@
--identifier nd.dev;
--@@
---dev->tstats
--+netdev_tstats(dev)
--- 
-2.1.4
+Go ahead and make your list ;-)
+
+Regards,
+Arend
+
+> We've just published one of our internal git trees that is actually
+> based on backports:
+> https://git.kernel.org/cgit/linux/kernel/git/iwlwifi/backport-iwlwifi.git/
+>
+> johannes
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
