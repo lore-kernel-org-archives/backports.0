@@ -1,41 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:57957 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:36813 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751001AbbEYVoO (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 25 May 2015 17:44:14 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: mcgrof@kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 2/4] header: remove last parameter from sk_alloc()
-Date: Mon, 25 May 2015 23:44:02 +0200
-Message-Id: <1432590244-4101-2-git-send-email-hauke@hauke-m.de> (sfid-20150525_234417_744115_FE0F7735)
-In-Reply-To: <1432590244-4101-1-git-send-email-hauke@hauke-m.de>
-References: <1432590244-4101-1-git-send-email-hauke@hauke-m.de>
+	id S1752189AbbE2HAj (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 29 May 2015 03:00:39 -0400
+Message-ID: <1432882836.2104.1.camel@sipsolutions.net> (sfid-20150529_090040_772261_8AB015ED)
+Subject: Re: Uses of Linux backports in the industry
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Julia Lawall <julia.lawall@lip6.fr>
+Date: Fri, 29 May 2015 09:00:36 +0200
+In-Reply-To: <CAB=NE6UUTmMMB0La3OFe+hXpaZzdAwTs0QKBsTLSyrsSMFxJRg@mail.gmail.com> (sfid-20150529_045521_094351_3FF15D30)
+References: <CAB=NE6UUTmMMB0La3OFe+hXpaZzdAwTs0QKBsTLSyrsSMFxJRg@mail.gmail.com>
+	 (sfid-20150529_045521_094351_3FF15D30)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Linux commit 11aa9c28 added a new parameter to sk_alloc() which is not
-available on older kernel versions. Just ignore it on these older
-versions.
+-lkml, that list is overfull anyway ...
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/net/sock.h | 4 ++++
- 1 file changed, 4 insertions(+)
+On Thu, 2015-05-28 at 19:54 -0700, Luis R. Rodriguez wrote:
+> Me and Julia are working on a paper which evaluates use of Coccinelle
+> on backports, a preliminary draft of such paper can be found on github
+> [0]. We are making some tweaks to this, one of which is covering the
+> uses of Linux backports [1] in the industry, for this we'd like to try
+> to get feedback as to where and how folks are using backports. Please
+> let me and Julia know -- or if the information is not sensitive please
+> feel free to just reply to this thread and share with others. All
+> feedback is greatly appreciated. If you are OK in having us list or
+> generalize your usage please indicate so.
 
-diff --git a/backport/backport-include/net/sock.h b/backport/backport-include/net/sock.h
-index 1a0a415..caca6d1 100644
---- a/backport/backport-include/net/sock.h
-+++ b/backport/backport-include/net/sock.h
-@@ -43,4 +43,8 @@
- 	BUILD_BUG_ON((size) > FIELD_SIZEOF(struct sk_buff, cb))
- #endif
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0)
-+#define sk_alloc(net, family, priority, prot, kern) sk_alloc(net, family, priority, prot)
-+#endif
-+
- #endif /* __BACKPORT_NET_SOCK_H */
--- 
-2.1.4
+We've just published one of our internal git trees that is actually
+based on backports:
+https://git.kernel.org/cgit/linux/kernel/git/iwlwifi/backport-iwlwifi.git/
+
+johannes
 
