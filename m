@@ -1,132 +1,52 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:41033 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752049AbbFNO3i (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 14 Jun 2015 10:29:38 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 15/21] backports: add tty_set_termios()
-Date: Sun, 14 Jun 2015 16:29:16 +0200
-Message-Id: <1434292162-2261-16-git-send-email-hauke@hauke-m.de> (sfid-20150614_163351_374702_CA523BFF)
-In-Reply-To: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
-References: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:23788
+	"EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751588AbbFAUDX (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 1 Jun 2015 16:03:23 -0400
+Date: Mon, 1 Jun 2015 22:03:20 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Felix Fietkau <nbd@openwrt.org>
+cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Uses of Linux backports in the industry
+In-Reply-To: <556CA991.7030302@openwrt.org>
+Message-ID: <alpine.DEB.2.02.1506012203070.2222@localhost6.localdomain6> (sfid-20150601_220327_251297_A12F5211)
+References: <CAB=NE6UUTmMMB0La3OFe+hXpaZzdAwTs0QKBsTLSyrsSMFxJRg@mail.gmail.com> <556CA991.7030302@openwrt.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-tty_set_termios() was not exported any more in kernel 4.0-rc1 (commit
-632f32e21) and exported again in kernel 4.1-rc2 (commit b00f5c2dc).
-This patch adds the backport for kernel 4.0.X, we can not detect kernel
-4.1-rc1, which would also need this fix, so bluetooth will have a
-compile error on kernel 4.1-rc1, kernel 4.1-rc2 and more recent
-versions will work.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/tty.h |  5 +++
- backport/compat/backport-4.1.c        | 65 +++++++++++++++++++++++++++++++++++
- 2 files changed, 70 insertions(+)
 
-diff --git a/backport/backport-include/linux/tty.h b/backport/backport-include/linux/tty.h
-index 758c549..3b8a0a2 100644
---- a/backport/backport-include/linux/tty.h
-+++ b/backport/backport-include/linux/tty.h
-@@ -24,4 +24,9 @@ extern void tty_port_tty_wakeup(struct tty_port *port);
- extern void tty_port_tty_hangup(struct tty_port *port, bool check_clocal);
- #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0) */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) && \
-+    LINUX_VERSION_CODE >= KERNEL_VERSION(4,0,0)
-+extern int tty_set_termios(struct tty_struct *tty, struct ktermios *kt);
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
-+
- #endif /* __BACKPORT_LINUX_TTY_H */
-diff --git a/backport/compat/backport-4.1.c b/backport/compat/backport-4.1.c
-index d5027bd..f367e3b 100644
---- a/backport/compat/backport-4.1.c
-+++ b/backport/compat/backport-4.1.c
-@@ -1,5 +1,6 @@
- /*
-  * Copyright (c) 2015  Stefan Assmann <sassmann@kpanic.de>
-+ * Copyright (c) 2015  Hauke Mehrtens <hauke@hauke-m.de>
-  *
-  * Backport functionality introduced in Linux 4.1.
-  *
-@@ -9,6 +10,7 @@
-  */
- 
- #include <linux/netdevice.h>
-+#include <linux/tty.h>
- 
- netdev_features_t passthru_features_check(struct sk_buff *skb,
- 					  struct net_device *dev,
-@@ -17,3 +19,66 @@ netdev_features_t passthru_features_check(struct sk_buff *skb,
- 	return features;
- }
- EXPORT_SYMBOL_GPL(passthru_features_check);
-+
-+#ifdef CONFIG_TTY
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,0,0)
-+static void unset_locked_termios(struct ktermios *termios,
-+				 struct ktermios *old,
-+				 struct ktermios *locked)
-+{
-+	int	i;
-+
-+#define NOSET_MASK(x, y, z) (x = ((x) & ~(z)) | ((y) & (z)))
-+
-+	if (!locked) {
-+		printk(KERN_WARNING "Warning?!? termios_locked is NULL.\n");
-+		return;
-+	}
-+
-+	NOSET_MASK(termios->c_iflag, old->c_iflag, locked->c_iflag);
-+	NOSET_MASK(termios->c_oflag, old->c_oflag, locked->c_oflag);
-+	NOSET_MASK(termios->c_cflag, old->c_cflag, locked->c_cflag);
-+	NOSET_MASK(termios->c_lflag, old->c_lflag, locked->c_lflag);
-+	termios->c_line = locked->c_line ? old->c_line : termios->c_line;
-+	for (i = 0; i < NCCS; i++)
-+		termios->c_cc[i] = locked->c_cc[i] ?
-+			old->c_cc[i] : termios->c_cc[i];
-+	/* FIXME: What should we do for i/ospeed */
-+}
-+
-+int tty_set_termios(struct tty_struct *tty, struct ktermios *new_termios)
-+{
-+	struct ktermios old_termios;
-+	struct tty_ldisc *ld;
-+
-+	WARN_ON(tty->driver->type == TTY_DRIVER_TYPE_PTY &&
-+		tty->driver->subtype == PTY_TYPE_MASTER);
-+	/*
-+	 *	Perform the actual termios internal changes under lock.
-+	 */
-+
-+
-+	/* FIXME: we need to decide on some locking/ordering semantics
-+	   for the set_termios notification eventually */
-+	down_write(&tty->termios_rwsem);
-+	old_termios = tty->termios;
-+	tty->termios = *new_termios;
-+	unset_locked_termios(&tty->termios, &old_termios, &tty->termios_locked);
-+
-+	if (tty->ops->set_termios)
-+		tty->ops->set_termios(tty, &old_termios);
-+	else
-+		tty_termios_copy_hw(&tty->termios, &old_termios);
-+
-+	ld = tty_ldisc_ref(tty);
-+	if (ld != NULL) {
-+		if (ld->ops->set_termios)
-+			ld->ops->set_termios(tty, &old_termios);
-+		tty_ldisc_deref(ld);
-+	}
-+	up_write(&tty->termios_rwsem);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(tty_set_termios);
-+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,0,0) */
-+#endif /* CONFIG_TTY */
--- 
-2.1.4
+On Mon, 1 Jun 2015, Felix Fietkau wrote:
 
+> On 2015-05-29 04:54, Luis R. Rodriguez wrote:
+> > Me and Julia are working on a paper which evaluates use of Coccinelle
+> > on backports, a preliminary draft of such paper can be found on github
+> > [0]. We are making some tweaks to this, one of which is covering the
+> > uses of Linux backports [1] in the industry, for this we'd like to try
+> > to get feedback as to where and how folks are using backports. Please
+> > let me and Julia know -- or if the information is not sensitive please
+> > feel free to just reply to this thread and share with others. All
+> > feedback is greatly appreciated. If you are OK in having us list or
+> > generalize your usage please indicate so.
+> In OpenWrt, we use backports to stay up to date with current wireless
+> drivers without being forced into frequently updating the kernels as
+> well. We support many different platforms, and sometimes it takes a
+> while to update the kernel on them.
+> Using backports significantly reduces the amount of effort that we need
+> to put into maintaining the wireless drivers.
+> When making changes to wireless drivers or mac80211, which I submit
+> upstream, I also develop them in our most recent backports snapshot
+> first (typically generated from wireless-testing). When they are done, I
+> port them to a proper git tree and submit them from there.
+> 
+> In OpenWrt, we typically update the backports snapshot outside of the
+> normal kernel release cycle (always to latest wireless-testing) and
+> stabilize that by cherry-picking individual patches on top of it.
+
+Thanks for the feedback!
+
+julia
