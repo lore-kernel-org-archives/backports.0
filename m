@@ -1,81 +1,84 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from app1b.xlhost.de ([84.200.252.162]:59530 "EHLO app1b.xlhost.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751827AbbFDJIN (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 4 Jun 2015 05:08:13 -0400
-Message-ID: <55701578.9030205@kpanic.de> (sfid-20150604_110817_225326_68B28345)
-Date: Thu, 04 Jun 2015 11:08:08 +0200
-From: Stefan Assmann <sassmann@kpanic.de>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:32822 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752948AbbFBML5 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 2 Jun 2015 08:11:57 -0400
+Received: by padj3 with SMTP id j3so66298730pad.0
+        for <backports@vger.kernel.org>; Tue, 02 Jun 2015 05:11:56 -0700 (PDT)
+Received: from [10.18.0.154] ([115.115.225.206])
+        by mx.google.com with ESMTPSA id g10sm5116165pat.35.2015.06.02.05.11.55
+        for <backports@vger.kernel.org>
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Jun 2015 05:11:56 -0700 (PDT)
+From: Bhuvan <bhuvanchandradv@gmail.com>
+Message-ID: <556D9D89.2020500@gmail.com> (sfid-20150602_141159_169819_E776CB04)
+Date: Tue, 02 Jun 2015 17:41:53 +0530
 MIME-Version: 1.0
-To: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
-CC: mcgrof@do-not-panic.com
-Subject: Re: [PATCH 1/4] backports: replace igb skb->no_fcs patch with semantic
- patch
-References: <1433330756-22733-1-git-send-email-sassmann@kpanic.de> <1433330756-22733-2-git-send-email-sassmann@kpanic.de> <556F5FD5.4070003@hauke-m.de>
-In-Reply-To: <556F5FD5.4070003@hauke-m.de>
-Content-Type: text/plain; charset=windows-1252
+To: Kernel backports mailinglist <backports@vger.kernel.org>
+Subject: Issues while integrating backports(20150525) to target Kernel 3.1.10
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 03.06.2015 22:13, Hauke Mehrtens wrote:
-> On 06/03/2015 01:25 PM, Stefan Assmann wrote:
->> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
->> ---
->>  .../network/0035-skb_no_fcs/igb_skb_no_fcs.patch           | 14 --------------
->>  .../network/0035-skb_no_fcs/skb_no_fcs.cocci               |  7 +++++++
->>  2 files changed, 7 insertions(+), 14 deletions(-)
->>  delete mode 100644 patches/collateral-evolutions/network/0035-skb_no_fcs/igb_skb_no_fcs.patch
->>  create mode 100644 patches/collateral-evolutions/network/0035-skb_no_fcs/skb_no_fcs.cocci
->>
->> diff --git a/patches/collateral-evolutions/network/0035-skb_no_fcs/igb_skb_no_fcs.patch b/patches/collateral-evolutions/network/0035-skb_no_fcs/igb_skb_no_fcs.patch
->> deleted file mode 100644
->> index f659bfd..0000000
->> --- a/patches/collateral-evolutions/network/0035-skb_no_fcs/igb_skb_no_fcs.patch
->> +++ /dev/null
->> @@ -1,14 +0,0 @@
->> ---- a/drivers/net/ethernet/intel/igb/igb_main.c
->> -+++ b/drivers/net/ethernet/intel/igb/igb_main.c
->> -@@ -4782,9 +4782,10 @@ static u32 igb_tx_cmd_type(struct sk_buf
->> - 	cmd_type |= IGB_SET_FLAG(tx_flags, IGB_TX_FLAGS_TSTAMP,
->> - 				 (E1000_ADVTXD_MAC_TSTAMP));
->> - 
->> -+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0)
->> - 	/* insert frame checksum */
->> - 	cmd_type ^= IGB_SET_FLAG(skb->no_fcs, 1, E1000_ADVTXD_DCMD_IFCS);
->> --
->> -+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0) */
->> - 	return cmd_type;
->> - }
->> - 
->> diff --git a/patches/collateral-evolutions/network/0035-skb_no_fcs/skb_no_fcs.cocci b/patches/collateral-evolutions/network/0035-skb_no_fcs/skb_no_fcs.cocci
->> new file mode 100644
->> index 0000000..703c227
->> --- /dev/null
->> +++ b/patches/collateral-evolutions/network/0035-skb_no_fcs/skb_no_fcs.cocci
->> @@ -0,0 +1,7 @@
->> +@r1@
->> +expression E1,E2;
->> +struct sk_buff *skb;
->> +@@
->> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0)
->> + E1 ^= E2(..., skb->no_fcs, ...)
->> ++#endif /* if LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0) */
->>
-> 
-> Is it always save to just remove something which accesses skb->no_fcs in
-> all cases? I think sometimes some special handling for older kernel
-> version could be needed. This also looks very specific to the igb usage.
-> 
-> Hauke
-> 
+Hello,
 
-In this case I'd say this is fine, no_fcs is used to send out frames with
-bad CRC for testing. So just commenting out related code shouldn't cause
-any harm. Yes, the cocci code is very specific and will likely need to be
-extended for other drivers when we pull them in. But you have to start
-somewhere.
+I'm trying to integrate backports(20150525) to target Kernel 3.1.10.
+Followed the instructions available in the backports wiki for kernel 
+integration procedure. Nice! documentation.
+Used linux-next.git, backports.git with next-20150525 and 
+backports-20150525 tags respectively.
+The target Linux kernel version is based on NVIDIA's L4T and it was not 
+a clean 3.1 baseline but
+rather some pre 3.2 version with further Android additions.
+My aim is to backport the iwlwifi drivers on 3.1.10 kernel.
 
-We always have the option to revert if something turns out to be a bad
-idea.
+Backporting 20150525 on 3.1.10 using gentree.py was not successful:
 
-  Stefan
+# ./gentree.py --integrate --clean --gitdebug --git-revision 
+next-20150525 ../linux-next ~/linux
+Get original source files from git ...
+Applying patches from patches to ~/backports ...
+Modify Kconfig tree ...
+Rewrite Makefiles and Kconfig files ...
+Applying patches from integration-patches/ to ~/linux ...
+Failed to apply changes from 
+001-enable-backports/0001-enable-backports-built-in.patch
+ > patching file Makefile
+ > Hunk #1 succeeded at 506 (offset -36 lines).
+ > Hunk #2 succeeded at 713 (offset -108 lines).
+ > Hunk #3 FAILED at 841.
+ > 1 out of 3 hunks FAILED -- saving rejects to file Makefile.rej
+Traceback (most recent call last):
+   File "./gentree.py", line 1091, in <module>
+     ret = _main()
+   File "./gentree.py", line 724, in _main
+     logwrite=logwrite)
+   File "./gentree.py", line 1078, in process
+     bpid.project_dir, logwrite)
+   File "./gentree.py", line 552, in apply_patches
+     raise Exception('Patch failed')
+Exception: Patch failed
+....
+
+Makefile.ref :
+
+--- Makefile
++++ Makefile
+@@ -841,7 +845,7 @@ libs-y        := $(libs-y1) $(libs-y2)
+
+  # Externally visible symbols (used by link-vmlinux.sh)
+  export KBUILD_VMLINUX_INIT := $(head-y) $(init-y)
+-export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y) $(drivers-y) $(net-y)
++export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y) $(drivers-y) $(net-y) 
+$(backports-y)
+  export KBUILD_LDS          := arch/$(SRCARCH)/kernel/vmlinux.lds
+  export LDFLAGS_vmlinux
+  # used by scripts/pacmage/Makefile
+
+Am i missing some thing or doing some thing wrong!.
+Can some one provide few pointers for fixing the issues and few pointers 
+on backporting kernel integration
+on non standard kernel trees, like the one which i am working on.
+
+Best regards,
+Bhuvan
