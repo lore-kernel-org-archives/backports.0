@@ -1,112 +1,60 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f67.google.com ([209.85.220.67]:35737 "EHLO
-	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753174AbbFKFW3 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 11 Jun 2015 01:22:29 -0400
-Received: by pabli10 with SMTP id li10so14123459pab.2
-        for <backports@vger.kernel.org>; Wed, 10 Jun 2015 22:22:28 -0700 (PDT)
-From: Bhuvanchandra DV <bhuvanchandradv@gmail.com>
-Message-ID: <557916F0.9060400@gmail.com> (sfid-20150611_072236_265509_AFEA9B0B)
-Date: Thu, 11 Jun 2015 10:34:48 +0530
-MIME-Version: 1.0
-To: Hauke Mehrtens <hauke@hauke-m.de>
-CC: Kernel backports mailinglist <backports@vger.kernel.org>
-Subject: Re: Issues while integrating backports(20150525) to target Kernel
- 3.1.10
-References: <556D9D89.2020500@gmail.com> <556F4819.3020706@hauke-m.de>
-In-Reply-To: <556F4819.3020706@hauke-m.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Received: from mx1.redhat.com ([209.132.183.28]:41682 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752558AbbFCL0O (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 3 Jun 2015 07:26:14 -0400
+From: Stefan Assmann <sassmann@kpanic.de>
+To: backports@vger.kernel.org
+Cc: mcgrof@do-not-panic.com, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH 1/4] backports: replace igb skb->no_fcs patch with semantic patch
+Date: Wed,  3 Jun 2015 13:25:53 +0200
+Message-Id: <1433330756-22733-2-git-send-email-sassmann@kpanic.de> (sfid-20150603_132617_152833_522C734B)
+In-Reply-To: <1433330756-22733-1-git-send-email-sassmann@kpanic.de>
+References: <1433330756-22733-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hello Hauke,
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+---
+ .../network/0035-skb_no_fcs/igb_skb_no_fcs.patch           | 14 --------------
+ .../network/0035-skb_no_fcs/skb_no_fcs.cocci               |  7 +++++++
+ 2 files changed, 7 insertions(+), 14 deletions(-)
+ delete mode 100644 patches/collateral-evolutions/network/0035-skb_no_fcs/igb_skb_no_fcs.patch
+ create mode 100644 patches/collateral-evolutions/network/0035-skb_no_fcs/skb_no_fcs.cocci
 
-On 06/04/2015 12:01 AM, Hauke Mehrtens wrote:
-
-> On 06/02/2015 02:11 PM, Bhuvan wrote:
->> Hello,
->>
->> I'm trying to integrate backports(20150525) to target Kernel 3.1.10.
->> Followed the instructions available in the backports wiki for kernel
->> integration procedure. Nice! documentation.
->> Used linux-next.git, backports.git with next-20150525 and
->> backports-20150525 tags respectively.
->> The target Linux kernel version is based on NVIDIA's L4T and it was not
->> a clean 3.1 baseline but
->> rather some pre 3.2 version with further Android additions.
->> My aim is to backport the iwlwifi drivers on 3.1.10 kernel.
->>
->> Backporting 20150525 on 3.1.10 using gentree.py was not successful:
->>
->> # ./gentree.py --integrate --clean --gitdebug --git-revision
->> next-20150525 ../linux-next ~/linux
->> Get original source files from git ...
->> Applying patches from patches to ~/backports ...
->> Modify Kconfig tree ...
->> Rewrite Makefiles and Kconfig files ...
->> Applying patches from integration-patches/ to ~/linux ...
->> Failed to apply changes from
->> 001-enable-backports/0001-enable-backports-built-in.patch
->>> patching file Makefile
->>> Hunk #1 succeeded at 506 (offset -36 lines).
->>> Hunk #2 succeeded at 713 (offset -108 lines).
->>> Hunk #3 FAILED at 841.
->>> 1 out of 3 hunks FAILED -- saving rejects to file Makefile.rej
->> Traceback (most recent call last):
->>    File "./gentree.py", line 1091, in <module>
->>      ret = _main()
->>    File "./gentree.py", line 724, in _main
->>      logwrite=logwrite)
->>    File "./gentree.py", line 1078, in process
->>      bpid.project_dir, logwrite)
->>    File "./gentree.py", line 552, in apply_patches
->>      raise Exception('Patch failed')
->> Exception: Patch failed
->> ....
->>
->> Makefile.ref :
->>
->> --- Makefile
->> +++ Makefile
->> @@ -841,7 +845,7 @@ libs-y        := $(libs-y1) $(libs-y2)
->>
->>   # Externally visible symbols (used by link-vmlinux.sh)
->>   export KBUILD_VMLINUX_INIT := $(head-y) $(init-y)
->> -export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y) $(drivers-y) $(net-y)
->> +export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y) $(drivers-y) $(net-y)
->> $(backports-y)
->>   export KBUILD_LDS          := arch/$(SRCARCH)/kernel/vmlinux.lds
->>   export LDFLAGS_vmlinux
->>   # used by scripts/pacmage/Makefile
->>
->> Am i missing some thing or doing some thing wrong!.
->> Can some one provide few pointers for fixing the issues and few pointers
->> on backporting kernel integration
->> on non standard kernel trees, like the one which i am working on.
->>
->> Best regards,
->> Bhuvan
-> I think the documentation is not so good. ;-)
->
-> If you just want to compile the drivers against your kernel the easiest
-> way is to download the tar from here:
-> http://www.kernel.org/pub/linux/kernel/projects/backports/2015/05/25/backports-20150525.tar.xz
->
-> You can compile it against your kernel like any other external kernel
-> module.
-> The git repository is only needed if you want to generate your own tar
-> with the drivers form your kernel.
-
-Thanks!
-Compiled the iwlwifi drivers successfully with backports-3.11.8 with some small
-change: KERNEL_VERSION(3,2,0) to KERNEL_VERSION(3,1,0) in backports-incluse/linux/export.h, found this fix in mailing list.
-Tried with the later backport versions, but couldn't compile the drivers successfully for 3.1.10 kernel.
-
-
->
-> Hauke
->
->
-Best regards,
-Bhuvan
+diff --git a/patches/collateral-evolutions/network/0035-skb_no_fcs/igb_skb_no_fcs.patch b/patches/collateral-evolutions/network/0035-skb_no_fcs/igb_skb_no_fcs.patch
+deleted file mode 100644
+index f659bfd..0000000
+--- a/patches/collateral-evolutions/network/0035-skb_no_fcs/igb_skb_no_fcs.patch
++++ /dev/null
+@@ -1,14 +0,0 @@
+---- a/drivers/net/ethernet/intel/igb/igb_main.c
+-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
+-@@ -4782,9 +4782,10 @@ static u32 igb_tx_cmd_type(struct sk_buf
+- 	cmd_type |= IGB_SET_FLAG(tx_flags, IGB_TX_FLAGS_TSTAMP,
+- 				 (E1000_ADVTXD_MAC_TSTAMP));
+- 
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0)
+- 	/* insert frame checksum */
+- 	cmd_type ^= IGB_SET_FLAG(skb->no_fcs, 1, E1000_ADVTXD_DCMD_IFCS);
+--
+-+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0) */
+- 	return cmd_type;
+- }
+- 
+diff --git a/patches/collateral-evolutions/network/0035-skb_no_fcs/skb_no_fcs.cocci b/patches/collateral-evolutions/network/0035-skb_no_fcs/skb_no_fcs.cocci
+new file mode 100644
+index 0000000..703c227
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0035-skb_no_fcs/skb_no_fcs.cocci
+@@ -0,0 +1,7 @@
++@r1@
++expression E1,E2;
++struct sk_buff *skb;
++@@
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0)
++ E1 ^= E2(..., skb->no_fcs, ...)
+++#endif /* if LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0) */
+-- 
+2.4.2
 
