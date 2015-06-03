@@ -1,44 +1,100 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:41034 "EHLO hauke-m.de"
+Received: from mx1.redhat.com ([209.132.183.28]:42897 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752105AbbFNO3i (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 14 Jun 2015 10:29:38 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
+	id S1752558AbbFCL0Q (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 3 Jun 2015 07:26:16 -0400
+From: Stefan Assmann <sassmann@kpanic.de>
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 17/21] header: add devm_kcalloc()
-Date: Sun, 14 Jun 2015 16:29:18 +0200
-Message-Id: <1434292162-2261-18-git-send-email-hauke@hauke-m.de> (sfid-20150614_163350_639541_D0F81A48)
-In-Reply-To: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
-References: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
+Cc: mcgrof@do-not-panic.com, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH 2/4] backports: replace igb ethtool_cmd_mdix patch with semantic patch
+Date: Wed,  3 Jun 2015 13:25:54 +0200
+Message-Id: <1433330756-22733-3-git-send-email-sassmann@kpanic.de> (sfid-20150603_132617_724125_AD4C998B)
+In-Reply-To: <1433330756-22733-1-git-send-email-sassmann@kpanic.de>
+References: <1433330756-22733-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is needed by the mt7601u driver.
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
 ---
- backport/backport-include/linux/device.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ .../0040-ethtool_cmd_mdix/ethtool_cmd_mdix.cocci   | 14 +++++++
+ .../igb_ethtool_cmd_mdix.patch                     | 47 ----------------------
+ 2 files changed, 14 insertions(+), 47 deletions(-)
+ create mode 100644 patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/ethtool_cmd_mdix.cocci
+ delete mode 100644 patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/igb_ethtool_cmd_mdix.patch
 
-diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
-index 539fd50..f03e7c1 100644
---- a/backport/backport-include/linux/device.h
-+++ b/backport/backport-include/linux/device.h
-@@ -182,6 +182,13 @@ static inline void *devm_kmalloc_array(struct device *dev,
- 		return NULL;
- 	return devm_kmalloc(dev, n * size, flags);
- }
+diff --git a/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/ethtool_cmd_mdix.cocci b/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/ethtool_cmd_mdix.cocci
+new file mode 100644
+index 0000000..b32973b
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/ethtool_cmd_mdix.cocci
+@@ -0,0 +1,14 @@
++@r1@
++expression E1;
++struct ethtool_cmd *ecmd;
++@@
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
++ ecmd->eth_tp_mdix_ctrl = E1;
+++#endif /* if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
 +
-+#define devm_kcalloc LINUX_BACKPORT(devm_kcalloc)
-+static inline void *devm_kcalloc(struct device *dev,
-+				 size_t n, size_t size, gfp_t flags)
-+{
-+	return devm_kmalloc_array(dev, n, size, flags);
-+}
- #endif
- 
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
++@r2@
++struct ethtool_cmd *ecmd;
++@@
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
++ if (ecmd->eth_tp_mdix_ctrl) {...}
+++#endif /* if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
+diff --git a/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/igb_ethtool_cmd_mdix.patch b/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/igb_ethtool_cmd_mdix.patch
+deleted file mode 100644
+index f48aa3f..0000000
+--- a/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/igb_ethtool_cmd_mdix.patch
++++ /dev/null
+@@ -1,47 +0,0 @@
+---- a/drivers/net/ethernet/intel/igb/igb_ethtool.c
+-+++ b/drivers/net/ethernet/intel/igb/igb_ethtool.c
+-@@ -247,10 +247,12 @@ static int igb_get_settings(struct net_d
+- 	else
+- 		ecmd->eth_tp_mdix = ETH_TP_MDI_INVALID;
+- 
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
+- 	if (hw->phy.mdix == AUTO_ALL_MODES)
+- 		ecmd->eth_tp_mdix_ctrl = ETH_TP_MDI_AUTO;
+- 	else
+- 		ecmd->eth_tp_mdix_ctrl = hw->phy.mdix;
+-+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
+- 
+- 	return 0;
+- }
+-@@ -269,6 +271,7 @@ static int igb_set_settings(struct net_d
+- 		return -EINVAL;
+- 	}
+- 
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
+- 	/* MDI setting is only allowed when autoneg enabled because
+- 	 * some hardware doesn't allow MDI setting when speed or
+- 	 * duplex is forced.
+-@@ -283,6 +286,7 @@ static int igb_set_settings(struct net_d
+- 			return -EINVAL;
+- 		}
+- 	}
+-+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
+- 
+- 	while (test_and_set_bit(__IGB_RESETTING, &adapter->state))
+- 		usleep_range(1000, 2000);
+-@@ -326,6 +330,7 @@ static int igb_set_settings(struct net_d
+- 		}
+- 	}
+- 
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
+- 	/* MDI-X => 2; MDI => 1; Auto => 3 */
+- 	if (ecmd->eth_tp_mdix_ctrl) {
+- 		/* fix up the value for auto (3 => 0) as zero is mapped
+-@@ -336,6 +341,7 @@ static int igb_set_settings(struct net_d
+- 		else
+- 			hw->phy.mdix = ecmd->eth_tp_mdix_ctrl;
+- 	}
+-+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
+- 
+- 	/* reset the link */
+- 	if (netif_running(adapter->netdev)) {
 -- 
-2.1.4
+2.4.2
 
