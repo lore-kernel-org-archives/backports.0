@@ -1,58 +1,68 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:41852 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:35560 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750816AbbFOVOO (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 15 Jun 2015 17:14:14 -0400
+	id S1754787AbbFCUNL (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 3 Jun 2015 16:13:11 -0400
+Message-ID: <556F5FD5.4070003@hauke-m.de> (sfid-20150603_221313_963942_46F13CFA)
+Date: Wed, 03 Jun 2015 22:13:09 +0200
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH v2 22/22] header: fix warning in lockdep_assert_held()
-Date: Mon, 15 Jun 2015 23:14:10 +0200
-Message-Id: <1434402850-22567-1-git-send-email-hauke@hauke-m.de> (sfid-20150615_231416_793206_1A49DB20)
-In-Reply-To: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
-References: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+To: Stefan Assmann <sassmann@kpanic.de>, backports@vger.kernel.org
+CC: mcgrof@do-not-panic.com
+Subject: Re: [PATCH 1/4] backports: replace igb skb->no_fcs patch with semantic
+ patch
+References: <1433330756-22733-1-git-send-email-sassmann@kpanic.de> <1433330756-22733-2-git-send-email-sassmann@kpanic.de>
+In-Reply-To: <1433330756-22733-2-git-send-email-sassmann@kpanic.de>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-When building the kernel there are lots of warnings like this:
-drivers/net/wireless/ath/ath10k/ce.c:404:21: warning: unused variable ‘ar_pci’ [-Wunused-variable]
-  struct ath10k_pci *ar_pci = ath10k_pci_priv(ar);
+On 06/03/2015 01:25 PM, Stefan Assmann wrote:
+> Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+> ---
+>  .../network/0035-skb_no_fcs/igb_skb_no_fcs.patch           | 14 --------------
+>  .../network/0035-skb_no_fcs/skb_no_fcs.cocci               |  7 +++++++
+>  2 files changed, 7 insertions(+), 14 deletions(-)
+>  delete mode 100644 patches/collateral-evolutions/network/0035-skb_no_fcs/igb_skb_no_fcs.patch
+>  create mode 100644 patches/collateral-evolutions/network/0035-skb_no_fcs/skb_no_fcs.cocci
+> 
+> diff --git a/patches/collateral-evolutions/network/0035-skb_no_fcs/igb_skb_no_fcs.patch b/patches/collateral-evolutions/network/0035-skb_no_fcs/igb_skb_no_fcs.patch
+> deleted file mode 100644
+> index f659bfd..0000000
+> --- a/patches/collateral-evolutions/network/0035-skb_no_fcs/igb_skb_no_fcs.patch
+> +++ /dev/null
+> @@ -1,14 +0,0 @@
+> ---- a/drivers/net/ethernet/intel/igb/igb_main.c
+> -+++ b/drivers/net/ethernet/intel/igb/igb_main.c
+> -@@ -4782,9 +4782,10 @@ static u32 igb_tx_cmd_type(struct sk_buf
+> - 	cmd_type |= IGB_SET_FLAG(tx_flags, IGB_TX_FLAGS_TSTAMP,
+> - 				 (E1000_ADVTXD_MAC_TSTAMP));
+> - 
+> -+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0)
+> - 	/* insert frame checksum */
+> - 	cmd_type ^= IGB_SET_FLAG(skb->no_fcs, 1, E1000_ADVTXD_DCMD_IFCS);
+> --
+> -+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0) */
+> - 	return cmd_type;
+> - }
+> - 
+> diff --git a/patches/collateral-evolutions/network/0035-skb_no_fcs/skb_no_fcs.cocci b/patches/collateral-evolutions/network/0035-skb_no_fcs/skb_no_fcs.cocci
+> new file mode 100644
+> index 0000000..703c227
+> --- /dev/null
+> +++ b/patches/collateral-evolutions/network/0035-skb_no_fcs/skb_no_fcs.cocci
+> @@ -0,0 +1,7 @@
+> +@r1@
+> +expression E1,E2;
+> +struct sk_buff *skb;
+> +@@
+> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0)
+> + E1 ^= E2(..., skb->no_fcs, ...)
+> ++#endif /* if LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0) */
+> 
 
-They are caused by an empty lockdep_assert_held() which does nothing
-with this variable in kernel version < 3.9. This patch replaces this
-macro with the version from a recent kernel and silence this warning.
+Is it always save to just remove something which accesses skb->no_fcs in
+all cases? I think sometimes some special handling for older kernel
+version could be needed. This also looks very specific to the igb usage.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/lockdep.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 backport/backport-include/linux/lockdep.h
-
-diff --git a/backport/backport-include/linux/lockdep.h b/backport/backport-include/linux/lockdep.h
-new file mode 100644
-index 0000000..3974b8d
---- /dev/null
-+++ b/backport/backport-include/linux/lockdep.h
-@@ -0,0 +1,17 @@
-+#ifndef __BACKPORT_LINUX_LOCKDEP_H
-+#define __BACKPORT_LINUX_LOCKDEP_H
-+#include_next <linux/lockdep.h>
-+#include <linux/version.h>
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
-+#undef lockdep_assert_held
-+#ifdef CONFIG_LOCKDEP
-+#define lockdep_assert_held(l)	do {				\
-+		WARN_ON(debug_locks && !lockdep_is_held(l));	\
-+	} while (0)
-+#else
-+#define lockdep_assert_held(l)			do { (void)(l); } while (0)
-+#endif /* CONFIG_LOCKDEP */
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0) */
-+
-+#endif /* __BACKPORT_LINUX_LOCKDEP_H */
--- 
-2.1.4
-
+Hauke
