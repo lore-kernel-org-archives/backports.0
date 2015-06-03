@@ -1,45 +1,96 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:51686 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:35519 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751228AbbFIG3f (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 9 Jun 2015 02:29:35 -0400
-Message-ID: <1433831373.1892.0.camel@sipsolutions.net> (sfid-20150609_082937_989231_7E3C4869)
-Subject: Re: [PATCH] pycocci: sync pycocci with Coccinelle upstream
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"cocci@systeme.lip6.fr" <cocci@systeme.lip6.fr>
-Date: Tue, 09 Jun 2015 08:29:33 +0200
-In-Reply-To: <CAB=NE6W68eikvWE+YKKSUC3_S_pTLY-cJq5hGeRkKp2mx9dRMA@mail.gmail.com> (sfid-20150608_224340_079310_DA6B54D3)
-References: <1433793702-21322-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1433795473.10172.3.camel@sipsolutions.net>
-	 <CAB=NE6W68eikvWE+YKKSUC3_S_pTLY-cJq5hGeRkKp2mx9dRMA@mail.gmail.com>
-	 (sfid-20150608_224340_079310_DA6B54D3)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+	id S1756784AbbFCSb4 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 3 Jun 2015 14:31:56 -0400
+Message-ID: <556F4819.3020706@hauke-m.de> (sfid-20150603_203219_631927_B8E9263B)
+Date: Wed, 03 Jun 2015 20:31:53 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
+MIME-Version: 1.0
+To: Bhuvan <bhuvanchandradv@gmail.com>,
+	Kernel backports mailinglist <backports@vger.kernel.org>
+Subject: Re: Issues while integrating backports(20150525) to target Kernel
+ 3.1.10
+References: <556D9D89.2020500@gmail.com>
+In-Reply-To: <556D9D89.2020500@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 2015-06-08 at 13:43 -0700, Luis R. Rodriguez wrote:
-> On Mon, Jun 8, 2015 at 1:31 PM, Johannes Berg <johannes@sipsolutions.net> wrote:
-> > On Mon, 2015-06-08 at 13:01 -0700, Luis R. Rodriguez wrote:
-> >> pycocci is now part of Coccinelle upstream. Coccinelle has a plan
-> >> to actually extend multithreaded support to enable us to not have
-> >> to script this out. Until then pyccoci is used and I'll sync both
-> >> solutions up as there is a bit of latency between a coccinelle release
-> >> and what we may need from pycocci.
-> >
-> > If it's upstream, do they ship it? If so it wouldn't be needed that we
-> > have a copy, it seems?
+On 06/02/2015 02:11 PM, Bhuvan wrote:
+> Hello,
 > 
-> Indeed, Coccinelle 1.0 has pycocci except for this last patch I just
-> mentioned. I think it is important enough for our sake that the errors
-> are reported well, I think its fair to drop this in backports once
-> Coccinelle 1.1 is released and we can reasonably expect users to have
-> it installed.
+> I'm trying to integrate backports(20150525) to target Kernel 3.1.10.
+> Followed the instructions available in the backports wiki for kernel
+> integration procedure. Nice! documentation.
+> Used linux-next.git, backports.git with next-20150525 and
+> backports-20150525 tags respectively.
+> The target Linux kernel version is based on NVIDIA's L4T and it was not
+> a clean 3.1 baseline but
+> rather some pre 3.2 version with further Android additions.
+> My aim is to backport the iwlwifi drivers on 3.1.10 kernel.
+> 
+> Backporting 20150525 on 3.1.10 using gentree.py was not successful:
+> 
+> # ./gentree.py --integrate --clean --gitdebug --git-revision
+> next-20150525 ../linux-next ~/linux
+> Get original source files from git ...
+> Applying patches from patches to ~/backports ...
+> Modify Kconfig tree ...
+> Rewrite Makefiles and Kconfig files ...
+> Applying patches from integration-patches/ to ~/linux ...
+> Failed to apply changes from
+> 001-enable-backports/0001-enable-backports-built-in.patch
+>> patching file Makefile
+>> Hunk #1 succeeded at 506 (offset -36 lines).
+>> Hunk #2 succeeded at 713 (offset -108 lines).
+>> Hunk #3 FAILED at 841.
+>> 1 out of 3 hunks FAILED -- saving rejects to file Makefile.rej
+> Traceback (most recent call last):
+>   File "./gentree.py", line 1091, in <module>
+>     ret = _main()
+>   File "./gentree.py", line 724, in _main
+>     logwrite=logwrite)
+>   File "./gentree.py", line 1078, in process
+>     bpid.project_dir, logwrite)
+>   File "./gentree.py", line 552, in apply_patches
+>     raise Exception('Patch failed')
+> Exception: Patch failed
+> ....
+> 
+> Makefile.ref :
+> 
+> --- Makefile
+> +++ Makefile
+> @@ -841,7 +845,7 @@ libs-y        := $(libs-y1) $(libs-y2)
+> 
+>  # Externally visible symbols (used by link-vmlinux.sh)
+>  export KBUILD_VMLINUX_INIT := $(head-y) $(init-y)
+> -export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y) $(drivers-y) $(net-y)
+> +export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y) $(drivers-y) $(net-y)
+> $(backports-y)
+>  export KBUILD_LDS          := arch/$(SRCARCH)/kernel/vmlinux.lds
+>  export LDFLAGS_vmlinux
+>  # used by scripts/pacmage/Makefile
+> 
+> Am i missing some thing or doing some thing wrong!.
+> Can some one provide few pointers for fixing the issues and few pointers
+> on backporting kernel integration
+> on non standard kernel trees, like the one which i am working on.
+> 
+> Best regards,
+> Bhuvan
 
-Not sure I see the point in applying it now - clearly we haven't had any
-issues here that required this change, so why bother?
+I think the documentation is not so good. ;-)
 
-johannes
+If you just want to compile the drivers against your kernel the easiest
+way is to download the tar from here:
+http://www.kernel.org/pub/linux/kernel/projects/backports/2015/05/25/backports-20150525.tar.xz
+
+You can compile it against your kernel like any other external kernel
+module.
+The git repository is only needed if you want to generate your own tar
+with the drivers form your kernel.
+
+Hauke
 
