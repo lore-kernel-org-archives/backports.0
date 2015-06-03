@@ -1,58 +1,80 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:48717 "EHLO sipsolutions.net"
+Received: from mx1.redhat.com ([209.132.183.28]:48298 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753048AbbFHU3b (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 8 Jun 2015 16:29:31 -0400
-Message-ID: <1433795370.10172.2.camel@sipsolutions.net> (sfid-20150608_222933_684157_484764E0)
-Subject: Re: [PATCH 3/4] gentree.py: add SmPL patch equivalence proof support
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@suse.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"cocci@systeme.lip6.fr" <cocci@systeme.lip6.fr>
-Date: Mon, 08 Jun 2015 22:29:30 +0200
-In-Reply-To: <CAB=NE6WTxatq3BAw=_84qwVEOhQezY3ik8GMM-zxeHZYYPZKYg@mail.gmail.com> (sfid-20150608_220920_158737_89BFA6E4)
-References: <1433549401-17006-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1433549401-17006-4-git-send-email-mcgrof@do-not-panic.com>
-	 <1433592743.2467.7.camel@sipsolutions.net>
-	 <CAB=NE6X6=uuof0BdhVctobb_Ypvj-Q03Akma_PWGe17PUn=7PA@mail.gmail.com>
-	 <1433792751.10172.0.camel@sipsolutions.net>
-	 <CAB=NE6WTxatq3BAw=_84qwVEOhQezY3ik8GMM-zxeHZYYPZKYg@mail.gmail.com>
-	 (sfid-20150608_220920_158737_89BFA6E4)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+	id S1752558AbbFCL0R (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 3 Jun 2015 07:26:17 -0400
+From: Stefan Assmann <sassmann@kpanic.de>
+To: backports@vger.kernel.org
+Cc: mcgrof@do-not-panic.com, hauke@hauke-m.de, sassmann@kpanic.de
+Subject: [PATCH 3/4] backports: replace igb xmit_more patch with semantic patch
+Date: Wed,  3 Jun 2015 13:25:55 +0200
+Message-Id: <1433330756-22733-4-git-send-email-sassmann@kpanic.de> (sfid-20150603_132618_340372_70BC11C2)
+In-Reply-To: <1433330756-22733-1-git-send-email-sassmann@kpanic.de>
+References: <1433330756-22733-1-git-send-email-sassmann@kpanic.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 2015-06-08 at 13:08 -0700, Luis R. Rodriguez wrote:
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+---
+ .../network/0048-no_ndo_xmit_flush/igb.patch               | 14 --------------
+ .../collateral-evolutions/network/0059-skb_xmit_more/INFO  | 10 ++++++++++
+ .../network/0059-skb_xmit_more/skb_no_xmit_more.cocci      |  9 +++++++++
+ 3 files changed, 19 insertions(+), 14 deletions(-)
+ delete mode 100644 patches/collateral-evolutions/network/0048-no_ndo_xmit_flush/igb.patch
+ create mode 100644 patches/collateral-evolutions/network/0059-skb_xmit_more/INFO
+ create mode 100644 patches/collateral-evolutions/network/0059-skb_xmit_more/skb_no_xmit_more.cocci
 
-> > Speaking of which - are you aware that pycocci fails (or rather doesn't
-> > fail!) miserably when cocci isn't installed/in the $PATH? At least I got
-> > a report to that extent,
-> 
-> Did you verify it?
-
-No, sorry. It was actually a pretty old discussion that came to my mind
-now.
-
-> mcgrof@ergon ~/linux-next (git::20150604-proto_ops-send-rcv-smpl)$ which pycocci
-> which: no pycocci in
-> (/usr/local/bin/:/usr/local/sbin/:/sbin/:/usr/sbin/:/home/mcgrof/bin/:/usr/bin:/usr/local/bin/:/usr/local/sbin/:/sbin/:/usr/sbin/:/home/mcgrof/bin/:/usr/bin:/usr/local/bin/:/usr/local/sbin/:/sbin/:/usr/sbin/:/home/mcgrof/bin/:/usr/bin:/home/mcgrof/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games)
-> 
-> So not on my path.
-
-Ah, no, I meant if *spatch* isn't on the $PATH, but you call pycocci ...
-the report said that in that case pycocci wasn't really failing
-"gracefully".
-
-Anyway - I really should verify that myself first.
-
-> Also Johannes, I value your time and I feel you're
-> investing quite a bit of time into this NACK discussion, I obviously
-> trust your judgement completely on gentree.py maintenance so for your
-> convenience feel free to be concise in your NACK's for patches there.
-
-Nah, don't worry -- I need to write it down to actually have a coherent
-argument myself :)
-
-johannes
+diff --git a/patches/collateral-evolutions/network/0048-no_ndo_xmit_flush/igb.patch b/patches/collateral-evolutions/network/0048-no_ndo_xmit_flush/igb.patch
+deleted file mode 100644
+index 54d52a5..0000000
+--- a/patches/collateral-evolutions/network/0048-no_ndo_xmit_flush/igb.patch
++++ /dev/null
+@@ -1,14 +0,0 @@
+---- a/drivers/net/ethernet/intel/igb/igb_main.c
+-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
+-@@ -4952,7 +4952,10 @@ static void igb_tx_map(struct igb_ring *
+- 	/* Make sure there is space in the ring for the next send. */
+- 	igb_maybe_stop_tx(tx_ring, DESC_NEEDED);
+- 
+--	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more) {
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0)
+-+	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more)
+-+#endif
+-+	{
+- 		writel(i, tx_ring->tail);
+- 
+- 		/* we need this if more than one processor can write to our tail
+diff --git a/patches/collateral-evolutions/network/0059-skb_xmit_more/INFO b/patches/collateral-evolutions/network/0059-skb_xmit_more/INFO
+new file mode 100644
+index 0000000..b429637
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0059-skb_xmit_more/INFO
+@@ -0,0 +1,10 @@
++In kernel 3.18 __u8 xmit_more is added to struct sk_buff.
++
++commit 0b725a2ca61bedc33a2a63d0451d528b268cf975
++Author: David S. Miller <davem@davemloft.net>
++Date:   Mon Aug 25 15:51:53 2014 -0700
++
++    net: Remove ndo_xmit_flush netdev operation, use signalling instead.
++
++git describe --contains 0b725a2ca61bedc33a2a63d0451d528b268cf975
++v3.18-rc1~52^2~228
+diff --git a/patches/collateral-evolutions/network/0059-skb_xmit_more/skb_no_xmit_more.cocci b/patches/collateral-evolutions/network/0059-skb_xmit_more/skb_no_xmit_more.cocci
+new file mode 100644
+index 0000000..ab207bd
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0059-skb_xmit_more/skb_no_xmit_more.cocci
+@@ -0,0 +1,9 @@
++@r1@
++struct sk_buff *skb;
++expression E1;
++@@
++ if (E1
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0)
++ || !skb->xmit_more
+++#endif /* if LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0) */
++ ) {...}
+-- 
+2.4.2
 
