@@ -1,74 +1,64 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:41044 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751549AbbFNO3i (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 14 Jun 2015 10:29:38 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 16/21] header: add dev_dbg_once() and others
-Date: Sun, 14 Jun 2015 16:29:17 +0200
-Message-Id: <1434292162-2261-17-git-send-email-hauke@hauke-m.de> (sfid-20150614_163351_798423_CC6BFB68)
-In-Reply-To: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
-References: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:37724 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750860AbbFDJqg (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 4 Jun 2015 05:46:36 -0400
+Message-ID: <55701E7A.1010609@broadcom.com> (sfid-20150604_114640_245104_F1ADDAB7)
+Date: Thu, 4 Jun 2015 11:46:34 +0200
+From: Arend van Spriel <arend@broadcom.com>
+MIME-Version: 1.0
+To: Hauke Mehrtens <hauke@hauke-m.de>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: how to deal with coccinelle version requirements
+References: <55701831.20700@broadcom.com> <55701954.101@hauke-m.de>
+In-Reply-To: <55701954.101@hauke-m.de>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The mt7601u driver makes use of some of these functions and they are
-not available on kernel version < 3.19.
+On 06/04/15 11:24, Hauke Mehrtens wrote:
+> On 06/04/2015 11:19 AM, Arend van Spriel wrote:
+>> I am running a build server on Ubuntu 14.04 and recently had to upgrade
+>> coccinelle for backports builds. So I got my hands on a debian package
+>> (from launchpad if I recall correctly) and installing it manually gives
+>> me following warning:
+>>
+>> $ sudo dpkg -i coccinelle_1.0.0~rc24.deb-1_amd64.deb
+>> Selecting previously unselected package coccinelle.
+>> (Reading database ... 309776 files and directories currently installed.)
+>> Preparing to unpack coccinelle_1.0.0~rc24.deb-1_amd64.deb ...
+>> Unpacking coccinelle (1.0.0~rc24.deb-1) ...
+>> dpkg: dependency problems prevent configuration of coccinelle:
+>>   coccinelle depends on libpcre3 (>= 1:8.35); however:
+>>    Version of libpcre3:amd64 on system is 1:8.31-2ubuntu2.
+>>
+>> dpkg: error processing package coccinelle (--install):
+>>   dependency problems - leaving unconfigured
+>> Processing triggers for man-db (2.6.7.1-1) ...
+>> Errors were encountered while processing:
+>>   coccinelle
+>>
+>> Now spatch is installed and works just fine, but I am getting all kinds
+>> of errors when trying to install other packages which kinda sucks. So I
+>> tried unstalling coccinelle and just build it from github repo, but that
+>> fails for me as well (giving 'Unbound module Pcre').
+>>
+>> So can anyone recommend a way to deal with the coccinelle version
+>> requirements when running on Ubuntu LTS version.
+>>
+>> Regards,
+>> Arend
+>
+> I also took the package from debian on my Ubuntu system, but I also
+> installed a more recent version of libpcre3, because coccinelle requires
+> it and is complaining about this in your error message. I used this
+> package: http://packages.ubuntu.com/utopic/libpcre3
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/device.h | 37 ++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+Thanks, Hauke
 
-diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
-index 03ca1f1..539fd50 100644
---- a/backport/backport-include/linux/device.h
-+++ b/backport/backport-include/linux/device.h
-@@ -199,5 +199,42 @@ static inline void *devm_kmemdup(struct device *dev, const void *src,
- }
- #endif
- 
-+#ifndef dev_level_once
-+#ifdef CONFIG_PRINTK
-+#define dev_level_once(dev_level, dev, fmt, ...)			\
-+do {									\
-+	static bool __print_once __read_mostly;				\
-+									\
-+	if (!__print_once) {						\
-+		__print_once = true;					\
-+		dev_level(dev, fmt, ##__VA_ARGS__);			\
-+	}								\
-+} while (0)
-+#else
-+#define dev_level_once(dev_level, dev, fmt, ...)			\
-+do {									\
-+	if (0)								\
-+		dev_level(dev, fmt, ##__VA_ARGS__);			\
-+} while (0)
-+#endif
-+
-+#define dev_emerg_once(dev, fmt, ...)					\
-+	dev_level_once(dev_emerg, dev, fmt, ##__VA_ARGS__)
-+#define dev_alert_once(dev, fmt, ...)					\
-+	dev_level_once(dev_alert, dev, fmt, ##__VA_ARGS__)
-+#define dev_crit_once(dev, fmt, ...)					\
-+	dev_level_once(dev_crit, dev, fmt, ##__VA_ARGS__)
-+#define dev_err_once(dev, fmt, ...)					\
-+	dev_level_once(dev_err, dev, fmt, ##__VA_ARGS__)
-+#define dev_warn_once(dev, fmt, ...)					\
-+	dev_level_once(dev_warn, dev, fmt, ##__VA_ARGS__)
-+#define dev_notice_once(dev, fmt, ...)					\
-+	dev_level_once(dev_notice, dev, fmt, ##__VA_ARGS__)
-+#define dev_info_once(dev, fmt, ...)					\
-+	dev_level_once(dev_info, dev, fmt, ##__VA_ARGS__)
-+#define dev_dbg_once(dev, fmt, ...)					\
-+	dev_level_once(dev_dbg, dev, fmt, ##__VA_ARGS__)
-+#endif /* dev_level_once */
-+
- 
- #endif /* __BACKPORT_DEVICE_H */
--- 
-2.1.4
+I did not like going down the path of picking up individual packages, 
+but alas. For now it is working.
+
+Regards,
+Arend
 
