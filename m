@@ -1,57 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:41031 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751549AbbFNO3f (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 14 Jun 2015 10:29:35 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 03/21] patches: include linux/sched.h header in drivers/nfc/mei_phy.c
-Date: Sun, 14 Jun 2015 16:29:04 +0200
-Message-Id: <1434292162-2261-4-git-send-email-hauke@hauke-m.de> (sfid-20150614_162942_075651_E3D48357)
-In-Reply-To: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
-References: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:46839 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753111AbbFDJTt (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 4 Jun 2015 05:19:49 -0400
+Received: from [10.176.128.60] (xl-bun-02.bun.broadcom.com [10.176.128.60])	by
+ mail-sj1-12.sj.broadcom.com (Postfix) with ESMTP id D7B9B27A8B	for
+ <backports@vger.kernel.org>; Thu,  4 Jun 2015 02:19:46 -0700 (PDT)
+Message-ID: <55701831.20700@broadcom.com> (sfid-20150604_112017_589556_586FC9D1)
+Date: Thu, 4 Jun 2015 11:19:45 +0200
+From: Arend van Spriel <arend@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: how to deal with coccinelle version requirements
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This additional include is needed to prevent this error with kernel 3.10:
-In file included from /home/hauke/compat-wireless/tmp/backport-include/linux/wait.h:3:0,
-                 from include/linux/mmzone.h:9,
-                 from include/linux/gfp.h:4,
-                 from include/linux/kmod.h:22,
-                 from include/linux/module.h:13,
-                 from /home/hauke/compat-wireless/tmp/backport-include/linux/module.h:3,
-                 from /home/hauke/compat-wireless/tmp/drivers/nfc/mei_phy.c:21:
-/home/hauke/compat-wireless/tmp/drivers/nfc/mei_phy.c: In function ‘mei_nfc_send’:
-include/linux/wait.h:296:33: error: ‘TASK_INTERRUPTIBLE’ undeclared (first use in this function)
-   prepare_to_wait(&wq, &__wait, TASK_INTERRUPTIBLE); \
-                                 ^
-.....
+I am running a build server on Ubuntu 14.04 and recently had to upgrade 
+coccinelle for backports builds. So I got my hands on a debian package 
+(from launchpad if I recall correctly) and installing it manually gives 
+me following warning:
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../network/0013-fix-makefile-includes/mei_phy.patch           | 10 ++++++++++
- 1 file changed, 10 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0013-fix-makefile-includes/mei_phy.patch
+$ sudo dpkg -i coccinelle_1.0.0~rc24.deb-1_amd64.deb
+Selecting previously unselected package coccinelle.
+(Reading database ... 309776 files and directories currently installed.)
+Preparing to unpack coccinelle_1.0.0~rc24.deb-1_amd64.deb ...
+Unpacking coccinelle (1.0.0~rc24.deb-1) ...
+dpkg: dependency problems prevent configuration of coccinelle:
+  coccinelle depends on libpcre3 (>= 1:8.35); however:
+   Version of libpcre3:amd64 on system is 1:8.31-2ubuntu2.
 
-diff --git a/patches/collateral-evolutions/network/0013-fix-makefile-includes/mei_phy.patch b/patches/collateral-evolutions/network/0013-fix-makefile-includes/mei_phy.patch
-new file mode 100644
-index 0000000..c05f6ea
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0013-fix-makefile-includes/mei_phy.patch
-@@ -0,0 +1,10 @@
-+--- a/drivers/nfc/mei_phy.c
-++++ b/drivers/nfc/mei_phy.c
-+@@ -19,6 +19,7 @@
-+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+ 
-+ #include <linux/module.h>
-++#include <linux/sched.h>
-+ #include <linux/slab.h>
-+ #include <linux/nfc.h>
-+ 
--- 
-2.1.4
+dpkg: error processing package coccinelle (--install):
+  dependency problems - leaving unconfigured
+Processing triggers for man-db (2.6.7.1-1) ...
+Errors were encountered while processing:
+  coccinelle
 
+Now spatch is installed and works just fine, but I am getting all kinds 
+of errors when trying to install other packages which kinda sucks. So I 
+tried unstalling coccinelle and just build it from github repo, but that 
+fails for me as well (giving 'Unbound module Pcre').
+
+So can anyone recommend a way to deal with the coccinelle version 
+requirements when running on Ubuntu LTS version.
+
+Regards,
+Arend
