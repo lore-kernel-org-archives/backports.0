@@ -1,48 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:46839 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753111AbbFDJTt (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 4 Jun 2015 05:19:49 -0400
-Received: from [10.176.128.60] (xl-bun-02.bun.broadcom.com [10.176.128.60])	by
- mail-sj1-12.sj.broadcom.com (Postfix) with ESMTP id D7B9B27A8B	for
- <backports@vger.kernel.org>; Thu,  4 Jun 2015 02:19:46 -0700 (PDT)
-Message-ID: <55701831.20700@broadcom.com> (sfid-20150604_112017_589556_586FC9D1)
-Date: Thu, 4 Jun 2015 11:19:45 +0200
-From: Arend van Spriel <arend@broadcom.com>
-MIME-Version: 1.0
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: how to deal with coccinelle version requirements
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:34099 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751240AbbFENGh (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 5 Jun 2015 09:06:37 -0400
+Received: by payr10 with SMTP id r10so50674827pay.1
+        for <backports@vger.kernel.org>; Fri, 05 Jun 2015 06:06:37 -0700 (PDT)
+From: Jonathan Liu <net147@gmail.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: backports@vger.kernel.org, Jonathan Liu <net147@gmail.com>
+Subject: [PATCH] backports: add missing include for vfree
+Date: Fri,  5 Jun 2015 23:06:53 +1000
+Message-Id: <1433509613-3272-1-git-send-email-net147@gmail.com> (sfid-20150605_150640_723586_8FFA431D)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I am running a build server on Ubuntu 14.04 and recently had to upgrade 
-coccinelle for backports builds. So I got my hands on a debian package 
-(from launchpad if I recall correctly) and installing it manually gives 
-me following warning:
+Signed-off-by: Jonathan Liu <net147@gmail.com>
+---
+ backport/compat/backport-3.15.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-$ sudo dpkg -i coccinelle_1.0.0~rc24.deb-1_amd64.deb
-Selecting previously unselected package coccinelle.
-(Reading database ... 309776 files and directories currently installed.)
-Preparing to unpack coccinelle_1.0.0~rc24.deb-1_amd64.deb ...
-Unpacking coccinelle (1.0.0~rc24.deb-1) ...
-dpkg: dependency problems prevent configuration of coccinelle:
-  coccinelle depends on libpcre3 (>= 1:8.35); however:
-   Version of libpcre3:amd64 on system is 1:8.31-2ubuntu2.
+diff --git a/backport/compat/backport-3.15.c b/backport/compat/backport-3.15.c
+index c6f9d43..381fe65 100644
+--- a/backport/compat/backport-3.15.c
++++ b/backport/compat/backport-3.15.c
+@@ -15,6 +15,7 @@
+ #include <linux/string.h>
+ #include <linux/mm.h>
+ #include <linux/slab.h>
++#include <linux/vmalloc.h>
+ #include <net/net_namespace.h>
+ 
+ #if IS_ENABLED(CPTCFG_IEEE802154_6LOWPAN)
+-- 
+2.4.1
 
-dpkg: error processing package coccinelle (--install):
-  dependency problems - leaving unconfigured
-Processing triggers for man-db (2.6.7.1-1) ...
-Errors were encountered while processing:
-  coccinelle
-
-Now spatch is installed and works just fine, but I am getting all kinds 
-of errors when trying to install other packages which kinda sucks. So I 
-tried unstalling coccinelle and just build it from github repo, but that 
-fails for me as well (giving 'Unbound module Pcre').
-
-So can anyone recommend a way to deal with the coccinelle version 
-requirements when running on Ubuntu LTS version.
-
-Regards,
-Arend
