@@ -1,71 +1,697 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ig0-f182.google.com ([209.85.213.182]:37484 "EHLO
-	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751350AbbFOWxj (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 15 Jun 2015 18:53:39 -0400
-Received: by igbsb11 with SMTP id sb11so2199511igb.0
-        for <backports@vger.kernel.org>; Mon, 15 Jun 2015 15:53:39 -0700 (PDT)
-MIME-Version: 1.0
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:36154 "EHLO
+	mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751376AbbFFAQm (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 5 Jun 2015 20:16:42 -0400
+Received: by qkx62 with SMTP id 62so48559129qkx.3
+        for <backports@vger.kernel.org>; Fri, 05 Jun 2015 17:16:41 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Mon, 15 Jun 2015 15:53:18 -0700
-Message-ID: <CAB=NE6U7c7qHkcBkCP6TH=khmudOeUS6vXYM7848Z1jn5teABw@mail.gmail.com> (sfid-20150616_005341_705828_A7C1A046)
-Subject: Super simple boot test for backports
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: Fengguang Wu <fengguang.wu@intel.com>,
-	Michal Marek <mmarek@suse.cz>,
-	Josh Triplett <josh@joshtriplett.org>
-Content-Type: text/plain; charset=UTF-8
+To: backports@vger.kernel.org
+Cc: cocci@systeme.lip6.fr,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 2/4] patches: change 0054-struct-proto_ops-sig backport strategy
+Date: Fri,  5 Jun 2015 17:09:59 -0700
+Message-Id: <1433549401-17006-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20150606_021644_827248_B59A270C)
+In-Reply-To: <1433549401-17006-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1433549401-17006-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-We currently do a 'ckmake' compilation test of a Linux backports
-release prior to a release, this consists compilation of a release
-over 30 vanilla kernels with one default popular kernel configuration.
-This takes about 1 hour now on a 32-core system with 256 GiB of RAM
-and all source code being on RAM. We now have support to enable
-backported stuff as built-in, we call this integration support [0] but
-we have no formal build testing for that, perhaps we should start
-doing that but note that if building all modules takes 1 hours on 30
-kernels this will likely take much longer as we'd then be building 30
-full kernels. Its a pain but if we're going to support this I think we
-should look towards that, and the only thing I can hope for is perhaps
-a distributed build test, or we just see if we can get a bigger box.
-Last time we hit a crux like this we got a bigger box thanks to HP,
-SUSE and the Linux Foundation and it's helped quite. The number of
-subsystems we backport has increased and so has our userbase, as well
-as our R&D and developer base.
+This modifies we backport the struct proto_ops and struct proto
+declarations from adding #idefs around the function prototype
+arguments to just declaring our own new backport callback for
+older kernels with the extra argument which calls the the
+upstream function. This is done because we cannot write an
+SmPL grammar patch to backport the collateral evolution as we
+do it now. The backport strategy we provide now is equivalent
+in terms of functionality but also a lot more clear, it also
+leaves the upstream code unmodified as much as possible, this
+should enable anyone reviewing the code to be able to more
+easily determine exactly what is going on.
 
-Apart from this I think it'd also worth we start doing some very
-simple run time tests prior to a release. Considering our current
-build test takes about 1 hour and we have 32 cores and we support
-about 30 kernels, it would seem adding a very simple run time test
-that might take 1 minute, one kernel per CPU, might be worth it. I
-don't think doing integration kernel build testing is NOT needed right
-now per se, but its something we should consider towards the future if
-we get a bigger box. Run time tests however would seem very useful and
-I think we can squeeze them in.
+1   3.0.101             [  OK  ]
+2   3.1.10              [  OK  ]
+3   3.2.68              [  OK  ]
+4   3.3.8               [  OK  ]
+5   3.4.107             [  OK  ]
+6   3.5.7               [  OK  ]
+7   3.6.11              [  OK  ]
+8   3.7.10              [  OK  ]
+9   3.8.13              [  OK  ]
+10  3.9.11              [  OK  ]
+11  3.10.75             [  OK  ]
+12  3.11.10             [  OK  ]
+13  3.12.40             [  OK  ]
+14  3.13.11             [  OK  ]
+15  3.14.39             [  OK  ]
+16  3.15.10             [  OK  ]
+17  3.16.7              [  OK  ]
+18  3.17.8              [  OK  ]
+19  3.18.12             [  OK  ]
+20  3.19.5              [  OK  ]
+21  4.0.0               [  OK  ]
+22  4.1-rc1             [  OK  ]
 
-For run time tests it'd be great if we can leverage off of someone's
-else's work already. Fengguang's work with 0 day tests comes to mind
-as one place to pook and look at but I'm not sure if the stuff in
-place there is overly complex for what we'd need. Since we backport,
-obviously we'd want to at least test a few drivers, that poses however
-a challenge in that any meaningful backports test should require
-loading at least a driver. Loading drivers require libc, with libkkmod
-at least, so we'd need those, unless of course we use sysfs echo
-hacks. A simple test unit that comes to mind without requiring a full
-init system could be for instance force loading mac80211_hwsim and
-issuing a simple scan request, even though it won't return anything.
-It would seem likely some folks already have most of this already
-written and we can just mesh things in. Ideally, if we had integration
-testing going, we could avoid loading modules and just build things as
-built-in and then we'd just test that the kernel can boot, and perhaps
-do a very simple run time test. If we go this route what should we do?
+real    53m48.791s
+user    1437m15.048s
+sys     217m20.652s
 
-Let me know your thoughts, and if anyone really values kernel
-integration support -- consider poking us about a possible help on a
-box upgrade :)
+Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+---
+ .../0054-struct-proto_ops-sig/bluetooth.patch      | 235 +++++++++++++--------
+ .../0054-struct-proto_ops-sig/ieee802154.patch     | 161 +++++++++-----
+ .../network/0054-struct-proto_ops-sig/nfc.patch    | 138 ++++++++----
+ 3 files changed, 356 insertions(+), 178 deletions(-)
 
-[0] https://backports.wiki.kernel.org/index.php/Documentation/integration
+diff --git a/patches/collateral-evolutions/network/0054-struct-proto_ops-sig/bluetooth.patch b/patches/collateral-evolutions/network/0054-struct-proto_ops-sig/bluetooth.patch
+index 1bd0ced..2cf5a9e 100644
+--- a/patches/collateral-evolutions/network/0054-struct-proto_ops-sig/bluetooth.patch
++++ b/patches/collateral-evolutions/network/0054-struct-proto_ops-sig/bluetooth.patch
+@@ -1,120 +1,187 @@
+ --- a/net/bluetooth/hci_sock.c
+ +++ b/net/bluetooth/hci_sock.c
+-@@ -906,8 +906,13 @@ static void hci_sock_cmsg(struct sock *s
+- 	}
++@@ -953,6 +953,14 @@ static int hci_sock_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
++ 
++ 	return err ? : copied;
+  }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_hci_sock_recvmsg(struct kiocb *iocb, struct socket *sock,
+++				     struct msghdr *msg, size_t len,
+++				     int flags)
+++{
+++	return hci_sock_recvmsg(sock, msg, len, flags);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
+  
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+- static int hci_sock_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+- 			    int flags)
+-+#else
+-+static int hci_sock_recvmsg(struct kiocb *iocb, struct socket *sock,
+-+			    struct msghdr *msg, size_t len, int flags)
+-+#endif
+- {
+- 	int noblock = flags & MSG_DONTWAIT;
+- 	struct sock *sk = sock->sk;
+-@@ -1065,8 +1070,13 @@ done:
+- 	return err;
++ static int hci_mgmt_cmd(struct hci_mgmt_chan *chan, struct sock *sk,
++ 			struct msghdr *msg, size_t msglen)
++@@ -1189,6 +1196,13 @@ drop:
++ 	kfree_skb(skb);
++ 	goto done;
+  }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_hci_sock_sendmsg(struct kiocb *iocb, struct socket *sock,
+++				     struct msghdr *msg, size_t len)
+++{
+++	return hci_sock_sendmsg(sock, msg, len);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
+  
++ static int hci_sock_setsockopt(struct socket *sock, int level, int optname,
++ 			       char __user *optval, unsigned int len)
++@@ -1345,8 +1358,13 @@ static const struct proto_ops hci_sock_ops = {
++ 	.release	= hci_sock_release,
++ 	.bind		= hci_sock_bind,
++ 	.getname	= hci_sock_getname,
+ +#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+- static int hci_sock_sendmsg(struct socket *sock, struct msghdr *msg,
+- 			    size_t len)
++ 	.sendmsg	= hci_sock_sendmsg,
++ 	.recvmsg	= hci_sock_recvmsg,
+ +#else
+-+static int hci_sock_sendmsg(struct kiocb *iocb, struct socket *sock,
+-+			    struct msghdr *msg, size_t len)
+-+#endif
+- {
+- 	struct sock *sk = sock->sk;
+- 	struct hci_mgmt_chan *chan;
+++	.sendmsg = backport_hci_sock_sendmsg,
+++	.recvmsg = backport_hci_sock_recvmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
++ 	.ioctl		= hci_sock_ioctl,
++ 	.poll		= datagram_poll,
++ 	.listen		= sock_no_listen,
+ --- a/net/bluetooth/l2cap_sock.c
+ +++ b/net/bluetooth/l2cap_sock.c
+-@@ -944,8 +944,13 @@ static int l2cap_sock_setsockopt(struct
++@@ -975,6 +975,13 @@ static int l2cap_sock_sendmsg(struct socket *sock, struct msghdr *msg,
++ 
+  	return err;
+  }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_l2cap_sock_sendmsg(struct kiocb *iocb,
+++				       struct socket *sock,
+++				       struct msghdr *msg, size_t len){
+++	return l2cap_sock_sendmsg(sock, msg, len);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
+  
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+- static int l2cap_sock_sendmsg(struct socket *sock, struct msghdr *msg,
+- 			      size_t len)
+-+#else
+-+static int l2cap_sock_sendmsg(struct kiocb *iocb, struct socket *sock,
+-+			      struct msghdr *msg, size_t len)
+-+#endif
+- {
+- 	struct sock *sk = sock->sk;
+- 	struct l2cap_chan *chan = l2cap_pi(sk)->chan;
+-@@ -976,8 +981,13 @@ static int l2cap_sock_sendmsg(struct soc
++ static int l2cap_sock_recvmsg(struct socket *sock, struct msghdr *msg,
++ 			      size_t len, int flags)
++@@ -1036,6 +1043,14 @@ done:
++ 	release_sock(sk);
+  	return err;
+  }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_l2cap_sock_recvmsg(struct kiocb *iocb,
+++				       struct socket *sock,
+++				       struct msghdr *msg, size_t len,
+++				       int flags){
+++	return l2cap_sock_recvmsg(sock, msg, len, flags);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
+  
++ /* Kill socket (only if zapped and orphan)
++  * Must be called on unlocked socket.
++@@ -1618,8 +1633,16 @@ static const struct proto_ops l2cap_sock_ops = {
++ 	.listen		= l2cap_sock_listen,
++ 	.accept		= l2cap_sock_accept,
++ 	.getname	= l2cap_sock_getname,
+ +#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+- static int l2cap_sock_recvmsg(struct socket *sock, struct msghdr *msg,
+- 			      size_t len, int flags)
++ 	.sendmsg	= l2cap_sock_sendmsg,
+ +#else
+-+static int l2cap_sock_recvmsg(struct kiocb *iocb, struct socket *sock,
+-+			      struct msghdr *msg, size_t len, int flags)
+-+#endif
+- {
+- 	struct sock *sk = sock->sk;
+- 	struct l2cap_pinfo *pi = l2cap_pi(sk);
+++	.sendmsg = backport_l2cap_sock_sendmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++ 	.recvmsg	= l2cap_sock_recvmsg,
+++#else
+++	.recvmsg = backport_l2cap_sock_recvmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
++ 	.poll		= bt_sock_poll,
++ 	.ioctl		= bt_sock_ioctl,
++ 	.mmap		= sock_no_mmap,
+ --- a/net/bluetooth/rfcomm/sock.c
+ +++ b/net/bluetooth/rfcomm/sock.c
+-@@ -549,8 +549,13 @@ static int rfcomm_sock_getname(struct so
+- 	return 0;
+- }
++@@ -622,6 +622,13 @@ done:
+  
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+- static int rfcomm_sock_sendmsg(struct socket *sock, struct msghdr *msg,
+- 			       size_t len)
+-+#else
+-+static int rfcomm_sock_sendmsg(struct kiocb *iocb, struct socket *sock,
+-+			       struct msghdr *msg, size_t len)
+-+#endif
+- {
+- 	struct sock *sk = sock->sk;
+- 	struct rfcomm_dlc *d = rfcomm_pi(sk)->dlc;
+-@@ -615,8 +620,13 @@ done:
+  	return sent;
+  }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_rfcomm_sock_sendmsg(struct kiocb *iocb,
+++					struct socket *sock,
+++					struct msghdr *msg, size_t len){
+++	return rfcomm_sock_sendmsg(sock, msg, len);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
+  
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+  static int rfcomm_sock_recvmsg(struct socket *sock, struct msghdr *msg,
+  			       size_t size, int flags)
+-+#else
+-+static int rfcomm_sock_recvmsg(struct kiocb *iocb, struct socket *sock,
+-+			       struct msghdr *msg, size_t size, int flags)
+-+#endif
++@@ -647,6 +654,14 @@ static int rfcomm_sock_recvmsg(struct socket *sock, struct msghdr *msg,
++ 
++ 	return len;
++ }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_rfcomm_sock_recvmsg(struct kiocb *iocb,
+++					struct socket *sock,
+++					struct msghdr *msg, size_t len,
+++					int flags){
+++	return rfcomm_sock_recvmsg(sock, msg, len, flags);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
++ 
++ static int rfcomm_sock_setsockopt_old(struct socket *sock, int optname, char __user *optval, unsigned int optlen)
+  {
+- 	struct sock *sk = sock->sk;
+- 	struct rfcomm_dlc *d = rfcomm_pi(sk)->dlc;
++@@ -1044,8 +1059,16 @@ static const struct proto_ops rfcomm_sock_ops = {
++ 	.listen		= rfcomm_sock_listen,
++ 	.accept		= rfcomm_sock_accept,
++ 	.getname	= rfcomm_sock_getname,
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++ 	.sendmsg	= rfcomm_sock_sendmsg,
+++#else
+++	.sendmsg = backport_rfcomm_sock_sendmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++ 	.recvmsg	= rfcomm_sock_recvmsg,
+++#else
+++	.recvmsg = backport_rfcomm_sock_recvmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
++ 	.shutdown	= rfcomm_sock_shutdown,
++ 	.setsockopt	= rfcomm_sock_setsockopt,
++ 	.getsockopt	= rfcomm_sock_getsockopt,
+ --- a/net/bluetooth/sco.c
+ +++ b/net/bluetooth/sco.c
+-@@ -688,8 +688,13 @@ static int sco_sock_getname(struct socke
+- 	return 0;
++@@ -713,6 +713,12 @@ static int sco_sock_sendmsg(struct socket *sock, struct msghdr *msg,
++ 	release_sock(sk);
++ 	return err;
+  }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_sco_sock_sendmsg(struct kiocb *iocb, struct socket *sock,
+++				     struct msghdr *msg, size_t len){
+++	return sco_sock_sendmsg(sock, msg, len);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
+  
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+- static int sco_sock_sendmsg(struct socket *sock, struct msghdr *msg,
+- 			    size_t len)
+-+#else
+-+static int sco_sock_sendmsg(struct kiocb *iocb, struct socket *sock,
+-+			    struct msghdr *msg, size_t len)
+-+#endif
++ static void sco_conn_defer_accept(struct hci_conn *conn, u16 setting)
+  {
+- 	struct sock *sk = sock->sk;
+- 	int err;
+-@@ -758,8 +763,13 @@ static void sco_conn_defer_accept(struct
+- 	}
++@@ -779,6 +785,13 @@ static int sco_sock_recvmsg(struct socket *sock, struct msghdr *msg,
++ 
++ 	return bt_sock_recvmsg(sock, msg, len, flags);
+  }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_sco_sock_recvmsg(struct kiocb *iocb, struct socket *sock,
+++				     struct msghdr *msg, size_t len,
+++				     int flags){
+++	return sco_sock_recvmsg(sock, msg, len, flags);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
+  
++ static int sco_sock_setsockopt(struct socket *sock, int level, int optname, char __user *optval, unsigned int optlen)
++ {
++@@ -1178,8 +1191,16 @@ static const struct proto_ops sco_sock_ops = {
++ 	.listen		= sco_sock_listen,
++ 	.accept		= sco_sock_accept,
++ 	.getname	= sco_sock_getname,
+ +#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+- static int sco_sock_recvmsg(struct socket *sock, struct msghdr *msg,
+- 			    size_t len, int flags)
++ 	.sendmsg	= sco_sock_sendmsg,
+ +#else
+-+static int sco_sock_recvmsg(struct kiocb *iocb, struct socket *sock,
+-+			    struct msghdr *msg, size_t len, int flags)
+-+#endif
+- {
+- 	struct sock *sk = sock->sk;
+- 	struct sco_pinfo *pi = sco_pi(sk);
+++	.sendmsg = backport_sco_sock_sendmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++ 	.recvmsg	= sco_sock_recvmsg,
+++#else
+++	.recvmsg = backport_sco_sock_recvmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
++ 	.poll		= bt_sock_poll,
++ 	.ioctl		= bt_sock_ioctl,
++ 	.mmap		= sock_no_mmap,
+diff --git a/patches/collateral-evolutions/network/0054-struct-proto_ops-sig/ieee802154.patch b/patches/collateral-evolutions/network/0054-struct-proto_ops-sig/ieee802154.patch
+index cfb77f3..0497dbe 100644
+--- a/patches/collateral-evolutions/network/0054-struct-proto_ops-sig/ieee802154.patch
++++ b/patches/collateral-evolutions/network/0054-struct-proto_ops-sig/ieee802154.patch
+@@ -1,79 +1,134 @@
+ --- a/net/ieee802154/socket.c
+ +++ b/net/ieee802154/socket.c
+-@@ -96,12 +96,21 @@ static int ieee802154_sock_release(struc
+- 	return 0;
+- }
+- 
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+- static int ieee802154_sock_sendmsg(struct socket *sock, struct msghdr *msg,
+- 				   size_t len)
+-+#else
+-+static int ieee802154_sock_sendmsg(struct kiocb *iocb, struct socket *sock,
+-+				   struct msghdr *msg, size_t len)
+-+#endif
++@@ -101,8 +101,19 @@ static int ieee802154_sock_sendmsg(struct socket *sock, struct msghdr *msg,
+  {
+  	struct sock *sk = sock->sk;
+  
+ +#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+  	return sk->sk_prot->sendmsg(sk, msg, len);
+ +#else
+-+	return sk->sk_prot->sendmsg(iocb, sk, msg, len);
+-+#endif
+++	return sk->sk_prot->sendmsg(NULL, sk, msg, len);
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
+  }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_ieee802154_sock_sendmsg(struct kiocb *iocb,
+++					    struct socket *sock,
+++					    struct msghdr *msg, size_t len){
+++	return ieee802154_sock_sendmsg(sock, msg, len);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
+  
+  static int ieee802154_sock_bind(struct socket *sock, struct sockaddr *uaddr,
+-@@ -253,7 +262,12 @@ static int raw_disconnect(struct sock *s
+- 	return 0;
+- }
+- 
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+- static int raw_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
+-+#else
+-+static int raw_sendmsg(struct kiocb *iocb, struct sock *sk,
+-+		       struct msghdr *msg, size_t size)
+-+#endif
+- {
+- 	struct net_device *dev;
+- 	unsigned int mtu;
+-@@ -324,8 +338,13 @@ out:
++ 				int addr_len)
++@@ -323,6 +334,12 @@ out_dev:
++ out:
+  	return err;
+  }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_raw_sendmsg(struct kiocb *iocb, struct socket *sock,
+++				struct msghdr *msg, size_t len){
+++	return raw_sendmsg(sock, msg, len);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
+  
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+  static int raw_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
+  		       int noblock, int flags, int *addr_len)
+-+#else
+-+static int raw_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
+-+		       size_t len, int noblock, int flags, int *addr_len)
+-+#endif
+- {
+- 	size_t copied = 0;
+- 	int err = -EOPNOTSUPP;
+-@@ -612,7 +631,12 @@ static int dgram_disconnect(struct sock
+- 	return 0;
++@@ -356,6 +373,13 @@ out:
++ 		return err;
++ 	return copied;
+  }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_raw_recvmsg(struct kiocb *iocb, struct socket *sock,
+++				struct msghdr *msg, size_t len, int noblock,
+++				int flags, int *addr_len){
+++	return raw_recvmsg(sock, msg, len, noblock, flags, addr_len);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
+  
++ static int raw_rcv_skb(struct sock *sk, struct sk_buff *skb)
++ {
++@@ -409,8 +433,16 @@ static struct proto ieee802154_raw_prot = {
++ 	.obj_size	= sizeof(struct sock),
++ 	.close		= raw_close,
++ 	.bind		= raw_bind,
+ +#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+- static int dgram_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
++ 	.sendmsg	= raw_sendmsg,
+ +#else
+-+static int dgram_sendmsg(struct kiocb *iocb, struct sock *sk,
+-+			 struct msghdr *msg, size_t size)
+-+#endif
+- {
+- 	struct net_device *dev;
+- 	unsigned int mtu;
+-@@ -711,8 +735,14 @@ out:
+++	.sendmsg = backport_raw_sendmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++ 	.recvmsg	= raw_recvmsg,
+++#else
+++	.recvmsg = backport_raw_recvmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
++ 	.hash		= raw_hash,
++ 	.unhash		= raw_unhash,
++ 	.connect	= raw_connect,
++@@ -434,7 +466,11 @@ static const struct proto_ops ieee802154_raw_ops = {
++ 	.shutdown	   = sock_no_shutdown,
++ 	.setsockopt	   = sock_common_setsockopt,
++ 	.getsockopt	   = sock_common_getsockopt,
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++ 	.sendmsg	   = ieee802154_sock_sendmsg,
+++#else
+++	.sendmsg = backport_ieee802154_sock_sendmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
++ 	.recvmsg	   = sock_common_recvmsg,
++ 	.mmap		   = sock_no_mmap,
++ 	.sendpage	   = sock_no_sendpage,
++@@ -710,6 +746,12 @@ out_dev:
++ out:
+  	return err;
+  }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_dgram_sendmsg(struct kiocb *iocb, struct socket *sock,
+++				  struct msghdr *msg, size_t len){
+++	return dgram_sendmsg(sock, msg, len);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
+  
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+  static int dgram_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
+  			 int noblock, int flags, int *addr_len)
+-+#else
+-+static int dgram_recvmsg(struct kiocb *iocb, struct sock *sk,
+-+			 struct msghdr *msg, size_t len, int noblock,
+-+			 int flags, int *addr_len)
+-+#endif
++@@ -751,6 +793,13 @@ out:
++ 		return err;
++ 	return copied;
++ }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_dgram_recvmsg(struct kiocb *iocb, struct socket *sock,
+++				  struct msghdr *msg, size_t len, int noblock,
+++				  int flags, int *addr_len){
+++	return dgram_recvmsg(sock, msg, len, noblock, flags, addr_len);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
++ 
++ static int dgram_rcv_skb(struct sock *sk, struct sk_buff *skb)
+  {
+- 	size_t copied = 0;
+- 	int err = -EOPNOTSUPP;
++@@ -947,8 +996,16 @@ static struct proto ieee802154_dgram_prot = {
++ 	.init		= dgram_init,
++ 	.close		= dgram_close,
++ 	.bind		= dgram_bind,
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++ 	.sendmsg	= dgram_sendmsg,
+++#else
+++	.sendmsg = backport_dgram_sendmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++ 	.recvmsg	= dgram_recvmsg,
+++#else
+++	.recvmsg = backport_dgram_recvmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
++ 	.hash		= dgram_hash,
++ 	.unhash		= dgram_unhash,
++ 	.connect	= dgram_connect,
++@@ -973,7 +1030,11 @@ static const struct proto_ops ieee802154_dgram_ops = {
++ 	.shutdown	   = sock_no_shutdown,
++ 	.setsockopt	   = sock_common_setsockopt,
++ 	.getsockopt	   = sock_common_getsockopt,
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++ 	.sendmsg	   = ieee802154_sock_sendmsg,
+++#else
+++	.sendmsg = backport_ieee802154_sock_sendmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
++ 	.recvmsg	   = sock_common_recvmsg,
++ 	.mmap		   = sock_no_mmap,
++ 	.sendpage	   = sock_no_sendpage,
+diff --git a/patches/collateral-evolutions/network/0054-struct-proto_ops-sig/nfc.patch b/patches/collateral-evolutions/network/0054-struct-proto_ops-sig/nfc.patch
+index 3bc5fc0..e29c4d8 100644
+--- a/patches/collateral-evolutions/network/0054-struct-proto_ops-sig/nfc.patch
++++ b/patches/collateral-evolutions/network/0054-struct-proto_ops-sig/nfc.patch
+@@ -1,59 +1,115 @@
+ --- a/net/nfc/llcp_sock.c
+ +++ b/net/nfc/llcp_sock.c
+-@@ -750,8 +750,13 @@ error:
+- 	return ret;
+- }
++@@ -792,6 +792,12 @@ static int llcp_sock_sendmsg(struct socket *sock, struct msghdr *msg,
+  
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+- static int llcp_sock_sendmsg(struct socket *sock, struct msghdr *msg,
+- 			     size_t len)
+-+#else
+-+static int llcp_sock_sendmsg(struct kiocb *iocb, struct socket *sock,
+-+			     struct msghdr *msg, size_t len)
+-+#endif
+- {
+- 	struct sock *sk = sock->sk;
+- 	struct nfc_llcp_sock *llcp_sock = nfc_llcp_sock(sk);
+-@@ -793,8 +798,13 @@ static int llcp_sock_sendmsg(struct sock
+  	return nfc_llcp_send_i_frame(llcp_sock, msg, len);
+  }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_llcp_sock_sendmsg(struct kiocb *iocb, struct socket *sock,
+++				      struct msghdr *msg, size_t len){
+++	return llcp_sock_sendmsg(sock, msg, len);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
+  
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+  static int llcp_sock_recvmsg(struct socket *sock, struct msghdr *msg,
+  			     size_t len, int flags)
+-+#else
+-+static int llcp_sock_recvmsg(struct kiocb *iocb, struct socket *sock,
+-+			     struct msghdr *msg, size_t len, int flags)
+-+#endif
+- {
+- 	int noblock = flags & MSG_DONTWAIT;
+- 	struct sock *sk = sock->sk;
+---- a/net/nfc/rawsock.c
+-+++ b/net/nfc/rawsock.c
+-@@ -211,7 +211,12 @@ static void rawsock_tx_work(struct work_
+- 	}
++@@ -882,6 +888,13 @@ done:
++ 
++ 	return copied;
+  }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_llcp_sock_recvmsg(struct kiocb *iocb, struct socket *sock,
+++				      struct msghdr *msg, size_t len,
+++				      int flags){
+++	return llcp_sock_recvmsg(sock, msg, len, flags);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
+  
++ static const struct proto_ops llcp_sock_ops = {
++ 	.family         = PF_NFC,
++@@ -898,8 +911,16 @@ static const struct proto_ops llcp_sock_ops = {
++ 	.shutdown       = sock_no_shutdown,
++ 	.setsockopt     = nfc_llcp_setsockopt,
++ 	.getsockopt     = nfc_llcp_getsockopt,
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++ 	.sendmsg        = llcp_sock_sendmsg,
+++#else
+++	.sendmsg = backport_llcp_sock_sendmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
+ +#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+- static int rawsock_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
++ 	.recvmsg        = llcp_sock_recvmsg,
+ +#else
+-+static int rawsock_sendmsg(struct kiocb *iocb, struct socket *sock,
+-+			   struct msghdr *msg, size_t len)
+-+#endif
+- {
+- 	struct sock *sk = sock->sk;
+- 	struct nfc_dev *dev = nfc_rawsock(sk)->dev;
+-@@ -247,8 +252,13 @@ static int rawsock_sendmsg(struct socket
+++	.recvmsg = backport_llcp_sock_recvmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
++ 	.mmap           = sock_no_mmap,
++ };
++ 
++@@ -919,7 +940,11 @@ static const struct proto_ops llcp_rawsock_ops = {
++ 	.setsockopt     = sock_no_setsockopt,
++ 	.getsockopt     = sock_no_getsockopt,
++ 	.sendmsg        = sock_no_sendmsg,
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++ 	.recvmsg        = llcp_sock_recvmsg,
+++#else
+++	.recvmsg = backport_llcp_sock_recvmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
++ 	.mmap           = sock_no_mmap,
++ };
++ 
++--- a/net/nfc/rawsock.c
+++++ b/net/nfc/rawsock.c
++@@ -246,6 +246,12 @@ static int rawsock_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
++ 
+  	return len;
+  }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_rawsock_sendmsg(struct kiocb *iocb, struct socket *sock,
+++				    struct msghdr *msg, size_t len){
+++	return rawsock_sendmsg(sock, msg, len);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
+  
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+  static int rawsock_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+  			   int flags)
++@@ -274,6 +280,12 @@ static int rawsock_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
++ 
++ 	return rc ? : copied;
++ }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0)
+++static int backport_rawsock_recvmsg(struct kiocb *iocb, struct socket *sock,
+++				    struct msghdr *msg, size_t len, int flags){
+++	return rawsock_recvmsg(sock, msg, len, flags);
+++}
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
++ 
++ static const struct proto_ops rawsock_ops = {
++ 	.family         = PF_NFC,
++@@ -290,8 +302,16 @@ static const struct proto_ops rawsock_ops = {
++ 	.shutdown       = sock_no_shutdown,
++ 	.setsockopt     = sock_no_setsockopt,
++ 	.getsockopt     = sock_no_getsockopt,
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++ 	.sendmsg        = rawsock_sendmsg,
+++#else
+++	.sendmsg = backport_rawsock_sendmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++ 	.recvmsg        = rawsock_recvmsg,
+ +#else
+-+static int rawsock_recvmsg(struct kiocb *iocb, struct socket *sock,
+-+			   struct msghdr *msg, size_t len, int flags)
+-+#endif
+- {
+- 	int noblock = flags & MSG_DONTWAIT;
+- 	struct sock *sk = sock->sk;
+++	.recvmsg = backport_rawsock_recvmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
++ 	.mmap           = sock_no_mmap,
++ };
++ 
++@@ -311,7 +331,11 @@ static const struct proto_ops rawsock_raw_ops = {
++ 	.setsockopt     = sock_no_setsockopt,
++ 	.getsockopt     = sock_no_getsockopt,
++ 	.sendmsg        = sock_no_sendmsg,
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++ 	.recvmsg        = rawsock_recvmsg,
+++#else
+++	.recvmsg = backport_rawsock_recvmsg,
+++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
++ 	.mmap           = sock_no_mmap,
++ };
++ 
+-- 
+2.3.2.209.gd67f9d5.dirty
 
- Luis
