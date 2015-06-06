@@ -1,29 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ig0-f172.google.com ([209.85.213.172]:38838 "EHLO
-	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751874AbbFZBHk (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 25 Jun 2015 21:07:40 -0400
-Received: by igin14 with SMTP id n14so3913194igi.1
-        for <backports@vger.kernel.org>; Thu, 25 Jun 2015 18:07:40 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1434748633-23279-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1434748633-23279-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from mail-qk0-f172.google.com ([209.85.220.172]:34765 "EHLO
+	mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751688AbbFFAMT (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 5 Jun 2015 20:12:19 -0400
+Received: by qkoo18 with SMTP id o18so48692326qko.1
+        for <backports@vger.kernel.org>; Fri, 05 Jun 2015 17:12:18 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Thu, 25 Jun 2015 18:07:20 -0700
-Message-ID: <CAB=NE6UVUYMoZd_FKcvEVLn0J-Vrdc9oTtsgdWiikHDY0s21Wg@mail.gmail.com> (sfid-20150626_030742_525397_8FC53457)
-Subject: Re: [PATCH] backports-update-manager: bump 4.1-rc1 to 4.1-rc8
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Content-Type: text/plain; charset=UTF-8
+To: backports@vger.kernel.org
+Cc: cocci@systeme.lip6.fr, "Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: [PATCH 0/4] backports: SmPL patch equivalence support
+Date: Fri,  5 Jun 2015 17:09:57 -0700
+Message-Id: <1433549401-17006-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20150606_021221_389025_1333C065)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Jun 19, 2015 at 2:17 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-Applied and pushed.
+A long time ago I wrote SmPL <--> patch equivalence proof support
+for backports but put that work on hold as I found it could be
+useful as a generic tool. Quite a bit of time has passed and I
+haven't gotten to that again so just merge this for now. If we want
+to generalize it we can do so later.
 
- Luis
---
-To unsubscribe from this list: send the line "unsubscribe backports" in
+This goes with an example patch being transformed.
+
+Luis R. Rodriguez (4):
+  patches: remove bt_sock_stream_recvmsg() and bt_sock_recvmsg() from
+    ifdefs
+  patches: change 0054-struct-proto_ops-sig backport strategy
+  gentree.py: add SmPL patch equivalence proof support
+  patches: provide 0054-struct-proto_ops-sig SmPL patch replacement
+
+ gentree.py                                         |  71 ++++++-
+ .../network/0054-struct-proto_ops-sig.cocci        | 177 +++++++++++++++++
+ .../0054-struct-proto_ops-sig/bluetooth.patch      | 212 ---------------------
+ .../0054-struct-proto_ops-sig/ieee802154.patch     |  79 --------
+ .../network/0054-struct-proto_ops-sig/nfc.patch    |  59 ------
+ 5 files changed, 240 insertions(+), 358 deletions(-)
+ create mode 100644 patches/collateral-evolutions/network/0054-struct-proto_ops-sig.cocci
+ delete mode 100644 patches/collateral-evolutions/network/0054-struct-proto_ops-sig/bluetooth.patch
+ delete mode 100644 patches/collateral-evolutions/network/0054-struct-proto_ops-sig/ieee802154.patch
+ delete mode 100644 patches/collateral-evolutions/network/0054-struct-proto_ops-sig/nfc.patch
+
+-- 
+2.3.2.209.gd67f9d5.dirty
+
