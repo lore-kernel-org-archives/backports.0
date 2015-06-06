@@ -1,36 +1,70 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:34099 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751240AbbFENGh (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 5 Jun 2015 09:06:37 -0400
-Received: by payr10 with SMTP id r10so50674827pay.1
-        for <backports@vger.kernel.org>; Fri, 05 Jun 2015 06:06:37 -0700 (PDT)
-From: Jonathan Liu <net147@gmail.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org, Jonathan Liu <net147@gmail.com>
-Subject: [PATCH] backports: add missing include for vfree
-Date: Fri,  5 Jun 2015 23:06:53 +1000
-Message-Id: <1433509613-3272-1-git-send-email-net147@gmail.com> (sfid-20150605_150640_723586_8FFA431D)
+Received: from s3.sipsolutions.net ([5.9.151.49]:35035 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751422AbbFFMM1 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 6 Jun 2015 08:12:27 -0400
+Message-ID: <1433592743.2467.7.camel@sipsolutions.net> (sfid-20150606_141229_757294_65112381)
+Subject: Re: [PATCH 3/4] gentree.py: add SmPL patch equivalence proof support
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org, cocci@systeme.lip6.fr
+Date: Sat, 06 Jun 2015 14:12:23 +0200
+In-Reply-To: <1433549401-17006-4-git-send-email-mcgrof@do-not-panic.com> (sfid-20150606_021855_421040_8CC03CC0)
+References: <1433549401-17006-1-git-send-email-mcgrof@do-not-panic.com>
+	 <1433549401-17006-4-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20150606_021855_421040_8CC03CC0)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Jonathan Liu <net147@gmail.com>
----
- backport/compat/backport-3.15.c | 1 +
- 1 file changed, 1 insertion(+)
+On Fri, 2015-06-05 at 17:10 -0700, Luis R. Rodriguez wrote:
+> If you have an SmPL patch that you think is ready to replace
+> a series of unified diff patches you can pass as an argument
+> to gentree.py '--prove-cocci' with the cocci file as the
+> an extra argument and gentree.py will try to prove equivalence
+> between the unified diff series and your Coccinelle SmPL patch.
+> 
+> You can use this as a guide when trying to replace an existing
+> unified diff series carried within backports with a respective
+> Coccinelle SmPL patch. You can use this to get a warm fuzzy or
+> to provide backports maintainers with a warm fuzzy of comfort
+> that your SmPL patch is sufficient.
 
-diff --git a/backport/compat/backport-3.15.c b/backport/compat/backport-3.15.c
-index c6f9d43..381fe65 100644
---- a/backport/compat/backport-3.15.c
-+++ b/backport/compat/backport-3.15.c
-@@ -15,6 +15,7 @@
- #include <linux/string.h>
- #include <linux/mm.h>
- #include <linux/slab.h>
-+#include <linux/vmalloc.h>
- #include <net/net_namespace.h>
- 
- #if IS_ENABLED(CPTCFG_IEEE802154_6LOWPAN)
--- 
-2.4.1
+I don't like this at all.
+
+gentree.py is supposed to be a tool to generate a new backport tree.
+You're (ab)using it for (s)patch development purposes that it was never
+intended for.
+
+It's already grown to be a spaghetti mess of different options, some of
+which cause partial tree creation (or no proper tree creation at all,
+iirc) and I think adding more to this will make it unmaintainable.
+
+Additionally, there's no real reason why this needs to be part of
+gentree. In theory, you can just apply both patches to any kind of tree
+(doesn't have to be a backport) and see the difference.
+
+In practice, I understand that it might make sense to apply them to a
+backport tree because that's where the original patch (non-spatch) came
+from, since presumably you want to use it for development. However, I
+still think this is far enough from the original purpose just like
+test_cocci and profile_cocci that it shouldn't be there.
+
+I'd support changing gentree to support a "up to this patch" mode, in
+which it stops processing at a certain patch and other scripts can then
+do remaining work like cocci profiling (which IMHO really shouldn't be
+here at all) or this comparison testing.
+
+I can also see how adding more to this script is convenient, since it's
+just a few lines of code in the right place in the script, but this has
+already made it complicated to follow all the different code paths and
+change them appropriately for any changes.
+
+As a consequence, I cannot support this change and would much rather
+remove more of the cocci test options from here - really something like
+profiling and equivalence testing should be part of a script provided by
+upstream coccinelle anyway, instead of in the backports project.
+
+johannes
 
