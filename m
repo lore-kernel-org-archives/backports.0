@@ -1,60 +1,31 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:15932 "EHLO mga11.intel.com"
+Received: from s3.sipsolutions.net ([5.9.151.49]:48725 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751186AbbFHI0O (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 8 Jun 2015 04:26:14 -0400
-From: "Coelho, Luciano" <luciano.coelho@intel.com>
-To: "hauke@hauke-m.de" <hauke@hauke-m.de>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-Subject: Re: [PATCH] backport: allow compilation with Ubuntu's 3.13
-Date: Mon, 8 Jun 2015 08:25:50 +0000
-Message-ID: <1433751947.3726.6.camel@intel.com> (sfid-20150608_102616_053611_EE5E5014)
-References: <1432042936-23733-1-git-send-email-emmanuel.grumbach@intel.com>
-	 <556399B7.2040607@hauke-m.de> <1433751430.3726.4.camel@coelho.fi>
-In-Reply-To: <1433751430.3726.4.camel@coelho.fi>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+	id S1752905AbbFHUbP (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 8 Jun 2015 16:31:15 -0400
+Message-ID: <1433795473.10172.3.camel@sipsolutions.net> (sfid-20150608_223116_930593_D59C0426)
+Subject: Re: [PATCH] pycocci: sync pycocci with Coccinelle upstream
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: backports@vger.kernel.org, cocci@systeme.lip6.fr
+Date: Mon, 08 Jun 2015 22:31:13 +0200
+In-Reply-To: <1433793702-21322-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20150608_220416_878803_1B3AED69)
+References: <1433793702-21322-1-git-send-email-mcgrof@do-not-panic.com>
+	 (sfid-20150608_220416_878803_1B3AED69)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-T24gTW9uLCAyMDE1LTA2LTA4IGF0IDExOjE3ICswMzAwLCBMdWNhIENvZWxobyB3cm90ZToNCj4g
-T24gTW9uLCAyMDE1LTA1LTI1IGF0IDIzOjUyICswMjAwLCBIYXVrZSBNZWhydGVucyB3cm90ZToN
-Cj4gPiBPbiAwNS8xOS8yMDE1IDAzOjQyIFBNLCBFbW1hbnVlbCBHcnVtYmFjaCB3cm90ZToNCj4g
-PiA+IENhbm9uaWNhbCBiYWNrcG9ydGVkOg0KPiA+ID4gDQo+ID4gPiBBdXRob3I6IE9yIEdlcmxp
-dHogPG9nZXJsaXR6QG1lbGxhbm94LmNvbT4NCj4gPiA+IERhdGU6ICAgTW9uIEphbiAyMCAxMzo1
-OToxOSAyMDE0ICswMjAwDQo+ID4gPiANCj4gPiA+ICAgICBuZXQ6IEFkZCBHUk8gc3VwcG9ydCBm
-b3IgVURQIGVuY2Fwc3VsYXRpbmcgcHJvdG9jb2xzDQo+ID4gPiANCj4gPiA+IFRoaXMgaXMgY29t
-bWl0IDJkYTIwNGE4ZjY3ZmJlMjU4MTZjYmNlOGNjODU1MWYwM2Q1Yjk1MWEgaW4gdGhlaXINCj4g
-PiA+IHRyZWUuDQo+ID4gPiBDb3BlIHdpdGggdGhhdC4NCj4gPiA+IA0KPiA+ID4gU2lnbmVkLW9m
-Zi1ieTogRW1tYW51ZWwgR3J1bWJhY2ggPGVtbWFudWVsLmdydW1iYWNoQGludGVsLmNvbT4NCj4g
-PiA+IC0tLQ0KPiA+ID4gVG91Y2ggY29tcGlsZWQgb25seS4gQW5kIEkgZG9uJ3QgcmVhbGx5IGtu
-b3cgaG93IHRoZSBVVFMgdGhpbmcgZ29lcyA6KQ0KPiA+ID4gLS0tDQo+ID4gPiAgYmFja3BvcnQv
-YmFja3BvcnQtaW5jbHVkZS9saW51eC9uZXRkZXZpY2UuaCB8IDIgKysNCj4gPiA+ICAxIGZpbGUg
-Y2hhbmdlZCwgMiBpbnNlcnRpb25zKCspDQo+ID4gPiANCj4gPiA+IGRpZmYgLS1naXQgYS9iYWNr
-cG9ydC9iYWNrcG9ydC1pbmNsdWRlL2xpbnV4L25ldGRldmljZS5oIGIvYmFja3BvcnQvYmFja3Bv
-cnQtaW5jbHVkZS9saW51eC9uZXRkZXZpY2UuaA0KPiA+ID4gaW5kZXggYmIzZmVmYi4uNjFhYzk1
-YyAxMDA2NDQNCj4gPiA+IC0tLSBhL2JhY2twb3J0L2JhY2twb3J0LWluY2x1ZGUvbGludXgvbmV0
-ZGV2aWNlLmgNCj4gPiA+ICsrKyBiL2JhY2twb3J0L2JhY2twb3J0LWluY2x1ZGUvbGludXgvbmV0
-ZGV2aWNlLmgNCj4gPiA+IEBAIC04MSw2ICs4MSw3IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBkZXZf
-Y29uc3VtZV9za2JfYW55KHN0cnVjdCBza19idWZmICpza2IpDQo+ID4gPiAgCWRldl9rZnJlZV9z
-a2JfYW55KHNrYik7DQo+ID4gPiAgfQ0KPiA+ID4gIA0KPiA+ID4gKyNpZiAoTElOVVhfVkVSU0lP
-Tl9DT0RFID09IEtFUk5FTF9WRVJTSU9OKDMsMTMsMTEpICYmIFVUU19VQlVOVFVfUkVMRUFTRV9B
-QkkgPCAyNCkNCj4gPiA+ICBzdHJ1Y3QgcGNwdV9zd19uZXRzdGF0cyB7DQo+ID4gPiAgCXU2NCAg
-ICAgcnhfcGFja2V0czsNCj4gPiA+ICAJdTY0ICAgICByeF9ieXRlczsNCj4gPiA+IEBAIC04OCw2
-ICs4OSw3IEBAIHN0cnVjdCBwY3B1X3N3X25ldHN0YXRzIHsNCj4gPiA+ICAJdTY0ICAgICB0eF9i
-eXRlczsNCj4gPiA+ICAJc3RydWN0IHU2NF9zdGF0c19zeW5jICAgc3luY3A7DQo+ID4gPiAgfTsN
-Cj4gPiA+ICsjZW5kaWYNCj4gPiA+ICANCj4gPiA+ICAjZGVmaW5lIG5ldGRldl90c3RhdHMoZGV2
-KQkoKHN0cnVjdCBwY3B1X3N3X25ldHN0YXRzICopZGV2LT5tbF9wcml2KQ0KPiA+ID4gICNkZWZp
-bmUgbmV0ZGV2X2Fzc2lnbl90c3RhdHMoZGV2LCBlKQlkZXYtPm1sX3ByaXYgPSAoZSk7DQo+ID4g
-PiANCj4gPiANCj4gPiANCj4gPiBUaGFuayB5b3UgZm9yIHRoZSBwYXRjaCwgaXQgd2FzIGFwcGxp
-ZWQgYW5kIHB1c2hlZC4NCj4gPiANCj4gPiBJIGNoYW5nZWQgaXQgaW50byB0aGlzOg0KPiA+ICsj
-aWYgKExJTlVYX1ZFUlNJT05fQ09ERSAhPSBLRVJORUxfVkVSU0lPTigzLDEzLDExKSB8fA0KPiA+
-IFVUU19VQlVOVFVfUkVMRUFTRV9BQkkgPCAyNCkNCj4gPiAuLi4NCj4gPiAjZW5kaWYNCj4gDQo+
-IElzbid0IHRoaXMgc3RpbGwgd3Jvbmc/IFdoYXQgaWYgdGhlIGtlcm5lbCBpcyA+PSAzLDEzLDEx
-PyBJbiB0aGF0IGNhc2UsDQo+IHRoZSBzdHJ1Y3Qgd2lsbCBiZSBhbHJlYWR5IGRlZmluZWQuLi4g
-YW5kIGlmIGl0J3MgYW4gdXBzdHJlYW0ga2VybmVsDQo+IChpLmUuIFVUU19VQlVOVFVfUkVMRUFT
-RV9BQkkgaXMgbm90IGRlZmluZWQpIHdlIHdpbGwgc3RpbGwgdHJ5IHRvDQo+IHJlZGVmaW5lIHRo
-aXMgc3RydWN0LCBubz8NCg0KSHVoLCBuZXZlciBtaW5kLCB0aGVyZSdzIHRoZSBMSU5VWF9WRVJT
-SU9OX0NPREUgPCBLRVJORUxfVkVSU0lPTigzLDE0LDApDQpzdXJyb3VuZGluZyBpdC4uLiBNaXNz
-ZWQgaXQuDQoNCi0tDQpMdWNhLg0K
+On Mon, 2015-06-08 at 13:01 -0700, Luis R. Rodriguez wrote:
+> pycocci is now part of Coccinelle upstream. Coccinelle has a plan
+> to actually extend multithreaded support to enable us to not have
+> to script this out. Until then pyccoci is used and I'll sync both
+> solutions up as there is a bit of latency between a coccinelle release
+> and what we may need from pycocci.
+
+If it's upstream, do they ship it? If so it wouldn't be needed that we
+have a copy, it seems?
+
+johannes
+
