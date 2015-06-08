@@ -1,31 +1,32 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:48739 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752574AbbF1WKY (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 28 Jun 2015 18:10:24 -0400
-Received: from [192.168.178.24] (p5DE97D38.dip0.t-ipconnect.de [93.233.125.56])
-	by hauke-m.de (Postfix) with ESMTPSA id 5DFA720166
-	for <backports@vger.kernel.org>; Mon, 29 Jun 2015 00:10:23 +0200 (CEST)
-Message-ID: <559070CE.5060907@hauke-m.de> (sfid-20150629_001026_648406_AEA32D7F)
-Date: Mon, 29 Jun 2015 00:10:22 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail-ig0-f169.google.com ([209.85.213.169]:36467 "EHLO
+	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753272AbbFHTBO (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 8 Jun 2015 15:01:14 -0400
+Received: by igbpi8 with SMTP id pi8so69081095igb.1
+        for <backports@vger.kernel.org>; Mon, 08 Jun 2015 12:01:14 -0700 (PDT)
 MIME-Version: 1.0
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: backports-20150626 is out
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAB=NE6W9qF9YK8WyBDFCQewDiAV_V7-Jvo97kp1e5NfTfGyROQ@mail.gmail.com>
+References: <1432042936-23733-1-git-send-email-emmanuel.grumbach@intel.com>
+ <1432110463.2174.2.camel@sipsolutions.net> <1432110664.5612.6.camel@intel.com>
+ <1432110893.2174.3.camel@sipsolutions.net> <1432111194.8314.1.camel@intel.com>
+ <555CA897.4010606@lwfinger.net> <CAB=NE6W9qF9YK8WyBDFCQewDiAV_V7-Jvo97kp1e5NfTfGyROQ@mail.gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+Date: Mon, 8 Jun 2015 12:00:53 -0700
+Message-ID: <CAB=NE6WZnK1UZ0s87DYriE69aEBYkk+pWL9zDVqPfijDGKki7A@mail.gmail.com> (sfid-20150608_210116_895556_CB806489)
+Subject: Re: [PATCH] backport: allow compilation with Ubuntu's 3.13
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>,
+	"johannes@sipsolutions.net" <johannes@sipsolutions.net>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backports-20150626 was released. This is based on linux-next next-20150626.
+On Mon, Jun 8, 2015 at 11:58 AM, Luis R. Rodriguez <mcgrof@frijolero.org> wrote:
+> This is a strategy
+> *new* developers
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/2015/06/26/backports-20150626.tar.xz
+Sorry I meant that developers can use for *new* upstream code.
 
-The source code can be found here:
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
-
-All the latest releases are listed here:
-http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
-
-Hauke
---
-To unsubscribe from this list: send the line "unsubscribe backports" in
+ Luis
