@@ -1,59 +1,79 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:41032 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751524AbbFNO3f (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 14 Jun 2015 10:29:35 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 04/21] header: fix rt6_nexthop() backport
-Date: Sun, 14 Jun 2015 16:29:05 +0200
-Message-Id: <1434292162-2261-5-git-send-email-hauke@hauke-m.de> (sfid-20150614_162943_262262_B415970E)
-In-Reply-To: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
-References: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
+Received: from paleale.coelho.fi ([176.9.41.70]:54861 "EHLO
+	farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752033AbbFHIoL (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 8 Jun 2015 04:44:11 -0400
+Message-ID: <1433751430.3726.4.camel@coelho.fi> (sfid-20150608_104414_166795_CD62B45A)
+From: Luca Coelho <luca@coelho.fi>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	backports@vger.kernel.org
+Date: Mon, 08 Jun 2015 11:17:10 +0300
+In-Reply-To: <556399B7.2040607@hauke-m.de>
+References: <1432042936-23733-1-git-send-email-emmanuel.grumbach@intel.com>
+	 <556399B7.2040607@hauke-m.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: [PATCH] backport: allow compilation with Ubuntu's 3.13
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-rt6_nexthop() got an additional parameter in commit 2647a9b0. Instead
-of only backporting it for kernel < 3.10 do it now for kernel version <
-4.2.
+On Mon, 2015-05-25 at 23:52 +0200, Hauke Mehrtens wrote:
+> On 05/19/2015 03:42 PM, Emmanuel Grumbach wrote:
+> > Canonical backported:
+> > 
+> > Author: Or Gerlitz <ogerlitz@mellanox.com>
+> > Date:   Mon Jan 20 13:59:19 2014 +0200
+> > 
+> >     net: Add GRO support for UDP encapsulating protocols
+> > 
+> > This is commit 2da204a8f67fbe25816cbce8cc8551f03d5b951a in their
+> > tree.
+> > Cope with that.
+> > 
+> > Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+> > ---
+> > Touch compiled only. And I don't really know how the UTS thing goes :)
+> > ---
+> >  backport/backport-include/linux/netdevice.h | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+> > index bb3fefb..61ac95c 100644
+> > --- a/backport/backport-include/linux/netdevice.h
+> > +++ b/backport/backport-include/linux/netdevice.h
+> > @@ -81,6 +81,7 @@ static inline void dev_consume_skb_any(struct sk_buff *skb)
+> >  	dev_kfree_skb_any(skb);
+> >  }
+> >  
+> > +#if (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI < 24)
+> >  struct pcpu_sw_netstats {
+> >  	u64     rx_packets;
+> >  	u64     rx_bytes;
+> > @@ -88,6 +89,7 @@ struct pcpu_sw_netstats {
+> >  	u64     tx_bytes;
+> >  	struct u64_stats_sync   syncp;
+> >  };
+> > +#endif
+> >  
+> >  #define netdev_tstats(dev)	((struct pcpu_sw_netstats *)dev->ml_priv)
+> >  #define netdev_assign_tstats(dev, e)	dev->ml_priv = (e);
+> > 
+> 
+> 
+> Thank you for the patch, it was applied and pushed.
+> 
+> I changed it into this:
+> +#if (LINUX_VERSION_CODE != KERNEL_VERSION(3,13,11) ||
+> UTS_UBUNTU_RELEASE_ABI < 24)
+> ...
+> #endif
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/net/ip6_fib.h | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+Isn't this still wrong? What if the kernel is >= 3,13,11? In that case,
+the struct will be already defined... and if it's an upstream kernel
+(i.e. UTS_UBUNTU_RELEASE_ABI is not defined) we will still try to
+redefine this struct, no?
 
-diff --git a/backport/backport-include/net/ip6_fib.h b/backport/backport-include/net/ip6_fib.h
-index 8c5d8ff..96b6759 100644
---- a/backport/backport-include/net/ip6_fib.h
-+++ b/backport/backport-include/net/ip6_fib.h
-@@ -4,12 +4,22 @@
- #include <net/ip6_route.h>
- #include <linux/version.h>
- 
--#if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
-+/*
-+ * This function is avaliable with one argument since kernel 3.10, but the
-+ * secound one was added in 4.2.
-+ */
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0)
- #define rt6_nexthop LINUX_BACKPORT(rt6_nexthop)
--static inline struct in6_addr *rt6_nexthop(struct rt6_info *rt)
-+static inline struct in6_addr *rt6_nexthop(struct rt6_info *rt,
-+					   struct in6_addr *daddr)
- {
--	return &rt->rt6i_gateway;
-+	if (rt->rt6i_flags & RTF_GATEWAY)
-+		return &rt->rt6i_gateway;
-+	else if (rt->rt6i_flags & RTF_CACHE)
-+		return &rt->rt6i_dst.addr;
-+	else
-+		return daddr;
- }
--#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0) */
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0) */
- 
- #endif /* __BACKPORT_NET_IP6_ROUTE_H */
--- 
-2.1.4
+--
+Luca.
 
