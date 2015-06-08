@@ -1,100 +1,72 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:42897 "EHLO mx1.redhat.com"
+Received: from cantor2.suse.de ([195.135.220.15]:41717 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752558AbbFCL0Q (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 3 Jun 2015 07:26:16 -0400
-From: Stefan Assmann <sassmann@kpanic.de>
-To: backports@vger.kernel.org
-Cc: mcgrof@do-not-panic.com, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH 2/4] backports: replace igb ethtool_cmd_mdix patch with semantic patch
-Date: Wed,  3 Jun 2015 13:25:54 +0200
-Message-Id: <1433330756-22733-3-git-send-email-sassmann@kpanic.de> (sfid-20150603_132617_724125_AD4C998B)
-In-Reply-To: <1433330756-22733-1-git-send-email-sassmann@kpanic.de>
-References: <1433330756-22733-1-git-send-email-sassmann@kpanic.de>
+	id S1752706AbbFHV33 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 8 Jun 2015 17:29:29 -0400
+Date: Mon, 8 Jun 2015 23:29:27 +0200
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
+To: cocci@systeme.lip6.fr
+Cc: backports@vger.kernel.org
+Subject: RFD: SmPL patch equivalence support strategy
+Message-ID: <20150608212927.GU23057@wotan.suse.de> (sfid-20150608_232930_816431_B89FDA40)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
----
- .../0040-ethtool_cmd_mdix/ethtool_cmd_mdix.cocci   | 14 +++++++
- .../igb_ethtool_cmd_mdix.patch                     | 47 ----------------------
- 2 files changed, 14 insertions(+), 47 deletions(-)
- create mode 100644 patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/ethtool_cmd_mdix.cocci
- delete mode 100644 patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/igb_ethtool_cmd_mdix.patch
+I recently respinned my old 2013 series on adding support for
+SmPL patch equivalence support on the Linux backports project.
+What this functionality did was to enable folks using regular
+patches to replace them with a Coccinelle SmPL patch and then
+get see a diff between both strategies. There are obviously
+several ways to do this, the algorithm embraced in the tool
+functionality extension I wrote can be summarized as follows
+though:
 
-diff --git a/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/ethtool_cmd_mdix.cocci b/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/ethtool_cmd_mdix.cocci
-new file mode 100644
-index 0000000..b32973b
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/ethtool_cmd_mdix.cocci
-@@ -0,0 +1,14 @@
-+@r1@
-+expression E1;
-+struct ethtool_cmd *ecmd;
-+@@
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-+ ecmd->eth_tp_mdix_ctrl = E1;
-++#endif /* if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-+
-+@r2@
-+struct ethtool_cmd *ecmd;
-+@@
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-+ if (ecmd->eth_tp_mdix_ctrl) {...}
-++#endif /* if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-diff --git a/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/igb_ethtool_cmd_mdix.patch b/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/igb_ethtool_cmd_mdix.patch
-deleted file mode 100644
-index f48aa3f..0000000
---- a/patches/collateral-evolutions/network/0040-ethtool_cmd_mdix/igb_ethtool_cmd_mdix.patch
-+++ /dev/null
-@@ -1,47 +0,0 @@
----- a/drivers/net/ethernet/intel/igb/igb_ethtool.c
--+++ b/drivers/net/ethernet/intel/igb/igb_ethtool.c
--@@ -247,10 +247,12 @@ static int igb_get_settings(struct net_d
-- 	else
-- 		ecmd->eth_tp_mdix = ETH_TP_MDI_INVALID;
-- 
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-- 	if (hw->phy.mdix == AUTO_ALL_MODES)
-- 		ecmd->eth_tp_mdix_ctrl = ETH_TP_MDI_AUTO;
-- 	else
-- 		ecmd->eth_tp_mdix_ctrl = hw->phy.mdix;
--+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-- 
-- 	return 0;
-- }
--@@ -269,6 +271,7 @@ static int igb_set_settings(struct net_d
-- 		return -EINVAL;
-- 	}
-- 
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-- 	/* MDI setting is only allowed when autoneg enabled because
-- 	 * some hardware doesn't allow MDI setting when speed or
-- 	 * duplex is forced.
--@@ -283,6 +286,7 @@ static int igb_set_settings(struct net_d
-- 			return -EINVAL;
-- 		}
-- 	}
--+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-- 
-- 	while (test_and_set_bit(__IGB_RESETTING, &adapter->state))
-- 		usleep_range(1000, 2000);
--@@ -326,6 +330,7 @@ static int igb_set_settings(struct net_d
-- 		}
-- 	}
-- 
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
-- 	/* MDI-X => 2; MDI => 1; Auto => 3 */
-- 	if (ecmd->eth_tp_mdix_ctrl) {
-- 		/* fix up the value for auto (3 => 0) as zero is mapped
--@@ -336,6 +341,7 @@ static int igb_set_settings(struct net_d
-- 		else
-- 			hw->phy.mdix = ecmd->eth_tp_mdix_ctrl;
-- 	}
--+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0) */
-- 
-- 	/* reset the link */
-- 	if (netif_running(adapter->netdev)) {
--- 
-2.4.2
+Tree upstream: original code. Now copy it to two new trees,
+Tree a, and Tree b.
 
+Tree a: apply Coccinelle SmPL patch
+Tree b: apply patch series
+
+diff -u -p a/ b/
+
+If there is equivalence the diff should yield 0 delta.
+In practice there are some surprises which folks should
+expect and because of this the order of choosing a/ first
+instead of b/ was chosen here:
+
+1) Extra new code (additions, green on git diff) are things
+   that you have not yet covered on your Coccinelle SmPL patch.
+2) Code removals observed (deletions, red in git diff) are
+   things your Coccinelle SmPL patch did that your old
+   patch series did not, so it was unexpected.
+
+A person's first use of Coccinelle might be to expect 2)
+to be "bad", its why I chose the order of extra code to
+reflect deletions. In practice though 2) is pretty common
+but its because it might show work you forgot to do over
+an entire tree. In the end the order is quite subjective
+but we need to pick one.
+
+The above solution was implemented on the Linux backports
+project but its integration was within the gentree.py script
+and that script already does quite a lot of things for us,
+we've decided its integration just adds complexity which
+likely should instead be implemented within Coccinelle.
+
+Are there other folks who could make use of this? If so I
+could take some time to write a Coccinelle tool for this.
+Are there any concerns if we were to work on this for
+integration into Coccinelle? Any reason why we shouldn't?
+Is the algorithm described above sufficient?
+
+In practice the tool just displayed a 'git diff --stat'
+output, if you wanted to see the actual differences you
+would have to change directory to the copy directory created
+and run 'git diff', as git was used for tracking the changes.
+Using git is not a requirement, it was just convenian for us
+as we had a debug git option for development on backports.
+What we do for a generic tool might differ.
+
+ Luis
