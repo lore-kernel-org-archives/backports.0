@@ -1,55 +1,65 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ig0-f181.google.com ([209.85.213.181]:33434 "EHLO
-	mail-ig0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753085AbbFSRvt (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 19 Jun 2015 13:51:49 -0400
-Received: by igbqq3 with SMTP id qq3so21636439igb.0
-        for <backports@vger.kernel.org>; Fri, 19 Jun 2015 10:51:49 -0700 (PDT)
+Received: from app1b.xlhost.de ([84.200.252.162]:60616 "EHLO app1b.xlhost.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752998AbbFIGq6 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 9 Jun 2015 02:46:58 -0400
+Message-ID: <55768BD6.1000305@kpanic.de> (sfid-20150609_084700_028748_6ECFC013)
+Date: Tue, 09 Jun 2015 08:46:46 +0200
+From: Stefan Assmann <sassmann@kpanic.de>
 MIME-Version: 1.0
-In-Reply-To: <1434578988-18411-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1434578988-18411-1-git-send-email-mcgrof@do-not-panic.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Fri, 19 Jun 2015 10:51:29 -0700
-Message-ID: <CAB=NE6UpXMqcb-03wJbXdDKAUjr_GJbsgGHBGPz38GSh5iFq5w@mail.gmail.com> (sfid-20150619_195201_768895_DC8BAD48)
-Subject: Re: [PATCH] gentree.py: use Coccinelle's new Parallelism support
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: "cocci@systeme.lip6.fr" <cocci@systeme.lip6.fr>,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	Xavier Clerc <xavier.clerc@inria.fr>
-Content-Type: text/plain; charset=UTF-8
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+CC: Hauke Mehrtens <hauke@hauke-m.de>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: [PATCH 1/4] backports: replace igb skb->no_fcs patch with semantic
+ patch
+References: <1433330756-22733-1-git-send-email-sassmann@kpanic.de> <1433330756-22733-2-git-send-email-sassmann@kpanic.de> <556F5FD5.4070003@hauke-m.de> <55701578.9030205@kpanic.de> <CAB=NE6UYbXqyo-O5Dj-FBTzhQ+LjRH86-fbgAQaqreVAoctQjg@mail.gmail.com>
+In-Reply-To: <CAB=NE6UYbXqyo-O5Dj-FBTzhQ+LjRH86-fbgAQaqreVAoctQjg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Jun 17, 2015 at 3:09 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> As of coccinelle-1.0.0-rc24 Coccinelle got its own built-in
-> parallelism support which does not require use of the separate
-> instances to be spawned. Coccinelle's new built-in parallelism
-> uses the parmap library for this.
->
-> Replace the pycocci script, which is no longer needed. I've
-> tested this with the 1.0.0 and 1.0.0-rc24 release and get
-> the same results for both releases.
->
-> When comparing our old way of doing things (using pycocci)
-> vs using the new parallellism support (-j option for spatch)
-> I see a general performance boost of at least ~10 seconds
-> right on average now when generating code using gentree.py
-> on the backports build server.
->
-> Cc: Xavier Clerc <xavier.clerc@inria.fr>
-> Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
-> ---
->  devel/pycocci | 174 ----------------------------------------------------------
->  gentree.py    |  23 +++++---
->  2 files changed, 16 insertions(+), 181 deletions(-)
->  delete mode 100755 devel/pycocci
+On 09.06.2015 00:09, Luis R. Rodriguez wrote:
+> On Thu, Jun 4, 2015 at 2:08 AM, Stefan Assmann <sassmann@kpanic.de> wrote:
+>> On 03.06.2015 22:13, Hauke Mehrtens wrote:
+>>> Is it always save to just remove something which accesses skb->no_fcs in
+>>> all cases? I think sometimes some special handling for older kernel
+>>> version could be needed. This also looks very specific to the igb usage.
+>>
+>> In this case I'd say this is fine, no_fcs is used to send out frames with
+>> bad CRC for testing. So just commenting out related code shouldn't cause
+>> any harm. Yes, the cocci code is very specific and will likely need to be
+>> extended for other drivers when we pull them in. But you have to start
+>> somewhere.
+>>
+>> We always have the option to revert if something turns out to be a bad
+>> idea.
+> 
+> I'm fine with merging now but please note the discussion, Hauke was
+> curious about the generality over the Coccinelle patch replacement
+> over a patch series. In order to help maintainers make a proper
+> assessment over whether or not we can merge an SmPL patch to replace a
+> patch series it is extremely useful to annotate the SmPL patch with
+> header comments which track:
+> 
+> a) The respective upstream commit and kernel version which introduced
+> the collateral evolution for which you are generalizing
+> b) A good description which explains your understanding as to why this
+> should work and will not break run time
+> 
+> a) is easy, b) is hard but it is the least we can do and I think we
+> will remain sane if we put this as a litmus test for future SmPL patch
+> replacements. Its not easy but please see my own SmPL patches and
+> review the description. Its pretty lengthy but these discussions can
+> be avoided if we had someone do the full homework.
+> 
+> If we want to scale we need this. Are you folks OK with requiring a)
+> and b) on future SmPL patch replacements? Best effort at least. Keep
+> in mind reason for this is also I believe there are some further
+> generalizations we can reach if we follow these best practices which I
+> think will have further beneficial gains to us.
 
-I ran into a snag with this feature, I reported it to the cocci
-mailing list [0], so for now we can't merge this.
+Adding that info to the git commit log sounds like added value. I'll try
+to provide it in my next patchset. If I get you right, this is somewhat
+similar to what's in the INFO files, correct?
 
-[0] https://systeme.lip6.fr/pipermail/cocci/2015-June/002140.html
-
- Luis
---
-To unsubscribe from this list: send the line "unsubscribe backports" in
+  Stefan
