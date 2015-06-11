@@ -1,40 +1,112 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:41040 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751431AbbFNO3i (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 14 Jun 2015 10:29:38 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 12/21] dependencies: make VIDEO_ADP1653 depend on kernel >= 3.13
-Date: Sun, 14 Jun 2015 16:29:13 +0200
-Message-Id: <1434292162-2261-13-git-send-email-hauke@hauke-m.de> (sfid-20150614_163350_805312_1375D03A)
-In-Reply-To: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
-References: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-pa0-f67.google.com ([209.85.220.67]:35737 "EHLO
+	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753174AbbFKFW3 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 11 Jun 2015 01:22:29 -0400
+Received: by pabli10 with SMTP id li10so14123459pab.2
+        for <backports@vger.kernel.org>; Wed, 10 Jun 2015 22:22:28 -0700 (PDT)
+From: Bhuvanchandra DV <bhuvanchandradv@gmail.com>
+Message-ID: <557916F0.9060400@gmail.com> (sfid-20150611_072236_265509_AFEA9B0B)
+Date: Thu, 11 Jun 2015 10:34:48 +0530
+MIME-Version: 1.0
+To: Hauke Mehrtens <hauke@hauke-m.de>
+CC: Kernel backports mailinglist <backports@vger.kernel.org>
+Subject: Re: Issues while integrating backports(20150525) to target Kernel
+ 3.1.10
+References: <556D9D89.2020500@gmail.com> <556F4819.3020706@hauke-m.de>
+In-Reply-To: <556F4819.3020706@hauke-m.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The driver VIDEO_ADP1653 now includes linux/gpio/consumer.h which is
-not available in kernel versions < 3.13. This patch makes the driver
-depend on kernel version >= 3.13.
+Hello Hauke,
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- dependencies | 1 +
- 1 file changed, 1 insertion(+)
+On 06/04/2015 12:01 AM, Hauke Mehrtens wrote:
 
-diff --git a/dependencies b/dependencies
-index 65ffa01..e1bd663 100644
---- a/dependencies
-+++ b/dependencies
-@@ -55,6 +55,7 @@ DVB_SMIPCIE 3.8
- # integration only and figure out a way to easily split that.
- # This does not seem like a good test desirable test case to
- # start that work with.
-+VIDEO_ADP1653 3.13
- 
- # missing devm_gpiod_get_optional()
- # this needs devm_gpiod_get_optional() with 3 arguments.
--- 
-2.1.4
+> On 06/02/2015 02:11 PM, Bhuvan wrote:
+>> Hello,
+>>
+>> I'm trying to integrate backports(20150525) to target Kernel 3.1.10.
+>> Followed the instructions available in the backports wiki for kernel
+>> integration procedure. Nice! documentation.
+>> Used linux-next.git, backports.git with next-20150525 and
+>> backports-20150525 tags respectively.
+>> The target Linux kernel version is based on NVIDIA's L4T and it was not
+>> a clean 3.1 baseline but
+>> rather some pre 3.2 version with further Android additions.
+>> My aim is to backport the iwlwifi drivers on 3.1.10 kernel.
+>>
+>> Backporting 20150525 on 3.1.10 using gentree.py was not successful:
+>>
+>> # ./gentree.py --integrate --clean --gitdebug --git-revision
+>> next-20150525 ../linux-next ~/linux
+>> Get original source files from git ...
+>> Applying patches from patches to ~/backports ...
+>> Modify Kconfig tree ...
+>> Rewrite Makefiles and Kconfig files ...
+>> Applying patches from integration-patches/ to ~/linux ...
+>> Failed to apply changes from
+>> 001-enable-backports/0001-enable-backports-built-in.patch
+>>> patching file Makefile
+>>> Hunk #1 succeeded at 506 (offset -36 lines).
+>>> Hunk #2 succeeded at 713 (offset -108 lines).
+>>> Hunk #3 FAILED at 841.
+>>> 1 out of 3 hunks FAILED -- saving rejects to file Makefile.rej
+>> Traceback (most recent call last):
+>>    File "./gentree.py", line 1091, in <module>
+>>      ret = _main()
+>>    File "./gentree.py", line 724, in _main
+>>      logwrite=logwrite)
+>>    File "./gentree.py", line 1078, in process
+>>      bpid.project_dir, logwrite)
+>>    File "./gentree.py", line 552, in apply_patches
+>>      raise Exception('Patch failed')
+>> Exception: Patch failed
+>> ....
+>>
+>> Makefile.ref :
+>>
+>> --- Makefile
+>> +++ Makefile
+>> @@ -841,7 +845,7 @@ libs-y        := $(libs-y1) $(libs-y2)
+>>
+>>   # Externally visible symbols (used by link-vmlinux.sh)
+>>   export KBUILD_VMLINUX_INIT := $(head-y) $(init-y)
+>> -export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y) $(drivers-y) $(net-y)
+>> +export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y) $(drivers-y) $(net-y)
+>> $(backports-y)
+>>   export KBUILD_LDS          := arch/$(SRCARCH)/kernel/vmlinux.lds
+>>   export LDFLAGS_vmlinux
+>>   # used by scripts/pacmage/Makefile
+>>
+>> Am i missing some thing or doing some thing wrong!.
+>> Can some one provide few pointers for fixing the issues and few pointers
+>> on backporting kernel integration
+>> on non standard kernel trees, like the one which i am working on.
+>>
+>> Best regards,
+>> Bhuvan
+> I think the documentation is not so good. ;-)
+>
+> If you just want to compile the drivers against your kernel the easiest
+> way is to download the tar from here:
+> http://www.kernel.org/pub/linux/kernel/projects/backports/2015/05/25/backports-20150525.tar.xz
+>
+> You can compile it against your kernel like any other external kernel
+> module.
+> The git repository is only needed if you want to generate your own tar
+> with the drivers form your kernel.
+
+Thanks!
+Compiled the iwlwifi drivers successfully with backports-3.11.8 with some small
+change: KERNEL_VERSION(3,2,0) to KERNEL_VERSION(3,1,0) in backports-incluse/linux/export.h, found this fix in mailing list.
+Tried with the later backport versions, but couldn't compile the drivers successfully for 3.1.10 kernel.
+
+
+>
+> Hauke
+>
+>
+Best regards,
+Bhuvan
 
