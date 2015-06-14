@@ -1,80 +1,52 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:48298 "EHLO mx1.redhat.com"
+Received: from hauke-m.de ([5.39.93.123]:41039 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752558AbbFCL0R (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 3 Jun 2015 07:26:17 -0400
-From: Stefan Assmann <sassmann@kpanic.de>
+	id S1752034AbbFNO3i (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 14 Jun 2015 10:29:38 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Cc: mcgrof@do-not-panic.com, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH 3/4] backports: replace igb xmit_more patch with semantic patch
-Date: Wed,  3 Jun 2015 13:25:55 +0200
-Message-Id: <1433330756-22733-4-git-send-email-sassmann@kpanic.de> (sfid-20150603_132618_340372_70BC11C2)
-In-Reply-To: <1433330756-22733-1-git-send-email-sassmann@kpanic.de>
-References: <1433330756-22733-1-git-send-email-sassmann@kpanic.de>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 11/21] dependencies: make VIDEO_ADV7604 depend on kernel >= 3.17
+Date: Sun, 14 Jun 2015 16:29:12 +0200
+Message-Id: <1434292162-2261-12-git-send-email-hauke@hauke-m.de> (sfid-20150614_163351_518319_FF7DDE99)
+In-Reply-To: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
+References: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
----
- .../network/0048-no_ndo_xmit_flush/igb.patch               | 14 --------------
- .../collateral-evolutions/network/0059-skb_xmit_more/INFO  | 10 ++++++++++
- .../network/0059-skb_xmit_more/skb_no_xmit_more.cocci      |  9 +++++++++
- 3 files changed, 19 insertions(+), 14 deletions(-)
- delete mode 100644 patches/collateral-evolutions/network/0048-no_ndo_xmit_flush/igb.patch
- create mode 100644 patches/collateral-evolutions/network/0059-skb_xmit_more/INFO
- create mode 100644 patches/collateral-evolutions/network/0059-skb_xmit_more/skb_no_xmit_more.cocci
+The VIDEO_ADV7604 driver now makes use of
+devm_gpiod_get_index_optional() which gets less parameters in older
+kernel versions. This makes the driver depend on kernel >= 3.17. In
+addition also the VIDEO_COBALT has to depend on this kernel version
+because it selects VIDEO_ADV7604.
 
-diff --git a/patches/collateral-evolutions/network/0048-no_ndo_xmit_flush/igb.patch b/patches/collateral-evolutions/network/0048-no_ndo_xmit_flush/igb.patch
-deleted file mode 100644
-index 54d52a5..0000000
---- a/patches/collateral-evolutions/network/0048-no_ndo_xmit_flush/igb.patch
-+++ /dev/null
-@@ -1,14 +0,0 @@
----- a/drivers/net/ethernet/intel/igb/igb_main.c
--+++ b/drivers/net/ethernet/intel/igb/igb_main.c
--@@ -4952,7 +4952,10 @@ static void igb_tx_map(struct igb_ring *
-- 	/* Make sure there is space in the ring for the next send. */
-- 	igb_maybe_stop_tx(tx_ring, DESC_NEEDED);
-- 
---	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more) {
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0)
--+	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more)
--+#endif
--+	{
-- 		writel(i, tx_ring->tail);
-- 
-- 		/* we need this if more than one processor can write to our tail
-diff --git a/patches/collateral-evolutions/network/0059-skb_xmit_more/INFO b/patches/collateral-evolutions/network/0059-skb_xmit_more/INFO
-new file mode 100644
-index 0000000..b429637
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0059-skb_xmit_more/INFO
-@@ -0,0 +1,10 @@
-+In kernel 3.18 __u8 xmit_more is added to struct sk_buff.
-+
-+commit 0b725a2ca61bedc33a2a63d0451d528b268cf975
-+Author: David S. Miller <davem@davemloft.net>
-+Date:   Mon Aug 25 15:51:53 2014 -0700
-+
-+    net: Remove ndo_xmit_flush netdev operation, use signalling instead.
-+
-+git describe --contains 0b725a2ca61bedc33a2a63d0451d528b268cf975
-+v3.18-rc1~52^2~228
-diff --git a/patches/collateral-evolutions/network/0059-skb_xmit_more/skb_no_xmit_more.cocci b/patches/collateral-evolutions/network/0059-skb_xmit_more/skb_no_xmit_more.cocci
-new file mode 100644
-index 0000000..ab207bd
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0059-skb_xmit_more/skb_no_xmit_more.cocci
-@@ -0,0 +1,9 @@
-+@r1@
-+struct sk_buff *skb;
-+expression E1;
-+@@
-+ if (E1
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0)
-+ || !skb->xmit_more
-++#endif /* if LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0) */
-+ ) {...}
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ dependencies | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/dependencies b/dependencies
+index ab3fef0..65ffa01 100644
+--- a/dependencies
++++ b/dependencies
+@@ -55,8 +55,6 @@ DVB_SMIPCIE 3.8
+ # integration only and figure out a way to easily split that.
+ # This does not seem like a good test desirable test case to
+ # start that work with.
+-VIDEO_ADV7604 3.13
+-VIDEO_COBALT 3.13
+ 
+ # missing devm_gpiod_get_optional()
+ # this needs devm_gpiod_get_optional() with 3 arguments.
+@@ -64,6 +62,8 @@ I2C_SI4713 3.17
+ USB_SI4713 3.17
+ PLATFORM_SI4713 3.17
+ SOC_CAMERA_OV2640 3.17
++VIDEO_ADV7604 3.17
++VIDEO_COBALT 3.17
+ 
+ # missing function clk_prepare_enable(), clk_disable_unprepare() and devm_regulator_bulk_get()
+ VIDEO_MT9V032 3.3
 -- 
-2.4.2
+2.1.4
 
