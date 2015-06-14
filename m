@@ -1,72 +1,99 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:41717 "EHLO mx2.suse.de"
+Received: from hauke-m.de ([5.39.93.123]:41042 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752706AbbFHV33 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 8 Jun 2015 17:29:29 -0400
-Date: Mon, 8 Jun 2015 23:29:27 +0200
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-To: cocci@systeme.lip6.fr
-Cc: backports@vger.kernel.org
-Subject: RFD: SmPL patch equivalence support strategy
-Message-ID: <20150608212927.GU23057@wotan.suse.de> (sfid-20150608_232930_816431_B89FDA40)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+	id S1752057AbbFNO3i (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 14 Jun 2015 10:29:38 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 14/21] patches: do not use vidioc_expbuf function pointer in v4l
+Date: Sun, 14 Jun 2015 16:29:15 +0200
+Message-Id: <1434292162-2261-15-git-send-email-hauke@hauke-m.de> (sfid-20150614_163352_200568_F6432159)
+In-Reply-To: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
+References: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I recently respinned my old 2013 series on adding support for
-SmPL patch equivalence support on the Linux backports project.
-What this functionality did was to enable folks using regular
-patches to replace them with a Coccinelle SmPL patch and then
-get see a diff between both strategies. There are obviously
-several ways to do this, the algorithm embraced in the tool
-functionality extension I wrote can be summarized as follows
-though:
+More v4l drivers are now accessing the vidioc_expbuf function pointer
+in struct v4l2_ioctl_ops which we can not backport to kernel < 3.5.
+This adds some more checks around the places.
 
-Tree upstream: original code. Now copy it to two new trees,
-Tree a, and Tree b.
+We should convert this to an spatch.
 
-Tree a: apply Coccinelle SmPL patch
-Tree b: apply patch series
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../media/0002-no_dmabuf/v4l2.patch                | 58 ++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-diff -u -p a/ b/
+diff --git a/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch b/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
+index 91c7cda..35950ec 100644
+--- a/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
++++ b/patches/collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
+@@ -508,6 +508,64 @@
+  
+  	.vidioc_s_std               = vidioc_s_std,
+  	.vidioc_g_std               = vidioc_g_std,
++--- a/drivers/media/usb/stk1160/stk1160-v4l.c
+++++ b/drivers/media/usb/stk1160/stk1160-v4l.c
++@@ -500,7 +500,9 @@ static const struct v4l2_ioctl_ops stk11
++ 	.vidioc_dqbuf         = vb2_ioctl_dqbuf,
++ 	.vidioc_streamon      = vb2_ioctl_streamon,
++ 	.vidioc_streamoff     = vb2_ioctl_streamoff,
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
++ 	.vidioc_expbuf        = vb2_ioctl_expbuf,
+++#endif
++ 
++ 	.vidioc_log_status  = v4l2_ctrl_log_status,
++ 	.vidioc_subscribe_event = v4l2_ctrl_subscribe_event,
++--- a/drivers/media/usb/uvc/uvc_queue.c
+++++ b/drivers/media/usb/uvc/uvc_queue.c
++@@ -270,6 +270,7 @@ int uvc_queue_buffer(struct uvc_video_qu
++ 	return ret;
++ }
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
++ int uvc_export_buffer(struct uvc_video_queue *queue,
++ 		      struct v4l2_exportbuffer *exp)
++ {
++@@ -281,6 +282,7 @@ int uvc_export_buffer(struct uvc_video_q
++ 
++ 	return ret;
++ }
+++#endif
++ 
++ int uvc_dequeue_buffer(struct uvc_video_queue *queue, struct v4l2_buffer *buf,
++ 		       int nonblocking)
++--- a/drivers/media/usb/uvc/uvc_v4l2.c
+++++ b/drivers/media/usb/uvc/uvc_v4l2.c
++@@ -720,6 +720,7 @@ static int uvc_ioctl_qbuf(struct file *f
++ 	return uvc_queue_buffer(&stream->queue, buf);
++ }
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
++ static int uvc_ioctl_expbuf(struct file *file, void *fh,
++ 			    struct v4l2_exportbuffer *exp)
++ {
++@@ -731,6 +732,7 @@ static int uvc_ioctl_expbuf(struct file
++ 
++ 	return uvc_export_buffer(&stream->queue, exp);
++ }
+++#endif
++ 
++ static int uvc_ioctl_dqbuf(struct file *file, void *fh, struct v4l2_buffer *buf)
++ {
++@@ -1487,7 +1489,9 @@ const struct v4l2_ioctl_ops uvc_ioctl_op
++ 	.vidioc_reqbufs = uvc_ioctl_reqbufs,
++ 	.vidioc_querybuf = uvc_ioctl_querybuf,
++ 	.vidioc_qbuf = uvc_ioctl_qbuf,
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0)
++ 	.vidioc_expbuf = uvc_ioctl_expbuf,
+++#endif
++ 	.vidioc_dqbuf = uvc_ioctl_dqbuf,
++ 	.vidioc_create_bufs = uvc_ioctl_create_bufs,
++ 	.vidioc_streamon = uvc_ioctl_streamon,
+ --- a/drivers/media/v4l2-core/videobuf2-dma-sg.c
+ +++ b/drivers/media/v4l2-core/videobuf2-dma-sg.c
+ @@ -379,9 +379,11 @@ static void *vb2_dma_sg_vaddr(void *buf_
+-- 
+2.1.4
 
-If there is equivalence the diff should yield 0 delta.
-In practice there are some surprises which folks should
-expect and because of this the order of choosing a/ first
-instead of b/ was chosen here:
-
-1) Extra new code (additions, green on git diff) are things
-   that you have not yet covered on your Coccinelle SmPL patch.
-2) Code removals observed (deletions, red in git diff) are
-   things your Coccinelle SmPL patch did that your old
-   patch series did not, so it was unexpected.
-
-A person's first use of Coccinelle might be to expect 2)
-to be "bad", its why I chose the order of extra code to
-reflect deletions. In practice though 2) is pretty common
-but its because it might show work you forgot to do over
-an entire tree. In the end the order is quite subjective
-but we need to pick one.
-
-The above solution was implemented on the Linux backports
-project but its integration was within the gentree.py script
-and that script already does quite a lot of things for us,
-we've decided its integration just adds complexity which
-likely should instead be implemented within Coccinelle.
-
-Are there other folks who could make use of this? If so I
-could take some time to write a Coccinelle tool for this.
-Are there any concerns if we were to work on this for
-integration into Coccinelle? Any reason why we shouldn't?
-Is the algorithm described above sufficient?
-
-In practice the tool just displayed a 'git diff --stat'
-output, if you wanted to see the actual differences you
-would have to change directory to the copy directory created
-and run 'git diff', as git was used for tracking the changes.
-Using git is not a requirement, it was just convenian for us
-as we had a debug git option for development on backports.
-What we do for a generic tool might differ.
-
- Luis
