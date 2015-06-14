@@ -1,30 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:40876 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:41046 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933124AbbFPI4b (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 16 Jun 2015 04:56:31 -0400
-Message-ID: <1434444988.2337.11.camel@sipsolutions.net> (sfid-20150616_105639_197692_AD504E51)
-Subject: Re: [PATCH 07/21] backports: add backport for new AEAD crypto API
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org
-Date: Tue, 16 Jun 2015 10:56:28 +0200
-In-Reply-To: <1434292162-2261-8-git-send-email-hauke@hauke-m.de> (sfid-20150614_162945_019275_3F6B4430)
+	id S1752183AbbFNO3j (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 14 Jun 2015 10:29:39 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 20/21] patches: deactivate tracing on mt7601u for kernel < 3.4
+Date: Sun, 14 Jun 2015 16:29:21 +0200
+Message-Id: <1434292162-2261-21-git-send-email-hauke@hauke-m.de> (sfid-20150614_163351_231934_F312D662)
+In-Reply-To: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
 References: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
-	 <1434292162-2261-8-git-send-email-hauke@hauke-m.de>
-	 (sfid-20150614_162945_019275_3F6B4430)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, 2015-06-14 at 16:29 +0200, Hauke Mehrtens wrote:
-> mac80211 makes use of the new AEAD crypto api since commit 957e0fe629.
-> This patch provides a backport layer which converts the new API to the
-> old one used in older kernel versions. This backport is based on this
-> mainline commit: 996d98d85.
+Kernel version < 3.4 has problems with tracing, deactivate it in the
+mt7601u driver for these kernel versions.
 
-This looks right to me.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../network/0022-define-tracing/mt7601u.patch                | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0022-define-tracing/mt7601u.patch
 
-johannes
+diff --git a/patches/collateral-evolutions/network/0022-define-tracing/mt7601u.patch b/patches/collateral-evolutions/network/0022-define-tracing/mt7601u.patch
+new file mode 100644
+index 0000000..688f4c8
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0022-define-tracing/mt7601u.patch
+@@ -0,0 +1,12 @@
++--- a/drivers/net/wireless/mediatek/mt7601u/trace.c
+++++ b/drivers/net/wireless/mediatek/mt7601u/trace.c
++@@ -15,6 +15,9 @@
++ #include <linux/module.h>
++ 
++ #ifndef __CHECKER__
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0)
+++#include "trace.h"
+++#endif
++ #define CREATE_TRACE_POINTS
++ #include "trace.h"
++ 
+-- 
+2.1.4
 
