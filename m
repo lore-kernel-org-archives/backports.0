@@ -1,197 +1,89 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:33702 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751373AbbFDJQh (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 4 Jun 2015 05:16:37 -0400
-Received: by padj3 with SMTP id j3so25792262pad.0
-        for <backports@vger.kernel.org>; Thu, 04 Jun 2015 02:16:36 -0700 (PDT)
-From: Bhuvanchandra DV <bhuvanchandradv@gmail.com>
-Message-ID: <5570176B.2050709@gmail.com> (sfid-20150604_111640_554528_6EC26AA3)
-Date: Thu, 04 Jun 2015 14:46:27 +0530
+Received: from hauke-m.de ([5.39.93.123]:41030 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751417AbbFNO3f (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 14 Jun 2015 10:29:35 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 00/21] backports: bring it to next-20150612 and add mt7601u
+Date: Sun, 14 Jun 2015 16:29:01 +0200
+Message-Id: <1434292162-2261-1-git-send-email-hauke@hauke-m.de> (sfid-20150614_162940_858072_A27CABFA)
 MIME-Version: 1.0
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-	Kernel backports mailinglist <backports@vger.kernel.org>
-CC: bhuvanchandra.dv@gmail.com
-Subject: Re: Issubh while integrating backports(20150525) to target Kernel
- 3.1.10
-References: <556D9D89.2020500@gmail.com> <556F4819.3020706@hauke-m.de>
-In-Reply-To: <556F4819.3020706@hauke-m.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hello Hauke,
+This adds many stuff, that is needed for next-20150612, for example the 
+backport of the new crypto API. It also fixes some problems in previous 
+patches and should fix tracing for some driver. In addition it adds the 
+new mt7601u driver and the new functions needed by this driver.
 
-On 06/04/2015 12:01 AM, Hauke Mehrtens wrote:
+Hauke Mehrtens (21):
+  patches: fix spatch for bluetooth
+  patches: deactivate tracing for ath6kl, cfg80211 and wil6210 only on
+    kernel < 3.4
+  patches: include linux/sched.h header in drivers/nfc/mei_phy.c
+  header: fix rt6_nexthop() backport
+  patches: remove additional member in struct mei_cl_device_id
+  patches: rhashtable header patch not needed
+  backports: add backport for new AEAD crypto API
+  dependencies: add VIDEO_COBALT
+  dependencies: make DVB_M88DS3103 and DVB_TS2020 depend on kernel > 3.8
+  dependencies: make two media tuners depend on kernel >= 3.3
+  dependencies: make VIDEO_ADV7604 depend on kernel >= 3.17
+  dependencies: make VIDEO_ADP1653 depend on kernel >= 3.13
+  backports: add HDMI driver
+  patches: do not use vidioc_expbuf function pointer in v4l
+  backports: add tty_set_termios()
+  header: add dev_dbg_once() and others
+  header: add devm_kcalloc()
+  backports: add mediatek mt7601u driver
+  patches: deactivate struct tracing in mt7601u
+  patches: deactivate tracing on mt7601u for kernel < 3.4
+  patches: refresh patches on next-20150612
 
-> On 06/02/2015 02:11 PM, Bhuvan wrote:
->> Hello,
->>
->> I'm trying to integrate backports(20150525) to target Kernel 3.1.10.
->> Followed the instructions available in the backports wiki for kernel
->> integration procedure. Nice! documentation.
->> Used linux-next.git, backports.git with next-20150525 and
->> backports-20150525 tags respectively.
->> The target Linux kernel version is based on NVIDIA's L4T and it was not
->> a clean 3.1 baseline but
->> rather some pre 3.2 version with further Android additions.
->> My aim is to backport the iwlwifi drivers on 3.1.10 kernel.
->>
->> Backporting 20150525 on 3.1.10 using gentree.py was not successful:
->>
->> # ./gentree.py --integrate --clean --gitdebug --git-revision
->> next-20150525 ../linux-next ~/linux
->> Get original source files from git ...
->> Applying patches from patches to ~/backports ...
->> Modify Kconfig tree ...
->> Rewrite Makefiles and Kconfig files ...
->> Applying patches from integration-patches/ to ~/linux ...
->> Failed to apply changes from
->> 001-enable-backports/0001-enable-backports-built-in.patch
->>> patching file Makefile
->>> Hunk #1 succeeded at 506 (offset -36 lines).
->>> Hunk #2 succeeded at 713 (offset -108 lines).
->>> Hunk #3 FAILED at 841.
->>> 1 out of 3 hunks FAILED -- saving rejects to file Makefile.rej
->> Traceback (most recent call last):
->>    File "./gentree.py", line 1091, in <module>
->>      ret = _main()
->>    File "./gentree.py", line 724, in _main
->>      logwrite=logwrite)
->>    File "./gentree.py", line 1078, in process
->>      bpid.project_dir, logwrite)
->>    File "./gentree.py", line 552, in apply_patches
->>      raise Exception('Patch failed')
->> Exception: Patch failed
->> ....
->>
->> Makefile.ref :
->>
->> --- Makefile
->> +++ Makefile
->> @@ -841,7 +845,7 @@ libs-y        := $(libs-y1) $(libs-y2)
->>
->>   # Externally visible symbols (used by link-vmlinux.sh)
->>   export KBUILD_VMLINUX_INIT := $(head-y) $(init-y)
->> -export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y) $(drivers-y) $(net-y)
->> +export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y) $(drivers-y) $(net-y)
->> $(backports-y)
->>   export KBUILD_LDS          := arch/$(SRCARCH)/kernel/vmlinux.lds
->>   export LDFLAGS_vmlinux
->>   # used by scripts/pacmage/Makefile
->>
->> Am i missing some thing or doing some thing wrong!.
->> Can some one provide few pointers for fixing the issues and few pointers
->> on backporting kernel integration
->> on non standard kernel trees, like the one which i am working on.
->>
->> Best regards,
->> Bhuvan
-> I think the documentation is not so good. ;-)
-:-)
->
-> If you just want to compile the drivers against your kernel the easiest
-> way is to download the tar from here:
-> http://www.kernel.org/pub/linux/kernel/projects/backports/2015/05/25/backports-20150525.tar.xz
->
-> You can compile it against your kernel like any other external kernel
-> module.
-> The git repository is only needed if you want to generate your own tar
-> with the drivers form your kernel.
+ backport/backport-include/crypto/aead.h            |  33 ++++++
+ backport/backport-include/linux/device.h           |  44 +++++++
+ backport/backport-include/linux/tty.h              |   5 +
+ backport/backport-include/net/ip6_fib.h            |  18 ++-
+ backport/compat/Kconfig                            |  16 +++
+ backport/compat/Makefile                           |   1 +
+ backport/compat/backport-4.1.c                     |  65 ++++++++++
+ backport/compat/backport-4.2.c                     |  67 +++++++++++
+ backport/defconfigs/wifi                           |   2 +
+ copy-list                                          |   3 +-
+ dependencies                                       |  16 ++-
+ patches/backport-adjustments/rhashtable.patch      |  10 --
+ .../media/0002-no_dmabuf/v4l2.patch                | 132 +++++++++++++++------
+ .../media/0005-dma-no-sync/v4l2.patch              |   8 +-
+ .../0013-fix-makefile-includes/mei_phy.patch       |  10 ++
+ .../network/0022-define-tracing/ath6kl.patch       |   4 +-
+ .../network/0022-define-tracing/cfg80211.patch     |   8 +-
+ .../network/0022-define-tracing/mt7601u.patch      |  12 ++
+ .../network/0022-define-tracing/wil6210.patch      |   4 +-
+ .../network/0024-led-blink-api/mac80211.patch      |   2 +-
+ .../network/0028-select_queue/mac80211.patch       |   4 +-
+ .../network/0028-select_queue/mwifiex.patch        |   2 +-
+ .../network/0046-mmc_rescan_entered/mwifiex.patch  |   2 +-
+ .../network/0050-iov_iter/bluetooth.patch          |   8 +-
+ .../0053-remove_wait_on_bit_timeout/btusb.patch    |  12 +-
+ .../network/0054-struct-proto_ops-sig.cocci        |   8 +-
+ .../network/0059-uuid-in-mei/INFO                  |   7 ++
+ .../network/0059-uuid-in-mei/nfc.patch             |  28 +++++
+ .../network/0060-trace_field_struct/INFO           |  11 ++
+ .../network/0060-trace_field_struct/mt7601u.patch  |  33 ++++++
+ 30 files changed, 494 insertions(+), 81 deletions(-)
+ create mode 100644 backport/backport-include/crypto/aead.h
+ create mode 100644 backport/compat/backport-4.2.c
+ delete mode 100644 patches/backport-adjustments/rhashtable.patch
+ create mode 100644 patches/collateral-evolutions/network/0013-fix-makefile-includes/mei_phy.patch
+ create mode 100644 patches/collateral-evolutions/network/0022-define-tracing/mt7601u.patch
+ create mode 100644 patches/collateral-evolutions/network/0059-uuid-in-mei/INFO
+ create mode 100644 patches/collateral-evolutions/network/0059-uuid-in-mei/nfc.patch
+ create mode 100644 patches/collateral-evolutions/network/0060-trace_field_struct/INFO
+ create mode 100644 patches/collateral-evolutions/network/0060-trace_field_struct/mt7601u.patch
 
-Agreed, but I'm using it for integrating the backport drivers with kernel instead of using them as kernel modules.
-Followed as per the instructions here: https://backports.wiki.kernel.org/index.php/Documentation/integration
-
-Using the backport-20150525 tar, compilation fails:
-
-Log:
-
-|dvb|make defconfig-wifi                                                                                  []
-Generating local configuration database from kernel ... done.
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer   -c -o conf.o conf.c
-cc -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer   -c -o zconf.tab.o zconf.tab.c
-In file included from zconf.tab.c:2503:0:
-menu.c: In function ‘get_symbol_str’:
-menu.c:561:18: warning: ‘jump’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-      jump->offset = r->len - 1;
-                   ^
-In file included from zconf.tab.c:2503:0:
-menu.c:515:19: note: ‘jump’ was declared here
-   struct jump_key *jump;
-                    ^
-cc   conf.o zconf.tab.o   -o conf
-boolean symbol HWMON tested for 'm'? test forced to 'n'
-boolean symbol HWMON tested for 'm'? test forced to 'n'
-#
-# configuration written to .config
-#
-|dvb|make                                                                                                 []
-make[5]: 'conf' is up to date.
-boolean symbol HWMON tested for 'm'? test forced to 'n'
-boolean symbol HWMON tested for 'm'? test forced to 'n'
-#
-# configuration written to .config
-#
-Building backport-include/backport/autoconf.h ... done.
-   CC [M]  /home/bhuvan/backports-20150525/compat/main.o
-/home/bhuvan/backports-20150525/compat/main.c:51:1: warning: data definition has no type or storage class [enabled by default]
-/home/bhuvan/backports-20150525/compat/main.c:51:1: warning: type defaults to ‘int’ in declaration of ‘EXPORT_SYMBOL_GPL’ [-Wimplicit-int]
-/home/bhuvan/backports-20150525/compat/main.c:51:1: warning: parameter names (without types) in function declaration [enabled by default]
-   CC [M]  /home/bhuvan/backports-20150525/compat/backport-3.2.o
-/home/bhuvan/backports-20150525/compat/backport-3.2.c:25:1: warning: data definition has no type or storage class [enabled by default]
-/home/bhuvan/backports-20150525/compat/backport-3.2.c:25:1: warning: type defaults to ‘int’ in declaration of ‘EXPORT_SYMBOL_GPL’ [-Wimplicit-int]
-/home/bhuvan/backports-20150525/compat/backport-3.2.c:25:1: warning: parameter names (without types) in function declaration [enabled by default]
-   CC [M]  /home/bhuvan/backports-20150525/compat/compat-3.3.o
-In file included from /home/bhuvan/backports-20150525/backport-include/linux/device.h:4:0,
-                  from include/linux/dmaengine.h:24,
-                  from include/linux/skbuff.h:30,
-                  from /home/bhuvan/backports-20150525/backport-include/linux/skbuff.h:3,
-                  from /home/bhuvan/backports-20150525/compat/compat-3.3.c:13:
-include/linux/device.h: In function ‘root_device_register’:
-include/linux/device.h:724:38: error: ‘THIS_MODULE’ undeclared (first use in this function)
-include/linux/device.h:724:38: note: each undeclared identifier is reported only once for each function it appears in
-/home/bhuvan/backports-20150525/compat/compat-3.3.c: At top level:
-/home/bhuvan/backports-20150525/compat/compat-3.3.c:166:1: warning: data definition has no type or storage class [enabled by default]
-/home/bhuvan/backports-20150525/compat/compat-3.3.c:166:1: warning: type defaults to ‘int’ in declaration of ‘EXPORT_SYMBOL_GPL’ [-Wimplicit-int]
-/home/bhuvan/backports-20150525/compat/compat-3.3.c:166:1: warning: parameter names (without types) in function declaration [enabled by default]
-/home/bhuvan/backports-20150525/compat/compat-3.3.c:206:1: warning: data definition has no type or storage class [enabled by default]
-/home/bhuvan/backports-20150525/compat/compat-3.3.c:206:1: warning: type defaults to ‘int’ in declaration of ‘EXPORT_SYMBOL_GPL’ [-Wimplicit-int]
-/home/bhuvan/backports-20150525/compat/compat-3.3.c:206:1: warning: parameter names (without types) in function declaration [enabled by default]
-/home/bhuvan/backports-20150525/compat/compat-3.3.c:226:1: warning: data definition has no type or storage class [enabled by default]
-/home/bhuvan/backports-20150525/compat/compat-3.3.c:226:1: warning: type defaults to ‘int’ in declaration of ‘EXPORT_SYMBOL_GPL’ [-Wimplicit-int]
-/home/bhuvan/backports-20150525/compat/compat-3.3.c:226:1: warning: parameter names (without types) in function declaration [enabled by default]
-/home/bhuvan/backports-20150525/compat/compat-3.3.c:239:1: warning: data definition has no type or storage class [enabled by default]
-/home/bhuvan/backports-20150525/compat/compat-3.3.c:239:1: warning: type defaults to ‘int’ in declaration of ‘EXPORT_SYMBOL_GPL’ [-Wimplicit-int]
-/home/bhuvan/backports-20150525/compat/compat-3.3.c:239:1: warning: parameter names (without types) in function declaration [enabled by default]
-scripts/Makefile.build:305: recipe for target '/home/bhuvan/backports-20150525/compat/compat-3.3.o' failed
-make[6]: *** [/home/bhuvan/backports-20150525/compat/compat-3.3.o] Error 1
-scripts/Makefile.build:441: recipe for target '/home/bhuvan/backports-20150525/compat' failed
-make[5]: *** [/home/bhuvan/backports-20150525/compat] Error 2
-Makefile:1361: recipe for target '_module_/home/bhuvan/backports-20150525' failed
-make[4]: *** [_module_/home/bhuvan/backports-20150525] Error 2
-Makefile.build:6: recipe for target 'modules' failed
-make[3]: *** [modules] Error 2
-Makefile.real:88: recipe for target 'modules' failed
-make[2]: *** [modules] Error 2
-Makefile:40: recipe for target 'modules' failed
-make[1]: *** [modules] Error 2
-Makefile:30: recipe for target 'default' failed
-make: *** [default] Error 2
-...
-
-CONFIG_MODULES is enabled in .config file
-
-|dvb|cat /home/bhuvan/linux-tegra/.config|grep CONFIG_MODULE
-CONFIG_MODULES=y
-# CONFIG_MODULE_FORCE_LOAD is not set
-CONFIG_MODULE_UNLOAD=y
-CONFIG_MODULE_FORCE_UNLOAD=y
-CONFIG_MODULE_SRCVERSION_ALL=y
-
->
-> Hauke
->
-Best regards,
-
-Bhuvan
+-- 
+2.1.4
 
