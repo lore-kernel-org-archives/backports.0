@@ -1,32 +1,58 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ig0-f169.google.com ([209.85.213.169]:36467 "EHLO
-	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753272AbbFHTBO (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 8 Jun 2015 15:01:14 -0400
-Received: by igbpi8 with SMTP id pi8so69081095igb.1
-        for <backports@vger.kernel.org>; Mon, 08 Jun 2015 12:01:14 -0700 (PDT)
+Received: from hauke-m.de ([5.39.93.123]:41852 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750816AbbFOVOO (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 15 Jun 2015 17:14:14 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH v2 22/22] header: fix warning in lockdep_assert_held()
+Date: Mon, 15 Jun 2015 23:14:10 +0200
+Message-Id: <1434402850-22567-1-git-send-email-hauke@hauke-m.de> (sfid-20150615_231416_793206_1A49DB20)
+In-Reply-To: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
+References: <1434292162-2261-1-git-send-email-hauke@hauke-m.de>
 MIME-Version: 1.0
-In-Reply-To: <CAB=NE6W9qF9YK8WyBDFCQewDiAV_V7-Jvo97kp1e5NfTfGyROQ@mail.gmail.com>
-References: <1432042936-23733-1-git-send-email-emmanuel.grumbach@intel.com>
- <1432110463.2174.2.camel@sipsolutions.net> <1432110664.5612.6.camel@intel.com>
- <1432110893.2174.3.camel@sipsolutions.net> <1432111194.8314.1.camel@intel.com>
- <555CA897.4010606@lwfinger.net> <CAB=NE6W9qF9YK8WyBDFCQewDiAV_V7-Jvo97kp1e5NfTfGyROQ@mail.gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Date: Mon, 8 Jun 2015 12:00:53 -0700
-Message-ID: <CAB=NE6WZnK1UZ0s87DYriE69aEBYkk+pWL9zDVqPfijDGKki7A@mail.gmail.com> (sfid-20150608_210116_895556_CB806489)
-Subject: Re: [PATCH] backport: allow compilation with Ubuntu's 3.13
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>,
-	"johannes@sipsolutions.net" <johannes@sipsolutions.net>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Jun 8, 2015 at 11:58 AM, Luis R. Rodriguez <mcgrof@frijolero.org> wrote:
-> This is a strategy
-> *new* developers
+When building the kernel there are lots of warnings like this:
+drivers/net/wireless/ath/ath10k/ce.c:404:21: warning: unused variable ‘ar_pci’ [-Wunused-variable]
+  struct ath10k_pci *ar_pci = ath10k_pci_priv(ar);
 
-Sorry I meant that developers can use for *new* upstream code.
+They are caused by an empty lockdep_assert_held() which does nothing
+with this variable in kernel version < 3.9. This patch replaces this
+macro with the version from a recent kernel and silence this warning.
 
- Luis
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/lockdep.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 backport/backport-include/linux/lockdep.h
+
+diff --git a/backport/backport-include/linux/lockdep.h b/backport/backport-include/linux/lockdep.h
+new file mode 100644
+index 0000000..3974b8d
+--- /dev/null
++++ b/backport/backport-include/linux/lockdep.h
+@@ -0,0 +1,17 @@
++#ifndef __BACKPORT_LINUX_LOCKDEP_H
++#define __BACKPORT_LINUX_LOCKDEP_H
++#include_next <linux/lockdep.h>
++#include <linux/version.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
++#undef lockdep_assert_held
++#ifdef CONFIG_LOCKDEP
++#define lockdep_assert_held(l)	do {				\
++		WARN_ON(debug_locks && !lockdep_is_held(l));	\
++	} while (0)
++#else
++#define lockdep_assert_held(l)			do { (void)(l); } while (0)
++#endif /* CONFIG_LOCKDEP */
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0) */
++
++#endif /* __BACKPORT_LINUX_LOCKDEP_H */
+-- 
+2.1.4
+
