@@ -1,41 +1,29 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:36850 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751913AbbFZSOX (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 26 Jun 2015 14:14:23 -0400
-Received: by lacny3 with SMTP id ny3so68270230lac.3
-        for <backports@vger.kernel.org>; Fri, 26 Jun 2015 11:14:21 -0700 (PDT)
-From: Florian Grandel <fgrandel@gmail.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org, Florian Grandel <fgrandel@gmail.com>
-Subject: [PATCH] headers: add missing include statement
-Date: Fri, 26 Jun 2015 20:14:13 +0200
-Message-Id: <1435342454-21239-1-git-send-email-fgrandel@gmail.com> (sfid-20150626_201425_250285_231B1AE4)
+Received: from hauke-m.de ([5.39.93.123]:42607 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754531AbbFPUxe (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 16 Jun 2015 16:53:34 -0400
+Received: from [IPv6:2003:62:4676:c200:a04b:92a6:f7ae:b99a] (p200300624676C200A04B92A6F7AEB99A.dip0.t-ipconnect.de [IPv6:2003:62:4676:c200:a04b:92a6:f7ae:b99a])
+	by hauke-m.de (Postfix) with ESMTPSA id 6A75F20127
+	for <backports@vger.kernel.org>; Tue, 16 Jun 2015 22:53:32 +0200 (CEST)
+Message-ID: <55808CCB.30309@hauke-m.de> (sfid-20150616_225336_952605_ADF572BA)
+Date: Tue, 16 Jun 2015 22:53:31 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
+MIME-Version: 1.0
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: backports-20150612 is out
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The net/route.h header is missing when compiling against the android msm
-kernel. Explicitly add it here to make the kernel compile.
+backports-20150612 was released. This is based on linux-next next-20150612.
 
-Signed-off-by: Florian Grandel <fgrandel@gmail.com>
----
- backport/backport-include/net/ip6_fib.h | 1 +
- 1 file changed, 1 insertion(+)
+https://www.kernel.org/pub/linux/kernel/projects/backports/2015/06/12/backports-20150612.tar.xz
 
-diff --git a/backport/backport-include/net/ip6_fib.h b/backport/backport-include/net/ip6_fib.h
-index 96b6759..ebdc94c 100644
---- a/backport/backport-include/net/ip6_fib.h
-+++ b/backport/backport-include/net/ip6_fib.h
-@@ -2,6 +2,7 @@
- #define __BACKPORT_NET_IP6_ROUTE_H
- #include_next <net/ip6_fib.h>
- #include <net/ip6_route.h>
-+#include <linux/route.h>
- #include <linux/version.h>
- 
- /*
--- 
-1.9.1
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
 
---
-To unsubscribe from this list: send the line "unsubscribe backports" in
+All the latest releases are listed here:
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
+
+Hauke
