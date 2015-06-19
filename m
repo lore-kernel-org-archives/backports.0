@@ -1,52 +1,55 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:23788
-	"EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751588AbbFAUDX (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 1 Jun 2015 16:03:23 -0400
-Date: Mon, 1 Jun 2015 22:03:20 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Felix Fietkau <nbd@openwrt.org>
-cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Uses of Linux backports in the industry
-In-Reply-To: <556CA991.7030302@openwrt.org>
-Message-ID: <alpine.DEB.2.02.1506012203070.2222@localhost6.localdomain6> (sfid-20150601_220327_251297_A12F5211)
-References: <CAB=NE6UUTmMMB0La3OFe+hXpaZzdAwTs0QKBsTLSyrsSMFxJRg@mail.gmail.com> <556CA991.7030302@openwrt.org>
+Received: from mail-ig0-f181.google.com ([209.85.213.181]:33434 "EHLO
+	mail-ig0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753085AbbFSRvt (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 19 Jun 2015 13:51:49 -0400
+Received: by igbqq3 with SMTP id qq3so21636439igb.0
+        for <backports@vger.kernel.org>; Fri, 19 Jun 2015 10:51:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <1434578988-18411-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1434578988-18411-1-git-send-email-mcgrof@do-not-panic.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Fri, 19 Jun 2015 10:51:29 -0700
+Message-ID: <CAB=NE6UpXMqcb-03wJbXdDKAUjr_GJbsgGHBGPz38GSh5iFq5w@mail.gmail.com> (sfid-20150619_195201_768895_DC8BAD48)
+Subject: Re: [PATCH] gentree.py: use Coccinelle's new Parallelism support
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: "cocci@systeme.lip6.fr" <cocci@systeme.lip6.fr>,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	Xavier Clerc <xavier.clerc@inria.fr>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+On Wed, Jun 17, 2015 at 3:09 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> As of coccinelle-1.0.0-rc24 Coccinelle got its own built-in
+> parallelism support which does not require use of the separate
+> instances to be spawned. Coccinelle's new built-in parallelism
+> uses the parmap library for this.
+>
+> Replace the pycocci script, which is no longer needed. I've
+> tested this with the 1.0.0 and 1.0.0-rc24 release and get
+> the same results for both releases.
+>
+> When comparing our old way of doing things (using pycocci)
+> vs using the new parallellism support (-j option for spatch)
+> I see a general performance boost of at least ~10 seconds
+> right on average now when generating code using gentree.py
+> on the backports build server.
+>
+> Cc: Xavier Clerc <xavier.clerc@inria.fr>
+> Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
+> ---
+>  devel/pycocci | 174 ----------------------------------------------------------
+>  gentree.py    |  23 +++++---
+>  2 files changed, 16 insertions(+), 181 deletions(-)
+>  delete mode 100755 devel/pycocci
 
+I ran into a snag with this feature, I reported it to the cocci
+mailing list [0], so for now we can't merge this.
 
-On Mon, 1 Jun 2015, Felix Fietkau wrote:
+[0] https://systeme.lip6.fr/pipermail/cocci/2015-June/002140.html
 
-> On 2015-05-29 04:54, Luis R. Rodriguez wrote:
-> > Me and Julia are working on a paper which evaluates use of Coccinelle
-> > on backports, a preliminary draft of such paper can be found on github
-> > [0]. We are making some tweaks to this, one of which is covering the
-> > uses of Linux backports [1] in the industry, for this we'd like to try
-> > to get feedback as to where and how folks are using backports. Please
-> > let me and Julia know -- or if the information is not sensitive please
-> > feel free to just reply to this thread and share with others. All
-> > feedback is greatly appreciated. If you are OK in having us list or
-> > generalize your usage please indicate so.
-> In OpenWrt, we use backports to stay up to date with current wireless
-> drivers without being forced into frequently updating the kernels as
-> well. We support many different platforms, and sometimes it takes a
-> while to update the kernel on them.
-> Using backports significantly reduces the amount of effort that we need
-> to put into maintaining the wireless drivers.
-> When making changes to wireless drivers or mac80211, which I submit
-> upstream, I also develop them in our most recent backports snapshot
-> first (typically generated from wireless-testing). When they are done, I
-> port them to a proper git tree and submit them from there.
-> 
-> In OpenWrt, we typically update the backports snapshot outside of the
-> normal kernel release cycle (always to latest wireless-testing) and
-> stabilize that by cherry-picking individual patches on top of it.
-
-Thanks for the feedback!
-
-julia
+ Luis
+--
+To unsubscribe from this list: send the line "unsubscribe backports" in
