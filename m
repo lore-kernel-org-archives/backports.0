@@ -1,89 +1,68 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:41030 "EHLO hauke-m.de"
+Received: from mail.melag.de ([217.6.74.107]:57418 "EHLO mail.melag.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751417AbbFNO3f (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 14 Jun 2015 10:29:35 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 00/21] backports: bring it to next-20150612 and add mt7601u
-Date: Sun, 14 Jun 2015 16:29:01 +0200
-Message-Id: <1434292162-2261-1-git-send-email-hauke@hauke-m.de> (sfid-20150614_162940_858072_A27CABFA)
+	id S1751203AbbFXJJu convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 24 Jun 2015 05:09:50 -0400
+Message-ID: <558A73D9.3060703@melag.de> (sfid-20150624_111014_494127_823C8373)
+Date: Wed, 24 Jun 2015 11:09:45 +0200
+From: "Enrico Weigelt, metux IT consult" <weigelt@melag.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+To: Richard Weinberger <richard.weinberger@gmail.com>
+CC: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Julia Lawall <julia.lawall@lip6.fr>
+Subject: Re: Uses of Linux backports in the industry
+References: <CAB=NE6UUTmMMB0La3OFe+hXpaZzdAwTs0QKBsTLSyrsSMFxJRg@mail.gmail.com>	<55687D72.3070904@melag.de> <CAFLxGvz1-2sm74dmWZ4QpyC4TSubP4OHj=6Z8aVhvjqA2+WkZw@mail.gmail.com>
+In-Reply-To: <CAFLxGvz1-2sm74dmWZ4QpyC4TSubP4OHj=6Z8aVhvjqA2+WkZw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This adds many stuff, that is needed for next-20150612, for example the 
-backport of the new crypto API. It also fixes some problems in previous 
-patches and should fix tracing for some driver. In addition it adds the 
-new mt7601u driver and the new functions needed by this driver.
+Am 29.05.2015 um 17:01 schrieb Richard Weinberger:
 
-Hauke Mehrtens (21):
-  patches: fix spatch for bluetooth
-  patches: deactivate tracing for ath6kl, cfg80211 and wil6210 only on
-    kernel < 3.4
-  patches: include linux/sched.h header in drivers/nfc/mei_phy.c
-  header: fix rt6_nexthop() backport
-  patches: remove additional member in struct mei_cl_device_id
-  patches: rhashtable header patch not needed
-  backports: add backport for new AEAD crypto API
-  dependencies: add VIDEO_COBALT
-  dependencies: make DVB_M88DS3103 and DVB_TS2020 depend on kernel > 3.8
-  dependencies: make two media tuners depend on kernel >= 3.3
-  dependencies: make VIDEO_ADV7604 depend on kernel >= 3.17
-  dependencies: make VIDEO_ADP1653 depend on kernel >= 3.13
-  backports: add HDMI driver
-  patches: do not use vidioc_expbuf function pointer in v4l
-  backports: add tty_set_termios()
-  header: add dev_dbg_once() and others
-  header: add devm_kcalloc()
-  backports: add mediatek mt7601u driver
-  patches: deactivate struct tracing in mt7601u
-  patches: deactivate tracing on mt7601u for kernel < 3.4
-  patches: refresh patches on next-20150612
+Hi,
 
- backport/backport-include/crypto/aead.h            |  33 ++++++
- backport/backport-include/linux/device.h           |  44 +++++++
- backport/backport-include/linux/tty.h              |   5 +
- backport/backport-include/net/ip6_fib.h            |  18 ++-
- backport/compat/Kconfig                            |  16 +++
- backport/compat/Makefile                           |   1 +
- backport/compat/backport-4.1.c                     |  65 ++++++++++
- backport/compat/backport-4.2.c                     |  67 +++++++++++
- backport/defconfigs/wifi                           |   2 +
- copy-list                                          |   3 +-
- dependencies                                       |  16 ++-
- patches/backport-adjustments/rhashtable.patch      |  10 --
- .../media/0002-no_dmabuf/v4l2.patch                | 132 +++++++++++++++------
- .../media/0005-dma-no-sync/v4l2.patch              |   8 +-
- .../0013-fix-makefile-includes/mei_phy.patch       |  10 ++
- .../network/0022-define-tracing/ath6kl.patch       |   4 +-
- .../network/0022-define-tracing/cfg80211.patch     |   8 +-
- .../network/0022-define-tracing/mt7601u.patch      |  12 ++
- .../network/0022-define-tracing/wil6210.patch      |   4 +-
- .../network/0024-led-blink-api/mac80211.patch      |   2 +-
- .../network/0028-select_queue/mac80211.patch       |   4 +-
- .../network/0028-select_queue/mwifiex.patch        |   2 +-
- .../network/0046-mmc_rescan_entered/mwifiex.patch  |   2 +-
- .../network/0050-iov_iter/bluetooth.patch          |   8 +-
- .../0053-remove_wait_on_bit_timeout/btusb.patch    |  12 +-
- .../network/0054-struct-proto_ops-sig.cocci        |   8 +-
- .../network/0059-uuid-in-mei/INFO                  |   7 ++
- .../network/0059-uuid-in-mei/nfc.patch             |  28 +++++
- .../network/0060-trace_field_struct/INFO           |  11 ++
- .../network/0060-trace_field_struct/mt7601u.patch  |  33 ++++++
- 30 files changed, 494 insertions(+), 81 deletions(-)
- create mode 100644 backport/backport-include/crypto/aead.h
- create mode 100644 backport/compat/backport-4.2.c
- delete mode 100644 patches/backport-adjustments/rhashtable.patch
- create mode 100644 patches/collateral-evolutions/network/0013-fix-makefile-includes/mei_phy.patch
- create mode 100644 patches/collateral-evolutions/network/0022-define-tracing/mt7601u.patch
- create mode 100644 patches/collateral-evolutions/network/0059-uuid-in-mei/INFO
- create mode 100644 patches/collateral-evolutions/network/0059-uuid-in-mei/nfc.patch
- create mode 100644 patches/collateral-evolutions/network/0060-trace_field_struct/INFO
- create mode 100644 patches/collateral-evolutions/network/0060-trace_field_struct/mt7601u.patch
+> On Fri, May 29, 2015 at 4:53 PM, Enrico Weigelt, metux IT consult
+> <weigelt@melag.de> wrote:
+>> Am 29.05.2015 um 04:54 schrieb Luis R. Rodriguez:
+>> Actually, I really wonder why folks are sticking to ancient kernels on
+>> newer hardware.
+>
+> Enterprise distribution kernels.
 
--- 
-2.1.4
+hmm, by "enterprise" you mean distros like RHEL, which even can't get a
+dist-upgrade right ? ;-p
 
+In that case, it's the duty of the dist vendor, to port their (often
+horrible) vendor patches. I wouldn't run those distros bare-metal
+anyways, so the need for new kernel features (eg. drivers) wouldn't
+that huge.
+
+ > Or "special" kernels like PREEMPT_RT.
+
+PREEMPT_RT is pretty close to upstream.
+There're at 4.0.5 right now, and 4.1 is still very fresh.
+
+If I'd have the need for it (actually was already considering it for our
+project), I'd rather port it to 4.1. (as our BSP already is at 4.1)
+
+> Sometimes the vendor BSP is that horrid that a customer cannot afford
+> to forward port it but wants recent stuff. So you need to backport...
+
+By "vendor BSP", you perhaps mean certain soc or board manufacturer
+stuff ? Just dont use it, it's usually horrible crap anyways. These
+usually are fire-and-forget showcases, not suited for production use.
+Waste of resources.
+
+
+cu
+--
+Enrico Weigelt, metux IT consult
++49-151-27565287
+MELAG Medizintechnik oHG Sitz Berlin Registergericht AG Charlottenburg HRA 21333 B
+
+Wichtiger Hinweis: Diese Nachricht kann vertrauliche oder nur für einen begrenzten Personenkreis bestimmte Informationen enthalten. Sie ist ausschließlich für denjenigen bestimmt, an den sie gerichtet worden ist. Wenn Sie nicht der Adressat dieser E-Mail sind, dürfen Sie diese nicht kopieren, weiterleiten, weitergeben oder sie ganz oder teilweise in irgendeiner Weise nutzen. Sollten Sie diese E-Mail irrtümlich erhalten haben, so benachrichtigen Sie bitte den Absender, indem Sie auf diese Nachricht antworten. Bitte löschen Sie in diesem Fall diese Nachricht und alle Anhänge, ohne eine Kopie zu behalten.
+Important Notice: This message may contain confidential or privileged information. It is intended only for the person it was addressed to. If you are not the intended recipient of this email you may not copy, forward, disclose or otherwise use it or any part of it in any form whatsoever. If you received this email in error please notify the sender by replying and delete this message and any attachments without retaining a copy.
+--
+To unsubscribe from this list: send the line "unsubscribe backports" in
