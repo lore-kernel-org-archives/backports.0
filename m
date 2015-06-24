@@ -1,39 +1,63 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ie0-f177.google.com ([209.85.223.177]:35252 "EHLO
-	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752584AbbFHUnj (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 8 Jun 2015 16:43:39 -0400
-Received: by iesa3 with SMTP id a3so1465863ies.2
-        for <backports@vger.kernel.org>; Mon, 08 Jun 2015 13:43:38 -0700 (PDT)
+Received: from mail.melag.de ([217.6.74.107]:62551 "EHLO mail.melag.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752097AbbFXKNc convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 24 Jun 2015 06:13:32 -0400
+Message-ID: <558A82C5.4030900@melag.de> (sfid-20150624_121345_400188_C758DC50)
+Date: Wed, 24 Jun 2015 12:13:25 +0200
+From: "Enrico Weigelt, metux IT consult" <weigelt@melag.de>
 MIME-Version: 1.0
-In-Reply-To: <1433795473.10172.3.camel@sipsolutions.net>
-References: <1433793702-21322-1-git-send-email-mcgrof@do-not-panic.com> <1433795473.10172.3.camel@sipsolutions.net>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Mon, 8 Jun 2015 13:43:17 -0700
-Message-ID: <CAB=NE6W68eikvWE+YKKSUC3_S_pTLY-cJq5hGeRkKp2mx9dRMA@mail.gmail.com> (sfid-20150608_224341_625171_CFB7036C)
-Subject: Re: [PATCH] pycocci: sync pycocci with Coccinelle upstream
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	"cocci@systeme.lip6.fr" <cocci@systeme.lip6.fr>
-Content-Type: text/plain; charset=UTF-8
+To: Felix Fietkau <nbd@openwrt.org>,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Julia Lawall <julia.lawall@lip6.fr>
+Subject: Re: Uses of Linux backports in the industry
+References: <CAB=NE6UUTmMMB0La3OFe+hXpaZzdAwTs0QKBsTLSyrsSMFxJRg@mail.gmail.com> <556CA991.7030302@openwrt.org>
+In-Reply-To: <556CA991.7030302@openwrt.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Jun 8, 2015 at 1:31 PM, Johannes Berg <johannes@sipsolutions.net> wrote:
-> On Mon, 2015-06-08 at 13:01 -0700, Luis R. Rodriguez wrote:
->> pycocci is now part of Coccinelle upstream. Coccinelle has a plan
->> to actually extend multithreaded support to enable us to not have
->> to script this out. Until then pyccoci is used and I'll sync both
->> solutions up as there is a bit of latency between a coccinelle release
->> and what we may need from pycocci.
->
-> If it's upstream, do they ship it? If so it wouldn't be needed that we
-> have a copy, it seems?
+Am 01.06.2015 um 20:50 schrieb Felix Fietkau:
 
-Indeed, Coccinelle 1.0 has pycocci except for this last patch I just
-mentioned. I think it is important enough for our sake that the errors
-are reported well, I think its fair to drop this in backports once
-Coccinelle 1.1 is released and we can reasonably expect users to have
-it installed.
+> We support many different platforms, and sometimes it takes a
+> while to update the kernel on them.
 
- Luis
+Just curious: what makes these platforms so different from each other,
+so it takes so much time to port to new kernel ? Are there things so
+special, that they can't go into mainline ?
+
+In a few weeks, I'll (hopefully) have a few weeks off and plan to play
+around w/ some spare DSL routers. Maybe we can have a talk on how to
+get more things mainlined, if you wish :)
+
+> Using backports significantly reduces the amount of effort that we need
+> to put into maintaining the wireless drivers.
+> When making changes to wireless drivers or mac80211, which I submit
+> upstream, I also develop them in our most recent backports snapshot
+> first (typically generated from wireless-testing). When they are done, I
+> port them to a proper git tree and submit them from there.
+
+How much has changed from your old baseline compared to current
+mainline ? I could imagine, in your area it might not be as much
+as in others (eg. graphics or v4l subsystem).
+
+> In OpenWrt, we typically update the backports snapshot outside of the
+> normal kernel release cycle (always to latest wireless-testing) and
+> stabilize that by cherry-picking individual patches on top of it.
+
+Can you estimate the required workforce ?
+Some statistics on that would be really nice.
+
+
+cu
+--
+Enrico Weigelt, metux IT consult
++49-151-27565287
+MELAG Medizintechnik oHG Sitz Berlin Registergericht AG Charlottenburg HRA 21333 B
+
+Wichtiger Hinweis: Diese Nachricht kann vertrauliche oder nur für einen begrenzten Personenkreis bestimmte Informationen enthalten. Sie ist ausschließlich für denjenigen bestimmt, an den sie gerichtet worden ist. Wenn Sie nicht der Adressat dieser E-Mail sind, dürfen Sie diese nicht kopieren, weiterleiten, weitergeben oder sie ganz oder teilweise in irgendeiner Weise nutzen. Sollten Sie diese E-Mail irrtümlich erhalten haben, so benachrichtigen Sie bitte den Absender, indem Sie auf diese Nachricht antworten. Bitte löschen Sie in diesem Fall diese Nachricht und alle Anhänge, ohne eine Kopie zu behalten.
+Important Notice: This message may contain confidential or privileged information. It is intended only for the person it was addressed to. If you are not the intended recipient of this email you may not copy, forward, disclose or otherwise use it or any part of it in any form whatsoever. If you received this email in error please notify the sender by replying and delete this message and any attachments without retaining a copy.
+--
+To unsubscribe from this list: send the line "unsubscribe backports" in
