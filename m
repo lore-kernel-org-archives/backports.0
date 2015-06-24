@@ -1,64 +1,71 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:37724 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750860AbbFDJqg (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 4 Jun 2015 05:46:36 -0400
-Message-ID: <55701E7A.1010609@broadcom.com> (sfid-20150604_114640_245104_F1ADDAB7)
-Date: Thu, 4 Jun 2015 11:46:34 +0200
-From: Arend van Spriel <arend@broadcom.com>
+Received: from a.ns.miles-group.at ([95.130.255.143]:65276 "EHLO radon.swed.at"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750966AbbFXJTL (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 24 Jun 2015 05:19:11 -0400
+Message-ID: <558A760B.2030600@nod.at> (sfid-20150624_111914_533940_8564B43C)
+Date: Wed, 24 Jun 2015 11:19:07 +0200
+From: Richard Weinberger <richard@nod.at>
 MIME-Version: 1.0
-To: Hauke Mehrtens <hauke@hauke-m.de>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: how to deal with coccinelle version requirements
-References: <55701831.20700@broadcom.com> <55701954.101@hauke-m.de>
-In-Reply-To: <55701954.101@hauke-m.de>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+To: "Enrico Weigelt, metux IT consult" <weigelt@melag.de>
+CC: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Julia Lawall <julia.lawall@lip6.fr>
+Subject: Re: Uses of Linux backports in the industry
+References: <CAB=NE6UUTmMMB0La3OFe+hXpaZzdAwTs0QKBsTLSyrsSMFxJRg@mail.gmail.com>	<55687D72.3070904@melag.de> <CAFLxGvz1-2sm74dmWZ4QpyC4TSubP4OHj=6Z8aVhvjqA2+WkZw@mail.gmail.com> <558A73D9.3060703@melag.de>
+In-Reply-To: <558A73D9.3060703@melag.de>
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 06/04/15 11:24, Hauke Mehrtens wrote:
-> On 06/04/2015 11:19 AM, Arend van Spriel wrote:
->> I am running a build server on Ubuntu 14.04 and recently had to upgrade
->> coccinelle for backports builds. So I got my hands on a debian package
->> (from launchpad if I recall correctly) and installing it manually gives
->> me following warning:
+Am 24.06.2015 um 11:09 schrieb Enrico Weigelt, metux IT consult:
+> Am 29.05.2015 um 17:01 schrieb Richard Weinberger:
+> 
+> Hi,
+> 
+>> On Fri, May 29, 2015 at 4:53 PM, Enrico Weigelt, metux IT consult
+>> <weigelt@melag.de> wrote:
+>>> Am 29.05.2015 um 04:54 schrieb Luis R. Rodriguez:
+>>> Actually, I really wonder why folks are sticking to ancient kernels on
+>>> newer hardware.
 >>
->> $ sudo dpkg -i coccinelle_1.0.0~rc24.deb-1_amd64.deb
->> Selecting previously unselected package coccinelle.
->> (Reading database ... 309776 files and directories currently installed.)
->> Preparing to unpack coccinelle_1.0.0~rc24.deb-1_amd64.deb ...
->> Unpacking coccinelle (1.0.0~rc24.deb-1) ...
->> dpkg: dependency problems prevent configuration of coccinelle:
->>   coccinelle depends on libpcre3 (>= 1:8.35); however:
->>    Version of libpcre3:amd64 on system is 1:8.31-2ubuntu2.
->>
->> dpkg: error processing package coccinelle (--install):
->>   dependency problems - leaving unconfigured
->> Processing triggers for man-db (2.6.7.1-1) ...
->> Errors were encountered while processing:
->>   coccinelle
->>
->> Now spatch is installed and works just fine, but I am getting all kinds
->> of errors when trying to install other packages which kinda sucks. So I
->> tried unstalling coccinelle and just build it from github repo, but that
->> fails for me as well (giving 'Unbound module Pcre').
->>
->> So can anyone recommend a way to deal with the coccinelle version
->> requirements when running on Ubuntu LTS version.
->>
->> Regards,
->> Arend
->
-> I also took the package from debian on my Ubuntu system, but I also
-> installed a more recent version of libpcre3, because coccinelle requires
-> it and is complaining about this in your error message. I used this
-> package: http://packages.ubuntu.com/utopic/libpcre3
+>> Enterprise distribution kernels.
+> 
+> hmm, by "enterprise" you mean distros like RHEL, which even can't get a
+> dist-upgrade right ? ;-p
 
-Thanks, Hauke
+Please send such prepubescent flames to /dev/null.
 
-I did not like going down the path of picking up individual packages, 
-but alas. For now it is working.
+> In that case, it's the duty of the dist vendor, to port their (often
+> horrible) vendor patches. I wouldn't run those distros bare-metal
+> anyways, so the need for new kernel features (eg. drivers) wouldn't
+> that huge.
+> 
+>> Or "special" kernels like PREEMPT_RT.
+> 
+> PREEMPT_RT is pretty close to upstream.
+> There're at 4.0.5 right now, and 4.1 is still very fresh.
+> 
+> If I'd have the need for it (actually was already considering it for our
+> project), I'd rather port it to 4.1. (as our BSP already is at 4.1)
 
-Regards,
-Arend
+Porting PREEMPT_RT is not that easy.
+Did you ever?
 
+>> Sometimes the vendor BSP is that horrid that a customer cannot afford
+>> to forward port it but wants recent stuff. So you need to backport...
+> 
+> By "vendor BSP", you perhaps mean certain soc or board manufacturer
+> stuff ? Just dont use it, it's usually horrible crap anyways. These
+> usually are fire-and-forget showcases, not suited for production use.
+> Waste of resources.
+
+So, you rewrite all drivers and the board support from scratch?
+Interesting. I'd love to meet your customers they seem to have
+a lot of money and time. ;-)
+
+Thanks,
+//richard
+--
+To unsubscribe from this list: send the line "unsubscribe backports" in
