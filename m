@@ -1,91 +1,66 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-lb0-f175.google.com ([209.85.217.175]:36154 "EHLO
-	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752080AbbFZTHJ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 26 Jun 2015 15:07:09 -0400
-Received: by lbbpo10 with SMTP id po10so69951255lbb.3
-        for <backports@vger.kernel.org>; Fri, 26 Jun 2015 12:07:08 -0700 (PDT)
-Received: from [192.168.43.155] (host-95-199-159-58.mobileonline.telia.com. [95.199.159.58])
-        by mx.google.com with ESMTPSA id wc8sm8379926lbb.37.2015.06.26.12.07.06
-        for <backports@vger.kernel.org>
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Jun 2015 12:07:07 -0700 (PDT)
-Message-ID: <558DA2D7.5000600@gmail.com> (sfid-20150626_210712_688157_EB0ECD0B)
-Date: Fri, 26 Jun 2015 21:07:03 +0200
-From: Florian Grandel <fgrandel@gmail.com>
+Received: from mail-ig0-f172.google.com ([209.85.213.172]:35651 "EHLO
+	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751651AbbFZBHQ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 25 Jun 2015 21:07:16 -0400
+Received: by igblr2 with SMTP id lr2so3885562igb.0
+        for <backports@vger.kernel.org>; Thu, 25 Jun 2015 18:07:15 -0700 (PDT)
 MIME-Version: 1.0
-To: Linux Backports <backports@vger.kernel.org>
-Subject: Fwd: Re: [PATCH] Bluetooth: hci_ldisc: backport changes
-References: <C64B93E8-D2FE-421F-B2D7-87A9C6AC22BA@holtmann.org>
-In-Reply-To: <C64B93E8-D2FE-421F-B2D7-87A9C6AC22BA@holtmann.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <1434748917-23404-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1434748917-23404-1-git-send-email-mcgrof@do-not-panic.com>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Thu, 25 Jun 2015 18:06:51 -0700
+Message-ID: <CAB=NE6WB9POGJZMNDxHNgnkV9PZDdEtWwnSJw_mqJezwxnHdog@mail.gmail.com> (sfid-20150626_030719_639426_1CFA1AE5)
+Subject: Re: [PATCH] patches: increase 0001-netlink-portid.cocci dependability
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: "cocci@systeme.lip6.fr" <cocci@systeme.lip6.fr>,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi!
-
-Wanted to send a patch including version checking upstream to the 
-bluetooth guys - but wasn't accepted, see below.
-
-Now your README in the patches folder says that new patches are not 
-usually acceptable on your side.
-
-What would be the right approach to get the below define statements into 
-the backports?
-
-Regards,
-
-Florian
-
--------- Forwarded Message --------
-Subject: Re: [PATCH] Bluetooth: hci_ldisc: backport changes
-Date: Fri, 26 Jun 2015 20:30:15 +0200
-From: Marcel Holtmann <marcel@holtmann.org>
-To: Florian Grandel <fgrandel@gmail.com>
-CC: linux-bluetooth@vger.kernel.org
-
-Hi Florian,
-
-> The references to tty->termios in hci_ldisc were not backports
-> compatible. Introducing #define statements to make this file compile
-> against earlier kernel versions.
+On Fri, Jun 19, 2015 at 2:21 PM, Luis R. Rodriguez
+<mcgrof@do-not-panic.com> wrote:
+> Using expression is pretty flexible, in this case we
+> don't want that flexibility as it can override any
+> struct who also uses the same variable name. For a
+> specific example of the issue refer to the netdev-ops
+> demo git tree [0] which provide an example of the issue
+> with two SmPL rules.
 >
-> Signed-off-by: Florian Grandel <fgrandel@gmail.com>
-> ---
-> drivers/bluetooth/hci_ldisc.c | 19 ++++++++++++++++++-
-> 1 file changed, 18 insertions(+), 1 deletion(-)
+> We keep the expression on the last rule on NETLINK_CB(skb)
+> given that we know only an skb can possibly be used on it.
 >
-> diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
-> index 177dd69..14d08b1 100644
-> --- a/drivers/bluetooth/hci_ldisc.c
-> +++ b/drivers/bluetooth/hci_ldisc.c
-> @@ -24,6 +24,7 @@
->  */
+> 1   3.0.101             [  OK  ]
+> 2   3.1.10              [  OK  ]
+> 3   3.2.68              [  OK  ]
+> 4   3.3.8               [  OK  ]
+> 5   3.4.107             [  OK  ]
+> 6   3.5.7               [  OK  ]
+> 7   3.6.11              [  OK  ]
+> 8   3.7.10              [  OK  ]
+> 9   3.8.13              [  OK  ]
+> 10  3.9.11              [  OK  ]
+> 11  3.10.75             [  OK  ]
+> 12  3.11.10             [  OK  ]
+> 13  3.12.40             [  OK  ]
+> 14  3.13.11             [  OK  ]
+> 15  3.14.39             [  OK  ]
+> 16  3.15.10             [  OK  ]
+> 17  3.16.7              [  OK  ]
+> 18  3.17.8              [  OK  ]
+> 19  3.18.12             [  OK  ]
+> 20  3.19.5              [  OK  ]
+> 21  4.0.0               [  OK  ]
+> 22  4.1-rc8             [  OK  ]
 >
-> #include <linux/module.h>
-> +#include <linux/version.h>
+> [0] https://github.com/mcgrof/netdev-ops.git
 >
-> #include <linux/kernel.h>
-> #include <linux/init.h>
-> @@ -277,7 +278,11 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable)
->
-> 	if (enable) {
-> 		/* Disable hardware flow control */
-> +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0))
-> 		ktermios = tty->termios;
-> +#else
-> +		ktermios = *tty->termios;
-> +#endif
+> Cc: cocci@systeme.lip6.fr
+> Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 
-such a patch is not acceptable upstream. This is something that the 
-backports projects has to keep out-of-tree.
+Applied and pushed.
 
-Regards
-
-Marcel
-
-
-
-
+ Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
