@@ -1,62 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:47947 "EHLO mail.kernel.org"
+Received: from hauke-m.de ([5.39.93.123]:48699 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750869AbbFCESJ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 3 Jun 2015 00:18:09 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 501BD205FC
-	for <backports@vger.kernel.org>; Wed,  3 Jun 2015 04:18:08 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 87E59203E5
-	for <backports@vger.kernel.org>; Wed,  3 Jun 2015 04:18:07 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1752843AbbF1V7a (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 28 Jun 2015 17:59:30 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Subject: [Bug 99361] New: 0001-enable-backports-built-in.patch fails to apply
- when using --integrate
-Date: Wed, 03 Jun 2015 04:18:07 +0000
-Message-ID: <bug-99361-58281@https.bugzilla.kernel.org/> (sfid-20150603_061811_913453_66F0081A)
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 02/14] copy: rename st21nfcb.h to st_nci.h
+Date: Sun, 28 Jun 2015 23:59:08 +0200
+Message-Id: <1435528760-19913-3-git-send-email-hauke@hauke-m.de> (sfid-20150628_235934_153534_33C54E2A)
+In-Reply-To: <1435528760-19913-1-git-send-email-hauke@hauke-m.de>
+References: <1435528760-19913-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=99361
+st21nfcb.h was renamed in the upstream kernel, do the same for
+backports. This rename was done in this commit:
+commit ed06aeefdac348cfb91a3db5fe1067e3202afd70
+Author: Christophe Ricard <christophe.ricard@gmail.com>
+Date:   Tue Jun 9 22:26:05 2015 +0200
 
-            Bug ID: 99361
-           Summary: 0001-enable-backports-built-in.patch fails to apply
-                    when using --integrate
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: 3.4.0
-          Hardware: All
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: Backports
-          Assignee: backports@vger.kernel.org
-          Reporter: net147@gmail.com
-        Regression: No
+    nfc: st-nci: Rename st21nfcb to st-nci
 
-Failed to apply changes from
-001-enable-backports/0001-enable-backports-built-in.patch
-> patching file Makefile
-> Hunk #1 succeeded at 506 (offset -36 lines).
-> Hunk #2 succeeded at 715 (offset -106 lines).
-> Hunk #3 FAILED at 841.
-> 1 out of 3 hunks FAILED -- saving rejects to file Makefile.rej
-Traceback (most recent call last):
-  File "./gentree.py", line 1091, in <module>
-    ret = _main()
-  File "./gentree.py", line 724, in _main
-    logwrite=logwrite)
-  File "./gentree.py", line 1078, in process
-    bpid.project_dir, logwrite)
-  File "./gentree.py", line 552, in apply_patches
-    raise Exception('Patch failed')
-Exception: Patch failed
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ copy-list | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/copy-list b/copy-list
+index a679c77..1583512 100644
+--- a/copy-list
++++ b/copy-list
+@@ -144,7 +144,7 @@ drivers/nfc/
+ include/linux/platform_data/nxp-nci.h
+ include/linux/platform_data/pn544.h
+ include/linux/platform_data/st21nfca.h
+-include/linux/platform_data/st21nfcb.h
++include/linux/platform_data/st_nci.h
+ 
+ # Media
+ include/media/
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+2.1.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe backports" in
