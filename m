@@ -1,94 +1,86 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ie0-f196.google.com ([209.85.223.196]:34320 "EHLO
-	mail-ie0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753898AbbFISrk (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 9 Jun 2015 14:47:40 -0400
-Received: by iebtr6 with SMTP id tr6so3256480ieb.1
-        for <backports@vger.kernel.org>; Tue, 09 Jun 2015 11:47:40 -0700 (PDT)
+Received: from hauke-m.de ([5.39.93.123]:48617 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752461AbbF1SF0 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 28 Jun 2015 14:05:26 -0400
+Message-ID: <55903763.3030702@hauke-m.de> (sfid-20150628_200529_139203_81B2560A)
+Date: Sun, 28 Jun 2015 20:05:23 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-In-Reply-To: <55768BD6.1000305@kpanic.de>
-References: <1433330756-22733-1-git-send-email-sassmann@kpanic.de>
- <1433330756-22733-2-git-send-email-sassmann@kpanic.de> <556F5FD5.4070003@hauke-m.de>
- <55701578.9030205@kpanic.de> <CAB=NE6UYbXqyo-O5Dj-FBTzhQ+LjRH86-fbgAQaqreVAoctQjg@mail.gmail.com>
- <55768BD6.1000305@kpanic.de>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Tue, 9 Jun 2015 11:24:37 -0700
-Message-ID: <CAB=NE6UPfPf3KMZjUzmE-yVbX3bo_fX37gB0_B1d2udEtGS4Jg@mail.gmail.com> (sfid-20150609_204743_262481_18A86031)
-Subject: Re: [PATCH 1/4] backports: replace igb skb->no_fcs patch with
- semantic patch
-To: Stefan Assmann <sassmann@kpanic.de>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: Florian Grandel <fgrandel@gmail.com>,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: backports@vger.kernel.org
+Subject: Re: [PATCH] patches: fix v4l2 patch
+References: <1435333743-28237-1-git-send-email-fgrandel@gmail.com>
+In-Reply-To: <1435333743-28237-1-git-send-email-fgrandel@gmail.com>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Jun 8, 2015 at 11:46 PM, Stefan Assmann <sassmann@kpanic.de> wrote:
-> On 09.06.2015 00:09, Luis R. Rodriguez wrote:
->> On Thu, Jun 4, 2015 at 2:08 AM, Stefan Assmann <sassmann@kpanic.de> wrote:
->>> On 03.06.2015 22:13, Hauke Mehrtens wrote:
->>>> Is it always save to just remove something which accesses skb->no_fcs in
->>>> all cases? I think sometimes some special handling for older kernel
->>>> version could be needed. This also looks very specific to the igb usage.
->>>
->>> In this case I'd say this is fine, no_fcs is used to send out frames with
->>> bad CRC for testing. So just commenting out related code shouldn't cause
->>> any harm. Yes, the cocci code is very specific and will likely need to be
->>> extended for other drivers when we pull them in. But you have to start
->>> somewhere.
->>>
->>> We always have the option to revert if something turns out to be a bad
->>> idea.
->>
->> I'm fine with merging now but please note the discussion, Hauke was
->> curious about the generality over the Coccinelle patch replacement
->> over a patch series. In order to help maintainers make a proper
->> assessment over whether or not we can merge an SmPL patch to replace a
->> patch series it is extremely useful to annotate the SmPL patch with
->> header comments which track:
->>
->> a) The respective upstream commit and kernel version which introduced
->> the collateral evolution for which you are generalizing
->> b) A good description which explains your understanding as to why this
->> should work and will not break run time
->>
->> a) is easy, b) is hard but it is the least we can do and I think we
->> will remain sane if we put this as a litmus test for future SmPL patch
->> replacements. Its not easy but please see my own SmPL patches and
->> review the description. Its pretty lengthy but these discussions can
->> be avoided if we had someone do the full homework.
->>
->> If we want to scale we need this. Are you folks OK with requiring a)
->> and b) on future SmPL patch replacements? Best effort at least. Keep
->> in mind reason for this is also I believe there are some further
->> generalizations we can reach if we follow these best practices which I
->> think will have further beneficial gains to us.
->
-> Adding that info to the git commit log sounds like added value. I'll try
-> to provide it in my next patchset. If I get you right, this is somewhat
-> similar to what's in the INFO files, correct?
+On 06/26/2015 05:49 PM, Florian Grandel wrote:
+> Fix to support next-20160626.
+> 
+> Signed-off-by: Florian Grandel <fgrandel@gmail.com>
+> ---
+>  .../media/0005-dma-no-sync/v4l2.patch              | 30 +++-------------------
+>  1 file changed, 4 insertions(+), 26 deletions(-)
+> 
+> diff --git a/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch b/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
+> index deeddd9..9b3329b 100644
+> --- a/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
+> +++ b/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
+> @@ -1,25 +1,3 @@
+> ---- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> -+++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> -@@ -570,7 +570,9 @@ static void vb2_dc_put_userptr(void *buf
+> - 	if (sgt) {
+> - 		DEFINE_DMA_ATTRS(attrs);
+> - 
+> -+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
+> - 		dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+> -+#endif
+> - 		/*
+> - 		 * No need to sync to CPU, it's already synced to the CPU
+> - 		 * since the finish() memop will have been called before this.
+> -@@ -637,7 +639,9 @@ static void *vb2_dc_get_userptr(void *al
+> - 	unsigned long dma_align = dma_get_cache_alignment();
+> - 	DEFINE_DMA_ATTRS(attrs);
+> - 
+> -+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
+> - 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+> -+#endif
+> - 
+> - 	/* Only cache aligned DMA transfers are reliable */
+> - 	if (!IS_ALIGNED(vaddr | size, dma_align)) {
 
-The commit log can use it, but indeed it'd be useful if we keep track
-of it also in the INFO files as well. In practice if its one file (one
-patch or one cocci file) at the top as a comment is used as well for
-info... The INFO file thing came about from the fact that Johannes
-long ago streamlined the practice of splitting up patch series into
-separate files, one for each affected module / component. This was
-done to enable being able to skip patch files which you do not carry
-on your copy target. So say you only want to provide backports tarball
-that carried in only one device driver, one patch series might affect
-all drivers but with this strategy the patching sequence would
-continue after only applying the one patch for that series that is
-applicable to that driver. Its redudnant to copy the same commit log /
-verbose message to all patches so Johannes figured to extract that and
-put it on a single INFO file.
+This part is still needed.
 
-Come to think of it, even if we have one file for a series whether its
-regular patches or cocci patches perhaps its best we embrace the
-practice of using the INFO strategy. This would help for example in
-enabling evaluation of number of lines of patch series and cocci files
-by just using 'wc -l', instead of having to first extract the info
-somehow. I'll go ahead and make these changes, unless I hear
-otherwise. Moving forward if we can stick to this that'd be great.
+>  --- a/drivers/media/v4l2-core/videobuf2-dma-sg.c
+>  +++ b/drivers/media/v4l2-core/videobuf2-dma-sg.c
+>  @@ -109,7 +109,9 @@ static void *vb2_dma_sg_alloc(void *allo
+> @@ -42,17 +20,17 @@
+>   		dprintk(1, "%s: Freeing buffer of %d pages\n", __func__,
+>   			buf->num_pages);
+>   		dma_unmap_sg_attrs(buf->dev, sgt->sgl, sgt->orig_nents,
+> -@@ -242,7 +246,9 @@ static void *vb2_dma_sg_get_userptr(void
+> - 	struct sg_table *sgt;
+> +@@ -235,7 +239,9 @@ static void *vb2_dma_sg_get_userptr(void
+>   	DEFINE_DMA_ATTRS(attrs);
+> + 	struct frame_vector *vec;
+>   
+>  +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
+>   	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+>  +#endif
+> - 
+>   	buf = kzalloc(sizeof *buf, GFP_KERNEL);
+>   	if (!buf)
+> -@@ -354,7 +360,9 @@ static void vb2_dma_sg_put_userptr(void
+> + 		return NULL;
+> +@@ -292,7 +298,9 @@ static void vb2_dma_sg_put_userptr(void
+>   	int i = buf->num_pages;
+>   	DEFINE_DMA_ATTRS(attrs);
+>   
+> 
 
-  Luis
+--
+To unsubscribe from this list: send the line "unsubscribe backports" in
