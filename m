@@ -1,31 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ig0-f178.google.com ([209.85.213.178]:38712 "EHLO
-	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752183AbbFIWRH (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 9 Jun 2015 18:17:07 -0400
-Received: by igblz2 with SMTP id lz2so21003829igb.1
-        for <backports@vger.kernel.org>; Tue, 09 Jun 2015 15:17:07 -0700 (PDT)
+Received: from hauke-m.de ([5.39.93.123]:48735 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752442AbbF1WJC (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 28 Jun 2015 18:09:02 -0400
+Message-ID: <5590707C.8010208@hauke-m.de> (sfid-20150629_000904_985567_4EEB4C03)
+Date: Mon, 29 Jun 2015 00:09:00 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-In-Reply-To: <1433509613-3272-1-git-send-email-net147@gmail.com>
-References: <1433509613-3272-1-git-send-email-net147@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Tue, 9 Jun 2015 15:16:46 -0700
-Message-ID: <CAB=NE6ViUX9z3Q1iqVhGJ8U93Syeg2DbbEstn05XL3VDy9nZBQ@mail.gmail.com> (sfid-20150610_001709_861916_A3D45F34)
-Subject: Re: [PATCH] backports: add missing include for vfree
-To: Jonathan Liu <net147@gmail.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: Florian Grandel <fgrandel@gmail.com>,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: backports@vger.kernel.org
+Subject: Re: [PATCH] patches: backport termios usage in hci_ldisc
+References: <1435357230-9712-1-git-send-email-fgrandel@gmail.com>
+In-Reply-To: <1435357230-9712-1-git-send-email-fgrandel@gmail.com>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Jun 5, 2015 at 6:06 AM, Jonathan Liu <net147@gmail.com> wrote:
-> Signed-off-by: Jonathan Liu <net147@gmail.com>
+On 06/27/2015 12:20 AM, Florian Grandel wrote:
+> The file net/bluetooth/hci_ldisc.c contains references to tty->termios.
+> These changed from pointer to instance in 3.7.0. This patch backports
+> all references by introducing kernel version defines.
+> 
+> Signed-off-by: Florian Grandel <fgrandel@gmail.com>
 > ---
->  backport/compat/backport-3.15.c | 1 +
->  1 file changed, 1 insertion(+)
+>  .../0020-tty-termios/net_bluetooth_hci_ldisc.patch | 67 ++++++++++++++++++++++
+>  1 file changed, 67 insertions(+)
+>  create mode 100644 patches/collateral-evolutions/network/0020-tty-termios/net_bluetooth_hci_ldisc.patch
+> 
+Thank you for the patch, it is applied and included in the recent release.
 
-Thanks Jonathan, applied and pushed! In the future please provide a
-commit log description as to why this was done.
-
- Luis
+Hauke
+--
+To unsubscribe from this list: send the line "unsubscribe backports" in
