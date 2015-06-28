@@ -1,62 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:41708 "EHLO mx1.redhat.com"
+Received: from hauke-m.de ([5.39.93.123]:48712 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753136AbbFCL0S (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 3 Jun 2015 07:26:18 -0400
-From: Stefan Assmann <sassmann@kpanic.de>
+	id S1752848AbbF1V7d (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 28 Jun 2015 17:59:33 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Cc: mcgrof@do-not-panic.com, hauke@hauke-m.de, sassmann@kpanic.de
-Subject: [PATCH 4/4] backports: replace igb pfmemalloc patch with semantic patch
-Date: Wed,  3 Jun 2015 13:25:56 +0200
-Message-Id: <1433330756-22733-5-git-send-email-sassmann@kpanic.de> (sfid-20150603_132619_896920_FCFC144F)
-In-Reply-To: <1433330756-22733-1-git-send-email-sassmann@kpanic.de>
-References: <1433330756-22733-1-git-send-email-sassmann@kpanic.de>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 13/14] dependencies: make NFC_PN544_I2C depend on kernel >= 3.17
+Date: Sun, 28 Jun 2015 23:59:19 +0200
+Message-Id: <1435528760-19913-14-git-send-email-hauke@hauke-m.de> (sfid-20150629_000351_214549_CC277457)
+In-Reply-To: <1435528760-19913-1-git-send-email-hauke@hauke-m.de>
+References: <1435528760-19913-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+NFC_PN544_I2C uses devm_gpiod_get_index() now which is not available in
+kernel < 3.17.
+
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../network/0049-no-pfmemalloc/igb.patch                   | 14 --------------
- .../network/0049-no-pfmemalloc/no-pfmemalloc.cocci         |  9 +++++++++
- 2 files changed, 9 insertions(+), 14 deletions(-)
- delete mode 100644 patches/collateral-evolutions/network/0049-no-pfmemalloc/igb.patch
- create mode 100644 patches/collateral-evolutions/network/0049-no-pfmemalloc/no-pfmemalloc.cocci
+ dependencies | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/patches/collateral-evolutions/network/0049-no-pfmemalloc/igb.patch b/patches/collateral-evolutions/network/0049-no-pfmemalloc/igb.patch
-deleted file mode 100644
-index 53b319a..0000000
---- a/patches/collateral-evolutions/network/0049-no-pfmemalloc/igb.patch
-+++ /dev/null
-@@ -1,14 +0,0 @@
----- a/drivers/net/ethernet/intel/igb/igb_main.c
--+++ b/drivers/net/ethernet/intel/igb/igb_main.c
--@@ -6578,7 +6578,11 @@ static void igb_reuse_rx_page(struct igb
-- 
-- static inline bool igb_page_is_reserved(struct page *page)
-- {
--+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-- 	return (page_to_nid(page) != numa_mem_id()) || page->pfmemalloc;
--+#else
--+	return (page_to_nid(page) != numa_mem_id());
--+#endif
-- }
-- 
-- static bool igb_can_reuse_rx_page(struct igb_rx_buffer *rx_buffer,
-diff --git a/patches/collateral-evolutions/network/0049-no-pfmemalloc/no-pfmemalloc.cocci b/patches/collateral-evolutions/network/0049-no-pfmemalloc/no-pfmemalloc.cocci
-new file mode 100644
-index 0000000..bbc1201
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0049-no-pfmemalloc/no-pfmemalloc.cocci
-@@ -0,0 +1,9 @@
-+@r1@
-+struct page *page;
-+expression E1;
-+@@
-+ return E1
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ || page->pfmemalloc
-++#endif /* if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0) */
-+ ;
+diff --git a/dependencies b/dependencies
+index 890845c..688bb56 100644
+--- a/dependencies
++++ b/dependencies
+@@ -65,6 +65,7 @@ PLATFORM_SI4713 3.17
+ SOC_CAMERA_OV2640 3.17
+ VIDEO_ADV7604 3.17
+ VIDEO_COBALT 3.17
++NFC_PN544_I2C 3.17
+ 
+ # missing function clk_prepare_enable(), clk_disable_unprepare() and devm_regulator_bulk_get()
+ VIDEO_MT9V032 3.3
 -- 
-2.4.2
+2.1.4
 
+--
+To unsubscribe from this list: send the line "unsubscribe backports" in
