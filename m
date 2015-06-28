@@ -1,31 +1,31 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ie0-f182.google.com ([209.85.223.182]:35167 "EHLO
-	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752183AbbFIWQS (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 9 Jun 2015 18:16:18 -0400
-Received: by iesa3 with SMTP id a3so22770345ies.2
-        for <backports@vger.kernel.org>; Tue, 09 Jun 2015 15:16:17 -0700 (PDT)
+Received: from hauke-m.de ([5.39.93.123]:48739 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752574AbbF1WKY (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 28 Jun 2015 18:10:24 -0400
+Received: from [192.168.178.24] (p5DE97D38.dip0.t-ipconnect.de [93.233.125.56])
+	by hauke-m.de (Postfix) with ESMTPSA id 5DFA720166
+	for <backports@vger.kernel.org>; Mon, 29 Jun 2015 00:10:23 +0200 (CEST)
+Message-ID: <559070CE.5060907@hauke-m.de> (sfid-20150629_001026_648406_AEA32D7F)
+Date: Mon, 29 Jun 2015 00:10:22 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-In-Reply-To: <1433330756-22733-1-git-send-email-sassmann@kpanic.de>
-References: <1433330756-22733-1-git-send-email-sassmann@kpanic.de>
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Tue, 9 Jun 2015 15:15:56 -0700
-Message-ID: <CAB=NE6WXJZGTWE-jUW-tNk-T=zhNdYLnMSVJaPMLwJJsxmEuTA@mail.gmail.com> (sfid-20150610_001620_880359_3AA91632)
-Subject: Re: [PATCH 0/4] backports: more generic ethernet patches
-To: Stefan Assmann <sassmann@kpanic.de>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Content-Type: text/plain; charset=UTF-8
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: backports-20150626 is out
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Jun 3, 2015 at 4:25 AM, Stefan Assmann <sassmann@kpanic.de> wrote:
-> Stefan Assmann (4):
->   backports: replace igb skb->no_fcs patch with semantic patch
->   backports: replace igb ethtool_cmd_mdix patch with semantic patch
->   backports: replace igb xmit_more patch with semantic patch
->   backports: replace igb pfmemalloc patch with semantic patch
+backports-20150626 was released. This is based on linux-next next-20150626.
 
-Thanks Stefan! Applied and pushed!
+https://www.kernel.org/pub/linux/kernel/projects/backports/2015/06/26/backports-20150626.tar.xz
 
- Luis
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
+
+All the latest releases are listed here:
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
+
+Hauke
+--
+To unsubscribe from this list: send the line "unsubscribe backports" in
