@@ -1,33 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ie0-f181.google.com ([209.85.223.181]:36838 "EHLO
-	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751383AbbFIWSi (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 9 Jun 2015 18:18:38 -0400
-Received: by ieclw1 with SMTP id lw1so22784060iec.3
-        for <backports@vger.kernel.org>; Tue, 09 Jun 2015 15:18:38 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1433549401-17006-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1433549401-17006-1-git-send-email-mcgrof@do-not-panic.com>
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-Date: Tue, 9 Jun 2015 15:18:17 -0700
-Message-ID: <CAB=NE6XptbAs-bqBaySAGk8Wyut0NYw4C+HOtfP+VOkm-tSLmQ@mail.gmail.com> (sfid-20150610_001840_286267_CAB6B26F)
-Subject: Re: [PATCH 0/4] backports: SmPL patch equivalence support
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: "cocci@systeme.lip6.fr" <cocci@systeme.lip6.fr>,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Content-Type: text/plain; charset=UTF-8
+Received: from hauke-m.de ([5.39.93.123]:48702 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752848AbbF1V7a (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 28 Jun 2015 17:59:30 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 03/14] copy: add include/linux/platform_data/nfcmrvl.h
+Date: Sun, 28 Jun 2015 23:59:09 +0200
+Message-Id: <1435528760-19913-4-git-send-email-hauke@hauke-m.de> (sfid-20150628_235935_271247_1011E12C)
+In-Reply-To: <1435528760-19913-1-git-send-email-hauke@hauke-m.de>
+References: <1435528760-19913-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Jun 5, 2015 at 5:09 PM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
-> Luis R. Rodriguez (4):
->   patches: remove bt_sock_stream_recvmsg() and bt_sock_recvmsg() from
->     ifdefs
->   patches: change 0054-struct-proto_ops-sig backport strategy
->   gentree.py: add SmPL patch equivalence proof support
->   patches: provide 0054-struct-proto_ops-sig SmPL patch replacement
+The new nfcmrvl driver needs a new platform data header file.
 
-FYI - dropped the gentree.py patch for SmPL proof support and pushed the rest.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ copy-list | 1 +
+ 1 file changed, 1 insertion(+)
 
- Luis
+diff --git a/copy-list b/copy-list
+index 1583512..2264d01 100644
+--- a/copy-list
++++ b/copy-list
+@@ -141,6 +141,7 @@ include/uapi/linux/nfc.h
+ 
+ # NFC drivers
+ drivers/nfc/
++include/linux/platform_data/nfcmrvl.h
+ include/linux/platform_data/nxp-nci.h
+ include/linux/platform_data/pn544.h
+ include/linux/platform_data/st21nfca.h
+-- 
+2.1.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe backports" in
