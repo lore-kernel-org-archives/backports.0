@@ -1,125 +1,104 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:35227 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753115AbbGTWck (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 20 Jul 2015 18:32:40 -0400
-Received: by pdrg1 with SMTP id g1so108034651pdr.2
-        for <backports@vger.kernel.org>; Mon, 20 Jul 2015 15:32:40 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: cocci@systeme.lip6.fr
-Cc: backports@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH v3 2/5] pycocci: add git class
-Date: Mon, 20 Jul 2015 15:32:21 -0700
-Message-Id: <1437431544-32662-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20150721_003242_058553_2CDDC7AE)
-In-Reply-To: <1437431544-32662-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1437431544-32662-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:38557 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752500AbbGAN7n (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 1 Jul 2015 09:59:43 -0400
+Received: by wibdq8 with SMTP id dq8so46353639wib.1
+        for <backports@vger.kernel.org>; Wed, 01 Jul 2015 06:59:42 -0700 (PDT)
+Message-ID: <5593F242.6030802@gmail.com> (sfid-20150701_155947_478274_1461BE24)
+Date: Wed, 01 Jul 2015 15:59:30 +0200
+From: Florian Grandel <fgrandel@gmail.com>
+MIME-Version: 1.0
+To: Hauke Mehrtens <hauke@hauke-m.de>,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: backports@vger.kernel.org
+Subject: Re: [PATCH] patches: fix v4l2 patch
+References: <1435333743-28237-1-git-send-email-fgrandel@gmail.com> <55903763.3030702@hauke-m.de>
+In-Reply-To: <55903763.3030702@hauke-m.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+On 06/28/2015 08:05 PM, Hauke Mehrtens wrote:
+> On 06/26/2015 05:49 PM, Florian Grandel wrote:
+>> Fix to support next-20160626.
+>>
+>> Signed-off-by: Florian Grandel <fgrandel@gmail.com>
+>> ---
+>>   .../media/0005-dma-no-sync/v4l2.patch              | 30 +++-------------------
+>>   1 file changed, 4 insertions(+), 26 deletions(-)
+>>
+>> diff --git a/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch b/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
+>> index deeddd9..9b3329b 100644
+>> --- a/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
+>> +++ b/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
+>> @@ -1,25 +1,3 @@
+>> ---- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
+>> -+++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+>> -@@ -570,7 +570,9 @@ static void vb2_dc_put_userptr(void *buf
+>> - 	if (sgt) {
+>> - 		DEFINE_DMA_ATTRS(attrs);
+>> -
+>> -+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
+>> - 		dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+>> -+#endif
+>> - 		/*
+>> - 		 * No need to sync to CPU, it's already synced to the CPU
+>> - 		 * since the finish() memop will have been called before this.
+>> -@@ -637,7 +639,9 @@ static void *vb2_dc_get_userptr(void *al
+>> - 	unsigned long dma_align = dma_get_cache_alignment();
+>> - 	DEFINE_DMA_ATTRS(attrs);
+>> -
+>> -+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
+>> - 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+>> -+#endif
+>> -
+>> - 	/* Only cache aligned DMA transfers are reliable */
+>> - 	if (!IS_ALIGNED(vaddr | size, dma_align)) {
+>
+> This part is still needed.
 
-This will let us check and use git for both inference
-of whether or not --use-gitgrep is needed later, and
-also for SmPL patch equivalence proof support later.
+Oups! You're right of course. Thanks for spotting this right away.
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
----
- tools/pycocci | 80 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
+>>   --- a/drivers/media/v4l2-core/videobuf2-dma-sg.c
+>>   +++ b/drivers/media/v4l2-core/videobuf2-dma-sg.c
+>>   @@ -109,7 +109,9 @@ static void *vb2_dma_sg_alloc(void *allo
+>> @@ -42,17 +20,17 @@
+>>    		dprintk(1, "%s: Freeing buffer of %d pages\n", __func__,
+>>    			buf->num_pages);
+>>    		dma_unmap_sg_attrs(buf->dev, sgt->sgl, sgt->orig_nents,
+>> -@@ -242,7 +246,9 @@ static void *vb2_dma_sg_get_userptr(void
+>> - 	struct sg_table *sgt;
+>> +@@ -235,7 +239,9 @@ static void *vb2_dma_sg_get_userptr(void
+>>    	DEFINE_DMA_ATTRS(attrs);
+>> + 	struct frame_vector *vec;
+>>
+>>   +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
+>>    	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
+>>   +#endif
+>> -
+>>    	buf = kzalloc(sizeof *buf, GFP_KERNEL);
+>>    	if (!buf)
+>> -@@ -354,7 +360,9 @@ static void vb2_dma_sg_put_userptr(void
+>> + 		return NULL;
+>> +@@ -292,7 +298,9 @@ static void vb2_dma_sg_put_userptr(void
+>>    	int i = buf->num_pages;
+>>    	DEFINE_DMA_ATTRS(attrs);
+>>
+>>
+>
+>
 
-diff --git a/tools/pycocci b/tools/pycocci
-index 5a11e5c770c7..141f9783d09b 100755
---- a/tools/pycocci
-+++ b/tools/pycocci
-@@ -215,6 +215,86 @@ class Req:
-     def gcc(self, version):
-         return self.require_version('gcc', '--version', version, 3, self.linux_version_cmp)
- 
-+class GitError(Exception):
-+    pass
-+class ExecutionGitError(GitError):
-+    def __init__(self, errcode):
-+        self.error_code = errcode
-+
-+def _check(process):
-+    if process.returncode != 0:
-+        raise ExecutionError(process.returncode)
-+
-+def git_init(tree=None):
-+    process = subprocess.Popen(['git', 'init'],
-+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                               close_fds=True, universal_newlines=True, cwd=tree)
-+    stdout = process.communicate()[0]
-+    process.wait()
-+    _check(process)
-+
-+def git_rev_parse(tree=None, extra_args=None):
-+    cmd = ['git', 'rev-parse' ] + extra_args
-+    process = subprocess.Popen(cmd,
-+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                               close_fds=True, universal_newlines=True, cwd=tree)
-+    stdout = process.communicate()[0]
-+    process.wait()
-+    if process.returncode != 0:
-+        return None
-+    return stdout.split('\n', 1)[0]
-+
-+def gitname(path=None):
-+    work_dir = path
-+    if not os.path.isdir(path):
-+        work_dir = os.path.dirname(path)
-+    process = subprocess.Popen(['git', 'rev-parse', '--show-toplevel', path],
-+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                               close_fds=True, universal_newlines=True, cwd=work_dir)
-+    stdout = process.communicate()[0]
-+    process.wait()
-+    if process.returncode != 0:
-+        return None
-+    return stdout.split('\n', 1)[0]
-+
-+def git_add(path, tree=None):
-+    process = subprocess.Popen(['git', 'add', '--ignore-removal', path],
-+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                               close_fds=True, universal_newlines=True, cwd=tree)
-+    stdout = process.communicate()[0]
-+    process.wait()
-+    _check(process)
-+
-+def git_checkout(tree=None, extra_args=None):
-+    cmd = ['git', 'checkout' ] + extra_args
-+    process = subprocess.Popen(cmd,
-+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                               close_fds=True, universal_newlines=True, cwd=tree)
-+    stdout = process.communicate()[0]
-+    process.wait()
-+    _check(process)
-+
-+def git_commit_all(message, tree=None):
-+    git_add('.', tree=tree)
-+    process = subprocess.Popen(['git', 'commit', '--allow-empty', '-a', '-m', message],
-+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                               close_fds=True, universal_newlines=True, cwd=tree)
-+    stdout = process.communicate()[0]
-+    process.wait()
-+    _check(process)
-+
-+def git_diff(tree=None, extra_args=None):
-+    cmd = ['git', 'diff', '--color=always'] + extra_args
-+
-+    process = subprocess.Popen(cmd,
-+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                               close_fds=True, universal_newlines=True, cwd=tree)
-+    stdout = process.communicate()[0]
-+    process.wait()
-+    _check(process)
-+
-+    return stdout
-+
- # simple tempdir wrapper object for 'with' statement
- #
- # Usage:
+
 -- 
-2.3.2.209.gd67f9d5.dirty
+Florian Grandel
+Softwareentwickler
 
+Mühlener Straße 7
+72160 Horb a.N.
+
+Tel: +49 173 9748059
+Skype: fgrandel
+GTalk: fgrandel@gmail.com
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
