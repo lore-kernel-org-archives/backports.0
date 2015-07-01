@@ -1,56 +1,31 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:50903 "EHLO
-	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752328AbbGUGCN (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 21 Jul 2015 02:02:13 -0400
-Date: Tue, 21 Jul 2015 08:02:10 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: "Luis R. Rodriguez" <mcgrof@suse.com>
-cc: "cocci@systeme.lip6.fr" <cocci@systeme.lip6.fr>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: [Cocci] [PATCH v3 5/5] pycocci: add man page and promote pycocci
- to install target
-In-Reply-To: <CAB=NE6VDgbDz9uF4OJeBc_y+4qycRHo1sqTcpcFGO7dm9HU85Q@mail.gmail.com>
-Message-ID: <alpine.DEB.2.02.1507210801590.2065@localhost6.localdomain6> (sfid-20150721_080219_148330_3FEBD9CC)
-References: <1437431544-32662-1-git-send-email-mcgrof@do-not-panic.com> <1437431544-32662-6-git-send-email-mcgrof@do-not-panic.com> <CAB=NE6VDgbDz9uF4OJeBc_y+4qycRHo1sqTcpcFGO7dm9HU85Q@mail.gmail.com>
+Received: from hauke-m.de ([5.39.93.123]:50496 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751982AbbGAVT4 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 1 Jul 2015 17:19:56 -0400
+Received: from [192.168.178.24] (p5DE94BC9.dip0.t-ipconnect.de [93.233.75.201])
+	by hauke-m.de (Postfix) with ESMTPSA id F1ADF20242
+	for <backports@vger.kernel.org>; Wed,  1 Jul 2015 23:19:54 +0200 (CEST)
+Message-ID: <5594597A.4020802@hauke-m.de> (sfid-20150701_231959_016765_4B6EAAE4)
+Date: Wed, 01 Jul 2015 23:19:54 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: backports-4.1.1-1 is out
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 20 Jul 2015, Luis R. Rodriguez wrote:
+backports-4.1.1-1 was released. This is based on Linux kernel 4.1.1.
 
-> On Mon, Jul 20, 2015 at 3:32 PM, Luis R. Rodriguez
-> <mcgrof@do-not-panic.com> wrote:
-> > diff --git a/Makefile b/Makefile
-> > index 27904f150204..63130b00af0f 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -448,6 +448,7 @@ install-man:
-> >         $(MKDIR_P) $(DESTDIR)$(MANDIR)/man1
-> >         $(MKDIR_P) $(DESTDIR)$(MANDIR)/man3
-> >         $(INSTALL_DATA) docs/spatch.1 $(DESTDIR)$(MANDIR)/man1/
-> > +       $(INSTALL_DATA) docs/pycocci.1 $(DESTDIR)$(MANDIR)/man1/
-> >         $(INSTALL_DATA) docs/Coccilib.3cocci $(DESTDIR)$(MANDIR)/man3/
-> >
-> >  install-bash:
-> > @@ -487,6 +488,8 @@ install-stubs:
-> >  install: install-man install-common install-stubs $(PYTHON_INSTALL_TARGET)
-> >         rm -f $(DESTDIR)$(LIBDIR)/spatch
-> >         rm -f $(DESTDIR)$(LIBDIR)/spatch.opt
-> > +       rm -f $(DESTDIR)$(LIBDIR)/pycocci
-> > +       $(INSTALL_PROGRAM) tools/pycoci $(DESTDIR)$(LIBDIR)
-> >         @if test -x spatch -o -x spatch.opt; then \
-> >                 $(MAKE) install-def;fi
-> >         @if test -x spatch ; then \
-> 
-> Whoops sorry this should be using $BINDIR instead. There was already a
-> target for pycocci also on the install-tools target, but distros are
-> not using that install target so we just would move that to the
-> default install target to get distros to start carrying this.
+https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v4.1.1/backports-4.1.1-1.tar.xz
 
-OK.
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
 
-julia
+All the latest releases are listed here:
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
+
+Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
