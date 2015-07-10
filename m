@@ -1,46 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:36607 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757371AbbGUAcs (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 20 Jul 2015 20:32:48 -0400
-Received: by wicgb10 with SMTP id gb10so40523944wic.1
-        for <backports@vger.kernel.org>; Mon, 20 Jul 2015 17:32:47 -0700 (PDT)
+Received: from cluster-d.mailcontrol.com ([85.115.60.190]:49450 "EHLO
+	cluster-d.mailcontrol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754194AbbGJLXA convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 10 Jul 2015 07:23:00 -0400
+Received: from banapppus01.asia.root.pri (static-42.188.93.111-tataidc.co.in [111.93.188.42] (may be forged))
+	by rly07d.srv.mailcontrol.com (MailControl) with ESMTP id t6ABMtuN048911
+	(version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO)
+	for <backports@vger.kernel.org>; Fri, 10 Jul 2015 12:22:57 +0100
+From: Arunkumar K <Arunkumar.K@csr.com>
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Query regarding back porting of upstreamed Linux kernel drivers
+Date: Fri, 10 Jul 2015 11:22:52 +0000
+Message-ID: <b43797e602f34e10a7924f0d3b6a1368@BANASIEXM02.ASIA.ROOT.PRI> (sfid-20150710_132308_695446_378530BA)
 MIME-Version: 1.0
-In-Reply-To: <1436657918-16124-1-git-send-email-hauke@hauke-m.de>
-References: <1436657918-16124-1-git-send-email-hauke@hauke-m.de>
-From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
-Date: Mon, 20 Jul 2015 17:32:27 -0700
-Message-ID: <CAB=NE6WBmH51NONny+yh+0xPF-rH+Jv0BVCKpFvprb7WOPQZFQ@mail.gmail.com> (sfid-20150721_023250_991991_DEF15098)
-Subject: Re: [PATCH] rel-html: backports: add version 4.2
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sat, Jul 11, 2015 at 4:38 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
-> This adds the version 4.2 to the list of supported versions.
->
-> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Hi,
 
-Applied, and pushed, thanks!
+I have the following queries regarding back porting of up-streamed Linux kernel driver:
 
-BTW we really should just finish off support for parsing json and use
-it. An example implementation would be for  Linux:
+Suppose a new driver is added to Linux mainline in release 4.2, will the developer who added new driver to the mainline need to submit the changes for back porting to the backports git?
 
-https://www.kernel.org/releases.json
+Or will the backports project team be doing the back porting of the new driver?
 
-My biggest brain-block with this though was trying to figure out a way
-to generate the json file in a standard way across projects. While
-Linux may use its own thing, we can for instance use the
-release-weight routines used in rel-html (and used in
-backports/lib/bpreqs.py) to for instance enable developers to annotate
-in a configuration file the minimum supported releases. The last step
-is figuring out which of the releases are supported and which are
-deprecated. I think I have a solution to this, for which I just asked
-for feedback on.
 
- Luis
+>From the following page https://backports.wiki.kernel.org/index.php/Main_Page
+
+"Current versions of backports support all mainline kernels starting with version 3.0, for kernel versions older than 3.0 please use backports-3.14, which supports all kernel versions back to 2.6.26."
+
+Suppose we have release backports-4.2 and new driver has been backported. Will it have support only till kernel version 3.0. Suppose if the new driver needs to be supported in version 2.6.32 what is the process followed?
+
+Regards,
+Arun
+
+
+
+Member of the CSR plc group of companies. CSR plc registered in England and Wales, registered number 4187346, registered office Churchill House, Cambridge Business Park, Cowley Road, Cambridge, CB4 0WZ, United Kingdom
+More information can be found at www.csr.com. Keep up to date with CSR on our technical blog, www.csr.com/blog, CSR people blog, www.csr.com/people, YouTube, www.youtube.com/user/CSRplc, Facebook, www.facebook.com/pages/CSR/191038434253534, or follow us on Twitter at www.twitter.com/CSR_plc.
+You can now access the wide range of products powered by aptX at www.aptx.com
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
