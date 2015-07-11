@@ -1,104 +1,67 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:38557 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752500AbbGAN7n (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 1 Jul 2015 09:59:43 -0400
-Received: by wibdq8 with SMTP id dq8so46353639wib.1
-        for <backports@vger.kernel.org>; Wed, 01 Jul 2015 06:59:42 -0700 (PDT)
-Message-ID: <5593F242.6030802@gmail.com> (sfid-20150701_155947_478274_1461BE24)
-Date: Wed, 01 Jul 2015 15:59:30 +0200
-From: Florian Grandel <fgrandel@gmail.com>
-MIME-Version: 1.0
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: backports@vger.kernel.org
-Subject: Re: [PATCH] patches: fix v4l2 patch
-References: <1435333743-28237-1-git-send-email-fgrandel@gmail.com> <55903763.3030702@hauke-m.de>
-In-Reply-To: <55903763.3030702@hauke-m.de>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Received: from hauke-m.de ([5.39.93.123]:56141 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752095AbbGKVeR (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 11 Jul 2015 17:34:17 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 3/3] devel: update the test kernel versions
+Date: Sat, 11 Jul 2015 23:34:10 +0200
+Message-Id: <1436650450-2696-4-git-send-email-hauke@hauke-m.de> (sfid-20150711_233420_821592_4A889649)
+In-Reply-To: <1436650450-2696-1-git-send-email-hauke@hauke-m.de>
+References: <1436650450-2696-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 06/28/2015 08:05 PM, Hauke Mehrtens wrote:
-> On 06/26/2015 05:49 PM, Florian Grandel wrote:
->> Fix to support next-20160626.
->>
->> Signed-off-by: Florian Grandel <fgrandel@gmail.com>
->> ---
->>   .../media/0005-dma-no-sync/v4l2.patch              | 30 +++-------------------
->>   1 file changed, 4 insertions(+), 26 deletions(-)
->>
->> diff --git a/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch b/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
->> index deeddd9..9b3329b 100644
->> --- a/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
->> +++ b/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch
->> @@ -1,25 +1,3 @@
->> ---- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
->> -+++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
->> -@@ -570,7 +570,9 @@ static void vb2_dc_put_userptr(void *buf
->> - 	if (sgt) {
->> - 		DEFINE_DMA_ATTRS(attrs);
->> -
->> -+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
->> - 		dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
->> -+#endif
->> - 		/*
->> - 		 * No need to sync to CPU, it's already synced to the CPU
->> - 		 * since the finish() memop will have been called before this.
->> -@@ -637,7 +639,9 @@ static void *vb2_dc_get_userptr(void *al
->> - 	unsigned long dma_align = dma_get_cache_alignment();
->> - 	DEFINE_DMA_ATTRS(attrs);
->> -
->> -+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
->> - 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
->> -+#endif
->> -
->> - 	/* Only cache aligned DMA transfers are reliable */
->> - 	if (!IS_ALIGNED(vaddr | size, dma_align)) {
->
-> This part is still needed.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ devel/backports-update-manager | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-Oups! You're right of course. Thanks for spotting this right away.
-
->>   --- a/drivers/media/v4l2-core/videobuf2-dma-sg.c
->>   +++ b/drivers/media/v4l2-core/videobuf2-dma-sg.c
->>   @@ -109,7 +109,9 @@ static void *vb2_dma_sg_alloc(void *allo
->> @@ -42,17 +20,17 @@
->>    		dprintk(1, "%s: Freeing buffer of %d pages\n", __func__,
->>    			buf->num_pages);
->>    		dma_unmap_sg_attrs(buf->dev, sgt->sgl, sgt->orig_nents,
->> -@@ -242,7 +246,9 @@ static void *vb2_dma_sg_get_userptr(void
->> - 	struct sg_table *sgt;
->> +@@ -235,7 +239,9 @@ static void *vb2_dma_sg_get_userptr(void
->>    	DEFINE_DMA_ATTRS(attrs);
->> + 	struct frame_vector *vec;
->>
->>   +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
->>    	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
->>   +#endif
->> -
->>    	buf = kzalloc(sizeof *buf, GFP_KERNEL);
->>    	if (!buf)
->> -@@ -354,7 +360,9 @@ static void vb2_dma_sg_put_userptr(void
->> + 		return NULL;
->> +@@ -292,7 +298,9 @@ static void vb2_dma_sg_put_userptr(void
->>    	int i = buf->num_pages;
->>    	DEFINE_DMA_ATTRS(attrs);
->>
->>
->
->
-
-
+diff --git a/devel/backports-update-manager b/devel/backports-update-manager
+index 228916d..1c3567d 100755
+--- a/devel/backports-update-manager
++++ b/devel/backports-update-manager
+@@ -26,26 +26,27 @@ SPACE_PER_KERNEL_DEB=13
+ KERNEL_URLS = [
+     KPATH + "v3.0.101-oneiric/linux-headers-3.0.101-0300101_3.0.101-0300101.201310220446_all.deb",
+     KPATH + "v3.1.10-precise/linux-headers-3.1.10-030110_3.1.10-030110.201201181135_all.deb",
+-    KPATH + "v3.2.68-precise/linux-headers-3.2.68-030268_3.2.68-030268.201503061936_all.deb",
++    KPATH + "v3.2.69-precise/linux-headers-3.2.69-030269_3.2.69-030269.201505100136_all.deb",
+     KPATH + "v3.3.8-quantal/linux-headers-3.3.8-030308_3.3.8-030308.201206041356_all.deb",
+-    KPATH + "v3.4.107-quantal/linux-headers-3.4.107-0304107_3.4.107-0304107.201504210712_all.deb",
++    KPATH + "v3.4.108-quantal/linux-headers-3.4.108-0304108_3.4.108-0304108.201506191442_all.deb",
+     KPATH + "v3.5.7.12-quantal/linux-headers-3.5.7-03050712_3.5.7-03050712.201305111435_all.deb",
+     KPATH + "v3.6.11-raring/linux-headers-3.6.11-030611_3.6.11-030611.201212171335_all.deb",
+     KPATH + "v3.7.10-raring/linux-headers-3.7.10-030710_3.7.10-030710.201302271235_all.deb",
+     KPATH + "v3.8.13-raring/linux-headers-3.8.13-030813_3.8.13-030813.201305111843_all.deb",
+     KPATH + "v3.9.11-saucy/linux-headers-3.9.11-030911_3.9.11-030911.201307202035_all.deb",
+-    KPATH + "v3.10.75-saucy/linux-headers-3.10.75-031075_3.10.75-031075.201504211105_all.deb",
++    KPATH + "v3.10.84-saucy/linux-headers-3.10.84-031084_3.10.84-031084.201507101935_all.deb",
+     KPATH + "v3.11.10-saucy/linux-headers-3.11.10-031110_3.11.10-031110.201311291453_all.deb",
+-    KPATH + "v3.12.40-trusty/linux-headers-3.12.40-031240_3.12.40-031240.201504091735_all.deb",
++    KPATH + "v3.12.44-trusty/linux-headers-3.12.44-031244_3.12.44-031244.201506151235_all.deb",
+     KPATH + "v3.13.11-trusty/linux-headers-3.13.11-031311_3.13.11-031311.201404222035_all.deb",
+-    KPATH + "v3.14.39-utopic/linux-headers-3.14.39-031439_3.14.39-031439.201504211206_all.deb",
++    KPATH + "v3.14.48-utopic/linux-headers-3.14.48-031448_3.14.48-031448.201507101835_all.deb",
+     KPATH + "v3.15.10-utopic/linux-headers-3.15.10-031510_3.15.10-031510.201408132333_all.deb",
+     KPATH + "v3.16.7-utopic/linux-headers-3.16.7-031607_3.16.7-031607.201410301735_all.deb",
+     KPATH + "v3.17.8-vivid/linux-headers-3.17.8-031708_3.17.8-031708.201501081837_all.deb",
+-    KPATH + "v3.18.12-vivid/linux-headers-3.18.12-031812_3.18.12-031812.201504221338_all.deb",
+-    KPATH + "v3.19.5-vivid/linux-headers-3.19.5-031905_3.19.5-031905.201504211114_all.deb",
+-    KPATH + "v4.0-vivid/linux-headers-4.0.0-040000_4.0.0-040000.201504121935_all.deb",
+-    KPATH + "v4.1-rc8-unstable/linux-headers-4.1.0-040100rc8_4.1.0-040100rc8.201506150335_all.deb"
++    KPATH + "v3.18.18-vivid/linux-headers-3.18.18-031818_3.18.18-031818.201507101433_all.deb",
++    KPATH + "v3.19.8-vivid/linux-headers-3.19.8-031908_3.19.8-031908.201505110938_all.deb",
++    KPATH + "v4.0.8-wily/linux-headers-4.0.8-040008_4.0.8-040008.201507101735_all.deb",
++    KPATH + "v4.1.2-unstable/linux-headers-4.1.2-040102_4.1.2-040102.201507101335_all.deb",
++    KPATH + "v4.2-rc1-unstable/linux-headers-4.2.0-040200rc1_4.2.0-040200rc1.201507051635_all.deb"
+ ]
+ 
+ NUM_KERNELS=len(KERNEL_URLS)
 -- 
-Florian Grandel
-Softwareentwickler
+2.1.4
 
-Mühlener Straße 7
-72160 Horb a.N.
-
-Tel: +49 173 9748059
-Skype: fgrandel
-GTalk: fgrandel@gmail.com
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
