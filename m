@@ -1,32 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:56140 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751944AbbGKVeR (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 11 Jul 2015 17:34:17 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 0/3] backports: convert  backports-update-manager to python 3
-Date: Sat, 11 Jul 2015 23:34:07 +0200
-Message-Id: <1436650450-2696-1-git-send-email-hauke@hauke-m.de> (sfid-20150711_233420_260215_E9BE0149)
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:7878 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750705AbbGKN2K (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 11 Jul 2015 09:28:10 -0400
+Message-ID: <55A119E7.3050809@broadcom.com> (sfid-20150711_152812_915704_24C3DEB8)
+Date: Sat, 11 Jul 2015 15:28:07 +0200
+From: Arend van Spriel <arend@broadcom.com>
+MIME-Version: 1.0
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+CC: Johannes Berg <johannes@sipsolutions.net>
+Subject: backport for aead_request_set_ad()
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Ubuntu now uses the xz algorithm to compress the debian packages and 
-our old script was not compatible this that. One step to make it work 
-again is to convert it to python 3.
+I am running backports on 4.2-rc1 source tree and hit following problem:
 
-Hauke Mehrtens (3):
-  devel: convert backports-update-manager to python3
-  devel: add support for deb with xz
-  devel: update the test kernel versions
+   CC [M]  /tmp/bp-test/net/mac80211/aes_ccm.o
+/tmp/bp-test/net/mac80211/aes_ccm.c: In function 
+���ieee80211_aes_ccm_encrypt���:
+/tmp/bp-test/net/mac80211/aes_ccm.c:41:2: error: implicit declaration of 
+function ���aead_request_set_ad��� [-Werror=implicit-function-declaration]
+   aead_request_set_ad(aead_req, sg[0].length);
+   ^
+cc1: some warnings being treated as errors
 
- devel/backports-update-manager | 44 ++++++++++++++++++++++--------------------
- lib/bpar.py                    |  4 ++--
- 2 files changed, 25 insertions(+), 23 deletions(-)
+Looking at commit 957e0fe62923 ("mac80211: Switch to new AEAD 
+interface") introducing this call it seems not so trivial and may 
+require a backports patch. Just wondering if anyone already had a shot 
+at this one.
 
--- 
-2.1.4
-
+Regards,
+Arend
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
