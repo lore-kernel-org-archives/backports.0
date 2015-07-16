@@ -1,160 +1,209 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:33576 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752840AbbGPAVm (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 15 Jul 2015 20:21:42 -0400
-Received: by pdbqm3 with SMTP id qm3so33626496pdb.0
-        for <backports@vger.kernel.org>; Wed, 15 Jul 2015 17:21:41 -0700 (PDT)
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:36558 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753591AbbGPAdE (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 15 Jul 2015 20:33:04 -0400
+Received: by pachj5 with SMTP id hj5so32617277pac.3
+        for <backports@vger.kernel.org>; Wed, 15 Jul 2015 17:33:03 -0700 (PDT)
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: cocci@systeme.lip6.fr
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH 2/2] pycocci: figure out if to enable --jobs, --use-gitgrep or --use-glimpse
-Date: Wed, 15 Jul 2015 17:21:30 -0700
-Message-Id: <1437006090-25479-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20150716_022143_943383_460EA2DF)
-In-Reply-To: <1437006090-25479-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1437006090-25479-1-git-send-email-mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: julia.lawall@lip6.fr, "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH 2/2] ckmake: address directory max depth
+Date: Wed, 15 Jul 2015 17:32:52 -0700
+Message-Id: <1437006772-25592-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20150716_023307_352517_654F32DC)
+In-Reply-To: <1437006772-25592-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1437006772-25592-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-pycocci was originally written to set sensible defaults for doing
-development with Coccinelle with a git tree and to also add
-parallelism wrapper support. Coccinelle now has a '--jobs' argument
-which does the same but it works better. This feature is available
-as of 1.0.0 but will have some fixes which will go in on 1.0.2.
+It seems new versions of python make the os walk recurse more
+than we used to before, our ckmake implementation was picking up
+more kernels targets than obviously we want to build then. Fix
+this by replacing the os.walk() with a simple os.listdir()
+which just keeps us at the top level directory of lib/modules.
 
-Likewise the 1.0.1 release has --use-gitgrep support which works
-better than --use-coccigrep. An old feature that has been in place
-for a long time is --use-glimpse, and since we have that code
-released now as open source we should provide support for it as
-its expected we'd get the best results with it. The glimpse
-code still needs a bit of work, as the public releases don't yet
-build correctly, but nevertheless we should support it.
-
-Instead of removing the old built-in warpper parallelism support
-lets keep it and instead check the version of coccinelle you have
-and let pycocci figure out what options you need.
-
-The index preference works well if your target is the base for
-development, but if its a file we don't yet have support to check
-to see where the base for development for that file comes from
-and check if it a git directory or glimpse index if there, we
-should be easily able to extend to add support this, but for those
-cases using --use-coccigrep may suffice anyway for now.
+There are issues still with the way kernels are reported but
+that's a cosmetic thing which we can fix next.
 
 Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
 ---
- tools/pycocci | 85 ++++++++++++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 76 insertions(+), 9 deletions(-)
+ devel/ckmake | 132 +++++++++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 84 insertions(+), 48 deletions(-)
 
-diff --git a/tools/pycocci b/tools/pycocci
-index 5a11e5c770c7..98b6ac257e09 100755
---- a/tools/pycocci
-+++ b/tools/pycocci
-@@ -266,14 +266,57 @@ class ExecutionErrorThread(CoccinelleError):
-             tf.close()
-             os.unlink(fn)
+diff --git a/devel/ckmake b/devel/ckmake
+index 0c238a65de8d..23f3819221f8 100755
+--- a/devel/ckmake
++++ b/devel/ckmake
+@@ -455,52 +455,58 @@ class kernel_set():
+                 return
+         self.releases.insert(new_rel['idx'], new_rel)
  
--def spatch(cocci_file, outdir,
--           max_threads, thread_id, temp_dir, ret_q, extra_args=[]):
-+class ExecutionErrorCocci(CoccinelleError):
-+    def __init__(self, errcode, output, cocci_file, logwrite, print_name):
-+        self.error_code = errcode
-+        logwrite("Failed to apply changes from %s\n" % print_name)
-+        logwrite(output)
+-    def parse_releases(self, target_kranges):
++    def parse_releases(self, target_kranges, args):
+         self.target_kranges = target_kranges
+-        for dirname, dirnames, filenames in os.walk(modules):
+-            rels = []
+-            for subdirname in dirnames:
+-                specifics = get_rel_spec_ubuntu(subdirname)
+-                if (not specifics):
+-                    continue
+-                base_specs = get_base_spec(specifics)
+-                if (not base_specs):
+-                    continue
+-                rc = False
+-
+-                ver = specifics['VERSION'] + '.' + \
+-                    specifics['PATCHLEVEL']
+-
+-                if ("rc" in subdirname):
+-                    rc = True
+-                    ver = ver + '-rc' + specifics['EXTRAVERSION']
+-                else:
+-                    ver = ver + '.' + specifics['SUBLEVEL']
+-
+-                get_rel_spec_base(subdirname)
+-                rel = dict(name=subdirname,
+-                           full_path=dirname + '/' +
+-                           subdirname,
+-                           version=ver,
+-                           is_rc=rc,
+-                           ver=specifics['VERSION'],
+-                           pat=specifics['PATCHLEVEL'],
+-                           sub=specifics['SUBLEVEL'],
+-                           ext=specifics['EXTRAVERSION'],
+-                           base_weight=compute_rel_weight_base(base_specs),
+-                           weight=compute_rel_weight(specifics),
+-                           processed=False,
+-                           log='',
+-                           status=1234)
+-                rels.append(rel)
+-
+-            def relsort(rel):
+-                return int(rel['ver']), int(rel['pat']), int(rel['sub'])
+-            rels.sort(key=relsort)
+-            for rel in rels:
+-                rel['idx'] = len(self.releases)
+-                self.evaluate_new_rel(rel)
+-        self.refresh()
++        rels = []
++        if args.develdebug:
++            sys.stdout.write("Paths for kernels:\n")
++        for path in os.listdir(os.path.abspath(modules)):
++            subdirname = os.path.abspath(os.path.join(modules, path))
++            if not os.path.isdir(subdirname):
++                continue
++            if args.develdebug:
++                sys.stdout.write("%s\n" % (subdirname))
++            specifics = get_rel_spec_ubuntu(path)
++            if (not specifics):
++                continue
++            base_specs = get_base_spec(specifics)
++            if (not base_specs):
++                continue
++            rc = False
 +
-+def spatch(cocci_file, outdir, logwrite, num_jobs, print_name, extra_args=[]):
++            ver = specifics['VERSION'] + '.' + \
++                specifics['PATCHLEVEL']
 +
-+    req = Req(chatty=True)
-+    req.coccinelle('1.0.2')
++            if ("rc" in subdirname):
++                rc = True
++                ver = ver + '-rc' + specifics['EXTRAVERSION']
++            else:
++                ver = ver + '.' + specifics['SUBLEVEL']
 +
-+    if not req.reqs_match():
-+        sys.exit(1)
++            get_rel_spec_base(subdirname)
++            rel = dict(name=subdirname,
++                       full_path=subdirname,
++                       version=ver,
++                       is_rc=rc,
++                       ver=specifics['VERSION'],
++                       pat=specifics['PATCHLEVEL'],
++                       sub=specifics['SUBLEVEL'],
++                       ext=specifics['EXTRAVERSION'],
++                       base_weight=compute_rel_weight_base(base_specs),
++                       weight=compute_rel_weight(specifics),
++                       processed=False,
++                       log='',
++                       status=1234)
++            rels.append(rel)
 +
-+    num_cpus = cpu_count()
-+    if num_jobs:
-+        threads = int(num_jobs)
-+    else:
-+        threads = num_cpus
-+
-+    cmd = ['spatch',
-+            '--sp-file', cocci_file,
-+            '--in-place',
-+            '--recursive-includes',
-+            '--relax-include-path',
-+            '--timeout', '120',
-+            '--dir', outdir ]
-+
-+    if (threads > 1):
-+            cmd.extend(['--jobs', str(threads)])
-+
-+    cmd.extend(extra_args)
-+
-+    logwrite("%s\n" % " ".join(cmd))
-+
-+    sprocess = subprocess.Popen(cmd,
-+                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                                close_fds=True, universal_newlines=True)
-+    output = sprocess.communicate()[0]
-+    sprocess.wait()
-+    if sprocess.returncode != 0:
-+        raise ExecutionErrorCocci(sprocess.returncode, output, cocci_file, logwrite, print_name)
-+    return output
-+
-+def spatch_old(cocci_file, outdir,
-+               max_threads, thread_id, temp_dir, ret_q, extra_args=[]):
-     cmd = ['spatch',
-             '--sp-file', cocci_file,
-             '--in-place',
-             '--recursive-includes',
-             '--relax-include-path',
--            '--use-coccigrep',
-             '--timeout', '120',
-             '--dir', outdir ]
++        def relsort(rel):
++            return int(rel['ver']), int(rel['pat']), int(rel['sub'])
++        rels.sort(key=relsort)
++        for rel in rels:
++            rel['idx'] = len(self.releases)
++            self.evaluate_new_rel(rel)
++        if not args.develdebug:
++            self.refresh()
  
-@@ -360,12 +403,36 @@ def _main():
-     if args.jobs > 0:
-         jobs = args.jobs
+     def setup_screen(self):
+         for i in range(0, len(self.releases)):
+@@ -519,6 +525,16 @@ class kernel_set():
+             self.stdscr.refresh()
+             self.lock.release()
  
--    output = threaded_spatch(args.cocci_file,
--                             args.target_dir,
--                             logwrite,
--                             jobs,
--                             os.path.basename(args.cocci_file),
--                             extra_args=extra_spatch_args)
-+    has_spatch_1_0_1 = Req(chatty=False)
-+    has_spatch_1_0_1.coccinelle('1.0.1')
++    def setup_screen_debug(self):
++        sys.stdout.write("%-4s" % ("IDX"))
++        sys.stdout.write("%-20s" % ("VERSION"))
++        sys.stdout.write("%-60s\n" % ("DIRECTORY"))
++        for i in range(0, len(self.releases)):
++            rel = self.releases[i]
++            sys.stdout.write("%-4d" % (rel['idx'] + 1))
++            sys.stdout.write("%-20s" % (rel['version']))
++            sys.stdout.write("%-60s\n" % (rel['full_path']))
 +
-+    has_spatch_1_0_2 = Req(chatty=False)
-+    has_spatch_1_0_2.coccinelle('1.0.2')
-+
-+    glimpse_index = os.path.abspath(os.path.join(args.target_dir, '.glimpse_index'))
-+    git_dir = os.path.abspath(os.path.join(args.target_dir, '.git'))
-+
-+    if os.path.isfile(glimpse_index):
-+       extra_spatch_args.append('--use-glimpse')
-+    elif os.path.isdir(git_dir):
-+        if has_spatch_1_0_1.reqs_match():
-+            extra_spatch_args.append('--use-gitgrep')
-+        else:
-+            extra_spatch_args.append('--use-coccigrep')
+     def create_threads(self, cmdline_args):
+         for rel in self.releases:
+             th = Thread(target=process_kernel, args=(0, self, cmdline_args))
+@@ -552,9 +568,19 @@ class kernel_set():
+ def main(stdscr, args, target_kranges):
+     kset = kernel_set(stdscr)
+ 
+-    kset.set_locale()
+-    kset.parse_releases(target_kranges)
++    if args.develdebug:
++        kill_curses()
 +    else:
-+        extra_spatch_args.append('--use-coccigrep')
++        kset.set_locale()
 +
-+    if has_spatch_1_0_2.reqs_match():
-+        output = spatch(args.cocci_file, args.target_dir, logwrite, jobs,
-+                        os.path.basename(args.cocci_file),
-+                        extra_args=extra_spatch_args)
-+    else:
-+        output = threaded_spatch(args.cocci_file,
-+                                 args.target_dir,
-+                                 logwrite,
-+                                 jobs,
-+                                 os.path.basename(args.cocci_file),
-+                                 extra_args=extra_spatch_args)
-     if args.verbose:
-         logwrite(output)
-     return 0
++    kset.parse_releases(target_kranges, args)
++
++    if args.develdebug:
++        kset.setup_screen_debug()
++        sys.exit(0)
++
+     kset.setup_screen()
++
+     kset.create_threads(args)
+     kset.kick_threads()
+     kset.wait_threads()
+@@ -602,6 +628,9 @@ if __name__ == "__main__":
+                         help='Build this defconfig rather than only backport code.')
+     parser.add_argument('--revs', metavar='<revision-list>', type=str,
+                         help='Optional list of kernel revisions to test for, example: 2.6.24,2.6.30,2.6.32..3.2,3.4')
++    parser.add_argument(
++        '--develdebug', const=True, default=False, action="store_const",
++        help='Development debug - use to debug which kernels we are going to process')
+     args = parser.parse_args()
+ 
+     target_kranges = []
+@@ -624,8 +653,15 @@ if __name__ == "__main__":
+         os.remove(ckmake_report)
+     if os.path.exists(tmp_path):
+         rmtree(tmp_path)
+-    os.makedirs(tmp_path)
++
++    if not args.develdebug:
++        os.makedirs(tmp_path)
++
+     curses.wrapper(main, args, target_kranges)
++
++    if args.develdebug:
++        sys.exit(ckmake_return)
++
+     kill_curses()
+     process_logs()
+     clean()
 -- 
 2.3.2.209.gd67f9d5.dirty
 
