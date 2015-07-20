@@ -1,253 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:33444 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752188AbbGTWcg (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 20 Jul 2015 18:32:36 -0400
-Received: by pdbnt7 with SMTP id nt7so37227899pdb.0
-        for <backports@vger.kernel.org>; Mon, 20 Jul 2015 15:32:36 -0700 (PDT)
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:34611 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753230AbbGTRKj (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 20 Jul 2015 13:10:39 -0400
+Received: by obre1 with SMTP id e1so105845528obr.1
+        for <backports@vger.kernel.org>; Mon, 20 Jul 2015 10:10:38 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.10.1507201826320.2475@hadrien>
+References: <1437195911-28821-1-git-send-email-mcgrof@do-not-panic.com>
+ <alpine.DEB.2.02.1507181901020.2059@localhost6.localdomain6>
+ <CAB=NE6VEpGSU2tY4H+QjuL82ku-Lz80sXN509q9_DgpbLnPEUQ@mail.gmail.com> <alpine.DEB.2.10.1507201826320.2475@hadrien>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: cocci@systeme.lip6.fr
-Cc: backports@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Subject: [PATCH v3 1/5] pycocci: add requirements class
-Date: Mon, 20 Jul 2015 15:32:20 -0700
-Message-Id: <1437431544-32662-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20150721_003239_008768_532A9DB6)
-In-Reply-To: <1437431544-32662-1-git-send-email-mcgrof@do-not-panic.com>
-References: <1437431544-32662-1-git-send-email-mcgrof@do-not-panic.com>
+Date: Mon, 20 Jul 2015 10:10:18 -0700
+Message-ID: <CAB=NE6X2oHaW3VCR5F2o3j6RmEVeEdtwZenarM1U5qPeAB=F4Q@mail.gmail.com> (sfid-20150720_191040_839019_2BCF61D1)
+Subject: Re: [Cocci] [PATCH v2 0/4] pycocci: index opts, SmPL patch proof support
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: "cocci@systeme.lip6.fr" <cocci@systeme.lip6.fr>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Johannes Berg <johannes@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This will be used later to help examine different tools requirements.
-For instance, this will be used to fine tune spatch operation depending
-on the version of spatch you have. Later we'll also use this to add
-support for SmPL patch equivalence proof support.
+On Mon, Jul 20, 2015 at 9:27 AM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+>> > Do you need patches 2 and 3?
+>>
+>> Do you mean I should squash them together, or something else ?
+>
+> I meant that since --use-git is able to cope with receiving a subtree of a
+> git repository, because git itself is able to cope with that, perhaps you
+> don't need them at all.  It seems like you are redoing all the work that
+> git already does.
 
-This introduces has no functional changes.
+Ah, well so although --use-gitgrep has its own heuristics for
+determining if gitgrep can correctly be used or not we still need
+something to figure out if it toggle --use-gitgrep or not as I do not
+think Coccinelle automatically tries to make use of --use-gitgrep
+unless otherwise specified, please correct me if I'm wrong. That is,
+if no indexing arguments are passed does Coccinelle figure out on its
+own whether or not to use --use-glimpse, --use-gitgrep and as a last
+resort --use-coccigrep ? This is what pycocci is doing here. Other
+than this another reason for the git class in this series is for
+Coccinelle SmPL patch equivalence proof support, that uses git to
+create branches for the patch version of changes, then the smpl
+version of changes, and finally 'git diff --stat between these two'.
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@do-not-panic.com>
----
- tools/pycocci | 204 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 203 insertions(+), 1 deletion(-)
-
-diff --git a/tools/pycocci b/tools/pycocci
-index 4aa1d3638347..5a11e5c770c7 100755
---- a/tools/pycocci
-+++ b/tools/pycocci
-@@ -10,9 +10,211 @@
- # defaults, specifically for kernel developers.
- 
- from multiprocessing import Process, cpu_count, Queue
--import argparse, subprocess, os, sys
-+import argparse, subprocess, os, sys, re
- import tempfile, shutil
- 
-+class ReqError(Exception):
-+    pass
-+class ExecutionError(ReqError):
-+    def __init__(self, errcode):
-+        self.error_code = errcode
-+
-+class Req:
-+    "To be used for verifying binay package dependencies on Python code"
-+    def __init__(self, chatty=True):
-+        self.all_reqs_ok = True
-+        self.debug = False
-+        self.chatty = chatty
-+    def logwrite(self, msg):
-+        if self.chatty:
-+            sys.stdout.write(msg)
-+            sys.stdout.flush()
-+    def enable_debug(self):
-+        self.debug = True
-+    def reqs_match(self):
-+        if self.all_reqs_ok:
-+            return True
-+        self.logwrite("You have unfulfilled binary requirements\n")
-+        return False
-+    def req_missing(self, program):
-+        self.all_reqs_ok = False
-+        self.logwrite("You need to have installed: %s\n" % program)
-+    def req_old_program(self, program, version_req):
-+        self.all_reqs_ok = False
-+        self.logwrite("You need to have installed: %s >= %s\n" % (program, version_req))
-+    def which(self, program):
-+        cmd = ['which', program]
-+        process = subprocess.Popen(cmd,
-+                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                                   close_fds=True, universal_newlines=True)
-+        stdout = process.communicate()[0]
-+        process.wait()
-+        if process.returncode != 0:
-+            raise ExecutionError(process.returncode)
-+        return stdout
-+    def req_exists(self, program):
-+        cmd = ['which', program]
-+        process = subprocess.Popen(cmd,
-+                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                                   close_fds=True, universal_newlines=True)
-+        stdout = process.communicate()[0]
-+        process.wait()
-+        if process.returncode == 0:
-+            return True
-+        return False
-+    def req_get_prog_version(self, program, version_query, version_pos):
-+        '''
-+        Suppose you have a binary that outputs:
-+        $ spatch --version
-+        spatch version 1.0.0-rc21 with Python support and with PCRE support
-+
-+        Every program veries what it wants you to query it for a version string,
-+        prog_version() is designed so that you pass what the program expects for
-+        its version query, and the position you expect the version string to be
-+        on using python list.
-+        '''
-+        cmd = [program, version_query]
-+        process = subprocess.Popen(cmd,
-+                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-+                                   close_fds=True, universal_newlines=True)
-+        stdout = process.communicate()[0]
-+        process.wait()
-+        if process.returncode != 0:
-+            raise ExecutionError(process.returncode)
-+        if self.debug:
-+            sys.stdout.write("Running '%s' got us this break down:\n%s\n" %
-+                             (
-+                             ' '.join(cmd),
-+                             "\n".join(map(str, [[i, x] for i, x in enumerate(stdout.split())])),
-+                             ))
-+            sys.stdout.write("You are using for version: %s\n" % stdout.split()[version_pos])
-+            sys.stdout.write("Specifically your idx, element: %s\n" % ([[i, x] for i, x in enumerate(stdout.split())][version_pos]))
-+        return stdout.split()[version_pos]
-+
-+    MAX_RC = 25
-+    def __compute_rel_weight(self, rel_specs):
-+        weight = 0
-+        extra = 0
-+        sublevel = 0
-+        relmod = 0
-+
-+        if self.debug:
-+            sys.stdout.write("VERSION       = %s\n" % rel_specs['VERSION'])
-+            sys.stdout.write("PATCHLEVEL    = %s\n" % rel_specs['PATCHLEVEL'])
-+            sys.stdout.write("SUBLEVEL      = %s\n" % rel_specs['SUBLEVEL'])
-+            sys.stdout.write("EXTRAVERSION  = %s\n" % rel_specs['EXTRAVERSION'])
-+            sys.stdout.write("RELMOD_UPDATE = %s\n" % rel_specs['RELMOD_UPDATE'])
-+
-+        if rel_specs['EXTRAVERSION'] != '':
-+            if ("." in rel_specs['EXTRAVERSION'] or
-+                    "rc" in rel_specs['EXTRAVERSION']):
-+                rc = rel_specs['EXTRAVERSION'].lstrip("-rc")
-+                if (rc == ""):
-+                    rc = 0
-+                else:
-+                    rc = int(rc) - (Req.MAX_RC + 1)
-+                extra = int(rc)
-+            else:
-+                extra = int(rel_specs['EXTRAVERSION']) + 10
-+
-+        if rel_specs['SUBLEVEL'] != '':
-+            sublevel = int(rel_specs['SUBLEVEL'].lstrip(".")) * 20
-+        else:
-+            sublevel = 5
-+
-+        if rel_specs['RELMOD_UPDATE'] != '':
-+            mod = rel_specs['RELMOD_UPDATE']
-+            if (mod == ""):
-+                mod = 0
-+            else:
-+                mod = int(mod)
-+            relmod = int(mod)
-+
-+        weight = (int(rel_specs['VERSION'])    << 32) + \
-+                 (int(rel_specs['PATCHLEVEL']) << 16) + \
-+                 (sublevel   		       << 8 ) + \
-+                 (extra * 60) + (relmod * 2)
-+
-+        return weight
-+    def req_get_rel_spec(self, rel):
-+        if "rc" in rel:
-+            m = re.match(r"v*(?P<VERSION>\d+)\.+"
-+                         "(?P<PATCHLEVEL>\d+)[.]*"
-+                         "(?P<SUBLEVEL>\d*)"
-+                         "(?P<EXTRAVERSION>[-rc]+\w*)\-*"
-+                         "(?P<RELMOD_UPDATE>\d*)[-]*",
-+                         rel)
-+        else:
-+            m = re.match(r"v*(?P<VERSION>\d+)\.+"
-+                         "(?P<PATCHLEVEL>\d+)[.]*"
-+                         "(?P<SUBLEVEL>\d*)[.]*"
-+                         "(?P<EXTRAVERSION>\w*)\-*"
-+                         "(?P<RELMOD_UPDATE>\d*)[-]*",
-+                         rel)
-+        if not m:
-+            return m
-+        rel_specs = m.groupdict()
-+        return rel_specs
-+    def compute_rel_weight(self, rel):
-+        rel_specs = self.req_get_rel_spec(rel)
-+        if not rel_specs:
-+            return 0
-+        return self.__compute_rel_weight(rel_specs)
-+    def linux_version_cmp(self, version_req, version):
-+        '''
-+        If the program follows the linux version style scheme you can
-+        use this to compare versions.
-+        '''
-+        weight_has = self.compute_rel_weight(version)
-+        weight_req = self.compute_rel_weight(version_req)
-+
-+        if self.debug:
-+            sys.stdout.write("You have program weight: %s\n" % weight_has)
-+            sys.stdout.write("Required program weight: %s\n" % weight_req)
-+
-+        if weight_has < weight_req:
-+            return -1
-+        return 0
-+    def require_version(self, program, version_query, version_req, version_pos, version_cmp):
-+        '''
-+        If you have a program version requirement you can specify it here,
-+        as for the other flags refer to prog_version.
-+        '''
-+        if not self.require(program):
-+            return False
-+        version = self.req_get_prog_version(program, version_query, version_pos)
-+        if self.debug:
-+            sys.stdout.write("Checking release specs and weight: for: %s\n" % program)
-+            sys.stdout.write("You have version: %s\n" % version)
-+            sys.stdout.write("Required version: %s\n" % version_req)
-+        if version_cmp(version_req, version) != 0:
-+            self.req_old_program(program, version_req)
-+            return False
-+        return True
-+    def require(self, program):
-+        if self.req_exists(program):
-+            return True
-+        self.req_missing(program)
-+        return False
-+    def require_hint(self, program, package_hint):
-+        if self.require(program):
-+            return True
-+        sys.stdout.write("Try installing the package: %s\n" % package_hint)
-+        return False
-+    def coccinelle(self, version):
-+        if self.require_version('spatch', '--version', version, 2, self.linux_version_cmp):
-+            return True
-+        self.logwrite("Try installing the package: coccinelle\n")
-+        self.logwrite("If that is too old go grab the code from source:\n\n")
-+        self.logwrite("git clone https://github.com/coccinelle/coccinelle.git\n\n")
-+        self.logwrite("To build you will need: ocaml ncurses-devel\n\n")
-+        self.logwrite("If on SUSE / OpenSUSE you will also need: ocaml-ocamldoc\n\n")
-+        return False
-+    def make(self, version):
-+        return self.require_version('make', '--version', version, 2, self.linux_version_cmp)
-+    def gcc(self, version):
-+        return self.require_version('gcc', '--version', version, 3, self.linux_version_cmp)
-+
- # simple tempdir wrapper object for 'with' statement
- #
- # Usage:
--- 
-2.3.2.209.gd67f9d5.dirty
-
+ Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
