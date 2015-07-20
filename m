@@ -1,52 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:33588 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752840AbbGPAVf (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 15 Jul 2015 20:21:35 -0400
-Received: by padck2 with SMTP id ck2so32314298pad.0
-        for <backports@vger.kernel.org>; Wed, 15 Jul 2015 17:21:35 -0700 (PDT)
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: cocci@systeme.lip6.fr
-Cc: backports@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH 0/2] coccinelle: extend pycocci checks
-Date: Wed, 15 Jul 2015 17:21:28 -0700
-Message-Id: <1437006090-25479-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20150716_022137_876334_0FAC9A83)
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:49615 "EHLO
+	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755601AbbGTRdI (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 20 Jul 2015 13:33:08 -0400
+Date: Mon, 20 Jul 2015 19:33:03 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+cc: "cocci@systeme.lip6.fr" <cocci@systeme.lip6.fr>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: [Cocci] [PATCH v2 0/4] pycocci: index opts, SmPL patch proof
+ support
+In-Reply-To: <CAB=NE6WWVSNUWyZThBe+eXoUCV+RrDuDPjUqa8bJ5Uf0Dw93NQ@mail.gmail.com>
+Message-ID: <alpine.DEB.2.10.1507201932490.2475@hadrien> (sfid-20150720_193310_241749_DD46339D)
+References: <1437195911-28821-1-git-send-email-mcgrof@do-not-panic.com> <alpine.DEB.2.02.1507181901020.2059@localhost6.localdomain6> <CAB=NE6VEpGSU2tY4H+QjuL82ku-Lz80sXN509q9_DgpbLnPEUQ@mail.gmail.com> <alpine.DEB.2.10.1507201826320.2475@hadrien>
+ <CAB=NE6X2oHaW3VCR5F2o3j6RmEVeEdtwZenarM1U5qPeAB=F4Q@mail.gmail.com> <alpine.DEB.2.10.1507201913370.2475@hadrien> <CAB=NE6UdMhy1WP+apzMKmCwe2eevwRy72h_5f0cx4_aYtQNofQ@mail.gmail.com> <alpine.DEB.2.10.1507201924530.2475@hadrien>
+ <CAB=NE6WWVSNUWyZThBe+eXoUCV+RrDuDPjUqa8bJ5Uf0Dw93NQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-Cocccinelle has received quite a bit of features, one is the ability
-to use git grep functionality for indexing. Another is some fixes for
-parallelism support. Instead of just assuming everyone has the latest
-release of coccinelle have the script check for the release installed
-and use sensible defaults which are known to work the best. This also
-infers what indexing option should be used for you:
 
- - Use glimpse if you have glimpseindex; otherwise:
- - Use git grep if you have a git tree; otherwise:
- - Use cocci grep
+On Mon, 20 Jul 2015, Luis R. Rodriguez wrote:
 
-We'll use the new --jobs (paramap support) if the release is > 1.0.2,
-otherwise we'll default to our old Python wrappar parallelism support.
+> On Mon, Jul 20, 2015 at 10:25 AM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+> >> Ah, so it should be safe to just check for the glimpse index on the
+> >> target directory, use it if its there, otherwise default to using
+> >> --use-gitgrep as a second step should be safe, regardless of whether
+> >> or not the target (directory or file) is part of a git tree?
+> >
+> > Yep.
+>
+> Great thanks, can you confirm if that safe for Coccinelle 1.0.1 or
+> will that only be a safe bet for 1.0.2 ? If only safe for 1.0.2 then I
+> can have it default only for 1.0.2 and for 1.0.2 leave the check in
+> place?
 
-This also preps up pycocci to be extended later with other tools, for
-example we're considering to add SmPL patch proof support into pycocci
-now, with the reqs checks stuff in place this should be rather easy to
-ensure folks have the requirements present.
+It's only supported as of 1.0.2.
 
-If there are no issues I'll push these into the Coccinelle git tree.
-
-Luis R. Rodriguez (2):
-  pycocci: add requirements class
-  pycocci: figure out if to enable --jobs, --use-gitgrep or
-    --use-glimpse
-
- tools/pycocci | 289 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 279 insertions(+), 10 deletions(-)
-
--- 
-2.3.2.209.gd67f9d5.dirty
-
+julia
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
