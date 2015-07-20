@@ -1,54 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:33463 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752188AbbGTWcc (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 20 Jul 2015 18:32:32 -0400
-Received: by padck2 with SMTP id ck2so107349413pad.0
-        for <backports@vger.kernel.org>; Mon, 20 Jul 2015 15:32:31 -0700 (PDT)
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:36495 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932232AbbGTRcM (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 20 Jul 2015 13:32:12 -0400
+Received: by obnw1 with SMTP id w1so105927526obn.3
+        for <backports@vger.kernel.org>; Mon, 20 Jul 2015 10:32:12 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.10.1507201924530.2475@hadrien>
+References: <1437195911-28821-1-git-send-email-mcgrof@do-not-panic.com>
+ <alpine.DEB.2.02.1507181901020.2059@localhost6.localdomain6>
+ <CAB=NE6VEpGSU2tY4H+QjuL82ku-Lz80sXN509q9_DgpbLnPEUQ@mail.gmail.com>
+ <alpine.DEB.2.10.1507201826320.2475@hadrien> <CAB=NE6X2oHaW3VCR5F2o3j6RmEVeEdtwZenarM1U5qPeAB=F4Q@mail.gmail.com>
+ <alpine.DEB.2.10.1507201913370.2475@hadrien> <CAB=NE6UdMhy1WP+apzMKmCwe2eevwRy72h_5f0cx4_aYtQNofQ@mail.gmail.com>
+ <alpine.DEB.2.10.1507201924530.2475@hadrien>
 From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: cocci@systeme.lip6.fr
-Cc: backports@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: [PATCH v3 0/5] pycocci: few updates and add to install target
-Date: Mon, 20 Jul 2015 15:32:19 -0700
-Message-Id: <1437431544-32662-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20150721_003233_842659_DF800562)
+Date: Mon, 20 Jul 2015 10:31:52 -0700
+Message-ID: <CAB=NE6WWVSNUWyZThBe+eXoUCV+RrDuDPjUqa8bJ5Uf0Dw93NQ@mail.gmail.com> (sfid-20150720_193219_479189_AC6A3525)
+Subject: Re: [Cocci] [PATCH v2 0/4] pycocci: index opts, SmPL patch proof support
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: "cocci@systeme.lip6.fr" <cocci@systeme.lip6.fr>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Johannes Berg <johannes@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
+On Mon, Jul 20, 2015 at 10:25 AM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+>> Ah, so it should be safe to just check for the glimpse index on the
+>> target directory, use it if its there, otherwise default to using
+>> --use-gitgrep as a second step should be safe, regardless of whether
+>> or not the target (directory or file) is part of a git tree?
+>
+> Yep.
 
-This v3 addresses the changes noted by Julia. Since this is extending
-features to help with SmPL patch development, in particular --show-proof,
-and since we're using quite a bit of heuristics useful to users of Coccinelle
-depending on their version installed document all this on a proper man page
-for pycocci and also add pycocci into the install target.
+Great thanks, can you confirm if that safe for Coccinelle 1.0.1 or
+will that only be a safe bet for 1.0.2 ? If only safe for 1.0.2 then I
+can have it default only for 1.0.2 and for 1.0.2 leave the check in
+place?
 
-In the future we should probably just let pycocci read ini type of file
-on say your ~/.pycocci which will let you specify and customize further
-defaults we'd inherit depending on your target. Then you can further
-customize your options per project. Each upstream project can then also
-have their own .pycocci perhaps which promotes a set of options to use.
-For instance right now Linux scripts/coccinelle/ lets scripts gather
-options to use per SmPL patch. We shoul standardize on a format format
-for that and to enable project specific tuned variables.
-
-If there are no issues with this v3 I'll merge soon.
-
-Luis R. Rodriguez (5):
-  pycocci: add requirements class
-  pycocci: add git class
-  pycocci: figure out if to enable --jobs, --use-gitgrep or
-    --use-glimpse
-  pycocci: add Coccinelle SmPL patch proof support
-  pycocci: add man page and promote pycocci to install target
-
- Makefile       |   3 +
- docs/pycocci.1 | 217 ++++++++++++++++++++++++++
- tools/pycocci  | 486 ++++++++++++++++++++++++++++++++++++++++++++++++++++++---
- 3 files changed, 687 insertions(+), 19 deletions(-)
- create mode 100644 docs/pycocci.1
-
--- 
-2.3.2.209.gd67f9d5.dirty
-
+ Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
