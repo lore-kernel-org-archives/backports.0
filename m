@@ -1,104 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wg0-f54.google.com ([74.125.82.54]:33090 "EHLO
-	mail-wg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752500AbbGAOHP (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 1 Jul 2015 10:07:15 -0400
-Received: by wgck11 with SMTP id k11so37975112wgc.0
-        for <backports@vger.kernel.org>; Wed, 01 Jul 2015 07:07:14 -0700 (PDT)
-From: Florian Grandel <fgrandel@gmail.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org, Florian Grandel <fgrandel@gmail.com>
-Subject: [PATCH v2] patches: fix v4l2 patch
-Date: Wed,  1 Jul 2015 16:06:52 +0200
-Message-Id: <1435759612-21587-1-git-send-email-fgrandel@gmail.com> (sfid-20150701_160718_206123_02E13620)
-In-Reply-To: <1435333743-28237-1-git-send-email-fgrandel@gmail.com>
-References: <1435333743-28237-1-git-send-email-fgrandel@gmail.com>
+Received: from mail-pd0-f169.google.com ([209.85.192.169]:33704 "EHLO
+	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752431AbbGTWaz (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 20 Jul 2015 18:30:55 -0400
+Received: by pdbnt7 with SMTP id nt7so37208608pdb.0
+        for <backports@vger.kernel.org>; Mon, 20 Jul 2015 15:30:54 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: backports@vger.kernel.org
+Cc: cocci@systeme.lip6.fr,
+	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [PATCH v2 0/2] backports: respin on 0002-no_dmabuf SmPL and ckmake changes
+Date: Mon, 20 Jul 2015 15:30:44 -0700
+Message-Id: <1437431446-32619-1-git-send-email-mcgrof@do-not-panic.com> (sfid-20150721_003057_350825_D924D6DF)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Fix to support next-20160626.
+This v2 is a respin with the ckmake format changes fixed. I'll merge
+this now as I had not heard feedback on the v1 spin and this is needed
+to move on with life.
 
-Signed-off-by: Florian Grandel <fgrandel@gmail.com>
----
- .../media/0005-dma-no-sync/v4l2.patch.orig         | 67 ++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
- create mode 100644 patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch.orig
+Luis R. Rodriguez (2):
+  patches: replace most of 0002-no_dmabuf with SmPL
+  ckmake: address directory max depth
 
-diff --git a/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch.orig b/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch.orig
-new file mode 100644
-index 0000000..7c99937
---- /dev/null
-+++ b/patches/collateral-evolutions/media/0005-dma-no-sync/v4l2.patch.orig
-@@ -0,0 +1,67 @@
-+<<<<<<< HEAD
-+--- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
-++++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
-+@@ -470,7 +470,9 @@ static void vb2_dc_put_userptr(void *buf
-+ 	if (sgt) {
-+ 		DEFINE_DMA_ATTRS(attrs);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ 		dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
-++#endif
-+ 		/*
-+ 		 * No need to sync to CPU, it's already synced to the CPU
-+ 		 * since the finish() memop will have been called before this.
-+@@ -534,7 +536,9 @@ static void *vb2_dc_get_userptr(void *al
-+ 	unsigned long dma_align = dma_get_cache_alignment();
-+ 	DEFINE_DMA_ATTRS(attrs);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
-++#endif
-+ 
-+ 	/* Only cache aligned DMA transfers are reliable */
-+ 	if (!IS_ALIGNED(vaddr | size, dma_align)) {
-+=======
-+>>>>>>> patches: fix v4l2 patch
-+--- a/drivers/media/v4l2-core/videobuf2-dma-sg.c
-++++ b/drivers/media/v4l2-core/videobuf2-dma-sg.c
-+@@ -109,7 +109,9 @@ static void *vb2_dma_sg_alloc(void *allo
-+ 	int num_pages;
-+ 	DEFINE_DMA_ATTRS(attrs);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
-++#endif
-+ 
-+ 	if (WARN_ON(alloc_ctx == NULL))
-+ 		return NULL;
-+@@ -185,7 +187,9 @@ static void vb2_dma_sg_put(void *buf_pri
-+ 	if (atomic_dec_and_test(&buf->refcount)) {
-+ 		DEFINE_DMA_ATTRS(attrs);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ 		dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
-++#endif
-+ 		dprintk(1, "%s: Freeing buffer of %d pages\n", __func__,
-+ 			buf->num_pages);
-+ 		dma_unmap_sg_attrs(buf->dev, sgt->sgl, sgt->orig_nents,
-+@@ -235,7 +239,9 @@ static void *vb2_dma_sg_get_userptr(void
-+ 	DEFINE_DMA_ATTRS(attrs);
-+ 	struct frame_vector *vec;
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
-++#endif
-+ 	buf = kzalloc(sizeof *buf, GFP_KERNEL);
-+ 	if (!buf)
-+ 		return NULL;
-+@@ -292,7 +298,9 @@ static void vb2_dma_sg_put_userptr(void
-+ 	int i = buf->num_pages;
-+ 	DEFINE_DMA_ATTRS(attrs);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ 	dma_set_attr(DMA_ATTR_SKIP_CPU_SYNC, &attrs);
-++#endif
-+ 
-+ 	dprintk(1, "%s: Releasing userspace buffer of %d pages\n",
-+ 	       __func__, buf->num_pages);
+ devel/ckmake                                       | 132 +++++----
+ .../media/0002-no_dmabuf.cocci                     |  75 +++++
+ .../media/0002-no_dmabuf/v4l2.patch                | 305 +--------------------
+ 3 files changed, 163 insertions(+), 349 deletions(-)
+ create mode 100644 patches/collateral-evolutions/media/0002-no_dmabuf.cocci
+
 -- 
-1.9.1
+2.3.2.209.gd67f9d5.dirty
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
