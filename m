@@ -1,38 +1,65 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:56168 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752651AbbGKXip (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 11 Jul 2015 19:38:45 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@kernel.org
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH] rel-html: backports: add version 4.2
-Date: Sun, 12 Jul 2015 01:38:38 +0200
-Message-Id: <1436657918-16124-1-git-send-email-hauke@hauke-m.de> (sfid-20150712_013847_930612_863556F2)
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:12022 "EHLO
+	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754008AbbGTRRI (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 20 Jul 2015 13:17:08 -0400
+Date: Mon, 20 Jul 2015 19:16:45 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+cc: "cocci@systeme.lip6.fr" <cocci@systeme.lip6.fr>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: [Cocci] [PATCH v2 0/4] pycocci: index opts, SmPL patch proof
+ support
+In-Reply-To: <CAB=NE6X2oHaW3VCR5F2o3j6RmEVeEdtwZenarM1U5qPeAB=F4Q@mail.gmail.com>
+Message-ID: <alpine.DEB.2.10.1507201913370.2475@hadrien> (sfid-20150720_191710_126115_D3DEB129)
+References: <1437195911-28821-1-git-send-email-mcgrof@do-not-panic.com> <alpine.DEB.2.02.1507181901020.2059@localhost6.localdomain6> <CAB=NE6VEpGSU2tY4H+QjuL82ku-Lz80sXN509q9_DgpbLnPEUQ@mail.gmail.com> <alpine.DEB.2.10.1507201826320.2475@hadrien>
+ <CAB=NE6X2oHaW3VCR5F2o3j6RmEVeEdtwZenarM1U5qPeAB=F4Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This adds the version 4.2 to the list of supported versions.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- projects/backports.cfg | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/projects/backports.cfg b/projects/backports.cfg
-index 97f5a98..1f93aa3 100644
---- a/projects/backports.cfg
-+++ b/projects/backports.cfg
-@@ -2,6 +2,7 @@
- rel_html_proj		= backports
- rel_html_proj_aliases	= compat-drivers
- supported =
-+	4.2
- 	4.1
- 	4.0
- 	3.19
--- 
-2.1.4
+On Mon, 20 Jul 2015, Luis R. Rodriguez wrote:
 
+> On Mon, Jul 20, 2015 at 9:27 AM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+> >> > Do you need patches 2 and 3?
+> >>
+> >> Do you mean I should squash them together, or something else ?
+> >
+> > I meant that since --use-git is able to cope with receiving a subtree of a
+> > git repository, because git itself is able to cope with that, perhaps you
+> > don't need them at all.  It seems like you are redoing all the work that
+> > git already does.
+>
+> Ah, well so although --use-gitgrep has its own heuristics for
+> determining if gitgrep can correctly be used or not we still need
+> something to figure out if it toggle --use-gitgrep or not as I do not
+> think Coccinelle automatically tries to make use of --use-gitgrep
+> unless otherwise specified, please correct me if I'm wrong. That is,
+> if no indexing arguments are passed does Coccinelle figure out on its
+> own whether or not to use --use-glimpse, --use-gitgrep and as a last
+> resort --use-coccigrep ? This is what pycocci is doing here. Other
+> than this another reason for the git class in this series is for
+> Coccinelle SmPL patch equivalence proof support, that uses git to
+> create branches for the patch version of changes, then the smpl
+> version of changes, and finally 'git diff --stat between these two'.
+
+Not sure to understand.  If there is glimpse information in the specified
+directory, then it would be reasonable to use glimpse.  If there is
+glimpse information in a parent directory, I don't think that using
+glimpse would be a good idea.  In any case, there is no code to handle
+that.
+
+Otherwise, if you give the argument --use-gitgrep, and the git command
+fails (not just that it doesn't find anything, but that it actually
+fails), then it will fall back to --use-coccigrep.
+
+On the other hand, maybe the git detection is necessary for the
+equivalence check.
+
+julia
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
