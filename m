@@ -1,48 +1,125 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:55995 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750756AbbGKNp2 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 11 Jul 2015 09:45:28 -0400
-Message-ID: <55A11DF5.6050202@hauke-m.de> (sfid-20150711_154659_059710_70B0A1D9)
-Date: Sat, 11 Jul 2015 15:45:25 +0200
-From: Hauke Mehrtens <hauke@hauke-m.de>
-MIME-Version: 1.0
-To: Arend van Spriel <arend@broadcom.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-CC: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: backport for aead_request_set_ad()
-References: <55A119E7.3050809@broadcom.com>
-In-Reply-To: <55A119E7.3050809@broadcom.com>
-Content-Type: text/plain; charset=utf-8
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:35227 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753115AbbGTWck (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 20 Jul 2015 18:32:40 -0400
+Received: by pdrg1 with SMTP id g1so108034651pdr.2
+        for <backports@vger.kernel.org>; Mon, 20 Jul 2015 15:32:40 -0700 (PDT)
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+To: cocci@systeme.lip6.fr
+Cc: backports@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: [PATCH v3 2/5] pycocci: add git class
+Date: Mon, 20 Jul 2015 15:32:21 -0700
+Message-Id: <1437431544-32662-3-git-send-email-mcgrof@do-not-panic.com> (sfid-20150721_003242_058553_2CDDC7AE)
+In-Reply-To: <1437431544-32662-1-git-send-email-mcgrof@do-not-panic.com>
+References: <1437431544-32662-1-git-send-email-mcgrof@do-not-panic.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 07/11/2015 03:28 PM, Arend van Spriel wrote:
-> I am running backports on 4.2-rc1 source tree and hit following problem:
-> 
->   CC [M]  /tmp/bp-test/net/mac80211/aes_ccm.o
-> /tmp/bp-test/net/mac80211/aes_ccm.c: In function
-> ���ieee80211_aes_ccm_encrypt���:
-> /tmp/bp-test/net/mac80211/aes_ccm.c:41:2: error: implicit declaration of
-> function ���aead_request_set_ad��� [-Werror=implicit-function-declaration]
->   aead_request_set_ad(aead_req, sg[0].length);
->   ^
-> cc1: some warnings being treated as errors
-> 
-> Looking at commit 957e0fe62923 ("mac80211: Switch to new AEAD
-> interface") introducing this call it seems not so trivial and may
-> require a backports patch. Just wondering if anyone already had a shot
-> at this one.
-> 
-> Regards,
-> Arend
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe backports" in
-Hi Arend,
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-this is already in backports, see this commit:
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/commit/?id=4d724eec
+This will let us check and use git for both inference
+of whether or not --use-gitgrep is needed later, and
+also for SmPL patch equivalence proof support later.
 
-Hauke
+Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
+---
+ tools/pycocci | 80 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
+
+diff --git a/tools/pycocci b/tools/pycocci
+index 5a11e5c770c7..141f9783d09b 100755
+--- a/tools/pycocci
++++ b/tools/pycocci
+@@ -215,6 +215,86 @@ class Req:
+     def gcc(self, version):
+         return self.require_version('gcc', '--version', version, 3, self.linux_version_cmp)
+ 
++class GitError(Exception):
++    pass
++class ExecutionGitError(GitError):
++    def __init__(self, errcode):
++        self.error_code = errcode
++
++def _check(process):
++    if process.returncode != 0:
++        raise ExecutionError(process.returncode)
++
++def git_init(tree=None):
++    process = subprocess.Popen(['git', 'init'],
++                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
++                               close_fds=True, universal_newlines=True, cwd=tree)
++    stdout = process.communicate()[0]
++    process.wait()
++    _check(process)
++
++def git_rev_parse(tree=None, extra_args=None):
++    cmd = ['git', 'rev-parse' ] + extra_args
++    process = subprocess.Popen(cmd,
++                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
++                               close_fds=True, universal_newlines=True, cwd=tree)
++    stdout = process.communicate()[0]
++    process.wait()
++    if process.returncode != 0:
++        return None
++    return stdout.split('\n', 1)[0]
++
++def gitname(path=None):
++    work_dir = path
++    if not os.path.isdir(path):
++        work_dir = os.path.dirname(path)
++    process = subprocess.Popen(['git', 'rev-parse', '--show-toplevel', path],
++                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
++                               close_fds=True, universal_newlines=True, cwd=work_dir)
++    stdout = process.communicate()[0]
++    process.wait()
++    if process.returncode != 0:
++        return None
++    return stdout.split('\n', 1)[0]
++
++def git_add(path, tree=None):
++    process = subprocess.Popen(['git', 'add', '--ignore-removal', path],
++                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
++                               close_fds=True, universal_newlines=True, cwd=tree)
++    stdout = process.communicate()[0]
++    process.wait()
++    _check(process)
++
++def git_checkout(tree=None, extra_args=None):
++    cmd = ['git', 'checkout' ] + extra_args
++    process = subprocess.Popen(cmd,
++                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
++                               close_fds=True, universal_newlines=True, cwd=tree)
++    stdout = process.communicate()[0]
++    process.wait()
++    _check(process)
++
++def git_commit_all(message, tree=None):
++    git_add('.', tree=tree)
++    process = subprocess.Popen(['git', 'commit', '--allow-empty', '-a', '-m', message],
++                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
++                               close_fds=True, universal_newlines=True, cwd=tree)
++    stdout = process.communicate()[0]
++    process.wait()
++    _check(process)
++
++def git_diff(tree=None, extra_args=None):
++    cmd = ['git', 'diff', '--color=always'] + extra_args
++
++    process = subprocess.Popen(cmd,
++                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
++                               close_fds=True, universal_newlines=True, cwd=tree)
++    stdout = process.communicate()[0]
++    process.wait()
++    _check(process)
++
++    return stdout
++
+ # simple tempdir wrapper object for 'with' statement
+ #
+ # Usage:
+-- 
+2.3.2.209.gd67f9d5.dirty
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
