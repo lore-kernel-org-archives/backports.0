@@ -1,69 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:43864 "EHLO
-	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751335AbbGUGLo (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 21 Jul 2015 02:11:44 -0400
-Date: Tue, 21 Jul 2015 08:11:43 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-cc: cocci@systeme.lip6.fr, backports@vger.kernel.org
-Subject: Re: [Cocci] [PATCH v3 0/5] pycocci: few updates and add to install
- target
-In-Reply-To: <1437431544-32662-1-git-send-email-mcgrof@do-not-panic.com>
-Message-ID: <alpine.DEB.2.02.1507210811190.2065@localhost6.localdomain6> (sfid-20150721_081146_599802_08916E19)
-References: <1437431544-32662-1-git-send-email-mcgrof@do-not-panic.com>
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:36607 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757371AbbGUAcs (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 20 Jul 2015 20:32:48 -0400
+Received: by wicgb10 with SMTP id gb10so40523944wic.1
+        for <backports@vger.kernel.org>; Mon, 20 Jul 2015 17:32:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <1436657918-16124-1-git-send-email-hauke@hauke-m.de>
+References: <1436657918-16124-1-git-send-email-hauke@hauke-m.de>
+From: "Luis R. Rodriguez" <mcgrof@frijolero.org>
+Date: Mon, 20 Jul 2015 17:32:27 -0700
+Message-ID: <CAB=NE6WBmH51NONny+yh+0xPF-rH+Jv0BVCKpFvprb7WOPQZFQ@mail.gmail.com> (sfid-20150721_023250_991991_DEF15098)
+Subject: Re: [PATCH] rel-html: backports: add version 4.2
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 20 Jul 2015, Luis R. Rodriguez wrote:
+On Sat, Jul 11, 2015 at 4:38 PM, Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> This adds the version 4.2 to the list of supported versions.
+>
+> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 
-> From: "Luis R. Rodriguez" <mcgrof@suse.com>
-> 
-> This v3 addresses the changes noted by Julia. Since this is extending
-> features to help with SmPL patch development, in particular --show-proof,
-> and since we're using quite a bit of heuristics useful to users of Coccinelle
-> depending on their version installed document all this on a proper man page
-> for pycocci and also add pycocci into the install target.
-> 
-> In the future we should probably just let pycocci read ini type of file
-> on say your ~/.pycocci which will let you specify and customize further
-> defaults we'd inherit depending on your target. Then you can further
-> customize your options per project. Each upstream project can then also
-> have their own .pycocci perhaps which promotes a set of options to use.
-> For instance right now Linux scripts/coccinelle/ lets scripts gather
-> options to use per SmPL patch. We shoul standardize on a format format
-> for that and to enable project specific tuned variables.
-> 
-> If there are no issues with this v3 I'll merge soon.
+Applied, and pushed, thanks!
 
-I'm OK with the concept of all of these.
+BTW we really should just finish off support for parsing json and use
+it. An example implementation would be for  Linux:
 
-julia
+https://www.kernel.org/releases.json
 
+My biggest brain-block with this though was trying to figure out a way
+to generate the json file in a standard way across projects. While
+Linux may use its own thing, we can for instance use the
+release-weight routines used in rel-html (and used in
+backports/lib/bpreqs.py) to for instance enable developers to annotate
+in a configuration file the minimum supported releases. The last step
+is figuring out which of the releases are supported and which are
+deprecated. I think I have a solution to this, for which I just asked
+for feedback on.
 
-> Luis R. Rodriguez (5):
->   pycocci: add requirements class
->   pycocci: add git class
->   pycocci: figure out if to enable --jobs, --use-gitgrep or
->     --use-glimpse
->   pycocci: add Coccinelle SmPL patch proof support
->   pycocci: add man page and promote pycocci to install target
-> 
->  Makefile       |   3 +
->  docs/pycocci.1 | 217 ++++++++++++++++++++++++++
->  tools/pycocci  | 486 ++++++++++++++++++++++++++++++++++++++++++++++++++++++---
->  3 files changed, 687 insertions(+), 19 deletions(-)
->  create mode 100644 docs/pycocci.1
-> 
-> -- 
-> 2.3.2.209.gd67f9d5.dirty
-> 
-> _______________________________________________
-> Cocci mailing list
-> Cocci@systeme.lip6.fr
-> https://systeme.lip6.fr/mailman/listinfo/cocci
-> 
+ Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
