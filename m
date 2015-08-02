@@ -1,118 +1,50 @@
-Return-path: <mcgrof@gmail.com>
-MIME-Version: 1.0
-Sender: mcgrof@gmail.com
-In-Reply-To: <alpine.DEB.2.02.1507181901020.2059@localhost6.localdomain6>
-References: <1437195911-28821-1-git-send-email-mcgrof@do-not-panic.com>
-	<alpine.DEB.2.02.1507181901020.2059@localhost6.localdomain6>
-Date: Mon, 20 Jul 2015 07:45:36 -0700
-Message-ID: <CAB=NE6VEpGSU2tY4H+QjuL82ku-Lz80sXN509q9_DgpbLnPEUQ@mail.gmail.com> (sfid-20150720_164539_483958_B606EFD7)
-Subject: Re: [Cocci] [PATCH v2 0/4] pycocci: index opts, SmPL patch proof support
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: cocci@systeme.lip6.fr, backports@vger.kernel.org,
-	johannes@sipsolutions.net
-Content-Type: multipart/alternative; boundary=089e0149bbb042a87e051b4f97ef
+Return-path: <backports-owner@vger.kernel.org>
+Received: from hauke-m.de ([5.39.93.123]:39108 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751876AbbHBWh4 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 2 Aug 2015 18:37:56 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 1/8] backports: do not add debugfs_create_devm_seqfile() on recent kernel versions
+Date: Mon,  3 Aug 2015 00:37:40 +0200
+Message-Id: <1438555067-15301-2-git-send-email-hauke@hauke-m.de> (sfid-20150803_003801_857971_22B96247)
+In-Reply-To: <1438555067-15301-1-git-send-email-hauke@hauke-m.de>
+References: <1438555067-15301-1-git-send-email-hauke@hauke-m.de>
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
---089e0149bbb042a87e051b4f97ef
-Content-Type: text/plain; charset=UTF-8
+An ifdef for the kernel version was missing around the header of
+debugfs_create_devm_seqfile() and the LINUX_BACKPORT() was also not
+added.
 
-On Jul 18, 2015 10:01 AM, "Julia Lawall" <julia.lawall@lip6.fr> wrote:
->
-> On Fri, 17 Jul 2015, Luis R. Rodriguez wrote:
->
-> > From: "Luis R. Rodriguez" <mcgrof@suse.com>
-> >
-> > This v2 changes the way we do git tree inference by using
-> > git rev-parse. While at it, I decided to mesh in SmPL  <--> patch
-> > equivalence proof support. This is a generalized solution, I
-> > originally had written for the backports project, we now give
-> > this instead a proper home and purpose under pycocci.
-> >
-> > If there are no issues I'll merge this soon, in hopes it will
-> > make it for the coccinelle 1.0.2 release.
-> >
-> > Luis R. Rodriguez (4):
-> >   pycocci: add requirements class
-> >   pycocci: add git class
-> >   pycocci: figure out if to enable --jobs, --use-gitgrep or
-> >     --use-glimpse
->
-> Do you need patches 2 and 3?
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/debugfs.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Do you mean I should squash them together, or something else ?
+diff --git a/backport/backport-include/linux/debugfs.h b/backport/backport-include/linux/debugfs.h
+index ef9b6e4..a684353 100644
+--- a/backport/backport-include/linux/debugfs.h
++++ b/backport/backport-include/linux/debugfs.h
+@@ -5,6 +5,8 @@
+ #include <linux/device.h>
+ #include <generated/utsrelease.h>
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
++#define debugfs_create_devm_seqfile LINUX_BACKPORT(debugfs_create_devm_seqfile)
+ #if defined(CONFIG_DEBUG_FS)
+ struct dentry *debugfs_create_devm_seqfile(struct device *dev, const char *name,
+ 					   struct dentry *parent,
+@@ -20,5 +22,6 @@ static inline struct dentry *debugfs_create_devm_seqfile(struct device *dev,
+ 	return ERR_PTR(-ENODEV);
+ }
+ #endif /* CONFIG_DEBUG_FS */
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0) */
+ 
+ #endif /* __BACKPORT_DEBUGFS_H_ */
+-- 
+2.1.4
 
-  Luis
-> julia
->
-> >   pycocci: add Coccinelle SmPL patch proof support
-> >
-> >  tools/pycocci | 475
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 462 insertions(+), 13 deletions(-)
-> >
-> > --
-> > 2.3.2.209.gd67f9d5.dirty
-> >
-> > _______________________________________________
-> > Cocci mailing list
-> > Cocci@systeme.lip6.fr
-> > https://systeme.lip6.fr/mailman/listinfo/cocci
-> >
-
---089e0149bbb042a87e051b4f97ef
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-<p dir=3D"ltr"><br>
-On Jul 18, 2015 10:01 AM, &quot;Julia Lawall&quot; &lt;<a href=3D"mailto:ju=
-lia.lawall@lip6.fr">julia.lawall@lip6.fr</a>&gt; wrote:<br>
-&gt;<br>
-&gt; On Fri, 17 Jul 2015, Luis R. Rodriguez wrote:<br>
-&gt;<br>
-&gt; &gt; From: &quot;Luis R. Rodriguez&quot; &lt;<a href=3D"mailto:mcgrof@=
-suse.com">mcgrof@suse.com</a>&gt;<br>
-&gt; &gt;<br>
-&gt; &gt; This v2 changes the way we do git tree inference by using<br>
-&gt; &gt; git rev-parse. While at it, I decided to mesh in SmPL=C2=A0 &lt;-=
--&gt; patch<br>
-&gt; &gt; equivalence proof support. This is a generalized solution, I<br>
-&gt; &gt; originally had written for the backports project, we now give<br>
-&gt; &gt; this instead a proper home and purpose under pycocci.<br>
-&gt; &gt;<br>
-&gt; &gt; If there are no issues I&#39;ll merge this soon, in hopes it will=
-<br>
-&gt; &gt; make it for the coccinelle 1.0.2 release.<br>
-&gt; &gt;<br>
-&gt; &gt; Luis R. Rodriguez (4):<br>
-&gt; &gt;=C2=A0 =C2=A0pycocci: add requirements class<br>
-&gt; &gt;=C2=A0 =C2=A0pycocci: add git class<br>
-&gt; &gt;=C2=A0 =C2=A0pycocci: figure out if to enable --jobs, --use-gitgre=
-p or<br>
-&gt; &gt;=C2=A0 =C2=A0 =C2=A0--use-glimpse<br>
-&gt;<br>
-&gt; Do you need patches 2 and 3?</p>
-<p dir=3D"ltr">Do you mean I should squash them together, or something else=
- ?</p>
-<p dir=3D"ltr">=C2=A0 Luis<br>
-&gt; julia<br>
-&gt;<br>
-&gt; &gt;=C2=A0 =C2=A0pycocci: add Coccinelle SmPL patch proof support<br>
-&gt; &gt;<br>
-&gt; &gt;=C2=A0 tools/pycocci | 475 +++++++++++++++++++++++++++++++++++++++=
-+++++++++++++++++--<br>
-&gt; &gt;=C2=A0 1 file changed, 462 insertions(+), 13 deletions(-)<br>
-&gt; &gt;<br>
-&gt; &gt; --<br>
-&gt; &gt; 2.3.2.209.gd67f9d5.dirty<br>
-&gt; &gt;<br>
-&gt; &gt; _______________________________________________<br>
-&gt; &gt; Cocci mailing list<br>
-&gt; &gt; <a href=3D"mailto:Cocci@systeme.lip6.fr">Cocci@systeme.lip6.fr</a=
-><br>
-&gt; &gt; <a href=3D"https://systeme.lip6.fr/mailman/listinfo/cocci">https:=
-//systeme.lip6.fr/mailman/listinfo/cocci</a><br>
-&gt; &gt;<br>
-</p>
-
---089e0149bbb042a87e051b4f97ef--
+--
+To unsubscribe from this list: send the line "unsubscribe backports" in
