@@ -1,57 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:41659 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:39118 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752641AbbHYWFN (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 25 Aug 2015 18:05:13 -0400
-Message-ID: <1440540311.2376.0.camel@sipsolutions.net> (sfid-20150826_000516_090677_1A7B4FFB)
-Subject: Re: [PATCH] backports: backport IFF_NO_QUEUE net_device flag
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-	backports@vger.kernel.org
-Date: Wed, 26 Aug 2015 00:05:11 +0200
-In-Reply-To: <1440531399-29379-1-git-send-email-emmanuel.grumbach@intel.com> (sfid-20150825_213646_779513_F10D303E)
-References: <1440531399-29379-1-git-send-email-emmanuel.grumbach@intel.com>
-	 (sfid-20150825_213646_779513_F10D303E)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+	id S1751938AbbHBWh6 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 2 Aug 2015 18:37:58 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 5/8] header: add of_platform_populate()
+Date: Mon,  3 Aug 2015 00:37:44 +0200
+Message-Id: <1438555067-15301-6-git-send-email-hauke@hauke-m.de> (sfid-20150803_003810_437223_5AB0A83D)
+In-Reply-To: <1438555067-15301-1-git-send-email-hauke@hauke-m.de>
+References: <1438555067-15301-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2015-08-25 at 22:36 +0300, Emmanuel Grumbach wrote:
-> commit fa8187c96471c49419c25d4ec3299d17d3f274b2
-> Author: Phil Sutter <phil@nwl.cc>
-> Date:   Thu Aug 13 19:01:06 2015 +0200
-> 
->     net: declare new net_device priv_flag IFF_NO_QUEUE
-> 
->     This private net_device flag can be set by drivers to inform that a
->     device runs fine without a qdisc attached. This was formerly done by
->     setting tx_queue_len to zero.
-> 
-> Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-> ---
->  backport/backport-include/linux/netdevice.h | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/backport/backport-include/linux/netdevice.h 
-> b/backport/backport-include/linux/netdevice.h
-> index 95189be..94d8613 100644
-> --- a/backport/backport-include/linux/netdevice.h
-> +++ b/backport/backport-include/linux/netdevice.h
-> @@ -292,4 +292,9 @@ netdev_features_t passthru_features_check(struct 
-> sk_buff *skb,
->  })
->  #endif /* netdev_alloc_pcpu_stats */
->  
-> +#if LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0)
-> +#ifndef IFF_NO_QUEUE
-> +#define IFF_NO_QUEUE 1<<26
-> +#endif
-> 
-That doesn't really help, does it? Need to add a semantic patch to
-backport this with an ifdef to set the tx_queue_len to 0 in the older
-kernel case?
+of_platform_populate() is not added when CONFIG_OF_DEVICE is not set on
+kernel < 3.4.
+The same is true for of_default_bus_match_table on kernel < 3.11. we do
+not need to provide a real implementation of of_default_bus_match_table
+because it will be accessed.
 
-johannes
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/of_platform.h | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 backport/backport-include/linux/of_platform.h
+
+diff --git a/backport/backport-include/linux/of_platform.h b/backport/backport-include/linux/of_platform.h
+new file mode 100644
+index 0000000..7b0e906
+--- /dev/null
++++ b/backport/backport-include/linux/of_platform.h
+@@ -0,0 +1,23 @@
++#ifndef __BACKPORT_LINUX_OF_PLATFORM_H
++#define __BACKPORT_LINUX_OF_PLATFORM_H
++#include_next <linux/of_platform.h>
++#include <linux/version.h>
++#include <linux/of.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0) && !defined(CONFIG_OF_DEVICE)
++struct of_dev_auxdata;
++#define of_platform_populate LINUX_BACKPORT(of_platform_populate)
++static inline int of_platform_populate(struct device_node *root,
++					const struct of_device_id *matches,
++					const struct of_dev_auxdata *lookup,
++					struct device *parent)
++{
++	return -ENODEV;
++}
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0) */
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0) && !defined(CONFIG_OF_DEVICE)
++extern const struct of_device_id of_default_bus_match_table[];
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0) */
++
++#endif /* __BACKPORT_LINUX_OF_PLATFORM_H */
+-- 
+2.1.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
