@@ -1,62 +1,52 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:56140 "EHLO mga02.intel.com"
+Received: from hauke-m.de ([5.39.93.123]:39119 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755860AbbHZCmM convert rfc822-to-8bit (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 25 Aug 2015 22:42:12 -0400
-From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-To: Johannes Berg <johannes@sipsolutions.net>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: [PATCH] backports: backport IFF_NO_QUEUE net_device flag
-Date: Wed, 26 Aug 2015 02:42:08 +0000
-Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB32E855856@hasmsx107.ger.corp.intel.com> (sfid-20150826_044220_196881_E66D0EC1)
-References: <1440531399-29379-1-git-send-email-emmanuel.grumbach@intel.com>
-	 (sfid-20150825_213646_779513_F10D303E)
- <1440540311.2376.0.camel@sipsolutions.net>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+	id S1751951AbbHBWh6 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 2 Aug 2015 18:37:58 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 6/8] dependencies: make NFC_NXP_NCI_I2C depend on >=3.17
+Date: Mon,  3 Aug 2015 00:37:45 +0200
+Message-Id: <1438555067-15301-7-git-send-email-hauke@hauke-m.de> (sfid-20150803_003807_856641_AAC741FA)
+In-Reply-To: <1438555067-15301-1-git-send-email-hauke@hauke-m.de>
+References: <1438555067-15301-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+The driver with the config option NFC_NXP_NCI_I2C now uses
+devm_gpiod_get_index() with 4 arguments which is not supported in
+backports.
 
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ dependencies | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-On 08/26/2015 01:05 AM, Johannes Berg wrote:
-> On Tue, 2015-08-25 at 22:36 +0300, Emmanuel Grumbach wrote:
->> commit fa8187c96471c49419c25d4ec3299d17d3f274b2
->> Author: Phil Sutter <phil@nwl.cc>
->> Date:   Thu Aug 13 19:01:06 2015 +0200
->>
->>     net: declare new net_device priv_flag IFF_NO_QUEUE
->>
->>     This private net_device flag can be set by drivers to inform that a
->>     device runs fine without a qdisc attached. This was formerly done by
->>     setting tx_queue_len to zero.
->>
->> Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
->> ---
->>  backport/backport-include/linux/netdevice.h | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/backport/backport-include/linux/netdevice.h 
->> b/backport/backport-include/linux/netdevice.h
->> index 95189be..94d8613 100644
->> --- a/backport/backport-include/linux/netdevice.h
->> +++ b/backport/backport-include/linux/netdevice.h
->> @@ -292,4 +292,9 @@ netdev_features_t passthru_features_check(struct 
->> sk_buff *skb,
->>  })
->>  #endif /* netdev_alloc_pcpu_stats */
->>  
->> +#if LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0)
->> +#ifndef IFF_NO_QUEUE
->> +#define IFF_NO_QUEUE 1<<26
->> +#endif
->>
-> That doesn't really help, does it? Need to add a semantic patch to
-> backport this with an ifdef to set the tx_queue_len to 0 in the older
-> kernel case?
-> 
-You are most probably right. I had to admit I just checked that it
-compiles and probably didn't take enough time to see what it really
-does... :(
+diff --git a/dependencies b/dependencies
+index 688bb56..90b2f6f 100644
+--- a/dependencies
++++ b/dependencies
+@@ -67,6 +67,9 @@ VIDEO_ADV7604 3.17
+ VIDEO_COBALT 3.17
+ NFC_PN544_I2C 3.17
+ 
++# this needs devm_gpiod_get_index() with 4 arguments.
++NFC_NXP_NCI_I2C 3.17
++
+ # missing function clk_prepare_enable(), clk_disable_unprepare() and devm_regulator_bulk_get()
+ VIDEO_MT9V032 3.3
+ VIDEO_S5K6AA 3.3
+@@ -144,7 +147,6 @@ NFC_MEI_PHY 3.10
+ 
+ # missing linux/gpio/consumer.h
+ NFC_PN544_I2C 3.13
+-NFC_NXP_NCI_I2C 3.13
+ 
+ # can not backport ieee802154_ptr in struct net_device wich was added in
+ # 98a18b6ffc7 "netdevice: add ieee802154_ptr to net_device"
+-- 
+2.1.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
