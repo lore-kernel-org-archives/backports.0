@@ -1,48 +1,31 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:43497 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:39137 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756038AbbHZHHO (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 26 Aug 2015 03:07:14 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
+	id S1752097AbbHBWr3 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 2 Aug 2015 18:47:29 -0400
+Received: from [192.168.178.24] (p5DE94E1E.dip0.t-ipconnect.de [93.233.78.30])
+	by hauke-m.de (Postfix) with ESMTPSA id DDAD7100733
+	for <backports@vger.kernel.org>; Mon,  3 Aug 2015 00:47:28 +0200 (CEST)
+Message-ID: <55BE9E00.9030206@hauke-m.de> (sfid-20150803_004731_600114_B174379B)
+Date: Mon, 03 Aug 2015 00:47:28 +0200
+From: Hauke Mehrtens <hauke@hauke-m.de>
+MIME-Version: 1.0
 To: backports@vger.kernel.org
-Cc: emmanuel.grumbach@intel.com,
-	Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: add spatch to handle IFF_NO_QUEUE
-Date: Wed, 26 Aug 2015 09:07:11 +0200
-Message-Id: <1440572831-6075-1-git-send-email-johannes@sipsolutions.net> (sfid-20150826_090716_826305_AB1821E1)
+Subject: backports-20150731 is out
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+backports-20150731 was released. This is based on linux-next next-20150731.
 
-This flag doesn't exist on newer kernels, but replaced the tx_queue_len
-assignment, so can't just be backported to have no effect. Instead, add
-a semantic patch that puts back the tx_queue_len=0 assignment on older
-kernel versions.
+https://www.kernel.org/pub/linux/kernel/projects/backports/2015/07/31/backports-20150731.tar.xz
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- patches/collateral-evolutions/network/0062-iff-no-queue.cocci | 9 +++++++++
- 1 file changed, 9 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0062-iff-no-queue.cocci
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
 
-diff --git a/patches/collateral-evolutions/network/0062-iff-no-queue.cocci b/patches/collateral-evolutions/network/0062-iff-no-queue.cocci
-new file mode 100644
-index 000000000000..984dcbe64bad
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0062-iff-no-queue.cocci
-@@ -0,0 +1,9 @@
-+@@
-+expression E;
-+@@
-+
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,2,0)
-+ E->priv_flags |= IFF_NO_QUEUE;
-++#else
-++E->tx_queue_len = 0;
-++#endif
--- 
-2.1.4
+All the latest releases are listed here:
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
 
+Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
