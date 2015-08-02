@@ -1,103 +1,205 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:48974 "EHLO mga02.intel.com"
+Received: from hauke-m.de ([5.39.93.123]:39113 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751433AbbHaAay (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 30 Aug 2015 20:30:54 -0400
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: newbie questions
-To: backports@vger.kernel.org
-Message-ID: <55E3A03D.6050607@linux.intel.com> (sfid-20150831_023101_616135_D37C8DBB)
-Date: Sun, 30 Aug 2015 19:30:53 -0500
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+	id S1751763AbbHBWh5 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 2 Aug 2015 18:37:57 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: mcgrof@kernel.org
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 2/8] backports: add hex_dump_to_buffer() with int return value
+Date: Mon,  3 Aug 2015 00:37:41 +0200
+Message-Id: <1438555067-15301-3-git-send-email-hauke@hauke-m.de> (sfid-20150803_003803_858657_AA31EEF1)
+In-Reply-To: <1438555067-15301-1-git-send-email-hauke@hauke-m.de>
+References: <1438555067-15301-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
-I am trying to figure out how complicated it'd be to add the sound subsystem to the list of supported packages - there are many cases where I only want the latest and greatest sound drivers and nothing else beyond the minimal dependencies. Bear with me if I am asking silly questions, I am not familiar at all with the backports environment and only tried to progress from the wiki and code.
+In the kernel hex_dump_to_buffer() got an int return value, returning
+the amount of bytes written into the buffer. This new return value is
+needed by seq_hex_dump() which we also backport.
 
-question1: is there a way the list of packages can be selected? I'd like to use the backports infrastructure only for what I care about (media, usb, audio). It'd be really nice if I could limit the updates to the parts I care about (media, usb, sound) and remove all the networking part I don't really have a use for. It's fine if the releases include everything, I only want to limit the changes in my own workspace.
+This change was done in the following commit in mainline Linux kernel:
+commit 114fc1afb2de7dec40da137dc2a55cd38fc220f2
+Author: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date:   Thu Feb 12 15:02:29 2015 -0800
 
-question2: I am not sure I understand how the code is generated. Nothing seems to work/compile even without my changes... If I use linux-next with the next-20150731 tag and the latest backport code, I get:
+    hexdump: make it return number of bytes placed in buffer
 
-~/backports$ ./gentree.py --clean --verbose --gitdebug --git-revision  v4.1.6  ../linux-next ../linux-next-backport
-Get original source files from git ...
-Applying patches from patches to ../linux-next-backport ...
-Applying patch 0000-upstream-backport-changes/0005-uapi-compromise/mwifiex.patch
-> patching file drivers/net/wireless/mwifiex/decl.h
-> Hunk #1 succeeded at 26 with fuzz 1.
-> patching file drivers/net/wireless/mwifiex/sta_rx.c
-Applying patch backport-adjustments/crypto-ccm.patch
-> patching file compat/crypto-ccm.c
-> Hunk #2 succeeded at 872 (offset -60 lines).
-> Hunk #3 succeeded at 898 (offset -60 lines).
-Applying patch backport-adjustments/devcoredump.patch
-> patching file compat/drivers-base-devcoredump.c
-> patching file include/linux/backport-devcoredump.h
-Not applying backport-adjustments/flow_dissector.patch, not needed
-Applying patch collateral-evolutions/media/0001-dma_mmap_coherent-revert.patch
-> patching file drivers/media/v4l2-core/videobuf2-dma-contig.c
-Applying patch collateral-evolutions/media/0002-no_dmabuf/v4l2.patch
-> patching file drivers/media/v4l2-core/Kconfig
-> Hunk #1 succeeded at 68 (offset -11 lines).
-> Hunk #2 succeeded at 79 (offset -11 lines).
-> patching file drivers/media/v4l2-core/v4l2-mem2mem.c
-> Hunk #1 succeeded at 440 (offset -19 lines).
-> Hunk #2 succeeded at 454 (offset -19 lines).
-> Hunk #3 succeeded at 805 with fuzz 2 (offset -36 lines).
-> Hunk #4 succeeded at 814 (offset -36 lines).
-> patching file drivers/media/v4l2-core/videobuf2-core.c
-> Hunk #1 succeeded at 252 (offset -1 lines).
-> Hunk #2 succeeded at 281 (offset -1 lines).
-> Hunk #3 succeeded at 425 (offset -1 lines).
-> Hunk #4 succeeded at 787 (offset -1 lines).
-> Hunk #5 succeeded at 801 (offset -1 lines).
-> Hunk #6 succeeded at 835 (offset -1 lines).
-> Hunk #7 succeeded at 1502 (offset -5 lines).
-> Hunk #8 succeeded at 1621 (offset -5 lines).
-> Hunk #9 succeeded at 1684 (offset -5 lines).
-> Hunk #10 succeeded at 2074 (offset -10 lines).
-> Hunk #11 succeeded at 2085 (offset -10 lines).
-> Hunk #12 succeeded at 2094 (offset -10 lines).
-> Hunk #13 succeeded at 2401 (offset -14 lines).
-> Hunk #14 succeeded at 2479 (offset -14 lines).
-> Hunk #15 succeeded at 3417 (offset -22 lines).
-> Hunk #16 succeeded at 3427 (offset -22 lines).
-> patching file drivers/media/v4l2-core/videobuf2-dma-contig.c
-> patching file drivers/media/v4l2-core/videobuf2-vmalloc.c
-> patching file include/media/v4l2-mem2mem.h
-> Hunk #1 succeeded at 119 (offset -2 lines).
-> Hunk #2 succeeded at 244 (offset -2 lines).
-> patching file include/media/videobuf2-core.h
-> Hunk #3 succeeded at 463 (offset -4 lines).
-> Hunk #4 succeeded at 630 (offset -13 lines).
-> patching file drivers/media/usb/uvc/uvc_queue.c
-> Hunk #1 FAILED at 270.
-> Hunk #2 succeeded at 269 (offset -12 lines).
-> 1 out of 2 hunks FAILED -- saving rejects to file drivers/media/usb/uvc/uvc_queue.c.rej
-> patching file drivers/media/v4l2-core/videobuf2-dma-sg.c
-> Hunk #1 succeeded at 373 (offset -4 lines).
-Traceback (most recent call last):
-  File "./gentree.py", line 1091, in <module>
-    ret = _main()
-  File "./gentree.py", line 724, in _main
-    logwrite=logwrite)
-  File "./gentree.py", line 906, in process
-    apply_patches(args, "backport", source_dir, 'patches', bpid.target_dir, logwrite)
-  File "./gentree.py", line 552, in apply_patches
-    raise Exception('Patch failed')
-Exception: Patch failed
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/printk.h |   8 ++
+ backport/compat/backport-4.0.c           | 132 +++++++++++++++++++++++++++++++
+ 2 files changed, 140 insertions(+)
 
-Now if I use branch origin/linux-4.1.y, the tree is generated but usually doesn't compile (random options selected)
+diff --git a/backport/backport-include/linux/printk.h b/backport/backport-include/linux/printk.h
+index 88989a9..d8083ac 100644
+--- a/backport/backport-include/linux/printk.h
++++ b/backport/backport-include/linux/printk.h
+@@ -138,6 +138,14 @@ do {									\
+ #endif
+ #endif /* pr_debug_ratelimited */
+ 
++/* replace hex_dump_to_buffer() with a version which returns the length */
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,0,0)
++#define hex_dump_to_buffer LINUX_BACKPORT(hex_dump_to_buffer)
++extern int hex_dump_to_buffer(const void *buf, size_t len, int rowsize,
++			      int groupsize, char *linebuf, size_t linebuflen,
++			      bool ascii);
++#endif
++
+ #endif	/* _COMPAT_LINUX_PRINTK_H */
+ 
+ /* This must be outside -- see also kernel.h */
+diff --git a/backport/compat/backport-4.0.c b/backport/compat/backport-4.0.c
+index 3de1211..acec0af 100644
+--- a/backport/compat/backport-4.0.c
++++ b/backport/compat/backport-4.0.c
+@@ -11,7 +11,10 @@
+ #include <linux/kernel.h>
+ #include <linux/mm.h>
+ #include <linux/sched.h>
++#include <linux/ctype.h>
++#include <linux/printk.h>
+ #include <linux/export.h>
++#include <asm/unaligned.h>
+ 
+ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
+ 						struct mm_struct *mm,
+@@ -191,3 +194,132 @@ long get_user_pages_unlocked(struct task_struct *tsk, struct mm_struct *mm,
+ 					 force, pages, FOLL_TOUCH);
+ }
+ EXPORT_SYMBOL_GPL(get_user_pages_unlocked);
++
++
++/**
++ * hex_dump_to_buffer - convert a blob of data to "hex ASCII" in memory
++ * @buf: data blob to dump
++ * @len: number of bytes in the @buf
++ * @rowsize: number of bytes to print per line; must be 16 or 32
++ * @groupsize: number of bytes to print at a time (1, 2, 4, 8; default = 1)
++ * @linebuf: where to put the converted data
++ * @linebuflen: total size of @linebuf, including space for terminating NUL
++ * @ascii: include ASCII after the hex output
++ *
++ * hex_dump_to_buffer() works on one "line" of output at a time, i.e.,
++ * 16 or 32 bytes of input data converted to hex + ASCII output.
++ *
++ * Given a buffer of u8 data, hex_dump_to_buffer() converts the input data
++ * to a hex + ASCII dump at the supplied memory location.
++ * The converted output is always NUL-terminated.
++ *
++ * E.g.:
++ *   hex_dump_to_buffer(frame->data, frame->len, 16, 1,
++ *			linebuf, sizeof(linebuf), true);
++ *
++ * example output buffer:
++ * 40 41 42 43 44 45 46 47 48 49 4a 4b 4c 4d 4e 4f  @ABCDEFGHIJKLMNO
++ *
++ * Return:
++ * The amount of bytes placed in the buffer without terminating NUL. If the
++ * output was truncated, then the return value is the number of bytes
++ * (excluding the terminating NUL) which would have been written to the final
++ * string if enough space had been available.
++ */
++int hex_dump_to_buffer(const void *buf, size_t len, int rowsize, int groupsize,
++		       char *linebuf, size_t linebuflen, bool ascii)
++{
++	const u8 *ptr = buf;
++	int ngroups;
++	u8 ch;
++	int j, lx = 0;
++	int ascii_column;
++	int ret;
++
++	if (rowsize != 16 && rowsize != 32)
++		rowsize = 16;
++
++	if (len > rowsize)		/* limit to one line at a time */
++		len = rowsize;
++	if (!is_power_of_2(groupsize) || groupsize > 8)
++		groupsize = 1;
++	if ((len % groupsize) != 0)	/* no mixed size output */
++		groupsize = 1;
++
++	ngroups = len / groupsize;
++	ascii_column = rowsize * 2 + rowsize / groupsize + 1;
++
++	if (!linebuflen)
++		goto overflow1;
++
++	if (!len)
++		goto nil;
++
++	if (groupsize == 8) {
++		const u64 *ptr8 = buf;
++
++		for (j = 0; j < ngroups; j++) {
++			ret = snprintf(linebuf + lx, linebuflen - lx,
++				       "%s%16.16llx", j ? " " : "",
++				       get_unaligned(ptr8 + j));
++			if (ret >= linebuflen - lx)
++				goto overflow1;
++			lx += ret;
++		}
++	} else if (groupsize == 4) {
++		const u32 *ptr4 = buf;
++
++		for (j = 0; j < ngroups; j++) {
++			ret = snprintf(linebuf + lx, linebuflen - lx,
++				       "%s%8.8x", j ? " " : "",
++				       get_unaligned(ptr4 + j));
++			if (ret >= linebuflen - lx)
++				goto overflow1;
++			lx += ret;
++		}
++	} else if (groupsize == 2) {
++		const u16 *ptr2 = buf;
++
++		for (j = 0; j < ngroups; j++) {
++			ret = snprintf(linebuf + lx, linebuflen - lx,
++				       "%s%4.4x", j ? " " : "",
++				       get_unaligned(ptr2 + j));
++			if (ret >= linebuflen - lx)
++				goto overflow1;
++			lx += ret;
++		}
++	} else {
++		for (j = 0; j < len; j++) {
++			if (linebuflen < lx + 3)
++				goto overflow2;
++			ch = ptr[j];
++			linebuf[lx++] = hex_asc_hi(ch);
++			linebuf[lx++] = hex_asc_lo(ch);
++			linebuf[lx++] = ' ';
++		}
++		if (j)
++			lx--;
++	}
++	if (!ascii)
++		goto nil;
++
++	while (lx < ascii_column) {
++		if (linebuflen < lx + 2)
++			goto overflow2;
++		linebuf[lx++] = ' ';
++	}
++	for (j = 0; j < len; j++) {
++		if (linebuflen < lx + 2)
++			goto overflow2;
++		ch = ptr[j];
++		linebuf[lx++] = (isascii(ch) && isprint(ch)) ? ch : '.';
++	}
++nil:
++	linebuf[lx] = '\0';
++	return lx;
++overflow2:
++	linebuf[lx++] = '\0';
++overflow1:
++	return ascii ? ascii_column + len : (groupsize * 2 + 1) * ngroups - 1;
++}
++EXPORT_SYMBOL_GPL(hex_dump_to_buffer);
+-- 
+2.1.4
 
-Can anyone help with a known config that works?
-
-
-question 3: how exactly does ckmake work and what am I missing?
-:~/backports$ ./devel/ckmake 
-[snip] backports/Makefile does not exist
-
-Thanks,
--Pierre
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
