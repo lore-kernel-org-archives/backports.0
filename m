@@ -1,146 +1,104 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:39115 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:59917 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751868AbbHBWh5 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 2 Aug 2015 18:37:57 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@kernel.org
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 3/8] backports: add seq_hex_dump()
-Date: Mon,  3 Aug 2015 00:37:42 +0200
-Message-Id: <1438555067-15301-4-git-send-email-hauke@hauke-m.de> (sfid-20150803_003811_283263_6F939491)
-In-Reply-To: <1438555067-15301-1-git-send-email-hauke@hauke-m.de>
-References: <1438555067-15301-1-git-send-email-hauke@hauke-m.de>
+	id S932884AbbHXJTR (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 24 Aug 2015 05:19:17 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backports: remove AVERAGE, backport DECLARE_EWMA
+Date: Mon, 24 Aug 2015 11:19:14 +0200
+Message-Id: <1440407954-9633-1-git-send-email-johannes@sipsolutions.net> (sfid-20150824_111922_949412_99752BD1)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-seq_hex_dump() is needed by the wil6210 driver and was added in this
-commit:
-commit 96e6df4cfc6ecf91097eb8eec55983a5f102a477
-Author: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date:   Fri Jul 24 09:11:53 2015 +1000
+From: Johannes Berg <johannes.berg@intel.com>
 
-    seq_file: provide an analogue of print_hex_dump()
+My patches to remove the out-of-line EWMA implemenation (under
+Kconfig symbol AVERAGE) went into net-next, so now we only need
+to backport DECLARE_EWMA as the only necessary macro.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/linux/seq_file.h | 25 +++++++++++++
- backport/compat/Makefile                   |  1 +
- backport/compat/backport-4.3.c             | 59 ++++++++++++++++++++++++++++++
- 3 files changed, 85 insertions(+)
- create mode 100644 backport/compat/backport-4.3.c
+ backport/backport-include/linux/average.h | 46 +++++++++++++++++++++++++++++++
+ backport/compat/Kconfig                   | 11 --------
+ 2 files changed, 46 insertions(+), 11 deletions(-)
+ create mode 100644 backport/backport-include/linux/average.h
 
-diff --git a/backport/backport-include/linux/seq_file.h b/backport/backport-include/linux/seq_file.h
-index 21dce09..8cc67a5 100644
---- a/backport/backport-include/linux/seq_file.h
-+++ b/backport/backport-include/linux/seq_file.h
-@@ -23,4 +23,29 @@ static inline struct user_namespace *seq_user_ns(struct seq_file *seq)
- #endif /* CONFIG_USER_NS */
- #endif /* < 3.7 */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
-+#define seq_has_overflowed LINUX_BACKPORT(seq_has_overflowed)
-+/**
-+ * seq_has_overflowed - check if the buffer has overflowed
-+ * @m: the seq_file handle
-+ *
-+ * seq_files have a buffer which may overflow. When this happens a larger
-+ * buffer is reallocated and all the data will be printed again.
-+ * The overflow state is true when m->count == m->size.
-+ *
-+ * Returns true if the buffer received more than it can hold.
-+ */
-+static inline bool seq_has_overflowed(struct seq_file *m)
-+{
-+	return m->count == m->size;
-+}
-+#endif
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0)
-+#define seq_hex_dump LINUX_BACKPORT(seq_hex_dump)
-+void seq_hex_dump(struct seq_file *m, const char *prefix_str, int prefix_type,
-+		  int rowsize, int groupsize, const void *buf, size_t len,
-+		  bool ascii);
-+#endif
-+
- #endif /* __BACKPORT_SEQ_FILE_H */
-diff --git a/backport/compat/Makefile b/backport/compat/Makefile
-index 23c0713..666ef91 100644
---- a/backport/compat/Makefile
-+++ b/backport/compat/Makefile
-@@ -28,6 +28,7 @@ compat-$(CPTCFG_KERNEL_3_19) += backport-3.19.o
- compat-$(CPTCFG_KERNEL_4_0) += backport-4.0.o
- compat-$(CPTCFG_KERNEL_4_1) += backport-4.1.o
- compat-$(CPTCFG_KERNEL_4_2) += backport-4.2.o
-+compat-$(CPTCFG_KERNEL_4_3) += backport-4.3.o
- 
- compat-$(CPTCFG_BPAUTO_BUILD_CRYPTO_CCM) += crypto-ccm.o
- compat-$(CPTCFG_BPAUTO_BUILD_DMA_SHARED_HELPERS) += dma-shared-helpers.o
-diff --git a/backport/compat/backport-4.3.c b/backport/compat/backport-4.3.c
+diff --git a/backport/backport-include/linux/average.h b/backport/backport-include/linux/average.h
 new file mode 100644
-index 0000000..d15c92c
+index 000000000000..5d80041fe5e8
 --- /dev/null
-+++ b/backport/compat/backport-4.3.c
-@@ -0,0 +1,59 @@
-+/*
-+ * Copyright (c) 2015  Hauke Mehrtens <hauke@hauke-m.de>
-+ *
-+ * Backport functionality introduced in Linux 4.3.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
++++ b/backport/backport-include/linux/average.h
+@@ -0,0 +1,46 @@
++#ifndef __BACKPORT_AVERAGE
++#define __BACKPORT_AVERAGE
++#include_next <linux/average.h>
 +
-+#include <linux/seq_file.h>
-+#include <linux/export.h>
-+#include <linux/printk.h>
-+
-+static void seq_set_overflow(struct seq_file *m)
-+{
-+	m->count = m->size;
-+}
-+
-+/* A complete analogue of print_hex_dump() */
-+void seq_hex_dump(struct seq_file *m, const char *prefix_str, int prefix_type,
-+		  int rowsize, int groupsize, const void *buf, size_t len,
-+		  bool ascii)
-+{
-+	const u8 *ptr = buf;
-+	int i, linelen, remaining = len;
-+	int ret;
-+
-+	if (rowsize != 16 && rowsize != 32)
-+		rowsize = 16;
-+
-+	for (i = 0; i < len && !seq_has_overflowed(m); i += rowsize) {
-+		linelen = min(remaining, rowsize);
-+		remaining -= rowsize;
-+
-+		switch (prefix_type) {
-+		case DUMP_PREFIX_ADDRESS:
-+			seq_printf(m, "%s%p: ", prefix_str, ptr + i);
-+			break;
-+		case DUMP_PREFIX_OFFSET:
-+			seq_printf(m, "%s%.8x: ", prefix_str, i);
-+			break;
-+		default:
-+			seq_printf(m, "%s", prefix_str);
-+			break;
-+		}
-+
-+		ret = hex_dump_to_buffer(ptr + i, linelen, rowsize, groupsize,
-+					 m->buf + m->count, m->size - m->count,
-+					 ascii);
-+		if (ret >= m->size - m->count) {
-+			seq_set_overflow(m);
-+		} else {
-+			m->count += ret;
-+			seq_putc(m, '\n');
-+		}
++#ifndef DECLARE_EWMA
++#define DECLARE_EWMA(name, _factor, _weight)				\
++	struct ewma_##name {						\
++		unsigned long internal;					\
++	};								\
++	static inline void ewma_##name##_init(struct ewma_##name *e)	\
++	{								\
++		BUILD_BUG_ON(!__builtin_constant_p(_factor));		\
++		BUILD_BUG_ON(!__builtin_constant_p(_weight));		\
++		BUILD_BUG_ON_NOT_POWER_OF_2(_factor);			\
++		BUILD_BUG_ON_NOT_POWER_OF_2(_weight);			\
++		e->internal = 0;					\
++	}								\
++	static inline unsigned long					\
++	ewma_##name##_read(struct ewma_##name *e)			\
++	{								\
++		BUILD_BUG_ON(!__builtin_constant_p(_factor));		\
++		BUILD_BUG_ON(!__builtin_constant_p(_weight));		\
++		BUILD_BUG_ON_NOT_POWER_OF_2(_factor);			\
++		BUILD_BUG_ON_NOT_POWER_OF_2(_weight);			\
++		return e->internal >> ilog2(_factor);			\
++	}								\
++	static inline void ewma_##name##_add(struct ewma_##name *e,	\
++					     unsigned long val)		\
++	{								\
++		unsigned long internal = ACCESS_ONCE(e->internal);	\
++		unsigned long weight = ilog2(_weight);			\
++		unsigned long factor = ilog2(_factor);			\
++									\
++		BUILD_BUG_ON(!__builtin_constant_p(_factor));		\
++		BUILD_BUG_ON(!__builtin_constant_p(_weight));		\
++		BUILD_BUG_ON_NOT_POWER_OF_2(_factor);			\
++		BUILD_BUG_ON_NOT_POWER_OF_2(_weight);			\
++									\
++		ACCESS_ONCE(e->internal) = internal ?			\
++			(((internal << weight) - internal) +		\
++				(val << factor)) >> weight :		\
++			(val << factor);				\
 +	}
-+}
-+EXPORT_SYMBOL_GPL(seq_hex_dump);
++#endif /* DECLARE_EWMA */
++
++#endif /* __BACKPORT_AVERAGE */
+diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
+index ed600a3e53bb..7c88729c3ec2 100644
+--- a/backport/compat/Kconfig
++++ b/backport/compat/Kconfig
+@@ -73,17 +73,6 @@ config BPAUTO_BUILD_CORDIC
+ config BPAUTO_CORDIC
+ 	bool
+ 
+-config BPAUTO_BUILD_AVERAGE
+-	bool
+-	depends on !AVERAGE
+-	default y if BPAUTO_USERSEL_BUILD_ALL
+-	default y if BPAUTO_AVERAGE
+-	#h-file linux/average.h
+-	#c-file lib/average.c
+-
+-config BPAUTO_AVERAGE
+-	bool
+-
+ config BPAUTO_MII
+ 	bool
+ 
 -- 
 2.1.4
 
