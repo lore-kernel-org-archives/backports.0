@@ -1,50 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:39108 "EHLO hauke-m.de"
+Received: from mga02.intel.com ([134.134.136.20]:56140 "EHLO mga02.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751876AbbHBWh4 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 2 Aug 2015 18:37:56 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@kernel.org
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/8] backports: do not add debugfs_create_devm_seqfile() on recent kernel versions
-Date: Mon,  3 Aug 2015 00:37:40 +0200
-Message-Id: <1438555067-15301-2-git-send-email-hauke@hauke-m.de> (sfid-20150803_003801_857971_22B96247)
-In-Reply-To: <1438555067-15301-1-git-send-email-hauke@hauke-m.de>
-References: <1438555067-15301-1-git-send-email-hauke@hauke-m.de>
+	id S1755860AbbHZCmM convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 25 Aug 2015 22:42:12 -0400
+From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+To: Johannes Berg <johannes@sipsolutions.net>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: [PATCH] backports: backport IFF_NO_QUEUE net_device flag
+Date: Wed, 26 Aug 2015 02:42:08 +0000
+Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB32E855856@hasmsx107.ger.corp.intel.com> (sfid-20150826_044220_196881_E66D0EC1)
+References: <1440531399-29379-1-git-send-email-emmanuel.grumbach@intel.com>
+	 (sfid-20150825_213646_779513_F10D303E)
+ <1440540311.2376.0.camel@sipsolutions.net>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-An ifdef for the kernel version was missing around the header of
-debugfs_create_devm_seqfile() and the LINUX_BACKPORT() was also not
-added.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/debugfs.h | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/backport/backport-include/linux/debugfs.h b/backport/backport-include/linux/debugfs.h
-index ef9b6e4..a684353 100644
---- a/backport/backport-include/linux/debugfs.h
-+++ b/backport/backport-include/linux/debugfs.h
-@@ -5,6 +5,8 @@
- #include <linux/device.h>
- #include <generated/utsrelease.h>
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
-+#define debugfs_create_devm_seqfile LINUX_BACKPORT(debugfs_create_devm_seqfile)
- #if defined(CONFIG_DEBUG_FS)
- struct dentry *debugfs_create_devm_seqfile(struct device *dev, const char *name,
- 					   struct dentry *parent,
-@@ -20,5 +22,6 @@ static inline struct dentry *debugfs_create_devm_seqfile(struct device *dev,
- 	return ERR_PTR(-ENODEV);
- }
- #endif /* CONFIG_DEBUG_FS */
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0) */
- 
- #endif /* __BACKPORT_DEBUGFS_H_ */
--- 
-2.1.4
-
+On 08/26/2015 01:05 AM, Johannes Berg wrote:
+> On Tue, 2015-08-25 at 22:36 +0300, Emmanuel Grumbach wrote:
+>> commit fa8187c96471c49419c25d4ec3299d17d3f274b2
+>> Author: Phil Sutter <phil@nwl.cc>
+>> Date:   Thu Aug 13 19:01:06 2015 +0200
+>>
+>>     net: declare new net_device priv_flag IFF_NO_QUEUE
+>>
+>>     This private net_device flag can be set by drivers to inform that a
+>>     device runs fine without a qdisc attached. This was formerly done by
+>>     setting tx_queue_len to zero.
+>>
+>> Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+>> ---
+>>  backport/backport-include/linux/netdevice.h | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/backport/backport-include/linux/netdevice.h 
+>> b/backport/backport-include/linux/netdevice.h
+>> index 95189be..94d8613 100644
+>> --- a/backport/backport-include/linux/netdevice.h
+>> +++ b/backport/backport-include/linux/netdevice.h
+>> @@ -292,4 +292,9 @@ netdev_features_t passthru_features_check(struct 
+>> sk_buff *skb,
+>>  })
+>>  #endif /* netdev_alloc_pcpu_stats */
+>>  
+>> +#if LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0)
+>> +#ifndef IFF_NO_QUEUE
+>> +#define IFF_NO_QUEUE 1<<26
+>> +#endif
+>>
+> That doesn't really help, does it? Need to add a semantic patch to
+> backport this with an ifdef to set the tx_queue_len to 0 in the older
+> kernel case?
+> 
+You are most probably right. I had to admit I just checked that it
+compiles and probably didn't take enough time to see what it really
+does... :(
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
