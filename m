@@ -1,46 +1,91 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:51290 "EHLO sipsolutions.net"
+Received: from mga14.intel.com ([192.55.52.115]:17437 "EHLO mga14.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752085AbbHaNdf (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 31 Aug 2015 09:33:35 -0400
-Message-ID: <1441028012.13980.10.camel@sipsolutions.net> (sfid-20150831_153337_435486_78BB89FC)
+	id S1752514AbbHaMut (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 31 Aug 2015 08:50:49 -0400
 Subject: Re: newbie questions
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+To: Johannes Berg <johannes@sipsolutions.net>,
 	backports@vger.kernel.org
-Date: Mon, 31 Aug 2015 15:33:32 +0200
-In-Reply-To: <55E454C9.5070302@linux.intel.com>
 References: <55E3A03D.6050607@linux.intel.com>
-	 (sfid-20150831_023101_616135_D37C8DBB) <1441006988.13980.3.camel@sipsolutions.net>
-	 <55E44DA7.3000209@linux.intel.com>
-	 <1441025664.13980.8.camel@sipsolutions.net>
-	 <55E454C9.5070302@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+ (sfid-20150831_023101_616135_D37C8DBB)
+ <1441006988.13980.3.camel@sipsolutions.net>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <55E44DA7.3000209@linux.intel.com> (sfid-20150831_145050_992724_44477EB5)
+Date: Mon, 31 Aug 2015 07:50:47 -0500
+MIME-Version: 1.0
+In-Reply-To: <1441006988.13980.3.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 2015-08-31 at 08:21 -0500, Pierre-Louis Bossart wrote:
-> > 
-> > The *to* version is never relevant. A given backport will compile
-> > against many different *to* versions.
+Thanks for the quick answers Johannes, more below.
+
+On 08/31/2015 02:43 AM, Johannes Berg wrote:
+> Hi,
 > 
-> I guess I completely missed the concept. I was thinking that the 
-> gentree.py command would only port and adjust the delta between linux
-> -next and the version I wanted. Looks like the backport is really an 
-> add-on that will apply to multiple versions. Not sure I understand 
-> how successive changes in the tree are handled if there is a single 
-> backport.
+>> question1: is there a way the list of packages can be selected? I'd 
+>> like to use the backports infrastructure only for what I care about 
+>> (media, usb, audio). It'd be really nice if I could limit the updates 
+>> to the parts I care about (media, usb, sound) and remove all the 
+>> networking part I don't really have a use for. It's fine if the 
+>> releases include everything, I only want to limit the changes in my 
+>> own workspace.
+> 
+> In general, this is possible. Check out the copy-list file. You can
+> edit this, and it'll copy only what's listed there.
 
-Well, there's a single *from* version, as you say that was currently
-"next-20150731" (or that was the one you used). The backport git
-repository is maintained in lockstep with the *from* version (although
-there's usually quite a bit of wiggle room)
+ok. I was thinking of a more automated way that doesn't require me to maintain a branch but that'll do for now.
 
-The result, the output of backports, will/should compile against any
-kernel starting from the earliest supported, all the way up to the
-*from* version, right now I think that's 3.0 until 4.1 or so.
+> In order to add sound though, you'll also have to at least change
+> backport/Makefile.kernel and backport/Kconfig.sources to include the
+> sound directory in the kconfig and build.
 
-johannes
+yes that part works fine. I still have to figure out how Kconfig works in the backports, I didn't get the explanations.
+
+> The existing semantic patches will be applied to it automatically, but
+> it seems fairly unlikely that it'll all compile cleanly without more
+> effort.
+
+indeed.
+
+>> question2: I am not sure I understand how the code is generated. 
+>> Nothing seems to work/compile even without my changes... If I use 
+>> linux-next with the next-20150731 tag and the latest backport code, I 
+>> get:
+>>
+>> ~/backports$ ./gentree.py --clean --verbose --gitdebug --git-revision
+>>   v4.1.6  ../linux-next ../linux-next-backport
+> 
+> You're not using next-20150731 tag? You're using v4.1.6 tag. If you
+> checked out linux-next in ../linux-next, then you can simply remove the
+> "--git-revision ..." argument and make the script a bit faster even.
+
+humm... What I wanted is backport next-20150731 to v4.1.6. linux-next is checked out to next-20150731.
+which of the two does git-revision refer two? the linux-next origin or the destination?
+
+> 
+>> Exception: Patch failed
+> 
+> This is because you're not using the right tag.
+> 
+>> Now if I use branch origin/linux-4.1.y, the tree is generated but 
+>> usually doesn't compile (random options selected)
+>>
+>> Can anyone help with a known config that works?
+>>
+>>
+>> question 3: how exactly does ckmake work and what am I missing?
+>> :~/backports$ ./devel/ckmake 
+>> [snip] backports/Makefile does not exist
+>>
+> 
+> Don't worry about it for now. It's just a test tool to compile against
+> a lot of trees - you need to run it on the result of backport.
+> 
+> johannes
+> --
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+> 
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
