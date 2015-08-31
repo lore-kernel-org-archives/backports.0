@@ -1,92 +1,73 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:39117 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:49920 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751782AbbHBWh5 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 2 Aug 2015 18:37:57 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: mcgrof@kernel.org
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 4/8] header: adapt change of parameter in {add,sub}_frag_mem_limit()
-Date: Mon,  3 Aug 2015 00:37:43 +0200
-Message-Id: <1438555067-15301-5-git-send-email-hauke@hauke-m.de> (sfid-20150803_003803_305667_62E47257)
-In-Reply-To: <1438555067-15301-1-git-send-email-hauke@hauke-m.de>
-References: <1438555067-15301-1-git-send-email-hauke@hauke-m.de>
+	id S1751514AbbHaHnO (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 31 Aug 2015 03:43:14 -0400
+Message-ID: <1441006988.13980.3.camel@sipsolutions.net> (sfid-20150831_094316_531236_BBF56070)
+Subject: Re: newbie questions
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	backports@vger.kernel.org
+Date: Mon, 31 Aug 2015 09:43:08 +0200
+In-Reply-To: <55E3A03D.6050607@linux.intel.com> (sfid-20150831_023101_616135_D37C8DBB)
+References: <55E3A03D.6050607@linux.intel.com>
+	 (sfid-20150831_023101_616135_D37C8DBB)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-In older kernel versions the first parameter is "struct inet_frag_queue
-*q", now it is "struct netns_frags *nf", This patch adds the new
-versions of this function to all kernel versions older than 4.3.
+Hi,
 
-This change was done in upstream Linux kernel in this commit:
-commit 0e60d245a0be7fdbb723607f1d6621007916b252
-Author: Florian Westphal <fw@strlen.de>
-Date:   Thu Jul 23 12:05:38 2015 +0200
+> question1: is there a way the list of packages can be selected? I'd 
+> like to use the backports infrastructure only for what I care about 
+> (media, usb, audio). It'd be really nice if I could limit the updates 
+> to the parts I care about (media, usb, sound) and remove all the 
+> networking part I don't really have a use for. It's fine if the 
+> releases include everything, I only want to limit the changes in my 
+> own workspace.
 
-    inet: frag: change *_frag_mem_limit functions to take netns_frags as argument
+In general, this is possible. Check out the copy-list file. You can
+edit this, and it'll copy only what's listed there.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/net/inet_frag.h | 38 +++++++++++++++++++++----------
- 1 file changed, 26 insertions(+), 12 deletions(-)
+In order to add sound though, you'll also have to at least change
+backport/Makefile.kernel and backport/Kconfig.sources to include the
+sound directory in the kconfig and build.
 
-diff --git a/backport/backport-include/net/inet_frag.h b/backport/backport-include/net/inet_frag.h
-index 3c9e11a..e36224e 100644
---- a/backport/backport-include/net/inet_frag.h
-+++ b/backport/backport-include/net/inet_frag.h
-@@ -11,18 +11,6 @@ static inline int frag_mem_limit(struct netns_frags *nf)
- 	return atomic_read(&nf->mem);
- }
- 
--#define sub_frag_mem_limit LINUX_BACKPORT(sub_frag_mem_limit)
--static inline void sub_frag_mem_limit(struct inet_frag_queue *q, int i)
--{
--	atomic_sub(i, &q->net->mem);
--}
--
--#define add_frag_mem_limit LINUX_BACKPORT(add_frag_mem_limit)
--static inline void add_frag_mem_limit(struct inet_frag_queue *q, int i)
--{
--	atomic_add(i, &q->net->mem);
--}
--
- #define init_frag_mem_limit LINUX_BACKPORT(init_frag_mem_limit)
- static inline void init_frag_mem_limit(struct netns_frags *nf)
- {
-@@ -40,5 +28,31 @@ void inet_frag_maybe_warn_overflow(struct inet_frag_queue *q,
- 				   const char *prefix);
- #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0) */
- 
-+/* the type of the paramater changed with kernel 4.3 */
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
-+#define sub_frag_mem_limit LINUX_BACKPORT(sub_frag_mem_limit)
-+static inline void sub_frag_mem_limit(struct netns_frags *nf, int i)
-+{
-+	atomic_sub(i, &nf->mem);
-+}
-+
-+#define add_frag_mem_limit LINUX_BACKPORT(add_frag_mem_limit)
-+static inline void add_frag_mem_limit(struct netns_frags *nf, int i)
-+{
-+	atomic_add(i, &nf->mem);
-+}
-+#elif LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0)
-+#define sub_frag_mem_limit LINUX_BACKPORT(sub_frag_mem_limit)
-+static inline void sub_frag_mem_limit(struct netns_frags *nf, int i)
-+{
-+	__percpu_counter_add(&nf->mem, -i, frag_percpu_counter_batch);
-+}
-+
-+#define add_frag_mem_limit LINUX_BACKPORT(add_frag_mem_limit)
-+static inline void add_frag_mem_limit(struct netns_frags *nf, int i)
-+{
-+	__percpu_counter_add(&nf->mem, i, frag_percpu_counter_batch);
-+}
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0) */
- 
- #endif /* __BACKPORT__NET_FRAG_H__ */
--- 
-2.1.4
+The existing semantic patches will be applied to it automatically, but
+it seems fairly unlikely that it'll all compile cleanly without more
+effort.
 
+> question2: I am not sure I understand how the code is generated. 
+> Nothing seems to work/compile even without my changes... If I use 
+> linux-next with the next-20150731 tag and the latest backport code, I 
+> get:
+> 
+> ~/backports$ ./gentree.py --clean --verbose --gitdebug --git-revision
+>   v4.1.6  ../linux-next ../linux-next-backport
+
+You're not using next-20150731 tag? You're using v4.1.6 tag. If you
+checked out linux-next in ../linux-next, then you can simply remove the
+"--git-revision ..." argument and make the script a bit faster even.
+
+> Exception: Patch failed
+
+This is because you're not using the right tag.
+
+> Now if I use branch origin/linux-4.1.y, the tree is generated but 
+> usually doesn't compile (random options selected)
+> 
+> Can anyone help with a known config that works?
+> 
+> 
+> question 3: how exactly does ckmake work and what am I missing?
+> :~/backports$ ./devel/ckmake 
+> [snip] backports/Makefile does not exist
+> 
+
+Don't worry about it for now. It's just a test tool to compile against
+a lot of trees - you need to run it on the result of backport.
+
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
