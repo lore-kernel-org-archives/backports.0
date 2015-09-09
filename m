@@ -1,74 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:4051 "EHLO
-	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751732AbbINTsu (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 14 Sep 2015 15:48:50 -0400
-Date: Mon, 14 Sep 2015 21:48:48 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-cc: Johannes Berg <johannes@sipsolutions.net>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: [PATCH v2] backports: add spatch to handle IFF_NO_QUEUE
-In-Reply-To: <CAB=NE6W8d-OCAMmti1Q4cWMkToe9o6m4M-_Hpz=p0peh9g5ROQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.02.1509142148440.2048@localhost6.localdomain6> (sfid-20150914_214852_448367_7E54A691)
-References: <1441790875-8496-1-git-send-email-johannes@sipsolutions.net> <CAB=NE6VMH6Ket9CRni2KMiTaAgStUGqDtUoZw4buF0R=9TH_Aw@mail.gmail.com> <1442219253.2075.4.camel@sipsolutions.net> <CAB=NE6W8d-OCAMmti1Q4cWMkToe9o6m4M-_Hpz=p0peh9g5ROQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Received: from s3.sipsolutions.net ([5.9.151.49]:50243 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751626AbbIIJ2B (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 9 Sep 2015 05:28:01 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH v2] backports: add spatch to handle IFF_NO_QUEUE
+Date: Wed,  9 Sep 2015 11:27:55 +0200
+Message-Id: <1441790875-8496-1-git-send-email-johannes@sipsolutions.net> (sfid-20150909_112804_444554_0C9FFB75)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+From: Johannes Berg <johannes.berg@intel.com>
 
+This flag doesn't exist on newer kernels, but replaced the tx_queue_len
+assignment, so can't just be backported to have no effect. Instead, add
+a semantic patch that puts back the tx_queue_len=0 assignment on older
+kernel versions.
 
-On Mon, 14 Sep 2015, Luis R. Rodriguez wrote:
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ patches/collateral-evolutions/network/0062-iff-no-queue.cocci | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0062-iff-no-queue.cocci
 
-> On Mon, Sep 14, 2015 at 1:27 AM, Johannes Berg
-> <johannes@sipsolutions.net> wrote:
-> > On Mon, 2015-09-14 at 01:25 -0700, Luis R. Rodriguez wrote:
-> >
-> >> > ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,3,0)
-> >> > + E->priv_flags |= IFF_NO_QUEUE;
-> >> > ++#else
-> >> > ++E->tx_queue_len = 0;
-> >> > ++#endif
-> >>
-> >> Interesting so although priv_flags may be a member name prevalent in
-> >> *many* data structures the SmPL rule here is very specific about the
-> >> use of IFF_NO_QUEUE as a flag, and since we know that is unique to one
-> >> use case we take the liberty over using expression here. Replying just
-> >> to annotate this practice and Cc Julia on her thoughts.
-> >>
-> >
-> > Yeah I thought about this for a while - it doesn't even cover all cases
-> > (there might be drivers that don't use |=, for example).
-> >
-> > However, for now this seemed sufficient since very few places in the
-> > code actually use this.
-> 
-> Sure, I wonder we could use some early rule checks to catch some
-> liberal assumptions we make for some of our rules in patches/, we
-> would use that to report issues *prior* to patch application and we'd
-> reject moving forward with generation if all these rule checks don't
-> match. If we do this that would stop patch application / compilation
-> testing proactively. Something as with the kernel's
-> scripts/coccinelle/ 'make coccicheck' prior to running our patch
-> application. This case seems a bit hard to cover for all cases that
-> don't use the assignments as in your rule though I think... if its
-> easy though it could be a good example to tackle.
+diff --git a/patches/collateral-evolutions/network/0062-iff-no-queue.cocci b/patches/collateral-evolutions/network/0062-iff-no-queue.cocci
+new file mode 100644
+index 000000000000..9c95b853df18
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0062-iff-no-queue.cocci
+@@ -0,0 +1,9 @@
++@@
++expression E;
++@@
++
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,3,0)
++ E->priv_flags |= IFF_NO_QUEUE;
+++#else
+++E->tx_queue_len = 0;
+++#endif
+-- 
+2.1.4
 
-I'm not sure to understand what you have in mind.  Could you be more
-concrete?
-
-julia
-
-
-
-> 
-> > That said, there are cases where E really needs to be an expression
-> > since it's not just "dev->..." but something like "foo->dev->...".
-> 
-> Right figured.
-> 
->  Luis
-> 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
