@@ -1,42 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:41549 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753074AbbIIMjc (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 9 Sep 2015 08:39:32 -0400
-Message-ID: <55F02882.5080207@broadcom.com> (sfid-20150909_143957_461218_E52679D2)
-Date: Wed, 9 Sep 2015 14:39:30 +0200
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:11912 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752281AbbIIMWy (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 9 Sep 2015 08:22:54 -0400
 From: Arend van Spriel <arend@broadcom.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>, Arend van Spriel <arend@broadcom.com>
+Subject: [PATCH] backports: fix typo in copy-list
+Date: Wed, 9 Sep 2015 14:22:49 +0200
+Message-ID: <1441801369-6348-1-git-send-email-arend@broadcom.com> (sfid-20150909_142256_293298_2400C2D6)
 MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: backport devcoredump
-References: <55EFEEF2.2060205@broadcom.com>	 <1441788585.3316.2.camel@sipsolutions.net> <55F02021.3060603@broadcom.com> <1441801810.3316.6.camel@sipsolutions.net>
-In-Reply-To: <1441801810.3316.6.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 09/09/2015 02:30 PM, Johannes Berg wrote:
-> On Wed, 2015-09-09 at 14:03 +0200, Arend van Spriel wrote:
->>
->>> I guess I'll need to run that - are you using a special copy-list?
->>
->> I do and maybe that is causing it. I attached it.
->>
->
-> Unlikely. However, I can't reproduce your issue - if I just add "select
-> WANT_DEV_COREDUMP" to your driver (brcmsmac) in my tree and compile
-> with that I do get it enabled.
+The platform data file is called st-nci.h instead of st_nci.h.
 
-Thanks for checking.
+Signed-off-by: Arend van Spriel <arend@broadcom.com>
+---
+ copy-list | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Can you share your driver changes for it?
-
-I will dig a bit deeper here. It must be something trivial. If I run 
-with backports/master I do get drivers-base-devcoredump.c in compat 
-folder so it must be in my branch which includes the copy-list change.
-
-Gr. AvS
+diff --git a/copy-list b/copy-list
+index 2264d01..d0341c3 100644
+--- a/copy-list
++++ b/copy-list
+@@ -145,7 +145,7 @@ include/linux/platform_data/nfcmrvl.h
+ include/linux/platform_data/nxp-nci.h
+ include/linux/platform_data/pn544.h
+ include/linux/platform_data/st21nfca.h
+-include/linux/platform_data/st_nci.h
++include/linux/platform_data/st-nci.h
+ 
+ # Media
+ include/media/
+-- 
+1.9.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
