@@ -1,26 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ig0-f170.google.com ([209.85.213.170]:33353 "EHLO
-	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932181AbbIYOBc (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 25 Sep 2015 10:01:32 -0400
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:2619 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753743AbbIINhZ (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 9 Sep 2015 09:37:25 -0400
+Message-ID: <55F03612.6040809@broadcom.com> (sfid-20150909_153729_680825_45483DBC)
+Date: Wed, 9 Sep 2015 15:37:22 +0200
+From: Arend van Spriel <arend@broadcom.com>
 MIME-Version: 1.0
-Date: Fri, 25 Sep 2015 17:01:31 +0300
-Message-ID: <CAMwBb8PRbYxULAYeRUMe8X4DFhqW5SjT3VwgtVqy+p0YjQg_Ag@mail.gmail.com> (sfid-20150925_160134_795586_BC0DFB64)
-Subject: Driver maintainers, Other Developers (rt2800usb bugs)
-From: stalingraddd <stalingraddd@gmail.com>
-To: linux-wireless@vger.kernel.org, backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: backport devcoredump
+References: <55EFEEF2.2060205@broadcom.com>	 <1441788585.3316.2.camel@sipsolutions.net> <55F02021.3060603@broadcom.com> <1441801810.3316.6.camel@sipsolutions.net> <55F02882.5080207@broadcom.com>
+In-Reply-To: <55F02882.5080207@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi, i'm having trouble with rt2800usb driver. My notebook is HP
-Elitebook 8530w, i have tp-link tl-wn7200nd adapter v1.2 (rt3070) and
-it doesn't work in kali linux 2.0, i also tried debian 8.2 and still
-no luck. Please check these threads
-https://forums.kali.org/showthread.php?27522-TP-Link-TL-WN7200ND-(rt3070-rt2800usb)-not-working-in-Kali-on-notebook
-https://forums.kali.org/showthread.php?27514-Alfa-AWUS051NH-v2-not-working-with-rt2x00usb
-My thread is about wn7200nd adapter, and the other guy is also having
-troubles like me. If you need any additional information to understand
-what is the problem feel free to write me.
+On 09/09/2015 02:39 PM, Arend van Spriel wrote:
+> On 09/09/2015 02:30 PM, Johannes Berg wrote:
+>> On Wed, 2015-09-09 at 14:03 +0200, Arend van Spriel wrote:
+>>>
+>>>> I guess I'll need to run that - are you using a special copy-list?
+>>>
+>>> I do and maybe that is causing it. I attached it.
+>>>
+>>
+>> Unlikely. However, I can't reproduce your issue - if I just add "select
+>> WANT_DEV_COREDUMP" to your driver (brcmsmac) in my tree and compile
+>> with that I do get it enabled.
+
+I guess the WANT_DEV_COREDUMP must be in the source tree to generate 
+drivers-base-devcoredump.c etc. I used backports generated tree using my 
+copy-list so not driver selects WANT_DEV_COREDUMP, because I applied the 
+brcmfmac devcoredump patch on the backports generated tree.
+
+Gr. AvS
+
+> Thanks for checking.
+>
+>> Can you share your driver changes for it?
+>
+> I will dig a bit deeper here. It must be something trivial. If I run
+> with backports/master I do get drivers-base-devcoredump.c in compat
+> folder so it must be in my branch which includes the copy-list change.
+>
+> Gr. AvS
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
