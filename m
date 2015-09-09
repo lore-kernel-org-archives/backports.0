@@ -1,47 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:50243 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751626AbbIIJ2B (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 9 Sep 2015 05:28:01 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH v2] backports: add spatch to handle IFF_NO_QUEUE
-Date: Wed,  9 Sep 2015 11:27:55 +0200
-Message-Id: <1441790875-8496-1-git-send-email-johannes@sipsolutions.net> (sfid-20150909_112804_444554_0C9FFB75)
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:41549 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753074AbbIIMjc (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 9 Sep 2015 08:39:32 -0400
+Message-ID: <55F02882.5080207@broadcom.com> (sfid-20150909_143957_461218_E52679D2)
+Date: Wed, 9 Sep 2015 14:39:30 +0200
+From: Arend van Spriel <arend@broadcom.com>
+MIME-Version: 1.0
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: backport devcoredump
+References: <55EFEEF2.2060205@broadcom.com>	 <1441788585.3316.2.camel@sipsolutions.net> <55F02021.3060603@broadcom.com> <1441801810.3316.6.camel@sipsolutions.net>
+In-Reply-To: <1441801810.3316.6.camel@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On 09/09/2015 02:30 PM, Johannes Berg wrote:
+> On Wed, 2015-09-09 at 14:03 +0200, Arend van Spriel wrote:
+>>
+>>> I guess I'll need to run that - are you using a special copy-list?
+>>
+>> I do and maybe that is causing it. I attached it.
+>>
+>
+> Unlikely. However, I can't reproduce your issue - if I just add "select
+> WANT_DEV_COREDUMP" to your driver (brcmsmac) in my tree and compile
+> with that I do get it enabled.
 
-This flag doesn't exist on newer kernels, but replaced the tx_queue_len
-assignment, so can't just be backported to have no effect. Instead, add
-a semantic patch that puts back the tx_queue_len=0 assignment on older
-kernel versions.
+Thanks for checking.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- patches/collateral-evolutions/network/0062-iff-no-queue.cocci | 9 +++++++++
- 1 file changed, 9 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0062-iff-no-queue.cocci
+> Can you share your driver changes for it?
 
-diff --git a/patches/collateral-evolutions/network/0062-iff-no-queue.cocci b/patches/collateral-evolutions/network/0062-iff-no-queue.cocci
-new file mode 100644
-index 000000000000..9c95b853df18
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0062-iff-no-queue.cocci
-@@ -0,0 +1,9 @@
-+@@
-+expression E;
-+@@
-+
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,3,0)
-+ E->priv_flags |= IFF_NO_QUEUE;
-++#else
-++E->tx_queue_len = 0;
-++#endif
--- 
-2.1.4
+I will dig a bit deeper here. It must be something trivial. If I run 
+with backports/master I do get drivers-base-devcoredump.c in compat 
+folder so it must be in my branch which includes the copy-list change.
+
+Gr. AvS
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
