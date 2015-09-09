@@ -1,41 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:35752 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:51491 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753375AbbINHtB (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 14 Sep 2015 03:49:01 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 08/10] dependencies: make netup-unidvb driver depend on >= 3.4
-Date: Mon, 14 Sep 2015 09:48:40 +0200
-Message-Id: <1442216922-3318-9-git-send-email-hauke@hauke-m.de> (sfid-20150914_094906_521424_33508529)
-In-Reply-To: <1442216922-3318-1-git-send-email-hauke@hauke-m.de>
-References: <1442216922-3318-1-git-send-email-hauke@hauke-m.de>
+	id S1751886AbbIINy7 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 9 Sep 2015 09:54:59 -0400
+Message-ID: <1441806891.3316.9.camel@sipsolutions.net> (sfid-20150909_155501_640545_A6DE599F)
+Subject: Re: backport devcoredump
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend van Spriel <arend@broadcom.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Wed, 09 Sep 2015 15:54:51 +0200
+In-Reply-To: <55F03612.6040809@broadcom.com>
+References: <55EFEEF2.2060205@broadcom.com>
+		 <1441788585.3316.2.camel@sipsolutions.net> <55F02021.3060603@broadcom.com>
+	 <1441801810.3316.6.camel@sipsolutions.net> <55F02882.5080207@broadcom.com>
+	 <55F03612.6040809@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-netup-unidvb uses spi_finalize_current_message() now which is not
-available on < 3.4.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- dependencies | 1 +
- 1 file changed, 1 insertion(+)
+> I guess the WANT_DEV_COREDUMP must be in the source tree to generate 
+> drivers-base-devcoredump.c etc. I used backports generated tree using 
+> my copy-list so not driver selects WANT_DEV_COREDUMP, because I 
+> applied the brcmfmac devcoredump patch on the backports generated 
+> tree.
+> 
 
-diff --git a/dependencies b/dependencies
-index 4f4c922..ba78004 100644
---- a/dependencies
-+++ b/dependencies
-@@ -123,6 +123,7 @@ DVB_PT3 3.3
- 
- # missing spi_finalize_current_message() and struct spi_master.transfer_one_message
- USB_MSI2500 3.4
-+DVB_NETUP_UNIDVB 3.4
- 
- # missing vb2_expbuf()
- SOC_CAMERA 3.5
--- 
-2.1.4
+Yes, I think you're right - I changed that at some point because I
+explicitly didn't want all the unused requirements to be pulled in.
 
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
