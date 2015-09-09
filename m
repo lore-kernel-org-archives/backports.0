@@ -1,36 +1,28 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:42554 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752986AbbIIId5 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 9 Sep 2015 04:33:57 -0400
-Message-ID: <55EFEEF2.2060205@broadcom.com> (sfid-20150909_103401_031785_6658449D)
-Date: Wed, 9 Sep 2015 10:33:54 +0200
-From: Arend van Spriel <arend@broadcom.com>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: backport devcoredump
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Received: from s3.sipsolutions.net ([5.9.151.49]:50064 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751323AbbIIIqY (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 9 Sep 2015 04:46:24 -0400
+Message-ID: <1441788366.3316.1.camel@sipsolutions.net> (sfid-20150909_104630_609762_8A534DA0)
+Subject: Re: [PATCH] backports: add spatch to handle IFF_NO_QUEUE
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: David Spinadel <david.spinadel@intel.com>
+In-Reply-To: <1440572831-6075-1-git-send-email-johannes@sipsolutions.net> (sfid-20150826_090716_826305_AB1821E1)
+References: <1440572831-6075-1-git-send-email-johannes@sipsolutions.net>
+	 (sfid-20150826_090716_826305_AB1821E1)
+Content-Type: text/plain; charset="UTF-8"
+Date: Wed, 09 Sep 2015 10:46:07 +0200
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi Johannes,
+On Wed, 2015-08-26 at 09:07 +0200, Johannes Berg wrote:
+> 
+> ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,2,0)
+> 
+Actually, that needs to be > instead of >= of course.
 
-I noticed that devcoredump has been added to backports project through 
-backport-adjustment patch. brcmfmac now select WANT_DEV_COREDUMP. 
-However, when I run gentree.py the devcoredump patch is not applied. 
-Also Kconfig of brcm80211 still shows WANT_DEV_COREDUMP. I tried 
-changing it to BPAUTO_WANT_DEV_COREDUMP, but that did not help.
-
-   CC [M] 
-/iscsi/arend/git/brcm80211-backport/drivers/net/wireless/brcm80211/brcmfmac/debug.o
-/iscsi/arend/git/brcm80211-backport/drivers/net/wireless/brcm80211/brcmfmac/debug.c:19:31: 
-fatal error: linux/devcoredump.h: No such file or directory
-  #include <linux/devcoredump.h>
-                                ^
-compilation terminated.
-
-Regards,
-Arend
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
