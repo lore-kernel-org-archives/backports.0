@@ -1,40 +1,34 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:52732 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:50079 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934121AbbIVVlL (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 22 Sep 2015 17:41:11 -0400
-Subject: Re: [PATCH v2] backports: add spatch to handle IFF_NO_QUEUE
-To: Johannes Berg <johannes@sipsolutions.net>,
-	backports@vger.kernel.org
-References: <1441790875-8496-1-git-send-email-johannes@sipsolutions.net>
-Cc: Johannes Berg <johannes.berg@intel.com>,
-	emmanuel.grumbach@intel.com
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <5601CAF5.4040907@hauke-m.de> (sfid-20150922_234113_949576_5475F0CF)
-Date: Tue, 22 Sep 2015 23:41:09 +0200
-MIME-Version: 1.0
-In-Reply-To: <1441790875-8496-1-git-send-email-johannes@sipsolutions.net>
-Content-Type: text/plain; charset=windows-1252
+	id S1751925AbbIIItr (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 9 Sep 2015 04:49:47 -0400
+Message-ID: <1441788585.3316.2.camel@sipsolutions.net> (sfid-20150909_104951_032610_BBFBE43C)
+Subject: Re: backport devcoredump
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend van Spriel <arend@broadcom.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Wed, 09 Sep 2015 10:49:45 +0200
+In-Reply-To: <55EFEEF2.2060205@broadcom.com>
+References: <55EFEEF2.2060205@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 09/09/2015 11:27 AM, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
+On Wed, 2015-09-09 at 10:33 +0200, Arend van Spriel wrote:
+> Hi Johannes,
 > 
-> This flag doesn't exist on newer kernels, but replaced the tx_queue_len
-> assignment, so can't just be backported to have no effect. Instead, add
-> a semantic patch that puts back the tx_queue_len=0 assignment on older
-> kernel versions.
-> 
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> ---
->  patches/collateral-evolutions/network/0062-iff-no-queue.cocci | 9 +++++++++
->  1 file changed, 9 insertions(+)
->  create mode 100644 patches/collateral-evolutions/network/0062-iff-no-queue.cocci
-> 
+> I noticed that devcoredump has been added to backports project 
+> through 
+> backport-adjustment patch. brcmfmac now select WANT_DEV_COREDUMP. 
+> However, when I run gentree.py the devcoredump patch is not applied. 
+> Also Kconfig of brcm80211 still shows WANT_DEV_COREDUMP.
 
-Thank you for the patch, it was applied and pushed out.
+That's strange.
 
-Hauke
+I guess I'll need to run that - are you using a special copy-list?
+
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
