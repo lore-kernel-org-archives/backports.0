@@ -1,155 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:33192 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753778AbbISHuK (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 19 Sep 2015 03:50:10 -0400
-Date: Sat, 19 Sep 2015 00:47:58 -0700
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-To: backports@vger.kernel.org
-Cc: cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
-	Julia Lawall <julia.lawall@lip6.fr>, mcgrof@suse.com
-Subject: Stats on automatically backporting Linux with Coccinelle
-Message-ID: <20150919074758.GB32001@garbanzo.do-not-panic.com> (sfid-20150919_095013_181682_91897F92)
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="98e8jtXdkpgskNou"
+Received: from s3.sipsolutions.net ([5.9.151.49]:55097 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753288AbbINI1g (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 14 Sep 2015 04:27:36 -0400
+Message-ID: <1442219253.2075.4.camel@sipsolutions.net> (sfid-20150914_102738_281757_5653902C)
+Subject: Re: [PATCH v2] backports: add spatch to handle IFF_NO_QUEUE
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Julia Lawall <julia.lawall@lip6.fr>
+Date: Mon, 14 Sep 2015 10:27:33 +0200
+In-Reply-To: <CAB=NE6VMH6Ket9CRni2KMiTaAgStUGqDtUoZw4buF0R=9TH_Aw@mail.gmail.com> (sfid-20150914_102534_238057_71CA5FF2)
+References: <1441790875-8496-1-git-send-email-johannes@sipsolutions.net>
+	 <CAB=NE6VMH6Ket9CRni2KMiTaAgStUGqDtUoZw4buF0R=9TH_Aw@mail.gmail.com>
+	 (sfid-20150914_102534_238057_71CA5FF2)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+On Mon, 2015-09-14 at 01:25 -0700, Luis R. Rodriguez wrote:
 
---98e8jtXdkpgskNou
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,3,0)
+> > + E->priv_flags |= IFF_NO_QUEUE;
+> > ++#else
+> > ++E->tx_queue_len = 0;
+> > ++#endif
+> 
+> Interesting so although priv_flags may be a member name prevalent in
+> *many* data structures the SmPL rule here is very specific about the
+> use of IFF_NO_QUEUE as a flag, and since we know that is unique to one
+> use case we take the liberty over using expression here. Replying just
+> to annotate this practice and Cc Julia on her thoughts.
+> 
 
-Thanks to all who contributed answering questions regarding use of Linux
-backports [0] in the industry, a paper is now published (EDCC 2015) and
-available regarding evaluation of use of use of Coccinelle to help
-automatically backport the Linux kernel [1]. Below are some stats and
-specific statistics definitions defined and used to reflect efficiency
-and work saved of use of Coccinelle rules on the backports project.
+Yeah I thought about this for a while - it doesn't even cover all cases
+(there might be drivers that don't use |=, for example).
 
-In summary we currently end up with that ~56% of backporting work is now
-automatically generated using Coccinelle. The rest of the stats below
-reveal exact metrics of efficiency of each used Coccinelle rule on the
-project. Eventually if folks like it we can strive to automate
-generating these stats for each release, graph progress over time and
-keep to evaluation of how much work each rule is saving us. A curious
-observation we've made while working on these metrics was that the run
-time impact of a simple rule with only an maintenance efficiency of ~1
-will have the very similar run time impact in comparison to more complex
-rules. On a laptop this meant an impact about 3-7s per new rule
-coccinelle file, what this means in practice is that even if you have a
-simple Coccinelle rule to backport just one collateral evolution that
-would address backporting only one device driver adding it to the
-project is desirable and encouraged given that the run time impact is
-always linear and we expect the gains of its use to help with long term
-maintenance (less patch refresh and manual patch hunk fixing) and doing
-more backport work automatically in case collateral evolution ends up
-being useful at any point in time for other drivers / new code that
-would need it.
+However, for now this seemed sufficient since very few places in the
+code actually use this.
 
-We define two metrics of efficiency, development efficiency and
-maintenance efficiency. For development efficiency, we start with the
-number of insertions and deletions that a semantic patch generates,
-ignoring context information, as reported by  git diff --stat, and take
-the ratio of this number with the size of the semantic patch, exclusive
-of comments and whitespace. The number of insertions and deletions
-represents the number of manual changes required when modifying the
-code. Development efficiency thus represents the initial coding savings
-induced by using semantic patches.  For maintenance efficiency, we
-compute the same ratio, but this time consider the complete size of the
-patch, not only the insertions and deletions, but also all the metadata
-information contained within the patch generated by the semantic patch,
-including file names, file offsets, and (unmodified) context lines; all
-of this metadata must also be kept up to date so that the patch command
-can apply the patch to the relevant files. A development (resp.,
-maintenance) efficiency value of 1 means the semantic patch has the same
-number of lines as  the changes (resp., lines) in the patch series it
-replaces. A development (resp., maintenance) efficiency value of 2 means
-the semantic patch is producing twice as many changes (resp., patch
-lines) as the number of lines in  the semantic patch.
+That said, there are cases where E really needs to be an expression
+since it's not just "dev->..." but something like "foo->dev->...".
 
-The tools used to generate these stats is up on github temporarily [2],
-again if we like these sorts of stats we should probably consider
-porting it to Python, keeping record of stats and integrate it into
-either the backports or coccinelle project.
-
-Maintenance efficiency:
-
-Size of patch (insertions + deletions + context)
---------------------------------------------------
-            Size of SmPL patch
-
-Development efficiency:
-
-Size of relevant changes of patch(insertions + deletions)
-----------------------------------------------------------
-                 Size of SmPL patch
-
------------------------------------------------------------------------------
-Development and Maintenance efficiency metrics:
------------------------------------------------------------------------------
-    dev-efficiency	  maint-efficiency	 diff-wc	  diffstat	     clean	     SmPL-Patch
-          0.666667	           1.88889	      17	         6	         9	skb_no_xmit_more.cocci
-           1.16667	           2.79167	      67	        28	        24	ptp_getsettime64.cocci
-          0.142857	                 1	      14	         2	        14	features_check.cocci
-           1.18182	           5.45455	      60	        13	        11	0055-netdev-tstats.cocci
-           1.55906	           3.55118	     451	       198	       127	0054-struct-proto_ops-sig.cocci
-          0.666667	           1.88889	      17	         6	         9	no-pfmemalloc.cocci
-          0.634146	            1.4878	      61	        26	        41	set_vf_rate.cocci
-              3.75	            10.625	      85	        30	         8	igb_pci_error_handlers.cocci
-           1.07692	           4.23077	      55	        14	        13	ethtool_cmd_mdix.cocci
-          0.588235	           1.23529	      21	        10	        17	    rxnfc.cocci
-          0.285714	           1.53571	      43	         8	        28	get_module.cocci
-          0.285714	           1.53571	      43	         8	        28	ethtool_eee.cocci
-          0.714286	           2.28571	      16	         5	         7	skb_no_fcs.cocci
-              0.25	           1.59375	      51	         8	        32	set_vf_spoofchk.cocci
-          0.428571	           2.85714	      40	         6	        14	sriov_configure.cocci
-           0.87037	            2.7037	     146	        47	        54	0031-sk_data_ready.cocci
-               4.4	              17.9	     179	        44	        10	genl-const.cocci
-           6.88889	           48.1111	     433	        62	         9	0019-usb_driver_lpm.cocci
-          0.571429	           4.14286	      58	         8	        14	get_ts_info.cocci
-           10.8667	              42.4	     636	       163	        15	0001-netlink-portid.cocci
-           2.93333	           16.1167	     967	       176	        60	0002-no_dmabuf.cocci
-          0.512821	           1.89744	      74	        20	        39	0002-group_attr_bus.cocci
-          0.769231	           2.79487	     109	        30	        39	0001-group_attr_class.cocci
-           1.47588	           5.67363	    3529	       918	       622	 all-SmPL.cocci
------------------------------------------------------------------------------
-Patch total diff wc -l: 2790
-SmPL  total diff wc -l: 3529
-Total total diff wc -l: 6319
----------------------------------------
-Patch diff % contribution: 44.1526
-SmPL  diff % contribution: 55.8474
-
-[0] http://backports.wiki.kernel.org
-[1] http://coccinelle.lip6.fr/papers/backport_edcc15.pdf
-[2] https://github.com/mcgrof/backports-cocci-stats
-
-  Luis
-
---98e8jtXdkpgskNou
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJV/RMuAAoJEM4jHQowkoinAzUQAINEW4UUg2vYDa9A2BXvsC1u
-VwUeWMZTxf0X7lJpgrf8qIpbEYhW8xPgTUMUs+1E+hbnYbWyL41Vm1jgfqBR+MNV
-MQBSi+NVC2YxmIa/hl2s2A2n5+VU6SYAojM0rXQmFPm7OSisb+TLo8e2qp365yk6
-Z1fe9K1bKzcXNukuAD9AtzNER33AgiJ8z8P42y0geH2wYN8gmF6YqMZtzlpfAUYN
-pfL2YtH2LXTZLBseBTrDd0yg1VSeaBGFjhlByj3rgL9gZIBCcgGzPDrIoEDfdYve
-3EvtM26tOnfe2GitTFKTblkocoMaLdQUuVCb8Kf8UHTQ5jrEtOypVuurCTSOiVnz
-57SSl3aoczUj6O7fmV0I5ii4Xk0OBDfIzsG3ss45eNrfR4h09HjeqodCF9vUkFmT
-EmA82RAkCQMXNn6Xk+yHAuMWTJgqX/CZoPaDace+Je+on61H8sy5+JWkjEXjs4mP
-n+eH2Nq72ogrHvF/LMadTSEihuUwLXhtpOT0bnBS3S3IDFgIfzgToLsYVn2f0Glc
-9AEDkKgURZjy0LPBJ70s5zonf7HyP/UfSwl3a7C+h2hx8FEDjVcCA+bQlGd/GJSz
-Xkwj5rNoRrdV3mJsE43z79nrAx0M3iHJMiv91+DXUbPp9D4gxrdsMTZFhILFVqz/
-103nzNo2LYWN2/+w0aas
-=4Xk9
------END PGP SIGNATURE-----
-
---98e8jtXdkpgskNou--
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
