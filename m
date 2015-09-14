@@ -1,42 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:54491 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:36293 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752618AbbIRNLZ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 18 Sep 2015 09:11:25 -0400
-Message-ID: <1442581882.2168.13.camel@sipsolutions.net> (sfid-20150918_151127_226278_79D49942)
-Subject: Re: [PATCH RFC 2/2] add script to enable audio backport
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	id S1750980AbbINVZH (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 14 Sep 2015 17:25:07 -0400
+Subject: Re: [PATCH v2] git-tracker: read INPUT_HTTP[S]_PROXY environment
+ variable
+To: Johannes Berg <johannes@sipsolutions.net>,
 	backports@vger.kernel.org
-Date: Fri, 18 Sep 2015 15:11:22 +0200
-In-Reply-To: <55FC0C72.20806@linux.intel.com>
-References: <1442526437-22392-1-git-send-email-pierre-louis.bossart@linux.intel.com>
-	 <1442526437-22392-3-git-send-email-pierre-louis.bossart@linux.intel.com>
-	 (sfid-20150917_234743_628456_B160EAFA) <1442560633.2168.6.camel@sipsolutions.net>
-	 <55FC0C72.20806@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+References: <1439976363.2089.2.camel@sipsolutions.net>
+ (sfid-20150819_112609_092507_D1F11647)
+ <1439977490.2089.5.camel@sipsolutions.net>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Message-ID: <55F73B2F.8000405@hauke-m.de> (sfid-20150914_232509_631392_D2BD2ED2)
+Date: Mon, 14 Sep 2015 23:25:03 +0200
+MIME-Version: 1.0
+In-Reply-To: <1439977490.2089.5.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2015-09-18 at 08:06 -0500, Pierre-Louis Bossart wrote:
+On 08/19/2015 11:44 AM, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
 > 
-> "You can submit this part upstream btw - it'll just be disabled in 
-> the
-> default copy-list... unless you also submit that upstream"
+> This allows using a different HTTP[S] proxy for input and output
+> trees, if necessary.
 > 
-> If you are ok to take the patches and have the upstream copy-list 
-> include the sound files then yes the script is not necessary. I just 
-> wanted to have a first pass that isn't intrusive or breaks all the 
-> backports, but simple enough for others to try and test.
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+>  devel/git-tracker.py | 22 ++++++++++++++++------
+>  lib/bpgit.py         | 14 ++++++++------
+>  2 files changed, 24 insertions(+), 12 deletions(-)
+> 
 
-Ah. Well I think that we'd probably wait until it compiles against all
-kernels, but after that having them included in the upstream copy-list
-isn't an issue at all.
+Thank you for the patch, it was applied and pushed out.
 
-And until then perhaps you'd just provide it as a separate tree or
-patch somewhere, I don't think we should add it to backports like that.
+Hauke
 
-johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
