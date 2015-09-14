@@ -1,44 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:35750 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:35744 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753200AbbINHtB (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 14 Sep 2015 03:49:01 -0400
+	id S1752405AbbINHtA (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 14 Sep 2015 03:49:00 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 06/10] patches: add additional include to brcmfmac
-Date: Mon, 14 Sep 2015 09:48:38 +0200
-Message-Id: <1442216922-3318-7-git-send-email-hauke@hauke-m.de> (sfid-20150914_094905_309710_635968DB)
+Subject: [PATCH 01/10] header: add acpi_dev_remove_driver_gpios()
+Date: Mon, 14 Sep 2015 09:48:33 +0200
+Message-Id: <1442216922-3318-2-git-send-email-hauke@hauke-m.de> (sfid-20150914_094902_227107_368DB457)
 In-Reply-To: <1442216922-3318-1-git-send-email-hauke@hauke-m.de>
 References: <1442216922-3318-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-brcmfmac uses atomic_or(), but does not include linux/atomic.h which
-causes problems on kernel 3.0
+This adds an empty implementation of acpi_dev_remove_driver_gpios() for
+kernel version < 3.19, on these versions we do not support these acpi
+features.
+This is used by hci_bcm.c
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../network/0013-fix-makefile-includes/brcmfmac.patch          | 10 ++++++++++
- 1 file changed, 10 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0013-fix-makefile-includes/brcmfmac.patch
+ backport/backport-include/linux/acpi.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/patches/collateral-evolutions/network/0013-fix-makefile-includes/brcmfmac.patch b/patches/collateral-evolutions/network/0013-fix-makefile-includes/brcmfmac.patch
-new file mode 100644
-index 0000000..0e0a96c
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0013-fix-makefile-includes/brcmfmac.patch
-@@ -0,0 +1,10 @@
-+--- a/drivers/net/wireless/brcm80211/brcmfmac/sdio.c
-++++ b/drivers/net/wireless/brcm80211/brcmfmac/sdio.c
-+@@ -15,6 +15,7 @@
-+  */
-+ 
-+ #include <linux/types.h>
-++#include <linux/atomic.h>
-+ #include <linux/kernel.h>
-+ #include <linux/kthread.h>
-+ #include <linux/printk.h>
+diff --git a/backport/backport-include/linux/acpi.h b/backport/backport-include/linux/acpi.h
+index ff55d76..395ca18 100644
+--- a/backport/backport-include/linux/acpi.h
++++ b/backport/backport-include/linux/acpi.h
+@@ -54,4 +54,10 @@ static inline struct acpi_device *_acpi_get_companion(struct device *dev)
+ #define ACPI_COMPANION(dev)	(NULL)
+ #endif /* CONFIG_ACPI */
+ #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3, 13, 0) */
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
++#define acpi_dev_remove_driver_gpios LINUX_BACKPORT(acpi_dev_remove_driver_gpios)
++static inline void acpi_dev_remove_driver_gpios(struct acpi_device *adev) {}
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3, 19, 0) */
++
+ #endif /* __BACKPORT_LINUX_ACPI_H */
 -- 
 2.1.4
 
