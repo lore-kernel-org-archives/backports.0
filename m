@@ -1,34 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:52829 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752415AbbIRHRP (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 18 Sep 2015 03:17:15 -0400
-Message-ID: <1442560633.2168.6.camel@sipsolutions.net> (sfid-20150918_091716_686998_B9316FCC)
-Subject: Re: [PATCH RFC 2/2] add script to enable audio backport
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	backports@vger.kernel.org
-Date: Fri, 18 Sep 2015 09:17:13 +0200
-In-Reply-To: <1442526437-22392-3-git-send-email-pierre-louis.bossart@linux.intel.com> (sfid-20150917_234743_628456_B160EAFA)
-References: <1442526437-22392-1-git-send-email-pierre-louis.bossart@linux.intel.com>
-	 <1442526437-22392-3-git-send-email-pierre-louis.bossart@linux.intel.com>
-	 (sfid-20150917_234743_628456_B160EAFA)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:15146 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751330AbbINIQ3 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 14 Sep 2015 04:16:29 -0400
+Message-ID: <55F68256.4090405@broadcom.com> (sfid-20150914_101632_628324_3FEA9A44)
+Date: Mon, 14 Sep 2015 10:16:22 +0200
+From: Arend van Spriel <arend@broadcom.com>
+MIME-Version: 1.0
+To: Hauke Mehrtens <hauke@hauke-m.de>, <backports@vger.kernel.org>
+Subject: Re: [PATCH 06/10] patches: add additional include to brcmfmac
+References: <1442216922-3318-1-git-send-email-hauke@hauke-m.de> <1442216922-3318-7-git-send-email-hauke@hauke-m.de>
+In-Reply-To: <1442216922-3318-7-git-send-email-hauke@hauke-m.de>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, 2015-09-17 at 16:47 -0500, Pierre-Louis Bossart wrote:
-> bash enable_audio.sh will add the required files in copylist
-> and patch some of the backport headers
-> 
-I don't think this should be part of backports - the code modifications
-shouldn't be necessary, you can add everything to copy-list as it
-should be (and run with your own copy-list for just sound), and provide
-a defconfig file.
+On 09/14/2015 09:48 AM, Hauke Mehrtens wrote:
+> brcmfmac uses atomic_or(), but does not include linux/atomic.h which
+> causes problems on kernel 3.0
 
-Scripting really shouldn't be there I think.
+Hi Hauke,
 
-johannes
+Will you also submit the actual patch upstream?
+
+Regards,
+Arend
+
+> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+> ---
+>   .../network/0013-fix-makefile-includes/brcmfmac.patch          | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+>   create mode 100644 patches/collateral-evolutions/network/0013-fix-makefile-includes/brcmfmac.patch
+>
+> diff --git a/patches/collateral-evolutions/network/0013-fix-makefile-includes/brcmfmac.patch b/patches/collateral-evolutions/network/0013-fix-makefile-includes/brcmfmac.patch
+> new file mode 100644
+> index 0000000..0e0a96c
+> --- /dev/null
+> +++ b/patches/collateral-evolutions/network/0013-fix-makefile-includes/brcmfmac.patch
+> @@ -0,0 +1,10 @@
+> +--- a/drivers/net/wireless/brcm80211/brcmfmac/sdio.c
+> ++++ b/drivers/net/wireless/brcm80211/brcmfmac/sdio.c
+> +@@ -15,6 +15,7 @@
+> +  */
+> +
+> + #include <linux/types.h>
+> ++#include <linux/atomic.h>
+> + #include <linux/kernel.h>
+> + #include <linux/kthread.h>
+> + #include <linux/printk.h>
+>
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
