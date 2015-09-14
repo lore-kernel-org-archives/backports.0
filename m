@@ -1,49 +1,64 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:36157 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751965AbbIPIMx (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 16 Sep 2015 04:12:53 -0400
-Message-ID: <55F92480.50004@broadcom.com> (sfid-20150916_101257_375846_E55877EB)
-Date: Wed, 16 Sep 2015 10:12:48 +0200
-From: Arend van Spriel <arend@broadcom.com>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:35950 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754004AbbINJds (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 14 Sep 2015 05:33:48 -0400
+Received: by obqa2 with SMTP id a2so104128626obq.3
+        for <backports@vger.kernel.org>; Mon, 14 Sep 2015 02:33:48 -0700 (PDT)
 MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	<backports@vger.kernel.org>
-Subject: Re: parse-integer support
-References: <55F8E3E9.9090901@linux.intel.com>	 (sfid-20150916_053717_657974_49EDAFEA) <1442383450.2280.2.camel@sipsolutions.net>
-In-Reply-To: <1442383450.2280.2.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+In-Reply-To: <1442219253.2075.4.camel@sipsolutions.net>
+References: <1441790875-8496-1-git-send-email-johannes@sipsolutions.net>
+ <CAB=NE6VMH6Ket9CRni2KMiTaAgStUGqDtUoZw4buF0R=9TH_Aw@mail.gmail.com> <1442219253.2075.4.camel@sipsolutions.net>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Mon, 14 Sep 2015 02:33:28 -0700
+Message-ID: <CAB=NE6W8d-OCAMmti1Q4cWMkToe9o6m4M-_Hpz=p0peh9g5ROQ@mail.gmail.com> (sfid-20150914_113351_681924_7856DA48)
+Subject: Re: [PATCH v2] backports: add spatch to handle IFF_NO_QUEUE
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 09/16/2015 08:04 AM, Johannes Berg wrote:
-> Hi,
+On Mon, Sep 14, 2015 at 1:27 AM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> On Mon, 2015-09-14 at 01:25 -0700, Luis R. Rodriguez wrote:
 >
->> I've progressed a bit in my endeavor to backport the sound drivers with
->> only a few compilation errors but I've reached a blocking point. The
->> audio drivers were converted to use parse_integer this summer but I
->> can't figure out how to back port this.
+>> > ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,3,0)
+>> > + E->priv_flags |= IFF_NO_QUEUE;
+>> > ++#else
+>> > ++E->tx_queue_len = 0;
+>> > ++#endif
+>>
+>> Interesting so although priv_flags may be a member name prevalent in
+>> *many* data structures the SmPL rule here is very specific about the
+>> use of IFF_NO_QUEUE as a flag, and since we know that is unique to one
+>> use case we take the liberty over using expression here. Replying just
+>> to annotate this practice and Cc Julia on her thoughts.
+>>
 >
-> Err, I can't even figure out what "parse_integer" is? Such a function
-> doesn't exist in my kernel
+> Yeah I thought about this for a while - it doesn't even cover all cases
+> (there might be drivers that don't use |=, for example).
 >
->> If I add include/linux/parse-integer to copy-list then there are tons of
->> redeclations.
->
-> Neither does a file called include/linux/parse-integer(.h)
->
-> If you can point out what you really meant here then I'm sure this is
-> easy to fix, but without looking at the code (which clearly I can't)
-> there's not much I can do.
+> However, for now this seemed sufficient since very few places in the
+> code actually use this.
 
-Probably it is not in because it was tagged as crap and not merged [1].
+Sure, I wonder we could use some early rule checks to catch some
+liberal assumptions we make for some of our rules in patches/, we
+would use that to report issues *prior* to patch application and we'd
+reject moving forward with generation if all these rule checks don't
+match. If we do this that would stop patch application / compilation
+testing proactively. Something as with the kernel's
+scripts/coccinelle/ 'make coccicheck' prior to running our patch
+application. This case seems a bit hard to cover for all cases that
+don't use the assignments as in your rule though I think... if its
+easy though it could be a good example to tackle.
 
-Regards,
-Arend
+> That said, there are cases where E really needs to be an expression
+> since it's not just "dev->..." but something like "foo->dev->...".
 
-[1] 
-http://mid.gmane.org/CA+55aFxN7ebRPpayOQSznjJobz1UVQRQ5rMAKjxGvc3vW6fNYg@mail.gmail.com
+Right figured.
 
+ Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
