@@ -1,33 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:40466 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:35751 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751967AbbIPIR4 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 16 Sep 2015 04:17:56 -0400
-Message-ID: <1442391470.2280.4.camel@sipsolutions.net> (sfid-20150916_101759_430163_413DEBD2)
-Subject: Re: parse-integer support
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend van Spriel <arend@broadcom.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	backports@vger.kernel.org
-Date: Wed, 16 Sep 2015 10:17:50 +0200
-In-Reply-To: <55F92480.50004@broadcom.com>
-References: <55F8E3E9.9090901@linux.intel.com>
-		 (sfid-20150916_053717_657974_49EDAFEA) <1442383450.2280.2.camel@sipsolutions.net>
-	 <55F92480.50004@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+	id S1753363AbbINHtB (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 14 Sep 2015 03:49:01 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 07/10] dependencies: deactivate mwifiex SDIO part in kernel < 3.2
+Date: Mon, 14 Sep 2015 09:48:39 +0200
+Message-Id: <1442216922-3318-8-git-send-email-hauke@hauke-m.de> (sfid-20150914_094905_920817_48C97511)
+In-Reply-To: <1442216922-3318-1-git-send-email-hauke@hauke-m.de>
+References: <1442216922-3318-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2015-09-16 at 10:12 +0200, Arend van Spriel wrote:
-> 
-> Probably it is not in because it was tagged as crap and not merged 
+The mwifiex SDIO driver needs mmc_hw_reset() which was added in kernel 3.2.
 
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ dependencies | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Oh, that thing. I actually saw that but didn't remember it was called
-'parse-integer' :)
+diff --git a/dependencies b/dependencies
+index e0b69bf..4f4c922 100644
+--- a/dependencies
++++ b/dependencies
+@@ -174,3 +174,6 @@ ATH_TRACEPOINTS 3.1
+ # to backport that only down to 3.5. For full details refer to backports
+ # commit 8cb8816d
+ IGB 3.5
++
++# This driver needs mmc_hw_reset() which was added in kernel version 3.2
++MWIFIEX_SDIO 3.2
+-- 
+2.1.4
 
-johannes
-> 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
