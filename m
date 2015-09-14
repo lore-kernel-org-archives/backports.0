@@ -1,36 +1,116 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:18868 "EHLO mga09.intel.com"
+Received: from hauke-m.de ([5.39.93.123]:35749 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751772AbbIPDhP (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 15 Sep 2015 23:37:15 -0400
-Received: from suquasem-mobl1.amr.corp.intel.com (unknown [10.254.177.138])
-	by linux.intel.com (Postfix) with ESMTP id BCA7C6A4005
-	for <backports@vger.kernel.org>; Tue, 15 Sep 2015 20:36:20 -0700 (PDT)
+	id S1753253AbbINHtA (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 14 Sep 2015 03:49:00 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: parse-integer support
-Message-ID: <55F8E3E9.9090901@linux.intel.com> (sfid-20150916_053717_657974_49EDAFEA)
-Date: Tue, 15 Sep 2015 22:37:13 -0500
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 05/10] patches: make ACPI gpio configuration depend on kernel >= 3.19
+Date: Mon, 14 Sep 2015 09:48:37 +0200
+Message-Id: <1442216922-3318-6-git-send-email-hauke@hauke-m.de> (sfid-20150914_094904_723782_0F36CD59)
+In-Reply-To: <1442216922-3318-1-git-send-email-hauke@hauke-m.de>
+References: <1442216922-3318-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
-I've progressed a bit in my endeavor to backport the sound drivers with 
-only a few compilation errors but I've reached a blocking point. The 
-audio drivers were converted to use parse_integer this summer but I 
-can't figure out how to back port this.
+The GPIO configuration in the hci_bcm driver is now fetched from ACPI,
+which only works in kernel version >= 3.19. In addition it used these
+GPIO informations with the gpio consumer framework which was added in
+3.13, deactivate these new features if the kernel does not support them.
 
-If I add include/linux/parse-integer to copy-list then there are tons of 
-redeclations.
-If I modify backport/backport-include/linux/kernel.h to add a 
-conditional #include <linux/parse-integer.h> then I can't figure out how 
-to add a subset of this header file from the backport-include directory.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../network/0062-acpi-gpio-remove/hci_bcm.patch    | 78 ++++++++++++++++++++++
+ 1 file changed, 78 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0062-acpi-gpio-remove/hci_bcm.patch
 
-It's only a matter of time before others are impacted so maybe smarter 
-people than me have ideas on how to go about this.
-Thanks,
--Pierre
+diff --git a/patches/collateral-evolutions/network/0062-acpi-gpio-remove/hci_bcm.patch b/patches/collateral-evolutions/network/0062-acpi-gpio-remove/hci_bcm.patch
+new file mode 100644
+index 0000000..df1b165
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0062-acpi-gpio-remove/hci_bcm.patch
+@@ -0,0 +1,78 @@
++--- a/drivers/bluetooth/hci_bcm.c
+++++ b/drivers/bluetooth/hci_bcm.c
++@@ -29,7 +29,9 @@
++ #include <linux/acpi.h>
++ #include <linux/platform_device.h>
++ #include <linux/clk.h>
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
++ #include <linux/gpio/consumer.h>
+++#endif
++ #include <linux/tty.h>
++ 
++ #include <net/bluetooth/bluetooth.h>
++@@ -138,8 +140,10 @@ static int bcm_gpio_set_power(struct bcm
++ 	if (powered && !IS_ERR(dev->clk) && !dev->clk_enabled)
++ 		clk_enable(dev->clk);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
++ 	gpiod_set_value(dev->shutdown, powered);
++ 	gpiod_set_value(dev->device_wakeup, powered);
+++#endif
++ 
++ 	if (!powered && !IS_ERR(dev->clk) && dev->clk_enabled)
++ 		clk_disable(dev->clk);
++@@ -347,7 +351,9 @@ static int bcm_suspend(struct device *de
++ 
++ 	/* Suspend the device */
++ 	if (bdev->device_wakeup) {
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
++ 		gpiod_set_value(bdev->device_wakeup, false);
+++#endif
++ 		BT_DBG("suspend, delaying 15 ms");
++ 		mdelay(15);
++ 	}
++@@ -363,7 +369,9 @@ static int bcm_resume(struct device *dev
++ 	BT_DBG("resume (%p): is_suspended %d", bdev, bdev->is_suspended);
++ 
++ 	if (bdev->device_wakeup) {
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
++ 		gpiod_set_value(bdev->device_wakeup, true);
+++#endif
++ 		BT_DBG("resume, delaying 15 ms");
++ 		mdelay(15);
++ 	}
++@@ -379,6 +387,7 @@ static int bcm_resume(struct device *dev
++ }
++ #endif
++ 
+++#if defined(CONFIG_ACPI) && LINUX_VERSION_CODE >= KERNEL_VERSION(3,19,0)
++ static const struct acpi_gpio_params device_wakeup_gpios = { 0, 0, false };
++ static const struct acpi_gpio_params shutdown_gpios = { 1, 0, false };
++ 
++@@ -388,7 +397,6 @@ static const struct acpi_gpio_mapping ac
++ 	{ },
++ };
++ 
++-#ifdef CONFIG_ACPI
++ static int bcm_resource(struct acpi_resource *ares, void *data)
++ {
++ 	struct bcm_device *dev = data;
++@@ -527,7 +535,7 @@ static const struct hci_uart_proto bcm_p
++ 	.dequeue	= bcm_dequeue,
++ };
++ 
++-#ifdef CONFIG_ACPI
+++#if defined(CONFIG_ACPI) && LINUX_VERSION_CODE >= KERNEL_VERSION(3,19,0)
++ static const struct acpi_device_id bcm_acpi_match[] = {
++ 	{ "BCM2E39", 0 },
++ 	{ "BCM2E67", 0 },
++@@ -544,7 +552,9 @@ static struct platform_driver bcm_driver
++ 	.remove = bcm_remove,
++ 	.driver = {
++ 		.name = "hci_bcm",
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,19,0)
++ 		.acpi_match_table = ACPI_PTR(bcm_acpi_match),
+++#endif
++ 		.pm = &bcm_pm_ops,
++ 	},
++ };
+-- 
+2.1.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
