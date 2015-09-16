@@ -1,45 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:9552 "EHLO mga09.intel.com"
+Received: from mga14.intel.com ([192.55.52.115]:43412 "EHLO mga14.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751418AbbIRNHA (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 18 Sep 2015 09:07:00 -0400
-Subject: Re: [PATCH RFC 2/2] add script to enable audio backport
+	id S1752255AbbIPOAv (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 16 Sep 2015 10:00:51 -0400
+Subject: Re: parse-integer support
 To: Johannes Berg <johannes@sipsolutions.net>,
+	Arend van Spriel <arend@broadcom.com>,
 	backports@vger.kernel.org
-References: <1442526437-22392-1-git-send-email-pierre-louis.bossart@linux.intel.com>
- <1442526437-22392-3-git-send-email-pierre-louis.bossart@linux.intel.com>
- (sfid-20150917_234743_628456_B160EAFA)
- <1442560633.2168.6.camel@sipsolutions.net>
+References: <55F8E3E9.9090901@linux.intel.com>
+ (sfid-20150916_053717_657974_49EDAFEA)
+ <1442383450.2280.2.camel@sipsolutions.net> <55F92480.50004@broadcom.com>
+ <1442391470.2280.4.camel@sipsolutions.net>
 From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <55FC0C72.20806@linux.intel.com> (sfid-20150918_150702_483804_E104602D)
-Date: Fri, 18 Sep 2015 08:06:58 -0500
+Message-ID: <55F97611.30809@linux.intel.com> (sfid-20150916_160055_791684_A5E5E589)
+Date: Wed, 16 Sep 2015 09:00:49 -0500
 MIME-Version: 1.0
-In-Reply-To: <1442560633.2168.6.camel@sipsolutions.net>
+In-Reply-To: <1442391470.2280.4.camel@sipsolutions.net>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 9/18/15 2:17 AM, Johannes Berg wrote:
-> On Thu, 2015-09-17 at 16:47 -0500, Pierre-Louis Bossart wrote:
->> bash enable_audio.sh will add the required files in copylist
->> and patch some of the backport headers
+On 9/16/15 3:17 AM, Johannes Berg wrote:
+> On Wed, 2015-09-16 at 10:12 +0200, Arend van Spriel wrote:
 >>
-> I don't think this should be part of backports - the code modifications
-> shouldn't be necessary, you can add everything to copy-list as it
-> should be (and run with your own copy-list for just sound), and provide
-> a defconfig file.
+>> Probably it is not in because it was tagged as crap and not merged
 >
-> Scripting really shouldn't be there I think.
+>
+> Oh, that thing. I actually saw that but didn't remember it was called
+> 'parse-integer' :)
 
-I guess I misunderstood an earlier email where you wrote
-
-"You can submit this part upstream btw - it'll just be disabled in the
-default copy-list... unless you also submit that upstream"
-
-If you are ok to take the patches and have the upstream copy-list 
-include the sound files then yes the script is not necessary. I just 
-wanted to have a first pass that isn't intrusive or breaks all the 
-backports, but simple enough for others to try and test.
+It is part of next-20150818, include/linux/parse-integer.h
+It's also used by quite a few drivers now...
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
