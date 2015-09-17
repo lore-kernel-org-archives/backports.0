@@ -1,53 +1,68 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:2619 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753743AbbIINhZ (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 9 Sep 2015 09:37:25 -0400
-Message-ID: <55F03612.6040809@broadcom.com> (sfid-20150909_153729_680825_45483DBC)
-Date: Wed, 9 Sep 2015 15:37:22 +0200
-From: Arend van Spriel <arend@broadcom.com>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: backport devcoredump
-References: <55EFEEF2.2060205@broadcom.com>	 <1441788585.3316.2.camel@sipsolutions.net> <55F02021.3060603@broadcom.com> <1441801810.3316.6.camel@sipsolutions.net> <55F02882.5080207@broadcom.com>
-In-Reply-To: <55F02882.5080207@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Received: from mga09.intel.com ([134.134.136.24]:1998 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751702AbbIQVra (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 17 Sep 2015 17:47:30 -0400
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To: backports@vger.kernel.org
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH RFC 0/2] addition of audio to backports
+Date: Thu, 17 Sep 2015 16:47:15 -0500
+Message-Id: <1442526437-22392-1-git-send-email-pierre-louis.bossart@linux.intel.com> (sfid-20150917_234732_592144_C7860558)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 09/09/2015 02:39 PM, Arend van Spriel wrote:
-> On 09/09/2015 02:30 PM, Johannes Berg wrote:
->> On Wed, 2015-09-09 at 14:03 +0200, Arend van Spriel wrote:
->>>
->>>> I guess I'll need to run that - are you using a special copy-list?
->>>
->>> I do and maybe that is causing it. I attached it.
->>>
->>
->> Unlikely. However, I can't reproduce your issue - if I just add "select
->> WANT_DEV_COREDUMP" to your driver (brcmsmac) in my tree and compile
->> with that I do get it enabled.
+First pass (compile-tested only) to get feedback before next steps.
+All drivers for PCI, USB, SPI, Firewire compile on a 3.13 kernel 
+HDAudio and Asoc need more work
+The first patch adds the needed dependencies and fixes.
+The second patch adds the means to enable audio in a local copy
 
-I guess the WANT_DEV_COREDUMP must be in the source tree to generate 
-drivers-base-devcoredump.c etc. I used backports generated tree using my 
-copy-list so not driver selects WANT_DEV_COREDUMP, because I applied the 
-brcmfmac devcoredump patch on the backports generated tree.
+KNOWN ISSUES/LIMITATIONS:
+0. the copylist has issues with bluetooth backport unrelated to audio, this 
+would be fixed when the master branch works.
+1. HDaudio will not work due to a dependency on DRM/i915. It's probably not
+possible to support HDMI in the backport
+2. ASoC drivers have issues with DMA, GPIO, DSD/OF properties
+3. no default config was added.
 
-Gr. AvS
+TODO:
+0. take feedback into account
+1. look into known limitations
+2. find a more elegant way to comment out sound/core.h and sound/pcm.h
+3. implement backport for hrtimer_resolution
+4. try with older kernels with ckmake (?)
 
-> Thanks for checking.
->
->> Can you share your driver changes for it?
->
-> I will dig a bit deeper here. It must be something trivial. If I run
-> with backports/master I do get drivers-base-devcoredump.c in compat
-> folder so it must be in my branch which includes the copy-list change.
->
-> Gr. AvS
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe backports" in
+Pierre-Louis Bossart (2):
+  Add required changes for audio packports
+  add script to enable audio backport
+
+ backport/Kconfig.sources                           |   2 +
+ backport/Makefile.kernel                           |   2 +
+ backport/backport-include/linux/firewire.h         |  12 +
+ backport/backport-include/linux/genalloc.h         |   9 +
+ backport/backport-include/linux/hrtimer.h          |  12 +
+ backport/backport-include/linux/skbuff.h           |   2 +
+ backport/backport-include/linux/uio.h              | 246 +++++++++++++++++++++
+ copy-list.patch                                    |  37 ++++
+ dependencies                                       |   2 +
+ enable-audio.sh                                    |   3 +
+ .../sound/0001-pcm-native-fix-v41-changes.patch    | 128 +++++++++++
+ patches/collateral-evolutions/sound/README         |   1 +
+ sound_headers.patch                                |  38 ++++
+ 13 files changed, 494 insertions(+)
+ create mode 100644 backport/backport-include/linux/firewire.h
+ create mode 100644 backport/backport-include/linux/genalloc.h
+ create mode 100644 backport/backport-include/linux/hrtimer.h
+ create mode 100644 backport/backport-include/linux/uio.h
+ create mode 100644 copy-list.patch
+ create mode 100644 enable-audio.sh
+ create mode 100644 patches/collateral-evolutions/sound/0001-pcm-native-fix-v41-changes.patch
+ create mode 100644 patches/collateral-evolutions/sound/README
+ create mode 100644 sound_headers.patch
+
+-- 
+1.9.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
