@@ -1,32 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:36305 "EHLO hauke-m.de"
+Received: from mga09.intel.com ([134.134.136.24]:9552 "EHLO mga09.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751061AbbINV0l (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 14 Sep 2015 17:26:41 -0400
-Received: from [192.168.178.24] (p5DE959AC.dip0.t-ipconnect.de [93.233.89.172])
-	by hauke-m.de (Postfix) with ESMTPSA id 452CF1004E0
-	for <backports@vger.kernel.org>; Mon, 14 Sep 2015 23:26:40 +0200 (CEST)
-To: backports@vger.kernel.org
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: backports-20150818 is out
-Message-ID: <55F73B8F.7090205@hauke-m.de> (sfid-20150914_232642_568373_24867F2C)
-Date: Mon, 14 Sep 2015 23:26:39 +0200
+	id S1751418AbbIRNHA (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 18 Sep 2015 09:07:00 -0400
+Subject: Re: [PATCH RFC 2/2] add script to enable audio backport
+To: Johannes Berg <johannes@sipsolutions.net>,
+	backports@vger.kernel.org
+References: <1442526437-22392-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+ <1442526437-22392-3-git-send-email-pierre-louis.bossart@linux.intel.com>
+ (sfid-20150917_234743_628456_B160EAFA)
+ <1442560633.2168.6.camel@sipsolutions.net>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <55FC0C72.20806@linux.intel.com> (sfid-20150918_150702_483804_E104602D)
+Date: Fri, 18 Sep 2015 08:06:58 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1442560633.2168.6.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backports-20150818 was released. This is based on linux-next next-20150818.
+On 9/18/15 2:17 AM, Johannes Berg wrote:
+> On Thu, 2015-09-17 at 16:47 -0500, Pierre-Louis Bossart wrote:
+>> bash enable_audio.sh will add the required files in copylist
+>> and patch some of the backport headers
+>>
+> I don't think this should be part of backports - the code modifications
+> shouldn't be necessary, you can add everything to copy-list as it
+> should be (and run with your own copy-list for just sound), and provide
+> a defconfig file.
+>
+> Scripting really shouldn't be there I think.
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/2015/08/18/backports-20150818.tar.gz
+I guess I misunderstood an earlier email where you wrote
 
-The source code can be found here:
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
+"You can submit this part upstream btw - it'll just be disabled in the
+default copy-list... unless you also submit that upstream"
 
-All the latest releases are listed here:
-http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
-
-Hauke
+If you are ok to take the patches and have the upstream copy-list 
+include the sound files then yes the script is not necessary. I just 
+wanted to have a first pass that isn't intrusive or breaks all the 
+backports, but simple enough for others to try and test.
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
