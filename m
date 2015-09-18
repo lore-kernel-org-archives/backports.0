@@ -1,87 +1,116 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:51937 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:52827 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756538AbbIUWHb (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 21 Sep 2015 18:07:31 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 02/10] header: add spi_sync_transfer()
-Date: Tue, 22 Sep 2015 00:07:15 +0200
-Message-Id: <1442873243-15490-3-git-send-email-hauke@hauke-m.de> (sfid-20150922_000733_400478_A120EE10)
-In-Reply-To: <1442873243-15490-1-git-send-email-hauke@hauke-m.de>
-References: <1442873243-15490-1-git-send-email-hauke@hauke-m.de>
+	id S1752307AbbIRHPw (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 18 Sep 2015 03:15:52 -0400
+Message-ID: <1442560549.2168.5.camel@sipsolutions.net> (sfid-20150918_091553_874180_3BD50705)
+Subject: Re: [PATCH RFC 1/2] Add required changes for audio packports
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	backports@vger.kernel.org
+Date: Fri, 18 Sep 2015 09:15:49 +0200
+In-Reply-To: <1442526437-22392-2-git-send-email-pierre-louis.bossart@linux.intel.com> (sfid-20150917_234741_112317_5CC135D1)
+References: <1442526437-22392-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+	 <1442526437-22392-2-git-send-email-pierre-louis.bossart@linux.intel.com>
+	 (sfid-20150917_234741_112317_5CC135D1)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-spi_sync_transfer() and spi_message_init_with_transfers() are used by
-the st-nci nfc driver.
+On Thu, 2015-09-17 at 16:47 -0500, Pierre-Louis Bossart wrote:
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/spi/spi.h | 49 +++++++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+> +#if  LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0)
+> +
+> +#define hrtimer_resolution	(unsigned int)LOW_RES_NSEC
+> +
+> +#endif /* < 4.2 */
 
-diff --git a/backport/backport-include/linux/spi/spi.h b/backport/backport-include/linux/spi/spi.h
-index 672cf5b..76fd8a2 100644
---- a/backport/backport-include/linux/spi/spi.h
-+++ b/backport/backport-include/linux/spi/spi.h
-@@ -17,4 +17,53 @@
- 			spi_unregister_driver)
- #endif
- 
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
-+/**
-+ * spi_message_init_with_transfers - Initialize spi_message and append transfers
-+ * @m: spi_message to be initialized
-+ * @xfers: An array of spi transfers
-+ * @num_xfers: Number of items in the xfer array
-+ *
-+ * This function initializes the given spi_message and adds each spi_transfer in
-+ * the given array to the message.
-+ */
-+#define spi_message_init_with_transfers LINUX_BACKPORT(spi_message_init_with_transfers)
-+static inline void
-+spi_message_init_with_transfers(struct spi_message *m,
-+struct spi_transfer *xfers, unsigned int num_xfers)
-+{
-+	unsigned int i;
-+
-+	spi_message_init(m);
-+	for (i = 0; i < num_xfers; ++i)
-+		spi_message_add_tail(&xfers[i], m);
-+}
-+
-+/**
-+ * spi_sync_transfer - synchronous SPI data transfer
-+ * @spi: device with which data will be exchanged
-+ * @xfers: An array of spi_transfers
-+ * @num_xfers: Number of items in the xfer array
-+ * Context: can sleep
-+ *
-+ * Does a synchronous SPI data transfer of the given spi_transfer array.
-+ *
-+ * For more specific semantics see spi_sync().
-+ *
-+ * It returns zero on success, else a negative error code.
-+ */
-+#define spi_sync_transfer LINUX_BACKPORT(spi_sync_transfer)
-+static inline int
-+spi_sync_transfer(struct spi_device *spi, struct spi_transfer *xfers,
-+	unsigned int num_xfers)
-+{
-+	struct spi_message msg;
-+
-+	spi_message_init_with_transfers(&msg, xfers, num_xfers);
-+
-+	return spi_sync(spi, &msg);
-+}
-+#endif /* < 3.9 */
-+
- #endif /* _BACKPORTS_LINUX_SPI_H */
--- 
-2.1.4
+Do we need parentheses around that all?
 
+> --- a/backport/backport-include/linux/skbuff.h
+> +++ b/backport/backport-include/linux/skbuff.h
+> @@ -258,6 +258,8 @@ static inline struct page *dev_alloc_page(void)
+>  #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0) */
+>  
+>  #if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
+> +
+> +#include <linux/uio.h>
+
+That's a bit odd? But perhaps necessary - just better to have the blank
+line after the include :)
+
+> --- /dev/null
+> +++ b/backport/backport-include/linux/uio.h
+> @@ -0,0 +1,246 @@
+> +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
+> +#include_next <linux/uio.h>
+> +
+> +#ifndef __iter_is_iovec_h_
+> +#define __iter_is_iovec_h_
+
+Perhaps better to simply protect the whole file?
+
+> +#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0))
+> +
+> +#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0))
+> +
+> +/* iov_iter is defined elsewhere */
+> +#include_next <linux/fs.h>
+> +static inline bool iter_is_iovec(struct iov_iter *i)
+> +{
+> +	return true;
+> +}
+> +
+> +#else
+> +static inline bool iter_is_iovec(struct iov_iter *i)
+> +{
+> +	return !(i->type & (ITER_BVEC | ITER_KVEC));
+> +}
+> +#endif
+> +#endif
+
+That could be written a bit clearer with #elif, I think.
+
+> +#endif /* __iter_is_iovec_h_ */
+> +
+> +#else
+> +
+> +#ifndef _LINUX_UIO_H
+> +#define _LINUX_UIO_H
+> 
+
+This part looks like a straight-up copy - perhaps better to add it to
+copy-list and then provide a patch to patch around it the necessary
+modifications - see for example the devcoredump patch in
+patches/backport-adjustments/devcoredump.patch
+
+> --- a/dependencies
+> +++ b/dependencies
+> @@ -178,3 +178,5 @@ IGB 3.5
+>  
+>  # This driver needs mmc_hw_reset() which was added in kernel version 
+> 3.2
+>  MWIFIEX_SDIO 3.2
+> +
+> +SOUND 3.13
+> \ No newline at end of file
+
+Please keep a newline at EOF.
+
+> ++static ssize_t snd_pcm_aio_read(struct kiocb *iocb, const struct 
+> iovec *iov,
+> ++			     unsigned long nr_segs, loff_t pos)
+> ++
+
+Is it possible to reduce this function to calling the existing
+snd_pcm_readv (and aio_write to writev) by suitable data structure
+manipulation?
+
+If so, it might be possible to create an spatch to make these changes,
+which would make them apply more generally and be less prone to
+breaking.
+
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
