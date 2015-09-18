@@ -1,41 +1,66 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:39613 "EHLO sipsolutions.net"
+Received: from s3.sipsolutions.net ([5.9.151.49]:54483 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750989AbbIPGEP (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 16 Sep 2015 02:04:15 -0400
-Message-ID: <1442383450.2280.2.camel@sipsolutions.net> (sfid-20150916_080420_740092_79358D21)
-Subject: Re: parse-integer support
+	id S1751068AbbIRNKB (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 18 Sep 2015 09:10:01 -0400
+Message-ID: <1442581797.2168.12.camel@sipsolutions.net> (sfid-20150918_151003_741136_D55F11B0)
+Subject: Re: [PATCH RFC 1/2] Add required changes for audio packports
 From: Johannes Berg <johannes@sipsolutions.net>
 To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
 	backports@vger.kernel.org
-Date: Wed, 16 Sep 2015 08:04:10 +0200
-In-Reply-To: <55F8E3E9.9090901@linux.intel.com> (sfid-20150916_053717_657974_49EDAFEA)
-References: <55F8E3E9.9090901@linux.intel.com>
-	 (sfid-20150916_053717_657974_49EDAFEA)
+Date: Fri, 18 Sep 2015 15:09:57 +0200
+In-Reply-To: <55FC0AFD.9010409@linux.intel.com>
+References: <1442526437-22392-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+	 <1442526437-22392-2-git-send-email-pierre-louis.bossart@linux.intel.com>
+	 (sfid-20150917_234741_112317_5CC135D1) <1442560549.2168.5.camel@sipsolutions.net>
+	 <55FC0AFD.9010409@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
+On Fri, 2015-09-18 at 08:00 -0500, Pierre-Louis Bossart wrote:
+> 
+> This was a first-order ugly backport to revert to what existed 
+> before.
 
-> I've progressed a bit in my endeavor to backport the sound drivers with 
-> only a few compilation errors but I've reached a blocking point. The 
-> audio drivers were converted to use parse_integer this summer but I 
-> can't figure out how to back port this.
+Fair enough.
 
-Err, I can't even figure out what "parse_integer" is? Such a function
-doesn't exist in my kernel
+> I have no idea what an spatch is,
 
-> If I add include/linux/parse-integer to copy-list then there are tons of 
-> redeclations.
+A semantic patch (coccinelle)
 
-Neither does a file called include/linux/parse-integer(.h)
+>  if there is an example of such a 
+> 'suitable data structure manipulation' I am all ears.
 
-If you can point out what you really meant here then I'm sure this is
-easy to fix, but without looking at the code (which clearly I can't)
-there's not much I can do.
+I don't have an example, but imagine you have this:
 
+old code:
+ my_read_data(struct my *my, void *out_buf, int len)
+
+new code:
+ my_read_data_sg(struct my *my, struct scatterlist *sg)
+
+
+Then on old kernels you could do
+
+backport_my_read_data(struct my *my, void *out_buf, int len)
+{
+ struct scatterlist sg;
+ struct sg_ent ent;
+
+ sg.nents = 1;
+ sg.ents = &ent;
+ ent.data = out_buf;
+ ent.len = len;
+ my_read_data_sg(&my, &sg);
+}
+
+(this absolutely won't compile, just to illustrate the idea)
+
+That basically reduces the old function pointer to the new one with
+static code inbetween, and then that can be embedded in an spatch that
+automatically adds the wrapper where needed.
 
 johannes
 --
