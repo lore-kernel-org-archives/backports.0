@@ -1,112 +1,60 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:35748 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:51939 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753185AbbINHtA (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 14 Sep 2015 03:49:00 -0400
+	id S1756612AbbIUWHb (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 21 Sep 2015 18:07:31 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 04/10] header: add compiler-gcc5.h
-Date: Mon, 14 Sep 2015 09:48:36 +0200
-Message-Id: <1442216922-3318-5-git-send-email-hauke@hauke-m.de> (sfid-20150914_094904_035878_5C3DA5C5)
-In-Reply-To: <1442216922-3318-1-git-send-email-hauke@hauke-m.de>
-References: <1442216922-3318-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 01/10] headers: add linux/bcm47xx_nvram.h
+Date: Tue, 22 Sep 2015 00:07:14 +0200
+Message-Id: <1442873243-15490-2-git-send-email-hauke@hauke-m.de> (sfid-20150922_000733_988148_3E08B71A)
+In-Reply-To: <1442873243-15490-1-git-send-email-hauke@hauke-m.de>
+References: <1442873243-15490-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This adds support for gcc 5.
-
-In kernel version >= 3.18 this is shipped with the kernel, in kernel
-version >= 4.2 all the gcc version specific files are merged into one
-file.
-This patch got backported to many kernel versions, but ignore it
-because it is always the same file.
+This is used by the brcmfmac driver since mainline commit 4e70f214.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/compiler-gcc5.h | 73 +++++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
- create mode 100644 backport/backport-include/linux/compiler-gcc5.h
+ backport/backport-include/linux/bcm47xx_nvram.h | 27 +++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+ create mode 100644 backport/backport-include/linux/bcm47xx_nvram.h
 
-diff --git a/backport/backport-include/linux/compiler-gcc5.h b/backport/backport-include/linux/compiler-gcc5.h
+diff --git a/backport/backport-include/linux/bcm47xx_nvram.h b/backport/backport-include/linux/bcm47xx_nvram.h
 new file mode 100644
-index 0000000..4e2f7c4
+index 0000000..0e50fcf
 --- /dev/null
-+++ b/backport/backport-include/linux/compiler-gcc5.h
-@@ -0,0 +1,73 @@
-+#ifndef __LINUX_COMPILER_H
-+#error "Please don't include <linux/compiler-gcc5.h> directly, include <linux/compiler.h> instead."
-+#endif
-+
++++ b/backport/backport-include/linux/bcm47xx_nvram.h
+@@ -0,0 +1,27 @@
++#ifndef __BACKPORTS_BCM47XX_NVRAM_H
++#define __BACKPORTS_BCM47XX_NVRAM_H
 +#include <linux/version.h>
 +
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0)
-+#include_next <linux/compiler-gcc5.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++#include_next <linux/bcm47xx_nvram.h>
 +#else
++#include <linux/types.h>
++#include <linux/kernel.h>
++#endif
 +
-+#define __used				__attribute__((__used__))
-+#define __must_check			__attribute__((warn_unused_result))
-+#define __compiler_offsetof(a, b)	__builtin_offsetof(a, b)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0)
 +
-+/* Mark functions as cold. gcc will assume any path leading to a call
-+   to them will be unlikely.  This means a lot of manual unlikely()s
-+   are unnecessary now for any paths leading to the usual suspects
-+   like BUG(), printk(), panic() etc. [but let's keep them for now for
-+   older compilers]
++#ifndef CONFIG_BCM47XX_NVRAM
++static inline char *bcm47xx_nvram_get_contents(size_t *val_len)
++{
++	return NULL;
++}
 +
-+   Early snapshots of gcc 4.3 don't support this and we can't detect this
-+   in the preprocessor, but we can live with this because they're unreleased.
-+   Maketime probing would be overkill here.
++static inline void bcm47xx_nvram_release_contents(char *nvram)
++{
++}
++#endif
 +
-+   gcc also has a __attribute__((__hot__)) to move hot functions into
-+   a special section, but I don't see any sense in this right now in
-+   the kernel context */
-+#define __cold			__attribute__((__cold__))
++#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
 +
-+#define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
-+
-+#ifndef __CHECKER__
-+# define __compiletime_warning(message) __attribute__((warning(message)))
-+# define __compiletime_error(message) __attribute__((error(message)))
-+#endif /* __CHECKER__ */
-+
-+/*
-+ * Mark a position in code as unreachable.  This can be used to
-+ * suppress control flow warnings after asm blocks that transfer
-+ * control elsewhere.
-+ *
-+ * Early snapshots of gcc 4.5 don't support this and we can't detect
-+ * this in the preprocessor, but we can live with this because they're
-+ * unreleased.  Really, we need to have autoconf for the kernel.
-+ */
-+#define unreachable() __builtin_unreachable()
-+
-+/* Mark a function definition as prohibited from being cloned. */
-+#define __noclone	__attribute__((__noclone__))
-+
-+/*
-+ * Tell the optimizer that something else uses this function or variable.
-+ */
-+#define __visible __attribute__((externally_visible))
-+
-+/*
-+ * GCC 'asm goto' miscompiles certain code sequences:
-+ *
-+ *   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=58670
-+ *
-+ * Work it around via a compiler barrier quirk suggested by Jakub Jelinek.
-+ * Fixed in GCC 4.8.2 and later versions.
-+ *
-+ * (asm goto is automatically volatile - the naming reflects this.)
-+ */
-+#define asm_volatile_goto(x...)	do { asm goto(x); asm (""); } while (0)
-+
-+#ifdef CONFIG_ARCH_USE_BUILTIN_BSWAP
-+#define __HAVE_BUILTIN_BSWAP32__
-+#define __HAVE_BUILTIN_BSWAP64__
-+#define __HAVE_BUILTIN_BSWAP16__
-+#endif /* CONFIG_ARCH_USE_BUILTIN_BSWAP */
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,18,0) */
++#endif /* __BACKPORTS_BCM47XX_NVRAM_H */
 -- 
 2.1.4
 
