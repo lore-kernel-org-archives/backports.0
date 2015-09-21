@@ -1,36 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:36219 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:51944 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751532AbbINTfD (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 14 Sep 2015 15:35:03 -0400
-Subject: Re: [PATCH 06/10] patches: add additional include to brcmfmac
-To: Arend van Spriel <arend@broadcom.com>, backports@vger.kernel.org
-References: <1442216922-3318-1-git-send-email-hauke@hauke-m.de>
- <1442216922-3318-7-git-send-email-hauke@hauke-m.de>
- <55F68256.4090405@broadcom.com>
+	id S1757016AbbIUWHc (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 21 Sep 2015 18:07:32 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <55F72164.8030501@hauke-m.de> (sfid-20150914_213505_702818_FE41577F)
-Date: Mon, 14 Sep 2015 21:35:00 +0200
-MIME-Version: 1.0
-In-Reply-To: <55F68256.4090405@broadcom.com>
-Content-Type: text/plain; charset=windows-1252
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 07/10] dependencies: make VIDEO_TC358743 depend on kernel 3.13
+Date: Tue, 22 Sep 2015 00:07:20 +0200
+Message-Id: <1442873243-15490-8-git-send-email-hauke@hauke-m.de> (sfid-20150922_000737_009196_BB74337E)
+In-Reply-To: <1442873243-15490-1-git-send-email-hauke@hauke-m.de>
+References: <1442873243-15490-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 09/14/2015 10:16 AM, Arend van Spriel wrote:
-> On 09/14/2015 09:48 AM, Hauke Mehrtens wrote:
->> brcmfmac uses atomic_or(), but does not include linux/atomic.h which
->> causes problems on kernel 3.0
-> 
-> Hi Hauke,
-> 
-> Will you also submit the actual patch upstream?
-> 
-> Regards,
-> Arend
+VIDEO_TC358743 now uses the GPIO driver subsystem which is not
+backported, make it depend on kernel 3.13.
 
-Yes, already planed that.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ dependencies | 1 +
+ 1 file changed, 1 insertion(+)
 
-Hauke
+diff --git a/dependencies b/dependencies
+index 3290839..edafdaf 100644
+--- a/dependencies
++++ b/dependencies
+@@ -57,6 +57,7 @@ DVB_SMIPCIE 3.8
+ # This does not seem like a good test desirable test case to
+ # start that work with.
+ VIDEO_ADP1653 3.13
++VIDEO_TC358743 3.13
+ 
+ # missing devm_gpiod_get_optional()
+ # this needs devm_gpiod_get_optional() with 3 arguments.
+-- 
+2.1.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
