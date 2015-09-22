@@ -1,68 +1,70 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:1998 "EHLO mga09.intel.com"
+Received: from hauke-m.de ([5.39.93.123]:52724 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751702AbbIQVra (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 17 Sep 2015 17:47:30 -0400
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To: backports@vger.kernel.org
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [PATCH RFC 0/2] addition of audio to backports
-Date: Thu, 17 Sep 2015 16:47:15 -0500
-Message-Id: <1442526437-22392-1-git-send-email-pierre-louis.bossart@linux.intel.com> (sfid-20150917_234732_592144_C7860558)
+	id S933703AbbIVVXb (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 22 Sep 2015 17:23:31 -0400
+Subject: Re: [PATCH 01/10] headers: add linux/bcm47xx_nvram.h
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+	arend@broadcom.com
+References: <1442873243-15490-1-git-send-email-hauke@hauke-m.de>
+ <1442873243-15490-2-git-send-email-hauke@hauke-m.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Message-ID: <5601C6D1.7080305@hauke-m.de> (sfid-20150922_232333_717771_5BD6EA62)
+Date: Tue, 22 Sep 2015 23:23:29 +0200
+MIME-Version: 1.0
+In-Reply-To: <1442873243-15490-2-git-send-email-hauke@hauke-m.de>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-First pass (compile-tested only) to get feedback before next steps.
-All drivers for PCI, USB, SPI, Firewire compile on a 3.13 kernel 
-HDAudio and Asoc need more work
-The first patch adds the needed dependencies and fixes.
-The second patch adds the means to enable audio in a local copy
+On 09/22/2015 12:07 AM, Hauke Mehrtens wrote:
+> This is used by the brcmfmac driver since mainline commit 4e70f214.
+> 
+> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+> ---
+>  backport/backport-include/linux/bcm47xx_nvram.h | 27 +++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>  create mode 100644 backport/backport-include/linux/bcm47xx_nvram.h
+> 
+> diff --git a/backport/backport-include/linux/bcm47xx_nvram.h b/backport/backport-include/linux/bcm47xx_nvram.h
+> new file mode 100644
+> index 0000000..0e50fcf
+> --- /dev/null
+> +++ b/backport/backport-include/linux/bcm47xx_nvram.h
+> @@ -0,0 +1,27 @@
+> +#ifndef __BACKPORTS_BCM47XX_NVRAM_H
+> +#define __BACKPORTS_BCM47XX_NVRAM_H
+> +#include <linux/version.h>
+> +
+> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+> +#include_next <linux/bcm47xx_nvram.h>
+> +#else
+> +#include <linux/types.h>
+> +#include <linux/kernel.h>
+> +#endif
+> +
+> +#if LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0)
+> +
+> +#ifndef CONFIG_BCM47XX_NVRAM
 
-KNOWN ISSUES/LIMITATIONS:
-0. the copylist has issues with bluetooth backport unrelated to audio, this 
-would be fixed when the master branch works.
-1. HDaudio will not work due to a dependency on DRM/i915. It's probably not
-possible to support HDMI in the backport
-2. ASoC drivers have issues with DMA, GPIO, DSD/OF properties
-3. no default config was added.
+I removed this ifndef so it will also compile on bcm47 devices.
+OpenWrt will take care that it will also work with older kernel versions
+there.
 
-TODO:
-0. take feedback into account
-1. look into known limitations
-2. find a more elegant way to comment out sound/core.h and sound/pcm.h
-3. implement backport for hrtimer_resolution
-4. try with older kernels with ckmake (?)
-
-Pierre-Louis Bossart (2):
-  Add required changes for audio packports
-  add script to enable audio backport
-
- backport/Kconfig.sources                           |   2 +
- backport/Makefile.kernel                           |   2 +
- backport/backport-include/linux/firewire.h         |  12 +
- backport/backport-include/linux/genalloc.h         |   9 +
- backport/backport-include/linux/hrtimer.h          |  12 +
- backport/backport-include/linux/skbuff.h           |   2 +
- backport/backport-include/linux/uio.h              | 246 +++++++++++++++++++++
- copy-list.patch                                    |  37 ++++
- dependencies                                       |   2 +
- enable-audio.sh                                    |   3 +
- .../sound/0001-pcm-native-fix-v41-changes.patch    | 128 +++++++++++
- patches/collateral-evolutions/sound/README         |   1 +
- sound_headers.patch                                |  38 ++++
- 13 files changed, 494 insertions(+)
- create mode 100644 backport/backport-include/linux/firewire.h
- create mode 100644 backport/backport-include/linux/genalloc.h
- create mode 100644 backport/backport-include/linux/hrtimer.h
- create mode 100644 backport/backport-include/linux/uio.h
- create mode 100644 copy-list.patch
- create mode 100644 enable-audio.sh
- create mode 100644 patches/collateral-evolutions/sound/0001-pcm-native-fix-v41-changes.patch
- create mode 100644 patches/collateral-evolutions/sound/README
- create mode 100644 sound_headers.patch
-
--- 
-1.9.1
+> +static inline char *bcm47xx_nvram_get_contents(size_t *val_len)
+> +{
+> +	return NULL;
+> +}
+> +
+> +static inline void bcm47xx_nvram_release_contents(char *nvram)
+> +{
+> +}
+> +#endif
+> +
+> +#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0) */
+> +
+> +#endif /* __BACKPORTS_BCM47XX_NVRAM_H */
+> 
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
