@@ -1,244 +1,76 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:51940 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753345AbbIUWHb (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 21 Sep 2015 18:07:31 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 03/10] patches: fix patch for wait_on_bit_timeout()
-Date: Tue, 22 Sep 2015 00:07:16 +0200
-Message-Id: <1442873243-15490-4-git-send-email-hauke@hauke-m.de> (sfid-20150922_000735_828838_E8533AC9)
-In-Reply-To: <1442873243-15490-1-git-send-email-hauke@hauke-m.de>
-References: <1442873243-15490-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:33723 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933482AbbI3TLG (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 30 Sep 2015 15:11:06 -0400
+Received: by oixx17 with SMTP id x17so28103096oix.0
+        for <backports@vger.kernel.org>; Wed, 30 Sep 2015 12:11:06 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.02.1509142148440.2048@localhost6.localdomain6>
+References: <1441790875-8496-1-git-send-email-johannes@sipsolutions.net>
+ <CAB=NE6VMH6Ket9CRni2KMiTaAgStUGqDtUoZw4buF0R=9TH_Aw@mail.gmail.com>
+ <1442219253.2075.4.camel@sipsolutions.net> <CAB=NE6W8d-OCAMmti1Q4cWMkToe9o6m4M-_Hpz=p0peh9g5ROQ@mail.gmail.com>
+ <alpine.DEB.2.02.1509142148440.2048@localhost6.localdomain6>
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Wed, 30 Sep 2015 12:10:46 -0700
+Message-ID: <CAB=NE6VWp46k+fR+ZuaDW5PPTDPCD9XAvAAavbp7_T=siDP5=A@mail.gmail.com> (sfid-20150930_211625_101429_AF271B4D)
+Subject: Re: [PATCH v2] backports: add spatch to handle IFF_NO_QUEUE
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-wake_up_interruptible() is missing in this patch, otherwise it will not
-be woken up again. In addition this patch adds the missing
-STATE_LPM_TRANSACTION state now and follows the moving of some parts in
-the code of the driver.
+On Mon, Sep 14, 2015 at 12:48 PM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+>
+>
+> On Mon, 14 Sep 2015, Luis R. Rodriguez wrote:
+>
+>> On Mon, Sep 14, 2015 at 1:27 AM, Johannes Berg
+>> <johannes@sipsolutions.net> wrote:
+>> > On Mon, 2015-09-14 at 01:25 -0700, Luis R. Rodriguez wrote:
+>> >
+>> >> > ++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,3,0)
+>> >> > + E->priv_flags |= IFF_NO_QUEUE;
+>> >> > ++#else
+>> >> > ++E->tx_queue_len = 0;
+>> >> > ++#endif
+>> >>
+>> >> Interesting so although priv_flags may be a member name prevalent in
+>> >> *many* data structures the SmPL rule here is very specific about the
+>> >> use of IFF_NO_QUEUE as a flag, and since we know that is unique to one
+>> >> use case we take the liberty over using expression here. Replying just
+>> >> to annotate this practice and Cc Julia on her thoughts.
+>> >>
+>> >
+>> > Yeah I thought about this for a while - it doesn't even cover all cases
+>> > (there might be drivers that don't use |=, for example).
+>> >
+>> > However, for now this seemed sufficient since very few places in the
+>> > code actually use this.
+>>
+>> Sure, I wonder we could use some early rule checks to catch some
+>> liberal assumptions we make for some of our rules in patches/, we
+>> would use that to report issues *prior* to patch application and we'd
+>> reject moving forward with generation if all these rule checks don't
+>> match. If we do this that would stop patch application / compilation
+>> testing proactively. Something as with the kernel's
+>> scripts/coccinelle/ 'make coccicheck' prior to running our patch
+>> application. This case seems a bit hard to cover for all cases that
+>> don't use the assignments as in your rule though I think... if its
+>> easy though it could be a good example to tackle.
+>
+> I'm not sure to understand what you have in mind.  Could you be more
+> concrete?
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../hci_intel.patch                                | 154 ++++++++++++++++-----
- 1 file changed, 123 insertions(+), 31 deletions(-)
+The idea was to put in place a grammatical expression of how the code
+is expected to be used and nag about when this is false, because when
+it is false the semantic patch in place would likely need to be
+updated to address new forms. Without such a sanity check we'll only
+find out about issues later upon compilation time, and that is
+reactive.
 
-diff --git a/patches/collateral-evolutions/network/0053-remove_wait_on_bit_timeout/hci_intel.patch b/patches/collateral-evolutions/network/0053-remove_wait_on_bit_timeout/hci_intel.patch
-index b8d1e7e..89e42d1 100644
---- a/patches/collateral-evolutions/network/0053-remove_wait_on_bit_timeout/hci_intel.patch
-+++ b/patches/collateral-evolutions/network/0053-remove_wait_on_bit_timeout/hci_intel.patch
-@@ -1,63 +1,105 @@
--diff --git a/drivers/bluetooth/hci_intel.c b/drivers/bluetooth/hci_intel.c
--index 21dfa89..f246352 100644
- --- a/drivers/bluetooth/hci_intel.c
- +++ b/drivers/bluetooth/hci_intel.c
--@@ -383,6 +383,7 @@ static int intel_setup(struct hci_uart *
-- 	 * and thus just timeout if that happens and fail the setup
-- 	 * of this device.
-- 	 */
-+@@ -122,8 +122,9 @@ static u8 intel_convert_speed(unsigned i
-+ static int intel_wait_booting(struct hci_uart *hu)
-+ {
-+ 	struct intel_data *intel = hu->priv;
-+-	int err;
-++	int err = 0;
-+ 
- +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
-- 	err = wait_on_bit_timeout(&intel->flags, STATE_DOWNLOADING,
-+ 	err = wait_on_bit_timeout(&intel->flags, STATE_BOOTING,
-  				  TASK_INTERRUPTIBLE,
-- 				  msecs_to_jiffies(5000));
--@@ -403,6 +404,33 @@ static int intel_setup(struct hci_uart *
-- 		err = -ENOEXEC;
-- 		goto done;
-+ 				  msecs_to_jiffies(1000));
-+@@ -137,6 +138,33 @@ static int intel_wait_booting(struct hci
-+ 		bt_dev_err(hu->hdev, "Device boot timeout");
-+ 		return -ETIMEDOUT;
-  	}
- +#else
--+	if (test_bit(STATE_DOWNLOADING, &intel->flags)) {
-++	if (test_bit(STATE_BOOTING, &intel->flags)) {
- +		DECLARE_WAITQUEUE(wait, current);
- +		signed long timeout;
- +
--+		add_wait_queue(&hdev->req_wait_q, &wait);
-++		add_wait_queue(&hu->hdev->req_wait_q, &wait);
- +		set_current_state(TASK_INTERRUPTIBLE);
- +
- +		/* Booting into operational firmware should not take
- +		 * longer than 1 second. However if that happens, then
- +		 * just fail the setup since something went wrong.
- +		 */
--+		timeout = schedule_timeout(msecs_to_jiffies(5000));
-++		timeout = schedule_timeout(msecs_to_jiffies(1000));
- +
--+		remove_wait_queue(&hdev->req_wait_q, &wait);
-++		remove_wait_queue(&hu->hdev->req_wait_q, &wait);
- +
- +		if (signal_pending(current)) {
--+			BT_ERR("%s: Firmware loading interrupted", hdev->name);
-++			BT_ERR("%s: Device boot interrupted", hu->hdev->name);
- +			return -EINTR;
- +		}
- +
- +		if (!timeout) {
--+			BT_ERR("%s: Firmware loading timeout", hdev->name);
-++			BT_ERR("%s: Device boot timeout", hu->hdev->name);
- +			return -ETIMEDOUT;
- +		}
- +	}
- +#endif
-  
-- 	rettime = ktime_get();
-- 	delta = ktime_sub(rettime, calltime);
--@@ -436,6 +464,7 @@ done:
-- 	 */
-- 	BT_INFO("%s: Waiting for device to boot", hdev->name);
-+ 	return err;
-+ }
-+@@ -144,8 +172,9 @@ static int intel_wait_booting(struct hci
-+ static int intel_wait_lpm_transaction(struct hci_uart *hu)
-+ {
-+ 	struct intel_data *intel = hu->priv;
-+-	int err;
-++	int err = 0;
-  
- +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
-- 	err = wait_on_bit_timeout(&intel->flags, STATE_BOOTING,
-+ 	err = wait_on_bit_timeout(&intel->flags, STATE_LPM_TRANSACTION,
-  				  TASK_INTERRUPTIBLE,
-  				  msecs_to_jiffies(1000));
--@@ -449,6 +478,33 @@ done:
-- 		BT_ERR("%s: Device boot timeout", hdev->name);
-+@@ -159,6 +188,29 @@ static int intel_wait_lpm_transaction(st
-+ 		bt_dev_err(hu->hdev, "LPM transaction timeout");
-  		return -ETIMEDOUT;
-  	}
- +#else
--+	if (test_bit(STATE_BOOTING, &intel->flags)) {
-++	if (test_bit(STATE_LPM_TRANSACTION, &intel->flags)) {
-++		DECLARE_WAITQUEUE(wait, current);
-++		signed long timeout;
-++
-++		add_wait_queue(&hu->hdev->req_wait_q, &wait);
-++		set_current_state(TASK_INTERRUPTIBLE);
-++
-++		timeout = schedule_timeout(msecs_to_jiffies(1000));
-++
-++		remove_wait_queue(&hu->hdev->req_wait_q, &wait);
-++
-++		if (signal_pending(current)) {
-++			BT_ERR("%s: LPM transaction interrupted", hu->hdev->name);
-++			return -EINTR;
-++		}
-++
-++		if (!timeout) {
-++			BT_ERR("%s: LPM transaction timeout", hu->hdev->name);
-++			return -ETIMEDOUT;
-++		}
-++	}
-++#endif
-+ 
-+ 	return err;
-+ }
-+@@ -826,6 +878,7 @@ static int intel_setup(struct hci_uart *
-+ 	 * and thus just timeout if that happens and fail the setup
-+ 	 * of this device.
-+ 	 */
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
-+ 	err = wait_on_bit_timeout(&intel->flags, STATE_DOWNLOADING,
-+ 				  TASK_INTERRUPTIBLE,
-+ 				  msecs_to_jiffies(5000));
-+@@ -840,6 +893,33 @@ static int intel_setup(struct hci_uart *
-+ 		err = -ETIMEDOUT;
-+ 		goto done;
-+ 	}
-++#else
-++	if (test_bit(STATE_DOWNLOADING, &intel->flags)) {
- +		DECLARE_WAITQUEUE(wait, current);
- +		signed long timeout;
- +
-@@ -68,21 +110,71 @@ index 21dfa89..f246352 100644
- +		 * longer than 1 second. However if that happens, then
- +		 * just fail the setup since something went wrong.
- +		 */
--+		timeout = schedule_timeout(msecs_to_jiffies(1000));
-++		timeout = schedule_timeout(msecs_to_jiffies(5000));
- +
- +		remove_wait_queue(&hdev->req_wait_q, &wait);
- +
- +		if (signal_pending(current)) {
--+			BT_ERR("%s: Device boot interrupted", hdev->name);
-++			BT_ERR("%s: Firmware loading interrupted", hdev->name);
- +			return -EINTR;
- +		}
- +
- +		if (!timeout) {
--+			BT_ERR("%s: Device boot timeout", hdev->name);
-++			BT_ERR("%s: Firmware loading timeout", hdev->name);
- +			return -ETIMEDOUT;
- +		}
- +	}
- +#endif
-  
-- 	rettime = ktime_get();
-- 	delta = ktime_sub(rettime, calltime);
-+ 	if (test_bit(STATE_FIRMWARE_FAILED, &intel->flags)) {
-+ 		bt_dev_err(hdev, "Firmware loading failed");
-+@@ -968,8 +1048,12 @@ static int intel_recv_event(struct hci_d
-+ 
-+ 		if (test_and_clear_bit(STATE_DOWNLOADING, &intel->flags) &&
-+ 		    test_bit(STATE_FIRMWARE_LOADED, &intel->flags)) {
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
-+ 			smp_mb__after_atomic();
-+ 			wake_up_bit(&intel->flags, STATE_DOWNLOADING);
-++#else
-++			wake_up_interruptible(&hu->hdev->req_wait_q);
-++#endif
-+ 		}
-+ 
-+ 	/* When switching to the operational firmware the device
-+@@ -979,8 +1063,12 @@ static int intel_recv_event(struct hci_d
-+ 	} else if (skb->len == 9 && hdr->evt == 0xff && hdr->plen == 0x07 &&
-+ 		   skb->data[2] == 0x02) {
-+ 		if (test_and_clear_bit(STATE_BOOTING, &intel->flags)) {
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
-+ 			smp_mb__after_atomic();
-+ 			wake_up_bit(&intel->flags, STATE_BOOTING);
-++#else
-++			wake_up_interruptible(&hu->hdev->req_wait_q);
-++#endif
-+ 		}
-+ 	}
-+ recv:
-+@@ -1019,15 +1107,23 @@ static int intel_recv_lpm(struct hci_dev
-+ 	case LPM_OP_SUSPEND_ACK:
-+ 		set_bit(STATE_SUSPENDED, &intel->flags);
-+ 		if (test_and_clear_bit(STATE_LPM_TRANSACTION, &intel->flags)) {
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
-+ 			smp_mb__after_atomic();
-+ 			wake_up_bit(&intel->flags, STATE_LPM_TRANSACTION);
-++#else
-++			wake_up_interruptible(&hu->hdev->req_wait_q);
-++#endif
-+ 		}
-+ 		break;
-+ 	case LPM_OP_RESUME_ACK:
-+ 		clear_bit(STATE_SUSPENDED, &intel->flags);
-+ 		if (test_and_clear_bit(STATE_LPM_TRANSACTION, &intel->flags)) {
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
-+ 			smp_mb__after_atomic();
-+ 			wake_up_bit(&intel->flags, STATE_LPM_TRANSACTION);
-++#else
-++			wake_up_interruptible(&hu->hdev->req_wait_q);
-++#endif
-+ 		}
-+ 		break;
-+ 	default:
--- 
-2.1.4
-
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
