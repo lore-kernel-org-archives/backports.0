@@ -1,35 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:37271 "EHLO sipsolutions.net"
+Received: from mail.kernel.org ([198.145.29.136]:39857 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751666AbbJWJeU (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 23 Oct 2015 05:34:20 -0400
-Message-ID: <1445592856.1945.0.camel@sipsolutions.net> (sfid-20151023_113422_594771_923ED8AB)
-Subject: Re: [PATCH] backports: add ktime_get_seconds()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend van Spriel <arend@broadcom.com>, backports@vger.kernel.org
-Date: Fri, 23 Oct 2015 11:34:16 +0200
-In-Reply-To: <5629FEB3.6050905@broadcom.com> (sfid-20151023_113239_295482_F75BC0A3)
-References: <1445584991-11249-1-git-send-email-johannes@sipsolutions.net>
-	 <5629FEB3.6050905@broadcom.com> (sfid-20151023_113239_295482_F75BC0A3)
+	id S1753079AbbJMUpv (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 13 Oct 2015 16:45:51 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 6116820453
+	for <backports@vger.kernel.org>; Tue, 13 Oct 2015 20:45:50 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id C7D7120558
+	for <backports@vger.kernel.org>; Tue, 13 Oct 2015 20:45:48 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 105921] Backport releases GPG public key unavailable
+Date: Tue, 13 Oct 2015 20:45:48 +0000
+Message-ID: <bug-105921-58281-gyqLzgKoSn@https.bugzilla.kernel.org/> (sfid-20151013_224553_756982_7945D988)
+In-Reply-To: <bug-105921-58281@https.bugzilla.kernel.org/>
+References: <bug-105921-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2015-10-23 at 11:32 +0200, Arend van Spriel wrote:
-> On 10/23/2015 09:23 AM, Johannes Berg wrote:
-> > From: Johannes Berg <johannes.berg@intel.com>
-> 
-> Already submitted a patch for this. I just did not bother to 
-> introduce the timekeeping.h file. So yours may be preferred.
-> 
+https://bugzilla.kernel.org/show_bug.cgi?id=105921
 
-Oh, missed that. Yours is better with time64_t though, so we should
-probably merge them...
+--- Comment #2 from Gregory Davis <bugzilla.kernel.org@gdavis.com> ---
+Hi,
 
-Adding the timekeeping.h file might be required if, in the future,
-somebody includes only it instead of ktime.h
+My search results are empty when I search for 583D1332 at https://pgp.mit.edu/.
 
-johannes
+There were no other search terms available:
+- could not see that "Hauke Mehrtens" was the signer
+- nor an email address
+A note somewhere on the website would be helpful.
+
+It's a mystery as to why I'm getting different results than you are for the
+search.
+
+Thanks.
+
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
