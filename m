@@ -1,73 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:63545 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751860AbbJPHeK (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 16 Oct 2015 03:34:10 -0400
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:55430 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750939AbbJOKO1 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 15 Oct 2015 06:14:27 -0400
 From: Arend van Spriel <arend@broadcom.com>
 To: "Luis R. Rodriguez" <mcgrof@kernel.org>
 CC: <backports@vger.kernel.org>, Arend van Spriel <arend@broadcom.com>
-Subject: [PATCH] backports: provide backport for ktime_get_seconds()
-Date: Fri, 16 Oct 2015 09:34:03 +0200
-Message-ID: <1444980843-16302-1-git-send-email-arend@broadcom.com> (sfid-20151016_093412_554433_81E986E1)
+Subject: [PATCH] backports: add backport for of_platform_default_populate()
+Date: Thu, 15 Oct 2015 12:14:19 +0200
+Message-ID: <1444904059-4082-1-git-send-email-arend@broadcom.com> (sfid-20151015_121428_920593_8E4FBEF5)
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Since commit 84b00607aeb8 ("mac80211: use ktime_get_seconds")
-mac80211 uses ktime_get_seconds(). This patch provide a backport
-using ktime_get_ts() for it.
+Since commit 69b5f4da2636 ("bcma: add support for population subnodes
+also when build as module") the bcma driver uses the function
+of_platform_default_populate(). This patch provides the stub function.
 
 Signed-off-by: Arend van Spriel <arend@broadcom.com>
 ---
- backport/backport-include/linux/ktime.h |  8 ++++++++
- backport/compat/backport-4.3.c          | 10 ++++++++++
- 2 files changed, 18 insertions(+)
+ backport/backport-include/linux/of_platform.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/backport/backport-include/linux/ktime.h b/backport/backport-include/linux/ktime.h
-index 6fbc6c6..2edacf9 100644
---- a/backport/backport-include/linux/ktime.h
-+++ b/backport/backport-include/linux/ktime.h
-@@ -9,6 +9,14 @@ extern ktime_t ktime_get_raw(void);
+diff --git a/backport/backport-include/linux/of_platform.h b/backport/backport-include/linux/of_platform.h
+index 7b0e906..3d83f4a 100644
+--- a/backport/backport-include/linux/of_platform.h
++++ b/backport/backport-include/linux/of_platform.h
+@@ -20,4 +20,17 @@ static inline int of_platform_populate(struct device_node *root,
+ extern const struct of_device_id of_default_bus_match_table[];
+ #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0) */
  
- #endif /* < 3.17 */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,17,0)
-+typedef __s64 time64_t;
-+#endif
-+#define ktime_get_seconds LINUX_BACKPORT(ktime_get_seconds)
-+extern time64_t ktime_get_seconds(void);
-+#endif /* < 3.19 */
-+
- #ifndef ktime_to_timespec64
- /* Map the ktime_t to timespec conversion to ns_to_timespec function */
- #define ktime_to_timespec64(kt)		ns_to_timespec64((kt).tv64)
-diff --git a/backport/compat/backport-4.3.c b/backport/compat/backport-4.3.c
-index d15c92c..2797944 100644
---- a/backport/compat/backport-4.3.c
-+++ b/backport/compat/backport-4.3.c
-@@ -11,6 +11,7 @@
- #include <linux/seq_file.h>
- #include <linux/export.h>
- #include <linux/printk.h>
-+#include <linux/ktime.h>
- 
- static void seq_set_overflow(struct seq_file *m)
- {
-@@ -57,3 +58,12 @@ void seq_hex_dump(struct seq_file *m, const char *prefix_str, int prefix_type,
- 	}
- }
- EXPORT_SYMBOL_GPL(seq_hex_dump);
-+
-+time64_t ktime_get_seconds(void)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0) && !defined(CONFIG_OF_DEVICE)
++struct of_dev_auxdata;
++#define of_platform_default_populate \
++	LINUX_BACKPORT(of_platform_default_populate)
++static inline int
++of_platform_default_populate(struct device_node *root,
++			     const struct of_dev_auxdata *lookup,
++			     struct device *parent)
 +{
-+	struct timespec ts;
-+
-+	ktime_get_ts(&ts);
-+	return ts.tv_sec;
++	return -ENODEV;
 +}
-+EXPORT_SYMBOL_GPL(ktime_get_seconds);
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0) */
++
+ #endif /* __BACKPORT_LINUX_OF_PLATFORM_H */
 -- 
 1.9.1
 
