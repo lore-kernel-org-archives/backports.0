@@ -1,25 +1,34 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:36781 "EHLO sipsolutions.net"
+Received: from s3.sipsolutions.net ([5.9.151.49]:38067 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752329AbbJWHXQ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 23 Oct 2015 03:23:16 -0400
+	id S1751559AbbJWLxH (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 23 Oct 2015 07:53:07 -0400
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
 Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: add ktime_get_seconds()
-Date: Fri, 23 Oct 2015 09:23:11 +0200
-Message-Id: <1445584991-11249-1-git-send-email-johannes@sipsolutions.net> (sfid-20151023_092322_558450_86167259)
+Subject: [PATCH v2] backports: add ktime_get_seconds()
+Date: Fri, 23 Oct 2015 13:52:59 +0200
+Message-Id: <1445601179-3434-1-git-send-email-johannes@sipsolutions.net> (sfid-20151023_135309_908087_762D8E78)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: Johannes Berg <johannes.berg@intel.com>
 
+Since commit 84b00607aeb8 ("mac80211: use ktime_get_seconds")
+mac80211 uses ktime_get_seconds(). This patch provide a backport
+using ktime_get_ts() for it.
+
+[commit message and time64_t taken from Arend's patch]
+
+Signed-off-by: Arend van Spriel <arend@broadcom.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
  backport/backport-include/linux/ktime.h       |  1 +
  backport/backport-include/linux/timekeeping.h | 21 +++++++++++++++++++++
- 2 files changed, 22 insertions(+)
+ backport/backport-include/linux/types.h       | 10 ++++++++++
+ 3 files changed, 32 insertions(+)
  create mode 100644 backport/backport-include/linux/timekeeping.h
+ create mode 100644 backport/backport-include/linux/types.h
 
 diff --git a/backport/backport-include/linux/ktime.h b/backport/backport-include/linux/ktime.h
 index 6fbc6c6eb26c..33ed31caf01a 100644
@@ -35,7 +44,7 @@ index 6fbc6c6eb26c..33ed31caf01a 100644
  #if  LINUX_VERSION_CODE < KERNEL_VERSION(3,17,0)
 diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
 new file mode 100644
-index 000000000000..25ca76b5f802
+index 000000000000..4fb39b2c0119
 --- /dev/null
 +++ b/backport/backport-include/linux/timekeeping.h
 @@ -0,0 +1,21 @@
@@ -49,7 +58,7 @@ index 000000000000..25ca76b5f802
 +#endif
 +
 +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
-+static inline time_t ktime_get_seconds(void)
++static inline time64_t ktime_get_seconds(void)
 +{
 +	struct timespec t;
 +
@@ -60,6 +69,22 @@ index 000000000000..25ca76b5f802
 +#endif
 +
 +#endif /* __BACKPORT_TIMKEEPING_H */
+diff --git a/backport/backport-include/linux/types.h b/backport/backport-include/linux/types.h
+new file mode 100644
+index 000000000000..d68e39c54325
+--- /dev/null
++++ b/backport/backport-include/linux/types.h
+@@ -0,0 +1,10 @@
++#ifndef __BACKPORT_TYPES
++#define __BACKPORT_TYPES
++#include <linux/version.h>
++#include_next <linux/types.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,17,0)
++typedef __s64 time64_t;
++#endif
++
++#endif /* __BACKPORT_TYPES */
 -- 
 2.5.1
 
