@@ -1,58 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:36778 "EHLO sipsolutions.net"
+Received: from s3.sipsolutions.net ([5.9.151.49]:37271 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752285AbbJWHXK (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 23 Oct 2015 03:23:10 -0400
+	id S1751666AbbJWJeU (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 23 Oct 2015 05:34:20 -0400
+Message-ID: <1445592856.1945.0.camel@sipsolutions.net> (sfid-20151023_113422_594771_923ED8AB)
+Subject: Re: [PATCH] backports: add ktime_get_seconds()
 From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Subject: [PATCH] backports: handle "genetlink: simplify genl_notify"
-Date: Fri, 23 Oct 2015 09:22:56 +0200
-Message-Id: <1445584976-11197-1-git-send-email-johannes@sipsolutions.net> (sfid-20151023_092321_981801_0881B0DB)
+To: Arend van Spriel <arend@broadcom.com>, backports@vger.kernel.org
+Date: Fri, 23 Oct 2015 11:34:16 +0200
+In-Reply-To: <5629FEB3.6050905@broadcom.com> (sfid-20151023_113239_295482_F75BC0A3)
+References: <1445584991-11249-1-git-send-email-johannes@sipsolutions.net>
+	 <5629FEB3.6050905@broadcom.com> (sfid-20151023_113239_295482_F75BC0A3)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+On Fri, 2015-10-23 at 11:32 +0200, Arend van Spriel wrote:
+> On 10/23/2015 09:23 AM, Johannes Berg wrote:
+> > From: Johannes Berg <johannes.berg@intel.com>
+> 
+> Already submitted a patch for this. I just did not bother to 
+> introduce the timekeeping.h file. So yours may be preferred.
+> 
 
-Handle the recent genl_notify() prototype change.
+Oh, missed that. Yours is better with time64_t though, so we should
+probably merge them...
 
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/net/genetlink.h | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+Adding the timekeeping.h file might be required if, in the future,
+somebody includes only it instead of ktime.h
 
-diff --git a/backport/backport-include/net/genetlink.h b/backport/backport-include/net/genetlink.h
-index 5761268f05d9..6c6d3e4692ef 100644
---- a/backport/backport-include/net/genetlink.h
-+++ b/backport/backport-include/net/genetlink.h
-@@ -90,9 +90,10 @@ int genl_unregister_family(struct genl_family *family);
- extern void genl_notify(struct sk_buff *skb, struct net *net, u32 pid,
- 			u32 group, struct nlmsghdr *nlh, gfp_t flags);
- #endif
--#define genl_notify(_fam, _skb, _net, _portid, _group, _nlh, _flags)	\
--	genl_notify(_skb, _net, _portid, (_fam)->mcgrps[_group].id,	\
--		    _nlh, _flags)
-+#define genl_notify(_fam, _skb, _info, _group, _flags)			\
-+	genl_notify(_skb, genl_info_net(_info),				\
-+		    genl_info_snd_portid(_info),			\
-+		    (_fam)->mcgrps[_group].id, _info->nlhdr, _flags)
- #define genlmsg_put(_skb, _pid, _seq, _fam, _flags, _cmd)		\
- 	genlmsg_put(_skb, _pid, _seq, &(_fam)->family, _flags, _cmd)
- #define genlmsg_nlhdr(_hdr, _fam)					\
-@@ -145,6 +146,10 @@ backport_genlmsg_multicast_allns(struct genl_family *family,
- #define __genl_const
- #else /* < 3.13 */
- #define __genl_const const
-+#define genl_notify(_fam, _skb, _info, _group, _flags)			\
-+	genl_notify(_fam, _skb, genl_info_net(_info),			\
-+		    genl_info_snd_portid(_info),			\
-+		    _group, _info->nlhdr, _flags)
- #endif /* < 3.13 */
- 
- #endif /* __BACKPORT_NET_GENETLINK_H */
--- 
-2.5.1
-
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
