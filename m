@@ -1,52 +1,103 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:55430 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750939AbbJOKO1 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 15 Oct 2015 06:14:27 -0400
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:20372 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752607AbbJ1VRn (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 28 Oct 2015 17:17:43 -0400
+Message-ID: <56313B75.4000406@broadcom.com> (sfid-20151028_221745_798499_ABFF6E96)
+Date: Wed, 28 Oct 2015 22:17:41 +0100
 From: Arend van Spriel <arend@broadcom.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: <backports@vger.kernel.org>, Arend van Spriel <arend@broadcom.com>
-Subject: [PATCH] backports: add backport for of_platform_default_populate()
-Date: Thu, 15 Oct 2015 12:14:19 +0200
-Message-ID: <1444904059-4082-1-git-send-email-arend@broadcom.com> (sfid-20151015_121428_920593_8E4FBEF5)
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Johannes Berg <johannes@sipsolutions.net>,
+	<backports@vger.kernel.org>
+CC: Johannes Berg <johannes.berg@intel.com>
+Subject: Re: [PATCH v2] backports: add ktime_get_seconds()
+References: <1445601179-3434-1-git-send-email-johannes@sipsolutions.net>
+In-Reply-To: <1445601179-3434-1-git-send-email-johannes@sipsolutions.net>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Since commit 69b5f4da2636 ("bcma: add support for population subnodes
-also when build as module") the bcma driver uses the function
-of_platform_default_populate(). This patch provides the stub function.
+On 10/23/2015 01:52 PM, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+>
+> Since commit 84b00607aeb8 ("mac80211: use ktime_get_seconds")
+> mac80211 uses ktime_get_seconds(). This patch provide a backport
+> using ktime_get_ts() for it.
+>
+> [commit message and time64_t taken from Arend's patch]
+>
+> Signed-off-by: Arend van Spriel <arend@broadcom.com>
 
-Signed-off-by: Arend van Spriel <arend@broadcom.com>
----
- backport/backport-include/linux/of_platform.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Looks good. Thanks.
 
-diff --git a/backport/backport-include/linux/of_platform.h b/backport/backport-include/linux/of_platform.h
-index 7b0e906..3d83f4a 100644
---- a/backport/backport-include/linux/of_platform.h
-+++ b/backport/backport-include/linux/of_platform.h
-@@ -20,4 +20,17 @@ static inline int of_platform_populate(struct device_node *root,
- extern const struct of_device_id of_default_bus_match_table[];
- #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0) */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0) && !defined(CONFIG_OF_DEVICE)
-+struct of_dev_auxdata;
-+#define of_platform_default_populate \
-+	LINUX_BACKPORT(of_platform_default_populate)
-+static inline int
-+of_platform_default_populate(struct device_node *root,
-+			     const struct of_dev_auxdata *lookup,
-+			     struct device *parent)
-+{
-+	return -ENODEV;
-+}
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0) */
-+
- #endif /* __BACKPORT_LINUX_OF_PLATFORM_H */
--- 
-1.9.1
+Regards,
+Arend
+
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+>   backport/backport-include/linux/ktime.h       |  1 +
+>   backport/backport-include/linux/timekeeping.h | 21 +++++++++++++++++++++
+>   backport/backport-include/linux/types.h       | 10 ++++++++++
+>   3 files changed, 32 insertions(+)
+>   create mode 100644 backport/backport-include/linux/timekeeping.h
+>   create mode 100644 backport/backport-include/linux/types.h
+>
+> diff --git a/backport/backport-include/linux/ktime.h b/backport/backport-include/linux/ktime.h
+> index 6fbc6c6eb26c..33ed31caf01a 100644
+> --- a/backport/backport-include/linux/ktime.h
+> +++ b/backport/backport-include/linux/ktime.h
+> @@ -1,6 +1,7 @@
+>   #ifndef __BACKPORT_LINUX_KTIME_H
+>   #define __BACKPORT_LINUX_KTIME_H
+>   #include_next <linux/ktime.h>
+> +#include <linux/timekeeping.h>
+>   #include <linux/version.h>
+>
+>   #if  LINUX_VERSION_CODE < KERNEL_VERSION(3,17,0)
+> diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
+> new file mode 100644
+> index 000000000000..4fb39b2c0119
+> --- /dev/null
+> +++ b/backport/backport-include/linux/timekeeping.h
+> @@ -0,0 +1,21 @@
+> +#ifndef __BACKPORT_TIMKEEPING_H
+> +#define __BACKPORT_TIMKEEPING_H
+> +#include <linux/version.h>
+> +#include <linux/types.h>
+> +
+> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
+> +#include_next <linux/timekeeping.h>
+> +#endif
+> +
+> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
+> +static inline time64_t ktime_get_seconds(void)
+> +{
+> +	struct timespec t;
+> +
+> +	ktime_get_ts(&t);
+> +
+> +	return t.tv_sec;
+> +}
+> +#endif
+> +
+> +#endif /* __BACKPORT_TIMKEEPING_H */
+> diff --git a/backport/backport-include/linux/types.h b/backport/backport-include/linux/types.h
+> new file mode 100644
+> index 000000000000..d68e39c54325
+> --- /dev/null
+> +++ b/backport/backport-include/linux/types.h
+> @@ -0,0 +1,10 @@
+> +#ifndef __BACKPORT_TYPES
+> +#define __BACKPORT_TYPES
+> +#include <linux/version.h>
+> +#include_next <linux/types.h>
+> +
+> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,17,0)
+> +typedef __s64 time64_t;
+> +#endif
+> +
+> +#endif /* __BACKPORT_TYPES */
+>
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
