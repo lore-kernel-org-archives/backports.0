@@ -1,78 +1,38 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:14117 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750979AbbJWJch (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 23 Oct 2015 05:32:37 -0400
-Message-ID: <5629FEB3.6050905@broadcom.com> (sfid-20151023_113239_295482_F75BC0A3)
-Date: Fri, 23 Oct 2015 11:32:35 +0200
-From: Arend van Spriel <arend@broadcom.com>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>,
-	<backports@vger.kernel.org>
-CC: Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH] backports: add ktime_get_seconds()
-References: <1445584991-11249-1-git-send-email-johannes@sipsolutions.net>
-In-Reply-To: <1445584991-11249-1-git-send-email-johannes@sipsolutions.net>
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Received: from static.88-198-24-112.clients.your-server.de ([88.198.24.112]:48939
+	"EHLO nbd.name" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1757064AbbJ2OiV (ORCPT
+	<rfc822;backports@vger.kernel.org>); Thu, 29 Oct 2015 10:38:21 -0400
+From: Felix Fietkau <nbd@openwrt.org>
+To: backports@vger.kernel.org
+Subject: [PATCH] backports: fix version check for page_is_pfmemalloc
+Date: Thu, 29 Oct 2015 15:09:38 +0100
+Message-Id: <1446127778-47105-1-git-send-email-nbd@openwrt.org> (sfid-20151029_153823_816629_EE7C8F5C)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 10/23/2015 09:23 AM, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
+The upstream commit that added it was backported in 4.1.9
 
-Already submitted a patch for this. I just did not bother to introduce 
-the timekeeping.h file. So yours may be preferred.
+Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+---
+ backport/backport-include/linux/mm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Arend
-
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> ---
->   backport/backport-include/linux/ktime.h       |  1 +
->   backport/backport-include/linux/timekeeping.h | 21 +++++++++++++++++++++
->   2 files changed, 22 insertions(+)
->   create mode 100644 backport/backport-include/linux/timekeeping.h
->
-> diff --git a/backport/backport-include/linux/ktime.h b/backport/backport-include/linux/ktime.h
-> index 6fbc6c6eb26c..33ed31caf01a 100644
-> --- a/backport/backport-include/linux/ktime.h
-> +++ b/backport/backport-include/linux/ktime.h
-> @@ -1,6 +1,7 @@
->   #ifndef __BACKPORT_LINUX_KTIME_H
->   #define __BACKPORT_LINUX_KTIME_H
->   #include_next <linux/ktime.h>
-> +#include <linux/timekeeping.h>
->   #include <linux/version.h>
->
->   #if  LINUX_VERSION_CODE < KERNEL_VERSION(3,17,0)
-> diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
-> new file mode 100644
-> index 000000000000..25ca76b5f802
-> --- /dev/null
-> +++ b/backport/backport-include/linux/timekeeping.h
-> @@ -0,0 +1,21 @@
-> +#ifndef __BACKPORT_TIMKEEPING_H
-> +#define __BACKPORT_TIMKEEPING_H
-> +#include <linux/version.h>
-> +#include <linux/types.h>
-> +
-> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
-> +#include_next <linux/timekeeping.h>
-> +#endif
-> +
-> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
-> +static inline time_t ktime_get_seconds(void)
-> +{
-> +	struct timespec t;
-> +
-> +	ktime_get_ts(&t);
-> +
-> +	return t.tv_sec;
-> +}
-> +#endif
-> +
-> +#endif /* __BACKPORT_TIMKEEPING_H */
->
+diff --git a/backport/backport-include/linux/mm.h b/backport/backport-include/linux/mm.h
+index ddb8813..7e6f77c 100644
+--- a/backport/backport-include/linux/mm.h
++++ b/backport/backport-include/linux/mm.h
+@@ -95,7 +95,7 @@ static inline unsigned long *frame_vector_pfns(struct frame_vector *vec)
+ }
+ #endif
+ 
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0) && \
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,9) && \
+      LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
+ #define page_is_pfmemalloc LINUX_BACKPORT(page_is_pfmemalloc)
+ static inline bool page_is_pfmemalloc(struct page *page)
+-- 
+2.2.2
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
