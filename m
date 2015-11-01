@@ -1,30 +1,29 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:35659 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:46341 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751629AbbKOSpn (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 15 Nov 2015 13:45:43 -0500
-Received: from [192.168.178.24] (p508B614B.dip0.t-ipconnect.de [80.139.97.75])
-	by hauke-m.de (Postfix) with ESMTPSA id EB0EB100029
-	for <backports@vger.kernel.org>; Sun, 15 Nov 2015 19:45:41 +0100 (CET)
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+	id S1752027AbbKAX4k (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 1 Nov 2015 18:56:40 -0500
+Message-ID: <5636A6B6.3010200@hauke-m.de> (sfid-20151102_005641_727479_95DE5D4A)
+Date: Mon, 02 Nov 2015 00:56:38 +0100
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: backports-4.3-1 is out
-Message-ID: <5648D2D5.9080308@hauke-m.de> (sfid-20151115_194549_355080_DA5CA378)
-Date: Sun, 15 Nov 2015 19:45:41 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+To: Felix Fietkau <nbd@openwrt.org>, backports@vger.kernel.org
+Subject: Re: [PATCH] backports: fix version check for page_is_pfmemalloc
+References: <1446127778-47105-1-git-send-email-nbd@openwrt.org>
+In-Reply-To: <1446127778-47105-1-git-send-email-nbd@openwrt.org>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backports-4.3-1 was released. This is based on Linux kernel 4.3.
-
-https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v4.3/backports-4.3-1.tar.xz
-
-The source code can be found here:
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
-
-All the latest releases are listed here:
-http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
+On 10/29/2015 03:09 PM, Felix Fietkau wrote:
+> The upstream commit that added it was backported in 4.1.9
+> 
+> Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+> ---
+>  backport/backport-include/linux/mm.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+Thank you for the patch I applied it.
 
 Hauke
 --
