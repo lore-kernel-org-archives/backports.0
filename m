@@ -1,45 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:35557 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:50751 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751550AbbKOP5M (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 15 Nov 2015 10:57:12 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
+	id S1751394AbbKBMgt (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 2 Nov 2015 07:36:49 -0500
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	(Exim 4.86)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1ZtELw-0003mx-5a
+	for backports@vger.kernel.org; Mon, 02 Nov 2015 13:36:48 +0100
+Message-ID: <1446467807.3205.21.camel@sipsolutions.net> (sfid-20151102_133651_365368_CEFE6092)
+Subject: CONFIG_WLAN getting disabled - copy-list usage
+From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 05/15] dependencies: make NFC_MRVL depend on kernel >= 3.3
-Date: Sun, 15 Nov 2015 16:56:49 +0100
-Message-Id: <1447603019-11862-6-git-send-email-hauke@hauke-m.de> (sfid-20151115_165714_781700_5E649FA7)
-In-Reply-To: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
-References: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
+Date: Mon, 02 Nov 2015 13:36:47 +0100
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This driver uses of_find_property() and devm_gpio_free() which are not
-available in this kernel versions.
+FYI, if anyone's using backports with a copy-list file that restricts
+the wifi drivers to their own, and is working against a recent tree
+that includes the drivers/net/wireless/realtek/ move, then CONFIG_WLAN
+will end up getting disabled.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- dependencies | 5 +++++
- 1 file changed, 5 insertions(+)
+To fix that for now modify your copy-list to include
+drivers/net/wireless/realtek/Makefile (and that file only).
 
-diff --git a/dependencies b/dependencies
-index 3316c93..d213fd7 100644
---- a/dependencies
-+++ b/dependencies
-@@ -149,6 +149,11 @@ BCMA_DRIVER_GPIO 3.13
- # only introduced in kernel 3.1
- NFC 3.1
- 
-+# This needs of_find_property() and devm_gpio_free()
-+NFC_MRVL 3.3
-+NFC_MRVL_USB 3.3
-+NFC_MRVL_UART 3.3
-+
- NFC_TRF7970A 3.4
- 
- INTEL_IPS 3.2
--- 
-2.6.2
+Once Kconfig changes go in and the Makefile statement
 
+obj-$(CONFIG_WLAN) += realtek/
+
+changes to
+
+obj-$(CONFIG_WLAN_REALTEK) += realtek/
+
+(or similar) this issue will go away.
+
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
