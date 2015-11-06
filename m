@@ -1,48 +1,135 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:52911 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:44295 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753961AbbKGQzV (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 7 Nov 2015 11:55:21 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
+	id S1032528AbbKFH6H (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 6 Nov 2015 02:58:07 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 04/10] header: add ktime_get_ns()
-Date: Sat,  7 Nov 2015 17:55:04 +0100
-Message-Id: <1446915310-8278-5-git-send-email-hauke@hauke-m.de> (sfid-20151107_175525_215515_2F8EF9A1)
-In-Reply-To: <1446915310-8278-1-git-send-email-hauke@hauke-m.de>
-References: <1446915310-8278-1-git-send-email-hauke@hauke-m.de>
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backport: backport debugfs_create_bool()
+Date: Fri,  6 Nov 2015 08:58:01 +0100
+Message-Id: <1446796681-22313-1-git-send-email-johannes@sipsolutions.net> (sfid-20151106_085809_714432_BF9D9B5F)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-We also have to add the prototype of ktime_t ktime_get(), because
-including linux/hrtimer.h caused some strange build errors.
+From: Johannes Berg <johannes.berg@intel.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+The prototype for this function is changing upstream, so backport
+a copy of the new one that has a bool * argument instead of u32 *.
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/linux/timekeeping.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ backport/backport-include/linux/debugfs.h | 15 ++++++++
+ backport/compat/Makefile                  |  1 +
+ backport/compat/backport-4.4.c            | 63 +++++++++++++++++++++++++++++++
+ 3 files changed, 79 insertions(+)
+ create mode 100644 backport/compat/backport-4.4.c
 
-diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
-index 4fb39b2..fe42e71 100644
---- a/backport/backport-include/linux/timekeeping.h
-+++ b/backport/backport-include/linux/timekeeping.h
-@@ -7,6 +7,16 @@
- #include_next <linux/timekeeping.h>
- #endif
+diff --git a/backport/backport-include/linux/debugfs.h b/backport/backport-include/linux/debugfs.h
+index a68435322b4b..5ea4bfbe928e 100644
+--- a/backport/backport-include/linux/debugfs.h
++++ b/backport/backport-include/linux/debugfs.h
+@@ -24,4 +24,19 @@ static inline struct dentry *debugfs_create_devm_seqfile(struct device *dev,
+ #endif /* CONFIG_DEBUG_FS */
+ #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0) */
  
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,17,0)
-+#define ktime_get_ns LINUX_BACKPORT(ktime_get_ns)
-+extern ktime_t ktime_get(void);
-+#define ktime_get_ns LINUX_BACKPORT(ktime_get_ns)
-+static inline u64 ktime_get_ns(void)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,4,0)
++#define debugfs_create_bool LINUX_BACKPORT(debugfs_create_bool)
++#ifdef CONFIG_DEBUG_FS
++struct dentry *debugfs_create_bool(const char *name, umode_t mode,
++				   struct dentry *parent, bool *value);
++#else
++static inline struct dentry *
++debugfs_create_bool(const char *name, umode_t mode,
++		    struct dentry *parent, bool *value)
 +{
-+	return ktime_to_ns(ktime_get());
++	return ERR_PTR(-ENODEV);
 +}
 +#endif
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,4,0) */
 +
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
- static inline time64_t ktime_get_seconds(void)
- {
+ #endif /* __BACKPORT_DEBUGFS_H_ */
+diff --git a/backport/compat/Makefile b/backport/compat/Makefile
+index 666ef9111ace..fa992e780ec1 100644
+--- a/backport/compat/Makefile
++++ b/backport/compat/Makefile
+@@ -29,6 +29,7 @@ compat-$(CPTCFG_KERNEL_4_0) += backport-4.0.o
+ compat-$(CPTCFG_KERNEL_4_1) += backport-4.1.o
+ compat-$(CPTCFG_KERNEL_4_2) += backport-4.2.o
+ compat-$(CPTCFG_KERNEL_4_3) += backport-4.3.o
++compat-$(CPTCFG_KERNEL_4_4) += backport-4.4.o
+ 
+ compat-$(CPTCFG_BPAUTO_BUILD_CRYPTO_CCM) += crypto-ccm.o
+ compat-$(CPTCFG_BPAUTO_BUILD_DMA_SHARED_HELPERS) += dma-shared-helpers.o
+diff --git a/backport/compat/backport-4.4.c b/backport/compat/backport-4.4.c
+new file mode 100644
+index 000000000000..dd02d2b7a3cf
+--- /dev/null
++++ b/backport/compat/backport-4.4.c
+@@ -0,0 +1,63 @@
++/*
++ * Copyright(c) 2015 Intel Deutschland GmbH
++ *
++ * Backport functionality introduced in Linux 4.4.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++
++#include <linux/debugfs.h>
++
++#ifdef CONFIG_DEBUG_FS
++static ssize_t debugfs_read_file_bool(struct file *file, char __user *user_buf,
++				      size_t count, loff_t *ppos)
++{
++	char buf[3];
++	bool *val = file->private_data;
++
++	if (*val)
++		buf[0] = 'Y';
++	else
++		buf[0] = 'N';
++	buf[1] = '\n';
++	buf[2] = 0x00;
++	return simple_read_from_buffer(user_buf, count, ppos, buf, 2);
++}
++
++static ssize_t debugfs_write_file_bool(struct file *file,
++				       const char __user *user_buf,
++				       size_t count, loff_t *ppos)
++{
++	char buf[32];
++	size_t buf_size;
++	bool bv;
++	bool *val = file->private_data;
++
++	buf_size = min(count, (sizeof(buf)-1));
++	if (copy_from_user(buf, user_buf, buf_size))
++		return -EFAULT;
++
++	buf[buf_size] = '\0';
++	if (strtobool(buf, &bv) == 0)
++		*val = bv;
++
++	return count;
++}
++
++static const struct file_operations fops_bool = {
++	.read =		debugfs_read_file_bool,
++	.write =	debugfs_write_file_bool,
++	.open =		simple_open,
++	.llseek =	default_llseek,
++};
++
++struct dentry *debugfs_create_bool(const char *name, umode_t mode,
++				   struct dentry *parent, bool *value)
++{
++	return debugfs_create_file(name, mode, parent, value, &fops_bool);
++}
++EXPORT_SYMBOL_GPL(debugfs_create_bool);
++#endif /* CONFIG_DEBUG_FS */
 -- 
 2.6.2
 
