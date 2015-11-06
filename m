@@ -1,46 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:51458 "EHLO mail.kernel.org"
+Received: from s3.sipsolutions.net ([5.9.151.49]:44377 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752122AbbKHJdn (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 8 Nov 2015 04:33:43 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 1B266204D3
-	for <backports@vger.kernel.org>; Sun,  8 Nov 2015 09:33:42 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 96DCE204B5
-	for <backports@vger.kernel.org>; Sun,  8 Nov 2015 09:33:39 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1032298AbbKFIQP (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 6 Nov 2015 03:16:15 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Subject: [Bug 107461] clients can not connect to the AP,AP is created over
- linux2.5 with ath9k wireless card
-Date: Sun, 08 Nov 2015 09:33:39 +0000
-Message-ID: <bug-107461-58281-D0cAMwUe6V@https.bugzilla.kernel.org/> (sfid-20151108_103346_108717_CD292986)
-In-Reply-To: <bug-107461-58281@https.bugzilla.kernel.org/>
-References: <bug-107461-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] gentree: fix Makefile symbol disabling
+Date: Fri,  6 Nov 2015 09:16:10 +0100
+Message-Id: <1446797770-32354-1-git-send-email-johannes@sipsolutions.net> (sfid-20151106_091617_823502_44C4BA59)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=107461
+From: Johannes Berg <johannes.berg@intel.com>
 
-Hauke Mehrtens <hauke@hauke-m.de> changed:
+Currently, a Makefile line like this:
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |hauke@hauke-m.de
+    obj-$(CONFIG_IPW2100) += ipw2x00/
 
---- Comment #1 from Hauke Mehrtens <hauke@hauke-m.de> ---
-I haven't understood what you do.
+will get mangled into
 
-Do you have an Ubuntu system with ath9k and kernel 4.5 + backports 3.19 running
-as an AP and this does not work? When you used an older kernel it worked?
+    #obj-$(CONFIG_IPW2100+= ipw2x00/
 
-I do not think that backports 3.19 works with kernel 4.5 at all, when you use a
-recent kernel there is no need for backports.
+when disabled by the gentree script. Fix the regular
+expression to contain the entire match as the first
+group, so it gets all preserved when replaced later
+by "#\1" using expression.sub().
 
+This then makes it come out as
+
+    #obj-$(CONFIG_IPW2100) += ipw2x00/
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ gentree.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gentree.py b/gentree.py
+index 636ea609ba57..772095fcf580 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -1057,7 +1057,7 @@ def process(kerneldir, copy_list_file, git_revision=None,
+     # groups -- 50 seemed safer and is still fast)
+     regexes = []
+     for some_symbols in [disable_makefile[i:i + 50] for i in range(0, len(disable_makefile), 50)]:
+-        r = '^([^#].*((' + bpid.full_prefix_resafe + '|CONFIG_)(' + '|'.join([s for s in some_symbols]) + ')))\W'
++        r = '^(([^#].*((' + bpid.full_prefix_resafe + '|CONFIG_)(' + '|'.join([s for s in some_symbols]) + ')))\W)'
+         regexes.append(re.compile(r, re.MULTILINE))
+     for f in maketree.get_makefiles():
+         data = open(f, 'r').read()
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+2.6.2
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
