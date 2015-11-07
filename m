@@ -1,144 +1,71 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:35543 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:52902 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751962AbbKOPxe (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 15 Nov 2015 10:53:34 -0500
+	id S1753711AbbKGQzR (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 7 Nov 2015 11:55:17 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: eliad@wizery.com, emmanuel.grumbach@intel.com
-Cc: backports@vger.kernel.org, eliadx.peller@intel.com,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH v2] backports: add of_find_property_value_of_size()
-Date: Sun, 15 Nov 2015 16:53:19 +0100
-Message-Id: <1447602799-11759-1-git-send-email-hauke@hauke-m.de> (sfid-20151115_165340_574318_8058BDE7)
-In-Reply-To: <1447588042-27281-1-git-send-email-emmanuel.grumbach@intel.com>
-References: <1447588042-27281-1-git-send-email-emmanuel.grumbach@intel.com>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 00/10] backport: update to next-20151013
+Date: Sat,  7 Nov 2015 17:55:00 +0100
+Message-Id: <1446915310-8278-1-git-send-email-hauke@hauke-m.de> (sfid-20151107_175520_266250_24BF550B)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Eliad Peller <eliad@wizery.com>
+This brings backports in sync with next-20151013.
+In addition it fixes some problem on RHEL 7.
 
-commit 2e98a32a274274fca0e6e ("backport: add
-of_property_read_u64_array()") added a call
-to of_find_property_value_of_size(), which is a
-static function, causing compilation error.
+Hauke Mehrtens (10):
+  patches: argument removed from struct ipv6_stub->ndisc_send_na()
+  patches: add missing header in 6lowpan/core.h
+  header: adapt renaming of mei_cl_ to mei_cldev_
+  header: add ktime_get_ns()
+  header: add __GFP_KSWAPD_RECLAIM
+  header: add nla_get_le32() and nla_get_le64()
+  header: change check for ACPI_COMPANION
+  backport: add of_property_read_u64_array()
+  dependencies: VIDEO_MT9P031 uses gpio consumer
+  patches: refresh on next-20151013
 
-Implement it locally as well.
+ backport/backport-include/linux/acpi.h             |  4 +--
+ backport/backport-include/linux/gfp.h              | 13 ++++++++
+ backport/backport-include/linux/mei_cl_bus.h       | 18 +++++++++--
+ backport/backport-include/linux/of.h               | 17 ++++++++++
+ backport/backport-include/linux/timekeeping.h      | 10 ++++++
+ backport/backport-include/net/netlink.h            | 22 +++++++++++++
+ backport/compat/backport-3.18.c                    | 37 ++++++++++++++++++++++
+ dependencies                                       |  2 +-
+ .../0002-disable-dump-adjust-on-old-kernels.patch  |  4 +--
+ .../include_net_cfg80211.patch                     |  2 +-
+ .../net_wireless_core.patch                        |  2 +-
+ .../0013-fix-makefile-includes/6lowpan.patch       | 10 ++++++
+ .../0013-fix-makefile-includes/brcmfmac.patch      | 10 ------
+ .../0014-netlink_seq/net_wireless_nl80211.patch    |  2 +-
+ .../0020-tty-termios/net_bluetooth_hci_ldisc.patch | 10 +++---
+ .../network/0024-led-blink-api/mac80211.patch      |  2 +-
+ .../network/0025-usb-sg/usbnet.patch               |  2 +-
+ .../network/0028-select_queue/mwifiex.patch        |  2 +-
+ .../network/0030-qdisc_tx_busylock/bluetooth.patch |  4 +--
+ .../0032-sriov_configure/igb_sriov_configure.patch |  4 +--
+ .../0033-ndo_vlan_rx_vid/igb_ndo_vlan_rx_vid.patch |  8 ++---
+ .../0043-ndo_set_vf_rate/igb_set_vf_rate.patch     |  4 +--
+ .../network/0047-write_iter/bluetooth.patch        | 10 +++---
+ .../network/0050-iov_iter/bluetooth.patch          |  8 ++---
+ .../network/0052-deactivate-ptp-pin/igb.patch      |  4 +--
+ .../network/0053-possible_net_t.patch              |  2 +-
+ .../0053-remove_wait_on_bit_timeout/btusb.patch    | 12 +++----
+ .../hci_intel.patch                                | 10 +++---
+ .../network/0055-name_assign_type/brcmfmac.patch   |  2 +-
+ .../network/0059-uuid-in-mei/nfc.patch             | 16 ++++++----
+ .../network/0062-acpi-gpio-remove/hci_bcm.patch    | 24 +++++++-------
+ .../network/0062-acpi-gpio-remove/hci_intel.patch  | 10 +++---
+ .../network/0065-ndisc_send_na-argument.cocci      |  9 ++++++
+ 33 files changed, 211 insertions(+), 85 deletions(-)
+ create mode 100644 backport/backport-include/linux/gfp.h
+ create mode 100644 patches/collateral-evolutions/network/0013-fix-makefile-includes/6lowpan.patch
+ delete mode 100644 patches/collateral-evolutions/network/0013-fix-makefile-includes/brcmfmac.patch
+ create mode 100644 patches/collateral-evolutions/network/0065-ndisc_send_na-argument.cocci
 
-Signed-off-by: Eliad Peller <eliadx.peller@intel.com>
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-[remove of_find_property_value_of_size() from backport-3.10.c]
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
-
-I did some changes to this patch, I hope they are ok.
-
- backport/backport-include/linux/of.h |  6 +++---
- backport/compat/backport-3.10.c      | 28 ----------------------------
- backport/compat/backport-3.18.c      | 28 ++++++++++++++++++++++++++++
- 3 files changed, 31 insertions(+), 31 deletions(-)
-
-diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
-index bc0d7fd..ab98061 100644
---- a/backport/backport-include/linux/of.h
-+++ b/backport/backport-include/linux/of.h
-@@ -82,9 +82,6 @@ static inline const void *of_get_property(const struct device_node *node,
- extern int of_property_read_u32_index(const struct device_node *np,
- 				       const char *propname,
- 				       u32 index, u32 *out_value);
--/* This is static in the kernel, but we need it in multiple places */
--void *of_find_property_value_of_size(const struct device_node *np,
--				     const char *propname, u32 len);
- #else
- static inline int of_property_read_u32_index(const struct device_node *np,
- 			const char *propname, u32 index, u32 *out_value)
-@@ -170,6 +167,9 @@ static inline struct device_node *of_find_compatible_node(
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,18,0)
- #define of_property_read_u64_array LINUX_BACKPORT(of_property_read_u64_array)
- #ifdef CONFIG_OF
-+/* This is static in the kernel, but we need it in multiple places */
-+void *of_find_property_value_of_size(const struct device_node *np,
-+				     const char *propname, u32 len);
- extern int of_property_read_u64_array(const struct device_node *np,
- 				      const char *propname,
- 				      u64 *out_values,
-diff --git a/backport/compat/backport-3.10.c b/backport/compat/backport-3.10.c
-index 53123fb..5cab709 100644
---- a/backport/compat/backport-3.10.c
-+++ b/backport/compat/backport-3.10.c
-@@ -123,34 +123,6 @@ EXPORT_SYMBOL_GPL(pci_vfs_assigned);
- 
- #ifdef CONFIG_OF
- /**
-- * of_find_property_value_of_size
-- *
-- * @np:		device node from which the property value is to be read.
-- * @propname:	name of the property to be searched.
-- * @len:	requested length of property value
-- *
-- * Search for a property in a device node and valid the requested size.
-- * Returns the property value on success, -EINVAL if the property does not
-- *  exist, -ENODATA if property does not have a value, and -EOVERFLOW if the
-- * property data isn't large enough.
-- *
-- */
--void *of_find_property_value_of_size(const struct device_node *np,
--				     const char *propname, u32 len)
--{
--	struct property *prop = of_find_property(np, propname, NULL);
--
--	if (!prop)
--		return ERR_PTR(-EINVAL);
--	if (!prop->value)
--		return ERR_PTR(-ENODATA);
--	if (len > prop->length)
--		return ERR_PTR(-EOVERFLOW);
--
--	return prop->value;
--}
--
--/**
-  * of_property_read_u32_index - Find and read a u32 from a multi-value property.
-  *
-  * @np:		device node from which the property value is to be read.
-diff --git a/backport/compat/backport-3.18.c b/backport/compat/backport-3.18.c
-index bed5d96..f0f7fd8 100644
---- a/backport/compat/backport-3.18.c
-+++ b/backport/compat/backport-3.18.c
-@@ -225,6 +225,34 @@ EXPORT_SYMBOL_GPL(bit_wait_timeout);
- 
- #ifdef CONFIG_OF
- /**
-+ * of_find_property_value_of_size
-+ *
-+ * @np:		device node from which the property value is to be read.
-+ * @propname:	name of the property to be searched.
-+ * @len:	requested length of property value
-+ *
-+ * Search for a property in a device node and valid the requested size.
-+ * Returns the property value on success, -EINVAL if the property does not
-+ *  exist, -ENODATA if property does not have a value, and -EOVERFLOW if the
-+ * property data isn't large enough.
-+ *
-+ */
-+void *of_find_property_value_of_size(const struct device_node *np,
-+				     const char *propname, u32 len)
-+{
-+	struct property *prop = of_find_property(np, propname, NULL);
-+
-+	if (!prop)
-+		return ERR_PTR(-EINVAL);
-+	if (!prop->value)
-+		return ERR_PTR(-ENODATA);
-+	if (len > prop->length)
-+		return ERR_PTR(-EOVERFLOW);
-+
-+	return prop->value;
-+}
-+
-+/**
-  * of_property_read_u64_array - Find and read an array of 64 bit integers
-  * from a property.
-  *
 -- 
 2.6.2
 
