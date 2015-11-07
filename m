@@ -1,51 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:49580 "EHLO mail.kernel.org"
+Received: from hauke-m.de ([5.39.93.123]:52911 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754101AbbKHIaO (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 8 Nov 2015 03:30:14 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id A5AD320639
-	for <backports@vger.kernel.org>; Sun,  8 Nov 2015 08:30:13 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id DF32320608
-	for <backports@vger.kernel.org>; Sun,  8 Nov 2015 08:30:12 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1753961AbbKGQzV (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 7 Nov 2015 11:55:21 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Subject: [Bug 107461] New: clients can not connect to the AP,AP is created
- over linux2.5 with ath9k wireless card
-Date: Sun, 08 Nov 2015 08:30:12 +0000
-Message-ID: <bug-107461-58281@https.bugzilla.kernel.org/> (sfid-20151108_093042_852714_7EADD877)
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 04/10] header: add ktime_get_ns()
+Date: Sat,  7 Nov 2015 17:55:04 +0100
+Message-Id: <1446915310-8278-5-git-send-email-hauke@hauke-m.de> (sfid-20151107_175525_215515_2F8EF9A1)
+In-Reply-To: <1446915310-8278-1-git-send-email-hauke@hauke-m.de>
+References: <1446915310-8278-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=107461
+We also have to add the prototype of ktime_t ktime_get(), because
+including linux/hrtimer.h caused some strange build errors.
 
-            Bug ID: 107461
-           Summary: clients can not connect to the AP,AP is created over
-                    linux2.5 with ath9k wireless card
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: 4.2.5
-          Hardware: All
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: Backports
-          Assignee: backports@vger.kernel.org
-          Reporter: kmalekinasab@yahoo.com
-        Regression: No
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/timekeeping.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-hi 
-i use the ap mode for creat access point over ubuntu with backport 3.19
-when i install  and update linux kernel to 4.5 then wireless clients can not
-connect to the ap and conect to the internet  via this AP.
-
+diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
+index 4fb39b2..fe42e71 100644
+--- a/backport/backport-include/linux/timekeeping.h
++++ b/backport/backport-include/linux/timekeeping.h
+@@ -7,6 +7,16 @@
+ #include_next <linux/timekeeping.h>
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,17,0)
++#define ktime_get_ns LINUX_BACKPORT(ktime_get_ns)
++extern ktime_t ktime_get(void);
++#define ktime_get_ns LINUX_BACKPORT(ktime_get_ns)
++static inline u64 ktime_get_ns(void)
++{
++	return ktime_to_ns(ktime_get());
++}
++#endif
++
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
+ static inline time64_t ktime_get_seconds(void)
+ {
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+2.6.2
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
