@@ -1,75 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:13118 "EHLO mga09.intel.com"
+Received: from hauke-m.de ([5.39.93.123]:52904 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751095AbbKOLr0 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 15 Nov 2015 06:47:26 -0500
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+	id S1753711AbbKGQzU (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 7 Nov 2015 11:55:20 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Cc: Eliad Peller <eliad@wizery.com>,
-	Eliad Peller <eliadx.peller@intel.com>,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Subject: [PATCH] backports: add of_find_property_value_of_size()
-Date: Sun, 15 Nov 2015 13:47:22 +0200
-Message-Id: <1447588042-27281-1-git-send-email-emmanuel.grumbach@intel.com> (sfid-20151115_124728_437539_79979956)
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 01/10] patches: argument removed from struct ipv6_stub->ndisc_send_na()
+Date: Sat,  7 Nov 2015 17:55:01 +0100
+Message-Id: <1446915310-8278-2-git-send-email-hauke@hauke-m.de> (sfid-20151107_175523_358245_E43A4C6F)
+In-Reply-To: <1446915310-8278-1-git-send-email-hauke@hauke-m.de>
+References: <1446915310-8278-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Eliad Peller <eliad@wizery.com>
+Commit 38cf595b1 "ipv6: remove unused neigh parameter from ndisc
+functions" removed one parameter from the callback function
+ndisc_send_na(). This semantic patch makes the code add NULL for that
+parameter on older kernel versions. Null was passed in most of the
+callers before.
 
-commit 2e98a32a274274fca0e6e ("backport: add
-of_property_read_u64_array()") added a call
-to of_find_property_value_of_size(), which is a
-static function, causing compilation error.
-
-Implement it locally as well.
-
-Signed-off-by: Eliad Peller <eliadx.peller@intel.com>
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/compat/backport-3.18.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ .../network/0065-ndisc_send_na-argument.cocci                    | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0065-ndisc_send_na-argument.cocci
 
-diff --git a/backport/compat/backport-3.18.c b/backport/compat/backport-3.18.c
-index bed5d96..60cd3c4 100644
---- a/backport/compat/backport-3.18.c
-+++ b/backport/compat/backport-3.18.c
-@@ -225,6 +225,34 @@ EXPORT_SYMBOL_GPL(bit_wait_timeout);
- 
- #ifdef CONFIG_OF
- /**
-+ * of_find_property_value_of_size
-+ *
-+ * @np:		device node from which the property value is to be read.
-+ * @propname:	name of the property to be searched.
-+ * @len:	requested length of property value
-+ *
-+ * Search for a property in a device node and valid the requested size.
-+ * Returns the property value on success, -EINVAL if the property does not
-+ *  exist, -ENODATA if property does not have a value, and -EOVERFLOW if the
-+ * property data isn't large enough.
-+ *
-+ */
-+static void *of_find_property_value_of_size(const struct device_node *np,
-+			const char *propname, u32 len)
-+{
-+	struct property *prop = of_find_property(np, propname, NULL);
-+
-+	if (!prop)
-+		return ERR_PTR(-EINVAL);
-+	if (!prop->value)
-+		return ERR_PTR(-ENODATA);
-+	if (len > prop->length)
-+		return ERR_PTR(-EOVERFLOW);
-+
-+	return prop->value;
-+}
-+
-+/**
-  * of_property_read_u64_array - Find and read an array of 64 bit integers
-  * from a property.
-  *
+diff --git a/patches/collateral-evolutions/network/0065-ndisc_send_na-argument.cocci b/patches/collateral-evolutions/network/0065-ndisc_send_na-argument.cocci
+new file mode 100644
+index 0000000..84c4209
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0065-ndisc_send_na-argument.cocci
+@@ -0,0 +1,9 @@
++@@
++identifier ndisc_send_na;
++expression netdev, saddr, target, router, solicited, override, inc_opt;
++@@
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0)
++ ipv6_stub->ndisc_send_na(netdev, saddr, target, router, solicited, override, inc_opt);
+++#else
+++ipv6_stub->ndisc_send_na(netdev, NULL, saddr, target, router, solicited, override, inc_opt);
+++#endif
 -- 
-2.5.0
+2.6.2
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
