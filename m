@@ -1,40 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:52949 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:52938 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753711AbbKGRIp (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 7 Nov 2015 12:08:45 -0500
-Subject: Re: [PATCH v2] backports: add ktime_get_seconds()
+	id S1753711AbbKGRHi (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 7 Nov 2015 12:07:38 -0500
+Subject: Re: [PATCH] gentree: fix Makefile symbol disabling
 To: Johannes Berg <johannes@sipsolutions.net>,
 	backports@vger.kernel.org
-References: <1445601179-3434-1-git-send-email-johannes@sipsolutions.net>
+References: <1446797770-32354-1-git-send-email-johannes@sipsolutions.net>
 Cc: Johannes Berg <johannes.berg@intel.com>
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <563E301B.7090609@hauke-m.de> (sfid-20151107_180846_901637_18715F55)
-Date: Sat, 7 Nov 2015 18:08:43 +0100
+Message-ID: <563E2FD8.3050208@hauke-m.de> (sfid-20151107_180739_890355_71AC1E49)
+Date: Sat, 7 Nov 2015 18:07:36 +0100
 MIME-Version: 1.0
-In-Reply-To: <1445601179-3434-1-git-send-email-johannes@sipsolutions.net>
+In-Reply-To: <1446797770-32354-1-git-send-email-johannes@sipsolutions.net>
 Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 10/23/2015 01:52 PM, Johannes Berg wrote:
+On 11/06/2015 09:16 AM, Johannes Berg wrote:
 > From: Johannes Berg <johannes.berg@intel.com>
 > 
-> Since commit 84b00607aeb8 ("mac80211: use ktime_get_seconds")
-> mac80211 uses ktime_get_seconds(). This patch provide a backport
-> using ktime_get_ts() for it.
+> Currently, a Makefile line like this:
 > 
-> [commit message and time64_t taken from Arend's patch]
+>     obj-$(CONFIG_IPW2100) += ipw2x00/
 > 
-> Signed-off-by: Arend van Spriel <arend@broadcom.com>
+> will get mangled into
+> 
+>     #obj-$(CONFIG_IPW2100+= ipw2x00/
+> 
+> when disabled by the gentree script. Fix the regular
+> expression to contain the entire match as the first
+> group, so it gets all preserved when replaced later
+> by "#\1" using expression.sub().
+> 
+> This then makes it come out as
+> 
+>     #obj-$(CONFIG_IPW2100) += ipw2x00/
+> 
 > Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 > ---
->  backport/backport-include/linux/ktime.h       |  1 +
->  backport/backport-include/linux/timekeeping.h | 21 +++++++++++++++++++++
->  backport/backport-include/linux/types.h       | 10 ++++++++++
->  3 files changed, 32 insertions(+)
->  create mode 100644 backport/backport-include/linux/timekeeping.h
->  create mode 100644 backport/backport-include/linux/types.h
+>  gentree.py | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 Thank you for the patch, it was applied.
 
