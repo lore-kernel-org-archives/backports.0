@@ -1,38 +1,106 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:35555 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:52919 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751338AbbKOP5M (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 15 Nov 2015 10:57:12 -0500
+	id S1753711AbbKGQzW (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 7 Nov 2015 11:55:22 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 04/15] dependencies: make NFC_FDP depend on kernel >= 3.13
-Date: Sun, 15 Nov 2015 16:56:48 +0100
-Message-Id: <1447603019-11862-5-git-send-email-hauke@hauke-m.de> (sfid-20151115_165714_168277_015C8A99)
-In-Reply-To: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
-References: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 08/10] backport: add of_property_read_u64_array()
+Date: Sat,  7 Nov 2015 17:55:08 +0100
+Message-Id: <1446915310-8278-9-git-send-email-hauke@hauke-m.de> (sfid-20151107_175527_704800_311C2FBE)
+In-Reply-To: <1446915310-8278-1-git-send-email-hauke@hauke-m.de>
+References: <1446915310-8278-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This driver now uses the gpio consumer api.
+This function was added in commit b31384fa5 "Driver core: Unified
+device properties interface for platform firmware".
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- dependencies | 1 +
- 1 file changed, 1 insertion(+)
+ backport/backport-include/linux/of.h | 17 +++++++++++++++++
+ backport/compat/backport-3.18.c      | 37 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 54 insertions(+)
 
-diff --git a/dependencies b/dependencies
-index 21c6685..3316c93 100644
---- a/dependencies
-+++ b/dependencies
-@@ -157,6 +157,7 @@ NFC_MEI_PHY 3.10
+diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
+index ef9c6aa..bc0d7fd 100644
+--- a/backport/backport-include/linux/of.h
++++ b/backport/backport-include/linux/of.h
+@@ -167,4 +167,21 @@ static inline struct device_node *of_find_compatible_node(
+ #endif
+ #endif
  
- # missing linux/gpio/consumer.h
- NFC_PN544_I2C 3.13
-+NFC_FDP 3.13
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,18,0)
++#define of_property_read_u64_array LINUX_BACKPORT(of_property_read_u64_array)
++#ifdef CONFIG_OF
++extern int of_property_read_u64_array(const struct device_node *np,
++				      const char *propname,
++				      u64 *out_values,
++				      size_t sz);
++#else
++static inline int of_property_read_u64_array(const struct device_node *np,
++					     const char *propname,
++					     u64 *out_values, size_t sz)
++{
++	return -ENOSYS;
++}
++#endif /* CONFIG_OF */
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0) */
++
+ #endif	/* _COMPAT_LINUX_OF_H */
+diff --git a/backport/compat/backport-3.18.c b/backport/compat/backport-3.18.c
+index 9e1a026..bed5d96 100644
+--- a/backport/compat/backport-3.18.c
++++ b/backport/compat/backport-3.18.c
+@@ -15,6 +15,7 @@
+ #include <linux/skbuff.h>
+ #include <linux/errqueue.h>
+ #include <linux/wait.h>
++#include <linux/of.h>
  
- # can not backport ieee802154_ptr in struct net_device wich was added in
- # 98a18b6ffc7 "netdevice: add ieee802154_ptr to net_device"
+ /**
+  * eth_get_headlen - determine the the length of header for an ethernet frame
+@@ -221,3 +222,39 @@ __sched int bit_wait_timeout(struct wait_bit_key *word)
+ }
+ EXPORT_SYMBOL_GPL(bit_wait_timeout);
+ #endif
++
++#ifdef CONFIG_OF
++/**
++ * of_property_read_u64_array - Find and read an array of 64 bit integers
++ * from a property.
++ *
++ * @np:		device node from which the property value is to be read.
++ * @propname:	name of the property to be searched.
++ * @out_values:	pointer to return value, modified only if return value is 0.
++ * @sz:		number of array elements to read
++ *
++ * Search for a property in a device node and read 64-bit value(s) from
++ * it. Returns 0 on success, -EINVAL if the property does not exist,
++ * -ENODATA if property does not have a value, and -EOVERFLOW if the
++ * property data isn't large enough.
++ *
++ * The out_values is modified only if a valid u64 value can be decoded.
++ */
++int of_property_read_u64_array(const struct device_node *np,
++			       const char *propname, u64 *out_values,
++			       size_t sz)
++{
++	const __be32 *val = of_find_property_value_of_size(np, propname,
++						(sz * sizeof(*out_values)));
++
++	if (IS_ERR(val))
++		return PTR_ERR(val);
++
++	while (sz--) {
++		*out_values++ = of_read_number(val, 2);
++		val += 2;
++	}
++	return 0;
++}
++EXPORT_SYMBOL_GPL(of_property_read_u64_array);
++#endif /* CONFIG_OF */
 -- 
 2.6.2
 
