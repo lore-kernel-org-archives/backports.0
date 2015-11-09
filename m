@@ -1,50 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:41659 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753320AbbKWXLO (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 23 Nov 2015 18:11:14 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 12/14] patches: remove call to is_platform_device member of struct soc_camera_device
-Date: Tue, 24 Nov 2015 00:11:02 +0100
-Message-Id: <1448320264-15070-13-git-send-email-hauke@hauke-m.de> (sfid-20151124_002251_931887_03D3DC4B)
-In-Reply-To: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
-References: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-yk0-f169.google.com ([209.85.160.169]:35744 "EHLO
+	mail-yk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752662AbbKIQXM (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 9 Nov 2015 11:23:12 -0500
+Received: by ykek133 with SMTP id k133so273119655yke.2
+        for <backports@vger.kernel.org>; Mon, 09 Nov 2015 08:23:12 -0800 (PST)
+Subject: Re: Realtek RTL8192DU Driver and Android LOllipop
+To: anjalik@iwavesystems.com, backports@vger.kernel.org
+References: <20151109054901.52833inkm5vggbh9@iwavesystems.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <5640C86D.2090804@lwfinger.net> (sfid-20151109_172320_658348_F542138F)
+Date: Mon, 9 Nov 2015 10:23:09 -0600
+MIME-Version: 1.0
+In-Reply-To: <20151109054901.52833inkm5vggbh9@iwavesystems.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-struct soc_camera_device got the is_platform_device member function in
-kernel 3.19.
+On 11/09/2015 04:49 AM, anjalik@iwavesystems.com wrote:
+> Hi ,
+>
+>   I am working on a project on Android Lollipop and I need to use Realtek Wi-Fi
+> Driver RTL8192DU . The Linux kernel version used in Android LOllipop is 3.10.53.
+> And I am getting compile time error during the ko file generation due to many
+> deperecated APIS used in the driver.
+>
+> Have u released or worked on Realtek Wi-Fi Driver RTL8192DU for the above
+> mentioned Linux kernel?
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../media/0008-no-is_platform_device/si4713.patch          | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
- create mode 100644 patches/collateral-evolutions/media/0008-no-is_platform_device/si4713.patch
+Backports can only backport drivers that are in the kernel. For several reasons, 
+the driver for RTL8192DU has never been submitted for inclusion.
 
-diff --git a/patches/collateral-evolutions/media/0008-no-is_platform_device/si4713.patch b/patches/collateral-evolutions/media/0008-no-is_platform_device/si4713.patch
-new file mode 100644
-index 0000000..811e47f
---- /dev/null
-+++ b/patches/collateral-evolutions/media/0008-no-is_platform_device/si4713.patch
-@@ -0,0 +1,14 @@
-+--- a/drivers/media/radio/si4713/si4713.c
-++++ b/drivers/media/radio/si4713/si4713.c
-+@@ -1605,7 +1605,11 @@ static int si4713_probe(struct i2c_clien
-+ 		goto free_ctrls;
-+ 	}
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,19,0)
-+ 	if (!np && (!pdata || !pdata->is_platform_device))
-++#else
-++	if (!np && !pdata)
-++#endif
-+ 		return 0;
-+ 
-+ 	si4713_pdev = platform_device_alloc("radio-si4713", -1);
--- 
-2.6.2
+The vendor driver for your device has been updated for later kernels and posted 
+at http://github.com/lwfinger/rtl8192du.git. If that one does not build on your 
+3.10 kernel, please report an issue for it at GitHub.
+
+Larry
+
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
