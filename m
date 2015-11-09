@@ -1,40 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:52073 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752334AbbKHJ52 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 8 Nov 2015 04:57:28 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id A9C0A2060D
-	for <backports@vger.kernel.org>; Sun,  8 Nov 2015 09:57:27 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 5D3802060A
-	for <backports@vger.kernel.org>; Sun,  8 Nov 2015 09:57:26 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+Received: from iwavesystems.com ([207.32.180.10]:33184 "EHLO
+	sip2-98.nexcess.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751592AbbKIKzn (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 9 Nov 2015 05:55:43 -0500
+Message-ID: <20151109054901.52833inkm5vggbh9@iwavesystems.com> (sfid-20151109_115544_864700_60CFC928)
+Date: Mon, 09 Nov 2015 05:49:01 -0500
+From: anjalik@iwavesystems.com
 To: backports@vger.kernel.org
-Subject: [Bug 107461] clients can not connect to the AP,AP is created over
- linux4.2.5 with ath9k wireless card
-Date: Sun, 08 Nov 2015 09:57:26 +0000
-Message-ID: <bug-107461-58281-6aB70qs38R@https.bugzilla.kernel.org/> (sfid-20151108_105731_078887_81525C2A)
-In-Reply-To: <bug-107461-58281@https.bugzilla.kernel.org/>
-References: <bug-107461-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Realtek RTL8192DU Driver and Android LOllipop
 MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=ISO-8859-1;
+ DelSp="Yes";
+ format="flowed"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=107461
+Hi ,
 
-kmalekinasab <kmalekinasab@yahoo.com> changed:
+  I am working on a project on Android Lollipop and I need to use  
+Realtek Wi-Fi Driver RTL8192DU . The Linux kernel version used in  
+Android LOllipop is 3.10.53. And I am getting compile time error  
+during the ko file generation due to many deperecated APIS used in the  
+driver.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-            Summary|clients can not connect to  |clients can not connect to
-                   |the AP,AP is created over   |the AP,AP is created over
-                   |linux2.5 with ath9k         |linux4.2.5 with ath9k
-                   |wireless card               |wireless card
+Have u released or worked on Realtek Wi-Fi Driver RTL8192DU for the  
+above mentioned Linux kernel?
 
--- 
-You are receiving this mail because:
-You are the assignee for the bug.
+
+Awaiting for the reply.
+
+Thanks & Regards,
+Anjali
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
