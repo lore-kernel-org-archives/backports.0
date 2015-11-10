@@ -1,31 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:46345 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752027AbbKAX6a (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 1 Nov 2015 18:58:30 -0500
-Received: from [192.168.178.22] (p508B6830.dip0.t-ipconnect.de [80.139.104.48])
-	by hauke-m.de (Postfix) with ESMTPSA id 719CE100029
-	for <backports@vger.kernel.org>; Mon,  2 Nov 2015 00:58:28 +0100 (CET)
-Message-ID: <5636A723.5060105@hauke-m.de> (sfid-20151102_005831_333331_043601E6)
-Date: Mon, 02 Nov 2015 00:58:27 +0100
-From: Hauke Mehrtens <hauke@hauke-m.de>
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:33807 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752673AbbKJMEL (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 10 Nov 2015 07:04:11 -0500
+Message-ID: <5641DD38.4080806@broadcom.com> (sfid-20151110_130413_359667_61CAD563)
+Date: Tue, 10 Nov 2015 13:04:08 +0100
+From: Arend van Spriel <arend@broadcom.com>
 MIME-Version: 1.0
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: backports-20150923 is out
-Content-Type: text/plain; charset=utf-8
+To: Johannes Berg <johannes@sipsolutions.net>,
+	<backports@vger.kernel.org>
+Subject: Re: CONFIG_WLAN getting disabled - copy-list usage
+References: <1446467807.3205.21.camel@sipsolutions.net>
+In-Reply-To: <1446467807.3205.21.camel@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backports-20150923 was released. This is based on linux-next next-20150923.
+On 11/02/2015 01:36 PM, Johannes Berg wrote:
+> FYI, if anyone's using backports with a copy-list file that restricts
+> the wifi drivers to their own, and is working against a recent tree
+> that includes the drivers/net/wireless/realtek/ move, then CONFIG_WLAN
+> will end up getting disabled.
+>
+> To fix that for now modify your copy-list to include
+> drivers/net/wireless/realtek/Makefile (and that file only).
+>
+> Once Kconfig changes go in and the Makefile statement
+>
+> obj-$(CONFIG_WLAN) += realtek/
+>
+> changes to
+>
+> obj-$(CONFIG_WLAN_REALTEK) += realtek/
+>
+> (or similar) this issue will go away.
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/2015/09/23/backports-20150923.tar.xz
+Thanks. It worked for me. As Kalle intends to move more drivers into 
+vendor subfolder, can we expect this will happen again. Can we fix up 
+kconfig handling for this?
 
-The source code can be found here:
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
-
-All the latest releases are listed here:
-http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
-
-Hauke
+Regards,
+Arend
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
