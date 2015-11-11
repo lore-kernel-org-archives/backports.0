@@ -1,49 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:52921 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753738AbbKGQzX (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 7 Nov 2015 11:55:23 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 09/10] dependencies: VIDEO_MT9P031 uses gpio consumer
-Date: Sat,  7 Nov 2015 17:55:09 +0100
-Message-Id: <1446915310-8278-10-git-send-email-hauke@hauke-m.de> (sfid-20151107_175528_882878_186EB6A3)
-In-Reply-To: <1446915310-8278-1-git-send-email-hauke@hauke-m.de>
-References: <1446915310-8278-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:35905 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752239AbbKKRPh (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 11 Nov 2015 12:15:37 -0500
+Received: by obdgf3 with SMTP id gf3so26767501obd.3
+        for <backports@vger.kernel.org>; Wed, 11 Nov 2015 09:15:36 -0800 (PST)
+Subject: Re: Realtek RTL8192DU Driver and Android LOllipop
+To: anjalik@iwavesystems.com
+References: <20151109054901.52833inkm5vggbh9@iwavesystems.com>
+ <5640C86D.2090804@lwfinger.net>
+ <20151111063247.203429dxmv42uelb@iwavesystems.com>
+Cc: backports@vger.kernel.org
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <564377B6.6040306@lwfinger.net> (sfid-20151111_181539_201566_228AB81C)
+Date: Wed, 11 Nov 2015 11:15:34 -0600
+MIME-Version: 1.0
+In-Reply-To: <20151111063247.203429dxmv42uelb@iwavesystems.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-VIDEO_MT9P031 uses the GPIO consumer and should only be build on
-kernel version >= 3.13
+On 11/11/2015 05:32 AM, anjalik@iwavesystems.com wrote:
+> Hi,
+>
+>   Thanks for the quick response. The driver is working fine. I tested Open, WEP
+> mode and WPA2 is yet to be tested since iwpriv is not working as it is
+> deprecated. I would like to ask a query regarding the firmware
+>
+> 1.Which is the firmware to be used ,rtl8192dufw.bin or rtl8192dufw_wol.bin ?
+>
+> I guess the firmware is rtl8192dufw.bin or do both the binaries together take
+> care of firmware functionalities.?
+>
+> In the previous driver which I used,the firmware image was embedded one. Even
+> without using the above binaries , everything is working fine. Is it really
+> required to copy these binaries under system/lib/firmware path.?
+>
+> I am using Dual Band USB 2.O Wi-Fi Adaptor with RTL8192DU chipset.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- dependencies | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The firmware with "wol" in its name is for Wake-On-Lan operation. The feature 
+requires special configuration, and I have not tested it. At startup, the driver 
+will load one or the other. If WOL is not enabled, only the regular firmware 
+will be used. I extracted both versions before I eliminated the embedded data.
 
-diff --git a/dependencies b/dependencies
-index 96f1d0a..ad3ec31 100644
---- a/dependencies
-+++ b/dependencies
-@@ -58,6 +58,7 @@ DVB_SMIPCIE 3.8
- # start that work with.
- VIDEO_ADP1653 3.13
- VIDEO_TC358743 3.13
-+VIDEO_MT9P031 3.13
- 
- # missing devm_gpiod_get_optional()
- # this needs devm_gpiod_get_optional() with 3 arguments.
-@@ -79,7 +80,6 @@ VIDEO_S5K6AA 3.3
- # missing devm_regulator_bulk_get
- VIDEO_MT9T001 3.5
- VIDEO_NOON010PC30 3.5
--VIDEO_MT9P031 3.5
- 
- # missing of_property_read_bool() added via fa4d34cc on v3.4-rc1~71, backport
- # that attomically and you can enable this for older kernels.
--- 
-2.6.2
+Adding a driver with embedded firmware to the standard kernel is frowned upon 
+due to the several thousand lines of data. That is the reason that I extracted 
+the firmware, and converted the driver to use external firmware. If your version 
+of the driver has been converted, then you need at least the standard firmware 
+in the /lib/firmware/ tree.
+
+Larry
+
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
