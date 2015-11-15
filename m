@@ -1,61 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:41641 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:35559 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753710AbbKWXLL (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 23 Nov 2015 18:11:11 -0500
+	id S1751502AbbKOP5M (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 15 Nov 2015 10:57:12 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Cc: Luca Coelho <luciano.coelho@intel.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 03/14] header: move smp_mb__after_atomic definition to the correct file
-Date: Tue, 24 Nov 2015 00:10:53 +0100
-Message-Id: <1448320264-15070-4-git-send-email-hauke@hauke-m.de> (sfid-20151124_001114_570748_7D48F5A0)
-In-Reply-To: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
-References: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 06/15] haeder: add napi_complete_done()
+Date: Sun, 15 Nov 2015 16:56:50 +0100
+Message-Id: <1447603019-11862-7-git-send-email-hauke@hauke-m.de> (sfid-20151115_165715_497096_5C14544C)
+In-Reply-To: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
+References: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Luca Coelho <luciano.coelho@intel.com>
+Upstream commit 3b47d30396 "net: gro: add a per device gro flush timer"
+added napi_complete_done(). On older kernel versions we will just use
+the old napi_complete() function, this should work without any
+problems, we only do not get the new improvements which need a more
+recent net subsystem.
 
-The smp_mb__after_atomic definition is in barrier.h in the mainline,
-but we currently include the backport in atomic.h.  This may cause
-problems with certain include chain combinations.
-
-Move it to the correct place.
-
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/asm/atomic.h  | 4 ----
- backport/backport-include/asm/barrier.h | 4 ++++
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ backport/backport-include/linux/netdevice.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/backport/backport-include/asm/atomic.h b/backport/backport-include/asm/atomic.h
-index 9f3543c..d5148f0 100644
---- a/backport/backport-include/asm/atomic.h
-+++ b/backport/backport-include/asm/atomic.h
-@@ -16,8 +16,4 @@
- #endif
- #endif
+diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+index 95189be..86d5ea7 100644
+--- a/backport/backport-include/linux/netdevice.h
++++ b/backport/backport-include/linux/netdevice.h
+@@ -292,4 +292,12 @@ netdev_features_t passthru_features_check(struct sk_buff *skb,
+ })
+ #endif /* netdev_alloc_pcpu_stats */
  
--#ifndef smp_mb__after_atomic
--#define smp_mb__after_atomic smp_mb__after_clear_bit
--#endif
--
- #endif /* __BACKPORT_ASM_ATOMIC_H */
-diff --git a/backport/backport-include/asm/barrier.h b/backport/backport-include/asm/barrier.h
-index 7ccf57c..423a581 100644
---- a/backport/backport-include/asm/barrier.h
-+++ b/backport/backport-include/asm/barrier.h
-@@ -10,4 +10,8 @@
- #define dma_rmb()	rmb()
- #endif
- 
-+#ifndef smp_mb__after_atomic
-+#define smp_mb__after_atomic smp_mb__after_clear_bit
-+#endif
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
++#define napi_complete_done LINUX_BACKPORT(napi_complete_done)
++static inline void napi_complete_done(struct napi_struct *n, int work_done)
++{
++	napi_complete(n);
++}
++#endif /* < 3.19 */
 +
- #endif /* __BACKPORT_ASM_BARRIER_H */
+ #endif /* __BACKPORT_NETDEVICE_H */
 -- 
 2.6.2
 
