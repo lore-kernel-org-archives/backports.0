@@ -1,47 +1,31 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:35570 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:35656 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751502AbbKOP5O (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 15 Nov 2015 10:57:14 -0500
+	id S1752372AbbKOSoP (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 15 Nov 2015 13:44:15 -0500
+Received: from [192.168.178.24] (p508B614B.dip0.t-ipconnect.de [80.139.97.75])
+	by hauke-m.de (Postfix) with ESMTPSA id ECA38100029
+	for <backports@vger.kernel.org>; Sun, 15 Nov 2015 19:44:13 +0100 (CET)
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 11/15] patches: add forward declaration of struct wpan_dev to cfg802154.h
-Date: Sun, 15 Nov 2015 16:56:55 +0100
-Message-Id: <1447603019-11862-12-git-send-email-hauke@hauke-m.de> (sfid-20151115_171409_380961_F45FF70C)
-In-Reply-To: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
-References: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
+Subject: backports-20151115 is out
+Message-ID: <5648D27D.9000405@hauke-m.de> (sfid-20151115_194424_199750_046F5DA4)
+Date: Sun, 15 Nov 2015 19:44:13 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Normally this forward declaration is coming from netdevice.h, but it
-was only added in more recent kernel versions there. This patch fixes
-the build with older kernel versions.
+backports-20151115 was released. This is based on linux-next next-20151115.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- .../network/0013-fix-makefile-includes/cfg802154.patch         | 10 ++++++++++
- 1 file changed, 10 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0013-fix-makefile-includes/cfg802154.patch
+https://www.kernel.org/pub/linux/kernel/projects/backports/2015/11/15/backports-20151115.tar.xz
 
-diff --git a/patches/collateral-evolutions/network/0013-fix-makefile-includes/cfg802154.patch b/patches/collateral-evolutions/network/0013-fix-makefile-includes/cfg802154.patch
-new file mode 100644
-index 0000000..93caa14
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0013-fix-makefile-includes/cfg802154.patch
-@@ -0,0 +1,10 @@
-+--- a/include/net/cfg802154.h
-++++ b/include/net/cfg802154.h
-+@@ -26,6 +26,7 @@
-+ 
-+ struct wpan_phy;
-+ struct wpan_phy_cca;
-++struct wpan_dev;
-+ 
-+ #ifdef CONFIG_IEEE802154_NL802154_EXPERIMENTAL
-+ struct ieee802154_llsec_device_key;
--- 
-2.6.2
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
 
+All the latest releases are listed here:
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
+
+Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
