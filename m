@@ -1,40 +1,52 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:41682 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:35564 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753085AbbKWXUY (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 23 Nov 2015 18:20:24 -0500
-Subject: Re: [PATCH] header: move smp_mb__after_atomic definition to the
- correct file
-To: Luca Coelho <luca@coelho.fi>, backports@vger.kernel.org
-References: <1447930121-3213-1-git-send-email-luca@coelho.fi>
+	id S1751706AbbKOP5N (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 15 Nov 2015 10:57:13 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <56539F36.4090503@hauke-m.de> (sfid-20151124_002025_990339_C882D193)
-Date: Tue, 24 Nov 2015 00:20:22 +0100
-MIME-Version: 1.0
-In-Reply-To: <1447930121-3213-1-git-send-email-luca@coelho.fi>
-Content-Type: text/plain; charset=windows-1252
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 08/15] header: add inet_frags_uninit_net()
+Date: Sun, 15 Nov 2015 16:56:52 +0100
+Message-Id: <1447603019-11862-9-git-send-email-hauke@hauke-m.de> (sfid-20151115_165716_666110_204803C4)
+In-Reply-To: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
+References: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 11/19/2015 11:48 AM, Luca Coelho wrote:
-> From: Luca Coelho <luciano.coelho@intel.com>
-> 
-> The smp_mb__after_atomic definition is in barrier.h in the mainline,
-> but we currently include the backport in atomic.h.  This may cause
-> problems with certain include chain combinations.
-> 
-> Move it to the correct place.
-> 
-> Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-> ---
->  backport/backport-include/asm/atomic.h  | 4 ----
->  backport/backport-include/asm/barrier.h | 4 ++++
->  2 files changed, 4 insertions(+), 4 deletions(-)
-> 
+inet_frags_uninit_net() was added in commit 1d6119baf06 "net: fix
+percpu memory leaks" and is used by the 6lowpan part of ieee802154 in
+backports.
 
-Thank you for the patch it was applied.
+percpu_counter_destroy() was added in kernel 3.9, so do not add this
+function on older kernel versions. This is currently only used by the
+6lowpan part of ieee802154 which is only activated for kernel >= 3.18.
 
-Hauke
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/net/inet_frag.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/backport/backport-include/net/inet_frag.h b/backport/backport-include/net/inet_frag.h
+index e36224e..f6bc6f1 100644
+--- a/backport/backport-include/net/inet_frag.h
++++ b/backport/backport-include/net/inet_frag.h
+@@ -55,4 +55,13 @@ static inline void add_frag_mem_limit(struct netns_frags *nf, int i)
+ }
+ #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0) */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,4,0) && \
++    LINUX_VERSION_CODE >= KERNEL_VERSION(3,9,0)
++#define inet_frags_uninit_net LINUX_BACKPORT(inet_frags_uninit_net)
++static inline void inet_frags_uninit_net(struct netns_frags *nf)
++{
++	percpu_counter_destroy(&nf->mem);
++}
++#endif /* < 4.4 && >= 3.9 */
++
+ #endif /* __BACKPORT__NET_FRAG_H__ */
+-- 
+2.6.2
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
