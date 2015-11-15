@@ -1,44 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:46326 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:35557 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752741AbbKAXpf (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 1 Nov 2015 18:45:35 -0500
+	id S1751550AbbKOP5N (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 15 Nov 2015 10:57:13 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/3] copy: copy new usbnet header files
-Date: Mon,  2 Nov 2015 00:45:20 +0100
-Message-Id: <1446421522-27167-1-git-send-email-hauke@hauke-m.de> (sfid-20151102_004538_728721_D716B38B)
+Subject: [PATCH 10/15] header: add empty implementation of irq_of_parse_and_map()
+Date: Sun, 15 Nov 2015 16:56:54 +0100
+Message-Id: <1447603019-11862-11-git-send-email-hauke@hauke-m.de> (sfid-20151115_165717_229562_B705078D)
+In-Reply-To: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
+References: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The following upstream commit added a new header files used by usbnet:
-
-commit c40a2c8817e42273a4627c48c884b805475a733f
-Author: Oliver Neukum <oneukum@suse.com>
-Date:   Mon Sep 7 16:05:38 2015 +0200
-
-    CDC: common parser for extra headers
+When CONFIG_OF is not set kernel < 3.5 does not provide an empty
+implementation of this function, more recent kernels do so.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- copy-list | 1 +
- 1 file changed, 1 insertion(+)
+ backport/backport-include/linux/of_irq.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+ create mode 100644 backport/backport-include/linux/of_irq.h
 
-diff --git a/copy-list b/copy-list
-index d0341c3..a35ae95 100644
---- a/copy-list
-+++ b/copy-list
-@@ -32,6 +32,7 @@ include/linux/wl12xx.h
- include/linux/rndis.h
- include/linux/bcm47xx_wdt.h
- include/linux/usb/usbnet.h
-+include/linux/usb/cdc.h
- include/linux/usb/rndis_host.h
- include/linux/spi/libertas_spi.h
- include/linux/platform_data/brcmfmac-sdio.h
+diff --git a/backport/backport-include/linux/of_irq.h b/backport/backport-include/linux/of_irq.h
+new file mode 100644
+index 0000000..b5cb432
+--- /dev/null
++++ b/backport/backport-include/linux/of_irq.h
+@@ -0,0 +1,15 @@
++#ifndef __BACKPORT_OF_IRQ_H
++#define __BACKPORT_OF_IRQ_H
++#include_next <linux/of_irq.h>
++#include <linux/version.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0) && !defined(CONFIG_OF)
++#define irq_of_parse_and_map LINUX_BACKPORT(irq_of_parse_and_map)
++static inline unsigned int irq_of_parse_and_map(struct device_node *dev,
++						int index)
++{
++	return 0;
++}
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,5,0) */
++
++#endif /* __BACKPORT_OF_IRQ_H */
 -- 
-2.6.1
+2.6.2
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
