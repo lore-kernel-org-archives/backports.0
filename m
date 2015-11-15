@@ -1,94 +1,144 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:35564 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:35543 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751675AbbKOP5O (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 15 Nov 2015 10:57:14 -0500
+	id S1751962AbbKOPxe (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 15 Nov 2015 10:53:34 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 14/15] defconfigs: update media defconfig
-Date: Sun, 15 Nov 2015 16:56:58 +0100
-Message-Id: <1447603019-11862-15-git-send-email-hauke@hauke-m.de> (sfid-20151115_171410_125368_4235DC69)
-In-Reply-To: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
-References: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
+To: eliad@wizery.com, emmanuel.grumbach@intel.com
+Cc: backports@vger.kernel.org, eliadx.peller@intel.com,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH v2] backports: add of_find_property_value_of_size()
+Date: Sun, 15 Nov 2015 16:53:19 +0100
+Message-Id: <1447602799-11759-1-git-send-email-hauke@hauke-m.de> (sfid-20151115_165340_574318_8058BDE7)
+In-Reply-To: <1447588042-27281-1-git-send-email-emmanuel.grumbach@intel.com>
+References: <1447588042-27281-1-git-send-email-emmanuel.grumbach@intel.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+From: Eliad Peller <eliad@wizery.com>
+
+commit 2e98a32a274274fca0e6e ("backport: add
+of_property_read_u64_array()") added a call
+to of_find_property_value_of_size(), which is a
+static function, causing compilation error.
+
+Implement it locally as well.
+
+Signed-off-by: Eliad Peller <eliadx.peller@intel.com>
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+[remove of_find_property_value_of_size() from backport-3.10.c]
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/defconfigs/media | 10 ----------
- 1 file changed, 10 deletions(-)
 
-diff --git a/backport/defconfigs/media b/backport/defconfigs/media
-index 7b1bfa9..c8f2e4d 100644
---- a/backport/defconfigs/media
-+++ b/backport/defconfigs/media
-@@ -191,7 +191,6 @@ CPTCFG_MEDIA_ANALOG_TV_SUPPORT=y
- CPTCFG_MEDIA_CAMERA_SUPPORT=y
- CPTCFG_MEDIA_CONTROLLER=y
- CPTCFG_MEDIA_DIGITAL_TV_SUPPORT=y
--CPTCFG_MEDIA_PARPORT_SUPPORT=y
- CPTCFG_MEDIA_PCI_SUPPORT=y
- CPTCFG_MEDIA_RADIO_SUPPORT=y
- CPTCFG_MEDIA_RC_SUPPORT=y
-@@ -348,12 +347,9 @@ CPTCFG_VIDEO_BT819=m
- CPTCFG_VIDEO_BT848=m
- CPTCFG_VIDEO_BT856=m
- CPTCFG_VIDEO_BT866=m
--CPTCFG_VIDEO_BTCX=m
--CPTCFG_VIDEO_BWQCAM=m
- CPTCFG_VIDEO_CAFE_CCIC=m
- CPTCFG_VIDEO_CODA=m
- CPTCFG_VIDEO_CPIA2=m
--CPTCFG_VIDEO_CQCAM=m
- CPTCFG_VIDEO_CS5345=m
- CPTCFG_VIDEO_CS53L32A=m
- CPTCFG_VIDEO_CX18=m
-@@ -400,7 +396,6 @@ CPTCFG_VIDEO_M32R_AR_M64278=m
- CPTCFG_VIDEO_M52790=m
- CPTCFG_VIDEO_M5MOLS=m
- CPTCFG_VIDEO_MEM2MEM_DEINTERLACE=m
--CPTCFG_VIDEO_MEM2MEM_TESTDEV=m
- CPTCFG_VIDEO_MEYE=m
- CPTCFG_VIDEO_MMP_CAMERA=m
- CPTCFG_VIDEO_MSP3400=m
-@@ -420,7 +415,6 @@ CPTCFG_VIDEO_OMAP3=m
- CPTCFG_VIDEO_OV7640=m
- CPTCFG_VIDEO_OV7670=m
- CPTCFG_VIDEO_OV9650=m
--CPTCFG_VIDEO_PMS=m
- CPTCFG_VIDEO_PVRUSB2=m
- CPTCFG_VIDEO_PXA27x=m
- CPTCFG_VIDEO_S3C_CAMIF=m
-@@ -443,7 +437,6 @@ CPTCFG_VIDEO_SAA7146_VV=m
- CPTCFG_VIDEO_SAA7164=m
- CPTCFG_VIDEO_SAA717X=m
- CPTCFG_VIDEO_SAA7185=m
--CPTCFG_VIDEO_SAA7191=m
- CPTCFG_VIDEO_SAMSUNG_EXYNOS_GSC=m
- CPTCFG_VIDEO_SAMSUNG_S5P_G2D=m
- CPTCFG_VIDEO_SAMSUNG_S5P_HDMI=m
-@@ -472,7 +465,6 @@ CPTCFG_VIDEO_TEA6415C=m
- CPTCFG_VIDEO_TEA6420=m
- CPTCFG_VIDEO_THS7303=m
- CPTCFG_VIDEO_TIMBERDALE=m
--CPTCFG_VIDEO_TLG2300=m
- CPTCFG_VIDEO_TLV320AIC23B=m
- CPTCFG_VIDEO_TM6000=m
- CPTCFG_VIDEO_TM6000_ALSA=m
-@@ -495,12 +487,10 @@ CPTCFG_VIDEO_USBVISION=m
- CPTCFG_VIDEO_V4L2=m
- CPTCFG_VIDEO_V4L2_SUBDEV_API=y
- CPTCFG_VIDEO_VIA_CAMERA=m
--CPTCFG_VIDEO_VINO=m
- CPTCFG_VIDEO_VIU=m
- CPTCFG_VIDEO_VP27SMPX=m
- CPTCFG_VIDEO_VPX3220=m
- CPTCFG_VIDEO_VS6624=m
--CPTCFG_VIDEO_W9966=m
- CPTCFG_VIDEO_WM8739=m
- CPTCFG_VIDEO_WM8775=m
- CPTCFG_VIDEO_ZORAN=m
+I did some changes to this patch, I hope they are ok.
+
+ backport/backport-include/linux/of.h |  6 +++---
+ backport/compat/backport-3.10.c      | 28 ----------------------------
+ backport/compat/backport-3.18.c      | 28 ++++++++++++++++++++++++++++
+ 3 files changed, 31 insertions(+), 31 deletions(-)
+
+diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
+index bc0d7fd..ab98061 100644
+--- a/backport/backport-include/linux/of.h
++++ b/backport/backport-include/linux/of.h
+@@ -82,9 +82,6 @@ static inline const void *of_get_property(const struct device_node *node,
+ extern int of_property_read_u32_index(const struct device_node *np,
+ 				       const char *propname,
+ 				       u32 index, u32 *out_value);
+-/* This is static in the kernel, but we need it in multiple places */
+-void *of_find_property_value_of_size(const struct device_node *np,
+-				     const char *propname, u32 len);
+ #else
+ static inline int of_property_read_u32_index(const struct device_node *np,
+ 			const char *propname, u32 index, u32 *out_value)
+@@ -170,6 +167,9 @@ static inline struct device_node *of_find_compatible_node(
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,18,0)
+ #define of_property_read_u64_array LINUX_BACKPORT(of_property_read_u64_array)
+ #ifdef CONFIG_OF
++/* This is static in the kernel, but we need it in multiple places */
++void *of_find_property_value_of_size(const struct device_node *np,
++				     const char *propname, u32 len);
+ extern int of_property_read_u64_array(const struct device_node *np,
+ 				      const char *propname,
+ 				      u64 *out_values,
+diff --git a/backport/compat/backport-3.10.c b/backport/compat/backport-3.10.c
+index 53123fb..5cab709 100644
+--- a/backport/compat/backport-3.10.c
++++ b/backport/compat/backport-3.10.c
+@@ -123,34 +123,6 @@ EXPORT_SYMBOL_GPL(pci_vfs_assigned);
+ 
+ #ifdef CONFIG_OF
+ /**
+- * of_find_property_value_of_size
+- *
+- * @np:		device node from which the property value is to be read.
+- * @propname:	name of the property to be searched.
+- * @len:	requested length of property value
+- *
+- * Search for a property in a device node and valid the requested size.
+- * Returns the property value on success, -EINVAL if the property does not
+- *  exist, -ENODATA if property does not have a value, and -EOVERFLOW if the
+- * property data isn't large enough.
+- *
+- */
+-void *of_find_property_value_of_size(const struct device_node *np,
+-				     const char *propname, u32 len)
+-{
+-	struct property *prop = of_find_property(np, propname, NULL);
+-
+-	if (!prop)
+-		return ERR_PTR(-EINVAL);
+-	if (!prop->value)
+-		return ERR_PTR(-ENODATA);
+-	if (len > prop->length)
+-		return ERR_PTR(-EOVERFLOW);
+-
+-	return prop->value;
+-}
+-
+-/**
+  * of_property_read_u32_index - Find and read a u32 from a multi-value property.
+  *
+  * @np:		device node from which the property value is to be read.
+diff --git a/backport/compat/backport-3.18.c b/backport/compat/backport-3.18.c
+index bed5d96..f0f7fd8 100644
+--- a/backport/compat/backport-3.18.c
++++ b/backport/compat/backport-3.18.c
+@@ -225,6 +225,34 @@ EXPORT_SYMBOL_GPL(bit_wait_timeout);
+ 
+ #ifdef CONFIG_OF
+ /**
++ * of_find_property_value_of_size
++ *
++ * @np:		device node from which the property value is to be read.
++ * @propname:	name of the property to be searched.
++ * @len:	requested length of property value
++ *
++ * Search for a property in a device node and valid the requested size.
++ * Returns the property value on success, -EINVAL if the property does not
++ *  exist, -ENODATA if property does not have a value, and -EOVERFLOW if the
++ * property data isn't large enough.
++ *
++ */
++void *of_find_property_value_of_size(const struct device_node *np,
++				     const char *propname, u32 len)
++{
++	struct property *prop = of_find_property(np, propname, NULL);
++
++	if (!prop)
++		return ERR_PTR(-EINVAL);
++	if (!prop->value)
++		return ERR_PTR(-ENODATA);
++	if (len > prop->length)
++		return ERR_PTR(-EOVERFLOW);
++
++	return prop->value;
++}
++
++/**
+  * of_property_read_u64_array - Find and read an array of 64 bit integers
+  * from a property.
+  *
 -- 
 2.6.2
 
