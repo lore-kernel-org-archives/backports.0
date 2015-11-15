@@ -1,37 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:49661 "EHLO mail.kernel.org"
+Received: from hauke-m.de ([5.39.93.123]:35570 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751020AbbKHIg3 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 8 Nov 2015 03:36:29 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 62FC92060B
-	for <backports@vger.kernel.org>; Sun,  8 Nov 2015 08:36:28 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 710602060A
-	for <backports@vger.kernel.org>; Sun,  8 Nov 2015 08:36:27 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1751502AbbKOP5O (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 15 Nov 2015 10:57:14 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Subject: [Bug 107461] clients can not connect to the AP,AP is created over
- linux2.5 with ath9k wireless card
-Date: Sun, 08 Nov 2015 08:36:27 +0000
-Message-ID: <bug-107461-58281-ag1s2HolJ5@https.bugzilla.kernel.org/> (sfid-20151108_093636_444703_287D538C)
-In-Reply-To: <bug-107461-58281@https.bugzilla.kernel.org/>
-References: <bug-107461-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 11/15] patches: add forward declaration of struct wpan_dev to cfg802154.h
+Date: Sun, 15 Nov 2015 16:56:55 +0100
+Message-Id: <1447603019-11862-12-git-send-email-hauke@hauke-m.de> (sfid-20151115_171409_380961_F45FF70C)
+In-Reply-To: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
+References: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=107461
+Normally this forward declaration is coming from netdevice.h, but it
+was only added in more recent kernel versions there. This patch fixes
+the build with older kernel versions.
 
-kmalekinasab <kmalekinasab@yahoo.com> changed:
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../network/0013-fix-makefile-includes/cfg802154.patch         | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0013-fix-makefile-includes/cfg802154.patch
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-           Severity|normal                      |high
-
+diff --git a/patches/collateral-evolutions/network/0013-fix-makefile-includes/cfg802154.patch b/patches/collateral-evolutions/network/0013-fix-makefile-includes/cfg802154.patch
+new file mode 100644
+index 0000000..93caa14
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0013-fix-makefile-includes/cfg802154.patch
+@@ -0,0 +1,10 @@
++--- a/include/net/cfg802154.h
+++++ b/include/net/cfg802154.h
++@@ -26,6 +26,7 @@
++ 
++ struct wpan_phy;
++ struct wpan_phy_cca;
+++struct wpan_dev;
++ 
++ #ifdef CONFIG_IEEE802154_NL802154_EXPERIMENTAL
++ struct ieee802154_llsec_device_key;
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+2.6.2
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
