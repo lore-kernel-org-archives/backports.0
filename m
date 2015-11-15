@@ -1,55 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:36840 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751591AbbKKQzf (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 11 Nov 2015 11:55:35 -0500
-Received: by obdgf3 with SMTP id gf3so26293193obd.3
-        for <backports@vger.kernel.org>; Wed, 11 Nov 2015 08:55:35 -0800 (PST)
-Subject: Re: Realtek RTL8192DU Driver and Android LOllipop
-To: anjalik@iwavesystems.com
-References: <20151109054901.52833inkm5vggbh9@iwavesystems.com>
- <5640C86D.2090804@lwfinger.net>
- <20151111063247.203429dxmv42uelb@iwavesystems.com>
-Cc: backports@vger.kernel.org
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <56437303.6090901@lwfinger.net> (sfid-20151111_175538_241309_B1D8ED6D)
-Date: Wed, 11 Nov 2015 10:55:31 -0600
-MIME-Version: 1.0
-In-Reply-To: <20151111063247.203429dxmv42uelb@iwavesystems.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Received: from hauke-m.de ([5.39.93.123]:35557 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751550AbbKOP5M (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 15 Nov 2015 10:57:12 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 05/15] dependencies: make NFC_MRVL depend on kernel >= 3.3
+Date: Sun, 15 Nov 2015 16:56:49 +0100
+Message-Id: <1447603019-11862-6-git-send-email-hauke@hauke-m.de> (sfid-20151115_165714_781700_5E649FA7)
+In-Reply-To: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
+References: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 11/11/2015 05:32 AM, anjalik@iwavesystems.com wrote:
-> Hi,
->
->   Thanks for the quick response. The driver is working fine. I tested Open, WEP
-> mode and WPA2 is yet to be tested since iwpriv is not working as it is
-> deprecated. I would like to ask a query regarding the firmware
->
-> 1.Which is the firmware to be used ,rtl8192dufw.bin or rtl8192dufw_wol.bin ?
->
-> I guess the firmware is rtl8192dufw.bin or do both the binaries together take
-> care of firmware functionalities.?
->
-> In the previous driver which I used,the firmware image was embedded one. Even
-> without using the above binaries , everything is working fine. Is it really
-> required to copy these binaries under system/lib/firmware path.?
->
-> I am using Dual Band USB 2.O Wi-Fi Adaptor with RTL8192DU chipset.
+This driver uses of_find_property() and devm_gpio_free() which are not
+available in this kernel versions.
 
-The "wol" part is for Wake On Lan. You need to configure the source specially to 
-use that feature, which I have not tested. I expect that you only need 
-rtl8192dufw.bin.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ dependencies | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-The firmware files came from the embedded data in the Realtek standard driver. 
-When submitting a driver for inclusion in the kernel, having embedded firmware 
-is frowned upon, thus the reason for extracting it. If you use the driver 
-version after the firmware was removed, then you need the firmware in the 
-standard path.
-
-Larry
-
+diff --git a/dependencies b/dependencies
+index 3316c93..d213fd7 100644
+--- a/dependencies
++++ b/dependencies
+@@ -149,6 +149,11 @@ BCMA_DRIVER_GPIO 3.13
+ # only introduced in kernel 3.1
+ NFC 3.1
+ 
++# This needs of_find_property() and devm_gpio_free()
++NFC_MRVL 3.3
++NFC_MRVL_USB 3.3
++NFC_MRVL_UART 3.3
++
+ NFC_TRF7970A 3.4
+ 
+ INTEL_IPS 3.2
+-- 
+2.6.2
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
