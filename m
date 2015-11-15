@@ -1,40 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:52131 "EHLO mail.kernel.org"
+Received: from hauke-m.de ([5.39.93.123]:35567 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752412AbbKHKGU (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 8 Nov 2015 05:06:20 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 9A9232060E
-	for <backports@vger.kernel.org>; Sun,  8 Nov 2015 10:06:19 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 416D82060C
-	for <backports@vger.kernel.org>; Sun,  8 Nov 2015 10:06:18 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1751739AbbKOP5N (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 15 Nov 2015 10:57:13 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Subject: [Bug 107461] clients can not connect to the AP,AP is created over
- linux4.2.5 with ath9k wireless card
-Date: Sun, 08 Nov 2015 10:06:18 +0000
-Message-ID: <bug-107461-58281-fWPLrTvnjL@https.bugzilla.kernel.org/> (sfid-20151108_110628_957063_66F7F9E5)
-In-Reply-To: <bug-107461-58281@https.bugzilla.kernel.org/>
-References: <bug-107461-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 09/15] header: make inet_frags_init_net() return something
+Date: Sun, 15 Nov 2015 16:56:53 +0100
+Message-Id: <1447603019-11862-10-git-send-email-hauke@hauke-m.de> (sfid-20151115_171409_243367_5DCA4EA3)
+In-Reply-To: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
+References: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=107461
+The return type changed from void to int to return some error code.
+Some code is now checking the return value which fails on older kernel
+versions when the function returns void.
 
---- Comment #2 from kmalekinasab <kmalekinasab@yahoo.com> ---
-No , I use kernel 4.2.5 over ubuntu
-http://ubuntuhandbook.org/index.php/2014/09/3-ways-create-wifi-hotspot-ubuntu/
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/net/inet_frag.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-
-I want create a access point with Kernel 4.2.5 and ubuntu OS. I hve a problem
-when the clients connect to the AP do not work properly.
- when  i use kernel 3 and ubuntu AP work properly.
-
+diff --git a/backport/backport-include/net/inet_frag.h b/backport/backport-include/net/inet_frag.h
+index f6bc6f1..055dae1 100644
+--- a/backport/backport-include/net/inet_frag.h
++++ b/backport/backport-include/net/inet_frag.h
+@@ -64,4 +64,13 @@ static inline void inet_frags_uninit_net(struct netns_frags *nf)
+ }
+ #endif /* < 4.4 && >= 3.9 */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,4,0)
++static inline int backport_inet_frags_init_net(struct netns_frags *nf)
++{
++	inet_frags_init_net(nf);
++	return 0;
++}
++#define inet_frags_init_net LINUX_BACKPORT(inet_frags_init_net)
++#endif /* < 4.4 */
++
+ #endif /* __BACKPORT__NET_FRAG_H__ */
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+2.6.2
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
