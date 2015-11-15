@@ -1,50 +1,94 @@
 Return-path: <backports-owner@vger.kernel.org>
 Received: from hauke-m.de ([5.39.93.123]:35564 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751706AbbKOP5N (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 15 Nov 2015 10:57:13 -0500
+	id S1751675AbbKOP5O (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 15 Nov 2015 10:57:14 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 08/15] header: add inet_frags_uninit_net()
-Date: Sun, 15 Nov 2015 16:56:52 +0100
-Message-Id: <1447603019-11862-9-git-send-email-hauke@hauke-m.de> (sfid-20151115_165716_666110_204803C4)
+Subject: [PATCH 14/15] defconfigs: update media defconfig
+Date: Sun, 15 Nov 2015 16:56:58 +0100
+Message-Id: <1447603019-11862-15-git-send-email-hauke@hauke-m.de> (sfid-20151115_171410_125368_4235DC69)
 In-Reply-To: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
 References: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-inet_frags_uninit_net() was added in commit 1d6119baf06 "net: fix
-percpu memory leaks" and is used by the 6lowpan part of ieee802154 in
-backports.
-
-percpu_counter_destroy() was added in kernel 3.9, so do not add this
-function on older kernel versions. This is currently only used by the
-6lowpan part of ieee802154 which is only activated for kernel >= 3.18.
-
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/net/inet_frag.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ backport/defconfigs/media | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/backport/backport-include/net/inet_frag.h b/backport/backport-include/net/inet_frag.h
-index e36224e..f6bc6f1 100644
---- a/backport/backport-include/net/inet_frag.h
-+++ b/backport/backport-include/net/inet_frag.h
-@@ -55,4 +55,13 @@ static inline void add_frag_mem_limit(struct netns_frags *nf, int i)
- }
- #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0) */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,4,0) && \
-+    LINUX_VERSION_CODE >= KERNEL_VERSION(3,9,0)
-+#define inet_frags_uninit_net LINUX_BACKPORT(inet_frags_uninit_net)
-+static inline void inet_frags_uninit_net(struct netns_frags *nf)
-+{
-+	percpu_counter_destroy(&nf->mem);
-+}
-+#endif /* < 4.4 && >= 3.9 */
-+
- #endif /* __BACKPORT__NET_FRAG_H__ */
+diff --git a/backport/defconfigs/media b/backport/defconfigs/media
+index 7b1bfa9..c8f2e4d 100644
+--- a/backport/defconfigs/media
++++ b/backport/defconfigs/media
+@@ -191,7 +191,6 @@ CPTCFG_MEDIA_ANALOG_TV_SUPPORT=y
+ CPTCFG_MEDIA_CAMERA_SUPPORT=y
+ CPTCFG_MEDIA_CONTROLLER=y
+ CPTCFG_MEDIA_DIGITAL_TV_SUPPORT=y
+-CPTCFG_MEDIA_PARPORT_SUPPORT=y
+ CPTCFG_MEDIA_PCI_SUPPORT=y
+ CPTCFG_MEDIA_RADIO_SUPPORT=y
+ CPTCFG_MEDIA_RC_SUPPORT=y
+@@ -348,12 +347,9 @@ CPTCFG_VIDEO_BT819=m
+ CPTCFG_VIDEO_BT848=m
+ CPTCFG_VIDEO_BT856=m
+ CPTCFG_VIDEO_BT866=m
+-CPTCFG_VIDEO_BTCX=m
+-CPTCFG_VIDEO_BWQCAM=m
+ CPTCFG_VIDEO_CAFE_CCIC=m
+ CPTCFG_VIDEO_CODA=m
+ CPTCFG_VIDEO_CPIA2=m
+-CPTCFG_VIDEO_CQCAM=m
+ CPTCFG_VIDEO_CS5345=m
+ CPTCFG_VIDEO_CS53L32A=m
+ CPTCFG_VIDEO_CX18=m
+@@ -400,7 +396,6 @@ CPTCFG_VIDEO_M32R_AR_M64278=m
+ CPTCFG_VIDEO_M52790=m
+ CPTCFG_VIDEO_M5MOLS=m
+ CPTCFG_VIDEO_MEM2MEM_DEINTERLACE=m
+-CPTCFG_VIDEO_MEM2MEM_TESTDEV=m
+ CPTCFG_VIDEO_MEYE=m
+ CPTCFG_VIDEO_MMP_CAMERA=m
+ CPTCFG_VIDEO_MSP3400=m
+@@ -420,7 +415,6 @@ CPTCFG_VIDEO_OMAP3=m
+ CPTCFG_VIDEO_OV7640=m
+ CPTCFG_VIDEO_OV7670=m
+ CPTCFG_VIDEO_OV9650=m
+-CPTCFG_VIDEO_PMS=m
+ CPTCFG_VIDEO_PVRUSB2=m
+ CPTCFG_VIDEO_PXA27x=m
+ CPTCFG_VIDEO_S3C_CAMIF=m
+@@ -443,7 +437,6 @@ CPTCFG_VIDEO_SAA7146_VV=m
+ CPTCFG_VIDEO_SAA7164=m
+ CPTCFG_VIDEO_SAA717X=m
+ CPTCFG_VIDEO_SAA7185=m
+-CPTCFG_VIDEO_SAA7191=m
+ CPTCFG_VIDEO_SAMSUNG_EXYNOS_GSC=m
+ CPTCFG_VIDEO_SAMSUNG_S5P_G2D=m
+ CPTCFG_VIDEO_SAMSUNG_S5P_HDMI=m
+@@ -472,7 +465,6 @@ CPTCFG_VIDEO_TEA6415C=m
+ CPTCFG_VIDEO_TEA6420=m
+ CPTCFG_VIDEO_THS7303=m
+ CPTCFG_VIDEO_TIMBERDALE=m
+-CPTCFG_VIDEO_TLG2300=m
+ CPTCFG_VIDEO_TLV320AIC23B=m
+ CPTCFG_VIDEO_TM6000=m
+ CPTCFG_VIDEO_TM6000_ALSA=m
+@@ -495,12 +487,10 @@ CPTCFG_VIDEO_USBVISION=m
+ CPTCFG_VIDEO_V4L2=m
+ CPTCFG_VIDEO_V4L2_SUBDEV_API=y
+ CPTCFG_VIDEO_VIA_CAMERA=m
+-CPTCFG_VIDEO_VINO=m
+ CPTCFG_VIDEO_VIU=m
+ CPTCFG_VIDEO_VP27SMPX=m
+ CPTCFG_VIDEO_VPX3220=m
+ CPTCFG_VIDEO_VS6624=m
+-CPTCFG_VIDEO_W9966=m
+ CPTCFG_VIDEO_WM8739=m
+ CPTCFG_VIDEO_WM8775=m
+ CPTCFG_VIDEO_ZORAN=m
 -- 
 2.6.2
 
