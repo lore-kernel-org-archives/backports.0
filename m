@@ -1,61 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:41648 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:35548 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753806AbbKWXLO (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 23 Nov 2015 18:11:14 -0500
+	id S1751338AbbKOP5L (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 15 Nov 2015 10:57:11 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 11/14] patches: remove access to fwnode member in struct device
-Date: Tue, 24 Nov 2015 00:11:01 +0100
-Message-Id: <1448320264-15070-12-git-send-email-hauke@hauke-m.de> (sfid-20151124_002252_223292_9AA6858E)
-In-Reply-To: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
-References: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 01/15] copy: add new file include/trace/events/vb2.h
+Date: Sun, 15 Nov 2015 16:56:45 +0100
+Message-Id: <1447603019-11862-2-git-send-email-hauke@hauke-m.de> (sfid-20151115_165712_293166_7222CA84)
+In-Reply-To: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
+References: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The firmware device node was added to struct device in ce793486e
-"driver core / ACPI: Represent ACPI companions using fwnode_handle" do
-not access it on older kernel versions.
-
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../media/0007-no-fwnode/v4l2.patch                | 26 ++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 patches/collateral-evolutions/media/0007-no-fwnode/v4l2.patch
+ copy-list | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/patches/collateral-evolutions/media/0007-no-fwnode/v4l2.patch b/patches/collateral-evolutions/media/0007-no-fwnode/v4l2.patch
-new file mode 100644
-index 0000000..1535749
---- /dev/null
-+++ b/patches/collateral-evolutions/media/0007-no-fwnode/v4l2.patch
-@@ -0,0 +1,26 @@
-+--- a/drivers/media/v4l2-core/v4l2-device.c
-++++ b/drivers/media/v4l2-core/v4l2-device.c
-+@@ -131,7 +131,11 @@ void v4l2_device_unregister(struct v4l2_
-+ 			 * re-created by just probing the V4L2 driver.
-+ 			 */
-+ 			if (client &&
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
-+ 			    !client->dev.of_node && !client->dev.fwnode)
-++#else
-++			    !client->dev.of_node)
-++#endif
-+ 				i2c_unregister_device(client);
-+ 			continue;
-+ 		}
-+@@ -140,7 +144,11 @@ void v4l2_device_unregister(struct v4l2_
-+ 		if (sd->flags & V4L2_SUBDEV_FL_IS_SPI) {
-+ 			struct spi_device *spi = v4l2_get_subdevdata(sd);
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
-+ 			if (spi && !spi->dev.of_node && !spi->dev.fwnode)
-++#else
-++			if (spi && !spi->dev.of_node)
-++#endif
-+ 				spi_unregister_device(spi);
-+ 			continue;
-+ 		}
+diff --git a/copy-list b/copy-list
+index a35ae95..7a6410f 100644
+--- a/copy-list
++++ b/copy-list
+@@ -164,6 +164,7 @@ include/uapi/linux/v4l2-subdev.h
+ include/uapi/linux/videodev2.h
+ include/uapi/linux/vsp1.h
+ include/trace/events/v4l2.h
++include/trace/events/vb2.h
+ drivers/staging/media/cxd2099/cxd2099.h
+ include/uapi/linux/ivtv.h
+ include/uapi/linux/meye.h
 -- 
 2.6.2
 
