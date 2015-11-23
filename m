@@ -1,46 +1,61 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:35562 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:41641 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751675AbbKOP5N (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 15 Nov 2015 10:57:13 -0500
+	id S1753710AbbKWXLL (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 23 Nov 2015 18:11:11 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 07/15] header: add upstream version of clamp()
-Date: Sun, 15 Nov 2015 16:56:51 +0100
-Message-Id: <1447603019-11862-8-git-send-email-hauke@hauke-m.de> (sfid-20151115_165716_109616_98BD24C5)
-In-Reply-To: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
-References: <1447603019-11862-1-git-send-email-hauke@hauke-m.de>
+Cc: Luca Coelho <luciano.coelho@intel.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 03/14] header: move smp_mb__after_atomic definition to the correct file
+Date: Tue, 24 Nov 2015 00:10:53 +0100
+Message-Id: <1448320264-15070-4-git-send-email-hauke@hauke-m.de> (sfid-20151124_001114_570748_7D48F5A0)
+In-Reply-To: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
+References: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-saa7164-encoder.c uses clamp() with constant values which fails on
-kernel version < 3.18 because the code wants to creates values of the
-same type and wants to assign variable values to them. The new code
-works with this kind of usage, use the new code also on older kernel
-versions to fix this problem.
+From: Luca Coelho <luciano.coelho@intel.com>
 
+The smp_mb__after_atomic definition is in barrier.h in the mainline,
+but we currently include the backport in atomic.h.  This may cause
+problems with certain include chain combinations.
+
+Move it to the correct place.
+
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/kernel.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ backport/backport-include/asm/atomic.h  | 4 ----
+ backport/backport-include/asm/barrier.h | 4 ++++
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/backport/backport-include/linux/kernel.h b/backport/backport-include/linux/kernel.h
-index 63ffe98..c0eec2d 100644
---- a/backport/backport-include/linux/kernel.h
-+++ b/backport/backport-include/linux/kernel.h
-@@ -148,6 +148,11 @@
- int __must_check hex2bin(u8 *dst, const char *src, size_t count);
- #endif /* < 3.2 */
+diff --git a/backport/backport-include/asm/atomic.h b/backport/backport-include/asm/atomic.h
+index 9f3543c..d5148f0 100644
+--- a/backport/backport-include/asm/atomic.h
++++ b/backport/backport-include/asm/atomic.h
+@@ -16,8 +16,4 @@
+ #endif
+ #endif
  
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,18,0)
-+#undef clamp
-+#define clamp(val, lo, hi) min((typeof(val))max(val, lo), hi)
-+#endif /* < 3.18 */
+-#ifndef smp_mb__after_atomic
+-#define smp_mb__after_atomic smp_mb__after_clear_bit
+-#endif
+-
+ #endif /* __BACKPORT_ASM_ATOMIC_H */
+diff --git a/backport/backport-include/asm/barrier.h b/backport/backport-include/asm/barrier.h
+index 7ccf57c..423a581 100644
+--- a/backport/backport-include/asm/barrier.h
++++ b/backport/backport-include/asm/barrier.h
+@@ -10,4 +10,8 @@
+ #define dma_rmb()	rmb()
+ #endif
+ 
++#ifndef smp_mb__after_atomic
++#define smp_mb__after_atomic smp_mb__after_clear_bit
++#endif
 +
- #endif /* __BACKPORT_KERNEL_H */
- 
- /*
+ #endif /* __BACKPORT_ASM_BARRIER_H */
 -- 
 2.6.2
 
