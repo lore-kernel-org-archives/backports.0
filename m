@@ -1,43 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:55281 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751296AbbJWLR0 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 23 Oct 2015 07:17:26 -0400
-Message-ID: <562A1743.9080406@broadcom.com> (sfid-20151023_131729_082416_E4188F5D)
-Date: Fri, 23 Oct 2015 13:17:23 +0200
-From: Arend van Spriel <arend@broadcom.com>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>,
-	<backports@vger.kernel.org>
-Subject: Re: [PATCH] backports: add ktime_get_seconds()
-References: <1445584991-11249-1-git-send-email-johannes@sipsolutions.net>	 <5629FEB3.6050905@broadcom.com> (sfid-20151023_113239_295482_F75BC0A3) <1445592856.1945.0.camel@sipsolutions.net>
-In-Reply-To: <1445592856.1945.0.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Received: from hauke-m.de ([5.39.93.123]:41650 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753567AbbKWXLN (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 23 Nov 2015 18:11:13 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 07/14] header: add of_node_full_name()
+Date: Tue, 24 Nov 2015 00:10:57 +0100
+Message-Id: <1448320264-15070-8-git-send-email-hauke@hauke-m.de> (sfid-20151124_001117_582038_6F500AB8)
+In-Reply-To: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
+References: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 10/23/2015 11:34 AM, Johannes Berg wrote:
-> On Fri, 2015-10-23 at 11:32 +0200, Arend van Spriel wrote:
->> On 10/23/2015 09:23 AM, Johannes Berg wrote:
->>> From: Johannes Berg <johannes.berg@intel.com>
->>
->> Already submitted a patch for this. I just did not bother to
->> introduce the timekeeping.h file. So yours may be preferred.
->>
->
-> Oh, missed that. Yours is better with time64_t though, so we should
-> probably merge them...
+This function was added in commit 74a7f0844 "devicetree: add helper
+inline for retrieving a node's full name".
 
-Be my guest ;-)
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/of.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-> Adding the timekeeping.h file might be required if, in the future,
-> somebody includes only it instead of ktime.h
-
-Yeah. I got the impression that timekeeping.h should not be included 
-directly, but that might not stop people from doing it anyway.
-
-Regards,
-Arend
+diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
+index ab98061..8089803 100644
+--- a/backport/backport-include/linux/of.h
++++ b/backport/backport-include/linux/of.h
+@@ -184,4 +184,19 @@ static inline int of_property_read_u64_array(const struct device_node *np,
+ #endif /* CONFIG_OF */
+ #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0) */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
++#define of_node_full_name LINUX_BACKPORT(of_node_full_name)
++#ifdef CONFIG_OF
++static inline const char *of_node_full_name(const struct device_node *np)
++{
++	return np ? np->full_name : "<no-node>";
++}
++#else
++static inline const char* of_node_full_name(const struct device_node *np)
++{
++	return "<no-node>";
++}
++#endif /* CONFIG_OF */
++#endif /* < 3.6 */
++
+ #endif	/* _COMPAT_LINUX_OF_H */
+-- 
+2.6.2
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
