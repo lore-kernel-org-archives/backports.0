@@ -1,54 +1,61 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:44377 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:41648 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1032298AbbKFIQP (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 6 Nov 2015 03:16:15 -0500
-From: Johannes Berg <johannes@sipsolutions.net>
+	id S1753806AbbKWXLO (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 23 Nov 2015 18:11:14 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] gentree: fix Makefile symbol disabling
-Date: Fri,  6 Nov 2015 09:16:10 +0100
-Message-Id: <1446797770-32354-1-git-send-email-johannes@sipsolutions.net> (sfid-20151106_091617_823502_44C4BA59)
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 11/14] patches: remove access to fwnode member in struct device
+Date: Tue, 24 Nov 2015 00:11:01 +0100
+Message-Id: <1448320264-15070-12-git-send-email-hauke@hauke-m.de> (sfid-20151124_002252_223292_9AA6858E)
+In-Reply-To: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
+References: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+The firmware device node was added to struct device in ce793486e
+"driver core / ACPI: Represent ACPI companions using fwnode_handle" do
+not access it on older kernel versions.
 
-Currently, a Makefile line like this:
-
-    obj-$(CONFIG_IPW2100) += ipw2x00/
-
-will get mangled into
-
-    #obj-$(CONFIG_IPW2100+= ipw2x00/
-
-when disabled by the gentree script. Fix the regular
-expression to contain the entire match as the first
-group, so it gets all preserved when replaced later
-by "#\1" using expression.sub().
-
-This then makes it come out as
-
-    #obj-$(CONFIG_IPW2100) += ipw2x00/
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- gentree.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../media/0007-no-fwnode/v4l2.patch                | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+ create mode 100644 patches/collateral-evolutions/media/0007-no-fwnode/v4l2.patch
 
-diff --git a/gentree.py b/gentree.py
-index 636ea609ba57..772095fcf580 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -1057,7 +1057,7 @@ def process(kerneldir, copy_list_file, git_revision=None,
-     # groups -- 50 seemed safer and is still fast)
-     regexes = []
-     for some_symbols in [disable_makefile[i:i + 50] for i in range(0, len(disable_makefile), 50)]:
--        r = '^([^#].*((' + bpid.full_prefix_resafe + '|CONFIG_)(' + '|'.join([s for s in some_symbols]) + ')))\W'
-+        r = '^(([^#].*((' + bpid.full_prefix_resafe + '|CONFIG_)(' + '|'.join([s for s in some_symbols]) + ')))\W)'
-         regexes.append(re.compile(r, re.MULTILINE))
-     for f in maketree.get_makefiles():
-         data = open(f, 'r').read()
+diff --git a/patches/collateral-evolutions/media/0007-no-fwnode/v4l2.patch b/patches/collateral-evolutions/media/0007-no-fwnode/v4l2.patch
+new file mode 100644
+index 0000000..1535749
+--- /dev/null
++++ b/patches/collateral-evolutions/media/0007-no-fwnode/v4l2.patch
+@@ -0,0 +1,26 @@
++--- a/drivers/media/v4l2-core/v4l2-device.c
+++++ b/drivers/media/v4l2-core/v4l2-device.c
++@@ -131,7 +131,11 @@ void v4l2_device_unregister(struct v4l2_
++ 			 * re-created by just probing the V4L2 driver.
++ 			 */
++ 			if (client &&
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++ 			    !client->dev.of_node && !client->dev.fwnode)
+++#else
+++			    !client->dev.of_node)
+++#endif
++ 				i2c_unregister_device(client);
++ 			continue;
++ 		}
++@@ -140,7 +144,11 @@ void v4l2_device_unregister(struct v4l2_
++ 		if (sd->flags & V4L2_SUBDEV_FL_IS_SPI) {
++ 			struct spi_device *spi = v4l2_get_subdevdata(sd);
++ 
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
++ 			if (spi && !spi->dev.of_node && !spi->dev.fwnode)
+++#else
+++			if (spi && !spi->dev.of_node)
+++#endif
++ 				spi_unregister_device(spi);
++ 			continue;
++ 		}
 -- 
 2.6.2
 
