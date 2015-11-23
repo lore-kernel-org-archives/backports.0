@@ -1,41 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:50751 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:41644 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751394AbbKBMgt (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 2 Nov 2015 07:36:49 -0500
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	(Exim 4.86)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1ZtELw-0003mx-5a
-	for backports@vger.kernel.org; Mon, 02 Nov 2015 13:36:48 +0100
-Message-ID: <1446467807.3205.21.camel@sipsolutions.net> (sfid-20151102_133651_365368_CEFE6092)
-Subject: CONFIG_WLAN getting disabled - copy-list usage
-From: Johannes Berg <johannes@sipsolutions.net>
+	id S1753317AbbKWXLM (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 23 Nov 2015 18:11:12 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Date: Mon, 02 Nov 2015 13:36:47 +0100
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 04/14] copy: remove camera-rcar.h
+Date: Tue, 24 Nov 2015 00:10:54 +0100
+Message-Id: <1448320264-15070-5-git-send-email-hauke@hauke-m.de> (sfid-20151124_001115_244306_0AB0DEE5)
+In-Reply-To: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
+References: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-FYI, if anyone's using backports with a copy-list file that restricts
-the wifi drivers to their own, and is working against a recent tree
-that includes the drivers/net/wireless/realtek/ move, then CONFIG_WLAN
-will end up getting disabled.
+This file was removed in upstream kernel commit 22bc8625 "[media]
+rcar_vin: Remove obsolete platform data support"
 
-To fix that for now modify your copy-list to include
-drivers/net/wireless/realtek/Makefile (and that file only).
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ copy-list | 1 -
+ 1 file changed, 1 deletion(-)
 
-Once Kconfig changes go in and the Makefile statement
+diff --git a/copy-list b/copy-list
+index 0b26aa3..c3c487c 100644
+--- a/copy-list
++++ b/copy-list
+@@ -169,7 +169,6 @@ include/uapi/linux/ivtv.h
+ include/uapi/linux/meye.h
+ 
+ drivers/media/
+-include/linux/platform_data/camera-rcar.h
+ include/linux/of_graph.h
+ 
+ include/net/6lowpan.h
+-- 
+2.6.2
 
-obj-$(CONFIG_WLAN) += realtek/
-
-changes to
-
-obj-$(CONFIG_WLAN_REALTEK) += realtek/
-
-(or similar) this issue will go away.
-
-johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
