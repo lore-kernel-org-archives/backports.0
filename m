@@ -1,49 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:52913 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:41644 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753972AbbKGQzV (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 7 Nov 2015 11:55:21 -0500
+	id S1754209AbbKWXLO (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 23 Nov 2015 18:11:14 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 05/10] header: add __GFP_KSWAPD_RECLAIM
-Date: Sat,  7 Nov 2015 17:55:05 +0100
-Message-Id: <1446915310-8278-6-git-send-email-hauke@hauke-m.de> (sfid-20151107_175525_831873_E3594015)
-In-Reply-To: <1446915310-8278-1-git-send-email-hauke@hauke-m.de>
-References: <1446915310-8278-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 13/14] dependencies: make SOC_CAMERA_PLATFORM depend on kernel >= 3.9
+Date: Tue, 24 Nov 2015 00:11:03 +0100
+Message-Id: <1448320264-15070-14-git-send-email-hauke@hauke-m.de> (sfid-20151124_002251_807592_64890D39)
+In-Reply-To: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
+References: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This was added to the mainline kernel in commit ac4f832eb2 "mm,
-page_alloc: distinguish between being unable to sleep, unwilling to
-sleep and avoiding waking kswapd". Instead of __GFP_KSWAPD_RECLAIM the
-old mm code did not got any flag.
+soc camera uses the member link from the platform data struct
+soc_camera_device, this member was added in kernel 3.9.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/gfp.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
- create mode 100644 backport/backport-include/linux/gfp.h
+ dependencies | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/backport/backport-include/linux/gfp.h b/backport/backport-include/linux/gfp.h
-new file mode 100644
-index 0000000..b4db7bb
---- /dev/null
-+++ b/backport/backport-include/linux/gfp.h
-@@ -0,0 +1,13 @@
-+#ifndef __BACKPORT_LINUX_GFP_H
-+#define __BACKPORT_LINUX_GFP_H
-+#include_next <linux/gfp.h>
+diff --git a/dependencies b/dependencies
+index d213fd7..4901e24 100644
+--- a/dependencies
++++ b/dependencies
+@@ -49,6 +49,8 @@ VIDEO_CX88_DVB 3.8
+ DVB_DM1105 3.8
+ DVB_SMIPCIE 3.8
+ 
++SOC_CAMERA_PLATFORM 3.9
 +
-+#ifndef ___GFP_KSWAPD_RECLAIM
-+#define ___GFP_KSWAPD_RECLAIM	0x0u
-+#endif
-+
-+#ifndef __GFP_KSWAPD_RECLAIM
-+#define __GFP_KSWAPD_RECLAIM	((__force gfp_t)___GFP_KSWAPD_RECLAIM) /* kswapd can wake */
-+#endif
-+
-+#endif /* __BACKPORT_TIMKEEPING_H */
+ # missing linux/gpio/consumer.h
+ # consumer.h cannot be backported currently, as functions rely
+ # on in-kernel functionality (GPIO_DEVRES), we can now backport
 -- 
 2.6.2
 
