@@ -1,56 +1,101 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:35905 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752239AbbKKRPh (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 11 Nov 2015 12:15:37 -0500
-Received: by obdgf3 with SMTP id gf3so26767501obd.3
-        for <backports@vger.kernel.org>; Wed, 11 Nov 2015 09:15:36 -0800 (PST)
-Subject: Re: Realtek RTL8192DU Driver and Android LOllipop
-To: anjalik@iwavesystems.com
-References: <20151109054901.52833inkm5vggbh9@iwavesystems.com>
- <5640C86D.2090804@lwfinger.net>
- <20151111063247.203429dxmv42uelb@iwavesystems.com>
-Cc: backports@vger.kernel.org
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <564377B6.6040306@lwfinger.net> (sfid-20151111_181539_201566_228AB81C)
-Date: Wed, 11 Nov 2015 11:15:34 -0600
-MIME-Version: 1.0
-In-Reply-To: <20151111063247.203429dxmv42uelb@iwavesystems.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Received: from hauke-m.de ([5.39.93.123]:41648 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753320AbbKWXLM (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 23 Nov 2015 18:11:12 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 06/14] header: include old media header files from new positions
+Date: Tue, 24 Nov 2015 00:10:56 +0100
+Message-Id: <1448320264-15070-7-git-send-email-hauke@hauke-m.de> (sfid-20151124_001116_416740_4110AF3C)
+In-Reply-To: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
+References: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 11/11/2015 05:32 AM, anjalik@iwavesystems.com wrote:
-> Hi,
->
->   Thanks for the quick response. The driver is working fine. I tested Open, WEP
-> mode and WPA2 is yet to be tested since iwpriv is not working as it is
-> deprecated. I would like to ask a query regarding the firmware
->
-> 1.Which is the firmware to be used ,rtl8192dufw.bin or rtl8192dufw_wol.bin ?
->
-> I guess the firmware is rtl8192dufw.bin or do both the binaries together take
-> care of firmware functionalities.?
->
-> In the previous driver which I used,the firmware image was embedded one. Even
-> without using the above binaries , everything is working fine. Is it really
-> required to copy these binaries under system/lib/firmware path.?
->
-> I am using Dual Band USB 2.O Wi-Fi Adaptor with RTL8192DU chipset.
+The media header files were reorganized and the platform header files
+are now moved to include/linux/platform_data/media/. place some dummy
+files there and include the original files from there.
 
-The firmware with "wol" in its name is for Wake-On-Lan operation. The feature 
-requires special configuration, and I have not tested it. At startup, the driver 
-will load one or the other. If WOL is not enabled, only the regular firmware 
-will be used. I extracted both versions before I eliminated the embedded data.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/platform_data/media/si4713.h   | 10 ++++++++++
+ .../linux/platform_data/media/soc_camera_platform.h            | 10 ++++++++++
+ .../backport-include/linux/platform_data/media/timb_radio.h    | 10 ++++++++++
+ .../backport-include/linux/platform_data/media/timb_video.h    | 10 ++++++++++
+ 4 files changed, 40 insertions(+)
+ create mode 100644 backport/backport-include/linux/platform_data/media/si4713.h
+ create mode 100644 backport/backport-include/linux/platform_data/media/soc_camera_platform.h
+ create mode 100644 backport/backport-include/linux/platform_data/media/timb_radio.h
+ create mode 100644 backport/backport-include/linux/platform_data/media/timb_video.h
 
-Adding a driver with embedded firmware to the standard kernel is frowned upon 
-due to the several thousand lines of data. That is the reason that I extracted 
-the firmware, and converted the driver to use external firmware. If your version 
-of the driver has been converted, then you need at least the standard firmware 
-in the /lib/firmware/ tree.
-
-Larry
-
+diff --git a/backport/backport-include/linux/platform_data/media/si4713.h b/backport/backport-include/linux/platform_data/media/si4713.h
+new file mode 100644
+index 0000000..b602bc2
+--- /dev/null
++++ b/backport/backport-include/linux/platform_data/media/si4713.h
+@@ -0,0 +1,10 @@
++#ifndef __BACKPORT_SI4713_H
++#define __BACKPORT_SI4713_H
++#include <linux/version.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0)
++#include_next <linux/platform_data/media/si4713.h>
++#else
++#include <media/si4713.h>
++#endif /* < 4.4 */
++
++#endif /* __BACKPORT_SI4713_H */
+diff --git a/backport/backport-include/linux/platform_data/media/soc_camera_platform.h b/backport/backport-include/linux/platform_data/media/soc_camera_platform.h
+new file mode 100644
+index 0000000..ce2dd17
+--- /dev/null
++++ b/backport/backport-include/linux/platform_data/media/soc_camera_platform.h
+@@ -0,0 +1,10 @@
++#ifndef __BACKPORT_SOC_CAMERA_H__
++#define __BACKPORT_SOC_CAMERA_H__
++#include <linux/version.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0)
++#include_next <linux/platform_data/media/soc_camera_platform.h>
++#else
++#include <media/soc_camera_platform.h>
++#endif /* < 4.4 */
++
++#endif /* __BACKPORT_SOC_CAMERA_H__ */
+diff --git a/backport/backport-include/linux/platform_data/media/timb_radio.h b/backport/backport-include/linux/platform_data/media/timb_radio.h
+new file mode 100644
+index 0000000..88dd20f
+--- /dev/null
++++ b/backport/backport-include/linux/platform_data/media/timb_radio.h
+@@ -0,0 +1,10 @@
++#ifndef __BACKPORT_TIMB_RADIO_
++#define __BACKPORT_TIMB_RADIO_
++#include <linux/version.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0)
++#include_next <linux/platform_data/media/timb_radio.h>
++#else
++#include <media/timb_radio.h>
++#endif /* < 4.4 */
++
++#endif /* __BACKPORT_TIMB_RADIO_ */
+diff --git a/backport/backport-include/linux/platform_data/media/timb_video.h b/backport/backport-include/linux/platform_data/media/timb_video.h
+new file mode 100644
+index 0000000..a729ee8
+--- /dev/null
++++ b/backport/backport-include/linux/platform_data/media/timb_video.h
+@@ -0,0 +1,10 @@
++#ifndef __BACKPORT_TIMB_VIDEO_
++#define __BACKPORT_TIMB_VIDEO_
++#include <linux/version.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0)
++#include_next <linux/platform_data/media/timb_video.h>
++#else
++#include <media/timb_video.h>
++#endif /* < 4.4 */
++
++#endif /* __BACKPORT_TIMB_VIDEO_ */
+-- 
+2.6.2
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
