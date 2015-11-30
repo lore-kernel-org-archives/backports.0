@@ -1,78 +1,109 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:35546 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751338AbbKOP5I (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 15 Nov 2015 10:57:08 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 00/15] backport: update to next-20151115
-Date: Sun, 15 Nov 2015 16:56:44 +0100
-Message-Id: <1447603019-11862-1-git-send-email-hauke@hauke-m.de> (sfid-20151115_165711_122168_03B81F0E)
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:24826 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752628AbbK3Jwn (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 30 Nov 2015 04:52:43 -0500
+Received: from [10.176.128.83] (bld-bun-01.bun.broadcom.com [10.176.128.83])
+	by mail-sj1-12.sj.broadcom.com (Postfix) with ESMTP id 231F627A81	for
+ <backports@vger.kernel.org>; Mon, 30 Nov 2015 01:52:40 -0800 (PST)
+Message-ID: <565C1C67.3080506@broadcom.com> (sfid-20151130_105245_365999_BBB2DB93)
+Date: Mon, 30 Nov 2015 10:52:39 +0100
+From: Arend van Spriel <arend@broadcom.com>
+MIME-Version: 1.0
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: backporting 4.4-rc2
+Content-Type: multipart/mixed;
+	boundary="------------000402010801010509020206"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This contains various patches bringing backport in sync with next-20151115.
+--------------000402010801010509020206
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hauke Mehrtens (15):
-  copy: add new file include/trace/events/vb2.h
-  copy: add drivers/net/wireless/realtek/
-  dependencies: make NFC_FDP_I2C depend on kernel >= 3.18
-  dependencies: make NFC_FDP depend on kernel >= 3.13
-  dependencies: make NFC_MRVL depend on kernel >= 3.3
-  haeder: add napi_complete_done()
-  header: add upstream version of clamp()
-  header: add inet_frags_uninit_net()
-  header: make inet_frags_init_net() return something
-  header: add empty implementation of irq_of_parse_and_map()
-  patches: add forward declaration of struct wpan_dev to cfg802154.h
-  patches: remove wpan_dev_hard_header() on kernel < 3.18
-  defconfigs: update wifi defconfigs
-  defconfigs: update media defconfig
-  patches: refresh on next-20151115
+Hi,
 
- backport/backport-include/linux/kernel.h           |   5 +
- backport/backport-include/linux/netdevice.h        |   8 ++
- backport/backport-include/linux/of_irq.h           |  15 +++
- backport/backport-include/net/inet_frag.h          |  18 +++
- backport/defconfigs/b43                            |   1 -
- backport/defconfigs/media                          |  10 --
- backport/defconfigs/rtlwifi                        |   1 +
- backport/defconfigs/wifi                           |   2 +-
- copy-list                                          |   4 +-
- dependencies                                       |   9 ++
- .../media/0001-dma_mmap_coherent-revert.patch      |   4 +-
- .../media/0002-no_dmabuf/v4l2.patch                | 122 +++++++++++++--------
- .../media/0004-missing-include/hackrf.patch        |   4 +-
- .../media/0005-dma-no-sync/v4l2.patch              |   8 +-
- .../0002-disable-dump-adjust-on-old-kernels.patch  |   4 +-
- .../include_net_cfg80211.patch                     |   2 +-
- .../network/0004-disable-wext-kconfig.patch        |   2 +-
- .../net_wireless_core.patch                        |   2 +-
- .../0013-fix-makefile-includes/cfg802154.patch     |  10 ++
- .../0014-netlink_seq/net_wireless_nl80211.patch    |   2 +-
- .../0020-tty-termios/net_bluetooth_hci_ldisc.patch |  10 +-
- .../network/0024-led-blink-api/mac80211.patch      |   2 +-
- .../network/0028-select_queue/mac80211.patch       |   4 +-
- .../net_bluetooth_hidp_core.patch                  |   2 +-
- .../network/0030-qdisc_tx_busylock/bluetooth.patch |   4 +-
- .../0032-sriov_configure/igb_sriov_configure.patch |   4 +-
- .../0033-ndo_vlan_rx_vid/igb_ndo_vlan_rx_vid.patch |   8 +-
- .../0038-ethtool_rxfh_indir/igb_rxfh_indir.patch   |  10 +-
- .../0043-ndo_set_vf_rate/igb_set_vf_rate.patch     |   4 +-
- .../network/0050-iov_iter/bluetooth.patch          |  16 +--
- .../network/0053-possible_net_t.patch              |   2 +-
- .../0053-remove_wait_on_bit_timeout/btusb.patch    |  12 +-
- .../network/0062-acpi-gpio-remove/hci_bcm.patch    |   4 +-
- .../network/0062-acpi-gpio-remove/hci_intel.patch  |   6 +-
- .../cfg802154.patch                                |  18 +++
- 35 files changed, 223 insertions(+), 116 deletions(-)
- create mode 100644 backport/backport-include/linux/of_irq.h
- create mode 100644 patches/collateral-evolutions/network/0013-fix-makefile-includes/cfg802154.patch
- create mode 100644 patches/collateral-evolutions/network/0066-remove-netdev_ieee802154_ptr/cfg802154.patch
+I am trying to backport 4.4-rc2, but end up with only hwsim defconfig in 
+the generated backport. Any clues where to look?
 
--- 
-2.6.2
+In drivers/net/wireless/Kconfig several "source" commands are commented 
+out, which I suspect is related. Running make menuconfig does not 
+present any wireless drivers to be selected.
 
+Regards,
+Arend
+
+--------------000402010801010509020206
+Content-Type: text/plain; charset="UTF-8"; name="copy-list"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="copy-list"
+
+#
+# This file specifies which sources are copied from the kernel
+# into the backports package.
+#
+# Directories must end with a slash (e.g. "net/wireless/") and
+# are then copied with all their contents.
+#
+# It is also possible to rename while copying, to do so list
+# old name -> new name
+# Note that in this case the spaces are needed: " -> "
+#
+
+COPYING
+MAINTAINERS
+include/linux/unaligned/
+include/linux/hashtable.h
+
+# 802.11
+drivers/net/wireless/Kconfig
+drivers/net/wireless/Makefile
+
+include/linux/wireless.h
+include/uapi/linux/wireless.h
+include/linux/ieee80211.h
+include/linux/pci_ids.h
+include/uapi/linux/pci_regs.h
+include/linux/mmc/sdio_ids.h
+include/linux/ath9k_platform.h
+include/uapi/linux/wil6210_uapi.h
+include/linux/wl12xx.h
+include/linux/rndis.h
+include/linux/bcm47xx_wdt.h
+include/linux/usb/usbnet.h
+include/linux/usb/rndis_host.h
+include/linux/spi/libertas_spi.h
+include/linux/platform_data/brcmfmac-sdio.h
+include/uapi/linux/nl80211.h
+
+include/net/cfg80211.h
+include/net/cfg80211-wext.h
+include/net/ieee80211_radiotap.h
+include/net/lib80211.h
+include/net/mac80211.h
+include/net/regulatory.h
+
+net/Makefile
+net/Kconfig
+net/wireless/
+net/mac80211/
+
+include/linux/ssb/
+drivers/bcma/
+include/linux/bcma/
+drivers/net/wireless/brcm80211/
+
+include/net/netns/ieee802154_6lowpan.h
+
+# MPLS labels, checked on skb->protocol on the
+# respective 802 family, only ethernet seems to use
+# this right now, see 960d97f95
+include/linux/mpls.h
+include/uapi/linux/mpls.h
+
+# fixup needed for CONFIG_WLAN
+drivers/net/wireless/realtek/Makefile
+
+--------------000402010801010509020206--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
