@@ -1,60 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:41646 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753931AbbKWXLN (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 23 Nov 2015 18:11:13 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 10/14] header: add netif_tx_napi_add()
-Date: Tue, 24 Nov 2015 00:11:00 +0100
-Message-Id: <1448320264-15070-11-git-send-email-hauke@hauke-m.de> (sfid-20151124_001118_164473_3915A142)
-In-Reply-To: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
-References: <1448320264-15070-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:25831 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753830AbbK3LxL (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 30 Nov 2015 06:53:11 -0500
+From: Arend van Spriel <arend@broadcom.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: <backports@vger.kernel.org>, Arend van Spriel <arend@broadcom.com>
+Subject: [PATCH] patches: fix path in name_assign_type patch
+Date: Mon, 30 Nov 2015 12:53:07 +0100
+Message-ID: <1448884387-20806-1-git-send-email-arend@broadcom.com> (sfid-20151130_125314_276815_BDEC0377)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Older kernel versions do not support to only set NAPI for TX queues, so
-call the normal NAPI function and do it also for the used RX part.
+Patch for brcmfmac need update path as it now resides under
+the broadcom vendor directory.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Arend van Spriel <arend@broadcom.com>
 ---
- backport/backport-include/linux/netdevice.h | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ .../network/0055-name_assign_type/brcmfmac.patch                      | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
-index 86d5ea7..bbe17a1 100644
---- a/backport/backport-include/linux/netdevice.h
-+++ b/backport/backport-include/linux/netdevice.h
-@@ -300,4 +300,26 @@ static inline void napi_complete_done(struct napi_struct *n, int work_done)
- }
- #endif /* < 3.19 */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,4,0)
-+#define netif_tx_napi_add LINUX_BACKPORT(netif_tx_napi_add)
-+/**
-+ *	netif_tx_napi_add - initialize a napi context
-+ *	@dev:  network device
-+ *	@napi: napi context
-+ *	@poll: polling function
-+ *	@weight: default weight
-+ *
-+ * This variant of netif_napi_add() should be used from drivers using NAPI
-+ * to exclusively poll a TX queue.
-+ * This will avoid we add it into napi_hash[], thus polluting this hash table.
-+ */
-+static inline void netif_tx_napi_add(struct net_device *dev,
-+				     struct napi_struct *napi,
-+				     int (*poll)(struct napi_struct *, int),
-+				     int weight)
-+{
-+	netif_napi_add(dev, napi, poll, weight);
-+}
-+#endif /* < 4.4 */
-+
- #endif /* __BACKPORT_NETDEVICE_H */
+diff --git a/patches/collateral-evolutions/network/0055-name_assign_type/brcmfmac.patch b/patches/collateral-evolutions/network/0055-name_assign_type/brcmfmac.patch
+index c68e9d0..bcbac24 100644
+--- a/patches/collateral-evolutions/network/0055-name_assign_type/brcmfmac.patch
++++ b/patches/collateral-evolutions/network/0055-name_assign_type/brcmfmac.patch
+@@ -1,5 +1,5 @@
+---- a/drivers/net/wireless/brcm80211/brcmfmac/p2p.c
+-+++ b/drivers/net/wireless/brcm80211/brcmfmac/p2p.c
++--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
+++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
+ @@ -2204,7 +2204,9 @@ struct wireless_dev *brcmf_p2p_add_vif(s
+  	}
+  
 -- 
-2.6.2
+1.9.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
