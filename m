@@ -1,59 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:6506 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932522AbbLHJ2n (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 8 Dec 2015 04:28:43 -0500
-Message-ID: <5666A2C8.3070002@broadcom.com> (sfid-20151208_102847_876978_85CDBA46)
-Date: Tue, 8 Dec 2015 10:28:40 +0100
-From: Arend van Spriel <arend@broadcom.com>
-MIME-Version: 1.0
-To: Johannes Berg <johannes@sipsolutions.net>,
-	Hauke Mehrtens <hauke@hauke-m.de>, <backports@vger.kernel.org>
-Subject: Re: [PATCH v2] backports: add ktime_get_seconds()
-References: <1445601179-3434-1-git-send-email-johannes@sipsolutions.net>	 <563E301B.7090609@hauke-m.de> <56669864.3050404@broadcom.com>	 (sfid-20151208_094430_942811_4B1A5954) <1449565444.4154.1.camel@sipsolutions.net>	 (sfid-20151208_100442_655563_BC7335A1) <1449566082.4154.6.camel@sipsolutions.net>
-In-Reply-To: <1449566082.4154.6.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Received: from s3.sipsolutions.net ([5.9.151.49]:51784 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756214AbbLBI4i (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 2 Dec 2015 03:56:38 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH v2] backports: add ktime_get_boot_ns()
+Date: Wed,  2 Dec 2015 09:56:34 +0100
+Message-Id: <1449046594-9738-1-git-send-email-johannes@sipsolutions.net> (sfid-20151202_095640_670832_C3102C13)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 12/08/2015 10:14 AM, Johannes Berg wrote:
-> On Tue, 2015-12-08 at 10:04 +0100, Johannes Berg wrote:
->>
->> That's not a bad idea. We could have a script that creates some kind
->> of
->> header file with #define HAVE_KTIME_GET_SECONDS and then we could use
->> that. We could even just do that for every single exported functions,
->> that will just be a few hundred lines but shouldn't matter much? :)
->>
->
-> Ok maybe not - on a very small test configuration for me that's
-> actually something like 6.5k lines...
->
-> I guess then we could ship a list of functions we want to look at, like
-> a file that simply lists one function per line:
+From: Johannes Berg <johannes.berg@intel.com>
 
-Basically the list would be the exported symbols from the backports 
-module, ie. compat.ko, right?
+This small helper inline was added in 3.17, we want to use it now
+so need to backport it.
 
-Gr. AvS
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/backport-include/linux/timekeeping.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> symbols-check:
->>>>
-> ktime_get_seconds
-> <<<
->
-> and then we can do something like
->
-> grep -f symbols-check /path/to/Module.symvers | \
-> 	cut -f2 | \
-> 	tr 'a-z' 'A-Z' | \
-> 	sed 's/^/#define HAVE_/;s/$/ 1/' \
-> 	> backport-include/backport/existing-symbols.h
->
-> and include that in the right place?
->
-> johannes
->
+diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
+index fe42e7170680..4d31580b8757 100644
+--- a/backport/backport-include/linux/timekeeping.h
++++ b/backport/backport-include/linux/timekeeping.h
+@@ -2,6 +2,7 @@
+ #define __BACKPORT_TIMKEEPING_H
+ #include <linux/version.h>
+ #include <linux/types.h>
++#include <linux/hrtimer.h>
+ 
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
+ #include_next <linux/timekeeping.h>
+@@ -15,6 +16,11 @@ static inline u64 ktime_get_ns(void)
+ {
+ 	return ktime_to_ns(ktime_get());
+ }
++
++static inline u64 ktime_get_boot_ns(void)
++{
++	return ktime_to_ns(ktime_get_boottime());
++}
+ #endif
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
+-- 
+2.6.2
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
