@@ -1,73 +1,95 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:52902 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:35653 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753711AbbKGQzR (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 7 Nov 2015 11:55:17 -0500
+	id S1754433AbbLDVOd (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 4 Dec 2015 16:14:33 -0500
+Subject: Re: [PATCH v2] backports: add ktime_get_boot_ns()
+To: Johannes Berg <johannes@sipsolutions.net>,
+	Arend van Spriel <arend@broadcom.com>,
+	backports@vger.kernel.org
+References: <1449046594-9738-1-git-send-email-johannes@sipsolutions.net>
+ <1449046985.2449.0.camel@sipsolutions.net>
+ <1449047089.2449.1.camel@sipsolutions.net> <565EC8F7.4030800@broadcom.com>
+ <1449053189.2449.8.camel@sipsolutions.net>
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 00/10] backport: update to next-20151013
-Date: Sat,  7 Nov 2015 17:55:00 +0100
-Message-Id: <1446915310-8278-1-git-send-email-hauke@hauke-m.de> (sfid-20151107_175520_266250_24BF550B)
+Message-ID: <56620234.8010104@hauke-m.de> (sfid-20151204_221435_395410_59A9BCD7)
+Date: Fri, 4 Dec 2015 22:14:28 +0100
+MIME-Version: 1.0
+In-Reply-To: <1449053189.2449.8.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This brings backports in sync with next-20151013.
-In addition it fixes some problem on RHEL 7.
+On 12/02/2015 11:46 AM, Johannes Berg wrote:
+> On Wed, 2015-12-02 at 11:33 +0100, Arend van Spriel wrote:
+>>  
+>> Got a feeling I missing a side of this story. Still got a feeling you
+>> need more coffee ;-)
+>>
+> 
+> Yep! I don't drink coffee though, so I'll have to make do with
+> something else ;-)
+> 
+> johannes
+> --
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+> 
+Hi Johannes,
 
-Hauke Mehrtens (10):
-  patches: argument removed from struct ipv6_stub->ndisc_send_na()
-  patches: add missing header in 6lowpan/core.h
-  header: adapt renaming of mei_cl_ to mei_cldev_
-  header: add ktime_get_ns()
-  header: add __GFP_KSWAPD_RECLAIM
-  header: add nla_get_le32() and nla_get_le64()
-  header: change check for ACPI_COMPANION
-  backport: add of_property_read_u64_array()
-  dependencies: VIDEO_MT9P031 uses gpio consumer
-  patches: refresh on next-20151013
+I am getting this error with your patch on kernel 4.3:
 
- backport/backport-include/linux/acpi.h             |  4 +--
- backport/backport-include/linux/gfp.h              | 13 ++++++++
- backport/backport-include/linux/mei_cl_bus.h       | 18 +++++++++--
- backport/backport-include/linux/of.h               | 17 ++++++++++
- backport/backport-include/linux/timekeeping.h      | 10 ++++++
- backport/backport-include/net/netlink.h            | 22 +++++++++++++
- backport/compat/backport-3.18.c                    | 37 ++++++++++++++++++++++
- dependencies                                       |  2 +-
- .../0002-disable-dump-adjust-on-old-kernels.patch  |  4 +--
- .../include_net_cfg80211.patch                     |  2 +-
- .../net_wireless_core.patch                        |  2 +-
- .../0013-fix-makefile-includes/6lowpan.patch       | 10 ++++++
- .../0013-fix-makefile-includes/brcmfmac.patch      | 10 ------
- .../0014-netlink_seq/net_wireless_nl80211.patch    |  2 +-
- .../0020-tty-termios/net_bluetooth_hci_ldisc.patch | 10 +++---
- .../network/0024-led-blink-api/mac80211.patch      |  2 +-
- .../network/0025-usb-sg/usbnet.patch               |  2 +-
- .../network/0028-select_queue/mwifiex.patch        |  2 +-
- .../network/0030-qdisc_tx_busylock/bluetooth.patch |  4 +--
- .../0032-sriov_configure/igb_sriov_configure.patch |  4 +--
- .../0033-ndo_vlan_rx_vid/igb_ndo_vlan_rx_vid.patch |  8 ++---
- .../0043-ndo_set_vf_rate/igb_set_vf_rate.patch     |  4 +--
- .../network/0047-write_iter/bluetooth.patch        | 10 +++---
- .../network/0050-iov_iter/bluetooth.patch          |  8 ++---
- .../network/0052-deactivate-ptp-pin/igb.patch      |  4 +--
- .../network/0053-possible_net_t.patch              |  2 +-
- .../0053-remove_wait_on_bit_timeout/btusb.patch    | 12 +++----
- .../hci_intel.patch                                | 10 +++---
- .../network/0055-name_assign_type/brcmfmac.patch   |  2 +-
- .../network/0059-uuid-in-mei/nfc.patch             | 16 ++++++----
- .../network/0062-acpi-gpio-remove/hci_bcm.patch    | 24 +++++++-------
- .../network/0062-acpi-gpio-remove/hci_intel.patch  | 10 +++---
- .../network/0065-ndisc_send_na-argument.cocci      |  9 ++++++
- 33 files changed, 211 insertions(+), 85 deletions(-)
- create mode 100644 backport/backport-include/linux/gfp.h
- create mode 100644 patches/collateral-evolutions/network/0013-fix-makefile-includes/6lowpan.patch
- delete mode 100644 patches/collateral-evolutions/network/0013-fix-makefile-includes/brcmfmac.patch
- create mode 100644 patches/collateral-evolutions/network/0065-ndisc_send_na-argument.cocci
+hauke@hauke-desktop:~/compat-wireless/tmp$ ionice -c 3 nice -n 20 make V=99
+  CC [M]  /home/hauke/compat-wireless/tmp/compat/main.o
+In file included from include/linux/hrtimer.h:18:0,
+                 from
+/home/hauke/compat-wireless/tmp/backport-include/linux/timekeeping.h:5,
+                 from include/linux/ktime.h:297,
+                 from
+/home/hauke/compat-wireless/tmp/backport-include/linux/ktime.h:3,
+                 from include/linux/rcupdate.h:47,
+                 from
+/home/hauke/compat-wireless/tmp/backport-include/linux/rcupdate.h:3,
+                 from include/linux/srcu.h:33,
+                 from include/linux/notifier.h:15,
+                 from include/linux/memory_hotplug.h:6,
+                 from include/linux/mmzone.h:812,
+                 from include/linux/gfp.h:5,
+                 from
+/home/hauke/compat-wireless/tmp/backport-include/linux/gfp.h:3,
+                 from include/linux/kmod.h:22,
+                 from include/linux/module.h:13,
+                 from
+/home/hauke/compat-wireless/tmp/backport-include/linux/module.h:3,
+                 from /home/hauke/compat-wireless/tmp/compat/main.c:1:
+include/linux/rbtree.h: In function ‘rb_link_node_rcu’:
+include/linux/rbtree.h:95:2: error: implicit declaration of function
+‘rcu_assign_pointer’ [-Werror=implicit-function-declaration]
+  rcu_assign_pointer(*rb_link, node);
+  ^
+cc1: some warnings being treated as errors
+scripts/Makefile.build:258: recipe for target
+'/home/hauke/compat-wireless/tmp/compat/main.o' failed
+make[6]: *** [/home/hauke/compat-wireless/tmp/compat/main.o] Error 1
+scripts/Makefile.build:403: recipe for target
+'/home/hauke/compat-wireless/tmp/compat' failed
+make[5]: *** [/home/hauke/compat-wireless/tmp/compat] Error 2
+Makefile:1378: recipe for target
+'_module_/home/hauke/compat-wireless/tmp' failed
+make[4]: *** [_module_/home/hauke/compat-wireless/tmp] Error 2
+Makefile.build:6: recipe for target 'modules' failed
+make[3]: *** [modules] Error 2
+Makefile.real:88: recipe for target 'modules' failed
+make[2]: *** [modules] Error 2
+Makefile:40: recipe for target 'modules' failed
+make[1]: *** [modules] Error 2
+Makefile:30: recipe for target 'default' failed
+make: *** [default] Error 2
+hauke@hauke-desktop:~/compat-wireless/tmp$ uname -a
+Linux hauke-desktop 4.3.0+ #3 SMP Tue Nov 3 20:56:24 CET 2015 x86_64
+GNU/Linux
+hauke@hauke-desktop:~/compat-wireless/tmp$
 
--- 
-2.6.2
+
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
