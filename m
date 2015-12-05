@@ -1,49 +1,182 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:36734 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:36727 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751095AbbLEUOF (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 5 Dec 2015 15:14:05 -0500
-Subject: Re: [PATCH] patches: fix path in name_assign_type patch
-To: Arend van Spriel <arend@broadcom.com>,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>
-References: <1448884387-20806-1-git-send-email-arend@broadcom.com>
-Cc: backports@vger.kernel.org
+	id S1751095AbbLEUMG (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 5 Dec 2015 15:12:06 -0500
+Subject: Re: [PATCH 1/2] backport: import TSO helpers with support for IPv6
+To: Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	backports@vger.kernel.org
+References: <1449056950-25054-1-git-send-email-emmanuel.grumbach@intel.com>
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <5663458B.1070103@hauke-m.de> (sfid-20151205_211408_495778_1F398223)
-Date: Sat, 5 Dec 2015 21:14:03 +0100
+Message-ID: <56634510.4020105@hauke-m.de> (sfid-20151205_211215_727014_94723188)
+Date: Sat, 5 Dec 2015 21:12:00 +0100
 MIME-Version: 1.0
-In-Reply-To: <1448884387-20806-1-git-send-email-arend@broadcom.com>
+In-Reply-To: <1449056950-25054-1-git-send-email-emmanuel.grumbach@intel.com>
 Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 11/30/2015 12:53 PM, Arend van Spriel wrote:
-> Patch for brcmfmac need update path as it now resides under
-> the broadcom vendor directory.
+On 12/02/2015 12:49 PM, Emmanuel Grumbach wrote:
+> Note that TSO core helpers have been implemented in 3.19,
+> but support for IPv6 was added in 4.4 only.
+> iwlwifi will soon need this.
 > 
-> Signed-off-by: Arend van Spriel <arend@broadcom.com>
+> Change-Id: Ic1cc407ca521fc3dd21ec1c9202ef599ca8e11e0
+> Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 > ---
->  .../network/0055-name_assign_type/brcmfmac.patch                      | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  backport/backport-include/net/tso.h | 33 ++++++++++++++
+>  backport/compat/backport-4.4.c      | 87 +++++++++++++++++++++++++++++++++++++
+>  2 files changed, 120 insertions(+)
+>  create mode 100644 backport/backport-include/net/tso.h
 > 
-> diff --git a/patches/collateral-evolutions/network/0055-name_assign_type/brcmfmac.patch b/patches/collateral-evolutions/network/0055-name_assign_type/brcmfmac.patch
-> index c68e9d0..bcbac24 100644
-> --- a/patches/collateral-evolutions/network/0055-name_assign_type/brcmfmac.patch
-> +++ b/patches/collateral-evolutions/network/0055-name_assign_type/brcmfmac.patch
-> @@ -1,5 +1,5 @@
-> ---- a/drivers/net/wireless/brcm80211/brcmfmac/p2p.c
-> -+++ b/drivers/net/wireless/brcm80211/brcmfmac/p2p.c
-> +--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
-> ++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
->  @@ -2204,7 +2204,9 @@ struct wireless_dev *brcmf_p2p_add_vif(s
->   	}
->   
+> diff --git a/backport/backport-include/net/tso.h b/backport/backport-include/net/tso.h
+> new file mode 100644
+> index 0000000..816928c
+> --- /dev/null
+> +++ b/backport/backport-include/net/tso.h
+> @@ -0,0 +1,33 @@
+> +#ifndef BACKPORT_TSO_H
+> +#define BACKPORT_TSO_H
+> +
+> +#include <net/ip.h>
+> +
+> +#if LINUX_VERSION_CODE < KERNEL_VERSION(4,4,0)
+> +
+> +#define tso_t LINUX_BACKPORT(tso_t)
+> +struct tso_t {
+> +	int next_frag_idx;
+> +	void *data;
+> +	size_t size;
+> +	u16 ip_id;
+> +	bool ipv6;
+> +	u32 tcp_seq;
+> +};
+> +
+> +#define tso_count_descs LINUX_BACKPORT(tso_count_descs)
+> +int tso_count_descs(struct sk_buff *skb);
+> +
+> +#define tso_build_hdr LINUX_BACKPORT(tso_build_hdr)
+> +void tso_build_hdr(struct sk_buff *skb, char *hdr, struct tso_t *tso,
+> +		   int size, bool is_last);
+> +#define tso_build_data LINUX_BACKPORT(tso_build_data)
+> +void tso_build_data(struct sk_buff *skb, struct tso_t *tso, int size);
+> +#define tso_start LINUX_BACKPORT(tso_start)
+> +void tso_start(struct sk_buff *skb, struct tso_t *tso);
+> +
+> +#else
+> +#include_next <net/tso.h>
+> +#endif
+> +
+> +#endif	/* BACKPORT_TSO_H */
+> diff --git a/backport/compat/backport-4.4.c b/backport/compat/backport-4.4.c
+> index 43e26e5..0905346 100644
+> --- a/backport/compat/backport-4.4.c
+> +++ b/backport/compat/backport-4.4.c
+> @@ -64,3 +64,90 @@ struct dentry *debugfs_create_bool(const char *name, umode_t mode,
+>  }
+>  EXPORT_SYMBOL_GPL(debugfs_create_bool);
+>  #endif /* CONFIG_DEBUG_FS */
+> +
+> +#include <linux/export.h>
+> +#include <linux/if_vlan.h>
+> +#include <net/ip.h>
+> +#include <net/tso.h>
+> +#include <asm/unaligned.h>
+
+Please move the includes to the top of this file and add these two
+includes which are also used by these functions:
+#include <linux/mm.h>
+#include <linux/skbuff.h>
+
+> +
+> +/* Calculate expected number of TX descriptors */
+> +int tso_count_descs(struct sk_buff *skb)
+> +{
+> +	/* The Marvell Way */
+> +	return skb_shinfo(skb)->gso_segs * 2 + skb_shinfo(skb)->nr_frags;
+> +}
+> +EXPORT_SYMBOL(tso_count_descs);
+> +
+> +void tso_build_hdr(struct sk_buff *skb, char *hdr, struct tso_t *tso,
+> +		   int size, bool is_last)
+> +{
+> +	struct tcphdr *tcph;
+> +	int hdr_len = skb_transport_offset(skb) + tcp_hdrlen(skb);
+> +	int mac_hdr_len = skb_network_offset(skb);
+> +
+> +	memcpy(hdr, skb->data, hdr_len);
+> +	if (!tso->ipv6) {
+> +		struct iphdr *iph = (void *)(hdr + mac_hdr_len);
+> +
+> +		iph->id = htons(tso->ip_id);
+> +		iph->tot_len = htons(size + hdr_len - mac_hdr_len);
+> +		tso->ip_id++;
+> +	} else {
+> +		struct ipv6hdr *iph = (void *)(hdr + mac_hdr_len);
+> +
+> +		iph->payload_len = htons(size + tcp_hdrlen(skb));
+> +	}
+> +	tcph = (struct tcphdr *)(hdr + skb_transport_offset(skb));
+> +	put_unaligned_be32(tso->tcp_seq, &tcph->seq);
+> +
+> +	if (!is_last) {
+> +		/* Clear all special flags for not last packet */
+> +		tcph->psh = 0;
+> +		tcph->fin = 0;
+> +		tcph->rst = 0;
+> +	}
+> +}
+> +EXPORT_SYMBOL(tso_build_hdr);
+> +
+> +void tso_build_data(struct sk_buff *skb, struct tso_t *tso, int size)
+> +{
+> +	tso->tcp_seq += size;
+> +	tso->size -= size;
+> +	tso->data += size;
+> +
+> +	if ((tso->size == 0) &&
+> +	    (tso->next_frag_idx < skb_shinfo(skb)->nr_frags)) {
+> +		skb_frag_t *frag = &skb_shinfo(skb)->frags[tso->next_frag_idx];
+> +
+> +		/* Move to next segment */
+> +		tso->size = frag->size;
+> +		tso->data = page_address(frag->page.p) + frag->page_offset;
+
+Please replace frag->page.p with skb_frag_page(frag). frag->page.p does
+on exist on kernel < 3.2.
+
+> +		tso->next_frag_idx++;
+> +	}
+> +}
+> +EXPORT_SYMBOL(tso_build_data);
+> +
+> +void tso_start(struct sk_buff *skb, struct tso_t *tso)
+> +{
+> +	int hdr_len = skb_transport_offset(skb) + tcp_hdrlen(skb);
+> +
+> +	tso->ip_id = ntohs(ip_hdr(skb)->id);
+> +	tso->tcp_seq = ntohl(tcp_hdr(skb)->seq);
+> +	tso->next_frag_idx = 0;
+> +	tso->ipv6 = vlan_get_protocol(skb) == htons(ETH_P_IPV6);
+> +
+> +	/* Build first data */
+> +	tso->size = skb_headlen(skb) - hdr_len;
+> +	tso->data = skb->data + hdr_len;
+> +	if ((tso->size == 0) &&
+> +	    (tso->next_frag_idx < skb_shinfo(skb)->nr_frags)) {
+> +		skb_frag_t *frag = &skb_shinfo(skb)->frags[tso->next_frag_idx];
+> +
+> +		/* Move to next segment */
+> +		tso->size = frag->size;
+> +		tso->data = page_address(frag->page.p) + frag->page_offset;
+
+same here
+
+> +		tso->next_frag_idx++;
+> +	}
+> +}
+> +EXPORT_SYMBOL(tso_start);
 > 
-I will do this for all patches at once, but thanks.
 
-Is it ok to replace the b43, b43legacy and brcm80211 by this single line?
-drivers/net/wireless/broadcom/
-
-Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
