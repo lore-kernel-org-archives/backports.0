@@ -1,38 +1,49 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:49630 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:36734 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754027AbbLIW4s (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 9 Dec 2015 17:56:48 -0500
-Message-ID: <1449701805.22495.1.camel@sipsolutions.net> (sfid-20151209_235652_234383_D59FAA77)
-Subject: Re: [PATCH v2] backports: add ktime_get_seconds()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-	Arend van Spriel <arend@broadcom.com>,
-	backports@vger.kernel.org
-Date: Wed, 09 Dec 2015 23:56:45 +0100
-In-Reply-To: <5668B0AC.2080602@hauke-m.de>
-References: <1445601179-3434-1-git-send-email-johannes@sipsolutions.net>
-	 <563E301B.7090609@hauke-m.de> <56669864.3050404@broadcom.com>
-	 <1449565444.4154.1.camel@sipsolutions.net>
-	 <1449566082.4154.6.camel@sipsolutions.net> <5666A2C8.3070002@broadcom.com>
-	 <1449567481.4154.9.camel@sipsolutions.net> <5668B0AC.2080602@hauke-m.de>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+	id S1751095AbbLEUOF (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 5 Dec 2015 15:14:05 -0500
+Subject: Re: [PATCH] patches: fix path in name_assign_type patch
+To: Arend van Spriel <arend@broadcom.com>,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+References: <1448884387-20806-1-git-send-email-arend@broadcom.com>
+Cc: backports@vger.kernel.org
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Message-ID: <5663458B.1070103@hauke-m.de> (sfid-20151205_211408_495778_1F398223)
+Date: Sat, 5 Dec 2015 21:14:03 +0100
+MIME-Version: 1.0
+In-Reply-To: <1448884387-20806-1-git-send-email-arend@broadcom.com>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2015-12-09 at 23:52 +0100, Hauke Mehrtens wrote:
-> 
-> We could search backport/compat/*.c for EXPORT_SYMBOL() and create
-> the
-> list based on that. Using compat.ko for that would mean we have to
-> compile first.
+On 11/30/2015 12:53 PM, Arend van Spriel wrote:
+> Patch for brcmfmac need update path as it now resides under
+> the broadcom vendor directory.
+> 
+> Signed-off-by: Arend van Spriel <arend@broadcom.com>
+> ---
+>  .../network/0055-name_assign_type/brcmfmac.patch                      | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/patches/collateral-evolutions/network/0055-name_assign_type/brcmfmac.patch b/patches/collateral-evolutions/network/0055-name_assign_type/brcmfmac.patch
+> index c68e9d0..bcbac24 100644
+> --- a/patches/collateral-evolutions/network/0055-name_assign_type/brcmfmac.patch
+> +++ b/patches/collateral-evolutions/network/0055-name_assign_type/brcmfmac.patch
+> @@ -1,5 +1,5 @@
+> ---- a/drivers/net/wireless/brcm80211/brcmfmac/p2p.c
+> -+++ b/drivers/net/wireless/brcm80211/brcmfmac/p2p.c
+> +--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
+> ++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
+>  @@ -2204,7 +2204,9 @@ struct wireless_dev *brcmf_p2p_add_vif(s
+>   	}
+>   
+> 
+I will do this for all patches at once, but thanks.
 
-EXPORT_SYMBOL is pretty simple to grep :)
+Is it ok to replace the b43, b43legacy and brcm80211 by this single line?
+drivers/net/wireless/broadcom/
 
-I'm just not really sure I see the point - after all, we have to add
-the #ifdefs manually as well?
-
-johannes
+Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
