@@ -1,173 +1,68 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:30064 "EHLO mga01.intel.com"
+Received: from hauke-m.de ([5.39.93.123]:37456 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751707AbbLEUff (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 5 Dec 2015 15:35:35 -0500
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+	id S1753903AbbLFNSi (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 6 Dec 2015 08:18:38 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Subject: [PATCH v2] backport: import TSO helpers with support for IPv6
-Date: Sat,  5 Dec 2015 22:35:30 +0200
-Message-Id: <1449347730-23500-1-git-send-email-emmanuel.grumbach@intel.com> (sfid-20151205_213537_712556_146926CE)
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 11/12] devel: update test kernel versions
+Date: Sun,  6 Dec 2015 14:18:27 +0100
+Message-Id: <1449407908-15547-12-git-send-email-hauke@hauke-m.de> (sfid-20151206_143058_208238_225FCE06)
+In-Reply-To: <1449407908-15547-1-git-send-email-hauke@hauke-m.de>
+References: <1449407908-15547-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Note that TSO core helpers have been implemented in 3.19,
-but support for IPv6 was added in 4.4 only.
-iwlwifi will soon need this.
-
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/net/tso.h | 33 ++++++++++++++
- backport/compat/backport-4.4.c      | 89 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 122 insertions(+)
- create mode 100644 backport/backport-include/net/tso.h
+ devel/backports-update-manager | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/backport/backport-include/net/tso.h b/backport/backport-include/net/tso.h
-new file mode 100644
-index 0000000..816928c
---- /dev/null
-+++ b/backport/backport-include/net/tso.h
-@@ -0,0 +1,33 @@
-+#ifndef BACKPORT_TSO_H
-+#define BACKPORT_TSO_H
-+
-+#include <net/ip.h>
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,4,0)
-+
-+#define tso_t LINUX_BACKPORT(tso_t)
-+struct tso_t {
-+	int next_frag_idx;
-+	void *data;
-+	size_t size;
-+	u16 ip_id;
-+	bool ipv6;
-+	u32 tcp_seq;
-+};
-+
-+#define tso_count_descs LINUX_BACKPORT(tso_count_descs)
-+int tso_count_descs(struct sk_buff *skb);
-+
-+#define tso_build_hdr LINUX_BACKPORT(tso_build_hdr)
-+void tso_build_hdr(struct sk_buff *skb, char *hdr, struct tso_t *tso,
-+		   int size, bool is_last);
-+#define tso_build_data LINUX_BACKPORT(tso_build_data)
-+void tso_build_data(struct sk_buff *skb, struct tso_t *tso, int size);
-+#define tso_start LINUX_BACKPORT(tso_start)
-+void tso_start(struct sk_buff *skb, struct tso_t *tso);
-+
-+#else
-+#include_next <net/tso.h>
-+#endif
-+
-+#endif	/* BACKPORT_TSO_H */
-diff --git a/backport/compat/backport-4.4.c b/backport/compat/backport-4.4.c
-index 43e26e5..2ea0d67 100644
---- a/backport/compat/backport-4.4.c
-+++ b/backport/compat/backport-4.4.c
-@@ -11,6 +11,14 @@
- #include <linux/debugfs.h>
- #include <linux/uaccess.h>
- #include <linux/fs.h>
-+#include <linux/export.h>
-+#include <linux/if_vlan.h>
-+#include <linux/mm.h>
-+#include <linux/skbuff.h>
-+#include <net/ip.h>
-+#include <net/tso.h>
-+#include <asm/unaligned.h>
-+
+diff --git a/devel/backports-update-manager b/devel/backports-update-manager
+index afe2321..99a4c6c 100755
+--- a/devel/backports-update-manager
++++ b/devel/backports-update-manager
+@@ -26,7 +26,7 @@ SPACE_PER_KERNEL_DEB=13
+ KERNEL_URLS = [
+     KPATH + "v3.0.101-oneiric/linux-headers-3.0.101-0300101_3.0.101-0300101.201310220446_all.deb",
+     KPATH + "v3.1.10-precise/linux-headers-3.1.10-030110_3.1.10-030110.201201181135_all.deb",
+-    KPATH + "v3.2.72-precise/linux-headers-3.2.72-030272_3.2.72-030272.201510131235_all.deb",
++    KPATH + "v3.2.74-precise/linux-headers-3.2.74-030274_3.2.74-030274.201511272234_all.deb",
+     KPATH + "v3.3.8-quantal/linux-headers-3.3.8-030308_3.3.8-030308.201206041356_all.deb",
+     KPATH + "v3.4.110-quantal/linux-headers-3.4.110-0304110_3.4.110-0304110.201510220333_all.deb",
+     KPATH + "v3.5.7.12-quantal/linux-headers-3.5.7-03050712_3.5.7-03050712.201305111435_all.deb",
+@@ -34,20 +34,21 @@ KERNEL_URLS = [
+     KPATH + "v3.7.10-raring/linux-headers-3.7.10-030710_3.7.10-030710.201302271235_all.deb",
+     KPATH + "v3.8.13-raring/linux-headers-3.8.13-030813_3.8.13-030813.201305111843_all.deb",
+     KPATH + "v3.9.11-saucy/linux-headers-3.9.11-030911_3.9.11-030911.201307202035_all.deb",
+-    KPATH + "v3.10.92-saucy/linux-headers-3.10.92-031092_3.10.92-031092.201510262203_all.deb",
++    KPATH + "v3.10.93-precise/linux-headers-3.10.93-031093_3.10.93-031093.201511092122_all.deb",
+     KPATH + "v3.11.10-saucy/linux-headers-3.11.10-031110_3.11.10-031110.201311291453_all.deb",
+-    KPATH + "v3.12.49-trusty/linux-headers-3.12.49-031249_3.12.49-031249.201510071331_all.deb",
++    KPATH + "v3.12.51-trusty/linux-headers-3.12.51-031251_3.12.51-031251.201511272233_all.deb",
+     KPATH + "v3.13.11-trusty/linux-headers-3.13.11-031311_3.13.11-031311.201404222035_all.deb",
+-    KPATH + "v3.14.56-utopic/linux-headers-3.14.56-031456_3.14.56-031456.201510262131_all.deb",
++    KPATH + "v3.14.57-trusty/linux-headers-3.14.57-031457_3.14.57-031457.201511091731_all.deb",
+     KPATH + "v3.15.10-utopic/linux-headers-3.15.10-031510_3.15.10-031510.201408132333_all.deb",
+     KPATH + "v3.16.7-utopic/linux-headers-3.16.7-031607_3.16.7-031607.201410301735_all.deb",
+     KPATH + "v3.17.8-vivid/linux-headers-3.17.8-031708_3.17.8-031708.201501081837_all.deb",
+-    KPATH + "v3.18.23-vivid/linux-headers-3.18.23-031823_3.18.23-031823.201510291931_all.deb",
++    KPATH + "v3.18.24-vivid/linux-headers-3.18.24-031824_3.18.24-031824.201511031331_all.deb",
+     KPATH + "v3.19.8-vivid/linux-headers-3.19.8-031908_3.19.8-031908.201505110938_all.deb",
+     KPATH + "v4.0.9-wily/linux-headers-4.0.9-040009_4.0.9-040009.201507212131_all.deb",
+-    KPATH + "v4.1.12-wily/linux-headers-4.1.12-040112_4.1.12-040112.201510262131_all.deb",
+-    KPATH + "v4.2.5-wily/linux-headers-4.2.5-040205_4.2.5-040205.201510270124_all.deb",
+-    KPATH + "v4.3-rc7-unstable/linux-headers-4.3.0-040300rc7_4.3.0-040300rc7.201510260712_all.deb"
++    KPATH + "v4.1.13-wily/linux-headers-4.1.13-040113_4.1.13-040113.201511092325_all.deb",
++    KPATH + "v4.2.6-wily/linux-headers-4.2.6-040206_4.2.6-040206.201511091832_all.deb",
++    KPATH + "v4.3-wily/linux-headers-4.3.0-040300_4.3.0-040300.201511020949_all.deb",
++    KPATH + "v4.4-rc3-wily/linux-headers-4.4.0-040400rc3_4.4.0-040400rc3.201511300321_all.deb"
+ ]
  
- #ifdef CONFIG_DEBUG_FS
- #if LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0)
-@@ -64,3 +72,84 @@ struct dentry *debugfs_create_bool(const char *name, umode_t mode,
- }
- EXPORT_SYMBOL_GPL(debugfs_create_bool);
- #endif /* CONFIG_DEBUG_FS */
-+
-+/* Calculate expected number of TX descriptors */
-+int tso_count_descs(struct sk_buff *skb)
-+{
-+	/* The Marvell Way */
-+	return skb_shinfo(skb)->gso_segs * 2 + skb_shinfo(skb)->nr_frags;
-+}
-+EXPORT_SYMBOL(tso_count_descs);
-+
-+void tso_build_hdr(struct sk_buff *skb, char *hdr, struct tso_t *tso,
-+		   int size, bool is_last)
-+{
-+	struct tcphdr *tcph;
-+	int hdr_len = skb_transport_offset(skb) + tcp_hdrlen(skb);
-+	int mac_hdr_len = skb_network_offset(skb);
-+
-+	memcpy(hdr, skb->data, hdr_len);
-+	if (!tso->ipv6) {
-+		struct iphdr *iph = (void *)(hdr + mac_hdr_len);
-+
-+		iph->id = htons(tso->ip_id);
-+		iph->tot_len = htons(size + hdr_len - mac_hdr_len);
-+		tso->ip_id++;
-+	} else {
-+		struct ipv6hdr *iph = (void *)(hdr + mac_hdr_len);
-+
-+		iph->payload_len = htons(size + tcp_hdrlen(skb));
-+	}
-+	tcph = (struct tcphdr *)(hdr + skb_transport_offset(skb));
-+	put_unaligned_be32(tso->tcp_seq, &tcph->seq);
-+
-+	if (!is_last) {
-+		/* Clear all special flags for not last packet */
-+		tcph->psh = 0;
-+		tcph->fin = 0;
-+		tcph->rst = 0;
-+	}
-+}
-+EXPORT_SYMBOL(tso_build_hdr);
-+
-+void tso_build_data(struct sk_buff *skb, struct tso_t *tso, int size)
-+{
-+	tso->tcp_seq += size;
-+	tso->size -= size;
-+	tso->data += size;
-+
-+	if ((tso->size == 0) &&
-+	    (tso->next_frag_idx < skb_shinfo(skb)->nr_frags)) {
-+		skb_frag_t *frag = &skb_shinfo(skb)->frags[tso->next_frag_idx];
-+
-+		/* Move to next segment */
-+		tso->size = frag->size;
-+		tso->data = skb_frag_page(frag) + frag->page_offset;
-+		tso->next_frag_idx++;
-+	}
-+}
-+EXPORT_SYMBOL(tso_build_data);
-+
-+void tso_start(struct sk_buff *skb, struct tso_t *tso)
-+{
-+	int hdr_len = skb_transport_offset(skb) + tcp_hdrlen(skb);
-+
-+	tso->ip_id = ntohs(ip_hdr(skb)->id);
-+	tso->tcp_seq = ntohl(tcp_hdr(skb)->seq);
-+	tso->next_frag_idx = 0;
-+	tso->ipv6 = vlan_get_protocol(skb) == htons(ETH_P_IPV6);
-+
-+	/* Build first data */
-+	tso->size = skb_headlen(skb) - hdr_len;
-+	tso->data = skb->data + hdr_len;
-+	if ((tso->size == 0) &&
-+	    (tso->next_frag_idx < skb_shinfo(skb)->nr_frags)) {
-+		skb_frag_t *frag = &skb_shinfo(skb)->frags[tso->next_frag_idx];
-+
-+		/* Move to next segment */
-+		tso->size = frag->size;
-+		tso->data = skb_frag_page(frag) + frag->page_offset;
-+		tso->next_frag_idx++;
-+	}
-+}
-+EXPORT_SYMBOL(tso_start);
+ NUM_KERNELS=len(KERNEL_URLS)
 -- 
-2.5.0
+2.6.2
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
