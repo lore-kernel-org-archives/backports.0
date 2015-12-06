@@ -1,44 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:34281 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:37448 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S964921AbbLOK1P (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 15 Dec 2015 05:27:15 -0500
-From: Johannes Berg <johannes@sipsolutions.net>
+	id S1753475AbbLFNSh (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 6 Dec 2015 08:18:37 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH v3] backports: add ktime_get_boot_ns()
-Date: Tue, 15 Dec 2015 11:27:10 +0100
-Message-Id: <1450175230-11297-1-git-send-email-johannes@sipsolutions.net> (sfid-20151215_112737_521397_C97E0572)
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 07/12] header: fix genl_notify() on kernel 4.4
+Date: Sun,  6 Dec 2015 14:18:23 +0100
+Message-Id: <1449407908-15547-8-git-send-email-hauke@hauke-m.de> (sfid-20151206_141841_869675_E13C3016)
+In-Reply-To: <1449407908-15547-1-git-send-email-hauke@hauke-m.de>
+References: <1449407908-15547-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+The change of the parameters of genl_notify() is in kernel 4.4. This
+backport should not be applied for kernel 4.4 and newer kernel versions.
 
-This small helper inline was added in 3.17, we want to use it now
-so need to backport it.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/timekeeping.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ backport/backport-include/net/genetlink.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
-index fe42e7170680..db90a0a139b5 100644
---- a/backport/backport-include/linux/timekeeping.h
-+++ b/backport/backport-include/linux/timekeeping.h
-@@ -15,6 +15,12 @@ static inline u64 ktime_get_ns(void)
- {
- 	return ktime_to_ns(ktime_get());
- }
-+
-+extern ktime_t ktime_get_boottime(void);
-+static inline u64 ktime_get_boot_ns(void)
-+{
-+	return ktime_to_ns(ktime_get_boottime());
-+}
- #endif
+diff --git a/backport/backport-include/net/genetlink.h b/backport/backport-include/net/genetlink.h
+index 6c6d3e4..2e0bb3e 100644
+--- a/backport/backport-include/net/genetlink.h
++++ b/backport/backport-include/net/genetlink.h
+@@ -146,10 +146,12 @@ backport_genlmsg_multicast_allns(struct genl_family *family,
+ #define __genl_const
+ #else /* < 3.13 */
+ #define __genl_const const
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,4,0)
+ #define genl_notify(_fam, _skb, _info, _group, _flags)			\
+ 	genl_notify(_fam, _skb, genl_info_net(_info),			\
+ 		    genl_info_snd_portid(_info),			\
+ 		    _group, _info->nlhdr, _flags)
++#endif /* < 4.4 */
+ #endif /* < 3.13 */
  
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
+ #endif /* __BACKPORT_NET_GENETLINK_H */
 -- 
 2.6.2
 
