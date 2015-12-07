@@ -1,72 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:37432 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:59698 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752964AbbLFNSf (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 6 Dec 2015 08:18:35 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 00/12] backport: update to next-20151203
-Date: Sun,  6 Dec 2015 14:18:16 +0100
-Message-Id: <1449407908-15547-1-git-send-email-hauke@hauke-m.de> (sfid-20151206_141837_590502_9EB7DE79)
+	id S1754280AbbLGJCV (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 7 Dec 2015 04:02:21 -0500
+Message-ID: <1449478931.4040.1.camel@sipsolutions.net> (sfid-20151207_100225_319926_BBAEFCDB)
+Subject: Re: [PATCH] patches: fix path in name_assign_type patch
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend van Spriel <arend@broadcom.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: backports@vger.kernel.org
+Date: Mon, 07 Dec 2015 10:02:11 +0100
+In-Reply-To: <56654A94.4060502@broadcom.com>
+References: <1448884387-20806-1-git-send-email-arend@broadcom.com>
+		 <5663458B.1070103@hauke-m.de>
+	 (sfid-20151205_211408_495778_1F398223) <1449412622.4040.0.camel@sipsolutions.net>
+	 <56654A94.4060502@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This brings backports to next-20151203 and fixes some problems with
-kernel version 4.4.
+On Mon, 2015-12-07 at 10:00 +0100, Arend van Spriel wrote:
+> 
+> > > drivers/net/wireless/broadcom/
 
-Emmanuel Grumbach (2):
-  backport: import TSO helpers with support for IPv6
-  backport: add skb_ensure_writable
+> drivers/net/wireless/broadcom/Kconfig
+> drivers/net/wireless/broadcom/Makefile
+> drivers/net/wireless/broadcom/b43
+> drivers/net/wireless/broadcom/b43legacy
+> drivers/net/wireless/broadcom/brcm80211
+> 
+> Or (as Hauke suggests):
+> 
+> drivers/net/wireless/broadcom/
+> 
+> To restrict the copy-list the first option would be preferred.
+> 
 
-Hauke Mehrtens (10):
-  copy: adapt to moving of wifi drivers into vendor directories
-  dependencies: make hostap depend on kernel 3.10
-  header: fix netif_tx_napi_add() for 4.4
-  header: add led_set_brightness_sync() for kernel 4.4
-  header: fix genl_notify() on kernel 4.4
-  header: fix include old media header files from new positions for
-    kernel 4.4
-  header: add sk_set_bit() and sk_clear_bit()
-  header: make __MODULE_INFO use __UNIQUE_ID
-  devel: update test kernel versions
-  patches: refresh on next-20151203
+Oh, you meant for the copy-list?
 
- backport/backport-include/linux/compiler.h         | 11 +++
- backport/backport-include/linux/leds.h             |  6 +-
- backport/backport-include/linux/moduleparam.h      | 14 ++++
- backport/backport-include/linux/net.h              |  7 ++
- backport/backport-include/linux/netdevice.h        |  4 +-
- .../linux/platform_data/media/si4713.h             |  4 +-
- .../platform_data/media/soc_camera_platform.h      |  4 +-
- .../linux/platform_data/media/timb_radio.h         |  4 +-
- .../linux/platform_data/media/timb_video.h         |  4 +-
- backport/backport-include/linux/skbuff.h           |  4 +
- backport/backport-include/net/genetlink.h          |  2 +
- backport/backport-include/net/sock.h               | 16 ++++
- backport/backport-include/net/tso.h                | 33 ++++++++
- backport/compat/backport-3.19.c                    | 13 ++++
- backport/compat/backport-4.4.c                     | 88 ++++++++++++++++++++++
- copy-list                                          | 38 +++-------
- dependencies                                       |  3 +
- devel/backports-update-manager                     | 17 +++--
- .../0005-uapi-compromise/mwifiex.patch             |  8 +-
- .../include_net_cfg80211.patch                     |  2 +-
- .../drivers_net_wireless_cw1200_sdio.patch         |  4 +-
- .../0014-netlink_seq/net_wireless_nl80211.patch    |  2 +-
- .../drivers_net_wireless_ipw2x00_ipw2100.patch     |  4 +-
- .../drivers_net_wireless_libertas_if_usb.patch     |  4 +-
- .../drivers_net_wireless_iwlwifi_iwl-debug.patch   |  4 +-
- .../network/0024-led-blink-api/mac80211.patch      |  2 +-
- .../network/0028-select_queue/mac80211.patch       |  4 +-
- .../network/0028-select_queue/mwifiex.patch        |  4 +-
- .../network/0053-possible_net_t.patch              |  2 +-
- .../network/0055-name_assign_type/brcmfmac.patch   |  6 +-
- 30 files changed, 246 insertions(+), 72 deletions(-)
- create mode 100644 backport/backport-include/net/tso.h
+I thought upstream backports just shipped a single copy-list line
+"ddrivers/net/wireless/"?
 
--- 
-2.6.2
-
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
