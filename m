@@ -1,42 +1,65 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:37441 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:60683 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753776AbbLFNSf (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 6 Dec 2015 08:18:35 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 04/12] dependencies: make hostap depend on kernel 3.10
-Date: Sun,  6 Dec 2015 14:18:20 +0100
-Message-Id: <1449407908-15547-5-git-send-email-hauke@hauke-m.de> (sfid-20151206_141840_113260_2791B0FA)
-In-Reply-To: <1449407908-15547-1-git-send-email-hauke@hauke-m.de>
-References: <1449407908-15547-1-git-send-email-hauke@hauke-m.de>
+	id S1754562AbbLGMvQ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 7 Dec 2015 07:51:16 -0500
+Message-ID: <1449492673.4040.4.camel@sipsolutions.net> (sfid-20151207_135118_775197_23BEFD60)
+Subject: Re: [PATCH v2] backports: add ktime_get_boot_ns()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>,
+	Arend van Spriel <arend@broadcom.com>,
+	backports@vger.kernel.org
+Date: Mon, 07 Dec 2015 13:51:13 +0100
+In-Reply-To: <56620234.8010104@hauke-m.de>
+References: <1449046594-9738-1-git-send-email-johannes@sipsolutions.net>
+	 <1449046985.2449.0.camel@sipsolutions.net>
+	 <1449047089.2449.1.camel@sipsolutions.net> <565EC8F7.4030800@broadcom.com>
+	 <1449053189.2449.8.camel@sipsolutions.net> <56620234.8010104@hauke-m.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The hostap driver uses proc_remove() which was added in kernel 3.10.
+On Fri, 2015-12-04 at 22:14 +0100, Hauke Mehrtens wrote:
+> 
+> I am getting this error with your patch on kernel 4.3:
+> 
+> hauke@hauke-desktop:~/compat-wireless/tmp$ ionice -c 3 nice -n 20
+> make V=99
+>   CC [M]  /home/hauke/compat-wireless/tmp/compat/main.o
+> In file included from include/linux/hrtimer.h:18:0,
+>                  from
+> /home/hauke/compat-wireless/tmp/backport-
+> include/linux/timekeeping.h:5,
+>                  from include/linux/ktime.h:297,
+>                  from
+> /home/hauke/compat-wireless/tmp/backport-include/linux/ktime.h:3,
+>                  from include/linux/rcupdate.h:47,
+>                  from
+> /home/hauke/compat-wireless/tmp/backport-include/linux/rcupdate.h:3,
+>                  from include/linux/srcu.h:33,
+>                  from include/linux/notifier.h:15,
+>                  from include/linux/memory_hotplug.h:6,
+>                  from include/linux/mmzone.h:812,
+>                  from include/linux/gfp.h:5,
+>                  from
+> /home/hauke/compat-wireless/tmp/backport-include/linux/gfp.h:3,
+>                  from include/linux/kmod.h:22,
+>                  from include/linux/module.h:13,
+>                  from
+> /home/hauke/compat-wireless/tmp/backport-include/linux/module.h:3,
+>                  from /home/hauke/compat-
+> wireless/tmp/compat/main.c:1:
+> include/linux/rbtree.h: In function ‘rb_link_node_rcu’:
+> include/linux/rbtree.h:95:2: error: implicit declaration of function
+> ‘rcu_assign_pointer’ [-Werror=implicit-function-declaration]
+>   rcu_assign_pointer(*rb_link, node);
+>   ^
+> 
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- dependencies | 3 +++
- 1 file changed, 3 insertions(+)
+Strange. I got different but similarly strange warnings though, I'll
+send the patch I ended up using.
 
-diff --git a/dependencies b/dependencies
-index 4901e24..111ce13 100644
---- a/dependencies
-+++ b/dependencies
-@@ -10,6 +10,9 @@ WL1251_SDIO 3.15
- WL1251_SDIO kconfig: CONFIG_WILINK_PLATFORM_DATA
- WLCORE_SDIO 3.15
- 
-+# hostapd uses proc_remove()
-+HOSTAP 3.10
-+
- # This driver uses the remove_proc_subtree() function.
- AIRO 3.9
- AIRO_CS 3.9
--- 
-2.6.2
-
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
