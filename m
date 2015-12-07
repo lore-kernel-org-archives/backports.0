@@ -1,55 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:18162 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933233AbbLHIoX (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 8 Dec 2015 03:44:23 -0500
-Message-ID: <56669864.3050404@broadcom.com> (sfid-20151208_094430_942811_4B1A5954)
-Date: Tue, 8 Dec 2015 09:44:20 +0100
-From: Arend van Spriel <arend@broadcom.com>
-MIME-Version: 1.0
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	<backports@vger.kernel.org>
-CC: Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH v2] backports: add ktime_get_seconds()
-References: <1445601179-3434-1-git-send-email-johannes@sipsolutions.net> <563E301B.7090609@hauke-m.de>
-In-Reply-To: <563E301B.7090609@hauke-m.de>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Received: from s3.sipsolutions.net ([5.9.151.49]:60685 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754562AbbLGMvz (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 7 Dec 2015 07:51:55 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH v3] backports: add ktime_get_boot_ns()
+Date: Mon,  7 Dec 2015 13:51:52 +0100
+Message-Id: <1449492712-1584-1-git-send-email-johannes@sipsolutions.net> (sfid-20151207_135156_666267_55DC9B0A)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 11/07/2015 06:08 PM, Hauke Mehrtens wrote:
-> On 10/23/2015 01:52 PM, Johannes Berg wrote:
->> From: Johannes Berg <johannes.berg@intel.com>
->>
->> Since commit 84b00607aeb8 ("mac80211: use ktime_get_seconds")
->> mac80211 uses ktime_get_seconds(). This patch provide a backport
->> using ktime_get_ts() for it.
->>
->> [commit message and time64_t taken from Arend's patch]
->>
->> Signed-off-by: Arend van Spriel <arend@broadcom.com>
->> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
->> ---
->>   backport/backport-include/linux/ktime.h       |  1 +
->>   backport/backport-include/linux/timekeeping.h | 21 +++++++++++++++++++++
->>   backport/backport-include/linux/types.h       | 10 ++++++++++
->>   3 files changed, 32 insertions(+)
->>   create mode 100644 backport/backport-include/linux/timekeeping.h
->>   create mode 100644 backport/backport-include/linux/types.h
->>
-> Thank you for the patch, it was applied.
+From: Johannes Berg <johannes.berg@intel.com>
 
-Hi Hauke, Johannes,
+This small helper inline was added in 3.17, we want to use it now
+so need to backport it.
 
-I hit a duplicate export of this function against Fedora 22 kernel 
-(v4.0.4). So they apparently backported it in their kernel. So I 
-manually removed the function from backports tarball. Could this be 
-automated by looking at Module.symvers of the kernel we build against? I 
-will explore that if you guys consider it useful.
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/backport-include/linux/timekeeping.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Regards,
-Arend
+diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
+index fe42e7170680..db90a0a139b5 100644
+--- a/backport/backport-include/linux/timekeeping.h
++++ b/backport/backport-include/linux/timekeeping.h
+@@ -15,6 +15,12 @@ static inline u64 ktime_get_ns(void)
+ {
+ 	return ktime_to_ns(ktime_get());
+ }
++
++extern ktime_t ktime_get_boottime(void);
++static inline u64 ktime_get_boot_ns(void)
++{
++	return ktime_to_ns(ktime_get_boottime());
++}
+ #endif
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
+-- 
+2.6.2
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
