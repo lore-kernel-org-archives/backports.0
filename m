@@ -1,88 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:51825 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:38253 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750984AbbLUAGJ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 20 Dec 2015 19:06:09 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 1/6] backport: add no_seek_end_llseek()
-Date: Mon, 21 Dec 2015 01:05:56 +0100
-Message-Id: <1450656361-21259-2-git-send-email-hauke@hauke-m.de> (sfid-20151221_010618_275833_501D33B5)
-In-Reply-To: <1450656361-21259-1-git-send-email-hauke@hauke-m.de>
-References: <1450656361-21259-1-git-send-email-hauke@hauke-m.de>
+	id S1756107AbbLHJOq (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 8 Dec 2015 04:14:46 -0500
+Message-ID: <1449566082.4154.6.camel@sipsolutions.net> (sfid-20151208_101450_060065_DD89F6BF)
+Subject: Re: [PATCH v2] backports: add ktime_get_seconds()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend van Spriel <arend@broadcom.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
+Date: Tue, 08 Dec 2015 10:14:42 +0100
+In-Reply-To: <1449565444.4154.1.camel@sipsolutions.net> (sfid-20151208_100442_655563_BC7335A1)
+References: <1445601179-3434-1-git-send-email-johannes@sipsolutions.net>
+	 <563E301B.7090609@hauke-m.de> <56669864.3050404@broadcom.com>
+	 (sfid-20151208_094430_942811_4B1A5954) <1449565444.4154.1.camel@sipsolutions.net>
+	 (sfid-20151208_100442_655563_BC7335A1)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-no_seek_end_llseek() was added with kernel 4.5 in commit fb1d259e4 "new
-helpers: no_seek_end_llseek{,_size}()". This is used by wlcore.
-generic_file_llseek_size() is only available in kernel >= 3.2.
+On Tue, 2015-12-08 at 10:04 +0100, Johannes Berg wrote:
+> 
+> That's not a bad idea. We could have a script that creates some kind
+> of
+> header file with #define HAVE_KTIME_GET_SECONDS and then we could use
+> that. We could even just do that for every single exported functions,
+> that will just be a few hundred lines but shouldn't matter much? :)
+> 
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/fs.h |  6 ++++++
- backport/compat/backport-4.5.c       | 27 +++++++++++++++++++++++++++
- 2 files changed, 33 insertions(+)
+Ok maybe not - on a very small test configuration for me that's
+actually something like 6.5k lines...
 
-diff --git a/backport/backport-include/linux/fs.h b/backport/backport-include/linux/fs.h
-index 2790db6..42fb1e9 100644
---- a/backport/backport-include/linux/fs.h
-+++ b/backport/backport-include/linux/fs.h
-@@ -43,4 +43,10 @@ static inline struct inode *file_inode(struct file *f)
- 	} while(0)
- #endif /* replace_fops */
- 
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,5,0) && \
-+     LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
-+#define no_seek_end_llseek LINUX_BACKPORT(no_seek_end_llseek)
-+extern loff_t no_seek_end_llseek(struct file *, loff_t, int);
-+#endif /* < 4.5 && >= 3.2 */
-+
- #endif	/* _COMPAT_LINUX_FS_H */
-diff --git a/backport/compat/backport-4.5.c b/backport/compat/backport-4.5.c
-index e8f9b12..13c0a71 100644
---- a/backport/compat/backport-4.5.c
-+++ b/backport/compat/backport-4.5.c
-@@ -11,6 +11,7 @@
- #include <linux/leds.h>
- #include <linux/export.h>
- #include <linux/errno.h>
-+#include <linux/fs.h>
- 
- #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,19,0)
- int led_set_brightness_sync(struct led_classdev *led_cdev,
-@@ -31,3 +32,29 @@ int led_set_brightness_sync(struct led_classdev *led_cdev,
- }
- EXPORT_SYMBOL_GPL(led_set_brightness_sync);
- #endif /* >= 3.19 */
-+
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)
-+/**
-+ * no_seek_end_llseek - llseek implementation for fixed-sized devices
-+ * @file:	file structure to seek on
-+ * @offset:	file offset to seek to
-+ * @whence:	type of seek
-+ *
-+ */
-+loff_t no_seek_end_llseek(struct file *file, loff_t offset, int whence)
-+{
-+	switch (whence) {
-+	case SEEK_SET: case SEEK_CUR:
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+		return generic_file_llseek_size(file, offset, whence,
-+						~0ULL, 0);
-+#else
-+		return generic_file_llseek_size(file, offset, whence,
-+						~0ULL);
-+#endif
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(no_seek_end_llseek);
-+#endif /* >= 3.2 */
--- 
-2.6.4
+I guess then we could ship a list of functions we want to look at, like
+a file that simply lists one function per line:
 
+symbols-check:
+>>>
+ktime_get_seconds
+<<<
+
+and then we can do something like
+
+grep -f symbols-check /path/to/Module.symvers | \
+	cut -f2 | \
+	tr 'a-z' 'A-Z' | \
+	sed 's/^/#define HAVE_/;s/$/ 1/' \
+	> backport-include/backport/existing-symbols.h
+
+and include that in the right place?
+
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
