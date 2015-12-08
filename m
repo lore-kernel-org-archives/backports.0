@@ -1,32 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:52196 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756529AbbLBKqd (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 2 Dec 2015 05:46:33 -0500
-Message-ID: <1449053189.2449.8.camel@sipsolutions.net> (sfid-20151202_114635_228320_3137A5DF)
-Subject: Re: [PATCH v2] backports: add ktime_get_boot_ns()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend van Spriel <arend@broadcom.com>, backports@vger.kernel.org
-Date: Wed, 02 Dec 2015 11:46:29 +0100
-In-Reply-To: <565EC8F7.4030800@broadcom.com>
-References: <1449046594-9738-1-git-send-email-johannes@sipsolutions.net>
-		 (sfid-20151202_095640_670832_C3102C13) <1449046985.2449.0.camel@sipsolutions.net>
-		 (sfid-20151202_100312_233801_691AC5CB) <1449047089.2449.1.camel@sipsolutions.net>
-	 <565EC8F7.4030800@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:6506 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932522AbbLHJ2n (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 8 Dec 2015 04:28:43 -0500
+Message-ID: <5666A2C8.3070002@broadcom.com> (sfid-20151208_102847_876978_85CDBA46)
+Date: Tue, 8 Dec 2015 10:28:40 +0100
+From: Arend van Spriel <arend@broadcom.com>
+MIME-Version: 1.0
+To: Johannes Berg <johannes@sipsolutions.net>,
+	Hauke Mehrtens <hauke@hauke-m.de>, <backports@vger.kernel.org>
+Subject: Re: [PATCH v2] backports: add ktime_get_seconds()
+References: <1445601179-3434-1-git-send-email-johannes@sipsolutions.net>	 <563E301B.7090609@hauke-m.de> <56669864.3050404@broadcom.com>	 (sfid-20151208_094430_942811_4B1A5954) <1449565444.4154.1.camel@sipsolutions.net>	 (sfid-20151208_100442_655563_BC7335A1) <1449566082.4154.6.camel@sipsolutions.net>
+In-Reply-To: <1449566082.4154.6.camel@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2015-12-02 at 11:33 +0100, Arend van Spriel wrote:
-> 
-> Got a feeling I missing a side of this story. Still got a feeling you
-> need more coffee ;-)
-> 
+On 12/08/2015 10:14 AM, Johannes Berg wrote:
+> On Tue, 2015-12-08 at 10:04 +0100, Johannes Berg wrote:
+>>
+>> That's not a bad idea. We could have a script that creates some kind
+>> of
+>> header file with #define HAVE_KTIME_GET_SECONDS and then we could use
+>> that. We could even just do that for every single exported functions,
+>> that will just be a few hundred lines but shouldn't matter much? :)
+>>
+>
+> Ok maybe not - on a very small test configuration for me that's
+> actually something like 6.5k lines...
+>
+> I guess then we could ship a list of functions we want to look at, like
+> a file that simply lists one function per line:
 
-Yep! I don't drink coffee though, so I'll have to make do with
-something else ;-)
+Basically the list would be the exported symbols from the backports 
+module, ie. compat.ko, right?
 
-johannes
+Gr. AvS
+
+> symbols-check:
+>>>>
+> ktime_get_seconds
+> <<<
+>
+> and then we can do something like
+>
+> grep -f symbols-check /path/to/Module.symvers | \
+> 	cut -f2 | \
+> 	tr 'a-z' 'A-Z' | \
+> 	sed 's/^/#define HAVE_/;s/$/ 1/' \
+> 	> backport-include/backport/existing-symbols.h
+>
+> and include that in the right place?
+>
+> johannes
+>
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
