@@ -1,48 +1,58 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:59698 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:42891 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754280AbbLGJCV (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 7 Dec 2015 04:02:21 -0500
-Message-ID: <1449478931.4040.1.camel@sipsolutions.net> (sfid-20151207_100225_319926_BBAEFCDB)
-Subject: Re: [PATCH] patches: fix path in name_assign_type patch
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend van Spriel <arend@broadcom.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org
-Date: Mon, 07 Dec 2015 10:02:11 +0100
-In-Reply-To: <56654A94.4060502@broadcom.com>
-References: <1448884387-20806-1-git-send-email-arend@broadcom.com>
-		 <5663458B.1070103@hauke-m.de>
-	 (sfid-20151205_211408_495778_1F398223) <1449412622.4040.0.camel@sipsolutions.net>
-	 <56654A94.4060502@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+	id S1750810AbbLIWwa (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 9 Dec 2015 17:52:30 -0500
+Subject: Re: [PATCH v2] backports: add ktime_get_seconds()
+To: Johannes Berg <johannes@sipsolutions.net>,
+	Arend van Spriel <arend@broadcom.com>,
+	backports@vger.kernel.org
+References: <1445601179-3434-1-git-send-email-johannes@sipsolutions.net>
+ <563E301B.7090609@hauke-m.de> <56669864.3050404@broadcom.com>
+ <1449565444.4154.1.camel@sipsolutions.net>
+ <1449566082.4154.6.camel@sipsolutions.net> <5666A2C8.3070002@broadcom.com>
+ <1449567481.4154.9.camel@sipsolutions.net>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Message-ID: <5668B0AC.2080602@hauke-m.de> (sfid-20151209_235239_550932_EA06C36D)
+Date: Wed, 9 Dec 2015 23:52:28 +0100
+MIME-Version: 1.0
+In-Reply-To: <1449567481.4154.9.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 2015-12-07 at 10:00 +0100, Arend van Spriel wrote:
-> 
-> > > drivers/net/wireless/broadcom/
-
-> drivers/net/wireless/broadcom/Kconfig
-> drivers/net/wireless/broadcom/Makefile
-> drivers/net/wireless/broadcom/b43
-> drivers/net/wireless/broadcom/b43legacy
-> drivers/net/wireless/broadcom/brcm80211
+On 12/08/2015 10:38 AM, Johannes Berg wrote:
+> On Tue, 2015-12-08 at 10:28 +0100, Arend van Spriel wrote:
+>>  
+>> Basically the list would be the exported symbols from the backports 
+>> module, ie. compat.ko, right?
+>>
 > 
-> Or (as Hauke suggests):
+> Perhaps, I think it's slightly more complicated.
 > 
-> drivers/net/wireless/broadcom/
+> For one, we mostly prefix them with backport_, so just using as-is
+> won't work.
 > 
-> To restrict the copy-list the first option would be preferred.
+> Secondly, we might sometimes intentionally do that, even though the
+> original function *does* exist, like with debugfs_create_bool() that
+> changed function signature.
 > 
+> I think it'd be safer to just do it one by one - but we might be able
+> to get rid of a lot of the RHEL/ubuntu/whatever ifdefs that way?
+> 
+> We might also be able to use them to ifdef some inlines that belong to
+> it? Overall it seems better to just do it by hand but as a better
+> mechanism than checking kernel versions?
+> 
+> johannes
 
-Oh, you meant for the copy-list?
+We could search backport/compat/*.c for EXPORT_SYMBOL() and create the
+list based on that. Using compat.ko for that would mean we have to
+compile first.
+Based on this data we can check if the kernel would export this function
+and create a "#define HAVE_FUNFION_NAME 1"
 
-I thought upstream backports just shipped a single copy-list line
-"ddrivers/net/wireless/"?
+Hauke
 
-johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
