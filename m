@@ -1,54 +1,67 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:38253 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:42883 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756107AbbLHJOq (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 8 Dec 2015 04:14:46 -0500
-Message-ID: <1449566082.4154.6.camel@sipsolutions.net> (sfid-20151208_101450_060065_DD89F6BF)
+	id S1752701AbbLIWsH (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 9 Dec 2015 17:48:07 -0500
 Subject: Re: [PATCH v2] backports: add ktime_get_seconds()
-From: Johannes Berg <johannes@sipsolutions.net>
 To: Arend van Spriel <arend@broadcom.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
-Date: Tue, 08 Dec 2015 10:14:42 +0100
-In-Reply-To: <1449565444.4154.1.camel@sipsolutions.net> (sfid-20151208_100442_655563_BC7335A1)
+	Johannes Berg <johannes@sipsolutions.net>,
+	backports@vger.kernel.org
 References: <1445601179-3434-1-git-send-email-johannes@sipsolutions.net>
-	 <563E301B.7090609@hauke-m.de> <56669864.3050404@broadcom.com>
-	 (sfid-20151208_094430_942811_4B1A5954) <1449565444.4154.1.camel@sipsolutions.net>
-	 (sfid-20151208_100442_655563_BC7335A1)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+ <563E301B.7090609@hauke-m.de> <56669864.3050404@broadcom.com>
+Cc: Johannes Berg <johannes.berg@intel.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Message-ID: <5668AFA3.3070102@hauke-m.de> (sfid-20151209_234826_018800_C3315955)
+Date: Wed, 9 Dec 2015 23:48:03 +0100
+MIME-Version: 1.0
+In-Reply-To: <56669864.3050404@broadcom.com>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2015-12-08 at 10:04 +0100, Johannes Berg wrote:
-> 
-> That's not a bad idea. We could have a script that creates some kind
-> of
-> header file with #define HAVE_KTIME_GET_SECONDS and then we could use
-> that. We could even just do that for every single exported functions,
-> that will just be a few hundred lines but shouldn't matter much? :)
-> 
-
-Ok maybe not - on a very small test configuration for me that's
-actually something like 6.5k lines...
-
-I guess then we could ship a list of functions we want to look at, like
-a file that simply lists one function per line:
-
-symbols-check:
+On 12/08/2015 09:44 AM, Arend van Spriel wrote:
+> On 11/07/2015 06:08 PM, Hauke Mehrtens wrote:
+>> On 10/23/2015 01:52 PM, Johannes Berg wrote:
+>>> From: Johannes Berg <johannes.berg@intel.com>
 >>>
-ktime_get_seconds
-<<<
+>>> Since commit 84b00607aeb8 ("mac80211: use ktime_get_seconds")
+>>> mac80211 uses ktime_get_seconds(). This patch provide a backport
+>>> using ktime_get_ts() for it.
+>>>
+>>> [commit message and time64_t taken from Arend's patch]
+>>>
+>>> Signed-off-by: Arend van Spriel <arend@broadcom.com>
+>>> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+>>> ---
+>>>   backport/backport-include/linux/ktime.h       |  1 +
+>>>   backport/backport-include/linux/timekeeping.h | 21
+>>> +++++++++++++++++++++
+>>>   backport/backport-include/linux/types.h       | 10 ++++++++++
+>>>   3 files changed, 32 insertions(+)
+>>>   create mode 100644 backport/backport-include/linux/timekeeping.h
+>>>   create mode 100644 backport/backport-include/linux/types.h
+>>>
+>> Thank you for the patch, it was applied.
+> 
+> Hi Hauke, Johannes,
+> 
+> I hit a duplicate export of this function against Fedora 22 kernel
+> (v4.0.4). So they apparently backported it in their kernel. So I
+> manually removed the function from backports tarball. Could this be
+> automated by looking at Module.symvers of the kernel we build against? I
+> will explore that if you guys consider it useful.
+> 
+> Regards,
+> Arend
 
-and then we can do something like
+Hi,
 
-grep -f symbols-check /path/to/Module.symvers | \
-	cut -f2 | \
-	tr 'a-z' 'A-Z' | \
-	sed 's/^/#define HAVE_/;s/$/ 1/' \
-	> backport-include/backport/existing-symbols.h
+I think in this patch adding this should fix your concrete problem:
+#define ktime_get_seconds LINUX_BACKPORT(ktime_get_seconds)
 
-and include that in the right place?
+But it would still be nice to know what functions are in the mainline
+kernel so we can use them.
 
-johannes
+Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
