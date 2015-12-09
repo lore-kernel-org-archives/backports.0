@@ -1,47 +1,85 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:38325 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:42901 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755998AbbLHJiF (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 8 Dec 2015 04:38:05 -0500
-Message-ID: <1449567481.4154.9.camel@sipsolutions.net> (sfid-20151208_103821_290098_EB5D29B9)
-Subject: Re: [PATCH v2] backports: add ktime_get_seconds()
-From: Johannes Berg <johannes@sipsolutions.net>
+	id S1752701AbbLIW5V (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 9 Dec 2015 17:57:21 -0500
+Subject: Re: [PATCH] patches: fix path in name_assign_type patch
 To: Arend van Spriel <arend@broadcom.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
-Date: Tue, 08 Dec 2015 10:38:01 +0100
-In-Reply-To: <5666A2C8.3070002@broadcom.com>
-References: <1445601179-3434-1-git-send-email-johannes@sipsolutions.net>
-		 <563E301B.7090609@hauke-m.de> <56669864.3050404@broadcom.com>
-		 (sfid-20151208_094430_942811_4B1A5954) <1449565444.4154.1.camel@sipsolutions.net>
-		 (sfid-20151208_100442_655563_BC7335A1) <1449566082.4154.6.camel@sipsolutions.net>
-	 <5666A2C8.3070002@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+	Johannes Berg <johannes@sipsolutions.net>,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+References: <1448884387-20806-1-git-send-email-arend@broadcom.com>
+ <5663458B.1070103@hauke-m.de> <1449412622.4040.0.camel@sipsolutions.net>
+ <56654A94.4060502@broadcom.com> <1449478931.4040.1.camel@sipsolutions.net>
+ <56654C02.8010005@broadcom.com>
+Cc: backports@vger.kernel.org
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Message-ID: <5668B1CF.6040301@hauke-m.de> (sfid-20151209_235729_434021_A1BA3F72)
+Date: Wed, 9 Dec 2015 23:57:19 +0100
+MIME-Version: 1.0
+In-Reply-To: <56654C02.8010005@broadcom.com>
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2015-12-08 at 10:28 +0100, Arend van Spriel wrote:
-> 
-> Basically the list would be the exported symbols from the backports 
-> module, ie. compat.ko, right?
+On 12/07/2015 10:06 AM, Arend van Spriel wrote:
+> On 12/07/2015 10:02 AM, Johannes Berg wrote:
+>> On Mon, 2015-12-07 at 10:00 +0100, Arend van Spriel wrote:
+>>>
+>>>>> drivers/net/wireless/broadcom/
+>>
+>>> drivers/net/wireless/broadcom/Kconfig
+>>> drivers/net/wireless/broadcom/Makefile
+>>> drivers/net/wireless/broadcom/b43
+>>> drivers/net/wireless/broadcom/b43legacy
+>>> drivers/net/wireless/broadcom/brcm80211
+>>>
+>>> Or (as Hauke suggests):
+>>>
+>>> drivers/net/wireless/broadcom/
+>>>
+>>> To restrict the copy-list the first option would be preferred.
+>>>
+>>
+>> Oh, you meant for the copy-list?
+>>
+>> I thought upstream backports just shipped a single copy-list line
+>> "ddrivers/net/wireless/"?
 > 
+> Nope. It is:
+> 
+> # 802.11
+> drivers/net/wireless/Kconfig
+> drivers/net/wireless/Makefile
+> 
+> It looks for subfolders and modifies the Kconfig and Makefile for the
+> ones missing (comment out).
+> 
+> Regards,
+> Arend
+> 
+>> johannes
+>>
 
-Perhaps, I think it's slightly more complicated.
+Arend is right I was asking if you would like:
+drivers/net/wireless/broadcom/Kconfig
+drivers/net/wireless/broadcom/Makefile
+drivers/net/wireless/broadcom/b43
+drivers/net/wireless/broadcom/b43legacy
+drivers/net/wireless/broadcom/brcm80211
 
-For one, we mostly prefix them with backport_, so just using as-is
-won't work.
+or this:
+drivers/net/wireless/broadcom/
 
-Secondly, we might sometimes intentionally do that, even though the
-original function *does* exist, like with debugfs_create_bool() that
-changed function signature.
+or this:
+drivers/net/wireless/
 
-I think it'd be safer to just do it one by one - but we might be able
-to get rid of a lot of the RHEL/ubuntu/whatever ifdefs that way?
+for the copy-list file.
 
-We might also be able to use them to ifdef some inlines that belong to
-it? Overall it seems better to just do it by hand but as a better
-mechanism than checking kernel versions?
+This is not just about the Broadcom driver I would do it in the same way
+for all wifi driver.
 
-johannes
+Do both of you replace the copy-list file in your internal versions?
+
+Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
