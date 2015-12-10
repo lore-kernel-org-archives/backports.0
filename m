@@ -1,46 +1,31 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:60685 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:44307 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754562AbbLGMvz (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 7 Dec 2015 07:51:55 -0500
-From: Johannes Berg <johannes@sipsolutions.net>
+	id S1752038AbbLJVHV (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 10 Dec 2015 16:07:21 -0500
+Received: from [192.168.178.24] (p508B64DC.dip0.t-ipconnect.de [80.139.100.220])
+	by hauke-m.de (Postfix) with ESMTPSA id 3454E10039A
+	for <backports@vger.kernel.org>; Thu, 10 Dec 2015 22:07:18 +0100 (CET)
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH v3] backports: add ktime_get_boot_ns()
-Date: Mon,  7 Dec 2015 13:51:52 +0100
-Message-Id: <1449492712-1584-1-git-send-email-johannes@sipsolutions.net> (sfid-20151207_135156_666267_55DC9B0A)
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: backports-20151203 is out
+Message-ID: <5669E984.3070706@hauke-m.de> (sfid-20151210_220728_792619_8A2E316D)
+Date: Thu, 10 Dec 2015 22:07:16 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+backports-20151203 was released. This is based on linux-next next-20151203.
 
-This small helper inline was added in 3.17, we want to use it now
-so need to backport it.
+https://www.kernel.org/pub/linux/kernel/projects/backports/2015/12/03/backports-20151203.tar.xz
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/linux/timekeeping.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
 
-diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
-index fe42e7170680..db90a0a139b5 100644
---- a/backport/backport-include/linux/timekeeping.h
-+++ b/backport/backport-include/linux/timekeeping.h
-@@ -15,6 +15,12 @@ static inline u64 ktime_get_ns(void)
- {
- 	return ktime_to_ns(ktime_get());
- }
-+
-+extern ktime_t ktime_get_boottime(void);
-+static inline u64 ktime_get_boot_ns(void)
-+{
-+	return ktime_to_ns(ktime_get_boottime());
-+}
- #endif
- 
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
--- 
-2.6.2
+All the latest releases are listed here:
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
 
+Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
