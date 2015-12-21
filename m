@@ -1,65 +1,88 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:60683 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:51825 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754562AbbLGMvQ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 7 Dec 2015 07:51:16 -0500
-Message-ID: <1449492673.4040.4.camel@sipsolutions.net> (sfid-20151207_135118_775197_23BEFD60)
-Subject: Re: [PATCH v2] backports: add ktime_get_boot_ns()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-	Arend van Spriel <arend@broadcom.com>,
-	backports@vger.kernel.org
-Date: Mon, 07 Dec 2015 13:51:13 +0100
-In-Reply-To: <56620234.8010104@hauke-m.de>
-References: <1449046594-9738-1-git-send-email-johannes@sipsolutions.net>
-	 <1449046985.2449.0.camel@sipsolutions.net>
-	 <1449047089.2449.1.camel@sipsolutions.net> <565EC8F7.4030800@broadcom.com>
-	 <1449053189.2449.8.camel@sipsolutions.net> <56620234.8010104@hauke-m.de>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+	id S1750984AbbLUAGJ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 20 Dec 2015 19:06:09 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 1/6] backport: add no_seek_end_llseek()
+Date: Mon, 21 Dec 2015 01:05:56 +0100
+Message-Id: <1450656361-21259-2-git-send-email-hauke@hauke-m.de> (sfid-20151221_010618_275833_501D33B5)
+In-Reply-To: <1450656361-21259-1-git-send-email-hauke@hauke-m.de>
+References: <1450656361-21259-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2015-12-04 at 22:14 +0100, Hauke Mehrtens wrote:
-> 
-> I am getting this error with your patch on kernel 4.3:
-> 
-> hauke@hauke-desktop:~/compat-wireless/tmp$ ionice -c 3 nice -n 20
-> make V=99
->   CC [M]  /home/hauke/compat-wireless/tmp/compat/main.o
-> In file included from include/linux/hrtimer.h:18:0,
->                  from
-> /home/hauke/compat-wireless/tmp/backport-
-> include/linux/timekeeping.h:5,
->                  from include/linux/ktime.h:297,
->                  from
-> /home/hauke/compat-wireless/tmp/backport-include/linux/ktime.h:3,
->                  from include/linux/rcupdate.h:47,
->                  from
-> /home/hauke/compat-wireless/tmp/backport-include/linux/rcupdate.h:3,
->                  from include/linux/srcu.h:33,
->                  from include/linux/notifier.h:15,
->                  from include/linux/memory_hotplug.h:6,
->                  from include/linux/mmzone.h:812,
->                  from include/linux/gfp.h:5,
->                  from
-> /home/hauke/compat-wireless/tmp/backport-include/linux/gfp.h:3,
->                  from include/linux/kmod.h:22,
->                  from include/linux/module.h:13,
->                  from
-> /home/hauke/compat-wireless/tmp/backport-include/linux/module.h:3,
->                  from /home/hauke/compat-
-> wireless/tmp/compat/main.c:1:
-> include/linux/rbtree.h: In function ‘rb_link_node_rcu’:
-> include/linux/rbtree.h:95:2: error: implicit declaration of function
-> ‘rcu_assign_pointer’ [-Werror=implicit-function-declaration]
->   rcu_assign_pointer(*rb_link, node);
->   ^
-> 
+no_seek_end_llseek() was added with kernel 4.5 in commit fb1d259e4 "new
+helpers: no_seek_end_llseek{,_size}()". This is used by wlcore.
+generic_file_llseek_size() is only available in kernel >= 3.2.
 
-Strange. I got different but similarly strange warnings though, I'll
-send the patch I ended up using.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/fs.h |  6 ++++++
+ backport/compat/backport-4.5.c       | 27 +++++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+)
 
-johannes
+diff --git a/backport/backport-include/linux/fs.h b/backport/backport-include/linux/fs.h
+index 2790db6..42fb1e9 100644
+--- a/backport/backport-include/linux/fs.h
++++ b/backport/backport-include/linux/fs.h
+@@ -43,4 +43,10 @@ static inline struct inode *file_inode(struct file *f)
+ 	} while(0)
+ #endif /* replace_fops */
+ 
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,5,0) && \
++     LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0))
++#define no_seek_end_llseek LINUX_BACKPORT(no_seek_end_llseek)
++extern loff_t no_seek_end_llseek(struct file *, loff_t, int);
++#endif /* < 4.5 && >= 3.2 */
++
+ #endif	/* _COMPAT_LINUX_FS_H */
+diff --git a/backport/compat/backport-4.5.c b/backport/compat/backport-4.5.c
+index e8f9b12..13c0a71 100644
+--- a/backport/compat/backport-4.5.c
++++ b/backport/compat/backport-4.5.c
+@@ -11,6 +11,7 @@
+ #include <linux/leds.h>
+ #include <linux/export.h>
+ #include <linux/errno.h>
++#include <linux/fs.h>
+ 
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,19,0)
+ int led_set_brightness_sync(struct led_classdev *led_cdev,
+@@ -31,3 +32,29 @@ int led_set_brightness_sync(struct led_classdev *led_cdev,
+ }
+ EXPORT_SYMBOL_GPL(led_set_brightness_sync);
+ #endif /* >= 3.19 */
++
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)
++/**
++ * no_seek_end_llseek - llseek implementation for fixed-sized devices
++ * @file:	file structure to seek on
++ * @offset:	file offset to seek to
++ * @whence:	type of seek
++ *
++ */
++loff_t no_seek_end_llseek(struct file *file, loff_t offset, int whence)
++{
++	switch (whence) {
++	case SEEK_SET: case SEEK_CUR:
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
++		return generic_file_llseek_size(file, offset, whence,
++						~0ULL, 0);
++#else
++		return generic_file_llseek_size(file, offset, whence,
++						~0ULL);
++#endif
++	default:
++		return -EINVAL;
++	}
++}
++EXPORT_SYMBOL_GPL(no_seek_end_llseek);
++#endif /* >= 3.2 */
+-- 
+2.6.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
