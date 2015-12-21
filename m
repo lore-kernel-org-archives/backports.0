@@ -1,33 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:54949 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:51827 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752666AbbLFOhL (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 6 Dec 2015 09:37:11 -0500
-Message-ID: <1449412622.4040.0.camel@sipsolutions.net> (sfid-20151206_153713_415888_56BE952C)
-Subject: Re: [PATCH] patches: fix path in name_assign_type patch
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-	Arend van Spriel <arend@broadcom.com>,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org
-Date: Sun, 06 Dec 2015 15:37:02 +0100
-In-Reply-To: <5663458B.1070103@hauke-m.de> (sfid-20151205_211408_495778_1F398223)
-References: <1448884387-20806-1-git-send-email-arend@broadcom.com>
-	 <5663458B.1070103@hauke-m.de> (sfid-20151205_211408_495778_1F398223)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+	id S1751038AbbLUAGJ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 20 Dec 2015 19:06:09 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 2/6] dependencies: make ti wlcore depend on kernel >= 3.2
+Date: Mon, 21 Dec 2015 01:05:57 +0100
+Message-Id: <1450656361-21259-3-git-send-email-hauke@hauke-m.de> (sfid-20151221_010619_486935_CEE373F5)
+In-Reply-To: <1450656361-21259-1-git-send-email-hauke@hauke-m.de>
+References: <1450656361-21259-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+wlcore uses no_seek_end_llseek() which is only backported to kernel >=
+3.2. generic_file_llseek_size() is only available for kernel >= 3.2 and
+needed by no_seek_end_llseek().
 
-> Is it ok to replace the b43, b43legacy and brcm80211 by this single
-> line?
-> drivers/net/wireless/broadcom/
-> 
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ dependencies | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-You mean in a single patch? I generally considered each file (or at
-least driver) separately so you could restrict copy-list to it.
+diff --git a/dependencies b/dependencies
+index 111ce13..54bf0b6 100644
+--- a/dependencies
++++ b/dependencies
+@@ -10,6 +10,11 @@ WL1251_SDIO 3.15
+ WL1251_SDIO kconfig: CONFIG_WILINK_PLATFORM_DATA
+ WLCORE_SDIO 3.15
+ 
++# needs no_seek_end_llseek()
++WLCORE 3.2
++WL12XX 3.2
++WL18XX 3.2
++
+ # hostapd uses proc_remove()
+ HOSTAP 3.10
+ 
+-- 
+2.6.4
 
-johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
