@@ -1,53 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:51784 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:51824 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756214AbbLBI4i (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 2 Dec 2015 03:56:38 -0500
-From: Johannes Berg <johannes@sipsolutions.net>
+	id S1750863AbbLUAGJ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 20 Dec 2015 19:06:09 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH v2] backports: add ktime_get_boot_ns()
-Date: Wed,  2 Dec 2015 09:56:34 +0100
-Message-Id: <1449046594-9738-1-git-send-email-johannes@sipsolutions.net> (sfid-20151202_095640_670832_C3102C13)
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 0/6] backports: sync with next-20151218
+Date: Mon, 21 Dec 2015 01:05:55 +0100
+Message-Id: <1450656361-21259-1-git-send-email-hauke@hauke-m.de> (sfid-20151221_010618_918225_26A7C784)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+This adds some changes needed to work with next-20151218. 
 
-This small helper inline was added in 3.17, we want to use it now
-so need to backport it.
+Hauke Mehrtens (6):
+  backport: add no_seek_end_llseek()
+  dependencies: make ti wlcore depend on kernel >= 3.2
+  dependencies: make ATH9K_HWRNG depend on kernel >= 3.17
+  header: add NETIF_F_SCTP_CRC
+  patches: convert gpio: change member .dev to .parent
+  patches: refresh patches on next-20151218
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/linux/timekeeping.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ backport/backport-include/linux/fs.h               |  6 +++++
+ backport/backport-include/linux/netdev_features.h  |  5 ++++
+ backport/compat/backport-4.5.c                     | 27 ++++++++++++++++++++++
+ dependencies                                       |  8 +++++++
+ .../generic/0002-gpio-parent.cocci                 | 25 ++++++++++++++++++++
+ .../media/0003-devnode_param_type/dvb-core.patch   |  2 +-
+ .../network/0004-disable-wext-kconfig.patch        |  2 +-
+ .../0013-fix-makefile-includes/6lowpan.patch       |  4 ++--
+ .../network/0025-usb-sg/usbnet.patch               | 12 +++++-----
+ .../0032-sriov_configure/igb_sriov_configure.patch |  4 ++--
+ .../0033-ndo_vlan_rx_vid/igb_ndo_vlan_rx_vid.patch |  8 +++----
+ .../0038-ethtool_rxfh_indir/igb_rxfh_indir.patch   | 10 ++++----
+ .../0043-ndo_set_vf_rate/igb_set_vf_rate.patch     |  4 ++--
+ .../network/0050-iov_iter/bluetooth.patch          |  6 ++---
+ .../network/0052-deactivate-ptp-pin/igb.patch      |  2 +-
+ .../0053-remove_wait_on_bit_timeout/btusb.patch    | 12 +++++-----
+ .../hci_intel.patch                                | 10 ++++----
+ .../network/0062-acpi-gpio-remove/hci_intel.patch  |  6 ++---
+ 18 files changed, 112 insertions(+), 41 deletions(-)
+ create mode 100644 patches/collateral-evolutions/generic/0002-gpio-parent.cocci
 
-diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
-index fe42e7170680..4d31580b8757 100644
---- a/backport/backport-include/linux/timekeeping.h
-+++ b/backport/backport-include/linux/timekeeping.h
-@@ -2,6 +2,7 @@
- #define __BACKPORT_TIMKEEPING_H
- #include <linux/version.h>
- #include <linux/types.h>
-+#include <linux/hrtimer.h>
- 
- #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,17,0)
- #include_next <linux/timekeeping.h>
-@@ -15,6 +16,11 @@ static inline u64 ktime_get_ns(void)
- {
- 	return ktime_to_ns(ktime_get());
- }
-+
-+static inline u64 ktime_get_boot_ns(void)
-+{
-+	return ktime_to_ns(ktime_get_boottime());
-+}
- #endif
- 
- #if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
 -- 
-2.6.2
+2.6.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
