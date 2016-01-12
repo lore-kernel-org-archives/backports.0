@@ -1,69 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:12496 "EHLO mga03.intel.com"
+Received: from s3.sipsolutions.net ([5.9.151.49]:48671 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754999AbcA1NXm (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 28 Jan 2016 08:23:42 -0500
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-To: backports@vger.kernel.org
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Subject: [PATCH] backports: change abs() macro so it uses consistent return type
-Date: Thu, 28 Jan 2016 15:23:24 +0200
-Message-Id: <1453987404-18557-1-git-send-email-emmanuel.grumbach@intel.com> (sfid-20160128_142344_289593_33D27ED1)
+	id S933737AbcALIgn (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 12 Jan 2016 03:36:43 -0500
+Message-ID: <1452587801.3473.1.camel@sipsolutions.net> (sfid-20160112_093645_338535_3A15C5C0)
+Subject: Re: WLAN drivers provided by Realtek do not work with backports
+ (cfg80211 module not compatible)
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Bartlomiej Grzeskowiak <bartlomiej.grzeskowiak@gmail.com>,
+	backports@vger.kernel.org
+Date: Tue, 12 Jan 2016 09:36:41 +0100
+In-Reply-To: <CADaZW1GjSckRoxu7aiVC8tpYr8N6N7wKOf8_8EX3zO-xZmMAgg@mail.gmail.com> (sfid-20160111_115730_073624_C934D2FE)
+References: <CADaZW1GjSckRoxu7aiVC8tpYr8N6N7wKOf8_8EX3zO-xZmMAgg@mail.gmail.com>
+	 (sfid-20160111_115730_073624_C934D2FE)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Backport:
+On Mon, 2016-01-11 at 11:56 +0100, Bartlomiej Grzeskowiak wrote:
+> We use 8192cu and 8811AU provided by Realtek. Our kernel is 3.10.
+> We would like to add parallel support for ath10k_pci from backports.
+> 
+> However after inserting compat.ko, cfg80211.ko and mac80211.ko from
+> backports, 8192cu.ko and 8821au.ko terminate with following message:
+> [  512.188364] 8192cu: Unknown symbol wiphy_new (err 0)
+> [  512.188481] 8192cu: Unknown symbol cfg80211_send_disassoc (err 0)
+> [  512.188554] 8192cu: Unknown symbol cfg80211_send_rx_assoc (err 0)
+> [  512.188607] 8192cu: Unknown symbol cfg80211_inform_bss_frame (err
+> 0)
+> 
+> Those interfaces are exported when I load cfg80211.ko compiled from
+> kernel 3.10.
+> But I can not see them in cfg80211.ko provided by backports.
+> 
 
-commit 8f57e4d930d48217268315898212518d4d3e0773
-Author: Michal Nazarewicz <mina86@mina86.com>
-Date:   Fri Jan 15 16:57:58 2016 -0800
+You have to load the cfg80211.ko from backports.
 
-    include/linux/kernel.h: change abs() macro so it uses consistent return type
-
-Change-Id: I224dc4b3898d7dc402632090b93d7f69866d1e48
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
----
- backport/backport-include/linux/kernel.h | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/backport/backport-include/linux/kernel.h b/backport/backport-include/linux/kernel.h
-index c0eec2d..7d56f02 100644
---- a/backport/backport-include/linux/kernel.h
-+++ b/backport/backport-include/linux/kernel.h
-@@ -165,3 +165,31 @@ int __must_check hex2bin(u8 *dst, const char *src, size_t count);
- #ifndef pr_fmt
- #define pr_fmt(msg) msg
- #endif
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,5,0)
-+
-+#undef abs
-+/**
-+ * abs - return absolute value of an argument
-+ * @x: the value.  If it is unsigned type, it is converted to signed type first.
-+ *     char is treated as if it was signed (regardless of whether it really is)
-+ *     but the macro's return type is preserved as char.
-+ *
-+ * Return: an absolute value of x.
-+ */
-+#define abs(x)	__abs_choose_expr(x, long long,				\
-+		__abs_choose_expr(x, long,				\
-+		__abs_choose_expr(x, int,				\
-+		__abs_choose_expr(x, short,				\
-+		__abs_choose_expr(x, char,				\
-+		__builtin_choose_expr(					\
-+			__builtin_types_compatible_p(typeof(x), char),	\
-+			(char)({ signed char __x = (x); __x<0?-__x:__x; }), \
-+			((void)0)))))))
-+
-+#define __abs_choose_expr(x, type, other) __builtin_choose_expr(	\
-+	__builtin_types_compatible_p(typeof(x),   signed type) ||	\
-+	__builtin_types_compatible_p(typeof(x), unsigned type),		\
-+	({ signed type __x = (x); __x < 0 ? -__x : __x; }), other)
-+
-+#endif
--- 
-2.5.0
-
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
