@@ -1,45 +1,61 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:58603 "EHLO mga09.intel.com"
+Received: from mail.kernel.org ([198.145.29.136]:51184 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932395AbcAYOzE (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 25 Jan 2016 09:55:04 -0500
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+	id S933741AbcA1AKI convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 27 Jan 2016 19:10:08 -0500
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id BC8E720117
+	for <backports@vger.kernel.org>; Thu, 28 Jan 2016 00:10:07 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+	by mail.kernel.org (Postfix) with ESMTP id F2C3A20107
+	for <backports@vger.kernel.org>; Thu, 28 Jan 2016 00:10:06 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Subject: [PATCH] backports: define NETIF_F_CSUM_MASK
-Date: Mon, 25 Jan 2016 16:54:52 +0200
-Message-Id: <1453733692-13338-1-git-send-email-emmanuel.grumbach@intel.com> (sfid-20160125_155508_500839_FA8E70DE)
+Subject: [Bug 111401] New: Missing country on atheros driver regd_common.h
+ and regd.h
+Date: Thu, 28 Jan 2016 00:10:06 +0000
+Message-ID: <bug-111401-58281@https.bugzilla.kernel.org/> (sfid-20160128_011011_674085_C1838744)
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This backports:
+https://bugzilla.kernel.org/show_bug.cgi?id=111401
 
-commit a188222b6ed29404ac2d4232d35d1fe0e77af370
-Author: Tom Herbert <tom@herbertland.com>
-Date:   Mon Dec 14 11:19:43 2015 -0800
+            Bug ID: 111401
+           Summary: Missing country on atheros driver regd_common.h and
+                    regd.h
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: backports-4.0.1-1
+          Hardware: All
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: brunoaduarte@hotmail.com
+        Regression: No
 
-    net: Rename NETIF_F_ALL_CSUM to NETIF_F_CSUM_MASK
+Country Guyana is missing from the enums in these files.
 
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
----
- backport/backport-include/linux/netdevice.h | 4 ++++
- 1 file changed, 4 insertions(+)
+wireless-regdb-2015.12.14 -> db.txt
+country GY:
+    (2402 - 2482 @ 40), (30)
+    (5735 - 5835 @ 80), (30)
 
-diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
-index 66405df..b9eb9c6 100644
---- a/backport/backport-include/linux/netdevice.h
-+++ b/backport/backport-include/linux/netdevice.h
-@@ -322,4 +322,8 @@ static inline void netif_tx_napi_add(struct net_device *dev,
- }
- #endif /* < 4.5 */
- 
-+#ifndef NETIF_F_CSUM_MASK
-+#define NETIF_F_CSUM_MASK (NETIF_F_V4_CSUM | NETIF_F_V6_CSUM)
-+#endif
-+
- #endif /* __BACKPORT_NETDEVICE_H */
+regd_common.h
+> {CTRY_GUYANA, NULL1_WORLD, "GY"},
+
+
+regd.h
+> enum CountryCode {
+>	CTRY_ALBANIA = xx,
+> ...
+
 -- 
-2.5.0
-
---
+You are receiving this mail because:
+You are the assignee for the bug.--
 To unsubscribe from this list: send the line "unsubscribe backports" in
