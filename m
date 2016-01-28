@@ -1,67 +1,69 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:42883 "EHLO hauke-m.de"
+Received: from mga03.intel.com ([134.134.136.65]:12496 "EHLO mga03.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752701AbbLIWsH (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 9 Dec 2015 17:48:07 -0500
-Subject: Re: [PATCH v2] backports: add ktime_get_seconds()
-To: Arend van Spriel <arend@broadcom.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	backports@vger.kernel.org
-References: <1445601179-3434-1-git-send-email-johannes@sipsolutions.net>
- <563E301B.7090609@hauke-m.de> <56669864.3050404@broadcom.com>
-Cc: Johannes Berg <johannes.berg@intel.com>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <5668AFA3.3070102@hauke-m.de> (sfid-20151209_234826_018800_C3315955)
-Date: Wed, 9 Dec 2015 23:48:03 +0100
-MIME-Version: 1.0
-In-Reply-To: <56669864.3050404@broadcom.com>
-Content-Type: text/plain; charset=windows-1252
+	id S1754999AbcA1NXm (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 28 Jan 2016 08:23:42 -0500
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+To: backports@vger.kernel.org
+Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Subject: [PATCH] backports: change abs() macro so it uses consistent return type
+Date: Thu, 28 Jan 2016 15:23:24 +0200
+Message-Id: <1453987404-18557-1-git-send-email-emmanuel.grumbach@intel.com> (sfid-20160128_142344_289593_33D27ED1)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 12/08/2015 09:44 AM, Arend van Spriel wrote:
-> On 11/07/2015 06:08 PM, Hauke Mehrtens wrote:
->> On 10/23/2015 01:52 PM, Johannes Berg wrote:
->>> From: Johannes Berg <johannes.berg@intel.com>
->>>
->>> Since commit 84b00607aeb8 ("mac80211: use ktime_get_seconds")
->>> mac80211 uses ktime_get_seconds(). This patch provide a backport
->>> using ktime_get_ts() for it.
->>>
->>> [commit message and time64_t taken from Arend's patch]
->>>
->>> Signed-off-by: Arend van Spriel <arend@broadcom.com>
->>> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
->>> ---
->>>   backport/backport-include/linux/ktime.h       |  1 +
->>>   backport/backport-include/linux/timekeeping.h | 21
->>> +++++++++++++++++++++
->>>   backport/backport-include/linux/types.h       | 10 ++++++++++
->>>   3 files changed, 32 insertions(+)
->>>   create mode 100644 backport/backport-include/linux/timekeeping.h
->>>   create mode 100644 backport/backport-include/linux/types.h
->>>
->> Thank you for the patch, it was applied.
-> 
-> Hi Hauke, Johannes,
-> 
-> I hit a duplicate export of this function against Fedora 22 kernel
-> (v4.0.4). So they apparently backported it in their kernel. So I
-> manually removed the function from backports tarball. Could this be
-> automated by looking at Module.symvers of the kernel we build against? I
-> will explore that if you guys consider it useful.
-> 
-> Regards,
-> Arend
+Backport:
 
-Hi,
+commit 8f57e4d930d48217268315898212518d4d3e0773
+Author: Michal Nazarewicz <mina86@mina86.com>
+Date:   Fri Jan 15 16:57:58 2016 -0800
 
-I think in this patch adding this should fix your concrete problem:
-#define ktime_get_seconds LINUX_BACKPORT(ktime_get_seconds)
+    include/linux/kernel.h: change abs() macro so it uses consistent return type
 
-But it would still be nice to know what functions are in the mainline
-kernel so we can use them.
+Change-Id: I224dc4b3898d7dc402632090b93d7f69866d1e48
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+---
+ backport/backport-include/linux/kernel.h | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-Hauke
+diff --git a/backport/backport-include/linux/kernel.h b/backport/backport-include/linux/kernel.h
+index c0eec2d..7d56f02 100644
+--- a/backport/backport-include/linux/kernel.h
++++ b/backport/backport-include/linux/kernel.h
+@@ -165,3 +165,31 @@ int __must_check hex2bin(u8 *dst, const char *src, size_t count);
+ #ifndef pr_fmt
+ #define pr_fmt(msg) msg
+ #endif
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,5,0)
++
++#undef abs
++/**
++ * abs - return absolute value of an argument
++ * @x: the value.  If it is unsigned type, it is converted to signed type first.
++ *     char is treated as if it was signed (regardless of whether it really is)
++ *     but the macro's return type is preserved as char.
++ *
++ * Return: an absolute value of x.
++ */
++#define abs(x)	__abs_choose_expr(x, long long,				\
++		__abs_choose_expr(x, long,				\
++		__abs_choose_expr(x, int,				\
++		__abs_choose_expr(x, short,				\
++		__abs_choose_expr(x, char,				\
++		__builtin_choose_expr(					\
++			__builtin_types_compatible_p(typeof(x), char),	\
++			(char)({ signed char __x = (x); __x<0?-__x:__x; }), \
++			((void)0)))))))
++
++#define __abs_choose_expr(x, type, other) __builtin_choose_expr(	\
++	__builtin_types_compatible_p(typeof(x),   signed type) ||	\
++	__builtin_types_compatible_p(typeof(x), unsigned type),		\
++	({ signed type __x = (x); __x < 0 ? -__x : __x; }), other)
++
++#endif
+-- 
+2.5.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
