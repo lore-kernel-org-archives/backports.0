@@ -1,61 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:51184 "EHLO mail.kernel.org"
+Received: from nbd.name ([46.4.11.11]:56579 "EHLO nbd.name"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933741AbcA1AKI convert rfc822-to-8bit (ORCPT
-	<rfc822;backports@vger.kernel.org>); Wed, 27 Jan 2016 19:10:08 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id BC8E720117
-	for <backports@vger.kernel.org>; Thu, 28 Jan 2016 00:10:07 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id F2C3A20107
-	for <backports@vger.kernel.org>; Thu, 28 Jan 2016 00:10:06 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1750854AbcAaQbX (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 31 Jan 2016 11:31:23 -0500
+From: Felix Fietkau <nbd@openwrt.org>
 To: backports@vger.kernel.org
-Subject: [Bug 111401] New: Missing country on atheros driver regd_common.h
- and regd.h
-Date: Thu, 28 Jan 2016 00:10:06 +0000
-Message-ID: <bug-111401-58281@https.bugzilla.kernel.org/> (sfid-20160128_011011_674085_C1838744)
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Subject: [PATCH 1/2] backports: add skb_free_frag()
+Date: Sun, 31 Jan 2016 17:11:35 +0100
+Message-Id: <1454256696-98530-1-git-send-email-nbd@openwrt.org> (sfid-20160131_173125_852003_235E7AD0)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=111401
+Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+---
+ backport/backport-include/linux/skbuff.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-            Bug ID: 111401
-           Summary: Missing country on atheros driver regd_common.h and
-                    regd.h
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: backports-4.0.1-1
-          Hardware: All
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: Backports
-          Assignee: backports@vger.kernel.org
-          Reporter: brunoaduarte@hotmail.com
-        Regression: No
-
-Country Guyana is missing from the enums in these files.
-
-wireless-regdb-2015.12.14 -> db.txt
-country GY:
-    (2402 - 2482 @ 40), (30)
-    (5735 - 5835 @ 80), (30)
-
-regd_common.h
-> {CTRY_GUYANA, NULL1_WORLD, "GY"},
-
-
-regd.h
-> enum CountryCode {
->	CTRY_ALBANIA = xx,
-> ...
-
+diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
+index 888d2a0..6fd4249 100644
+--- a/backport/backport-include/linux/skbuff.h
++++ b/backport/backport-include/linux/skbuff.h
+@@ -300,4 +300,11 @@ int skb_ensure_writable(struct sk_buff *skb, int write_len);
+ 
+ #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0) */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0)
++static inline void skb_free_frag(void *data)
++{
++	put_page(virt_to_head_page(data));
++}
++#endif
++
+ #endif /* __BACKPORT_SKBUFF_H */
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.--
+2.2.2
+
+--
 To unsubscribe from this list: send the line "unsubscribe backports" in
