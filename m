@@ -1,30 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:36193 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:49900 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751923AbcBFTLR (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 6 Feb 2016 14:11:17 -0500
-Message-ID: <1454785873.2166.0.camel@sipsolutions.net> (sfid-20160206_201119_371384_48FFBE90)
-Subject: Re: backports build issue with 4.5-rc2
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend van Spriel <arend@broadcom.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Sat, 06 Feb 2016 20:11:13 +0100
-In-Reply-To: <56B477EB.1010308@broadcom.com> (sfid-20160205_113050_784576_5F9729C3)
-References: <56B477EB.1010308@broadcom.com>
-	 (sfid-20160205_113050_784576_5F9729C3)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+	id S1752578AbcBLN7w (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 12 Feb 2016 08:59:52 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 3/5] patches: add missing include
+Date: Fri, 12 Feb 2016 14:58:37 +0100
+Message-Id: <1455285519-16163-4-git-send-email-hauke@hauke-m.de> (sfid-20160212_145955_383144_BBB40A4C)
+In-Reply-To: <1455285519-16163-1-git-send-email-hauke@hauke-m.de>
+References: <1455285519-16163-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2016-02-05 at 11:22 +0100, Arend van Spriel wrote:
-> I created a 4.5-rc2 package and am getting build error against 3.11 
-> kernel for cfg80211 and mac80211. Does anyone has patch for this
-> already?
-> 
+media-device.h needs the size of the "struct ida" now, but the include
+is missing when compile against older kernel versions.
 
-Yes, I sent it on Dec 17th to this list :)
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../media/0004-missing-include/media-device.patch            | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+ create mode 100644 patches/collateral-evolutions/media/0004-missing-include/media-device.patch
 
-johannes
+diff --git a/patches/collateral-evolutions/media/0004-missing-include/media-device.patch b/patches/collateral-evolutions/media/0004-missing-include/media-device.patch
+new file mode 100644
+index 0000000..9e0128a
+--- /dev/null
++++ b/patches/collateral-evolutions/media/0004-missing-include/media-device.patch
+@@ -0,0 +1,12 @@
++diff --git a/include/media/media-device.h b/include/media/media-device.h
++index d385589..6d9a84d 100644
++--- a/include/media/media-device.h
+++++ b/include/media/media-device.h
++@@ -23,6 +23,7 @@
++ #ifndef _MEDIA_DEVICE_H
++ #define _MEDIA_DEVICE_H
++ 
+++#include <linux/idr.h>
++ #include <linux/list.h>
++ #include <linux/mutex.h>
++ #include <linux/spinlock.h>
+-- 
+2.7.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
