@@ -1,46 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:49900 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:51554 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752578AbcBLN7w (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 12 Feb 2016 08:59:52 -0500
+	id S1751561AbcBOPZL (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 15 Feb 2016 10:25:11 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 3/5] patches: add missing include
-Date: Fri, 12 Feb 2016 14:58:37 +0100
-Message-Id: <1455285519-16163-4-git-send-email-hauke@hauke-m.de> (sfid-20160212_145955_383144_BBB40A4C)
-In-Reply-To: <1455285519-16163-1-git-send-email-hauke@hauke-m.de>
-References: <1455285519-16163-1-git-send-email-hauke@hauke-m.de>
+Subject: [PATCH 11/12] backports: add BPAUTO_BUILD_CORDIC only for kernel < 3.1
+Date: Mon, 15 Feb 2016 16:24:58 +0100
+Message-Id: <1455549899-14564-12-git-send-email-hauke@hauke-m.de> (sfid-20160215_184437_522084_CEF1AF93)
+In-Reply-To: <1455549899-14564-1-git-send-email-hauke@hauke-m.de>
+References: <1455549899-14564-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-media-device.h needs the size of the "struct ida" now, but the include
-is missing when compile against older kernel versions.
+Cordic was added in commit 10f8113ecb "lib: cordic: add library module
+providing cordic angle calculation" in kernel 3.1, we do not need the
+backport for more recent kernel versions.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../media/0004-missing-include/media-device.patch            | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 patches/collateral-evolutions/media/0004-missing-include/media-device.patch
+ backport/compat/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/patches/collateral-evolutions/media/0004-missing-include/media-device.patch b/patches/collateral-evolutions/media/0004-missing-include/media-device.patch
-new file mode 100644
-index 0000000..9e0128a
---- /dev/null
-+++ b/patches/collateral-evolutions/media/0004-missing-include/media-device.patch
-@@ -0,0 +1,12 @@
-+diff --git a/include/media/media-device.h b/include/media/media-device.h
-+index d385589..6d9a84d 100644
-+--- a/include/media/media-device.h
-++++ b/include/media/media-device.h
-+@@ -23,6 +23,7 @@
-+ #ifndef _MEDIA_DEVICE_H
-+ #define _MEDIA_DEVICE_H
-+ 
-++#include <linux/idr.h>
-+ #include <linux/list.h>
-+ #include <linux/mutex.h>
-+ #include <linux/spinlock.h>
+diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
+index 07084d2..a99f11f 100644
+--- a/backport/compat/Kconfig
++++ b/backport/compat/Kconfig
+@@ -65,6 +65,7 @@ config BP_MODULES
+ config BPAUTO_BUILD_CORDIC
+ 	tristate
+ 	depends on !CORDIC
++	depends on KERNEL_3_1
+ 	default m if BPAUTO_CORDIC
+ 	default m if BPAUTO_USERSEL_BUILD_ALL
+ 	#module-name cordic
 -- 
 2.7.0
 
