@@ -1,304 +1,69 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:49178 "EHLO
-	farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750826AbcBMKEn (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 13 Feb 2016 05:04:43 -0500
-From: Luca Coelho <luca@coelho.fi>
+Received: from hauke-m.de ([5.39.93.123]:51548 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751561AbcBOPZJ (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 15 Feb 2016 10:25:09 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Cc: emmanuel.grumbach@intel.com
-Date: Sat, 13 Feb 2016 11:46:53 +0200
-Message-Id: <1455356813-4863-1-git-send-email-luca@coelho.fi> (sfid-20160213_110446_751806_865CFE1A)
-Subject: [PATCH] backport: add thermal backports for kernels < 4.3
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 04/12] header: make mdiobus_register() allocate the irqs
+Date: Mon, 15 Feb 2016 16:24:51 +0100
+Message-Id: <1455549899-14564-5-git-send-email-hauke@hauke-m.de> (sfid-20160215_184439_692592_D323B0D1)
+In-Reply-To: <1455549899-14564-1-git-send-email-hauke@hauke-m.de>
+References: <1455549899-14564-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Luca Coelho <luciano.coelho@intel.com>
+This function was added to the mainline Linux kernel in commit
+e7f4dc353 "mdio: Move allocation of interrupts into core".
+This will not work when someone requests irqs for the phys and does not
+use polling mode
 
-There were some API changes in the thermal framework in kernel version
-4.3 and also earlier in 3.10.  Backport what is needed to support
-older kernels.
-
-The 4.3 change is a bit tricky, because it changes the prototypes of
-some ops.  The solution for that is to add hook functions that will
-intercept the calls from the thermal framework and convert them to
-calls that the backported driver provides (namely convert unsigned
-longs to ints).
-
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
+ backport/backport-include/linux/phy.h | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-This will be needed by a upcoming patches for the iwlwifi driver that
-include some thermal framework functionality.  Already sending this
-out so that it can be added before our driver breaks. ;)
-
-backport-include/linux/thermal.h | 109 ++++++++++++++++++++++++++++++++
- backport/compat/backport-4.3.c   | 131 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 240 insertions(+)
- create mode 100644 backport-include/linux/thermal.h
-
-diff --git a/backport-include/linux/thermal.h b/backport-include/linux/thermal.h
-new file mode 100644
-index 0000000..dbcb4be
---- /dev/null
-+++ b/backport-include/linux/thermal.h
-@@ -0,0 +1,109 @@
-+#ifndef __BACKPORT_LINUX_THERMAL_H
-+#define __BACKPORT_LINUX_THERMAL_H
-+#include_next <linux/thermal.h>
-+#include <linux/version.h>
+diff --git a/backport/backport-include/linux/phy.h b/backport/backport-include/linux/phy.h
+index 1c75dc6..f727ac7 100644
+--- a/backport/backport-include/linux/phy.h
++++ b/backport/backport-include/linux/phy.h
+@@ -27,6 +27,35 @@ void phy_attached_print(struct phy_device *phydev, const char *fmt, ...)
+ 	__printf(2, 3);
+ #define phy_attached_info LINUX_BACKPORT(phy_attached_info)
+ void phy_attached_info(struct phy_device *phydev);
 +
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
-+#define thermal_notify_framework notify_thermal_framework
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0) */
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0)
-+
-+/* Declare the < 4.3.0 struct so we can use it when calling the outer
-+ * kernel.
-+ */
-+struct old_thermal_zone_device_ops {
-+	int (*bind) (struct thermal_zone_device *,
-+		     struct thermal_cooling_device *);
-+	int (*unbind) (struct thermal_zone_device *,
-+		       struct thermal_cooling_device *);
-+	int (*get_temp) (struct thermal_zone_device *, unsigned long *);
-+	int (*get_mode) (struct thermal_zone_device *,
-+			 enum thermal_device_mode *);
-+	int (*set_mode) (struct thermal_zone_device *,
-+		enum thermal_device_mode);
-+	int (*get_trip_type) (struct thermal_zone_device *, int,
-+		enum thermal_trip_type *);
-+	int (*get_trip_temp) (struct thermal_zone_device *, int,
-+			      unsigned long *);
-+	int (*set_trip_temp) (struct thermal_zone_device *, int,
-+			      unsigned long);
-+	int (*get_trip_hyst) (struct thermal_zone_device *, int,
-+			      unsigned long *);
-+	int (*set_trip_hyst) (struct thermal_zone_device *, int,
-+			      unsigned long);
-+	int (*get_crit_temp) (struct thermal_zone_device *, unsigned long *);
-+	int (*set_emul_temp) (struct thermal_zone_device *, unsigned long);
-+	int (*get_trend) (struct thermal_zone_device *, int,
-+			  enum thermal_trend *);
-+	int (*notify) (struct thermal_zone_device *, int,
-+		       enum thermal_trip_type);
-+};
-+
-+/* also add a way to call the old register function */
-+static inline struct thermal_zone_device *old_thermal_zone_device_register(
-+	const char *type, int trips, int mask, void *devdata,
-+	struct old_thermal_zone_device_ops *_ops,
-+	const struct thermal_zone_params *tzp,
-+	int passive_delay, int polling_delay)
++static inline int backport_mdiobus_register(struct mii_bus *bus)
 +{
-+	struct thermal_zone_device_ops *ops =
-+		(struct thermal_zone_device_ops *) _ops;
++	bus->irq = kmalloc(sizeof(int) * PHY_MAX_ADDR, GFP_KERNEL);
++	if (!bus->irq) {
++		pr_err("mii_bus irq allocation failed\n");
++		return -ENOMEM;
++	}
 +
-+	return thermal_zone_device_register(type, trips, mask, devdata,
-+					    ops, tzp, passive_delay,
-+					    polling_delay);
++	memset(bus->irq, PHY_POLL, sizeof(int) * PHY_MAX_ADDR);
++
++/* in kernel 4.3 a #define for mdiobus_register is added to the kernel. */
++#ifndef mdiobus_register
++	return mdiobus_register(bus);
++#else
++	return __mdiobus_register(bus, THIS_MODULE);
++#endif
 +}
++#ifdef mdiobus_register
++#undef mdiobus_register
++#endif
++#define mdiobus_register LINUX_BACKPORT(mdiobus_register)
 +
-+#undef thermal_zone_device_ops
-+struct backport_thermal_zone_device_ops {
-+	int (*bind) (struct thermal_zone_device *,
-+		     struct thermal_cooling_device *);
-+	int (*unbind) (struct thermal_zone_device *,
-+		       struct thermal_cooling_device *);
-+	int (*get_temp) (struct thermal_zone_device *, int *);
-+	int (*get_mode) (struct thermal_zone_device *,
-+			 enum thermal_device_mode *);
-+	int (*set_mode) (struct thermal_zone_device *,
-+		enum thermal_device_mode);
-+	int (*get_trip_type) (struct thermal_zone_device *, int,
-+		enum thermal_trip_type *);
-+	int (*get_trip_temp) (struct thermal_zone_device *, int, int *);
-+	int (*set_trip_temp) (struct thermal_zone_device *, int, int);
-+	int (*get_trip_hyst) (struct thermal_zone_device *, int, int *);
-+	int (*set_trip_hyst) (struct thermal_zone_device *, int, int);
-+	int (*get_crit_temp) (struct thermal_zone_device *, int *);
-+	int (*set_emul_temp) (struct thermal_zone_device *, int);
-+	int (*get_trend) (struct thermal_zone_device *, int,
-+			  enum thermal_trend *);
-+	int (*notify) (struct thermal_zone_device *, int,
-+		       enum thermal_trip_type);
-+
-+	/* These ops hold the original callbacks set by the
-+	 * registrant, because we'll add our hooks to the ones called
-+	 * by the framework.  Luckily someone made this ops struct
-+	 * non-const so we can mangle them.
-+	 */
-+	int (*_get_temp) (struct thermal_zone_device *, int *);
-+	int (*_get_trip_temp) (struct thermal_zone_device *, int, int *);
-+	int (*_set_trip_temp) (struct thermal_zone_device *, int, int);
-+	int (*_get_trip_hyst) (struct thermal_zone_device *, int, int *);
-+	int (*_set_trip_hyst) (struct thermal_zone_device *, int, int);
-+	int (*_get_crit_temp) (struct thermal_zone_device *, int *);
-+	int (*_set_emul_temp) (struct thermal_zone_device *, int);
-+};
-+#define thermal_zone_device_ops LINUX_BACKPORT(thermal_zone_device_ops)
-+
-+#undef thermal_zone_device_register
-+struct thermal_zone_device *backport_thermal_zone_device_register(
-+	const char *type, int trips, int mask, void *devdata,
-+	struct thermal_zone_device_ops *ops,
-+	const struct thermal_zone_params *tzp,
-+	int passive_delay, int polling_delay);
-+
-+#define thermal_zone_device_register \
-+	LINUX_BACKPORT(thermal_zone_device_register)
-+
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0) */
-+
-+#endif /* __BACKPORT_LINUX_THERMAL_H */
-diff --git a/backport/compat/backport-4.3.c b/backport/compat/backport-4.3.c
-index d15c92c..193641d 100644
---- a/backport/compat/backport-4.3.c
-+++ b/backport/compat/backport-4.3.c
-@@ -1,5 +1,6 @@
- /*
-  * Copyright (c) 2015  Hauke Mehrtens <hauke@hauke-m.de>
-+ * Copyright (c) 2015 - 2016 Intel Deutschland GmbH
-  *
-  * Backport functionality introduced in Linux 4.3.
-  *
-@@ -11,6 +12,136 @@
- #include <linux/seq_file.h>
- #include <linux/export.h>
- #include <linux/printk.h>
-+#include <linux/thermal.h>
-+
-+static int backport_thermal_get_temp(struct thermal_zone_device *dev,
-+				     unsigned long *temp)
++static inline void backport_mdiobus_unregister(struct mii_bus *bus)
 +{
-+	struct backport_thermal_zone_device_ops *ops =
-+		(struct backport_thermal_zone_device_ops *)dev->ops;
-+	int _temp, ret;
-+
-+	ret = ops->_get_temp(dev, &_temp);
-+	if (!ret)
-+		*temp = (unsigned long)_temp;
-+
-+	return ret;
++	kfree(bus->irq);
++	mdiobus_unregister(bus);
 +}
-+
-+static int backport_thermal_get_trip_temp(struct thermal_zone_device *dev, int i,
-+					  unsigned long *temp)
-+{
-+	struct backport_thermal_zone_device_ops *ops =
-+		(struct backport_thermal_zone_device_ops *)dev->ops;
-+	int _temp, ret;
-+
-+	ret = ops->_get_trip_temp(dev, i,  &_temp);
-+	if (!ret)
-+		*temp = (unsigned long)_temp;
-+
-+	return ret;
-+}
-+
-+static int backport_thermal_set_trip_temp(struct thermal_zone_device *dev, int i,
-+					  unsigned long temp)
-+{
-+	struct backport_thermal_zone_device_ops *ops =
-+		(struct backport_thermal_zone_device_ops *)dev->ops;
-+
-+	return ops->_set_trip_temp(dev, i, (int)temp);
-+}
-+
-+static int backport_thermal_get_trip_hyst(struct thermal_zone_device *dev, int i,
-+					  unsigned long *temp)
-+{
-+	struct backport_thermal_zone_device_ops *ops =
-+		(struct backport_thermal_zone_device_ops *)dev->ops;
-+	int _temp, ret;
-+
-+	ret = ops->_get_trip_hyst(dev, i, &_temp);
-+	if (!ret)
-+		*temp = (unsigned long)_temp;
-+
-+	return ret;
-+}
-+
-+static int backport_thermal_set_trip_hyst(struct thermal_zone_device *dev, int i,
-+					  unsigned long temp)
-+{
-+	struct backport_thermal_zone_device_ops *ops =
-+		(struct backport_thermal_zone_device_ops *)dev->ops;
-+
-+	return ops->_set_trip_hyst(dev, i, (int)temp);
-+}
-+
-+static int backport_thermal_get_crit_temp(struct thermal_zone_device *dev,
-+					  unsigned long *temp)
-+{
-+	struct backport_thermal_zone_device_ops *ops =
-+		(struct backport_thermal_zone_device_ops *)dev->ops;
-+	int _temp, ret;
-+
-+	ret = ops->_get_crit_temp(dev, &_temp);
-+	if (!ret)
-+		*temp = (unsigned long)_temp;
-+
-+	return ret;
-+}
-+
-+static int backport_thermal_set_emul_temp(struct thermal_zone_device *dev,
-+					  unsigned long temp)
-+{
-+	struct backport_thermal_zone_device_ops *ops =
-+		(struct backport_thermal_zone_device_ops *)dev->ops;
-+
-+	return ops->_set_emul_temp(dev, (int)temp);
-+}
-+
-+struct thermal_zone_device *backport_thermal_zone_device_register(
-+	const char *type, int trips, int mask, void *devdata,
-+	struct backport_thermal_zone_device_ops *ops,
-+	const struct thermal_zone_params *tzp,
-+	int passive_delay, int polling_delay)
-+{
-+	/* It's okay to cast here, because the backport is a superset
-+	 * of the old struct.
-+	 */
-+	struct old_thermal_zone_device_ops *_ops =
-+		(struct old_thermal_zone_device_ops *)ops;
-+
-+	/* store the registrant's ops for the backport ops to use */
-+#define copy_ops(_op) ops->_##_op = ops->_op
-+	copy_ops(get_temp);
-+	copy_ops(get_trip_temp);
-+	copy_ops(set_trip_temp);
-+	copy_ops(get_trip_hyst);
-+	copy_ops(set_trip_hyst);
-+	copy_ops(get_crit_temp);
-+	copy_ops(set_emul_temp);
-+#undef copy_ops
-+
-+	/* Assign the backport ops to the old struct to get the
-+	 * correct types.  But only assign if the registrant defined
-+	 * the ops.
-+	 */
-+#define assign_ops(_op)		\
-+	if (ops->_op)		\
-+		_ops->_op = backport_thermal_##_op
-+
-+	assign_ops(get_temp);
-+	assign_ops(get_trip_temp);
-+	assign_ops(set_trip_temp);
-+	assign_ops(get_trip_hyst);
-+	assign_ops(set_trip_hyst);
-+	assign_ops(get_crit_temp);
-+	assign_ops(set_emul_temp);
-+#undef assign_ops
-+
-+	return old_thermal_zone_device_register(type, trips, mask, devdata,
-+						_ops, tzp, passive_delay,
-+						polling_delay);
-+}
-+EXPORT_SYMBOL_GPL(backport_thermal_zone_device_register);
++#define mdiobus_unregister LINUX_BACKPORT(mdiobus_unregister)
+ #endif /* < 4.5 */
  
- static void seq_set_overflow(struct seq_file *m)
- {
+ #endif /* __BACKPORT_LINUX_PHY_H */
 -- 
 2.7.0
 
