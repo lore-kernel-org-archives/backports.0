@@ -1,42 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:51554 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:56146 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751561AbcBOPZL (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 15 Feb 2016 10:25:11 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
+	id S964895AbcBQTbY (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 17 Feb 2016 14:31:24 -0500
+Received: from [192.168.178.24] (p5DE94B1C.dip0.t-ipconnect.de [93.233.75.28])
+	by hauke-m.de (Postfix) with ESMTPSA id 3DBDC1001AC
+	for <backports@vger.kernel.org>; Wed, 17 Feb 2016 20:31:22 +0100 (CET)
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 11/12] backports: add BPAUTO_BUILD_CORDIC only for kernel < 3.1
-Date: Mon, 15 Feb 2016 16:24:58 +0100
-Message-Id: <1455549899-14564-12-git-send-email-hauke@hauke-m.de> (sfid-20160215_184437_522084_CEF1AF93)
-In-Reply-To: <1455549899-14564-1-git-send-email-hauke@hauke-m.de>
-References: <1455549899-14564-1-git-send-email-hauke@hauke-m.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: backports-20160122 is out
+Message-ID: <56C4CA89.4030600@hauke-m.de> (sfid-20160217_203127_192432_C1071625)
+Date: Wed, 17 Feb 2016 20:31:21 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Cordic was added in commit 10f8113ecb "lib: cordic: add library module
-providing cordic angle calculation" in kernel 3.1, we do not need the
-backport for more recent kernel versions.
+backports-20160122 was released. This is based on linux-next next-20160122.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/compat/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+https://www.kernel.org/pub/linux/kernel/projects/backports/2016/01/22/backports-20160122.tar.xz
 
-diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
-index 07084d2..a99f11f 100644
---- a/backport/compat/Kconfig
-+++ b/backport/compat/Kconfig
-@@ -65,6 +65,7 @@ config BP_MODULES
- config BPAUTO_BUILD_CORDIC
- 	tristate
- 	depends on !CORDIC
-+	depends on KERNEL_3_1
- 	default m if BPAUTO_CORDIC
- 	default m if BPAUTO_USERSEL_BUILD_ALL
- 	#module-name cordic
--- 
-2.7.0
+
+In addition also backports-20160104 was created:
+https://www.kernel.org/pub/linux/kernel/projects/backports/2016/01/04/backports-20160104.tar.xz
+
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
+
+All the latest releases are listed here:
+http://drvbp1.linux-foundation.org/~mcgrof/rel-html/backports/
+
+Hauke
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
