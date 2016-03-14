@@ -1,71 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:51548 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751561AbcBOPZJ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 15 Feb 2016 10:25:09 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 04/12] header: make mdiobus_register() allocate the irqs
-Date: Mon, 15 Feb 2016 16:24:51 +0100
-Message-Id: <1455549899-14564-5-git-send-email-hauke@hauke-m.de> (sfid-20160215_184439_692592_D323B0D1)
-In-Reply-To: <1455549899-14564-1-git-send-email-hauke@hauke-m.de>
-References: <1455549899-14564-1-git-send-email-hauke@hauke-m.de>
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:42650 "EHLO
+	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755228AbcCNI44 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 14 Mar 2016 04:56:56 -0400
+Date: Mon, 14 Mar 2016 09:56:55 +0100 (CET)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Cristina-Gabriela Moraru <cristina.moraru09@gmail.com>
+cc: backports@vger.kernel.org, mcgrof@do-not-panic.com
+Subject: Re: GSoC project
+In-Reply-To: <CAGZ2q2z5eHwaDqu53oyyKz+ur=TTa1AQrjHT51Tww0wizVz7_A@mail.gmail.com>
+Message-ID: <alpine.DEB.2.10.1603140956030.2688@hadrien> (sfid-20160314_095658_693959_FB27BA6A)
+References: <CAGZ2q2z5eHwaDqu53oyyKz+ur=TTa1AQrjHT51Tww0wizVz7_A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This function was added to the mainline Linux kernel in commit
-e7f4dc353 "mdio: Move allocation of interrupts into core".
-This will not work when someone requests irqs for the phys and does not
-use polling mode
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/phy.h | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
 
-diff --git a/backport/backport-include/linux/phy.h b/backport/backport-include/linux/phy.h
-index 1c75dc6..f727ac7 100644
---- a/backport/backport-include/linux/phy.h
-+++ b/backport/backport-include/linux/phy.h
-@@ -27,6 +27,35 @@ void phy_attached_print(struct phy_device *phydev, const char *fmt, ...)
- 	__printf(2, 3);
- #define phy_attached_info LINUX_BACKPORT(phy_attached_info)
- void phy_attached_info(struct phy_device *phydev);
-+
-+static inline int backport_mdiobus_register(struct mii_bus *bus)
-+{
-+	bus->irq = kmalloc(sizeof(int) * PHY_MAX_ADDR, GFP_KERNEL);
-+	if (!bus->irq) {
-+		pr_err("mii_bus irq allocation failed\n");
-+		return -ENOMEM;
-+	}
-+
-+	memset(bus->irq, PHY_POLL, sizeof(int) * PHY_MAX_ADDR);
-+
-+/* in kernel 4.3 a #define for mdiobus_register is added to the kernel. */
-+#ifndef mdiobus_register
-+	return mdiobus_register(bus);
-+#else
-+	return __mdiobus_register(bus, THIS_MODULE);
-+#endif
-+}
-+#ifdef mdiobus_register
-+#undef mdiobus_register
-+#endif
-+#define mdiobus_register LINUX_BACKPORT(mdiobus_register)
-+
-+static inline void backport_mdiobus_unregister(struct mii_bus *bus)
-+{
-+	kfree(bus->irq);
-+	mdiobus_unregister(bus);
-+}
-+#define mdiobus_unregister LINUX_BACKPORT(mdiobus_unregister)
- #endif /* < 4.5 */
- 
- #endif /* __BACKPORT_LINUX_PHY_H */
--- 
-2.7.0
+On Sat, 12 Mar 2016, Cristina-Gabriela Moraru wrote:
 
+> Hi,
+>
+> My name is Cristina Moraru and I am a software engineer from Romania
+> currently a student in a Master's program. I am interested in Driver
+> Backports project from GSoC and I would like to familiarize with it
+> and start contributing. My experience so far with Linux Kernel
+> includes an university course of driver development and an internship
+> at The Linux Foundation within Outreachy program (December 2015-March
+> 2016) in which I developed drivers in the Industrial I/O subsystem. I
+> have checked the TODO's page and I think the most interesting idea is
+> adding make localmodconfig support. Any suggestion of what to start
+> with ?
+
+Hi,
+
+Sorry not to have gotten back to you.  I will discuss with Luis about what
+we are interested in supervising in the context of GSoC, and get back to
+you.
+
+julia
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
