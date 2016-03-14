@@ -1,33 +1,37 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-qk0-f176.google.com ([209.85.220.176]:36677 "EHLO
-	mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753614AbcCZTt7 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sat, 26 Mar 2016 15:49:59 -0400
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:36671 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934032AbcCNLDE (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 14 Mar 2016 07:03:04 -0400
+Received: by mail-lb0-f173.google.com with SMTP id x1so233557780lbj.3
+        for <backports@vger.kernel.org>; Mon, 14 Mar 2016 04:03:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <56F6E651.9090200@ispras.ru>
-References: <56F4266B.4060605@gmail.com> <1943931458892174@web3o.yandex.ru>
- <56F5D04A.20506@gmail.com> <56F5D11B.7000803@gmail.com> <56F6E651.9090200@ispras.ru>
-From: "Luis R. Rodriguez" <mcgrof@gmail.com>
-Date: Sat, 26 Mar 2016 12:49:39 -0700
-Message-ID: <CAB=NE6WL5OnJTYi99dbuOyh0cenM7NcajfKHQDnbYKYBn67owQ@mail.gmail.com> (sfid-20160326_205002_328709_82DD26B7)
-Subject: Re: [lsb-discuss] Google Summer of Code 2016 - Many new applications
-To: Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: Till Kamppeter <till.kamppeter@gmail.com>,
-	Evgeny Novikov <novikov@ispras.ru>, Greg KH <greg@kroah.com>,
-	"lsb-discuss@lists.linux-foundation.org"
-	<lsb-discuss@lists.linux-foundation.org>,
-	linux-wireless <linux-wireless@vger.kernel.org>,
-	Open Printing <printing-architecture@lists.linux-foundation.org>,
-	chris holcombe <chris.holcombe@canonical.com>,
-	Chris MacNaughton <chris.macnaughton@canonical.com>
+Date: Mon, 14 Mar 2016 13:03:01 +0200
+Message-ID: <CANUX_P3KuZRvqNY7jUfptZxFCz5Hb=7UKPAXafL_tW3P3=Ln4Q@mail.gmail.com> (sfid-20160314_120352_880829_BBD21C0E)
+Subject: compilation issues with 3.1.0
+From: Emmanuel Grumbach <egrumbach@gmail.com>
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I just hit "want to mentor" for the backports one by Cristina-Gabriela Moraru.
+Hi,
 
-  Luis
+One of my colleagues has issues with 3.1.0:
+it can't find dma_common_get_sgtable.
+
+HAVE_GENERIC_DMA_COHERENT is set, and hence
+BPAUTO_BUILD_DMA_SHARED_HELPERS is not set.
+Because of that, dma_common_get_sgtable isn't defined.
+
+Sorry for the stupid question, but I can't think on how
+dma_common_get_sgtable should be declared on 3.1 since it doesn't
+exist in the base kernel obviously. Maybe that helper is supposed to
+be used only in code that should be under ifdef?
+
+thanks...
+
+Emmanuel Grumbach
+egrumbach@gmail.com
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
