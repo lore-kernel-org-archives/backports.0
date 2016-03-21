@@ -1,44 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:42650 "EHLO
-	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755228AbcCNI44 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 14 Mar 2016 04:56:56 -0400
-Date: Mon, 14 Mar 2016 09:56:55 +0100 (CET)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Cristina-Gabriela Moraru <cristina.moraru09@gmail.com>
-cc: backports@vger.kernel.org, mcgrof@do-not-panic.com
-Subject: Re: GSoC project
-In-Reply-To: <CAGZ2q2z5eHwaDqu53oyyKz+ur=TTa1AQrjHT51Tww0wizVz7_A@mail.gmail.com>
-Message-ID: <alpine.DEB.2.10.1603140956030.2688@hadrien> (sfid-20160314_095658_693959_FB27BA6A)
-References: <CAGZ2q2z5eHwaDqu53oyyKz+ur=TTa1AQrjHT51Tww0wizVz7_A@mail.gmail.com>
+Received: from mail.kernel.org ([198.145.29.136]:48736 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756270AbcCUQpu (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 21 Mar 2016 12:45:50 -0400
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <56D4B8DB.5000901@gmail.com>
+References: <56D4B8DB.5000901@gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Date: Mon, 21 Mar 2016 09:45:27 -0700
+Message-ID: <CAB=NE6XdHrU0=MxnXd-UR+BuTkfVEcw6=O3=CPPK6RNpehSW2g@mail.gmail.com> (sfid-20160321_174553_368552_C6EAABDE)
+Subject: Re: Google Summer of Code 2016 - The Linux Foundation is accepted as
+ mentoring organization!
+To: Till Kamppeter <till.kamppeter@gmail.com>,
+	Julia Lawall <julia.lawall@lip6.fr>
+Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	Greg KH <greg@kroah.com>,
+	"lsb-discuss@lists.linux-foundation.org"
+	<lsb-discuss@lists.linux-foundation.org>,
+	linux-wireless <linux-wireless@vger.kernel.org>,
+	Open Printing <printing-architecture@lists.linux-foundation.org>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-
-
-On Sat, 12 Mar 2016, Cristina-Gabriela Moraru wrote:
-
+On Mon, Feb 29, 2016 at 1:32 PM, Till Kamppeter
+<till.kamppeter@gmail.com> wrote:
 > Hi,
 >
-> My name is Cristina Moraru and I am a software engineer from Romania
-> currently a student in a Master's program. I am interested in Driver
-> Backports project from GSoC and I would like to familiarize with it
-> and start contributing. My experience so far with Linux Kernel
-> includes an university course of driver development and an internship
-> at The Linux Foundation within Outreachy program (December 2015-March
-> 2016) in which I developed drivers in the Industrial I/O subsystem. I
-> have checked the TODO's page and I think the most interesting idea is
-> adding make localmodconfig support. Any suggestion of what to start
-> with ?
+> we are accepted as mentoring organization again!
+>
+> So please advertise our participation to find students and add more
+> project ideas to the ideas page:
+>
+> https://www.linuxfoundation.org/collaborate/workgroups/gsoc/google-summer-code-2016
+>
+> Please add your ideas to the sub-page of your work group. If you have
+> problems mail me with your project idea.
 
-Hi,
+Thanks,
 
-Sorry not to have gotten back to you.  I will discuss with Luis about what
-we are interested in supervising in the context of GSoC, and get back to
-you.
+We will be coordinating with one student so far that has expressed
+interest in a very specific project in the realm of Linux backports
+which may also help Linux upstream, will be following up with that
+student next.
 
-julia
+ Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
