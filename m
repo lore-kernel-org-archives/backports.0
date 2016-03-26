@@ -1,51 +1,33 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:48736 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756270AbcCUQpu (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 21 Mar 2016 12:45:50 -0400
+Received: from mail-qk0-f176.google.com ([209.85.220.176]:36677 "EHLO
+	mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753614AbcCZTt7 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 26 Mar 2016 15:49:59 -0400
 MIME-Version: 1.0
-In-Reply-To: <56D4B8DB.5000901@gmail.com>
-References: <56D4B8DB.5000901@gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Date: Mon, 21 Mar 2016 09:45:27 -0700
-Message-ID: <CAB=NE6XdHrU0=MxnXd-UR+BuTkfVEcw6=O3=CPPK6RNpehSW2g@mail.gmail.com> (sfid-20160321_174553_368552_C6EAABDE)
-Subject: Re: Google Summer of Code 2016 - The Linux Foundation is accepted as
- mentoring organization!
-To: Till Kamppeter <till.kamppeter@gmail.com>,
-	Julia Lawall <julia.lawall@lip6.fr>
-Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	Greg KH <greg@kroah.com>,
+In-Reply-To: <56F6E651.9090200@ispras.ru>
+References: <56F4266B.4060605@gmail.com> <1943931458892174@web3o.yandex.ru>
+ <56F5D04A.20506@gmail.com> <56F5D11B.7000803@gmail.com> <56F6E651.9090200@ispras.ru>
+From: "Luis R. Rodriguez" <mcgrof@gmail.com>
+Date: Sat, 26 Mar 2016 12:49:39 -0700
+Message-ID: <CAB=NE6WL5OnJTYi99dbuOyh0cenM7NcajfKHQDnbYKYBn67owQ@mail.gmail.com> (sfid-20160326_205002_328709_82DD26B7)
+Subject: Re: [lsb-discuss] Google Summer of Code 2016 - Many new applications
+To: Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: Till Kamppeter <till.kamppeter@gmail.com>,
+	Evgeny Novikov <novikov@ispras.ru>, Greg KH <greg@kroah.com>,
 	"lsb-discuss@lists.linux-foundation.org"
 	<lsb-discuss@lists.linux-foundation.org>,
 	linux-wireless <linux-wireless@vger.kernel.org>,
 	Open Printing <printing-architecture@lists.linux-foundation.org>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>
+	chris holcombe <chris.holcombe@canonical.com>,
+	Chris MacNaughton <chris.macnaughton@canonical.com>
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Feb 29, 2016 at 1:32 PM, Till Kamppeter
-<till.kamppeter@gmail.com> wrote:
-> Hi,
->
-> we are accepted as mentoring organization again!
->
-> So please advertise our participation to find students and add more
-> project ideas to the ideas page:
->
-> https://www.linuxfoundation.org/collaborate/workgroups/gsoc/google-summer-code-2016
->
-> Please add your ideas to the sub-page of your work group. If you have
-> problems mail me with your project idea.
+I just hit "want to mentor" for the backports one by Cristina-Gabriela Moraru.
 
-Thanks,
-
-We will be coordinating with one student so far that has expressed
-interest in a very specific project in the realm of Linux backports
-which may also help Linux upstream, will be following up with that
-student next.
-
- Luis
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
