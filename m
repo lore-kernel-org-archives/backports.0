@@ -1,60 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:49597 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752006AbcD3VBG (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 30 Apr 2016 17:01:06 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 05/16] header: add shash_desc_zero() and ahash_request_zero()
-Date: Sat, 30 Apr 2016 23:00:37 +0200
-Message-Id: <1462050048-8953-6-git-send-email-hauke@hauke-m.de> (sfid-20160430_230111_592833_C9B9E525)
-In-Reply-To: <1462050048-8953-1-git-send-email-hauke@hauke-m.de>
-References: <1462050048-8953-1-git-send-email-hauke@hauke-m.de>
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:42546 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753249AbcDAInO (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 1 Apr 2016 04:43:14 -0400
+From: Arend van Spriel <arend@broadcom.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: backports@vger.kernel.org, Arend van Spriel <arend@broadcom.com>
+Subject: [PATCH 1/2] backport: add stub for of_translate_address() function
+Date: Fri,  1 Apr 2016 10:33:38 +0200
+Message-Id: <1459499619-16641-1-git-send-email-arend@broadcom.com> (sfid-20160401_104322_169654_02E3402F)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-shash_desc_zero() and ahash_request_zero() were added in Linux commit
-e67ffe0af "crypto: hash - Add helpers to zero stack request/descriptor".
+The stub for of_translate_address() was added in 4.4 kernel. Prior to
+that it was only available when CONFIG_OF_ADDRESS was selected. So
+backport the stub for kernel < 4.4 and !CONFIG_OF_ADDRESS.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Arend van Spriel <arend@broadcom.com>
 ---
- backport/backport-include/crypto/hash.h | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
- create mode 100644 backport/backport-include/crypto/hash.h
+ backport/backport-include/linux/of_address.h | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+ create mode 100644 backport/backport-include/linux/of_address.h
 
-diff --git a/backport/backport-include/crypto/hash.h b/backport/backport-include/crypto/hash.h
+diff --git a/backport/backport-include/linux/of_address.h b/backport/backport-include/linux/of_address.h
 new file mode 100644
-index 0000000..18cb630
+index 0000000..63ac79d
 --- /dev/null
-+++ b/backport/backport-include/crypto/hash.h
-@@ -0,0 +1,24 @@
-+#ifndef _BACKPORT_CRYPTO_HASH_H
-+#define _BACKPORT_CRYPTO_HASH_H
-+#include_next <crypto/hash.h>
++++ b/backport/backport-include/linux/of_address.h
+@@ -0,0 +1,18 @@
++#ifndef __BACKPORT_OF_ADDRESS_H
++#define __BACKPORT_OF_ADDRESS_H
++#include_next <linux/of_address.h>
 +#include <linux/version.h>
 +
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0)
-+#define shash_desc_zero LINUX_BACKPORT(shash_desc_zero)
-+static inline void shash_desc_zero(struct shash_desc *desc)
-+{
-+	memzero_explicit(desc,
-+			 sizeof(*desc) + crypto_shash_descsize(desc->tfm));
-+}
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,4,0) && !defined(CONFIG_OF_ADDRESS)
++#ifndef OF_BAD_ADDR
++#define OF_BAD_ADDR     ((u64)-1)
 +#endif
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0)
-+#define ahash_request_zero LINUX_BACKPORT(ahash_request_zero)
-+static inline void ahash_request_zero(struct ahash_request *req)
++#define of_translate_address LINUX_BACKPORT(of_translate_addres)
++static inline u64 of_translate_address(struct device_node *np,
++				       const __be32 *addr)
 +{
-+	memzero_explicit(req, sizeof(*req) +
-+			      crypto_ahash_reqsize(crypto_ahash_reqtfm(req)));
++	return OF_BAD_ADDR;
 +}
-+#endif
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,4,0) */
 +
-+#endif /* _BACKPORT_CRYPTO_HASH_H */
++#endif /* __BACKPORT_OF_IRQ_H */
 -- 
-2.8.1
+1.9.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
