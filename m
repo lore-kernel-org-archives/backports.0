@@ -1,124 +1,81 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:47025 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752132AbcDSVvC (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 19 Apr 2016 17:51:02 -0400
-Received: from [192.168.178.24] (p4FFCCF1D.dip0.t-ipconnect.de [79.252.207.29])
-	by hauke-m.de (Postfix) with ESMTPSA id 5DD94100163
-	for <backports@vger.kernel.org>; Tue, 19 Apr 2016 23:50:57 +0200 (CEST)
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: Bluetooth skcipher backport
-Message-ID: <5716A840.6060903@hauke-m.de> (sfid-20160419_235106_184162_5A0A0218)
-Date: Tue, 19 Apr 2016 23:50:56 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:14628 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751818AbcDAVZH (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 1 Apr 2016 17:25:07 -0400
+From: Arend van Spriel <arend@broadcom.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: backports@vger.kernel.org, Arend van Spriel <arend@broadcom.com>
+Subject: [PATCH] backport-include: fix abs definition in kernel.h
+Date: Fri,  1 Apr 2016 22:35:27 +0200
+Message-Id: <1459542927-17174-1-git-send-email-arend@broadcom.com> (sfid-20160401_232509_852404_BBA4B8E9)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
+The definition of abs should be within include protection to avoid
+following build issue:
 
-I looked at backports and saw that bluetooth now uses skcipher. I get
-the following compile error. Does someone want to look into it or
-already has a patch for it?
+In file included from /tmp/bp-test/backport-include/linux/kernel.h:3:0,
+                 from include/linux/cache.h:4,
+                 from include/linux/time.h:4,
+                 from /tmp/bp-test/backport-include/linux/time.h:3,
+                 from include/linux/stat.h:18,
+                 from include/linux/module.h:10,
+                 from /tmp/bp-test/backport-include/linux/module.h:3,
+                 from /tmp/bp-test/net/wireless/nl80211.c:10:
+include/linux/kernel.h:179:0: warning: "abs" redefined [enabled by default]
+error, forbidden warning: kernel.h:179
+make[6]: *** [/tmp/bp-test/net/wireless/nl80211.o] Error 1
 
-This is caused by this changeset:
+Signed-off-by: Arend van Spriel <arend@broadcom.com>
+---
+ backport/backport-include/linux/kernel.h | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
-commit 71af2f6bb22a4bf42663e10f1d8913d4967ed07f
-Author: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Sun Jan 24 21:18:30 2016 +0800
-
-Bluetooth: Use skcipher and hash
-
-
-
-  CC [M]
-/home/hauke/compat-wireless/tmp/drivers/media/dvb-frontends/tda10021.o
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c: In function ‘smp_e’:
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c:366:2: error:
-implicit declaration of function ‘SKCIPHER_REQUEST_ON_STACK’
-[-Werror=implicit-function-declaration]
-  SKCIPHER_REQUEST_ON_STACK(req, tfm);
-  ^
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c:366:28: error: ‘req’
-undeclared (first use in this function)
-  SKCIPHER_REQUEST_ON_STACK(req, tfm);
-                            ^
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c:366:28: note: each
-undeclared identifier is reported only once for each function it appears in
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c:367:2: warning: ISO
-C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
-  struct scatterlist sg;
-  ^
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c:381:8: error:
-implicit declaration of function ‘crypto_skcipher_setkey’
-[-Werror=implicit-function-declaration]
-  err = crypto_skcipher_setkey(tfm, tmp, 16);
-        ^
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c:392:2: error:
-implicit declaration of function ‘skcipher_request_set_tfm’
-[-Werror=implicit-function-declaration]
-  skcipher_request_set_tfm(req, tfm);
-  ^
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c:393:2: error:
-implicit declaration of function ‘skcipher_request_set_callback’
-[-Werror=implicit-function-declaration]
-  skcipher_request_set_callback(req, 0, NULL, NULL);
-  ^
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c:394:2: error:
-implicit declaration of function ‘skcipher_request_set_crypt’
-[-Werror=implicit-function-declaration]
-  skcipher_request_set_crypt(req, &sg, &sg, 16, NULL);
-  ^
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c:396:8: error:
-implicit declaration of function ‘crypto_skcipher_encrypt’
-[-Werror=implicit-function-declaration]
-  err = crypto_skcipher_encrypt(req);
-        ^
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c:397:2: error:
-implicit declaration of function ‘skcipher_request_zero’
-[-Werror=implicit-function-declaration]
-  skcipher_request_zero(req);
-  ^
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c: In function
-‘smp_chan_destroy’:
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c:767:2: error:
-implicit declaration of function ‘crypto_free_skcipher’
-[-Werror=implicit-function-declaration]
-  crypto_free_skcipher(smp->tfm_aes);
-  ^
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c: In function
-‘smp_chan_create’:
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c:1367:17: error:
-implicit declaration of function ‘crypto_alloc_skcipher’
-[-Werror=implicit-function-declaration]
-  smp->tfm_aes = crypto_alloc_skcipher("ecb(aes)", 0, CRYPTO_ALG_ASYNC);
-                 ^
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c:1367:15: warning:
-assignment makes pointer from integer without a cast [-Wint-conversion]
-  smp->tfm_aes = crypto_alloc_skcipher("ecb(aes)", 0, CRYPTO_ALG_ASYNC);
-               ^
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c: In function
-‘smp_add_cid’:
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c:3146:10: warning:
-assignment makes pointer from integer without a cast [-Wint-conversion]
-  tfm_aes = crypto_alloc_skcipher("ecb(aes)", 0, CRYPTO_ALG_ASYNC);
-          ^
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c: In function
-‘bt_selftest_smp’:
-/home/hauke/compat-wireless/tmp/net/bluetooth/smp.c:3782:10: warning:
-assignment makes pointer from integer without a cast [-Wint-conversion]
-  tfm_aes = crypto_alloc_skcipher("ecb(aes)", 0, CRYPTO_ALG_ASYNC);
-          ^
-cc1: some warnings being treated as errors
-scripts/Makefile.build:258: recipe for target
-'/home/hauke/compat-wireless/tmp/net/bluetooth/smp.o' failed
-make[6]: *** [/home/hauke/compat-wireless/tmp/net/bluetooth/smp.o] Error 1
-scripts/Makefile.build:403: recipe for target
-'/home/hauke/compat-wireless/tmp/net/bluetooth' failed
-make[5]: *** [/home/hauke/compat-wireless/tmp/net/bluetooth] Error 2
-
-
+diff --git a/backport/backport-include/linux/kernel.h b/backport/backport-include/linux/kernel.h
+index 7d56f02..ed4a87d 100644
+--- a/backport/backport-include/linux/kernel.h
++++ b/backport/backport-include/linux/kernel.h
+@@ -152,20 +152,6 @@ int __must_check hex2bin(u8 *dst, const char *src, size_t count);
+ #undef clamp
+ #define clamp(val, lo, hi) min((typeof(val))max(val, lo), hi)
+ #endif /* < 3.18 */
+-
+-#endif /* __BACKPORT_KERNEL_H */
+-
+-/*
+- * We have to do this outside the include guard, because
+- * out own header (linux/export.h) has to include kernel.h
+- * indirectly (through module.h) and then undef's pr_fmt.
+- * Then, when the real kernel.h gets included again, it's
+- * not defined and we get problems ...
+- */
+-#ifndef pr_fmt
+-#define pr_fmt(msg) msg
+-#endif
+-
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(4,5,0)
+ 
+ #undef abs
+@@ -193,3 +179,16 @@ int __must_check hex2bin(u8 *dst, const char *src, size_t count);
+ 	({ signed type __x = (x); __x < 0 ? -__x : __x; }), other)
+ 
+ #endif
++
++#endif /* __BACKPORT_KERNEL_H */
++
++/*
++ * We have to do this outside the include guard, because
++ * out own header (linux/export.h) has to include kernel.h
++ * indirectly (through module.h) and then undef's pr_fmt.
++ * Then, when the real kernel.h gets included again, it's
++ * not defined and we get problems ...
++ */
++#ifndef pr_fmt
++#define pr_fmt(msg) msg
++#endif
+-- 
+1.9.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
