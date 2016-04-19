@@ -1,91 +1,61 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:49610 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752190AbcD3VBI (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 30 Apr 2016 17:01:08 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 11/16] backports: add devm_led_trigger_register()
-Date: Sat, 30 Apr 2016 23:00:43 +0200
-Message-Id: <1462050048-8953-12-git-send-email-hauke@hauke-m.de> (sfid-20160430_230722_446062_FF590D1F)
-In-Reply-To: <1462050048-8953-1-git-send-email-hauke@hauke-m.de>
-References: <1462050048-8953-1-git-send-email-hauke@hauke-m.de>
+Received: from paleale.coelho.fi ([176.9.41.70]:37332 "EHLO
+	farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752758AbcDSTPq (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 19 Apr 2016 15:15:46 -0400
+Message-ID: <1461093340.16778.81.camel@coelho.fi> (sfid-20160419_211548_136881_4A59840D)
+From: Luca Coelho <luca@coelho.fi>
+To: Arend van Spriel <arend@broadcom.com>,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: backports@vger.kernel.org
+Date: Tue, 19 Apr 2016 22:15:40 +0300
+In-Reply-To: <1454928135-8154-1-git-send-email-arend@broadcom.com>
+References: <1454928135-8154-1-git-send-email-arend@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: [PATCH] backport: add empty inline for wireless_nlevent_flush()
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-devm_led_trigger_register() was added in Linux commit 9534cc31d "leds:
-core: add managed version of led_trigger_register"
+Hi Arend,
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/leds.h |  6 ++++++
- backport/compat/backport-4.5.c         | 29 +++++++++++++++++++++++++++++
- 2 files changed, 35 insertions(+)
+On Mon, 2016-02-08 at 11:42 +0100, Arend van Spriel wrote:
+> The function was added in v4.5 kernel. As it can not be backported
+> it is provided for older kernels as an empty inline.
+> 
+> Signed-off-by: Arend van Spriel <arend@broadcom.com>
+> ---
+> Not sure whether LINUX_BACKPORT() macro should be used. Let me
+> know if that is needed.
+> 
+> Regards,
+> Arend
+> ---
+>  backport/backport-include/net/iw_handler.h | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/backport/backport-include/net/iw_handler.h
+> b/backport/backport-include/net/iw_handler.h
+> index 11135c8..03a4fd1 100644
+> --- a/backport/backport-include/net/iw_handler.h
+> +++ b/backport/backport-include/net/iw_handler.h
+> @@ -25,4 +25,7 @@ iwe_stream_add_point_check(struct iw_request_info
+> *info, char *stream,
+>  	return res;
+>  }
+>  #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
+> +#if LINUX_VERSION_CODE < KERNEL_VERSION(4,5,0)
 
-diff --git a/backport/backport-include/linux/leds.h b/backport/backport-include/linux/leds.h
-index 53b3066..fb4d7b3 100644
---- a/backport/backport-include/linux/leds.h
-+++ b/backport/backport-include/linux/leds.h
-@@ -56,6 +56,12 @@ extern int led_set_brightness_sync(struct led_classdev *led_cdev,
- 				   enum led_brightness value);
- #endif /* < 4.5 && >= 3.19 */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,5,0)
-+#define devm_led_trigger_register LINUX_BACKPORT(devm_led_trigger_register)
-+extern int devm_led_trigger_register(struct device *dev,
-+				     struct led_trigger *trigger);
-+#endif /* < 4.5 */
-+
- #include <backport/leds-disabled.h>
- 
- #endif /* __BACKPORT_LINUX_LEDS_H */
-diff --git a/backport/compat/backport-4.5.c b/backport/compat/backport-4.5.c
-index 16306e1..bbf4f3b 100644
---- a/backport/compat/backport-4.5.c
-+++ b/backport/compat/backport-4.5.c
-@@ -13,6 +13,7 @@
- #include <linux/export.h>
- #include <linux/errno.h>
- #include <linux/fs.h>
-+#include <linux/leds.h>
- #include <linux/phy.h>
- #include <linux/printk.h>
- #include <linux/slab.h>
-@@ -122,3 +123,31 @@ void phy_attached_print(struct phy_device *phydev, const char *fmt, ...)
- 	}
- }
- EXPORT_SYMBOL_GPL(phy_attached_print);
-+
-+static void devm_led_trigger_release(struct device *dev, void *res)
-+{
-+	led_trigger_unregister(*(struct led_trigger **)res);
-+}
-+
-+int devm_led_trigger_register(struct device *dev,
-+			      struct led_trigger *trig)
-+{
-+	struct led_trigger **dr;
-+	int rc;
-+
-+	dr = devres_alloc(devm_led_trigger_release, sizeof(*dr),
-+			  GFP_KERNEL);
-+	if (!dr)
-+		return -ENOMEM;
-+
-+	*dr = trig;
-+
-+	rc = led_trigger_register(trig);
-+	if (rc)
-+		devres_free(dr);
-+	else
-+		devres_add(dev, dr);
-+
-+	return rc;
-+}
-+EXPORT_SYMBOL_GPL(devm_led_trigger_register);
--- 
-2.8.1
+This function was added to stable 4.4.6, so we should change this #if
+accordingly.
 
+
+> +static inline void wireless_nlevent_flush(void) {}
+> +#endif
+>  #endif /* __BACKPORT_IW_HANDLER_H */
+
+--
+Cheers,
+Luca.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
