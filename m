@@ -1,81 +1,145 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:14628 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751818AbcDAVZH (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 1 Apr 2016 17:25:07 -0400
-From: Arend van Spriel <arend@broadcom.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org, Arend van Spriel <arend@broadcom.com>
-Subject: [PATCH] backport-include: fix abs definition in kernel.h
-Date: Fri,  1 Apr 2016 22:35:27 +0200
-Message-Id: <1459542927-17174-1-git-send-email-arend@broadcom.com> (sfid-20160401_232509_852404_BBA4B8E9)
+Received: from hauke-m.de ([5.39.93.123]:49609 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750912AbcD3VBI (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 30 Apr 2016 17:01:08 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 10/16] backports: add kstrtobool() and kstrtobool_from_user()
+Date: Sat, 30 Apr 2016 23:00:42 +0200
+Message-Id: <1462050048-8953-11-git-send-email-hauke@hauke-m.de> (sfid-20160430_230721_595418_57E719FC)
+In-Reply-To: <1462050048-8953-1-git-send-email-hauke@hauke-m.de>
+References: <1462050048-8953-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The definition of abs should be within include protection to avoid
-following build issue:
+kstrtobool was added in Linux commit a21d167dc "lib: move strtobool()
+to kstrtobool()".
 
-In file included from /tmp/bp-test/backport-include/linux/kernel.h:3:0,
-                 from include/linux/cache.h:4,
-                 from include/linux/time.h:4,
-                 from /tmp/bp-test/backport-include/linux/time.h:3,
-                 from include/linux/stat.h:18,
-                 from include/linux/module.h:10,
-                 from /tmp/bp-test/backport-include/linux/module.h:3,
-                 from /tmp/bp-test/net/wireless/nl80211.c:10:
-include/linux/kernel.h:179:0: warning: "abs" redefined [enabled by default]
-error, forbidden warning: kernel.h:179
-make[6]: *** [/tmp/bp-test/net/wireless/nl80211.o] Error 1
-
-Signed-off-by: Arend van Spriel <arend@broadcom.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/kernel.h | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+ backport/backport-include/linux/kernel.h |  7 +++
+ backport/compat/Makefile                 |  1 +
+ backport/compat/backport-4.6.c           | 77 ++++++++++++++++++++++++++++++++
+ 3 files changed, 85 insertions(+)
+ create mode 100644 backport/compat/backport-4.6.c
 
 diff --git a/backport/backport-include/linux/kernel.h b/backport/backport-include/linux/kernel.h
-index 7d56f02..ed4a87d 100644
+index 54050aa..f47b21f 100644
 --- a/backport/backport-include/linux/kernel.h
 +++ b/backport/backport-include/linux/kernel.h
-@@ -152,20 +152,6 @@ int __must_check hex2bin(u8 *dst, const char *src, size_t count);
- #undef clamp
+@@ -153,6 +153,13 @@ int __must_check hex2bin(u8 *dst, const char *src, size_t count);
  #define clamp(val, lo, hi) min((typeof(val))max(val, lo), hi)
  #endif /* < 3.18 */
--
--#endif /* __BACKPORT_KERNEL_H */
--
--/*
-- * We have to do this outside the include guard, because
-- * out own header (linux/export.h) has to include kernel.h
-- * indirectly (through module.h) and then undef's pr_fmt.
-- * Then, when the real kernel.h gets included again, it's
-- * not defined and we get problems ...
-- */
--#ifndef pr_fmt
--#define pr_fmt(msg) msg
--#endif
--
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0)
++#define kstrtobool LINUX_BACKPORT(kstrtobool)
++int __must_check kstrtobool(const char *s, bool *res);
++#define kstrtobool_from_user LINUX_BACKPORT(kstrtobool_from_user)
++int __must_check kstrtobool_from_user(const char __user *s, size_t count, bool *res);
++#endif
++
  #if LINUX_VERSION_CODE < KERNEL_VERSION(4,5,0)
  
  #undef abs
-@@ -193,3 +179,16 @@ int __must_check hex2bin(u8 *dst, const char *src, size_t count);
- 	({ signed type __x = (x); __x < 0 ? -__x : __x; }), other)
+diff --git a/backport/compat/Makefile b/backport/compat/Makefile
+index 76d71e7..7651f83 100644
+--- a/backport/compat/Makefile
++++ b/backport/compat/Makefile
+@@ -31,6 +31,7 @@ compat-$(CPTCFG_KERNEL_4_2) += backport-4.2.o
+ compat-$(CPTCFG_KERNEL_4_3) += backport-4.3.o
+ compat-$(CPTCFG_KERNEL_4_4) += backport-4.4.o
+ compat-$(CPTCFG_KERNEL_4_5) += backport-4.5.o
++compat-$(CPTCFG_KERNEL_4_6) += backport-4.6.o
  
- #endif
+ compat-$(CPTCFG_BPAUTO_BUILD_CRYPTO_CCM) += crypto-ccm.o
+ compat-$(CPTCFG_BPAUTO_CRYPTO_SKCIPHER) += crypto-skcipher.o
+diff --git a/backport/compat/backport-4.6.c b/backport/compat/backport-4.6.c
+new file mode 100644
+index 0000000..54ff669
+--- /dev/null
++++ b/backport/compat/backport-4.6.c
+@@ -0,0 +1,77 @@
++/*
++ * Copyright(c) 2016 Hauke Mehrtens <hauke@hauke-m.de>
++ *
++ * Backport functionality introduced in Linux 4.6.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
 +
-+#endif /* __BACKPORT_KERNEL_H */
++#include <linux/kernel.h>
++#include <linux/uaccess.h>
++#include <linux/export.h>
++
++/**
++ * kstrtobool - convert common user inputs into boolean values
++ * @s: input string
++ * @res: result
++ *
++ * This routine returns 0 iff the first character is one of 'Yy1Nn0', or
++ * [oO][NnFf] for "on" and "off". Otherwise it will return -EINVAL.  Value
++ * pointed to by res is updated upon finding a match.
++ */
++int kstrtobool(const char *s, bool *res)
++{
++	if (!s)
++		return -EINVAL;
++
++	switch (s[0]) {
++	case 'y':
++	case 'Y':
++	case '1':
++		*res = true;
++		return 0;
++	case 'n':
++	case 'N':
++	case '0':
++		*res = false;
++		return 0;
++	case 'o':
++	case 'O':
++		switch (s[1]) {
++		case 'n':
++		case 'N':
++			*res = true;
++			return 0;
++		case 'f':
++		case 'F':
++			*res = false;
++			return 0;
++		default:
++			break;
++		}
++	default:
++		break;
++	}
++
++	return -EINVAL;
++}
++EXPORT_SYMBOL_GPL(kstrtobool);
 +
 +/*
-+ * We have to do this outside the include guard, because
-+ * out own header (linux/export.h) has to include kernel.h
-+ * indirectly (through module.h) and then undef's pr_fmt.
-+ * Then, when the real kernel.h gets included again, it's
-+ * not defined and we get problems ...
++ * Since "base" would be a nonsense argument, this open-codes the
++ * _from_user helper instead of using the helper macro below.
 + */
-+#ifndef pr_fmt
-+#define pr_fmt(msg) msg
-+#endif
++int kstrtobool_from_user(const char __user *s, size_t count, bool *res)
++{
++	/* Longest string needed to differentiate, newline, terminator */
++	char buf[4];
++
++	count = min(count, sizeof(buf) - 1);
++	if (copy_from_user(buf, s, count))
++		return -EFAULT;
++	buf[count] = '\0';
++	return kstrtobool(buf, res);
++}
++EXPORT_SYMBOL_GPL(kstrtobool_from_user);
 -- 
-1.9.1
+2.8.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
