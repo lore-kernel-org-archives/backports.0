@@ -1,38 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:51784 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751139AbcEDVDH (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 4 May 2016 17:03:07 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 4A22A203E3
-	for <backports@vger.kernel.org>; Wed,  4 May 2016 21:03:05 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 8C58A203B8
-	for <backports@vger.kernel.org>; Wed,  4 May 2016 21:03:04 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 65881] errors compiling after make defconfig-alx
-Date: Wed, 04 May 2016 21:03:04 +0000
-Message-ID: <bug-65881-58281-GdzHsKOobW@https.bugzilla.kernel.org/> (sfid-20160504_230309_931794_8BDC71A7)
-In-Reply-To: <bug-65881-58281@https.bugzilla.kernel.org/>
-References: <bug-65881-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:34410 "EHLO
+	mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750728AbcECJS6 (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 3 May 2016 05:18:58 -0400
+Received: by mail-vk0-f65.google.com with SMTP id m188so1222101vka.1
+        for <backports@vger.kernel.org>; Tue, 03 May 2016 02:18:58 -0700 (PDT)
 MIME-Version: 1.0
+Date: Tue, 3 May 2016 18:18:57 +0900
+Message-ID: <CAArnnE7di429C8uhQCd=AQVej0mpA9BPMh-at+GyFgk16gj1ng@mail.gmail.com> (sfid-20160503_111901_478492_8CBE8E8E)
+Subject: How to backport a bluetooth subsystem? not shown 'Bluetooth subsystem
+ support' selection.
+From: Hyuntak Lee <pphdev12@gmail.com>
+To: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=65881
+Dears,
 
-Luis R. Rodriguez <mcgrof@gmail.com> changed:
+I have been working with embedded boards. It only supports 3.4 kernel.
+So, I'm trying to backport a latest bluetooth subsystem to 3.4 kernel.
+(I used a backports-4.1.1-1 stable release)
+But I could not backport because not shown 'Bluetooth subsystem
+support' selection.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-                 CC|                            |mcgrof@gmail.com
-         Resolution|---                         |PATCH_ALREADY_AVAILABLE
+My steps is below:
 
--- 
-You are receiving this mail because:
-You are the assignee for the bug.
+###To compile old kernel
+$ export ARCH=arm
+$ export CROSS_COMPILE=$CCPREFIX
+$ cd $KERNEL_SRC
+KERNEL_SRC$ make defconfig
+KERNEL_SRC$ make
+KERNEL_SRC$ make INSTALL_MOD_PATH=$OUTPUT install
+###To backport
+$ export KLIB=$KERNEL_SRC
+$ export KLIB_BUILD=$OUTPUT
+$ wget http://www.kernel.org/pub/linux/kernel/projects/backports/stable/v4.1.1/backports-4.1.1-1.tar.xz
+$ unxz backports-4.1.1-1.tar.xz
+$ tar xfp backports-4.1.1-1.tar
+$ cd backports-4.1.1-1
+backports-4.1.1-1$ make menuconfig
+### not shown 'Bluetooth subsystem support' selection.
+
+But, if not set a KLIB env value, shown 'Bluetooth subsystem support' selection.
+
+Am I missing some configuration?
+Please advise me.
+
+Best regards,
+tak
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
