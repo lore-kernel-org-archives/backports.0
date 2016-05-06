@@ -1,49 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:41772 "EHLO sipsolutions.net"
+Received: from hauke-m.de ([5.39.93.123]:60899 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752505AbcEaNtG (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 31 May 2016 09:49:06 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: update devcoredump patch
-Date: Tue, 31 May 2016 15:49:01 +0200
-Message-Id: <1464702541-20621-1-git-send-email-johannes@sipsolutions.net> (sfid-20160531_154909_169715_B72CDD75)
+	id S1758397AbcEFV2v (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 6 May 2016 17:28:51 -0400
+Subject: Re: [PATCH] backport-include: fix abs definition in kernel.h
+To: Arend van Spriel <arend@broadcom.com>,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+References: <1459542927-17174-1-git-send-email-arend@broadcom.com>
+Cc: backports@vger.kernel.org
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Message-ID: <572D0C91.8000408@hauke-m.de> (sfid-20160506_232852_684232_20762513)
+Date: Fri, 6 May 2016 23:28:49 +0200
+MIME-Version: 1.0
+In-Reply-To: <1459542927-17174-1-git-send-email-arend@broadcom.com>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On 04/01/2016 10:35 PM, Arend van Spriel wrote:
+> The definition of abs should be within include protection to avoid
+> following build issue:
+> 
+> In file included from /tmp/bp-test/backport-include/linux/kernel.h:3:0,
+>                  from include/linux/cache.h:4,
+>                  from include/linux/time.h:4,
+>                  from /tmp/bp-test/backport-include/linux/time.h:3,
+>                  from include/linux/stat.h:18,
+>                  from include/linux/module.h:10,
+>                  from /tmp/bp-test/backport-include/linux/module.h:3,
+>                  from /tmp/bp-test/net/wireless/nl80211.c:10:
+> include/linux/kernel.h:179:0: warning: "abs" redefined [enabled by default]
+> error, forbidden warning: kernel.h:179
+> make[6]: *** [/tmp/bp-test/net/wireless/nl80211.o] Error 1
+> 
+> Signed-off-by: Arend van Spriel <arend@broadcom.com>
+> ---
+>  backport/backport-include/linux/kernel.h | 27 +++++++++++++--------------
+>  1 file changed, 13 insertions(+), 14 deletions(-)
+> 
 
-Changed upstream by commit 522566376a3f ("devcoredump:
-add scatterlist support").
 
-Change-Id: I9a8e933ed70ac85ebc0c241a3faa78217fbb6f30
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- patches/backport-adjustments/devcoredump.patch | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thank you for the patch, it was applied.
 
-diff --git a/patches/backport-adjustments/devcoredump.patch b/patches/backport-adjustments/devcoredump.patch
-index b438f32e115b..efa5d9f9ab48 100644
---- a/patches/backport-adjustments/devcoredump.patch
-+++ b/patches/backport-adjustments/devcoredump.patch
-@@ -103,12 +103,12 @@
-  
- -#ifdef CONFIG_DEV_COREDUMP
- +#ifdef CPTCFG_BPAUTO_WANT_DEV_COREDUMP
-- void dev_coredumpv(struct device *dev, const void *data, size_t datalen,
-+ void dev_coredumpv(struct device *dev, void *data, size_t datalen,
-  		   gfp_t gfp);
-  
- @@ -30,6 +30,6 @@ dev_coredumpm(struct device *dev, struct
-  {
-- 	free(data);
-+ 	_devcd_free_sgtable(table);
-  }
- -#endif /* CONFIG_DEV_COREDUMP */
- +#endif /* CPTCFG_BPAUTO_WANT_DEV_COREDUMP */
--- 
-2.8.0.rc3
+Hauke
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
