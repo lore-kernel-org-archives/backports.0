@@ -1,80 +1,83 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-bn1on0138.outbound.protection.outlook.com ([157.56.110.138]:14838
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S932362AbcECSqN convert rfc822-to-8bit (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 3 May 2016 14:46:13 -0400
-From: Guillaume Fournier <gfournier@brioconcept.com>
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Problem backporting wl18xx to kernel 2.6.28
-Date: Tue, 3 May 2016 16:14:39 +0000
-Message-ID: <CY1PR0401MB0972873AA01C262A18881EA0BA7A0@CY1PR0401MB0972.namprd04.prod.outlook.com> (sfid-20160503_204615_893557_EA1B30FF)
-Content-Type: text/plain; charset="us-ascii"
+Received: from hauke-m.de ([5.39.93.123]:32866 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751745AbcEGLNn (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 7 May 2016 07:13:43 -0400
+Subject: Re: Linux backports CII badge and run time testing
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+References: <CAB=NE6VJF4kk4EoqA3Lqqp9e2bJqrXvoPmGSHaHs6qr3bX43OA@mail.gmail.com>
+Cc: Michal Marek <mmarek@suse.cz>, Takashi Iwai <tiwai@suse.de>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Fengguang Wu <fengguang.wu@intel.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Message-ID: <572DCDE0.5040605@hauke-m.de> (sfid-20160507_131429_300723_D1AE5EAB)
+Date: Sat, 7 May 2016 13:13:36 +0200
 MIME-Version: 1.0
+In-Reply-To: <CAB=NE6VJF4kk4EoqA3Lqqp9e2bJqrXvoPmGSHaHs6qr3bX43OA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hello,
+Hi Luis,
 
-I am trying to use backports-3.14.22-1 to cross-compile the wl18xx driver for a custom kernel 2.6.28 designed to run on an NXP video encoder (ASC8852A).  I am using Backports 3.14 because of this note in the documentation: "Current versions of backports support all mainline kernels starting with version 3.0, for kernel versions older than 3.0 please use backports-3.14, which supports all kernel versions back to 2.6.26.".  I have decided to using 3.14.22 because it seemed the most recent 3.14 release.  While configuring Backports, I noticed that the TI Modules (WL_TI) were not supported prior to 2.6.30:
+Did you apply for this? What are the benefits of this?
 
-Symbol: WL18XX [=m]
-Type : tristate
-Prompt: TI wl18xx support
-  Defined at drivers/net/wireless/ti/wl18xx/Kconfig:1
-  Depends on: WLAN [=y] && WL_TI [=y] && m && <choice> && MAC80211 [=m]
-  Location:
-    -> Wireless LAN (WLAN [=y])
-      -> TI Wireless LAN support (WL_TI [=y])
-  Selects: WLCORE [=m]
+On 05/05/2016 12:34 AM, Luis R. Rodriguez wrote:
+> As per the Core Infrastructure Initiative guidelines we now meet the
+> requirements for a badge, the details of the submission is here:
+> 
+> https://bestpractices.coreinfrastructure.org/projects/111
+> 
+> A lot of it just required updating our documentation to enable folks
+> to report security issues. If there are things that need to be
+> adjusted please let me know. A lot of this follows the Linux kernel
+> submission for a lot of things:
+> 
+> https://bestpractices.coreinfrastructure.org/projects/34
+> 
+> Things we need to improve on though are automated tests specific to
+> backports against a series of kernels, and also providing a bit of a
+> description when we make new releases. I realize that is hard, but its
+> also hard for Linux, we have no reasons no to be able to do that as
+> well.
 
-and
+Doing predictable releases cost some constant effort. I do not know if
+we have the resources to do predictable releases.
 
-Symbol: WL_TI [=y]
-Type : boolean
-Prompt: TI Wireless LAN support
-  Defined at drivers/net/wireless/ti/Kconfig:1
-  Depends on: WLAN [=y] && !BACKPORT_KERNEL_2_6_30
-  Location:
-    -> Wireless LAN (WLAN [=y])
+Security support could also be a problem because then we have to react
+pretty fast when someone sees a problem in one of the drivers we ship.
+Otherwise fixing the security problems should not be a big deal as I
+assume that most security problems will be already fixed in upstream
+Linux kernel.
 
-Therefore, I am trying to get the wl18xx to build on 2.6.30 as a first step.  After I get this to work, I will try to manually backport it to 2.6.28.  I will have to find out how to get the patched driver source code for the 2.6.30 driver (maybe use the Backports kernel integration?), but first things first.
+> As for run time testing, we know folks out there in the industry
+> already use backports and do their own run time tests against drivers,
+> and this may be automated, we however need something more, at the very
+> least a boot.
 
-To make things easier for Backports, I am *not* using my custom kernel for now but a clean slate 2.6.30 kernel.  Here is what I did:
-1) Cloned linux from git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-2) Checked out v2.6.30
-3) Menuconfig to make sure CONFIG_CRYPTO_CCM=m is activated as per: http://marc.info/?t=139876444500003&r=1&w=2 (it was already activated so I had nothing to do except saving the config)
-4) Cross-compiled the kernel
-5) Menuconfig Backports to select wl18xx driver, cfg80211, mac80211
-6) Cross-compile Backports
+Build testing and testing with simulated drivers like mac80211_hwsim
+should be doable, but testing all the device drivers which serve real
+hardware is nearly impossible.
 
-All this is run in a VirtualBox VM running Ubuntu 16.04 LTS 32 bits.  Here are my environment variables of interest:
-CROSS_COMPILE=/opt/Mozart_toolchain/arm-eabi-uclibc/usr/bin/arm-unknown-linux-uclibcgnueabi- (from NXP SDK toolchain)
-ARCH=arm
-KLIB_BUILD=/home/gfournier/wifi-atomas/linux (points to the clean slate cloned linux kernel 2.6.30)
-KLIB=/home/gfournier/wifi-atomas/rootfs (empty rootfs directory to get the result of the build)
+> Looking for something minimal to start off, how about this:
+> 
+> https://github.com/michal42/qemu-boot-test
 
-I am running into build errors.  First, I got this error (although CONFIG_CRYPTO_CCM=m):
-In file included from /home/gfournier/wifi-atomas/backports-3.14.22-1/compat/compat-2.6.32.c:11:
-/home/gfournier/wifi-atomas/backports-3.14.22-1/backport-include/linux/compat.h:18: error: expected ';', ',' or ')' before '*' token
+yes that should be doable to have a qemu boot test which also checks if
+loading the modules and unloading works.
 
-I commented out the code as such to see if I would get better results:
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
-//#define compat_put_timespec LINUX_BACKPORT(compat_put_timespec)
-//extern int compat_put_timespec(const struct timespec *, void __user *);
-#endif
+> This doesn't yet load modules but it should be possible to add support
+> for it. I suppose we'd need to backport some qemu related drivers, and
+> call it a day to start off with? Anyone oppose to that? Any other
+> ideas? I know we discussed the possibility of using 0-day somehow, but
+> 0-day builds full kernels, not packages that provide modules, and our
+> issues also is we would need coverage of testing over a series of
+> kernels.
+> 
+> If you have further information about how you use backports to do any
+> regular run time testing, information on that would be appreciated.
 
-However, I now have this error:
-/home/gfournier/wifi-atomas/backports-3.14.22-1/drivers/net/wireless/ti/wl18xx/scan.c: In function 'wl18xx_scan_send':
-/home/gfournier/wifi-atomas/backports-3.14.22-1/drivers/net/wireless/ti/wl18xx/scan.c:138: error: unknown field 'enabled' specified in initializer
-/home/gfournier/wifi-atomas/backports-3.14.22-1/drivers/net/wireless/ti/wl18xx/scan.c:138: warning: excess elements in struct initializer
-/home/gfournier/wifi-atomas/backports-3.14.22-1/drivers/net/wireless/ti/wl18xx/scan.c:138: warning: (near initialization for 'descriptor')
-
-Is there something I am not understanding correctly about how I am supposed to build Backports?
-Can you provide help on the previous errors?
-To your knowledge, has anyone tried to get wl18xx running on 2.6.28?
-
-Guillaume Fournier
-
+Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
