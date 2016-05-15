@@ -1,49 +1,57 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:34867 "EHLO
-	mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756401AbcEEJqU (ORCPT
-	<rfc822;backports@vger.kernel.org>); Thu, 5 May 2016 05:46:20 -0400
-Received: by mail-oi0-f65.google.com with SMTP id w198so12830187oiw.2
-        for <backports@vger.kernel.org>; Thu, 05 May 2016 02:46:19 -0700 (PDT)
+Received: from mail-ig0-f172.google.com ([209.85.213.172]:38345 "EHLO
+	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751241AbcEOGZo (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 15 May 2016 02:25:44 -0400
+Received: by mail-ig0-f172.google.com with SMTP id m9so27267335ige.1
+        for <backports@vger.kernel.org>; Sat, 14 May 2016 23:25:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAB=NE6VJF4kk4EoqA3Lqqp9e2bJqrXvoPmGSHaHs6qr3bX43OA@mail.gmail.com>
-References: <CAB=NE6VJF4kk4EoqA3Lqqp9e2bJqrXvoPmGSHaHs6qr3bX43OA@mail.gmail.com>
-Date: Thu, 5 May 2016 12:46:19 +0300
-Message-ID: <CANe27jLBmahqRc6ryNxSTKAwo5qkD8NAW+iB8cVGYWOAavF1qA@mail.gmail.com> (sfid-20160505_114624_380034_79C2F959)
-Subject: Re: Linux backports CII badge and run time testing
-From: Jouni Malinen <jkmalinen@gmail.com>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-	Michal Marek <mmarek@suse.cz>, Takashi Iwai <tiwai@suse.de>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Hauke Mehrtens <hauke@hauke-m.de>,
-	Fengguang Wu <fengguang.wu@intel.com>
+Date: Sun, 15 May 2016 09:25:43 +0300
+Message-ID: <CANUX_P1i8MYwsbcnvjbqrHZ77aMOZHZ6ug3VzHvn=3pUU_czyw@mail.gmail.com> (sfid-20160515_082547_385567_1B073874)
+Subject: wireless_nlevent_flush backported to stable kernels
+From: Emmanuel Grumbach <egrumbach@gmail.com>
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, May 5, 2016 at 1:34 AM, Luis R. Rodriguez
-<mcgrof@do-not-panic.com> wrote:
+Hi,
 
-> As for run time testing, we know folks out there in the industry
-> already use backports and do their own run time tests against drivers,
-> and this may be automated, we however need something more, at the very
-> least a boot.
+Johanne's patch:
 
-All the automated wpa_supplicant/hostapd testing with mac80211_hwsim
-on my server use Backports: http://buildbot.w1.fi/hwsim/
+commit cb150b9d23be6ee7f3a0fff29784f1c5b5ac514d
+Author: Johannes Berg <johannes.berg@intel.com>
+Date:   Wed Jan 27 13:29:34 2016 +0100
 
-The current model does not focus on testing Backports, so I'm only
-updating that manually every now and then while hostap.git updates are
-automated (that being the main focus for testing). That said, it would
-be trivial to update Backports to the latest snapshot whenever running
-the test. In fact, the same server is already generating snapshot
-builds of Backports from wireless-testing.git daily.
+    cfg80211/wext: fix message ordering
 
-This is all with a single base kernel version, though, so if you want
-more coverage in that front, you'd want to run the same setup against
-multiple kernels.
 
-- Jouni
+has been backported to more stable kernels and hence backport needs to
+take that into account.
+I am using Ubuntu's wily kernel (4.2 based) and apparently, they
+backported Johanne's fix as well.
+
+On my system, I fixed it with the patch below, but it is surely not good enough.
+
+diff --git a/backport-include/net/iw_handler.h
+b/backport-include/net/iw_handler.h
+index e205d1e..b9c0144 100644
+--- a/backport-include/net/iw_handler.h
++++ b/backport-include/net/iw_handler.h
+@@ -25,7 +25,8 @@ iwe_stream_add_point_check(struct iw_request_info
+*info, char *stream,
+        return res;
+ }
+ #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(4,4,6)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,4,6) &&      \
++    LINUX_VERSION_CODE < KERNEL_VERSION(4,1,21)
+ static inline void wireless_nlevent_flush(void) {}
+ #endif
+ #endif /* __BACKPORT_IW_HANDLER_H */
+
+
+Emmanuel Grumbach
+egrumbach@gmail.com
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
