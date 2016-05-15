@@ -1,48 +1,49 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:60899 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758397AbcEFV2v (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 6 May 2016 17:28:51 -0400
-Subject: Re: [PATCH] backport-include: fix abs definition in kernel.h
-To: Arend van Spriel <arend@broadcom.com>,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>
-References: <1459542927-17174-1-git-send-email-arend@broadcom.com>
-Cc: backports@vger.kernel.org
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <572D0C91.8000408@hauke-m.de> (sfid-20160506_232852_684232_20762513)
-Date: Fri, 6 May 2016 23:28:49 +0200
-MIME-Version: 1.0
-In-Reply-To: <1459542927-17174-1-git-send-email-arend@broadcom.com>
-Content-Type: text/plain; charset=windows-1252
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:38115 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751871AbcEOJNU (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 15 May 2016 05:13:20 -0400
+From: Arend van Spriel <arend@broadcom.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: backports@vger.kernel.org, Arend van Spriel <arend@broadcom.com>
+Subject: [PATCH] backports: genetlink: add define for GENL_UNS_ADMIN_PERM
+Date: Sun, 15 May 2016 11:13:17 +0200
+Message-Id: <1463303597-32397-1-git-send-email-arend@broadcom.com> (sfid-20160515_111325_348941_B121C38D)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 04/01/2016 10:35 PM, Arend van Spriel wrote:
-> The definition of abs should be within include protection to avoid
-> following build issue:
-> 
-> In file included from /tmp/bp-test/backport-include/linux/kernel.h:3:0,
->                  from include/linux/cache.h:4,
->                  from include/linux/time.h:4,
->                  from /tmp/bp-test/backport-include/linux/time.h:3,
->                  from include/linux/stat.h:18,
->                  from include/linux/module.h:10,
->                  from /tmp/bp-test/backport-include/linux/module.h:3,
->                  from /tmp/bp-test/net/wireless/nl80211.c:10:
-> include/linux/kernel.h:179:0: warning: "abs" redefined [enabled by default]
-> error, forbidden warning: kernel.h:179
-> make[6]: *** [/tmp/bp-test/net/wireless/nl80211.o] Error 1
-> 
-> Signed-off-by: Arend van Spriel <arend@broadcom.com>
-> ---
->  backport/backport-include/linux/kernel.h | 27 +++++++++++++--------------
->  1 file changed, 13 insertions(+), 14 deletions(-)
-> 
+Since commit 5ed071ec9992 ("nl80211: Allow privileged operations
+from user namespaces") the definition GENL_UNS_ADMIN_PERM is used
+by nl80211.c. Add definition if not defined by target kernel.
 
+Signed-off-by: Arend van Spriel <arend@broadcom.com>
+---
+Tried to add uapi/linux/genetlink.h, but ended up in inclusion issues that
+I did not look into further so instead added the definition in already
+existing net/genetlink.h in backport. Feel free to fix otherwise if that
+is preferred.
 
-Thank you for the patch, it was applied.
+Regards,
+Arend
+---
+ backport/backport-include/net/genetlink.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Hauke
+diff --git a/backport/backport-include/net/genetlink.h b/backport/backport-include/net/genetlink.h
+index 2e0bb3e..49661bb 100644
+--- a/backport/backport-include/net/genetlink.h
++++ b/backport/backport-include/net/genetlink.h
+@@ -154,4 +154,8 @@ backport_genlmsg_multicast_allns(struct genl_family *family,
+ #endif /* < 4.4 */
+ #endif /* < 3.13 */
+ 
++#ifndef GENL_UNS_ADMIN_PERM
++#define GENL_UNS_ADMIN_PERM	0x10
++#endif
++
+ #endif /* __BACKPORT_NET_GENETLINK_H */
+-- 
+1.9.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
