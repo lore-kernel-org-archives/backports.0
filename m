@@ -1,54 +1,33 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:34410 "EHLO
-	mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750728AbcECJS6 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 3 May 2016 05:18:58 -0400
-Received: by mail-vk0-f65.google.com with SMTP id m188so1222101vka.1
-        for <backports@vger.kernel.org>; Tue, 03 May 2016 02:18:58 -0700 (PDT)
-MIME-Version: 1.0
-Date: Tue, 3 May 2016 18:18:57 +0900
-Message-ID: <CAArnnE7di429C8uhQCd=AQVej0mpA9BPMh-at+GyFgk16gj1ng@mail.gmail.com> (sfid-20160503_111901_478492_8CBE8E8E)
-Subject: How to backport a bluetooth subsystem? not shown 'Bluetooth subsystem
- support' selection.
-From: Hyuntak Lee <pphdev12@gmail.com>
-To: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Received: from s3.sipsolutions.net ([5.9.151.49]:52034 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752069AbcEQJJC (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 17 May 2016 05:09:02 -0400
+Message-ID: <1463476136.2265.0.camel@sipsolutions.net> (sfid-20160517_110905_186512_722859B2)
+Subject: Re: wireless_nlevent_flush backported to stable kernels
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend Van Spriel <arend.vanspriel@broadcom.com>,
+	Emmanuel Grumbach <egrumbach@gmail.com>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Tue, 17 May 2016 11:08:56 +0200
+In-Reply-To: <573ADEF3.8030408@broadcom.com> (sfid-20160517_110608_933524_91834CD9)
+References: <CANUX_P1i8MYwsbcnvjbqrHZ77aMOZHZ6ug3VzHvn=3pUU_czyw@mail.gmail.com>
+	 <5738467E.4020005@broadcom.com> <1463426768.2179.3.camel@sipsolutions.net>
+	 <573ADEF3.8030408@broadcom.com> (sfid-20160517_110608_933524_91834CD9)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Dears,
+On Tue, 2016-05-17 at 11:05 +0200, Arend Van Spriel wrote:
+> 
+> I remember and so the suggestion was to maintain a list of functions
+> to check. Or did you pursue that as well with same result?
 
-I have been working with embedded boards. It only supports 3.4 kernel.
-So, I'm trying to backport a latest bluetooth subsystem to 3.4 kernel.
-(I used a backports-4.1.1-1 stable release)
-But I could not backport because not shown 'Bluetooth subsystem
-support' selection.
+Well I had it set up that way, compiling a little test thing for each
+function. Each one took quite a while, I don't remember the data
+though.
 
-My steps is below:
-
-###To compile old kernel
-$ export ARCH=arm
-$ export CROSS_COMPILE=$CCPREFIX
-$ cd $KERNEL_SRC
-KERNEL_SRC$ make defconfig
-KERNEL_SRC$ make
-KERNEL_SRC$ make INSTALL_MOD_PATH=$OUTPUT install
-###To backport
-$ export KLIB=$KERNEL_SRC
-$ export KLIB_BUILD=$OUTPUT
-$ wget http://www.kernel.org/pub/linux/kernel/projects/backports/stable/v4.1.1/backports-4.1.1-1.tar.xz
-$ unxz backports-4.1.1-1.tar.xz
-$ tar xfp backports-4.1.1-1.tar
-$ cd backports-4.1.1-1
-backports-4.1.1-1$ make menuconfig
-### not shown 'Bluetooth subsystem support' selection.
-
-But, if not set a KLIB env value, shown 'Bluetooth subsystem support' selection.
-
-Am I missing some configuration?
-Please advise me.
-
-Best regards,
-tak
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
