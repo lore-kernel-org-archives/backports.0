@@ -1,56 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:34897 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751118AbcEQJGI (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 17 May 2016 05:06:08 -0400
-Received: by mail-pa0-f49.google.com with SMTP id gj5so4671465pac.2
-        for <backports@vger.kernel.org>; Tue, 17 May 2016 02:06:08 -0700 (PDT)
-Subject: Re: wireless_nlevent_flush backported to stable kernels
-To: Johannes Berg <johannes@sipsolutions.net>,
-	Emmanuel Grumbach <egrumbach@gmail.com>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-References: <CANUX_P1i8MYwsbcnvjbqrHZ77aMOZHZ6ug3VzHvn=3pUU_czyw@mail.gmail.com>
- <5738467E.4020005@broadcom.com> <1463426768.2179.3.camel@sipsolutions.net>
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <573ADEF3.8030408@broadcom.com> (sfid-20160517_110610_633935_36037EAE)
-Date: Tue, 17 May 2016 11:05:55 +0200
-MIME-Version: 1.0
-In-Reply-To: <1463426768.2179.3.camel@sipsolutions.net>
-Content-Type: text/plain; charset=utf-8
+Received: from s3.sipsolutions.net ([5.9.151.49]:43939 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751341AbcEaUzx (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 31 May 2016 16:55:53 -0400
+Message-ID: <1464728148.3076.35.camel@sipsolutions.net> (sfid-20160531_225555_504523_EC9FDBF9)
+Subject: Re: [PATCH] backports: add nla_put_u64_64bit()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+	backports@vger.kernel.org
+Date: Tue, 31 May 2016 22:55:48 +0200
+In-Reply-To: <574DE840.4060009@broadcom.com> (sfid-20160531_213843_163887_ED438BDB)
+References: <1464703661-10164-1-git-send-email-johannes@sipsolutions.net>
+	 <574DE840.4060009@broadcom.com> (sfid-20160531_213843_163887_ED438BDB)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-
-
-On 16-5-2016 21:26, Johannes Berg wrote:
-> On Sun, 2016-05-15 at 11:50 +0200, Arend Van Spriel wrote:
->>  
->>> On my system, I fixed it with the patch below, but it is surely not
->>> good enough.
->> In general this is avoided by preceeding the stub function with:
->>
->> #define wireless_nlevent_flush LINUX_BACKPORT(wireless_nlevent_flush)
->>
->> This way you will use the stub and not the in-kernel function.
+On Tue, 2016-05-31 at 21:38 +0200, Arend van Spriel wrote:
+> On 31-05-16 16:07, Johannes Berg wrote:
+> > 
+> > From: Johannes Berg <johannes.berg@intel.com>
+> > 
+> > Backport it simply using nla_put_u64(). This is fine for all the
+> > current users, but probably should be fixed.
+> I submitted a patch including this a couple of weeks ago titled:
+> "backports: netlink: add 64-bit aligned helper functions".
 > 
-> That's normally fine, but not a good idea here because this really is a
-> *stub*, and thus using the stub instead of the real function removes
-> the ability to actually get the bugfix. So in this case, where it's a
-> stub and not a full backport, it's better to try to get the original
-> function in as many situations as possible.
-> 
->> There has
->> been discussions about adding a mechanism to avoid backport if kernel
->> has the function available. No actual work in that area has been done
->> yet.
-> 
-> Oh, I've done that - but it was so terribly slow that it was
-> essentially unusable...
 
-I remember and so the suggestion was to maintain a list of functions to
-check. Or did you pursue that as well with same result?
+Indeed you did, sorry. Ignore this one then.
 
-Regards,
-Arend
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
