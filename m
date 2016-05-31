@@ -1,34 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:41814 "EHLO sipsolutions.net"
+Received: from s3.sipsolutions.net ([5.9.151.49]:41827 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752505AbcEaODn (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 31 May 2016 10:03:43 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	(Exim 4.87)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1b7kGd-00066Y-W4
-	for backports@vger.kernel.org; Tue, 31 May 2016 16:03:36 +0200
-Message-ID: <1464703413.3076.31.camel@sipsolutions.net> (sfid-20160531_160354_623754_71A86E25)
-Subject: Re: [PATCH] backports: update devcoredump patch
+	id S1752725AbcEaOHo (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 31 May 2016 10:07:44 -0400
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Date: Tue, 31 May 2016 16:03:33 +0200
-In-Reply-To: <1464702541-20621-1-git-send-email-johannes@sipsolutions.net> (sfid-20160531_154909_169715_B72CDD75)
-References: <1464702541-20621-1-git-send-email-johannes@sipsolutions.net>
-	 (sfid-20160531_154909_169715_B72CDD75)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backports: add nla_put_u64_64bit()
+Date: Tue, 31 May 2016 16:07:41 +0200
+Message-Id: <1464703661-10164-1-git-send-email-johannes@sipsolutions.net> (sfid-20160531_160746_453586_EABC9ED6)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2016-05-31 at 15:49 +0200, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
-> 
-> Changed upstream by commit 522566376a3f ("devcoredump:
-> add scatterlist support").
-> 
-This isn't working.
+From: Johannes Berg <johannes.berg@intel.com>
 
-johannes
+Backport it simply using nla_put_u64(). This is fine for all the
+current users, but probably should be fixed.
+
+Change-Id: I0a48b90cdd081a7cba67ad592933ab266093c831
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/backport-include/net/netlink.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/backport/backport-include/net/netlink.h b/backport/backport-include/net/netlink.h
+index 40160b57bc7a..570d440a9d2c 100644
+--- a/backport/backport-include/net/netlink.h
++++ b/backport/backport-include/net/netlink.h
+@@ -189,4 +189,13 @@ static inline __le64 nla_get_le64(const struct nlattr *nla)
+ }
+ #endif /* < 4.4 */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,7,0)
++#define nla_put_u64_64bit LINUX_BACKPORT(nla_put_u64_64bit)
++static inline int nla_put_u64_64bit(struct sk_buff *skb, int attrtype,
++				    u64 value, int padattr)
++{
++	return nla_put_u64(skb, attrtype, value);
++}
++#endif /* < 4.7 */
++
+ #endif /* __BACKPORT_NET_NETLINK_H */
+-- 
+2.8.0.rc3
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
