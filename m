@@ -1,62 +1,60 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:41815 "EHLO sipsolutions.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754107AbcEaOD5 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Tue, 31 May 2016 10:03:57 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:33679 "EHLO
+	mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755295AbcEaTin (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 31 May 2016 15:38:43 -0400
+Received: by mail-wm0-f46.google.com with SMTP id s131so24281429wme.0
+        for <backports@vger.kernel.org>; Tue, 31 May 2016 12:38:43 -0700 (PDT)
+Subject: Re: [PATCH] backports: add nla_put_u64_64bit()
+To: Johannes Berg <johannes@sipsolutions.net>,
+	backports@vger.kernel.org
+References: <1464703661-10164-1-git-send-email-johannes@sipsolutions.net>
 Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: add page_ref backport
-Date: Tue, 31 May 2016 16:03:53 +0200
-Message-Id: <1464703433-6026-1-git-send-email-johannes@sipsolutions.net> (sfid-20160531_160359_234066_56C5D368)
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <574DE840.4060009@broadcom.com> (sfid-20160531_213846_334790_00A9FDBC)
+Date: Tue, 31 May 2016 21:38:40 +0200
+MIME-Version: 1.0
+In-Reply-To: <1464703661-10164-1-git-send-email-johannes@sipsolutions.net>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On 31-05-16 16:07, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+> 
+> Backport it simply using nla_put_u64(). This is fine for all the
+> current users, but probably should be fixed.
 
-Currently, only page_ref_inc() is needed, so backport only that.
+I submitted a patch including this a couple of weeks ago titled:
+"backports: netlink: add 64-bit aligned helper functions".
 
-Change-Id: I7b4d7eb4ccccf61d0921ef28a40b6628e8f2c1f8
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/linux/mm.h       |  1 +
- backport/backport-include/linux/page_ref.h | 13 +++++++++++++
- 2 files changed, 14 insertions(+)
- create mode 100644 backport/backport-include/linux/page_ref.h
+Regards,
+Arend
 
-diff --git a/backport/backport-include/linux/mm.h b/backport/backport-include/linux/mm.h
-index bac230364139..5b3cca6afb63 100644
---- a/backport/backport-include/linux/mm.h
-+++ b/backport/backport-include/linux/mm.h
-@@ -1,6 +1,7 @@
- #ifndef __BACKPORT_MM_H
- #define __BACKPORT_MM_H
- #include_next <linux/mm.h>
-+#include <linux/page_ref.h>
- 
- #ifndef VM_NODUMP
- /*
-diff --git a/backport/backport-include/linux/page_ref.h b/backport/backport-include/linux/page_ref.h
-new file mode 100644
-index 000000000000..0b890e9be415
---- /dev/null
-+++ b/backport/backport-include/linux/page_ref.h
-@@ -0,0 +1,13 @@
-+#ifndef __BP_PAGE_REF_H
-+#define __BP_PAGE_REF_H
-+#include <linux/version.h>
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,6,0)
-+#include_next <linux/page_ref.h>
-+#else
-+static inline void page_ref_inc(struct page *page)
-+{
-+	atomic_inc(&page->_count);
-+}
-+#endif
-+
-+#endif /* __BP_PAGE_REF_H */
--- 
-2.8.0.rc3
-
+> Change-Id: I0a48b90cdd081a7cba67ad592933ab266093c831
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+>  backport/backport-include/net/netlink.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/backport/backport-include/net/netlink.h b/backport/backport-include/net/netlink.h
+> index 40160b57bc7a..570d440a9d2c 100644
+> --- a/backport/backport-include/net/netlink.h
+> +++ b/backport/backport-include/net/netlink.h
+> @@ -189,4 +189,13 @@ static inline __le64 nla_get_le64(const struct nlattr *nla)
+>  }
+>  #endif /* < 4.4 */
+>  
+> +#if LINUX_VERSION_CODE < KERNEL_VERSION(4,7,0)
+> +#define nla_put_u64_64bit LINUX_BACKPORT(nla_put_u64_64bit)
+> +static inline int nla_put_u64_64bit(struct sk_buff *skb, int attrtype,
+> +				    u64 value, int padattr)
+> +{
+> +	return nla_put_u64(skb, attrtype, value);
+> +}
+> +#endif /* < 4.7 */
+> +
+>  #endif /* __BACKPORT_NET_NETLINK_H */
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
