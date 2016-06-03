@@ -1,36 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:48338 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751726AbcFVTlN (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 22 Jun 2016 15:41:13 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 3ABD820173
-	for <backports@vger.kernel.org>; Wed, 22 Jun 2016 19:41:12 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 8991720166
-	for <backports@vger.kernel.org>; Wed, 22 Jun 2016 19:41:11 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 120851] spam
-Date: Wed, 22 Jun 2016 19:41:11 +0000
-Message-ID: <bug-120851-58281-g6d71PXCZ2@https.bugzilla.kernel.org/> (sfid-20160622_214115_041044_46ACBD9C)
-In-Reply-To: <bug-120851-58281@https.bugzilla.kernel.org/>
-References: <bug-120851-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:33269 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751348AbcFCIkv (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 3 Jun 2016 04:40:51 -0400
+Received: by mail-pa0-f44.google.com with SMTP id ec8so7007195pac.0
+        for <backports@vger.kernel.org>; Fri, 03 Jun 2016 01:40:51 -0700 (PDT)
+Subject: Re: [PATCH] backports: update devcoredump patch
+To: Johannes Berg <johannes@sipsolutions.net>,
+	backports@vger.kernel.org
+References: <1464702541-20621-1-git-send-email-johannes@sipsolutions.net>
+ <1464703413.3076.31.camel@sipsolutions.net>
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <67751df1-34ee-6e9f-3dd5-7b9a8400f25e@broadcom.com> (sfid-20160603_104054_451767_05E04900)
+Date: Fri, 3 Jun 2016 10:40:46 +0200
 MIME-Version: 1.0
+In-Reply-To: <1464703413.3076.31.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=120851
+On 31-5-2016 16:03, Johannes Berg wrote:
+> On Tue, 2016-05-31 at 15:49 +0200, Johannes Berg wrote:
+>> From: Johannes Berg <johannes.berg@intel.com>
+>>
+>> Changed upstream by commit 522566376a3f ("devcoredump:
+>> add scatterlist support").
+>>
+> This isn't working.
 
-Johannes Berg <johannes@sipsolutions.net> changed:
+You already have something that is working? Otherwise, I have to dive in
+to fix my nightly builds.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|RESOLVED                    |CLOSED
-
--- 
-You are receiving this mail because:
-You are the assignee for the bug.
+Gr. AvS
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
