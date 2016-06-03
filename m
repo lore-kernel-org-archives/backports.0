@@ -1,68 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:53379 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750863AbcFEJaO (ORCPT
-	<rfc822;backports@vger.kernel.org>); Sun, 5 Jun 2016 05:30:14 -0400
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org,
-	Arend van Spriel <arend.vanspriel@broadcom.com>
-Subject: [PATCH 2/2] backports: patches: update devcoredump patch
-Date: Sun,  5 Jun 2016 11:30:05 +0200
-Message-Id: <1465119005-4161-2-git-send-email-arend.vanspriel@broadcom.com> (sfid-20160605_113018_707595_A6BA1018)
-In-Reply-To: <1465119005-4161-1-git-send-email-arend.vanspriel@broadcom.com>
-References: <1465119005-4161-1-git-send-email-arend.vanspriel@broadcom.com>
+Received: from s3.sipsolutions.net ([5.9.151.49]:46469 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932301AbcFCSsX (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 3 Jun 2016 14:48:23 -0400
+Message-ID: <1464979700.2224.7.camel@sipsolutions.net> (sfid-20160603_204824_556169_BA52A18D)
+Subject: Re: [PATCH] backports: update devcoredump patch
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend Van Spriel <arend.vanspriel@broadcom.com>,
+	backports@vger.kernel.org
+Date: Fri, 03 Jun 2016 20:48:20 +0200
+In-Reply-To: <67751df1-34ee-6e9f-3dd5-7b9a8400f25e@broadcom.com> (sfid-20160603_104054_451767_05E04900)
+References: <1464702541-20621-1-git-send-email-johannes@sipsolutions.net>
+	 <1464703413.3076.31.camel@sipsolutions.net>
+	 <67751df1-34ee-6e9f-3dd5-7b9a8400f25e@broadcom.com>
+	 (sfid-20160603_104054_451767_05E04900)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Due to changes in include/linux/devcoredump.h the patch needs to
-be updated.
 
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
----
-This patch is another shot at devcoredump patch. It just fixes
-applying the patch. However, the resulting file now uses the
-scatterlist function sg_pcopy_to_buffer() so that will need a
-backport for kernels before v3.11.
+> You already have something that is working? Otherwise, I have to dive
+> in to fix my nightly builds.
+> 
 
-Regards,
-Arend
----
- patches/backport-adjustments/devcoredump.patch | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Don't know if you got my other mail - at least the list seems to have
+rejected it.
 
-diff --git a/patches/backport-adjustments/devcoredump.patch b/patches/backport-adjustments/devcoredump.patch
-index b438f32..397b317 100644
---- a/patches/backport-adjustments/devcoredump.patch
-+++ b/patches/backport-adjustments/devcoredump.patch
-@@ -97,18 +97,18 @@
- -__exitcall(devcoredump_exit);
- --- a/include/linux/backport-devcoredump.h
- +++ b/include/linux/backport-devcoredump.h
--@@ -5,7 +5,7 @@
-- #include <linux/module.h>
-- #include <linux/vmalloc.h>
-+@@ -66,7 +66,7 @@ static inline void _devcd_free_sgtable(struct scatterlist *tab
-+ }
-+ 
-  
- -#ifdef CONFIG_DEV_COREDUMP
- +#ifdef CPTCFG_BPAUTO_WANT_DEV_COREDUMP
-- void dev_coredumpv(struct device *dev, const void *data, size_t datalen,
-- 		   gfp_t gfp);
-+ void dev_coredumpv(struct device *dev, void *data, size_t datalen,
-+                   gfp_t gfp);
-  
--@@ -30,6 +30,6 @@ dev_coredumpm(struct device *dev, struct
-+@@ -100,6 +100,6 @@ static inline void dev_coredumpsg(struct device *dev, struct
-  {
-- 	free(data);
-+        _devcd_free_sgtable(table);
-  }
- -#endif /* CONFIG_DEV_COREDUMP */
- +#endif /* CPTCFG_BPAUTO_WANT_DEV_COREDUMP */
--- 
-1.9.1
+No, I don't really - this one was giving compiler warnings. I *think*
+that was because it simply didn't work, but I'm not entirely sure.
 
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
