@@ -1,45 +1,76 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:56698 "EHLO
-	farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750888AbcFJTVV (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 10 Jun 2016 15:21:21 -0400
-Message-ID: <1465586467.29614.15.camel@coelho.fi> (sfid-20160610_212123_536980_9597A9B6)
-From: Luca Coelho <luca@coelho.fi>
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Cc: backports@vger.kernel.org
-Date: Fri, 10 Jun 2016 22:21:07 +0300
-In-Reply-To: <CAF7Mx6qcFsG+AYOxoxKpBS+jU19rbBwpRHeUkg_43vnabLyb=w@mail.gmail.com>
-References: <1465576858-1524-1-git-send-email-luca@coelho.fi>
-	 <CAF7Mx6qcFsG+AYOxoxKpBS+jU19rbBwpRHeUkg_43vnabLyb=w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [PATCH] backport: define nla_put_u64_64bit() for < 4.7 kernels
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:37131 "EHLO
+	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750913AbcFDUXI (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sat, 4 Jun 2016 16:23:08 -0400
+Received: by mail-wm0-f51.google.com with SMTP id z87so32863262wmh.0
+        for <backports@vger.kernel.org>; Sat, 04 Jun 2016 13:23:07 -0700 (PDT)
+Subject: Re: [PATCH] backports: add page_ref backport
+To: Johannes Berg <johannes@sipsolutions.net>,
+	backports@vger.kernel.org
+References: <1464703433-6026-1-git-send-email-johannes@sipsolutions.net>
+Cc: Johannes Berg <johannes.berg@intel.com>
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <575338A9.7070301@broadcom.com> (sfid-20160604_222310_848244_4B8208D0)
+Date: Sat, 4 Jun 2016 22:23:05 +0200
+MIME-Version: 1.0
+In-Reply-To: <1464703433-6026-1-git-send-email-johannes@sipsolutions.net>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2016-06-10 at 20:30 +0200, Arend Van Spriel wrote:
-> Op 10 jun. 2016 18:59 schreef "Luca Coelho" <luca@coelho.fi>:
-> >
-> > From: Luca Coelho <luciano.coelho@intel.com>
-> >
-> > The nla_put_u64_64_bit() function was introduced in v4.7.  Define
-> it
-> > in netlink.h if the kernel is < 4.7.
-> I already submitted a patch including this a couple of weeks ago
-> titled: "backports: netlink: add 64-bit aligned helper functions" and
-> Johannes also did something similar.
 
-Argh! Sorry for the noise then.  I had written this patch back in May
-23, but forgot about it and bumped into it today, so I decided to send
-it out. ;)
 
-I got unsubscribed from the backports list, apparently.  I think this
-is because of the same issue my server had a while back... And I was
-wondering why the list was so silent... heheh!
+On 31-05-16 16:03, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+> 
+> Currently, only page_ref_inc() is needed, so backport only that.
+> 
+> Change-Id: I7b4d7eb4ccccf61d0921ef28a40b6628e8f2c1f8
 
-Time to subscribe again. :)
+Guess the change-id is internal ;-) The patch works for me.
 
---
-Luca.
+Regards,
+Arend
+
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+>  backport/backport-include/linux/mm.h       |  1 +
+>  backport/backport-include/linux/page_ref.h | 13 +++++++++++++
+>  2 files changed, 14 insertions(+)
+>  create mode 100644 backport/backport-include/linux/page_ref.h
+> 
+> diff --git a/backport/backport-include/linux/mm.h b/backport/backport-include/linux/mm.h
+> index bac230364139..5b3cca6afb63 100644
+> --- a/backport/backport-include/linux/mm.h
+> +++ b/backport/backport-include/linux/mm.h
+> @@ -1,6 +1,7 @@
+>  #ifndef __BACKPORT_MM_H
+>  #define __BACKPORT_MM_H
+>  #include_next <linux/mm.h>
+> +#include <linux/page_ref.h>
+>  
+>  #ifndef VM_NODUMP
+>  /*
+> diff --git a/backport/backport-include/linux/page_ref.h b/backport/backport-include/linux/page_ref.h
+> new file mode 100644
+> index 000000000000..0b890e9be415
+> --- /dev/null
+> +++ b/backport/backport-include/linux/page_ref.h
+> @@ -0,0 +1,13 @@
+> +#ifndef __BP_PAGE_REF_H
+> +#define __BP_PAGE_REF_H
+> +#include <linux/version.h>
+> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,6,0)
+> +#include_next <linux/page_ref.h>
+> +#else
+> +static inline void page_ref_inc(struct page *page)
+> +{
+> +	atomic_inc(&page->_count);
+> +}
+> +#endif
+> +
+> +#endif /* __BP_PAGE_REF_H */
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
