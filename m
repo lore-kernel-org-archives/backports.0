@@ -1,37 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:60862 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750871AbcFJHVD (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 10 Jun 2016 03:21:03 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 4333A2026D
-	for <backports@vger.kernel.org>; Fri, 10 Jun 2016 07:21:02 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 70C0A20263
-	for <backports@vger.kernel.org>; Fri, 10 Jun 2016 07:21:01 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 119881] ((Technical))Call @@@++ USA I8557O92847 EPSON
- p.r.i.n.t.e.r t.e.c.h s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.e.r u.s.a.
-Date: Fri, 10 Jun 2016 07:21:01 +0000
-Message-ID: <bug-119881-58281-AW7SGOZAnx@https.bugzilla.kernel.org/> (sfid-20160610_092106_043593_19F3F61E)
-In-Reply-To: <bug-119881-58281@https.bugzilla.kernel.org/>
-References: <bug-119881-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:37214 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750785AbcFEJaO (ORCPT
+	<rfc822;backports@vger.kernel.org>); Sun, 5 Jun 2016 05:30:14 -0400
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: backports@vger.kernel.org,
+	Arend van Spriel <arend.vanspriel@broadcom.com>
+Subject: [PATCH 1/2] backports: add definition for USB_SPEED_SUPER_PLUS
+Date: Sun,  5 Jun 2016 11:30:04 +0200
+Message-Id: <1465119005-4161-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20160605_113018_027191_C0FB18FE)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=119881
+Speed definition for usb3.1 has been added in 4.6 kernel. Add
+definiton for older kernels.
 
-Johannes Berg <johannes@sipsolutions.net> changed:
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+---
+ backport/backport-include/linux/usb/ch9.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|RESOLVED                    |CLOSED
-
+diff --git a/backport/backport-include/linux/usb/ch9.h b/backport/backport-include/linux/usb/ch9.h
+index 135e24c..c42fc30 100644
+--- a/backport/backport-include/linux/usb/ch9.h
++++ b/backport/backport-include/linux/usb/ch9.h
+@@ -21,4 +21,8 @@ static inline int usb_endpoint_maxp(const struct usb_endpoint_descriptor *epd)
+ }
+ #endif /* < 3.2 */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0)
++#define USB_SPEED_SUPER_PLUS	(USB_SPEED_SUPER + 1)
++#endif /* < 4.6 */
++
+ #endif /* __BACKPORT__LINUX_USB_CH9_H */
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+1.9.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
