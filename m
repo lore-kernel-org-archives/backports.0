@@ -1,187 +1,132 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:54517 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751125AbcFFGRo convert rfc822-to-8bit (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 6 Jun 2016 02:17:44 -0400
-From: "HUANG Weller (CM/ESW12-CN)" <Weller.Huang@cn.bosch.com>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"jack@suse.cz" <jack@suse.cz>, "tytso@mit.edu" <tytso@mit.edu>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-CC: "stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"Behme Dirk (CM/ESO2)" <Dirk.Behme@de.bosch.com>,
-	"Juergens Dirk (CM/ESO2)" <Dirk.Juergens@de.bosch.com>
-Subject: RE: FAILED: patch "[PATCH] ext4: fix data exposure after a crash"
- failed to apply to 3.14-stable tree
-Date: Mon, 6 Jun 2016 06:17:38 +0000
-Message-ID: <3aaf6022009f4a759d4edaed1fba0cf6@SGPMBX1004.APAC.bosch.com> (sfid-20160606_081747_198565_B8482B22)
-References: <146507681324370@kroah.com>
- <14e1b621c63d4053afe540c9ae623f8e@SGPMBX1004.APAC.bosch.com>
- <57550738.1090200@broadcom.com>
-In-Reply-To: <57550738.1090200@broadcom.com>
-Content-Type: text/plain; charset="us-ascii"
+Received: from mail.kernel.org ([198.145.29.136]:35026 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751473AbcFIWtA (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 9 Jun 2016 18:49:00 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id BA60320260
+	for <backports@vger.kernel.org>; Thu,  9 Jun 2016 22:48:58 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+	by mail.kernel.org (Postfix) with ESMTP id 8284B2025A
+	for <backports@vger.kernel.org>; Thu,  9 Jun 2016 22:48:57 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 119891] New: UST<::: /@!!((I+855+7O9+2847+))!!@EPSON printer
+ suppOrt phOne number EPSON printer tech suppOrt phOne number USA
+Date: Thu, 09 Jun 2016 22:48:57 +0000
+Message-ID: <bug-119891-58281@https.bugzilla.kernel.org/> (sfid-20160610_004903_043865_211BD55C)
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi Arend,
+https://bugzilla.kernel.org/show_bug.cgi?id=119891
 
-I am sorry for this misunderstanding.
-Yes, I remember Jan Kara told me before.
+            Bug ID: 119891
+           Summary: UST<::: /@!!((I+855+7O9+2847+))!!@EPSON printer
+                    suppOrt phOne number EPSON printer tech suppOrt phOne
+                    number USA
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: 18557092847
+          Hardware: All
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: mv0855914@gmail.com
+        Regression: No
 
-Best regards
+((moti))Call @@@++ USA I8557O92847 EPSON p.r.i.n.t.e.r t.e.c.h s.u.p.p.o.r.t
+p.h.o.n.e n.u.m.8.e.r u.s.a. C.a.l.l EPSON h.e.l.p d.e.s.k n.u.m.8.e.r
+n.u.m.8.e.r C.a.n.a.d.a EPSON s.u.p.p.o.r.t p.h.o.n.e n.u.m.8.r usa USA 1
+I8557O92847 EPSON p.r.i.n.t.e.r t.e.c.h s.u.p.p.o.r.t p.h.o.n.e n.u.m.8.e.r
+u.s.a. C.a.l.l EPSON h.e.l.p d.e.s.k n.u.m.8.e.r n.u.m.8.e.r C.a.n.a.d.a EPSON
+s.u.p.p.o.r.t p.h.o.n.e n.u.m.8.r usa canada 1-1855-709-2847 USA, EPSON printer
+Tech Support phone num8er,EPSON technical support phone num8er 1 I8557O92847
+.EPSON Tech Support Num8er EPSON Tech EPSON tech support, EPSON tech support
+num8er, EPSON tech support phone num8er, EPSON technical support, EPSON
+technical support num8er, EPSON technical support phone num8er, EPSON tech
+support num8er, EPSON support num8er, EPSON Tech support phone num8er, EPSON
+support phone num8er, EPSON technical support phone num8er, EPSON technical
+support num8er,Support Phone Num8er for EPSON printer Phone Num8er for EPSON
+CustomerService Technical Support Telephone Num8er EPSON printer support num8er
+EPSON EPSON printer tech support num8er EPSON EPSON printer technical support
+num8er EPSON EPSON printer technical support phone num8er EPSON EPSON printer
+customer service num8er EPSON EPSON internet security technical support EPSON
+technical support phone num8er EPSON EPSON tech support phone num8er EPSON
+EPSON customer support phone num8er I-855-709-2847 EPSON EPSON printer support
+phone num8er EPSON EPSON support phone EPSON tech support EPSON customer
+support EPSON phone support EPSON support num8er EPSON EPSON technical support
+EPSON printer customer support phone num8er EPSON EPSON printer tech support
+phone num8er EPSON contact EPSON support EPSON printer technical support phone
+num8er ~!~I8557092847++ EPSON EPSON phone num8er EPSON tech support EPSON
+support ticket EPSON customer support num8er EPSON EPSON tech support num8er
+EPSON EPSON technical support num8er EPSON EPSON support center EPSON telephone
+support call EPSON support EPSON printer support support EPSON EPSON 8illing
+support EPSON printer technical support num8er EPSON support EPSON printer
+EPSON online support EPSON contact support EPSON printer support num8er EPSON
+EPSON printer customer support num8er EPSON EPSON printer tech support num8er
+EPSON support for EPSON EPSON phone num8er EPSON EPSON customer service phone
+num8er EPSON EPSON contact phone num8er EPSON EPSON printer phone num8er EPSON
+EPSON printer customer service phone num8er EPSON phone num8er EPSON for EPSON
+customer service EPSON software phone num8er EPSON phone num8er EPSON for EPSON
+EPSON customer service telephone num8er EPSON EPSON helpline phone num8er EPSON
+EPSON contact num8er EPSON EPSON customer service num8er EPSON EPSON customer
+service phone num8er ~!~I8557092847++ EPSON us EPSON customer service phone
+num8er EPSON usa EPSON telephone num8er EPSON EPSON phone num8er EPSON usa
+EPSON printer contact num8er EPSON EPSON num8er EPSON EPSON contact num8er
+EPSON usa EPSON printer helpline num8er EPSON EPSON helpline num8er EPSON EPSON
+customer num8er EPSON EPSON printer customer service num8er EPSON EPSON contact
+telephone num8er EPSON contact num8er EPSON for EPSON EPSON software contact
+num8er EPSON EPSON toll free num8er EPSON EPSON telephone num8er EPSON uk EPSON
+registration num8er EPSON EPSON toll free num8er EPSON usa EPSON customer
+service EPSON software customer service contact EPSON customer service EPSON
+customer service phone EPSON printer customer service EPSON service EPSON
+printer technical support EPSON printer customer support EPSON technical
+support reviews telephone EPSON printer EPSON tech support phone num8er EPSON
+EPSON printer tech support phone num8er EPSON EPSON printer customer service
+EPSON technical support phone num8er EPSON EPSON printer free printer support
+EPSON customer service 8illing EPSON customer service email address EPSON
+customer service reviews contact EPSON customer service EPSON tech support
+num8er EPSON usa EPSON printer support num8er EPSON EPSON printer contact
+num8er EPSON EPSON customer service phone num8er EPSON EPSON technical support
+usa EPSON technical support num8er EPSON EPSON tech support phone EPSON tech
+support num8er EPSON EPSON customer service telephone num8er EPSON EPSON
+printer customer support num8er EPSON EPSON printer phone num8er EPSON EPSON
+printer online support EPSON customer service num8er EPSON EPSON tech support
+center EPSON customer service EPSON software customer service EPSON customer
+care num8er EPSON usa EPSON customer num8er EPSON EPSON customer support num8er
+EPSON EPSON customer care num8er EPSON EPSON customer care toll free num8er
+EPSON EPSON tech support EPSON technical support EPSON printer support EPSON
+printer tech support EPSON support center EPSON.com customer service EPSON
+printer customer care num8er EPSON EPSON customer care EPSON phone num8er EPSON
+phone num8er EPSON for EPSON customer service EPSON phone support EPSON phone
+num8er EPSON tech support EPSON support phone num8er EPSON contact EPSON 8y
+phone EPSON contact phone num8er EPSON EPSON helpline phone num8er EPSON EPSON
+printer phone EPSON printer for phone EPSON contact num8er EPSON EPSON contact
+support contact EPSON printer EPSON contact num8er EPSON usa EPSON toll free
+num8er EPSON EPSON telephone num8er EPSON EPSON toll free num8er EPSON usa
+EPSON printer support services technical support for printer EPSON EPSON
+customer service phone num8er EPSON usa EPSON printer customer care num8er
+EPSON usa EPSON customer care num8er EPSON EPSON customer care center EPSON
+customer support EPSON customer support phone EPSON customer help EPSON
+customer & technical support EPSON customer portal EPSON customer care phone
+num8er EPSON usa EPSON customer care email EPSON helpline EPSON tech support
+contact EPSON customer care toll free EPSON printer customer service num8er
+EPSON EPSON printer protection norton printer customer service num8er EPSON
+EPSON software customer service num8er EPSON EPSON hotline customer service
+phone num8er EPSON EPSON customer service phone num8er EPSON us how to contact
+EPSON 8y email EPSON free phone support EPSON printer technical support num8er
+EPSON EPSON printer technical support help desk phone num8er EPSON EPSON
+technical support num8er EPSON toll free num8er EPSON EPSON printer customer
+support phone num8er EPSON EPSON printer customer
 
- Weller HUANG
-
-
-
-> -----Original Message-----
-> From: Arend van Spriel [mailto:arend.vanspriel@broadcom.com]
-> Sent: Monday, June 06, 2016 1:17 PM
-> To: HUANG Weller (CM/ESW12-CN) <Weller.Huang@cn.bosch.com>;
-> gregkh@linuxfoundation.org; jack@suse.cz; tytso@mit.edu;
-> backports@vger.kernel.org
-> Cc: stable@vger.kernel.org; Behme Dirk (CM/ESO2)
-> <Dirk.Behme@de.bosch.com>; Juergens Dirk (CM/ESO2)
-> <Dirk.Juergens@de.bosch.com>
-> Subject: Re: FAILED: patch "[PATCH] ext4: fix data exposure after a crash" failed
-> to apply to 3.14-stable tree
-> 
-> On 06-06-16 02:02, HUANG Weller (CM/ESW12-CN) wrote:
-> > Hi backports team,
-> >
-> > Could you please apply the below patch to the 3.14-stable tree ?
-> 
-> Hi Huang,
-> 
-> I suspect you are talking to the wrong crowd. Backports is a project to generate a
-> source package of latest kernel code which can be compiled against older target
-> kernels.
-> 
-> What is meant in Greg's (automated) response is that the patch should be
-> backported manually so it applies to 3.14-stable tree. This is something Jan Kara
-> should take care of if he cares about getting this patch in 3.14-stable.
-> 
-> Regards,
-> Arend
-> 
-> > Thanks.
-> > Best regards
-> >
-> >  Weller HUANG
-> >
-> >
-> >
-> >> -----Original Message-----
-> >> From: gregkh@linuxfoundation.org [mailto:gregkh@linuxfoundation.org]
-> >> Sent: Sunday, June 05, 2016 5:47 AM
-> >> To: jack@suse.cz; HUANG Weller (CM/ESW12-CN)
-> >> <Weller.Huang@cn.bosch.com>; tytso@mit.edu
-> >> Cc: stable@vger.kernel.org
-> >> Subject: FAILED: patch "[PATCH] ext4: fix data exposure after a
-> >> crash" failed to apply to 3.14-stable tree
-> >>
-> >>
-> >> The patch below does not apply to the 3.14-stable tree.
-> >> If someone wants it applied there, or to any other stable or longterm
-> >> tree, then please email the backport, including the original git
-> >> commit id to <stable@vger.kernel.org>.
-> >>
-> >> thanks,
-> >>
-> >> greg k-h
-> >>
-> >> ------------------ original commit in Linus's tree ------------------
-> >>
-> >> From 06bd3c36a733ac27962fea7d6f47168841376824 Mon Sep 17 00:00:00
-> >> 2001
-> >> From: Jan Kara <jack@suse.cz>
-> >> Date: Sun, 24 Apr 2016 00:56:03 -0400
-> >> Subject: [PATCH] ext4: fix data exposure after a crash
-> >>
-> >> Huang has reported that in his powerfail testing he is seeing stale
-> >> block contents in some of recently allocated blocks although he
-> >> mounts
-> >> ext4 in data=ordered mode. After some investigation I have found out
-> >> that indeed when delayed allocation is used, we don't add inode to
-> >> transaction's list of inodes needing flushing before commit.
-> >> Originally we were doing that but commit f3b59291a69d removed the logic with
-> a flawed argument that it is not needed.
-> >>
-> >> The problem is that although for delayed allocated blocks we write
-> >> their contents immediately after allocating them, there is no
-> >> guarantee that the IO scheduler or device doesn't reorder things and
-> >> thus transaction allocating blocks and attaching them to inode can
-> >> reach stable storage before actual block contents. Actually whenever
-> >> we attach freshly allocated blocks to inode using a written extent,
-> >> we should add inode to transaction's ordered inode list to make sure
-> >> we properly wait for block contents to be written before committing
-> >> the transaction. So that is what we do in this patch. This also handles other
-> cases where stale data exposure was possible - like filling hole via mmap in
-> data=ordered,nodelalloc mode.
-> >>
-> >> The only exception to the above rule are extending direct IO writes
-> >> where
-> >> blkdev_direct_IO() waits for IO to complete before increasing i_size
-> >> and thus stale data exposure is not possible. For now we don't
-> >> complicate the code with optimizing this special case since the
-> >> overhead is pretty low. In case this is observed to be a performance
-> >> problem we can always handle it using a special flag to ext4_map_blocks().
-> >>
-> >> CC: stable@vger.kernel.org
-> >> Fixes: f3b59291a69d0b734be1fc8be489fef2dd846d3d
-> >> Reported-by: "HUANG Weller (CM/ESW12-CN)" <Weller.Huang@cn.bosch.com>
-> >> Tested-by: "HUANG Weller (CM/ESW12-CN)" <Weller.Huang@cn.bosch.com>
-> >> Signed-off-by: Jan Kara <jack@suse.cz>
-> >> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-> >>
-> >> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c index
-> >> 981a1fc30eaa..250c2df04a92
-> >> 100644
-> >> --- a/fs/ext4/inode.c
-> >> +++ b/fs/ext4/inode.c
-> >> @@ -684,6 +684,21 @@ out_sem:
-> >>  		ret = check_block_validity(inode, map);
-> >>  		if (ret != 0)
-> >>  			return ret;
-> >> +
-> >> +		/*
-> >> +		 * Inodes with freshly allocated blocks where contents will be
-> >> +		 * visible after transaction commit must be on transaction's
-> >> +		 * ordered data list.
-> >> +		 */
-> >> +		if (map->m_flags & EXT4_MAP_NEW &&
-> >> +		    !(map->m_flags & EXT4_MAP_UNWRITTEN) &&
-> >> +		    !(flags & EXT4_GET_BLOCKS_ZERO) &&
-> >> +		    !IS_NOQUOTA(inode) &&
-> >> +		    ext4_should_order_data(inode)) {
-> >> +			ret = ext4_jbd2_file_inode(handle, inode);
-> >> +			if (ret)
-> >> +				return ret;
-> >> +		}
-> >>  	}
-> >>  	return retval;
-> >>  }
-> >> @@ -1289,15 +1304,6 @@ static int ext4_write_end(struct file *file,
-> >>  	int i_size_changed = 0;
-> >>
-> >>  	trace_ext4_write_end(inode, pos, len, copied);
-> >> -	if (ext4_test_inode_state(inode, EXT4_STATE_ORDERED_MODE)) {
-> >> -		ret = ext4_jbd2_file_inode(handle, inode);
-> >> -		if (ret) {
-> >> -			unlock_page(page);
-> >> -			put_page(page);
-> >> -			goto errout;
-> >> -		}
-> >> -	}
-> >> -
-> >>  	if (ext4_has_inline_data(inode)) {
-> >>  		ret = ext4_write_inline_data_end(inode, pos, len,
-> >>  						 copied, page);
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe backports"
-> > in
-> >
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
