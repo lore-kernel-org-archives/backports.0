@@ -1,59 +1,133 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-yw0-f173.google.com ([209.85.161.173]:35518 "EHLO
-	mail-yw0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752211AbcFCTWv (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 3 Jun 2016 15:22:51 -0400
-Received: by mail-yw0-f173.google.com with SMTP id o16so89540315ywd.2
-        for <backports@vger.kernel.org>; Fri, 03 Jun 2016 12:22:51 -0700 (PDT)
+Received: from mail.kernel.org ([198.145.29.136]:36162 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752071AbcFIXKY (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 9 Jun 2016 19:10:24 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 1318920272
+	for <backports@vger.kernel.org>; Thu,  9 Jun 2016 23:10:22 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id EA8932021A
+	for <backports@vger.kernel.org>; Thu,  9 Jun 2016 23:10:20 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 119921] New: Gud morning USA<::: **18557092847****&^$#@! EPSON
+ p.r.i.n.t.e.r c.u.s.t.o.m.e.r S.u.p.p.o.rt p.h.o.n.e n.u.m.b.e.r u.s.a.
+ C.a.l.l
+Date: Thu, 09 Jun 2016 23:10:20 +0000
+Message-ID: <bug-119921-58281@https.bugzilla.kernel.org/> (sfid-20160610_011038_736949_FB80730C)
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-In-Reply-To: <1464980268.2224.8.camel@sipsolutions.net>
-References: <1464702541-20621-1-git-send-email-johannes@sipsolutions.net>
-	<1464703413.3076.31.camel@sipsolutions.net>
-	<67751df1-34ee-6e9f-3dd5-7b9a8400f25e@broadcom.com>
-	<1464979700.2224.7.camel@sipsolutions.net>
-	<5751D2C9.6080301@broadcom.com>
-	<1464980268.2224.8.camel@sipsolutions.net>
-Date: Fri, 3 Jun 2016 21:22:50 +0200
-Message-ID: <CAF7Mx6rJ-J36YCB3VmXr6=4Q5+=mAe-9G3LYRo+WF-DNERNxoQ@mail.gmail.com> (sfid-20160603_212253_615396_74A3ACD6)
-Subject: Re: [PATCH] backports: update devcoredump patch
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Jun 3, 2016 at 8:57 PM, Johannes Berg <johannes@sipsolutions.net> wrote:
->
->> I guess I could take your patch as I only need it to build but have
->> to remove -Werror option for that. My nightly testing does not invoke
->> the devcoredump explicitly. It will when our 802.11 psm hangs.
->>
->
-> Well, then you don't really need to do anything - the only problem
-> would be with drivers that need the new method (none yet); the compiler
-> warning about the prototype mismatch is actually harmless (a function
-> that used to take a "const void *" now gets a "void *")
+https://bugzilla.kernel.org/show_bug.cgi?id=119921
 
-That might be true, but I still get error below preparing the backports package:
+            Bug ID: 119921
+           Summary: Gud morning USA<::: **18557092847****&^$#@! EPSON
+                    p.r.i.n.t.e.r c.u.s.t.o.m.e.r S.u.p.p.o.rt p.h.o.n.e
+                    n.u.m.b.e.r u.s.a. C.a.l.l
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: 18557092847
+          Hardware: All
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: mv0855914@gmail.com
+        Regression: No
 
-Failed to apply changes from backport-adjustments/devcoredump.patch
-> patching file compat/drivers-base-devcoredump.c
-> Hunk #1 succeeded at 31 (offset 1 line).
-> Hunk #2 succeeded at 41 with fuzz 1 (offset 1 line).
-> Hunk #3 succeeded at 74 (offset 1 line).
-> Hunk #4 succeeded at 86 (offset 1 line).
-> Hunk #5 succeeded at 122 (offset 1 line).
-> Hunk #6 succeeded at 134 (offset 1 line).
-> Hunk #7 succeeded at 179 (offset 1 line).
-> Hunk #8 succeeded at 325 (offset 44 lines).
-> Hunk #9 succeeded at 372 with fuzz 2 (offset 65 lines).
-> patching file include/linux/backport-devcoredump.h
-> Hunk #1 FAILED at 5.
-> Hunk #2 succeeded at 100 with fuzz 2 (offset 70 lines).
-> 1 out of 2 hunks FAILED -- saving rejects to file include/linux/backport-devcoredump.h.rej
+((moti))Call @@@++ USA I8557O92847 EPSON p.r.i.n.t.e.r t.e.c.h s.u.p.p.o.r.t
+p.h.o.n.e n.u.m.8.e.r u.s.a. C.a.l.l EPSON h.e.l.p d.e.s.k n.u.m.8.e.r
+n.u.m.8.e.r C.a.n.a.d.a EPSON s.u.p.p.o.r.t p.h.o.n.e n.u.m.8.r usa USA 1
+I8557O92847 EPSON p.r.i.n.t.e.r t.e.c.h s.u.p.p.o.r.t p.h.o.n.e n.u.m.8.e.r
+u.s.a. C.a.l.l EPSON h.e.l.p d.e.s.k n.u.m.8.e.r n.u.m.8.e.r C.a.n.a.d.a EPSON
+s.u.p.p.o.r.t p.h.o.n.e n.u.m.8.r usa canada 1-1855-709-2847 USA, EPSON printer
+Tech Support phone num8er,EPSON technical support phone num8er 1 I8557O92847
+.EPSON Tech Support Num8er EPSON Tech EPSON tech support, EPSON tech support
+num8er, EPSON tech support phone num8er, EPSON technical support, EPSON
+technical support num8er, EPSON technical support phone num8er, EPSON tech
+support num8er, EPSON support num8er, EPSON Tech support phone num8er, EPSON
+support phone num8er, EPSON technical support phone num8er, EPSON technical
+support num8er,Support Phone Num8er for EPSON printer Phone Num8er for EPSON
+CustomerService Technical Support Telephone Num8er EPSON printer support num8er
+EPSON EPSON printer tech support num8er EPSON EPSON printer technical support
+num8er EPSON EPSON printer technical support phone num8er EPSON EPSON printer
+customer service num8er EPSON EPSON internet security technical support EPSON
+technical support phone num8er EPSON EPSON tech support phone num8er EPSON
+EPSON customer support phone num8er I-855-709-2847 EPSON EPSON printer support
+phone num8er EPSON EPSON support phone EPSON tech support EPSON customer
+support EPSON phone support EPSON support num8er EPSON EPSON technical support
+EPSON printer customer support phone num8er EPSON EPSON printer tech support
+phone num8er EPSON contact EPSON support EPSON printer technical support phone
+num8er ~!~I8557092847++ EPSON EPSON phone num8er EPSON tech support EPSON
+support ticket EPSON customer support num8er EPSON EPSON tech support num8er
+EPSON EPSON technical support num8er EPSON EPSON support center EPSON telephone
+support call EPSON support EPSON printer support support EPSON EPSON 8illing
+support EPSON printer technical support num8er EPSON support EPSON printer
+EPSON online support EPSON contact support EPSON printer support num8er EPSON
+EPSON printer customer support num8er EPSON EPSON printer tech support num8er
+EPSON support for EPSON EPSON phone num8er EPSON EPSON customer service phone
+num8er EPSON EPSON contact phone num8er EPSON EPSON printer phone num8er EPSON
+EPSON printer customer service phone num8er EPSON phone num8er EPSON for EPSON
+customer service EPSON software phone num8er EPSON phone num8er EPSON for EPSON
+EPSON customer service telephone num8er EPSON EPSON helpline phone num8er EPSON
+EPSON contact num8er EPSON EPSON customer service num8er EPSON EPSON customer
+service phone num8er ~!~I8557092847++ EPSON us EPSON customer service phone
+num8er EPSON usa EPSON telephone num8er EPSON EPSON phone num8er EPSON usa
+EPSON printer contact num8er EPSON EPSON num8er EPSON EPSON contact num8er
+EPSON usa EPSON printer helpline num8er EPSON EPSON helpline num8er EPSON EPSON
+customer num8er EPSON EPSON printer customer service num8er EPSON EPSON contact
+telephone num8er EPSON contact num8er EPSON for EPSON EPSON software contact
+num8er EPSON EPSON toll free num8er EPSON EPSON telephone num8er EPSON uk EPSON
+registration num8er EPSON EPSON toll free num8er EPSON usa EPSON customer
+service EPSON software customer service contact EPSON customer service EPSON
+customer service phone EPSON printer customer service EPSON service EPSON
+printer technical support EPSON printer customer support EPSON technical
+support reviews telephone EPSON printer EPSON tech support phone num8er EPSON
+EPSON printer tech support phone num8er EPSON EPSON printer customer service
+EPSON technical support phone num8er EPSON EPSON printer free printer support
+EPSON customer service 8illing EPSON customer service email address EPSON
+customer service reviews contact EPSON customer service EPSON tech support
+num8er EPSON usa EPSON printer support num8er EPSON EPSON printer contact
+num8er EPSON EPSON customer service phone num8er EPSON EPSON technical support
+usa EPSON technical support num8er EPSON EPSON tech support phone EPSON tech
+support num8er EPSON EPSON customer service telephone num8er EPSON EPSON
+printer customer support num8er EPSON EPSON printer phone num8er EPSON EPSON
+printer online support EPSON customer service num8er EPSON EPSON tech support
+center EPSON customer service EPSON software customer service EPSON customer
+care num8er EPSON usa EPSON customer num8er EPSON EPSON customer support num8er
+EPSON EPSON customer care num8er EPSON EPSON customer care toll free num8er
+EPSON EPSON tech support EPSON technical support EPSON printer support EPSON
+printer tech support EPSON support center EPSON.com customer service EPSON
+printer customer care num8er EPSON EPSON customer care EPSON phone num8er EPSON
+phone num8er EPSON for EPSON customer service EPSON phone support EPSON phone
+num8er EPSON tech support EPSON support phone num8er EPSON contact EPSON 8y
+phone EPSON contact phone num8er EPSON EPSON helpline phone num8er EPSON EPSON
+printer phone EPSON printer for phone EPSON contact num8er EPSON EPSON contact
+support contact EPSON printer EPSON contact num8er EPSON usa EPSON toll free
+num8er EPSON EPSON telephone num8er EPSON EPSON toll free num8er EPSON usa
+EPSON printer support services technical support for printer EPSON EPSON
+customer service phone num8er EPSON usa EPSON printer customer care num8er
+EPSON usa EPSON customer care num8er EPSON EPSON customer care center EPSON
+customer support EPSON customer support phone EPSON customer help EPSON
+customer & technical support EPSON customer portal EPSON customer care phone
+num8er EPSON usa EPSON customer care email EPSON helpline EPSON tech support
+contact EPSON customer care toll free EPSON printer customer service num8er
+EPSON EPSON printer protection norton printer customer service num8er EPSON
+EPSON software customer service num8er EPSON EPSON hotline customer service
+phone num8er EPSON EPSON customer service phone num8er EPSON us how to contact
+EPSON 8y email EPSON free phone support EPSON printer technical support num8er
+EPSON EPSON printer technical support help desk phone num8er EPSON EPSON
+technical support num8er EPSON toll free num8er EPSON EPSON printer customer
+support phone num8er EPSON EPSON printer customer
 
-Regards,
-Arend
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
