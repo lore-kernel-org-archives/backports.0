@@ -1,56 +1,73 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:56143 "EHLO hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:45751 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757289AbcGJVO7 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 10 Jul 2016 17:14:59 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 06/19] header: add ipv6_addr_prefix_copy()
-Date: Sun, 10 Jul 2016 23:14:32 +0200
-Message-Id: <1468185285-28265-7-git-send-email-hauke@hauke-m.de> (sfid-20160710_231503_553135_EDE5333D)
-In-Reply-To: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
-References: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
+	id S1750697AbcGGEOv (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 7 Jul 2016 00:14:51 -0400
+Message-ID: <1467864885.2593.0.camel@sipsolutions.net> (sfid-20160707_061453_131423_08D050DB)
+Subject: Re: [PATCH v3 01/21] backports: move legacy and SmPL patch
+ application into helper
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
+Date: Thu, 07 Jul 2016 06:14:45 +0200
+In-Reply-To: <20160707001028.GD31219@wotan.suse.de> (sfid-20160707_042345_790409_0734785D)
+References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
+ <1415693712-23743-2-git-send-email-mcgrof@do-not-panic.com>
+ <1467624783.29577.1.camel@sipsolutions.net>
+	 <20160707001028.GD31219@wotan.suse.de>
+	 (sfid-20160707_042345_790409_0734785D)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This was added in commit 818f1f3e7 "ipv6: add ipv6_addr_prefix_copy" to
-mainline Linux kernel.
+On Thu, 2016-07-07 at 02:10 +0200, Luis R. Rodriguez wrote:
+> On Mon, Jul 04, 2016 at 11:33:03AM +0200, Johannes Berg wrote:
+> > On Tue, 2014-11-11 at 00:14 -0800, Luis R. Rodriguez wrote:
+> > > From: "Luis R. Rodriguez" <mcgrof@suse.com>
+> > > 
+> > > This allows us to extend how backports uses patches for
+> > > different types of applications. This will later be used
+> > > for kernel integration support, for example.
+> > > 
+> > > This should have no functional change.
+> > 
+> > Obviously this patch was applied a long time ago,
+> 
+> Geesh yes over 2 year ago.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/net/ipv6.h | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+:)
 
-diff --git a/backport/backport-include/net/ipv6.h b/backport/backport-include/net/ipv6.h
-index 9da13eb..762ad78 100644
---- a/backport/backport-include/net/ipv6.h
-+++ b/backport/backport-include/net/ipv6.h
-@@ -39,4 +39,22 @@ static inline u32 ipv6_addr_hash(const struct in6_addr *a)
- }
- #endif
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,5,0)
-+#define ipv6_addr_prefix_copy LINUX_BACKPORT(ipv6_addr_prefix_copy)
-+static inline void ipv6_addr_prefix_copy(struct in6_addr *addr,
-+					 const struct in6_addr *pfx,
-+					 int plen)
-+{
-+	/* caller must guarantee 0 <= plen <= 128 */
-+	int o = plen >> 3,
-+	    b = plen & 0x7;
-+
-+	memcpy(addr->s6_addr, pfx, o);
-+	if (b != 0) {
-+		addr->s6_addr[o] &= ~(0xff00 >> b);
-+		addr->s6_addr[o] |= (pfx->s6_addr[o] & (0xff00 >> b));
-+	}
-+}
-+#endif
-+
- #endif /* __BACKPORT_NET_IPV6_H */
--- 
-2.8.1
+> > but you lied - it has a functional change:
+> > 
+> > > +        if process.returncode != 0:
+> > > +            if not args.verbose:
+> > > +                logwrite("Failed to apply changes from %s" %
+> > > print_name)
+> > > +                for line in output:
+> > > +                    logwrite('> %s' % line)
+> > > +            raise Exception('Patch failed')
+> > 
+> > vs.
+> > 
+> > > -        if process.returncode != 0:
+> > > -            if not args.verbose:
+> > > -                logwrite("Failed to apply changes from %s" %
+> > > print_name)
+> > > -                for line in output:
+> > > -                    logwrite('> %s' % line)
+> > > -            return 2
+> > 
+> > This had a major impact on the devel/git-tracker.py tool.
+> 
+> Sorry about that, is there an easy fix for it? Is there a test
+> we can do to avoid further regressions against the tracker ?
+> 
 
+Luca has a fix.
+
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
