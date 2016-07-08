@@ -1,40 +1,57 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:52054 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751082AbcGVPpR (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 22 Jul 2016 11:45:17 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 1386720552
-	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:45:16 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 655D920546
-	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:45:15 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 141261] USA +1-80.07.50.65.84 Microsoft Office 365 Help Support
- Phone Number Ms Office 365 helpline phone number Microsoft Outlook 365 Toll
- Free Phone Number++
-Date: Fri, 22 Jul 2016 15:45:15 +0000
-Message-ID: <bug-141261-58281-6tRXS6XOMq@https.bugzilla.kernel.org/> (sfid-20160722_174519_236118_77765E22)
-In-Reply-To: <bug-141261-58281@https.bugzilla.kernel.org/>
-References: <bug-141261-58281@https.bugzilla.kernel.org/>
+Received: from paleale.coelho.fi ([176.9.41.70]:34108 "EHLO
+	farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1755520AbcGHTxj (ORCPT
+	<rfc822;backports@vger.kernel.org>); Fri, 8 Jul 2016 15:53:39 -0400
+Message-ID: <1468007615.25088.93.camel@coelho.fi> (sfid-20160708_215342_291030_9712F177)
+From: Luca Coelho <luca@coelho.fi>
+To: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
+Cc: emmanuel.grumbach@intel.com
+Date: Fri, 08 Jul 2016 22:53:35 +0300
+In-Reply-To: <06392fc7-23f8-0434-8e39-27ee4239363b@hauke-m.de>
+References: <1455356813-4863-1-git-send-email-luca@coelho.fi>
+	 <06392fc7-23f8-0434-8e39-27ee4239363b@hauke-m.de>
 Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Mime-Version: 1.0
+Subject: Re: [PATCH] backport: add thermal backports for kernels < 4.3
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=141261
+On Fri, 2016-07-08 at 21:49 +0200, Hauke Mehrtens wrote:
+> On 02/13/2016 10:46 AM, Luca Coelho wrote:
+> > From: Luca Coelho <luciano.coelho@intel.com>
+> > 
+> > There were some API changes in the thermal framework in kernel
+> > version
+> > 4.3 and also earlier in 3.10.  Backport what is needed to support
+> > older kernels.
+> > 
+> > The 4.3 change is a bit tricky, because it changes the prototypes
+> > of
+> > some ops.  The solution for that is to add hook functions that will
+> > intercept the calls from the thermal framework and convert them to
+> > calls that the backported driver provides (namely convert unsigned
+> > longs to ints).
+> 
+> If it is just some int or unsigned long I think it is easier to just
+> have a patch or spatch for your driver. I assume that your program
+> logic
+> does not care about the type.
 
-Spam Script <spamscript@kernel.org> changed:
+Johannes and I have simplified this a bit.  I'll send a new version out
+soon.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-              Group|                            |Junk
-         Resolution|---                         |INVALID
 
--- 
-You are receiving this mail because:
-You are the assignee for the bug.
+> > 
+> > Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+> > ---
+> 
+> Sorry that it took me so long to look into this.
+
+No worries! We were wondering about you. ;)
+
+--
+Cheers,
+Luca.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
