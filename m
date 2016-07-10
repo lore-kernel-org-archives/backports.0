@@ -1,92 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:56143 "EHLO hauke-m.de"
+Received: from hauke-m.de ([5.39.93.123]:56157 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757289AbcGJVPB (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 10 Jul 2016 17:15:01 -0400
+	id S1757302AbcGJVPA (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 10 Jul 2016 17:15:00 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 12/19] patches: make iwlwifi use the old thermal APIs
-Date: Sun, 10 Jul 2016 23:14:38 +0200
-Message-Id: <1468185285-28265-13-git-send-email-hauke@hauke-m.de> (sfid-20160711_013911_630415_E2AA8EEB)
+Subject: [PATCH 09/19] header: adapt thermal_zone_device_register() signature changes
+Date: Sun, 10 Jul 2016 23:14:35 +0200
+Message-Id: <1468185285-28265-10-git-send-email-hauke@hauke-m.de> (sfid-20160710_231505_730405_A59BF966)
 In-Reply-To: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
 References: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The thermal API changed in the last kernel versions, make iwlwifi use
-the correct interface for each kernel version.
+The signature of thermal_zone_device_register() changed for kernel <
+3.10 multiple times, adapt the backports code to the old signature.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- .../network/0070-thermal/iwlwifi.patch             | 58 ++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0070-thermal/iwlwifi.patch
+ backport/backport-include/linux/thermal.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 backport/backport-include/linux/thermal.h
 
-diff --git a/patches/collateral-evolutions/network/0070-thermal/iwlwifi.patch b/patches/collateral-evolutions/network/0070-thermal/iwlwifi.patch
+diff --git a/backport/backport-include/linux/thermal.h b/backport/backport-include/linux/thermal.h
 new file mode 100644
-index 0000000..f736036
+index 0000000..c06dee6
 --- /dev/null
-+++ b/patches/collateral-evolutions/network/0070-thermal/iwlwifi.patch
-@@ -0,0 +1,58 @@
-+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-+index f1f2825..05d0dd2 100644
-+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-+@@ -637,7 +637,11 @@ send:
-+ }
-+ 
-+ static int iwl_mvm_tzone_get_temp(struct thermal_zone_device *device,
-++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0)
-++				  unsigned long *temperature)
-++#else
-+ 				  int *temperature)
-++#endif
-+ {
-+ 	struct iwl_mvm *mvm = (struct iwl_mvm *)device->devdata;
-+ 	int ret;
-+@@ -662,7 +666,11 @@ out:
-+ }
-+ 
-+ static int iwl_mvm_tzone_get_trip_temp(struct thermal_zone_device *device,
-++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0)
-++				       int trip, unsigned long *temp)
-++#else
-+ 				       int trip, int *temp)
-++#endif
-+ {
-+ 	struct iwl_mvm *mvm = (struct iwl_mvm *)device->devdata;
-+ 
-+@@ -685,8 +693,13 @@ static int iwl_mvm_tzone_get_trip_type(s
-+ 	return 0;
-+ }
-+ 
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ static int iwl_mvm_tzone_set_trip_temp(struct thermal_zone_device *device,
-++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0)
-++				       int trip, unsigned long temp)
-++#else
-+ 				       int trip, int temp)
-++#endif
-+ {
-+ 	struct iwl_mvm *mvm = (struct iwl_mvm *)device->devdata;
-+ 	struct iwl_mvm_thermal_device *tzone;
-+@@ -739,12 +752,15 @@ out:
-+ 	mutex_unlock(&mvm->mutex);
-+ 	return ret;
-+ }
-++#endif /* >= 3.6 */
-+ 
-+ static  struct thermal_zone_device_ops tzone_ops = {
-+ 	.get_temp = iwl_mvm_tzone_get_temp,
-+ 	.get_trip_temp = iwl_mvm_tzone_get_trip_temp,
-+ 	.get_trip_type = iwl_mvm_tzone_get_trip_type,
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
-+ 	.set_trip_temp = iwl_mvm_tzone_set_trip_temp,
-++#endif
-+ };
-+ 
-+ /* make all trips writable */
++++ b/backport/backport-include/linux/thermal.h
+@@ -0,0 +1,17 @@
++#ifndef __BACKPORT_THERMAL_H__
++#define __BACKPORT_THERMAL_H__
++#include_next <linux/thermal.h>
++#include <linux/version.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
++#define thermal_zone_device_register(type, trips, mask, devdata, ops, tzp, passive_delay, polling_delay) \
++	thermal_zone_device_register(type, trips, devdata, ops, 0, 0, passive_delay, polling_delay)
++#elif LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
++#define thermal_zone_device_register(type, trips, mask, devdata, ops, tzp, passive_delay, polling_delay) \
++	thermal_zone_device_register(type, trips, mask, devdata, ops, 0, 0, passive_delay, polling_delay)
++#elif LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)
++#define thermal_zone_device_register(type, trips, mask, devdata, ops, tzp, passive_delay, polling_delay) \
++	thermal_zone_device_register(type, trips, mask, devdata, ops, passive_delay, polling_delay)
++#endif /* < 3.8 */
++
++#endif /* __BACKPORT_THERMAL_H__ */
 -- 
 2.8.1
 
