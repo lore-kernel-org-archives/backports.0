@@ -1,57 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:34108 "EHLO
-	farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1755520AbcGHTxj (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 8 Jul 2016 15:53:39 -0400
-Message-ID: <1468007615.25088.93.camel@coelho.fi> (sfid-20160708_215342_291030_9712F177)
-From: Luca Coelho <luca@coelho.fi>
-To: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
-Cc: emmanuel.grumbach@intel.com
-Date: Fri, 08 Jul 2016 22:53:35 +0300
-In-Reply-To: <06392fc7-23f8-0434-8e39-27ee4239363b@hauke-m.de>
-References: <1455356813-4863-1-git-send-email-luca@coelho.fi>
-	 <06392fc7-23f8-0434-8e39-27ee4239363b@hauke-m.de>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [PATCH] backport: add thermal backports for kernels < 4.3
+Received: from hauke-m.de ([5.39.93.123]:56145 "EHLO hauke-m.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757293AbcGJVO7 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 10 Jul 2016 17:14:59 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 08/19] header: add empty for_each_child_of_node()
+Date: Sun, 10 Jul 2016 23:14:34 +0200
+Message-Id: <1468185285-28265-9-git-send-email-hauke@hauke-m.de> (sfid-20160710_231504_671004_F791B6EB)
+In-Reply-To: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
+References: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2016-07-08 at 21:49 +0200, Hauke Mehrtens wrote:
-> On 02/13/2016 10:46 AM, Luca Coelho wrote:
-> > From: Luca Coelho <luciano.coelho@intel.com>
-> > 
-> > There were some API changes in the thermal framework in kernel
-> > version
-> > 4.3 and also earlier in 3.10.  Backport what is needed to support
-> > older kernels.
-> > 
-> > The 4.3 change is a bit tricky, because it changes the prototypes
-> > of
-> > some ops.  The solution for that is to add hook functions that will
-> > intercept the calls from the thermal framework and convert them to
-> > calls that the backported driver provides (namely convert unsigned
-> > longs to ints).
-> 
-> If it is just some int or unsigned long I think it is easier to just
-> have a patch or spatch for your driver. I assume that your program
-> logic
-> does not care about the type.
+This is needed by bcma driver and was added to mainline kernel in
+commit aba3dfff9a "dt: add empty for_each_child_of_node,
+of_find_property".
 
-Johannes and I have simplified this a bit.  I'll send a new version out
-soon.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/of.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
+diff --git a/backport/backport-include/linux/of.h b/backport/backport-include/linux/of.h
+index 8089803..1a38034 100644
+--- a/backport/backport-include/linux/of.h
++++ b/backport/backport-include/linux/of.h
+@@ -199,4 +199,9 @@ static inline const char* of_node_full_name(const struct device_node *np)
+ #endif /* CONFIG_OF */
+ #endif /* < 3.6 */
+ 
++#ifndef for_each_child_of_node
++#define for_each_child_of_node(parent, child) \
++	while (0)
++#endif
++
+ #endif	/* _COMPAT_LINUX_OF_H */
+-- 
+2.8.1
 
-> > 
-> > Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-> > ---
-> 
-> Sorry that it took me so long to look into this.
-
-No worries! We were wondering about you. ;)
-
---
-Cheers,
-Luca.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
