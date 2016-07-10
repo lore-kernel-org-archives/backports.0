@@ -1,149 +1,49 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:52466 "EHLO mail.kernel.org"
+Received: from hauke-m.de ([5.39.93.123]:56188 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751856AbcGMPsp (ORCPT <rfc822;backports@vger.kernel.org>);
-	Wed, 13 Jul 2016 11:48:45 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 49907202AE
-	for <backports@vger.kernel.org>; Wed, 13 Jul 2016 15:47:47 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id B70B020295
-	for <backports@vger.kernel.org>; Wed, 13 Jul 2016 15:47:45 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 127091] New: @+Macbook PRo Number+@ 1.8.O.O.2.3.5.3.0.8.3 @+@
- Macbook PRo Tech Support Phone Number Macbook PRo phone number usa
-Date: Wed, 13 Jul 2016 15:47:45 +0000
-Message-ID: <bug-127091-58281@https.bugzilla.kernel.org/> (sfid-20160713_174932_360488_D9C058E8)
-Content-Type: text/plain; charset="UTF-8"
+	id S1757215AbcGJVQi (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 10 Jul 2016 17:16:38 -0400
+Subject: Re: [PATCH 1/2] backports: add definition for USB_SPEED_SUPER_PLUS
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+References: <1465119005-4161-1-git-send-email-arend.vanspriel@broadcom.com>
+Cc: backports@vger.kernel.org
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Message-ID: <5c4fbb51-7c91-fab5-a9b4-cc39304aff6f@hauke-m.de> (sfid-20160710_231640_914653_F683E8FB)
+Date: Sun, 10 Jul 2016 23:16:36 +0200
 MIME-Version: 1.0
+In-Reply-To: <1465119005-4161-1-git-send-email-arend.vanspriel@broadcom.com>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=127091
+On 06/05/2016 11:30 AM, Arend van Spriel wrote:
+> Speed definition for usb3.1 has been added in 4.6 kernel. Add
+> definiton for older kernels.
+> 
+> Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> ---
+>  backport/backport-include/linux/usb/ch9.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/backport/backport-include/linux/usb/ch9.h b/backport/backport-include/linux/usb/ch9.h
+> index 135e24c..c42fc30 100644
+> --- a/backport/backport-include/linux/usb/ch9.h
+> +++ b/backport/backport-include/linux/usb/ch9.h
+> @@ -21,4 +21,8 @@ static inline int usb_endpoint_maxp(const struct usb_endpoint_descriptor *epd)
+>  }
+>  #endif /* < 3.2 */
+>  
+> +#if LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0)
+> +#define USB_SPEED_SUPER_PLUS	(USB_SPEED_SUPER + 1)
+> +#endif /* < 4.6 */
+> +
+>  #endif /* __BACKPORT__LINUX_USB_CH9_H */
+> 
 
-            Bug ID: 127091
-           Summary: @+Macbook PRo Number+@ 1.8.O.O.2.3.5.3.0.8.3 @+@
-                    Macbook PRo Tech Support Phone Number Macbook PRo
-                    phone number usa
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: @+Macbook PRo Number+@ 1.8.O.O.2.3.5.3.0.8.3 @+@
-                    Macbook PRo Tech Support Phone Number Macbook PRo
-                    phone number usa
-          Hardware: All
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: Backports
-          Assignee: backports@vger.kernel.org
-          Reporter: garrymark277@gmail.com
-        Regression: No
+This is in a emum in the mainline kernel. I think this will cause some
+warnings when backporting it this way.
 
-@+Macbook PRo Number+@ 1.8.O.O.2.3.5.3.0.8.3 @+@ Macbook PRo Tech Support Phone
-Number Macbook PRo phone number usa
-
-@+++Macbook PRo Phone Number1.8.O.O.2.3.5.3.0.8.3 @@ Macbook PRo Technical
-Support Number +++++Macbook PRo Phone Number @@ 18OO.235.3083 @@ Macbook PRo
-Tech Support Phone Number +++++Macbook PRo Phone Number @@ 18OO.235.3083 @@
-Macbook PRo Tech Support Phone Number +++Macbook PRo outlook helpline phone
-number Macbook PRo outlook phone number Macbook PRo outlook phone number
-Macbook PRo outlook tech phone number Macbook PRo outlook phone number
-+++++Macbook PRo Phone Number @@ 18OO.235.3083 @@ Macbook PRo Tech Support
-Phone Number Macbook PRo Customer Service Phone Number Macbook PRo outlook
-express Contact Number@@ 1 Support Now Usa Canada For All Macbook PRo Products:
-Macbook PRo outlook express Phone Number 18OO.235.3083Macbook PRo Tech Support
-Phone Number Macbook PRo Customer Service Phone NumberMacbook PRo outlook
-express Contact Number(()) Macbook PRo tech support Macbook PRo Hotmail
-technical support number Hotmail tech phone number Macbook PRo customer service
-number Macbook PRo customer support telephone number outlook Support phone
-number office tech support Macbook PRo tech support number Macbook PRo support
-phone number Macbook PRo support line Macbook PRo outlook tech support number
-Macbook PRo server support phone number Macbook PRo product support number
-Macbook PRo telephone support Macbook PRo windows 8 tech support call Macbook
-PRo support phone number windows 18OO number Macbook PRo windows tech support
-phone number Macbook PRo outlook/Hotmail phone number))(( Macbook PRo Phone
-Number18OO.235.3083Macbook PRo Tech Support Phone Number Macbook PRo Customer
-Service Phone Number* Macbook PRo Phone Number18OO.235.3083Macbook PRo Tech
-Support Phone NumberMacbook PRo Customer Service Phone Number* Macbook PRo
-outlook helpline phone number Macbook PRo outlook phone number Macbook PRo
-outlook phone number Macbook PRo outlook tech phone number Macbook PRo outlook
-phone number Macbook PRo Phone Number18OO.235.3083Macbook PRo Tech Support
-Phone Number Macbook PRo Customer Service Phone Number Macbook PRo outlook
-express Contact Number@@ 1 Support Now Usa Canada For All Macbook PRo Products:
-Macbook PRo outlook express Phone Number 18OO.235.3083Macbook PRo Tech Support
-Phone Number Macbook PRo Customer Service Phone NumberMacbook PRo outlook
-express Contact Number(()) Macbook PRo tech support Macbook PRo Hotmail
-technical support number Hotmail tech phone number Macbook PRo customer service
-number Macbook PRo customer support telephone number outlook Support phone
-number office tech support Macbook PRo tech support number Macbook PRo support
-phone number Macbook PRo support line Macbook PRo outlook tech support number
-Macbook PRo server support phone number Macbook PRo product support number
-Macbook PRo telephone support Macbook PRo windows 8 tech support call Macbook
-PRo support phone number windows 18OO number Macbook PRo windows tech support
-phone number Macbook PRo outlook/Hotmail phone number))(( Macbook PRo Phone
-Number18OO.235.3083Macbook PRo Tech Support Phone Number Macbook PRo Customer
-Service Phone Number Macbook PRo outlook express Contact Number@@ Support Now
-Usa Canada For All Macbook PRo Products: Macbook PRo outlook express Phone
-Number 18OO.235.3083Macbook PRo Tech Support Phone Number Macbook PRo Customer
-Service Phone NumberMacbook PRo outlook express Contact Number(()) Macbook PRo
-tech support Macbook PRo Hotmail technical support number Hotmail tech phone
-number Macbook PRo customer service number Macbook PRo customer support
-telephone number outlook Support phone number office tech support Macbook PRo
-tech support number Macbook PRo support phone number Macbook PRo support line
-Macbook PRo outlook tech support number Macbook PRo server support phone number
-Macbook PRo product support number Macbook PRo telephone support Macbook PRo
-windows 8 tech support call Macbook PRo support phone number windows 18OO
-number Macbook PRo windows tech support phone number Macbook PRo
-outlook/Hotmail phone number))(( Support Now Usa Canada For All Macbook PRo
-Products: Macbook PRo Phone Number 18OO.235.3083Macbook PRo Tech Support Phone
-NumberMacbook PRo Customer Service Phone Number Macbook PRo Contact Number(())
-Macbook PRo tech support Macbook PRo Hotmail technical support number Hotmail
-tech phone number Macbook PRo customer service number Macbook PRo customer
-support telephone number outlook Support phone number office tech support
-Macbook PRo tech support number Macbook PRo support phone number Macbook PRo
-support line Macbook PRo outlook tech support number Macbook PRo server support
-phone number Macbook PRo product support number Macbook PRo telephone support
-Macbook PRo windows 8 tech support call Macbook PRo support phone number
-windows 18OO number Macbook PRo windows tech support phone number Macbook PRo
-outlook/Hotmail phone number!!!! Support@ Macbook PRo Phone Number 1-8OO-6~26-
-O759@* Macbook PRo Outlook Tech Support Phone Number, Macbook PRo Customer
-Support Phone Number Macbook PRo Hotmail Customer Care Phone Number technical
-support usa* 8OO number for Macbook PRo tech support Macbook PRo phone number
-technical support Macbook PRo tech phone number Macbook PRo customer service
-phone Macbook PRo technical support telephone number outlook contact phone
-number office tech support number for Macbook PRo tech support Macbook PRo
-support phone number Macbook PRo support line Macbook PRo outlook tech support
-number Macbook PRo server support phone number Macbook PRo product support
-number Macbook PRo telephone support Macbook PRo 8OO phone number ms tech
-support Macbook PRo support number Macbook PRo windows 8 tech support call
-Macbook PRo support phone number windows 18OO number Macbook PRo windows tech
-support phone number Macbook PRo outlook/Hotmail phone number (()) Macbook PRo
-Phone Number 1-8OO-6~26- O759@* Macbook PRo Outlook Tech Support Phone Number,
-Macbook PRo Customer Support Phone Number Macbook PRo Hotmail Customer Care
-Phone Number technical support usa** 8OO number for Macbook PRo tech support
-Macbook PRo phone number technical support Macbook PRo tech phone number
-Macbook PRo customer service phone Macbook PRo technical support telephone
-number outlook contact phone number office tech support number for Macbook PRo
-tech support Macbook PRo support phone number Macbook PRo support line Macbook
-PRo outlook tech support number Macbook PRo server support phone number Macbook
-PRo product support number Macbook PRo telephone support Macbook PRo 8OO phone
-number ms tech support Macbook PRo support number Macbook PRo windows 8 tech
-support call Macbook PRo support phone number windows 18OO number Macbook PRo
-windows tech support phone number Macbook PRo outlook/Hotmail phone number
-Hotmail customer care phone number Hotmail technical support phone number **
-https://wiki.secondlife.com/wiki/@%2B%2B%2BMS_Office_Phone_Number1.8.O.O.2.3.5.3.0.8.3_@@_Macbook
-PRo_office_Technical_Support_Number
-https://wiki.secondlife.com/wiki/Call_USA@%2B%2B%2B@_18.00.2.61.38.51_Macbook
-PRo_office_tech_support_phone_number_ms_office_tech_support_phone_number
-https://wiki.secondlife.com/wiki/%2B%2BMacbook
-PRo%2B%2B%2B@@@_1.8.0.0.2.3.5.3.0.8.3_@%2B@_Macbook
-PRo_office_Technical_Support_Phone_Number_USA ~~((()))))$$
-
--- 
-You are receiving this mail because:
-You are the assignee for the bug.
+Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
