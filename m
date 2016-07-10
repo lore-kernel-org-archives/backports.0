@@ -1,379 +1,202 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:43806 "EHLO mail.kernel.org"
+Received: from hauke-m.de ([5.39.93.123]:56145 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752096AbcGYOsg convert rfc822-to-8bit (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 25 Jul 2016 10:48:36 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 3655720172
-	for <backports@vger.kernel.org>; Mon, 25 Jul 2016 14:48:34 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id E2314200DB
-	for <backports@vger.kernel.org>; Mon, 25 Jul 2016 14:48:32 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1757351AbcGJVPE (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 10 Jul 2016 17:15:04 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Subject: [Bug 142031] New: 1 855-276 2781 QuickBooks 2016 Pro Support Number
-Date: Mon, 25 Jul 2016 14:48:32 +0000
-Message-ID: <bug-142031-58281@https.bugzilla.kernel.org/> (sfid-20160725_164838_586286_E988523A)
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 19/19] defconfig: update defconfigs, some options changed in the kernel.
+Date: Sun, 10 Jul 2016 23:14:45 +0200
+Message-Id: <1468185285-28265-20-git-send-email-hauke@hauke-m.de> (sfid-20160711_013912_700993_B96F4BA8)
+In-Reply-To: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
+References: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=142031
-
-            Bug ID: 142031
-           Summary: 1 855-276 2781 QuickBooks 2016 Pro Support Number
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: 10
-          Hardware: All
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: high
-          Priority: P1
-         Component: Backports
-          Assignee: backports@vger.kernel.org
-          Reporter: yashrajbhardwaj7@gmail.com
-        Regression: No
-
-Created attachment 225861
-  --> https://bugzilla.kernel.org/attachment.cgi?id=225861&action=edit
-Contact +1(855) 276-2781 QuickBooks Technical Support on Phone  Contact
-QuickBooks Phone Support | Intuit +1 855 935-7526 Toll Free QuickBooks Desktop
-Support Phone Number +1 800 903-7315 | Intuit USA
-
-Contact +1(855) 276-2781 QuickBooks Technical Support on Phone 
-Contact QuickBooks Phone Support | Intuit +1 855 935-7526 Toll Free
-QuickBooks Desktop Support Phone Number +1 800 903-7315 | Intuit USA
-Call Now-☎ ☏
-Quickbooks point of sale technical support phone number, QUICKBOOKS point of 
-
-sale Customer Service Phone Number, QUICKBOOKS point of sale Customer support 
-
-phone number, QUICKBOOKS point of sale support phone number
-
-call quickbooks, contact quickbooks, quickbooks support, quickbooks tech 
-
-support, quickbooks technical support, quichbooks customer care, quickbooks 
-
-customer service, quickbooks customer support, quickbooks phone number, 
-
-quickbooks customer care phone number, quickbooks customer service phone 
-
-number, quickbooks customer support phone number, quickbooks tech support 
-
-phone number, quickbooks technical support phone number, intuit support, 
-
-intuit phone support, intuit phone number
-
-#quickbooks #intuit #technicalsupport #phonesupport +intuit +quickbooks 
-
-+technicalsupport +phonesupport
-
-quickbooks accounting, quickbooks accounting software, quickbooks software, 
-
-quickbooks technical support, quickbooks support, quickbooks tech help, 
-
-quickbooks technical help, quickbooks free support, quickbooks online, 
-
-quicbooks support phone number, intuit technical support number,intuit tech 
-
-support,intuit support quickbooks,intuit support phone number,intuit 
-
-support,intuit quickbooks support phone number,intuit quickbooks support 
-
-number,intuit quickbooks support,intuit quickbooks online,intuit 
-
-quickbooks,intuit quickbook support,intuit customer service phone 
-
-number,quickbooks technical support number,quickbooks technical 
-
-support,quickbooks tech support,quickbooks support phone number,quickbooks 
-
-support phone,quickbooks support number,quickbooks support,quickbooks 
-
-support,quickbooks phone support,quickbooks payroll support,quickbooks online 
-
-support,quickbooks customer support,quickbook support,quickbooks 
-
-premiere,quickbooks premier vs pro,quickbooks premier support,quickbooks 
-
-premier industry,quickbooks premier for mac,quickbooks premier contractor 
-
-2011,quickbooks premier contractor 2010,quickbooks premier accountant 
-
-2011,quickbooks premier accountant 2010,quickbooks premier 2011,quickbooks 
-
-premier 2010,quickbooks premier 2009,quickbooks premier,quickbooks 2010 
-
-premier,quickbooks technical support number,quickbooks technical 
-
-support,quickbooks tech support,quickbooks support phone number,quickbooks 
-
-support phone,quickbooks support number,quickbooks support,quickbooks phone 
-
-support,quickbooks payroll support,quickbooks online support,quickbooks on 
-
-mac,quickbooks mac support,quickbooks mac,quickbooks for macs,quickbooks for 
-
-mac support,quickbooks for mac help,quickbooks for mac download,quickbooks 
-
-customer support,quickbook support,intuit quickbooks mac,intuit quickbooks for 
-
-mac
-
-Quickbooks Support, Quickbooks Support Number, Quickbooks Support Phone,
-Quickbooks Support Phone Number, Quickbooks Customer Support,Quickbooks
-Customer Support Number,Quickbooks Customer service,Quickbooks tech
-Support,Quickbooks tech Support Number,Quickbooks 24/7 Support
-
-1-855 276-2781 QuickBooks Tech Support Phone Number, QuickBooks Technical 
-
-Support Phone Number, QuickBooks Customer Support Phone Number, QuickBooks 
-
-Customer Service Phone Number, QuickBooks Customer Care Phone Number, 
-
-QuickBooks Phone Support Number, Intuit Tech Support Phone Number.
-
-QUICKBOOKS point of sale tech support phone number  QUICKBOOKS point of sale 
-
-customer support phone number  QUICKBOOKS point of sale support phone number  
-
-QUICKBOOKS point of sale support phone  QUICKBOOKS point of sale tech support  
-
-QUICKBOOKS point of sale customer support  QUICKBOOKS point of sale phone 
-
-support  QUICKBOOKS point of sale support number  QUICKBOOKS point of sale 
-
-technical support  QUICKBOOKS point of sale customer support phone number  
-
-QUICKBOOKS point of sale tech support phone number contact  QUICKBOOKS point 
-
-of sale support  QUICKBOOKS point of sale technical support phone number  
-
-QUICKBOOKS point of sale phone number tech support  QUICKBOOKS point of sale 
-
-support ticket  QUICKBOOKS point of sale customer support number  QUICKBOOKS 
-
-point of sale tech support number  QUICKBOOKS point of sale technical support 
-
-number  QUICKBOOKS point of sale support center  QUICKBOOKS point of sale 
-
-telephone support call  QUICKBOOKS point of sale support  QUICKBOOKS point of 
-
-sale support support  QUICKBOOKS point of sale  QUICKBOOKS point of sale 
-
-billing support  QUICKBOOKS point of sale technical support number support  
-
-QUICKBOOKS point of sale  QUICKBOOKS point of sale point of sale support  
-
-QUICKBOOKS point of sale contact support  QUICKBOOKS point of sale support 
-
-number  QUICKBOOKS point of sale customer support number  QUICKBOOKS point of 
-
-sale tech support number support for  QUICKBOOKS point of sale  QUICKBOOKS 
-
-point of sale phone number  QUICKBOOKS point of sale customer service phone 
-
-number  QUICKBOOKS point of sale contact phone number  QUICKBOOKS point of 
-
-sale phone number  QUICKBOOKS point of sale customer service phone number 
-
-phone number for  QUICKBOOKS point of sale customer service  QUICKBOOKS point 
-
-of sale software phone number phone number for  QUICKBOOKS point of sale  
-
-QUICKBOOKS point of sale customer service telephone number  QUICKBOOKS point 
-
-of sale helpline phone number  QUICKBOOKS point of sale contact number  
-
-QUICKBOOKS point of sale customer service number  QUICKBOOKS point of sale 
-
-customer service phone number us  QUICKBOOKS point of sale customer service 
-
-phone number usa  QUICKBOOKS point of sale telephone number  QUICKBOOKS point 
-
-of sale phone number usa  QUICKBOOKS point of sale contact number  QUICKBOOKS 
-
-point of sale number  QUICKBOOKS point of sale contact number usa  QUICKBOOKS 
-
-point of sale helpline number  QUICKBOOKS point of sale helpline number  
-
-QUICKBOOKS point of sale customer number  QUICKBOOKS point of sale customer 
-
-service number  QUICKBOOKS point of sale contact telephone number contact 
-
-number for  QUICKBOOKS point of sale  QUICKBOOKS point of sale software 
-
-contact number  QUICKBOOKS point of sale toll free number  QUICKBOOKS point of 
-
-sale telephone number uk  QUICKBOOKS point of sale registration number  
-
-QUICKBOOKS point of sale toll free number usa  QUICKBOOKS point of sale 
-
-customer service  QUICKBOOKS point of sale software customer service contact  
-
-QUICKBOOKS point of sale customer service  QUICKBOOKS point of sale customer 
-
-service phone  QUICKBOOKS point of sale customer service  QUICKBOOKS point of 
-
-sale service1-855-276-2781US,  QUICKBOOKS point of sale Support phone number,  
-
-QUICKBOOKS point of sale customer service phone number
-Quickbooks tech Support Phone Number    +1(855) 276-2781     24*7 Support 
-
-
-Quickbooks tech Support Number    +1(855) 276-2781     24*7 Support  
-Quickbooks technical Support Phone Number    +1(855) 276-2781     24*7 
-
-Support  
-Quickbooks technical Support Number    +1(855) 276-2781     24*7 Support 
-
-
-Quickbooks pro tech Support Phone Number    +1(855) 276-2781     24*7 
-
-Support  
-Quickbooks pro tech Support Number    +1(855) 276-2781     24*7 Support 
-
-
-Quickbooks pro technical Support Phone Number    +1(855) 276-2781     24*7 
-
-Support  
-Quickbooks pro technical Support Number    +1(855) 276-2781     24*7 Support 
-
-
-Quickbooks customer service number    +1(855) 276-2781     24*7 Support 
-
-
-Quickbooks customer service phone number    +1(855) 276-2781     24*7 
-
-Support  
-Quickbooks customer support number    +1(855) 276-2781     24*7 Support 
-
-
-Quickbooks customer support phone number    +1(855) 276-2781     24*7 
-
-Support  
-Quickbooks payroll tech Support Phone Number    +1(855) 276-2781     24*7 
-
-Support  
-Quickbooks payroll tech Support Number    +1(855) 276-2781     24*7 Support 
-
-
-Quickbooks payroll technical Support Phone Number    +1(855) 276-2781    
-
- 24*7 Support  
-Quickbooks payroll technical Support Number    +1(855) 276-2781     24*7 
-
-Support  
-Quickbooks premier support phone number    +1(855) 276-2781     24*7 Support 
-
-
-Quickbooks premier support number    +1(855) 276-2781     24*7 Support 
-
-
-Quickbooks premier support number    +1(855) 276-2781     24*7 Support 
-
-
-Quickbooks help desk phone number    +1(855) 276-2781     24*7 Support 
-
-
-Quickbooks help desk number    +1(855) 276-2781     24*7 Support  
-Quickbooks Error Support Number    +1(855) 276-2781     24*7 Support  
-Quickbooks Error Support phone Number    +1(855) 276-2781     24*7 Support 
-
-
-Quickbooks Contact Number    +1(855) 276-2781     24*7 Support  
-Quickbooks Error Support    +1(855) 276-2781     24*7 Support  
-    +1(855) 276-2781     24*7 Support  
-Quickbooks Support Contact Number    +1(855) 276-2781     24*7 Support 
-
-
-QuickBooks technical support    +1(855) 276-2781     24*7 Support  
-QuickBooks Customer Service Phone Number    +1(855) 276-2781     24*7 
-
-Support  
-QuickBooks Customer Service Number    +1(855) 276-2781     24*7 Support 
-
-
-QuickBooks Customer Support Phone Number    +1(855) 276-2781     24*7 
-
-Support  
-QuickBooks Customer Support Number    +1(855) 276-2781     24*7 Support 
-
-
-QuickBooks Customer Service Helpline Number    +1(855) 276-2781     24*7 
-
-Support  
-QuickBooks Customer Care Number    +1(855) 276-2781     24*7 Support  
-QuickBooks support team phone number    +1(855) 276-2781     24*7 Support 
-
-
-QuickBooks tech support phone number    +1(855) 276-2781     24*7 Support 
-
-
-QuickBooks Help Desk Phone Number    +1(855) 276-2781     24*7 Support 
-
-
-QuickBooks tech support number    +1(855) 276-2781     24*7 Support  
-QuickBooks technical support phone number    +1(855) 276-2781     24*7 
-
-Support  
-QuickBooks phone number    +1(855) 276-2781     24*7 Support  
-QuickBooks technical support number    +1(855) 276-2781     24*7 Support 
-
-
-QuickBooks support phone number    +1(855) 276-2781     24*7 Support  
-QuickBooks Customer Service Phone Number    +1(855) 276-2781     24*7 
-
-Support  
-QuickBooks Customer Service Number    +1(855) 276-2781     24*7 Support 
-
-
-QuickBooks Customer Support Phone Number    +1(855) 276-2781     24*7 
-
-Support  
-QuickBooks Customer Support Number    +1(855) 276-2781     24*7 Support 
-
-
-QuickBooks Customer Service Helpline Number    +1(855) 276-2781     24*7 
-
-Support  
-QuickBooks Customer Care Number    +1(855) 276-2781     24*7 Support  
-QuickBooks support team phone number    +1(855) 276-2781     24*7 Support 
-
-
-QuickBooks help number    +1(855) 276-2781     24*7 Support  
-QuickBooks Helpline Number    +1(855) 276-2781     24*7 Support  
-QuickBooks help phone number    +1(855) 276-2781     24*7 Support  
-QuickBooks Tech Support Toll free Number    +1(855) 276-2781     24*7 
-
-Support  
-QuickBooks Support Telephone Number    +1(855) 276-2781     24*7 Support 
-
-
-QuickBooks Tech Support Telephone number    +1(855) 276-2781     24*7 
-
-Support  
-QuickBooks Tech Support contact number    +1(855) 276-2781     24*7 Support 
-
-
-QuickBooks support contact number    +1(855) 276-2781     24*7 Support 
-
-
-QuickBooks technical support contact number    +1(855) 276-2781     24*7 
-
-Support  
-QuickBooks pro support phone number    +1(855) 276-2781     24*7 Support 
-
-
-QuickBooks payroll support phone number    +1(855) 276-2781     24*7 Support 
-
-
-QuickBooks payroll customer support phone number    +1(855) 276-2781
-
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/defconfigs/ar5523      |  2 +-
+ backport/defconfigs/ath10k      |  2 +-
+ backport/defconfigs/ath5k       |  2 +-
+ backport/defconfigs/ath6kl      |  2 +-
+ backport/defconfigs/ath9k       |  2 +-
+ backport/defconfigs/ath9k-debug |  2 +-
+ backport/defconfigs/carl9170    |  2 +-
+ backport/defconfigs/media       |  5 -----
+ backport/defconfigs/wcn36xx     |  2 +-
+ backport/defconfigs/wifi        | 18 +++++++++++++++---
+ backport/defconfigs/wil6210     |  2 +-
+ 11 files changed, 24 insertions(+), 17 deletions(-)
+
+diff --git a/backport/defconfigs/ar5523 b/backport/defconfigs/ar5523
+index b218d9a..101c3a2 100644
+--- a/backport/defconfigs/ar5523
++++ b/backport/defconfigs/ar5523
+@@ -4,5 +4,5 @@ CPTCFG_MAC80211=m
+ CPTCFG_MAC80211_LEDS=y
+ CPTCFG_MAC80211_MESH=y
+ CPTCFG_WLAN=y
+-CPTCFG_ATH_CARDS=m
++CPTCFG_WLAN_VENDOR_ATH=y
+ CPTCFG_AR5523=m
+diff --git a/backport/defconfigs/ath10k b/backport/defconfigs/ath10k
+index c791c99..b7be617 100644
+--- a/backport/defconfigs/ath10k
++++ b/backport/defconfigs/ath10k
+@@ -4,7 +4,7 @@ CPTCFG_MAC80211=m
+ CPTCFG_MAC80211_LEDS=y
+ CPTCFG_MAC80211_MESH=y
+ CPTCFG_WLAN=y
+-CPTCFG_ATH_CARDS=m
++CPTCFG_WLAN_VENDOR_ATH=y
+ CPTCFG_ATH10K_PCI=m
+ CPTCFG_ATH10K=m
+ CPTCFG_ATH10K_DEBUG=y
+diff --git a/backport/defconfigs/ath5k b/backport/defconfigs/ath5k
+index df95c57..920c6c6 100644
+--- a/backport/defconfigs/ath5k
++++ b/backport/defconfigs/ath5k
+@@ -4,5 +4,5 @@ CPTCFG_MAC80211=m
+ CPTCFG_MAC80211_LEDS=y
+ CPTCFG_MAC80211_MESH=y
+ CPTCFG_WLAN=y
+-CPTCFG_ATH_CARDS=m
++CPTCFG_WLAN_VENDOR_ATH=y
+ CPTCFG_ATH5K=m
+diff --git a/backport/defconfigs/ath6kl b/backport/defconfigs/ath6kl
+index a372127..a1a1fdd 100644
+--- a/backport/defconfigs/ath6kl
++++ b/backport/defconfigs/ath6kl
+@@ -1,7 +1,7 @@
+ CPTCFG_CFG80211=m
+ CPTCFG_CFG80211_WEXT=y
+ CPTCFG_WLAN=y
+-CPTCFG_ATH_CARDS=m
++CPTCFG_WLAN_VENDOR_ATH=y
+ CPTCFG_ATH6KL=m
+ CPTCFG_ATH6KL_SDIO=m
+ CPTCFG_ATH6KL_USB=m
+diff --git a/backport/defconfigs/ath9k b/backport/defconfigs/ath9k
+index 0e935cc..c7097f9 100644
+--- a/backport/defconfigs/ath9k
++++ b/backport/defconfigs/ath9k
+@@ -4,6 +4,6 @@ CPTCFG_MAC80211=m
+ CPTCFG_MAC80211_LEDS=y
+ CPTCFG_MAC80211_MESH=y
+ CPTCFG_WLAN=y
+-CPTCFG_ATH_CARDS=m
++CPTCFG_WLAN_VENDOR_ATH=y
+ CPTCFG_ATH9K=m
+ CPTCFG_ATH9K_HTC=m
+diff --git a/backport/defconfigs/ath9k-debug b/backport/defconfigs/ath9k-debug
+index b7baedd..d9cf94f 100644
+--- a/backport/defconfigs/ath9k-debug
++++ b/backport/defconfigs/ath9k-debug
+@@ -12,7 +12,7 @@ CPTCFG_MAC80211_HT_DEBUG=y
+ CPTCFG_MAC80211_IBSS_DEBUG=y
+ CPTCFG_MAC80211_PS_DEBUG=y
+ CPTCFG_WLAN=y
+-CPTCFG_ATH_CARDS=m
++CPTCFG_WLAN_VENDOR_ATH=y
+ CPTCFG_ATH9K=m
+ CPTCFG_ATH9K_HTC=m
+ CPTCFG_ATH_DEBUG=y
+diff --git a/backport/defconfigs/carl9170 b/backport/defconfigs/carl9170
+index cc94e37..002e0f1 100644
+--- a/backport/defconfigs/carl9170
++++ b/backport/defconfigs/carl9170
+@@ -4,5 +4,5 @@ CPTCFG_MAC80211=m
+ CPTCFG_MAC80211_LEDS=y
+ CPTCFG_MAC80211_MESH=y
+ CPTCFG_WLAN=y
+-CPTCFG_ATH_CARDS=m
++CPTCFG_WLAN_VENDOR_ATH=y
+ CPTCFG_CARL9170=m
+diff --git a/backport/defconfigs/media b/backport/defconfigs/media
+index c8f2e4d..a044583 100644
+--- a/backport/defconfigs/media
++++ b/backport/defconfigs/media
+@@ -404,12 +404,8 @@ CPTCFG_VIDEO_MT9P031=m
+ CPTCFG_VIDEO_MT9T001=m
+ CPTCFG_VIDEO_MT9V011=m
+ CPTCFG_VIDEO_MT9V032=m
+-CPTCFG_VIDEO_MX2=m
+-CPTCFG_VIDEO_MX2_EMMAPRP=m
+-CPTCFG_VIDEO_MX3=m
+ CPTCFG_VIDEO_MXB=m
+ CPTCFG_VIDEO_NOON010PC30=m
+-CPTCFG_VIDEO_OMAP1=m
+ CPTCFG_VIDEO_OMAP2_VOUT=m
+ CPTCFG_VIDEO_OMAP3=m
+ CPTCFG_VIDEO_OV7640=m
+@@ -464,7 +460,6 @@ CPTCFG_VIDEO_TDA9840=m
+ CPTCFG_VIDEO_TEA6415C=m
+ CPTCFG_VIDEO_TEA6420=m
+ CPTCFG_VIDEO_THS7303=m
+-CPTCFG_VIDEO_TIMBERDALE=m
+ CPTCFG_VIDEO_TLV320AIC23B=m
+ CPTCFG_VIDEO_TM6000=m
+ CPTCFG_VIDEO_TM6000_ALSA=m
+diff --git a/backport/defconfigs/wcn36xx b/backport/defconfigs/wcn36xx
+index 374eb11..a0ed809 100644
+--- a/backport/defconfigs/wcn36xx
++++ b/backport/defconfigs/wcn36xx
+@@ -8,6 +8,6 @@ CPTCFG_MAC80211=m
+ CPTCFG_MAC80211_DEBUGFS=y
+ CPTCFG_MAC80211_MESSAGE_TRACING=y
+ CPTCFG_WLAN=y
+-CPTCFG_ATH_CARDS=m
++CPTCFG_WLAN_VENDOR_ATH=y
+ CPTCFG_WCN36XX=m
+ CPTCFG_WCN36XX_DEBUGFS=y
+diff --git a/backport/defconfigs/wifi b/backport/defconfigs/wifi
+index 78d1453..4034bb1 100644
+--- a/backport/defconfigs/wifi
++++ b/backport/defconfigs/wifi
+@@ -11,7 +11,6 @@ CPTCFG_ATH6KL_SDIO=m
+ CPTCFG_ATH6KL_USB=m
+ CPTCFG_ATH9K_HTC=m
+ CPTCFG_ATH9K=m
+-CPTCFG_ATH_CARDS=m
+ CPTCFG_ATMEL=m
+ CPTCFG_B43LEGACY=m
+ CPTCFG_B43=m
+@@ -119,6 +118,19 @@ CPTCFG_WLAN=y
+ CPTCFG_WLCORE=m
+ CPTCFG_WLCORE_SDIO=m
+ CPTCFG_WLCORE_SPI=m
+-CPTCFG_WL_MEDIATEK=y
+-CPTCFG_WL_TI=y
++CPTCFG_WLAN_VENDOR_ADMTEK=y
++CPTCFG_WLAN_VENDOR_ATH=y
++CPTCFG_WLAN_VENDOR_ATMEL=y
++CPTCFG_WLAN_VENDOR_BROADCOM=y
++CPTCFG_WLAN_VENDOR_CISCO=y
++CPTCFG_WLAN_VENDOR_INTEL=y
++CPTCFG_WLAN_VENDOR_INTERSIL=y
++CPTCFG_WLAN_VENDOR_MARVELL=y
++CPTCFG_WLAN_VENDOR_MEDIATEK=y
++CPTCFG_WLAN_VENDOR_RALINK=y
++CPTCFG_WLAN_VENDOR_REALTEK=y
++CPTCFG_WLAN_VENDOR_RSI=y
++CPTCFG_WLAN_VENDOR_ST=y
++CPTCFG_WLAN_VENDOR_TI=y
++CPTCFG_WLAN_VENDOR_ZYDAS=y
+ CPTCFG_ZD1211RW=m
+diff --git a/backport/defconfigs/wil6210 b/backport/defconfigs/wil6210
+index 3fa29b8..e449a69 100644
+--- a/backport/defconfigs/wil6210
++++ b/backport/defconfigs/wil6210
+@@ -1,5 +1,5 @@
+ CPTCFG_CFG80211=m
+ CPTCFG_CFG80211_WEXT=y
+ CPTCFG_WLAN=y
+-CPTCFG_ATH_CARDS=m
++CPTCFG_WLAN_VENDOR_ATH=y
+ CPTCFG_WIL6210=m
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.--
+2.8.1
+
+--
 To unsubscribe from this list: send the line "unsubscribe backports" in
