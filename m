@@ -1,148 +1,97 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:57658 "EHLO mail.kernel.org"
+Received: from hauke-m.de ([5.39.93.123]:56140 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752104AbcGVQfg (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 22 Jul 2016 12:35:36 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id E07AD20534
-	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 16:35:34 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id BCFF020458
-	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 16:35:33 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1757207AbcGJVO4 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 10 Jul 2016 17:14:56 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Subject: [Bug 141471] New: ++.+1-844.855.1955)
- +.+.phone@number@@epson@printer@technical@support@n
-Date: Fri, 22 Jul 2016 16:35:33 +0000
-Message-ID: <bug-141471-58281@https.bugzilla.kernel.org/> (sfid-20160722_183538_805671_F7EFE911)
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 00/19] backports: bring to next-20160324
+Date: Sun, 10 Jul 2016 23:14:26 +0200
+Message-Id: <1468185285-28265-1-git-send-email-hauke@hauke-m.de> (sfid-20160710_231458_920505_0266340E)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=141471
+This add various stuff needed for next-20160324.
 
-            Bug ID: 141471
-           Summary: ++.+1-844.855.1955)
-                    +.+.phone@number@@epson@printer@technical@support@n
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: ++.+1-844.855.1955)
-                    +.+.phone@number@@epson@printer@technical@support@n
-          Hardware: All
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: Backports
-          Assignee: backports@vger.kernel.org
-          Reporter: 9756765764dahiya@gmail.com
-        Regression: No
+Hauke Mehrtens (19):
+  copy-list: rename brcmfmac.h
+  copy-list: add media/tvp5150.h header file
+  dependencies: deactivate igb on kernel < 3.11
+  header: adapt get_user_pages_{locked,unlocked} signature
+  header: remove vid parameter from ndo_dflt_fdb_add()
+  header: add ipv6_addr_prefix_copy()
+  header: add missing S16_MIN and S16_MAX
+  header: add empty for_each_child_of_node()
+  header: adapt thermal_zone_device_register() signature changes
+  header: add thermal_notify_framework()
+  patches: do not call of_irq_* functions on kernel < 3.13 in bcma
+  patches: make iwlwifi use the old thermal APIs
+  patches: remove usage of the head_frag member of skb
+  patch: add include for net/ipv6.h to igb_main.c
+  backports: add rhashtable_walk_init()
+  patches: refresh on next-20160324
+  gentree.py: print some more error messages when spatch fails.
+  devel: update test kernel versions
+  defconfig: update defconfigs, some options changed in the kernel.
 
-((moti))Call @@@++ USA I8448551955 Lexmark   p.r.i.n.t.e.r t.e.c.h
-s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.e.r u.s.a. C.a.l.l Lexmark   h.e.l.p d.e.s.k
-n.u.m.b.e.r n.u.m.b.e.r C.a.n.a.d.a Lexmark   s.u.p.p.o.
-
-((moti))Call @@@++ USA I8448551955 Lexmark   p.r.i.n.t.e.r t.e.c.h
-s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.e.r u.s.a. C.a.l.l Lexmark   h.e.l.p d.e.s.k
-n.u.m.b.e.r n.u.m.b.e.r C.a.n.a.d.a Lexmark   s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.r
-usa USA 1 I8448551955 Lexmark   p.r.i.n.t.e.r t.e.c.h s.u.p.p.o.r.t p.h.o.n.e
-n.u.m.b.e.r u.s.a. C.a.l.l Lexmark   h.e.l.p d.e.s.k n.u.m.b.e.r n.u.m.b.e.r
-C.a.n.a.d.a Lexmark   s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.r usa canada
-1-1844-855-1955 USA, Lexmark   printer Tech Support phone number,Lexmark  
-technical support phone number 1 I8448551955 .Lexmark   Tech Support Number
-Lexmark   Tech Lexmark   tech support, Lexmark   tech support number, Lexmark  
-tech support phone number, Lexmark   technical support, Lexmark   technical
-support number, Lexmark   technical support phone number, Lexmark   tech
-support number, Lexmark   support number, Lexmark   Tech support phone number,
-Lexmark   support phone number, Lexmark   technical support phone number,
-Lexmark   technical support number,Support Phone Number for Lexmark   printer
-Phone Number for Lexmark   CustomerService Technical Support Telephone Number
-Lexmark   printer support number Lexmark   Lexmark   printer tech support
-number Lexmark   Lexmark   printer technical support number Lexmark   Lexmark  
-printer technical support phone number Lexmark   Lexmark   printer customer
-service number Lexmark   Lexmark   internet security technical support Lexmark 
- technical support phone number Lexmark   Lexmark   tech support phone number
-Lexmark   Lexmark   customer support phone number I-844-855-1955 Lexmark  
-Lexmark   printer support phone number Lexmark   Lexmark   support phone
-Lexmark   tech support Lexmark   customer support Lexmark   phone support
-Lexmark   support number Lexmark   Lexmark   technical support Lexmark  
-printer customer support phone number Lexmark   Lexmark   printer tech support
-phone number Lexmark   contact Lexmark   support Lexmark   printer technical
-support phone number ~!~I8448551955++ Lexmark   Lexmark   phone number Lexmark 
- tech support Lexmark   support ticket Lexmark   customer support number
-Lexmark   Lexmark   tech support number Lexmark   Lexmark   technical support
-number Lexmark   Lexmark   support center Lexmark   telephone support call
-Lexmark   support Lexmark   printer support support Lexmark   Lexmark   billing
-support Lexmark   printer technical support number Lexmark   support Lexmark  
-printer Lexmark   online support Lexmark   contact support Lexmark   printer
-support number Lexmark   Lexmark   printer customer support number Lexmark  
-Lexmark   printer tech support number Lexmark   support for Lexmark   Lexmark  
-phone number Lexmark   Lexmark   customer service phone number Lexmark  
-Lexmark   contact phone number Lexmark   Lexmark   printer phone number Lexmark
-  Lexmark   printer customer service phone number Lexmark   phone number
-Lexmark   for Lexmark   customer service Lexmark   software phone number
-Lexmark   phone number Lexmark   for Lexmark   Lexmark   customer service
-telephone number Lexmark   Lexmark   helpline phone number Lexmark   Lexmark  
-contact number Lexmark   Lexmark   customer service number Lexmark   Lexmark  
-customer service phone number ~!~I8448551955++ Lexmark   us Lexmark   customer
-service phone number Lexmark   usa Lexmark   telephone number Lexmark   Lexmark
-  phone number Lexmark   usa Lexmark   printer contact number Lexmark   Lexmark
-  number Lexmark   Lexmark   contact number Lexmark   usa Lexmark   printer
-helpline number Lexmark   Lexmark   helpline number Lexmark   Lexmark  
-customer number Lexmark   Lexmark   printer customer service number Lexmark  
-Lexmark   contact telephone number Lexmark   contact number Lexmark   for
-Lexmark   Lexmark   software contact number Lexmark   Lexmark   toll free
-number Lexmark   Lexmark   telephone number Lexmark   uk Lexmark   registration
-number Lexmark   Lexmark   toll free number Lexmark   usa Lexmark   customer
-service Lexmark   software customer service contact Lexmark   customer service
-Lexmark   customer service phone Lexmark   printer customer service Lexmark  
-service Lexmark   printer technical support Lexmark   printer customer support
-Lexmark   technical support reviews telephone Lexmark   printer Lexmark   tech
-support phone number Lexmark   Lexmark   printer tech support phone number
-Lexmark   Lexmark   printer customer service Lexmark   technical support phone
-number Lexmark   Lexmark   printer free printer support Lexmark   customer
-service billing Lexmark   customer service email address Lexmark   customer
-service reviews contact Lexmark   customer service Lexmark   tech support
-number Lexmark   usa Lexmark   printer support number Lexmark   Lexmark  
-printer contact number Lexmark   Lexmark   customer service phone number
-Lexmark   Lexmark   technical support usa Lexmark   technical support number
-Lexmark   Lexmark   tech support phone Lexmark   tech support number LEXMARK
-LEXMARK customer service telephone number LEXMARK LEXMARK printer customer
-support number LEXMARK LEXMARK printer phone number LEXMARK LEXMARK printer
-online support LEXMARK customer service number LEXMARK LEXMARK tech support
-center LEXMARK customer service LEXMARK software customer service LEXMARK
-customer care number LEXMARK usa LEXMARK customer number LEXMARK LEXMARK
-customer support number LEXMARK LEXMARK customer care number LEXMARK LEXMARK
-customer care toll free number LEXMARK LEXMARK tech support LEXMARK technical
-support LEXMARK printer support LEXMARK printer tech support LEXMARK support
-center LEXMARK.com customer service LEXMARK printer customer care number
-LEXMARK LEXMARK customer care LEXMARK phone number LEXMARK phone number LEXMARK
-for LEXMARK customer service LEXMARK phone support LEXMARK phone number LEXMARK
-tech support LEXMARK support phone number LEXMARK contact LEXMARK by phone
-LEXMARK contact phone number LEXMARK LEXMARK helpline phone number LEXMARK
-LEXMARK printer phone LEXMARK printer for phone LEXMARK contact number LEXMARK
-LEXMARK contact support contact LEXMARK printer LEXMARK contact number LEXMARK
-usa LEXMARK toll free number LEXMARK LEXMARK telephone number LEXMARK LEXMARK
-toll free number LEXMARK usa LEXMARK printer support services technical support
-for printer LEXMARK LEXMARK customer service phone number LEXMARK usa LEXMARK
-printer customer care number LEXMARK usa LEXMARK customer care number LEXMARK
-LEXMARK customer care center LEXMARK customer support LEXMARK customer support
-phone LEXMARK customer help LEXMARK customer & technical support LEXMARK
-customer portal LEXMARK customer care phone number LEXMARK usa LEXMARK customer
-care email LEXMARK helpline LEXMARK tech support contact LEXMARK customer care
-toll free LEXMARK printer customer service number LEXMARK LEXMARK printer
-protection norton printer customer service number LEXMARK LEXMARK software
-customer service number LEXMARK LEXMARK hotline customer service phone number
-LEXMARK LEXMARK customer service phone number LEXMARK us how to contact LEXMARK
-by email LEXMARK free phone support LEXMARK printer technical support number
-LEXMARK LEXMARK printer technical support help desk phone number LEXMARK
-LEXMARK technical support number LEXMARK toll free number LEXMARK LEXMARK
-printer customer support phone number Lexmark   Lexmark   printer customer
+ backport/backport-include/linux/kernel.h           |  8 +++
+ backport/backport-include/linux/mm.h               | 45 ++++++++++++----
+ backport/backport-include/linux/of.h               |  5 ++
+ backport/backport-include/linux/rhashtable.h       | 12 +++++
+ backport/backport-include/linux/rtnetlink.h        |  6 +++
+ backport/backport-include/linux/thermal.h          | 27 ++++++++++
+ backport/backport-include/net/ipv6.h               | 18 +++++++
+ backport/compat/Makefile                           |  1 +
+ backport/compat/backport-4.0.c                     | 18 +++----
+ backport/compat/backport-4.7.c                     | 62 ++++++++++++++++++++++
+ backport/defconfigs/ar5523                         |  2 +-
+ backport/defconfigs/ath10k                         |  2 +-
+ backport/defconfigs/ath5k                          |  2 +-
+ backport/defconfigs/ath6kl                         |  2 +-
+ backport/defconfigs/ath9k                          |  2 +-
+ backport/defconfigs/ath9k-debug                    |  2 +-
+ backport/defconfigs/carl9170                       |  2 +-
+ backport/defconfigs/media                          |  5 --
+ backport/defconfigs/wcn36xx                        |  2 +-
+ backport/defconfigs/wifi                           | 18 +++++--
+ backport/defconfigs/wil6210                        |  2 +-
+ copy-list                                          |  4 +-
+ dependencies                                       |  3 +-
+ devel/backports-update-manager                     | 21 ++++----
+ gentree.py                                         |  2 +-
+ .../media/0004-missing-include/media-device.patch  |  2 +-
+ .../0002-disable-dump-adjust-on-old-kernels.patch  |  4 +-
+ .../include_net_cfg80211.patch                     |  2 +-
+ .../net_wireless_core.patch                        |  2 +-
+ .../network/0013-fix-makefile-includes/igb.patch   | 12 +++++
+ .../0014-netlink_seq/net_wireless_nl80211.patch    |  2 +-
+ .../network/0024-led-blink-api/mac80211.patch      |  2 +-
+ .../network/0025-usb-sg/usbnet.patch               |  2 +-
+ .../0032-sriov_configure/igb_sriov_configure.patch |  4 +-
+ .../0033-ndo_vlan_rx_vid/igb_ndo_vlan_rx_vid.patch | 23 +++++---
+ .../0043-ndo_set_vf_rate/igb_set_vf_rate.patch     |  4 +-
+ .../network/0052-deactivate-ptp-pin/igb.patch      | 16 +++---
+ .../network/0053-possible_net_t.patch              |  2 +-
+ .../0053-remove_wait_on_bit_timeout/btusb.patch    | 12 ++---
+ .../network/0055-name_assign_type/brcmfmac.patch   |  2 +-
+ .../network/0062-acpi-gpio-remove/hci_bcm.patch    |  2 +-
+ .../network/0069-remove-of_irq/bcma.patch          | 26 +++++++++
+ .../network/0070-thermal/iwlwifi.patch             | 58 ++++++++++++++++++++
+ .../network/0071-skb-head_frag/wireless.patch      | 16 ++++++
+ .../network/0072-netdevice-ndo_fdb_add/igb.patch   | 16 ++++++
+ 45 files changed, 394 insertions(+), 88 deletions(-)
+ create mode 100644 backport/backport-include/linux/rhashtable.h
+ create mode 100644 backport/backport-include/linux/thermal.h
+ create mode 100644 backport/compat/backport-4.7.c
+ create mode 100644 patches/collateral-evolutions/network/0013-fix-makefile-includes/igb.patch
+ create mode 100644 patches/collateral-evolutions/network/0069-remove-of_irq/bcma.patch
+ create mode 100644 patches/collateral-evolutions/network/0070-thermal/iwlwifi.patch
+ create mode 100644 patches/collateral-evolutions/network/0071-skb-head_frag/wireless.patch
+ create mode 100644 patches/collateral-evolutions/network/0072-netdevice-ndo_fdb_add/igb.patch
 
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+2.8.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
