@@ -1,39 +1,52 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:55918 "EHLO mail.kernel.org"
+Received: from hauke-m.de ([5.39.93.123]:56149 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754231AbcGUVPS (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 21 Jul 2016 17:15:18 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 69BF52051D
-	for <backports@vger.kernel.org>; Thu, 21 Jul 2016 21:15:17 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id BD43E203ED
-	for <backports@vger.kernel.org>; Thu, 21 Jul 2016 21:15:16 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1757207AbcGJVPB (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 10 Jul 2016 17:15:01 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Subject: [Bug 135721] **^*Moti call @ *1*8*4*4*3*1*3*1*9*0*4* Canon Tech
- @=?UTF-8?Q?support=20phone=20number=20Canon=20printer=20customer=20care=20service=20phone=20number=20USA=20=EF=82=A7=20=5E=2A=5E=2ANANU=20?=@ Canon Technical @support phone number Canon printer customer care service phone number ^*^*NANU @ Canon Technical @s
-Date: Thu, 21 Jul 2016 21:15:16 +0000
-Message-ID: <bug-135721-58281-lESS499o0t@https.bugzilla.kernel.org/> (sfid-20160721_231836_731892_616DB7AD)
-In-Reply-To: <bug-135721-58281@https.bugzilla.kernel.org/>
-References: <bug-135721-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 13/19] patches: remove usage of the head_frag member of skb
+Date: Sun, 10 Jul 2016 23:14:39 +0200
+Message-Id: <1468185285-28265-14-git-send-email-hauke@hauke-m.de> (sfid-20160711_013914_780420_84F5A613)
+In-Reply-To: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
+References: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=135721
+In kernel < 3.5 the skb header can not be fragmented, because this
+feature is not implemented, so assume that head_frag is false.
 
-Spam Script <spamscript@kernel.org> changed:
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../network/0071-skb-head_frag/wireless.patch            | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0071-skb-head_frag/wireless.patch
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-              Group|                            |Junk
-         Resolution|---                         |INVALID
-
+diff --git a/patches/collateral-evolutions/network/0071-skb-head_frag/wireless.patch b/patches/collateral-evolutions/network/0071-skb-head_frag/wireless.patch
+new file mode 100644
+index 0000000..d05cf53
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0071-skb-head_frag/wireless.patch
+@@ -0,0 +1,16 @@
++diff --git a/net/wireless/util.c b/net/wireless/util.c
++index 9f440a9..18ff313 100644
++--- a/net/wireless/util.c
+++++ b/net/wireless/util.c
++@@ -746,7 +746,11 @@ void ieee80211_amsdu_to_8023s(struct sk_
++ 	u8 *payload;
++ 	int offset = 0, remaining, err;
++ 	struct ethhdr eth;
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
+++	bool reuse_frag = 0;
+++#else
++ 	bool reuse_frag = skb->head_frag && !skb_has_frag_list(skb);
+++#endif
++ 	bool reuse_skb = false;
++ 	bool last = false;
++ 
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+2.8.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
