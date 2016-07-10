@@ -1,40 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:45358 "EHLO mail.kernel.org"
+Received: from hauke-m.de ([5.39.93.123]:56141 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751058AbcGVPEc (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 22 Jul 2016 11:04:32 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 1AFF620571
-	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:04:30 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 7706E205C2
-	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:04:20 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1757269AbcGJVO6 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 10 Jul 2016 17:14:58 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Subject: [Bug 140621] CALL@@@@ 1888-300-9067 norton internet security contact
- phone number Tech Support Phone Number, norton internet security contact
- phone number Antivirus Hel...
-Date: Fri, 22 Jul 2016 15:03:55 +0000
-Message-ID: <bug-140621-58281-6LXe6g0ASQ@https.bugzilla.kernel.org/> (sfid-20160722_170439_197191_4A952945)
-In-Reply-To: <bug-140621-58281@https.bugzilla.kernel.org/>
-References: <bug-140621-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 01/19] copy-list: rename brcmfmac.h
+Date: Sun, 10 Jul 2016 23:14:27 +0200
+Message-Id: <1468185285-28265-2-git-send-email-hauke@hauke-m.de> (sfid-20160710_231501_102768_2BFE9C35)
+In-Reply-To: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
+References: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=140621
+The brcmfmac-sdio.h was renamed to brcmfmac.h.
 
-Spam Script <spamscript@kernel.org> changed:
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ copy-list | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-              Group|                            |Junk
-         Resolution|---                         |INVALID
-
+diff --git a/copy-list b/copy-list
+index bd99364..f4740f6 100644
+--- a/copy-list
++++ b/copy-list
+@@ -35,7 +35,7 @@ include/linux/usb/usbnet.h
+ include/linux/usb/cdc.h
+ include/linux/usb/rndis_host.h
+ include/linux/spi/libertas_spi.h
+-include/linux/platform_data/brcmfmac-sdio.h
++include/linux/platform_data/brcmfmac.h
+ include/linux/platform_data/net-cw1200.h
+ include/uapi/linux/nl80211.h
+ 
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+2.8.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
