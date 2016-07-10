@@ -1,39 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:45092 "EHLO mail.kernel.org"
+Received: from hauke-m.de ([5.39.93.123]:56143 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751810AbcGVPE3 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 22 Jul 2016 11:04:29 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 0FDA9205FC
-	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:04:26 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id CE30C205B1
-	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:04:17 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1757207AbcGJVO6 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 10 Jul 2016 17:14:58 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Subject: [Bug 140461] Usa!!++++(18`007506584)+++ Avg 360 customer service
- number Avg antivirus s$$$$$upport phone number
-Date: Fri, 22 Jul 2016 15:03:55 +0000
-Message-ID: <bug-140461-58281-0xUkYinKYM@https.bugzilla.kernel.org/> (sfid-20160722_170438_655200_02C172CD)
-In-Reply-To: <bug-140461-58281@https.bugzilla.kernel.org/>
-References: <bug-140461-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 02/19] copy-list: add media/tvp5150.h header file
+Date: Sun, 10 Jul 2016 23:14:28 +0200
+Message-Id: <1468185285-28265-3-git-send-email-hauke@hauke-m.de> (sfid-20160710_231500_580489_8D866C82)
+In-Reply-To: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
+References: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=140461
+This header file is now used by some driver.
 
-Spam Script <spamscript@kernel.org> changed:
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ copy-list | 2 ++
+ 1 file changed, 2 insertions(+)
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-              Group|                            |Junk
-         Resolution|---                         |INVALID
-
+diff --git a/copy-list b/copy-list
+index f4740f6..48b26ca 100644
+--- a/copy-list
++++ b/copy-list
+@@ -150,6 +150,8 @@ drivers/staging/media/cxd2099/cxd2099.h
+ include/uapi/linux/ivtv.h
+ include/uapi/linux/meye.h
+ 
++include/dt-bindings/media/tvp5150.h
++
+ drivers/media/
+ include/linux/platform_data/media/gpio-ir-recv.h
+ include/linux/of_graph.h
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+2.8.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
