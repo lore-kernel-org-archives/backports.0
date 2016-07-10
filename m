@@ -1,39 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:60350 "EHLO mail.kernel.org"
+Received: from hauke-m.de ([5.39.93.123]:56145 "EHLO hauke-m.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752481AbcGYQsC (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 25 Jul 2016 12:48:02 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id BF40F205F9
-	for <backports@vger.kernel.org>; Mon, 25 Jul 2016 16:48:00 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 230CE205FF
-	for <backports@vger.kernel.org>; Mon, 25 Jul 2016 16:47:49 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1757273AbcGJVO6 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sun, 10 Jul 2016 17:14:58 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Subject: [Bug 144191] !!!!!call!!18006531176 technical support phone number
- apple macbook mini customer service phone number
-Date: Mon, 25 Jul 2016 16:47:09 +0000
-Message-ID: <bug-144191-58281-WXbYIjT0se@https.bugzilla.kernel.org/> (sfid-20160725_184804_792041_EC23F0CD)
-In-Reply-To: <bug-144191-58281@https.bugzilla.kernel.org/>
-References: <bug-144191-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 03/19] dependencies: deactivate igb on kernel < 3.11
+Date: Sun, 10 Jul 2016 23:14:29 +0200
+Message-Id: <1468185285-28265-4-git-send-email-hauke@hauke-m.de> (sfid-20160710_231501_690945_1380A93F)
+In-Reply-To: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
+References: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=144191
+igb now needs the mpls_features member on skb_buff, which was added
+with kernel 3.11, deactivate it till this gets backported.
 
-Spam Script <spamscript@kernel.org> changed:
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ dependencies | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-              Group|                            |Junk
-         Resolution|---                         |INVALID
-
+diff --git a/dependencies b/dependencies
+index 1af2c0f..2a51bcc 100644
+--- a/dependencies
++++ b/dependencies
+@@ -136,7 +136,8 @@ ATH9K_HWRNG 3.17
+ # and since net_get_random_once() depends on static keys we've decided
+ # to backport that only down to 3.5. For full details refer to backports
+ # commit 8cb8816d
+-IGB 3.5
++# mpls_features was added with kernel 3.11
++IGB 3.11
+ 
+ # This driver needs mmc_hw_reset() which was added in kernel version 3.2
+ MWIFIEX_SDIO 3.2
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+2.8.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
