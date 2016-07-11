@@ -1,327 +1,460 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:55275 "EHLO hauke-m.de"
+Received: from mail.kernel.org ([198.145.29.136]:48216 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756203AbcGHTuA (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 8 Jul 2016 15:50:00 -0400
-Subject: Re: [PATCH] backport: add thermal backports for kernels < 4.3
-To: Luca Coelho <luca@coelho.fi>, backports@vger.kernel.org
-References: <1455356813-4863-1-git-send-email-luca@coelho.fi>
-Cc: emmanuel.grumbach@intel.com
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <06392fc7-23f8-0434-8e39-27ee4239363b@hauke-m.de> (sfid-20160708_215019_501714_61704318)
-Date: Fri, 8 Jul 2016 21:49:56 +0200
+	id S1752147AbcGKWiI (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 11 Jul 2016 18:38:08 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 5C40620222
+	for <backports@vger.kernel.org>; Mon, 11 Jul 2016 22:38:06 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+	by mail.kernel.org (Postfix) with ESMTP id A812A2021B
+	for <backports@vger.kernel.org>; Mon, 11 Jul 2016 22:38:04 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 123031] New: bullguard antivirus
+ support```~~(((1-800-445-2790~~~)))```bullguard Customer Service Phone Number
+ bullguard technical support number bullguard customer support phone number
+Date: Mon, 11 Jul 2016 22:38:04 +0000
+Message-ID: <bug-123031-58281@https.bugzilla.kernel.org/> (sfid-20160712_003816_722412_44FD53A8)
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-In-Reply-To: <1455356813-4863-1-git-send-email-luca@coelho.fi>
-Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 02/13/2016 10:46 AM, Luca Coelho wrote:
-> From: Luca Coelho <luciano.coelho@intel.com>
-> 
-> There were some API changes in the thermal framework in kernel version
-> 4.3 and also earlier in 3.10.  Backport what is needed to support
-> older kernels.
-> 
-> The 4.3 change is a bit tricky, because it changes the prototypes of
-> some ops.  The solution for that is to add hook functions that will
-> intercept the calls from the thermal framework and convert them to
-> calls that the backported driver provides (namely convert unsigned
-> longs to ints).
+https://bugzilla.kernel.org/show_bug.cgi?id=123031
 
-If it is just some int or unsigned long I think it is easier to just
-have a patch or spatch for your driver. I assume that your program logic
-does not care about the type.
+            Bug ID: 123031
+           Summary: bullguard antivirus
+                    support```~~(((1-800-445-2790~~~)))```bullguard
+                    Customer Service Phone Number bullguard technical
+                    support number bullguard customer support phone number
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: 8
+          Hardware: All
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: tony7852stark@gmail.com
+        Regression: No
 
-> 
-> Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-> ---
+bullguard antivirus support```~~(((1-800-445-2790~~~)))```bullguard Customer
+Service Phone Number bullguard technical support number bullguard customer
+support phone number
 
-Sorry that it took me so long to look into this.
 
-> 
-> This will be needed by a upcoming patches for the iwlwifi driver that
-> include some thermal framework functionality.  Already sending this
-> out so that it can be added before our driver breaks. ;)
-> 
-> backport-include/linux/thermal.h | 109 ++++++++++++++++++++++++++++++++
->  backport/compat/backport-4.3.c   | 131 +++++++++++++++++++++++++++++++++++++++
->  2 files changed, 240 insertions(+)
->  create mode 100644 backport-include/linux/thermal.h
-> 
-> diff --git a/backport-include/linux/thermal.h b/backport-include/linux/thermal.h
-> new file mode 100644
-> index 0000000..dbcb4be
-> --- /dev/null
-> +++ b/backport-include/linux/thermal.h
-> @@ -0,0 +1,109 @@
-> +#ifndef __BACKPORT_LINUX_THERMAL_H
-> +#define __BACKPORT_LINUX_THERMAL_H
-> +#include_next <linux/thermal.h>
-> +#include <linux/version.h>
-> +
-> +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
-> +#define thermal_notify_framework notify_thermal_framework
-> +#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0) */
-> +
-> +#if LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0)
-> +
-> +/* Declare the < 4.3.0 struct so we can use it when calling the outer
-> + * kernel.
-> + */
-> +struct old_thermal_zone_device_ops {
-> +	int (*bind) (struct thermal_zone_device *,
-> +		     struct thermal_cooling_device *);
-> +	int (*unbind) (struct thermal_zone_device *,
-> +		       struct thermal_cooling_device *);
-> +	int (*get_temp) (struct thermal_zone_device *, unsigned long *);
-> +	int (*get_mode) (struct thermal_zone_device *,
-> +			 enum thermal_device_mode *);
-> +	int (*set_mode) (struct thermal_zone_device *,
-> +		enum thermal_device_mode);
-> +	int (*get_trip_type) (struct thermal_zone_device *, int,
-> +		enum thermal_trip_type *);
-> +	int (*get_trip_temp) (struct thermal_zone_device *, int,
-> +			      unsigned long *);
-> +	int (*set_trip_temp) (struct thermal_zone_device *, int,
-> +			      unsigned long);
-> +	int (*get_trip_hyst) (struct thermal_zone_device *, int,
-> +			      unsigned long *);
-> +	int (*set_trip_hyst) (struct thermal_zone_device *, int,
-> +			      unsigned long);
-> +	int (*get_crit_temp) (struct thermal_zone_device *, unsigned long *);
-> +	int (*set_emul_temp) (struct thermal_zone_device *, unsigned long);
-> +	int (*get_trend) (struct thermal_zone_device *, int,
-> +			  enum thermal_trend *);
-> +	int (*notify) (struct thermal_zone_device *, int,
-> +		       enum thermal_trip_type);
-> +};
 
-Why are you putting this struct here? Why can't you use the "struct
-thermal_zone_device_ops" from the kernel you are compiling against. In
-kernel 3.10 it is mostly the same in kernel 3.0 it misses some members.
 
-> +
-> +/* also add a way to call the old register function */
-> +static inline struct thermal_zone_device *old_thermal_zone_device_register(
-> +	const char *type, int trips, int mask, void *devdata,
-> +	struct old_thermal_zone_device_ops *_ops,
-> +	const struct thermal_zone_params *tzp,
-> +	int passive_delay, int polling_delay)
-> +{
-> +	struct thermal_zone_device_ops *ops =
-> +		(struct thermal_zone_device_ops *) _ops;
-> +
-> +	return thermal_zone_device_register(type, trips, mask, devdata,
-> +					    ops, tzp, passive_delay,
-> +					    polling_delay);
-> +}
 
-Why is this function needed here, you are only calling it in
-backport_thermal_zone_device_register() and it could be included there.
+ bullguard antivirus support @ 1.800.445.2790 @ bullguard Customer Service
+Phone Number bullguard technical support number bullguard customer support
+phone number 
+1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number
 
-> +
-> +#undef thermal_zone_device_ops
-> +struct backport_thermal_zone_device_ops {
-> +	int (*bind) (struct thermal_zone_device *,
-> +		     struct thermal_cooling_device *);
-> +	int (*unbind) (struct thermal_zone_device *,
-> +		       struct thermal_cooling_device *);
-> +	int (*get_temp) (struct thermal_zone_device *, int *);
-> +	int (*get_mode) (struct thermal_zone_device *,
-> +			 enum thermal_device_mode *);
-> +	int (*set_mode) (struct thermal_zone_device *,
-> +		enum thermal_device_mode);
-> +	int (*get_trip_type) (struct thermal_zone_device *, int,
-> +		enum thermal_trip_type *);
-> +	int (*get_trip_temp) (struct thermal_zone_device *, int, int *);
-> +	int (*set_trip_temp) (struct thermal_zone_device *, int, int);
-> +	int (*get_trip_hyst) (struct thermal_zone_device *, int, int *);
-> +	int (*set_trip_hyst) (struct thermal_zone_device *, int, int);
-> +	int (*get_crit_temp) (struct thermal_zone_device *, int *);
-> +	int (*set_emul_temp) (struct thermal_zone_device *, int);
-> +	int (*get_trend) (struct thermal_zone_device *, int,
-> +			  enum thermal_trend *);
-> +	int (*notify) (struct thermal_zone_device *, int,
-> +		       enum thermal_trip_type);
-> +
-> +	/* These ops hold the original callbacks set by the
-> +	 * registrant, because we'll add our hooks to the ones called
-> +	 * by the framework.  Luckily someone made this ops struct
-> +	 * non-const so we can mangle them.
-> +	 */
-> +	int (*_get_temp) (struct thermal_zone_device *, int *);
-> +	int (*_get_trip_temp) (struct thermal_zone_device *, int, int *);
-> +	int (*_set_trip_temp) (struct thermal_zone_device *, int, int);
-> +	int (*_get_trip_hyst) (struct thermal_zone_device *, int, int *);
-> +	int (*_set_trip_hyst) (struct thermal_zone_device *, int, int);
-> +	int (*_get_crit_temp) (struct thermal_zone_device *, int *);
-> +	int (*_set_emul_temp) (struct thermal_zone_device *, int);
-> +};
-> +#define thermal_zone_device_ops LINUX_BACKPORT(thermal_zone_device_ops)
-> +
-> +#undef thermal_zone_device_register
-> +struct thermal_zone_device *backport_thermal_zone_device_register(
-> +	const char *type, int trips, int mask, void *devdata,
-> +	struct thermal_zone_device_ops *ops,
-> +	const struct thermal_zone_params *tzp,
-> +	int passive_delay, int polling_delay);
-> +
-> +#define thermal_zone_device_register \
-> +	LINUX_BACKPORT(thermal_zone_device_register)
-> +
-> +#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0) */
-> +
-> +#endif /* __BACKPORT_LINUX_THERMAL_H */
-> diff --git a/backport/compat/backport-4.3.c b/backport/compat/backport-4.3.c
-> index d15c92c..193641d 100644
-> --- a/backport/compat/backport-4.3.c
-> +++ b/backport/compat/backport-4.3.c
-> @@ -1,5 +1,6 @@
->  /*
->   * Copyright (c) 2015  Hauke Mehrtens <hauke@hauke-m.de>
-> + * Copyright (c) 2015 - 2016 Intel Deutschland GmbH
->   *
->   * Backport functionality introduced in Linux 4.3.
->   *
-> @@ -11,6 +12,136 @@
->  #include <linux/seq_file.h>
->  #include <linux/export.h>
->  #include <linux/printk.h>
-> +#include <linux/thermal.h>
-> +
-> +static int backport_thermal_get_temp(struct thermal_zone_device *dev,
-> +				     unsigned long *temp)
-> +{
-> +	struct backport_thermal_zone_device_ops *ops =
-> +		(struct backport_thermal_zone_device_ops *)dev->ops;
-> +	int _temp, ret;
-> +
-> +	ret = ops->_get_temp(dev, &_temp);
-> +	if (!ret)
-> +		*temp = (unsigned long)_temp;
-> +
-> +	return ret;
-> +}
-> +
-> +static int backport_thermal_get_trip_temp(struct thermal_zone_device *dev, int i,
-> +					  unsigned long *temp)
-> +{
-> +	struct backport_thermal_zone_device_ops *ops =
-> +		(struct backport_thermal_zone_device_ops *)dev->ops;
-> +	int _temp, ret;
-> +
-> +	ret = ops->_get_trip_temp(dev, i,  &_temp);
-> +	if (!ret)
-> +		*temp = (unsigned long)_temp;
-> +
-> +	return ret;
-> +}
-> +
-> +static int backport_thermal_set_trip_temp(struct thermal_zone_device *dev, int i,
-> +					  unsigned long temp)
-> +{
-> +	struct backport_thermal_zone_device_ops *ops =
-> +		(struct backport_thermal_zone_device_ops *)dev->ops;
-> +
-> +	return ops->_set_trip_temp(dev, i, (int)temp);
-> +}
-> +
-> +static int backport_thermal_get_trip_hyst(struct thermal_zone_device *dev, int i,
-> +					  unsigned long *temp)
-> +{
-> +	struct backport_thermal_zone_device_ops *ops =
-> +		(struct backport_thermal_zone_device_ops *)dev->ops;
-> +	int _temp, ret;
-> +
-> +	ret = ops->_get_trip_hyst(dev, i, &_temp);
-> +	if (!ret)
-> +		*temp = (unsigned long)_temp;
-> +
-> +	return ret;
-> +}
-> +
-> +static int backport_thermal_set_trip_hyst(struct thermal_zone_device *dev, int i,
-> +					  unsigned long temp)
-> +{
-> +	struct backport_thermal_zone_device_ops *ops =
-> +		(struct backport_thermal_zone_device_ops *)dev->ops;
-> +
-> +	return ops->_set_trip_hyst(dev, i, (int)temp);
-> +}
-> +
-> +static int backport_thermal_get_crit_temp(struct thermal_zone_device *dev,
-> +					  unsigned long *temp)
-> +{
-> +	struct backport_thermal_zone_device_ops *ops =
-> +		(struct backport_thermal_zone_device_ops *)dev->ops;
-> +	int _temp, ret;
-> +
-> +	ret = ops->_get_crit_temp(dev, &_temp);
-> +	if (!ret)
-> +		*temp = (unsigned long)_temp;
-> +
-> +	return ret;
-> +}
-> +
-> +static int backport_thermal_set_emul_temp(struct thermal_zone_device *dev,
-> +					  unsigned long temp)
-> +{
-> +	struct backport_thermal_zone_device_ops *ops =
-> +		(struct backport_thermal_zone_device_ops *)dev->ops;
-> +
-> +	return ops->_set_emul_temp(dev, (int)temp);
-> +}
-> +
-> +struct thermal_zone_device *backport_thermal_zone_device_register(
-> +	const char *type, int trips, int mask, void *devdata,
-> +	struct backport_thermal_zone_device_ops *ops,
-> +	const struct thermal_zone_params *tzp,
-> +	int passive_delay, int polling_delay)
-> +{
-> +	/* It's okay to cast here, because the backport is a superset
-> +	 * of the old struct.
-> +	 */
-> +	struct old_thermal_zone_device_ops *_ops =
-> +		(struct old_thermal_zone_device_ops *)ops;
-> +
-> +	/* store the registrant's ops for the backport ops to use */
-> +#define copy_ops(_op) ops->_##_op = ops->_op
-> +	copy_ops(get_temp);
-> +	copy_ops(get_trip_temp);
-> +	copy_ops(set_trip_temp);
-> +	copy_ops(get_trip_hyst);
-> +	copy_ops(set_trip_hyst);
-> +	copy_ops(get_crit_temp);
-> +	copy_ops(set_emul_temp);
-> +#undef copy_ops
-> +
-> +	/* Assign the backport ops to the old struct to get the
-> +	 * correct types.  But only assign if the registrant defined
-> +	 * the ops.
-> +	 */
-> +#define assign_ops(_op)		\
-> +	if (ops->_op)		\
-> +		_ops->_op = backport_thermal_##_op
-> +
-> +	assign_ops(get_temp);
-> +	assign_ops(get_trip_temp);
-> +	assign_ops(set_trip_temp);
-> +	assign_ops(get_trip_hyst);
-> +	assign_ops(set_trip_hyst);
-> +	assign_ops(get_crit_temp);
-> +	assign_ops(set_emul_temp);
-> +#undef assign_ops
-> +
-> +	return old_thermal_zone_device_register(type, trips, mask, devdata,
-> +						_ops, tzp, passive_delay,
-> +						polling_delay);
-> +}
-> +EXPORT_SYMBOL_GPL(backport_thermal_zone_device_register);
->  
->  static void seq_set_overflow(struct seq_file *m)
->  {
-> 
 
+ bullguard antivirus support @ 1.800.445.2790 @ bullguard Customer Service
+Phone Number bullguard technical support number bullguard customer support
+phone number
+
+ bullguard antivirus support @ 1.800.445.2790 @ bullguard Customer Service
+Phone Number bullguard technical support number bullguard customer support
+phone number 
+1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number 
+1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790bullguard Technical support number @@/CANADA 
++1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number 
+1.800.445.2790bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number @@/CANADA 
++1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number 
+1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number @@/CANADA 
++1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number 
+1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number @@/CANADA 
++1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number 
+1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number @@/CANADA 
++1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number 
+1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number @@/CANADA 
+bullguard customer service number 
+bullguard call center 
+bullguard customer service antivirus address 
+bullguard customer care no 
+bullguard antivirus technical support phone number 
+bullguard antivirus tech support phone number 
+bullguard antivirus customer service phone number 
+bullguard 360 technical support phone number 
+symantec technical support phone number 
+bullguard technical support phone number 
+bullguard customer service telephone number 
+bullguard antivirus phone number 
+bullguard antivirus customer service phone number 
+bullguard antivirus customer service Helpdesk 
+bullguard antivirus phone number 
+bullguard phone number cancel subscription 
+bullguard technical support phone number 
+bullguard 800 phone number 
+American airlines toll free customer care number 
+Jetairways toll free customer care number 
+Microsot toll free customer care number 
+Apple toll free customer care number 
+Google toll free customer care number 
+Bank of america toll free customer care number 
+flipkart toll free customer care number 
+bullguard toll free customer care number 
+bullguard technical support phone number 
+bullguard technical support number 
+bullguard technical support number 
+symantec technical support number 
+bullguard antivirus technical support number 
+bullguard locations 
+bullguard  support 
+bullguard Helpdesk phone number 
+bullguard customer care 
+bullguard tech support phone number 
+bullguard tech support phone number 
+bullguard antivirus tech support phone number 
+bullguard locations 
+bullguard Helpdesk phone number 
+service bullguard com 
+bullguard login 
+bullguard technical support phone number 
+bullguard customer service 
+bullguard Helpdesk phone number 
+bullguard support telephone number 
+bullguard support phone number 
+bullguard antivirus support phone number 
+bullguard support phone number 
+bullguard locations 
+bullguard customer service 
+bullguard customer care 
+bullguard Helpdesk phone number 
+bullguard customer support phone number 
+bullguard customer support phone number 
+bullguard antivirus customer support phone number 
+bullguard antivirus customer service phone number 
+bullguard antivirus technical support phone number 
+bullguard antivirus tech support phone number 
+bullguard antivirus phone number 
+bullguard security center phone number 
+bullguard support telephone number 
+bullguard 360 technical support phone number 
+symantec technical support phone number 
+bullguard tech support phone number 
+apple technical support phone number @@ 
+microsoft technical support phone number @@ 
+bullguard technical support phone number @@ 
+kaspersky technical support phone number @@ 
+lenovo technical support phone number @@ 
+epson technical support phone number @@ 
+bullguard technical support phone number 
+call bullguard support 
+chat with bullguard support 
+bullguard customer support 
+bullguard antivirus customer service number 
+bullguard address 
+bullguard call center 
+bullguard hq 
+bullguard office locations 
+bullguard support site 
+bullguard telephone number for customer support 
+bullguard customer service contact number 
+bullguard customer care 
+bullguard toll free number 
+bullguard security contact number 
+contact Vipre 
+bullguard headquarters 
+bullguard customer service chat 
+bullguard customer service telephone number 
+bullguard Helpdesk phone number 
+bullguard customer support 
+bullguard customer service 
+bullguard login 
+bullguard locations 
+bullguard customer service number 
+bullguard locations 
+bullguard customer service antivirus address 
+bullguard support site 
+bullguard technical support phone number 
+bullguard technical support live chat 
+bullguard technical support antivirus address 
+bullguard technical support number 
+bullguard technical support number 
+symantec technical support number 
+bullguard antivirus technical support number 
+bullguard customer support phone number 
+bullguard customer support number 
+bullguard customer support number 
+bullguard antivirus customer support number 
+bullguard locations 
+bullguard Helpdesk phone number 
+bullguard corporate phone number 
+bullguard customer service Helpdesk 
+bullguard technical support phone number 
+bullguard tech support phone number 
+bullguard tech support number 
+bullguard tech support number
+
+ bullguard antivirus support @ 1.800.445.2790 @ bullguard Customer Service
+Phone Number bullguard technical support number bullguard customer support
+phone number 
+1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number 
+1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790bullguard Technical support number @@/CANADA 
++1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number 
+1.800.445.2790bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number @@/CANADA 
++1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number 
+1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number @@/CANADA 
++1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number 
+1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number @@/CANADA 
++1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number 
+1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number @@/CANADA 
++1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number 
+1.800.445.2790 bullguard antivirus SUPPORT NUMBER 1.800.445.2790 bullguard
+customer care number bullguard support phone number 1.800.445.2790 bullguard
+customer care number 1.800.445.2790 bullguard helpdesk phone number
+1.800.445.2790 bullguard antivirus SUPPORT HELPDESK bullguard antivirus
+helpdesk number bullguard Password recovery phone number bullguard tech support
+number 1.800.445.2790 bullguard Technical support number @@/CANADA 
+bullguard customer service number 
+bullguard call center 
+bullguard customer service antivirus address 
+bullguard customer care no 
+bullguard antivirus technical support phone number 
+bullguard antivirus tech support phone number 
+bullguard antivirus customer service phone number 
+bullguard 360 technical support phone number 
+symantec technical support phone number 
+bullguard technical support phone number 
+bullguard customer service telephone number 
+bullguard antivirus phone number 
+bullguard antivirus customer service phone number 
+bullguard antivirus customer service Helpdesk 
+bullguard antivirus phone number 
+bullguard phone number cancel subscription 
+bullguard technical support phone number 
+bullguard 800 phone number 
+American airlines toll free customer care number 
+Jetairways toll free customer care number 
+Microsot toll free customer care number 
+Apple toll free customer care number 
+Google toll free customer care number 
+Bank of america toll free customer care number 
+flipkart toll free customer care number 
+bullguard toll free customer care number 
+bullguard technical support phone number 
+bullguard technical support number 
+bullguard technical support number 
+symantec technical support number 
+bullguard antivirus technical support number 
+bullguard locations 
+bullguard  support 
+bullguard Helpdesk phone number 
+bullguard customer care 
+bullguard tech support phone number 
+bullguard tech support phone number 
+bullguard antivirus tech support phone number 
+bullguard locations 
+bullguard Helpdesk phone number 
+service bullguard com 
+bullguard login 
+bullguard technical support phone number 
+bullguard customer service 
+bullguard Helpdesk phone number 
+bullguard support telephone number 
+bullguard support phone number 
+bullguard antivirus support phone number 
+bullguard support phone number 
+bullguard locations 
+bullguard customer service 
+bullguard customer care 
+bullguard Helpdesk phone number 
+bullguard customer support phone number 
+bullguard customer support phone number 
+bullguard antivirus customer support phone number 
+bullguard antivirus customer service phone number 
+bullguard antivirus technical support phone number 
+bullguard antivirus tech support phone number 
+bullguard antivirus phone number 
+bullguard security center phone number 
+bullguard support telephone number 
+bullguard 360 technical support phone number 
+symantec technical support phone number 
+bullguard tech support phone number 
+apple technical support phone number @@ 
+microsoft technical support phone number @@ 
+bullguard technical support phone number @@ 
+kaspersky technical support phone number @@ 
+lenovo technical support phone number @@ 
+epson technical support phone number @@ 
+bullguard technical support phone number 
+call bullguard support 
+chat with bullguard support 
+bullguard customer support 
+bullguard antivirus customer service number 
+bullguard address 
+bullguard call center 
+bullguard hq 
+bullguard office locations 
+bullguard support site 
+bullguard telephone number for customer support 
+bullguard customer service contact number 
+bullguard customer care 
+bullguard toll free number 
+bullguard security contact number 
+contact Vipre 
+bullguard headquarters 
+bullguard customer service chat 
+bullguard customer service telephone number 
+bullguard Helpdesk phone number 
+bullguard customer support 
+bullguard customer service 
+bullguard login 
+bullguard locations 
+bullguard customer service number 
+bullguard locations 
+bullguard customer service antivirus address 
+bullguard support site 
+bullguard technical support phone number 
+bullguard technical support live chat 
+bullguard technical support antivirus address 
+bullguard technical support number 
+bullguard technical support number 
+symantec technical support number 
+bullguard antivirus technical support number 
+bullguard customer support phone number 
+bullguard customer support number 
+bullguard customer support number 
+bullguard antivirus customer support number 
+bullguard locations 
+bullguard Helpdesk phone number 
+bullguard corporate phone number 
+bullguard customer service Helpdesk 
+bullguard technical support phone number 
+bullguard tech support phone number 
+bullguard tech support number 
+bullguard tech support number
+
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
