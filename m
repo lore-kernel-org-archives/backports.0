@@ -1,33 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:42680 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:44322 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754021AbcGVPDk (ORCPT <rfc822;backports@vger.kernel.org>);
-	Fri, 22 Jul 2016 11:03:40 -0400
+	id S1751221AbcGMQ6f convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 13 Jul 2016 12:58:35 -0400
 Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 5AFA220552
-	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:03:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A278820279
+	for <backports@vger.kernel.org>; Wed, 13 Jul 2016 16:58:17 +0000 (UTC)
 Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 66CE220524
-	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58D3420222
+	for <backports@vger.kernel.org>; Wed, 13 Jul 2016 16:58:15 +0000 (UTC)
 From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: [Bug 141051] New: +*+1.8OO7506584 AVG antivirus phone number AVG
- Support phone
-Date: Fri, 22 Jul 2016 15:03:36 +0000
-Message-ID: <bug-141051-58281@https.bugzilla.kernel.org/> (sfid-20160722_170344_401860_2E70A722)
+Subject: [Bug 129201] New: free call@##$%# 18.OO8.82O.65.2 avg avg avg usa
+ avg tech support phone number, avg antivrus phone number tech call brother
+ bhai
+Date: Wed, 13 Jul 2016 16:58:15 +0000
+Message-ID: <bug-129201-58281@https.bugzilla.kernel.org/> (sfid-20160713_185938_330402_93721B2B)
 Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=141051
+https://bugzilla.kernel.org/show_bug.cgi?id=129201
 
-            Bug ID: 141051
-           Summary: +*+1.8OO7506584 AVG antivirus phone number AVG Support
-                    phone
+            Bug ID: 129201
+           Summary: free call@##$%# 18.OO8.82O.65.2 avg avg avg usa avg
+                    tech support phone number, avg antivrus phone number
+                    tech call brother bhai
            Product: Backports project
            Version: unspecified
-    Kernel Version: gfhdfggf
+    Kernel Version: sdgfsdfgsd
           Hardware: All
                 OS: Linux
               Tree: Mainline
@@ -36,141 +38,354 @@ https://bugzilla.kernel.org/show_bug.cgi?id=141051
           Priority: P1
          Component: Backports
           Assignee: backports@vger.kernel.org
-          Reporter: ankurcoe03@gmail.com
+          Reporter: victor.jackson.122016@gmail.com
         Regression: No
 
-HELP 18OO75O6584 Avg technical support number Avg antivirus online help desk
-number Avg tech support phone number Avg Phone Number Avg technical support
-phone 
-
-
-
-HELP 18OO75O6584 Avg technical support number Avg antivirus online help desk
-number Avg tech support phone number Avg Phone Number Avg technical support
-phone number
-
-
-
-HELP 18OO75O6584 Avg technical support number Avg antivirus online help desk
-number Avg tech support phone number Avg Phone Number Avg technical support
-phone number18`007506584Avg Tech Support Phone Number, Avg 360 Helpline Phone
-Number, Avg 360 Phone Numberweb-based help desk 18.00.750.6584 Avg CUStomer
-care number antivirus helpline number !!!clean PC 18`007506584^^^ Avg 360
-CUStomer care number Avg antivirus helpline number
-ChristoerRichey+++18`007506584^^^++Avg 360 CUStomer care number+Avg antivirus
-helpline number 1800~750^6584++Avg ANTIVIRUS CUSTOMER CARE NUMBER
-Usa!!++++(18`007506584)+++ Avg 360 customer service number Avg antivirus
-technical support phone number 1-800-750*6584* Avg Antivirus Tech support phone
-number,Template:1-800-750*6584* Avg Antivirus Phone number usA,
-Canada,1-800-750*6584* Avg tech Support Phone Number, Avg 360 Phone number,Avg
-Helpline number,Avg AntiVirus Phone Number: How to install Avg Phone number
-usA, Canada, Avg tech Support Phone Number, Avg 360 Phone number,Avg Helpline
-number??? us Avg tech support number 1-800-750*6584* Avg antivirus tech support
-number Avg antivirus Avg uninstaller free Avg antivirus Avg antivirus Avg
-antivirus phone number support northon Avg helpline Avg antivirus login how to
-get phone numbers Avg antivirus Avg antivirus trial Avg number Avg log in Avg
-antivirus free phone numbers free Avg disk doctor Avg systemworks Avg antivirus
-download internet security Avg virus removal Avg account phone number Avg live
-chat buy Avg antivirus Avg internet security login Avg search Avg software
-phone number anti virus software Avg tech support phone number free Avg Avg
-mobile Avg free Avg antivirus software Avg free antivirus Avg antivirus phone
-number customer service Avg online backup Avg antivirus phone support notron
-quick heal Avg toll free number 1-800-750*6584*##Avg download manager Avg
-identity safe download Avg antivirus Avg install Avg internet security 2111 Avg
-anti virus phone number phone number for Avg customer service Avg customer
-phone number Avg customer support phone number canada symantec removal tool Avg
-safe search Avg price Avg toolbar Avg av Avg antivirus coupon Avg nz phone
-number Avg 800 number Avg downloads Avg antivirus free trial Avg internet
-security 2112 Avg cancellation phone number Avg updates phone book phone
-numbers in usa telephone number Avg helpline number phone directory contact Avg
-by phone Avg subscription Avg ghost download Avg com support phone number Avg
-antivirus contact Avg antivirus contact number technical support phone number
-Avg phone antivirus Avg free Avg support phone number us Avg removal tool phone
-number for Avg antivirus customer service Avg update Avg antivirus number Avg
-antivirus phone number canada Avg phone support canada Avg spyware toll free
-numbers Avg store Avg online family find free phone numbers Avg account
-antivirus Avg gratis Avg antivirus account Avg contact phone number Avg system
-works Avg internet security support phone number symantec
-##1-800-750*6584*##Avg Avg utilities 15 contact Avg antivirus Avg s Avg
-antivirus renewal Avg support phone number usa Avg customer service phone
-number billing Avg internet security support usa number Avg review Avg annual
-renewal free antivirus Avg anti virus Avg Avg renewal Avg antivirus online
-trend antivirus how to contact Avg antivirus by phone Avg anitvirus norotn
-support Avg Avg security contact number us numbers Avg phone support number Avg
-technical support number Avg customer care Avg help desk phone number contact
-Avg antivirus by phone Avg antivirus tech support number Avg antivirus tech
-support Avg customer service Avg anti virus software ##1-800-750*6584*##Avg
-anti virus protection search for phone numbers Avg activation what is Avg Avg
-full Avg support phone Avg contact us Avg renewal code antivirus Avg free
-symantec technical support phone number Avg security customer service phone
-number Avg usa Avg security support tech support number antivirus support
-install Avg antivirus phone number for Avg antivirus support live chat phone
-numbers Avg customer service phone number usa phone number in us Avg internet
-security 2111 Avg ghost 15.1 symantec tech support phone number Avg customer
-support phone number vanity numbers phone number service Avg my account login
-symantec technical support Avg antivirus support number antivirus Avg symantec
-support number Avg for phone phone number of usa phone number for business Avg
-1 800 number phone number for Avg internet security Avg hotline Avg internet
-security contact phone number symantec ##1-800-750*6584*##$Avg antivirus phone
-number for Avg tech support Avg customer support phone number usa Avg support
-symantec contact Avg security symantec customer service phone number Avg
-antivirus 2111 Avg customer service phone number Avg technical support number
-Avg tech support phone number Avg 360 Phone Number Avg 360 technical support
-phone number Avg antivirus technical support phone number Avg antivirus phone
-number 1-800-750*6584* Avg antivirus contact number Avg customer service number
-Avg antivirus customer service Helpline Number 1-800-750*6584* Avg 360 customer
-service phone number Avg antivirus customer service phone number Avg support
-number Avg help number Avg antivirus phone support number Avg tech support
-telephone number Avg tech support number Avg antivirus support phone number Avg
-technical support phone number Avg antivirus tech support phone number Avg 360
-phone number customer service Avg 1-800-750*6584* technical support telephone
-number Avg antivirus Tech Support Toll Free Number Avg antivirus support phone
-number Avg antivirus help phone number Avg 1800 number Avg internet security
-customer service phone number Avg antivirus 1800 number Avg Toll Free Number
-Avg 360 login Phone Number Avg 360 login to account my Avg 360 account login
-Avg 360 my account Avg activation Avg product activation how do i activate my
-Avg product Avg 360 activation install Avg 360 how to activate my Avg antivirus
-product key Avg antivirus customer service phone number 1-800-750*6584* Avg
-antivirus phone number support Avg support contact number Avg contact number
-for billing Avg customer service phone number activate Avg 360 with product key
-how do i activate my Avg product register Avg product i have Avg product key
-Avg 360 activation install Avg 360 Avg account activation Avg 360 my account
-Avg 360 telephone number Avg 1 800 number symantec Avg security contact phone
-number 1 800 Avg number Avg online help Avg 360 contact number contact Avg
-customer support Avg customer care number Avg customer care Avg symantec
-telephone number Avg internet security telephone number Avg internet security
-customer service number symantec customer service number 1-800-750*6584*
-symantec customer service phone number Avg 360 telephone number Avg internet
-security telephone number Avg technical support phone number Avg technical
-support phone number us Avg 360 contact number Avg antivirus customer service
-number phone number for Avg customer service Avg contact phone number Avg
-antivirus telephone number phone number for Avg antivirus Avg security contact
-number 1-800-750*6584* Avg toll free number Avg antivirus number phone number
-for Avg antivirus customer service Avg security customer service phone number
-Avg 360 technical support phone number Avg phone number Avg customer service
-phone number Avg contact number Avg security phone number Avg support phone
-number Avg customer service number Avg number Avg support number Avg 360 phone
-number Avg symantec phone number Avg tech support number Avg technical support
-phone number Avg telephone number Avg tech support phone number Avg antivirus
-contact number Avg phone number customer service 1-800-750*6584* Avg internet
-security phone number Avg antivirus customer service phone number Avg 360
-support phone number phone number for Avg 1-800-750*6584* Avg 360 customer
-service phone number Avg antivirus tech support phone number 1-800-750*6584*
-Avg antivirus support phone number Avg antivirus phone number support Avg help
-phone number 1-800-750*6584* Avg help telephone number Avg antivirus help phone
-number Avg 360 helpline phone number Avg customer care number Avg toll free
-number www Avg com/setup Avg com http help Avg com Avg com/setup
-1-800-750*6584* http www Avg com www Avg com Avg setup www Avg setup Avg phone
-number http www Avg com setup Avg 360 support Avg antivirus telephone number
-1-800-750*6584* Avg phone number billing Avg antivirus 1-800 phone number Avg
-antivirus 1800 phone numberAvg antivirus 1-800 number 1-800-750*6584* Avg 1-800
-number Avg 1-800 phone number Avg phone number billing Avg 800 phone number Avg
-antivirus 800 phone number 1-800-750*6584* Avg 1 800 number Avg 1 -800 number
-Avg internet security 1-800 number Avg 800 phone number usa Avg 1800 support
-number???????????????????????????
+18.OO8.82O.65.2 avg avg avg usa avg tech support phone number, avg antivrus
+phone number tech call brother bhai18.OO8.82O.65.2 avg avg avg usa avg tech
+support phone number, avg antivrus phone number tech call brother
+bhai18.OO8.82O.65.2 avg avg avg usa avg tech support phone number, avg antivrus
+phone number tech call brother bhai18008820652 usa @@@@!!@! usa free call
+1800.882.0652 avg antivirus teCHnnical support phone number@@@@!!@! usa free
+call 1800.882.0652 avg antivirus teCHnnical support phone number@@@@!!@! usa
+free call 1800.882.0652 avg antivirus teCHnnical support phone number@@@@!!@!
+usa free call 1800.882.0652 avg antivirus teCHnnical support phone
+numberUSA!!!!!! Avg 1800-882-0652 Avg Antivirus helpline, Avg Antivirus
+technical support phone number, Avg Antivirus tech support number
+1-800-882-0652 Avg Antivirus tech support phone number USA !!Call aus
+1-800-882-0652 Avg Tech Support Phone Number UK-1 800 882 0652 Avg support
+number, Avg support, Avg Antivirus support, Avg tech support, Avg technical
+support, Avg customer service number, Avg customer service, Avg tech support
+number, Avg support center, Avg Antivirus support number, hewlett packard
+support, Avg contact number, Avg phone number, Avg help and support, Avg
+customer support, Avg Antivirus help, Avg technical support number, Avg support
+phone number, hewlett packard customer service, Avg Antiviruss support, Avg
+customer service phone number, Avg number, Avg customer care, Avg contact, Avg
+tech support phone number, Avg support chat, Avg customer support number, Avg
+customer care number, contact Avg support, Avg help, Avg phone, Avg Antivirus
+support phone number, Avg customer support phone number, Avg Antivirus tech
+support, Avg phone support, Avg technical support phone number, Avg laptop
+support number, hewlett packard Antivirus support, Avg helpline, Avg telephone
+support, Avg online support, Avg support contact, Avg chat support, hewlett
+packard phone number, Avg Antivirus customer service, Avg Antivirus tech
+support number, Avg product support, hewlett packard customer service phone
+number, Avg computer support number, Avg support contact number, Avg support
+Antivirus, Avg computer support, Avg tech support chat, Avg helpline number,
+Avg laptop support, hewlett packard tech support, Avg online chat, hewlett
+packard technical support, Avg Antivirus help line, phone number for Avg
+support, hewlett packard support phone number, Avg Antivirus technical support,
+hewlett packard customer service number, Avg service number, hewlett packard
+helpline, Avg customer care no,1 800 882 0652Avg Antivirus customer service
+number, Avg help number, Avg Antivirus customer service phone number, Avg 1800
+number, Avg support phone, Avg support line, hewlett packard contact number,
+Avg Antivirus tech support phone number, Avg Antivirus customer support phone
+number, Avg Antiviruss help, call Avg support, Avg Antivirus support chat,
+hewlett packard support number, hewlett packard tech support number, Avg
+support telephone number, hewlett packard tech support phone number, call Avg,
+Avg contact support, hewlett packard technical support phone number, Avg
+support centre, hewlett packard customer support, Avg desktop support, Avg
+laptop customer service, contact Avg Antivirus support, Avg pc support, Avg
+laptop customer care number, Avg support for Antiviruss, Avg Antivirus customer
+care, Avg customer care phone number, hewlett packard help, phone number for
+Avg, Avg online help, Avg laptop customer care, Avg helpline phone number, Avg
+Antivirus customer support, Avg technical support chat, Avg computer help, Avg
+support numbers, Avg technical support contact number, Avg telephone number,
+Avg Antivirus technical support phone number, Avg Antivirus helpline, Avg
+support Antiviruss, Avg support online, Avg Antivirus contact number, Avg help
+phone number, Avg Antivirus customer care number, contact hewlett packard by
+phone, Avg Antivirus phone support, hewlett packard Antiviruss support, Avg
+tech support phone, Avg technical help, Avg laptop tech support number, contact
+Avg by phone, Avg support call, Avg computers support, hewlett packard customer
+service telephone number, phone number for hewlett packard, Avg online support
+chat, Avg laptop customer service number, Avg online chat support, Avg
+Antiviruss customer service, hewlett packard customer service phone, Avg laptop
+tech support, Avg service phone number, hewlett packard Antivirus help, phone
+number for Avg Antiviruss, Avg troubleshooting phone number, Avg 800 number,
+hewlett packard technical support number, contact Avg support phone, phone
+number for Avg Antivirus support, Avg customer support chat, Avg help and
+support number, contact hewlett packard, Avg laptop support phone number, Avg
+Antiviruss customer service phone number, Avg laptop customer service phone
+number, Avg computer support phone number, Avg pavilion support, Avg computer
+customer service, Avg customer services, hewlett packard telephone number, Avg
+helpline no, Avg help desk number, contact Avg support phone number, hewlett
+packard contact, Avg phone numbers, Avg Antiviruss customer care number, Avg
+Antivirus help and support, contact Avg technical support, Avg contact numbers,
+contact Avg support chat, call Avg tech support, Avg customer service phone,
+Avg help support, Avg computer tech support, Avg assistance phone number, Avg
+customer service telephone number, hewlett packard Antivirus support phone
+number, Avg contact support number, Avg support center phone number, Avg
+support phone numbers, tech support for Avg, Avg it support, Avg laptop
+helpline, Avg technical, Avg laptop technical support number, Avg Antiviruss
+tech support phone number, Avg Antiviruss support phone number, hewlett packard
+help desk phone number, Avg computer tech support phone number, Avg customer
+service number for laptop, Avg Antivirus helpline number, contact Avg support
+by phone, hewlett packard support center, Avg lapTech&Help 1-800-882-0652 Avg
+tech support Phone Number | Avg Tech Support Phone Number | Avg Customer
+Service Phone Number customer care 800-882-0652 Avg activation support phone
+number, Avg 360 phone number, Avg contact phone number Talk:MiniSS™800-882-0652
+,Avg support phone number, Avg customer service number
+NamespacesPageDiscussionPage actionsViewHistory AntiVirus support @!@! Avg
+support phone number, Avg customer service number call Avg support UK 800-882-
+0652 USA ,Avg Antivirus technical support, Avg support phone number, Avg
+Customer support phone number, Avg Antivirus Customer support, Avg Antivirus
+phone number,Avg Antivirus Helpline number,Avg phone number,Avg Customer Care
+Helpdesk number usa, orton Internet Security support phone number Avg phone
+number, Avg helpline, Avg Antivirus technical support 800-882-0652 Avg support
+phone number 800-882-0652 uk Avg support Helpline number 800-882-0652 Avg
+Customer support number 800-882-0652 Avg Customer support phone number
+800-882-0652 Avg Customer support Helpline number 800-882-0652 Avg Customer
+support Helpline 800-882-0652 uk Avg Antivirus Customer support 800-882-0652
+Avg Antivirus support phone number 800-882-0652 Avg Antivirus support Helpline
+number 800-882-0652 Avg Antivirus phone number,Avg Antivirus Helpline
+number,Avg phone number,Avg Customer Care Helpdesk number usa Avg support On
+Call Official USA Avg tech support Toll-Free number 800-882-0652 Avg Customer
+Service And support phone numbers 800-882- 0652 Avg Internet Security support
+number 800-882-0652 Avg Internet Security support phone number 800-882-0652 Avg
+Internet Security Helpline number 800-882-0652 Avg Internet Security Product
+Key 800-882-0652 Avg Anti Virus Customer support 800-882-0652 Avg Anti Virus
+Customer support number 800-882-0652 Avg Anti Virus Customer support phone
+number 800-882-0652 Avg Antivirus Customer Service phone number 800-882-0652
+Avg Antivirus Customer Service number 800-882-0652 Avg Antivirus Customer
+Service Helpline number 800-882-0652 Avg Antivirus Customer Service Helpline
+800- 882-0652 Avg support Antivirus 800-882-0652 Avg support Windows Xp
+800-882-0652 Avg support Windows 8 800-882-0652 Avg Antivirus Virus support
+800-882-0652 Avg phone number 800-882-0652 Avg Helpline number 800-882-0652 Avg
+support phone number 800-882-0652 Avg support Helpline number 800-882-0652 Avg
+Customer support number 800-882-0652 Avg Customer support phone number
+800-882-0652 Avg Customer support Helpline number 800-882-0652 Avg Customer
+support Helpline 800-882-0652 Avg Antivirus Customer support 800-882-0652 Avg
+Antivirus support phone number 800-882-0652 Avg Antivirus support Helpline
+number 800-882-0652 Avg Antivirus support number 800-882-0652 Avg Antivirus
+support phone number 800-882-0652 Avg Antivirus support 800- 882-0652 Avg
+support Help number 800-882-0652 Avg phone support number 800-882-0652 Avg
+Antivirus tech support phone 800-882-0652 Avg Antivirus tech support number
+800-882-0652 Avg tech support Toll-Free 800-882-0652 Avg support phone number
+800-882-0652 Avg Symantec support phone number 800-882-0652 Avg tech support
+number 800-882-0652 Avg tech support number 800-882-0652 Avg Customer Service
+phone number 800-882-0652 Avg Renewal Process 800-882-0652 Avg Contact number
+800-882-0652 Symantec technical support number 800-882-0652 Avg Helpline number
+USA 800-882-0652 phone number For Avg Antivirus 800-882-0652 Avg Annual Renewal
+800-882-0652 Avg Security Customer Service 800-882-0652 Avg Internet Security
+phone number 800-882-0652 phone number For Avg tech support 800-882-0652 Avg
+Symantec Customer Service phone number 800-882- 0652 Avg Antivirus technical
+support 800-882-0652 Avg support phone number 800-882-0652 Avg support Helpline
+number 800-882-0652 Avg Customer support number 800-882-0652 Avg Customer
+support phone number 800-882-0652 Avg Customer support Helpline number
+800-882-0652 Avg Customer support Helpline 800-882-0652 Avg Antivirus Customer
+support 800-882-0652 Avg Antivirus support phone number 800-882-0652 Avg
+Antivirus support Helpline number 800-882-0652 Antivirus support 1 Avg support
+phone number, Avg customer service number @@GET DISCOUNT!!!! purchase NEW Avg
+Antivirus phone number,Avg Antivirus Helpline phone number,Avg phone number,Avg
+Customer Avg support On Call Official USA Avg tech support Toll-Free number
+800-882-0652 Avg Customer Service And support phone numbers 800-882-0652 Avg
+Internet Security support number 800-882-0652 Avg Internet Security support
+phone number 800-882-0652 Avg Internet Security Helpline number 800-882-0652
+Avg Internet Security Product Key 800-882-0652 Avg Anti Virus Customer support
+800-882-0652 Avg Anti Virus Customer support number 800-882-0652 Avg Anti Virus
+Customer support phone number 800-882-0652 Avg Antivirus Customer Service phone
+number 800-882-0652 Avg Antivirus Customer Service number 800-882-0652 Avg
+Antivirus Customer Service Helpline number 800- 882-0652 Avg Antivirus Customer
+Service Helpline 800-882-0652 Avg support Antivirus 800-882-0652 Avg support
+Windows Xp 800-882-0652 Avg support Windows 8 800-882-0652 Avg Antivirus
+support 800-882-0652 Avg phone number 800-882-0652 Avg Helpline phone number
+800-882-0652 Avg support phone number 800-882-0652 Avg support Helpline number
+800-882-0652 Avg Customer support number 800-882-0652 Avg Customer support
+phone number 800-882-0652 Avg Customer support Helpline number 800-882-0652 Avg
+Customer support Helpline 800-882-0652 Avg Antivirus Customer support
+800-882-0652 Avg Antivirus support phone number 800-882-0652 Avg Antivirus
+support Helpline number 800-882-0652 Avg Antivirus support number 800-882-0652
+Avg Antivirus support phone number 800-882-0652 Avg Antivirus support
+800-882-0652 Avg support Help number 800-882- 0652 Avg phone support number
+800-882-0652 Avg Antivirus tech support phone 800-882-0652 Avg Antivirus tech
+support number 800-882-0652 Avg tech support Toll-Free 800-882-0652 Avg support
+phone number 800-882-0652 Avg Symantec support phone number 800-882-0652 Avg
+tech support number 800-882-0652 Avg tech support number 800-882-0652 Avg
+Customer Service phone number 800-882-0652 Avg Renewal Process 800-882-0652 Avg
+Contact number 800-882-0652 Symantec technical support number 800-882-0652 Avg
+Helpline number USA 800-882-0652 phone number For Avg Antivirus 800-882-0652
+Avg Annual Renewal 800-882-0652 Avg Security Customer Service 800-882- 0652 Avg
+Internet Security phone number 800-882-0652 phone number For Avg tech support
+800-882- 0652 Avg Symantec Customer Service phone number 800-882-0652 @ Avg™
+Antivirus technical support 1--240*8386 phone number,Avg™ tech support phone
+number 800-882-0652 NamespacesPageDiscussionPage actionsViewHistory ~@ Avg™
+Antivirus technical support 1--240*8386 phone number,Avg™ tech support phone
+number 800-882-0652 NamespacesPageDiscussionPage actionsViewHistory ~~@ Avg™
+Antivirus technical support 1--240*8386 phone number,Avg™ tech support phone
+number 800-882-0652 ~@ Avg™ Antivirus technical support 800-882-0652 phone
+number,Avg™ tech support phone number 800-882-0652 ~@ Avg™ Antivirus technical
+support 800-882- 0652 phone number,Avg™ tech support phone number 800-882-0652
+~@ Avg™ Antivirus technical support 800-882-0652 phone number,Avg™ tech support
+phone number 800-882-0652 @ Avg™ Antivirus technical support 800-882-0652 phone
+number,Avg™ tech support phone number 800-882- 0652 10:45, 14 June 2016
+(EDT)10:45, 14 June 2016 (EDT)Riskyjattanil (talk) 10:45, 14 June 2016
+(EDT)bokunda support presents dhodukala namnkaJUN9Q QWQ89E E 10:45, 14 June
+2016 (EDT)~ $@$@ MS Antivirus™ phone number 800-882-0652 I2408386 Avg Antivirus
+Avg phone number 800-882- 0652 Avg technical support phone number 800-882-0652
+Avg technical support contact number 800- 882-0652 Avg technical support phone
+number usa 800-882-0652 Avg proadvisor technical support number 800-882-0652
+Avg enterprise technical support number 800-882-0652 Avg technical support
+phone number australia 800-882-0652 Avg technical support phone number usa
+800-882-0652 Avg tech support phone number canada 800-882-0652 Avg technical
+support number 800-882-0652 Avg technical support number usa 800-882-0652 Avg
+tech support contact number 800-882-0652 Avg technical support canada
+800-882-0652 $$ms Antivirus phone number 800-882-0652 I2408386 Avg Antivirus
+phone number 800-882-0652 USA$CANADA!Unable to render embedded object: File (
+File (@@ I-240- 8386 @@Avg Antivirus technical support helpline phone number
+800-882-0652 USA/CANADA) not found.Unable to render embedded object: File (
+File (~@ I--240-8386 Avg Avg technical support helpline phone number
+800-882-0652 USA/CANADA) not found.) not found.) not found.~@ I-240-8386 Avg
+Avg technical support helpline phone number 800-882-0652 ~@## I--240-8386 Avg
+Avg™ email technical support number 800-882-0652 ~@## I--240-8386 Avg Antivirus
+Avg support phone number 800-882- 0652 ~@## I--240-8386 Avg Antivirus Avg
+support phone number 800-882-0652 ~@## I--240-8386 Avg Avg 2007 support number
+800-882-0652 ~@## I--240-8386 Avg Avg 2007 support number 800-882-0652 ~@##
+I--240-8386 Avg Avg 20I0 support phone number 800-882-0652 ~@## I--240-8386 Avg
+Avg 20I0 support phone number 800-882-0652 ~@## I--240-8386 Avg Avg 20I0
+technical support ~@## I--240- 8386 Avg Avg 20I0 technical support ~@##
+I--240-8386 Avg Avg 20I0 technical support phone number 800-882-0652 Avg Avg
+20I0 technical support phone number 800-882-0652 Avg Avg 20I3 technical support
+number 800-882-0652 Avg Avg 20I3 technical support number 800-882-0652 Avg Avg
+365 technical support phone number 800-882-0652 Avg Avg 365 technical support
+phone number 800-882- 0652 Avg Avg contact number 800-882-0652 Avg Avg contact
+number 800-882-0652 Avg Avg customer service Avg Avg customer service Avg Avg
+customer service number 800-882-0652 Avg Avg customer service number
+800-882-0652 Avg Avg customer service phone number 800-882-0652 Avg Avg
+customer service phone number 800-882-0652 Avg Avg customer support Avg Avg
+customer support Avg Avg customer support number 800-882-0652 Avg Avg customer
+support number 800-882-0652 Avg Avg customer support phone number 800-882-0652
+Avg Avg customer support phone number 800-882-0652 Avg Avg email sign in
+support number 800-882-0652 Avg Avg email sign in support number 800-882- 0652
+Avg Avg email signature support number 800-882-0652 Avg Avg email signature
+support number 800-882-0652 Avg Avg email support number 800-882-0652 Avg Avg
+email support number 800-882- 0652 Avg Avg email support phone number
+800-882-0652 Avg Avg email support phone number 800- 882-0652 Avg Avg email
+technical support number 800-882-0652 Avg Avg email technical support number
+800-882-0652 Avg Avg express tech support phone number 800-882-0652 Avg Avg
+express tech support phone number 800-882-0652 Avg Avg exprss technical support
+phone number 800-882-0652 Avg Avg exprss technical support phone number
+800-882-0652 Avg Avg help desk phone number 800- 882-0652 Avg Avg help desk
+phone number 800-882-0652 Avg Avg help phone number 800-882-0652 Avg Avg help
+phone number 800-882-0652 Avg Avg help support Avg Avg help support Avg Avg
+phone number 800-882-0652 support Avg Avg phone number 800-882-0652 support Avg
+Avg phone support Avg Avg phone support Avg Avg support contact phone number
+800-882-0652 Avg Avg support contact phone number 800-882-0652 Avg Avg support
+number 800-882-0652 Avg Avg support number 800-882- 0652 Avg Avg support phone
+Avg Avg support phone Avg Avg support phone number 800-882-0652 Avg Avg support
+phone number 800-882-0652 Avg Avg support telephone number 800-882-0652 Avg Avg
+support telephone number 800-882-0652 Avg Avg tech support number 800-882-0652
+Avg Avg tech support number 800-882-0652 Avg Avg tech support phone number
+800-882-0652 Avg Avg tech support phone number 800-882-0652 Avg Avg technical
+support Avg Avg technical support Avg Avg technical support number 800-882-0652
+Avg Avg technical support number 800-882-0652 Avg Avg technical support phone
+number 800-882-0652 Avg Avg technical support phone number 800-882-0652 Avg
+support Avg Avg 20I0 support phone number 800-882-0652 Avg 20I0 support phone
+number 800-882- 0652 Avg 20I0 technical support phone number 800-882-0652 Avg
+20I0 technical support phone number 800-882-0652 Avg customer support phone
+number 800-882-0652 Avg customer support phone number 800-882-0652 Avg express
+technical support number 800-882-0652 Avg express technical support number
+800-882-0652 Avg express technical support phone number 800-882-0652 Avg
+express technical support phone number 800-882-0652 Avg help number
+800-882-0652 Avg technical support phone number 800-882-0652 Avg technical
+support phone number 800-882-0652 Avg technical support telephone number
+800-882-0652 Avg technical support telephone number 800-882-0652 Avgcom
+customer support phone number 800-882-0652 Avgcom customer support phone number
+800-882- 0652 Avgcom support number 800-882-0652 Avgcom support number
+800-882-0652 Avgcom support phone number 800-882-0652 Avgcom support phone
+number 800-882-0652 phone number 800-882- 0652 for Avg Avg support phone number
+800-882-0652 for Avg Avg support phone number 800-882- 0652 for Avg Avg
+technical support phone number 800-882-0652 for Avg Avg technical support phone
+number 800-882-0652 for Avg support phone number 800-882-0652 for Avg support
+Avg Avg customer service contact number 800-882-0652 Avg Avg customer service
+contact number 800-882-0652 Avg Avg customer service phone number 800-882-0652
+Avg Avg customer service phone number 800-882-0652 Avg Avg customer service
+toll free number 800-882-0652 Avg Avg customer service toll free number
+800-882-0652 Avg Avg customer support contact number 800-882-0652 Avg Avg
+customer support contact number 800-882-0652 Avg Avg customer support telephone
+number 800-882-0652 Avg Avg customer support telephone number 800-882-0652 Avg
+Avg tech support contact number 800-882-0652 Avg Avg tech support contact
+number 800-882-0652 Avg Avg tech support phone number 800-882-0652 Avg Avg tech
+support phone number 800-882-0652 Avg Avg tech support telephone number
+800-882- 0652 Avg Avg tech support telephone number 800-882-0652 Avg Avg tech
+support toll free number 800- 882-0652 Avg Avg tech support toll free number
+800-882-0652 Avg Avg technical support contact number 800-882-0652 Avg Avg
+technical support contact number 800-882-0652 Avg Avg technical support phone
+number 800-882-0652 Avg Avg technical support phone number 800-882-0652 Avg Avg
+technical support telephone number 800-882-0652 Avg Avg technical support
+telephone number 800- 882-0652 Avg customer service contact number 800-882-0652
+Avg customer service contact number 800-882-0652 Avg customer service contact
+number 800-882-0652 Avg customer service contact number 800-882-0652 Avg
+customer service phone number 800-882-0652 Avg customer service phone number
+800-882-0652 Avg customer service phone number 800-882-0652 Avg customer
+service phone number 800-882-0652 Avg customer service telephone number
+800-882-0652 Avg customer service telephone number 800-882-0652 Avg customer
+service telephone number 800-882-0652 Avg customer service telephone number
+800-882-0652 Avg customer service toll free number 800-882-0652 Avg customer
+service toll free number 800-882-0652 Avg customer service toll free number
+800-882-0652 Avg customer service toll free number 800-882-0652 Avg customer
+support contact number 800-882- 0652 Avg customer support contact number
+800-882-0652 Avg customer support contact number 800- 882-0652 Avg customer
+support contact number 800-882-0652 Avg customer support phone number
+800-882-0652 Avg customer support phone number 800-882-0652 Avg customer
+support telephone number 800-882-0652 Avg customer support telephone number
+800-882-0652 Avg customer support toll free number 800-882-0652 Avg customer
+support toll free number 800-882-0652 Avg tech support contact number
+800-882-0652 Avg tech support contact number 800-882-0652 Avg tech support
+phone number 800-882-0652 Avg tech support phone number 800-882-0652 Avg tech
+support telephone number 800-882-0652 Avg tech support telephone number
+800-882-0652 Avg tech support toll free number 800-882-0652 Avg tech support
+toll free number 800-882-0652 Avg technical support contact number 800-882-0652
+Avg technical support contact number 800-882-0652 Avg technical support phone
+number 800-882-0652 Avg technical support phone number 800-882-0652 Avg
+technical support telephone number 800-882-0652 Avg technical support telephone
+number 800-882-0652 Avg technical support toll free number 800-882-0652 Avg
+technical support toll free number 800-882-0652 call Avg Antivirus 365 support
+call Avg support phone number 800-882-0652 call Avg tech support phone number
+800-882-0652 call Avg technical support call windows technical support can i
+install Avg express on windows 7 can not send email from Avg can Avg express be
+installed on windows 7 can Avg express run on windows 7 can receive but not
+send email Avg can receive email but cannot send Avg can receive email cannot
+send Avg can receive emails but cannot send Avg can send but not receive email
+Avg can send email but not receive Avg contact Avg email support contact Avg
+Antivirus 365 support contact Avg Antivirus 365 support phone number
+800-882-0652 contact Avg Antivirus phone number 800-882-0652 contact Avg
+Antivirus support by phone contact Avg Avg by phone contact Avg Avg email
+support contact Avg Avg support contact Avg phone number 800-882-0652 contact
+Avg support by phone contact Avg support phone contact Avg support phone number
+800-882-0652 contact Avg tech support phone number 800-882-0652 contact Avg
+technical support contact Avg technical support by phone contact Avg technical
+support phone number 800-882-0652 contact number 800-882-0652 for Avg Antivirus
+contact number 800-882-0652 for Avg Avg contact number 800-882-0652 for Avg
+support contact number 800-882-0652 for Avg email contact Antivirus 365 support
+phone contact Avg support by phone contact Avg support phone contact phone
+number 800-882-0652 for Avg contact phone number 800-882-0652 for Avg support
+contact windows support phone number 800-882-0652 customer service phone number
+800-882-0652 for Avg customer service technical support customer support Avg
+phone number 800-882-0652 email address for Avg support email address Avg
+support email Avg technical support help for Avg Avg how do i contact Avg by
+phone how do i contact Avg Avg how do i contact Avg support by phone how do i
+get in touch with Avg support how to contact Avg by phone how to contact Avg
+Avg how to contact Avg Avg support how to contact Avg support by email how to
+contact Avg support by phone how to contact Avg technical support i need a
+phone number 800-882-0652 for Avg
+supporthttps://developer.valvesoftware.com/wiki/Talk:N@rton_Support_helpp_desk%2B1@I800-
+882-0652_n@rton Avg technical helpline 1@I800-882-0652 Installation I8008820652
+Avg update server Avg update failed Avg update definitions failed Avg
+definitions not updating @#######@@1-800-882- 0652@!Unable to render embedded
+object: File (@@@@@@ Avg antivirus tecg s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.e.r Avg
+tech s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.e.r Avg antivirus technical s.u.p.p.o.r.t
+p.h.o.n.e n.u.m.b.e.r.pdf @#######@@1-800-882-0652@) not found.!@@@@@@ Avg
+antivirus tecg s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.e.r Avg tech s.u.p.p.o.r.t
+p.h.o.n.e n.u.m.b.e.r Avg antivirus technical s.u.p.p.o.r.t p.h.o.n.e
+n.u.m.b.e.r.pdf, 2 Avg tech s.u.p.p.o.r.t n.u.m.b.e.r Avg tech s.u.p.p.o.r.t
+p.h.o.n.e n.u.m.b.e.r Canada I800-882-0652 Avg p.h.o.n.e n.u.m.b.e.r us File
+Avg p.h.o.n.e n.u.m.b.e.r(((I800.882.0652))Avg tech s.u.p.p.o.r.t n.u.m.b.e.r
+Avg tech s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.e.r UK I800-882-0652 Avg p.h.o.n.e
+n.u.m.b.e.r australia.pdf, 5.2 KB (added by sanjna78547, 39 seconds ago) Avg
+?I800-882-0652 Avg tech s.u.p.p.o.r.t n.u.m.b.e.r I800-882-0652, Avg helpline,
+Avg customer care , notrton customer s.u.p.p.o.r.t usa helpline I800.882.0652
+Avg tech s.u.p.p.o.r.t p.h.o.n.e n
 
 -- 
 You are receiving this mail because:
-You are the assignee for the bug.
---
+You are the assignee for the bug.--
 To unsubscribe from this list: send the line "unsubscribe backports" in
