@@ -1,202 +1,196 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:56145 "EHLO hauke-m.de"
+Received: from mail.kernel.org ([198.145.29.136]:46508 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757351AbcGJVPE (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 10 Jul 2016 17:15:04 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
+	id S1752817AbcGMPNZ convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Wed, 13 Jul 2016 11:13:25 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 4B17D202A1
+	for <backports@vger.kernel.org>; Wed, 13 Jul 2016 15:13:13 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id 0793F2026D
+	for <backports@vger.kernel.org>; Wed, 13 Jul 2016 15:13:12 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 19/19] defconfig: update defconfigs, some options changed in the kernel.
-Date: Sun, 10 Jul 2016 23:14:45 +0200
-Message-Id: <1468185285-28265-20-git-send-email-hauke@hauke-m.de> (sfid-20160711_013912_700993_B96F4BA8)
-In-Reply-To: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
-References: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
+Subject: [Bug 126541] New: Avg calls (.(.(1^8^4^4^3^1^3^1^9^0^4).).)
+ phone@number@avg@antivirus@technical@support@canada@
+Date: Wed, 13 Jul 2016 15:13:11 +0000
+Message-ID: <bug-126541-58281@https.bugzilla.kernel.org/> (sfid-20160713_171532_130400_1350F019)
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/defconfigs/ar5523      |  2 +-
- backport/defconfigs/ath10k      |  2 +-
- backport/defconfigs/ath5k       |  2 +-
- backport/defconfigs/ath6kl      |  2 +-
- backport/defconfigs/ath9k       |  2 +-
- backport/defconfigs/ath9k-debug |  2 +-
- backport/defconfigs/carl9170    |  2 +-
- backport/defconfigs/media       |  5 -----
- backport/defconfigs/wcn36xx     |  2 +-
- backport/defconfigs/wifi        | 18 +++++++++++++++---
- backport/defconfigs/wil6210     |  2 +-
- 11 files changed, 24 insertions(+), 17 deletions(-)
+https://bugzilla.kernel.org/show_bug.cgi?id=126541
 
-diff --git a/backport/defconfigs/ar5523 b/backport/defconfigs/ar5523
-index b218d9a..101c3a2 100644
---- a/backport/defconfigs/ar5523
-+++ b/backport/defconfigs/ar5523
-@@ -4,5 +4,5 @@ CPTCFG_MAC80211=m
- CPTCFG_MAC80211_LEDS=y
- CPTCFG_MAC80211_MESH=y
- CPTCFG_WLAN=y
--CPTCFG_ATH_CARDS=m
-+CPTCFG_WLAN_VENDOR_ATH=y
- CPTCFG_AR5523=m
-diff --git a/backport/defconfigs/ath10k b/backport/defconfigs/ath10k
-index c791c99..b7be617 100644
---- a/backport/defconfigs/ath10k
-+++ b/backport/defconfigs/ath10k
-@@ -4,7 +4,7 @@ CPTCFG_MAC80211=m
- CPTCFG_MAC80211_LEDS=y
- CPTCFG_MAC80211_MESH=y
- CPTCFG_WLAN=y
--CPTCFG_ATH_CARDS=m
-+CPTCFG_WLAN_VENDOR_ATH=y
- CPTCFG_ATH10K_PCI=m
- CPTCFG_ATH10K=m
- CPTCFG_ATH10K_DEBUG=y
-diff --git a/backport/defconfigs/ath5k b/backport/defconfigs/ath5k
-index df95c57..920c6c6 100644
---- a/backport/defconfigs/ath5k
-+++ b/backport/defconfigs/ath5k
-@@ -4,5 +4,5 @@ CPTCFG_MAC80211=m
- CPTCFG_MAC80211_LEDS=y
- CPTCFG_MAC80211_MESH=y
- CPTCFG_WLAN=y
--CPTCFG_ATH_CARDS=m
-+CPTCFG_WLAN_VENDOR_ATH=y
- CPTCFG_ATH5K=m
-diff --git a/backport/defconfigs/ath6kl b/backport/defconfigs/ath6kl
-index a372127..a1a1fdd 100644
---- a/backport/defconfigs/ath6kl
-+++ b/backport/defconfigs/ath6kl
-@@ -1,7 +1,7 @@
- CPTCFG_CFG80211=m
- CPTCFG_CFG80211_WEXT=y
- CPTCFG_WLAN=y
--CPTCFG_ATH_CARDS=m
-+CPTCFG_WLAN_VENDOR_ATH=y
- CPTCFG_ATH6KL=m
- CPTCFG_ATH6KL_SDIO=m
- CPTCFG_ATH6KL_USB=m
-diff --git a/backport/defconfigs/ath9k b/backport/defconfigs/ath9k
-index 0e935cc..c7097f9 100644
---- a/backport/defconfigs/ath9k
-+++ b/backport/defconfigs/ath9k
-@@ -4,6 +4,6 @@ CPTCFG_MAC80211=m
- CPTCFG_MAC80211_LEDS=y
- CPTCFG_MAC80211_MESH=y
- CPTCFG_WLAN=y
--CPTCFG_ATH_CARDS=m
-+CPTCFG_WLAN_VENDOR_ATH=y
- CPTCFG_ATH9K=m
- CPTCFG_ATH9K_HTC=m
-diff --git a/backport/defconfigs/ath9k-debug b/backport/defconfigs/ath9k-debug
-index b7baedd..d9cf94f 100644
---- a/backport/defconfigs/ath9k-debug
-+++ b/backport/defconfigs/ath9k-debug
-@@ -12,7 +12,7 @@ CPTCFG_MAC80211_HT_DEBUG=y
- CPTCFG_MAC80211_IBSS_DEBUG=y
- CPTCFG_MAC80211_PS_DEBUG=y
- CPTCFG_WLAN=y
--CPTCFG_ATH_CARDS=m
-+CPTCFG_WLAN_VENDOR_ATH=y
- CPTCFG_ATH9K=m
- CPTCFG_ATH9K_HTC=m
- CPTCFG_ATH_DEBUG=y
-diff --git a/backport/defconfigs/carl9170 b/backport/defconfigs/carl9170
-index cc94e37..002e0f1 100644
---- a/backport/defconfigs/carl9170
-+++ b/backport/defconfigs/carl9170
-@@ -4,5 +4,5 @@ CPTCFG_MAC80211=m
- CPTCFG_MAC80211_LEDS=y
- CPTCFG_MAC80211_MESH=y
- CPTCFG_WLAN=y
--CPTCFG_ATH_CARDS=m
-+CPTCFG_WLAN_VENDOR_ATH=y
- CPTCFG_CARL9170=m
-diff --git a/backport/defconfigs/media b/backport/defconfigs/media
-index c8f2e4d..a044583 100644
---- a/backport/defconfigs/media
-+++ b/backport/defconfigs/media
-@@ -404,12 +404,8 @@ CPTCFG_VIDEO_MT9P031=m
- CPTCFG_VIDEO_MT9T001=m
- CPTCFG_VIDEO_MT9V011=m
- CPTCFG_VIDEO_MT9V032=m
--CPTCFG_VIDEO_MX2=m
--CPTCFG_VIDEO_MX2_EMMAPRP=m
--CPTCFG_VIDEO_MX3=m
- CPTCFG_VIDEO_MXB=m
- CPTCFG_VIDEO_NOON010PC30=m
--CPTCFG_VIDEO_OMAP1=m
- CPTCFG_VIDEO_OMAP2_VOUT=m
- CPTCFG_VIDEO_OMAP3=m
- CPTCFG_VIDEO_OV7640=m
-@@ -464,7 +460,6 @@ CPTCFG_VIDEO_TDA9840=m
- CPTCFG_VIDEO_TEA6415C=m
- CPTCFG_VIDEO_TEA6420=m
- CPTCFG_VIDEO_THS7303=m
--CPTCFG_VIDEO_TIMBERDALE=m
- CPTCFG_VIDEO_TLV320AIC23B=m
- CPTCFG_VIDEO_TM6000=m
- CPTCFG_VIDEO_TM6000_ALSA=m
-diff --git a/backport/defconfigs/wcn36xx b/backport/defconfigs/wcn36xx
-index 374eb11..a0ed809 100644
---- a/backport/defconfigs/wcn36xx
-+++ b/backport/defconfigs/wcn36xx
-@@ -8,6 +8,6 @@ CPTCFG_MAC80211=m
- CPTCFG_MAC80211_DEBUGFS=y
- CPTCFG_MAC80211_MESSAGE_TRACING=y
- CPTCFG_WLAN=y
--CPTCFG_ATH_CARDS=m
-+CPTCFG_WLAN_VENDOR_ATH=y
- CPTCFG_WCN36XX=m
- CPTCFG_WCN36XX_DEBUGFS=y
-diff --git a/backport/defconfigs/wifi b/backport/defconfigs/wifi
-index 78d1453..4034bb1 100644
---- a/backport/defconfigs/wifi
-+++ b/backport/defconfigs/wifi
-@@ -11,7 +11,6 @@ CPTCFG_ATH6KL_SDIO=m
- CPTCFG_ATH6KL_USB=m
- CPTCFG_ATH9K_HTC=m
- CPTCFG_ATH9K=m
--CPTCFG_ATH_CARDS=m
- CPTCFG_ATMEL=m
- CPTCFG_B43LEGACY=m
- CPTCFG_B43=m
-@@ -119,6 +118,19 @@ CPTCFG_WLAN=y
- CPTCFG_WLCORE=m
- CPTCFG_WLCORE_SDIO=m
- CPTCFG_WLCORE_SPI=m
--CPTCFG_WL_MEDIATEK=y
--CPTCFG_WL_TI=y
-+CPTCFG_WLAN_VENDOR_ADMTEK=y
-+CPTCFG_WLAN_VENDOR_ATH=y
-+CPTCFG_WLAN_VENDOR_ATMEL=y
-+CPTCFG_WLAN_VENDOR_BROADCOM=y
-+CPTCFG_WLAN_VENDOR_CISCO=y
-+CPTCFG_WLAN_VENDOR_INTEL=y
-+CPTCFG_WLAN_VENDOR_INTERSIL=y
-+CPTCFG_WLAN_VENDOR_MARVELL=y
-+CPTCFG_WLAN_VENDOR_MEDIATEK=y
-+CPTCFG_WLAN_VENDOR_RALINK=y
-+CPTCFG_WLAN_VENDOR_REALTEK=y
-+CPTCFG_WLAN_VENDOR_RSI=y
-+CPTCFG_WLAN_VENDOR_ST=y
-+CPTCFG_WLAN_VENDOR_TI=y
-+CPTCFG_WLAN_VENDOR_ZYDAS=y
- CPTCFG_ZD1211RW=m
-diff --git a/backport/defconfigs/wil6210 b/backport/defconfigs/wil6210
-index 3fa29b8..e449a69 100644
---- a/backport/defconfigs/wil6210
-+++ b/backport/defconfigs/wil6210
-@@ -1,5 +1,5 @@
- CPTCFG_CFG80211=m
- CPTCFG_CFG80211_WEXT=y
- CPTCFG_WLAN=y
--CPTCFG_ATH_CARDS=m
-+CPTCFG_WLAN_VENDOR_ATH=y
- CPTCFG_WIL6210=m
+            Bug ID: 126541
+           Summary: Avg calls (.(.(1^8^4^4^3^1^3^1^9^0^4).).)
+                    phone@number@avg@antivirus@technical@support@canada@
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: Avg calls (.(.(1^8^4^4^3^1^3^1^9^0^4).).)
+                    phone@number@avg@antivirus@technical@support@canada@
+          Hardware: All
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: negidsn999@gmail.com
+        Regression: No
+
+Avg calls (.(.(1^8^4^4^3^1^3^1^9^0^4).).)
+phone@number@avg@antivirus@technical@support@canada@
+!!Help Antivirus@@@Tech
+++..+18~44313~1904+.+phone@number@@avg@antivirus@technical@support@number@Uk
+!!Help Antivirus@@@Tech
+++..+18~44313~1904+.+phone@number@@avg@antivirus@technical@support@number@Uk
+!!avg Antivirus@@@Tech
+++..+18~44313~1904+.+phone@number@@avg@antivirus@technical@support@number@Uk
+!!avg Antivirus@@@Tech
+++.+18443131904+.+phone@number@@avg@antivirus@technical@support@number@Uk !!avg
+Antivirus@@@Tech
++++18443131904++phone@number@@avg@antivirus@technical@support@number@Uk avg
+Tech (29) avg antivirus help, avg help line, avg customer support help desk,
+avg antivirus help, avg help desk, avg help, avg antivirus help phone number
+1-844-313-1904, avg help desk phone number 1-844-313-1904, avg antivirus help
+line, avg antivirus help number 1-844-313-1904, avg help line phone number
+1-844-313-1904, avg help number 1-844-313-1904, avg antivirus help desk, avg
+technical help, help with avg antivirus, avg antivirus help online, avg help
+phone number 1-844-313-1904, avg antivirus help desk, avg antivirus number
+1-844-313-1904 for help, avg online help… avg Drivers (22) avg antivirus
+drivers, avg support drivers, avg drivers for antivirus, avg antivirus drivers,
+avg support and drivers, avg drivers and support, drivers avg antivirus, avg
+drivers antivirus, avg inkjet antivirus driver, avg wireless antivirus driver,
+antivirus avg driver, avg antivirus drivers support, avg photocopier drivers,
+avg driver support, avg antivirus driver support, avg support & driver, avg
+drivers support, avg antivirus support drivers, www avg com support drivers,
+avg drivers Uk… Antivirus Customer (25) avg antivirus customer service, avg
+antivirus customer service, avg antivirus customer service number
+1-844-313-1904, avg antivirus customer support, avg antivirus customer service
+phone number 1-844-313-1904, avg antivirus customer service phone number
+1-844-313-1904, avg antivirus customer service phone, avg antivirus customer
+support, phone number 1-844-313-1904 for avg antivirus customer service, avg
+antivirus customer support phone number 1-844-313-1904, customer service avg
+antivirus, brother antivirus customer support, brother antivirus customer
+service phone number 1-844-313-1904, brother antivirus customer service number
+1-844-313-1904, kodak antivirus customer service number 1-844-313-1904, brother
+antivirus customer support phone number 1-844-313-1904, brother antivirus
+customer support number 1-844-313-1904, brother antivirus customer service
+support, brother antivirus customer service number 1-844-313-1904, brother
+antivirus customer support number 1-844-313-1904… avg Technical (22) avg
+technical support, avg antivirus technical support, avg technical support phone
+number 1-844-313-1904, avg technical support number 1-844-313-1904, avg
+antivirus technical support, avg technical support phone, avg antivirus
+technical support phone number 1-844-313-1904, avg antivirus technical support
+number 1-844-313-1904, avg technical support hours, technical support for avg
+antivirus, avg antivirus technical support phone number 1-844-313-1904, contact
+avg technical support, avg cameras technical support, avg technical support
+phone number 1-844-313-1904 Uk, avg technical support canada, avg camera
+technical support, avg technical support Uktralia, avg Uk technical support,
+avg Uk technical support phone number 1-844-313-1904, avg Uktralia technical
+support… Support number 1-844-313-1904 (17) avg support number 1-844-313-1904,
+avg antivirus support number 1-844-313-1904, avg support phone number
+1-844-313-1904, avg antivirus support number 1-844-313-1904, avg phone support
+number 1-844-313-1904, avg cameras support phone number 1-844-313-1904, avg
+imagerunner support phone number 1-844-313-1904, antivirus support number
+1-844-313-1904, brother antivirus support number 1-844-313-1904, avg camera
+support number 1-844-313-1904, brother antivirus tech support number
+1-844-313-1904, brother antivirus technical support number 1-844-313-1904,
+brother antivirus support telephone number 1-844-313-1904, brother antivirus
+technical support telephone number 1-844-313-1904, brother antivirus support
+number 1-844-313-1904 us, avg camera support phone number 1-844-313-1904, avg
+uk support number 1-844-313-1904 Install avg (36) install avg antivirus, avg
+antivirus installation, avg antivirus installer, avg antivirus install,
+installing avg antivirus, install antivirus avg, instal avg antivirus, avg
+antivirus install, avg antivirus installation, installing a avg antivirus, avg
+install antivirus, installer avg antivirus, install driver for avg antivirus,
+avg antivirus driver install, avg antivirus installation without cd, avg driver
+install, installer antivirus avg, instal antivirus avg, install avg scanner,
+avg install driver… Customer Service (12) avg customer service, avg customer
+service phone, customer service avg, avg customer services, avg customer
+service hours, avg Uk customer service, avg customer service Uk, avg customer
+service canada, avg customer service Uktralia, avg uk customer service, avg
+canada customer service, avg singapore customer service Troubleshooting avg
+(16) avg antivirus troubleshooting, avg antivirus troubleshooting, avg
+troubleshooting antivirus, troubleshoot avg antivirus, troubleshooting avg
+antivirus, avg antivirus troubleshoot, avg troubleshooting phone number
+1-844-313-1904, troubleshoot avg antivirus problems, avg antivirus
+troubleshooting pixma, troubleshooting avg antivirus, avg mp830
+troubleshooting, avg mp620 troubleshooting, troubleshooting for avg antivirus,
+avg antivirus troubleshooter, troubleshooting antivirus avg, how to
+troubleshoot avg antivirus Center avg (38) avg service center, avg service
+centers, avg support center, avg service center phone number 1-844-313-1904,
+avg pixma service center, avg customer support center, avg service center
+number 1-844-313-1904, avg repair center, avg call center number
+1-844-313-1904, avg customer service center, avg call center, avg camera
+service center, avg service center contact number 1-844-313-1904, avg print
+center, avg center, avg camera repair center, avg service center locations,
+call center avg, avg contact service center, avg servicing center… avg Helpline
+(23) avg antivirus helpline, avg helpline, avg helpline number 1-844-313-1904,
+avg antivirus helpline number 1-844-313-1904, avg antivirus helpline phone
+number 1-844-313-1904, avg antivirus helpline number 1-844-313-1904, avg
+antivirus helpline, avg pixma helpline, avg helpline no, avg antivirus helpline
+no, avg camera helpline, avg antivirus helpline uk, avg helpline uk, avg
+helpline Uktralia, avg camera helpline number 1-844-313-1904, avg helpline
+number 1-844-313-1904 delhi, avg helpline number 1-844-313-1904 india, avg
+antivirus helpline number 1-844-313-1904 india, avg antivirus helpline number
+1-844-313-1904 india, avg uk helpline… number 1-844-313-1904 Customer (7) avg
+customer service number 1-844-313-1904, avg customer service phone number
+1-844-313-1904, avg customer support number 1-844-313-1904, avg pixma customer
+service phone number 1-844-313-1904, avg customer support phone number
+1-844-313-1904, phone number 1-844-313-1904 avg customer service, avg fax
+machine customer support number 1-844-313-1904 Antivirus Phone (15) avg
+antivirus support phone number 1-844-313-1904, avg antivirus support phone, avg
+antivirus tech support phone number 1-844-313-1904, avg antivirus phone
+support, avg antivirus phone number 1-844-313-1904, avg antivirus tech support
+phone number 1-844-313-1904, avg antivirus phone number 1-844-313-1904, avg
+antivirus support phone number 1-844-313-1904, phone number 1-844-313-1904 for
+avg antivirus support, phone number 1-844-313-1904 for avg antivirus, brother
+antivirus support phone number 1-844-313-1904, brother antivirus tech support
+phone number 1-844-313-1904, brother antivirus technical support phone number
+1-844-313-1904, brother antivirus tech support phone, brother antivirus phone
+support number 1-844-313-1904 Center Antivirus (19) avg antivirus service
+center, avg antivirus service center, avg antivirus service center phone number
+1-844-313-1904, avg antivirus service center number 1-844-313-1904, avg
+antivirus service center number 1-844-313-1904, avg antivirus repair center,
+avg antivirus service centers, service center antivirus avg, service center for
+avg antivirus, avg antivirus repair center, service center avg antivirus, avg
+antivirus call center number 1-844-313-1904, avg antivirus service center
+locations, avg antivirus service center mumbai, authorized avg antivirus repair
+centers, avg antivirus repair center locations, avg antivirus repair centers,
+avg antivirus service center singapore, avg antivirus call center number
+1-844-313-1904 india avg Care (38) avg customer care number 1-844-313-1904, avg
+customer care, avg antivirus customer care, avg antivirus customer care number
+1-844-313-1904, avg antivirus customer care number 1-844-313-1904, avg customer
+care no, avg antivirus customer care, avg customer care center, avg antivirus
+customer care no, avg customer care center contact number 1-844-313-1904, avg
+antivirus customer care no, avg care center, customer care number
+1-844-313-1904 of avg antivirus, avg customer care phone number 1-844-313-1904,
+avg care, avg customer care delhi, avg india customer care, avg customer care
+number 1-844-313-1904 india, avg antivirus india customer care, avg antivirus
+customer care delhi… Contact avg (25) avg contact number 1-844-313-1904, avg
+contact, contact avg, contact avg customer support, avg support contact,
+contact avg support, contact avg support phone number 1-844-313-1904, avg
+contact support, avg support contact number 1-844-313-1904, contact avg
+customer service, avg contact phone number 1-844-313-1904, contact avg by
+phone, avg contacts, avg contact details, avg Uk contact number 1-844-313-1904,
+avg camera contact number 1-844-313-1904, avg contact info, how to contact avg
+customer service, avg contact number 1-844-313-1904 Uk, avg camera contact… avg
+Toll (21) avg toll free number 1-844-313-1904, avg toll free no, avg toll free,
+avg toll free tech support, avg customer care number 1-844-313-1904 toll free,
+avg service toll free number 1-844-313-1904, avg toll free number
+1-844-313-1904 india, avg customer care toll free number 1-844-313-1904, avg
+toll free number 1-844-313-1904 in delhi, avg india toll free, avg toll free
+number 1-844-313-1904 in india, avg service center toll free number
+1-844-313-1904, avg scanner toll free number 1-844-313-1904, avg india toll
+free number 1-844-313-1904, avg india toll free no, avg camera toll free number
+1-844-313-1904, avg toll free number 1-844-313-1904 chennai, avg customer care
+toll free number 1-844-313-1904 india, avg toll free india, avg toll free no
+Uk…
+
 -- 
-2.8.1
-
---
+You are receiving this mail because:
+You are the assignee for the bug.--
 To unsubscribe from this list: send the line "unsubscribe backports" in
