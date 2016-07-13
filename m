@@ -1,143 +1,146 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:37034 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:52466 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754531AbcGUWMT (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 21 Jul 2016 18:12:19 -0400
+	id S1751856AbcGMPsp (ORCPT <rfc822;backports@vger.kernel.org>);
+	Wed, 13 Jul 2016 11:48:45 -0400
 Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 7E2BB2050E
-	for <backports@vger.kernel.org>; Thu, 21 Jul 2016 22:12:17 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 4CDBA20501
-	for <backports@vger.kernel.org>; Thu, 21 Jul 2016 22:12:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49907202AE
+	for <backports@vger.kernel.org>; Wed, 13 Jul 2016 15:47:47 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id B70B020295
+	for <backports@vger.kernel.org>; Wed, 13 Jul 2016 15:47:45 +0000 (UTC)
 From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: [Bug 137971] New: Call,@(1 80 02 13 21 71)@-: Icloud help number
- usa-Icloud Helpline number
-Date: Thu, 21 Jul 2016 22:12:16 +0000
-Message-ID: <bug-137971-58281@https.bugzilla.kernel.org/> (sfid-20160722_001222_256926_954EEEA0)
+Subject: [Bug 127091] New: @+Macbook PRo Number+@ 1.8.O.O.2.3.5.3.0.8.3 @+@
+ Macbook PRo Tech Support Phone Number Macbook PRo phone number usa
+Date: Wed, 13 Jul 2016 15:47:45 +0000
+Message-ID: <bug-127091-58281@https.bugzilla.kernel.org/> (sfid-20160713_174932_360488_D9C058E8)
 Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=137971
+https://bugzilla.kernel.org/show_bug.cgi?id=127091
 
-            Bug ID: 137971
-           Summary: Call,@(1 80 02 13 21 71)@-: Icloud help number
-                    usa-Icloud Helpline number
+            Bug ID: 127091
+           Summary: @+Macbook PRo Number+@ 1.8.O.O.2.3.5.3.0.8.3 @+@
+                    Macbook PRo Tech Support Phone Number Macbook PRo
+                    phone number usa
            Product: Backports project
            Version: unspecified
-    Kernel Version: 4
-          Hardware: Intel
+    Kernel Version: @+Macbook PRo Number+@ 1.8.O.O.2.3.5.3.0.8.3 @+@
+                    Macbook PRo Tech Support Phone Number Macbook PRo
+                    phone number usa
+          Hardware: All
                 OS: Linux
               Tree: Mainline
             Status: NEW
-          Severity: high
+          Severity: normal
           Priority: P1
          Component: Backports
           Assignee: backports@vger.kernel.org
-          Reporter: rajdsky9@gmail.com
+          Reporter: garrymark277@gmail.com
         Regression: No
 
-Call, 1 80 02 13 21 71 for Icloud customer support phone number Icloud
-Technical Support phone Number Icloud phone number usa Icloud Toll Free, @(1 80
-02 13 21 71)@-: Icloud help desk phone number voses online solution for all
-USA/CANADA clients. For any help of query call 1 80 02 13 21 71 to get all
-Icloud account solution. 185 58 54 14 05 For any help of query call 1 85 58 54
-14 05 to get all Icloud account solution. @@Call, 1 80 02 13 21 71 for all type
-help by Icloud support telephone number,Icloud support phone number,Icloud
-support phone number,Icloud help phone number, Icloud technical support
-number.Icloud support number, Icloud phone number, Icloud tech support number,
-Icloud customer support number, Icloud customer support phone number, Icloud
-customer service phone number, Icloud payroll customer service phone number,
-Icloud support phone number Icloud help number-Icloud Helpline Number; Icloud
-help phone number-Icloud Helpline Number, Icloud Tech Support Toll free Number,
-Icloud Support Telephone Number, Icloud Tech Support Telephone number, Icloud
-Tech Support contact number, Icloud support contact number, Icloud technical
-support contact number, Icloud help desk phone number.Icloud password recovery
-support phone number. Call, @(1 80 02 13 21 71)@-: Icloud password recovery
-support phone number. It@@Call, 1 80 02 13 21 71 for Icloud customer support
-telephone number,Icloud support phone number is very popular toll free number
-which vose by Icloud technical support, Icloud Customer Service Phone Number,
-Icloud Customer Service Number, Icloud Customer Support Phone Number, Icloud
-Customer Support Number, Icloud Customer Service Helpline Number, Icloud
-Customer Care Number, Icloud support team phone number. Icloud password
-recovery support phone number. Call,@(1 80 02 13 21 71)@-: Icloud help
-number-Icloud Helpline Number; Icloud help phone number, Icloud Helpline
-Number, Icloud Tech Support Toll free Number, Icloud Support Telephone Number,
-Icloud Tech Support Telephone number, Icloud Tech Support contact number,
-Icloud support contact number, Icloud technical support contact number, Icloud
-support phone number, Icloud payroll support phone number. Icloud payroll
-customer support phone number.. Icloud password reset support phone number. for
-all type help by Icloud support telephone number, Icloud help phone number,
-Icloud technical support number.Icloud support number, Icloud phone number,
-Icloud tech support number, Icloud customer support number, Icloud customer
-support phone number, Icloud customer service phone number, Icloud payroll
-customer service phone number Icloud Toll Free, @(1 80 02 13 21 71)@-: Icloud
-Technical Support number usa, Icloud help desk phone number usa voses online
-solution for all USA/CANADA clients. For any help of query call 1 80 02 13 21
-71 to get all Icloud account solution. 185 58 54 14 05 For any help of query
-call 1 85 58 54 14 05 to get all Icloud account solution. @@Call, 1 80 02 13 21
-71 for all type help by Icloud support phone number usa,Icloud support phone
-number usa,Icloud support phone number usa,Icloud help phone number usa, Icloud
-technical support number usa.Icloud support number usa, Icloud phone number
-usa, Icloud tech support number usa, Icloud customer support number usa, Icloud
-customer support phone number usa, Icloud customer service phone number usa,
-Icloud payroll customer service phone number usa, Icloud support phone number
-usa Icloud help number usa-Icloud Helpline number usa; Icloud help phone number
-usa-Icloud Helpline number usa, Icloud Tech Support Toll free number usa,
-Icloud Support Telephone number usa, Icloud Tech Support Telephone number usa,
-Icloud Tech Support contact number usa, Icloud support contact number usa,
-Icloud technical support contact number usa, Icloud help desk phone number
-usa.Icloud password recovery support phone number usa. Call, @(1 80 02 13 21
-71)@-: Icloud password recovery support phone number usa. It is very popular
-toll free number usa which vose by Icloud technical support, Icloud Customer
-Service Phone number usa, Icloud Customer Service number usa, Icloud Customer
-Support Phone number usa, Icloud Customer Support number usa, Icloud Customer
-Service Helpline number usa, Icloud Customer Care number usa, Icloud support
-team phone number usa. Icloud password recovery support phone number usa.
-Call,@(1 80 02 13 21 71)@-: Icloud help number usa-Icloud Helpline number usa;
-Icloud help phone number usa, Icloud Helpline number usa, Icloud Tech Support
-Toll free number usa, Icloud Support Telephone number usa, Icloud Tech Support
-Telephone number usa, Icloud Tech Support contact number usa, Icloud support
-contact number usa, Icloud technical support contact number usa, Icloud support
-phone number usa, Icloud payroll support phone number usa. Icloud payroll
-customer support phone number usa.. Icloud password reset support phone number
-usa. for all type help by Icloud support telephone number usa, Icloud help
-phone number usa, Icloud technical support number usa.Icloud support number
-usa, Icloud phone number usa, Icloud tech support number usa, Icloud customer
-support number usa, Icloud customer support phone number usa, Icloud customer
-service phone number usa, Icloud payroll customer service phone number usa
-@@Call, I-85 58 54 14 05 for all type help by Icloud support telephone
-number,Icloud support phone number,Icloud support phone number,Icloud help
-phone number, Icloud technical support number.Icloud support number, Icloud
-phone number, Icloud tech support number, Icloud customer support number,
-Icloud customer support phone number, Icloud customer service phone number,
-Icloud payroll customer service phone number, Icloud support phone number
-Icloud help number-Icloud Helpline Number; Icloud help phone number-Icloud
-Helpline Number, Icloud Tech Support Toll free Number, Icloud Support Telephone
-Number, Icloud Tech Support Telephone number, Icloud Tech Support contact
-number, Icloud support contact number, Icloud technical support contact number,
-Icloud help desk phone number.Icloud password recovery support phone number.
-Call, @(I-85 58 54 14 05)@-: Icloud password recovery support phone number. It
-is very popular toll free number which vose by Icloud technical support, Icloud
-Customer Service Phone Number, Icloud Customer Service Number, Icloud Customer
-Support Phone Number, Icloud Customer Support Number, Icloud Customer Service
-Helpline Number, Icloud Customer Care Number, Icloud support team phone number.
-Icloud password recovery support phone number. Call,@(I-85 58 54 14 05)@-:
-Icloud help number-Icloud Helpline Number; Icloud help phone number, Icloud
-Helpline Number, Icloud Tech Support Toll free Number, Icloud Support Telephone
-Number, Icloud Tech Support Telephone number, Icloud Tech Support contact
-number, Icloud support contact number, Icloud technical support contact number,
-Icloud support phone number, Icloud payroll support phone number. Icloud
-payroll customer support phone number.. Icloud password reset support phone
-number. for all type help by Icloud support telephone number, Icloud help phone
-number, Icloud technical support number.Icloud support number, Icloud phone
-number, Icloud tech support number, Icloud customer support number, Icloud
-customer support phone number, Icloud customer service phone number, Icloud
-payroll customer service phone number Describe Call, 1 80 02 13 21 71 for
-Icloud customer support phone number Icloud Technical Support phone Number
-Icloud phone number usa here.
+@+Macbook PRo Number+@ 1.8.O.O.2.3.5.3.0.8.3 @+@ Macbook PRo Tech Support Phone
+Number Macbook PRo phone number usa
+
+@+++Macbook PRo Phone Number1.8.O.O.2.3.5.3.0.8.3 @@ Macbook PRo Technical
+Support Number +++++Macbook PRo Phone Number @@ 18OO.235.3083 @@ Macbook PRo
+Tech Support Phone Number +++++Macbook PRo Phone Number @@ 18OO.235.3083 @@
+Macbook PRo Tech Support Phone Number +++Macbook PRo outlook helpline phone
+number Macbook PRo outlook phone number Macbook PRo outlook phone number
+Macbook PRo outlook tech phone number Macbook PRo outlook phone number
++++++Macbook PRo Phone Number @@ 18OO.235.3083 @@ Macbook PRo Tech Support
+Phone Number Macbook PRo Customer Service Phone Number Macbook PRo outlook
+express Contact Number@@ 1 Support Now Usa Canada For All Macbook PRo Products:
+Macbook PRo outlook express Phone Number 18OO.235.3083Macbook PRo Tech Support
+Phone Number Macbook PRo Customer Service Phone NumberMacbook PRo outlook
+express Contact Number(()) Macbook PRo tech support Macbook PRo Hotmail
+technical support number Hotmail tech phone number Macbook PRo customer service
+number Macbook PRo customer support telephone number outlook Support phone
+number office tech support Macbook PRo tech support number Macbook PRo support
+phone number Macbook PRo support line Macbook PRo outlook tech support number
+Macbook PRo server support phone number Macbook PRo product support number
+Macbook PRo telephone support Macbook PRo windows 8 tech support call Macbook
+PRo support phone number windows 18OO number Macbook PRo windows tech support
+phone number Macbook PRo outlook/Hotmail phone number))(( Macbook PRo Phone
+Number18OO.235.3083Macbook PRo Tech Support Phone Number Macbook PRo Customer
+Service Phone Number* Macbook PRo Phone Number18OO.235.3083Macbook PRo Tech
+Support Phone NumberMacbook PRo Customer Service Phone Number* Macbook PRo
+outlook helpline phone number Macbook PRo outlook phone number Macbook PRo
+outlook phone number Macbook PRo outlook tech phone number Macbook PRo outlook
+phone number Macbook PRo Phone Number18OO.235.3083Macbook PRo Tech Support
+Phone Number Macbook PRo Customer Service Phone Number Macbook PRo outlook
+express Contact Number@@ 1 Support Now Usa Canada For All Macbook PRo Products:
+Macbook PRo outlook express Phone Number 18OO.235.3083Macbook PRo Tech Support
+Phone Number Macbook PRo Customer Service Phone NumberMacbook PRo outlook
+express Contact Number(()) Macbook PRo tech support Macbook PRo Hotmail
+technical support number Hotmail tech phone number Macbook PRo customer service
+number Macbook PRo customer support telephone number outlook Support phone
+number office tech support Macbook PRo tech support number Macbook PRo support
+phone number Macbook PRo support line Macbook PRo outlook tech support number
+Macbook PRo server support phone number Macbook PRo product support number
+Macbook PRo telephone support Macbook PRo windows 8 tech support call Macbook
+PRo support phone number windows 18OO number Macbook PRo windows tech support
+phone number Macbook PRo outlook/Hotmail phone number))(( Macbook PRo Phone
+Number18OO.235.3083Macbook PRo Tech Support Phone Number Macbook PRo Customer
+Service Phone Number Macbook PRo outlook express Contact Number@@ Support Now
+Usa Canada For All Macbook PRo Products: Macbook PRo outlook express Phone
+Number 18OO.235.3083Macbook PRo Tech Support Phone Number Macbook PRo Customer
+Service Phone NumberMacbook PRo outlook express Contact Number(()) Macbook PRo
+tech support Macbook PRo Hotmail technical support number Hotmail tech phone
+number Macbook PRo customer service number Macbook PRo customer support
+telephone number outlook Support phone number office tech support Macbook PRo
+tech support number Macbook PRo support phone number Macbook PRo support line
+Macbook PRo outlook tech support number Macbook PRo server support phone number
+Macbook PRo product support number Macbook PRo telephone support Macbook PRo
+windows 8 tech support call Macbook PRo support phone number windows 18OO
+number Macbook PRo windows tech support phone number Macbook PRo
+outlook/Hotmail phone number))(( Support Now Usa Canada For All Macbook PRo
+Products: Macbook PRo Phone Number 18OO.235.3083Macbook PRo Tech Support Phone
+NumberMacbook PRo Customer Service Phone Number Macbook PRo Contact Number(())
+Macbook PRo tech support Macbook PRo Hotmail technical support number Hotmail
+tech phone number Macbook PRo customer service number Macbook PRo customer
+support telephone number outlook Support phone number office tech support
+Macbook PRo tech support number Macbook PRo support phone number Macbook PRo
+support line Macbook PRo outlook tech support number Macbook PRo server support
+phone number Macbook PRo product support number Macbook PRo telephone support
+Macbook PRo windows 8 tech support call Macbook PRo support phone number
+windows 18OO number Macbook PRo windows tech support phone number Macbook PRo
+outlook/Hotmail phone number!!!! Support@ Macbook PRo Phone Number 1-8OO-6~26-
+O759@* Macbook PRo Outlook Tech Support Phone Number, Macbook PRo Customer
+Support Phone Number Macbook PRo Hotmail Customer Care Phone Number technical
+support usa* 8OO number for Macbook PRo tech support Macbook PRo phone number
+technical support Macbook PRo tech phone number Macbook PRo customer service
+phone Macbook PRo technical support telephone number outlook contact phone
+number office tech support number for Macbook PRo tech support Macbook PRo
+support phone number Macbook PRo support line Macbook PRo outlook tech support
+number Macbook PRo server support phone number Macbook PRo product support
+number Macbook PRo telephone support Macbook PRo 8OO phone number ms tech
+support Macbook PRo support number Macbook PRo windows 8 tech support call
+Macbook PRo support phone number windows 18OO number Macbook PRo windows tech
+support phone number Macbook PRo outlook/Hotmail phone number (()) Macbook PRo
+Phone Number 1-8OO-6~26- O759@* Macbook PRo Outlook Tech Support Phone Number,
+Macbook PRo Customer Support Phone Number Macbook PRo Hotmail Customer Care
+Phone Number technical support usa** 8OO number for Macbook PRo tech support
+Macbook PRo phone number technical support Macbook PRo tech phone number
+Macbook PRo customer service phone Macbook PRo technical support telephone
+number outlook contact phone number office tech support number for Macbook PRo
+tech support Macbook PRo support phone number Macbook PRo support line Macbook
+PRo outlook tech support number Macbook PRo server support phone number Macbook
+PRo product support number Macbook PRo telephone support Macbook PRo 8OO phone
+number ms tech support Macbook PRo support number Macbook PRo windows 8 tech
+support call Macbook PRo support phone number windows 18OO number Macbook PRo
+windows tech support phone number Macbook PRo outlook/Hotmail phone number
+Hotmail customer care phone number Hotmail technical support phone number **
+https://wiki.secondlife.com/wiki/@%2B%2B%2BMS_Office_Phone_Number1.8.O.O.2.3.5.3.0.8.3_@@_Macbook
+PRo_office_Technical_Support_Number
+https://wiki.secondlife.com/wiki/Call_USA@%2B%2B%2B@_18.00.2.61.38.51_Macbook
+PRo_office_tech_support_phone_number_ms_office_tech_support_phone_number
+https://wiki.secondlife.com/wiki/%2B%2BMacbook
+PRo%2B%2B%2B@@@_1.8.0.0.2.3.5.3.0.8.3_@%2B@_Macbook
+PRo_office_Technical_Support_Phone_Number_USA ~~((()))))$$
 
 -- 
 You are receiving this mail because:
