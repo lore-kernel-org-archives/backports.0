@@ -1,90 +1,31 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:60994 "EHLO
-	farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753883AbcGDNXv (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 4 Jul 2016 09:23:51 -0400
-Received: from [192.40.95.4] (helo=dubbel.ger.corp.intel.com)
-	by farmhouse.coelho.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	(Exim 4.87)
-	(envelope-from <luca@coelho.fi>)
-	id 1bK3qn-0001Ny-07
-	for backports@vger.kernel.org; Mon, 04 Jul 2016 16:23:49 +0300
-From: Luca Coelho <luca@coelho.fi>
-To: backports@vger.kernel.org
-Date: Mon,  4 Jul 2016 16:23:38 +0300
-Message-Id: <1467638618-9713-1-git-send-email-luca@coelho.fi> (sfid-20160704_152353_265008_6592302D)
-Subject: [PATCH] backports: add backport for old devcoredumpm (i.e. < 4.7)
+Received: from s3.sipsolutions.net ([5.9.151.49]:55308 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751054AbcGOSPq (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 15 Jul 2016 14:15:46 -0400
+Message-ID: <1468606541.3640.0.camel@sipsolutions.net> (sfid-20160715_201548_686432_35A36375)
+Subject: Re: [PATCH 12/19] patches: make iwlwifi use the old thermal APIs
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
+Date: Fri, 15 Jul 2016 20:15:41 +0200
+In-Reply-To: <1468185285-28265-13-git-send-email-hauke@hauke-m.de> (sfid-20160711_013911_630415_E2AA8EEB)
+References: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
+	 <1468185285-28265-13-git-send-email-hauke@hauke-m.de>
+	 (sfid-20160711_013911_630415_E2AA8EEB)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Luca Coelho <luciano.coelho@intel.com>
+On Sun, 2016-07-10 at 23:14 +0200, Hauke Mehrtens wrote:
+> The thermal API changed in the last kernel versions, make iwlwifi use
+> the correct interface for each kernel version.
+> 
+What's wrong with Luca's approach for this?
 
-The API has changed in kernel version 4.7.  So now we need to backport
-to this intermediate version if the kernel is > 3.18, but < 4.7.
+I really dislike having to touch the code, even if the amount of code
+for the "proper" backport is possibly bigger.
 
-To do so, add wrappers around the old functions and save the functions
-passed by the caller so that they can be passed by the wrappers.
-
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
----
- backport/backport-include/linux/bp-devcoredump.h | 27 ++++++++++++++++++++++++
- patches/backport-adjustments/devcoredump.patch   | 10 +++++++++
- 2 files changed, 37 insertions(+)
- create mode 100644 backport/backport-include/linux/bp-devcoredump.h
-
-diff --git a/backport/backport-include/linux/bp-devcoredump.h b/backport/backport-include/linux/bp-devcoredump.h
-new file mode 100644
-index 0000000..f116bd2
---- /dev/null
-+++ b/backport/backport-include/linux/bp-devcoredump.h
-@@ -0,0 +1,27 @@
-+#ifndef __BACKPORT_LINUX_DEVCOREDUMP_H
-+#define __BACKPORT_LINUX_DEVCOREDUMP_H
-+#include <linux/version.h>
-+
-+/* We only need to add our wrapper inside the range from 3.18 until
-+ * 4.6, outside that we can let our BPAUTO mechanism handle it.
-+ */
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0) &&	\
-+     LINUX_VERSION_CODE < KERNEL_VERSION(4,7,0))
-+static inline
-+void backport_dev_coredumpm(struct device *dev, struct module *owner,
-+			    void *data, size_t datalen, gfp_t gfp,
-+			    ssize_t (*read_fn)(char *buffer, loff_t offset,
-+					    size_t count, void *data,
-+					    size_t datalen),
-+			    void (*free_fn)(void *data))
-+{
-+	return dev_coredumpm(dev, owner, (const void *)data, datalen, gfp,
-+			     (void *)read_fn, (void *)free_fn);
-+}
-+
-+#define dev_coredumpm LINUX_BACKPORT(dev_coredumpm)
-+
-+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0) &&	\
-+	   LINUX_VERSION_CODE < KERNEL_VERSION(4,7,0)) */
-+
-+#endif /* __BACKPORT_LINUX_DEVCOREDUMP_H */
-diff --git a/patches/backport-adjustments/devcoredump.patch b/patches/backport-adjustments/devcoredump.patch
-index b438f32..2e90720 100644
---- a/patches/backport-adjustments/devcoredump.patch
-+++ b/patches/backport-adjustments/devcoredump.patch
-@@ -114,3 +114,13 @@
- +#endif /* CPTCFG_BPAUTO_WANT_DEV_COREDUMP */
-  
-  #endif /* __DEVCOREDUMP_H */
-+--- a/include/linux/devcoredump.h
-++++ b/include/linux/devcoredump.h
-+@@ -1,6 +1,7 @@
-+ /* Automatically created during backport process */
-+ #ifndef CPTCFG_BPAUTO_BUILD_WANT_DEV_COREDUMP
-+ #include_next <linux/devcoredump.h>
-++#include <linux/bp-devcoredump.h>
-+ #else
-+ #undef dev_coredumpv
-+ #define dev_coredumpv LINUX_BACKPORT(dev_coredumpv)
--- 
-2.8.1
-
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
