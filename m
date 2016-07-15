@@ -1,40 +1,38 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:42852 "EHLO mail.kernel.org"
+Received: from s3.sipsolutions.net ([5.9.151.49]:55398 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753244AbcGYSbl (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 25 Jul 2016 14:31:41 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 21B2A203AA
-	for <backports@vger.kernel.org>; Mon, 25 Jul 2016 18:31:40 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 6A89E205FA
-	for <backports@vger.kernel.org>; Mon, 25 Jul 2016 18:31:39 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 148941] 1888+468+0321 Bitdefender t-e-c-h s-u-p-p-o-r-t
- p-h-o-n-e n-u-m-b-e-r Bitdefender antivirus s-u-p-p-o-r-t , helpline for
- Bitdefender antivirus s-u-p-p-o-r-t p-h-o-n-e n-u-m-b-e-r
-Date: Mon, 25 Jul 2016 18:31:36 +0000
-Message-ID: <bug-148941-58281-QuwJ5KsIGX@https.bugzilla.kernel.org/> (sfid-20160725_203143_503361_378C4D96)
-In-Reply-To: <bug-148941-58281@https.bugzilla.kernel.org/>
-References: <bug-148941-58281@https.bugzilla.kernel.org/>
+	id S1751311AbcGOSj5 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 15 Jul 2016 14:39:57 -0400
+Message-ID: <1468607992.3640.2.camel@sipsolutions.net> (sfid-20160715_203958_750400_1BB882EA)
+Subject: Re: [PATCH 00/19] backports: bring to next-20160324
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
+Date: Fri, 15 Jul 2016 20:39:52 +0200
+In-Reply-To: <e6dd178e-560d-447f-a10d-7e1223eb49d8@hauke-m.de>
+References: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
+ <1468607662.3640.1.camel@sipsolutions.net>
+	 <e6dd178e-560d-447f-a10d-7e1223eb49d8@hauke-m.de>
 Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=148941
+On Fri, 2016-07-15 at 20:39 +0200, Hauke Mehrtens wrote:
+> Hi Johannes,
+> 
+> On 07/15/2016 08:34 PM, Johannes Berg wrote:
+> > On Sun, 2016-07-10 at 23:14 +0200, Hauke Mehrtens wrote:
+> > > This add various stuff needed for next-20160324.
+> > > 
+> > 
+> > Are you sure this was 2016 03 24?
+> 
+> Yes this is for 2016 03 24.
+> Do you see a problem or why are you asking?
+> 
 
-Spam Script <spamscript@kernel.org> changed:
+No, it just seemed so old :)
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-              Group|                            |Junk
-         Resolution|---                         |INVALID
-
--- 
-You are receiving this mail because:
-You are the assignee for the bug.
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
