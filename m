@@ -1,352 +1,456 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:38982 "EHLO mail.kernel.org"
+Received: from s3.sipsolutions.net ([5.9.151.49]:55512 "EHLO sipsolutions.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751157AbcGKVPn (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 11 Jul 2016 17:15:43 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id B7E7E201C0
-	for <backports@vger.kernel.org>; Mon, 11 Jul 2016 21:15:39 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id DA0022017E
-	for <backports@vger.kernel.org>; Mon, 11 Jul 2016 21:15:37 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
+	id S1751388AbcGOTBm (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 15 Jul 2016 15:01:42 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Subject: [Bug 122461] New: HELPLINE)!@!( 1800+492+3958 MACBOOK ANtivirus
- Customer S.e.r.v.i.c.e P.h.o.n.e Number
-Date: Mon, 11 Jul 2016 21:15:37 +0000
-Message-ID: <bug-122461-58281@https.bugzilla.kernel.org/> (sfid-20160711_231546_674808_5247E026)
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Cc: luca@coelho.fi, Luca Coelho <luciano.coelho@intel.com>
+Subject: [PATCH 1/2] backports: add some scatterlist backports for <3.9 and <3.11
+Date: Fri, 15 Jul 2016 21:01:34 +0200
+Message-Id: <1468609295-25792-1-git-send-email-johannes@sipsolutions.net> (sfid-20160715_210145_170482_5CDC9777)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=122461
+From: Luca Coelho <luciano.coelho@intel.com>
 
-            Bug ID: 122461
-           Summary: HELPLINE)!@!( 1800+492+3958 MACBOOK ANtivirus Customer
-                    S.e.r.v.i.c.e P.h.o.n.e Number
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: egdfgdfg
-          Hardware: All
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: Backports
-          Assignee: backports@vger.kernel.org
-          Reporter: jainsingh@yopmail.com
-        Regression: No
+There were some changes and additions in kernel 3.9 and again in 3.11.
+Add the needed backports accordingly.
 
-HELPLINE)!@!( 1800+492+3958 MACBOOK ANtivirus Customer S.e.r.v.i.c.e P.h.o.n.e
-Number
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/backport-include/linux/scatterlist.h |  92 ++++++++++++++
+ backport/compat/Makefile                      |   1 +
+ backport/compat/backport-3.11.c               | 124 +++++++++++++++++++
+ backport/compat/compat-3.9.c                  | 166 ++++++++++++++++++++++++++
+ 4 files changed, 383 insertions(+)
+ create mode 100644 backport/backport-include/linux/scatterlist.h
+ create mode 100644 backport/compat/backport-3.11.c
 
-ESET+1.8.0.0.4.9.2.3.9.5.8 phone number customer supportMACBOOK phone.. support
-numbertrend MACBOOKrosupport contact numbertrend MACBOOKrophone numbers
-customer supporttrend MACBOOKrophone.. support numbertrend MACBOOKrosupport
-contact numberESETprinter customer support phone number ,ESETtechnical support
-number usa Helpline US TOLL FREEtrend MACBOOKro360trend MACBOOKroCustomer
-Service Phone Number Toll Free 1.8.0.0.4.9.2.3.9.5.8ESETtech support phone
-number freetrend MACBOOKroCall@ US Toll Free 1.8.0.0.4.9.2.3.9.5.8ESETtech
-support phone number free 1 @@Call, +1.8.0.0.4.9.2.3.9.5.8for all type help
-bytrend MACBOOKrotech support phone number, Intuittrend MACBOOKroTech Support
-Phone Number,trend MACBOOKroHelp Desk Phone Number,trend MACBOOKrotech support
-number,trend MACBOOKrotechnical support phone number, @@@trend MACBOOKrophone
-number,trend MACBOOKrotechnical support number,trend MACBOOKrosupport phone
-number,trend MACBOOKrotechnical support,trend MACBOOKroCustomer Service Phone
-Number,trend MACBOOKroCustomer Service Number,trend MACBOOKroCustomer Support
-Phone Number,trend MACBOOKroCustomer Support Number,
-@@I.8.O.O4.4.52.79.O@@trend MACBOOKroCustomer Service Helpline Number,trend
-MACBOOKroCustomer Care Number,trend MACBOOKrosupport team phone number,
-@@@@ESEThelp number-ESETHelpline Number;trend MACBOOKrohelp phone
-number-ESETHelpline Number,trend MACBOOKroTech Support Toll free Number,trend
-MACBOOKroSupport Telephone Number,trend MACBOOKroTech Support Telephone
-number,trend MACBOOKroTech Support contact number,trend MACBOOKrosupport
-contact number,trend MACBOOKrotechnical support contact number. Call,
-+1.8.0.0.4.9.2.3.9.5.8trend MACBOOKrotech support phone number, Intuittrend
-MACBOOKroTech Support Phone Number,trend MACBOOKroHelp Desk Phone Number,trend
-MACBOOKrotech support number,trend MACBOOKrotechnical support phone
-number,trend MACBOOKrophone number,trend MACBOOKrotechnical support
-number,trend MACBOOKrosupport phone number. It is very popular toll free number
-which ANtivirusvide bytrend MACBOOKrotechnical support,trend MACBOOKroCustomer
-Service Phone Number,trend MACBOOKroCustomer Service Number,trend
-MACBOOKroCustomer Support Phone Number,trend MACBOOKroCustomer Support
-Number,trend MACBOOKroCustomer Service Helpline Number,trend MACBOOKroCustomer
-Care Number,trend MACBOOKrosupport team phone number. Call,trend MACBOOKrotech
-support phone number, Intuittrend MACBOOKroTech Support Phone Number,trend
-MACBOOKroHelp Desk Phone Number,trend MACBOOKrotech support number,trend
-MACBOOKrotechnical support phone number,trend MACBOOKrophone number,trend
-MACBOOKrotechnical support number,trend MACBOOKrosupport phone number,trend
-MACBOOKrotechnical support,trend MACBOOKroCustomer Service Phone Number,trend
-MACBOOKroCustomer Service Number,trend MACBOOKroCustomer Support Phone
-Number,trend MACBOOKroCustomer Support Number,trend MACBOOKroCustomer Service
-Helpline Number,trend MACBOOKroCustomer Care Number,trend MACBOOKrosupport team
-phone number, #ESETTech Support Phone +1.8.0.0.4.9.2.3.9.5.8Numbertrend
-MACBOOKrocustomer support numbertrend MACBOOKro1.8.0.0.4.9.2.3.9.5.8technical
-supporttrend MACBOOKrosupport phone numbertrend MACBOOKrotech support toll free
-number in usatrend MACBOOKrotech support phone numbertrend MACBOOKrotech
-support phone number freetrend MACBOOKrotechnical support phone numbertrend
-MACBOOKrotechnologies phone numbertrend MACBOOKrotelephone support numbertrend
-MACBOOKrosupport contact numbertrend MACBOOKro1.8.0.0.4.9.2.3.9.5.8customer
-support phone numbertrend MACBOOKro1.8.0.0.4.9.2.3.9.5.8ANtivirusblemstrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8tech supporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8technical supporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8toll free numbertrend MACBOOKrocom customer
-service phone numbertrend MACBOOKrocontact phone numbertrend MACBOOKrocontact
-telephone numbertrend MACBOOKrocustomer service contact numbertrend
-MACBOOKrocustomer service emailtrend MACBOOKrocustomer service phone
-numbertrend MACBOOKrocustomer service telephone numbertrend MACBOOKrocustomer
-services emailtrend MACBOOKrocustomer support email addresstrend
-MACBOOKrocustomer support numbertrend MACBOOKrocustomer support phone
-numbertrend MACBOOKro1.8.0.0.4.9.2.3.9.5.8tech support assistanttrend
-MACBOOKrosupport assistanttrend MACBOOKrotech support
-+ESET1.8.0.0.4.9.2.3.9.5.8+online +support +WEBROOT+support+number
-+WEBROOT+online+supporttrend MACBOOKro1.8.0.0.4.9.2.3.9.5.8number technical
-supporttrend MACBOOKro1.8.0.0.4.9.2.3.9.5.8service numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8support contact phone numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8telephone support number telephone numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8customer service numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8compaqtrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8supporttrend MACBOOKro1.8.0.0.4.9.2.3.9.5.8compaq
-supporttrend MACBOOKro1.8.0.0.4.9.2.3.9.5.8customer servicetrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8contact phone numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8customer phone numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8customer services numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8customer support telephone numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8support onlinetrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8tech supporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8service phone numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8support customer service numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8tech support phone numberstrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8technical support contact numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8telephone number customer service numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8tech support onlinetrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8tech supporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8customer supporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8customer servicetrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8online supporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8phone number customer supporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8support telephone numberstrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8technical support numberstrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8usa support telephone numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8supporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8supporttrend MACBOOKrosupporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8tech support @@Call, +1.8.0.0.4.9.2.3.9.5.8for
-all type help bytrend MACBOOKrotech support phone number, Intuittrend
-MACBOOKroTech Support Phone Number,trend MACBOOKroHelp Desk Phone Number,trend
-MACBOOKrotech support number,trend MACBOOKrotechnical support phone number,
-@@@trend MACBOOKrophone number,trend MACBOOKrotechnical support number,trend
-MACBOOKrosupport phone number,trend MACBOOKrotechnical support,trend
-MACBOOKroCustomer Service Phone Number,trend MACBOOKroCustomer Service
-Number,trend MACBOOKroCustomer Support Phone Number,trend MACBOOKroCustomer
-Support Number, @@I.8.O.O4.4.52.79.O@@trend MACBOOKroCustomer Service Helpline
-Number,trend MACBOOKroCustomer Care Number,trend MACBOOKrosupport team phone
-number, @@I.8.O.O4.4.52.79.O@@ESEThelp number-ESETHelpline Number;trend
-MACBOOKrohelp phone number-ESETHelpline Number,trend MACBOOKroTech Support Toll
-free Number,trend MACBOOKroSupport Telephone Number,trend MACBOOKroTech Support
-Telephone number,trend MACBOOKroTech Support contact number,trend
-MACBOOKrosupport contact number,trend MACBOOKrotechnical support contact
-number. Call, +1.8.0.0.4.9.2.3.9.5.8ESETtech support phone number, Intuittrend
-MACBOOKroTech Support Phone Number,trend MACBOOKroHelp Desk Phone Number,trend
-MACBOOKrotech support number,trend MACBOOKrotechnical support phone
-number,trend MACBOOKrophone number,trend MACBOOKrotechnical support
-number,trend MACBOOKrosupport phone number. It is very popular toll free number
-which ANtivirusvide bytrend MACBOOKrotechnical support,trend MACBOOKroCustomer
-Service Phone Number,trend MACBOOKroCustomer Service Number,trend
-MACBOOKroCustomer Support Phone Number,trend MACBOOKroCustomer Support
-Number,trend MACBOOKroCustomer Service Helpline Number,trend MACBOOKroCustomer
-Care Number,trend MACBOOKrosupport team phone number. Call,trend MACBOOKrotech
-support phone number, Intuittrend MACBOOKroTech Support Phone Number,trend
-MACBOOKroHelp Desk Phone Number,trend MACBOOKrotech support number,trend
-MACBOOKrotechnical support phone number,trend MACBOOKrophone number,trend
-MACBOOKrotechnical support number,trend MACBOOKrosupport phone number,trend
-MACBOOKrotechnical support,trend MACBOOKroCustomer Service Phone Number,trend
-MACBOOKroCustomer Service Number,trend MACBOOKroCustomer Support Phone
-Number,trend MACBOOKroCustomer Support Number,trend MACBOOKroCustomer Service
-Helpline Number,trend MACBOOKroCustomer Care Number,trend MACBOOKrosupport team
-phone number, #ESETTech Support Phone +1.8.0.0.4.9.2.3.9.5.8Numbertrend
-MACBOOKrocustomer support numbertrend MACBOOKro1.8.0.0.4.9.2.3.9.5.8technical
-supporttrend MACBOOKrosupport phone numbertrend MACBOOKrotech support toll free
-number in usatrend MACBOOKrotech support phone numbertrend MACBOOKrotech
-support phone number freetrend MACBOOKrotechnical support phone numbertrend
-MACBOOKrotechnologies phone numbertrend MACBOOKrotelephone support numbertrend
-MACBOOKrosupport contact numbertrend MACBOOKro1.8.0.0.4.9.2.3.9.5.8customer
-support phone numbertrend MACBOOKro1.8.0.0.4.9.2.3.9.5.8ANtivirusblemstrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8tech supporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8technical supporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8toll free numbertrend MACBOOKrocom customer
-service phone numbertrend MACBOOKrocontact phone numbertrend MACBOOKrocontact
-telephone numbertrend MACBOOKrocustomer service contact numbertrend
-MACBOOKrocustomer service emailtrend MACBOOKrocustomer service phone
-numbertrend MACBOOKrocustomer service telephone numbertrend MACBOOKrocustomer
-services emailtrend MACBOOKrocustomer support email addresstrend
-MACBOOKrocustomer support numbertrend MACBOOKrocustomer support phone
-numbertrend MACBOOKro1.8.0.0.4.9.2.3.9.5.8tech support assistanttrend
-MACBOOKrosupport assistanttrend MACBOOKrotech support
-+ESET1.8.0.0.4.9.2.3.9.5.8+online +support +WEBROOT+support+number
-+WEBROOT+online+supporttrend MACBOOKro1.8.0.0.4.9.2.3.9.5.8number technical
-supporttrend MACBOOKro1.8.0.0.4.9.2.3.9.5.8service numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8support contact phone numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8telephone support number telephone numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8customer service numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8compaqtrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8supporttrend MACBOOKro1.8.0.0.4.9.2.3.9.5.8compaq
-supporttrend MACBOOKro1.8.0.0.4.9.2.3.9.5.8customer servicetrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8contact phone numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8customer phone numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8customer services numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8customer support telephone numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8support onlinetrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8tech supporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8service phone numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8support customer service numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8tech support phone numberstrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8technical support contact numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8telephone number customer service numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8tech support onlinetrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8tech supporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8customer supporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8customer servicetrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8online supporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8phone number customer supporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8support telephone numberstrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8technical support numberstrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8usa support telephone numbertrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8supporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8supporttrend MACBOOKrosupporttrend
-MACBOOKro1.8.0.0.4.9.2.3.9.5.8tech support @@I.8.O.O4.4.52.79.O+++trend
-MACBOOKroa.n.t.i.v.i.r.u.s c.u.s.t.o.m.e.r s.e.r.v.i.c.e P.h.o.n.e numbertrend
-MACBOOKrot.e.c.h .s.u.p.p.o.r.t number @@
-1.8.0.0.4.9.2.3.9.5.8ESETa.n.t.i.v.i.r.u.s c.u.s.t.o.m.e.r s.e.r.v.i.c.e
-P.h.o.n.e numbertrend MACBOOKrot.e.c.h .s.u.p.p.o.r.t number usatrend
-MACBOOKroteleP.h.o.n.e numbertrend MACBOOKrotoll free numbertrend
-MACBOOKrou.s.atrend MACBOOKroANtivirus s.u.p.p.o.r.t services technical
-s.u.p.p.o.r.t for ANtivirustrend MACBOOKroc.u.s.t.o.m.e.r s.e.r.v.i.c.e
-P.h.o.n.e numbertrend MACBOOKrou.s.atrend MACBOOKroANtivirus customer care
-numbertrend MACBOOKrou.s.atrend MACBOOKrocustomer care numbertrend
-MACBOOKrocustomer care centertrend MACBOOKrocustomer s.u.p.p.o.r.ttrend
-MACBOOKrocustomer s.u.p.p.o.r.t P.h.o.n.etrend MACBOOKrocustomer h.e.l.ptrend
-MACBOOKrocustomer & technical s.u.p.p.o.r.ttrend MACBOOKrocustomer portaltrend
-MACBOOKrocustomer care P.h.o.n.e numbertrend MACBOOKrou.s.atrend
-MACBOOKrocustomer care emailtrend MACBOOKroh.e.l.p.l.i.n.etrend MACBOOKrotech
-s.u.p.p.o.r.t contacttrend MACBOOKrocustomer care toll freetrend
-MACBOOKroANtivirus c.u.s.t.o.m.e.r s.e.r.v.i.c.e numbertrend MACBOOKroANtivirus
-ANtivirustection ANtivirus c.u.s.t.o.m.e.r s.e.r.v.i.c.e numbertrend
-MACBOOKrosoftware c.u.s.t.o.m.e.r s.e.r.v.i.c.e numbertrend MACBOOKrohotline
-c.u.s.t.o.m.e.r s.e.r.v.i.c.e P.h.o.n.e numbertrend MACBOOKroc.u.s.t.o.m.e.r
-s.e.r.v.i.c.e P.h.o.n.e numbertrend MACBOOKrous how to contacttrend MACBOOKroby
-emailtrend MACBOOKrofree P.h.o.n.e s.u.p.p.o.r.ttrend MACBOOKroANtivirus
-technical s.u.p.p.o.r.t numbertrend MACBOOKroANtivirus technical s.u.p.p.o.r.t
-h.e.l.p desk P.h.o.n.e numbertrend MACBOOKrotechnical s.u.p.p.o.r.t numbertrend
-MACBOOKrotoll free numbertrend MACBOOKroANtivirus customer s.u.p.p.o.r.t
-P.h.o.n.e numbertrend MACBOOKroANtivirus c.u.s.t.o.m.e.r s.e.r.v.i.c.e
-P.h.o.n.e numbertrend MACBOOKroP.h.o.n.e numbertrend MACBOOKrofortrend
-MACBOOKroANtivirus c.u.s.t.o.m.e.r s.e.r.v.i.c.e contacttrend
-MACBOOKroANtivirus c.u.s.t.o.m.e.r s.e.r.v.i.c.e P.h.o.n.e numbertrend
-MACBOOKrosecurity s.u.p.p.o.r.t P.h.o.n.e numbertrend MACBOOKrointernet
-security s.u.p.p.o.r.t P.h.o.n.e numbertrend MACBOOKroP.h.o.n.e numbertrend
-MACBOOKrofortrend MACBOOKrosecuritytrend MACBOOKrointernet security P.h.o.n.e
-numbertrend MACBOOKroin u.s.atrend MACBOOKroANtivirus contact P.h.o.n.e
-numbertrend MACBOOKroin u.s.atrend MACBOOKrosecurity contact P.h.o.n.e
-numbertrend MACBOOKroANtivirus h.e.l.p desk P.h.o.n.e numbertrend MACBOOKroin
-u.s.atrend MACBOOKroANtivirus tech s.u.p.p.o.r.t P.h.o.n.e numbertrend
-MACBOOKrofree in u.s.atrend MACBOOKroANtivirus s.u.p.p.o.r.t P.h.o.n.e
-numbertrend MACBOOKroANtivirus P.h.o.n.e numbertrend MACBOOKros.u.p.p.o.r.t for
-technical issue in u.s.a P.h.o.n.e numbertrend MACBOOKrofortrend
-MACBOOKroANtivirus technical s.u.p.p.o.r.ttrend MACBOOKroANtivirus
-c.u.s.t.o.m.e.r s.e.r.v.i.c.e teleP.h.o.n.e numbertrend MACBOOKroANtivirus toll
-free customer care numberI.8.O.O4.4.52.79.O++trend MACBOOKroustrend
-MACBOOKroc.u.s.t.o.m.e.r s.e.r.v.i.c.e P.h.o.n.e numbertrend
-MACBOOKrou.s.atrend MACBOOKroteleP.h.o.n.e numbertrend MACBOOKroP.h.o.n.e
-numbertrend MACBOOKrou.s.atrend MACBOOKroANtivirus contact numbertrend
-MACBOOKronumbertrend MACBOOKrocontact numbertrend MACBOOKrou.s.atrend
-MACBOOKroANtivirus h.e.l.p.l.i.n.e numbertrend MACBOOKroh.e.l.p.l.i.n.e
-numbertrend MACBOOKrocustomer numbertrend MACBOOKroANtivirus c.u.s.t.o.m.e.r
-s.e.r.v.i.c.e numbertrend MACBOOKrocontact teleP.h.o.n.e numbertrend
-MACBOOKrocontact numbertrend MACBOOKrofortrend MACBOOKrosoftware contact
-numbertrend MACBOOKrotoll free numbertrend MACBOOKroteleP.h.o.n.e numbertrend
-MACBOOKrouktrend MACBOOKroregistration numbertrend MACBOOKrotoll free
-numbertrend MACBOOKrou.s.atrend MACBOOKroc.u.s.t.o.m.e.r s.e.r.v.i.c.etrend
-MACBOOKrosoftware c.u.s.t.o.m.e.r s.e.r.v.i.c.e contacttrend
-MACBOOKroc.u.s.t.o.m.e.r s.e.r.v.i.c.etrend MACBOOKroc.u.s.t.o.m.e.r
-s.e.r.v.i.c.e P.h.o.n.etrend MACBOOKroANtivirus c.u.s.t.o.m.e.r
-s.e.r.v.i.c.etrend MACBOOKroservicetrend MACBOOKroANtivirus technical
-s.u.p.p.o.r.ttrend MACBOOKroANtivirus customer s.u.p.p.o.r.ttrend
-MACBOOKrotechnical s.u.p.p.o.r.t reviews teleP.h.o.n.etrend
-MACBOOKroANtivirustrend MACBOOKrotech s.u.p.p.o.r.t P.h.o.n.e numbertrend
-MACBOOKroANtivirus tech s.u.p.p.o.r.t P.h.o.n.e numbertrend MACBOOKroANtivirus
-c.u.s.t.o.m.e.r s.e.r.v.i.c.etrend MACBOOKrotechnical s.u.p.p.o.r.t P.h.o.n.e
-numbertrend MACBOOKroANtivirus free ANtivirus s.u.p.p.o.r.ttrend
-MACBOOKroc.u.s.t.o.m.e.r s.e.r.v.i.c.e billingtrend MACBOOKroc.u.s.t.o.m.e.r
-s.e.r.v.i.c.e email addresstrend MACBOOKroc.u.s.t.o.m.e.r s.e.r.v.i.c.e reviews
-contacttrend MACBOOKroc.u.s.t.o.m.e.r s.e.r.v.i.c.etrend MACBOOKrotech
-s.u.p.p.o.r.t numbertrend MACBOOKrou.s.atrend MACBOOKroANtivirus s.u.p.p.o.r.t
-numbertrend MACBOOKroANtivirus contact numbertrend MACBOOKroc.u.s.t.o.m.e.r
-s.e.r.v.i.c.e P.h.o.n.e numbertrend MACBOOKrotechnical s.u.p.p.o.r.t u.s.atrend
-MACBOOKrotechnical s.u.p.p.o.r.t numbertrend MACBOOKrotech s.u.p.p.o.r.t
-P.h.o.n.etrend MACBOOKrotech s.u.p.p.o.r.t numbertrend MACBOOKroc.u.s.t.o.m.e.r
-s.e.r.v.i.c.e teleP.h.o.n.e numbertrend MACBOOKroANtivirus customer
-s.u.p.p.o.r.t numbertrend MACBOOKroANtivirus P.h.o.n.e numbertrend
-MACBOOKroANtivirus online s.u.p.p.o.r.ttrend MACBOOKroc.u.s.t.o.m.e.r
-s.e.r.v.i.c.e numbertrend MACBOOKrotech s.u.p.p.o.r.t centertrend
-MACBOOKroc.u.s.t.o.m.e.r s.e.r.v.i.c.etrend MACBOOKrosoftware c.u.s.t.o.m.e.r
-s.e.r.v.i.c.etrend MACBOOKrocustomer care numbertrend MACBOOKrou.s.atrend
-MACBOOKrocustomer numbertrend MACBOOKrocustomer s.u.p.p.o.r.t numbertrend
-MACBOOKrocustomer care numbertrend MACBOOKrocustomer care toll free numbertrend
-MACBOOKrotech s.u.p.p.o.r.ttrend MACBOOKrotechnical s.u.p.p.o.r.ttrend
-MACBOOKroANtivirus s.u.p.p.o.r.ttrend MACBOOKroANtivirus tech
-s.u.p.p.o.r.ttrend MACBOOKros.u.p.p.o.r.t center aV.G.com c.u.s.t.o.m.e.r
-s.e.r.v.i.c.etrend MACBOOKroANtivirus customer care numbertrend
-MACBOOKrocustomer caretrend MACBOOKroP.h.o.n.e numbertrend MACBOOKroP.h.o.n.e
-numbertrend MACBOOKrofortrend MACBOOKroc.u.s.t.o.m.e.r s.e.r.v.i.c.etrend
-MACBOOKroP.h.o.n.e s.u.p.p.o.r.ttrend MACBOOKroP.h.o.n.e numbertrend
-MACBOOKrotech s.u.p.p.o.r.ttrend MACBOOKros.u.p.p.o.r.t P.h.o.n.e numbertrend
-MACBOOKrocontacttrend MACBOOKroby P.h.o.n.etrend MACBOOKrocontact P.h.o.n.e
-numbertrend MACBOOKroh.e.l.p.l.i.n.e P.h.o.n.e numbertrend MACBOOKroANtivirus
-P.h.o.n.etrend MACBOOKroANtivirus for P.h.o.n.etrend MACBOOKrocontact
-numbertrend MACBOOKrocontact s.u.p.p.o.r.t contacttrend MACBOOKroANtivirustrend
-MACBOOKrocontact numbertrend MACBOOKrou.s.atrend MACBOOKrotoll free numbertrend
-MACBOOKroteleP.h.o.n.e numbertrend MACBOOKrotoll free numbertrend
-MACBOOKrou.s.atrend MACBOOKroANtivirus s.u.p.p.o.r.t services technical
-s.u.p.p.o.r.t for ANtivirustrend MACBOOKroc.u.s.t.o.m.e.r s.e.r.v.i.c.e
-P.h.o.n.e numbertrend MACBOOKrou.s.atrend MACBOOKroANtivirus customer care
-numbertrend MACBOOKrou.s.atrend MACBOOKrocustomer care numbertrend
-MACBOOKrocustomer care centertrend MACBOOKrocustomer s.u.p.p.o.r.ttrend
-MACBOOKrocustomer s.u.p.p.o.r.t P.h.o.n.etrend MACBOOKrocustomer h.e.l.ptrend
-MACBOOKrocustomer & technical s.u.p.p.o.r.ttrend MACBOOKrocustomer portaltrend
-MACBOOKrocustomer care P.h.o.n.e numbertrend MACBOOKrou.s.atrend
-MACBOOKrocustomer care emailtrend MACBOOKroh.e.l.p.l.i.n.etrend MACBOOKrotech
-s.u.p.p.o.r.t contacttrend MACBOOKrocustomer care toll freetrend
-MACBOOKroANtivirus c.u.s.t.o.m.e.r s.e.r.v.i.c.e numbertrend MACBOOKroANtivirus
-ANtivirustection ANtivirus c.u.s.t.o.m.e.r s.e.r.v.i.c.e numbertrend
-MACBOOKrosoftware c.u.s.t.o.m.e.r s.e.r.v.i.c.e numbertrend MACBOOKrohotline
-c.u.s.t.o.m.e.r s.e.r.v.i.c.e P.h.o.n.e numbertrend MACBOOKroc.u.s.t.o.m.e.r
-s.e.r.v.i.c.e P.h.o.n.e numbertrend MACBOOKrous how to contacttrend MACBOOKroby
-emailtrend MACBOOKrofree P.h.o.n.e s.u.p.p.o.r.ttrend MACBOOKroANtivirus
-technical s.u.p.p.o.r.t numbertrend MACBOOKroANtivirus technical s.u.p.p.o.r.t
-h.e.l.p desk P.h.o.n.e numbertrend MACBOOKrotechnical s.u.p.p.o.r.t numbertrend
-MACBOOKrotoll free numbertrend MACBOOKroANtivirus customer s.u.p.p.o.r.t
-P.h.o.n.e numbertrend MACBOOKroANtivirus c.u.s.t.o.m.e.r s.e.r.v.i.c.e
-P.h.o.n.e numbertrend MACBOOKroP.h.o.n.e numbertrend MACBOOKro....fortrend
-MACBOOKroANtivirus c.u.s.t.o.m.e.r s.e.r.v.i.c.e contacttrend
-MACBOOKroANtivirus c.u.s.t.o.m.e.r s.e.r.v.i.c.e P.h.o.n.e numbertrend
-MACBOOKrosecurity s.u.p.p.o.r.t P.h.o.n.e numbertrend MACBOOKrointernet
-security s.u.p.p.o.r.t P.h.o.n.e numbertrend MACBOOKroP.h.o.n.e numbertrend
-MACBOOKrofortrend MACBOOKrosecuritytrend MACBOOKrointernet security P.h.o.n.e
-numbertrend MACBOOKroin u.s.atrend MACBOOKroANtivirus contact P.h.o.n.e
-numbertrend MACBOOKroin u.s.atrend MACBOOKrosecurity contact P.h.o.n.e
-numbertrend MACBOOKroANtivirus h.e.l.p desk P.h.o.n.e numbertrend MACBOOKroin
-u.s.atrend MACBOOKroANtivirus tech s.u.p.p.o.r.t P.h.o.n.e numbertrend
-MACBOOKrofree in u.s.atrend MACBOOKroANtivirus s.u.p.p.o.r.t P.h.o.n.e
-numbertrend MACBOOKroANtivirus P.h.o.n.e numbertrend MACBOOKros.u.p.p.o.r.t for
-technical issue in u.s.a P.h.o.n.e numbertrend MACBOOKrofortrend
-MACBOOKroANtivirus technical s.u.p.p.o.r.ttrend MACBOOKroANtivirus
-c.u.s.t.o.m.e.r s.e.r.v.i.c.e teleP.h.o.n.e numbertrend MACBOOKroANtivirus toll
-free customer care number
-
+diff --git a/backport/backport-include/linux/scatterlist.h b/backport/backport-include/linux/scatterlist.h
+new file mode 100644
+index 000000000000..47335588ad85
+--- /dev/null
++++ b/backport/backport-include/linux/scatterlist.h
+@@ -0,0 +1,92 @@
++#ifndef __BACKPORT_SCATTERLIST_H
++#define __BACKPORT_SCATTERLIST_H
++#include_next <linux/scatterlist.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 9, 0)
++
++/*
++ * sg page iterator
++ *
++ * Iterates over sg entries page-by-page.  On each successful iteration,
++ * @piter->page points to the current page, @piter->sg to the sg holding this
++ * page and @piter->sg_pgoffset to the page's page offset within the sg. The
++ * iteration will stop either when a maximum number of sg entries was reached
++ * or a terminating sg (sg_last(sg) == true) was reached.
++ */
++struct sg_page_iter {
++	struct page             *page;          /* current page */
++	struct scatterlist      *sg;            /* sg holding the page */
++	unsigned int            sg_pgoffset;    /* page offset within the sg */
++
++	/* these are internal states, keep away */
++	unsigned int            __nents;        /* remaining sg entries */
++	int                     __pg_advance;   /* nr pages to advance at the
++						 * next step */
++};
++
++struct backport_sg_mapping_iter {
++	/* the following three fields can be accessed directly */
++	struct page		*page;		/* currently mapped page */
++	void			*addr;		/* pointer to the mapped area */
++	size_t			length;		/* length of the mapped area */
++	size_t			consumed;	/* number of consumed bytes */
++	struct sg_page_iter	piter;		/* page iterator */
++
++	/* these are internal states, keep away */
++	unsigned int		__offset;	/* offset within page */
++	unsigned int		__remaining;	/* remaining bytes on page */
++	unsigned int		__flags;
++};
++#define sg_mapping_iter LINUX_BACKPORT(sg_mapping_iter)
++
++/**
++ * sg_page_iter_page - get the current page held by the page iterator
++ * @piter:	page iterator holding the page
++ */
++static inline struct page *sg_page_iter_page(struct sg_page_iter *piter)
++{
++	return nth_page(sg_page(piter->sg), piter->sg_pgoffset);
++}
++
++bool __sg_page_iter_next(struct sg_page_iter *piter);
++void __sg_page_iter_start(struct sg_page_iter *piter,
++			  struct scatterlist *sglist, unsigned int nents,
++			  unsigned long pgoffset);
++
++void backport_sg_miter_start(struct sg_mapping_iter *miter, struct scatterlist *sgl,
++		    unsigned int nents, unsigned int flags);
++bool backport_sg_miter_next(struct sg_mapping_iter *miter);
++void backport_sg_miter_stop(struct sg_mapping_iter *miter);
++#define sg_miter_start LINUX_BACKPORT(sg_miter_start)
++#define sg_miter_next LINUX_BACKPORT(sg_miter_next)
++#define sg_miter_stop LINUX_BACKPORT(sg_miter_stop)
++
++/**
++ * for_each_sg_page - iterate over the pages of the given sg list
++ * @sglist:    sglist to iterate over
++ * @piter:     page iterator to hold current page, sg, sg_pgoffset
++ * @nents:     maximum number of sg entries to iterate over
++ * @pgoffset:  starting page offset
++ */
++#define for_each_sg_page(sglist, piter, nents, pgoffset)		\
++	for (__sg_page_iter_start((piter), (sglist), (nents), (pgoffset)); \
++	     __sg_page_iter_next(piter);)
++
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3, 9, 0) */
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 11, 0)
++size_t sg_copy_buffer(struct scatterlist *sgl, unsigned int nents, void *buf,
++		      size_t buflen, off_t skip, bool to_buffer);
++
++#define sg_pcopy_to_buffer LINUX_BACKPORT(sg_pcopy_to_buffer)
++
++static inline
++size_t sg_pcopy_to_buffer(struct scatterlist *sgl, unsigned int nents,
++			  void *buf, size_t buflen, off_t skip)
++{
++	return sg_copy_buffer(sgl, nents, buf, buflen, skip, true);
++}
++
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3, 11, 0) */
++
++#endif /* __BACKPORT_SCATTERLIST_H */
+diff --git a/backport/compat/Makefile b/backport/compat/Makefile
+index 6013083e22b1..8cf1a7b83c8f 100644
+--- a/backport/compat/Makefile
++++ b/backport/compat/Makefile
+@@ -18,6 +18,7 @@ compat-$(CPTCFG_KERNEL_3_7) += compat-3.7.o
+ compat-$(CPTCFG_KERNEL_3_8) += compat-3.8.o
+ compat-$(CPTCFG_KERNEL_3_9) += compat-3.9.o
+ compat-$(CPTCFG_KERNEL_3_10) += backport-3.10.o
++compat-$(CPTCFG_KERNEL_3_11) += backport-3.11.o
+ compat-$(CPTCFG_KERNEL_3_12) += backport-3.12.o
+ compat-$(CPTCFG_KERNEL_3_13) += backport-3.13.o
+ compat-$(CPTCFG_KERNEL_3_14) += backport-3.14.o
+diff --git a/backport/compat/backport-3.11.c b/backport/compat/backport-3.11.c
+new file mode 100644
+index 000000000000..7f9ff3419344
+--- /dev/null
++++ b/backport/compat/backport-3.11.c
+@@ -0,0 +1,124 @@
++/*
++ * Copyright (c) 2016 Intel Deutschland GmbH
++ *
++ * Backport functionality introduced in Linux 3.11.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/module.h>
++#include <linux/scatterlist.h>
++
++static bool sg_miter_get_next_page(struct sg_mapping_iter *miter)
++{
++	if (!miter->__remaining) {
++		struct scatterlist *sg;
++		unsigned long pgoffset;
++
++		if (!__sg_page_iter_next(&miter->piter))
++			return false;
++
++		sg = miter->piter.sg;
++		pgoffset = miter->piter.sg_pgoffset;
++
++		miter->__offset = pgoffset ? 0 : sg->offset;
++		miter->__remaining = sg->offset + sg->length -
++				(pgoffset << PAGE_SHIFT) - miter->__offset;
++		miter->__remaining = min_t(unsigned long, miter->__remaining,
++					   PAGE_SIZE - miter->__offset);
++	}
++
++	return true;
++}
++
++/**
++ * sg_miter_skip - reposition mapping iterator
++ * @miter: sg mapping iter to be skipped
++ * @offset: number of bytes to plus the current location
++ *
++ * Description:
++ *   Sets the offset of @miter to its current location plus @offset bytes.
++ *   If mapping iterator @miter has been proceeded by sg_miter_next(), this
++ *   stops @miter.
++ *
++ * Context:
++ *   Don't care if @miter is stopped, or not proceeded yet.
++ *   Otherwise, preemption disabled if the SG_MITER_ATOMIC is set.
++ *
++ * Returns:
++ *   true if @miter contains the valid mapping.  false if end of sg
++ *   list is reached.
++ */
++static bool sg_miter_skip(struct sg_mapping_iter *miter, off_t offset)
++{
++	sg_miter_stop(miter);
++
++	while (offset) {
++		off_t consumed;
++
++		if (!sg_miter_get_next_page(miter))
++			return false;
++
++		consumed = min_t(off_t, offset, miter->__remaining);
++		miter->__offset += consumed;
++		miter->__remaining -= consumed;
++		offset -= consumed;
++	}
++
++	return true;
++}
++
++/**
++ * sg_copy_buffer - Copy data between a linear buffer and an SG list
++ * @sgl:		 The SG list
++ * @nents:		 Number of SG entries
++ * @buf:		 Where to copy from
++ * @buflen:		 The number of bytes to copy
++ * @skip:		 Number of bytes to skip before copying
++ * @to_buffer:		 transfer direction (true == from an sg list to a
++ *			 buffer, false == from a buffer to an sg list
++ *
++ * Returns the number of copied bytes.
++ *
++ **/
++size_t sg_copy_buffer(struct scatterlist *sgl, unsigned int nents, void *buf,
++		      size_t buflen, off_t skip, bool to_buffer)
++{
++	unsigned int offset = 0;
++	struct sg_mapping_iter miter;
++	unsigned long flags;
++	unsigned int sg_flags = SG_MITER_ATOMIC;
++
++	if (to_buffer)
++		sg_flags |= SG_MITER_FROM_SG;
++	else
++		sg_flags |= SG_MITER_TO_SG;
++
++	sg_miter_start(&miter, sgl, nents, sg_flags);
++
++	if (!sg_miter_skip(&miter, skip))
++		return false;
++
++	local_irq_save(flags);
++
++	while (sg_miter_next(&miter) && offset < buflen) {
++		unsigned int len;
++
++		len = min(miter.length, buflen - offset);
++
++		if (to_buffer)
++			memcpy(buf + offset, miter.addr, len);
++		else
++			memcpy(miter.addr, buf + offset, len);
++
++		offset += len;
++	}
++
++	sg_miter_stop(&miter);
++
++	local_irq_restore(flags);
++	return offset;
++}
++EXPORT_SYMBOL_GPL(sg_copy_buffer);
+diff --git a/backport/compat/compat-3.9.c b/backport/compat/compat-3.9.c
+index 5a4f52390cbe..93889b550327 100644
+--- a/backport/compat/compat-3.9.c
++++ b/backport/compat/compat-3.9.c
+@@ -15,6 +15,8 @@
+ #include <linux/if.h>
+ #include <linux/if_ether.h>
+ #include <linux/etherdevice.h>
++#include <linux/scatterlist.h>
++#include <linux/highmem.h>
+ #include <net/inet_frag.h>
+ #include <net/sock.h>
+ 
+@@ -70,3 +72,167 @@ void inet_frag_maybe_warn_overflow(struct inet_frag_queue *q,
+ 		LIMIT_NETDEBUG(KERN_WARNING "%s%s", prefix, msg);
+ }
+ EXPORT_SYMBOL_GPL(inet_frag_maybe_warn_overflow);
++
++void __sg_page_iter_start(struct sg_page_iter *piter,
++			  struct scatterlist *sglist, unsigned int nents,
++			  unsigned long pgoffset)
++{
++	piter->__pg_advance = 0;
++	piter->__nents = nents;
++
++	piter->page = NULL;
++	piter->sg = sglist;
++	piter->sg_pgoffset = pgoffset;
++}
++EXPORT_SYMBOL_GPL(__sg_page_iter_start);
++
++static int sg_page_count(struct scatterlist *sg)
++{
++	return PAGE_ALIGN(sg->offset + sg->length) >> PAGE_SHIFT;
++}
++
++bool __sg_page_iter_next(struct sg_page_iter *piter)
++{
++	if (!piter->__nents || !piter->sg)
++		return false;
++
++	piter->sg_pgoffset += piter->__pg_advance;
++	piter->__pg_advance = 1;
++
++	while (piter->sg_pgoffset >= sg_page_count(piter->sg)) {
++		piter->sg_pgoffset -= sg_page_count(piter->sg);
++		piter->sg = sg_next(piter->sg);
++		if (!--piter->__nents || !piter->sg)
++			return false;
++	}
++	piter->page = nth_page(sg_page(piter->sg), piter->sg_pgoffset);
++
++	return true;
++}
++EXPORT_SYMBOL_GPL(__sg_page_iter_next);
++
++static bool sg_miter_get_next_page(struct sg_mapping_iter *miter)
++{
++	if (!miter->__remaining) {
++		struct scatterlist *sg;
++		unsigned long pgoffset;
++
++		if (!__sg_page_iter_next(&miter->piter))
++			return false;
++
++		sg = miter->piter.sg;
++		pgoffset = miter->piter.sg_pgoffset;
++
++		miter->__offset = pgoffset ? 0 : sg->offset;
++		miter->__remaining = sg->offset + sg->length -
++				(pgoffset << PAGE_SHIFT) - miter->__offset;
++		miter->__remaining = min_t(unsigned long, miter->__remaining,
++					   PAGE_SIZE - miter->__offset);
++	}
++
++	return true;
++}
++
++/**
++ * sg_miter_start - start mapping iteration over a sg list
++ * @miter: sg mapping iter to be started
++ * @sgl: sg list to iterate over
++ * @nents: number of sg entries
++ *
++ * Description:
++ *   Starts mapping iterator @miter.
++ *
++ * Context:
++ *   Don't care.
++ */
++void backport_sg_miter_start(struct sg_mapping_iter *miter, struct scatterlist *sgl,
++		    unsigned int nents, unsigned int flags)
++{
++	memset(miter, 0, sizeof(struct sg_mapping_iter));
++
++	__sg_page_iter_start(&miter->piter, sgl, nents, 0);
++	WARN_ON(!(flags & (SG_MITER_TO_SG | SG_MITER_FROM_SG)));
++	miter->__flags = flags;
++}
++EXPORT_SYMBOL_GPL(backport_sg_miter_start);
++
++/**
++ * sg_miter_next - proceed mapping iterator to the next mapping
++ * @miter: sg mapping iter to proceed
++ *
++ * Description:
++ *   Proceeds @miter to the next mapping.  @miter should have been started
++ *   using sg_miter_start().  On successful return, @miter->page,
++ *   @miter->addr and @miter->length point to the current mapping.
++ *
++ * Context:
++ *   Preemption disabled if SG_MITER_ATOMIC.  Preemption must stay disabled
++ *   till @miter is stopped.  May sleep if !SG_MITER_ATOMIC.
++ *
++ * Returns:
++ *   true if @miter contains the next mapping.  false if end of sg
++ *   list is reached.
++ */
++bool backport_sg_miter_next(struct sg_mapping_iter *miter)
++{
++	sg_miter_stop(miter);
++
++	/*
++	 * Get to the next page if necessary.
++	 * __remaining, __offset is adjusted by sg_miter_stop
++	 */
++	if (!sg_miter_get_next_page(miter))
++		return false;
++
++	miter->page = sg_page_iter_page(&miter->piter);
++	miter->consumed = miter->length = miter->__remaining;
++
++	if (miter->__flags & SG_MITER_ATOMIC)
++		miter->addr = kmap_atomic(miter->page) + miter->__offset;
++	else
++		miter->addr = kmap(miter->page) + miter->__offset;
++
++	return true;
++}
++EXPORT_SYMBOL_GPL(backport_sg_miter_next);
++
++/**
++ * sg_miter_stop - stop mapping iteration
++ * @miter: sg mapping iter to be stopped
++ *
++ * Description:
++ *   Stops mapping iterator @miter.  @miter should have been started
++ *   using sg_miter_start().  A stopped iteration can be resumed by
++ *   calling sg_miter_next() on it.  This is useful when resources (kmap)
++ *   need to be released during iteration.
++ *
++ * Context:
++ *   Preemption disabled if the SG_MITER_ATOMIC is set.  Don't care
++ *   otherwise.
++ */
++void backport_sg_miter_stop(struct sg_mapping_iter *miter)
++{
++	WARN_ON(miter->consumed > miter->length);
++
++	/* drop resources from the last iteration */
++	if (miter->addr) {
++		miter->__offset += miter->consumed;
++		miter->__remaining -= miter->consumed;
++
++		if ((miter->__flags & SG_MITER_TO_SG) &&
++		    !PageSlab(miter->page))
++			flush_kernel_dcache_page(miter->page);
++
++		if (miter->__flags & SG_MITER_ATOMIC) {
++			WARN_ON_ONCE(preemptible());
++			kunmap_atomic(miter->addr);
++		} else
++			kunmap(miter->page);
++
++		miter->page = NULL;
++		miter->addr = NULL;
++		miter->length = 0;
++		miter->consumed = 0;
++	}
++}
++EXPORT_SYMBOL_GPL(backport_sg_miter_stop);
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+2.8.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
