@@ -1,36 +1,193 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:55982 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:51134 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754419AbcGUVPT (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 21 Jul 2016 17:15:19 -0400
+	id S1754088AbcGUU6r (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 21 Jul 2016 16:58:47 -0400
 Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 419572052C
-	for <backports@vger.kernel.org>; Thu, 21 Jul 2016 21:15:18 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id E2965204E3
-	for <backports@vger.kernel.org>; Thu, 21 Jul 2016 21:15:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 877302045B
+	for <backports@vger.kernel.org>; Thu, 21 Jul 2016 20:58:45 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+	by mail.kernel.org (Postfix) with ESMTP id 4D8AC2041B
+	for <backports@vger.kernel.org>; Thu, 21 Jul 2016 20:58:44 +0000 (UTC)
 From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: [Bug 135741] **^*DINESH @ *1*8*4*4*3*1*3*1*9*0*4* Hp Tech @support
- phone number Hp printer customer care service phone number
-Date: Thu, 21 Jul 2016 21:15:16 +0000
-Message-ID: <bug-135741-58281-IHqXHFwZYO@https.bugzilla.kernel.org/> (sfid-20160721_231831_301457_E9641F1A)
-In-Reply-To: <bug-135741-58281@https.bugzilla.kernel.org/>
-References: <bug-135741-58281@https.bugzilla.kernel.org/>
+Subject: [Bug 137281] New: microsoft $$$844-307-5701+))))outlook tech support
+ number@@microsoft outlook
+Date: Thu, 21 Jul 2016 20:58:43 +0000
+Message-ID: <bug-137281-58281@https.bugzilla.kernel.org/> (sfid-20160721_225850_330786_C08EE7D9)
 Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=135741
+https://bugzilla.kernel.org/show_bug.cgi?id=137281
 
-Spam Script <spamscript@kernel.org> changed:
+            Bug ID: 137281
+           Summary: microsoft $$$844-307-5701+))))outlook tech support
+                    number@@microsoft outlook
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: microsoft $$$844-307-5701+))))outlook tech support
+                    number@@microsoft outlook
+          Hardware: All
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: high
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: haridwarahia@yopmail.com
+        Regression: No
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-              Group|                            |Junk
-         Resolution|---                         |INVALID
+microsoft $$$844-307-5701+))))outlook tech support number@@microsoft outlook 
+microsoft $$$844-307-5701+))))outlook tech support number@@microsoft
+outlookmicrosoft $$$844-307-5701+))))outlook tech support number@@microsoft
+outlook======microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook  microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlookmicrosoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook======microsoft $$$844-307-5701+))))outlook tech
+support number@@microsoft outlook>>>>>>>>>><<<<<<<<<<<microsoft
+$$$844-307-5701+))))outlook tech support number@@microsoft
+outlook<<<<<<<<<>>>>>>>>>>>microsoft $$$844-307-5701+))))outlook tech support
+number@@microsoft outlook
 
 -- 
 You are receiving this mail because:
