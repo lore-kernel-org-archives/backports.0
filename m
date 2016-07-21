@@ -1,58 +1,146 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pf0-f177.google.com ([209.85.192.177]:34895 "EHLO
-	mail-pf0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932537AbcGOK4P (ORCPT
-	<rfc822;backports@vger.kernel.org>); Fri, 15 Jul 2016 06:56:15 -0400
-Received: by mail-pf0-f177.google.com with SMTP id c2so40634549pfa.2
-        for <backports@vger.kernel.org>; Fri, 15 Jul 2016 03:56:14 -0700 (PDT)
-Subject: Re: [PATCH 1/2] backports: add definition for USB_SPEED_SUPER_PLUS
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>
-References: <1465119005-4161-1-git-send-email-arend.vanspriel@broadcom.com>
- <5c4fbb51-7c91-fab5-a9b4-cc39304aff6f@hauke-m.de>
-Cc: backports@vger.kernel.org
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <e342b267-32aa-f5f9-4575-b81a31e93ea0@broadcom.com> (sfid-20160715_125617_777321_A6B86FDC)
-Date: Fri, 15 Jul 2016 12:56:06 +0200
+Received: from mail.kernel.org ([198.145.29.136]:37034 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754531AbcGUWMT (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 21 Jul 2016 18:12:19 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 7E2BB2050E
+	for <backports@vger.kernel.org>; Thu, 21 Jul 2016 22:12:17 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+	by mail.kernel.org (Postfix) with ESMTP id 4CDBA20501
+	for <backports@vger.kernel.org>; Thu, 21 Jul 2016 22:12:16 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 137971] New: Call,@(1 80 02 13 21 71)@-: Icloud help number
+ usa-Icloud Helpline number
+Date: Thu, 21 Jul 2016 22:12:16 +0000
+Message-ID: <bug-137971-58281@https.bugzilla.kernel.org/> (sfid-20160722_001222_256926_954EEEA0)
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-In-Reply-To: <5c4fbb51-7c91-fab5-a9b4-cc39304aff6f@hauke-m.de>
-Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 10-7-2016 23:16, Hauke Mehrtens wrote:
-> On 06/05/2016 11:30 AM, Arend van Spriel wrote:
->> Speed definition for usb3.1 has been added in 4.6 kernel. Add
->> definiton for older kernels.
->>
->> Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
->> ---
->>  backport/backport-include/linux/usb/ch9.h | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/backport/backport-include/linux/usb/ch9.h b/backport/backport-include/linux/usb/ch9.h
->> index 135e24c..c42fc30 100644
->> --- a/backport/backport-include/linux/usb/ch9.h
->> +++ b/backport/backport-include/linux/usb/ch9.h
->> @@ -21,4 +21,8 @@ static inline int usb_endpoint_maxp(const struct usb_endpoint_descriptor *epd)
->>  }
->>  #endif /* < 3.2 */
->>  
->> +#if LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0)
->> +#define USB_SPEED_SUPER_PLUS	(USB_SPEED_SUPER + 1)
->> +#endif /* < 4.6 */
->> +
->>  #endif /* __BACKPORT__LINUX_USB_CH9_H */
->>
-> 
-> This is in a emum in the mainline kernel. I think this will cause some
-> warnings when backporting it this way.
+https://bugzilla.kernel.org/show_bug.cgi?id=137971
 
-The way it is used in brcmfmac I do not get a warning, but I agree it
-would not work if this value is used calling a function that expects
-enum usb_device_speed. So how would you backport this?
+            Bug ID: 137971
+           Summary: Call,@(1 80 02 13 21 71)@-: Icloud help number
+                    usa-Icloud Helpline number
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: 4
+          Hardware: Intel
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: high
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: rajdsky9@gmail.com
+        Regression: No
 
-Regards,
-Arend
+Call, 1 80 02 13 21 71 for Icloud customer support phone number Icloud
+Technical Support phone Number Icloud phone number usa Icloud Toll Free, @(1 80
+02 13 21 71)@-: Icloud help desk phone number voses online solution for all
+USA/CANADA clients. For any help of query call 1 80 02 13 21 71 to get all
+Icloud account solution. 185 58 54 14 05 For any help of query call 1 85 58 54
+14 05 to get all Icloud account solution. @@Call, 1 80 02 13 21 71 for all type
+help by Icloud support telephone number,Icloud support phone number,Icloud
+support phone number,Icloud help phone number, Icloud technical support
+number.Icloud support number, Icloud phone number, Icloud tech support number,
+Icloud customer support number, Icloud customer support phone number, Icloud
+customer service phone number, Icloud payroll customer service phone number,
+Icloud support phone number Icloud help number-Icloud Helpline Number; Icloud
+help phone number-Icloud Helpline Number, Icloud Tech Support Toll free Number,
+Icloud Support Telephone Number, Icloud Tech Support Telephone number, Icloud
+Tech Support contact number, Icloud support contact number, Icloud technical
+support contact number, Icloud help desk phone number.Icloud password recovery
+support phone number. Call, @(1 80 02 13 21 71)@-: Icloud password recovery
+support phone number. It@@Call, 1 80 02 13 21 71 for Icloud customer support
+telephone number,Icloud support phone number is very popular toll free number
+which vose by Icloud technical support, Icloud Customer Service Phone Number,
+Icloud Customer Service Number, Icloud Customer Support Phone Number, Icloud
+Customer Support Number, Icloud Customer Service Helpline Number, Icloud
+Customer Care Number, Icloud support team phone number. Icloud password
+recovery support phone number. Call,@(1 80 02 13 21 71)@-: Icloud help
+number-Icloud Helpline Number; Icloud help phone number, Icloud Helpline
+Number, Icloud Tech Support Toll free Number, Icloud Support Telephone Number,
+Icloud Tech Support Telephone number, Icloud Tech Support contact number,
+Icloud support contact number, Icloud technical support contact number, Icloud
+support phone number, Icloud payroll support phone number. Icloud payroll
+customer support phone number.. Icloud password reset support phone number. for
+all type help by Icloud support telephone number, Icloud help phone number,
+Icloud technical support number.Icloud support number, Icloud phone number,
+Icloud tech support number, Icloud customer support number, Icloud customer
+support phone number, Icloud customer service phone number, Icloud payroll
+customer service phone number Icloud Toll Free, @(1 80 02 13 21 71)@-: Icloud
+Technical Support number usa, Icloud help desk phone number usa voses online
+solution for all USA/CANADA clients. For any help of query call 1 80 02 13 21
+71 to get all Icloud account solution. 185 58 54 14 05 For any help of query
+call 1 85 58 54 14 05 to get all Icloud account solution. @@Call, 1 80 02 13 21
+71 for all type help by Icloud support phone number usa,Icloud support phone
+number usa,Icloud support phone number usa,Icloud help phone number usa, Icloud
+technical support number usa.Icloud support number usa, Icloud phone number
+usa, Icloud tech support number usa, Icloud customer support number usa, Icloud
+customer support phone number usa, Icloud customer service phone number usa,
+Icloud payroll customer service phone number usa, Icloud support phone number
+usa Icloud help number usa-Icloud Helpline number usa; Icloud help phone number
+usa-Icloud Helpline number usa, Icloud Tech Support Toll free number usa,
+Icloud Support Telephone number usa, Icloud Tech Support Telephone number usa,
+Icloud Tech Support contact number usa, Icloud support contact number usa,
+Icloud technical support contact number usa, Icloud help desk phone number
+usa.Icloud password recovery support phone number usa. Call, @(1 80 02 13 21
+71)@-: Icloud password recovery support phone number usa. It is very popular
+toll free number usa which vose by Icloud technical support, Icloud Customer
+Service Phone number usa, Icloud Customer Service number usa, Icloud Customer
+Support Phone number usa, Icloud Customer Support number usa, Icloud Customer
+Service Helpline number usa, Icloud Customer Care number usa, Icloud support
+team phone number usa. Icloud password recovery support phone number usa.
+Call,@(1 80 02 13 21 71)@-: Icloud help number usa-Icloud Helpline number usa;
+Icloud help phone number usa, Icloud Helpline number usa, Icloud Tech Support
+Toll free number usa, Icloud Support Telephone number usa, Icloud Tech Support
+Telephone number usa, Icloud Tech Support contact number usa, Icloud support
+contact number usa, Icloud technical support contact number usa, Icloud support
+phone number usa, Icloud payroll support phone number usa. Icloud payroll
+customer support phone number usa.. Icloud password reset support phone number
+usa. for all type help by Icloud support telephone number usa, Icloud help
+phone number usa, Icloud technical support number usa.Icloud support number
+usa, Icloud phone number usa, Icloud tech support number usa, Icloud customer
+support number usa, Icloud customer support phone number usa, Icloud customer
+service phone number usa, Icloud payroll customer service phone number usa
+@@Call, I-85 58 54 14 05 for all type help by Icloud support telephone
+number,Icloud support phone number,Icloud support phone number,Icloud help
+phone number, Icloud technical support number.Icloud support number, Icloud
+phone number, Icloud tech support number, Icloud customer support number,
+Icloud customer support phone number, Icloud customer service phone number,
+Icloud payroll customer service phone number, Icloud support phone number
+Icloud help number-Icloud Helpline Number; Icloud help phone number-Icloud
+Helpline Number, Icloud Tech Support Toll free Number, Icloud Support Telephone
+Number, Icloud Tech Support Telephone number, Icloud Tech Support contact
+number, Icloud support contact number, Icloud technical support contact number,
+Icloud help desk phone number.Icloud password recovery support phone number.
+Call, @(I-85 58 54 14 05)@-: Icloud password recovery support phone number. It
+is very popular toll free number which vose by Icloud technical support, Icloud
+Customer Service Phone Number, Icloud Customer Service Number, Icloud Customer
+Support Phone Number, Icloud Customer Support Number, Icloud Customer Service
+Helpline Number, Icloud Customer Care Number, Icloud support team phone number.
+Icloud password recovery support phone number. Call,@(I-85 58 54 14 05)@-:
+Icloud help number-Icloud Helpline Number; Icloud help phone number, Icloud
+Helpline Number, Icloud Tech Support Toll free Number, Icloud Support Telephone
+Number, Icloud Tech Support Telephone number, Icloud Tech Support contact
+number, Icloud support contact number, Icloud technical support contact number,
+Icloud support phone number, Icloud payroll support phone number. Icloud
+payroll customer support phone number.. Icloud password reset support phone
+number. for all type help by Icloud support telephone number, Icloud help phone
+number, Icloud technical support number.Icloud support number, Icloud phone
+number, Icloud tech support number, Icloud customer support number, Icloud
+customer support phone number, Icloud customer service phone number, Icloud
+payroll customer service phone number Describe Call, 1 80 02 13 21 71 for
+Icloud customer support phone number Icloud Technical Support phone Number
+Icloud phone number usa here.
+
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
