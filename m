@@ -1,59 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:53842 "EHLO sipsolutions.net"
+Received: from mail.kernel.org ([198.145.29.136]:46292 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751562AbcGDJdI (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 4 Jul 2016 05:33:08 -0400
-Message-ID: <1467624783.29577.1.camel@sipsolutions.net> (sfid-20160704_113312_018147_CA9B8A9F)
-Subject: Re: [PATCH v3 01/21] backports: move legacy and SmPL patch
- application into helper
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, yann.morin.1998@free.fr,
-	mmarek@suse.cz, sassmann@kpanic.de,
-	"Luis R. Rodriguez" <mcgrof@suse.com>
-Date: Mon, 04 Jul 2016 11:33:03 +0200
-In-Reply-To: <1415693712-23743-2-git-send-email-mcgrof@do-not-panic.com> (sfid-20141111_092101_147387_47EB0676)
-References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
-	 <1415693712-23743-2-git-send-email-mcgrof@do-not-panic.com>
-	 (sfid-20141111_092101_147387_47EB0676)
+	id S1751950AbcGVPEn (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 22 Jul 2016 11:04:43 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 48A9120503
+	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:04:42 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id 2FEB7205E8
+	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:04:32 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 139601] @@1-888-269-0130@@AVG online technical support number
+ AVG Online customer care number
+Date: Fri, 22 Jul 2016 15:03:57 +0000
+Message-ID: <bug-139601-58281-plGAWO3EiG@https.bugzilla.kernel.org/> (sfid-20160722_170444_884080_22550201)
+In-Reply-To: <bug-139601-58281@https.bugzilla.kernel.org/>
+References: <bug-139601-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2014-11-11 at 00:14 -0800, Luis R. Rodriguez wrote:
-> From: "Luis R. Rodriguez" <mcgrof@suse.com>
-> 
-> This allows us to extend how backports uses patches for
-> different types of applications. This will later be used
-> for kernel integration support, for example.
-> 
-> This should have no functional change.
+https://bugzilla.kernel.org/show_bug.cgi?id=139601
 
-Obviously this patch was applied a long time ago, but you lied - it has
-a functional change:
+Spam Script <spamscript@kernel.org> changed:
 
-> +        if process.returncode != 0:
-> +            if not args.verbose:
-> +                logwrite("Failed to apply changes from %s" %
-> print_name)
-> +                for line in output:
-> +                    logwrite('> %s' % line)
-> +            raise Exception('Patch failed')
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |RESOLVED
+              Group|                            |Junk
+         Resolution|---                         |INVALID
 
-vs.
-
-> -        if process.returncode != 0:
-> -            if not args.verbose:
-> -                logwrite("Failed to apply changes from %s" %
-> print_name)
-> -                for line in output:
-> -                    logwrite('> %s' % line)
-> -            return 2
-
-This had a major impact on the devel/git-tracker.py tool.
-
-johannes
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
