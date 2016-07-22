@@ -1,70 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:56149 "EHLO hauke-m.de"
+Received: from mail.kernel.org ([198.145.29.136]:45860 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757207AbcGJVO7 (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 10 Jul 2016 17:14:59 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
+	id S1751058AbcGVPEi (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 22 Jul 2016 11:04:38 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 8B78A2058A
+	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:04:37 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id 8BD3C2055C
+	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:04:25 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 05/19] header: remove vid parameter from ndo_dflt_fdb_add()
-Date: Sun, 10 Jul 2016 23:14:31 +0200
-Message-Id: <1468185285-28265-6-git-send-email-hauke@hauke-m.de> (sfid-20160710_231504_120972_835691B6)
-In-Reply-To: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
-References: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
+Subject: [Bug 141011] Call @@@@@ )))))))Netgear Router 1 844 234 9752 Netgear
+ Router Tech suPpOrt Phone Number Canada
+Date: Fri, 22 Jul 2016 15:03:56 +0000
+Message-ID: <bug-141011-58281-qtUMTJRSaI@https.bugzilla.kernel.org/> (sfid-20160722_170439_999766_12DA33B1)
+In-Reply-To: <bug-141011-58281@https.bugzilla.kernel.org/>
+References: <bug-141011-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The signature was changed in Linux kernel commit f6f6424ba "net: make
-vid as a parameter for ndo_fdb_add/ndo_fdb_del".
+https://bugzilla.kernel.org/show_bug.cgi?id=141011
 
-In addition the signature of the callback ndo_fdb_add was also changed.
+Spam Script <spamscript@kernel.org> changed:
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/rtnetlink.h              |  6 ++++++
- .../network/0072-netdevice-ndo_fdb_add/igb.patch         | 16 ++++++++++++++++
- 2 files changed, 22 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0072-netdevice-ndo_fdb_add/igb.patch
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |RESOLVED
+              Group|                            |Junk
+         Resolution|---                         |INVALID
 
-diff --git a/backport/backport-include/linux/rtnetlink.h b/backport/backport-include/linux/rtnetlink.h
-index 6dea700..806f212 100644
---- a/backport/backport-include/linux/rtnetlink.h
-+++ b/backport/backport-include/linux/rtnetlink.h
-@@ -13,4 +13,10 @@
- 				 lockdep_rtnl_is_held())
- #endif
- 
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0))
-+#define ndo_dflt_fdb_add(ndm, tb, dev, addr, vid, flags) \
-+	ndo_dflt_fdb_add(ndm, tb, dev, addr, flags)
-+#endif
-+
-+			    
- #endif /* __BACKPORT_LINUX_RTNETLINK_H */
-diff --git a/patches/collateral-evolutions/network/0072-netdevice-ndo_fdb_add/igb.patch b/patches/collateral-evolutions/network/0072-netdevice-ndo_fdb_add/igb.patch
-new file mode 100644
-index 0000000..c50fe51
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0072-netdevice-ndo_fdb_add/igb.patch
-@@ -0,0 +1,16 @@
-+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-+index 55a1405c..31edad7 100644
-+--- a/drivers/net/ethernet/intel/igb/igb_main.c
-++++ b/drivers/net/ethernet/intel/igb/igb_main.c
-+@@ -2077,7 +2077,11 @@ static int igb_set_features(struct net_d
-+ 
-+ static int igb_ndo_fdb_add(struct ndmsg *ndm, struct nlattr *tb[],
-+ 			   struct net_device *dev,
-++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
-++			   const unsigned char *addr,
-++#else
-+ 			   const unsigned char *addr, u16 vid,
-++#endif
-+ 			   u16 flags)
-+ {
-+ 	/* guarantee we can provide a unique filter for the unicast address */
 -- 
-2.8.1
-
+You are receiving this mail because:
+You are the assignee for the bug.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
