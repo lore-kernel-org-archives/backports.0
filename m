@@ -1,35 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:45070 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:46508 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751329AbcGWWHf (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sat, 23 Jul 2016 18:07:35 -0400
+	id S1751950AbcGVPEr (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 22 Jul 2016 11:04:47 -0400
 Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id C9BFF205EC
-	for <backports@vger.kernel.org>; Sat, 23 Jul 2016 22:07:33 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 18F2D205E4
-	for <backports@vger.kernel.org>; Sat, 23 Jul 2016 22:07:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A00120591
+	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:04:45 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id 263A420555
+	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:04:35 +0000 (UTC)
 From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: [Bug 141671] Help-Call1800-213-2171/.Icloud 24/7 support phone
- number,Icloud telephone number for support
-Date: Sat, 23 Jul 2016 22:07:32 +0000
-Message-ID: <bug-141671-58281-RDjYzUmFOV@https.bugzilla.kernel.org/> (sfid-20160724_000737_056644_22BADC2C)
-In-Reply-To: <bug-141671-58281@https.bugzilla.kernel.org/>
-References: <bug-141671-58281@https.bugzilla.kernel.org/>
+Subject: [Bug 141051] +*+1.8OO7506584 AVG antivirus phone number AVG Support
+ phone
+Date: Fri, 22 Jul 2016 15:03:57 +0000
+Message-ID: <bug-141051-58281-FmjkU2DJ8k@https.bugzilla.kernel.org/> (sfid-20160722_170449_372332_05C1EE79)
+In-Reply-To: <bug-141051-58281@https.bugzilla.kernel.org/>
+References: <bug-141051-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=141671
+https://bugzilla.kernel.org/show_bug.cgi?id=141051
 
-Alan <alan@lxorguk.ukuu.org.uk> changed:
+Spam Script <spamscript@kernel.org> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
              Status|NEW                         |RESOLVED
-                 CC|                            |alan@lxorguk.ukuu.org.uk
+              Group|                            |Junk
          Resolution|---                         |INVALID
 
 -- 
