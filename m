@@ -1,268 +1,93 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:49956 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:40424 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752463AbcGYQdm convert rfc822-to-8bit (ORCPT
-	<rfc822;backports@vger.kernel.org>); Mon, 25 Jul 2016 12:33:42 -0400
+	id S1753825AbcGVLEE (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 22 Jul 2016 07:04:04 -0400
 Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id DBE7A20553
-	for <backports@vger.kernel.org>; Mon, 25 Jul 2016 16:33:39 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id DC46720534
-	for <backports@vger.kernel.org>; Mon, 25 Jul 2016 16:33:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 899012053E
+	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 11:04:02 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id A8DFB2053C
+	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 11:04:01 +0000 (UTC)
 From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: [Bug 145611] New: Hp Printer(1844)(305)(5565)Customer Support Phone
- Number New York
-Date: Mon, 25 Jul 2016 16:33:36 +0000
-Message-ID: <bug-145611-58281@https.bugzilla.kernel.org/> (sfid-20160725_183344_907162_84B27F14)
+Subject: [Bug 139321] New: Warning in mac80211 driver from backports-4.4.2-1
+Date: Fri, 22 Jul 2016 11:04:01 +0000
+Message-ID: <bug-139321-58281@https.bugzilla.kernel.org/> (sfid-20160722_130407_570033_191BCBD9)
 Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=145611
+https://bugzilla.kernel.org/show_bug.cgi?id=139321
 
-            Bug ID: 145611
-           Summary: Hp Printer(1844)(305)(5565)Customer Support Phone
-                    Number New York
+            Bug ID: 139321
+           Summary: Warning in mac80211 driver from backports-4.4.2-1
            Product: Backports project
            Version: unspecified
-    Kernel Version: 4
-          Hardware: All
+    Kernel Version: 3.12.37-rt51+
+          Hardware: i386
                 OS: Linux
-              Tree: Mainline
+              Tree: PREEMPT_RT
             Status: NEW
           Severity: normal
           Priority: P1
          Component: Backports
           Assignee: backports@vger.kernel.org
-          Reporter: jeancheral@gmail.com
+          Reporter: kavitam@cdot.in
         Regression: No
 
-@*@*@*$*HP Printer 1-844-305-5565 HP printer Tech Support Phone Number Canada
-HP printer customer service number !!!!^^^^^^^^!!!!!HP Printer 1-844-305-5565
-HP Technical Support Phone Number california HP printer customer service number
-!!!!^^^^^^^^!!!!!HP Printer 1-844-305-5565 HP Technical Support Phone Number
-california HP printer customer service number 8448481262)))@HP printer suppOrt
-phOne number HP printer tech suppOrt phOne number USA
-++((1-844-305-5565))Unable to render embedded object: File ( File (:: /@) not
-found.Unable to render embedded object: File (((1-844-305-5565))) not
-found.Unable to render embedded object: File (:: /@) not found.Unable to render
-embedded object: File (((1-844-305-5565))) not found.Unable to render embedded
-object: File (@HP printer suppOrt phOne number HP printer tech suppOrt phOne
-number USA HP printer custOmer service@@) not found.Unable to render embedded
-object: File (((*1-844-305-5565+))) not found.Unable to render embedded object:
-File (@@HP printer suppOrt phOne number HP printer tech suppOrt phOne number
-USA, HP printer technical suppOrt phOne number HP printer custOmer suppOrt
-phOne number HP printer phOne number HP printer custOmer care phOne number
-brOhter printer custOmer care number HP printer tOll free phOne number HP
-printer suppOrt HP suppOrt HP printers suppOrt HP custOmer service HP printer
-help HP tech suppOrt HP printer custOmer service HP printer tech suppOrt HP
-technical suppOrt HP printer trOubleshOOting HP printers trOubleshOOting HP
-internatiOnal HPs printer suppOrt HP custOmer suppOrt HP printer technical
-suppOrt HP printer repair HP printer helpline HP printers custOmer service HP
-service center HPs printers suppOrt HP helpline HP custOmer service phOne
-number install HP printer HP printers tech suppOrt HP printer suppOrt number HP
-printer custOmer suppOrt HP printer cOntact number HP printer prOblems HP
-printers help HP printer service HP printer service center HP printer cOntact
-HP custOmer service number HP printers helpline HP suppOrt number HP printer
-repairs HP printer scanner HP printers phOne number HP printers custOmer
-suppOrt HP suppOrt center HP tech suppOrt phOne number HPs printers custOmer
-service HP printer custOmer service number HP printers technical suppOrt HP
-printer helpline number HP suppOrt phOne number HP suppOrt printer HP technical
-suppOrt number HP printers cOntact trOubleshOOting HP printer HP printer phOne
-suppOrt HP printers suppOrt phOne number trOubleshOOt HP printer HP printers
-cOntact number HPs custOmer service HP printer number HP phOne suppOrt HP
-trOubleshOOting HP printer custOmer care HP printer help desk drivers fOr HP
-printers HP technical suppOrt phOne number HP custOmer service phOne cOntact HP
-printers HP printer custOmer care number HP help desk HP Online suppOrt HP
-custOmer suppOrt phOne number HPs printer custOmer service HP printer mfc HP
-printers tech suppOrt phOne number HP service HPs tech suppOrt HP printers
-custOmer service phOne number HP printer install HP laser printers HPs printers
-suppOrt HP printer HP printer service centre HP printer updates HP inkjet
-printer cOntact HP suppOrt HP tech suppOrt phOne HP lc61 HPs printers tech
-suppOrt printers Online cOntact HP printer HPs printer HP label printer HP
-custOmer suppOrt phOne HP printers custOmer suppOrt number HP suppOrt centre HP
-laser printer HP printer custOmer service suppOrt HP wireless printer setup buy
-HP printer Online HP printer tech suppOrt number HP netwOrk printer HP printers
-custOmer service number custOmer service fOr HP printers HP service centre HP
-wireless printer HP printers HP custOmer care HP printer Online suppOrt HP
-printer tOll free number phOne number fOr HP printers HP printer installatiOn
-HP printers help desk HP printer suppOrt phOne service HP HP mfc HP printer
-custOmer suppOrt number HP printers technical suppOrt phOne number HP printer
-hOtline cOntact number fOr HP printers HP printer HP printer suppOrt number
-cOntact HP printer suppOrt HP printer trOubleshOOt HP telephOne suppOrt HP
-printers custOmer suppOrt phOne number HP printer help phOne number HP custOmer
-service telephOne number HP printer tech suppOrt phOne HP printer tech suppOrt
-usa HP printer Online HP multifunctiOn printer printer suppOrt HP printer help
-HP mfc printer technical suppOrt fOr HP printers HP tech suppOrt number email
-suppOrt HP printers suppOrt phOne mfc HP HP hl227Odw HP printers website HP
-printer suppOrt HP printers repair repair HP printer HP printers suppOrt HP
-helpline number HP scanner printer HP printers service HP printers custOmer
-service telephOne number HP printer phOne number custOmer service HP printers
-reviewHP printer support fOr HP printer HP printer repair service HP printer
-phOne number fOr HP printer suppOrt HP printer website HP printers custOmer
-service phOne HP printer prOblems and sOlutiOns HPs printers custOmer service
-phOne number custOmer service HP printer sOlutiOn HP HP fax suppOrt mfc HP
-printer HP printer custOmer service phOne HP printer help number HP mfc-846On
-drivers fOr HP printers HP technical suppOrt phOne number HP custOmer service
-phOne cOntact HP printers HP printer custOmer care number HP help desk HP
-Online suppOrt HP custOmer suppOrt phOne number HPs printer custOmer service HP
-printer mfc HP printers tech suppOrt phOne number HP service HPs tech suppOrt
-HP printers custOmer service phOne number HP printer install HP laser printers
-HPs printers suppOrt HP printer HP printer service centre HP printer updates HP
-inkjet printer cOntact HP suppOrt HP tech suppOrt phOne HP lc61 HPs printers
-tech suppOrt printers Online cOntact HP printer HPs printer HP label printer HP
-custOmer suppOrt phOne HP printers custOmer suppOrt number HP suppOrt centre HP
-laser printer HP printer custOmer service suppOrt HP wireless printer setup buy
-HP printer Online HP printer tech suppOrt number HP netwOrk printer HP printers
-custOmer service number custOmer service fOr HP printers HP service centre HP
-wireless printer HP printers HP custOmer care HP printer Online suppOrt HP
-printer tOll free number phOne number fOr HP printers HP printer installatiOn
-HP printers help desk HP printer suppOrt phOne service HP HP HP printer
-custOmer service/@) not found.Unable to render embedded object: File
-(((1-844-305-5565+))) not found.) not found.@HP printer suppOrt phOne number HP
-printer tech suppOrt phOne number USA @Wireless HP Printer Tech Support number
-1-844-305-5565HP Printer customer service number Wifi HP Printer customer
-support phone number ??USA/CANADA/UK/HP tralia @@ 1-844-305-5565+HP Printer
-tech support number, HP Printer customer service number,HP Printer technical
-Support Phone Number, HP Printer customer service phone number ((HP))Call @@@+
-USA 1-844-305-5565HP p.r.i.n.t.e.r t.e.c.h s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.e.r
-u.s.a. C.a.l.l HP h.e.l.p d.e.s.k n.u.m.b.e.r n.u.m.b.e.r C.a.n.a.d.a HP
-s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.r usa USA 1 1-844-305-5565HP p.r.i.n.t.e.r
-t.e.c.h s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.e.r u.s.a. C.a.l.l HP h.e.l.p d.e.s.k
-n.u.m.b.e.r n.u.m.b.e.r C.a.n.a.d.a HP s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.r usa
-canada 1-844-305-55651USA, HP Printer Tech Support phone number,HP technical
-support phone number 1 1-844-305-5565.HP Tech Support Number HP Tech HP tech
-support, HP tech support number, HP tech support phone number, HP technical
-support, HP technical support number, HP technical support phone number, HP
-tech support number, HP support number, HP Tech support phone number, HP
-support phone number, HP technical support phone number, HP technical support
-number,Support Phone Number for HP Printer Phone Number for HP CustomerService
-Technical Support Telephone Number HP Printer support number HP HP Printer tech
-support number HP HP Printer technical support number HP HP Printer technical
-support phone number HP HP Printer customer service number HP HP internet
-security technical support HP technical support phone number HP HP tech support
-phone number HP HP customer support phone number I-844-848-1262HP HP Printer
-support phone number HP HP support phone HP tech support HP customer support HP
-phone support HP support number HP HP technical support HP Printer customer
-support phone number HP HP Printer tech support phone number HP contact HP
-support HP Printer technical support phone number ~Unable to render embedded
-object: File (~1-844-305-5565++ HP HP phone number HP tech support HP support
-ticket HP customer support number HP HP tech support number HP HP technical
-support number HP HP support center HP telephone support call HP support HP
-Printer support support HP HP billing support HP Printer technical support
-number HP support HP Printer HP online support HP contact support HP Printer
-support number HP HP Printer customer support number HP HP Printer tech support
-number HP support for HP HP phone number HP HP customer service phone number HP
-HP contact phone number HP HP Printer phone number HP HP Printer customer
-service phone number HP phone number HP for HP customer service HP software
-phone number HP phone number HP for HP HP customer service telephone number HP
-HP helpline phone number HP HP contact number HP HP customer service number HP
-HP customer service phone number ~) not found.~1-844-305-5565++ HP us HP
-customer service phone number HP usa HP telephone number HP HP phone number HP
-usa HP Printer contact number HP HP number HP HP contact number HP usa HP
-Printer helpline number HP HP helpline number HP HP customer number HP HP
-Printer customer service number HP HP contact telephone number HP contact
-number HP for HP HP software contact number HP HP toll free number HP HP
-telephone number HP uk HP registration number HP HP toll free number HP usa HP
-customer service HP software customer service contact HP customer service HP
-customer service phone HP Printer customer service HP service HP Printer
-technical support HP Printer customer support HP technical support reviews
-telephone HP Printer HP tech support phone number HP HP Printer tech support
-phone number HP HP Printer customer service HP technical support phone number
-HP HP Printer free router support HP customer service billing HP customer
-service email address HP customer service reviews contact HP customer service
-HP tech support number HP usa HP Printer support number HP HP Printer contact
-number HP HP customer service phone number HP HP technical support usa HP
-technical support number HP HP tech support phone HP tech support number HP HP
-customer service telephone number HP HP Printer customer support number HP HP
-Printer phone number HP HP Printer online support HP customer service number HP
-HP tech support center HP customer service HP software customer service HP
-customer care number HP usa HP customer number HP HP customer support number HP
-HP customer care number HP HP customer care toll free number HP HP tech support
-HP technical support HP Printer support HP Printer tech support HP support
-center HP .com customer service HP Printer customer care number HP HP customer
-care HP phone number HP phone number HP for HP customer service HP phone
-support HP phone number HP tech support HP support phone number HP contact HP
-by phone HP contact phone number HP HP helpline phone number HP HP Printer
-phone HP Printer for phone HP contact number HP HP contact support contact HP
-Printer HP contact number HP usa HP toll free number HP HP telephone number HP
-HP toll free number HP usa HP Printer support services technical support for
-router HP HP customer service phone number HP usa HP Printer customer care
-number HP usa HP customer care number HP HP customer care center HP customer
-support HP customer support phone HP customer help HP customer & technical
-support HP customer portal HP customer care phone number HP usa HP customer
-care email HP helpline HP tech support contact HP customer care toll free HP
-Printer customer service number HP HP Printer protection norton router customer
-service number HP HP software customer service number HP HP hotline customer
-service phone number HP HP customer service phone number HP us how to contact
-HP by email HP free phone support HP Printer technical support number HP HP
-Printer technical support help desk phone number HP HP technical support number
-HP toll free number HP HP Printer customer support phone number HP HP Printer
-customer =============[edit]SUPPORT::USA CALL1-844-305-5565 HP Printer customer
-care support phone number SUPPORT:USA CALL1-844-305-5565 HP Printer customer
-care support phone number USA FLORIDA CALL1-844-305-5565 HP Printer customer
-care support phone number USA/CANADA CANADA$$$Us@@ HP Printer technical support
-phone number 1-844-305-5565@@NEWYORK>>>>>>>>>> >#$$$!$CALL @@CALL USA
-!!1-844-305-5565HP Printer customer service 1-844-305-5565 $$$$$ ++ HP us HP
-c.u.s.t.o.m.e.r s.e.r.v.i.c.e P.h.o.n.e number 1-844-305-5565 ++ HP us HP
-c.u.s.t.o.m.e.r s.e.r.v.i.c.e P.h.o.n.e number HP Printer telephone
-number@@CALL USA !!1-844-305-5565HP Printer customer service phone number and
-HP Printer tech support phone number HP Printer customer service and support
-phone number usa FAST CALL @@ 1-844-305-5565HP Printer customer service and
-support phone number usa FAST CALL @@ 1-844-305-5565HP Printer customer service
-and support phone number usa CALL @@ 1-844-305-5565HP Printer customer service
-and support phone number us CALL @@ 1-844-305-5565HP Printer customer service
-and support phone number usa CALL @@ 1-844-305-5565HP Printer customer service
-and support phone number HP Printer scanner, HP Printers phone number, HP
-Printers customer support, HP support center, HP tech, support phone number, HP
-s routers customer service, HP Printer customer service number, HP Printers
-technical support, HP Printer helpline numbe,HP support phone number, bther
-support router, HP technical support number, HP Printers contact,
-troublesh44ting HP printe, , HP Printer phone support, HP Printers support
-phone number, troublesh44t HP Printer, HP Printers contact number, HP s
-customer service, HP Printer number¸HP phone support, HP troublesh44ting, HP
-Printer customer care, HP Printer help desk, drivers for HP Printers, HP
-technical support phone number, HP customer service phone, contact HP Printers,
-HP Printer customer care number, HP help desk¸HP online support, HP customer
-support phone number, HP s router customer service¸HP Printer mfc, HP Printers
-tech support phone number, HP service¸HP s tech support, HP Printers customer
-service phone number, HP Printer install, HP laser routers, HP s routers,
-support HP Printer, HP Printer service centre, HP Printer updates, HP inkjet
-router, contact HP support, HP tech support phone, @@ ((()) HP lc61, HP s
-routers tech support, routers online, contact HP Printer, HP s router, HP label
-router, HP customer support phone, HP Printers customer support number, HP
-support centre, HP laser router, HP Printer toll free number, phone number for
-HP Printers, HP Printer installation, HP Printers help, desk, HP Printer
-support phone, service HP , HP mfc, HP Printer customer support , umber, HP
-Printers technical support phone number, HP Printer hotline, contact number for
-HP Printers, HP Printer, HP .com support, contact HP Printer support, HP
-Printer troublesh44t, HP telephone support, HP Printers customer support phone
-number, HP , router help phone number, HP customer service telephone number, HP
-Printer tech support, phone, HP .ca support, HP Printer online, HP
-multifunction router, router support, HP , router help, HP mfc router,
-technical support for HP Printers, HP tech support number, email support, HP
-Printers support phone, mfc HP , HP hl2271dw, HP Printers website¸HP Printer
-support, phone¸HP Printer problems and , olutions, HP s routers customer
-service phone number, customer service HP Printer, solution HP , HP fax
-support, mfc HP Printer, HP Printer, customer service phone, HP Printer help
-number, HP mfc-8461n, HP Printer support line, HP Printers service centre, HP
-wireless laser router, HP s router help, HP fax helpline, HP Printers number,
-HP Printers contact phone number, HP Printer telephone support, HP Printer
-servicing, tech support for HP Printers, HP Printer customer care no, HP fax
-customer service, HP Printer official website, contact HP customer service, HP
-technical support, HP Printers phone support, HP technical support phone, HP
-Printer repair service, HP Printer setup, HP printing problems, HP s technical
-support, router drivers, HP mfc support, HP repairs, installing HP Printer, HP
-copier support, support HP Printers, HP s router support phone number, @@ ((())
-HP s technical support phone number, HP product support, HP Printer and
-scanner, HP s routers troublesh44ting, HP Printer support contact number, HP
-Printer technical support number, samsung router support,, troublesh44ting HP
-Printer problems, HP contact number, online router support, HP Printer problems
-solutions., rother routers installation, router HP mfc,activity_
+Hi,
+
+I am running hostapd 2.5 and ath9k driver from backports-4.4.2-1.The system is
+not acceible after sometime of powered on.This system can be configured as
+AP/client or MESH.As soon as my system boots, following warning message
+displays on the screen:
+
+My system:
+
+Linux CDOT-BBWT 3.12.37-rt51+ #1 SMP PREEMPT RT Thu Jul 21 12:15:34 IST 2016
+ppc GNU/Linux
+
+------------[ cut here ]------------
+WARNING: at /home/lwbj/backports-4.4.2-1/net/mac80211/rx.c:3557
+Modules linked in: ath9k(O) mac80211(O) ath9k_common(O) ath9k_hw(O) ath(O)
+cfg80211(O) compat(O)
+CPU: 0 PID: 1507 Comm: irq/21-ath9k Tainted: G           O 3.12.37-rt51+ #1
+task: eac89f40 ti: d7b84000 task.ti: d7b84000
+NIP: fa9b81d4 LR: facc5fd0 CTR: c006eeac
+REGS: d7b85bf0 TRAP: 0700   Tainted: G           O  (3.12.37-rt51+)
+MSR: 00029000 <CE,EE,ME>  CR: 22022042  XER: 20000000
+
+GPR00: facc5fd0 d7b85ca0 eac89f40 d3144c20 d919fd80 00000000 eac89f40 00000000
+GPR08: 00000000 00000001 00000004 00000000 c006eeac 00000000 00000000 0001d76e
+GPR16: d31476fc d31463d4 d3028038 d30ce020 d30ce020 0001d896 d3144c20 1757ad80
+GPR24: d3028010 d919fd98 fa9ed2a5 00000000 00000200 d919fd80 d919fd80 d3144c20
+NIP [fa9b81d4] ieee80211_rx_napi+0x2c/0x8a0 [mac80211]
+LR [facc5fd0] ath_rx_tasklet+0x7e8/0xac8 [ath9k]
+Call Trace:
+[d7b85ca0] [d757ad60] 0xd757ad60 (unreliable)
+[d7b85d10] [facc5fd0] ath_rx_tasklet+0x7e8/0xac8 [ath9k]
+[d7b85dd0] [facc3690] ath9k_tasklet+0xdc/0x274 [ath9k]
+[d7b85df0] [c0043b04] __tasklet_action.isra.15+0xbc/0x170
+[d7b85e20] [c00436b4] do_current_softirqs+0x1d8/0x258
+[d7b85e70] [c00437b4] local_bh_enable+0x80/0x84
+[d7b85e80] [c0086a7c] irq_forced_thread_fn+0x50/0x94
+[d7b85ea0] [c0086c78] irq_thread+0xf0/0x140
+[d7b85ee0] [c0060368] kthread+0x98/0x9c
+[d7b85f40] [c000f5cc] ret_from_kernel_thread+0x5c/0x64
+Instruction dump:
+4bfffc70 9421ff90 7c0802a6 be61003c 3f40fa9f 90010074 3b5ad2a5 7c7f1b78
+7c9e2378 893a0002 7cbb2b78 69290001 <0f090000> 2f890000 89240032 409e064c
+---[ end trace 0000000000000002 ]---
+
+Is the kernel panic? How to fix this issue? Please suggest.
+
+Thanks in advance.
+Kavita
 
 -- 
 You are receiving this mail because:
-You are the assignee for the bug.--
+You are the assignee for the bug.
+--
 To unsubscribe from this list: send the line "unsubscribe backports" in
