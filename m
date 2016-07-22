@@ -1,73 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:45751 "EHLO sipsolutions.net"
+Received: from mail.kernel.org ([198.145.29.136]:46496 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750697AbcGGEOv (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 7 Jul 2016 00:14:51 -0400
-Message-ID: <1467864885.2593.0.camel@sipsolutions.net> (sfid-20160707_061453_131423_08D050DB)
-Subject: Re: [PATCH v3 01/21] backports: move legacy and SmPL patch
- application into helper
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-	backports@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yann.morin.1998@free.fr, mmarek@suse.cz, sassmann@kpanic.de
-Date: Thu, 07 Jul 2016 06:14:45 +0200
-In-Reply-To: <20160707001028.GD31219@wotan.suse.de> (sfid-20160707_042345_790409_0734785D)
-References: <1415693712-23743-1-git-send-email-mcgrof@do-not-panic.com>
- <1415693712-23743-2-git-send-email-mcgrof@do-not-panic.com>
- <1467624783.29577.1.camel@sipsolutions.net>
-	 <20160707001028.GD31219@wotan.suse.de>
-	 (sfid-20160707_042345_790409_0734785D)
+	id S1751950AbcGVPEq (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 22 Jul 2016 11:04:46 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 19EF820588
+	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:04:45 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id A657F205B5
+	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:04:35 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 140941] Netgear tech support number 1-844-234-9752 netgear
+ router support number
+Date: Fri, 22 Jul 2016 15:03:58 +0000
+Message-ID: <bug-140941-58281-CDu3qhUbSZ@https.bugzilla.kernel.org/> (sfid-20160722_170448_789077_E3A44E4E)
+In-Reply-To: <bug-140941-58281@https.bugzilla.kernel.org/>
+References: <bug-140941-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, 2016-07-07 at 02:10 +0200, Luis R. Rodriguez wrote:
-> On Mon, Jul 04, 2016 at 11:33:03AM +0200, Johannes Berg wrote:
-> > On Tue, 2014-11-11 at 00:14 -0800, Luis R. Rodriguez wrote:
-> > > From: "Luis R. Rodriguez" <mcgrof@suse.com>
-> > > 
-> > > This allows us to extend how backports uses patches for
-> > > different types of applications. This will later be used
-> > > for kernel integration support, for example.
-> > > 
-> > > This should have no functional change.
-> > 
-> > Obviously this patch was applied a long time ago,
-> 
-> Geesh yes over 2 year ago.
+https://bugzilla.kernel.org/show_bug.cgi?id=140941
 
-:)
+Spam Script <spamscript@kernel.org> changed:
 
-> > but you lied - it has a functional change:
-> > 
-> > > +        if process.returncode != 0:
-> > > +            if not args.verbose:
-> > > +                logwrite("Failed to apply changes from %s" %
-> > > print_name)
-> > > +                for line in output:
-> > > +                    logwrite('> %s' % line)
-> > > +            raise Exception('Patch failed')
-> > 
-> > vs.
-> > 
-> > > -        if process.returncode != 0:
-> > > -            if not args.verbose:
-> > > -                logwrite("Failed to apply changes from %s" %
-> > > print_name)
-> > > -                for line in output:
-> > > -                    logwrite('> %s' % line)
-> > > -            return 2
-> > 
-> > This had a major impact on the devel/git-tracker.py tool.
-> 
-> Sorry about that, is there an easy fix for it? Is there a test
-> we can do to avoid further regressions against the tracker ?
-> 
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |RESOLVED
+              Group|                            |Junk
+         Resolution|---                         |INVALID
 
-Luca has a fix.
-
-johannes
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
