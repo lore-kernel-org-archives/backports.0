@@ -1,34 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:53346 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:43974 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750730AbcGXEOv (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 24 Jul 2016 00:14:51 -0400
+	id S1751317AbcGVPEP (ORCPT <rfc822;backports@vger.kernel.org>);
+	Fri, 22 Jul 2016 11:04:15 -0400
 Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id E8730205F2
-	for <backports@vger.kernel.org>; Sun, 24 Jul 2016 04:14:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D0DE205BC
+	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:04:12 +0000 (UTC)
 Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-	by mail.kernel.org (Postfix) with ESMTP id 74B6320604
-	for <backports@vger.kernel.org>; Sun, 24 Jul 2016 04:14:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DA2B20592
+	for <backports@vger.kernel.org>; Fri, 22 Jul 2016 15:04:08 +0000 (UTC)
 From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: [Bug 141671] Help-Call1800-213-2171/.Icloud 24/7 support phone
- number,Icloud telephone number for support
-Date: Sun, 24 Jul 2016 04:14:45 +0000
-Message-ID: <bug-141671-58281-z3ZqVndmOl@https.bugzilla.kernel.org/> (sfid-20160724_061453_750594_B23CF0F2)
-In-Reply-To: <bug-141671-58281@https.bugzilla.kernel.org/>
-References: <bug-141671-58281@https.bugzilla.kernel.org/>
+Subject: [Bug 139701] Gmail support phone number #$#1888-269-0130##$Gmail
+ phone support Gmail contact phone number
+Date: Fri, 22 Jul 2016 15:03:55 +0000
+Message-ID: <bug-139701-58281-x2yABzCHdm@https.bugzilla.kernel.org/> (sfid-20160722_170416_401619_8B119809)
+In-Reply-To: <bug-139701-58281@https.bugzilla.kernel.org/>
+References: <bug-139701-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=141671
+https://bugzilla.kernel.org/show_bug.cgi?id=139701
 
 Spam Script <spamscript@kernel.org> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
+             Status|NEW                         |RESOLVED
               Group|                            |Junk
+         Resolution|---                         |INVALID
 
 -- 
 You are receiving this mail because:
