@@ -1,33 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:55592 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:59290 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751787AbcGYUJe (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 25 Jul 2016 16:09:34 -0400
+	id S1750877AbcGWNb0 (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 23 Jul 2016 09:31:26 -0400
 Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 19A2220396
-	for <backports@vger.kernel.org>; Mon, 25 Jul 2016 20:09:33 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id 011CB20379
-	for <backports@vger.kernel.org>; Mon, 25 Jul 2016 20:09:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BE972057F
+	for <backports@vger.kernel.org>; Sat, 23 Jul 2016 13:31:24 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id 59DF120574
+	for <backports@vger.kernel.org>; Sat, 23 Jul 2016 13:31:23 +0000 (UTC)
 From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: [Bug 149751] New: Hp Printer1-(844)-(305)-(5565)Support Toll Free
- Phone Number Alaska,Texas,Florida
-Date: Mon, 25 Jul 2016 20:09:31 +0000
-Message-ID: <bug-149751-58281@https.bugzilla.kernel.org/> (sfid-20160725_220937_323401_B98C4950)
+Subject: [Bug 141601] New: $$$Help &Support (1-888-633-5526) ZOHO   Support
+ TelePhone Number 888+633-5526 ZOHO Customer Care Number
+Date: Sat, 23 Jul 2016 13:31:22 +0000
+Message-ID: <bug-141601-58281@https.bugzilla.kernel.org/> (sfid-20160723_153128_286644_712DAAEB)
 Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=149751
+https://bugzilla.kernel.org/show_bug.cgi?id=141601
 
-            Bug ID: 149751
-           Summary: Hp Printer1-(844)-(305)-(5565)Support Toll Free Phone
-                    Number Alaska,Texas,Florida
+            Bug ID: 141601
+           Summary: $$$Help &Support (1-888-633-5526) ZOHO   Support
+                    TelePhone Number 888+633-5526 ZOHO Customer Care
+                    Number
            Product: Backports project
            Version: unspecified
-    Kernel Version: 4
+    Kernel Version: ZOHO   telephone number!!1888-633-5526ZOHO PHONE
+                    NUMBER
           Hardware: All
                 OS: Linux
               Tree: Mainline
@@ -36,92 +38,253 @@ https://bugzilla.kernel.org/show_bug.cgi?id=149751
           Priority: P1
          Component: Backports
           Assignee: backports@vger.kernel.org
-          Reporter: teresadoris41@gmail.com
+          Reporter: ramu.sara1000015@gmail.com
         Regression: No
 
-CALL : USA ((1844-305-5565))HP printer tech support phone number ,HP technical
-support USA@@@@@@@ @USA....*@@*....cTALK((1844.305.5565))HP printer tech
-support phone number ,HP technical support USA@@@@ @@@@@@@USA@@@@HP PRInter
-1-844-848-1262 Support Phone Number !CAll @@@@@@@ 1 844 305 5565 HP Printer
-Support Phone Number Canada HP Printer customer care phone number Call
-@@@@@@@@@@@@@@@ 1 844 305 5565 HP Printer Support Phone Number Canada HP
-Printer customer care phone number Call @@@@@$$$$$$$$((((((((((HP Printer
-1-844-305-5565 HP Tech Support Phone Number Canada HP Printer customer service
-number $$$$$$$@@@@@@HP Printer 1-844-848-1262 HP Tech Support Phone Number
-Canada HP Printer customer service number $HP Printer 1-844-305-5565 HP Tech
-Support Phone Number Canada HP Printer customer service number HP PRINTER
-SUPPORT USA(((1844-305-5565(USA), 1844-305-5565(UK)
-1844-305-5565(AUS)!!!!!!FREE HP Printer support phone number,HP customer
-service number @SUPPORT Canada!!!!!!!!!((1844-848-1262))!!!!!!FREE HP Printer
-support phone number,HP cusomer support, HP technical support chat, HP computer
-help, HP support numbers, HP technical support contact number, HP telephone
-number, HP Printer technical support phone number, HP Printer helpline, HP
-support printers, HP support online, HP Printer contact number, HP help phone
-number, HP Printer customer care number, contact hewlett packard by phone, HP
-Printer phone support, hewlett packard printers support, HP tech support phone,
-HP technical help, HP laptop tech support number, contact HP by phone, HP
-support call, HP computers support, hewlett packard customer service telephone
-number, phone number for hewlett packard, HP online support chat, HP laptop
-customer service number, HP online chat support, HP printers customer service,
-hewlett packard customer service phone, HP laptop tech support, HP service
-phone number, hewlett packard printer help, phone number for HP printers, HP
-troubleshooting phone number, HP 844 number, hewlett packard technical support
-number, contact HP support phone, phone number for HP Printer support, HP
-customer support chat, HP help and support number, contact hewlett packard, HP
-laptop support phone number, HP printers customer service phone number, HP
-laptop customer service phone number, HP computer support phone number, HP
-pavilion support, HP computer customer service, HP customer services, hewlett
-packard telephone number, HP helpline no, HP help desk number, contact HP
-support phone number, hewlett packard contact, HP phone numbers, HP printers
-customer care number, HP Printer help and support, contact HP technical
-support, HP contact numbers, contact HP support chat, call HP tech support, HP
-customer service phone, HP help support, HP computer tech support, HP
-assistance phone number, HP customer service telephone number, hewlett packard
-printer support phone number, HP contact support number, HP support center
-phone number, HP support phone numbers, tech support for HP, HP it support, HP
-laptop helpline, HP technical, HP laptop technical support number, HP printers
-tech support phone number, HP printers support phone number, hewlett packard
-help desk phone number, HP computer tech support phone number, HP customer
-service number for laptop, HP Printer helpline number, contact HP support by
-phone, hewlett packard support center, HP laptop customer care no, HP Printer
-support telephone number, HP support services, HP customer service number for
-printers, HP product support number, HP laptop tech support phone number, HP
-Printer helpline phone number, contact HP customer support, hewlett packard
-customer support phone number, HP printers technical support, HP customer care
-center, support for HP printers, HP Printer support center, phone number for HP
-tech support, HP desktop customer care number, HP laptops support, HP Printer
-online support, HP Printer phone number, hewlett packard printers support phone
-number, technical support for HP printers phone number, HP help center phone
-number, contact HP tech support, call HP Printer support, HP printers customer
-support, HP computer customer service number, HP printers helpline, HP customer
-care contact number, HP laptop help, HP computer customer service phone number,
-phone number for hewlett packard customer service, hewlett packard 844 number,
-HP Printer help phone number, HP printers help phone number, HP Printer phone
-number for customer service, HP computer technical support phone number,
-customer service HP, HP support technical support number, contact number for
-HP, HP computers support phone number, HP printers support number, HP Printer
-technical support number, contact HP tech support by phone, HP computer
-customer care number, HP Printer 844 number, call HP customer service, HP
-Printer help center, HP computers customer service, HP Printer help desk,
-hewlett packard computer support, HP printers technical support number, HP help
-desk phone number, HP Printer support phone, HP contact help, contact HP laptop
-support, HP customer service contact number, support for HP printer, HP Printer
-customer care no, HP computer phone number, HP tech help, HP pc support number,
-HP laptop customer support, HP desktop support number, support HP printer, HP
-support hours, number for HP support, HP support customer service number, HP
-contact phone number, customer service number for HP printers, HP computers
-help, HP tech support contact number, HP phone support number.... HP printer
-support number HP printer customer service number HP printer customer support
-number HP printer customer care number HP printer help number HP printer
-helpline number HP printer contact number HP printer toll free number HP
-printer troubleshooting phone number HP printer support canada HP printer
-customer service canada HP printer help canada HP printer phone number canda HP
-printer phone Support canda HP printer not printing HP printer not respoding HP
-printer problems with windows 7-8-10 HP printer problems with mac HP deskjet
-printer support number HP deskjet printer help number HP laserjet printer
-support number HP laserjet printer help number HP printer wireless setup number
-HP printer wireless setup number HP printer wifi problem HP printer wifi not
-working
+Created attachment 225561
+  --> https://bugzilla.kernel.org/attachment.cgi?id=225561&action=edit
+The ZOHO Customer Care Number
+
+ZOHO Password Recoveryt(18886335526)Number ZOHO phone Number ZOHO Technical
+Support Phone Number USA/Canada.ZOHO Technical Support Phone Number ZOHO Phone
+Number & | ZOHO Help Desk Phone Number & ZOHO Customer Service number
+(1-888-633-5526)ZOHO 
+
+Helpline Number & ZOHO Support Phone Number ZOHO Help Support (1-888-633-5526)
+ZOHO 
+
+Support TelePhone Number ZOHO Customer Care Number ZOHO Tech Support Number
+ZOHO Technical 
+
+services (1-888-633-5526)ZOHO Onlince Support Number USA 1-888-633-5526 ZOHO
+tech support 
+
+number, Wireless ZOHO customer service number, ZOHO support number,ZOHO phone
+number ZOHO 
+
+customer phone number helpline number,USA CANADA>>1888-633-5526 ZOHO TECH
+SUPPORT PHONE 
+
+NUMBER ZOHO CUSTOMER SERVICE PHONE NUMBER here.1888-633-5526 ZOHO TECH SUPPORT
+PHONE 
+
+NUMBER %%%ZOHO CUSTOMER SERVICE PHONE NUMBER ZOHO technical support number ZOHO
+helpdesk 
+
+number ZOHO helpdesk phone number ZOHO Helpline number,ZOHO Phone number USA
+CANADA,
+
+(((1888-633-5526))))-ZOHO phone numberZOHO tech support PHONE NUMBER Helpline
+tollfree !!
+
+1888-633-5526 ZOHO tech support phone number !! ZOHO install TECH SUPPORT PHONE
+NUMBER 
+
+FREE USA CANADA !!1888-633-5526 ZOHO TECH SUPPORT PHONE NUMBER %%%ZOHO CUSTOMER
+SERVICE 
+
+PHONE NUMBER !!! ZOHO customer service phone number!!! ZOHO phone number ZOHO
+telephone 
+
+number!!1888-633-5526ZOHO PHONE NUMBER!!!TECH SUPPORT phone number ++ZOHO TOLL
+FREE PHONE 
+
+NUMBERPhone Number 1888-633-5526 USA CANADA, ZOHO 360 Support Phone Number,
+ZOHO Technical 
+
+Support Phone Numbe here.Describe toll free ZOHO Phone Number 1888-633-5526 USA
+CANADA, 
+
+ZOHO 360 Support Phone Number, ZOHO Technical Support Phone Number here.toll
+free ZOHO 
+
+Phone Number 1888-633-5526 USA CANADA, ZOHO 360 Support Phone Number, ZOHO
+Technical 
+
+Support Phone Number toll free ZOHO Phone Number 1888-633-5526 USA CANADA, ZOHO
+360 
+
+Support Phone Number, ZOHO Technical Support Phone Number, ZOHO Customer
+Support Number?? 
+
+This article is in need of a technical review. This article is in need of an
+editorial 
+
+review. ZOHO Phone Number 1888-633-5526 USA CANADA, ZOHO Support Phone Number,
+ZOHO 
+
+Technical Support Phone Number, ZOHO Customer Support Number?? ZOHO Support
+Phone Number 
+
+1888-633-5526 USA CANADA, ZOHO Phone Number, ZOHO Technical Support Phone
+Number, ZOHO 
+
+Service Support Number ZOHO Support Phone Number 1888-633-5526 USA CANADA, ZOHO
+Phone 
+
+Number, ZOHO Technical Support Phone Number, ZOHO Service Support Number?? ZOHO
+Phone 
+
+Number 1888-633-5526 USA CANADA, ZOHO 360 Support Phone Number, ZOHO Technical
+Support 
+
+Phone Number, ZOHO Customer Support Number?? ZOHO Support Phone Number
+1888-633-5526 USA 
+
+CANADA, ZOHO Support Phone Number, ZOHO Technical Support Phone Number, ZOHO
+Customer 
+
+Support Number?? ZOHO phone number %1888-633-5526%ZOHO phone number ZOHO
+security phone 
+
+number ZOHO 360 phone number %1888-633-5526%ZOHO support phone number ZOHO
+symantec phone 
+
+number ZOHO phone number customer service %1888-633-5526%ZOHO customer service
+phone 
+
+number ZOHO tech support phone number ZOHO technical support phone number ZOHO
+phone 
+
+numbers ZOHO help phone number ZOHO support phone number %1888-633-5526%ZOHO
+phone support 
+
+ZOHO contact phone number ZOHO internet security phone number ZOHO 360 support
+phone 
+
+number ZOHO phone ZOHO 1888 phone number phone number for ZOHO phone numbers
+ZOHO customer 
+
+service phone number ZOHO customer support phone number find a phone number
+ZOHO USA 
+
+CANADA phone number USA CANADA phone number phone number for ZOHO tech support
+phone 
+
+number ZOHO 360 phone support free phone numbers phone number ZOHO phone number
+get human 
+
+find phone number phone number for ZOHO security us phone number phone number
+USA CANADA 
+
+%1888-633-5526%ZOHO contact phone number ZOHO phone number for support ZOHO
+contact number 
+
+phone number for ZOHO USA CANADA phone numbers phone number search us phone
+numbers find 
+
+phone numbers Nortoumber ZOHO 1888 number ZOHO downloads ZOHO free trial ZOHO
+internet 
+
+security 2012 ZOHO cancellation phone number ZOHO updates phone book phone
+numbers in USA 
+
+CANADA telephone number ZOHO helpline number phone directory contact ZOHO by
+phone ZOHO 
+
+subscription ZOHO ghost download ZOHO com support phone number ZOHO contact
+ZOHO contact 
+
+number technical support phone number ZOHO phone ZOHO 360 free ZOHO support
+toll free ZOHO 
+
+Phone Number 1888-633-5526 FREE FREE USA CANADA, ZOHO 360 Support Phone Number,
+ZOHO 
+
+Technical Support Phone Number toll free ZOHO Phone Number 1888-633-5526 USA
+CANADA, ZOHO 
+
+360 Support Phone Number, ZOHO Technical Support Phone Numbe (last edited
+2016-02-28 FREE 
+
+USA CANADA !!1888-633-5526 ZOHO TECH SUPPORT PHONE NUMBER %%%ZOHO CUSTOMER
+SERVICE PHONE 
+
+NUMBERFREE USA CANADA !!1888-633-5526 ZOHO TECH SUPPORT PHONE NUMBER %%%ZOHO
+CUSTOMER 
+
+SERVICE PHONE NUMBERFREE USA CANADA !!1888-633-5526 ZOHO TECH SUPPORT PHONE
+NUMBER %%%ZOHO 
+
+CUSTOMER SERVICE PHONE NUMBERFREE USA CANADA !!1888-633-5526 ZOHO TECH SUPPORT
+PHONE 
+
+NUMBER %%%ZOHO CUSTOMER SERVICE PHONE NUMBER JUSTs Call USA 1-888-633-5526 ZOHO
+tech 
+
+support number, Wireless ZOHO customer service number, ZOHO support number,ZOHO
+phone 
+
+number ZOHO customer phone number helpline number,USA CANADA>>1888-633-5526
+ZOHO TECH 
+
+SUPPORT PHONE NUMBER ZOHO CUSTOMER SERVICE PHONE NUMBER here.1888-633-5526 ZOHO
+TECH 
+
+SUPPORT PHONE NUMBER %%%ZOHO CUSTOMER SERVICE PHONE NUMBER ZOHO technical
+support number 
+
+ZOHO helpdesk number ZOHO helpdesk phone number ZOHO Helpline number,ZOHO Phone
+number USA 
+
+CANADA,(((1888-633-5526))))-ZOHO phone numberZOHO tech support PHONE NUMBER
+Helpline 
+
+tollfree !!1888-633-5526 ZOHO tech support phone number !! ZOHO install TECH
+SUPPORT PHONE 
+
+NUMBER FREE USA CANADA !!1888-633-5526 ZOHO TECH SUPPORT PHONE NUMBER %%%ZOHO
+CUSTOMER 
+
+SERVICE PHONE NUMBER !!! ZOHO customer service phone number!!! ZOHO phone
+number ZOHO 
+
+telephone number!!1888-633-5526ZOHO PHONE NUMBER!!!TECH SUPPORT phone number
+++ZOHO TOLL 
+
+FREE PHONE NUMBERPhone Number 1888-633-5526 USA CANADA, ZOHO 360 Support Phone
+Number, 
+
+ZOHO Technical Support Phone Numbe here.Describe toll free ZOHO Phone Number
+1888-633-5526 
+
+USA CANADA, ZOHO 360 Support Phone Number, ZOHO Technical Support Phone Number
+here.toll 
+
+free ZOHO Phone Number 1888-633-5526 USA CANADA, ZOHO 360 Support Phone Number,
+ZOHO 
+
+Technical Support Phone Number toll free ZOHO Phone Number 1888-633-5526 USA
+CANADA, ZOHO 
+
+360 Support Phone Number, ZOHO Technical Support Phone Number, ZOHO Customer
+Support 
+
+Number?? This article is in need of a technical review. This article is in need
+of an 
+
+editorial review. ZOHO Phone Number 1888-633-5526 USA CANADA, ZOHO Support
+Phone Number, 
+
+ZOHO Technical Support Phone Number, ZOHO Customer Support Number?? ZOHO
+Support Phone 
+
+Number 1888-633-5526 USA CANADA, ZOHO Phone Number, ZOHO Technical Support
+Phone Number, 
+
+ZOHO Service Support Number ZOHO Support Phone Number 1888-633-5526 USA CANADA,
+ZOHO Phone 
+
+Number, ZOHO Technical Support Phone Number, ZOHO Service Support Number?? ZOHO
+Phone 
+
+Number 1888-633-5526 USA CANADA, ZOHO 360 Support Phone Number, ZOHO Technical
+Support 
+
+Phone Number Describe The ZOHO Customer Care Number (1-888-633-5526) ZOHO Help
+Number ZOHO 
+
+Tech Support Phone Number USA/Canada. here.
 
 -- 
 You are receiving this mail because:
