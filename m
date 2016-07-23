@@ -1,41 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:56147 "EHLO hauke-m.de"
+Received: from mail.kernel.org ([198.145.29.136]:45070 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757334AbcGJVPD (ORCPT <rfc822;backports@vger.kernel.org>);
-	Sun, 10 Jul 2016 17:15:03 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
+	id S1751329AbcGWWHf (ORCPT <rfc822;backports@vger.kernel.org>);
+	Sat, 23 Jul 2016 18:07:35 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id C9BFF205EC
+	for <backports@vger.kernel.org>; Sat, 23 Jul 2016 22:07:33 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+	by mail.kernel.org (Postfix) with ESMTP id 18F2D205E4
+	for <backports@vger.kernel.org>; Sat, 23 Jul 2016 22:07:33 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 17/19] gentree.py: print some more error messages when spatch fails.
-Date: Sun, 10 Jul 2016 23:14:43 +0200
-Message-Id: <1468185285-28265-18-git-send-email-hauke@hauke-m.de> (sfid-20160711_013912_051003_575CA71C)
-In-Reply-To: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
-References: <1468185285-28265-1-git-send-email-hauke@hauke-m.de>
+Subject: [Bug 141671] Help-Call1800-213-2171/.Icloud 24/7 support phone
+ number,Icloud telephone number for support
+Date: Sat, 23 Jul 2016 22:07:32 +0000
+Message-ID: <bug-141671-58281-RDjYzUmFOV@https.bugzilla.kernel.org/> (sfid-20160724_000737_056644_22BADC2C)
+In-Reply-To: <bug-141671-58281@https.bugzilla.kernel.org/>
+References: <bug-141671-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I saw some problems here, add more debug output.
+https://bugzilla.kernel.org/show_bug.cgi?id=141671
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- gentree.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Alan <alan@lxorguk.ukuu.org.uk> changed:
 
-diff --git a/gentree.py b/gentree.py
-index 772095f..e97ead0 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -601,7 +601,7 @@ def apply_patches(args, desc, source_dir, patch_src, target_dir, logwrite=lambda
-         output = sprocess.communicate()[0]
-         sprocess.wait()
-         if sprocess.returncode != 0:
--            logwrite("Failed to process SmPL patch %s" % print_name)
-+            logwrite("Failed to process SmPL patch %s with %i" % (print_name, sprocess.returncode))
-             raise Exception('SmPL patch failed')
-         output = output.split('\n')
-         if output[-1] == '':
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |RESOLVED
+                 CC|                            |alan@lxorguk.ukuu.org.uk
+         Resolution|---                         |INVALID
+
 -- 
-2.8.1
-
+You are receiving this mail because:
+You are the assignee for the bug.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
