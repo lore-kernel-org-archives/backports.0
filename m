@@ -1,126 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:42862 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754936AbcHWVcb (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 23 Aug 2016 17:32:31 -0400
-Date: Tue, 23 Aug 2016 23:32:24 +0200
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Michal Marek <mmarek@suse.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Cristina Moraru <cristina.moraru09@gmail.com>,
-        "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>,
-        Valentin Rothberg <valentinrothberg@gmail.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org,
-        teg@jklm.no, kay@vrfy.org, rusty@rustcorp.com.au,
-        akpm@linux-foundation.org, backports@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "rafael.j.wysocki" <rafael.j.wysocki@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>, Christoph Hellwig <hch@lst.de>,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Paul Bolle <pebolle@tiscali.nl>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Tejun Heo <tj@kernel.org>,
-        Jej B <James.Bottomley@hansenpartnership.com>,
-        Theodore Ts'o <tytso@mit.edu>, danijons@student.chalmers.se,
-        Andrzej Wasowski <wasowski@itu.dk>
-Subject: Re: [RFC PATCH 0/5] Add CONFIG symbol as module attribute
-Message-ID: <20160823213224.GK3296@wotan.suse.de> (sfid-20160823_233234_323913_782F20B3)
-References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
- <20160818175505.GM3296@wotan.suse.de>
- <8e80a77a-7e8f-f5d9-d221-50cddb1926c5@suse.com>
+Received: from mail.kernel.org ([198.145.29.136]:49994 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S967037AbcHBOHu (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 2 Aug 2016 10:07:50 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 8F80920494
+	for <backports@vger.kernel.org>; Tue,  2 Aug 2016 14:06:53 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+	by mail.kernel.org (Postfix) with ESMTP id 302A820457
+	for <backports@vger.kernel.org>; Tue,  2 Aug 2016 14:06:48 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 151241] Are you facing technical problems with your hp printer
+ and looking for hp printer support phone number or hewlett packard printer
+ support phone number or hewlett packard customer service telephone number or
+ hewlett packard customer service phone number or
+Date: Tue, 02 Aug 2016 14:06:48 +0000
+Message-ID: <bug-151241-58281-0NmwHzHTMp@https.bugzilla.kernel.org/> (sfid-20160802_160825_404915_8AF8F76A)
+In-Reply-To: <bug-151241-58281@https.bugzilla.kernel.org/>
+References: <bug-151241-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <8e80a77a-7e8f-f5d9-d221-50cddb1926c5@suse.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, Aug 19, 2016 at 11:07:36AM +0200, Michal Marek wrote:
-> On 2016-08-18 19:55, Luis R. Rodriguez wrote:
-> > On Wed, Aug 17, 2016 at 09:26:58PM +0200, Cristina Moraru wrote:
-> > 
-> >> This patchset implements dynamic pegging of kconfig symbol
-> >> into driver modinfo section
-> > 
-> > First a little bit of motivation here helps, so let me try to
-> > help fill in some gaps. This may help explain what you have
-> > been working on a bit more.
-> > 
-> > First, for those that were not Cc'd but curious about this work
-> > so far, you can read the patches here:
-> > 
-> > Original cover letter:
-> > 
-> > https://lkml.kernel.org/r/1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com
-> > 
-> > https://marc.info/?l=linux-kernel&m=147146213519750&w=2 - patch 1
-> > https://marc.info/?l=linux-kernel&m=147146209019744&w=2 - patch 2
-> > https://marc.info/?l=linux-kernel&m=147146211819747&w=2 - patch 3
-> > https://marc.info/?l=linux-kernel&m=147146209119745&w=2 - patch 4
-> > https://marc.info/?l=linux-kernel&m=147146209519746&w=2 - patch 5
-> > 
-> > There are a few situations in which you may want to extract a
-> > subset of Kconfig CONFIG_* symbols for a system. At least when
-> > only considering modules:
-> > 
-> >  a) When optimizing build requirements for a kernel for a system.
-> >     That is you boot into a distro kernel and then want to build
-> >     a slim kernel only with sensible kernel configuration options.
-> > 
-> >  b) When you are on a distribution kernel but the distribution
-> >     kernel provided lacks hardware support for your device, you
-> >     may either want to upgrade the full kernel in which case you
-> >     want to do a) or -- you may want to just a backports release
-> >     which provides just the modules you need, you'd use it on top
-> >     of the distribution kernel.
-> 
-> c) Having the mapping in sysfs would allow to simplify
-> streamline_config.pl avoid parsing Makefiles in perl.
+https://bugzilla.kernel.org/show_bug.cgi?id=151241
 
-Indeed, this was actually a side possible goal here :) only it seems
-we totally forgot about it while addressing the work.
+Johannes Berg <johannes@sipsolutions.net> changed:
 
-> Only if the patch did not depend on streamline_config.pl :)
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+          Component|Backports                   |Spam
+            Version|unspecified                 |2.5
+           Assignee|backports@vger.kernel.org   |other_spam@kernel-bugs.kern
+                   |                            |el.org
+            Product|Backports project           |Other
 
-Indeed, lets get rid of that dependency.
-
-> One idea would be to generate
-> the Module.ksymb in a similar way we generate the modules.builtin file:
-> Generate an alternate include/config/*.conf with all CONFIG_FOO=m
-> replaced with
-> 
-> CONFIG_FOO=m-CONFIG_FOO
-> 
-> and in the Makefile, iterate over $(filter m-CONFIG_%, $(.VARIABLES)) to
-> create the mapping. This would also properly cover cases where we build
-> the $(obj-m) list from another list. It would certainly create other
-> corner cases, but it's worth trying IMO.
-
-Neat, would that cover lib-m then as well or other targets that would generate 
-modules ?
-
-> Another thing is that we do not necessarily need to record this
-> information in .modinfo, but we can generate a list in
-> /lib/modules/`uname -r`/ for consumption. It could also include drivers
-> that are builtin in the current configuration.
-
-Well so one future use would be for instance a 'make udevconfig' which
-in theory should be able then to scrape all possible related needed
-device CONFIG_'s and then give you an optimal kernel configuration.
-It'd be nice to be able to extract this from the kernel and modules
-without needing build sources in /lib/modules/`uname -r`/.
-
-Thoughts?
-
-  Luis
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
