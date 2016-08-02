@@ -1,85 +1,189 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:52924 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933523AbcHYIls (ORCPT <rfc822;backports@vger.kernel.org>);
-        Thu, 25 Aug 2016 04:41:48 -0400
-Subject: Re: [RFC PATCH 0/5] Add CONFIG symbol as module attribute
-To: Christoph Hellwig <hch@lst.de>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>
-References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
- <20160818175505.GM3296@wotan.suse.de> <20160825074313.GC18622@lst.de>
-Cc: Cristina Moraru <cristina.moraru09@gmail.com>,
-        "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>,
-        Valentin Rothberg <valentinrothberg@gmail.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org,
-        teg@jklm.no, kay@vrfy.org, rusty@rustcorp.com.au,
-        akpm@linux-foundation.org, backports@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "rafael.j.wysocki" <rafael.j.wysocki@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Paul Bolle <pebolle@tiscali.nl>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Tejun Heo <tj@kernel.org>,
-        Jej B <James.Bottomley@hansenpartnership.com>,
-        Theodore Ts'o <tytso@mit.edu>, danijons@student.chalmers.se,
-        Andrzej Wasowski <wasowski@itu.dk>
-From: Michal Marek <mmarek@suse.com>
-Message-ID: <cc2c4d65-aa57-a04d-8e2a-75c13943b2b7@suse.com> (sfid-20160825_104151_420501_DA6B64CD)
-Date: Thu, 25 Aug 2016 10:41:25 +0200
+Received: from mail.kernel.org ([198.145.29.136]:46302 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S966069AbcHBNrX convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 2 Aug 2016 09:47:23 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 87EE72034B
+	for <backports@vger.kernel.org>; Tue,  2 Aug 2016 13:36:20 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+	by mail.kernel.org (Postfix) with ESMTP id 40C2A2021A
+	for <backports@vger.kernel.org>; Tue,  2 Aug 2016 13:36:19 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 151241] New: Are you facing technical problems with your hp
+ printer and looking for hp printer support phone number or hewlett packard
+ printer support phone number or hewlett packard customer service telephone
+ number or hewlett packard customer service phone number or
+Date: Tue, 02 Aug 2016 13:36:18 +0000
+Message-ID: <bug-151241-58281@https.bugzilla.kernel.org/> (sfid-20160802_154903_942283_218D82DC)
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-In-Reply-To: <20160825074313.GC18622@lst.de>
-Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 2016-08-25 09:43, Christoph Hellwig wrote:
-> The idea seems useful, but I reallt don't like the 'reverse-engineering'
-> approach.
-> 
-> If we want to this properly from the ground up we should just split out
-> our CONFIG_ SYMBOLS into
-> 
-> MODULE_* - builds exactly one module (tristate, or maybe also as a built-in
-> only one, then like a bool)
-> 
-> CONFIG_* - just bool, MODULE_ may depend on it, too.
-> 
-> The other nice thing is that we could probably fold most of the Makefiles
-> into Kconfig using that methods as well, by listing the objectes required
-> for a module, e.g.
-> 
-> module NVME_TARGET
-> 	tristate "NVMe Target support"
-> 	depends on BLOCK
-> 	depends on CONFIGFS_FS
-> 	name nvmet
-> 	objects core.o configfs.o admin-cmd.o io-cmd.o fabrics-cmd.o
-> 	objects discovery.o
-> 
-> module NVME_TARGET_LOOP
-> 	tristate "NVMe loopback device support"
-> 	depends on BLK_DEV_NVME
-> 	depends on NVME_TARGET
-> 	select NVME_FABRICS
-> 	select SG_POOL
-> 	name nvme-loop
-> 	objects loop.o
+https://bugzilla.kernel.org/show_bug.cgi?id=151241
 
-It looks nice for the simple case, but as soon as you need something
-non-standard, you will need to mix a kconfig generated and a manually
-written Makefile snippet.
+            Bug ID: 151241
+           Summary: Are you facing technical problems with your hp printer
+                    and looking for hp printer support phone number or
+                    hewlett packard printer support phone number or
+                    hewlett packard customer service telephone number or
+                    hewlett packard customer service phone number or
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: Printer Technical Support
+                                            (888) 990-8801
+          Hardware: All
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: alexbelton6495@gmail.com
+        Regression: No
 
-Michal
---
+Printer Technical Support                                                     
+(888) 990-8801
+
+
+
+
+
+
+
+
+Are you facing technical problems with your hp printer and looking for hp
+printer support phone number or hewlett packard printer support phone number or
+hewlett packard customer service telephone number or hewlett packard customer
+service phone number or hewlett packard customer service telephone number or
+hewlett packard printer customer service telephone number, don’t worry you are
+at the right place. You just need to connect with our hp printer technology
+expert through our toll free number (888) 990-8801.
+When you dial our hp printer support telephone number you’ll be connected with
+one of our printer technology experts and s/he will help you to get rid of your
+technical problem with hp printer. In case they’re unable to fix it they’ll be
+sharing a new hp printer support phone number of their senior level
+technicians. They’ll help you with lexmark printer support phone number or
+canon printer support phone number, brother printer support phone number, epson
+printer customer service number, dell printer support phone number, dell
+enterprise support phone number.
+Our printer technology experts are good enough to assist you if you are
+searching on Google for hp printer support, hp printer help, hp printer
+helpline, hp printer helpdesk, hp printer tech support, hp printer technical
+support number, support for hp printer, technical support for hp printer.
+Hewlett Packard printer support, Hewlett Packard printer help, Hewlett Packard
+printer helpline, Hewlett Packard printer helpdesk, support for Hewlett Packard
+printer, hp printer problem, hp printer problems, Hewlett Packard printer
+problem, Hewlett Packard printer problems, hp printer issues, Hewlett Packard
+printer issues, hp printer number, Hewlett Packard printer number, hp technical
+support number. You don’t need to go and search on Google every time you need
+assistance.
+Our printer technology experts are equipped enough to assist you if you are
+also searching for hp printer support phone number, hewlett packard printer
+support phone number, hp printer support, hp printer spooler support, support
+for hp printer spooler, hp printer spooler error support, hp printer support
+phone number, canon printer support number, brother printer support number, hp
+printer tech support phone number, hewlett packard printer support phone
+number, hp printer support telephone number, hp printer support center, canon
+printer support phone number, hp printer support chat, brother printer support
+phone number, dell printer support phone number.
+When you dial our hp printer support telephone number you’ll be connected with
+one of our printer technology experts and s/he will help you to get rid of your
+technical problem with hp printer. In case they’re unable to fix it they’ll be
+sharing a new hp printer support phone number of their senior level
+technicians. They’ll help you with lexmark printer support phone number or
+canon printer support phone number, brother printer support phone number, epson
+printer customer service number, dell printer support phone number, dell
+enterprise support phone number.
+Our printer technology experts are good enough to assist you if you are
+searching on Google for hp printer support, hp printer help, hp printer
+helpline, hp printer helpdesk, hp printer tech support, hp printer technical
+support number, support for hp printer, technical support for hp printer.
+Hewlett Packard printer support, Hewlett Packard printer help, Hewlett Packard
+printer helpline, Hewlett Packard printer helpdesk, support for Hewlett Packard
+printer, hp printer problem, hp printer problems, Hewlett Packard printer
+problem, Hewlett Packard printer problems, hp printer issues, Hewlett Packard
+printer issues, hp printer number, Hewlett Packard printer number, hp technical
+support number. You don’t need to go and search on Google every time you need
+assistance.
+Our printer technology experts are equipped enough to assist you if you are
+also searching for hp printer support phone number, hewlett packard printer
+support phone number, hp printer support, hp printer spooler support, support
+for hp printer spooler, hp printer spooler error support, hp printer support
+phone number, canon printer support number, brother printer support number, hp
+printer tech support phone number, hewlett packard printer support phone
+number, hp printer support telephone number, hp printer support center, canon
+printer support phone number, hp printer support chat, brother printer support
+phone number, dell printer support phone number.
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer support number | Printer support number | Printer support number |
+Printer help number | Printer help number | Printer help number | Printer help
+number | Printer help number | Printer help number | Printer help number |
+Printer help number | Printer help number | Printer help number | Printer help
+number | Printer help number | Printer help number | Printer help number |
+Printer help number | Printer help number | Printer help number | Printer help
+number |
+hp printer tech support phone number | hewlett packard printer support phone
+number |hp printer support telephone number |hp printer support center |dell
+printer support phone number |brother printer support phone number |hp printer
+support chat |canon printer support phone number
+Printer help number | Printer help number | Printer help number | Printer help
+number | Printer help number | Printer help number | Printer help number |
+Printer help number | Printer help number | Printer help number | Printer help
+number | Printer help number | Printer help number | Printer help number |
+Printer help number | Printer help number | Printer help number | Printer help
+number |
+hp printer tech support phone number | hewlett packard printer support phone
+number |hp printer support telephone number |hp printer support center |dell
+printer support phone number |brother printer support phone number |hp printer
+support chat |canon printer support phone number
+hp printer tech support phone number | hewlett packard printer support phone
+number |hp printer support telephone number |hp printer support center |dell
+printer support phone number |brother printer support phone number |hp printer
+support chat |canon printer support phone number
+Our printer technology experts are good enough to assist you if you are
+searching on Google for hp printer support, hp printer help, hp printer
+helpline, hp printer helpdesk, hp printer tech support, hp printer technical
+support number, support for hp printer, technical support for hp printer.
+Hewlett Packard printer support, Hewlett Packard printer help, Hewlett Packard
+printer helpline, Hewlett Packard printer helpdesk, support for Hewlett Packard
+printer, hp printer problem, hp printer problems, Hewlett Packard printer
+problem, Hewlett Packard printer problems, hp printer issues, Hewlett Packard
+printer issues, hp printer number, Hewlett Packard printer number, hp technical
+support number.
+Our printer technology experts are good enough to assist you if you are
+searching on Google for hp printer support, hp printer help, hp printer
+helpline, hp printer helpdesk, hp printer tech support, hp printer technical
+support number, support for hp printer, technical support for hp printer.
+Hewlett Packard printer support, Hewlett Packard printer help, Hewlett Packard
+printer helpline, Hewlett Packard printer helpdesk, support for Hewlett Packard
+printer, hp printer problem, hp printer problems, Hewlett Packard printer
+problem, Hewlett Packard printer problems, hp printer number, Hewlett Packard
+printer number, hp technical support number. You don’t need to go and search on
+Google every time you need assistance.
+
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.--
 To unsubscribe from this list: send the line "unsubscribe backports" in
