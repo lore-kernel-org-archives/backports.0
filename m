@@ -1,129 +1,106 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:56660 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753370AbcHWTYE (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 23 Aug 2016 15:24:04 -0400
-Date: Tue, 23 Aug 2016 21:07:53 +0200
+Received: from mx2.suse.de ([195.135.220.15]:45834 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932155AbcHHVyI (ORCPT <rfc822;backports@vger.kernel.org>);
+	Mon, 8 Aug 2016 17:54:08 -0400
+Date: Mon, 8 Aug 2016 23:54:03 +0200
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Cristina-Gabriela Moraru <cristina.moraru09@gmail.com>
+To: Julia Lawall <julia.lawall@lip6.fr>
 Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        linux-kernel@vger.kernel.org, Tom Gundersen <teg@jklm.no>,
-        Kay Sievers <kay@vrfy.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        akpm@linux-foundation.org, backports@vger.kernel.org
-Subject: Re: [RFC PATCH 2/5] Add CONFIG symbol to module as compilation
- parameter
-Message-ID: <20160823190753.GF3296@wotan.suse.de> (sfid-20160823_212408_084102_8354B6DB)
-References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
- <1471462023-119645-3-git-send-email-cristina.moraru09@gmail.com>
- <20160818181007.GN3296@wotan.suse.de>
- <CAGZ2q2yt1NYshNpm5ZCmPXfYxPynttEU7KiiL3RALegGD04nug@mail.gmail.com>
+	Cristina Moraru <cristina.moraru09@gmail.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	"vegard.nossum@gmail.com" <vegard.nossum@gmail.com>,
+	Valentin Rothberg <valentinrothberg@gmail.com>,
+	Paul Bolle <pebolle@tiscali.nl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org, teg@jklm.no, kay@vrfy.org,
+	rusty@rustcorp.com.au, akpm@linux-foundation.org,
+	backports@vger.kernel.org, gregkh@linuxfoundation.org,
+	Michal Marek <mmarek@suse.com>,
+	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+	"rafael.j.wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [RFC PATCH 2/3] Add generation of Module.ksymb file in
+ streamline_config.pl
+Message-ID: <20160808215403.GX3296@wotan.suse.de> (sfid-20160808_235411_502354_5FECF7F1)
+References: <1469979232-15531-1-git-send-email-cristina.moraru09@gmail.com>
+ <1469979232-15531-3-git-send-email-cristina.moraru09@gmail.com>
+ <20160808191533.GT3296@wotan.suse.de>
+ <alpine.DEB.2.10.1608082230110.3341@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAGZ2q2yt1NYshNpm5ZCmPXfYxPynttEU7KiiL3RALegGD04nug@mail.gmail.com>
+In-Reply-To: <alpine.DEB.2.10.1608082230110.3341@hadrien>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sat, Aug 20, 2016 at 05:11:37PM +0200, Cristina-Gabriela Moraru wrote:
-> 2016-08-18 20:10 GMT+02:00 Luis R. Rodriguez <mcgrof@kernel.org>:
-> > On Wed, Aug 17, 2016 at 09:27:00PM +0200, Cristina Moraru wrote:
-> >> Add  CONFIG symbol to kernel modules as a define via -D
-> >
-> > Perhaps better worded as:
-> >
-> > When modules have a direct Kconfig CONFIG_ symbol associated with
-> > we want to be able to make it available to the build system when we
-> > are building the module.
-> >
-> > You can then describe you do this with -D.
-> >
-> >> compilation parameter. The CONFIG_FOO symbol for each
-> >> module is determined by the module name, using the
-> >> associations from Module.ksymb. This file is loaded
-> >> using the 'include' directive, thus run like a regular
-> >> makefile. The format of the content of the file is the
-> >> following:
-> >>
-> >> foo_KCONF=CONFIG_FOO
-> >>
-> >> creating a set of Makefile variables foo_KCONF with the
-> >> CONFIG_FOO as values.
-> >>
-> >> The Makefile then adds this value in the compilation
-> >> command with -DKBUILD_KCONF='"CONFIG_FOO"'.
-> >
-> > Very nice. What would it mean if it lacks this ?
-> > This should be explained on the commit log.
-> >
+On Mon, Aug 08, 2016 at 10:32:46PM +0200, Julia Lawall wrote:
 > 
-> If we lack it then KBUILD_KCONF="" and in /sys the module has the
-> kconfig_symbol attribute but with the empty string as content:
 > 
-> prompt:/sys$ cat ./module/mptbase/kconfig_symbol
+> On Mon, 8 Aug 2016, Luis R. Rodriguez wrote:
 > 
-> prompt:/sys$
+> > On Sun, Jul 31, 2016 at 05:33:51PM +0200, Cristina Moraru wrote:
+> > > Add generation of ./scripts/mod/Module.ksymb file containing
+> > > associations of driver file names and corresponding CONFIG_*
+> > > symbol.
+> > >
+> > > This file will be used by modpost to peg kconfig CONFIG_*
+> > > symbol to its corresponding module. This information will
+> > > be further exposed in userspace for extracting build options
+> > > for the required modules.
+> > >
+> > > This approach faces the following limitations:
+> > > * in some cases there are more than one CONFIG_* option
+> > > for certain objects. This happens for the objects that are
+> > > part of more CONFIGs. Thus, all configs are returned for
+> > > this object names. For example, the mapping for clk_div6 is
+> > > CONFIG_ARCH_R8A73A4, CONFIG_ARCH_R8A7793 and many others.
+> >
+> > Ah, indeed so for instance:
+> >
+> > drivers/clk/renesas/Makefile:
+> > ...
+> > obj-$(CONFIG_ARCH_R8A73A4)              += clk-r8a73a4.o clk-div6.o
+> > obj-$(CONFIG_ARCH_R8A7740)              += clk-r8a7740.o clk-div6.o
+> > ...
+> >
+> > So in this case there is no particular unique CONFIG_* symbols that
+> > only associates itself to clk-div6.
+> >
+> > Given that the purpose here is to help compile a .config that is sufficient to
+> > build a kernel with that module, I do believe using both config symbols would
+> > be the appropriate solution in this case to ensure a build suffices based only
+> > on this information.  This is only possible of course *iff* both symbols are
+> > not mutually exclusive, so in this case an issue would be if for instance
+> > CONFIG_ARCH_R8A73A4's kconfig entry negates CONFIG_ARCH_R8A7740. They do not
+> > in this case so using both suffices. I can imagine doing this secondary logic
+> > is cumbersome, so perhaps its best we avoid these sorts of situations as it
+> > would imply doing more work going barkwards -- from modules loaded to modules
+> > to symbols.
+> >
+> > I'd bet this would not be the only kconfig issue that could arise from this
+> > loose practice in kconfig.
+> >
+> > Anyway, if we determine that both kconfig options should be enabled for a build
+> > to select this driver -- that would increase the build size, perhaps with no
+> > need for it. So this strategy of course would not yield optimal builds.
 > 
-> I will add it into the commit log.
+> Do you care?  I guess no one would want clk-div6 for actual execution.  I
+> haven't looked at the file, but from the make information, it looks like a
+> library that is shared by two drivers and has no independent interest.  If
+> the goal is just to be sure that the code is compiled, for sanity checking
+> purposes, then wouldn't it be fine to either pick one option, or pick both
+> (giving perhaps a little more confidence at a small cost).
 
-OK -- I do wonder if instead of an empty string leaving the kconfig_symbol
-out is better. If its empty then it can be confusing, and so perhaps better
-an "unknown" is better. But skipping the attribute then seems best as then
-we can focus on just addressing what it *does mean* when we do have a mapping.
-This would allow addressing the semantic gap of modules that lack this and
-trying to fix those step by step. To fix those we first need to identify
-*why* we can't get an attribute pegged to these - document this perhaps on
-kernelnewbies.org/KernelProjects/<pick-a-topic-name-for-your-project>
-and then your commit log can reference this for a list of known reasons
-and pending work.
+Indeed but both kconfig options may be mutually exclusive, in such case a tool
+trying to pick what should be enabled must do more work, maybe read some
+Kconfig and then understand that language.
 
-> >> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> >> index e7df0f5..8ae9b7f 100644
-> >> --- a/scripts/Makefile.lib
-> >> +++ b/scripts/Makefile.lib
-> >> @@ -89,6 +89,10 @@ multi-objs-m       := $(addprefix $(obj)/,$(multi-objs-m))
-> >>  subdir-ym    := $(addprefix $(obj)/,$(subdir-ym))
-> >>  obj-dirs     := $(addprefix $(obj)/,$(obj-dirs))
-> >>
-> >> +# Include Module.ksymb which contains the associations of modules' names
-> >> +# and corresponding CONFIG_* options
-> >> +include Module.ksymb
-> >
-> > Is this file always generated? If not prefixing the include call with - would
-> > be better. If we are going to make this optional, then an ifdef wrapper would
-> > suffice as we know it'd be expected only if the new feature was enabled.
-> 
-> Yes. This file is always generated. In case a 'git pull' happened
-> between two 'make' commands, the associations should be updated. Ok. I
-> will add a ifdef.
-> 
-> >
-> >> +
-> >>  # These flags are needed for modversions and compiling, so we define them here
-> >>  # already
-> >>  # $(modname_flags) #defines KBUILD_MODNAME as the name of the module it will
-> >> @@ -100,6 +104,9 @@ name-fix = $(squote)$(quote)$(subst $(comma),_,$(subst -,_,$1))$(quote)$(squote)
-> >>  basename_flags = -DKBUILD_BASENAME=$(call name-fix,$(basetarget))
-> >>  modname_flags  = $(if $(filter 1,$(words $(modname))),\
-> >>                   -DKBUILD_MODNAME=$(call name-fix,$(modname)))
-> >> +ksym-fix = $(squote)$(quote)$($(subst $(comma),_,$(subst -,_,$1))_KCONF)$(quote)$(squote)
-> >> +ksymb_flags = $(if $(filter 1,$(words $(modname))),\
-> >> +                 -DKBUILD_KSYMB=$(call ksym-fix, $(modname)))
-> >
-> > Are clashes possible with this formula? Can we end up with two results for instance?
-> > If not what prevents current konfig logic and namespace from a clash ? If we do
-> > not have anything to prevent a clash, what can we do to help make such clash not
-> > possible ?
-> 
-> I think the fact that modname is unique prevents from having clashes.
-> KBUILD_KSYMB is found according to modname.
-> Currently there is no clash because I enforced the Module.ksymb to
-> have 1-to-1 mapping.
-> The only potential clash I can imagine right now it having the same
-> module name but architecture specific CONFIG_* symbol. If there is a
-> 1-to-1 mapping in Module.ksymb there should be no clash in the
-> makefile.
-
-OK thanks.
+I'm a bit more inclined to close the gap and leave this ambiguity out of the
+kconfig picture if possible so we have 1-1 mappings for modules at least, then
+dependencies are explicit and tools doing backward mapping would not have to
+learn kconfig.
 
   Luis
 --
