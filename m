@@ -1,143 +1,77 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:48608 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752400AbcH2T0d (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 29 Aug 2016 15:26:33 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id D73D9201DD
-        for <backports@vger.kernel.org>; Mon, 29 Aug 2016 19:26:30 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-        by mail.kernel.org (Postfix) with ESMTP id 54A0A2011D
-        for <backports@vger.kernel.org>; Mon, 29 Aug 2016 19:26:29 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 155521] New: Voice of Canada @@@@I@855@709@2847 ++++ E.p.s.o.n.
- .p.r.i..n.t.e.rs.u.p.p.O.r.t p.h.O.n.e n.u.m.b.e.r E.p.s.o.n.
- .p.r.i..n.t.e.rt.e.c.h. s.u.p.p.O.r.t p.h.O.n.e n.u.m.b.e.r U.S.A
-Date: Mon, 29 Aug 2016 19:26:28 +0000
-Message-ID: <bug-155521-58281@https.bugzilla.kernel.org/> (sfid-20160829_212635_807580_DB2D006E)
-Content-Type: text/plain; charset="UTF-8"
+Received: from mout.gmx.net ([212.227.15.19]:61472 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752132AbcHHTIx convert rfc822-to-8bit (ORCPT
+	<rfc822;backports@vger.kernel.org>); Mon, 8 Aug 2016 15:08:53 -0400
+In-Reply-To: <CAB=NE6W=-sOfJCTHZSzk1pFC20Zh9R-rELOe2zcoCDhY_hw33Q@mail.gmail.com>
+References: <trinity-50e3397a-cfd4-4f35-ab8b-51700c2a6cf6-1470642723593@3capp-gmx-bs12> <CAB=NE6W=-sOfJCTHZSzk1pFC20Zh9R-rELOe2zcoCDhY_hw33Q@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Subject: Re: gentree fails at no such file compat/crypto-skcipher.c
+From: Peter Huewe <peterhuewe@gmx.de>
+Date: Mon, 08 Aug 2016 12:05:52 -0700
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+CC: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Message-ID: <01C20278-FFC0-4346-848F-C3B92F031B4E@gmx.de> (sfid-20160808_210856_020302_42FD4CE3)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=155521
 
-            Bug ID: 155521
-           Summary: Voice of Canada @@@@I@855@709@2847 ++++ E.p.s.o.n.
-                    .p.r.i..n.t.e.rs.u.p.p.O.r.t p.h.O.n.e n.u.m.b.e.r
-                    E.p.s.o.n. .p.r.i..n.t.e.rt.e.c.h. s.u.p.p.O.r.t
-                    p.h.O.n.e n.u.m.b.e.r U.S.A
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: Voice of Canada @@@@I@855@709@2847 ++++ E.p.s.o.n.
-                    .p.r.i..n.t.e.rs.u.p.p.O.r.t p.h.O.n.e n.u.m.b.e.r
-                    E.p.s.o.n. .p.r.i..n.t.e.rt.e.c.h. s.u.p.p.O.r.t
-                    p.h.O.n.e n.u.m.b.e.r U.S.A
-          Hardware: All
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: Backports
-          Assignee: backports@vger.kernel.org
-          Reporter: shipramall8@gmail.com
-        Regression: No
 
-Created attachment 231291
-  --> https://bugzilla.kernel.org/attachment.cgi?id=231291&action=edit
-((moti))Call @@@++ USA I8557O92847 EPSON p.r.i.n.t.e.r t.e.c.h s.u.p.p.o.r.t
-p.h.o.n.e n.u.m.b.e.r u.s.a. C.a.l.l EPSON h.e.l.p d.e.s.k n.u.m.b.e.r
-n.u.m.b.e.r C.a.n.a.d.a EPSON s.u.p.p.o.r.t p.h.o.n.
+Am 8. August 2016 10:35:47 GMT-07:00, schrieb "Luis R. Rodriguez" <mcgrof@kernel.org>:
+>On Mon, Aug 8, 2016 at 12:52 AM, Peter Huewe <PeterHuewe@gmx.de> wrote:
+>>
+>> I'm currently looking into the backports project to figure out how
+>hard it would be to add the tpm drivers.
+>> However unfortunately the gentree.py script fails, and I cannot
+>really explain why:
+>>
+>> ./gentree.py --clean --git-revision v4.0 /home/peter/linux-next/
+>/home/peter/linux-4.0-backport
+>> Get original source files from git ...
+>> Traceback (most recent call last):
+>>   File "./gentree.py", line 1091, in <module>
+>>     ret = _main()
+>>   File "./gentree.py", line 724, in _main
+>>     logwrite=logwrite)
+>>   File "./gentree.py", line 862, in process
+>>     disable_list = add_automatic_backports(args)
+>>   File "./gentree.py", line 276, in add_automatic_backports
+>>     automatic_backport_mangle_c_file(f)), 'r'):
+>> IOError: [Errno 2] No such file or directory:
+>'/home/peter/linux-4.0-backport/compat/crypto-skcipher.c'
+>
+>If you are trying to use a target v4.0 kernel then you need to
+>checkout the linux-4.0.y branch from the backports tree as well.
+>
+>git checkout -b linux-4.0.y origin/linux-4.0.y
+>
+>And try again.
 
-((moti))Call @@@++ USA I8557O92847 EPSON p.r.i.n.t.e.r t.e.c.h s.u.p.p.o.r.t
-p.h.o.n.e n.u.m.b.e.r u.s.a. C.a.l.l EPSON h.e.l.p d.e.s.k n.u.m.b.e.r
-n.u.m.b.e.r C.a.n.a.d.a EPSON s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.r usa USA 1
-I8557O92847 EPSON p.r.i.n.t.e.r t.e.c.h s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.e.r
-u.s.a. C.a.l.l EPSON h.e.l.p d.e.s.k n.u.m.b.e.r n.u.m.b.e.r C.a.n.a.d.a EPSON
-s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.r usa canada 1-1855-709-2847 USA, EPSON printer
-Tech Support phone number,EPSON technical support phone number 1 I8557O92847
-.EPSON Tech Support Number EPSON Tech EPSON tech support, EPSON tech support
-number, EPSON tech support phone number, EPSON technical support, EPSON
-technical support number, EPSON technical support phone number, EPSON tech
-support number, EPSON support number, EPSON Tech support phone number, EPSON
-support phone number, EPSON technical support phone number, EPSON technical
-support number,Support Phone Number for EPSON printer Phone Number for EPSON
-CustomerService Technical Support Telephone Number EPSON printer support number
-EPSON EPSON printer tech support number EPSON EPSON printer technical support
-number EPSON EPSON printer technical support phone number EPSON EPSON printer
-customer service number EPSON EPSON internet security technical support EPSON
-technical support phone number EPSON EPSON tech support phone number EPSON
-EPSON customer support phone number I-855-709-2847 EPSON EPSON printer support
-phone number EPSON EPSON support phone EPSON tech support EPSON customer
-support EPSON phone support EPSON support number EPSON EPSON technical support
-EPSON printer customer support phone number EPSON EPSON printer tech support
-phone number EPSON contact EPSON support EPSON printer technical support phone
-number ~!~I8557092847++ EPSON EPSON phone number EPSON tech support EPSON
-support ticket EPSON customer support number EPSON EPSON tech support number
-EPSON EPSON technical support number EPSON EPSON support center EPSON telephone
-support call EPSON support EPSON printer support support EPSON EPSON billing
-support EPSON printer technical support number EPSON support EPSON printer
-EPSON online support EPSON contact support EPSON printer support number EPSON
-EPSON printer customer support number EPSON EPSON printer tech support number
-EPSON support for EPSON EPSON phone number EPSON EPSON customer service phone
-number EPSON EPSON contact phone number EPSON EPSON printer phone number EPSON
-EPSON printer customer service phone number EPSON phone number EPSON for EPSON
-customer service EPSON software phone number EPSON phone number EPSON for EPSON
-EPSON customer service telephone number EPSON EPSON helpline phone number EPSON
-EPSON contact number EPSON EPSON customer service number EPSON EPSON customer
-service phone number ~!~I8557092847++ EPSON us EPSON customer service phone
-number EPSON usa EPSON telephone number EPSON EPSON phone number EPSON usa
-EPSON printer contact number EPSON EPSON number EPSON EPSON contact number
-EPSON usa EPSON printer helpline number EPSON EPSON helpline number EPSON EPSON
-customer number EPSON EPSON printer customer service number EPSON EPSON contact
-telephone number EPSON contact number EPSON for EPSON EPSON software contact
-number EPSON EPSON toll free number EPSON EPSON telephone number EPSON uk EPSON
-registration number EPSON EPSON toll free number EPSON usa EPSON customer
-service EPSON software customer service contact EPSON customer service EPSON
-customer service phone EPSON printer customer service EPSON service EPSON
-printer technical support EPSON printer customer support EPSON technical
-support reviews telephone EPSON printer EPSON tech support phone number EPSON
-EPSON printer tech support phone number EPSON EPSON printer customer service
-EPSON technical support phone number EPSON EPSON printer free printer support
-EPSON customer service billing EPSON customer service email address EPSON
-customer service reviews contact EPSON customer service EPSON tech support
-number EPSON usa EPSON printer support number EPSON EPSON printer contact
-number EPSON EPSON customer service phone number EPSON EPSON technical support
-usa EPSON technical support number EPSON EPSON tech support phone EPSON tech
-support number EPSON EPSON customer service telephone number EPSON EPSON
-printer customer support number EPSON EPSON printer phone number EPSON EPSON
-printer online support EPSON customer service number EPSON EPSON tech support
-center EPSON customer service EPSON software customer service EPSON customer
-care number EPSON usa EPSON customer number EPSON EPSON customer support number
-EPSON EPSON customer care number EPSON EPSON customer care toll free number
-EPSON EPSON tech support EPSON technical support EPSON printer support EPSON
-printer tech support EPSON support center EPSON.com customer service EPSON
-printer customer care number EPSON EPSON customer care EPSON phone number EPSON
-phone number EPSON for EPSON customer service EPSON phone support EPSON phone
-number EPSON tech support EPSON support phone number EPSON contact EPSON by
-phone EPSON contact phone number EPSON EPSON helpline phone number EPSON EPSON
-printer phone EPSON printer for phone EPSON contact number EPSON EPSON contact
-support contact EPSON printer EPSON contact number EPSON usa EPSON toll free
-number EPSON EPSON telephone number EPSON EPSON toll free number EPSON usa
-EPSON printer support services technical support for printer EPSON EPSON
-customer service phone number EPSON usa EPSON printer customer care number
-EPSON usa EPSON customer care number EPSON EPSON customer care center EPSON
-customer support EPSON customer support phone EPSON customer help EPSON
-customer & technical support EPSON customer portal EPSON customer care phone
-number EPSON usa EPSON customer care email EPSON helpline EPSON tech support
-contact EPSON customer care toll free EPSON printer customer service number
-EPSON EPSON printer protection norton printer customer service number EPSON
-EPSON software customer service number EPSON EPSON hotline customer service
-phone number EPSON EPSON customer service phone number EPSON us how to contact
-EPSON by email EPSON free phone support EPSON printer technical support number
-EPSON EPSON printer technical support help desk phone number EPSON EPSON
-technical support number EPSON toll free number EPSON EPSON printer customer
-support phone number EPSON EPSON printer customer
+Thanks, this was not clear to me.
+Should we add that to the wiki maybe?
 
+>But if you are trying to add new drivers, best is to just try the
+>master branch of backports against the latest respective linux-next
+>tag that backports works against, so in this case backports is at
+>backports-20160324, so you can set you linux-next tree to
+>next-20160324:
+>
+>git reset --hard next-20160324
+>
+>This is because contributions would go to the master branch of
+>backports.
+
+About adding new drivers,
+if I make only a patch against the master branch,
+how do you then get support for older versions? E.g. 4.0.9?
+
+How does the maintenance work? (As I then would also sign up to do the maintenance of the tpm drivers in the backports)
+
+Thanks
+Peter
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+Sent from my mobile
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
