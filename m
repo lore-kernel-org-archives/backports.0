@@ -1,61 +1,55 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pf0-f180.google.com ([209.85.192.180]:33963 "EHLO
-	mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752111AbcHPTNR (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 16 Aug 2016 15:13:17 -0400
-Received: by mail-pf0-f180.google.com with SMTP id p64so30358367pfb.1
-        for <backports@vger.kernel.org>; Tue, 16 Aug 2016 12:12:52 -0700 (PDT)
-Subject: Re: [PATCH] backports: genetlink: define GENL_UNS_ADMIN_PERM as
- GENL_ADMIN_PERM
-To: Luca Coelho <luca@coelho.fi>, hauke@hauke-m.de
-References: <1471339244-12868-1-git-send-email-luca@coelho.fi>
-Cc: backports@vger.kernel.org
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <d6080ced-2956-5b96-9d03-31be637ac47b@broadcom.com> (sfid-20160816_211348_273096_75F80E01)
-Date: Tue, 16 Aug 2016 21:12:47 +0200
+Received: from mx2.suse.de ([195.135.220.15]:53534 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932360AbcHIWPI (ORCPT <rfc822;backports@vger.kernel.org>);
+	Tue, 9 Aug 2016 18:15:08 -0400
+Date: Wed, 10 Aug 2016 00:15:06 +0200
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Peter Huewe <PeterHuewe@gmx.de>,
+	"backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: Re: gentree fails at no such file compat/crypto-skcipher.c
+Message-ID: <20160809221506.GG3296@wotan.suse.de> (sfid-20160810_001509_933213_0A05848D)
+References: <trinity-50e3397a-cfd4-4f35-ab8b-51700c2a6cf6-1470642723593@3capp-gmx-bs12>
+ <CAB=NE6W=-sOfJCTHZSzk1pFC20Zh9R-rELOe2zcoCDhY_hw33Q@mail.gmail.com>
+ <01C20278-FFC0-4346-848F-C3B92F031B4E@gmx.de>
+ <20160808201407.GV3296@wotan.suse.de>
+ <trinity-cbde6023-9aad-4338-a14e-0adb12480dfb-1470718971775@3capp-gmx-bs04>
+ <20160809212848.GF3296@wotan.suse.de>
 MIME-Version: 1.0
-In-Reply-To: <1471339244-12868-1-git-send-email-luca@coelho.fi>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160809212848.GF3296@wotan.suse.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 16-8-2016 11:20, Luca Coelho wrote:
-> From: Luca Coelho <luciano.coelho@intel.com>
+On Tue, Aug 09, 2016 at 11:28:48PM +0200, Luis R. Rodriguez wrote:
+> On Tue, Aug 09, 2016 at 07:02:51AM +0200, Peter Huewe wrote:
+> If you can
+> export the functionality as modular then you are set, as you can then
+> just carry it as a new generic module helper. We have some of these,
+> refer to tons of functionality in the directory backport/compat/
+> in that take note of the Makefile
 > 
-> Older kernels don't have support for GENL_UNS_ADMIN_PERM.  So, if it
-> is not defined, use the previous GENL_ADMIN_PERM permission instead.
-
-I posted a patch for this May 17.
-
-> Change-Id: I4c845de0d5b326aff8400df22a23595ef9cd12aa
-
-and this is gerrit noise :-)
-
-Gr. AvS
-
-ps: Gr. are Greetings. Not Growling here.
-
-> Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-> ---
->  backport/backport-include/uapi/linux/genetlink.h | 9 +++++++++
->  1 file changed, 9 insertions(+)
->  create mode 100644 backport/backport-include/uapi/linux/genetlink.h
+> compat-$(CPTCFG_BPAUTO_BUILD_CRYPTO_CCM) += crypto-ccm.o                        
+> compat-$(CPTCFG_BPAUTO_CRYPTO_SKCIPHER) += crypto-skcipher.o 
 > 
-> diff --git a/backport/backport-include/uapi/linux/genetlink.h b/backport/backport-include/uapi/linux/genetlink.h
-> new file mode 100644
-> index 0000000..5292892
-> --- /dev/null
-> +++ b/backport/backport-include/uapi/linux/genetlink.h
-> @@ -0,0 +1,9 @@
-> +#ifndef __BACKPORT_UAPI_LINUX_GENETLINK_H
-> +#define __BACKPORT_UAPI_LINUX_GENETLINK_H
-> +#include_next <uapi/linux/genetlink.h>
-> +
-> +#ifndef GENL_UNS_ADMIN_PERM
-> +#define GENL_UNS_ADMIN_PERM GENL_ADMIN_PERM
-> +#endif
-> +
-> +#endif /* __BACKPORT_UAPI_LINUX_GENETLINK_H */
+> We copy over from upstream crypto-ccm and throw it in here to
+> provide our own copy. Additionally there is also patch for
+> it, see patches/backport-adjustments/crypto-ccm.patch
 > 
+> So the BPAUTO stuff is one of the auto-things we have.
+
+I forgot to refer you also to the c-file trick used to copy
+code for this purpose refer to backport/compat/Kconfig:
+
+config BPAUTO_BUILD_CRYPTO_CCM                                                  
+        bool                                                                    
+        default n if CRYPTO_CCM                                                 
+        default y if BPAUTO_CRYPTO_CCM                                          
+        #c-file crypto/ccm.c  
+
+That c-file entry means copy upstream's copy to compat/
+
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
