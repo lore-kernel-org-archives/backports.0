@@ -1,40 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:53692 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755418AbcH2UCu (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 29 Aug 2016 16:02:50 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id A6A9B201EF
-        for <backports@vger.kernel.org>; Mon, 29 Aug 2016 20:02:48 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-        by mail.kernel.org (Postfix) with ESMTP id A87922017E
-        for <backports@vger.kernel.org>; Mon, 29 Aug 2016 20:02:47 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 155521] Voice of Canada @@@@I@855@709@2847 ++++ E.p.s.o.n.
- .p.r.i..n.t.e.rs.u.p.p.O.r.t p.h.O.n.e n.u.m.b.e.r E.p.s.o.n.
- .p.r.i..n.t.e.rt.e.c.h. s.u.p.p.O.r.t p.h.O.n.e n.u.m.b.e.r U.S.A
-Date: Mon, 29 Aug 2016 20:02:47 +0000
-Message-ID: <bug-155521-58281-oeDtKhd3it@https.bugzilla.kernel.org/> (sfid-20160829_220301_468844_3B0C59F6)
-In-Reply-To: <bug-155521-58281@https.bugzilla.kernel.org/>
-References: <bug-155521-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Received: from paleale.coelho.fi ([176.9.41.70]:39198 "EHLO
+	farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750928AbcHPJUw (ORCPT
+	<rfc822;backports@vger.kernel.org>); Tue, 16 Aug 2016 05:20:52 -0400
+From: Luca Coelho <luca@coelho.fi>
+To: hauke@hauke-m.de
+Cc: backports@vger.kernel.org
+Date: Tue, 16 Aug 2016 12:20:44 +0300
+Message-Id: <1471339244-12868-1-git-send-email-luca@coelho.fi> (sfid-20160816_112212_902465_AB789047)
+Subject: [PATCH] backports: genetlink: define GENL_UNS_ADMIN_PERM as GENL_ADMIN_PERM
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=155521
+From: Luca Coelho <luciano.coelho@intel.com>
 
-Spam Script <spamscript@kernel.org> changed:
+Older kernels don't have support for GENL_UNS_ADMIN_PERM.  So, if it
+is not defined, use the previous GENL_ADMIN_PERM permission instead.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-              Group|                            |Junk
-         Resolution|---                         |INVALID
+Change-Id: I4c845de0d5b326aff8400df22a23595ef9cd12aa
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+---
+ backport/backport-include/uapi/linux/genetlink.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+ create mode 100644 backport/backport-include/uapi/linux/genetlink.h
 
+diff --git a/backport/backport-include/uapi/linux/genetlink.h b/backport/backport-include/uapi/linux/genetlink.h
+new file mode 100644
+index 0000000..5292892
+--- /dev/null
++++ b/backport/backport-include/uapi/linux/genetlink.h
+@@ -0,0 +1,9 @@
++#ifndef __BACKPORT_UAPI_LINUX_GENETLINK_H
++#define __BACKPORT_UAPI_LINUX_GENETLINK_H
++#include_next <uapi/linux/genetlink.h>
++
++#ifndef GENL_UNS_ADMIN_PERM
++#define GENL_UNS_ADMIN_PERM GENL_ADMIN_PERM
++#endif
++
++#endif /* __BACKPORT_UAPI_LINUX_GENETLINK_H */
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+2.8.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
