@@ -1,143 +1,85 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:55642 "EHLO mx2.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:58483 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751568AbcHWTNt (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 23 Aug 2016 15:13:49 -0400
-Date: Tue, 23 Aug 2016 21:00:18 +0200
+        id S1754106AbcHSAy0 (ORCPT <rfc822;backports@vger.kernel.org>);
+        Thu, 18 Aug 2016 20:54:26 -0400
+Date: Thu, 18 Aug 2016 20:55:29 +0200
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Cristina-Gabriela Moraru <cristina.moraru09@gmail.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        linux-kernel@vger.kernel.org, Tom Gundersen <teg@jklm.no>,
-        Kay Sievers <kay@vrfy.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        akpm@linux-foundation.org, backports@vger.kernel.org,
-        "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>
-Subject: Re: [RFC PATCH 1/5] Add generation of Module.symb in
- streamline_config
-Message-ID: <20160823190018.GD3296@wotan.suse.de> (sfid-20160823_211352_463163_6EA7065C)
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Cristina Moraru <cristina.moraru09@gmail.com>,
+        linux-kernel@vger.kernel.org, teg@jklm.no, kay@vrfy.org,
+        rusty@rustcorp.com.au, akpm@linux-foundation.org,
+        backports@vger.kernel.org,
+        "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [RFC PATCH 2/5] Add CONFIG symbol to module as compilation
+ parameter
+Message-ID: <20160818185529.GS3296@wotan.suse.de> (sfid-20160819_033832_399691_6A796379)
 References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
- <1471462023-119645-2-git-send-email-cristina.moraru09@gmail.com>
- <20160818182236.GO3296@wotan.suse.de>
- <CAGZ2q2xi9Uy-ye387=mWhy_fOEJBC593Nos7fH027m-_ZdoOXA@mail.gmail.com>
+ <1471462023-119645-3-git-send-email-cristina.moraru09@gmail.com>
+ <20160818181007.GN3296@wotan.suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <CAGZ2q2xi9Uy-ye387=mWhy_fOEJBC593Nos7fH027m-_ZdoOXA@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160818181007.GN3296@wotan.suse.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sat, Aug 20, 2016 at 03:59:17PM +0200, Cristina-Gabriela Moraru wrote:
-> 2016-08-18 20:22 GMT+02:00 Luis R. Rodriguez <mcgrof@kernel.org>:
+On Thu, Aug 18, 2016 at 08:10:07PM +0200, Luis R. Rodriguez wrote:
+> On Wed, Aug 17, 2016 at 09:27:00PM +0200, Cristina Moraru wrote:
 > 
-> > On Wed, Aug 17, 2016 at 09:26:59PM +0200, Cristina Moraru wrote:
-> > > Add generation of ./scripts/Module.ksymb file containing
-> > > associations of driver file names and corresponding CONFIG_*
-> > > symbol:
-> > >
-> > > foo_KCONF=CONFIG_FOO
-> > >
-> > > This file will be further loaded by the Makefile as a
-> > > configuration file: all foo_KCONF will be considered variables
-> > > and all CONFIG_FOO will be their associate values.
-> >
-> > Will the file generated always work? What are the current
-> > restrictions on kconfig variable names?
-> >
-> >
-> The file generated will always work. It's loaded with makefile's "include"
-> directive which is quite straightforward.
+> > Signed-off-by: Cristina Moraru <cristina.moraru09@gmail.com>
+> > ---
+> >  scripts/Makefile.lib | 9 ++++++++-
+> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> > index e7df0f5..8ae9b7f 100644
+> > --- a/scripts/Makefile.lib
+> > +++ b/scripts/Makefile.lib
+> > @@ -89,6 +89,10 @@ multi-objs-m	:= $(addprefix $(obj)/,$(multi-objs-m))
+> >  subdir-ym	:= $(addprefix $(obj)/,$(subdir-ym))
+> >  obj-dirs	:= $(addprefix $(obj)/,$(obj-dirs))
+> >  
+> > +# Include Module.ksymb which contains the associations of modules' names
+> > +# and corresponding CONFIG_* options
+> > +include Module.ksymb
 > 
-> If you're referring to  CONFIG_* variables, I can't find any restriction
-> regarding size or anything else.
-> If you're referring to the newly created makefile variable foo_KCONF I only
-> found this in the documentation:
-> "A variable name may be any sequence of characters not containing ‘:’, ‘#’,
-> ‘=’, or whitespace."
+> Is this file always generated? If not prefixing the include call with - would
+> be better. If we are going to make this optional, then an ifdef wrapper would
+> suffice as we know it'd be expected only if the new feature was enabled.
 
-Both since we'd up with a file with tons of entries like:
+The ordering of the patches 2 and 3 seem to be backward, you should first
+generate the file otherwise this patch will break the build as the file
+is not present.
 
-bar_KCONF=CONFIG_BAR
-foo_KCONF=CONFIG_FOO
-
-I was asking really what checks do we have to ensure either side in these lines
-will not make a Makefile barf. For instance using "\" will surely barf. Does
-Kconfig check for sanity ? If so then what are the rules for Kconfig variables?
-Makefiles then have the above description you mentioned, and I was curious how
-and if we want to vet for correctness for both.
-
-> "It is traditional to use upper case letters in variable names, but we
-> recommend using lower case letters for variable names that serve internal
-> purposes in the makefile, and reserving upper case for parameters that
-> control implicit rules or for parameters that the user should override with
-> command options"
+> > +
+> >  # These flags are needed for modversions and compiling, so we define them here
+> >  # already
+> >  # $(modname_flags) #defines KBUILD_MODNAME as the name of the module it will
+> > @@ -100,6 +104,9 @@ name-fix = $(squote)$(quote)$(subst $(comma),_,$(subst -,_,$1))$(quote)$(squote)
+> >  basename_flags = -DKBUILD_BASENAME=$(call name-fix,$(basetarget))
+> >  modname_flags  = $(if $(filter 1,$(words $(modname))),\
+> >                   -DKBUILD_MODNAME=$(call name-fix,$(modname)))
+> > +ksym-fix = $(squote)$(quote)$($(subst $(comma),_,$(subst -,_,$1))_KCONF)$(quote)$(squote)
+> > +ksymb_flags = $(if $(filter 1,$(words $(modname))),\
+> > +                 -DKBUILD_KSYMB=$(call ksym-fix, $(modname)))
 > 
-> Since the module name is lowercase I put the suffix uppercase in order to
-> be more visible.
+> Are clashes possible with this formula? Can we end up with two results for instance?
+> If not what prevents current konfig logic and namespace from a clash ? If we do
+> not have anything to prevent a clash, what can we do to help make such clash not
+> possible ?
 
-OK thanks.
+To help test this I've added your patches to a development branch on my linux-next
+tree to see if 0-day picks up any issues.
 
-> > This is nice for experimentation, however as you note we want
-> > to evaluate a better way to do this. While at it, can you describe
-> > what algorithm currently is used by scripts/kconfig/streamline_config.pl
-> > to collect %objects and the associated CONFIG symbol ? Can you think
-> > of possible flaws to it ?
-> >
-> >
-> Shortly, all makefiles are parsed searching for patterns such as:
-> 
-> obj-$(CONFIG_FOO) := obj-foo1.o obj-foo2.o ... etc.
-> 
-> Each obj-foo is added in the hashmap as key with the value
-> array(CONFIG_FOO).
-> If obj-foo already exists in the hashmap CONFIG_FOO is appended to the
-> array value.
+Guenter, to be even more thorough can I trouble you for a spin of this branch?
 
-So this fails to then capture lib-$(CONFIG_BAR) then. These can be modules
-too. So we'd need something to loop over all possible valid targets to be
-able to easily extend this with future targets, in case we get something
-other than obj- and lib-. For instance I am looking to add a force-obj-y
-and force-lib-y, later this may mean supporting force-obj-m and foce-lib-m,
-the actual name however is still up in the air [0], however my point is
-we want to be easily able to extend the series of targets used for modules.
+https://git.kernel.org/cgit/linux/kernel/git/mcgrof/linux-next.git/log/?h=20160818-gsoc-kconf_symb
 
-This may prove useful to the build something for other things.
-
-Also, does the scripts/kconfig/streamline_config.pl algorithm support
-where you have more than one line on a target, for instance:
-
-obj-$(CONFIG_FOO) := foo1.o \
-		     foo2.o \
-		     foo3.o
-
-If not we'd need to figure out a way to capture these then?
-
-[0] https://lkml.kernel.org/r/20160822235910.GW3296@wotan.suse.de
-
-> I noted that there are situations where an object obj-foo has as associates
-> more identical CONFIG_FOOs.
-> Since I select only the names which have exaclty one CONFIG_* associated
-> this is a bit confusing. I am missing one category of drivers which can be
-> found:
-> 
-> driver-foo ---- CONFIG_FOO CONFIG_FOO
-
-What do these 3 columns represent here ?
-
-> For example: nfit CONFIG_ACPI_NFIT CONFIG_ACPI_NFIT -- this actually
-> results in  a module in /sys which does not have a content into
-> kconfig_ksymb although it has exactly one match.
-> 
-> Another thing I can think of is that sometimes we find lines such as:
-> 
-> foo-name-$(CONFIG_FOO) = obj-foo1.o obj-foo2.o obj-foo3.o
-> 
-> This can be a clue that the final kernel module is named foo-name and could
-> solve some ambiguous cases.
-> This are just a few situations I can think of to be kept in mind for the
-> next Module.ksymb generator
-
-Indeed thanks, I think it'd be nice if we can iron all of them out. If we cannot
-then we should annotate why we can't and see if we are willing to compromise
-to help address this.
+Results should help give us an idea of troubling areas if this were to be added
+as a new Kconfig feature even for R&D.
 
   Luis
 --
