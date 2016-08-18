@@ -1,41 +1,31 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:43348 "EHLO mail.kernel.org"
+Received: from mx2.suse.de ([195.135.220.15]:47195 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754195AbcHDMQR (ORCPT <rfc822;backports@vger.kernel.org>);
-	Thu, 4 Aug 2016 08:16:17 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id A915F203C4
-	for <backports@vger.kernel.org>; Thu,  4 Aug 2016 12:07:33 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-	by mail.kernel.org (Postfix) with ESMTP id A5274203B1
-	for <backports@vger.kernel.org>; Thu,  4 Aug 2016 12:07:29 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 151471] 18 *))  00 ))+681)) *72 ))  08 *)) Yandex  >>  Support
- phone number
-Date: Thu, 04 Aug 2016 12:07:29 +0000
-Message-ID: <bug-151471-58281-sgKUrMSdXV@https.bugzilla.kernel.org/> (sfid-20160804_141619_840816_28230F00)
-In-Reply-To: <bug-151471-58281@https.bugzilla.kernel.org/>
-References: <bug-151471-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
+	id S1751442AbcHRTno (ORCPT <rfc822;backports@vger.kernel.org>);
+	Thu, 18 Aug 2016 15:43:44 -0400
+Date: Thu, 18 Aug 2016 20:32:18 +0200
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Cristina Moraru <cristina.moraru09@gmail.com>,
+	linux-kernel@vger.kernel.org, teg@jklm.no, kay@vrfy.org,
+	rusty@rustcorp.com.au, akpm@linux-foundation.org,
+	backports@vger.kernel.org,
+	"vegard.nossum@gmail.com" <vegard.nossum@gmail.com>
+Subject: Re: [RFC PATCH 1/5] Add generation of Module.symb in
+ streamline_config
+Message-ID: <20160818183218.GR3296@wotan.suse.de> (sfid-20160818_214346_992676_49F6FB59)
+References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
+ <1471462023-119645-2-git-send-email-cristina.moraru09@gmail.com>
+ <20160818182236.GO3296@wotan.suse.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160818182236.GO3296@wotan.suse.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=151471
 
-Johannes Berg <johannes@sipsolutions.net> changed:
+Also I think your subject has a typo.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-          Component|Backports                   |Spam
-            Version|unspecified                 |2.5
-           Assignee|backports@vger.kernel.org   |other_spam@kernel-bugs.kern
-                   |                            |el.org
-            Product|Backports project           |Other
-
--- 
-You are receiving this mail because:
-You are the assignee for the bug.
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
