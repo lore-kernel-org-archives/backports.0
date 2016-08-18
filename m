@@ -1,106 +1,148 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:45834 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932155AbcHHVyI (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 8 Aug 2016 17:54:08 -0400
-Date: Mon, 8 Aug 2016 23:54:03 +0200
+Received: from mx2.suse.de ([195.135.220.15]:58392 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754246AbcHSAyS (ORCPT <rfc822;backports@vger.kernel.org>);
+        Thu, 18 Aug 2016 20:54:18 -0400
+Date: Thu, 18 Aug 2016 20:22:36 +0200
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	Cristina Moraru <cristina.moraru09@gmail.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	"vegard.nossum@gmail.com" <vegard.nossum@gmail.com>,
-	Valentin Rothberg <valentinrothberg@gmail.com>,
-	Paul Bolle <pebolle@tiscali.nl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org, teg@jklm.no, kay@vrfy.org,
-	rusty@rustcorp.com.au, akpm@linux-foundation.org,
-	backports@vger.kernel.org, gregkh@linuxfoundation.org,
-	Michal Marek <mmarek@suse.com>,
-	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-	"rafael.j.wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [RFC PATCH 2/3] Add generation of Module.ksymb file in
- streamline_config.pl
-Message-ID: <20160808215403.GX3296@wotan.suse.de> (sfid-20160808_235411_502354_5FECF7F1)
-References: <1469979232-15531-1-git-send-email-cristina.moraru09@gmail.com>
- <1469979232-15531-3-git-send-email-cristina.moraru09@gmail.com>
- <20160808191533.GT3296@wotan.suse.de>
- <alpine.DEB.2.10.1608082230110.3341@hadrien>
+To: Cristina Moraru <cristina.moraru09@gmail.com>
+Cc: linux-kernel@vger.kernel.org, mcgrof@kernel.org, teg@jklm.no,
+        kay@vrfy.org, rusty@rustcorp.com.au, akpm@linux-foundation.org,
+        backports@vger.kernel.org,
+        "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>
+Subject: Re: [RFC PATCH 1/5] Add generation of Module.symb in
+ streamline_config
+Message-ID: <20160818182236.GO3296@wotan.suse.de> (sfid-20160819_040407_175425_34C55C83)
+References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
+ <1471462023-119645-2-git-send-email-cristina.moraru09@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <alpine.DEB.2.10.1608082230110.3341@hadrien>
+In-Reply-To: <1471462023-119645-2-git-send-email-cristina.moraru09@gmail.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Aug 08, 2016 at 10:32:46PM +0200, Julia Lawall wrote:
+On Wed, Aug 17, 2016 at 09:26:59PM +0200, Cristina Moraru wrote:
+> Add generation of ./scripts/Module.ksymb file containing
+> associations of driver file names and corresponding CONFIG_*
+> symbol:
 > 
+> foo_KCONF=CONFIG_FOO
 > 
-> On Mon, 8 Aug 2016, Luis R. Rodriguez wrote:
-> 
-> > On Sun, Jul 31, 2016 at 05:33:51PM +0200, Cristina Moraru wrote:
-> > > Add generation of ./scripts/mod/Module.ksymb file containing
-> > > associations of driver file names and corresponding CONFIG_*
-> > > symbol.
-> > >
-> > > This file will be used by modpost to peg kconfig CONFIG_*
-> > > symbol to its corresponding module. This information will
-> > > be further exposed in userspace for extracting build options
-> > > for the required modules.
-> > >
-> > > This approach faces the following limitations:
-> > > * in some cases there are more than one CONFIG_* option
-> > > for certain objects. This happens for the objects that are
-> > > part of more CONFIGs. Thus, all configs are returned for
-> > > this object names. For example, the mapping for clk_div6 is
-> > > CONFIG_ARCH_R8A73A4, CONFIG_ARCH_R8A7793 and many others.
-> >
-> > Ah, indeed so for instance:
-> >
-> > drivers/clk/renesas/Makefile:
-> > ...
-> > obj-$(CONFIG_ARCH_R8A73A4)              += clk-r8a73a4.o clk-div6.o
-> > obj-$(CONFIG_ARCH_R8A7740)              += clk-r8a7740.o clk-div6.o
-> > ...
-> >
-> > So in this case there is no particular unique CONFIG_* symbols that
-> > only associates itself to clk-div6.
-> >
-> > Given that the purpose here is to help compile a .config that is sufficient to
-> > build a kernel with that module, I do believe using both config symbols would
-> > be the appropriate solution in this case to ensure a build suffices based only
-> > on this information.  This is only possible of course *iff* both symbols are
-> > not mutually exclusive, so in this case an issue would be if for instance
-> > CONFIG_ARCH_R8A73A4's kconfig entry negates CONFIG_ARCH_R8A7740. They do not
-> > in this case so using both suffices. I can imagine doing this secondary logic
-> > is cumbersome, so perhaps its best we avoid these sorts of situations as it
-> > would imply doing more work going barkwards -- from modules loaded to modules
-> > to symbols.
-> >
-> > I'd bet this would not be the only kconfig issue that could arise from this
-> > loose practice in kconfig.
-> >
-> > Anyway, if we determine that both kconfig options should be enabled for a build
-> > to select this driver -- that would increase the build size, perhaps with no
-> > need for it. So this strategy of course would not yield optimal builds.
-> 
-> Do you care?  I guess no one would want clk-div6 for actual execution.  I
-> haven't looked at the file, but from the make information, it looks like a
-> library that is shared by two drivers and has no independent interest.  If
-> the goal is just to be sure that the code is compiled, for sanity checking
-> purposes, then wouldn't it be fine to either pick one option, or pick both
-> (giving perhaps a little more confidence at a small cost).
+> This file will be further loaded by the Makefile as a
+> configuration file: all foo_KCONF will be considered variables
+> and all CONFIG_FOO will be their associate values.
 
-Indeed but both kconfig options may be mutually exclusive, in such case a tool
-trying to pick what should be enabled must do more work, maybe read some
-Kconfig and then understand that language.
+Will the file generated always work? What are the current
+restrictions on kconfig variable names?
 
-I'm a bit more inclined to close the gap and leave this ambiguity out of the
-kconfig picture if possible so we have 1-1 mappings for modules at least, then
-dependencies are explicit and tools doing backward mapping would not have to
-learn kconfig.
+> The suffix
+> is added to be able to differentiate the new variables from
+> all existing variables in the Makefile system. Each kernel
+> module will receive its CONFIG_FOO option as macro in the
+> compilation command (-D parameter) and will expose it along
+> with other module attributes (attributes of struct module).
+
+This is done later so this description does not belong here.
+You want to describe what this patch does alone, if it has
+potential for the future just mention basics, and that will will
+be done later.
+
+> Note: this patch is built on the assumption that each driver
+> has exactly one associate CONFIG_FOO symbol.
+
+This should note be a note, it should be an important aspect of
+your changes -- you should try to describe when a direct mapping
+is possible and when it is not.
+
+> CONFIG_* options
+> that are required by CONFIG_FOO are not included. They can be
+> found by SAT resolvers.
+
+You can leave this out.
+
+> This patch is part of a research project within
+> Google Summer of Code of porting 'make localmodconfig'
+> for backported drivers. The goal is to enable each
+> module to expose in /sys its corresponding CONFIG_* option.
+> The value of this attribute will be dynamically pegged by
+> modpost without requiring extra work from the driver developers.
+> Further, this information will be used by a hardware interogation
+> tool to extract build information about the existing devices.
+
+You can leave this out.
+
+> 
+> Signed-off-by: Cristina Moraru <cristina.moraru09@gmail.com>
+> ---
+>  scripts/kconfig/streamline_config.pl | 30 +++++++++++++++++++++++++++++-
+>  1 file changed, 29 insertions(+), 1 deletion(-)
+> 
+> diff --git a/scripts/kconfig/streamline_config.pl b/scripts/kconfig/streamline_config.pl
+> index b8c7b29..686d02a 100755
+> --- a/scripts/kconfig/streamline_config.pl
+> +++ b/scripts/kconfig/streamline_config.pl
+> @@ -128,9 +128,11 @@ my @config_file = read_config;
+>  # Parse options
+>  my $localmodconfig = 0;
+>  my $localyesconfig = 0;
+> +my $genmoduleksymb = 0;
+>  
+>  GetOptions("localmodconfig" => \$localmodconfig,
+> -	   "localyesconfig" => \$localyesconfig);
+> +	   "localyesconfig" => \$localyesconfig,
+> +	   "genmoduleksymb" => \$genmoduleksymb);
+>  
+>  # Get the build source and top level Kconfig file (passed in)
+>  my $ksource = ($ARGV[0] ? $ARGV[0] : '.');
+> @@ -147,6 +149,7 @@ my %objects;
+>  my $var;
+>  my $iflevel = 0;
+>  my @ifdeps;
+> +my @drv_objs;
+>  
+>  # prevent recursion
+>  my %read_kconfigs;
+> @@ -348,6 +351,31 @@ foreach my $makefile (@makefiles) {
+>      close($infile);
+>  }
+>  
+> +foreach my $obj_key ( keys %objects )
+> +{
+> +	my @config_options = @{$objects{$obj_key}};
+> +	# Last index of array is 0 is equivalent to array's size is 1
+> +	if ( $#config_options == 0) {
+> +		push(@drv_objs, $obj_key);
+> +	}
+> +}
+> +
+> +sub gen_module_kconfigs {
+> +	my $module_ksymb = $ENV{'srctree'}."/scripts/Module.ksymb";
+> +
+> +	open(my $ksymbfile, '>', $module_ksymb) || die "Can not open $module_ksymb for writing";
+> +
+> +	foreach (@drv_objs) {
+> +		print $ksymbfile "$_" . "_KCONF=" . "@{$objects{$_}}\n";
+> +	}
+> +	close($ksymbfile);
+> +}
+> +
+> +if ($genmoduleksymb) {
+> +	gen_module_kconfigs();
+> +	exit(0);
+> +}
+> +
+>  my %modules;
+>  my $linfile;
+
+This is nice for experimentation, however as you note we want
+to evaluate a better way to do this. While at it, can you describe
+what algorithm currently is used by scripts/kconfig/streamline_config.pl
+to collect %objects and the associated CONFIG symbol ? Can you think
+of possible flaws to it ?
+
+The generation here is also forced, we want to enable this to be optional
+so please consider adding a Kconfig entry for this as a feature, just as
+the module versioning stuff has one.
 
   Luis
 --
