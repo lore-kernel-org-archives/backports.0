@@ -1,88 +1,73 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:58396 "EHLO mx2.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:35248 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754249AbcHSAyS (ORCPT <rfc822;backports@vger.kernel.org>);
-        Thu, 18 Aug 2016 20:54:18 -0400
-Date: Thu, 18 Aug 2016 20:59:41 +0200
+        id S1754920AbcHSBdr (ORCPT <rfc822;backports@vger.kernel.org>);
+        Thu, 18 Aug 2016 21:33:47 -0400
+Date: Thu, 18 Aug 2016 18:18:41 +0200
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Cristina Moraru <cristina.moraru09@gmail.com>
-Cc: linux-kernel@vger.kernel.org, mcgrof@kernel.org, teg@jklm.no,
-        kay@vrfy.org, rusty@rustcorp.com.au, akpm@linux-foundation.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        backports@vger.kernel.org, vegard.nossum@gmail.com
-Subject: Re: [RFC PATCH 4/5] Set KCONFIG_KSYMB as value for kconfig_ksymb
- module attribute
-Message-ID: <20160818185941.GK3296@wotan.suse.de> (sfid-20160819_040342_440456_23B2B3BA)
-References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
- <1471462023-119645-5-git-send-email-cristina.moraru09@gmail.com>
+To: Peter Huewe <PeterHuewe@gmx.de>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
+Subject: Re: backport-4.7.c fails due to missing rhashtable.h for target <
+ 3.17
+Message-ID: <20160818161841.GK3296@wotan.suse.de> (sfid-20160819_033428_881619_A2164A7C)
+References: <trinity-e021195e-a0df-484c-9ba9-6d30922988b8-1470901957548@3capp-gmx-bs55>
+ <trinity-15584ccd-5e19-4c65-93a1-97f688db43d7-1470904501866@3capp-gmx-bs55>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1471462023-119645-5-git-send-email-cristina.moraru09@gmail.com>
+In-Reply-To: <trinity-15584ccd-5e19-4c65-93a1-97f688db43d7-1470904501866@3capp-gmx-bs55>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, Aug 17, 2016 at 09:27:02PM +0200, Cristina Moraru wrote:
-> Update modpost to add in *.mod.c files generated for each
-> module the setting of module attribute kernel_ksymb to
-> value given by KBUILD_KSYMB macro.
-
-Please review your patches and update subjects to match what other
-types of previous patches look like in terms of format, so
-for this patch check changes to scripts/mod/modpost.c and use
-similar type of patch prefix.
-
+On Thu, Aug 11, 2016 at 10:35:01AM +0200, Peter Huewe wrote:
+> ckmake says the same
 > 
-> This patch is part of a research project within
-> Google Summer of Code of porting 'make localmodconfig'
-> for backported drivers. The goal is to enable each
-> module to expose in /sys its corresponding CONFIG_* option.
-> The value of this attribute will be dynamically pegged by
-> modpost without requiring extra work from the driver developers.
-> Further, this information will be used by a hardware interogation
-> tool to extract build information about the existing devices.
-
-You can leave this out.
-
-> Signed-off-by: Cristina Moraru <cristina.moraru09@gmail.com>
-> ---
->  scripts/mod/modpost.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index 48958d3..a105916 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -2245,6 +2245,12 @@ static void add_srcversion(struct buffer *b, struct module *mod)
->  	}
->  }
->  
-> +static void add_kconfig_symbol(struct buffer *b, struct module *mod)
-> +{
-> +	buf_printf(b, "\n");
-> +	buf_printf(b, "MODULE_INFO(kconfig_symbol, KBUILD_KSYMB);\n");
-
-What if its not available? What happens?
-
-> +}
-> +
->  static void write_if_changed(struct buffer *b, const char *fname)
->  {
->  	char *tmp;
-> @@ -2478,6 +2484,7 @@ int main(int argc, char **argv)
->  		add_depends(&buf, mod, modules);
->  		add_moddevtable(&buf, mod);
->  		add_srcversion(&buf, mod);
-> +		add_kconfig_symbol(&buf, mod);
->  
->  		sprintf(fname, "%s.mod.c", mod->name);
->  		write_if_changed(&buf, fname);
-> -- 
-> 2.7.4
+> 1   3.0.101             [  FAIL  ]
+> 2   3.1.10              [  FAIL  ]
+> 3   3.2.81              [  FAIL  ]
+> 4   3.3.8               [  FAIL  ]
+> 5   3.4.112             [  FAIL  ]
+> 6   3.5.7               [  FAIL  ]
+> 7   3.6.11              [  FAIL  ]
+> 8   3.7.10              [  FAIL  ]
+> 9   3.8.13              [  FAIL  ]
+> 10  3.9.11              [  FAIL  ]
+> 11  3.10.102            [  FAIL  ]
+> 12  3.11.10             [  FAIL  ]
+> 13  3.12.61             [  FAIL  ]
+> 14  3.13.11             [  FAIL  ]
+> 15  3.14.73             [  FAIL  ]
+> 16  3.15.10             [  FAIL  ]
+> 17  3.16.36             [  FAIL  ]
+> 18  3.17.8              [  OK  ]
+> 19  3.18.36             [  OK  ]
+> 20  3.19.8              [  OK  ]
+> 21  4.0.9               [  OK  ]
+> 22  4.1.27              [  OK  ]
+> 23  4.2.8               [  OK  ]
+> 24  4.3.6               [  OK  ]
+> 25  4.4.14              [  OK  ]
+> 26  4.5.7               [  OK  ]
+> 27  4.6.3               [  OK  ]
+> 28  4.7-rc6             [  OK  ]
 > 
 > 
+> 
+> Was this all green for you?
 
--- 
-Luis Rodriguez, SUSE LINUX GmbH
-Maxfeldstrasse 5; D-90409 Nuernberg
+I leave it to Hauke and Johannes to respond but I typically
+use ckmake per commit.
+
+> Do you think it makes sense to set up a small per-commit based build/compile test (e.g. with travis) to see whether commits really work?
+> (I probably could do something like that)
+
+We need to run this prior to integration so the work needs to be done
+by the developer. One thing we could do, since compilation tests take a
+while is perhaps set up registering trees for testing so that then
+something similar to 0-day can fetch and test for you and you get a report
+of results. You then can rely on this prior to pushing patches.
+
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
