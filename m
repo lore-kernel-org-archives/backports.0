@@ -1,102 +1,146 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:41973 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752208AbcHHUOJ (ORCPT <rfc822;backports@vger.kernel.org>);
-	Mon, 8 Aug 2016 16:14:09 -0400
-Date: Mon, 8 Aug 2016 22:14:07 +0200
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Peter Huewe <peterhuewe@gmx.de>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	"backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: gentree fails at no such file compat/crypto-skcipher.c
-Message-ID: <20160808201407.GV3296@wotan.suse.de> (sfid-20160808_221411_479580_4AC46CCD)
-References: <trinity-50e3397a-cfd4-4f35-ab8b-51700c2a6cf6-1470642723593@3capp-gmx-bs12>
- <CAB=NE6W=-sOfJCTHZSzk1pFC20Zh9R-rELOe2zcoCDhY_hw33Q@mail.gmail.com>
- <01C20278-FFC0-4346-848F-C3B92F031B4E@gmx.de>
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:36614 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752765AbcHTPMP (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sat, 20 Aug 2016 11:12:15 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <01C20278-FFC0-4346-848F-C3B92F031B4E@gmx.de>
+In-Reply-To: <20160818181007.GN3296@wotan.suse.de>
+References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
+ <1471462023-119645-3-git-send-email-cristina.moraru09@gmail.com> <20160818181007.GN3296@wotan.suse.de>
+From: Cristina-Gabriela Moraru <cristina.moraru09@gmail.com>
+Date: Sat, 20 Aug 2016 17:11:37 +0200
+Message-ID: <CAGZ2q2yt1NYshNpm5ZCmPXfYxPynttEU7KiiL3RALegGD04nug@mail.gmail.com> (sfid-20160820_171220_292482_6E1F3FC1)
+Subject: Re: [RFC PATCH 2/5] Add CONFIG symbol to module as compilation parameter
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Tom Gundersen <teg@jklm.no>,
+        Kay Sievers <kay@vrfy.org>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        akpm@linux-foundation.org, backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Aug 08, 2016 at 12:05:52PM -0700, Peter Huewe wrote:
-> 
-> 
-> Am 8. August 2016 10:35:47 GMT-07:00, schrieb "Luis R. Rodriguez" <mcgrof@kernel.org>:
-> >On Mon, Aug 8, 2016 at 12:52 AM, Peter Huewe <PeterHuewe@gmx.de> wrote:
-> >>
-> >> I'm currently looking into the backports project to figure out how
-> >hard it would be to add the tpm drivers.
-> >> However unfortunately the gentree.py script fails, and I cannot
-> >really explain why:
-> >>
-> >> ./gentree.py --clean --git-revision v4.0 /home/peter/linux-next/
-> >/home/peter/linux-4.0-backport
-> >> Get original source files from git ...
-> >> Traceback (most recent call last):
-> >>   File "./gentree.py", line 1091, in <module>
-> >>     ret = _main()
-> >>   File "./gentree.py", line 724, in _main
-> >>     logwrite=logwrite)
-> >>   File "./gentree.py", line 862, in process
-> >>     disable_list = add_automatic_backports(args)
-> >>   File "./gentree.py", line 276, in add_automatic_backports
-> >>     automatic_backport_mangle_c_file(f)), 'r'):
-> >> IOError: [Errno 2] No such file or directory:
-> >'/home/peter/linux-4.0-backport/compat/crypto-skcipher.c'
-> >
-> >If you are trying to use a target v4.0 kernel then you need to
-> >checkout the linux-4.0.y branch from the backports tree as well.
-> >
-> >git checkout -b linux-4.0.y origin/linux-4.0.y
-> >
-> >And try again.
-> 
-> Thanks, this was not clear to me.
-> Should we add that to the wiki maybe?
+2016-08-18 20:10 GMT+02:00 Luis R. Rodriguez <mcgrof@kernel.org>:
+> On Wed, Aug 17, 2016 at 09:27:00PM +0200, Cristina Moraru wrote:
+>> Add  CONFIG symbol to kernel modules as a define via -D
+>
+> Perhaps better worded as:
+>
+> When modules have a direct Kconfig CONFIG_ symbol associated with
+> we want to be able to make it available to the build system when we
+> are building the module.
+>
+> You can then describe you do this with -D.
+>
+>> compilation parameter. The CONFIG_FOO symbol for each
+>> module is determined by the module name, using the
+>> associations from Module.ksymb. This file is loaded
+>> using the 'include' directive, thus run like a regular
+>> makefile. The format of the content of the file is the
+>> following:
+>>
+>> foo_KCONF=CONFIG_FOO
+>>
+>> creating a set of Makefile variables foo_KCONF with the
+>> CONFIG_FOO as values.
+>>
+>> The Makefile then adds this value in the compilation
+>> command with -DKBUILD_KCONF='"CONFIG_FOO"'.
+>
+> Very nice. What would it mean if it lacks this ?
+> This should be explained on the commit log.
+>
 
-Yes please do.
+If we lack it then KBUILD_KCONF="" and in /sys the module has the
+kconfig_symbol attribute but with the empty string as content:
 
-> >But if you are trying to add new drivers, best is to just try the
-> >master branch of backports against the latest respective linux-next
-> >tag that backports works against, so in this case backports is at
-> >backports-20160324, so you can set you linux-next tree to
-> >next-20160324:
-> >
-> >git reset --hard next-20160324
-> >
-> >This is because contributions would go to the master branch of
-> >backports.
-> 
-> About adding new drivers,
-> if I make only a patch against the master branch,
-> how do you then get support for older versions? E.g. 4.0.9?
+prompt:/sys$ cat ./module/mptbase/kconfig_symbol
 
-Just as we do for Linux upstream. First you commit on master, then
-you take that and you backport it. Same rules apply for upstream though
-so only fixes / security fixes for older stable releases.
+prompt:/sys$
 
-> How does the maintenance work? (As I then would also sign up to do the
-> maintenance of the tpm drivers in the backports)
+I will add it into the commit log.
 
-Everyone lends a hand, as backports moves to a new linux-next target, so that
-typically means developers involved often help out other subsystem they are not
-typically interested, but because this is a bit unfair we ask at least one
-person interested in one subsystem to help vet / review changes and help with
-general stuff.
+>> This patch is part of a research project within
+>> Google Summer of Code of porting 'make localmodconfig'
+>> for backported drivers. The goal is to enable each
+>> module to expose in /sys its corresponding CONFIG_* option.
+>> The value of this attribute will be dynamically pegged by
+>> modpost without requiring extra work from the driver developers.
+>> Further, this information will be used by a hardware interogation
+>> tool to extract build information about the existing devices.
+>
+> You can leave this out as its part of the cover letter and
+> not relevant to the patch. You can however mention you will
+> use this later to make the define more useful in userspace.
+>
+>> Signed-off-by: Cristina Moraru <cristina.moraru09@gmail.com>
+>> ---
+>>  scripts/Makefile.lib | 9 ++++++++-
+>>  1 file changed, 8 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+>> index e7df0f5..8ae9b7f 100644
+>> --- a/scripts/Makefile.lib
+>> +++ b/scripts/Makefile.lib
+>> @@ -89,6 +89,10 @@ multi-objs-m       := $(addprefix $(obj)/,$(multi-objs-m))
+>>  subdir-ym    := $(addprefix $(obj)/,$(subdir-ym))
+>>  obj-dirs     := $(addprefix $(obj)/,$(obj-dirs))
+>>
+>> +# Include Module.ksymb which contains the associations of modules' names
+>> +# and corresponding CONFIG_* options
+>> +include Module.ksymb
+>
+> Is this file always generated? If not prefixing the include call with - would
+> be better. If we are going to make this optional, then an ifdef wrapper would
+> suffice as we know it'd be expected only if the new feature was enabled.
 
-If you manage to address your backports through SmPL that means less work
-for everyone as these typically then allow the backport to not have to
-require major changes unless a major functionality that disrupts old
-data structures is introduced, but if this is not something common on
-tpm drivers it should be mostly smooth sailing (mostly automation) after
-the more complex driver is backported.
+Yes. This file is always generated. In case a 'git pull' happened
+between two 'make' commands, the associations should be updated. Ok. I
+will add a ifdef.
 
-Strive to backport the more complex subsystem driver first, and try to use
-SmPL, after that adding new drivers should be trivial.
+>
+>> +
+>>  # These flags are needed for modversions and compiling, so we define them here
+>>  # already
+>>  # $(modname_flags) #defines KBUILD_MODNAME as the name of the module it will
+>> @@ -100,6 +104,9 @@ name-fix = $(squote)$(quote)$(subst $(comma),_,$(subst -,_,$1))$(quote)$(squote)
+>>  basename_flags = -DKBUILD_BASENAME=$(call name-fix,$(basetarget))
+>>  modname_flags  = $(if $(filter 1,$(words $(modname))),\
+>>                   -DKBUILD_MODNAME=$(call name-fix,$(modname)))
+>> +ksym-fix = $(squote)$(quote)$($(subst $(comma),_,$(subst -,_,$1))_KCONF)$(quote)$(squote)
+>> +ksymb_flags = $(if $(filter 1,$(words $(modname))),\
+>> +                 -DKBUILD_KSYMB=$(call ksym-fix, $(modname)))
+>
+> Are clashes possible with this formula? Can we end up with two results for instance?
+> If not what prevents current konfig logic and namespace from a clash ? If we do
+> not have anything to prevent a clash, what can we do to help make such clash not
+> possible ?
 
-We don't have strict rules on maintenance yet but perhaps we should start.
+I think the fact that modname is unique prevents from having clashes.
+KBUILD_KSYMB is found according to modname.
+Currently there is no clash because I enforced the Module.ksymb to
+have 1-to-1 mapping.
+The only potential clash I can imagine right now it having the same
+module name but architecture specific CONFIG_* symbol. If there is a
+1-to-1 mapping in Module.ksymb there should be no clash in the
+makefile.
 
- Luis
+>
+>>  orig_c_flags   = $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) $(KBUILD_SUBDIR_CCFLAGS) \
+>>                   $(ccflags-y) $(CFLAGS_$(basetarget).o)
+>> @@ -162,7 +169,7 @@ endif
+>>
+>>  c_flags        = -Wp,-MD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)     \
+>>                $(__c_flags) $(modkern_cflags)                           \
+>> -              $(basename_flags) $(modname_flags)
+>> +              $(basename_flags) $(modname_flags) $(ksymb_flags)
+>>
+>>  a_flags        = -Wp,-MD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)     \
+>>                $(__a_flags) $(modkern_aflags)
+>> --
+>
+> Other than that looks good!
+>
+>   Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
