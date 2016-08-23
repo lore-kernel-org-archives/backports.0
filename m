@@ -1,113 +1,164 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:35587 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751752AbcHVTsg (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 22 Aug 2016 15:48:36 -0400
+Received: from mail.kernel.org ([198.145.29.136]:46498 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754598AbcHWTbO (ORCPT <rfc822;backports@vger.kernel.org>);
+        Tue, 23 Aug 2016 15:31:14 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+        by mail.kernel.org (Postfix) with ESMTP id AD51D2037F
+        for <backports@vger.kernel.org>; Tue, 23 Aug 2016 19:20:29 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+        by mail.kernel.org (Postfix) with ESMTP id D0EEB20376
+        for <backports@vger.kernel.org>; Tue, 23 Aug 2016 19:20:16 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 153601] New: ^^1+855+709+2847^^@@@@$$ Epson Printer tech
+ support phone number
+Date: Tue, 23 Aug 2016 19:20:16 +0000
+Message-ID: <bug-153601-58281@https.bugzilla.kernel.org/> (sfid-20160823_213121_901902_0A0C0BD6)
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-In-Reply-To: <8e80a77a-7e8f-f5d9-d221-50cddb1926c5@suse.com>
-References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
- <20160818175505.GM3296@wotan.suse.de> <8e80a77a-7e8f-f5d9-d221-50cddb1926c5@suse.com>
-From: Cristina-Gabriela Moraru <cristina.moraru09@gmail.com>
-Date: Mon, 22 Aug 2016 21:48:33 +0200
-Message-ID: <CAGZ2q2yHp97d7mYBMB9bDMc3EOgHwZd7Cgjqvor=8K_jBXMdSg@mail.gmail.com> (sfid-20160822_214839_518056_4BF1CF30)
-Subject: Re: [RFC PATCH 0/5] Add CONFIG symbol as module attribute
-To: Michal Marek <mmarek@suse.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>,
-        Valentin Rothberg <valentinrothberg@gmail.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org,
-        Tom Gundersen <teg@jklm.no>, Kay Sievers <kay@vrfy.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        akpm@linux-foundation.org, backports@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "rafael.j.wysocki" <rafael.j.wysocki@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>, Christoph Hellwig <hch@lst.de>,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Paul Bolle <pebolle@tiscali.nl>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Tejun Heo <tj@kernel.org>,
-        Jej B <James.Bottomley@hansenpartnership.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, danijons@student.chalmers.se,
-        Andrzej Wasowski <wasowski@itu.dk>
-Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-2016-08-19 11:07 GMT+02:00 Michal Marek <mmarek@suse.com>:
-> On 2016-08-18 19:55, Luis R. Rodriguez wrote:
->> On Wed, Aug 17, 2016 at 09:26:58PM +0200, Cristina Moraru wrote:
->>
->>> This patchset implements dynamic pegging of kconfig symbol
->>> into driver modinfo section
->>
->> First a little bit of motivation here helps, so let me try to
->> help fill in some gaps. This may help explain what you have
->> been working on a bit more.
->>
->> First, for those that were not Cc'd but curious about this work
->> so far, you can read the patches here:
->>
->> Original cover letter:
->>
->> https://lkml.kernel.org/r/1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com
->>
->> https://marc.info/?l=linux-kernel&m=147146213519750&w=2 - patch 1
->> https://marc.info/?l=linux-kernel&m=147146209019744&w=2 - patch 2
->> https://marc.info/?l=linux-kernel&m=147146211819747&w=2 - patch 3
->> https://marc.info/?l=linux-kernel&m=147146209119745&w=2 - patch 4
->> https://marc.info/?l=linux-kernel&m=147146209519746&w=2 - patch 5
->>
->> There are a few situations in which you may want to extract a
->> subset of Kconfig CONFIG_* symbols for a system. At least when
->> only considering modules:
->>
->>  a) When optimizing build requirements for a kernel for a system.
->>     That is you boot into a distro kernel and then want to build
->>     a slim kernel only with sensible kernel configuration options.
->>
->>  b) When you are on a distribution kernel but the distribution
->>     kernel provided lacks hardware support for your device, you
->>     may either want to upgrade the full kernel in which case you
->>     want to do a) or -- you may want to just a backports release
->>     which provides just the modules you need, you'd use it on top
->>     of the distribution kernel.
->
-> c) Having the mapping in sysfs would allow to simplify
-> streamline_config.pl avoid parsing Makefiles in perl. Only if the patch
-> did not depend on streamline_config.pl :). One idea would be to generate
-> the Module.ksymb in a similar way we generate the modules.builtin file:
-> Generate an alternate include/config/*.conf with all CONFIG_FOO=m
-> replaced with
->
-> CONFIG_FOO=m-CONFIG_FOO
->
-> and in the Makefile, iterate over $(filter m-CONFIG_%, $(.VARIABLES)) to
-> create the mapping. This would also properly cover cases where we build
-> the $(obj-m) list from another list. It would certainly create other
-> corner cases, but it's worth trying IMO.
->
+https://bugzilla.kernel.org/show_bug.cgi?id=153601
 
-That's interesting.
+            Bug ID: 153601
+           Summary: ^^1+855+709+2847^^@@@@$$ Epson Printer tech support
+                    phone number
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: ^^1+855+709+2847^^@@@@$$ Epson Printer tech support
+                    phone number
+          Hardware: All
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: nirmalbaba028@gmail.com
+        Regression: No
 
-> Another thing is that we do not necessarily need to record this
-> information in .modinfo, but we can generate a list in
-> /lib/modules/`uname -r`/ for consumption. It could also include drivers
-> that are builtin in the current configuration.
->
-> Michal
+Created attachment 229921
+  --> https://bugzilla.kernel.org/attachment.cgi?id=229921&action=edit
+^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number 
+^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number 
+^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number  ^^
 
-Thank you,
+^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number 
+^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number 
+^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number 
+^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number 
+^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number
+EPSON** day service 1 855 709 2847 EPSON support phone number EPSON support
+phone number EPSON phone number
+EPSON** day service 1 855 709 2847 EPSON support phone number EPSON support
+phone number EPSON phone number
+EPSON Phone Number)))) 1-855-709-2847 ((((EPSON Tech Support phone number
+@@Call, 1-855-709-2847 for all type help by EPSON tech support phone number,
+1855-709-2847 Intuit EPSON Tech Support Phone Number, 1855-709-2847 EPSON Help
+Desk Phone Number, 1855-709-2847 EPSON tech support number, EPSON technical
+support phone number,@@ 1855-709-2847 @ EPSON phone number, 1855-709-2847 EPSON
+technical support number, 1855-709-2847 EPSON support phone number,
+1855-709-2847 EPSON technical support, EPSON Customer Service Phone Number,
+EPSON Customer Service Number, EPSON Customer Support Phone Number, EPSON
+Customer Support Number,@@@@ EPSON Customer Service Helpline Number, EPSON
+Customer Care Number, EPSON support team phone number, @@@@@ EPSON help
+number-EPSON Helpline Number; EPSON helpphone number-EPSON Helpline Number,
+EPSON Tech Support Toll free Number, EPSON Support Telephone Number, EPSON Tech
+Support Telephone number, EPSON Tech Support contact number, EPSON support
+contact number, EPSON technical support contact number. Call, EPSON tech
+support phone number, Intuit EPSON Tech Support Phone Number, EPSON Help Desk
+Phone Number, EPSON tech support number, EPSON technical support phone number,
+EPSON phone number, EPSON technical support number, EPSON support phone number.
+It is very popular toll free number which printervide by EPSON technical
+support, EPSON Customer Service Phone Number, EPSON Customer Service Number,
+EPSON Customer Support Phone Number, EPSON Customer Support Number, EPSON
+Customer Service Helpline Number, EPSON Customer Care Number, EPSON support
+teamphone number. Call, EPSON tech support phone number, Intuit EPSON Tech
+Support Phone Number, EPSON Help Desk Phone Number, EPSON tech support number,
+EPSON technical support phone number, EPSON phone number, EPSON technical
+support number, EPSON support phone number, EPSON technical support, EPSON
+Customer ServicePhone Number, EPSON Customer Service Number, EPSON Customer
+Support Phone Number, EPSON Customer Support Number, EPSON Customer Service
+Helpline Number, EPSON Customer Care Number, EPSON support team phone number,
+EPSON help number-EPSON Helpline Number; EPSON help phone number, EPSON
+Helpline Number, EPSON Tech Support Toll free Number, EPSON Support Telephone
+Number, EPSON Tech Support Telephone number, EPSON Tech Support contact number,
+EPSON support contactnumber, EPSON technical support contact number, EPSON
+printer support phone number, EPSON printer support phone number. EPSON printer
+customer support phone numberEPSON Support Helpline Number, EPSON contact
+number EPSON tech support phone number EPSON support team phone number EPSON
+contact number 1855-709-2847 EPSON technical help telephone number, EPSON
+technical help contact number, EPSON technical support contact number, EPSON
+contact number, EPSON contact phone number, EPSON contact telephone number,
+EPSON 24 hour contact number, EPSON customer support contact number, EPSON
+customer service contact number, EPSON official number, EPSON official contact
+number, EPSON 855 contact number, EPSON toll free number, 855 number for EPSON
+support, EPSON 24/7 support phone number EPSON PRINTER supportphone
+number,EPSON PRINTER support phone number,EPSON PRINTER help phone number,
+EPSON PRINTER technical support number.EPSON PRINTER support number, EPSON
+PRINTER phonenumber, EPSON PRINTER tech support number, EPSON PRINTER customer
+support number, EPSON PRINTER customer support phone number, EPSON PRINTER
+customer service phone number, EPSON PRINTER printer customer service phone
+number, EPSON PRINTER support phone number. Help@Call 1-855-709-2847/.EPSON
+24/7 support phone number,EPSON telephone number for support? call
+1855-709-2847@./EPSON contact number, EPSON contact phone number, EPSON contact
+telephone numbertelephone number for EPSON online support,EPSON official
+support number,EPSON official number,EPSON printer official phone number,phone
+number for EPSON printer supportEPSON 24/7 support phone numberEPSON
+supportnumber,EPSON telephone number for support .................. EPSON
+PRINTER phone number,(1-855-709-2847)// EPSON PRINTER customer care number.....
+EPSON PRINTER Toll Free, Intuit@(1-855.709-2847)@-: EPSON PRINTER Technical
+Support Number, EPSON PRINTER help desk phone number printervides online
+solution for all USA/CANADA clients. For any help of query call 1 855 709 2847
+to get all EPSON PRINTER account solution. For any help of query call 1 855 709
+2847 to get all EPSON PRINTER account solution. @@Call, 1-855-709-2847 for all
+type help by EPSON PRINTER support telephone number,EPSON PRINTER support phone
+number,EPSON PRINTER support phone number,EPSON PRINTER help phone number,
+EPSON PRINTER technical support number.EPSON PRINTER support number, EPSON
+PRINTER phone number, EPSON PRINTER tech support number, EPSON PRINTER customer
+support number, EPSON PRINTER customer support phone number, EPSON PRINTER
+customer service phone number, EPSON PRINTER printer customer service phone
+number, EPSON PRINTER support phone number EPSON PRINTER help number-EPSON
+PRINTER Helpline Number; EPSON PRINTER help phone number-EPSON PRINTER Helpline
+Number, EPSON PRINTER Tech Support Toll free Number, EPSON PRINTER Support
+Telephone Number, EPSON PRINTER Tech Support Telephone number, EPSON PRINTER
+Tech Support contact number, EPSON PRINTER support contact number, EPSON
+PRINTER technical support contact number, EPSON PRINTER help desk phonenumber.
+Call, @(1-855-709-2847)@-: It is very popular toll free number which
+printervide by EPSON PRINTER technical support, EPSON PRINTER Customer Service
+Phone Number, EPSON PRINTER Customer Service Number, EPSON PRINTER Customer
+Support Phone Number, EPSON PRINTER Customer Support Number, EPSON PRINTER
+Customer Service Helpline Number, EPSON PRINTER Customer Care Number, EPSON
+PRINTER support team phonehttps://bugzilla.kernel.org/show_bug.cgi?id=153591
+ number. Call,@(1-855-709-2847)@-: EPSON PRINTER help number-EPSON PRINTER
+Helpline Number; EPSON PRINTER help phonenumber, EPSON PRINTER Helpline Number,
+EPSON PRINTER Tech Support Toll free Number, EPSON PRINTER Support Telephone
+Number, EPSON PRINTER Tech Support Telephone number, EPSON PRINTER Tech Support
+contact number, EPSON PRINTER support contact number, EPSON PRINTER technical
+support contact number, EPSON PRINTER printer support phone number, EPSON
+PRINTER printer support phone number. EPSON PRINTER printer customer support
+phone number for all type help by EPSON PRINTER support telephone number, EPSON
+PRINTER help phone number, EPSON PRINTER technical support number.EPSON PRINTER
+support number, EPSON PRINTER phone number, EPSON PRINTER tech support number,
+EPSON PRINTER customer support number, EPSON PRINTER customer support phone
+number, EPSON PRINTER customer service phone number, EPSON PRINTER printer
+customer service phone number
 
-Cristina
+  ^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number 
+^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number 
+^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number 
+^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number 
+^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number 
+^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number 
+^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number 
+^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number 
+^^1+855+709+2847^^@@@@$$ Epson Printer tech support phone number
+
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
