@@ -1,144 +1,143 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:56003 "EHLO mx2.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:55642 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753211AbcHWTSE (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 23 Aug 2016 15:18:04 -0400
-Date: Tue, 23 Aug 2016 21:17:59 +0200
+        id S1751568AbcHWTNt (ORCPT <rfc822;backports@vger.kernel.org>);
+        Tue, 23 Aug 2016 15:13:49 -0400
+Date: Tue, 23 Aug 2016 21:00:18 +0200
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
 To: Cristina-Gabriela Moraru <cristina.moraru09@gmail.com>
 Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>,
-        Valentin Rothberg <valentinrothberg@gmail.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <mmarek@suse.com>, linux-kernel@vger.kernel.org,
-        Tom Gundersen <teg@jklm.no>, Kay Sievers <kay@vrfy.org>,
+        linux-kernel@vger.kernel.org, Tom Gundersen <teg@jklm.no>,
+        Kay Sievers <kay@vrfy.org>,
         Rusty Russell <rusty@rustcorp.com.au>,
         akpm@linux-foundation.org, backports@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "rafael.j.wysocki" <rafael.j.wysocki@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>, Christoph Hellwig <hch@lst.de>,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Paul Bolle <pebolle@tiscali.nl>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Tejun Heo <tj@kernel.org>,
-        Jej B <James.Bottomley@hansenpartnership.com>,
-        Theodore Ts'o <tytso@mit.edu>, danijons@student.chalmers.se,
-        Andrzej Wasowski <wasowski@itu.dk>
-Subject: Re: [RFC PATCH 0/5] Add CONFIG symbol as module attribute
-Message-ID: <20160823191759.GH3296@wotan.suse.de> (sfid-20160823_211807_172275_CCF4080C)
+        "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>
+Subject: Re: [RFC PATCH 1/5] Add generation of Module.symb in
+ streamline_config
+Message-ID: <20160823190018.GD3296@wotan.suse.de> (sfid-20160823_211352_463163_6EA7065C)
 References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
- <20160818175505.GM3296@wotan.suse.de>
- <CAGZ2q2yFPefFHcNY15O6PkZn2utiEtGuS=qUU5mNQ7LyPDMrnA@mail.gmail.com>
+ <1471462023-119645-2-git-send-email-cristina.moraru09@gmail.com>
+ <20160818182236.GO3296@wotan.suse.de>
+ <CAGZ2q2xi9Uy-ye387=mWhy_fOEJBC593Nos7fH027m-_ZdoOXA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAGZ2q2yFPefFHcNY15O6PkZn2utiEtGuS=qUU5mNQ7LyPDMrnA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAGZ2q2xi9Uy-ye387=mWhy_fOEJBC593Nos7fH027m-_ZdoOXA@mail.gmail.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Aug 22, 2016 at 09:35:47PM +0200, Cristina-Gabriela Moraru wrote:
-> 2016-08-18 19:55 GMT+02:00 Luis R. Rodriguez <mcgrof@kernel.org>:
-> > On Wed, Aug 17, 2016 at 09:26:58PM +0200, Cristina Moraru wrote:
-> >
-> >> This patchset implements dynamic pegging of kconfig symbol
-> >> into driver modinfo section
-> >
-> > First a little bit of motivation here helps, so let me try to
-> > help fill in some gaps. This may help explain what you have
-> > been working on a bit more.
-> >
-> > First, for those that were not Cc'd but curious about this work
-> > so far, you can read the patches here:
-> >
-> > Original cover letter:
-> >
-> > https://lkml.kernel.org/r/1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com
-> >
-> > https://marc.info/?l=linux-kernel&m=147146213519750&w=2 - patch 1
-> > https://marc.info/?l=linux-kernel&m=147146209019744&w=2 - patch 2
-> > https://marc.info/?l=linux-kernel&m=147146211819747&w=2 - patch 3
-> > https://marc.info/?l=linux-kernel&m=147146209119745&w=2 - patch 4
-> > https://marc.info/?l=linux-kernel&m=147146209519746&w=2 - patch 5
-> >
-> > There are a few situations in which you may want to extract a
-> > subset of Kconfig CONFIG_* symbols for a system. At least when
-> > only considering modules:
-> >
-> >  a) When optimizing build requirements for a kernel for a system.
-> >     That is you boot into a distro kernel and then want to build
-> >     a slim kernel only with sensible kernel configuration options.
-> >
-> >  b) When you are on a distribution kernel but the distribution
-> >     kernel provided lacks hardware support for your device, you
-> >     may either want to upgrade the full kernel in which case you
-> >     want to do a) or -- you may want to just a backports release
-> >     which provides just the modules you need, you'd use it on top
-> >     of the distribution kernel.
-> >
-> > Are there other *uses* outside of the two above for having a direct
-> > deterministic mapping between module and a kconfig symbol ? What
-> > if we could also do this for built-in code as well ? kconfig-sat [0] is
-> > work that is still being ironed out, but if that was in place and we
-> > handed it a set of required options we want, it should in theory help
-> > resolve the dependencies to give us a functional .config for a kernel.
-> > This of course is a long term possible goal just used as an example
-> > -- but are there other uses?
-> >
-> I can't think of any examples. I will add this ones in the cover
-> letter as motivation.
-
-Michal provided one more :) -- which was actually a side goal you had I think.
-
-Very clearly documenting the motivation is very important here, side benefits
-that you can think of are (some listed above) should help understand why
-we may went to or not do some further enhancements to build system to help
-with more deterministic backwards mappings.
-
-> > To be clear, you only peg the CONFIG_ option if you are
-> > 100% certain of having a direct mapping, is that right ?
-> >
+On Sat, Aug 20, 2016 at 03:59:17PM +0200, Cristina-Gabriela Moraru wrote:
+> 2016-08-18 20:22 GMT+02:00 Luis R. Rodriguez <mcgrof@kernel.org>:
 > 
-> Yes.
-
-OK but as you clarified in other e-mail then the attribute is added but
-its just empty. This is rather ambiguous -- lets instead try to not add
-the attribute if one is not available.
-
-> And there are some drivers which have duplicate values in the hash.
-> foo.o -> CONFIG_FOO CONFIG_FOO
-
-What is the reason for this ?
-
-> Although this one has one match it's filtered as having 2 CONFIGs.
-> 
-> >> The result of this patchset is the following. All modules from
-> >> /sys expose the correct CONFIG_* symbol in the module attribute
-> >> kconfig_symb with some exceptions. For a total number of 58
-> >> modules,
+> > On Wed, Aug 17, 2016 at 09:26:59PM +0200, Cristina Moraru wrote:
+> > > Add generation of ./scripts/Module.ksymb file containing
+> > > associations of driver file names and corresponding CONFIG_*
+> > > symbol:
+> > >
+> > > foo_KCONF=CONFIG_FOO
+> > >
+> > > This file will be further loaded by the Makefile as a
+> > > configuration file: all foo_KCONF will be considered variables
+> > > and all CONFIG_FOO will be their associate values.
 > >
-> > What kernel configuration did you use ? What architecture ?
-> > If you use allmodconfig, what do the numbers look like ?
+> > Will the file generated always work? What are the current
+> > restrictions on kconfig variable names?
 > >
+> >
+> The file generated will always work. It's loaded with makefile's "include"
+> directive which is quite straightforward.
 > 
-> I have a virtual machine in which I created the configuration with
-> make localmodconfig and installed the new kernel.
-> $  uname -a
-> Linux ubuntu 4.7.0+ #28 SMP Mon Aug 15 20:39:19 CEST 2016 x86_64
-> x86_64 x86_64 GNU/Linux
-> 
-> Should I send you the .config file ?
+> If you're referring to  CONFIG_* variables, I can't find any restriction
+> regarding size or anything else.
+> If you're referring to the newly created makefile variable foo_KCONF I only
+> found this in the documentation:
+> "A variable name may be any sequence of characters not containing ‘:’, ‘#’,
+> ‘=’, or whitespace."
 
-This is not needed, I ran your patches through 0-day and it was happy.
-Good job !
+Both since we'd up with a file with tons of entries like:
+
+bar_KCONF=CONFIG_BAR
+foo_KCONF=CONFIG_FOO
+
+I was asking really what checks do we have to ensure either side in these lines
+will not make a Makefile barf. For instance using "\" will surely barf. Does
+Kconfig check for sanity ? If so then what are the rules for Kconfig variables?
+Makefiles then have the above description you mentioned, and I was curious how
+and if we want to vet for correctness for both.
+
+> "It is traditional to use upper case letters in variable names, but we
+> recommend using lower case letters for variable names that serve internal
+> purposes in the makefile, and reserving upper case for parameters that
+> control implicit rules or for parameters that the user should override with
+> command options"
+> 
+> Since the module name is lowercase I put the suffix uppercase in order to
+> be more visible.
+
+OK thanks.
+
+> > This is nice for experimentation, however as you note we want
+> > to evaluate a better way to do this. While at it, can you describe
+> > what algorithm currently is used by scripts/kconfig/streamline_config.pl
+> > to collect %objects and the associated CONFIG symbol ? Can you think
+> > of possible flaws to it ?
+> >
+> >
+> Shortly, all makefiles are parsed searching for patterns such as:
+> 
+> obj-$(CONFIG_FOO) := obj-foo1.o obj-foo2.o ... etc.
+> 
+> Each obj-foo is added in the hashmap as key with the value
+> array(CONFIG_FOO).
+> If obj-foo already exists in the hashmap CONFIG_FOO is appended to the
+> array value.
+
+So this fails to then capture lib-$(CONFIG_BAR) then. These can be modules
+too. So we'd need something to loop over all possible valid targets to be
+able to easily extend this with future targets, in case we get something
+other than obj- and lib-. For instance I am looking to add a force-obj-y
+and force-lib-y, later this may mean supporting force-obj-m and foce-lib-m,
+the actual name however is still up in the air [0], however my point is
+we want to be easily able to extend the series of targets used for modules.
+
+This may prove useful to the build something for other things.
+
+Also, does the scripts/kconfig/streamline_config.pl algorithm support
+where you have more than one line on a target, for instance:
+
+obj-$(CONFIG_FOO) := foo1.o \
+		     foo2.o \
+		     foo3.o
+
+If not we'd need to figure out a way to capture these then?
+
+[0] https://lkml.kernel.org/r/20160822235910.GW3296@wotan.suse.de
+
+> I noted that there are situations where an object obj-foo has as associates
+> more identical CONFIG_FOOs.
+> Since I select only the names which have exaclty one CONFIG_* associated
+> this is a bit confusing. I am missing one category of drivers which can be
+> found:
+> 
+> driver-foo ---- CONFIG_FOO CONFIG_FOO
+
+What do these 3 columns represent here ?
+
+> For example: nfit CONFIG_ACPI_NFIT CONFIG_ACPI_NFIT -- this actually
+> results in  a module in /sys which does not have a content into
+> kconfig_ksymb although it has exactly one match.
+> 
+> Another thing I can think of is that sometimes we find lines such as:
+> 
+> foo-name-$(CONFIG_FOO) = obj-foo1.o obj-foo2.o obj-foo3.o
+> 
+> This can be a clue that the final kernel module is named foo-name and could
+> solve some ambiguous cases.
+> This are just a few situations I can think of to be kept in mind for the
+> next Module.ksymb generator
+
+Indeed thanks, I think it'd be nice if we can iron all of them out. If we cannot
+then we should annotate why we can't and see if we are willing to compromise
+to help address this.
 
   Luis
 --
