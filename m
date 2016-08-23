@@ -1,149 +1,130 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:45680 "EHLO sipsolutions.net"
+Received: from mx2.suse.de ([195.135.220.15]:56660 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754013AbcH2Rvy (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 29 Aug 2016 13:51:54 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Jouni Malinen <j@w1.fi>, Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] gentree: create Kconfig.local, use it to restrict compat
-Date: Mon, 29 Aug 2016 19:51:41 +0200
-Message-Id: <1472493101-6058-1-git-send-email-johannes@sipsolutions.net> (sfid-20160829_195156_781608_735F5B56)
+        id S1753370AbcHWTYE (ORCPT <rfc822;backports@vger.kernel.org>);
+        Tue, 23 Aug 2016 15:24:04 -0400
+Date: Tue, 23 Aug 2016 21:07:53 +0200
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Cristina-Gabriela Moraru <cristina.moraru09@gmail.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        linux-kernel@vger.kernel.org, Tom Gundersen <teg@jklm.no>,
+        Kay Sievers <kay@vrfy.org>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        akpm@linux-foundation.org, backports@vger.kernel.org
+Subject: Re: [RFC PATCH 2/5] Add CONFIG symbol to module as compilation
+ parameter
+Message-ID: <20160823190753.GF3296@wotan.suse.de> (sfid-20160823_212408_084102_8354B6DB)
+References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
+ <1471462023-119645-3-git-send-email-cristina.moraru09@gmail.com>
+ <20160818181007.GN3296@wotan.suse.de>
+ <CAGZ2q2yt1NYshNpm5ZCmPXfYxPynttEU7KiiL3RALegGD04nug@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAGZ2q2yt1NYshNpm5ZCmPXfYxPynttEU7KiiL3RALegGD04nug@mail.gmail.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Sat, Aug 20, 2016 at 05:11:37PM +0200, Cristina-Gabriela Moraru wrote:
+> 2016-08-18 20:10 GMT+02:00 Luis R. Rodriguez <mcgrof@kernel.org>:
+> > On Wed, Aug 17, 2016 at 09:27:00PM +0200, Cristina Moraru wrote:
+> >> Add  CONFIG symbol to kernel modules as a define via -D
+> >
+> > Perhaps better worded as:
+> >
+> > When modules have a direct Kconfig CONFIG_ symbol associated with
+> > we want to be able to make it available to the build system when we
+> > are building the module.
+> >
+> > You can then describe you do this with -D.
+> >
+> >> compilation parameter. The CONFIG_FOO symbol for each
+> >> module is determined by the module name, using the
+> >> associations from Module.ksymb. This file is loaded
+> >> using the 'include' directive, thus run like a regular
+> >> makefile. The format of the content of the file is the
+> >> following:
+> >>
+> >> foo_KCONF=CONFIG_FOO
+> >>
+> >> creating a set of Makefile variables foo_KCONF with the
+> >> CONFIG_FOO as values.
+> >>
+> >> The Makefile then adds this value in the compilation
+> >> command with -DKBUILD_KCONF='"CONFIG_FOO"'.
+> >
+> > Very nice. What would it mean if it lacks this ?
+> > This should be explained on the commit log.
+> >
+> 
+> If we lack it then KBUILD_KCONF="" and in /sys the module has the
+> kconfig_symbol attribute but with the empty string as content:
+> 
+> prompt:/sys$ cat ./module/mptbase/kconfig_symbol
+> 
+> prompt:/sys$
+> 
+> I will add it into the commit log.
 
-Not all the compat code is always necessary, for example code
-enabled by BPAUTO_CRYPTO_SKCIPHER and by BPAUTO_RHASHTABLE is
-gated on other symbols being selected. Checking against the
-Kconfig symbols as it's done right now is wrong though, since
-the base kernel's Kconfig symbols would be used, selecting,
-for example, BPAUTO_CRYPTO_SKCIPHER when the base kernel has
-CONFIG_BT set, but doing that when BT isn't even part of the
-backport, or when it's disabled in the backport.
+OK -- I do wonder if instead of an empty string leaving the kconfig_symbol
+out is better. If its empty then it can be confusing, and so perhaps better
+an "unknown" is better. But skipping the attribute then seems best as then
+we can focus on just addressing what it *does mean* when we do have a mapping.
+This would allow addressing the semantic gap of modules that lack this and
+trying to fix those step by step. To fix those we first need to identify
+*why* we can't get an attribute pegged to these - document this perhaps on
+kernelnewbies.org/KernelProjects/<pick-a-topic-name-for-your-project>
+and then your commit log can reference this for a list of known reasons
+and pending work.
 
-To fix this, keep track of all the local Kconfig symbols,
-similar to the .local-symbols files but as a Kconfig.local,
-and add for each local symbol a symbol that just mirrors the
-state of the symbol as selected by the user. This effectively
-allows checking the source of the symbol.
+> >> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> >> index e7df0f5..8ae9b7f 100644
+> >> --- a/scripts/Makefile.lib
+> >> +++ b/scripts/Makefile.lib
+> >> @@ -89,6 +89,10 @@ multi-objs-m       := $(addprefix $(obj)/,$(multi-objs-m))
+> >>  subdir-ym    := $(addprefix $(obj)/,$(subdir-ym))
+> >>  obj-dirs     := $(addprefix $(obj)/,$(obj-dirs))
+> >>
+> >> +# Include Module.ksymb which contains the associations of modules' names
+> >> +# and corresponding CONFIG_* options
+> >> +include Module.ksymb
+> >
+> > Is this file always generated? If not prefixing the include call with - would
+> > be better. If we are going to make this optional, then an ifdef wrapper would
+> > suffice as we know it'd be expected only if the new feature was enabled.
+> 
+> Yes. This file is always generated. In case a 'git pull' happened
+> between two 'make' commands, the associations should be updated. Ok. I
+> will add a ifdef.
+> 
+> >
+> >> +
+> >>  # These flags are needed for modversions and compiling, so we define them here
+> >>  # already
+> >>  # $(modname_flags) #defines KBUILD_MODNAME as the name of the module it will
+> >> @@ -100,6 +104,9 @@ name-fix = $(squote)$(quote)$(subst $(comma),_,$(subst -,_,$1))$(quote)$(squote)
+> >>  basename_flags = -DKBUILD_BASENAME=$(call name-fix,$(basetarget))
+> >>  modname_flags  = $(if $(filter 1,$(words $(modname))),\
+> >>                   -DKBUILD_MODNAME=$(call name-fix,$(modname)))
+> >> +ksym-fix = $(squote)$(quote)$($(subst $(comma),_,$(subst -,_,$1))_KCONF)$(quote)$(squote)
+> >> +ksymb_flags = $(if $(filter 1,$(words $(modname))),\
+> >> +                 -DKBUILD_KSYMB=$(call ksym-fix, $(modname)))
+> >
+> > Are clashes possible with this formula? Can we end up with two results for instance?
+> > If not what prevents current konfig logic and namespace from a clash ? If we do
+> > not have anything to prevent a clash, what can we do to help make such clash not
+> > possible ?
+> 
+> I think the fact that modname is unique prevents from having clashes.
+> KBUILD_KSYMB is found according to modname.
+> Currently there is no clash because I enforced the Module.ksymb to
+> have 1-to-1 mapping.
+> The only potential clash I can imagine right now it having the same
+> module name but architecture specific CONFIG_* symbol. If there is a
+> 1-to-1 mapping in Module.ksymb there should be no clash in the
+> makefile.
 
-Make the relevant backported items use the new BACKPORTED_*
-symbols for dependencies, instead of the original ones, thus
-avoiding the above-mentioned "leakage" of kernel symbols.
-When the symbol isn't even present in the backport, it'll be
-simply regarded as false by the kconfig system.
+OK thanks.
 
-Reported-by: Jouni Malinen <j@w1.fi>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/Kconfig.integrate |  1 +
- backport/Kconfig.package   |  1 +
- backport/compat/Kconfig    | 16 ++++++++--------
- gentree.py                 | 12 +++++++++++-
- 4 files changed, 21 insertions(+), 9 deletions(-)
-
-diff --git a/backport/Kconfig.integrate b/backport/Kconfig.integrate
-index f64a3f6eb235..45ab3ecd4d57 100644
---- a/backport/Kconfig.integrate
-+++ b/backport/Kconfig.integrate
-@@ -32,5 +32,6 @@ if BACKPORT_LINUX
- 
- source "$BACKPORT_DIR/Kconfig.versions"
- source "$BACKPORT_DIR/Kconfig.sources"
-+source "$BACKPORT_DIR/Kconfig.local"
- 
- endif # BACKPORT_LINUX
-diff --git a/backport/Kconfig.package b/backport/Kconfig.package
-index 96845740a42a..250cdf3e4278 100644
---- a/backport/Kconfig.package
-+++ b/backport/Kconfig.package
-@@ -22,3 +22,4 @@ source "$BACKPORT_DIR/Kconfig.sources"
- # these will be generated
- source "$BACKPORT_DIR/Kconfig.kernel"
- source "$BACKPORT_DIR/Kconfig.versions"
-+source "$BACKPORT_DIR/Kconfig.local"
-diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
-index 710f626a5dbc..ffa8cea84295 100644
---- a/backport/compat/Kconfig
-+++ b/backport/compat/Kconfig
-@@ -116,10 +116,10 @@ config BPAUTO_BUILD_CRYPTO_CCM
- config BPAUTO_CRYPTO_SKCIPHER
- 	tristate
- 	depends on KERNEL_4_3
--	default y if MAC802154
--	default y if LIB80211_CRYPT_WEP
--	default y if LIB80211_CRYPT_TKIP
--	default y if BT
-+	default y if BACKPORTED_MAC802154
-+	default y if BACKPORTED_LIB80211_CRYPT_WEP
-+	default y if BACKPORTED_LIB80211_CRYPT_TKIP
-+	default y if BACKPORTED_BT
- 	#c-file crypto/skcipher.c
- 	#module-name skcipher
- 
-@@ -139,7 +139,7 @@ config BPAUTO_RHASHTABLE
- 	# current API of rhashtable was introduced in version 4.1
- 	depends on KERNEL_4_1
- 	# not very nice - but better than always having it
--	default y if MAC80211
-+	default y if BACKPORTED_MAC80211
- 	#h-file linux/rhashtable.h
- 	#c-file lib/rhashtable.c
- 
-@@ -155,9 +155,9 @@ config BPAUTO_HDMI
- 	bool
- 	select BPAUTO_BUILD_HDMI if KERNEL_4_0
- 	# these drivers are using the new features of the hdmi driver.
--	default y if VIDEO_ADV7511
--	default y if VIDEO_ADV7604
--	default y if VIDEO_ADV7842
-+	default y if BACKPORTED_VIDEO_ADV7511
-+	default y if BACKPORTED_VIDEO_ADV7604
-+	default y if BACKPORTED_VIDEO_ADV7842
- 
- config BPAUTO_FRAME_VECTOR
- 	bool
-diff --git a/gentree.py b/gentree.py
-index 419b13b5d048..222f4c585e20 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -924,7 +924,7 @@ def process(kerneldir, copy_list_file, git_revision=None,
- 
-     # some post-processing is required
-     configtree = kconfig.ConfigTree(os.path.join(bpid.target_dir, 'Kconfig'), bpid)
--    ignore=['Kconfig.kernel', 'Kconfig.versions']
-+    ignore=['Kconfig.kernel', 'Kconfig.versions', 'Kconfig.local']
- 
-     configtree.verify_sources(ignore=ignore)
-     git_debug_snapshot(args, "verify sources on top level backports Kconfig")
-@@ -942,6 +942,7 @@ def process(kerneldir, copy_list_file, git_revision=None,
-     ignore = [os.path.join(bpid.target_dir, x) for x in [
-                 'Kconfig.package.hacks',
-                 'Kconfig.versions',
-+                'Kconfig.local',
-                 'Kconfig',
-                 ]
-             ]
-@@ -960,6 +961,15 @@ def process(kerneldir, copy_list_file, git_revision=None,
-             f.write('%s=\n' % sym)
-         f.close()
-         git_debug_snapshot(args, "add symbols files")
-+    # also write Kconfig.local, representing all local symbols
-+    # with a BACKPORTED_ prefix
-+    f = open(os.path.join(bpid.target_dir, 'Kconfig.local'), 'w')
-+    for sym in symbols:
-+        f.write('config BACKPORTED_%s\n' % sym)
-+        f.write('\ttristate\n')
-+        f.write('\tdefault %s\n' % sym)
-+    f.close()
-+    git_debug_snapshot(args, "add Kconfig.local")
- 
-     # add defconfigs that we want
-     defconfigs_dir = os.path.join(source_dir, 'backport', 'defconfigs')
--- 
-2.8.1
-
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
