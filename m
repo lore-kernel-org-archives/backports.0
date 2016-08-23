@@ -1,233 +1,448 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:35178 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752900AbcHTOtE (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sat, 20 Aug 2016 10:49:04 -0400
+Received: from mail.kernel.org ([198.145.29.136]:51970 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755628AbcHWUYo (ORCPT <rfc822;backports@vger.kernel.org>);
+        Tue, 23 Aug 2016 16:24:44 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+        by mail.kernel.org (Postfix) with ESMTP id D02FE20379
+        for <backports@vger.kernel.org>; Tue, 23 Aug 2016 20:24:35 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+        by mail.kernel.org (Postfix) with ESMTP id 6DCFF20376
+        for <backports@vger.kernel.org>; Tue, 23 Aug 2016 20:24:33 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 153681] New: Desktop<<<<<<)()(1844551*^*9757()()<<<<<Phone
+ number for intuit Desktop Quickbooks support
+Date: Tue, 23 Aug 2016 20:24:33 +0000
+Message-ID: <bug-153681-58281@https.bugzilla.kernel.org/> (sfid-20160823_222458_409034_6138E31E)
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-In-Reply-To: <CAGZ2q2xi9Uy-ye387=mWhy_fOEJBC593Nos7fH027m-_ZdoOXA@mail.gmail.com>
-References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
- <1471462023-119645-2-git-send-email-cristina.moraru09@gmail.com>
- <20160818182236.GO3296@wotan.suse.de> <CAGZ2q2xi9Uy-ye387=mWhy_fOEJBC593Nos7fH027m-_ZdoOXA@mail.gmail.com>
-From: Cristina-Gabriela Moraru <cristina.moraru09@gmail.com>
-Date: Sat, 20 Aug 2016 16:49:02 +0200
-Message-ID: <CAGZ2q2w=RFFkWBtg0fwVzEFs_2+x39aayjHu-v6d1G1=PXWSPg@mail.gmail.com> (sfid-20160820_164908_241748_86999F10)
-Subject: Re: [RFC PATCH 1/5] Add generation of Module.symb in streamline_config
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Tom Gundersen <teg@jklm.no>,
-        Kay Sievers <kay@vrfy.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        akpm@linux-foundation.org, backports@vger.kernel.org,
-        "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-2016-08-20 15:59 GMT+02:00 Cristina-Gabriela Moraru
-<cristina.moraru09@gmail.com>:
->
->
-> 2016-08-18 20:22 GMT+02:00 Luis R. Rodriguez <mcgrof@kernel.org>:
->>
->> On Wed, Aug 17, 2016 at 09:26:59PM +0200, Cristina Moraru wrote:
->> > Add generation of ./scripts/Module.ksymb file containing
->> > associations of driver file names and corresponding CONFIG_*
->> > symbol:
->> >
->> > foo_KCONF=3DCONFIG_FOO
->> >
->> > This file will be further loaded by the Makefile as a
->> > configuration file: all foo_KCONF will be considered variables
->> > and all CONFIG_FOO will be their associate values.
->>
->> Will the file generated always work? What are the current
->> restrictions on kconfig variable names?
->>
->
-> The file generated will always work. It's loaded with makefile's "include=
-"
-> directive which is quite straightforward.
->
-> If you're referring to  CONFIG_* variables, I can't find any restriction
-> regarding size or anything else.
-> If you're referring to the newly created makefile variable foo_KCONF I on=
-ly
-> found this in the documentation:
-> "A variable name may be any sequence of characters not containing =E2=80=
-=98:=E2=80=99, =E2=80=98#=E2=80=99,
-> =E2=80=98=3D=E2=80=99, or whitespace."
-> "It is traditional to use upper case letters in variable names, but we
-> recommend using lower case letters for variable names that serve internal
-> purposes in the makefile, and reserving upper case for parameters that
-> control implicit rules or for parameters that the user should override wi=
-th
-> command options"
->
-> Since the module name is lowercase I put the suffix uppercase in order to=
- be
-> more visible.
->
->>
->> > The suffix
->> > is added to be able to differentiate the new variables from
->> > all existing variables in the Makefile system. Each kernel
->> > module will receive its CONFIG_FOO option as macro in the
->> > compilation command (-D parameter) and will expose it along
->> > with other module attributes (attributes of struct module).
->>
->> This is done later so this description does not belong here.
->> You want to describe what this patch does alone, if it has
->> potential for the future just mention basics, and that will will
->> be done later.
->>
->> > Note: this patch is built on the assumption that each driver
->> > has exactly one associate CONFIG_FOO symbol.
->>
->> This should note be a note, it should be an important aspect of
->> your changes -- you should try to describe when a direct mapping
->> is possible and when it is not.
->>
->> > CONFIG_* options
->> > that are required by CONFIG_FOO are not included. They can be
->> > found by SAT resolvers.
->>
->> You can leave this out.
->>
->> > This patch is part of a research project within
->> > Google Summer of Code of porting 'make localmodconfig'
->> > for backported drivers. The goal is to enable each
->> > module to expose in /sys its corresponding CONFIG_* option.
->> > The value of this attribute will be dynamically pegged by
->> > modpost without requiring extra work from the driver developers.
->> > Further, this information will be used by a hardware interogation
->> > tool to extract build information about the existing devices.
->>
->> You can leave this out.
->>
->> >
->> > Signed-off-by: Cristina Moraru <cristina.moraru09@gmail.com>
->> > ---
->> >  scripts/kconfig/streamline_config.pl | 30
->> > +++++++++++++++++++++++++++++-
->> >  1 file changed, 29 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/scripts/kconfig/streamline_config.pl
->> > b/scripts/kconfig/streamline_config.pl
->> > index b8c7b29..686d02a 100755
->> > --- a/scripts/kconfig/streamline_config.pl
->> > +++ b/scripts/kconfig/streamline_config.pl
->> > @@ -128,9 +128,11 @@ my @config_file =3D read_config;
->> >  # Parse options
->> >  my $localmodconfig =3D 0;
->> >  my $localyesconfig =3D 0;
->> > +my $genmoduleksymb =3D 0;
->> >
->> >  GetOptions("localmodconfig" =3D> \$localmodconfig,
->> > -        "localyesconfig" =3D> \$localyesconfig);
->> > +        "localyesconfig" =3D> \$localyesconfig,
->> > +        "genmoduleksymb" =3D> \$genmoduleksymb);
->> >
->> >  # Get the build source and top level Kconfig file (passed in)
->> >  my $ksource =3D ($ARGV[0] ? $ARGV[0] : '.');
->> > @@ -147,6 +149,7 @@ my %objects;
->> >  my $var;
->> >  my $iflevel =3D 0;
->> >  my @ifdeps;
->> > +my @drv_objs;
->> >
->> >  # prevent recursion
->> >  my %read_kconfigs;
->> > @@ -348,6 +351,31 @@ foreach my $makefile (@makefiles) {
->> >      close($infile);
->> >  }
->> >
->> > +foreach my $obj_key ( keys %objects )
->> > +{
->> > +     my @config_options =3D @{$objects{$obj_key}};
->> > +     # Last index of array is 0 is equivalent to array's size is 1
->> > +     if ( $#config_options =3D=3D 0) {
->> > +             push(@drv_objs, $obj_key);
->> > +     }
->> > +}
->> > +
->> > +sub gen_module_kconfigs {
->> > +     my $module_ksymb =3D $ENV{'srctree'}."/scripts/Module.ksymb";
->> > +
->> > +     open(my $ksymbfile, '>', $module_ksymb) || die "Can not open
->> > $module_ksymb for writing";
->> > +
->> > +     foreach (@drv_objs) {
->> > +             print $ksymbfile "$_" . "_KCONF=3D" . "@{$objects{$_}}\n=
-";
->> > +     }
->> > +     close($ksymbfile);
->> > +}
->> > +
->> > +if ($genmoduleksymb) {
->> > +     gen_module_kconfigs();
->> > +     exit(0);
->> > +}
->> > +
->> >  my %modules;
->> >  my $linfile;
->>
->> This is nice for experimentation, however as you note we want
->> to evaluate a better way to do this. While at it, can you describe
->> what algorithm currently is used by scripts/kconfig/streamline_config.pl
->> to collect %objects and the associated CONFIG symbol ? Can you think
->> of possible flaws to it ?
->>
->
-> Shortly, all makefiles are parsed searching for patterns such as:
->
-> obj-$(CONFIG_FOO) :=3D obj-foo1.o obj-foo2.o ... etc.
->
-> Each obj-foo is added in the hashmap as key with the value
-> array(CONFIG_FOO).
-> If obj-foo already exists in the hashmap CONFIG_FOO is appended to the ar=
-ray
-> value.
->
-> I noted that there are situations where an object obj-foo has as associat=
-es
-> more identical CONFIG_FOOs.
-> Since I select only the names which have exaclty one CONFIG_* associated
-> this is a bit confusing. I am missing one category of drivers which can b=
-e
-> found:
->
-> driver-foo ---- CONFIG_FOO CONFIG_FOO
->
-> For example: nfit CONFIG_ACPI_NFIT CONFIG_ACPI_NFIT -- this actually resu=
-lts
-> in  a module in /sys which does not have a content into kconfig_ksymb
-> although it has exactly one match.
->
-> Another thing I can think of is that sometimes we find lines such as:
->
-> foo-name-$(CONFIG_FOO) =3D obj-foo1.o obj-foo2.o obj-foo3.o
->
-> This can be a clue that the final kernel module is named foo-name and cou=
-ld
-> solve some ambiguous cases.
-> This are just a few situations I can think of to be kept in mind for the
-> next Module.ksymb generator
->
->>
->> The generation here is also forced, we want to enable this to be optiona=
-l
->> so please consider adding a Kconfig entry for this as a feature, just as
->> the module versioning stuff has one.
->
->
-> OK
->>
->>
->>   Luis
->
->
+https://bugzilla.kernel.org/show_bug.cgi?id=153681
 
-Message forwarded since original message was rejected by lkml and
-backports for being HTML format.
-Cristina
---
+            Bug ID: 153681
+           Summary: Desktop<<<<<<)()(1844551*^*9757()()<<<<<Phone number
+                    for intuit Desktop Quickbooks support
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: Desktop<<<<<<)()(1844551*^*9757()()<<<<<Phone number
+                    for intuit Desktop Quickbooks support
+          Hardware: All
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: dw85292@gmail.com
+        Regression: No
+
+Desktop<<<<<<)()(1844551*^*9757()()<<<<<Phone number for intuit Desktop
+Quickbooks support
+
+Desktop<<<<<<)()(1844551*^*9757()()<<<<<Phone number for intuit Desktop
+Quickbooks support
+Desktop<<<<<<)()(1844551*^*9757()()<<<<<Phone number for intuit Desktop
+Quickbooks support
+Desktop<<<<<<)()(1844551*^*9757()()<<<<<Phone number for intuit Desktop
+Quickbooks support
+Desktop<<<<<<)()(1844551*^*9757()()<<<<<Phone number for intuit Desktop
+Quickbooks support
+Desktop<<<<<<)()(1844551*^*9757()()<<<<<Phone number for intuit Desktop
+Quickbooks support
+(((((##+1(844)551 9757)))@-: Intuit Quickbooks pro Tech Support Phone Number 1
+844~551~9757 provides online solution for all USA/CANADA clients. For any help
+of query call to get all Intuit Quickbooks pro account solution. @@Call,
+++1(844)551 9757 for all type help by Intuit Quickbooks pro tech support phone
+number 1 844~551~9757, Intuit Quickbooks pro Tech Support Phone Number 1
+844~551~9757, Intuit Quickbooks pro Help Desk Phone Number 1 844~551~9757,
+Intuit Quickbooks pro tech support phone number 1 844~551~9757, Intuit
+Quickbooks pro technical support phone number 1 844~551~9757,@@@ Intuit
+Quickbooks pro phone number 1 844~551~9757, Intuit Quickbooks pro technical
+support phone number 1 844~551~9757, Intuit Quickbooks pro support phone number
+1 844~551~9757, Intuit Quickbooks pro technical support, Intuit Quickbooks pro
+Customer Service Phone Number 1 844~551~9757, Intuit Quickbooks pro Customer
+Service Number 1 844~551~9757, Intuit Quickbooks pro Customer Support Phone
+Number 1 844~551~9757, Intuit Quickbooks pro Customer Support phone number 1
+844~551~9757,@@@@ Intuit Quickbooks pro Customer Service Helpline Number 1
+844~551~9757 +1(844)551 9757, Intuit Quickbooks pro Support phone number 1
+844~551~9757, Intuit Quickbooks pro support team phone number 1 844~551~9757,
+@@@@@ Intuit Quickbooks pro help number 1 844~551~9757-Intuit Quickbooks pro
+Helpline Number 1 844~551~9757; Intuit Quickbooks pro help phone number 1
+844~551~9757-Intuit Quickbooks pro Helpline Number 1 844~551~9757, Intuit
+Quickbooks pro Tech Support Toll free Number 1 844~551~9757, Intuit Quickbooks
+pro Support Telephone Number 1 844~551~9757, Intuit Quickbooks pro Tech Support
+Telephone number 1 844~551~9757, Intuit Quickbooks pro Tech Support contact
+number 1 844~551~9757 +1(844)551 9757, Intuit Quickbooks pro support contact
+number 1 844~551~9757, Intuit Quickbooks pro technical support contact number 1
+844~551~9757.
+California 1 844 551 **9757 Quickbooks Desktop Technical support phone number
+Florida/MiamiCalifornia 1 844 551 **9757 Quickbooks Desktop Technical support
+phone number Florida/MiamiCalifornia 1 844 551 **9757 Quickbooks Desktop
+Technical support phone number Florida/MiamiCalifornia 1 844 551 **9757
+Quickbooks Desktop Technical support phone number Florida/Miami
+∑∑∑California/Los Angeles1(844551-9757)Quickbooks desktop support number+Intuit
+Payroll Phone Number+Intuit QuickBooks Enterprise Support Number+QuickBooks
+Dekstop Software Support Number
+Desktop<<<<<<)()(1844551*^*9757()()<<<<<Phone number for intuit Desktop
+Quickbooks support
+Desktop<<<<<<)()(1844551*^*9757()()<<<<<Phone number for intuit Desktop
+Quickbooks support
+Desktop<<<<<<)()(1844551*^*9757()()<<<<<Phone number for intuit Desktop
+Quickbooks support
+Desktop<<<<<<)()(1844551*^*9757()()<<<<<Phone number for intuit Desktop
+Quickbooks support
+Desktop<<<<<<)()(1844551*^*9757()()<<<<<Phone number for intuit Desktop
+Quickbooks support
+(((((##+1(844)551 9757)))@-: Intuit Quickbooks pro Tech Support Phone Number 1
+844~551~9757 provides online solution for all USA/CANADA clients. For any help
+of query call to get all Intuit Quickbooks pro account solution. @@Call,
+++1(844)551 9757 for all type help by Intuit Quickbooks pro tech support phone
+number 1 844~551~9757, Intuit Quickbooks pro Tech Support Phone Number 1
+844~551~9757, Intuit Quickbooks pro Help Desk Phone Number 1 844~551~9757,
+Intuit Quickbooks pro tech support phone number 1 844~551~9757, Intuit
+Quickbooks pro technical support phone number 1 844~551~9757,@@@ Intuit 
+
+tech it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California    
+Quickbooks Desktop Support Number            tech it20 \844-551-97.57 &&
+18=77-778-8714 ? Florida // California     Quickbooks Desktop Support Number   
+        tech it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California    
+Quickbooks Desktop Support Number            tech it20 \844-551-97.57 &&
+18=77-778-8714 ? Florida // California     Quickbooks Desktop Support Number   
+        tech it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California    
+Quickbooks Desktop Support Number            tech it20 \844-551-97.57 &&
+18=77-778-8714 ? Florida // California     Quickbooks Desktop Support Number   
+        tech it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California    
+Quickbooks Desktop Support Number            tech it20 \844-551-97.57 &&
+18=77-778-8714 ? Florida // California     Quickbooks Desktop Support Number    
+ it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     technical support Number 1-8<44>551<0>109 for
+quickbooks technical support chat Toll free 1-8<44>551<0>109 number technical
+support quickbooks intuit quickbooks 1-8<44>551<0>109 canada technical support
+phone number quickbooks 1-8<445510109 for="" mac="" technical="" support=""
+phone="" number="" quickbooks="" 1-8<44="">551<0>109 merchant services
+technical support number#EFR#RE QB 1-8445510109 online banking technical
+support number quickbooks 1-8445510109 payroll technical support number
+quickbooks 1-8445510109 point of sale technical support phone number QB
+1-8<44>551<0>109 pos technical support phone number quickbooks 1-8445510>109
+premier 2016 technical support number quickbooks 1-8<44>551<0>109 pro 2016
+technical support number quickbooks 1-8<445510109 enhanced="" payroll=""
+technical="" support="" phone="" number="" quickbooks="" 1-8<44="">551<0>109
+2012 technical support phone number intuit 1-8<44>551<0>109 quickbooks
+enterprise technical support helpline number. California 1 844 551 0109
+intuitquickbookssupportphonenumber Good Evening!!quickbooks update error 15215
+quickbooks update error 1603 quickbooks update error 15270 quickbooks update
+error 0928 quickbooks update error 15223 quickbooks update error 1625
+quickbooks update error 15101 quickbooks update error 12029 quickbooks update
+error 15222 quickbooks update error 15301 quickbooks update error quickbooks
+update error 15215 quickbooks update error 1603 intuit quickbooks support
+number intuit quickbooks phone number intuit quickbooks license number intuit
+quickbooks product number intuit quickbooks sales phone number intuit
+quickbooks payroll phone number intuit quickbooks payments phone number intuit
+quickbooks payroll support number intuit quickbooks 2009 serial number intuit
+quickbooks registration phone number intuit quickbooks number intuit quickbooks
+license number and product number intuit quickbooks license and product number
+crack intuit quickbooks billing phone number intuit quickbooks contact number
+intuit quickbooks phone number customer service intuit quickbooks number of
+customers intuit quickbooks support phone number canada intuit quickbooks help
+desk phone number intuit quickbooks enterprise support number intuit quickbooks
+toll free number intuit quickbooks invalid product number intuit quickbooks
+licence number intuit quickbooks pro 2009 license number intuit quickbooks
+merchant services phone number intuit quickbooks number of users intuit
+quickbooks online support number intuit quickbooks online phone number intuit
+quickbooks help phone number intuit quickbooks registration number intuit
+quickbooks serial number intuit quickbooks phone number support intuit
+quickbooks pro 2009 serial number intuit quickbooks premier 2009 serial number
+intuit quickbooks pro 2014 serial number intuit quickbooks telephone number
+intuit quickbooks support telephone number +1 844 551 0109 intuit quickbooks
+1844 number intuit quickbooks 2009 product number intuit quickbooks pro 2009
+product number +++ 1 844 551 0109??? intuit quickbooks 800 number Alabama
+quickbooks +1>>>844.. 551.. 0109 Nevada desktop support phone number Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     technical support Number 1-8<44>551<0>109 for
+quickbooks technical support chat Toll free 1-8<44>551<0>109 number technical
+support quickbooks intuit quickbooks 1-8<44>551<0>109 canada technical support
+phone number quickbooks 1-8<445510109 for="" mac="" technical="" support=""
+phone="" number="" quickbooks="" 1-8<44="">551<0>109 merchant services
+technical support number#EFR#RE QB 1-8445510109 online banking technical
+support number quickbooks 1-8445510109 payroll technical support number
+quickbooks 1-8445510109 point of sale technical support phone number QB
+1-8<44>551<0>109 pos technical support phone number quickbooks 1-8445510>109
+premier 2016 technical support number quickbooks 1-8<44>551<0>109 pro 2016
+technical support number quickbooks 1-8<445510109 enhanced="" payroll=""
+technical="" support="" phone="" number="" quickbooks="" 1-8<44="">551<0>109
+2012 technical support phone number intuit 1-8<44>551<0>109 quickbooks
+enterprise technical support helpline number. California 1 844 551 0109
+intuitquickbookssupportphonenumber Good Evening!!quickbooks update error 15215
+quickbooks update error 1603 quickbooks update error 15270 quickbooks update
+error 0928 quickbooks update error 15223 quickbooks update error 1625
+quickbooks update error 15101 quickbooks update error 12029 quickbooks update
+error 15222 quickbooks update error 15301 quickbooks update error quickbooks
+update error 15215 quickbooks update error 1603 intuit quickbooks support
+number intuit quickbooks phone number intuit quickbooks license number intuit
+quickbooks product number intuit quickbooks sales phone number intuit
+quickbooks payroll phone number intuit quickbooks payments phone number intuit
+quickbooks payroll support number intuit quickbooks 2009 serial number intuit
+quickbooks registration phone number intuit quickbooks number intuit quickbooks
+license number and product number intuit quickbooks license and product number
+crack intuit quickbooks billing phone number intuit quickbooks contact number
+intuit quickbooks phone number customer service intuit quickbooks number of
+customers intuit quickbooks support phone number canada intuit quickbooks help
+desk phone number intuit quickbooks enterprise support number intuit quickbooks
+toll free number intuit quickbooks invalid product number intuit quickbooks
+licence number intuit quickbooks pro 2009 license number intuit quickbooks
+merchant services phone number intuit quickbooks number of users intuit
+quickbooks online support number intuit quickbooks online phone number intuit
+quickbooks help phone number intuit quickbooks registration number intuit
+quickbooks serial number intuit quickbooks phone number support intuit
+quickbooks pro 2009 serial number intuit quickbooks premier 2009 serial number
+intuit quickbooks pro 2014 serial number intuit quickbooks telephone number
+intuit quickbooks support telephone number +1 844 551 0109 intuit quickbooks
+1844 number intuit quickbooks 2009 product number intuit quickbooks pro 2009
+product number +++ 1 844 551 0109??? intuit quickbooks 800 number Alabama
+quickbooks +1>>>844.. 551.. 0109 Nevada desktop support phone number Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     technical support Number 1-8<44>551<0>109 for
+quickbooks technical support chat Toll free 1-8<44>551<0>109 number technical
+support quickbooks intuit quickbooks 1-8<44>551<0>109 canada technical support
+phone number quickbooks 1-8<445510109 for="" mac="" technical="" support=""
+phone="" number="" quickbooks="" 1-8<44="">551<0>109 merchant services
+technical support number#EFR#RE QB 1-8445510109 online banking technical
+support number quickbooks 1-8445510109 payroll technical support number
+quickbooks 1-8445510109 point of sale technical support phone number QB
+1-8<44>551<0>109 pos technical support phone number quickbooks 1-8445510>109
+premier 2016 technical support number quickbooks 1-8<44>551<0>109 pro 2016
+technical support number quickbooks 1-8<445510109 enhanced="" payroll=""
+technical="" support="" phone="" number="" quickbooks="" 1-8<44="">551<0>109
+2012 technical support phone number intuit 1-8<44>551<0>109 quickbooks
+enterprise technical support helpline number. California 1 844 551 0109
+intuitquickbookssupportphonenumber Good Evening!!quickbooks update error 15215
+quickbooks update error 1603 quickbooks update error 15270 quickbooks update
+error 0928 quickbooks update error 15223 quickbooks update error 1625
+quickbooks update error 15101 quickbooks update error 12029 quickbooks update
+error 15222 quickbooks update error 15301 quickbooks update error quickbooks
+update error 15215 quickbooks update error 1603 intuit quickbooks support
+number intuit quickbooks phone number intuit quickbooks license number intuit
+quickbooks product number intuit quickbooks sales phone number intuit
+quickbooks payroll phone number intuit quickbooks payments phone number intuit
+quickbooks payroll support number intuit quickbooks 2009 serial number intuit
+quickbooks registration phone number intuit quickbooks number intuit quickbooks
+license number and product number intuit quickbooks license and product number
+crack intuit quickbooks billing phone number intuit quickbooks contact number
+intuit quickbooks phone number customer service intuit quickbooks number of
+customers intuit quickbooks support phone number canada intuit quickbooks help
+desk phone number intuit quickbooks enterprise support number intuit quickbooks
+toll free number intuit quickbooks invalid product number intuit quickbooks
+licence number intuit quickbooks pro 2009 license number intuit quickbooks
+merchant services phone number intuit quickbooks number of users intuit
+quickbooks online support number intuit quickbooks online phone number intuit
+quickbooks help phone number intuit quickbooks registration number intuit
+quickbooks serial number intuit quickbooks phone number support intuit
+quickbooks pro 2009 serial number intuit quickbooks premier 2009 serial number
+intuit quickbooks pro 2014 serial number intuit quickbooks telephone number
+intuit quickbooks support telephone number +1 844 551 0109 intuit quickbooks
+1844 number intuit quickbooks 2009 product number intuit quickbooks pro 2009
+product number +++ 1 844 551 0109??? intuit quickbooks 800 number Alabama
+quickbooks +1>>>844.. 551.. 0109 Nevada desktop support phone number Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     technical support Number 1-8<44>551<0>109 for
+quickbooks technical support chat Toll free 1-8<44>551<0>109 number technical
+support quickbooks intuit quickbooks 1-8<44>551<0>109 canada technical support
+phone number quickbooks 1-8<445510109 for="" mac="" technical="" support=""
+phone="" number="" quickbooks="" 1-8<44="">551<0>109 merchant services
+technical support number#EFR#RE QB 1-8445510109 online banking technical
+support number quickbooks 1-8445510109 payroll technical support number
+quickbooks 1-8445510109 point of sale technical support phone number QB
+1-8<44>551<0>109 pos technical support phone number quickbooks 1-8445510>109
+premier 2016 technical support number quickbooks 1-8<44>551<0>109 pro 2016
+technical support number quickbooks 1-8<445510109 enhanced="" payroll=""
+technical="" support="" phone="" number="" quickbooks="" 1-8<44="">551<0>109
+2012 technical support phone number intuit 1-8<44>551<0>109 quickbooks
+enterprise technical support helpline number. California 1 844 551 0109
+intuitquickbookssupportphonenumber Good Evening!!quickbooks update error 15215
+quickbooks update error 1603 quickbooks update error 15270 quickbooks update
+error 0928 quickbooks update error 15223 quickbooks update error 1625
+quickbooks update error 15101 quickbooks update error 12029 quickbooks update
+error 15222 quickbooks update error 15301 quickbooks update error quickbooks
+update error 15215 quickbooks update error 1603 intuit quickbooks support
+number intuit quickbooks phone number intuit quickbooks license number intuit
+quickbooks product number intuit quickbooks sales phone number intuit
+quickbooks payroll phone number intuit quickbooks payments phone number intuit
+quickbooks payroll support number intuit quickbooks 2009 serial number intuit
+quickbooks registration phone number intuit quickbooks number intuit quickbooks
+license number and product number intuit quickbooks license and product number
+crack intuit quickbooks billing phone number intuit quickbooks contact number
+intuit quickbooks phone number customer service intuit quickbooks number of
+customers intuit quickbooks support phone number canada intuit quickbooks help
+desk phone number intuit quickbooks enterprise support number intuit quickbooks
+toll free number intuit quickbooks invalid product number intuit quickbooks
+licence number intuit quickbooks pro 2009 license number intuit quickbooks
+merchant services phone number intuit quickbooks number of users intuit
+quickbooks online support number intuit quickbooks online phone number intuit
+quickbooks help phone number intuit quickbooks registration number intuit
+quickbooks serial number intuit quickbooks phone number support intuit
+quickbooks pro 2009 serial number intuit quickbooks premier 2009 serial number
+intuit quickbooks pro 2014 serial number intuit quickbooks telephone number
+intuit quickbooks support telephone number +1 844 551 0109 intuit quickbooks
+1844 number intuit quickbooks 2009 product number intuit quickbooks pro 2009
+product number +++ 1 844 551 0109??? intuit quickbooks 800 number Alabama
+quickbooks +1>>>844.. 551.. 0109 Nevada desktop support phone number Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     technical support Number 1-8<44>551<0>109 for
+quickbooks technical support chat Toll free 1-8<44>551<0>109 number technical
+support quickbooks intuit quickbooks 1-8<44>551<0>109 canada technical support
+phone number quickbooks 1-8<445510109 for="" mac="" technical="" support=""
+phone="" number="" quickbooks="" 1-8<44="">551<0>109 merchant services
+technical support number#EFR#RE QB 1-8445510109 online banking technical
+support number quickbooks 1-8445510109 payroll technical support number
+quickbooks 1-8445510109 point of sale technical support phone number QB
+1-8<44>551<0>109 pos technical support phone number quickbooks 1-8445510>109
+premier 2016 technical support number quickbooks 1-8<44>551<0>109 pro 2016
+technical support number quickbooks 1-8<445510109 enhanced="" payroll=""
+technical="" support="" phone="" number="" quickbooks="" 1-8<44="">551<0>109
+2012 technical support phone number intuit 1-8<44>551<0>109 quickbooks
+enterprise technical support helpline number. California 1 844 551 0109
+intuitquickbookssupportphonenumber Good Evening!!quickbooks update error 15215
+quickbooks update error 1603 quickbooks update error 15270 quickbooks update
+error 0928 quickbooks update error 15223 quickbooks update error 1625
+quickbooks update error 15101 quickbooks update error 12029 quickbooks update
+error 15222 quickbooks update error 15301 quickbooks update error quickbooks
+update error 15215 quickbooks update error 1603 intuit quickbooks support
+number intuit quickbooks phone number intuit quickbooks license number intuit
+quickbooks product number intuit quickbooks sales phone number intuit
+quickbooks payroll phone number intuit quickbooks payments phone number intuit
+quickbooks payroll support number intuit quickbooks 2009 serial number intuit
+quickbooks registration phone number intuit quickbooks number intuit quickbooks
+license number and product number intuit quickbooks license and product number
+crack intuit quickbooks billing phone number intuit quickbooks contact number
+intuit quickbooks phone number customer service intuit quickbooks number of
+customers intuit quickbooks support phone number canada intuit quickbooks help
+desk phone number intuit quickbooks enterprise support number intuit quickbooks
+toll free number intuit quickbooks invalid product number intuit quickbooks
+licence number intuit quickbooks pro 2009 license number intuit quickbooks
+merchant services phone number intuit quickbooks number of users intuit
+quickbooks online support number intuit quickbooks online phone number intuit
+quickbooks help phone number intuit quickbooks registration number intuit
+quickbooks serial number intuit quickbooks phone number support intuit
+quickbooks pro 2009 serial number intuit quickbooks premier 2009 serial number
+intuit quickbooks pro 2014 serial number intuit quickbooks telephone number
+intuit quickbooks support telephone number +1 844 551 0109 intuit quickbooks
+1844 number intuit quickbooks 2009 product number intuit quickbooks pro 2009
+product number +++ 1 844 551 0109??? intuit quickbooks 800 number Alabama
+quickbooks +1>>>844.. 551.. 0109 Nevada desktop support phone number Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number            tech
+it20 \844-551-97.57 && 18=77-778-8714 ? Florida // California     Quickbooks
+Desktop Support Number            tech it20 \844-551-97.57 && 18=77-778-8714 ?
+Florida // California     Quickbooks Desktop Support Number
+
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.--
 To unsubscribe from this list: send the line "unsubscribe backports" in
