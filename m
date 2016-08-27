@@ -1,51 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:39308 "EHLO
-	farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751266AbcHPTSA (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 16 Aug 2016 15:18:00 -0400
-Message-ID: <1471375075.9777.590.camel@coelho.fi> (sfid-20160816_211802_145193_72074C1F)
-From: Luca Coelho <luca@coelho.fi>
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>, hauke@hauke-m.de
-Cc: backports@vger.kernel.org
-Date: Tue, 16 Aug 2016 22:17:55 +0300
-In-Reply-To: <d6080ced-2956-5b96-9d03-31be637ac47b@broadcom.com>
-References: <1471339244-12868-1-git-send-email-luca@coelho.fi>
-	 <d6080ced-2956-5b96-9d03-31be637ac47b@broadcom.com>
+Received: from mail.kernel.org ([198.145.29.136]:52982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754684AbcH0Shn (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sat, 27 Aug 2016 14:37:43 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+        by mail.kernel.org (Postfix) with ESMTP id 247F42034F
+        for <backports@vger.kernel.org>; Sat, 27 Aug 2016 18:37:30 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+        by mail.kernel.org (Postfix) with ESMTP id 96B80202BE
+        for <backports@vger.kernel.org>; Sat, 27 Aug 2016 18:37:21 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug
+ 154291]=?UTF-8?Q?=20quickbooks=20help=20desk=20phone=20number=20USA=20=26=20Canada=20=2B=E2=AB=B8=E2=AB=B8=2018=2A44=2A41=2A44=2A86=2A8=20=E2=AB=B8=E2=AB=B8=20=20quickbooks=20QB=20support=20tele?=@phone number in the "World" Are you looking??=?UTF-8?Q?=20Texas=20=2B=E2=AB=B8=E2=AB=B8=2018=2A44=2A41=2A44=2A86=2A8=20=E2=AB=B8=E2=AB=B8=20=20California=20quickbooks=20pro=20support=20phone=20number=20New=20York=20=2B=E2=AB=B8=E2=AB=B8=2018=2A44=2A41=2A44=2A86=2A8=20=E2=AB=B8=E2=AB=B8?=
+Date: Sat, 27 Aug 2016 18:37:17 +0000
+Message-ID: <bug-154291-58281-le5tmAviqk@https.bugzilla.kernel.org/> (sfid-20160827_203746_730713_1F0760B3)
+In-Reply-To: <bug-154291-58281@https.bugzilla.kernel.org/>
+References: <bug-154291-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [PATCH] backports: genetlink: define GENL_UNS_ADMIN_PERM as
- GENL_ADMIN_PERM
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2016-08-16 at 21:12 +0200, Arend Van Spriel wrote:
-> On 16-8-2016 11:20, Luca Coelho wrote:
-> > 
-> > From: Luca Coelho <luciano.coelho@intel.com>
-> > 
-> > Older kernels don't have support for GENL_UNS_ADMIN_PERM.  So, if
-> > it
-> > is not defined, use the previous GENL_ADMIN_PERM permission
-> > instead.
-> 
-> I posted a patch for this May 17.
+https://bugzilla.kernel.org/show_bug.cgi?id=154291
 
-Argh, this was again from my "deafness" window.  I googled and only
-found your v1, which was NAKed by Johannes.  Missed v2, sorry.
+Spam Script <spamscript@kernel.org> changed:
 
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |RESOLVED
+              Group|                            |Junk
+         Resolution|---                         |INVALID
 
-> > 
-> > Change-Id: I4c845de0d5b326aff8400df22a23595ef9cd12aa
-> 
-> and this is gerrit noise :-)
-
-Gr.  And now I am growling. :P
-
-About your patch, why didn't you add to uapi/linux/ as I did? I saw you
-mentioned some inclusion problems, but I didn't run into any.
-
---
-Cheers,
-Luca.
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
