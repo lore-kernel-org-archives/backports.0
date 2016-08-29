@@ -1,50 +1,143 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:39184 "EHLO
-	farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751123AbcHPI33 (ORCPT
-	<rfc822;backports@vger.kernel.org>); Tue, 16 Aug 2016 04:29:29 -0400
-Message-ID: <1471336165.9777.559.camel@coelho.fi> (sfid-20160816_102932_576733_6DBBE9C9)
-From: Luca Coelho <luca@coelho.fi>
-To: hauke@hauke-m.de
-Cc: backports@vger.kernel.org
-Date: Tue, 16 Aug 2016 11:29:25 +0300
-In-Reply-To: <1471000543-24994-1-git-send-email-luca@coelho.fi>
-References: <1471000543-24994-1-git-send-email-luca@coelho.fi>
+Received: from mail.kernel.org ([198.145.29.136]:48608 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752400AbcH2T0d (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 29 Aug 2016 15:26:33 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+        by mail.kernel.org (Postfix) with ESMTP id D73D9201DD
+        for <backports@vger.kernel.org>; Mon, 29 Aug 2016 19:26:30 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+        by mail.kernel.org (Postfix) with ESMTP id 54A0A2011D
+        for <backports@vger.kernel.org>; Mon, 29 Aug 2016 19:26:29 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 155521] New: Voice of Canada @@@@I@855@709@2847 ++++ E.p.s.o.n.
+ .p.r.i..n.t.e.rs.u.p.p.O.r.t p.h.O.n.e n.u.m.b.e.r E.p.s.o.n.
+ .p.r.i..n.t.e.rt.e.c.h. s.u.p.p.O.r.t p.h.O.n.e n.u.m.b.e.r U.S.A
+Date: Mon, 29 Aug 2016 19:26:28 +0000
+Message-ID: <bug-155521-58281@https.bugzilla.kernel.org/> (sfid-20160829_212635_807580_DB2D006E)
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [PATCH] backports: use codel and fq headers from the kernel
- sources
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2016-08-12 at 14:15 +0300, Luca Coelho wrote:
-> From: Luca Coelho <luciano.coelho@intel.com>
-> 
-> We don't need to have a local copy of codel.h anymore, so it can be
-> removed and copied from the kernel sources.  Additionally, it was
-> split into 3 different headers, so copy the other 2 as well.
-> 
-> Also copy the fq header files, which are used by newer wireless
-> subsystem versions, from the kernel sources.
-> 
-> Additionally, remove pkt_sched.h since it is not necessary anymore.
-> 
-> Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-> ---
->  backport/backport-include/linux/pkt_sched.h | 108 ---------
->  backport/backport-include/net/codel.h       | 350 ------------------
-> ----------
->  copy-list                                   |   5 +
->  3 files changed, 5 insertions(+), 458 deletions(-)
->  delete mode 100644 backport/backport-include/linux/pkt_sched.h
->  delete mode 100644 backport/backport-include/net/codel.h
+https://bugzilla.kernel.org/show_bug.cgi?id=155521
 
-Unfortunately this patch doesn't help with < 4.2 kernels, due to
-missing flow_dissector.c stuff, specifically skb_get_hash_perturb() and
-all the new stuff it depends on... :(
+            Bug ID: 155521
+           Summary: Voice of Canada @@@@I@855@709@2847 ++++ E.p.s.o.n.
+                    .p.r.i..n.t.e.rs.u.p.p.O.r.t p.h.O.n.e n.u.m.b.e.r
+                    E.p.s.o.n. .p.r.i..n.t.e.rt.e.c.h. s.u.p.p.O.r.t
+                    p.h.O.n.e n.u.m.b.e.r U.S.A
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: Voice of Canada @@@@I@855@709@2847 ++++ E.p.s.o.n.
+                    .p.r.i..n.t.e.rs.u.p.p.O.r.t p.h.O.n.e n.u.m.b.e.r
+                    E.p.s.o.n. .p.r.i..n.t.e.rt.e.c.h. s.u.p.p.O.r.t
+                    p.h.O.n.e n.u.m.b.e.r U.S.A
+          Hardware: All
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: shipramall8@gmail.com
+        Regression: No
 
---
-Cheers,
-Luca.
+Created attachment 231291
+  --> https://bugzilla.kernel.org/attachment.cgi?id=231291&action=edit
+((moti))Call @@@++ USA I8557O92847 EPSON p.r.i.n.t.e.r t.e.c.h s.u.p.p.o.r.t
+p.h.o.n.e n.u.m.b.e.r u.s.a. C.a.l.l EPSON h.e.l.p d.e.s.k n.u.m.b.e.r
+n.u.m.b.e.r C.a.n.a.d.a EPSON s.u.p.p.o.r.t p.h.o.n.
+
+((moti))Call @@@++ USA I8557O92847 EPSON p.r.i.n.t.e.r t.e.c.h s.u.p.p.o.r.t
+p.h.o.n.e n.u.m.b.e.r u.s.a. C.a.l.l EPSON h.e.l.p d.e.s.k n.u.m.b.e.r
+n.u.m.b.e.r C.a.n.a.d.a EPSON s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.r usa USA 1
+I8557O92847 EPSON p.r.i.n.t.e.r t.e.c.h s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.e.r
+u.s.a. C.a.l.l EPSON h.e.l.p d.e.s.k n.u.m.b.e.r n.u.m.b.e.r C.a.n.a.d.a EPSON
+s.u.p.p.o.r.t p.h.o.n.e n.u.m.b.r usa canada 1-1855-709-2847 USA, EPSON printer
+Tech Support phone number,EPSON technical support phone number 1 I8557O92847
+.EPSON Tech Support Number EPSON Tech EPSON tech support, EPSON tech support
+number, EPSON tech support phone number, EPSON technical support, EPSON
+technical support number, EPSON technical support phone number, EPSON tech
+support number, EPSON support number, EPSON Tech support phone number, EPSON
+support phone number, EPSON technical support phone number, EPSON technical
+support number,Support Phone Number for EPSON printer Phone Number for EPSON
+CustomerService Technical Support Telephone Number EPSON printer support number
+EPSON EPSON printer tech support number EPSON EPSON printer technical support
+number EPSON EPSON printer technical support phone number EPSON EPSON printer
+customer service number EPSON EPSON internet security technical support EPSON
+technical support phone number EPSON EPSON tech support phone number EPSON
+EPSON customer support phone number I-855-709-2847 EPSON EPSON printer support
+phone number EPSON EPSON support phone EPSON tech support EPSON customer
+support EPSON phone support EPSON support number EPSON EPSON technical support
+EPSON printer customer support phone number EPSON EPSON printer tech support
+phone number EPSON contact EPSON support EPSON printer technical support phone
+number ~!~I8557092847++ EPSON EPSON phone number EPSON tech support EPSON
+support ticket EPSON customer support number EPSON EPSON tech support number
+EPSON EPSON technical support number EPSON EPSON support center EPSON telephone
+support call EPSON support EPSON printer support support EPSON EPSON billing
+support EPSON printer technical support number EPSON support EPSON printer
+EPSON online support EPSON contact support EPSON printer support number EPSON
+EPSON printer customer support number EPSON EPSON printer tech support number
+EPSON support for EPSON EPSON phone number EPSON EPSON customer service phone
+number EPSON EPSON contact phone number EPSON EPSON printer phone number EPSON
+EPSON printer customer service phone number EPSON phone number EPSON for EPSON
+customer service EPSON software phone number EPSON phone number EPSON for EPSON
+EPSON customer service telephone number EPSON EPSON helpline phone number EPSON
+EPSON contact number EPSON EPSON customer service number EPSON EPSON customer
+service phone number ~!~I8557092847++ EPSON us EPSON customer service phone
+number EPSON usa EPSON telephone number EPSON EPSON phone number EPSON usa
+EPSON printer contact number EPSON EPSON number EPSON EPSON contact number
+EPSON usa EPSON printer helpline number EPSON EPSON helpline number EPSON EPSON
+customer number EPSON EPSON printer customer service number EPSON EPSON contact
+telephone number EPSON contact number EPSON for EPSON EPSON software contact
+number EPSON EPSON toll free number EPSON EPSON telephone number EPSON uk EPSON
+registration number EPSON EPSON toll free number EPSON usa EPSON customer
+service EPSON software customer service contact EPSON customer service EPSON
+customer service phone EPSON printer customer service EPSON service EPSON
+printer technical support EPSON printer customer support EPSON technical
+support reviews telephone EPSON printer EPSON tech support phone number EPSON
+EPSON printer tech support phone number EPSON EPSON printer customer service
+EPSON technical support phone number EPSON EPSON printer free printer support
+EPSON customer service billing EPSON customer service email address EPSON
+customer service reviews contact EPSON customer service EPSON tech support
+number EPSON usa EPSON printer support number EPSON EPSON printer contact
+number EPSON EPSON customer service phone number EPSON EPSON technical support
+usa EPSON technical support number EPSON EPSON tech support phone EPSON tech
+support number EPSON EPSON customer service telephone number EPSON EPSON
+printer customer support number EPSON EPSON printer phone number EPSON EPSON
+printer online support EPSON customer service number EPSON EPSON tech support
+center EPSON customer service EPSON software customer service EPSON customer
+care number EPSON usa EPSON customer number EPSON EPSON customer support number
+EPSON EPSON customer care number EPSON EPSON customer care toll free number
+EPSON EPSON tech support EPSON technical support EPSON printer support EPSON
+printer tech support EPSON support center EPSON.com customer service EPSON
+printer customer care number EPSON EPSON customer care EPSON phone number EPSON
+phone number EPSON for EPSON customer service EPSON phone support EPSON phone
+number EPSON tech support EPSON support phone number EPSON contact EPSON by
+phone EPSON contact phone number EPSON EPSON helpline phone number EPSON EPSON
+printer phone EPSON printer for phone EPSON contact number EPSON EPSON contact
+support contact EPSON printer EPSON contact number EPSON usa EPSON toll free
+number EPSON EPSON telephone number EPSON EPSON toll free number EPSON usa
+EPSON printer support services technical support for printer EPSON EPSON
+customer service phone number EPSON usa EPSON printer customer care number
+EPSON usa EPSON customer care number EPSON EPSON customer care center EPSON
+customer support EPSON customer support phone EPSON customer help EPSON
+customer & technical support EPSON customer portal EPSON customer care phone
+number EPSON usa EPSON customer care email EPSON helpline EPSON tech support
+contact EPSON customer care toll free EPSON printer customer service number
+EPSON EPSON printer protection norton printer customer service number EPSON
+EPSON software customer service number EPSON EPSON hotline customer service
+phone number EPSON EPSON customer service phone number EPSON us how to contact
+EPSON by email EPSON free phone support EPSON printer technical support number
+EPSON EPSON printer technical support help desk phone number EPSON EPSON
+technical support number EPSON toll free number EPSON EPSON printer customer
+support phone number EPSON EPSON printer customer
+
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
