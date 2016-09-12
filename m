@@ -1,490 +1,195 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:55410 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934568AbcIPM11 (ORCPT <rfc822;backports@vger.kernel.org>);
-        Fri, 16 Sep 2016 08:27:27 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id 05EF2205DD
-        for <backports@vger.kernel.org>; Fri, 16 Sep 2016 12:27:25 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-        by mail.kernel.org (Postfix) with ESMTP id 2297F205AA
-        for <backports@vger.kernel.org>; Fri, 16 Sep 2016 12:27:23 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 159821] New: OFFicial ++1 800 919 0992+++ Quickbooks phone
- number +++1(800)919 0992 +++Quickbooks support phone number
-Date: Fri, 16 Sep 2016 12:27:22 +0000
-Message-ID: <bug-159821-58281@https.bugzilla.kernel.org/> (sfid-20160916_142730_351609_6EE23A4B)
-Content-Type: text/plain; charset="UTF-8"
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:34619 "EHLO
+        mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751449AbcILJRz (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 12 Sep 2016 05:17:55 -0400
+Received: by mail-pa0-f46.google.com with SMTP id to9so49138886pac.1
+        for <backports@vger.kernel.org>; Mon, 12 Sep 2016 02:17:55 -0700 (PDT)
+Subject: Re: [PATCH] gentree: create Kconfig.local, use it to restrict compat
+To: Johannes Berg <johannes@sipsolutions.net>,
+        backports@vger.kernel.org
+References: <1472493101-6058-1-git-send-email-johannes@sipsolutions.net>
+Cc: Jouni Malinen <j@w1.fi>, Johannes Berg <johannes.berg@intel.com>
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <4d5c9281-7f15-37ec-d0f7-099cc9a12f53@broadcom.com> (sfid-20160912_111812_391584_15C26800)
+Date: Mon, 12 Sep 2016 11:17:47 +0200
 MIME-Version: 1.0
+In-Reply-To: <1472493101-6058-1-git-send-email-johannes@sipsolutions.net>
+Content-Type: multipart/mixed;
+ boundary="------------20DF901D04546C1BDCA104A2"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=159821
-
-            Bug ID: 159821
-           Summary: OFFicial ++1 800 919 0992+++ Quickbooks phone number
-                    +++1(800)919 0992 +++Quickbooks support phone number
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: OFFicial ++1 800 919 0992+++ Quickbooks phone number
-                    +++1(800)919 0992 +++Quickbooks support phone number
-          Hardware: All
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: Backports
-          Assignee: backports@vger.kernel.org
-          Reporter: mhmjhmhmmmnbmnmnmnmbmm@mail.com
-        Regression: No
-
-Created attachment 235411
-  --> https://bugzilla.kernel.org/attachment.cgi?id=235411&action=edit
-Quickbooks Phone Number)))) 1-800-919-0992 ((((Quickbooks Tech Support phone
-number @@Call, 1-800-919-0992 for all type help by Quickbooks tech support
-phone number, 1800-919-0992 Intuit Quickbooks Te
-
-Call (Toll Free)+1800 919 0992 Quickbooks Technical Support Phone
-Number............Intuit Quickbooks help
-
-Call (Toll Free)+1800 919 0992 Quickbooks Technical Support Phone
-Number............Intuit
-
- Quickbooks help
-
-Call (Toll Free)+1800 919 0992 Quickbooks Technical Support Phone
-Number............Intuit
-
- Quickbooks help
-
-QB Support@@@((1+800+919+0992))Quickbooks Phone Number and Quickbooks support
-number
-
-TelePhone Number Quickbooks Toll Free, Intuit@(1-800-919-0992)@ Quickbooks Tech
-Support
-
-Phone Number provides online solution for all USA/CANADA clients. For any help
-of query call
-
-to get all Quickbooks account solution. @@Call, for all type help by Quickbooks
-tech support
-
-phone number, Intuit Quickbooks Tech Support Phone Number, Quickbooks Help Desk
-Phone
-
-Number, Quickbooks tech support number, Quickbooks technical support phone
-number,@@@
-
- Quickbooks phone number, Quickbooks technical support number, Quickbooks
-support help    
-intuit customer service number    
-tech support for Quickbooks     
-technical support for Quickbooks     
-technical support for intuit    
- Quickbooks help website    
- Quickbooks support website    
- Quickbooks.com/helpme    
- Quickbooks customer support website    
-intuit Quickbooks head office    
-intuit Quickbooks call center    
-intuit payroll support number    
-(any thing with intuit payroll)    
-buy Quickbooks enhance payroll    
-buy intuit enhance payroll    
-customer support for Quickbooks     
-customer support for intuit    
-customer support for intuit Quickbooks     
-www.Quickbooks.com/support Quickbooks support phone number, Quickbooks
-technical support, Quickbooks Customer Service Phone Number,
-
- Quickbooks Customer Service Number, Quickbooks Customer Support Phone Number,
-
- Quickbooks Customer Support Number,@@@@ Quickbooks Customer Service Helpline
-
-Number, Quickbooks Customer Care Number, Quickbooks support team phone number,
-
-@@@@@ Quickbooks help number- Quickbooks Helpline Number; Quickbooks help phone
-
-number- Quickbooks Helpline Number, Quickbooks Tech Support Toll free Number,
-Quickbooks 
-
-Support Telephone Number, Quickbooks Tech Support Telephone number, Quickbooks
-Tech
-
-Support contact number, Quickbooks support contact number, Quickbooks technical
-support
-
-contact number.
-
- Quickbooks helpdesk number, Quickbooks support help number, Quickbooks support
-help number
-
-~Help Usa@ ...((( Quickbooks support phone number...
-
-~Help Usa@ ..((( Quickbooks support phone number... ~Help Usa@
-+1-800-919-0992...
-
-((( Quickbooks support phone number... ~Help Usa@ +1-800-919-0992...(((
-Quickbooks support
-
-number... ~Help Usa@ +1-800-919-0992...((( Quickbooks help desk phone number...
-~Help Usa@
-
-+1-800-919-0992...((( Quickbooks help desk phone number... ~Help Usa@
-+1-800-919-0992...
-
-((( Quickbooks help desk phone number... Contents [hide] 1 ::~Help Usa@
-+1-800-919-
-
-0992...((( Quickbooks tech support phone number... 2 ::~Help Usa@
-+1-800-919-0992...
-
-((( Quickbooks tech support number... 3 ::~Help Usa@ +1-800-919-0992...(((
-Quickbooks 
-
-customer support number... 4 Intuit Help... 1-800-919-0992 Quickbooks tech
-support phone
-
-number , Quickbooks technical support phone number 5 Intuit Help...
-1-800-919-0992 Quickbooks 
-
- tech support phone number , Quickbooks technical support phone number 6 Intuit
-Help... 1-
-
-800-919-0992 Quickbooks tech support phone number , Quickbooks technical
-
-support phone number
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone number...[edit]
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks tech support number...[edit]
-
-== ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone number..==.
-
-== ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone
-
-number...==
-
-Contents
-
-• 1 ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support number...
-
-• 2 ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support number...
-
-• 3 ~Help Usa@ +1-800-919-0992...((( Quickbooks technical support phone
-number...
-
-• 4 ~Help Usa@ +1-800-919-0992...((( Quickbooks technical support phone
-number...
-
-• 5 ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support number...
-
-• 6 ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support number...
-
-• 7 ~Help Usa@ +1-800-919-0992...((( Quickbooks technical support phone
-number...
-
-• 8 ~Help Usa@ +1-800-919-0992...((( Quickbooks technical support phone
-number...
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks tech
-
-support number...
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks tech
-
-support number...
-
-==~Help Usa@ +1-800-919-0992...((( Quickbooks technical support phone number...
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks technical
-
-support phone number...
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks technical
-
-support phone number...
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks technical support number... ~Help
-Usa@ +1-800-
-
-919-0992...((( Quickbooks technical support number... ~Help Usa@
-+1-800-919-0992...
-
-((( Quickbooks technical support number...==
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks customer support number...[edit]
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks customer support number...== ~Help
-Usa@
-
-+1-800-919-0992...((( Quickbooks customer support number... ~Help Usa@
-+1-800-919-
-
-0992...((( Quickbooks customer support phone number... ~Help Usa@
-+1-800-919-0992...
-
-((( Quickbooks customer support phone number... ~Help Usa@ +1-800-919-0992...
-
-((( Quickbooks customer support phone number... ~Help Usa@ +1-800-919-0992...
-
-((( Quickbooks customer service number... ~Help Usa@ +1-800-919-0992...(((
-Quickbooks 
-
-customer service number... ~Help Usa@ +1-800-919-0992...((( Quickbooks customer
-
-service number... ~Help Usa@ +1-800-919-0992...((( Quickbooks customer service
-phone
-
-number... ~Help Usa@ +1-800-919-0992...((( Quickbooks customer service phone
-number...
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks customer service phone number...
-~Help
-
-Usa@ +1-800-919-0992...((( Quickbooks support helpline number... ~Help Usa@
-+1-800-919-
-
-0992...((( Quickbooks support helpline number... ~Help Usa@ +1-800-919-0992...
-
-((( Quickbooks support helpline number... ~Help Usa@ +1-800-919-0992...(((
-Quickbooks 
-
-point of sale support phone number... ~Help Usa@ +1-800-919-0992...(((
-Quickbooks point of sale
-
-tech support phone number... ~Help Usa@ +1-800-919-0992...((( Quickbooks point
-of sale
-
-technical support phone number... ~Help Usa@ +1-800-919-0992...((( Quickbooks
-point of sale
-
-customer support phone number... ~Help Usa@ +1-800-919-0992...((( Quickbooks
-support
-
-phone number... ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone
-number...
-
- Quickbooks 
- Quickbooks helpdesk number, Quickbooks support help number, Quickbooks support
-help number
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks support phone number...
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks support phone number... ~Help Usa@
-+1-
-
-800-919-0992...((( Quickbooks support phone number... ~Help Usa@
-+1-800-919-0992...
-
-((( Quickbooks support number... ~Help Usa@ +1-800-919-0992...((( Quickbooks
-help desk phone
-
-number... ~Help Usa@ +1-800-919-0992...((( Quickbooks help desk phone number...
-~Help
-
-Usa@ +1-800-919-0992...((( Quickbooks help desk phone number... Contents [hide]
-
-1 ::~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone number... 2
-::~Help Usa@
-
-+1-800-919-0992...((( Quickbooks tech support number... 3 ::~Help Usa@
-+1-800-919-0992...
-
-((( Quickbooks customer support number... 4 Intuit Help... Quickbooks tech
-support phone
-
-number , Quickbooks technical support phone number 5 Intuit Help...
-1-800-919-0992 Quickbooks 
-
- tech support phone number , Quickbooks technical support phone number 6 Intuit
-
-Help... Quickbooks tech support phone number , Quickbooks technical support
-
-phone number
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone number...[edit]
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks tech support number...[edit]
-
-== ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone number..==.
-
-== ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone
-
-number...==
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks tech
-
-support number...
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks tech
-
-support number...
-
-==~Help Usa@ +1-800-919-0992...((( Quickbooks technical support phone number...
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks technical
-
-support phone number...
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks technical
-
-support phone number...
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks technical support number... ~Help
-Usa@ +1-800-
-
-919-0992...((( Quickbooks technical support number... ~Help Usa@
-+1-800-919-0992...
-
-((( Quickbooks technical support number...==
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks customer support number...[edit]
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks customer support number...== ~Help
-Usa@
-
-+1-800-919-0992...((( Quickbooks customer support number... ~Help Usa@
-+1-800-919-
-
-0992...((( Quickbooks customer support phone number... ~Help Usa@
-+1-800-919-0992...
-
-((( Quickbooks customer support phone number... ~Help Usa@ +1-800-919-0992...
-
-((( Quickbooks customer support phone number... ~Help Usa@ +1-800-919-0992...
-
-((( Quickbooks customer service number... ~Help Usa@ +1-800-919-0992...(((
-Quickbooks 
-
-customer service number... ~Help Usa@ +1-800-919-0992...((( Quickbooks customer
-
-service number... ~Help Usa@ +1-800-919-0992...((( Quickbooks customer service
-phone
-
-number... ~Help Usa@ +1-800-919-0992...((( Quickbooks customer service phone
-number...
-
-~Help Usa@ +1-800-919-0992...((( Quickbooks customer service phone number...
-~Help
-
-Usa@ +1-800-919-0992...((( Quickbooks support helpline number... ~Help Usa@
-+1-800-919-
-
-0992...((( Quickbooks support helpline numbera... ~Help Usa@ +1-800-919-0992...
-
-((( Quickbooks support helpline number... ~Help Usa@ +1-800-919-0992...(((
-Quickbooks 
-
-point of sale support phone number... ~Help Usa@ +1-800-919-0992...(((
-Quickbooks point of sale
-
-tech support phone number... ~Help Usa@ +1-800-919-0992...((( Quickbooks point
-of sale
-
-technical support phone number... ~Help Usa@ +1-800-919-0992...((( Quickbooks
-point of sale
-
-customer support phone number... ~Help Usa@ +1-800-919-0992...((( Quickbooks
-support
-
-phone number... ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone
-number...
-
- Quickbooks 
- Quickbooks tech support phone number 1-800-919-0992 Quickbooks tech Support
-Number 1-800-
-
-919-0992 Quickbooks technical Support Phone Number 1-800-919-0992 Quickbooks
-technical
-
-Support Number 1-800-919-0992 Quickbooks tech Support Phone Number
-1-800-919-0992
-
- Quickbooks tech Support Number 1-800-919-0992 Quickbooks technical Support
-Phone
-
-Number 1-800-919-0992 Quickbooks technical Support Number 1-800-919-0992
-Quickbooks 
-
-customer service number 1-800-919-0992 Quickbooks customer service phone number
-1-800-919-
-
-0992 Quickbooks customer support number 1-800-919-0992 Quickbooks customer
-support phone
-
-number 1-800-919-0992 Quickbooks tech Support Phone Number 1-800-919-0992
-
- Quickbooks tech Support Number 1-800-919-0992 Quickbooks technical Support
-
-Phone Number 1-800-919-0992 Quickbooks technical Support Number 1-800-919-0992
-
- Quickbooks support phone number 1-800-919-0992 Quickbooks support number
-
-1-800-919-0992 Quickbooks support number 1-800-919-0992 Quickbooks help desk
-phone
-
-number 1-800-919-0992 Quickbooks help desk number 1-800-919-0992 Quickbooks
-Error Support
-
-Number 1-800-919-0992 Quickbooks Error Support phone Number 1-800-919-0992
-Quickbooks 
-
-Contact Number 1-800-919-0992 Quickbooks Error Support 1-800-919-0992
-Quickbooks Support
-
-Contact Number 1-800-919-0992 Technical Support for Quickbooks Printer
-1-800-919-0992
-
- Quickbooks Support Phone Number 1-800-919-0992 Quickbooks Support Phone Number
-1-800-
-
-919-0992 Quickbooks Support Phone Number 1-800-919-0992 Quickbooks Support
-Phone
-
-Number 1-800-919-0992 Quickbooks tech Support Phone Number USA 1-800-919-0992
-
- Quickbooks tech Support Number USA 1-800-919-0992 Quickbooks technical Support
-Phone
-
-Number USA 1-800-919-0992 Quickbooks technical Support Number USA
-1-800-919-0992
-
- Quickbooks tech Support Phone Number USA 1-800-919-0992 Quickbooks tech
-Support
-
-Number USA 1-800-919-0992 Quickbooks technical Support Phone Number USA
-1-800-919-
-
-0992 Quickbooks technical Support Number USA 1-800-919-0992 Quickbooks customer
-
-service number USA 1-800-919-0992 Quickbooks customer service phone number USA
-1-800-919-
-
-0992 Quickbooks customer support number USA 1-800-919-0992 Quickbooks customer
-support
-
-phone number USA 1-800-919-0992 Quickbooks tech Support Phone Number USA 1-800-
-
-919-0992 Quickbooks tech Support Number USA 1-800-919-0992 Quickbooks 
-
-technical Support Phone Number USA 1-800-919-0992 Quickbooks technical Support
-
-Number USA 1-800-919-0992 Quickbooks support phone number USA 1-800-919-0992
-
- Quickbooks support number USA 1-800-919-0992 Quickbooks help desk phone number
-
-USA 1-800-919-0992 Quickbooks help desk number USA 1-800-919-0992 Quickbooks
-help 1-800-
-
-919-0992 Quickbooks contact support number 1-800-919-0992 Quickbooks customer
-Support 1-
-
-1800-919-0992 Quickbook online help
-
+This is a multi-part message in MIME format.
+--------------20DF901D04546C1BDCA104A2
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+
+On 29-8-2016 19:51, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+> 
+> Not all the compat code is always necessary, for example code
+> enabled by BPAUTO_CRYPTO_SKCIPHER and by BPAUTO_RHASHTABLE is
+> gated on other symbols being selected. Checking against the
+> Kconfig symbols as it's done right now is wrong though, since
+> the base kernel's Kconfig symbols would be used, selecting,
+> for example, BPAUTO_CRYPTO_SKCIPHER when the base kernel has
+> CONFIG_BT set, but doing that when BT isn't even part of the
+> backport, or when it's disabled in the backport.
+
+Excellent. Thanks for this. I have been spending some time on fixing
+that skcipher stuff (attached) although the stuff in my selective
+backport does not need it.
+
+Regards,
+Arend
+
+--------------20DF901D04546C1BDCA104A2
+Content-Type: text/plain; charset=UTF-8;
+ name="0001-backports-patches-update-the-crypto-skcipher-patch.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0001-backports-patches-update-the-crypto-skcipher-patch.patc";
+ filename*1="h"
+
+>From 3f3cdff75e845d1b0cf0af06efb2b0ad56e486d9 Mon Sep 17 00:00:00 2001
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Date: Wed, 24 Aug 2016 10:07:17 +0100
+Subject: [PATCH] backports: patches: update the crypto-skcipher patch
+
+The upstream code in crypto/skcipher.c has been changed. Although
+the crypto-skcipher.patch still applies it results in some undefined
+functions. This patch adds those or the needed function prototypes.
+
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+---
+ patches/backport-adjustments/crypto-skcipher.patch | 104 ++++++++++++++++++++-
+ 1 file changed, 101 insertions(+), 3 deletions(-)
+
+diff --git a/patches/backport-adjustments/crypto-skcipher.patch b/patches/backport-adjustments/crypto-skcipher.patch
+index c7584c6..61be77a 100644
+--- a/patches/backport-adjustments/crypto-skcipher.patch
++++ b/patches/backport-adjustments/crypto-skcipher.patch
+@@ -1,10 +1,91 @@
+ --- a/compat/crypto-skcipher.c
+ +++ b/compat/crypto-skcipher.c
+-@@ -18,7 +18,28 @@
+- #include <linux/bug.h>
+- #include <linux/module.h>
++@@ -22,7 +22,109 @@
++ #include <linux/seq_file.h>
++ #include <net/netlink.h>
+  
+ -#include "internal.h"
+++#define CRYPTO_ALG_TYPE_SKCIPHER	0x00000005
+++
+++struct skcipher_alg {
+++        int (*setkey)(struct crypto_skcipher *tfm, const u8 *key,
+++                      unsigned int keylen);
+++        int (*encrypt)(struct skcipher_request *req);
+++        int (*decrypt)(struct skcipher_request *req);
+++        int (*init)(struct crypto_skcipher *tfm);
+++        void (*exit)(struct crypto_skcipher *tfm);
+++
+++        unsigned int min_keysize;
+++        unsigned int max_keysize;
+++        unsigned int ivsize;
+++        unsigned int chunksize;
+++
+++        struct crypto_alg base;
+++};
+++
+++struct crypto_alg *crypto_find_alg(const char *alg_name,
+++                                   const struct crypto_type *frontend,
+++                                   u32 type, u32 mask);
+++
+++struct skcipher_instance {
+++        void (*free)(struct skcipher_instance *inst);
+++        union {
+++                struct {
+++                        char head[offsetof(struct skcipher_alg, base)];
+++                        struct crypto_instance base;
+++                } s;
+++                struct skcipher_alg alg;
+++        };
+++};
+++
+++static inline struct skcipher_alg *crypto_skcipher_alg(
+++        struct crypto_skcipher *tfm)
+++{
+++        return container_of(crypto_skcipher_tfm(tfm)->__crt_alg,
+++                            struct skcipher_alg, base);
+++}
+++
+++static inline struct crypto_instance *skcipher_crypto_instance(
+++        struct skcipher_instance *inst)
+++{
+++        return &inst->s.base;
+++}
+++
+++static unsigned int crypto_alg_extsize(struct crypto_alg *alg)
+++{
+++        return alg->cra_ctxsize +
+++               (alg->cra_alignmask & ~(crypto_tfm_ctx_alignment() - 1));
+++}
+++
+++static int crypto_grab_spawn(struct crypto_spawn *spawn, const char *name,
+++			      u32 type, u32 mask)
+++{
+++        struct crypto_alg *alg;
+++        int err;
+++
+++        alg = crypto_find_alg(name, spawn->frontend, type, mask);
+++        if (IS_ERR(alg))
+++                return PTR_ERR(alg);
+++
+++        err = crypto_init_spawn(spawn, alg, spawn->inst, mask);
+++        crypto_mod_put(alg);
+++        return err;
+++}
+++
+++static int crypto_type_has_alg(const char *name, const struct crypto_type *fe,
+++				u32 type, u32 mask)
+++{
+++        int ret = 0;
+++        struct crypto_alg *alg = crypto_find_alg(name, fe, type, mask);
+++
+++        if (!IS_ERR(alg)) {
+++                crypto_mod_put(alg);
+++                ret = 1;
+++        }
+++
+++        return ret;
+++}
+++
+ +struct crypto_tfm *__crypto_alloc_tfm(struct crypto_alg *alg, u32 type,
+ +				      u32 mask);
+ +
+@@ -30,3 +111,20 @@
+  
+  static unsigned int crypto_skcipher_extsize(struct crypto_alg *alg)
+  {
++@@ -257,6 +359,8 @@
++ }
++
++ static void crypto_skcipher_free_instance(struct crypto_instance *inst)
+++	__attribute__((unused));
+++static void crypto_skcipher_free_instance(struct crypto_instance *inst)
++ {
++	struct skcipher_instance *skcipher =
++		container_of(inst, struct skcipher_instance, s.base);
++@@ -314,7 +418,6 @@
++ static const struct crypto_type crypto_skcipher_type2 = {
++	.extsize = crypto_skcipher_extsize,
++	.init_tfm = crypto_skcipher_init_tfm,
++-	.free = crypto_skcipher_free_instance,
++ #ifdef CONFIG_PROC_FS
++	.show = crypto_skcipher_show,
++ #endif
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.--
+1.9.1
+
+
+--------------20DF901D04546C1BDCA104A2--
+--
 To unsubscribe from this list: send the line "unsubscribe backports" in
