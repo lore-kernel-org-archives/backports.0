@@ -1,36 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:46530 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:43296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753937AbcIEAQU (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 4 Sep 2016 20:16:20 -0400
+        id S1758990AbcIPLmX (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 16 Sep 2016 07:42:23 -0400
 Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id 698C42021B
-        for <backports@vger.kernel.org>; Mon,  5 Sep 2016 00:06:34 +0000 (UTC)
-Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-        by mail.kernel.org (Postfix) with ESMTP id 1275E201FE
-        for <backports@vger.kernel.org>; Mon,  5 Sep 2016 00:06:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTP id D06C420434
+        for <backports@vger.kernel.org>; Fri, 16 Sep 2016 11:42:21 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+        by mail.kernel.org (Postfix) with ESMTP id 94419205D1
+        for <backports@vger.kernel.org>; Fri, 16 Sep 2016 11:42:20 +0000 (UTC)
 From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: [Bug 156021] New: Full Solution@1-844-551-9757)QuickBooks enterprise
- Tech Support Phone Number provides online solution for all USA
-Date: Mon, 05 Sep 2016 00:06:32 +0000
-Message-ID: <bug-156021-58281@https.bugzilla.kernel.org/> (sfid-20160905_021623_293823_486EA098)
+Subject: [Bug 158501] New: <<Aab aa BHi
+ ja>>^^^^^**{({(18009190992})})}+++Quickbooks  technical support phone
+ number*Quickbooks  Support phone number-*-*
+Date: Fri, 16 Sep 2016 11:42:20 +0000
+Message-ID: <bug-158501-58281@https.bugzilla.kernel.org/> (sfid-20160916_134225_754445_5BA22342)
 Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=156021
+https://bugzilla.kernel.org/show_bug.cgi?id=158501
 
-            Bug ID: 156021
-           Summary: Full Solution@1-844-551-9757)QuickBooks enterprise
-                    Tech Support Phone Number provides online solution for
-                    all USA
+            Bug ID: 158501
+           Summary: <<Aab aa BHi
+                    ja>>^^^^^**{({(18009190992})})}+++Quickbooks
+                    technical support phone number*Quickbooks  Support
+                    phone number-*-*
            Product: Backports project
            Version: unspecified
-    Kernel Version: Full Solution@1-844-551-9757)QuickBooks enterprise
-                    Tech Support Phone Number provides online solution for
-                    all USA
+    Kernel Version: Quickbooks  technical support phone number
           Hardware: All
                 OS: Linux
               Tree: Mainline
@@ -39,81 +39,56 @@ https://bugzilla.kernel.org/show_bug.cgi?id=156021
           Priority: P1
          Component: Backports
           Assignee: backports@vger.kernel.org
-          Reporter: hunt87070@gmail.com
+          Reporter: mhmjhmhmmmnbmnmnmnmbmm@mail.com
         Regression: No
 
-Full Solution@1-844-551-9757)QuickBooks enterprise Tech Support Phone Number
-provides online solution for all USA
-Full Solution@1-844-551-9757)QuickBooks enterprise Tech Support Phone Number
-provides online solution for all USA
-Full Solution@1-844-551-9757)QuickBooks enterprise Tech Support Phone Number
-provides online solution for all USA
-Full Solution@1-844-551-9757)QuickBooks enterprise Tech Support Phone Number
-provides online solution for all USA
-+>>1844-551-9757 Quickbooks enterprise Support Number 1844-551-9757 quickbooks
-enterprise customer service phone number     
+Quickbooks Enterprise technical s.u.p.p.o.r.t h.e.l.p desk P.h.o.n.e NUMBER
+1800 919 0992 Call 1-800-919-0992 Quickbooks technical s.u.p.p.o.r.t NUMBER
+1800 919 0992 Quickbooks toll free NUMBER 1800 919 0992 Call 1-800-919-0992
+Quickbooks Enterprise customer s.u.p.p.o.r.t P.h.o.n.e NUMBER 1800 919 0992
+Call 1-800-919-0992 Quickbooks Enterprise c.u.s.t.o.m.e.r s.e.r.v.i.c.e
+P.h.o.n.e NUMBER 1800 919 0992 Quickbooks P.h.o.n.e NUMBER 1800 919 0992
+Quickbooks for Quickbooks Enterprise c.u.s.t.o.m.e.r s.e.r.v.i.c.e contact
+Quickbooks Enterprise c.u.s.t.o.m.e.r s.e.r.v.i.c.e P.h.o.n.e NUMBER 1800 919
+0992 Call 1-800-919-0992 Quickbooks security s.u.p.p.o.r.t P.h.o.n.e NUMBER
+1800 919 0992 Call 1-800-919-0992 Quickbooks internet security s.u.p.p.o.r.t
+P.h.o.n.e NUMBER 1800 919 0992 Quickbooks P.h.o.n.e NUMBER 1800 919 0992
+Quickbooks for Quickbooks security Quickbooks internet security P.h.o.n.e
+NUMBER 1800 919 0992 Quickbooks in canada Quickbooks Enterprise contact
+P.h.o.n.e NUMBER 1800 919 0992 Quickbooks in canada Quickbooks security contact
+P.h.o.n.e NUMBER 1800 919 0992 Call 1-800-919-0992 Quickbooks Enterprise
+h.e.l.p desk P.h.o.n.e NUMBER 1800 919 0992 
 
-quickbooks enterprise telephone number1844-551-9757@./quickbooks enterprise
-number, quickbooks enterprise phone number,
+https://www.facebook.com/Quickbooks-1800-919-0992-Enterprise-Support-Phone-Number-1776222839321546/
 
-Full Solution@1-844-551-9757)QuickBooks enterprise Tech Support Phone Number
-provides online solution for all USA
-
-== ยฆ$รท§§ == 1 844 551 9757 == ยฆ$รท§§ == Quickbooks enterprise tech support
-number usa
-
-NeWy0rK~CALIFORN!!YAAA ™1<844>551>9757 QuickBooks 2016 enterprise Support Phone
-Number
-
-~Help Usa@ +1 -844 -551 -9757...((( Quickbooks enterprise Pro technical support
-phone number...
-
-=TEXAS=~Help Usa@ +1 -844 -551 -9757...((( Quickbooks enterprise technical
-support phone number..Usa@ texas
-
-Intuit@1844+551+9757 QB SUPPORT ON ((1-844+551+9757)) Quickbooks enterprise
-PHONE NUMBER AND Quickbooks Payroll SUPPORT PHONE NUMBER
-
-Quickbooks @@$##``1~844~551~9757`` QB enterprise Tech Support telephone Number
-Quickbooks Toll Free phone Number
-
-1844..551..9757)@@Quickbooks enterprise Tech Support Phone Number###@@Q
-
-phone number for1.844.551.9757 Quickbooks enterprise tech support
-
-Quickbooks enterprise support Phone Number ((***@1844 551 9757***    
-
-Live Quickbooks )) +++ (( 1-844-551 -9757 )) +++ Quickbooks enterprise support
-phone number USA Live Quickbooks )) +++ 
-
-$$1-844-551-9757""quickbooks enterprise support phone number USA
-
-online 1844 551 9757 enterprise tech support phone number Quickbooks phone
-number
- Help~+1- 844- 551-9757...((( QuickBooks payroll technical support number...==
-::@Usa Help~+1- 844- 551-9757...((( QuickBooks customer support number...edit
-@Usa Help~+1- 844- 551-9757...((( QuickBooks pro customer support number...==
-@Usa Help~+1- 844- 551-9757...((( QuickBooks payroll customer support number...
-@Usa Help~+1- 844- 551-9757...((( QuickBooks customer support phone number...
-@Usa Help~+1- 844- 551-9757...((( QuickBooks pro customer support phone
-number... @Usa Help~+1- 844- 551-9757...((( QuickBooks payroll customer support
-phone number... @Usa Help~+1- 844- 551-9757...((( QuickBooks 2009 customer
-service number... @Usa Help~+1- 844- 551-9757...((( QuickBooks pro customer
-service number... @Usa Help~+1- 844- 551-9757...((( QuickBooks payroll customer
-service number... @Usa Help~+1- 844- 551-9757...((( QuickBooks customer service
-phone number... @Usa Help~+1- 844- 551-9757...((( QuickBooks pro customer
-service phone number... @Usa Help~+1- 844- 551-9757...((( QuickBooks payroll
-customer service phone number... @Usa Help~+1- 844- 551-9757...((( QuickBooks
-support helpline number... @Usa Help~+1- 844- 551-9757...((( QuickBooks pro
-support helpline number... @Usa Help~+1- 844- 551-9757...((( QuickBooks payroll
-support helpline number... @Usa Help~+1- 844- 551-9757...((( QuickBooks point
-of sale support phone number... @Usa Help~+1- 844- 551-9757...((( QuickBooks
-point of sale tech support phone number... @Usa Help~+1- 844- 551-9757...(((
-QuickBooks point of sale technical support phone number... @Usa Help~+1- 844-
-551-9757...((( QuickBooks point of sale customer support phone number... @Usa
-Help~+1- 844- 551-9757...((( QuickBooks 2008 pos support phone number... @Usa
-Help~+1- 844- 551-9757...((( QuickBooks pos tech support phone
-number...</551></551></551></551></551></551></551>
+Quickbooks in canada Quickbooks Enterprise tech s.u.p.p.o.r.t P.h.o.n.e NUMBER
+1800 919 0992 Quickbooks free in canada Quickbooks Enterprise s.u.p.p.o.r.t
+P.h.o.n.e NUMBER 1800 919 0992 Call 1-800-919-0992 Quickbooks Enterprise
+P.h.o.n.e NUMBER 1800 919 0992 Quickbooks s.u.p.p.o.r.t for technical issue in
+canada P.h.o.n.e NUMBER 1800 919 0992 Quickbooks for Quickbooks Enterprise
+technical s.u.p.p.o.r.t Quickbooks Enterprise c.u.s.t.o.m.e.r s.e.r.v.i.c.e
+teleP.h.o.n.e NUMBER 1800 919 0992 Call 1-800-919-0992 Quickbooks Enterprise
+toll free customer care NUMBER 1800 919 0992 Call 1-800-919-0992 Quickbooks
+internet security h.e.l.p Quickbooks enterprise technical support phone
+number... Quickbooks Enterprise Customer Service Helpline Number,
+Quickbooks Enterprise Customer Care Number, Quickbooks Enterprise support team
+phone number,  Quickbooks Enterprise phone number, Quickbooks Enterprise
+technical support number, Quickbooks Enterprise support phone number,
+Quickbooks Enterprise technical support, Quickbooks Enterprise Customer Service
+Phone Number, Quickbooks Enterprise Customer Service Number, Quickbooks
+Enterprise Customer Support Phone Number, Quickbooks Enterprise Customer
+Support Number QuickBooks help number-QuickBooks Helpline Number; QuickBooks
+help phone number-QuickBooks Helpline Number, QuickBooks HELP DESK Toll free
+Number, QuickBooks Support Telephone Number, QuickBooks HELP DESK Telephone
+number, QuickBooks HELP DESK contact number, QuickBooks support contact number,
+QuickBooks technical support contact number. Quickbooks Enterprise PHONE NUMBER
+AND Quickbooks Enterprise SUPPORT PHONE NUMBER Quickbooks Enterprise Toll Free,
+Intuit QuickBooks Customer Service Helpline Number, QuickBooks Customer
+Care Number, QuickBooks support team phone number,  QuickBooks phone
+number, QuickBooks technical support number, QuickBooks support phone number,
+QuickBooks technical support, QuickBooks Customer Service Phone Number,
+QuickBooks Customer Service Number, QuickBooks Customer Support Phone Number,
+QuickBooks Customer Support Number.
 
 -- 
 You are receiving this mail because:
