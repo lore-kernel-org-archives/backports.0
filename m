@@ -1,195 +1,695 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:34619 "EHLO
-        mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751449AbcILJRz (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 12 Sep 2016 05:17:55 -0400
-Received: by mail-pa0-f46.google.com with SMTP id to9so49138886pac.1
-        for <backports@vger.kernel.org>; Mon, 12 Sep 2016 02:17:55 -0700 (PDT)
-Subject: Re: [PATCH] gentree: create Kconfig.local, use it to restrict compat
-To: Johannes Berg <johannes@sipsolutions.net>,
-        backports@vger.kernel.org
-References: <1472493101-6058-1-git-send-email-johannes@sipsolutions.net>
-Cc: Jouni Malinen <j@w1.fi>, Johannes Berg <johannes.berg@intel.com>
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <4d5c9281-7f15-37ec-d0f7-099cc9a12f53@broadcom.com> (sfid-20160912_111812_391584_15C26800)
-Date: Mon, 12 Sep 2016 11:17:47 +0200
+Received: from mail.kernel.org ([198.145.29.136]:44286 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1759155AbcIPLqv (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 16 Sep 2016 07:46:51 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+        by mail.kernel.org (Postfix) with ESMTP id 0978F205C7
+        for <backports@vger.kernel.org>; Fri, 16 Sep 2016 11:46:47 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+        by mail.kernel.org (Postfix) with ESMTP id 74F8F20531
+        for <backports@vger.kernel.org>; Fri, 16 Sep 2016 11:46:40 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 158631] New: Janam janam jo sath nibhaye Quickbooks Enterprise
+ Support 1 800 9190992 Quickbooks Enterprise support phone number, Quickbooks
+ Enterprise support phone number USA Janam janam jo sath nibhaye Quickbooks
+ Enterprise Support 1 800 9190992 Quickbooks Enterpris
+Date: Fri, 16 Sep 2016 11:46:40 +0000
+Message-ID: <bug-158631-58281@https.bugzilla.kernel.org/> (sfid-20160916_134652_911335_4BD32559)
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-In-Reply-To: <1472493101-6058-1-git-send-email-johannes@sipsolutions.net>
-Content-Type: multipart/mixed;
- boundary="------------20DF901D04546C1BDCA104A2"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------20DF901D04546C1BDCA104A2
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+https://bugzilla.kernel.org/show_bug.cgi?id=158631
 
-On 29-8-2016 19:51, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
-> 
-> Not all the compat code is always necessary, for example code
-> enabled by BPAUTO_CRYPTO_SKCIPHER and by BPAUTO_RHASHTABLE is
-> gated on other symbols being selected. Checking against the
-> Kconfig symbols as it's done right now is wrong though, since
-> the base kernel's Kconfig symbols would be used, selecting,
-> for example, BPAUTO_CRYPTO_SKCIPHER when the base kernel has
-> CONFIG_BT set, but doing that when BT isn't even part of the
-> backport, or when it's disabled in the backport.
+            Bug ID: 158631
+           Summary: Janam janam jo sath nibhaye Quickbooks Enterprise
+                    Support 1 800 9190992 Quickbooks Enterprise support
+                    phone number, Quickbooks Enterprise support phone
+                    number USA Janam janam jo sath nibhaye Quickbooks
+                    Enterprise Support 1 800 9190992 Quickbooks Enterpris
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: Happy Pets ****++++18009190992+++****Quickbooks
+                    Enterprise technical support phone number////
+          Hardware: All
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: mhmjhmhmmmnbmnmnmnmbmm@mail.com
+        Regression: No
 
-Excellent. Thanks for this. I have been spending some time on fixing
-that skcipher stuff (attached) although the stuff in my selective
-backport does not need it.
+Created attachment 234791
+  --> https://bugzilla.kernel.org/attachment.cgi?id=234791&action=edit
+Janam janam jo sath nibhaye Quickbooks Enterprise Support 1 800 9190992
+Quickbooks Enterprise support phone number, Quickbooks Enterprise support phone
+number USA Janam janam jo sath nibhaye Quickbook
 
-Regards,
-Arend
+Janam janam jo sath nibhaye Quickbooks Enterprise Support 1 800 9190992
+Quickbooks Enterprise support phone number, Quickbooks Enterprise support phone
+number USA
+Janam janam jo sath nibhaye Quickbooks Enterprise Support 1 800 9190992
+Quickbooks Enterprise support phone number, Quickbooks Enterprise support phone
+number USA QPML +¦$÷ 1800 -919-0992 Quickbooks Enterprise tech support phone
+number, Quickbooks Enterprise tech support phone number, Quickbooks Enterprise
+technical support phone number, Quickbooks Enterprise phone number, Quickbooks
+Enterprise contact phone number, Quickbooks Enterprise contact telephone
+number, Quickbooks Enterprise 24 hour phone number, Quickbooks Enterprise
+customer support phone number, Quickbooks Enterprise customer service phone
+number, Quickbooks Enterprise official number, Quickbooks Enterprise official
+phone number, Quickbooks Enterprise 800 phone number, Quickbooks Enterprise
+toll free number, 800 number for Quickbooks Enterprise support, Quickbooks
+Enterprise 24/7 support phone number Quickbooks Enterprise support phone
+number,Quickbooks Enterprise support phone number,Quickbooks Enterprise help
+phone number, }. }.).).).) Quickbooks Enterprise #$W@#%@$Q Quickbooks
+Enterprise tech support phone number USA%$#%$/CanaDA Quickbooks Enterprise tech
+support telephone number.
+Call @@ +_()(^%#$Q USA 1 800 9190992 Quickbooks Enterprise** technical support
+phone number 1 800 9190992 usa/canada Quickbooks Enterprise Technical Support
+Number. Quickbooks Enterprise technical support number.Quickbooks Enterprise
+support number, Quickbooks Enterprise phone number, Quickbooks Enterprise HELP
+DESK number, Quickbooks Enterprise customer support number, Quickbooks
+Enterprise customer support phone number, Quickbooks Enterprise customer
+service phone number, Quickbooks Enterprise customer service phone number,
+Quickbooks Enterprise support phone number. Help?.Quickbooks Enterprise 24/7
+support phone number,Quickbooks Enterprise telephone number for support? call
+1800 -919-0992.(Quickbooks Enterprise technical support phone number Quickbooks
+Enterprise phone number QB SUPPORT ON ((1-800 -919-0992)) Quickbooks Enterprise
+PHONE NUMBER AND Quickbooks Enterprise SUPPORT PHONE NUMBER Quickbooks
+Enterprise Toll Free, Intuit (1-800 -919-0992)? 1800 .919.0992 Quickbooks
+Enterprise s.u.p.p.o.r.t. .p.h.o.n.e. .n.u.m.b.e.r. usa/ca 1800 .919.0992
+Quickbooks Enterprise s.u.p.p.o.r.t. .p.h.o.n.e. .n.u.m.b.e.r. usa Intuit???
+Quickbooks Enterprise ENTERPRISE help number- Quickbooks Enterprise ENTERPRISE
+Helpline Number; Quickbooks Enterprise ENTERPRISE help phone number- Quickbooks
+Enterprise ENTERPRISE Helpline Number, Quickbooks Enterprise ENTERPRISE Tech
+Support Toll free Number, Quickbooks Enterprise ENTERPRISE Support Telephone
+Number, Quickbooks Enterprise ENTERPRISE Tech Support Telephone number,
+Quickbooks Enterprise ENTERPRISE Tech Support phone number, Quickbooks
+Enterprise ENTERPRISE support phone number, Quickbooks Enterprise ENTERPRISE
+technical support phone number. Call, Quickbooks Enterprise ENTERPRISE tech
+support phone number, Quickbooks Enterprise ENTERPRISE Tech Support Phone
+Number, Quickbooks Enterprise ENTERPRISE Help Desk Phone Number, Quickbooks
+Enterprise ENTERPRISE tech support number, Quickbooks Enterprise ENTERPRISE
+technical support phone number, Quickbooks Enterprise ENTERPRISE phone number,
+Quickbooks Enterprise ENTERPRISE technical support number, Quickbooks
+Enterprise ENTERPRISE support phone number. It is very popular toll free number
+which ENTERPRISEvide by Quickbooks Enterprise ENTERPRISE technical support,
+Quickbooks Enterprise ENTERPRISE Customer Service Phone Number, Quickbooks
+Enterprise ENTERPRISE Customer Service Number, Quickbooks Enterprise ENTERPRISE
+Customer Support Phone Number, Quickbooks Enterprise ENTERPRISE Customer
+Support Number, Quickbooks Enterprise ENTERPRISE Customer Service Helpline
+Number, Quickbooks Enterprise ENTERPRISE Customer Care Number, Quickbooks
+Enterprise ENTERPRISE support team phone number. Call, Quickbooks Enterprise
+ENTERPRISE tech support phone number, Quickbooks Enterprise ENTERPRISE Tech
+Support Phone Number, Quickbooks Enterprise ENTERPRISE Help Desk Phone Number,
+Quickbooks Enterprise ENTERPRISE tech support number, Quickbooks Enterprise
+ENTERPRISE technical support phone number, Quickbooks Enterprise ENTERPRISE
+phone number, Quickbooks Enterprise ENTERPRISE technical support number,
+Quickbooks Enterprise ENTERPRISE support phone number, Quickbooks Enterprise
+ENTERPRISE technical support, Quickbooks Enterprise ENTERPRISE Customer Service
+Phone Number, Quickbooks Enterprise ENTERPRISE Customer Service Number,
+Quickbooks Enterprise ENTERPRISE Customer Support Phone Number, Quickbooks
+Enterprise ENTERPRISE Customer Support Number, Quickbooks Enterprise ENTERPRISE
+Customer Service Helpline Number, Quickbooks Enterprise ENTERPRISE Customer
+Care Number,CALL ????? Quickbooks Enterprise ENTERPRISE Customer Service
+Helpline Number, Quickbooks Enterprise ENTERPRISE Customer Care Number,
+Quickbooks Enterprise ENTERPRISE support team phone number, ???? Quickbooks
+Enterprise ENTERPRISE phone number, Quickbooks Enterprise ENTERPRISE technical
+support number, Quickbooks Enterprise ENTERPRISE support phone number,
+Quickbooks Enterprise ENTERPRISE technical support, Quickbooks Enterprise
+ENTERPRISE Customer Service Phone Number, Quickbooks Enterprise ENTERPRISE
+Customer Service Number, Quickbooks Enterprise ENTERPRISE Customer Support
+Phone Number, Quickbooks Enterprise ENTERPRISE Customer Support Number,???Call,
++1.800 .919.0992 for all type help by Quickbooks Enterprise ENTERPRISE tech
+support phone number, Quickbooks Enterprise ENTERPRISE Tech Support Phone
+Number, Quickbooks Enterprise ENTERPRISE Help Desk Phone Number, Quickbooks
+Enterprise ENTERPRISE tech support number, Quickbooks Enterprise ENTERPRISE
+technical support phone number,??-: Quickbooks Enterprise ENTERPRISE Tech
+Support Phone Number ENTERPRISEvides @@ solution for all USA/CANADA clients.
+For any help of query call 1 800 to get all Quickbooks Enterprise ENTERPRISE
+account solution. }. }.).).).) Quickbooks Enterprise #$W@#%@$Q Quickbooks
+Enterprise tech support phone number USA%$#%$/CanaDA Quickbooks Enterprise tech
+support telephone number.
+Call @@ +_()(^%#$Q USA 1 800 9190992 Quickbooks Enterprise** technical support
+phone number 1 800 9190992 usa/canada Quickbooks Enterprise Technical Support
+Number. ?(+1.800 .919.0992)? Quickbooks Enterprise ENTERPRISE technical support
+phone number 1-800 -919-0992 Quickbooks Enterprise ENTERPRISE customer service
+phone number usa # Quickbooks Enterprise ENTERPRISE Toll Free, ??1+800
++919+0992?? Quickbooks Enterprise ENTERPRISE technical support phone number
+1-800 -919-0992 Quickbooks Enterprise ENTERPRISE customer service phone number
+usa here.USA intuit Help ??1+800 +919+0992?ount solution. ?4
++919+0992)Enterprise support phone number. It is very popular toll free number
+which POSvide by Quickbooks Enterprise Enterprise technical support,
+Quickbooks Enterprise help number-Quickbooks Enterprise Helpline Number;
+Quickbooks Enterprise help phone number-Quickbooks Enterprise Helpline Number,
+Quickbooks Enterprise HELP DESK Toll free Number, Quickbooks Enterprise Support
+Telephone Number, Quickbooks Enterprise HELP DESK Telephone number, Quickbooks
+Enterprise HELP DESK phone number, Quickbooks Enterprise support phone number,
+Quickbooks Enterprise technical support phone number. Helpline TECH ))1-800
++919+0992(( Quickbooks Enterprise Enterprise technical support phone number
+1-800 +919+0992 Quickbooks Enterprise Enterprise POS phone number 1800
++919+0992 QB SUPPORT ON ((1-800 +919+0992)) Quickbooks Enterprise Enterprise
+PHONE NUMBER AND Quickbooks Enterprise Enterprise SUPPORT PHONE NUMBER
+Quickbooks Enterprise Enterprise Toll Free, Intuit????? Quickbooks Enterprise
+Customer Service Helpline Number, Quickbooks Enterprise Customer Care Number,
+Quickbooks Enterprise support team phone number, ???? Quickbooks Enterprise
+phone number, Quickbooks Enterprise technical support number, Quickbooks
+Enterprise support phone number, Quickbooks Enterprise technical support,
+Quickbooks Enterprise Customer Service Phone Number, Quickbooks Enterprise
+Customer Service Number, Quickbooks Enterprise Customer Support Phone Number,
+Quickbooks Enterprise Customer Support Number,???Call, 1-800 -919-0992 for all
+type help by Quickbooks Enterprise HELP DESK phone number, Intuit Quickbooks
+Enterprise HELP DESK Phone Number, Quickbooks Enterprise Help Desk Phone
+Number, Quickbooks Enterprise HELP DESK number, Quickbooks Enterprise technical
+support phone number,?? Quickbooks Enterprise HELP DESK Phone Number vides @@
+solution for all USA/CANADA clients. For any help of query call 1 800 9190992
+to get all Quickbooks Enterprise account solution. ?/Quickbooks Enterprise
+phone number, Quickbooks Enterprise contact phone number, Quickbooks Enterprise
+contact telephone number,,telephone number for Quickbooks Enterprise @@
+support,Quickbooks Enterprise official support number,Quickbooks Enterprise
+official number,Quickbooks Enterprise official phone number,,,phone number for
+Quickbooks Enterprise support,,Quickbooks Enterprise 24/7 support phone
+number,,Quickbooks Enterprise support number,Quickbooks Enterprise telephone
+number for support QB SUPPORT ON ((1-800 -919-0992)) Quickbooks Enterprise
+PHONE NUMBER AND Quickbooks Enterprise SUPPORT PHONE NUMBER @@ Support For
+(((1+800 +919+0992)!!! Quickbooks Enterprise ((Technical)) Support phone
+number,, Quickbooks Enterprise HELP DESK phone number @@ Support For (((1+800
++919+0992)!!! Quickbooks Enterprise ((Technical)) Support phone number,,
+Quickbooks Enterprise HELP DESK phone number Helpline TECH ))1-800 -919-0992(
+Quickbooks Enterprise Enterprise help number- Quickbooks Enterprise Enterprise
+Helpline Number; Quickbooks Enterprise Enterprise help phone number- Quickbooks
+Enterprise Enterprise Helpline Number, Quickbooks Enterprise Enterprise Tech
+Support Toll free Number, Quickbooks Enterprise Enterprise Support Telephone
+Number, Quickbooks Enterprise Enterprise Tech Support Telephone number,
+Quickbooks Enterprise Enterprise Tech Support phone number, Quickbooks
+Enterprise Enterprise support phone number, Quickbooks Enterprise Enterprise
+technical support phone number. Call, Quickbooks Enterprise Enterprise tech
+support phone number, Intuit Quickbooks Enterprise Enterprise Tech Support
+Phone Number, Quickbooks Enterprise Enterprise Help Desk Phone Number,
+Quickbooks Enterprise Enterprise tech support number, Quickbooks Enterprise
+Enterprise technical support phone number, Quickbooks Enterprise Enterprise
+phone number, Quickbooks Enterprise Enterprise technical support number, }.
+}.).).).) Quickbooks Enterprise #$W@#%@$Q Quickbooks Enterprise tech support
+phone number USA%$#%$/CanaDA Quickbooks Enterprise tech support telephone
+number.
+Call @@ +_()(^%#$Q USA 1 800 9190992 Quickbooks Enterprise** technical support
+phone number 1 800 9190992 usa/canada Quickbooks Enterprise Technical Support
+Number. Quickbooks Enterprise(1-800 -919-0992)????? Quickbooks Enterprise
+Enterprise Customer Service Helpline Number, Quickbooks Enterprise Enterprise
+Customer Care Number, Quickbooks Enterprise Enterprise support team phone
+number, ???? Quickbooks Enterprise Enterprise phone number, Quickbooks
+Enterprise Enterprise technical support number, Quickbooks Enterprise
+Enterprise support phone number, Quickbooks Enterprise Enterprise technical
+support, Quickbooks Enterprise Enterprise Customer Service Phone Number,
+Quickbooks Enterprise Enterprise Customer Service Number, Quickbooks Enterprise
+Enterprise Customer Support Phone Number, Quickbooks Enterprise Enterprise
+Customer Support Number,???Call, 1-800 +919+0992 for all type help by
+Quickbooks Enterprise Enterprise tech support phone number, Intuit Quickbooks
+Enterprise Enterprise Tech Support Phone Number, Quickbooks Enterprise
+Enterprise Help Desk Phone Number, Quickbooks Enterprise Enterprise tech
+support number, Quickbooks Enterprise Enterprise technical support phone
+number,??Call 1-800 -919-0992/ Quickbooks Enterprise Enterprise Tech Support
+Phone Number POSvides @@ solution for all USA/CANADA clients. For any help of
+query call 1 800 +919+0992 to get all Quickbooks Enterprise Enterprise acc?QPML
++¦$÷ 1800 -919-0992 Quickbooks Enterprise tech support phone number, Quickbooks
+Enterprise tech support phone number, Quickbooks Enterprise technical support
+phone number, Quickbooks Enterprise phone number, Quickbooks Enterprise contact
+phone number, Quickbooks Enterprise contact telephone number, Quickbooks
+Enterprise 24 hour phone number, Quickbooks Enterprise customer support phone
+number, Quickbooks Enterprise customer service phone number, Quickbooks
+Enterprise official number, Quickbooks Enterprise official phone number,
+Quickbooks Enterprise 800 phone number, Quickbooks Enterprise toll free number,
+800 number for Quickbooks Enterprise support, Quickbooks Enterprise 24/7
+support phone number Quickbooks Enterprise support phone number,Quickbooks
+Enterprise support phone number,Quickbooks Enterprise help phone number,
+Quickbooks Enterprise technical support number.Quickbooks Enterprise support
+number, Quickbooks Enterprise phone number, Quickbooks Enterprise HELP DESK
+number, Quickbooks Enterprise customer support number, Quickbooks Enterprise
+customer support phone number, Quickbooks Enterprise customer service phone
+number, Quickbooks Enterprise customer service phone number, Quickbooks
+Enterprise support phone number. Help?.Quickbooks Enterprise 24/7 support phone
+number,Quickbooks Enterprise telephone number for support? call 1800
+-919-0992.(Quickbooks Enterprise technical support phone number Quickbooks
+Enterprise phone number QB SUPPORT ON ((1-800 -919-0992)) Quickbooks Enterprise
+PHONE NUMBER AND Quickbooks Enterprise SUPPORT PHONE NUMBER Quickbooks
+Enterprise Toll Free, Intuit (1-800 -919-0992)? 1800 .919.0992 Quickbooks
+Enterprise s.u.p.p.o.r.t. .p.h.o.n.e. .n.u.m.b.e.r. usa/ca 1800 .919.0992
+Quickbooks Enterprise s.u.p.p.o.r.t. .p.h.o.n.e. .n.u.m.b.e.r. usa Intuit???
+Quickbooks Enterprise ENTERPRISE help number- Quickbooks Enterprise ENTERPRISE
+Helpline Number; Quickbooks Enterprise ENTERPRISE help phone number- Quickbooks
+Enterprise ENTERPRISE Helpline Number, Quickbooks Enterprise ENTERPRISE Tech
+Support Toll free Number, Quickbooks Enterprise ENTERPRISE Support Telephone
+Number, Quickbooks Enterprise ENTERPRISE Tech Support Telephone number,
+Quickbooks Enterprise ENTERPRISE Tech Support phone number, Quickbooks
+Enterprise ENTERPRISE support phone number, Quickbooks Enterprise ENTERPRISE
+technical support phone number. Call, Quickbooks Enterprise ENTERPRISE tech
+support phone number,~Help Usa@ +1 -800 -919-0992...((( Quickbooks Enterprise
+pro technical support phone number... ~Help Usa@ +1 -800 -919-0992...(((
+Quickbooks Enterprise pro support phone number... ~Help Usa@ +1 -800
+-919-0992...((( Quickbooks Enterprise pro tech support phone number...
+Quickbooks Enterprise ENTERPRISE Tech Support Phone Number, Quickbooks
+Enterprise ENTERPRISE Help Desk Phone Number, Quickbooks Enterprise ENTERPRISE
+tech support number, Quickbooks Enterprise ENTERPRISE technical support phone
+number, Quickbooks Enterprise ENTERPRISE phone number, Quickbooks Enterprise
+ENTERPRISE technical support number, Quickbooks Enterprise ENTERPRISE support
+phone number. It is very popular toll free number which ENTERPRISEvide by
+Quickbooks Enterprise ENTERPRISE technical support, Quickbooks Enterprise
+ENTERPRISE Customer Service Phone Number, Quickbooks Enterprise ENTERPRISE
+Customer Service Number, Quickbooks Enterprise ENTERPRISE Customer Support
+Phone Number, Quickbooks Enterprise ENTERPRISE Customer Support Number,
+Quickbooks Enterprise ENTERPRISE Customer Service Helpline Number, Quickbooks
+Enterprise ENTERPRISE Customer Care Number, Quickbooks Enterprise ENTERPRISE
+support team phone number. Call, Quickbooks Enterprise ENTERPRISE tech support
+phone number, Quickbooks Enterprise ENTERPRISE Tech Support Phone Number,
+Quickbooks Enterprise ENTERPRISE Help Desk Phone Number, Quickbooks Enterprise
+ENTERPRISE tech support number, Quickbooks Enterprise ENTERPRISE technical
+support phone number, Quickbooks Enterprise ENTERPRISE phone number, Quickbooks
+Enterprise ENTERPRISE technical support number, Quickbooks Enterprise
+ENTERPRISE support phone number, Quickbooks Enterprise ENTERPRISE technical
+support, Quickbooks Enterprise ENTERPRISE Customer Service Phone Number, }.
+}.).).).) Quickbooks Enterprise #$W@#%@$Q Quickbooks Enterprise tech support
+phone number USA%$#%$/CanaDA Quickbooks Enterprise tech support telephone
+number.
+Call @@ +_()(^%#$Q USA 1 800 9190992 Quickbooks Enterprise** technical support
+phone number 1 800 9190992 usa/canada Quickbooks Enterprise Technical Support
+Number. Quickbooks Enterprise ENTERPRISE Customer Service Number, Quickbooks
+Enterprise ENTERPRISE Customer Support Phone Number, Quickbooks Enterprise
+ENTERPRISE Customer Support Number, Quickbooks Enterprise ENTERPRISE Customer
+Service Helpline Number, Quickbooks Enterprise ENTERPRISE Customer Care
+Number,CALL ????? Quickbooks Enterprise ENTERPRISE Customer Service Helpline
+Number, Quickbooks Enterprise ENTERPRISE Customer Care Number, Quickbooks
+Enterprise ENTERPRISE support team phone number, ???? Quickbooks Enterprise
+ENTERPRISE phone number, Quickbooks Enterprise ENTERPRISE technical support
+number, Quickbooks Enterprise ENTERPRISE support phone number, Quickbooks
+Enterprise ENTERPRISE technical support, Quickbooks Enterprise ENTERPRISE
+Customer Service Phone Number, Quickbooks Enterprise ENTERPRISE Customer
+Service Number, Quickbooks Enterprise ENTERPRISE Customer Support Phone Number,
+Quickbooks Enterprise ENTERPRISE Customer Support Number,???Call, +1.800
+.919.0992 for all type help by Quickbooks Enterprise ENTERPRISE tech support
+phone number, Quickbooks Enterprise ENTERPRISE Tech Support Phone Number,
+Quickbooks Enterprise ENTERPRISE Help Desk Phone Number, Quickbooks Enterprise
+ENTERPRISE tech support number, Quickbooks Enterprise ENTERPRISE technical
+support phone number,??-: Quickbooks Enterprise ENTERPRISE Tech Support Phone
+Number ENTERPRISEvides @@ solution for all USA/CANADA clients. For any help of
+query call 1 800 to get all Quickbooks Enterprise ENTERPRISE account solution.
+?(+1.800 .919.0992)? Quickbooks Enterprise ENTERPRISE technical support phone
+number 1-800 -919-0992 Quickbooks Enterprise ENTERPRISE customer service phone
+number usa # Quickbooks Enterprise ENTERPRISE Toll Free, ??1+800 +919+0992??
+Quickbooks Enterprise ENTERPRISE technical support phone number 1-800 -919-0992
+Quickbooks Enterprise ENTERPRISE customer service phone number usa here.USA
+intuit Help ??1+800 +919+0992?ount solution. ?4 +919+0992)Enterprise support
+phone number. It is very popular toll free number which POSvide by Quickbooks
+Enterprise Enterprise technical support, Quickbooks Enterprise Enterprise
+Customer Service Phone Number, Quickbooks Enterprise Enterprise Customer
+Service Number, Quickbooks Enterprise Enterprise Customer Support Phone Number,
+Quickbooks Enterprise Enterprise Customer Support Number, Quickbooks Enterprise
+Enterprise Customer Service Helpline Number, Quickbooks Enterprise Enterprise
+Customer Care Number, Quickbooks Enterprise Enterprise support team phone
+number. Call, Quickbooks Enterprise Enterprise tech support phone number,
+Intuit Quickbooks Enterprise Enterprise Tech Support Phone Number, Quickbooks
+Enterprise Enterprise Help Desk Phone Number, Quickbooks Enterprise Enterprise
+tech support number, Quickbooks Enterprise Enterprise technical support phone
+number, Quickbooks Enterprise Enterprise phone number, Quickbooks Enterprise
+Enterprise technical support number, Quickbooks Enterprise Enterprise support
+phone number, Quickbooks Enterprise Enterprise technical support, Quickbooks
+Enterprise Enterprise Customer Service Phone Number, Quickbooks Enterprise
+Enterprise Customer Service Number, Quickbooks Enterprise Enterprise Customer
+Support Phone Number, Quickbooks Enterprise Enterprise Customer Support Number,
+Quickbooks Enterprise Enterprise Customer Service Helpline Number,Describe USA
+intuit Help Quickbooks Enterprise Tech Support Phone NumberIntuit??(1-??????800
+-919-0992) Quickbooks Enterprise help number-Quickbooks Enterprise Helpline
+Number; Quickbooks Enterprise help phone number-Quickbooks Enterprise Helpline
+Number, Quickbooks Enterprise Tech Support Toll free Number, Quickbooks
+Enterprise Support Telephone Number, Quickbooks Enterprise Tech Support
+Telephone number, Quickbooks Enterprise Tech Support phone number, Quickbooks
+Enterprise support phone number, Quickbooks Enterprise technical support phone
+number. Call, Quickbooks Enterprise tech support phone number, Intuit
+Quickbooks Enterprise Tech Support Phone Number, Quickbooks Enterprise Help
+Desk Phone Number, Quickbooks Enterprise tech support number, Quickbooks
+Enterprise technical support phone number, Quickbooks Enterprise phone number,
+Quickbooks Enterprise technical support number, Quickbooks Enterprise support
+phone number. It is very popular toll free number which vide by Quickbooks
+Enterprise technical support, Quickbooks Enterprise Customer Service Phone
+Number, Quickbooks Enterprise Customer Service Number, Quickbooks Enterprise
+Customer Support Phone Number, Quickbooks Enterprise Customer Support Number,
+Quickbooks Enterprise Customer Service Helpline Number, Quickbooks Enterprise
+Customer Care Number, Quickbooks Enterprise support team phone number. Call,
+Quickbooks Enterprise tech support phone number, Intuit Quickbooks Enterprise
+Tech Support Phone Number, Quickbooks Enterprise Help Desk Phone Number,
+Quickbooks Enterprise tech support number, Quickbooks Enterprise technical
+support phone number, Quickbooks Enterprise phone number, Quickbooks Enterprise
+technical support number, Quickbooks Enterprise support phone number,
+Quickbooks Enterprise technical support, Quickbooks Enterprise Customer Service
+Phone Number, Quickbooks Enterprise Customer Service Number, Quickbooks
+Enterprise Customer Support Phone Number, Quickbooks Enterprise Customer
+Support Number, Quickbooks Enterprise Customer Service Helpline Number,
+Quickbooks Enterprise Customer Care Number, Quickbooks Enterprise support team
+phone number, Quickbooks Enterprise help number-Quickbooks Enterprise Helpline
+Number; Quickbooks Enterprise help phone number, Quickbooks Enterprise Helpline
+Number1800 -919-0992 Quickbooks Enterprise technical help telephone number,
+Quickbooks Enterprise technical help phone number, Quickbooks Enterprise
+technical support phone number, Quickbooks Enterprise phone number, Quickbooks
+Enterprise contact phone number, Quickbooks Enterprise contact telephone
+number, Quickbooks Enterprise 24 hour phone number,????? Quickbooks Enterprise
+Customer Service Helpline Number, Quickbooks Enterprise Customer Care Number,
+Quickbooks Enterprise support team phone number, ???? Quickbooks Enterprise
+phone number,~Help Usa@ +1 -800 -919-0992...((( Quickbooks Enterprise pro
+technical support phone number... ~Help Usa@ +1 -800 -919-0992...((( Quickbooks
+Enterprise pro support phone number... ~Help Usa@ +1 -800 -919-0992...(((
+Quickbooks Enterprise pro tech support phone number... Quickbooks Enterprise
+technical support number, Quickbooks Enterprise support phone number,
+Quickbooks Enterprise technical support, Quickbooks Enterprise
+CustomeraService?? Phone Number, Quickbooks Enterprise Customer Service Number,
+Quickbooks Enterprise Customer Support Phone Number, Quickbooks Enterprise
+Customer Support Number,???Call, 1-800 -919-0992 for all type help by
+Quickbooks Enterprise tech support phone number, Intuit Quickbooks Enterprise
+Tech Support Phone Number, Quickbooks Enterprise Help Desk Phone Number,
+Quickbooks Enterprise tech support number, Quickbooks Enterprise technical
+support phone number,??Quickbooks Enterprise Tech Support Phone Number vides @@
+solution for all USA/CANADA clients. For any help of query call 1 800 9190992
+to get all Quickbooks Enterprise
+USA-Care 1800+919+0992....Quickbooks Enterprise Pro Support Number, Quickbooks
+Enterprise Pro  Support phone Number, Quickbooks Enterprise Pro Help Desk phone
+Number
+!!Quickbooks Enterprise Pro NY...1800*919*0992...,. Quickbooks Enterprise Pro 
+Support Phone Number, Quickbooks Enterprise Pro Tech Support number, Quickbooks
+Enterprise Pro Pro Support Phone Number 
 
---------------20DF901D04546C1BDCA104A2
-Content-Type: text/plain; charset=UTF-8;
- name="0001-backports-patches-update-the-crypto-skcipher-patch.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-backports-patches-update-the-crypto-skcipher-patch.patc";
- filename*1="h"
+Help @@1.(800.919.0992 Quickbooks Enterprise Pro  Support Phone number,tech
+support number Hurry up :Quickbooks Enterprise Pro support phone number,tech
+support number,helpline number,help number tech support number,@@ support
+number,CALL USA@@@1(800) 919 0992@@@ Quickbooks Enterprise Pro Tech Support
+Phone number,Quickbooks Enterprise Pro tech support numberCall Toll-free 1 800
+919 0992  support phone number
 
->From 3f3cdff75e845d1b0cf0af06efb2b0ad56e486d9 Mon Sep 17 00:00:00 2001
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Date: Wed, 24 Aug 2016 10:07:17 +0100
-Subject: [PATCH] backports: patches: update the crypto-skcipher patch
+Helpline 1 800 919 0992  @@ support phone number Helpline 1 800 919 0992  tech
+support phone number Helpline 1 800 919 0992  customer support phone number
+intuit Helpline 1 800 919 0992  support phone number Helpline 1 800 919 0992  
+support phone number Helpline 1 800 919 0992   support phone number Helpline 1
+800 919 0992   support phone number Helpline 1 800 919 0992  phone number for
+tech support Helpline 1 800 919 0992  support phone number us Helpline 1 800
+919 0992  intuit support phone number Helpline 1 800 919 0992  point of sale
+support phone number Helpline 1 800 919 0992   support phone number Helpline 1
+800 919 0992  @@ customer support phone number Helpline 1 800 919 0992  @@
+technical support phone number Helpline 1 800 919 0992  @@ tech support phone
+number Helpline 1 800 919 0992  support phone number  Helpline 1 800 919 0992 
+assisted  support phone number intuit Helpline 1 800 919 0992  customer support
+phone number free Helpline 1 800 919 0992  support phone number Helpline 1 800
+919 0992  support contact phone number intuit support phone number for Helpline
+1 800 919 0992  intuit Helpline 1 800 919 0992  phone support number Helpline 1
+800 919 0992  @@ phone support number Helpline 1 800 919 0992  advisor support
+phone number Helpline 1 800 919 0992  for mac support phone number intuit
+Helpline 1 800 919 0992  technical support phone number Helpline 1 800 919 0992
+ enhanced  support phone number Helpline 1 800 919 0992  @@ phone number
+support Helpline 1 800 919 0992  uk support phone number Helpline 1 800 919
+0992  support phone number canada Helpline 1 800 919 0992  support uk phone
+number Helpline 1 800 919 0992  technical support canada phone number Helpline
+1 800 919 0992   technical support phone number Helpline 1 800 919 0992  
+customer support phone number intuit Helpline 1 800 919 0992  tech support
+phone number Helpline 1 800 919 0992  merchant services support phone number
+contact Helpline 1 800 919 0992  support phone number Helpline 1 800 919 0992  
+tech support phone number Helpline 1 800 919 0992  phone number for customer
+support Helpline 1 800 919 0992   2012 support phone number Helpline 1 800 919
+0992   2013 support phone number Helpline 1 800 919 0992  support phone number
+intuit Helpline 1 800 919 0992  support phone number australia Helpline 1 800
+919 0992  sales support phone number Helpline 1 800 919 0992  remote access
+support phone number Helpline 1 800 919 0992  registration support phone number
+Helpline 1 800 919 0992  advisor technical support phone number Helpline 1 800
+919 0992  advisor tech support phone number Helpline 1 800 919 0992   2013
+technical support phone number Helpline 1 800 919 0992  support phone number
+south africa Helpline 1 800 919 0992  support phone number uk technical support
+phone number Helpline 1 800 919 0992  tech support phone number for Helpline 1
+800 919 0992  Helpline 1 800 919 0992  technical support phone number uk
+Helpline 1 800 919 0992  technical support phone number canada Helpline 1 800
+919 0992  technical support phone number australia Helpline 1 (800) 919 0992 
+tech support phone number uk Helpline 1 (800) 919 0992  tech support phone
+number canada Helpline 1 (800) 919 0992  support plan phone number Helpline 1
+(800) 919 0992   2013 customer support phone number Helpline 1 (800) 919 0992
+Point of sale 2012 technical support phone number Helpline 1 (800) 919 0992
+Point of sale 2010 support phone number intuit Helpline 1 (800) 919 0992  
+support phone number intuit Helpline 1 (800) 919 0992  phone number support
+intuit Helpline 1 (800) 919 0992   support phone number intuit support for
+Helpline 1 (800) 919 0992  phone number intuit technical support phone number
+Helpline 1 (800) 919 0992  Helpline 1 (800) 919 0992  2012 technical support
+phone number Helpline 1 (800) 919 0992  direct deit support phone number
+Helpline 1 (800) 919 0992   tech support phone number Helpline 1 (800) 919 0992
+ for mac tech support phone number Helpline 1 (800) 919 0992  install support
+phone number Helpline 1 (800) 919 0992  @@ backup support phone number Helpline
+1 (800) 919 0992  @@ bill pay support phone number Helpline 1 (800) 919 0992  
+customer support phone number Helpline 1 (800) 919 0992  phone number tech
+support Helpline 1 (800) 919 0992  point of sale technical support phone number
+Help Desk 1 (800) 919 0992   tech support phone number Help Desk 1 (800) 919
+0992   technical support phone number bank of america Help Desk 1 (800) 919
+0992  support phone number Help Desk 1 800 919 0992  support phone number Help
+Desk 1 800 919 0992  @@ support phone number Help Desk 1 800 919 0992  tech
+support phone number Help Desk 1 800 919 0992  customer support phone number
+intuit Help Desk 1 800 919 0992  support phone number Help Desk 1 800 919 0992 
+ support phone number Help Desk 1 800 919 0992   support phone number Help Desk
+1 800 919 0992   support phone number Help Desk 1 800 919 0992  phone number
+for tech support Help Desk 1 800 919 0992  support phone number us Help Desk 1
+800 919 0992  intuit support phone number Help Desk 1 800 919 0992  point of
+sale support phone number Help Desk 1 800 919 0992   support phone number Help
+Desk 1 800 919 0992  @@ customer support phone number Help Desk 1 800 919 0992 
+@@ technical support phone number Help Desk 1 800 919 0992  @@ tech support
+phone number Help Desk 1 800 919 0992  support phone number  Help Desk 1 800
+919 0992  assisted  support phone number intuit Help Desk 1 800 919 0992 
+customer support phone number free Help Desk 1 800 919 0992  support phone
+number Help Desk 1 800 919 0992  support contact phone number intuit support
+phone number for Help Desk 1 800 919 0992  intuit Help Desk 1 800 919 0992 
+phone support number Help Desk 1 800 919 0992  @@ phone support number Help
+Desk 1 800 919 0992  advisor support phone number Help Desk 1 800 919 0992  for
+mac support phone number intuit Help Desk 1 800 919 0992  technical support
+phone number Help Desk 1 800 919 0992  enhanced  support phone number Help Desk
+1 800 919 0992  @@ phone number support Help Desk 1 800 919 0992  uk support
+phone number Help Desk 1 800 919 0992  support phone number canada Help Desk 1
+800 919 0992  support uk phone number Help Desk 1 800 919 0992  technical
+support canada phone number Help Desk 1 800 919 0992   technical support phone
+number Help Desk 1 800 919 0992   customer support phone number intuit Help
+Desk 1 800 919 0992  tech support phone number Help Desk 1 800 919 0992 
+merchant services support phone number contact Help Desk 1 800 919 0992 
+support phone number Help Desk 1 800 919 0992   tech support phone number Help
+Desk 1 800 919 0992  phone number for customer support Help Desk 1 800 919 0992
+  2012 support phone number Help Desk 1 800 919 0992   2013 support phone
+number Help Desk 1 800 919 0992  support phone number intuit Help Desk 1 800
+919 0992  support phone number australia Help Desk 1 800 919 0992  sales
+support phone number Help Desk 1 800 919 0992  remote access support phone
+number Help Desk 1 800 919 0992  registration support phone number Help Desk 1
+800 919 0992  advisor technical support phone number Help Desk 1 800 919 0992 
+advisor tech support phone number Help Desk 1 800 919 0992   2013 technical
+support phone number Help Desk 1 800 919 0992  support phone number south
+africa Help Desk 1 800 919 0992  support phone number uk technical support
+phone number Help Desk 1 800 919 0992  tech support phone number for Help Desk
+1 800 919 0992  Help Desk 1 800 919 0992  technical support phone number uk
+Help Desk 1 800 919 0992 technical support phone number canada Help Desk 1 800
+919 0992 technical support phone number australia Help Desk 1 (800) 919 0992
+tech support phone number uk Help Desk 1 (800) 919 0992 tech support phone
+number canada Help Desk 1 (800) 919 0992 support plan phone number Help Desk 1
+(800) 919 0992  2013 customer support phone number Help Desk 1 (800) 919 0992
+Point of sale 2012 technical support phone number Help Desk 1 (800) 919 0992
+Point of sale 2010 support phone number intuit Help Desk 1 (800) 919 0992 
+support phone number intuit Help Desk 1 (800) 919 0992 phone number support
+intuit Help Desk 1 (800) 919 0992  support phone number intuit support for Help
+Desk 1 (800) 919 0992 phone number intuit technical support phone number Help
+Desk 1 (800) 919 0992 Help Desk 1 (800) 919 0992 2012 technical support phone
+number Help Desk 1 (800) 919 0992 direct deit support phone number Help Desk 1
+(800) 919 0992  tech support phone number Help Desk 1 (800) 919 0992 for mac
+tech support phone number Help Desk 1 (800) 919 0992 install support phone
+number Help Desk 1 (800) 919 0992 @@ backup support phone number Help Desk 1
+(800) 919 0992 @@ bill pay support phone number Help Desk 1 (800) 919 0992 
+customer support phone number Help Desk 1 (800) 919 0992 phone number tech
+support Help Desk 1 (800) 919 0992 point of sale technical support phone number
+Help Desk 1 (800) 919 0992  tech support phone number Help Desk 1 (800) 919
+0992  technical support phone number bank of america Help Desk 1 (800) 919 0992
+support phone number Quickbooks Enterprise Pro support phone number Quickbooks
+Enterprise Pro @@ support phone number
 
-The upstream code in crypto/skcipher.c has been changed. Although
-the crypto-skcipher.patch still applies it results in some undefined
-functions. This patch adds those or the needed function prototypes.
+Quickbooks Enterprise Pro tech support phone number Quickbooks Enterprise Pro
+customer support phone number intuit Quickbooks Enterprise Pro support phone
+number Quickbooks Enterprise Pro  support phone number Quickbooks Enterprise
+Pro  support phone number Quickbooks Enterprise Pro  support phone number
+Quickbooks Enterprise Pro phone number for tech support Quickbooks Enterprise
+Pro support phone number us Quickbooks Enterprise Pro intuit support phone
+number Quickbooks Enterprise Pro point of sale support phone number Quickbooks
+Enterprise Pro  support phone number Quickbooks Enterprise Pro @@ customer
+support phone number Quickbooks Enterprise Pro @@ technical support phone
+number Quickbooks Enterprise Pro @@ tech support phone number Quickbooks
+Enterprise Pro support phone number  Quickbooks Enterprise Pro assisted 
+support phone number intuit Quickbooks Enterprise Pro customer support phone
+number free Quickbooks Enterprise Pro support phone number Quickbooks
+Enterprise Pro support contact phone number intuit support phone number for
+Quickbooks Enterprise Pro intuit Quickbooks Enterprise Pro phone support number
+Quickbooks Enterprise Pro @@ phone support number Quickbooks Enterprise Pro
+advisor support phone number Quickbooks Enterprise Pro for mac support phone
+number intuit Quickbooks Enterprise Pro technical support phone number
+Quickbooks Enterprise Pro enhanced  support phone number Quickbooks Enterprise
+Pro @@ phone number support Quickbooks Enterprise Pro uk support phone number
+Quickbooks Enterprise Pro support phone number canada Quickbooks Enterprise Pro
+support uk phone number Quickbooks Enterprise Pro technical support canada
+phone number Quickbooks Enterprise Pro  technical support phone number
+Quickbooks Enterprise Pro  customer support phone number intuit Quickbooks
+Enterprise Pro tech support phone number Quickbooks Enterprise Pro merchant
+services support phone number contact Quickbooks Enterprise Pro support phone
+number Quickbooks Enterprise Pro  tech support phone number Quickbooks
+Enterprise Pro phone number for customer support Quickbooks Enterprise Pro 
+2012 support phone number Quickbooks Enterprise Pro  2013 support phone number
+Quickbooks Enterprise Pro support phone number intuit Quickbooks Enterprise Pro
+support phone number australia Quickbooks Enterprise Pro sales support phone
+number Quickbooks Enterprise Pro remote access support phone number Quickbooks
+Enterprise Pro registration support phone number Quickbooks Enterprise Pro
+advisor technical support phone number Quickbooks Enterprise Pro advisor tech
+support phone number Quickbooks Enterprise Pro  2013 technical support phone
+number Quickbooks Enterprise Pro support phone number south africa Quickbooks
+Enterprise Pro support phone number uk technical support phone number
+Quickbooks Enterprise Pro tech support phone number for Quickbooks Enterprise
+Pro Quickbooks Enterprise Pro technical support phone number uk Quickbooks
+Enterprise Pro technical support phone number canada Quickbooks Enterprise Pro
+technical support phone number australia Quickbooks Enterprise Pro tech support
+phone number uk Quickbooks Enterprise Pro tech support phone number canada
+Quickbooks Enterprise Pro support plan phone number Quickbooks Enterprise Pro 
+2013 customer support phone number Quickbooks Enterprise Pro  2012 technical
+support phone number Quickbooks Enterprise Pro  2010 support phone number
+intuit Quickbooks Enterprise Pro  support phone number intuit Quickbooks
+Enterprise Pro phone number support intuit Quickbooks Enterprise Pro  support
+phone number intuit support for Quickbooks Enterprise Pro phone number intuit
+technical support phone number Quickbooks Enterprise Pro Quickbooks Enterprise
+Pro 2012 technical support phone number Quickbooks Enterprise Pro direct deit
+support phone number Quickbooks Enterprise Pro  tech support phone number
+Quickbooks Enterprise Pro for mac tech support phone number Quickbooks
+Enterprise Pro install support phone number Quickbooks Enterprise Pro @@ backup
+support phone number Quickbooks Enterprise Pro @@ bill pay support phone number
+Quickbooks Enterprise Pro  customer support phone number Quickbooks Enterprise
+Pro phone number tech support Quickbooks Enterprise Pro point of sale technical
+support phone number Quickbooks Enterprise Pro  tech support phone number
+Quickbooks Enterprise Pro  technical support phone number bank of america
+Quickbooks Enterprise Pro support phone number USA-Care
+1800+919+0992....Quickbooks Enterprise Pro Support Number, Quickbooks
+Enterprise Pro  Support phone Number, Quickbooks Enterprise Pro Help Desk phone
+Number
 
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
----
- patches/backport-adjustments/crypto-skcipher.patch | 104 ++++++++++++++++++++-
- 1 file changed, 101 insertions(+), 3 deletions(-)
+Help @@1.(800).919.0992)))R)))))))) Quickbooks Enterprise Pro  Support Phone
+number,tech support number Hurry up :Quickbooks Enterprise Pro support phone
+number,tech support number,helpline number,help number tech support number,@@
+support number,CALL USA@@@1(800) 919 0992@@@ Quickbooks Enterprise Pro Tech
+Support Phone number,Quickbooks Enterprise Pro tech support numberCall
+Toll-free 1 800 919 0992  support phone number
 
-diff --git a/patches/backport-adjustments/crypto-skcipher.patch b/patches/backport-adjustments/crypto-skcipher.patch
-index c7584c6..61be77a 100644
---- a/patches/backport-adjustments/crypto-skcipher.patch
-+++ b/patches/backport-adjustments/crypto-skcipher.patch
-@@ -1,10 +1,91 @@
- --- a/compat/crypto-skcipher.c
- +++ b/compat/crypto-skcipher.c
--@@ -18,7 +18,28 @@
-- #include <linux/bug.h>
-- #include <linux/module.h>
-+@@ -22,7 +22,109 @@
-+ #include <linux/seq_file.h>
-+ #include <net/netlink.h>
-  
- -#include "internal.h"
-++#define CRYPTO_ALG_TYPE_SKCIPHER	0x00000005
-++
-++struct skcipher_alg {
-++        int (*setkey)(struct crypto_skcipher *tfm, const u8 *key,
-++                      unsigned int keylen);
-++        int (*encrypt)(struct skcipher_request *req);
-++        int (*decrypt)(struct skcipher_request *req);
-++        int (*init)(struct crypto_skcipher *tfm);
-++        void (*exit)(struct crypto_skcipher *tfm);
-++
-++        unsigned int min_keysize;
-++        unsigned int max_keysize;
-++        unsigned int ivsize;
-++        unsigned int chunksize;
-++
-++        struct crypto_alg base;
-++};
-++
-++struct crypto_alg *crypto_find_alg(const char *alg_name,
-++                                   const struct crypto_type *frontend,
-++                                   u32 type, u32 mask);
-++
-++struct skcipher_instance {
-++        void (*free)(struct skcipher_instance *inst);
-++        union {
-++                struct {
-++                        char head[offsetof(struct skcipher_alg, base)];
-++                        struct crypto_instance base;
-++                } s;
-++                struct skcipher_alg alg;
-++        };
-++};
-++
-++static inline struct skcipher_alg *crypto_skcipher_alg(
-++        struct crypto_skcipher *tfm)
-++{
-++        return container_of(crypto_skcipher_tfm(tfm)->__crt_alg,
-++                            struct skcipher_alg, base);
-++}
-++
-++static inline struct crypto_instance *skcipher_crypto_instance(
-++        struct skcipher_instance *inst)
-++{
-++        return &inst->s.base;
-++}
-++
-++static unsigned int crypto_alg_extsize(struct crypto_alg *alg)
-++{
-++        return alg->cra_ctxsize +
-++               (alg->cra_alignmask & ~(crypto_tfm_ctx_alignment() - 1));
-++}
-++
-++static int crypto_grab_spawn(struct crypto_spawn *spawn, const char *name,
-++			      u32 type, u32 mask)
-++{
-++        struct crypto_alg *alg;
-++        int err;
-++
-++        alg = crypto_find_alg(name, spawn->frontend, type, mask);
-++        if (IS_ERR(alg))
-++                return PTR_ERR(alg);
-++
-++        err = crypto_init_spawn(spawn, alg, spawn->inst, mask);
-++        crypto_mod_put(alg);
-++        return err;
-++}
-++
-++static int crypto_type_has_alg(const char *name, const struct crypto_type *fe,
-++				u32 type, u32 mask)
-++{
-++        int ret = 0;
-++        struct crypto_alg *alg = crypto_find_alg(name, fe, type, mask);
-++
-++        if (!IS_ERR(alg)) {
-++                crypto_mod_put(alg);
-++                ret = 1;
-++        }
-++
-++        return ret;
-++}
-++
- +struct crypto_tfm *__crypto_alloc_tfm(struct crypto_alg *alg, u32 type,
- +				      u32 mask);
- +
-@@ -30,3 +111,20 @@
-  
-  static unsigned int crypto_skcipher_extsize(struct crypto_alg *alg)
-  {
-+@@ -257,6 +359,8 @@
-+ }
-+
-+ static void crypto_skcipher_free_instance(struct crypto_instance *inst)
-++	__attribute__((unused));
-++static void crypto_skcipher_free_instance(struct crypto_instance *inst)
-+ {
-+	struct skcipher_instance *skcipher =
-+		container_of(inst, struct skcipher_instance, s.base);
-+@@ -314,7 +418,6 @@
-+ static const struct crypto_type crypto_skcipher_type2 = {
-+	.extsize = crypto_skcipher_extsize,
-+	.init_tfm = crypto_skcipher_init_tfm,
-+-	.free = crypto_skcipher_free_instance,
-+ #ifdef CONFIG_PROC_FS
-+	.show = crypto_skcipher_show,
-+ #endif
+Helpline 1 800 919 0992  @@ support phone number Helpline 1 800 919 0992  tech
+support phone number Helpline 1 800 919 0992  customer support phone number
+intuit Helpline 1 800 919 0992  support phone number Helpline 1 800 919 0992  
+support phone number Helpline 1 800 919 0992   support phone number Helpline 1
+800 919 0992   support phone number Helpline 1 800 919 0992  phone number for
+tech support Helpline 1 800 919 0992  support phone number us Helpline 1 800
+919 0992  intuit support phone number Helpline 1 800 919 0992  point of sale
+support phone number Helpline 1 800 919 0992   support phone number Helpline 1
+800 919 0992  @@ customer support phone number Helpline 1 800 919 0992  @@
+technical support phone number Helpline 1 800 919 0992  @@ tech support phone
+number Helpline 1 800 919 0992  support phone number  Helpline 1 800 919 0992 
+assisted  support phone number intuit Helpline 1 800 919 0992  customer support
+phone number free Helpline 1 800 919 0992  support phone number Helpline 1 800
+919 0992  support contact phone number intuit support phone number for Helpline
+1 800 919 0992  intuit Helpline 1 800 919 0992  phone support number Helpline 1
+800 919 0992  @@ phone support number Helpline 1 800 919 0992  advisor support
+phone number Helpline 1 800 919 0992  for mac support phone number intuit
+Helpline 1 800 919 0992  technical support phone number Helpline 1 800 919 0992
+ enhanced  support phone number Helpline 1 800 919 0992  @@ phone number
+support Helpline 1 800 919 0992  uk support phone number Helpline 1 800 919
+0992  support phone number canada Helpline 1 800 919 0992  support uk phone
+number Helpline 1 800 919 0992  technical support canada phone number Helpline
+1 800 919 0992   technical support phone number Helpline 1 800 919 0992  
+customer support phone number intuit Helpline 1 800 919 0992  tech support
+phone number Helpline 1 800 919 0992  merchant services support phone number
+contact Helpline 1 800 919 0992  support phone number Helpline 1 800 919 0992  
+tech support phone number Helpline 1 800 919 0992  phone number for customer
+support Helpline 1 800 919 0992   2012 support phone number Helpline 1 800 919
+0992   2013 support phone number Helpline 1 800 919 0992  support phone number
+intuit Helpline 1 800 919 0992  support phone number australia Helpline 1 800
+919 0992  sales support phone number Helpline 1 800 919 0992  remote access
+support phone number Helpline 1 800 919 0992  registration support phone number
+Helpline 1 800 919 0992  advisor technical support phone number Helpline 1 800
+919 0992  advisor tech support phone number Helpline 1 800 919 0992   2013
+technical support phone number Helpline 1 800 919 0992  support phone number
+south africa Helpline 1 800 919 0992  support phone number uk technical support
+phone number Helpline 1 800 919 0992  tech support phone number for Helpline 1
+800 919 0992  Helpline 1 800 919 0992  technical support phone number uk
+Helpline 1 800 919 0992  technical support phone number canada Helpline 1 800
+919 0992  technical support phone number australia Helpline 1 (800) 919 0992 
+tech support phone number uk Helpline 1 (800) 919 0992  tech support phone
+number canada Helpline 1 (800) 919 0992  support plan phone number Helpline 1
+(800) 919 0992   2013 customer support phone number Helpline 1 (800) 919 0992
+Point of sale 2012 technical support phone number Helpline 1 (800) 919 0992
+Point of sale 2010 support phone number intuit Helpline 1 (800) 919 0992  
+support phone number intuit Helpline 1 (800) 919 0992  phone number support
+intuit Helpline 1 (800) 919 0992   support phone number intuit support for
+Helpline 1 (800) 919 0992  phone number intuit technical support phone number
+Helpline 1 (800) 919 0992  Helpline 1 (800) 919 0992  2012 technical support
+phone number Helpline 1 (800) 919 0992  direct deit support phone number
+Helpline 1 (800) 919 0992   tech support phone number Helpline 1 (800) 919 0992
+ for mac tech support phone number Helpline 1 (800) 919 0992  install support
+phone number Helpline 1 (800) 919 0992  @@ backup support phone number Helpline
+1 (800) 919 0992  @@ bill pay support phone number Helpline 1 (800) 919 0992  
+customer support phone number Helpline 1 (800) 919 0992  phone number tech
+support Helpline 1 (800) 919 0992  point of sale technical support phone number
+Help Desk 1 (800) 919 0992   tech support phone number Help Desk 1 (800) 919
+0992   technical support phone number bank of america Help Desk 1 (800) 919
+0992  support phone number Help Desk 1 800 919 0992  support phone number Help
+Desk 1 800 919 0992  @@ support phone number Help Desk 1 800 919 0992  tech
+support phone number Help Desk 1 800 919 0992  customer support phone number
+intuit Help Desk 1 800 919 0992  support phone number Help Desk 1 800 919 0992 
+ support phone number Help Desk 1 800 919 0992   support phone number Help Desk
+1 800 919 0992   support phone number Help Desk 1 800 919 0992  phone number
+for tech support Help Desk 1 800 919 0992  support phone number us Help Desk 1
+800 919 0992  intuit support phone number Help Desk 1 800 919 0992  point of
+sale support phone number Help Desk 1 800 919 0992   support phone number Help
+Desk 1 800 919 0992  @@ customer support phone number Help Desk 1 800 919 0992 
+@@ technical support phone number Help Desk 1 800 919 0992  @@ tech support
+phone number Help Desk 1 800 919 0992  support phone number  Help Desk 1 800
+919 0992  assisted  support phone number intuit Help Desk 1 800 919 0992 
+customer support phone number free Help Desk 1 800 919 0992  support phone
+number Help Desk 1 800 919 0992  support contact phone number intuit support
+phone number for Help Desk 1 800 919 0992  intuit Help Desk 1 800 919 0992 
+phone support number Help Desk 1 800 919 0992  @@ phone support number Help
+Desk 1 800 919 0992  advisor support phone number Help Desk 1 800 919 0992  for
+mac support phone number intuit Help Desk 1 800 919 0992  technical support
+phone number Help Desk 1 800 919 0992  enhanced  support phone number Help Desk
+1 800 919 0992  @@ phone number support Help Desk 1 800 919 0992  uk support
+phone number Help Desk 1 800 919 0992  support phone number canada Help Desk 1
+800 919 0992  support uk phone number Help Desk 1 800 919 0992  technical
+support canada phone number Help Desk 1 800 919 0992   technical support phone
+number Help Desk 1 800 919 0992   customer support phone number intuit Help
+Desk 1 800 919 0992  tech support phone number Help Desk 1 800 919 0992 
+merchant services support phone number contact Help Desk 1 800 919 0992 
+support phone number Help Desk 1 800 919 0992   tech support phone number Help
+Desk 1 800 919 0992  phone number for customer support Help Desk 1 800 919 0992
+  2012 support phone number Help Desk 1 800 919 0992   2013 support phone
+number Help Desk 1 800 919 0992  support phone number intuit Help Desk 1 800
+919 0992  support phone number australia Help Desk 1 800 919 0992  sales
+support phone number Help Desk 1 800 919 0992  remote access support phone
+number Help Desk 1 800 919 0992  registration support phone number Help Desk 1
+800 919 0992  advisor technical support phone number Help Desk 1 800 919 0992 
+advisor tech support phone number Help Desk 1 800 919 0992   2013 technical
+support phone number Help Desk 1 800 919 0992  support phone number south
+africa Help Desk 1 800 919 0992  support phone number uk technical support
+phone number Help Desk 1 800 919 0992  tech support phone number for Help Desk
+1 800 919 0992  Help Desk 1 800 919 0992  technical support phone number uk
+Help Desk 1 800 919 0992 technical support phone number canada Help Desk 1 800
+919 0992 technical support phone number australia Help Desk 1 (800) 919 0992
+tech support phone number uk Help Desk 1 (800) 919 0992 tech support phone
+number canada Help Desk 1 (800) 919 0992 support plan phone number Help Desk 1
+(800) 919 0992  2013 customer support phone number Help Desk 1 (800) 919 0992
+Point of sale 2012 technical support phone number Help Desk 1 (800) 919 0992
+Point of sale 2010 support phone number intuit Help Desk 1 (800) 919 0992 
+support phone number intuit Help Desk 1 (800) 919 0992 phone number support
+intuit Help Desk 1 (800) 919 0992  support phone number intuit support for Help
+Desk 1 (800) 919 0992 phone number intuit technical support phone number Help
+Desk 1 (8
+
 -- 
-1.9.1
-
-
---------------20DF901D04546C1BDCA104A2--
---
+You are receiving this mail because:
+You are the assignee for the bug.--
 To unsubscribe from this list: send the line "unsubscribe backports" in
