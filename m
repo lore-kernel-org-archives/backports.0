@@ -1,28 +1,28 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:56782 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:47580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757939AbcIPNgX (ORCPT <rfc822;backports@vger.kernel.org>);
-        Fri, 16 Sep 2016 09:36:23 -0400
+        id S1758173AbcIPNSz (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 16 Sep 2016 09:18:55 -0400
 Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id 107F9205E5
-        for <backports@vger.kernel.org>; Fri, 16 Sep 2016 13:36:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTP id 4AFFC20637
+        for <backports@vger.kernel.org>; Fri, 16 Sep 2016 13:18:53 +0000 (UTC)
 Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-        by mail.kernel.org (Postfix) with ESMTP id E127F2047D
-        for <backports@vger.kernel.org>; Fri, 16 Sep 2016 13:36:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTP id 5FCF22065A
+        for <backports@vger.kernel.org>; Fri, 16 Sep 2016 13:18:38 +0000 (UTC)
 From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: [Bug 161321] %%1~800~919~0992%%  < QuickBooks customer .support
- phone number
-Date: Fri, 16 Sep 2016 13:36:17 +0000
-Message-ID: <bug-161321-58281-lLClHR35TL@https.bugzilla.kernel.org/> (sfid-20160916_153626_115721_B41A07D4)
-In-Reply-To: <bug-161321-58281@https.bugzilla.kernel.org/>
-References: <bug-161321-58281@https.bugzilla.kernel.org/>
+Subject: [Bug 159821] OFFicial ++1 800 919 0992+++ Quickbooks phone number
+ +++1(800)919 0992 +++Quickbooks support phone number
+Date: Fri, 16 Sep 2016 13:17:47 +0000
+Message-ID: <bug-159821-58281-d6wZNo7Avf@https.bugzilla.kernel.org/> (sfid-20160916_151857_812704_AB84C57E)
+In-Reply-To: <bug-159821-58281@https.bugzilla.kernel.org/>
+References: <bug-159821-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=161321
+https://bugzilla.kernel.org/show_bug.cgi?id=159821
 
 Spam Script <spamscript@kernel.org> changed:
 
