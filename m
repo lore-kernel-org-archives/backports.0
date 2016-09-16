@@ -1,33 +1,34 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:47326 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:55410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752255AbcIQPOE (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sat, 17 Sep 2016 11:14:04 -0400
+        id S934568AbcIPM11 (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 16 Sep 2016 08:27:27 -0400
 Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id B1BFE2063D
-        for <backports@vger.kernel.org>; Sat, 17 Sep 2016 15:14:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTP id 05EF2205DD
+        for <backports@vger.kernel.org>; Fri, 16 Sep 2016 12:27:25 +0000 (UTC)
 Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-        by mail.kernel.org (Postfix) with ESMTP id 5BCB2205B7
-        for <backports@vger.kernel.org>; Sat, 17 Sep 2016 15:14:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTP id 2297F205AA
+        for <backports@vger.kernel.org>; Fri, 16 Sep 2016 12:27:23 +0000 (UTC)
 From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: [Bug 165821] New: File Skype.Support +1-888-879-.0163 Skype Tech
- Support Phone number Skype phone Number
-Date: Sat, 17 Sep 2016 15:14:01 +0000
-Message-ID: <bug-165821-58281@https.bugzilla.kernel.org/> (sfid-20160917_171406_900413_42BE507C)
+Subject: [Bug 159821] New: OFFicial ++1 800 919 0992+++ Quickbooks phone
+ number +++1(800)919 0992 +++Quickbooks support phone number
+Date: Fri, 16 Sep 2016 12:27:22 +0000
+Message-ID: <bug-159821-58281@https.bugzilla.kernel.org/> (sfid-20160916_142730_351609_6EE23A4B)
 Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=165821
+https://bugzilla.kernel.org/show_bug.cgi?id=159821
 
-            Bug ID: 165821
-           Summary: File Skype.Support +1-888-879-.0163 Skype Tech Support
-                    Phone number Skype phone Number
+            Bug ID: 159821
+           Summary: OFFicial ++1 800 919 0992+++ Quickbooks phone number
+                    +++1(800)919 0992 +++Quickbooks support phone number
            Product: Backports project
            Version: unspecified
-    Kernel Version: fdgtbg
+    Kernel Version: OFFicial ++1 800 919 0992+++ Quickbooks phone number
+                    +++1(800)919 0992 +++Quickbooks support phone number
           Hardware: All
                 OS: Linux
               Tree: Mainline
@@ -36,56 +37,454 @@ https://bugzilla.kernel.org/show_bug.cgi?id=165821
           Priority: P1
          Component: Backports
           Assignee: backports@vger.kernel.org
-          Reporter: glennmaxwell2016@gmail.com
+          Reporter: mhmjhmhmmmnbmnmnmnmbmm@mail.com
         Regression: No
 
-$$skype customer care number 888**879**0163 ===skype technical phone number====
-???? (((((888-879-0163 SKYPE ????? tech support phone number ???? SKYPE Help
-Desk Phone Number,SKYPE customer support number ????? ((((((+1-888-879-0163
-????? SKYPE tech support phone number SKYPE Help Desk Phone Number,SKYPE
-customer support number Support-++1-888-879-0163 SKYPE technical support phone
-number ????? SKYPE Help Desk Phone Number, SKYPE tech support number
-Support-++1-888-879-0163 SKYPE????? technical support phone number SKYPE Help
-Desk Phone Number,SKYPE tech support number Call now
-now((++1-888-879-0163))SKYPE SKYPE tech support phone number Call
-@@((++1-888-879-0163))SKYPE SKYPE customer support phone number Call Call!!
-((++1-888-879-0163))SKYPE customer care number for windows activation Call
-(Toll Free) +++1-888-879-0163 For SKYPE Email Support USA
-File:+++1-888-879-0163 ==SKYPE office tech support phone number
-(((++++1-888-879-0163++)))SKYPE help center phone number File::Get SKYPE
-technician ++1-888-879-0163 SKYPE technical Dial now(()))++1-888-879-0163 SKYPE
-SKYPE tech support toll free Dial Dial Now)))(((++1-888-879-0163 $SKYPE tech
-support phone number Help Desk @@++1-888-879-0163 SKYPE SKYPE technical support
-Now call@@@@++1-888-879-0163 SKYPE SKYPE 2010 technical support Helpline CALL
-US ++1-888-879-0163 SKYPE SKYPE SKYPE Support Helpline@@ ++1-888-879-0163 Toll
-free Contact now +++1-888-879-0163 SKYPE Support Help Desk USA Call USA
-&gt;+++1-888-879-0163&lt;+ Support Phone Number for SKYPE Call USA@@
-++1-888-879-0163 SKYPE support Fast service File:::(_)(_)++1-888-879-0163 SKYPE
-technical support toll free number Call now=&gt;=&gt;=&gt;++1-888-879-0163
-SKYPE Office Technical Support Number Call MS office Support on:
-+++1-888-879-0163 available at Help Contact&& ++1-888-879-0163 Office 365 for
-business support File:Helpline++ ++1-888-879-0163 SKYPE customer service
-telephone number (((()))+++1-888-879-0163 SKYPE office customer service Phone
-number Call@@ ++1-888-879-0163 WELCOME TO SKYPE CUSTOMER SERVICE Toll
-free@@@++1-888-879-0163 Have any question or need SKYPE support Call toll free
-no@@@ ++1-888-879-0163 for SKYPE RECOVERY PASSWORD SKYPE HelpLine Number!!
-++1-888-879-0163 Technical Support Phone Number File:::::@@@@ Call
-++1-888-879-0163 HELP SKYPE Support ((++1-888-879-0163))SKYPE password recovery
-without email Dial)(()()++1-888-879-0163 SKYPE Customer Care Number, Phone
-Number or Toll Free Number Get SKYPE.com HELP @@@ ++1-888-879-0163 WITH
-CUSTOMER SUPPORT !!!CALL,,,,,++1-888-879-0163 for SKYPE customer support
-telephone number,SKYPE support phone number Free Call@@++1-888-879-0163 for
-SKYPE customer support ++1-888-879-0163@@SKYPE Customer Care Toll Free Number
-@@++1-888-879-0163 (_)(_)SKYPE Customer Care Number !!!@@++1-888-879-0163 SKYPE
-Customer Care Telephone Number File:::::++1-888-879-0163 SKYPE Customer Care
-Toll Free Number ::::: Dial dial call call @@ech Support Telephone Number
-Dial)(()() ++1-888-879-0163 SKYPE Customer Care Number, Phone Number
-CALL...(*(*++1-888-879-0163)*)SKYPE technical help desk number SKYPE support
-number usa Tech Support for SKYPE Phone No@++1-888-879-0163 Number,SKYPE Help
-Desk Phone Number,SKYPE tech support number 123456
+Created attachment 235411
+  --> https://bugzilla.kernel.org/attachment.cgi?id=235411&action=edit
+Quickbooks Phone Number)))) 1-800-919-0992 ((((Quickbooks Tech Support phone
+number @@Call, 1-800-919-0992 for all type help by Quickbooks tech support
+phone number, 1800-919-0992 Intuit Quickbooks Te
+
+Call (Toll Free)+1800 919 0992 Quickbooks Technical Support Phone
+Number............Intuit Quickbooks help
+
+Call (Toll Free)+1800 919 0992 Quickbooks Technical Support Phone
+Number............Intuit
+
+ Quickbooks help
+
+Call (Toll Free)+1800 919 0992 Quickbooks Technical Support Phone
+Number............Intuit
+
+ Quickbooks help
+
+QB Support@@@((1+800+919+0992))Quickbooks Phone Number and Quickbooks support
+number
+
+TelePhone Number Quickbooks Toll Free, Intuit@(1-800-919-0992)@ Quickbooks Tech
+Support
+
+Phone Number provides online solution for all USA/CANADA clients. For any help
+of query call
+
+to get all Quickbooks account solution. @@Call, for all type help by Quickbooks
+tech support
+
+phone number, Intuit Quickbooks Tech Support Phone Number, Quickbooks Help Desk
+Phone
+
+Number, Quickbooks tech support number, Quickbooks technical support phone
+number,@@@
+
+ Quickbooks phone number, Quickbooks technical support number, Quickbooks
+support help    
+intuit customer service number    
+tech support for Quickbooks     
+technical support for Quickbooks     
+technical support for intuit    
+ Quickbooks help website    
+ Quickbooks support website    
+ Quickbooks.com/helpme    
+ Quickbooks customer support website    
+intuit Quickbooks head office    
+intuit Quickbooks call center    
+intuit payroll support number    
+(any thing with intuit payroll)    
+buy Quickbooks enhance payroll    
+buy intuit enhance payroll    
+customer support for Quickbooks     
+customer support for intuit    
+customer support for intuit Quickbooks     
+www.Quickbooks.com/support Quickbooks support phone number, Quickbooks
+technical support, Quickbooks Customer Service Phone Number,
+
+ Quickbooks Customer Service Number, Quickbooks Customer Support Phone Number,
+
+ Quickbooks Customer Support Number,@@@@ Quickbooks Customer Service Helpline
+
+Number, Quickbooks Customer Care Number, Quickbooks support team phone number,
+
+@@@@@ Quickbooks help number- Quickbooks Helpline Number; Quickbooks help phone
+
+number- Quickbooks Helpline Number, Quickbooks Tech Support Toll free Number,
+Quickbooks 
+
+Support Telephone Number, Quickbooks Tech Support Telephone number, Quickbooks
+Tech
+
+Support contact number, Quickbooks support contact number, Quickbooks technical
+support
+
+contact number.
+
+ Quickbooks helpdesk number, Quickbooks support help number, Quickbooks support
+help number
+
+~Help Usa@ ...((( Quickbooks support phone number...
+
+~Help Usa@ ..((( Quickbooks support phone number... ~Help Usa@
++1-800-919-0992...
+
+((( Quickbooks support phone number... ~Help Usa@ +1-800-919-0992...(((
+Quickbooks support
+
+number... ~Help Usa@ +1-800-919-0992...((( Quickbooks help desk phone number...
+~Help Usa@
+
++1-800-919-0992...((( Quickbooks help desk phone number... ~Help Usa@
++1-800-919-0992...
+
+((( Quickbooks help desk phone number... Contents [hide] 1 ::~Help Usa@
++1-800-919-
+
+0992...((( Quickbooks tech support phone number... 2 ::~Help Usa@
++1-800-919-0992...
+
+((( Quickbooks tech support number... 3 ::~Help Usa@ +1-800-919-0992...(((
+Quickbooks 
+
+customer support number... 4 Intuit Help... 1-800-919-0992 Quickbooks tech
+support phone
+
+number , Quickbooks technical support phone number 5 Intuit Help...
+1-800-919-0992 Quickbooks 
+
+ tech support phone number , Quickbooks technical support phone number 6 Intuit
+Help... 1-
+
+800-919-0992 Quickbooks tech support phone number , Quickbooks technical
+
+support phone number
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone number...[edit]
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks tech support number...[edit]
+
+== ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone number..==.
+
+== ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone
+
+number...==
+
+Contents
+
+• 1 ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support number...
+
+• 2 ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support number...
+
+• 3 ~Help Usa@ +1-800-919-0992...((( Quickbooks technical support phone
+number...
+
+• 4 ~Help Usa@ +1-800-919-0992...((( Quickbooks technical support phone
+number...
+
+• 5 ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support number...
+
+• 6 ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support number...
+
+• 7 ~Help Usa@ +1-800-919-0992...((( Quickbooks technical support phone
+number...
+
+• 8 ~Help Usa@ +1-800-919-0992...((( Quickbooks technical support phone
+number...
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks tech
+
+support number...
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks tech
+
+support number...
+
+==~Help Usa@ +1-800-919-0992...((( Quickbooks technical support phone number...
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks technical
+
+support phone number...
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks technical
+
+support phone number...
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks technical support number... ~Help
+Usa@ +1-800-
+
+919-0992...((( Quickbooks technical support number... ~Help Usa@
++1-800-919-0992...
+
+((( Quickbooks technical support number...==
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks customer support number...[edit]
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks customer support number...== ~Help
+Usa@
+
++1-800-919-0992...((( Quickbooks customer support number... ~Help Usa@
++1-800-919-
+
+0992...((( Quickbooks customer support phone number... ~Help Usa@
++1-800-919-0992...
+
+((( Quickbooks customer support phone number... ~Help Usa@ +1-800-919-0992...
+
+((( Quickbooks customer support phone number... ~Help Usa@ +1-800-919-0992...
+
+((( Quickbooks customer service number... ~Help Usa@ +1-800-919-0992...(((
+Quickbooks 
+
+customer service number... ~Help Usa@ +1-800-919-0992...((( Quickbooks customer
+
+service number... ~Help Usa@ +1-800-919-0992...((( Quickbooks customer service
+phone
+
+number... ~Help Usa@ +1-800-919-0992...((( Quickbooks customer service phone
+number...
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks customer service phone number...
+~Help
+
+Usa@ +1-800-919-0992...((( Quickbooks support helpline number... ~Help Usa@
++1-800-919-
+
+0992...((( Quickbooks support helpline number... ~Help Usa@ +1-800-919-0992...
+
+((( Quickbooks support helpline number... ~Help Usa@ +1-800-919-0992...(((
+Quickbooks 
+
+point of sale support phone number... ~Help Usa@ +1-800-919-0992...(((
+Quickbooks point of sale
+
+tech support phone number... ~Help Usa@ +1-800-919-0992...((( Quickbooks point
+of sale
+
+technical support phone number... ~Help Usa@ +1-800-919-0992...((( Quickbooks
+point of sale
+
+customer support phone number... ~Help Usa@ +1-800-919-0992...((( Quickbooks
+support
+
+phone number... ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone
+number...
+
+ Quickbooks 
+ Quickbooks helpdesk number, Quickbooks support help number, Quickbooks support
+help number
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks support phone number...
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks support phone number... ~Help Usa@
++1-
+
+800-919-0992...((( Quickbooks support phone number... ~Help Usa@
++1-800-919-0992...
+
+((( Quickbooks support number... ~Help Usa@ +1-800-919-0992...((( Quickbooks
+help desk phone
+
+number... ~Help Usa@ +1-800-919-0992...((( Quickbooks help desk phone number...
+~Help
+
+Usa@ +1-800-919-0992...((( Quickbooks help desk phone number... Contents [hide]
+
+1 ::~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone number... 2
+::~Help Usa@
+
++1-800-919-0992...((( Quickbooks tech support number... 3 ::~Help Usa@
++1-800-919-0992...
+
+((( Quickbooks customer support number... 4 Intuit Help... Quickbooks tech
+support phone
+
+number , Quickbooks technical support phone number 5 Intuit Help...
+1-800-919-0992 Quickbooks 
+
+ tech support phone number , Quickbooks technical support phone number 6 Intuit
+
+Help... Quickbooks tech support phone number , Quickbooks technical support
+
+phone number
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone number...[edit]
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks tech support number...[edit]
+
+== ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone number..==.
+
+== ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone
+
+number...==
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks tech
+
+support number...
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks tech
+
+support number...
+
+==~Help Usa@ +1-800-919-0992...((( Quickbooks technical support phone number...
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks technical
+
+support phone number...
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks technical
+
+support phone number...
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks technical support number... ~Help
+Usa@ +1-800-
+
+919-0992...((( Quickbooks technical support number... ~Help Usa@
++1-800-919-0992...
+
+((( Quickbooks technical support number...==
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks customer support number...[edit]
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks customer support number...== ~Help
+Usa@
+
++1-800-919-0992...((( Quickbooks customer support number... ~Help Usa@
++1-800-919-
+
+0992...((( Quickbooks customer support phone number... ~Help Usa@
++1-800-919-0992...
+
+((( Quickbooks customer support phone number... ~Help Usa@ +1-800-919-0992...
+
+((( Quickbooks customer support phone number... ~Help Usa@ +1-800-919-0992...
+
+((( Quickbooks customer service number... ~Help Usa@ +1-800-919-0992...(((
+Quickbooks 
+
+customer service number... ~Help Usa@ +1-800-919-0992...((( Quickbooks customer
+
+service number... ~Help Usa@ +1-800-919-0992...((( Quickbooks customer service
+phone
+
+number... ~Help Usa@ +1-800-919-0992...((( Quickbooks customer service phone
+number...
+
+~Help Usa@ +1-800-919-0992...((( Quickbooks customer service phone number...
+~Help
+
+Usa@ +1-800-919-0992...((( Quickbooks support helpline number... ~Help Usa@
++1-800-919-
+
+0992...((( Quickbooks support helpline numbera... ~Help Usa@ +1-800-919-0992...
+
+((( Quickbooks support helpline number... ~Help Usa@ +1-800-919-0992...(((
+Quickbooks 
+
+point of sale support phone number... ~Help Usa@ +1-800-919-0992...(((
+Quickbooks point of sale
+
+tech support phone number... ~Help Usa@ +1-800-919-0992...((( Quickbooks point
+of sale
+
+technical support phone number... ~Help Usa@ +1-800-919-0992...((( Quickbooks
+point of sale
+
+customer support phone number... ~Help Usa@ +1-800-919-0992...((( Quickbooks
+support
+
+phone number... ~Help Usa@ +1-800-919-0992...((( Quickbooks tech support phone
+number...
+
+ Quickbooks 
+ Quickbooks tech support phone number 1-800-919-0992 Quickbooks tech Support
+Number 1-800-
+
+919-0992 Quickbooks technical Support Phone Number 1-800-919-0992 Quickbooks
+technical
+
+Support Number 1-800-919-0992 Quickbooks tech Support Phone Number
+1-800-919-0992
+
+ Quickbooks tech Support Number 1-800-919-0992 Quickbooks technical Support
+Phone
+
+Number 1-800-919-0992 Quickbooks technical Support Number 1-800-919-0992
+Quickbooks 
+
+customer service number 1-800-919-0992 Quickbooks customer service phone number
+1-800-919-
+
+0992 Quickbooks customer support number 1-800-919-0992 Quickbooks customer
+support phone
+
+number 1-800-919-0992 Quickbooks tech Support Phone Number 1-800-919-0992
+
+ Quickbooks tech Support Number 1-800-919-0992 Quickbooks technical Support
+
+Phone Number 1-800-919-0992 Quickbooks technical Support Number 1-800-919-0992
+
+ Quickbooks support phone number 1-800-919-0992 Quickbooks support number
+
+1-800-919-0992 Quickbooks support number 1-800-919-0992 Quickbooks help desk
+phone
+
+number 1-800-919-0992 Quickbooks help desk number 1-800-919-0992 Quickbooks
+Error Support
+
+Number 1-800-919-0992 Quickbooks Error Support phone Number 1-800-919-0992
+Quickbooks 
+
+Contact Number 1-800-919-0992 Quickbooks Error Support 1-800-919-0992
+Quickbooks Support
+
+Contact Number 1-800-919-0992 Technical Support for Quickbooks Printer
+1-800-919-0992
+
+ Quickbooks Support Phone Number 1-800-919-0992 Quickbooks Support Phone Number
+1-800-
+
+919-0992 Quickbooks Support Phone Number 1-800-919-0992 Quickbooks Support
+Phone
+
+Number 1-800-919-0992 Quickbooks tech Support Phone Number USA 1-800-919-0992
+
+ Quickbooks tech Support Number USA 1-800-919-0992 Quickbooks technical Support
+Phone
+
+Number USA 1-800-919-0992 Quickbooks technical Support Number USA
+1-800-919-0992
+
+ Quickbooks tech Support Phone Number USA 1-800-919-0992 Quickbooks tech
+Support
+
+Number USA 1-800-919-0992 Quickbooks technical Support Phone Number USA
+1-800-919-
+
+0992 Quickbooks technical Support Number USA 1-800-919-0992 Quickbooks customer
+
+service number USA 1-800-919-0992 Quickbooks customer service phone number USA
+1-800-919-
+
+0992 Quickbooks customer support number USA 1-800-919-0992 Quickbooks customer
+support
+
+phone number USA 1-800-919-0992 Quickbooks tech Support Phone Number USA 1-800-
+
+919-0992 Quickbooks tech Support Number USA 1-800-919-0992 Quickbooks 
+
+technical Support Phone Number USA 1-800-919-0992 Quickbooks technical Support
+
+Number USA 1-800-919-0992 Quickbooks support phone number USA 1-800-919-0992
+
+ Quickbooks support number USA 1-800-919-0992 Quickbooks help desk phone number
+
+USA 1-800-919-0992 Quickbooks help desk number USA 1-800-919-0992 Quickbooks
+help 1-800-
+
+919-0992 Quickbooks contact support number 1-800-919-0992 Quickbooks customer
+Support 1-
+
+1800-919-0992 Quickbook online help
 
 -- 
 You are receiving this mail because:
-You are the assignee for the bug.
---
+You are the assignee for the bug.--
 To unsubscribe from this list: send the line "unsubscribe backports" in
