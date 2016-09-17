@@ -1,34 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:51630 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:53054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752597AbcIQPnX (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sat, 17 Sep 2016 11:43:23 -0400
+        id S1753911AbcIQLyc (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sat, 17 Sep 2016 07:54:32 -0400
 Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id CF50B205DE
-        for <backports@vger.kernel.org>; Sat, 17 Sep 2016 15:43:20 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-        by mail.kernel.org (Postfix) with ESMTP id 03002205D4
-        for <backports@vger.kernel.org>; Sat, 17 Sep 2016 15:43:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTP id 70DA1206BE
+        for <backports@vger.kernel.org>; Sat, 17 Sep 2016 11:54:30 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+        by mail.kernel.org (Postfix) with ESMTP id 1EE8C206B1
+        for <backports@vger.kernel.org>; Sat, 17 Sep 2016 11:54:29 +0000 (UTC)
 From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: [Bug 166041] New:
- :::AVG:::::::::::AVG:::::::::::::::::@1+888+879+0163::::::::::::SUPPORT:::::::::::::::::::::~~! AVG Antivirus tech support phone number;;;;;;
-Date: Sat, 17 Sep 2016 15:43:18 +0000
-Message-ID: <bug-166041-58281@https.bugzilla.kernel.org/> (sfid-20160917_174325_843232_57143BA9)
+Subject: [Bug 163821] New: ++++1.8.0.0.9.1.9.0.9.9.2.++++++++++ Quickbooks
+ C-u-s-t-o-m-e-r S.e.r.v.i.c.e s.u.p.p.o.r.t p.h.o.n.e number.
+Date: Sat, 17 Sep 2016 11:54:28 +0000
+Message-ID: <bug-163821-58281@https.bugzilla.kernel.org/> (sfid-20160917_135435_105705_6229131C)
 Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=166041
+https://bugzilla.kernel.org/show_bug.cgi?id=163821
 
-            Bug ID: 166041
-           Summary: :::AVG:::::::::::AVG:::::::::::::::::@1+888+879+0163::
-                    ::::::::::SUPPORT:::::::::::::::::::::~~! AVG
-                    Antivirus tech support phone number;;;;;;
+            Bug ID: 163821
+           Summary: ++++1.8.0.0.9.1.9.0.9.9.2.++++++++++ Quickbooks
+                    C-u-s-t-o-m-e-r S.e.r.v.i.c.e s.u.p.p.o.r.t p.h.o.n.e
+                    number.
            Product: Backports project
            Version: unspecified
-    Kernel Version: scx
+    Kernel Version: 1.8.0.0.9.1.9.0.9.9.2. Quickbooks C-u-s-t-o-m-e-r
+                    S.e.r.v.i.c.e s.u.p.p.o.r.t p.h.o.n.e number.
           Hardware: All
                 OS: Linux
               Tree: Mainline
@@ -37,388 +38,115 @@ https://bugzilla.kernel.org/show_bug.cgi?id=166041
           Priority: P1
          Component: Backports
           Assignee: backports@vger.kernel.org
-          Reporter: glennmaxwell2016@gmail.com
+          Reporter: 6yh6tytrytyy@mail.com
         Regression: No
 
-Get Support#@#@ 1888 879 0163 AVG support phone number, AVG tech support phone
-number
-All
-Get Support#@#@ 1888 879 0163 AVG support phone number, AVG tech support phone
-number
-AVG Antivirus Number $$$1-888-879-0163$$AVG Antivirus Customer Service Number
-USA
+Created attachment 237521
+  --> https://bugzilla.kernel.org/attachment.cgi?id=237521&action=edit
+Quickbooks Phone Number))))1-800-919-0992((((Quickbooks Tech Support phone
+number @@Call, 1-800-919-0992 for all type help by Quickbooks tech support
+phone number, 1800-919-0992 Intuit Quickbooks Tech
 
-AVG Antivirus  Number $$$1-888-879-0163$$AVG Antivirus Customer Service Number
-USA
-
-usa+1-888-879-0163) Technical support number
-CANADA+1888-879-0163 AVG Antivirus Technical Support
-USA-1888-879-0163contact AVG antivirus customer service phone number
-AUS-1-888-879-0163 phone number for AVG customer service
-UK-1888-879-0163 phone number for AVG antivirus technical support
-1-888-879-0163 phone number for AVG antivirus customer service
-phone number for AVG antivirus technical support
-phone number for AVG security
-AVG antivirus customer care phone number
-AVG antivirus customer service billing
-AVG antivirus customer service email address
-AVG antivirus customer service live chat
-AVG antivirus customer service telephone number
-AVG antivirus customer support usa phone number
-AVG antivirus help desk support phone number free in usa
-AVG antivirus phone number customer service us
-AVG antivirus phone number support
-AVG antivirus support phone number
-AVG antivirus tech support phone number free in usa
-AVG antivirus tech support phone number
-AVG antivirus technical support customer service
-AVG antivirus technical support number
-AVG antivirus telephone number
-AVG antivirus toll free customer care number
-AVG antivirus toll free number in usa
-AVG antivirus contact phone number in usa
-AVG antivirus customer service number
-AVG antivirus customer service phone number
-AVG antivirus customer service telephone number
-AVG antivirus customer support number
-AVG antivirus customer support phone number
-AVG antivirus customer support phone number
-AVG antivirus help desk phone number in usa
-AVG antivirus phone number
-AVG antivirus phone number support for technical issue in usa
-AVG antivirus support phone number
-AVG antivirus technical support help desk phone number
-AVG antivirus technical support number
-AVG antivirus technical support phone number
-AVG customer service number
-AVG customer service telephone number
-AVG customer services email
-AVG customer support email address
-AVG customer support number
-AVG customer support phone number
-AVG customer service phone number
-AVG internet security contact phone number
-AVG internet security customer service phone number
-AVG internet security phone number
-AVG internet security help phone number
-AVG internet security phone number in usa
-AVG internet security support phone number
-AVG internet security technical support
-AVG phone number customer service
-AVG phone numbers customer support
-AVG phone support number
-AVG security contact phone number
-AVG security phone number customer service
-AVG security support phone number
-AVG support contact number
-AVG support email address
-AVG support phone number
-AVG support telephone number
-AVG support telephone number usa
-AVG support telephone number
-AVG tech support number
-AVG tech support phone number
-AVG tech support phone number free
-AVG technical support phone number
-AVG technical support cutomer phone number
-AVG technical support phone number
-AVG technical support number free in usa
-AVG technical support number toll free number
-AVG technical support phone number
-AVG technologies phone number
-AVG telephone support number
-AVG antivirus customer support phone number
-AVG antivirus customer service phone number
-AVG customer support phone number
-AVG phone number customer service
-AVG technical support telephone number
-contact AVG antivirus customer service phone number
-customer service number for AVG antivirus
-phone number for AVG antivirus
-phone number for AVG antivirus customer service
-phone number for AVG antivirus support
-phone number for AVG customer service
-phone number for AVG customer service
-phone number for AVG customer support
-phone number for AVG tech support
-phone number AVG antivirus customer service
-AVG antivirus customer service number
-AVG antivirus customer service phone
-AVG antivirus customer service phone number
-AVG antivirus customer service phone number us
-AVG antivirus customer service telephone number
-AVG antivirus customer support
-AVG antivirus customer support number
-AVG antivirus phone number customer service us
-AVG antivirus phone number support
-AVG antivirus phone support
-AVG antivirus phone support number
-AVG antivirus support phone number
-AVG antivirus tech support phone number
-AVG antivirus technical support
-AVG antivirus technical support number
-AVG antivirus technical support phone number
-AVG customer service phone number
-AVG customer support phone number
-AVG helpline phone number
-AVG internet security customer service
-AVG internet security customer service phone number
-AVG internet security help phone number
-AVG internet security phone number customer service
-AVG phone number customer service
-AVG phone number customer support
-AVG security customer service phone number
-AVG security phone number customer service
-AVG support phone number
-AVG support telephone number
-AVG tech support number
-AVG tech support phone number
-AVG technical support
-AVG technical support number
-AVG technical support phone number
-AVG antivirus customer support phone number
-AVG antivirus phone number customer service
-AVG antivirus tech support number
-AVG customer service phone number
-AVG customer service phone numbers
-AVG internet security technical support
-AVG tech support phone number us
-AVG technical support telephone number
-contact AVG antivirus
-contact AVG by phone
-contact AVG customer service
-contact AVG antivirus customer service phone number
-contactAVG antivirus tech support usa
-customer service AVG phone number
-download AVG titanium
-dri AVG customer service number
-dri AVG customer service phone number
-dri AVG phone number
-how to contact AVG by email
-how to delete AVG from mac
-micro trend customer service
-AVG antivirus customer service number
-phone number for AVG customer service
-phone number forAVG customer service
-phone number forAVG customer support
-phone number forAVG tech support
-phone number forAVG technical support
-phone number for AVG antivirus technical support
-phone number for AVG security
-phone number for AVG support
-phone number for AVG technical support
-phone number for AVG antivirus customer service
-phone number for AVG customer service
-remove AVG from mac
-technical support for antivirus AVG
-telephone number forAVG technical support
-telephone AVG antivirus
-AVG antivirus contact number
-AVG antivirus customer care
-AVG antivirus customer care number
-AVG antivirus customer care number usa
-AVG antivirus customer service
-AVG antivirus customer service number :idea: :evil: :D :) :lol: :( :o :shock:
-AVG antivirus customer service phone number
-AVG antivirus customer service phone number usa
-AVG antivirus customer service telephone number
-AVG antivirus customer support
-AVG antivirus customer support in usa
-AVG antivirus customer support number
-AVG antivirus customer support phone number
-AVG antivirus for phone
-AVG antivirus free antivirus support
-AVG antivirus help phone number
-AVG antivirus helpline number
-AVG antivirus online support
-AVG antivirus phone
-AVG antivirus phone number
-AVG antivirus phone number in usa
-AVG antivirus phone number usa
-AVG antivirus phone support
-AVG antivirus plus tech support
-AVG antivirus protection
-AVG antivirus support
-AVG antivirus support number
-AVG antivirus support phone number
-AVG antivirus support services
-AVG antivirus support telephone number
-AVG antivirus tech support
-AVG antivirus tech support phone number free in usa
-AVG antivirus tech support number
-AVG antivirus tech support phone number
-AVG antivirus technical support
-AVG antivirus technical support number
-AVG antivirus technical support phone number
-AVG antivirus toll free customer care number
-AVG antivirus toll free number
-AVG antivirus contact phone number in usa
-AVG antivirus help desk phone number in usa
-AVG antivirus phone number support for technical issue in usa
-AVG antivirus support phone number
-AVG antivirus technical support help desk phone number
-AVG antivirus technical support phone number
-AVG contact number
-AVG contact number usa
-AVG contact phone number
-AVG contact support
-AVG contact number usa
-AVG contact phone number
-AVG contact phone number usa
-AVG customer & technical support
-AVG customer care
-AVG customer care center
-AVG customer care email
-AVG customer care number
-AVG customer care number
-AVG customer care number usa
-AVG customer care number usa toll free
-AVG customer care phone number usa
-AVG customer care tchnical support
-AVG customer care toll free
-AVG customer care toll free number
-AVG customer care usa
-AVG customer help
-AVG customer number
-AVG customer portal
-AVG customer service
-AVG customer service billing
-AVG customer service email address
-AVG customer service number
-AVG customer service phone
-AVG customer service phone number
-AVG customer service phone number us
-AVG customer service phone number usa
-AVG customer service reviews
-AVG customer service telephone number
-AVG customer service usa
-AVG customer support
-AVG customer support number
-AVG customer support phone
-AVG customer support phone number
-AVG customer service number
-AVG customer service number usa
-AVG customer service phone number
-AVG customer support number
-AVG customer support phone number
-AVG free phone support
-AVG gold support phone number
-AVG help desk phone number
-AVG help phone number
-AVG helpline
-AVG helpline phone number
-AVG hotline customer service phone number
-AVG internet security customer service
-AVG internet security phone number
-AVG internet security phone number in usa
-AVG lab usa customer service
-AVG labs usa customer serviceAVG
-AVG phone number
-AVG phone number customer service
-AVG phone number support
-AVG phone number tech support
-AVG phone number technical support
-AVG phone numbers customer support
-AVG phone support
-AVG phone support number
-AVG phone number customer service
-AVG phone number support
-AVG phone number tech support
-AVG phone number usa
-AVG security contact phone number
-AVG security phone number
-AVG security support phone number
-AVG software customer service
-AVG software customer service number
-AVG support center
-AVG support contact number
-AVG support email address
-AVG support phone number
-AVG support telephone number
-AVG support number usa
-AVG support phone number
-AVG support phone number usa
-AVG tech support
-AVG tech support center
-AVG tech support contact
-AVG tech support number
-AVG tech support number usa
-AVG tech support phone
-AVG tech support phone number
-AVG tech support phone number free
-AVG tech support number
-AVG tech support number usa
-AVG tech support phone number
-AVG technical support
-AVG technical support number
-AVG technical support phone number
-AVG technical support phone number usa
-AVG technical support reviews
-AVG technical support usa
-AVG technical support phone number
-AVG technical support number
-AVG technical support number toll free number
-AVG technical support number usa
-AVG technical support phone number
-AVG technical support phone number usa
-AVG technologies phone number
-AVG telephone number
-AVG telephone support number
-AVG toll free number
-AVG toll free number usa
-AVG usa customer care for tech support
-AVG usa customer service
-AVG usa phone number
-AVG antivirus customer service phone number
-AVG antivirus customer service phone number
-AVG antivirus customer support phone number
-AVG antivirus customer support phone number
-AVG antivirus technical support number
-AVG customer service phone number usa
-AVG internet security support phone number
-AVG.com customer service
-AVG antivirus antispyware 2011
-AVG antivirus customer support
-AVG antivirus serial key
-AVG antivirus serial number
-AVG antivirus support
-AVG antivirus technical support
-AVG business support
-AVG contact support
-AVG customer care number
-AVG customer service 888
-AVG customer service number
-AVG customer service phone number
-AVG customer service telephone number 18888790163
-AVG customer support
-AVG grentry non payment
-AVG helpline support number
-AVG internet security customer service
-AVG internet security technical support
-AVG oem customer service
-AVG pc cillin technical support
-AVG phone support
-AVG removal tool download
-AVG subscription renewal
-AVG support contact
-AVG support hotline
-AVG support phone number
-AVG tech support phone number18888790163
-AVG technical support
-AVG technical support chat
-AVG technical support phone number
-AVG technical support phone number usa  1888-879-0163
-AVG telephone number
-AVG titanium antivirus
-AVG titanium internet security
-AVG titanium maximum
-AVG titanium maximum security
-AVG titanium problems
-AVG titanium removal tool
-AVG titanium reviews
-AVG titanium support
-AVG virus removal service
-uninstall AVG smart surfing for mac
+Quickbooks Phone Number))))1-800-919-0992((((Quickbooks Tech Support phone
+number @@Call, 1-800-919-0992 for all type help by Quickbooks tech support
+phone number, 1800-919-0992 Intuit Quickbooks Tech Support Phone Number,
+1800-919-0992 Quickbooks Help Desk Phone Number, 1800-919-0992 Quickbooks tech
+support number, Quickbooks technical support phone number,@@ 1800-919-0992 @
+Quickbooks phone number, 1800-919-0992 Quickbooks technical support number,
+1800-919-0992 Quickbooks support phone number, 1800-919-0992 Quickbooks
+technical support, Quickbooks Customer Service Phone Number, Quickbooks
+Customer Service Number, Quickbooks Customer Support Phone Number, Quickbooks
+Customer Support Number,@@@@ Quickbooks Customer Service Helpline Number,
+Quickbooks Customer Care Number, Quickbooks support team phone number, @@@@@
+Quickbooks help number-Quickbooks Helpline Number; Quickbooks help phone
+number-Quickbooks Helpline Number, Quickbooks Tech Support Toll free Number,
+Quickbooks Support Telephone Number, Quickbooks Tech Support Telephone number,
+Quickbooks Tech Support contact number, Quickbooks support contact number,
+Quickbooks technical support contact number. Call, Quickbooks tech support
+phone number, Intuit Quickbooks Tech Support Phone Number, Quickbooks Help Desk
+Phone Number, Quickbooks tech support number, Quickbooks technical support
+phone number, Quickbooks phone number, Quickbooks technical support number,
+Quickbooks support phone number. It is very popular toll free number which
+provide by Quickbooks technical support, Quickbooks Customer Service Phone
+Number, Quickbooks Customer Service Number, Quickbooks Customer Support Phone
+Number, Quickbooks Customer Support Number, Quickbooks Customer Service
+Helpline Number, Quickbooks Customer Care Number, Quickbooks support team phone
+number. Call, Quickbooks tech support phone number, Intuit Quickbooks Tech
+Support Phone Number, Quickbooks Help Desk Phone Number, Quickbooks tech
+support number, Quickbooks technical support phone number, Quickbooks phone
+number, Quickbooks technical support number, Quickbooks support phone number,
+Quickbooks technical support,
+https://www.linkedin.com/company/quickbooks-support-number-1-866-388-3501/
+Quickbooks Customer Service Phone Number, Quickbooks Customer Service Number,
+Quickbooks Customer Support Phone Number, Quickbooks Customer Support Number,
+Quickbooks Customer Service Helpline Number, Quickbooks Customer Care Number,
+Quickbooks support team phone number, Quickbooks help number-Quickbooks
+Helpline Number; Quickbooks help phone number, Quickbooks Helpline Number,
+Quickbooks Tech Support Toll free Number, Quickbooks Support Telephone Number,
+Quickbooks Tech Support Telephone number, Quickbooks Tech Support contact
+number, Quickbooks support contact number, Quickbooks technical support contact
+number, Quickbooks pro support phone number, Quickbooks payroll support phone
+number. Quickbooks payroll customer support phone number Quickbooks Support
+Helpline Number, Quickbooks contact number Quickbooks tech support phone number
+Quickbooks support team phone number Quickbooks contact number 1800-919-0992
+Quickbooks technical help telephone number, Quickbooks technical help contact
+number, Quickbooks technical support contact number, Quickbooks contact number,
+Quickbooks contact phone number, Quickbooks contact telephone number,
+Quickbooks 24 hour contact number, Quickbooks customer support contact number,
+Quickbooks customer service contact number, Quickbooks official number,
+Quickbooks official contact number, Quickbooks 800 contact number, Quickbooks
+toll free number, 800 number for Quickbooks support, Quickbooks 24/7 support
+phone number Quickbooks PRO support phone number,Quickbooks PRO support phone
+number,Quickbooks PRO help phone number, Quickbooks PRO technical support
+number.Quickbooks PRO support number, Quickbooks PRO phone number, Quickbooks
+PRO tech support number, Quickbooks PRO customer support number, Quickbooks PRO
+customer support phone number, Quickbooks PRO customer service phone number,
+Quickbooks PRO payroll customer service phone number, Quickbooks PRO support
+phone number. Help@Call 1-800-919-0992/.Quickbooks 24/7 support phone
+number,Quickbooks telephone number for support? call 1800-919-0992@./Quickbooks
+contact number, Quickbooks contact phone number, Quickbooks contact telephone
+numbertelephone number for Quickbooks online support,Quickbooks official
+support number,Quickbooks official number,Quickbooks payroll official phone
+number,phone number for Quickbooks payroll supportQuickbooks 24/7 support phone
+numberQuickbooks support number,Quickbooks telephone number for support
+.................. Quickbooks PRO phone number,(1-800-919-0992)// Quickbooks
+PRO customer care number..... Quickbooks PRO Toll Free,
+Intuit@(1-800.919-0992)@-: Quickbooks PRO Technical Support Number, Quickbooks
+PRO help desk phone number provides online solution for all USA/CANADA clients.
+For any help of query call 1 800 919 0992 to get all Quickbooks PRO account
+solution. For any help of query call 1 800 919 0992 to get all Quickbooks PRO
+account solution. @@Call, 1-800-919-0992 for all type help by Quickbooks PRO
+support telephone number,Quickbooks PRO support phone number,Quickbooks PRO
+support phone number,Quickbooks PRO help phone number, Quickbooks PRO technical
+support number.Quickbooks PRO support number, Quickbooks PRO phone number,
+Quickbooks PRO tech support number, Quickbooks PRO customer support number,
+Quickbooks PRO customer support phone number, Quickbooks PRO customer service
+phone number, Quickbooks PRO payroll customer service phone number, Quickbooks
+PRO support phone number Quickbooks PRO help number-Quickbooks PRO Helpline
+Number; Quickbooks PRO help phone number-Quickbooks PRO Helpline Number,
+Quickbooks PRO Tech Support Toll free Number, Quickbooks PRO Support Telephone
+Number, Quickbooks PRO Tech Support Telephone number, Quickbooks PRO Tech
+Support contact number, Quickbooks PRO support contact number, Quickbooks PRO
+technical support contact number, Quickbooks PRO help desk phone number. Call,
+@(1-800-919-0992)@-: It is very popular toll free number which provide by
+Quickbooks PRO technical support,https://www.youtube.com/watch?v=JnPtCk_CNs8
+Quickbooks PRO Customer Service Phone Number, Quickbooks PRO Customer Service
+Number, Quickbooks PRO Customer Support Phone Number, Quickbooks PRO Customer
+Support Number, Quickbooks PRO Customer Service Helpline Number, Quickbooks PRO
+Customer Care Number, Quickbooks PRO support team phone number.
+Call,@(1-800-919-0992)@-: Quickbooks PRO help number-Quickbooks PRO Helpline
+Number; Quickbooks PRO help phone number, Quickbooks PRO Helpline Number,
+Quickbooks PRO Tech Support Toll free Number, Quickbooks PRO Support Telephone
+Number, Quickbooks PRO Tech Support Telephone number, Quickbooks PRO Tech
+Support contact number, Quickbooks PRO support contact number, Quickbooks PRO
+technical support contact number, Quickbooks PRO pro support phone number,
+Quickbooks PRO payroll support phone number. Quickbooks PRO payroll customer
+support phone number for all type help by Quickbooks PRO support telephone
+number, Quickbooks PRO help phone number, Quickbooks PRO technical support
+number.Quickbooks PRO support number, Quickbooks PRO phone number, Quickbooks
+PRO tech support number, Quickbooks PRO customer support number, Quickbooks PRO
+customer support phone number, Quickbooks PRO customer service phone number,
+Quickbooks PRO payroll customer service phone number
 
 -- 
 You are receiving this mail because:
