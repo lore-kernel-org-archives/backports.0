@@ -1,97 +1,426 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:33896 "EHLO sipsolutions.net"
+Received: from mail.kernel.org ([198.145.29.136]:51410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932185AbcI2JF0 (ORCPT <rfc822;backports@vger.kernel.org>);
-        Thu, 29 Sep 2016 05:05:26 -0400
-From: Johannes Berg <johannes@sipsolutions.net>
+        id S1752342AbcIQPlj (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sat, 17 Sep 2016 11:41:39 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+        by mail.kernel.org (Postfix) with ESMTP id 0DDA520145
+        for <backports@vger.kernel.org>; Sat, 17 Sep 2016 15:41:37 +0000 (UTC)
+Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
+        by mail.kernel.org (Postfix) with ESMTP id 5158E20218
+        for <backports@vger.kernel.org>; Sat, 17 Sep 2016 15:41:35 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] git-tracker: add an option to add a Change-Id to commits
-Date: Thu, 29 Sep 2016 11:05:20 +0200
-Message-Id: <1475139920-671-1-git-send-email-johannes@sipsolutions.net> (sfid-20160929_110530_010866_866EB269)
+Subject: [Bug 166011] New: AVG Symantec 1-888-879-0163 AVG technical number
+ AVG antivirus technical support phone
+Date: Sat, 17 Sep 2016 15:41:35 +0000
+Message-ID: <bug-166011-58281@https.bugzilla.kernel.org/> (sfid-20160917_174141_793335_C9D26087)
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+https://bugzilla.kernel.org/show_bug.cgi?id=166011
 
-When the resulting output trees are used with gerrit, it can be
-useful for patches to have a Change-Id. Add an option to let the
-script generate them.
+            Bug ID: 166011
+           Summary: AVG Symantec 1-888-879-0163 AVG technical number AVG
+                    antivirus technical support phone
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: dcsx
+          Hardware: All
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: glennmaxwell2016@gmail.com
+        Regression: No
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- devel/git-tracker.py | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+Get Support#@#@ 1888 879 0163 AVG support phone number, AVG tech support phone
+number
+All
+Get Support#@#@ 1888 879 0163 AVG support phone number, AVG tech support phone
+number
+AVG Antivirus Number $$$1-888-879-0163$$AVG Antivirus Customer Service Number
+USA
 
-diff --git a/devel/git-tracker.py b/devel/git-tracker.py
-index 766267dfb4b8..c86906b9eaa7 100755
---- a/devel/git-tracker.py
-+++ b/devel/git-tracker.py
-@@ -12,7 +12,7 @@ problem to occur (although this is less useful since lots of commits
- need to be squashed in the output tree.)
- """
- 
--import sys, re, os, argparse, shutil
-+import sys, re, os, argparse, shutil, hashlib
- try:
-     import configparser as ConfigParser
- except:
-@@ -56,7 +56,7 @@ def update_cache_objects(gittree, objdir, input):
- 
- def handle_commit(args, msg, branch, treename, kernelobjdir, tmpdir, wgitdir, backport_rev, kernel_rev,
-                   prev_kernel_rev=None, defconfig=None, env={}, commit_failure=True,
--                  append_shortlog=None):
-+                  append_shortlog=None, add_changeid=False):
-     log = []
-     def logwrite(l):
-         log.append(l)
-@@ -127,6 +127,15 @@ def handle_commit(args, msg, branch, treename, kernelobjdir, tmpdir, wgitdir, ba
-             'krev': kernel_rev,
-           }
- 
-+            if add_changeid:
-+                have_changeid = False
-+                for line in msg.split('\n'):
-+                    if line.lower().startswith('change-id: I'):
-+                        have_changeid = True
-+                        break
-+                if not have_changeid:
-+                    msg += 'Change-Id: I%s\n' % hashlib.sha1(msg).hexdigest()
-+
-             git.commit(msg, tree=wdir, env=env, opts=['-q', '--allow-empty'])
-             git.push(opts=['-f', '-q', 'origin', branch], tree=wdir)
-         os.rename(os.path.join(wdir, '.git'), wgitdir)
-@@ -162,6 +171,10 @@ if __name__ == '__main__':
-         if not config.has_option(tree, 'output'):
-             print("No output defined in section %s" % tree)
-             sys.exit(3)
-+        if config.has_option(tree, 'changeid'):
-+            if config.get(tree, 'changeid') != 'true':
-+                print("changeid option can only take the value 'true'")
-+                sys.exit(3)
- 
-     with tempdir.tempdir() as kernel_tmpdir:
-         # get cachedir, or use temporary directory
-@@ -182,6 +195,7 @@ if __name__ == '__main__':
-             defconfig = None
-             if config.has_option(tree, 'defconfig'):
-                 defconfig = config.get(tree, 'defconfig')
-+            add_changeid = config.has_option(tree, 'changeid')
-             branches = [r.strip() for r in config.get(tree, 'branches').split(',')]
- 
-             update_cache_objects(input, kernelobjdir, input=True)
-@@ -277,7 +291,8 @@ if __name__ == '__main__':
-                                                 wgitdir, backport_rev, commit, env=env,
-                                                 prev_kernel_rev=prev, defconfig=defconfig,
-                                                 commit_failure=not catch_up_from_failure,
--                                                append_shortlog=append_shortlog)
-+                                                append_shortlog=append_shortlog,
-+                                                add_changeid=add_changeid)
-                         if not failure:
-                             prev = commit
-                             catch_up_from_failure = False
+AVG Antivirus  Number $$$1-888-879-0163$$AVG Antivirus Customer Service Number
+USA
+
+usa+1-888-879-0163) Technical support number
+CANADA+1888-879-0163 AVG Antivirus Technical Support
+USA-1888-879-0163contact AVG antivirus customer service phone number
+AUS-1-888-879-0163 phone number for AVG customer service
+UK-1888-879-0163 phone number for AVG antivirus technical support
+1-888-879-0163 phone number for AVG antivirus customer service
+phone number for AVG antivirus technical support
+phone number for AVG security
+AVG antivirus customer care phone number
+AVG antivirus customer service billing
+AVG antivirus customer service email address
+AVG antivirus customer service live chat
+AVG antivirus customer service telephone number
+AVG antivirus customer support usa phone number
+AVG antivirus help desk support phone number free in usa
+AVG antivirus phone number customer service us
+AVG antivirus phone number support
+AVG antivirus support phone number
+AVG antivirus tech support phone number free in usa
+AVG antivirus tech support phone number
+AVG antivirus technical support customer service
+AVG antivirus technical support number
+AVG antivirus telephone number
+AVG antivirus toll free customer care number
+AVG antivirus toll free number in usa
+AVG antivirus contact phone number in usa
+AVG antivirus customer service number
+AVG antivirus customer service phone number
+AVG antivirus customer service telephone number
+AVG antivirus customer support number
+AVG antivirus customer support phone number
+AVG antivirus customer support phone number
+AVG antivirus help desk phone number in usa
+AVG antivirus phone number
+AVG antivirus phone number support for technical issue in usa
+AVG antivirus support phone number
+AVG antivirus technical support help desk phone number
+AVG antivirus technical support number
+AVG antivirus technical support phone number
+AVG customer service number
+AVG customer service telephone number
+AVG customer services email
+AVG customer support email address
+AVG customer support number
+AVG customer support phone number
+AVG customer service phone number
+AVG internet security contact phone number
+AVG internet security customer service phone number
+AVG internet security phone number
+AVG internet security help phone number
+AVG internet security phone number in usa
+AVG internet security support phone number
+AVG internet security technical support
+AVG phone number customer service
+AVG phone numbers customer support
+AVG phone support number
+AVG security contact phone number
+AVG security phone number customer service
+AVG security support phone number
+AVG support contact number
+AVG support email address
+AVG support phone number
+AVG support telephone number
+AVG support telephone number usa
+AVG support telephone number
+AVG tech support number
+AVG tech support phone number
+AVG tech support phone number free
+AVG technical support phone number
+AVG technical support cutomer phone number
+AVG technical support phone number
+AVG technical support number free in usa
+AVG technical support number toll free number
+AVG technical support phone number
+AVG technologies phone number
+AVG telephone support number
+AVG antivirus customer support phone number
+AVG antivirus customer service phone number
+AVG customer support phone number
+AVG phone number customer service
+AVG technical support telephone number
+contact AVG antivirus customer service phone number
+customer service number for AVG antivirus
+phone number for AVG antivirus
+phone number for AVG antivirus customer service
+phone number for AVG antivirus support
+phone number for AVG customer service
+phone number for AVG customer service
+phone number for AVG customer support
+phone number for AVG tech support
+phone number AVG antivirus customer service
+AVG antivirus customer service number
+AVG antivirus customer service phone
+AVG antivirus customer service phone number
+AVG antivirus customer service phone number us
+AVG antivirus customer service telephone number
+AVG antivirus customer support
+AVG antivirus customer support number
+AVG antivirus phone number customer service us
+AVG antivirus phone number support
+AVG antivirus phone support
+AVG antivirus phone support number
+AVG antivirus support phone number
+AVG antivirus tech support phone number
+AVG antivirus technical support
+AVG antivirus technical support number
+AVG antivirus technical support phone number
+AVG customer service phone number
+AVG customer support phone number
+AVG helpline phone number
+AVG internet security customer service
+AVG internet security customer service phone number
+AVG internet security help phone number
+AVG internet security phone number customer service
+AVG phone number customer service
+AVG phone number customer support
+AVG security customer service phone number
+AVG security phone number customer service
+AVG support phone number
+AVG support telephone number
+AVG tech support number
+AVG tech support phone number
+AVG technical support
+AVG technical support number
+AVG technical support phone number
+AVG antivirus customer support phone number
+AVG antivirus phone number customer service
+AVG antivirus tech support number
+AVG customer service phone number
+AVG customer service phone numbers
+AVG internet security technical support
+AVG tech support phone number us
+AVG technical support telephone number
+contact AVG antivirus
+contact AVG by phone
+contact AVG customer service
+contact AVG antivirus customer service phone number
+contactAVG antivirus tech support usa
+customer service AVG phone number
+download AVG titanium
+dri AVG customer service number
+dri AVG customer service phone number
+dri AVG phone number
+how to contact AVG by email
+how to delete AVG from mac
+micro trend customer service
+AVG antivirus customer service number
+phone number for AVG customer service
+phone number forAVG customer service
+phone number forAVG customer support
+phone number forAVG tech support
+phone number forAVG technical support
+phone number for AVG antivirus technical support
+phone number for AVG security
+phone number for AVG support
+phone number for AVG technical support
+phone number for AVG antivirus customer service
+phone number for AVG customer service
+remove AVG from mac
+technical support for antivirus AVG
+telephone number forAVG technical support
+telephone AVG antivirus
+AVG antivirus contact number
+AVG antivirus customer care
+AVG antivirus customer care number
+AVG antivirus customer care number usa
+AVG antivirus customer service
+AVG antivirus customer service number :idea: :evil: :D :) :lol: :( :o :shock:
+AVG antivirus customer service phone number
+AVG antivirus customer service phone number usa
+AVG antivirus customer service telephone number
+AVG antivirus customer support
+AVG antivirus customer support in usa
+AVG antivirus customer support number
+AVG antivirus customer support phone number
+AVG antivirus for phone
+AVG antivirus free antivirus support
+AVG antivirus help phone number
+AVG antivirus helpline number
+AVG antivirus online support
+AVG antivirus phone
+AVG antivirus phone number
+AVG antivirus phone number in usa
+AVG antivirus phone number usa
+AVG antivirus phone support
+AVG antivirus plus tech support
+AVG antivirus protection
+AVG antivirus support
+AVG antivirus support number
+AVG antivirus support phone number
+AVG antivirus support services
+AVG antivirus support telephone number
+AVG antivirus tech support
+AVG antivirus tech support phone number free in usa
+AVG antivirus tech support number
+AVG antivirus tech support phone number
+AVG antivirus technical support
+AVG antivirus technical support number
+AVG antivirus technical support phone number
+AVG antivirus toll free customer care number
+AVG antivirus toll free number
+AVG antivirus contact phone number in usa
+AVG antivirus help desk phone number in usa
+AVG antivirus phone number support for technical issue in usa
+AVG antivirus support phone number
+AVG antivirus technical support help desk phone number
+AVG antivirus technical support phone number
+AVG contact number
+AVG contact number usa
+AVG contact phone number
+AVG contact support
+AVG contact number usa
+AVG contact phone number
+AVG contact phone number usa
+AVG customer & technical support
+AVG customer care
+AVG customer care center
+AVG customer care email
+AVG customer care number
+AVG customer care number
+AVG customer care number usa
+AVG customer care number usa toll free
+AVG customer care phone number usa
+AVG customer care tchnical support
+AVG customer care toll free
+AVG customer care toll free number
+AVG customer care usa
+AVG customer help
+AVG customer number
+AVG customer portal
+AVG customer service
+AVG customer service billing
+AVG customer service email address
+AVG customer service number
+AVG customer service phone
+AVG customer service phone number
+AVG customer service phone number us
+AVG customer service phone number usa
+AVG customer service reviews
+AVG customer service telephone number
+AVG customer service usa
+AVG customer support
+AVG customer support number
+AVG customer support phone
+AVG customer support phone number
+AVG customer service number
+AVG customer service number usa
+AVG customer service phone number
+AVG customer support number
+AVG customer support phone number
+AVG free phone support
+AVG gold support phone number
+AVG help desk phone number
+AVG help phone number
+AVG helpline
+AVG helpline phone number
+AVG hotline customer service phone number
+AVG internet security customer service
+AVG internet security phone number
+AVG internet security phone number in usa
+AVG lab usa customer service
+AVG labs usa customer serviceAVG
+AVG phone number
+AVG phone number customer service
+AVG phone number support
+AVG phone number tech support
+AVG phone number technical support
+AVG phone numbers customer support
+AVG phone support
+AVG phone support number
+AVG phone number customer service
+AVG phone number support
+AVG phone number tech support
+AVG phone number usa
+AVG security contact phone number
+AVG security phone number
+AVG security support phone number
+AVG software customer service
+AVG software customer service number
+AVG support center
+AVG support contact number
+AVG support email address
+AVG support phone number
+AVG support telephone number
+AVG support number usa
+AVG support phone number
+AVG support phone number usa
+AVG tech support
+AVG tech support center
+AVG tech support contact
+AVG tech support number
+AVG tech support number usa
+AVG tech support phone
+AVG tech support phone number
+AVG tech support phone number free
+AVG tech support number
+AVG tech support number usa
+AVG tech support phone number
+AVG technical support
+AVG technical support number
+AVG technical support phone number
+AVG technical support phone number usa
+AVG technical support reviews
+AVG technical support usa
+AVG technical support phone number
+AVG technical support number
+AVG technical support number toll free number
+AVG technical support number usa
+AVG technical support phone number
+AVG technical support phone number usa
+AVG technologies phone number
+AVG telephone number
+AVG telephone support number
+AVG toll free number
+AVG toll free number usa
+AVG usa customer care for tech support
+AVG usa customer service
+AVG usa phone number
+AVG antivirus customer service phone number
+AVG antivirus customer service phone number
+AVG antivirus customer support phone number
+AVG antivirus customer support phone number
+AVG antivirus technical support number
+AVG customer service phone number usa
+AVG internet security support phone number
+AVG.com customer service
+AVG antivirus antispyware 2011
+AVG antivirus customer support
+AVG antivirus serial key
+AVG antivirus serial number
+AVG antivirus support
+AVG antivirus technical support
+AVG business support
+AVG contact support
+AVG customer care number
+AVG customer service 888
+AVG customer service number
+AVG customer service phone number
+AVG customer service telephone number 18888790163
+AVG customer support
+AVG grentry non payment
+AVG helpline support number
+AVG internet security customer service
+AVG internet security technical support
+AVG oem customer service
+AVG pc cillin technical support
+AVG phone support
+AVG removal tool download
+AVG subscription renewal
+AVG support contact
+AVG support hotline
+AVG support phone number
+AVG tech support phone number18888790163
+AVG technical support
+AVG technical support chat
+AVG technical support phone number
+AVG technical support phone number usa  1888-879-0163
+AVG telephone number
+AVG titanium antivirus
+AVG titanium internet security
+AVG titanium maximum
+AVG titanium maximum security
+AVG titanium problems
+AVG titanium removal tool
+AVG titanium reviews
+AVG titanium support
+AVG virus removal service
+uninstall AVG smart surfing for mac
+
 -- 
-2.8.1
-
+You are receiving this mail because:
+You are the assignee for the bug.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
