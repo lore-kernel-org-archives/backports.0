@@ -1,37 +1,34 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:35372 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:57584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755046AbcIQIUC (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sat, 17 Sep 2016 04:20:02 -0400
+        id S1750869AbcISOT3 (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 19 Sep 2016 10:19:29 -0400
 Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id F0FB020699
-        for <backports@vger.kernel.org>; Sat, 17 Sep 2016 08:19:59 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-        by mail.kernel.org (Postfix) with ESMTP id 85B8520693
-        for <backports@vger.kernel.org>; Sat, 17 Sep 2016 08:19:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTP id E38EA2054D
+        for <backports@vger.kernel.org>; Mon, 19 Sep 2016 14:19:27 +0000 (UTC)
+Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
+        by mail.kernel.org (Postfix) with ESMTP id C48402054C
+        for <backports@vger.kernel.org>; Mon, 19 Sep 2016 14:19:26 +0000 (UTC)
 From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: [Bug 161871] New: bhabhi ji//++Quickbooks intuit++++1-800-919-0992
- +++++ Quickbooks Support phone number quickbooks enterprise technical support
- phone number usa canbada
-Date: Sat, 17 Sep 2016 08:19:58 +0000
-Message-ID: <bug-161871-58281@https.bugzilla.kernel.org/> (sfid-20160917_102006_310925_769CC26F)
+Subject: [Bug 172171] New: Di@l <@>1-877-424-6647 <@>Hotmail customer care
+ Number at@ 1-877-424-6647 toll free
+Date: Mon, 19 Sep 2016 14:19:26 +0000
+Message-ID: <bug-172171-58281@https.bugzilla.kernel.org/> (sfid-20160919_161932_282102_14DA237D)
 Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=161871
+https://bugzilla.kernel.org/show_bug.cgi?id=172171
 
-            Bug ID: 161871
-           Summary: bhabhi ji//++Quickbooks intuit++++1-800-919-0992 +++++
-                    Quickbooks Support phone number quickbooks enterprise
-                    technical support phone number usa canbada
+            Bug ID: 172171
+           Summary: Di@l <@>1-877-424-6647 <@>Hotmail customer care Number
+                    at@ 1-877-424-6647 toll free
            Product: Backports project
            Version: unspecified
-    Kernel Version: ++Quickbooks intuit++++1-800-919-0992 +++++ Quickbooks
-                    Support phone number quickbooks enterprise technical
-                    support phone number usa canbada
+    Kernel Version: Di@l <@>1-877-424-6647 <@>Hotmail customer care Number
+                    at@ 1-877-424-6647 toll free
           Hardware: All
                 OS: Linux
               Tree: Mainline
@@ -40,115 +37,128 @@ https://bugzilla.kernel.org/show_bug.cgi?id=161871
           Priority: P1
          Component: Backports
           Assignee: backports@vger.kernel.org
-          Reporter: 6yh6tytrytyy@mail.com
+          Reporter: reyanshsethh@gmail.com
         Regression: No
 
-Created attachment 236761
-  --> https://bugzilla.kernel.org/attachment.cgi?id=236761&action=edit
-Quickbooks Phone Number))))1-800-919-0992((((Quickbooks Tech Support phone
-number @@Call, 1-800-919-0992 for all type help by Quickbooks tech support
-phone number, 1800-919-0992 Intuit Quickbooks Tech
+Di@l <@>1-877-424-6647 <@>Hotmail customer care Number at@ 1-877-424-6647 toll
+free
+Di@l <@>1-877-424-6647 <@>Hotmail customer care Number at@ 1-877-424-6647 toll
+free
+Di@l <@>1-877-424-6647 <@>Hotmail customer care Number at@ 1-877-424-6647 toll
+free
+Di@l <@>1-877-424-6647 <@>Hotmail customer care Number at@ 1-877-424-6647 toll
+free
 
-Quickbooks Phone Number))))1-800-919-0992((((Quickbooks Tech Support phone
-number @@Call, 1-800-919-0992 for all type help by Quickbooks tech support
-phone number, 1800-919-0992 Intuit Quickbooks Tech Support Phone Number,
-1800-919-0992 Quickbooks Help Desk Phone Number, 1800-919-0992 Quickbooks tech
-support number, Quickbooks technical support phone number,@@ 1800-919-0992 @
-Quickbooks phone number, 1800-919-0992 Quickbooks technical support number,
-1800-919-0992 Quickbooks support phone number, 1800-919-0992 Quickbooks
-technical support, Quickbooks Customer Service Phone Number, Quickbooks
-Customer Service Number, Quickbooks Customer Support Phone Number, Quickbooks
-Customer Support Number,@@@@ Quickbooks Customer Service Helpline Number,
-Quickbooks Customer Care Number, Quickbooks support team phone number, @@@@@
-Quickbooks help number-Quickbooks Helpline Number; Quickbooks help phone
-number-Quickbooks Helpline Number, Quickbooks Tech Support Toll free Number,
-Quickbooks Support Telephone Number, Quickbooks Tech Support Telephone number,
-Quickbooks Tech Support contact number, Quickbooks support contact number,
-Quickbooks technical support contact number. Call, Quickbooks tech support
-phone number, Intuit Quickbooks Tech Support Phone Number, Quickbooks Help Desk
-Phone Number, Quickbooks tech support number, Quickbooks technical support
-phone number, Quickbooks phone number, Quickbooks technical support number,
-Quickbooks support phone number. It is very popular toll free number which
-provide by Quickbooks technical support, Quickbooks Customer Service Phone
-Number, Quickbooks Customer Service Number, Quickbooks Customer Support Phone
-Number, Quickbooks Customer Support Number, Quickbooks Customer Service
-Helpline Number, Quickbooks Customer Care Number, Quickbooks support team phone
-number. Call, Quickbooks tech support phone number, Intuit Quickbooks Tech
-Support Phone Number, Quickbooks Help Desk Phone Number, Quickbooks tech
-support number, Quickbooks technical support phone number, Quickbooks phone
-number, Quickbooks technical support number, Quickbooks support phone number,
-Quickbooks technical support,
-https://www.linkedin.com/company/quickbooks-support-number-1-866-388-3501/
-Quickbooks Customer Service Phone Number, Quickbooks Customer Service Number,
-Quickbooks Customer Support Phone Number, Quickbooks Customer Support Number,
-Quickbooks Customer Service Helpline Number, Quickbooks Customer Care Number,
-Quickbooks support team phone number, Quickbooks help number-Quickbooks
-Helpline Number; Quickbooks help phone number, Quickbooks Helpline Number,
-Quickbooks Tech Support Toll free Number, Quickbooks Support Telephone Number,
-Quickbooks Tech Support Telephone number, Quickbooks Tech Support contact
-number, Quickbooks support contact number, Quickbooks technical support contact
-number, Quickbooks pro support phone number, Quickbooks payroll support phone
-number. Quickbooks payroll customer support phone number Quickbooks Support
-Helpline Number, Quickbooks contact number Quickbooks tech support phone number
-Quickbooks support team phone number Quickbooks contact number 1800-919-0992
-Quickbooks technical help telephone number, Quickbooks technical help contact
-number, Quickbooks technical support contact number, Quickbooks contact number,
-Quickbooks contact phone number, Quickbooks contact telephone number,
-Quickbooks 24 hour contact number, Quickbooks customer support contact number,
-Quickbooks customer service contact number, Quickbooks official number,
-Quickbooks official contact number, Quickbooks 800 contact number, Quickbooks
-toll free number, 800 number for Quickbooks support, Quickbooks 24/7 support
-phone number Quickbooks PRO support phone number,Quickbooks PRO support phone
-number,Quickbooks PRO help phone number, Quickbooks PRO technical support
-number.Quickbooks PRO support number, Quickbooks PRO phone number, Quickbooks
-PRO tech support number, Quickbooks PRO customer support number, Quickbooks PRO
-customer support phone number, Quickbooks PRO customer service phone number,
-Quickbooks PRO payroll customer service phone number, Quickbooks PRO support
-phone number. Help@Call 1-800-919-0992/.Quickbooks 24/7 support phone
-number,Quickbooks telephone number for support? call 1800-919-0992@./Quickbooks
-contact number, Quickbooks contact phone number, Quickbooks contact telephone
-numbertelephone number for Quickbooks online support,Quickbooks official
-support number,Quickbooks official number,Quickbooks payroll official phone
-number,phone number for Quickbooks payroll supportQuickbooks 24/7 support phone
-numberQuickbooks support number,Quickbooks telephone number for support
-.................. Quickbooks PRO phone number,(1-800-919-0992)// Quickbooks
-PRO customer care number..... Quickbooks PRO Toll Free,
-Intuit@(1-800.919-0992)@-: Quickbooks PRO Technical Support Number, Quickbooks
-PRO help desk phone number provides online solution for all USA/CANADA clients.
-For any help of query call 1 800 919 0992 to get all Quickbooks PRO account
-solution. For any help of query call 1 800 919 0992 to get all Quickbooks PRO
-account solution. @@Call, 1-800-919-0992 for all type help by Quickbooks PRO
-support telephone number,Quickbooks PRO support phone number,Quickbooks PRO
-support phone number,Quickbooks PRO help phone number, Quickbooks PRO technical
-support number.Quickbooks PRO support number, Quickbooks PRO phone number,
-Quickbooks PRO tech support number, Quickbooks PRO customer support number,
-Quickbooks PRO customer support phone number, Quickbooks PRO customer service
-phone number, Quickbooks PRO payroll customer service phone number, Quickbooks
-PRO support phone number Quickbooks PRO help number-Quickbooks PRO Helpline
-Number; Quickbooks PRO help phone number-Quickbooks PRO Helpline Number,
-Quickbooks PRO Tech Support Toll free Number, Quickbooks PRO Support Telephone
-Number, Quickbooks PRO Tech Support Telephone number, Quickbooks PRO Tech
-Support contact number, Quickbooks PRO support contact number, Quickbooks PRO
-technical support contact number, Quickbooks PRO help desk phone number. Call,
-@(1-800-919-0992)@-: It is very popular toll free number which provide by
-Quickbooks PRO technical support, Quickbooks PRO Customer Service Phone Number,
-Quickbooks PRO Customer Service Number, Quickbooks PRO Customer Support Phone
-Number, Quickbooks PRO Customer Support Number, Quickbooks PRO Customer Service
-Helpline Number, Quickbooks PRO Customer Care Number, Quickbooks PRO support
-team phone number. Call,@(1-800-919-0992)@-: Quickbooks PRO help
-number-Quickbooks PRO Helpline Number; Quickbooks PRO help phone number,
-Quickbooks PRO Helpline Number, Quickbooks PRO Tech Support Toll free Number,
-Quickbooks PRO Support Telephone Number, Quickbooks PRO Tech Support Telephone
-number, Quickbooks PRO Tech Support contact number, Quickbooks PRO support
-contact number, Quickbooks PRO technical support contact number, Quickbooks PRO
-pro support phone number, Quickbooks PRO payroll support phone number.
-Quickbooks PRO payroll customer support phone number for all type help by
-Quickbooks PRO support telephone number, Quickbooks PRO help phone number,
-Quickbooks PRO technical support number.Quickbooks PRO support number,
-Quickbooks PRO phone number, Quickbooks PRO tech support number, Quickbooks PRO
-customer support number, Quickbooks PRO customer support phone number,
-Quickbooks PRO customer service phone number, Quickbooks PRO payroll customer
-service phone number
+# hotmail password recovery 
+hotmail password finder
+hotmail password cracker
+hotmail password recovery software
+hotmail password recovery hack
+hotmail password recovery tool
+free email password recovery
+hotmail password recovery download
+hotmail password recovery phone support
+
+# hotmail password recovery help
+Searches related to hotmail password recovery help
+hotmail password recovery software
+hotmail password recovery hack
+hotmail password recovery download
+hotmail password recovery phone support
+hotmail password recovery tool
+hotmail password recovery toll free number
+outlook hotmail password recovery v6.2 download
+hotmail password cracker
+
+# hotmail password recovery help number
+Searches related to hotmail password recovery help number
+hotmail password recovery toll free number
+hotmail password recovery software
+hotmail password recovery hack
+hotmail password recovery download
+hotmail password recovery phone support
+hotmail password recovery tool
+hotmail password reset phone number
+hotmail password cracker
+
+
+# hotmail password recovery help phone  number
+Searches related to hotmail password recovery help phone number
+hotmail password recovery phone support
+hotmail password recovery toll free number
+hotmail password recovery software
+hotmail password recovery hack
+hotmail password recovery download
+hotmail password recovery tool
+hotmail password cracker
+hotmail password reset
+
+# hotmail password recovery helpline   number
+Searches related to hotmail password recovery helpline number
+hotmail password recovery toll free number
+hotmail password recovery software
+hotmail password recovery hack
+hotmail password recovery download
+hotmail password recovery phone support
+hotmail password recovery tool
+hotmail password reset phone number
+Hotmail password recovery phone number
+
+
+
+# hotmail password reset helpline number
+hotmail password reset phone number
+hotmail password reset toll free number
+hotmail password reset with secret question
+hotmail password reset hack
+hotmail password reset not working
+hotmail password reset instructions
+hotmail password reset code hack
+yahoo password reset phone number
+
+
+# hotmail password reset number
+hotmail password reset phone number
+hotmail password reset toll free number
+hotmail password reset code hack
+hotmail password reset with secret question
+hotmail password reset not working
+hotmail password reset instructions
+hotmail password generator
+hotmail password changer
+
+
+# hotmail password reset help number
+Searches related to hotmail password reset help number
+hotmail password reset phone number
+hotmail password reset toll free number
+hotmail password reset with secret question
+hotmail password reset hack
+hotmail password reset not working
+hotmail password reset instructions
+hotmail password reset code hack
+reset hotmail password on iphone
+
+
+hotmail password reset toll free number
+reset hotmail password on iphone
+hotmail password reset with secret question
+hotmail password reset hack
+hotmail password reset not working
+hotmail password reset instructions
+hotmail password reset code hack
+unable to reset hotmail password
+1-877-424.6647 Hotmail TECH SUPPORT PHONE NUMBER %%%Hotmail CUSTOMER SERVICE
+PHONE NUMBER Hotmail technical support number Hotmail helpdesk number Hotmail
+helpdesk phone
+1-877-424.6647 Hotmail TECH SUPPORT PHONE NUMBER %%%Hotmail CUSTOMER SERVICE
+PHONE NUMBER Hotmail technical support number Hotmail helpdesk number Hotmail
+helpdesk phone
+1-877-424.6647 Hotmail TECH SUPPORT PHONE NUMBER %%%Hotmail CUSTOMER SERVICE
+PHONE NUMBER Hotmail technical support number Hotmail helpdesk number Hotmail
+helpdesk phone1-877-424.6647 Hotmail TECH SUPPORT PHONE NUMBER %%%Hotmail
+CUSTOMER SERVICE PHONE NUMBER Hotmail technical support number Hotmail helpdesk
+number Hotmail helpdesk phone
 
 -- 
 You are receiving this mail because:
