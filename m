@@ -1,35 +1,33 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:40272 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:33382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755337AbcIQKCr (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sat, 17 Sep 2016 06:02:47 -0400
+        id S932539AbcI3RNC (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 30 Sep 2016 13:13:02 -0400
 Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id DB6E720675
-        for <backports@vger.kernel.org>; Sat, 17 Sep 2016 10:02:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTP id 75FDE20328
+        for <backports@vger.kernel.org>; Fri, 30 Sep 2016 17:13:00 +0000 (UTC)
 Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-        by mail.kernel.org (Postfix) with ESMTP id 37552206AD
-        for <backports@vger.kernel.org>; Sat, 17 Sep 2016 10:02:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTP id 4EA6920306
+        for <backports@vger.kernel.org>; Fri, 30 Sep 2016 17:12:59 +0000 (UTC)
 From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: [Bug 162311] New: ????@@Quickbooks support phone number *^^==@
- 1800-919-0992 Quickbooks pro support phone number Quickbooks support phone
- number
-Date: Sat, 17 Sep 2016 10:02:43 +0000
-Message-ID: <bug-162311-58281@https.bugzilla.kernel.org/> (sfid-20160917_120249_965917_E0555C00)
+Subject: [Bug 174921] New: New MiccroSoft+1800-626-4703++ Outlook Help_Line
+ Outlook Help Desk Tech Support Number
+Date: Fri, 30 Sep 2016 17:12:59 +0000
+Message-ID: <bug-174921-58281@https.bugzilla.kernel.org/> (sfid-20160930_191304_755256_562F28F2)
 Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=162311
+https://bugzilla.kernel.org/show_bug.cgi?id=174921
 
-            Bug ID: 162311
-           Summary: ????@@Quickbooks support phone number *^^==@
-                    1800-919-0992 Quickbooks pro support phone number
-                    Quickbooks support phone number
+            Bug ID: 174921
+           Summary: New MiccroSoft+1800-626-4703++ Outlook Help_Line
+                    Outlook Help Desk Tech Support Number
            Product: Backports project
            Version: unspecified
-    Kernel Version: Quickbooks pro support phone number
+    Kernel Version: Outlook HelpLine Number
           Hardware: All
                 OS: Linux
               Tree: Mainline
@@ -38,223 +36,49 @@ https://bugzilla.kernel.org/show_bug.cgi?id=162311
           Priority: P1
          Component: Backports
           Assignee: backports@vger.kernel.org
-          Reporter: kirtibbbbb02@mail.com
+          Reporter: hrichasingh098@gmail.com
         Regression: No
 
-QUICKBOOKS Customer Service Phone Number, QUICKBOOKS Customer Service Number,
-QUICKBOOKS Customer Support Phone Number USA. Service Number 1-800-919-0992 for
-Customer Service Number for Quickbooks 1-800-919-0992 Support for Quickbooks
-Service Phone Number for Quickbooks Support Phone Number for Quickbooks
-Customer Service Number for Quickbooks Service Phone Number for payroll
-Quickbooks Support Phone Number for payroll Quickbooks Customer Support
-1-800-919-0992 Phone Number for Quickbooks Support Phone Number for payroll
-Quickbooks Customer Support 1-800-919-0992 Phone Number for Quickbooks Customer
-Service 1-800-919-0992 Phone Number for Quickbooks Call 1-800-919-0992 payroll
-Customer Service Phone Number for Quickbooks Support Phone Number
-1-800-919-0992 for Customer Support Number for Quickbooks Service Number
-1-800-919-0992 for Customer Service Number for Quickbooks
-$$1-800-919-0992"USA"quickbooks payroll technical support number
-$$1-800-919-0992"USA"QuickBooks customer service phone numbers
-$$1-800-919-0992"USA"quickbooks payroll technical support phone number
-$$1-800-919-0992"USA"quickbooks technical support contact number
-$$1-800-919-0992"USA"quickbook tech support number $$1-800-919-0992"
+Office mobile
+Office for Windows phone
+Office for Windows tablet
+Office for iPhone
+Office for iPad
+Office for Android phone
+Office for Android tablet
+USE MicroSoft Outlook TOLL FREE Number HOTMAIL CUSTOMER CARE NUMBER FOR
+COMPLETE ERROR ERADICATION
+Get all technical mishaps eliminated with our Hotmail telephone number for UK,
+we are offering 24*7 technical support, for each error in your hotmail account.
+you can simply consult with our brilliant technical experts through Hotmail
+customer support number for solution.
 
-https://www.linkedin.com/company/quickbooks-customer-service-number-1-800-919-0992-
+Having a technical support by your side, when you are going through the
+hardships of errors and disputes in your Hotmail account, is the best and
+simpler way one can achieve. Generally, the web users who have email account
+and are daily accessing the platform, come through technical troubles and
+certain technical mishaps, which often leaves the users in trouble and they are
+unable to access the same with ease. In the era of so many web mail services,
+Hotmail which is now referred as outlook is definitely leading. It is one of
+the ultimate web mail service providers, by Microsoft, there are other names of
+it, also like MSN and Windows Live. Apparently, users are being offered Hotmail
+UK Contact Number for solution.
+The features are what, which users love the most in their hotmail account, you
+can check out the chat, voice mail as well as huge storage space also, in your
+hotmail account. One can enjoy the updated version of this platform for with so
+many essential features and emailing services and for mishaps one can consider
+Hotmail UK Helpline number for solution. We basically, at Hotmail support are
+bringing best technical support for each and every mishap which users are
+coming across. There are many sorts of technical hindrances, which our talented
+experts resolve with Hotmail UK Help Support.
+SOME OF OUR SERVICES THROUGH HOTMAIL CUSTOMER SUPPORT NUMBER UK
 
-USA"quickbooks help desk phone number $$1-800-919-0992"USA"quickbooks payroll
-customer service number $$1-800-919-0992""quickbooks customer support number
-USA $$1-800-919-0992""quickbooks customer service number USA
-$$1-800-919-0992""quickbooks technical support USA $$1-800-919-0992""quickbooks
-payroll support USA $$1-800-919-0992"
-
-https://www.linkedin.com/company/quickbooks-tech-support-number-1-800-919-0992
-
-
-quickbooks payroll tech support USA $$1-800-919-0992""quickbooks support phone
-number USA $$1-800-919-0992""quickbooks support telephone number USA
-$$1-800-919-0992"USA"how to restore quickbooks payroll backup
-$$1-800-919-0992"USA"quickbooks phone support number
-$$1-800-919-0992"USA"quickbooks customer service telephone number
-$$1-800-919-0992"USA"quickbooks customer care phone number
-$$1-800-919-0992"USA"quickbooks phone number for customer support
-$$1-800-919-0992""quickbooks restore backup number USA
-$$1-800-919-0992""Quickbooks Contact Phone Number USA
-$$1-800-919-0992"USA"quickbooks 
-
-https://www.linkedin.com/company/quickbooks-technical-support-number-1-800-919-0992-
-
-restore backup phone number Help ==((((1-800-919-0992)))) QuickBooks Customer
-care Technical Support Help Phone Number USA Contact @@@@@USA 1-800-919-0992
-QuickBooks Pro support Phone Number and QuickBooks Pro customer support Phone
-Number USA Call USA @@@@@@ 1-800-919-0992 QuickBooks Pro Phone Number and
-QuickBooks Pro support TelePhone Number Chicago USA ((((1-800-919-0992))))
-QuickBooks Payroll Errors Tech Support Phone number USA 1-800-919-0992
-QuickBooks Errors Customer Care Technical Support Number USA Calling
-18009190992 QuickBooks Payroll ProAdvisor Accountant Premier Desktop payroll
-
-https://www.linkedin.com/company/quickbooks-support-number-1-800-919-0992
-
- Technical Support Phone Number? 18009190992 QuickBooks Pro Support Number,
-QuickBooks Premium Support Number, Calling QuickBooks Support phone Number
-Today? Calling QB 18009190992 QuickBooks Premium Support Telephone Number,
-QuickBooks premium Customer Support Telephone Number
-$$$$1-800-919-0992""##quickbooks payroll technical support
-number!!!!!!!@@1-800-919-0992$$$quickbooks customer support number!!!!!!!!
-$$$$$$1-800-919-0992@@QuickBooks customer service phone
-numbers!!!!!!!!!!!!!!$$$$1-800-919-0992##quickbook tech support
-number!!!!!!!!!!!!!! $$$$ 1-800-919-0992 quickbooks payroll technical support
-phone number!!!!!!!!!!!!!! $$$$ 1-800-919-0992 quickbooks technical support
-contact number!!!!!!!!!!!!!! $$$$1-800-919-0992##quickbook tech support
-
-https://www.linkedin.com/company/quickbooks-support-phone-number-1-800-919-0992
-
- number!!!!!!!!!!!!!!$$$$1-800-919-0992##quickbooks restore backup phone
-number!!!!!!!!!!!!!! $$$$ 1-800-919-0992 quickbooks restore backup phone
-number!!!!!!!!!!!!!! $$$$ 1-800-919-0992 quickbooks payroll customer service
-number!!!!!!!!!!!!!! $$$$ 1-800-919-0992 quickbooks customer support
-number!!!!!!!!!!!!!! $$$$ 1-800-919-0992 quickbooks customer care phone
-number!!!!!!!!!!!!!! $$$$ 1-800-919-0992 quickbooks phone number for customer
-support!!!!!!!!!!!!!! $$$$1-800-919-0992""quickbooks restore backup phone
-number!!!!!!!@@1-800-919-0992 how to restore quickbooks payroll
-backup!!!!!!!!!!!quickbooks payroll technical support
-number@@@@@!!!!!!!!!!!!!!!!!!!######1-800-919-0992 QuickBooks customer service
-phone numbers!!!!!!@@1-800-919-0992 quickbooks payroll technical support phone
-number!!!!!!!1-800-919-0992quickbooks technical support contact
-number!!!!!!!!quickbook tech support number USA @@@@@1-800-919-0992quickbooks
-help desk phone number!!!!!!!!!1-800-919-0992quickbooks payroll customer
-service number!!!!!!!!!1-800-919-0992quickbooks customer support
-number!!!!!!!!!1-800-919-0992!!!!!!quickbooks customer service
-number!!!!!!!!!1-800-919-0992quickbooks technical
-support!!!!!!!!!1-800-919-0992quickbooks payroll
-support!!!!!!!!!@1-800-919-0992@@@quickbooks payroll tech
-support!!!!!!!!!1-800-919-0992quickbooks payroll login!!!!!!!!!quickbooks
-support!!!!!!!!! $$$$1-800-919-0992""quickbooks support phone
-number!!!!!!!!!$$$$1-800-919-0992""quickbooks support telephone
-number!!!!!!!!!quickbooks phone support!!!!!!!!! USA
-$$$$1-800-919-0992""quickbooks phone support
-number!!!!!!!!!$$$$1-800-919-0992""quickbooks customer service telephone
-number!!!!!!!!!$$$$1-800-919-0992""quickbooks customer care phone
-number!!!!!!!!!quickbooks phone number for customer
-support!!!!!!!!!$$$$1-800-919-0992""quickbooks restore backup
-number!!!!!!!!!Quickbooks Contact Phone
-Number!!!!!!!!!$$$1-800-919-0992""support for quickbooks usa 1-800-919-0992
-QUICKBOOKS technical support USA, QUICKBOOKS Customer Service Phone Number,
-QUICKBOOKS Customer Service Number USA, QUICKBOOKS Customer Support Phone
-Number, QUICKBOOKS Customer Support Number, QUICKBOOKS Customer Service
-Helpline Number, QUICKBOOKS Customer Care Number, QUICKBOOKS support team phone
-number. Call, QUICKBOOKS tech support phone number, ==1-800-919-0992== Intuit
-QUICKBOOKS Tech Support Phone Number, QUICKBOOKS Help Desk Phone Number,
-QUICKBOOKS tech support number, QUICKBOOKS technical support phone number,
-1-800-919-0992 QUICKBOOKS phone number, QUICKBOOKS technical support number,
-QUICKBOOKS support phone number, 1-800-919-0992 QUICKBOOKS technical support,
-QUICKBOOKS Customer Service Phone Number, QUICKBOOKS Customer Service Number,
-QUICKBOOKS Customer Support Phone Number USA. Service Number 1-800-919-0992 for
-Customer Service Number for Quickbooks 1-800-919-0992 Support for Quickbooks
-Service Phone Number for Quickbooks Support Phone Number for Quickbooks
-Customer Service Number for Quickbooks Service Phone Number for payroll
-Quickbooks Support Phone Number for payroll Quickbooks Customer Support
-1-800-919-0992 Phone Number for Quickbooks Support Phone Number for payroll
-Quickbooks Customer Support 1-800-919-0992 Phone Number for Quickbooks Customer
-Service 1-800-919-0992 Phone Number for Quickbooks Call 1-800-919-0992 payroll
-Customer Service Phone Number for Quickbooks Support Phone Number
-1-800-919-0992 for Customer Support Number for Quickbooks Service Number
-1-800-919-0992 for Customer Service Number for Quickbooks Point where =CAll
-1800 919 0992=Quickbooks support phone number for customer support number
-quickbooks $$1-800-919-0992"USA"quickbooks payroll technical support number
-$$1-800-919-0992"USA"QuickBooks customer service phone numbers
-$$1-800-919-0992"USA"quickbooks payroll technical support phone number
-$$1-800-919-0992"USA"quickbooks technical support contact number
-$$1-800-919-0992"USA"quickbook tech support number
-$$1-800-919-0992"USA"quickbooks help desk phone number
-$$1-800-919-0992"USA"quickbooks payroll customer service number
-$$1-800-919-0992""quickbooks customer support number USA
-$$1-800-919-0992""quickbooks customer service number USA
-$$1-800-919-0992""quickbooks technical support USA $$1-800-919-0992""quickbooks
-payroll support USA $$1-800-919-0992""quickbooks payroll tech support USA
-$$1-800-919-0992""quickbooks support phone number USA
-$$1-800-919-0992""quickbooks support telephone number USA
-$$1-800-919-0992"USA"how to restore quickbooks payroll backup
-$$1-800-919-0992"USA"quickbooks phone support number
-$$1-800-919-0992"USA"quickbooks customer service telephone number
-$$1-800-919-0992"USA"quickbooks customer care phone number
-$$1-800-919-0992"USA"quickbooks phone number for customer support
-$$1-800-919-0992""quickbooks restore backup number USA
-$$1-800-919-0992""Quickbooks Contact Phone Number USA
-$$1-800-919-0992"USA"quickbooks restore backup phone number Help
-==((((1-800-919-0992)))) QuickBooks Customer care Technical Support Help Phone
-Number USA Contact @@@@@USA 1-800-919-0992 QuickBooks Pro support Phone Number
-and QuickBooks Pro customer support Phone Number USA Call USA @@@@@@
-1-800-919-0992 QuickBooks Pro Phone Number and QuickBooks Pro support TelePhone
-Number Chicago USA ((((1-800-919-0992)))) QuickBooks Payroll Errors Tech
-Support Phone number USA 1-800-919-0992 QuickBooks Errors Customer Care
-Technical Support Number USA Calling 18009190992 QuickBooks Payroll ProAdvisor
-Accountant Premier Desktop payroll Technical Support Phone Number? 18009190992
-QuickBooks Pro Support Number, QuickBooks Premium Support Number, Calling
-QuickBooks Support phone Number Today? Calling QB 18009190992 QuickBooks
-Premium Support Telephone Number, QuickBooks premium Customer Support Telephone
-Number $$$$1-800-919-0992""##quickbooks payroll technical support
-number!!!!!!!@@1-800-919-0992$$$quickbooks customer support number!!!!!!!!
-$$$$$$1-800-919-0992@@QuickBooks customer service phone
-numbers!!!!!!!!!!!!!!$$$$1-800-919-0992##quickbook tech support
-number!!!!!!!!!!!!!! $$$$ 1-800-919-0992 quickbooks payroll technical support
-phone number!!!!!!!!!!!!!! $$$$ 1-800-919-0992 quickbooks technical support
-contact number!!!!!!!!!!!!!! $$$$1-800-919-0992##quickbook tech support
-number!!!!!!!!!!!!!!$$$$1-800-919-0992##quickbooks restore backup phone
-number!!!!!!!!!!!!!! $$$$ 1-800-919-0992 quickbooks restore backup phone
-number!!!!!!!!!!!!!! $$$$ 1-800-919-0992 quickbooks payroll customer service
-number!!!!!!!!!!!!!! $$$$ 1-800-919-0992 quickbooks customer support
-number!!!!!!!!!!!!!! $$$$ 1-800-919-0992 quickbooks customer care phone
-number!!!!!!!!!!!!!! $$$$ 1-800-919-0992 quickbooks phone number for customer
-support!!!!!!!!!!!!!! $$$$1-800-919-0992""quickbooks restore backup phone
-number!!!!!!!@@1-800-919-0992 how to restore quickbooks payroll
-backup!!!!!!!!!!!quickbooks payroll technical support
-number@@@@@!!!!!!!!!!!!!!!!!!!######1-800-919-0992 QuickBooks customer service
-phone numbers!!!!!!@@1-800-919-0992 quickbooks payroll technical support phone
-number!!!!!!!1-800-919-0992quickbooks technical support contact
-number!!!!!!!!quickbook tech support number USA @@@@@1-800-919-0992quickbooks
-help desk phone number!!!!!!!!!1-800-919-0992quickbooks payroll customer
-service number!!!!!!!!!1-800-919-0992quickbooks customer support
-number!!!!!!!!!1-800-919-0992!!!!!!quickbooks customer service
-number!!!!!!!!!1-800-919-0992quickbooks technical
-support!!!!!!!!!1-800-919-0992quickbooks payroll
-support!!!!!!!!!@1-800-919-0992@@@quickbooks payroll tech
-support!!!!!!!!!1-800-919-0992quickbooks payroll login!!!!!!!!!quickbooks
-support!!!!!!!!! $$$$1-800-919-0992""quickbooks support phone
-number!!!!!!!!!$$$$1-800-919-0992""quickbooks support telephone
-number!!!!!!!!!quickbooks phone support!!!!!!!!! USA
-$$$$1-800-919-0992""quickbooks phone support
-number!!!!!!!!!$$$$1-800-919-0992""quickbooks customer service telephone
-number!!!!!!!!!$$$$1-800-919-0992""quickbooks customer care phone
-number!!!!!!!!!quickbooks phone number for customer
-support!!!!!!!!!$$$$1-800-919-0992""quickbooks restore backup
-number!!!!!!!!!Quickbooks Contact Phone
-Number!!!!!!!!!$$$1-800-919-0992""support for quickbooks usa 1-800-919-0992
-QUICKBOOKS technical support USA, QUICKBOOKS Customer Service Phone Number,
-QUICKBOOKS Customer Service Number USA, QUICKBOOKS Customer Support Phone
-Number, QUICKBOOKS Customer Support Number, QUICKBOOKS Customer Service
-Helpline Number, QUICKBOOKS Customer Care Number, QUICKBOOKS support team phone
-number. Call, QUICKBOOKS tech support phone number, ==1-800-919-0992== Intuit
-QUICKBOOKS Tech Support Phone Number, QUICKBOOKS Help Desk Phone Number,
-QUICKBOOKS tech support number, QUICKBOOKS technical support phone number,
-1-800-919-0992 QUICKBOOKS phone number, QUICKBOOKS technical support number,
-QUICKBOOKS support phone number, 1-800-919-0992 QUICKBOOKS technical support,
-QUICKBOOKS Customer Service Phone Number, QUICKBOOKS Customer Service Number,
-QUICKBOOKS Customer Support Phone Number USA. Service Number 1-800-919-0992 for
-Customer Service Number for Quickbooks 1-800-919-0992 Support for Quickbooks
-Service Phone Number for Quickbooks Support Phone Number for Quickbooks
-Customer Service Number for Quickbooks Service Phone Number for payroll
-Quickbooks Support Phone Number for payroll Quickbooks Customer Support
-1-800-919-0992 Phone Number for Quickbooks Support Phone Number for payroll
-Quickbooks Customer Support 1-800-919-0992 Phone Number for Quickbooks Customer
-Service 1-800-919-0992 Phone Number for Quickbooks Call 1-800-919-0992 payroll
-Customer Service Phone Number for Quickbooks Support Phone Number
-1-800-919-0992 for Customer Support Number for Quickbooks Service Number
-1-800-919-0992 for Customer Service Number for Quickbooks
-$$1-800-919-0992"USA"quickbooks payroll technical support number
-$$1-800-919-0992"USA"QuickBooks customer service phone numbers
-$$1-800-919-0992"USA"quickbooks payroll technical support phone number
-$$1-800-919-0992"USA"quickbooks technical support contact number
-$$1-800-919-0992"USA"
+We offer exceptional and totally unique support to each and every user through
+ultimate Hotmail customer care number for easy access of their account. Our
+services are simply great and unique, users can eradicate each and every issue
+on their own sometimes, but unfortunately there are certain technical errors
+which need prompt support and we resolve it, with excellent technical support
+for Microsoft Hotmail/Outlook UK Number .
 
 -- 
 You are receiving this mail because:
