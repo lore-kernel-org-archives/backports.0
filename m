@@ -1,36 +1,38 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:56512 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:33484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754187AbcIQUqo (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sat, 17 Sep 2016 16:46:44 -0400
+        id S1751157AbcJCKJz (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 3 Oct 2016 06:09:55 -0400
 Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id 2C5C6206FE
-        for <backports@vger.kernel.org>; Sat, 17 Sep 2016 20:46:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTP id 39EAF2021A
+        for <backports@vger.kernel.org>; Mon,  3 Oct 2016 10:09:53 +0000 (UTC)
 Received: from bugzilla1.web.kernel.org (bugzilla1.web.kernel.org [172.20.200.51])
-        by mail.kernel.org (Postfix) with ESMTP id C2FA42078B
-        for <backports@vger.kernel.org>; Sat, 17 Sep 2016 20:46:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTP id AFE80201FE
+        for <backports@vger.kernel.org>; Mon,  3 Oct 2016 10:09:50 +0000 (UTC)
 From: bugzilla-daemon@bugzilla.kernel.org
 To: backports@vger.kernel.org
-Subject: [Bug 165821] File Skype.Support +1-888-879-.0163 Skype Tech Support
- Phone number Skype phone Number
-Date: Sat, 17 Sep 2016 20:45:33 +0000
-Message-ID: <bug-165821-58281-SGV62GF6Wk@https.bugzilla.kernel.org/> (sfid-20160917_224646_105758_3CCA2D05)
-In-Reply-To: <bug-165821-58281@https.bugzilla.kernel.org/>
-References: <bug-165821-58281@https.bugzilla.kernel.org/>
+Subject: [Bug 175381] WiFi Intermittently Disconnecting
+Date: Mon, 03 Oct 2016 10:09:50 +0000
+Message-ID: <bug-175381-58281-J9G80AltDm@https.bugzilla.kernel.org/> (sfid-20161003_120957_142133_9478412B)
+In-Reply-To: <bug-175381-58281@https.bugzilla.kernel.org/>
+References: <bug-175381-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=165821
+https://bugzilla.kernel.org/show_bug.cgi?id=175381
 
-Spam Script <spamscript@kernel.org> changed:
+Luca Coelho <luca@coelho.fi> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-              Group|                            |Junk
-         Resolution|---                         |INVALID
+                 CC|                            |luca@coelho.fi
+          Component|Backports                   |network-wireless
+            Version|unspecified                 |2.5
+           Assignee|backports@vger.kernel.org   |drivers_network-wireless@ke
+                   |                            |rnel-bugs.osdl.org
+            Product|Backports project           |Drivers
 
 -- 
 You are receiving this mail because:
