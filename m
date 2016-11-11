@@ -1,92 +1,57 @@
-Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pf0-f173.google.com ([209.85.192.173]:34355 "EHLO
-        mail-pf0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753149AbcKVQAj (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 22 Nov 2016 11:00:39 -0500
-Received: by mail-pf0-f173.google.com with SMTP id c4so4848266pfb.1
-        for <backports@vger.kernel.org>; Tue, 22 Nov 2016 08:00:11 -0800 (PST)
-From: Thomas Pedersen <thomas@eero.com>
-To: backports@vger.kernel.org
-Cc: hauke@hauke-m.de, Thomas Pedersen <thomas@eero.com>
-Subject: [PATCH 1/2] export KLIB_VERSION during make install
-Date: Tue, 22 Nov 2016 07:59:54 -0800
-Message-Id: <20161122155955.1038-1-thomas@eero.com> (sfid-20161122_170041_865911_2746ED2D)
-Sender: backports-owner@vger.kernel.org
+Return-path: <mcgrof@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1476883383.10092.6.camel@sipsolutions.net>
+References: <1476883383.10092.6.camel@sipsolutions.net>
+From: "Luis R. Rodriguez" <mcgrof@gmail.com>
+Date: Fri, 11 Nov 2016 08:32:22 -0800
+Message-ID: <CAB=NE6V5f5gt63A5H-6kQDcdJxTAJ-9Zn1Tp8v1_x3dcihWamQ@mail.gmail.com> (sfid-20161111_173225_958092_027BC0D3)
+Subject: Re: rename .local-symbols -> local-symbols?
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: backports@vger.kernel.org
+Content-Type: multipart/alternative; boundary=001a114e021afc3887054109087f
 List-ID: <backports@vger.kernel.org>
 
-This should fix make install against non-running kernel
-versions.
+--001a114e021afc3887054109087f
+Content-Type: text/plain; charset=UTF-8
 
-Signed-off-by: Thomas Pedersen <thomas@eero.com>
----
- backport/Makefile               | 6 ++++--
- backport/Makefile.real          | 4 ++--
- backport/scripts/mod_helpers.sh | 2 +-
- 3 files changed, 7 insertions(+), 5 deletions(-)
+On Oct 19, 2016 7:14 AM, "Johannes Berg" <johannes@sipsolutions.net> wrote:
+>
+> Just assisted somebody on IRC who forgot to copy the file - likely
+> because it has a . in front and thus is hidden and isn't matched by the
+> usual * etc.
+>
+> Should we consider renaming it during the generation? Wouldn't be a big
+> change, and we already ship a lot of strange files (Kconfig.*, etc.)
+> that people can't really do anything with, and still see.
+>
+> Thoughts?
 
-diff --git a/backport/Makefile b/backport/Makefile
-index 11678f6..edd36b7 100644
---- a/backport/Makefile
-+++ b/backport/Makefile
-@@ -11,16 +11,18 @@ BACKPORT_DIR := $(shell pwd)
- KMODDIR ?= updates
- ifneq ($(origin KLIB), undefined)
- KMODPATH_ARG := "INSTALL_MOD_PATH=$(KLIB)"
-+KLIB_VERSION := $(shell basename $(KLIB))
- else
--KLIB := /lib/modules/$(shell uname -r)/
-+KLIB_VERSION := $(shell uname -r)
- KMODPATH_ARG :=
-+KLIB := /lib/modules/$(KLIB_VERSION)/
- endif
- KLIB_BUILD ?= $(KLIB)/build/
- KERNEL_CONFIG := $(KLIB_BUILD)/.config
- KERNEL_MAKEFILE := $(KLIB_BUILD)/Makefile
- CONFIG_MD5 := $(shell md5sum $(KERNEL_CONFIG) 2>/dev/null | sed 's/\s.*//')
- 
--export KLIB KLIB_BUILD BACKPORT_DIR KMODDIR KMODPATH_ARG
-+export KLIB KLIB_VERSION KLIB_BUILD BACKPORT_DIR KMODDIR KMODPATH_ARG
- 
- # disable built-in rules for this file
- .SUFFIXES:
-diff --git a/backport/Makefile.real b/backport/Makefile.real
-index a0f4916..5ec133e 100644
---- a/backport/Makefile.real
-+++ b/backport/Makefile.real
-@@ -95,7 +95,7 @@ install: modules
- 	@./scripts/blacklist.sh $(KLIB)/ $(KLIB)/$(KMODDIR)
- 	@./scripts/compress_modules.sh $(KLIB)/$(KMODDIR)
- 	@./scripts/check_depmod.sh
--	@/sbin/depmod -a
-+	@/sbin/depmod -a $(KLIB_VERSION)
- 	@./scripts/update-initramfs.sh $(KLIB)
- 	@echo
- 	@echo Your backported driver modules should be installed now.
-@@ -108,7 +108,7 @@ modules_install: install
- .PHONY: uninstall
- uninstall:
- 	@./scripts/uninstall.sh
--	@/sbin/depmod -a
-+	@/sbin/depmod -a $(KLIB_VERSION)
- 	@./scripts/update-initramfs.sh $(KLIB)
- 	@echo
- 	@echo Your backported driver modules should be uninstalled now.
-diff --git a/backport/scripts/mod_helpers.sh b/backport/scripts/mod_helpers.sh
-index 0845b3e..4056a0f 100644
---- a/backport/scripts/mod_helpers.sh
-+++ b/backport/scripts/mod_helpers.sh
-@@ -2,7 +2,7 @@ function mod_filename()
- {
- 	which modinfo > /dev/null 2>&1
- 	if [[ $? -eq 0 ]]; then
--		MOD_QUERY="modinfo -F filename"
-+		MOD_QUERY="modinfo -k ${KLIB_VERSION} -F filename"
- 	else
- 		MOD_QUERY="modprobe -l"
- 	fi
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Fine by me
 
---
-To unsubscribe from this list: send the line "unsubscribe backports" in
+  Luis
+
+--001a114e021afc3887054109087f
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p dir=3D"ltr"></p>
+<p dir=3D"ltr">On Oct 19, 2016 7:14 AM, &quot;Johannes Berg&quot; &lt;<a hr=
+ef=3D"mailto:johannes@sipsolutions.net">johannes@sipsolutions.net</a>&gt; w=
+rote:<br>
+&gt;<br>
+&gt; Just assisted somebody on IRC who forgot to copy the file - likely<br>
+&gt; because it has a . in front and thus is hidden and isn&#39;t matched b=
+y the<br>
+&gt; usual * etc.<br>
+&gt;<br>
+&gt; Should we consider renaming it during the generation? Wouldn&#39;t be =
+a big<br>
+&gt; change, and we already ship a lot of strange files (Kconfig.*, etc.)<b=
+r>
+&gt; that people can&#39;t really do anything with, and still see.<br>
+&gt;<br>
+&gt; Thoughts?</p>
+<p dir=3D"ltr">Fine by me</p>
+<p dir=3D"ltr">=C2=A0 Luis</p>
+
+--001a114e021afc3887054109087f--
