@@ -1,47 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from [192.19.211.62] ([192.19.211.62]:48746 "EHLO
+Received: from [192.19.211.62] ([192.19.211.62]:48747 "EHLO
         relay.smtp.broadcom.com" rhost-flags-FAIL-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S966902AbcKLUZg (ORCPT
+        by vger.kernel.org with ESMTP id S966898AbcKLUZg (ORCPT
         <rfc822;backports@vger.kernel.org>); Sat, 12 Nov 2016 15:25:36 -0500
 From: Arend van Spriel <arend.vanspriel@broadcom.com>
 To: "Luis R. Rodriguez" <mcgrof@kernel.org>
 Cc: backports@vger.kernel.org,
         Arend van Spriel <arend.vanspriel@broadcom.com>
-Subject: [PATCH 1/3] backports: add backport for nla_memdup()
-Date: Sat, 12 Nov 2016 20:18:41 +0000
-Message-Id: <1478981923-12298-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20161112_212539_916745_F427AF9B)
+Subject: [PATCH 3/3] backports: empty define for __ro_after_init
+Date: Sat, 12 Nov 2016 20:18:43 +0000
+Message-Id: <1478981923-12298-3-git-send-email-arend.vanspriel@broadcom.com> (sfid-20161112_212539_146779_9220B565)
+In-Reply-To: <1478981923-12298-1-git-send-email-arend.vanspriel@broadcom.com>
+References: <1478981923-12298-1-git-send-email-arend.vanspriel@broadcom.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-New helper function was introduced in netlink so a backport is needed.
+nl80211 now uses section qualifier __ro_after_init. However, this
+is not available in kernels before v4.6. Neither is the section
+itself hence adding an empty define in backports.
 
 Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
 ---
- backport/backport-include/net/netlink.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ backport/backport-include/linux/cache.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+ create mode 100644 backport/backport-include/linux/cache.h
 
-diff --git a/backport/backport-include/net/netlink.h b/backport/backport-include/net/netlink.h
-index 40160b5..b836a4b 100644
---- a/backport/backport-include/net/netlink.h
-+++ b/backport/backport-include/net/netlink.h
-@@ -189,4 +189,17 @@ static inline __le64 nla_get_le64(const struct nlattr *nla)
- }
- #endif /* < 4.4 */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
-+/**
-+ * nla_memdup - duplicate attribute memory (kmemdup)
-+ * @src: netlink attribute to duplicate from
-+ * @gfp: GFP mask
-+ */
-+#define nla_memdump LINUX_BACKPORT(nla_memdup)
-+static inline void *nla_memdup(const struct nlattr *src, gfp_t gfp)
-+{
-+	return kmemdup(nla_data(src), nla_len(src), gfp);
-+}
-+#endif /* < 4.9 */
+diff --git a/backport/backport-include/linux/cache.h b/backport/backport-include/linux/cache.h
+new file mode 100644
+index 0000000..9ea4a96
+--- /dev/null
++++ b/backport/backport-include/linux/cache.h
+@@ -0,0 +1,11 @@
++#ifndef _BACKPORT_CACHE_H
++#define _BACKPORT_CACHE_H
 +
- #endif /* __BACKPORT_NET_NETLINK_H */
++#include_next <linux/cache.h>
++#include <linux/version.h>
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0))
++#define __ro_after_init
++#endif
++
++#endif /* _BACKPORT_CACHE_H */
 -- 
 1.9.1
 
