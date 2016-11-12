@@ -1,56 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw1.esolutions.de ([178.239.73.50]:49040 "EHLO
-        mail-gw1.esolutions.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752364AbcKRNNv (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 18 Nov 2016 08:13:51 -0500
-Received: from DEGAMES01.eso.local (degames01.eso.local [10.2.0.245])
-        by mail-gw1.esolutions.de (Postfix) with ESMTPS
-        for <backports@vger.kernel.org>; Fri, 18 Nov 2016 14:13:49 +0100 (CET)
-From: Gienger Timo <Timo.Gienger@esolutions.de>
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: Kernel integrated backports ends in endless silentoldconfig
- loop when built out of tree
-Date: Fri, 18 Nov 2016 13:13:48 +0000
-Message-ID: <DFF58FB81DEAB64EB0833EEE3623AE53AB6081A7@DEGAMES02.eso.local> (sfid-20161118_141411_431593_FD7B113F)
-References: <DFF58FB81DEAB64EB0833EEE3623AE53AB604CDD@DEGAMES02.eso.local>
- <DFF58FB81DEAB64EB0833EEE3623AE53AB607D0B@DEGAMES02.eso.local>
- <DFF58FB81DEAB64EB0833EEE3623AE53AB60806F@DEGAMES02.eso.local>
- <DFF58FB81DEAB64EB0833EEE3623AE53AB6080F4@DEGAMES02.eso.local>
- <DFF58FB81DEAB64EB0833EEE3623AE53AB60812F@DEGAMES02.eso.local>
-In-Reply-To: <DFF58FB81DEAB64EB0833EEE3623AE53AB60812F@DEGAMES02.eso.local>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Received: from s3.sipsolutions.net ([5.9.151.49]:42652 "EHLO sipsolutions.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966699AbcKLVH3 (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sat, 12 Nov 2016 16:07:29 -0500
+Message-ID: <1478984842.4226.1.camel@sipsolutions.net> (sfid-20161112_220731_357735_75E66460)
+Subject: Re: [PATCH 3/3] backports: empty define for __ro_after_init
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: backports@vger.kernel.org
+Date: Sat, 12 Nov 2016 22:07:22 +0100
+In-Reply-To: <1478981923-12298-3-git-send-email-arend.vanspriel@broadcom.com> (sfid-20161112_212539_146779_9220B565)
+References: <1478981923-12298-1-git-send-email-arend.vanspriel@broadcom.com>
+         <1478981923-12298-3-git-send-email-arend.vanspriel@broadcom.com>
+         (sfid-20161112_212539_146779_9220B565)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-T24gRnJpLCAyMDE2LTExLTE4IGF0IDEyOjQ5ICswMDAwLCBHaWVuZ2VyIFRpbW8gd3JvdGU6Cj4g
-QnV0IHNlZW1zIHRvIGdldCBtZXNzZWQgdXAgc29tZXdoZXJlIGJlY2F1c2Ugb2YgdGhhdC4KClNv
-cnJ5IGZvciB0aGUgc3BhbSwgaXQgd2lsbCBob3BlZnVsbHkgYmUgdGhlIGxhc3QgbWFpbC4gQWZ0
-ZXIgZXhjaGFuZ2luZwp0aGUgdmFyaWFibGUgJEJBQ0tQT1JUX0RJUiBpbiBiYWNrcG9ydHMvTWFr
-ZWZpbGUgc291cmNpbmcgcGFyYW1ldGVyOgpkaWZmIC0tZ2l0IGEvYmFja3BvcnRzL0tjb25maWcg
-Yi9iYWNrcG9ydHMvS2NvbmZpZwppbmRleCBjMjAxMDI5Li5lYmJmYmQ4IDEwMDY0NAotLS0gYS9i
-YWNrcG9ydHMvS2NvbmZpZworKysgYi9iYWNrcG9ydHMvS2NvbmZpZwpAQCAtMzAsNyArMzAsNyBA
-QCBtZW51Y29uZmlnIEJBQ0tQT1JUX0xJTlVYCiAKIGlmIEJBQ0tQT1JUX0xJTlVYCiAKLXNvdXJj
-ZSAiJEJBQ0tQT1JUX0RJUi9LY29uZmlnLnZlcnNpb25zIgotc291cmNlICIkQkFDS1BPUlRfRElS
-L0tjb25maWcuc291cmNlcyIKK3NvdXJjZSAiYmFja3BvcnRzL0tjb25maWcudmVyc2lvbnMiCitz
-b3VyY2UgImJhY2twb3J0cy9LY29uZmlnLnNvdXJjZXMiCiAKIGVuZGlmICMgQkFDS1BPUlRfTElO
-VVgKCgpJIGZhY2VkIHRoZSBpc3N1ZSB0aGF0IHRoZSBpbmNsdWRlcyBjb3VsZG7CtHQgYmUgZm91
-bmQuIEp1c3QgaW4gY2FzZQpzb21lb25lIGVsc2UgaGF2aW5nIHRoZSBzYW1lIGlzc3VlLCBhbHNv
-IHRoZSBOT1NURElOQ19GTEFHUyBuZWVkIHRvIGJlCmFkanVzdGVkIHRvIGZpbmQgdGhlIGluY2x1
-ZGVzOgoKZGlmZiAtLWdpdCBhL2JhY2twb3J0cy9NYWtlZmlsZSBiL2JhY2twb3J0cy9NYWtlZmls
-ZQppbmRleCA3NTlmZTdmLi4zNDc5ZDA0IDEwMDY0NAotLS0gYS9iYWNrcG9ydHMvTWFrZWZpbGUK
-KysrIGIvYmFja3BvcnRzL01ha2VmaWxlCkBAIC0yMSwxMiArMjEsMTMgQEAgZXhwb3J0IGJhY2tw
-b3J0X3NyY3RyZWUgPSAkKE0pCiBlbHNlCiBleHBvcnQgQkFDS1BPUlRfRElSID0gYmFja3BvcnRz
-LwogZXhwb3J0IGJhY2twb3J0X3NyY3RyZWUgPSAkKEJBQ0tQT1JUX0RJUikKKwogTk9TVERJTkNf
-RkxBR1MgOj0gXAotICAgICAgIC1JJChCQUNLUE9SVF9ESVIpL2JhY2twb3J0LWluY2x1ZGUvIFwK
-LSAgICAgICAtSSQoQkFDS1BPUlRfRElSKS9iYWNrcG9ydC1pbmNsdWRlL3VhcGkgXAotICAgICAg
-IC1JJChCQUNLUE9SVF9ESVIpL2luY2x1ZGUvIFwKLSAgICAgICAtSSQoQkFDS1BPUlRfRElSKS9p
-bmNsdWRlL3VhcGkgXAotICAgICAgIC1pbmNsdWRlICQoQkFDS1BPUlRfRElSKS9iYWNrcG9ydC1p
-bmNsdWRlL2JhY2twb3J0L2JhY2twb3J0LmggXAorICAgICAgIC1JJChzcmN0cmVlKS9iYWNrcG9y
-dHMvYmFja3BvcnQtaW5jbHVkZS8gXAorICAgICAgIC1JJChzcmN0cmVlKS9iYWNrcG9ydHMvYmFj
-a3BvcnQtaW5jbHVkZS91YXBpIFwKKyAgICAgICAtSSQoc3JjdHJlZSkvYmFja3BvcnRzL2luY2x1
-ZGUvIFwKKyAgICAgICAtSSQoc3JjdHJlZSkvYmFja3BvcnRzL2luY2x1ZGUvdWFwaSBcCisgICAg
-ICAgLWluY2x1ZGUKJChzcmN0cmVlKS9iYWNrcG9ydHMvYmFja3BvcnQtaW5jbHVkZS9iYWNrcG9y
-dC9iYWNrcG9ydC5oIFwKICAgICAgICAkKENGTEFHUykKIGVuZGlmCgoKQlIKVGltbwoK
+On Sat, 2016-11-12 at 20:18 +0000, Arend van Spriel wrote:
+> nl80211 now uses section qualifier __ro_after_init. However, this
+> is not available in kernels before v4.6. Neither is the section
+> itself hence adding an empty define in backports.
+
+> +#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0))
+> +#define __ro_after_init
+> +#endif
+
+Due to how __ro_after_init works, it *has* to be a macro originally, so
+you could just ifndef on itself:
+
+#ifndef __ro_after_init
+#define __ro_after_init
+#endif
+
+and be slightly more compatible in case somebody ever backports it.
+
+Don't think it really matters much, but why not.
+
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
