@@ -1,53 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:35825 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752517AbcKNT00 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 14 Nov 2016 14:26:26 -0500
-Received: by mail-wm0-f52.google.com with SMTP id a197so117204489wmd.0
-        for <backports@vger.kernel.org>; Mon, 14 Nov 2016 11:26:24 -0800 (PST)
-Subject: Re: [PATCH 3/3] backports: empty define for __ro_after_init
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Kees Cook <keescook@chromium.org>
-References: <1478981923-12298-1-git-send-email-arend.vanspriel@broadcom.com>
- <1478981923-12298-3-git-send-email-arend.vanspriel@broadcom.com>
- <1478984842.4226.1.camel@sipsolutions.net>
- <20161114185917.GZ13978@wotan.suse.de>
-Cc: backports@vger.kernel.org
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <c36c06eb-41b9-cd72-0260-317410e77a63@broadcom.com> (sfid-20161114_202628_521372_B46FF4B8)
-Date: Mon, 14 Nov 2016 20:26:21 +0100
-MIME-Version: 1.0
-In-Reply-To: <20161114185917.GZ13978@wotan.suse.de>
-Content-Type: text/plain; charset=windows-1252
+Received: from [192.19.211.62] ([192.19.211.62]:50685 "EHLO
+        relay.smtp.broadcom.com" rhost-flags-FAIL-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S934302AbcKMTnP (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sun, 13 Nov 2016 14:43:15 -0500
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: backports@vger.kernel.org,
+        Arend van Spriel <arend.vanspriel@broadcom.com>
+Subject: [PATCH V2] backports: empty define for __ro_after_init
+Date: Sun, 13 Nov 2016 19:43:07 +0000
+Message-Id: <1479066187-26861-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20161113_204317_871666_964C0C8E)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 14-11-2016 19:59, Luis R. Rodriguez wrote:
-> On Sat, Nov 12, 2016 at 10:07:22PM +0100, Johannes Berg wrote:
->> On Sat, 2016-11-12 at 20:18 +0000, Arend van Spriel wrote:
->>> nl80211 now uses section qualifier __ro_after_init. However, this
->>> is not available in kernels before v4.6. Neither is the section
->>> itself hence adding an empty define in backports.
->>
->>> +#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0))
->>> +#define __ro_after_init
->>> +#endif
->>
->> Due to how __ro_after_init works, it *has* to be a macro originally, so
->> you could just ifndef on itself:
->>
->> #ifndef __ro_after_init
->> #define __ro_after_init
->> #endif
->>
->> and be slightly more compatible in case somebody ever backports it.
-> 
-> Agreed.
+nl80211 now uses section qualifier __ro_after_init. However, this
+is not available in kernels before v4.6. Neither is the section
+itself hence adding an empty define in backports.
 
-Agree as well hence I posted a V2 yesterday ;-)
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+---
+v2:
+- use ifndef instead of version check
+- consequently dropped inclusion of version.h
+---
+ backport/backport-include/linux/cache.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+ create mode 100644 backport/backport-include/linux/cache.h
 
-Regards,
-Arend
+diff --git a/backport/backport-include/linux/cache.h b/backport/backport-include/linux/cache.h
+new file mode 100644
+index 0000000..bd7cdcf
+--- /dev/null
++++ b/backport/backport-include/linux/cache.h
+@@ -0,0 +1,10 @@
++#ifndef _BACKPORT_CACHE_H
++#define _BACKPORT_CACHE_H
++
++#include_next <linux/cache.h>
++
++#ifndef __ro_after_init
++#define __ro_after_init
++#endif
++
++#endif /* _BACKPORT_CACHE_H */
+-- 
+1.9.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
