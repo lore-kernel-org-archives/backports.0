@@ -1,44 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:42652 "EHLO sipsolutions.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966699AbcKLVH3 (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sat, 12 Nov 2016 16:07:29 -0500
-Message-ID: <1478984842.4226.1.camel@sipsolutions.net> (sfid-20161112_220731_357735_75E66460)
-Subject: Re: [PATCH 3/3] backports: empty define for __ro_after_init
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org
-Date: Sat, 12 Nov 2016 22:07:22 +0100
-In-Reply-To: <1478981923-12298-3-git-send-email-arend.vanspriel@broadcom.com> (sfid-20161112_212539_146779_9220B565)
-References: <1478981923-12298-1-git-send-email-arend.vanspriel@broadcom.com>
-         <1478981923-12298-3-git-send-email-arend.vanspriel@broadcom.com>
-         (sfid-20161112_212539_146779_9220B565)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-pg0-f44.google.com ([74.125.83.44]:33824 "EHLO
+        mail-pg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753379AbcKNI4B (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 14 Nov 2016 03:56:01 -0500
+Received: by mail-pg0-f44.google.com with SMTP id x23so49205094pgx.1
+        for <backports@vger.kernel.org>; Mon, 14 Nov 2016 00:56:01 -0800 (PST)
+Received: from [10.176.68.21] ([192.19.213.250])
+        by smtp.gmail.com with ESMTPSA id d197sm33337563pfd.38.2016.11.14.00.49.06
+        for <backports@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 14 Nov 2016 00:49:06 -0800 (PST)
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Subject: min/max mtu field in struct net_device
+Message-ID: <c4682854-87ce-5e28-d049-545f24d48cab@broadcom.com> (sfid-20161114_095807_156709_13DD77F5)
+Date: Mon, 14 Nov 2016 09:49:03 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sat, 2016-11-12 at 20:18 +0000, Arend van Spriel wrote:
-> nl80211 now uses section qualifier __ro_after_init. However, this
-> is not available in kernels before v4.6. Neither is the section
-> itself hence adding an empty define in backports.
+Just wondering. Does anyone have any ideas on how to backport the two
+patches below. The struct net_device now holds mtu range which network
+subsystem checks. For a number of drivers and mac80211 it means they no
+longer have .ndo_change_mtu callback. My guess is that we need patches
+in backport of some sort to tackle this.
 
-> +#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0))
-> +#define __ro_after_init
-> +#endif
+Regards,
+Arend
 
-Due to how __ro_after_init works, it *has* to be a macro originally, so
-you could just ifndef on itself:
+commit 61e84623ace35ce48975e8f90bbbac7557c43d61
+Author: Jarod Wilson <jarod@redhat.com>
+Date:   Fri Oct 7 22:04:33 2016 -0400
 
-#ifndef __ro_after_init
-#define __ro_after_init
-#endif
+    net: centralize net_device min/max MTU checking
 
-and be slightly more compatible in case somebody ever backports it.
+commit 9c22b4a34eddbaa5b5243c8cd27e31aa36e676e1
+Author: Jarod Wilson <jarod@redhat.com>
+Date:   Thu Oct 20 13:55:18 2016 -0400
 
-Don't think it really matters much, but why not.
-
-johannes
+    net: use core MTU range checking in wireless drivers
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
