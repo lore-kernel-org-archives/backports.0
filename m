@@ -1,36 +1,53 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw1.esolutions.de ([178.239.73.50]:31461 "EHLO
-        mail-gw1.esolutions.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940711AbcKQRNB (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 17 Nov 2016 12:13:01 -0500
-Received: from DEGAMES01.eso.local (degames01.eso.local [10.2.0.245])
-        by mail-gw1.esolutions.de (Postfix) with ESMTPS
-        for <backports@vger.kernel.org>; Thu, 17 Nov 2016 15:41:51 +0100 (CET)
-From: Gienger Timo <Timo.Gienger@esolutions.de>
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: Kernel integrated backports ends in endless silentoldconfig
- loop when built out of tree
-Date: Thu, 17 Nov 2016 14:41:49 +0000
-Message-ID: <DFF58FB81DEAB64EB0833EEE3623AE53AB607D0B@DEGAMES02.eso.local> (sfid-20161117_181306_092086_7392983A)
-References: <DFF58FB81DEAB64EB0833EEE3623AE53AB604CDD@DEGAMES02.eso.local>
-In-Reply-To: <DFF58FB81DEAB64EB0833EEE3623AE53AB604CDD@DEGAMES02.eso.local>
-Content-Type: text/plain; charset="utf-8"
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:35825 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752517AbcKNT00 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 14 Nov 2016 14:26:26 -0500
+Received: by mail-wm0-f52.google.com with SMTP id a197so117204489wmd.0
+        for <backports@vger.kernel.org>; Mon, 14 Nov 2016 11:26:24 -0800 (PST)
+Subject: Re: [PATCH 3/3] backports: empty define for __ro_after_init
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Kees Cook <keescook@chromium.org>
+References: <1478981923-12298-1-git-send-email-arend.vanspriel@broadcom.com>
+ <1478981923-12298-3-git-send-email-arend.vanspriel@broadcom.com>
+ <1478984842.4226.1.camel@sipsolutions.net>
+ <20161114185917.GZ13978@wotan.suse.de>
+Cc: backports@vger.kernel.org
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <c36c06eb-41b9-cd72-0260-317410e77a63@broadcom.com> (sfid-20161114_202628_521372_B46FF4B8)
+Date: Mon, 14 Nov 2016 20:26:21 +0100
 MIME-Version: 1.0
+In-Reply-To: <20161114185917.GZ13978@wotan.suse.de>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-T24gVHVlLCAyMDE2LTExLTE1IGF0IDEzOjI2ICswMDAwLCBHaWVuZ2VyIFRpbW8gd3JvdGU6Cj4g
-acK0bSBjdXJyZW50bHkgaGF2aW5nIHRoZSBpc3N1ZSB0aGF0IGnCtG0gZW5kaW5nIHVwIGluIGFu
-IGVuZGxlc3MgbG9vcAo+IHdpdGggYSBiYWNrcG9ydHMgaW50ZWdyYXRlZCBrZXJuZWwgd2hlbiBi
-dWlsZGluZyBvdXQgb2YgdHJlZS4KPiBXaGVuIGnCtG0gYnVpbGRpbmcgdGhlIEtlcm5lbCBpbi10
-cmVlIGV2ZXJ5dGhpbmcgd29ya3MgZmluZSwgYnV0IHdoZW4KPiB1c2luZyAiTz0iIG9wdGlvbiB0
-byBidWlsZCBvdXRzaWRlIG9mIHRoZSBzb3VyY2UgdHJlZSB0aGUgYnVpbGQgZW5kcyB1cAo+IGlu
-IGFuIGVuZGxlc3MgbG9vcDoKCldoZW4gaSBleHBvcnQgdGhlIEtDT05GSUdfQVVUT0NPTkZJRyBs
-aWtlIHRoaXMKZXhwb3J0IEtDT05GSUdfQVVUT0NPTkZJRz0vc3NkMS9rb3V0L2luY2x1ZGUvY29u
-ZmlnL2F1dG8uY29uZgp0aGUgb3V0IG9mIHRyZWUgYnVpbGQgcnVucyBmaW5lLiBKdXN0IGhhdmUg
-bm90IGZvdW5kIG91dCB5ZXQsIHdoeSA7KQoKQ3VycmVudGx5IHN0aWxsIHRyeWluZyB0byBmaW5k
-IHRoZSBwbGFjZSBpbiB3aGljaCB0aGUgbG9vcCBpcyBjcmVhdGVkCmFuZCB0aGUgbWFrZSB0YXJn
-ZXQgImluY2x1ZGUvY29uZmlnLyUuY29uZjoiIGlzIGNhbGxlZCBvdmVyIGFuZCBvdmVyCmFnYWlu
-LgoKQlIKVGltbwo=
+On 14-11-2016 19:59, Luis R. Rodriguez wrote:
+> On Sat, Nov 12, 2016 at 10:07:22PM +0100, Johannes Berg wrote:
+>> On Sat, 2016-11-12 at 20:18 +0000, Arend van Spriel wrote:
+>>> nl80211 now uses section qualifier __ro_after_init. However, this
+>>> is not available in kernels before v4.6. Neither is the section
+>>> itself hence adding an empty define in backports.
+>>
+>>> +#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0))
+>>> +#define __ro_after_init
+>>> +#endif
+>>
+>> Due to how __ro_after_init works, it *has* to be a macro originally, so
+>> you could just ifndef on itself:
+>>
+>> #ifndef __ro_after_init
+>> #define __ro_after_init
+>> #endif
+>>
+>> and be slightly more compatible in case somebody ever backports it.
+> 
+> Agreed.
+
+Agree as well hence I posted a V2 yesterday ;-)
+
+Regards,
+Arend
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
