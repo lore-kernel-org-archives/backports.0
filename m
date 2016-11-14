@@ -1,115 +1,63 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from lpdvsmtp01.broadcom.com ([192.19.211.62]:52952 "EHLO
-        relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935303AbcKWKdj (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 23 Nov 2016 05:33:39 -0500
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Subject: [PATCH] patches: network: add spatch for mtu range checking
-Date: Wed, 23 Nov 2016 10:33:13 +0000
-Message-Id: <1479897193-6168-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20161123_113549_273377_1C1F6F8B)
+Received: from mail-pf0-f173.google.com ([209.85.192.173]:35475 "EHLO
+        mail-pf0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753090AbcKNKqH (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 14 Nov 2016 05:46:07 -0500
+Received: by mail-pf0-f173.google.com with SMTP id i88so29157396pfk.2
+        for <backports@vger.kernel.org>; Mon, 14 Nov 2016 02:46:06 -0800 (PST)
+Subject: Re: min/max mtu field in struct net_device
+To: Johannes Berg <johannes@sipsolutions.net>,
+        "backports@vger.kernel.org" <backports@vger.kernel.org>
+References: <c4682854-87ce-5e28-d049-545f24d48cab@broadcom.com>
+ <1479115859.7899.3.camel@sipsolutions.net>
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <57925560-252e-a547-fe09-959362d9dce4@broadcom.com> (sfid-20161114_114609_899102_0DAAC8DA)
+Date: Mon, 14 Nov 2016 11:46:01 +0100
+MIME-Version: 1.0
+In-Reply-To: <1479115859.7899.3.camel@sipsolutions.net>
+Content-Type: multipart/mixed;
+ boundary="------------DFA882ACA6FB1769F51BDF68"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The mtu range checking was moved into network subsystem resulting in
-the addition of min_mtu and max_mtu fields in struct net_device. For
-drivers with a .ndo_change_mtu() which took care of range checking this
-resulted in removal of the callback. This spatch restores the callback
-using the values set in {min,max}_mtu fields for kernels before v4.10.
+This is a multi-part message in MIME format.
+--------------DFA882ACA6FB1769F51BDF68
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
----
- .../network/0073-netdevice-mtu-range.cocci         | 75 ++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
- create mode 100644 patches/collateral-evolutions/network/0073-netdevice-mtu-range.cocci
+On 14-11-2016 10:30, Johannes Berg wrote:
+> On Mon, 2016-11-14 at 09:49 +0100, Arend Van Spriel wrote:
+>> Just wondering. Does anyone have any ideas on how to backport the two
+>> patches below. The struct net_device now holds mtu range which
+>> network subsystem checks. For a number of drivers and mac80211 it
+>> means they no longer have .ndo_change_mtu callback. My guess is that
+>> we need patches in backport of some sort to tackle this.
+> 
+> Yeah, I kinda saw this coming. Since in almost all cases using the new
+> min/max the ndo_change_mtu was actually removed, perhaps we can come up
+> with a way to spatch it back in?
 
-diff --git a/patches/collateral-evolutions/network/0073-netdevice-mtu-range.cocci b/patches/collateral-evolutions/network/0073-netdevice-mtu-range.cocci
-new file mode 100644
-index 0000000..30276f9
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0073-netdevice-mtu-range.cocci
-@@ -0,0 +1,75 @@
-+@initialize:python@
-+@@
-+
-+first_ops = 0
-+
-+@r@
-+identifier OPS;
-+position p;
-+@@
-+
-+struct net_device_ops OPS@p = { ... };
-+
-+@script:python depends on r@
-+@@
-+
-+first_ops = 0
-+
-+@script:python@
-+p << r.p;
-+@@
-+
-+ln = int(p[0].line)
-+if first_ops == 0 or ln < first_ops:
-+  first_ops = ln
-+
-+@script:python@
-+p << r.p;
-+@@
-+
-+ln = int(p[0].line)
-+if not(first_ops == ln):
-+  cocci.include_match(False)
-+
-+@r1 exists@
-+expression ndevexp, e1, e2;
-+identifier func;
-+@@
-+func(...) {
-+	<+...
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,10,0)
-+	ndevexp->min_mtu = e1;
-+	ndevexp->max_mtu = e2;
-++#endif
-+	...+>
-+}
-+
-+@r2@
-+expression r1.e1,r1.e2;
-+identifier r.OPS;
-+@@
-++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
-++ static int __change_mtu(struct net_device *ndev, int new_mtu)
-++ {
-++ if (new_mtu < e1 || new_mtu > e2)
-++             return -EINVAL;
-++             ndev->mtu = new_mtu;
-++             return 0;
-++ }
-++#endif
-++
-+struct net_device_ops OPS = {
-+       ...
-+};
-+
-+@depends on r2@
-+identifier OPS;
-+@@
-+
-+struct net_device_ops OPS = {
-++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
-++      .ndo_change_mtu = __change_mtu,
-++#endif
-+       ...
-+};
-+
--- 
-1.9.1
+Me too. This is what I got so far, but the callback is generated twice
+for net/mac80211/iface.c for obvious reasons (data and monitor ops).
+These are my first baby steps with spatch so not sure how to solve it.
 
+Gr. AvS
+
+--------------DFA882ACA6FB1769F51BDF68
+Content-Type: text/plain; charset=UTF-8;
+ name="0073-netdevice-mtu-range.cocci"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="0073-netdevice-mtu-range.cocci"
+
+QHIxQApleHByZXNzaW9uIG5kZXYsIGUxLCBlMjsKaWRlbnRpZmllciBmdW5jOwpAQApmdW5j
+KC4uLikgewoJPC4uLgotIAluZGV2LT5taW5fbXR1ID0gZTE7Ci0gCW5kZXYtPm1heF9tdHUg
+PSBlMjsKCS4uLj4KfQpAQApleHByZXNzaW9uIHIxLmUxLCByMS5lMjsKaWRlbnRpZmllciBP
+UFM7CkBACisgc3RhdGljIGludCBfX2NoYW5nZV9tdHUoc3RydWN0IG5ldF9kZXZpY2UgKm5k
+ZXYsIGludCBuZXdfbXR1KQorIHsKKwlpZiAobmV3X210dSA8IGUxIHx8IG5ld19tdHUgPiBl
+MikKKyAJCXJldHVybiAtRUlOVkFMOworCW5kZXYtPm10dSA9IG5ld19tdHU7CisgfQorCnN0
+cnVjdCBuZXRfZGV2aWNlX29wcyBPUFMgPSB7CisgCS5uZG9fY2hhbmdlX210dSA9IF9fY2hh
+bmdlX210dSwKCS4uLgp9Owo=
+--------------DFA882ACA6FB1769F51BDF68--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
