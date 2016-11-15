@@ -1,108 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:46752 "EHLO sipsolutions.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935299AbcKOJJ1 (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 15 Nov 2016 04:09:27 -0500
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: rename .local-symbols to local-symbols
-Date: Tue, 15 Nov 2016 10:09:21 +0100
-Message-Id: <20161115090921.28871-1-johannes@sipsolutions.net> (sfid-20161115_100930_669208_073F894A)
+Received: from mail-gw1.esolutions.de ([178.239.73.50]:43947 "EHLO
+        mail-gw1.esolutions.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750890AbcKOMc7 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 15 Nov 2016 07:32:59 -0500
+Received: from DEGAMES01.eso.local (degames01.eso.local [10.2.0.245])
+        by mail-gw1.esolutions.de (Postfix) with ESMTPS
+        for <backports@vger.kernel.org>; Tue, 15 Nov 2016 13:26:29 +0100 (CET)
+From: Gienger Timo <Timo.Gienger@esolutions.de>
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Kernel integrated backports ends in endless silentoldconfig loop
+ when built out of tree
+Date: Tue, 15 Nov 2016 12:26:28 +0000
+Message-ID: <DFF58FB81DEAB64EB0833EEE3623AE53AB604CDD@DEGAMES02.eso.local> (sfid-20161115_133302_097050_43CF52CA)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
-
-Remove the leading . in the file, which has tripped up people
-a few times already because it's hidden, and not always copied.
-
-Change-Id: I48729af712f01b56cf43c4982321b989e33259f3
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/Makefile            | 4 ++--
- backport/Makefile.real       | 2 +-
- devel/doc/kconfig-operation  | 2 +-
- devel/doc/makefile-operation | 2 +-
- gentree.py                   | 2 +-
- 5 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/backport/Makefile b/backport/Makefile
-index 11678f67adcd..0fd4cdb2f322 100644
---- a/backport/Makefile
-+++ b/backport/Makefile
-@@ -37,7 +37,7 @@ mrproper:
- 	@rm -f backport-include/backport/autoconf.h
- 
- .DEFAULT:
--	@set -e ; test -f .local-symbols || (						\
-+	@set -e ; test -f local-symbols || (						\
- 	echo "/--------------"								;\
- 	echo "| You shouldn't run make in the backports tree, but only in"		;\
- 	echo "| the generated output. This here is only the skeleton code"		;\
-@@ -63,7 +63,7 @@ mrproper:
- 	@set -e ; if [ "$$(cat .kernel_config_md5 2>/dev/null)" != "$(CONFIG_MD5)" ]	;\
- 	then 										\
- 		echo -n "Generating local configuration database from kernel ..."	;\
--		grep -v -f .local-symbols $(KERNEL_CONFIG) | grep = | (			\
-+		grep -v -f local-symbols $(KERNEL_CONFIG) | grep = | (			\
- 			while read l ; do						\
- 				if [ "$${l:0:7}" != "CONFIG_" ] ; then			\
- 					continue					;\
-diff --git a/backport/Makefile.real b/backport/Makefile.real
-index a0f491626f80..c874d318916c 100644
---- a/backport/Makefile.real
-+++ b/backport/Makefile.real
-@@ -60,7 +60,7 @@ defconfig-%::
- backport-include/backport/autoconf.h: .config Kconfig.versions Kconfig.kernel
- 	@$(MAKE) oldconfig
- 	@echo -n "Building backport-include/backport/autoconf.h ..."
--	@grep -f .local-symbols .config | (				\
-+	@grep -f local-symbols .config | (				\
- 		echo "#ifndef COMPAT_AUTOCONF_INCLUDED"			;\
- 		echo "#define COMPAT_AUTOCONF_INCLUDED"			;\
- 		echo "/*"						;\
-diff --git a/devel/doc/kconfig-operation b/devel/doc/kconfig-operation
-index 35e198c6ebe3..fffcc91bfefd 100644
---- a/devel/doc/kconfig-operation
-+++ b/devel/doc/kconfig-operation
-@@ -99,7 +99,7 @@ These are the problems and their solutions:
-     To achieve this, all Kconfig files are walked during the backporting
-     process, starting at the root "Kconfig", and any symbols defined in
-     them collected. Later then, only those options are renamed. They are
--    also recorded for the build process in the output file .local-symbols.
-+    also recorded for the build process in the output file local-symbols.
- 
-  2) Kconfig files may reference files that don't exist when they're copied
-     but not all the drivers, e.g. drivers/net/wireless/Kconfig is copied
-diff --git a/devel/doc/makefile-operation b/devel/doc/makefile-operation
-index 38cf4e73eb3c..a3eecd6e6f7d 100644
---- a/devel/doc/makefile-operation
-+++ b/devel/doc/makefile-operation
-@@ -25,7 +25,7 @@ the tools -- menuconfig, defconfig-*, ...
- When the configuration is complete and exists in .config, the autoconf
- header (backport-include/backport/autoconf.h) must be generated. This step is
- also done in the make system (by a small embedded shell script) and needs
--the .local-symbols so it only includes the symbols from the backport.
-+the local-symbols so it only includes the symbols from the backport.
- 
- After this exists, all that's left to do is source the .config file and
- export everything in there into the environment for calling the kernel's
-diff --git a/gentree.py b/gentree.py
-index e97ead0790d6..186a41477b18 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -953,7 +953,7 @@ def process(kerneldir, copy_list_file, git_revision=None,
- 
-     # write local symbol list -- needed during packaging build
-     if not bpid.integrate:
--        f = open(os.path.join(bpid.target_dir, '.local-symbols'), 'w')
-+        f = open(os.path.join(bpid.target_dir, 'local-symbols'), 'w')
-         for sym in symbols:
-             f.write('%s=\n' % sym)
-         f.close()
--- 
-2.9.3
-
+SGksCgppwrRtIGN1cnJlbnRseSBoYXZpbmcgdGhlIGlzc3VlIHRoYXQgacK0bSBlbmRpbmcgdXAg
+aW4gYW4gZW5kbGVzcyBsb29wCndpdGggYSBiYWNrcG9ydHMgaW50ZWdyYXRlZCBrZXJuZWwgd2hl
+biBidWlsZGluZyBvdXQgb2YgdHJlZS4KV2hlbiBpwrRtIGJ1aWxkaW5nIHRoZSBLZXJuZWwgaW4t
+dHJlZSBldmVyeXRoaW5nIHdvcmtzIGZpbmUsIGJ1dCB3aGVuCnVzaW5nICJPPSIgb3B0aW9uIHRv
+IGJ1aWxkIG91dHNpZGUgb2YgdGhlIHNvdXJjZSB0cmVlIHRoZSBidWlsZCBlbmRzIHVwCmluIGFu
+IGVuZGxlc3MgbG9vcDoKCuKUnOKUgCgvc3NkMS9saW51eC1zdGFibGUpCuKUlOKUgD4gbWFrZSBP
+PS9zc2QxL2tvdXQvIAptYWtlWzFdOiBFbnRlcmluZyBkaXJlY3RvcnkgYC9zc2QxL2tvdXQnCiAg
+R0VOICAgICAuL01ha2VmaWxlCnNjcmlwdHMva2NvbmZpZy9jb25mIC0tc2lsZW50b2xkY29uZmln
+IEtjb25maWcKbWFrZVsxXTogTGVhdmluZyBkaXJlY3RvcnkgYC9zc2QxL2tvdXQnCm1ha2VbMV06
+IEVudGVyaW5nIGRpcmVjdG9yeSBgL3NzZDEva291dCcKICBHRU4gICAgIC4vTWFrZWZpbGUKc2Ny
+aXB0cy9rY29uZmlnL2NvbmYgLS1zaWxlbnRvbGRjb25maWcgS2NvbmZpZwptYWtlWzFdOiBMZWF2
+aW5nIGRpcmVjdG9yeSBgL3NzZDEva291dCcKbWFrZVsxXTogRW50ZXJpbmcgZGlyZWN0b3J5IGAv
+c3NkMS9rb3V0JwogIEdFTiAgICAgLi9NYWtlZmlsZQpzY3JpcHRzL2tjb25maWcvY29uZiAtLXNp
+bGVudG9sZGNvbmZpZyBLY29uZmlnCm1ha2VbMV06IExlYXZpbmcgZGlyZWN0b3J5IGAvc3NkMS9r
+b3V0JwoKScK0dmUgdHJpZWQgc2V2ZXJhbCBjb21iaW5hdGlvbnM6CmJhY2twb3J0cyB2NC4wLjEt
+MSAvIGxpbnV4LXRyZWUgdjQuMC4xIC0+IHRhcmdldCBrZXJuZWwgdjMuNC42NgpiYWNrcG9ydHMg
+djMuMTkucmMxLTEgLyBsaW51eC10cmVlIHYzLjE5LXJjMSAtPiB0YXJnZXQga2VybmVsIHYzLjQu
+NjYKYmFja3BvcnRzIHY0LjIuMi0xIC8gbGludXgtdHJlZSB2NC4yLjIgLT4gdGFyZ2V0IGtlcm5l
+bCB2NC4wCmJhY2twb3J0cyB2NC40LjItMSAvIGxpbnV4LXRyZWUgdjQuNC4yIC0+IHRhcmdldCBr
+ZXJuZWwgdjQuMAoKQnV0IGnCtG0gYWx3YXlzIGVuZGluZyB1cCBpbiB0aGUgYWJvdmUgbG9vcC4g
+T2YgY291cnNlIHdoZW4gaSByZW1vdmUgdGhlCnNvdXJjaW5nIG9mIGJhY2twb3J0cyBpbiB0aGUg
+S2NvbmZpZyBmaWxlIGluIHRoZSByb290IGRpcmVjdG9yeSwgdGhlIG91dApvZiB0cmVlIGJ1aWxk
+IHdvcmtzIGp1c3QgZmluZS4KCknCtHZlIGFsc28gdHJpZWQgZGlmZmVyZW50IGRlZmNvbmZpZ3Ms
+IGZyb20geDg2IHRvIGFybSBjcm9zcyBjb21waWxlZCwKbGFzdCBvbmUgacK0dmUgdGVzdGVkIHdh
+cyBzaGFubm9uX2RlZmNvbmZpZy4KCkkgd2FzIHNlYXJjaGluZyB0aGUgYXJjaGl2ZXMsIGJ1dCBj
+b3VsZCBub3QgZmluZCBhbnkgaXNzdWUgbGlrZSB0aGF0IHNvCmZhci4gQW55Ym9keSB0cmllZCBi
+dWlsZGluZyBpdCBvdXQgb2YgdHJlZT8gT3IgaXMgdGhhdCBub3QgZXZlbiBtZWFudCB0bwpiZSBz
+dXBwb3J0ZWQ/IE9yIGFtIGkgZG9pbmcgc29tZXRoaW5nIGNvbXBsZXRlbHkgd3Jvbmc/CgpUaGFu
+a3MgaW4gYWR2YW5jZSBhbmQgQlIKVGltbwoK
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
