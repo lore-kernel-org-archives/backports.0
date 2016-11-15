@@ -1,60 +1,108 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:58441 "EHLO mx2.suse.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:46752 "EHLO sipsolutions.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932605AbcKNS7T (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 14 Nov 2016 13:59:19 -0500
-Date: Mon, 14 Nov 2016 19:59:17 +0100
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>,
-        Kees Cook <keescook@chromium.org>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
-Subject: Re: [PATCH 3/3] backports: empty define for __ro_after_init
-Message-ID: <20161114185917.GZ13978@wotan.suse.de> (sfid-20161114_195921_055135_E28946DD)
-References: <1478981923-12298-1-git-send-email-arend.vanspriel@broadcom.com>
- <1478981923-12298-3-git-send-email-arend.vanspriel@broadcom.com>
- <1478984842.4226.1.camel@sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1478984842.4226.1.camel@sipsolutions.net>
+        id S935299AbcKOJJ1 (ORCPT <rfc822;backports@vger.kernel.org>);
+        Tue, 15 Nov 2016 04:09:27 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backports: rename .local-symbols to local-symbols
+Date: Tue, 15 Nov 2016 10:09:21 +0100
+Message-Id: <20161115090921.28871-1-johannes@sipsolutions.net> (sfid-20161115_100930_669208_073F894A)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sat, Nov 12, 2016 at 10:07:22PM +0100, Johannes Berg wrote:
-> On Sat, 2016-11-12 at 20:18 +0000, Arend van Spriel wrote:
-> > nl80211 now uses section qualifier __ro_after_init. However, this
-> > is not available in kernels before v4.6. Neither is the section
-> > itself hence adding an empty define in backports.
-> 
-> > +#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0))
-> > +#define __ro_after_init
-> > +#endif
-> 
-> Due to how __ro_after_init works, it *has* to be a macro originally, so
-> you could just ifndef on itself:
-> 
-> #ifndef __ro_after_init
-> #define __ro_after_init
-> #endif
-> 
-> and be slightly more compatible in case somebody ever backports it.
+From: Johannes Berg <johannes.berg@intel.com>
 
-Agreed.
+Remove the leading . in the file, which has tripped up people
+a few times already because it's hidden, and not always copied.
 
-> Don't think it really matters much, but why not.
+Change-Id: I48729af712f01b56cf43c4982321b989e33259f3
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/Makefile            | 4 ++--
+ backport/Makefile.real       | 2 +-
+ devel/doc/kconfig-operation  | 2 +-
+ devel/doc/makefile-operation | 2 +-
+ gentree.py                   | 2 +-
+ 5 files changed, 6 insertions(+), 6 deletions(-)
 
-Distributions that do wish to backport the __ro_after_init
-mechanism will have this defined, so indeed what you suggest
-seems appropriate.
+diff --git a/backport/Makefile b/backport/Makefile
+index 11678f67adcd..0fd4cdb2f322 100644
+--- a/backport/Makefile
++++ b/backport/Makefile
+@@ -37,7 +37,7 @@ mrproper:
+ 	@rm -f backport-include/backport/autoconf.h
+ 
+ .DEFAULT:
+-	@set -e ; test -f .local-symbols || (						\
++	@set -e ; test -f local-symbols || (						\
+ 	echo "/--------------"								;\
+ 	echo "| You shouldn't run make in the backports tree, but only in"		;\
+ 	echo "| the generated output. This here is only the skeleton code"		;\
+@@ -63,7 +63,7 @@ mrproper:
+ 	@set -e ; if [ "$$(cat .kernel_config_md5 2>/dev/null)" != "$(CONFIG_MD5)" ]	;\
+ 	then 										\
+ 		echo -n "Generating local configuration database from kernel ..."	;\
+-		grep -v -f .local-symbols $(KERNEL_CONFIG) | grep = | (			\
++		grep -v -f local-symbols $(KERNEL_CONFIG) | grep = | (			\
+ 			while read l ; do						\
+ 				if [ "$${l:0:7}" != "CONFIG_" ] ; then			\
+ 					continue					;\
+diff --git a/backport/Makefile.real b/backport/Makefile.real
+index a0f491626f80..c874d318916c 100644
+--- a/backport/Makefile.real
++++ b/backport/Makefile.real
+@@ -60,7 +60,7 @@ defconfig-%::
+ backport-include/backport/autoconf.h: .config Kconfig.versions Kconfig.kernel
+ 	@$(MAKE) oldconfig
+ 	@echo -n "Building backport-include/backport/autoconf.h ..."
+-	@grep -f .local-symbols .config | (				\
++	@grep -f local-symbols .config | (				\
+ 		echo "#ifndef COMPAT_AUTOCONF_INCLUDED"			;\
+ 		echo "#define COMPAT_AUTOCONF_INCLUDED"			;\
+ 		echo "/*"						;\
+diff --git a/devel/doc/kconfig-operation b/devel/doc/kconfig-operation
+index 35e198c6ebe3..fffcc91bfefd 100644
+--- a/devel/doc/kconfig-operation
++++ b/devel/doc/kconfig-operation
+@@ -99,7 +99,7 @@ These are the problems and their solutions:
+     To achieve this, all Kconfig files are walked during the backporting
+     process, starting at the root "Kconfig", and any symbols defined in
+     them collected. Later then, only those options are renamed. They are
+-    also recorded for the build process in the output file .local-symbols.
++    also recorded for the build process in the output file local-symbols.
+ 
+  2) Kconfig files may reference files that don't exist when they're copied
+     but not all the drivers, e.g. drivers/net/wireless/Kconfig is copied
+diff --git a/devel/doc/makefile-operation b/devel/doc/makefile-operation
+index 38cf4e73eb3c..a3eecd6e6f7d 100644
+--- a/devel/doc/makefile-operation
++++ b/devel/doc/makefile-operation
+@@ -25,7 +25,7 @@ the tools -- menuconfig, defconfig-*, ...
+ When the configuration is complete and exists in .config, the autoconf
+ header (backport-include/backport/autoconf.h) must be generated. This step is
+ also done in the make system (by a small embedded shell script) and needs
+-the .local-symbols so it only includes the symbols from the backport.
++the local-symbols so it only includes the symbols from the backport.
+ 
+ After this exists, all that's left to do is source the .config file and
+ export everything in there into the environment for calling the kernel's
+diff --git a/gentree.py b/gentree.py
+index e97ead0790d6..186a41477b18 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -953,7 +953,7 @@ def process(kerneldir, copy_list_file, git_revision=None,
+ 
+     # write local symbol list -- needed during packaging build
+     if not bpid.integrate:
+-        f = open(os.path.join(bpid.target_dir, '.local-symbols'), 'w')
++        f = open(os.path.join(bpid.target_dir, 'local-symbols'), 'w')
+         for sym in symbols:
+             f.write('%s=\n' % sym)
+         f.close()
+-- 
+2.9.3
 
-When backporting things like these please try to Cc the original
-authors as they can easily provide feedback about issues they can think
-of if you backport things one way or another. I've Cc'd Kees but
-I think this backport is straight forward -- for older kernels we
-just cannot backport this for modules running old kernels where we
-cannot modify the kernels, making this a no-op for old kernels
-is the best we can then.
-
-  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
