@@ -1,37 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:59358 "EHLO sipsolutions.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751522AbcKNN13 (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 14 Nov 2016 08:27:29 -0500
-Message-ID: <1479130044.12007.3.camel@sipsolutions.net> (sfid-20161114_143109_177605_E3A72011)
-Subject: Re: min/max mtu field in struct net_device
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>,
-        "backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Mon, 14 Nov 2016 14:27:24 +0100
-In-Reply-To: <57925560-252e-a547-fe09-959362d9dce4@broadcom.com> (sfid-20161114_114608_120567_45CAF6A2)
-References: <c4682854-87ce-5e28-d049-545f24d48cab@broadcom.com>
-         <1479115859.7899.3.camel@sipsolutions.net>
-         <57925560-252e-a547-fe09-959362d9dce4@broadcom.com>
-         (sfid-20161114_114608_120567_45CAF6A2)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-gw1.esolutions.de ([178.239.73.50]:31461 "EHLO
+        mail-gw1.esolutions.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940711AbcKQRNB (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 17 Nov 2016 12:13:01 -0500
+Received: from DEGAMES01.eso.local (degames01.eso.local [10.2.0.245])
+        by mail-gw1.esolutions.de (Postfix) with ESMTPS
+        for <backports@vger.kernel.org>; Thu, 17 Nov 2016 15:41:51 +0100 (CET)
+From: Gienger Timo <Timo.Gienger@esolutions.de>
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: Re: Kernel integrated backports ends in endless silentoldconfig
+ loop when built out of tree
+Date: Thu, 17 Nov 2016 14:41:49 +0000
+Message-ID: <DFF58FB81DEAB64EB0833EEE3623AE53AB607D0B@DEGAMES02.eso.local> (sfid-20161117_181306_092086_7392983A)
+References: <DFF58FB81DEAB64EB0833EEE3623AE53AB604CDD@DEGAMES02.eso.local>
+In-Reply-To: <DFF58FB81DEAB64EB0833EEE3623AE53AB604CDD@DEGAMES02.eso.local>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-
-> Me too. This is what I got so far, but the callback is generated
-> twice
-> for net/mac80211/iface.c for obvious reasons (data and monitor ops).
-> These are my first baby steps with spatch so not sure how to solve
-> it.
-
-Oh, right, that's problematic - no easy way to link the two and know
-which one is which ...
-
-I guess we'll have to carry that as a manual patch. We should probably
-also ifdef on the kernel version.
-
-johannes
+T24gVHVlLCAyMDE2LTExLTE1IGF0IDEzOjI2ICswMDAwLCBHaWVuZ2VyIFRpbW8gd3JvdGU6Cj4g
+acK0bSBjdXJyZW50bHkgaGF2aW5nIHRoZSBpc3N1ZSB0aGF0IGnCtG0gZW5kaW5nIHVwIGluIGFu
+IGVuZGxlc3MgbG9vcAo+IHdpdGggYSBiYWNrcG9ydHMgaW50ZWdyYXRlZCBrZXJuZWwgd2hlbiBi
+dWlsZGluZyBvdXQgb2YgdHJlZS4KPiBXaGVuIGnCtG0gYnVpbGRpbmcgdGhlIEtlcm5lbCBpbi10
+cmVlIGV2ZXJ5dGhpbmcgd29ya3MgZmluZSwgYnV0IHdoZW4KPiB1c2luZyAiTz0iIG9wdGlvbiB0
+byBidWlsZCBvdXRzaWRlIG9mIHRoZSBzb3VyY2UgdHJlZSB0aGUgYnVpbGQgZW5kcyB1cAo+IGlu
+IGFuIGVuZGxlc3MgbG9vcDoKCldoZW4gaSBleHBvcnQgdGhlIEtDT05GSUdfQVVUT0NPTkZJRyBs
+aWtlIHRoaXMKZXhwb3J0IEtDT05GSUdfQVVUT0NPTkZJRz0vc3NkMS9rb3V0L2luY2x1ZGUvY29u
+ZmlnL2F1dG8uY29uZgp0aGUgb3V0IG9mIHRyZWUgYnVpbGQgcnVucyBmaW5lLiBKdXN0IGhhdmUg
+bm90IGZvdW5kIG91dCB5ZXQsIHdoeSA7KQoKQ3VycmVudGx5IHN0aWxsIHRyeWluZyB0byBmaW5k
+IHRoZSBwbGFjZSBpbiB3aGljaCB0aGUgbG9vcCBpcyBjcmVhdGVkCmFuZCB0aGUgbWFrZSB0YXJn
+ZXQgImluY2x1ZGUvY29uZmlnLyUuY29uZjoiIGlzIGNhbGxlZCBvdmVyIGFuZCBvdmVyCmFnYWlu
+LgoKQlIKVGltbwo=
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
