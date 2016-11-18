@@ -1,50 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw1.esolutions.de ([178.239.73.50]:43947 "EHLO
+Received: from mail-gw1.esolutions.de ([178.239.73.50]:13143 "EHLO
         mail-gw1.esolutions.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750890AbcKOMc7 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 15 Nov 2016 07:32:59 -0500
+        with ESMTP id S1751905AbcKRLtk (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 18 Nov 2016 06:49:40 -0500
 Received: from DEGAMES01.eso.local (degames01.eso.local [10.2.0.245])
         by mail-gw1.esolutions.de (Postfix) with ESMTPS
-        for <backports@vger.kernel.org>; Tue, 15 Nov 2016 13:26:29 +0100 (CET)
+        for <backports@vger.kernel.org>; Fri, 18 Nov 2016 12:49:37 +0100 (CET)
 From: Gienger Timo <Timo.Gienger@esolutions.de>
 To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Kernel integrated backports ends in endless silentoldconfig loop
- when built out of tree
-Date: Tue, 15 Nov 2016 12:26:28 +0000
-Message-ID: <DFF58FB81DEAB64EB0833EEE3623AE53AB604CDD@DEGAMES02.eso.local> (sfid-20161115_133302_097050_43CF52CA)
+Subject: Re: Kernel integrated backports ends in endless silentoldconfig
+ loop when built out of tree
+Date: Fri, 18 Nov 2016 11:49:36 +0000
+Message-ID: <DFF58FB81DEAB64EB0833EEE3623AE53AB6080F4@DEGAMES02.eso.local> (sfid-20161118_124942_511160_2CF1BC44)
+References: <DFF58FB81DEAB64EB0833EEE3623AE53AB604CDD@DEGAMES02.eso.local>
+ <DFF58FB81DEAB64EB0833EEE3623AE53AB607D0B@DEGAMES02.eso.local>
+ <DFF58FB81DEAB64EB0833EEE3623AE53AB60806F@DEGAMES02.eso.local>
+In-Reply-To: <DFF58FB81DEAB64EB0833EEE3623AE53AB60806F@DEGAMES02.eso.local>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-SGksCgppwrRtIGN1cnJlbnRseSBoYXZpbmcgdGhlIGlzc3VlIHRoYXQgacK0bSBlbmRpbmcgdXAg
-aW4gYW4gZW5kbGVzcyBsb29wCndpdGggYSBiYWNrcG9ydHMgaW50ZWdyYXRlZCBrZXJuZWwgd2hl
-biBidWlsZGluZyBvdXQgb2YgdHJlZS4KV2hlbiBpwrRtIGJ1aWxkaW5nIHRoZSBLZXJuZWwgaW4t
-dHJlZSBldmVyeXRoaW5nIHdvcmtzIGZpbmUsIGJ1dCB3aGVuCnVzaW5nICJPPSIgb3B0aW9uIHRv
-IGJ1aWxkIG91dHNpZGUgb2YgdGhlIHNvdXJjZSB0cmVlIHRoZSBidWlsZCBlbmRzIHVwCmluIGFu
-IGVuZGxlc3MgbG9vcDoKCuKUnOKUgCgvc3NkMS9saW51eC1zdGFibGUpCuKUlOKUgD4gbWFrZSBP
-PS9zc2QxL2tvdXQvIAptYWtlWzFdOiBFbnRlcmluZyBkaXJlY3RvcnkgYC9zc2QxL2tvdXQnCiAg
-R0VOICAgICAuL01ha2VmaWxlCnNjcmlwdHMva2NvbmZpZy9jb25mIC0tc2lsZW50b2xkY29uZmln
-IEtjb25maWcKbWFrZVsxXTogTGVhdmluZyBkaXJlY3RvcnkgYC9zc2QxL2tvdXQnCm1ha2VbMV06
-IEVudGVyaW5nIGRpcmVjdG9yeSBgL3NzZDEva291dCcKICBHRU4gICAgIC4vTWFrZWZpbGUKc2Ny
-aXB0cy9rY29uZmlnL2NvbmYgLS1zaWxlbnRvbGRjb25maWcgS2NvbmZpZwptYWtlWzFdOiBMZWF2
-aW5nIGRpcmVjdG9yeSBgL3NzZDEva291dCcKbWFrZVsxXTogRW50ZXJpbmcgZGlyZWN0b3J5IGAv
-c3NkMS9rb3V0JwogIEdFTiAgICAgLi9NYWtlZmlsZQpzY3JpcHRzL2tjb25maWcvY29uZiAtLXNp
-bGVudG9sZGNvbmZpZyBLY29uZmlnCm1ha2VbMV06IExlYXZpbmcgZGlyZWN0b3J5IGAvc3NkMS9r
-b3V0JwoKScK0dmUgdHJpZWQgc2V2ZXJhbCBjb21iaW5hdGlvbnM6CmJhY2twb3J0cyB2NC4wLjEt
-MSAvIGxpbnV4LXRyZWUgdjQuMC4xIC0+IHRhcmdldCBrZXJuZWwgdjMuNC42NgpiYWNrcG9ydHMg
-djMuMTkucmMxLTEgLyBsaW51eC10cmVlIHYzLjE5LXJjMSAtPiB0YXJnZXQga2VybmVsIHYzLjQu
-NjYKYmFja3BvcnRzIHY0LjIuMi0xIC8gbGludXgtdHJlZSB2NC4yLjIgLT4gdGFyZ2V0IGtlcm5l
-bCB2NC4wCmJhY2twb3J0cyB2NC40LjItMSAvIGxpbnV4LXRyZWUgdjQuNC4yIC0+IHRhcmdldCBr
-ZXJuZWwgdjQuMAoKQnV0IGnCtG0gYWx3YXlzIGVuZGluZyB1cCBpbiB0aGUgYWJvdmUgbG9vcC4g
-T2YgY291cnNlIHdoZW4gaSByZW1vdmUgdGhlCnNvdXJjaW5nIG9mIGJhY2twb3J0cyBpbiB0aGUg
-S2NvbmZpZyBmaWxlIGluIHRoZSByb290IGRpcmVjdG9yeSwgdGhlIG91dApvZiB0cmVlIGJ1aWxk
-IHdvcmtzIGp1c3QgZmluZS4KCknCtHZlIGFsc28gdHJpZWQgZGlmZmVyZW50IGRlZmNvbmZpZ3Ms
-IGZyb20geDg2IHRvIGFybSBjcm9zcyBjb21waWxlZCwKbGFzdCBvbmUgacK0dmUgdGVzdGVkIHdh
-cyBzaGFubm9uX2RlZmNvbmZpZy4KCkkgd2FzIHNlYXJjaGluZyB0aGUgYXJjaGl2ZXMsIGJ1dCBj
-b3VsZCBub3QgZmluZCBhbnkgaXNzdWUgbGlrZSB0aGF0IHNvCmZhci4gQW55Ym9keSB0cmllZCBi
-dWlsZGluZyBpdCBvdXQgb2YgdHJlZT8gT3IgaXMgdGhhdCBub3QgZXZlbiBtZWFudCB0bwpiZSBz
-dXBwb3J0ZWQ/IE9yIGFtIGkgZG9pbmcgc29tZXRoaW5nIGNvbXBsZXRlbHkgd3Jvbmc/CgpUaGFu
-a3MgaW4gYWR2YW5jZSBhbmQgQlIKVGltbwoK
+T24gRnJpLCAyMDE2LTExLTE4IGF0IDExOjAxICswMDAwLCBHaWVuZ2VyIFRpbW8gd3JvdGU6Cj4g
+SGVyZSBpdCBzZWVtcyB0aGF0IHRoZSBhY3R1YWwgcHJvYmxlbSBpcyB0aGUgdmFyaWFibGUgc3Vi
+c3RpdHV0aW9uLAo+IGFmdGVyIGNoYW5naW5nOgo+IC1zb3VyY2UgIiRCQUNLUE9SVF9ESVIvS2Nv
+bmZpZy52ZXJzaW9ucyIKPiAtc291cmNlICIkQkFDS1BPUlRfRElSL0tjb25maWcuc291cmNlcyIK
+PiB0bwo+ICtzb3VyY2UgImJhY2twb3J0cy9LY29uZmlnLnZlcnNpb25zIgo+ICtzb3VyY2UgImJh
+Y2twb3J0cy9LY29uZmlnLnNvdXJjZXMiCj4gdGhlIG1ha2Ugc3lzdGVtIGlzIGFibGUgdG8gZmlu
+ZCB0aGUgdGFyZ2V0cyBhbmQgaXMgYWJsZSB0byBidWlsZCBvdXQgb2YKPiB0cmVlLiBTbyB0byB0
+aGUgdGltZSB0aGUgMiBmaWxlcyBhcmUgc291cmNlZCBCQUNLUE9SVF9ESVIgaXMgbm90IHlldAo+
+IGRlZmluZWQgYXQgZmFpbHMgYmVjYXVzZSBvZiB0aGlzLgoKQWN0dWFsbHkgaXQgaXMgZGVmaW5l
+ZCBhcyB0aGUgc3RyYWNlIHNob3dzOgoyNTgzOSBzdGF0KCJiYWNrcG9ydHMvL0tjb25maWcuc291
+cmNlcyIsIDB4N2ZmY2FmNmZmOWUwKSA9IC0xIEVOT0VOVCAoTm8Kc3VjaCBmaWxlIG9yIGRpcmVj
+dG9yeSkKMjU4Mzkgc3RhdCgiL3NzZDEvbGludXgtdGFyZ2V0L2JhY2twb3J0cy8vY29uZmlnLnNv
+dXJjZXMiLAoweDdmZmNhZjcwMTliMCkgPSAtMSBFTk9FTlQgKE5vIHN1Y2ggZmlsZSBvciBkaXJl
+Y3RvcnkpCjI1ODM5IHN0YXQoImJhY2twb3J0cy8vS2NvbmZpZy52ZXJzaW9ucyIsIDB4N2ZmY2Fm
+NmZmYTUwKSA9IC0xIEVOT0VOVAooTm8gc3VjaCBmaWxlIG9yIGRpcmVjdG9yeSkKMjU4Mzkgc3Rh
+dCgiL3NzZDEvbGludXgtdGFyZ2V0L2JhY2twb3J0cy8vY29uZmlnLnZlcnNpb25zIiwKMHg3ZmZj
+YWY3MDFhMjApID0gLTEgRU5PRU5UIChObyBzdWNoIGZpbGUgb3IgZGlyZWN0b3J5KQoKQnV0IHNl
+ZW1zIHRvIGdldCBtZXNzZWQgdXAgc29tZXdoZXJlIGJlY2F1c2Ugb2YgdGhhdC4KCg==
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
