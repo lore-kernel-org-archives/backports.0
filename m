@@ -1,96 +1,83 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-gw1.esolutions.de ([178.239.73.50]:18394 "EHLO
-        mail-gw1.esolutions.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751816AbcKRKBa (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 18 Nov 2016 05:01:30 -0500
-Received: from DEGAMES01.eso.local (degames01.eso.local [10.2.0.245])
-        by mail-gw1.esolutions.de (Postfix) with ESMTPS
-        for <backports@vger.kernel.org>; Fri, 18 Nov 2016 11:01:26 +0100 (CET)
-From: Gienger Timo <Timo.Gienger@esolutions.de>
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: Kernel integrated backports ends in endless silentoldconfig
- loop when built out of tree
-Date: Fri, 18 Nov 2016 10:01:25 +0000
-Message-ID: <DFF58FB81DEAB64EB0833EEE3623AE53AB60806F@DEGAMES02.eso.local> (sfid-20161118_110133_341552_43C74C7B)
-References: <DFF58FB81DEAB64EB0833EEE3623AE53AB604CDD@DEGAMES02.eso.local>
- <DFF58FB81DEAB64EB0833EEE3623AE53AB607D0B@DEGAMES02.eso.local>
-In-Reply-To: <DFF58FB81DEAB64EB0833EEE3623AE53AB607D0B@DEGAMES02.eso.local>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Received: from mail-pg0-f49.google.com ([74.125.83.49]:33485 "EHLO
+        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753626AbcKVQAj (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 22 Nov 2016 11:00:39 -0500
+Received: by mail-pg0-f49.google.com with SMTP id 3so8959601pgd.0
+        for <backports@vger.kernel.org>; Tue, 22 Nov 2016 08:00:13 -0800 (PST)
+From: Thomas Pedersen <thomas@eero.com>
+To: backports@vger.kernel.org
+Cc: hauke@hauke-m.de, Thomas Pedersen <thomas@eero.com>
+Subject: [PATCH 2/2] remove KMODPATH_ARG
+Date: Tue, 22 Nov 2016 07:59:55 -0800
+Message-Id: <20161122155955.1038-2-thomas@eero.com> (sfid-20161122_170042_424549_77EB9565)
+In-Reply-To: <20161122155955.1038-1-thomas@eero.com>
+References: <20161122155955.1038-1-thomas@eero.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-T24gVGh1LCAyMDE2LTExLTE3IGF0IDE1OjQxICswMDAwLCBHaWVuZ2VyIFRpbW8gd3JvdGU6Cj4g
-Q3VycmVudGx5IHN0aWxsIHRyeWluZyB0byBmaW5kIHRoZSBwbGFjZSBpbiB3aGljaCB0aGUgbG9v
-cCBpcyBjcmVhdGVkCj4gYW5kIHRoZSBtYWtlIHRhcmdldCAiaW5jbHVkZS9jb25maWcvJS5jb25m
-OiIgaXMgY2FsbGVkIG92ZXIgYW5kIG92ZXIKPiBhZ2Fpbi4KClNlZW1zIGxpa2UgaXQgaXMgYmVj
-YXVzZSBvZiBLY29uZmlnLnZlcnNpb25zIGFuZCBLY29uZmlnLnNvdXJjZXMgYXMKdGhlc2UgYXJl
-IGluY2x1ZGVkIGluIHRoZSBhdXRvLmNvbmYuY21kIGFuZCBjYW5ub3QgYmUgZm91bmQgYW5kIGtl
-ZXAKZ2V0dGluZyByZW1hZGUgZHVyaW5nIHRoZSBtYWtlIHByb2Nlc3MuIEJlY2F1c2Ugb2YgdGhp
-cyBtYWtlIHRyaWdnZXJzCnRhcmdldCBpbmNsdWRlL2NvbmZpZy9hdXRvLmNvbmYgYWdhaW4gd2hp
-Y2ggY2F1c2VzIHNpbGVudG9sZGNvbmZpZywKd2hpY2ggYWdhaW4gdHJpZ2dlcnMgYmVsb3cgcHJv
-YmxlbSBvZiBub3QgZmluZGluZyBLY29uZmlnLnNvdXJjZXMKYW5kIEtjb25maWcudmVyc2lvbnM6
-CgptZGI8PDQ+PiBjb250aW51ZQovc3NkMS9rb3V0L2luY2x1ZGUvY29uZmlnL2F1dG8uY29uZi5j
-bWQ6OTgwCUZpbGUKYGJhY2twb3J0cy8vS2NvbmZpZy5zb3VyY2VzJyBkb2VzIG5vdCBleGlzdC4K
-L3NzZDEva291dC9pbmNsdWRlL2NvbmZpZy9hdXRvLmNvbmYuY21kOjk4MAlNdXN0IHJlbWFrZSB0
-YXJnZXQKYGJhY2twb3J0cy8vS2NvbmZpZy5zb3VyY2VzJy4KL3NzZDEva291dC9pbmNsdWRlL2Nv
-bmZpZy9hdXRvLmNvbmYuY21kOjk4MAlTdWNjZXNzZnVsbHkgcmVtYWRlIHRhcmdldApmaWxlIGBi
-YWNrcG9ydHMvL0tjb25maWcuc291cmNlcycuCi9zc2QxL2tvdXQvaW5jbHVkZS9jb25maWcvYXV0
-by5jb25mLmNtZDo5ODAJRmlsZQpgYmFja3BvcnRzLy9LY29uZmlnLnZlcnNpb25zJyBkb2VzIG5v
-dCBleGlzdC4KL3NzZDEva291dC9pbmNsdWRlL2NvbmZpZy9hdXRvLmNvbmYuY21kOjk4MAlNdXN0
-IHJlbWFrZSB0YXJnZXQKYGJhY2twb3J0cy8vS2NvbmZpZy52ZXJzaW9ucycuCi9zc2QxL2tvdXQv
-aW5jbHVkZS9jb25maWcvYXV0by5jb25mLmNtZDo5ODAJU3VjY2Vzc2Z1bGx5IHJlbWFkZSB0YXJn
-ZXQKZmlsZSBgYmFja3BvcnRzLy9LY29uZmlnLnZlcnNpb25zJy4KClByZXJlcXVpc2l0ZSBgYmFj
-a3BvcnRzLy9LY29uZmlnLi5zb3VyY2VzJyBvZiB0YXJnZXQKYGluY2x1ZGUvY29uZmlnL2F1dG8u
-Y29uZicgZG9lcyBub3QgZXhpc3QuClByZXJlcXVpc2l0ZSBgYmFja3BvcnRzLy9LY29uZmlnLi52
-ZXJzaW9ucycgb2YgdGFyZ2V0CmBpbmNsdWRlL2NvbmZpZy9hdXRvLmNvbmYnIGRvZXMgbm90IGV4
-aXN0LgpNdXN0IHJlbWFrZSB0YXJnZXQgYGluY2x1ZGUvY29uZmlnL2F1dG8uY29uZicuCgoKSW4g
-c3VjY2Vzc2Z1bCBpbi10cmVlIGJ1aWQgdGhlc2UgYXJlIGZvdW5kOgooL3NzZDEvbGludXgtdGFy
-Z2V0L2luY2x1ZGUvY29uZmlnL2F1dG8uY29uZi5jbWQ6OTgwKQpiYWNrcG9ydHMvL0tjb25maWcu
-c291cmNlczogCm1kYjwwPiAKKC9zc2QxL2xpbnV4LXRhcmdldC9pbmNsdWRlL2NvbmZpZy9hdXRv
-LmNvbmYuY21kOjk4MCkKYmFja3BvcnRzLy9LY29uZmlnLnZlcnNpb25zOiAKbWRiPDA+IAoKCgpB
-ZnRlciB0cnlpbmcgdG8gYWRqdXN0IFZQQVRIIG1ha2Ugc3RpbGwgd2FzIG5vdCBhYmxlIHRvIGZp
-bmQgdGhlIHRhcmdldApmaWxlcy4gU28gYWZ0ZXIgY2hlY2tpbmcsIHdoZXJlIHRoZXNlIGFyZSBh
-Y3R1YWxseSBzb3VyY2VkLCB3aGljaCBpcyBpbgpiYWNrcG9ydHMvS2NvbmZpZy4KCkhlcmUgaXQg
-c2VlbXMgdGhhdCB0aGUgYWN0dWFsIHByb2JsZW0gaXMgdGhlIHZhcmlhYmxlIHN1YnN0aXR1dGlv
-biwKYWZ0ZXIgY2hhbmdpbmc6Ci1zb3VyY2UgIiRCQUNLUE9SVF9ESVIvS2NvbmZpZy52ZXJzaW9u
-cyIKLXNvdXJjZSAiJEJBQ0tQT1JUX0RJUi9LY29uZmlnLnNvdXJjZXMiCnRvCitzb3VyY2UgImJh
-Y2twb3J0cy9LY29uZmlnLnZlcnNpb25zIgorc291cmNlICJiYWNrcG9ydHMvS2NvbmZpZy5zb3Vy
-Y2VzIgp0aGUgbWFrZSBzeXN0ZW0gaXMgYWJsZSB0byBmaW5kIHRoZSB0YXJnZXRzIGFuZCBpcyBh
-YmxlIHRvIGJ1aWxkIG91dCBvZgp0cmVlLiBTbyB0byB0aGUgdGltZSB0aGUgMiBmaWxlcyBhcmUg
-c291cmNlZCBCQUNLUE9SVF9ESVIgaXMgbm90IHlldApkZWZpbmVkIGF0IGZhaWxzIGJlY2F1c2Ug
-b2YgdGhpcy4KCgpBIGxpdHRsZSB3ZWlyZCBzZWVtcyBmb3IgbWUgdGhlIHN0cmFjZSBvdXRwdXQg
-b2YgdGhlIHByb2JsZW0uIEl0IGRvZXMKbm90IGZpbmQgS2NvbmZpZy5zb3VyY2VzIGFuZCB2ZXJz
-aW9ucyBpbiB0aGUgY3VycmVudCBkaXJlY3RvcnkgKHdoaWNoIGlzCnRoZSBvdXRwdXQgZGlyZWN0
-b3J5KS4gVGhlbiBpdCBjaGVja3MgVlBBVEgsIGJ1dCBmb3IgImNvbmZpZy52ZXJzaW9ucyIKYW5k
-ICJjb25maWcuc291cmNlcyIsIGRvbsK0dCBrbm93IGV4YWN0bHkgd2h5LCBiZWNhdXNlIG90aGVy
-d2lzZSBpdCB3b3VsZApiZSBzdWNjZXNzZnVsIGFuZCBjb3VsZCBmaW5kIGl0OgoyNTgzOSBzdGF0
-KCJiYWNrcG9ydHMvL0tjb25maWcuc291cmNlcyIsIDB4N2ZmY2FmNmZmOWUwKSA9IC0xIEVOT0VO
-VCAoTm8Kc3VjaCBmaWxlIG9yIGRpcmVjdG9yeSkKMjU4Mzkgc3RhdCgiL3NzZDEvbGludXgtdGFy
-Z2V0L2JhY2twb3J0cy8vY29uZmlnLnNvdXJjZXMiLAoweDdmZmNhZjcwMTliMCkgPSAtMSBFTk9F
-TlQgKE5vIHN1Y2ggZmlsZSBvciBkaXJlY3RvcnkpCjI1ODM5IHN0YXQoImJhY2twb3J0cy8vS2Nv
-bmZpZy52ZXJzaW9ucyIsIDB4N2ZmY2FmNmZmYTUwKSA9IC0xIEVOT0VOVAooTm8gc3VjaCBmaWxl
-IG9yIGRpcmVjdG9yeSkKMjU4Mzkgc3RhdCgiL3NzZDEvbGludXgtdGFyZ2V0L2JhY2twb3J0cy8v
-Y29uZmlnLnZlcnNpb25zIiwKMHg3ZmZjYWY3MDFhMjApID0gLTEgRU5PRU5UIChObyBzdWNoIGZp
-bGUgb3IgZGlyZWN0b3J5KQoyNTgzOSB3cml0ZSgxLCAiICAgQ29uc2lkZXJpbmcgdGFyZ2V0IGZp
-bGUKYGJhY2twb3J0cy8vS2NvbmZpZy52ZXJzaW9ucycuXG4iLCA1OCkgPSA1OAoyNTgzOSB3cml0
-ZSgxLCAiICAgIEZpbGUgYGJhY2twb3J0cy8vS2NvbmZpZy52ZXJzaW9ucycgZG9lcyBub3QKZXhp
-c3QuXG4iLCA1NSkgPSA1NQoyNTgzOSB3cml0ZSgxLCAiICAgIEZpbmlzaGVkIHByZXJlcXVpc2l0
-ZXMgb2YgdGFyZ2V0IGZpbGUKYGJhY2twb3J0cy8vS2NvbmZpZy52ZXJzaW9ucycuXG4iLCA3Mykg
-PSA3MwoyNTgzOSB3cml0ZSgxLCAiICAgTXVzdCByZW1ha2UgdGFyZ2V0IGBiYWNrcG9ydHMvL0tj
-b25maWcudmVyc2lvbnMnLlxuIiwKNTMpID0gNTMKMjU4Mzkgd3JpdGUoMSwgIiAgIFN1Y2Nlc3Nm
-dWxseSByZW1hZGUgdGFyZ2V0IGZpbGUKYGJhY2twb3J0cy8vS2NvbmZpZy52ZXJzaW9ucycuXG4i
-LCA2NikgPSA2NgoyNTgzOSBzdGF0KCJiYWNrcG9ydHMvL0tjb25maWcudmVyc2lvbnMiLCAweDdm
-ZmNhZjZmZjllMCkgPSAtMSBFTk9FTlQKKE5vIHN1Y2ggZmlsZSBvciBkaXJlY3RvcnkpCjI1ODM5
-IHN0YXQoIi9zc2QxL2xpbnV4LXRhcmdldC9iYWNrcG9ydHMvL2NvbmZpZy52ZXJzaW9ucyIsCjB4
-N2ZmY2FmNzAxOWIwKSA9IC0xIEVOT0VOVCAoTm8gc3VjaCBmaWxlIG9yIGRpcmVjdG9yeSkKMjU4
-Mzkgc3RhdCgiYmFja3BvcnRzL0tjb25maWciLCAweDdmZmNhZjZmZmE1MCkgPSAtMSBFTk9FTlQg
-KE5vIHN1Y2gKZmlsZSBvciBkaXJlY3RvcnkpCjI1ODM5IHN0YXQoIi9zc2QxL2xpbnV4LXRhcmdl
-dC9iYWNrcG9ydHMvS2NvbmZpZyIsIHtzdF9tb2RlPVNfSUZSRUd8CjA2NDQsIHN0X3NpemU9ODI4
-LCAuLi59KSA9IDAKMjU4Mzkgc3RhdCgiL3NzZDEvbGludXgtdGFyZ2V0L2JhY2twb3J0cy9LY29u
-ZmlnIiwge3N0X21vZGU9U19JRlJFR3wKMDY0NCwgc3Rfc2l6ZT04MjgsIC4uLn0pID0gMAoKTmV2
-ZXJ0aGVsZXNzIGl0IHNlZW1zIHRvIHdvcmsgb3V0IGZvciBtZSBpZiBpIHVzZSBhIHJlbGF0aXZl
-IHNvdXJjZSBwYXRoCmZvciB0aGUgMiBLY29uZmlnIGZpbGVzIGFuZCBzb2x2ZXMgdGhlIGlzc3Vl
-IHNvIGZhci4gTWF5YmUgeW91IGZpZ3VyZQpvdXQgaG93IHRvIGZpeCB0aGlzPwoKQlIKVGltbwo=
+This interferes with module install when specifying KLIB.
+
+According to kernel docs, INSTALL_MOD_PATH is the module
+install path prefix:
+
+	INSTALL_MOD_PATH
+	--------------------------------------------------
+	INSTALL_MOD_PATH specifies a prefix to MODLIB for
+	module directory relocations required by build
+	roots.  This is not defined in the makefile but
+	the argument can be passed to make if needed.
+
+Which causes modules to be installed in
+/lib/modules/$KLIB_VERSION/lib/modules/$KLIB_VERSION.
+
+Signed-off-by: Thomas Pedersen <thomas@eero.com>
+---
+ backport/Makefile      | 4 +---
+ backport/Makefile.real | 2 +-
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/backport/Makefile b/backport/Makefile
+index edd36b7..8cf1096 100644
+--- a/backport/Makefile
++++ b/backport/Makefile
+@@ -10,11 +10,9 @@ BACKPORT_DIR := $(shell pwd)
+ 
+ KMODDIR ?= updates
+ ifneq ($(origin KLIB), undefined)
+-KMODPATH_ARG := "INSTALL_MOD_PATH=$(KLIB)"
+ KLIB_VERSION := $(shell basename $(KLIB))
+ else
+ KLIB_VERSION := $(shell uname -r)
+-KMODPATH_ARG :=
+ KLIB := /lib/modules/$(KLIB_VERSION)/
+ endif
+ KLIB_BUILD ?= $(KLIB)/build/
+@@ -22,7 +20,7 @@ KERNEL_CONFIG := $(KLIB_BUILD)/.config
+ KERNEL_MAKEFILE := $(KLIB_BUILD)/Makefile
+ CONFIG_MD5 := $(shell md5sum $(KERNEL_CONFIG) 2>/dev/null | sed 's/\s.*//')
+ 
+-export KLIB KLIB_VERSION KLIB_BUILD BACKPORT_DIR KMODDIR KMODPATH_ARG
++export KLIB KLIB_VERSION KLIB_BUILD BACKPORT_DIR KMODDIR
+ 
+ # disable built-in rules for this file
+ .SUFFIXES:
+diff --git a/backport/Makefile.real b/backport/Makefile.real
+index 5ec133e..b65474b 100644
+--- a/backport/Makefile.real
++++ b/backport/Makefile.real
+@@ -90,7 +90,7 @@ modules: backport-include/backport/autoconf.h
+ .PHONY: install
+ install: modules
+ 	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_DIR)			\
+-		INSTALL_MOD_DIR=$(KMODDIR) $(KMODPATH_ARG)		\
++		INSTALL_MOD_DIR=$(KMODDIR)				\
+ 		modules_install
+ 	@./scripts/blacklist.sh $(KLIB)/ $(KLIB)/$(KMODDIR)
+ 	@./scripts/compress_modules.sh $(KLIB)/$(KMODDIR)
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
