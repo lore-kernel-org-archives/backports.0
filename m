@@ -1,56 +1,115 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:40784 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753093AbcKRMoL (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 18 Nov 2016 07:44:11 -0500
-Received: from [192.40.95.5] (helo=dubbel.ger.corp.intel.com)
-        by farmhouse.coelho.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <luca@coelho.fi>)
-        id 1c7iWW-0000Pp-J5
-        for backports@vger.kernel.org; Fri, 18 Nov 2016 14:44:09 +0200
-From: Luca Coelho <luca@coelho.fi>
-To: backports@vger.kernel.org
-Date: Fri, 18 Nov 2016 14:44:02 +0200
-Message-Id: <20161118124402.17319-1-luca@coelho.fi> (sfid-20161118_134413_093871_C90578DD)
-Subject: [PATCH] backports: only backport kconfig.h macros for < v3.4
+Received: from lpdvsmtp01.broadcom.com ([192.19.211.62]:52952 "EHLO
+        relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935303AbcKWKdj (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 23 Nov 2016 05:33:39 -0500
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: backports@vger.kernel.org,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Julia Lawall <julia.lawall@lip6.fr>
+Subject: [PATCH] patches: network: add spatch for mtu range checking
+Date: Wed, 23 Nov 2016 10:33:13 +0000
+Message-Id: <1479897193-6168-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20161123_113549_273377_1C1F6F8B)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Luca Coelho <luciano.coelho@intel.com>
+The mtu range checking was moved into network subsystem resulting in
+the addition of min_mtu and max_mtu fields in struct net_device. For
+drivers with a .ndo_change_mtu() which took care of range checking this
+resulted in removal of the callback. This spatch restores the callback
+using the values set in {min,max}_mtu fields for kernels before v4.10.
 
-In kernel v4.9-rc3, config_enabled() was removed, so we can't use it
-anymore.  The IS_BUILTIN macro is undefined then redefined using
-config_enabled(), which doesn't work anymore.  Additionally, it's not
-necessary to include all these macros if the kernel is >= v3.4.  To
-fix the config_enabled() problem and to avoid backporting
-unnecessarily, simply gate the backports on < v3.4.
-
-Change-Id: I7682ca0cef166e00dd37529da113ab949dfc5c0a
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
 ---
- backport/backport-include/linux/kconfig.h | 2 ++
- 1 file changed, 2 insertions(+)
+ .../network/0073-netdevice-mtu-range.cocci         | 75 ++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
+ create mode 100644 patches/collateral-evolutions/network/0073-netdevice-mtu-range.cocci
 
-diff --git a/backport/backport-include/linux/kconfig.h b/backport/backport-include/linux/kconfig.h
-index 4fe2a10..4899c7e 100644
---- a/backport/backport-include/linux/kconfig.h
-+++ b/backport/backport-include/linux/kconfig.h
-@@ -5,6 +5,7 @@
- #include_next <linux/kconfig.h>
- #endif
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0)
- #ifndef __ARG_PLACEHOLDER_1
- #define __ARG_PLACEHOLDER_1 0,
- #define config_enabled(cfg) _config_enabled(cfg)
-@@ -36,3 +37,4 @@
- #endif
- 
- #endif
-+#endif
+diff --git a/patches/collateral-evolutions/network/0073-netdevice-mtu-range.cocci b/patches/collateral-evolutions/network/0073-netdevice-mtu-range.cocci
+new file mode 100644
+index 0000000..30276f9
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0073-netdevice-mtu-range.cocci
+@@ -0,0 +1,75 @@
++@initialize:python@
++@@
++
++first_ops = 0
++
++@r@
++identifier OPS;
++position p;
++@@
++
++struct net_device_ops OPS@p = { ... };
++
++@script:python depends on r@
++@@
++
++first_ops = 0
++
++@script:python@
++p << r.p;
++@@
++
++ln = int(p[0].line)
++if first_ops == 0 or ln < first_ops:
++  first_ops = ln
++
++@script:python@
++p << r.p;
++@@
++
++ln = int(p[0].line)
++if not(first_ops == ln):
++  cocci.include_match(False)
++
++@r1 exists@
++expression ndevexp, e1, e2;
++identifier func;
++@@
++func(...) {
++	<+...
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,10,0)
++	ndevexp->min_mtu = e1;
++	ndevexp->max_mtu = e2;
+++#endif
++	...+>
++}
++
++@r2@
++expression r1.e1,r1.e2;
++identifier r.OPS;
++@@
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
+++ static int __change_mtu(struct net_device *ndev, int new_mtu)
+++ {
+++ if (new_mtu < e1 || new_mtu > e2)
+++             return -EINVAL;
+++             ndev->mtu = new_mtu;
+++             return 0;
+++ }
+++#endif
+++
++struct net_device_ops OPS = {
++       ...
++};
++
++@depends on r2@
++identifier OPS;
++@@
++
++struct net_device_ops OPS = {
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
+++      .ndo_change_mtu = __change_mtu,
+++#endif
++       ...
++};
++
 -- 
-2.10.2
+1.9.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
