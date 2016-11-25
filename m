@@ -1,44 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pg0-f44.google.com ([74.125.83.44]:33824 "EHLO
-        mail-pg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753379AbcKNI4B (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 14 Nov 2016 03:56:01 -0500
-Received: by mail-pg0-f44.google.com with SMTP id x23so49205094pgx.1
-        for <backports@vger.kernel.org>; Mon, 14 Nov 2016 00:56:01 -0800 (PST)
-Received: from [10.176.68.21] ([192.19.213.250])
-        by smtp.gmail.com with ESMTPSA id d197sm33337563pfd.38.2016.11.14.00.49.06
-        for <backports@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Nov 2016 00:49:06 -0800 (PST)
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Subject: min/max mtu field in struct net_device
-Message-ID: <c4682854-87ce-5e28-d049-545f24d48cab@broadcom.com> (sfid-20161114_095807_156709_13DD77F5)
-Date: Mon, 14 Nov 2016 09:49:03 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Received: from s3.sipsolutions.net ([5.9.151.49]:60142 "EHLO sipsolutions.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750703AbcKYH6M (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 25 Nov 2016 02:58:12 -0500
+Message-ID: <1480060687.4317.0.camel@sipsolutions.net> (sfid-20161125_085816_125313_35588E8E)
+Subject: Re: unknown symbol CRYPTO_GCM
+From: Johannes Berg <johannes@sipsolutions.net>
+To: =?UTF-8?Q?Franti=C5=A1ek_Hor=C3=ADnek?=
+        <frantisekhorinek@gmail.com>, backports@vger.kernel.org
+Date: Fri, 25 Nov 2016 08:58:07 +0100
+In-Reply-To: <CAHU8GYNVMkbEH-Vp06DsKVV-x5nwfSMXL_fowOWMQoswTHfNyA@mail.gmail.com> (sfid-20161125_022459_769208_EDE7918F)
+References: <CAHU8GYNVMkbEH-Vp06DsKVV-x5nwfSMXL_fowOWMQoswTHfNyA@mail.gmail.com>
+         (sfid-20161125_022459_769208_EDE7918F)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Just wondering. Does anyone have any ideas on how to backport the two
-patches below. The struct net_device now holds mtu range which network
-subsystem checks. For a number of drivers and mac80211 it means they no
-longer have .ndo_change_mtu callback. My guess is that we need patches
-in backport of some sort to tackle this.
+On Fri, 2016-11-25 at 02:24 +0100, František Horínek wrote:
+> 
+> there is also a warning before build:
+> warning: (MAC80211 && MAC802154) selects BPAUTO_CRYPTO_CCM which has
+> unmet direct dependencies (CRYPTO_AEAD && CRYPTO_CTR)
 
-Regards,
-Arend
+All of this stuff is broken.
 
-commit 61e84623ace35ce48975e8f90bbbac7557c43d61
-Author: Jarod Wilson <jarod@redhat.com>
-Date:   Fri Oct 7 22:04:33 2016 -0400
+> I am using backports-4.2.6-1 downloaded today (25. 11. 2016)
+> 
+> What should I do?
 
-    net: centralize net_device min/max MTU checking
+Enable CRYPTO_GCM in your base kernel.
 
-commit 9c22b4a34eddbaa5b5243c8cd27e31aa36e676e1
-Author: Jarod Wilson <jarod@redhat.com>
-Date:   Thu Oct 20 13:55:18 2016 -0400
-
-    net: use core MTU range checking in wireless drivers
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
