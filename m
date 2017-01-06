@@ -1,101 +1,167 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:36042 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752099AbdA3I2C (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 30 Jan 2017 03:28:02 -0500
-Received: by mail-wm0-f48.google.com with SMTP id c85so203455471wmi.1
-        for <backports@vger.kernel.org>; Mon, 30 Jan 2017 00:27:38 -0800 (PST)
-Subject: Re: issue with devcoredump.patch
-To: Luca Coelho <luca@coelho.fi>,
-        "backports@vger.kernel.org" <backports@vger.kernel.org>
-References: <118eb454-703f-9de9-6fc4-5326de6592ca@broadcom.com>
- <79134735-3833-5b38-e7b8-e311ad1e925b@broadcom.com>
- <1485600612.26003.20.camel@coelho.fi>
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <8f4f34d7-50c5-1aa8-a617-6daad3b90bd2@broadcom.com> (sfid-20170130_092804_760075_73A60754)
-Date: Mon, 30 Jan 2017 09:27:35 +0100
-MIME-Version: 1.0
-In-Reply-To: <1485600612.26003.20.camel@coelho.fi>
-Content-Type: text/plain; charset=utf-8
+Received: from s3.sipsolutions.net ([5.9.151.49]:58874 "EHLO sipsolutions.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966720AbdAFKkh (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 6 Jan 2017 05:40:37 -0500
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backport: replace select_queue changes by an spatch
+Date: Fri,  6 Jan 2017 11:40:32 +0100
+Message-Id: <20170106104032.7301-1-johannes@sipsolutions.net> (sfid-20170106_114144_091521_C5E5A2D6)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 28-1-2017 11:50, Luca Coelho wrote:
-> Hey Arend,
-> 
-> On Tue, 2017-01-10 at 21:39 +0100, Arend Van Spriel wrote:
->> Turns out that at line 70 of the patch file there is no single space
->> before the tab, which lib/patch.py marks as an error. With that fixed
->> the fun really starts as I get following code:
->>
->> static CLASS_ATTR_RW(disabled);
->>
->> static struct attribute *devcd_class_attrs[] = {
->>         &class_attr_disabled.attr,
->>         NULL,
->> };
->> #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
->> ATTRIBUTE_GROUPS(devcd_class);
->> #else
->> #define BP_ATTR_GRP_STRUCT device_attribute
->> ATTRIBUTE_GROUPS_BACKPORT(devcd_class);
->> #endif
->>
->> static struct class devcd_class = {
->>         .name           = "devcoredump",
->>         .owner          = THIS_MODULE,
->>         .dev_release    = devcd_dev_release,
->> #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
->> #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
->>         .dev_groups     = devcd_dev_groups,
->> #else
->>         .dev_attrs = devcd_class_dev_attrs,
->> #endif
->> #endif
->> #if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
->>         .class_attrs    = devcd_class_attrs,
->> #else
->>         .class_groups   = devcd_class_groups,
->> #endif
->> };
->>
->> This is because the new devcoredump.c in 4.10-rc1 now triggers a
->> Coccinelle script to kick in, ie.
->> patches/collateral-evolutions/generic/0001-group-attr/0001-group_attr_class.cocci.
->> It seems to kick in because of the ATTRIBUTE_GROUPS(devcd_class) macro.
-> 
-> Did you ever get this to work? I'm getting this warnings:
-> 
-> home/luca/iwlwifi/stack-dev/compat/drivers-base-devcoredump.c:197:3: warning: initialization from incompatible pointer type [enabled by default]
->    .class_attrs = devcd_class_attrs,
->    ^
-> /home/luca/iwlwifi/stack-dev/compat/drivers-base-devcoredump.c:197:3: warning: (near initialization for ‘devcd_class.class_attrs’) [enabled by default]
-> In file included from /home/luca/iwlwifi/stack-dev/backport-include/linux/sysfs.h:3:0,
->                  from include/linux/kobject.h:21,
->                  from include/linux/module.h:17,
->                  from /home/luca/iwlwifi/stack-dev/backport-include/linux/module.h:3,
->                  from /home/luca/iwlwifi/stack-dev/compat/drivers-base-devcoredump.c:27:
-> /home/luca/iwlwifi/stack-dev/compat/drivers-base-devcoredump.c:179:18: warning: ‘devcd_class_groups’ defined but not used [-Wunused-variable]
->  ATTRIBUTE_GROUPS(devcd_class);
->                   ^
-> include/linux/sysfs.h:131:38: note: in definition of macro ‘__ATTRIBUTE_GROUPS’
->  static const struct attribute_group *_name##_groups[] = { \
->                                       ^
-> /home/luca/iwlwifi/stack-dev/compat/drivers-base-devcoredump.c:179:1: note: in expansion of macro ‘ATTRIBUTE_GROUPS’
->  ATTRIBUTE_GROUPS(devcd_class);
->  ^
-> 
-> Any idea how to fix it?
+From: Johannes Berg <johannes.berg@intel.com>
 
-Yeah. This is what I hit after fixing the devcoredump.patch. Because of
-the recent change in drivers/base/devcoredump.c I think
-0001-group_attr_class.cocci needs to be quite a bit smarter. My SmPL
-knowledge is still somewhat limited so I did not get it working
-properly. Maybe posting the problem (in simplified form) on the Cocci
-mailing list will get us a solution.
+This hasn't really been a problem, but if we may want to add
+more uses in the future, or change things around (e.g. with
+the proposed 802.3 format addition to mac80211) then we may
+want to have this more maintainable.
 
-Regards,
-Arend
+The output looks a bit worse, but I think we can live with that.
+
+Change-Id: I0d1fa6d1d3560c720ff710c89aea846740eb2173
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ .../network/0028-select_queue.cocci                | 24 ++++++++++++
+ .../network/0028-select_queue/INFO                 | 12 ------
+ .../network/0028-select_queue/mac80211.patch       | 44 ----------------------
+ .../network/0028-select_queue/mwifiex.patch        | 22 -----------
+ 4 files changed, 24 insertions(+), 78 deletions(-)
+ create mode 100644 patches/collateral-evolutions/network/0028-select_queue.cocci
+ delete mode 100644 patches/collateral-evolutions/network/0028-select_queue/INFO
+ delete mode 100644 patches/collateral-evolutions/network/0028-select_queue/mac80211.patch
+ delete mode 100644 patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch
+
+diff --git a/patches/collateral-evolutions/network/0028-select_queue.cocci b/patches/collateral-evolutions/network/0028-select_queue.cocci
+new file mode 100644
+index 000000000000..224d0ca34d95
+--- /dev/null
++++ b/patches/collateral-evolutions/network/0028-select_queue.cocci
+@@ -0,0 +1,24 @@
++@ndo@
++identifier ops, select_queue;
++@@
++struct net_device_ops ops = {
++ .ndo_select_queue = select_queue,
++ ...
++};
++
++@@
++identifier ndo.select_queue;
++identifier dev, skb, accel_priv, fallback;
++type select_queue_fallback_t;
++type u16;
++@@
++u16 select_queue(
++ struct net_device *dev, struct sk_buff *skb
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
++ , void *accel_priv
+++#endif
+++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0) || (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI > 30)
++ , select_queue_fallback_t fallback
+++#endif
++ )
++ {...}
+diff --git a/patches/collateral-evolutions/network/0028-select_queue/INFO b/patches/collateral-evolutions/network/0028-select_queue/INFO
+deleted file mode 100644
+index 519e4fcfa671..000000000000
+--- a/patches/collateral-evolutions/network/0028-select_queue/INFO
++++ /dev/null
+@@ -1,12 +0,0 @@
+-backports: adapt to changes in netdev select_queue call
+-
+-This patch reverts the changes done in the following commit for older
+-kernel versions:
+-commit f663dd9aaf9ed124f25f0f8452edf238f087ad50
+-Author: Jason Wang <jasowang@redhat.com>
+-Date:   Fri Jan 10 16:18:26 2014 +0800
+-
+-    net: core: explicitly select a txq before doing l2 forwarding
+-
+-mcgrof@ergon ~/linux (git::master)$ git describe --contains f663dd9aaf9ed124f25f0f8452edf238f087ad50
+-v3.13-rc8~4^2~2
+diff --git a/patches/collateral-evolutions/network/0028-select_queue/mac80211.patch b/patches/collateral-evolutions/network/0028-select_queue/mac80211.patch
+deleted file mode 100644
+index 39a9d4aa6737..000000000000
+--- a/patches/collateral-evolutions/network/0028-select_queue/mac80211.patch
++++ /dev/null
+@@ -1,44 +0,0 @@
+---- a/net/mac80211/iface.c
+-+++ b/net/mac80211/iface.c
+-@@ -1101,10 +1101,20 @@ static void ieee80211_uninit(struct net_
+- 	ieee80211_teardown_sdata(IEEE80211_DEV_TO_SUB_IF(dev));
+- }
+- 
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0) || \
+-+    (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI > 30)
+- static u16 ieee80211_netdev_select_queue(struct net_device *dev,
+- 					 struct sk_buff *skb,
+- 					 void *accel_priv,
+- 					 select_queue_fallback_t fallback)
+-+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
+-+static u16 ieee80211_netdev_select_queue(struct net_device *dev,
+-+					 struct sk_buff *skb,
+-+					 void *accel_priv)
+-+#else
+-+static u16 ieee80211_netdev_select_queue(struct net_device *dev,
+-+					 struct sk_buff *skb)
+-+#endif
+- {
+- 	return ieee80211_select_queue(IEEE80211_DEV_TO_SUB_IF(dev), skb);
+- }
+-@@ -1150,10 +1160,20 @@ static const struct net_device_ops ieee8
+- 	.ndo_get_stats64	= ieee80211_get_stats64,
+- };
+- 
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0) || \
+-+    (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI > 30)
+- static u16 ieee80211_monitor_select_queue(struct net_device *dev,
+- 					  struct sk_buff *skb,
+- 					  void *accel_priv,
+- 					  select_queue_fallback_t fallback)
+-+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
+-+static u16 ieee80211_monitor_select_queue(struct net_device *dev,
+-+					  struct sk_buff *skb,
+-+					  void *accel_priv)
+-+#else
+-+static u16 ieee80211_monitor_select_queue(struct net_device *dev,
+-+					  struct sk_buff *skb)
+-+#endif
+- {
+- 	struct ieee80211_sub_if_data *sdata = IEEE80211_DEV_TO_SUB_IF(dev);
+- 	struct ieee80211_local *local = sdata->local;
+diff --git a/patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch b/patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch
+deleted file mode 100644
+index 61a091b5c606..000000000000
+--- a/patches/collateral-evolutions/network/0028-select_queue/mwifiex.patch
++++ /dev/null
+@@ -1,22 +0,0 @@
+---- a/drivers/net/wireless/marvell/mwifiex/main.c
+-+++ b/drivers/net/wireless/marvell/mwifiex/main.c
+-@@ -1199,9 +1199,19 @@ static struct net_device_stats *mwifiex_
+- 	return &priv->stats;
+- }
+- 
+-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0) || \
+-+    (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI > 30)
+- static u16
+- mwifiex_netdev_select_wmm_queue(struct net_device *dev, struct sk_buff *skb,
+- 				void *accel_priv, select_queue_fallback_t fallback)
+-+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
+-+static u16
+-+mwifiex_netdev_select_wmm_queue(struct net_device *dev, struct sk_buff *skb,
+-+				void *accel_priv)
+-+#else
+-+static u16
+-+mwifiex_netdev_select_wmm_queue(struct net_device *dev, struct sk_buff *skb)
+-+#endif
+- {
+- 	skb->priority = cfg80211_classify8021d(skb, NULL);
+- 	return mwifiex_1d_to_wmm_queue[skb->priority];
+-- 
+2.9.3
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
