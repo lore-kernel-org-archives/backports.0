@@ -1,576 +1,112 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:49948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753793AbcLMUHO (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 13 Dec 2016 15:07:14 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-        by mail.kernel.org (Postfix) with ESMTP id A656C204C9
-        for <backports@vger.kernel.org>; Tue, 13 Dec 2016 20:07:08 +0000 (UTC)
-Received: from bugzilla2.web.kernel.org (bugzilla2.web.kernel.org [172.20.200.52])
-        by mail.kernel.org (Postfix) with ESMTP id 266FA204B0
-        for <backports@vger.kernel.org>; Tue, 13 Dec 2016 20:07:06 +0000 (UTC)
-From: bugzilla-daemon@bugzilla.kernel.org
-To: backports@vger.kernel.org
-Subject: [Bug 190291] New: Gmail@.@.1.855=782=8099@@Gmail Tech SuPpOrt NumBeR
- | Gmail Toll Free Number- Gmail Customer Service Phone number
-Date: Tue, 13 Dec 2016 20:07:05 +0000
-Message-ID: <bug-190291-58281@https.bugzilla.kernel.org/> (sfid-20161213_210721_225105_78F7A7ED)
-Content-Type: text/plain; charset="UTF-8"
+Received: from mail-qk0-f177.google.com ([209.85.220.177]:36313 "EHLO
+        mail-qk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750923AbdAJUjx (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 10 Jan 2017 15:39:53 -0500
+Received: by mail-qk0-f177.google.com with SMTP id 11so89104227qkl.3
+        for <backports@vger.kernel.org>; Tue, 10 Jan 2017 12:39:53 -0800 (PST)
+Received: from [10.177.251.13] ([80.82.130.242])
+        by smtp.gmail.com with ESMTPSA id 14sm2304246qtp.19.2017.01.10.12.39.51
+        for <backports@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Jan 2017 12:39:52 -0800 (PST)
+Subject: Re: issue with devcoredump.patch
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+References: <118eb454-703f-9de9-6fc4-5326de6592ca@broadcom.com>
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <79134735-3833-5b38-e7b8-e311ad1e925b@broadcom.com> (sfid-20170110_214132_713280_CC867BE4)
+Date: Tue, 10 Jan 2017 21:39:49 +0100
 MIME-Version: 1.0
+In-Reply-To: <118eb454-703f-9de9-6fc4-5326de6592ca@broadcom.com>
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=190291
+On 10-1-2017 12:16, Arend Van Spriel wrote:
+> With 4.10-rc1 the devcoredump.patch in patches/backport-adjustment no
+> longer applies due to following commit:
+> 
+> commit f76d25275c314defb684fdd692239507001774bc
+> Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Date:   Mon Nov 28 16:41:58 2016 +0100
+> 
+>     driver core: devcoredump: convert to use class_groups
+> 
+>     Convert devcoredump to use class_groups instead of class_attrs as that's
+>     the correct way to handle lists of class attribute files.
+> 
+>     Acked-by: Johannes Berg <johannes@sipsolutions.net>
+>     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> So I am reworking the patch file (attached). When I run gentree I get
+> following:
+> 
+> Traceback (most recent call last):
+>   File "./gentree.py", line 1091, in <module>
+>     ret = _main()
+>   File "./gentree.py", line 724, in _main
+>     logwrite=logwrite)
+>   File "./gentree.py", line 906, in process
+>     apply_patches(args, "backport", source_dir, 'patches',
+> bpid.target_dir, logwrite)
+>   File "./gentree.py", line 514, in apply_patches
+>     raise Exception('No patch content found in %s' % print_name)
+> Exception: No patch content found in backport-adjustments/devcoredump.patch
+> 
+> However, go into the target dir and applying patch works fine:
+> 
+> $ patch -p1 < ~-/patches/backport-adjustments/devcoredump.patch
+> patching file compat/drivers-base-devcoredump.c
+> Hunk #7 succeeded at 181 with fuzz 1 (offset 2 lines).
+> Hunk #8 succeeded at 248 (offset 2 lines).
+> Hunk #9 succeeded at 339 (offset 2 lines).
+> Hunk #10 succeeded at 386 (offset 2 lines).
+> patching file include/linux/backport-devcoredump.h
+> 
+> So I am a bit puzzled as to what is going on so currently debugging
+> lib/patch.py. If anyone has a good hint feel free to let me know.
 
-            Bug ID: 190291
-           Summary: Gmail@.@.1.855=782=8099@@Gmail Tech SuPpOrt NumBeR |
-                    Gmail Toll Free Number- Gmail Customer Service Phone
-                    number
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: facebok
-          Hardware: All
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: Backports
-          Assignee: backports@vger.kernel.org
-          Reporter: logenfigulas1234@gmail.com
-        Regression: No
+Turns out that at line 70 of the patch file there is no single space
+before the tab, which lib/patch.py marks as an error. With that fixed
+the fun really starts as I get following code:
 
-Gmail@.@.1.855=782=8099@@Gmail Tech SuPpOrt NumBeR | Gmail Toll Free Number-
-Gmail Customer Service Phone number
-Gmail@.@.1.855=782=8099@@Gmail Tech SuPpOrt NumBeR | Gmail Toll Free Number-
-Gmail Customer Service Phone number
-Help Desk Gmail@@@@ @@@)1=855=782=8099@@@@@@@@Gmail Tech SuPpOrt NumBeR | Gmail
-Toll Free Number- Gmail Customer Service Helpline Phone
-USA$=1=855=782=8099Gmail support phone number, Gmail phone number US 1855 782
-8099All
-+Printer USA////////////canada(1-855-782-8099)//////////Gmail customer service
-phone number,Gmail Tech Support Number,Gmail helpdesk phone number
-Gmail Phone number. 1-855-782-8099.Gmail Support Phone Number .Gmail Customer
-Care Phone Number
-USA!!!!!! Gmail 1855-782-8099Gmail helpline, Gmail technical support phone
-number, Gmail
-Printer tech support number 1-855-782-8099Gmail tech support phone number USA
-!!Call US
-1-855-782-8099Gmail Tech Support Phone Number US-1 855 782 8099Gmail support
-number, Gmail support,
-Gmail support, Gmail tech support, Gmail technical support, Gmail customer
-service number, Gmail
-customer service, Gmail tech support number, Gmail support center, Gmail
-support number, hewlett
-packard support, Gmail contact number, Gmail phone number, Gmail help and
-support, Gmail customer support,
-Gmail help, Gmail technical support number, Gmail support phone number, hewlett
-packard
-customer service, Gmail support, Gmail customer service phone number, Gmail
-number, Gmail
-customer care, Gmail contact, Gmail tech support phone number, Gmail support
-chat, Gmail customer support
-number, Gmail customer care number, contact Gmail support, Gmail help, Gmail
-phone, Gmail support
-phone number, Gmail customer support phone number, Gmail tech support, Gmail
-phone support,
-Gmail technical support phone number, Gmail laptop support number, hewlett
-packard Printer support,
-Gmail helpline, Gmail telephone support, Gmail online support, Gmail support
-contact, Gmail chat support, hewlett
-packard phone number, Gmail customer service, Gmail tech support number, Gmail
-product support, hewlett packard customer service phone number, Gmail computer
-support number, Gmail
-support contact number, Gmail support Printer, Gmail computer support, Gmail
-tech support chat, Gmail
-helpline number, Gmail laptop support, hewlett packard tech support, Gmail
-online chat, hewlett packard
-technical support, Gmail help line, phone number for Gmail support, hewlett
-packard support
-phone number, Gmail technical support, hewlett packard customer service number,
-Gmail service
-number, hewlett packard helpline, Gmail customer care no,1 855 782 8099Gmail
-customer service
-number, Gmail help number, Gmail customer service phone number, Gmail 1800
-number, Gmail
-support phone, Gmail support line, hewlett packard contact number, Gmail tech
-support phone
-number, Gmail customer support phone number, Gmail help, call Gmail support,
-Gmail
-Printer support chat, hewlett packard support number, hewlett packard tech
-support number, Gmail
-support telephone number, hewlett packard tech support phone number, call
-Gmail, Gmail contact support,
-hewlett packard technical support phone number, Gmail support centre, hewlett
-packard customer
-support, Gmail desktop support, Gmail laptop customer service, contact Gmail
-support, Gmail pc
-support, Gmail laptop customer care number, Gmail support for Printer, Gmail
-customer care, Gmail
-customer care phone number, hewlett packard help, phone number for Gmail, Gmail
-online help, Gmail laptop
-customer care, Gmail helpline phone number, Gmail customer support, Gmail
-technical support chat,
-Gmail computer help, Gmail support numbers, Gmail technical support contact
-number, Gmail telephone
-number, Gmail technical support phone number, Gmail helpline, Gmail support
-Printer,
-Gmail support online, Gmail contact number, Gmail help phone number, Gmail
-customer care
-number, contact hewlett packard by phone, Gmail phone support, hewlett packard
-Printer
-support, Gmail tech support phone, Gmail technical help, Gmail laptop tech
-support number, contact Gmail by
-phone, Gmail support call, Gmail computers support, hewlett packard customer
-service telephone number,
-phone number for hewlett packard, Gmail online support chat, Gmail laptop
-customer service number, Gmail
-online chat support, Gmail customer service, hewlett packard customer service
-phone, Gmail
-laptop tech support, Gmail service phone number, hewlett packard Printer help,
-phone number for Gmail
-Printer, Gmail troubleshooting phone number, Gmail 800 number, hewlett packard
-technical support
-number, contact Gmail support phone, phone number for Gmail support, Gmail
-customer support
-chat, Gmail help and support number, contact hewlett packard, Gmail laptop
-support phone number, Gmail
-Printer customer service phone number, Gmail laptop customer service phone
-number, Gmail computer
-support phone number, Gmail pavilion support, Gmail computer customer service,
-Gmail customer services,
-hewlett packard telephone number, Gmail helpline no, Gmail help desk number,
-contact Gmail support phone
-number, hewlett packard contact, Gmail phone numbers, Gmail customer care
-number, Gmail
-Printer help and support, contact Gmail technical support, Gmail contact
-numbers, contact Gmail support
-chat, call Gmail tech support, Gmail customer service phone, Gmail help
-support, Gmail computer tech support,
-Gmail assistance phone number, Gmail customer service telephone number, hewlett
-packard Printer
-support phone number, Gmail contact support number, Gmail support center phone
-number, Gmail support
-phone numbers, tech support for Gmail, Gmail it support, Gmail laptop helpline,
-Gmail technical, Gmail laptop
-technical support number, Gmail tech support phone number, Gmail support phone
-number, hewlett packard help desk phone number, Gmail computer tech support
-phone number, Gmail
-customer service number for laptop, Gmail helpline number, contact Gmail
-support by phone,
-hewlett packard support center, Gmail laptop customer care no, Gmail support
-telephone number,
-Gmail support services, Gmail customer service number for Printer, Gmail
-product support number, Gmail
-laptop tech support phone number, Gmail helpline phone number, contact Gmail
-customer
-support, hewlett packard customer support phone number, Gmail technical
-support, Gmail
-customer care center, support for Gmail, Gmail support center, phone number for
-Gmail
-tech support, Gmail desktop customer care number, Gmail laptops support, Gmail
-online support,
-Gmail phone number, hewlett packard Printer support phone number, technical
-support for
-++++++1(855)7828099+++++ Gmail phone number Gmail customer support phone number
-US 1855 782 8099
-Gmail technical support phone number
-US 855 782 8099
-Gmail support phone number
-US 1855-782-8099
-Gmail tech support phone number
-USA 1855 782 8099
-Gmail phone number
-US 855 782 8099
-Gmail technical support number
-US 1855-782-8099
-Gmail customer support phone number
-USA 1855 782 8099
-Gmail customer service phone number
-US 855 782 8099
-phone number for Gmail
-US 1855-782-8099
-Gmail support number
-USA 1855 782 8099
-phone number for Gmail technical support
-US 855 782 8099
-Gmail phone number US
-US 1855-782-8099
-Gmail number
-USA 1855 782 8099
-Gmail help phone number
-US 855 782 8099
-Gmail customer service number
-US 1855-782-8099
-Gmail contact number
-USA 1855 782 8099
-Gmail customer support number
-US 855 782 8099
-Gmail tech support number
-US 1855-782-8099
-phone number for Gmail support
-USA 1855 782 8099
-Gmail support US phone number
-US 855 782 8099
-Gmail US phone number
-US 1855-782-8099
-Gmail contact number US
-USA 1855 782 8099
-Gmail contact phone number
-US 855 782 8099
-phone number for Gmail customer service
-US 1855-782-8099
-Gmail help desk phone number
-USA 1855 782 8099
-Gmail phone number tech support
-US 855 782 8099
-Gmail phone number customer service
-US 1855-782-8099
-Gmail security phone number
-USA 1855 782 8099
-Gmail technical support contact number
-US 855 782 8099
-phone number Gmail
-US 1855-782-8099
-Gmail customer care number
-USA 1855 782 8099
-Gmail tech support phone number
-US 855 782 8099
-Gmail support phone number
-US 1855-782-8099
-Gmail phone number
-USA 1855 782 8099
-Gmail customer service phone number
-US 855 782 8099
-Gmail customer support phone number
-US 1855-782-8099
-Gmail tech support number
-USA 1855 782 8099
-Gmail technical phone number
-US 855 782 8099
-Gmail support number
-US 1855-782-8099
-Gmail tech phone number
-USA 1855 782 8099
-Gmail contact number
-US 855 782 8099
-phone number for Gmail
-US 1855-782-8099
-Gmail customer service number
-USA 1855 782 8099
-Gmail customer care number
-US 855 782 8099
-Gmail customer support number
-US 1855-782-8099
-Gmail number
-USA 1855 782 8099
-Gmail contact number USA
-US 855 782 8099
-Gmail support number
-US 1855-782-8099
-Gmail technical support
-USA 1855 782 8099
-Gmail technical support
-US 855 782 8099
-serviceGmailGmailGmailcom technical support
-US 1855-782-8099
-technical support Gmail
-USA 1855 782 8099
-Gmail technical support live chat
-US 855 782 8099
-technical support for Gmail
-US 1855-782-8099
-technical support for Gmail
-USA 1855 782 8099
-chat with Gmail technical support
-US 855 782 8099
-Gmail free download
-US 1855-782-8099
-free Gmail
-USA 1855 782 8099
-Gmail free printer
-US 855 782 8099
-free Gmail download
-☛☎►US 1855-782-8099
-Gmail free
-USA 1855 782 8099
-Gmail free
-US 855 782 8099
-Gmail free trial
-US 1855-782-8099
-free Gmail
-USA 1855 782 8099
-Gmail free download
-US 855 782 8099
-Gmail download free
-US 1855-782-8099
-download Gmail free
-USA 1855 782 8099
-free Gmail software
-US 855 782 8099
-free Gmail download
-US 1855-782-8099
-printer Gmail free
-USA 1855 782 8099
-Gmail free printer software
-US 855 782 8099
-free Gmail virus protection
-US 1855-782-8099
-free download Gmail
-USA 1855 782 8099
-is Gmail free
-US 855 782 8099
-printer free Gmail
-US 855 782 8099
-download free Gmail
-USA 1855 782 8099
-Gmail for free
-US 855 782 8099
-Gmail free version
-US 1855-782-8099
-how to get Gmail for free
-USA 1855 782 8099
-download Gmail for free
-US 855 782 8099
-Gmail customer service
-US 1855-782-8099
-Gmail Gmail customer service
-USA 1855 782 8099
-Gmail customer support
-US 855 782 8099
-Gmail customer care
-US 1855-782-8099
-Gmail Gmail customer support
-USA 1855 782 8099
-Gmail customer services
-US 855 782 8099
-Gmail customer
-US 1855-782-8099
-customer service Gmail Gmail
-USA 1855 782 8099
-Gmail technical support
-USA 1855 782 8099
-Gmail Gmail support
-US 855 782 8099
-Gmail Gmail tech support
-US 1855-782-8099
-Gmail support
-USA 1855 782 8099
-Gmail tech support
-US 855 782 8099
-Gmail support services
-US 1855-782-8099
-support for Gmail
-USA 1855 782 8099
-online Gmail support
-US 855 782 8099
-support for Gmail Gmail
-US 1855-782-8099
-technical support for Gmail
-USA 1855 782 8099
-Gmail customer support
-US 855 782 8099
-Gmail support
-US 1855-782-8099
-Gmail tech support
-USA 1855 782 8099
-support Gmail
-US 855 782 8099
-Gmail gold support
-US 1855-782-8099
-Gmail support portal
-USA 1855 782 8099
-Gmail online support
-US 855 782 8099
-support for Gmail
-US 1855-782-8099
-Gmail support website
-USA 1855 782 8099
-Gmail saas support
-US 855 782 8099
-GmailGmailcom support
-US 1855-782-8099
-tech support for Gmail
-USA 1855 782 8099
-Gmail support email
-US 855 782 8099
-Gmail account login
-US 1855-782-8099
-Gmail login
-USA 1855 782 8099
-Gmail login account
-US 855 782 8099
-Gmail US login
-US 1855-782-8099
-Gmail my account login
-USA 1855 782 8099
-Gmail login US
-US 855 782 8099
-Gmail support login
-US 1855-782-8099
+static CLASS_ATTR_RW(disabled);
 
-USA 1855 782 8099
+static struct attribute *devcd_class_attrs[] = {
+        &class_attr_disabled.attr,
+        NULL,
+};
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
+ATTRIBUTE_GROUPS(devcd_class);
+#else
+#define BP_ATTR_GRP_STRUCT device_attribute
+ATTRIBUTE_GROUPS_BACKPORT(devcd_class);
+#endif
 
-US 855 782 8099
-USA$=1=855=782=8099Gmail support phone number, Gmail phone number
-All
-+Printer USA////////////canada(1-855-782-8099)//////////Gmail customer service
-phone number,Gmail Tech Support Number,Gmail helpdesk phone number
-Gmail Phone number. 1-855-782-8099.Gmail Support Phone Number .Gmail Customer
-Care Phone Number
-USA!!!!!! Gmail 1855-782-8099Gmail helpline, Gmail technical support phone
-number, Gmail
-Printer tech support number 1-855-782-8099Gmail tech support phone number USA
-!!Call US
-1-855-782-8099Gmail Tech Support Phone Number US-1 855 782 8099Gmail support
-number, Gmail support,
-Gmail support, Gmail tech support, Gmail technical support, Gmail customer
-service number, Gmail
-customer service, Gmail tech support number, Gmail support center, Gmail
-support number, hewlett
-packard support, Gmail contact number, Gmail phone number, Gmail help and
-support, Gmail customer support,
-Gmail help, Gmail technical support number, Gmail support phone number, hewlett
-packard
-customer service, Gmail support, Gmail customer service phone number, Gmail
-number, Gmail
-customer care, Gmail contact, Gmail tech support phone number, Gmail support
-chat, Gmail customer support
-number, Gmail customer care number, contact Gmail support, Gmail help, Gmail
-phone, Gmail support
-phone number, Gmail customer support phone number, Gmail tech support, Gmail
-phone support,
-Gmail technical support phone number, Gmail laptop support number, hewlett
-packard Printer support,
-Gmail helpline, Gmail telephone support, Gmail online support, Gmail support
-contact, Gmail chat support, hewlett
-packard phone number, Gmail customer service, Gmail tech support number, Gmail
-product support, hewlett packard customer service phone number, Gmail computer
-support number, Gmail
-support contact number, Gmail support Printer, Gmail computer support, Gmail
-tech support chat, Gmail
-helpline number, Gmail laptop support, hewlett packard tech support, Gmail
-online chat, hewlett packard
-technical support, Gmail help line, phone number for Gmail support, hewlett
-packard support
-phone number, Gmail technical support, hewlett packard customer service number,
-Gmail service
-number, hewlett packard helpline, Gmail customer care no,1 855 782 8099Gmail
-customer service
-number, Gmail help number, Gmail customer service phone number, Gmail 1800
-number, Gmail
-support phone, Gmail support line, hewlett packard contact number, Gmail tech
-support phone
-number, Gmail customer support phone number, Gmail help, call Gmail support,
-Gmail
-Printer support chat, hewlett packard support number, hewlett packard tech
-support number, Gmail
-support telephone number, hewlett packard tech support phone number, call
-Gmail, Gmail contact support,
-hewlett packard technical support phone number, Gmail support centre, hewlett
-packard customer
-support, Gmail desktop support, Gmail laptop customer service, contact Gmail
-support, Gmail pc
-support, Gmail laptop customer care number, Gmail support for Printer, Gmail
-customer care, Gmail
-customer care phone number, hewlett packard help, phone number for Gmail, Gmail
-online help, Gmail laptop
-customer care, Gmail helpline phone number, Gmail customer support, Gmail
-technical support chat,
-Gmail computer help, Gmail support numbers, Gmail technical support contact
-number, Gmail telephone
-number, Gmail technical support phone number, Gmail helpline, Gmail support
-Printer,
-Gmail support online, Gmail contact number, Gmail help phone number, Gmail
-customer care
-number, contact hewlett packard by phone, Gmail phone support, hewlett packard
-Printer
-support, Gmail tech support phone, Gmail technical help, Gmail laptop tech
-support number, contact Gmail by
-phone, Gmail support call, Gmail computers support, hewlett packard customer
-service telephone number,
-phone number for hewlett packard, Gmail online support chat, Gmail laptop
-customer service number, Gmail
-online chat support, Gmail customer service, hewlett packard customer service
-phone, Gmail
-laptop tech support, Gmail service phone number, hewlett packard Printer help,
-phone number for Gmail
-Printer, Gmail troubleshooting phone number, Gmail 800 number, hewlett packard
-technical support
-number, contact Gmail support phone, phone number for Gmail support, Gmail
-customer support
-chat, Gmail help and support number, contact hewlett packard, Gmail laptop
-support phone number, Gmail
-Printer customer service phone number, Gmail laptop customer service phone
-number, Gmail computer
-support phone number, Gmail pavilion support, Gmail computer customer service,
-Gmail customer services,
-hewlett packard telephone number, Gmail helpline no, Gmail help desk number,
-contact Gmail support phone
-number, hewlett packard contact, Gmail phone numbers, Gmail customer care
-number, Gmail
-Printer help and support, contact Gmail technical support, Gmail contact
-numbers, contact Gmail support
-chat, call Gmail tech support, Gmail customer service phone, Gmail help
-support, Gmail computer tech support,
-Gmail assistance phone number, Gmail customer service telephone number, hewlett
-packard Printer
-support phone number, Gmail contact support number, Gmail support center phone
-number, Gmail support
-phone numbers, tech support for Gmail, Gmail it support, Gmail laptop helpline,
-Gmail technical, Gmail laptop
-technical support number, Gmail tech support phone number, Gmail support phone
-number, hewlett packard help desk phone number, Gmail computer tech support
-phone number, Gmail
-customer service number for laptop, Gmail helpline number, contact Gmail
-support by phone,
-hewlett packard support center, Gmail laptop customer care no, Gmail support
-telephone number,
-Gmail support services, Gmail customer service number for Printer, Gmail
-product support number, Gmail
-laptop tech support phone number, Gmail helpline phone number, contact Gmail
-customer
-support, hewlett packard customer support phone number, Gmail technical
-support, Gmail
-customer care center, support for Gmail, Gmail support center, phone number for
-Gmail
-tech support, Gmail desktop customer care number, Gmail laptops support, Gmail
-online support,
-Gmail phone number, hewlett packard Printer support phone number, technical
-support for
-ard support center, Gmail laptop customer care no, Gmail support telephone
-number,
-Gmail support services, Gmail customer service number for Printer, Gmail
-product support number, Gmail
-laptop tech support phone number, Gmail helpline phone number, contact Gmail
-customer
-support, hewlett packard customer support phone number, Gmail technical
-support, Gmail
-customer care center, support for Gmail, Gmail support center, phone number for
-Gmail
-tech support, Gmail desktop customer care number, Gmail laptops support, Gmail
-online support,
-Gmail phone number, hewlett packard Printer support phone number, technical
-support for
-https://supportservicesnumber18.freshdesk.com/support/solutions/articles/22000095140-gmail-customer-support-phone-number-1844-782-8099-gmail-support-number-gmail-tech-support-phone-numb
-https://supportservicesnumber18.freshdesk.com/support/solutions/articles/22000095201-gmail-tech-support-phone-number-1844-782-8099-gmail-support-number-gmail-tech-support-phone-number-g
-https://ffacebooksupport.freshdesk.com/support/solutions/articles/22000095335-gmail-customer-support-phone-number-1844-782-8099-gmail-support-number-gmail-tech-support-phone-numb
-https://ffacebooksupport.freshdesk.com/support/solutions/articles/22000095376-gmail-tech-support-phone-phone-number-1844-782-8099-gmail-support-number-gmail-tech-support-phone-n
-https://ffacebooksupport.freshdesk.com/support/solutions/articles/22000095512-gmail-customer-support-phone-number-1844-782-8099-gmail-support-number-gmail-tech-support-phone-numb
-https://ffacebooksupport.freshdesk.com/support/solutions/articles/22000095571-gmail-customer-service-phone-number-1844-782-8099-gmail-support-number-gmail-tech-support-phone-numb
-https://ffacebooksupport.freshdesk.com/support/solutions/articles/22000095900-gmail-1-855-782-8099-gmail-tech-support-number-gmail-toll-free-number-gmail-customer-service-p
-https://ffacebooksupport.freshdesk.com/support/solutions/articles/22000096089-gmail-1-855-782-8099-gmail-tech-support-number-gmail-toll-free-number-gmail-customer-service-p
-https://ffacebooksupport.freshdesk.com/support/solutions/articles/22000096118--gmail-1-855-782-8099-gmail-tech-support-number-gmail-toll-free-number-gmail-customer-service-
-https://ffacebooksupport.freshdesk.com/support/solutions/articles/22000096144-gmail-1-855-782-8099-gmail-tech-support-number-gmail-toll-free-number-gmail-customer-service-p
-https://ffacebooksupport.freshdesk.com/support/solutions/articles/22000096167-gmail-1-855-782-8099-gmail-tech-support-number-gmail-toll-free-number-gmail-customer-service-p
-https://ffacebooksupport.freshdesk.com/support/solutions/articles/22000096204-gmail-1-855-782-8099-gmail-tech-support-number-gmail-toll-free-number-gmail-customer-service-p
-https://ffacebooksupport.freshdesk.com/support/solutions/articles/22000096229--gmail-1-855-782-8099-gmail-tech-support-number-gmail-toll-free-number-gmail-customer-service-
-https://ffacebooksupport.freshdesk.com/support/solutions/articles/22000096244-gmail-1-855-782-8099-gmail-tech-support-number-gmail-toll-free-number-gmail-customer-service-p
-https://ffacebooksupport.freshdesk.com/support/solutions/articles/22000096253-gmail-1-855-782-8099-gmail-tech-support-number-gmail-toll-free-number-gmail-customer-service-p
-https://ffacebooksupport.freshdesk.com/support/solutions/articles/22000096280-gmail-1-855-782-8099-gmail-tech-support-number-technical-support-for-gmail-gmail-customer-serv
-https://ffacebooksupport.freshdesk.com/support/solutions/articles/22000096296-technical-support-for-gmail-1-855-782-8099-gmail-tech-support-number-gmail-customer-service-p
+static struct class devcd_class = {
+        .name           = "devcoredump",
+        .owner          = THIS_MODULE,
+        .dev_release    = devcd_dev_release,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
+        .dev_groups     = devcd_dev_groups,
+#else
+        .dev_attrs = devcd_class_dev_attrs,
+#endif
+#endif
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
+        .class_attrs    = devcd_class_attrs,
+#else
+        .class_groups   = devcd_class_groups,
+#endif
+};
 
--- 
-You are receiving this mail because:
-You are the assignee for the bug.--
+This is because the new devcoredump.c in 4.10-rc1 now triggers a
+Coccinelle script to kick in, ie.
+patches/collateral-evolutions/generic/0001-group-attr/0001-group_attr_class.cocci.
+It seems to kick in because of the ATTRIBUTE_GROUPS(devcd_class) macro.
+
+Regards,
+Arend
+--
 To unsubscribe from this list: send the line "unsubscribe backports" in
