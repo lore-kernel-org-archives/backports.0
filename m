@@ -1,133 +1,90 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from lpdvrndsmtp01.broadcom.com ([192.19.229.170]:50255 "EHLO
-        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752030AbdAaN4u (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 31 Jan 2017 08:56:50 -0500
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-To: Luca Coelho <luca@coelho.fi>
-Cc: backports@vger.kernel.org,
-        Arend van Spriel <arend.vanspriel@broadcom.com>
-Subject: [PATCH] backports: adjustments: fix devcoredump patch for class_groups
-Date: Tue, 31 Jan 2017 13:46:44 +0000
-Message-Id: <1485870404-28663-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170131_145653_838432_40EC8097)
+Received: from paleale.coelho.fi ([176.9.41.70]:37022 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750828AbdA1Ku0 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sat, 28 Jan 2017 05:50:26 -0500
+Message-ID: <1485600612.26003.20.camel@coelho.fi> (sfid-20170128_115034_513410_48DF4C3B)
+From: Luca Coelho <luca@coelho.fi>
+To: Arend Van Spriel <arend.vanspriel@broadcom.com>,
+        "backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Sat, 28 Jan 2017 12:50:12 +0200
+In-Reply-To: <79134735-3833-5b38-e7b8-e311ad1e925b@broadcom.com>
+References: <118eb454-703f-9de9-6fc4-5326de6592ca@broadcom.com>
+         <79134735-3833-5b38-e7b8-e311ad1e925b@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: issue with devcoredump.patch
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Since...
+Hey Arend,
 
-  commit f76d25275c314defb684fdd692239507001774bc
-  Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-  Date:   Mon Nov 28 16:41:58 2016 +0100
+On Tue, 2017-01-10 at 21:39 +0100, Arend Van Spriel wrote:
+> Turns out that at line 70 of the patch file there is no single space
+> before the tab, which lib/patch.py marks as an error. With that fixed
+> the fun really starts as I get following code:
+> 
+> static CLASS_ATTR_RW(disabled);
+> 
+> static struct attribute *devcd_class_attrs[] = {
+>         &class_attr_disabled.attr,
+>         NULL,
+> };
+> #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
+> ATTRIBUTE_GROUPS(devcd_class);
+> #else
+> #define BP_ATTR_GRP_STRUCT device_attribute
+> ATTRIBUTE_GROUPS_BACKPORT(devcd_class);
+> #endif
+> 
+> static struct class devcd_class = {
+>         .name           = "devcoredump",
+>         .owner          = THIS_MODULE,
+>         .dev_release    = devcd_dev_release,
+> #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
+> #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
+>         .dev_groups     = devcd_dev_groups,
+> #else
+>         .dev_attrs = devcd_class_dev_attrs,
+> #endif
+> #endif
+> #if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
+>         .class_attrs    = devcd_class_attrs,
+> #else
+>         .class_groups   = devcd_class_groups,
+> #endif
+> };
+> 
+> This is because the new devcoredump.c in 4.10-rc1 now triggers a
+> Coccinelle script to kick in, ie.
+> patches/collateral-evolutions/generic/0001-group-attr/0001-group_attr_class.cocci.
+> It seems to kick in because of the ATTRIBUTE_GROUPS(devcd_class) macro.
 
-     driver core: devcoredump: convert to use class_groups
+Did you ever get this to work? I'm getting this warnings:
 
-it is using struct class::class_groups. Update the devcoredump
-patch file accordingly.
+home/luca/iwlwifi/stack-dev/compat/drivers-base-devcoredump.c:197:3: warning: initialization from incompatible pointer type [enabled by default]
+   .class_attrs = devcd_class_attrs,
+   ^
+/home/luca/iwlwifi/stack-dev/compat/drivers-base-devcoredump.c:197:3: warning: (near initialization for ‘devcd_class.class_attrs’) [enabled by default]
+In file included from /home/luca/iwlwifi/stack-dev/backport-include/linux/sysfs.h:3:0,
+                 from include/linux/kobject.h:21,
+                 from include/linux/module.h:17,
+                 from /home/luca/iwlwifi/stack-dev/backport-include/linux/module.h:3,
+                 from /home/luca/iwlwifi/stack-dev/compat/drivers-base-devcoredump.c:27:
+/home/luca/iwlwifi/stack-dev/compat/drivers-base-devcoredump.c:179:18: warning: ‘devcd_class_groups’ defined but not used [-Wunused-variable]
+ ATTRIBUTE_GROUPS(devcd_class);
+                  ^
+include/linux/sysfs.h:131:38: note: in definition of macro ‘__ATTRIBUTE_GROUPS’
+ static const struct attribute_group *_name##_groups[] = { \
+                                      ^
+/home/luca/iwlwifi/stack-dev/compat/drivers-base-devcoredump.c:179:1: note: in expansion of macro ‘ATTRIBUTE_GROUPS’
+ ATTRIBUTE_GROUPS(devcd_class);
+ ^
 
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
----
- patches/backport-adjustments/devcoredump.patch | 43 +++++++++++++++++++++-----
- 1 file changed, 35 insertions(+), 8 deletions(-)
+Any idea how to fix it?
 
-diff --git a/patches/backport-adjustments/devcoredump.patch b/patches/backport-adjustments/devcoredump.patch
-index f35e881..ab38ac6 100644
---- a/patches/backport-adjustments/devcoredump.patch
-+++ b/patches/backport-adjustments/devcoredump.patch
-@@ -10,7 +10,7 @@ index 240374f..8bb376b 100644
-  
-  static struct class devcd_class;
-  
--@@ -40,6 +41,10 @@ static bool devcd_disabled;
-+@@ -40,6 +41,10 @@
-  /* if data isn't read by userspace after 5 minutes then delete it */
-  #define DEVCD_TIMEOUT	(HZ * 60 * 5)
-  
-@@ -41,7 +41,7 @@ index 240374f..8bb376b 100644
-  	device_del(&devcd->devcd_dev);
-  	put_device(&devcd->devcd_dev);
-  }
--@@ -115,6 +122,7 @@ static struct bin_attribute devcd_attr_data = {
-+@@ -115,6 +122,7 @@ static ssize_t devcd_data_write(struct file *filp, struct kobject *kobj,
-  	.write = devcd_data_write,
-  };
-  
-@@ -49,7 +49,7 @@ index 240374f..8bb376b 100644
-  static struct bin_attribute *devcd_dev_bin_attrs[] = {
-  	&devcd_attr_data, NULL,
-  };
--@@ -126,6 +134,7 @@ static const struct attribute_group devcd_dev_group = {
-+@@ -126,6 +134,7 @@ static ssize_t devcd_data_write(struct file *filp, struct kobject *kobj,
-  static const struct attribute_group *devcd_dev_groups[] = {
-  	&devcd_dev_group, NULL,
-  };
-@@ -57,17 +57,44 @@ index 240374f..8bb376b 100644
-  
-  static int devcd_free(struct device *dev, void *data)
-  {
--@@ -170,7 +179,9 @@ static struct class devcd_class = {
-+@@ -160,20 +169,35 @@ static ssize_t disabled_store(struct class *class, struct class_attribute *attr,
-+ 
-+ 	return count;
-+ }
-++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0)
-++static struct class_attribute devcd_class_attrs[] = {
-++	__ATTR_RW(disabled),
-++	__ATTR_NULL
-++};
-++#else
-+ static CLASS_ATTR_RW(disabled);
-+ 
-+ static struct attribute *devcd_class_attrs[] = {
-+ 	&class_attr_disabled.attr,
-+ 	NULL,
-+ };
-+-ATTRIBUTE_GROUPS(devcd_class);
-++static const struct attribute_group devcd_class_group = {
-++	.attrs = devcd_class_attrs,
-++};
-++#endif
-+ 
-+ static struct class devcd_class = {
-  	.name		= "devcoredump",
-  	.owner		= THIS_MODULE,
-  	.dev_release	= devcd_dev_release,
- +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
-  	.dev_groups	= devcd_dev_groups,
- +#endif
-- 	.class_attrs	= devcd_class_attrs,
-++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0)
-++	.class_attrs	= devcd_class_attrs,
-++#else
-+ 	.class_groups	= devcd_class_groups,
-++#endif
-  };
-  
--@@ -231,6 +242,14 @@ static void devcd_free_sgtable(void *data)
-+ static ssize_t devcd_readv(char *buffer, loff_t offset, size_t count,
-+@@ -233,6 +257,14 @@ static void devcd_free_sgtable(void *data)
-  	_devcd_free_sgtable(data);
-  }
-  
-@@ -82,7 +109,7 @@ index 240374f..8bb376b 100644
-  /**
-   * devcd_read_from_table - copy data from sg_table to a given buffer
-   * and return the number of bytes read
--@@ -314,6 +333,11 @@ void dev_coredumpm(struct device *dev, struct module *owner,
-+@@ -316,6 +348,11 @@ void dev_coredumpm(struct device *dev, struct module *owner,
-  	if (device_add(&devcd->devcd_dev))
-  		goto put_device;
-  
-@@ -94,7 +121,7 @@ index 240374f..8bb376b 100644
-  	if (sysfs_create_link(&devcd->devcd_dev.kobj, &dev->kobj,
-  			      "failing_device"))
-  		/* nothing - symlink will be missing */;
--@@ -356,15 +380,13 @@ void dev_coredumpsg(struct device *dev, struct scatterlist *table,
-+@@ -358,15 +395,13 @@ void dev_coredumpsg(struct device *dev, struct scatterlist *table,
-  }
-  EXPORT_SYMBOL_GPL(dev_coredumpsg);
-  
--- 
-1.9.1
-
+--
+Cheers,
+Luca.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
