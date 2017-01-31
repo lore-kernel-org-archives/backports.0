@@ -1,112 +1,133 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-qk0-f177.google.com ([209.85.220.177]:36313 "EHLO
-        mail-qk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750923AbdAJUjx (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 10 Jan 2017 15:39:53 -0500
-Received: by mail-qk0-f177.google.com with SMTP id 11so89104227qkl.3
-        for <backports@vger.kernel.org>; Tue, 10 Jan 2017 12:39:53 -0800 (PST)
-Received: from [10.177.251.13] ([80.82.130.242])
-        by smtp.gmail.com with ESMTPSA id 14sm2304246qtp.19.2017.01.10.12.39.51
-        for <backports@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jan 2017 12:39:52 -0800 (PST)
-Subject: Re: issue with devcoredump.patch
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-References: <118eb454-703f-9de9-6fc4-5326de6592ca@broadcom.com>
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <79134735-3833-5b38-e7b8-e311ad1e925b@broadcom.com> (sfid-20170110_214132_713280_CC867BE4)
-Date: Tue, 10 Jan 2017 21:39:49 +0100
-MIME-Version: 1.0
-In-Reply-To: <118eb454-703f-9de9-6fc4-5326de6592ca@broadcom.com>
-Content-Type: text/plain; charset=utf-8
+Received: from lpdvrndsmtp01.broadcom.com ([192.19.229.170]:50255 "EHLO
+        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752030AbdAaN4u (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 31 Jan 2017 08:56:50 -0500
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+To: Luca Coelho <luca@coelho.fi>
+Cc: backports@vger.kernel.org,
+        Arend van Spriel <arend.vanspriel@broadcom.com>
+Subject: [PATCH] backports: adjustments: fix devcoredump patch for class_groups
+Date: Tue, 31 Jan 2017 13:46:44 +0000
+Message-Id: <1485870404-28663-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170131_145653_838432_40EC8097)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 10-1-2017 12:16, Arend Van Spriel wrote:
-> With 4.10-rc1 the devcoredump.patch in patches/backport-adjustment no
-> longer applies due to following commit:
-> 
-> commit f76d25275c314defb684fdd692239507001774bc
-> Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Date:   Mon Nov 28 16:41:58 2016 +0100
-> 
->     driver core: devcoredump: convert to use class_groups
-> 
->     Convert devcoredump to use class_groups instead of class_attrs as that's
->     the correct way to handle lists of class attribute files.
-> 
->     Acked-by: Johannes Berg <johannes@sipsolutions.net>
->     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> So I am reworking the patch file (attached). When I run gentree I get
-> following:
-> 
-> Traceback (most recent call last):
->   File "./gentree.py", line 1091, in <module>
->     ret = _main()
->   File "./gentree.py", line 724, in _main
->     logwrite=logwrite)
->   File "./gentree.py", line 906, in process
->     apply_patches(args, "backport", source_dir, 'patches',
-> bpid.target_dir, logwrite)
->   File "./gentree.py", line 514, in apply_patches
->     raise Exception('No patch content found in %s' % print_name)
-> Exception: No patch content found in backport-adjustments/devcoredump.patch
-> 
-> However, go into the target dir and applying patch works fine:
-> 
-> $ patch -p1 < ~-/patches/backport-adjustments/devcoredump.patch
-> patching file compat/drivers-base-devcoredump.c
-> Hunk #7 succeeded at 181 with fuzz 1 (offset 2 lines).
-> Hunk #8 succeeded at 248 (offset 2 lines).
-> Hunk #9 succeeded at 339 (offset 2 lines).
-> Hunk #10 succeeded at 386 (offset 2 lines).
-> patching file include/linux/backport-devcoredump.h
-> 
-> So I am a bit puzzled as to what is going on so currently debugging
-> lib/patch.py. If anyone has a good hint feel free to let me know.
+Since...
 
-Turns out that at line 70 of the patch file there is no single space
-before the tab, which lib/patch.py marks as an error. With that fixed
-the fun really starts as I get following code:
+  commit f76d25275c314defb684fdd692239507001774bc
+  Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  Date:   Mon Nov 28 16:41:58 2016 +0100
 
-static CLASS_ATTR_RW(disabled);
+     driver core: devcoredump: convert to use class_groups
 
-static struct attribute *devcd_class_attrs[] = {
-        &class_attr_disabled.attr,
-        NULL,
-};
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
-ATTRIBUTE_GROUPS(devcd_class);
-#else
-#define BP_ATTR_GRP_STRUCT device_attribute
-ATTRIBUTE_GROUPS_BACKPORT(devcd_class);
-#endif
+it is using struct class::class_groups. Update the devcoredump
+patch file accordingly.
 
-static struct class devcd_class = {
-        .name           = "devcoredump",
-        .owner          = THIS_MODULE,
-        .dev_release    = devcd_dev_release,
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
-        .dev_groups     = devcd_dev_groups,
-#else
-        .dev_attrs = devcd_class_dev_attrs,
-#endif
-#endif
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
-        .class_attrs    = devcd_class_attrs,
-#else
-        .class_groups   = devcd_class_groups,
-#endif
-};
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+---
+ patches/backport-adjustments/devcoredump.patch | 43 +++++++++++++++++++++-----
+ 1 file changed, 35 insertions(+), 8 deletions(-)
 
-This is because the new devcoredump.c in 4.10-rc1 now triggers a
-Coccinelle script to kick in, ie.
-patches/collateral-evolutions/generic/0001-group-attr/0001-group_attr_class.cocci.
-It seems to kick in because of the ATTRIBUTE_GROUPS(devcd_class) macro.
+diff --git a/patches/backport-adjustments/devcoredump.patch b/patches/backport-adjustments/devcoredump.patch
+index f35e881..ab38ac6 100644
+--- a/patches/backport-adjustments/devcoredump.patch
++++ b/patches/backport-adjustments/devcoredump.patch
+@@ -10,7 +10,7 @@ index 240374f..8bb376b 100644
+  
+  static struct class devcd_class;
+  
+-@@ -40,6 +41,10 @@ static bool devcd_disabled;
++@@ -40,6 +41,10 @@
+  /* if data isn't read by userspace after 5 minutes then delete it */
+  #define DEVCD_TIMEOUT	(HZ * 60 * 5)
+  
+@@ -41,7 +41,7 @@ index 240374f..8bb376b 100644
+  	device_del(&devcd->devcd_dev);
+  	put_device(&devcd->devcd_dev);
+  }
+-@@ -115,6 +122,7 @@ static struct bin_attribute devcd_attr_data = {
++@@ -115,6 +122,7 @@ static ssize_t devcd_data_write(struct file *filp, struct kobject *kobj,
+  	.write = devcd_data_write,
+  };
+  
+@@ -49,7 +49,7 @@ index 240374f..8bb376b 100644
+  static struct bin_attribute *devcd_dev_bin_attrs[] = {
+  	&devcd_attr_data, NULL,
+  };
+-@@ -126,6 +134,7 @@ static const struct attribute_group devcd_dev_group = {
++@@ -126,6 +134,7 @@ static ssize_t devcd_data_write(struct file *filp, struct kobject *kobj,
+  static const struct attribute_group *devcd_dev_groups[] = {
+  	&devcd_dev_group, NULL,
+  };
+@@ -57,17 +57,44 @@ index 240374f..8bb376b 100644
+  
+  static int devcd_free(struct device *dev, void *data)
+  {
+-@@ -170,7 +179,9 @@ static struct class devcd_class = {
++@@ -160,20 +169,35 @@ static ssize_t disabled_store(struct class *class, struct class_attribute *attr,
++ 
++ 	return count;
++ }
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0)
+++static struct class_attribute devcd_class_attrs[] = {
+++	__ATTR_RW(disabled),
+++	__ATTR_NULL
+++};
+++#else
++ static CLASS_ATTR_RW(disabled);
++ 
++ static struct attribute *devcd_class_attrs[] = {
++ 	&class_attr_disabled.attr,
++ 	NULL,
++ };
++-ATTRIBUTE_GROUPS(devcd_class);
+++static const struct attribute_group devcd_class_group = {
+++	.attrs = devcd_class_attrs,
+++};
+++#endif
++ 
++ static struct class devcd_class = {
+  	.name		= "devcoredump",
+  	.owner		= THIS_MODULE,
+  	.dev_release	= devcd_dev_release,
+ +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
+  	.dev_groups	= devcd_dev_groups,
+ +#endif
+- 	.class_attrs	= devcd_class_attrs,
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0)
+++	.class_attrs	= devcd_class_attrs,
+++#else
++ 	.class_groups	= devcd_class_groups,
+++#endif
+  };
+  
+-@@ -231,6 +242,14 @@ static void devcd_free_sgtable(void *data)
++ static ssize_t devcd_readv(char *buffer, loff_t offset, size_t count,
++@@ -233,6 +257,14 @@ static void devcd_free_sgtable(void *data)
+  	_devcd_free_sgtable(data);
+  }
+  
+@@ -82,7 +109,7 @@ index 240374f..8bb376b 100644
+  /**
+   * devcd_read_from_table - copy data from sg_table to a given buffer
+   * and return the number of bytes read
+-@@ -314,6 +333,11 @@ void dev_coredumpm(struct device *dev, struct module *owner,
++@@ -316,6 +348,11 @@ void dev_coredumpm(struct device *dev, struct module *owner,
+  	if (device_add(&devcd->devcd_dev))
+  		goto put_device;
+  
+@@ -94,7 +121,7 @@ index 240374f..8bb376b 100644
+  	if (sysfs_create_link(&devcd->devcd_dev.kobj, &dev->kobj,
+  			      "failing_device"))
+  		/* nothing - symlink will be missing */;
+-@@ -356,15 +380,13 @@ void dev_coredumpsg(struct device *dev, struct scatterlist *table,
++@@ -358,15 +395,13 @@ void dev_coredumpsg(struct device *dev, struct scatterlist *table,
+  }
+  EXPORT_SYMBOL_GPL(dev_coredumpsg);
+  
+-- 
+1.9.1
 
-Regards,
-Arend
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
