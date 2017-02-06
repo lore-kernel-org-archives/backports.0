@@ -1,39 +1,33 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-qt0-f179.google.com ([209.85.216.179]:32876 "EHLO
-        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750940AbdBKVpR (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sat, 11 Feb 2017 16:45:17 -0500
-Received: by mail-qt0-f179.google.com with SMTP id v23so60844642qtb.0
-        for <backports@vger.kernel.org>; Sat, 11 Feb 2017 13:45:17 -0800 (PST)
-Subject: Re: [RFC] backports: always use new version compare macros
+Received: from mail-qt0-f174.google.com ([209.85.216.174]:35900 "EHLO
+        mail-qt0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752502AbdBFWpS (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 6 Feb 2017 17:45:18 -0500
+Received: by mail-qt0-f174.google.com with SMTP id k15so119384187qtg.3
+        for <backports@vger.kernel.org>; Mon, 06 Feb 2017 14:45:13 -0800 (PST)
+Subject: Re: deprecating more kernel versions
 To: Johannes Berg <johannes@sipsolutions.net>,
         backports@vger.kernel.org
-References: <20170207220716.7538-1-johannes@sipsolutions.net>
- <1486505323.18071.2.camel@sipsolutions.net>
+References: <1486399064.5430.7.camel@sipsolutions.net>
 From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <3babafe1-f754-bfe0-06fd-94e69137520a@broadcom.com> (sfid-20170211_224522_079060_18C1C789)
-Date: Sat, 11 Feb 2017 22:45:13 +0100
+Message-ID: <04ef169d-49b1-98e0-1db6-7c4e7e9b5c9f@broadcom.com> (sfid-20170206_234532_527890_82D4F704)
+Date: Mon, 6 Feb 2017 23:45:08 +0100
 MIME-Version: 1.0
-In-Reply-To: <1486505323.18071.2.camel@sipsolutions.net>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <1486399064.5430.7.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+On 6-2-2017 17:37, Johannes Berg wrote:
+> What kernel versions do you still need?
+> 
+> For example, 3.0 is getting really quite old, the oldest long-term
+> stable is 3.2.x now.
 
-
-On 7-2-2017 23:08, Johannes Berg wrote:
-> It's some churn, but I think worthwhile - any objections?
-
-I find comparison operators more clear, but it is probably just a matter
-of getting used to it. What makes it worthwile? As you already did the
-churn I do not have any objections. Just curious.
+We currently backport internal tree and wireless-testing nightly to 3.10
+and 3.11 kernels.
 
 Regards,
 Arend
-
-> johannes
-> --
-> To unsubscribe from this list: send the line "unsubscribe backports" in
-> 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
