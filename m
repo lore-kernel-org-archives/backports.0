@@ -1,40 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:45480 "EHLO sipsolutions.net"
+Received: from s3.sipsolutions.net ([5.9.151.49]:39806 "EHLO sipsolutions.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751192AbdBXMaw (ORCPT <rfc822;backports@vger.kernel.org>);
-        Fri, 24 Feb 2017 07:30:52 -0500
-Message-ID: <1487939443.2540.19.camel@sipsolutions.net> (sfid-20170224_133054_113403_81FF49D9)
-Subject: Re: [PATCH] backports: add definitions S32_MAX and S32_MIN
+        id S1750950AbdBFMkA (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 6 Feb 2017 07:40:00 -0500
 From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Cc: backports@vger.kernel.org
-Date: Fri, 24 Feb 2017 13:30:43 +0100
-In-Reply-To: <c5eb014a-b922-f825-0319-af46d4864ab4@broadcom.com> (sfid-20170223_092759_188265_A4FEF280)
-References: <1487801925-22641-1-git-send-email-arend.vanspriel@broadcom.com>
-         <1487836149.18380.0.camel@sipsolutions.net>
-         <c5eb014a-b922-f825-0319-af46d4864ab4@broadcom.com>
-         (sfid-20170223_092759_188265_A4FEF280)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 1/3] backports: devcoredump: make patch apply
+Date: Mon,  6 Feb 2017 13:39:54 +0100
+Message-Id: <20170206123956.20082-1-johannes@sipsolutions.net> (sfid-20170206_134001_952751_EBB6AF9E)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+From: Johannes Berg <johannes.berg@intel.com>
 
-> I create a package nightly for our internal tree and wireless-testing
-> and build for couple of target kernels to run some wifi tests on
-> target systems. So I tend to hit issues pretty soon. Not covering all
-> target kernels though.
+Just make the patch apply again - the next commits
+will auto-generate the necessary backport code.
 
-Ok, that's nice. I'm torn between doing something that runs on our
-existing infrastructure (easy, but internal) or building some kind of
-infrastructure, likely on the build box we have from the LF... that's
-harder but accessible to people other than me.
+Change-Id: I2b25ccbaadf1d49b9fdd229b3eaf1ecb7a9cf9ce
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ patches/backport-adjustments/devcoredump.patch | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Or are there any alternatives? Perhaps if I put the scripts upstream
-then it doesn't matter that I might actually be running it on our
-internal infrastructure, since anyone can just take the scripts and run
-them?
+diff --git a/patches/backport-adjustments/devcoredump.patch b/patches/backport-adjustments/devcoredump.patch
+index b840adc145f7..315ffd57e3bf 100644
+--- a/patches/backport-adjustments/devcoredump.patch
++++ b/patches/backport-adjustments/devcoredump.patch
+@@ -62,7 +62,7 @@
+ +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
+  	.dev_groups	= devcd_dev_groups,
+ +#endif
+- 	.class_attrs	= devcd_class_attrs,
++ 	.class_groups	= devcd_class_groups,
+  };
+  
+ @@ -270,6 +281,11 @@ void dev_coredumpm(struct device *dev, s
+-- 
+2.9.3
 
-johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
