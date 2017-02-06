@@ -1,27 +1,31 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:42314 "EHLO sipsolutions.net"
+Received: from s3.sipsolutions.net ([5.9.151.49]:39754 "EHLO sipsolutions.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751947AbdBFQhs (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 6 Feb 2017 11:37:48 -0500
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.88)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1camIT-0006Ma-8K
-        for backports@vger.kernel.org; Mon, 06 Feb 2017 17:37:45 +0100
-Message-ID: <1486399064.5430.7.camel@sipsolutions.net> (sfid-20170206_173750_137436_1430EC0A)
-Subject: deprecating more kernel versions
+        id S1751701AbdBFMhy (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 6 Feb 2017 07:37:54 -0500
+Message-ID: <1486384668.5430.3.camel@sipsolutions.net> (sfid-20170206_133858_640666_EE3086A4)
+Subject: Re: [Cocci] matching a modified identifier?
 From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Date: Mon, 06 Feb 2017 17:37:44 +0100
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: cocci <cocci@systeme.lip6.fr>,
+        backports <backports@vger.kernel.org>
+Date: Mon, 06 Feb 2017 13:37:48 +0100
+In-Reply-To: <alpine.DEB.2.20.1702061321500.8663@hadrien>
+References: <1486380902.5430.1.camel@sipsolutions.net>
+         <alpine.DEB.2.20.1702061321500.8663@hadrien>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-What kernel versions do you still need?
 
-For example, 3.0 is getting really quite old, the oldest long-term
-stable is 3.2.x now.
+> Use python between the two rules to construct the identifier you
+> want.
+
+Indeed, that works and is simpler than I thought (had briefly
+considered, but then found the workaround)
+
+Thanks :)
 
 johannes
 --
