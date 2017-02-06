@@ -1,65 +1,96 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:58768 "EHLO sipsolutions.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936774AbdAFKQ3 (ORCPT <rfc822;backports@vger.kernel.org>);
-        Fri, 6 Jan 2017 05:16:29 -0500
-From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: replace netlink_seq with spatch
-Date: Fri,  6 Jan 2017 11:15:58 +0100
-Message-Id: <20170106101558.372-1-johannes@sipsolutions.net> (sfid-20170106_111653_908970_8B0F9EA8)
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:39671 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751291AbdBFMXG (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 6 Feb 2017 07:23:06 -0500
+Date: Mon, 6 Feb 2017 13:22:52 +0100 (CET)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Johannes Berg <johannes@sipsolutions.net>
+cc: cocci <cocci@systeme.lip6.fr>,
+        backports <backports@vger.kernel.org>
+Subject: Re: [Cocci] matching a modified identifier?
+In-Reply-To: <1486380902.5430.1.camel@sipsolutions.net>
+Message-ID: <alpine.DEB.2.20.1702061321500.8663@hadrien> (sfid-20170206_132325_865138_D74AB941)
+References: <1486380902.5430.1.camel@sipsolutions.net>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; BOUNDARY="8323329-995527867-1486383772=:8663"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+--8323329-995527867-1486383772=:8663
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
-Even if right now there's only a single instance of this, we can
-make backports more robust by using an spatch for it instead of
-a plain patch.
 
-Change-Id: Ib709c254bfb02724e578f4a55e3b2391f61227f2
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- patches/collateral-evolutions/network/0014-netlink_seq.cocci |  7 +++++++
- .../network/0014-netlink_seq/net_wireless_nl80211.patch      | 12 ------------
- 2 files changed, 7 insertions(+), 12 deletions(-)
- create mode 100644 patches/collateral-evolutions/network/0014-netlink_seq.cocci
- delete mode 100644 patches/collateral-evolutions/network/0014-netlink_seq/net_wireless_nl80211.patch
 
-diff --git a/patches/collateral-evolutions/network/0014-netlink_seq.cocci b/patches/collateral-evolutions/network/0014-netlink_seq.cocci
-new file mode 100644
-index 000000000000..4aa1f280d35c
---- /dev/null
-+++ b/patches/collateral-evolutions/network/0014-netlink_seq.cocci
-@@ -0,0 +1,7 @@
-+@@
-+struct netlink_callback *cb;
-+expression E;
-+@@
-++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0))
-+	cb->seq = E;
-++#endif
-diff --git a/patches/collateral-evolutions/network/0014-netlink_seq/net_wireless_nl80211.patch b/patches/collateral-evolutions/network/0014-netlink_seq/net_wireless_nl80211.patch
-deleted file mode 100644
-index 362c26c3c6db..000000000000
---- a/patches/collateral-evolutions/network/0014-netlink_seq/net_wireless_nl80211.patch
-+++ /dev/null
-@@ -1,12 +0,0 @@
----- a/net/wireless/nl80211.c
--+++ b/net/wireless/nl80211.c
--@@ -6853,7 +6853,9 @@ static int nl80211_dump_scan(struct sk_b
-- 	spin_lock_bh(&rdev->bss_lock);
-- 	cfg80211_bss_expire(rdev);
-- 
--+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,1,0))
-- 	cb->seq = rdev->bss_generation;
--+#endif
-- 
-- 	list_for_each_entry(scan, &rdev->bss_list, list) {
-- 		if (++idx <= start)
--- 
-2.9.3
+On Mon, 6 Feb 2017, Johannes Berg wrote:
 
+> Hi,
+>
+> In backports, we have the following spatch:
+>
+> @ attribute_group @
+> identifier group;
+> declarer name ATTRIBUTE_GROUPS;
+> @@
+>
+> ATTRIBUTE_GROUPS(group);
+>
+> @ class_group depends on attribute_group @
+> identifier group_class;
+> identifier groups;
+> fresh identifier group_dev_attr = attribute_group.group ## "_dev_attrs";
+> @@
+>
+> struct class group_class = {
+> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
+>         .dev_groups = groups,
+> +#else
+> +       .dev_attrs = group_dev_attr,
+> +#endif
+> };
+>
+> [...]
+>
+>
+>
+> But this isn't sufficient and falls over if there are multiple
+> instances of ATTRIBUTE_GROUPS, it's essentially undefined which one
+> gets picked.
+>
+> I tried to match a modified identifier like this:
+>
+> @ attribute_group @
+> identifier group;
+> fresh identifier groups = group ## "_groups";
+> declarer name ATTRIBUTE_GROUPS;
+> @@
+>
+> ATTRIBUTE_GROUPS(group);
+>
+> @ class_group depends on attribute_group @
+> identifier group_class;
+> identifier attribute_group.groups;
+> fresh identifier group_dev_attr = attribute_group.group ## "_dev_attrs";
+> @@
+>
+> struct class group_class = {
+> +#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
+>         .dev_groups = groups,
+> +#else
+> +       .dev_attrs = group_dev_attr,
+> +#endif
+> };
+>
+> [...]
+>
+>
+> but that doesn't work at all.
+
+Use python between the two rules to construct the identifier you want.
+You can see examples in coccinelle/demos/pythontococci.cocci
+
+julia
+--8323329-995527867-1486383772=:8663--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
