@@ -1,33 +1,52 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:56568 "EHLO sipsolutions.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753522AbdBGM3L (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 7 Feb 2017 07:29:11 -0500
-Message-ID: <1486470543.25609.0.camel@sipsolutions.net> (sfid-20170207_132913_068768_E791D2ED)
-Subject: Re: [PATCH] backports: restore config_enabled() macro
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org
-Date: Tue, 07 Feb 2017 13:29:03 +0100
-In-Reply-To: <1486466124-31640-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170207_121541_911512_C145DFDA)
-References: <1486466124-31640-1-git-send-email-arend.vanspriel@broadcom.com>
-         (sfid-20170207_121541_911512_C145DFDA)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from lpdvrndsmtp01.broadcom.com ([192.19.229.170]:55491 "EHLO
+        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751093AbdBKXPY (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sat, 11 Feb 2017 18:15:24 -0500
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+To: Johannes Berg <johannes.berg@intel.com>
+Cc: backports@vger.kernel.org,
+        Arend van Spriel <arend.vanspriel@broadcom.com>
+Subject: [PATCH] backports: add "MBIM Extended Functional Descriptor" structure definition
+Date: Sat, 11 Feb 2017 23:14:59 +0000
+Message-Id: <1486854899-13118-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170212_001555_428221_3909FA4D)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2017-02-07 at 11:15 +0000, Arend van Spriel wrote:
-> Attempted a backport to FC25 4.9.5 kernel and hit issue with
-> IS_BUILTIN()
-> using config_enabled() macro in backport-include/linux/kconfig.h. Fix
-> this
-> by using #ifndef.
+commit 477c6d345604 ("backports: add USB_CDC_MBIM_EXTENDED_TYPE if needed")
+added define but the structure definition that goes with it is also needed.
+As they were introduced in the same kernel version we can add the structure
+with the same #ifndef USB_CDC_MBIM_EXTENDED_TYPE.
 
-Hah, very timely - I just had a problem with IS_REACHABLE that this
-should solve nicely :)
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+---
+ backport/backport-include/linux/usb/cdc.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-johannes
+diff --git a/backport/backport-include/linux/usb/cdc.h b/backport/backport-include/linux/usb/cdc.h
+index 2097949..5ad31bf 100644
+--- a/backport/backport-include/linux/usb/cdc.h
++++ b/backport/backport-include/linux/usb/cdc.h
+@@ -15,6 +15,17 @@
+ 
+ #ifndef USB_CDC_MBIM_EXTENDED_TYPE
+ #define USB_CDC_MBIM_EXTENDED_TYPE 0x1c
++
++/* "MBIM Extended Functional Descriptor" from CDC MBIM spec 1.0 errata-1 */
++struct usb_cdc_mbim_extended_desc {
++	__u8	bLength;
++	__u8	bDescriptorType;
++	__u8	bDescriptorSubType;
++
++	__le16	bcdMBIMExtendedVersion;
++	__u8	bMaxOutstandingCommandMessages;
++	__le16	wMTU;
++} __attribute__ ((packed));
+ #endif
+ 
+ /*
+-- 
+1.9.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
