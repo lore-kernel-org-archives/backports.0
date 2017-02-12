@@ -1,93 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:39814 "EHLO sipsolutions.net"
+Received: from s3.sipsolutions.net ([5.9.151.49]:48362 "EHLO sipsolutions.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751437AbdBFMkA (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 6 Feb 2017 07:40:00 -0500
+        id S1751218AbdBLTLv (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 12 Feb 2017 14:11:51 -0500
+Message-ID: <1486926706.5142.1.camel@sipsolutions.net> (sfid-20170212_201153_150545_81A1A14B)
+Subject: Re: [RFC] backports: always use new version compare macros
 From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 3/3] backports: support class_groups
-Date: Mon,  6 Feb 2017 13:39:56 +0100
-Message-Id: <20170206123956.20082-3-johannes@sipsolutions.net> (sfid-20170206_134002_277997_E7F9D5B6)
-In-Reply-To: <20170206123956.20082-1-johannes@sipsolutions.net>
-References: <20170206123956.20082-1-johannes@sipsolutions.net>
+To: Arend Van Spriel <arend.vanspriel@broadcom.com>,
+        backports@vger.kernel.org
+Date: Sun, 12 Feb 2017 20:11:46 +0100
+In-Reply-To: <3babafe1-f754-bfe0-06fd-94e69137520a@broadcom.com> (sfid-20170211_224517_636776_965EDC33)
+References: <20170207220716.7538-1-johannes@sipsolutions.net>
+         <1486505323.18071.2.camel@sipsolutions.net>
+         <3babafe1-f754-bfe0-06fd-94e69137520a@broadcom.com>
+         (sfid-20170211_224517_636776_965EDC33)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Sat, 2017-02-11 at 22:45 +0100, Arend Van Spriel wrote:
+> 
+> On 7-2-2017 23:08, Johannes Berg wrote:
+> > It's some churn, but I think worthwhile - any objections?
+> 
+> I find comparison operators more clear, but it is probably just a
+> matter of getting used to it. What makes it worthwile? As you already
+> did the churn I do not have any objections. Just curious.
 
-Add a new semantic patch just like for dev_groups to
-support class_groups.
+So to be honest, I actually pushed the change more or less by accident,
+I'm happy to back it out again.
 
-Change-Id: I114e1a6ed8db901b3aa738a5052721d1da45cae4
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- .../0001-group-attr/0003-class_groups.cocci        | 54 ++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
- create mode 100644 patches/collateral-evolutions/generic/0001-group-attr/0003-class_groups.cocci
+My reasoning was something along these lines: First, I find it awkward
+to always type the long form when we always have the same patterns.
+Especially with the IN_RANGE() part, which I haven't even fully
+converted I think. So that's my immediate motivation for adding it, but
+as the de-facto maintainer now I'd also want people to really be able
+to figure out which pattern they should use, regardless of whether
+they're looking at old or new bits, so unifying it (towards the new one
+because I'm a lazy bastard) seemed like a good idea.
 
-diff --git a/patches/collateral-evolutions/generic/0001-group-attr/0003-class_groups.cocci b/patches/collateral-evolutions/generic/0001-group-attr/0003-class_groups.cocci
-new file mode 100644
-index 000000000000..a4694dd75763
---- /dev/null
-+++ b/patches/collateral-evolutions/generic/0001-group-attr/0003-class_groups.cocci
-@@ -0,0 +1,54 @@
-+/* see upstream commit ced6473e74867 */
-+
-+@ attribute_group @
-+identifier group;
-+declarer name ATTRIBUTE_GROUPS;
-+@@
-+
-+ATTRIBUTE_GROUPS(group);
-+
-+@script:python attribute_groups_name@
-+group << attribute_group.group;
-+groups;
-+@@
-+coccinelle.groups = group + "_groups"
-+
-+@ class_group @
-+identifier group_class;
-+identifier attribute_groups_name.groups;
-+fresh identifier group_dev_attr = attribute_group.group ## "_dev_attrs";
-+@@
-+
-+struct class group_class = {
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,10,0)
-+	.class_groups = groups,
-++#else
-++	.class_attrs = group_dev_attr,
-++#endif
-+};
-+
-+@ attribute_group_mod depends on class_group @
-+declarer name ATTRIBUTE_GROUPS_BACKPORT;
-+identifier attribute_group.group;
-+@@
-+
-++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,10,0)
-+ATTRIBUTE_GROUPS(group);
-++#else
-++#define BP_ATTR_GRP_STRUCT class_attribute
-++ATTRIBUTE_GROUPS_BACKPORT(group);
-++#endif
-+
-+@ class_registering @
-+identifier class_register, ret;
-+identifier class_group.group_class;
-+fresh identifier group_class_init = "init_" ## attribute_group.group ## "_attrs";
-+@@
-+
-+(
-++	group_class_init();
-+	return class_register(&group_class);
-+|
-++	group_class_init();
-+	ret = class_register(&group_class);
-+)
--- 
-2.9.3
-
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
