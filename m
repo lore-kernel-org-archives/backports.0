@@ -1,52 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from lpdvrndsmtp01.broadcom.com ([192.19.229.170]:55491 "EHLO
-        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751093AbdBKXPY (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sat, 11 Feb 2017 18:15:24 -0500
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-To: Johannes Berg <johannes.berg@intel.com>
-Cc: backports@vger.kernel.org,
-        Arend van Spriel <arend.vanspriel@broadcom.com>
-Subject: [PATCH] backports: add "MBIM Extended Functional Descriptor" structure definition
-Date: Sat, 11 Feb 2017 23:14:59 +0000
-Message-Id: <1486854899-13118-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170212_001555_428221_3909FA4D)
+Received: from s3.sipsolutions.net ([5.9.151.49]:45480 "EHLO sipsolutions.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751192AbdBXMaw (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 24 Feb 2017 07:30:52 -0500
+Message-ID: <1487939443.2540.19.camel@sipsolutions.net> (sfid-20170224_133054_113403_81FF49D9)
+Subject: Re: [PATCH] backports: add definitions S32_MAX and S32_MIN
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Cc: backports@vger.kernel.org
+Date: Fri, 24 Feb 2017 13:30:43 +0100
+In-Reply-To: <c5eb014a-b922-f825-0319-af46d4864ab4@broadcom.com> (sfid-20170223_092759_188265_A4FEF280)
+References: <1487801925-22641-1-git-send-email-arend.vanspriel@broadcom.com>
+         <1487836149.18380.0.camel@sipsolutions.net>
+         <c5eb014a-b922-f825-0319-af46d4864ab4@broadcom.com>
+         (sfid-20170223_092759_188265_A4FEF280)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-commit 477c6d345604 ("backports: add USB_CDC_MBIM_EXTENDED_TYPE if needed")
-added define but the structure definition that goes with it is also needed.
-As they were introduced in the same kernel version we can add the structure
-with the same #ifndef USB_CDC_MBIM_EXTENDED_TYPE.
 
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
----
- backport/backport-include/linux/usb/cdc.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+> I create a package nightly for our internal tree and wireless-testing
+> and build for couple of target kernels to run some wifi tests on
+> target systems. So I tend to hit issues pretty soon. Not covering all
+> target kernels though.
 
-diff --git a/backport/backport-include/linux/usb/cdc.h b/backport/backport-include/linux/usb/cdc.h
-index 2097949..5ad31bf 100644
---- a/backport/backport-include/linux/usb/cdc.h
-+++ b/backport/backport-include/linux/usb/cdc.h
-@@ -15,6 +15,17 @@
- 
- #ifndef USB_CDC_MBIM_EXTENDED_TYPE
- #define USB_CDC_MBIM_EXTENDED_TYPE 0x1c
-+
-+/* "MBIM Extended Functional Descriptor" from CDC MBIM spec 1.0 errata-1 */
-+struct usb_cdc_mbim_extended_desc {
-+	__u8	bLength;
-+	__u8	bDescriptorType;
-+	__u8	bDescriptorSubType;
-+
-+	__le16	bcdMBIMExtendedVersion;
-+	__u8	bMaxOutstandingCommandMessages;
-+	__le16	wMTU;
-+} __attribute__ ((packed));
- #endif
- 
- /*
--- 
-1.9.1
+Ok, that's nice. I'm torn between doing something that runs on our
+existing infrastructure (easy, but internal) or building some kind of
+infrastructure, likely on the build box we have from the LF... that's
+harder but accessible to people other than me.
 
+Or are there any alternatives? Perhaps if I put the scripts upstream
+then it doesn't matter that I might actually be running it on our
+internal infrastructure, since anyone can just take the scripts and run
+them?
+
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
