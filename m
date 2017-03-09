@@ -1,42 +1,49 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pf0-f170.google.com ([209.85.192.170]:35164 "EHLO
-        mail-pf0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755141AbdCTUnt (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 20 Mar 2017 16:43:49 -0400
-Received: by mail-pf0-f170.google.com with SMTP id 20so22797728pfk.2
-        for <backports@vger.kernel.org>; Mon, 20 Mar 2017 13:43:43 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1489746787.2544.7.camel@sipsolutions.net>
-References: <CAAEAJfDinWQ+GdU7hJR3z79LMu8whduStXUHJqihXW0MmWBLYQ@mail.gmail.com>
- <4f3274fd-c310-f30b-7883-2bf67125c360@broadcom.com> <CAAEAJfCTnpLc1BeDrkavyy6OJLK_W8jo7Zm4tfA=NYTmH5x=3g@mail.gmail.com>
- <be61848d-0e08-5d21-145a-4082347e46ef@broadcom.com> <1489746787.2544.7.camel@sipsolutions.net>
-From: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Date: Mon, 20 Mar 2017 17:35:39 -0300
-Message-ID: <CAAEAJfAS-kdb+n1SVVaQTK8SS7gA3Huc9Tvy59tJTSRaHPJpVw@mail.gmail.com> (sfid-20170320_214350_849505_61194BC5)
-Subject: Re: Errors using linux-4.4.y against kernel target v3.19
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Arend Van Spriel <arend.vanspriel@broadcom.com>,
-        backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Received: from lpdvrndsmtp01.broadcom.com ([192.19.229.170]:43452 "EHLO
+        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754794AbdCINFr (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 9 Mar 2017 08:05:47 -0500
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+To: Johannes Berg <johannes.berg@intel.com>
+Cc: backports@vger.kernel.org,
+        Arend van Spriel <arend.vanspriel@broadcom.com>
+Subject: [PATCH 4/4] backports: add dummy include/linux/sched/signal.h
+Date: Thu,  9 Mar 2017 12:57:33 +0000
+Message-Id: <1489064253-3652-5-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170309_140612_271100_D793219E)
+In-Reply-To: <1489064253-3652-1-git-send-email-arend.vanspriel@broadcom.com>
+References: <1489064253-3652-1-git-send-email-arend.vanspriel@broadcom.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 17 March 2017 at 07:33, Johannes Berg <johannes@sipsolutions.net> wrote:
-> On Fri, 2017-03-17 at 11:29 +0100, Arend Van Spriel wrote:
->>
->> Yeah, I meant retry kernel integration with the v4.4 kernel instead
->> of v4.4.53. However, I think we can safely assume kernel integration
->> to be broken. Not sure whether Johannes want to support it moving
->> forward. I think for now it has low priority.
->
-> I currently have no intention of working on it.
->
+Simply including linux/sched.h for older kernels not carrying this
+file. This new include file was introduced by commit 3f07c0144132
+("sched/headers: Prepare for new header dependencies before moving
+code to <linux/sched/signal.h>").
 
-Fair enough. It's not a big deal really.
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+---
+ backport/backport-include/linux/sched/signal.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+ create mode 100644 backport/backport-include/linux/sched/signal.h
 
-Thanks guys,
---=20
-Ezequiel Garc=C3=ADa, VanguardiaSur
-www.vanguardiasur.com.ar
+diff --git a/backport/backport-include/linux/sched/signal.h b/backport/backport-include/linux/sched/signal.h
+new file mode 100644
+index 0000000..ec89925
+--- /dev/null
++++ b/backport/backport-include/linux/sched/signal.h
+@@ -0,0 +1,10 @@
++#ifndef _BACKPORT_LINUX_SCHED_SIGNAL_H
++#define _BACKPORT_LINUX_SCHED_SIGNAL_H
++
++#if LINUX_VERSION_IS_LESS(4, 11, 0)
++#include <linux/sched.h>
++#else
++#include_next <linux/sched/signal.h>
++#endif
++
++#endif /* _BACKPORT_LINUX_SCHED_SIGNAL_H */
+-- 
+1.9.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
