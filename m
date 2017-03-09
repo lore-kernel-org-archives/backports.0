@@ -1,48 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ot0-f178.google.com ([74.125.82.178]:35915 "EHLO
-        mail-ot0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753932AbdC2IEj (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 29 Mar 2017 04:04:39 -0400
-Received: by mail-ot0-f178.google.com with SMTP id t8so5208137otf.3
-        for <backports@vger.kernel.org>; Wed, 29 Mar 2017 01:04:38 -0700 (PDT)
-MIME-Version: 1.0
-From: Janusz Dziedzic <janusz.dziedzic@gmail.com>
-Date: Wed, 29 Mar 2017 10:04:37 +0200
-Message-ID: <CAFED-jmLaRiM5b7XotQDrhtphSMtLDO565xCjobTnwhtipuuUQ@mail.gmail.com> (sfid-20170329_100904_084825_40B6ACA5)
-Subject: ib-rhashtable.c:90:17: error
-To: backports@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Received: from lpdvrndsmtp01.broadcom.com ([192.19.229.170]:43453 "EHLO
+        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932332AbdCINFi (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 9 Mar 2017 08:05:38 -0500
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+To: Johannes Berg <johannes.berg@intel.com>
+Cc: backports@vger.kernel.org,
+        Arend van Spriel <arend.vanspriel@broadcom.com>
+Subject: [PATCH 0/4] backports: fixes for wireless-testing
+Date: Thu,  9 Mar 2017 12:57:29 +0000
+Message-Id: <1489064253-3652-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170309_140611_729182_C316A114)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hello,
+This series fixes backport issues found backporting the wireless-testing
+tree that moved to 4.11-rc1.
 
-backports generate like this:
+Arend van Spriel (4):
+  patches: update crypto-ccm.patch for v4.11-rc1
+  backports: add backport for idr_remove
+  backports: introduce new definition for DECLARE_EWMA macro
+  backports: add dummy include/linux/sched/signal.h
 
-./gentree.py --verbose --clean --git-revision next-20170310
---copy-list copy-list.ath ~/linux-next/ ~/backports-output
+ backport/backport-include/linux/average.h      | 65 +++++++++++++++++---------
+ backport/backport-include/linux/idr.h          | 10 ++++
+ backport/backport-include/linux/sched/signal.h | 10 ++++
+ patches/crypto-ccm.patch                       |  9 ++--
+ 4 files changed, 69 insertions(+), 25 deletions(-)
+ create mode 100644 backport/backport-include/linux/sched/signal.h
 
-When compile on 4.4 kernel I hit such error:
+--
+1.9.1
 
-  CC [M]  /home/jdziedzx/backports-output/compat/backport-4.8.o
-  CC [M]  /home/jdziedzx/backports-output/compat/lib-rhashtable.o
-/home/jdziedzx/backports-output/compat/lib-rhashtable.c: In function
-=E2=80=98alloc_bucket_locks=E2=80=99:
-/home/jdziedzx/backports-output/compat/lib-rhashtable.c:90:17: error:
-implicit declaration of function =E2=80=98kvmalloc=E2=80=99
-[-Werror=3Dimplicit-function-declaration]
-    tbl->locks =3D kvmalloc(size * sizeof(spinlock_t), gfp);
-                 ^
-/home/jdziedzx/backports-output/compat/lib-rhashtable.c:90:15:
-warning: assignment makes pointer from integer without a cast
-[-Wint-conversion]
-    tbl->locks =3D kvmalloc(size * sizeof(spinlock_t), gfp);
-               ^
-cc1: some warnings being treated as errors
-
-Is there any fix for that?
-
---=20
-Janusz Dziedzic
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
