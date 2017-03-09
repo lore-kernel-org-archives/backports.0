@@ -1,38 +1,58 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:40834 "EHLO sipsolutions.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934332AbdCJKJu (ORCPT <rfc822;backports@vger.kernel.org>);
-        Fri, 10 Mar 2017 05:09:50 -0500
-Message-ID: <1489140587.3038.5.camel@sipsolutions.net> (sfid-20170310_110953_458923_5967B86E)
-Subject: Re: [PATCH 1/4] patches: update crypto-ccm.patch for v4.11-rc1
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Cc: backports@vger.kernel.org
-Date: Fri, 10 Mar 2017 11:09:47 +0100
-In-Reply-To: <53b84dec-ea90-eb9d-6392-952a80e37589@broadcom.com> (sfid-20170310_110844_780612_FCC3155B)
+Received: from rnd-relay.smtp.broadcom.com ([192.19.229.170]:43465 "EHLO
+        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932332AbdCINFd (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 9 Mar 2017 08:05:33 -0500
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+To: Johannes Berg <johannes.berg@intel.com>
+Cc: backports@vger.kernel.org,
+        Arend van Spriel <arend.vanspriel@broadcom.com>
+Subject: [PATCH 2/4] backports: add backport for idr_remove
+Date: Thu,  9 Mar 2017 12:57:31 +0000
+Message-Id: <1489064253-3652-3-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170309_140610_090838_BA14C134)
+In-Reply-To: <1489064253-3652-1-git-send-email-arend.vanspriel@broadcom.com>
 References: <1489064253-3652-1-git-send-email-arend.vanspriel@broadcom.com>
-         <1489064253-3652-2-git-send-email-arend.vanspriel@broadcom.com>
-         <1489127672.3038.0.camel@sipsolutions.net>
-         <b5a13b6c-6ed7-7682-2043-1dcc8ddfec79@broadcom.com>
-         <1489139555.3038.4.camel@sipsolutions.net>
-         <53b84dec-ea90-eb9d-6392-952a80e37589@broadcom.com>
-         (sfid-20170310_110844_780612_FCC3155B)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+Since commit d3e709e63e97 ("idr: Return the deleted entry from
+idr_remove") the function signature changed so provide a backport
+which does a idr_find() and subsequent idr_remove().
 
-> > No, I meant adding all of crypto/ to copy-list and making sure
-> > *that*
-> > works across kernels ...
-> 
-> Understand. There seem to have been significant changes in crypto
-> land making this a challenge. Still seems like right idea.
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+---
+Hi Johannes,
 
-I'm not really sure it's the right idea, it seems like it'll be quite
-complicated ... :)
+Not sure if the find/remove approach is a good one here. Better solutions
+are welcome.
 
-johannes
+Regards,
+Arend
+---
+ backport/backport-include/linux/idr.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/backport/backport-include/linux/idr.h b/backport/backport-include/linux/idr.h
+index d7cf9f0..01aa2c2 100644
+--- a/backport/backport-include/linux/idr.h
++++ b/backport/backport-include/linux/idr.h
+@@ -61,4 +61,14 @@ static inline void idr_preload_end(void)
+ 	for (id = 0; ((entry) = idr_get_next(idp, &(id))) != NULL; ++id)
+ #endif
+
++#if LINUX_VERSION_IS_LESS(4, 11, 0)
++static inline void *backport_idr_remove(struct idr *idr, int id)
++{
++	void *item = idr_find(idr, id);
++	idr_remove(idr, id);
++	return item;
++}
++#define idr_remove	backport_idr_remove
++#endif
++
+ #endif /* __BACKPORT_IDR_H */
+--
+1.9.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
