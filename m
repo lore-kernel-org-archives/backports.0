@@ -1,35 +1,77 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:43016 "EHLO sipsolutions.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753154AbdCaH3v (ORCPT <rfc822;backports@vger.kernel.org>);
-        Fri, 31 Mar 2017 03:29:51 -0400
-Message-ID: <1490945388.6288.0.camel@sipsolutions.net> (sfid-20170331_092952_323089_961680CA)
-Subject: Re: [PATCH 0/4] backports: fixes for wireless-testing
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: backports@vger.kernel.org
-Date: Fri, 31 Mar 2017 09:29:48 +0200
-In-Reply-To: <1489064253-3652-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170309_140611_729182_C316A114)
-References: <1489064253-3652-1-git-send-email-arend.vanspriel@broadcom.com>
-         (sfid-20170309_140611_729182_C316A114)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from lpdvrndsmtp01.broadcom.com ([192.19.229.170]:45303 "EHLO
+        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933511AbdCJKBU (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 10 Mar 2017 05:01:20 -0500
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+To: Johannes Berg <johannes.berg@intel.com>
+Cc: backports@vger.kernel.org,
+        Arend van Spriel <arend.vanspriel@broadcom.com>
+Subject: [PATCH] backports: provide backport for setup_deferrable_timer()
+Date: Fri, 10 Mar 2017 10:01:10 +0000
+Message-Id: <1489140070-29878-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170310_110147_921141_BC86D9EB)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, 2017-03-09 at 12:57 +0000, Arend van Spriel wrote:
-> This series fixes backport issues found backporting the wireless-
-> testing
-> tree that moved to 4.11-rc1.
-> 
-> Arend van Spriel (4):
->   patches: update crypto-ccm.patch for v4.11-rc1
->   backports: add backport for idr_remove
->   backports: introduce new definition for DECLARE_EWMA macro
->   backports: add dummy include/linux/sched/signal.h
+Since commit f8f118ceaa56 ("mac80211: Use setup_timer instead of
+init_timer") mac80211 needs setup_deferrable_timer() which is not
+available in older kernels. Provide a backport in linux/timer.h.
+Really need two flavors of backport to support up to 3.0 kernel.
 
-Applied, except I replaced the average.h by just copying that file
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+---
+Hit another one last night so here it is.
 
-johannes
+Regards,
+Arend
+---
+ backport/backport-include/linux/timer.h | 35 +++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+ create mode 100644 backport/backport-include/linux/timer.h
+
+diff --git a/backport/backport-include/linux/timer.h b/backport/backport-include/linux/timer.h
+new file mode 100644
+index 0000000..df560a2
+--- /dev/null
++++ b/backport/backport-include/linux/timer.h
+@@ -0,0 +1,35 @@
++#ifndef _BACKPORT_TIMER_H
++#define _BACKPORT_TIMER_H
++
++#include_next <linux/timer.h>
++
++#ifndef setup_deferrable_timer
++/*
++ * The TIMER_DEFERRABLE flag has not been around since 3.0 so
++ * two different backports are needed here.
++ */
++#ifdef TIMER_DEFERRABLE
++#define setup_deferrable_timer(timer, fn, data)                         \
++        __setup_timer((timer), (fn), (data), TIMER_DEFERRABLE)
++#else
++static inline void setup_deferrable_timer_key(struct timer_list *timer,
++					      const char *name,
++					      struct lock_class_key *key,
++					      void (*func)(unsigned long),
++					      unsigned long data)
++{
++	timer->function = func;
++	timer->data = data;
++	init_timer_deferrable_key(timer, name, key);
++}
++#define setup_deferrable_timer(timer, fn, data)				\
++	do {								\
++		static struct lock_class_key __key;			\
++		setup_deferrable_timer_key((timer), #timer, &__key,	\
++					   (fn), (data));		\
++	} while (0)
++#endif
++
++#endif
++
++#endif /* _BACKPORT_TIMER_H */
+-- 
+1.9.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
