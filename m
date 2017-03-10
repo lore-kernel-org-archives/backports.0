@@ -1,47 +1,63 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:42872 "EHLO sipsolutions.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753164AbdC2IwP (ORCPT <rfc822;backports@vger.kernel.org>);
-        Wed, 29 Mar 2017 04:52:15 -0400
-Message-ID: <1490777532.7948.15.camel@sipsolutions.net> (sfid-20170329_105543_346370_0C07DAE7)
-Subject: Re: Question of backports
-From: Johannes Berg <johannes@sipsolutions.net>
-To: =?UTF-8?Q?=E5=90=B3=E9=87=8D=E6=AF=85?= <uranus0206@gmail.com>,
-        backports@vger.kernel.org
-Date: Wed, 29 Mar 2017 10:52:12 +0200
-In-Reply-To: <CAN+BLYH=tkxSxJSv995+n83Zon0kqweNb6X8nWeKuLFtCepSmQ@mail.gmail.com> (sfid-20170324_113721_904132_74122683)
-References: <CAN+BLYH=tkxSxJSv995+n83Zon0kqweNb6X8nWeKuLFtCepSmQ@mail.gmail.com>
-         (sfid-20170324_113721_904132_74122683)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-qk0-f173.google.com ([209.85.220.173]:33132 "EHLO
+        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933511AbdCJKIp (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 10 Mar 2017 05:08:45 -0500
+Received: by mail-qk0-f173.google.com with SMTP id y76so160200529qkb.0
+        for <backports@vger.kernel.org>; Fri, 10 Mar 2017 02:08:44 -0800 (PST)
+Subject: Re: [PATCH 1/4] patches: update crypto-ccm.patch for v4.11-rc1
+To: Johannes Berg <johannes@sipsolutions.net>
+References: <1489064253-3652-1-git-send-email-arend.vanspriel@broadcom.com>
+ <1489064253-3652-2-git-send-email-arend.vanspriel@broadcom.com>
+ <1489127672.3038.0.camel@sipsolutions.net>
+ <b5a13b6c-6ed7-7682-2043-1dcc8ddfec79@broadcom.com>
+ <1489139555.3038.4.camel@sipsolutions.net>
+Cc: backports@vger.kernel.org
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <53b84dec-ea90-eb9d-6392-952a80e37589@broadcom.com> (sfid-20170310_110854_891001_B01336BD)
+Date: Fri, 10 Mar 2017 11:08:41 +0100
+MIME-Version: 1.0
+In-Reply-To: <1489139555.3038.4.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2017-03-24 at 18:36 +0800, 吳重毅 wrote:
-> Hi:
-> I am confuse with backports' parameter. First i found the mail list
-> of
-> http://lists.infradead.org/pipermail/ath10k/2017-March/009458.html
-> And i follow the attachment to patch backports' git.
-> I am success full create the backports-output, but some parameters
-> confused me.
-> The parameter "--git-revision next-20170310". Is it says i am using
-> tag next-20170310 of source linux-next?
-> Currently my git of backports is point at master.
-> When i use the command in maillist to generate backport-output.
-> What target of kernel version am i going to backport to ?
-> kernel of tag next-20170310(linux-next) to which kernel version?
-> If my backports git is point at tag v4.4.2 and --git-version is point
-> at v4.11. Can i say i am backporting from 4.11 to 4.4.2?
+On 10-3-2017 10:52, Johannes Berg wrote:
+> On Fri, 2017-03-10 at 10:49 +0100, Arend Van Spriel wrote:
+>>
+>> On 10-3-2017 7:34, Johannes Berg wrote:
+>>> On Thu, 2017-03-09 at 12:57 +0000, Arend van Spriel wrote:
+>>>> Since v4.11-rc1 the patch file for crypto/ccm.c, which is
+>>>> incorporated
+>>>> in the compat module, no longer applies. Update the patch file to
+>>>> fix
+>>>> the issue.
+>>>
+>>> I think I want to get rid of this ccm thing entirely, any
+>>> objections?
+>>> As I remember, it doesn't actually work properly anyway.
+>>
+>> No objection here. Does the same apply to skcipher stuff?
+> 
+> I think so, but not sure.
+> 
+>>> I suspect that if we really can't do anything else, we'd have to
+>>> provide a backport for all of crypto/, but I don't want to go there
+>>> and
+>>> would rather mandate that all the crypto things are enabled in the
+>>> base
+>>> kernel.
+>>
+>> But that can only work when crypto api in base kernel and backport
+>> kernel are the same, right?
+> 
+> No, I meant adding all of crypto/ to copy-list and making sure *that*
+> works across kernels ...
 
---git-revision is for the kernel source you want to use.
+Understand. There seem to have been significant changes in crypto land
+making this a challenge. Still seems like right idea.
 
-backports has its own tagging/branching, intended to match the *source*
-kernel.
-
-the *target* kernel, the one you compile against, shouldn't matter at
-all and support (roughly) 3.0-current.
-
-johannes
+Regards,
+Arend
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
