@@ -1,127 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from rnd-relay.smtp.broadcom.com ([192.19.229.170]:43458 "EHLO
-        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932346AbdCINFi (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 9 Mar 2017 08:05:38 -0500
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-To: Johannes Berg <johannes.berg@intel.com>
-Cc: backports@vger.kernel.org,
-        Arend van Spriel <arend.vanspriel@broadcom.com>
-Subject: [PATCH 3/4] backports: introduce new definition for DECLARE_EWMA macro
-Date: Thu,  9 Mar 2017 12:57:32 +0000
-Message-Id: <1489064253-3652-4-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170309_140611_189597_39E350D6)
-In-Reply-To: <1489064253-3652-1-git-send-email-arend.vanspriel@broadcom.com>
+Received: from s3.sipsolutions.net ([5.9.151.49]:40596 "EHLO sipsolutions.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933466AbdCJJwj (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 10 Mar 2017 04:52:39 -0500
+Message-ID: <1489139555.3038.4.camel@sipsolutions.net> (sfid-20170310_105246_522208_929684C2)
+Subject: Re: [PATCH 1/4] patches: update crypto-ccm.patch for v4.11-rc1
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Cc: backports@vger.kernel.org
+Date: Fri, 10 Mar 2017 10:52:35 +0100
+In-Reply-To: <b5a13b6c-6ed7-7682-2043-1dcc8ddfec79@broadcom.com> (sfid-20170310_104945_709577_B870A5E9)
 References: <1489064253-3652-1-git-send-email-arend.vanspriel@broadcom.com>
+         <1489064253-3652-2-git-send-email-arend.vanspriel@broadcom.com>
+         <1489127672.3038.0.camel@sipsolutions.net>
+         <b5a13b6c-6ed7-7682-2043-1dcc8ddfec79@broadcom.com>
+         (sfid-20170310_104945_709577_B870A5E9)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Since commit eb1e011a1474 ("average: change to declare precision,
-not factor") the definition of DECLARE_EWMA has changed so we
-need a backport for the new macro as it differs. Changing the
-strategy by checking the kernel version and #undef the macro to
-be sure we do not run into macro redefinition issue.
+On Fri, 2017-03-10 at 10:49 +0100, Arend Van Spriel wrote:
+> 
+> On 10-3-2017 7:34, Johannes Berg wrote:
+> > On Thu, 2017-03-09 at 12:57 +0000, Arend van Spriel wrote:
+> > > Since v4.11-rc1 the patch file for crypto/ccm.c, which is
+> > > incorporated
+> > > in the compat module, no longer applies. Update the patch file to
+> > > fix
+> > > the issue.
+> > 
+> > I think I want to get rid of this ccm thing entirely, any
+> > objections?
+> > As I remember, it doesn't actually work properly anyway.
+> 
+> No objection here. Does the same apply to skcipher stuff?
 
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
----
- backport/backport-include/linux/average.h | 65 +++++++++++++++++++++----------
- 1 file changed, 44 insertions(+), 21 deletions(-)
+I think so, but not sure.
 
-diff --git a/backport/backport-include/linux/average.h b/backport/backport-include/linux/average.h
-index 5d80041..51702fb 100644
---- a/backport/backport-include/linux/average.h
-+++ b/backport/backport-include/linux/average.h
-@@ -2,45 +2,68 @@
- #define __BACKPORT_AVERAGE
- #include_next <linux/average.h>
- 
--#ifndef DECLARE_EWMA
--#define DECLARE_EWMA(name, _factor, _weight)				\
-+/*
-+ * Exponentially weighted moving average (EWMA)
-+ *
-+ * This implements a fixed-precision EWMA algorithm, with both the
-+ * precision and fall-off coefficient determined at compile-time
-+ * and built into the generated helper funtions.
-+ *
-+ * The first argument to the macro is the name that will be used
-+ * for the struct and helper functions.
-+ *
-+ * The second argument, the precision, expresses how many bits are
-+ * used for the fractional part of the fixed-precision values.
-+ *
-+ * The third argument, the weight reciprocal, determines how the
-+ * new values will be weighed vs. the old state, new values will
-+ * get weight 1/weight_rcp and old values 1-1/weight_rcp. Note
-+ * that this parameter must be a power of two for efficiency.
-+ */
-+#if LINUX_VERSION_IS_LESS(4, 11, 0)
-+#undef DECLARE_EWMA
-+#define DECLARE_EWMA(name, _precision, _weight_rcp)			\
- 	struct ewma_##name {						\
- 		unsigned long internal;					\
- 	};								\
- 	static inline void ewma_##name##_init(struct ewma_##name *e)	\
- 	{								\
--		BUILD_BUG_ON(!__builtin_constant_p(_factor));		\
--		BUILD_BUG_ON(!__builtin_constant_p(_weight));		\
--		BUILD_BUG_ON_NOT_POWER_OF_2(_factor);			\
--		BUILD_BUG_ON_NOT_POWER_OF_2(_weight);			\
-+		BUILD_BUG_ON(!__builtin_constant_p(_precision));	\
-+		BUILD_BUG_ON(!__builtin_constant_p(_weight_rcp));	\
-+		/*							\
-+		 * Even if you want to feed it just 0/1 you should have	\
-+		 * some bits for the non-fractional part...		\
-+		 */							\
-+		BUILD_BUG_ON((_precision) > 30);			\
-+		BUILD_BUG_ON_NOT_POWER_OF_2(_weight_rcp);		\
- 		e->internal = 0;					\
- 	}								\
- 	static inline unsigned long					\
- 	ewma_##name##_read(struct ewma_##name *e)			\
- 	{								\
--		BUILD_BUG_ON(!__builtin_constant_p(_factor));		\
--		BUILD_BUG_ON(!__builtin_constant_p(_weight));		\
--		BUILD_BUG_ON_NOT_POWER_OF_2(_factor);			\
--		BUILD_BUG_ON_NOT_POWER_OF_2(_weight);			\
--		return e->internal >> ilog2(_factor);			\
-+		BUILD_BUG_ON(!__builtin_constant_p(_precision));	\
-+		BUILD_BUG_ON(!__builtin_constant_p(_weight_rcp));	\
-+		BUILD_BUG_ON((_precision) > 30);			\
-+		BUILD_BUG_ON_NOT_POWER_OF_2(_weight_rcp);		\
-+		return e->internal >> (_precision);			\
- 	}								\
- 	static inline void ewma_##name##_add(struct ewma_##name *e,	\
- 					     unsigned long val)		\
- 	{								\
- 		unsigned long internal = ACCESS_ONCE(e->internal);	\
--		unsigned long weight = ilog2(_weight);			\
--		unsigned long factor = ilog2(_factor);			\
-+		unsigned long weight_rcp = ilog2(_weight_rcp);		\
-+		unsigned long precision = _precision;			\
- 									\
--		BUILD_BUG_ON(!__builtin_constant_p(_factor));		\
--		BUILD_BUG_ON(!__builtin_constant_p(_weight));		\
--		BUILD_BUG_ON_NOT_POWER_OF_2(_factor);			\
--		BUILD_BUG_ON_NOT_POWER_OF_2(_weight);			\
-+		BUILD_BUG_ON(!__builtin_constant_p(_precision));	\
-+		BUILD_BUG_ON(!__builtin_constant_p(_weight_rcp));	\
-+		BUILD_BUG_ON((_precision) > 30);			\
-+		BUILD_BUG_ON_NOT_POWER_OF_2(_weight_rcp);		\
- 									\
- 		ACCESS_ONCE(e->internal) = internal ?			\
--			(((internal << weight) - internal) +		\
--				(val << factor)) >> weight :		\
--			(val << factor);				\
-+			(((internal << weight_rcp) - internal) +	\
-+				(val << precision)) >> weight_rcp :	\
-+			(val << precision);				\
- 	}
--#endif /* DECLARE_EWMA */
-+#endif /* LINUX_VERSION_IS_LESS(4, 11, 0) */
- 
- #endif /* __BACKPORT_AVERAGE */
--- 
-1.9.1
+> > I suspect that if we really can't do anything else, we'd have to
+> > provide a backport for all of crypto/, but I don't want to go there
+> > and
+> > would rather mandate that all the crypto things are enabled in the
+> > base
+> > kernel.
+> 
+> But that can only work when crypto api in base kernel and backport
+> kernel are the same, right?
 
+No, I meant adding all of crypto/ to copy-list and making sure *that*
+works across kernels ...
+
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
