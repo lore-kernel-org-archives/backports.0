@@ -1,77 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from lpdvrndsmtp01.broadcom.com ([192.19.229.170]:45303 "EHLO
-        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933511AbdCJKBU (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 10 Mar 2017 05:01:20 -0500
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-To: Johannes Berg <johannes.berg@intel.com>
-Cc: backports@vger.kernel.org,
-        Arend van Spriel <arend.vanspriel@broadcom.com>
-Subject: [PATCH] backports: provide backport for setup_deferrable_timer()
-Date: Fri, 10 Mar 2017 10:01:10 +0000
-Message-Id: <1489140070-29878-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170310_110147_921141_BC86D9EB)
+Received: from s3.sipsolutions.net ([5.9.151.49]:39548 "EHLO sipsolutions.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751738AbdCNNtN (ORCPT <rfc822;backports@vger.kernel.org>);
+        Tue, 14 Mar 2017 09:49:13 -0400
+Message-ID: <1489499345.10872.2.camel@sipsolutions.net> (sfid-20170314_144954_178430_26599BD6)
+Subject: Re: [PATCH 3/4] backports: introduce new definition for
+ DECLARE_EWMA macro
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Cc: backports@vger.kernel.org
+Date: Tue, 14 Mar 2017 14:49:05 +0100
+In-Reply-To: <d639368b-b887-cd0b-9c51-b76f127407f4@broadcom.com> (sfid-20170310_105333_837576_BD83F099)
+References: <1489064253-3652-1-git-send-email-arend.vanspriel@broadcom.com>
+         <1489064253-3652-4-git-send-email-arend.vanspriel@broadcom.com>
+         <1489127774.3038.1.camel@sipsolutions.net>
+         <d639368b-b887-cd0b-9c51-b76f127407f4@broadcom.com>
+         (sfid-20170310_105333_837576_BD83F099)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Since commit f8f118ceaa56 ("mac80211: Use setup_timer instead of
-init_timer") mac80211 needs setup_deferrable_timer() which is not
-available in older kernels. Provide a backport in linux/timer.h.
-Really need two flavors of backport to support up to 3.0 kernel.
 
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
----
-Hit another one last night so here it is.
+> That will work as long a linux/average.h only contains DECLARE_EWMA
+> and that is all the backported code cares about. So for now the copy-
+> list approach will work. Maybe add a comment in the copy-list
+> documenting the approach.
+> 
+I think it's highly unlikely it'll ever contain anything else.
 
-Regards,
-Arend
----
- backport/backport-include/linux/timer.h | 35 +++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 backport/backport-include/linux/timer.h
+Will you respin this, or did you want me to handle it?
 
-diff --git a/backport/backport-include/linux/timer.h b/backport/backport-include/linux/timer.h
-new file mode 100644
-index 0000000..df560a2
---- /dev/null
-+++ b/backport/backport-include/linux/timer.h
-@@ -0,0 +1,35 @@
-+#ifndef _BACKPORT_TIMER_H
-+#define _BACKPORT_TIMER_H
-+
-+#include_next <linux/timer.h>
-+
-+#ifndef setup_deferrable_timer
-+/*
-+ * The TIMER_DEFERRABLE flag has not been around since 3.0 so
-+ * two different backports are needed here.
-+ */
-+#ifdef TIMER_DEFERRABLE
-+#define setup_deferrable_timer(timer, fn, data)                         \
-+        __setup_timer((timer), (fn), (data), TIMER_DEFERRABLE)
-+#else
-+static inline void setup_deferrable_timer_key(struct timer_list *timer,
-+					      const char *name,
-+					      struct lock_class_key *key,
-+					      void (*func)(unsigned long),
-+					      unsigned long data)
-+{
-+	timer->function = func;
-+	timer->data = data;
-+	init_timer_deferrable_key(timer, name, key);
-+}
-+#define setup_deferrable_timer(timer, fn, data)				\
-+	do {								\
-+		static struct lock_class_key __key;			\
-+		setup_deferrable_timer_key((timer), #timer, &__key,	\
-+					   (fn), (data));		\
-+	} while (0)
-+#endif
-+
-+#endif
-+
-+#endif /* _BACKPORT_TIMER_H */
--- 
-1.9.1
-
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
