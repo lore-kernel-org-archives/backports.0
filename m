@@ -1,48 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-qk0-f177.google.com ([209.85.220.177]:33879 "EHLO
-        mail-qk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752039AbdCAJrr (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 1 Mar 2017 04:47:47 -0500
-Received: by mail-qk0-f177.google.com with SMTP id s186so61238917qkb.1
-        for <backports@vger.kernel.org>; Wed, 01 Mar 2017 01:47:41 -0800 (PST)
-Subject: Re: [PATCH] backports: add definitions S32_MAX and S32_MIN
-To: Johannes Berg <johannes@sipsolutions.net>
-References: <1487801925-22641-1-git-send-email-arend.vanspriel@broadcom.com>
- <1487836149.18380.0.camel@sipsolutions.net>
- <c5eb014a-b922-f825-0319-af46d4864ab4@broadcom.com>
- <1487939443.2540.19.camel@sipsolutions.net>
-Cc: backports@vger.kernel.org
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <c62a3ff4-6203-fa1d-6bf4-515b93de2c74@broadcom.com> (sfid-20170301_105119_176723_F83F71E6)
-Date: Wed, 1 Mar 2017 10:47:39 +0100
+Received: from mail-ot0-f178.google.com ([74.125.82.178]:35915 "EHLO
+        mail-ot0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753932AbdC2IEj (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 29 Mar 2017 04:04:39 -0400
+Received: by mail-ot0-f178.google.com with SMTP id t8so5208137otf.3
+        for <backports@vger.kernel.org>; Wed, 29 Mar 2017 01:04:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1487939443.2540.19.camel@sipsolutions.net>
-Content-Type: text/plain; charset=utf-8
+From: Janusz Dziedzic <janusz.dziedzic@gmail.com>
+Date: Wed, 29 Mar 2017 10:04:37 +0200
+Message-ID: <CAFED-jmLaRiM5b7XotQDrhtphSMtLDO565xCjobTnwhtipuuUQ@mail.gmail.com> (sfid-20170329_100904_084825_40B6ACA5)
+Subject: ib-rhashtable.c:90:17: error
+To: backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+Hello,
 
+backports generate like this:
 
-On 24-2-2017 13:30, Johannes Berg wrote:
-> 
->> I create a package nightly for our internal tree and wireless-testing
->> and build for couple of target kernels to run some wifi tests on
->> target systems. So I tend to hit issues pretty soon. Not covering all
->> target kernels though.
-> 
-> Ok, that's nice. I'm torn between doing something that runs on our
-> existing infrastructure (easy, but internal) or building some kind of
-> infrastructure, likely on the build box we have from the LF... that's
-> harder but accessible to people other than me.
-> 
-> Or are there any alternatives? Perhaps if I put the scripts upstream
-> then it doesn't matter that I might actually be running it on our
-> internal infrastructure, since anyone can just take the scripts and run
-> them?
+./gentree.py --verbose --clean --git-revision next-20170310
+--copy-list copy-list.ath ~/linux-next/ ~/backports-output
 
-The alternative is fine by me.
+When compile on 4.4 kernel I hit such error:
 
-Regards,
-Arend
+  CC [M]  /home/jdziedzx/backports-output/compat/backport-4.8.o
+  CC [M]  /home/jdziedzx/backports-output/compat/lib-rhashtable.o
+/home/jdziedzx/backports-output/compat/lib-rhashtable.c: In function
+=E2=80=98alloc_bucket_locks=E2=80=99:
+/home/jdziedzx/backports-output/compat/lib-rhashtable.c:90:17: error:
+implicit declaration of function =E2=80=98kvmalloc=E2=80=99
+[-Werror=3Dimplicit-function-declaration]
+    tbl->locks =3D kvmalloc(size * sizeof(spinlock_t), gfp);
+                 ^
+/home/jdziedzx/backports-output/compat/lib-rhashtable.c:90:15:
+warning: assignment makes pointer from integer without a cast
+[-Wint-conversion]
+    tbl->locks =3D kvmalloc(size * sizeof(spinlock_t), gfp);
+               ^
+cc1: some warnings being treated as errors
+
+Is there any fix for that?
+
+--=20
+Janusz Dziedzic
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
