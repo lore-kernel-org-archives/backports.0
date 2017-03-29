@@ -1,35 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:39548 "EHLO sipsolutions.net"
+Received: from s3.sipsolutions.net ([5.9.151.49]:42872 "EHLO sipsolutions.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751738AbdCNNtN (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 14 Mar 2017 09:49:13 -0400
-Message-ID: <1489499345.10872.2.camel@sipsolutions.net> (sfid-20170314_144954_178430_26599BD6)
-Subject: Re: [PATCH 3/4] backports: introduce new definition for
- DECLARE_EWMA macro
+        id S1753164AbdC2IwP (ORCPT <rfc822;backports@vger.kernel.org>);
+        Wed, 29 Mar 2017 04:52:15 -0400
+Message-ID: <1490777532.7948.15.camel@sipsolutions.net> (sfid-20170329_105543_346370_0C07DAE7)
+Subject: Re: Question of backports
 From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Cc: backports@vger.kernel.org
-Date: Tue, 14 Mar 2017 14:49:05 +0100
-In-Reply-To: <d639368b-b887-cd0b-9c51-b76f127407f4@broadcom.com> (sfid-20170310_105333_837576_BD83F099)
-References: <1489064253-3652-1-git-send-email-arend.vanspriel@broadcom.com>
-         <1489064253-3652-4-git-send-email-arend.vanspriel@broadcom.com>
-         <1489127774.3038.1.camel@sipsolutions.net>
-         <d639368b-b887-cd0b-9c51-b76f127407f4@broadcom.com>
-         (sfid-20170310_105333_837576_BD83F099)
+To: =?UTF-8?Q?=E5=90=B3=E9=87=8D=E6=AF=85?= <uranus0206@gmail.com>,
+        backports@vger.kernel.org
+Date: Wed, 29 Mar 2017 10:52:12 +0200
+In-Reply-To: <CAN+BLYH=tkxSxJSv995+n83Zon0kqweNb6X8nWeKuLFtCepSmQ@mail.gmail.com> (sfid-20170324_113721_904132_74122683)
+References: <CAN+BLYH=tkxSxJSv995+n83Zon0kqweNb6X8nWeKuLFtCepSmQ@mail.gmail.com>
+         (sfid-20170324_113721_904132_74122683)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+On Fri, 2017-03-24 at 18:36 +0800, 吳重毅 wrote:
+> Hi:
+> I am confuse with backports' parameter. First i found the mail list
+> of
+> http://lists.infradead.org/pipermail/ath10k/2017-March/009458.html
+> And i follow the attachment to patch backports' git.
+> I am success full create the backports-output, but some parameters
+> confused me.
+> The parameter "--git-revision next-20170310". Is it says i am using
+> tag next-20170310 of source linux-next?
+> Currently my git of backports is point at master.
+> When i use the command in maillist to generate backport-output.
+> What target of kernel version am i going to backport to ?
+> kernel of tag next-20170310(linux-next) to which kernel version?
+> If my backports git is point at tag v4.4.2 and --git-version is point
+> at v4.11. Can i say i am backporting from 4.11 to 4.4.2?
 
-> That will work as long a linux/average.h only contains DECLARE_EWMA
-> and that is all the backported code cares about. So for now the copy-
-> list approach will work. Maybe add a comment in the copy-list
-> documenting the approach.
-> 
-I think it's highly unlikely it'll ever contain anything else.
+--git-revision is for the kernel source you want to use.
 
-Will you respin this, or did you want me to handle it?
+backports has its own tagging/branching, intended to match the *source*
+kernel.
+
+the *target* kernel, the one you compile against, shouldn't matter at
+all and support (roughly) 3.0-current.
 
 johannes
 --
