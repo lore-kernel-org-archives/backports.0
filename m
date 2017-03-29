@@ -1,116 +1,66 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:38588 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750774AbdCOTkd (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 15 Mar 2017 15:40:33 -0400
-Received: by mail-wm0-f41.google.com with SMTP id t189so31526264wmt.1
-        for <backports@vger.kernel.org>; Wed, 15 Mar 2017 12:40:32 -0700 (PDT)
-Subject: Re: Errors using linux-4.4.y against kernel target v3.19
-To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        backports@vger.kernel.org
-References: <CAAEAJfDinWQ+GdU7hJR3z79LMu8whduStXUHJqihXW0MmWBLYQ@mail.gmail.com>
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <4f3274fd-c310-f30b-7883-2bf67125c360@broadcom.com> (sfid-20170315_204035_000931_063FE732)
-Date: Wed, 15 Mar 2017 20:40:28 +0100
+Received: from mail-it0-f67.google.com ([209.85.214.67]:33470 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752631AbdC2Idw (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 29 Mar 2017 04:33:52 -0400
+Received: by mail-it0-f67.google.com with SMTP id w11so958796itb.0
+        for <backports@vger.kernel.org>; Wed, 29 Mar 2017 01:33:51 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAAEAJfDinWQ+GdU7hJR3z79LMu8whduStXUHJqihXW0MmWBLYQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1490775563.7948.4.camel@sipsolutions.net>
+References: <CAFED-jmLaRiM5b7XotQDrhtphSMtLDO565xCjobTnwhtipuuUQ@mail.gmail.com>
+ <1490775563.7948.4.camel@sipsolutions.net>
+From: =?UTF-8?B?5ZCz6YeN5q+F?= <uranus0206@gmail.com>
+Date: Wed, 29 Mar 2017 16:33:30 +0800
+Message-ID: <CAN+BLYHsge-FXDR25_58HGUYVaPjj9QnWjQUiXJ8aA-MdGp=_A@mail.gmail.com> (sfid-20170329_103434_149590_72FBA875)
+Subject: Re: ib-rhashtable.c:90:17: error
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Janusz Dziedzic <janusz.dziedzic@gmail.com>,
+        backports@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 15-3-2017 16:06, Ezequiel Garcia wrote:
-> Hi,
-> 
-> I have checked out linux-4.4.y branch, and executed this:
-> 
->   $ python2 gentree.py --integrate ~/repos/linux/next/
-> ~/repos/linux/torvalds/  --clean --gitdebug --git-revision v4.4.53
-> --verbose
-> 
-> My torvalds dir is reset to v3.19. It seems it goes more or less well,
-> but it fails at three points:
-> 
-> 1) Failed to process SmPL patch
-> collateral-evolutions/network/0027-genl-const/genl-const.cocci:
-> 
-> Failed to process SmPL patch
-> collateral-evolutions/network/0027-genl-const/genl-const.cocci
-> Traceback (most recent call last):
->   File "gentree.py", line 1091, in <module>
->     ret = _main()
->   File "gentree.py", line 724, in _main
->     logwrite=logwrite)
->   File "gentree.py", line 906, in process
->     apply_patches(args, "backport", source_dir, 'patches',
-> bpid.target_dir, logwrite)
->   File "gentree.py", line 605, in apply_patches
->     raise Exception('SmPL patch failed')
-> Exception: SmPL patch failed
-> 
-> Running coccinelle results in this:
-> 
-> [zeta@laptop ~/repos/backports]$ ./devel/pycocci
-> patches/collateral-evolutions/network/0027-genl-const/genl-const.cocci
-> ~/repos/linux/torvalds/backports/
-> spatch --sp-file
-> patches/collateral-evolutions/network/0027-genl-const/genl-const.cocci
-> --in-place --recursive-includes --relax-include-path --use-coccigrep
-> --timeout 120 --dir /home/zeta/repos/linux/torvalds/backports/ -max 4
-> -index 0
-> spatch --sp-file
-> patches/collateral-evolutions/network/0027-genl-const/genl-const.cocci
-> --in-place --recursive-includes --relax-include-path --use-coccigrep
-> --timeout 120 --dir /home/zeta/repos/linux/torvalds/backports/ -max 4
-> -index 1
-> spatch --sp-file
-> patches/collateral-evolutions/network/0027-genl-const/genl-const.cocci
-> --in-place --recursive-includes --relax-include-path --use-coccigrep
-> --timeout 120 --dir /home/zeta/repos/linux/torvalds/backports/ -max 4
-> -index 2
-> spatch --sp-file
-> patches/collateral-evolutions/network/0027-genl-const/genl-const.cocci
-> --in-place --recursive-includes --relax-include-path --use-coccigrep
-> --timeout 120 --dir /home/zeta/repos/linux/torvalds/backports/ -max 4
-> -index 3
-> Failed to apply changes from genl-const.cocci
-> Specific log output from change that failed using genl-const.cocci
-> init_defs_builtins: /usr/lib/coccinelle/standard.h
-> plus: parse error:
->   File "patches/collateral-evolutions/network/0027-genl-const/genl-const.cocci",
-> line 6, column 1, charpos = 68
->   around = '__genl_const',
->   whole content = +__genl_const struct genl_multicast_group
-> 
-> Full log using genl-const.cocci
-> init_defs_builtins: /usr/lib/coccinelle/standard.h
-> plus: parse error:
->   File "patches/collateral-evolutions/network/0027-genl-const/genl-const.cocci",
-> line 6, column 1, charpos = 68
->   around = '__genl_const',
->   whole content = +__genl_const struct genl_multicast_group
-> 
-> 2) The Makefile patch doesn't apply, namely:
-> integration-patches/0001-enable-backports/0001-enable-backports-built-in.patch.
-> The resolution was fairly easy.
-> 
-> 3) The BACKPORT_BP_MODULES symbol is problematic:
-> 
-> scripts/kconfig/mconf Kconfig
-> backports//compat/Kconfig:57: symbol 'BACKPORT_BP_MODULES' redefines
-> option 'modules' already defined by symbol 'MODULES'
-> make[1]: *** [scripts/kconfig/Makefile:24: menuconfig] Error 1
-> make: *** [Makefile:543: menuconfig] Error 2
-> 
-> Any ideas on why I get all of these? Is it that v3.19 is not supported
-> by the 4.4.y branch ?
+I had encountered same problem. And i solved by some procedures below:
 
-I honestly don't know the current state of backports integration
-feature. My use-case is creating a tarball that can be built against any
-target kernel.
+Step 1: linux-next check out to latest version, backports also
+checkout to master and apply ccm patch.
+Step 2: generate tree by ./gentree.py --verbose --clean ~/linux-next/
+~/backports-output
+Step 3: modify DECLARE_EWMA(signal, 10, 8) to DECLARE_EWMA(signal,
+2014, 8) in ../mac80211/sta_info.h of backports-output
+Step 4: modify "skb=3Didr_remove(...);" to "skb=3Didr_find(...); if (skb)
+idr_remove(...);"  in ../mac80211/status.h of backports-output
+Step 5: Target linux kernel (the lower version or your specific
+version ) need to be compiled first.
+Step 6: export KLIB_BUILD=3D"path/to/your_lower_linux_kernel"
+Step 7: export KLIB=3D"path/to/your/build/object" (I am about to get
+*.ko, thus i point the directory to backports-output)
+Step 8: make defconfig-your_choice (I am using defconfig-ath10k)
+Step 9: make the backports-output and wait to compile.
 
-In your case can you try it with v4.4 kernel?
+My compile environment is Ubuntu16.04 with kernel 4.4 and I am porting
+ath10k in linux kernel 4.11 back to linux 4.2.
+I hope this information will help you.
 
-Regards,
-Arend
+On Wed, Mar 29, 2017 at 4:19 PM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+>
+>>     tbl->locks =3D kvmalloc(size * sizeof(spinlock_t), gfp);
+>
+> Looks like we need to backport kvmalloc(), and perhaps something around
+> the free as well.
+>
+>> Is there any fix for that?
+>
+> No, not yet, but shouldn't be hard.
+>
+> johannes
+> --
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+
+
+
+--=20
+=E5=90=B3=E9=87=8D=E6=AF=85 Wu Chung-yi
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
