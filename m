@@ -1,53 +1,34 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:33370 "EHLO sipsolutions.net"
+Received: from s3.sipsolutions.net ([5.9.151.49]:43016 "EHLO sipsolutions.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755509AbdBGVKF (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 7 Feb 2017 16:10:05 -0500
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.88)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1cbCzy-0003xu-Dl
-        for backports@vger.kernel.org; Tue, 07 Feb 2017 22:08:26 +0100
-Message-ID: <1486501705.18071.1.camel@sipsolutions.net> (sfid-20170207_221034_779051_861CAC3E)
-Subject: backports update
+        id S1753154AbdCaH3v (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 31 Mar 2017 03:29:51 -0400
+Message-ID: <1490945388.6288.0.camel@sipsolutions.net> (sfid-20170331_092952_323089_961680CA)
+Subject: Re: [PATCH 0/4] backports: fixes for wireless-testing
 From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Date: Tue, 07 Feb 2017 22:08:25 +0100
+To: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: backports@vger.kernel.org
+Date: Fri, 31 Mar 2017 09:29:48 +0200
+In-Reply-To: <1489064253-3652-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170309_140611_729182_C316A114)
+References: <1489064253-3652-1-git-send-email-arend.vanspriel@broadcom.com>
+         (sfid-20170309_140611_729182_C316A114)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
+On Thu, 2017-03-09 at 12:57 +0000, Arend van Spriel wrote:
+> This series fixes backport issues found backporting the wireless-
+> testing
+> tree that moved to 4.11-rc1.
+> 
+> Arend van Spriel (4):
+>   patches: update crypto-ccm.patch for v4.11-rc1
+>   backports: add backport for idr_remove
+>   backports: introduce new definition for DECLARE_EWMA macro
+>   backports: add dummy include/linux/sched/signal.h
 
-After two days of work, I've pushed out a new backports tree.
-
-Since there's a limit to the # of hours in a day, I've dropped a number
-of things:
- * Ethernet
- * Media
- * Bluetooth
- * 6lowpan
- * made various other things depend on (too) high kernel versions
-
-None of these things are unfixable - if anyone has a specific driver
-they need patches are very welcome.
-
-Currently, the master branch of the backports repository is now
-intended to work with wireless-testing tag wt-2017-02-06, plus the
-following patch: https://patchwork.kernel.org/patch/9560281/
-
-ckmake isn't entirely happy - Ubuntu kernel versions 3.0-3.3 are
-internally inconsistent and get errors in their own code and 3.7-4.4
-are failing to link against 'mcount' which is again some ftrace problem
-that I'm not willing to solve right now.
-
-I assume with the correct kernel configuration these problems would go
-away, and I think we should stop compiling against Ubuntu kernels that
-nobody uses any more and instead focus on defconfigs that are actually
-in use, perhaps taking some from the distros. But that's another story.
-
-Please go and test this against your drivers/kernels/test beds.
+Applied, except I replaced the average.h by just copying that file
 
 johannes
 --
