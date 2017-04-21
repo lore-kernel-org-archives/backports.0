@@ -1,51 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:46610 "EHLO sipsolutions.net"
+Received: from s3.sipsolutions.net ([5.9.151.49]:41784 "EHLO sipsolutions.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424172AbdDUSy2 (ORCPT <rfc822;backports@vger.kernel.org>);
-        Fri, 21 Apr 2017 14:54:28 -0400
-Message-ID: <1492800860.19290.3.camel@sipsolutions.net> (sfid-20170421_205445_515164_EC2774A7)
-Subject: Re: [PATCH 2/2] backports: add the necessary backports for netlink
- extack
+        id S971323AbdDUKr1 (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 21 Apr 2017 06:47:27 -0400
 From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>,
-        backports@vger.kernel.org
-Date: Fri, 21 Apr 2017 20:54:20 +0200
-In-Reply-To: <d79056c4-ff9d-0e16-ed84-03fae4cdee83@broadcom.com> (sfid-20170421_205053_447231_D19084FD)
-References: <20170421104722.21538-1-johannes@sipsolutions.net>
-         <20170421104722.21538-2-johannes@sipsolutions.net>
-         <d79056c4-ff9d-0e16-ed84-03fae4cdee83@broadcom.com>
-         (sfid-20170421_205053_447231_D19084FD)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 1/2] backports: extend magic to 6 possible arguments
+Date: Fri, 21 Apr 2017 12:47:21 +0200
+Message-Id: <20170421104722.21538-1-johannes@sipsolutions.net> (sfid-20170421_124729_890268_BA7A8760)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2017-04-21 at 20:50 +0200, Arend Van Spriel wrote:
-> On 21-4-2017 12:47, Johannes Berg wrote:
-> > From: Johannes Berg <johannes.berg@intel.com>
-> 
-> I did not follow everything about this extack thing, but does it
-> impose a version requirement on the libnl used in user-space?
+From: Johannes Berg <johannes.berg@intel.com>
 
-No. It turns out that libnl doesn't care at all about the ack message
-contents, so you can use any version.
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/backport-include/backport/magic.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Here's a sample iw patch:
+diff --git a/backport/backport-include/backport/magic.h b/backport/backport-include/backport/magic.h
+index 222e02513ef2..d7e7cc961bbf 100644
+--- a/backport/backport-include/backport/magic.h
++++ b/backport/backport-include/backport/magic.h
+@@ -5,8 +5,8 @@
+  * http://efesx.com/2010/08/31/overloading-macros/
+  */
+ 
+-#define VA_NUM_ARGS(...) VA_NUM_ARGS_IMPL(__VA_ARGS__, 5,4,3,2,1)
+-#define VA_NUM_ARGS_IMPL(_1,_2,_3,_4,_5,N,...) N
++#define VA_NUM_ARGS(...) VA_NUM_ARGS_IMPL(__VA_ARGS__, 6,5,4,3,2,1)
++#define VA_NUM_ARGS_IMPL(_1,_2,_3,_4,_5,_6,N,...) N
+ 
+ #define macro_dispatcher(func, ...) \
+ 	macro_dispatcher_(func, VA_NUM_ARGS(__VA_ARGS__))
+-- 
+2.11.0
 
-https://git.kernel.org/pub/scm/linux/kernel/git/jberg/iw.git/commit/?h=bpf&id=7105f7614c13680306cf3b91ad8711eccfa70df3
-
-> > +/* this is for patches we apply */
-> 
-> Guess the comment is inspired by the one below ;-) but would it not
-> be a bit more clear to say:
-> 
-> /* this is for files patched using 0078-genl-extack.cocci */
-
-Yeah I guess that'd make some sense :)
-
-Though realistically none of it is really all that necessary since one
-can always grep ;-)
-
-johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
