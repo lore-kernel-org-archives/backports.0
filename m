@@ -1,47 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:60104 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751192AbdEaIa3 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 31 May 2017 04:30:29 -0400
-From: Luca Coelho <luca@coelho.fi>
-To: johannes@sipsolutions.net
+Received: from s3.sipsolutions.net ([5.9.151.49]:49324 "EHLO sipsolutions.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934406AbdEXGqS (ORCPT <rfc822;backports@vger.kernel.org>);
+        Wed, 24 May 2017 02:46:18 -0400
+Message-ID: <1495608375.2665.1.camel@sipsolutions.net> (sfid-20170524_084622_671320_F3C6A2B4)
+Subject: Re: [PATCH] patches: add patch for compat/lib-rhashtable.c
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>
 Cc: backports@vger.kernel.org
-Date: Wed, 31 May 2017 11:30:10 +0300
-Message-Id: <20170531083010.15135-1-luca@coelho.fi> (sfid-20170531_103045_781505_A7DA3108)
-Subject: [PATCH] backports: add lockdep_rtnl_is_held() for < 3.13 without CONFIG_PROVE_LOCKING
+Date: Wed, 24 May 2017 08:46:15 +0200
+In-Reply-To: <1495226777-11429-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170519_224637_347450_368DFBBA)
+References: <1495226777-11429-1-git-send-email-arend.vanspriel@broadcom.com>
+         (sfid-20170519_224637_347450_368DFBBA)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Luca Coelho <luciano.coelho@intel.com>
+On Fri, 2017-05-19 at 21:46 +0100, Arend van Spriel wrote:
+> The file compat/lib-rhashtable.c is a copy from the backported kernel
+> source lib/rhashtable.c. This patch reverts a recent change to that
+> file, ie. commit 43ca5bc4f72e ("lib/rhashtable.c: simplify a strange
+> allocation pattern"). It introduced the function
+> gfpflags_allow_blocking()
+> introduced in 4.4 kernel and kvmalloc() introduced in 4.12-rc1.
+> Looking
+> at those functions backporting them is complicated so instead add
+> this
+> patch that reverts the change for kernel prior to 4.12.
 
-In kernels earlier than 3.13, lockdep_rtnl_is_held() is only declared
-in rtnetlink.h when CONFIG_PROVE_LOCKING is not set.  Backport this
-function if that's the case.
+Thanks Arend!
 
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
----
- backport/backport-include/linux/rtnetlink.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Why do you think backporting it is complicated though?
 
-diff --git a/backport/backport-include/linux/rtnetlink.h b/backport/backport-include/linux/rtnetlink.h
-index 9b68be820049..59beffa8316a 100644
---- a/backport/backport-include/linux/rtnetlink.h
-+++ b/backport/backport-include/linux/rtnetlink.h
-@@ -18,4 +18,12 @@
- 	ndo_dflt_fdb_add(ndm, tb, dev, addr, flags)
- #endif
- 
-+#if LINUX_VERSION_IS_LESS(3,13,0) &&		\
-+	!defined(CONFIG_PROVE_LOCKING)
-+static inline bool lockdep_rtnl_is_held(void)
-+{
-+	return true;
-+}
-+#endif
-+
- #endif /* __BACKPORT_LINUX_RTNETLINK_H */
--- 
-2.11.0
+kvmalloc() is just kvmalloc_node(), and if we disregard the
+__vmalloc_node_flags_caller() but - since kvmalloc() doesn't care about
+node anyway - just use __vmalloc() there, it should be easy? The
+pgprot_t argument is just PAGE_KERNEL, and the other stuff doesn't
+really matter.
 
+gfpflags_allow_blocking() is a pretty simple inline, and even if we'd
+implement it to always return false we'd get the old rhashtable
+behaviour.
+
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
