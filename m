@@ -1,60 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-qt0-f179.google.com ([209.85.216.179]:36019 "EHLO
-        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031324AbdEXTgv (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 24 May 2017 15:36:51 -0400
-Received: by mail-qt0-f179.google.com with SMTP id f55so164265950qta.3
-        for <backports@vger.kernel.org>; Wed, 24 May 2017 12:36:50 -0700 (PDT)
-Subject: Re: [PATCH] patches: add patch for compat/lib-rhashtable.c
-To: Johannes Berg <johannes@sipsolutions.net>
+Received: from paleale.coelho.fi ([176.9.41.70]:59866 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751168AbdE3IJp (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 30 May 2017 04:09:45 -0400
+From: Luca Coelho <luca@coelho.fi>
+To: johannes@sipsolutions.net
 Cc: backports@vger.kernel.org
-References: <1495226777-11429-1-git-send-email-arend.vanspriel@broadcom.com>
- <1495608375.2665.1.camel@sipsolutions.net>
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <0c32b99a-63c4-476c-85f2-67e63d4219bc@broadcom.com> (sfid-20170524_213742_521387_A0486567)
-Date: Wed, 24 May 2017 21:36:46 +0200
-MIME-Version: 1.0
-In-Reply-To: <1495608375.2665.1.camel@sipsolutions.net>
-Content-Type: text/plain; charset=utf-8
+Date: Tue, 30 May 2017 11:09:34 +0300
+Message-Id: <20170530080934.7214-1-luca@coelho.fi> (sfid-20170530_100950_656784_A39C9357)
+Subject: [PATCH] backports: provide backport of devcoredump when disabled in kernels >= 3.18
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 24-05-17 08:46, Johannes Berg wrote:
-> On Fri, 2017-05-19 at 21:46 +0100, Arend van Spriel wrote:
->> The file compat/lib-rhashtable.c is a copy from the backported kernel
->> source lib/rhashtable.c. This patch reverts a recent change to that
->> file, ie. commit 43ca5bc4f72e ("lib/rhashtable.c: simplify a strange
->> allocation pattern"). It introduced the function
->> gfpflags_allow_blocking()
->> introduced in 4.4 kernel and kvmalloc() introduced in 4.12-rc1.
->> Looking
->> at those functions backporting them is complicated so instead add
->> this
->> patch that reverts the change for kernel prior to 4.12.
-> 
-> Thanks Arend!
-> 
-> Why do you think backporting it is complicated though?
-> 
-> kvmalloc() is just kvmalloc_node(), and if we disregard the
-> __vmalloc_node_flags_caller() but - since kvmalloc() doesn't care about
-> node anyway - just use __vmalloc() there, it should be easy? The
-> pgprot_t argument is just PAGE_KERNEL, and the other stuff doesn't
-> really matter.
-> 
-> gfpflags_allow_blocking() is a pretty simple inline, and even if we'd
-> implement it to always return false we'd get the old rhashtable
-> behaviour.
+From: Luca Coelho <luciano.coelho@intel.com>
 
-I was reading commit d0164adc89f6 ("mm, page_alloc: distinguish between
-being unable to sleep, unwilling to slee...") which introduced
-gfpflags_allow_blocking() and did a lot more stuff. So I could not
-really determine the implications of backporting
-gfpflags_allow_blocking(). We can indeed probably make it work for
-rhashtable easily, but will that be appropriate if some other backport
-code starts using it.
+When devcoredump is not enabled in a kernel that supports it, we would
+only use stubs for the devcoredump in the backports.  Allow the
+backport to compile when that's the case.
 
-Regards,
-Arend
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+---
+ backport/compat/Kconfig        | 1 -
+ backport/compat/backport-4.7.c | 8 ++++++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
+index 335d9058072e..f66d5f74ba18 100644
+--- a/backport/compat/Kconfig
++++ b/backport/compat/Kconfig
+@@ -128,7 +128,6 @@ config BPAUTO_WANT_DEV_COREDUMP
+ 
+ config BPAUTO_BUILD_WANT_DEV_COREDUMP
+ 	bool
+-	depends on KERNEL_3_18
+ 	default n if DEV_COREDUMP
+ 	default n if DISABLE_DEV_COREDUMP
+ 	default y if BPAUTO_WANT_DEV_COREDUMP
+diff --git a/backport/compat/backport-4.7.c b/backport/compat/backport-4.7.c
+index 25a00235bce4..b064707767c6 100644
+--- a/backport/compat/backport-4.7.c
++++ b/backport/compat/backport-4.7.c
+@@ -116,8 +116,12 @@ int nla_put_64bit(struct sk_buff *skb, int attrtype, int attrlen,
+ }
+ EXPORT_SYMBOL_GPL(nla_put_64bit);
+ 
+-/* below 3.18 we copied the entire devcoredump */
+-#if LINUX_VERSION_IS_GEQ(3,18,0)
++/*
++ * Below 3.18 or if the kernel has devcoredump disabled, we copied the
++ * entire devcoredump, so no need to define these functions.
++ */
++#if LINUX_VERSION_IS_GEQ(3,18,0) && \
++	!defined(CPTCFG_BPAUTO_BUILD_WANT_DEV_COREDUMP)
+ #include <linux/devcoredump.h>
+ #include <linux/scatterlist.h>
+ 
+-- 
+2.11.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
