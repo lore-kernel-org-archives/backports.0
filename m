@@ -1,64 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wr0-f171.google.com ([209.85.128.171]:36728 "EHLO
-        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423853AbdDUSuy (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 21 Apr 2017 14:50:54 -0400
-Received: by mail-wr0-f171.google.com with SMTP id c55so59845238wrc.3
-        for <backports@vger.kernel.org>; Fri, 21 Apr 2017 11:50:53 -0700 (PDT)
-Subject: Re: [PATCH 2/2] backports: add the necessary backports for netlink
- extack
-To: Johannes Berg <johannes@sipsolutions.net>,
-        backports@vger.kernel.org
-References: <20170421104722.21538-1-johannes@sipsolutions.net>
- <20170421104722.21538-2-johannes@sipsolutions.net>
-Cc: Johannes Berg <johannes.berg@intel.com>
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <d79056c4-ff9d-0e16-ed84-03fae4cdee83@broadcom.com> (sfid-20170421_205109_944586_78043FD9)
-Date: Fri, 21 Apr 2017 20:50:51 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170421104722.21538-2-johannes@sipsolutions.net>
-Content-Type: text/plain; charset=windows-1252
+Received: from paleale.coelho.fi ([176.9.41.70]:60104 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751192AbdEaIa3 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 31 May 2017 04:30:29 -0400
+From: Luca Coelho <luca@coelho.fi>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org
+Date: Wed, 31 May 2017 11:30:10 +0300
+Message-Id: <20170531083010.15135-1-luca@coelho.fi> (sfid-20170531_103045_781505_A7DA3108)
+Subject: [PATCH] backports: add lockdep_rtnl_is_held() for < 3.13 without CONFIG_PROVE_LOCKING
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 21-4-2017 12:47, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
+From: Luca Coelho <luciano.coelho@intel.com>
 
-I did not follow everything about this extack thing, but does it impose
-a version requirement on the libnl used in user-space?
+In kernels earlier than 3.13, lockdep_rtnl_is_held() is only declared
+in rtnetlink.h when CONFIG_PROVE_LOCKING is not set.  Backport this
+function if that's the case.
 
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> ---
->  backport/backport-include/linux/netlink.h | 17 ++++++++
->  backport/backport-include/net/genetlink.h | 24 +++++++++++
->  backport/backport-include/net/netlink.h   | 69 +++++++++++++++++++++++++++++++
->  patches/0078-genl-extack.cocci            |  5 +++
->  4 files changed, 115 insertions(+)
->  create mode 100644 patches/0078-genl-extack.cocci
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+---
+ backport/backport-include/linux/rtnetlink.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-[...]
+diff --git a/backport/backport-include/linux/rtnetlink.h b/backport/backport-include/linux/rtnetlink.h
+index 9b68be820049..59beffa8316a 100644
+--- a/backport/backport-include/linux/rtnetlink.h
++++ b/backport/backport-include/linux/rtnetlink.h
+@@ -18,4 +18,12 @@
+ 	ndo_dflt_fdb_add(ndm, tb, dev, addr, flags)
+ #endif
+ 
++#if LINUX_VERSION_IS_LESS(3,13,0) &&		\
++	!defined(CONFIG_PROVE_LOCKING)
++static inline bool lockdep_rtnl_is_held(void)
++{
++	return true;
++}
++#endif
++
+ #endif /* __BACKPORT_LINUX_RTNETLINK_H */
+-- 
+2.11.0
 
-> +/* this is for patches we apply */
-
-Guess the comment is inspired by the one below ;-) but would it not be a
-bit more clear to say:
-
-/* this is for files patched using 0078-genl-extack.cocci */
-
-> +static inline struct netlink_ext_ack *genl_info_extack(struct genl_info *info)
-> +{
-> +#if LINUX_VERSION_IS_GEQ(4,12,0)
-> +	return info->extack;
-> +#else
-> +	return NULL;
-> +#endif
-> +}
-> +
->  /* this is for patches we apply */
->  #if LINUX_VERSION_IS_LESS(3,7,0)
->  #define genl_info_snd_portid(__genl_info) (__genl_info->snd_pid)
-
-Regards,
-Arend
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
