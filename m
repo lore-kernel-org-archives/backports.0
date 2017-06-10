@@ -1,31 +1,38 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-bl2nam02on0134.outbound.protection.outlook.com ([104.47.38.134]:50496
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752646AbdF0UHf (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 27 Jun 2017 16:07:35 -0400
-From: Dan Kephart <Dan.Kephart@lairdtech.com>
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Kernel specific branches question
-Date: Tue, 27 Jun 2017 20:07:31 +0000
-Message-ID: <921F8F57-F9B2-431F-828D-C2D86292ED94@lairdtech.com> (sfid-20170627_220738_057277_8F491788)
-Content-Type: text/plain; charset="utf-8"
+Received: from mail-qt0-f176.google.com ([209.85.216.176]:35036 "EHLO
+        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751137AbdFJTn0 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sat, 10 Jun 2017 15:43:26 -0400
+Received: by mail-qt0-f176.google.com with SMTP id w1so98686307qtg.2
+        for <backports@vger.kernel.org>; Sat, 10 Jun 2017 12:43:26 -0700 (PDT)
+Subject: Re: Possible bug on brcmfmac compat driver
+To: "Mario J. Rugiero" <mrugiero@tecnoaccion.com.ar>,
+        backports@vger.kernel.org
+References: <627ced49-bbf5-3344-c900-bdf77710e489@tecnoaccion.com.ar>
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <56a4dee3-566e-3f44-bad3-22c61dbe8836@broadcom.com> (sfid-20170610_214328_503498_12824C4E)
+Date: Sat, 10 Jun 2017 21:43:22 +0200
 MIME-Version: 1.0
+In-Reply-To: <627ced49-bbf5-3344-c900-bdf77710e489@tecnoaccion.com.ar>
+Content-Type: text/plain; charset=windows-1252
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-SGksDQogDQpBdCBMYWlyZCwgd2UgdXNlIGJhY2twb3J0cyBmb3Igc3VwcG9ydGluZyBvdXIgd2ly
-ZWxlc3MgbW9kdWxlcywgc3BlY2lmaWNhbGx5IHVzaW5nIGFuIHVubW9kaWZpZWQgYnJjbWZtYWMs
-IGEgZmFpcmx5IG1vZGlmaWVkIGF0aDZrbCwgYW5kIGFuIG91dCBvZiB0cmVlIGN1c3RvbSB2ZXJz
-aW9uIG9mIHRoZSBub24tdXBzdHJlYW1lZCBtd2x3aWZpLCBhbmQgYWxzbyB1c2luZyB1bm1vZGlm
-aWVkIEJsdWV0b290aC4gIEF0IHRoZSBtb21lbnQsIHdlIGFyZSBiYWNrcG9ydGluZyBvdXIgZm9y
-ayBvZiB0aGUgNC45IGtlcm5lbCBmb3IgdGhvc2UgZHJpdmVycy4gIEkgcHVsbGVkIGEgY29weSBv
-ZiB0aGUgZ2l0IHJlcG8gYSBmZXcgbW9udGhzIGJhY2sgYW5kIHdlIGhhdmUgd29ya2VkIGZyb20g
-dGhhdC4gIEnigJltIHdvbmRlcmluZyBob3cgd2UgY2FuIGhlbHAgcmVzdXJyZWN0IHRoZSBwcm9j
-ZXNzIG9mIGhhdmluZyBicmFuY2hlcyBmb3Igc3BlY2lmaWMga2VybmVsIHJlbGVhc2VzIGFuZCB0
-aGUgdGVzdGluZyB0aGF0IHdhcyBkb25lIGZvciB0aG9zZSBhcyBzZWVuIGluIHRoaXMgY29tbWl0
-Og0KaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvYmFja3Bv
-cnRzL2JhY2twb3J0cy5naXQvY29tbWl0Lz9oPWxpbnV4LTQuNC55JmlkPWJlYzQwMzdhNTRkZDBl
-MWExYWVlZmU3Mzg1ZmFmODJiYWM0NGQ2YTANCg0KVGhhbmtzDQpEYW4NCg0K
+On 29-05-17 16:43, Mario J. Rugiero wrote:
+> When trying to build the SDIO support for this driver, I get a
+> redefinition of the function brcmf_proto_bcdc_detach.
+> 
+> Apparently, CPTCFG_BRCMFMAC_PROTO_BCDC is defined for the makefile, but
+> the flag is not being passed to the compilers, so bcdc.h defines the
+> stubs instead of declaring the functions to be defined in bcdc.c.
+
+Not sure what is happening. Can you try:
+
+$ make V=1
+
+and share the output in this email thread.
+
+Regards,
+Arend
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
