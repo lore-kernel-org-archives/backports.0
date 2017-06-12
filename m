@@ -1,88 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wr0-f173.google.com ([209.85.128.173]:34004 "EHLO
-        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752289AbdFUVu1 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 21 Jun 2017 17:50:27 -0400
-Received: by mail-wr0-f173.google.com with SMTP id 77so152669860wrb.1
-        for <backports@vger.kernel.org>; Wed, 21 Jun 2017 14:50:26 -0700 (PDT)
-Subject: Re: [PATCH V2] backport: handle change in netdevice destructor usage
+Received: from mail-wr0-f175.google.com ([209.85.128.175]:34684 "EHLO
+        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751976AbdFLJPa (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 12 Jun 2017 05:15:30 -0400
+Received: by mail-wr0-f175.google.com with SMTP id g76so88657220wrd.1
+        for <backports@vger.kernel.org>; Mon, 12 Jun 2017 02:15:30 -0700 (PDT)
+Subject: Re: [PATCH] backport: handle change in netdevice destructor usage
 To: Johannes Berg <johannes@sipsolutions.net>
 Cc: backports@vger.kernel.org
-References: <1498078699-27809-1-git-send-email-arend.vanspriel@broadcom.com>
- <1498079928.9688.2.camel@sipsolutions.net>
+References: <1497258385-5116-1-git-send-email-arend.vanspriel@broadcom.com>
+ <1497258670.18110.1.camel@sipsolutions.net>
 From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <2ed2b0d7-7e5a-48b3-e8b1-d52ac644293d@broadcom.com> (sfid-20170621_235051_706676_1408B0CE)
-Date: Wed, 21 Jun 2017 23:50:22 +0200
+Message-ID: <f5b49f6d-7a18-ddec-9d51-6a3194168fa2@broadcom.com> (sfid-20170612_111532_596161_B27804D8)
+Date: Mon, 12 Jun 2017 11:15:27 +0200
 MIME-Version: 1.0
-In-Reply-To: <1498079928.9688.2.camel@sipsolutions.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1497258670.18110.1.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-
-
-On 21-06-17 23:18, Johannes Berg wrote:
-> Perhaps that can be fixed as such:
+On 6/12/2017 11:11 AM, Johannes Berg wrote:
+> On Mon, 2017-06-12 at 10:06 +0100, Arend van Spriel wrote:
+>> This patch deals with changes made in struct net_device by commit
+>> cf124db566e6 ("net: Fix inconsistent teardown and release of private
+>> netdev state."). This only looks for instances that need
+>> free_netdev() call, ie. struct net_device::needs_free_netdev == true.
 > 
->> +@r2 depends on r1@
->> +identifier r1.D, r1.C;
->> +fresh identifier E = "__" ## D;
+> I think we may need to worry about more kernel versions than just 4.12
+> here, since this stuff is getting backported, and then it would cause
+> double-frees.
 > 
-> attribute __maybe_unused;
-> 
->> +@@
->> +
->> ++#if LINUX_VERSION_IS_LESS(4,13,0)
->> ++static void E(struct net_device *ndev)
-> 
-> __maybe_unused
+> I'm also considering simply removing the priv_destructor entirely from
+> mac80211, but I guess this would still apply to other drivers.
 
-Ok. I clearly made a mistake in #else of the macro:
+For current backports the only other driver is brcmfmac. So you don't 
+need it in mac80211? Does that mean you move stuff to .ndo_uninit()?
 
-+#if LINUX_VERSION_IS_LESS(4,13,0)
-+#define netdev_set_priv_destructor(_dev, _destructor) \
-+	(_dev)->destructor = __ ## _destructor
-+#else
-+	(_dev)->needs_free_netdev = true;
-+	if (_destructor != free_netdev)
-+		(_dev)->priv_destructor = _destructor;
-+#endif
-
-So I will fix that, but I do not quite understand your comment.
-Expanding the macro in spatch output for net/mac80211/iface.c:
-
-+#if LINUX_VERSION_IS_LESS(4,13,0)
-+static void __ieee80211_if_free(struct net_device *ndev)
-+{
-+	ieee80211_if_free(ndev);
-+	free_netdev(ndev);
-+}
-+#endif
-+
- static void ieee80211_if_setup(struct net_device *dev)
- {
- 	ether_setup(dev);
- 	dev->priv_flags &= ~IFF_TX_SKB_SHARING;
- 	dev->netdev_ops = &ieee80211_dataif_ops;
--	dev->needs_free_netdev = true;
--	dev->priv_destructor = ieee80211_if_free;
-+#if LINUX_VERSION_IS_LESS(4,13,0)
-+       dev->destructor = __ieee80211_if_free
-+#else
-+       dev->needs_free_netdev = true;
-+       if (ieee80211_if_free != free_netdev)
-+               dev->priv_destructor = ieee80211_if_free;
-+#endif
- }
-
-So __ieee80211_if_free is only defined for lower kernels and it is only
-used for lower kernels. Adding the __ieee80211_if_free depends on r1 in
-the semantic patch.
-
-So I will send a V3 fixing the macro in netdevice.h, but I don't think
-we need the maybe_unused attribute.
-
-Regards,
 Arend
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
