@@ -1,41 +1,31 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wr0-f170.google.com ([209.85.128.170]:33072 "EHLO
-        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751108AbdFUVxm (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 21 Jun 2017 17:53:42 -0400
-Received: by mail-wr0-f170.google.com with SMTP id r103so152734787wrb.0
-        for <backports@vger.kernel.org>; Wed, 21 Jun 2017 14:53:41 -0700 (PDT)
-Subject: Re: [PATCH V2] backport: handle change in netdevice destructor usage
-To: Johannes Berg <johannes@sipsolutions.net>
+Received: from s3.sipsolutions.net ([5.9.151.49]:59116 "EHLO sipsolutions.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753920AbdFMU7y (ORCPT <rfc822;backports@vger.kernel.org>);
+        Tue, 13 Jun 2017 16:59:54 -0400
+Message-ID: <1497387587.6068.15.camel@sipsolutions.net> (sfid-20170613_230018_766279_40DAE2C6)
+Subject: Re: [PATCH] backport: handle change in netdevice destructor usage
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>
 Cc: backports@vger.kernel.org
-References: <1498078699-27809-1-git-send-email-arend.vanspriel@broadcom.com>
- <1498079928.9688.2.camel@sipsolutions.net>
- <2ed2b0d7-7e5a-48b3-e8b1-d52ac644293d@broadcom.com>
- <1498081947.9688.3.camel@sipsolutions.net>
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <079f345f-dd48-809e-d431-51c6d7bfc1ae@broadcom.com> (sfid-20170621_235344_270276_DD40637D)
-Date: Wed, 21 Jun 2017 23:53:38 +0200
-MIME-Version: 1.0
-In-Reply-To: <1498081947.9688.3.camel@sipsolutions.net>
-Content-Type: text/plain; charset=utf-8
+Date: Tue, 13 Jun 2017 22:59:47 +0200
+In-Reply-To: <1497258385-5116-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170612_110637_487182_292F64A6)
+References: <1497258385-5116-1-git-send-email-arend.vanspriel@broadcom.com>
+         (sfid-20170612_110637_487182_292F64A6)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 21-06-17 23:52, Johannes Berg wrote:
-> On Wed, 2017-06-21 at 23:50 +0200, Arend van Spriel wrote:
->>
->>>> ++#if LINUX_VERSION_IS_LESS(4,13,0)
->>>> ++static void E(struct net_device *ndev)
-> 
->> So I will send a V3 fixing the macro in netdevice.h, but I don't
->> think we need the maybe_unused attribute.
-> 
-> Ummm, yeah, I totally missed the #if above :)
-> 
-> Maybe it's time to get some sleep...
+On Mon, 2017-06-12 at 10:06 +0100, Arend van Spriel wrote:
+> This patch deals with changes made in struct net_device by commit
+> cf124db566e6 ("net: Fix inconsistent teardown and release of private
+> netdev state."). This only looks for instances that need
+> free_netdev() call, ie. struct net_device::needs_free_netdev == true.
 
-Dito. That V3 will have to wait until tomorrow.
+Come to think of it, isn't this missing the part where we now call
+priv_destructor when registering fails or something?
 
-Gr. AvS
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
