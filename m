@@ -1,62 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:59866 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751168AbdE3IJp (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 30 May 2017 04:09:45 -0400
-From: Luca Coelho <luca@coelho.fi>
-To: johannes@sipsolutions.net
+Received: from s3.sipsolutions.net ([5.9.151.49]:38308 "EHLO sipsolutions.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752167AbdFNN05 (ORCPT <rfc822;backports@vger.kernel.org>);
+        Wed, 14 Jun 2017 09:26:57 -0400
+Message-ID: <1497446815.9377.0.camel@sipsolutions.net> (sfid-20170614_152659_593618_D83ED48C)
+Subject: Re: [PATCH] backport: handle change in netdevice destructor usage
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>
 Cc: backports@vger.kernel.org
-Date: Tue, 30 May 2017 11:09:34 +0300
-Message-Id: <20170530080934.7214-1-luca@coelho.fi> (sfid-20170530_100950_656784_A39C9357)
-Subject: [PATCH] backports: provide backport of devcoredump when disabled in kernels >= 3.18
+Date: Wed, 14 Jun 2017 15:26:55 +0200
+In-Reply-To: <5d265e01-bd12-801b-b604-ef7107e9373c@broadcom.com> (sfid-20170614_152544_312266_545812F3)
+References: <1497258385-5116-1-git-send-email-arend.vanspriel@broadcom.com>
+         <1497387587.6068.15.camel@sipsolutions.net>
+         <5d265e01-bd12-801b-b604-ef7107e9373c@broadcom.com>
+         (sfid-20170614_152544_312266_545812F3)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Luca Coelho <luciano.coelho@intel.com>
+On Wed, 2017-06-14 at 15:25 +0200, Arend van Spriel wrote:
+> On 13-06-17 22:59, Johannes Berg wrote:
+> > On Mon, 2017-06-12 at 10:06 +0100, Arend van Spriel wrote:
+> > > This patch deals with changes made in struct net_device by commit
+> > > cf124db566e6 ("net: Fix inconsistent teardown and release of
+> > > private
+> > > netdev state."). This only looks for instances that need
+> > > free_netdev() call, ie. struct net_device::needs_free_netdev ==
+> > > true.
+> > 
+> > Come to think of it, isn't this missing the part where we now call
+> > priv_destructor when registering fails or something?
+> 
+> Ah. I should have studied the patch better to see what behavioral
+> changes the commit imposed. 
 
-When devcoredump is not enabled in a kernel that supports it, we would
-only use stubs for the devcoredump in the backports.  Allow the
-backport to compile when that's the case.
+Not sure, tbh. I just think there are issues there.
 
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
----
- backport/compat/Kconfig        | 1 -
- backport/compat/backport-4.7.c | 8 ++++++--
- 2 files changed, 6 insertions(+), 3 deletions(-)
+> So are you still considering the patch
+> despite the likely backport of commit cf124db566e6. I can do my
+> homework better and resubmit if needed.
 
-diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
-index 335d9058072e..f66d5f74ba18 100644
---- a/backport/compat/Kconfig
-+++ b/backport/compat/Kconfig
-@@ -128,7 +128,6 @@ config BPAUTO_WANT_DEV_COREDUMP
- 
- config BPAUTO_BUILD_WANT_DEV_COREDUMP
- 	bool
--	depends on KERNEL_3_18
- 	default n if DEV_COREDUMP
- 	default n if DISABLE_DEV_COREDUMP
- 	default y if BPAUTO_WANT_DEV_COREDUMP
-diff --git a/backport/compat/backport-4.7.c b/backport/compat/backport-4.7.c
-index 25a00235bce4..b064707767c6 100644
---- a/backport/compat/backport-4.7.c
-+++ b/backport/compat/backport-4.7.c
-@@ -116,8 +116,12 @@ int nla_put_64bit(struct sk_buff *skb, int attrtype, int attrlen,
- }
- EXPORT_SYMBOL_GPL(nla_put_64bit);
- 
--/* below 3.18 we copied the entire devcoredump */
--#if LINUX_VERSION_IS_GEQ(3,18,0)
-+/*
-+ * Below 3.18 or if the kernel has devcoredump disabled, we copied the
-+ * entire devcoredump, so no need to define these functions.
-+ */
-+#if LINUX_VERSION_IS_GEQ(3,18,0) && \
-+	!defined(CPTCFG_BPAUTO_BUILD_WANT_DEV_COREDUMP)
- #include <linux/devcoredump.h>
- #include <linux/scatterlist.h>
- 
--- 
-2.11.0
+Yeah I still think this backports patch makes sense, since I'm not sure
+I want to fix mac80211 that way (the bits in unregistering multiple
+netdevs are awkward) and brcmfmac would still need it.
 
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
