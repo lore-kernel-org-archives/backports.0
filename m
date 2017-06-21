@@ -1,50 +1,154 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:38308 "EHLO sipsolutions.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752167AbdFNN05 (ORCPT <rfc822;backports@vger.kernel.org>);
-        Wed, 14 Jun 2017 09:26:57 -0400
-Message-ID: <1497446815.9377.0.camel@sipsolutions.net> (sfid-20170614_152659_593618_D83ED48C)
-Subject: Re: [PATCH] backport: handle change in netdevice destructor usage
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: backports@vger.kernel.org
-Date: Wed, 14 Jun 2017 15:26:55 +0200
-In-Reply-To: <5d265e01-bd12-801b-b604-ef7107e9373c@broadcom.com> (sfid-20170614_152544_312266_545812F3)
-References: <1497258385-5116-1-git-send-email-arend.vanspriel@broadcom.com>
-         <1497387587.6068.15.camel@sipsolutions.net>
-         <5d265e01-bd12-801b-b604-ef7107e9373c@broadcom.com>
-         (sfid-20170614_152544_312266_545812F3)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from lpdvrndsmtp01.broadcom.com ([192.19.229.170]:43280 "EHLO
+        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751083AbdFUU62 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 21 Jun 2017 16:58:28 -0400
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+To: Johannes Berg <johannes.berg@intel.com>
+Cc: backports@vger.kernel.org,
+        Arend van Spriel <arend.vanspriel@broadcom.com>
+Subject: [PATCH V2] backport: handle change in netdevice destructor usage
+Date: Wed, 21 Jun 2017 21:58:19 +0100
+Message-Id: <1498078699-27809-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170621_225830_268542_FFBDC610)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2017-06-14 at 15:25 +0200, Arend van Spriel wrote:
-> On 13-06-17 22:59, Johannes Berg wrote:
-> > On Mon, 2017-06-12 at 10:06 +0100, Arend van Spriel wrote:
-> > > This patch deals with changes made in struct net_device by commit
-> > > cf124db566e6 ("net: Fix inconsistent teardown and release of
-> > > private
-> > > netdev state."). This only looks for instances that need
-> > > free_netdev() call, ie. struct net_device::needs_free_netdev ==
-> > > true.
-> > 
-> > Come to think of it, isn't this missing the part where we now call
-> > priv_destructor when registering fails or something?
-> 
-> Ah. I should have studied the patch better to see what behavioral
-> changes the commit imposed. 
+This patch deals with changes made in struct net_device by commit
+cf124db566e6 ("net: Fix inconsistent teardown and release of private
+netdev state.").
 
-Not sure, tbh. I just think there are issues there.
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+---
+Hi Johannes,
 
-> So are you still considering the patch
-> despite the likely backport of commit cf124db566e6. I can do my
-> homework better and resubmit if needed.
+It took a while for me to be happy with this version. More so because I
+found that brcmfmac has a double-free bug if register_netdevice() fails
+so I needed to solve that puzzle. Below is the changelog.
 
-Yeah I still think this backports patch makes sense, since I'm not sure
-I want to fix mac80211 that way (the bits in unregistering multiple
-netdevs are awkward) and brcmfmac would still need it.
+Regards,
+Arend
 
-johannes
+ V2:
+  - changed netdev_set_priv_destructor() to macro.
+  - revised semantic patch covering drivers only needing free_netdev().
+  - used some tricks suggested by Julia in semantic patch.
+  - added more version checks against 4.13.
+---
+ backport/backport-include/linux/netdevice.h |  9 ++++
+ patches/0079-netdev-destructor.cocci        | 84 +++++++++++++++++++++++++++++
+ 2 files changed, 93 insertions(+)
+ create mode 100644 patches/0079-netdev-destructor.cocci
+
+diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+index 06230b5..0f5b198 100644
+--- a/backport/backport-include/linux/netdevice.h
++++ b/backport/backport-include/linux/netdevice.h
+@@ -320,4 +320,13 @@ static inline void netif_trans_update(struct net_device *dev)
+ }
+ #endif
+ 
++#if LINUX_VERSION_IS_LESS(4,13,0)
++#define netdev_set_priv_destructor(_dev, _destructor) \
++	(_dev)->destructor = __ ## _destructor
++#else
++	(_dev)->needs_free_netdev = true;
++	if (_destructor != free_netdev)
++		(_dev)->priv_destructor = _destructor;
++#endif
++
+ #endif /* __BACKPORT_NETDEVICE_H */
+diff --git a/patches/0079-netdev-destructor.cocci b/patches/0079-netdev-destructor.cocci
+new file mode 100644
+index 0000000..fab8af1
+--- /dev/null
++++ b/patches/0079-netdev-destructor.cocci
+@@ -0,0 +1,84 @@
++@r1@
++struct net_device *NDEV;
++identifier D, C;
++identifier TRUE =~ "true";
++@@
++C(...)
++{
++	<...
++-	NDEV->needs_free_netdev = TRUE;
++-	NDEV->priv_destructor = D;
+++	netdev_set_priv_destructor(NDEV, D);
++	...>
++}
++
++@r2 depends on r1@
++identifier r1.D, r1.C;
++fresh identifier E = "__" ## D;
++@@
++
+++#if LINUX_VERSION_IS_LESS(4,13,0)
+++static void E(struct net_device *ndev)
+++{
+++	D(ndev);
+++	free_netdev(ndev);
+++}
+++#endif
+++
++C(...)
++{
++	...
++}
++
++@r3 depends on r1@
++type T;
++identifier NDEV;
++identifier r1.D;
++T RET;
++@@
++
++RET = \(register_netdevice\|register_ndev\)(NDEV);
++if (<+... RET ...+>) {
++	<...
+++#if LINUX_VERSION_IS_LESS(4,13,0)
+++	D(NDEV);
+++#endif
++	free_netdev(NDEV);
++	...>
++}
++
++@r4 depends on r1@
++identifier NDEV;
++identifier r1.D;
++type T;
++T RET;
++@@
++
++if (...)
++	RET = register_netdevice(NDEV);
++else
++	RET = register_netdev(NDEV);
++if (<+... RET ...+>) {
++	<...
+++#if LINUX_VERSION_IS_LESS(4,13,0)
+++	D(NDEV);
+++#endif
++	free_netdev(NDEV);
++	...>
++}
++
++@r5@
++struct net_device *NDEV;
++identifier TRUE =~ "true";
++@@
++
++-NDEV->needs_free_netdev = TRUE;
+++netdev_set_priv_destructor(NDEV, free_netdev);
++
++@r6@
++struct net_device *NDEV;
++identifier D;
++@@
++
++-NDEV->priv_destructor = D;
+++netdev_set_priv_destructor(NDEV, D);
+-- 
+1.9.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
