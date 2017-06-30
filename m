@@ -1,37 +1,26 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-by2nam01on0131.outbound.protection.outlook.com ([104.47.34.131]:20453
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750925AbdFSQs3 (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 19 Jun 2017 12:48:29 -0400
-From: Chris Feyerchak <Chris.Feyerchak@lairdtech.com>
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-CC: Chris Feyerchak <Chris.Feyerchak@lairdtech.com>
-Subject: Backports Wiki Account Creation Problem
-Date: Mon, 19 Jun 2017 16:48:26 +0000
-Message-ID: <DM5PR02MB33554B00E68B3B89FE369117FCC40@DM5PR02MB3355.namprd02.prod.outlook.com> (sfid-20170619_184832_189734_C73FA70F)
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
+Received: from s3.sipsolutions.net ([5.9.151.49]:55438 "EHLO sipsolutions.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751638AbdF3LkM (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 30 Jun 2017 07:40:12 -0400
+Message-ID: <1498822809.2788.3.camel@sipsolutions.net> (sfid-20170630_134121_754445_34ED93AA)
+Subject: Re: [PATCH] copy-list: remove nfc platform data headers
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: backports@vger.kernel.org
+Date: Fri, 30 Jun 2017 13:40:09 +0200
+In-Reply-To: <1498116801-18498-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20170622_093328_269068_90CE6103)
+References: <1498116801-18498-1-git-send-email-arend.vanspriel@broadcom.com>
+         (sfid-20170622_093328_269068_90CE6103)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hello,
+Applied this, and the netdev destructor change.
 
-I'd attempted to create a user account on the Backports Wiki [1] last week,=
- but still haven't received access.=A0 I did receive the email address veri=
-fication email and I did follow the confirmation link.
+Thanks Arend!
 
-Any suggestions on how to proceed?
-
-Thanks in advance,
-
-Chris
-
-Chris Feyerchak
-Engineer, Laird Connectivity Solutions
-chris.feyerchak@lairdtech.com
-http://www.lairdtech.com
-
-[1]=A0 https://backports.wiki.kernel.org/index.php/Main_Page=
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
