@@ -1,62 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:37045 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751782AbdGXCkW (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sun, 23 Jul 2017 22:40:22 -0400
-Received: by mail-wm0-f54.google.com with SMTP id c184so20419502wmd.0
-        for <backports@vger.kernel.org>; Sun, 23 Jul 2017 19:40:22 -0700 (PDT)
+Received: from mail-ua0-f170.google.com ([209.85.217.170]:35517 "EHLO
+        mail-ua0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751968AbdGAUhK (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sat, 1 Jul 2017 16:37:10 -0400
+Received: by mail-ua0-f170.google.com with SMTP id j53so92191938uaa.2
+        for <backports@vger.kernel.org>; Sat, 01 Jul 2017 13:37:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <C01EE046-1B86-499B-9D64-2219AEC94552@coelho.fi>
-References: <1500620116-20476-1-git-send-email-acelan.kao@canonical.com>
- <1500643281.20057.0.camel@coelho.fi> <2ad34c26-a8d2-fd9c-4d3c-77a3c6ec0d46@broadcom.com>
- <C01EE046-1B86-499B-9D64-2219AEC94552@coelho.fi>
-From: AceLan Kao <acelan.kao@canonical.com>
-Date: Mon, 24 Jul 2017 10:40:20 +0800
-Message-ID: <CAFv23Qn9rNnEXUT9SX-hGbODt-tEqbz2M9rYZLp_AMMPpgezjA@mail.gmail.com> (sfid-20170724_044025_173104_16C885A0)
-Subject: Re: [PATCH] backport: add some new kv[mz]alloc function
-To: Luca Coelho <luca@coelho.fi>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>, hauke@hauke-m.de,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
+In-Reply-To: <20170701163946.GY21846@wotan.suse.de>
+References: <CAE7P1anbpmTJNCLpx-EaTa_CmLofnTaCdi-9SATAfayuxss1cQ@mail.gmail.com>
+ <20170701163946.GY21846@wotan.suse.de>
+From: Chris Feyerchak <chris@feyerchak.net>
+Date: Sat, 1 Jul 2017 16:37:09 -0400
+Message-ID: <CAE7P1anD0qTUAJvqEiUqQnp0RnuL-1tHn8hgMkrSFc5wVrMAag@mail.gmail.com> (sfid-20170701_223713_327856_05C1D8DB)
+Subject: Re: Proposed Backports Project Logo - Old Tux on Hoverboard
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: backports@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Yes, I'm compiling the backport driver with bt enabled.
-I'll keep all bt related commits until I resolved all the issue.
+I'd like to vectorize it. I wanted to get buy-in from the community
+before I put any more time into it.
 
-BTW, the new introduced functions are required by the lib/rhashtable.c
+Chris
 
-2017-07-22 19:29 GMT+08:00 Luca Coelho <luca@coelho.fi>:
->
->
-> On July 22, 2017 10:52:13 AM GMT+03:00, Arend van Spriel <arend.vanspriel@broadcom.com> wrote:
->>On 21-07-17 15:21, Luca Coelho wrote:
->>> On Fri, 2017-07-21 at 14:55 +0800, AceLan Kao wrote:
->>>> add some new kv[mz]alloc functions which introduced after v4.12
->>>> by this commit
->>>>
->>>> commit a7c3e901a46ff54c016d040847eda598a9e3e653
->>>> Author: Michal Hocko <mhocko@suse.com>
->>>> Date:   Mon May 8 15:57:09 2017 -0700
->>>>
->>>>     mm: introduce kv[mz]alloc helpers
->>>>
->>>> Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
->>>> ---
->>>
->>> I don't see any backported code using any of these yet... Why do you
->>> need it?
+On Sat, Jul 1, 2017 at 12:39 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
+> On Sat, Jul 01, 2017 at 10:07:23AM -0400, Chris Feyerchak wrote:
+>> Hello All,
 >>
->>AceLan is trying to reinstate BT subsystem/drivers in backports so it
->>may be needed for that. If that is true I think this patch should go in
->>that "BT reinstatement" patch series.
+>> I propose a logo for the Backports Project:
+>>
+>> Old Tux on Hoverboard
+>>
+>> https://backports.wiki.kernel.org/images-backports/b/b1/Old_tux_on_hoverboard_135px_135px.png
+>>
+>> This concept stemmed from a "Backports: Old Kernel, Latest Hardware" slogan.
+>>
+>> What do you think?
 >
+> Looks cool and nicer than what we have today :) Any chance you vectorize it?
 >
-> Yeah, but I even checked BT stuff and didn't find any occurrences...
->
-> --
-> Luca.
-> --
-> To unsubscribe from this list: send the line "unsubscribe backports" in
+>   Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
