@@ -1,36 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:35609 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752276AbdGJJnS (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 10 Jul 2017 05:43:18 -0400
-Received: by mail-it0-f68.google.com with SMTP id v193so12364399itc.2
-        for <backports@vger.kernel.org>; Mon, 10 Jul 2017 02:43:18 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1498116664-18399-1-git-send-email-arend.vanspriel@broadcom.com>
-References: <1498116664-18399-1-git-send-email-arend.vanspriel@broadcom.com>
-From: Emmanuel Grumbach <egrumbach@gmail.com>
-Date: Mon, 10 Jul 2017 12:43:17 +0300
-Message-ID: <CANUX_P2yPeeN5k-F-56jKTMaTY=4e6_KTkBreS9OC2oube3S4w@mail.gmail.com> (sfid-20170710_114322_080259_569D3843)
-Subject: Re: [PATCH V3] backport: handle change in netdevice destructor usage
+Received: from mx2.suse.de ([195.135.220.15]:59622 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751017AbdGMR2Q (ORCPT <rfc822;backports@vger.kernel.org>);
+        Thu, 13 Jul 2017 13:28:16 -0400
+Date: Thu, 13 Jul 2017 19:28:14 +0200
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
 To: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: Johannes Berg <johannes.berg@intel.com>,
-        "backports@vger.kernel.org" <backports@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc: AceLan Kao <acelan.kao@canonical.com>,
+        Johannes Berg <johannes.berg@intel.com>, hauke@hauke-m.de,
+        mcgrof@kernel.org, backports@vger.kernel.org,
+        Anthony Wong <anthony.wong@canonical.com>
+Subject: Re: Adding the BT driver
+Message-ID: <20170713172814.GB21846@wotan.suse.de> (sfid-20170713_192818_543895_BA9B89C2)
+References: <CAFv23QnvFGj3b2GCV=v=mGk8JgGwZRe+W-+m9gxbtAsChySz=Q@mail.gmail.com>
+ <59673BA0.20703@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <59673BA0.20703@broadcom.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, Jun 22, 2017 at 10:31 AM, Arend van Spriel
-<arend.vanspriel@broadcom.com> wrote:
-> This patch deals with changes made in struct net_device by commit
-> cf124db566e6 ("net: Fix inconsistent teardown and release of private
-> netdev state.").
->
-> Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> ---
-> After a (somewhat) good night sleep here is V3.
->
+On Thu, Jul 13, 2017 at 11:21:36AM +0200, Arend van Spriel wrote:
+> On 7/13/2017 5:07 AM, AceLan Kao wrote:
+> > Hi all,
+> > 
+> > I'm working on adding BT driver back to linux backport driver, and got
+> > some questions.
+> 
+> I suppose it means you also want to maintain BT support in backports
+> project?
 
-I can't claim I understand any of this, but I can say that this
-davem's patch has been applied on 4.11.X and is included in 4.11.9.
+Which has me thinking perhaps the policy we need is a MAINTAINERS.backport file
+or something?
+
+> > 1. Do we still do building the backport driver against all the
+> > supported kernels? I didn't see those reports in git log recently, so
+> > I'm wondering while backporting BT driver, can I skip some old
+> > kernels' support.
+> 
+> Well. You could limit the earliest kernel by adding a dependency in the
+> dependencies file.
+> 
+> > 2. Is there a script that can help me to build the backport driver
+> > against certain kernels?
+> 
+> Not really. You just run make from the backports package and provide
+> KLIB_BUILD=... on the command line referring to the target kernel headers.
+
+There is documentation:
+
+https://backports.wiki.kernel.org/index.php/Documentation/backports/hacking#Adding_new_driver
+
+I updated it recently as I demo'd adding yet-another new subsystem (not
+upstream, nor patches posted).
+
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
