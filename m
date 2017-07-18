@@ -1,62 +1,119 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:32959 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752774AbdGNDIB (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 13 Jul 2017 23:08:01 -0400
-Received: by mail-pg0-f68.google.com with SMTP id u62so8981874pgb.0
-        for <backports@vger.kernel.org>; Thu, 13 Jul 2017 20:08:01 -0700 (PDT)
-From: AceLan Kao <acelan.kao@canonical.com>
-To: hauke@hauke-m.de, mcgrof@kernel.org, backports@vger.kernel.org
-Subject: [PATCH 2/2] copy-list: remove st-nci.h and patch
-Date: Fri, 14 Jul 2017 11:07:54 +0800
-Message-Id: <1500001674-24553-2-git-send-email-acelan.kao@canonical.com> (sfid-20170714_050803_640070_8A45D056)
-In-Reply-To: <1500001674-24553-1-git-send-email-acelan.kao@canonical.com>
-References: <1500001674-24553-1-git-send-email-acelan.kao@canonical.com>
+Received: from paleale.coelho.fi ([176.9.41.70]:39270 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751396AbdGRNds (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 18 Jul 2017 09:33:48 -0400
+From: Luca Coelho <luca@coelho.fi>
+To: egrumbach@gmail.com, arend.vanspriel@broadcom.com
+Cc: johannes@sipsolutions.net, backports@vger.kernel.org,
+        Luca Coelho <luciano.coelho@intel.com>
+Date: Tue, 18 Jul 2017 16:33:38 +0300
+Message-Id: <20170718133338.16475-1-luca@coelho.fi> (sfid-20170718_153349_627060_09B31316)
+Subject: [PATCH] backport: fix netdev destructor backport
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
->From below commit, st-nci.h has been removed
-   61a0410 NFC: st-nci: Get rid of platform data
-And we don't need st-nci-spi.patch, either. The patch is included in
-upstream kernel source.
+From: Luca Coelho <luciano.coelho@intel.com>
 
-Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
+The commit that changed the netdev destructor was also applied in
+v4.12-rc6, so we need to update the backport.
+
+Another issue was that when the default free_netdev() destructor was supposed to be used, we would get compilation errors, such as this one in hwsim:
+
+In file included from ./include/net/dst.h:12:0,
+                 from /home/luca/iwlwifi/stack-dev/drivers/net/wireless/mac80211_hwsim.c:22:
+/home/luca/iwlwifi/stack-dev/drivers/net/wireless/mac80211_hwsim.c: In function hwsim_mon_setup':
+/home/luca/iwlwifi/stack-dev/backport-include/linux/netdevice.h:325:23: error: '__free_netdev' undeclared (first use in this function)
+  (_dev)->destructor = __ ## _destructor
+                       ^
+/home/luca/iwlwifi/stack-dev/drivers/net/wireless/mac80211_hwsim.c:2977:2: note: in expansion of macro 'netdev_set_priv_destructor'
+  netdev_set_priv_destructor(dev, free_netdev);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/luca/iwlwifi/stack-dev/backport-include/linux/netdevice.h:325:23: note: each undeclared identifier is reported only once for each function it appears in
+  (_dev)->destructor = __ ## _destructor
+                       ^
+/home/luca/iwlwifi/stack-dev/drivers/net/wireless/mac80211_hwsim.c:2977:2: note: in expansion of macro 'netdev_set_priv_destructor'
+  netdev_set_priv_destructor(dev, free_netdev);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~
+scripts/Makefile.build:300: recipe for target '/home/luca/iwlwifi/stack-dev/drivers/net/wireless/mac80211_hwsim.o' failed
+
+To fix this, add a new macro, netdev_set_def_destructor(), that
+handles this special case.
+
+Fixes: 721ae78f9355 ("backport: handle change in netdevice destructor usage")
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 ---
- copy-list                                           |  1 -
- patches/0013-fix-makefile-includes/st-nci-spi.patch | 10 ----------
- 2 files changed, 11 deletions(-)
- delete mode 100644 patches/0013-fix-makefile-includes/st-nci-spi.patch
+ backport/backport-include/linux/netdevice.h | 9 ++++++---
+ patches/0079-netdev-destructor.cocci        | 8 ++++----
+ 2 files changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/copy-list b/copy-list
-index 52df0ea..5f6bf42 100644
---- a/copy-list
-+++ b/copy-list
-@@ -116,7 +116,6 @@ include/uapi/linux/nfc.h
- drivers/nfc/
- include/linux/platform_data/nfcmrvl.h
- include/linux/platform_data/nxp-nci.h
--include/linux/platform_data/st-nci.h
+diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+index 98e781eeb740..d22eec2d3113 100644
+--- a/backport/backport-include/linux/netdevice.h
++++ b/backport/backport-include/linux/netdevice.h
+@@ -320,14 +320,17 @@ static inline void netif_trans_update(struct net_device *dev)
+ }
+ #endif
  
- # MPLS labels, checked on skb->protocol on the
- # respective 802 family, only ethernet seems to use
-diff --git a/patches/0013-fix-makefile-includes/st-nci-spi.patch b/patches/0013-fix-makefile-includes/st-nci-spi.patch
-deleted file mode 100644
-index 1ecd161..0000000
---- a/patches/0013-fix-makefile-includes/st-nci-spi.patch
-+++ /dev/null
-@@ -1,10 +0,0 @@
----- a/drivers/nfc/st-nci/spi.c
--+++ b/drivers/nfc/st-nci/spi.c
--@@ -21,6 +21,7 @@
-- #include <linux/spi/spi.h>
-- #include <linux/gpio.h>
-- #include <linux/gpio/consumer.h>
--+#include <linux/of.h>
-- #include <linux/of_irq.h>
-- #include <linux/of_gpio.h>
-- #include <linux/acpi.h>
+-#if LINUX_VERSION_IS_LESS(4,13,0)
++#if LINUX_VERSION_IS_LESS(4,12,0)
+ #define netdev_set_priv_destructor(_dev, _destructor) \
+ 	(_dev)->destructor = __ ## _destructor
++#define netdev_set_def_destructor(_dev) \
++	(_dev)->destructor = free_netdev
+ #else
+ #define netdev_set_priv_destructor(_dev, _destructor) \
+ 	(_dev)->needs_free_netdev = true; \
+-	if ((_destructor) != free_netdev) \
+-		(_dev)->priv_destructor = (_destructor);
++	(_dev)->priv_destructor = (_destructor);
++#define netdev_set_def_destructor(_dev) \
++	(_dev)->needs_free_netdev = true;
+ #endif
+ 
+ #endif /* __BACKPORT_NETDEVICE_H */
+diff --git a/patches/0079-netdev-destructor.cocci b/patches/0079-netdev-destructor.cocci
+index fab8af192aac..199aacf29032 100644
+--- a/patches/0079-netdev-destructor.cocci
++++ b/patches/0079-netdev-destructor.cocci
+@@ -17,7 +17,7 @@ identifier r1.D, r1.C;
+ fresh identifier E = "__" ## D;
+ @@
+ 
+-+#if LINUX_VERSION_IS_LESS(4,13,0)
+++#if LINUX_VERSION_IS_LESS(4,12,0)
+ +static void E(struct net_device *ndev)
+ +{
+ +	D(ndev);
+@@ -40,7 +40,7 @@ T RET;
+ RET = \(register_netdevice\|register_ndev\)(NDEV);
+ if (<+... RET ...+>) {
+ 	<...
+-+#if LINUX_VERSION_IS_LESS(4,13,0)
+++#if LINUX_VERSION_IS_LESS(4,12,0)
+ +	D(NDEV);
+ +#endif
+ 	free_netdev(NDEV);
+@@ -60,7 +60,7 @@ else
+ 	RET = register_netdev(NDEV);
+ if (<+... RET ...+>) {
+ 	<...
+-+#if LINUX_VERSION_IS_LESS(4,13,0)
+++#if LINUX_VERSION_IS_LESS(4,12,0)
+ +	D(NDEV);
+ +#endif
+ 	free_netdev(NDEV);
+@@ -73,7 +73,7 @@ identifier TRUE =~ "true";
+ @@
+ 
+ -NDEV->needs_free_netdev = TRUE;
+-+netdev_set_priv_destructor(NDEV, free_netdev);
+++netdev_set_def_destructor(NDEV);
+ 
+ @r6@
+ struct net_device *NDEV;
 -- 
-2.7.4
+2.13.2
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
