@@ -1,45 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ua0-f170.google.com ([209.85.217.170]:35517 "EHLO
-        mail-ua0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751968AbdGAUhK (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sat, 1 Jul 2017 16:37:10 -0400
-Received: by mail-ua0-f170.google.com with SMTP id j53so92191938uaa.2
-        for <backports@vger.kernel.org>; Sat, 01 Jul 2017 13:37:10 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20170701163946.GY21846@wotan.suse.de>
-References: <CAE7P1anbpmTJNCLpx-EaTa_CmLofnTaCdi-9SATAfayuxss1cQ@mail.gmail.com>
- <20170701163946.GY21846@wotan.suse.de>
-From: Chris Feyerchak <chris@feyerchak.net>
-Date: Sat, 1 Jul 2017 16:37:09 -0400
-Message-ID: <CAE7P1anD0qTUAJvqEiUqQnp0RnuL-1tHn8hgMkrSFc5wVrMAag@mail.gmail.com> (sfid-20170701_223713_327856_05C1D8DB)
-Subject: Re: Proposed Backports Project Logo - Old Tux on Hoverboard
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: backports@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:33600 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750793AbdGUGzU (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 21 Jul 2017 02:55:20 -0400
+Received: by mail-pg0-f68.google.com with SMTP id z1so4678323pgs.0
+        for <backports@vger.kernel.org>; Thu, 20 Jul 2017 23:55:19 -0700 (PDT)
+From: AceLan Kao <acelan.kao@canonical.com>
+To: hauke@hauke-m.de, mcgrof@kernel.org, backports@vger.kernel.org
+Subject: [PATCH] backport: add some new kv[mz]alloc function
+Date: Fri, 21 Jul 2017 14:55:16 +0800
+Message-Id: <1500620116-20476-1-git-send-email-acelan.kao@canonical.com> (sfid-20170721_085522_386301_00D7BA99)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I'd like to vectorize it. I wanted to get buy-in from the community
-before I put any more time into it.
+add some new kv[mz]alloc functions which introduced after v4.12
+by this commit
 
-Chris
+commit a7c3e901a46ff54c016d040847eda598a9e3e653
+Author: Michal Hocko <mhocko@suse.com>
+Date:   Mon May 8 15:57:09 2017 -0700
 
-On Sat, Jul 1, 2017 at 12:39 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> On Sat, Jul 01, 2017 at 10:07:23AM -0400, Chris Feyerchak wrote:
->> Hello All,
->>
->> I propose a logo for the Backports Project:
->>
->> Old Tux on Hoverboard
->>
->> https://backports.wiki.kernel.org/images-backports/b/b1/Old_tux_on_hoverboard_135px_135px.png
->>
->> This concept stemmed from a "Backports: Old Kernel, Latest Hardware" slogan.
->>
->> What do you think?
->
-> Looks cool and nicer than what we have today :) Any chance you vectorize it?
->
->   Luis
+    mm: introduce kv[mz]alloc helpers
+
+Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
+---
+ backport/backport-include/linux/mm.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/backport/backport-include/linux/mm.h b/backport/backport-include/linux/mm.h
+index 3234b37..8125310 100644
+--- a/backport/backport-include/linux/mm.h
++++ b/backport/backport-include/linux/mm.h
+@@ -123,4 +123,20 @@ static inline bool page_is_pfmemalloc(struct page *page)
+ }
+ #endif /* < 4.2 */
+ 
++#if LINUX_VERSION_IS_LESS(4,12,0)
++extern void *kvmalloc_node(size_t size, gfp_t flags, int node);
++static inline void *kvmalloc(size_t size, gfp_t flags)
++{
++	return kvmalloc_node(size, flags, NUMA_NO_NODE);
++}
++static inline void *kvzalloc_node(size_t size, gfp_t flags, int node)
++{
++	return kvmalloc_node(size, flags | __GFP_ZERO, node);
++}
++static inline void *kvzalloc(size_t size, gfp_t flags)
++{
++	return kvmalloc(size, flags | __GFP_ZERO);
++}
++#endif /* < 4.12.0 */
++
+ #endif /* __BACKPORT_MM_H */
+-- 
+2.7.4
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
