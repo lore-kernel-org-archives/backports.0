@@ -1,59 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33600 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750793AbdGUGzU (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 21 Jul 2017 02:55:20 -0400
-Received: by mail-pg0-f68.google.com with SMTP id z1so4678323pgs.0
-        for <backports@vger.kernel.org>; Thu, 20 Jul 2017 23:55:19 -0700 (PDT)
-From: AceLan Kao <acelan.kao@canonical.com>
-To: hauke@hauke-m.de, mcgrof@kernel.org, backports@vger.kernel.org
-Subject: [PATCH] backport: add some new kv[mz]alloc function
-Date: Fri, 21 Jul 2017 14:55:16 +0800
-Message-Id: <1500620116-20476-1-git-send-email-acelan.kao@canonical.com> (sfid-20170721_085522_386301_00D7BA99)
+Received: from mail-vk0-f42.google.com ([209.85.213.42]:33916 "EHLO
+        mail-vk0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755092AbdGVNUd (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sat, 22 Jul 2017 09:20:33 -0400
+Received: by mail-vk0-f42.google.com with SMTP id n125so4009583vke.1
+        for <backports@vger.kernel.org>; Sat, 22 Jul 2017 06:20:33 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAE7P1anD0qTUAJvqEiUqQnp0RnuL-1tHn8hgMkrSFc5wVrMAag@mail.gmail.com>
+References: <CAE7P1anbpmTJNCLpx-EaTa_CmLofnTaCdi-9SATAfayuxss1cQ@mail.gmail.com>
+ <20170701163946.GY21846@wotan.suse.de> <CAE7P1anD0qTUAJvqEiUqQnp0RnuL-1tHn8hgMkrSFc5wVrMAag@mail.gmail.com>
+From: Chris Feyerchak <chris@feyerchak.net>
+Date: Sat, 22 Jul 2017 09:20:32 -0400
+Message-ID: <CAE7P1a=VOYb9X_X=2pAMvjBRmO24mJYLPkeiHJcx7o4xECyzew@mail.gmail.com> (sfid-20170722_152035_696826_1FC045B0)
+Subject: Re: Proposed Backports Project Logo - Old Tux on Hoverboard
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-add some new kv[mz]alloc functions which introduced after v4.12
-by this commit
+Hi Luis,
 
-commit a7c3e901a46ff54c016d040847eda598a9e3e653
-Author: Michal Hocko <mhocko@suse.com>
-Date:   Mon May 8 15:57:09 2017 -0700
+I've heard positive feedback and no negative feedback on the proposed new logo.
 
-    mm: introduce kv[mz]alloc helpers
+Could you go ahead and configure the wiki to use the new logo, please?
+ My account doesn't have the necessary permissions.  The 135x135 pixel
+raster is the size recommended in the MediaWiki documentation.
 
-Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
----
- backport/backport-include/linux/mm.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+I'm attempting to upload a higher resolution raster as well, but my
+account is temporarily locked due to too many failed login attempts.
+:)
 
-diff --git a/backport/backport-include/linux/mm.h b/backport/backport-include/linux/mm.h
-index 3234b37..8125310 100644
---- a/backport/backport-include/linux/mm.h
-+++ b/backport/backport-include/linux/mm.h
-@@ -123,4 +123,20 @@ static inline bool page_is_pfmemalloc(struct page *page)
- }
- #endif /* < 4.2 */
- 
-+#if LINUX_VERSION_IS_LESS(4,12,0)
-+extern void *kvmalloc_node(size_t size, gfp_t flags, int node);
-+static inline void *kvmalloc(size_t size, gfp_t flags)
-+{
-+	return kvmalloc_node(size, flags, NUMA_NO_NODE);
-+}
-+static inline void *kvzalloc_node(size_t size, gfp_t flags, int node)
-+{
-+	return kvmalloc_node(size, flags | __GFP_ZERO, node);
-+}
-+static inline void *kvzalloc(size_t size, gfp_t flags)
-+{
-+	return kvmalloc(size, flags | __GFP_ZERO);
-+}
-+#endif /* < 4.12.0 */
-+
- #endif /* __BACKPORT_MM_H */
--- 
-2.7.4
+Chris
 
+On Sat, Jul 1, 2017 at 4:37 PM, Chris Feyerchak <chris@feyerchak.net> wrote:
+> I'd like to vectorize it. I wanted to get buy-in from the community
+> before I put any more time into it.
+>
+> Chris
+>
+> On Sat, Jul 1, 2017 at 12:39 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
+>> On Sat, Jul 01, 2017 at 10:07:23AM -0400, Chris Feyerchak wrote:
+>>> Hello All,
+>>>
+>>> I propose a logo for the Backports Project:
+>>>
+>>> Old Tux on Hoverboard
+>>>
+>>> https://backports.wiki.kernel.org/images-backports/b/b1/Old_tux_on_hoverboard_135px_135px.png
+>>>
+>>> This concept stemmed from a "Backports: Old Kernel, Latest Hardware" slogan.
+>>>
+>>> What do you think?
+>>
+>> Looks cool and nicer than what we have today :) Any chance you vectorize it?
+>>
+>>   Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
