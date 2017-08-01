@@ -1,44 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.mailbox.org ([80.241.60.215]:42934 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754294AbdHUW2p (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 21 Aug 2017 18:28:45 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 09/21] header: add get_random_u32()
-Date: Tue, 22 Aug 2017 00:28:05 +0200
-Message-Id: <20170821222817.17376-10-hauke@hauke-m.de> (sfid-20170822_002848_506623_E02510F3)
-In-Reply-To: <20170821222817.17376-1-hauke@hauke-m.de>
-References: <20170821222817.17376-1-hauke@hauke-m.de>
+Received: from mx2.suse.de ([195.135.220.15]:49075 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752319AbdHAUbY (ORCPT <rfc822;backports@vger.kernel.org>);
+        Tue, 1 Aug 2017 16:31:24 -0400
+Date: Tue, 1 Aug 2017 22:31:22 +0200
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Chris Feyerchak <chris@feyerchak.net>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, backports@vger.kernel.org
+Subject: Re: Proposed Backports Project Logo - Old Tux on Hoverboard
+Message-ID: <20170801203122.GW18884@wotan.suse.de> (sfid-20170801_223137_142458_80F7EB82)
+References: <CAE7P1anbpmTJNCLpx-EaTa_CmLofnTaCdi-9SATAfayuxss1cQ@mail.gmail.com>
+ <20170701163946.GY21846@wotan.suse.de>
+ <CAE7P1anD0qTUAJvqEiUqQnp0RnuL-1tHn8hgMkrSFc5wVrMAag@mail.gmail.com>
+ <CAE7P1a=VOYb9X_X=2pAMvjBRmO24mJYLPkeiHJcx7o4xECyzew@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAE7P1a=VOYb9X_X=2pAMvjBRmO24mJYLPkeiHJcx7o4xECyzew@mail.gmail.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This was renamed in upstream kernel and changed from unsigned int to u32.
+On Sat, Jul 22, 2017 at 09:20:32AM -0400, Chris Feyerchak wrote:
+> Hi Luis,
+> 
+> I've heard positive feedback and no negative feedback on the proposed new logo.
+> 
+> Could you go ahead and configure the wiki to use the new logo, please?
+>  My account doesn't have the necessary permissions.  The 135x135 pixel
+> raster is the size recommended in the MediaWiki documentation.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/random.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+Great, do you have a vector graphics representation of the logo? That
+would enable us to scale it at any time for anything.
 
-diff --git a/backport/backport-include/linux/random.h b/backport/backport-include/linux/random.h
-index a9dda73b..7d817d8b 100644
---- a/backport/backport-include/linux/random.h
-+++ b/backport/backport-include/linux/random.h
-@@ -42,4 +42,11 @@ static inline u32 prandom_u32_max(u32 ep_ro)
- }
- #endif /* LINUX_VERSION_IS_LESS(3,14,0) */
- 
-+#if LINUX_VERSION_IS_LESS(4,11,0)
-+static inline u32 get_random_u32(void)
-+{
-+	return get_random_int();
-+}
-+#endif
-+
- #endif /* __BACKPORT_RANDOM_H */
--- 
-2.11.0
-
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
