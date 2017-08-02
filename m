@@ -1,53 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.mailbox.org ([80.241.60.212]:48937 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754422AbdHUW2s (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 21 Aug 2017 18:28:48 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 18/21] patches: adapt signature of proto_ops->accept
-Date: Tue, 22 Aug 2017 00:28:14 +0200
-Message-Id: <20170821222817.17376-19-hauke@hauke-m.de> (sfid-20170822_002851_655504_1F943928)
-In-Reply-To: <20170821222817.17376-1-hauke@hauke-m.de>
-References: <20170821222817.17376-1-hauke@hauke-m.de>
+Received: from paleale.coelho.fi ([176.9.41.70]:41696 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751019AbdHBExz (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 2 Aug 2017 00:53:55 -0400
+Message-ID: <1501649631.2588.57.camel@coelho.fi> (sfid-20170802_065401_892518_60EBE102)
+From: Luca Coelho <luca@coelho.fi>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Chris Feyerchak <chris@feyerchak.net>
+Cc: backports@vger.kernel.org
+Date: Wed, 02 Aug 2017 07:53:51 +0300
+In-Reply-To: <20170801203122.GW18884@wotan.suse.de>
+References: <CAE7P1anbpmTJNCLpx-EaTa_CmLofnTaCdi-9SATAfayuxss1cQ@mail.gmail.com>
+         <20170701163946.GY21846@wotan.suse.de>
+         <CAE7P1anD0qTUAJvqEiUqQnp0RnuL-1tHn8hgMkrSFc5wVrMAag@mail.gmail.com>
+         <CAE7P1a=VOYb9X_X=2pAMvjBRmO24mJYLPkeiHJcx7o4xECyzew@mail.gmail.com>
+         <20170801203122.GW18884@wotan.suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: Proposed Backports Project Logo - Old Tux on Hoverboard
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-In commit cdfbabfb2f0ce ("net: Work around lockdep limitation in sockets
-that use sockets") a extra parameter was added to proto_ops->accept(),
-do not assume it on older kernel versions.
+Hi,
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- patches/0081-proto_ops-accept/nfc.patch | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
- create mode 100644 patches/0081-proto_ops-accept/nfc.patch
+On Tue, 2017-08-01 at 22:31 +0200, Luis R. Rodriguez wrote:
+> On Sat, Jul 22, 2017 at 09:20:32AM -0400, Chris Feyerchak wrote:
+> > Hi Luis,
+> > 
+> > I've heard positive feedback and no negative feedback on the proposed new logo.
+> > 
+> > Could you go ahead and configure the wiki to use the new logo, please?
+> >  My account doesn't have the necessary permissions.  The 135x135 pixel
+> > raster is the size recommended in the MediaWiki documentation.
+> 
+> Great, do you have a vector graphics representation of the logo? That
+> would enable us to scale it at any time for anything.
 
-diff --git a/patches/0081-proto_ops-accept/nfc.patch b/patches/0081-proto_ops-accept/nfc.patch
-new file mode 100644
-index 00000000..decd13a8
---- /dev/null
-+++ b/patches/0081-proto_ops-accept/nfc.patch
-@@ -0,0 +1,16 @@
-+diff --git a/net/nfc/llcp_sock.c b/net/nfc/llcp_sock.c
-+index 043c6d3..5b4e44c 100644
-+--- a/net/nfc/llcp_sock.c
-++++ b/net/nfc/llcp_sock.c
-+@@ -443,7 +443,11 @@ struct sock *nfc_llcp_accept_dequeue(struct sock *parent,
-+ }
-+ 
-+ static int llcp_sock_accept(struct socket *sock, struct socket *newsock,
-++#if LINUX_VERSION_IS_GEQ(4,11,0)
-+ 			    int flags, bool kern)
-++#else
-++			    int flags)
-++#endif
-+ {
-+ 	DECLARE_WAITQUEUE(wait, current);
-+ 	struct sock *sk = sock->sk, *new_sk;
--- 
-2.11.0
+I like the concept of ageing Tux on something new like a hoverboard, but
+the logo itself needs some work, IMHO.  I can't really understand the
+logo unless I chant to myself "Old Tux on Hoverboard... Old Tux on
+Hoverboard...".
 
+--
+Luca.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
