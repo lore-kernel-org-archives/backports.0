@@ -1,54 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.mailbox.org ([80.241.60.212]:48955 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754388AbdHUW2r (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 21 Aug 2017 18:28:47 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 14/21] header: add offsetofend()
-Date: Tue, 22 Aug 2017 00:28:10 +0200
-Message-Id: <20170821222817.17376-15-hauke@hauke-m.de> (sfid-20170822_002849_814745_D2369F95)
-In-Reply-To: <20170821222817.17376-1-hauke@hauke-m.de>
-References: <20170821222817.17376-1-hauke@hauke-m.de>
+Received: from mail-pg0-f48.google.com ([74.125.83.48]:33702 "EHLO
+        mail-pg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751925AbdHHNOz (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 8 Aug 2017 09:14:55 -0400
+Received: by mail-pg0-f48.google.com with SMTP id u5so14774578pgn.0
+        for <backports@vger.kernel.org>; Tue, 08 Aug 2017 06:14:55 -0700 (PDT)
+From: AceLan Kao <acelan.kao@canonical.com>
+To: hauke@hauke-m.de, mcgrof@kernel.org, backports@vger.kernel.org
+Subject: [PATCH] backports: remove 802.15.4 entirely
+Date: Tue,  8 Aug 2017 21:14:50 +0800
+Message-Id: <1502198091-24156-1-git-send-email-acelan.kao@canonical.com> (sfid-20170808_151457_408526_48A1FBCC)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-offsetofend() was moved from vfio.h to stddef.h in commit
-3876488444e7123 ("include/stddef.h: Move offsetofend() from vfio.h to a
-generic kernel header") for kernel 4.1. Add it again to stddef.h so it
-is available in more include paths.
+Sorry, the previous one can not be clean applied.
+Please ignore it and use this one.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/stddef.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
- create mode 100644 backport/backport-include/linux/stddef.h
+AceLan Kao (1):
+  backports: remove 802.15.4 entirely
 
-diff --git a/backport/backport-include/linux/stddef.h b/backport/backport-include/linux/stddef.h
-new file mode 100644
-index 00000000..2c836b00
---- /dev/null
-+++ b/backport/backport-include/linux/stddef.h
-@@ -0,0 +1,16 @@
-+#ifndef __BACKPORT_LINUX_STDDEF_H
-+#define __BACKPORT_LINUX_STDDEF_H
-+#include_next <linux/stddef.h>
-+
-+#ifndef offsetofend
-+/**
-+ * offsetofend(TYPE, MEMBER)
-+ *
-+ * @TYPE: The type of the structure
-+ * @MEMBER: The member within the structure to get the end offset of
-+ */
-+#define offsetofend(TYPE, MEMBER) \
-+	(offsetof(TYPE, MEMBER)	+ sizeof(((TYPE *)0)->MEMBER))
-+#endif
-+
-+#endif /* __BACKPORT_LINUX_STDDEF_H */
+ backport/Kconfig.sources                           |  5 --
+ backport/Makefile.kernel                           |  6 ---
+ backport/compat/Kconfig                            |  1 -
+ dependencies                                       | 10 ----
+ patches/0006-ieee802154-6lowpan-namespace.patch    | 63 ----------------------
+ patches/0007-lowpan-inet_frag_lru_move.patch       | 59 --------------------
+ patches/0008-net-user-ns.patch                     | 17 ------
+ patches/0013-fix-makefile-includes/6lowpan.patch   | 10 ----
+ patches/0013-fix-makefile-includes/cfg802154.patch | 10 ----
+ patches/0030-qdisc_tx_busylock/ieee802154.patch    | 22 --------
+ patches/0044-no_user_ns_in_net/ieee802154.patch    | 30 -----------
+ .../cfg802154.patch                                | 18 -------
+ patches/0068-proto-hash/ieee802154.patch           | 62 ---------------------
+ 13 files changed, 313 deletions(-)
+ delete mode 100644 patches/0006-ieee802154-6lowpan-namespace.patch
+ delete mode 100644 patches/0007-lowpan-inet_frag_lru_move.patch
+ delete mode 100644 patches/0008-net-user-ns.patch
+ delete mode 100644 patches/0013-fix-makefile-includes/6lowpan.patch
+ delete mode 100644 patches/0013-fix-makefile-includes/cfg802154.patch
+ delete mode 100644 patches/0030-qdisc_tx_busylock/ieee802154.patch
+ delete mode 100644 patches/0044-no_user_ns_in_net/ieee802154.patch
+ delete mode 100644 patches/0066-remove-netdev_ieee802154_ptr/cfg802154.patch
+ delete mode 100644 patches/0068-proto-hash/ieee802154.patch
+
 -- 
-2.11.0
+2.7.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
