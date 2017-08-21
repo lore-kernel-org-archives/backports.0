@@ -1,49 +1,68 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.mailbox.org ([80.241.60.212]:48925 "EHLO mx1.mailbox.org"
+Received: from mx1.mailbox.org ([80.241.60.212]:48937 "EHLO mx1.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754035AbdHUW2o (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 21 Aug 2017 18:28:44 -0400
+        id S1754383AbdHUW2r (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 21 Aug 2017 18:28:47 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: johannes@sipsolutions.net
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 08/21] header: backport devm_acpi_dev_add_driver_gpios()
-Date: Tue, 22 Aug 2017 00:28:04 +0200
-Message-Id: <20170821222817.17376-9-hauke@hauke-m.de> (sfid-20170822_002845_485339_DE72ECAB)
+Subject: [PATCH 13/21] patch: Allow usage of pci_error_handlers->reset_notify
+Date: Tue, 22 Aug 2017 00:28:09 +0200
+Message-Id: <20170821222817.17376-14-hauke@hauke-m.de> (sfid-20170822_002849_534962_0FA02CDE)
 In-Reply-To: <20170821222817.17376-1-hauke@hauke-m.de>
 References: <20170821222817.17376-1-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is used by some NFC drivers to get information from the ACPI.
-This was added in kernel 4.13, but backporting it to older kernel
-versions than 3.19 is hard because such old kernel versions do not even
-have struct acpi_gpio_mapping. This only adds the empty version of this
-function as this normally needed some extra support in the generic ACPI
-code and I do not care about this functionality.
+The member reset_notify in the struct pci_error_handlers was divided
+into reset_prepare and reset_done in upstream commit 775755ed3c65fb
+("PCI: Split ->reset_notify() method into ->reset_prepare() and
+->reset_done()"). Make new code also work with old kernel versions.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/acpi.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ patches/0082-pci_error_handlers.cocci | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 patches/0082-pci_error_handlers.cocci
 
-diff --git a/backport/backport-include/linux/acpi.h b/backport/backport-include/linux/acpi.h
-index c63648b6..fe183626 100644
---- a/backport/backport-include/linux/acpi.h
-+++ b/backport/backport-include/linux/acpi.h
-@@ -60,4 +60,13 @@ static inline struct acpi_device *_acpi_get_companion(struct device *dev)
- static inline void acpi_dev_remove_driver_gpios(struct acpi_device *adev) {}
- #endif /* LINUX_VERSION_IS_LESS(3, 19, 0) */
- 
-+#if LINUX_VERSION_IN_RANGE(3,19,0, 4,13,0)
-+#define devm_acpi_dev_add_driver_gpios LINUX_BACKPORT(devm_acpi_dev_add_driver_gpios)
-+static inline int devm_acpi_dev_add_driver_gpios(struct device *dev,
-+			      const struct acpi_gpio_mapping *gpios)
-+{
-+	return -ENXIO;
-+}
-+#endif /* LINUX_VERSION_IN_RANGE(4,19,0, 4,13,0) */
+diff --git a/patches/0082-pci_error_handlers.cocci b/patches/0082-pci_error_handlers.cocci
+new file mode 100644
+index 00000000..9b5573d4
+--- /dev/null
++++ b/patches/0082-pci_error_handlers.cocci
+@@ -0,0 +1,32 @@
++@r@
++identifier OPS;
++identifier pcie_reset_prepare_fn;
++identifier pcie_reset_done_fn;
++fresh identifier pcie_reset_notify_fn = pcie_reset_prepare_fn ## "_notify";
++position p;
++@@
++struct pci_error_handlers OPS@p = {
+++#if LINUX_VERSION_IS_GEQ(4,13,0)
++	.reset_prepare = pcie_reset_prepare_fn,
++	.reset_done = pcie_reset_done_fn,
+++#else
+++	.reset_notify = pcie_reset_notify_fn,
+++#endif
++};
 +
- #endif /* __BACKPORT_LINUX_ACPI_H */
++
++@@
++identifier r.pcie_reset_prepare_fn;
++identifier r.pcie_reset_done_fn;
++identifier r.pcie_reset_notify_fn;
++@@
++void pcie_reset_done_fn(...) {...}
+++#if LINUX_VERSION_IS_LESS(4,13,0)
+++static void pcie_reset_notify_fn(struct pci_dev *dev, bool prepare)
+++{
+++	if (prepare)
+++		pcie_reset_prepare_fn(dev);
+++	else
+++		pcie_reset_done_fn(dev);
+++}
+++#endif
 -- 
 2.11.0
 
