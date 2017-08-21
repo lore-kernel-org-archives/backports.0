@@ -1,40 +1,60 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.mailbox.org ([80.241.60.215]:42931 "EHLO mx2.mailbox.org"
+Received: from mx2.mailbox.org ([80.241.60.215]:42954 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754260AbdHUW2p (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 21 Aug 2017 18:28:45 -0400
+        id S1754198AbdHUW2t (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 21 Aug 2017 18:28:49 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: johannes@sipsolutions.net
 Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 10/21] header: rename wait_queue_entry_t to wait_queue_t
-Date: Tue, 22 Aug 2017 00:28:06 +0200
-Message-Id: <20170821222817.17376-11-hauke@hauke-m.de> (sfid-20170822_002846_834093_B2F134B7)
+Subject: [PATCH 17/21] patches: backport the probe_new for i2c drivers
+Date: Tue, 22 Aug 2017 00:28:13 +0200
+Message-Id: <20170821222817.17376-18-hauke@hauke-m.de> (sfid-20170822_002852_580908_5D54C557)
 In-Reply-To: <20170821222817.17376-1-hauke@hauke-m.de>
 References: <20170821222817.17376-1-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-In kernel 4.13 wait_queue_t was renamed to wait_queue_entry_t, reverse
-this for older kernel versions.
+I2C got a new probe function which does not take the struct
+i2c_device_id any more, backport this to older kernel versions with a
+spatch.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/wait.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ patches/0080-i2c-proble-new.cocci | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 patches/0080-i2c-proble-new.cocci
 
-diff --git a/backport/backport-include/linux/wait.h b/backport/backport-include/linux/wait.h
-index 3059ff1d..c4b1114e 100644
---- a/backport/backport-include/linux/wait.h
-+++ b/backport/backport-include/linux/wait.h
-@@ -76,4 +76,8 @@ wait_on_bit_timeout(void *word, int bit, unsigned mode, unsigned long timeout)
- #endif
- #endif
- 
-+#if LINUX_VERSION_IS_LESS(4,13,0)
-+#define wait_queue_entry_t wait_queue_t
-+#endif
+diff --git a/patches/0080-i2c-proble-new.cocci b/patches/0080-i2c-proble-new.cocci
+new file mode 100644
+index 00000000..35580aca
+--- /dev/null
++++ b/patches/0080-i2c-proble-new.cocci
+@@ -0,0 +1,25 @@
++@r@
++identifier OPS;
++identifier i2c_probe;
++fresh identifier i2c_probe_wrap = "bp_" ## i2c_probe;
++position p;
++@@
++struct i2c_driver OPS@p = {
+++#if LINUX_VERSION_IS_GEQ(4,10,0)
++	.probe_new = i2c_probe,
+++#else
+++	.probe = i2c_probe_wrap,
+++#endif
++};
 +
- #endif /* __BACKPORT_LINUX_WAIT_H */
++@@
++identifier r.i2c_probe_wrap;
++identifier r.i2c_probe;
++@@
++int i2c_probe(...) {...}
+++#if LINUX_VERSION_IS_LESS(4,10,0)
+++static int i2c_probe_wrap(struct i2c_client *client, const struct i2c_device_id *id)
+++{
+++	return i2c_probe(client);
+++}
+++#endif
 -- 
 2.11.0
 
