@@ -1,42 +1,69 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:40784 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751007AbdG1Iig (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 28 Jul 2017 04:38:36 -0400
-Message-ID: <1501231112.20057.123.camel@coelho.fi> (sfid-20170728_103838_985903_918B581F)
-From: Luca Coelho <luca@coelho.fi>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
-        egrumbach@gmail.com
-Cc: johannes@sipsolutions.net, backports@vger.kernel.org
-Date: Fri, 28 Jul 2017 11:38:32 +0300
-In-Reply-To: <9cef262a-3331-d4cd-8874-dc68f7a9e36e@broadcom.com>
-References: <20170718133338.16475-1-luca@coelho.fi>
-         <9cef262a-3331-d4cd-8874-dc68f7a9e36e@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [PATCH] backport: fix netdev destructor backport
+Received: from mx1.mailbox.org ([80.241.60.212]:48910 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754049AbdHUW2m (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 21 Aug 2017 18:28:42 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 03/21] header: skbuff: add skb_put_zero(), skb_put_data() and skb_put_u8()
+Date: Tue, 22 Aug 2017 00:27:59 +0200
+Message-Id: <20170821222817.17376-4-hauke@hauke-m.de> (sfid-20170822_002844_227398_62E1A776)
+In-Reply-To: <20170821222817.17376-1-hauke@hauke-m.de>
+References: <20170821222817.17376-1-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sat, 2017-07-22 at 10:01 +0200, Arend van Spriel wrote:
-> On 18-07-17 15:33, Luca Coelho wrote:
-> > From: Luca Coelho <luciano.coelho@intel.com>
-> > 
-> > The commit that changed the netdev destructor was also applied in
-> > v4.12-rc6, so we need to update the backport.
-> > 
-> > Another issue was that when the default free_netdev() destructor was supposed to be used, we would get compilation errors, such as this one in hwsim:
-> 
-> [...]
-> 
-> > Fixes: 721ae78f9355 ("backport: handle change in netdevice destructor usage")
-> 
-> Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+These functions were added in kernel 4.13 and are used by many driver
+now.
 
-Thanks, Arend.  Applied.
+This was added in the following upsteram comits:
+e45a79da863c19 ("skbuff/mac80211: introduce and use skb_put_zero()")
+59ae1d127ac0ae ("networking: introduce and use skb_put_data()")
+634fef61076d64 ("networking: add and use skb_put_u8()")
 
---
-Cheers,
-Luca.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/skbuff.h | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
+index dc957487..09894a96 100644
+--- a/backport/backport-include/linux/skbuff.h
++++ b/backport/backport-include/linux/skbuff.h
+@@ -315,4 +315,30 @@ __u32 skb_get_hash_perturb(const struct sk_buff *skb, u32 perturb)
+ 
+ #endif
+ 
++#if LINUX_VERSION_IS_LESS(4,13,0)
++static inline void *skb_put_zero(struct sk_buff *skb, unsigned int len)
++{
++	void *tmp = skb_put(skb, len);
++
++	memset(tmp, 0, len);
++
++	return tmp;
++}
++
++static inline void *skb_put_data(struct sk_buff *skb, const void *data,
++				 unsigned int len)
++{
++	void *tmp = skb_put(skb, len);
++
++	memcpy(tmp, data, len);
++
++	return tmp;
++}
++
++static inline void skb_put_u8(struct sk_buff *skb, u8 val)
++{
++	*(u8 *)skb_put(skb, 1) = val;
++}
++#endif
++
+ #endif /* __BACKPORT_SKBUFF_H */
+-- 
+2.11.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
