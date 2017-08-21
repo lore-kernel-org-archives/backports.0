@@ -1,47 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:41696 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751019AbdHBExz (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 2 Aug 2017 00:53:55 -0400
-Message-ID: <1501649631.2588.57.camel@coelho.fi> (sfid-20170802_065401_892518_60EBE102)
-From: Luca Coelho <luca@coelho.fi>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Chris Feyerchak <chris@feyerchak.net>
-Cc: backports@vger.kernel.org
-Date: Wed, 02 Aug 2017 07:53:51 +0300
-In-Reply-To: <20170801203122.GW18884@wotan.suse.de>
-References: <CAE7P1anbpmTJNCLpx-EaTa_CmLofnTaCdi-9SATAfayuxss1cQ@mail.gmail.com>
-         <20170701163946.GY21846@wotan.suse.de>
-         <CAE7P1anD0qTUAJvqEiUqQnp0RnuL-1tHn8hgMkrSFc5wVrMAag@mail.gmail.com>
-         <CAE7P1a=VOYb9X_X=2pAMvjBRmO24mJYLPkeiHJcx7o4xECyzew@mail.gmail.com>
-         <20170801203122.GW18884@wotan.suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: Proposed Backports Project Logo - Old Tux on Hoverboard
+Received: from mx2.mailbox.org ([80.241.60.215]:42931 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754260AbdHUW2p (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 21 Aug 2017 18:28:45 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 10/21] header: rename wait_queue_entry_t to wait_queue_t
+Date: Tue, 22 Aug 2017 00:28:06 +0200
+Message-Id: <20170821222817.17376-11-hauke@hauke-m.de> (sfid-20170822_002846_834093_B2F134B7)
+In-Reply-To: <20170821222817.17376-1-hauke@hauke-m.de>
+References: <20170821222817.17376-1-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
+In kernel 4.13 wait_queue_t was renamed to wait_queue_entry_t, reverse
+this for older kernel versions.
 
-On Tue, 2017-08-01 at 22:31 +0200, Luis R. Rodriguez wrote:
-> On Sat, Jul 22, 2017 at 09:20:32AM -0400, Chris Feyerchak wrote:
-> > Hi Luis,
-> > 
-> > I've heard positive feedback and no negative feedback on the proposed new logo.
-> > 
-> > Could you go ahead and configure the wiki to use the new logo, please?
-> >  My account doesn't have the necessary permissions.  The 135x135 pixel
-> > raster is the size recommended in the MediaWiki documentation.
-> 
-> Great, do you have a vector graphics representation of the logo? That
-> would enable us to scale it at any time for anything.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/wait.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-I like the concept of ageing Tux on something new like a hoverboard, but
-the logo itself needs some work, IMHO.  I can't really understand the
-logo unless I chant to myself "Old Tux on Hoverboard... Old Tux on
-Hoverboard...".
+diff --git a/backport/backport-include/linux/wait.h b/backport/backport-include/linux/wait.h
+index 3059ff1d..c4b1114e 100644
+--- a/backport/backport-include/linux/wait.h
++++ b/backport/backport-include/linux/wait.h
+@@ -76,4 +76,8 @@ wait_on_bit_timeout(void *word, int bit, unsigned mode, unsigned long timeout)
+ #endif
+ #endif
+ 
++#if LINUX_VERSION_IS_LESS(4,13,0)
++#define wait_queue_entry_t wait_queue_t
++#endif
++
+ #endif /* __BACKPORT_LINUX_WAIT_H */
+-- 
+2.11.0
 
---
-Luca.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
