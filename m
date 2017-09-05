@@ -1,66 +1,72 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.mailbox.org ([80.241.60.215]:47174 "EHLO mx2.mailbox.org"
+Received: from mx1.mailbox.org ([80.241.60.212]:54435 "EHLO mx1.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752313AbdIFV6o (ORCPT <rfc822;backports@vger.kernel.org>);
-        Wed, 6 Sep 2017 17:58:44 -0400
-Subject: Re: [PATCH 08/21] header: backport devm_acpi_dev_add_driver_gpios()
+        id S1752719AbdIEVlc (ORCPT <rfc822;backports@vger.kernel.org>);
+        Tue, 5 Sep 2017 17:41:32 -0400
+Subject: Re: [PATCH 00/21] backports: multiple changes for kernel 3.13-rc6
 To: Johannes Berg <johannes@sipsolutions.net>
 Cc: backports@vger.kernel.org
 References: <20170821222817.17376-1-hauke@hauke-m.de>
- <20170821222817.17376-9-hauke@hauke-m.de>
- <1504710103.23905.12.camel@sipsolutions.net>
+ <1504602018.12380.3.camel@sipsolutions.net>
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <c5f48794-8d4c-b4e2-bfac-7d5473490756@hauke-m.de> (sfid-20170906_235845_889202_8C3430A4)
-Date: Wed, 6 Sep 2017 23:58:38 +0200
+Message-ID: <edbd9333-79ed-7662-d29d-e93c2f64eb6a@hauke-m.de> (sfid-20170905_234159_448412_942DC1DA)
+Date: Tue, 5 Sep 2017 23:41:21 +0200
 MIME-Version: 1.0
-In-Reply-To: <1504710103.23905.12.camel@sipsolutions.net>
+In-Reply-To: <1504602018.12380.3.camel@sipsolutions.net>
 Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 09/06/2017 05:01 PM, Johannes Berg wrote:
-> On Tue, 2017-08-22 at 00:28 +0200, Hauke Mehrtens wrote:
->> This is used by some NFC drivers to get information from the ACPI.
->> This was added in kernel 4.13, but backporting it to older kernel
->> versions than 3.19 is hard because such old kernel versions do not
->> even
->> have struct acpi_gpio_mapping. This only adds the empty version of
->> this
->> function as this normally needed some extra support in the generic
->> ACPI
->> code and I do not care about this functionality.
+On 09/05/2017 11:00 AM, Johannes Berg wrote:
+> Hi Hauke,
 > 
+>> This was build tested with kernel 3.18, 4.4 and 4.9. and runtime
+>> tested with iwlwifi on kernel 4.9.
 > 
->> +#if LINUX_VERSION_IN_RANGE(3,19,0, 4,13,0)
-> 
-> This I don't understand - you said it's hard to do for <3.19, and then
-> make a simple no-op for all, but don't do it for <3.19 at all?
-> 
-> Why not just LINUX_VERION_LESS(4,13,0)?
+> Cool.
 
-struct acpi_gpio_mapping was added to kernel 3.19. We could add here a
-dummy struct acpi_gpio_mapping, but the drivers anyway need more
-adjustments to compile properly.
+I have some patches to use it in LEDE, and tried it there with ath9k and
+ath10k, but hope to do some more testing.
 
->> +#define devm_acpi_dev_add_driver_gpios
->> LINUX_BACKPORT(devm_acpi_dev_add_driver_gpios)
->> +static inline int devm_acpi_dev_add_driver_gpios(struct device *dev,
->> +			      const struct acpi_gpio_mapping *gpios)
->> +{
->> +	return -ENXIO;
->> +}
->> +#endif /* LINUX_VERSION_IN_RANGE(4,19,0, 4,13,0) */
-
-This should be
-+#endif /* LINUX_VERSION_IN_RANGE(3,19,0, 4,13,0) */
-
+>> Are you planing to to releases in a tar?
 > 
-> Also, typo here.
+> Not personally, no. I barely have time to do any maintenance here to
+> start with, and still haven't set up any infrastructure to allow others
+> to really help out significantly.
+> 
+>> Which kernel versions are currently support by backports?
+> 
+> I think we didn't really change anything, so should be 3.0+
+
+I would prefer to drop everything < 3.10, or do not care about older
+kernel versions. For LEDE I am only interested in 3.18 or 4.4 and more
+recent.
+
+>> patches/0079-netdev-destructor.cocci takes very long to apply, about
+>> 3 times longer all others together.
+> 
+> I doubt we can do anything about that.
+> 
+>> Should we remove ssb and bcma from backports and use the in kernel 
+>> versions instead? I do not expect so many changes any more affecting
+>> the wifi drivers.
+> 
+> I have no opinion either way.
+
+When I find some time I will check how much problems with will cause for
+kernel >= 3.10.
+
+>> Is the compat wireless build server still being used?
+> 
+> It's still *there*, but I haven't really used it in a long time. I was
+> planning to set up some kind of auto-builder but haven't gotten around
+> to it.
 > 
 > johannes
-> --
-> To unsubscribe from this list: send the line "unsubscribe backports" in
 > 
 
+How do we want to proceed with these patches?
+
+Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
