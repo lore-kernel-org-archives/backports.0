@@ -1,48 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.mailbox.org ([80.241.60.215]:45959 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751722AbdIJWKr (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 10 Sep 2017 18:10:47 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 3/8] backport: add ethtool_convert_legacy_u32_to_link_mode()
-Date: Mon, 11 Sep 2017 00:10:15 +0200
-Message-Id: <20170910221020.13067-4-hauke@hauke-m.de> (sfid-20170911_001050_209089_78D99287)
-In-Reply-To: <20170910221020.13067-1-hauke@hauke-m.de>
-References: <20170910221020.13067-1-hauke@hauke-m.de>
+Received: from paleale.coelho.fi ([176.9.41.70]:47070 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750704AbdIEGup (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 5 Sep 2017 02:50:45 -0400
+From: Luca Coelho <luca@coelho.fi>
+To: backports@vger.kernel.org
+Cc: Luca Coelho <luciano.coelho@intel.com>
+Date: Tue,  5 Sep 2017 09:50:39 +0300
+Message-Id: <20170905065039.25808-1-luca@coelho.fi> (sfid-20170905_085047_421946_CCC9B604)
+Subject: [PATCH] backport: fix netdev destructor backport for v4.11.9
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This function was added in kernel 4.7 in commit 6d62b4d5fac62 ("net:
-ethtool: export conversion function between u32 and link mode") and is
-used by mii_ethtool_get_link_ksettings() in the backport-4.10.c file.
+From: Luca Coelho <luciano.coelho@intel.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+The patch that changed the netdev destructor code was backported to
+v4.11.9, so handle that in the backport.
+
+Change-Id: I21a64c84d1c46771d9436341537d946e5ae64c1b
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 ---
- backport/compat/backport-4.10.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ backport/backport-include/linux/netdevice.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/backport/compat/backport-4.10.c b/backport/compat/backport-4.10.c
-index 4c8125fb..44e02dd7 100644
---- a/backport/compat/backport-4.10.c
-+++ b/backport/compat/backport-4.10.c
-@@ -36,6 +36,13 @@ static bool ethtool_convert_link_mode_to_legacy_u32(u32 *legacy_u32,
- 	*legacy_u32 = src[0];
- 	return retval;
+diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+index d22eec2d3113..112bcf2b1c15 100644
+--- a/backport/backport-include/linux/netdevice.h
++++ b/backport/backport-include/linux/netdevice.h
+@@ -320,7 +320,8 @@ static inline void netif_trans_update(struct net_device *dev)
  }
-+
-+static void ethtool_convert_legacy_u32_to_link_mode(unsigned long *dst,
-+						    u32 legacy_u32)
-+{
-+	bitmap_zero(dst, __ETHTOOL_LINK_MODE_MASK_NBITS);
-+	dst[0] = legacy_u32;
-+}
  #endif
  
- static u32 mii_get_an(struct mii_if_info *mii, u16 addr)
+-#if LINUX_VERSION_IS_LESS(4,12,0)
++#if LINUX_VERSION_IS_LESS(4,12,0) &&		\
++	!LINUX_VERSION_IN_RANGE(4,11,9, 4,12,0)
+ #define netdev_set_priv_destructor(_dev, _destructor) \
+ 	(_dev)->destructor = __ ## _destructor
+ #define netdev_set_def_destructor(_dev) \
 -- 
-2.11.0
+2.14.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
