@@ -1,45 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.mailbox.org ([80.241.60.215]:45968 "EHLO mx2.mailbox.org"
+Received: from s3.sipsolutions.net ([5.9.151.49]:54368 "EHLO sipsolutions.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751821AbdIJWKs (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 10 Sep 2017 18:10:48 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 4/8] header: add IOMEM_ERR_PTR()
-Date: Mon, 11 Sep 2017 00:10:16 +0200
-Message-Id: <20170910221020.13067-5-hauke@hauke-m.de> (sfid-20170911_001051_218860_47EFDDF7)
-In-Reply-To: <20170910221020.13067-1-hauke@hauke-m.de>
-References: <20170910221020.13067-1-hauke@hauke-m.de>
+        id S932891AbdIFPKm (ORCPT <rfc822;backports@vger.kernel.org>);
+        Wed, 6 Sep 2017 11:10:42 -0400
+Message-ID: <1504710640.23905.16.camel@sipsolutions.net> (sfid-20170906_171130_571276_1DEFF5F5)
+Subject: Re: [PATCH 21/21] copy-list: add quantenna qtnfmac driver
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org
+Date: Wed, 06 Sep 2017 17:10:40 +0200
+In-Reply-To: <20170821222817.17376-22-hauke@hauke-m.de> (sfid-20170822_002853_824683_59CC6C9B)
+References: <20170821222817.17376-1-hauke@hauke-m.de>
+         <20170821222817.17376-22-hauke@hauke-m.de>
+         (sfid-20170822_002853_824683_59CC6C9B)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This was added in kernel 3.17 in commit efd342fb0031a1 ("of: Provide a
-function to request and map memory")
+Alright, I've also applied
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/io.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
- create mode 100644 backport/backport-include/linux/io.h
+ 9 - 11
+13 - 15
+17, 18, 20, 21
 
-diff --git a/backport/backport-include/linux/io.h b/backport/backport-include/linux/io.h
-new file mode 100644
-index 00000000..78ae4650
---- /dev/null
-+++ b/backport/backport-include/linux/io.h
-@@ -0,0 +1,9 @@
-+#ifndef __BP_LINUX_IO_H
-+#define __BP_LINUX_IO_H
-+#include_next <linux/io.h>
-+
-+#ifndef IOMEM_ERR_PTR
-+#define IOMEM_ERR_PTR(err) (__force void __iomem *)ERR_PTR(err)
-+#endif
-+
-+#endif /* __BP_LINUX_IO_H */
--- 
-2.11.0
+As for 12, see the question there.
 
+On 16 I'd like Arend to take a look.
+
+And finally 19, it seems like we should be able to just add something
+like
+
+config BPAUTO_REFCOUNT
+	def_bool y
+	#h-file linux/refcount.h
+
+to compat/Kconfig and the scripting should take care of everything
+else?
+
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
