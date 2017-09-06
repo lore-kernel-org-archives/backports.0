@@ -1,58 +1,33 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:40832 "EHLO sipsolutions.net"
+Received: from s3.sipsolutions.net ([5.9.151.49]:54334 "EHLO sipsolutions.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751085AbdINHVK (ORCPT <rfc822;backports@vger.kernel.org>);
-        Thu, 14 Sep 2017 03:21:10 -0400
-Message-ID: <1505373667.31630.0.camel@sipsolutions.net> (sfid-20170914_092112_262786_13A5CBAD)
-Subject: Re: [PATCH 16/21] patches: brcmfmac: fix netdev destructor
+        id S932704AbdIFPFr (ORCPT <rfc822;backports@vger.kernel.org>);
+        Wed, 6 Sep 2017 11:05:47 -0400
+Message-ID: <1504710345.23905.14.camel@sipsolutions.net> (sfid-20170906_170613_695243_3BD2C7D9)
+Subject: Re: [PATCH 12/21] compat: avoid usage of kvzalloc() in rhashtable.c
 From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>
+To: Hauke Mehrtens <hauke@hauke-m.de>
 Cc: backports@vger.kernel.org
-Date: Thu, 14 Sep 2017 09:21:07 +0200
-In-Reply-To: <7fad164c-e46f-ad64-4586-5521c2fc770d@broadcom.com> (sfid-20170913_213617_763307_FCD99C6F)
+Date: Wed, 06 Sep 2017 17:05:45 +0200
+In-Reply-To: <20170821222817.17376-13-hauke@hauke-m.de> (sfid-20170822_002849_246894_A23843F2)
 References: <20170821222817.17376-1-hauke@hauke-m.de>
-         <20170821222817.17376-17-hauke@hauke-m.de>
-         <7fad164c-e46f-ad64-4586-5521c2fc770d@broadcom.com>
-         (sfid-20170913_213617_763307_FCD99C6F)
+         <20170821222817.17376-13-hauke@hauke-m.de>
+         (sfid-20170822_002849_246894_A23843F2)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2017-09-13 at 21:36 +0200, Arend van Spriel wrote:
-> 
-> Way overdue, but better late than never. 
+On Tue, 2017-08-22 at 00:28 +0200, Hauke Mehrtens wrote:
+> This reverts commit 12e8fd6fd3802 ("lib/rhashtable.c: use kvzalloc()
+> in
+> bucket_table_alloc() when possible") from upstream kernel.
+> Kernel versions older that 4.12 do not have kvzalloc() try to avoid
+> the
+> usage of this.
 
-No worries, I already applied the patch anyway ;-)
-
-> I think we prefer to use 
-> spatch, but I understand the destructor handling in brcmfmac is
-> complicated.
-
-Agree - and making changes across header files is hard in spatch.
-
-> The story above does not tell it right. brcmf_add_if() is called
-> first 
-> doing the alloc_netdev() setting needs_free_netdev to true and 
-> subsequently brcmf_net_attach() is called doing the 
-> register_netdevice(). When that is successful and only then I set
-> the 
-> priv_destructor. The reason for this was to keep the error path
-> simple, 
-> because when register_netdevice() fails it calls the priv_destructor 
-> although that is not documented in struct net_device:
-> 
->   *	@priv_destructor:	Called from unregister
-
-Ok, too late now I guess, since the patch is in. But at least we'll
-have your explanation here :)
-
-> I think I will make an attempt to change brcmfmac so we can get rid
-> of this patch file and rely on the spatch, but for now I am fine with
-> it.
-
-Thanks for the review!
+Can't we backport these? There was a patch from AceLan Kao to do so in
+a pretty simple fashion, but that should still be better than a patch?
 
 johannes
 --
