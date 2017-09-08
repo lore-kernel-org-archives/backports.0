@@ -1,68 +1,189 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:41328 "EHLO mail.hauke-m.de"
+Received: from s3.sipsolutions.net ([5.9.151.49]:35642 "EHLO sipsolutions.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752315AbdIFWNQ (ORCPT <rfc822;backports@vger.kernel.org>);
-        Wed, 6 Sep 2017 18:13:16 -0400
-Subject: Re: [PATCH] backport: add some new kv[mz]alloc function
-To: AceLan Kao <acelan.kao@canonical.com>, mcgrof@kernel.org,
-        backports@vger.kernel.org
-References: <1500620116-20476-1-git-send-email-acelan.kao@canonical.com>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <060d0213-2a3a-9490-b121-39a55e773822@hauke-m.de> (sfid-20170907_001341_070070_298AE28C)
-Date: Thu, 7 Sep 2017 00:05:55 +0200
-MIME-Version: 1.0
-In-Reply-To: <1500620116-20476-1-git-send-email-acelan.kao@canonical.com>
-Content-Type: text/plain; charset=utf-8
+        id S1755228AbdIHNKv (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 8 Sep 2017 09:10:51 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH v2] backport-update-manager: automatically get list of ubuntu kernels
+Date: Fri,  8 Sep 2017 15:10:46 +0200
+Message-Id: <20170908131046.11089-1-johannes@sipsolutions.net> (sfid-20170908_151110_520643_8701906F)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 07/21/2017 08:55 AM, AceLan Kao wrote:
-> add some new kv[mz]alloc functions which introduced after v4.12
-> by this commit
-> 
-> commit a7c3e901a46ff54c016d040847eda598a9e3e653
-> Author: Michal Hocko <mhocko@suse.com>
-> Date:   Mon May 8 15:57:09 2017 -0700
-> 
->     mm: introduce kv[mz]alloc helpers
-> 
-> Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
-> ---
->  backport/backport-include/linux/mm.h | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/backport/backport-include/linux/mm.h b/backport/backport-include/linux/mm.h
-> index 3234b37..8125310 100644
-> --- a/backport/backport-include/linux/mm.h
-> +++ b/backport/backport-include/linux/mm.h
-> @@ -123,4 +123,20 @@ static inline bool page_is_pfmemalloc(struct page *page)
->  }
->  #endif /* < 4.2 */
->  
-> +#if LINUX_VERSION_IS_LESS(4,12,0)
-> +extern void *kvmalloc_node(size_t size, gfp_t flags, int node);
+From: Johannes Berg <johannes.berg@intel.com>
 
-Is kvmalloc_node() implemented somewhere? It was added in kernel 4.12
-and is not available in older mainline kernel versions.
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ devel/backports-update-manager | 114 +++++++++++++++++++++++++----------------
+ 1 file changed, 69 insertions(+), 45 deletions(-)
 
-> +static inline void *kvmalloc(size_t size, gfp_t flags)
-> +{
-> +	return kvmalloc_node(size, flags, NUMA_NO_NODE);
-> +}
-> +static inline void *kvzalloc_node(size_t size, gfp_t flags, int node)
-> +{
-> +	return kvmalloc_node(size, flags | __GFP_ZERO, node);
-> +}
-> +static inline void *kvzalloc(size_t size, gfp_t flags)
-> +{
-> +	return kvmalloc(size, flags | __GFP_ZERO);
-> +}
-> +#endif /* < 4.12.0 */
-> +
->  #endif /* __BACKPORT_MM_H */
-> 
-
-Hauke
+diff --git a/devel/backports-update-manager b/devel/backports-update-manager
+index 4678687b4cb1..e22ba3463135 100755
+--- a/devel/backports-update-manager
++++ b/devel/backports-update-manager
+@@ -18,46 +18,6 @@ SPACE_PER_KERNEL=101
+ # ~13 MiB of both deb files
+ SPACE_PER_KERNEL_DEB=13
+ 
+-# Having to update this manually is stupid, lets either get Ubuntu
+-# folks to use a json files or we start seeing how we can start
+-# building our own shit.
+-# For example:
+-# https://www.kernel.org/releases.json
+-KERNEL_URLS = [
+-    KPATH + "v3.0.101-oneiric/linux-headers-3.0.101-0300101_3.0.101-0300101.201310220446_all.deb",
+-    KPATH + "v3.1.10-precise/linux-headers-3.1.10-030110_3.1.10-030110.201201181135_all.deb",
+-    KPATH + "v3.2.81-precise/linux-headers-3.2.81-030281_3.2.81-030281.201606152334_all.deb",
+-    KPATH + "v3.3.8-quantal/linux-headers-3.3.8-030308_3.3.8-030308.201206041356_all.deb",
+-    KPATH + "v3.4.112-precise/linux-headers-3.4.112-0304112_3.4.112-0304112.201604271231_all.deb",
+-    KPATH + "v3.5.7.12-quantal/linux-headers-3.5.7-03050712_3.5.7-03050712.201305111435_all.deb",
+-    KPATH + "v3.6.11-raring/linux-headers-3.6.11-030611_3.6.11-030611.201212171335_all.deb",
+-    KPATH + "v3.7.10-raring/linux-headers-3.7.10-030710_3.7.10-030710.201302271235_all.deb",
+-    KPATH + "v3.8.13-raring/linux-headers-3.8.13-030813_3.8.13-030813.201305111843_all.deb",
+-    KPATH + "v3.9.11-saucy/linux-headers-3.9.11-030911_3.9.11-030911.201307202035_all.deb",
+-    KPATH + "v3.10.102-precise/linux-headers-3.10.102-0310102_3.10.102-0310102.201606131145_all.deb",
+-    KPATH + "v3.11.10-saucy/linux-headers-3.11.10-031110_3.11.10-031110.201311291453_all.deb",
+-    KPATH + "v3.12.61-trusty/linux-headers-3.12.61-031261_3.12.61-031261.201606201232_all.deb",
+-    KPATH + "v3.13.11-trusty/linux-headers-3.13.11-031311_3.13.11-031311.201404222035_all.deb",
+-    KPATH + "v3.14.73-trusty/linux-headers-3.14.73-031473_3.14.73-031473.201606241434_all.deb",
+-    KPATH + "v3.15.10-utopic/linux-headers-3.15.10-031510_3.15.10-031510.201408132333_all.deb",
+-    KPATH + "v3.16.36-trusty/linux-headers-3.16.36-031636_3.16.36-031636.201606152333_all.deb",
+-    KPATH + "v3.17.8-vivid/linux-headers-3.17.8-031708_3.17.8-031708.201501081837_all.deb",
+-    KPATH + "v3.18.36-vivid/linux-headers-3.18.36-031836_3.18.36-031836.201606230133_all.deb",
+-    KPATH + "v3.19.8-vivid/linux-headers-3.19.8-031908_3.19.8-031908.201505110938_all.deb",
+-    KPATH + "v4.0.9-wily/linux-headers-4.0.9-040009_4.0.9-040009.201507212131_all.deb",
+-    KPATH + "v4.1.27-wily/linux-headers-4.1.27-040127_4.1.27-040127.201606230134_all.deb",
+-    KPATH + "v4.2.8-wily/linux-headers-4.2.8-040208_4.2.8-040208.201512150620_all.deb",
+-    KPATH + "v4.3.6-wily/linux-headers-4.3.6-040306_4.3.6-040306.201602191831_all.deb",
+-    KPATH + "v4.4.14-xenial/linux-headers-4.4.14-040414_4.4.14-040414.201606241434_all.deb",
+-    KPATH + "v4.5.7-yakkety/linux-headers-4.5.7-040507_4.5.7-040507.201606100436_all.deb",
+-    KPATH + "v4.6.3-yakkety/linux-headers-4.6.3-040603_4.6.3-040603.201606241434_all.deb",
+-    KPATH + "v4.7.10/linux-headers-4.7.10-040710_4.7.10-040710.201610220847_all.deb",
+-    KPATH + "v4.8.17/linux-headers-4.8.17-040817_4.8.17-040817.201701090438_all.deb",
+-    KPATH + "v4.9.8/linux-headers-4.9.8-040908_4.9.8-040908.201702040431_all.deb",
+-]
+-
+-NUM_KERNELS=len(KERNEL_URLS)
+-
+ GIT_TREES = [
+     "git://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git",
+     "git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git",
+@@ -65,6 +25,16 @@ GIT_TREES = [
+     "git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git",
+ ]
+ 
++def make_version_tuple(ver):
++    ver = re.split(r'[.-]', ver)
++    sver = []
++    for n in ver:
++        try:
++            sver.append(int(n))
++        except ValueError:
++            sver.append(-1)
++    return sver
++
+ class backport_kernel_updater:
+     """
+     This is the Linux kernel backports kernel updater. It ensures you
+@@ -79,13 +49,68 @@ class backport_kernel_updater:
+             return "i386"
+         sys.stdout.write("Unsupported machine type: %s\n" % machine)
+         sys.exit(1)
++
++    @classmethod
++    def _get_ubuntu_ppa_mainline_kernels(cls):
++        base = 'http://kernel.ubuntu.com/~kernel-ppa/mainline/'
++        html = urlopen(base).read()
++        builds = re.findall(b'href="([-v.0-9a-z]*)/"', html)
++        builds = [b.decode('ascii') for b in builds]
++        # remove some special kernels
++        builds = [b for b in builds if re.match('v[3-9]', b)]
++        builds = [b for b in builds if not '-rc' in b and not '-unstable' in b and not '-ckt' in b]
++        last = {}
++        for b in builds:
++            split = re.split(r'[.-]', b, 2)
++            ver = '.'.join(split[:2])
++            sub = b[len(ver):]
++            if not sub.startswith('.'):
++                sub = '.0' + sub
++            sub = sub[1:]
++            sver = make_version_tuple(sub)
++            item = (sver, b)
++            try:
++                last[ver].append(item)
++            except KeyError:
++                last[ver] = [item]
++        for ver in last:
++            n = 0
++            for sver in last[ver]:
++                if len(sver[0]) > n:
++                    n = len(sver[0])
++            for sver in last[ver]:
++                while len(sver[0]) < n:
++                    sver[0].append(0)
++
++        result = []
++        for subvers in last.values():
++            subvers.sort(reverse=True)
++            for version in subvers:
++                version = version[1]
++
++                html = urlopen(base + version + '/').read()
++                if b'Build for amd64 failed' in html:
++                    continue
++                pkgs = re.findall(b'href="linux-headers-[^"]*_all\.deb"', html)
++                if not pkgs:
++                    continue
++                pkgs = [p[6:-1] for p in pkgs]
++                pkgs.sort()
++                pkg = pkgs[-1].decode('ascii')
++                result.append((version, base + version + '/' + pkg))
++                break
++
++        result.sort(key = lambda x: make_version_tuple(x[0][1:]))
++        return [x[1] for x in result]
++
+     def __init__(self,
+                  force=False,
+                  git_trees_only=False,
+                  reference=None):
+         self.ksrc_base = ""
+         self.ksrc_prefix = ""
+-        self.kernel_urls = KERNEL_URLS
++        self.kernel_urls = self._get_ubuntu_ppa_mainline_kernels()
++        self.num_kernels = len(self.kernel_urls)
+         self.git_trees = GIT_TREES
+         self.git_trees_missing = list()
+         self.git_trees_present = list()
+@@ -172,7 +197,6 @@ class backport_kernel_updater:
+             self.all_git_trees_present = len(self.git_trees_present) == len(self.git_trees)
+ 
+         urls = self.kernel_urls + self.kernel_urls_generic
+-        urls.sort()
+         self.all_kernel_urls = urls
+         self.all_new_kernels = list()
+ 
+@@ -203,13 +227,13 @@ class backport_kernel_updater:
+         sys.stdout.write("\n")
+         sys.stdout.write("Stable kernel header release updater\n")
+         sys.stdout.write("------------------------------------------------------------------\n")
+-        sys.stdout.write("This will download %d kernel headers to allow you to\n" % NUM_KERNELS)
++        sys.stdout.write("This will download %d kernel headers to allow you to\n" % self.num_kernels)
+         sys.stdout.write("cross compile any module over these kernels with ckmake.\n")
+         sys.stdout.write("The download payload is about ~ %d MiB, once uncompressed\n" %
+-                         (SPACE_PER_KERNEL_DEB * NUM_KERNELS))
++                         (SPACE_PER_KERNEL_DEB * self.num_kernels))
+         sys.stdout.write("it will stash kernel header files under the directories:\n\n\t%s\n\t%s\n\n" %
+                          (self.ksrc_prefix + "/usr/src/", self.ksrc_prefix + "/lib/modules/"))
+-        sys.stdout.write("It will consume about ~ %d GiB of space.\n\n" % (NUM_KERNELS * SPACE_PER_KERNEL / 1024))
++        sys.stdout.write("It will consume about ~ %d GiB of space.\n\n" % (self.num_kernels * SPACE_PER_KERNEL / 1024))
+         sys.stdout.write("The kernel headers used are from Vanilla kernels")
+         sys.stdout.write("from the \nUbuntu mainline / vanilla kernel PPA and are extracted\n")
+         sys.stdout.write("using the GNU ar and Python tar module:\n\n%s\n\n" % KPATH)
+-- 
+2.14.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
