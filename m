@@ -1,76 +1,52 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wr0-f178.google.com ([209.85.128.178]:54162 "EHLO
-        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750757AbdIRHQm (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 18 Sep 2017 03:16:42 -0400
-Received: by mail-wr0-f178.google.com with SMTP id l22so5444401wrc.10
-        for <backports@vger.kernel.org>; Mon, 18 Sep 2017 00:16:41 -0700 (PDT)
-Subject: Re: [PATCH 16/21] patches: brcmfmac: fix netdev destructor
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-        Johannes Berg <johannes@sipsolutions.net>
+Received: from s3.sipsolutions.net ([5.9.151.49]:60728 "EHLO sipsolutions.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752448AbdIHJZE (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 8 Sep 2017 05:25:04 -0400
+Message-ID: <1504862702.6177.17.camel@sipsolutions.net> (sfid-20170908_112506_348214_CF96B659)
+Subject: Re: [PATCH 12/21] compat: avoid usage of kvzalloc() in rhashtable.c
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org, AceLan Kao <acelan.kao@canonical.com>
+Date: Fri, 08 Sep 2017 11:25:02 +0200
+In-Reply-To: <97c46ee3-1a5c-d3cc-21ba-8bd8a2a02ee7@hauke-m.de>
 References: <20170821222817.17376-1-hauke@hauke-m.de>
- <20170821222817.17376-17-hauke@hauke-m.de>
- <7fad164c-e46f-ad64-4586-5521c2fc770d@broadcom.com>
- <1505373667.31630.0.camel@sipsolutions.net>
- <77ecd9e5-3d0b-d86a-a6bf-15b200c6bd20@hauke-m.de>
-Cc: backports@vger.kernel.org
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <59BF72D7.7060702@broadcom.com> (sfid-20170918_091644_221475_2F0F3213)
-Date: Mon, 18 Sep 2017 09:16:39 +0200
-MIME-Version: 1.0
-In-Reply-To: <77ecd9e5-3d0b-d86a-a6bf-15b200c6bd20@hauke-m.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+         <20170821222817.17376-13-hauke@hauke-m.de>
+         <1504710345.23905.14.camel@sipsolutions.net>
+         <97c46ee3-1a5c-d3cc-21ba-8bd8a2a02ee7@hauke-m.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 9/18/2017 12:00 AM, Hauke Mehrtens wrote:
-> On 09/14/2017 09:21 AM, Johannes Berg wrote:
->> On Wed, 2017-09-13 at 21:36 +0200, Arend van Spriel wrote:
->>>
->>> Way overdue, but better late than never.
->>
->> No worries, I already applied the patch anyway ;-)
->>
->>> I think we prefer to use
->>> spatch, but I understand the destructor handling in brcmfmac is
->>> complicated.
->>
->> Agree - and making changes across header files is hard in spatch.
->
-> I have no idea how to do this with spatch, I would appreciate if you
-> could convert this to an spatch, I do not know how.
+On Thu, 2017-09-07 at 00:12 +0200, Hauke Mehrtens wrote:
+> On 09/06/2017 05:05 PM, Johannes Berg wrote:
+> > On Tue, 2017-08-22 at 00:28 +0200, Hauke Mehrtens wrote:
+> > > This reverts commit 12e8fd6fd3802 ("lib/rhashtable.c: use
+> > > kvzalloc()
+> > > in
+> > > bucket_table_alloc() when possible") from upstream kernel.
+> > > Kernel versions older that 4.12 do not have kvzalloc() try to
+> > > avoid
+> > > the
+> > > usage of this.
+> > 
+> > Can't we backport these? There was a patch from AceLan Kao to do so
+> > in
+> > a pretty simple fashion, but that should still be better than a
+> > patch?
+> > 
+> > johannes
+> 
+> Hi,
+> 
+> I think AceLan Kao's patch misses the implementation of
+> kvmalloc_node().
+> We can implement this for node == NUMA_NO_NODE by using __vmalloc()
+> instead of __vmalloc_node_flags_caller() which should be fine.
 
-No problem. Well, maybe it is, but I will give it a try ;-)
+Sounds reasonable to me.
 
->>> The story above does not tell it right. brcmf_add_if() is called
->>> first
->>> doing the alloc_netdev() setting needs_free_netdev to true and
->>> subsequently brcmf_net_attach() is called doing the
->>> register_netdevice(). When that is successful and only then I set
->>> the
->>> priv_destructor. The reason for this was to keep the error path
->>> simple,
->>> because when register_netdevice() fails it calls the priv_destructor
->>> although that is not documented in struct net_device:
->>>
->>>    *	@priv_destructor:	Called from unregister
->>
->> Ok, too late now I guess, since the patch is in. But at least we'll
->> have your explanation here :)
->>
->>> I think I will make an attempt to change brcmfmac so we can get rid
->>> of this patch file and rely on the spatch, but for now I am fine with
->>> it.
->>
->> Thanks for the review!
->
-> I fixed this patch in a later commit again, there was a problem with
-> recent kernel versions.
-
-I saw that patch, but did not incorporate it in this response. Thanks 
-for fixing it.
-
-Regards,
-Arend
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
