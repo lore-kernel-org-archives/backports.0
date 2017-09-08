@@ -1,52 +1,32 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:54286 "EHLO sipsolutions.net"
+Received: from s3.sipsolutions.net ([5.9.151.49]:60776 "EHLO sipsolutions.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932737AbdIFPBp (ORCPT <rfc822;backports@vger.kernel.org>);
-        Wed, 6 Sep 2017 11:01:45 -0400
-Message-ID: <1504710103.23905.12.camel@sipsolutions.net> (sfid-20170906_170218_148105_8F1FAC39)
+        id S1750850AbdIHJ2J (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 8 Sep 2017 05:28:09 -0400
+Message-ID: <1504862887.6177.19.camel@sipsolutions.net> (sfid-20170908_112810_667580_DB38371E)
 Subject: Re: [PATCH 08/21] header: backport devm_acpi_dev_add_driver_gpios()
 From: Johannes Berg <johannes@sipsolutions.net>
 To: Hauke Mehrtens <hauke@hauke-m.de>
 Cc: backports@vger.kernel.org
-Date: Wed, 06 Sep 2017 17:01:43 +0200
-In-Reply-To: <20170821222817.17376-9-hauke@hauke-m.de> (sfid-20170822_002845_485339_DE72ECAB)
+Date: Fri, 08 Sep 2017 11:28:07 +0200
+In-Reply-To: <1504862738.6177.18.camel@sipsolutions.net> (sfid-20170908_112541_179205_041F014E)
 References: <20170821222817.17376-1-hauke@hauke-m.de>
          <20170821222817.17376-9-hauke@hauke-m.de>
-         (sfid-20170822_002845_485339_DE72ECAB)
+         <1504710103.23905.12.camel@sipsolutions.net>
+         <c5f48794-8d4c-b4e2-bfac-7d5473490756@hauke-m.de>
+         <1504862738.6177.18.camel@sipsolutions.net>
+         (sfid-20170908_112541_179205_041F014E)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2017-08-22 at 00:28 +0200, Hauke Mehrtens wrote:
-> This is used by some NFC drivers to get information from the ACPI.
-> This was added in kernel 4.13, but backporting it to older kernel
-> versions than 3.19 is hard because such old kernel versions do not
-> even
-> have struct acpi_gpio_mapping. This only adds the empty version of
-> this
-> function as this normally needed some extra support in the generic
-> ACPI
-> code and I do not care about this functionality.
+On Fri, 2017-09-08 at 11:25 +0200, Johannes Berg wrote:
+> 
+> Right. I'll fix this and apply then.
 
-
-> +#if LINUX_VERSION_IN_RANGE(3,19,0, 4,13,0)
-
-This I don't understand - you said it's hard to do for <3.19, and then
-make a simple no-op for all, but don't do it for <3.19 at all?
-
-Why not just LINUX_VERION_LESS(4,13,0)?
-
-> +#define devm_acpi_dev_add_driver_gpios
-> LINUX_BACKPORT(devm_acpi_dev_add_driver_gpios)
-> +static inline int devm_acpi_dev_add_driver_gpios(struct device *dev,
-> +			      const struct acpi_gpio_mapping *gpios)
-> +{
-> +	return -ENXIO;
-> +}
-> +#endif /* LINUX_VERSION_IN_RANGE(4,19,0, 4,13,0) */
-
-Also, typo here.
+Heh, turns out I accidentally applied it already anyway - so I just
+fixed the version thing then.
 
 johannes
 --
