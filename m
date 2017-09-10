@@ -1,39 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:48030 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753900AbdIFPoX (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 6 Sep 2017 11:44:23 -0400
-Message-ID: <1504712656.5400.84.camel@coelho.fi> (sfid-20170906_174448_930364_E0508030)
-From: Luca Coelho <luca@coelho.fi>
-To: Johannes Berg <johannes@sipsolutions.net>,
-        backports@vger.kernel.org
-Date: Wed, 06 Sep 2017 18:44:16 +0300
-In-Reply-To: <1504709551.23905.6.camel@sipsolutions.net>
-References: <20170905065039.25808-1-luca@coelho.fi>
-         (sfid-20170905_085047_421946_CCC9B604) <1504709551.23905.6.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [PATCH] backport: fix netdev destructor backport for v4.11.9
+Received: from mx1.mailbox.org ([80.241.60.212]:58438 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751602AbdIJWKt (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 10 Sep 2017 18:10:49 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 8/8] dependencies: make MWIFIEX_PCIE depend on kernel > 3.16
+Date: Mon, 11 Sep 2017 00:10:20 +0200
+Message-Id: <20170910221020.13067-9-hauke@hauke-m.de> (sfid-20170911_001051_553871_00642A7A)
+In-Reply-To: <20170910221020.13067-1-hauke@hauke-m.de>
+References: <20170910221020.13067-1-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2017-09-06 at 16:52 +0200, Johannes Berg wrote:
-> On Tue, 2017-09-05 at 09:50 +0300, Luca Coelho wrote:
-> > From: Luca Coelho <luciano.coelho@intel.com>
-> > 
-> > The patch that changed the netdev destructor code was backported to
-> > v4.11.9, so handle that in the backport.
-> 
-> Applied, since it was so obvious.
-> 
-> > Change-Id: I21a64c84d1c46771d9436341537d946e5ae64c1b
-> 
-> Without that though :)
+This driver needs the reset_notify member from the struct
+pci_error_handlers.
 
-Oops, sorry! I learned to systematically remove those from kernel
-patches, but for some reason I left it in this patch.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ dependencies | 3 +++
+ 1 file changed, 3 insertions(+)
 
---
-Luca.
+diff --git a/dependencies b/dependencies
+index c9827139..bda18659 100644
+--- a/dependencies
++++ b/dependencies
+@@ -59,6 +59,9 @@ NFC_TRF7970A 3.17
+ # this needs devm_gpiod_get_index() with 4 arguments.
+ NFC_NXP_NCI_I2C 3.17
+ 
++# pci_error_handlers->reset_notify is missing
++MWIFIEX_PCIE 3.16
++
+ # this needs device_property..() functions and struct acpi_gpio_mapping
+ NFC_FDP_I2C 3.19
+ NFC_ST21NFCA_I2C 3.19
+-- 
+2.11.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
