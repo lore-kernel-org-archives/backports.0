@@ -1,42 +1,29 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.mailbox.org ([80.241.60.212]:58422 "EHLO mx1.mailbox.org"
+Received: from s3.sipsolutions.net ([5.9.151.49]:45902 "EHLO sipsolutions.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751602AbdIJWKs (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 10 Sep 2017 18:10:48 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 5/8] header: add __get_dynamic_array_len
-Date: Mon, 11 Sep 2017 00:10:17 +0200
-Message-Id: <20170910221020.13067-6-hauke@hauke-m.de> (sfid-20170911_001050_897693_76A98389)
+        id S1751264AbdIKOsE (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 11 Sep 2017 10:48:04 -0400
+Message-ID: <1505141282.20347.8.camel@sipsolutions.net> (sfid-20170911_164807_388241_3E4FA26E)
+Subject: Re: [PATCH 0/8] backports: misc fixes
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org
+Date: Mon, 11 Sep 2017 16:48:02 +0200
 In-Reply-To: <20170910221020.13067-1-hauke@hauke-m.de>
 References: <20170910221020.13067-1-hauke@hauke-m.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This was added in kernel 3.16 in commit beba4bb096201 ("tracing: Add
-__get_dynamic_array_len() macro for trace events")
+On Mon, 2017-09-11 at 00:10 +0200, Hauke Mehrtens wrote:
+> This fixes two problems introduced in my previous patches and also
+> adds 
+> some other small functions needed to build against kernel >= 3.13.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/trace/ftrace.h | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks! I had some of this pending locally, but applied all of yours
+now.
 
-diff --git a/backport/backport-include/trace/ftrace.h b/backport/backport-include/trace/ftrace.h
-index 5fda0ce5..2daedd55 100644
---- a/backport/backport-include/trace/ftrace.h
-+++ b/backport/backport-include/trace/ftrace.h
-@@ -6,4 +6,8 @@
- 		ftrace_print_array_seq(p, array, count, el_size);	\
- 	})
- 
-+#undef __get_dynamic_array_len
-+#define __get_dynamic_array_len(field)	\
-+		((__entry->__data_loc_##field >> 16) & 0xffff)
-+
- #include_next <trace/ftrace.h>
--- 
-2.11.0
-
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
