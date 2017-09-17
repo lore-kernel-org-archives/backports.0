@@ -1,67 +1,68 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:46262 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751920AbdIMUA2 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 13 Sep 2017 16:00:28 -0400
-Received: by mail-wm0-f47.google.com with SMTP id i189so15075222wmf.1
-        for <backports@vger.kernel.org>; Wed, 13 Sep 2017 13:00:27 -0700 (PDT)
-Subject: Re: [PATCH 00/21] backports: multiple changes for kernel 3.13-rc6
-To: Johannes Berg <johannes@sipsolutions.net>,
-        Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org
-References: <20170821222817.17376-1-hauke@hauke-m.de>
- <1504602018.12380.3.camel@sipsolutions.net>
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <7ee0d9f0-1928-37b7-510e-a3d852ab64c4@broadcom.com> (sfid-20170913_220029_903009_8C2EBF15)
-Date: Wed, 13 Sep 2017 22:00:25 +0200
-MIME-Version: 1.0
-In-Reply-To: <1504602018.12380.3.camel@sipsolutions.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Received: from mx2.mailbox.org ([80.241.60.215]:43318 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751600AbdIQQ6h (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 17 Sep 2017 12:58:37 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 2/4] header: add uuid backports
+Date: Sun, 17 Sep 2017 18:58:11 +0200
+Message-Id: <20170917165813.17580-3-hauke@hauke-m.de> (sfid-20170917_185838_404557_88624BC9)
+In-Reply-To: <20170917165813.17580-1-hauke@hauke-m.de>
+References: <20170917165813.17580-1-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+This backports the following upstream commits:
+f9727a17db9: ("uuid: rename uuid types")
+df33767d9fe: ("uuid: hoist helpers uuid_equal() and uuid_copy() from xfs")
 
+ath10k now makes use of them.
 
-On 05-09-17 11:00, Johannes Berg wrote:
-> Hi Hauke,
-> 
+Some parts should go into the uapi/linux/uuid.h file, but
+then #include_next hack is not working correctly any more, so place it
+all into the normal file.
 
-[...]
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/uuid.h | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 backport/backport-include/linux/uuid.h
 
->> patches/0079-netdev-destructor.cocci takes very long to apply, about
->> 3 times longer all others together.
-> 
-> I doubt we can do anything about that.
+diff --git a/backport/backport-include/linux/uuid.h b/backport/backport-include/linux/uuid.h
+new file mode 100644
+index 00000000..5ffe225b
+--- /dev/null
++++ b/backport/backport-include/linux/uuid.h
+@@ -0,0 +1,25 @@
++#ifndef __BACKPORT_LINUX_UUID_H_
++#define __BACKPORT_LINUX_UUID_H_
++#include <linux/version.h>
++#include_next <linux/uuid.h>
++
++#if LINUX_VERSION_IS_LESS(4,13,0)
++#define guid_t uuid_le
++#define uuid_t uuid_be
++
++static inline void guid_gen(guid_t *u)
++{
++	return uuid_le_gen(u);
++}
++static inline void uuid_gen(uuid_t *u)
++{
++	return uuid_be_gen(u);
++}
++
++static inline void guid_copy(guid_t *dst, const guid_t *src)
++{
++	memcpy(dst, src, sizeof(guid_t));
++}
++#endif
++
++#endif /* __BACKPORT_LINUX_UUID_H_ */
+-- 
+2.11.0
 
-Not sure what is causing it. Might just be the amount of network device 
-drivers. When discussing (parts of) this spatch Julia mentioned about 
-use of disjunction vs expression:
-
-"""
-You can put a disjunction: \(fn1\|fn2\).  Another option is to make an
-identifier metavariable with an appropriate regular expression, but this
-would be less efficient than the disjuction option.  Coccinelle does 
-some optimizations based on what is the pattern matching code, but not 
-regular expression constraints.
-"""
-
-but I ended up using the disjunction:
-
-RET = \(register_netdevice\|register_ndev\)(NDEV);
-if (<+... RET ...+>) {
-
-so that can not be optimized further.
-
->> Should we remove ssb and bcma from backports and use the in kernel
->> versions instead? I do not expect so many changes any more affecting
->> the wifi drivers.
-> 
-> I have no opinion either way.
-
-There may be some new cores coming up in our wifi chips that BCMA would 
-need to add, but also heard rumors about switching to new backplane type.
-
-Regards,
-Arend
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
