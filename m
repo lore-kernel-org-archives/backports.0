@@ -1,38 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:54438 "EHLO sipsolutions.net"
+Received: from mx2.mailbox.org ([80.241.60.215]:43406 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932729AbdIFPNt (ORCPT <rfc822;backports@vger.kernel.org>);
-        Wed, 6 Sep 2017 11:13:49 -0400
-Message-ID: <1504710827.23905.18.camel@sipsolutions.net> (sfid-20170906_171442_910356_6C3842F4)
-Subject: Re: [PATCH 21/21] copy-list: add quantenna qtnfmac driver
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org
-Date: Wed, 06 Sep 2017 17:13:47 +0200
-In-Reply-To: <1504710640.23905.16.camel@sipsolutions.net> (sfid-20170906_171130_571276_1DEFF5F5)
-References: <20170821222817.17376-1-hauke@hauke-m.de>
-         <20170821222817.17376-22-hauke@hauke-m.de>
-         (sfid-20170822_002853_824683_59CC6C9B) <1504710640.23905.16.camel@sipsolutions.net>
-         (sfid-20170906_171130_571276_1DEFF5F5)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+        id S1751806AbdIQQ6u (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 17 Sep 2017 12:58:50 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 3/4] header: add UUID_STRING_LEN
+Date: Sun, 17 Sep 2017 18:58:12 +0200
+Message-Id: <20170917165813.17580-4-hauke@hauke-m.de> (sfid-20170917_185854_365871_BCB4CA48)
+In-Reply-To: <20170917165813.17580-1-hauke@hauke-m.de>
+References: <20170917165813.17580-1-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2017-09-06 at 17:10 +0200, Johannes Berg wrote:
-> 
-> And finally 19, it seems like we should be able to just add something
-> like
-> 
-> config BPAUTO_REFCOUNT
-> 	def_bool y
-> 	#h-file linux/refcount.h
+This was added in commit 2b1b0d6670 ("lib/uuid.c: introduce a few more
+generic helpers") and is used by ath10k.
 
-And perhaps that also needs
-	#c-file lib/refcount.c
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/uuid.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-but even that seems reasonably self-contained?
+diff --git a/backport/backport-include/linux/uuid.h b/backport/backport-include/linux/uuid.h
+index 5ffe225b..bc6fbe17 100644
+--- a/backport/backport-include/linux/uuid.h
++++ b/backport/backport-include/linux/uuid.h
+@@ -3,6 +3,14 @@
+ #include <linux/version.h>
+ #include_next <linux/uuid.h>
+ 
++#ifndef UUID_STRING_LEN
++/*
++ * The length of a UUID string ("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
++ * not including trailing NUL.
++ */
++#define	UUID_STRING_LEN		36
++#endif
++
+ #if LINUX_VERSION_IS_LESS(4,13,0)
+ #define guid_t uuid_le
+ #define uuid_t uuid_be
+-- 
+2.11.0
 
-johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
