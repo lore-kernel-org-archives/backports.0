@@ -1,54 +1,30 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:60736 "EHLO sipsolutions.net"
+Received: from mx2.mailbox.org ([80.241.60.215]:43311 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752637AbdIHJZk (ORCPT <rfc822;backports@vger.kernel.org>);
-        Fri, 8 Sep 2017 05:25:40 -0400
-Message-ID: <1504862738.6177.18.camel@sipsolutions.net> (sfid-20170908_112541_179205_041F014E)
-Subject: Re: [PATCH 08/21] header: backport devm_acpi_dev_add_driver_gpios()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org
-Date: Fri, 08 Sep 2017 11:25:38 +0200
-In-Reply-To: <c5f48794-8d4c-b4e2-bfac-7d5473490756@hauke-m.de>
-References: <20170821222817.17376-1-hauke@hauke-m.de>
-         <20170821222817.17376-9-hauke@hauke-m.de>
-         <1504710103.23905.12.camel@sipsolutions.net>
-         <c5f48794-8d4c-b4e2-bfac-7d5473490756@hauke-m.de>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+        id S934788AbdIYTqq (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 25 Sep 2017 15:46:46 -0400
+To: Johannes Berg <johannes@sipsolutions.net>,
+        "backports@vger.kernel.org" <backports@vger.kernel.org>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: backports release
+Message-ID: <27bccd20-ae01-a395-2d02-eff89ec3301d@hauke-m.de> (sfid-20170925_214826_078557_DC0DCFEF)
+Date: Mon, 25 Sep 2017 21:46:42 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2017-09-06 at 23:58 +0200, Hauke Mehrtens wrote:
-> 
-> > This I don't understand - you said it's hard to do for <3.19, and
-> > then
-> > make a simple no-op for all, but don't do it for <3.19 at all?
-> > 
-> > Why not just LINUX_VERION_LESS(4,13,0)?
-> 
-> struct acpi_gpio_mapping was added to kernel 3.19. We could add here
-> a dummy struct acpi_gpio_mapping, but the drivers anyway need more
-> adjustments to compile properly.
+Hi all,
 
-Ok.
+I would like to make a backports tar release in the next few days based
+on kernel 4.14-rc2 with the current backports repository status.
 
-> > > +#define devm_acpi_dev_add_driver_gpios
-> > > LINUX_BACKPORT(devm_acpi_dev_add_driver_gpios)
-> > > +static inline int devm_acpi_dev_add_driver_gpios(struct device
-> > > *dev,
-> > > +			      const struct acpi_gpio_mapping
-> > > *gpios)
-> > > +{
-> > > +	return -ENXIO;
-> > > +}
-> > > +#endif /* LINUX_VERSION_IN_RANGE(4,19,0, 4,13,0) */
-> 
-> This should be
-> +#endif /* LINUX_VERSION_IN_RANGE(3,19,0, 4,13,0) */
+Are there any objections to this? Does anybody have any known issues?
+I know that kernels < 3.14 are not working well, but I do not really
+care any more.
 
-Right. I'll fix this and apply then.
+I would like to use this tar in LEDE later on.
 
-johannes
+Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
