@@ -1,60 +1,100 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:49816 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751762AbdJMJkG (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 13 Oct 2017 05:40:06 -0400
-Received: by mail-wm0-f41.google.com with SMTP id b189so19725751wmd.4
-        for <backports@vger.kernel.org>; Fri, 13 Oct 2017 02:40:05 -0700 (PDT)
-Subject: Re: [PATCH] backports: no longer support kernels < 3.10
-To: Johannes Berg <johannes@sipsolutions.net>,
-        backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-References: <20171013092641.9113-1-johannes@sipsolutions.net>
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <97250f48-ae56-e53a-fb57-1cbfc6470b77@broadcom.com> (sfid-20171013_114008_475433_62DE9875)
-Date: Fri, 13 Oct 2017 11:40:01 +0200
-MIME-Version: 1.0
-In-Reply-To: <20171013092641.9113-1-johannes@sipsolutions.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Received: from mx2.mailbox.org ([80.241.60.215]:56263 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751677AbdJATiu (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 1 Oct 2017 15:38:50 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH] header: fix compile error on PowerPC (PPC_85xx)
+Date: Sun,  1 Oct 2017 21:38:23 +0200
+Message-Id: <20171001193823.22685-1-hauke@hauke-m.de> (sfid-20171001_213725_971296_CB3FECF9)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 13-10-17 11:26, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
-> 
-> Since CRYPTO_CMAC was introduced in 3.10, and mac80211
-> depends on it, we basically get nothing out of it anyway.
-> 
-> I'm not removing the support code (yet) since it actually
-> compiles, and perhaps somebody has a need for (certain)
-> kernel versions lower than 3.10.
-> 
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> ---
->   README                         |  2 +-
->   devel/backports-update-manager | 10 +++++++++-
->   2 files changed, 10 insertions(+), 2 deletions(-)
-> 
+Including linux/interrupt.h in linux/hrtimer.h causes this error message
+on PowerPC builds on x86, ARM and MIPS it works:
 
-[ trimming ]
+  CC [M]  /backports-4.14-rc2-1/compat/main.o
+In file included from /backports-4.14-rc2-1/backport-include/linux/printk.h:5:0,
+                 from ./include/linux/kernel.h:13,
+                 from /backports-4.14-rc2-1/backport-include/linux/kernel.h:3,
+                 from ./include/linux/list.h:8,
+                 from /backports-4.14-rc2-1/backport-include/linux/list.h:3,
+                 from ./include/linux/module.h:9,
+                 from /backports-4.14-rc2-1/backport-include/linux/module.h:3,
+                 from /backports-4.14-rc2-1/compat/main.c:1:
+./include/linux/ratelimit.h: In function 'ratelimit_state_exit':
+./include/linux/ratelimit.h:62:11: error: dereferencing pointer to incomplete type 'struct task_struct'
+    current->comm, rs->missed);
+           ^
+./include/linux/printk.h:279:37: note: in definition of macro 'pr_warning'
+  printk(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
+                                     ^
+./include/linux/ratelimit.h:61:3: note: in expansion of macro 'pr_warn'
+   pr_warn("%s: %d output lines suppressed due to ratelimiting\n",
+   ^
 
-> diff --git a/devel/backports-update-manager b/devel/backports-update-manager
-> index 64df29bcea26..dc9697253e84 100755
-> --- a/devel/backports-update-manager
-> +++ b/devel/backports-update-manager
+The backport of the hrtimer_start() functions needs the
+linux/interrupt.h because some parts are defined there. Fix this by
+moving the hrtimer_start() backport to the linux/interrupt.h backport
+header file.
 
-[ more trimming ]
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/hrtimer.h   | 17 -----------------
+ backport/backport-include/linux/interrupt.h | 17 ++++++++++++++++-
+ 2 files changed, 16 insertions(+), 18 deletions(-)
+ delete mode 100644 backport/backport-include/linux/hrtimer.h
 
-> @@ -52,7 +54,7 @@ class backport_kernel_updater:
->   
->       @classmethod
->       def _get_ubuntu_ppa_mainline_kernels(cls):
-> -        base = 'http://kernel.ubuntu.com/~kernel-ppa/mainline/'
-> +        base = KPATH
+diff --git a/backport/backport-include/linux/hrtimer.h b/backport/backport-include/linux/hrtimer.h
+deleted file mode 100644
+index bdcf106e..00000000
+--- a/backport/backport-include/linux/hrtimer.h
++++ /dev/null
+@@ -1,17 +0,0 @@
+-#ifndef _BP_HRTIMER_H
+-#define _BP_HRTIMER_H
+-#include <linux/version.h>
+-#include_next <linux/hrtimer.h>
+-#include <linux/interrupt.h>
+-
+-#if LINUX_VERSION_IS_LESS(4,10,0)
+-static inline void backport_hrtimer_start(struct hrtimer *timer, s64 time,
+-					  const enum hrtimer_mode mode)
+-{
+-	ktime_t _time = { .tv64 = time };
+-	hrtimer_start(timer, _time, mode);
+-}
+-#define hrtimer_start LINUX_BACKPORT(hrtimer_start)
+-#endif
+-
+-#endif /* _BP_HRTIMER_H */
+diff --git a/backport/backport-include/linux/interrupt.h b/backport/backport-include/linux/interrupt.h
+index 0e243ba8..ad3cbf66 100644
+--- a/backport/backport-include/linux/interrupt.h
++++ b/backport/backport-include/linux/interrupt.h
+@@ -1,2 +1,17 @@
+-#include <linux/hrtimer.h>
++#ifndef _BP_LINUX_INTERRUPT_H
++#define _BP_LINUX_INTERRUPT_H
++#include <linux/version.h>
+ #include_next <linux/interrupt.h>
++#include <linux/ktime.h>
++
++#if LINUX_VERSION_IS_LESS(4,10,0)
++static inline void backport_hrtimer_start(struct hrtimer *timer, s64 time,
++					  const enum hrtimer_mode mode)
++{
++	ktime_t _time = { .tv64 = time };
++	hrtimer_start(timer, _time, mode);
++}
++#define hrtimer_start LINUX_BACKPORT(hrtimer_start)
++#endif
++
++#endif /* _BP_LINUX_INTERRUPT_H */
+-- 
+2.11.0
 
-I guess this is not directly related to this change, right?
-
-Regards,
-Arend
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
