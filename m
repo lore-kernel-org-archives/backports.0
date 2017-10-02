@@ -1,63 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:42246 "EHLO
+Received: from s3.sipsolutions.net ([144.76.63.242]:33936 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752485AbdJLVAb (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 12 Oct 2017 17:00:31 -0400
+        with ESMTP id S1751062AbdJBMzD (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 2 Oct 2017 08:55:03 -0400
+Message-ID: <1506947972.25586.14.camel@sipsolutions.net> (sfid-20171002_145308_345469_764283FA)
+Subject: Re: [PATCH] header: fix compile error on PowerPC (PPC_85xx)
 From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4/5] backports: add bin2hex()
-Date: Thu, 12 Oct 2017 23:00:24 +0200
-Message-Id: <20171012210025.7490-4-johannes@sipsolutions.net> (sfid-20171012_230033_397823_259F188D)
-In-Reply-To: <20171012210025.7490-1-johannes@sipsolutions.net>
-References: <20171012210025.7490-1-johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org
+Date: Mon, 02 Oct 2017 14:39:32 +0200
+In-Reply-To: <20171001193823.22685-1-hauke@hauke-m.de> (sfid-20171001_213725_971296_CB3FECF9)
+References: <20171001193823.22685-1-hauke@hauke-m.de>
+         (sfid-20171001_213725_971296_CB3FECF9)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Sun, 2017-10-01 at 21:38 +0200, Hauke Mehrtens wrote:
+> Including linux/interrupt.h in linux/hrtimer.h causes this error
+> message
+> on PowerPC builds on x86, ARM and MIPS it works:
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/linux/kernel.h |  5 +++++
- backport/compat/backport-3.18.c          | 10 ++++++++++
- 2 files changed, 15 insertions(+)
+I think I also saw this on x86 on older kernel versions, and couldn't
+really figure out what was causing it...
 
-diff --git a/backport/backport-include/linux/kernel.h b/backport/backport-include/linux/kernel.h
-index ea55d7d3b143..0d625313f5fb 100644
---- a/backport/backport-include/linux/kernel.h
-+++ b/backport/backport-include/linux/kernel.h
-@@ -211,6 +211,11 @@ static inline u32 reciprocal_scale(u32 val, u32 ep_ro)
- }
- #endif /* LINUX_VERSION_IS_LESS(3,14,0) */
- 
-+#if LINUX_VERSION_IS_LESS(3,18,0)
-+#define bin2hex LINUX_BACKPORT(bin2hex)
-+extern char *bin2hex(char *dst, const void *src, size_t count);
-+#endif
-+
- #endif /* __BACKPORT_KERNEL_H */
- 
- /*
-diff --git a/backport/compat/backport-3.18.c b/backport/compat/backport-3.18.c
-index 73db233cb22b..d2eceef7dc77 100644
---- a/backport/compat/backport-3.18.c
-+++ b/backport/compat/backport-3.18.c
-@@ -320,3 +320,13 @@ void memzero_explicit(void *s, size_t count)
- }
- EXPORT_SYMBOL_GPL(memzero_explicit);
- #endif
-+
-+char *bin2hex(char *dst, const void *src, size_t count)
-+{
-+	const unsigned char *_src = src;
-+
-+	while (count--)
-+		dst = hex_byte_pack(dst, *_src++);
-+	return dst;
-+}
-+EXPORT_SYMBOL(bin2hex);
--- 
-2.14.2
+> The backport of the hrtimer_start() functions needs the
+> linux/interrupt.h because some parts are defined there. Fix this by
+> moving the hrtimer_start() backport to the linux/interrupt.h backport
+> header file.
+
+Does hrtimre.h always include interrupt.h, so that we get it in when
+somebody includes just hrtimer.h?
+
+johannes
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
