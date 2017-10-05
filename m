@@ -1,35 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:47088 "EHLO
+Received: from s3.sipsolutions.net ([144.76.63.242]:34338 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753490AbdJMGAm (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 13 Oct 2017 02:00:42 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1e2t1U-0007Q3-KP
-        for backports@vger.kernel.org; Fri, 13 Oct 2017 08:00:40 +0200
-Message-ID: <1507874440.2551.0.camel@sipsolutions.net> (sfid-20171013_080043_451037_48105BB7)
-Subject: Re: [PATCH 5/5] backports: add signature verification code
+        with ESMTP id S1751342AbdJEGtk (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 5 Oct 2017 02:49:40 -0400
+Message-ID: <1507186179.2387.12.camel@sipsolutions.net> (sfid-20171005_084942_554412_3C4B8BB7)
+Subject: Re: [PATCH] header: fix compile error on PowerPC (PPC_85xx)
 From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Date: Fri, 13 Oct 2017 08:00:40 +0200
-In-Reply-To: <1507845908.1998.78.camel@sipsolutions.net> (sfid-20171013_000514_660535_9D47C209)
-References: <20171012210025.7490-1-johannes@sipsolutions.net>
-         <20171012210025.7490-5-johannes@sipsolutions.net>
-         (sfid-20171012_230042_844657_1EE6AD34) <1507844540.1998.77.camel@sipsolutions.net>
-         (sfid-20171012_234223_926621_6E791A9A) <1507845908.1998.78.camel@sipsolutions.net>
-         (sfid-20171013_000514_660535_9D47C209)
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: backports@vger.kernel.org
+Date: Thu, 05 Oct 2017 08:49:39 +0200
+In-Reply-To: <a47cbe26-26fb-cfb6-f7cd-17d77153ea66@hauke-m.de>
+References: <20171001193823.22685-1-hauke@hauke-m.de>
+         <1506947972.25586.14.camel@sipsolutions.net>
+         <a47cbe26-26fb-cfb6-f7cd-17d77153ea66@hauke-m.de>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2017-10-13 at 00:05 +0200, Johannes Berg wrote:
-> Might be that this leaks memory - will need to investigate.
+On Mon, 2017-10-02 at 20:31 +0200, Hauke Mehrtens wrote:
+> On 10/02/2017 02:39 PM, Johannes Berg wrote:
+> > On Sun, 2017-10-01 at 21:38 +0200, Hauke Mehrtens wrote:
+> > > Including linux/interrupt.h in linux/hrtimer.h causes this error
+> > > message
+> > > on PowerPC builds on x86, ARM and MIPS it works:
+> > 
+> > I think I also saw this on x86 on older kernel versions, and
+> > couldn't
+> > really figure out what was causing it...
+> 
+> I haven't fully understood this issue, but the LEDE build bot found
+> it
+> on multiple PowerPC based systems. With this patch applied it is
+> compiling on all targets.
+> 
+> I ran the build test script on the compat server and it was fine with
+> this patch applied for all kernel versions that worked before.
 
-I fixed this just after sending that email, it was trivial after all -
-I just had forgotten to free a bunch of key components.
+Ok.
 
+> > > The backport of the hrtimer_start() functions needs the
+> > > linux/interrupt.h because some parts are defined there. Fix this
+> > > by
+> > > moving the hrtimer_start() backport to the linux/interrupt.h
+> > > backport
+> > > header file.
+> > 
+> > Does hrtimre.h always include interrupt.h, so that we get it in
+> > when
+> > somebody includes just hrtimer.h?
+> 
+> I do not know, it is not included directly.
+
+I guess we'll find out :-)
+
+I'll apply this.
+
+thanks,
 johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
