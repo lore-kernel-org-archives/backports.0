@@ -1,29 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:42604 "EHLO
+Received: from s3.sipsolutions.net ([144.76.63.242]:42242 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750990AbdJLVmW (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 12 Oct 2017 17:42:22 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1e2lFF-0006yL-Be
-        for backports@vger.kernel.org; Thu, 12 Oct 2017 23:42:21 +0200
-Message-ID: <1507844540.1998.77.camel@sipsolutions.net> (sfid-20171012_234223_926621_6E791A9A)
-Subject: Re: [PATCH 5/5] backports: add signature verification code
+        with ESMTP id S1751759AbdJLVAb (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 12 Oct 2017 17:00:31 -0400
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Date: Thu, 12 Oct 2017 23:42:20 +0200
-In-Reply-To: <20171012210025.7490-5-johannes@sipsolutions.net> (sfid-20171012_230042_844657_1EE6AD34)
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 3/5] copy-list: move mpls includes
+Date: Thu, 12 Oct 2017 23:00:23 +0200
+Message-Id: <20171012210025.7490-3-johannes@sipsolutions.net> (sfid-20171012_230033_445238_ABBF2088)
+In-Reply-To: <20171012210025.7490-1-johannes@sipsolutions.net>
 References: <20171012210025.7490-1-johannes@sipsolutions.net>
-         <20171012210025.7490-5-johannes@sipsolutions.net>
-         (sfid-20171012_230042_844657_1EE6AD34)
-Content-Type: text/plain
-Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I addressed the fixme, and pushed it to the pending branch.
+From: Johannes Berg <johannes.berg@intel.com>
 
-johannes
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ copy-list | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/copy-list b/copy-list
+index 11fd3455d611..0bd232f44b56 100644
+--- a/copy-list
++++ b/copy-list
+@@ -65,6 +65,11 @@ net/Makefile
+ net/Kconfig
+ net/wireless/
+ net/mac80211/
++# MPLS labels, checked on skb->protocol on the
++# respective 802 family, only ethernet seems to use
++# this right now, see 960d97f95
++include/linux/mpls.h
++include/uapi/linux/mpls.h
+ 
+ drivers/net/wireless/ath/
+ drivers/ssb/
+@@ -113,9 +118,3 @@ include/uapi/linux/nfc.h
+ drivers/nfc/
+ include/linux/platform_data/nfcmrvl.h
+ include/linux/platform_data/nxp-nci.h
+-
+-# MPLS labels, checked on skb->protocol on the
+-# respective 802 family, only ethernet seems to use
+-# this right now, see 960d97f95
+-include/linux/mpls.h
+-include/uapi/linux/mpls.h
+-- 
+2.14.2
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
