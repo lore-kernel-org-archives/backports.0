@@ -1,46 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:48878 "EHLO
+Received: from s3.sipsolutions.net ([144.76.63.242]:42238 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751549AbdJMJJ3 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 13 Oct 2017 05:09:29 -0400
-Message-ID: <1507885767.2551.37.camel@sipsolutions.net> (sfid-20171013_110931_156207_94EFFE7B)
-Subject: Re: [PATCH 5/5] backports: add signature verification code
+        with ESMTP id S1751961AbdJLVAb (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 12 Oct 2017 17:00:31 -0400
 From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
-        backports@vger.kernel.org
+To: backports@vger.kernel.org
 Cc: Johannes Berg <johannes.berg@intel.com>
-Date: Fri, 13 Oct 2017 11:09:27 +0200
-In-Reply-To: <ce53b46c-e75c-3a37-606b-e40be0ae063f@broadcom.com> (sfid-20171013_110218_691131_412EC474)
+Subject: [PATCH 2/5] backports: add mktime64()
+Date: Thu, 12 Oct 2017 23:00:22 +0200
+Message-Id: <20171012210025.7490-2-johannes@sipsolutions.net> (sfid-20171012_230033_138596_E84C5CAC)
+In-Reply-To: <20171012210025.7490-1-johannes@sipsolutions.net>
 References: <20171012210025.7490-1-johannes@sipsolutions.net>
-         <20171012210025.7490-5-johannes@sipsolutions.net>
-         <ce53b46c-e75c-3a37-606b-e40be0ae063f@broadcom.com>
-         (sfid-20171013_110218_691131_412EC474)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
+From: Johannes Berg <johannes.berg@intel.com>
 
-Please trim quotes, your email was 469K :)
-(and evolution gets slow replying to that :P)
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/backport-include/linux/time64.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-On Fri, 2017-10-13 at 11:02 +0200, Arend van Spriel wrote:
-> On 12-10-17 23:00, Johannes Berg wrote:
-> > From: Johannes Berg <johannes.berg@intel.com>
-> > 
-> > Uh, this was awful. Because the crypto/ things are completely
-> > impossible to backport, I've actually implemented this by using
-> > mbedtls and embedding the relevant functions it has...
-> 
-> Interesting approach. I guess the crypto/ things would simply pull
-> in  too much new kernel stuff in the compat layer. So how much does
-> mbedtls add to compat.ko?
+diff --git a/backport/backport-include/linux/time64.h b/backport/backport-include/linux/time64.h
+index 609b8904e40d..49805da9dfce 100644
+--- a/backport/backport-include/linux/time64.h
++++ b/backport/backport-include/linux/time64.h
+@@ -21,4 +21,26 @@
+ #define timespec64			timespec
+ #endif /* LINUX_VERSION_IS_LESS(3,17,0) */
+ 
++#if LINUX_VERSION_IS_LESS(3,19,0)
++static inline time64_t mktime64(const unsigned int year0, const unsigned int mon0,
++				const unsigned int day, const unsigned int hour,
++				const unsigned int min, const unsigned int sec)
++{
++	unsigned int mon = mon0, year = year0;
++
++	/* 1..12 -> 11,12,1..10 */
++	if (0 >= (int) (mon -= 2)) {
++		mon += 12;	/* Puts Feb last since it has leap day */
++		year -= 1;
++	}
++
++	return ((((time64_t)
++		  (year/4 - year/100 + year/400 + 367*mon/12 + day) +
++		  year*365 - 719499
++	    )*24 + hour /* now have hours - midnight tomorrow handled here */
++	  )*60 + min /* now have minutes */
++	)*60 + sec; /* finally seconds */
++}
++#endif
++
+ #endif /* __BACKPORT_LINUX_TIME64_H */
+-- 
+2.14.2
 
-Good question, let's try to compile:
-
-add/remove: 246/0 grow/shrink: 1/0 up/down: 49050/0 (49050)
-
-johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
