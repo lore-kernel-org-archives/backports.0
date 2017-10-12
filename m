@@ -1,56 +1,30 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:48810 "EHLO
+Received: from s3.sipsolutions.net ([144.76.63.242]:42800 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751086AbdJKObu (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 11 Oct 2017 10:31:50 -0400
+        with ESMTP id S1756120AbdJLWFK (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 12 Oct 2017 18:05:10 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1e2lbI-0007LD-Km
+        for backports@vger.kernel.org; Fri, 13 Oct 2017 00:05:08 +0200
+Message-ID: <1507845908.1998.78.camel@sipsolutions.net> (sfid-20171013_000514_660535_9D47C209)
+Subject: Re: [PATCH 5/5] backports: add signature verification code
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 2/5] backports: backport from_timer() and timer_setup()
-Date: Wed, 11 Oct 2017 16:31:44 +0200
-Message-Id: <20171011143147.3337-2-johannes@sipsolutions.net> (sfid-20171011_163300_411719_1DA39D88)
-In-Reply-To: <20171011143147.3337-1-johannes@sipsolutions.net>
-References: <20171011143147.3337-1-johannes@sipsolutions.net>
+Date: Fri, 13 Oct 2017 00:05:08 +0200
+In-Reply-To: <1507844540.1998.77.camel@sipsolutions.net> (sfid-20171012_234223_926621_6E791A9A)
+References: <20171012210025.7490-1-johannes@sipsolutions.net>
+         <20171012210025.7490-5-johannes@sipsolutions.net>
+         (sfid-20171012_230042_844657_1EE6AD34) <1507844540.1998.77.camel@sipsolutions.net>
+         (sfid-20171012_234223_926621_6E791A9A)
+Content-Type: text/plain
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+Might be that this leaks memory - will need to investigate.
 
-These are needed for Kees's new timer API, and luckily
-he already provided them for conversion purposes :-)
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/linux/timer.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/backport/backport-include/linux/timer.h b/backport/backport-include/linux/timer.h
-index df560a26f77f..85f74d40deda 100644
---- a/backport/backport-include/linux/timer.h
-+++ b/backport/backport-include/linux/timer.h
-@@ -32,4 +32,20 @@ static inline void setup_deferrable_timer_key(struct timer_list *timer,
- 
- #endif
- 
-+#ifndef from_timer
-+#define TIMER_DATA_TYPE          unsigned long
-+#define TIMER_FUNC_TYPE          void (*)(TIMER_DATA_TYPE)
-+
-+static inline void timer_setup(struct timer_list *timer,
-+			       void (*callback) (struct timer_list *),
-+			       unsigned int flags)
-+{
-+	__setup_timer(timer, (TIMER_FUNC_TYPE) callback,
-+		      (TIMER_DATA_TYPE) timer, flags);
-+}
-+
-+#define from_timer(var, callback_timer, timer_fieldname) \
-+	container_of(callback_timer, typeof(*var), timer_fieldname)
-+#endif
-+
- #endif /* _BACKPORT_TIMER_H */
--- 
-2.14.2
-
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
