@@ -1,50 +1,34 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:49392 "EHLO
+Received: from s3.sipsolutions.net ([144.76.63.242]:48778 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751607AbdJMKEl (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 13 Oct 2017 06:04:41 -0400
+        with ESMTP id S1751468AbdJMI4N (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 13 Oct 2017 04:56:13 -0400
+Message-ID: <1507884971.2551.34.camel@sipsolutions.net> (sfid-20171013_105614_526461_57020383)
+Subject: Re: [PATCH 4/5] backports: add bin2hex()
 From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+        backports@vger.kernel.org
 Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: add fixed version of __verify_pcpu_ptr
-Date: Fri, 13 Oct 2017 12:04:37 +0200
-Message-Id: <20171013100437.18073-1-johannes@sipsolutions.net> (sfid-20171013_120442_575458_4E11F624)
+Date: Fri, 13 Oct 2017 10:56:11 +0200
+In-Reply-To: <8f8b0780-b14e-4795-94ff-6d55f1541c19@broadcom.com> (sfid-20171013_105521_852219_E8C86D05)
+References: <20171012210025.7490-1-johannes@sipsolutions.net>
+         <20171012210025.7490-4-johannes@sipsolutions.net>
+         <8f8b0780-b14e-4795-94ff-6d55f1541c19@broadcom.com>
+         (sfid-20171013_105521_852219_E8C86D05)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Fri, 2017-10-13 at 10:55 +0200, Arend van Spriel wrote:
+> On 12-10-17 23:00, Johannes Berg wrote:
+> > From: Johannes Berg <johannes.berg@intel.com>
+> 
+> any remark why/who needs this. The change summary hints that it is 
+> needed for kernels before 3.18.
 
-Some parts of the code (ath_cmn_is_fft_buf_full) use a per-CPU
-pointer to an array, so we need to backport the fixed version
-or this fails to compile in 3.10/3.11.
+Sorry. Key stuff in the next patch requires it :)
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/linux/percpu-defs.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
- create mode 100644 backport/backport-include/linux/percpu-defs.h
-
-diff --git a/backport/backport-include/linux/percpu-defs.h b/backport/backport-include/linux/percpu-defs.h
-new file mode 100644
-index 000000000000..87a92e07e04f
---- /dev/null
-+++ b/backport/backport-include/linux/percpu-defs.h
-@@ -0,0 +1,13 @@
-+#ifndef __BACKPORT_PERCPU_DEFS_H
-+#define __BACKPORT_PERCPU_DEFS_H
-+#include_next <linux/percpu-defs.h>
-+
-+/* override this with the array-safe version */
-+#undef __verify_pcpu_ptr
-+#define __verify_pcpu_ptr(ptr)						\
-+do {									\
-+	const void __percpu *__vpp_verify = (typeof((ptr) + 0))NULL;	\
-+	(void)__vpp_verify;						\
-+} while (0)
-+
-+#endif /* __BACKPORT_PERCPU_DEFS_H */
--- 
-2.14.2
-
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
