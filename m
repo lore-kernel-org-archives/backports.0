@@ -1,35 +1,60 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:36612 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751354AbdJXOJr (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 24 Oct 2017 10:09:47 -0400
-Message-ID: <1508854185.2639.32.camel@sipsolutions.net> (sfid-20171024_160948_704933_04FF9D62)
-Subject: Re: Compiling error of backport-4.12.c
-From: Johannes Berg <johannes@sipsolutions.net>
-To: =?UTF-8?Q?=E5=90=B3=E9=87=8D=E6=AF=85?= <uranus0206@gmail.com>,
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:49816 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751762AbdJMJkG (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 13 Oct 2017 05:40:06 -0400
+Received: by mail-wm0-f41.google.com with SMTP id b189so19725751wmd.4
+        for <backports@vger.kernel.org>; Fri, 13 Oct 2017 02:40:05 -0700 (PDT)
+Subject: Re: [PATCH] backports: no longer support kernels < 3.10
+To: Johannes Berg <johannes@sipsolutions.net>,
         backports@vger.kernel.org
-Date: Tue, 24 Oct 2017 16:09:45 +0200
-In-Reply-To: <1508843560.2639.28.camel@sipsolutions.net> (sfid-20171024_131243_858493_ECB135F8)
-References: <CAN+BLYGmKpHm+iJOMynv6Qhvyh=ECaJnAM96QiU=LptiisW0xw@mail.gmail.com>
-         (sfid-20171024_123805_971082_E604BA18) <1508843560.2639.28.camel@sipsolutions.net>
-         (sfid-20171024_131243_858493_ECB135F8)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Cc: Johannes Berg <johannes.berg@intel.com>
+References: <20171013092641.9113-1-johannes@sipsolutions.net>
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <97250f48-ae56-e53a-fb57-1cbfc6470b77@broadcom.com> (sfid-20171013_114008_475433_62DE9875)
+Date: Fri, 13 Oct 2017 11:40:01 +0200
+MIME-Version: 1.0
+In-Reply-To: <20171013092641.9113-1-johannes@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2017-10-24 at 13:12 +0200, Johannes Berg wrote:
-> On Tue, 2017-10-24 at 18:37 +0800, 吳重毅 wrote:
-> > 
-> > /home/chungyi/backport_test/compat/backport-4.12.c:49:27: error:
-> > lvalue required as left operand of assignment
-> >    genl_info_userhdr(info) = ERR_PTR(-ENOMEM);
-> >                            ^
+On 13-10-17 11:26, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
 > 
-> Huh, my mistake, I'll fix that.
+> Since CRYPTO_CMAC was introduced in 3.10, and mac80211
+> depends on it, we basically get nothing out of it anyway.
+> 
+> I'm not removing the support code (yet) since it actually
+> compiles, and perhaps somebody has a need for (certain)
+> kernel versions lower than 3.10.
+> 
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+>   README                         |  2 +-
+>   devel/backports-update-manager | 10 +++++++++-
+>   2 files changed, 10 insertions(+), 2 deletions(-)
+> 
 
-Fixed, please try now.
+[ trimming ]
 
-johannes
+> diff --git a/devel/backports-update-manager b/devel/backports-update-manager
+> index 64df29bcea26..dc9697253e84 100755
+> --- a/devel/backports-update-manager
+> +++ b/devel/backports-update-manager
+
+[ more trimming ]
+
+> @@ -52,7 +54,7 @@ class backport_kernel_updater:
+>   
+>       @classmethod
+>       def _get_ubuntu_ppa_mainline_kernels(cls):
+> -        base = 'http://kernel.ubuntu.com/~kernel-ppa/mainline/'
+> +        base = KPATH
+
+I guess this is not directly related to this change, right?
+
+Regards,
+Arend
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
