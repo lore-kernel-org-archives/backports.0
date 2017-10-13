@@ -1,29 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:42830 "EHLO
+Received: from s3.sipsolutions.net ([144.76.63.242]:48786 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751586AbdJSGlD (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 19 Oct 2017 02:41:03 -0400
-Message-ID: <1508395260.8801.0.camel@sipsolutions.net> (sfid-20171019_084107_032745_FD8A7C1A)
-Subject: Re: [PATCH] backports: remove CRYPTO_CCM backport
+        with ESMTP id S1756708AbdJMI5D (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 13 Oct 2017 04:57:03 -0400
+Message-ID: <1507885021.2551.35.camel@sipsolutions.net> (sfid-20171013_105707_629766_B0B63F8B)
+Subject: Re: [PATCH 1/5] backports: move headers to be clearer
 From: Johannes Berg <johannes@sipsolutions.net>
-To: Luca Coelho <luca@coelho.fi>, backports@vger.kernel.org
-Date: Thu, 19 Oct 2017 08:41:00 +0200
-In-Reply-To: <1508391450.5497.177.camel@coelho.fi>
-References: <20171013103157.26545-1-johannes@sipsolutions.net>
-         <1508391450.5497.177.camel@coelho.fi>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+        backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Date: Fri, 13 Oct 2017 10:57:01 +0200
+In-Reply-To: <353bd455-2253-886a-b0ca-9c3777a739e4@broadcom.com> (sfid-20171013_105624_278491_A3259FA4)
+References: <20171012210025.7490-1-johannes@sipsolutions.net>
+         <353bd455-2253-886a-b0ca-9c3777a739e4@broadcom.com>
+         (sfid-20171013_105624_278491_A3259FA4)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Thu, 2017-10-19 at 08:37 +0300, Luca Coelho wrote:
+On Fri, 2017-10-13 at 10:56 +0200, Arend van Spriel wrote:
 > 
-> Should backports then depend on CRYPTO_CCM? It didn't really work in
-> the past and I got a few reports of broken backport with old kernels
-> due to missing CRYPTO_CCM in the kernel config.
+> On 12-10-17 23:00, Johannes Berg wrote:
+> > From: Johannes Berg <johannes.berg@intel.com>
+> > 
+> > Those uapi header files are always needed, so don't mark them as
+> > being for wwwan drivers.
+> 
+> Just nit picking but your finger seem to have stuck on the 'w' key :-
+> p
 
-this change will automatically make mac80211 depend on it, after re-
-generation.
+Heh :)
 
 johannes
 --
