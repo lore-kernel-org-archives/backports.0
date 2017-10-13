@@ -1,42 +1,50 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:49172 "EHLO
+Received: from s3.sipsolutions.net ([144.76.63.242]:48896 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757709AbdJMJmd (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 13 Oct 2017 05:42:33 -0400
+        with ESMTP id S1751549AbdJMJKI (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 13 Oct 2017 05:10:08 -0400
+Message-ID: <1507885806.2551.38.camel@sipsolutions.net> (sfid-20171013_111018_221373_50D4C303)
+Subject: Re: [PATCH 5/5] backports: add signature verification code
 From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+        backports@vger.kernel.org
 Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH v2 07/11] backports: add netdev_upper_dev_link() extack argument
-Date: Fri, 13 Oct 2017 11:42:22 +0200
-Message-Id: <20171013094226.10021-7-johannes@sipsolutions.net> (sfid-20171013_114235_507862_8A1C8AE8)
-In-Reply-To: <20171013094226.10021-1-johannes@sipsolutions.net>
-References: <20171013094226.10021-1-johannes@sipsolutions.net>
+Date: Fri, 13 Oct 2017 11:10:06 +0200
+In-Reply-To: <1507885767.2551.37.camel@sipsolutions.net>
+References: <20171012210025.7490-1-johannes@sipsolutions.net>
+         <20171012210025.7490-5-johannes@sipsolutions.net>
+         <ce53b46c-e75c-3a37-606b-e40be0ae063f@broadcom.com>
+         (sfid-20171013_110218_691131_412EC474) <1507885767.2551.37.camel@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Fri, 2017-10-13 at 11:09 +0200, Johannes Berg wrote:
+> Hi,
+> 
+> Please trim quotes, your email was 469K :)
+> (and evolution gets slow replying to that :P)
+> 
+> On Fri, 2017-10-13 at 11:02 +0200, Arend van Spriel wrote:
+> > On 12-10-17 23:00, Johannes Berg wrote:
+> > > From: Johannes Berg <johannes.berg@intel.com>
+> > > 
+> > > Uh, this was awful. Because the crypto/ things are completely
+> > > impossible to backport, I've actually implemented this by using
+> > > mbedtls and embedding the relevant functions it has...
+> > 
+> > Interesting approach. I guess the crypto/ things would simply pull
+> > in  too much new kernel stuff in the compat layer. So how much does
+> > mbedtls add to compat.ko?
+> 
+> Good question, let's try to compile:
+> 
+> add/remove: 246/0 grow/shrink: 1/0 up/down: 49050/0 (49050)
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/linux/netdevice.h | 5 +++++
- 1 file changed, 5 insertions(+)
+That's not just mbedtls though, of course, that's all of the code added
+by this patch.
 
-diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
-index 9c912285368e..10d37b804b96 100644
---- a/backport/backport-include/linux/netdevice.h
-+++ b/backport/backport-include/linux/netdevice.h
-@@ -333,4 +333,9 @@ static inline void netif_trans_update(struct net_device *dev)
- 	(_dev)->needs_free_netdev = true;
- #endif
- 
-+#if LINUX_VERSION_IS_LESS(4,14,0)
-+#define netdev_upper_dev_link(dev, upper, extack) \
-+	netdev_upper_dev_link(dev, upper)
-+#endif
-+
- #endif /* __BACKPORT_NETDEVICE_H */
--- 
-2.14.2
-
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
