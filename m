@@ -1,84 +1,65 @@
-Return-path: <kavitam@cdot.in>
-From: "KAVITA MATHUR" <kavitam@cdot.in>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org
-Subject: compilation errors in ath10k driver with latest backports git
-Date: Thu, 7 Sep 2017 14:34:48 +0530
-Message-Id: <20170907090319.M77568@cdot.in>
-In-Reply-To: <cd9ddade-391a-686a-c023-c7a10a575cdc@broadcom.com>
-References: <20170821222817.17376-1-hauke@hauke-m.de> <20170821222817.17376-17-hauke@hauke-m.de> <1504710312.23905.13.camel@sipsolutions.net> <cd9ddade-391a-686a-c023-c7a10a575cdc@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
-	charset=utf-8
+Return-path: <backports-owner@vger.kernel.org>
+Received: from s3.sipsolutions.net ([144.76.63.242]:49164 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757630AbdJMJmc (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 13 Oct 2017 05:42:32 -0400
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH v2 05/11] backports: add bin2hex()
+Date: Fri, 13 Oct 2017 11:42:20 +0200
+Message-Id: <20171013094226.10021-5-johannes@sipsolutions.net> (sfid-20171013_114235_050911_2AEE96FF)
+In-Reply-To: <20171013094226.10021-1-johannes@sipsolutions.net>
+References: <20171013094226.10021-1-johannes@sipsolutions.net>
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
+From: Johannes Berg <johannes.berg@intel.com>
 
-I am using backports git and ath10k git to download latest changes in ath0k driver.
-There are build errors in ath10k drivers due to definitions not backported from kernel
-4.12. Backpors-git is backported kernel till 4.8. Please suggest how to fix these issues.
+This is needed in the key backports in the next patch.
 
-Following is the build error log:
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/backport-include/linux/kernel.h |  5 +++++
+ backport/compat/backport-3.18.c          | 10 ++++++++++
+ 2 files changed, 15 insertions(+)
 
-CC [M]  /home/shw/kavita/backports/backports-output_14Aug17/compat/backport-3.13.o
-CC [M]  /home/shw/kavita/backports/backports-output_14Aug17/compat/backport-3.15.o
-CC [M]  /home/shw/kavita/backports/backports-output_14Aug17/compat/backport-3.18.o
-CC [M]  /home/shw/kavita/backports/backports-output_14Aug17/compat/backport-3.19.o
-CC [M]  /home/shw/kavita/backports/backports-output_14Aug17/compat/backport-4.1.o
-CC [M]  /home/shw/kavita/backports/backports-output_14Aug17/compat/backport-4.2.o
-CC [M]  /home/shw/kavita/backports/backports-output_14Aug17/compat/backport-4.4.o
-CC [M]  /home/shw/kavita/backports/backports-output_14Aug17/compat/backport-4.5.o
-CC [M]  /home/shw/kavita/backports/backports-output_14Aug17/compat/backport-4.7.o
-LD [M]  /home/shw/kavita/backports/backports-output_14Aug17/compat/compat.o
-CC [M]
-/home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless/ath/main.o
-CC [M]
-/home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless/ath/regd.o
-CC [M]  /home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless/ath/hw.o
-CC [M]  /home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless/ath/key.o
-CC [M]
-/home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless/ath/dfs_pattern_detector.o
-CC [M]
-/home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless/ath/dfs_pri_detector.o
-LD [M]  /home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless/ath/ath.o
-CC [M]
-/home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless/ath/ath10k/mac.o
-In file included from
-/home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless/ath/ath10k/mac.h:22,
-               from
-/home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless/ath/ath10k/mac.c:18:
-/home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless/ath/ath10k/core.h:465:
-error: expected specifier-qualifier-list before 'guid_t'
-/home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless/ath/ath10k/mac.c:
-In function 'ath10k_tx_h_add_p2p_noa_ie':
-/home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless/ath/ath10k/mac.c:3492:
-error: implicit declaration of function 'skb_put_data'
-make[8]: ***
-[/home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless/ath/ath10k/mac.o]
-Error 1
-make[7]: ***
-[/home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless/ath/ath10k]
-Error 2
-make[6]: ***
-[/home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless/ath] Error 2
-make[5]: *** [/home/shw/kavita/backports/backports-output_14Aug17/drivers/net/wireless]
-Error 2
-make[4]: *** [_module_/home/shw/kavita/backports/backports-output_14Aug17] Error 2
-make[3]: *** [modules] Error 2
-make[2]: *** [modules] Error 2
-make[1]: *** [modules] Error 2
-make: *** [default] Error 2 
+diff --git a/backport/backport-include/linux/kernel.h b/backport/backport-include/linux/kernel.h
+index 0e9a69f9bcd2..3ddeb13c29a2 100644
+--- a/backport/backport-include/linux/kernel.h
++++ b/backport/backport-include/linux/kernel.h
+@@ -213,6 +213,11 @@ static inline u32 reciprocal_scale(u32 val, u32 ep_ro)
+ }
+ #endif /* LINUX_VERSION_IS_LESS(3,14,0) */
+ 
++#if LINUX_VERSION_IS_LESS(3,18,0)
++#define bin2hex LINUX_BACKPORT(bin2hex)
++extern char *bin2hex(char *dst, const void *src, size_t count);
++#endif
++
+ #endif /* __BACKPORT_KERNEL_H */
+ 
+ /*
+diff --git a/backport/compat/backport-3.18.c b/backport/compat/backport-3.18.c
+index 73db233cb22b..d2eceef7dc77 100644
+--- a/backport/compat/backport-3.18.c
++++ b/backport/compat/backport-3.18.c
+@@ -320,3 +320,13 @@ void memzero_explicit(void *s, size_t count)
+ }
+ EXPORT_SYMBOL_GPL(memzero_explicit);
+ #endif
++
++char *bin2hex(char *dst, const void *src, size_t count)
++{
++	const unsigned char *_src = src;
++
++	while (count--)
++		dst = hex_byte_pack(dst, *_src++);
++	return dst;
++}
++EXPORT_SYMBOL(bin2hex);
+-- 
+2.14.2
 
-
-Thanks & Regards,
-कविता माथुर Kavita Mathur 
-वरिष्ठ अनुसंधान अभियंता  Senior Research Engineer 
-सी-डॉट                      C-DOT
-इलैक्ट्रॉनिक्स सिटी फेज़ I         Electronics City Phase I
-होसूर रोड, बेंगलूरु               Hosur Road, Bengaluru – 560100
-फोन  Ph 080-28529896
-Disclaimer:
-----------
-This email and any files transmitted with it
+--
+To unsubscribe from this list: send the line "unsubscribe backports" in
