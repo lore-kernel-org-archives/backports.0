@@ -1,34 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:48778 "EHLO
+Received: from s3.sipsolutions.net ([144.76.63.242]:49156 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751468AbdJMI4N (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 13 Oct 2017 04:56:13 -0400
-Message-ID: <1507884971.2551.34.camel@sipsolutions.net> (sfid-20171013_105614_526461_57020383)
-Subject: Re: [PATCH 4/5] backports: add bin2hex()
+        with ESMTP id S1757567AbdJMJmc (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 13 Oct 2017 05:42:32 -0400
 From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
-        backports@vger.kernel.org
+To: backports@vger.kernel.org
 Cc: Johannes Berg <johannes.berg@intel.com>
-Date: Fri, 13 Oct 2017 10:56:11 +0200
-In-Reply-To: <8f8b0780-b14e-4795-94ff-6d55f1541c19@broadcom.com> (sfid-20171013_105521_852219_E8C86D05)
-References: <20171012210025.7490-1-johannes@sipsolutions.net>
-         <20171012210025.7490-4-johannes@sipsolutions.net>
-         <8f8b0780-b14e-4795-94ff-6d55f1541c19@broadcom.com>
-         (sfid-20171013_105521_852219_E8C86D05)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Subject: [PATCH v2 03/11] copy-list: move mpls includes
+Date: Fri, 13 Oct 2017 11:42:18 +0200
+Message-Id: <20171013094226.10021-3-johannes@sipsolutions.net> (sfid-20171013_114234_252217_CFAF8795)
+In-Reply-To: <20171013094226.10021-1-johannes@sipsolutions.net>
+References: <20171013094226.10021-1-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2017-10-13 at 10:55 +0200, Arend van Spriel wrote:
-> On 12-10-17 23:00, Johannes Berg wrote:
-> > From: Johannes Berg <johannes.berg@intel.com>
-> 
-> any remark why/who needs this. The change summary hints that it is 
-> needed for kernels before 3.18.
+From: Johannes Berg <johannes.berg@intel.com>
 
-Sorry. Key stuff in the next patch requires it :)
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ copy-list | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-johannes
+diff --git a/copy-list b/copy-list
+index 11fd3455d611..0bd232f44b56 100644
+--- a/copy-list
++++ b/copy-list
+@@ -65,6 +65,11 @@ net/Makefile
+ net/Kconfig
+ net/wireless/
+ net/mac80211/
++# MPLS labels, checked on skb->protocol on the
++# respective 802 family, only ethernet seems to use
++# this right now, see 960d97f95
++include/linux/mpls.h
++include/uapi/linux/mpls.h
+ 
+ drivers/net/wireless/ath/
+ drivers/ssb/
+@@ -113,9 +118,3 @@ include/uapi/linux/nfc.h
+ drivers/nfc/
+ include/linux/platform_data/nfcmrvl.h
+ include/linux/platform_data/nxp-nci.h
+-
+-# MPLS labels, checked on skb->protocol on the
+-# respective 802 family, only ethernet seems to use
+-# this right now, see 960d97f95
+-include/linux/mpls.h
+-include/uapi/linux/mpls.h
+-- 
+2.14.2
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
