@@ -1,229 +1,354 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:49562 "EHLO
+Received: from s3.sipsolutions.net ([144.76.63.242]:50002 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751480AbdJMKTE (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 13 Oct 2017 06:19:04 -0400
+        with ESMTP id S1756047AbdJPT7U (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 16 Oct 2017 15:59:20 -0400
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: reduce mbedtls bignum stack usage
-Date: Fri, 13 Oct 2017 12:19:01 +0200
-Message-Id: <20171013101901.25450-1-johannes@sipsolutions.net> (sfid-20171013_121906_330878_E94D80B4)
+Cc: ilan.peer@intel.com, Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backports: fully add netlink extack for generic netlink
+Date: Mon, 16 Oct 2017 21:59:17 +0200
+Message-Id: <20171016195917.31230-1-johannes@sipsolutions.net> (sfid-20171016_215922_903298_D2C3E0D8)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: Johannes Berg <johannes.berg@intel.com>
 
-mbedtls_mpi_exp_mod() uses almost 4k of memory, which
-really shouldn't be on the stack in the kernel.
+The previous backport just made the code compatible, but removed
+the extack functionality entirely.
+
+By ignoring the setsockopt() and just assuming that userspace does
+in fact support extack (which is true for all of wifi and in fact
+all users of libnl), we can support full extack functionality even
+on kernels that don't support it.
 
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/compat/verification/bignum.c | 87 ++++++++++++++++++++---------------
- 1 file changed, 49 insertions(+), 38 deletions(-)
+ backport/backport-include/linux/netlink.h |   3 +
+ backport/backport-include/net/genetlink.h |  27 +++-
+ backport/compat/Makefile                  |   1 +
+ backport/compat/backport-4.12.c           | 225 ++++++++++++++++++++++++++++++
+ patches/0078-genl-extack.cocci            |   6 +
+ 5 files changed, 261 insertions(+), 1 deletion(-)
+ create mode 100644 backport/compat/backport-4.12.c
 
-diff --git a/backport/compat/verification/bignum.c b/backport/compat/verification/bignum.c
-index 7edfb0837557..b8f65285cf53 100644
---- a/backport/compat/verification/bignum.c
-+++ b/backport/compat/verification/bignum.c
-@@ -1611,22 +1611,31 @@ int mbedtls_mpi_exp_mod( mbedtls_mpi *X, const mbedtls_mpi *A, const mbedtls_mpi
-     size_t i, j, nblimbs;
-     size_t bufsize, nbits;
-     mbedtls_mpi_uint ei, mm, state;
--    mbedtls_mpi RR, T, W[ 2 << MBEDTLS_MPI_WINDOW_SIZE ], Apos;
-+    struct {
-+	    mbedtls_mpi RR, T, W[ 2 << MBEDTLS_MPI_WINDOW_SIZE ], Apos;
-+    } *ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-     int neg;
- 
--    if( mbedtls_mpi_cmp_int( N, 0 ) < 0 || ( N->p[0] & 1 ) == 0 )
--        return( MBEDTLS_ERR_MPI_BAD_INPUT_DATA );
-+    if (!ctx)
-+        return -ENOMEM;
- 
--    if( mbedtls_mpi_cmp_int( E, 0 ) < 0 )
--        return( MBEDTLS_ERR_MPI_BAD_INPUT_DATA );
-+    if( mbedtls_mpi_cmp_int( N, 0 ) < 0 || ( N->p[0] & 1 ) == 0 ) {
-+        ret = ( MBEDTLS_ERR_MPI_BAD_INPUT_DATA );
-+        goto free_ctx;
-+    }
+diff --git a/backport/backport-include/linux/netlink.h b/backport/backport-include/linux/netlink.h
+index 58fad589039f..443599187920 100644
+--- a/backport/backport-include/linux/netlink.h
++++ b/backport/backport-include/linux/netlink.h
+@@ -11,6 +11,9 @@ struct netlink_ext_ack {
+ 	const struct nlattr *bad_attr;
+ 	u8 cookie[NETLINK_MAX_COOKIE_LEN];
+ 	u8 cookie_len;
 +
-+    if( mbedtls_mpi_cmp_int( E, 0 ) < 0 ) {
-+        ret = ( MBEDTLS_ERR_MPI_BAD_INPUT_DATA );
-+        goto free_ctx;
-+    }
++	/* backport only field */
++	const void *__bp_genl_real_ops;
+ };
  
-     /*
-      * Init temps and window size
-      */
-     mpi_montg_init( &mm, N );
--    mbedtls_mpi_init( &RR ); mbedtls_mpi_init( &T );
--    mbedtls_mpi_init( &Apos );
--    memset( W, 0, sizeof( W ) );
-+    mbedtls_mpi_init( &ctx->RR ); mbedtls_mpi_init( &ctx->T );
-+    mbedtls_mpi_init( &ctx->Apos );
-+    memset( ctx->W, 0, sizeof( ctx->W ) );
- 
-     i = mbedtls_mpi_bitlen( E );
- 
-@@ -1638,8 +1647,8 @@ int mbedtls_mpi_exp_mod( mbedtls_mpi *X, const mbedtls_mpi *A, const mbedtls_mpi
- 
-     j = N->n + 1;
-     MBEDTLS_MPI_CHK( mbedtls_mpi_grow( X, j ) );
--    MBEDTLS_MPI_CHK( mbedtls_mpi_grow( &W[1],  j ) );
--    MBEDTLS_MPI_CHK( mbedtls_mpi_grow( &T, j * 2 ) );
-+    MBEDTLS_MPI_CHK( mbedtls_mpi_grow( &ctx->W[1],  j ) );
-+    MBEDTLS_MPI_CHK( mbedtls_mpi_grow( &ctx->T, j * 2 ) );
- 
-     /*
-      * Compensate for negative A (and correct at the end)
-@@ -1647,9 +1656,9 @@ int mbedtls_mpi_exp_mod( mbedtls_mpi *X, const mbedtls_mpi *A, const mbedtls_mpi
-     neg = ( A->s == -1 );
-     if( neg )
-     {
--        MBEDTLS_MPI_CHK( mbedtls_mpi_copy( &Apos, A ) );
--        Apos.s = 1;
--        A = &Apos;
-+        MBEDTLS_MPI_CHK( mbedtls_mpi_copy( &ctx->Apos, A ) );
-+        ctx->Apos.s = 1;
-+        A = &ctx->Apos;
-     }
- 
-     /*
-@@ -1657,31 +1666,31 @@ int mbedtls_mpi_exp_mod( mbedtls_mpi *X, const mbedtls_mpi *A, const mbedtls_mpi
-      */
-     if( _RR == NULL || _RR->p == NULL )
-     {
--        MBEDTLS_MPI_CHK( mbedtls_mpi_lset( &RR, 1 ) );
--        MBEDTLS_MPI_CHK( mbedtls_mpi_shift_l( &RR, N->n * 2 * biL ) );
--        MBEDTLS_MPI_CHK( mbedtls_mpi_mod_mpi( &RR, &RR, N ) );
-+        MBEDTLS_MPI_CHK( mbedtls_mpi_lset( &ctx->RR, 1 ) );
-+        MBEDTLS_MPI_CHK( mbedtls_mpi_shift_l( &ctx->RR, N->n * 2 * biL ) );
-+        MBEDTLS_MPI_CHK( mbedtls_mpi_mod_mpi( &ctx->RR, &ctx->RR, N ) );
- 
-         if( _RR != NULL )
--            memcpy( _RR, &RR, sizeof( mbedtls_mpi ) );
-+            memcpy( _RR, &ctx->RR, sizeof( mbedtls_mpi ) );
-     }
-     else
--        memcpy( &RR, _RR, sizeof( mbedtls_mpi ) );
-+        memcpy( &ctx->RR, _RR, sizeof( mbedtls_mpi ) );
- 
-     /*
-      * W[1] = A * R^2 * R^-1 mod N = A * R mod N
-      */
-     if( mbedtls_mpi_cmp_mpi( A, N ) >= 0 )
--        MBEDTLS_MPI_CHK( mbedtls_mpi_mod_mpi( &W[1], A, N ) );
-+        MBEDTLS_MPI_CHK( mbedtls_mpi_mod_mpi( &ctx->W[1], A, N ) );
-     else
--        MBEDTLS_MPI_CHK( mbedtls_mpi_copy( &W[1], A ) );
-+        MBEDTLS_MPI_CHK( mbedtls_mpi_copy( &ctx->W[1], A ) );
- 
--    MBEDTLS_MPI_CHK( mpi_montmul( &W[1], &RR, N, mm, &T ) );
-+    MBEDTLS_MPI_CHK( mpi_montmul( &ctx->W[1], &ctx->RR, N, mm, &ctx->T ) );
- 
-     /*
-      * X = R^2 * R^-1 mod N = R mod N
-      */
--    MBEDTLS_MPI_CHK( mbedtls_mpi_copy( X, &RR ) );
--    MBEDTLS_MPI_CHK( mpi_montred( X, N, mm, &T ) );
-+    MBEDTLS_MPI_CHK( mbedtls_mpi_copy( X, &ctx->RR ) );
-+    MBEDTLS_MPI_CHK( mpi_montred( X, N, mm, &ctx->T ) );
- 
-     if( wsize > 1 )
-     {
-@@ -1690,21 +1699,21 @@ int mbedtls_mpi_exp_mod( mbedtls_mpi *X, const mbedtls_mpi *A, const mbedtls_mpi
-          */
-         j =  one << ( wsize - 1 );
- 
--        MBEDTLS_MPI_CHK( mbedtls_mpi_grow( &W[j], N->n + 1 ) );
--        MBEDTLS_MPI_CHK( mbedtls_mpi_copy( &W[j], &W[1]    ) );
-+        MBEDTLS_MPI_CHK( mbedtls_mpi_grow( &ctx->W[j], N->n + 1 ) );
-+        MBEDTLS_MPI_CHK( mbedtls_mpi_copy( &ctx->W[j], &ctx->W[1]    ) );
- 
-         for( i = 0; i < wsize - 1; i++ )
--            MBEDTLS_MPI_CHK( mpi_montmul( &W[j], &W[j], N, mm, &T ) );
-+            MBEDTLS_MPI_CHK( mpi_montmul( &ctx->W[j], &ctx->W[j], N, mm, &ctx->T ) );
- 
-         /*
-          * W[i] = W[i - 1] * W[1]
-          */
-         for( i = j + 1; i < ( one << wsize ); i++ )
-         {
--            MBEDTLS_MPI_CHK( mbedtls_mpi_grow( &W[i], N->n + 1 ) );
--            MBEDTLS_MPI_CHK( mbedtls_mpi_copy( &W[i], &W[i - 1] ) );
-+            MBEDTLS_MPI_CHK( mbedtls_mpi_grow( &ctx->W[i], N->n + 1 ) );
-+            MBEDTLS_MPI_CHK( mbedtls_mpi_copy( &ctx->W[i], &ctx->W[i - 1] ) );
- 
--            MBEDTLS_MPI_CHK( mpi_montmul( &W[i], &W[1], N, mm, &T ) );
-+            MBEDTLS_MPI_CHK( mpi_montmul( &ctx->W[i], &ctx->W[1], N, mm, &ctx->T ) );
-         }
-     }
- 
-@@ -1741,7 +1750,7 @@ int mbedtls_mpi_exp_mod( mbedtls_mpi *X, const mbedtls_mpi *A, const mbedtls_mpi
-             /*
-              * out of window, square X
-              */
--            MBEDTLS_MPI_CHK( mpi_montmul( X, X, N, mm, &T ) );
-+            MBEDTLS_MPI_CHK( mpi_montmul( X, X, N, mm, &ctx->T ) );
-             continue;
-         }
- 
-@@ -1759,12 +1768,12 @@ int mbedtls_mpi_exp_mod( mbedtls_mpi *X, const mbedtls_mpi *A, const mbedtls_mpi
-              * X = X^wsize R^-1 mod N
-              */
-             for( i = 0; i < wsize; i++ )
--                MBEDTLS_MPI_CHK( mpi_montmul( X, X, N, mm, &T ) );
-+                MBEDTLS_MPI_CHK( mpi_montmul( X, X, N, mm, &ctx->T ) );
- 
-             /*
-              * X = X * W[wbits] R^-1 mod N
-              */
--            MBEDTLS_MPI_CHK( mpi_montmul( X, &W[wbits], N, mm, &T ) );
-+            MBEDTLS_MPI_CHK( mpi_montmul( X, &ctx->W[wbits], N, mm, &ctx->T ) );
- 
-             state--;
-             nbits = 0;
-@@ -1777,18 +1786,18 @@ int mbedtls_mpi_exp_mod( mbedtls_mpi *X, const mbedtls_mpi *A, const mbedtls_mpi
-      */
-     for( i = 0; i < nbits; i++ )
-     {
--        MBEDTLS_MPI_CHK( mpi_montmul( X, X, N, mm, &T ) );
-+        MBEDTLS_MPI_CHK( mpi_montmul( X, X, N, mm, &ctx->T ) );
- 
-         wbits <<= 1;
- 
-         if( ( wbits & ( one << wsize ) ) != 0 )
--            MBEDTLS_MPI_CHK( mpi_montmul( X, &W[1], N, mm, &T ) );
-+            MBEDTLS_MPI_CHK( mpi_montmul( X, &ctx->W[1], N, mm, &ctx->T ) );
-     }
- 
-     /*
-      * X = A^E * R * R^-1 mod N = A^E mod N
-      */
--    MBEDTLS_MPI_CHK( mpi_montred( X, N, mm, &T ) );
-+    MBEDTLS_MPI_CHK( mpi_montred( X, N, mm, &ctx->T ) );
- 
-     if( neg && E->n != 0 && ( E->p[0] & 1 ) != 0 )
-     {
-@@ -1799,12 +1808,14 @@ int mbedtls_mpi_exp_mod( mbedtls_mpi *X, const mbedtls_mpi *A, const mbedtls_mpi
- cleanup:
- 
-     for( i = ( one << ( wsize - 1 ) ); i < ( one << wsize ); i++ )
--        mbedtls_mpi_free( &W[i] );
-+        mbedtls_mpi_free( &ctx->W[i] );
- 
--    mbedtls_mpi_free( &W[1] ); mbedtls_mpi_free( &T ); mbedtls_mpi_free( &Apos );
-+    mbedtls_mpi_free( &ctx->W[1] ); mbedtls_mpi_free( &ctx->T ); mbedtls_mpi_free( &ctx->Apos );
- 
-     if( _RR == NULL || _RR->p == NULL )
--        mbedtls_mpi_free( &RR );
-+        mbedtls_mpi_free( &ctx->RR );
-+free_ctx:
-+    kfree(ctx);
- 
-     return( ret );
+ #define NL_SET_ERR_MSG(extack, msg) do {	\
+diff --git a/backport/backport-include/net/genetlink.h b/backport/backport-include/net/genetlink.h
+index b655d243621b..bf25340b84ea 100644
+--- a/backport/backport-include/net/genetlink.h
++++ b/backport/backport-include/net/genetlink.h
+@@ -23,10 +23,16 @@ static inline struct netlink_ext_ack *genl_info_extack(struct genl_info *info)
+ #if LINUX_VERSION_IS_GEQ(4,12,0)
+ 	return info->extack;
+ #else
+-	return NULL;
++	return info->userhdr;
+ #endif
  }
+ 
++/* this gets put in place of info->userhdr, since we use that above */
++static inline void *genl_info_userhdr(struct genl_info *info)
++{
++	return (u8 *)info->genlhdr + GENL_HDRLEN;
++}
++
+ /* this is for patches we apply */
+ #if LINUX_VERSION_IS_LESS(3,7,0)
+ #define genl_info_snd_portid(__genl_info) (__genl_info->snd_pid)
+@@ -202,4 +208,23 @@ static inline struct nlattr **genl_family_attrbuf(struct genl_family *family)
+ #define __genl_ro_after_init __ro_after_init
+ #endif
+ 
++#if LINUX_VERSION_IS_LESS(4,12,0)
++static inline int
++__real_bp_extack_genl_register_family(struct genl_family *family)
++{
++	return genl_register_family(family);
++}
++static inline void
++__real_bp_extack_genl_unregister_family(struct genl_family *family)
++{
++	genl_unregister_family(family);
++}
++int bp_extack_genl_register_family(struct genl_family *family);
++void bp_extack_genl_unregister_family(struct genl_family *family);
++#undef genl_register_family
++#define genl_register_family bp_extack_genl_register_family
++#undef genl_unregister_family
++#define genl_unregister_family bp_extack_genl_unregister_family
++#endif
++
+ #endif /* __BACKPORT_NET_GENETLINK_H */
+diff --git a/backport/compat/Makefile b/backport/compat/Makefile
+index 69cfd514da71..5c79b9b849cb 100644
+--- a/backport/compat/Makefile
++++ b/backport/compat/Makefile
+@@ -36,6 +36,7 @@ compat-$(CPTCFG_KERNEL_4_6) += backport-4.6.o
+ compat-$(CPTCFG_KERNEL_4_7) += backport-4.7.o
+ compat-$(CPTCFG_KERNEL_4_8) += backport-4.8.o
+ compat-$(CPTCFG_KERNEL_4_10) += backport-4.10.o
++compat-$(CPTCFG_KERNEL_4_12) += backport-4.12.o
+ 
+ compat-$(CPTCFG_BPAUTO_CRYPTO_SKCIPHER) += crypto-skcipher.o
+ 
+diff --git a/backport/compat/backport-4.12.c b/backport/compat/backport-4.12.c
+new file mode 100644
+index 000000000000..4d73cb4e929b
+--- /dev/null
++++ b/backport/compat/backport-4.12.c
+@@ -0,0 +1,225 @@
++/*
++ * Copyright 2017 Intel Deutschland GmbH
++ */
++#include <net/genetlink.h>
++#include <net/sock.h>
++
++enum nlmsgerr_attrs {
++	NLMSGERR_ATTR_UNUSED,
++	NLMSGERR_ATTR_MSG,
++	NLMSGERR_ATTR_OFFS,
++	NLMSGERR_ATTR_COOKIE,
++	__NLMSGERR_ATTR_MAX,
++	NLMSGERR_ATTR_MAX = __NLMSGERR_ATTR_MAX - 1
++};
++
++#define NLM_F_CAPPED	0x100	/* request was capped */
++#define NLM_F_ACK_TLVS	0x200	/* extended ACK TVLs were included */
++
++struct bp_extack_genl_family {
++	struct genl_family family;
++	struct genl_family *real_family;
++
++	struct genl_ops ops[];
++};
++
++static const struct nla_policy extack_dummy_policy[1] = {};
++
++static struct bp_extack_genl_family *get_copy(const struct genl_ops *op)
++{
++	do {
++		op--;
++	} while (op->policy != extack_dummy_policy);
++
++	return container_of(op, struct bp_extack_genl_family, ops[0]);
++}
++
++static int extack_pre_doit(const struct genl_ops *ops,
++			   struct sk_buff *skb,
++			   struct genl_info *info)
++{
++	struct netlink_ext_ack *extack = kzalloc(sizeof(*extack), GFP_KERNEL);
++	struct bp_extack_genl_family *copy = get_copy(ops);
++	const struct genl_ops *real_ops;
++	int err;
++
++	info->userhdr = extack;
++
++	if (!extack) {
++		info->userhdr = ERR_PTR(-ENOMEM);
++		return -ENOMEM;
++	}
++
++	real_ops = &copy->real_family->ops[ops - &copy->ops[1]];
++	extack->__bp_genl_real_ops = real_ops;
++
++	err = copy->real_family->pre_doit(real_ops, skb, info);
++
++	if (err) {
++		info->userhdr = ERR_PTR(err);
++		kfree(extack);
++	}
++
++	return err;
++}
++
++static void extack_netlink_ack(struct sk_buff *in_skb, struct nlmsghdr *nlh,
++			       int err, const struct netlink_ext_ack *extack)
++{
++	struct sk_buff *skb;
++	struct nlmsghdr *rep;
++	struct nlmsgerr *errmsg;
++	size_t payload = sizeof(*errmsg);
++	size_t tlvlen = 0;
++	unsigned int flags = 0;
++	/* backports assumes everyone supports this - libnl does so it's true */
++	bool nlk_has_extack = true;
++
++	/* Error messages get the original request appened, unless the user
++	 * requests to cap the error message, and get extra error data if
++	 * requested.
++	 * (ignored in backports)
++	 */
++	if (err) {
++		if (1)
++			payload += nlmsg_len(nlh);
++		else
++			flags |= NLM_F_CAPPED;
++		if (nlk_has_extack && extack) {
++			if (extack->_msg)
++				tlvlen += nla_total_size(strlen(extack->_msg) + 1);
++			if (extack->bad_attr)
++				tlvlen += nla_total_size(sizeof(u32));
++		}
++	} else {
++		flags |= NLM_F_CAPPED;
++
++		if (nlk_has_extack && extack && extack->cookie_len)
++			tlvlen += nla_total_size(extack->cookie_len);
++	}
++
++	if (tlvlen)
++		flags |= NLM_F_ACK_TLVS;
++
++	skb = nlmsg_new(payload + tlvlen, GFP_KERNEL);
++	if (!skb) {
++		NETLINK_CB(in_skb).sk->sk_err = ENOBUFS;
++		NETLINK_CB(in_skb).sk->sk_error_report(NETLINK_CB(in_skb).sk);
++		return;
++	}
++
++	rep = __nlmsg_put(skb, NETLINK_CB(in_skb).portid, nlh->nlmsg_seq,
++			  NLMSG_ERROR, payload, flags);
++	errmsg = nlmsg_data(rep);
++	errmsg->error = err;
++	memcpy(&errmsg->msg, nlh, payload > sizeof(*errmsg) ? nlh->nlmsg_len : sizeof(*nlh));
++
++	if (nlk_has_extack && extack) {
++		if (err) {
++			if (extack->_msg)
++				WARN_ON(nla_put_string(skb, NLMSGERR_ATTR_MSG,
++						       extack->_msg));
++			if (extack->bad_attr &&
++			    !WARN_ON((u8 *)extack->bad_attr < in_skb->data ||
++				     (u8 *)extack->bad_attr >= in_skb->data +
++							       in_skb->len))
++				WARN_ON(nla_put_u32(skb, NLMSGERR_ATTR_OFFS,
++						    (u8 *)extack->bad_attr -
++						    in_skb->data));
++		} else {
++			if (extack->cookie_len)
++				WARN_ON(nla_put(skb, NLMSGERR_ATTR_COOKIE,
++						extack->cookie_len,
++						extack->cookie));
++		}
++	}
++
++	nlmsg_end(skb, rep);
++
++	netlink_unicast(in_skb->sk, skb, NETLINK_CB(in_skb).portid, MSG_DONTWAIT);
++}
++
++static int extack_doit(struct sk_buff *skb, struct genl_info *info)
++{
++	const struct genl_ops *real_ops;
++	int err;
++
++	/* older kernels have a bug here */
++	if (IS_ERR(info->userhdr)) {
++		extack_netlink_ack(skb, info->nlhdr,
++				   PTR_ERR(info->userhdr),
++				   genl_info_extack(info));
++		goto out;
++	}
++
++	real_ops = genl_info_extack(info)->__bp_genl_real_ops;
++	err = real_ops->doit(skb, info);
++
++	if (err == -EINTR)
++		return err;
++
++	if (info->nlhdr->nlmsg_flags & NLM_F_ACK || err)
++		extack_netlink_ack(skb, info->nlhdr, err,
++				   genl_info_extack(info));
++
++out:
++	/* suppress sending ACK from normal netlink code */
++	info->nlhdr->nlmsg_flags &= ~NLM_F_ACK;
++	return 0;
++}
++
++static void extack_post_doit(const struct genl_ops *ops,
++			     struct sk_buff *skb,
++			     struct genl_info *info)
++{
++	get_copy(ops)->real_family->post_doit(ops, skb, info);
++	kfree(info->userhdr);
++}
++
++int bp_extack_genl_register_family(struct genl_family *family)
++{
++	unsigned int size = sizeof(struct bp_extack_genl_family) +
++			    sizeof(family->ops[0]) * (family->n_ops + 1);
++	struct bp_extack_genl_family *copy;
++	int i, err;
++
++	copy = kzalloc(size, GFP_KERNEL);
++	if (!copy)
++		return -ENOMEM;
++
++	copy->family = *family;
++	copy->real_family = family;
++	copy->family.ops = &copy->ops[1];
++
++	for (i = 0; i < family->n_ops; i++) {
++		copy->ops[i + 1] = family->ops[i];
++		copy->ops[i + 1].doit = extack_doit;
++	}
++
++	copy->ops[0].policy = extack_dummy_policy;
++
++	copy->family.pre_doit = extack_pre_doit;
++	copy->family.post_doit = extack_post_doit;
++
++	/*
++	 * store in attrbuf, so that even if we re-register the family
++	 * the data will be overwritten and we don't overwrite data
++	 * that's used again later...
++	 */
++	family->attrbuf = (void *)copy;
++
++	err = __real_bp_extack_genl_register_family(&copy->family);
++	if (err)
++		kfree(copy);
++	return err;
++}
++EXPORT_SYMBOL_GPL(bp_extack_genl_register_family);
++
++void bp_extack_genl_unregister_family(struct genl_family *family)
++{
++	struct bp_extack_genl_family *copy = (void *)family->attrbuf;
++
++	__real_bp_extack_genl_unregister_family(&copy->family);
++	kfree(copy);
++}
++EXPORT_SYMBOL_GPL(bp_extack_genl_unregister_family);
+diff --git a/patches/0078-genl-extack.cocci b/patches/0078-genl-extack.cocci
+index b25061743554..5560e09dc0c0 100644
+--- a/patches/0078-genl-extack.cocci
++++ b/patches/0078-genl-extack.cocci
+@@ -3,3 +3,9 @@ struct genl_info *info;
+ @@
+ -info->extack
+ +genl_info_extack(info)
++
++@@
++struct genl_info *info;
++@@
++-info->userhdr
+++genl_info_userhdr(info)
 -- 
 2.14.2
 
