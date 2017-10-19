@@ -1,67 +1,71 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:43012 "EHLO
+Received: from paleale.coelho.fi ([176.9.41.70]:54170 "EHLO
         farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751926AbdJaL6p (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 31 Oct 2017 07:58:45 -0400
-Message-ID: <1509451120.4492.216.camel@coelho.fi> (sfid-20171031_125851_316276_5FDEBC25)
+        with ESMTP id S1751118AbdJSFhe (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 19 Oct 2017 01:37:34 -0400
+Message-ID: <1508391450.5497.177.camel@coelho.fi> (sfid-20171019_073736_708281_20E2AD3E)
 From: Luca Coelho <luca@coelho.fi>
 To: Johannes Berg <johannes@sipsolutions.net>,
-        =?UTF-8?Q?=E5=90=B3=E9=87=8D=E6=AF=85?= <uranus0206@gmail.com>
-Cc: backports@vger.kernel.org
-Date: Tue, 31 Oct 2017 13:58:40 +0200
-In-Reply-To: <1509393839.2637.3.camel@sipsolutions.net>
-References: <CAN+BLYGmKpHm+iJOMynv6Qhvyh=ECaJnAM96QiU=LptiisW0xw@mail.gmail.com>
-         <1508843560.2639.28.camel@sipsolutions.net>
-         <1508854185.2639.32.camel@sipsolutions.net>
-         <CAN+BLYEfk4_ntabp+Yxdmu8eV_f7knefRwPmbH1b=VV0POoGaQ@mail.gmail.com>
-         (sfid-20171026_055256_037938_4070B188) <1509002960.2421.50.camel@sipsolutions.net>
-         (sfid-20171026_092934_213999_8CEEC02D) <1509005208.2421.51.camel@sipsolutions.net>
-         (sfid-20171026_100654_665631_5F5B08F1) <1509393839.2637.3.camel@sipsolutions.net>
+        backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>
+Date: Thu, 19 Oct 2017 08:37:30 +0300
+In-Reply-To: <20171013103157.26545-1-johannes@sipsolutions.net>
+References: <20171013103157.26545-1-johannes@sipsolutions.net>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Subject: Re: Compiling error of backport-4.12.c
+Subject: Re: [PATCH] backports: remove CRYPTO_CCM backport
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 2017-10-30 at 21:03 +0100, Johannes Berg wrote:
-> On Thu, 2017-10-26 at 10:06 +0200, Johannes Berg wrote:
-> > On Thu, 2017-10-26 at 09:29 +0200, Johannes Berg wrote:
-> > > On Thu, 2017-10-26 at 11:52 +0800, 吳重毅 wrote:
-> > > > Thankd for fixing, i am able compile now.
-> > > 
-> > > Ok, great.
-> > > 
-> > > > But when i load the modules and firmware.bin, it crash.
-> > > 
-> > > Crap, sorry about that. I'll see what I can do about it right
-> > > now.
-> > 
-> > Ok, I see the bug. Not sure yet how to fix, but yeah.
+On Fri, 2017-10-13 at 12:31 +0200, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
 > 
-> I thought I said I'd fixed it, but don't see that email.
+> This never actually worked properly as far as I can tell,
+> and now it looks like it won't even compile due to the
+> real crypto_memneq() backport.
 > 
-> Anyway, I did, but Luca found another bug ... where it compiles, this
-> fixes it, I think:
+> Just remove it - distro kernels have it enabled and all
+> others should just enable it.
 > 
-> --- a/compat/backport-4.12.c
-> +++ b/compat/backport-4.12.c
-> @@ -225,6 +225,7 @@ int bp_extack_genl_register_family(struct
-> genl_family *family)
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+>  backport/compat/Kconfig     | 11 -------
+>  backport/compat/Makefile    |  1 -
+>  backport/compat/backports.h | 10 ------
+>  backport/compat/main.c      |  9 +-----
+>  patches/crypto-ccm.patch    | 78 ---------------------------------
+> ------------
+>  5 files changed, 1 insertion(+), 108 deletions(-)
+>  delete mode 100644 patches/crypto-ccm.patch
+> 
+> diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
+> index 542cf0cca781..492efbfc7d9f 100644
+> --- a/backport/compat/Kconfig
+> +++ b/backport/compat/Kconfig
+> @@ -102,17 +102,6 @@ config BPAUTO_USERSEL_BUILD_ALL
+>  	  It's only really useful for compat testing, so
+>  	  you probably shouldn't enable it.
 >  
->  	/* copy this since the family might access it directly */
->  	family->attrbuf = copy->family.attrbuf;
-> +	family->mcgrp_offset = copy->family.mcgrp_offset;
->  
->  	mutex_lock(&copies_mutex);
->  	list_add_tail(&copy->list, &copies_list);
-> 
-> But on older kernels this doesn't compile, and needs more work.
+> -config BPAUTO_CRYPTO_CCM
+> -	depends on CRYPTO_AEAD
+> -	depends on CRYPTO_CTR
+> -	bool
+> -
+> -config BPAUTO_BUILD_CRYPTO_CCM
+> -	bool
+> -	default n if CRYPTO_CCM
+> -	default y if BPAUTO_CRYPTO_CCM
+> -	#c-file crypto/ccm.c
+> -
+>  config BPAUTO_CRYPTO_SKCIPHER
+>  	tristate
+>  	depends on KERNEL_4_3
 
-FWIW, this fixes the problem I was having with nl80211 commands that
-were never completing.  I tried it in kernel v4.7.
+Should backports then depend on CRYPTO_CCM? It didn't really work in
+the past and I got a few reports of broken backport with old kernels
+due to missing CRYPTO_CCM in the kernel config.
 
 --
-Cheers,
 Luca.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
