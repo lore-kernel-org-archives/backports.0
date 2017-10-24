@@ -1,43 +1,34 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:49124 "EHLO
+Received: from s3.sipsolutions.net ([144.76.63.242]:36612 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751762AbdJMJj7 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 13 Oct 2017 05:39:59 -0400
-Message-ID: <1507887597.2551.41.camel@sipsolutions.net> (sfid-20171013_114000_601332_99F5F36E)
-Subject: Re: [PATCH 5/5] backports: add signature verification code
+        with ESMTP id S1751354AbdJXOJr (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 24 Oct 2017 10:09:47 -0400
+Message-ID: <1508854185.2639.32.camel@sipsolutions.net> (sfid-20171024_160948_704933_04FF9D62)
+Subject: Re: Compiling error of backport-4.12.c
 From: Johannes Berg <johannes@sipsolutions.net>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+To: =?UTF-8?Q?=E5=90=B3=E9=87=8D=E6=AF=85?= <uranus0206@gmail.com>,
         backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Date: Fri, 13 Oct 2017 11:39:57 +0200
-In-Reply-To: <1507887514.2551.40.camel@sipsolutions.net> (sfid-20171013_113837_720986_87C1D508)
-References: <20171012210025.7490-1-johannes@sipsolutions.net>
-         <20171012210025.7490-5-johannes@sipsolutions.net>
-         <ce53b46c-e75c-3a37-606b-e40be0ae063f@broadcom.com>
-         <1507885767.2551.37.camel@sipsolutions.net>
-         <2f943e21-1a4f-0863-dc7b-93640f9c4149@broadcom.com>
-         (sfid-20171013_113631_961954_E067CB12) <1507887514.2551.40.camel@sipsolutions.net>
-         (sfid-20171013_113837_720986_87C1D508)
+Date: Tue, 24 Oct 2017 16:09:45 +0200
+In-Reply-To: <1508843560.2639.28.camel@sipsolutions.net> (sfid-20171024_131243_858493_ECB135F8)
+References: <CAN+BLYGmKpHm+iJOMynv6Qhvyh=ECaJnAM96QiU=LptiisW0xw@mail.gmail.com>
+         (sfid-20171024_123805_971082_E604BA18) <1508843560.2639.28.camel@sipsolutions.net>
+         (sfid-20171024_131243_858493_ECB135F8)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2017-10-13 at 11:38 +0200, Johannes Berg wrote:
-> On Fri, 2017-10-13 at 11:36 +0200, Arend van Spriel wrote:
-> 
-> > > add/remove: 246/0 grow/shrink: 1/0 up/down: 49050/0 (49050)
+On Tue, 2017-10-24 at 13:12 +0200, Johannes Berg wrote:
+> On Tue, 2017-10-24 at 18:37 +0800, 吳重毅 wrote:
 > > 
-> > Not sure what tool output this is so I assume it means 49k
-> > increase? 
-> > That looks good I would say.
+> > /home/chungyi/backport_test/compat/backport-4.12.c:49:27: error:
+> > lvalue required as left operand of assignment
+> >    genl_info_userhdr(info) = ERR_PTR(-ENOMEM);
+> >                            ^
 > 
-> This was from scripts/bloat-o-meter (kernel sources). And yeah,
-> that's a hair under 48KiB :)
+> Huh, my mistake, I'll fix that.
 
-FWIW, the code is far larger because I just copied it with almost no
-modification, there's a lot of stuff that's not even compiled here, and
-for the things that are compiled, a lot isn't needed and not linked in.
+Fixed, please try now.
 
 johannes
 --
