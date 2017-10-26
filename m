@@ -1,54 +1,38 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:42242 "EHLO
+Received: from s3.sipsolutions.net ([144.76.63.242]:38334 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751759AbdJLVAb (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 12 Oct 2017 17:00:31 -0400
+        with ESMTP id S1750919AbdJZIGu (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 26 Oct 2017 04:06:50 -0400
+Message-ID: <1509005208.2421.51.camel@sipsolutions.net> (sfid-20171026_100654_665631_5F5B08F1)
+Subject: Re: Compiling error of backport-4.12.c
 From: Johannes Berg <johannes@sipsolutions.net>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 3/5] copy-list: move mpls includes
-Date: Thu, 12 Oct 2017 23:00:23 +0200
-Message-Id: <20171012210025.7490-3-johannes@sipsolutions.net> (sfid-20171012_230033_445238_ABBF2088)
-In-Reply-To: <20171012210025.7490-1-johannes@sipsolutions.net>
-References: <20171012210025.7490-1-johannes@sipsolutions.net>
+To: =?UTF-8?Q?=E5=90=B3=E9=87=8D=E6=AF=85?= <uranus0206@gmail.com>
+Cc: backports@vger.kernel.org
+Date: Thu, 26 Oct 2017 10:06:48 +0200
+In-Reply-To: <1509002960.2421.50.camel@sipsolutions.net> (sfid-20171026_092934_213999_8CEEC02D)
+References: <CAN+BLYGmKpHm+iJOMynv6Qhvyh=ECaJnAM96QiU=LptiisW0xw@mail.gmail.com>
+         <1508843560.2639.28.camel@sipsolutions.net>
+         <1508854185.2639.32.camel@sipsolutions.net>
+         <CAN+BLYEfk4_ntabp+Yxdmu8eV_f7knefRwPmbH1b=VV0POoGaQ@mail.gmail.com>
+         (sfid-20171026_055256_037938_4070B188) <1509002960.2421.50.camel@sipsolutions.net>
+         (sfid-20171026_092934_213999_8CEEC02D)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Thu, 2017-10-26 at 09:29 +0200, Johannes Berg wrote:
+> On Thu, 2017-10-26 at 11:52 +0800, 吳重毅 wrote:
+> > Thankd for fixing, i am able compile now.
+> 
+> Ok, great.
+> 
+> > But when i load the modules and firmware.bin, it crash.
+> 
+> Crap, sorry about that. I'll see what I can do about it right now.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- copy-list | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Ok, I see the bug. Not sure yet how to fix, but yeah.
 
-diff --git a/copy-list b/copy-list
-index 11fd3455d611..0bd232f44b56 100644
---- a/copy-list
-+++ b/copy-list
-@@ -65,6 +65,11 @@ net/Makefile
- net/Kconfig
- net/wireless/
- net/mac80211/
-+# MPLS labels, checked on skb->protocol on the
-+# respective 802 family, only ethernet seems to use
-+# this right now, see 960d97f95
-+include/linux/mpls.h
-+include/uapi/linux/mpls.h
- 
- drivers/net/wireless/ath/
- drivers/ssb/
-@@ -113,9 +118,3 @@ include/uapi/linux/nfc.h
- drivers/nfc/
- include/linux/platform_data/nfcmrvl.h
- include/linux/platform_data/nxp-nci.h
--
--# MPLS labels, checked on skb->protocol on the
--# respective 802 family, only ethernet seems to use
--# this right now, see 960d97f95
--include/linux/mpls.h
--include/uapi/linux/mpls.h
--- 
-2.14.2
-
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
