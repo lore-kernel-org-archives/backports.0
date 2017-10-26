@@ -1,48 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.mailbox.org ([80.241.60.212]:44693 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751120AbdJBSb0 (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 2 Oct 2017 14:31:26 -0400
-Subject: Re: [PATCH] header: fix compile error on PowerPC (PPC_85xx)
-To: Johannes Berg <johannes@sipsolutions.net>
+Received: from s3.sipsolutions.net ([144.76.63.242]:38070 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750884AbdJZH3X (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 26 Oct 2017 03:29:23 -0400
+Message-ID: <1509002960.2421.50.camel@sipsolutions.net> (sfid-20171026_092934_213999_8CEEC02D)
+Subject: Re: Compiling error of backport-4.12.c
+From: Johannes Berg <johannes@sipsolutions.net>
+To: =?UTF-8?Q?=E5=90=B3=E9=87=8D=E6=AF=85?= <uranus0206@gmail.com>
 Cc: backports@vger.kernel.org
-References: <20171001193823.22685-1-hauke@hauke-m.de>
- <1506947972.25586.14.camel@sipsolutions.net>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <a47cbe26-26fb-cfb6-f7cd-17d77153ea66@hauke-m.de> (sfid-20171002_203128_535902_C54B2E48)
-Date: Mon, 2 Oct 2017 20:31:21 +0200
-MIME-Version: 1.0
-In-Reply-To: <1506947972.25586.14.camel@sipsolutions.net>
-Content-Type: text/plain; charset=utf-8
+Date: Thu, 26 Oct 2017 09:29:20 +0200
+In-Reply-To: <CAN+BLYEfk4_ntabp+Yxdmu8eV_f7knefRwPmbH1b=VV0POoGaQ@mail.gmail.com> (sfid-20171026_055256_037938_4070B188)
+References: <CAN+BLYGmKpHm+iJOMynv6Qhvyh=ECaJnAM96QiU=LptiisW0xw@mail.gmail.com>
+         <1508843560.2639.28.camel@sipsolutions.net>
+         <1508854185.2639.32.camel@sipsolutions.net>
+         <CAN+BLYEfk4_ntabp+Yxdmu8eV_f7knefRwPmbH1b=VV0POoGaQ@mail.gmail.com>
+         (sfid-20171026_055256_037938_4070B188)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 10/02/2017 02:39 PM, Johannes Berg wrote:
-> On Sun, 2017-10-01 at 21:38 +0200, Hauke Mehrtens wrote:
->> Including linux/interrupt.h in linux/hrtimer.h causes this error
->> message
->> on PowerPC builds on x86, ARM and MIPS it works:
-> 
-> I think I also saw this on x86 on older kernel versions, and couldn't
-> really figure out what was causing it...
+On Thu, 2017-10-26 at 11:52 +0800, 吳重毅 wrote:
+> Thankd for fixing, i am able compile now.
 
-I haven't fully understood this issue, but the LEDE build bot found it
-on multiple PowerPC based systems. With this patch applied it is
-compiling on all targets.
+Ok, great.
 
-I ran the build test script on the compat server and it was fine with
-this patch applied for all kernel versions that worked before.
+> But when i load the modules and firmware.bin, it crash.
 
->> The backport of the hrtimer_start() functions needs the
->> linux/interrupt.h because some parts are defined there. Fix this by
->> moving the hrtimer_start() backport to the linux/interrupt.h backport
->> header file.
-> 
-> Does hrtimre.h always include interrupt.h, so that we get it in when
-> somebody includes just hrtimer.h?
+Crap, sorry about that. I'll see what I can do about it right now.
 
-I do not know, it is not included directly.
+johannes
 
-Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
