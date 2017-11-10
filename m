@@ -1,38 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.mailbox.org ([80.241.60.215]:37553 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751202AbdI3Wbi (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sat, 30 Sep 2017 18:31:38 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 0DB9D4C35E
-        for <backports@vger.kernel.org>; Sun,  1 Oct 2017 00:31:36 +0200 (CEST)
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
-        with ESMTP id qLnsre_meOOR for <backports@vger.kernel.org>;
-        Sun,  1 Oct 2017 00:31:33 +0200 (CEST)
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: backports-4.14-rc2-1 released
-Message-ID: <44a41bfb-239b-26f3-5627-f6501a2b6ef5@hauke-m.de> (sfid-20171001_003054_982330_910048FC)
-Date: Sun, 1 Oct 2017 00:31:32 +0200
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:33490 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751220AbdKJIEN (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 10 Nov 2017 03:04:13 -0500
+Received: by mail-wm0-f43.google.com with SMTP id r68so4897337wmr.0
+        for <backports@vger.kernel.org>; Fri, 10 Nov 2017 00:04:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAN+BLYG8yxBbEuGB=rYDJAPA5i7AwPEqknLas1+FM=iP6w5N=w@mail.gmail.com>
+References: <CAN+BLYEAyzFaCOt8rM9OMX2RhhFnahXvRJQY+-nTgdjcpGeTLA@mail.gmail.com>
+ <CAN+BLYG8yxBbEuGB=rYDJAPA5i7AwPEqknLas1+FM=iP6w5N=w@mail.gmail.com>
+From: =?UTF-8?B?5ZCz6YeN5q+F?= <uranus0206@gmail.com>
+Date: Fri, 10 Nov 2017 16:03:51 +0800
+Message-ID: <CAN+BLYHawvjYt+HK3QKR1jRqmibepNK8wkszHSgpMSNsEqK4qg@mail.gmail.com> (sfid-20171110_090415_622837_13CE9927)
+Subject: Re: QCA9984 ap mode with ath10k backport cannot be connect
+To: backports@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-backports-4.14-rc2 was released. This is based on Linux 4.14-rc2.
+Hi:
+I also have another card which driver is ath9k. I use the same
+backport source to build ath9k module, and get the same result(I do
+not get any fail message in dmesg).
 
-https://www.kernel.org/pub/linux/kernel/projects/backports/stable/v4.14-rc2/backports-4.14-rc2-1.tar.xz
+Enable wifi ap mode is successful. But cannot be connected. Then i
+change to previous built modules( an issue with old module is wifi
+card with ath9k cannot use), and i can connect to ap.
 
-The source code can be found here:
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
+Here are both backport source i made(backport to linux4.2):
+Old:  https://drive.google.com/open?id=1y00crEiBzpZS9qILvFaPYfZrVKdIXuT4
+New:  https://drive.google.com/open?id=1zuxoyysXj2RskxKeMZ4h2sakqJI1wYzT
 
-This release should compile on kernel 3.13 to 4.13, we still have some
-problems on older kernel versions, probably some configurations will
-also work on older kernel versions, but not everything will work.
-
-Hauke
+I diff the backport sources and they are very different.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
