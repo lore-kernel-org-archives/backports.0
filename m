@@ -1,96 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pg0-f49.google.com ([74.125.83.49]:46816 "EHLO
-        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbdLBAot (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 1 Dec 2017 19:44:49 -0500
-Received: by mail-pg0-f49.google.com with SMTP id b11so5171192pgu.13
-        for <backports@vger.kernel.org>; Fri, 01 Dec 2017 16:44:49 -0800 (PST)
-Received: from ?IPv6:2600:100f:b000:9b80:6941:fc3f:6520:9004? ([2600:100f:b000:9b80:6941:fc3f:6520:9004])
-        by smtp.gmail.com with ESMTPSA id h13sm12772807pfi.40.2017.12.01.16.44.47
-        for <backports@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Dec 2017 16:44:48 -0800 (PST)
-From: Remington Furman <remicles2@gmail.com>
-Subject: Cross-compiling wifi driver on Android
-To: backports@vger.kernel.org
-Message-ID: <41f0fd53-25ef-420e-8ef8-f24498b8118e@gmail.com> (sfid-20171202_014451_466599_433CD4CB)
-Date: Fri, 1 Dec 2017 16:44:46 -0800
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:7140 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751208AbdLAS5U (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 1 Dec 2017 13:57:20 -0500
+Date: Fri, 1 Dec 2017 19:57:19 +0100 (CET)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Johannes Berg <johannes@sipsolutions.net>
+cc: Remington Furman <remicles2@gmail.com>, backports@vger.kernel.org,
+        cocci <cocci@systeme.lip6.fr>
+Subject: Re: [Cocci] Parse error with genl-const.cocci
+In-Reply-To: <1512151378.25588.20.camel@sipsolutions.net>
+Message-ID: <alpine.DEB.2.20.1712011954500.2825@hadrien> (sfid-20171201_195722_482642_380FDACA)
+References: <925f98d2-047f-785f-4162-21b53a77cd62@gmail.com> <1512116859.25588.4.camel@sipsolutions.net> <5c6cb44c-9e19-8cf2-8946-a9c0e08c3974@gmail.com> (sfid-20171201_185732_488308_017133DA) <1512151378.25588.20.camel@sipsolutions.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
 
-I've been following the directions here:
-<https://backports.wiki.kernel.org/index.php/Documentation/packaging#Cross_compiling>
-Thanks you your help, I've successfully run gentree.py
 
-I used a "make showcommands kernelconfig" Android build command
-to find the proper CROSS_COMPILE and ARCH variables for building
-the kernel.  I then pointed KLIB and KLIB_BUILD to the proper
-directories for my Android build (it uses a separate build
-directory for everything, including the kernel).
+On Fri, 1 Dec 2017, Johannes Berg wrote:
 
- From my backports directory:
-set -a
-CROSS_COMPILE=aarch64-linux-android-
-ARCH=arm64
-KLIB=/media/remicles/BP2/work/linux_android_board_support_package_vla.br_.1.2.4-01810-8x16.0-3/APQ8016_410C_LA.BR.1.2.4-01810-8x16.0_5.1.1_Lollipop_P2/kernel
-KLIB_BUILD=/media/remicles/BP2/work/linux_android_board_support_package_vla.br_.1.2.4-01810-8x16.0-3/APQ8016_410C_LA.BR.1.2.4-01810-8x16.0_5.1.1_Lollipop_P2/out/target/product/msm8916_64/obj/KERNEL_OBJ
-set +a
-make menuconfig
+> On Fri, 2017-12-01 at 09:57 -0800, Remington Furman wrote:
+> >
+> > Ok, I've rebuilt with 1.0.4, and it applied genl-const.cocci just
+> > fine.  But, later on my CPU was held at 100% for 29 minutes:
+>
+> Yeah, known issue. Give it more time - that particular patch is
+> *really* slow. Yes, more than 29 minutes, on my system as well.
+>
+> What I can recommend is that you remove things from copy-list that you
+> don't care about, e.g. bluetooth drivers if you don't need them,
+> certain wifi drivers you don't need, etc. (before running gentree.py)
 
-That succeeds and shows me a menu.  However, '<M> USB Network
-Adapters ----' is an empty menu and the rtl8192cu driver I am
-after is not available.  Enabling CPTCFG_WLAN_VENDOR_REALTEK in
-'make menuconfig' doesn't lead to any other options.
+You can also set a timeout, for example --timeout 120 (120 seconds).  It
+will report on the files that timed out and you can check on them
+manually.  Some other useful options are:
 
-If I instead run 'make defconfig-rtlwifi' (which includes
-'CPTCFG_RTL8192CU=m'), then the resulting .config file still
-contains:
+--profile: see how long it spends in each rule or various parts of the
+OCaml code
 
-$ grep -i -e "rtl" -e "realtek" .config
-CPTCFG_WLAN_VENDOR_REALTEK=y
-CPTCFG_NET_VENDOR_REALTEK=y
-CPTCFG_BACKPORTED_WLAN_VENDOR_REALTEK=y
-# CPTCFG_BACKPORTED_RTL8180 is not set
-[snip]
-# CPTCFG_BACKPORTED_RTL8192CU is not set
-# CPTCFG_BACKPORTED_RTLWIFI is not set
-# CPTCFG_BACKPORTED_RTLWIFI_PCI is not set
-# CPTCFG_BACKPORTED_RTLWIFI_USB is not set
-# CPTCFG_BACKPORTED_RTLWIFI_DEBUG is not set
-[snip]
-# CPTCFG_BACKPORTED_USB_RTL8152 is not set
+--show-trying: see what function it is working on
 
-At this point, a build includes compat.ko and cfg80211.ko, but no
-rtl8192cu.ko, of course.
+--debug see what rule and with what inputs it is working on
 
-If I understand this page correctly, I need to first disable
-conflicting drivers in my target kernel .config before running
-'make menuconfig' in backports.
-<https://backports.wiki.kernel.org/index.php/Documentation/integration#Kernel_integration_menuconfig>
-I've tried a number of target kernel configurations, but haven't
-found a combination that makes backports happy yet.  I've disable
-CONFIG_CFG80211 and CONFIG_WLAN, but no luck.
+It may work better to put --debug before the others.
 
-I've tried to dive into Makefile.real to understand how the two
-.config files interact, but I don't understand menuconfig/kconf
-enough.  Is there a way I can get some debug output to see any
-conflicts between my .config files?
+julia
 
-I've thought about just copying the backports driver code into my
-target kernel source directory and building from there, but I'm
-not sure if that would work or is advised.  My guess is that it
-could be a mess without using the backports Kconfig files.  My
-goal is to have an rtl8192cu.ko module (and the modules it
-depends on) that I can load on the target.
-
-Does anyone have any pointers or suggestions?
-
-Thank you,
-Remington
-
+>
+> johannes
+> _______________________________________________
+> Cocci mailing list
+> Cocci@systeme.lip6.fr
+> https://systeme.lip6.fr/mailman/listinfo/cocci
+>
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
