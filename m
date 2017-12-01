@@ -1,43 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:45064 "EHLO
+Received: from s3.sipsolutions.net ([144.76.63.242]:59524 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751519AbdLBIIx (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sat, 2 Dec 2017 03:08:53 -0500
-Message-ID: <1512202131.26976.4.camel@sipsolutions.net> (sfid-20171202_090902_798234_0982F0D6)
-Subject: Re: Cross-compiling wifi driver on Android
+        with ESMTP id S1752481AbdLASDA (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 1 Dec 2017 13:03:00 -0500
+Message-ID: <1512151378.25588.20.camel@sipsolutions.net> (sfid-20171201_190302_115105_1E4CA93C)
+Subject: Re: Parse error with genl-const.cocci
 From: Johannes Berg <johannes@sipsolutions.net>
 To: Remington Furman <remicles2@gmail.com>, backports@vger.kernel.org
-Date: Sat, 02 Dec 2017 09:08:51 +0100
-In-Reply-To: <41f0fd53-25ef-420e-8ef8-f24498b8118e@gmail.com> (sfid-20171202_014451_466599_433CD4CB)
-References: <41f0fd53-25ef-420e-8ef8-f24498b8118e@gmail.com>
-         (sfid-20171202_014451_466599_433CD4CB)
+Cc: cocci <cocci@systeme.lip6.fr>
+Date: Fri, 01 Dec 2017 19:02:58 +0100
+In-Reply-To: <5c6cb44c-9e19-8cf2-8946-a9c0e08c3974@gmail.com> (sfid-20171201_185732_488308_017133DA)
+References: <925f98d2-047f-785f-4162-21b53a77cd62@gmail.com>
+         <1512116859.25588.4.camel@sipsolutions.net>
+         <5c6cb44c-9e19-8cf2-8946-a9c0e08c3974@gmail.com>
+         (sfid-20171201_185732_488308_017133DA)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Fri, 2017-12-01 at 16:44 -0800, Remington Furman wrote:
+On Fri, 2017-12-01 at 09:57 -0800, Remington Furman wrote:
+> 
+> Ok, I've rebuilt with 1.0.4, and it applied genl-const.cocci just
+> fine.  But, later on my CPU was held at 100% for 29 minutes:
 
-> That succeeds and shows me a menu.  However, '<M> USB Network
-> Adapters ----' is an empty menu and the rtl8192cu driver I am
-> after is not available.  Enabling CPTCFG_WLAN_VENDOR_REALTEK in
-> 'make menuconfig' doesn't lead to any other options.
+Yeah, known issue. Give it more time - that particular patch is
+*really* slow. Yes, more than 29 minutes, on my system as well.
 
-In menuconfig, hit "/" and search for (part of) the symbol you want
-(e.g. "RTL8192"), and check the dependencies.
-
-It really only has one though "depends on USB", which is weird. Check
-it there.
-
-> If I understand this page correctly, I need to first disable
-> conflicting drivers in my target kernel .config before running
-> 'make menuconfig' in backports.
-> <https://backports.wiki.kernel.org/index.php/Documentation/integration#Kernel_integration_menuconfig>
-> I've tried a number of target kernel configurations, but haven't
-> found a combination that makes backports happy yet.  I've disable
-> CONFIG_CFG80211 and CONFIG_WLAN, but no luck.
-
-You don't want integration, so I think you can ignore that page.
+What I can recommend is that you remove things from copy-list that you
+don't care about, e.g. bluetooth drivers if you don't need them,
+certain wifi drivers you don't need, etc. (before running gentree.py)
 
 johannes
 --
