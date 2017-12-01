@@ -1,128 +1,174 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:42960 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752924AbdLDOLc (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 4 Dec 2017 09:11:32 -0500
-Received: by mail-ua0-f193.google.com with SMTP id p33so12507060uag.9
-        for <backports@vger.kernel.org>; Mon, 04 Dec 2017 06:11:31 -0800 (PST)
+Received: from mail-pl0-f51.google.com ([209.85.160.51]:37933 "EHLO
+        mail-pl0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751157AbdLAR5a (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 1 Dec 2017 12:57:30 -0500
+Received: by mail-pl0-f51.google.com with SMTP id s10so6674553plj.5
+        for <backports@vger.kernel.org>; Fri, 01 Dec 2017 09:57:30 -0800 (PST)
+Subject: Re: Parse error with genl-const.cocci
+To: Johannes Berg <johannes@sipsolutions.net>,
+        backports@vger.kernel.org
+Cc: cocci <cocci@systeme.lip6.fr>
+References: <925f98d2-047f-785f-4162-21b53a77cd62@gmail.com>
+ <1512116859.25588.4.camel@sipsolutions.net>
+From: Remington Furman <remicles2@gmail.com>
+Message-ID: <5c6cb44c-9e19-8cf2-8946-a9c0e08c3974@gmail.com> (sfid-20171201_185734_142661_4AE4FE1E)
+Date: Fri, 1 Dec 2017 09:57:27 -0800
 MIME-Version: 1.0
-From: Michael McElroy <mikem388@gmail.com>
-Date: Mon, 4 Dec 2017 09:11:30 -0500
-Message-ID: <CAJt7Dwx07xy6e2b=bNOzM-otW6tCz+F24XyTQGPMrFVQoXN+2Q@mail.gmail.com> (sfid-20171204_151134_721482_5C7096AD)
-Subject: Compile error with Linux-3.4
-To: backports@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1512116859.25588.4.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-I have been following the thread on the genl-const.cocci parse error.
-I  had the same problem and found the information very helpful. I had
-been killing the gentree build because I thought it was hung applying
-SmPL patch 0079-netdev-destructor.cocci. On my system, a 4 processor
-Intel(R) Core(TM) i7-3740QM CPU @ 2.70GHz machine, that patch takes
-about an hour and 20 minutes with the system at 100% for about an
-hour. After reading your discussion, I stopped killing it and it ran
-successfully.  I am backporting to 3.4 and ran into a couple of other
-problems. There were 2  problems building the output against a 3.4
-kernel. I wasn't sure that my kernel was the problem, so I built
-against the 3.4 branch of linux-stable.
+Hi Johannes and Julia,
 
-The first problem was caused by commit 8cdd85766293018fea01512959320a05269e97b4.
+Wow, you two are great.  Thank you for the quick response.  More
+notes below, including another spatch error after downgrading to
+spatch 1.0.4.
 
-Author: Johannes Berg <johannes.berg@intel.com>
-Date:   Fri Oct 13 10:48:42 2017 +0200
+On 12/01/2017 12:27 AM, Johannes Berg wrote:
+ > +cocci list
+ >
+ > Hi,
+ >
+ > Looks like you made a really deep investigation here - awesome, thanks
+ > for doing that!
 
-    backports: add netdev_upper_dev_link() extack argument
+It's the least I could do, considering the work you've put in
+before me.
 
-    But make it optional (using magic.h) to let this still work
-    on kernels that didn't change the argument.
+ > On Thu, 2017-11-30 at 21:43 -0800, Remington Furman wrote:
+ >>
+ >> Full log using genl-const.cocci
+ >> init_defs_builtins: /usr/local/bin/../lib/coccinelle/standard.h
+ >> meta: parse error:
+ >>    File "./patches/0027-genl-const/genl-const.cocci", line 2, column 
+10,
+ >> charpos = 13
+ >>    around = '__genl_const',
+ >>    whole content = attribute __genl_const;
+ >> [...snip callstack...]
+ >
+ > FWIW, the patch is pretty simple:
+ >
+ > @@
+ > attribute __genl_const;
+ > @@
+ > (
+ > -const struct genl_multicast_group
+ > +__genl_const struct genl_multicast_group
+ > |
+ > -const struct genl_ops
+ > +__genl_const struct genl_ops
+ > )
+ >
+ > (yes, that's the full patch)
 
-    Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+I had considered trying to manually apply the patch, but didn't
+know what files it would touch, or if spatch would fail on other
+patches later on.
 
-In file included from /home/mike/linux-backport/compat/compat-3.8.c:18:
-/home/mike/linux-backport/backport-include/linux/netdevice.h:341:
-error: implicit declaration of function 'netdev_upper_dev_link'
+ >> This is very similar to this problem:
+ >> <https://www.spinics.net/lists/backports/msg04216.html>
+ >> The conclusion of that thread is that the --integrate workflow is
+ >> no longer supported.
+ >>
+ >> However, I am not using --integrate, and I am still getting
+ >> errors about parsing '__genl_const'.
+ >
+ > Yeah this --integrate is unrelated to the problem - the problem is that
+ > spatch can't parse this patch (any more).
+ >
+ >> Is that a bug in the patch
+ >> or possibly a regression in spatch?
+ >
+ > I think it's a regression in spatch.
 
-/home/mike/linux-backport/backport-include/linux/netdevice.h: In
-function '_bp_netdev_upper_dev_
+Ok, I'm glad Julia confirmed that the behavior changed between
+releases.
 
-+#if LINUX_VERSION_IS_LESS(4,14,0)
-+static inline int _bp_netdev_upper_dev_link(struct net_device *dev,
-+                                           struct net_device *upper_dev)
-+{
-+       return netdev_upper_dev_link(dev, upper_dev);
-+}
-+#define netdev_upper_dev_link3(dev, upper, extack) \
-+       netdev_upper_dev_link(dev, upper)
-+#define netdev_upper_dev_link2(dev, upper) \
-+       netdev_upper_dev_link(dev, upper)
-+#define netdev_upper_dev_link(...) \
-+       macro_dispatcher(netdev_upper_dev_link, __VA_ARGS__)(__VA_ARGS__)
-+#endif
-+
+ >> I've tried v4.14-rc2 also,
+ >> but nothing older.
+ >
+ > That's a kernel version so not really relevant - spatch doesn't even
+ > attempt to apply the changes since it can't parse them.
+ >
+ >> This page has a lot of great example info, and suggested that it
+ >> could be a problem with my version of spatch. Specifically, that
+ >> I was missing the menhir and libmenhir-ocaml-dev packages when
+ >> building Coccinelle and a rebuild should help.
+ >> <http://stonyslp.blogspot.com/2017/08/backport-driver.html>
+ >
+ > That I don't know - I've never built spatch myself.
 
-I tried building against various kernels and didn't find
-netdev_upper_dev_link' defined until 3, so anything less that that
-probably has this error.  I didn't know exactly what to use here so I
-just did an  #if 0 around that section and resolved the problem for
-me.
+If I remember correctly, I had to because the version in my package
+manager was only 1.0.0-rc19, and that was too old for the backports
+tag I checked out.  So, I chose the latest release in git.
 
-The second problem is in commit 2ebca7b7d087be04e25b1fc50cf08137d423af3d.
+ >> Unfortunately, I still have the same errors after running make
+ >> distclean and rebuilding.
+ >>
+ >> I have:
+ >> coccinelle $ git describe --tags
+ >> 1.0.6-365-gd73c6e6
+ >> coccinelle $ spatch --version
+ >> spatch version 1.0.6-00365-gd73c6e6 compiled with OCaml version 4.01.0
+ >> Flags passed to the configure script: [none]
+ >> OCaml scripting support: yes
+ >> Python scripting support: yes
+ >> Syntax of regular expresssions: PCRE
+ >
+ > That seems reasonable as far as configuration is concerned.
+ >
+ >> I found this patch which describes how older versions can't
+ >> handle the __genl_const changes (20150209):
+ >> <https://www.spinics.net/lists/backports/msg03223.html>
+ >>
+ >> But, I also see commit 748116c8 from shortly after (20150507)
+ >> which introduced genl-const.cocci and says only spatch 1.0.0-rc23
+ >> is needed.
+ >
+ > Right.
+ >
+ >> I feel like I'm close to figuring this out, but would appreciate
+ >> any help or pointers.
+ >
+ > Yeah I think you're pretty close.
+ >
+ > Can you try obtaining/building spatch 1.0.4? That definitely works for
+ > me, so I think there's probably a regression in spatch somewhere
+ > between 1.0.4 and the version that you're running.
+ >
+ > johannes
 
-Author: Luca Coelho <luciano.coelho@intel.com>
-Date:   Tue Apr 19 22:13:11 2016 +0300
+Ok, I've rebuilt with 1.0.4, and it applied genl-const.cocci just
+fine.  But, later on my CPU was held at 100% for 29 minutes:
 
-    backport: add pm_runtime_active() implementation for < 3.9 kernels
-
-    The pm_runtime_active() helper function was introduced in kernel 3.9.
-    In order to use it in earlier kernels, we need to add its
-    implementation to the backports.
-
-    Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-    [add LINUX_BACKPORT() protection]
-    Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-
-diff --git a/backport/backport-include/linux/pm_runtime.h
-b/backport/backport-include/linu
-new file mode 100644
-index 0000000..16d2a80
---- /dev/null
-+++ b/backport/backport-include/linux/pm_runtime.h
-@@ -0,0 +1,19 @@
-+#ifndef __BACKPORT_PM_RUNTIME_H
-+#define __BACKPORT_PM_RUNTIME_H
-+#include_next <linux/pm_runtime.h>
-+
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
-+#define pm_runtime_active LINUX_BACKPORT(pm_runtime_active)
-+#ifdef CONFIG_PM
-+static inline bool pm_runtime_active(struct device *dev)
-+{
-+       return dev->power.runtime_status == RPM_ACTIVE
-+               || dev->power.disable_depth;
-+}
-+#else
-+static inline bool pm_runtime_active(struct device *dev) { return true; }
-+#endif /* CONFIG_PM */
-+
-+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0) */
-+
-+#endif /* __BACKPORT_PM_RUNTIME_H */
+Applying SmPL patch 0079-netdev-destructor.cocci
+[...waited 29 minutes...]
+^CTraceback (most recent call last):
+   File "./gentree.py", line 1107, in <module>
+     ret = _main()
+   File "./gentree.py", line 724, in _main
+     logwrite=logwrite)
+   File "./gentree.py", line 906, in process
+     failure = apply_patches(args, "backport", source_dir, 'patches', 
+bpid.target_dir, logwrite)
+   File "./gentree.py", line 601, in apply_patches
+     output = sprocess.communicate()[0]
+   File "/usr/lib/python2.7/subprocess.py", line 791, in communicate
+     stdout = _eintr_retry_call(self.stdout.read)
+   File "/usr/lib/python2.7/subprocess.py", line 476, in _eintr_retry_call
+     return func(*args)
+KeyboardInterrupt
 
 
-/home/mike/linux-backport/backport-include/linux/pm_runtime.h: In
-function 'backport_pm_runtime_active':
-/home/mike/linux-backport/backport-include/linux/pm_runtime.h:10:
-error: 'struct dev_pm_info' has no member named 'runtime_status'
-/home/mike/linux-backport/backport-include/linux/pm_runtime.h:11:
-error: 'struct dev_pm_info' has no member named 'disable_depth'
-make[6]: *** [/home/mike/linux-backport/compat/backport-4.8.o] Error 1
+Any ideas there?  Perhaps I will try another release version of
+spatch and report back.  Or I will update the genl-const.cocci
+patch and try the latest spatch release again.
 
-In linux/pm.h, those members addition to the struct are controlled by
-CONFIG_PM_RUNTIME, not CONFIG_PM. I changed pm_runtime.h to use
-CONFIG_PM_RUNTIME and that resolved the problem.
+Thank you,
+Remington
 
-Thanks for this amazing product,
-Mike McElroy
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
