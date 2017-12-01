@@ -1,66 +1,146 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:46233 "EHLO
-        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752306AbdLLPTz (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 12 Dec 2017 10:19:55 -0500
-Received: by mail-pf0-f176.google.com with SMTP id c204so14413718pfc.13
-        for <backports@vger.kernel.org>; Tue, 12 Dec 2017 07:19:54 -0800 (PST)
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:10518
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750735AbdLAJSI (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 1 Dec 2017 04:18:08 -0500
+Date: Fri, 1 Dec 2017 10:18:02 +0100 (CET)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Johannes Berg <johannes@sipsolutions.net>
+cc: Remington Furman <remicles2@gmail.com>, backports@vger.kernel.org,
+        cocci <cocci@systeme.lip6.fr>
 Subject: Re: [Cocci] Parse error with genl-const.cocci
-To: Julia Lawall <julia.lawall@lip6.fr>,
-        Johannes Berg <johannes@sipsolutions.net>
-Cc: backports@vger.kernel.org, cocci <cocci@systeme.lip6.fr>
-References: <925f98d2-047f-785f-4162-21b53a77cd62@gmail.com>
- <1512116859.25588.4.camel@sipsolutions.net>
- <alpine.DEB.2.20.1712011015160.2865@hadrien>
- <1512120542.25588.7.camel@sipsolutions.net>
- <alpine.DEB.2.20.1712011059360.2865@hadrien>
-From: Remington Furman <remicles2@gmail.com>
-Message-ID: <e589e785-6e08-8b37-8017-09ffc8627de2@gmail.com> (sfid-20171212_162002_053241_D2A13E91)
-Date: Tue, 12 Dec 2017 07:19:51 -0800
+In-Reply-To: <1512116859.25588.4.camel@sipsolutions.net>
+Message-ID: <alpine.DEB.2.20.1712011015160.2865@hadrien> (sfid-20171201_101812_821394_ECE50825)
+References: <925f98d2-047f-785f-4162-21b53a77cd62@gmail.com> (sfid-20171201_064358_586047_BC8ED658) <1512116859.25588.4.camel@sipsolutions.net>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1712011059360.2865@hadrien>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 12/01/2017 02:00 AM, Julia Lawall wrote:
-> On Fri, 1 Dec 2017, Johannes Berg wrote:
->> Hi Julia,
->>
->> On Fri, 2017-12-01 at 10:18 +0100, Julia Lawall wrote:
->>> The handling of attributes has also been extended so that you can actually
->>> match against them in some cases, such as on function declarations.  On
->>> the oher hand, nothing was done to allow attributes in front of types that
->>> are alone.
->> Very cool!
->>> I can try to fix this.  In the short term, perhaps using 1.0.4 is
->>> acceptable.
->> To me that's OK, I'll try to keep it in mind.
->>
->> Can we do some "#ifdef" type syntax in spatch on the version of it? :-)
-> There's nothing for that available at the moment.
->> I guess I could also have two different versions of the patch and write
->> some code to pick up which one to use, but that's a bit awkward ...
->>
->> But let me know if you can't actually fix this (easily), then I can do
->> that instead.
-> OK, I'll try to look at it soon.
+
+
+On Fri, 1 Dec 2017, Johannes Berg wrote:
+
+> +cocci list
 >
-> julia
-I thought I'd point out the layers of coevolution that result from the 
-changing spatch behavior.  :) It's a bit fractal when every layer in the 
-dependency graph has the possibility to change.  I suppose a #ifdef type 
-solution might remove the potential need to backport the .cocci patches 
-themselves going forward.
+> Hi,
+>
+> Looks like you made a really deep investigation here - awesome, thanks
+> for doing that!
 
-But, I think it might be sufficient to just document what version of the 
-tools, in this case spatch, were used for a particular backports 
-commit/release.  It's easy enough to build any version of spatch from 
-git.  Or perhaps each .cocci patch could have a comment listing the 
-spatch version it was developed with.  Future backports releases could 
-then update the patch syntax as needed, document the spatch version, and 
-leave it at that.
+Hello,
 
--Remington
+The attribute metavariable declaration has become attribute name, to be
+more like eg declarer name, iterator name, etc.
+
+The handling of attributes has also been extended so that you can actually
+match against them in some cases, such as on function declarations.  On
+the oher hand, nothing was done to allow attributes in front of types that
+are alone.
+
+I can try to fix this.  In the short term, perhaps using 1.0.4 is
+acceptable.
+
+julia
+
+>
+>
+> On Thu, 2017-11-30 at 21:43 -0800, Remington Furman wrote:
+> >
+> > Full log using genl-const.cocci
+> > init_defs_builtins: /usr/local/bin/../lib/coccinelle/standard.h
+> > meta: parse error:
+> >    File "./patches/0027-genl-const/genl-const.cocci", line 2, column 10,
+> > charpos = 13
+> >    around = '__genl_const',
+> >    whole content = attribute __genl_const;
+> > [...snip callstack...]
+>
+> FWIW, the patch is pretty simple:
+>
+> @@
+> attribute __genl_const;
+> @@
+> (
+> -const struct genl_multicast_group
+> +__genl_const struct genl_multicast_group
+> |
+> -const struct genl_ops
+> +__genl_const struct genl_ops
+> )
+>
+> (yes, that's the full patch)
+>
+>
+> > This is very similar to this problem:
+> > <https://www.spinics.net/lists/backports/msg04216.html>
+> > The conclusion of that thread is that the --integrate workflow is
+> > no longer supported.
+> >
+> > However, I am not using --integrate, and I am still getting
+> > errors about parsing '__genl_const'.
+>
+> Yeah this --integrate is unrelated to the problem - the problem is that
+> spatch can't parse this patch (any more).
+>
+> > Is that a bug in the patch
+> > or possibly a regression in spatch?
+>
+> I think it's a regression in spatch.
+>
+> > I've tried v4.14-rc2 also,
+> > but nothing older.
+>
+> That's a kernel version so not really relevant - spatch doesn't even
+> attempt to apply the changes since it can't parse them.
+>
+> > This page has a lot of great example info, and suggested that it
+> > could be a problem with my version of spatch. Specifically, that
+> > I was missing the menhir and libmenhir-ocaml-dev packages when
+> > building Coccinelle and a rebuild should help.
+> > <http://stonyslp.blogspot.com/2017/08/backport-driver.html>
+>
+> That I don't know - I've never built spatch myself.
+>
+> > Unfortunately, I still have the same errors after running make
+> > distclean and rebuilding.
+> >
+> > I have:
+> > coccinelle $ git describe --tags
+> > 1.0.6-365-gd73c6e6
+> > coccinelle $ spatch --version
+> > spatch version 1.0.6-00365-gd73c6e6 compiled with OCaml version 4.01.0
+> > Flags passed to the configure script: [none]
+> > OCaml scripting support: yes
+> > Python scripting support: yes
+> > Syntax of regular expresssions: PCRE
+>
+> That seems reasonable as far as configuration is concerned.
+>
+> > I found this patch which describes how older versions can't
+> > handle the __genl_const changes (20150209):
+> > <https://www.spinics.net/lists/backports/msg03223.html>
+> >
+> > But, I also see commit 748116c8 from shortly after (20150507)
+> > which introduced genl-const.cocci and says only spatch 1.0.0-rc23
+> > is needed.
+>
+> Right.
+>
+> > I feel like I'm close to figuring this out, but would appreciate
+> > any help or pointers.
+>
+> Yeah I think you're pretty close.
+>
+> Can you try obtaining/building spatch 1.0.4? That definitely works for
+> me, so I think there's probably a regression in spatch somewhere
+> between 1.0.4 and the version that you're running.
+>
+> johannes
+> _______________________________________________
+> Cocci mailing list
+> Cocci@systeme.lip6.fr
+> https://systeme.lip6.fr/mailman/listinfo/cocci
+>
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
