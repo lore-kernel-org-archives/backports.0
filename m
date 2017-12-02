@@ -1,59 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:7140 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751208AbdLAS5U (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 1 Dec 2017 13:57:20 -0500
-Date: Fri, 1 Dec 2017 19:57:19 +0100 (CET)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Johannes Berg <johannes@sipsolutions.net>
-cc: Remington Furman <remicles2@gmail.com>, backports@vger.kernel.org,
-        cocci <cocci@systeme.lip6.fr>
-Subject: Re: [Cocci] Parse error with genl-const.cocci
-In-Reply-To: <1512151378.25588.20.camel@sipsolutions.net>
-Message-ID: <alpine.DEB.2.20.1712011954500.2825@hadrien> (sfid-20171201_195722_482642_380FDACA)
-References: <925f98d2-047f-785f-4162-21b53a77cd62@gmail.com> <1512116859.25588.4.camel@sipsolutions.net> <5c6cb44c-9e19-8cf2-8946-a9c0e08c3974@gmail.com> (sfid-20171201_185732_488308_017133DA) <1512151378.25588.20.camel@sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Received: from s3.sipsolutions.net ([144.76.63.242]:52484 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752121AbdLBU2L (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sat, 2 Dec 2017 15:28:11 -0500
+Message-ID: <1512246489.26976.6.camel@sipsolutions.net> (sfid-20171202_212813_379502_73F01EEF)
+Subject: Re: Cross-compiling wifi driver on Android
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Remington Furman <remicles2@gmail.com>, backports@vger.kernel.org
+Date: Sat, 02 Dec 2017 21:28:09 +0100
+In-Reply-To: <043841bf-92f4-e240-ea3b-2ae6946aae66@gmail.com> (sfid-20171202_173104_365595_E4B4EAD5)
+References: <41f0fd53-25ef-420e-8ef8-f24498b8118e@gmail.com>
+         <1512202131.26976.4.camel@sipsolutions.net>
+         <043841bf-92f4-e240-ea3b-2ae6946aae66@gmail.com>
+         (sfid-20171202_173104_365595_E4B4EAD5)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+Hi,
 
+> Thank you very much.  That tip to follow the dependencies helped a lot.  
+> I had been using "/" before, but just learned you can type the numbers 
+> in parenthesis in the search results to jump to them. Saves a lot of time.
 
-On Fri, 1 Dec 2017, Johannes Berg wrote:
+Hah, nice trick, I wasn't aware of that either :-)
 
-> On Fri, 2017-12-01 at 09:57 -0800, Remington Furman wrote:
-> >
-> > Ok, I've rebuilt with 1.0.4, and it applied genl-const.cocci just
-> > fine.  But, later on my CPU was held at 100% for 29 minutes:
->
-> Yeah, known issue. Give it more time - that particular patch is
-> *really* slow. Yes, more than 29 minutes, on my system as well.
->
-> What I can recommend is that you remove things from copy-list that you
-> don't care about, e.g. bluetooth drivers if you don't need them,
-> certain wifi drivers you don't need, etc. (before running gentree.py)
+Thanks!
 
-You can also set a timeout, for example --timeout 120 (120 seconds).  It
-will report on the files that timed out and you can check on them
-manually.  Some other useful options are:
+> After working recursively through the dependencies for the backports 
+> menuconfig option I wanted (RTL8192CU) I found out that CPTCFG_MAC80211 
+> wasn't appearing as an option in backports because my target kernel did 
+> not satisfy it's dependencies for CRYPTO_CCM, CRYPTO_GCM, and 
+> CRYPTO_CMAC.  After enabling those on my target kernel, CPTCFG_MAC80211 
+> appeared and I could enable everything in backports down to my desired 
+> driver.
 
---profile: see how long it spends in each rule or various parts of the
-OCaml code
+Ah, yes, I should've guessed that, but forgot that the driver needs
+mac80211 at all. I had attempted to backport these (crypto) at some
+point, but it's very tricky.
 
---show-trying: see what function it is working on
+Glad you could sort it out :)
 
---debug see what rule and with what inputs it is working on
-
-It may work better to put --debug before the others.
-
-julia
-
->
-> johannes
-> _______________________________________________
-> Cocci mailing list
-> Cocci@systeme.lip6.fr
-> https://systeme.lip6.fr/mailman/listinfo/cocci
->
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
