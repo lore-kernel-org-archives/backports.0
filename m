@@ -1,81 +1,128 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:63778 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753289AbdLNPQq (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 14 Dec 2017 10:16:46 -0500
-Date: Thu, 14 Dec 2017 16:16:42 +0100 (CET)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Remington Furman <remicles2@gmail.com>
-cc: Johannes Berg <johannes@sipsolutions.net>,
-        backports@vger.kernel.org, cocci <cocci@systeme.lip6.fr>
-Subject: Re: [Cocci] Parse error with genl-const.cocci
-In-Reply-To: <e589e785-6e08-8b37-8017-09ffc8627de2@gmail.com>
-Message-ID: <alpine.DEB.2.20.1712141614460.5502@hadrien> (sfid-20171214_161712_631945_42C8D7E7)
-References: <925f98d2-047f-785f-4162-21b53a77cd62@gmail.com> <1512116859.25588.4.camel@sipsolutions.net> <alpine.DEB.2.20.1712011015160.2865@hadrien> <1512120542.25588.7.camel@sipsolutions.net> <alpine.DEB.2.20.1712011059360.2865@hadrien>
- <e589e785-6e08-8b37-8017-09ffc8627de2@gmail.com>
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:35373 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752209AbdLEQ3N (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 5 Dec 2017 11:29:13 -0500
+Received: by mail-ua0-f194.google.com with SMTP id l2so646088uak.2
+        for <backports@vger.kernel.org>; Tue, 05 Dec 2017 08:29:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323329-1417705839-1513264602=:5502"
+From: Michael McElroy <mikem388@gmail.com>
+Date: Tue, 5 Dec 2017 11:29:12 -0500
+Message-ID: <CAJt7DwwqoJMWk1=-BO5O+cfutLfTwE04oYo46GqcMhb9zgGwPA@mail.gmail.com> (sfid-20171205_172916_304793_B93BEC9D)
+Subject: Errors backporting to 3.4
+To: backports@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+I have been following the thread on the genl-const.cocci parse error. I
+had the same problem and found the information very helpful. I had been
+killing the gentree build because I thought it was hung applying SmPL patch
+0079-netdev-destructor.cocci. On my system, a 4 processor  Intel(R)
+Core(TM) i7-3740QM CPU @ 2.70GHz machine, that patch takes about an hour
+and 20 minutes with the system at 100% for about an hour. After reading
+your discussion, I stopped killing it and it ran successfully.  I am
+backporting to 3.4 and ran into a couple of other problems. There were 2
+problems building the output against a 3.4 kernel. I wasn't sure that my
+kernel was the problem, so I built against the 3.4 branch of linux-stable.
 
---8323329-1417705839-1513264602=:5502
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+The first problem was caused by commit 8cdd85766293018fea01512959320a
+05269e97b4.
+
+Author: Johannes Berg <johannes.berg@intel.com>
+Date:   Fri Oct 13 10:48:42 2017 +0200
+
+    backports: add netdev_upper_dev_link() extack argument
+
+    But make it optional (using magic.h) to let this still work
+    on kernels that didn't change the argument.
+
+    Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+
+In file included from /home/mike/linux-backport/compat/compat-3.8.c:18:
+/home/mike/linux-backport/backport-include/linux/netdevice.h:341: error:
+implicit declaration of function 'netdev_upper_dev_link'
+
+/home/mike/linux-backport/backport-include/linux/netdevice.h: In function
+'_bp_netdev_upper_dev_
+
++#if LINUX_VERSION_IS_LESS(4,14,0)
++static inline int _bp_netdev_upper_dev_link(struct net_device *dev,
++                                           struct net_device *upper_dev)
++{
++       return netdev_upper_dev_link(dev, upper_dev);
++}
++#define netdev_upper_dev_link3(dev, upper, extack) \
++       netdev_upper_dev_link(dev, upper)
++#define netdev_upper_dev_link2(dev, upper) \
++       netdev_upper_dev_link(dev, upper)
++#define netdev_upper_dev_link(...) \
++       macro_dispatcher(netdev_upper_dev_link, __VA_ARGS__)(__VA_ARGS__)
++#endif
++
+
+I tried building against various kernels and didn't find
+netdev_upper_dev_link' defined until 3, so anything less that that probably
+has this error.  I didn't know exactly what to use here so I just did an
+#if 0 around that section and resolved the problem for me.
 
 
+The second problem is in commit 2ebca7b7d087be04e25b1fc50cf08137d423af3d.
 
-On Tue, 12 Dec 2017, Remington Furman wrote:
+Author: Luca Coelho <luciano.coelho@intel.com>
+Date:   Tue Apr 19 22:13:11 2016 +0300
 
-> On 12/01/2017 02:00 AM, Julia Lawall wrote:
-> > On Fri, 1 Dec 2017, Johannes Berg wrote:
-> > > Hi Julia,
-> > >
-> > > On Fri, 2017-12-01 at 10:18 +0100, Julia Lawall wrote:
-> > > > The handling of attributes has also been extended so that you can
-> > > > actually
-> > > > match against them in some cases, such as on function declarations.  On
-> > > > the oher hand, nothing was done to allow attributes in front of types
-> > > > that
-> > > > are alone.
-> > > Very cool!
-> > > > I can try to fix this.  In the short term, perhaps using 1.0.4 is
-> > > > acceptable.
-> > > To me that's OK, I'll try to keep it in mind.
-> > >
-> > > Can we do some "#ifdef" type syntax in spatch on the version of it? :-)
-> > There's nothing for that available at the moment.
-> > > I guess I could also have two different versions of the patch and write
-> > > some code to pick up which one to use, but that's a bit awkward ...
-> > >
-> > > But let me know if you can't actually fix this (easily), then I can do
-> > > that instead.
-> > OK, I'll try to look at it soon.
-> >
-> > julia
-> I thought I'd point out the layers of coevolution that result from the
-> changing spatch behavior.  :) It's a bit fractal when every layer in the
-> dependency graph has the possibility to change.  I suppose a #ifdef type
-> solution might remove the potential need to backport the .cocci patches
-> themselves going forward.
->
-> But, I think it might be sufficient to just document what version of the
-> tools, in this case spatch, were used for a particular backports
-> commit/release.  It's easy enough to build any version of spatch from git.  Or
-> perhaps each .cocci patch could have a comment listing the spatch version it
-> was developed with.  Future backports releases could then update the patch
-> syntax as needed, document the spatch version, and leave it at that.
+    backport: add pm_runtime_active() implementation for < 3.9 kernels
 
-Hello,
+    The pm_runtime_active() helper function was introduced in kernel 3.9.
+    In order to use it in earlier kernels, we need to add its
+    implementation to the backports.
 
-I updated the github version of Coccinelle such that
-patches/0027-genl-const/genl-const.cocci
-will almost parse correctly.  The only thing that remains is to change
-attribute into attribute name.
+    Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+    [add LINUX_BACKPORT() protection]
+    Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 
-julia
---8323329-1417705839-1513264602=:5502--
+diff --git a/backport/backport-include/linux/pm_runtime.h
+b/backport/backport-include/linu
+new file mode 100644
+index 0000000..16d2a80
+--- /dev/null
++++ b/backport/backport-include/linux/pm_runtime.h
+@@ -0,0 +1,19 @@
++#ifndef __BACKPORT_PM_RUNTIME_H
++#define __BACKPORT_PM_RUNTIME_H
++#include_next <linux/pm_runtime.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0)
++#define pm_runtime_active LINUX_BACKPORT(pm_runtime_active)
++#ifdef CONFIG_PM
++static inline bool pm_runtime_active(struct device *dev)
++{
++       return dev->power.runtime_status == RPM_ACTIVE
++               || dev->power.disable_depth;
++}
++#else
++static inline bool pm_runtime_active(struct device *dev) { return true; }
++#endif /* CONFIG_PM */
++
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,9,0) */
++
++#endif /* __BACKPORT_PM_RUNTIME_H */
+
+
+/home/mike/linux-backport/backport-include/linux/pm_runtime.h: In function
+'backport_pm_runtime_active':
+/home/mike/linux-backport/backport-include/linux/pm_runtime.h:10: error:
+'struct dev_pm_info' has no member named 'runtime_status'
+/home/mike/linux-backport/backport-include/linux/pm_runtime.h:11: error:
+'struct dev_pm_info' has no member named 'disable_depth'
+make[6]: *** [/home/mike/linux-backport/compat/backport-4.8.o] Error 1
+
+In linux/pm.h, those members addition to the struct are controlled by
+CONFIG_PM_RUNTIME, not CONFIG_PM. I changed pm_runtime.h to
+use CONFIG_PM_RUNTIME and that resolved the problem.
+
+Thanks for this amazing product,
+Mike McElroy
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
