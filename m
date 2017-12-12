@@ -1,68 +1,66 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pg0-f45.google.com ([74.125.83.45]:37544 "EHLO
-        mail-pg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751776AbdLBQbD (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sat, 2 Dec 2017 11:31:03 -0500
-Received: by mail-pg0-f45.google.com with SMTP id y6so5786389pgp.4
-        for <backports@vger.kernel.org>; Sat, 02 Dec 2017 08:31:03 -0800 (PST)
-Subject: Re: Cross-compiling wifi driver on Android
-To: Johannes Berg <johannes@sipsolutions.net>,
-        backports@vger.kernel.org
-References: <41f0fd53-25ef-420e-8ef8-f24498b8118e@gmail.com>
- <1512202131.26976.4.camel@sipsolutions.net>
+Received: from mail-pf0-f176.google.com ([209.85.192.176]:46233 "EHLO
+        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752306AbdLLPTz (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 12 Dec 2017 10:19:55 -0500
+Received: by mail-pf0-f176.google.com with SMTP id c204so14413718pfc.13
+        for <backports@vger.kernel.org>; Tue, 12 Dec 2017 07:19:54 -0800 (PST)
+Subject: Re: [Cocci] Parse error with genl-const.cocci
+To: Julia Lawall <julia.lawall@lip6.fr>,
+        Johannes Berg <johannes@sipsolutions.net>
+Cc: backports@vger.kernel.org, cocci <cocci@systeme.lip6.fr>
+References: <925f98d2-047f-785f-4162-21b53a77cd62@gmail.com>
+ <1512116859.25588.4.camel@sipsolutions.net>
+ <alpine.DEB.2.20.1712011015160.2865@hadrien>
+ <1512120542.25588.7.camel@sipsolutions.net>
+ <alpine.DEB.2.20.1712011059360.2865@hadrien>
 From: Remington Furman <remicles2@gmail.com>
-Message-ID: <043841bf-92f4-e240-ea3b-2ae6946aae66@gmail.com> (sfid-20171202_173105_619774_22B9D3EA)
-Date: Sat, 2 Dec 2017 08:31:00 -0800
+Message-ID: <e589e785-6e08-8b37-8017-09ffc8627de2@gmail.com> (sfid-20171212_162002_053241_D2A13E91)
+Date: Tue, 12 Dec 2017 07:19:51 -0800
 MIME-Version: 1.0
-In-Reply-To: <1512202131.26976.4.camel@sipsolutions.net>
+In-Reply-To: <alpine.DEB.2.20.1712011059360.2865@hadrien>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi Johannes,
-
-Thank you very much.  That tip to follow the dependencies helped a lot.  
-I had been using "/" before, but just learned you can type the numbers 
-in parenthesis in the search results to jump to them. Saves a lot of time.
-
-After working recursively through the dependencies for the backports 
-menuconfig option I wanted (RTL8192CU) I found out that CPTCFG_MAC80211 
-wasn't appearing as an option in backports because my target kernel did 
-not satisfy it's dependencies for CRYPTO_CCM, CRYPTO_GCM, and 
-CRYPTO_CMAC.  After enabling those on my target kernel, CPTCFG_MAC80211 
-appeared and I could enable everything in backports down to my desired 
-driver.
-
-Thanks again.  I'll let you know when I'm able to get the new drivers 
-loaded on my target next week.
-
-Cheers,
-
-Remington
-
-On 12/02/2017 12:08 AM, Johannes Berg wrote:
-> On Fri, 2017-12-01 at 16:44 -0800, Remington Furman wrote:
+On 12/01/2017 02:00 AM, Julia Lawall wrote:
+> On Fri, 1 Dec 2017, Johannes Berg wrote:
+>> Hi Julia,
+>>
+>> On Fri, 2017-12-01 at 10:18 +0100, Julia Lawall wrote:
+>>> The handling of attributes has also been extended so that you can actually
+>>> match against them in some cases, such as on function declarations.  On
+>>> the oher hand, nothing was done to allow attributes in front of types that
+>>> are alone.
+>> Very cool!
+>>> I can try to fix this.  In the short term, perhaps using 1.0.4 is
+>>> acceptable.
+>> To me that's OK, I'll try to keep it in mind.
+>>
+>> Can we do some "#ifdef" type syntax in spatch on the version of it? :-)
+> There's nothing for that available at the moment.
+>> I guess I could also have two different versions of the patch and write
+>> some code to pick up which one to use, but that's a bit awkward ...
+>>
+>> But let me know if you can't actually fix this (easily), then I can do
+>> that instead.
+> OK, I'll try to look at it soon.
 >
->> That succeeds and shows me a menu.  However, '<M> USB Network
->> Adapters ----' is an empty menu and the rtl8192cu driver I am
->> after is not available.  Enabling CPTCFG_WLAN_VENDOR_REALTEK in
->> 'make menuconfig' doesn't lead to any other options.
-> In menuconfig, hit "/" and search for (part of) the symbol you want
-> (e.g. "RTL8192"), and check the dependencies.
->
-> It really only has one though "depends on USB", which is weird. Check
-> it there.
->
->> If I understand this page correctly, I need to first disable
->> conflicting drivers in my target kernel .config before running
->> 'make menuconfig' in backports.
->> <https://backports.wiki.kernel.org/index.php/Documentation/integration#Kernel_integration_menuconfig>
->> I've tried a number of target kernel configurations, but haven't
->> found a combination that makes backports happy yet.  I've disable
->> CONFIG_CFG80211 and CONFIG_WLAN, but no luck.
-> You don't want integration, so I think you can ignore that page.
->
-> johannes
+> julia
+I thought I'd point out the layers of coevolution that result from the 
+changing spatch behavior.  :) It's a bit fractal when every layer in the 
+dependency graph has the possibility to change.  I suppose a #ifdef type 
+solution might remove the potential need to backport the .cocci patches 
+themselves going forward.
 
+But, I think it might be sufficient to just document what version of the 
+tools, in this case spatch, were used for a particular backports 
+commit/release.  It's easy enough to build any version of spatch from 
+git.  Or perhaps each .cocci patch could have a comment listing the 
+spatch version it was developed with.  Future backports releases could 
+then update the patch syntax as needed, document the spatch version, and 
+leave it at that.
+
+-Remington
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
