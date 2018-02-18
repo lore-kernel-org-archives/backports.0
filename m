@@ -1,37 +1,51 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from sandesh.cdotd.ernet.in ([196.1.105.47]:34209 "HELO
-        sandesh.cdotd.ernet.in" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with SMTP id S1752196AbeB0Lmu (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 27 Feb 2018 06:42:50 -0500
-From: "KAVITA MATHUR" <kavitam@cdot.in>
-To: ath10k@lists.infradead.org, backports@vger.kernel.org
-Cc: linux-wireless@vger.kernel.org
-Subject: fixed bit rate 9Mbps set as 24Mbps in g mode(legacy)
-Date: Tue, 27 Feb 2018 14:19:49 +0530
-Message-Id: <20180227083933.M59708@cdot.in> (sfid-20180227_124252_710122_D68A4540)
-In-Reply-To: <1519625792-12010-1-git-send-email-periyasa@codeaurora.org>
-References: <1519625792-12010-1-git-send-email-periyasa@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset=utf-8
+Received: from paleale.coelho.fi ([176.9.41.70]:59514 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751335AbeBRNzo (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sun, 18 Feb 2018 08:55:44 -0500
+From: Luca Coelho <luca@coelho.fi>
+To: backports@vger.kernel.org
+Cc: Luca Coelho <luciano.coelho@intel.com>
+Date: Sun, 18 Feb 2018 15:24:54 +0200
+Message-Id: <20180218132459.11011-6-luca@coelho.fi> (sfid-20180218_145545_390270_5C56D086)
+In-Reply-To: <20180218132459.11011-1-luca@coelho.fi>
+References: <20180218132459.11011-1-luca@coelho.fi>
+Subject: [PATCH 05/10] backport: remove pkcs7_verify.c patch hunk
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
+From: Luca Coelho <luciano.coelho@intel.com>
 
-I have configured AP in g mode and tested legacy rates.All basic rates and supported
-rates(1,2,5.5,11,6,9,12,18,24,36,48,54) are set except 9Mbps.
+The change that used to be patched into the pkcs7_verify.c file is now
+part of newer kernels, so we don't need to patch it anymore.  Remove
+this hunk from verify.patch accordingly.
 
-When fixed bit rate 9Mbps is set, it gets set as 24 Mbps. This issue has been observed
-in backports-4.4.2-1 as well as latest git version of ath10k driver.
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+---
+ patches/verify.patch | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-
-Is anybody aware of this issue? How can I fix this rate 9Mbps?
-
-
-Thanks & Regards,
-Kavita
-
+diff --git a/patches/verify.patch b/patches/verify.patch
+index 0fda8411e43a..442f2f622351 100644
+--- a/patches/verify.patch
++++ b/patches/verify.patch
+@@ -62,14 +62,3 @@
+  struct x509_certificate {
+  	struct x509_certificate *next;
+  	struct x509_certificate *signer;	/* Certificate that signed this one */
+---- a/compat/verification/pkcs7_verify.c
+-+++ b/compat/verification/pkcs7_verify.c
+-@@ -150,7 +150,7 @@
+- 		pr_devel("Sig %u: Found cert serial match X.509[%u]\n",
+- 			 sinfo->index, certix);
+- 
+--		if (x509->pub->pkey_algo != sinfo->sig->pkey_algo) {
+-+		if (strcmp(x509->pub->pkey_algo, sinfo->sig->pkey_algo)) {
+- 			pr_warn("Sig %u: X.509 algo and PKCS#7 sig algo don't match\n",
+- 				sinfo->index);
+- 			continue;
+-- 
+2.15.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
