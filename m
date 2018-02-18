@@ -1,59 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:59522 "EHLO
+Received: from paleale.coelho.fi ([176.9.41.70]:59512 "EHLO
         farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751335AbeBRNzr (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sun, 18 Feb 2018 08:55:47 -0500
+        with ESMTP id S1751335AbeBRNzm (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sun, 18 Feb 2018 08:55:42 -0500
 From: Luca Coelho <luca@coelho.fi>
 To: backports@vger.kernel.org
 Cc: Luca Coelho <luciano.coelho@intel.com>
-Date: Sun, 18 Feb 2018 15:24:51 +0200
-Message-Id: <20180218132459.11011-3-luca@coelho.fi> (sfid-20180218_145548_308755_D53692BB)
+Date: Sun, 18 Feb 2018 15:24:58 +0200
+Message-Id: <20180218132459.11011-10-luca@coelho.fi> (sfid-20180218_145544_524148_787AD41A)
 In-Reply-To: <20180218132459.11011-1-luca@coelho.fi>
 References: <20180218132459.11011-1-luca@coelho.fi>
-Subject: [PATCH 02/10] backport: add pcie_find_root_port()
+Subject: [PATCH 09/10] backport: increase max stack frame size compiler check to 1280
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 From: Luca Coelho <luciano.coelho@intel.com>
 
-This function was introduced in v4.9 and added to 3.12.69, 4.4.37 and
-4.8.13.
+The verification code has some large data variables that are allocated
+in the stack.  Increase the maximum stack frame size in the compiler
+check slightly (from 1024 to 1280) to prevent harmless warnings.
 
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 ---
- backport/backport-include/linux/pci.h | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ backport/compat/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/backport/backport-include/linux/pci.h b/backport/backport-include/linux/pci.h
-index 81c2d57a3454..67ac40fcbf58 100644
---- a/backport/backport-include/linux/pci.h
-+++ b/backport/backport-include/linux/pci.h
-@@ -184,4 +184,25 @@ static inline int pci_enable_msix_exact(struct pci_dev *dev,
- #endif
- #endif /* CONFIG_PCI */
- 
-+#if LINUX_VERSION_IS_LESS(4,9,0) &&			\
-+	!LINUX_VERSION_IN_RANGE(3,12,69, 3,13,0) &&	\
-+	!LINUX_VERSION_IN_RANGE(4,4,37, 4,5,0) &&	\
-+	!LINUX_VERSION_IN_RANGE(4,8,13, 4,9,0)
-+
-+static inline struct pci_dev *pcie_find_root_port(struct pci_dev *dev)
-+{
-+	while (1) {
-+		if (!pci_is_pcie(dev))
-+			break;
-+		if (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT)
-+			return dev;
-+		if (!dev->bus->self)
-+			break;
-+		dev = dev->bus->self;
-+	}
-+	return NULL;
-+}
-+
-+#endif/* <4.9.0 but not >= 3.12.69, 4.4.37, 4.8.13 */
-+
- #endif /* _BACKPORT_LINUX_PCI_H */
+diff --git a/backport/compat/Makefile b/backport/compat/Makefile
+index 5c79b9b849cb..ac70aaf82fcc 100644
+--- a/backport/compat/Makefile
++++ b/backport/compat/Makefile
+@@ -1,4 +1,4 @@
+-ccflags-y += -I$(src)
++ccflags-y += -I$(src) -Wframe-larger-than=1280
+ ifeq ($(CONFIG_BACKPORT_INTEGRATE),)
+ obj-m += compat.o
+ else
 -- 
 2.15.1
 
