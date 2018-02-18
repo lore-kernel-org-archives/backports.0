@@ -1,121 +1,81 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail2.candelatech.com ([208.74.158.173]:58566 "EHLO
-        mail2.candelatech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932778AbeB1TnL (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 28 Feb 2018 14:43:11 -0500
-Subject: Re: fixed bit rate 9Mbps set as 24Mbps in g mode(legacy)
-To: KAVITA MATHUR <kavitam@cdot.in>, ath10k@lists.infradead.org,
-        backports@vger.kernel.org
-References: <1519625792-12010-1-git-send-email-periyasa@codeaurora.org>
- <20180227083933.M59708@cdot.in>
- <3047f184-d600-7be7-52bc-2ed4cee37ffe@candelatech.com>
- <20180228035700.M28643@cdot.in>
-Cc: linux-wireless@vger.kernel.org
-From: Ben Greear <greearb@candelatech.com>
-Message-ID: <04a538f8-80fc-432d-ba6c-59a3c48e6508@candelatech.com> (sfid-20180228_204314_544712_0138AABA)
-Date: Wed, 28 Feb 2018 11:43:08 -0800
-MIME-Version: 1.0
-In-Reply-To: <20180228035700.M28643@cdot.in>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Received: from paleale.coelho.fi ([176.9.41.70]:59530 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751478AbeBRNzv (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sun, 18 Feb 2018 08:55:51 -0500
+From: Luca Coelho <luca@coelho.fi>
+To: backports@vger.kernel.org
+Cc: Luca Coelho <luciano.coelho@intel.com>
+Date: Sun, 18 Feb 2018 15:24:53 +0200
+Message-Id: <20180218132459.11011-5-luca@coelho.fi> (sfid-20180218_145553_082409_396B04D4)
+In-Reply-To: <20180218132459.11011-1-luca@coelho.fi>
+References: <20180218132459.11011-1-luca@coelho.fi>
+Subject: [PATCH 04/10] backport: update genl_dump_check_consistent() backport
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 02/27/2018 08:03 PM, KAVITA MATHUR wrote:
->
->
->
-> On Tue, 27 Feb 2018 08:41:50 -0800, Ben Greear wrote
->> On 02/27/2018 12:49 AM, KAVITA MATHUR wrote:
->>> Hi,
->>>
->>> I have configured AP in g mode and tested legacy rates.All basic rates and supported
->>> rates(1,2,5.5,11,6,9,12,18,24,36,48,54) are set except 9Mbps.
->>>
->>> When fixed bit rate 9Mbps is set, it gets set as 24 Mbps. This issue has been observed
->>> in backports-4.4.2-1 as well as latest git version of ath10k driver.
->>>
->>>
->>> Is anybody aware of this issue? How can I fix this rate 9Mbps?
->>
->> You should specify which firmware/chipset you are using, since this might
->> easily be a firmware issue.
->
->
-> Chipset : QCA988x
-> ath10k version : git 16 oct 2017(v4.14-rc2-1-24-gc6db471)
-> firmware version : firmware-5.bin_10.2.4.70.66
-> Kernel version : 3.12
->
->> And, how are you determining that 'it gets set to 24Mbps'.  Is that the
->> encoding you see in a wifi sniff, or is the driver being set to 24Mbps
->> improperly when you use iw (or whatever) to try configuring the rate?
->
-> I have used command "iw wlan0 station dump" to see set data rate as well as I have
-> sniffer. Measured data throughput is also as per 24Mbps.
+From: Luca Coelho <luciano.coelho@intel.com>
 
-I use more recent (and hacked) kernels/drivers, and my own wave-1 firmware.  I did have
-a bug in some code I wrote because the 48Mbps rate code is '0x0', and some of
-my code was ignoring it thinking it was not properly set.  I did see correct
-on-air 48Mbps encoding rates though.
+The genl_dump_check_consistent() function was changed in v4.15 to use
+only two arguments.  The family is not needed anymore, because we were
+erroneously subtracting the header size and that was fixed in v4.15.
 
-Possibly you have similar problems with rate-code 0x0.
+Since the family was only used to check the header size, we can create
+a dummy with hdrsize = 0, which will allow us to call the old version
+of the function.  There is a good side-effect to doing this: the bug
+is going to be fixed, because with hdrsize = 0 we will not subtract
+anything and it will have the same effect as the fix.
 
-Have you tried doing a capture with an ath9k or some other non-ath10k driver
-to see if it is really 24Mbps on air?
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+---
+ backport/backport-include/net/genetlink.h | 23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
 
->
->
->
->> Recent upstream mac80211 has broken the ability to set a single tx rate as
->> well, last I checked.
->
-> Other rates are set properly except 9Mbps.By default it sets as 6Mbps, when data
-> transfer starts, then it set to the mentioned fixed data rate.
-
-Setting the tx rate through normal API will not effect management frames, and at the beginning of
-the connection, perhaps no data frames have been sent/received yet, so you would
-see 6Mbps reported.
-
-Thanks,
-Ben
-
->
-> Thanks & Regards,
-> Kavita
->> Thanks,
->> Ben
->>
->>>
->>>
->>> Thanks & Regards,
->>> Kavita
->>>
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe backports" in
->>>
->>
->> --
->> Ben Greear <greearb@candelatech.com>
->> Candela Technologies Inc  http://www.candelatech.com
->
->
-> Thanks & Regards,
-> कविता माथुर Kavita Mathur
-> वरिष्ठ अनुसंधान अभियंता  Senior Research Engineer
-> सी-डॉट                      C-DOT
-> इलैक्ट्रॉनिक्स सिटी फेज़ I         Electronics City Phase I
-> होसूर रोड, बेंगलूरु               Hosur Road, Bengaluru – 560100
-> फोन  Ph 080-28529896
-> Disclaimer:
-> ----------
-> This email and any files transmitted with it
->
-
-
+diff --git a/backport/backport-include/net/genetlink.h b/backport/backport-include/net/genetlink.h
+index f620b99da280..dfbacbf40723 100644
+--- a/backport/backport-include/net/genetlink.h
++++ b/backport/backport-include/net/genetlink.h
+@@ -56,9 +56,25 @@ static inline void *genl_info_userhdr(struct genl_info *info)
+ #endif
+ 
+ #if LINUX_VERSION_IS_LESS(3,1,0)
+-#define genl_dump_check_consistent(cb, user_hdr, family)
++#define genl_dump_check_consistent(cb, user_hdr)
+ #endif
+ 
++#if LINUX_VERSION_IS_LESS(4,15,0)
++#ifndef genl_dump_check_consistent
++static inline
++void backport_genl_dump_check_consistent(struct netlink_callback *cb,
++					 void *user_hdr)
++{
++	struct genl_family dummy_family = {
++		.hdrsize = 0,
++	};
++
++	genl_dump_check_consistent(cb, user_hdr, &dummy_family);
++}
++#define genl_dump_check_consistent LINUX_BACKPORT(genl_dump_check_consistent)
++#endif
++#endif /* LINUX_VERSION_IS_LESS(4,15,0) */
++
+ #if LINUX_VERSION_IS_LESS(3,13,0) && RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(7,0)
+ static inline int __real_genl_register_family(struct genl_family *family)
+ {
+@@ -139,10 +155,7 @@ extern void genl_notify(struct sk_buff *skb, struct net *net, u32 pid,
+ 	genlmsg_put(_skb, _pid, _seq, &(_fam)->family, _flags, _cmd)
+ #define genlmsg_nlhdr(_hdr, _fam)					\
+ 	genlmsg_nlhdr(_hdr, &(_fam)->family)
+-#ifndef genl_dump_check_consistent
+-#define genl_dump_check_consistent(_cb, _hdr, _fam)			\
+-	genl_dump_check_consistent(_cb, _hdr, &(_fam)->family)
+-#endif
++
+ #ifndef genlmsg_put_reply /* might already be there from _info override above */
+ #define genlmsg_put_reply(_skb, _info, _fam, _flags, _cmd)		\
+ 	genlmsg_put_reply(_skb, _info, &(_fam)->family, _flags, _cmd)
 -- 
-Ben Greear <greearb@candelatech.com>
-Candela Technologies Inc  http://www.candelatech.com
+2.15.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
