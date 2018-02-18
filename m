@@ -1,78 +1,67 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.mailbox.org ([80.241.60.212]:33852 "EHLO mx1.mailbox.org"
+Received: from mga17.intel.com ([192.55.52.151]:57420 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751297AbeBRQLu (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 18 Feb 2018 11:11:50 -0500
-Subject: Re: [PATCH 00/10] backport: updates for v4.16
-To: Luca Coelho <luca@coelho.fi>, backports@vger.kernel.org
-Cc: Luca Coelho <luciano.coelho@intel.com>
+        id S1751474AbeBRR66 (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 18 Feb 2018 12:58:58 -0500
+Message-ID: <1518976736.7832.64.camel@intel.com> (sfid-20180218_185900_696918_27C855F6)
+Subject: Re: [PATCH 10/10] backport: implement alloc_percpu_gfp() for < 3.18.
+From: Luciano Coelho <luciano.coelho@intel.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
+Cc: Sara Sharon <sara.sharon@intel.com>
+Date: Sun, 18 Feb 2018 19:58:56 +0200
+In-Reply-To: <4eb11ec9-3d1e-91ee-6585-7c8221454faf@hauke-m.de>
 References: <20180218132459.11011-1-luca@coelho.fi>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <c212f7c3-f5d6-543f-26ba-ef1c55221261@hauke-m.de> (sfid-20180218_171151_577612_F3745EB5)
-Date: Sun, 18 Feb 2018 17:11:47 +0100
-MIME-Version: 1.0
-In-Reply-To: <20180218132459.11011-1-luca@coelho.fi>
-Content-Type: text/plain; charset=utf-8
+         <20180218132459.11011-11-luca@coelho.fi>
+         <4eb11ec9-3d1e-91ee-6585-7c8221454faf@hauke-m.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 02/18/2018 02:24 PM, Luca Coelho wrote:
-> From: Luca Coelho <luciano.coelho@intel.com>
+On Sun, 2018-02-18 at 17:10 +0100, Hauke Mehrtens wrote:
+> On 02/18/2018 02:24 PM, Luca Coelho wrote:
+> > From: Sara Sharon <sara.sharon@intel.com>
+> > 
+> > mac80211 now uses the alloc_percpu_gfp() function, which doesn't
+> > exist
+> > in kernels older than 3.18.  Backport it accordingly.
+> > 
+> > Signed-off-by: Sara Sharon <sara.sharon@intel.com>
+> > Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+> > ---
+> >  backport-include/linux/percpu.h | 19 +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> >  create mode 100644 backport-include/linux/percpu.h
+> > 
+> > diff --git a/backport-include/linux/percpu.h b/backport-
+> > include/linux/percpu.h
+> > new file mode 100644
+> > index 000000000000..10be03cba795
+> > --- /dev/null
+> > +++ b/backport-include/linux/percpu.h
+> > @@ -0,0 +1,19 @@
+> > +/*
+> > + * Copyright (C) 2018 Intel Corporation
+> > + */
+> > +#ifndef __BACKPORT_PERCPU_H
+> > +#define __BACKPORT_PERCPU_H
+> > +#include_next <linux/percpu.h>
+> > +
+> > +#if LINUX_VERSION_IS_LESS(3,18,0)
+> > +static inline void __percpu *__alloc_gfp_warn(void)
+> > +{
+> > +	WARN(1, "Cannot backport alloc_percpu_gfp");
+> > +	return NULL;
 > 
-> Hi,
-> 
-> Here's a bunch of patches that we had pending in our internal
-> backports tree.  With this series at least iwlwifi can be fully
-> backported from v4.16 kernels.
+> Is this only called with GFP_KERNEL for now or why is it ok to only
+> show
+> an error message here?
 
-Thanks for the patches they are looking good to me.
+Yes, exactly.  For now we only use it with GFP_KERNEL and backporting
+for the other cases would be very difficult, so I took this shortcut
+here.
 
-With which kernels have you tested these patches + iwlwifi?
-
-> 
-> Please review.
-> 
-> Cheers,
-> Luca.
-> 
-> 
-> Luca Coelho (9):
->   compat: only define thermal backports if CONFIG_THERMAL is enabled
->   backport: add pcie_find_root_port()
->   backport: include lib/bucket_locks.c
->   backport: update genl_dump_check_consistent() backport
->   backport: remove pkcs7_verify.c patch hunk
->   backport: add new build_bug.h file
->   backports: fix typo "TIMKEEPING" and fix gfp.h
->   backport: remove stddef.h inclusions
->   backport: increase max stack frame size compiler check to 1280
-> 
-> Sara Sharon (1):
->   backport: implement alloc_percpu_gfp() for < 3.18.
-> 
->  backport-include/linux/percpu.h               | 19 ++++++++++++++++++
->  backport/backport-include/linux/build_bug.h   | 10 +++++++++
->  backport/backport-include/linux/gfp.h         |  2 +-
->  backport/backport-include/linux/pci.h         | 21 +++++++++++++++++++
->  backport/backport-include/linux/spinlock.h    | 13 ++++++++++++
->  backport/backport-include/linux/thermal.h     |  2 ++
->  backport/backport-include/linux/timekeeping.h |  6 +++---
->  backport/backport-include/net/genetlink.h     | 23 ++++++++++++++++-----
->  backport/compat/Kconfig                       |  7 +++++++
->  backport/compat/Makefile                      |  2 +-
->  backport/compat/backport-4.3.c                |  2 ++
->  backport/compat/verification/mbedtls/asn1.h   |  2 --
->  backport/compat/verification/mbedtls/md.h     |  2 --
->  backport/compat/verification/mbedtls/oid.h    |  2 --
->  patches/lib-bucket_locks.patch                | 29 +++++++++++++++++++++++++++
->  patches/lib-rhashtable.patch                  | 27 -------------------------
->  patches/verify.patch                          | 11 ----------
->  17 files changed, 126 insertions(+), 54 deletions(-)
->  create mode 100644 backport-include/linux/percpu.h
->  create mode 100644 backport/backport-include/linux/build_bug.h
->  create mode 100644 backport/backport-include/linux/spinlock.h
->  create mode 100644 patches/lib-bucket_locks.patch
-> 
-
+--
+Luca.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
