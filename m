@@ -1,61 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:59538 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751478AbeBRNzz (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sun, 18 Feb 2018 08:55:55 -0500
-From: Luca Coelho <luca@coelho.fi>
-To: backports@vger.kernel.org
-Cc: Luca Coelho <luciano.coelho@intel.com>
-Date: Sun, 18 Feb 2018 15:24:56 +0200
-Message-Id: <20180218132459.11011-8-luca@coelho.fi> (sfid-20180218_145557_190400_B1447278)
-In-Reply-To: <20180218132459.11011-1-luca@coelho.fi>
-References: <20180218132459.11011-1-luca@coelho.fi>
-Subject: [PATCH 07/10] backports: fix typo "TIMKEEPING" and fix gfp.h
+Received: from mail2.candelatech.com ([208.74.158.173]:60718 "EHLO
+        mail2.candelatech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751733AbeB0Qlw (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 27 Feb 2018 11:41:52 -0500
+Subject: Re: fixed bit rate 9Mbps set as 24Mbps in g mode(legacy)
+To: KAVITA MATHUR <kavitam@cdot.in>, ath10k@lists.infradead.org,
+        backports@vger.kernel.org
+References: <1519625792-12010-1-git-send-email-periyasa@codeaurora.org>
+ <20180227083933.M59708@cdot.in>
+Cc: linux-wireless@vger.kernel.org
+From: Ben Greear <greearb@candelatech.com>
+Message-ID: <3047f184-d600-7be7-52bc-2ed4cee37ffe@candelatech.com> (sfid-20180227_174155_153235_AA2C6009)
+Date: Tue, 27 Feb 2018 08:41:50 -0800
+MIME-Version: 1.0
+In-Reply-To: <20180227083933.M59708@cdot.in>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Luca Coelho <luciano.coelho@intel.com>
+On 02/27/2018 12:49 AM, KAVITA MATHUR wrote:
+> Hi,
+>
+> I have configured AP in g mode and tested legacy rates.All basic rates and supported
+> rates(1,2,5.5,11,6,9,12,18,24,36,48,54) are set except 9Mbps.
+>
+> When fixed bit rate 9Mbps is set, it gets set as 24 Mbps. This issue has been observed
+> in backports-4.4.2-1 as well as latest git version of ath10k driver.
+>
+>
+> Is anybody aware of this issue? How can I fix this rate 9Mbps?
 
-There is a typo in the timekeeping.h backport, fix that.
-Additionally, fix the gfp.h file tha has a copy/paste issue where
-__BACKPORT_TIMKEEPING_H is used instead of __BACKPORT_LINUX_GFP_H.
+You should specify which firmware/chipset you are using, since this might
+easily be a firmware issue.
 
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
----
- backport/backport-include/linux/gfp.h         | 2 +-
- backport/backport-include/linux/timekeeping.h | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+And, how are you determining that 'it gets set to 24Mbps'.  Is that the encoding
+you see in a wifi sniff, or is the driver being set to 24Mbps improperly when
+you use iw (or whatever) to try configuring the rate?
 
-diff --git a/backport/backport-include/linux/gfp.h b/backport/backport-include/linux/gfp.h
-index b4db7bb9066e..42f818f1fee3 100644
---- a/backport/backport-include/linux/gfp.h
-+++ b/backport/backport-include/linux/gfp.h
-@@ -10,4 +10,4 @@
- #define __GFP_KSWAPD_RECLAIM	((__force gfp_t)___GFP_KSWAPD_RECLAIM) /* kswapd can wake */
- #endif
- 
--#endif /* __BACKPORT_TIMKEEPING_H */
-+#endif /* __BACKPORT_LINUX_GFP_H */
-diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
-index b683d1298336..0b9c649a3395 100644
---- a/backport/backport-include/linux/timekeeping.h
-+++ b/backport/backport-include/linux/timekeeping.h
-@@ -1,5 +1,5 @@
--#ifndef __BACKPORT_TIMKEEPING_H
--#define __BACKPORT_TIMKEEPING_H
-+#ifndef __BACKPORT_TIMEKEEPING_H
-+#define __BACKPORT_TIMEKEEPING_H
- #include <linux/version.h>
- #include <linux/types.h>
- 
-@@ -35,4 +35,4 @@ static inline time64_t ktime_get_seconds(void)
- }
- #endif
- 
--#endif /* __BACKPORT_TIMKEEPING_H */
-+#endif /* __BACKPORT_TIMEKEEPING_H */
+Recent upstream mac80211 has broken the ability to set a single tx rate as well,
+last I checked.
+
+Thanks,
+Ben
+
+>
+>
+> Thanks & Regards,
+> Kavita
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+>
+
+
 -- 
-2.15.1
+Ben Greear <greearb@candelatech.com>
+Candela Technologies Inc  http://www.candelatech.com
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
