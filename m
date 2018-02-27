@@ -1,47 +1,37 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-sn1nam01on0137.outbound.protection.outlook.com ([104.47.32.137]:63721
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754223AbeASICc (ORCPT <rfc822;backports@vger.kernel.org>);
-        Fri, 19 Jan 2018 03:02:32 -0500
-Date: Fri, 19 Jan 2018 02:02:21 -0600
-From: Chi-Hsien Lin <chi-hsien.lin@cypress.com>
-To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-        Winnie Chang <winnie.chang@cypress.com>,
-        Chi-hsien Lin <chi-hsien.lin@cypress.com>
-Subject: [PATCH] backports: include linux/err.h in key.c
-Message-ID: <20180119080215.GA102758@aremote07.aus.cypress.com> (sfid-20180119_090250_042216_85C253C3)
+Received: from sandesh.cdotd.ernet.in ([196.1.105.47]:34209 "HELO
+        sandesh.cdotd.ernet.in" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with SMTP id S1752196AbeB0Lmu (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 27 Feb 2018 06:42:50 -0500
+From: "KAVITA MATHUR" <kavitam@cdot.in>
+To: ath10k@lists.infradead.org, backports@vger.kernel.org
+Cc: linux-wireless@vger.kernel.org
+Subject: fixed bit rate 9Mbps set as 24Mbps in g mode(legacy)
+Date: Tue, 27 Feb 2018 14:19:49 +0530
+Message-Id: <20180227083933.M59708@cdot.in> (sfid-20180227_124252_710122_D68A4540)
+In-Reply-To: <1519625792-12010-1-git-send-email-periyasa@codeaurora.org>
+References: <1519625792-12010-1-git-send-email-periyasa@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+        charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Winnie Chang <winnie.chang@cypress.com>
+Hi,
 
-Function IS_ERR, PTR_ERR and ERR_PTR are not found. Need to include
-linux/err.h to fix compiling errors.
+I have configured AP in g mode and tested legacy rates.All basic rates and supported
+rates(1,2,5.5,11,6,9,12,18,24,36,48,54) are set except 9Mbps.
 
-Signed-off-by: Winnie Chang <winnie.chang@cypress.com>
-Signed-off-by: Chi-hsien Lin <chi-hsien.lin@cypress.com>
----
- backport/compat/verification/key.c | 1 +
- 1 file changed, 1 insertion(+)
+When fixed bit rate 9Mbps is set, it gets set as 24 Mbps. This issue has been observed
+in backports-4.4.2-1 as well as latest git version of ath10k driver.
 
-diff --git a/backport/compat/verification/key.c b/backport/compat/verification/key.c
-index 3a3c9bc..329f8b2 100644
---- a/backport/compat/verification/key.c
-+++ b/backport/compat/verification/key.c
-@@ -1,6 +1,7 @@
- #include <linux/export.h>
- #include <linux/slab.h>
- #include <linux/key.h>
-+#include <linux/err.h>
- #include <keys/asymmetric-type.h>
- #include "x509_parser.h"
- 
--- 
-1.9.1
+
+Is anybody aware of this issue? How can I fix this rate 9Mbps?
+
+
+Thanks & Regards,
+Kavita
+
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
