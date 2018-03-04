@@ -1,62 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:32996 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752412AbeB1SsV (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 28 Feb 2018 13:48:21 -0500
-Message-ID: <1519843697.3891.15.camel@coelho.fi> (sfid-20180228_194823_878807_36A6B264)
-From: Luca Coelho <luca@coelho.fi>
-To: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
-Cc: Sara Sharon <sara.sharon@intel.com>
-Date: Wed, 28 Feb 2018 20:48:17 +0200
-In-Reply-To: <e59b84ac-99c0-9797-bc87-763a62a9bd0d@hauke-m.de>
-References: <20180218132459.11011-1-luca@coelho.fi>
-         <20180218132459.11011-11-luca@coelho.fi>
-         <e59b84ac-99c0-9797-bc87-763a62a9bd0d@hauke-m.de>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [PATCH 10/10] backport: implement alloc_percpu_gfp() for < 3.18.
+Received: from mx1.mailbox.org ([80.241.60.212]:34286 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932507AbeCDW5v (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 4 Mar 2018 17:57:51 -0500
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: johannes@sipsolutions.net, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 10/14] header: timekeeping.h: Add ktime_get_ts64()
+Date: Sun,  4 Mar 2018 23:57:13 +0100
+Message-Id: <20180304225717.20890-11-hauke@hauke-m.de> (sfid-20180304_235756_708468_5F4F6AC8)
+In-Reply-To: <20180304225717.20890-1-hauke@hauke-m.de>
+References: <20180304225717.20890-1-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2018-02-28 at 19:32 +0100, Hauke Mehrtens wrote:
-> 
-> On 02/18/2018 02:24 PM, Luca Coelho wrote:
-> > From: Sara Sharon <sara.sharon@intel.com>
-> > 
-> > mac80211 now uses the alloc_percpu_gfp() function, which doesn't
-> > exist
-> > in kernels older than 3.18.  Backport it accordingly.
-> > 
-> > Signed-off-by: Sara Sharon <sara.sharon@intel.com>
-> > Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-> > ---
-> >  backport-include/linux/percpu.h | 19 +++++++++++++++++++
-> >  1 file changed, 19 insertions(+)
-> >  create mode 100644 backport-include/linux/percpu.h
-> > 
-> > diff --git a/backport-include/linux/percpu.h b/backport-
-> > include/linux/percpu.h
-> > new file mode 100644
-> > index 000000000000..10be03cba795
-> > --- /dev/null
-> > +++ b/backport-include/linux/percpu.h
-> 
-> This path is wrong, please add this to
-> backport/backport-include/linux/percpu.h
-> 
-> As this was already applied, will you send a patch to fix this
-> please.
+This function was added in commit d6d29896c665d ("timekeeping: Provide
+timespec64 based interfaces"). We can just use the 32 bit version
+instated as the rest was already backported in backports commit
+ea8b7cd797ca0c ("backports: deal with struct timespec64 changes)".
 
-Oh, sorry.  My bad.  Our internal tree is a backport itself, so the
-tree struct is different.  Usually the patches apply nicely and go to
-the correct directories automatically (git magic), but I since this is
-a new file, it couldn't detect anything similar and just added it to
-the wrong place.
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ backport/backport-include/linux/timekeeping.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-I'll send a fix.  Thanks for pointing out.
+diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
+index c108645f..30f9b7a9 100644
+--- a/backport/backport-include/linux/timekeeping.h
++++ b/backport/backport-include/linux/timekeeping.h
+@@ -44,4 +44,11 @@ static inline time64_t ktime_get_real_seconds(void)
+ }
+ #endif
+ 
++#if LINUX_VERSION_IS_LESS(3,17,0)
++static inline void ktime_get_ts64(struct timespec64 *ts)
++{
++	ktime_get_ts(ts);
++}
++#endif
++
+ #endif /* __BACKPORT_TIMEKEEPING_H */
+-- 
+2.11.0
 
---
-Cheers,
-Luca.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
