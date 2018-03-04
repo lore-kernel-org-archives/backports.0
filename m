@@ -1,45 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.mailbox.org ([80.241.60.212]:34286 "EHLO mx1.mailbox.org"
+Received: from mx2.mailbox.org ([80.241.60.215]:52132 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932507AbeCDW5v (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 4 Mar 2018 17:57:51 -0500
+        id S932512AbeCDW5y (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 4 Mar 2018 17:57:54 -0500
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: johannes@sipsolutions.net, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 10/14] header: timekeeping.h: Add ktime_get_ts64()
-Date: Sun,  4 Mar 2018 23:57:13 +0100
-Message-Id: <20180304225717.20890-11-hauke@hauke-m.de> (sfid-20180304_235756_708468_5F4F6AC8)
+Subject: [PATCH 13/14] dependencies: Make mt76 depend on kernel 4.1
+Date: Sun,  4 Mar 2018 23:57:16 +0100
+Message-Id: <20180304225717.20890-14-hauke@hauke-m.de> (sfid-20180304_235803_152439_93C6EB00)
 In-Reply-To: <20180304225717.20890-1-hauke@hauke-m.de>
 References: <20180304225717.20890-1-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This function was added in commit d6d29896c665d ("timekeeping: Provide
-timespec64 based interfaces"). We can just use the 32 bit version
-instated as the rest was already backported in backports commit
-ea8b7cd797ca0c ("backports: deal with struct timespec64 changes)".
+The mt76 driver uses the devm_led_classdev_register() function which
+was added in kernel 4.1, do not build this driver on older kernel
+versions.
+It is probably not so hard to make this driver also work on older kernel
+versions.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/timekeeping.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ dependencies | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
-index c108645f..30f9b7a9 100644
---- a/backport/backport-include/linux/timekeeping.h
-+++ b/backport/backport-include/linux/timekeeping.h
-@@ -44,4 +44,11 @@ static inline time64_t ktime_get_real_seconds(void)
- }
- #endif
+diff --git a/dependencies b/dependencies
+index 2741cbeb..92d7dc2c 100644
+--- a/dependencies
++++ b/dependencies
+@@ -162,3 +162,7 @@ USB_NET_RNDIS_WLAN 4.6
  
-+#if LINUX_VERSION_IS_LESS(3,17,0)
-+static inline void ktime_get_ts64(struct timespec64 *ts)
-+{
-+	ktime_get_ts(ts);
-+}
-+#endif
+ # depends on struct mmc_card::ocr
+ RSI_SDIO 3.13
 +
- #endif /* __BACKPORT_TIMEKEEPING_H */
++# depends on devm_led_classdev_register()
++MT76_CORE 4.1
++MT76x2E 4.1
 -- 
 2.11.0
 
