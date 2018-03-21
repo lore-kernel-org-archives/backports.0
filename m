@@ -1,47 +1,30 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.mailbox.org ([80.241.60.215]:52086 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932487AbeCDW5q (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 4 Mar 2018 17:57:46 -0500
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: johannes@sipsolutions.net, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 02/14] compat: timer.h: Remove last parameters from DEFINE_TIMER
-Date: Sun,  4 Mar 2018 23:57:05 +0100
-Message-Id: <20180304225717.20890-3-hauke@hauke-m.de> (sfid-20180304_235754_206853_2C3AD70F)
-In-Reply-To: <20180304225717.20890-1-hauke@hauke-m.de>
-References: <20180304225717.20890-1-hauke@hauke-m.de>
+Received: from s3.sipsolutions.net ([144.76.63.242]:32890 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751502AbeCUISG (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 21 Mar 2018 04:18:06 -0400
+Message-ID: <1521620284.2645.13.camel@sipsolutions.net> (sfid-20180321_091810_607661_D630A213)
+Subject: Re: Backports gentree fail with v4.12
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Wan-Hua Chang <winnie.chang@cypress.com>, backports@vger.kernel.org
+Cc: chln@cypress.com
+Date: Wed, 21 Mar 2018 09:18:04 +0100
+In-Reply-To: <20180314094425.GA169496@aremote01.aus.cypress.com> (sfid-20180314_104444_324871_60016084)
+References: <20180314094425.GA169496@aremote01.aus.cypress.com>
+         (sfid-20180314_104444_324871_60016084)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-DEFINE_TIMER only has 2 parameters since kernel commit 1d27e3e2252ba
-("timer: Remove expires and data arguments from DEFINE_TIMER") which was
-added with kernel 4.15. Add a version which translates between the new
-and the old API.
+On Wed, 2018-03-14 at 04:44 -0500, Wan-Hua Chang wrote:
+>  
+> ./gentree.py --gitdebug --clean --git-revision v4.12 --copy-list
+> ./copy-list.brcmfmac --verbose ~/linux-stable ~/output/v4.12-backports
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/timer.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+You can't fix that. You might be able to go back to an older backports
+version, but I don't even know if we have one for 4.12.
 
-diff --git a/backport/backport-include/linux/timer.h b/backport/backport-include/linux/timer.h
-index 9824ea6b..69590bb7 100644
---- a/backport/backport-include/linux/timer.h
-+++ b/backport/backport-include/linux/timer.h
-@@ -60,4 +60,11 @@ static inline void timer_setup(struct timer_list *timer,
- 	container_of(callback_timer, typeof(*var), timer_fieldname)
- #endif
- 
-+#if LINUX_VERSION_IS_LESS(4,15,0)
-+#undef DEFINE_TIMER
-+#define DEFINE_TIMER(_name, _function)				\
-+	struct timer_list _name =				\
-+		__TIMER_INITIALIZER(_function, 0, 0, 0)
-+#endif
-+
- #endif /* _BACKPORT_TIMER_H */
--- 
-2.11.0
-
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
