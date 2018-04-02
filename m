@@ -1,44 +1,58 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from rnd-relay.smtp.broadcom.com ([192.19.229.170]:45732 "EHLO
-        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751565AbeD3LQE (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 30 Apr 2018 07:16:04 -0400
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-To: backports@vger.kernel.org
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
-Subject: [PATCH 2/3] backport-include: add ETH_P_PREAUTH definition in if_ether.h
-Date: Mon, 30 Apr 2018 13:15:45 +0200
-Message-Id: <1525086946-6352-3-git-send-email-arend.vanspriel@broadcom.com> (sfid-20180430_131606_030789_8AAEA1BF)
-In-Reply-To: <1525086946-6352-1-git-send-email-arend.vanspriel@broadcom.com>
-References: <1525086946-6352-1-git-send-email-arend.vanspriel@broadcom.com>
+Received: from mail-io0-f193.google.com ([209.85.223.193]:37103 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754262AbeDBLUo (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 2 Apr 2018 07:20:44 -0400
+Received: by mail-io0-f193.google.com with SMTP id y128so17558654iod.4
+        for <backports@vger.kernel.org>; Mon, 02 Apr 2018 04:20:44 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAAEAJfB76xseRqnYQfRihXY6g0Jyqwt8zfddU1W7CXDg3xEFFg@mail.gmail.com>
+References: <CAAEAJfB76xseRqnYQfRihXY6g0Jyqwt8zfddU1W7CXDg3xEFFg@mail.gmail.com>
+From: Ratheendran R <ratheendran.s@gmail.com>
+Date: Mon, 2 Apr 2018 16:50:43 +0530
+Message-ID: <CALM_QrUuDH7dUU9vhyCtx-szsgraMM_=93fcW2PEgu_VagRnpA@mail.gmail.com> (sfid-20180402_132046_582361_4D42E159)
+Subject: Re:
+To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Cc: backports@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This macro definition was added in 4.17-rc1 and used by mac80211
-so add it to backport.
+Hi All,
 
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
----
- backport/backport-include/linux/if_ether.h | 4 ++++
- 1 file changed, 4 insertions(+)
+I am doing a mt7601 backport 4.14 on linux 2.6.37 kernel.
 
-diff --git a/backport/backport-include/linux/if_ether.h b/backport/backport-include/linux/if_ether.h
-index 55862ce..344480a 100644
---- a/backport/backport-include/linux/if_ether.h
-+++ b/backport/backport-include/linux/if_ether.h
-@@ -39,6 +39,10 @@
- #define ETH_P_8021AD	0x88A8          /* 802.1ad Service VLAN		*/
- #endif
- 
-+#ifndef ETH_P_PREAUTH
-+#define ETH_P_PREAUTH   0x88C7          /* 802.11 Preauthentication */
-+#endif
-+
- #ifndef ETH_MIN_MTU
- #define ETH_MIN_MTU	68
- #endif
--- 
-1.9.1
+Now when I build the backorts aganist the 2.6.37 linux build I am
+getting the below error.
+'error: bit-field =E2=80=98<anonymous>=E2=80=99 width not an integer consta=
+nt'
 
+compilation error actuals
+/home/hitem//software/source/wifi-drivers/backports-4.14-rc2-1/drivers/net/=
+wireless/mediatek/mt7601u/main.c:181:3:
+error: bit-field =E2=80=98<anonymous>=E2=80=99 width not an integer constan=
+t
+/home/hitem//software/source/wifi-drivers/backports-4.14-rc2-1/drivers/net/=
+wireless/mediatek/mt7601u/main.c:
+In function =E2=80=98mt7601u_set_rts_threshold=E2=80=99:
+/home/hitem//software/source/wifi-drivers/backports-4.14-rc2-1/drivers/net/=
+wireless/mediatek/mt7601u/main.c:329:2:
+error: bit-field =E2=80=98<anonymous>=E2=80=99 width not an integer constan=
+t
+make[8]: *** [/home/hitem//software/source/wifi-drivers/backports-4.14-rc2-=
+1/drivers/net/wireless/mediatek/mt7601u/main.o]
+Error 1
+
+
+Can anyone let me know how to fix this.
+
+Thanks in Advance.
+Ratheendran
+
+On 3/15/17, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar> wrote:
+> subscribe backports
+> --
+> To unsubscribe from this list: send the line "unsubscribe backports" in
+>
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
