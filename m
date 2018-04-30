@@ -1,34 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from rnd-relay.smtp.broadcom.com ([192.19.229.170]:45736 "EHLO
+Received: from rnd-relay.smtp.broadcom.com ([192.19.229.170]:45732 "EHLO
         rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751822AbeD3LQE (ORCPT
+        by vger.kernel.org with ESMTP id S1751565AbeD3LQE (ORCPT
         <rfc822;backports@vger.kernel.org>); Mon, 30 Apr 2018 07:16:04 -0400
 From: Arend van Spriel <arend.vanspriel@broadcom.com>
 To: backports@vger.kernel.org
 Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
-Subject: [PATCH 0/3] backports: enable building v4.17 kernel
-Date: Mon, 30 Apr 2018 13:15:43 +0200
-Message-Id: <1525086946-6352-1-git-send-email-arend.vanspriel@broadcom.com> (sfid-20180430_131606_942335_69A5E506)
+Subject: [PATCH 2/3] backport-include: add ETH_P_PREAUTH definition in if_ether.h
+Date: Mon, 30 Apr 2018 13:15:45 +0200
+Message-Id: <1525086946-6352-3-git-send-email-arend.vanspriel@broadcom.com> (sfid-20180430_131606_030789_8AAEA1BF)
+In-Reply-To: <1525086946-6352-1-git-send-email-arend.vanspriel@broadcom.com>
+References: <1525086946-6352-1-git-send-email-arend.vanspriel@broadcom.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This series enables backporting v4.17-rcX kernel sources. It was
-not tested against every target kernel, but it does work properly
-for 3.11 FC19 kernel.
+This macro definition was added in 4.17-rc1 and used by mac80211
+so add it to backport.
 
-It applies to the master branch of the backports repository.
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+---
+ backport/backport-include/linux/if_ether.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Arend van Spriel (3):
-  patches: update patches for v4.17-rc1
-  backport-include: add ETH_P_PREAUTH definition in if_ether.h
-  backport-include: deal with struct sock::sk_pacing_shift
-
- backport/backport-include/linux/if_ether.h |  4 ++++
- backport/backport-include/net/sock.h       | 12 ++++++++++++
- patches/0004-disable-wext-kconfig.patch    |  4 ++--
- patches/0070-mac80211-fils.patch           |  8 ++++----
- 4 files changed, 22 insertions(+), 6 deletions(-)
-
+diff --git a/backport/backport-include/linux/if_ether.h b/backport/backport-include/linux/if_ether.h
+index 55862ce..344480a 100644
+--- a/backport/backport-include/linux/if_ether.h
++++ b/backport/backport-include/linux/if_ether.h
+@@ -39,6 +39,10 @@
+ #define ETH_P_8021AD	0x88A8          /* 802.1ad Service VLAN		*/
+ #endif
+ 
++#ifndef ETH_P_PREAUTH
++#define ETH_P_PREAUTH   0x88C7          /* 802.11 Preauthentication */
++#endif
++
+ #ifndef ETH_MIN_MTU
+ #define ETH_MIN_MTU	68
+ #endif
 -- 
 1.9.1
 
