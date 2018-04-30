@@ -1,58 +1,77 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:37103 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754262AbeDBLUo (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 2 Apr 2018 07:20:44 -0400
-Received: by mail-io0-f193.google.com with SMTP id y128so17558654iod.4
-        for <backports@vger.kernel.org>; Mon, 02 Apr 2018 04:20:44 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <CAAEAJfB76xseRqnYQfRihXY6g0Jyqwt8zfddU1W7CXDg3xEFFg@mail.gmail.com>
-References: <CAAEAJfB76xseRqnYQfRihXY6g0Jyqwt8zfddU1W7CXDg3xEFFg@mail.gmail.com>
-From: Ratheendran R <ratheendran.s@gmail.com>
-Date: Mon, 2 Apr 2018 16:50:43 +0530
-Message-ID: <CALM_QrUuDH7dUU9vhyCtx-szsgraMM_=93fcW2PEgu_VagRnpA@mail.gmail.com> (sfid-20180402_132046_582361_4D42E159)
-Subject: Re:
-To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Cc: backports@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Received: from rnd-relay.smtp.broadcom.com ([192.19.229.170]:45746 "EHLO
+        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751822AbeD3LQF (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 30 Apr 2018 07:16:05 -0400
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+To: backports@vger.kernel.org
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
+Subject: [PATCH 1/3] patches: update patches for v4.17-rc1
+Date: Mon, 30 Apr 2018 13:15:44 +0200
+Message-Id: <1525086946-6352-2-git-send-email-arend.vanspriel@broadcom.com> (sfid-20180430_131606_628611_5DAE829A)
+In-Reply-To: <1525086946-6352-1-git-send-email-arend.vanspriel@broadcom.com>
+References: <1525086946-6352-1-git-send-email-arend.vanspriel@broadcom.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi All,
+Few patches do not apply to source code in v4.17-rc1 so updating
+those.
 
-I am doing a mt7601 backport 4.14 on linux 2.6.37 kernel.
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+---
+ patches/0004-disable-wext-kconfig.patch | 4 ++--
+ patches/0070-mac80211-fils.patch        | 8 ++++----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-Now when I build the backorts aganist the 2.6.37 linux build I am
-getting the below error.
-'error: bit-field =E2=80=98<anonymous>=E2=80=99 width not an integer consta=
-nt'
+diff --git a/patches/0004-disable-wext-kconfig.patch b/patches/0004-disable-wext-kconfig.patch
+index 313ea90..1ed420a 100644
+--- a/patches/0004-disable-wext-kconfig.patch
++++ b/patches/0004-disable-wext-kconfig.patch
+@@ -25,10 +25,10 @@ so remove the Kconfig options for them.
+  config CFG80211
+  	tristate "cfg80211 - wireless configuration API"
+  	depends on RFKILL || !RFKILL
+-@@ -191,7 +173,7 @@ config CFG80211_CRDA_SUPPORT
++@@ -187,7 +169,7 @@ config CFG80211_CRDA_SUPPORT
++
+  config CFG80211_WEXT
+  	bool "cfg80211 wireless extensions compatibility" if !CFG80211_WEXT_EXPORT
+- 	depends on CFG80211
+ -	select WEXT_CORE
+ +	depends on WEXT_CORE
+  	default y if CFG80211_WEXT_EXPORT
+diff --git a/patches/0070-mac80211-fils.patch b/patches/0070-mac80211-fils.patch
+index 345e707..d7274e5 100644
+--- a/patches/0070-mac80211-fils.patch
++++ b/patches/0070-mac80211-fils.patch
+@@ -5,7 +5,7 @@
+  /*
+   * FILS AEAD for (Re)Association Request/Response frames
+   * Copyright 2016, Qualcomm Atheros, Inc.
+-@@ -332,3 +333,4 @@ int fils_decrypt_assoc_resp(struct ieee8
++@@ -332,3 +333,4 @@ int fils_decrypt_assoc_resp(struct ieee80211_sub_if_data *sdata,
+  	*frame_len -= AES_BLOCK_SIZE;
+  	return 0;
+  }
+@@ -42,13 +42,13 @@
+  #endif /* FILS_AEAD_H */
+ --- a/net/mac80211/main.c
+ +++ b/net/mac80211/main.c
+-@@ -553,7 +553,9 @@ struct ieee80211_hw *ieee80211_alloc_hw_
++@@ -553,7 +553,9 @@ struct ieee80211_hw *ieee80211_alloc_hw_nm(size_t priv_data_len,
+  			   NL80211_FEATURE_MAC_ON_CREATE |
+  			   NL80211_FEATURE_USERSPACE_MPM |
+  			   NL80211_FEATURE_FULL_AP_CLIENT_STATE;
+ +#if LINUX_VERSION_IS_GEQ(4,3,0)
+  	wiphy_ext_feature_set(wiphy, NL80211_EXT_FEATURE_FILS_STA);
+ +#endif
++ 	wiphy_ext_feature_set(wiphy,
++ 			      NL80211_EXT_FEATURE_CONTROL_PORT_OVER_NL80211);
+  
+- 	if (!ops->hw_scan)
+- 		wiphy->features |= NL80211_FEATURE_LOW_PRIORITY_SCAN |
+-- 
+1.9.1
 
-compilation error actuals
-/home/hitem//software/source/wifi-drivers/backports-4.14-rc2-1/drivers/net/=
-wireless/mediatek/mt7601u/main.c:181:3:
-error: bit-field =E2=80=98<anonymous>=E2=80=99 width not an integer constan=
-t
-/home/hitem//software/source/wifi-drivers/backports-4.14-rc2-1/drivers/net/=
-wireless/mediatek/mt7601u/main.c:
-In function =E2=80=98mt7601u_set_rts_threshold=E2=80=99:
-/home/hitem//software/source/wifi-drivers/backports-4.14-rc2-1/drivers/net/=
-wireless/mediatek/mt7601u/main.c:329:2:
-error: bit-field =E2=80=98<anonymous>=E2=80=99 width not an integer constan=
-t
-make[8]: *** [/home/hitem//software/source/wifi-drivers/backports-4.14-rc2-=
-1/drivers/net/wireless/mediatek/mt7601u/main.o]
-Error 1
-
-
-Can anyone let me know how to fix this.
-
-Thanks in Advance.
-Ratheendran
-
-On 3/15/17, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar> wrote:
-> subscribe backports
-> --
-> To unsubscribe from this list: send the line "unsubscribe backports" in
->
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
