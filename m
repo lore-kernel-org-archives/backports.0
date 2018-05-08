@@ -1,97 +1,73 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:51600
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750743AbeESGr2 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sat, 19 May 2018 02:47:28 -0400
-Date: Sat, 19 May 2018 08:47:26 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>
-cc: Patrick Doyle <wpdster@gmail.com>, backports@vger.kernel.org,
-        cocci@systeme.lip6.fr
-Subject: Re: [Cocci] Need help compiling coccinelle on Ubuntu 16.04
-In-Reply-To: <5AFFC6FC.1070906@broadcom.com>
-Message-ID: <alpine.DEB.2.20.1805190847060.2237@hadrien> (sfid-20180519_084729_946901_73924BAA)
-References: <CAF_dkJCyP-2Yc-fynAGWp5D7YZP5ybaLXrYK4EHc_Z7XSP9kiA@mail.gmail.com> <5AFFC6FC.1070906@broadcom.com>
+Received: from mail-pg0-f46.google.com ([74.125.83.46]:33392 "EHLO
+        mail-pg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932100AbeEHIxm (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 8 May 2018 04:53:42 -0400
+Received: by mail-pg0-f46.google.com with SMTP id i194-v6so20885034pgd.0
+        for <backports@vger.kernel.org>; Tue, 08 May 2018 01:53:42 -0700 (PDT)
+Subject: Re: Failed to backport from from Linux 4.4 drivers to Linux 3.10.108
+To: Johannes Berg <johannes@sipsolutions.net>
+References: <149bc44e-f521-cf4a-397a-c8e42d00081b@gmail.com>
+ <1525770549.14830.1.camel@sipsolutions.net>
+Cc: backports@vger.kernel.org
+From: Masashi Honma <masashi.honma@gmail.com>
+Message-ID: <a6942432-8895-fa56-5a37-a232b99c38fc@gmail.com> (sfid-20180508_105349_385066_FF1B4845)
+Date: Tue, 8 May 2018 17:53:38 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1525770549.14830.1.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+On 2018/05/08 18:09, Johannes Berg wrote:
+> On Tue, 2018-05-08 at 12:05 +0900, Masashi Honma wrote:
+>> I am trying to backport from Linux 4.4
+> 
+> This will probably not work unless you use an old backports git tree
+> snapshot.
 
+Thank you.
 
-On Sat, 19 May 2018, Arend van Spriel wrote:
+I am using linux-4.4.y branch of backports.
+Do you mean older branch (like linux-4.2.y or linux-3.19.y or something) 
+should be used ?
 
-> On 5/16/2018 3:48 PM, Patrick Doyle wrote:
-> > TherI just tried compiling coccinelle on a Ubuntu 16.04 system, having
-> > installed all the dependencies that seem to make sense, and it fails
-> > to compile.
-> >
-> > I need to use a version of spatch >= 1.0.6 for another project, and
-> > the version supplied with Ubuntu is 1.0.4.
-> >
-> > So I:
-> >
-> > $ git clone https://github.com/coccinelle/coccinelle.git
-> > $ cd coccinelle
-> > $ ./autogen
-> > $ ./configure --prefix=/home/wpd/local
-> > $ make
-> >
-> > and that fails with
-> >
-> > ...
-> > cp /usr/lib/ocaml/parmap/parmap.cmi ocaml/parmap.cmi
-> > cp /usr/lib/ocaml/parmap/parmap.cmx ocaml/parmap.cmx
-> > cp: cannot stat '/usr/lib/ocaml/parmap/parmap.cmx': No such file or
-> > directory
-> > Makefile:620: recipe for target 'ocaml/parmap.cmi' failed
-> > make: [ocaml/parmap.cmi] Error 1 (ignored)
-> > rm parsing_cocci/lexer_cli.ml parsing_cocci/parser_cocci_menhir.ml.d
-> > tools/spgen/source/spgen_lexer.ml
-> > parsing_cocci/parser_cocci_menhir.mli.d parsing_cocci/lexer_script.ml
-> > parsing_cocci/lexer_cocci.ml parsing_c/lexer_c.ml
-> >
-> > I have installed libparmap-ocaml-dev:
-> >
-> > $ apt search libparmap-ocaml-dev
-> > Sorting... Done
-> > Full Text Search... Done
-> > libparmap-ocaml-dev/xenial,now 1.0~rc7-1 amd64 [installed]
-> >    small OCaml library allowing to exploit multicore architectures
-> >
-> > and /usr/lib/ocaml/parmp shows:
-> >
-> > $ ls -l /usr/lib/ocaml/parmap
-> > total 312
-> > -rw-r--r-- 1 root root   2379 Jan 18  2016 bytearray.cmi
-> > -rw-r--r-- 1 root root   1615 Jan 18  2016 bytearray.mli
-> > -rw-r--r-- 1 root root   5218 Jan 18  2016 libparmap_stubs.a
-> > -rw-r--r-- 1 root root    219 Jan 18  2016 META
-> > -rw-r--r-- 1 root root 117954 Jan 18  2016 parmap.a
-> > -rw-r--r-- 1 root root  27116 Jan 18  2016 parmap.cma
-> > -rw-r--r-- 1 root root   5814 Jan 18  2016 parmap.cmi
-> > -rw-r--r-- 1 root root   1898 Jan 18  2016 parmap.cmxa
-> > -rw-r--r-- 1 root root 106712 Jan 18  2016 parmap.cmxs
-> > -rw-r--r-- 1 root root  10472 Jan 18  2016 parmap.mli
-> > -rw-r--r-- 1 root root    906 Jan 18  2016 parmap_utils.cmi
-> > -rw-r--r-- 1 root root    270 Jan 18  2016 parmap_utils.mli
-> > -rw-r--r-- 1 root root    363 Jan 18  2016 setcore.cmi
-> > -rw-r--r-- 1 root root    207 Jan 18  2016 setcore.mli
-> >
-> > There are parmap.cmxa and parmap.cmxs files, but no parmap.cmx file.
-> >
-> > I am stuck here (and clearly ignorant of what I am doing).  Any help
-> > would be appreciated.
-> >
-> > Thank you.
->
-> I found compiling it required too many stuff I did not really want on my
-> system. So I generally pick up recent version from launchpad:
->
-> https://launchpad.net/~npalix/+archive/ubuntu/coccinelle
+> No, looks fine - perhaps your spatch version isn't right? What version
+> do you have,
 
-That's indeed at least better than 1.0.4.
+I am using a spatch binary build with latest git source because the 
+package is not enough fresh to build the backports. The version is this.
 
-julia
+commit f9d474787c57f1d3cc3a73217e0f5d14ed958631
+Author: julia <julia.lawall@lip6.fr>
+Date:   Mon Apr 30 08:10:06 2018 +0200
+
+     make pragmas more flexible, improve positioning of eoln when pragma 
+at the end of a file
+
+> and what does it say if you run
+> 
+> mkdir /tmp/xyz && spatch --sp-file .../genl-const.cocci --dir /tmp/xyz
+> 
+> or something like that?
+
+This is the result.
+
+------------------
+$ mkdir /tmp/xyz && spatch --sp-file 
+./patches/collateral-evolutions/network/0027-genl-const/genl-const.cocci 
+--dir /tmp/xyz
+init_defs_builtins: /usr/local/bin/../lib/coccinelle/standard.h
+meta: parse error:
+   File 
+"./patches/collateral-evolutions/network/0027-genl-const/genl-const.cocci", 
+line 2, column 10, charpos = 13
+   around = '__genl_const',
+   whole content = attribute __genl_const;
+------------------
+
+Regards,
+Masashi Honma.
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
