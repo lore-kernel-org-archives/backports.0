@@ -1,43 +1,41 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55756 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932088AbeEWMWC (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 23 May 2018 08:22:02 -0400
-Received: by mail-wm0-f65.google.com with SMTP id a8-v6so8394176wmg.5
-        for <backports@vger.kernel.org>; Wed, 23 May 2018 05:22:01 -0700 (PDT)
-Subject: Re: PCI MSI API support in backports
-To: Omer Efrat <omer.efrat@tandemg.com>,
-        "backports@vger.kernel.org" <backports@vger.kernel.org>
-References: <HE1PR0202MB2954B6138062CFAF4D2D2BA59A6B0@HE1PR0202MB2954.eurprd02.prod.outlook.com>
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <5B055CE7.4000000@broadcom.com> (sfid-20180523_142321_633114_F6BE155F)
-Date: Wed, 23 May 2018 14:21:59 +0200
-MIME-Version: 1.0
-In-Reply-To: <HE1PR0202MB2954B6138062CFAF4D2D2BA59A6B0@HE1PR0202MB2954.eurprd02.prod.outlook.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Received: from s3.sipsolutions.net ([144.76.63.242]:41198 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934439AbeEIJDj (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 9 May 2018 05:03:39 -0400
+Message-ID: <1525856616.6910.7.camel@sipsolutions.net> (sfid-20180509_110341_146524_5C557783)
+Subject: Re: Failed to backport from from Linux 4.4 drivers to Linux 3.10.108
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Masashi Honma <masashi.honma@gmail.com>
+Cc: backports@vger.kernel.org
+Date: Wed, 09 May 2018 11:03:36 +0200
+In-Reply-To: <d54cd7c5-fb33-59dc-afd0-d48f36a7a06d@gmail.com> (sfid-20180509_105147_898906_A1672B89)
+References: <149bc44e-f521-cf4a-397a-c8e42d00081b@gmail.com>
+         <1525770549.14830.1.camel@sipsolutions.net>
+         <a6942432-8895-fa56-5a37-a232b99c38fc@gmail.com>
+         <1525770503.14830.2.camel@sipsolutions.net>
+         <2e85d2c4-d89e-6ab0-2b8e-60ce683f477f@gmail.com>
+         <b67c4791-f0da-0fe0-c787-85e9a7824bc6@gmail.com>
+         <1525850665.6910.0.camel@sipsolutions.net>
+         <1525852495.6910.2.camel@sipsolutions.net>
+         <2f59e893-da45-f3e7-430b-1377518727bb@gmail.com>
+         <1525853548.6910.3.camel@sipsolutions.net>
+         <d54cd7c5-fb33-59dc-afd0-d48f36a7a06d@gmail.com>
+         (sfid-20180509_105147_898906_A1672B89)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 5/23/2018 1:39 PM, Omer Efrat wrote:
-> Our wireless driver uses pci_alloc_irq_vectors function in order to allocate the pci irq vectors.
-> (hardware supports MSI, with no MSIx support)
->
-> When trying to backport from linux-stable v4.16 to v3.10.104, compilation fails.
-> It seems that backports didn't backported pci_alloc_irq_vectors function (introduced at aff171641d181ea573380efc3f559c9de4741fc5 PCI: Provide sensible IRQ vector alloc/free routines), although MSIx APIs are supported in backports.
->
-> Is that makes sense?
-> Are changes to PCI driver being included in backports by their owners as a workflow?
-> Is pci_alloc_irq_vectors function planned to be included in backports?
-> Are we missing something?
+On Wed, 2018-05-09 at 17:51 +0900, Masashi Honma wrote:
+> On 2018/05/09 17:12, Johannes Berg wrote:
+> > Though of course this doesn't apply to the older branches :)
+> 
+> How about setting upper limitation to the older branches by attached patch ?
 
-Well. I think what you are missing is a wireless driver in linux 
-upstream. We backport on a as-needed basis so the reason is probably 
-that none of the upstream drivers require the pci_alloc_irq_vectors() 
-function. So what wireless driver are we talking about here. Is it a 
-proprietary driver?
+We could also cherry-pick my trivial patch to the older branches I
+guess. That'd still be simpler?
 
-Regards,
-Arend
-
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
