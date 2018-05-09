@@ -1,63 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:48836 "EHLO
+Received: from s3.sipsolutions.net ([144.76.63.242]:40358 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752340AbeEOUak (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 15 May 2018 16:30:40 -0400
-Message-ID: <1526416237.4450.17.camel@sipsolutions.net> (sfid-20180515_223042_217399_C215AB8D)
-Subject: Re: How to use backports?
+        with ESMTP id S933715AbeEIIMa (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 9 May 2018 04:12:30 -0400
+Message-ID: <1525853548.6910.3.camel@sipsolutions.net> (sfid-20180509_101234_517974_0A752259)
+Subject: Re: Failed to backport from from Linux 4.4 drivers to Linux 3.10.108
 From: Johannes Berg <johannes@sipsolutions.net>
-To: Patrick Doyle <wpdster@gmail.com>
+To: Masashi Honma <masashi.honma@gmail.com>
 Cc: backports@vger.kernel.org
-Date: Tue, 15 May 2018 22:30:37 +0200
-In-Reply-To: <CAF_dkJDB077igL5AiySBXo_aam=8wozCg=-Rc-9=7qMqFd4kKA@mail.gmail.com> (sfid-20180515_222647_549797_2BBD3148)
-References: <CAF_dkJDhJtg95_DZ96OFuYNRtZkS1YWNZSvB9f_UJL0teDK8eQ@mail.gmail.com>
-         <1526414646.4450.13.camel@sipsolutions.net>
-         <CAF_dkJDB077igL5AiySBXo_aam=8wozCg=-Rc-9=7qMqFd4kKA@mail.gmail.com>
-         (sfid-20180515_222647_549797_2BBD3148)
+Date: Wed, 09 May 2018 10:12:28 +0200
+In-Reply-To: <2f59e893-da45-f3e7-430b-1377518727bb@gmail.com> (sfid-20180509_100729_158836_FAA8AFAC)
+References: <149bc44e-f521-cf4a-397a-c8e42d00081b@gmail.com>
+         <1525770549.14830.1.camel@sipsolutions.net>
+         <a6942432-8895-fa56-5a37-a232b99c38fc@gmail.com>
+         <1525770503.14830.2.camel@sipsolutions.net>
+         <2e85d2c4-d89e-6ab0-2b8e-60ce683f477f@gmail.com>
+         <b67c4791-f0da-0fe0-c787-85e9a7824bc6@gmail.com>
+         <1525850665.6910.0.camel@sipsolutions.net>
+         <1525852495.6910.2.camel@sipsolutions.net>
+         <2f59e893-da45-f3e7-430b-1377518727bb@gmail.com>
+         (sfid-20180509_100729_158836_FAA8AFAC)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2018-05-15 at 16:26 -0400, Patrick Doyle wrote:
-> It turns out, for my project, I would prefer to use the "kernel
-> integration mode", since I would really like to turn off loadable
-> modules (not needed for my space-constrained embedded target).  But if
-> the "too hard" LED comes on, I can let that go.
+On Wed, 2018-05-09 at 17:07 +0900, Masashi Honma wrote:
+> On 2018/05/09 16:54, Johannes Berg wrote:
+> > Actually, since 1.0.6 has hit the distros, I'll just solve it by
+> > requiring 1.0.6 and changing the spatch.
 
-You can try it I guess.
-
-For the "loadable module" mode you just remove "--integrate" from the
-command line and use a new (empty) directory for the output - the system
-then leaves there a setup where you can use "make menuconfig" etc. for
-out-of-tree module compilation.
-
-> Anyway... am I looking in the wrong place for documentation?  Should I
-> be looking elsewhere?
-
-No, that seems about right, but nobody's maintaining it much.
-
-> How do folks use backports anyway?
-
-We use it with some of the devel/ scripts to make a git tree that
-follows the upstream kernel tree, but that just uses gentree internally.
-
-> OK, I'll try that.  Thanks.
-> (that just failed to find a
-> ../buildroot/build/linux-custom/backports/Kconfig... which smells a
-> little like bitrot to me).
-
-That's ... a bit strange, that's the file it should be creating there
-for the integration?
-
-> If folks don't tend to use this tool on Ubuntu LTS releases, what
-> version of Linux do you use it on?  What is known to work?
-
-I usually use one of Debian/testing or Fedora (currently F27 while I
-wait for some things I can't upgrade).
-
-We do run it one some kind of Ubuntu LTS at work, but I suspect they
-also installed spatch by hand, no idea how though.
+Though of course this doesn't apply to the older branches :)
 
 johannes
 --
