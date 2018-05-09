@@ -1,56 +1,58 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:51604 "EHLO
+Received: from s3.sipsolutions.net ([144.76.63.242]:40178 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754231AbeEHHJV (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 8 May 2018 03:09:21 -0400
-Message-ID: <1525770549.14830.1.camel@sipsolutions.net> (sfid-20180508_090923_752185_689AD7AD)
+        with ESMTP id S933749AbeEIHy5 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 9 May 2018 03:54:57 -0400
+Message-ID: <1525852495.6910.2.camel@sipsolutions.net> (sfid-20180509_095459_933710_ED1116F9)
 Subject: Re: Failed to backport from from Linux 4.4 drivers to Linux 3.10.108
 From: Johannes Berg <johannes@sipsolutions.net>
-To: Masashi Honma <masashi.honma@gmail.com>, backports@vger.kernel.org
-Date: Tue, 08 May 2018 11:09:09 +0200
-In-Reply-To: <149bc44e-f521-cf4a-397a-c8e42d00081b@gmail.com> (sfid-20180508_050515_355323_48A52193)
+To: Masashi Honma <masashi.honma@gmail.com>
+Cc: backports@vger.kernel.org
+Date: Wed, 09 May 2018 09:54:55 +0200
+In-Reply-To: <1525850665.6910.0.camel@sipsolutions.net> (sfid-20180509_092429_663815_F4317767)
 References: <149bc44e-f521-cf4a-397a-c8e42d00081b@gmail.com>
-         (sfid-20180508_050515_355323_48A52193)
+         <1525770549.14830.1.camel@sipsolutions.net>
+         <a6942432-8895-fa56-5a37-a232b99c38fc@gmail.com>
+         <1525770503.14830.2.camel@sipsolutions.net>
+         <2e85d2c4-d89e-6ab0-2b8e-60ce683f477f@gmail.com>
+         <b67c4791-f0da-0fe0-c787-85e9a7824bc6@gmail.com>
+         (sfid-20180509_092122_486020_BC3800A2) <1525850665.6910.0.camel@sipsolutions.net>
+         (sfid-20180509_092429_663815_F4317767)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2018-05-08 at 12:05 +0900, Masashi Honma wrote:
-> I am trying to backport from Linux 4.4
+On Wed, 2018-05-09 at 09:24 +0200, Johannes Berg wrote:
+> On Wed, 2018-05-09 at 16:21 +0900, Masashi Honma wrote:
+> > On 2018/05/09 06:42, Masashi Honma wrote:> It looks regression of 
+> > latest(1.0.6+) coccinelle.
+> > > This works with coccinelle 1.0.4.
+> > 
+> > I asked about this to coccinelle.
+> > 
+> > https://github.com/coccinelle/coccinelle/issues/135
+> > 
+> > julia says this notation is deprecated from 1.0.6.
+> > 
+> > @@
+> > attribute __genl_const;
+> > @@
+> > 
+> > from 1.0.6, "name" field is required.
+> > 
+> > @@
+> > attribute name __genl_const;
+> > @@
+> > 
+> > The coccinelle made a backward incompatible change...
+> 
+> Yes, I'm aware.
+> 
+> Just don't know how to solve it :)
 
-This will probably not work unless you use an old backports git tree
-snapshot.
-
-> The gentree.py command resulted in these messages.
-> ----
-> Get original source files from git ...
-> Applying patches from patches to /home/honma/git/linux-stable/backports/ ...
-> Failed to process SmPL patch 
-> collateral-evolutions/network/0027-genl-const/genl-const.cocci
-> Traceback (most recent call last):
->    File "./gentree.py", line 1091, in <module>
->      ret = _main()
->    File "./gentree.py", line 724, in _main
->      logwrite=logwrite)
->    File "./gentree.py", line 906, in process
->      apply_patches(args, "backport", source_dir, 'patches', 
-> bpid.target_dir, logwrite)
->    File "./gentree.py", line 605, in apply_patches
->      raise Exception('SmPL patch failed')
-> Exception: SmPL patch failed
-
-Then again, this shouldn't happen.
-
-> Is this caused by my invalid procedure ?
-> If so, please tell me right way.
-
-No, looks fine - perhaps your spatch version isn't right? What version
-do you have, and what does it say if you run
-
-mkdir /tmp/xyz && spatch --sp-file .../genl-const.cocci --dir /tmp/xyz
-
-or something like that?
+Actually, since 1.0.6 has hit the distros, I'll just solve it by
+requiring 1.0.6 and changing the spatch.
 
 johannes
 --
