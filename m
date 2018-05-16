@@ -1,67 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:47632 "EHLO
+Received: from s3.sipsolutions.net ([144.76.63.242]:40374 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752311AbeEOUEJ (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 15 May 2018 16:04:09 -0400
-Message-ID: <1526414646.4450.13.camel@sipsolutions.net> (sfid-20180515_220411_290881_71A7AE72)
+        with ESMTP id S1751395AbeEPN0d (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 16 May 2018 09:26:33 -0400
+Message-ID: <1526477191.3921.2.camel@sipsolutions.net> (sfid-20180516_152635_395474_5375B57A)
 Subject: Re: How to use backports?
 From: Johannes Berg <johannes@sipsolutions.net>
-To: Patrick Doyle <wpdster@gmail.com>, backports@vger.kernel.org
-Date: Tue, 15 May 2018 22:04:06 +0200
-In-Reply-To: <CAF_dkJDhJtg95_DZ96OFuYNRtZkS1YWNZSvB9f_UJL0teDK8eQ@mail.gmail.com> (sfid-20180515_214223_713521_1BD8D086)
+To: Patrick Doyle <wpdster@gmail.com>,
+        Steve deRosier <derosier@gmail.com>
+Cc: backports@vger.kernel.org
+Date: Wed, 16 May 2018 15:26:31 +0200
+In-Reply-To: <CAF_dkJAe8m+BibjxQuTgapHCZAG436x8g+UPRkr7ra44-xccXg@mail.gmail.com> (sfid-20180516_152530_662482_9EDB8D0D)
 References: <CAF_dkJDhJtg95_DZ96OFuYNRtZkS1YWNZSvB9f_UJL0teDK8eQ@mail.gmail.com>
-         (sfid-20180515_214223_713521_1BD8D086)
+         <1526414646.4450.13.camel@sipsolutions.net>
+         <CAF_dkJDB077igL5AiySBXo_aam=8wozCg=-Rc-9=7qMqFd4kKA@mail.gmail.com>
+         <1526416237.4450.17.camel@sipsolutions.net>
+         <CALLGbRL915L0uTyJnhD7eQFy2aBgQzRQMW_XiLgfypmbW-sHvw@mail.gmail.com>
+         <CAF_dkJAe8m+BibjxQuTgapHCZAG436x8g+UPRkr7ra44-xccXg@mail.gmail.com>
+         (sfid-20180516_152530_662482_9EDB8D0D)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi Patrick,
+On Wed, 2018-05-16 at 09:24 -0400, Patrick Doyle wrote:
+> I'll go find somebody I can ask
+> about compiling coccinelle (whatever that is) on Ubuntu 16.04, figure
+> out what's going on there, and return from interrupt now.
 
-> From reading https://backports.wiki.kernel.org/index.php/Documentation/integration
-> it would appear that I should be able to do something vaguely like:
-> 
-> $ ./gentree.py --integrate --clean --gitdebug ../linux-ath-erstrom
-> ../buildroot/build/linux-custom
-
-In theory yes. I can't really recommend --integrate, it's untested. I
-may remove it entirely since nobody is maintaining it.
-
-> You need to have installed: spatch >= 1.0.6
-> Try installing the package: coccinelle
-
-Indeed. There was actually a very recent commit (latest commit) that
-would make this require only an earlier version. Reverting that may be
-easier for you.
-
-> So now I am trying to compile coccinelle from source and that is failing:
-> 
-> cp: cannot stat '/usr/lib/ocaml/parmap/parmap.cmx': No such file or directory
-> Makefile:620: recipe for target 'ocaml/parmap.cmi' failed
-> 
-> It appears that the version of libparmap-ocaml-dev I installed on my
-> Ubuntu 16.04 workstation does not include parmap.cmx.  (It includes
-> parmap.cmxa and parmap.cmxs, but not parmap.cmx).
-> 
-> Or, perhaps I'm off on completely the wrong tangent here.
-
-That I can't really say. I guess you could ask the coccinelle mailing
-list about it.
-
-> So, first questions first...
-> If I want to port a driver from the latest linux-ath-erstrom source
-> tree to my custom 4.9 source tree, is backports and gentree.py the
-> right way to go?
-
-Yes, that sounds reasonable. I don't know what "linux-ath-erstrom" is,
-but if it's reasonably close to upstream now it should be OK.
-
-> Should I reasonably expect gentree to run on a 16.04 LTS Ubuntu?  If
-> so, what dependencies should I install?
-
-No idea, sorry.
+This is the mailing list: cocci@systeme.lip6.fr
 
 johannes
-
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
