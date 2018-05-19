@@ -1,69 +1,97 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-ot0-f171.google.com ([74.125.82.171]:39331 "EHLO
-        mail-ot0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751578AbeEOTmV (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 15 May 2018 15:42:21 -0400
-Received: by mail-ot0-f171.google.com with SMTP id l12-v6so1611182oth.6
-        for <backports@vger.kernel.org>; Tue, 15 May 2018 12:42:21 -0700 (PDT)
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:51600
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750743AbeESGr2 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sat, 19 May 2018 02:47:28 -0400
+Date: Sat, 19 May 2018 08:47:26 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>
+cc: Patrick Doyle <wpdster@gmail.com>, backports@vger.kernel.org,
+        cocci@systeme.lip6.fr
+Subject: Re: [Cocci] Need help compiling coccinelle on Ubuntu 16.04
+In-Reply-To: <5AFFC6FC.1070906@broadcom.com>
+Message-ID: <alpine.DEB.2.20.1805190847060.2237@hadrien> (sfid-20180519_084729_946901_73924BAA)
+References: <CAF_dkJCyP-2Yc-fynAGWp5D7YZP5ybaLXrYK4EHc_Z7XSP9kiA@mail.gmail.com> <5AFFC6FC.1070906@broadcom.com>
 MIME-Version: 1.0
-From: Patrick Doyle <wpdster@gmail.com>
-Date: Tue, 15 May 2018 15:41:50 -0400
-Message-ID: <CAF_dkJDhJtg95_DZ96OFuYNRtZkS1YWNZSvB9f_UJL0teDK8eQ@mail.gmail.com> (sfid-20180515_214223_713521_1BD8D086)
-Subject: How to use backports?
-To: backports@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Please forgive my ignorance.  I would like to use the backports tool
-to backport a driver from a fork of linux-next to my (vendor's) custom
-4.9 kernel.
 
->From reading https://backports.wiki.kernel.org/index.php/Documentation/integration
-it would appear that I should be able to do something vaguely like:
 
-$ ./gentree.py --integrate --clean --gitdebug ../linux-ath-erstrom
-../buildroot/build/linux-custom
+On Sat, 19 May 2018, Arend van Spriel wrote:
 
-But, the first time I tried that, I received the following error:
+> On 5/16/2018 3:48 PM, Patrick Doyle wrote:
+> > TherI just tried compiling coccinelle on a Ubuntu 16.04 system, having
+> > installed all the dependencies that seem to make sense, and it fails
+> > to compile.
+> >
+> > I need to use a version of spatch >= 1.0.6 for another project, and
+> > the version supplied with Ubuntu is 1.0.4.
+> >
+> > So I:
+> >
+> > $ git clone https://github.com/coccinelle/coccinelle.git
+> > $ cd coccinelle
+> > $ ./autogen
+> > $ ./configure --prefix=/home/wpd/local
+> > $ make
+> >
+> > and that fails with
+> >
+> > ...
+> > cp /usr/lib/ocaml/parmap/parmap.cmi ocaml/parmap.cmi
+> > cp /usr/lib/ocaml/parmap/parmap.cmx ocaml/parmap.cmx
+> > cp: cannot stat '/usr/lib/ocaml/parmap/parmap.cmx': No such file or
+> > directory
+> > Makefile:620: recipe for target 'ocaml/parmap.cmi' failed
+> > make: [ocaml/parmap.cmi] Error 1 (ignored)
+> > rm parsing_cocci/lexer_cli.ml parsing_cocci/parser_cocci_menhir.ml.d
+> > tools/spgen/source/spgen_lexer.ml
+> > parsing_cocci/parser_cocci_menhir.mli.d parsing_cocci/lexer_script.ml
+> > parsing_cocci/lexer_cocci.ml parsing_c/lexer_c.ml
+> >
+> > I have installed libparmap-ocaml-dev:
+> >
+> > $ apt search libparmap-ocaml-dev
+> > Sorting... Done
+> > Full Text Search... Done
+> > libparmap-ocaml-dev/xenial,now 1.0~rc7-1 amd64 [installed]
+> >    small OCaml library allowing to exploit multicore architectures
+> >
+> > and /usr/lib/ocaml/parmp shows:
+> >
+> > $ ls -l /usr/lib/ocaml/parmap
+> > total 312
+> > -rw-r--r-- 1 root root   2379 Jan 18  2016 bytearray.cmi
+> > -rw-r--r-- 1 root root   1615 Jan 18  2016 bytearray.mli
+> > -rw-r--r-- 1 root root   5218 Jan 18  2016 libparmap_stubs.a
+> > -rw-r--r-- 1 root root    219 Jan 18  2016 META
+> > -rw-r--r-- 1 root root 117954 Jan 18  2016 parmap.a
+> > -rw-r--r-- 1 root root  27116 Jan 18  2016 parmap.cma
+> > -rw-r--r-- 1 root root   5814 Jan 18  2016 parmap.cmi
+> > -rw-r--r-- 1 root root   1898 Jan 18  2016 parmap.cmxa
+> > -rw-r--r-- 1 root root 106712 Jan 18  2016 parmap.cmxs
+> > -rw-r--r-- 1 root root  10472 Jan 18  2016 parmap.mli
+> > -rw-r--r-- 1 root root    906 Jan 18  2016 parmap_utils.cmi
+> > -rw-r--r-- 1 root root    270 Jan 18  2016 parmap_utils.mli
+> > -rw-r--r-- 1 root root    363 Jan 18  2016 setcore.cmi
+> > -rw-r--r-- 1 root root    207 Jan 18  2016 setcore.mli
+> >
+> > There are parmap.cmxa and parmap.cmxs files, but no parmap.cmx file.
+> >
+> > I am stuck here (and clearly ignorant of what I am doing).  Any help
+> > would be appreciated.
+> >
+> > Thank you.
+>
+> I found compiling it required too many stuff I did not really want on my
+> system. So I generally pick up recent version from launchpad:
+>
+> https://launchpad.net/~npalix/+archive/ubuntu/coccinelle
 
-You need to have installed: spatch
-Try installing the package: coccinelle
+That's indeed at least better than 1.0.4.
 
-So:
-
-$ sudo apt install coccinelle
-
-and try again, only to get this error:
-
-You need to have installed: spatch >= 1.0.6
-Try installing the package: coccinelle
-
-So now I am trying to compile coccinelle from source and that is failing:
-
-cp: cannot stat '/usr/lib/ocaml/parmap/parmap.cmx': No such file or directory
-Makefile:620: recipe for target 'ocaml/parmap.cmi' failed
-
-It appears that the version of libparmap-ocaml-dev I installed on my
-Ubuntu 16.04 workstation does not include parmap.cmx.  (It includes
-parmap.cmxa and parmap.cmxs, but not parmap.cmx).
-
-Or, perhaps I'm off on completely the wrong tangent here.
-
-So, first questions first...
-If I want to port a driver from the latest linux-ath-erstrom source
-tree to my custom 4.9 source tree, is backports and gentree.py the
-right way to go?
-
-Should I reasonably expect gentree to run on a 16.04 LTS Ubuntu?  If
-so, what dependencies should I install?
-
-Or am I going about this the wrong way?
-
-I'm stuck, and would appreciate any help anybody can give me.
-
-Thanks in advance.
-
---wpd
+julia
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
