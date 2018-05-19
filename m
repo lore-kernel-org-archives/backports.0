@@ -1,73 +1,93 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pg0-f53.google.com ([74.125.83.53]:45717 "EHLO
-        mail-pg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934140AbeEIIvq (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 9 May 2018 04:51:46 -0400
-Received: by mail-pg0-f53.google.com with SMTP id w3-v6so1843750pgv.12
-        for <backports@vger.kernel.org>; Wed, 09 May 2018 01:51:46 -0700 (PDT)
-Subject: Re: Failed to backport from from Linux 4.4 drivers to Linux 3.10.108
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: backports@vger.kernel.org
-References: <149bc44e-f521-cf4a-397a-c8e42d00081b@gmail.com>
- <1525770549.14830.1.camel@sipsolutions.net>
- <a6942432-8895-fa56-5a37-a232b99c38fc@gmail.com>
- <1525770503.14830.2.camel@sipsolutions.net>
- <2e85d2c4-d89e-6ab0-2b8e-60ce683f477f@gmail.com>
- <b67c4791-f0da-0fe0-c787-85e9a7824bc6@gmail.com>
- <1525850665.6910.0.camel@sipsolutions.net>
- <1525852495.6910.2.camel@sipsolutions.net>
- <2f59e893-da45-f3e7-430b-1377518727bb@gmail.com>
- <1525853548.6910.3.camel@sipsolutions.net>
-From: Masashi Honma <masashi.honma@gmail.com>
-Message-ID: <d54cd7c5-fb33-59dc-afd0-d48f36a7a06d@gmail.com> (sfid-20180509_105150_311982_21C3ADDF)
-Date: Wed, 9 May 2018 17:51:36 +0900
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40170 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750743AbeESGlD (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sat, 19 May 2018 02:41:03 -0400
+Received: by mail-wm0-f65.google.com with SMTP id j5-v6so18624964wme.5
+        for <backports@vger.kernel.org>; Fri, 18 May 2018 23:41:03 -0700 (PDT)
+Subject: Re: [Cocci] Need help compiling coccinelle on Ubuntu 16.04
+To: Patrick Doyle <wpdster@gmail.com>
+References: <CAF_dkJCyP-2Yc-fynAGWp5D7YZP5ybaLXrYK4EHc_Z7XSP9kiA@mail.gmail.com>
+Cc: cocci@systeme.lip6.fr, backports@vger.kernel.org
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <5AFFC6FC.1070906@broadcom.com> (sfid-20180519_084106_383562_2EB06B82)
+Date: Sat, 19 May 2018 08:41:00 +0200
 MIME-Version: 1.0
-In-Reply-To: <1525853548.6910.3.camel@sipsolutions.net>
-Content-Type: multipart/mixed;
- boundary="------------40254726DE30790B509F47D4"
+In-Reply-To: <CAF_dkJCyP-2Yc-fynAGWp5D7YZP5ybaLXrYK4EHc_Z7XSP9kiA@mail.gmail.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------40254726DE30790B509F47D4
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+On 5/16/2018 3:48 PM, Patrick Doyle wrote:
+> TherI just tried compiling coccinelle on a Ubuntu 16.04 system, having
+> installed all the dependencies that seem to make sense, and it fails
+> to compile.
+>
+> I need to use a version of spatch >= 1.0.6 for another project, and
+> the version supplied with Ubuntu is 1.0.4.
+>
+> So I:
+>
+> $ git clone https://github.com/coccinelle/coccinelle.git
+> $ cd coccinelle
+> $ ./autogen
+> $ ./configure --prefix=/home/wpd/local
+> $ make
+>
+> and that fails with
+>
+> ...
+> cp /usr/lib/ocaml/parmap/parmap.cmi ocaml/parmap.cmi
+> cp /usr/lib/ocaml/parmap/parmap.cmx ocaml/parmap.cmx
+> cp: cannot stat '/usr/lib/ocaml/parmap/parmap.cmx': No such file or directory
+> Makefile:620: recipe for target 'ocaml/parmap.cmi' failed
+> make: [ocaml/parmap.cmi] Error 1 (ignored)
+> rm parsing_cocci/lexer_cli.ml parsing_cocci/parser_cocci_menhir.ml.d
+> tools/spgen/source/spgen_lexer.ml
+> parsing_cocci/parser_cocci_menhir.mli.d parsing_cocci/lexer_script.ml
+> parsing_cocci/lexer_cocci.ml parsing_c/lexer_c.ml
+>
+> I have installed libparmap-ocaml-dev:
+>
+> $ apt search libparmap-ocaml-dev
+> Sorting... Done
+> Full Text Search... Done
+> libparmap-ocaml-dev/xenial,now 1.0~rc7-1 amd64 [installed]
+>    small OCaml library allowing to exploit multicore architectures
+>
+> and /usr/lib/ocaml/parmp shows:
+>
+> $ ls -l /usr/lib/ocaml/parmap
+> total 312
+> -rw-r--r-- 1 root root   2379 Jan 18  2016 bytearray.cmi
+> -rw-r--r-- 1 root root   1615 Jan 18  2016 bytearray.mli
+> -rw-r--r-- 1 root root   5218 Jan 18  2016 libparmap_stubs.a
+> -rw-r--r-- 1 root root    219 Jan 18  2016 META
+> -rw-r--r-- 1 root root 117954 Jan 18  2016 parmap.a
+> -rw-r--r-- 1 root root  27116 Jan 18  2016 parmap.cma
+> -rw-r--r-- 1 root root   5814 Jan 18  2016 parmap.cmi
+> -rw-r--r-- 1 root root   1898 Jan 18  2016 parmap.cmxa
+> -rw-r--r-- 1 root root 106712 Jan 18  2016 parmap.cmxs
+> -rw-r--r-- 1 root root  10472 Jan 18  2016 parmap.mli
+> -rw-r--r-- 1 root root    906 Jan 18  2016 parmap_utils.cmi
+> -rw-r--r-- 1 root root    270 Jan 18  2016 parmap_utils.mli
+> -rw-r--r-- 1 root root    363 Jan 18  2016 setcore.cmi
+> -rw-r--r-- 1 root root    207 Jan 18  2016 setcore.mli
+>
+> There are parmap.cmxa and parmap.cmxs files, but no parmap.cmx file.
+>
+> I am stuck here (and clearly ignorant of what I am doing).  Any help
+> would be appreciated.
+>
+> Thank you.
 
-On 2018/05/09 17:12, Johannes Berg wrote:
-> Though of course this doesn't apply to the older branches :)
+I found compiling it required too many stuff I did not really want on my 
+system. So I generally pick up recent version from launchpad:
 
-How about setting upper limitation to the older branches by attached patch ?
+https://launchpad.net/~npalix/+archive/ubuntu/coccinelle
 
-Masashi Honma.
+Regards,
+Arend
 
---------------40254726DE30790B509F47D4
-Content-Type: text/plain; charset=UTF-8;
- name="patch"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="patch"
-
-ZGlmZiAtLWdpdCBhL2xpYi9icHJlcXMucHkgYi9saWIvYnByZXFzLnB5CmluZGV4IDEzMjVm
-ZDIuLmZlZWY0NDQgMTAwNjQ0Ci0tLSBhL2xpYi9icHJlcXMucHkKKysrIGIvbGliL2JwcmVx
-cy5weQpAQCAtMTkwLDEwICsxOTAsMTEgQEAgY2xhc3MgUmVxOgogICAgICAgICBzeXMuc3Rk
-b3V0LndyaXRlKCJUcnkgaW5zdGFsbGluZyB0aGUgcGFja2FnZTogJXNcbiIgJSBwYWNrYWdl
-X2hpbnQpCiAgICAgICAgIHJldHVybiBGYWxzZQogICAgIGRlZiBjb2NjaW5lbGxlKHNlbGYs
-IHZlcnNpb24pOgotICAgICAgICBpZiBzZWxmLnJlcXVpcmVfdmVyc2lvbignc3BhdGNoJywg
-Jy0tdmVyc2lvbicsIHZlcnNpb24sIDIsIHNlbGYubGludXhfdmVyc2lvbl9jbXApOgorICAg
-ICAgICBpZiBzZWxmLmxpbnV4X3ZlcnNpb25fY21wKCcxLjAuNicsIHNlbGYucmVxX2dldF9w
-cm9nX3ZlcnNpb24oJ3NwYXRjaCcsICctLXZlcnNpb24nLCAyKSkgPT0gLTEgYW5kIFwKKyAg
-ICAgICAgICAgc2VsZi5yZXF1aXJlX3ZlcnNpb24oJ3NwYXRjaCcsICctLXZlcnNpb24nLCB2
-ZXJzaW9uLCAyLCBzZWxmLmxpbnV4X3ZlcnNpb25fY21wKToKICAgICAgICAgICAgIHJldHVy
-biBUcnVlCiAgICAgICAgIHN5cy5zdGRvdXQud3JpdGUoIlRyeSBpbnN0YWxsaW5nIHRoZSBw
-YWNrYWdlOiBjb2NjaW5lbGxlXG4iKQotICAgICAgICBzeXMuc3Rkb3V0LndyaXRlKCJJZiB0
-aGF0IGlzIHRvbyBvbGQgZ28gZ3JhYiB0aGUgY29kZSBmcm9tIHNvdXJjZTpcblxuIikKKyAg
-ICAgICAgc3lzLnN0ZG91dC53cml0ZSgiSWYgdGhhdCBpcyBsZXNzIHRoYW4gIiArIHZlcnNp
-b24gKyAiIG9yIG1vcmUgdGhhbiAxLjAuNiBnbyBncmFiIHRoZSBjb2RlIGZyb20gc291cmNl
-OlxuXG4iKQogICAgICAgICBzeXMuc3Rkb3V0LndyaXRlKCJnaXQgY2xvbmUgaHR0cHM6Ly9n
-aXRodWIuY29tL2NvY2NpbmVsbGUvY29jY2luZWxsZS5naXRcblxuIikKICAgICAgICAgc3lz
-LnN0ZG91dC53cml0ZSgiVG8gYnVpbGQgeW91IHdpbGwgbmVlZDogb2NhbWwgbmN1cnNlcy1k
-ZXZlbFxuXG4iKQogICAgICAgICBzeXMuc3Rkb3V0LndyaXRlKCJJZiBvbiBTVVNFIC8gT3Bl
-blNVU0UgeW91IHdpbGwgYWxzbyBuZWVkOiBvY2FtbC1vY2FtbGRvY1xuXG4iKQo=
---------------40254726DE30790B509F47D4--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
