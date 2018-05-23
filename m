@@ -1,32 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-he1eur01on0127.outbound.protection.outlook.com ([104.47.0.127]:45152
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+Received: from mail-db5eur01on0104.outbound.protection.outlook.com ([104.47.2.104]:56416
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965530AbeEXNkm (ORCPT <rfc822;backports@vger.kernel.org>);
-        Thu, 24 May 2018 09:40:42 -0400
+        id S932543AbeEWLjJ (ORCPT <rfc822;backports@vger.kernel.org>);
+        Wed, 23 May 2018 07:39:09 -0400
 From: Omer Efrat <omer.efrat@tandemg.com>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
-        "backports@vger.kernel.org" <backports@vger.kernel.org>
-Subject: Re: PCI MSI API support in backports
-Date: Thu, 24 May 2018 13:40:38 +0000
-Message-ID: <HE1PR0202MB2954E60E8F7C06ED8EEEC5E59A6A0@HE1PR0202MB2954.eurprd02.prod.outlook.com> (sfid-20180524_154320_049952_B1050A84)
-References: <HE1PR0202MB2954B6138062CFAF4D2D2BA59A6B0@HE1PR0202MB2954.eurprd02.prod.outlook.com>,<5B055CE7.4000000@broadcom.com>
-In-Reply-To: <5B055CE7.4000000@broadcom.com>
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Subject: PCI MSI API support in backports
+Date: Wed, 23 May 2018 11:39:05 +0000
+Message-ID: <HE1PR0202MB2954B6138062CFAF4D2D2BA59A6B0@HE1PR0202MB2954.eurprd02.prod.outlook.com> (sfid-20180523_134025_860338_4B4A861E)
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 5/23/2018 3:21 PM, Arend van Spriel wrote:
-> Well. I think what you are missing is a wireless driver in linux=20
-> upstream. We backport on a as-needed basis so the reason is probably=20
-> that none of the upstream drivers require the pci_alloc_irq_vectors()=20
-> function. So what wireless driver are we talking about here. Is it a=20
-> proprietary driver?
+Our wireless driver uses pci_alloc_irq_vectors function in order to allocat=
+e the pci irq vectors.
+(hardware supports MSI, with no MSIx support)
 
-Yes, we are talking about a proprietary driver.
-Does that mean I should just add pci_alloc_irq_vectors function myself and =
-send it here as a patch?
+When trying to backport from linux-stable v4.16 to v3.10.104, compilation f=
+ails.
+It seems that backports didn't backported pci_alloc_irq_vectors function (i=
+ntroduced at aff171641d181ea573380efc3f559c9de4741fc5 PCI: Provide sensible=
+ IRQ vector alloc/free routines), although MSIx APIs are supported in backp=
+orts.
+
+Is that makes sense?
+Are changes to PCI driver being included in backports by their owners as a =
+workflow?
+Is pci_alloc_irq_vectors function planned to be included in backports?
+Are we missing something?
 
 Best regards,
 Omer Efrat.=
