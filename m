@@ -1,41 +1,44 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pg0-f53.google.com ([74.125.83.53]:34408 "EHLO
-        mail-pg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934275AbeEIJYt (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 9 May 2018 05:24:49 -0400
-Received: by mail-pg0-f53.google.com with SMTP id g20-v6so15733636pgv.1
-        for <backports@vger.kernel.org>; Wed, 09 May 2018 02:24:49 -0700 (PDT)
-Subject: Re: Failed to backport from from Linux 4.4 drivers to Linux 3.10.108
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: backports@vger.kernel.org
-References: <149bc44e-f521-cf4a-397a-c8e42d00081b@gmail.com>
- <1525770549.14830.1.camel@sipsolutions.net>
- <a6942432-8895-fa56-5a37-a232b99c38fc@gmail.com>
- <1525770503.14830.2.camel@sipsolutions.net>
- <2e85d2c4-d89e-6ab0-2b8e-60ce683f477f@gmail.com>
- <b67c4791-f0da-0fe0-c787-85e9a7824bc6@gmail.com>
- <1525850665.6910.0.camel@sipsolutions.net>
- <1525852495.6910.2.camel@sipsolutions.net>
- <2f59e893-da45-f3e7-430b-1377518727bb@gmail.com>
- <1525853548.6910.3.camel@sipsolutions.net>
- <d54cd7c5-fb33-59dc-afd0-d48f36a7a06d@gmail.com>
- <1525856616.6910.7.camel@sipsolutions.net>
-From: Masashi Honma <masashi.honma@gmail.com>
-Message-ID: <ba98f466-b6c0-4498-0597-57174b4f7fe5@gmail.com> (sfid-20180509_112452_252912_442641DA)
-Date: Wed, 9 May 2018 18:24:45 +0900
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55316 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1034514AbeEXTbe (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 24 May 2018 15:31:34 -0400
+Received: by mail-wm0-f66.google.com with SMTP id a8-v6so8168056wmg.5
+        for <backports@vger.kernel.org>; Thu, 24 May 2018 12:31:33 -0700 (PDT)
+Subject: Re: PCI MSI API support in backports
+To: Omer Efrat <omer.efrat@tandemg.com>,
+        "backports@vger.kernel.org" <backports@vger.kernel.org>
+References: <HE1PR0202MB2954B6138062CFAF4D2D2BA59A6B0@HE1PR0202MB2954.eurprd02.prod.outlook.com>
+ <5B055CE7.4000000@broadcom.com>
+ <HE1PR0202MB2954E60E8F7C06ED8EEEC5E59A6A0@HE1PR0202MB2954.eurprd02.prod.outlook.com>
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <5B071313.8060206@broadcom.com> (sfid-20180524_213322_279839_F2937A87)
+Date: Thu, 24 May 2018 21:31:31 +0200
 MIME-Version: 1.0
-In-Reply-To: <1525856616.6910.7.camel@sipsolutions.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <HE1PR0202MB2954E60E8F7C06ED8EEEC5E59A6A0@HE1PR0202MB2954.eurprd02.prod.outlook.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On 2018/05/09 18:03, Johannes Berg wrote:
-> We could also cherry-pick my trivial patch to the older branches I
-> guess. That'd still be simpler?
+On 5/24/2018 3:40 PM, Omer Efrat wrote:
+> On 5/23/2018 3:21 PM, Arend van Spriel wrote:
+>> Well. I think what you are missing is a wireless driver in linux
+>> upstream. We backport on a as-needed basis so the reason is probably
+>> that none of the upstream drivers require the pci_alloc_irq_vectors()
+>> function. So what wireless driver are we talking about here. Is it a
+>> proprietary driver?
+>
+> Yes, we are talking about a proprietary driver.
+> Does that mean I should just add pci_alloc_irq_vectors function myself and send it here as a patch?
 
-Oh, you already have a plan.
-Then drop my plan.
+You could, but I asked about your driver because the backports project 
+exports its symbols using EXPORT_SYMBOL_GPL(). This means that only 
+GPL-compatible drivers can use it. This has been a conscious decision 
+(see [1]).
 
-Masashi Honma.
+Regards,
+Arend
+
+[1] https://backports.wiki.kernel.org/index.php/License
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
