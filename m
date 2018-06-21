@@ -1,53 +1,35 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-eopbgr680139.outbound.protection.outlook.com ([40.107.68.139]:41632
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+Received: from mail-sn1nam02on0121.outbound.protection.outlook.com ([104.47.36.121]:11014
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751171AbeFZGH3 (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 26 Jun 2018 02:07:29 -0400
-Date: Tue, 26 Jun 2018 01:07:18 -0500
+        id S1751150AbeFUKMv (ORCPT <rfc822;backports@vger.kernel.org>);
+        Thu, 21 Jun 2018 06:12:51 -0400
+Date: Thu, 21 Jun 2018 05:12:32 -0500
 From: Wan-Hua Chang <winnie.chang@cypress.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: backports@vger.kernel.org, Chi-Hsien.Lin@cypress.com,
-        Aaron Komisar <aaron.komisar@tandemg.com>
+To: Aaron Komisar <aaron.komisar@tandemg.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+        "backports@vger.kernel.org" <backports@vger.kernel.org>,
+        "chi-hsien.lin@cypress.com" <chi-hsien.lin@cypress.com>
 Subject: Re: [PATCH] Updating id field in backports genl family
-Message-ID: <20180626060717.GA33209@aremote01.aus.cypress.com> (sfid-20180626_080735_428822_F28450E6)
+Message-ID: <20180621101232.GA116498@aremote01.aus.cypress.com> (sfid-20180621_121253_884644_5E5BB83A)
 References: <20180611102947.GA188023@aremote01.aus.cypress.com>
- <1529944813.10347.3.camel@sipsolutions.net>
+ <1528719907.10346.0.camel@sipsolutions.net>
+ <6bbc4985-0a18-80f5-2a52-6bc04f27af3a@cypress.com>
+ <AM4PR0202MB2916BC5C05FC8D9A2DB041EBF87F0@AM4PR0202MB2916.eurprd02.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1529944813.10347.3.camel@sipsolutions.net>
+In-Reply-To: <AM4PR0202MB2916BC5C05FC8D9A2DB041EBF87F0@AM4PR0202MB2916.eurprd02.prod.outlook.com>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, Jun 25, 2018 at 06:40:13PM +0200, Johannes Berg wrote:
-> Looking at this again ...
-> 
-> > I see the patch causes compiling error becasue family->family is not
-> > found when LINUX_VERSION >= 3.13
-> 
-> Yeah, that seems right.
-> 
-> > backports/backport/backport-include/genetlink.h
-> > struct backport_genl_fmaily is only defined when LINUX_VERSION < 3.13
-> > 
-> > 
-> > And in backports/backport/compat/backport-3.13.c line 127 
-> > 
-> > family->id = family->family.id
-> > 
-> > it looks like this line has done what the patch want to do. Is the
-> > comprehension correct?
-> 
-> I don't think so. We call this function - via
-> __real_bp_extack_genl_register_family() - on copy->family, so we do need
-> to copy like Aaron said, we just need to make it conditional for kernel
-> < 3.13 because on 3.13 we don't use this sub-family thing.
-> 
-> I've committed a fix - does that work for both of you? Aaron?
-Hi Johannes, 
-Yes, the fix works for me, thanks.
+Hi Aaron,
 
-> 
-> johannes
+Since you want to backport from Linux v4.4.92 drivers to Linux v3.10.104
+kernel, you can use "git checkout linux-4.4.y" to set backports git to
+4.4. With this version, there is no backport-4.12.c created and this
+file is not needed in your case as well. If you use backports master
+branch it supposes you want to backports Linux latest drivers to
+v3.10.104.
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
