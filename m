@@ -1,58 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-eopbgr20119.outbound.protection.outlook.com ([40.107.2.119]:2944
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752390AbeFZGyt (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 26 Jun 2018 02:54:49 -0400
-From: Aaron Komisar <aaron.komisar@tandemg.com>
-To: Wan-Hua Chang <winnie.chang@cypress.com>,
-        Johannes Berg <johannes@sipsolutions.net>
-CC: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-        "Chi-Hsien.Lin@cypress.com" <chi-hsien.lin@cypress.com>
+Received: from s3.sipsolutions.net ([144.76.63.242]:58710 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750806AbeFUORF (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 21 Jun 2018 10:17:05 -0400
+Message-ID: <1529590622.26642.6.camel@sipsolutions.net> (sfid-20180621_161706_978921_779F659E)
 Subject: Re: [PATCH] Updating id field in backports genl family
-Date: Tue, 26 Jun 2018 06:54:46 +0000
-Message-ID: <AM4PR0202MB29164C902F2A904E875C123EF8490@AM4PR0202MB2916.eurprd02.prod.outlook.com> (sfid-20180626_085451_895564_7A4E76BC)
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Aaron Komisar <aaron.komisar@tandemg.com>,
+        Wan-Hua Chang <winnie.chang@cypress.com>
+Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+        "chi-hsien.lin@cypress.com" <chi-hsien.lin@cypress.com>
+Date: Thu, 21 Jun 2018 16:17:02 +0200
+In-Reply-To: <AM4PR0202MB2916993B0F8E323A5319820DF8760@AM4PR0202MB2916.eurprd02.prod.outlook.com>
 References: <20180611102947.GA188023@aremote01.aus.cypress.com>
- <1529944813.10347.3.camel@sipsolutions.net>,<20180626060717.GA33209@aremote01.aus.cypress.com>
-In-Reply-To: <20180626060717.GA33209@aremote01.aus.cypress.com>
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
+         <1528719907.10346.0.camel@sipsolutions.net>
+         <6bbc4985-0a18-80f5-2a52-6bc04f27af3a@cypress.com>
+         <AM4PR0202MB2916BC5C05FC8D9A2DB041EBF87F0@AM4PR0202MB2916.eurprd02.prod.outlook.com>
+        ,<20180621101232.GA116498@aremote01.aus.cypress.com>
+         <AM4PR0202MB2916993B0F8E323A5319820DF8760@AM4PR0202MB2916.eurprd02.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, Jun 26, 2018 at 09:07:13PM +0300, Wan-Hua Chang wrote:
+On Thu, 2018-06-21 at 14:14 +0000, Aaron Komisar wrote:
+> On Mon, 2018-06-21 at 13:12 +0300, Wan-Hua Chang wrote:
+> > Hi Aaron,
+> > 
+> > Since you want to backport from Linux v4.4.92 drivers to Linux v3.10.104
+> > kernel, you can use "git checkout linux-4.4.y" to set backports git to
+> > 4.4. With this version, there is no backport-4.12.c created and this
+> > file is not needed in your case as well. If you use backports master
+> > branch it supposes you want to backports Linux latest drivers to
+> > v3.10.104.
+> > 
+> 
+> I am doing the development on a recent kernel (4.16) and the target kernel is
+> either v3.10.104 or v4.4.92.
 
->> Looking at this again ...
->>=20
->> > I see the patch causes compiling error becasue family->family is not
->> > found when LINUX_VERSION >=3D 3.13
->>=20
->> Yeah, that seems right.
->>=20
->> > backports/backport/backport-include/genetlink.h
->> > struct backport_genl_fmaily is only defined when LINUX_VERSION < 3.13
->> >=20
->> >=20
->> > And in backports/backport/compat/backport-3.13.c line 127=20
->> >=20
->> > family->id =3D family->family.id
->> >=20
->> > it looks like this line has done what the patch want to do. Is the
->> > comprehension correct?
->>=20
->> I don't think so. We call this function - via
->> __real_bp_extack_genl_register_family() - on copy->family, so we do need
->> to copy like Aaron said, we just need to make it conditional for kernel
->> < 3.13 because on 3.13 we don't use this sub-family thing.
->>=20
->> I've committed a fix - does that work for both of you? Aaron?
->Hi Johannes,=20
->Yes, the fix works for me, thanks.
-Same here.
-Thanks!
->
->>=20
->> johannes
-    =
+Yeah, I think we just need to put the right ifdef on that id assignment?
+
+We might even have that already internally, I'll check.
+
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
