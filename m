@@ -1,34 +1,43 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-eopbgr720106.outbound.protection.outlook.com ([40.107.72.106]:18080
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+Received: from mail-db5eur01on0136.outbound.protection.outlook.com ([104.47.2.136]:5120
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932590AbeFKKaC (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 11 Jun 2018 06:30:02 -0400
-Date: Mon, 11 Jun 2018 05:29:49 -0500
-From: Wan-Hua Chang <winnie.chang@cypress.com>
-To: backports@vger.kernel.org
-Cc: Chi-Hsien.Lin@cypress.com
+        id S1750806AbeFUOOl (ORCPT <rfc822;backports@vger.kernel.org>);
+        Thu, 21 Jun 2018 10:14:41 -0400
+From: Aaron Komisar <aaron.komisar@tandemg.com>
+To: Wan-Hua Chang <winnie.chang@cypress.com>
+CC: Johannes Berg <johannes@sipsolutions.net>,
+        "backports@vger.kernel.org" <backports@vger.kernel.org>,
+        "chi-hsien.lin@cypress.com" <chi-hsien.lin@cypress.com>
 Subject: Re: [PATCH] Updating id field in backports genl family
-Message-ID: <20180611102947.GA188023@aremote01.aus.cypress.com> (sfid-20180611_123004_861733_D37D3B95)
+Date: Thu, 21 Jun 2018 14:14:39 +0000
+Message-ID: <AM4PR0202MB2916993B0F8E323A5319820DF8760@AM4PR0202MB2916.eurprd02.prod.outlook.com> (sfid-20180621_161444_096545_15256535)
+References: <20180611102947.GA188023@aremote01.aus.cypress.com>
+ <1528719907.10346.0.camel@sipsolutions.net>
+ <6bbc4985-0a18-80f5-2a52-6bc04f27af3a@cypress.com>
+ <AM4PR0202MB2916BC5C05FC8D9A2DB041EBF87F0@AM4PR0202MB2916.eurprd02.prod.outlook.com>,<20180621101232.GA116498@aremote01.aus.cypress.com>
+In-Reply-To: <20180621101232.GA116498@aremote01.aus.cypress.com>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
+On Mon, 2018-06-21 at 13:12 +0300, Wan-Hua Chang wrote:
+>Hi Aaron,
+>
+>Since you want to backport from Linux v4.4.92 drivers to Linux v3.10.104
+>kernel, you can use "git checkout linux-4.4.y" to set backports git to
+>4.4. With this version, there is no backport-4.12.c created and this
+>file is not needed in your case as well. If you use backports master
+>branch it supposes you want to backports Linux latest drivers to
+>v3.10.104.
+>
 
-I see the patch causes compiling error becasue family->family is not
-found when LINUX_VERSION >= 3.13
+I am doing the development on a recent kernel (4.16) and the target kernel =
+is
+either v3.10.104 or v4.4.92.
 
-backports/backport/backport-include/genetlink.h
-struct backport_genl_fmaily is only defined when LINUX_VERSION < 3.13
-
-
-And in backports/backport/compat/backport-3.13.c line 127 
-
-family->id = family->family.id
-
-it looks like this line has done what the patch want to do. Is the
-comprehension correct?
+Thanks,
+Aaron=
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
