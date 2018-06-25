@@ -1,43 +1,48 @@
-Return-path: <masashi.honma@gmail.com>
-MIME-Version: 1.0
-References: <149bc44e-f521-cf4a-397a-c8e42d00081b@gmail.com>
- <1525770549.14830.1.camel@sipsolutions.net> <a6942432-8895-fa56-5a37-a232b99c38fc@gmail.com>
- <1525770503.14830.2.camel@sipsolutions.net> <2e85d2c4-d89e-6ab0-2b8e-60ce683f477f@gmail.com>
- <b67c4791-f0da-0fe0-c787-85e9a7824bc6@gmail.com> <1525850665.6910.0.camel@sipsolutions.net>
- <1525852495.6910.2.camel@sipsolutions.net> <2f59e893-da45-f3e7-430b-1377518727bb@gmail.com>
- <1525853548.6910.3.camel@sipsolutions.net> <d54cd7c5-fb33-59dc-afd0-d48f36a7a06d@gmail.com>
- <1525856616.6910.7.camel@sipsolutions.net>
-In-Reply-To: <1525856616.6910.7.camel@sipsolutions.net>
-From: Masashi Honma <masashi.honma@gmail.com>
-Date: Wed, 09 May 2018 09:16:41 +0000
-Message-ID: <CAFk-A4=wqeCHxOQ2sp3S=OyDQsxYdd=OAWiUxnY5uW258eyK3A@mail.gmail.com> (sfid-20180509_111652_964022_406DFF3D)
-Subject: Re: Failed to backport from from Linux 4.4 drivers to Linux 3.10.108
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: backports@vger.kernel.org
-Content-Type: multipart/alternative; boundary="00000000000005451d056bc25d54"
+Return-path: <backports-owner@vger.kernel.org>
+Received: from s3.sipsolutions.net ([144.76.63.242]:45942 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755335AbeFYQkP (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 25 Jun 2018 12:40:15 -0400
+Message-ID: <1529944813.10347.3.camel@sipsolutions.net> (sfid-20180625_184034_777654_D030021A)
+Subject: Re: [PATCH] Updating id field in backports genl family
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Wan-Hua Chang <winnie.chang@cypress.com>, backports@vger.kernel.org
+Cc: Chi-Hsien.Lin@cypress.com,
+        Aaron Komisar <aaron.komisar@tandemg.com>
+Date: Mon, 25 Jun 2018 18:40:13 +0200
+In-Reply-To: <20180611102947.GA188023@aremote01.aus.cypress.com> (sfid-20180611_123004_861733_D37D3B95)
+References: <20180611102947.GA188023@aremote01.aus.cypress.com>
+         (sfid-20180611_123004_861733_D37D3B95)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
---00000000000005451d056bc25d54
-Content-Type: text/plain; charset="UTF-8"
+Looking at this again ...
 
-2018/5/9 18:03 Johannes Berg <johannes@sipsolutions.net>:
+> I see the patch causes compiling error becasue family->family is not
+> found when LINUX_VERSION >= 3.13
 
->
-> We could also cherry-pick my trivial patch to the older branches I
-> guess. That'd still be simpler?
->
-> Oh, you already have a plan.
-Then drop my plan.
+Yeah, that seems right.
 
-Masashi Honma.
+> backports/backport/backport-include/genetlink.h
+> struct backport_genl_fmaily is only defined when LINUX_VERSION < 3.13
+> 
+> 
+> And in backports/backport/compat/backport-3.13.c line 127 
+> 
+> family->id = family->family.id
+> 
+> it looks like this line has done what the patch want to do. Is the
+> comprehension correct?
 
---00000000000005451d056bc25d54
-Content-Type: text/html; charset="UTF-8"
+I don't think so. We call this function - via
+__real_bp_extack_genl_register_family() - on copy->family, so we do need
+to copy like Aaron said, we just need to make it conditional for kernel
+< 3.13 because on 3.13 we don't use this sub-family thing.
 
-<div>2018/5/9 18:03 Johannes Berg &lt;<a href="mailto:johannes@sipsolutions.net">johannes@sipsolutions.net</a>&gt;:<div class="gmail_quote"><blockquote class="gmail_quote" style="margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">
-<br>
-We could also cherry-pick my trivial patch to the older branches I<br>
-guess. That&#39;d still be simpler?<br><br>
-</blockquote></div></div><div dir="auto">Oh, you already have a plan.</div><div dir="auto">Then drop my plan.</div><div dir="auto"><br></div><div dir="auto">Masashi Honma.</div>
+I've committed a fix - does that work for both of you? Aaron?
 
---00000000000005451d056bc25d54--
+johannes
+--
+To unsubscribe from this list: send the line "unsubscribe backports" in
