@@ -1,43 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-db5eur01on0136.outbound.protection.outlook.com ([104.47.2.136]:5120
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750806AbeFUOOl (ORCPT <rfc822;backports@vger.kernel.org>);
-        Thu, 21 Jun 2018 10:14:41 -0400
-From: Aaron Komisar <aaron.komisar@tandemg.com>
-To: Wan-Hua Chang <winnie.chang@cypress.com>
-CC: Johannes Berg <johannes@sipsolutions.net>,
-        "backports@vger.kernel.org" <backports@vger.kernel.org>,
-        "chi-hsien.lin@cypress.com" <chi-hsien.lin@cypress.com>
-Subject: Re: [PATCH] Updating id field in backports genl family
-Date: Thu, 21 Jun 2018 14:14:39 +0000
-Message-ID: <AM4PR0202MB2916993B0F8E323A5319820DF8760@AM4PR0202MB2916.eurprd02.prod.outlook.com> (sfid-20180621_161444_096545_15256535)
-References: <20180611102947.GA188023@aremote01.aus.cypress.com>
- <1528719907.10346.0.camel@sipsolutions.net>
- <6bbc4985-0a18-80f5-2a52-6bc04f27af3a@cypress.com>
- <AM4PR0202MB2916BC5C05FC8D9A2DB041EBF87F0@AM4PR0202MB2916.eurprd02.prod.outlook.com>,<20180621101232.GA116498@aremote01.aus.cypress.com>
-In-Reply-To: <20180621101232.GA116498@aremote01.aus.cypress.com>
-Content-Type: text/plain; charset="iso-8859-1"
+Received: from mail2.candelatech.com ([208.74.158.173]:43468 "EHLO
+        mail2.candelatech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728123AbeGPUpy (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 16 Jul 2018 16:45:54 -0400
+Subject: Re: What distro can run recent backports?
+To: Johannes Berg <johannes@sipsolutions.net>,
+        backports@vger.kernel.org
+References: <1ea772b3-612a-aa1e-8088-069864dc0920@candelatech.com>
+ <1531770284.3265.0.camel@sipsolutions.net>
+From: Ben Greear <greearb@candelatech.com>
+Message-ID: <2823e04b-0434-42eb-12be-4e7a8e2d35b8@candelatech.com> (sfid-20180716_221657_132797_5B3F9974)
+Date: Mon, 16 Jul 2018 13:16:52 -0700
 MIME-Version: 1.0
+In-Reply-To: <1531770284.3265.0.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Mon, 2018-06-21 at 13:12 +0300, Wan-Hua Chang wrote:
->Hi Aaron,
+On 07/16/2018 12:44 PM, Johannes Berg wrote:
+> On Mon, 2018-07-16 at 10:49 -0700, Ben Greear wrote:
+>> Hello,
+>>
+>> I'm trying to make backports work with my 4.16-ct kernel.  I tried Fedora-27, but it has
+>> some bug relate to spatch so it cannot run there.
 >
->Since you want to backport from Linux v4.4.92 drivers to Linux v3.10.104
->kernel, you can use "git checkout linux-4.4.y" to set backports git to
->4.4. With this version, there is no backport-4.12.c created and this
->file is not needed in your case as well. If you use backports master
->branch it supposes you want to backports Linux latest drivers to
->v3.10.104.
+> I think it's an upstream spatch bug. You could use an older version and
+> revert the recent genl_const patch.
 >
+> I'm on F27 but haven't gotten it to work recently (and am out for the
+> next ~4 weeks)
+>
+> johannes
 
-I am doing the development on a recent kernel (4.16) and the target kernel =
-is
-either v3.10.104 or v4.4.92.
+Thanks, I did try reverting the patch, and that got me farther, and after
+more hacking on some incompatible patches and some Kconfig issues,
+I got it to start building, and then it blew up all over the place.
+
+This patch is part of what I used, by the way:
+
+https://www.spinics.net/lists/backports/msg04115.html
+
+It seems like a fragile house of cards, and I think maybe I should just
+go back to manually copying files around and then fixing the incompatibilities.
 
 Thanks,
-Aaron=
+Ben
+
+-- 
+Ben Greear <greearb@candelatech.com>
+Candela Technologies Inc  http://www.candelatech.com
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
