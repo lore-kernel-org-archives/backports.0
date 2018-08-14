@@ -1,59 +1,77 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38206 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728228AbeH3Ay0 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 29 Aug 2018 20:54:26 -0400
-Received: by mail-pg1-f196.google.com with SMTP id e2-v6so2850999pgv.5
-        for <backports@vger.kernel.org>; Wed, 29 Aug 2018 13:55:48 -0700 (PDT)
-Message-ID: <1535576146.25991.52.camel@gmail.com> (sfid-20180829_225550_611627_5288C10A)
-Subject: Re: Backports not building configured drivers
-From: Marlon Smith <marlon.smith10@gmail.com>
-To: Luca Coelho <luca@coelho.fi>, backports@vger.kernel.org
-Date: Wed, 29 Aug 2018 13:55:46 -0700
-In-Reply-To: <203184ae0ffe879f79d8051807aa7f8326aaa311.camel@coelho.fi>
-References: <1535407305.25991.36.camel@gmail.com>
-         <203184ae0ffe879f79d8051807aa7f8326aaa311.camel@coelho.fi>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:1552 "EHLO
+        mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732699AbeHNQap (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 14 Aug 2018 12:30:45 -0400
+Date: Tue, 14 Aug 2018 15:43:20 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Luciano Coelho <luciano.coelho@intel.com>
+cc: cocci@systeme.lip6.fr, backports@vger.kernel.org
+Subject: Re: [Cocci] New release after 1.0.7?
+In-Reply-To: <deb8e4df52ce0baddcae77458a8a7246814b8804.camel@intel.com>
+Message-ID: <alpine.DEB.2.20.1808141541470.3371@hadrien> (sfid-20180814_154332_802152_8AF50589)
+References: <32b52167e7dd5734ba4aa5f21aa1fddd257e6292.camel@intel.com>  <alpine.DEB.2.20.1808141515280.3371@hadrien> <deb8e4df52ce0baddcae77458a8a7246814b8804.camel@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2018-08-28 at 07:42 +0300, Luca Coelho wrote:
-> On Mon, 2018-08-27 at 15:01 -0700, Marlon Smith wrote:
-> > 
-> > Hi everyone,
-> Hi Marlon,
-> > > > 
-> > I'm using backports 4.14 to build for a custom kernel 3.14.  That
-> > kernel includes the RT2800 wifi driver, and if I configure
-> > backports
-> > with menuconfig to build a newer version of that driver it works
-> > perfectly.  However, if I configure backports to build the RTL8821
-> > driver, which my kernel otherwise does not include, the driver
-> > never
-> > gets built and backports shows it as not selected the next time I
-> > run
-> > menuconfig.
-> > 
-> > Is this expected behaviour?  Is there something I can do to force
-> > this
-> > driver to build?
-> This probably means that your 3.14 kernel doesn't have some of the
-> dependencies needed by the RTL8821 driver from 4.14.  Check the list
-> of
-> dependencies for the driver and make sure they are included in your
-> 3.14 kernel.
-> > --
-> Luca.
+> I'm not sure it's a regression, but I just couldn't get the attributes
+> to work with 1.0.6 either with and without Johannes' changes to upgrade
+> it to the 1.0.6 syntax.
+>
+> This is the cocci that doesn't work (which is supposed to work with
+> 1.0.6):
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git/tree/patches/0027-genl-const/genl-const.cocci
+>
+> And, IIRC, this is the file that it's supposed to alter:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/net/wireless/nl80211.c
 
-Hey Luca, thanks for the reply!  The requirements in the backports 4.14
-menuconfig are listed as follows:
+With the current version, I get the diff below.  Is it what you expect?
 
-Depends on: WLAN [=y] && WLAN_VENDOR_REALTEK [=y] && RTL_CARDS [=m] &&
-m && BP_MODULES [=y] && PCI [=y]
+julia
 
-I can find the symbol WLAN_VENDOR_REALTEK in the backports 4.14
-menuconfig but not in the 3.14 kernel's menuconfig.  Does this mean I
-can't use the driver with this kernel?
+--- nl80211.c
++++ /tmp/cocci-output-11687-71a383-nl80211.c
+@@ -48,7 +48,7 @@ enum nl80211_multicast_groups {
+ 	NL80211_MCGRP_TESTMODE /* keep last - ifdef! */
+ };
+
+-static const struct genl_multicast_group nl80211_mcgrps[] = {
++static __genl_const struct genl_multicast_group nl80211_mcgrps[] = {
+ 	[NL80211_MCGRP_CONFIG] = { .name = NL80211_MULTICAST_GROUP_CONFIG },
+ 	[NL80211_MCGRP_SCAN] = { .name = NL80211_MULTICAST_GROUP_SCAN },
+ 	[NL80211_MCGRP_REGULATORY] = { .name = NL80211_MULTICAST_GROUP_REG },
+@@ -12894,7 +12894,8 @@ static int nl80211_tx_control_port(struc
+ 					 NL80211_FLAG_CHECK_NETDEV_UP)
+ #define NL80211_FLAG_CLEAR_SKB		0x20
+
+-static int nl80211_pre_doit(const struct genl_ops *ops, struct sk_buff *skb,
++static int nl80211_pre_doit(__genl_const struct genl_ops *ops,
++			    struct sk_buff *skb,
+ 			    struct genl_info *info)
+ {
+ 	struct cfg80211_registered_device *rdev;
+@@ -12956,7 +12957,8 @@ static int nl80211_pre_doit(const struct
+ 	return 0;
+ }
+
+-static void nl80211_post_doit(const struct genl_ops *ops, struct sk_buff *skb,
++static void nl80211_post_doit(__genl_const struct genl_ops *ops,
++			      struct sk_buff *skb,
+ 			      struct genl_info *info)
+ {
+ 	if (info->user_ptr[1]) {
+@@ -12985,7 +12987,7 @@ static void nl80211_post_doit(const stru
+ 	}
+ }
+
+-static const struct genl_ops nl80211_ops[] = {
++static __genl_const struct genl_ops nl80211_ops[] = {
+ 	{
+ 		.cmd = NL80211_CMD_GET_WIPHY,
+ 		.doit = nl80211_get_wiphy,
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
