@@ -1,56 +1,82 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:43286 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728238AbeHVNo0 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 22 Aug 2018 09:44:26 -0400
-Message-ID: <040d643bff98456efb34f1c4987a5e9e6ed0b93a.camel@coelho.fi> (sfid-20180822_122016_507978_5CC50C77)
-From: Luca Coelho <luca@coelho.fi>
-To: cocci@systeme.lip6.fr
-Cc: backports@vger.kernel.org
-Date: Wed, 22 Aug 2018 13:20:07 +0300
-In-Reply-To: <74f2d0049e235c1bd02f94a83cdaf00eaf401174.camel@coelho.fi>
-References: <ea981773c0caca06958f6dc5f5238954b520056b.camel@coelho.fi>
-         <74f2d0049e235c1bd02f94a83cdaf00eaf401174.camel@coelho.fi>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: Finding and replacing a struct inside another struct
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:32178 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729955AbeHNQHO (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 14 Aug 2018 12:07:14 -0400
+Date: Tue, 14 Aug 2018 15:19:55 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Luciano Coelho <luciano.coelho@intel.com>
+cc: cocci@systeme.lip6.fr, backports@vger.kernel.org
+Subject: Re: [Cocci] New release after 1.0.7?
+In-Reply-To: <32b52167e7dd5734ba4aa5f21aa1fddd257e6292.camel@intel.com>
+Message-ID: <alpine.DEB.2.20.1808141515280.3371@hadrien> (sfid-20180814_152007_774372_35ED45D6)
+References: <32b52167e7dd5734ba4aa5f21aa1fddd257e6292.camel@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2018-08-22 at 12:38 +0300, Luca Coelho wrote:
-> On Wed, 2018-08-22 at 12:30 +0300, Luca Coelho wrote:
-> > Hi,
-> > 
-> > I need some help again. :)
-> > 
-> > I have a struct (cfg80211_crypto_settings) that contains a new
-> > element
-> > that I want to substitute for a function call
-> > (cfg_control_port_over_nl80211).  But this struct appears inside
-> > another struct.
-> > 
-> > So I tried this:
-> > 
-> > First I try to find a struct that contains the struct I want (with
-> > the
-> > @parent_child@ rule):
-> > 
-> > @parent_child@
-> > identifier child;
-> > identifier parent_type;
-> > @@
-> > struct parent_type
-> > {
-> > ...
-> > struct cfg80211_crypto_settings child;
-> > ...
-> > }
 
-Unfortunately it seems that the parent struct doesn't really match with
-this.  I guess I'll have to hardcode the parent struct as well.
 
---
-Luca.
+On Tue, 14 Aug 2018, Luciano Coelho wrote:
 
+> Hi,
+>
+> Is there a plan for a new release after 1.0.7? 1.0.7 was not tagged and
+> no tarballs were released, so I'm not sure what is the status of it.
+> Additionally, I've had problems compiling it, and bisected it to this
+> commit:
+>
+> commit 7ab8f01b63d7cdec988e5f05065f3c18fdab7319 (refs/bisect/bad)
+> Author:     Thierry Martinez <thierry.martinez@inria.fr>
+> AuthorDate: Wed Jun 20 15:46:18 2018 +0200
+> Commit:     Thierry Martinez <thierry.martinez@inria.fr>
+> CommitDate: Wed Jun 20 15:46:18 2018 +0200
+>
+>     Allow bytecode compilation for pyml/generate
+>
+>     This change generalizes a patch submitted by
+>       Christopher Zimmermann <chrisz@openbsd.org>
+>     for allowing pyml/generate to be compiled by ocamlc if ocamlopt
+>     is not available.
+>
+>     The rules are adapted from pyml-current/Makefile.
+>
+> Nevertheless, the compilation problem I had seems to be fixed in the
+> latest master (commit 97695d059cd5).
+>
+> We (in the Linux backports project) have made a change to support the
+> new attributes style[1], which was supposed to work with 1.0.6, but
+> that seems to be broken too.
+>
+> We don't want to revert to using the pre-1.0.6 versions, so we are
+> waiting for new release to choose for our project.  So, my question
+> again, can we expect a new stable release any time soon?
+
+Sorry, I'm not sure where 1.0.7 came from.  I think that the compilation
+issues should not be resolved, although if someone still sees problems
+with the github version please report them.  I'm surprised that the
+attributes have degraded, since I don't recall a change with respect to
+that recently.  Could you send a .c and .cocci file that shows the
+problem?
+
+I would indeed like to make a release now that the compiations issues are
+resolved and things seem more stable.
+
+julia
+
+
+>
+> [1]
+> https://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git/commit/?id=98272f479c2126a135dfcb12484e93d5888164ab
+>
+> --
+> Cheers,
+> Luca.
+> _______________________________________________
+> Cocci mailing list
+> Cocci@systeme.lip6.fr
+> https://systeme.lip6.fr/mailman/listinfo/cocci
+>
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
