@@ -1,40 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-pf1-f169.google.com ([209.85.210.169]:44792 "EHLO
-        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbeH1BuR (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 27 Aug 2018 21:50:17 -0400
-Received: by mail-pf1-f169.google.com with SMTP id k21-v6so194072pff.11
-        for <backports@vger.kernel.org>; Mon, 27 Aug 2018 15:01:46 -0700 (PDT)
-Received: from Marlon-PC.hitronhub.home (S0106a84e3f53ec33.gv.shawcable.net. [184.66.238.184])
-        by smtp.gmail.com with ESMTPSA id g5-v6sm250459pgn.73.2018.08.27.15.01.45
-        for <backports@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 15:01:45 -0700 (PDT)
-Message-ID: <1535407305.25991.36.camel@gmail.com> (sfid-20180828_000148_719689_13E49E95)
-Subject: Backports not building configured drivers
-From: Marlon Smith <marlon.smith10@gmail.com>
-To: backports@vger.kernel.org
-Date: Mon, 27 Aug 2018 15:01:45 -0700
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mout.web.de ([212.227.15.4]:49897 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726205AbeHPIls (ORCPT <rfc822;backports@vger.kernel.org>);
+        Thu, 16 Aug 2018 04:41:48 -0400
+Subject: Re: [Cocci] Adjustment for const qualification
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Luciano Coelho <luciano.coelho@intel.com>, cocci@systeme.lip6.fr,
+        backports@vger.kernel.org
+References: <deb8e4df52ce0baddcae77458a8a7246814b8804.camel@intel.com>
+ <b417bf64-7970-8482-0246-ab00129b4657@users.sourceforge.net>
+ <alpine.DEB.2.20.1808151127520.2309@hadrien>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Message-ID: <2bd2aee9-eaed-3c04-f5e6-f88ed43a337c@users.sourceforge.net> (sfid-20180816_074553_692200_1A519586)
+Date: Thu, 16 Aug 2018 07:45:34 +0200
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.20.1808151127520.2309@hadrien>
+Content-Type: text/plain; charset=utf-8
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi everyone,
+> This is rejected by the semantic patch parser.
 
-I'm using backports 4.14 to build for a custom kernel 3.14.  That
-kernel includes the RT2800 wifi driver, and if I configure backports
-with menuconfig to build a newer version of that driver it works
-perfectly.  However, if I configure backports to build the RTL8821
-driver, which my kernel otherwise does not include, the driver never
-gets built and backports shows it as not selected the next time I run
-menuconfig.
+The software version “Coccinelle 1.0.7-00472-g99fc302b” accepts the following
+SmPL script variant.
 
-Is this expected behaviour?  Is there something I can do to force this
-driver to build?
+@replacement@
+attribute name __genl_const;
+@@
+-const
++__genl_const
+ struct
+(genl_multicast_group
+|genl_ops
+)
 
-Thanks!
 
-Marlon
+Would it be nice if such a transformation approach can work also without
+the specified metavariable?
+https://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git/tree/patches/0027-genl-const/genl-const.cocci?id=694b78f1533eb72c638c83754e0567630a93f456
+
+Regards,
+Markus
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
