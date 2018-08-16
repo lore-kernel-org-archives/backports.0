@@ -1,62 +1,40 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:18849 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726983AbeHVOTD (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 22 Aug 2018 10:19:03 -0400
-Date: Wed, 22 Aug 2018 06:54:16 -0400 (EDT)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Luca Coelho <luca@coelho.fi>
-cc: cocci@systeme.lip6.fr, backports@vger.kernel.org
-Subject: Re: [Cocci] Finding and replacing a struct inside another struct
-In-Reply-To: <040d643bff98456efb34f1c4987a5e9e6ed0b93a.camel@coelho.fi>
-Message-ID: <alpine.DEB.2.21.1808220653240.2365@hadrien> (sfid-20180822_125441_673185_40F4B887)
-References: <ea981773c0caca06958f6dc5f5238954b520056b.camel@coelho.fi> <74f2d0049e235c1bd02f94a83cdaf00eaf401174.camel@coelho.fi> <040d643bff98456efb34f1c4987a5e9e6ed0b93a.camel@coelho.fi>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Received: from s3.sipsolutions.net ([144.76.63.242]:39758 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729566AbeHPKC5 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 16 Aug 2018 06:02:57 -0400
+Message-ID: <1534403122.3547.51.camel@sipsolutions.net> (sfid-20180816_090636_198317_F24298EE)
+Subject: Re: [Cocci] New release after 1.0.7?
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Luciano Coelho <luciano.coelho@intel.com>,
+        Julia Lawall <julia.lawall@lip6.fr>
+Cc: cocci@systeme.lip6.fr, backports@vger.kernel.org
+Date: Thu, 16 Aug 2018 09:05:22 +0200
+In-Reply-To: <72ebc0aac08fd1e82dfb09cc12a2c8321f302d49.camel@intel.com> (sfid-20180814_163933_723729_9E8F6797)
+References: <32b52167e7dd5734ba4aa5f21aa1fddd257e6292.camel@intel.com>
+         <alpine.DEB.2.20.1808141515280.3371@hadrien>
+         <deb8e4df52ce0baddcae77458a8a7246814b8804.camel@intel.com>
+         <alpine.DEB.2.20.1808141541470.3371@hadrien>
+         <72ebc0aac08fd1e82dfb09cc12a2c8321f302d49.camel@intel.com>
+         (sfid-20180814_163933_723729_9E8F6797)
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+On Tue, 2018-08-14 at 17:39 +0300, Luciano Coelho wrote:
+> 
+> Yes, this looks right! So it seems to be working with 1.0.8. :P
 
+There is no 1.0.8 though.
 
-On Wed, 22 Aug 2018, Luca Coelho wrote:
+Julia, can you clear up the confusion with 1.0.7 and perhaps make a
+1.0.8 release? Right now, there's only a very old (1.0.4 I think)
+release that can do this at all, but it isn't compatible with the
+current syntax. We'd like to have a release that has this ability so we
+can check for the (minimum) version.
 
-> On Wed, 2018-08-22 at 12:38 +0300, Luca Coelho wrote:
-> > On Wed, 2018-08-22 at 12:30 +0300, Luca Coelho wrote:
-> > > Hi,
-> > >
-> > > I need some help again. :)
-> > >
-> > > I have a struct (cfg80211_crypto_settings) that contains a new
-> > > element
-> > > that I want to substitute for a function call
-> > > (cfg_control_port_over_nl80211).  But this struct appears inside
-> > > another struct.
-> > >
-> > > So I tried this:
-> > >
-> > > First I try to find a struct that contains the struct I want (with
-> > > the
-> > > @parent_child@ rule):
-> > >
-> > > @parent_child@
-> > > identifier child;
-> > > identifier parent_type;
-> > > @@
-> > > struct parent_type
-> > > {
-> > > ...
-> > > struct cfg80211_crypto_settings child;
-> > > ...
-> > > }
->
-> Unfortunately it seems that the parent struct doesn't really match with
-> this.  I guess I'll have to hardcode the parent struct as well.
-
-Is this a Coccinelle problem, or is the code just not organized as you
-would like.  If it is a Coccinelle problem, please send the source code as
-well.
-
-thanks,
-julia
+Thanks,
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
