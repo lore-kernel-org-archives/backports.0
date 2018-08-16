@@ -1,41 +1,39 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.62]:50796 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727185AbeH3LeU (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 30 Aug 2018 07:34:20 -0400
-Message-ID: <1535614402.5215.36.camel@sipsolutions.net> (sfid-20180830_093335_275301_3C50E0EC)
-Subject: Re: Backports not building configured drivers
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Marlon Smith <marlon.smith10@gmail.com>,
-        Luca Coelho <luca@coelho.fi>, backports@vger.kernel.org
-Date: Thu, 30 Aug 2018 09:33:22 +0200
-In-Reply-To: <1535576146.25991.52.camel@gmail.com> (sfid-20180829_225550_611627_5288C10A)
-References: <1535407305.25991.36.camel@gmail.com>
-         <203184ae0ffe879f79d8051807aa7f8326aaa311.camel@coelho.fi>
-         <1535576146.25991.52.camel@gmail.com>
-         (sfid-20180829_225550_611627_5288C10A)
+Received: from mga04.intel.com ([192.55.52.120]:46142 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727247AbeHPKFg (ORCPT <rfc822;backports@vger.kernel.org>);
+        Thu, 16 Aug 2018 06:05:36 -0400
+Message-ID: <03da1650217f909d24683d191f395ce3498b43ad.camel@intel.com> (sfid-20180816_090913_972214_EC255BE3)
+Subject: Re: [Cocci] New release after 1.0.7?
+From: Luciano Coelho <luciano.coelho@intel.com>
+To: Johannes Berg <johannes@sipsolutions.net>,
+        Julia Lawall <julia.lawall@lip6.fr>
+Cc: cocci@systeme.lip6.fr, backports@vger.kernel.org
+Date: Thu, 16 Aug 2018 10:09:09 +0300
+In-Reply-To: <1534403122.3547.51.camel@sipsolutions.net>
+References: <32b52167e7dd5734ba4aa5f21aa1fddd257e6292.camel@intel.com>
+         <alpine.DEB.2.20.1808141515280.3371@hadrien>
+         <deb8e4df52ce0baddcae77458a8a7246814b8804.camel@intel.com>
+         <alpine.DEB.2.20.1808141541470.3371@hadrien>
+         <72ebc0aac08fd1e82dfb09cc12a2c8321f302d49.camel@intel.com>
+         (sfid-20180814_163933_723729_9E8F6797) <1534403122.3547.51.camel@sipsolutions.net>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2018-08-29 at 13:55 -0700, Marlon Smith wrote:
-
-> Hey Luca, thanks for the reply!  The requirements in the backports 4.14
-> menuconfig are listed as follows:
+On Thu, 2018-08-16 at 09:05 +0200, Johannes Berg wrote:
+> On Tue, 2018-08-14 at 17:39 +0300, Luciano Coelho wrote:
+> > 
+> > Yes, this looks right! So it seems to be working with 1.0.8. :P
 > 
-> Depends on: WLAN [=y] && WLAN_VENDOR_REALTEK [=y] && RTL_CARDS [=m] &&
-> m && BP_MODULES [=y] && PCI [=y]
-> 
-> I can find the symbol WLAN_VENDOR_REALTEK in the backports 4.14
-> menuconfig but not in the 3.14 kernel's menuconfig.  Does this mean I
-> can't use the driver with this kernel?
+> There is no 1.0.8 though.
 
-No, actually the symbol is enabled? See the [=y] above.
+I know, I was just hinting that what works now should be released as
+1.0.8. ;)
 
-The above looks like it is actually enabled though, so something else
-must be going on?
 
-johannes
+--
+Luca.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
