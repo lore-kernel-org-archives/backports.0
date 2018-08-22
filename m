@@ -1,45 +1,82 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.4]:49897 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726205AbeHPIls (ORCPT <rfc822;backports@vger.kernel.org>);
-        Thu, 16 Aug 2018 04:41:48 -0400
-Subject: Re: [Cocci] Adjustment for const qualification
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Luciano Coelho <luciano.coelho@intel.com>, cocci@systeme.lip6.fr,
-        backports@vger.kernel.org
-References: <deb8e4df52ce0baddcae77458a8a7246814b8804.camel@intel.com>
- <b417bf64-7970-8482-0246-ab00129b4657@users.sourceforge.net>
- <alpine.DEB.2.20.1808151127520.2309@hadrien>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <2bd2aee9-eaed-3c04-f5e6-f88ed43a337c@users.sourceforge.net> (sfid-20180816_074553_692200_1A519586)
-Date: Thu, 16 Aug 2018 07:45:34 +0200
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1808151127520.2309@hadrien>
-Content-Type: text/plain; charset=utf-8
+Received: from paleale.coelho.fi ([176.9.41.70]:43236 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728246AbeHVNCj (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 22 Aug 2018 09:02:39 -0400
+Message-ID: <74f2d0049e235c1bd02f94a83cdaf00eaf401174.camel@coelho.fi> (sfid-20180822_113835_047727_4CE405BE)
+From: Luca Coelho <luca@coelho.fi>
+To: cocci@systeme.lip6.fr
+Cc: backports@vger.kernel.org
+Date: Wed, 22 Aug 2018 12:38:30 +0300
+In-Reply-To: <ea981773c0caca06958f6dc5f5238954b520056b.camel@coelho.fi>
+References: <ea981773c0caca06958f6dc5f5238954b520056b.camel@coelho.fi>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: Finding and replacing a struct inside another struct
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-> This is rejected by the semantic patch parser.
+On Wed, 2018-08-22 at 12:30 +0300, Luca Coelho wrote:
+> Hi,
+> 
+> I need some help again. :)
+> 
+> I have a struct (cfg80211_crypto_settings) that contains a new
+> element
+> that I want to substitute for a function call
+> (cfg_control_port_over_nl80211).  But this struct appears inside
+> another struct.
+> 
+> So I tried this:
+> 
+> First I try to find a struct that contains the struct I want (with
+> the
+> @parent_child@ rule):
+> 
+> @parent_child@
+> identifier child;
+> identifier parent_type;
+> @@
+> struct parent_type
+> {
+> ...
+> struct cfg80211_crypto_settings child;
+> ...
+> }
+> 
+> And then I try to match usage of the parent struct that I found:
+> 
+> @@
+> identifier parent_child.child;
+> identifier parent_child.parent_type;
+> identifier p;
+> @@
+> struct parent_type *p;
+> <...
+> -p.child.control_over_nl80211
+> +cfg_control_port_over_nl80211(&p.child)
+> ...>
 
-The software version “Coccinelle 1.0.7-00472-g99fc302b” accepts the following
-SmPL script variant.
+Ah, I think I found the problem... I was using p.child, but I was
+defining p as a pointer!
 
-@replacement@
-attribute name __genl_const;
+I guess I should have this instead:
+
 @@
--const
-+__genl_const
- struct
-(genl_multicast_group
-|genl_ops
-)
+identifier parent_child.child;
+identifier parent_child.parent_type;
+ide
+ntifier p;
+@@
+struct parent_type *p;
+<...
+-p->child.control_over_nl80211
++cf
+g_control_port_over_nl80211(&p->child)
+...>
 
+--
+Luca.
 
-Would it be nice if such a transformation approach can work also without
-the specified metavariable?
-https://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git/tree/patches/0027-genl-const/genl-const.cocci?id=694b78f1533eb72c638c83754e0567630a93f456
-
-Regards,
-Markus
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
