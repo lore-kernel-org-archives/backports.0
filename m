@@ -1,45 +1,85 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-eopbgr720107.outbound.protection.outlook.com ([40.107.72.107]:23216
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726469AbeHVF4E (ORCPT <rfc822;backports@vger.kernel.org>);
-        Wed, 22 Aug 2018 01:56:04 -0400
-Date: Tue, 21 Aug 2018 21:33:01 -0500
-From: Winnie Chang <winnie.chang@cypress.com>
-To: backports@vger.kernel.org
-Cc: Chi-Hsien.Lin@cypress.com
-Subject: [PATCH] backports: add header file for function memcmp
-Message-ID: <20180822023158.GA3143@aremote01.aus.cypress.com> (sfid-20180822_043322_571304_CE99D972)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Received: from paleale.coelho.fi ([176.9.41.70]:43276 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728356AbeHVNSy (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 22 Aug 2018 09:18:54 -0400
+Message-ID: <ea981773c0caca06958f6dc5f5238954b520056b.camel@coelho.fi> (sfid-20180822_115525_374138_86637289)
+From: Luca Coelho <luca@coelho.fi>
+To: cocci@systeme.lip6.fr
+Cc: backports@vger.kernel.org
+Date: Wed, 22 Aug 2018 12:30:04 +0300
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Finding and replacing a struct inside another struct
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Function memcmp is implicit declaration on kernel 4.9.88 ARM platform.
-backport-include/keys/asymmetric-type.h uses function memcmp but its
-caller compat/verification/verify.c and all its related header files
-do not include string.h, the header file is usually included from
-arch/arm/include/asm, but in this configuration, it doesn't. We need
-to be safe and insure string.h is there.
----
- backport/backport-include/keys/asymmetric-type.h | 2 ++
- 1 file changed, 2 insertions(+)
+Hi,
 
-diff --git a/backport/backport-include/keys/asymmetric-type.h b/backport/backport-include/keys/asymmetric-type.h
-index ee9c418..5744de9 100644
---- a/backport/backport-include/keys/asymmetric-type.h
-+++ b/backport/backport-include/keys/asymmetric-type.h
-@@ -2,6 +2,8 @@
- #define __BP_ASYMMETRIC_TYPE_H
- #ifdef CPTCFG_BPAUTO_BUILD_SYSTEM_DATA_VERIFICATION
- 
-+#include <linux/string.h>
-+
- struct asymmetric_key_id {
- 	unsigned short	len;
- 	unsigned char	data[];
--- 
-1.9.1
+I need some help again. :)
+
+I have a struct (cfg80211_crypto_settings) that contains a new element
+that I want to substitute for a function call
+(cfg_control_port_over_nl80211).  But this struct appears inside
+another struct.
+
+So I tried this:
+
+First I try to find a struct that contains the struct I want (with the
+@parent_child@ rule):
+
+@parent_child@
+identifier child;
+identifier parent_type;
+@@
+struct parent_type
+{
+...
+struct cfg80211_crypto_settings child;
+...
+}
+
+And then I try to match usage of the parent struct that I found:
+
+@@
+identifier parent_child.child;
+identifier parent_child.parent_type;
+identifier p;
+@@
+struct parent_type *p;
+<...
+-p.child.control_over_nl80211
++cfg_control_port_over_nl80211(&p.child)
+...>
+
+
+But I'm getting some cryptic errors:
+
+struct parent_type*
+warning: line 715: req, previously declared as a metavariable, is used as an identifier
+warning: line 732: req, previously declared as a metavariable, is used as an identifier
+warning: line 740: req, previously declared as a metavariable, is used as an identifier
+warning: line 912: should name_assign_type be a metavariable?
+warning: line 918: params, previously declared as a metavariable, is used as an identifier
+warning: line 933: params, previously declared as a metavariable, is used as an identifier
+warning: line 941: should reqid be a metavariable?
+line 1175: non-structure type in field ref
+struct parent_type*
+warning: line 715: req, previously declared as a metavariable, is used as an identifier
+warning: line 732: req, previously declared as a metavariable, is used as an identifier
+warning: line 740: req, previously declared as a metavariable, is used as an identifier
+warning: line 912: should name_assign_type be a metavariable?
+warning: line 918: params, previously declared as a metavariable, is used as an identifier
+warning: line 933: params, previously declared as a metavariable, is used as an identifier
+warning: line 941: should reqid be a metavariable?
+line 1175: non-structure type in field ref
+
+
+Does anyone know if there is a proper way to do is?
+
+--
+Cheers,
+Luca.
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
