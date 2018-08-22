@@ -1,47 +1,62 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-bl2nam02on0105.outbound.protection.outlook.com ([104.47.38.105]:49231
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726469AbeHVG3N (ORCPT <rfc822;backports@vger.kernel.org>);
-        Wed, 22 Aug 2018 02:29:13 -0400
-Date: Tue, 21 Aug 2018 22:06:05 -0500
-From: Winnie Chang <winnie.chang@cypress.com>
-To: backports@vger.kernel.org
-Cc: Chi-Hsien.Lin@cypress.com
-Subject: [PATCH v2] backports: add header file for function memcmp
-Message-ID: <20180822030554.GA73398@aremote01.aus.cypress.com> (sfid-20180822_050625_036935_A42BDE44)
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:18849 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726983AbeHVOTD (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 22 Aug 2018 10:19:03 -0400
+Date: Wed, 22 Aug 2018 06:54:16 -0400 (EDT)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Luca Coelho <luca@coelho.fi>
+cc: cocci@systeme.lip6.fr, backports@vger.kernel.org
+Subject: Re: [Cocci] Finding and replacing a struct inside another struct
+In-Reply-To: <040d643bff98456efb34f1c4987a5e9e6ed0b93a.camel@coelho.fi>
+Message-ID: <alpine.DEB.2.21.1808220653240.2365@hadrien> (sfid-20180822_125441_673185_40F4B887)
+References: <ea981773c0caca06958f6dc5f5238954b520056b.camel@coelho.fi> <74f2d0049e235c1bd02f94a83cdaf00eaf401174.camel@coelho.fi> <040d643bff98456efb34f1c4987a5e9e6ed0b93a.camel@coelho.fi>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Function memcmp is implicit declaration on kernel 4.9.88 ARM platform.
-backport-include/keys/asymmetric-type.h uses function memcmp but its
-caller compat/verification/verify.c and all its related header files
-do not include string.h. The header file is usually included from
-arch/arm/include/asm, but in this configuration, it doesn't. We need
-to be safe and insure string.h is there.
 
-Signed-off-by: Winnie Chang <winnie.chang@cypress.com>
----
- backport/backport-include/keys/asymmetric-type.h | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/backport/backport-include/keys/asymmetric-type.h b/backport/backport-include/keys/asymmetric-type.h
-index ee9c418..5744de9 100644
---- a/backport/backport-include/keys/asymmetric-type.h
-+++ b/backport/backport-include/keys/asymmetric-type.h
-@@ -2,6 +2,8 @@
- #define __BP_ASYMMETRIC_TYPE_H
- #ifdef CPTCFG_BPAUTO_BUILD_SYSTEM_DATA_VERIFICATION
- 
-+#include <linux/string.h>
-+
- struct asymmetric_key_id {
- 	unsigned short	len;
- 	unsigned char	data[];
--- 
-1.9.1
+On Wed, 22 Aug 2018, Luca Coelho wrote:
 
+> On Wed, 2018-08-22 at 12:38 +0300, Luca Coelho wrote:
+> > On Wed, 2018-08-22 at 12:30 +0300, Luca Coelho wrote:
+> > > Hi,
+> > >
+> > > I need some help again. :)
+> > >
+> > > I have a struct (cfg80211_crypto_settings) that contains a new
+> > > element
+> > > that I want to substitute for a function call
+> > > (cfg_control_port_over_nl80211).  But this struct appears inside
+> > > another struct.
+> > >
+> > > So I tried this:
+> > >
+> > > First I try to find a struct that contains the struct I want (with
+> > > the
+> > > @parent_child@ rule):
+> > >
+> > > @parent_child@
+> > > identifier child;
+> > > identifier parent_type;
+> > > @@
+> > > struct parent_type
+> > > {
+> > > ...
+> > > struct cfg80211_crypto_settings child;
+> > > ...
+> > > }
+>
+> Unfortunately it seems that the parent struct doesn't really match with
+> this.  I guess I'll have to hardcode the parent struct as well.
+
+Is this a Coccinelle problem, or is the code just not organized as you
+would like.  If it is a Coccinelle problem, please send the source code as
+well.
+
+thanks,
+julia
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
