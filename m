@@ -1,97 +1,45 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:6416 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728234AbeHVOQv (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 22 Aug 2018 10:16:51 -0400
-Date: Wed, 22 Aug 2018 06:52:24 -0400 (EDT)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Luca Coelho <luca@coelho.fi>
-cc: cocci@systeme.lip6.fr, backports@vger.kernel.org
-Subject: Re: [Cocci] Finding and replacing a struct inside another struct
-In-Reply-To: <ea981773c0caca06958f6dc5f5238954b520056b.camel@coelho.fi>
-Message-ID: <alpine.DEB.2.21.1808220649460.2365@hadrien> (sfid-20180822_125230_537980_2C27F036)
-References: <ea981773c0caca06958f6dc5f5238954b520056b.camel@coelho.fi>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Received: from paleale.coelho.fi ([176.9.41.70]:44650 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726567AbeH1Icr (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 28 Aug 2018 04:32:47 -0400
+Message-ID: <203184ae0ffe879f79d8051807aa7f8326aaa311.camel@coelho.fi> (sfid-20180828_064301_792815_C58FF3A0)
+From: Luca Coelho <luca@coelho.fi>
+To: Marlon Smith <marlon.smith10@gmail.com>, backports@vger.kernel.org
+Date: Tue, 28 Aug 2018 07:42:56 +0300
+In-Reply-To: <1535407305.25991.36.camel@gmail.com>
+References: <1535407305.25991.36.camel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: Backports not building configured drivers
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+On Mon, 2018-08-27 at 15:01 -0700, Marlon Smith wrote:
+> Hi everyone,
+
+Hi Marlon,
 
 
-On Wed, 22 Aug 2018, Luca Coelho wrote:
+> I'm using backports 4.14 to build for a custom kernel 3.14.  That
+> kernel includes the RT2800 wifi driver, and if I configure backports
+> with menuconfig to build a newer version of that driver it works
+> perfectly.  However, if I configure backports to build the RTL8821
+> driver, which my kernel otherwise does not include, the driver never
+> gets built and backports shows it as not selected the next time I run
+> menuconfig.
+> 
+> Is this expected behaviour?  Is there something I can do to force
+> this
+> driver to build?
 
-> Hi,
->
-> I need some help again. :)
->
-> I have a struct (cfg80211_crypto_settings) that contains a new element
-> that I want to substitute for a function call
-> (cfg_control_port_over_nl80211).  But this struct appears inside
-> another struct.
->
-> So I tried this:
->
-> First I try to find a struct that contains the struct I want (with the
-> @parent_child@ rule):
->
-> @parent_child@
-> identifier child;
-> identifier parent_type;
-> @@
-> struct parent_type
-> {
-> ...
-> struct cfg80211_crypto_settings child;
-> ...
-> }
->
-> And then I try to match usage of the parent struct that I found:
->
-> @@
-> identifier parent_child.child;
-> identifier parent_child.parent_type;
-> identifier p;
-> @@
-> struct parent_type *p;
-> <...
-> -p.child.control_over_nl80211F
-> +cfg_control_port_over_nl80211(&p.child)
-> ...>
->
->
-> But I'm getting some cryptic errors:
->
-> struct parent_type*
-> warning: line 715: req, previously declared as a metavariable, is used as an identifier
-> warning: line 732: req, previously declared as a metavariable, is used as an identifier
-> warning: line 740: req, previously declared as a metavariable, is used as an identifier
-> warning: line 912: should name_assign_type be a metavariable?
-> warning: line 918: params, previously declared as a metavariable, is used as an identifier
-> warning: line 933: params, previously declared as a metavariable, is used as an identifier
-> warning: line 941: should reqid be a metavariable?
-> line 1175: non-structure type in field ref
-> struct parent_type*
-> warning: line 715: req, previously declared as a metavariable, is used as an identifier
-> warning: line 732: req, previously declared as a metavariable, is used as an identifier
-> warning: line 740: req, previously declared as a metavariable, is used as an identifier
-> warning: line 912: should name_assign_type be a metavariable?
-> warning: line 918: params, previously declared as a metavariable, is used as an identifier
-> warning: line 933: params, previously declared as a metavariable, is used as an identifier
-> warning: line 941: should reqid be a metavariable?
-> line 1175: non-structure type in field ref
->
->
-> Does anyone know if there is a proper way to do is?
+This probably means that your 3.14 kernel doesn't have some of the
+dependencies needed by the RTL8821 driver from 4.14.  Check the list of
+dependencies for the driver and make sure they are included in your
+3.14 kernel.
 
-You already found the solution for the actual errors.  But it is good to
-pay attention to the warnings too.  For "should name_assign_type be a
-metavariable?" is it concerned because an explicit identifier name is used
-as something other than the name of a function or the name of a field.  If
-you really want to only match assign_type, then you can make a
-metavariable-like declaration symbol assign_type; that basically means
-that you know what you are doing and don't want to see the warning any
-more.
+--
+Luca.
 
-julia
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
