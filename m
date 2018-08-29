@@ -1,40 +1,73 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.63.242]:39758 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729566AbeHPKC5 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 16 Aug 2018 06:02:57 -0400
-Message-ID: <1534403122.3547.51.camel@sipsolutions.net> (sfid-20180816_090636_198317_F24298EE)
-Subject: Re: [Cocci] New release after 1.0.7?
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Luciano Coelho <luciano.coelho@intel.com>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Cc: cocci@systeme.lip6.fr, backports@vger.kernel.org
-Date: Thu, 16 Aug 2018 09:05:22 +0200
-In-Reply-To: <72ebc0aac08fd1e82dfb09cc12a2c8321f302d49.camel@intel.com> (sfid-20180814_163933_723729_9E8F6797)
-References: <32b52167e7dd5734ba4aa5f21aa1fddd257e6292.camel@intel.com>
-         <alpine.DEB.2.20.1808141515280.3371@hadrien>
-         <deb8e4df52ce0baddcae77458a8a7246814b8804.camel@intel.com>
-         <alpine.DEB.2.20.1808141541470.3371@hadrien>
-         <72ebc0aac08fd1e82dfb09cc12a2c8321f302d49.camel@intel.com>
-         (sfid-20180814_163933_723729_9E8F6797)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:39619 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727595AbeH3BMz (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 29 Aug 2018 21:12:55 -0400
+Received: by mail-oi0-f68.google.com with SMTP id c190-v6so11732961oig.6
+        for <backports@vger.kernel.org>; Wed, 29 Aug 2018 14:14:13 -0700 (PDT)
+Subject: Re: Backports not building configured drivers
+To: Marlon Smith <marlon.smith10@gmail.com>,
+        Luca Coelho <luca@coelho.fi>, backports@vger.kernel.org
+References: <1535407305.25991.36.camel@gmail.com>
+ <203184ae0ffe879f79d8051807aa7f8326aaa311.camel@coelho.fi>
+ <1535576146.25991.52.camel@gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <f1692edb-a6c4-a155-e067-9f83ac5a7e3f@lwfinger.net> (sfid-20180829_231426_547273_AA801DAC)
+Date: Wed, 29 Aug 2018 16:14:11 -0500
+MIME-Version: 1.0
+In-Reply-To: <1535576146.25991.52.camel@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2018-08-14 at 17:39 +0300, Luciano Coelho wrote:
+On 08/29/2018 03:55 PM, Marlon Smith wrote:
+> On Tue, 2018-08-28 at 07:42 +0300, Luca Coelho wrote:
+>> On Mon, 2018-08-27 at 15:01 -0700, Marlon Smith wrote:
+>>>   
+>>> Hi everyone,
+>> Hi Marlon,
+>>>>>   
+>>> I'm using backports 4.14 to build for a custom kernel 3.14.  That
+>>> kernel includes the RT2800 wifi driver, and if I configure
+>>> backports
+>>> with menuconfig to build a newer version of that driver it works
+>>> perfectly.  However, if I configure backports to build the RTL8821
+>>> driver, which my kernel otherwise does not include, the driver
+>>> never
+>>> gets built and backports shows it as not selected the next time I
+>>> run
+>>> menuconfig.
+>>>   
+>>> Is this expected behaviour?  Is there something I can do to force
+>>> this
+>>> driver to build?
+>> This probably means that your 3.14 kernel doesn't have some of the
+>> dependencies needed by the RTL8821 driver from 4.14.  Check the list
+>> of
+>> dependencies for the driver and make sure they are included in your
+>> 3.14 kernel.
+>>> --
+>> Luca.
 > 
-> Yes, this looks right! So it seems to be working with 1.0.8. :P
+> Hey Luca, thanks for the reply!  The requirements in the backports 4.14
+> menuconfig are listed as follows:
+> 
+> Depends on: WLAN [=y] && WLAN_VENDOR_REALTEK [=y] && RTL_CARDS [=m] &&
+> m && BP_MODULES [=y] && PCI [=y]
+> 
+> I can find the symbol WLAN_VENDOR_REALTEK in the backports 4.14
+> menuconfig but not in the 3.14 kernel's menuconfig.  Does this mean I
+> can't use the driver with this kernel?
+> --
 
-There is no 1.0.8 though.
+Marlon,
 
-Julia, can you clear up the confusion with 1.0.7 and perhaps make a
-1.0.8 release? Right now, there's only a very old (1.0.4 I think)
-release that can do this at all, but it isn't compatible with the
-current syntax. We'd like to have a release that has this ability so we
-can check for the (minimum) version.
+That symbol postdates kernel 3.14. I have no idea if the backports code will 
+run, or even build, in kernels that old, but I think it would be safe for you to 
+edit the symbol WLAN_VENDOR_REALTEK out of that "depends on" line in the 
+configuration menu. At least, that will get you to the next problem. :)
 
-Thanks,
-johannes
+Larry
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
