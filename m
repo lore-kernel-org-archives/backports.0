@@ -1,57 +1,59 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:64548 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732621AbeHNP4n (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 14 Aug 2018 11:56:43 -0400
-Message-ID: <32b52167e7dd5734ba4aa5f21aa1fddd257e6292.camel@intel.com> (sfid-20180814_150937_918498_BA1DA7F7)
-Subject: New release after 1.0.7?
-From: Luciano Coelho <luciano.coelho@intel.com>
-To: cocci@systeme.lip6.fr
-Cc: backports@vger.kernel.org
-Date: Tue, 14 Aug 2018 16:09:33 +0300
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38206 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728228AbeH3Ay0 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 29 Aug 2018 20:54:26 -0400
+Received: by mail-pg1-f196.google.com with SMTP id e2-v6so2850999pgv.5
+        for <backports@vger.kernel.org>; Wed, 29 Aug 2018 13:55:48 -0700 (PDT)
+Message-ID: <1535576146.25991.52.camel@gmail.com> (sfid-20180829_225550_611627_5288C10A)
+Subject: Re: Backports not building configured drivers
+From: Marlon Smith <marlon.smith10@gmail.com>
+To: Luca Coelho <luca@coelho.fi>, backports@vger.kernel.org
+Date: Wed, 29 Aug 2018 13:55:46 -0700
+In-Reply-To: <203184ae0ffe879f79d8051807aa7f8326aaa311.camel@coelho.fi>
+References: <1535407305.25991.36.camel@gmail.com>
+         <203184ae0ffe879f79d8051807aa7f8326aaa311.camel@coelho.fi>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Hi,
+On Tue, 2018-08-28 at 07:42 +0300, Luca Coelho wrote:
+> On Mon, 2018-08-27 at 15:01 -0700, Marlon Smith wrote:
+> > 
+> > Hi everyone,
+> Hi Marlon,
+> > > > 
+> > I'm using backports 4.14 to build for a custom kernel 3.14.  That
+> > kernel includes the RT2800 wifi driver, and if I configure
+> > backports
+> > with menuconfig to build a newer version of that driver it works
+> > perfectly.  However, if I configure backports to build the RTL8821
+> > driver, which my kernel otherwise does not include, the driver
+> > never
+> > gets built and backports shows it as not selected the next time I
+> > run
+> > menuconfig.
+> > 
+> > Is this expected behaviour?  Is there something I can do to force
+> > this
+> > driver to build?
+> This probably means that your 3.14 kernel doesn't have some of the
+> dependencies needed by the RTL8821 driver from 4.14.  Check the list
+> of
+> dependencies for the driver and make sure they are included in your
+> 3.14 kernel.
+> > --
+> Luca.
 
-Is there a plan for a new release after 1.0.7? 1.0.7 was not tagged and
-no tarballs were released, so I'm not sure what is the status of it. 
-Additionally, I've had problems compiling it, and bisected it to this
-commit:
+Hey Luca, thanks for the reply!  The requirements in the backports 4.14
+menuconfig are listed as follows:
 
-commit 7ab8f01b63d7cdec988e5f05065f3c18fdab7319 (refs/bisect/bad)
-Author:     Thierry Martinez <thierry.martinez@inria.fr>
-AuthorDate: Wed Jun 20 15:46:18 2018 +0200
-Commit:     Thierry Martinez <thierry.martinez@inria.fr>
-CommitDate: Wed Jun 20 15:46:18 2018 +0200
+Depends on: WLAN [=y] && WLAN_VENDOR_REALTEK [=y] && RTL_CARDS [=m] &&
+m && BP_MODULES [=y] && PCI [=y]
 
-    Allow bytecode compilation for pyml/generate
-    
-    This change generalizes a patch submitted by
-      Christopher Zimmermann <chrisz@openbsd.org>
-    for allowing pyml/generate to be compiled by ocamlc if ocamlopt
-    is not available.
-    
-    The rules are adapted from pyml-current/Makefile.
-
-Nevertheless, the compilation problem I had seems to be fixed in the
-latest master (commit 97695d059cd5).
-
-We (in the Linux backports project) have made a change to support the
-new attributes style[1], which was supposed to work with 1.0.6, but
-that seems to be broken too.
-
-We don't want to revert to using the pre-1.0.6 versions, so we are
-waiting for new release to choose for our project.  So, my question
-again, can we expect a new stable release any time soon?
-
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git/commit/?id=98272f479c2126a135dfcb12484e93d5888164ab
-
---
-Cheers,
-Luca.
+I can find the symbol WLAN_VENDOR_REALTEK in the backports 4.14
+menuconfig but not in the 3.14 kernel's menuconfig.  Does this mean I
+can't use the driver with this kernel?
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
