@@ -1,33 +1,58 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.62]:50860 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbeIXCPy (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sun, 23 Sep 2018 22:15:54 -0400
-Message-ID: <1537733820.1707.10.camel@sipsolutions.net> (sfid-20180923_221712_660554_A3E53FDE)
-Subject: Re: [PATCH 06/10] dependencies: make hostap and atmel depend on
- kernel >= 4.18
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org, john@phrozen.org
-Date: Sun, 23 Sep 2018 22:17:00 +0200
-In-Reply-To: <20180923174535.16198-7-hauke@hauke-m.de> (sfid-20180923_194552_062144_6F12F664)
-References: <20180923174535.16198-1-hauke@hauke-m.de>
-         <20180923174535.16198-7-hauke@hauke-m.de>
-         (sfid-20180923_194552_062144_6F12F664)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from nbd.name ([46.4.11.11]:56608 "EHLO nbd.name"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725919AbeIFQFG (ORCPT <rfc822;backports@vger.kernel.org>);
+        Thu, 6 Sep 2018 12:05:06 -0400
+From: Felix Fietkau <nbd@nbd.name>
+To: backports@vger.kernel.org
+Cc: john@phrozen.org
+Subject: [PATCH] backports: backport sg_init_marker()
+Date: Thu,  6 Sep 2018 13:30:02 +0200
+Message-Id: <20180906113002.59425-1-nbd@nbd.name> (sfid-20180906_133006_643082_03903869)
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, 2018-09-23 at 19:45 +0200, Hauke Mehrtens wrote:
-> The hostap and atmel wireless driver now make use of the
-> proc_create_single_data() function which can not easily be backported.
-> As these drivers are not used too often just deactivate them on older
-> kernel versions for now.
+It is used by new mt76 changes
 
-It should be pretty easy to backport based on proc_create_data(), which
-has been around since 2.6.26?
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+---
+ backport/backport-include/linux/scatterlist.h | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-johannes
+diff --git a/backport/backport-include/linux/scatterlist.h b/backport/backport-include/linux/scatterlist.h
+index bfc74494..06934b6b 100644
+--- a/backport/backport-include/linux/scatterlist.h
++++ b/backport/backport-include/linux/scatterlist.h
+@@ -102,4 +102,27 @@ size_t sg_pcopy_from_buffer(struct scatterlist *sgl, unsigned int nents,
+ 
+ #endif /* LINUX_VERSION_IS_LESS(3, 11, 0) */
+ 
++#if LINUX_VERSION_IS_LESS(4, 17, 0)
++
++#define sg_init_marker LINUX_BACKPORT(sg_init_marker)
++/**
++ * sg_init_marker - Initialize markers in sg table
++ * @sgl:	   The SG table
++ * @nents:	   Number of entries in table
++ *
++ **/
++static inline void sg_init_marker(struct scatterlist *sgl,
++				  unsigned int nents)
++{
++#ifdef CONFIG_DEBUG_SG
++	unsigned int i;
++
++	for (i = 0; i < nents; i++)
++		sgl[i].sg_magic = SG_MAGIC;
++#endif
++	sg_mark_end(&sgl[nents - 1]);
++}
++
++#endif /* LINUX_VERSION_IS_LESS(4, 17, 0) */
++
+ #endif /* __BACKPORT_SCATTERLIST_H */
+-- 
+2.17.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
