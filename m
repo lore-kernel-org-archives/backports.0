@@ -1,36 +1,38 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.62]:51614 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730392AbeISPk4 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 19 Sep 2018 11:40:56 -0400
-Message-ID: <1537351415.10305.34.camel@sipsolutions.net> (sfid-20180919_120348_454832_8A580E67)
-Subject: Re: [PATCH] backports: add strreplace()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Chi-Hsien Lin <Chi-Hsien.Lin@cypress.com>,
-        "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: Winnie Chang <Winnie.Chang@cypress.com>
-Date: Wed, 19 Sep 2018 12:03:35 +0200
-In-Reply-To: <1537351259-19914-1-git-send-email-chi-hsien.lin@cypress.com>
-References: <1537351259-19914-1-git-send-email-chi-hsien.lin@cypress.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from nbd.name ([46.4.11.11]:48208 "EHLO nbd.name"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726692AbeIFLbv (ORCPT <rfc822;backports@vger.kernel.org>);
+        Thu, 6 Sep 2018 07:31:51 -0400
+From: Felix Fietkau <nbd@nbd.name>
+To: backports@vger.kernel.org
+Cc: john@phrozen.org
+Subject: [PATCH 5/6] backport: copy net/rsi_91x.h
+Date: Thu,  6 Sep 2018 08:57:49 +0200
+Message-Id: <20180906065750.89673-5-nbd@nbd.name> (sfid-20180906_085755_924822_7FABED75)
+In-Reply-To: <20180906065750.89673-1-nbd@nbd.name>
+References: <20180906065750.89673-1-nbd@nbd.name>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Wed, 2018-09-19 at 10:01 +0000, Chi-Hsien Lin wrote:
-> From: Winnie Chang <Winnie.Chang@cypress.com>
-> 
-> wireless-drivers-next.git commit cb18e2e9ec71 (brcmfmac: fix wrong
-> strnchr usage) used strreplace(), which is not available in kernel prior
-> to v4.12.
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+---
+ copy-list | 1 +
+ 1 file changed, 1 insertion(+)
 
-4.12,
-
-> +#if LINUX_VERSION_IS_LESS(4,2,0)
-
-or 4.2?
-
-johannes
+diff --git a/copy-list b/copy-list
+index 21ca8070..f9f9396c 100644
+--- a/copy-list
++++ b/copy-list
+@@ -49,6 +49,7 @@ include/linux/spi/libertas_spi.h
+ include/linux/platform_data/brcmfmac.h
+ include/linux/platform_data/net-cw1200.h
+ include/uapi/linux/nl80211.h
++include/net/rsi_91x.h
+ 
+ include/net/cfg80211.h
+ include/net/cfg80211-wext.h
+-- 
+2.17.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
