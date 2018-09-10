@@ -1,34 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.62]:58462 "EHLO
+Received: from s3.sipsolutions.net ([144.76.43.62]:48802 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbeIXOhO (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 24 Sep 2018 10:37:14 -0400
-Message-ID: <1537778165.1707.26.camel@sipsolutions.net> (sfid-20180924_103619_431679_C0B28536)
-Subject: Re: [PATCH 08/10] patches: remove .coredump from struct driver for
- kernel < 4.16
+        with ESMTP id S1726165AbeIJMR2 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 10 Sep 2018 08:17:28 -0400
+Message-ID: <1536564277.3224.7.camel@sipsolutions.net> (sfid-20180910_092452_298416_76B5FDB0)
+Subject: Re: [Cocci] New release after 1.0.7?
 From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org, john@phrozen.org
-Date: Mon, 24 Sep 2018 10:36:05 +0200
-In-Reply-To: <20180923174535.16198-9-hauke@hauke-m.de> (sfid-20180923_194553_442604_1A88B709)
-References: <20180923174535.16198-1-hauke@hauke-m.de>
-         <20180923174535.16198-9-hauke@hauke-m.de>
-         (sfid-20180923_194553_442604_1A88B709)
+To: Julia Lawall <julia.lawall@lip6.fr>,
+        Luciano Coelho <luciano.coelho@intel.com>
+Cc: cocci@systeme.lip6.fr, backports@vger.kernel.org
+Date: Mon, 10 Sep 2018 09:24:37 +0200
+In-Reply-To: <alpine.DEB.2.20.1808141515280.3371@hadrien> (sfid-20180814_152007_774372_35ED45D6)
+References: <32b52167e7dd5734ba4aa5f21aa1fddd257e6292.camel@intel.com>
+         <alpine.DEB.2.20.1808141515280.3371@hadrien>
+         (sfid-20180814_152007_774372_35ED45D6)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, 2018-09-23 at 19:45 +0200, Hauke Mehrtens wrote:
-> Kernel 4.16 added a new .coredump member to the driver structure which
-> can be implemented by drivers. Remove this member on older kernel
-> versions as they do not support this feature.
+Julia,
 
-Note that this isn't sufficient.
+On Tue, 2018-08-14 at 15:19 +0200, Julia Lawall wrote:
 
-On 4.16, the return value was int, now it's void. I'll change this patch
-to be for < 4.17, but if somebody wants to submit an spatch to fix up
-the difference that would work too.
+> Sorry, I'm not sure where 1.0.7 came from. [...]
+
+> I would indeed like to make a release now that the compiations issues are
+> resolved and things seem more stable.
+
+Were you able to clear this up?
+
+I see now that the website advertises the 1.0.7 release, however
+
+ * it's not tagged in git(hub) - all previous releases have a tag
+ * commit c1522bde ("Release 1.0.7") is NOT what's released as 1.0.7 on
+   the website
+ * it *looks* like the actual 1.0.7 release was cut from a much newer
+   git commit, likely with the fix?
 
 johannes
 --
