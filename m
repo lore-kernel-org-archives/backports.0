@@ -1,47 +1,57 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:1160 "EHLO
-        mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726552AbeILPSm (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 12 Sep 2018 11:18:42 -0400
-Date: Wed, 12 Sep 2018 12:14:48 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Johannes Berg <johannes@sipsolutions.net>
-cc: Luciano Coelho <luciano.coelho@intel.com>, cocci@systeme.lip6.fr,
-        backports@vger.kernel.org
-Subject: Re: [Cocci] New release after 1.0.7?
-In-Reply-To: <1536564277.3224.7.camel@sipsolutions.net>
-Message-ID: <alpine.DEB.2.20.1809121214160.31876@hadrien> (sfid-20180912_121453_878702_F0296E31)
-References: <32b52167e7dd5734ba4aa5f21aa1fddd257e6292.camel@intel.com>  <alpine.DEB.2.20.1808141515280.3371@hadrien>  (sfid-20180814_152007_774372_35ED45D6) <1536564277.3224.7.camel@sipsolutions.net>
+Received: from mail-eopbgr710097.outbound.protection.outlook.com ([40.107.71.97]:15360
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726148AbeIJLdP (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 10 Sep 2018 07:33:15 -0400
+Date: Mon, 10 Sep 2018 01:40:22 -0500
+From: Winnie Chang <winnie.chang@cypress.com>
+To: backports@vger.kernel.org
+Cc: Chi-Hsien.Lin@cypress.com
+Subject: [PATCH] patches: update lib-bucket_locks.patch for v4.18-rc1
+Message-ID: <20180910064001.GA112464@aremote01.aus.cypress.com> (sfid-20180910_084049_140799_59A3EC0F)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+This patch do not apply to source code in v4.18-rc1 due to
+commit ce91f6ee5b3b (mm: kvmalloc does not fallback to vmalloc for
+incompatible gfp flags) so updating it.
 
+Signed-off-by: Winnie Chang <winnie.chang@cypress.com>
+---
+ patches/lib-bucket_locks.patch | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-On Mon, 10 Sep 2018, Johannes Berg wrote:
+diff --git a/patches/lib-bucket_locks.patch b/patches/lib-bucket_locks.patch
+index 15eeda1..c20c9ce 100644
+--- a/patches/lib-bucket_locks.patch
++++ b/patches/lib-bucket_locks.patch
+@@ -1,8 +1,6 @@
+-diff --git a/compat/lib-bucket_locks.c b/compat/lib-bucket_locks.c
+-index 266a97c5708b..405b52ca5708 100644
+ --- a/compat/lib-bucket_locks.c
+ +++ b/compat/lib-bucket_locks.c
+-@@ -30,10 +30,24 @@ int alloc_bucket_spinlocks(spinlock_t **
++@@ -30,7 +30,21 @@
+  	}
+  
+  	if (sizeof(spinlock_t) != 0) {
+@@ -19,10 +17,7 @@ index 266a97c5708b..405b52ca5708 100644
+ +			tlocks = kmalloc_array(size, sizeof(spinlock_t),
+ +						   gfp);
+ +#else
+- 		if (gfpflags_allow_blocking(gfp))
+- 			tlocks = kvmalloc(size * sizeof(spinlock_t), gfp);
+- 		else
+- 			tlocks = kmalloc_array(size, sizeof(spinlock_t), gfp);
++ 		tlocks = kvmalloc_array(size, sizeof(spinlock_t), gfp);
+ +#endif
+  		if (!tlocks)
+  			return -ENOMEM;
+-- 
+1.9.1
 
-> Julia,
->
-> On Tue, 2018-08-14 at 15:19 +0200, Julia Lawall wrote:
->
-> > Sorry, I'm not sure where 1.0.7 came from. [...]
->
-> > I would indeed like to make a release now that the compiations issues are
-> > resolved and things seem more stable.
->
-> Were you able to clear this up?
->
-> I see now that the website advertises the 1.0.7 release, however
->
->  * it's not tagged in git(hub) - all previous releases have a tag
->  * commit c1522bde ("Release 1.0.7") is NOT what's released as 1.0.7 on
->    the website
->  * it *looks* like the actual 1.0.7 release was cut from a much newer
->    git commit, likely with the fix?
-
-There is now a tag for the official release of 1.0.7 in github.
-
-julia
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
