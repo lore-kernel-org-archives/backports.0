@@ -1,36 +1,131 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.62]:50714 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726467AbeIXCJH (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sun, 23 Sep 2018 22:09:07 -0400
-Message-ID: <1537733414.1707.8.camel@sipsolutions.net> (sfid-20180923_221027_281716_D4D7C489)
-Subject: Re: [PATCH 01/10] backports: Remove ssb and bcma
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org, john@phrozen.org
-Date: Sun, 23 Sep 2018 22:10:14 +0200
-In-Reply-To: <20180923174535.16198-2-hauke@hauke-m.de> (sfid-20180923_194547_614863_47F61E59)
-References: <20180923174535.16198-1-hauke@hauke-m.de>
-         <20180923174535.16198-2-hauke@hauke-m.de>
-         (sfid-20180923_194547_614863_47F61E59)
+Received: from paleale.coelho.fi ([176.9.41.70]:48510 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726713AbeIKQVk (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 11 Sep 2018 12:21:40 -0400
+Message-ID: <9ff5075ecd90926d1e47060f0309cd2c0e531ba2.camel@coelho.fi> (sfid-20180911_132250_034365_176DD0FC)
+From: Luca Coelho <luca@coelho.fi>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: cocci@systeme.lip6.fr, backports@vger.kernel.org,
+        johannes.berg@intel.com, felipe.balbi@intel.com
+Date: Tue, 11 Sep 2018 14:22:44 +0300
+In-Reply-To: <alpine.DEB.2.20.1809111059590.3671@hadrien>
+References: <fa1892a1698ad83235d455a947c354a54fa34c1d.camel@coelho.fi>
+         <alpine.DEB.2.20.1809111059590.3671@hadrien>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
+Subject: Re: Weird problem trying to match code inside a function
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, 2018-09-23 at 19:45 +0200, Hauke Mehrtens wrote:
-> Use the versions shipped with the kernel instead.
-> bcma and ssb didn't change much in the last few years, most of the
-> changes were related to code only used on embedded devices. Removing
-> this reduces the number of parts we have to backport. b43, b43legacy and
-> brcmsmac work well with the in kernel version.
+On Tue, 2018-09-11 at 11:05 +0200, Julia Lawall wrote:
+> 
+> On Tue, 11 Sep 2018, Luca Coelho wrote:
+> 
+> > Hi Julia,
+> > 
+> > I bumped in to another weird problem.  I'm trying to match some
+> > code
+> > inside a function that has a specific struct as a parameter, but I
+> > can't get it to work.
+> > 
+> > This is cocci code I tried first:
+> > 
+> > http://pastebin.coelho.fi/6f8f346822a7c99e.txt
+> > 
+> > And this is the file I'm trying to match:
+> > 
+> > http://pastebin.coelho.fi/f73f542932add1c6.txt
+> > 
+> > The led activate op changed from being a function that returns void
+> > to
+> > one that returns int and I had to backport that.
+> > 
+> > The strange thing is that if I have only the first rule, it works
+> > fine,
+> > but when I add the second rule it fails.
+> 
+> I didn't look at the code in detail, but there is a restriction on
+> metavariables that are not position variables that are inherited from
+> one
+> rule to another.  Such metavariables have to have only one value.  If
+> there is more than one possible value, the original match fails
+> completely.
+> 
+> For example, if you do:
+> 
+> @r@
+> expression E;
+> @@
+> 
+> f();
+> ...
+> -g(E);
+> 
+> This will do the right thing for:
+> 
+> f();
+> if (x)
+>   g(3);
+> else g(4);
+> 
+> But if you do:
+> 
+> @r@
+> expression E;
+> @@
+> 
+> f();
+> ...
+> -g(E);
+> 
+> @@
+> expression r.E;
+> @@
+> 
+> - xxx(E);
+> 
+> Then nothing will happen at all.  Because in the first rule, it is
+> not
+> able to find a unique binding for E.
+> 
+> A solution can be:
+> 
+> @r@
+> expression E;
+> position p;
+> @@
+> 
+> f();
+> ...
+> g(E@p);
+> 
+> @s@
+> position r.p;
+> expression E;
+> @@
+> 
+> - g(E@p);
+> 
+> @@
+> expression s.E;
+> @@
+> 
+> - xxx(E);
+> 
+> Position metavariable can take on many values, even if they are
+> inherited.
 
->  patches/0051-no-wakeup_path/ssb.patch              | 12 -----------
->  patches/0069-remove-of_irq/bcma.patch              | 24 ----------------------
->  11 files changed, 23 insertions(+), 80 deletions(-)
+Ah, I think this explains the problem.
 
-Is that really worth it?
+I tried to add the position thing in my rules, but I didn't succeed. 
+I'll have to try again at some other time.  My rules without matching
+inside a function work fine, so I'll leave with that for now.
 
-johannes
+Thanks!
+
+--
+Luca.
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
