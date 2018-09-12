@@ -1,50 +1,38 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.62]:50910 "EHLO
+Received: from s3.sipsolutions.net ([144.76.43.62]:56486 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbeIXCT2 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sun, 23 Sep 2018 22:19:28 -0400
-Message-ID: <1537734032.1707.13.camel@sipsolutions.net> (sfid-20180923_222045_739767_417CE306)
-Subject: Re: [PATCH 04/10] dependencies: Make RSI_COEX coexistence depend on
- kernel >= 4.17
+        with ESMTP id S1726552AbeILPUL (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 12 Sep 2018 11:20:11 -0400
+Message-ID: <1536747369.3678.11.camel@sipsolutions.net> (sfid-20180912_121622_761899_6A8F82E0)
+Subject: Re: [Cocci] New release after 1.0.7?
 From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: backports@vger.kernel.org, john@phrozen.org
-Date: Sun, 23 Sep 2018 22:20:32 +0200
-In-Reply-To: <20180923174535.16198-5-hauke@hauke-m.de> (sfid-20180923_194549_145993_73713907)
-References: <20180923174535.16198-1-hauke@hauke-m.de>
-         <20180923174535.16198-5-hauke@hauke-m.de>
-         (sfid-20180923_194549_145993_73713907)
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Luciano Coelho <luciano.coelho@intel.com>, cocci@systeme.lip6.fr,
+        backports@vger.kernel.org
+Date: Wed, 12 Sep 2018 12:16:09 +0200
+In-Reply-To: <alpine.DEB.2.20.1809121214160.31876@hadrien>
+References: <32b52167e7dd5734ba4aa5f21aa1fddd257e6292.camel@intel.com>
+          <alpine.DEB.2.20.1808141515280.3371@hadrien>
+          (sfid-20180814_152007_774372_35ED45D6) <1536564277.3224.7.camel@sipsolutions.net>
+         <alpine.DEB.2.20.1809121214160.31876@hadrien>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, 2018-09-23 at 19:45 +0200, Hauke Mehrtens wrote:
-> When RSI_COEX is activated the driver wants to link against the
-> rsi_bt_ops symbol from the bluetooth driver btrsi. This driver was only
-> added in kernel 4.17. Deactivate bluetooth coexistence support for older
-> kernel versions.
-> 
-> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-> ---
->  dependencies | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/dependencies b/dependencies
-> index 74f8a80f..555f31fb 100644
-> --- a/dependencies
-> +++ b/dependencies
-> @@ -53,6 +53,9 @@ USB_NET_RNDIS_WLAN 4.6
->  # depends on struct mmc_card::ocr
->  RSI_SDIO 3.13
->  
-> +# For Coexsitence the BT driver has to export rsi_bt_ops
+On Wed, 2018-09-12 at 12:14 +0200, Julia Lawall wrote:
 
-Typo :)
+> > I see now that the website advertises the 1.0.7 release, however
+> > 
+> >  * it's not tagged in git(hub) - all previous releases have a tag
+> >  * commit c1522bde ("Release 1.0.7") is NOT what's released as 1.0.7 on
+> >    the website
+> >  * it *looks* like the actual 1.0.7 release was cut from a much newer
+> >    git commit, likely with the fix?
+> 
+> There is now a tag for the official release of 1.0.7 in github.
 
-But I guess I can fix it - I won't apply right now (need to sleep) but
-hopefully tomorrow (though I'll probably have power cut some time during
-the day, so who knows what'll happen)
+Great, thanks!
 
 johannes
 --
