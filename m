@@ -1,84 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.mailbox.org ([80.241.60.212]:39792 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726302AbeIXCfD (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 23 Sep 2018 22:35:03 -0400
-Subject: Re: [PATCH 05/10] dependencies: Make WIL6210 depend on kernel >= 4.8
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:1160 "EHLO
+        mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726552AbeILPSm (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 12 Sep 2018 11:18:42 -0400
+Date: Wed, 12 Sep 2018 12:14:48 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
 To: Johannes Berg <johannes@sipsolutions.net>
-Cc: backports@vger.kernel.org, john@phrozen.org
-References: <20180923174535.16198-1-hauke@hauke-m.de>
- <20180923174535.16198-6-hauke@hauke-m.de>
- <1537733544.1707.9.camel@sipsolutions.net>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <8643b128-a100-50da-7860-680d99340cef@hauke-m.de> (sfid-20180923_223618_799840_2DC48609)
-Date: Sun, 23 Sep 2018 22:36:07 +0200
+cc: Luciano Coelho <luciano.coelho@intel.com>, cocci@systeme.lip6.fr,
+        backports@vger.kernel.org
+Subject: Re: [Cocci] New release after 1.0.7?
+In-Reply-To: <1536564277.3224.7.camel@sipsolutions.net>
+Message-ID: <alpine.DEB.2.20.1809121214160.31876@hadrien> (sfid-20180912_121453_878702_F0296E31)
+References: <32b52167e7dd5734ba4aa5f21aa1fddd257e6292.camel@intel.com>  <alpine.DEB.2.20.1808141515280.3371@hadrien>  (sfid-20180814_152007_774372_35ED45D6) <1536564277.3224.7.camel@sipsolutions.net>
 MIME-Version: 1.0
-In-Reply-To: <1537733544.1707.9.camel@sipsolutions.net>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="Wn6u3mRXeU9dFKXbKCV6aOhqzW7FmzqS5"
+Content-Type: text/plain; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---Wn6u3mRXeU9dFKXbKCV6aOhqzW7FmzqS5
-Content-Type: multipart/mixed; boundary="ST3hdcsPRh6F8vH2EVfC5Lct0BXGB04bZ";
- protected-headers="v1"
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: backports@vger.kernel.org, john@phrozen.org
-Message-ID: <8643b128-a100-50da-7860-680d99340cef@hauke-m.de>
-Subject: Re: [PATCH 05/10] dependencies: Make WIL6210 depend on kernel >= 4.8
-References: <20180923174535.16198-1-hauke@hauke-m.de>
- <20180923174535.16198-6-hauke@hauke-m.de>
- <1537733544.1707.9.camel@sipsolutions.net>
-In-Reply-To: <1537733544.1707.9.camel@sipsolutions.net>
-
---ST3hdcsPRh6F8vH2EVfC5Lct0BXGB04bZ
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-On 09/23/2018 10:12 PM, Johannes Berg wrote:
-> On Sun, 2018-09-23 at 19:45 +0200, Hauke Mehrtens wrote:
->> The WIL6210 driver now uses pci_alloc_irq_vectors() which is only
->> available in kernel >=3D 4.8, only build this driver against such kern=
-el
->> versions.
->=20
-> From the description of the function, it seems like it should be pretty=
-
-> simple to backport?
->=20
-> johannes
-
-I haven't tried to backport this.
-If someone wants to do it I would be happy.
-
-Hauke
 
 
+On Mon, 10 Sep 2018, Johannes Berg wrote:
 
+> Julia,
+>
+> On Tue, 2018-08-14 at 15:19 +0200, Julia Lawall wrote:
+>
+> > Sorry, I'm not sure where 1.0.7 came from. [...]
+>
+> > I would indeed like to make a release now that the compiations issues are
+> > resolved and things seem more stable.
+>
+> Were you able to clear this up?
+>
+> I see now that the website advertises the 1.0.7 release, however
+>
+>  * it's not tagged in git(hub) - all previous releases have a tag
+>  * commit c1522bde ("Release 1.0.7") is NOT what's released as 1.0.7 on
+>    the website
+>  * it *looks* like the actual 1.0.7 release was cut from a much newer
+>    git commit, likely with the fix?
 
---ST3hdcsPRh6F8vH2EVfC5Lct0BXGB04bZ--
+There is now a tag for the official release of 1.0.7 in github.
 
---Wn6u3mRXeU9dFKXbKCV6aOhqzW7FmzqS5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAlun+TcACgkQ8bdnhZyy
-68ew2ggAnl/SGiU5VIRgeJ9q06DySTqQS5fuQOa0KPwqLhDr7f6KFQEt0silO4Kp
-JMnL6OROZHta/Ha6ulTRh8Z6yxuFAqs8UH0NQRyNZFmjWs2E3QnYqqW++qN/Xt+b
-a+hfKwiPOlPOPvOaCSOn1A9Z1pp4Wjq1yM6wcyPk25kLXfnmkKFvaQkDddXfoiYm
-bjvzC7ZHFYzVXPYtCEmchZ6jgeBVhwG7ZFrZ27iDvg7mzkwlMYbIRtCfuioZN1o0
-2M3poVFXVM+PFQdC1VZY2jg7clATi4JSjJD4pTZ/Aw0w6GOuxQ/vTV71gxFsy8e2
-/5IStZnY6wvTK6fjk0suEODoGVOp0w==
-=/CI8
------END PGP SIGNATURE-----
-
---Wn6u3mRXeU9dFKXbKCV6aOhqzW7FmzqS5--
+julia
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
