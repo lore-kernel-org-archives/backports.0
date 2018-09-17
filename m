@@ -1,78 +1,78 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:50942 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726954AbeITRLv (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 20 Sep 2018 13:11:51 -0400
-From: Luca Coelho <luca@coelho.fi>
-To: backports@vger.kernel.org
-Cc: Luca Coelho <luciano.coelho@intel.com>
-Date: Thu, 20 Sep 2018 14:28:28 +0300
-Message-Id: <20180920112842.27198-1-luca@coelho.fi> (sfid-20180920_132851_572621_E565E5E5)
-Subject: [PATCH 00/14] backport: updates for 4.19
+Received: from mx2.mailbox.org ([80.241.60.215]:32894 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727672AbeIRDYr (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 17 Sep 2018 23:24:47 -0400
+Cc: cocci@systeme.lip6.fr
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: 0079-netdev-destructor.cocci very slow
+Message-ID: <afcbee1b-be9f-bbd2-a72e-1a89a24b4f3d@hauke-m.de> (sfid-20180917_235548_596100_F1A753F4)
+Date: Mon, 17 Sep 2018 23:55:25 +0200
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="JfJiqqp9vwVTxiVdo4iF5uafvLzwBJSmX"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Luca Coelho <luciano.coelho@intel.com>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--JfJiqqp9vwVTxiVdo4iF5uafvLzwBJSmX
+Content-Type: multipart/mixed; boundary="qfE7jrv5pW5ffLpxnldqZF91pGJvdKnxz";
+ protected-headers="v1"
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: cocci@systeme.lip6.fr
+Message-ID: <afcbee1b-be9f-bbd2-a72e-1a89a24b4f3d@hauke-m.de>
+Subject: 0079-netdev-destructor.cocci very slow
 
-Hi,
+--qfE7jrv5pW5ffLpxnldqZF91pGJvdKnxz
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-I finally found the time to go through the backports I had made for
-our internal tree and send them upstream.
+The 0079-netdev-destructor.cocci spatch in backports is very slow for
+me. For bigger files I get a warning that it takes over to 15 seconds to
+apply it to just one file, for the complete backports tree it takes over
+an hour to apply.
 
-We've compile tested this on some old kernels, but the list is far
-from being comprehensive.
+This is the patch:
+https://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git/t=
+ree/patches/0079-netdev-destructor.cocci
 
-Please review.
+When I remove the <-- --> in the first rule, it is applied in some
+seconds on the complete tree, so an speed improvement of about 100
+times, but it is not working correctly any more. ;-)
 
-Cheers,
-Luca.
+Is this normal or how can I improve the spatch to be faster? I am using
+coccinelle 1.0.7 build with default configure arguments against the
+libraries from Debian stable.
+
+If this is normal I should probably try to reduce the number of files it
+tries to apply this against in gentree.py before spatch gets started.
+
+Hauke
 
 
-Johannes Berg (1):
-  backports: improve skb->xmit_more handling
+--qfE7jrv5pW5ffLpxnldqZF91pGJvdKnxz--
 
-Luca Coelho (12):
-  backport: fix compilation with IPV6 not set
-  backport: introduce match_string() for kernels < 4.6
-  backport: add patch to ignore iwlwifi removal on < 3.14 kernels
-  backport: convert tree section names to ascii
-  backport: add rhashtable-types.h
-  backport: remove duplicate leds.h inclusion from backport-4.5.c
-  backport: prevent unused subclass variable warning in < 3.18
-  backport: make ktime_get_boottime_seconds() non-inline
-  backport: update u64_stats_init() to a new version in kernels < 4.2
-  backport: update lib-rhashtable.c
-  backport: convert int led activate op to void when needed
-  backports: add __alloc_bucket_spinlocks() for < 4.19
+--JfJiqqp9vwVTxiVdo4iF5uafvLzwBJSmX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-Shahar S Matityahu (1):
-  backports: add wait_event_killable_timeout backport support
+-----BEGIN PGP SIGNATURE-----
 
- backport/backport-include/linux/netdevice.h   | 10 ++++++
- backport/backport-include/linux/skbuff.h      |  9 ++++++
- backport/backport-include/linux/spinlock.h    | 32 +++++++++++++++++++
- backport/backport-include/linux/string.h      |  4 +++
- backport/backport-include/linux/timekeeping.h |  5 +--
- backport/backport-include/linux/wait.h        | 15 +++++++++
- backport/compat/Kconfig                       |  1 +
- backport/compat/Makefile                      |  1 +
- backport/compat/backport-4.18.c               | 11 +++++++
- backport/compat/backport-4.4.c                |  6 ++++
- backport/compat/backport-4.5.c                |  1 -
- backport/compat/backport-4.6.c                | 26 +++++++++++++++
- devel/git-tracker.py                          |  2 ++
- .../0059-skb_xmit_more/skb_no_xmit_more.cocci | 10 ++----
- patches/iwlwifi-pci-device-removal.patch      | 24 ++++++++++++++
- patches/led_activate.cocci                    | 24 ++++++++++++++
- patches/lib-rhashtable.patch                  | 14 ++++++++
- 17 files changed, 183 insertions(+), 12 deletions(-)
- create mode 100644 backport/compat/backport-4.18.c
- create mode 100644 patches/iwlwifi-pci-device-removal.patch
- create mode 100644 patches/led_activate.cocci
- create mode 100644 patches/lib-rhashtable.patch
+iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAlugIs0ACgkQ8bdnhZyy
+68fNDwf/WpeGhTUd8V9INmO+yE4UEYwOehsPvkNRJMD0zmNIH2ggqmnjgjHqXSEU
+8NGcRgm6OIsOx7bCOjxYR7nD3fDMgvos8Ua00jHj5kk3KL+zo7lsWt3+Q4JXWWXd
+fI7xGYjCYua1YUv+QpTa/t4l9yV25KyOqPWhlEMps7yCz1x2bpVyVV8pvcwmPrrh
+A8uXIgl9IrT87/PDmKcIr389+9jwDhF8ImOQnJ3HFCt0eqKerihkxBXDMjKchqfx
+iQfQVipyh03Ba9MhPZUV0qhNnbygG3aZKpm5J8hbEMp8G5aLv1AUFv5wH3ZACBbS
+WYgew73iny5+r0Q7uzkaZRF5CV+gPg==
+=JlNx
+-----END PGP SIGNATURE-----
 
--- 
-2.18.0
-
+--JfJiqqp9vwVTxiVdo4iF5uafvLzwBJSmX--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
