@@ -1,57 +1,48 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-eopbgr710097.outbound.protection.outlook.com ([40.107.71.97]:15360
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726148AbeIJLdP (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 10 Sep 2018 07:33:15 -0400
-Date: Mon, 10 Sep 2018 01:40:22 -0500
-From: Winnie Chang <winnie.chang@cypress.com>
-To: backports@vger.kernel.org
-Cc: Chi-Hsien.Lin@cypress.com
-Subject: [PATCH] patches: update lib-bucket_locks.patch for v4.18-rc1
-Message-ID: <20180910064001.GA112464@aremote01.aus.cypress.com> (sfid-20180910_084049_140799_59A3EC0F)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Received: from mx2.mailbox.org ([80.241.60.215]:56186 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728338AbeIRDA7 (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 17 Sep 2018 23:00:59 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org, john@phrozen.org,
+        Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 5/7] header: Add NL_SET_BAD_ATTR
+Date: Mon, 17 Sep 2018 23:31:40 +0200
+Message-Id: <20180917213142.7875-5-hauke@hauke-m.de> (sfid-20180917_233153_435649_50DA739B)
+In-Reply-To: <20180917213142.7875-1-hauke@hauke-m.de>
+References: <20180917213142.7875-1-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This patch do not apply to source code in v4.18-rc1 due to
-commit ce91f6ee5b3b (mm: kvmalloc does not fallback to vmalloc for
-incompatible gfp flags) so updating it.
+This is  used by the mac80211_hwsim driver. The code was copied from the
+mainline kernel.
+This was introduced in mainline kernel commit c3ab2b4ec8f7 ("net: ipv4:
+Add extack messages for route add failures")
 
-Signed-off-by: Winnie Chang <winnie.chang@cypress.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- patches/lib-bucket_locks.patch | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ backport/backport-include/linux/netlink.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/patches/lib-bucket_locks.patch b/patches/lib-bucket_locks.patch
-index 15eeda1..c20c9ce 100644
---- a/patches/lib-bucket_locks.patch
-+++ b/patches/lib-bucket_locks.patch
-@@ -1,8 +1,6 @@
--diff --git a/compat/lib-bucket_locks.c b/compat/lib-bucket_locks.c
--index 266a97c5708b..405b52ca5708 100644
- --- a/compat/lib-bucket_locks.c
- +++ b/compat/lib-bucket_locks.c
--@@ -30,10 +30,24 @@ int alloc_bucket_spinlocks(spinlock_t **
-+@@ -30,7 +30,21 @@
-  	}
-  
-  	if (sizeof(spinlock_t) != 0) {
-@@ -19,10 +17,7 @@ index 266a97c5708b..405b52ca5708 100644
- +			tlocks = kmalloc_array(size, sizeof(spinlock_t),
- +						   gfp);
- +#else
-- 		if (gfpflags_allow_blocking(gfp))
-- 			tlocks = kvmalloc(size * sizeof(spinlock_t), gfp);
-- 		else
-- 			tlocks = kmalloc_array(size, sizeof(spinlock_t), gfp);
-+ 		tlocks = kvmalloc_array(size, sizeof(spinlock_t), gfp);
- +#endif
-  		if (!tlocks)
-  			return -ENOMEM;
+diff --git a/backport/backport-include/linux/netlink.h b/backport/backport-include/linux/netlink.h
+index 7da31aad..468a12d1 100644
+--- a/backport/backport-include/linux/netlink.h
++++ b/backport/backport-include/linux/netlink.h
+@@ -32,4 +32,11 @@ struct netlink_ext_ack {
+ #define NETLINK_CB_PORTID(__skb) NETLINK_CB(__skb).portid
+ #endif
+ 
++#ifndef NL_SET_BAD_ATTR
++#define NL_SET_BAD_ATTR(extack, attr) do {		\
++	if ((extack))					\
++		(extack)->bad_attr = (attr);		\
++} while (0)
++#endif /* NL_SET_BAD_ATTR */
++
+ #endif /* __BACKPORT_LINUX_NETLINK_H */
 -- 
-1.9.1
+2.11.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
