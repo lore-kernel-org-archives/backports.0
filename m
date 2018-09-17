@@ -1,131 +1,167 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.mailbox.org ([80.241.60.215]:22758 "EHLO mx2.mailbox.org"
+Received: from mx1.mailbox.org ([80.241.60.212]:60628 "EHLO mx1.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726097AbeIWUMj (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 23 Sep 2018 16:12:39 -0400
-Subject: Re: [PATCH 00/14] backport: updates for 4.19
-To: Luca Coelho <luca@coelho.fi>, backports@vger.kernel.org
-Cc: Luca Coelho <luciano.coelho@intel.com>
-References: <20180920112842.27198-1-luca@coelho.fi>
+        id S1727672AbeIRDA6 (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 17 Sep 2018 23:00:58 -0400
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <60c22894-4313-fb34-598c-208b8e78b830@hauke-m.de> (sfid-20180923_161503_937138_D6B3C880)
-Date: Sun, 23 Sep 2018 16:14:54 +0200
-MIME-Version: 1.0
-In-Reply-To: <20180920112842.27198-1-luca@coelho.fi>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="t9L9S0OyDVsyyT3tE72kNBSdedFxYWCj3"
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org, john@phrozen.org,
+        Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 3/7] patches: Adapt to new select queue API
+Date: Mon, 17 Sep 2018 23:31:38 +0200
+Message-Id: <20180917213142.7875-3-hauke@hauke-m.de> (sfid-20180917_233152_500664_B09B1BAE)
+In-Reply-To: <20180917213142.7875-1-hauke@hauke-m.de>
+References: <20180917213142.7875-1-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---t9L9S0OyDVsyyT3tE72kNBSdedFxYWCj3
-Content-Type: multipart/mixed; boundary="Um7ltqW8naX0JiEiObUBXeajxgjDeXOqS";
- protected-headers="v1"
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: Luca Coelho <luca@coelho.fi>, backports@vger.kernel.org
-Cc: Luca Coelho <luciano.coelho@intel.com>
-Message-ID: <60c22894-4313-fb34-598c-208b8e78b830@hauke-m.de>
-Subject: Re: [PATCH 00/14] backport: updates for 4.19
-References: <20180920112842.27198-1-luca@coelho.fi>
-In-Reply-To: <20180920112842.27198-1-luca@coelho.fi>
+The select queue API was changed in upstream commit 4f49dec9075a ("net:
+allow ndo_select_queue to pass netdev"). This patch adds a new version
+of the API for kernel < 4.19
 
---Um7ltqW8naX0JiEiObUBXeajxgjDeXOqS
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ patches/0028-select_queue/mac80211.patch  | 26 ++++++++++++++++++--------
+ patches/0028-select_queue/mwifiex.patch   | 13 +++++++++----
+ patches/0028-select_queue/rtl8188eu.patch | 18 ++++++++++++++++++
+ patches/0028-select_queue/rtl8723bs.patch | 18 ++++++++++++++++++
+ 4 files changed, 63 insertions(+), 12 deletions(-)
+ create mode 100644 patches/0028-select_queue/rtl8188eu.patch
+ create mode 100644 patches/0028-select_queue/rtl8723bs.patch
 
-On 09/20/2018 01:28 PM, Luca Coelho wrote:
-> From: Luca Coelho <luciano.coelho@intel.com>
->=20
-> Hi,
->=20
-> I finally found the time to go through the backports I had made for
-> our internal tree and send them upstream.
+diff --git a/patches/0028-select_queue/mac80211.patch b/patches/0028-select_queue/mac80211.patch
+index 2bfca8ee..82bf659f 100644
+--- a/patches/0028-select_queue/mac80211.patch
++++ b/patches/0028-select_queue/mac80211.patch
+@@ -1,15 +1,20 @@
+ --- a/net/mac80211/iface.c
+ +++ b/net/mac80211/iface.c
+-@@ -1126,10 +1126,20 @@ static void ieee80211_uninit(struct net_
++@@ -1128,10 +1128,25 @@ static void ieee80211_uninit(struct net_
+  	ieee80211_teardown_sdata(IEEE80211_DEV_TO_SUB_IF(dev));
+  }
+  
+-+#if LINUX_VERSION_IS_GEQ(3,14,0) || \
+-+    (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI > 30)
+++#if LINUX_VERSION_IS_GEQ(4,19,0)
+  static u16 ieee80211_netdev_select_queue(struct net_device *dev,
+  					 struct sk_buff *skb,
+- 					 void *accel_priv,
++ 					 struct net_device *sb_dev,
+  					 select_queue_fallback_t fallback)
+++#elif LINUX_VERSION_IS_GEQ(3,14,0) || \
+++    (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI > 30)
+++static u16 ieee80211_netdev_select_queue(struct net_device *dev,
+++					 struct sk_buff *skb,
+++					 void *accel_priv,
+++					 select_queue_fallback_t fallback)
+ +#elif LINUX_VERSION_IS_GEQ(3,13,0)
+ +static u16 ieee80211_netdev_select_queue(struct net_device *dev,
+ +					 struct sk_buff *skb,
+@@ -21,16 +26,21 @@
+  {
+  	return ieee80211_select_queue(IEEE80211_DEV_TO_SUB_IF(dev), skb);
+  }
+-@@ -1172,10 +1182,20 @@ static const struct net_device_ops ieee8
++@@ -1174,10 +1189,25 @@ static const struct net_device_ops ieee8
+  	.ndo_get_stats64	= ieee80211_get_stats64,
+  };
+  
+-+#if LINUX_VERSION_IS_GEQ(3,14,0) || \
+-+    (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI > 30)
+++#if LINUX_VERSION_IS_GEQ(4,19,0)
+  static u16 ieee80211_monitor_select_queue(struct net_device *dev,
+  					  struct sk_buff *skb,
+- 					  void *accel_priv,
++ 					  struct net_device *sb_dev,
+  					  select_queue_fallback_t fallback)
+++#elif LINUX_VERSION_IS_GEQ(3,14,0) || \
+++    (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI > 30)
+++static u16 ieee80211_monitor_select_queue(struct net_device *dev,
+++					  struct sk_buff *skb,
+++					  void *accel_priv,
+++					  select_queue_fallback_t fallback)
+ +#elif LINUX_VERSION_IS_GEQ(3,13,0)
+ +static u16 ieee80211_monitor_select_queue(struct net_device *dev,
+ +					  struct sk_buff *skb,
+diff --git a/patches/0028-select_queue/mwifiex.patch b/patches/0028-select_queue/mwifiex.patch
+index 5d2e257c..87159fa9 100644
+--- a/patches/0028-select_queue/mwifiex.patch
++++ b/patches/0028-select_queue/mwifiex.patch
+@@ -1,14 +1,19 @@
+ --- a/drivers/net/wireless/marvell/mwifiex/main.c
+ +++ b/drivers/net/wireless/marvell/mwifiex/main.c
+-@@ -1261,9 +1261,19 @@ static struct net_device_stats *mwifiex_
++@@ -1280,10 +1280,24 @@ static struct net_device_stats *mwifiex_
+  	return &priv->stats;
+  }
+  
+-+#if LINUX_VERSION_IS_GEQ(3,14,0) || \
+-+    (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI > 30)
+++#if LINUX_VERSION_IS_GEQ(4,19,0)
+  static u16
+  mwifiex_netdev_select_wmm_queue(struct net_device *dev, struct sk_buff *skb,
+- 				void *accel_priv, select_queue_fallback_t fallback)
++ 				struct net_device *sb_dev,
++ 				select_queue_fallback_t fallback)
+++#elif LINUX_VERSION_IS_GEQ(3,14,0) || \
+++    (LINUX_VERSION_CODE == KERNEL_VERSION(3,13,11) && UTS_UBUNTU_RELEASE_ABI > 30)
+++static u16
+++mwifiex_netdev_select_wmm_queue(struct net_device *dev, struct sk_buff *skb,
+++				void *accel_priv, select_queue_fallback_t fallback)
+ +#elif LINUX_VERSION_IS_GEQ(3,13,0)
+ +static u16
+ +mwifiex_netdev_select_wmm_queue(struct net_device *dev, struct sk_buff *skb,
+diff --git a/patches/0028-select_queue/rtl8188eu.patch b/patches/0028-select_queue/rtl8188eu.patch
+new file mode 100644
+index 00000000..00413804
+--- /dev/null
++++ b/patches/0028-select_queue/rtl8188eu.patch
+@@ -0,0 +1,18 @@
++--- a/drivers/staging/rtl8188eu/os_dep/os_intfs.c
+++++ b/drivers/staging/rtl8188eu/os_dep/os_intfs.c
++@@ -244,9 +244,15 @@ static unsigned int rtw_classify8021d(st
++ 	return dscp >> 5;
++ }
++ 
+++#if LINUX_VERSION_IS_GEQ(4,19,0)
++ static u16 rtw_select_queue(struct net_device *dev, struct sk_buff *skb,
++ 			    struct net_device *sb_dev,
++ 			    select_queue_fallback_t fallback)
+++#else
+++static u16 rtw_select_queue(struct net_device *dev, struct sk_buff *skb,
+++			    void *accel_priv,
+++			    select_queue_fallback_t fallback)
+++#endif
++ {
++ 	struct adapter	*padapter = rtw_netdev_priv(dev);
++ 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
+diff --git a/patches/0028-select_queue/rtl8723bs.patch b/patches/0028-select_queue/rtl8723bs.patch
+new file mode 100644
+index 00000000..7dbf7f60
+--- /dev/null
++++ b/patches/0028-select_queue/rtl8723bs.patch
+@@ -0,0 +1,18 @@
++--- a/drivers/staging/rtl8723bs/os_dep/os_intfs.c
+++++ b/drivers/staging/rtl8723bs/os_dep/os_intfs.c
++@@ -403,9 +403,15 @@ static unsigned int rtw_classify8021d(st
++ }
++ 
++ 
+++#if LINUX_VERSION_IS_GEQ(4,19,0)
++ static u16 rtw_select_queue(struct net_device *dev, struct sk_buff *skb,
++ 			    struct net_device *sb_dev,
++ 			    select_queue_fallback_t fallback)
+++#else
+++static u16 rtw_select_queue(struct net_device *dev, struct sk_buff *skb,
+++			    void *accel_priv,
+++			    select_queue_fallback_t fallback)
+++#endif
++ {
++ 	struct adapter	*padapter = rtw_netdev_priv(dev);
++ 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
+-- 
+2.11.0
 
-Thank you for the patches. I had some comments, but in general they look
-good.
-
-> We've compile tested this on some old kernels, but the list is far
-> from being comprehensive.
-Which kernel versions do you support internally?
-
-I tested this with some kernel versions and saw many problems with < 4.0
-but I do not really care about them any more. The problems where mostly
-not caused by these patches.
-
-> Please review.
->=20
-> Cheers,
-> Luca.
->=20
->=20
-> Johannes Berg (1):
->   backports: improve skb->xmit_more handling
->=20
-> Luca Coelho (12):
->   backport: fix compilation with IPV6 not set
->   backport: introduce match_string() for kernels < 4.6
->   backport: add patch to ignore iwlwifi removal on < 3.14 kernels
->   backport: convert tree section names to ascii
->   backport: add rhashtable-types.h
->   backport: remove duplicate leds.h inclusion from backport-4.5.c
->   backport: prevent unused subclass variable warning in < 3.18
->   backport: make ktime_get_boottime_seconds() non-inline
->   backport: update u64_stats_init() to a new version in kernels < 4.2
->   backport: update lib-rhashtable.c
->   backport: convert int led activate op to void when needed
->   backports: add __alloc_bucket_spinlocks() for < 4.19
->=20
-> Shahar S Matityahu (1):
->   backports: add wait_event_killable_timeout backport support
->=20
->  backport/backport-include/linux/netdevice.h   | 10 ++++++
->  backport/backport-include/linux/skbuff.h      |  9 ++++++
->  backport/backport-include/linux/spinlock.h    | 32 +++++++++++++++++++=
-
->  backport/backport-include/linux/string.h      |  4 +++
->  backport/backport-include/linux/timekeeping.h |  5 +--
->  backport/backport-include/linux/wait.h        | 15 +++++++++
->  backport/compat/Kconfig                       |  1 +
->  backport/compat/Makefile                      |  1 +
->  backport/compat/backport-4.18.c               | 11 +++++++
->  backport/compat/backport-4.4.c                |  6 ++++
->  backport/compat/backport-4.5.c                |  1 -
->  backport/compat/backport-4.6.c                | 26 +++++++++++++++
->  devel/git-tracker.py                          |  2 ++
->  .../0059-skb_xmit_more/skb_no_xmit_more.cocci | 10 ++----
->  patches/iwlwifi-pci-device-removal.patch      | 24 ++++++++++++++
->  patches/led_activate.cocci                    | 24 ++++++++++++++
->  patches/lib-rhashtable.patch                  | 14 ++++++++
->  17 files changed, 183 insertions(+), 12 deletions(-)
->  create mode 100644 backport/compat/backport-4.18.c
->  create mode 100644 patches/iwlwifi-pci-device-removal.patch
->  create mode 100644 patches/led_activate.cocci
->  create mode 100644 patches/lib-rhashtable.patch
->=20
-
-
-
---Um7ltqW8naX0JiEiObUBXeajxgjDeXOqS--
-
---t9L9S0OyDVsyyT3tE72kNBSdedFxYWCj3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAlunn98ACgkQ8bdnhZyy
-68deXQgA5FQDsJhaOtx8oDoTZwzl6nrrrinEUBWHZVgAVh1vkHOWogxBK1dythep
-RjsH8n1iGBFdurCJN9gyPustx2XdGFhiGMl5GfQm0W7dSuHinGf/SCEGtWgSMYne
-OOrpWUPpX1cyWw+6+/0/GErBm62m9C04xlnm4gi8M4gKUHyVpQh2ShiFamML23a4
-iMnWKldyKMoEiHk4fhVGVDJ2oD/MZM3OZaE2kX1Q69sZ4wgXQ1sZMTdX8aWeQUed
-rDYQCScvSVKa1EELCf3q5VmWZQrbYz5bs+ZYm/Xo3sz8VRFwi/F28zhuTlo3VMjg
-UQB7V8DTNpid6nu8OacoapJvUxmYJw==
-=6fZp
------END PGP SIGNATURE-----
-
---t9L9S0OyDVsyyT3tE72kNBSdedFxYWCj3--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
