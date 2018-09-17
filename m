@@ -1,82 +1,82 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:52036 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727337AbeIXO6y (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 24 Sep 2018 10:58:54 -0400
-From: Luca Coelho <luca@coelho.fi>
-To: backports@vger.kernel.org
-Cc: hauke@hauke-m.de, Luca Coelho <luciano.coelho@intel.com>
-Date: Mon, 24 Sep 2018 11:57:46 +0300
-Message-Id: <20180924085746.1693-1-luca@coelho.fi> (sfid-20180924_105755_253787_16644D48)
-In-Reply-To: <a33185451dea29e7302f43356cb7709d0fb7bbcd.camel@coelho.fi>
-References: <a33185451dea29e7302f43356cb7709d0fb7bbcd.camel@coelho.fi>
+Received: from mx1.mailbox.org ([80.241.60.212]:64714 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727672AbeIRDJN (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 17 Sep 2018 23:09:13 -0400
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: aspriel@gmail.com, Johannes Berg <johannes@sipsolutions.net>,
+        John Crispin <john@phrozen.org>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: .coredump spatch
+Message-ID: <a1e69bd7-132b-124b-d36c-b9cae361a9ff@hauke-m.de> (sfid-20180917_234005_259044_844723B8)
+Date: Mon, 17 Sep 2018 23:39:55 +0200
 MIME-Version: 1.0
-Subject: [PATCH v2] backport: add ktime_get_raw_ts64() backport for < 3.19
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="fQdELXVNnkmMm95T0cgn3AFYuqbvKLWLf"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Luca Coelho <luciano.coelho@intel.com>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--fQdELXVNnkmMm95T0cgn3AFYuqbvKLWLf
+Content-Type: multipart/mixed; boundary="GPjI3iiII7iTsHdzIRs1POw2TG6cyIyfQ";
+ protected-headers="v1"
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: aspriel@gmail.com, Johannes Berg <johannes@sipsolutions.net>,
+ John Crispin <john@phrozen.org>
+Message-ID: <a1e69bd7-132b-124b-d36c-b9cae361a9ff@hauke-m.de>
+Subject: .coredump spatch
 
-The getrawmonotonic64() function that is used by the
-ktime_get_raw_ts64() backport was only introduced in 3.19.  To fix
-compilation with earlier kernels, do the convertion from
-getrawmonotonic() manually if the kernel is < 3.19.
+--GPjI3iiII7iTsHdzIRs1POw2TG6cyIyfQ
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Additionally, add timespec_to_timespec64() that we need for this
-conversion (and which was only introduced in 3.17).
+The device structure now has this .coredump member which is also used by
+some wireless drivers, see here for example:
+https://git.kernel.org/linus/8e072168f75ebce85b96cbcefea2b10ddbd5913f
 
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
----
- backport/backport-include/linux/timekeeping.h | 29 +++++++++++++++++++
- 1 file changed, 29 insertions(+)
+I tried to create a spatch for this, but I failed to match the driver
+member because it is embedded inside an other structure, it looks like
+this for example:
 
-diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
-index aebb00ca366b..718715316a1d 100644
---- a/backport/backport-include/linux/timekeeping.h
-+++ b/backport/backport-include/linux/timekeeping.h
-@@ -55,11 +55,40 @@ static inline void ktime_get_ts64(struct timespec64 *ts)
- }
- #endif
- 
-+#if LINUX_VERSION_IS_LESS(3,17,0)
-+/* This was introduced in 4.15, but we only need it in the
-+ * ktime_get_raw_ts64 backport() for < 3.17.
-+ */
-+#if __BITS_PER_LONG == 64
-+static inline struct timespec64 timespec_to_timespec64(const struct timespec ts)
-+{
-+	return *(const struct timespec64 *)&ts;
-+}
-+
-+#else
-+static inline struct timespec64 timespec_to_timespec64(const struct timespec ts)
-+{
-+	struct timespec64 ret;
-+
-+	ret.tv_sec = ts.tv_sec;
-+	ret.tv_nsec = ts.tv_nsec;
-+	return ret;
-+}
-+#endif
-+#endif /* < 3.17 */
-+
- #if LINUX_VERSION_IS_LESS(4,18,0)
- #define ktime_get_raw_ts64 LINUX_BACKPORT(ktime_get_raw_ts64)
- static inline void ktime_get_raw_ts64(struct timespec64 *ts)
- {
-+#if LINUX_VERSION_IS_LESS(3,19,0)
-+	struct timespec64 ts64;
-+
-+	getrawmonotonic(&ts64);
-+	*ts = timespec_to_timespec64(ts64);
-+#else
- 	return getrawmonotonic64(ts);
-+#endif /* < 3.19 */
- }
- #endif
- 
--- 
-2.19.0
+static struct pci_driver brcmf_pciedrvr =3D {
+=2E...
+	.driver.coredump =3D brcmf_dev_coredump,
+};
 
+I would like to convert this to this:
+
+static struct pci_driver brcmf_pciedrvr =3D {
+=2E...
+#if LINUX_VERSION_IS_GEQ(4,16,0)
+	.driver.coredump =3D brcmf_dev_coredump,
+#endif
+};
+
+Hauke
+
+
+--GPjI3iiII7iTsHdzIRs1POw2TG6cyIyfQ--
+
+--fQdELXVNnkmMm95T0cgn3AFYuqbvKLWLf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAlugHy8ACgkQ8bdnhZyy
+68cQ1gf/XnFcfbwQWniudK4HGC69a7w69i7lMnX5+HuJbX6oKXVZ2cZF/rvSAqjk
++gdaWxh+YSVUcekpG9aqtB1o486wvJkxhNbZR69vECjdNTqNYnZcBorByzYZnPsl
+WZRQZ72R3KZVJf2XEk5vUPGJZ7a1eKQtTzECaZP1wETrlOQYdqXVR9UG6paIxd2N
+HXFYADzS/RNGq+h+C/yLWqPIqtD4NrEQws8AXTTlliRk4N7Yz/Vv1DuA6X3O7DFW
+FPT0AIEYJqNDaPudk8KV5h3hq+erGWE5F8IFgqC7kVy3H0RJo9zy2Ar9atgigKXN
+Q3oo/TMfWZPYXR5f1w4Lw0isbqr/7A==
+=oGjj
+-----END PGP SIGNATURE-----
+
+--fQdELXVNnkmMm95T0cgn3AFYuqbvKLWLf--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
