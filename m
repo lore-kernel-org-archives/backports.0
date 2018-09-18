@@ -1,69 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.mailbox.org ([80.241.60.212]:33606 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728647AbeIYDqh (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 24 Sep 2018 23:46:37 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH] backports: Add 3. parameter to of_dma_configure()
-Date: Mon, 24 Sep 2018 23:42:03 +0200
-Message-Id: <20180924214203.26553-1-hauke@hauke-m.de> (sfid-20180924_234232_968572_712CE2B6)
+Received: from mail-eopbgr00090.outbound.protection.outlook.com ([40.107.0.90]:6212
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726399AbeIRL7S (ORCPT <rfc822;backports@vger.kernel.org>);
+        Tue, 18 Sep 2018 07:59:18 -0400
+From: Omer Efrat <omer.efrat@tandemg.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>,
+        "backports@vger.kernel.org" <backports@vger.kernel.org>
+CC: "aspriel@gmail.com" <aspriel@gmail.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        John Crispin <john@phrozen.org>
+Subject: Re: .coredump spatch
+Date: Tue, 18 Sep 2018 06:28:07 +0000
+Message-ID: <VI1PR02MB3631D220BDE0C139F4369F769A1D0@VI1PR02MB3631.eurprd02.prod.outlook.com> (sfid-20180918_082815_147382_944800DC)
+References: <a1e69bd7-132b-124b-d36c-b9cae361a9ff@hauke-m.de>
+In-Reply-To: <a1e69bd7-132b-124b-d36c-b9cae361a9ff@hauke-m.de>
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-With commit 3d6ce86ee794 ("drivers: remove force dma flag from buses")
-in kernel 4.18 of_dma_configure() got the extra parameter force_dma.
-This is backported by setting the force_dma member which was added in
-commit d89e2378a97f ("drivers: flag buses which demand DMA
-configuration") in kernel 4.15.
-In older kernel versions we just ignore this parameter as the
-of_dma_configure() function internally takes care of setting this
-correctly.
-Since commit 7b07cbefb68d ("iommu: of: Handle IOMMU lookup failure with
-deferred probing or error") in kernel 4.12 this function returns int and
-not void any more.
+On Tue, Sep 18, 2018, Hauke Mehrtens wrote:
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/linux/of_device.h | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+> The device structure now has this .coredump member which is also used by
+> some wireless drivers, see here for example:
+> https://git.kernel.org/linus/8e072168f75ebce85b96cbcefea2b10ddbd5913f
+>=20
+> I tried to create a spatch for this, but I failed to match the driver
+> member because it is embedded inside an other structure, it looks like
+> this for example:
+>=20
+> static struct pci_driver brcmf_pciedrvr =3D {
+> ....
+>         .driver.coredump =3D brcmf_dev_coredump,
+> };
+>=20
+> I would like to convert this to this:
+>=20
+> static struct pci_driver brcmf_pciedrvr =3D {
+> ....
+> #if LINUX_VERSION_IS_GEQ(4,16,0)
+>         .driver.coredump =3D brcmf_dev_coredump,
+> #endif
+> };
+>=20
+> Hauke
 
-diff --git a/backport/backport-include/linux/of_device.h b/backport/backport-include/linux/of_device.h
-index 951b2534..cdd366e3 100644
---- a/backport/backport-include/linux/of_device.h
-+++ b/backport/backport-include/linux/of_device.h
-@@ -3,9 +3,24 @@
- #include_next <linux/of_device.h>
- #include <linux/version.h>
- 
--#if LINUX_VERSION_IS_LESS(4,1,0)
--static inline void of_dma_configure(struct device *dev, struct device_node *np)
--{}
--#endif /* < 4.1.0 */
-+#if LINUX_VERSION_IS_LESS(4,18,0)
-+static inline int backport_of_dma_configure(struct device *dev,
-+					    struct device_node *np,
-+					    bool force_dma)
-+{
-+#if LINUX_VERSION_IS_GEQ(4,15,0)
-+	dev->bus->force_dma = force_dma;
-+	return of_dma_configure(dev, np);
-+#elif LINUX_VERSION_IS_GEQ(4,12,0)
-+	return of_dma_configure(dev, np);
-+#elif LINUX_VERSION_IS_GEQ(4,1,0)
-+	of_dma_configure(dev, np);
-+	return 0;
-+#else
-+	return 0;
-+#endif
-+}
-+#define of_dma_configure LINUX_BACKPORT(of_dma_configure)
-+#endif /* < 4.18 */
- 
- #endif /* __BP_OF_DEVICE_H */
--- 
-2.11.0
+I think you should have a look at 0075-ndo-stats-64.cocci for a good refere=
+nce.
 
+Omer.=
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
