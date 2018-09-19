@@ -1,82 +1,76 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.mailbox.org ([80.241.60.212]:64714 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727672AbeIRDJN (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 17 Sep 2018 23:09:13 -0400
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: aspriel@gmail.com, Johannes Berg <johannes@sipsolutions.net>,
-        John Crispin <john@phrozen.org>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: .coredump spatch
-Message-ID: <a1e69bd7-132b-124b-d36c-b9cae361a9ff@hauke-m.de> (sfid-20180917_234005_259044_844723B8)
-Date: Mon, 17 Sep 2018 23:39:55 +0200
+Received: from mail-eopbgr720119.outbound.protection.outlook.com ([40.107.72.119]:53040
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728059AbeISQ2l (ORCPT <rfc822;backports@vger.kernel.org>);
+        Wed, 19 Sep 2018 12:28:41 -0400
+From: Chi-Hsien Lin <Chi-Hsien.Lin@cypress.com>
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>
+CC: Winnie Chang <Winnie.Chang@cypress.com>,
+        Winnie Chang <Winnie.Chang@cypress.com>,
+        Chi-Hsien Lin <Chi-Hsien.Lin@cypress.com>
+Subject: [PATCH v2] backports: add strreplace()
+Date: Wed, 19 Sep 2018 10:51:15 +0000
+Message-ID: <1537354267-42104-1-git-send-email-chi-hsien.lin@cypress.com> (sfid-20180919_125122_741789_0CE09797)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="fQdELXVNnkmMm95T0cgn3AFYuqbvKLWLf"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---fQdELXVNnkmMm95T0cgn3AFYuqbvKLWLf
-Content-Type: multipart/mixed; boundary="GPjI3iiII7iTsHdzIRs1POw2TG6cyIyfQ";
- protected-headers="v1"
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: aspriel@gmail.com, Johannes Berg <johannes@sipsolutions.net>,
- John Crispin <john@phrozen.org>
-Message-ID: <a1e69bd7-132b-124b-d36c-b9cae361a9ff@hauke-m.de>
-Subject: .coredump spatch
+From: Winnie Chang <Winnie.Chang@cypress.com>
 
---GPjI3iiII7iTsHdzIRs1POw2TG6cyIyfQ
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+wireless-drivers-next.git commit cb18e2e9ec71 (brcmfmac: fix wrong
+strnchr usage) used strreplace(), which is not available in kernel prior
+to v4.2. Before this commit proprgates to linux-stable.git, add
+strreplace() to avoid gentree failure.
 
-The device structure now has this .coredump member which is also used by
-some wireless drivers, see here for example:
-https://git.kernel.org/linus/8e072168f75ebce85b96cbcefea2b10ddbd5913f
+Signed-off-by: Winnie Chang <winnie.chang@cypress.com>
+Signed-off-by: Chi-Hsien Lin <chi-hsien.lin@cypress.com>
+---
+ backport/backport-include/linux/string.h | 4 ++++
+ backport/compat/backport-4.2.c           | 9 +++++++++
+ 2 files changed, 13 insertions(+)
 
-I tried to create a spatch for this, but I failed to match the driver
-member because it is embedded inside an other structure, it looks like
-this for example:
+diff --git a/backport/backport-include/linux/string.h b/backport/backport-i=
+nclude/linux/string.h
+index b85d9c73dc27..4b35eb9f2baf 100644
+--- a/backport/backport-include/linux/string.h
++++ b/backport/backport-include/linux/string.h
+@@ -29,4 +29,8 @@ void memzero_explicit(void *s, size_t count);
+ ssize_t strscpy(char *dest, const char *src, size_t count);
+ #endif
 
-static struct pci_driver brcmf_pciedrvr =3D {
-=2E...
-	.driver.coredump =3D brcmf_dev_coredump,
-};
++#if LINUX_VERSION_IS_LESS(4,2,0)
++char *strreplace(char *s, char old, char new);
++#endif
++
+ #endif /* __BACKPORT_LINUX_STRING_H */
+diff --git a/backport/compat/backport-4.2.c b/backport/compat/backport-4.2.=
+c
+index e00aa49c7e4a..b275d349f7eb 100644
+--- a/backport/compat/backport-4.2.c
++++ b/backport/compat/backport-4.2.c
+@@ -65,3 +65,12 @@ struct aead_request *crypto_backport_convert(struct aead=
+_request *req)
+ return &nreq->subreq;
+ }
+ EXPORT_SYMBOL_GPL(crypto_backport_convert);
++
++char *strreplace(char *s, char old, char new)
++{
++for (; *s; ++s)
++if (*s =3D=3D old)
++*s =3D new;
++return s;
++}
++EXPORT_SYMBOL_GPL(strreplace);
+--
+2.1.0
 
-I would like to convert this to this:
 
-static struct pci_driver brcmf_pciedrvr =3D {
-=2E...
-#if LINUX_VERSION_IS_GEQ(4,16,0)
-	.driver.coredump =3D brcmf_dev_coredump,
-#endif
-};
-
-Hauke
-
-
---GPjI3iiII7iTsHdzIRs1POw2TG6cyIyfQ--
-
---fQdELXVNnkmMm95T0cgn3AFYuqbvKLWLf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAlugHy8ACgkQ8bdnhZyy
-68cQ1gf/XnFcfbwQWniudK4HGC69a7w69i7lMnX5+HuJbX6oKXVZ2cZF/rvSAqjk
-+gdaWxh+YSVUcekpG9aqtB1o486wvJkxhNbZR69vECjdNTqNYnZcBorByzYZnPsl
-WZRQZ72R3KZVJf2XEk5vUPGJZ7a1eKQtTzECaZP1wETrlOQYdqXVR9UG6paIxd2N
-HXFYADzS/RNGq+h+C/yLWqPIqtD4NrEQws8AXTTlliRk4N7Yz/Vv1DuA6X3O7DFW
-FPT0AIEYJqNDaPudk8KV5h3hq+erGWE5F8IFgqC7kVy3H0RJo9zy2Ar9atgigKXN
-Q3oo/TMfWZPYXR5f1w4Lw0isbqr/7A==
-=oGjj
------END PGP SIGNATURE-----
-
---fQdELXVNnkmMm95T0cgn3AFYuqbvKLWLf--
+This message and any attachments may contain confidential information from =
+Cypress or its subsidiaries. If it has been received in error, please advis=
+e the sender and immediately delete this message.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
