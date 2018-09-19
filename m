@@ -1,42 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.mailbox.org ([80.241.60.215]:40906 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726802AbeIWXoB (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 23 Sep 2018 19:44:01 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org, john@phrozen.org,
-        Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 05/10] dependencies: Make WIL6210 depend on kernel >= 4.8
-Date: Sun, 23 Sep 2018 19:45:30 +0200
-Message-Id: <20180923174535.16198-6-hauke@hauke-m.de> (sfid-20180923_194551_041786_E1F84913)
-In-Reply-To: <20180923174535.16198-1-hauke@hauke-m.de>
-References: <20180923174535.16198-1-hauke@hauke-m.de>
+Received: from s3.sipsolutions.net ([144.76.43.62]:50882 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731191AbeISO0c (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 19 Sep 2018 10:26:32 -0400
+Message-ID: <1537346968.10305.4.camel@sipsolutions.net> (sfid-20180919_104941_132846_721229CC)
+Subject: Re: .coredump spatch
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>,
+        "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: aspriel@gmail.com, John Crispin <john@phrozen.org>
+Date: Wed, 19 Sep 2018 10:49:28 +0200
+In-Reply-To: <a1e69bd7-132b-124b-d36c-b9cae361a9ff@hauke-m.de>
+References: <a1e69bd7-132b-124b-d36c-b9cae361a9ff@hauke-m.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The WIL6210 driver now uses pci_alloc_irq_vectors() which is only
-available in kernel >= 4.8, only build this driver against such kernel
-versions.
+On Mon, 2018-09-17 at 23:39 +0200, Hauke Mehrtens wrote:
+> The device structure now has this .coredump member which is also used by
+> some wireless drivers, see here for example:
+> https://git.kernel.org/linus/8e072168f75ebce85b96cbcefea2b10ddbd5913f
+> 
+> I tried to create a spatch for this
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- dependencies | 3 +++
- 1 file changed, 3 insertions(+)
+How did you try? This seems to work for me:
 
-diff --git a/dependencies b/dependencies
-index 555f31fb..42ed0e2f 100644
---- a/dependencies
-+++ b/dependencies
-@@ -63,3 +63,6 @@ MT76x2E 4.1
- # select_queue_fallback_t is missing
- RTL8723BS 3.14
- R8188EU  3.14
-+
-+# pci_alloc_irq_vectors is missing
-+WIL6210 4.8
--- 
-2.11.0
+@@
+identifier drv, fn;
+@@
+static struct pci_driver drv = {
+	.driver = {
++#if LINUX_VERSION_IS_GEQ(4,16,0)
+		.coredump = fn,
++#endif
+		...
+	},
+	...
+};
 
+@@
+identifier drv, fn;
+@@
+ static struct pci_driver drv = {
++#if LINUX_VERSION_IS_GEQ(4,16,0)
+	.driver.coredump = fn,
++#endif
+	...
+ };
+
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
