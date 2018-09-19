@@ -1,131 +1,76 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:36275 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726488AbeIKODf (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 11 Sep 2018 10:03:35 -0400
-Date: Tue, 11 Sep 2018 11:05:10 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Luca Coelho <luca@coelho.fi>
-cc: cocci@systeme.lip6.fr, backports@vger.kernel.org,
-        johannes.berg@intel.com, felipe.balbi@intel.com
-Subject: Re: Weird problem trying to match code inside a function
-In-Reply-To: <fa1892a1698ad83235d455a947c354a54fa34c1d.camel@coelho.fi>
-Message-ID: <alpine.DEB.2.20.1809111059590.3671@hadrien> (sfid-20180911_110515_794768_2814E2C4)
-References: <fa1892a1698ad83235d455a947c354a54fa34c1d.camel@coelho.fi>
+Received: from mail-bl2nam02on0132.outbound.protection.outlook.com ([104.47.38.132]:13258
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728059AbeISPi3 (ORCPT <rfc822;backports@vger.kernel.org>);
+        Wed, 19 Sep 2018 11:38:29 -0400
+From: Chi-Hsien Lin <Chi-Hsien.Lin@cypress.com>
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>
+CC: Winnie Chang <Winnie.Chang@cypress.com>,
+        Winnie Chang <Winnie.Chang@cypress.com>,
+        Chi-Hsien Lin <Chi-Hsien.Lin@cypress.com>
+Subject: [PATCH] backports: add strreplace()
+Date: Wed, 19 Sep 2018 10:01:14 +0000
+Message-ID: <1537351259-19914-1-git-send-email-chi-hsien.lin@cypress.com> (sfid-20180919_120122_269393_9B62C054)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+From: Winnie Chang <Winnie.Chang@cypress.com>
+
+wireless-drivers-next.git commit cb18e2e9ec71 (brcmfmac: fix wrong
+strnchr usage) used strreplace(), which is not available in kernel prior
+to v4.12. Before this commit proprgates to linux-stable.git, add
+strreplace() to avoid gentree failure.
+
+Signed-off-by: Winnie Chang <winnie.chang@cypress.com>
+Signed-off-by: Chi-Hsien Lin <chi-hsien.lin@cypress.com>
+---
+ backport/backport-include/linux/string.h | 4 ++++
+ backport/compat/backport-4.2.c           | 9 +++++++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/backport/backport-include/linux/string.h b/backport/backport-i=
+nclude/linux/string.h
+index b85d9c73dc27..4b35eb9f2baf 100644
+--- a/backport/backport-include/linux/string.h
++++ b/backport/backport-include/linux/string.h
+@@ -29,4 +29,8 @@ void memzero_explicit(void *s, size_t count);
+ ssize_t strscpy(char *dest, const char *src, size_t count);
+ #endif
+
++#if LINUX_VERSION_IS_LESS(4,2,0)
++char *strreplace(char *s, char old, char new);
++#endif
++
+ #endif /* __BACKPORT_LINUX_STRING_H */
+diff --git a/backport/compat/backport-4.2.c b/backport/compat/backport-4.2.=
+c
+index e00aa49c7e4a..b275d349f7eb 100644
+--- a/backport/compat/backport-4.2.c
++++ b/backport/compat/backport-4.2.c
+@@ -65,3 +65,12 @@ struct aead_request *crypto_backport_convert(struct aead=
+_request *req)
+ return &nreq->subreq;
+ }
+ EXPORT_SYMBOL_GPL(crypto_backport_convert);
++
++char *strreplace(char *s, char old, char new)
++{
++for (; *s; ++s)
++if (*s =3D=3D old)
++*s =3D new;
++return s;
++}
++EXPORT_SYMBOL_GPL(strreplace);
+--
+2.1.0
 
 
-On Tue, 11 Sep 2018, Luca Coelho wrote:
-
-> Hi Julia,
->
-> I bumped in to another weird problem.  I'm trying to match some code
-> inside a function that has a specific struct as a parameter, but I
-> can't get it to work.
->
-> This is cocci code I tried first:
->
-> http://pastebin.coelho.fi/6f8f346822a7c99e.txt
->
-> And this is the file I'm trying to match:
->
-> http://pastebin.coelho.fi/f73f542932add1c6.txt
->
-> The led activate op changed from being a function that returns void to
-> one that returns int and I had to backport that.
->
-> The strange thing is that if I have only the first rule, it works fine,
-> but when I add the second rule it fails.
-
-I didn't look at the code in detail, but there is a restriction on
-metavariables that are not position variables that are inherited from one
-rule to another.  Such metavariables have to have only one value.  If
-there is more than one possible value, the original match fails
-completely.
-
-For example, if you do:
-
-@r@
-expression E;
-@@
-
-f();
-...
--g(E);
-
-This will do the right thing for:
-
-f();
-if (x)
-  g(3);
-else g(4);
-
-But if you do:
-
-@r@
-expression E;
-@@
-
-f();
-...
--g(E);
-
-@@
-expression r.E;
-@@
-
-- xxx(E);
-
-Then nothing will happen at all.  Because in the first rule, it is not
-able to find a unique binding for E.
-
-A solution can be:
-
-@r@
-expression E;
-position p;
-@@
-
-f();
-...
-g(E@p);
-
-@s@
-position r.p;
-expression E;
-@@
-
-- g(E@p);
-
-@@
-expression s.E;
-@@
-
-- xxx(E);
-
-Position metavariable can take on many values, even if they are inherited.
-
-julia
-
->
-> I can make it work if I match the entire code, without trying to match
-> the function in the first rule:
->
-> http://pastebin.coelho.fi/46c18ce890330d57.txt
->
-> And this is fine for me now, but I'm really curious as to why I had the
-> problem with my first implementation...
->
-> Can you shed some light?
->
-> --
-> Cheers,
-> Luca.
->
->
+This message and any attachments may contain confidential information from =
+Cypress or its subsidiaries. If it has been received in error, please advis=
+e the sender and immediately delete this message.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
