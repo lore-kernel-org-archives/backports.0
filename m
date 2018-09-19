@@ -1,56 +1,36 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:51032 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1732412AbeITRMF (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 20 Sep 2018 13:12:05 -0400
-From: Luca Coelho <luca@coelho.fi>
-To: backports@vger.kernel.org
-Cc: Luca Coelho <luciano.coelho@intel.com>
-Date: Thu, 20 Sep 2018 14:28:38 +0300
-Message-Id: <20180920112842.27198-11-luca@coelho.fi> (sfid-20180920_132904_456101_D910A4A3)
-In-Reply-To: <20180920112842.27198-1-luca@coelho.fi>
-References: <20180920112842.27198-1-luca@coelho.fi>
-Subject: [PATCH 10/14] backport: update u64_stats_init() to a new version in kernels < 4.2
+Received: from s3.sipsolutions.net ([144.76.43.62]:51614 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730392AbeISPk4 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 19 Sep 2018 11:40:56 -0400
+Message-ID: <1537351415.10305.34.camel@sipsolutions.net> (sfid-20180919_120348_454832_8A580E67)
+Subject: Re: [PATCH] backports: add strreplace()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Chi-Hsien Lin <Chi-Hsien.Lin@cypress.com>,
+        "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: Winnie Chang <Winnie.Chang@cypress.com>
+Date: Wed, 19 Sep 2018 12:03:35 +0200
+In-Reply-To: <1537351259-19914-1-git-send-email-chi-hsien.lin@cypress.com>
+References: <1537351259-19914-1-git-send-email-chi-hsien.lin@cypress.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Luca Coelho <luciano.coelho@intel.com>
+On Wed, 2018-09-19 at 10:01 +0000, Chi-Hsien Lin wrote:
+> From: Winnie Chang <Winnie.Chang@cypress.com>
+> 
+> wireless-drivers-next.git commit cb18e2e9ec71 (brcmfmac: fix wrong
+> strnchr usage) used strreplace(), which is not available in kernel prior
+> to v4.12.
 
-The u64_stats_init() macro was turned into a static inline function in
-v4.2 to prevent warnings that happen when its argument is not used
-elsewhere.
+4.12,
 
-Since we started hitting these warnings, undefine the macro and define
-the static inline to prevent them.
+> +#if LINUX_VERSION_IS_LESS(4,2,0)
 
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
----
- backport/backport-include/linux/netdevice.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+or 4.2?
 
-diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
-index 8723f8c58e84..44319331fce8 100644
---- a/backport/backport-include/linux/netdevice.h
-+++ b/backport/backport-include/linux/netdevice.h
-@@ -263,6 +263,16 @@ netdev_features_t passthru_features_check(struct sk_buff *skb,
- 					  netdev_features_t features);
- #endif /* LINUX_VERSION_IS_LESS(4,1,0) */
- 
-+#if LINUX_VERSION_IS_LESS(4,2,0)
-+#undef u64_stats_init
-+static inline void u64_stats_init(struct u64_stats_sync *syncp)
-+{
-+#if BITS_PER_LONG == 32 && defined(CONFIG_SMP)
-+	seqcount_init(&syncp->seq);
-+#endif
-+}
-+#endif /* LINUX_VERSION_IS_LESS(4,2,0) */
-+
- #ifndef netdev_alloc_pcpu_stats
- #define netdev_alloc_pcpu_stats(type)				\
- ({								\
--- 
-2.18.0
+johannes
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
