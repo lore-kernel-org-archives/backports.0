@@ -1,116 +1,54 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.mailbox.org ([80.241.60.215]:46738 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726168AbeIWTuW (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 23 Sep 2018 15:50:22 -0400
-Subject: Re: [PATCH] backport: add ktime_get_raw_ts64() backport for < 3.19
-To: Luca Coelho <luca@coelho.fi>, backports@vger.kernel.org
+Received: from paleale.coelho.fi ([176.9.41.70]:51048 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727029AbeITRMJ (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 20 Sep 2018 13:12:09 -0400
+From: Luca Coelho <luca@coelho.fi>
+To: backports@vger.kernel.org
 Cc: Luca Coelho <luciano.coelho@intel.com>
-References: <20180920162622.30203-1-luca@coelho.fi>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <4cb197ca-9ae6-18b9-ec7a-59eb893d96dd@hauke-m.de> (sfid-20180923_155252_112914_9FA2928C)
-Date: Sun, 23 Sep 2018 15:52:42 +0200
-MIME-Version: 1.0
-In-Reply-To: <20180920162622.30203-1-luca@coelho.fi>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="LJhEAK1huxmZTkq7khya92FlHNhMH1mLi"
+Date: Thu, 20 Sep 2018 14:28:40 +0300
+Message-Id: <20180920112842.27198-13-luca@coelho.fi> (sfid-20180920_132908_334724_9A3D9FB1)
+In-Reply-To: <20180920112842.27198-1-luca@coelho.fi>
+References: <20180920112842.27198-1-luca@coelho.fi>
+Subject: [PATCH 12/14] backport: update lib-rhashtable.c
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---LJhEAK1huxmZTkq7khya92FlHNhMH1mLi
-Content-Type: multipart/mixed; boundary="RFpMyz4pIetm5NTiStQHeoZ6G41ien0N7";
- protected-headers="v1"
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: Luca Coelho <luca@coelho.fi>, backports@vger.kernel.org
-Cc: Luca Coelho <luciano.coelho@intel.com>
-Message-ID: <4cb197ca-9ae6-18b9-ec7a-59eb893d96dd@hauke-m.de>
-Subject: Re: [PATCH] backport: add ktime_get_raw_ts64() backport for < 3.19
-References: <20180920162622.30203-1-luca@coelho.fi>
-In-Reply-To: <20180920162622.30203-1-luca@coelho.fi>
+From: Luca Coelho <luciano.coelho@intel.com>
 
---RFpMyz4pIetm5NTiStQHeoZ6G41ien0N7
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+The bucket_table_alloc() function was reworked, so update the patch
+accordingly.  It's much simpler now, if !GFP_KERNEL, we just fail
+(like we used to).  This is not a problem because we only use this
+function with GFP_KERNEL anyway.
 
-On 09/20/2018 06:26 PM, Luca Coelho wrote:
-> From: Luca Coelho <luciano.coelho@intel.com>
->=20
-> The getrawmonotonic64() function that is used by the
-> ktime_get_raw_ts64() backport was only introduced in 3.19.  To fix
-> compilation with earlier kernels, do the convertion from
-> getrawmonotonic() manually if the kernel is < 3.19.
->=20
-> Additionally, add timespec_to_timespec64() that we need for this
-> conversion (and which was only introduced in 4.15).
->=20
-> Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-> ---
->  backport/backport-include/linux/timekeeping.h | 29 +++++++++++++++++++=
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+---
+ patches/lib-rhashtable.patch | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 patches/lib-rhashtable.patch
 
->  1 file changed, 29 insertions(+)
->=20
-> diff --git a/backport/backport-include/linux/timekeeping.h b/backport/b=
-ackport-include/linux/timekeeping.h
-> index aebb00ca366b..56fca5759b8e 100644
-> --- a/backport/backport-include/linux/timekeeping.h
-> +++ b/backport/backport-include/linux/timekeeping.h
-> @@ -55,11 +55,40 @@ static inline void ktime_get_ts64(struct timespec64=
- *ts)
->  }
->  #endif
-> =20
-> +#if LINUX_VERSION_IS_LESS(3,19,0)
-> +/* This was introduced in 4.15, but we only need it in the
-> + * ktime_get_raw_ts64 backport() for < 3.19.
+diff --git a/patches/lib-rhashtable.patch b/patches/lib-rhashtable.patch
+new file mode 100644
+index 000000000000..a538d0c83fc7
+--- /dev/null
++++ b/patches/lib-rhashtable.patch
+@@ -0,0 +1,14 @@
++diff --git a/compat/lib-rhashtable.c b/compat/lib-rhashtable.c
++index 30526afa8343..bee37f2682dd 100644
++--- a/compat/lib-rhashtable.c
+++++ b/compat/lib-rhashtable.c
++@@ -173,7 +173,8 @@ static struct bucket_table *bucket_table_alloc(struct rhashtable *ht,
++ 	int i;
++ 
++ 	size = sizeof(*tbl) + nbuckets * sizeof(tbl->buckets[0]);
++-	tbl = kvzalloc(size, gfp);
+++	if (gfp == GFP_KERNEL)
+++		tbl = vzalloc(size);
++ 
++ 	size = nbuckets;
++ 
+-- 
+2.18.0
 
-timespec_to_timespec64() was already added in 3.17, see
-https://elixir.bootlin.com/linux/v3.17.8/ident/timespec_to_timespec64
-
-> + */
-> +#if __BITS_PER_LONG =3D=3D 64
-> +static inline struct timespec64 timespec_to_timespec64(const struct ti=
-mespec ts)
-> +{
-> +	return *(const struct timespec64 *)&ts;
-> +}
-> +
-> +#else
-> +static inline struct timespec64 timespec_to_timespec64(const struct ti=
-mespec ts)
-> +{
-> +	struct timespec64 ret;
-> +
-> +	ret.tv_sec =3D ts.tv_sec;
-> +	ret.tv_nsec =3D ts.tv_nsec;
-> +	return ret;
-> +}
-> +#endif
-> +#endif /* < 3.19 */
-> +
-
-
---RFpMyz4pIetm5NTiStQHeoZ6G41ien0N7--
-
---LJhEAK1huxmZTkq7khya92FlHNhMH1mLi
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAlunmqoACgkQ8bdnhZyy
-68diGwf9GOZeWs0gJ+vJHjeTzp+9cAZr9JEsgz5A9CJCvrLq1z3DVoGwH5QzCynv
-ZuaQvljHkhNtscXXj3nkseCBNPeDriBikoJquEniuQJOuY5fd8KUTpei2IkZUVC6
-r21jammjkcV3uMm6rbH4380YDW+r5VMfMFZeoMFzHL/eimin5W8jmEzbFDSfynsT
-OQqxQfxw6bB+YbHIoyQ6zVIlryfWhKKyot4GF0YGAOG1MGfMxMgs7/oYb9gLVkK4
-8P7WvDonOyqD6cY2c7t8mSyzXnNNC6OW/mtWXI03Dyk2U4fkej2nZvbIs5fTsVdH
-or9LF9wGFQuSuNA1094VKrO1E+O4Ng==
-=FF7b
------END PGP SIGNATURE-----
-
---LJhEAK1huxmZTkq7khya92FlHNhMH1mLi--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
