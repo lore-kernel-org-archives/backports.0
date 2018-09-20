@@ -1,131 +1,61 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.mailbox.org ([80.241.60.212]:38496 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726467AbeIWXoE (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 23 Sep 2018 19:44:04 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org, john@phrozen.org,
-        Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 08/10] patches: remove .coredump from struct driver for kernel < 4.16
-Date: Sun, 23 Sep 2018 19:45:33 +0200
-Message-Id: <20180923174535.16198-9-hauke@hauke-m.de> (sfid-20180923_194553_442604_1A88B709)
-In-Reply-To: <20180923174535.16198-1-hauke@hauke-m.de>
-References: <20180923174535.16198-1-hauke@hauke-m.de>
+Received: from paleale.coelho.fi ([176.9.41.70]:50948 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727029AbeITRLw (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 20 Sep 2018 13:11:52 -0400
+From: Luca Coelho <luca@coelho.fi>
+To: backports@vger.kernel.org
+Cc: Luca Coelho <luciano.coelho@intel.com>
+Date: Thu, 20 Sep 2018 14:28:29 +0300
+Message-Id: <20180920112842.27198-2-luca@coelho.fi> (sfid-20180920_132852_170955_A44C90A5)
+In-Reply-To: <20180920112842.27198-1-luca@coelho.fi>
+References: <20180920112842.27198-1-luca@coelho.fi>
+Subject: [PATCH 01/14] backport: fix compilation with IPV6 not set
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Kernel 4.16 added a new .coredump member to the driver structure which
-can be implemented by drivers. Remove this member on older kernel
-versions as they do not support this feature.
+From: Luca Coelho <luciano.coelho@intel.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+At least in some older kernel versions (e.g. 3.10), the tcp.h header
+file is not implicitly included from other headers if CONFIG_IPV6 is
+not set, so we need to include it in backport-4.4.c.  Also, there is
+an IPv6 structure that is used, so we should ifdef it away when IPv6
+is not enabled.
+
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 ---
- patches/0088-coredump.cocci | 93 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
- create mode 100644 patches/0088-coredump.cocci
+ backport/compat/backport-4.4.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/patches/0088-coredump.cocci b/patches/0088-coredump.cocci
-new file mode 100644
-index 00000000..329e0315
---- /dev/null
-+++ b/patches/0088-coredump.cocci
-@@ -0,0 +1,93 @@
-+@r1@
-+identifier drv, fn;
-+@@
-+static struct pci_driver drv = {
-+	.driver = {
-++#if LINUX_VERSION_IS_GEQ(4,16,0)
-+		.coredump = fn,
-++#endif
-+		...
-+	},
-+	...
-+};
-+
-+@r11 depends on r1@
-+identifier r1.fn;
-+@@
-++#if LINUX_VERSION_IS_GEQ(4,16,0)
-+fn(...)
-+{
-+	...
-+}
-++#endif
-+
-+
-+@r2@
-+identifier drv, fn;
-+@@
-+ static struct pci_driver drv = {
-++#if LINUX_VERSION_IS_GEQ(4,16,0)
-+	.driver.coredump = fn,
-++#endif
-+	...
-+ };
-+
-+@r21 depends on r2@
-+identifier r2.fn;
-+@@
-++#if LINUX_VERSION_IS_GEQ(4,16,0)
-+fn(...)
-+{
-+	...
-+}
-++#endif
-+
-+
-+@r3@
-+identifier drv, fn;
-+@@
-+static struct usb_driver drv = {
-+	.drvwrap.driver = {
-++#if LINUX_VERSION_IS_GEQ(4,16,0)
-+		.coredump = fn,
-++#endif
-+		...
-+	},
-+	...
-+};
-+
-+
-+@r31 depends on r3@
-+identifier r3.fn;
-+@@
-++#if LINUX_VERSION_IS_GEQ(4,16,0)
-+fn(...)
-+{
-+	...
-+}
-++#endif
-+
-+
-+@r4@
-+identifier driver, fn;
-+@@
-+ static struct sdio_driver driver = {
-+	.drv = {
-++#if LINUX_VERSION_IS_GEQ(4,16,0)
-+		.coredump = fn,
-++#endif
-+		...
-+	},
-+	...
-+};
-+
-+
-+@r41 depends on r4@
-+identifier r4.fn;
-+@@
-++#if LINUX_VERSION_IS_GEQ(4,16,0)
-+fn(...)
-+{
-+	...
-+}
-++#endif
+diff --git a/backport/compat/backport-4.4.c b/backport/compat/backport-4.4.c
+index 1c11a2064e53..7966e94928e7 100644
+--- a/backport/compat/backport-4.4.c
++++ b/backport/compat/backport-4.4.c
+@@ -15,6 +15,7 @@
+ #include <linux/if_vlan.h>
+ #include <linux/mm.h>
+ #include <linux/skbuff.h>
++#include <linux/tcp.h>
+ #include <net/ip.h>
+ #include <net/tso.h>
+ #include <asm/unaligned.h>
+@@ -95,9 +96,14 @@ void tso_build_hdr(struct sk_buff *skb, char *hdr, struct tso_t *tso,
+ 		iph->tot_len = htons(size + hdr_len - mac_hdr_len);
+ 		tso->ip_id++;
+ 	} else {
++#ifdef CONFIG_IPV6
+ 		struct ipv6hdr *iph = (void *)(hdr + mac_hdr_len);
+ 
+ 		iph->payload_len = htons(size + tcp_hdrlen(skb));
++#else /* CONFIG_IPV6 */
++		/* tso->ipv6 should never be set if IPV6 is not enabeld */
++		WARN_ON(1);
++#endif /* CONFIG_IPV6 */
+ 	}
+ 	tcph = (struct tcphdr *)(hdr + skb_transport_offset(skb));
+ 	put_unaligned_be32(tso->tcp_seq, &tcph->seq);
 -- 
-2.11.0
+2.18.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
