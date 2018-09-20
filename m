@@ -1,38 +1,56 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.62]:57226 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726072AbeIXNTF (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 24 Sep 2018 09:19:05 -0400
-Message-ID: <1537773492.1707.20.camel@sipsolutions.net> (sfid-20180924_091825_877152_5AD40070)
-Subject: Re: kernel 4.18+ build problem "Recursive variable 'KBUILD_CFLAGS' "
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-        "backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Mon, 24 Sep 2018 09:18:12 +0200
-In-Reply-To: <1537735763.1707.18.camel@sipsolutions.net> (sfid-20180923_224935_958639_C79130DB)
-References: <32c2c52e-d3a0-e961-6040-1a34997a7a1f@hauke-m.de>
-         <1537733001.1707.5.camel@sipsolutions.net>
-         <1537733344.1707.7.camel@sipsolutions.net>
-         <1f853fa4-0915-c5a9-f168-1d618aa36804@hauke-m.de>
-         <1537735763.1707.18.camel@sipsolutions.net>
-         (sfid-20180923_224935_958639_C79130DB)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from paleale.coelho.fi ([176.9.41.70]:51032 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1732412AbeITRMF (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 20 Sep 2018 13:12:05 -0400
+From: Luca Coelho <luca@coelho.fi>
+To: backports@vger.kernel.org
+Cc: Luca Coelho <luciano.coelho@intel.com>
+Date: Thu, 20 Sep 2018 14:28:38 +0300
+Message-Id: <20180920112842.27198-11-luca@coelho.fi> (sfid-20180920_132904_456101_D910A4A3)
+In-Reply-To: <20180920112842.27198-1-luca@coelho.fi>
+References: <20180920112842.27198-1-luca@coelho.fi>
+Subject: [PATCH 10/14] backport: update u64_stats_init() to a new version in kernels < 4.2
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, 2018-09-23 at 22:49 +0200, Johannes Berg wrote:
-> On Sun, 2018-09-23 at 22:48 +0200, Hauke Mehrtens wrote:
-> > 
-> > > Seems simple enough though, just make cc-option := instead of = in
-> > > scripts/Kbuild.include? Or maybe not, dunno.
-> > 
-> > This works for me, will you add a patch?
-> 
-> Sure, I can do that.
+From: Luca Coelho <luciano.coelho@intel.com>
 
-Done now.
+The u64_stats_init() macro was turned into a static inline function in
+v4.2 to prevent warnings that happen when its argument is not used
+elsewhere.
 
-johannes
+Since we started hitting these warnings, undefine the macro and define
+the static inline to prevent them.
+
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+---
+ backport/backport-include/linux/netdevice.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+index 8723f8c58e84..44319331fce8 100644
+--- a/backport/backport-include/linux/netdevice.h
++++ b/backport/backport-include/linux/netdevice.h
+@@ -263,6 +263,16 @@ netdev_features_t passthru_features_check(struct sk_buff *skb,
+ 					  netdev_features_t features);
+ #endif /* LINUX_VERSION_IS_LESS(4,1,0) */
+ 
++#if LINUX_VERSION_IS_LESS(4,2,0)
++#undef u64_stats_init
++static inline void u64_stats_init(struct u64_stats_sync *syncp)
++{
++#if BITS_PER_LONG == 32 && defined(CONFIG_SMP)
++	seqcount_init(&syncp->seq);
++#endif
++}
++#endif /* LINUX_VERSION_IS_LESS(4,2,0) */
++
+ #ifndef netdev_alloc_pcpu_stats
+ #define netdev_alloc_pcpu_stats(type)				\
+ ({								\
+-- 
+2.18.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
