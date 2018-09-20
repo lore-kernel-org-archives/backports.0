@@ -1,77 +1,83 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from nbd.name ([46.4.11.11]:48206 "EHLO nbd.name"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725880AbeIFLbv (ORCPT <rfc822;backports@vger.kernel.org>);
-        Thu, 6 Sep 2018 07:31:51 -0400
-From: Felix Fietkau <nbd@nbd.name>
+Received: from paleale.coelho.fi ([176.9.41.70]:50998 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727029AbeITRL5 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 20 Sep 2018 13:11:57 -0400
+From: Luca Coelho <luca@coelho.fi>
 To: backports@vger.kernel.org
-Cc: john@phrozen.org
-Subject: [PATCH 2/6] backport-include: backport kvmalloc and kvmalloc_array
-Date: Thu,  6 Sep 2018 08:57:46 +0200
-Message-Id: <20180906065750.89673-2-nbd@nbd.name> (sfid-20180906_085755_478149_FDEDADFC)
-In-Reply-To: <20180906065750.89673-1-nbd@nbd.name>
-References: <20180906065750.89673-1-nbd@nbd.name>
+Cc: Luca Coelho <luciano.coelho@intel.com>
+Date: Thu, 20 Sep 2018 14:28:37 +0300
+Message-Id: <20180920112842.27198-10-luca@coelho.fi> (sfid-20180920_132856_540776_D55FC53C)
+In-Reply-To: <20180920112842.27198-1-luca@coelho.fi>
+References: <20180920112842.27198-1-luca@coelho.fi>
+Subject: [PATCH 09/14] backport: make ktime_get_boottime_seconds() non-inline
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
----
- backport/backport-include/linux/mm.h | 35 ++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+From: Luca Coelho <luciano.coelho@intel.com>
 
-diff --git a/backport/backport-include/linux/mm.h b/backport/backport-include/linux/mm.h
-index 3234b37d..6ee5c7d8 100644
---- a/backport/backport-include/linux/mm.h
-+++ b/backport/backport-include/linux/mm.h
-@@ -3,6 +3,9 @@
- #include_next <linux/mm.h>
- #include <linux/page_ref.h>
- #include <linux/sched.h>
-+#include <linux/overflow.h>
-+#include <linux/vmalloc.h>
-+#include <linux/slab.h>
+With kernels < 3.17, we need to include hrtimer.h to get ktime_divns()
+for the ktime_get_boottime_seconds() backport.  But we can't just
+include htrtimer.h in the backport timekeeping.h because we run into
+some cyclical inclusions that cause problems.  To solve that make
+ktime_get_boottime_seconds() non-inline and add it to a new
+backport-4.18.c file.
+
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+---
+ backport/backport-include/linux/timekeeping.h |  5 +----
+ backport/compat/Makefile                      |  1 +
+ backport/compat/backport-4.18.c               | 11 +++++++++++
+ 3 files changed, 13 insertions(+), 4 deletions(-)
+ create mode 100644 backport/compat/backport-4.18.c
+
+diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
+index 73ce9f1797ed..aebb00ca366b 100644
+--- a/backport/backport-include/linux/timekeeping.h
++++ b/backport/backport-include/linux/timekeeping.h
+@@ -25,10 +25,7 @@ static inline u64 ktime_get_boot_ns(void)
+ #endif /* < 3.17 */
  
- #ifndef VM_NODUMP
- /*
-@@ -123,4 +126,36 @@ static inline bool page_is_pfmemalloc(struct page *page)
- }
- #endif /* < 4.2 */
+ #if LINUX_VERSION_IS_LESS(4,18,0)
+-static inline time64_t ktime_get_boottime_seconds(void)
+-{
+-	return ktime_divns(ktime_get_boottime(), NSEC_PER_SEC);
+-}
++extern time64_t ktime_get_boottime_seconds(void);
+ #endif /* < 4.18 */
  
-+#if LINUX_VERSION_IS_LESS(4,12,0)
-+#define kvmalloc LINUX_BACKPORT(kvmalloc)
-+static inline void *kvmalloc(size_t size, gfp_t flags)
+ #if LINUX_VERSION_IS_LESS(3,19,0)
+diff --git a/backport/compat/Makefile b/backport/compat/Makefile
+index 12c4121ff7e1..f5b1886e2d8e 100644
+--- a/backport/compat/Makefile
++++ b/backport/compat/Makefile
+@@ -37,6 +37,7 @@ compat-$(CPTCFG_KERNEL_4_7) += backport-4.7.o
+ compat-$(CPTCFG_KERNEL_4_8) += backport-4.8.o
+ compat-$(CPTCFG_KERNEL_4_10) += backport-4.10.o
+ compat-$(CPTCFG_KERNEL_4_12) += backport-4.12.o
++compat-$(CPTCFG_KERNEL_4_18) += backport-4.18.o
+ 
+ compat-$(CPTCFG_BPAUTO_CRYPTO_SKCIPHER) += crypto-skcipher.o
+ 
+diff --git a/backport/compat/backport-4.18.c b/backport/compat/backport-4.18.c
+new file mode 100644
+index 000000000000..c47fabe5a7a1
+--- /dev/null
++++ b/backport/compat/backport-4.18.c
+@@ -0,0 +1,11 @@
++/*
++ * Copyright (C) 2018 Intel Corporation
++ */
++
++#include <linux/hrtimer.h>
++
++time64_t ktime_get_boottime_seconds(void)
 +{
-+	gfp_t kmalloc_flags = flags;
-+	void *ret;
-+
-+	if ((flags & GFP_KERNEL) != GFP_KERNEL)
-+		return kmalloc(size, flags);
-+
-+	if (size > PAGE_SIZE)
-+		kmalloc_flags |= __GFP_NOWARN | __GFP_NORETRY;
-+
-+	ret = kmalloc(size, flags);
-+	if (ret || size < PAGE_SIZE)
-+		return ret;
-+
-+	return vmalloc(size);
++	return ktime_divns(ktime_get_boottime(), NSEC_PER_SEC);
 +}
-+
-+#define kvmalloc_array LINUX_BACKPORT(kvmalloc_array)
-+static inline void *kvmalloc_array(size_t n, size_t size, gfp_t flags)
-+{
-+	size_t bytes;
-+
-+	if (unlikely(check_mul_overflow(n, size, &bytes)))
-+		return NULL;
-+
-+	return kvmalloc(bytes, flags);
-+}
-+#endif
-+
- #endif /* __BACKPORT_MM_H */
++EXPORT_SYMBOL_GPL(ktime_get_boottime_seconds);
 -- 
-2.17.0
+2.18.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
