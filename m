@@ -1,58 +1,79 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from nbd.name ([46.4.11.11]:56608 "EHLO nbd.name"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725919AbeIFQFG (ORCPT <rfc822;backports@vger.kernel.org>);
-        Thu, 6 Sep 2018 12:05:06 -0400
-From: Felix Fietkau <nbd@nbd.name>
+Received: from paleale.coelho.fi ([176.9.41.70]:50960 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727029AbeITRLx (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 20 Sep 2018 13:11:53 -0400
+From: Luca Coelho <luca@coelho.fi>
 To: backports@vger.kernel.org
-Cc: john@phrozen.org
-Subject: [PATCH] backports: backport sg_init_marker()
-Date: Thu,  6 Sep 2018 13:30:02 +0200
-Message-Id: <20180906113002.59425-1-nbd@nbd.name> (sfid-20180906_133006_643082_03903869)
+Cc: Luca Coelho <luciano.coelho@intel.com>
+Date: Thu, 20 Sep 2018 14:28:31 +0300
+Message-Id: <20180920112842.27198-4-luca@coelho.fi> (sfid-20180920_132854_071068_96F8394E)
+In-Reply-To: <20180920112842.27198-1-luca@coelho.fi>
+References: <20180920112842.27198-1-luca@coelho.fi>
+Subject: [PATCH 03/14] backport: introduce match_string() for kernels < 4.6
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-It is used by new mt76 changes
+From: Luca Coelho <luciano.coelho@intel.com>
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
+This function was introduced in v4.6 and now the iwlwifi driver uses
+it.  Add the function for kernels older than v4.6.
+
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 ---
- backport/backport-include/linux/scatterlist.h | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ backport/backport-include/linux/string.h |  4 ++++
+ backport/compat/backport-4.6.c           | 26 ++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
 
-diff --git a/backport/backport-include/linux/scatterlist.h b/backport/backport-include/linux/scatterlist.h
-index bfc74494..06934b6b 100644
---- a/backport/backport-include/linux/scatterlist.h
-+++ b/backport/backport-include/linux/scatterlist.h
-@@ -102,4 +102,27 @@ size_t sg_pcopy_from_buffer(struct scatterlist *sgl, unsigned int nents,
+diff --git a/backport/backport-include/linux/string.h b/backport/backport-include/linux/string.h
+index b85d9c73dc27..df93bf79a691 100644
+--- a/backport/backport-include/linux/string.h
++++ b/backport/backport-include/linux/string.h
+@@ -29,4 +29,8 @@ void memzero_explicit(void *s, size_t count);
+ ssize_t strscpy(char *dest, const char *src, size_t count);
+ #endif
  
- #endif /* LINUX_VERSION_IS_LESS(3, 11, 0) */
- 
-+#if LINUX_VERSION_IS_LESS(4, 17, 0)
++#if LINUX_VERSION_IS_LESS(4,6,0)
++int match_string(const char * const *array, size_t n, const char *string);
++#endif /* LINUX_VERSION_IS_LESS(4,5,0) */
 +
-+#define sg_init_marker LINUX_BACKPORT(sg_init_marker)
+ #endif /* __BACKPORT_LINUX_STRING_H */
+diff --git a/backport/compat/backport-4.6.c b/backport/compat/backport-4.6.c
+index 54ff669df192..8d0ecf56526d 100644
+--- a/backport/compat/backport-4.6.c
++++ b/backport/compat/backport-4.6.c
+@@ -75,3 +75,29 @@ int kstrtobool_from_user(const char __user *s, size_t count, bool *res)
+ 	return kstrtobool(buf, res);
+ }
+ EXPORT_SYMBOL_GPL(kstrtobool_from_user);
++
 +/**
-+ * sg_init_marker - Initialize markers in sg table
-+ * @sgl:	   The SG table
-+ * @nents:	   Number of entries in table
++ * match_string - matches given string in an array
++ * @array:	array of strings
++ * @n:		number of strings in the array or -1 for NULL terminated arrays
++ * @string:	string to match with
 + *
-+ **/
-+static inline void sg_init_marker(struct scatterlist *sgl,
-+				  unsigned int nents)
++ * Return:
++ * index of a @string in the @array if matches, or %-EINVAL otherwise.
++ */
++int match_string(const char * const *array, size_t n, const char *string)
 +{
-+#ifdef CONFIG_DEBUG_SG
-+	unsigned int i;
++	int index;
++	const char *item;
 +
-+	for (i = 0; i < nents; i++)
-+		sgl[i].sg_magic = SG_MAGIC;
-+#endif
-+	sg_mark_end(&sgl[nents - 1]);
++	for (index = 0; index < n; index++) {
++		item = array[index];
++		if (!item)
++			break;
++		if (!strcmp(item, string))
++			return index;
++	}
++
++	return -EINVAL;
 +}
-+
-+#endif /* LINUX_VERSION_IS_LESS(4, 17, 0) */
-+
- #endif /* __BACKPORT_SCATTERLIST_H */
++EXPORT_SYMBOL(match_string);
 -- 
-2.17.0
+2.18.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
