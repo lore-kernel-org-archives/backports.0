@@ -1,43 +1,71 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.62]:48802 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbeIJMR2 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 10 Sep 2018 08:17:28 -0400
-Message-ID: <1536564277.3224.7.camel@sipsolutions.net> (sfid-20180910_092452_298416_76B5FDB0)
-Subject: Re: [Cocci] New release after 1.0.7?
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Julia Lawall <julia.lawall@lip6.fr>,
-        Luciano Coelho <luciano.coelho@intel.com>
-Cc: cocci@systeme.lip6.fr, backports@vger.kernel.org
-Date: Mon, 10 Sep 2018 09:24:37 +0200
-In-Reply-To: <alpine.DEB.2.20.1808141515280.3371@hadrien> (sfid-20180814_152007_774372_35ED45D6)
-References: <32b52167e7dd5734ba4aa5f21aa1fddd257e6292.camel@intel.com>
-         <alpine.DEB.2.20.1808141515280.3371@hadrien>
-         (sfid-20180814_152007_774372_35ED45D6)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from paleale.coelho.fi ([176.9.41.70]:51040 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727029AbeITRMH (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 20 Sep 2018 13:12:07 -0400
+From: Luca Coelho <luca@coelho.fi>
+To: backports@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>
+Date: Thu, 20 Sep 2018 14:28:39 +0300
+Message-Id: <20180920112842.27198-12-luca@coelho.fi> (sfid-20180920_132906_182119_A098F443)
+In-Reply-To: <20180920112842.27198-1-luca@coelho.fi>
+References: <20180920112842.27198-1-luca@coelho.fi>
+Subject: [PATCH 11/14] backports: improve skb->xmit_more handling
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-Julia,
+From: Johannes Berg <johannes.berg@intel.com>
 
-On Tue, 2018-08-14 at 15:19 +0200, Julia Lawall wrote:
+Replace the existing skb->xmit_more semantic patch rule with a more
+generic one that uses a helper inline function.
 
-> Sorry, I'm not sure where 1.0.7 came from. [...]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+---
+ backport/backport-include/linux/skbuff.h          |  9 +++++++++
+ patches/0059-skb_xmit_more/skb_no_xmit_more.cocci | 10 +++-------
+ 2 files changed, 12 insertions(+), 7 deletions(-)
 
-> I would indeed like to make a release now that the compiations issues are
-> resolved and things seem more stable.
+diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
+index 034206b6649d..61133c4277cc 100644
+--- a/backport/backport-include/linux/skbuff.h
++++ b/backport/backport-include/linux/skbuff.h
+@@ -200,6 +200,15 @@ static inline struct sk_buff *__pskb_copy_fclone(struct sk_buff *skb,
+ struct sk_buff *skb_clone_sk(struct sk_buff *skb);
+ #endif
+ 
++static inline bool skb_xmit_more(struct sk_buff *skb)
++{
++#if LINUX_VERSION_IS_LESS(3,18,0)
++	return false;
++#else
++	return skb->xmit_more;
++#endif
++}
++
+ #if LINUX_VERSION_IS_LESS(3,19,0)
+ /**
+  * __dev_alloc_pages - allocate page for network Rx
+diff --git a/patches/0059-skb_xmit_more/skb_no_xmit_more.cocci b/patches/0059-skb_xmit_more/skb_no_xmit_more.cocci
+index ab20c833af40..bf7f22e267a3 100644
+--- a/patches/0059-skb_xmit_more/skb_no_xmit_more.cocci
++++ b/patches/0059-skb_xmit_more/skb_no_xmit_more.cocci
+@@ -1,9 +1,5 @@
+-@r1@
++@@
+ struct sk_buff *skb;
+-expression E1;
+ @@
+- if (E1
+-+#if LINUX_VERSION_IS_GEQ(3,18,0)
+- || !skb->xmit_more
+-+#endif /* if LINUX_VERSION_IS_GEQ(3,18,0) */
+- ) {...}
++-skb->xmit_more
+++skb_xmit_more(skb)
+-- 
+2.18.0
 
-Were you able to clear this up?
-
-I see now that the website advertises the 1.0.7 release, however
-
- * it's not tagged in git(hub) - all previous releases have a tag
- * commit c1522bde ("Release 1.0.7") is NOT what's released as 1.0.7 on
-   the website
- * it *looks* like the actual 1.0.7 release was cut from a much newer
-   git commit, likely with the fix?
-
-johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
