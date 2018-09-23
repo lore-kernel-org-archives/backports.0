@@ -1,131 +1,81 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:48510 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726713AbeIKQVk (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 11 Sep 2018 12:21:40 -0400
-Message-ID: <9ff5075ecd90926d1e47060f0309cd2c0e531ba2.camel@coelho.fi> (sfid-20180911_132250_034365_176DD0FC)
-From: Luca Coelho <luca@coelho.fi>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: cocci@systeme.lip6.fr, backports@vger.kernel.org,
-        johannes.berg@intel.com, felipe.balbi@intel.com
-Date: Tue, 11 Sep 2018 14:22:44 +0300
-In-Reply-To: <alpine.DEB.2.20.1809111059590.3671@hadrien>
-References: <fa1892a1698ad83235d455a947c354a54fa34c1d.camel@coelho.fi>
-         <alpine.DEB.2.20.1809111059590.3671@hadrien>
+Received: from s3.sipsolutions.net ([144.76.43.62]:50664 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbeIXCCO (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sun, 23 Sep 2018 22:02:14 -0400
+Message-ID: <1537733001.1707.5.camel@sipsolutions.net> (sfid-20180923_220334_818247_9A235E8D)
+Subject: Re: kernel 4.18+ build problem "Recursive variable 'KBUILD_CFLAGS' "
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>,
+        "backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Sun, 23 Sep 2018 22:03:21 +0200
+In-Reply-To: <32c2c52e-d3a0-e961-6040-1a34997a7a1f@hauke-m.de> (sfid-20180923_161658_834557_1648CD51)
+References: <32c2c52e-d3a0-e961-6040-1a34997a7a1f@hauke-m.de>
+         (sfid-20180923_161658_834557_1648CD51)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Subject: Re: Weird problem trying to match code inside a function
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2018-09-11 at 11:05 +0200, Julia Lawall wrote:
+On Sun, 2018-09-23 at 16:16 +0200, Hauke Mehrtens wrote:
+> Hi,
 > 
-> On Tue, 11 Sep 2018, Luca Coelho wrote:
+> I tried to compile backports against kernel 4.18 and 4.19-rc4 (header
+> files from Ubuntu) and ran into this problem when it wants to link the
+> kernel:
 > 
-> > Hi Julia,
-> > 
-> > I bumped in to another weird problem.  I'm trying to match some
-> > code
-> > inside a function that has a specific struct as a parameter, but I
-> > can't get it to work.
-> > 
-> > This is cocci code I tried first:
-> > 
-> > http://pastebin.coelho.fi/6f8f346822a7c99e.txt
-> > 
-> > And this is the file I'm trying to match:
-> > 
-> > http://pastebin.coelho.fi/f73f542932add1c6.txt
-> > 
-> > The led activate op changed from being a function that returns void
-> > to
-> > one that returns int and I had to backport that.
-> > 
-> > The strange thing is that if I have only the first rule, it works
-> > fine,
-> > but when I add the second rule it fails.
-> 
-> I didn't look at the code in detail, but there is a restriction on
-> metavariables that are not position variables that are inherited from
-> one
-> rule to another.  Such metavariables have to have only one value.  If
-> there is more than one possible value, the original match fails
-> completely.
-> 
-> For example, if you do:
-> 
-> @r@
-> expression E;
-> @@
-> 
-> f();
-> ...
-> -g(E);
-> 
-> This will do the right thing for:
-> 
-> f();
-> if (x)
->   g(3);
-> else g(4);
-> 
-> But if you do:
-> 
-> @r@
-> expression E;
-> @@
-> 
-> f();
-> ...
-> -g(E);
-> 
-> @@
-> expression r.E;
-> @@
-> 
-> - xxx(E);
-> 
-> Then nothing will happen at all.  Because in the first rule, it is
-> not
-> able to find a unique binding for E.
-> 
-> A solution can be:
-> 
-> @r@
-> expression E;
-> position p;
-> @@
-> 
-> f();
-> ...
-> g(E@p);
-> 
-> @s@
-> position r.p;
-> expression E;
-> @@
-> 
-> - g(E@p);
-> 
-> @@
-> expression s.E;
-> @@
-> 
-> - xxx(E);
-> 
-> Position metavariable can take on many values, even if they are
-> inherited.
+>   LD [M]
+> /home/hauke/compat-wireless/backports-4.19-rc4-1/drivers/net/wireless/realtek/rtlwifi/rtl_usb.o
+>   Building modules, stage 2.
+> scripts/Makefile.lib:10: *** Recursive variable 'KBUILD_CFLAGS'
+> references itself (eventually).  Stop.
 
-Ah, I think this explains the problem.
+Hmm. I vaguely remember something like that with our driver, but can't
+find it now? I also remember trying to fix it in the upstream kernel ...
 
-I tried to add the position thing in my rules, but I didn't succeed. 
-I'll have to try again at some other time.  My rules without matching
-inside a function work fine, so I'll leave with that for now.
+Ah yes. This patch:
 
-Thanks!
+-subdir-ccflags-y = $(call cc-option,...)
++subdir-ccflags-y := $(call cc-option,...)
 
---
-Luca.
+My commit log said:
 
+   In newer kernels, calling cc-option will use KBUILD_CFLAGS,
+   which itself gets subdir-ccflags-y added to it. Thus, we get
+   it referencing itself, since nothing here is evaluated until
+   KBUILD_CFLAGS is used: KBUILD_CFLAGS contains subdir-ccflags-y,
+   that in turn contains cc-option call, containing KBUILD_CFLAGS.
+
+   To avoid that, use := assignment to subdir-ccflags-y. This
+   causes make to also evaluate += immediately, cc-option calls
+   are done right away and we don't end up with KBUILD_CFLAGS
+   referencing itself.
+
+   This fixes build of the driver on kernels 4.15 and higher.
+
+Really in our driver - and it was ChromeOS-specific code too - it was +=
+but we had to start with := instead of =.
+
+I don't see something like this in rtlwifi though?
+
+Ah, but we have
+
+subdir-ccflags-y += $(call cc-option, -fno-pie) $(call cc-option, -no-pie)
+
+in backports, so I guess this would help:
+
+--- a/backport/Makefile.kernel
++++ b/backport/Makefile.kernel
+@@ -30,7 +30,7 @@ NOSTDINC_FLAGS := \
+        $(CFLAGS)
+ endif
+ 
+-subdir-ccflags-y += $(call cc-option, -fno-pie) $(call cc-option, -no-pie)
++subdir-ccflags-y := $(call cc-option, -fno-pie) $(call cc-option, -no-pie)
+ ifeq ($(CPTCFG_KERNEL_4_3),y)
+ subdir-ccflags-y += -Wno-pointer-sign
+ endif
+
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
