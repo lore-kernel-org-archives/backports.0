@@ -1,81 +1,131 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.62]:50664 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbeIXCCO (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sun, 23 Sep 2018 22:02:14 -0400
-Message-ID: <1537733001.1707.5.camel@sipsolutions.net> (sfid-20180923_220334_818247_9A235E8D)
-Subject: Re: kernel 4.18+ build problem "Recursive variable 'KBUILD_CFLAGS' "
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-        "backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Sun, 23 Sep 2018 22:03:21 +0200
-In-Reply-To: <32c2c52e-d3a0-e961-6040-1a34997a7a1f@hauke-m.de> (sfid-20180923_161658_834557_1648CD51)
-References: <32c2c52e-d3a0-e961-6040-1a34997a7a1f@hauke-m.de>
-         (sfid-20180923_161658_834557_1648CD51)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mx1.mailbox.org ([80.241.60.212]:38496 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726467AbeIWXoE (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 23 Sep 2018 19:44:04 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org, john@phrozen.org,
+        Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 08/10] patches: remove .coredump from struct driver for kernel < 4.16
+Date: Sun, 23 Sep 2018 19:45:33 +0200
+Message-Id: <20180923174535.16198-9-hauke@hauke-m.de> (sfid-20180923_194553_442604_1A88B709)
+In-Reply-To: <20180923174535.16198-1-hauke@hauke-m.de>
+References: <20180923174535.16198-1-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Sun, 2018-09-23 at 16:16 +0200, Hauke Mehrtens wrote:
-> Hi,
-> 
-> I tried to compile backports against kernel 4.18 and 4.19-rc4 (header
-> files from Ubuntu) and ran into this problem when it wants to link the
-> kernel:
-> 
->   LD [M]
-> /home/hauke/compat-wireless/backports-4.19-rc4-1/drivers/net/wireless/realtek/rtlwifi/rtl_usb.o
->   Building modules, stage 2.
-> scripts/Makefile.lib:10: *** Recursive variable 'KBUILD_CFLAGS'
-> references itself (eventually).  Stop.
+Kernel 4.16 added a new .coredump member to the driver structure which
+can be implemented by drivers. Remove this member on older kernel
+versions as they do not support this feature.
 
-Hmm. I vaguely remember something like that with our driver, but can't
-find it now? I also remember trying to fix it in the upstream kernel ...
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ patches/0088-coredump.cocci | 93 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 93 insertions(+)
+ create mode 100644 patches/0088-coredump.cocci
 
-Ah yes. This patch:
+diff --git a/patches/0088-coredump.cocci b/patches/0088-coredump.cocci
+new file mode 100644
+index 00000000..329e0315
+--- /dev/null
++++ b/patches/0088-coredump.cocci
+@@ -0,0 +1,93 @@
++@r1@
++identifier drv, fn;
++@@
++static struct pci_driver drv = {
++	.driver = {
+++#if LINUX_VERSION_IS_GEQ(4,16,0)
++		.coredump = fn,
+++#endif
++		...
++	},
++	...
++};
++
++@r11 depends on r1@
++identifier r1.fn;
++@@
+++#if LINUX_VERSION_IS_GEQ(4,16,0)
++fn(...)
++{
++	...
++}
+++#endif
++
++
++@r2@
++identifier drv, fn;
++@@
++ static struct pci_driver drv = {
+++#if LINUX_VERSION_IS_GEQ(4,16,0)
++	.driver.coredump = fn,
+++#endif
++	...
++ };
++
++@r21 depends on r2@
++identifier r2.fn;
++@@
+++#if LINUX_VERSION_IS_GEQ(4,16,0)
++fn(...)
++{
++	...
++}
+++#endif
++
++
++@r3@
++identifier drv, fn;
++@@
++static struct usb_driver drv = {
++	.drvwrap.driver = {
+++#if LINUX_VERSION_IS_GEQ(4,16,0)
++		.coredump = fn,
+++#endif
++		...
++	},
++	...
++};
++
++
++@r31 depends on r3@
++identifier r3.fn;
++@@
+++#if LINUX_VERSION_IS_GEQ(4,16,0)
++fn(...)
++{
++	...
++}
+++#endif
++
++
++@r4@
++identifier driver, fn;
++@@
++ static struct sdio_driver driver = {
++	.drv = {
+++#if LINUX_VERSION_IS_GEQ(4,16,0)
++		.coredump = fn,
+++#endif
++		...
++	},
++	...
++};
++
++
++@r41 depends on r4@
++identifier r4.fn;
++@@
+++#if LINUX_VERSION_IS_GEQ(4,16,0)
++fn(...)
++{
++	...
++}
+++#endif
+-- 
+2.11.0
 
--subdir-ccflags-y = $(call cc-option,...)
-+subdir-ccflags-y := $(call cc-option,...)
-
-My commit log said:
-
-   In newer kernels, calling cc-option will use KBUILD_CFLAGS,
-   which itself gets subdir-ccflags-y added to it. Thus, we get
-   it referencing itself, since nothing here is evaluated until
-   KBUILD_CFLAGS is used: KBUILD_CFLAGS contains subdir-ccflags-y,
-   that in turn contains cc-option call, containing KBUILD_CFLAGS.
-
-   To avoid that, use := assignment to subdir-ccflags-y. This
-   causes make to also evaluate += immediately, cc-option calls
-   are done right away and we don't end up with KBUILD_CFLAGS
-   referencing itself.
-
-   This fixes build of the driver on kernels 4.15 and higher.
-
-Really in our driver - and it was ChromeOS-specific code too - it was +=
-but we had to start with := instead of =.
-
-I don't see something like this in rtlwifi though?
-
-Ah, but we have
-
-subdir-ccflags-y += $(call cc-option, -fno-pie) $(call cc-option, -no-pie)
-
-in backports, so I guess this would help:
-
---- a/backport/Makefile.kernel
-+++ b/backport/Makefile.kernel
-@@ -30,7 +30,7 @@ NOSTDINC_FLAGS := \
-        $(CFLAGS)
- endif
- 
--subdir-ccflags-y += $(call cc-option, -fno-pie) $(call cc-option, -no-pie)
-+subdir-ccflags-y := $(call cc-option, -fno-pie) $(call cc-option, -no-pie)
- ifeq ($(CPTCFG_KERNEL_4_3),y)
- subdir-ccflags-y += -Wno-pointer-sign
- endif
-
-johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
