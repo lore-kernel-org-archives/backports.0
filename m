@@ -1,78 +1,84 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.mailbox.org ([80.241.60.215]:32894 "EHLO mx2.mailbox.org"
+Received: from mx1.mailbox.org ([80.241.60.212]:39792 "EHLO mx1.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727672AbeIRDYr (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 17 Sep 2018 23:24:47 -0400
-Cc: cocci@systeme.lip6.fr
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+        id S1726302AbeIXCfD (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 23 Sep 2018 22:35:03 -0400
+Subject: Re: [PATCH 05/10] dependencies: Make WIL6210 depend on kernel >= 4.8
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: backports@vger.kernel.org, john@phrozen.org
+References: <20180923174535.16198-1-hauke@hauke-m.de>
+ <20180923174535.16198-6-hauke@hauke-m.de>
+ <1537733544.1707.9.camel@sipsolutions.net>
 From: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: 0079-netdev-destructor.cocci very slow
-Message-ID: <afcbee1b-be9f-bbd2-a72e-1a89a24b4f3d@hauke-m.de> (sfid-20180917_235548_596100_F1A753F4)
-Date: Mon, 17 Sep 2018 23:55:25 +0200
+Message-ID: <8643b128-a100-50da-7860-680d99340cef@hauke-m.de> (sfid-20180923_223618_799840_2DC48609)
+Date: Sun, 23 Sep 2018 22:36:07 +0200
 MIME-Version: 1.0
+In-Reply-To: <1537733544.1707.9.camel@sipsolutions.net>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="JfJiqqp9vwVTxiVdo4iF5uafvLzwBJSmX"
+ boundary="Wn6u3mRXeU9dFKXbKCV6aOhqzW7FmzqS5"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---JfJiqqp9vwVTxiVdo4iF5uafvLzwBJSmX
-Content-Type: multipart/mixed; boundary="qfE7jrv5pW5ffLpxnldqZF91pGJvdKnxz";
+--Wn6u3mRXeU9dFKXbKCV6aOhqzW7FmzqS5
+Content-Type: multipart/mixed; boundary="ST3hdcsPRh6F8vH2EVfC5Lct0BXGB04bZ";
  protected-headers="v1"
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: cocci@systeme.lip6.fr
-Message-ID: <afcbee1b-be9f-bbd2-a72e-1a89a24b4f3d@hauke-m.de>
-Subject: 0079-netdev-destructor.cocci very slow
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: backports@vger.kernel.org, john@phrozen.org
+Message-ID: <8643b128-a100-50da-7860-680d99340cef@hauke-m.de>
+Subject: Re: [PATCH 05/10] dependencies: Make WIL6210 depend on kernel >= 4.8
+References: <20180923174535.16198-1-hauke@hauke-m.de>
+ <20180923174535.16198-6-hauke@hauke-m.de>
+ <1537733544.1707.9.camel@sipsolutions.net>
+In-Reply-To: <1537733544.1707.9.camel@sipsolutions.net>
 
---qfE7jrv5pW5ffLpxnldqZF91pGJvdKnxz
+--ST3hdcsPRh6F8vH2EVfC5Lct0BXGB04bZ
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-The 0079-netdev-destructor.cocci spatch in backports is very slow for
-me. For bigger files I get a warning that it takes over to 15 seconds to
-apply it to just one file, for the complete backports tree it takes over
-an hour to apply.
+On 09/23/2018 10:12 PM, Johannes Berg wrote:
+> On Sun, 2018-09-23 at 19:45 +0200, Hauke Mehrtens wrote:
+>> The WIL6210 driver now uses pci_alloc_irq_vectors() which is only
+>> available in kernel >=3D 4.8, only build this driver against such kern=
+el
+>> versions.
+>=20
+> From the description of the function, it seems like it should be pretty=
 
-This is the patch:
-https://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git/t=
-ree/patches/0079-netdev-destructor.cocci
+> simple to backport?
+>=20
+> johannes
 
-When I remove the <-- --> in the first rule, it is applied in some
-seconds on the complete tree, so an speed improvement of about 100
-times, but it is not working correctly any more. ;-)
-
-Is this normal or how can I improve the spatch to be faster? I am using
-coccinelle 1.0.7 build with default configure arguments against the
-libraries from Debian stable.
-
-If this is normal I should probably try to reduce the number of files it
-tries to apply this against in gentree.py before spatch gets started.
+I haven't tried to backport this.
+If someone wants to do it I would be happy.
 
 Hauke
 
 
---qfE7jrv5pW5ffLpxnldqZF91pGJvdKnxz--
 
---JfJiqqp9vwVTxiVdo4iF5uafvLzwBJSmX
+
+--ST3hdcsPRh6F8vH2EVfC5Lct0BXGB04bZ--
+
+--Wn6u3mRXeU9dFKXbKCV6aOhqzW7FmzqS5
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAlugIs0ACgkQ8bdnhZyy
-68fNDwf/WpeGhTUd8V9INmO+yE4UEYwOehsPvkNRJMD0zmNIH2ggqmnjgjHqXSEU
-8NGcRgm6OIsOx7bCOjxYR7nD3fDMgvos8Ua00jHj5kk3KL+zo7lsWt3+Q4JXWWXd
-fI7xGYjCYua1YUv+QpTa/t4l9yV25KyOqPWhlEMps7yCz1x2bpVyVV8pvcwmPrrh
-A8uXIgl9IrT87/PDmKcIr389+9jwDhF8ImOQnJ3HFCt0eqKerihkxBXDMjKchqfx
-iQfQVipyh03Ba9MhPZUV0qhNnbygG3aZKpm5J8hbEMp8G5aLv1AUFv5wH3ZACBbS
-WYgew73iny5+r0Q7uzkaZRF5CV+gPg==
-=JlNx
+iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAlun+TcACgkQ8bdnhZyy
+68ew2ggAnl/SGiU5VIRgeJ9q06DySTqQS5fuQOa0KPwqLhDr7f6KFQEt0silO4Kp
+JMnL6OROZHta/Ha6ulTRh8Z6yxuFAqs8UH0NQRyNZFmjWs2E3QnYqqW++qN/Xt+b
+a+hfKwiPOlPOPvOaCSOn1A9Z1pp4Wjq1yM6wcyPk25kLXfnmkKFvaQkDddXfoiYm
+bjvzC7ZHFYzVXPYtCEmchZ6jgeBVhwG7ZFrZ27iDvg7mzkwlMYbIRtCfuioZN1o0
+2M3poVFXVM+PFQdC1VZY2jg7clATi4JSjJD4pTZ/Aw0w6GOuxQ/vTV71gxFsy8e2
+/5IStZnY6wvTK6fjk0suEODoGVOp0w==
+=/CI8
 -----END PGP SIGNATURE-----
 
---JfJiqqp9vwVTxiVdo4iF5uafvLzwBJSmX--
+--Wn6u3mRXeU9dFKXbKCV6aOhqzW7FmzqS5--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
