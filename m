@@ -1,72 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:28434
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731025AbeISO0Z (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 19 Sep 2018 10:26:25 -0400
-Date: Wed, 19 Sep 2018 10:49:25 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Johannes Berg <johannes@sipsolutions.net>
-cc: Hauke Mehrtens <hauke@hauke-m.de>,
-        "backports@vger.kernel.org" <backports@vger.kernel.org>,
-        cocci@systeme.lip6.fr
-Subject: Re: [Cocci] 0079-netdev-destructor.cocci very slow
-In-Reply-To: <1537346626.10305.2.camel@sipsolutions.net>
-Message-ID: <alpine.DEB.2.20.1809191047200.4106@hadrien> (sfid-20180919_104936_292426_34F1BC41)
-References: <afcbee1b-be9f-bbd2-a72e-1a89a24b4f3d@hauke-m.de> <1537262543.2957.19.camel@sipsolutions.net> <c823a257-4a1e-f3d0-d5a4-4face3c0c85a@hauke-m.de> <1537346626.10305.2.camel@sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Received: from mx2.mailbox.org ([80.241.60.215]:40874 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726339AbeIWXoA (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 23 Sep 2018 19:44:00 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org, john@phrozen.org,
+        Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 04/10] dependencies: Make RSI_COEX coexistence depend on kernel >= 4.17
+Date: Sun, 23 Sep 2018 19:45:29 +0200
+Message-Id: <20180923174535.16198-5-hauke@hauke-m.de> (sfid-20180923_194549_145993_73713907)
+In-Reply-To: <20180923174535.16198-1-hauke@hauke-m.de>
+References: <20180923174535.16198-1-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+When RSI_COEX is activated the driver wants to link against the
+rsi_bt_ops symbol from the bluetooth driver btrsi. This driver was only
+added in kernel 4.17. Deactivate bluetooth coexistence support for older
+kernel versions.
 
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ dependencies | 3 +++
+ 1 file changed, 3 insertions(+)
 
-On Wed, 19 Sep 2018, Johannes Berg wrote:
+diff --git a/dependencies b/dependencies
+index 74f8a80f..555f31fb 100644
+--- a/dependencies
++++ b/dependencies
+@@ -53,6 +53,9 @@ USB_NET_RNDIS_WLAN 4.6
+ # depends on struct mmc_card::ocr
+ RSI_SDIO 3.13
+ 
++# For Coexsitence the BT driver has to export rsi_bt_ops
++RSI_COEX 4.17
++
+ # depends on devm_led_classdev_register()
+ MT76_CORE 4.1
+ MT76x2E 4.1
+-- 
+2.11.0
 
-> On Tue, 2018-09-18 at 23:52 +0200, Hauke Mehrtens wrote:
->
-> > > spatch should already try that internally, but perhaps with some extra
-> > > knowledge we can do a better job ...
->
-> > Yes we talked about this topic some months ago in IRC.
-> > If there is really no better solution, then I will grep in all files for
-> > needs_free_netdev and priv_destructor and only apply this to the files
-> > which are matching. This list should be pretty short.
->
-> Right. No objection to that. Perhaps we should have some sort of special
-> comment header for our spatches that the script can consume?
->
-> Something like
->
-> // restrict-files: grep -qE 'needs_free_netdev|priv_destructor'
->
-> and we'd run that on all files? Or perhaps the API should be more a la
-> "grep -lE" so we can run it on many files and get a list of matching
-> files out?
->
-> > It looks like coccinelle already does such a grep when I remove the <--
-> > --> from the patch, because this is about 100 times faster.
->
-> Good point, not sure why it doesn't do that with the <... ...>?
-
-Because <... ...> means 0 or more of what is inside.  <+... ...+> looks
-for one or more and may be faster.  On the other hand, it ensures that
-there is one or more, which can also be expensive.
-
-It could be better to just have a rule:
-
-@worthwhile@
-@@
-
-(
-functions(...)
-|
-you(...)
-|
-like(...)
-)
-
-and then have the <... ...> rule depend on worthwhile.
-
-julia
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
