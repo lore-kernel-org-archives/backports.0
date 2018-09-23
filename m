@@ -1,61 +1,42 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from paleale.coelho.fi ([176.9.41.70]:50948 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727029AbeITRLw (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 20 Sep 2018 13:11:52 -0400
-From: Luca Coelho <luca@coelho.fi>
-To: backports@vger.kernel.org
-Cc: Luca Coelho <luciano.coelho@intel.com>
-Date: Thu, 20 Sep 2018 14:28:29 +0300
-Message-Id: <20180920112842.27198-2-luca@coelho.fi> (sfid-20180920_132852_170955_A44C90A5)
-In-Reply-To: <20180920112842.27198-1-luca@coelho.fi>
-References: <20180920112842.27198-1-luca@coelho.fi>
-Subject: [PATCH 01/14] backport: fix compilation with IPV6 not set
+Received: from mx1.mailbox.org ([80.241.60.212]:38444 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726467AbeIWXoB (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 23 Sep 2018 19:44:01 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org, john@phrozen.org,
+        Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 03/10] copy: Add crc32poly.h
+Date: Sun, 23 Sep 2018 19:45:28 +0200
+Message-Id: <20180923174535.16198-4-hauke@hauke-m.de> (sfid-20180923_194550_412258_30EBA68F)
+In-Reply-To: <20180923174535.16198-1-hauke@hauke-m.de>
+References: <20180923174535.16198-1-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Luca Coelho <luciano.coelho@intel.com>
+This is used by the rtl8723bs driver. The implementation is completely
+in this header file, so it is save to copy it
 
-At least in some older kernel versions (e.g. 3.10), the tcp.h header
-file is not implicitly included from other headers if CONFIG_IPV6 is
-not set, so we need to include it in backport-4.4.c.  Also, there is
-an IPv6 structure that is used, so we should ifdef it away when IPv6
-is not enabled.
-
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/compat/backport-4.4.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ copy-list | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/backport/compat/backport-4.4.c b/backport/compat/backport-4.4.c
-index 1c11a2064e53..7966e94928e7 100644
---- a/backport/compat/backport-4.4.c
-+++ b/backport/compat/backport-4.4.c
-@@ -15,6 +15,7 @@
- #include <linux/if_vlan.h>
- #include <linux/mm.h>
- #include <linux/skbuff.h>
-+#include <linux/tcp.h>
- #include <net/ip.h>
- #include <net/tso.h>
- #include <asm/unaligned.h>
-@@ -95,9 +96,14 @@ void tso_build_hdr(struct sk_buff *skb, char *hdr, struct tso_t *tso,
- 		iph->tot_len = htons(size + hdr_len - mac_hdr_len);
- 		tso->ip_id++;
- 	} else {
-+#ifdef CONFIG_IPV6
- 		struct ipv6hdr *iph = (void *)(hdr + mac_hdr_len);
+diff --git a/copy-list b/copy-list
+index b2ec0972..9c522629 100644
+--- a/copy-list
++++ b/copy-list
+@@ -15,6 +15,7 @@ MAINTAINERS
+ include/linux/unaligned/
+ include/linux/hashtable.h
+ include/linux/fixp-arith.h
++include/linux/crc32poly.h
  
- 		iph->payload_len = htons(size + tcp_hdrlen(skb));
-+#else /* CONFIG_IPV6 */
-+		/* tso->ipv6 should never be set if IPV6 is not enabeld */
-+		WARN_ON(1);
-+#endif /* CONFIG_IPV6 */
- 	}
- 	tcph = (struct tcphdr *)(hdr + skb_transport_offset(skb));
- 	put_unaligned_be32(tso->tcp_seq, &tcph->seq);
+ # This just defines some macros, simply take it
+ include/linux/bitfield.h
 -- 
-2.18.0
+2.11.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
