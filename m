@@ -1,31 +1,46 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.62]:49484 "EHLO
+Received: from s3.sipsolutions.net ([144.76.43.62]:50696 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728121AbeHVLCY (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 22 Aug 2018 07:02:24 -0400
-Message-ID: <1534922281.25523.57.camel@sipsolutions.net> (sfid-20180822_093902_267050_85B2BFD5)
-Subject: Re: [PATCH v2] backports: add header file for function memcmp
+        with ESMTP id S1726467AbeIXCH6 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sun, 23 Sep 2018 22:07:58 -0400
+Message-ID: <1537733344.1707.7.camel@sipsolutions.net> (sfid-20180923_220921_997288_0CE63A7D)
+Subject: Re: kernel 4.18+ build problem "Recursive variable 'KBUILD_CFLAGS' "
 From: Johannes Berg <johannes@sipsolutions.net>
-To: Winnie Chang <winnie.chang@cypress.com>, backports@vger.kernel.org
-Cc: Chi-Hsien.Lin@cypress.com
-Date: Wed, 22 Aug 2018 09:18:01 +0200
-In-Reply-To: <20180822030554.GA73398@aremote01.aus.cypress.com> (sfid-20180822_050625_036935_A42BDE44)
-References: <20180822030554.GA73398@aremote01.aus.cypress.com>
-         (sfid-20180822_050625_036935_A42BDE44)
+To: Hauke Mehrtens <hauke@hauke-m.de>,
+        "backports@vger.kernel.org" <backports@vger.kernel.org>
+Date: Sun, 23 Sep 2018 22:09:04 +0200
+In-Reply-To: <1537733001.1707.5.camel@sipsolutions.net> (sfid-20180923_220334_818247_9A235E8D)
+References: <32c2c52e-d3a0-e961-6040-1a34997a7a1f@hauke-m.de>
+         (sfid-20180923_161658_834557_1648CD51) <1537733001.1707.5.camel@sipsolutions.net>
+         (sfid-20180923_220334_818247_9A235E8D)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2018-08-21 at 22:06 -0500, Winnie Chang wrote:
-> Function memcmp is implicit declaration on kernel 4.9.88 ARM platform.
-> backport-include/keys/asymmetric-type.h uses function memcmp but its
-> caller compat/verification/verify.c and all its related header files
-> do not include string.h. The header file is usually included from
-> arch/arm/include/asm, but in this configuration, it doesn't. We need
-> to be safe and insure string.h is there.
+On Sun, 2018-09-23 at 22:03 +0200, Johannes Berg wrote:
+> On Sun, 2018-09-23 at 16:16 +0200, Hauke Mehrtens wrote:
+> > Hi,
+> > 
+> > I tried to compile backports against kernel 4.18 and 4.19-rc4 (header
+> > files from Ubuntu) and ran into this problem when it wants to link the
+> > kernel:
+> > 
+> >   LD [M]
+> > /home/hauke/compat-wireless/backports-4.19-rc4-1/drivers/net/wireless/realtek/rtlwifi/rtl_usb.o
+> >   Building modules, stage 2.
+> > scripts/Makefile.lib:10: *** Recursive variable 'KBUILD_CFLAGS'
+> > references itself (eventually).  Stop.
+> 
+> Hmm. I vaguely remember something like that with our driver, but can't
+> find it now? I also remember trying to fix it in the upstream kernel ...
 
-Makes sense, thanks!
+Hmm. Well, I can't find any changes from me upstream in this area, so
+either I didn't succeed or it didn't get applied. I also can't find a
+public record of a patch, so I guess I didn't succeed?
+
+Seems simple enough though, just make cc-option := instead of = in
+scripts/Kbuild.include? Or maybe not, dunno.
 
 johannes
 --
