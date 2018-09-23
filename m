@@ -1,47 +1,49 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-eopbgr710126.outbound.protection.outlook.com ([40.107.71.126]:63153
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726497AbeIZQ03 (ORCPT <rfc822;backports@vger.kernel.org>);
-        Wed, 26 Sep 2018 12:26:29 -0400
-Reply-To: chi-hsien.lin@cypress.com
-Subject: Re: [PATCH v2] backports: add strreplace()
-To: Johannes Berg <johannes@sipsolutions.net>,
-        "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc: Winnie Chang <Winnie.Chang@cypress.com>
-References: <1537354267-42104-1-git-send-email-chi-hsien.lin@cypress.com>
- <1537773565.1707.21.camel@sipsolutions.net>
-From: Chi-Hsien Lin <chi-hsien.lin@cypress.com>
-Message-ID: <31ec4cff-7be6-3b45-d163-93901ab8f00e@cypress.com> (sfid-20180926_121418_613904_184D5482)
-Date: Wed, 26 Sep 2018 18:13:53 +0800
-MIME-Version: 1.0
-In-Reply-To: <1537773565.1707.21.camel@sipsolutions.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Received: from mx2.mailbox.org ([80.241.60.215]:40996 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726947AbeIWXoE (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 23 Sep 2018 19:44:04 -0400
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org, john@phrozen.org,
+        Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 10/10] patches: Do not remove linux/kmemleak.h include
+Date: Sun, 23 Sep 2018 19:45:35 +0200
+Message-Id: <20180923174535.16198-11-hauke@hauke-m.de> (sfid-20180923_194552_730396_7022A53B)
+In-Reply-To: <20180923174535.16198-1-hauke@hauke-m.de>
+References: <20180923174535.16198-1-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
+This driver has to include linux/kmemleak.h to get kmemleak_not_leak in
+kernel 4.19. I haven't seen any problem when compiling against multiple
+other kernels, but didn't test all the 3.X versions.
 
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ patches/0085-not-include-kmemleak.patch | 11 -----------
+ 1 file changed, 11 deletions(-)
+ delete mode 100644 patches/0085-not-include-kmemleak.patch
 
-On 09/24/2018 3:19, Johannes Berg wrote:
-> On Wed, 2018-09-19 at 10:51 +0000, Chi-Hsien Lin wrote:
->> From: Winnie Chang <Winnie.Chang@cypress.com>
->>
->> wireless-drivers-next.git commit cb18e2e9ec71 (brcmfmac: fix wrong
->> strnchr usage) used strreplace(), which is not available in kernel prior
->> to v4.2. Before this commit proprgates to linux-stable.git, add
->> strreplace() to avoid gentree failure.
-> 
-> Something's fishy with your email - there's no whitespace in it at all??
-> 
-> Anyway, since it was only a few lines I've fixed it up, but please check
-> what the reason was before/when you send a new patch.
+diff --git a/patches/0085-not-include-kmemleak.patch b/patches/0085-not-include-kmemleak.patch
+deleted file mode 100644
+index d9f051f3..00000000
+--- a/patches/0085-not-include-kmemleak.patch
++++ /dev/null
+@@ -1,11 +0,0 @@
+---- a/drivers/staging/rtl8188eu/hal/rtl8188eu_recv.c
+-+++ b/drivers/staging/rtl8188eu/hal/rtl8188eu_recv.c
+-@@ -5,7 +5,7 @@
+-  *
+-  ******************************************************************************/
+- #define _RTL8188EU_RECV_C_
+--#include <linux/kmemleak.h>
+-+#include <linux/slab.h>
+- #include <osdep_service.h>
+- #include <drv_types.h>
+- #include <recv_osdep.h>
+-- 
+2.11.0
 
-Thanks for catching this. It's identified to be caused by our SMTP 
-server which does extra processing to external mails. I will work with 
-our IT to fix it and make sure it doesn't happen in our future patch 
-submissions.
-
-Regards,
-Chi-hsien Lin
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
