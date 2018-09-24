@@ -1,76 +1,82 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx1.mailbox.org ([80.241.60.212]:38508 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726951AbeIWXoE (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 23 Sep 2018 19:44:04 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org, john@phrozen.org,
-        Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 09/10] backports: Make netdev destructor spatch apply correctly again
-Date: Sun, 23 Sep 2018 19:45:34 +0200
-Message-Id: <20180923174535.16198-10-hauke@hauke-m.de> (sfid-20180923_194552_237545_E7708305)
-In-Reply-To: <20180923174535.16198-1-hauke@hauke-m.de>
-References: <20180923174535.16198-1-hauke@hauke-m.de>
+Received: from paleale.coelho.fi ([176.9.41.70]:52036 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727337AbeIXO6y (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 24 Sep 2018 10:58:54 -0400
+From: Luca Coelho <luca@coelho.fi>
+To: backports@vger.kernel.org
+Cc: hauke@hauke-m.de, Luca Coelho <luciano.coelho@intel.com>
+Date: Mon, 24 Sep 2018 11:57:46 +0300
+Message-Id: <20180924085746.1693-1-luca@coelho.fi> (sfid-20180924_105755_253787_16644D48)
+In-Reply-To: <a33185451dea29e7302f43356cb7709d0fb7bbcd.camel@coelho.fi>
+References: <a33185451dea29e7302f43356cb7709d0fb7bbcd.camel@coelho.fi>
+MIME-Version: 1.0
+Subject: [PATCH v2] backport: add ktime_get_raw_ts64() backport for < 3.19
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-The netdev destructor spatch did not apply to the wil6210 driver any
-more, because there the calls were done in a different order compared to
-the spatch. Add an additional rule which applies when the order is
-changed.
+From: Luca Coelho <luciano.coelho@intel.com>
 
-Fixes: 30a378636e47 ("backports: speed up netdev destructor spatch by two orders of magnitude")
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+The getrawmonotonic64() function that is used by the
+ktime_get_raw_ts64() backport was only introduced in 3.19.  To fix
+compilation with earlier kernels, do the convertion from
+getrawmonotonic() manually if the kernel is < 3.19.
+
+Additionally, add timespec_to_timespec64() that we need for this
+conversion (and which was only introduced in 3.17).
+
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 ---
- patches/0079-netdev-destructor.cocci | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ backport/backport-include/linux/timekeeping.h | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/patches/0079-netdev-destructor.cocci b/patches/0079-netdev-destructor.cocci
-index f2bea35b..8d7228ec 100644
---- a/patches/0079-netdev-destructor.cocci
-+++ b/patches/0079-netdev-destructor.cocci
-@@ -67,6 +67,38 @@ if (<+... RET ...+>) {
- 	...>
+diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
+index aebb00ca366b..718715316a1d 100644
+--- a/backport/backport-include/linux/timekeeping.h
++++ b/backport/backport-include/linux/timekeeping.h
+@@ -55,11 +55,40 @@ static inline void ktime_get_ts64(struct timespec64 *ts)
  }
+ #endif
  
-+@r11@
-+struct net_device *NDEV;
-+identifier D, C;
-+identifier TRUE =~ "true";
-+@@
-+C(...)
++#if LINUX_VERSION_IS_LESS(3,17,0)
++/* This was introduced in 4.15, but we only need it in the
++ * ktime_get_raw_ts64 backport() for < 3.17.
++ */
++#if __BITS_PER_LONG == 64
++static inline struct timespec64 timespec_to_timespec64(const struct timespec ts)
 +{
-+	<+...
-+-	NDEV->priv_destructor = D;
-+-	NDEV->needs_free_netdev = TRUE;
-++	netdev_set_priv_destructor(NDEV, D);
-+	...+>
++	return *(const struct timespec64 *)&ts;
 +}
 +
-+@r12 depends on r11@
-+identifier r11.D, r11.C;
-+fresh identifier E = "__" ## D;
-+@@
-+
-++#if LINUX_VERSION_IS_LESS(4,12,0)
-++static void E(struct net_device *ndev)
-++{
-++	D(ndev);
-++	free_netdev(ndev);
-++}
-++#endif
-++
-+C(...)
++#else
++static inline struct timespec64 timespec_to_timespec64(const struct timespec ts)
 +{
-+	...
-+}
++	struct timespec64 ret;
 +
- @r5@
- struct net_device *NDEV;
- identifier TRUE =~ "true";
++	ret.tv_sec = ts.tv_sec;
++	ret.tv_nsec = ts.tv_nsec;
++	return ret;
++}
++#endif
++#endif /* < 3.17 */
++
+ #if LINUX_VERSION_IS_LESS(4,18,0)
+ #define ktime_get_raw_ts64 LINUX_BACKPORT(ktime_get_raw_ts64)
+ static inline void ktime_get_raw_ts64(struct timespec64 *ts)
+ {
++#if LINUX_VERSION_IS_LESS(3,19,0)
++	struct timespec64 ts64;
++
++	getrawmonotonic(&ts64);
++	*ts = timespec_to_timespec64(ts64);
++#else
+ 	return getrawmonotonic64(ts);
++#endif /* < 3.19 */
+ }
+ #endif
+ 
 -- 
-2.11.0
+2.19.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
