@@ -1,30 +1,34 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.62]:50758 "EHLO
+Received: from s3.sipsolutions.net ([144.76.43.62]:58462 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726467AbeIXCLS (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sun, 23 Sep 2018 22:11:18 -0400
-Message-ID: <1537733544.1707.9.camel@sipsolutions.net> (sfid-20180923_221237_388483_9F6D50B9)
-Subject: Re: [PATCH 05/10] dependencies: Make WIL6210 depend on kernel >= 4.8
+        with ESMTP id S1726417AbeIXOhO (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 24 Sep 2018 10:37:14 -0400
+Message-ID: <1537778165.1707.26.camel@sipsolutions.net> (sfid-20180924_103619_431679_C0B28536)
+Subject: Re: [PATCH 08/10] patches: remove .coredump from struct driver for
+ kernel < 4.16
 From: Johannes Berg <johannes@sipsolutions.net>
 To: Hauke Mehrtens <hauke@hauke-m.de>
 Cc: backports@vger.kernel.org, john@phrozen.org
-Date: Sun, 23 Sep 2018 22:12:24 +0200
-In-Reply-To: <20180923174535.16198-6-hauke@hauke-m.de> (sfid-20180923_194551_041786_E1F84913)
+Date: Mon, 24 Sep 2018 10:36:05 +0200
+In-Reply-To: <20180923174535.16198-9-hauke@hauke-m.de> (sfid-20180923_194553_442604_1A88B709)
 References: <20180923174535.16198-1-hauke@hauke-m.de>
-         <20180923174535.16198-6-hauke@hauke-m.de>
-         (sfid-20180923_194551_041786_E1F84913)
+         <20180923174535.16198-9-hauke@hauke-m.de>
+         (sfid-20180923_194553_442604_1A88B709)
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
 On Sun, 2018-09-23 at 19:45 +0200, Hauke Mehrtens wrote:
-> The WIL6210 driver now uses pci_alloc_irq_vectors() which is only
-> available in kernel >= 4.8, only build this driver against such kernel
-> versions.
+> Kernel 4.16 added a new .coredump member to the driver structure which
+> can be implemented by drivers. Remove this member on older kernel
+> versions as they do not support this feature.
 
->From the description of the function, it seems like it should be pretty
-simple to backport?
+Note that this isn't sufficient.
+
+On 4.16, the return value was int, now it's void. I'll change this patch
+to be for < 4.17, but if somebody wants to submit an spatch to fix up
+the difference that would work too.
 
 johannes
 --
