@@ -1,76 +1,79 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mail-eopbgr720119.outbound.protection.outlook.com ([40.107.72.119]:53040
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728059AbeISQ2l (ORCPT <rfc822;backports@vger.kernel.org>);
-        Wed, 19 Sep 2018 12:28:41 -0400
-From: Chi-Hsien Lin <Chi-Hsien.Lin@cypress.com>
-To: "backports@vger.kernel.org" <backports@vger.kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>
-CC: Winnie Chang <Winnie.Chang@cypress.com>,
-        Winnie Chang <Winnie.Chang@cypress.com>,
-        Chi-Hsien Lin <Chi-Hsien.Lin@cypress.com>
-Subject: [PATCH v2] backports: add strreplace()
-Date: Wed, 19 Sep 2018 10:51:15 +0000
-Message-ID: <1537354267-42104-1-git-send-email-chi-hsien.lin@cypress.com> (sfid-20180919_125122_741789_0CE09797)
-Content-Type: text/plain; charset="iso-8859-1"
+Received: from mx2.mailbox.org ([80.241.60.215]:57804 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726242AbeIZC7q (ORCPT <rfc822;backports@vger.kernel.org>);
+        Tue, 25 Sep 2018 22:59:46 -0400
+Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 8E59A41A6F
+        for <backports@vger.kernel.org>; Tue, 25 Sep 2018 22:50:22 +0200 (CEST)
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id a-fmFapyVbEk for <backports@vger.kernel.org>;
+        Tue, 25 Sep 2018 22:50:21 +0200 (CEST)
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: backports-4.19-rc5-1 released
+Message-ID: <3e70e3c3-ad52-5005-0354-31f25a9a3378@hauke-m.de> (sfid-20180925_225025_615547_5743766B)
+Date: Tue, 25 Sep 2018 22:50:17 +0200
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="jyqshpoeKu209m9EPRRmFhz2oLALcp1e4"
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-From: Winnie Chang <Winnie.Chang@cypress.com>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--jyqshpoeKu209m9EPRRmFhz2oLALcp1e4
+Content-Type: multipart/mixed; boundary="p99ozo6axk1KZL975d1Hi2kmnSRwyFRtA";
+ protected-headers="v1"
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Message-ID: <3e70e3c3-ad52-5005-0354-31f25a9a3378@hauke-m.de>
+Subject: backports-4.19-rc5-1 released
 
-wireless-drivers-next.git commit cb18e2e9ec71 (brcmfmac: fix wrong
-strnchr usage) used strreplace(), which is not available in kernel prior
-to v4.2. Before this commit proprgates to linux-stable.git, add
-strreplace() to avoid gentree failure.
+--p99ozo6axk1KZL975d1Hi2kmnSRwyFRtA
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Winnie Chang <winnie.chang@cypress.com>
-Signed-off-by: Chi-Hsien Lin <chi-hsien.lin@cypress.com>
----
- backport/backport-include/linux/string.h | 4 ++++
- backport/compat/backport-4.2.c           | 9 +++++++++
- 2 files changed, 13 insertions(+)
+backports-4.19-rc5 was released. This is based on Linux 4.19-rc5.
 
-diff --git a/backport/backport-include/linux/string.h b/backport/backport-i=
-nclude/linux/string.h
-index b85d9c73dc27..4b35eb9f2baf 100644
---- a/backport/backport-include/linux/string.h
-+++ b/backport/backport-include/linux/string.h
-@@ -29,4 +29,8 @@ void memzero_explicit(void *s, size_t count);
- ssize_t strscpy(char *dest, const char *src, size_t count);
- #endif
+https://mirrors.edge.kernel.org/pub/linux/kernel/projects/backports/stabl=
+e/v4.19-rc5/backports-4.19-rc5-1.tar.xz
 
-+#if LINUX_VERSION_IS_LESS(4,2,0)
-+char *strreplace(char *s, char old, char new);
-+#endif
-+
- #endif /* __BACKPORT_LINUX_STRING_H */
-diff --git a/backport/compat/backport-4.2.c b/backport/compat/backport-4.2.=
-c
-index e00aa49c7e4a..b275d349f7eb 100644
---- a/backport/compat/backport-4.2.c
-+++ b/backport/compat/backport-4.2.c
-@@ -65,3 +65,12 @@ struct aead_request *crypto_backport_convert(struct aead=
-_request *req)
- return &nreq->subreq;
- }
- EXPORT_SYMBOL_GPL(crypto_backport_convert);
-+
-+char *strreplace(char *s, char old, char new)
-+{
-+for (; *s; ++s)
-+if (*s =3D=3D old)
-+*s =3D new;
-+return s;
-+}
-+EXPORT_SYMBOL_GPL(strreplace);
---
-2.1.0
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
+
+This release should compile on most kernel versions, we still have some
+problems on older kernel versions, probably some configurations will
+also work on older kernel versions, but not everything will work.
+
+Huge thanks for Johannes and Luca for their great work.
+
+Hauke
 
 
-This message and any attachments may contain confidential information from =
-Cypress or its subsidiaries. If it has been received in error, please advis=
-e the sender and immediately delete this message.
+--p99ozo6axk1KZL975d1Hi2kmnSRwyFRtA--
+
+--jyqshpoeKu209m9EPRRmFhz2oLALcp1e4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAluqn4kACgkQ8bdnhZyy
+68c0Swf/cR76E1a3MikCSVBHA/itF849K7REFkyz5lJSAccWbRfvfXumk3OGWzjw
+8iE8OYcvGJAbP0QhJBhZw9zfVv27BPqDQdWuAo1Dmf+KkaFT/JnmorCbxZ6h8YZa
+Pfy07ViGvfhamNKlUJ5LXl/WuQECRPv9pkAAO8XnzAQTByqbu2MnaqimLVihp2gp
+AxQcLOItnpSnO4XeBLjr4l5Z3p8FosVEa3nspxFon6MGelTRwFF3pOXoejjYyHTw
+zEU9MUfz2St2Hb/ebZtVu5H+Ex8MRsw7KNQJhkeqSJipGaTUPSUO7dZDi21j9Nhu
+hXYHeM51JgICmUsyReamH4jTL3aZIw==
+=wYuY
+-----END PGP SIGNATURE-----
+
+--jyqshpoeKu209m9EPRRmFhz2oLALcp1e4--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
