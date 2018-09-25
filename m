@@ -1,35 +1,69 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.62]:36454 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbeIZNFW (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 26 Sep 2018 09:05:22 -0400
-Message-ID: <1537944825.28767.2.camel@sipsolutions.net> (sfid-20180926_085359_874503_CB6FBA13)
-Subject: Re: backports-4.19-rc5-1 released
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-        "backports@vger.kernel.org" <backports@vger.kernel.org>
-Date: Wed, 26 Sep 2018 08:53:45 +0200
-In-Reply-To: <3e70e3c3-ad52-5005-0354-31f25a9a3378@hauke-m.de> (sfid-20180925_225025_615547_5743766B)
-References: <3e70e3c3-ad52-5005-0354-31f25a9a3378@hauke-m.de>
-         (sfid-20180925_225025_615547_5743766B)
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from paleale.coelho.fi ([176.9.41.70]:52384 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726201AbeIYPUG (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 25 Sep 2018 11:20:06 -0400
+From: Luca Coelho <luca@coelho.fi>
+To: backports@vger.kernel.org
+Cc: Luca Coelho <luciano.coelho@intel.com>
+Date: Tue, 25 Sep 2018 12:13:22 +0300
+Message-Id: <20180925091322.17832-1-luca@coelho.fi> (sfid-20180925_111333_944405_D5BC364B)
+MIME-Version: 1.0
+Subject: [PATCH] backports: fix iwlwifi pci device removal patch
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-On Tue, 2018-09-25 at 22:50 +0200, Hauke Mehrtens wrote:
+From: Luca Coelho <luciano.coelho@intel.com>
 
-> This release should compile on most kernel versions, we still have some
-> problems on older kernel versions, probably some configurations will
-> also work on older kernel versions, but not everything will work.
+Accidentally, the patch to remove the device removal code from earlier
+kernels was sent from an intermediate version of the code, so the
+patch doesn't apply properly.  Fix it by updating it to the version
+that was actually upstreamed.
 
-In particular
- * mt76 drivers don't compile on many kernels, due to missing
-   #include <linux/module.h> in some files - fix is going upstream
- * if skcipher is required and enabled (lib80211 wep/tkip), things fail
-   to compile - this affects most kernel versions less than 4.3
-   (if I find a way to test it, I'll remove skcipher from lib80211)
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+---
+ patches/0085-iwlwifi-pci-device-removal.patch | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-johannes
+diff --git a/patches/0085-iwlwifi-pci-device-removal.patch b/patches/0085-iwlwifi-pci-device-removal.patch
+index c72cd09f4634..6e1f1fff2591 100644
+--- a/patches/0085-iwlwifi-pci-device-removal.patch
++++ b/patches/0085-iwlwifi-pci-device-removal.patch
+@@ -1,24 +1,22 @@
+ diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+-index 7229991ae70d..d77d0aa3bf7b 100644
++index cc8c53dc0ab6..68296b65a680 100644
+ --- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+ +++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+-@@ -1946,6 +1946,11 @@ static void iwl_trans_pcie_removal_wk(struct work_struct *wk)
++@@ -1922,6 +1922,9 @@ static void iwl_trans_pcie_removal_wk(struct work_struct *wk)
+  	struct iwl_trans_pcie_removal *removal =
+  		container_of(wk, struct iwl_trans_pcie_removal, work);
+  	struct pci_dev *pdev = removal->pdev;
+ +#if LINUX_VERSION_IS_LESS(3,14,0)
+-+	dev_err(&rescan->pdev->dev,
+-+		"Device disconnected - can't rescan on old kernels.\n");
+-+	pci_dev_put(pdev);
+++	dev_err(&pdev->dev, "Device gone - can't remove on old kernels.\n");
+ +#else
+  	char *prop[] = {"EVENT=INACCESSIBLE", NULL};
+  
+  	dev_err(&pdev->dev, "Device gone - attempting removal\n");
+-@@ -1957,6 +1962,7 @@ static void iwl_trans_pcie_removal_wk(struct work_struct *wk)
++@@ -1930,6 +1933,7 @@ static void iwl_trans_pcie_removal_wk(struct work_struct *wk)
++ 	pci_dev_put(pdev);
++ 	pci_stop_and_remove_bus_device(pdev);
++ 	pci_unlock_rescan_remove();
+++#endif /* LINUX_VERSION_IS_LESS(3,14,0) */
+  
+  	kfree(removal);
+  	module_put(THIS_MODULE);
+-+#endif /* LINUX_VERSION_IS_LESS(3,14,0) */
+- }
+- 
+- static bool iwl_trans_pcie_grab_nic_access(struct iwl_trans *trans,
+-- 
+2.19.0
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
