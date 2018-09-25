@@ -1,90 +1,63 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.mailbox.org ([80.241.60.215]:11942 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726497AbeIXCRY (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 23 Sep 2018 22:17:24 -0400
-Subject: Re: [PATCH 01/10] backports: Remove ssb and bcma
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: backports@vger.kernel.org, john@phrozen.org
-References: <20180923174535.16198-1-hauke@hauke-m.de>
- <20180923174535.16198-2-hauke@hauke-m.de>
- <1537733414.1707.8.camel@sipsolutions.net>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <6ced1780-6f69-9ee3-f81c-6d740b382b49@hauke-m.de> (sfid-20180923_221841_800301_4F504111)
-Date: Sun, 23 Sep 2018 22:18:34 +0200
-MIME-Version: 1.0
-In-Reply-To: <1537733414.1707.8.camel@sipsolutions.net>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="S6lOsjRfxpWWoU323Hcxt1hJ6jQ5cVuqS"
+Received: from s3.sipsolutions.net ([144.76.43.62]:50118 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727165AbeIYTSL (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 25 Sep 2018 15:18:11 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1g4n6u-0005Y9-9a
+        for backports@vger.kernel.org; Tue, 25 Sep 2018 15:10:40 +0200
+Message-ID: <1537881030.3387.12.camel@sipsolutions.net> (sfid-20180925_151043_638811_F7DF4797)
+Subject: backports test automation
+From: Johannes Berg <johannes@sipsolutions.net>
+To: backports@vger.kernel.org
+Date: Tue, 25 Sep 2018 15:10:30 +0200
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---S6lOsjRfxpWWoU323Hcxt1hJ6jQ5cVuqS
-Content-Type: multipart/mixed; boundary="OOKbHmdHFjxkfnmtqeMIst7fZiZibf8yD";
- protected-headers="v1"
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: backports@vger.kernel.org, john@phrozen.org
-Message-ID: <6ced1780-6f69-9ee3-f81c-6d740b382b49@hauke-m.de>
-Subject: Re: [PATCH 01/10] backports: Remove ssb and bcma
-References: <20180923174535.16198-1-hauke@hauke-m.de>
- <20180923174535.16198-2-hauke@hauke-m.de>
- <1537733414.1707.8.camel@sipsolutions.net>
-In-Reply-To: <1537733414.1707.8.camel@sipsolutions.net>
+Hi all,
 
---OOKbHmdHFjxkfnmtqeMIst7fZiZibf8yD
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Yesterday Luca and I thought a bit about test automation ... I haven't
+really come up with the best thing so far, but here's what I'm thinking
+now...
 
-On 09/23/2018 10:10 PM, Johannes Berg wrote:
-> On Sun, 2018-09-23 at 19:45 +0200, Hauke Mehrtens wrote:
->> Use the versions shipped with the kernel instead.
->> bcma and ssb didn't change much in the last few years, most of the
->> changes were related to code only used on embedded devices. Removing
->> this reduces the number of parts we have to backport. b43, b43legacy a=
-nd
->> brcmsmac work well with the in kernel version.
->=20
->>  patches/0051-no-wakeup_path/ssb.patch              | 12 -----------
->>  patches/0069-remove-of_irq/bcma.patch              | 24 -------------=
----------
->>  11 files changed, 23 insertions(+), 80 deletions(-)
->=20
-> Is that really worth it?
->=20
-> johannes
+First of all, I think we're currently stretched enough that we have to
+restrict ourselves to Linux mainline - we don't have resources to worry
+about linux-next, and in particular linux-next could break every day
+anyway due to rebases etc. so things there aren't very clear.
 
-There are sometimes some changes needed because of ssb and bmca, like
-of_dma_configure() getting one additional parameter now. To reduce the
-effort I just want to get rid of this.
-In OpenWrt we take this from the mainline kernel anyway as it is build
-in for some Broadcom SoCs.
-
-Hauke
+Another thing I should say is that I'm trying to avoid having automation
+that manipulates the git tree (even adding tags) since we have no
+permission model for that and kernel.org trees are supposed to be
+controlled by people, afaict.
 
 
---OOKbHmdHFjxkfnmtqeMIst7fZiZibf8yD--
+With that in mind, I think I'd like to have the following:
 
---S6lOsjRfxpWWoU323Hcxt1hJ6jQ5cVuqS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+ * A file in the tree, that indicates the "usable kernel version".
+   Currently, that would be 4.19-rc5. This lets us have *some*
+   resemblance of tracking what we're doing ...
 
------BEGIN PGP SIGNATURE-----
+ * A script that runs every once a while (ok, this is deliberately
+   vague), checking compilation against all linux.git tags that are
+   newer or equal to the one in the file.
+   Typically the nicest thing to do here would be to store the result in
+   git notes, but like I said above, I don't want any automation to have
+   (full) access to the tree, and I don't think kernel.org can split the
+   permissions.
+   Thus, I think this should do two things:
+    - store the results locally, maybe sqlite or so, to avoid doing
+      duplicate work
+    - send out the results to the list, with links to logs (or
+      attached? better for archiving, but could be big though)
 
-iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAlun9RoACgkQ8bdnhZyy
-68fvrAf+JVm93D49mDCBGJdXCeWlTJxD//gd86FnIe8v9uHppKlZrD+QYoX1LtZZ
-M34va4afoYbQkZcrgBmIn78JQ9toCErP5nA8MOTQiFlH7o3Owvpch35f3AZbys5G
-n2mYuPvG0MeW1TZ1FRZW+RUtws7K6LIvWXaXYOBrSFKc6lvJKdUXU+TEi+oC5pBk
-7VbilUIqjrl/6KyWzLl3c0zCvJU56pqtDenUtazQAk5YrWV/cCmiiI5K4Neq8/1f
-kDB5H2hWCRcnwynjbOsggdgaal7BzwbsJ2v9oStRsBmiHijNNa5M0cjDsg6w6ov8
-zOV8F5n1z2baTIfiVik5BASF1NR5MQ==
-=Jwk+
------END PGP SIGNATURE-----
+We were also thinking about having tags, but given the git permissions
+thing we can't create those automatically ... I suppose somebody could
+add them after the emails?
 
---S6lOsjRfxpWWoU323Hcxt1hJ6jQ5cVuqS--
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
