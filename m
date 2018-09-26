@@ -1,46 +1,47 @@
 Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.mailbox.org ([80.241.60.215]:40874 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726339AbeIWXoA (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 23 Sep 2018 19:44:00 -0400
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org, john@phrozen.org,
-        Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 04/10] dependencies: Make RSI_COEX coexistence depend on kernel >= 4.17
-Date: Sun, 23 Sep 2018 19:45:29 +0200
-Message-Id: <20180923174535.16198-5-hauke@hauke-m.de> (sfid-20180923_194549_145993_73713907)
-In-Reply-To: <20180923174535.16198-1-hauke@hauke-m.de>
-References: <20180923174535.16198-1-hauke@hauke-m.de>
+Received: from mail-eopbgr710126.outbound.protection.outlook.com ([40.107.71.126]:63153
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726497AbeIZQ03 (ORCPT <rfc822;backports@vger.kernel.org>);
+        Wed, 26 Sep 2018 12:26:29 -0400
+Reply-To: chi-hsien.lin@cypress.com
+Subject: Re: [PATCH v2] backports: add strreplace()
+To: Johannes Berg <johannes@sipsolutions.net>,
+        "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc: Winnie Chang <Winnie.Chang@cypress.com>
+References: <1537354267-42104-1-git-send-email-chi-hsien.lin@cypress.com>
+ <1537773565.1707.21.camel@sipsolutions.net>
+From: Chi-Hsien Lin <chi-hsien.lin@cypress.com>
+Message-ID: <31ec4cff-7be6-3b45-d163-93901ab8f00e@cypress.com> (sfid-20180926_121418_613904_184D5482)
+Date: Wed, 26 Sep 2018 18:13:53 +0800
+MIME-Version: 1.0
+In-Reply-To: <1537773565.1707.21.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
 
-When RSI_COEX is activated the driver wants to link against the
-rsi_bt_ops symbol from the bluetooth driver btrsi. This driver was only
-added in kernel 4.17. Deactivate bluetooth coexistence support for older
-kernel versions.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- dependencies | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/dependencies b/dependencies
-index 74f8a80f..555f31fb 100644
---- a/dependencies
-+++ b/dependencies
-@@ -53,6 +53,9 @@ USB_NET_RNDIS_WLAN 4.6
- # depends on struct mmc_card::ocr
- RSI_SDIO 3.13
- 
-+# For Coexsitence the BT driver has to export rsi_bt_ops
-+RSI_COEX 4.17
-+
- # depends on devm_led_classdev_register()
- MT76_CORE 4.1
- MT76x2E 4.1
--- 
-2.11.0
+On 09/24/2018 3:19, Johannes Berg wrote:
+> On Wed, 2018-09-19 at 10:51 +0000, Chi-Hsien Lin wrote:
+>> From: Winnie Chang <Winnie.Chang@cypress.com>
+>>
+>> wireless-drivers-next.git commit cb18e2e9ec71 (brcmfmac: fix wrong
+>> strnchr usage) used strreplace(), which is not available in kernel prior
+>> to v4.2. Before this commit proprgates to linux-stable.git, add
+>> strreplace() to avoid gentree failure.
+> 
+> Something's fishy with your email - there's no whitespace in it at all??
+> 
+> Anyway, since it was only a few lines I've fixed it up, but please check
+> what the reason was before/when you send a new patch.
 
+Thanks for catching this. It's identified to be caused by our SMTP 
+server which does extra processing to external mails. I will work with 
+our IT to fix it and make sure it doesn't happen in our future patch 
+submissions.
+
+Regards,
+Chi-hsien Lin
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
