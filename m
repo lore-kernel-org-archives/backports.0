@@ -1,47 +1,48 @@
-Return-path: <omer.efrat@tandemg.com>
-From: Omer Efrat <omer.efrat@tandemg.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>, "backports@vger.kernel.org"
-	<backports@vger.kernel.org>
-CC: "aspriel@gmail.com" <aspriel@gmail.com>, Johannes Berg
-	<johannes@sipsolutions.net>, John Crispin <john@phrozen.org>
-Subject: Re: .coredump spatch
-Date: Tue, 18 Sep 2018 06:28:07 +0000
-Message-ID:
- <VI1PR02MB3631D220BDE0C139F4369F769A1D0@VI1PR02MB3631.eurprd02.prod.outlook.com>
-References: <a1e69bd7-132b-124b-d36c-b9cae361a9ff@hauke-m.de>
-In-Reply-To: <a1e69bd7-132b-124b-d36c-b9cae361a9ff@hauke-m.de>
-Content-Type: text/plain; charset="iso-8859-1"
+Return-path: <backports-owner@vger.kernel.org>
+Received: from paleale.coelho.fi ([176.9.41.70]:54154 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728677AbeJAODZ (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 1 Oct 2018 10:03:25 -0400
+From: Luca Coelho <luca@coelho.fi>
+To: backports@vger.kernel.org
+Cc: Luca Coelho <luciano.coelho@intel.com>
+Date: Mon,  1 Oct 2018 10:26:57 +0300
+Message-Id: <20181001072657.17277-1-luca@coelho.fi> (sfid-20181001_092706_520867_D534459C)
 MIME-Version: 1.0
+Subject: [PATCH] backport: check Ubuntu kernel for u64_stats_update_begin_irqsave()
+Sender: backports-owner@vger.kernel.org
 List-ID: <backports@vger.kernel.org>
-Message-ID: <20180918062807.U3lcjd6WTda1JGhlORXhJxcCk-AVtbMz3z-FwkoCaPg@z>
 
-On Tue, Sep 18, 2018, Hauke Mehrtens wrote:
+From: Luca Coelho <luciano.coelho@intel.com>
 
-> The device structure now has this .coredump member which is also used by
-> some wireless drivers, see here for example:
-> https://git.kernel.org/linus/8e072168f75ebce85b96cbcefea2b10ddbd5913f
->=20
-> I tried to create a spatch for this, but I failed to match the driver
-> member because it is embedded inside an other structure, it looks like
-> this for example:
->=20
-> static struct pci_driver brcmf_pciedrvr =3D {
-> ....
->         .driver.coredump =3D brcmf_dev_coredump,
-> };
->=20
-> I would like to convert this to this:
->=20
-> static struct pci_driver brcmf_pciedrvr =3D {
-> ....
-> #if LINUX_VERSION_IS_GEQ(4,16,0)
->         .driver.coredump =3D brcmf_dev_coredump,
-> #endif
-> };
->=20
-> Hauke
+Ubuntu cherry-picked the patch that added
+u64_stat_update_begin_irqsave() in their 4.15 kernel, so we get a
+redefinition compilation error if we try to compile against that.
 
-I think you should have a look at 0075-ndo-stats-64.cocci for a good refere=
-nce.
+To solve this, check UTS_UBUNTU_RELEASE_ABI and don't define our
+backported function if it's 33 or higher.
 
-Omer.=
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+---
+ backport/backport-include/linux/u64_stats_sync.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/backport/backport-include/linux/u64_stats_sync.h b/backport/backport-include/linux/u64_stats_sync.h
+index 0d2212382db7..251373a74139 100644
+--- a/backport/backport-include/linux/u64_stats_sync.h
++++ b/backport/backport-include/linux/u64_stats_sync.h
+@@ -152,7 +152,8 @@ static inline bool u64_stats_fetch_retry_irq(const struct u64_stats_sync *syncp,
+ #endif /* LINUX_VERSION_IS_LESS(3,13,0) */
+ 
+ #if LINUX_VERSION_IS_LESS(4,16,0) && \
+-    !LINUX_VERSION_IN_RANGE(4,14,44, 4,15,0)
++    !LINUX_VERSION_IN_RANGE(4,14,44, 4,15,0) && \
++    !(LINUX_VERSION_IS_GEQ(4,15,18) && UTS_UBUNTU_RELEASE_ABI >= 33)
+ static inline unsigned long
+ u64_stats_update_begin_irqsave(struct u64_stats_sync *syncp)
+ {
+-- 
+2.19.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe backports" in
