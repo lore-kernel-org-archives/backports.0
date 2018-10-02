@@ -1,183 +1,85 @@
-Return-path: <backports-owner@vger.kernel.org>
-Received: from mx2.mailbox.org ([80.241.60.215]:45728 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726710AbeJAEiy (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 1 Oct 2018 00:38:54 -0400
-Subject: Re: [PATCH] add support for pci_alloc_irq_vectors
-To: Omer Dagan <omer.dagan@tandemg.com>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-References: <AM0PR02MB36506A5694D9DEFB288445F093160@AM0PR02MB3650.eurprd02.prod.outlook.com>
- <c2cb21f7-ff19-db8a-faa6-61ef0804ffd8@hauke-m.de>
- <AM0PR02MB365025326A06C3B60C28036093150@AM0PR02MB3650.eurprd02.prod.outlook.com>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <0757f4e8-027d-5a7e-8403-19ec1c6cd3a5@hauke-m.de> (sfid-20181001_000424_432086_3EF83D27)
-Date: Mon, 1 Oct 2018 00:04:01 +0200
-MIME-Version: 1.0
-In-Reply-To: <AM0PR02MB365025326A06C3B60C28036093150@AM0PR02MB3650.eurprd02.prod.outlook.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="e7r3MnD4Jf1oafkoPtbd8CsPdfpPGOXhn"
+Return-Path: <SRS0=zs2H=MO=vger.kernel.org=backports-owner@kernel.org>
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+	aws-us-west-2-korg-lkml-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
+Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9079C43143
+	for <backports@archiver.kernel.org>; Tue,  2 Oct 2018 17:51:25 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id 7F24E2082A
+	for <backports@archiver.kernel.org>; Tue,  2 Oct 2018 17:51:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F24E2082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=backports-owner@vger.kernel.org
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1726529AbeJCAf5 (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Tue, 2 Oct 2018 20:35:57 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:47542 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726233AbeJCAf5 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 2 Oct 2018 20:35:57 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1g7OpP-0003Fx-DP; Tue, 02 Oct 2018 19:51:23 +0200
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     backports@vger.kernel.org
+Cc:     Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 2/6] backports: fix genlmsg_nlhdr() backport
+Date:   Tue,  2 Oct 2018 19:51:03 +0200
+Message-Id: <20181002175107.16336-2-johannes@sipsolutions.net>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20181002175107.16336-1-johannes@sipsolutions.net>
+References: <20181002175107.16336-1-johannes@sipsolutions.net>
 Sender: backports-owner@vger.kernel.org
-List-ID: <backports@vger.kernel.org>
+Precedence: bulk
+List-ID: <backports.vger.kernel.org>
+X-Mailing-List: backports@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---e7r3MnD4Jf1oafkoPtbd8CsPdfpPGOXhn
-Content-Type: multipart/mixed; boundary="rYUCDV4MRqdcezkdtnVn1Z5uScKJciYpc";
- protected-headers="v1"
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: Omer Dagan <omer.dagan@tandemg.com>, "mcgrof@kernel.org"
- <mcgrof@kernel.org>
-Cc: "backports@vger.kernel.org" <backports@vger.kernel.org>
-Message-ID: <0757f4e8-027d-5a7e-8403-19ec1c6cd3a5@hauke-m.de>
-Subject: Re: [PATCH] add support for pci_alloc_irq_vectors
-References: <AM0PR02MB36506A5694D9DEFB288445F093160@AM0PR02MB3650.eurprd02.prod.outlook.com>
- <c2cb21f7-ff19-db8a-faa6-61ef0804ffd8@hauke-m.de>
- <AM0PR02MB365025326A06C3B60C28036093150@AM0PR02MB3650.eurprd02.prod.outlook.com>
-In-Reply-To: <AM0PR02MB365025326A06C3B60C28036093150@AM0PR02MB3650.eurprd02.prod.outlook.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
---rYUCDV4MRqdcezkdtnVn1Z5uScKJciYpc
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Since 4.15 this no longer takes a family argument, so add that
+to the backports instead of trying to work around the family
+argument having changed type.
 
-Hi Omer,
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/backport-include/net/genetlink.h | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-On 09/26/2018 09:29 AM, Omer Dagan wrote:
-> Hi Hauke=A0
-> I removed the Makefile dependency - you are correct there was no need
-> for that
-> the whitespace issue was not intentional -=A0corrected in this=A0patch =
+diff --git a/backport/backport-include/net/genetlink.h b/backport/backport-include/net/genetlink.h
+index dfbacbf40723..d80d979ac423 100644
+--- a/backport/backport-include/net/genetlink.h
++++ b/backport/backport-include/net/genetlink.h
+@@ -60,6 +60,14 @@ static inline void *genl_info_userhdr(struct genl_info *info)
+ #endif
+ 
+ #if LINUX_VERSION_IS_LESS(4,15,0)
++#define genlmsg_nlhdr LINUX_BACKPORT(genlmsg_nlhdr)
++static inline struct nlmsghdr *genlmsg_nlhdr(void *user_hdr)
++{
++	return (struct nlmsghdr *)((char *)user_hdr -
++				   GENL_HDRLEN -
++				   NLMSG_HDRLEN);
++}
++
+ #ifndef genl_dump_check_consistent
+ static inline
+ void backport_genl_dump_check_consistent(struct netlink_callback *cb,
+@@ -153,8 +161,6 @@ extern void genl_notify(struct sk_buff *skb, struct net *net, u32 pid,
+ 		    (_fam)->mcgrps[_group].id, _info->nlhdr, _flags)
+ #define genlmsg_put(_skb, _pid, _seq, _fam, _flags, _cmd)		\
+ 	genlmsg_put(_skb, _pid, _seq, &(_fam)->family, _flags, _cmd)
+-#define genlmsg_nlhdr(_hdr, _fam)					\
+-	genlmsg_nlhdr(_hdr, &(_fam)->family)
+ 
+ #ifndef genlmsg_put_reply /* might already be there from _info override above */
+ #define genlmsg_put_reply(_skb, _info, _fam, _flags, _cmd)		\
+-- 
+2.14.4
 
-
-You should use whitespace to do some indention. I do not know if you
-missed then or if your mail program removed them. I would suggest to
-send the patches with "git send-email".
-
-It also looks like your mail is blocked by the mailling list, probably
-because it uses html mail.
-
-
-Hauke
-
->=20
-> from: Omer Dagan <omer.dagan@tandemg.com>
-> Date: Sun, 16 Sep 2018 17:25:11 +0300
-> Subject: [PATCH] add support for pci_alloc_irq_vectors
->=20
-> =A0 =A0 add support for function in kernels under 4.8
-> =A0 =A0 function is a wrapper around 'pci_enable_msi_block' or
-> =A0 =A0 'pci_enable_msi_range' depending on the kernel version
-> =A0 =A0 the min\max number of interrupts was overridden to always use t=
-he
-> =A0 =A0 max number of interrupts which seems correct since it was not
-> =A0 =A0 supported in the old APIs
->=20
-> Signed-off-by: Omer Dagan <omer.dagan@tandemg.com>
-> ---
-> =A0backport/backport-include/linux/pci.h | 19 +++++++++++++++++++
-> =A0backport/compat/backport-4.8.c=A0 =A0 =A0 =A0 | 25 +++++++++++++++++=
-++++++++
-> =A02 files changed, 44 insertions(+)
->=20
-> diff --git a/backport/backport-include/linux/pci.h
-> b/backport/backport-include/linux/pci.h
-> index 67ac40fc..531f5a47 100644
-> --- a/backport/backport-include/linux/pci.h
-> +++ b/backport/backport-include/linux/pci.h
-> @@ -134,6 +134,25 @@ static inline int pci_vfs_assigned(struct pci_dev =
-*dev)
-> =A0
-> =A0#endif /* LINUX_VERSION_IS_LESS(3,10,0) */
-> =A0
-> +#if LINUX_VERSION_IS_LESS(4,8,0)
-> +#define pci_alloc_irq_vectors LINUX_BACKPORT(pci_alloc_irq_vectors)
-> +#ifdef CONFIG_PCI_MSI
-> +int pci_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
-> +unsigned int max_vecs, unsigned int flags);
-> +#else
-> +static inline int pci_alloc_irq_vectors(struct pci_dev *dev, unsigned
-> int min_vecs,
-> +unsigned int max_vecs, unsigned int flags)
-> +{ return -ENOSYS; }
-> +#endif
-> +#endif
-> +
-> +#if LINUX_VERSION_IS_LESS(4,8,0)
-> +#define pci_free_irq_vectors LINUX_BACKPORT(pci_free_irq_vectors)
-> +static inline void pci_free_irq_vectors(struct pci_dev *dev)
-> +{
-> +}
-> +#endif
-> +
-> =A0#if LINUX_VERSION_IS_LESS(3,14,0)
-> =A0#define pci_enable_msi_range LINUX_BACKPORT(pci_enable_msi_range)
-> =A0#ifdef CONFIG_PCI_MSI
-> diff --git a/backport/compat/backport-4.8.c b/backport/compat/backport-=
-4.8.c
-> index 7d056444..706bd067 100644
-> --- a/backport/compat/backport-4.8.c
-> +++ b/backport/compat/backport-4.8.c
-> @@ -9,6 +9,7 @@
-> =A0 */
-> =A0#include <linux/usb.h>
-> =A0#include <linux/usb/cdc.h>
-> +#include <linux/pci.h>
-> =A0
-> =A0int cdc_parse_cdc_header(struct usb_cdc_parsed_header *hdr,
-> =A0struct usb_interface *intf,
-> @@ -144,3 +145,27 @@ next_desc:
-> =A0return cnt;
-> =A0}
-> =A0EXPORT_SYMBOL_GPL(cdc_parse_cdc_header);
-> +
-> +#if LINUX_VERSION_IS_LESS(4,8,0)
-> +int pci_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
-> +unsigned int max_vecs, unsigned int flags)
-> +{
-> +int res;
-> +int msi_nvect =3D max_vecs;
-> +
-> +if (max_vecs < min_vecs)
-> +return -ERANGE;
-> +
-> +#if LINUX_VERSION_IS_LESS(3,15,0)
-> +res =3D pci_enable_msi_block(dev, msi_nvect);
-> +if (res =3D=3D 0) {
-> +return msi_nvect;
-> +}
-> +#else
-> +res =3D pci_enable_msi_range(dev, msi_nvect, msi_nvect);
-> +return msi_nvect;
-> +#endif /*LINUX_VERSION_IS_LESS(3,15,0)*/
-> +return -ENOSPC;
-> +}
-> +EXPORT_SYMBOL(pci_alloc_irq_vectors);
-> +#endif /*LINUX_VERSION_IS_LESS(4,8,0)*/
-> --=A0
-
-
-
-
---rYUCDV4MRqdcezkdtnVn1Z5uScKJciYpc--
-
---e7r3MnD4Jf1oafkoPtbd8CsPdfpPGOXhn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAluxSFIACgkQ8bdnhZyy
-68eUjgf/a058XF+gTkVCwAalDEtX2C8DPW4IuA6YMeHz5cfZQV4Kx8msPc3511S2
-FFTxgeu7kFTLHVCWzVG6umXBwr4/YPUEsAVMWzgXc6PyHZusQAIbJP0+eu+883vK
-dQMdxZkIVn1CkaGcBr2aO2cTLfhbqanNPddrQZxYiDvyK2XwHA95maexORkIuvJl
-5+JpDgCdCjSzBQ2n6unUa+vi8YF1F9ETRcHe94rQ9YP7TLVhuXL/Nc4MWFv08HNF
-hBzL9VP9QnvayFTevJsf2iv4buiy00PBnDMVokza/VMyMJDeG88byPcqZRacWyYR
-bvRkmCpJ0Dr0t9R1pvPniwvKovojkQ==
-=mk6K
------END PGP SIGNATURE-----
-
---e7r3MnD4Jf1oafkoPtbd8CsPdfpPGOXhn--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
