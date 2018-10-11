@@ -1,185 +1,210 @@
-Return-Path: <SRS0=TTIH=MP=vger.kernel.org=backports-owner@kernel.org>
+Return-Path: <SRS0=/rDn=MX=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1168AC00449
-	for <backports@archiver.kernel.org>; Wed,  3 Oct 2018 09:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E158AC677FC
+	for <backports@archiver.kernel.org>; Thu, 11 Oct 2018 20:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CE9120684
-	for <backports@archiver.kernel.org>; Wed,  3 Oct 2018 09:18:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=tandemg.com header.i=@tandemg.com header.b="yC2uPK5H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CE9120684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tandemg.com
+	by mail.kernel.org (Postfix) with ESMTP id 91B9620652
+	for <backports@archiver.kernel.org>; Thu, 11 Oct 2018 20:57:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91B9620652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=bugzilla.kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=backports-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbeJCQFs (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Wed, 3 Oct 2018 12:05:48 -0400
-Received: from mail-eopbgr00105.outbound.protection.outlook.com ([40.107.0.105]:29216
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727188AbeJCQFs (ORCPT <rfc822;backports@vger.kernel.org>);
-        Wed, 3 Oct 2018 12:05:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tandemg.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9m8qrNvkNlH2RCm3Tx/hMSXFTG4altrUA3XjLH0jr7w=;
- b=yC2uPK5H2NSu4IQZM8Z2u0qgVVinYMMnzAxCEXiEvZCFlQhVs53qwj+KGF5Vzn6W6tEQRzYLGMp+mRpKyt8p6xXQDblAVGSU5l8mE/QgBtteinnqkj6RWuayAuLKRpPwY2PfyuxBqxMGlIpmu+88laOygMfnmxEjOmyyHGsjfdM=
-Received: from AM0PR02MB3650.eurprd02.prod.outlook.com (52.133.63.27) by
- AM0PR02MB3649.eurprd02.prod.outlook.com (52.133.63.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.18; Wed, 3 Oct 2018 09:18:09 +0000
-Received: from AM0PR02MB3650.eurprd02.prod.outlook.com
- ([fe80::e0b5:1e22:6b63:e7fc]) by AM0PR02MB3650.eurprd02.prod.outlook.com
- ([fe80::e0b5:1e22:6b63:e7fc%4]) with mapi id 15.20.1207.018; Wed, 3 Oct 2018
- 09:18:09 +0000
-From:   Omer Dagan <omer.dagan@tandemg.com>
-To:     "hauke@hauke-m.de" <hauke@hauke-m.de>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>
-CC:     "backports@vger.kernel.org" <backports@vger.kernel.org>,
-        Omer Dagan <omer.dagan@tandemg.com>
-Subject: [PATCH] add support for pci_alloc_irq_vectors
-Thread-Topic: [PATCH] add support for pci_alloc_irq_vectors
-Thread-Index: AQHUWvoA56ildz6zPE66wqD7bP+nNQ==
-Date:   Wed, 3 Oct 2018 09:18:09 +0000
-Message-ID: <20181003091746.28511-1-omer.dagan@tandemg.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5PR0701CA0016.eurprd07.prod.outlook.com
- (2603:10a6:203:51::26) To AM0PR02MB3650.eurprd02.prod.outlook.com
- (2603:10a6:208:3f::27)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=omer.dagan@tandemg.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [37.142.120.98]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR02MB3649;6:5liiR+yBopG/ei3mU5/tkYYlzsq9rCGBnBbQUJBUdrdLX4q09VupIpmWrPmfyXrlEium3dlirmriOOBk3iP9tFAOWt6MNIMz0PI2Zz3FFzNOAjAki4wyvlitbczAVTnHF/Lf9rmCZJsEq9ZRL/Yt2XjsDJZipso4v1HDIZpWz+1ZtEwS7jsUBGfMU4f1unFWU7qVyzuPtWQNXpNN/N8aY5PSccX8GZWFsvl0uuD+f5+lnvyaPV3xxBl24NEogmyp5mHG5NE8jJRaIIsJ+eZmz2xPjhKUq2/0+JAcS5uYQlGSAOqQ3F4lG8yc9dn3y308sV+t7dpOvKyLHQUtthAwH+d7oZJDpivW3OVMyrQNTEP5C8aXvLINw61L2resQiX4t82GdyMpNtRr4O54VOj8skedDRSE3krKhqQCzPUZRVXhLp/0LJpZqeUN1BUXdU8gLjTliMO2AeF0hsdl4Hd49A==;5:GQbvphsp7l+QouW9Xk01iTEGazj/utrT5mkBIc7kFGnWudSQXVgbqncGFdQQKIFR6aIdHrwk1LRUb28naF/HRcH9XnL87LL1b2CqvqkdBlogOmsCb129ZEIy9IVDQOmrzKuiq9aeV4uLfpt5FHAPsROI9EOzm9/PoyfKRsx5wkw=;7:+0UFOF67XZtaNL251sAxMxADQ+P3f3KbhQRXKPdZYS7jsLPrECXhzweLnph4QzlJqndsuR/iNg3BKMbUBUipSFUVi48YoDBtlL1N0x22zvkz//EuNC4krRmPT9VmwetcEOS6VKWpm40PBJ8UstwuUcnm7Z6WNPUqFOU7y3oP8qfBJ/WKLa1jSrcTABsdL9i8lCdfv5mRxIMfGX4MHly/w3jICBfGsoOCvTkGyWwkJQaYRmAOUU+ad1oXVzt1rLsB
-x-ms-office365-filtering-correlation-id: 7a51698d-9d6d-4804-e3ae-08d6291122a0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:AM0PR02MB3649;
-x-ms-traffictypediagnostic: AM0PR02MB3649:
-x-microsoft-antispam-prvs: <AM0PR02MB3649AD69B16439FE8F9A15A893E90@AM0PR02MB3649.eurprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123564045)(2016111802025)(20161123558120)(6043046)(201708071742011)(7699051);SRVR:AM0PR02MB3649;BCL:0;PCL:0;RULEID:;SRVR:AM0PR02MB3649;
-x-forefront-prvs: 0814A2C7A3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(39840400004)(366004)(136003)(189003)(199004)(107886003)(5660300001)(6436002)(6486002)(3846002)(53936002)(86362001)(66066001)(1076002)(25786009)(102836004)(68736007)(105586002)(6512007)(4326008)(6116002)(106356001)(6506007)(36756003)(7736002)(97736004)(2501003)(305945005)(5250100002)(99286004)(71200400001)(71190400001)(81156014)(8936002)(110136005)(316002)(2906002)(52116002)(8676002)(54906003)(386003)(2900100001)(81166006)(14454004)(486006)(26005)(1857600001)(476003)(186003)(2616005)(508600001)(256004)(44832011);DIR:OUT;SFP:1102;SCL:1;SRVR:AM0PR02MB3649;H:AM0PR02MB3650.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: tandemg.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: iUBQ8UdrA3MqbItF9bWb2glJ30po5TYxkogMmseIfSFWTj/+tJCzncDh8Ntt106aQEPbyaqvPiDI8L46YjsmF92wI6AX2DDi6uwyfofkhK7DlZPYSWcjAmF3WBZiw8Q8wmgcxbR4Jo7HtcbKmda6O0s2SZG5NdbA1zpSo/REIHcsJ58euxQzGpHOvNF4oFcapSSrPvI2y8TT9+EGlTTyO+FgTE0GY4Zr2YYVcFSgiyi4yiGijlz5QgwN5EgakzbBmvSw2aepZu+bvLVH6PLnvAZDddd2aqfOVezpJSu6ZkD3MM/24xzRGys7v5Kk8RCEzIXtQDJHuZB8Rkmg/nV1RCgRpR7o8Omh68EZAbRVKcg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1725902AbeJLE0w convert rfc822-to-8bit (ORCPT
+        <rfc822;backports@archiver.kernel.org>);
+        Fri, 12 Oct 2018 00:26:52 -0400
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98]:40360 "EHLO
+        mail.wl.linuxfoundation.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725819AbeJLE0w (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 12 Oct 2018 00:26:52 -0400
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+        by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 2ADE92B25B
+        for <backports@vger.kernel.org>; Thu, 11 Oct 2018 20:57:52 +0000 (UTC)
+Received: by mail.wl.linuxfoundation.org (Postfix, from userid 486)
+        id 1C89C2C14E; Thu, 11 Oct 2018 20:57:52 +0000 (UTC)
+From:   bugzilla-daemon@bugzilla.kernel.org
+To:     backports@vger.kernel.org
+Subject: [Bug 201383] New: Intel AC9260 wifi does not get DHCP IP - SuSE 15
+ kernel 4.12.14-25.16-default
+Date:   Thu, 11 Oct 2018 20:57:52 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: Backports project
+X-Bugzilla-Component: Backports
+X-Bugzilla-Version: unspecified
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: high
+X-Bugzilla-Who: pradhan@hpe.com
+X-Bugzilla-Status: NEW
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: P1
+X-Bugzilla-Assigned-To: backports@vger.kernel.org
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version
+ cf_kernel_version rep_platform op_sys cf_tree bug_status bug_severity
+ priority component assigned_to reporter cf_regression
+Message-ID: <bug-201383-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Bugzilla-URL: https://bugzilla.kernel.org/
+Auto-Submitted: auto-generated
 MIME-Version: 1.0
-X-OriginatorOrg: tandemg.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a51698d-9d6d-4804-e3ae-08d6291122a0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2018 09:18:09.5718
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d690b55a-f04a-454b-9f62-fb1e25467a25
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR02MB3649
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-From: Omer Dagan <omer.dagan@tandemg.com>
+https://bugzilla.kernel.org/show_bug.cgi?id=201383
 
-    add support for function in kernels under 4.8
-    function is a wrapper around 'pci_enable_msi_block' or
-    'pci_enable_msi_range' depending on the kernel version
-    the min\max number of interrupts was overridden to always use the
-    max number of interrupts which seems correct since it was not
-    supported in the old APIs
+            Bug ID: 201383
+           Summary: Intel AC9260 wifi does not get DHCP IP - SuSE 15
+                    kernel 4.12.14-25.16-default
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: 4.12.14-25.16-default
+          Hardware: Intel
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: high
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: pradhan@hpe.com
+        Regression: No
 
-Signed-off-by: Omer Dagan <omer.dagan@tandemg.com>
----
- backport/backport-include/linux/pci.h | 19 +++++++++++++++++++
- backport/compat/backport-4.8.c        | 25 +++++++++++++++++++++++++
- 2 files changed, 44 insertions(+)
+4.12.14-25.16-default #1 SMP Thu Aug 23 10:02:38 UTC 2018 (a5893c4) x86_64
+x86_64 x86_64 GNU/Linux
 
-diff --git a/backport/backport-include/linux/pci.h b/backport/backport-incl=
-ude/linux/pci.h
-index 67ac40fc..531f5a47 100644
---- a/backport/backport-include/linux/pci.h
-+++ b/backport/backport-include/linux/pci.h
-@@ -134,6 +134,25 @@ static inline int pci_vfs_assigned(struct pci_dev *dev=
-)
-=20
- #endif /* LINUX_VERSION_IS_LESS(3,10,0) */
-=20
-+#if LINUX_VERSION_IS_LESS(4,8,0)
-+#define pci_alloc_irq_vectors LINUX_BACKPORT(pci_alloc_irq_vectors)
-+#ifdef CONFIG_PCI_MSI
-+int pci_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
-+		unsigned int max_vecs, unsigned int flags);
-+#else
-+static inline int pci_alloc_irq_vectors(struct pci_dev *dev, unsigned int =
-min_vecs,
-+		unsigned int max_vecs, unsigned int flags)
-+{ return -ENOSYS; }
-+#endif
-+#endif
-+
-+#if LINUX_VERSION_IS_LESS(4,8,0)
-+#define pci_free_irq_vectors LINUX_BACKPORT(pci_free_irq_vectors)
-+static inline void pci_free_irq_vectors(struct pci_dev *dev)
-+{
-+}
-+#endif
-+
- #if LINUX_VERSION_IS_LESS(3,14,0)
- #define pci_enable_msi_range LINUX_BACKPORT(pci_enable_msi_range)
- #ifdef CONFIG_PCI_MSI
-diff --git a/backport/compat/backport-4.8.c b/backport/compat/backport-4.8.=
-c
-index 7d056444..706bd067 100644
---- a/backport/compat/backport-4.8.c
-+++ b/backport/compat/backport-4.8.c
-@@ -9,6 +9,7 @@
-  */
- #include <linux/usb.h>
- #include <linux/usb/cdc.h>
-+#include <linux/pci.h>
-=20
- int cdc_parse_cdc_header(struct usb_cdc_parsed_header *hdr,
- 			 struct usb_interface *intf,
-@@ -144,3 +145,27 @@ next_desc:
- 	return cnt;
- }
- EXPORT_SYMBOL_GPL(cdc_parse_cdc_header);
-+
-+#if LINUX_VERSION_IS_LESS(4,8,0)
-+int pci_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
-+		unsigned int max_vecs, unsigned int flags)
-+{
-+	int res;
-+	int msi_nvect =3D max_vecs;
-+
-+	if (max_vecs < min_vecs)
-+		return -ERANGE;
-+
-+#if LINUX_VERSION_IS_LESS(3,15,0)
-+	res =3D pci_enable_msi_block(dev, msi_nvect);
-+	if (res =3D=3D 0) {
-+		return msi_nvect;
-+	}
-+#else
-+	res =3D pci_enable_msi_range(dev, msi_nvect, msi_nvect);
-+	return msi_nvect;
-+#endif /*LINUX_VERSION_IS_LESS(3,15,0)*/
-+	return -ENOSPC;
-+}
-+EXPORT_SYMBOL(pci_alloc_irq_vectors);
-+#endif /*LINUX_VERSION_IS_LESS(4,8,0)*/
---=20
-2.17.1
 
---
+Followed the below steps to configure, however not receiving IPv4 IP address
+from the router. Please suggest.
+
+Steps:
+=====
+•       Installed iw and wpa_supplicant packages.
+•       Verified the presence of the card
+sles15sp0:linux_test>dmesg | grep 9260
+[   74.125592] iwlwifi 0000:06:00.0: Detected Intel(R) Dual Band Wireless AC
+9260, REV=0x324
+•       Verified SLES image rev
+sles15sp0:linux_test>uname -a
+Linux sles15sp0 4.12.14-25.16-default #1 SMP Thu Aug 23 10:02:38 UTC 2018
+(a5893c4) x86_64 x86_64 x86_64 GNU/Linux
+You have new mail in /var/mail/root
+sles15sp0:linux_test>
+•       Looked for the wireless interface in the system and brought it up
+sles15sp0:linux_test>iw dev
+phy#0
+        Interface wlan0
+                ifindex 6
+                wdev 0x1
+                addr 94:b8:6d:87:4b:1e
+                type managed
+You have new mail in /var/mail/root
+sles15sp0:linux_test>ip link show wlan0
+6: wlan0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT
+group default qlen 1000
+    link/ether 94:b8:6d:87:4b:1e brd ff:ff:ff:ff:ff:ff
+
+sles15sp0:linux_test>ip link set wlan0 up
+
+sles15sp0:linux_test>ip link show wlan0
+
+6: wlan0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc mq state DOWN mode
+DEFAULT group default qlen 1000
+    link/ether 94:b8:6d:87:4b:1e brd ff:ff:ff:ff:ff:ff
+sles15sp0:linux_test>iw wlan0 link
+Not connected.
+
+•       Scanned for available wifi access points and verified that security
+type = PSK
+sles15sp0:linux_test>iw wlan0 scan | fgrep -i ssid
+        SSID: NETGEAR48-5G-2
+        SSID: NETGEAR48
+        SSID: Verizon-MiFi5510L-EFC7
+        SSID: NETGEAR48-5G-1
+sles15sp0:linux_test>iw wlan0 scan | fgrep -i Authentication
+                 * Authentication suites: PSK
+                 * Authentication suites: PSK
+                 * Authentication suites: PSK
+                 * Authentication suites: PSK
+
+•       Created a WPA configuration file
+
+sles15sp0:linux_test>wpa_passphrase NETGEAR48 smoothgiant416 > wpa.conf
+sles15sp0:linux_test>cat wpa.conf
+network={
+        ssid="NETGEAR48"
+        #psk="smoothgiant416"
+        psk=61d3dc46d102862ce4077862bc2f04d060b4b882deff43bbe4b10d8a4a041138
+}
+
+•       Looked up the drivers present in the system and ran wpa_supplicant
+sles15sp0:linux_test>lsmod | grep -e Used -e iwl
+Module                  Size  Used by
+iwlmvm                425984  0
+mac80211              888832  1 iwlmvm
+iwlwifi               258048  1 iwlmvm
+cfg80211              696320  3 iwlmvm,iwlwifi,mac80211
+You have new mail in /var/mail/root
+
+sles15sp0:linux_test>wpa_supplicant -B -Dcfg80211 -iwlan0 -c ./wpa.conf
+Successfully initialized wpa_supplicant
+wlan0: Unsupported driver 'cfg80211'
+
+sles15sp0:linux_test>wpa_supplicant -B -Dwext -iwlan0 -c /tmp/wpa.conf
+Successfully initialized wpa_supplicant
+
+•       Checking if the association between Wifi AP ( our lab router ) and
+wlan0 (wifi interface) is in place.
+
+sles15sp0:linux_test>iw dev wlan0 link
+Connected to cc:40:d0:83:49:c1 (on wlan0)
+        SSID: NETGEAR48
+        freq: 2412
+        RX: 2927 bytes (49 packets)
+        TX: 1941 bytes (20 packets)
+        signal: -62 dBm
+        tx bitrate: 14.4 MBit/s MCS 8 short GI
+
+        bss flags:      CTS-protection short-preamble short-slot-time
+        dtim period:    2
+        beacon int:     200
+You have new mail in /var/mail/root
+
+sles15sp0:linux_test>iw dev wlan0 info
+Interface wlan0
+        ifindex 6
+        wdev 0x1
+        addr 94:b8:6d:87:4b:1e
+        ssid NETGEAR48
+        type managed
+        wiphy 0
+        channel 1 (2412 MHz), width: 20 MHz, center1: 2412 MHz
+sles15sp0:linux_test>
+
+•       Try to obtain a DHCP IP from router.
+•       This is where the problem lies, even if we are associated with the
+access point we are not getting an IP(IPV4)  back from router
+sles15sp0:linux_test>dhclient wlan0
+You have new mail in /var/mail/root
+
+sles15sp0:linux_test>ip addr show wlan0
+6: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group
+default qlen 1000
+    link/ether 94:b8:6d:87:4b:1e brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::96b8:6dff:fe87:4b1e/64 scope link
+       valid_lft forever preferred_lft forever
+sles15sp0:linux_test>
+
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.--
 To unsubscribe from this list: send the line "unsubscribe backports" in
