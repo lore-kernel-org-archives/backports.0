@@ -2,40 +2,40 @@ Return-Path: <SRS0=7Ax0=OL=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UPPERCASE_75_100,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3538C65BB0
-	for <backports@archiver.kernel.org>; Sun,  2 Dec 2018 11:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4920CC65BAE
+	for <backports@archiver.kernel.org>; Sun,  2 Dec 2018 11:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F49A20834
-	for <backports@archiver.kernel.org>; Sun,  2 Dec 2018 11:52:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F49A20834
+	by mail.kernel.org (Postfix) with ESMTP id 0FAD420834
+	for <backports@archiver.kernel.org>; Sun,  2 Dec 2018 11:52:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FAD420834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=backports-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725823AbeLBLxA (ORCPT <rfc822;backports@archiver.kernel.org>);
+        id S1725812AbeLBLxA (ORCPT <rfc822;backports@archiver.kernel.org>);
         Sun, 2 Dec 2018 06:53:00 -0500
-Received: from mx1.mailbox.org ([80.241.60.212]:50480 "EHLO mx1.mailbox.org"
+Received: from mx2.mailbox.org ([80.241.60.215]:41254 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725838AbeLBLw7 (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 2 Dec 2018 06:52:59 -0500
+        id S1725837AbeLBLxA (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 2 Dec 2018 06:53:00 -0500
 Received: from smtp1.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:1:0])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 91E3242921;
-        Sun,  2 Dec 2018 12:52:56 +0100 (CET)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 26DA3A115B;
+        Sun,  2 Dec 2018 12:52:57 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp1.mailbox.org ([80.241.60.240])
         by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
-        with ESMTP id ekHOmUiBNbOm; Sun,  2 Dec 2018 12:52:50 +0100 (CET)
+        with ESMTP id iCuatGLVzHR5; Sun,  2 Dec 2018 12:52:55 +0100 (CET)
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 To:     johannes@sipsolutions.net
 Cc:     backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 01/12] backports: Refresh patches on kernel 4.20-rc4
-Date:   Sun,  2 Dec 2018 12:52:15 +0100
-Message-Id: <20181202115226.3594-2-hauke@hauke-m.de>
+Subject: [PATCH 11/12] backports: Remove unused default configurations
+Date:   Sun,  2 Dec 2018 12:52:25 +0100
+Message-Id: <20181202115226.3594-12-hauke@hauke-m.de>
 In-Reply-To: <20181202115226.3594-1-hauke@hauke-m.de>
 References: <20181202115226.3594-1-hauke@hauke-m.de>
 Sender: backports-owner@vger.kernel.org
@@ -43,338 +43,538 @@ Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-This patch was merged upstream and removed from backports:
- * patches/0090-use-skb_pad.patch
-
-This patch was manually modified:
- * patches/0025-usb-sg/usbnet.patch
+The alx, igb and the media driver were removed some time ago, also
+remove the default configurations.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- patches/0002-disable-dump-adjust-on-old-kernels.patch         |  4 ++--
- patches/0003-cfg80211-wext-padding/include_net_cfg80211.patch |  2 +-
- .../0010-add-wext-handlers-to-netdev/net_wireless_core.patch  |  2 +-
- patches/0014-netlink_seq/net_wireless_nl80211.patch           |  2 +-
- .../drivers_net_wireless_libertas_if_usb.patch                |  4 ++--
- .../drivers_net_wireless_iwlwifi_iwl-debug.patch              |  6 +++---
- patches/0021-umode_t-api-change/ath9k.patch                   |  2 +-
- patches/0024-led-blink-api/mac80211.patch                     |  2 +-
- patches/0025-usb-sg/usbnet.patch                              |  4 ++--
- patches/0053-possible_net_t.patch                             |  2 +-
- patches/0055-name_assign_type/brcmfmac.patch                  |  2 +-
- patches/0069-iwlwifi-pd-string-fix.patch                      |  8 ++++----
- patches/0070-mac80211-fils.patch                              |  2 +-
- patches/0071-skb-head_frag/wireless.patch                     |  2 +-
- patches/0077-genl-ro-after-init/hwsim.patch                   |  2 +-
- patches/0077-genl-ro-after-init/nl80211.patch                 |  2 +-
- patches/0085-iwlwifi-pci-device-removal.patch                 |  4 ++--
- patches/0090-use-skb_pad.patch                                | 11 -----------
- 18 files changed, 26 insertions(+), 37 deletions(-)
- delete mode 100644 patches/0090-use-skb_pad.patch
+ backport/defconfigs/alx   |   1 -
+ backport/defconfigs/igb   |   2 -
+ backport/defconfigs/media | 498 ----------------------------------------------
+ 3 files changed, 501 deletions(-)
+ delete mode 100644 backport/defconfigs/alx
+ delete mode 100644 backport/defconfigs/igb
+ delete mode 100644 backport/defconfigs/media
 
-diff --git a/patches/0002-disable-dump-adjust-on-old-kernels.patch b/patches/0002-disable-dump-adjust-on-old-kernels.patch
-index be1d9720..fa379bfe 100644
---- a/patches/0002-disable-dump-adjust-on-old-kernels.patch
-+++ b/patches/0002-disable-dump-adjust-on-old-kernels.patch
-@@ -28,7 +28,7 @@ Date:   Fri Mar 1 14:03:49 2013 +0100
- 
- --- a/net/wireless/nl80211.c
- +++ b/net/wireless/nl80211.c
--@@ -2174,6 +2174,7 @@ static int nl80211_dump_wiphy(struct sk_
-+@@ -2204,6 +2204,7 @@ static int nl80211_dump_wiphy(struct sk_
-  						 cb->nlh->nlmsg_seq,
-  						 NLM_F_MULTI, state);
-  			if (ret < 0) {
-@@ -36,7 +36,7 @@ Date:   Fri Mar 1 14:03:49 2013 +0100
-  				/*
-  				 * If sending the wiphy data didn't fit (ENOBUFS
-  				 * or EMSGSIZE returned), this SKB is still
--@@ -2195,6 +2196,7 @@ static int nl80211_dump_wiphy(struct sk_
-+@@ -2225,6 +2226,7 @@ static int nl80211_dump_wiphy(struct sk_
-  					rtnl_unlock();
-  					return 1;
-  				}
-diff --git a/patches/0003-cfg80211-wext-padding/include_net_cfg80211.patch b/patches/0003-cfg80211-wext-padding/include_net_cfg80211.patch
-index f8159596..12f607d1 100644
---- a/patches/0003-cfg80211-wext-padding/include_net_cfg80211.patch
-+++ b/patches/0003-cfg80211-wext-padding/include_net_cfg80211.patch
-@@ -1,6 +1,6 @@
- --- a/include/net/cfg80211.h
- +++ b/include/net/cfg80211.h
--@@ -3971,6 +3971,9 @@ struct wiphy_iftype_ext_capab {
-+@@ -4031,6 +4031,9 @@ struct wiphy_iftype_ext_capab {
-  struct wiphy {
-  	/* assign these fields before you register the wiphy */
-  
-diff --git a/patches/0010-add-wext-handlers-to-netdev/net_wireless_core.patch b/patches/0010-add-wext-handlers-to-netdev/net_wireless_core.patch
-index e129648c..735599d5 100644
---- a/patches/0010-add-wext-handlers-to-netdev/net_wireless_core.patch
-+++ b/patches/0010-add-wext-handlers-to-netdev/net_wireless_core.patch
-@@ -11,7 +11,7 @@
-  	device_initialize(&rdev->wiphy.dev);
-  	rdev->wiphy.dev.class = &ieee80211_class;
-  	rdev->wiphy.dev.platform_data = rdev;
--@@ -1215,6 +1211,15 @@ static int cfg80211_netdev_notifier_call
-+@@ -1235,6 +1231,15 @@ static int cfg80211_netdev_notifier_call
-  		}
-  		wdev->netdev = dev;
-  #ifdef CONFIG_CFG80211_WEXT
-diff --git a/patches/0014-netlink_seq/net_wireless_nl80211.patch b/patches/0014-netlink_seq/net_wireless_nl80211.patch
-index 3bbaf287..e1c730bf 100644
---- a/patches/0014-netlink_seq/net_wireless_nl80211.patch
-+++ b/patches/0014-netlink_seq/net_wireless_nl80211.patch
-@@ -1,6 +1,6 @@
- --- a/net/wireless/nl80211.c
- +++ b/net/wireless/nl80211.c
--@@ -8206,7 +8206,9 @@ static int nl80211_dump_scan(struct sk_b
-+@@ -8158,7 +8158,9 @@ static int nl80211_dump_scan(struct sk_b
-  	if (start == 0)
-  		cfg80211_bss_expire(rdev);
-  
-diff --git a/patches/0016-libertas-olpc-ec-wakeup/drivers_net_wireless_libertas_if_usb.patch b/patches/0016-libertas-olpc-ec-wakeup/drivers_net_wireless_libertas_if_usb.patch
-index 6dace46d..22108262 100644
---- a/patches/0016-libertas-olpc-ec-wakeup/drivers_net_wireless_libertas_if_usb.patch
-+++ b/patches/0016-libertas-olpc-ec-wakeup/drivers_net_wireless_libertas_if_usb.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/net/wireless/marvell/libertas/if_usb.c
- +++ b/drivers/net/wireless/marvell/libertas/if_usb.c
--@@ -938,6 +938,7 @@ static int if_usb_suspend(struct usb_int
-+@@ -939,6 +939,7 @@ static int if_usb_suspend(struct usb_int
-  		goto out;
-  	}
-  
-@@ -8,7 +8,7 @@
-  #ifdef CONFIG_OLPC
-  	if (machine_is_olpc()) {
-  		if (priv->wol_criteria == EHS_REMOVE_WAKEUP)
--@@ -946,6 +947,7 @@ static int if_usb_suspend(struct usb_int
-+@@ -947,6 +948,7 @@ static int if_usb_suspend(struct usb_int
-  			olpc_ec_wakeup_set(EC_SCI_SRC_WLAN);
-  	}
-  #endif
-diff --git a/patches/0018-pv-trace-fixes/drivers_net_wireless_iwlwifi_iwl-debug.patch b/patches/0018-pv-trace-fixes/drivers_net_wireless_iwlwifi_iwl-debug.patch
-index dba0a1de..d323f7ad 100644
---- a/patches/0018-pv-trace-fixes/drivers_net_wireless_iwlwifi_iwl-debug.patch
-+++ b/patches/0018-pv-trace-fixes/drivers_net_wireless_iwlwifi_iwl-debug.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/net/wireless/intel/iwlwifi/iwl-debug.c
- +++ b/drivers/net/wireless/intel/iwlwifi/iwl-debug.c
--@@ -74,13 +74,16 @@ void __iwl_ ##fn(struct device *dev, con
-+@@ -69,13 +69,16 @@ void __iwl_ ##fn(struct device *dev, con
-  	struct va_format vaf = {				\
-  		.fmt = fmt,					\
-  	};							\
-@@ -21,7 +21,7 @@
-  }
-  
-  __iwl_fn(warn)
--@@ -99,13 +102,18 @@ void __iwl_err(struct device *dev, bool
-+@@ -94,13 +97,18 @@ void __iwl_err(struct device *dev, bool
-  	va_list args;
-  
-  	va_start(args, fmt);
-@@ -41,7 +41,7 @@
-  	trace_iwlwifi_err(&vaf);
-  	va_end(args);
-  }
--@@ -122,13 +130,19 @@ void __iwl_dbg(struct device *dev,
-+@@ -117,13 +125,19 @@ void __iwl_dbg(struct device *dev,
-  	va_list args;
-  
-  	va_start(args, fmt);
-diff --git a/patches/0021-umode_t-api-change/ath9k.patch b/patches/0021-umode_t-api-change/ath9k.patch
-index 9707a5a8..1be51cb9 100644
---- a/patches/0021-umode_t-api-change/ath9k.patch
-+++ b/patches/0021-umode_t-api-change/ath9k.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/net/wireless/ath/ath9k/common-spectral.c
- +++ b/drivers/net/wireless/ath/ath9k/common-spectral.c
--@@ -1050,7 +1050,11 @@ static const struct file_operations fops
-+@@ -1031,7 +1031,11 @@ static const struct file_operations fops
-  
-  static struct dentry *create_buf_file_handler(const char *filename,
-  					      struct dentry *parent,
-diff --git a/patches/0024-led-blink-api/mac80211.patch b/patches/0024-led-blink-api/mac80211.patch
-index 42a02533..00a4007c 100644
---- a/patches/0024-led-blink-api/mac80211.patch
-+++ b/patches/0024-led-blink-api/mac80211.patch
-@@ -1,6 +1,6 @@
- --- a/net/mac80211/ieee80211_i.h
- +++ b/net/mac80211/ieee80211_i.h
--@@ -1285,6 +1285,7 @@ struct ieee80211_local {
-+@@ -1291,6 +1291,7 @@ struct ieee80211_local {
-  	struct mutex chanctx_mtx;
-  
-  #ifdef CONFIG_MAC80211_LEDS
-diff --git a/patches/0025-usb-sg/usbnet.patch b/patches/0025-usb-sg/usbnet.patch
-index 50c2d274..cab07250 100644
---- a/patches/0025-usb-sg/usbnet.patch
-+++ b/patches/0025-usb-sg/usbnet.patch
-@@ -58,10 +58,10 @@
- +#if LINUX_VERSION_IS_GEQ(3,35,0)
-  			kfree(entry->urb->sg);
- +#endif
-+ 			/* fall through */
-  		case rx_cleanup:
-  			usb_free_urb (entry->urb);
-- 			dev_kfree_skb (skb);
--@@ -1893,7 +1911,9 @@ int usbnet_resume (struct usb_interface
-+@@ -1894,7 +1912,9 @@ int usbnet_resume (struct usb_interface
-  			retval = usb_submit_urb(res, GFP_ATOMIC);
-  			if (retval < 0) {
-  				dev_kfree_skb_any(skb);
-diff --git a/patches/0053-possible_net_t.patch b/patches/0053-possible_net_t.patch
-index e052a16a..0fc1d23e 100644
---- a/patches/0053-possible_net_t.patch
-+++ b/patches/0053-possible_net_t.patch
-@@ -2,7 +2,7 @@ diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
- index 04e5785..a251da1 100644
- --- a/include/net/cfg80211.h
- +++ b/include/net/cfg80211.h
--@@ -4113,12 +4113,12 @@ struct wiphy {
-+@@ -4171,12 +4171,12 @@ struct wiphy {
-  
-  static inline struct net *wiphy_net(struct wiphy *wiphy)
-  {
-diff --git a/patches/0055-name_assign_type/brcmfmac.patch b/patches/0055-name_assign_type/brcmfmac.patch
-index b9c9b390..ddf248cc 100644
---- a/patches/0055-name_assign_type/brcmfmac.patch
-+++ b/patches/0055-name_assign_type/brcmfmac.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
- +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
--@@ -2203,7 +2203,9 @@ struct wireless_dev *brcmf_p2p_add_vif(s
-+@@ -2215,7 +2215,9 @@ struct wireless_dev *brcmf_p2p_add_vif(s
-  	}
-  
-  	strncpy(ifp->ndev->name, name, sizeof(ifp->ndev->name) - 1);
-diff --git a/patches/0069-iwlwifi-pd-string-fix.patch b/patches/0069-iwlwifi-pd-string-fix.patch
-index b2a6a512..ca7732d0 100644
---- a/patches/0069-iwlwifi-pd-string-fix.patch
-+++ b/patches/0069-iwlwifi-pd-string-fix.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/net/wireless/intel/iwlwifi/dvm/debugfs.c
- +++ b/drivers/net/wireless/intel/iwlwifi/dvm/debugfs.c
--@@ -2419,12 +2419,23 @@ int iwl_dbgfs_register(struct iwl_priv *
-+@@ -2414,12 +2414,23 @@ int iwl_dbgfs_register(struct iwl_priv *
-  	 */
-  	if (priv->mac80211_registered) {
-  		char buf[100];
-@@ -26,7 +26,7 @@
-  			goto err;
- --- a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs-vif.c
- +++ b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs-vif.c
--@@ -1497,8 +1497,13 @@ void iwl_mvm_vif_dbgfs_register(struct i
-+@@ -1492,8 +1492,13 @@ void iwl_mvm_vif_dbgfs_register(struct i
-  	mvmvif->dbgfs_dir = debugfs_create_dir("iwlmvm", dbgfs_dir);
-  
-  	if (!mvmvif->dbgfs_dir) {
-@@ -40,7 +40,7 @@
-  		return;
-  	}
-  
--@@ -1544,15 +1549,28 @@ void iwl_mvm_vif_dbgfs_register(struct i
-+@@ -1539,15 +1544,28 @@ void iwl_mvm_vif_dbgfs_register(struct i
-  	 * find
-  	 * netdev:wlan0 -> ../../../ieee80211/phy0/netdev:wlan0/iwlmvm/
-  	 */
-@@ -71,7 +71,7 @@
-  	IWL_ERR(mvm, "Can't create debugfs entity\n");
- --- a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
- +++ b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
--@@ -2056,7 +2056,13 @@ int iwl_mvm_dbgfs_register(struct iwl_mv
-+@@ -2078,7 +2078,13 @@ int iwl_mvm_dbgfs_register(struct iwl_mv
-  	 * Create a symlink with mac80211. It will be removed when mac80211
-  	 * exists (before the opmode exists which removes the target.)
-  	 */
-diff --git a/patches/0070-mac80211-fils.patch b/patches/0070-mac80211-fils.patch
-index bdbc8a94..c277a642 100644
---- a/patches/0070-mac80211-fils.patch
-+++ b/patches/0070-mac80211-fils.patch
-@@ -42,7 +42,7 @@
-  #endif /* FILS_AEAD_H */
- --- a/net/mac80211/main.c
- +++ b/net/mac80211/main.c
--@@ -570,7 +570,9 @@ struct ieee80211_hw *ieee80211_alloc_hw_
-+@@ -571,7 +571,9 @@ struct ieee80211_hw *ieee80211_alloc_hw_
-  			   NL80211_FEATURE_MAC_ON_CREATE |
-  			   NL80211_FEATURE_USERSPACE_MPM |
-  			   NL80211_FEATURE_FULL_AP_CLIENT_STATE;
-diff --git a/patches/0071-skb-head_frag/wireless.patch b/patches/0071-skb-head_frag/wireless.patch
-index d165630c..026a03e1 100644
---- a/patches/0071-skb-head_frag/wireless.patch
-+++ b/patches/0071-skb-head_frag/wireless.patch
-@@ -1,6 +1,6 @@
- --- a/net/wireless/util.c
- +++ b/net/wireless/util.c
--@@ -634,7 +634,11 @@ void ieee80211_amsdu_to_8023s(struct sk_
-+@@ -637,7 +637,11 @@ void ieee80211_amsdu_to_8023s(struct sk_
-  	u8 *payload;
-  	int offset = 0, remaining;
-  	struct ethhdr eth;
-diff --git a/patches/0077-genl-ro-after-init/hwsim.patch b/patches/0077-genl-ro-after-init/hwsim.patch
-index 986e2a04..6a1b7022 100644
---- a/patches/0077-genl-ro-after-init/hwsim.patch
-+++ b/patches/0077-genl-ro-after-init/hwsim.patch
-@@ -1,6 +1,6 @@
- --- a/drivers/net/wireless/mac80211_hwsim.c
- +++ b/drivers/net/wireless/mac80211_hwsim.c
--@@ -3553,7 +3553,7 @@ static const struct genl_ops hwsim_ops[]
-+@@ -3546,7 +3546,7 @@ static const struct genl_ops hwsim_ops[]
-  	},
-  };
-  
-diff --git a/patches/0077-genl-ro-after-init/nl80211.patch b/patches/0077-genl-ro-after-init/nl80211.patch
-index bb9f9013..a897be35 100644
---- a/patches/0077-genl-ro-after-init/nl80211.patch
-+++ b/patches/0077-genl-ro-after-init/nl80211.patch
-@@ -1,6 +1,6 @@
- --- a/net/wireless/nl80211.c
- +++ b/net/wireless/nl80211.c
--@@ -13906,7 +13906,7 @@ static const struct genl_ops nl80211_ops
-+@@ -13904,7 +13904,7 @@ static const struct genl_ops nl80211_ops
-  	},
-  };
-  
-diff --git a/patches/0085-iwlwifi-pci-device-removal.patch b/patches/0085-iwlwifi-pci-device-removal.patch
-index 6e1f1fff..f61f0172 100644
---- a/patches/0085-iwlwifi-pci-device-removal.patch
-+++ b/patches/0085-iwlwifi-pci-device-removal.patch
-@@ -2,7 +2,7 @@ diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wirel
- index cc8c53dc0ab6..68296b65a680 100644
- --- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
- +++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
--@@ -1922,6 +1922,9 @@ static void iwl_trans_pcie_removal_wk(struct work_struct *wk)
-+@@ -1941,6 +1941,9 @@ static void iwl_trans_pcie_removal_wk(st
-  	struct iwl_trans_pcie_removal *removal =
-  		container_of(wk, struct iwl_trans_pcie_removal, work);
-  	struct pci_dev *pdev = removal->pdev;
-@@ -12,7 +12,7 @@ index cc8c53dc0ab6..68296b65a680 100644
-  	char *prop[] = {"EVENT=INACCESSIBLE", NULL};
-  
-  	dev_err(&pdev->dev, "Device gone - attempting removal\n");
--@@ -1930,6 +1933,7 @@ static void iwl_trans_pcie_removal_wk(struct work_struct *wk)
-+@@ -1949,6 +1952,7 @@ static void iwl_trans_pcie_removal_wk(st
-  	pci_dev_put(pdev);
-  	pci_stop_and_remove_bus_device(pdev);
-  	pci_unlock_rescan_remove();
-diff --git a/patches/0090-use-skb_pad.patch b/patches/0090-use-skb_pad.patch
+diff --git a/backport/defconfigs/alx b/backport/defconfigs/alx
 deleted file mode 100644
-index 086328c1..00000000
---- a/patches/0090-use-skb_pad.patch
+index b4ae66f7..00000000
+--- a/backport/defconfigs/alx
 +++ /dev/null
-@@ -1,11 +0,0 @@
----- a/drivers/net/wireless/mediatek/mt76/usb.c
--+++ b/drivers/net/wireless/mediatek/mt76/usb.c
--@@ -535,7 +535,7 @@ int mt76u_skb_dma_info(struct sk_buff *s
-- 	}
-- 
-- 	if (unlikely(pad)) {
---		if (__skb_pad(last, pad, true))
--+		if (skb_pad(last, pad))
-- 			return -ENOMEM;
-- 		__skb_put(last, pad);
-- 	}
+@@ -1 +0,0 @@
+-CPTCFG_ALX=m
+diff --git a/backport/defconfigs/igb b/backport/defconfigs/igb
+deleted file mode 100644
+index 80452574..00000000
+--- a/backport/defconfigs/igb
++++ /dev/null
+@@ -1,2 +0,0 @@
+-CPTCFG_NET_VENDOR_INTEL=y
+-CPTCFG_IGB=m
+diff --git a/backport/defconfigs/media b/backport/defconfigs/media
+deleted file mode 100644
+index a0445837..00000000
+--- a/backport/defconfigs/media
++++ /dev/null
+@@ -1,498 +0,0 @@
+-CPTCFG_DVB_A8293=m
+-CPTCFG_DVB_AF9013=m
+-CPTCFG_DVB_AF9033=m
+-CPTCFG_DVB_AS102=m
+-CPTCFG_DVB_AS102_FE=m
+-CPTCFG_DVB_ATBM8830=m
+-CPTCFG_DVB_AU8522=m
+-CPTCFG_DVB_AU8522_DTV=m
+-CPTCFG_DVB_AU8522_V4L=m
+-CPTCFG_DVB_AV7110=m
+-CPTCFG_DVB_B2C2_FLEXCOP=m
+-CPTCFG_DVB_B2C2_FLEXCOP_PCI=m
+-CPTCFG_DVB_B2C2_FLEXCOP_USB=m
+-CPTCFG_DVB_BCM3510=m
+-CPTCFG_DVB_BT8XX=m
+-CPTCFG_DVB_BUDGET=m
+-CPTCFG_DVB_BUDGET_AV=m
+-CPTCFG_DVB_BUDGET_CI=m
+-CPTCFG_DVB_BUDGET_CORE=m
+-CPTCFG_DVB_BUDGET_PATCH=m
+-CPTCFG_DVB_CORE=m
+-CPTCFG_DVB_CX22700=m
+-CPTCFG_DVB_CX22702=m
+-CPTCFG_DVB_CX24110=m
+-CPTCFG_DVB_CX24116=m
+-CPTCFG_DVB_CX24123=m
+-CPTCFG_DVB_CXD2820R=m
+-CPTCFG_DVB_DDBRIDGE=m
+-CPTCFG_DVB_DIB3000MB=m
+-CPTCFG_DVB_DIB3000MC=m
+-CPTCFG_DVB_DIB7000M=m
+-CPTCFG_DVB_DIB7000P=m
+-CPTCFG_DVB_DIB8000=m
+-CPTCFG_DVB_DIB9000=m
+-CPTCFG_DVB_DM1105=m
+-CPTCFG_DVB_DRXD=m
+-CPTCFG_DVB_DRXK=m
+-CPTCFG_DVB_DS3000=m
+-CPTCFG_DVB_DUMMY_FE=m
+-CPTCFG_DVB_EC100=m
+-CPTCFG_DVB_FIREDTV=m
+-CPTCFG_DVB_FIREDTV_INPUT=y
+-CPTCFG_DVB_HD29L2=m
+-CPTCFG_DVB_HOPPER=m
+-CPTCFG_DVB_ISL6405=m
+-CPTCFG_DVB_ISL6421=m
+-CPTCFG_DVB_ISL6423=m
+-CPTCFG_DVB_IX2505V=m
+-CPTCFG_DVB_L64781=m
+-CPTCFG_DVB_LG2160=m
+-CPTCFG_DVB_LGDT3305=m
+-CPTCFG_DVB_LGDT330X=m
+-CPTCFG_DVB_LGS8GL5=m
+-CPTCFG_DVB_LGS8GXX=m
+-CPTCFG_DVB_LNBP21=m
+-CPTCFG_DVB_LNBP22=m
+-CPTCFG_DVB_M88RS2000=m
+-CPTCFG_DVB_MANTIS=m
+-CPTCFG_DVB_MB86A16=m
+-CPTCFG_DVB_MB86A20S=m
+-CPTCFG_DVB_MT312=m
+-CPTCFG_DVB_MT352=m
+-CPTCFG_DVB_NGENE=m
+-CPTCFG_DVB_NXT200X=m
+-CPTCFG_DVB_NXT6000=m
+-CPTCFG_DVB_OR51132=m
+-CPTCFG_DVB_OR51211=m
+-CPTCFG_DVB_PLL=m
+-CPTCFG_DVB_PLUTO2=m
+-CPTCFG_DVB_PT1=m
+-CPTCFG_DVB_PT3=m
+-CPTCFG_DVB_RTL2830=m
+-CPTCFG_DVB_RTL2832=m
+-CPTCFG_DVB_S5H1409=m
+-CPTCFG_DVB_S5H1411=m
+-CPTCFG_DVB_S5H1420=m
+-CPTCFG_DVB_S5H1432=m
+-CPTCFG_DVB_S921=m
+-CPTCFG_DVB_SI21XX=m
+-CPTCFG_DVB_SP8870=m
+-CPTCFG_DVB_SP887X=m
+-CPTCFG_DVB_STB0899=m
+-CPTCFG_DVB_STB6000=m
+-CPTCFG_DVB_STB6100=m
+-CPTCFG_DVB_STV0288=m
+-CPTCFG_DVB_STV0297=m
+-CPTCFG_DVB_STV0299=m
+-CPTCFG_DVB_STV0367=m
+-CPTCFG_DVB_STV0900=m
+-CPTCFG_DVB_STV090x=m
+-CPTCFG_DVB_STV6110=m
+-CPTCFG_DVB_STV6110x=m
+-CPTCFG_DVB_TDA10021=m
+-CPTCFG_DVB_TDA10023=m
+-CPTCFG_DVB_TDA10048=m
+-CPTCFG_DVB_TDA1004X=m
+-CPTCFG_DVB_TDA10071=m
+-CPTCFG_DVB_TDA10086=m
+-CPTCFG_DVB_TDA18271C2DD=m
+-CPTCFG_DVB_TDA665x=m
+-CPTCFG_DVB_TDA8083=m
+-CPTCFG_DVB_TDA8261=m
+-CPTCFG_DVB_TDA826X=m
+-CPTCFG_DVB_TS2020=m
+-CPTCFG_DVB_TTUSB_BUDGET=m
+-CPTCFG_DVB_TTUSB_DEC=m
+-CPTCFG_DVB_TUA6100=m
+-CPTCFG_DVB_TUNER_CX24113=m
+-CPTCFG_DVB_TUNER_DIB0070=m
+-CPTCFG_DVB_TUNER_DIB0090=m
+-CPTCFG_DVB_TUNER_ITD1000=m
+-CPTCFG_DVB_USB=m
+-CPTCFG_DVB_USB_A800=m
+-CPTCFG_DVB_USB_AF9005=m
+-CPTCFG_DVB_USB_AF9005_REMOTE=m
+-CPTCFG_DVB_USB_AF9015=m
+-CPTCFG_DVB_USB_AF9035=m
+-CPTCFG_DVB_USB_ANYSEE=m
+-CPTCFG_DVB_USB_AU6610=m
+-CPTCFG_DVB_USB_AZ6007=m
+-CPTCFG_DVB_USB_AZ6027=m
+-CPTCFG_DVB_USB_CE6230=m
+-CPTCFG_DVB_USB_CINERGY_T2=m
+-CPTCFG_DVB_USB_CXUSB=m
+-CPTCFG_DVB_USB_CYPRESS_FIRMWARE=m
+-CPTCFG_DVB_USB_DIB0700=m
+-CPTCFG_DVB_USB_DIBUSB_MB=m
+-CPTCFG_DVB_USB_DIBUSB_MC=m
+-CPTCFG_DVB_USB_DIGITV=m
+-CPTCFG_DVB_USB_DTT200U=m
+-CPTCFG_DVB_USB_DTV5100=m
+-CPTCFG_DVB_USB_DVBSKY=m
+-CPTCFG_DVB_USB_DW2102=m
+-CPTCFG_DVB_USB_EC168=m
+-CPTCFG_DVB_USB_FRIIO=m
+-CPTCFG_DVB_USB_GL861=m
+-CPTCFG_DVB_USB_GP8PSK=m
+-CPTCFG_DVB_USB_LME2510=m
+-CPTCFG_DVB_USB_M920X=m
+-CPTCFG_DVB_USB_MXL111SF=m
+-CPTCFG_DVB_USB_NOVA_T_USB2=m
+-CPTCFG_DVB_USB_OPERA1=m
+-CPTCFG_DVB_USB_PCTV452E=m
+-CPTCFG_DVB_USB_RTL28XXU=m
+-CPTCFG_DVB_USB_TECHNISAT_USB2=m
+-CPTCFG_DVB_USB_TTUSB2=m
+-CPTCFG_DVB_USB_UMT_010=m
+-CPTCFG_DVB_USB_V2=m
+-CPTCFG_DVB_USB_VP702X=m
+-CPTCFG_DVB_USB_VP7045=m
+-CPTCFG_DVB_VES1820=m
+-CPTCFG_DVB_VES1X93=m
+-CPTCFG_DVB_ZL10036=m
+-CPTCFG_DVB_ZL10039=m
+-CPTCFG_DVB_ZL10353=m
+-CPTCFG_I2C_SI470X=m
+-CPTCFG_I2C_SI4713=m
+-CPTCFG_IR_ENE=m
+-CPTCFG_IR_FINTEK=m
+-CPTCFG_IR_GPIO_CIR=m
+-CPTCFG_IR_IGUANA=m
+-CPTCFG_IR_IMG=m
+-CPTCFG_IR_IMG_HW=y
+-CPTCFG_IR_IMG_JVC=y
+-CPTCFG_IR_IMG_NEC=y
+-CPTCFG_IR_IMG_RAW=y
+-CPTCFG_IR_IMG_SANYO=y
+-CPTCFG_IR_IMG_SHARP=y
+-CPTCFG_IR_IMG_SONY=y
+-CPTCFG_IR_IMON=m
+-CPTCFG_IR_ITE_CIR=m
+-CPTCFG_IR_JVC_DECODER=m
+-CPTCFG_IR_LIRC_CODEC=m
+-CPTCFG_IR_MCEUSB=m
+-CPTCFG_IR_MCE_KBD_DECODER=m
+-CPTCFG_IR_NEC_DECODER=m
+-CPTCFG_IR_NUVOTON=m
+-CPTCFG_IR_RC5_DECODER=m
+-CPTCFG_IR_RC6_DECODER=m
+-CPTCFG_IR_REDRAT3=m
+-CPTCFG_IR_RX51=m
+-CPTCFG_IR_SANYO_DECODER=m
+-CPTCFG_IR_SONY_DECODER=m
+-CPTCFG_IR_STREAMZAP=m
+-CPTCFG_IR_TTUSBIR=m
+-CPTCFG_IR_WINBOND_CIR=m
+-CPTCFG_LIRC=m
+-CPTCFG_MANTIS_CORE=m
+-CPTCFG_MEDIA_ALTERA_CI=m
+-CPTCFG_MEDIA_ANALOG_TV_SUPPORT=y
+-CPTCFG_MEDIA_CAMERA_SUPPORT=y
+-CPTCFG_MEDIA_CONTROLLER=y
+-CPTCFG_MEDIA_DIGITAL_TV_SUPPORT=y
+-CPTCFG_MEDIA_PCI_SUPPORT=y
+-CPTCFG_MEDIA_RADIO_SUPPORT=y
+-CPTCFG_MEDIA_RC_SUPPORT=y
+-CPTCFG_MEDIA_SDR_SUPPORT=y
+-CPTCFG_MEDIA_SUPPORT=m
+-CPTCFG_MEDIA_USB_SUPPORT=y
+-CPTCFG_PLATFORM_SI4713=m
+-CPTCFG_RADIO_AZTECH=m
+-CPTCFG_RADIO_CADET=m
+-CPTCFG_RADIO_GEMTEK=m
+-CPTCFG_RADIO_ISA=m
+-CPTCFG_RADIO_MAXIRADIO=m
+-CPTCFG_RADIO_MIROPCM20=m
+-CPTCFG_RADIO_RTRACK2=m
+-CPTCFG_RADIO_RTRACK=m
+-CPTCFG_RADIO_SAA7706H=m
+-CPTCFG_RADIO_SF16FMI=m
+-CPTCFG_RADIO_SF16FMR2=m
+-CPTCFG_RADIO_SHARK2=m
+-CPTCFG_RADIO_SHARK=m
+-CPTCFG_RADIO_SI470X=y
+-CPTCFG_RADIO_SI4713=m
+-CPTCFG_RADIO_SI476X=m
+-CPTCFG_RADIO_TEA5764=m
+-CPTCFG_RADIO_TEF6862=m
+-CPTCFG_RADIO_TERRATEC=m
+-CPTCFG_RADIO_TIMBERDALE=m
+-CPTCFG_RADIO_TRUST=m
+-CPTCFG_RADIO_TYPHOON=m
+-CPTCFG_RADIO_WL1273=m
+-CPTCFG_RADIO_WL128X=m
+-CPTCFG_RADIO_ZOLTRIX=m
+-CPTCFG_RC_ATI_REMOTE=m
+-CPTCFG_RC_CORE=m
+-CPTCFG_RC_DEVICES=y
+-CPTCFG_RC_LOOPBACK=m
+-CPTCFG_RC_MAP=m
+-CPTCFG_SMS_SDIO_DRV=m
+-CPTCFG_SMS_SIANO_MDTV=m
+-CPTCFG_SMS_USB_DRV=m
+-CPTCFG_SOC_CAMERA=m
+-CPTCFG_SOC_CAMERA_IMX074=m
+-CPTCFG_SOC_CAMERA_MT9M001=m
+-CPTCFG_SOC_CAMERA_MT9M111=m
+-CPTCFG_SOC_CAMERA_MT9T031=m
+-CPTCFG_SOC_CAMERA_MT9T112=m
+-CPTCFG_SOC_CAMERA_MT9V022=m
+-CPTCFG_SOC_CAMERA_OV2640=m
+-CPTCFG_SOC_CAMERA_OV5642=m
+-CPTCFG_SOC_CAMERA_OV6650=m
+-CPTCFG_SOC_CAMERA_OV772X=m
+-CPTCFG_SOC_CAMERA_OV9640=m
+-CPTCFG_SOC_CAMERA_OV9740=m
+-CPTCFG_SOC_CAMERA_PLATFORM=m
+-CPTCFG_SOC_CAMERA_RJ54N1=m
+-CPTCFG_SOC_CAMERA_TW9910=m
+-CPTCFG_STA2X11_VIP=m
+-CPTCFG_TTPCI_EEPROM=m
+-CPTCFG_USB_AIRSPY=m
+-CPTCFG_USB_DSBR=m
+-CPTCFG_USB_GL860=m
+-CPTCFG_USB_GSPCA=m
+-CPTCFG_USB_GSPCA_BENQ=m
+-CPTCFG_USB_GSPCA_CONEX=m
+-CPTCFG_USB_GSPCA_CPIA1=m
+-CPTCFG_USB_GSPCA_DTCS033=m
+-CPTCFG_USB_GSPCA_ETOMS=m
+-CPTCFG_USB_GSPCA_FINEPIX=m
+-CPTCFG_USB_GSPCA_JEILINJ=m
+-CPTCFG_USB_GSPCA_JL2005BCD=m
+-CPTCFG_USB_GSPCA_KINECT=m
+-CPTCFG_USB_GSPCA_KONICA=m
+-CPTCFG_USB_GSPCA_MARS=m
+-CPTCFG_USB_GSPCA_MR97310A=m
+-CPTCFG_USB_GSPCA_NW80X=m
+-CPTCFG_USB_GSPCA_OV519=m
+-CPTCFG_USB_GSPCA_OV534=m
+-CPTCFG_USB_GSPCA_OV534_9=m
+-CPTCFG_USB_GSPCA_PAC207=m
+-CPTCFG_USB_GSPCA_PAC7302=m
+-CPTCFG_USB_GSPCA_PAC7311=m
+-CPTCFG_USB_GSPCA_SE401=m
+-CPTCFG_USB_GSPCA_SN9C2028=m
+-CPTCFG_USB_GSPCA_SN9C20X=m
+-CPTCFG_USB_GSPCA_SONIXB=m
+-CPTCFG_USB_GSPCA_SONIXJ=m
+-CPTCFG_USB_GSPCA_SPCA1528=m
+-CPTCFG_USB_GSPCA_SPCA500=m
+-CPTCFG_USB_GSPCA_SPCA501=m
+-CPTCFG_USB_GSPCA_SPCA505=m
+-CPTCFG_USB_GSPCA_SPCA506=m
+-CPTCFG_USB_GSPCA_SPCA508=m
+-CPTCFG_USB_GSPCA_SPCA561=m
+-CPTCFG_USB_GSPCA_SQ905=m
+-CPTCFG_USB_GSPCA_SQ905C=m
+-CPTCFG_USB_GSPCA_SQ930X=m
+-CPTCFG_USB_GSPCA_STK014=m
+-CPTCFG_USB_GSPCA_STK1135=m
+-CPTCFG_USB_GSPCA_STV0680=m
+-CPTCFG_USB_GSPCA_SUNPLUS=m
+-CPTCFG_USB_GSPCA_T613=m
+-CPTCFG_USB_GSPCA_TOPRO=m
+-CPTCFG_USB_GSPCA_TV8532=m
+-CPTCFG_USB_GSPCA_VC032X=m
+-CPTCFG_USB_GSPCA_VICAM=m
+-CPTCFG_USB_GSPCA_XIRLINK_CIT=m
+-CPTCFG_USB_GSPCA_ZC3XX=m
+-CPTCFG_USB_HACKRF=m
+-CPTCFG_USB_KEENE=m
+-CPTCFG_USB_M5602=m
+-CPTCFG_USB_MA901=m
+-CPTCFG_USB_MR800=m
+-CPTCFG_USB_MSI2500=m
+-CPTCFG_USB_PWC=m
+-CPTCFG_USB_RAREMONO=m
+-CPTCFG_USB_S2255=m
+-CPTCFG_USB_SI470X=m
+-CPTCFG_USB_SI4713=m
+-CPTCFG_USB_STKWEBCAM=m
+-CPTCFG_USB_STV06XX=m
+-CPTCFG_USB_VIDEO_CLASS=m
+-CPTCFG_USB_ZR364XX=m
+-CPTCFG_V4L2_MEM2MEM_DEV=m
+-CPTCFG_V4L_MEM2MEM_DRIVERS=y
+-CPTCFG_V4L_PLATFORM_DRIVERS=y
+-CPTCFG_VIDEOBUF2_CORE=m
+-CPTCFG_VIDEOBUF2_DMA_CONTIG=m
+-CPTCFG_VIDEOBUF2_DMA_SG=m
+-CPTCFG_VIDEOBUF2_MEMOPS=m
+-CPTCFG_VIDEOBUF2_VMALLOC=m
+-CPTCFG_VIDEOBUF_DMA_CONTIG=m
+-CPTCFG_VIDEOBUF_DMA_SG=m
+-CPTCFG_VIDEOBUF_DVB=m
+-CPTCFG_VIDEOBUF_GEN=m
+-CPTCFG_VIDEOBUF_VMALLOC=m
+-CPTCFG_VIDEO_AD9389B=m
+-CPTCFG_VIDEO_ADP1653=m
+-CPTCFG_VIDEO_ADV7170=m
+-CPTCFG_VIDEO_ADV7175=m
+-CPTCFG_VIDEO_ADV7180=m
+-CPTCFG_VIDEO_ADV7183=m
+-CPTCFG_VIDEO_ADV7343=m
+-CPTCFG_VIDEO_ADV7393=m
+-CPTCFG_VIDEO_ADV7604=m
+-CPTCFG_VIDEO_AK881X=m
+-CPTCFG_VIDEO_APTINA_PLL=m
+-CPTCFG_VIDEO_AS3645A=m
+-CPTCFG_VIDEO_ATMEL_ISI=m
+-CPTCFG_VIDEO_AU0828=m
+-CPTCFG_VIDEO_AU0828_RC=y
+-CPTCFG_VIDEO_BLACKFIN_CAPTURE=m
+-CPTCFG_VIDEO_BLACKFIN_PPI=m
+-CPTCFG_VIDEO_BT819=m
+-CPTCFG_VIDEO_BT848=m
+-CPTCFG_VIDEO_BT856=m
+-CPTCFG_VIDEO_BT866=m
+-CPTCFG_VIDEO_CAFE_CCIC=m
+-CPTCFG_VIDEO_CODA=m
+-CPTCFG_VIDEO_CPIA2=m
+-CPTCFG_VIDEO_CS5345=m
+-CPTCFG_VIDEO_CS53L32A=m
+-CPTCFG_VIDEO_CX18=m
+-CPTCFG_VIDEO_CX18_ALSA=m
+-CPTCFG_VIDEO_CX231XX=m
+-CPTCFG_VIDEO_CX231XX_ALSA=m
+-CPTCFG_VIDEO_CX231XX_DVB=m
+-CPTCFG_VIDEO_CX231XX_RC=y
+-CPTCFG_VIDEO_CX2341X=m
+-CPTCFG_VIDEO_CX23885=m
+-CPTCFG_VIDEO_CX25821=m
+-CPTCFG_VIDEO_CX25821_ALSA=m
+-CPTCFG_VIDEO_CX25840=m
+-CPTCFG_VIDEO_CX88=m
+-CPTCFG_VIDEO_CX88_ALSA=m
+-CPTCFG_VIDEO_CX88_BLACKBIRD=m
+-CPTCFG_VIDEO_CX88_DVB=m
+-CPTCFG_VIDEO_CX88_MPEG=m
+-CPTCFG_VIDEO_CX88_VP3054=m
+-CPTCFG_VIDEO_DAVINCI_VPBE_DISPLAY=m
+-CPTCFG_VIDEO_DAVINCI_VPIF_CAPTURE=m
+-CPTCFG_VIDEO_DAVINCI_VPIF_DISPLAY=m
+-CPTCFG_VIDEO_DEV=m
+-CPTCFG_VIDEO_DM355_CCDC=m
+-CPTCFG_VIDEO_DM6446_CCDC=m
+-CPTCFG_VIDEO_EM28XX=m
+-CPTCFG_VIDEO_EM28XX_ALSA=m
+-CPTCFG_VIDEO_EM28XX_DVB=m
+-CPTCFG_VIDEO_EM28XX_RC=m
+-CPTCFG_VIDEO_EM28XX_V4L2=m
+-CPTCFG_VIDEO_EXYNOS_FIMC_LITE=m
+-CPTCFG_VIDEO_FB_IVTV=m
+-CPTCFG_VIDEO_GO7007=m
+-CPTCFG_VIDEO_GO7007_USB=m
+-CPTCFG_VIDEO_GO7007_USB_S2250_BOARD=m
+-CPTCFG_VIDEO_HDPVR=m
+-CPTCFG_VIDEO_HEXIUM_GEMINI=m
+-CPTCFG_VIDEO_HEXIUM_ORION=m
+-CPTCFG_VIDEO_IR_I2C=m
+-CPTCFG_VIDEO_IVTV=m
+-CPTCFG_VIDEO_IVTV_ALSA=m
+-CPTCFG_VIDEO_KS0127=m
+-CPTCFG_VIDEO_M32R_AR_M64278=m
+-CPTCFG_VIDEO_M52790=m
+-CPTCFG_VIDEO_M5MOLS=m
+-CPTCFG_VIDEO_MEM2MEM_DEINTERLACE=m
+-CPTCFG_VIDEO_MEYE=m
+-CPTCFG_VIDEO_MMP_CAMERA=m
+-CPTCFG_VIDEO_MSP3400=m
+-CPTCFG_VIDEO_MT9M032=m
+-CPTCFG_VIDEO_MT9P031=m
+-CPTCFG_VIDEO_MT9T001=m
+-CPTCFG_VIDEO_MT9V011=m
+-CPTCFG_VIDEO_MT9V032=m
+-CPTCFG_VIDEO_MXB=m
+-CPTCFG_VIDEO_NOON010PC30=m
+-CPTCFG_VIDEO_OMAP2_VOUT=m
+-CPTCFG_VIDEO_OMAP3=m
+-CPTCFG_VIDEO_OV7640=m
+-CPTCFG_VIDEO_OV7670=m
+-CPTCFG_VIDEO_OV9650=m
+-CPTCFG_VIDEO_PVRUSB2=m
+-CPTCFG_VIDEO_PXA27x=m
+-CPTCFG_VIDEO_S3C_CAMIF=m
+-CPTCFG_VIDEO_S5C73M3=m
+-CPTCFG_VIDEO_S5K4ECGX=m
+-CPTCFG_VIDEO_S5K6AA=m
+-CPTCFG_VIDEO_S5P_FIMC=m
+-CPTCFG_VIDEO_S5P_MIPI_CSIS=m
+-CPTCFG_VIDEO_SAA6588=m
+-CPTCFG_VIDEO_SAA7110=m
+-CPTCFG_VIDEO_SAA711X=m
+-CPTCFG_VIDEO_SAA7127=m
+-CPTCFG_VIDEO_SAA7134=m
+-CPTCFG_VIDEO_SAA7134_ALSA=m
+-CPTCFG_VIDEO_SAA7134_DVB=m
+-CPTCFG_VIDEO_SAA7134_GO7007=m
+-CPTCFG_VIDEO_SAA7134_RC=y
+-CPTCFG_VIDEO_SAA7146=m
+-CPTCFG_VIDEO_SAA7146_VV=m
+-CPTCFG_VIDEO_SAA7164=m
+-CPTCFG_VIDEO_SAA717X=m
+-CPTCFG_VIDEO_SAA7185=m
+-CPTCFG_VIDEO_SAMSUNG_EXYNOS_GSC=m
+-CPTCFG_VIDEO_SAMSUNG_S5P_G2D=m
+-CPTCFG_VIDEO_SAMSUNG_S5P_HDMI=m
+-CPTCFG_VIDEO_SAMSUNG_S5P_HDMIPHY=m
+-CPTCFG_VIDEO_SAMSUNG_S5P_JPEG=m
+-CPTCFG_VIDEO_SAMSUNG_S5P_MFC=m
+-CPTCFG_VIDEO_SAMSUNG_S5P_MIXER=m
+-CPTCFG_VIDEO_SAMSUNG_S5P_SDO=m
+-CPTCFG_VIDEO_SAMSUNG_S5P_SII9234=m
+-CPTCFG_VIDEO_SAMSUNG_S5P_TV=y
+-CPTCFG_VIDEO_SH_MOBILE_CEU=m
+-CPTCFG_VIDEO_SH_MOBILE_CSI2=m
+-CPTCFG_VIDEO_SH_VEU=m
+-CPTCFG_VIDEO_SH_VOU=m
+-CPTCFG_VIDEO_SMIAPP=m
+-CPTCFG_VIDEO_SMIAPP_PLL=m
+-CPTCFG_VIDEO_SOLO6X10=m
+-CPTCFG_VIDEO_SONY_BTF_MPX=m
+-CPTCFG_VIDEO_SR030PC30=m
+-CPTCFG_VIDEO_STK1160=m
+-CPTCFG_VIDEO_STK1160_AC97=y
+-CPTCFG_VIDEO_STK1160_COMMON=m
+-CPTCFG_VIDEO_TDA7432=m
+-CPTCFG_VIDEO_TDA9840=m
+-CPTCFG_VIDEO_TEA6415C=m
+-CPTCFG_VIDEO_TEA6420=m
+-CPTCFG_VIDEO_THS7303=m
+-CPTCFG_VIDEO_TLV320AIC23B=m
+-CPTCFG_VIDEO_TM6000=m
+-CPTCFG_VIDEO_TM6000_ALSA=m
+-CPTCFG_VIDEO_TM6000_DVB=m
+-CPTCFG_VIDEO_TUNER=m
+-CPTCFG_VIDEO_TVAUDIO=m
+-CPTCFG_VIDEO_TVEEPROM=m
+-CPTCFG_VIDEO_TVP514X=m
+-CPTCFG_VIDEO_TVP5150=m
+-CPTCFG_VIDEO_TVP7002=m
+-CPTCFG_VIDEO_TW2804=m
+-CPTCFG_VIDEO_TW68=m
+-CPTCFG_VIDEO_TW9903=m
+-CPTCFG_VIDEO_TW9906=m
+-CPTCFG_VIDEO_UDA1342=m
+-CPTCFG_VIDEO_UPD64031A=m
+-CPTCFG_VIDEO_UPD64083=m
+-CPTCFG_VIDEO_USBTV=m
+-CPTCFG_VIDEO_USBVISION=m
+-CPTCFG_VIDEO_V4L2=m
+-CPTCFG_VIDEO_V4L2_SUBDEV_API=y
+-CPTCFG_VIDEO_VIA_CAMERA=m
+-CPTCFG_VIDEO_VIU=m
+-CPTCFG_VIDEO_VP27SMPX=m
+-CPTCFG_VIDEO_VPX3220=m
+-CPTCFG_VIDEO_VS6624=m
+-CPTCFG_VIDEO_WM8739=m
+-CPTCFG_VIDEO_WM8775=m
+-CPTCFG_VIDEO_ZORAN=m
+-CPTCFG_VIDEO_ZORAN_AVS6EYES=m
+-CPTCFG_VIDEO_ZORAN_BUZ=m
+-CPTCFG_VIDEO_ZORAN_DC10=m
+-CPTCFG_VIDEO_ZORAN_DC30=m
+-CPTCFG_VIDEO_ZORAN_LML33=m
+-CPTCFG_VIDEO_ZORAN_LML33R10=m
+-CPTCFG_VIDEO_ZORAN_ZR36060=m
 -- 
 2.11.0
 
