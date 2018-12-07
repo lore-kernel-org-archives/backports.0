@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,T_TVD_MIME_EPI autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 256EDC07E85
-	for <backports@archiver.kernel.org>; Fri,  7 Dec 2018 20:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10EFDC07E85
+	for <backports@archiver.kernel.org>; Fri,  7 Dec 2018 20:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA7B820868
-	for <backports@archiver.kernel.org>; Fri,  7 Dec 2018 20:01:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA7B820868
+	by mail.kernel.org (Postfix) with ESMTP id C8D9620868
+	for <backports@archiver.kernel.org>; Fri,  7 Dec 2018 20:01:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8D9620868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=backports-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726053AbeLGUBJ (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Fri, 7 Dec 2018 15:01:09 -0500
-Received: from mx1.mailbox.org ([80.241.60.212]:59324 "EHLO mx1.mailbox.org"
+        id S1726070AbeLGUBT (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Fri, 7 Dec 2018 15:01:19 -0500
+Received: from mx2.mailbox.org ([80.241.60.215]:53764 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbeLGUBJ (ORCPT <rfc822;backports@vger.kernel.org>);
-        Fri, 7 Dec 2018 15:01:09 -0500
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        id S1726047AbeLGUBT (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 7 Dec 2018 15:01:19 -0500
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 86A3848BEC;
-        Fri,  7 Dec 2018 21:01:06 +0100 (CET)
+        by mx2.mailbox.org (Postfix) with ESMTPS id B2BC2A10D0;
+        Fri,  7 Dec 2018 21:01:17 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
+Received: from smtp1.mailbox.org ([80.241.60.240])
         by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id rrmUlZdVDdNH; Fri,  7 Dec 2018 21:01:05 +0100 (CET)
-Subject: Re: [PATCH 00/12] backports: Multiple fixes for kernel 4.20
+        with ESMTP id hCtboSmiFSww; Fri,  7 Dec 2018 21:01:16 +0100 (CET)
+Subject: Re: [PATCH 0/7] backports-4.19: Fixes for kernel 4.19 branch
 To:     johannes@sipsolutions.net
 Cc:     backports@vger.kernel.org
-References: <20181202115226.3594-1-hauke@hauke-m.de>
+References: <20181202205131.13519-1-hauke@hauke-m.de>
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=hauke@hauke-m.de; prefer-encrypt=mutual; keydata=
@@ -96,41 +96,48 @@ Autocrypt: addr=hauke@hauke-m.de; prefer-encrypt=mutual; keydata=
  qW4TeDaiKtaki/NrHwCH3aOWx0xrxj4Vr2qVEO9Qksk+4RZt2QLX9PClmDDZR/KgnAGIVaHc
  w6Onn02ka7+V9c8DcJjQpD6IysI0r4U0LCUMddtwqaDk/0LR8M3+LhQ70+kWRCAY0QCZa5pC
  U9K2P2+nz7is4sF1hNVarw==
-Message-ID: <0e648032-a788-5449-013c-a708e75cfa40@hauke-m.de>
-Date:   Fri, 7 Dec 2018 21:01:00 +0100
+Message-ID: <e75203d9-8c6a-964c-a86e-5c81d8c33e73@hauke-m.de>
+Date:   Fri, 7 Dec 2018 21:01:15 +0100
 MIME-Version: 1.0
-In-Reply-To: <20181202115226.3594-1-hauke@hauke-m.de>
+In-Reply-To: <20181202205131.13519-1-hauke@hauke-m.de>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="ClL0OOrpkTg6YgKAFGXFu5QUcxs2H0rZI"
+ boundary="cHYBPIguKSuyz0F72SzemYk6bWH4xAhnW"
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---ClL0OOrpkTg6YgKAFGXFu5QUcxs2H0rZI
-Content-Type: multipart/mixed; boundary="CWHBxJ5qxhOTdrzeZTD27WrSkZEnZtSzY";
+--cHYBPIguKSuyz0F72SzemYk6bWH4xAhnW
+Content-Type: multipart/mixed; boundary="yZ8vY9RtnpiBHdoLn8iuhzEmCmL54T37p";
  protected-headers="v1"
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: johannes@sipsolutions.net
 Cc: backports@vger.kernel.org
-Message-ID: <0e648032-a788-5449-013c-a708e75cfa40@hauke-m.de>
-Subject: Re: [PATCH 00/12] backports: Multiple fixes for kernel 4.20
-References: <20181202115226.3594-1-hauke@hauke-m.de>
-In-Reply-To: <20181202115226.3594-1-hauke@hauke-m.de>
+Message-ID: <e75203d9-8c6a-964c-a86e-5c81d8c33e73@hauke-m.de>
+Subject: Re: [PATCH 0/7] backports-4.19: Fixes for kernel 4.19 branch
+References: <20181202205131.13519-1-hauke@hauke-m.de>
+In-Reply-To: <20181202205131.13519-1-hauke@hauke-m.de>
 
---CWHBxJ5qxhOTdrzeZTD27WrSkZEnZtSzY
+--yZ8vY9RtnpiBHdoLn8iuhzEmCmL54T37p
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: de-LU
 Content-Transfer-Encoding: quoted-printable
 
-On 12/2/18 12:52 PM, Hauke Mehrtens wrote:
-> This fixes multiple problems in backport when using it with kernel 4.20=
--rc4.
+On 12/2/18 9:51 PM, Hauke Mehrtens wrote:
+> I would like to create a kernel 4.19 branch based on todays master=20
+> branch plus these changes. When this is merged I would create a new=20
+> backports 4.19.6 or later release.
 >=20
-> "ckmake --allyesconfig" results with kernel 4.20-rc4:
+> This contains some fixes, which are half backports from my patches for =
+
+> master and the other half is only relevant for kernel 4.19.
 >=20
+> I can create the branch myself. ;-)
+>=20
+>=20
+> hauke@drvbp1:~/build/tmp$ cat ckmake-report.log=20
 > 1   3.10.108            [  LINK  ]
 > 2   3.11.10             [  LINK  ]
 > 3   3.12.74             [  OK  ]
@@ -163,45 +170,41 @@ On 12/2/18 12:52 PM, Hauke Mehrtens wrote:
 > 30  4.19.6              [  OK  ]
 >=20
 >=20
-> Hauke Mehrtens (12):
->   backports: Refresh patches on kernel 4.20-rc4
->   backports: Add page_ref_count() and page_ref_sub_and_test()
->   backports: Add page_frag_alloc() and __page_frag_cache_drain()
->   backports: Add missing include for mt76
->   backports: Add device_get_mac_address()
->   backports: Remove BPAUTO_CRYPTO_SKCIPHER
+> Hauke Mehrtens (7):
+>   backports: Refresh patches on kernel 4.19.6
 >   backports: Fix pci_alloc_irq_vectors() backport
 >   backports: Revert "dependencies: Make WIL6210 depend on kernel >=3D 4=
 =2E8"
->   backports: Make TI WLCORE depend on kernel >=3D 4.2
->   backports: Remove unused code from backport-public_key.h
->   backports: Remove unused default configurations
->   backports: Update wifi default configuration
->=20
+>   backports: Remove BPAUTO_CRYPTO_SKCIPHER
+>   backports: Do not activate R8188EU on kernels without SKCIPHER
+>   backports: Add missing includes for mt76 driver.
+>   backports: Add skcipher_request_zero()
+
 Applied in a little bit different order.
 
 Hauke
 
 
---CWHBxJ5qxhOTdrzeZTD27WrSkZEnZtSzY--
 
---ClL0OOrpkTg6YgKAFGXFu5QUcxs2H0rZI
+--yZ8vY9RtnpiBHdoLn8iuhzEmCmL54T37p--
+
+--cHYBPIguKSuyz0F72SzemYk6bWH4xAhnW
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAlwK0YAACgkQ8bdnhZyy
-68fA4QgA4g7BcF+cl/IPsptoaWKvSmFZMxlG+efVVQcYrGImbDaqfp8B+IX7Izgh
-4GVvx6BzbM0RjZiOwHP4TBfRSNUB5Yx9ZrTw5CVVsGPCHSo6DWrhpI/xMElVvzzV
-QEiZ7iEhBZmc/6AZg6AAg385QW90eFGHgTQJuM+bv0uuxonfQR7pNE/wnANY6SYz
-hQLLBd89+N28g5L+8PNy8LrRduEgpEaCGS7BoEH62PkKHTzgR1zlx2NwGT9V8YRc
-z+LkhaYy1OJETyo1r4m4sj1Jkj1OGMMvs88cEQluAnP16UoMYzYyXcZ8muq+79gQ
-vLQhaUO0sVxnWoCP4QQ8JxqSAqupFw==
-=rJ3I
+iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAlwK0YsACgkQ8bdnhZyy
+68evIwf+O51ci5p/WIVjKREjXpkM/1kmLWAAkyjykZ8A0yJRYtkxxn+7Ab7ClBjy
+mro5RuX/Ar1N5jKtN7MhoMVwGleuIPp6MPfv5FfpoVlYf2vTeu/9tL0g7eq6SInK
+E0XXK8o2jo0k+QYlIE5W+wsSbaLFgMlJdEaWxgKxxBhelVQXWH5NHLPx/pTSzgK3
+1gAic4E6ro7XEUs3yypgF6GCLx3tU5eXFqayv+nuKd2EkII78QPNpmGi/zIg64oa
+kEinzkar/MXjFmlpdEvjxrfzy7GO7OD5YA9LSFhZG0IvjTf3XQsHD00uBo8Iem9G
+UTqGfKa73+OICZOMkW+SEX7DIWLExA==
+=Yp6g
 -----END PGP SIGNATURE-----
 
---ClL0OOrpkTg6YgKAFGXFu5QUcxs2H0rZI--
+--cHYBPIguKSuyz0F72SzemYk6bWH4xAhnW--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
