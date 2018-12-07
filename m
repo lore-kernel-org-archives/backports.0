@@ -2,39 +2,38 @@ Return-Path: <SRS0=K4sR=OQ=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_TVD_MIME_EPI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,T_TVD_MIME_EPI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10EFDC07E85
-	for <backports@archiver.kernel.org>; Fri,  7 Dec 2018 20:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B55C07E85
+	for <backports@archiver.kernel.org>; Fri,  7 Dec 2018 20:03:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8D9620868
-	for <backports@archiver.kernel.org>; Fri,  7 Dec 2018 20:01:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8D9620868
+	by mail.kernel.org (Postfix) with ESMTP id B1CB920868
+	for <backports@archiver.kernel.org>; Fri,  7 Dec 2018 20:03:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1CB920868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=backports-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726070AbeLGUBT (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Fri, 7 Dec 2018 15:01:19 -0500
-Received: from mx2.mailbox.org ([80.241.60.215]:53764 "EHLO mx2.mailbox.org"
+        id S1726069AbeLGUDc (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Fri, 7 Dec 2018 15:03:32 -0500
+Received: from mx2.mailbox.org ([80.241.60.215]:57660 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbeLGUBT (ORCPT <rfc822;backports@vger.kernel.org>);
-        Fri, 7 Dec 2018 15:01:19 -0500
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        id S1726047AbeLGUDc (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 7 Dec 2018 15:03:32 -0500
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id B2BC2A10D0;
-        Fri,  7 Dec 2018 21:01:17 +0100 (CET)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 78476A10C2
+        for <backports@vger.kernel.org>; Fri,  7 Dec 2018 21:03:30 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id hCtboSmiFSww; Fri,  7 Dec 2018 21:01:16 +0100 (CET)
-Subject: Re: [PATCH 0/7] backports-4.19: Fixes for kernel 4.19 branch
-To:     johannes@sipsolutions.net
-Cc:     backports@vger.kernel.org
-References: <20181202205131.13519-1-hauke@hauke-m.de>
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id CBS3bjNt1FKg for <backports@vger.kernel.org>;
+        Fri,  7 Dec 2018 21:03:29 +0100 (CET)
+To:     "backports@vger.kernel.org" <backports@vger.kernel.org>
 From:   Hauke Mehrtens <hauke@hauke-m.de>
+Subject: backports-4.20-rc5-1 + backports-4.19.7-1 released
 Openpgp: preference=signencrypt
 Autocrypt: addr=hauke@hauke-m.de; prefer-encrypt=mutual; keydata=
  mQINBFtLdKcBEADFOTNUys8TnhpEdE5e1wO1vC+a62dPtuZgxYG83+9iVpsAyaSrCGGz5tmu
@@ -96,115 +95,68 @@ Autocrypt: addr=hauke@hauke-m.de; prefer-encrypt=mutual; keydata=
  qW4TeDaiKtaki/NrHwCH3aOWx0xrxj4Vr2qVEO9Qksk+4RZt2QLX9PClmDDZR/KgnAGIVaHc
  w6Onn02ka7+V9c8DcJjQpD6IysI0r4U0LCUMddtwqaDk/0LR8M3+LhQ70+kWRCAY0QCZa5pC
  U9K2P2+nz7is4sF1hNVarw==
-Message-ID: <e75203d9-8c6a-964c-a86e-5c81d8c33e73@hauke-m.de>
-Date:   Fri, 7 Dec 2018 21:01:15 +0100
+Message-ID: <02b1b647-1ed6-cd01-3c86-e8e7a0f3e699@hauke-m.de>
+Date:   Fri, 7 Dec 2018 21:03:28 +0100
 MIME-Version: 1.0
-In-Reply-To: <20181202205131.13519-1-hauke@hauke-m.de>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="cHYBPIguKSuyz0F72SzemYk6bWH4xAhnW"
+ boundary="iU2rgvmsvody0jnSm4Ltzp86epktDj1oF"
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---cHYBPIguKSuyz0F72SzemYk6bWH4xAhnW
-Content-Type: multipart/mixed; boundary="yZ8vY9RtnpiBHdoLn8iuhzEmCmL54T37p";
+--iU2rgvmsvody0jnSm4Ltzp86epktDj1oF
+Content-Type: multipart/mixed; boundary="L4Q2AtuHCn3oPDrj3N6wQHua9mTeTWtdj";
  protected-headers="v1"
 From: Hauke Mehrtens <hauke@hauke-m.de>
-To: johannes@sipsolutions.net
-Cc: backports@vger.kernel.org
-Message-ID: <e75203d9-8c6a-964c-a86e-5c81d8c33e73@hauke-m.de>
-Subject: Re: [PATCH 0/7] backports-4.19: Fixes for kernel 4.19 branch
-References: <20181202205131.13519-1-hauke@hauke-m.de>
-In-Reply-To: <20181202205131.13519-1-hauke@hauke-m.de>
+To: "backports@vger.kernel.org" <backports@vger.kernel.org>
+Message-ID: <02b1b647-1ed6-cd01-3c86-e8e7a0f3e699@hauke-m.de>
+Subject: backports-4.20-rc5-1 + backports-4.19.7-1 released
 
---yZ8vY9RtnpiBHdoLn8iuhzEmCmL54T37p
+--L4Q2AtuHCn3oPDrj3N6wQHua9mTeTWtdj
 Content-Type: text/plain; charset=utf-8
-Content-Language: de-LU
+Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 12/2/18 9:51 PM, Hauke Mehrtens wrote:
-> I would like to create a kernel 4.19 branch based on todays master=20
-> branch plus these changes. When this is merged I would create a new=20
-> backports 4.19.6 or later release.
->=20
-> This contains some fixes, which are half backports from my patches for =
+backports-4.20-rc5-1 was released. This is based on Linux 4.20-rc5.
 
-> master and the other half is only relevant for kernel 4.19.
->=20
-> I can create the branch myself. ;-)
->=20
->=20
-> hauke@drvbp1:~/build/tmp$ cat ckmake-report.log=20
-> 1   3.10.108            [  LINK  ]
-> 2   3.11.10             [  LINK  ]
-> 3   3.12.74             [  OK  ]
-> 4   3.13.11             [  LINK  ]
-> 5   3.14.79             [  LINK  ]
-> 6   3.15.10             [  LINK  ]
-> 7   3.16.61             [  OK  ]
-> 8   3.17.8              [  LINK  ]
-> 9   3.18.128            [  OK  ]
-> 10  3.19.8              [  LINK  ]
-> 11  4.0.9               [  LINK  ]
-> 12  4.1.52              [  OK  ]
-> 13  4.2.8               [  LINK  ]
-> 14  4.3.6               [  LINK  ]
-> 15  4.4.166             [  OK  ]
-> 16  4.5.7               [  OK  ]
-> 17  4.6.7               [  OK  ]
-> 18  4.7.10              [  OK  ]
-> 19  4.8.17              [  OK  ]
-> 20  4.9.142             [  OK  ]
-> 21  4.10.17             [  OK  ]
-> 22  4.11.12             [  OK  ]
-> 23  4.12.14             [  OK  ]
-> 24  4.13.16             [  OK  ]
-> 25  4.14.85             [  OK  ]
-> 26  4.15.18             [  OK  ]
-> 27  4.16.18             [  OK  ]
-> 28  4.17.19             [  OK  ]
-> 29  4.18.20             [  OK  ]
-> 30  4.19.6              [  OK  ]
->=20
->=20
-> Hauke Mehrtens (7):
->   backports: Refresh patches on kernel 4.19.6
->   backports: Fix pci_alloc_irq_vectors() backport
->   backports: Revert "dependencies: Make WIL6210 depend on kernel >=3D 4=
-=2E8"
->   backports: Remove BPAUTO_CRYPTO_SKCIPHER
->   backports: Do not activate R8188EU on kernels without SKCIPHER
->   backports: Add missing includes for mt76 driver.
->   backports: Add skcipher_request_zero()
+https://mirrors.edge.kernel.org/pub/linux/kernel/projects/backports/stabl=
+e/v4.20-rc5/backports-4.20-rc5-1.tar.xz
 
-Applied in a little bit different order.
+
+backports-4.19.7-1 was released. This is based on Linux 4.19.7.
+
+https://mirrors.edge.kernel.org/pub/linux/kernel/projects/backports/stabl=
+e/v4.19.7/backports-4.19.7-1.tar.xz
+
+
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
 
 Hauke
 
 
+--L4Q2AtuHCn3oPDrj3N6wQHua9mTeTWtdj--
 
---yZ8vY9RtnpiBHdoLn8iuhzEmCmL54T37p--
-
---cHYBPIguKSuyz0F72SzemYk6bWH4xAhnW
+--iU2rgvmsvody0jnSm4Ltzp86epktDj1oF
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAlwK0YsACgkQ8bdnhZyy
-68evIwf+O51ci5p/WIVjKREjXpkM/1kmLWAAkyjykZ8A0yJRYtkxxn+7Ab7ClBjy
-mro5RuX/Ar1N5jKtN7MhoMVwGleuIPp6MPfv5FfpoVlYf2vTeu/9tL0g7eq6SInK
-E0XXK8o2jo0k+QYlIE5W+wsSbaLFgMlJdEaWxgKxxBhelVQXWH5NHLPx/pTSzgK3
-1gAic4E6ro7XEUs3yypgF6GCLx3tU5eXFqayv+nuKd2EkII78QPNpmGi/zIg64oa
-kEinzkar/MXjFmlpdEvjxrfzy7GO7OD5YA9LSFhZG0IvjTf3XQsHD00uBo8Iem9G
-UTqGfKa73+OICZOMkW+SEX7DIWLExA==
-=Yp6g
+iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAlwK0hAACgkQ8bdnhZyy
+68eZFgf+Ny6pHKdfSRxJ5eX9/9kUIVJ+NB1WniNEhDgCNbcCkb7Mp+nB41Hf9SK8
+bN3vVriQ2BKOPEjRCPanIAG7bkzDMw7dOpWlNLhvhWcZb9AV+qNmuk74JdaaS6NP
+UjYrw8hHMeqpfMRa+Zqu9jiP4mITuxE0/Vdzsiwb2I+JeFFzVE96PRsaMworSIVo
+1QzlqyP4eLVae2BAtBjekza385/CIK4GEL3RtojxSzkKlfD/RAAgrs2AuuBkj5o1
+Winp0AWLlsKgMX1hKUq1NU2soGYvSA7qUDeKKO/nqLHeRf7aDGdIQ8LCZrIiWNWw
+V7A/39q/MVceXw7GPkIdDcm+3YoGfg==
+=DG/S
 -----END PGP SIGNATURE-----
 
---cHYBPIguKSuyz0F72SzemYk6bWH4xAhnW--
+--iU2rgvmsvody0jnSm4Ltzp86epktDj1oF--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
