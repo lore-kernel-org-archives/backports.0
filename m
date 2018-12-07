@@ -1,599 +1,207 @@
-Return-Path: <SRS0=7Ax0=OL=vger.kernel.org=backports-owner@kernel.org>
+Return-Path: <SRS0=K4sR=OQ=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_TVD_MIME_EPI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0B7C64EB4
-	for <backports@archiver.kernel.org>; Sun,  2 Dec 2018 20:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 256EDC07E85
+	for <backports@archiver.kernel.org>; Fri,  7 Dec 2018 20:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EC8F206B7
-	for <backports@archiver.kernel.org>; Sun,  2 Dec 2018 20:51:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EC8F206B7
+	by mail.kernel.org (Postfix) with ESMTP id DA7B820868
+	for <backports@archiver.kernel.org>; Fri,  7 Dec 2018 20:01:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA7B820868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=backports-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725781AbeLBUvu (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Sun, 2 Dec 2018 15:51:50 -0500
-Received: from mx1.mailbox.org ([80.241.60.212]:64540 "EHLO mx1.mailbox.org"
+        id S1726053AbeLGUBJ (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Fri, 7 Dec 2018 15:01:09 -0500
+Received: from mx1.mailbox.org ([80.241.60.212]:59324 "EHLO mx1.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725778AbeLBUvu (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 2 Dec 2018 15:51:50 -0500
-Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
+        id S1726047AbeLGUBJ (ORCPT <rfc822;backports@vger.kernel.org>);
+        Fri, 7 Dec 2018 15:01:09 -0500
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 8FECC4346F;
-        Sun,  2 Dec 2018 21:51:43 +0100 (CET)
+        by mx1.mailbox.org (Postfix) with ESMTPS id 86A3848BEC;
+        Fri,  7 Dec 2018 21:01:06 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
-        with ESMTP id gKH7p6b2OBLv; Sun,  2 Dec 2018 21:51:42 +0100 (CET)
-From:   Hauke Mehrtens <hauke@hauke-m.de>
+        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
+        with ESMTP id rrmUlZdVDdNH; Fri,  7 Dec 2018 21:01:05 +0100 (CET)
+Subject: Re: [PATCH 00/12] backports: Multiple fixes for kernel 4.20
 To:     johannes@sipsolutions.net
-Cc:     backports@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 4/7] backports: Remove BPAUTO_CRYPTO_SKCIPHER
-Date:   Sun,  2 Dec 2018 21:51:28 +0100
-Message-Id: <20181202205131.13519-5-hauke@hauke-m.de>
-In-Reply-To: <20181202205131.13519-1-hauke@hauke-m.de>
-References: <20181202205131.13519-1-hauke@hauke-m.de>
+Cc:     backports@vger.kernel.org
+References: <20181202115226.3594-1-hauke@hauke-m.de>
+From:   Hauke Mehrtens <hauke@hauke-m.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=hauke@hauke-m.de; prefer-encrypt=mutual; keydata=
+ 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
+ U9K2P2+nz7is4sF1hNVarw==
+Message-ID: <0e648032-a788-5449-013c-a708e75cfa40@hauke-m.de>
+Date:   Fri, 7 Dec 2018 21:01:00 +0100
+MIME-Version: 1.0
+In-Reply-To: <20181202115226.3594-1-hauke@hauke-m.de>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="ClL0OOrpkTg6YgKAFGXFu5QUcxs2H0rZI"
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-Upstream commit: 8d44ac2d83184f5de2f76e620fde7dc58a5c0b82
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--ClL0OOrpkTg6YgKAFGXFu5QUcxs2H0rZI
+Content-Type: multipart/mixed; boundary="CWHBxJ5qxhOTdrzeZTD27WrSkZEnZtSzY";
+ protected-headers="v1"
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: johannes@sipsolutions.net
+Cc: backports@vger.kernel.org
+Message-ID: <0e648032-a788-5449-013c-a708e75cfa40@hauke-m.de>
+Subject: Re: [PATCH 00/12] backports: Multiple fixes for kernel 4.20
+References: <20181202115226.3594-1-hauke@hauke-m.de>
+In-Reply-To: <20181202115226.3594-1-hauke@hauke-m.de>
 
-This was added in commit 32751c901728 ("backport: add crypto skcipher
-interface"), but all the drivers which need it were deactivated in
-commit cdcec8e6128 ("backports: disable things needing LIB80211 unless
-SKCIPHER can exist") because it does not compile any more. Remove this
-code now completely from the tree and keep these drivers deactivated on
-kernel < 4.3.
+--CWHBxJ5qxhOTdrzeZTD27WrSkZEnZtSzY
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/backport-include/crypto/skcipher.h | 454 ----------------------------
- backport/compat/Kconfig                     |   8 -
- backport/compat/Makefile                    |   2 -
- patches/crypto-skcipher.patch               |  32 --
- 4 files changed, 496 deletions(-)
- delete mode 100644 backport/backport-include/crypto/skcipher.h
- delete mode 100644 patches/crypto-skcipher.patch
+On 12/2/18 12:52 PM, Hauke Mehrtens wrote:
+> This fixes multiple problems in backport when using it with kernel 4.20=
+-rc4.
+>=20
+> "ckmake --allyesconfig" results with kernel 4.20-rc4:
+>=20
+> 1   3.10.108            [  LINK  ]
+> 2   3.11.10             [  LINK  ]
+> 3   3.12.74             [  OK  ]
+> 4   3.13.11             [  LINK  ]
+> 5   3.14.79             [  LINK  ]
+> 6   3.15.10             [  LINK  ]
+> 7   3.16.61             [  OK  ]
+> 8   3.17.8              [  LINK  ]
+> 9   3.18.128            [  OK  ]
+> 10  3.19.8              [  LINK  ]
+> 11  4.0.9               [  LINK  ]
+> 12  4.1.52              [  OK  ]
+> 13  4.2.8               [  LINK  ]
+> 14  4.3.6               [  LINK  ]
+> 15  4.4.166             [  OK  ]
+> 16  4.5.7               [  OK  ]
+> 17  4.6.7               [  OK  ]
+> 18  4.7.10              [  OK  ]
+> 19  4.8.17              [  OK  ]
+> 20  4.9.142             [  OK  ]
+> 21  4.10.17             [  OK  ]
+> 22  4.11.12             [  OK  ]
+> 23  4.12.14             [  OK  ]
+> 24  4.13.16             [  OK  ]
+> 25  4.14.85             [  OK  ]
+> 26  4.15.18             [  OK  ]
+> 27  4.16.18             [  OK  ]
+> 28  4.17.19             [  OK  ]
+> 29  4.18.20             [  OK  ]
+> 30  4.19.6              [  OK  ]
+>=20
+>=20
+> Hauke Mehrtens (12):
+>   backports: Refresh patches on kernel 4.20-rc4
+>   backports: Add page_ref_count() and page_ref_sub_and_test()
+>   backports: Add page_frag_alloc() and __page_frag_cache_drain()
+>   backports: Add missing include for mt76
+>   backports: Add device_get_mac_address()
+>   backports: Remove BPAUTO_CRYPTO_SKCIPHER
+>   backports: Fix pci_alloc_irq_vectors() backport
+>   backports: Revert "dependencies: Make WIL6210 depend on kernel >=3D 4=
+=2E8"
+>   backports: Make TI WLCORE depend on kernel >=3D 4.2
+>   backports: Remove unused code from backport-public_key.h
+>   backports: Remove unused default configurations
+>   backports: Update wifi default configuration
+>=20
+Applied in a little bit different order.
 
-diff --git a/backport/backport-include/crypto/skcipher.h b/backport/backport-include/crypto/skcipher.h
-deleted file mode 100644
-index 73ba7830..00000000
---- a/backport/backport-include/crypto/skcipher.h
-+++ /dev/null
-@@ -1,454 +0,0 @@
--#ifndef _BACKPORT_CRYPTO_SKCIPHER_H
--#define _BACKPORT_CRYPTO_SKCIPHER_H
--#include_next <crypto/skcipher.h>
--#include <linux/version.h>
--
--#if LINUX_VERSION_IS_LESS(4,3,0)
--/**
-- *	struct skcipher_request - Symmetric key cipher request
-- *	@cryptlen: Number of bytes to encrypt or decrypt
-- *	@iv: Initialisation Vector
-- *	@src: Source SG list
-- *	@dst: Destination SG list
-- *	@base: Underlying async request request
-- *	@__ctx: Start of private context data
-- */
--#define skcipher_request LINUX_BACKPORT(skcipher_request)
--struct skcipher_request {
--	unsigned int cryptlen;
--
--	u8 *iv;
--
--	struct scatterlist *src;
--	struct scatterlist *dst;
--
--	struct crypto_async_request base;
--
--	void *__ctx[] CRYPTO_MINALIGN_ATTR;
--};
--
--#define crypto_skcipher LINUX_BACKPORT(crypto_skcipher)
--struct crypto_skcipher {
--	int (*setkey)(struct crypto_skcipher *tfm, const u8 *key,
--	              unsigned int keylen);
--	int (*encrypt)(struct skcipher_request *req);
--	int (*decrypt)(struct skcipher_request *req);
--
--	unsigned int ivsize;
--	unsigned int reqsize;
--	unsigned int keysize;
--
--	struct crypto_tfm base;
--};
--
--#ifndef SKCIPHER_REQUEST_ON_STACK
--#define SKCIPHER_REQUEST_ON_STACK(name, tfm) \
--	char __##name##_desc[sizeof(struct skcipher_request) + \
--		crypto_skcipher_reqsize(tfm)] CRYPTO_MINALIGN_ATTR; \
--	struct skcipher_request *name = (void *)__##name##_desc
--#endif
--
--/**
-- * DOC: Symmetric Key Cipher API
-- *
-- * Symmetric key cipher API is used with the ciphers of type
-- * CRYPTO_ALG_TYPE_SKCIPHER (listed as type "skcipher" in /proc/crypto).
-- *
-- * Asynchronous cipher operations imply that the function invocation for a
-- * cipher request returns immediately before the completion of the operation.
-- * The cipher request is scheduled as a separate kernel thread and therefore
-- * load-balanced on the different CPUs via the process scheduler. To allow
-- * the kernel crypto API to inform the caller about the completion of a cipher
-- * request, the caller must provide a callback function. That function is
-- * invoked with the cipher handle when the request completes.
-- *
-- * To support the asynchronous operation, additional information than just the
-- * cipher handle must be supplied to the kernel crypto API. That additional
-- * information is given by filling in the skcipher_request data structure.
-- *
-- * For the symmetric key cipher API, the state is maintained with the tfm
-- * cipher handle. A single tfm can be used across multiple calls and in
-- * parallel. For asynchronous block cipher calls, context data supplied and
-- * only used by the caller can be referenced the request data structure in
-- * addition to the IV used for the cipher request. The maintenance of such
-- * state information would be important for a crypto driver implementer to
-- * have, because when calling the callback function upon completion of the
-- * cipher operation, that callback function may need some information about
-- * which operation just finished if it invoked multiple in parallel. This
-- * state information is unused by the kernel crypto API.
-- */
--
--#define __crypto_skcipher_cast LINUX_BACKPORT(__crypto_skcipher_cast)
--static inline struct crypto_skcipher *__crypto_skcipher_cast(
--	struct crypto_tfm *tfm)
--{
--	return container_of(tfm, struct crypto_skcipher, base);
--}
--
--/**
-- * crypto_alloc_skcipher() - allocate symmetric key cipher handle
-- * @alg_name: is the cra_name / name or cra_driver_name / driver name of the
-- *	      skcipher cipher
-- * @type: specifies the type of the cipher
-- * @mask: specifies the mask for the cipher
-- *
-- * Allocate a cipher handle for an skcipher. The returned struct
-- * crypto_skcipher is the cipher handle that is required for any subsequent
-- * API invocation for that skcipher.
-- *
-- * Return: allocated cipher handle in case of success; IS_ERR() is true in case
-- *	   of an error, PTR_ERR() returns the error code.
-- */
--#define crypto_alloc_skcipher LINUX_BACKPORT(crypto_alloc_skcipher)
--struct crypto_skcipher *crypto_alloc_skcipher(const char *alg_name,
--					      u32 type, u32 mask);
--
--#define crypto_skcipher_tfm LINUX_BACKPORT(crypto_skcipher_tfm)
--static inline struct crypto_tfm *crypto_skcipher_tfm(
--	struct crypto_skcipher *tfm)
--{
--	return &tfm->base;
--}
--
--/**
-- * crypto_free_skcipher() - zeroize and free cipher handle
-- * @tfm: cipher handle to be freed
-- */
--#define crypto_free_skcipher LINUX_BACKPORT(crypto_free_skcipher)
--static inline void crypto_free_skcipher(struct crypto_skcipher *tfm)
--{
--	crypto_destroy_tfm(tfm, crypto_skcipher_tfm(tfm));
--}
--
--/**
-- * crypto_has_skcipher() - Search for the availability of an skcipher.
-- * @alg_name: is the cra_name / name or cra_driver_name / driver name of the
-- *	      skcipher
-- * @type: specifies the type of the cipher
-- * @mask: specifies the mask for the cipher
-- *
-- * Return: true when the skcipher is known to the kernel crypto API; false
-- *	   otherwise
-- */
--#define crypto_has_skcipher LINUX_BACKPORT(crypto_has_skcipher)
--static inline int crypto_has_skcipher(const char *alg_name, u32 type,
--					u32 mask)
--{
--	return crypto_has_alg(alg_name, crypto_skcipher_type(type),
--			      crypto_skcipher_mask(mask));
--}
--
--#define crypto_skcipher_driver_name LINUX_BACKPORT(crypto_skcipher_driver_name)
--static inline const char *crypto_skcipher_driver_name(
--	struct crypto_skcipher *tfm)
--{
--	return crypto_tfm_alg_driver_name(crypto_skcipher_tfm(tfm));
--}
--
--/**
-- * crypto_skcipher_ivsize() - obtain IV size
-- * @tfm: cipher handle
-- *
-- * The size of the IV for the skcipher referenced by the cipher handle is
-- * returned. This IV size may be zero if the cipher does not need an IV.
-- *
-- * Return: IV size in bytes
-- */
--#define crypto_skcipher_ivsize LINUX_BACKPORT(crypto_skcipher_ivsize)
--static inline unsigned int crypto_skcipher_ivsize(struct crypto_skcipher *tfm)
--{
--	return tfm->ivsize;
--}
--
--/**
-- * crypto_skcipher_blocksize() - obtain block size of cipher
-- * @tfm: cipher handle
-- *
-- * The block size for the skcipher referenced with the cipher handle is
-- * returned. The caller may use that information to allocate appropriate
-- * memory for the data returned by the encryption or decryption operation
-- *
-- * Return: block size of cipher
-- */
--#define crypto_skcipher_blocksize LINUX_BACKPORT(crypto_skcipher_blocksize)
--static inline unsigned int crypto_skcipher_blocksize(
--	struct crypto_skcipher *tfm)
--{
--	return crypto_tfm_alg_blocksize(crypto_skcipher_tfm(tfm));
--}
--
--#define crypto_skcipher_alignmask LINUX_BACKPORT(crypto_skcipher_alignmask)
--static inline unsigned int crypto_skcipher_alignmask(
--	struct crypto_skcipher *tfm)
--{
--	return crypto_tfm_alg_alignmask(crypto_skcipher_tfm(tfm));
--}
--
--#define crypto_skcipher_get_flags LINUX_BACKPORT(crypto_skcipher_get_flags)
--static inline u32 crypto_skcipher_get_flags(struct crypto_skcipher *tfm)
--{
--	return crypto_tfm_get_flags(crypto_skcipher_tfm(tfm));
--}
--
--#define crypto_skcipher_set_flags LINUX_BACKPORT(crypto_skcipher_set_flags)
--static inline void crypto_skcipher_set_flags(struct crypto_skcipher *tfm,
--					       u32 flags)
--{
--	crypto_tfm_set_flags(crypto_skcipher_tfm(tfm), flags);
--}
--
--#define crypto_skcipher_clear_flags LINUX_BACKPORT(crypto_skcipher_clear_flags)
--static inline void crypto_skcipher_clear_flags(struct crypto_skcipher *tfm,
--						 u32 flags)
--{
--	crypto_tfm_clear_flags(crypto_skcipher_tfm(tfm), flags);
--}
--
--/**
-- * crypto_skcipher_setkey() - set key for cipher
-- * @tfm: cipher handle
-- * @key: buffer holding the key
-- * @keylen: length of the key in bytes
-- *
-- * The caller provided key is set for the skcipher referenced by the cipher
-- * handle.
-- *
-- * Note, the key length determines the cipher type. Many block ciphers implement
-- * different cipher modes depending on the key size, such as AES-128 vs AES-192
-- * vs. AES-256. When providing a 16 byte key for an AES cipher handle, AES-128
-- * is performed.
-- *
-- * Return: 0 if the setting of the key was successful; < 0 if an error occurred
-- */
--#define crypto_skcipher_setkey LINUX_BACKPORT(crypto_skcipher_setkey)
--static inline int crypto_skcipher_setkey(struct crypto_skcipher *tfm,
--					 const u8 *key, unsigned int keylen)
--{
--	return tfm->setkey(tfm, key, keylen);
--}
--
--#define crypto_skcipher_has_setkey LINUX_BACKPORT(crypto_skcipher_has_setkey)
--static inline bool crypto_skcipher_has_setkey(struct crypto_skcipher *tfm)
--{
--	return tfm->keysize;
--}
--
--#define crypto_skcipher_default_keysize LINUX_BACKPORT(crypto_skcipher_default_keysize)
--static inline unsigned int crypto_skcipher_default_keysize(
--	struct crypto_skcipher *tfm)
--{
--	return tfm->keysize;
--}
--
--/**
-- * crypto_skcipher_reqtfm() - obtain cipher handle from request
-- * @req: skcipher_request out of which the cipher handle is to be obtained
-- *
-- * Return the crypto_skcipher handle when furnishing an skcipher_request
-- * data structure.
-- *
-- * Return: crypto_skcipher handle
-- */
--#define crypto_skcipher_reqtfm LINUX_BACKPORT(crypto_skcipher_reqtfm)
--static inline struct crypto_skcipher *crypto_skcipher_reqtfm(
--	struct skcipher_request *req)
--{
--	return __crypto_skcipher_cast(req->base.tfm);
--}
--
--/**
-- * crypto_skcipher_encrypt() - encrypt plaintext
-- * @req: reference to the skcipher_request handle that holds all information
-- *	 needed to perform the cipher operation
-- *
-- * Encrypt plaintext data using the skcipher_request handle. That data
-- * structure and how it is filled with data is discussed with the
-- * skcipher_request_* functions.
-- *
-- * Return: 0 if the cipher operation was successful; < 0 if an error occurred
-- */
--#define crypto_skcipher_encrypt LINUX_BACKPORT(crypto_skcipher_encrypt)
--static inline int crypto_skcipher_encrypt(struct skcipher_request *req)
--{
--	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
--
--	return tfm->encrypt(req);
--}
--
--/**
-- * crypto_skcipher_decrypt() - decrypt ciphertext
-- * @req: reference to the skcipher_request handle that holds all information
-- *	 needed to perform the cipher operation
-- *
-- * Decrypt ciphertext data using the skcipher_request handle. That data
-- * structure and how it is filled with data is discussed with the
-- * skcipher_request_* functions.
-- *
-- * Return: 0 if the cipher operation was successful; < 0 if an error occurred
-- */
--#define crypto_skcipher_decrypt LINUX_BACKPORT(crypto_skcipher_decrypt)
--static inline int crypto_skcipher_decrypt(struct skcipher_request *req)
--{
--	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
--
--	return tfm->decrypt(req);
--}
--
--/**
-- * DOC: Symmetric Key Cipher Request Handle
-- *
-- * The skcipher_request data structure contains all pointers to data
-- * required for the symmetric key cipher operation. This includes the cipher
-- * handle (which can be used by multiple skcipher_request instances), pointer
-- * to plaintext and ciphertext, asynchronous callback function, etc. It acts
-- * as a handle to the skcipher_request_* API calls in a similar way as
-- * skcipher handle to the crypto_skcipher_* API calls.
-- */
--
--/**
-- * crypto_skcipher_reqsize() - obtain size of the request data structure
-- * @tfm: cipher handle
-- *
-- * Return: number of bytes
-- */
--#define crypto_skcipher_reqsize LINUX_BACKPORT(crypto_skcipher_reqsize)
--static inline unsigned int crypto_skcipher_reqsize(struct crypto_skcipher *tfm)
--{
--	return tfm->reqsize;
--}
--
--/**
-- * skcipher_request_set_tfm() - update cipher handle reference in request
-- * @req: request handle to be modified
-- * @tfm: cipher handle that shall be added to the request handle
-- *
-- * Allow the caller to replace the existing skcipher handle in the request
-- * data structure with a different one.
-- */
--#define skcipher_request_set_tfm LINUX_BACKPORT(skcipher_request_set_tfm)
--static inline void skcipher_request_set_tfm(struct skcipher_request *req,
--					    struct crypto_skcipher *tfm)
--{
--	req->base.tfm = crypto_skcipher_tfm(tfm);
--}
--
--#define skcipher_request_cast LINUX_BACKPORT(skcipher_request_cast)
--static inline struct skcipher_request *skcipher_request_cast(
--	struct crypto_async_request *req)
--{
--	return container_of(req, struct skcipher_request, base);
--}
--
--/**
-- * skcipher_request_alloc() - allocate request data structure
-- * @tfm: cipher handle to be registered with the request
-- * @gfp: memory allocation flag that is handed to kmalloc by the API call.
-- *
-- * Allocate the request data structure that must be used with the skcipher
-- * encrypt and decrypt API calls. During the allocation, the provided skcipher
-- * handle is registered in the request data structure.
-- *
-- * Return: allocated request handle in case of success; IS_ERR() is true in case
-- *	   of an error, PTR_ERR() returns the error code.
-- */
--#define skcipher_request LINUX_BACKPORT(skcipher_request)
--static inline struct skcipher_request *skcipher_request_alloc(
--	struct crypto_skcipher *tfm, gfp_t gfp)
--{
--	struct skcipher_request *req;
--
--	req = kmalloc(sizeof(struct skcipher_request) +
--		      crypto_skcipher_reqsize(tfm), gfp);
--
--	if (likely(req))
--		skcipher_request_set_tfm(req, tfm);
--
--	return req;
--}
--
--/**
-- * skcipher_request_free() - zeroize and free request data structure
-- * @req: request data structure cipher handle to be freed
-- */
--#define skcipher_request_free LINUX_BACKPORT(skcipher_request_free)
--static inline void skcipher_request_free(struct skcipher_request *req)
--{
--	kzfree(req);
--}
--
--/**
-- * skcipher_request_set_callback() - set asynchronous callback function
-- * @req: request handle
-- * @flags: specify zero or an ORing of the flags
-- *         CRYPTO_TFM_REQ_MAY_BACKLOG the request queue may back log and
-- *	   increase the wait queue beyond the initial maximum size;
-- *	   CRYPTO_TFM_REQ_MAY_SLEEP the request processing may sleep
-- * @compl: callback function pointer to be registered with the request handle
-- * @data: The data pointer refers to memory that is not used by the kernel
-- *	  crypto API, but provided to the callback function for it to use. Here,
-- *	  the caller can provide a reference to memory the callback function can
-- *	  operate on. As the callback function is invoked asynchronously to the
-- *	  related functionality, it may need to access data structures of the
-- *	  related functionality which can be referenced using this pointer. The
-- *	  callback function can access the memory via the "data" field in the
-- *	  crypto_async_request data structure provided to the callback function.
-- *
-- * This function allows setting the callback function that is triggered once the
-- * cipher operation completes.
-- *
-- * The callback function is registered with the skcipher_request handle and
-- * must comply with the following template
-- *
-- *	void callback_function(struct crypto_async_request *req, int error)
-- */
--#define skcipher_request_set_callback LINUX_BACKPORT(skcipher_request_set_callback)
--static inline void skcipher_request_set_callback(struct skcipher_request *req,
--						 u32 flags,
--						 crypto_completion_t compl,
--						 void *data)
--{
--	req->base.complete = compl;
--	req->base.data = data;
--	req->base.flags = flags;
--}
--
--/**
-- * skcipher_request_set_crypt() - set data buffers
-- * @req: request handle
-- * @src: source scatter / gather list
-- * @dst: destination scatter / gather list
-- * @cryptlen: number of bytes to process from @src
-- * @iv: IV for the cipher operation which must comply with the IV size defined
-- *      by crypto_skcipher_ivsize
-- *
-- * This function allows setting of the source data and destination data
-- * scatter / gather lists.
-- *
-- * For encryption, the source is treated as the plaintext and the
-- * destination is the ciphertext. For a decryption operation, the use is
-- * reversed - the source is the ciphertext and the destination is the plaintext.
-- */
--#define skcipher_request_set_crypt LINUX_BACKPORT(skcipher_request_set_crypt)
--static inline void skcipher_request_set_crypt(
--	struct skcipher_request *req,
--	struct scatterlist *src, struct scatterlist *dst,
--	unsigned int cryptlen, void *iv)
--{
--	req->src = src;
--	req->dst = dst;
--	req->cryptlen = cryptlen;
--	req->iv = iv;
--}
--#endif /* < 4.3 */
--
--#if LINUX_VERSION_IS_LESS(4,6,0)
--#define skcipher_request_zero LINUX_BACKPORT(skcipher_request_zero)
--static inline void skcipher_request_zero(struct skcipher_request *req)
--{
--	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
--
--	memzero_explicit(req, sizeof(*req) + crypto_skcipher_reqsize(tfm));
--}
--#endif /* < 4.6 */
--
--#endif /* _BACKPORT_CRYPTO_SKCIPHER_H */
-diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
-index f88a646e..bb5d864c 100644
---- a/backport/compat/Kconfig
-+++ b/backport/compat/Kconfig
-@@ -102,14 +102,6 @@ config BPAUTO_USERSEL_BUILD_ALL
- 	  It's only really useful for compat testing, so
- 	  you probably shouldn't enable it.
- 
--config BPAUTO_CRYPTO_SKCIPHER
--	tristate
--	depends on KERNEL_4_3
--	default y if BACKPORTED_LIB80211_CRYPT_WEP
--	default y if BACKPORTED_LIB80211_CRYPT_TKIP
--	#c-file crypto/skcipher.c
--	#module-name skcipher
--
- config BPAUTO_WANT_DEV_COREDUMP
- 	bool
- 
-diff --git a/backport/compat/Makefile b/backport/compat/Makefile
-index fdc68c8b..99b52faa 100644
---- a/backport/compat/Makefile
-+++ b/backport/compat/Makefile
-@@ -41,8 +41,6 @@ compat-$(CPTCFG_KERNEL_4_20) += backport-4.20.o
- 
- compat-$(CPTCFG_KERNEL_4_20) += backport-genetlink.o
- 
--compat-$(CPTCFG_BPAUTO_CRYPTO_SKCIPHER) += crypto-skcipher.o
--
- compat-$(CPTCFG_BPAUTO_BUILD_SYSTEM_DATA_VERIFICATION) += verification/verify.o
- compat-$(CPTCFG_BPAUTO_BUILD_SYSTEM_DATA_VERIFICATION) += verification/pkcs7.asn1.o
- compat-$(CPTCFG_BPAUTO_BUILD_SYSTEM_DATA_VERIFICATION) += verification/pkcs7_verify.o
-diff --git a/patches/crypto-skcipher.patch b/patches/crypto-skcipher.patch
-deleted file mode 100644
-index 99eedb24..00000000
---- a/patches/crypto-skcipher.patch
-+++ /dev/null
-@@ -1,32 +0,0 @@
----- a/compat/crypto-skcipher.c
--+++ b/compat/crypto-skcipher.c
--@@ -26,7 +26,28 @@
-- #include <linux/seq_file.h>
-- #include <net/netlink.h>
-- 
---#include "internal.h"
--+struct crypto_tfm *__crypto_alloc_tfm(struct crypto_alg *alg, u32 type,
--+				      u32 mask);
--+
--+void *crypto_alloc_tfm(const char *alg_name,
--+		       const struct crypto_type *frontend, u32 type, u32 mask);
--+
--+struct crypto_alg *crypto_mod_get(struct crypto_alg *alg);
--+
--+static inline void *crypto_skcipher_ctx(struct crypto_skcipher *tfm)
--+{
--+	return crypto_tfm_ctx(&tfm->base);
--+}
--+
--+static inline void *skcipher_request_ctx(struct skcipher_request *req)
--+{
--+	return req->__ctx;
--+}
--+
--+static inline u32 skcipher_request_flags(struct skcipher_request *req)
--+{
--+	return req->base.flags;
--+}
-- 
-- enum {
-- 	SKCIPHER_WALK_PHYS = 1 << 0,
--- 
-2.11.0
+Hauke
 
+
+--CWHBxJ5qxhOTdrzeZTD27WrSkZEnZtSzY--
+
+--ClL0OOrpkTg6YgKAFGXFu5QUcxs2H0rZI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAlwK0YAACgkQ8bdnhZyy
+68fA4QgA4g7BcF+cl/IPsptoaWKvSmFZMxlG+efVVQcYrGImbDaqfp8B+IX7Izgh
+4GVvx6BzbM0RjZiOwHP4TBfRSNUB5Yx9ZrTw5CVVsGPCHSo6DWrhpI/xMElVvzzV
+QEiZ7iEhBZmc/6AZg6AAg385QW90eFGHgTQJuM+bv0uuxonfQR7pNE/wnANY6SYz
+hQLLBd89+N28g5L+8PNy8LrRduEgpEaCGS7BoEH62PkKHTzgR1zlx2NwGT9V8YRc
+z+LkhaYy1OJETyo1r4m4sj1Jkj1OGMMvs88cEQluAnP16UoMYzYyXcZ8muq+79gQ
+vLQhaUO0sVxnWoCP4QQ8JxqSAqupFw==
+=rJ3I
+-----END PGP SIGNATURE-----
+
+--ClL0OOrpkTg6YgKAFGXFu5QUcxs2H0rZI--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
