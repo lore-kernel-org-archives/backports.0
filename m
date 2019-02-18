@@ -1,209 +1,129 @@
-Return-Path: <SRS0=LVpZ=QM=vger.kernel.org=backports-owner@kernel.org>
+Return-Path: <SRS0=DOmW=QZ=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50BB6C282CB
-	for <backports@archiver.kernel.org>; Tue,  5 Feb 2019 22:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCFEC43381
+	for <backports@archiver.kernel.org>; Mon, 18 Feb 2019 19:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11EAF2184B
-	for <backports@archiver.kernel.org>; Tue,  5 Feb 2019 22:08:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549404484;
-	bh=4cnI9HVm/rM1jBpWUo06U03yr13EUpQvfXeFok2ulS4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Pqc4uOGCbF9msfqjEIEss4QZcUosgU35Im7CZox07P9MFZ/n4DvCJIV+70wi8mzYv
-	 5evtolLFPYP5X2jcLEeYfr3sIMsDR9dtPjVlVfYiTec6s9HvuB2LrLWgDP5A1DhwSD
-	 +fBeKfbFAAbckpZvYXvoRKEYYgBm4974tScfTOQM=
+	by mail.kernel.org (Postfix) with ESMTP id EA76E21773
+	for <backports@archiver.kernel.org>; Mon, 18 Feb 2019 19:20:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729861AbfBEWID (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Tue, 5 Feb 2019 17:08:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55506 "EHLO mail.kernel.org"
+        id S1729284AbfBRTUc (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Mon, 18 Feb 2019 14:20:32 -0500
+Received: from mx1.mailbox.org ([80.241.60.212]:12364 "EHLO mx1.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726114AbfBEWID (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 5 Feb 2019 17:08:03 -0500
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1729189AbfBRTUc (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 18 Feb 2019 14:20:32 -0500
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7CCD218A1;
-        Tue,  5 Feb 2019 22:08:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549404481;
-        bh=33gU8Y67ldAEaOcxe+uTft9byPtSrzIGHSfE+Y3SiQM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fbpST3CeLMzonZVG0QSgJ5FSMAPzLvRaNguVm+sMWh7p70d7JxVl0k9D1UCZipDa/
-         UwZCvKL74EEUpdmrHzvWCWzVbF5z98EH1geSe071aWnczmhR0+xUxGCinwQ9aoRYHR
-         X2JmTw3y+nAqAR1XlAgRIlzQvafbFKDIdXf1IIG0=
-Received: by mail-ua1-f49.google.com with SMTP id d2so1667431ual.2;
-        Tue, 05 Feb 2019 14:08:01 -0800 (PST)
-X-Gm-Message-State: AHQUAubnfxIYJgF2r/wTT02fiJkST0mGutd03TCHyLwDT5iihIamsztu
-        Xsvh7rBXj+cwDh+0ykftUuGLJ8HldQDvz/v0DAc=
-X-Google-Smtp-Source: AHgI3IYsnUCH6kMaEcnA6Waww1et1FUvdYMjHFv1pkeixMBd7AsguRH4+lG1bx/GvhyJUOkPzdNO62bDo5fPHcaGybE=
-X-Received: by 2002:ab0:63d6:: with SMTP id i22mr2721638uap.137.1549404480766;
- Tue, 05 Feb 2019 14:08:00 -0800 (PST)
+        by mx1.mailbox.org (Postfix) with ESMTPS id 981D34CDF7
+        for <backports@vger.kernel.org>; Mon, 18 Feb 2019 20:20:30 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
+        with ESMTP id iiFyNI50ggpD for <backports@vger.kernel.org>;
+        Mon, 18 Feb 2019 20:20:29 +0100 (CET)
+From:   Hauke Mehrtens <hauke@hauke-m.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=hauke@hauke-m.de; keydata=
+ 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
+ IXp4PqR6piQM6Rfbx1enZzFmXVg=
+To:     backports@vger.kernel.org
+Subject: backports-5.0-rc6-1, backports-4.20.10-1, backports-4.19.23-1
+ released
+Message-ID: <3847bbb7-15d0-633b-5b28-c36b3854e9c1@hauke-m.de>
+Date:   Mon, 18 Feb 2019 20:20:28 +0100
 MIME-Version: 1.0
-References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
- <20160818175505.GM3296@wotan.suse.de> <20160825074313.GC18622@lst.de> <20160825201919.GE3296@wotan.suse.de>
-In-Reply-To: <20160825201919.GE3296@wotan.suse.de>
-From:   Luis Chamberlain <mcgrof@kernel.org>
-Date:   Tue, 5 Feb 2019 16:07:46 -0600
-X-Gmail-Original-Message-ID: <CAB=NE6UfkNN5kES6QmkM-dVC=HzKsZEkevH+Y3beXhVb2gC5vg@mail.gmail.com>
-Message-ID: <CAB=NE6UfkNN5kES6QmkM-dVC=HzKsZEkevH+Y3beXhVb2gC5vg@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/5] Add CONFIG symbol as module attribute
-To:     Christoph Hellwig <hch@lst.de>,
-        Brendan Higgins <brendanhiggins@google.com>
-Cc:     Cristina Moraru <cristina.moraru09@gmail.com>,
-        "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>,
-        Valentin Rothberg <valentinrothberg@gmail.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <mmarek@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tom Gundersen <teg@jklm.no>, Kay Sievers <kay@vrfy.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        backports@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "rafael.j.wysocki" <rafael.j.wysocki@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Paul Bolle <pebolle@tiscali.nl>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Tejun Heo <tj@kernel.org>,
-        Jej B <James.Bottomley@hansenpartnership.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, danijons@student.chalmers.se,
-        Andrzej Wasowski <wasowski@itu.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-On Thu, Aug 25, 2016 at 2:19 PM Luis R. Rodriguez <mcgrof@kernel.org> wrote:
->
-> On Thu, Aug 25, 2016 at 09:43:13AM +0200, Christoph Hellwig wrote:
-> > The idea seems useful, but I reallt don't like the 'reverse-engineering'
-> > approach.
-> >
-> > If we want to this properly from the ground up we should just split out
-> > our CONFIG_ SYMBOLS into
-> >
-> > MODULE_* - builds exactly one module (tristate, or maybe also as a built-in
-> > only one, then like a bool)
-> >
-> > CONFIG_* - just bool, MODULE_ may depend on it, too.
->
-> Curious what does the split buy us if the real meaningful input is the value
-> assigned to the config ? Ie, MODULE_FOO=m would be the modules we want to
-> check for.
+backports-5.0-rc6-1 was released. This is based on Linux 5.0-rc6.
+https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/v5.0-rc6/backports-5.0-rc6-1.tar.xz
 
-Also, unless you have kernel sources I don't think you could still
-easily infer which MODULE_* config option enabled the module, could
-you? And this was one of the original goals with this patch set. I
-still think extending the modinfo section would be needed to allow
-udevadm info to easily extract the information, no?
+backports-4.20.10-1 was released. This is based on Linux 4.20.10.
+https://mirrors.edge.kernel.org/pub/linux/kernel/projects/backports/stable/v4.20.10/backports-4.20.10-1.tar.xz
 
-> > The other nice thing is that we could probably fold most of the Makefiles
-> > into Kconfig using that methods as well, by listing the objectes required
-> > for a module, e.g.
->
-> OK If the Kconfig file has the objects listed I can see the gain of using
-> Kconfig then to more easily map out to a symbol, given doing this on Makefiles
-> is not straight forward.
->
-> > module NVME_TARGET
-> >       tristate "NVMe Target support"
-> >       depends on BLOCK
-> >       depends on CONFIGFS_FS
-> >       name nvmet
-> >       objects core.o configfs.o admin-cmd.o io-cmd.o fabrics-cmd.o
-> >       objects discovery.o
-> >
-> > module NVME_TARGET_LOOP
-> >       tristate "NVMe loopback device support"
-> >       depends on BLK_DEV_NVME
-> >       depends on NVME_TARGET
-> >       select NVME_FABRICS
-> >       select SG_POOL
-> >       name nvme-loop
-> >       objects loop.o
->
-> I can see a huge win of having a direct specification that provides as a
-> feature two way mapping from CONFIG <--> module (objects) and backwards again
-> easily and clearly without hacks, specially if upon boot then we can then
-> provide the precise kernel configuration you need, for both built-in and
-> modules. The above could help with modules -- for built-in reverse mapping
-> we'd need something else, perhaps a configurable option to keep tabs on
-> inits called with associated configs.
->
-> The above would be a pretty intrusive change though, in comparison to
-> Cristina's original approach.
+backports-4.19.23-1 was released. This is based on Linux 4.19.23.
+https://mirrors.edge.kernel.org/pub/linux/kernel/projects/backports/stable/v4.19.23/backports-4.19.23-1.tar.xz
 
-I think this is the biggest issue so far, and that we have no code to
-showcase for it. Meanwhile pegging at least a kconfig symbol to
-modinfo for at least a lot of modules would help considerably for
-other use cases mentioned.
+There is now a updated wiki page with the releases:
+https://backports.wiki.kernel.org/index.php/Releases
 
-> The reverse-engineering object --> config
-> aspect of her work and of the old scripts/kconfig/streamline_config.pl
-> explains why it was hard. I'd be curious to learn of other gains possible
-> other than those listed so far, if we had this.
->
-> Re-iterating gains of having a simple two way CONFIG <--> module (objects)
-> mapping (following the above proposal now):
->
-> a) When optimizing build requirements for a kernel for a system.
->    That is you boot into a distro kernel and then want to build
->    a slim kernel only with sensible kernel configuration options.
->
-> b) When you are on a distribution kernel but the distribution
->    kernel provided lacks hardware support for your device, you
->    may either want to upgrade the full kernel in which case you
->    want to do a) or -- you may want to just a backports release
->    which provides just the modules you need, you'd use it on top
->    of the distribution kernel.
->
-> c) Having the mapping in sysfs would allow to simplify
->    streamline_config.pl avoid parsing Makefiles in perl. (From Michal)
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
 
-It took me a while to recall where this was and why after 3 years of
-not following up on this thread. So in case others fall into the same
-boat, the sysfs gain here is that the modinfo section could be
-readable then on any module's:
-
-/sys/module/e1000/section/kconfig_symb
-
-> d) Fold most of the Makefiles into Kconfig
->
-> In retrospect c) still seems related to a) as we'd do away with
-> the hacks completely needed by streamline_config.pl, a) can be
-> augmented if we figure out a built-in solution as well.
->
-> d) Just seems like collateral of a more precise mapping than
-> what a Makefile provides. Anything else ?
-
-In lieu of no Luke Skywalker, if you will, for a large kconfig revamp
-on this, I'm inclined to believe *at least* having some kconfig_symb
-exposed for some modules is better than nothing. Christoph are you
-totally opposed to this effort until we get a non-reverse engineered
-effort in place? It just seems like an extraordinary amount of work
-and I'm not quite sure who's volunteering to do it.
-
-Other stakeholders may benefit from at least having some config -->
-module mapping for now. Not just backports or building slimmer
-kernels.
-
- Luis
+Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
