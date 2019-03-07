@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFCE5C43381
-	for <backports@archiver.kernel.org>; Thu,  7 Mar 2019 07:48:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D6BC43381
+	for <backports@archiver.kernel.org>; Thu,  7 Mar 2019 07:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CFFF2063F
-	for <backports@archiver.kernel.org>; Thu,  7 Mar 2019 07:48:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8E2D2063F
+	for <backports@archiver.kernel.org>; Thu,  7 Mar 2019 07:50:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbfCGHse (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Thu, 7 Mar 2019 02:48:34 -0500
-Received: from paleale.coelho.fi ([176.9.41.70]:41050 "EHLO
+        id S1726134AbfCGHu6 (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Thu, 7 Mar 2019 02:50:58 -0500
+Received: from paleale.coelho.fi ([176.9.41.70]:41058 "EHLO
         farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726170AbfCGHsd (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 7 Mar 2019 02:48:33 -0500
+        with ESMTP id S1725554AbfCGHu6 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 7 Mar 2019 02:50:58 -0500
 Received: from 91-156-6-193.elisa-laajakaista.fi ([91.156.6.193] helo=redipa.ger.corp.intel.com)
         by farmhouse.coelho.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.91)
         (envelope-from <luca@coelho.fi>)
-        id 1h1nlV-0006FB-15; Thu, 07 Mar 2019 09:48:30 +0200
+        id 1h1nnp-0006FP-UH; Thu, 07 Mar 2019 09:50:55 +0200
 From:   Luca Coelho <luca@coelho.fi>
 To:     backports@vger.kernel.org
 Cc:     Luca Coelho <luciano.coelho@intel.com>
-Date:   Thu,  7 Mar 2019 09:48:24 +0200
-Message-Id: <20190307074824.17022-1-luca@coelho.fi>
+Date:   Thu,  7 Mar 2019 09:50:50 +0200
+Message-Id: <20190307075050.17248-1-luca@coelho.fi>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190221211737.28076-1-luca@coelho.fi>
-References: <20190221211737.28076-1-luca@coelho.fi>
+In-Reply-To: <20190307074824.17022-1-luca@coelho.fi>
+References: <20190307074824.17022-1-luca@coelho.fi>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: [PATCH v2] backports: handle RHEL 7.6 kernel
+Subject: [PATCH v3] backports: handle RHEL 7.6 kernel
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
@@ -48,7 +48,6 @@ code 7.6 where appropriate.  This doesn't take into consideration
 lower versions of the kernel (i.e. < 7.6), because it's very difficult
 to find the information about when each feature was backported.
 
-Change-Id: Ie0bcf57d3507370ea3cb7188133ba357795432ac
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 ---
 
@@ -57,6 +56,10 @@ In v2:
    * Fix some linking issues;
    * Fix some duplicate symbols due to backporting stuff that was
      already in RHEL's kernel;
+
+In v3:
+
+   * Remove gerrit tag.
 
 
 .../backport-include/linux/bp-devcoredump.h   |   3 +-
