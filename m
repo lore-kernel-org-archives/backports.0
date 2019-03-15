@@ -1,183 +1,77 @@
-Return-Path: <SRS0=FSCw=RQ=vger.kernel.org=backports-owner@kernel.org>
+Return-Path: <SRS0=louc=RS=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1307C43381
-	for <backports@archiver.kernel.org>; Wed, 13 Mar 2019 20:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45501C43381
+	for <backports@archiver.kernel.org>; Fri, 15 Mar 2019 14:33:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6011620854
-	for <backports@archiver.kernel.org>; Wed, 13 Mar 2019 20:33:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F23A21871
+	for <backports@archiver.kernel.org>; Fri, 15 Mar 2019 14:33:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbfCMUd2 (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Wed, 13 Mar 2019 16:33:28 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:37516 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbfCMUd1 (ORCPT <rfc822;backports@vger.kernel.org>);
-        Wed, 13 Mar 2019 16:33:27 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 9CE28A184F;
-        Wed, 13 Mar 2019 21:33:25 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id m6ZswFVM0a3m; Wed, 13 Mar 2019 21:33:21 +0100 (CET)
-Subject: Re: [PATCH] backport-include: add newly introduced macros in cordic.h
-To:     Arend van Spriel <arend.vanspriel@broadcom.com>,
-        backports@vger.kernel.org
-References: <1552467460-10165-1-git-send-email-arend.vanspriel@broadcom.com>
-From:   Hauke Mehrtens <hauke@hauke-m.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=hauke@hauke-m.de; keydata=
- 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
- U9K2P2+nz7is4sF1hNVarw==
-Message-ID: <d5c2c6b9-991a-1b30-9683-5bd5aff8fd55@hauke-m.de>
-Date:   Wed, 13 Mar 2019 21:33:20 +0100
+        id S1729280AbfCOOd0 (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Fri, 15 Mar 2019 10:33:26 -0400
+Received: from paleale.coelho.fi ([176.9.41.70]:44012 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729221AbfCOOd0 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 15 Mar 2019 10:33:26 -0400
+Received: from 91-156-6-193.elisa-laajakaista.fi ([91.156.6.193] helo=redipa.ger.corp.intel.com)
+        by farmhouse.coelho.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.91)
+        (envelope-from <luca@coelho.fi>)
+        id 1h4ntj-0004kR-Rp; Fri, 15 Mar 2019 16:33:24 +0200
+From:   Luca Coelho <luca@coelho.fi>
+To:     backports@vger.kernel.org
+Cc:     Luca Coelho <luciano.coelho@intel.com>
+Date:   Fri, 15 Mar 2019 16:33:12 +0200
+Message-Id: <20190315143318.4714-1-luca@coelho.fi>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <1552467460-10165-1-git-send-email-arend.vanspriel@broadcom.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: [PATCH 0/6] backport: some patches from our internal tree 2019-03-15
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-On 3/13/19 9:57 AM, Arend van Spriel wrote:
-> The kernel header file linux/cordic.h changed in v5.0 kernel
-> resulting in backport build to fail for brcmsmac (and probably
-> b43 as well). So backport those definitions for older kernels.
+From: Luca Coelho <luciano.coelho@intel.com>
 
-This was already added here:
-https://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git/commit/?id=77b9ee6a9f0e0c3697cbadf2fd59e46ea5c64def
+Hi,
 
-Hauke
+These are a few new patches that we had pending in our internal tree.
+They update some things for v5.0, fix some bugs and add things needed
+by iwlwifi.
 
-> 
-> Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> ---
-> Hi,
-> 
-> It has been a while since I submitted or did anything with the backports
-> repo. I was using it on Ubuntu 14.04 and had a problem building coccinelle
-> v1.0.7. I finally fixed that so I wanted to share here what was going on so
-> it may help others.
-> 
-> So while building coccinelle it failed with following:
-> 
-> make[1]: Entering directory `/projects/hnd_software_nl/work/arend/utils/coccinelle-1.0.7/bundles/parmap'
-> /usr/bin/ocamlc.opt -unsafe -I parmap   -c parmap/bytearray.ml -o parmap/bytearray.cmo
-> File "parmap/bytearray.ml", line 1:
-> Error: Could not find the .cmi file for interface parmap/bytearray.mli.
-> make[1]: *** [parmap/bytearray.cmo] Error 2
-> make[1]: Leaving directory `/projects/hnd_software_nl/work/arend/utils/coccinelle-1.0.7/bundles/parmap'
-> make: *** [all] Error 2
-> 
-> So what is going on. During configure it is detected that my machine does not
-> have the parmap ocaml library. This library is also bundled in coccinelle tarbal
-> so it decides to build that. However, that fails for some reason. I decided to
-> take a closer look. I found that if I went to bundles/parmap/parmap and run make
-> there the build went fine so I went along and installed it. Rerun configure picked
-> up the installed parmap library and the reset of coccinelle build went fine.
-> 
-> So I am back in business and here is the patch that should fix the cordic users.
-> 
-> Regards,
-> Arend
-> ---
->  backport/backport-include/linux/cordic.h | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/backport/backport-include/linux/cordic.h b/backport/backport-include/linux/cordic.h
-> index 67d6a4a..101da91 100644
-> --- a/backport/backport-include/linux/cordic.h
-> +++ b/backport/backport-include/linux/cordic.h
-> @@ -5,6 +5,16 @@
-> 
->  #if (LINUX_VERSION_CODE > KERNEL_VERSION(3,1,0))
->  #include_next <linux/cordic.h>
-> +#if LINUX_VERSION_IS_LESS(5,0,0)
-> +#define CORDIC_ANGLE_GEN	39797
-> +#define CORDIC_PRECISION_SHIFT	16
-> +#define CORDIC_NUM_ITER	(CORDIC_PRECISION_SHIFT + 2)
-> +
-> +#define CORDIC_FIXED(X)	((s32)((X) << CORDIC_PRECISION_SHIFT))
-> +#define CORDIC_FLOAT(X)	(((X) >= 0) \
-> +		? ((((X) >> (CORDIC_PRECISION_SHIFT - 1)) + 1) >> 1) \
-> +		: -((((-(X)) >> (CORDIC_PRECISION_SHIFT - 1)) + 1) >> 1))
-> +#endif
->  #else
-> 
->  /*
-> --
-> 1.9.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe backports" in
-> 
+Please review.
+
+
+Cheers,
+Luca.
+
+
+Johannes Berg (1):
+  backports: genetlink: avoid NULL dereference
+
+Luca Coelho (5):
+  backport: add v5.* to the Makefile
+  backports: update iwlwifi pci device removal patch for v5.0
+  backport: add atomic_fetch_add_unless()
+  backport: add include ftrace_event.h back to backport-4.0.c
+  backport: fix handling of nospec.h for 4.15.0 and 4.15.1
+
+ backport/Makefile                             | 5 +++--
+ backport/backport-include/linux/atomic.h      | 9 +++++++++
+ backport/backport-include/linux/nospec.h      | 3 ++-
+ backport/compat/backport-4.0.c                | 1 +
+ backport/compat/backport-genetlink.c          | 9 +++------
+ patches/0085-iwlwifi-pci-device-removal.patch | 8 ++++----
+ 6 files changed, 22 insertions(+), 13 deletions(-)
+
+-- 
+2.20.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
