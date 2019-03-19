@@ -2,78 +2,96 @@ Return-Path: <SRS0=hPYX=RW=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CBEC43381
-	for <backports@archiver.kernel.org>; Tue, 19 Mar 2019 06:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A2DC43381
+	for <backports@archiver.kernel.org>; Tue, 19 Mar 2019 06:09:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F8FC20989
-	for <backports@archiver.kernel.org>; Tue, 19 Mar 2019 06:09:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 138BE20989
+	for <backports@archiver.kernel.org>; Tue, 19 Mar 2019 06:09:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7Abc27c"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I4QFKd2i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725996AbfCSGJS (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Tue, 19 Mar 2019 02:09:18 -0400
-Received: from mail-pg1-f177.google.com ([209.85.215.177]:34672 "EHLO
-        mail-pg1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfCSGJS (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 19 Mar 2019 02:09:18 -0400
-Received: by mail-pg1-f177.google.com with SMTP id v12so13174416pgq.1
-        for <backports@vger.kernel.org>; Mon, 18 Mar 2019 23:09:18 -0700 (PDT)
+        id S1726093AbfCSGJU (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Tue, 19 Mar 2019 02:09:20 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45336 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfCSGJU (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 19 Mar 2019 02:09:20 -0400
+Received: by mail-pg1-f195.google.com with SMTP id y3so3912380pgk.12
+        for <backports@vger.kernel.org>; Mon, 18 Mar 2019 23:09:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:subject:date:message-id;
-        bh=gsSpzmzOg/1R/k2SmLSlqcfCvMCiIxBd84wwhVNjTqc=;
-        b=V7Abc27ci/lKKmE9OKM7mi3xxvt0C2IU10akkqpwuJgaLhN9bwut5iyWCpCJjFcvPI
-         PFS+wZpUtKlTckFfFB1OFRsFfB8N2WSt3l30b1+B/IHgqtXaRSkdXpCONZ0dizORkexp
-         udg2c/8bfRki0H+mNsJ3KiqCutasbKjWRv66ThNRC0zp/VLOvQm2HYZz8TlI5u36rbAF
-         HO5W7mCGkk4X8Vzh4/w+gTp4uI60i3ahb/KsXXwn0fPtdHH4LO/0J6DG+B8rbZ3rf6aH
-         enMgnJrcCO+i8+pUzuGb0YH5+6VlzTe8ASRnJUgIrKiTnYa+kYs/8hiyIHf0zZ5voAGk
-         Togg==
+        h=sender:from:to:subject:date:message-id:in-reply-to:references;
+        bh=7N1ouRxa4TSFGu4udslbaDq+i5rQRCGlHsRn/0j1M6I=;
+        b=I4QFKd2ipugGCu8RMfGVpXd845Tn1Is9mdtSVRL+k3/v/5P8M+gEUNFophdiEEs5Xp
+         EkMAhAGzXkgByjQEJISFQcjim6bHueHRRXAH73pxVXiQOlWgcnuHgHovmht4f/clK0tZ
+         zwaPL5q0PIy1SU4wtSsnS/1kNihEgtPLjzvGU2FQXXfwB2V1EmzbWIq/FMdiecb023k5
+         ZtyGdVLH+B4kAYO2AYqtyjDZcEzPv31o2Nd+yBcEGtPxbAh9YrjHjH56PWrYaY32GBll
+         FjO5r19R/SctCSEB8kFrwuO11Q+WxA04siVrw9UoIu+BEBoqFQ+oeYzhtMAU6kWNjGVx
+         5sGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:subject:date:message-id;
-        bh=gsSpzmzOg/1R/k2SmLSlqcfCvMCiIxBd84wwhVNjTqc=;
-        b=iKhWxtJlXBTK3+ubwaP9Da+ZiPoFmc/ex9FZANNpNJUbmE7zSqqIIbQGTnNhwTnenE
-         SkRCQZJvxBzWoxuFJw6Zau0MpGlbLXAtaAU8meTCuDMUT4WqmOv4dfdYrbaf75j3oQBN
-         5AGfqtHDtgkf3tyycCrXNKAvaKHJFJnrJC63qlJ4mlP+4hYKf3q+rCMVHYFLVYfeDtUE
-         4L5VCervuji+A7FlMew9uF5wjSDbdMF8UlE9LgYYEMWEAPkApjPASoCV/fah/7gBEMfs
-         Jp5UP285TLxGZSEPFi7jc+WHvXz6WlaOge+icpaMHt9egKz0HSp7sJX9wsaxUqU3MXQD
-         tCaQ==
-X-Gm-Message-State: APjAAAWPlhpId7EeXydyjugVZA7zemB9OuN9urgnZgotopdcpZLXcR5L
-        S5BlOCNIgpqsiI1X5m67STLZERj52YE=
-X-Google-Smtp-Source: APXvYqzvZa9p/GCadRA6jffiym6d2Lbi1sTtXcPsIm3z/g9qH7jIK3/GPgT8TTHYLfc1LxBsQ+Z3ig==
-X-Received: by 2002:a62:5e46:: with SMTP id s67mr281148pfb.126.1552975757484;
-        Mon, 18 Mar 2019 23:09:17 -0700 (PDT)
+        h=x-gm-message-state:sender:from:to:subject:date:message-id
+         :in-reply-to:references;
+        bh=7N1ouRxa4TSFGu4udslbaDq+i5rQRCGlHsRn/0j1M6I=;
+        b=TZlekN1FOE2SDMqk84KyUGoMqiMDQ5K67DiXWS/hFLIJK3Iy6dF4ldNVKHGk4huJVj
+         EEaJqM2AA/gIfzQlQ5u9fsqfYdim4ay/3sbd3bc8nHgYqELQcGUr3uJpcR2aPo7E7Jh+
+         yvp/5I7VCzeLKJRx+oHwZZddecXJQ6SPmE1LI0gLZiIQmTZa9upDqcRYzP92ucC8jMuC
+         1dczWQ9JtkpCJ3Pggy41TQujMpZnXMiulWIHkuvGqGIBJQXV3FnZ75oHif3yqXWDfhKW
+         rc249mh2P+mUS2iTOnznbDYoo1nJb+s5aevwJwOJudbfmEBElUQ8LA9GaBTUFO6GD17G
+         hzhQ==
+X-Gm-Message-State: APjAAAUgOzDITkPi3Yl1elOTArbhN8Z+OjicqqfZA6LmxxHjhVqQ1THv
+        wxIMIhZ1BxrpyVAJAQG8oJK9gpkU64w=
+X-Google-Smtp-Source: APXvYqwMS0opi1voMy/8y0viQGD1A4HB50dfwmZmc/Y24DvfX0tjMMGCn6SblUm0naXDvFCItZgSAA==
+X-Received: by 2002:a17:902:6804:: with SMTP id h4mr300782plk.115.1552975759736;
+        Mon, 18 Mar 2019 23:09:19 -0700 (PDT)
 Received: from localhost (61-220-137-37.HINET-IP.hinet.net. [61.220.137.37])
-        by smtp.gmail.com with ESMTPSA id k83sm14899755pfj.178.2019.03.18.23.09.16
+        by smtp.gmail.com with ESMTPSA id x1sm19514951pge.73.2019.03.18.23.09.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Mar 2019 23:09:16 -0700 (PDT)
+        Mon, 18 Mar 2019 23:09:19 -0700 (PDT)
 From:   AceLan Kao <acelan.kao@canonical.com>
 To:     hauke@hauke-m.de, mcgrof@kernel.org, backports@vger.kernel.org
-Subject: [PATCH 0/2] backports: to make iwlwifi compile under v5.1-rc1
-Date:   Tue, 19 Mar 2019 14:09:13 +0800
-Message-Id: <20190319060915.19849-1-acelan.kao@canonical.com>
+Subject: [PATCH 1/2] backports: remove mt76.patch
+Date:   Tue, 19 Mar 2019 14:09:14 +0800
+Message-Id: <20190319060915.19849-2-acelan.kao@canonical.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190319060915.19849-1-acelan.kao@canonical.com>
+References: <20190319060915.19849-1-acelan.kao@canonical.com>
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-Trying to backport iwlwifi driver from v5.1-rc1, and did some necessary
-modifications.
+The patch patches/0013-fix-makefile-includes/mt76.patch was added in
+upstream Linux commit 85b7e2acd31b ("mt76: Add missing include of
+linux/module.h") which was added in v5.1-rc1
 
-AceLan Kao (2):
-  backports: remove mt76.patch
-  backports: update backport/backport-include/net/netlink.h
-
- backport/backport-include/net/netlink.h       |  8 ++++++--
+Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
+---
  patches/0013-fix-makefile-includes/mt76.patch | 10 ----------
- 2 files changed, 6 insertions(+), 12 deletions(-)
+ 1 file changed, 10 deletions(-)
  delete mode 100644 patches/0013-fix-makefile-includes/mt76.patch
 
+diff --git a/patches/0013-fix-makefile-includes/mt76.patch b/patches/0013-fix-makefile-includes/mt76.patch
+deleted file mode 100644
+index 4f122c46..00000000
+--- a/patches/0013-fix-makefile-includes/mt76.patch
++++ /dev/null
+@@ -1,10 +0,0 @@
+---- a/drivers/net/wireless/mediatek/mt76/mt76x0/usb_mcu.c
+-+++ b/drivers/net/wireless/mediatek/mt76/mt76x0/usb_mcu.c
+-@@ -15,6 +15,7 @@
+-  */
+- #include <linux/kernel.h>
+- #include <linux/firmware.h>
+-+#include <linux/module.h>
+- 
+- #include "mt76x0.h"
+- #include "mcu.h"
 -- 
 2.17.1
 
