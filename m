@@ -2,37 +2,35 @@ Return-Path: <SRS0=hPYX=RW=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6B3C43381
-	for <backports@archiver.kernel.org>; Tue, 19 Mar 2019 21:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0065BC43381
+	for <backports@archiver.kernel.org>; Tue, 19 Mar 2019 21:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49606217F4
-	for <backports@archiver.kernel.org>; Tue, 19 Mar 2019 21:50:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBDD82146E
+	for <backports@archiver.kernel.org>; Tue, 19 Mar 2019 21:56:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbfCSVuf (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Tue, 19 Mar 2019 17:50:35 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:8318 "EHLO mx2.mailbox.org"
+        id S1726832AbfCSV4H (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Tue, 19 Mar 2019 17:56:07 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:31504 "EHLO mx1.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726686AbfCSVue (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 19 Mar 2019 17:50:34 -0400
+        id S1726768AbfCSV4H (ORCPT <rfc822;backports@vger.kernel.org>);
+        Tue, 19 Mar 2019 17:56:07 -0400
 Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id B1EB9A2F89;
-        Tue, 19 Mar 2019 22:50:32 +0100 (CET)
+        by mx1.mailbox.org (Postfix) with ESMTPS id D48D74D7C9;
+        Tue, 19 Mar 2019 22:56:04 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp1.mailbox.org ([80.241.60.240])
         by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
-        with ESMTP id SrWxB6HZmqa8; Tue, 19 Mar 2019 22:50:23 +0100 (CET)
-Subject: Re: [PATCH 2/2] backports: update
- backport/backport-include/net/netlink.h
-To:     AceLan Kao <acelan.kao@canonical.com>, mcgrof@kernel.org,
-        backports@vger.kernel.org
-References: <20190319060915.19849-1-acelan.kao@canonical.com>
- <20190319060915.19849-3-acelan.kao@canonical.com>
+        with ESMTP id bm9VR2sAjom3; Tue, 19 Mar 2019 22:55:54 +0100 (CET)
+Subject: Re: [PATCH 0/6] backport: some patches from our internal tree
+ 2019-03-15
+To:     Luca Coelho <luca@coelho.fi>, backports@vger.kernel.org
+Cc:     Luca Coelho <luciano.coelho@intel.com>
+References: <20190315143318.4714-1-luca@coelho.fi>
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=hauke@hauke-m.de; keydata=
@@ -95,10 +93,10 @@ Autocrypt: addr=hauke@hauke-m.de; keydata=
  qW4TeDaiKtaki/NrHwCH3aOWx0xrxj4Vr2qVEO9Qksk+4RZt2QLX9PClmDDZR/KgnAGIVaHc
  w6Onn02ka7+V9c8DcJjQpD6IysI0r4U0LCUMddtwqaDk/0LR8M3+LhQ70+kWRCAY0QCZa5pC
  U9K2P2+nz7is4sF1hNVarw==
-Message-ID: <c1efbd7a-7bce-2c34-8be8-946c77eecd8e@hauke-m.de>
-Date:   Tue, 19 Mar 2019 22:50:22 +0100
+Message-ID: <7981d418-bf75-fb3f-57a9-f729935896a6@hauke-m.de>
+Date:   Tue, 19 Mar 2019 22:55:54 +0100
 MIME-Version: 1.0
-In-Reply-To: <20190319060915.19849-3-acelan.kao@canonical.com>
+In-Reply-To: <20190315143318.4714-1-luca@coelho.fi>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -107,41 +105,32 @@ Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-On 3/19/19 7:09 AM, AceLan Kao wrote:
-> Add new macros introduced from
->    23323289b154 netlink: reduce NLA_POLICY_NESTED{,_ARRAY} arguments
+On 3/15/19 3:33 PM, Luca Coelho wrote:
+> From: Luca Coelho <luciano.coelho@intel.com>
 > 
-> Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
-> ---
->  backport/backport-include/net/netlink.h | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+> Hi,
 > 
-> diff --git a/backport/backport-include/net/netlink.h b/backport/backport-include/net/netlink.h
-> index 4af73631..6f6630ae 100644
-> --- a/backport/backport-include/net/netlink.h
-> +++ b/backport/backport-include/net/netlink.h
-> @@ -59,10 +59,14 @@ struct backport_nla_policy {
->  #define NLA_POLICY_ETH_ADDR		NLA_POLICY_EXACT_LEN(ETH_ALEN)
->  #define NLA_POLICY_ETH_ADDR_COMPAT	NLA_POLICY_EXACT_LEN_WARN(ETH_ALEN)
->  
-> -#define NLA_POLICY_NESTED(maxattr, policy) \
-> +#define _NLA_POLICY_NESTED(maxattr, policy) \
->  	{ .type = NLA_NESTED, .validation_data = policy, .len = maxattr }
-> -#define NLA_POLICY_NESTED_ARRAY(maxattr, policy) \
-> +#define _NLA_POLICY_NESTED_ARRAY(maxattr, policy) \
->  	{ .type = NLA_NESTED_ARRAY, .validation_data = policy, .len = maxattr }
-> +#define NLA_POLICY_NESTED(policy) \
-> +	_NLA_POLICY_NESTED(ARRAY_SIZE(policy) - 1, policy)
-> +#define NLA_POLICY_NESTED_ARRAY(policy) \
-> +	_NLA_POLICY_NESTED_ARRAY(ARRAY_SIZE(policy) - 1, policy)
->  
->  #define __NLA_ENSURE(condition) (sizeof(char[1 - 2*!(condition)]) - 1)
->  #define NLA_ENSURE_INT_TYPE(tp)				\
+> These are a few new patches that we had pending in our internal tree.
+> They update some things for v5.0, fix some bugs and add things needed
+> by iwlwifi.
 > 
+> Please review.
+> 
+> 
+> Cheers,
+> Luca.
+> 
+> 
+> Johannes Berg (1):
+>   backports: genetlink: avoid NULL dereference
+> 
+> Luca Coelho (5):
+>   backport: add v5.* to the Makefile
+>   backports: update iwlwifi pci device removal patch for v5.0
+>   backport: add atomic_fetch_add_unless()
+>   backport: add include ftrace_event.h back to backport-4.0.c
+>   backport: fix handling of nospec.h for 4.15.0 and 4.15.1
 
-This is only added for kernel < 4.20, there is a ifdef around, there is
-also a backport needed for kernel 4.20 till 5.0.
-
-Hauke
+Acked-by: Hauke Mehrtens <hauke@hauke-m.de>
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
