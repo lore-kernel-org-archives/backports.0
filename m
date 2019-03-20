@@ -4,59 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CF8C43381
-	for <backports@archiver.kernel.org>; Wed, 20 Mar 2019 02:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47BDAC43381
+	for <backports@archiver.kernel.org>; Wed, 20 Mar 2019 02:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9525A2184D
-	for <backports@archiver.kernel.org>; Wed, 20 Mar 2019 02:34:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19F2F2184D
+	for <backports@archiver.kernel.org>; Wed, 20 Mar 2019 02:34:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7lX8vQo"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UmolYxgS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbfCTCek (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Tue, 19 Mar 2019 22:34:40 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38637 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726969AbfCTCek (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 19 Mar 2019 22:34:40 -0400
-Received: by mail-pf1-f194.google.com with SMTP id 10so765675pfo.5
-        for <backports@vger.kernel.org>; Tue, 19 Mar 2019 19:34:39 -0700 (PDT)
+        id S1727106AbfCTCen (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Tue, 19 Mar 2019 22:34:43 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42829 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726969AbfCTCen (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 19 Mar 2019 22:34:43 -0400
+Received: by mail-pf1-f196.google.com with SMTP id r15so752044pfn.9
+        for <backports@vger.kernel.org>; Tue, 19 Mar 2019 19:34:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:subject:date:message-id:in-reply-to:references;
-        bh=7N1ouRxa4TSFGu4udslbaDq+i5rQRCGlHsRn/0j1M6I=;
-        b=G7lX8vQoYd+fIpQmIHgnkxHEvsrSW6JCCBZeIzp6yTDcJABTNC9FKPnfVw7NzSvTtS
-         1pdpyx+zOepgOxNWNIQEOZUWe4i3di1D6Qm2IRk1b8Qa/oWE7LrvvKsCDstaA3JCb/BH
-         oAUYtojJQ8PDMXP9FFEjxpsFfF8su1x9qz/brfHfsYP72dM5/ELrM8Jf/pggD107kb4l
-         sTCiBctfw2mWy7cMP4g0jlJ9eqbU1Kt+0/7X1c/rJ9biZGUKQGqW8Dp34fBUSTTqAL+t
-         dUQ92G2OraljGMXnaxOh0ZFK2ZtFUKJ+6fgHi3Kg+AEgOY56IjHnbwgjZ3DFoQ1Uvtro
-         ePBg==
+        bh=yGRGme722hHhdJZt9XFqgfh6kYYfHE8aexQKr571aEk=;
+        b=UmolYxgSKnscEpFPEupWOmXE490UcaV2n7PjXLJMD0ZS6y9lbK6eZPpXoTYsc/kFby
+         Psv9AmaxaMNN2/F9ioAmsl/xddadoSYf699x6ZHN7xODXw+oU1KqyJsPMj47epnppHTk
+         n91jXkUj4KXhIEfyMMIR90/EuTJET960yliotvO+7/v67YLETP+0//f93t+NBCkkmvxy
+         VPaLQfaMXawJcvb5duoxwou9pFjAn8muokSukzneVbPIXCP6LY3q1Tp+ctOd+oXNLOyD
+         UaQOz9y7aJGIfVaZzXySghLNetHUESS7QTE06U40nwiFVh6+H+qHJRm3OqoEmWfUj8V+
+         HYmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:subject:date:message-id
          :in-reply-to:references;
-        bh=7N1ouRxa4TSFGu4udslbaDq+i5rQRCGlHsRn/0j1M6I=;
-        b=VkWbhX2qmTcbG6+pYXbgS/zb17y0ces8LhZ0ezYxr7/JiTgHAaP7L7HA4q6d7b8Uyt
-         BgMO6/7EfQbunPAu2HChYaUXJm9hEI3nzc42aBgF6OF+2XNOHvjI+dK+1GAhZPloDdrm
-         8Hmh0XagTKsyItxnrmaCafcDlhsNXfP+ju6MXcQZf45wRyjx0aQUaqR1dTBWsPcK1ntt
-         T+FZL1KYdsmtIShr6eaF6OGOqwm6CibQlk1/Ah3wREHoBE4GjFFixQ3CZTCFg+ftKJjy
-         LNqpOTskThELHFCiUliBPbv8gJ2LB6iT0vZvVRGVsdc0YW03NqL3Wjpv7l8pIO0nArP6
-         9alA==
-X-Gm-Message-State: APjAAAWLPjD/zBnuQtncgUIdIoGYKFEVcQOrjkP/ENuWbohIZ4vXUzAP
-        CMFkFEggvxE5u/aXVQN6A/M=
-X-Google-Smtp-Source: APXvYqw8qJD3t4G/unOdNH+01xW6YCEVikGKZJ+KqYOvEj+b0oDzb1qsTUKCRQeSMjmg2mjOCOl7xQ==
-X-Received: by 2002:a63:145b:: with SMTP id 27mr5367086pgu.74.1553049279468;
-        Tue, 19 Mar 2019 19:34:39 -0700 (PDT)
+        bh=yGRGme722hHhdJZt9XFqgfh6kYYfHE8aexQKr571aEk=;
+        b=ngdF8Oj8eevuFjlXIxOqrEfsEBtSeaxt5vtDtRp2sNkknuVp8t+GcP29zQcdIywLD/
+         9x4KG4NSdOOcbrjtIBSYBjQ3sGJFCZlLnqqCJG0eGgCrXQgU/cVo7+6FN3N+PmG/B5x9
+         YyLjrsruSLmoVIF+ewjGjvnNTeY9e+axfl+LYkRjPGqVhw8M8+7oHOOXvoFtzi/fQDrQ
+         x+/ZZ7IRfj6siXaECR9JWuUvRkQAg7lCdPy6Q+/hftdWyEDWnwiLlLEg3AtjeOXDIeQM
+         dBFjCbHAcqvuz3Rbx8eP4Lj55gsi/Qn3H4FsoHYAoBzKTliJ30I6Vj/wszx/5OnW/Bq7
+         IT0A==
+X-Gm-Message-State: APjAAAX55q8lN5uaT8vGg7mvIBxXKG3pbknZHy/Fcw6eqboBwCfybVDH
+        2G/B34P7KQxtkFbqkdoh5DM=
+X-Google-Smtp-Source: APXvYqyQsTloCgRHHrP1q87vjH6WQzyI19wgGNTxqy1vvQcUQF58Tea+6wP8DqtVCCXFamslIM9Rjw==
+X-Received: by 2002:a17:902:8644:: with SMTP id y4mr5221719plt.99.1553049282613;
+        Tue, 19 Mar 2019 19:34:42 -0700 (PDT)
 Received: from localhost (61-220-137-37.HINET-IP.hinet.net. [61.220.137.37])
-        by smtp.gmail.com with ESMTPSA id c11sm339476pfn.65.2019.03.19.19.34.38
+        by smtp.gmail.com with ESMTPSA id k8sm411707pgq.37.2019.03.19.19.34.41
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Mar 2019 19:34:38 -0700 (PDT)
+        Tue, 19 Mar 2019 19:34:41 -0700 (PDT)
 From:   AceLan Kao <acelan.kao@canonical.com>
 To:     hauke@hauke-m.de, mcgrof@kernel.org, backports@vger.kernel.org
-Subject: [PATCH v2 1/2] backports: remove mt76.patch
-Date:   Wed, 20 Mar 2019 10:34:33 +0800
-Message-Id: <20190320023434.2804-2-acelan.kao@canonical.com>
+Subject: [PATCH v2 2/2] backports: update backport/backport-include/net/netlink.h
+Date:   Wed, 20 Mar 2019 10:34:34 +0800
+Message-Id: <20190320023434.2804-3-acelan.kao@canonical.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190320023434.2804-1-acelan.kao@canonical.com>
 References: <20190320023434.2804-1-acelan.kao@canonical.com>
@@ -65,32 +66,54 @@ Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-The patch patches/0013-fix-makefile-includes/mt76.patch was added in
-upstream Linux commit 85b7e2acd31b ("mt76: Add missing include of
-linux/module.h") which was added in v5.1-rc1
+Add new macros has been introduced since v5.1-rc1
+   23323289b154 netlink: reduce NLA_POLICY_NESTED{,_ARRAY} arguments
+
+V2: The new macros are required under v5.1, v1 put the macros only under
+v4.20
 
 Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
 ---
- patches/0013-fix-makefile-includes/mt76.patch | 10 ----------
- 1 file changed, 10 deletions(-)
- delete mode 100644 patches/0013-fix-makefile-includes/mt76.patch
+ backport/backport-include/net/netlink.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/patches/0013-fix-makefile-includes/mt76.patch b/patches/0013-fix-makefile-includes/mt76.patch
-deleted file mode 100644
-index 4f122c46..00000000
---- a/patches/0013-fix-makefile-includes/mt76.patch
-+++ /dev/null
-@@ -1,10 +0,0 @@
----- a/drivers/net/wireless/mediatek/mt76/mt76x0/usb_mcu.c
--+++ b/drivers/net/wireless/mediatek/mt76/mt76x0/usb_mcu.c
--@@ -15,6 +15,7 @@
--  */
-- #include <linux/kernel.h>
-- #include <linux/firmware.h>
--+#include <linux/module.h>
-- 
-- #include "mt76x0.h"
-- #include "mcu.h"
+diff --git a/backport/backport-include/net/netlink.h b/backport/backport-include/net/netlink.h
+index 4af73631..c5db02da 100644
+--- a/backport/backport-include/net/netlink.h
++++ b/backport/backport-include/net/netlink.h
+@@ -4,6 +4,17 @@
+ #include <linux/version.h>
+ #include <linux/in6.h>
+ 
++#if LINUX_VERSION_IS_LESS(5,1,0)
++#define _NLA_POLICY_NESTED(maxattr, policy) \
++	{ .type = NLA_NESTED, .validation_data = policy, .len = maxattr }
++#define _NLA_POLICY_NESTED_ARRAY(maxattr, policy) \
++	{ .type = NLA_NESTED_ARRAY, .validation_data = policy, .len = maxattr }
++#define NLA_POLICY_NESTED(policy) \
++	_NLA_POLICY_NESTED(ARRAY_SIZE(policy) - 1, policy)
++#define NLA_POLICY_NESTED_ARRAY(policy) \
++	_NLA_POLICY_NESTED_ARRAY(ARRAY_SIZE(policy) - 1, policy)
++#endif /* < 5.1 */
++
+ #if LINUX_VERSION_IS_LESS(4,20,0)
+ /* can't backport using the enum - need to override */
+ #define NLA_UNSPEC		0
+@@ -59,10 +70,14 @@ struct backport_nla_policy {
+ #define NLA_POLICY_ETH_ADDR		NLA_POLICY_EXACT_LEN(ETH_ALEN)
+ #define NLA_POLICY_ETH_ADDR_COMPAT	NLA_POLICY_EXACT_LEN_WARN(ETH_ALEN)
+ 
++#ifndef NLA_POLICY_NESTED
+ #define NLA_POLICY_NESTED(maxattr, policy) \
+ 	{ .type = NLA_NESTED, .validation_data = policy, .len = maxattr }
++#endif
++#ifndef NLA_POLICY_NESTED_ARRAY
+ #define NLA_POLICY_NESTED_ARRAY(maxattr, policy) \
+ 	{ .type = NLA_NESTED_ARRAY, .validation_data = policy, .len = maxattr }
++#endif
+ 
+ #define __NLA_ENSURE(condition) (sizeof(char[1 - 2*!(condition)]) - 1)
+ #define NLA_ENSURE_INT_TYPE(tp)				\
 -- 
 2.17.1
 
