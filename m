@@ -2,37 +2,36 @@ Return-Path: <SRS0=kVHn=R7=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4538EC43381
-	for <backports@archiver.kernel.org>; Thu, 28 Mar 2019 15:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21221C43381
+	for <backports@archiver.kernel.org>; Thu, 28 Mar 2019 15:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CC8220811
-	for <backports@archiver.kernel.org>; Thu, 28 Mar 2019 15:03:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2F6120823
+	for <backports@archiver.kernel.org>; Thu, 28 Mar 2019 15:10:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725816AbfC1PD2 (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Thu, 28 Mar 2019 11:03:28 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:34210 "EHLO mx2.mailbox.org"
+        id S1725948AbfC1PKa (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Thu, 28 Mar 2019 11:10:30 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:12110 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726087AbfC1PD2 (ORCPT <rfc822;backports@vger.kernel.org>);
-        Thu, 28 Mar 2019 11:03:28 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        id S1725816AbfC1PKa (ORCPT <rfc822;backports@vger.kernel.org>);
+        Thu, 28 Mar 2019 11:10:30 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id D8D20A4428;
-        Thu, 28 Mar 2019 16:03:25 +0100 (CET)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 7EDD8A3208
+        for <backports@vger.kernel.org>; Thu, 28 Mar 2019 16:10:28 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id 2Eu2ZpZeS8mk; Thu, 28 Mar 2019 16:03:13 +0100 (CET)
-Subject: Re: [PATCH 0/6] backport: some patches from our internal tree
- 2019-03-15
-To:     Luca Coelho <luca@coelho.fi>, backports@vger.kernel.org
-Cc:     Luca Coelho <luciano.coelho@intel.com>
-References: <20190315143318.4714-1-luca@coelho.fi>
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
+        with ESMTP id o3r36SVSvhXO for <backports@vger.kernel.org>;
+        Thu, 28 Mar 2019 16:10:21 +0100 (CET)
+To:     backports@vger.kernel.org
 From:   Hauke Mehrtens <hauke@hauke-m.de>
+Subject: backports-5.1-rc2-1, backports-5.0.5-1, backports-4.20.17-1,
+ backports-4.19.32-1 released
 Openpgp: preference=signencrypt
 Autocrypt: addr=hauke@hauke-m.de; keydata=
  mQINBFtLdKcBEADFOTNUys8TnhpEdE5e1wO1vC+a62dPtuZgxYG83+9iVpsAyaSrCGGz5tmu
@@ -94,56 +93,34 @@ Autocrypt: addr=hauke@hauke-m.de; keydata=
  qW4TeDaiKtaki/NrHwCH3aOWx0xrxj4Vr2qVEO9Qksk+4RZt2QLX9PClmDDZR/KgnAGIVaHc
  w6Onn02ka7+V9c8DcJjQpD6IysI0r4U0LCUMddtwqaDk/0LR8M3+LhQ70+kWRCAY0QCZa5pC
  U9K2P2+nz7is4sF1hNVarw==
-Message-ID: <357a3233-e17f-1d81-277e-b7568750af8b@hauke-m.de>
-Date:   Thu, 28 Mar 2019 16:03:12 +0100
+Message-ID: <999cfb3c-6149-9ae3-6aac-0029db1dc552@hauke-m.de>
+Date:   Thu, 28 Mar 2019 16:10:21 +0100
 MIME-Version: 1.0
-In-Reply-To: <20190315143318.4714-1-luca@coelho.fi>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-On 3/15/19 3:33 PM, Luca Coelho wrote:
-> From: Luca Coelho <luciano.coelho@intel.com>
-> 
-> Hi,
-> 
-> These are a few new patches that we had pending in our internal tree.
-> They update some things for v5.0, fix some bugs and add things needed
-> by iwlwifi.
-> 
-> Please review.
-> 
-> 
-> Cheers,
-> Luca.
-> 
-> 
-> Johannes Berg (1):
->   backports: genetlink: avoid NULL dereference
-> 
-> Luca Coelho (5):
->   backport: add v5.* to the Makefile
->   backports: update iwlwifi pci device removal patch for v5.0
->   backport: add atomic_fetch_add_unless()
->   backport: add include ftrace_event.h back to backport-4.0.c
->   backport: fix handling of nospec.h for 4.15.0 and 4.15.1
-> 
->  backport/Makefile                             | 5 +++--
->  backport/backport-include/linux/atomic.h      | 9 +++++++++
->  backport/backport-include/linux/nospec.h      | 3 ++-
->  backport/compat/backport-4.0.c                | 1 +
->  backport/compat/backport-genetlink.c          | 9 +++------
->  patches/0085-iwlwifi-pci-device-removal.patch | 8 ++++----
->  6 files changed, 22 insertions(+), 13 deletions(-)
-> 
+backports-5.1-rc2-1 was released. This is based on Linux 5.1-rc2.
+https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/v5.1-rc2/backports-5.1-rc2-1.tar.xz
 
-Hi Luca,
+backports-5.0.5-1 was released. This is based on Linux 5.0.5.
+https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/v5.0.5/backports-5.0.5-1.tar.xz
 
-I allied all your patches.
+backports-4.20.17-1 was released. This is based on Linux 4.20.17.
+https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/v4.20.17/backports-4.20.17-1.tar.xz
+
+backports-4.19.32-1 was released. This is based on Linux 4.19.32.
+https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/v4.19.32/backports-4.19.32-1.tar.xz
+
+There is now a updated wiki page with the releases:
+https://backports.wiki.kernel.org/index.php/Releases
+
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
 
 Hauke
 --
