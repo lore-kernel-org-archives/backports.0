@@ -3,34 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5644C43381
-	for <backports@archiver.kernel.org>; Thu, 28 Mar 2019 15:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4538EC43381
+	for <backports@archiver.kernel.org>; Thu, 28 Mar 2019 15:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 702E320811
-	for <backports@archiver.kernel.org>; Thu, 28 Mar 2019 15:02:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CC8220811
+	for <backports@archiver.kernel.org>; Thu, 28 Mar 2019 15:03:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726087AbfC1PCx (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Thu, 28 Mar 2019 11:02:53 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:36834 "EHLO mx1.mailbox.org"
+        id S1725816AbfC1PD2 (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Thu, 28 Mar 2019 11:03:28 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:34210 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725816AbfC1PCw (ORCPT <rfc822;backports@vger.kernel.org>);
-        Thu, 28 Mar 2019 11:02:52 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        id S1726087AbfC1PD2 (ORCPT <rfc822;backports@vger.kernel.org>);
+        Thu, 28 Mar 2019 11:03:28 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id C88FE4CCA7;
-        Thu, 28 Mar 2019 16:02:49 +0100 (CET)
+        by mx2.mailbox.org (Postfix) with ESMTPS id D8D20A4428;
+        Thu, 28 Mar 2019 16:03:25 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
-        with ESMTP id fXZsWzG9Dnaj; Thu, 28 Mar 2019 16:02:46 +0100 (CET)
-Subject: Re: [PATCH v3 0/3] backports: to make iwlwifi backported from
- v5.1-rc1 can be compiled
-To:     AceLan Kao <acelan.kao@canonical.com>, mcgrof@kernel.org,
-        backports@vger.kernel.org
-References: <20190327030044.28263-1-acelan.kao@canonical.com>
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
+        with ESMTP id 2Eu2ZpZeS8mk; Thu, 28 Mar 2019 16:03:13 +0100 (CET)
+Subject: Re: [PATCH 0/6] backport: some patches from our internal tree
+ 2019-03-15
+To:     Luca Coelho <luca@coelho.fi>, backports@vger.kernel.org
+Cc:     Luca Coelho <luciano.coelho@intel.com>
+References: <20190315143318.4714-1-luca@coelho.fi>
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=hauke@hauke-m.de; keydata=
@@ -93,10 +94,10 @@ Autocrypt: addr=hauke@hauke-m.de; keydata=
  qW4TeDaiKtaki/NrHwCH3aOWx0xrxj4Vr2qVEO9Qksk+4RZt2QLX9PClmDDZR/KgnAGIVaHc
  w6Onn02ka7+V9c8DcJjQpD6IysI0r4U0LCUMddtwqaDk/0LR8M3+LhQ70+kWRCAY0QCZa5pC
  U9K2P2+nz7is4sF1hNVarw==
-Message-ID: <112cb47b-b4c4-ccea-6dfc-b22e9335b962@hauke-m.de>
-Date:   Thu, 28 Mar 2019 16:02:45 +0100
+Message-ID: <357a3233-e17f-1d81-277e-b7568750af8b@hauke-m.de>
+Date:   Thu, 28 Mar 2019 16:03:12 +0100
 MIME-Version: 1.0
-In-Reply-To: <20190327030044.28263-1-acelan.kao@canonical.com>
+In-Reply-To: <20190315143318.4714-1-luca@coelho.fi>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -105,59 +106,44 @@ Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-On 3/27/19 4:00 AM, AceLan Kao wrote:
-> Trying to backport iwlwifi driver from v5.1-rc1, and did some necessary
-> modifications.
+On 3/15/19 3:33 PM, Luca Coelho wrote:
+> From: Luca Coelho <luciano.coelho@intel.com>
 > 
-> == ckmake-report.log ==
+> Hi,
 > 
-> 1   3.10.108            [  FAIL  ]
-> 2   3.11.10             [  FAIL  ]
-> 3   3.12.74             [  FAIL  ]
-> 4   3.13.11             [  FAIL  ]
-> 5   3.14.79             [  FAIL  ]
-> 6   3.15.10             [  FAIL  ]
-> 7   3.16.63             [  FAIL  ]
-> 8   3.17.8              [  FAIL  ]
-> 9   3.18.136            [  FAIL  ]
-> 10  3.19.8              [  FAIL  ]
-> 11  4.0.9               [  FAIL  ]
-> 12  4.1.52              [  FAIL  ]
-> 13  4.2.8               [  LINK  ]
-> 14  4.3.6               [  LINK  ]
-> 15  4.4.176             [  OK  ]
-> 16  4.5.7               [  OK  ]
-> 17  4.6.7               [  FAIL  ]
-> 18  4.7.10              [  FAIL  ]
-> 19  4.8.17              [  FAIL  ]
-> 20  4.9.162             [  FAIL  ]
-> 21  4.10.17             [  FAIL  ]
-> 22  4.11.12             [  FAIL  ]
-> 23  4.12.14             [  OK  ]
-> 24  4.13.16             [  OK  ]
-> 25  4.14.105            [  OK  ]
-> 26  4.15.18             [  OK  ]
-> 27  4.16.18             [  OK  ]
-> 28  4.17.19             [  OK  ]
-> 29  4.18.20             [  OK  ]
-> 30  4.19.28             [  OK  ]
-> 31  4.20.15             [  OK  ]
-> 32  5.0.1               [  OK  ]
+> These are a few new patches that we had pending in our internal tree.
+> They update some things for v5.0, fix some bugs and add things needed
+> by iwlwifi.
 > 
-> AceLan Kao (3):
->   backports: remove mt76.patch
->   backports: update backport/backport-include/net/netlink.h
->   backports: fix compilation error against v4.4 kernel
+> Please review.
 > 
->  backport/backport-include/net/netlink.h       | 18 +++++++++++++-----
->  patches/0013-fix-makefile-includes/mt76.patch | 10 ----------
->  patches/lib-refcount.patch                    |  6 +++++-
->  3 files changed, 18 insertions(+), 16 deletions(-)
->  delete mode 100644 patches/0013-fix-makefile-includes/mt76.patch
+> 
+> Cheers,
+> Luca.
+> 
+> 
+> Johannes Berg (1):
+>   backports: genetlink: avoid NULL dereference
+> 
+> Luca Coelho (5):
+>   backport: add v5.* to the Makefile
+>   backports: update iwlwifi pci device removal patch for v5.0
+>   backport: add atomic_fetch_add_unless()
+>   backport: add include ftrace_event.h back to backport-4.0.c
+>   backport: fix handling of nospec.h for 4.15.0 and 4.15.1
+> 
+>  backport/Makefile                             | 5 +++--
+>  backport/backport-include/linux/atomic.h      | 9 +++++++++
+>  backport/backport-include/linux/nospec.h      | 3 ++-
+>  backport/compat/backport-4.0.c                | 1 +
+>  backport/compat/backport-genetlink.c          | 9 +++------
+>  patches/0085-iwlwifi-pci-device-removal.patch | 8 ++++----
+>  6 files changed, 22 insertions(+), 13 deletions(-)
 > 
 
-Thank you I applied your first 2 patches and took my version instead of
-your 3. patch.
+Hi Luca,
+
+I allied all your patches.
 
 Hauke
 --
