@@ -1,97 +1,111 @@
-Return-Path: <SRS0=dpLs=UV=vger.kernel.org=backports-owner@kernel.org>
+Return-Path: <SRS0=C7fe=UZ=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE75C43613
-	for <backports@archiver.kernel.org>; Sat, 22 Jun 2019 08:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1ADDC48BD6
+	for <backports@archiver.kernel.org>; Wed, 26 Jun 2019 22:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12B6C2070B
-	for <backports@archiver.kernel.org>; Sat, 22 Jun 2019 08:51:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A44D42184C
+	for <backports@archiver.kernel.org>; Wed, 26 Jun 2019 22:21:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561587682;
+	bh=SEf59/aTYORotE0ONQAGQtOjxVf4gUWafDThzfWNYPY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=VEoxuXOlZiIPVAa3j6aNz278NoJeeLcz/AUqaK2hdZnD+4pJJrJD+n7CEaK16l+GI
+	 D+4jHzbONirxc2vFE5EWooPWq9Tn/ogO9/qNBk9ZFKhHNg2iPn4RAiBgKA5+EYivJJ
+	 YTrnYthOB9joy/vzY2ASJ+KXMT1HQ+4ALW2j/6d0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726292AbfFVIvB (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Sat, 22 Jun 2019 04:51:01 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:53996 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbfFVIvB (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sat, 22 Jun 2019 04:51:01 -0400
-Received: from mail-pg1-f198.google.com ([209.85.215.198])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <anthony.wong@canonical.com>)
-        id 1hebjf-0001qy-FK
-        for backports@vger.kernel.org; Sat, 22 Jun 2019 08:50:59 +0000
-Received: by mail-pg1-f198.google.com with SMTP id s195so5511362pgs.13
-        for <backports@vger.kernel.org>; Sat, 22 Jun 2019 01:50:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nRsTsEdNQs10LB0kne5DEeG896N+NmVkAoKfo79DZuw=;
-        b=XNSVH/hyx6HY2jBcQaOLHgS1iey7tvaZQruRxaqa5J9W9yUVHGXVIm1Z7tnD8SToqw
-         Vfz0ssb+gbZ1xUhnk4lmV3tendc+rGHMonGXPgyYdY2Vcc5R5qlDE01jlmFHobZlIuK9
-         gUNMSmaekpVD9KJzcn2WDG8wcCBXaaSDJ9NEzTKiK8cNrTV/z85HOLrKfVYKC0VG8XxB
-         oGa8XVPrpAjY4x6Yii56sWya88AiTtv8biRRa+Y81fNL9xCz2ZGPQoTXQUG1uCrzEBSC
-         BIZBrzF/lgTmK37Zt/nbTF51Kpcr1q18DyoIwQAFna9YbJw5y5pD7od4qUFN56WLWBvf
-         reqQ==
-X-Gm-Message-State: APjAAAUZlaOyD72/0TXzTgFOlNlZlXxfKST5PQeVI426dDTZxUS2R3UQ
-        hlRkkp88IGC3RsJZa8xtsyR5gnmaJpQc/OZF3EFECYj2JwXx7s66fHELY6DYMEbq0HnC/nCQewR
-        3vA2liRI4n5Qd0veIjNdAv6XwNwvMK8me2zsWHg==
-X-Received: by 2002:a17:90a:258b:: with SMTP id k11mr11399972pje.110.1561193457683;
-        Sat, 22 Jun 2019 01:50:57 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqy3QgHq5to5+XG6zk8SCEPqe8BLVWQVQxi7nnPd2j9FIx8t6+8Cs0oIG+6VSHE4JpEuwmurgQ==
-X-Received: by 2002:a17:90a:258b:: with SMTP id k11mr11399950pje.110.1561193457388;
-        Sat, 22 Jun 2019 01:50:57 -0700 (PDT)
-Received: from canonical.com (124244234215.ctinets.com. [124.244.234.215])
-        by smtp.gmail.com with ESMTPSA id c18sm5259674pfc.180.2019.06.22.01.50.56
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 22 Jun 2019 01:50:56 -0700 (PDT)
-From:   anthony.wong@canonical.com
-X-Google-Original-From: yp@anthonywong.net
-To:     hauke@hauke-m.de, mcgrof@kernel.org
-Cc:     backports@vger.kernel.org
-Subject: [PATCH] backports: Keep kconf/zconf.{lex,tab}.c during "make clean"
-Date:   Sat, 22 Jun 2019 16:50:53 +0800
-Message-Id: <20190622085053.6709-1-yp@anthonywong.net>
-X-Mailer: git-send-email 2.20.1
+        id S1726293AbfFZWVW (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Wed, 26 Jun 2019 18:21:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45246 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726239AbfFZWVW (ORCPT <rfc822;backports@vger.kernel.org>);
+        Wed, 26 Jun 2019 18:21:22 -0400
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6062E217F4;
+        Wed, 26 Jun 2019 22:21:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561587681;
+        bh=Tqz80iJYZg/0GvkxSfm5luZWdZskDvCbYXS8JM/P41M=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=rDRINPrARYm4y0gTMKieViIBMlqLk3pfnXd5IX5+U0eQmw2kxZF/3a0rjGwTKySrr
+         MG1EkmO5tV9AOiFnuzSNFhgmLZRPX99sIh0nZcKUbjTRMX2v8nLdVYLvrDGOSexOcf
+         VzU/Ol9q0oq/agucEG8UfeMFWJQg7/Cf8EnIwDDE=
+Received: by mail-vs1-f46.google.com with SMTP id m8so295376vsj.0;
+        Wed, 26 Jun 2019 15:21:21 -0700 (PDT)
+X-Gm-Message-State: APjAAAUS0Mjo4O9cnmerQYbEoyhNKyz/m996M3Xge9mPWJqt49RZqZoi
+        8HXd7IpwPcD6RvKZLSeqdvvqz6WzOX3CMMOc6rU=
+X-Google-Smtp-Source: APXvYqxiURrS3kYi96trsVNlLi7NqOcM8326ys8JoB7UHyO3AYKMXjoykeMiQXetdNc9DXfJMTI9H3ax6sGVyKS63kE=
+X-Received: by 2002:a67:1143:: with SMTP id 64mr472922vsr.133.1561587680499;
+ Wed, 26 Jun 2019 15:21:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
+ <20160818175505.GM3296@wotan.suse.de> <20160825074313.GC18622@lst.de>
+ <20160825201919.GE3296@wotan.suse.de> <CAB=NE6UfkNN5kES6QmkM-dVC=HzKsZEkevH+Y3beXhVb2gC5vg@mail.gmail.com>
+In-Reply-To: <CAB=NE6UfkNN5kES6QmkM-dVC=HzKsZEkevH+Y3beXhVb2gC5vg@mail.gmail.com>
+From:   Luis Chamberlain <mcgrof@kernel.org>
+Date:   Wed, 26 Jun 2019 15:21:08 -0700
+X-Gmail-Original-Message-ID: <CAB=NE6XEnZ1uH2nidRbn6myvdQJ+vArpTTT6iSJebUmyfdaLcQ@mail.gmail.com>
+Message-ID: <CAB=NE6XEnZ1uH2nidRbn6myvdQJ+vArpTTT6iSJebUmyfdaLcQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/5] Add CONFIG symbol as module attribute
+To:     Christoph Hellwig <hch@lst.de>,
+        Brendan Higgins <brendanhiggins@google.com>
+Cc:     Cristina Moraru <cristina.moraru09@gmail.com>,
+        "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>,
+        Valentin Rothberg <valentinrothberg@gmail.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <mmarek@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tom Gundersen <teg@jklm.no>, Kay Sievers <kay@vrfy.org>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        backports@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "rafael.j.wysocki" <rafael.j.wysocki@intel.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Paul Bolle <pebolle@tiscali.nl>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Laurence Oberman <loberman@redhat.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Tejun Heo <tj@kernel.org>,
+        Jej B <James.Bottomley@hansenpartnership.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Daniel Jonsson <danijons@student.chalmers.se>,
+        Andrzej Wasowski <wasowski@itu.dk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-From: Anthony Wong <yp@anthonywong.net>
+On Tue, Feb 5, 2019 at 2:07 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> In lieu of no Luke Skywalker, if you will, for a large kconfig revamp
+> on this, I'm inclined to believe *at least* having some kconfig_symb
+> exposed for some modules is better than nothing. Christoph are you
+> totally opposed to this effort until we get a non-reverse engineered
+> effort in place? It just seems like an extraordinary amount of work
+> and I'm not quite sure who's volunteering to do it.
+>
+> Other stakeholders may benefit from at least having some config -->
+> module mapping for now. Not just backports or building slimmer
+> kernels.
 
-On recent kernel versions, build fails after "make clean" is run
-because "make clean" removes kconf/zconf.{lex,tab}.c, so presesrve
-them during "make clean".
+Christoph, *poke*
 
-Signed-off-by: Anthony Wong <yp@anthonywong.net>
----
- backport/Makefile.real | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/backport/Makefile.real b/backport/Makefile.real
-index 65508028..e772a9cf 100644
---- a/backport/Makefile.real
-+++ b/backport/Makefile.real
-@@ -115,7 +115,10 @@ uninstall:
- 	@echo Reboot.
- 	@echo
- 
-+EXCLUDE_CLEAN := kconf/zconf.lex.c kconf/zconf.tab.c
- .PHONY: clean
- clean:
-+	@$(foreach f, $(EXCLUDE_CLEAN), mv $(f) $(f).orig;)
- 	@$(MAKE) -f Makefile.build clean
- 	@$(MAKE) -C kconf clean
-+	@$(foreach f, $(EXCLUDE_CLEAN), mv $(f).orig $(f);)
--- 
-2.11.0
-
+  Luis
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
