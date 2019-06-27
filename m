@@ -1,62 +1,31 @@
-Return-Path: <SRS0=C7fe=UZ=vger.kernel.org=backports-owner@kernel.org>
+Return-Path: <SRS0=dJri=U2=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1ADDC48BD6
-	for <backports@archiver.kernel.org>; Wed, 26 Jun 2019 22:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 394FAC48BD7
+	for <backports@archiver.kernel.org>; Thu, 27 Jun 2019 04:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A44D42184C
-	for <backports@archiver.kernel.org>; Wed, 26 Jun 2019 22:21:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561587682;
-	bh=SEf59/aTYORotE0ONQAGQtOjxVf4gUWafDThzfWNYPY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=VEoxuXOlZiIPVAa3j6aNz278NoJeeLcz/AUqaK2hdZnD+4pJJrJD+n7CEaK16l+GI
-	 D+4jHzbONirxc2vFE5EWooPWq9Tn/ogO9/qNBk9ZFKhHNg2iPn4RAiBgKA5+EYivJJ
-	 YTrnYthOB9joy/vzY2ASJ+KXMT1HQ+4ALW2j/6d0=
+	by mail.kernel.org (Postfix) with ESMTP id 0FD2C20659
+	for <backports@archiver.kernel.org>; Thu, 27 Jun 2019 04:51:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbfFZWVW (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Wed, 26 Jun 2019 18:21:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45246 "EHLO mail.kernel.org"
+        id S1726663AbfF0Ev2 (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Thu, 27 Jun 2019 00:51:28 -0400
+Received: from verein.lst.de ([213.95.11.211]:49015 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726239AbfFZWVW (ORCPT <rfc822;backports@vger.kernel.org>);
-        Wed, 26 Jun 2019 18:21:22 -0400
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6062E217F4;
-        Wed, 26 Jun 2019 22:21:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561587681;
-        bh=Tqz80iJYZg/0GvkxSfm5luZWdZskDvCbYXS8JM/P41M=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=rDRINPrARYm4y0gTMKieViIBMlqLk3pfnXd5IX5+U0eQmw2kxZF/3a0rjGwTKySrr
-         MG1EkmO5tV9AOiFnuzSNFhgmLZRPX99sIh0nZcKUbjTRMX2v8nLdVYLvrDGOSexOcf
-         VzU/Ol9q0oq/agucEG8UfeMFWJQg7/Cf8EnIwDDE=
-Received: by mail-vs1-f46.google.com with SMTP id m8so295376vsj.0;
-        Wed, 26 Jun 2019 15:21:21 -0700 (PDT)
-X-Gm-Message-State: APjAAAUS0Mjo4O9cnmerQYbEoyhNKyz/m996M3Xge9mPWJqt49RZqZoi
-        8HXd7IpwPcD6RvKZLSeqdvvqz6WzOX3CMMOc6rU=
-X-Google-Smtp-Source: APXvYqxiURrS3kYi96trsVNlLi7NqOcM8326ys8JoB7UHyO3AYKMXjoykeMiQXetdNc9DXfJMTI9H3ax6sGVyKS63kE=
-X-Received: by 2002:a67:1143:: with SMTP id 64mr472922vsr.133.1561587680499;
- Wed, 26 Jun 2019 15:21:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
- <20160818175505.GM3296@wotan.suse.de> <20160825074313.GC18622@lst.de>
- <20160825201919.GE3296@wotan.suse.de> <CAB=NE6UfkNN5kES6QmkM-dVC=HzKsZEkevH+Y3beXhVb2gC5vg@mail.gmail.com>
-In-Reply-To: <CAB=NE6UfkNN5kES6QmkM-dVC=HzKsZEkevH+Y3beXhVb2gC5vg@mail.gmail.com>
-From:   Luis Chamberlain <mcgrof@kernel.org>
-Date:   Wed, 26 Jun 2019 15:21:08 -0700
-X-Gmail-Original-Message-ID: <CAB=NE6XEnZ1uH2nidRbn6myvdQJ+vArpTTT6iSJebUmyfdaLcQ@mail.gmail.com>
-Message-ID: <CAB=NE6XEnZ1uH2nidRbn6myvdQJ+vArpTTT6iSJebUmyfdaLcQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/5] Add CONFIG symbol as module attribute
-To:     Christoph Hellwig <hch@lst.de>,
-        Brendan Higgins <brendanhiggins@google.com>
-Cc:     Cristina Moraru <cristina.moraru09@gmail.com>,
+        id S1726578AbfF0Ev2 (ORCPT <rfc822;backports@vger.kernel.org>);
+        Thu, 27 Jun 2019 00:51:28 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 610AB68B05; Thu, 27 Jun 2019 06:50:52 +0200 (CEST)
+Date:   Thu, 27 Jun 2019 06:50:52 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Cristina Moraru <cristina.moraru09@gmail.com>,
         "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>,
         Valentin Rothberg <valentinrothberg@gmail.com>,
         Hannes Reinecke <hare@suse.de>,
@@ -83,29 +52,37 @@ Cc:     Cristina Moraru <cristina.moraru09@gmail.com>,
         Johannes Thumshirn <jthumshirn@suse.de>,
         Tejun Heo <tj@kernel.org>,
         Jej B <James.Bottomley@hansenpartnership.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
+        Theodore Ts'o <tytso@mit.edu>,
         Daniel Jonsson <danijons@student.chalmers.se>,
         Andrzej Wasowski <wasowski@itu.dk>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [RFC PATCH 0/5] Add CONFIG symbol as module attribute
+Message-ID: <20190627045052.GA7594@lst.de>
+References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com> <20160818175505.GM3296@wotan.suse.de> <20160825074313.GC18622@lst.de> <20160825201919.GE3296@wotan.suse.de> <CAB=NE6UfkNN5kES6QmkM-dVC=HzKsZEkevH+Y3beXhVb2gC5vg@mail.gmail.com> <CAB=NE6XEnZ1uH2nidRbn6myvdQJ+vArpTTT6iSJebUmyfdaLcQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAB=NE6XEnZ1uH2nidRbn6myvdQJ+vArpTTT6iSJebUmyfdaLcQ@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 2:07 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> In lieu of no Luke Skywalker, if you will, for a large kconfig revamp
-> on this, I'm inclined to believe *at least* having some kconfig_symb
-> exposed for some modules is better than nothing. Christoph are you
-> totally opposed to this effort until we get a non-reverse engineered
-> effort in place? It just seems like an extraordinary amount of work
-> and I'm not quite sure who's volunteering to do it.
->
-> Other stakeholders may benefit from at least having some config -->
-> module mapping for now. Not just backports or building slimmer
-> kernels.
+On Wed, Jun 26, 2019 at 03:21:08PM -0700, Luis Chamberlain wrote:
+> On Tue, Feb 5, 2019 at 2:07 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> > In lieu of no Luke Skywalker, if you will, for a large kconfig revamp
+> > on this, I'm inclined to believe *at least* having some kconfig_symb
+> > exposed for some modules is better than nothing. Christoph are you
+> > totally opposed to this effort until we get a non-reverse engineered
+> > effort in place? It just seems like an extraordinary amount of work
+> > and I'm not quite sure who's volunteering to do it.
+> >
+> > Other stakeholders may benefit from at least having some config -->
+> > module mapping for now. Not just backports or building slimmer
+> > kernels.
+> 
+> Christoph, *poke*
 
-Christoph, *poke*
-
-  Luis
+Yes, I'm still totally opposed to a half-backed hack like this.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
