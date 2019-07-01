@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7F8C5B578
-	for <backports@archiver.kernel.org>; Mon,  1 Jul 2019 21:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF88C06511
+	for <backports@archiver.kernel.org>; Mon,  1 Jul 2019 21:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CB8521479
-	for <backports@archiver.kernel.org>; Mon,  1 Jul 2019 21:50:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0405D21479
+	for <backports@archiver.kernel.org>; Mon,  1 Jul 2019 21:50:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfGAVuH (ORCPT <rfc822;backports@archiver.kernel.org>);
+        id S1726979AbfGAVuH (ORCPT <rfc822;backports@archiver.kernel.org>);
         Mon, 1 Jul 2019 17:50:07 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:40582 "EHLO mx1.mailbox.org"
+Received: from mx2.mailbox.org ([80.241.60.215]:46028 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726979AbfGAVuH (ORCPT <rfc822;backports@vger.kernel.org>);
+        id S1727028AbfGAVuH (ORCPT <rfc822;backports@vger.kernel.org>);
         Mon, 1 Jul 2019 17:50:07 -0400
 Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 6E78C501D8;
+        by mx2.mailbox.org (Postfix) with ESMTPS id 73328A1052;
         Mon,  1 Jul 2019 23:50:06 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id 7IHqwhcqcspm; Mon,  1 Jul 2019 23:50:00 +0200 (CEST)
+        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
+        with ESMTP id JMiVZKfFSx-u; Mon,  1 Jul 2019 23:49:57 +0200 (CEST)
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 To:     backports@vger.kernel.org
 Cc:     Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 17/18] header: fix of_get_mac_address()
-Date:   Mon,  1 Jul 2019 23:49:13 +0200
-Message-Id: <20190701214914.8066-19-hauke@hauke-m.de>
+Subject: [PATCH 12/18] header: add hrtimer_forward() and ns_to_ktime()
+Date:   Mon,  1 Jul 2019 23:49:07 +0200
+Message-Id: <20190701214914.8066-13-hauke@hauke-m.de>
 In-Reply-To: <20190701214914.8066-1-hauke@hauke-m.de>
 References: <20190701214914.8066-1-hauke@hauke-m.de>
 MIME-Version: 1.0
@@ -42,42 +42,46 @@ Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-The behavior of of_get_mac_address() changed in kernel 5.2, it now
-returns an error code and not NULL in case of an error.
-
-This was changed in upstream kernel commit d01f449c008a
-("of_net: add NVMEM support to of_get_mac_address")
+ktime_t was converted from the union to s64 in kernel 4.10.
+hrtimer_start() was already converted some time ago in backports, now
+mac80211_hwsim uses hrtimer_start() together with the newly added
+functions.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/of_net.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ backport/backport-include/linux/interrupt.h | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/backport/backport-include/linux/of_net.h b/backport/backport-include/linux/of_net.h
-index 7f4b688f..18becf5c 100644
---- a/backport/backport-include/linux/of_net.h
-+++ b/backport/backport-include/linux/of_net.h
-@@ -12,4 +12,20 @@ static inline const void *of_get_mac_address(struct device_node *np)
- #endif
- #endif
+diff --git a/backport/backport-include/linux/interrupt.h b/backport/backport-include/linux/interrupt.h
+index ad3cbf66..f7e7134d 100644
+--- a/backport/backport-include/linux/interrupt.h
++++ b/backport/backport-include/linux/interrupt.h
+@@ -5,6 +5,25 @@
+ #include <linux/ktime.h>
  
-+/* The behavior of of_get_mac_address() changed in kernel 5.2, it now
-+ * returns an error code and not NULL in case of an error.
-+ */
-+#if LINUX_VERSION_IS_LESS(5,2,0)
-+static inline const void *backport_of_get_mac_address(struct device_node *np)
+ #if LINUX_VERSION_IS_LESS(4,10,0)
++
++/* Forward a hrtimer so it expires after now: */
++static inline u64
++backport_hrtimer_forward(struct hrtimer *timer, ktime_t now, s64 interval)
 +{
-+	const void *mac = of_get_mac_address(np);
++	ktime_t _interval = { .tv64 = interval };
 +
-+	if (!mac)
-+		return ERR_PTR(-ENODEV);
-+
-+	return mac;
++	return hrtimer_forward(timer, now, _interval);
 +}
-+#define of_get_mac_address LINUX_BACKPORT(of_get_mac_address)
-+#endif /* < 5.2 */
++#define hrtimer_forward LINUX_BACKPORT(hrtimer_forward)
 +
- #endif /* _BP_OF_NET_H */
++static inline s64 backport_ns_to_ktime(u64 ns)
++{
++	ktime_t _time = ns_to_ktime(ns);
++
++	return _time.tv64;
++}
++#define ns_to_ktime LINUX_BACKPORT(ns_to_ktime)
++
+ static inline void backport_hrtimer_start(struct hrtimer *timer, s64 time,
+ 					  const enum hrtimer_mode mode)
+ {
 -- 
 2.20.1
 
