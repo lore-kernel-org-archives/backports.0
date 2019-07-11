@@ -1,59 +1,70 @@
-Return-Path: <SRS0=3kcU=VA=vger.kernel.org=backports-owner@kernel.org>
+Return-Path: <SRS0=sYjf=VI=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72DF4C5B578
-	for <backports@archiver.kernel.org>; Wed,  3 Jul 2019 22:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA16C742A1
+	for <backports@archiver.kernel.org>; Thu, 11 Jul 2019 23:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 333EF21882
-	for <backports@archiver.kernel.org>; Wed,  3 Jul 2019 22:42:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562193758;
-	bh=a0yZjsgWewtpDDoVFrAXWiYIAsNMau9sa4xhkhASoiU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=MpEfsJIW2AxSAHcxFMiLFvUFAAC17SW82OCKL8LtD7hRWBuIvDD3TbyJEzn+Cdxda
-	 NgpwBgQJT9bxofSchdithoqgSP6JZMZsFMfF4blqf/V8UBMuoW+svzlOw7sQrNLed+
-	 eleVwMmbjvG8pznkDdmKpqfa5oYhkktLhPY9xidI=
+	by mail.kernel.org (Postfix) with ESMTP id 65C6820872
+	for <backports@archiver.kernel.org>; Thu, 11 Jul 2019 23:07:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="pC1rUeUs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfGCWmh (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Wed, 3 Jul 2019 18:42:37 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42527 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbfGCWmh (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 3 Jul 2019 18:42:37 -0400
-Received: by mail-pl1-f196.google.com with SMTP id ay6so1969483plb.9;
-        Wed, 03 Jul 2019 15:42:36 -0700 (PDT)
+        id S1728731AbfGKXHj (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Thu, 11 Jul 2019 19:07:39 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36142 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727956AbfGKXHj (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 11 Jul 2019 19:07:39 -0400
+Received: by mail-pl1-f193.google.com with SMTP id k8so3803434plt.3
+        for <backports@vger.kernel.org>; Thu, 11 Jul 2019 16:07:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+qGhOFVVuh1+hXZl4hRpVsq3pyMl58gDzWUfgabd5Wk=;
+        b=pC1rUeUsUJNlod97gWaG8RwEIRMJ93XD8nEOvbudDiOflrPz5bNgkYB222olkOK9e+
+         JMU0yF7nevaJlsRDSsArz0mFViMjF9lPxyrS3GKMMN9gtFjxjdCPcy0SkmnVR7HbqZ6v
+         PSPmg2HKo6W0Lo4P/ljzZOUCkURcTYTt2JwJtxuJpEbpW1OzsydcW3y9mMIzVcWFnCDk
+         dvhdDm49LwMroorcny0EwN6pUR5cskCwzJVah8Kj93nG+hrYRDt70gDZa2M4u8jnYUJ6
+         9oiBkwY5uQ7JSaZ8Kx8wwzk4+zQb8p4/GcR5a4Y0Wz21K85cQBCRr74t1p9Lk8/CXMIN
+         RgzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PCddMzEjs2p7iYZQi+ZtIQLYMeW5v/QID7YyYIQrvbc=;
-        b=Shd6A9yfFvFS7EppLkJtiNvLYUACPWipP+VCuefVf1w+DB3vXNWDqQo+YzROGwJDwj
-         S0r/91nSB1lByhjEaVwqbbNsT2rX15UKcUZFDbpUEC+xTH4VVTipTaOQ9zRP+15jD5uk
-         IfzrwoGUVSn8+GUKXNZiAdd34Q6iDOx0BXhRL2Pu5dqyqd0v8jqg4vqUenVtWCLzhY7J
-         A3DBOMosmd9UV64ezTqtaxgEAVinf7i21XRgCKvUy3SqmyzWH4L+/QzHB235oxVmRt56
-         ocx1Te0dFt1H6JcIGwzoA5S+O0wu1fij1Yd9eDK7uUYYQexT2b3AFMig56X2TgI3ZUZj
-         x38w==
-X-Gm-Message-State: APjAAAXXqPbB4GMEbXNKDURg81xQtjHvuVDNWPHxO6kv8Ws1qu7+OWUn
-        DfoOKuh6VLBsNhRsiSgi54Y=
-X-Google-Smtp-Source: APXvYqyrpSxwL8fWf4uPI4kUSZ+xAGW58c6IDL/yluq9fbRuoFFmUIkciHxkADiZsaesAL3oRZI0pw==
-X-Received: by 2002:a17:902:76c3:: with SMTP id j3mr43792032plt.116.1562193756183;
-        Wed, 03 Jul 2019 15:42:36 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id b24sm3300146pfd.98.2019.07.03.15.42.34
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 03 Jul 2019 15:42:34 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 2F07E402AC; Wed,  3 Jul 2019 22:42:34 +0000 (UTC)
-Date:   Wed, 3 Jul 2019 22:42:34 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Brendan Higgins <brendanhiggins@google.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+qGhOFVVuh1+hXZl4hRpVsq3pyMl58gDzWUfgabd5Wk=;
+        b=NP0UIFnlE5w9PpnQK59ABOIZpgsAde0p4T8K+xP/5iR6ZdExgl0B/vKIgLrj4yEt+6
+         FOb+61ByDSoTbkZR4lVp8qpMKK1LdblxOLfk3z8fvWI5EzTwrFE135p19XfTRExg3DYn
+         6n9DxiZgiGCquigEcEQoeHG5JmsRbQVQzcQGc4T3s0dOg0E2dPaqIoBWpYWVIogGPRnK
+         4kcJ6LGY/wI9eA2w2e1Pqh46GbKsAaK0MNElOdrMJV29kwLJ3AaMVSu58ZOtut9rcAm3
+         e3alsd3D8vLo8vYMk1qcwRLA2F6h1Ttm1edtUs6kRrBqlBAZSZbYtVUK/4vN2Z5cmi3I
+         dKFg==
+X-Gm-Message-State: APjAAAX7Ck3TKwmcyduJLJeTynMIp73HTgHSvMy8Q4LTytLEra9mxhpS
+        afmP65wDVnMWz5IBplo3iZREcsCwBSx7fKpU5wxRlQ==
+X-Google-Smtp-Source: APXvYqwRbzXfz8+tRkRk82bppmgo6RvJOCW4UL3hfJaEFcemn8pvU0j0qx9PoyKqBSvgnFguiW0Yk1JoGcCum2yuM/w=
+X-Received: by 2002:a17:902:1004:: with SMTP id b4mr7521409pla.325.1562886458358;
+ Thu, 11 Jul 2019 16:07:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <20160825201919.GE3296@wotan.suse.de> <CAB=NE6UfkNN5kES6QmkM-dVC=HzKsZEkevH+Y3beXhVb2gC5vg@mail.gmail.com>
+ <CAB=NE6XEnZ1uH2nidRbn6myvdQJ+vArpTTT6iSJebUmyfdaLcQ@mail.gmail.com>
+ <20190627045052.GA7594@lst.de> <CAB=NE6Xa525g+3oWROjCyDT3eD0sw-6O+7o97HGX8zORJfYw4w@mail.gmail.com>
+ <20190629084257.GA1227@kroah.com> <20190702205106.GR19023@42.do-not-panic.com>
+ <20190703074048.GH3033@kroah.com> <20190703165020.GV19023@42.do-not-panic.com>
+ <20190703185758.GB14336@kroah.com> <20190703222531.GX19023@42.do-not-panic.com>
+In-Reply-To: <20190703222531.GX19023@42.do-not-panic.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Thu, 11 Jul 2019 16:07:27 -0700
+Message-ID: <CAFd5g45nGf-abwtNzSOo8suGyhzTEEQbiq7yNCS8XoO4ezA=UQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/5] Add CONFIG symbol as module attribute
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@lst.de>,
         Cristina Moraru <cristina.moraru09@gmail.com>,
         "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>,
         Valentin Rothberg <valentinrothberg@gmail.com>,
@@ -65,7 +76,6 @@ Cc:     Christoph Hellwig <hch@lst.de>,
         Rusty Russell <rusty@rustcorp.com.au>,
         Andrew Morton <akpm@linux-foundation.org>,
         backports@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "rafael.j.wysocki" <rafael.j.wysocki@intel.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Takashi Iwai <tiwai@suse.de>,
@@ -81,259 +91,186 @@ Cc:     Christoph Hellwig <hch@lst.de>,
         Johannes Thumshirn <jthumshirn@suse.de>,
         Tejun Heo <tj@kernel.org>,
         Jej B <James.Bottomley@hansenpartnership.com>,
-        Theodore Ts'o <tytso@mit.edu>,
+        "Theodore Ts'o" <tytso@mit.edu>,
         Daniel Jonsson <danijons@student.chalmers.se>,
         Andrzej Wasowski <wasowski@itu.dk>
-Subject: Re: [RFC PATCH 0/5] Add CONFIG symbol as module attribute
-Message-ID: <20190703224234.GY19023@42.do-not-panic.com>
-References: <20160818175505.GM3296@wotan.suse.de>
- <20160825074313.GC18622@lst.de>
- <20160825201919.GE3296@wotan.suse.de>
- <CAB=NE6UfkNN5kES6QmkM-dVC=HzKsZEkevH+Y3beXhVb2gC5vg@mail.gmail.com>
- <CAB=NE6XEnZ1uH2nidRbn6myvdQJ+vArpTTT6iSJebUmyfdaLcQ@mail.gmail.com>
- <20190627045052.GA7594@lst.de>
- <CAB=NE6Xa525g+3oWROjCyDT3eD0sw-6O+7o97HGX8zORJfYw4w@mail.gmail.com>
- <40f70582-c16a-7de0-cfd6-c7d5ff9ead71@metux.net>
- <20190703173555.GW19023@42.do-not-panic.com>
- <9a2ae341-9ea7-d4c6-7c3e-b12bb6515905@metux.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9a2ae341-9ea7-d4c6-7c3e-b12bb6515905@metux.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 09:31:33PM +0200, Enrico Weigelt, metux IT consult wrote:
-> On 03.07.19 19:35, Luis Chamberlain wrote:
-> 
-> Hi,
-> 
-> >> Okay, but IIRC this will add more boilerplate those modules.
-> > 
-> > Just one module attribute.
-> 
-> Yes, but still one per module. This raises the question whether
-> maintainers are willing to cope w/ tons of tiny patches for just
-> one line - for something that will take quite some time to become
-> actually useful (doesn't help much if only few drivers support it),
-> and is only helpful in a few use cases.
+On Wed, Jul 3, 2019 at 3:25 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> On Wed, Jul 03, 2019 at 08:57:58PM +0200, Greg Kroah-Hartman wrote:
+> > On Wed, Jul 03, 2019 at 04:50:20PM +0000, Luis Chamberlain wrote:
+> > > On Wed, Jul 03, 2019 at 09:40:48AM +0200, Greg Kroah-Hartman wrote:
+> > > > On Tue, Jul 02, 2019 at 08:51:06PM +0000, Luis Chamberlain wrote:
+> > > > > On Sat, Jun 29, 2019 at 10:42:57AM +0200, Greg Kroah-Hartman wrote:
+> > > > > > On Fri, Jun 28, 2019 at 11:40:22AM -0700, Luis Chamberlain wrote:
+> > > > > > > On Wed, Jun 26, 2019 at 9:51 PM Christoph Hellwig <hch@lst.de> wrote:
+> > > > > > > >
+> > > > > > > > On Wed, Jun 26, 2019 at 03:21:08PM -0700, Luis Chamberlain wrote:
+> > > > > > > > > On Tue, Feb 5, 2019 at 2:07 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> > > > > > > > > > In lieu of no Luke Skywalker, if you will, for a large kconfig revamp
+> > > > > > > > > > on this, I'm inclined to believe *at least* having some kconfig_symb
+> > > > > > > > > > exposed for some modules is better than nothing. Christoph are you
+> > > > > > > > > > totally opposed to this effort until we get a non-reverse engineered
+> > > > > > > > > > effort in place? It just seems like an extraordinary amount of work
+> > > > > > > > > > and I'm not quite sure who's volunteering to do it.
+> > > > > > > > > >
+> > > > > > > > > > Other stakeholders may benefit from at least having some config -->
+> > > > > > > > > > module mapping for now. Not just backports or building slimmer
+> > > > > > > > > > kernels.
+> > > > > > > > >
+> > > > > > > > > Christoph, *poke*
+> > > > > > > >
+> > > > > > > > Yes, I'm still totally opposed to a half-backed hack like this.
+> > > > > > >
+> > > > > > > The solution puts forward a mechanism to add a kconfig_symb where we
+> > > > > > > are 100% certain we have a direct module --> config mapping.
+> > > > > > >
+> > > > > > > This is *currently* determined when the streamline_config.pl finds
+> > > > > > > that an object has only *one* associated config symbol associated. As
+> > > > > > > Cristina noted, of 62 modules on a running system 58 of them ended up
+> > > > > > > getting the kconfig_symb assigned, that is 93.5% of all modules on the
+> > > > > > > system being tested. For the other modules, if they did want this
+> > > > > > > association, we could allow a way for modules to define their own
+> > > > > > > KBUILD_KCONF variable so that this could be considered as well, or
+> > > > > > > they can look at their own kconfig stuff to try to fit the model that
+> > > > > > > does work. To be clear, the heuristics *can* be updated if there is
+> > > > > > > confidence in alternative methods for resolution. But since it is
+> > > > > > > reflective of our current situation, I cannot consider it a hack.
+> > > > > > >
+> > > > > > > This implementation is a reflection of our reality in the kernel, and
+> > > > > > > as has been discussed in this thread, if we want to correct the gaps
+> > > > > > > we need to do a lot of work. And *no one* is working towards these
+> > > > > > > goals.
+> > > > > > >
+> > > > > > > That said, even if you go forward with an intrusive solution like the
+> > > > > > > one you proposed we could still use the same kconfig_symb...
+> > > > > > >
+> > > > > > > So no, I don't see this as a hack. It's a reflection as to our current
+> > > > > > > reality. And I cannot see how the kconfig_symb can lie or be
+> > > > > > > incorrect. So in fact I think that pushing this forward also makes the
+> > > > > > > problem statement clearer for the future of what semantics needs to be
+> > > > > > > addressed, and helps us even annotate the problematic areas of the
+> > > > > > > kernel.
+> > > > > > >
+> > > > > > > What negative aspects do you see with this being merged in practice?
+> > > > > >
+> > > > > > I'm trying to see what the actual problem that you are wanting to solve
+> > > > > > here with this.  What exactly is it?
+> > > > >
+> > > > > The problem is that there is no current maping of a module to respective
+> > > > > kconfig symbol.
+> > > >
+> > > > That's because it is not just "one" symbol per module.
+> > >
+> > > This is true. But it is not the case for all modules.  In fact it seems
+> > > its true that most modules do have *one* main symbol.
+> >
+> > You mean "one unique symbol from all other modules", right?
+>
+> I mean that in the typical case you have *one* main *parent* symbol defining
+> one device driver for one piece of hardware.
+>
+> > That is much different than just "one" symbol, given that almost
+> > every driver depends on something else being enabled as well (bus type,
+> > platform type, arch, etc.)
+>
+> Yes but that is different than what is trying to be addressed.
+>
+> > And I would argue, that finding that "one" symbol is easy, just parse
+> > the Makefiles.  But I would also state that this "one" symbol doesn't
+> > really help you much as those are the "simple" things.  It's how to
+> > turn on all of the required symbols to get to that "one" symbol that is
+> > the hard part.
+>
+> Absolutely, but *that* is a different problem! But I am glad you brought
+> that up and acknowledge it. Addressing that problem will take time and
+> folks are working towards it. Addressing that problem will still however
+> not address the problem being addressed here.
+>
+> > And conversely, if you disable that "one" symbol, does that also mean
+> > you can disable the symbols it depended on?  If so, how far back?
+>
+> Right..
+>
+> > And what about functionality?  If my usb-storage device is "enabled" in
+> > the build, yet all filesystems are not, or the needed dm module is not,
+> > it is useless.
+>
+> Yes. The localmodconfig approach is to keep enabled as modules *all* currently
+> enabled modules, that covers that.
+>
+> But again, this is a separate problem. The one I am addressing, on
+> behalf of Cristina, is a subspace, dedicated towards *hardware*
+> functionality.
 
-This can be wrapped in kconfig and disabled by default.
+Hmm...maybe this isn't what I am looking for then. I am interested in
+the problem of figuring out what dependencies I need to select to turn
+on a desired config symbol (which is obviously a separate issue), and
+I am interested in associating symbols with a config symbol and then
+ensuring that symbol is exercised. Basically, I want a way to make
+sure my tests actually get run without a human looking at them; I feel
+like what you are working on might help with this latter issue, but I
+am not 100% sure. It sounds like it is not your primary goal in any
+case.
 
-> And to make it really useful, we also need some way to automatically
-> derive which other symbols to enable (subsystems, etc), w/o auto-
-> enabling stuff one doesn't need here. (are the defaults sane for
-> this usecase ?)
+> > Hardware requires usually more than one real "symbol" in
+> > order to work properly, as you know.
+>
+> Right. This does not mean that this information of parent main symbol is
+> not useful. And having it available on the modules can help with
+> multiple goals, without requiring kernel sources.
+>
+> > And of course, what does this really matter to anyone?  If you build
+> > "all modules" and you only load the modules you actually use for your
+> > hardware (based on auto-loading), then your system uses the same amount
+> > of memory as if you disabled all of the modules you did not need.
+>
+> For backports it means you can enable only what you need, or at least
+> show users what modules in a backports release could be upgraded and let
+> you enable / disable them.  For other users, people can care about build
+> time. And not everyone has fancy systems to build all modules; and
+> sometimes you may just want to enable a small qemu system and build
+> locally on it, enabling all modules on such systems would just be
+> extremely silly.
+>
+> > Yes, it's faster to build, but is that what you are trying to optimize
+> > for here?
+>
+> Particularly for me, yes. Others have other needs and I have already
+> stated clearly what the gains are.
+>
+> > Anyway, if this is just an acidemic thing, have fun, but I would not be
+> > adding anything else to the module image that is not really going to be
+> > useful to anyone.
+>
+> The academic consensus is kconfig semantics are poo and we need to do
+> slowly start addressing this. I believe that striving towards having
+> one kconfig symbol per hw component can help long term, and in the
+> meantime, this also will help with the 'make localmodconfig' and
+> backport users.
+>
+> > good luck!
+>
+> This is not about luck. If you don't want to address these problems,
+> that's fine, but please provide objective considerations rather than
+> right out rejection without a reasonable basis. Or even better, provide
+> alternative recommendations.
+>
+> The alternative Christoph recommended is hugely instrusive, no one is
+> working on it, and the simple solution proposed in this thread at least
+> gets us a small step forward in helping to enable a few more users,
+> while also postulating if we should strive towards having one main kconfig
+> for each hw component. Since it seems this is already the case, and
+> there are only a few outliers, this effort should help spot outliers
+> and address them to help with our semantics.
 
-No, that's a separate problem.
-> 
-> The main problem here, IMHO, is that the kconfig system doesn't really
-> know what makes up a module (it only knows that something w =y cant
-> depend on something thats =m).
-> 
-> So it smalls like we'd need some config language that really understands
-> things like modules, subsystems, arches, etc with their properties and
-> is used by both kconfig and kbuild. Then we could put all metadata there
-> instead of the current macro calls. At that point we could also put
-> things like match tables in here, which would solve the problem of
-> finding the right driver by hardware descriptions.
-> 
-> But that's really a *big* topic, it's not easy.
+Ooo, looks like I should take a look at that.
 
-Christoph's sugggestion goes along the lines with addressing some of
-this, yet 2 years havegone by and no one is working on it and its hugely
-intrusive. I'd welcome the patches.
-
-> >> And I wonder whether target binaries are the right place for those
-> >> things at all - IMHO that's something one wants to derive from the
-> >> source code  / .config's.
-> > 
-> > For the use cases mentioned for why the module attribute is being
-> > suggested it would help to not have to download kernel sources. 
-> 
-> Are we still talking about compiling custom kernels ?
-> (how to do that w/o source code ?)
-
-There is a difference between getting kernel sources for your current
-running kernel Vs getting kernel sources from say Linus' tree or the
-stable tree, or whatever subsystem you work on. I'm saying that with
-a module attribute being present you would *not* have to get the kernel
-sources for the current kernel you are running.
-
-> > The only question we want to answer is: for the hardware components
-> > present on this system, which configs options do I need to enable
-> > to support these components?
-> 
-> What else would one need that data, if not compiling a custom kernel
-> (which in turn needs the source) ?
-
-One is compiling a custom kernel.
-
-> > At least for virtualization we decided to support at least these two to
-> > help:
-> > 
-> >   * make kvmconfig
-> >   * make xenconfig
-> 
-> These two are rather simple. Most times there isn't much variance in
-> virtual hardware (unless one starts directly mapping in pci or usb
-> devices ...)
-
-Actually no, there is huge variance on the qemu level and that problem
-is not solved by the above.
-
-> > Similar problem would be found if one wanted to find a desirable kernel
-> > config for a remote system. One should be able to somehow scrape some
-> > hardware information, dump that to a file, and then somehow generate
-> > a working config for that system.
-> 
-> Yes. That's actually pretty much the same usecase (in my case I'd also
-> have dts, lspci/lsusb output, etc)
-> 
-> > The module attribute being suggested would enable at least one way
-> > to gather some of the required config symbols: symbols for *hardware*
-> > and where one can run a modern kernel, with many features / hardware
-> > enabled already.
-> 
-> But only for a pretty specific usecase.
-
-Two: build time, and backports.
-
-> I'm not opposed to this, but
-> I wonder whether maintainers are willing to accept that stuff for just
-> that specific usecase.
-
-This is why we are discussing this on this thread.
-
-Since we have 'make localmodconfig' already upstream, and since this
-would help both users of that and backports I'd argue it makes sense
-upstream. Otherwise I find it that having upstream 'make localmodconfig'
-but not wanting to improve that problem space rather odd.
-
-> > However, folks producing embedded systems *do* / *should* have a lot of
-> > knowledge of their systems, and so the type of scheme you have devised
-> > seems sensible for it.
-> 
-> Usually we have (unless we need to do reverse engineering :o). But it's
-> a pretty time-consuming task. Especially if the requirements change
-> several times in the development or lifetime of a specific product.
-> 
-> For example "oh, we now need eth", "naah, we don't wanna use usb
-> anymore", "let's take a different SoM", ... not that have pretty
-> orthogonal sets of configs we need to maintain: hardware- and non-
-> hardware-related ones. And hardware-related ones can fall into different
-> categories like fixed-attached/onboard vs. hotpluggable ones.
-> 
-> Recently I had a case where the customer requested xattr support, so
-> I had to enable general xattr support as well as per-filesystem.
-> Pretty simple, but having lots of those cases quickly sums up. One of
-> the reasons why I've written my own little config generator.
-
-I agree that the problem space you are dealing with should be made
-easier.
-
-> >> In embedded world, we often have scenarios where we want a really
-> >> minimal kernel, but need to enable/disable certain hi-level peripherals
-> >> in the middle of the project (eg. "oh, we also need ethernet, but we
-> >> wanna drop usb"). There we'll have to find out what actual chip is,
-> >> its corresponding driver, required subsystems, etc, and also kick off
-> >> everything we don't need anymore.
-> > 
-> > Right. One *should* be able to tell some tool, hey, here is the list of
-> > my desirable .config options. Go and figure out what I need to make that
-> > work and give me a resulting .config. Its not easy.
-> 
-> I think I've already got into a pretty usable state - at least for my
-> projects. For now only supports a few boards and limited set of
-> features, but patches are always welcomed :)
-
-A solution upstream would be better ;)
-
-> >> I've thought about implementing some actual dependency tracking
-> >> (at least recording the auto-enabled symbols), but didn't expect that
-> >> to become practically usable anytime soon,
-> > 
-> > The ability to easily ask the kernel to enable the components needed
-> > for a respective config option *is* very useful but indeed not easy.
-> 
-> Yes, it would need to understand things like conditional definitions
-> to deduce that certain things need to be enabled first, before certain
-> drivers become choosable.
-> 
-> > This is not the only space where this problem exists. Similar problem
-> > exists for distribution packages, and dependencies. Challenges have
-> > been made for proper research towards these problems, and such research
-> > has lead distributions to opt to enable some of these algorithms.
-> 
-> The problem w/ dependencies is that there can be different types of
-> dependencies, as well as different types of software objects. Just
-> solving the expressions is only a part of the problem.
-> 
-> > This begs the question if we could learn from similar efforts on Linux
-> > for these sorts of questions. One possibility here is to evaluate the
-> > prospect of using a SAT solver with Minimally Unsatisfiable Subformulas
-> > (MUSes) support, which should be be able to address thir problem. This
-> > prospect is ongoing and currrent R&D is active, for details refer to:
-> > 
-> > https://kernelnewbies.org/KernelProjects/kconfig-sat
-> 
-> Good tip, I'll have a look at it.
-> 
-> > It certainly can be useful for components, ie, not hardware. But for
-> > hardware a one-to-one mapping of one driver to one config would be of
-> > much more use.
-> 
-> Unfortunately, we don't have this 1:1 mapping. Often drivers support
-> different sets of devices, depending on other factors, sometimes sub-
-> options (eg. different hw versions), sometimes depending on other
-> subsystems, sometimes arch-specific, etc, etc.
-> 
-> I think we should work towards that, but I doubt we'd reach that goal
-> anytime soon, and begs the question whether it's really worth all the
-> effort required for that.
-
-Code speaks, and fortunately its being worked on.
-
-> > It would be wonderful if for instance kconfig
-> > supported a way to group a major set of components under *one* config
-> > symbol and then say: "I want this major component enabled" and then it'd
-> > go and enable all the defaults which would be required for it. 
-> 
-> Yes, thought about that, too. For example have syms for selecting whole
-> boards and features of them - a bit like this:
-> 
->   --> Preconfigure for specific boards
->       --> board A
->       --> board B
->       ...
->   --> Enable board features
->       --> Ethernet port
->       --> Display
->           --> Touch panel
->       --> Audio
->       ....
-> 
-> BUT: this would turn into maintenance hell, so I dropped that idea.
-> 
-> > An example is if you
-> > wanted to enable PCI on a system which didn't support it. Because of
-> > this, it seems you'd want *all* desirable configs and let a piece of
-> > software figure out what you need / can enable. And.. this is precisely
-> > where the SAT solver with MUSes could help...
-> 
-> Yes, but this piece of software first needs to know whether eg. PCI
-> is available on that HW. Oh, and things like PCI could be a dependency
-> as well as an feature on its own, depending on how you gonna use it.
-> (eg. if directly access from userland or VMs).
-
-Yes, but that is a separate problem. The way 'make localmodconfig'
-addresses this is by keeping as modules things which are already
-modules. And keeping things it found as =y as buit-in in your kernel as
-well.
-
-  Luis
+Cheers!
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
