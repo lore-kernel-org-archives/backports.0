@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DCE9C433FF
-	for <backports@archiver.kernel.org>; Mon,  5 Aug 2019 12:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19710C0650F
+	for <backports@archiver.kernel.org>; Mon,  5 Aug 2019 12:08:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F20C2086D
-	for <backports@archiver.kernel.org>; Mon,  5 Aug 2019 12:08:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4D302086D
+	for <backports@archiver.kernel.org>; Mon,  5 Aug 2019 12:08:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728468AbfHEMIE (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Mon, 5 Aug 2019 08:08:04 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:49996 "EHLO mx1.mailbox.org"
+        id S1728571AbfHEMIG (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Mon, 5 Aug 2019 08:08:06 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:18502 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727259AbfHEMIE (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 5 Aug 2019 08:08:04 -0400
+        id S1727259AbfHEMIG (ORCPT <rfc822;backports@vger.kernel.org>);
+        Mon, 5 Aug 2019 08:08:06 -0400
 Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id D1D3C514BC;
-        Mon,  5 Aug 2019 14:08:02 +0200 (CEST)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 58551A018D;
+        Mon,  5 Aug 2019 14:08:05 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
-        with ESMTP id QJMiJSfGd0G9; Mon,  5 Aug 2019 14:07:49 +0200 (CEST)
+        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
+        with ESMTP id zqkdr_-kpU67; Mon,  5 Aug 2019 14:07:57 +0200 (CEST)
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 To:     backports@vger.kernel.org
 Cc:     johannes@sipsolutions.net, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 05/12] header: Add trace_##name##_enabled()
-Date:   Mon,  5 Aug 2019 14:06:57 +0200
-Message-Id: <20190805120704.13128-6-hauke@hauke-m.de>
+Subject: [PATCH 07/12] backport: Add genl_callback_extack() function
+Date:   Mon,  5 Aug 2019 14:06:59 +0200
+Message-Id: <20190805120704.13128-8-hauke@hauke-m.de>
 In-Reply-To: <20190805120704.13128-1-hauke@hauke-m.de>
 References: <20190805120704.13128-1-hauke@hauke-m.de>
 MIME-Version: 1.0
@@ -42,159 +42,52 @@ Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-This adds the function trace_##name##_enabled to __DECLARE_TRACE() which
-was added in commit 7c65bbc7dc ("tracing: Add
-trace_<tracepoint>_enabled() function"). This is now used by ath10k.
-
-__DECLARE_TRACE() got other changes wit kernel 3.16, so add two
-different versions.
+The struct netlink_callback got a new extack attribute in commit
+4a19edb60d02 ("netlink: Pass extack to dump handlers") in kernel 4.20.
+Use a function instead of directly accessing it to return NULL on older
+kernel versions, the code should handle NULL.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/tracepoint.h | 132 +++++++++++++++++++
- 1 file changed, 132 insertions(+)
+ backport/backport-include/net/genetlink.h | 10 ++++++++++
+ patches/0078-genl-extack.cocci            |  6 ++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/backport/backport-include/linux/tracepoint.h b/backport/backport-include/linux/tracepoint.h
-index a695c6fc..6bb91ad3 100644
---- a/backport/backport-include/linux/tracepoint.h
-+++ b/backport/backport-include/linux/tracepoint.h
-@@ -7,4 +7,136 @@
- #define TRACE_DEFINE_ENUM(a)
+diff --git a/backport/backport-include/net/genetlink.h b/backport/backport-include/net/genetlink.h
+index 772f10f0..747b6dac 100644
+--- a/backport/backport-include/net/genetlink.h
++++ b/backport/backport-include/net/genetlink.h
+@@ -34,6 +34,16 @@ static inline struct netlink_ext_ack *genl_info_extack(struct genl_info *info)
  #endif
+ }
  
-+#if LINUX_VERSION_IS_LESS(3,15,0)
-+#ifdef TRACEPOINTS_ENABLED
-+#undef __DECLARE_TRACE
-+#define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args) \
-+	extern struct tracepoint __tracepoint_##name;			\
-+	static inline void trace_##name(proto)				\
-+	{								\
-+		if (static_key_false(&__tracepoint_##name.key))		\
-+			__DO_TRACE(&__tracepoint_##name,		\
-+				TP_PROTO(data_proto),			\
-+				TP_ARGS(data_args),			\
-+				TP_CONDITION(cond),,);			\
-+	}								\
-+	__DECLARE_TRACE_RCU(name, PARAMS(proto), PARAMS(args),		\
-+		PARAMS(cond), PARAMS(data_proto), PARAMS(data_args))	\
-+	static inline int						\
-+	register_trace_##name(void (*probe)(data_proto), void *data)	\
-+	{								\
-+		return tracepoint_probe_register(#name, (void *)probe,	\
-+						 data);			\
-+	}								\
-+	static inline int						\
-+	unregister_trace_##name(void (*probe)(data_proto), void *data)	\
-+	{								\
-+		return tracepoint_probe_unregister(#name, (void *)probe, \
-+						   data);		\
-+	}								\
-+	static inline void						\
-+	check_trace_callback_type_##name(void (*cb)(data_proto))	\
-+	{								\
-+	}								\
-+	static inline bool						\
-+	trace_##name##_enabled(void)					\
-+	{								\
-+		return static_key_false(&__tracepoint_##name.key);	\
-+	}
-+
++/* this is for patches we apply */
++static inline struct netlink_ext_ack *genl_callback_extack(struct netlink_callback *cb)
++{
++#if LINUX_VERSION_IS_GEQ(4,20,0)
++	return cb->extack;
 +#else
-+#undef __DECLARE_TRACE
-+#define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args) \
-+	static inline void trace_##name(proto)				\
-+	{ }								\
-+	static inline void trace_##name##_rcuidle(proto)		\
-+	{ }								\
-+	static inline int						\
-+	register_trace_##name(void (*probe)(data_proto),		\
-+			      void *data)				\
-+	{								\
-+		return -ENOSYS;						\
-+	}								\
-+	static inline int						\
-+	unregister_trace_##name(void (*probe)(data_proto),		\
-+				void *data)				\
-+	{								\
-+		return -ENOSYS;						\
-+	}								\
-+	static inline void check_trace_callback_type_##name(void (*cb)(data_proto)) \
-+	{								\
-+	}								\
-+	static inline bool						\
-+	trace_##name##_enabled(void)					\
-+	{								\
-+		return false;						\
-+	}
-+#endif /* TRACEPOINTS_ENABLED */
-+#elif LINUX_VERSION_IS_LESS(3,16,0)
-+#ifdef TRACEPOINTS_ENABLED
-+#undef __DECLARE_TRACE
-+#define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args) \
-+	extern struct tracepoint __tracepoint_##name;			\
-+	static inline void trace_##name(proto)				\
-+	{								\
-+		if (static_key_false(&__tracepoint_##name.key))		\
-+			__DO_TRACE(&__tracepoint_##name,		\
-+				TP_PROTO(data_proto),			\
-+				TP_ARGS(data_args),			\
-+				TP_CONDITION(cond),,);			\
-+	}								\
-+	__DECLARE_TRACE_RCU(name, PARAMS(proto), PARAMS(args),		\
-+		PARAMS(cond), PARAMS(data_proto), PARAMS(data_args))	\
-+	static inline int						\
-+	register_trace_##name(void (*probe)(data_proto), void *data)	\
-+	{								\
-+		return tracepoint_probe_register(&__tracepoint_##name,	\
-+						(void *)probe, data);	\
-+	}								\
-+	static inline int						\
-+	unregister_trace_##name(void (*probe)(data_proto), void *data)	\
-+	{								\
-+		return tracepoint_probe_unregister(&__tracepoint_##name,\
-+						(void *)probe, data);	\
-+	}								\
-+	static inline void						\
-+	check_trace_callback_type_##name(void (*cb)(data_proto))	\
-+	{								\
-+	}								\
-+	static inline bool						\
-+	trace_##name##_enabled(void)					\
-+	{								\
-+		return static_key_false(&__tracepoint_##name.key);	\
-+	}
++	return NULL;
++#endif
++}
 +
-+#else
-+#undef __DECLARE_TRACE
-+#define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args) \
-+	static inline void trace_##name(proto)				\
-+	{ }								\
-+	static inline void trace_##name##_rcuidle(proto)		\
-+	{ }								\
-+	static inline int						\
-+	register_trace_##name(void (*probe)(data_proto),		\
-+			      void *data)				\
-+	{								\
-+		return -ENOSYS;						\
-+	}								\
-+	static inline int						\
-+	unregister_trace_##name(void (*probe)(data_proto),		\
-+				void *data)				\
-+	{								\
-+		return -ENOSYS;						\
-+	}								\
-+	static inline void check_trace_callback_type_##name(void (*cb)(data_proto)) \
-+	{								\
-+	}								\
-+	static inline bool						\
-+	trace_##name##_enabled(void)					\
-+	{								\
-+		return false;						\
-+	}
-+#endif /* TRACEPOINTS_ENABLED */
-+#endif /* < 3.16 */
+ /* this gets put in place of info->userhdr, since we use that above */
+ static inline void *genl_info_userhdr(struct genl_info *info)
+ {
+diff --git a/patches/0078-genl-extack.cocci b/patches/0078-genl-extack.cocci
+index 5560e09d..860d68b4 100644
+--- a/patches/0078-genl-extack.cocci
++++ b/patches/0078-genl-extack.cocci
+@@ -9,3 +9,9 @@ struct genl_info *info;
+ @@
+ -info->userhdr
+ +genl_info_userhdr(info)
 +
- #endif /* __BACKPORT_LINUX_TRACEPOINT_H */
++@@
++struct netlink_callback *cb;
++@@
++-cb->extack
+++genl_callback_extack(cb)
 -- 
 2.20.1
 
