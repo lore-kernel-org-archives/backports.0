@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1B1C32792
-	for <backports@archiver.kernel.org>; Thu,  3 Oct 2019 17:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE157C4CED1
+	for <backports@archiver.kernel.org>; Thu,  3 Oct 2019 17:42:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF392222C9
+	by mail.kernel.org (Postfix) with ESMTP id 935FE20830
 	for <backports@archiver.kernel.org>; Thu,  3 Oct 2019 17:42:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729191AbfJCP5Z (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Thu, 3 Oct 2019 11:57:25 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:38538 "EHLO mx2.mailbox.org"
+        id S1730948AbfJCRmP (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Thu, 3 Oct 2019 13:42:15 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:38534 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730949AbfJCP5Z (ORCPT <rfc822;backports@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:57:25 -0400
-Received: from smtp2.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        id S1730947AbfJCP50 (ORCPT <rfc822;backports@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:57:26 -0400
+Received: from smtp2.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 9C3A8A3354;
-        Thu,  3 Oct 2019 17:57:22 +0200 (CEST)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 20967A359F;
+        Thu,  3 Oct 2019 17:57:24 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp2.mailbox.org ([80.241.60.240])
-        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
-        with ESMTP id FBrKpf3be_i2; Thu,  3 Oct 2019 17:57:19 +0200 (CEST)
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id Mgk7rPBOcsPw; Thu,  3 Oct 2019 17:57:21 +0200 (CEST)
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 To:     backports@vger.kernel.org
 Cc:     johannes@sipsolutions.net, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 05/11] backports: skbuf.h: Add skb_frag_off()
-Date:   Thu,  3 Oct 2019 17:56:36 +0200
-Message-Id: <20191003155642.14909-6-hauke@hauke-m.de>
+Subject: [PATCH 09/11] backports: dependencies: make ATH9K OWL depend on kernel 3.14
+Date:   Thu,  3 Oct 2019 17:56:40 +0200
+Message-Id: <20191003155642.14909-10-hauke@hauke-m.de>
 In-Reply-To: <20191003155642.14909-1-hauke@hauke-m.de>
 References: <20191003155642.14909-1-hauke@hauke-m.de>
 MIME-Version: 1.0
@@ -42,36 +42,29 @@ Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-Add skb_frag_off() Which was added in upstream commit 7240b60c98d6
-("linux: Add skb_frag_t page_offset accessors") which is used by the
-usbnet driver.
+The ath9k owl driver uses pci_lock_rescan_remove() and
+pci_unlock_rescan_remove() which was added in kernel 3.14, only compile
+it on kernel >= 3.14.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/skbuff.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ dependencies | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
-index de943916..589d2499 100644
---- a/backport/backport-include/linux/skbuff.h
-+++ b/backport/backport-include/linux/skbuff.h
-@@ -380,4 +380,16 @@ static inline struct sk_buff *__skb_peek(const struct sk_buff_head *list_)
- }
- #endif
+diff --git a/dependencies b/dependencies
+index 11470217..02d46ca3 100644
+--- a/dependencies
++++ b/dependencies
+@@ -52,6 +52,9 @@ ATH_TRACEPOINTS 3.1
+ # missigng add_hwgenerator_randomness()
+ ATH9K_HWRNG 3.17
  
-+#if LINUX_VERSION_IS_LESS(5,4,0)
-+/**
-+ * skb_frag_off() - Returns the offset of a skb fragment
-+ * @frag: the paged fragment
-+ */
-+#define skb_frag_off LINUX_BACKPORT(skb_frag_off)
-+static inline unsigned int skb_frag_off(const skb_frag_t *frag)
-+{
-+	return frag->page_offset;
-+}
-+#endif
++# missing pci_lock_rescan_remove()
++ATH9K_PCI_NO_EEPROM 3.14
 +
- #endif /* __BACKPORT_SKBUFF_H */
+ # This driver needs mmc_hw_reset() which was added in kernel version 3.2
+ MWIFIEX_SDIO 3.2
+ 
 -- 
 2.20.1
 
