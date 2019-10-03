@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BF6ECE58F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1B1C32792
 	for <backports@archiver.kernel.org>; Thu,  3 Oct 2019 17:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1562820830
-	for <backports@archiver.kernel.org>; Thu,  3 Oct 2019 17:42:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF392222C9
+	for <backports@archiver.kernel.org>; Thu,  3 Oct 2019 17:42:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730947AbfJCRmQ (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Thu, 3 Oct 2019 13:42:16 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:38530 "EHLO mx2.mailbox.org"
+        id S1729191AbfJCP5Z (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Thu, 3 Oct 2019 11:57:25 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:38538 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730945AbfJCP50 (ORCPT <rfc822;backports@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:57:26 -0400
-Received: from smtp2.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        id S1730949AbfJCP5Z (ORCPT <rfc822;backports@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:57:25 -0400
+Received: from smtp2.mailbox.org (smtp1.mailbox.org [80.241.60.240])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 95EF3A3526;
-        Thu,  3 Oct 2019 17:57:23 +0200 (CEST)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 9C3A8A3354;
+        Thu,  3 Oct 2019 17:57:22 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp2.mailbox.org ([80.241.60.240])
-        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
-        with ESMTP id 4ZV-Hl7s7SIp; Thu,  3 Oct 2019 17:57:20 +0200 (CEST)
+        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
+        with ESMTP id FBrKpf3be_i2; Thu,  3 Oct 2019 17:57:19 +0200 (CEST)
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 To:     backports@vger.kernel.org
 Cc:     johannes@sipsolutions.net, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 08/11] backports: io: Add writel_relaxed()
-Date:   Thu,  3 Oct 2019 17:56:39 +0200
-Message-Id: <20191003155642.14909-9-hauke@hauke-m.de>
+Subject: [PATCH 05/11] backports: skbuf.h: Add skb_frag_off()
+Date:   Thu,  3 Oct 2019 17:56:36 +0200
+Message-Id: <20191003155642.14909-6-hauke@hauke-m.de>
 In-Reply-To: <20191003155642.14909-1-hauke@hauke-m.de>
 References: <20191003155642.14909-1-hauke@hauke-m.de>
 MIME-Version: 1.0
@@ -42,32 +42,36 @@ Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-Add writel_relaxed() from upstream commit 9439eb3ab9d1 ("asm-generic:
-io: implement relaxed accessor macros as conditional wrappers") which is
-used by the wil6210 driver.
+Add skb_frag_off() Which was added in upstream commit 7240b60c98d6
+("linux: Add skb_frag_t page_offset accessors") which is used by the
+usbnet driver.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/io.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ backport/backport-include/linux/skbuff.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/backport/backport-include/linux/io.h b/backport/backport-include/linux/io.h
-index f91085be..e04305c3 100644
---- a/backport/backport-include/linux/io.h
-+++ b/backport/backport-include/linux/io.h
-@@ -11,4 +11,12 @@
- void __ioread32_copy(void *to, const void __iomem *from, size_t count);
+diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
+index de943916..589d2499 100644
+--- a/backport/backport-include/linux/skbuff.h
++++ b/backport/backport-include/linux/skbuff.h
+@@ -380,4 +380,16 @@ static inline struct sk_buff *__skb_peek(const struct sk_buff_head *list_)
+ }
  #endif
  
-+#ifndef writel_relaxed
-+#define writel_relaxed writel_relaxed
-+static inline void writel_relaxed(u32 value, volatile void __iomem *addr)
++#if LINUX_VERSION_IS_LESS(5,4,0)
++/**
++ * skb_frag_off() - Returns the offset of a skb fragment
++ * @frag: the paged fragment
++ */
++#define skb_frag_off LINUX_BACKPORT(skb_frag_off)
++static inline unsigned int skb_frag_off(const skb_frag_t *frag)
 +{
-+	__raw_writel(__cpu_to_le32(value), addr);
++	return frag->page_offset;
 +}
 +#endif
 +
- #endif /* __BP_LINUX_IO_H */
+ #endif /* __BACKPORT_SKBUFF_H */
 -- 
 2.20.1
 
