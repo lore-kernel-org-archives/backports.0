@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9CAC432C0
-	for <backports@archiver.kernel.org>; Tue, 19 Nov 2019 08:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9091C432C3
+	for <backports@archiver.kernel.org>; Tue, 19 Nov 2019 08:54:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82CF620878
-	for <backports@archiver.kernel.org>; Tue, 19 Nov 2019 08:53:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0E8F21739
+	for <backports@archiver.kernel.org>; Tue, 19 Nov 2019 08:54:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726132AbfKSIxG convert rfc822-to-8bit (ORCPT
+        id S1726170AbfKSIyB convert rfc822-to-8bit (ORCPT
         <rfc822;backports@archiver.kernel.org>);
-        Tue, 19 Nov 2019 03:53:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34842 "EHLO mail.kernel.org"
+        Tue, 19 Nov 2019 03:54:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725798AbfKSIxG (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 19 Nov 2019 03:53:06 -0500
+        id S1725904AbfKSIyB (ORCPT <rfc822;backports@vger.kernel.org>);
+        Tue, 19 Nov 2019 03:54:01 -0500
 From:   bugzilla-daemon@bugzilla.kernel.org
 To:     backports@vger.kernel.org
-Subject: [Bug 205573] iwlwifi backport breaks realtek and ralink drivers
-Date:   Tue, 19 Nov 2019 08:53:05 +0000
+Subject: [Bug 203007] drivers arenot proper
+Date:   Tue, 19 Nov 2019 08:54:00 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: None
@@ -32,15 +32,15 @@ X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
 X-Bugzilla-Who: johannes@sipsolutions.net
-X-Bugzilla-Status: CLOSED
-X-Bugzilla-Resolution: WILL_NOT_FIX
+X-Bugzilla-Status: RESOLVED
+X-Bugzilla-Resolution: INSUFFICIENT_DATA
 X-Bugzilla-Priority: P1
 X-Bugzilla-Assigned-To: backports@vger.kernel.org
 X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_status
-Message-ID: <bug-205573-58281-qmMRBcD1Lf@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-205573-58281@https.bugzilla.kernel.org/>
-References: <bug-205573-58281@https.bugzilla.kernel.org/>
+X-Bugzilla-Changed-Fields: bug_status resolution
+Message-ID: <bug-203007-58281-X8GpcjZFPn@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-203007-58281@https.bugzilla.kernel.org/>
+References: <bug-203007-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 X-Bugzilla-URL: https://bugzilla.kernel.org/
@@ -51,13 +51,14 @@ Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-https://bugzilla.kernel.org/show_bug.cgi?id=205573
+https://bugzilla.kernel.org/show_bug.cgi?id=203007
 
 Johannes Berg (johannes@sipsolutions.net) changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-             Status|RESOLVED                    |CLOSED
+             Status|NEW                         |RESOLVED
+         Resolution|---                         |INSUFFICIENT_DATA
 
 -- 
 You are receiving this mail because:
