@@ -6,23 +6,24 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1A9C432C3
-	for <backports@archiver.kernel.org>; Tue, 19 Nov 2019 08:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B330BC432C0
+	for <backports@archiver.kernel.org>; Tue, 19 Nov 2019 08:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5234A222DF
-	for <backports@archiver.kernel.org>; Tue, 19 Nov 2019 08:57:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A215206B6
+	for <backports@archiver.kernel.org>; Tue, 19 Nov 2019 08:58:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbfKSI5L convert rfc822-to-8bit (ORCPT
+        id S1726510AbfKSI6N convert rfc822-to-8bit (ORCPT
         <rfc822;backports@archiver.kernel.org>);
-        Tue, 19 Nov 2019 03:57:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36960 "EHLO mail.kernel.org"
+        Tue, 19 Nov 2019 03:58:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725306AbfKSI5L (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 19 Nov 2019 03:57:11 -0500
+        id S1725306AbfKSI6N (ORCPT <rfc822;backports@vger.kernel.org>);
+        Tue, 19 Nov 2019 03:58:13 -0500
 From:   bugzilla-daemon@bugzilla.kernel.org
 To:     backports@vger.kernel.org
-Subject: [Bug 196123] Backports Compatibility with RHEL 6.7-6.9
-Date:   Tue, 19 Nov 2019 08:57:10 +0000
+Subject: [Bug 195245] Backports-4.4.2 implict declarations: scatterwalk_ffwd,
+ aead_alg_instance, aead_crypto_instance
+Date:   Tue, 19 Nov 2019 08:58:12 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: None
@@ -32,15 +33,15 @@ X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
 X-Bugzilla-Who: johannes@sipsolutions.net
-X-Bugzilla-Status: CLOSED
+X-Bugzilla-Status: RESOLVED
 X-Bugzilla-Resolution: WILL_NOT_FIX
 X-Bugzilla-Priority: P1
 X-Bugzilla-Assigned-To: backports@vger.kernel.org
 X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_status
-Message-ID: <bug-196123-58281-lzXqbk15lo@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-196123-58281@https.bugzilla.kernel.org/>
-References: <bug-196123-58281@https.bugzilla.kernel.org/>
+X-Bugzilla-Changed-Fields: bug_status resolution
+Message-ID: <bug-195245-58281-e94en6ebzW@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-195245-58281@https.bugzilla.kernel.org/>
+References: <bug-195245-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 X-Bugzilla-URL: https://bugzilla.kernel.org/
@@ -51,13 +52,20 @@ Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-https://bugzilla.kernel.org/show_bug.cgi?id=196123
+https://bugzilla.kernel.org/show_bug.cgi?id=195245
 
 Johannes Berg (johannes@sipsolutions.net) changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-             Status|RESOLVED                    |CLOSED
+             Status|NEW                         |RESOLVED
+         Resolution|---                         |WILL_NOT_FIX
+
+--- Comment #1 from Johannes Berg (johannes@sipsolutions.net) ---
+We actually removed the ccm backport, it never functioned well, if at all, and
+is a pain to backport.
+
+Just put ccm into your base kernel instead, it's always been available.
 
 -- 
 You are receiving this mail because:
