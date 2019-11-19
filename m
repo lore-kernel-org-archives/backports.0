@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 347F2C432C3
-	for <backports@archiver.kernel.org>; Tue, 19 Nov 2019 08:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1A9C432C3
+	for <backports@archiver.kernel.org>; Tue, 19 Nov 2019 08:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 036B6206B6
-	for <backports@archiver.kernel.org>; Tue, 19 Nov 2019 08:57:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5234A222DF
+	for <backports@archiver.kernel.org>; Tue, 19 Nov 2019 08:57:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbfKSI5C convert rfc822-to-8bit (ORCPT
+        id S1726170AbfKSI5L convert rfc822-to-8bit (ORCPT
         <rfc822;backports@archiver.kernel.org>);
-        Tue, 19 Nov 2019 03:57:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36876 "EHLO mail.kernel.org"
+        Tue, 19 Nov 2019 03:57:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726170AbfKSI5C (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 19 Nov 2019 03:57:02 -0500
+        id S1725306AbfKSI5L (ORCPT <rfc822;backports@vger.kernel.org>);
+        Tue, 19 Nov 2019 03:57:11 -0500
 From:   bugzilla-daemon@bugzilla.kernel.org
 To:     backports@vger.kernel.org
 Subject: [Bug 196123] Backports Compatibility with RHEL 6.7-6.9
-Date:   Tue, 19 Nov 2019 08:57:01 +0000
+Date:   Tue, 19 Nov 2019 08:57:10 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: None
@@ -32,13 +32,13 @@ X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
 X-Bugzilla-Who: johannes@sipsolutions.net
-X-Bugzilla-Status: RESOLVED
+X-Bugzilla-Status: CLOSED
 X-Bugzilla-Resolution: WILL_NOT_FIX
 X-Bugzilla-Priority: P1
 X-Bugzilla-Assigned-To: backports@vger.kernel.org
 X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_status resolution
-Message-ID: <bug-196123-58281-jkIzeCUyn6@https.bugzilla.kernel.org/>
+X-Bugzilla-Changed-Fields: bug_status
+Message-ID: <bug-196123-58281-lzXqbk15lo@https.bugzilla.kernel.org/>
 In-Reply-To: <bug-196123-58281@https.bugzilla.kernel.org/>
 References: <bug-196123-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
@@ -57,12 +57,7 @@ Johannes Berg (johannes@sipsolutions.net) changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-         Resolution|---                         |WILL_NOT_FIX
-
---- Comment #7 from Johannes Berg (johannes@sipsolutions.net) ---
-Sorry, we have no capacity to deal with all the jungle of old versions you're
-mentioning. We can barely keep up with the latest backported to 3.something+.
+             Status|RESOLVED                    |CLOSED
 
 -- 
 You are receiving this mail because:
