@@ -5,24 +5,24 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53129C432C3
-	for <backports@archiver.kernel.org>; Tue, 19 Nov 2019 08:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0873C432C0
+	for <backports@archiver.kernel.org>; Tue, 19 Nov 2019 08:54:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 240CA223D8
-	for <backports@archiver.kernel.org>; Tue, 19 Nov 2019 08:54:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83A88206B6
+	for <backports@archiver.kernel.org>; Tue, 19 Nov 2019 08:54:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726132AbfKSIyj convert rfc822-to-8bit (ORCPT
+        id S1726637AbfKSIyq convert rfc822-to-8bit (ORCPT
         <rfc822;backports@archiver.kernel.org>);
-        Tue, 19 Nov 2019 03:54:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35666 "EHLO mail.kernel.org"
+        Tue, 19 Nov 2019 03:54:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725904AbfKSIyj (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 19 Nov 2019 03:54:39 -0500
+        id S1726510AbfKSIyq (ORCPT <rfc822;backports@vger.kernel.org>);
+        Tue, 19 Nov 2019 03:54:46 -0500
 From:   bugzilla-daemon@bugzilla.kernel.org
 To:     backports@vger.kernel.org
 Subject: [Bug 204573] kernel panic:"kernel BUG at
  /home/issuser/frm_build/kernel/bxt/include/linux/scatterlist.h:140!"
-Date:   Tue, 19 Nov 2019 08:54:38 +0000
+Date:   Tue, 19 Nov 2019 08:54:45 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: None
@@ -32,13 +32,13 @@ X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
 X-Bugzilla-Who: johannes@sipsolutions.net
-X-Bugzilla-Status: NEW
+X-Bugzilla-Status: NEEDINFO
 X-Bugzilla-Resolution: 
 X-Bugzilla-Priority: P1
 X-Bugzilla-Assigned-To: backports@vger.kernel.org
 X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: 
-Message-ID: <bug-204573-58281-6Prxoqvgno@https.bugzilla.kernel.org/>
+X-Bugzilla-Changed-Fields: bug_status
+Message-ID: <bug-204573-58281-9UV2Z3VMPT@https.bugzilla.kernel.org/>
 In-Reply-To: <bug-204573-58281@https.bugzilla.kernel.org/>
 References: <bug-204573-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
@@ -53,9 +53,11 @@ X-Mailing-List: backports@vger.kernel.org
 
 https://bugzilla.kernel.org/show_bug.cgi?id=204573
 
---- Comment #1 from Johannes Berg (johannes@sipsolutions.net) ---
-I think this might have been an upstream bug - can you try with a later
-version?
+Johannes Berg (johannes@sipsolutions.net) changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |NEEDINFO
 
 -- 
 You are receiving this mail because:
