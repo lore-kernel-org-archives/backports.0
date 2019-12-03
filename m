@@ -2,84 +2,93 @@ Return-Path: <SRS0=KWFe=ZZ=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 999A9C432C0
-	for <backports@archiver.kernel.org>; Tue,  3 Dec 2019 15:21:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3607EC432C3
+	for <backports@archiver.kernel.org>; Tue,  3 Dec 2019 16:15:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75A4E20661
-	for <backports@archiver.kernel.org>; Tue,  3 Dec 2019 15:21:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B6EE206E4
+	for <backports@archiver.kernel.org>; Tue,  3 Dec 2019 16:15:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726190AbfLCPVL (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Tue, 3 Dec 2019 10:21:11 -0500
-Received: from s3.sipsolutions.net ([144.76.43.62]:54796 "EHLO
+        id S1725997AbfLCQPt (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Tue, 3 Dec 2019 11:15:49 -0500
+Received: from s3.sipsolutions.net ([144.76.43.62]:55454 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbfLCPVL (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 3 Dec 2019 10:21:11 -0500
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        with ESMTP id S1725848AbfLCQPt (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 3 Dec 2019 11:15:49 -0500
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
         (Exim 4.92.3)
         (envelope-from <johannes@sipsolutions.net>)
-        id 1ic9zB-00FUxc-Dg
-        for backports@vger.kernel.org; Tue, 03 Dec 2019 16:21:09 +0100
-Message-ID: <757c854e78543992b5110208517cd8d3ca8e9414.camel@sipsolutions.net>
-Subject: Re: [PATCH] backports: speed up building with bash
+        id 1icAq3-00Fbya-1d; Tue, 03 Dec 2019 17:15:47 +0100
 From:   Johannes Berg <johannes@sipsolutions.net>
 To:     backports@vger.kernel.org
-Date:   Tue, 03 Dec 2019 16:21:08 +0100
-In-Reply-To: <1bef9e95439caedef7dd2252b5414035e370f7b7.camel@sipsolutions.net> (sfid-20191203_161831_359846_43C56C36)
-References: <20191203150610.152231-1-johannes@sipsolutions.net>
-         (sfid-20191203_160632_743093_BF954A9E) <1bef9e95439caedef7dd2252b5414035e370f7b7.camel@sipsolutions.net>
-         (sfid-20191203_161831_359846_43C56C36)
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+Cc:     Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH v2] backports: significantly speed up build
+Date:   Tue,  3 Dec 2019 17:15:40 +0100
+Message-Id: <20191203161540.174109-1-johannes@sipsolutions.net>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-On Tue, 2019-12-03 at 16:18 +0100, Johannes Berg wrote:
-> On Tue, 2019-12-03 at 16:06 +0100, Johannes Berg wrote:
-> > From: Johannes Berg <johannes.berg@intel.com>
-> > 
-> > When building with /bin/sh -> bash, things are SUPER slow (at least
-> > for me), because bash takes a LOOONG time to look at the environment
-> > variables (and we typically have around 6k), adding ~300ms to each
-> > bash invocation for me.
-> 
-> The real results are like this:
-> 
-> Completely clean build, after git clean -fdxq, but I have ccache primed
-> so all the stuff is build overhead - gcc is ccache and just returns
-> directly from the cache.
-> 
-> without the patch:
-> real	9m17.180s
-> user	24m38.063s
-> sys	0m32.138s
-> 
-> 
-> with the patch:
-> real	0m18.157s
-> user	0m24.553s
-> sys	0m13.342s
+From: Johannes Berg <johannes.berg@intel.com>
 
-That was with bash, with dash:
+When building with /bin/sh -> bash, things are SUPER slow (at least
+for me), because bash takes a LOOONG time to look at the environment
+variables (and we typically have around 6k), adding over a second to
+each bash invocation for me.
 
-without the patch:
-real	0m33.018s
-user	0m56.248s
-sys	0m22.898s
+The reason we export them is that we need them in all of the sub-
+makes, and those only read auto.conf, which we can't change.
 
-with the patch:
-real	0m18.113s
-user	0m18.036s
-sys	0m12.903s
+Work around this by overriding 'make' itself, and using --eval to
+read *our* .config file into each make that gets called. This way,
+the variables are present in all make invocations in the same way
+as they would be through the environment, but don't get passed to
+shell invocations.
 
-johannes
+If --eval is not supported, keep doing what we did before.
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/Makefile.build | 7 +++++++
+ backport/scripts/make   | 4 ++++
+ 2 files changed, 11 insertions(+)
+ create mode 100755 backport/scripts/make
+
+diff --git a/backport/Makefile.build b/backport/Makefile.build
+index a848b37ed64b..9c272b2ddf62 100644
+--- a/backport/Makefile.build
++++ b/backport/Makefile.build
+@@ -1,4 +1,11 @@
++# detect if make supports --eval
++_EVAL := $(shell make --eval "test:" -f /dev/null test >/dev/null 2>&1 && echo YES || echo NO)
++ifeq ($(_EVAL),YES)
++MAKE=$(BACKPORT_DIR)/scripts/make
++else
+ -include .config
++endif
++
+ export
+ 
+ .PHONY: modules
+diff --git a/backport/scripts/make b/backport/scripts/make
+new file mode 100755
+index 000000000000..cff7d0031478
+--- /dev/null
++++ b/backport/scripts/make
+@@ -0,0 +1,4 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++
++exec make --eval '-include $(BACKPORT_DIR)/.config' "$@"
+-- 
+2.23.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
