@@ -2,37 +2,36 @@ Return-Path: <SRS0=9sdh=2N=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F95C3F68F
-	for <backports@archiver.kernel.org>; Mon, 23 Dec 2019 18:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0386C2D0D0
+	for <backports@archiver.kernel.org>; Mon, 23 Dec 2019 18:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 368792073A
-	for <backports@archiver.kernel.org>; Mon, 23 Dec 2019 18:58:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7074206B7
+	for <backports@archiver.kernel.org>; Mon, 23 Dec 2019 18:59:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726805AbfLWS6x (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Mon, 23 Dec 2019 13:58:53 -0500
-Received: from mout-p-101.mailbox.org ([80.241.56.151]:20168 "EHLO
-        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726766AbfLWS6x (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 23 Dec 2019 13:58:53 -0500
-X-Greylist: delayed 445 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Dec 2019 13:58:52 EST
+        id S1727050AbfLWS7q (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Mon, 23 Dec 2019 13:59:46 -0500
+Received: from mout-p-201.mailbox.org ([80.241.56.171]:59362 "EHLO
+        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726882AbfLWS7p (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 23 Dec 2019 13:59:45 -0500
 Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 47hTCZ4dyYzKmdM;
-        Mon, 23 Dec 2019 19:58:50 +0100 (CET)
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 47hT312g8DzQlCP;
+        Mon, 23 Dec 2019 19:51:25 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
-        with ESMTP id avU2364kR1jK; Mon, 23 Dec 2019 19:58:47 +0100 (CET)
-To:     Johannes Berg <johannes@sipsolutions.net>,
-        Luca Coelho <luca@coelho.fi>
-Cc:     backports@vger.kernel.org
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id vJ99lKmxzeyl; Mon, 23 Dec 2019 19:51:22 +0100 (CET)
+Subject: Re: [PATCH v2] backports: significantly speed up build
+To:     Johannes Berg <johannes@sipsolutions.net>
+References: <20191203161540.174109-1-johannes@sipsolutions.net>
+ <3b26ecccf84f1cff683d6bff67f21063bc50682f.camel@sipsolutions.net>
 From:   Hauke Mehrtens <hauke@hauke-m.de>
-Subject: iwlwifi build problem in backports 5.5
 Autocrypt: addr=hauke@hauke-m.de; keydata=
  mQINBFtLdKcBEADFOTNUys8TnhpEdE5e1wO1vC+a62dPtuZgxYG83+9iVpsAyaSrCGGz5tmu
  BgkEMZVK9YogfMyVHFEcy0RqfO7gIYBYvFp0z32btJhjkjBm9hZ6eonjFnG9XmqDKg/aZI+u
@@ -93,9 +92,11 @@ Autocrypt: addr=hauke@hauke-m.de; keydata=
  3jmPvpEc2WCU5uJfaVoAEqh9kI2D7NlQCG80UkXDHGmcoHBnsiEZGjzm5zYOYinjTUeoy3F0
  8aTZ+e/sj+r4VTOUB/b0jy+JPnxn23FktGIYnQ+lLsAkmcbcDwCop4V59weR2eqwBqedNRUX
  5OTP93lUIhrRIy3cZT/A5nNcUeCYRS8bCRFKrQKEn92RFg==
-Message-ID: <ca1799cd-c802-83db-42b2-e51084f57f9b@hauke-m.de>
-Date:   Mon, 23 Dec 2019 19:58:45 +0100
+Cc:     backports@vger.kernel.org
+Message-ID: <03a681ac-6394-2c33-aec4-a8b69f84fcdc@hauke-m.de>
+Date:   Mon, 23 Dec 2019 19:51:20 +0100
 MIME-Version: 1.0
+In-Reply-To: <3b26ecccf84f1cff683d6bff67f21063bc50682f.camel@sipsolutions.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -104,41 +105,23 @@ Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-Hi Johannes and Luca,
+On 12/3/19 5:28 PM, Johannes Berg wrote:
+> On Tue, 2019-12-03 at 17:15 +0100, Johannes Berg wrote:
+>>
+>> If --eval is not supported, keep doing what we did before.
+> 
+> It's a bit disconcerting that we have systems that run make 3.81 or
+> older, but apparently that's what happened?! That was released over 9
+> years ago, and --eval was added to the code base 10 years ago ...
+> 
+> johannes
 
-I see this build problem in backports based on kernel 5.5:
----------------------------------------------------------------
-drivers/net/wireless/intel/iwlwifi/pcie/rx.c: In function
-‘iwl_pcie_rx_handle’:
-drivers/net/wireless/intel/iwlwifi/pcie/rx.c:1532:11: error: ‘struct
-napi_struct’ has no member named ‘rx_count’
-   if (napi->rx_count) {
-           ^~
-drivers/net/wireless/intel/iwlwifi/pcie/rx.c:1533:34: error: ‘struct
-napi_struct’ has no member named ‘rx_list’; did you mean ‘dev_list’?
-    netif_receive_skb_list(&napi->rx_list);
-                                  ^~~~~~~
-                                  dev_list
-drivers/net/wireless/intel/iwlwifi/pcie/rx.c:1534:26: error: ‘struct
-napi_struct’ has no member named ‘rx_list’; did you mean ‘dev_list’?
-    INIT_LIST_HEAD(&napi->rx_list);
-                          ^~~~~~~
-                          dev_list
-drivers/net/wireless/intel/iwlwifi/pcie/rx.c:1535:8: error: ‘struct
-napi_struct’ has no member named ‘rx_count’
-    napi->rx_count = 0;
-        ^~
-make[10]: ***
-[/usr/src/linux-headers-4.19.0-6-common/scripts/Makefile.build:308:
-drivers/net/wireless/intel/iwlwifi/pcie/rx.o] Error 1
-make[10]: *** Waiting for unfinished jobs....
------------------------------------------------------------------
+Hi Johannes,
 
-This commit in iwlwifi causes the problems:
-https://git.kernel.org/linus/b167191e2a851cb2e4c6ef8b91c83ff73ef41872
+This looks good, but I am not an bash expert.
 
-it depends on this change:
-https://git.kernel.org/linus/323ebb61e32b478e2432c5a3cbf9e2ca678a9609
+Even RedHat 7.7 uses make 3.82, so I do not care about older versions
+any more.
 
 Hauke
 --
