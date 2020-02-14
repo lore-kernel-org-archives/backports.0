@@ -1,38 +1,34 @@
-Return-Path: <SRS0=A3ax=3P=vger.kernel.org=backports-owner@kernel.org>
+Return-Path: <SRS0=vn7s=4C=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C787C35240
-	for <backports@archiver.kernel.org>; Sun, 26 Jan 2020 23:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A18C2BA83
+	for <backports@archiver.kernel.org>; Fri, 14 Feb 2020 09:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 088272071E
-	for <backports@archiver.kernel.org>; Sun, 26 Jan 2020 23:13:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 360FB222C4
+	for <backports@archiver.kernel.org>; Fri, 14 Feb 2020 09:32:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbgAZXNz (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Sun, 26 Jan 2020 18:13:55 -0500
-Received: from mout-p-102.mailbox.org ([80.241.56.152]:20620 "EHLO
-        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbgAZXNz (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sun, 26 Jan 2020 18:13:55 -0500
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 485TG91CyszKmZB;
-        Mon, 27 Jan 2020 00:13:53 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
-        with ESMTP id AnOs_cCnyrA7; Mon, 27 Jan 2020 00:13:50 +0100 (CET)
-From:   Hauke Mehrtens <hauke@hauke-m.de>
+        id S1728522AbgBNJc0 (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Fri, 14 Feb 2020 04:32:26 -0500
+Received: from s3.sipsolutions.net ([144.76.43.62]:39642 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbgBNJc0 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 14 Feb 2020 04:32:26 -0500
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.93)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1j2XKi-00BGbD-9K; Fri, 14 Feb 2020 10:32:24 +0100
+From:   Johannes Berg <johannes@sipsolutions.net>
 To:     backports@vger.kernel.org
-Cc:     johannes@sipsolutions.net, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH] backports: Do not access rx_count and rx_list attributes
-Date:   Mon, 27 Jan 2020 00:13:36 +0100
-Message-Id: <20200126231336.2573-1-hauke@hauke-m.de>
+Cc:     Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backports: suppress attribute((cold)) warnings with gcc 9
+Date:   Fri, 14 Feb 2020 10:32:21 +0100
+Message-Id: <20200214093221.11931-1-johannes@sipsolutions.net>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: backports-owner@vger.kernel.org
@@ -40,42 +36,42 @@ Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-The rx_count and rx_list attributes were only added in kernel 5.4 in
-commit 323ebb61e32b ("net: use listified RX for handling GRO_NORMAL skbs")
+From: Johannes Berg <johannes.berg@intel.com>
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Since my last system upgrade I started building with gcc 9,
+and that complains that a function is cold when the one we
+create locally here isn't - mark it as cold always, I don't
+think it would complain the other way around.
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- patches/0092-listified-rx/iwlwifi.patch | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
- create mode 100644 patches/0092-listified-rx/iwlwifi.patch
+ backport/backport-include/linux/module.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/patches/0092-listified-rx/iwlwifi.patch b/patches/0092-listified-rx/iwlwifi.patch
-new file mode 100644
-index 00000000..223629c9
---- /dev/null
-+++ b/patches/0092-listified-rx/iwlwifi.patch
-@@ -0,0 +1,19 @@
-+The rx_count and rx_list attributes wrere only added in kernel 5.4 in
-+commit 323ebb61e32b ("net: use listified RX for handling GRO_NORMAL skbs")
-+
-+--- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-++++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-+@@ -1537,11 +1537,13 @@ out:
-+ 
-+ 	napi = &rxq->napi;
-+ 	if (napi->poll) {
-++#if LINUX_VERSION_IS_GEQ(5,4,0)
-+ 		if (napi->rx_count) {
-+ 			netif_receive_skb_list(&napi->rx_list);
-+ 			INIT_LIST_HEAD(&napi->rx_list);
-+ 			napi->rx_count = 0;
-+ 		}
-++#endif /* >= 5.4 */
-+ 
-+ 		napi_gro_flush(napi, false);
-+ 	}
+diff --git a/backport/backport-include/linux/module.h b/backport/backport-include/linux/module.h
+index 1a2c82f45b75..675d8d770954 100644
+--- a/backport/backport-include/linux/module.h
++++ b/backport/backport-include/linux/module.h
+@@ -33,7 +33,7 @@ extern void backport_dependency_symbol(void);
+ 		backport_dependency_symbol();				\
+ 		return initfn();					\
+ 	}								\
+-	int init_module(void) __attribute__((alias("__init_backport")));\
++	int init_module(void) __attribute__((cold,alias("__init_backport")));\
+ 	BACKPORT_MOD_VERSIONS
+ 
+ /*
+@@ -58,7 +58,7 @@ extern void backport_dependency_symbol(void);
+ 		exitfn();						\
+ 		rcu_barrier();						\
+ 	}								\
+-	void cleanup_module(void) __attribute__((alias("__exit_compat")));
++	void cleanup_module(void) __attribute__((cold,alias("__exit_compat")));
+ #endif
+ 
+ #if LINUX_VERSION_IS_LESS(3,3,0)
 -- 
-2.20.1
+2.24.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
