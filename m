@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45404C2BA83
-	for <backports@archiver.kernel.org>; Fri, 14 Feb 2020 11:29:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1D3C2BA83
+	for <backports@archiver.kernel.org>; Fri, 14 Feb 2020 13:24:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 191E5206ED
-	for <backports@archiver.kernel.org>; Fri, 14 Feb 2020 11:29:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C745222C4
+	for <backports@archiver.kernel.org>; Fri, 14 Feb 2020 13:24:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729007AbgBNL3b (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Fri, 14 Feb 2020 06:29:31 -0500
-Received: from s3.sipsolutions.net ([144.76.43.62]:43166 "EHLO
+        id S1728083AbgBNNYK (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Fri, 14 Feb 2020 08:24:10 -0500
+Received: from s3.sipsolutions.net ([144.76.43.62]:45336 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728864AbgBNL3b (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 14 Feb 2020 06:29:31 -0500
+        with ESMTP id S1726191AbgBNNYK (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 14 Feb 2020 08:24:10 -0500
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
         (Exim 4.93)
         (envelope-from <johannes@sipsolutions.net>)
-        id 1j2ZA1-00BVQS-8y; Fri, 14 Feb 2020 12:29:29 +0100
+        id 1j2awy-00BkJJ-33; Fri, 14 Feb 2020 14:24:08 +0100
 From:   Johannes Berg <johannes@sipsolutions.net>
 To:     backports@vger.kernel.org
 Cc:     Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] backports: debugfs: add unsigned long helpers
-Date:   Fri, 14 Feb 2020 12:29:25 +0100
-Message-Id: <20200214122925.cf82be1a01b9.I8721de5b950a581febb54720dfdc6253389df021@changeid>
+Subject: [PATCH] backports: patch lib/refcount.c to make sparse happy
+Date:   Fri, 14 Feb 2020 14:24:00 +0100
+Message-Id: <20200214142400.3a70d41278c6.I1154c5725b98fb8535c25fce7862eeb546535515@changeid>
 X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -38,48 +38,39 @@ X-Mailing-List: backports@vger.kernel.org
 
 From: Johannes Berg <johannes.berg@intel.com>
 
-debugfs_create_ulong and debugfs_create_xul.
+We're testing sparse, so don't want warnings here.
 
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/linux/debugfs.h | 26 +++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ patches/lib-refcount.patch | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/backport/backport-include/linux/debugfs.h b/backport/backport-include/linux/debugfs.h
-index fb50c4f5750e..973c545cf0e0 100644
---- a/backport/backport-include/linux/debugfs.h
-+++ b/backport/backport-include/linux/debugfs.h
-@@ -60,4 +60,30 @@ debugfs_real_fops(const struct file *filp)
- 	debugfs_create_file(name, mode, parent, data, fops)
- #endif
- 
-+#if LINUX_VERSION_IS_LESS(4,4,0)
-+static inline struct dentry *
-+debugfs_create_ulong(const char *name, umode_t mode,
-+		     struct dentry *parent, unsigned long *value)
-+{
-+	if (sizeof(unsigned long) == sizeof(u64))
-+		return debugfs_create_u64(name, mode, parent, (u64 *)value);
-+	if (sizeof(unsigned long) == sizeof(u32))
-+		return debugfs_create_u32(name, mode, parent, (u32 *)value);
-+	WARN_ON(1);
-+	return ERR_PTR(-EINVAL);
-+}
-+#endif
-+
-+#if LINUX_VERSION_IS_LESS(5,5,0)
-+static inline void debugfs_create_xul(const char *name, umode_t mode,
-+				      struct dentry *parent,
-+				      unsigned long *value)
-+{
-+	if (sizeof(*value) == sizeof(u32))
-+		debugfs_create_x32(name, mode, parent, (u32 *)value);
-+	else
-+		debugfs_create_x64(name, mode, parent, (u64 *)value);
-+}
-+#endif
-+
- #endif /* __BACKPORT_DEBUGFS_H_ */
+diff --git a/patches/lib-refcount.patch b/patches/lib-refcount.patch
+index cca07cfb7df2..0f63ec6aa6d9 100644
+--- a/patches/lib-refcount.patch
++++ b/patches/lib-refcount.patch
+@@ -10,3 +10,21 @@ index 5d0582a..8d108f9 100644
+  
+  /**
+   * refcount_add_not_zero_checked - add a value to a refcount unless it is 0
++@@ -153,6 +153,8 @@ bool refcount_dec_and_lock(refcount_t *r, spinlock_t *lock)
++ 		return false;
++ 	}
++ 
+++	__release(lock);
+++
++ 	return true;
++ }
++ EXPORT_SYMBOL(refcount_dec_and_lock);
++@@ -182,6 +184,8 @@ bool refcount_dec_and_lock_irqsave(refcount_t *r, spinlock_t *lock,
++ 		return false;
++ 	}
++ 
+++	__release(lock);
+++
++ 	return true;
++ }
++ EXPORT_SYMBOL(refcount_dec_and_lock_irqsave);
 -- 
 2.24.1
 
