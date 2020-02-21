@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 895A3C35641
-	for <backports@archiver.kernel.org>; Fri, 21 Feb 2020 09:03:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8144C35640
+	for <backports@archiver.kernel.org>; Fri, 21 Feb 2020 09:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6626E206EF
-	for <backports@archiver.kernel.org>; Fri, 21 Feb 2020 09:03:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9558206E2
+	for <backports@archiver.kernel.org>; Fri, 21 Feb 2020 09:03:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbgBUJD1 (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Fri, 21 Feb 2020 04:03:27 -0500
-Received: from s3.sipsolutions.net ([144.76.43.62]:54828 "EHLO
+        id S1725865AbgBUJDa (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Fri, 21 Feb 2020 04:03:30 -0500
+Received: from s3.sipsolutions.net ([144.76.43.62]:54832 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbgBUJD1 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 21 Feb 2020 04:03:27 -0500
+        with ESMTP id S1726853AbgBUJDa (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 21 Feb 2020 04:03:30 -0500
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
         (Exim 4.93)
         (envelope-from <johannes@sipsolutions.net>)
-        id 1j546r-00EncU-Mh; Fri, 21 Feb 2020 09:56:33 +0100
+        id 1j546s-00EncU-NY; Fri, 21 Feb 2020 09:56:34 +0100
 From:   Johannes Berg <johannes@sipsolutions.net>
 To:     backports@vger.kernel.org
 Cc:     Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 10/15] backports: patch lib/refcount.c to make sparse happy
-Date:   Fri, 21 Feb 2020 09:56:19 +0100
-Message-Id: <20200221095437.ab78be8ac2e8.I1154c5725b98fb8535c25fce7862eeb546535515@changeid>
+Subject: [PATCH 13/15] git-tracker: use write-tree/commit-tree/update-ref
+Date:   Fri, 21 Feb 2020 09:56:22 +0100
+Message-Id: <20200221095437.8699e29264b8.I370ee81ce341d4db00a2e5193efe3c697f944121@changeid>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200221085624.6213-1-johannes@sipsolutions.net>
 References: <20200221085624.6213-1-johannes@sipsolutions.net>
@@ -40,39 +40,82 @@ X-Mailing-List: backports@vger.kernel.org
 
 From: Johannes Berg <johannes.berg@intel.com>
 
-We're testing sparse, so don't want warnings here.
+This gives us more flexibility, so we can create pretend
+merge commits later.
 
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- patches/lib-refcount.patch | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ devel/git-tracker.py |  4 +++-
+ lib/bpgit.py         | 34 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+), 1 deletion(-)
 
-diff --git a/patches/lib-refcount.patch b/patches/lib-refcount.patch
-index cca07cfb7df2..0f63ec6aa6d9 100644
---- a/patches/lib-refcount.patch
-+++ b/patches/lib-refcount.patch
-@@ -10,3 +10,21 @@ index 5d0582a..8d108f9 100644
-  
-  /**
-   * refcount_add_not_zero_checked - add a value to a refcount unless it is 0
-+@@ -153,6 +153,8 @@ bool refcount_dec_and_lock(refcount_t *r, spinlock_t *lock)
-+ 		return false;
-+ 	}
-+ 
-++	__release(lock);
-++
-+ 	return true;
-+ }
-+ EXPORT_SYMBOL(refcount_dec_and_lock);
-+@@ -182,6 +184,8 @@ bool refcount_dec_and_lock_irqsave(refcount_t *r, spinlock_t *lock,
-+ 		return false;
-+ 	}
-+ 
-++	__release(lock);
-++
-+ 	return true;
-+ }
-+ EXPORT_SYMBOL(refcount_dec_and_lock_irqsave);
+diff --git a/devel/git-tracker.py b/devel/git-tracker.py
+index 1cb26ec82eb0..7e55fa5ccb8e 100755
+--- a/devel/git-tracker.py
++++ b/devel/git-tracker.py
+@@ -104,6 +104,7 @@ def handle_commit(args, msg, branch, treename, kernelobjdir, tmpdir, wgitdir, ba
+         else:
+             git.reset(opts=['-q'], tree=wdir)
+ 
++        parents = [git.rev_parse('HEAD', tree=wdir)]
+         if not failure or commit_failure:
+             if append_shortlog:
+                 files = []
+@@ -136,7 +137,8 @@ def handle_commit(args, msg, branch, treename, kernelobjdir, tmpdir, wgitdir, ba
+                 if not have_changeid:
+                     msg += 'Change-Id: I%s\n' % hashlib.sha1(msg).hexdigest()
+ 
+-            git.commit(msg, tree=wdir, env=env, opts=['-q', '--allow-empty'])
++            treeid = git.write_tree(tree=wdir)
++            git.commit_tree(treeid, msg, parents, tree=wdir, env=env)
+             git.push(opts=['-f', '-q', 'origin', branch], tree=wdir)
+         os.rename(os.path.join(wdir, '.git'), wgitdir)
+     finally:
+diff --git a/lib/bpgit.py b/lib/bpgit.py
+index ff5f4a0c95b3..60d4abaa7a0d 100644
+--- a/lib/bpgit.py
++++ b/lib/bpgit.py
+@@ -255,6 +255,40 @@ def add(fn, tree=None):
+     process.wait()
+     _check(process)
+ 
++def write_tree(tree=None):
++    process = subprocess.Popen(['git', 'write-tree'], stdout=subprocess.PIPE,
++                               close_fds=True, universal_newlines=True, cwd=tree)
++    stdout = process.communicate()[0]
++    process.wait()
++    _check(process)
++    sha = stdout.strip()
++    if not _sha_re.match(sha):
++        raise SHAError()
++    return sha
++
++def commit_tree(treeid, msg, parents, env=None, tree=None):
++    if env is None:
++        env = {}
++    opts = []
++    for p in parents:
++        opts.extend(['-p', p])
++    stdin = tempfile.NamedTemporaryFile(mode='wr')
++    stdin.write(msg)
++    stdin.seek(0)
++    process = subprocess.Popen(['git', 'commit-tree', '-F-', treeid] + opts,
++                               stdin=stdin.file, universal_newlines=True,
++                               stdout=subprocess.PIPE, env=env, cwd=tree)
++    stdout = process.communicate()[0]
++    process.wait()
++    _check(process)
++    sha = stdout.strip()
++    if not _sha_re.match(sha):
++        raise SHAError()
++    process = subprocess.Popen(['git', 'update-ref', 'HEAD', sha], cwd=tree)
++    process.wait()
++    _check(process)
++    return sha
++
+ def commit(msg, tree=None, env = {}, opts=[]):
+     stdin = tempfile.NamedTemporaryFile(mode='wr')
+     stdin.write(msg)
 -- 
 2.24.1
 
