@@ -6,31 +6,29 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8144C35640
-	for <backports@archiver.kernel.org>; Fri, 21 Feb 2020 09:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B03FBC35641
+	for <backports@archiver.kernel.org>; Fri, 21 Feb 2020 09:07:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9558206E2
-	for <backports@archiver.kernel.org>; Fri, 21 Feb 2020 09:03:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EE1C206EF
+	for <backports@archiver.kernel.org>; Fri, 21 Feb 2020 09:07:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725865AbgBUJDa (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Fri, 21 Feb 2020 04:03:30 -0500
-Received: from s3.sipsolutions.net ([144.76.43.62]:54832 "EHLO
+        id S1727629AbgBUJH5 (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Fri, 21 Feb 2020 04:07:57 -0500
+Received: from s3.sipsolutions.net ([144.76.43.62]:54902 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726853AbgBUJDa (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 21 Feb 2020 04:03:30 -0500
+        with ESMTP id S1727426AbgBUJH4 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 21 Feb 2020 04:07:56 -0500
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
         (Exim 4.93)
         (envelope-from <johannes@sipsolutions.net>)
-        id 1j546s-00EncU-NY; Fri, 21 Feb 2020 09:56:34 +0100
+        id 1j54Hq-00Ep9Q-HW; Fri, 21 Feb 2020 10:07:54 +0100
 From:   Johannes Berg <johannes@sipsolutions.net>
 To:     backports@vger.kernel.org
 Cc:     Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 13/15] git-tracker: use write-tree/commit-tree/update-ref
-Date:   Fri, 21 Feb 2020 09:56:22 +0100
-Message-Id: <20200221095437.8699e29264b8.I370ee81ce341d4db00a2e5193efe3c697f944121@changeid>
+Subject: [PATCH v2] git-tracker: use write-tree/commit-tree/update-ref
+Date:   Fri, 21 Feb 2020 10:07:50 +0100
+Message-Id: <20200221100750.61538df8b501.I370ee81ce341d4db00a2e5193efe3c697f944121@changeid>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200221085624.6213-1-johannes@sipsolutions.net>
-References: <20200221085624.6213-1-johannes@sipsolutions.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: backports-owner@vger.kernel.org
@@ -44,6 +42,10 @@ This gives us more flexibility, so we can create pretend
 merge commits later.
 
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+v2:
+ * use -F - (two arguments) instead of -F- to make it
+   compatible with ancient git
 ---
  devel/git-tracker.py |  4 +++-
  lib/bpgit.py         | 34 ++++++++++++++++++++++++++++++++++
@@ -72,7 +74,7 @@ index 1cb26ec82eb0..7e55fa5ccb8e 100755
          os.rename(os.path.join(wdir, '.git'), wgitdir)
      finally:
 diff --git a/lib/bpgit.py b/lib/bpgit.py
-index ff5f4a0c95b3..60d4abaa7a0d 100644
+index ff5f4a0c95b3..c80647465778 100644
 --- a/lib/bpgit.py
 +++ b/lib/bpgit.py
 @@ -255,6 +255,40 @@ def add(fn, tree=None):
@@ -99,7 +101,7 @@ index ff5f4a0c95b3..60d4abaa7a0d 100644
 +    stdin = tempfile.NamedTemporaryFile(mode='wr')
 +    stdin.write(msg)
 +    stdin.seek(0)
-+    process = subprocess.Popen(['git', 'commit-tree', '-F-', treeid] + opts,
++    process = subprocess.Popen(['git', 'commit-tree', '-F', '-', treeid] + opts,
 +                               stdin=stdin.file, universal_newlines=True,
 +                               stdout=subprocess.PIPE, env=env, cwd=tree)
 +    stdout = process.communicate()[0]
