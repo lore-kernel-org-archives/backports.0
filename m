@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D8DBC35645
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F114DC35649
 	for <backports@archiver.kernel.org>; Fri, 21 Feb 2020 08:56:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BCD52067D
+	by mail.kernel.org (Postfix) with ESMTP id CEB3D206DB
 	for <backports@archiver.kernel.org>; Fri, 21 Feb 2020 08:56:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730373AbgBUI4e (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Fri, 21 Feb 2020 03:56:34 -0500
-Received: from s3.sipsolutions.net ([144.76.43.62]:54718 "EHLO
+        id S1730035AbgBUI4f (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Fri, 21 Feb 2020 03:56:35 -0500
+Received: from s3.sipsolutions.net ([144.76.43.62]:54726 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730510AbgBUI4e (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 21 Feb 2020 03:56:34 -0500
+        with ESMTP id S1727859AbgBUI4f (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 21 Feb 2020 03:56:35 -0500
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
         (Exim 4.93)
         (envelope-from <johannes@sipsolutions.net>)
-        id 1j546q-00EncU-MU; Fri, 21 Feb 2020 09:56:32 +0100
+        id 1j546r-00EncU-5y; Fri, 21 Feb 2020 09:56:33 +0100
 From:   Johannes Berg <johannes@sipsolutions.net>
 To:     backports@vger.kernel.org
 Cc:     Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 06/15] backports: if_vlan: add VLAN_N_VID
-Date:   Fri, 21 Feb 2020 09:56:15 +0100
-Message-Id: <20200221095437.58e62099cff6.I8a16fcb2fb6f22dece6b440e0f3c0d6f3ade3417@changeid>
+Subject: [PATCH 08/15] gentree: add timing info to git debug commit message
+Date:   Fri, 21 Feb 2020 09:56:17 +0100
+Message-Id: <20200221095437.1c19e55f2a34.If8a190b493b67963db290f8b6a69c8907f70d9bf@changeid>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200221085624.6213-1-johannes@sipsolutions.net>
 References: <20200221085624.6213-1-johannes@sipsolutions.net>
@@ -40,24 +40,44 @@ X-Mailing-List: backports@vger.kernel.org
 
 From: Johannes Berg <johannes.berg@intel.com>
 
+This is useful to see where we spend most time.
+
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/linux/if_vlan.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ gentree.py | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/backport/backport-include/linux/if_vlan.h b/backport/backport-include/linux/if_vlan.h
-index 18f63e80d214..571a8b7e0521 100644
---- a/backport/backport-include/linux/if_vlan.h
-+++ b/backport/backport-include/linux/if_vlan.h
-@@ -36,4 +36,8 @@
- #define skb_vlan_tag_get_id(__skb)	((__skb)->vlan_tci & VLAN_VID_MASK)
- #endif
+diff --git a/gentree.py b/gentree.py
+index 3273eedec928..8fdf34c60f7e 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -4,7 +4,7 @@
+ #
  
-+#ifndef VLAN_N_VID
-+#define VLAN_N_VID 4096
-+#endif
-+
- #endif /* __BACKPORT_LINUX_IF_VLAN_H_ */
+ import argparse, sys, os, errno, shutil, re, subprocess
+-import tarfile, gzip
++import tarfile, gzip, time
+ 
+ # find self
+ source_dir = os.path.abspath(os.path.dirname(__file__))
+@@ -305,12 +305,17 @@ def git_debug_init(args):
+     git.commit_all("Copied backport", tree=args.bpid.project_dir)
+ 
+ 
++prevtime = None
+ def git_debug_snapshot(args, name):
+     """
+     Take a git snapshot for the debugging.
+     """
+     if not args.gitdebug:
+         return
++    global prevtime
++    if prevtime is not None:
++        name += "\n\n(took %.2f seconds)\n" % (time.time() - prevtime)
++    prevtime = time.time()
+     git.commit_all(name, tree=args.bpid.project_dir)
+ 
+ def get_rel_spec_stable(rel):
 -- 
 2.24.1
 
