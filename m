@@ -2,38 +2,37 @@ Return-Path: <SRS0=W20+=4L=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,T_TVD_MIME_EPI,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	T_TVD_MIME_EPI autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 579CEC35673
-	for <backports@archiver.kernel.org>; Sun, 23 Feb 2020 22:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D62BCC35671
+	for <backports@archiver.kernel.org>; Sun, 23 Feb 2020 22:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22263206ED
-	for <backports@archiver.kernel.org>; Sun, 23 Feb 2020 22:26:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A875420675
+	for <backports@archiver.kernel.org>; Sun, 23 Feb 2020 22:28:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbgBWW06 (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Sun, 23 Feb 2020 17:26:58 -0500
-Received: from mout-p-201.mailbox.org ([80.241.56.171]:42284 "EHLO
-        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbgBWW06 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sun, 23 Feb 2020 17:26:58 -0500
+        id S1726678AbgBWW2x (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Sun, 23 Feb 2020 17:28:53 -0500
+Received: from mout-p-102.mailbox.org ([80.241.56.152]:46456 "EHLO
+        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbgBWW2x (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sun, 23 Feb 2020 17:28:53 -0500
 Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 48Qfv32MY5zQlJr;
-        Sun, 23 Feb 2020 23:26:55 +0100 (CET)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 48QfxG1wKlzKmYW;
+        Sun, 23 Feb 2020 23:28:50 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id vkBS9XmBzZ92; Sun, 23 Feb 2020 23:26:49 +0100 (CET)
-Subject: Re: [PATCH 02/15] backports: update x509.asn1.[ch]
+        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
+        with ESMTP id 6qVnYpNLFNQP; Sun, 23 Feb 2020 23:28:46 +0100 (CET)
+Subject: Re: [PATCH 07/15] patches: make nl80211.c include if_vlan.h
 To:     Johannes Berg <johannes@sipsolutions.net>,
         backports@vger.kernel.org
-Cc:     Luca Coelho <luciano.coelho@intel.com>
+Cc:     Johannes Berg <johannes.berg@intel.com>
 References: <20200221085624.6213-1-johannes@sipsolutions.net>
- <20200221095437.fcc31f62d6cf.I268b63a7ca56b448e4a0ae8e2f4293561342648d@changeid>
+ <20200221095437.e96fb1098bd4.Id24cee4c680b685966d9cb78c08671ac18b75983@changeid>
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 Autocrypt: addr=hauke@hauke-m.de; keydata=
  mQINBFtLdKcBEADFOTNUys8TnhpEdE5e1wO1vC+a62dPtuZgxYG83+9iVpsAyaSrCGGz5tmu
@@ -95,255 +94,84 @@ Autocrypt: addr=hauke@hauke-m.de; keydata=
  3jmPvpEc2WCU5uJfaVoAEqh9kI2D7NlQCG80UkXDHGmcoHBnsiEZGjzm5zYOYinjTUeoy3F0
  8aTZ+e/sj+r4VTOUB/b0jy+JPnxn23FktGIYnQ+lLsAkmcbcDwCop4V59weR2eqwBqedNRUX
  5OTP93lUIhrRIy3cZT/A5nNcUeCYRS8bCRFKrQKEn92RFg==
-Message-ID: <55f3752b-b334-a2af-75f3-4dc90cae9a4e@hauke-m.de>
-Date:   Sun, 23 Feb 2020 23:26:44 +0100
+Message-ID: <b7f3ef2b-b60f-191b-3492-a4b3ac8ec98f@hauke-m.de>
+Date:   Sun, 23 Feb 2020 23:28:42 +0100
 MIME-Version: 1.0
-In-Reply-To: <20200221095437.fcc31f62d6cf.I268b63a7ca56b448e4a0ae8e2f4293561342648d@changeid>
+In-Reply-To: <20200221095437.e96fb1098bd4.Id24cee4c680b685966d9cb78c08671ac18b75983@changeid>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="eMTkuwtJ82ukinojUleFtPaOYIpDQMLXF"
+ boundary="m631Mkq7p0htDgy9mCi7M4bfFppbkrfzo"
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---eMTkuwtJ82ukinojUleFtPaOYIpDQMLXF
-Content-Type: multipart/mixed; boundary="LI1y1Yb6BTAeoQ8jGigPuwsufAlAyZT9Q"
+--m631Mkq7p0htDgy9mCi7M4bfFppbkrfzo
+Content-Type: multipart/mixed; boundary="QIrVvXcmnuJcg1K5eMqIJleG25APMGsUg"
 
---LI1y1Yb6BTAeoQ8jGigPuwsufAlAyZT9Q
+--QIrVvXcmnuJcg1K5eMqIJleG25APMGsUg
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
 On 2/21/20 9:56 AM, Johannes Berg wrote:
-> From: Luca Coelho <luciano.coelho@intel.com>
+> From: Johannes Berg <johannes.berg@intel.com>
 >=20
-> In v5.2, x509_cert_parser.c implemented a new function,
-> x509_note_params().  So we need the new generated asn1 files.  Update
-> these files from the ones generated with v5.2
+> On upstream it gets it through some include maze, until that's
+> fixed, just patch it in.
 
-Should we generate these files automatically?
-Sine this commit flex and bison are anyway needed for building:
-https://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git/c=
-ommit/?id=3D4ec72687181df4b786152747c008a688c9b9b9de
+Will you take care to improve this upstream for the next kernel version?
 
-Why did you use kernel 5.2 and nothing more recent?
-
-> type=3Dmaint
-> ticket=3Djira:WIFI-25529
 >=20
-> Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 > Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 > ---
->  backport/compat/verification/x509.asn1.c | 105 ++++++++++++-----------=
-
->  backport/compat/verification/x509.asn1.h |   1 +
->  2 files changed, 55 insertions(+), 51 deletions(-)
+>  patches/0093-nl80211-vlan.patch | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>  create mode 100644 patches/0093-nl80211-vlan.patch
 >=20
-> diff --git a/backport/compat/verification/x509.asn1.c b/backport/compat=
-/verification/x509.asn1.c
-> index 316c10e3267f..e68864b6a1f5 100644
-> --- a/backport/compat/verification/x509.asn1.c
-> +++ b/backport/compat/verification/x509.asn1.c
-> @@ -13,13 +13,14 @@ enum x509_actions {
->  	ACT_x509_note_issuer =3D 3,
->  	ACT_x509_note_not_after =3D 4,
->  	ACT_x509_note_not_before =3D 5,
-> -	ACT_x509_note_pkey_algo =3D 6,
-> -	ACT_x509_note_serial =3D 7,
-> -	ACT_x509_note_signature =3D 8,
-> -	ACT_x509_note_subject =3D 9,
-> -	ACT_x509_note_tbs_certificate =3D 10,
-> -	ACT_x509_process_extension =3D 11,
-> -	NR__x509_actions =3D 12
-> +	ACT_x509_note_params =3D 6,
-> +	ACT_x509_note_pkey_algo =3D 7,
-> +	ACT_x509_note_serial =3D 8,
-> +	ACT_x509_note_signature =3D 9,
-> +	ACT_x509_note_subject =3D 10,
-> +	ACT_x509_note_tbs_certificate =3D 11,
-> +	ACT_x509_process_extension =3D 12,
-> +	NR__x509_actions =3D 13
->  };
-> =20
->  static const asn1_action_t x509_action_table[NR__x509_actions] =3D {
-> @@ -29,12 +30,13 @@ static const asn1_action_t x509_action_table[NR__x5=
-09_actions] =3D {
->  	[   3] =3D x509_note_issuer,
->  	[   4] =3D x509_note_not_after,
->  	[   5] =3D x509_note_not_before,
-> -	[   6] =3D x509_note_pkey_algo,
-> -	[   7] =3D x509_note_serial,
-> -	[   8] =3D x509_note_signature,
-> -	[   9] =3D x509_note_subject,
-> -	[  10] =3D x509_note_tbs_certificate,
-> -	[  11] =3D x509_process_extension,
-> +	[   6] =3D x509_note_params,
-> +	[   7] =3D x509_note_pkey_algo,
-> +	[   8] =3D x509_note_serial,
-> +	[   9] =3D x509_note_signature,
-> +	[  10] =3D x509_note_subject,
-> +	[  11] =3D x509_note_tbs_certificate,
-> +	[  12] =3D x509_process_extension,
->  };
-> =20
->  static const unsigned char x509_machine[] =3D {
-> @@ -61,7 +63,7 @@ static const unsigned char x509_machine[] =3D {
->  	// Name
->  	[  16] =3D   ASN1_OP_MATCH_JUMP,
->  	[  17] =3D   _tag(UNIV, CONS, SEQ),
-> -	[  18] =3D   _jump_target(80),		// --> Name
-> +	[  18] =3D   _jump_target(81),		// --> Name
->  	[  19] =3D   ASN1_OP_ACT,
->  	[  20] =3D   _action(ACT_x509_note_issuer),
->  	// Validity
-> @@ -87,7 +89,7 @@ static const unsigned char x509_machine[] =3D {
->  	// Name
->  	[  38] =3D   ASN1_OP_MATCH_JUMP,
->  	[  39] =3D   _tag(UNIV, CONS, SEQ),
-> -	[  40] =3D   _jump_target(80),		// --> Name
-> +	[  40] =3D   _jump_target(81),		// --> Name
->  	[  41] =3D   ASN1_OP_ACT,
->  	[  42] =3D   _action(ACT_x509_note_subject),
->  	// SubjectPublicKeyInfo
-> @@ -109,7 +111,7 @@ static const unsigned char x509_machine[] =3D {
->  	[  55] =3D   _tagn(CONT, PRIM,  2),
->  	[  56] =3D   ASN1_OP_MATCH_JUMP_OR_SKIP,		// extensions
->  	[  57] =3D   _tagn(CONT, CONS,  3),
-> -	[  58] =3D   _jump_target(95),
-> +	[  58] =3D   _jump_target(96),
->  	[  59] =3D  ASN1_OP_END_SEQ,
->  	[  60] =3D  ASN1_OP_ACT,
->  	[  61] =3D  _action(ACT_x509_note_tbs_certificate),
-> @@ -132,47 +134,48 @@ static const unsigned char x509_machine[] =3D {
->  	[  74] =3D  ASN1_OP_MATCH_ACT,		// algorithm
->  	[  75] =3D  _tag(UNIV, PRIM, OID),
->  	[  76] =3D  _action(ACT_x509_note_OID),
-> -	[  77] =3D  ASN1_OP_MATCH_ANY_OR_SKIP,		// parameters
-> -	[  78] =3D ASN1_OP_END_SEQ,
-> -	[  79] =3D ASN1_OP_RETURN,
-> +	[  77] =3D  ASN1_OP_MATCH_ANY_ACT_OR_SKIP,		// parameters
-> +	[  78] =3D  _action(ACT_x509_note_params),
-> +	[  79] =3D ASN1_OP_END_SEQ,
-> +	[  80] =3D ASN1_OP_RETURN,
-> =20
->  	// RelativeDistinguishedName
-> -	[  80] =3D  ASN1_OP_MATCH,
-> -	[  81] =3D  _tag(UNIV, CONS, SET),
-> +	[  81] =3D  ASN1_OP_MATCH,
-> +	[  82] =3D  _tag(UNIV, CONS, SET),
->  	// AttributeValueAssertion
-> -	[  82] =3D   ASN1_OP_MATCH,
-> -	[  83] =3D   _tag(UNIV, CONS, SEQ),
-> -	[  84] =3D    ASN1_OP_MATCH_ACT,		// attributeType
-> -	[  85] =3D    _tag(UNIV, PRIM, OID),
-> -	[  86] =3D    _action(ACT_x509_note_OID),
-> -	[  87] =3D    ASN1_OP_MATCH_ANY_ACT,		// attributeValue
-> -	[  88] =3D    _action(ACT_x509_extract_name_segment),
-> -	[  89] =3D   ASN1_OP_END_SEQ,
-> -	[  90] =3D  ASN1_OP_END_SET_OF,
-> -	[  91] =3D  _jump_target(82),
-> -	[  92] =3D ASN1_OP_END_SEQ_OF,
-> -	[  93] =3D _jump_target(80),
-> -	[  94] =3D ASN1_OP_RETURN,
-> +	[  83] =3D   ASN1_OP_MATCH,
-> +	[  84] =3D   _tag(UNIV, CONS, SEQ),
-> +	[  85] =3D    ASN1_OP_MATCH_ACT,		// attributeType
-> +	[  86] =3D    _tag(UNIV, PRIM, OID),
-> +	[  87] =3D    _action(ACT_x509_note_OID),
-> +	[  88] =3D    ASN1_OP_MATCH_ANY_ACT,		// attributeValue
-> +	[  89] =3D    _action(ACT_x509_extract_name_segment),
-> +	[  90] =3D   ASN1_OP_END_SEQ,
-> +	[  91] =3D  ASN1_OP_END_SET_OF,
-> +	[  92] =3D  _jump_target(83),
-> +	[  93] =3D ASN1_OP_END_SEQ_OF,
-> +	[  94] =3D _jump_target(81),
-> +	[  95] =3D ASN1_OP_RETURN,
-> =20
->  	// Extensions
-> -	[  95] =3D  ASN1_OP_MATCH,
-> -	[  96] =3D  _tag(UNIV, CONS, SEQ),
-> +	[  96] =3D  ASN1_OP_MATCH,
-> +	[  97] =3D  _tag(UNIV, CONS, SEQ),
->  	// Extension
-> -	[  97] =3D   ASN1_OP_MATCH,
-> -	[  98] =3D   _tag(UNIV, CONS, SEQ),
-> -	[  99] =3D    ASN1_OP_MATCH_ACT,		// extnid
-> -	[ 100] =3D    _tag(UNIV, PRIM, OID),
-> -	[ 101] =3D    _action(ACT_x509_note_OID),
-> -	[ 102] =3D    ASN1_OP_MATCH_OR_SKIP,		// critical
-> -	[ 103] =3D    _tag(UNIV, PRIM, BOOL),
-> -	[ 104] =3D    ASN1_OP_MATCH_ACT,		// extnValue
-> -	[ 105] =3D    _tag(UNIV, PRIM, OTS),
-> -	[ 106] =3D    _action(ACT_x509_process_extension),
-> -	[ 107] =3D   ASN1_OP_END_SEQ,
-> -	[ 108] =3D  ASN1_OP_END_SEQ_OF,
-> -	[ 109] =3D  _jump_target(97),
-> -	[ 110] =3D ASN1_OP_END_SEQ,
-> -	[ 111] =3D ASN1_OP_RETURN,
-> +	[  98] =3D   ASN1_OP_MATCH,
-> +	[  99] =3D   _tag(UNIV, CONS, SEQ),
-> +	[ 100] =3D    ASN1_OP_MATCH_ACT,		// extnid
-> +	[ 101] =3D    _tag(UNIV, PRIM, OID),
-> +	[ 102] =3D    _action(ACT_x509_note_OID),
-> +	[ 103] =3D    ASN1_OP_MATCH_OR_SKIP,		// critical
-> +	[ 104] =3D    _tag(UNIV, PRIM, BOOL),
-> +	[ 105] =3D    ASN1_OP_MATCH_ACT,		// extnValue
-> +	[ 106] =3D    _tag(UNIV, PRIM, OTS),
-> +	[ 107] =3D    _action(ACT_x509_process_extension),
-> +	[ 108] =3D   ASN1_OP_END_SEQ,
-> +	[ 109] =3D  ASN1_OP_END_SEQ_OF,
-> +	[ 110] =3D  _jump_target(98),
-> +	[ 111] =3D ASN1_OP_END_SEQ,
-> +	[ 112] =3D ASN1_OP_RETURN,
->  };
-> =20
->  const struct asn1_decoder x509_decoder =3D {
-> diff --git a/backport/compat/verification/x509.asn1.h b/backport/compat=
-/verification/x509.asn1.h
-> index 4f32a25d6660..77ec6085ae75 100644
-> --- a/backport/compat/verification/x509.asn1.h
-> +++ b/backport/compat/verification/x509.asn1.h
-> @@ -13,6 +13,7 @@ extern int x509_note_OID(void *, size_t, unsigned cha=
-r, const void *, size_t);
->  extern int x509_note_issuer(void *, size_t, unsigned char, const void =
-*, size_t);
->  extern int x509_note_not_after(void *, size_t, unsigned char, const vo=
-id *, size_t);
->  extern int x509_note_not_before(void *, size_t, unsigned char, const v=
-oid *, size_t);
-> +extern int x509_note_params(void *, size_t, unsigned char, const void =
-*, size_t);
->  extern int x509_note_pkey_algo(void *, size_t, unsigned char, const vo=
-id *, size_t);
->  extern int x509_note_serial(void *, size_t, unsigned char, const void =
-*, size_t);
->  extern int x509_note_signature(void *, size_t, unsigned char, const vo=
-id *, size_t);
+> diff --git a/patches/0093-nl80211-vlan.patch b/patches/0093-nl80211-vla=
+n.patch
+> new file mode 100644
+> index 000000000000..c1f8dac13125
+> --- /dev/null
+> +++ b/patches/0093-nl80211-vlan.patch
+> @@ -0,0 +1,12 @@
+> +diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+> +index ae8e3d9575d3..15c0e3c5c979 100644
+> +--- a/net/wireless/nl80211.c
+> ++++ b/net/wireless/nl80211.c
+> +@@ -20,6 +20,7 @@
+> + #include <linux/netlink.h>
+> + #include <linux/nospec.h>
+> + #include <linux/etherdevice.h>
+> ++#include <linux/if_vlan.h>
+> + #include <net/net_namespace.h>
+> + #include <net/genetlink.h>
+> + #include <net/cfg80211.h>
 >=20
 
 
 
---LI1y1Yb6BTAeoQ8jGigPuwsufAlAyZT9Q--
+--QIrVvXcmnuJcg1K5eMqIJleG25APMGsUg--
 
---eMTkuwtJ82ukinojUleFtPaOYIpDQMLXF
+--m631Mkq7p0htDgy9mCi7M4bfFppbkrfzo
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCgAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAl5S/CQACgkQ8bdnhZyy
-68cFNwgA0O6u6LfQO/BpgHMIZEvnKIJNcgwtPC13yvOry04feHOvMVYQgZIOC4tz
-i7rEtI28bWnCBJQYTsho+I06tmcU2kh89CMsNRp9szi4L+WOmfuSaYRWH3n3elpG
-KQfCxSPKlqCGIS1C4NOIYFJ9wRLfh7/XWkdCIu8Lc+HijOmud4aQMQX4pRbY19yz
-XVdWjwFYV/F4qJjV8cJcaLVmTrhudvpFIQ7nmWusZJg9+VSzruk1UgxRy6Pw5CZv
-m60utGFFr/lXFsBo8So/Lj6yzGGacnB8L+dbfzpZqjAvsZ8l5Sz+B7cUG/XyOMvh
-RJnrqcylbDhNIQdcKSlqDySQw5DCYA==
-=gXN1
+iQEzBAEBCgAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAl5S/JoACgkQ8bdnhZyy
+68fagQf+OiRma5Fmac0aJy5Vyfe2haNJMjYO9nlDLV8wKduHDYBpE5x2THsGNMG1
+qS2DKdAneLQpVbgH1qRy/pwyCDG0/zqM/i9iqtwZ62+ME1nzVSvZGhdxeneXlDES
+qdTfF+a5UbAOVPiwtqqJZgECJ6m7DAOry3/1FKOQI64byRhgWAS61RzBfj5DfcFL
+nuI3/xNrdDPlbOzKfDhiOhTRK27DVYOVoD58I2GfzPY1ZNuTc6wUih3SWtUTb+S4
+MPPlLRnlhvKp2Di+XvHYRi6KAMFkziaTJG1yPMNaf39snYpv9D+qhIGCfwFHk8tk
+0+nDSD59wlzxegb2KrMNJQO0YErwDw==
+=ohSQ
 -----END PGP SIGNATURE-----
 
---eMTkuwtJ82ukinojUleFtPaOYIpDQMLXF--
+--m631Mkq7p0htDgy9mCi7M4bfFppbkrfzo--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
