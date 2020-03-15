@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC4CC10DCE
-	for <backports@archiver.kernel.org>; Sun, 15 Mar 2020 13:42:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 407A4C10DCE
+	for <backports@archiver.kernel.org>; Sun, 15 Mar 2020 13:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1D3C205C9
-	for <backports@archiver.kernel.org>; Sun, 15 Mar 2020 13:42:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 110C120663
+	for <backports@archiver.kernel.org>; Sun, 15 Mar 2020 13:54:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728625AbgCONmP convert rfc822-to-8bit (ORCPT
+        id S1728132AbgCONyl convert rfc822-to-8bit (ORCPT
         <rfc822;backports@archiver.kernel.org>);
-        Sun, 15 Mar 2020 09:42:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52746 "EHLO mail.kernel.org"
+        Sun, 15 Mar 2020 09:54:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726498AbgCONmP (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 15 Mar 2020 09:42:15 -0400
+        id S1727778AbgCONyl (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 15 Mar 2020 09:54:41 -0400
 From:   bugzilla-daemon@bugzilla.kernel.org
 To:     backports@vger.kernel.org
 Subject: [Bug 206855] Strange issue... Kernel hangs since 5.4.19 and not when
  i disable mic in the BIOS
-Date:   Sun, 15 Mar 2020 13:42:14 +0000
+Date:   Sun, 15 Mar 2020 13:54:40 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: None
@@ -38,8 +38,8 @@ X-Bugzilla-Resolution:
 X-Bugzilla-Priority: P1
 X-Bugzilla-Assigned-To: backports@vger.kernel.org
 X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: see_also
-Message-ID: <bug-206855-58281-11QoL69XRX@https.bugzilla.kernel.org/>
+X-Bugzilla-Changed-Fields: 
+Message-ID: <bug-206855-58281-N7LDy0aSLT@https.bugzilla.kernel.org/>
 In-Reply-To: <bug-206855-58281@https.bugzilla.kernel.org/>
 References: <bug-206855-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
@@ -54,12 +54,9 @@ X-Mailing-List: backports@vger.kernel.org
 
 https://bugzilla.kernel.org/show_bug.cgi?id=206855
 
-Jean-Luc Livémont (jl.livemont@laposte.net) changed:
-
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-           See Also|                            |https://bugzilla.kernel.org
-                   |                            |/show_bug.cgi?id=206851
+--- Comment #1 from Jean-Luc Livémont (jl.livemont@laposte.net) ---
+alsa-info in
+http://alsa-project.org/db/?f=bf6e165117e96e93e6978aa68ed206b92ee5e255
 
 -- 
 You are receiving this mail because:
