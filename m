@@ -1,83 +1,96 @@
-Return-Path: <SRS0=GVy1=45=vger.kernel.org=backports-owner@kernel.org>
+Return-Path: <SRS0=LW64=5A=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8FAC1975A
-	for <backports@archiver.kernel.org>; Thu, 12 Mar 2020 15:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFCDBC2BB1D
+	for <backports@archiver.kernel.org>; Sun, 15 Mar 2020 13:40:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90F2E206B7
-	for <backports@archiver.kernel.org>; Thu, 12 Mar 2020 15:59:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8ECA205C9
+	for <backports@archiver.kernel.org>; Sun, 15 Mar 2020 13:40:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbgCLP7Y (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Thu, 12 Mar 2020 11:59:24 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:57516 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727240AbgCLP7Y (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 12 Mar 2020 11:59:24 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.93)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1jCQEz-004nuk-UJ; Thu, 12 Mar 2020 16:59:22 +0100
-From:   Johannes Berg <johannes@sipsolutions.net>
+        id S1728596AbgCONko convert rfc822-to-8bit (ORCPT
+        <rfc822;backports@archiver.kernel.org>);
+        Sun, 15 Mar 2020 09:40:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52382 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726498AbgCONko (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 15 Mar 2020 09:40:44 -0400
+From:   bugzilla-daemon@bugzilla.kernel.org
 To:     backports@vger.kernel.org
-Cc:     Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 3/3] backports: netlink: fix nla_validate_nested()
-Date:   Thu, 12 Mar 2020 16:59:13 +0100
-Message-Id: <20200312165913.14bfeceb4e2e.I026c8a13b9f070ccccbf29547d1289c362782881@changeid>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200312165913.e9a97c70de23.Idb983599e482232ae3cfc3328e837e8a9bf1af7a@changeid>
-References: <20200312165913.e9a97c70de23.Idb983599e482232ae3cfc3328e837e8a9bf1af7a@changeid>
+Subject: [Bug 206855] New: Strange issue... Kernel hangs since 5.4.19 and not
+ when i disable mic in the BIOS
+Date:   Sun, 15 Mar 2020 13:40:43 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: Backports project
+X-Bugzilla-Component: Backports
+X-Bugzilla-Version: unspecified
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: jl.livemont@laposte.net
+X-Bugzilla-Status: NEW
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: P1
+X-Bugzilla-Assigned-To: backports@vger.kernel.org
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version
+ cf_kernel_version rep_platform op_sys cf_tree bug_status bug_severity
+ priority component assigned_to reporter cf_regression attachments.created
+Message-ID: <bug-206855-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Bugzilla-URL: https://bugzilla.kernel.org/
+Auto-Submitted: auto-generated
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+https://bugzilla.kernel.org/show_bug.cgi?id=206855
 
-I had accidentally named this nl80211_validate_nested(),
-and it got renamed in 5.6.
+            Bug ID: 206855
+           Summary: Strange issue... Kernel hangs since 5.4.19 and not
+                    when i disable mic in the BIOS
+           Product: Backports project
+           Version: unspecified
+    Kernel Version: 5.5.8-200
+          Hardware: Intel
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: jl.livemont@laposte.net
+        Regression: No
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/net/netlink.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Created attachment 287933
+  --> https://bugzilla.kernel.org/attachment.cgi?id=287933&action=edit
+> journalctl --since today >journalctl_dump
 
-diff --git a/backport/backport-include/net/netlink.h b/backport/backport-include/net/netlink.h
-index bc24adfb4d63..675e43fc4e31 100644
---- a/backport/backport-include/net/netlink.h
-+++ b/backport/backport-include/net/netlink.h
-@@ -266,17 +266,17 @@ nla_validate_nested_deprecated(const struct nlattr *start, int maxtype,
- }
- #endif /* < 5.2 */
- 
--#if LINUX_VERSION_IS_LESS(5,3,0)
--#define nl80211_validate_nested LINUX_BACKPORT(nl80211_validate_nested)
-+#if LINUX_VERSION_IS_LESS(5,6,0)
-+#define nla_validate_nested LINUX_BACKPORT(nla_validate_nested)
- static inline int
--nl80211_validate_nested(const struct nlattr *start, int maxtype,
--			const struct nla_policy *policy,
--			struct netlink_ext_ack *extack)
-+nla_validate_nested(const struct nlattr *start, int maxtype,
-+		    const struct nla_policy *policy,
-+		    struct netlink_ext_ack *extack)
- {
- 	return __nla_validate_nested(start, maxtype, policy,
- 				     NL_VALIDATE_STRICT, extack);
- }
--#endif /* < 5.3 */
-+#endif /* < 5.6 */
- 
- #if LINUX_VERSION_IS_LESS(5,1,0)
- #undef NLA_POLICY_NESTED
+At the demand of  Jaroslav Kysela 2020-03-14 15:20:18 UTC
+
+F31 requires to install latest alsa-firmware, alsa-ucm and pulseaudio packages
+for this hardware. Anyway, the hang looks suspicious. Create a Fedora bug for
+this with the kernel log. I'll check.
+
+I hope i put it in the right place...
+
+Here is the journalctl dump.
+last boot was 5.5.8 with alsa.conf
+previous was 5.4.19 without alsa.conf
+previous was 5.5.8 without alsa.cong and hang
+
+Do you need something else?
+
 -- 
-2.24.1
-
---
+You are receiving this mail because:
+You are the assignee for the bug.--
 To unsubscribe from this list: send the line "unsubscribe backports" in
