@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFCDBC2BB1D
-	for <backports@archiver.kernel.org>; Sun, 15 Mar 2020 13:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC4CC10DCE
+	for <backports@archiver.kernel.org>; Sun, 15 Mar 2020 13:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8ECA205C9
-	for <backports@archiver.kernel.org>; Sun, 15 Mar 2020 13:40:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1D3C205C9
+	for <backports@archiver.kernel.org>; Sun, 15 Mar 2020 13:42:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728596AbgCONko convert rfc822-to-8bit (ORCPT
+        id S1728625AbgCONmP convert rfc822-to-8bit (ORCPT
         <rfc822;backports@archiver.kernel.org>);
-        Sun, 15 Mar 2020 09:40:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52382 "EHLO mail.kernel.org"
+        Sun, 15 Mar 2020 09:42:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726498AbgCONko (ORCPT <rfc822;backports@vger.kernel.org>);
-        Sun, 15 Mar 2020 09:40:44 -0400
+        id S1726498AbgCONmP (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 15 Mar 2020 09:42:15 -0400
 From:   bugzilla-daemon@bugzilla.kernel.org
 To:     backports@vger.kernel.org
-Subject: [Bug 206855] New: Strange issue... Kernel hangs since 5.4.19 and not
- when i disable mic in the BIOS
-Date:   Sun, 15 Mar 2020 13:40:43 +0000
+Subject: [Bug 206855] Strange issue... Kernel hangs since 5.4.19 and not when
+ i disable mic in the BIOS
+Date:   Sun, 15 Mar 2020 13:42:14 +0000
 X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
+X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: Backports project
 X-Bugzilla-Component: Backports
@@ -38,10 +38,10 @@ X-Bugzilla-Resolution:
 X-Bugzilla-Priority: P1
 X-Bugzilla-Assigned-To: backports@vger.kernel.org
 X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version
- cf_kernel_version rep_platform op_sys cf_tree bug_status bug_severity
- priority component assigned_to reporter cf_regression attachments.created
-Message-ID: <bug-206855-58281@https.bugzilla.kernel.org/>
+X-Bugzilla-Changed-Fields: see_also
+Message-ID: <bug-206855-58281-11QoL69XRX@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-206855-58281@https.bugzilla.kernel.org/>
+References: <bug-206855-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 X-Bugzilla-URL: https://bugzilla.kernel.org/
@@ -54,41 +54,12 @@ X-Mailing-List: backports@vger.kernel.org
 
 https://bugzilla.kernel.org/show_bug.cgi?id=206855
 
-            Bug ID: 206855
-           Summary: Strange issue... Kernel hangs since 5.4.19 and not
-                    when i disable mic in the BIOS
-           Product: Backports project
-           Version: unspecified
-    Kernel Version: 5.5.8-200
-          Hardware: Intel
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: Backports
-          Assignee: backports@vger.kernel.org
-          Reporter: jl.livemont@laposte.net
-        Regression: No
+Jean-Luc Livémont (jl.livemont@laposte.net) changed:
 
-Created attachment 287933
-  --> https://bugzilla.kernel.org/attachment.cgi?id=287933&action=edit
-> journalctl --since today >journalctl_dump
-
-At the demand of  Jaroslav Kysela 2020-03-14 15:20:18 UTC
-
-F31 requires to install latest alsa-firmware, alsa-ucm and pulseaudio packages
-for this hardware. Anyway, the hang looks suspicious. Create a Fedora bug for
-this with the kernel log. I'll check.
-
-I hope i put it in the right place...
-
-Here is the journalctl dump.
-last boot was 5.5.8 with alsa.conf
-previous was 5.4.19 without alsa.conf
-previous was 5.5.8 without alsa.cong and hang
-
-Do you need something else?
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+           See Also|                            |https://bugzilla.kernel.org
+                   |                            |/show_bug.cgi?id=206851
 
 -- 
 You are receiving this mail because:
