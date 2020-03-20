@@ -2,37 +2,37 @@ Return-Path: <SRS0=vds9=5F=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D92C41621
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0506C43333
 	for <backports@archiver.kernel.org>; Fri, 20 Mar 2020 23:40:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A28AF20714
+	by mail.kernel.org (Postfix) with ESMTP id CBEEB20752
 	for <backports@archiver.kernel.org>; Fri, 20 Mar 2020 23:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbgCTXkQ (ORCPT <rfc822;backports@archiver.kernel.org>);
+        id S1726867AbgCTXkQ (ORCPT <rfc822;backports@archiver.kernel.org>);
         Fri, 20 Mar 2020 19:40:16 -0400
-Received: from mout-p-103.mailbox.org ([80.241.56.161]:8216 "EHLO
-        mout-p-103.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726867AbgCTXkQ (ORCPT
+Received: from mout-p-102.mailbox.org ([80.241.56.152]:45588 "EHLO
+        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726976AbgCTXkQ (ORCPT
         <rfc822;backports@vger.kernel.org>); Fri, 20 Mar 2020 19:40:16 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 48kgHf4R8czKmTh;
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 48kgHf4DPGzKmNY;
         Sat, 21 Mar 2020 00:40:14 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
-        with ESMTP id ebEqFekY5bVm; Sat, 21 Mar 2020 00:40:12 +0100 (CET)
+        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
+        with ESMTP id oe6cnk7cGRlt; Sat, 21 Mar 2020 00:40:11 +0100 (CET)
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 To:     backports@vger.kernel.org
 Cc:     johannes@sipsolutions.net, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 7/8] backports: Do not build BPAUTO_BUILD_SYSTEM_DATA_VERIFICATION on < 3.13
-Date:   Sat, 21 Mar 2020 00:39:49 +0100
-Message-Id: <20200320233950.32257-8-hauke@hauke-m.de>
+Subject: [PATCH 6/8] backports: netdevice.h: Add return value to napi_complete()
+Date:   Sat, 21 Mar 2020 00:39:48 +0100
+Message-Id: <20200320233950.32257-7-hauke@hauke-m.de>
 In-Reply-To: <20200320233950.32257-1-hauke@hauke-m.de>
 References: <20200320233950.32257-1-hauke@hauke-m.de>
 MIME-Version: 1.0
@@ -42,38 +42,32 @@ Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-SYSTEM_DATA_VERIFICATION now uses hash_algo_name() which was added in
-kernel 3.13. Just do not build this on older kernel versions.
+mt76 checks the return value of napi_complete() now, add the same
+handling as already done for napi_complete_done().
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/compat/Kconfig | 1 +
- dependencies            | 3 +++
- 2 files changed, 4 insertions(+)
+ backport/backport-include/linux/netdevice.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/backport/compat/Kconfig b/backport/compat/Kconfig
-index 3af729a3..41b50a6b 100644
---- a/backport/compat/Kconfig
-+++ b/backport/compat/Kconfig
-@@ -150,6 +150,7 @@ config BPAUTO_BUILD_SYSTEM_DATA_VERIFICATION
- 	bool
- 	default y if BPAUTO_SYSTEM_DATA_VERIFICATION
- 	depends on KERNEL_4_7 || !SYSTEM_DATA_VERIFICATION
-+	depends on !KERNEL_3_13
- 	select BPAUTO_ASN1_DECODER
- 	select BPAUTO_PUBLIC_KEY
- 	select BPAUTO_PKCS7
-diff --git a/dependencies b/dependencies
-index 47558470..cb6741c7 100644
---- a/dependencies
-+++ b/dependencies
-@@ -89,3 +89,6 @@ R8188EU  3.14
- # depends on crypto_sync_skcipher()
- AIRO 4.20
- AIRO_CS 4.20
+diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+index 76b57e4d..a71ed590 100644
+--- a/backport/backport-include/linux/netdevice.h
++++ b/backport/backport-include/linux/netdevice.h
+@@ -302,7 +302,13 @@ static inline bool backport_napi_complete_done(struct napi_struct *n, int work_d
+ #endif /* < 3.19 */
+ 	return true;
+ }
 +
-+# needs BPAUTO_BUILD_SYSTEM_DATA_VERIFICATION
-+CFG80211_REQUIRE_SIGNED_REGDB 3_13
++static inline bool backport_napi_complete(struct napi_struct *n)
++{
++	return backport_napi_complete_done(n, 0);
++}
+ #define napi_complete_done LINUX_BACKPORT(napi_complete_done)
++#define napi_complete LINUX_BACKPORT(napi_complete)
+ #endif /* < 4.10 */
+ 
+ #if LINUX_VERSION_IS_LESS(4,5,0)
 -- 
 2.20.1
 
