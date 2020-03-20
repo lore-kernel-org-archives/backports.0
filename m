@@ -6,34 +6,32 @@ X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4AEC4332B
-	for <backports@archiver.kernel.org>; Fri, 20 Mar 2020 23:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5E8C4332D
+	for <backports@archiver.kernel.org>; Fri, 20 Mar 2020 23:39:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C32FB20714
-	for <backports@archiver.kernel.org>; Fri, 20 Mar 2020 23:38:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91CDD20714
+	for <backports@archiver.kernel.org>; Fri, 20 Mar 2020 23:39:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbgCTXin (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Fri, 20 Mar 2020 19:38:43 -0400
-Received: from mout-p-102.mailbox.org ([80.241.56.152]:45536 "EHLO
-        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbgCTXin (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 20 Mar 2020 19:38:43 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        id S1726867AbgCTXjJ (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Fri, 20 Mar 2020 19:39:09 -0400
+Received: from mout-p-101.mailbox.org ([80.241.56.151]:28552 "EHLO
+        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbgCTXjJ (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 20 Mar 2020 19:39:09 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 48kgFr5PqkzKmTJ;
-        Sat, 21 Mar 2020 00:38:40 +0100 (CET)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 48kgGM107pzKmbs;
+        Sat, 21 Mar 2020 00:39:07 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
-        with ESMTP id YYeslrrRQ4tM; Sat, 21 Mar 2020 00:38:37 +0100 (CET)
-Subject: Re: [PATCH 2/3] backports: skbuff: add skb_list_walk_safe() and
- skb_mark_not_on_list()
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
+        with ESMTP id APIcc45p33KP; Sat, 21 Mar 2020 00:39:04 +0100 (CET)
+Subject: Re: [PATCH 1/3] backports: add linux/units.h
 To:     Johannes Berg <johannes@sipsolutions.net>,
         backports@vger.kernel.org
 Cc:     Johannes Berg <johannes.berg@intel.com>
 References: <20200312165913.e9a97c70de23.Idb983599e482232ae3cfc3328e837e8a9bf1af7a@changeid>
- <20200312165913.0915e5af7240.I35d006756fc2f08463616f8717f02d20ac80153d@changeid>
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 Autocrypt: addr=hauke@hauke-m.de; keydata=
  mQINBFtLdKcBEADFOTNUys8TnhpEdE5e1wO1vC+a62dPtuZgxYG83+9iVpsAyaSrCGGz5tmu
@@ -95,10 +93,10 @@ Autocrypt: addr=hauke@hauke-m.de; keydata=
  3jmPvpEc2WCU5uJfaVoAEqh9kI2D7NlQCG80UkXDHGmcoHBnsiEZGjzm5zYOYinjTUeoy3F0
  8aTZ+e/sj+r4VTOUB/b0jy+JPnxn23FktGIYnQ+lLsAkmcbcDwCop4V59weR2eqwBqedNRUX
  5OTP93lUIhrRIy3cZT/A5nNcUeCYRS8bCRFKrQKEn92RFg==
-Message-ID: <a9273679-e6ed-e0cb-ad5a-1b2e014a17f2@hauke-m.de>
-Date:   Sat, 21 Mar 2020 00:38:39 +0100
+Message-ID: <f47b1117-9af3-f5b9-8ab0-d3b35213785d@hauke-m.de>
+Date:   Sat, 21 Mar 2020 00:39:05 +0100
 MIME-Version: 1.0
-In-Reply-To: <20200312165913.0915e5af7240.I35d006756fc2f08463616f8717f02d20ac80153d@changeid>
+In-Reply-To: <20200312165913.e9a97c70de23.Idb983599e482232ae3cfc3328e837e8a9bf1af7a@changeid>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -110,33 +108,27 @@ X-Mailing-List: backports@vger.kernel.org
 On 3/12/20 4:59 PM, Johannes Berg wrote:
 > From: Johannes Berg <johannes.berg@intel.com>
 > 
+> We can just copy this.
+> 
 > Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 > ---
->  backport/backport-include/linux/skbuff.h | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+>  copy-list       | 1 +
+>  copy-list.intel | 1 +
+>  2 files changed, 2 insertions(+)
 > 
-> diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
-> index 8af34146432e..3b63ce76a0b5 100644
-> --- a/backport/backport-include/linux/skbuff.h
-> +++ b/backport/backport-include/linux/skbuff.h
-> @@ -380,6 +380,11 @@ static inline struct sk_buff *__skb_peek(const struct sk_buff_head *list_)
->  {
->  	return list_->next;
->  }
-> +
-> +static inline void skb_mark_not_on_list(struct sk_buff *skb)
-> +{
-> +	skb->next = NULL;
-> +}
->  #endif
+......
+>  
+>  # crypto_memneq
+>  crypto/memneq.c -> compat/memneq.c
+> diff --git a/copy-list.intel b/copy-list.intel
+> index ee944edaaefb..28b6bc87ddfe 100644
+> --- a/copy-list.intel
+> +++ b/copy-list.intel
 
-skb_mark_not_on_list() was backported to kernel 4.19.10 and this
-definition conflicts.
-
-I added this around it:
-#if !LINUX_VERSION_IN_RANGE(4,19,10, 4,20,0)
+copy-list.intel is not in upstream, I will just ignore this part.
 
 Hauke
+
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
