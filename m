@@ -1,155 +1,142 @@
-Return-Path: <SRS0=zia6=5D=vger.kernel.org=backports-owner@kernel.org>
+Return-Path: <SRS0=vds9=5F=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B8B2C10DCE
-	for <backports@archiver.kernel.org>; Wed, 18 Mar 2020 18:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4AEC4332B
+	for <backports@archiver.kernel.org>; Fri, 20 Mar 2020 23:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E09E72051A
-	for <backports@archiver.kernel.org>; Wed, 18 Mar 2020 18:13:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=web.de header.i=@web.de header.b="FpNK2lVO"
+	by mail.kernel.org (Postfix) with ESMTP id C32FB20714
+	for <backports@archiver.kernel.org>; Fri, 20 Mar 2020 23:38:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbgCRSNt (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Wed, 18 Mar 2020 14:13:49 -0400
-Received: from mout.web.de ([212.227.15.3]:43863 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726631AbgCRSNt (ORCPT <rfc822;backports@vger.kernel.org>);
-        Wed, 18 Mar 2020 14:13:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1584555228;
-        bh=kuVcrXVfOJv0W9ObGx9aicM3DFLllyOivWvRf6mIUjc=;
-        h=X-UI-Sender-Class:Subject:From:To:Date;
-        b=FpNK2lVOhCsPKetN6RVE+c6+ondiUFPMDN1mQje+hZdaJHt7+gsgpvAbDUKAUyXci
-         ggfU3DLhm37/1WYMiFNmDFpqrSAqSsu5BSiEo+fJo4xjzmz/WxIXpGt374945ZTwDl
-         xKx1v63jM2jvjRY/ZUHa6GKdium/RdS0ykMsLOOA=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from christian-ThinkPad.christiansaga.de ([80.133.235.247]) by
- smtp.web.de (mrweb003 [213.165.67.108]) with ESMTPSA (Nemesis) id
- 0Lylol-1jJuDE3l5T-0167nb for <backports@vger.kernel.org>; Wed, 18 Mar 2020
- 19:13:47 +0100
-Message-ID: <cfdd4be67ee8ff5f6d817182c3115159c76099cb.camel@web.de>
-Subject: Makefile patching error in backport from 5.3 to 4.9.214
-From:   Christian <list-christian@web.de>
-To:     backports@vger.kernel.org
-Date:   Wed, 18 Mar 2020 19:13:47 +0100
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ZvgsVrRfoCuFuC539HYYafS1uFAPVBEqVs+9vRlgCXCVfUjJzWk
- V66nw4fTCY6YMMOYGNLiP+kPm49dNUcJ9aFHvnLRp4++QPnponfXIbZpUDCsWYgu0aqGzyb
- HOOaAHYS7wV+z4SffWziYx3aQ36xsszIXbGJZQuqAmlUsxRfsyaxBB0MFpgQfOL0asrJDkT
- 8nFKBDty34urrFNt1lLvQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Fikq0gr9Dkc=:54bc0yMDr1KbwQY3xmnMWu
- XQq0mOKzS3XzrQMdoqbmQdEMZek65dzfIjq2OW5mAINS7uwOklrwbgza5N4IiUwZUY4sTv1xC
- 3ljSwLo81MjZl4TY8WSU7eJbCZ7TT5MSlToSNbIuPCsmze0SCrPgwtQ6cjrSzPWosdEdq1s+1
- qBkUg6C4HYxj05JMNtwkZhwSOHNfJHdjkqRb4zpTeO+Po56rz7uHCWB0FvE8nED8ShNdA67eb
- DTDhMnb0kKTcyUB7fbU3X6KSDyR9PWWyumrjGur6YXTDNzbiuBlHZDRxn3gGehn7ypShblzdf
- EwbIKGtq5cwAHtA3Xlswg6n1xGn5L38iTwnbPFx11umbqrCVhkTwEvk0dn1QjJKvuhPi/eoDg
- LqXBtJ0gFd3TmwdqnXomWF5SnMYyBKqr86tiurcKg5K189ezyr8NEvjh5UKCo1yyr4Ku5UW+r
- 3fMhHlqOcPYgo9xxL9mZ14SpewVkE+Xtv+MzWdh33H8nfI4PDlLgdTkmEaJ9xcPtCNXNJoOl3
- 3pQKu9kRH52w5J1GKszWGr6Os1qrzALWDR+dIm1JnzpvSRQ1BYziWMOi1D7RP04k7cdCpGgLq
- mrF9zbzME4BnqGvcYeqLXt2UKjHI974rNvdtBLTfvIpbDiqJZ3jxNJIAswNfQnsdkQ8aMEyZj
- 6PrLvRkY/yeNEyR+C3WHzO2Em1ZDUMMiEYfe0Xt3F4Q2AMw4ULLxV5w9QICbpZrk46jksqKhs
- 7ol6MI68Q40gqka9mF75nV3fj0W45u1ZHVgrJx0Vhs5kGbIFxFBsscO9+6kskOCSPdhH2ICwe
- tBNbPql5gKuhcK07oxsHkL4wn/rspQtfhOfaEJqPtYzhv+BBinVjCSyC3bZQczbV8TmNJ/23G
- OacO0SB5phVyZPvcOpf5N7fMwQf1xBrwl/zPjZyVpqmZIee8yCGgXl0Y20kxJRJscs6jHC+DT
- VYrj6RqH1Yetu9yCb6CojGg55O/ftvCIyLW5XWflHF6wvMghV5JIEW6JvCPByWpbRx7qn9vgy
- YO3RKTPFI/+0d685Rlv8S08jIc7gzLdVX/aQ45gOS0YccSvGPyteKYUxQJ998dfT2o/E8vlOm
- Nqlj+22LAs2MhnWMPrWIiWeYEkCzxTYA5Sjq4yn9Gfw/+UjL5uipaV3OwWzSCwpgDoVrqhnnx
- whs1ntoHAYvbvHs/V8ZQx/q8fPBNCaP96fPuyBJAcxLrfjAaTOV7lyefb8rMtObdNyrzMO5Jt
- IvLZ/sh/s2EoQWnIN
+        id S1726851AbgCTXin (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Fri, 20 Mar 2020 19:38:43 -0400
+Received: from mout-p-102.mailbox.org ([80.241.56.152]:45536 "EHLO
+        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbgCTXin (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 20 Mar 2020 19:38:43 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 48kgFr5PqkzKmTJ;
+        Sat, 21 Mar 2020 00:38:40 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
+        with ESMTP id YYeslrrRQ4tM; Sat, 21 Mar 2020 00:38:37 +0100 (CET)
+Subject: Re: [PATCH 2/3] backports: skbuff: add skb_list_walk_safe() and
+ skb_mark_not_on_list()
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        backports@vger.kernel.org
+Cc:     Johannes Berg <johannes.berg@intel.com>
+References: <20200312165913.e9a97c70de23.Idb983599e482232ae3cfc3328e837e8a9bf1af7a@changeid>
+ <20200312165913.0915e5af7240.I35d006756fc2f08463616f8717f02d20ac80153d@changeid>
+From:   Hauke Mehrtens <hauke@hauke-m.de>
+Autocrypt: addr=hauke@hauke-m.de; keydata=
+ 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
+Message-ID: <a9273679-e6ed-e0cb-ad5a-1b2e014a17f2@hauke-m.de>
+Date:   Sat, 21 Mar 2020 00:38:39 +0100
+MIME-Version: 1.0
+In-Reply-To: <20200312165913.0915e5af7240.I35d006756fc2f08463616f8717f02d20ac80153d@changeid>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-Hi there,
+On 3/12/20 4:59 PM, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+> 
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+>  backport/backport-include/linux/skbuff.h | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
+> index 8af34146432e..3b63ce76a0b5 100644
+> --- a/backport/backport-include/linux/skbuff.h
+> +++ b/backport/backport-include/linux/skbuff.h
+> @@ -380,6 +380,11 @@ static inline struct sk_buff *__skb_peek(const struct sk_buff_head *list_)
+>  {
+>  	return list_->next;
+>  }
+> +
+> +static inline void skb_mark_not_on_list(struct sk_buff *skb)
+> +{
+> +	skb->next = NULL;
+> +}
+>  #endif
 
-I am just trying to backport wireless drivers from 5.3 to 4.9.214. I
-thought I start with a clean kernel tree to see how all this works.
-However when trying to integrate into a kernel-stable tree, I get an
-error when the makefile is to be changed:
+skb_mark_not_on_list() was backported to kernel 4.19.10 and this
+definition conflicts.
 
-Modify Kconfig tree ...
-Rewrite Makefiles and Kconfig files ...
-Applying patches from integration-patches/ to /root/git/linux-stable/
-...
-Applying patch 001-enable-backports/0001-enable-backports-built-
-in.patch
-> patching file Makefile
-> Hunk #1 succeeded at 571 (offset 29 lines).
-> Hunk #2 FAILED at 821.
-> Hunk #3 FAILED at 838.
-> 2 out of 3 hunks FAILED -- saving rejects to file Makefile.rej
+I added this around it:
+#if !LINUX_VERSION_IN_RANGE(4,19,10, 4,20,0)
 
-What I did:
-cloned linux-stable:
-git clone git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-
-stable.git -b v4.9.194
-
-cloned linux-next:
-git clone git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-
-next.git
-
-cloned linux-backports:
-git clone
-git://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git
--b linux-5.3.y
-
-Then used:
-./gentree.py --copy-list ./copy-list --verbose --integrate --clean --
-git-revision v5.3 ~/linux-next ~/linux-stable
-
-Apparently the patch created by gentree does not fit to the makefile. I
-can amend it by hand, however this seems to be an error in the used
-patch?
-Anyone know what to do?
-
-Kind Regards
-Chris
-
-Makefile.rej content:
-
-=2D-- Makefile
-+++ Makefile
-@@ -821,13 +822,16 @@ core-y		+=3D kernel/ mm/ fs/ ipc/
-security/ crypto/ block/
-
- vmlinux-dirs	:=3D $(patsubst %/,%,$(filter %/, $(init-y) $(init-m) \
- 		     $(core-y) $(core-m) $(drivers-y) $(drivers-m) \
-+		     $(backports-y) $(backports-m) \
- 		     $(net-y) $(net-m) $(libs-y) $(libs-m)))
-
- vmlinux-alldirs	:=3D $(sort $(vmlinux-dirs) $(patsubst
-%/,%,$(filter %/, \
- 		     $(init-n) $(init-) \
- 		     $(core-n) $(core-) $(drivers-n) $(drivers-) \
-+		     $(backports-n) $(backports-) \
- 		     $(net-n)  $(net-)  $(libs-n)    $(libs-))))
-
-+backports-y	:=3D $(patsubst %/, %/built-in.o, $(backports-y))
- init-y		:=3D $(patsubst %/, %/built-in.o, $(init-y))
- core-y		:=3D $(patsubst %/, %/built-in.o, $(core-y))
- drivers-y	:=3D $(patsubst %/, %/built-in.o, $(drivers-y))
-@@ -838,7 +842,7 @@ libs-y		:=3D $(libs-y1) $(libs-y2)
-
- # Externally visible symbols (used by link-vmlinux.sh)
- export KBUILD_VMLINUX_INIT :=3D $(head-y) $(init-y)
--export KBUILD_VMLINUX_MAIN :=3D $(core-y) $(libs-y) $(drivers-y) $(net-
-y)
-+export KBUILD_VMLINUX_MAIN :=3D $(core-y) $(libs-y) $(drivers-y) $(net-
-y) $(backports-y)
- export KBUILD_LDS          :=3D arch/$(SRCARCH)/kernel/vmlinux.lds
- export LDFLAGS_vmlinux
- # used by scripts/pacmage/Makefile
-
+Hauke
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
