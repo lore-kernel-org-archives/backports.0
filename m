@@ -2,133 +2,124 @@ Return-Path: <SRS0=vds9=5F=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5E8C4332D
-	for <backports@archiver.kernel.org>; Fri, 20 Mar 2020 23:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C30C4332D
+	for <backports@archiver.kernel.org>; Fri, 20 Mar 2020 23:40:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91CDD20714
-	for <backports@archiver.kernel.org>; Fri, 20 Mar 2020 23:39:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41DB420714
+	for <backports@archiver.kernel.org>; Fri, 20 Mar 2020 23:40:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbgCTXjJ (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Fri, 20 Mar 2020 19:39:09 -0400
-Received: from mout-p-101.mailbox.org ([80.241.56.151]:28552 "EHLO
-        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbgCTXjJ (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 20 Mar 2020 19:39:09 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        id S1726851AbgCTXkN (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Fri, 20 Mar 2020 19:40:13 -0400
+Received: from mout-p-201.mailbox.org ([80.241.56.171]:60566 "EHLO
+        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726773AbgCTXkM (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 20 Mar 2020 19:40:12 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 48kgGM107pzKmbs;
-        Sat, 21 Mar 2020 00:39:07 +0100 (CET)
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 48kgHZ2lXZzQl94;
+        Sat, 21 Mar 2020 00:40:10 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp1.mailbox.org ([80.241.60.240])
-        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
-        with ESMTP id APIcc45p33KP; Sat, 21 Mar 2020 00:39:04 +0100 (CET)
-Subject: Re: [PATCH 1/3] backports: add linux/units.h
-To:     Johannes Berg <johannes@sipsolutions.net>,
-        backports@vger.kernel.org
-Cc:     Johannes Berg <johannes.berg@intel.com>
-References: <20200312165913.e9a97c70de23.Idb983599e482232ae3cfc3328e837e8a9bf1af7a@changeid>
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id 0ZwteY1d2mmn; Sat, 21 Mar 2020 00:40:08 +0100 (CET)
 From:   Hauke Mehrtens <hauke@hauke-m.de>
-Autocrypt: addr=hauke@hauke-m.de; keydata=
- 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
-Message-ID: <f47b1117-9af3-f5b9-8ab0-d3b35213785d@hauke-m.de>
-Date:   Sat, 21 Mar 2020 00:39:05 +0100
+To:     backports@vger.kernel.org
+Cc:     johannes@sipsolutions.net, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 0/8] backports: Update to version 5.5.10
+Date:   Sat, 21 Mar 2020 00:39:42 +0100
+Message-Id: <20200320233950.32257-1-hauke@hauke-m.de>
 MIME-Version: 1.0
-In-Reply-To: <20200312165913.e9a97c70de23.Idb983599e482232ae3cfc3328e837e8a9bf1af7a@changeid>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-On 3/12/20 4:59 PM, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
-> 
-> We can just copy this.
-> 
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> ---
->  copy-list       | 1 +
->  copy-list.intel | 1 +
->  2 files changed, 2 insertions(+)
-> 
-......
->  
->  # crypto_memneq
->  crypto/memneq.c -> compat/memneq.c
-> diff --git a/copy-list.intel b/copy-list.intel
-> index ee944edaaefb..28b6bc87ddfe 100644
-> --- a/copy-list.intel
-> +++ b/copy-list.intel
+This adds the missing changes to make backports work with kernel 5.5.10
 
-copy-list.intel is not in upstream, I will just ignore this part.
+1   3.12.74             [  OK  ]
+2   3.13.11             [  LINK  ]
+3   3.14.79             [  LINK  ]
+4   3.16.82             [  OK  ]
+5   3.18.140            [  OK  ]
+6   4.0.9               [  LINK  ]
+7   4.1.52              [  OK  ]
+8   4.2.8               [  LINK  ]
+9   4.3.6               [  LINK  ]
+10  4.4.216             [  OK  ]
+11  4.5.7               [  OK  ]
+12  4.6.7               [  OK  ]
+13  4.7.10              [  OK  ]
+14  4.8.17              [  OK  ]
+15  4.9.216             [  OK  ]
+16  4.10.17             [  OK  ]
+17  4.11.12             [  OK  ]
+18  4.12.14             [  OK  ]
+19  4.13.16             [  OK  ]
+20  4.14.173            [  OK  ]
+21  4.15.18             [  OK  ]
+22  4.16.18             [  OK  ]
+23  4.17.19             [  OK  ]
+24  4.18.20             [  OK  ]
+25  4.19.109            [  OK  ]
+26  4.20.17             [  OK  ]
+27  5.0.21              [  OK  ]
+28  5.1.21              [  OK  ]
+29  5.2.21              [  OK  ]
+30  5.3.18              [  OK  ]
+31  5.4.25              [  OK  ]
+32  5.5.9               [  OK  ]
 
-Hauke
+My mails were not send to the mailing list, I hope this is fixed now.
 
+Hauke Mehrtens (8):
+  backports: patches: Refresh against kernel 5.5.10
+  backports: fs.h: Add compat_ptr_ioctl()
+  backports: stddef.h: Add sizeof_field()
+  backports: Make qtnfmac depend on kernel 5.1 or later
+  backports: rcupdate.h: Add rcu_swap_protected()
+  backports: netdevice.h: Add return value to napi_complete()
+  backports: Do not build BPAUTO_BUILD_SYSTEM_DATA_VERIFICATION on <
+    3.13
+  backports: page_ref.h: Exclude page_ref_count() on kernel >= 4.4.216
+
+ backport/backport-include/linux/fs.h          | 10 +++++
+ backport/backport-include/linux/netdevice.h   |  6 +++
+ backport/backport-include/linux/page_ref.h    |  2 +
+ backport/backport-include/linux/rcupdate.h    | 18 ++++++++
+ backport/backport-include/linux/stddef.h      | 12 +++++-
+ backport/compat/Kconfig                       |  1 +
+ backport/compat/Makefile                      |  1 +
+ backport/compat/backport-5.5.c                | 41 +++++++++++++++++++
+ dependencies                                  |  8 +++-
+ ...2-disable-dump-adjust-on-old-kernels.patch |  4 +-
+ .../include_net_cfg80211.patch                |  2 +-
+ .../net_wireless_core.patch                   |  2 +-
+ .../0013-fix-makefile-includes/rtw88.patch    | 28 ++++---------
+ .../net_wireless_nl80211.patch                |  2 +-
+ patches/0022-define-tracing/wil6210.patch     |  2 +-
+ patches/0024-led-blink-api/mac80211.patch     |  2 +-
+ patches/0025-usb-sg/usbnet.patch              |  2 +-
+ patches/0028-select_queue/mwifiex.patch       |  2 +-
+ patches/0028-select_queue/rtl8723bs.patch     |  2 +-
+ patches/0053-possible_net_t.patch             |  2 +-
+ patches/0055-name_assign_type/brcmfmac.patch  |  2 +-
+ patches/0069-iwlwifi-pd-string-fix.patch      |  2 +-
+ patches/0077-genl-ro-after-init/hwsim.patch   |  2 +-
+ patches/0077-genl-ro-after-init/nl80211.patch |  2 +-
+ patches/0085-iwlwifi-pci-device-removal.patch |  4 +-
+ patches/0090-remove-GRO_CONSUMED.patch        |  2 +-
+ patches/lib-refcount.patch                    | 10 ++---
+ 27 files changed, 128 insertions(+), 45 deletions(-)
+ create mode 100644 backport/compat/backport-5.5.c
+
+-- 
+2.20.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
