@@ -2,36 +2,36 @@ Return-Path: <SRS0=leQY=5J=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,T_TVD_MIME_EPI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_TVD_MIME_EPI autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02458C10DCE
-	for <backports@archiver.kernel.org>; Tue, 24 Mar 2020 23:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC13C10DCE
+	for <backports@archiver.kernel.org>; Tue, 24 Mar 2020 23:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA1552078A
-	for <backports@archiver.kernel.org>; Tue, 24 Mar 2020 23:06:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38F7B2078A
+	for <backports@archiver.kernel.org>; Tue, 24 Mar 2020 23:11:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727376AbgCXXG1 (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Tue, 24 Mar 2020 19:06:27 -0400
-Received: from mout-p-102.mailbox.org ([80.241.56.152]:43300 "EHLO
-        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727341AbgCXXG1 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 24 Mar 2020 19:06:27 -0400
+        id S1727064AbgCXXL1 (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Tue, 24 Mar 2020 19:11:27 -0400
+Received: from mout-p-101.mailbox.org ([80.241.56.151]:25980 "EHLO
+        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726956AbgCXXL1 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 24 Mar 2020 19:11:27 -0400
 Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 48n6Ln0DDlzKmcq;
-        Wed, 25 Mar 2020 00:06:25 +0100 (CET)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 48n6SX2vyMzKmhK;
+        Wed, 25 Mar 2020 00:11:24 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
-        with ESMTP id mN0fFq3vDVJF; Wed, 25 Mar 2020 00:06:21 +0100 (CET)
-To:     backports@vger.kernel.org
-Cc:     linux-wireless@vger.kernel.org
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id Jzy-_3kf1avr; Wed, 25 Mar 2020 00:11:19 +0100 (CET)
+Subject: Re: [PATCH 00/15] updates & improvements
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        backports@vger.kernel.org
+References: <20200221085624.6213-1-johannes@sipsolutions.net>
 From:   Hauke Mehrtens <hauke@hauke-m.de>
-Subject: backports-5.5.11-1, backports-5.4.27-1 and backports-4.19.112-1
- released
 Autocrypt: addr=hauke@hauke-m.de; keydata=
  mQINBFtLdKcBEADFOTNUys8TnhpEdE5e1wO1vC+a62dPtuZgxYG83+9iVpsAyaSrCGGz5tmu
  BgkEMZVK9YogfMyVHFEcy0RqfO7gIYBYvFp0z32btJhjkjBm9hZ6eonjFnG9XmqDKg/aZI+u
@@ -92,66 +92,62 @@ Autocrypt: addr=hauke@hauke-m.de; keydata=
  3jmPvpEc2WCU5uJfaVoAEqh9kI2D7NlQCG80UkXDHGmcoHBnsiEZGjzm5zYOYinjTUeoy3F0
  8aTZ+e/sj+r4VTOUB/b0jy+JPnxn23FktGIYnQ+lLsAkmcbcDwCop4V59weR2eqwBqedNRUX
  5OTP93lUIhrRIy3cZT/A5nNcUeCYRS8bCRFKrQKEn92RFg==
-Message-ID: <e7a24883-53d8-480a-4012-304a525f6360@hauke-m.de>
-Date:   Wed, 25 Mar 2020 00:05:48 +0100
+Message-ID: <6a46da0a-b03c-32d8-caaa-87b13b021d34@hauke-m.de>
+Date:   Wed, 25 Mar 2020 00:11:06 +0100
 MIME-Version: 1.0
+In-Reply-To: <20200221085624.6213-1-johannes@sipsolutions.net>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="WFnLW5klKkBWhTIX77cY2kagUU3vtBQdb"
+ boundary="OyEzmw0Jk6IiE8wgylYTDBc6Tv7T42E0v"
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---WFnLW5klKkBWhTIX77cY2kagUU3vtBQdb
-Content-Type: multipart/mixed; boundary="4xPNa4jNsUbKzDOpW7aaHMi0FORUk7EQd"
+--OyEzmw0Jk6IiE8wgylYTDBc6Tv7T42E0v
+Content-Type: multipart/mixed; boundary="C6PhhPkPad59TBc27YnTJfEINiqwNdLwT"
 
---4xPNa4jNsUbKzDOpW7aaHMi0FORUk7EQd
+--C6PhhPkPad59TBc27YnTJfEINiqwNdLwT
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-backports-5.5.11-1 was released. This is based on Linux 5.5.11.
-https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/v5.5.11=
-/backports-5.5.11-1.tar.xz
+On 2/21/20 9:56 AM, Johannes Berg wrote:
+> This is what we have now to make our driver (only) work on 5.5, and
+> because I got tired of waiting for the devel/git-tracker.py I threw
+> in a speed improvement for the gentree --git option, using git's
+> cat-file --batch API. We should use that for much more, and perhaps
+> implicitly in the git library, but getting the files was one of the
+> slower things, now it's barely noticable.
+>=20
+> johannes
 
-backports-5.4.27-1 was released. This is based on Linux 5.4.27.
-https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/v5.4.27=
-/backports-5.4.27-1.tar.xz
-
-backports-4.19.112-1 was released. This is based on Linux 4.19.112.
-https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/v4.19.1=
-12/backports-4.19.112-1.tar.xz
-
-There is now a updated wiki page with the releases:
-https://backports.wiki.kernel.org/index.php/Releases
-
-The source code can be found here:
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
+I left out the RedHat patch and applied the rest. I removed the type and
+ticket tag from some coimmit messages.
 
 Hauke
 
 
---4xPNa4jNsUbKzDOpW7aaHMi0FORUk7EQd--
+--C6PhhPkPad59TBc27YnTJfEINiqwNdLwT--
 
---WFnLW5klKkBWhTIX77cY2kagUU3vtBQdb
+--OyEzmw0Jk6IiE8wgylYTDBc6Tv7T42E0v
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCgAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAl56kmgACgkQ8bdnhZyy
-68c1Pwf9HdFyS1/6cKj4TDKuYB3Dk0ThSfTvtQioq1RQi96/EA9/UfB1jhnAuZh+
-qzLDygnt94yKgHHjMuNCOaKjxPXB8KqJLnKOVtwzdw4BCZlPwSYoBn4yteOtH0O4
-NnSJU3olesXzHCMy4MRxCmTz5XesO14/baOb7p0y77xvJN7EVgfuNhnAZkJ4rvrp
-7aiVwQmg80j6884BjR0lFUUGHRvrylOfhODoEW0aSCstuWo1Vq5fLVK1qBu5Ad0S
-4NAzumhl1kW2Eohui9qS84BJF6WdjwHxmeqkloXsSAK1Nwr189q4grN5gy3R2aHR
-KkaoSXPiumiaN0X1mrH5WrHeD5XBug==
-=pAp6
+iQEzBAEBCgAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAl56k4sACgkQ8bdnhZyy
+68d6KAgAmYAVd+TLVTVUc9oJVds1kEgV9f157ygS8CK5kxXIA60/54NIs4ank09D
+cTjatf2KbnrCePeTdvyyZrXwUjTc7ZdmuLcW2TIV1zC/ztWODPCZSZz7iyUo9x2B
+TvhEGjeurpMzB3kYoVyJb4S8ZtCAZv5TnrdrE0+uVEt9Y7FqGkvZw/epnfJ50qcR
+bRVqPLNRwcD3FowpayaIXPb/0oHBFpesZnxR5iESK0Legwpim6dYY7WDr23OqBEk
+subuOmb26YbvNm5sTRnlrqCLfpnBRSoke/MWu6Qv+jUJYHgd4uKEoznr8r6/QhMx
+V9+6gu4tZUDn/jDbaFPQxWWYSoYjcg==
+=XQrI
 -----END PGP SIGNATURE-----
 
---WFnLW5klKkBWhTIX77cY2kagUU3vtBQdb--
+--OyEzmw0Jk6IiE8wgylYTDBc6Tv7T42E0v--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
