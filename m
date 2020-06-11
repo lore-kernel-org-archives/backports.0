@@ -1,175 +1,242 @@
-Return-Path: <SRS0=WoTc=7V=vger.kernel.org=backports-owner@kernel.org>
+Return-Path: <SRS0=XWeN=7Y=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,T_TVD_MIME_EPI,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9749EC433E0
-	for <backports@archiver.kernel.org>; Mon,  8 Jun 2020 08:15:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC734C433DF
+	for <backports@archiver.kernel.org>; Thu, 11 Jun 2020 14:30:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30D4820656
-	for <backports@archiver.kernel.org>; Mon,  8 Jun 2020 08:15:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="lVOABnW1"
+	by mail.kernel.org (Postfix) with ESMTP id CE1E22065C
+	for <backports@archiver.kernel.org>; Thu, 11 Jun 2020 14:30:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729063AbgFHIPU (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Mon, 8 Jun 2020 04:15:20 -0400
-Received: from mail-eopbgr50062.outbound.protection.outlook.com ([40.107.5.62]:22070
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729060AbgFHIPT (ORCPT <rfc822;backports@vger.kernel.org>);
-        Mon, 8 Jun 2020 04:15:19 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iIS87gOsam/I/9+MiMRThASfIxT+GPqG0NZiojB23cN0jpxqhoKR92o9NQzU6kZ5kMe5W0aY/vpBjFc34JFVb1yQh6pggx36XahwnAfxknVySqVAjrc3fmLhweWNJxEThePJSOUcs4V2feIugLVWgIgfuyiynEIjvSzYEIP30mv2+GEJ9EVceqz+hpATiwfTYGf4TJb3FcKE6ptge8stqb+59+BLSQl+MR5VvD5v/6x123pNZKk5R/vF6Jmrk1c9Oc5BJlxsRajwFwr3BXzVIewRChO4jDLyXvvYJWl8gxzhxroPWAeFz54iF+dEmNUO6kH/aaXv6m4c6IM+DwND3A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JYvjhK1fUxCQ/elLzDfKHQRZZPkxMmWgJ8+6I3HSZC0=;
- b=I3bDbrvdcX/x1YT5tuXYTC+52orqogr9bc7O7/6RUqpqbgz+/9S3E4IKep/Jz1C+EkMDNbLKRb0883PBrBvjEHUQo9IQsPgZTrXRgWuAqrQj8kwcbcyiK7Jeo9u6kd9biszXdTuofrQ0Aq3x4+si5jeAQZIiA2BrGvpUz/dYmoh3pyvsh5qFCfDGliNHLCg0D5Rzr47gctfUrgznKrDRVscsPl3Z7ibO9uvAn0mId9LcsdHWBPL3up/O4jK4IPfkXujeJacdpDYeHJUSV2wcoM9u/YxHU4pFkkx5SL9bEe+g8/OpdKQ4eoTcl0L8EHzKGtJV/+rbZ3/YELm/XAG9cA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
- dkim=pass header.d=mellanox.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JYvjhK1fUxCQ/elLzDfKHQRZZPkxMmWgJ8+6I3HSZC0=;
- b=lVOABnW1ZZx8BuZFvFD550DgqqK4Xki1ajkv+a0ldbQOClgPmVMjph7DLP3OA5G4KHXT98CXstSmtFft4vooFoYcnkLtRbMfcXqNbajXM+q2/CmvQIS9jHvrrfYl1wNhQU7SSaQlNqN60HZ/3ps4nsnPRAYkNZdDDbXjs6ayMXU=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none
- header.from=mellanox.com;
-Received: from AM0PR05MB4738.eurprd05.prod.outlook.com (2603:10a6:208:b7::18)
- by AM0PR05MB6817.eurprd05.prod.outlook.com (2603:10a6:20b:153::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3066.18; Mon, 8 Jun
- 2020 08:15:16 +0000
-Received: from AM0PR05MB4738.eurprd05.prod.outlook.com
- ([fe80::c94d:7197:8290:bbb9]) by AM0PR05MB4738.eurprd05.prod.outlook.com
- ([fe80::c94d:7197:8290:bbb9%4]) with mapi id 15.20.3066.023; Mon, 8 Jun 2020
- 08:15:16 +0000
+        id S1728323AbgFKOa2 (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Thu, 11 Jun 2020 10:30:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60154 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728183AbgFKOa2 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 11 Jun 2020 10:30:28 -0400
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [IPv6:2001:67c:2050::465:103])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6A99C08C5C1
+        for <backports@vger.kernel.org>; Thu, 11 Jun 2020 07:30:27 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 49jR8t1RkQzKmYW;
+        Thu, 11 Jun 2020 16:30:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id lGsv2Pl0jIgn; Thu, 11 Jun 2020 16:30:18 +0200 (CEST)
 Subject: Re: generate backport error
-To:     Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
+To:     Shetu Ayalew <shetu@mellanox.com>, backports@vger.kernel.org
 References: <7318c1e5-fbe0-b941-f10e-ed00151a835f@mellanox.com>
  <9661a158-829d-e053-9ae7-5e3114c4f9f6@hauke-m.de>
-From:   Shetu Ayalew <shetu@mellanox.com>
-Message-ID: <ea4eaf08-d135-69c0-0fa1-f8ad4499edd1@mellanox.com>
-Date:   Mon, 8 Jun 2020 11:15:10 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
-In-Reply-To: <9661a158-829d-e053-9ae7-5e3114c4f9f6@hauke-m.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-ClientProxiedBy: AM0PR04CA0025.eurprd04.prod.outlook.com
- (2603:10a6:208:122::38) To AM0PR05MB4738.eurprd05.prod.outlook.com
- (2603:10a6:208:b7::18)
+ <ea4eaf08-d135-69c0-0fa1-f8ad4499edd1@mellanox.com>
+From:   Hauke Mehrtens <hauke@hauke-m.de>
+Autocrypt: addr=hauke@hauke-m.de; keydata=
+ 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
+Message-ID: <fa307949-4370-dc19-2136-116d9806fdbf@hauke-m.de>
+Date:   Thu, 11 Jun 2020 16:30:01 +0200
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [10.0.0.25] (109.67.81.162) by AM0PR04CA0025.eurprd04.prod.outlook.com (2603:10a6:208:122::38) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3066.18 via Frontend Transport; Mon, 8 Jun 2020 08:15:15 +0000
-X-Originating-IP: [109.67.81.162]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: e944a9fa-3713-418f-672d-08d80b841385
-X-MS-TrafficTypeDiagnostic: AM0PR05MB6817:
-X-Microsoft-Antispam-PRVS: <AM0PR05MB6817B07172A34A3C5DAA131EDA850@AM0PR05MB6817.eurprd05.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
-X-Forefront-PRVS: 042857DBB5
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: r6zKkc8Ty+hbZcX6acGqsEE2sZNahvsM2JWZ33BUoQHWjPZSVI9PlAg4KepSU26zQOXQMgVeI0OvSCWintftlCwT3AGnwFn1crNC4ouj//zy1Y9/B6Tts8wP7MrvmGOLb6kgrTOKvbU74qfIsz+61bkosaXfiB42ufmsmqdoIKkntw18gxCPzhjWFQbTVGqVJ5lbdCjn1ra/20E8FjDX9QkIfcndHHQSLJkcmEbNKe7vEPww+XQq8x9h/ycOqU1JyzI3LNVLF5rmXl06HZVHxPpC1KOowG7gY6uNnr4pkAQ9jHcLUJZ2DGpnL/tf5YTEbio67qR6DSQxgwIiARQgecEwYah2bhEoE3W3Kjet2H3JpWaadhYnAcanSAB3zmNgFLLYRxU+Rw2V+R/RvMb259TS1jo5Y78WFpB3iwXfHzVZjob8GpWi3twrTfFdWVq3JJGg2u77FEPlBwW9q0Qq7A==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR05MB4738.eurprd05.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(136003)(376002)(346002)(39860400002)(396003)(366004)(16576012)(3480700007)(316002)(53546011)(16526019)(7116003)(52116002)(6666004)(26005)(5660300002)(186003)(6486002)(2616005)(86362001)(956004)(8936002)(8676002)(478600001)(36756003)(66476007)(66556008)(83380400001)(31696002)(31686004)(966005)(2906002)(66946007)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: k6iUHF8CL7DsQOgPwyx4rCJp9lUdAk1buFVU3JR7y+5ILUu1ZfSFNuOHFbC49XIRmWcGKha0bcv3IjJgHERIU/wdz2+L8drlYYiwQWz3ZLKB/teit8g5yk0ENOZ0n+xAHsF1k8Xgfv+7tiMe0L+KuqUiT50fVvizM/9KvNY4ASalWbwbkNR8I2+N244y8VXgaZ+XQUoisrV0LKXTtCasJeuuX3BiukDHm6T7caT3GOvwVbUaU1zNGv1/MFiDnDtGlP8XMAdigvDOCXUhCik1HEPz7BCEe6scsxnuArZf8W0klZrgHO9zCspt8VR/ZcBkhHiCl7tbaI0VJ+sEeDs8CKKUfrrCN2tuCCN4zxm9WbMwn5W8KRbfhyXlTiiN4jndZcHa3hQxe8U4qNyUxgYypmJoGSaE6PVXHiHP5yO2Gdb71aH43cx1LKOaVBxbVUVaLvrVqAMfUAkunkZtEG8i9wK12Wqs3x8yWOJehV5VCHc=
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e944a9fa-3713-418f-672d-08d80b841385
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jun 2020 08:15:16.5852
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FuHazNWEF6+Xj0TIzgBeVjxmyqu//MeZCjKzCW5UXqK1oS8eScnc3BMHcIh4NurzZMWOJW4q4H16kJs3YkrhQw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR05MB6817
+In-Reply-To: <ea4eaf08-d135-69c0-0fa1-f8ad4499edd1@mellanox.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="x6AQKcSFguOLHfbYi3vMUVnDdE2qw78li"
+X-Rspamd-Queue-Id: CF4C11807
+X-Rspamd-Score: -5.18 / 15.00 / 15.00
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-On 6/7/2020 5:46 PM, Hauke Mehrtens wrote:
-> On 6/1/20 11:19 AM, Shetu Ayalew wrote:
->> Hi,
->>
->> I'm trying to run the the gentree.py.
->> I use coccinelle 1.0.7 and the following tree -
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/
->>
->> with few different tags the last one was v5.7-rc3-1 (for backports
->> tree)  and v5.7-rc3 (for the Linux tree).
->>
->> and I get error:
->>
->> Traceback (most recent call last):
->>    File "./gentree.py", line 1107, in <module>
->>      ret = _main()
->>    File "./gentree.py", line 724, in _main
->>      logwrite=logwrite)
->>    File "./gentree.py", line 914, in process
->>      kver = gen_version.kernelversion(bpid.project_dir)
->>    File "/.autodirect/swgwork/shetu/upstream/backports/lib/bpversion.py",
->> line 40, in kernelversion
->>      _check(process)
->>    File "/.autodirect/swgwork/shetu/upstream/backports/lib/bpversion.py",
->> line 11, in _check
->>      raise ExecutionError(process.returncode)
->> lib.bpversion.ExecutionError
->>
->>
->> To my understanding the source of the above error is the fail of the run
->> of the following command that the script executes:
->>
->> "make --no-print-directory -C  /swgwork/shetu/upstream/backport_vr
->> kernelversion"
->>
->> The error I get is "you shouldn't run make in the backports tree, but
->> only in the generated output ...".
->>
->> But the directory backport_vr is not under the backports tree. Moreover
->> I tried running make kernelversion
->>
->> from backport_vr and I got the same error message. Do you familiar with
->> this probelm, any idea how to solve it ?
->>
->>
->> Thanks,
->>
->> Shetu.
-> Hi Shetu,
->
-> The script tries to get the kernel version of the kernel you want to
-> create a backports release for and this somehow fails.
->
-> Could you please run this manually like I did here:
->
-> $ make --no-print-directory -C ~/linux/linux-next kernelversion
-> 5.7.0-rc3
-> $ echo $?
-> 0
->
-> Please keep the mailing list in CC.
->
-> Hauke
->
-Hi,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--x6AQKcSFguOLHfbYi3vMUVnDdE2qw78li
+Content-Type: multipart/mixed; boundary="e8FdL8rAQ60Z4WtuA3OjZiUm4tDOskjaR"
 
-I did  and got the same output as you. But it seems like the script is 
-not using the source tree path as in you asked me to do, rather it uses 
-the output tree (after backport) path.
-Looking into the Makefile is looks like the it checks if file named 
-local-symbols exits (which not) and thus fails.
+--e8FdL8rAQ60Z4WtuA3OjZiUm4tDOskjaR
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Thanks
+On 6/8/20 10:15 AM, Shetu Ayalew wrote:
+> On 6/7/2020 5:46 PM, Hauke Mehrtens wrote:
+>> On 6/1/20 11:19 AM, Shetu Ayalew wrote:
+>>> Hi,
+>>>
+>>> I'm trying to run the the gentree.py.
+>>> I use coccinelle 1.0.7 and the following tree -
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/
+>>>
+>>> with few different tags the last one was v5.7-rc3-1 (for backports
+>>> tree)=C2=A0 and v5.7-rc3 (for the Linux tree).
+>>>
+>>> and I get error:
+>>>
+>>> Traceback (most recent call last):
+>>> =C2=A0=C2=A0 File "./gentree.py", line 1107, in <module>
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 ret =3D _main()
+>>> =C2=A0=C2=A0 File "./gentree.py", line 724, in _main
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 logwrite=3Dlogwrite)
+>>> =C2=A0=C2=A0 File "./gentree.py", line 914, in process
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 kver =3D gen_version.kernelversion(bpid.proj=
+ect_dir)
+>>> =C2=A0=C2=A0 File
+>>> "/.autodirect/swgwork/shetu/upstream/backports/lib/bpversion.py",
+>>> line 40, in kernelversion
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 _check(process)
+>>> =C2=A0=C2=A0 File
+>>> "/.autodirect/swgwork/shetu/upstream/backports/lib/bpversion.py",
+>>> line 11, in _check
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 raise ExecutionError(process.returncode)
+>>> lib.bpversion.ExecutionError
+>>>
+>>>
+>>> To my understanding the source of the above error is the fail of the =
+run
+>>> of the following command that the script executes:
+>>>
+>>> "make --no-print-directory -C=C2=A0 /swgwork/shetu/upstream/backport_=
+vr
+>>> kernelversion"
+>>>
+>>> The error I get is "you shouldn't run make in the backports tree, but=
 
-Shetu.
+>>> only in the generated output ...".
+>>>
+>>> But the directory backport_vr is not under the backports tree. Moreov=
+er
+>>> I tried running make kernelversion
+>>>
+>>> from backport_vr and I got the same error message. Do you familiar wi=
+th
+>>> this probelm, any idea how to solve it ?
+>>>
+>>>
+>>> Thanks,
+>>>
+>>> Shetu.
+>> Hi Shetu,
+>>
+>> The script tries to get the kernel version of the kernel you want to
+>> create a backports release for and this somehow fails.
+>>
+>> Could you please run this manually like I did here:
+>>
+>> $ make --no-print-directory -C ~/linux/linux-next kernelversion
+>> 5.7.0-rc3
+>> $ echo $?
+>> 0
+>>
+>> Please keep the mailing list in CC.
+>>
+>> Hauke
+>>
+> Hi,
+>=20
+> I did=C2=A0 and got the same output as you. But it seems like the scrip=
+t is
+> not using the source tree path as in you asked me to do, rather it uses=
 
+> the output tree (after backport) path.
+> Looking into the Makefile is looks like the it checks if file named
+> local-symbols exits (which not) and thus fails.
+>=20
+> Thanks
+>=20
+> Shetu.
+>=20
+
+How do you call the ./gentree.py  script like this?
+=2E/gentree.py ~/linux/linux-next-clean/
+/home/hauke/backports/backports-5.7-rc3-test1
+
+If you just need the wifi drivers form a recent kernel you can also
+download a pregenerted tar here:
+https://backports.wiki.kernel.org/index.php/Releases
+
+Hauke
+
+
+--e8FdL8rAQ60Z4WtuA3OjZiUm4tDOskjaR--
+
+--x6AQKcSFguOLHfbYi3vMUVnDdE2qw78li
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAl7iP+kACgkQ8bdnhZyy
+68fEjgf/VDiwEOkObZywREwI9EjoN/2BTHoSbniQP0zq3ejk2G3UMvdtP25+EWYY
+pUKOq0lBFPygXh8Y67JX4c3HJOuLWcbCgLIY0ScJ7aefo/UBuN6U6K2/JKW1UxRH
+duphk/sjvpC8JJCb9GElkTbTcZZeXHUgZ6s7qXGw0KQ+SeeajpRe2sxCFVRsCFmn
+w/ZeMWRVUsWTeirFMqmG+bSYpJ2TuFvabASOtUMi/v6OPPKnN0fk6uSdClXjSBtW
+0eWPS/BrWKFmuHoPhABL24ER094VAu7vhJPTDVjy+ppAtfRejLdrDMZ7wvOQEmpZ
+sWosI+IAZy+0ZfvyQwAITCT5jyb8eQ==
+=G+dP
+-----END PGP SIGNATURE-----
+
+--x6AQKcSFguOLHfbYi3vMUVnDdE2qw78li--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
