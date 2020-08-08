@@ -2,42 +2,40 @@ Return-Path: <SRS0=EqUw=BS=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,T_TVD_MIME_EPI,URIBL_BLOCKED autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,T_TVD_MIME_EPI autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39054C433E0
-	for <backports@archiver.kernel.org>; Sat,  8 Aug 2020 15:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA515C433E0
+	for <backports@archiver.kernel.org>; Sat,  8 Aug 2020 16:06:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 225002076B
-	for <backports@archiver.kernel.org>; Sat,  8 Aug 2020 15:53:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F52C20716
+	for <backports@archiver.kernel.org>; Sat,  8 Aug 2020 16:06:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbgHHPxX (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Sat, 8 Aug 2020 11:53:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52818 "EHLO
+        id S1726528AbgHHQGk (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Sat, 8 Aug 2020 12:06:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726238AbgHHPxW (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sat, 8 Aug 2020 11:53:22 -0400
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [IPv6:2001:67c:2050::465:102])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3F1BC061756
-        for <backports@vger.kernel.org>; Sat,  8 Aug 2020 08:53:21 -0700 (PDT)
+        with ESMTP id S1726398AbgHHQGj (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sat, 8 Aug 2020 12:06:39 -0400
+X-Greylist: delayed 423 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 08 Aug 2020 09:06:38 PDT
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050::465:101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C563EC061756
+        for <backports@vger.kernel.org>; Sat,  8 Aug 2020 09:06:38 -0700 (PDT)
 Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4BP6Fm0NdHzKmXM;
-        Sat,  8 Aug 2020 17:53:16 +0200 (CEST)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4BP6P069n8zKmbx;
+        Sat,  8 Aug 2020 17:59:32 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id cyidYc-Gi4e1; Sat,  8 Aug 2020 17:53:11 +0200 (CEST)
-Subject: Re: [PATCH] backports: make backports-4.18 compatible with kernel <
- 3.19
-To:     Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        mcgrof@kernel.org
-Cc:     backports@vger.kernel.org
-References: <20200706085624.515714-1-oleksandr.suvorov@toradex.com>
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id YOlHtS0-6XFH; Sat,  8 Aug 2020 17:59:29 +0200 (CEST)
+To:     "backports@vger.kernel.org" <backports@vger.kernel.org>
+Cc:     linux-wireless@vger.kernel.org
 From:   Hauke Mehrtens <hauke@hauke-m.de>
+Subject: wireless backports 4.19.137-1, 5.4.56-1 and 5.8-1 released
 Autocrypt: addr=hauke@hauke-m.de; keydata=
  mQINBFtLdKcBEADFOTNUys8TnhpEdE5e1wO1vC+a62dPtuZgxYG83+9iVpsAyaSrCGGz5tmu
  BgkEMZVK9YogfMyVHFEcy0RqfO7gIYBYvFp0z32btJhjkjBm9hZ6eonjFnG9XmqDKg/aZI+u
@@ -98,75 +96,72 @@ Autocrypt: addr=hauke@hauke-m.de; keydata=
  q9SjZLS0KI6hMLaYwRq/LPNZyDmMd8fVVvmrmlyacYpkQ4FNFuqamXJO7Z8hbTB1WglRCdMN
  bVi+L9fa2gJ1pT34LcKRP/aqdqHR0Svc4B17vXzhkmnjfdp4SO5wGGMhz7nB1JI7CjCRRf+H
  nyFzhfxUVvpNZCYq18iKFBzilZNKLjh9sly4+DrCCUp2cg==
-Message-ID: <b6e16423-ddb9-3fc6-fd68-0d97f637981e@hauke-m.de>
-Date:   Sat, 8 Aug 2020 17:53:01 +0200
+Message-ID: <9516452b-9a6e-cfe7-d308-927d4a2168f7@hauke-m.de>
+Date:   Sat, 8 Aug 2020 17:59:25 +0200
 MIME-Version: 1.0
-In-Reply-To: <20200706085624.515714-1-oleksandr.suvorov@toradex.com>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="2MnR2gSmCdhUEpD0FUCeDnjOkQJBPvTmN"
+ boundary="k6gTEIorqqY71VzwKLdepkPhkepWTnb7T"
 X-MBO-SPAM-Probability: 
-X-Rspamd-Score: -6.40 / 15.00 / 15.00
-X-Rspamd-Queue-Id: BB6AF17A7
-X-Rspamd-UID: a39e56
+X-Rspamd-Score: -5.82 / 15.00 / 15.00
+X-Rspamd-Queue-Id: 646C4178C
+X-Rspamd-UID: c34c4b
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---2MnR2gSmCdhUEpD0FUCeDnjOkQJBPvTmN
-Content-Type: multipart/mixed; boundary="kUFhpfqS20YEFD2WF6kxDkhoAzf52zeQ0"
+--k6gTEIorqqY71VzwKLdepkPhkepWTnb7T
+Content-Type: multipart/mixed; boundary="V3oCkN9vDBTJ2rGhT9jaPikuHCNChkbOV"
 
---kUFhpfqS20YEFD2WF6kxDkhoAzf52zeQ0
+--V3oCkN9vDBTJ2rGhT9jaPikuHCNChkbOV
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 7/6/20 10:56 AM, Oleksandr Suvorov wrote:
-> backports-4.18.c uses ktime_divns() function.
-> As ktime_divns() is not exported in kernel < 3.19, this symbol
-> will not be resolved on compat.ko loading.
-> This commit fixes the linking issue [1].
->=20
-> [1]
-> -------------------------------
-> WARNING: "ktime_divns" [compat/compat.ko] undefined!
-> -------------------------------
->=20
-> Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-> ---
->=20
->  backport/compat/backport-4.18.c | 36 +++++++++++++++++++++++++++++++++=
+Hi
 
->  1 file changed, 36 insertions(+)
->=20
+backports-5.8-1 was released. This is based on Linux 5.8.
+https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/v5.8/ba=
+ckports-5.8-1.tar.xz
 
-Thank you for the patches, I applied all 3 of them to master and the 5.4
-branch.
+backports-5.4.56-1 was released. This is based on Linux 5.4.56.
+https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/v5.4.56=
+/backports-5.4.56-1.tar.xz
+
+backports-4.19.137-1 was released. This is based on Linux 4.19.137.
+https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/v4.19.1=
+37/backports-4.19.137-1.tar.xz
+
+There is now a updated wiki page with the releases:
+https://backports.wiki.kernel.org/index.php/Releases
+
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
 
 Hauke
 
 
---kUFhpfqS20YEFD2WF6kxDkhoAzf52zeQ0--
+--V3oCkN9vDBTJ2rGhT9jaPikuHCNChkbOV--
 
---2MnR2gSmCdhUEpD0FUCeDnjOkQJBPvTmN
+--k6gTEIorqqY71VzwKLdepkPhkepWTnb7T
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCgAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAl8uyl0ACgkQ8bdnhZyy
-68fpGQf+LXCp2jNiqYeWpZ9WvbD4QRprtbstAR3IgWqWtZO+X4GBGWIDGd3xboJV
-B8pqWBwsFHPqwCQUCM+686iPc44oomuO3kGUyMGMQLulPX5najsPTCw5nEUKPAii
-gZHjtI12l8TqssgtV2i2PAA29m/8+KB/7n0o3C5I+CqWP6zIPh14Mll5o7OEjIFW
-iwb29PYkM3PDCXfBW4xpEb8ZGogWXPHsMVNiL6Ox7L7IJJStI0h5KvWNFkE5zAWr
-jwN9TdMdccmjgGmczO6YHTwpUpPEK6KBlXS4TvRR1Y2+w6E1QNqI93Qer4WrNh3z
-Iiq2YNB9rU9J9Nes78PF4mRHtltxYg==
-=2JBs
+iQEzBAEBCgAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAl8uy90ACgkQ8bdnhZyy
+68cvoQf/YEbmTpkWufmGQ8HNH+npyL+cJDiX94OMvZeeEkzvwDWqWYlYkKa7lxkr
+JOyasdGavlTKZb3+4ncSym9tbopkll7OSgZ84a0h9bM5cGcp81NELlj6bROY0uzy
+VigeG9LBBdW5xpZVdulKBF4sjmGxLQTHxMUp0qOHXLmGeZJKSIK9osO0GFfB3lzC
+hNoTSSwMrriELEirqueoSz9/5zqxxjijd+z0Hic3EM3CS7CIZb0kdkNxSaBCMaqI
+/fhjRZB9B24ZGsJ7gUirRo1kFYbe5r/Ab/odfQxxAZp9wMEP0astICDeH3fqc3HX
+EUntgGRilJU4WHuc/qZsKwAEmQrsvA==
+=SuGw
 -----END PGP SIGNATURE-----
 
---2MnR2gSmCdhUEpD0FUCeDnjOkQJBPvTmN--
+--k6gTEIorqqY71VzwKLdepkPhkepWTnb7T--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
