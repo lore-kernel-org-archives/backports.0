@@ -1,152 +1,84 @@
-Return-Path: <SRS0=LDwe=CJ=vger.kernel.org=backports-owner@kernel.org>
+Return-Path: <SRS0=vUcr=CQ=vger.kernel.org=backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A53B2C433E6
-	for <backports@archiver.kernel.org>; Mon, 31 Aug 2020 18:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74BB9C433E2
+	for <backports@archiver.kernel.org>; Mon,  7 Sep 2020 16:47:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89F85206FA
-	for <backports@archiver.kernel.org>; Mon, 31 Aug 2020 18:47:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27AAF2080A
+	for <backports@archiver.kernel.org>; Mon,  7 Sep 2020 16:47:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pUV61KNp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbgHaSrE (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Mon, 31 Aug 2020 14:47:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57916 "EHLO
+        id S1729874AbgIGQq7 (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Mon, 7 Sep 2020 12:46:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726948AbgHaSrD (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 31 Aug 2020 14:47:03 -0400
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [IPv6:2001:67c:2050::465:103])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DEA2C061573
-        for <backports@vger.kernel.org>; Mon, 31 Aug 2020 11:47:02 -0700 (PDT)
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4BgK1Z4mZszKmg1;
-        Mon, 31 Aug 2020 20:46:58 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
-        with ESMTP id vIoRX54aWKh1; Mon, 31 Aug 2020 20:46:52 +0200 (CEST)
-Subject: Re: [PATCH v2 2/2] backports: add skb_list_del_init
-To:     Felix Fietkau <nbd@nbd.name>, backports@vger.kernel.org
-References: <20200814142958.7773-1-nbd@nbd.name>
- <20200814142958.7773-2-nbd@nbd.name>
-From:   Hauke Mehrtens <hauke@hauke-m.de>
-Autocrypt: addr=hauke@hauke-m.de; keydata=
- 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
-Message-ID: <8e1d9f3d-4128-4030-97fd-3e541bb9c7e6@hauke-m.de>
-Date:   Mon, 31 Aug 2020 20:46:51 +0200
+        with ESMTP id S1730832AbgIGQf1 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 7 Sep 2020 12:35:27 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54D4FC061573
+        for <backports@vger.kernel.org>; Mon,  7 Sep 2020 09:35:26 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id n25so5857794ljj.4
+        for <backports@vger.kernel.org>; Mon, 07 Sep 2020 09:35:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=+h1Pdc/iqSt3JXpDTI9s9JPO3WZgXFqaBuFfvZnQ5to=;
+        b=pUV61KNpQIOkY7p+Dv4ugk6KKi5n5wslOiyFGiYGzu1lbpHNbd0pIa2JTywc2P/dnX
+         5IZLa2UoIpYkQ6TizFIUh/oW+45yL9J17AqNDnyJ9Arcqr2istmUJGtM0d7FeJ4tAhS5
+         wcLpXGIuaoyENPeDteKnJW8YrfKyGhuacxzyt/J40vg6bTkKaz1cLENRbT/SQO3oUDvf
+         /NkKHSOKhdo6hVnhMG2wQ3eYVHdlg7StDNk8xDMT4sjgQ2t+QsO6bVMk2MA0arp67t6Q
+         6jcJkb/M2HJniLobN2I5DD/D+HuiW1R5A9HziM5tuZlkRK+PVtzqYhEXCe/586k3VHQp
+         Clug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=+h1Pdc/iqSt3JXpDTI9s9JPO3WZgXFqaBuFfvZnQ5to=;
+        b=E6OUi4IzGCc48YRCilHwwIfdO81bibwsiG9SPg8SUWKBU/+JnWv1V7vSPQzp4GX5zV
+         RAmJ67t0ZgO4ej+fYUrnyDYEX02KPJvQq+8gRm+wATR2Q3nSQ2cSLloE3Fg1ZwPA9wTo
+         pJMoW8lIbnhPeCmkj+MYcVGf8/sH1vpDICV8QRaoJH4TMaXsh2G+qZtHjUA4i1hFf78Z
+         c/+CzLwgc5z/ZeTUm2pBqfBGJ1RsB8SltLehKuBzgdnwkunfwyVzQDmEm1npX4xvkq5e
+         Fn2RyWEcM4b8hOx0PNDFYF8UgSwdsAdRY+jefgrWZnhkoCmnkrVO3iiPqcc5gVxFvX+W
+         Oq0Q==
+X-Gm-Message-State: AOAM530R24WrcZRblhm7v4l3XnYokNjWvMo9ZC4RlG9Kml/p6egtfTj7
+        YOV0Oaj0hfhk/ylbGFvRIkJLmYlFzVRmVCpL3a1mh2IE+D8=
+X-Google-Smtp-Source: ABdhPJzzRn3lkop2dcVStsN51EY9TXUy9edK7V0jAQbTWLPDb9k90JvZVGq4uOcq6RCTumXkdIukkRKJX9uduDKDm5M=
+X-Received: by 2002:a2e:9c84:: with SMTP id x4mr3666775lji.406.1599496524537;
+ Mon, 07 Sep 2020 09:35:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200814142958.7773-2-nbd@nbd.name>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-MBO-SPAM-Probability: 
-X-Rspamd-Score: -5.80 / 15.00 / 15.00
-X-Rspamd-Queue-Id: 6AF4C17B7
-X-Rspamd-UID: b441ac
+From:   Etienne Cordonnier <cordonnier.etienne@gmail.com>
+Date:   Mon, 7 Sep 2020 18:35:13 +0200
+Message-ID: <CAJFWPWZRyVuzPy5_vR=2jJRPzG0pXA2hEhpL-sBDmHFLr43Fdw@mail.gmail.com>
+Subject: Enabling WEXT_CORE
+To:     backports@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: backports-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-On 8/14/20 4:29 PM, Felix Fietkau wrote:
-> It is needed for mac80211
-> 
-> Signed-off-by: Felix Fietkau <nbd@nbd.name>
-> ---
->  backport/backport-include/linux/skbuff.h | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/backport/backport-include/linux/skbuff.h b/backport/backport-include/linux/skbuff.h
-> index 3ed990d0d2ef..7b825630d391 100644
-> --- a/backport/backport-include/linux/skbuff.h
-> +++ b/backport/backport-include/linux/skbuff.h
-> @@ -384,6 +384,12 @@ static inline void skb_mark_not_on_list(struct sk_buff *skb)
->  {
->  	skb->next = NULL;
->  }
-> +
-> +static inline void skb_list_del_init(struct sk_buff *skb)
-> +{
-> +	__list_del_entry(&skb->list);
-> +	skb_mark_not_on_list(skb);
-> +}
->  #endif /* 4.19.10 <= x < 4.20 */
->  #endif
->  
-> 
+Hello,
+I am using linux-backports in "integration mode" and managed to
+backport wireless drivers from 5.4 to 4.9 (I needed to fix a few
+Kconfig files, since integration mode does not work 100% out of the
+box, but other than that everything seems to work).
 
-Hi Felix,
+One issue I have is that the file
+"patches/0004-disable-wext-kconfig.patch" is removing the option
+WEXT_CORE in backports/net/wireless/Kconfig, meaning that there is no
+config BACKPORT_WEXT_CORE defined. However the config
+BACKPORT_CFG80211_WEXT depends on WEXT_CORE, so I cannot enable
+BACKPORT_CFG80211_WEXT and support for the old iwconfig interface (the
+iw tool works fine, though). Is it a known limitation, or am I missing
+something?
 
-These two backports are not working.
-
-The list member was only added in kernel 4.19 to the sk_buff structure,
-see here:
-https://git.kernel.org/linus/d4546c2509b1e9cd082e3682dcec98472e37ee5a
-
-Hauke
+Thanks,
+Etienne
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
