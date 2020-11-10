@@ -2,147 +2,424 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,T_TVD_MIME_EPI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDBDC388F7
-	for <backports@archiver.kernel.org>; Tue, 10 Nov 2020 14:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB12CC388F7
+	for <backports@archiver.kernel.org>; Tue, 10 Nov 2020 23:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1EFCC20797
-	for <backports@archiver.kernel.org>; Tue, 10 Nov 2020 14:04:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2361E20781
+	for <backports@archiver.kernel.org>; Tue, 10 Nov 2020 23:25:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=celeno.com header.i=@celeno.com header.b="vCjajaWw"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="z67DdDvp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730044AbgKJOEG (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Tue, 10 Nov 2020 09:04:06 -0500
-Received: from mail-eopbgr50049.outbound.protection.outlook.com ([40.107.5.49]:39665
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729898AbgKJOEF (ORCPT <rfc822;backports@vger.kernel.org>);
-        Tue, 10 Nov 2020 09:04:05 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Yf6rxKaRyMqrQCIhTpgmkgDHVjffdcK1fsYOXMU3UwVJaRkqzykxyIRdWS2E2HCCUbhFStXwxr80+5p//WPskBv5w1gA9BdRiqvqCRy8xqXTOrp1apoBNaxTGi2zm5vovWcqTc2WQfKhVz+DL115gVhwiRwPgSR3gel7+pOQJQGtMdzJ5bn3dIK6DWCYv/WYWsi/cmmIyel6C6DY9D1KIH/uXU7D3zFfJtjb7X00AE2bVoeJJ+u567iYZQ9WgsCAQP6t1eH1EJ1R+x9wxoCAgsBGZKh3OQHE8PTgZLoRoV6IfWb83Htj1mQEPCHHzZafqLbj7qbIu50TwAMZpsyrOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EtbR7G5Aim6/+sOhuDaF+zicZbhrJ3o/J7kFtLPrC/I=;
- b=Dv8OFmvb4DOlaTcUSHvHzHI+Yy7kWYiDsLbxKIS4alFIR3mCk6M8BT6Q8oHTefXpa73NN+x5twJoZ7GP98dwBuyvD7YOy+3bjjlOcVyWZKTBypAgkU60nQilI/K9A5r1d1Sma7cREe4Zo1G916/SSNHz2MDxqBQCtTB+2zgsss048e9PIRG7bd6kyoyqpbcHyHQIv8PMH3MKYRzntbuy/TJIMUnxX+6S2Y779XNcOZbz6DbhKvFMpKPwpWSatRFW3nS9EfwOHOb7RaYAQkMh5Gj6egrDGiJtVlsUIrrv5YGCUjZ86crCaF1k4S5jXEBGf5V/voRqy97SOf6pYqsY5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=celeno.com; dmarc=pass action=none header.from=celeno.com;
- dkim=pass header.d=celeno.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=celeno.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EtbR7G5Aim6/+sOhuDaF+zicZbhrJ3o/J7kFtLPrC/I=;
- b=vCjajaWwACNgnlmLxv/p5Gpyi21HX8pPh/SU/y207dUE4SliNyMSRHSJD1GBqTzGFbmeG5HrDrM9cGbpbkEZyNV8SG7wloX6hgMCM085bTgh3+E3d6/xUBg5L6Vvc7c3OyciJvg/QS1OxXj18OblPzGABZA5/RuyhDgRL01GZhc=
-Authentication-Results: hauke-m.de; dkim=none (message not signed)
- header.d=none;hauke-m.de; dmarc=none action=none header.from=celeno.com;
-Received: from AM0P192MB0468.EURP192.PROD.OUTLOOK.COM (2603:10a6:208:45::15)
- by AM9P192MB0966.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:1ce::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3541.21; Tue, 10 Nov
- 2020 14:03:59 +0000
-Received: from AM0P192MB0468.EURP192.PROD.OUTLOOK.COM
- ([fe80::148d:ab6b:a633:c543]) by AM0P192MB0468.EURP192.PROD.OUTLOOK.COM
- ([fe80::148d:ab6b:a633:c543%5]) with mapi id 15.20.3499.032; Tue, 10 Nov 2020
- 14:03:59 +0000
-From:   Shay Bar <shay.bar@celeno.com>
-To:     hauke@hauke-m.de, mcgrof@kernel.org
-Cc:     backports@vger.kernel.org, eliav.farber@celeno.com
-Subject: [PATCH] backports: Add time64_to_tm and ipv6_mc_check_mld
-Date:   Tue, 10 Nov 2020 16:03:44 +0200
-Message-Id: <20201110140344.17330-1-shay.bar@celeno.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-Originating-IP: [87.70.23.140]
-X-ClientProxiedBy: LO4P123CA0001.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:150::6) To AM0P192MB0468.EURP192.PROD.OUTLOOK.COM
- (2603:10a6:208:45::15)
+        id S1730894AbgKJXZG (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Tue, 10 Nov 2020 18:25:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59930 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726706AbgKJXZG (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 10 Nov 2020 18:25:06 -0500
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [IPv6:2001:67c:2050::465:201])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6506FC0613D1
+        for <backports@vger.kernel.org>; Tue, 10 Nov 2020 15:25:06 -0800 (PST)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4CW3qd6RNszQjbR;
+        Wed, 11 Nov 2020 00:25:01 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
+        t=1605050699;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0jF4pZa9vJ1zfMWHKkAEovoeAxg0BNuzEzl1fDW/0y0=;
+        b=z67DdDvpdJbtU+Rj4Cm7V+9WUtbM81QfpbK1PzmLSNX2PMDThTHlO9wcCOVMVo1+z2mT7A
+        beTEbrTx2cxOA0bQr5xscaSnEqi7JUW/GmvBsLDaBGUxU3K/vT9jinz+A8rbP9wcCeB9kR
+        xm4Ky6nG7GF2vNIy6LflZqjioPz6rFkBztJ69AyzwklY6wQME0Xb/PCvWqZd2QsuMSgAU2
+        +PPcYNTLk+Pd2nK//GSbJxy3FzUifOxR/Up26vQ58tiMdzkmxhJk0bZw48OiA+mGS0CTV0
+        haDZQQrsDwthPv85TOQN0iyEw2W2VvHvPYhpJSQ+szUVze0502mSKv8ImrCABw==
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id fMpPWsI0ADP0; Wed, 11 Nov 2020 00:24:58 +0100 (CET)
+Subject: Re: [PATCH v2 2/2] backports: add skb_list_del_init
+To:     "Coelho, Luciano" <luciano.coelho@intel.com>,
+        "nbd@nbd.name" <nbd@nbd.name>,
+        "johannes@sipsolutions.net" <johannes@sipsolutions.net>,
+        "backports@vger.kernel.org" <backports@vger.kernel.org>
+References: <20200814142958.7773-1-nbd@nbd.name>
+ <20200814142958.7773-2-nbd@nbd.name>
+ <8e1d9f3d-4128-4030-97fd-3e541bb9c7e6@hauke-m.de>
+ <e7a00f96-41e4-6513-5962-b80fbfa37613@nbd.name>
+ <1923f0e6540d422d41f5817caeae412c49de973a.camel@sipsolutions.net>
+ <761d13bdc1b162ed574c6b3c3bb9b6635ad696f7.camel@intel.com>
+From:   Hauke Mehrtens <hauke@hauke-m.de>
+Message-ID: <fa8b5247-f06f-0f2f-1f73-cd84bd50c475@hauke-m.de>
+Date:   Wed, 11 Nov 2020 00:24:42 +0100
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (87.70.23.140) by LO4P123CA0001.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:150::6) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3541.21 via Frontend Transport; Tue, 10 Nov 2020 14:03:58 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4969492f-a98c-4425-7f4f-08d885817844
-X-MS-TrafficTypeDiagnostic: AM9P192MB0966:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM9P192MB09660B76ACE95596A5DEFB57E7E90@AM9P192MB0966.EURP192.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2000;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: DHQ3eSEIA4jmBSJhCuRmIl66LmoXWVtMgv7JxXQwYU1Mlj27no2UQT5cjLH7A4QGHvKaxrK9V1IBWT0cK7fEDY1FFq2iI4FWSR6rtPUE9V9KYYSBX5LReQxcpQJuF84lVUjcouaJ+7A/8YEUbICHFlDbqHjb7+ubqueIiIO1POJK93mcGFBXrztGT5FMAt8sxbv6SJ0rTXnj4cSbB/JPUqXxLlLwLwxYbY7COE+67R2ghu2b70eaUFZ/NZpU1sVUcRZ9/YouanwGXTaRnzMCxfzrz51y9AwbomfqQdEqGiKFIMOFkv4eOy/oZuG2PtjgOkmDJKF2HvHPCAjWDwSQpHn6strfp3UeD9GmuTkrVkHnDZCfRSsY/HvW6fT0+4BI
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0P192MB0468.EURP192.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(366004)(69590400008)(4326008)(66946007)(1076003)(66476007)(66556008)(8676002)(8936002)(86362001)(26005)(6506007)(52116002)(5660300002)(2616005)(956004)(107886003)(6666004)(498600001)(16526019)(186003)(44832011)(2906002)(6486002)(36756003)(6512007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: rh1mR16C7hSdhr9nIdKlfnD2eXTePVAzmQ8I/83g2FIzrcPy42+YOQAVQkl2FYZtP36wgAjzWC9ZrQR8L4zspkCpykK/nHDMUNYkqGml2TCwWrRqcahlc3tOWRGtEw8IF+iSxsrdgkOSHN7LkGSSSkuurl1RattHoZnBLbT6ZkwaakkxpwcdZnF0pgCxucnsc/2XNwJCvwyEzbO9X4hm06eH3SfgJFWkjRLpi56+gqhSNz11YF3ha18bNhGtLlQ+FpGxINWR8uQUrP6oBfEBCvc6OsAXwQV2d3g2w3e7e73HXlwj56ENnByU5v171QA1MV28tzuWAafaVuZ1uDS/8i8mfvPx1Jgx+WbBbHtb9WditXMJRzVIn+OYs3ZFrXHiq3wopCl6P1wTLDLHOkBAi59ir+8S9Zz/b8a6b56Sta3y1usUiOdk5KZTY4o+d0Q8y44IDTSl7jTQeI5fdbPv6oPlNE6/eymwpdEBf0cXNeMXHqXjJx3EVaRTxbQFAUaFOw6maqzdZtSiayJTbYFeyv9WybcSMxsoQo0X6dCAO62Q8QkmbCyNH+o0PZpJbwtu9fF6A7CSjt8MNifOuni+D5qYbKsdcskiX8o4tZB/jFprX83cFzZHbjCLRtaqSZysdWMmaQRczngbQPCdrjGB1Q==
-X-OriginatorOrg: celeno.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4969492f-a98c-4425-7f4f-08d885817844
-X-MS-Exchange-CrossTenant-AuthSource: AM0P192MB0468.EURP192.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2020 14:03:59.0004
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f313103b-4c9f-4fd3-b5cf-b97f91c4afa8
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: of9Vi5uGBz+CE/HAtimn2Ev8fibzlre9HIT2HiIKANaUXGZcx5gy9ilUfZDbdYu1+L0ZxdUyVUnOftMmICQ9Bw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9P192MB0966
+In-Reply-To: <761d13bdc1b162ed574c6b3c3bb9b6635ad696f7.camel@intel.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="4zPDYwQGSwuMi0W4ZuORUgOWgkE7NAQeo"
+X-MBO-SPAM-Probability: 
+X-Rspamd-Score: -7.02 / 15.00 / 15.00
+X-Rspamd-Queue-Id: 8519C14AF
+X-Rspamd-UID: a121bf
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-ipv6_mc_check_mld() was added in kernel version 4.2.0.
-The 2nd parameter was removed in kernel version 5.1.0.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--4zPDYwQGSwuMi0W4ZuORUgOWgkE7NAQeo
+Content-Type: multipart/mixed; boundary="2DgfvQNKFiX0tL8WS8RGTPD8UScs880YO";
+ protected-headers="v1"
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: "Coelho, Luciano" <luciano.coelho@intel.com>, "nbd@nbd.name"
+ <nbd@nbd.name>, "johannes@sipsolutions.net" <johannes@sipsolutions.net>,
+ "backports@vger.kernel.org" <backports@vger.kernel.org>
+Message-ID: <fa8b5247-f06f-0f2f-1f73-cd84bd50c475@hauke-m.de>
+Subject: Re: [PATCH v2 2/2] backports: add skb_list_del_init
+References: <20200814142958.7773-1-nbd@nbd.name>
+ <20200814142958.7773-2-nbd@nbd.name>
+ <8e1d9f3d-4128-4030-97fd-3e541bb9c7e6@hauke-m.de>
+ <e7a00f96-41e4-6513-5962-b80fbfa37613@nbd.name>
+ <1923f0e6540d422d41f5817caeae412c49de973a.camel@sipsolutions.net>
+ <761d13bdc1b162ed574c6b3c3bb9b6635ad696f7.camel@intel.com>
+In-Reply-To: <761d13bdc1b162ed574c6b3c3bb9b6635ad696f7.camel@intel.com>
 
-time64_to_tm() was added in kernel version 4.8.0.
+--2DgfvQNKFiX0tL8WS8RGTPD8UScs880YO
+Content-Type: multipart/mixed;
+ boundary="------------5654EA6774C47FCDAEFF6DFF"
+Content-Language: en-US
 
-Signed-off-by: Shay Bar <shay.bar@celeno.com>
----
- backport/backport-include/linux/time.h   |  8 ++++++++
- backport/backport-include/net/addrconf.h | 15 +++++++++++++++
- 2 files changed, 23 insertions(+)
+This is a multi-part message in MIME format.
+--------------5654EA6774C47FCDAEFF6DFF
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/backport/backport-include/linux/time.h b/backport/backport-include/linux/time.h
-index 3191047d..ce8a1b03 100644
---- a/backport/backport-include/linux/time.h
-+++ b/backport/backport-include/linux/time.h
-@@ -4,4 +4,12 @@
- 
- #include <linux/time64.h>
- 
-+#if LINUX_VERSION_IS_LESS(4,8,0)
-+static inline void time64_to_tm(time64_t totalsecs, int offset,
-+				struct tm *result)
-+{
-+	time_to_tm((time_t)totalsecs, 0, result);
-+}
-+#endif
-+
- #endif /* __BACKPORT_LINUX_TIME_H */
-diff --git a/backport/backport-include/net/addrconf.h b/backport/backport-include/net/addrconf.h
-index f1e8e627..67d44e19 100644
---- a/backport/backport-include/net/addrconf.h
-+++ b/backport/backport-include/net/addrconf.h
-@@ -22,4 +22,19 @@ static inline bool ipv6_addr_is_solict_mult(const struct in6_addr *addr)
- }
- #endif /* LINUX_VERSION_IS_LESS(3,9,0) */
- 
-+#if LINUX_VERSION_IS_LESS(4,2,0)
-+static inline int ipv6_mc_check_mld(struct sk_buff *skb)
-+{
-+	WARN_ON(1);
-+
-+	return -1;
-+}
-+#elif LINUX_VERSION_IS_LESS(5,1,0)
-+static inline int backport_ipv6_mc_check_mld(struct sk_buff *skb)
-+{
-+	return ipv6_mc_check_mld(skb, NULL);
-+}
-+#define ipv6_mc_check_mld LINUX_BACKPORT(ipv6_mc_check_mld)
-+#endif
-+
- #endif	/* _BACKPORT_NET_ADDRCONF_H */
--- 
-2.17.1
+On 9/28/20 11:12 AM, Coelho, Luciano wrote:
+> On Mon, 2020-09-28 at 09:20 +0200, Johannes Berg wrote:
+>> On Mon, 2020-09-28 at 08:31 +0200, Felix Fietkau wrote:
+>>>> The list member was only added in kernel 4.19 to the sk_buff structu=
+re,
+>>>> see here:
+>>>> https://git.kernel.org/linus/d4546c2509b1e9cd082e3682dcec98472e37ee5=
+a
+>>> I guess it was working for me on 4.14 because the list member was
+>>> backported in 4.14.71.
+>>> So it works for kernels with that backport, and I guess other version=
+s
+>>> which don't have that will need a more intrusive backport that patche=
+s
+>>> mac80211 anyway.
+>>
+>> I think Luca (+) just made some internally - we should push that out.
+>=20
+> This is what I have (I'm planning to send my updates later this week):
+>=20
 
+Hi,
+
+I have something which looks good to me and is compiling, I have to test =
+
+it on some devices and send the patches soon.
+
+With kernel 5.10 I see some changes in netlink again. Do you already=20
+have some patches for that?
+
+Hauke
+
+--------------5654EA6774C47FCDAEFF6DFF
+Content-Type: application/pgp-keys;
+ name="OpenPGP_0x93DD20630910B515.asc"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment;
+ filename="OpenPGP_0x93DD20630910B515.asc"
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xsFNBFtLdKcBEADFOTNUys8TnhpEdE5e1wO1vC+a62dPtuZgxYG83+9iVpsAyaSrCGGz5tmuB=
+gkE
+MZVK9YogfMyVHFEcy0RqfO7gIYBYvFp0z32btJhjkjBm9hZ6eonjFnG9XmqDKg/aZI+ud9KGU=
+h0D
+eaHT9FY96qdUsxIsdCodowf1eTNTJn+hdCudjLWjDf9FlBV0XKTN+ETY3pbPL2yih8Uem7tC3=
+pmU
+7oN7Z0OpKev5E2hLhhx+Lpcro4ikeclxdAg7g3XZWQLqfvKsjiOJsCWNXpy7hhru9PQE8oNFg=
+SNz
+zx2tMouhmXIlzEX4xFnJghprn+8EA/sCaczhdna+LVjICHxTO36ytOv7L3q6xDxIkdF6vyeEt=
+Vm1
+OfRzfGSgKdrvxc+FRJjp3TIRPFqvYUADDPh5Az7xa1LRy3YcvKYxpsDDKpJ8nCxNaYs6hqTbz=
+4lo
+Hpv1hQLrPXFVpoFUApfvH/q7bb+eXVjRW1m2Ahvp7QipLEAKGbiV7uvALuIjnlVtfBZSxI+Xg=
+7SB
+ETxgK1YHxV7PhlzMdTIKY9GL0Rtl6CMir/zMFJkxTMeO1P8wzt+WOvpxF9TixOhUtmfv0X7ay=
+93H
+WOdddAzov7eCKp4Ju1ZQj8QqROqsc/Ba87OH8cnG/QX9pHXpO9efHcZYIIwx1nquXnXyjJ/sM=
+dS7
+jGiEOfGlp6N9IwARAQABzSFIYXVrZSBNZWhydGVucyA8aGF1a2VAaGF1a2UtbS5kZT7CwZQEE=
+wEI
+AD4CGwEFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AWIQS4+/Pwq1ZO6E9/sdOT3SBjCRC1FQUCX=
+r/2
+hwUJBcXE4AAKCRCT3SBjCRC1FX1BEACXkrQyF2DJuoWQ9up7LKEHjnQ3CjL06kNWH3FtvdOjd=
+e/H
+7ACo2gEAPz3mWYGocdH8NjpmlnneX+3SzDspkW9dOJP/xjq9IlttJi3WeQqrBpe/01285IUDf=
+OYi
++DasdqGFEzAYGznGmptL9X7hcAdu7fWUbxjZgPtJKw2pshRu9cCrPJqqlKkRFVlthFc+mkcLF=
+xeP
+l7SvLY+ANwvviQBblXJ2WXTSTX+Kqx8ywrKPwsJlTGysqvNRKScDMr2u+aROaOC9rvU3bucmW=
+NSu
+igtXJLSA1PbU7khRCHRb1q5q3AN+PCM3SXYwV7DL/4pCkEYdrQPztJ57jnsnJVjKR5TCkBwUa=
+PIX
+jFmOk15/BNuZWAfAZqYHkcbVjwo4Dr1XnJJon4vQncnVE4Igqlt2jujTRlB/AomuzLWy61mqk=
+wUQ
+l+uM1tNmeg0yC/b8bM6PqPca6tKfvkvseFzcVK6kKRfeO5zbVLoLQ3hQzRWTS2qOeiHDJyX7i=
+KW/
+jmR7YpLcx/Srqayb5YO207yo8NHkztyuSqFoAKBElEYIKtpJwZ8mnMJizijs5wjQ0VqDpGbRQ=
+anU
+x025D4lN8PrHNEnDbx/e7MSZGye2oK73GZYcExXpEC4QkJwu7AVoVir9lZUclC7Lz0QZS08ap=
+VSY
+u81UzhmlEprdOEPPGEXOtC1zs6y9O8LBlAQTAQgAPgIbAQULCQgHAgYVCAkKCwIEFgIDAQIeA=
+QIX
+gBYhBLj78/CrVk7oT3+x05PdIGMJELUVBQJdBNjNBQkDmpemAAoJEJPdIGMJELUVPpwP/2APQ=
+K0A
+8SUrCE0bNn8o1Avf35DgY5cMA7HI/v3uB6DLKS9qpT+nQw4p3HwXYMckIaWuQFaqIS1hQBGdQ=
+k6B
++2hMtqWJ3ASnp6Jkz0SqKfmtFHoHk0hhQiMcCnGM8dKZ/CzmmdoF0jo1Xy3lGk5MA0iUF8/pt=
+MES
+lUZsLQHC8EVp0ai9wouucA1ni8vnrODTKRGiC0Pyt6g28ms0MrtcKsLZLQRhwYPlxe54lul/o=
+lFy
+6widiMyb+DaxEIfhxCz9U6OPcLrqw0Qy+9l0oTFmCH/2X1GZbRfrLsDRIO1HcA9hYYjBXRuFN=
+La6
+y44ABlC8WFz6J1IbRisepGI5OdbE6deQUVo52Z+T315Zqqlc4iDEevpalWuiZUj7ApZU0Re6Y=
+t1s
+QC/LW/EK2loZCm6fmZFx6zkYHaWRnNGOb3S5L0+BYHUhiPV6FF66PSOaSlqfRd0SHAWNDf4p/=
+LNf
+tiC3SBvO+IZu1IHazUyHScB22j1F0hiLeAItCHdpu3CTrOqwdEGnUgePI2rrSexRK17ijX6ZE=
+GgH
+oju5OTGok+bKfCmYChpiQ3YxE7wLU7T1h3gfcCAUZkFemhVumHxDuETfdj1SsSV+IOy92Pj4l=
+W7W
+x088YVa2mOl7kt6hfMsA0BsnZP5jrxSC2w0UJtIqNexEmUsgdHXIdBurZV1QOaxRlpFswsGOB=
+BMB
+CAA4AhsBBQsJCAcCBhUICQoLAgQWAgMBAh4BAheAFiEEuPvz8KtWTuhPf7HTk90gYwkQtRUFA=
+ltL
+fU8ACgkQk90gYwkQtRUXrRAAlmgonnRA/mOmabOSEBPY6dWAmqkABAu/LI+AC3lOJHWd+Tm3v=
+fbs
+kNKv77z5ZxYoJKe8ngQz/sDxx3Otd/zjZGs/r10iLc+aBwreqNkLnpQ1/HCgg+M3sZoj38rCQ=
+8E3
+MJoPKD53zKpqG//e5dSKE535IFj2I34449glJFyCU2Mdd6umxxWEPBQbq/D0VjLfsTpWSN9x7=
+EAj
+I3PmpHQP1C3JaWrg+uJ2C/2tJGpFIL/cIGdGhE/vlTqQT0EH738ySRSrARFpmXbTKpfF4Ms04=
+iFL
+vaB9wqizQoHQd73pGD8N5bVdzMb1LQgrGTMwKYnTsiZwnNwSRJX94O4FdVuuzZ6hpuFPCo9Lq=
+BuD
+B4f2dK2qn6zVa28Cj1Q3i5AYJHQ7nfU7kx9+WnU2Dx0BBmqH+c6jiZNIzmWAtA+UwirBnkZwk=
+kfl
+kWCy74nzUIcmi5kxgNXcNxVILCo3u8nUT9MqTJziaS2BUUoJLptfAu3gX4JPSkalxYJSK4e4d=
+m68
+lBMr0eK+IAAYveurlNk53xjmWqQx28IBCv9ne/4sS9fQfL2ZbwTUHaSmtsjvRKv6Hg1fL2c1a=
+/Q4
+cKQRHAMO17GlwH7x93jLbYj+gyRlc47tG1lA7tF6qOD4SZWJuK5qO2wJeRE4QFLbXFCc9a7ku=
+3JO
+ls57hcKnd54mF9PNEstq5bbOwE0EW0t7AwEIAOA7WMwe9wVGMTGlNoGxU6z8F7g22vjYC6Whf=
+NDz
+1yV2nHWKCpJVcg9t705Ob8NQLzGHt9mNeqoC5Jq/Pm0vSpS5qYDZ+azFszqiq/zfptgxu3plg=
+IN5
+FY0UZCRDbNWkGaFCBSRQcZVWdjrlEmB71ro3o9dQixZMUKPRH2t+UABHosxBrY4YxHeDlE+Yj=
+7sc
+a+ckP+yAffKE09e1AbOtmwyMohvA4brPrRvCWQLz74faTDAIHFn/gbLuANNK/l8qI6tOqZwTG=
+u+P
+HpVdQaOPAYNKRFZ3BckPWEhIi7XYMJ6ulvBNNJAExlaTdX2n78RkS1T30G36yk4k5AttdC+57=
+9sA
+EQEAAcLBfAQYAQgAJgIbDBYhBLj78/CrVk7oT3+x05PdIGMJELUVBQJev/bJBQkFxb7GAAoJE=
+JPd
+IGMJELUV0e8QALOYmuyRwi5rIONihFqDCFyNj/FPiuJTemMgcEldk/ZBVrbKBq+iAO4UnTRy3=
+4G/
+gUp77KqiXgzEkfWfg8yZRZh6F+zb/WWN+MViLa3jXEphVQtw+Yey12V+YDoMshhR8j2E52BRl=
+0G3
+hD7C0/iwPqQAswwXg5ZcRyVWMkmytVBIHKOlKA5yFowOhoQlV+tdq/OBIn+K0XZFbqxxVjEWC=
+/cr
+VaOQb5j9Ibkfzr3QW04SMFBZ9jHBv2fXx8WaM+kUkl7brQO2G/RXaS2waMGUnuwKxlMadyXjm=
+KUY
+JW+eopWP6I0ksv4EjwZECUaOndp1muGAmR9TecIkNCzeC96eDeLR4lc57WoFLN6kWgz5Mt0ej=
+gww
+zMc+nrUUyFGMrkbL73ZOi9q1a5tftTQmeIOmnlunkjbAFzwxfgPKEuqBhJNdGuoJsmy5qyMQb=
+AZu
+RHbj8mdZBAN63DGifpnI2hAtpM1U1vA6XXTjEB3/ey0Mf4gSz+5PGpsdAZ9E9j3qkO1XU+LtL=
+wIX
+wOE6opKJJ1gTxEtxi3Y//BI8vVqpPIW50SrXgopHGm25vt992akGpUtgB6cQjlee0wH7AOev7=
+Zip
+gQa3Qe3x1Or4umo5MJRhxE5H7REmAMhLnbTlJ0HcWSeQatWS8x6wnybc/2XPcIcW1xEDMcFR3=
+koN
+GyK62hwOj6q9wsF8BBgBCAAmAhsMFiEEuPvz8KtWTuhPf7HTk90gYwkQtRUFAl0E2QUFCQOak=
+YIA
+CgkQk90gYwkQtRUEfQ//SxFjktcASBIl8TZO9a5CcCKtwO3EvyS667D6S1bg3dFonqILXoMGJ=
+LM0
+z4kQa6VsVhtw2JGOIwbMnDeHtxuxLkxYvcPP6+GwQMkQmOsU0g8iT7EldKvjlW2ESaIVQFKAm=
+XS8
+re36eQqj73Ap5lzbsZ6thw1gK9ZcMr1Ft1Eigw02ckkY+BFetR5XGO4GaSBhRBYY7y4Xy0WuZ=
+Cen
+Y7Ev58tZr72DZJVd1Gi4YjavmCUHBaTv9lLPBS84C3fObxy5OvNFmKRg1NARMLqjoQeqLBwBF=
+OUP
+cL9xr0//Yv5+p1SLDoEyVBhS0M9KSM0n9RcOiCeHVwadsmfo8sFXnfDy6tWSpGi0rUPzh9xSh=
+5bU
+7htRKsGNCv1N4mUmpKroPLKjUsfHqytT4VGwdTDFS5E+2/ls2xi4Nj23MRh6vvocIxotJ6uNH=
+X1k
+Yu+1iOvsIjty700P3IveQoXxjQ0dfvq3Ud/Sl/5bUelft21g4Qwqp+cJGy34fSWD4PzOCEe6U=
+gmZ
+eKzd/w78+tWPvzrTXNLatbb2OpYV8gpoaeNcLlO2DHg3tRbe/3nHoU8//OciZ0Aqjs97Wq0Za=
+C6C
+dq82QNw1dZixSEWAcwBw0ej3Ujdh7TUAl6tx5AcVxEAmzkgDEuoJBI4vyA1eSgMwdqpdFJW2V=
+9Lb
+gjg52H6vOq/ZDai29hjCwXYEGAEIACAWIQS4+/Pwq1ZO6E9/sdOT3SBjCRC1FQUCW0t7AwIbD=
+AAK
+CRCT3SBjCRC1FdQPD/9mUbTho+I+5Fdy55KC40R2W9ShTsRA95C3r37uBnA37T6Mf8X28efeH=
+c7R
+RQX4eRpKMmoNMM0geW1oQ5rhqX9umAJkdSO/rKrpZ2+Oy6HohehcKm1cRYoLw49rllZFzMhoa=
+lNj
+jITCRiLTBMy8Vgg7VY9poCpRYjunrdeoigLmrRgHwQtjHBVa6R7OlTD66bG6/P+SyTQkcCx9e=
+NMy
+dgcZio7K77mB1lyXsdz4ikOeN5O7uPAwlNRYT/e6bIyROudLHmXT+Fkijsg7mZyJiJun1oAaG=
+kYB
+6Z0uk6AVjy1Cd7/aTGBU/4+CnOnzYs55UNJ4deMdFLyuGdTxa7vR8YLvnYunALN2xLnexRF+h=
+8B5
+cTDwDoJtzDWKASLbWs6LdUh4LHAOiejNVAzyF0FbmN8mbCfn3w/Qw8RJLHdnUxDeie6ik1yey=
+v0u
+7a3lsU3bz2fsAz1RUa+uWg38UozJHMKVFUWxzUpEXBVoc0tjDyOXBOVHy2BnhA1RiPRAOuh/8=
+i11
+lnQpyaadJgoAKOrBsq6IJRqdpUkOJvJOtCaLS/DP/Q/IgBaxoXilBnvx1HADQH+MR7BjdEMDU=
+E7L
+fl2f2Ab6qvR9uRhj1hlgWKTWn89g4EWfRr/y0Wnx4+xkZAC4t0AA1wl2iLJ4ZR6OS2xYc7DDg=
+LBU
+m92DF40ru3IjdrOags7ATQRbS3txAQgA5mqcJOegV5MWglTaYd0QwCGx+HtfjBM8VHLjw7vTL=
+g8U
+OCKeDAROryeO8AEwMaM377TQXxxnjkc00Hl5QoNxb1sGbGu0Ir4XTI+7l/L7Qzg22jDc/Icw0=
+i05
+Ygp3/8RrM4qK4dquFzp/U6ASsxKF7/2tOaVOirHBWZ+ceLVorrC9VtOI2AbK37YWADoFAigKG=
+Q8Y
+1DqmBXlCUIRa/Ft7KKhs5IDHV2Kux+iAnBxO+wJT9BpO58Aj1A7x2d7pIqynnPnzKKBY/AOc4=
+X8u
+9Dbp4OtgeOeTuRW4FUhaMqWmIBDTSF8tTu/BAfSidx8HkdP98vVvbjrWGbBfF5X6MTNCSQARA=
+QAB
+wsKyBBgBCAAmAhsCFiEEuPvz8KtWTuhPf7HTk90gYwkQtRUFAl6/9soFCQXFvlgBQMB0IAQZA=
+QgA
+HRYhBMs9P7gHHficF5sLQ/G3Z4WcsuvHBQJbS3txAAoJEPG3Z4WcsuvHdVoH/A2m8fbyqNbrG=
+4Ax
+5eC2c6yYX0ZtiN/ieRU26CybBXvI6UTXH+nhiaRi3lt7P8KlnfHGLC7W8yWtc56M9xMD4R2iB=
+5sF
+8OE4GJvjVbtgpvXYNmizUI/IWjXzj4SBqq+bp74Z5cK2xvmI5dHq9rAHQec15SMfISIx6HzCS=
+KFu
+Mge/U+HmbHhcq8APjniOqSU4ENXWl5TqYdumRrpTMvvqb4iD/wG+ezyfNfw00j1l6phHu9py1=
+uY1
+il3h20zGh/SlTXcSQiJfGWYKuMzdprJ6ZYifhKDVYBjoCokXJHhpZFrXHs0NCK+cgWgAZFVWQ=
+ksn
+WHxE0ie06xcGNcEMMghXC+8JEJPdIGMJELUVMJYP/395wAMaYBsT+cW/jXPnOl9Q5FlBYwVbj=
+BCe
+ssGBp2/k1sd7b9ZivD535u5qfzpwy4Fbj3aRVP2wcp94tGyut3CXA03lyjTaRjpy2utPm8MVq=
+cD0
+beAcdRsIpdXd25turPJkHbWNkMhpjvy/MGwwaTxW6oKJgR4/aYmuznk1sbHSAUCcYEvZMN4kh=
+9OO
+c+8QGaWkG8njx/SUfx7CUaLIQYKbMpWhDY4d1XHm5RQN7m/ohWae0z4M4NmHN9JjIwxtE6Iro=
+rGo
+YF0fJAPvQIJG173zNiFvst11hXYAszYa2zmMrfI/aJdW+28nvOBDphgTvqQYLIIXFkqiPbr3Q=
+tnb
+e+IXhdL1snfkwunUCeQJehfF647O6whNwrHn0lzOZYNZvZNTAbc0SUxShesFVrGhKD/Ik7yOb=
+8JN
+10uvvOrh7erTa4xUhIT7styuFvQADWxUdRk29iwf6Swl2sLJzOZkqNyelnXHNMiAIlMQimmA7=
+ygZ
+mjqr1KNktLQojqEwtpjBGr8s81nIOYx3x9VW+auaXJpximRDgU0W6pqZck7tnyFtMHVaCVEJ0=
+w1t
+WL4v19raAnWlPfgtwpE/9qp2odHRK9zgHXu9fOGSaeN92nhI7nAYYyHPucHUkjsKMJFF/4efI=
+XOF
+/FRW+k1kJirXyIoUHOKVk0ouOH2yXLj4OsIJSnZywsKyBBgBCAAmAhsCFiEEuPvz8KtWTuhPf=
+7HT
+k90gYwkQtRUFAl0E2QUFCQOakRQBQMB0IAQZAQgAHRYhBMs9P7gHHficF5sLQ/G3Z4WcsuvHB=
+QJb
+S3txAAoJEPG3Z4WcsuvHdVoH/A2m8fbyqNbrG4Ax5eC2c6yYX0ZtiN/ieRU26CybBXvI6UTXH=
++nh
+iaRi3lt7P8KlnfHGLC7W8yWtc56M9xMD4R2iB5sF8OE4GJvjVbtgpvXYNmizUI/IWjXzj4SBq=
+q+b
+p74Z5cK2xvmI5dHq9rAHQec15SMfISIx6HzCSKFuMge/U+HmbHhcq8APjniOqSU4ENXWl5TqY=
+dum
+RrpTMvvqb4iD/wG+ezyfNfw00j1l6phHu9py1uY1il3h20zGh/SlTXcSQiJfGWYKuMzdprJ6Z=
+Yif
+hKDVYBjoCokXJHhpZFrXHs0NCK+cgWgAZFVWQksnWHxE0ie06xcGNcEMMghXC+8JEJPdIGMJE=
+LUV
+kVwP/18ljntddAENT0iipPFe+vpPReM+Dtqdg1MLLDdpcJb8yscBXb8wAr1bbFtdaYzK+GJ3N=
+0Ye
+DzRXd4m5zhe9C2u8rceMPGHtmkX2NRVDf2Mo1hGDaUeDrWDFg3fFz8nvcPDyS6d6y9lLZ8cfM=
+bUe
+uPaha/fFRuH6+9HUrJql3mF7xHTuve+YbuIJCiM1gGt9UPdmB6cSZsaz18zWH6fU75iFY6DE9=
+dbJ
+8gwh/tZM55jSKfgIOrbKAl9ZpKfoWB3gX9RVmNEZfQlNH9PATlLbLKvVD/y9SpQ7zCGAJ26aa=
+kLz
+khNm+Ajwg5YzKQ/4dlKipQrJuwWWtfur3fKSRY1kpyTtTsYV7/EKJrG/HI+Du8C4wsM7KSo1n=
+XAl
+jOhCRrWQmLpGYEWkNBSDv789LqUIWgSmlant5RJI0+bxUVuPBrUPcyBLf5VIo4yYVYZEJj31t=
+aeX
+Zl3aN90ROYEU1cD3iaDY3a8j9MeO7v27V1H2DOmMftHeOY++kRzZYJTm4l9pWgASqH2QjYPs2=
+VAI
+bzRSRcMcaZygcGeyIRkaPObnNg5iKeNNR6jLcXTxpNn57+yP6vhVM5QH9vSPL4k+fGfbcWS0Y=
+hid
+D6UuwCSZxtwPAKinhXn3B5HZ6rAGp501FRfk5M/3eVQiGtEjLdxlP8Dmc1xR4JhFLxsJEUqtA=
+oSf
+3ZEWwsKsBBgBCAAgFiEEuPvz8KtWTuhPf7HTk90gYwkQtRUFAltLe3ECGwIBQAkQk90gYwkQt=
+RXA
+dCAEGQEIAB0WIQTLPT+4Bx34nBebC0Pxt2eFnLLrxwUCW0t7cQAKCRDxt2eFnLLrx3VaB/wNp=
+vH2
+8qjW6xuAMeXgtnOsmF9GbYjf4nkVNugsmwV7yOlE1x/p4YmkYt5bez/CpZ3xxiwu1vMlrXOej=
+PcT
+A+EdogebBfDhOBib41W7YKb12DZos1CPyFo184+Egaqvm6e+GeXCtsb5iOXR6vawB0HnNeUjH=
+yEi
+Meh8wkihbjIHv1Ph5mx4XKvAD454jqklOBDV1peU6mHbpka6UzL76m+Ig/8Bvns8nzX8NNI9Z=
+eqY
+R7vactbmNYpd4dtMxof0pU13EkIiXxlmCrjM3aayemWIn4Sg1WAY6AqJFyR4aWRa1x7NDQivn=
+IFo
+AGRVVkJLJ1h8RNIntOsXBjXBDDIIVwvvwjsP/1QDdPUYl5sX1AbOit/DUBxZmsRu/aSvTWZN2=
+ZzD
+rkp3oE3wanA9yYxg2VhC9QIWw6agD0eJ/b3Z9RjWXWzRphXIEXBpk1uRyeJdjzRfSMgSaZVol=
+yL8
+82unkZGDdbjHsNcWxQqLbJQJeTljtgINx7ZwmGoD6ZD6eoMS+Ogu+gkVRoIMi8L4EE/0OCOsn=
+Wz+
+tgBJiK1KyeSg2YCu3a6YAnxU5j7tDZKxV+XO5cqeaOceRdG6HyyvHLNyT9r0SiZtpK99GlXYr=
+SeY
+Hyp1c3Epa1ZPQ3/sps6U+SqRkoEBlKBNcEQuqGaLtKBQNzgXycTBHdGeNlGx6Xx+XJCgivmqn=
+YpY
+nhu4r1zk6KNhGG83yMWnD+zvPuYz03c+cdCrI5wgrWPqWoxCML+SZEqk37ROtozPyVfxMj102=
+3L9
+cW5W31j1i/W99IUdkRipZB9EUBhIgD+i8FvsJEGjxJ3idsuTvP7tD+07VnL9dL5QanCAG1DJ/=
+RZM
+LZYNIr+CZPAWFa9rj7X0oa6pbhN4NqIq1qSL82sfAIfdo5bHTGvGPhWvapUQ71CSyT7hFm3ZA=
+tf0
+8KWYMNlH8qCcAYhVodzDo6efTaRrv5X1zwNwmNCkPojKwjSvhTQsJQx123CpoOT/QtHwzf4uF=
+DvT
+6RZEIBjRAJlrmkJT0rY/b6fPuKziwXWE1Vqv
+=3D2yDv
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------5654EA6774C47FCDAEFF6DFF--
+
+--2DgfvQNKFiX0tL8WS8RGTPD8UScs880YO--
+
+--4zPDYwQGSwuMi0W4ZuORUgOWgkE7NAQeo
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAl+rITsACgkQ8bdnhZyy
+68dQsgf/UhKYzpiAIolz963W6Ho8U7vgKRCPXTSejlhc/vFtl+olU3sX4c5AJEHA
+omP94rirqgfS0m0fRmc0Id/0KfAphYg2/muYSFDuqpJMiohhU1lCBYQN25vG8KGm
+X27MeuwFM8v8RVH0Xz4L6EhTuk31Gl2nCZ5tz169dOMlqGfBASUrIZQ6fzn9kLu3
+NenZg3bkhHiyVAgl66Y9J6b2AY/T0x0RQSsEgHLAjM/QCJyN5/Wuy4RI3E+O3UHH
+qjGMW9P54GHwfZ1eNRCqUOiOIxC4Zl0bcY/ZixlRzrFuko9MBHcxAsrSpIAEIZju
+Tu7p76xOqAMjW0bt95AapdrMSMy/LQ==
+=7aub
+-----END PGP SIGNATURE-----
+
+--4zPDYwQGSwuMi0W4ZuORUgOWgkE7NAQeo--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
