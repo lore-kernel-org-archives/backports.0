@@ -2,395 +2,107 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,T_TVD_MIME_EPI autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B126EC2D0E4
-	for <backports@archiver.kernel.org>; Sun, 15 Nov 2020 13:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2DCBC2D0E4
+	for <backports@archiver.kernel.org>; Sun, 15 Nov 2020 14:08:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DE7322447
-	for <backports@archiver.kernel.org>; Sun, 15 Nov 2020 13:47:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29D1622447
+	for <backports@archiver.kernel.org>; Sun, 15 Nov 2020 14:08:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="Sc+KMlQl"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=celeno.com header.i=@celeno.com header.b="rmfCDwYn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbgKONrK (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Sun, 15 Nov 2020 08:47:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43182 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727156AbgKONrK (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sun, 15 Nov 2020 08:47:10 -0500
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [IPv6:2001:67c:2050::465:102])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8B4CC0613D1
-        for <backports@vger.kernel.org>; Sun, 15 Nov 2020 05:47:09 -0800 (PST)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4CYtmV0F6KzQlL9;
-        Sun, 15 Nov 2020 14:47:06 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-        t=1605448024;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Y1ju/l46FWtrJYC3tfA1uE/oDvMHZ1xJSq/pyUDQRjs=;
-        b=Sc+KMlQlto61Wl6fAy6+LGpnGWo/EbEGD0g/Cy6Sxb64UkpxpNEzcF7T4Ay0RodvYITwn7
-        4LtPeZ6TE/hhYiJF0Z41l/U5liaLUrCmHmPxtN4MpBVEDFSPghv2D0j7bbSNM3UfyOKcEJ
-        5JQHu/cniHRy0YfhQK8rEZIa7IlFnAEPipULTK1v/NJFXYaOD/JWP95pTWokAG+I5+DNX6
-        4z9CD5WbXAXIBEKcgsTjtJaMOjpSC7M1U3Nfa8U3uk6OcI8xW+9xcgK2LVIsd+vGjrvLul
-        TlWB/aSccDB6tu6qe5C/0EjPfZ4qCFFrls+JbfI5y67Zbozq1rlhmrlGf1koNg==
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id Kg7HDqh291pt; Sun, 15 Nov 2020 14:46:59 +0100 (CET)
-To:     Shay Bar <shay.bar@celeno.com>, mcgrof@kernel.org
-Cc:     backports@vger.kernel.org, eliav.farber@celeno.com
+        id S1727026AbgKOOHi (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Sun, 15 Nov 2020 09:07:38 -0500
+Received: from mail-eopbgr30088.outbound.protection.outlook.com ([40.107.3.88]:61667
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726743AbgKOOHh (ORCPT <rfc822;backports@vger.kernel.org>);
+        Sun, 15 Nov 2020 09:07:37 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MT7zrThGZU7k5aYLImu6fRbwGy2nLhHwWCBmc8gREjwFIu3zHySN2G7uID7NG9B9AKKtiCD6NebF6cG+dhUgbbVZPzdHUggdtZ5vVOCLlG7Frs0/LCSVSI2BFeVbl+2InZE5Xq33tHjCg/LQ4DLCKjgPnireM9X6m9a7W6Avkn1d17dsMmQ5rsz5G6amx7vwxaGHYMgIQ2V27TgtkbofbtaLZ6u7xebtbAtuHuJycBr37oZWbLt+aSisl6in5l4G5/W14CXGTzSkXPQXd/BCo6FKSW+6eIyHXGpke1bei6uOJ+fWhE3b1f90J8fjJ1EY+tfTun56NwLXBg3Nd6pOBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w2kv+t5vBGHOFW45H9kSbU3hI1XKSf/5oaViKOG88h0=;
+ b=YXthg6jo+Kh4cuOIUR9vOUur8vjWf32R+NI+rzQ59j4SFBrjuDpf6Ts608UPYN/bdigI/unsTKDiLaOZl/cMh5tOBd5icFw00Sl/8f0PM+JL0rTqohR/3YM9d3HMq5KF2BwttE40vOoOH2QO7A5RWddTi2wCl3pCDMG7AsngbnwEfbT/JmRR3+QPooNs8TqnjksnlpYDRjCoI0UvayrPd9Y/NDUhl98pniL1rPY35s1fkmU7/y/EYiOZlQQ/8580WZdE+mD5lNqLc4ywR7PY2fGWCGdiKa7bmKL6nqeWhBeMttTmPh7zJh/aEmodkYtcC4ijiaQ2rvAxKOwp15abKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=celeno.com; dmarc=pass action=none header.from=celeno.com;
+ dkim=pass header.d=celeno.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=celeno.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w2kv+t5vBGHOFW45H9kSbU3hI1XKSf/5oaViKOG88h0=;
+ b=rmfCDwYnEs1LZXHLmPOGKW/liPtvkTffllcxRxC1MAw8+XVqWSXQ23DfWU9lvHlzaju3s5uuvlCL4LTi/TvNcadfZYeDHvOdEIXcKKZIsI2i92YBKtLN4zVqtugBTJjYjVKgQPkUWbA4BJmoc52sB2gVfN5o19fNHcvV+BvaXdI=
+Received: from AM0P192MB0468.EURP192.PROD.OUTLOOK.COM (2603:10a6:208:45::15)
+ by AM9P192MB0870.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:1f2::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3541.21; Sun, 15 Nov
+ 2020 14:07:34 +0000
+Received: from AM0P192MB0468.EURP192.PROD.OUTLOOK.COM
+ ([fe80::148d:ab6b:a633:c543]) by AM0P192MB0468.EURP192.PROD.OUTLOOK.COM
+ ([fe80::148d:ab6b:a633:c543%5]) with mapi id 15.20.3564.028; Sun, 15 Nov 2020
+ 14:07:34 +0000
+From:   Shay Bar <Shay.Bar@celeno.com>
+To:     Hauke Mehrtens <hauke@hauke-m.de>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>
+CC:     "backports@vger.kernel.org" <backports@vger.kernel.org>,
+        Eliav Farber <Eliav.Farber@celeno.com>
+Subject: RE: [PATCH] backports: Add time64_to_tm and ipv6_mc_check_mld
+Thread-Topic: [PATCH] backports: Add time64_to_tm and ipv6_mc_check_mld
+Thread-Index: AQHWt2pVuPzpmqNoiEOor5MSAl0rj6nJPK8AgAAFs7A=
+Date:   Sun, 15 Nov 2020 14:07:34 +0000
+Message-ID: <AM0P192MB04684FF2B814EF6A61549381E7E40@AM0P192MB0468.EURP192.PROD.OUTLOOK.COM>
 References: <20201110140344.17330-1-shay.bar@celeno.com>
-From:   Hauke Mehrtens <hauke@hauke-m.de>
-Subject: Re: [PATCH] backports: Add time64_to_tm and ipv6_mc_check_mld
-Message-ID: <29b92ce7-9dc1-0456-34b0-6391ef628005@hauke-m.de>
-Date:   Sun, 15 Nov 2020 14:46:46 +0100
+ <29b92ce7-9dc1-0456-34b0-6391ef628005@hauke-m.de>
+In-Reply-To: <29b92ce7-9dc1-0456-34b0-6391ef628005@hauke-m.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: hauke-m.de; dkim=none (message not signed)
+ header.d=none;hauke-m.de; dmarc=none action=none header.from=celeno.com;
+x-originating-ip: [87.71.36.60]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 35b4a96f-6a36-4982-c090-08d8896fcccc
+x-ms-traffictypediagnostic: AM9P192MB0870:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM9P192MB0870522B19913AA13B4DB012E7E40@AM9P192MB0870.EURP192.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:1091;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: aEi4RBRV8VUw8eTGDLhJyaGd3bCT/0yk4X//UsuK6rEjU/cIG9hYhpD63JU/jgS6WbVKEXHwondP3IwcoKMHgENoYyqwk4hsCaFb1myyhTMZQP8XaSZUZ0PhwF1+y7nLvgU16pmaErl1d+D1EvBRjNlwJgJzRTn2fh0DLVMeI0wfFu2XoHBMI4LWPb+3gk1QwXEN1+zZSPAjpqHE6fJylrDBhUorECpkxDtba2V3uaaxPU7i9Pa9qrYyTWzJMrRUJxwkz5jvbSHvO+WvpOgyBwZk49HyiO/IxmmeBHR3IZsCYF2XfOYDKuwgrjxJFJfv
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0P192MB0468.EURP192.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(346002)(376002)(396003)(366004)(39840400004)(136003)(8936002)(71200400001)(66446008)(54906003)(64756008)(4326008)(86362001)(66946007)(66476007)(2906002)(55016002)(478600001)(66556008)(26005)(110136005)(558084003)(316002)(33656002)(8676002)(52536014)(5660300002)(6506007)(107886003)(76116006)(7696005)(9686003)(186003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: PgKTduholnTi+7iCHsvLjEGVUjgI+e5dzKH5rHuZGwmxOWr94c2TSWnPMPqAf2rzsyzHpZfa+ENx5u7Z/zGA7U7HYqNLYylM2P+98fC+07bv/dje7xbRdEHJEBvVMFNRR3OmoI/RWl2MNL0N0cSwygBVbsY/UNb2TPobdCamZubsC8l/UrWI43Qui9ohovv+S+V7f4iG8LHkzG7VvS8sefxjfdWWQY0qx5sdwDDaWUz8GiQD783xUY9Lmj+bX/XOASCfHz44z3gDtPZ+qC0MjLctqBGkcBSRHcfRa2ZmrsrwzXXbGVcbtALA5eCGj2izvH3JNxEVKw6OEdHoQ0MpHOZuGyCgVKMC246UFNRNQfC791ybISaw6H+XqtasrtpmDhW3KwHOmrYBYV8sp9mq4MVElL6MUxaNzYkPolDFXL+DgQAwZf4pEEi7JgAR2PXL3pQiswnad/kXHw2YUPJ5CZ5OJi6YAxgfnqoRw5ACVvEW6KAEjVcB5o3WfjhhpM7gOqTD4DOZzIIkSAvqKBAXRbWgM2NbSwHm1M6ZevFY4lamu2vo7o6tcnj5pi6CxWbntzWbs9jP/WGHI2beemuJ3jvHd7ZAcaSqSQ7XhVlpPzdklP0o7KsQak8+H0WwkvBmU5jWQpBJDvUlkPSblO20LOaT7nb2zvN5d0AFlxTtWzlNCuISfAi3QjfBHlyng7r04HdavmnLAhj2KiX5sW8ML2bbaN3o7jhs4gYtKTF+SMbAQUEg0+xW6vjMxTi72MtYdijkU5AOG74Y1ut2KzxOasZGOV7eIqchfL9Vvgw3Ckl4OGgGqAWkOejtx9DkGSpfNxhAi9hCYmHHY2Ei5Dk0MjvKLumtsEiw3xgSl9MGLAjQTO7ug5zIBzbr9OiVrxzdEaG1DIoCgfRvtcn2sVNfyA==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20201110140344.17330-1-shay.bar@celeno.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="SbfKzGyxPcxDwVgEM40JHyjQP46qyo0W3"
-X-MBO-SPAM-Probability: 
-X-Rspamd-Score: -6.00 / 15.00 / 15.00
-X-Rspamd-Queue-Id: 053BE1832
-X-Rspamd-UID: 4b50c7
+X-OriginatorOrg: celeno.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM0P192MB0468.EURP192.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35b4a96f-6a36-4982-c090-08d8896fcccc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2020 14:07:34.2611
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f313103b-4c9f-4fd3-b5cf-b97f91c4afa8
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4oWmlRcW4LMoSLQ/ThhV67xRtwO26evvdUp970PlGA9nzcgsaj3IWRyHVyLN3gaeQeWcwX9a80zM1tvF+oAPuA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9P192MB0870
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---SbfKzGyxPcxDwVgEM40JHyjQP46qyo0W3
-Content-Type: multipart/mixed; boundary="0C81gWcDIzLK9ZhFwvSLU2CNDzMegjWG5";
- protected-headers="v1"
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: Shay Bar <shay.bar@celeno.com>, mcgrof@kernel.org
-Cc: backports@vger.kernel.org, eliav.farber@celeno.com
-Message-ID: <29b92ce7-9dc1-0456-34b0-6391ef628005@hauke-m.de>
-Subject: Re: [PATCH] backports: Add time64_to_tm and ipv6_mc_check_mld
-References: <20201110140344.17330-1-shay.bar@celeno.com>
-In-Reply-To: <20201110140344.17330-1-shay.bar@celeno.com>
+Hi Hauke,
 
---0C81gWcDIzLK9ZhFwvSLU2CNDzMegjWG5
-Content-Type: multipart/mixed;
- boundary="------------99726EF4BB764D8087908571"
-Content-Language: en-US
+Indeed, no wifi driver is currently using them, but we plan to
+commit our new driver (that uses it) to the kernel.
 
-This is a multi-part message in MIME format.
---------------99726EF4BB764D8087908571
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Should I ping this patch again once we upstream or can you
+already accept it now ?
 
-On 11/10/20 3:03 PM, Shay Bar wrote:
-> ipv6_mc_check_mld() was added in kernel version 4.2.0.
-> The 2nd parameter was removed in kernel version 5.1.0.
->=20
-> time64_to_tm() was added in kernel version 4.8.0.
->=20
-> Signed-off-by: Shay Bar <shay.bar@celeno.com>
-
-Hi Shay,
-
-Where are these functions used? I can not find ayn wifi driver in kernel =
-
-5.10 using it.
-
-Hauke
-
---------------99726EF4BB764D8087908571
-Content-Type: application/pgp-keys;
- name="OpenPGP_0x93DD20630910B515.asc"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
- filename="OpenPGP_0x93DD20630910B515.asc"
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xsFNBFtLdKcBEADFOTNUys8TnhpEdE5e1wO1vC+a62dPtuZgxYG83+9iVpsAyaSrCGGz5tmuB=
-gkE
-MZVK9YogfMyVHFEcy0RqfO7gIYBYvFp0z32btJhjkjBm9hZ6eonjFnG9XmqDKg/aZI+ud9KGU=
-h0D
-eaHT9FY96qdUsxIsdCodowf1eTNTJn+hdCudjLWjDf9FlBV0XKTN+ETY3pbPL2yih8Uem7tC3=
-pmU
-7oN7Z0OpKev5E2hLhhx+Lpcro4ikeclxdAg7g3XZWQLqfvKsjiOJsCWNXpy7hhru9PQE8oNFg=
-SNz
-zx2tMouhmXIlzEX4xFnJghprn+8EA/sCaczhdna+LVjICHxTO36ytOv7L3q6xDxIkdF6vyeEt=
-Vm1
-OfRzfGSgKdrvxc+FRJjp3TIRPFqvYUADDPh5Az7xa1LRy3YcvKYxpsDDKpJ8nCxNaYs6hqTbz=
-4lo
-Hpv1hQLrPXFVpoFUApfvH/q7bb+eXVjRW1m2Ahvp7QipLEAKGbiV7uvALuIjnlVtfBZSxI+Xg=
-7SB
-ETxgK1YHxV7PhlzMdTIKY9GL0Rtl6CMir/zMFJkxTMeO1P8wzt+WOvpxF9TixOhUtmfv0X7ay=
-93H
-WOdddAzov7eCKp4Ju1ZQj8QqROqsc/Ba87OH8cnG/QX9pHXpO9efHcZYIIwx1nquXnXyjJ/sM=
-dS7
-jGiEOfGlp6N9IwARAQABzSFIYXVrZSBNZWhydGVucyA8aGF1a2VAaGF1a2UtbS5kZT7CwZQEE=
-wEI
-AD4CGwEFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AWIQS4+/Pwq1ZO6E9/sdOT3SBjCRC1FQUCX=
-r/2
-hwUJBcXE4AAKCRCT3SBjCRC1FX1BEACXkrQyF2DJuoWQ9up7LKEHjnQ3CjL06kNWH3FtvdOjd=
-e/H
-7ACo2gEAPz3mWYGocdH8NjpmlnneX+3SzDspkW9dOJP/xjq9IlttJi3WeQqrBpe/01285IUDf=
-OYi
-+DasdqGFEzAYGznGmptL9X7hcAdu7fWUbxjZgPtJKw2pshRu9cCrPJqqlKkRFVlthFc+mkcLF=
-xeP
-l7SvLY+ANwvviQBblXJ2WXTSTX+Kqx8ywrKPwsJlTGysqvNRKScDMr2u+aROaOC9rvU3bucmW=
-NSu
-igtXJLSA1PbU7khRCHRb1q5q3AN+PCM3SXYwV7DL/4pCkEYdrQPztJ57jnsnJVjKR5TCkBwUa=
-PIX
-jFmOk15/BNuZWAfAZqYHkcbVjwo4Dr1XnJJon4vQncnVE4Igqlt2jujTRlB/AomuzLWy61mqk=
-wUQ
-l+uM1tNmeg0yC/b8bM6PqPca6tKfvkvseFzcVK6kKRfeO5zbVLoLQ3hQzRWTS2qOeiHDJyX7i=
-KW/
-jmR7YpLcx/Srqayb5YO207yo8NHkztyuSqFoAKBElEYIKtpJwZ8mnMJizijs5wjQ0VqDpGbRQ=
-anU
-x025D4lN8PrHNEnDbx/e7MSZGye2oK73GZYcExXpEC4QkJwu7AVoVir9lZUclC7Lz0QZS08ap=
-VSY
-u81UzhmlEprdOEPPGEXOtC1zs6y9O8LBlAQTAQgAPgIbAQULCQgHAgYVCAkKCwIEFgIDAQIeA=
-QIX
-gBYhBLj78/CrVk7oT3+x05PdIGMJELUVBQJdBNjNBQkDmpemAAoJEJPdIGMJELUVPpwP/2APQ=
-K0A
-8SUrCE0bNn8o1Avf35DgY5cMA7HI/v3uB6DLKS9qpT+nQw4p3HwXYMckIaWuQFaqIS1hQBGdQ=
-k6B
-+2hMtqWJ3ASnp6Jkz0SqKfmtFHoHk0hhQiMcCnGM8dKZ/CzmmdoF0jo1Xy3lGk5MA0iUF8/pt=
-MES
-lUZsLQHC8EVp0ai9wouucA1ni8vnrODTKRGiC0Pyt6g28ms0MrtcKsLZLQRhwYPlxe54lul/o=
-lFy
-6widiMyb+DaxEIfhxCz9U6OPcLrqw0Qy+9l0oTFmCH/2X1GZbRfrLsDRIO1HcA9hYYjBXRuFN=
-La6
-y44ABlC8WFz6J1IbRisepGI5OdbE6deQUVo52Z+T315Zqqlc4iDEevpalWuiZUj7ApZU0Re6Y=
-t1s
-QC/LW/EK2loZCm6fmZFx6zkYHaWRnNGOb3S5L0+BYHUhiPV6FF66PSOaSlqfRd0SHAWNDf4p/=
-LNf
-tiC3SBvO+IZu1IHazUyHScB22j1F0hiLeAItCHdpu3CTrOqwdEGnUgePI2rrSexRK17ijX6ZE=
-GgH
-oju5OTGok+bKfCmYChpiQ3YxE7wLU7T1h3gfcCAUZkFemhVumHxDuETfdj1SsSV+IOy92Pj4l=
-W7W
-x088YVa2mOl7kt6hfMsA0BsnZP5jrxSC2w0UJtIqNexEmUsgdHXIdBurZV1QOaxRlpFswsGOB=
-BMB
-CAA4AhsBBQsJCAcCBhUICQoLAgQWAgMBAh4BAheAFiEEuPvz8KtWTuhPf7HTk90gYwkQtRUFA=
-ltL
-fU8ACgkQk90gYwkQtRUXrRAAlmgonnRA/mOmabOSEBPY6dWAmqkABAu/LI+AC3lOJHWd+Tm3v=
-fbs
-kNKv77z5ZxYoJKe8ngQz/sDxx3Otd/zjZGs/r10iLc+aBwreqNkLnpQ1/HCgg+M3sZoj38rCQ=
-8E3
-MJoPKD53zKpqG//e5dSKE535IFj2I34449glJFyCU2Mdd6umxxWEPBQbq/D0VjLfsTpWSN9x7=
-EAj
-I3PmpHQP1C3JaWrg+uJ2C/2tJGpFIL/cIGdGhE/vlTqQT0EH738ySRSrARFpmXbTKpfF4Ms04=
-iFL
-vaB9wqizQoHQd73pGD8N5bVdzMb1LQgrGTMwKYnTsiZwnNwSRJX94O4FdVuuzZ6hpuFPCo9Lq=
-BuD
-B4f2dK2qn6zVa28Cj1Q3i5AYJHQ7nfU7kx9+WnU2Dx0BBmqH+c6jiZNIzmWAtA+UwirBnkZwk=
-kfl
-kWCy74nzUIcmi5kxgNXcNxVILCo3u8nUT9MqTJziaS2BUUoJLptfAu3gX4JPSkalxYJSK4e4d=
-m68
-lBMr0eK+IAAYveurlNk53xjmWqQx28IBCv9ne/4sS9fQfL2ZbwTUHaSmtsjvRKv6Hg1fL2c1a=
-/Q4
-cKQRHAMO17GlwH7x93jLbYj+gyRlc47tG1lA7tF6qOD4SZWJuK5qO2wJeRE4QFLbXFCc9a7ku=
-3JO
-ls57hcKnd54mF9PNEstq5bbOwE0EW0t7AwEIAOA7WMwe9wVGMTGlNoGxU6z8F7g22vjYC6Whf=
-NDz
-1yV2nHWKCpJVcg9t705Ob8NQLzGHt9mNeqoC5Jq/Pm0vSpS5qYDZ+azFszqiq/zfptgxu3plg=
-IN5
-FY0UZCRDbNWkGaFCBSRQcZVWdjrlEmB71ro3o9dQixZMUKPRH2t+UABHosxBrY4YxHeDlE+Yj=
-7sc
-a+ckP+yAffKE09e1AbOtmwyMohvA4brPrRvCWQLz74faTDAIHFn/gbLuANNK/l8qI6tOqZwTG=
-u+P
-HpVdQaOPAYNKRFZ3BckPWEhIi7XYMJ6ulvBNNJAExlaTdX2n78RkS1T30G36yk4k5AttdC+57=
-9sA
-EQEAAcLBfAQYAQgAJgIbDBYhBLj78/CrVk7oT3+x05PdIGMJELUVBQJev/bJBQkFxb7GAAoJE=
-JPd
-IGMJELUV0e8QALOYmuyRwi5rIONihFqDCFyNj/FPiuJTemMgcEldk/ZBVrbKBq+iAO4UnTRy3=
-4G/
-gUp77KqiXgzEkfWfg8yZRZh6F+zb/WWN+MViLa3jXEphVQtw+Yey12V+YDoMshhR8j2E52BRl=
-0G3
-hD7C0/iwPqQAswwXg5ZcRyVWMkmytVBIHKOlKA5yFowOhoQlV+tdq/OBIn+K0XZFbqxxVjEWC=
-/cr
-VaOQb5j9Ibkfzr3QW04SMFBZ9jHBv2fXx8WaM+kUkl7brQO2G/RXaS2waMGUnuwKxlMadyXjm=
-KUY
-JW+eopWP6I0ksv4EjwZECUaOndp1muGAmR9TecIkNCzeC96eDeLR4lc57WoFLN6kWgz5Mt0ej=
-gww
-zMc+nrUUyFGMrkbL73ZOi9q1a5tftTQmeIOmnlunkjbAFzwxfgPKEuqBhJNdGuoJsmy5qyMQb=
-AZu
-RHbj8mdZBAN63DGifpnI2hAtpM1U1vA6XXTjEB3/ey0Mf4gSz+5PGpsdAZ9E9j3qkO1XU+LtL=
-wIX
-wOE6opKJJ1gTxEtxi3Y//BI8vVqpPIW50SrXgopHGm25vt992akGpUtgB6cQjlee0wH7AOev7=
-Zip
-gQa3Qe3x1Or4umo5MJRhxE5H7REmAMhLnbTlJ0HcWSeQatWS8x6wnybc/2XPcIcW1xEDMcFR3=
-koN
-GyK62hwOj6q9wsF8BBgBCAAmAhsMFiEEuPvz8KtWTuhPf7HTk90gYwkQtRUFAl0E2QUFCQOak=
-YIA
-CgkQk90gYwkQtRUEfQ//SxFjktcASBIl8TZO9a5CcCKtwO3EvyS667D6S1bg3dFonqILXoMGJ=
-LM0
-z4kQa6VsVhtw2JGOIwbMnDeHtxuxLkxYvcPP6+GwQMkQmOsU0g8iT7EldKvjlW2ESaIVQFKAm=
-XS8
-re36eQqj73Ap5lzbsZ6thw1gK9ZcMr1Ft1Eigw02ckkY+BFetR5XGO4GaSBhRBYY7y4Xy0WuZ=
-Cen
-Y7Ev58tZr72DZJVd1Gi4YjavmCUHBaTv9lLPBS84C3fObxy5OvNFmKRg1NARMLqjoQeqLBwBF=
-OUP
-cL9xr0//Yv5+p1SLDoEyVBhS0M9KSM0n9RcOiCeHVwadsmfo8sFXnfDy6tWSpGi0rUPzh9xSh=
-5bU
-7htRKsGNCv1N4mUmpKroPLKjUsfHqytT4VGwdTDFS5E+2/ls2xi4Nj23MRh6vvocIxotJ6uNH=
-X1k
-Yu+1iOvsIjty700P3IveQoXxjQ0dfvq3Ud/Sl/5bUelft21g4Qwqp+cJGy34fSWD4PzOCEe6U=
-gmZ
-eKzd/w78+tWPvzrTXNLatbb2OpYV8gpoaeNcLlO2DHg3tRbe/3nHoU8//OciZ0Aqjs97Wq0Za=
-C6C
-dq82QNw1dZixSEWAcwBw0ej3Ujdh7TUAl6tx5AcVxEAmzkgDEuoJBI4vyA1eSgMwdqpdFJW2V=
-9Lb
-gjg52H6vOq/ZDai29hjCwXYEGAEIACAWIQS4+/Pwq1ZO6E9/sdOT3SBjCRC1FQUCW0t7AwIbD=
-AAK
-CRCT3SBjCRC1FdQPD/9mUbTho+I+5Fdy55KC40R2W9ShTsRA95C3r37uBnA37T6Mf8X28efeH=
-c7R
-RQX4eRpKMmoNMM0geW1oQ5rhqX9umAJkdSO/rKrpZ2+Oy6HohehcKm1cRYoLw49rllZFzMhoa=
-lNj
-jITCRiLTBMy8Vgg7VY9poCpRYjunrdeoigLmrRgHwQtjHBVa6R7OlTD66bG6/P+SyTQkcCx9e=
-NMy
-dgcZio7K77mB1lyXsdz4ikOeN5O7uPAwlNRYT/e6bIyROudLHmXT+Fkijsg7mZyJiJun1oAaG=
-kYB
-6Z0uk6AVjy1Cd7/aTGBU/4+CnOnzYs55UNJ4deMdFLyuGdTxa7vR8YLvnYunALN2xLnexRF+h=
-8B5
-cTDwDoJtzDWKASLbWs6LdUh4LHAOiejNVAzyF0FbmN8mbCfn3w/Qw8RJLHdnUxDeie6ik1yey=
-v0u
-7a3lsU3bz2fsAz1RUa+uWg38UozJHMKVFUWxzUpEXBVoc0tjDyOXBOVHy2BnhA1RiPRAOuh/8=
-i11
-lnQpyaadJgoAKOrBsq6IJRqdpUkOJvJOtCaLS/DP/Q/IgBaxoXilBnvx1HADQH+MR7BjdEMDU=
-E7L
-fl2f2Ab6qvR9uRhj1hlgWKTWn89g4EWfRr/y0Wnx4+xkZAC4t0AA1wl2iLJ4ZR6OS2xYc7DDg=
-LBU
-m92DF40ru3IjdrOags7ATQRbS3txAQgA5mqcJOegV5MWglTaYd0QwCGx+HtfjBM8VHLjw7vTL=
-g8U
-OCKeDAROryeO8AEwMaM377TQXxxnjkc00Hl5QoNxb1sGbGu0Ir4XTI+7l/L7Qzg22jDc/Icw0=
-i05
-Ygp3/8RrM4qK4dquFzp/U6ASsxKF7/2tOaVOirHBWZ+ceLVorrC9VtOI2AbK37YWADoFAigKG=
-Q8Y
-1DqmBXlCUIRa/Ft7KKhs5IDHV2Kux+iAnBxO+wJT9BpO58Aj1A7x2d7pIqynnPnzKKBY/AOc4=
-X8u
-9Dbp4OtgeOeTuRW4FUhaMqWmIBDTSF8tTu/BAfSidx8HkdP98vVvbjrWGbBfF5X6MTNCSQARA=
-QAB
-wsKyBBgBCAAmAhsCFiEEuPvz8KtWTuhPf7HTk90gYwkQtRUFAl6/9soFCQXFvlgBQMB0IAQZA=
-QgA
-HRYhBMs9P7gHHficF5sLQ/G3Z4WcsuvHBQJbS3txAAoJEPG3Z4WcsuvHdVoH/A2m8fbyqNbrG=
-4Ax
-5eC2c6yYX0ZtiN/ieRU26CybBXvI6UTXH+nhiaRi3lt7P8KlnfHGLC7W8yWtc56M9xMD4R2iB=
-5sF
-8OE4GJvjVbtgpvXYNmizUI/IWjXzj4SBqq+bp74Z5cK2xvmI5dHq9rAHQec15SMfISIx6HzCS=
-KFu
-Mge/U+HmbHhcq8APjniOqSU4ENXWl5TqYdumRrpTMvvqb4iD/wG+ezyfNfw00j1l6phHu9py1=
-uY1
-il3h20zGh/SlTXcSQiJfGWYKuMzdprJ6ZYifhKDVYBjoCokXJHhpZFrXHs0NCK+cgWgAZFVWQ=
-ksn
-WHxE0ie06xcGNcEMMghXC+8JEJPdIGMJELUVMJYP/395wAMaYBsT+cW/jXPnOl9Q5FlBYwVbj=
-BCe
-ssGBp2/k1sd7b9ZivD535u5qfzpwy4Fbj3aRVP2wcp94tGyut3CXA03lyjTaRjpy2utPm8MVq=
-cD0
-beAcdRsIpdXd25turPJkHbWNkMhpjvy/MGwwaTxW6oKJgR4/aYmuznk1sbHSAUCcYEvZMN4kh=
-9OO
-c+8QGaWkG8njx/SUfx7CUaLIQYKbMpWhDY4d1XHm5RQN7m/ohWae0z4M4NmHN9JjIwxtE6Iro=
-rGo
-YF0fJAPvQIJG173zNiFvst11hXYAszYa2zmMrfI/aJdW+28nvOBDphgTvqQYLIIXFkqiPbr3Q=
-tnb
-e+IXhdL1snfkwunUCeQJehfF647O6whNwrHn0lzOZYNZvZNTAbc0SUxShesFVrGhKD/Ik7yOb=
-8JN
-10uvvOrh7erTa4xUhIT7styuFvQADWxUdRk29iwf6Swl2sLJzOZkqNyelnXHNMiAIlMQimmA7=
-ygZ
-mjqr1KNktLQojqEwtpjBGr8s81nIOYx3x9VW+auaXJpximRDgU0W6pqZck7tnyFtMHVaCVEJ0=
-w1t
-WL4v19raAnWlPfgtwpE/9qp2odHRK9zgHXu9fOGSaeN92nhI7nAYYyHPucHUkjsKMJFF/4efI=
-XOF
-/FRW+k1kJirXyIoUHOKVk0ouOH2yXLj4OsIJSnZywsKyBBgBCAAmAhsCFiEEuPvz8KtWTuhPf=
-7HT
-k90gYwkQtRUFAl0E2QUFCQOakRQBQMB0IAQZAQgAHRYhBMs9P7gHHficF5sLQ/G3Z4WcsuvHB=
-QJb
-S3txAAoJEPG3Z4WcsuvHdVoH/A2m8fbyqNbrG4Ax5eC2c6yYX0ZtiN/ieRU26CybBXvI6UTXH=
-+nh
-iaRi3lt7P8KlnfHGLC7W8yWtc56M9xMD4R2iB5sF8OE4GJvjVbtgpvXYNmizUI/IWjXzj4SBq=
-q+b
-p74Z5cK2xvmI5dHq9rAHQec15SMfISIx6HzCSKFuMge/U+HmbHhcq8APjniOqSU4ENXWl5TqY=
-dum
-RrpTMvvqb4iD/wG+ezyfNfw00j1l6phHu9py1uY1il3h20zGh/SlTXcSQiJfGWYKuMzdprJ6Z=
-Yif
-hKDVYBjoCokXJHhpZFrXHs0NCK+cgWgAZFVWQksnWHxE0ie06xcGNcEMMghXC+8JEJPdIGMJE=
-LUV
-kVwP/18ljntddAENT0iipPFe+vpPReM+Dtqdg1MLLDdpcJb8yscBXb8wAr1bbFtdaYzK+GJ3N=
-0Ye
-DzRXd4m5zhe9C2u8rceMPGHtmkX2NRVDf2Mo1hGDaUeDrWDFg3fFz8nvcPDyS6d6y9lLZ8cfM=
-bUe
-uPaha/fFRuH6+9HUrJql3mF7xHTuve+YbuIJCiM1gGt9UPdmB6cSZsaz18zWH6fU75iFY6DE9=
-dbJ
-8gwh/tZM55jSKfgIOrbKAl9ZpKfoWB3gX9RVmNEZfQlNH9PATlLbLKvVD/y9SpQ7zCGAJ26aa=
-kLz
-khNm+Ajwg5YzKQ/4dlKipQrJuwWWtfur3fKSRY1kpyTtTsYV7/EKJrG/HI+Du8C4wsM7KSo1n=
-XAl
-jOhCRrWQmLpGYEWkNBSDv789LqUIWgSmlant5RJI0+bxUVuPBrUPcyBLf5VIo4yYVYZEJj31t=
-aeX
-Zl3aN90ROYEU1cD3iaDY3a8j9MeO7v27V1H2DOmMftHeOY++kRzZYJTm4l9pWgASqH2QjYPs2=
-VAI
-bzRSRcMcaZygcGeyIRkaPObnNg5iKeNNR6jLcXTxpNn57+yP6vhVM5QH9vSPL4k+fGfbcWS0Y=
-hid
-D6UuwCSZxtwPAKinhXn3B5HZ6rAGp501FRfk5M/3eVQiGtEjLdxlP8Dmc1xR4JhFLxsJEUqtA=
-oSf
-3ZEWwsKsBBgBCAAgFiEEuPvz8KtWTuhPf7HTk90gYwkQtRUFAltLe3ECGwIBQAkQk90gYwkQt=
-RXA
-dCAEGQEIAB0WIQTLPT+4Bx34nBebC0Pxt2eFnLLrxwUCW0t7cQAKCRDxt2eFnLLrx3VaB/wNp=
-vH2
-8qjW6xuAMeXgtnOsmF9GbYjf4nkVNugsmwV7yOlE1x/p4YmkYt5bez/CpZ3xxiwu1vMlrXOej=
-PcT
-A+EdogebBfDhOBib41W7YKb12DZos1CPyFo184+Egaqvm6e+GeXCtsb5iOXR6vawB0HnNeUjH=
-yEi
-Meh8wkihbjIHv1Ph5mx4XKvAD454jqklOBDV1peU6mHbpka6UzL76m+Ig/8Bvns8nzX8NNI9Z=
-eqY
-R7vactbmNYpd4dtMxof0pU13EkIiXxlmCrjM3aayemWIn4Sg1WAY6AqJFyR4aWRa1x7NDQivn=
-IFo
-AGRVVkJLJ1h8RNIntOsXBjXBDDIIVwvvwjsP/1QDdPUYl5sX1AbOit/DUBxZmsRu/aSvTWZN2=
-ZzD
-rkp3oE3wanA9yYxg2VhC9QIWw6agD0eJ/b3Z9RjWXWzRphXIEXBpk1uRyeJdjzRfSMgSaZVol=
-yL8
-82unkZGDdbjHsNcWxQqLbJQJeTljtgINx7ZwmGoD6ZD6eoMS+Ogu+gkVRoIMi8L4EE/0OCOsn=
-Wz+
-tgBJiK1KyeSg2YCu3a6YAnxU5j7tDZKxV+XO5cqeaOceRdG6HyyvHLNyT9r0SiZtpK99GlXYr=
-SeY
-Hyp1c3Epa1ZPQ3/sps6U+SqRkoEBlKBNcEQuqGaLtKBQNzgXycTBHdGeNlGx6Xx+XJCgivmqn=
-YpY
-nhu4r1zk6KNhGG83yMWnD+zvPuYz03c+cdCrI5wgrWPqWoxCML+SZEqk37ROtozPyVfxMj102=
-3L9
-cW5W31j1i/W99IUdkRipZB9EUBhIgD+i8FvsJEGjxJ3idsuTvP7tD+07VnL9dL5QanCAG1DJ/=
-RZM
-LZYNIr+CZPAWFa9rj7X0oa6pbhN4NqIq1qSL82sfAIfdo5bHTGvGPhWvapUQ71CSyT7hFm3ZA=
-tf0
-8KWYMNlH8qCcAYhVodzDo6efTaRrv5X1zwNwmNCkPojKwjSvhTQsJQx123CpoOT/QtHwzf4uF=
-DvT
-6RZEIBjRAJlrmkJT0rY/b6fPuKziwXWE1Vqv
-=3D2yDv
------END PGP PUBLIC KEY BLOCK-----
-
---------------99726EF4BB764D8087908571--
-
---0C81gWcDIzLK9ZhFwvSLU2CNDzMegjWG5--
-
---SbfKzGyxPcxDwVgEM40JHyjQP46qyo0W3
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAl+xMUYACgkQ8bdnhZyy
-68f0Xgf/bwCl0CILmwMMyQSlwKEWhf0GqEyNwobifiXp1YhPx/ieLN1RFGjjq6mR
-C+OCyS5iEU0+AWZnPlXNlPF9VOUwMxn2llPY2KrWbiJRRWBxPSvTgT4hf8MNUsgK
-Wl/DJeDVP0jyr3aOsCudQB+5iAOr1CllyZM9m2/jyQ5j8zHWnVz6Oj87MLfzf1T1
-WNKJm6n1NCBo+4zzkSnyrZP56+kW/x9a1JpD4t42mSC48JqsINsQXVExrs3g9ORq
-dy7TKp6Vt/08hV99AgSR2afUzIILDbasRl/9Iyx/It0TztZC/xN5kBLWyI+izUP7
-Htn4tR88nGDIT1KKgDhuwS2strmHUg==
-=DfQV
------END PGP SIGNATURE-----
-
---SbfKzGyxPcxDwVgEM40JHyjQP46qyo0W3--
+Thanks,
+Shay.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
