@@ -7,95 +7,96 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 697ECC64E7B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C26CCC71155
 	for <backports@archiver.kernel.org>; Tue,  1 Dec 2020 22:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0167120709
-	for <backports@archiver.kernel.org>; Tue,  1 Dec 2020 22:06:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 406CE20757
+	for <backports@archiver.kernel.org>; Tue,  1 Dec 2020 22:06:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="IyLFMzVK"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="dyoUbh+d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388352AbgLAWGW (ORCPT <rfc822;backports@archiver.kernel.org>);
+        id S2388185AbgLAWGW (ORCPT <rfc822;backports@archiver.kernel.org>);
         Tue, 1 Dec 2020 17:06:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60696 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388185AbgLAWGW (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 1 Dec 2020 17:06:22 -0500
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [IPv6:2001:67c:2050::465:103])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5719FC08C5F2
-        for <backports@vger.kernel.org>; Tue,  1 Dec 2020 14:05:02 -0800 (PST)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        with ESMTP id S2388137AbgLAWGV (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 1 Dec 2020 17:06:21 -0500
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [IPv6:2001:67c:2050::465:202])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BBD2C061A56
+        for <backports@vger.kernel.org>; Tue,  1 Dec 2020 14:04:59 -0800 (PST)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Clx372M5kzQlL0;
-        Tue,  1 Dec 2020 23:04:35 +0100 (CET)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Clx344NBtzQlS9;
+        Tue,  1 Dec 2020 23:04:32 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-        t=1606860273;
+        t=1606860270;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=qY96tDG5FtYdURavmyUO3DFYTLdyqMel2fdmC+0bAfQ=;
-        b=IyLFMzVKotgNeQmP2Rsz+TF8eV+wm9WypwzVG651UpcnN1fSF0FXbsUbfItd0aC8l6Rjey
-        LzSMCJ8ZmWkcyvbSNKOJJaz3oEA5TDo91Fz+F9sb9JCM233j+5orL7hlqlWHOyxgACkR5E
-        SPeqXxIMhuqlSs6XVN1JZDg1AoIa3SwIpZ3iz199jtJb4dj4rLyqbji6U764DyzlpTXFBI
-        bHb7z+VQpjDsdtPn5RTmNLG8EVgKpc1cybQf5Jw46TG7r7K1vxH5Dw/8PctJln9UHJS7W+
-        x5YV3sHBs/rxT8i0grUP+ap4D6Fao77Rb6epvYsba8d6iE2rRofLCTHlv19yMg==
+        bh=GoKBPNg7HGGxf7OpAh/Tnv0ng5cz6AndXSnxKOmcFDM=;
+        b=dyoUbh+d2Eli59MJJPn5kg1wYCBzAL5Bakvtw60OAQ4J3olYNTi6B5mohDTcUggvwAT7KJ
+        f6XwYwnEITU1Xu2Jg8QgBBHbYkaGurqfL3Od9bnSEZCY9msOzhQguTfoN9XQnpVg5V0pxo
+        RJgqWq5G8VnuikOzqsToElPu/kWicUpOQ6L6pyNSsk+Tq5Aqqa3HKh9ez5Pwd0MZyOvKs9
+        5I2Yua/WziQ0BcyhJJGzuLq0UgwMnN4cXVxaR0z9bN2841NQAXb1FNvaakjUBl4sUASOTB
+        75DZ7C0Q+AKLwJGO8GPVdJ57Ac7JkCm+7jfadyD8DimN4see15199xNt3zl4jA==
 Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
-        with ESMTP id qjgWwCka1cH8; Tue,  1 Dec 2020 23:04:32 +0100 (CET)
+        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
+        with ESMTP id 8DFiEvcOFMQJ; Tue,  1 Dec 2020 23:04:29 +0100 (CET)
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 To:     backports@vger.kernel.org
 Cc:     johannes@sipsolutions.net, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 09/30] header: add module_sdio_driver
-Date:   Tue,  1 Dec 2020 23:03:54 +0100
-Message-Id: <20201201220415.30582-10-hauke@hauke-m.de>
+Subject: [PATCH 03/30] backports: Extend NOSTDINC_FLAGS
+Date:   Tue,  1 Dec 2020 23:03:48 +0100
+Message-Id: <20201201220415.30582-4-hauke@hauke-m.de>
 In-Reply-To: <20201201220415.30582-1-hauke@hauke-m.de>
 References: <20201201220415.30582-1-hauke@hauke-m.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-MBO-SPAM-Probability: 
-X-Rspamd-Score: -5.16 / 15.00 / 15.00
-X-Rspamd-Queue-Id: 7CF921835
-X-Rspamd-UID: 486646
+X-Rspamd-Score: -4.40 / 15.00 / 15.00
+X-Rspamd-Queue-Id: B9E9A1825
+X-Rspamd-UID: 048998
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-The module_sdio_driver define is used by the mt76 driver.
-This was added in upstream Linux commit db0a39083520 ("mmc: sdio: Add
-helper macro for sdio_driver boilerplate").
+Instead of overwriting NOSTDINC_FLAGS our Makefile should extend
+NOSTDINC_FLAGS. The kernel also sets some options in NOSTDINC_FLAGS and
+we should not overwrite them.
+
+Without this change backports included the stddef.h from the libc.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/mmc/sdio_func.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ backport/Makefile.kernel | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/backport/backport-include/linux/mmc/sdio_func.h b/backport/backport-include/linux/mmc/sdio_func.h
-index 0a67f992..7ff926ae 100644
---- a/backport/backport-include/linux/mmc/sdio_func.h
-+++ b/backport/backport-include/linux/mmc/sdio_func.h
-@@ -83,4 +83,18 @@ static inline void sdio_retune_crc_enable(struct sdio_func *func)
- }
- #endif /* < 5.2 */
+diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
+index 5c966974..62baa945 100644
+--- a/backport/Makefile.kernel
++++ b/backport/Makefile.kernel
+@@ -4,7 +4,7 @@ ifeq ($(CONFIG_BACKPORT_INTEGRATE),)
+ backport-cc-disable-warning = $(call try-run,\
+ 	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -W$(strip $(1)) -c -x c /dev/null -o "$$TMP",-Wno-$(strip $(1)))
  
-+#ifndef module_sdio_driver
-+/**
-+ * module_sdio_driver() - Helper macro for registering a SDIO driver
-+ * @__sdio_driver: sdio_driver struct
-+ *
-+ * Helper macro for SDIO drivers which do not do anything special in module
-+ * init/exit. This eliminates a lot of boilerplate. Each module may only
-+ * use this macro once, and calling it replaces module_init() and module_exit()
-+ */
-+#define module_sdio_driver(__sdio_driver) \
-+	module_driver(__sdio_driver, sdio_register_driver, \
-+		      sdio_unregister_driver)
-+#endif
-+
- #endif /* __BACKPORT_MMC_SDIO_FUNC_H */
+-NOSTDINC_FLAGS := \
++NOSTDINC_FLAGS += \
+ 	-I$(M)/backport-include/ \
+ 	-I$(M)/backport-include/uapi \
+ 	-I$(M)/include/ \
+@@ -21,7 +21,7 @@ export backport_srctree = $(M)
+ else
+ export BACKPORT_DIR = backports/
+ export backport_srctree = $(BACKPORT_DIR)
+-NOSTDINC_FLAGS := \
++NOSTDINC_FLAGS += \
+ 	-I$(BACKPORT_DIR)/backport-include/ \
+ 	-I$(BACKPORT_DIR)/backport-include/uapi \
+ 	-I$(BACKPORT_DIR)/include/ \
 -- 
 2.20.1
 
