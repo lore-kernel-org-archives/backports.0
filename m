@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 359C4C83018
-	for <backports@archiver.kernel.org>; Tue,  1 Dec 2020 22:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC484C64E7A
+	for <backports@archiver.kernel.org>; Tue,  1 Dec 2020 22:06:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD2432085B
-	for <backports@archiver.kernel.org>; Tue,  1 Dec 2020 22:05:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 690E62085B
+	for <backports@archiver.kernel.org>; Tue,  1 Dec 2020 22:06:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="GLdpvriV"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="TxsmJo3n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730097AbgLAWF5 (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Tue, 1 Dec 2020 17:05:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60528 "EHLO
+        id S1730191AbgLAWGG (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Tue, 1 Dec 2020 17:06:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728261AbgLAWF4 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 1 Dec 2020 17:05:56 -0500
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [IPv6:2001:67c:2050::465:103])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DC06C0613CF
-        for <backports@vger.kernel.org>; Tue,  1 Dec 2020 14:04:46 -0800 (PST)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        with ESMTP id S1728261AbgLAWGG (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 1 Dec 2020 17:06:06 -0500
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [IPv6:2001:67c:2050::465:102])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 525DCC061A53
+        for <backports@vger.kernel.org>; Tue,  1 Dec 2020 14:04:45 -0800 (PST)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Clx3J5dcPzQlLl;
-        Tue,  1 Dec 2020 23:04:44 +0100 (CET)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4Clx3H730RzQlYB;
+        Tue,  1 Dec 2020 23:04:43 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
         t=1606860282;
@@ -37,64 +37,97 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=wRoFnEa7I+Fw1zlxenfb7qDtGsd73UMlyQf69c53wec=;
-        b=GLdpvriVsxyRiasWxq/VTNbpeKayZFfqnjQBR8RVEkd6Xx1MVJ9ak//0u0Axg35fl88/lz
-        7nNf1jMA6uPLtMiYmwSTOFLKckf1h60YYORi05wst05b/j9Uf04cpfeD5CcGqkET5O2Xe1
-        3W53HPKpMrftDXdcpRoj+hkE+0r24hQ6Y9mhKRzadLcvbgTMAS/sY8t6U1L1adUiMHICyb
-        M9LDw+RfsiolhDXt2cAXWGQ+uU5wBOMLh/RqSzbSAt75jnQjaCUEGnmyoehpWQMcK08/TD
-        sbneWNsITGN7WsjtF491TUiEWi90ecpUwPCbKuacWFNc1MipfCvxdkDVojWAfQ==
+        bh=jdvztZgq7dOKQLntR1EvCyz/XEvBlhWti94GW9v2mmY=;
+        b=TxsmJo3nRTIgogCcLg6HQD1oDBzBzfXlXat3QYi8dJyN14yZOc99BTakRhp7YR2mCTWBj+
+        gTtrXvDtvH6AK5KDaKnd6tJM0ZNFnQzUhPSBsJZkDHEJ6uzQJcucdnNOIiDX6TgWZ0Z/Tc
+        rqmFcUZhrmuk9bow2EPkRC3On1htnixvY6b7wX1Gr3DM1OyCB1rs6NnOWU7PLSUpUq8ix8
+        OB5YgGXBkZw1FeKLV7dauzQWEYbJkmbtKXwXfNkdzqWCXPJXucBK7C2UDFn5rsHWY0DLKh
+        tLd+ZsGtMoyjUOF5FGHAMVE2JUUHp3Ozs8u1kQGroXxHpc12uo7TsGpS3KoKJw==
 Received: from smtp1.mailbox.org ([80.241.60.240])
         by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
-        with ESMTP id bvdI46LcnkSZ; Tue,  1 Dec 2020 23:04:42 +0100 (CET)
+        with ESMTP id LZcogc_ZDVSM; Tue,  1 Dec 2020 23:04:41 +0100 (CET)
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 To:     backports@vger.kernel.org
 Cc:     johannes@sipsolutions.net, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 30/30] backports: Remove crypto/akcipher.h
-Date:   Tue,  1 Dec 2020 23:04:15 +0100
-Message-Id: <20201201220415.30582-31-hauke@hauke-m.de>
+Subject: [PATCH 28/30] backports: Make ieee80211_tx_status handling work on older kernel versions
+Date:   Tue,  1 Dec 2020 23:04:13 +0100
+Message-Id: <20201201220415.30582-29-hauke@hauke-m.de>
 In-Reply-To: <20201201220415.30582-1-hauke@hauke-m.de>
 References: <20201201220415.30582-1-hauke@hauke-m.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-MBO-SPAM-Probability: 
 X-Rspamd-Score: -4.76 / 15.00 / 15.00
-X-Rspamd-Queue-Id: EBF87665
-X-Rspamd-UID: 152a15
+X-Rspamd-Queue-Id: 1E4B81478
+X-Rspamd-UID: fca55e
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-crypto/akcipher.h is only used by code which was anyway removed in the
-patches/verify.patch patch from include/crypto/backport-public_key.h.
-
-Remove the include, because is not available on older kernel version.
+The commit f02dff93e26b ("mac80211: extend ieee80211_tx_status_ext to
+support bulk free") makes use of the list attribute in the skb, but this
+is not available in kernel < 4.19, use the sk_buff_head instead on these
+kernel versions.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- patches/verify.patch | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ patches/0097-skb-list/mac80211-status.patch | 47 +++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 patches/0097-skb-list/mac80211-status.patch
 
-diff --git a/patches/verify.patch b/patches/verify.patch
-index f76b6bf5..f1faff55 100644
---- a/patches/verify.patch
-+++ b/patches/verify.patch
-@@ -64,7 +64,15 @@
-  	struct x509_certificate *signer;	/* Certificate that signed this one */
- --- a/include/crypto/backport-public_key.h
- +++ b/include/crypto/backport-public_key.h
--@@ -53,34 +53,6 @@ extern void public_key_signature_free(st
-+@@ -12,7 +12,6 @@
+diff --git a/patches/0097-skb-list/mac80211-status.patch b/patches/0097-skb-list/mac80211-status.patch
+new file mode 100644
+index 00000000..ab968445
+--- /dev/null
++++ b/patches/0097-skb-list/mac80211-status.patch
+@@ -0,0 +1,47 @@
++Make ieee80211_tx_status handling work on older kernel versions
++
++The commit f02dff93e26b ("mac80211: extend ieee80211_tx_status_ext to
++support bulk free") makes use of the list attribute in the skb, but this
++is not available in kernel < 4.19, use the sk_buff_head instead on these
++kernel versions.
++
++--- a/include/net/mac80211.h
+++++ b/include/net/mac80211.h
++@@ -1132,7 +1132,11 @@ struct ieee80211_tx_status {
++ 	struct ieee80211_tx_info *info;
++ 	struct sk_buff *skb;
++ 	struct rate_info *rate;
+++#if LINUX_VERSION_IS_GEQ(4,19,0)
++ 	struct list_head *free_list;
+++#else
+++	struct sk_buff_head *free_list;
+++#endif
++ };
 + 
-+ #include <linux/keyctl.h>
-+ #include <linux/oid_registry.h>
-+-#include <crypto/akcipher.h>
++ /**
++--- a/net/mac80211/status.c
+++++ b/net/mac80211/status.c
++@@ -1033,7 +1033,11 @@ static void __ieee80211_tx_status(struct
++ 	 */
++ 	if (!local->monitors && (!send_to_cooked || !local->cooked_mntrs)) {
++ 		if (status->free_list)
+++#if LINUX_VERSION_IS_GEQ(4,19,0)
++ 			list_add_tail(&skb->list, status->free_list);
+++#else
+++			__skb_queue_tail(status->free_list, skb);
+++#endif
++ 		else
++ 			dev_kfree_skb(skb);
++ 		return;
++@@ -1183,7 +1187,11 @@ free:
 + 
-+ /*
-+  * Cryptographic data for the public-key subtype of the asymmetric key type.
-+@@ -53,34 +52,6 @@ extern void public_key_signature_free(st
-  
-  extern struct asymmetric_key_subtype public_key_subtype;
-  
++ 	ieee80211_report_used_skb(local, skb, false);
++ 	if (status->free_list)
+++#if LINUX_VERSION_IS_GEQ(4,19,0)
++ 		list_add_tail(&skb->list, status->free_list);
+++#else
+++		__skb_queue_tail(status->free_list, skb);
+++#endif
++ 	else
++ 		dev_kfree_skb(skb);
++ }
 -- 
 2.20.1
 
