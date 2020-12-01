@@ -7,117 +7,100 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F681C64E7A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB12EC71155
 	for <backports@archiver.kernel.org>; Tue,  1 Dec 2020 22:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4F1320709
-	for <backports@archiver.kernel.org>; Tue,  1 Dec 2020 22:05:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51B402085B
+	for <backports@archiver.kernel.org>; Tue,  1 Dec 2020 22:05:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="Z3jBg3uv"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="1tJTYJDM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730071AbgLAWF0 (ORCPT <rfc822;backports@archiver.kernel.org>);
+        id S1730033AbgLAWF0 (ORCPT <rfc822;backports@archiver.kernel.org>);
         Tue, 1 Dec 2020 17:05:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60530 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730033AbgLAWFZ (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 1 Dec 2020 17:05:25 -0500
+        with ESMTP id S1730057AbgLAWF0 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 1 Dec 2020 17:05:26 -0500
 Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050::465:101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 922ECC061A47
-        for <backports@vger.kernel.org>; Tue,  1 Dec 2020 14:04:36 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 933F2C061A04
+        for <backports@vger.kernel.org>; Tue,  1 Dec 2020 14:04:35 -0800 (PST)
 Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Clx371lCgzQlMH;
-        Tue,  1 Dec 2020 23:04:35 +0100 (CET)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Clx360n8bzQlM3;
+        Tue,  1 Dec 2020 23:04:34 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-        t=1606860273;
+        t=1606860272;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=lPLUzBNA+h18yV+tcQqwtCklbNQDSuPCnpenVLdke2Y=;
-        b=Z3jBg3uvgYqLxIDlmjIJxAUpCZUvHzL6O0SHSr2dQLCE1YQaCHpEGnfF2rNOKf/efu1lZa
-        U1BNcJaMi8f77d4oaJQ7HMa18uyznwrc93SMQww9uz00SK+laKmMfvRYKc11knU2zB6jSL
-        E0dhLHLNZQEerU7JRsCsxlrYpcUxPdQ2g3i6HnK8pRxa8pxe5MmyQH+ARidNKY4BzRrfJT
-        G3rDsVZqLfG+SElC3Icv+nJk9fDjTzz3CEnCHpTctRrHlKf0c2cvutNWp3hYgvDM81gjBT
-        /nFJcYedHqAtH5Lv8Hl7Bv24yKkmKrT+2FKd8n6X6Jxcs50PnZ4tE6/ZsCxDxg==
+        bh=8MK4dFZXovNdmf3Lj1g/E5itizXxEPGWlUmiNMgwbmE=;
+        b=1tJTYJDMqxQlEcMD6v2zaVQ4DKw9nzIJxTUSAGFz+Hk2dhiIohxezWzMmtgvEp9lUdPaMY
+        R1qvHk/rkq5x3YjjvFzouFDrrNIlcxX8Sgb7yVfaFtkYePg/rbloZva2pBagX0rmPXZmH4
+        OMU78cKaFsf0krYPYPYxnBvMLFSG7Q+OWcVZzFSQkobdYhbs2ShIzEziHhjuqOe1OG1nr/
+        jaFWvzw73e2MTkKdFdPS4MLqN6XgIbW4o2s78qs0jtG2fn62Nti4UG/IzhR64uDfa0VU52
+        tP8lhozVhYlATaMjof0gim6R3HDMBxhNpPD4E5HyzVa7chXE6igp6GlgezMQWA==
 Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
-        with ESMTP id xCf1j1dFtheE; Tue,  1 Dec 2020 23:04:31 +0100 (CET)
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id S6-DjB5eeW-J; Tue,  1 Dec 2020 23:04:31 +0100 (CET)
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 To:     backports@vger.kernel.org
-Cc:     johannes@sipsolutions.net, Shay Bar <shay.bar@celeno.com>
-Subject: [PATCH 07/30] backports: Add time64_to_tm and ipv6_mc_check_mld
-Date:   Tue,  1 Dec 2020 23:03:52 +0100
-Message-Id: <20201201220415.30582-8-hauke@hauke-m.de>
+Cc:     johannes@sipsolutions.net, Felix Fietkau <nbd@nbd.name>
+Subject: [PATCH 06/30] backports: add tasklet_setup, from_tasklet
+Date:   Tue,  1 Dec 2020 23:03:51 +0100
+Message-Id: <20201201220415.30582-7-hauke@hauke-m.de>
 In-Reply-To: <20201201220415.30582-1-hauke@hauke-m.de>
 References: <20201201220415.30582-1-hauke@hauke-m.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-SPAM-Probability: *
-X-Rspamd-Score: 1.07 / 15.00 / 15.00
-X-Rspamd-Queue-Id: 37C2B1832
-X-Rspamd-UID: 0d5484
+X-MBO-SPAM-Probability: 
+X-Rspamd-Score: -0.42 / 15.00 / 15.00
+X-Rspamd-Queue-Id: 1A26D1478
+X-Rspamd-UID: 4958e6
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-From: Shay Bar <shay.bar@celeno.com>
+From: Felix Fietkau <nbd@nbd.name>
 
-ipv6_mc_check_mld() was added in kernel version 4.2.0.
-The 2nd parameter was removed in kernel version 5.1.0.
+Add the new tasklet API
 
-time64_to_tm() was added in kernel version 4.8.0.
-
-Signed-off-by: Shay Bar <shay.bar@celeno.com>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
 ---
- backport/backport-include/linux/time.h   |  8 ++++++++
- backport/backport-include/net/addrconf.h | 15 +++++++++++++++
- 2 files changed, 23 insertions(+)
+ backport/backport-include/linux/interrupt.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/backport/backport-include/linux/time.h b/backport/backport-include/linux/time.h
-index 3191047d..ce8a1b03 100644
---- a/backport/backport-include/linux/time.h
-+++ b/backport/backport-include/linux/time.h
-@@ -4,4 +4,12 @@
- 
- #include <linux/time64.h>
- 
-+#if LINUX_VERSION_IS_LESS(4,8,0)
-+static inline void time64_to_tm(time64_t totalsecs, int offset,
-+				struct tm *result)
-+{
-+	time_to_tm((time_t)totalsecs, 0, result);
-+}
-+#endif
-+
- #endif /* __BACKPORT_LINUX_TIME_H */
-diff --git a/backport/backport-include/net/addrconf.h b/backport/backport-include/net/addrconf.h
-index f1e8e627..67d44e19 100644
---- a/backport/backport-include/net/addrconf.h
-+++ b/backport/backport-include/net/addrconf.h
-@@ -22,4 +22,19 @@ static inline bool ipv6_addr_is_solict_mult(const struct in6_addr *addr)
+diff --git a/backport/backport-include/linux/interrupt.h b/backport/backport-include/linux/interrupt.h
+index f7e7134d..f334a963 100644
+--- a/backport/backport-include/linux/interrupt.h
++++ b/backport/backport-include/linux/interrupt.h
+@@ -31,6 +31,23 @@ static inline void backport_hrtimer_start(struct hrtimer *timer, s64 time,
+ 	hrtimer_start(timer, _time, mode);
  }
- #endif /* LINUX_VERSION_IS_LESS(3,9,0) */
- 
-+#if LINUX_VERSION_IS_LESS(4,2,0)
-+static inline int ipv6_mc_check_mld(struct sk_buff *skb)
-+{
-+	WARN_ON(1);
+ #define hrtimer_start LINUX_BACKPORT(hrtimer_start)
 +
-+	return -1;
-+}
-+#elif LINUX_VERSION_IS_LESS(5,1,0)
-+static inline int backport_ipv6_mc_check_mld(struct sk_buff *skb)
-+{
-+	return ipv6_mc_check_mld(skb, NULL);
-+}
-+#define ipv6_mc_check_mld LINUX_BACKPORT(ipv6_mc_check_mld)
 +#endif
 +
- #endif	/* _BACKPORT_NET_ADDRCONF_H */
++#if LINUX_VERSION_IS_LESS(5,9,0)
++
++static inline void
++tasklet_setup(struct tasklet_struct *t,
++	      void (*callback)(struct tasklet_struct *))
++{
++	void (*cb)(unsigned long data) = (void *)callback;
++
++	tasklet_init(t, cb, (unsigned long)t);
++}
++
++#define from_tasklet(var, callback_tasklet, tasklet_fieldname) \
++	container_of(callback_tasklet, typeof(*var), tasklet_fieldname)
++
+ #endif
+ 
+ #endif /* _BP_LINUX_INTERRUPT_H */
 -- 
 2.20.1
 
