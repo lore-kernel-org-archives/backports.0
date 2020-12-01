@@ -7,159 +7,131 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78616C64E7A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5797C64E7B
 	for <backports@archiver.kernel.org>; Tue,  1 Dec 2020 22:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 179FA2085B
+	by mail.kernel.org (Postfix) with ESMTP id 5DDDA2086A
 	for <backports@archiver.kernel.org>; Tue,  1 Dec 2020 22:05:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="jLPRnWV0"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="pMfGirBl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbgLAWFO (ORCPT <rfc822;backports@archiver.kernel.org>);
+        id S1728214AbgLAWFO (ORCPT <rfc822;backports@archiver.kernel.org>);
         Tue, 1 Dec 2020 17:05:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60492 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728214AbgLAWFN (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 1 Dec 2020 17:05:13 -0500
+        with ESMTP id S1728654AbgLAWFO (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 1 Dec 2020 17:05:14 -0500
 Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [IPv6:2001:67c:2050::465:201])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98EF4C0613D6
-        for <backports@vger.kernel.org>; Tue,  1 Dec 2020 14:04:33 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 705F6C0617A6
+        for <backports@vger.kernel.org>; Tue,  1 Dec 2020 14:04:34 -0800 (PST)
 Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Clx335RsvzQlXQ;
-        Tue,  1 Dec 2020 23:04:31 +0100 (CET)
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Clx350CWPzQlXS;
+        Tue,  1 Dec 2020 23:04:33 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-        t=1606860269;
+        t=1606860271;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=8E2dwQ73UX5ObszCQbSIGK2G4xLbdCDJWiCpOWHz3bU=;
-        b=jLPRnWV05DfeVF5hc9l+JP6VBESOvDIE2KItrdUFHAdYwizJYFJL23ZgxOSN1dDCt0NNan
-        rcQIh0DS9M//T2sGdp3OpzjvJCM+A0Fz8egEjUbMWFq6pQn4vL6f/uV4wDuzIwsFMlrpmg
-        lQjeNWC2x+4qXLCEl3XHmXIPcEL1/alhpblZbZzhpN56xhGIC2zyTyqGfez/dYsnOlJ133
-        4ikM0yps4v4emO0UKwHz1mnWCYNFSDuYoST3+5vnqLJGtfEkzrO+kAFm6B4WqZHBd/DUIB
-        DWfbCeeUy4TefwrrMZUKgo9fnNfuiDyqzZxRxV81HjolRfV5zPiCD/kaaoXnLg==
+        bh=7kaptZvvkmCxe4m+7/dA3tIKE6XVyeB4jTS4cH6q9Pk=;
+        b=pMfGirBl28D1HuFr5jJ91MJDgyi969GU3ElGKKNgScWumNU+ceZyH2NWFmmhfbClY8rM7I
+        KhNGeqO2NkusSdSWYq+pNiDz9rbt6C+POY20zDUbomL60GtIRJzcR3xIIIM0v8vIBkjBb8
+        8gEf98zfkCv1a5S8B8ZBItLTB7uHBXXN9197QVEZMJOBlJNTMSDllvfKONmYlVSunfMGMV
+        eN6JDE0cj2OVmvHKxw3RUasnuWPCSx/h/LorCgrSXuuWFM0BCw8xSJK5yIcZv6i/wqLYUR
+        TyvF646hLK/9NCeJzFuHs4+hU/MMcf93EJJPuoWUyFWEqO4asLgbg5W6s9Pckg==
 Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id uuYEi-dXOPim; Tue,  1 Dec 2020 23:04:28 +0100 (CET)
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id 17-rqFMCe03g; Tue,  1 Dec 2020 23:04:30 +0100 (CET)
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 To:     backports@vger.kernel.org
 Cc:     johannes@sipsolutions.net, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 01/30] backports: Adapt to changes in Ubuntu mainline URLs
-Date:   Tue,  1 Dec 2020 23:03:46 +0100
-Message-Id: <20201201220415.30582-2-hauke@hauke-m.de>
+Subject: [PATCH 04/30] patches: Refresh on kernel 5.8.18
+Date:   Tue,  1 Dec 2020 23:03:49 +0100
+Message-Id: <20201201220415.30582-5-hauke@hauke-m.de>
 In-Reply-To: <20201201220415.30582-1-hauke@hauke-m.de>
 References: <20201201220415.30582-1-hauke@hauke-m.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-MBO-SPAM-Probability: 
-X-Rspamd-Score: -4.07 / 15.00 / 15.00
-X-Rspamd-Queue-Id: D0D581835
-X-Rspamd-UID: 95a8e3
+X-Rspamd-Score: -4.76 / 15.00 / 15.00
+X-Rspamd-Queue-Id: 1D86A665
+X-Rspamd-UID: 31db43
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-The .deb files are now located in the /amd64/ sub folder.
-Check not only for the _all header, but also check if there is at least
-one _generic deb file. This was missing in some recent releases by
-Ubuntu.
-
-Reorder the __init__ function to be able to provide the arch to
-_get_ubuntu_ppa_mainline_kernels().
+No manual changes needed.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- devel/backports-update-manager | 44 ++++++++++++++++++++++------------
- 1 file changed, 29 insertions(+), 15 deletions(-)
+ patches/0002-disable-dump-adjust-on-old-kernels.patch | 4 ++--
+ patches/0014-netlink_seq/net_wireless_nl80211.patch   | 2 +-
+ patches/0071-skb-head_frag/wireless.patch             | 2 +-
+ patches/0077-genl-ro-after-init/nl80211.patch         | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/devel/backports-update-manager b/devel/backports-update-manager
-index dc969725..2ef82854 100755
---- a/devel/backports-update-manager
-+++ b/devel/backports-update-manager
-@@ -37,6 +37,21 @@ def make_version_tuple(ver):
-             sver.append(-1)
-     return sver
+diff --git a/patches/0002-disable-dump-adjust-on-old-kernels.patch b/patches/0002-disable-dump-adjust-on-old-kernels.patch
+index ba34a516..4766e4c8 100644
+--- a/patches/0002-disable-dump-adjust-on-old-kernels.patch
++++ b/patches/0002-disable-dump-adjust-on-old-kernels.patch
+@@ -28,7 +28,7 @@ Date:   Fri Mar 1 14:03:49 2013 +0100
  
-+def parse_ubuntu_ppa_page(version, baseurl):
-+    html = urlopen(baseurl).read()
-+    if b'Build for amd64 failed' in html:
-+        return None
-+    pkgs = re.findall(b'href="linux-headers-[^"]*-generic_[^"]*\.deb"', html)
-+    if not pkgs:
-+        return None
-+    pkgs = re.findall(b'href="linux-headers-[^"]*_all\.deb"', html)
-+    if not pkgs:
-+        return None
-+    pkgs = [p[6:-1] for p in pkgs]
-+    pkgs.sort()
-+    pkg = pkgs[-1].decode('ascii')
-+    return (version, baseurl + pkg)
-+
- class backport_kernel_updater:
-     """
-     This is the Linux kernel backports kernel updater. It ensures you
-@@ -53,7 +68,7 @@ class backport_kernel_updater:
-         sys.exit(1)
- 
-     @classmethod
--    def _get_ubuntu_ppa_mainline_kernels(cls):
-+    def _get_ubuntu_ppa_mainline_kernels(cls, pkg_arch):
-         base = KPATH
-         html = urlopen(base).read()
-         builds = re.findall(b'href="([-v.0-9a-z]*)/"', html)
-@@ -96,17 +111,16 @@ class backport_kernel_updater:
-             for version in subvers:
-                 version = version[1]
- 
--                html = urlopen(base + version + '/').read()
--                if b'Build for amd64 failed' in html:
--                    continue
--                pkgs = re.findall(b'href="linux-headers-[^"]*_all\.deb"', html)
--                if not pkgs:
--                    continue
--                pkgs = [p[6:-1] for p in pkgs]
--                pkgs.sort()
--                pkg = pkgs[-1].decode('ascii')
--                result.append((version, base + version + '/' + pkg))
--                break
-+                baseurl = base + version + '/'
-+                pkgs = parse_ubuntu_ppa_page(version, baseurl)
-+                if pkgs:
-+                    result.append(pkgs)
-+                    break
-+                baseurl = base + version + '/' + pkg_arch + '/'
-+                pkgs = parse_ubuntu_ppa_page(version, baseurl)
-+                if pkgs:
-+                    result.append(pkgs)
-+                    break
- 
-         result.sort(key = lambda x: make_version_tuple(x[0][1:]))
-         return [x[1] for x in result]
-@@ -116,7 +130,9 @@ class backport_kernel_updater:
-                  reference=None):
-         self.ksrc_base = ""
-         self.ksrc_prefix = ""
--        self.kernel_urls = self._get_ubuntu_ppa_mainline_kernels()
-+        sysname, nodename, release, version, self.machine = os.uname()
-+        self.pkg_arch = self.pkg_arch(self.machine)
-+        self.kernel_urls = self._get_ubuntu_ppa_mainline_kernels(self.pkg_arch)
-         self.num_kernels = len(self.kernel_urls)
-         self.git_trees = GIT_TREES
-         self.git_trees_missing = list()
-@@ -134,8 +150,6 @@ class backport_kernel_updater:
-         self.reference = reference
-         self.reference_git = None
-         self.cwd = os.getcwd()
--        sysname, nodename, release, version, self.machine = os.uname()
--        self.pkg_arch = self.pkg_arch(self.machine)
-         if self.root:
-             self.ksrc_base = self.cwd + "/"
-             self.ksrc_prefix = self.ksrc_base + BACKPORTS_KSRC_DIR
+ --- a/net/wireless/nl80211.c
+ +++ b/net/wireless/nl80211.c
+-@@ -2680,6 +2680,7 @@ static int nl80211_dump_wiphy(struct sk_
++@@ -2683,6 +2683,7 @@ static int nl80211_dump_wiphy(struct sk_
+  						 cb->nlh->nlmsg_seq,
+  						 NLM_F_MULTI, state);
+  			if (ret < 0) {
+@@ -36,7 +36,7 @@ Date:   Fri Mar 1 14:03:49 2013 +0100
+  				/*
+  				 * If sending the wiphy data didn't fit (ENOBUFS
+  				 * or EMSGSIZE returned), this SKB is still
+-@@ -2701,6 +2702,7 @@ static int nl80211_dump_wiphy(struct sk_
++@@ -2704,6 +2705,7 @@ static int nl80211_dump_wiphy(struct sk_
+  					rtnl_unlock();
+  					return 1;
+  				}
+diff --git a/patches/0014-netlink_seq/net_wireless_nl80211.patch b/patches/0014-netlink_seq/net_wireless_nl80211.patch
+index e21045f9..f5ed7e2c 100644
+--- a/patches/0014-netlink_seq/net_wireless_nl80211.patch
++++ b/patches/0014-netlink_seq/net_wireless_nl80211.patch
+@@ -1,6 +1,6 @@
+ --- a/net/wireless/nl80211.c
+ +++ b/net/wireless/nl80211.c
+-@@ -9038,7 +9038,9 @@ static int nl80211_dump_scan(struct sk_b
++@@ -9042,7 +9042,9 @@ static int nl80211_dump_scan(struct sk_b
+  	if (start == 0)
+  		cfg80211_bss_expire(rdev);
+  
+diff --git a/patches/0071-skb-head_frag/wireless.patch b/patches/0071-skb-head_frag/wireless.patch
+index c4c49d99..83630eb8 100644
+--- a/patches/0071-skb-head_frag/wireless.patch
++++ b/patches/0071-skb-head_frag/wireless.patch
+@@ -1,6 +1,6 @@
+ --- a/net/wireless/util.c
+ +++ b/net/wireless/util.c
+-@@ -676,7 +676,11 @@ void ieee80211_amsdu_to_8023s(struct sk_
++@@ -678,7 +678,11 @@ void ieee80211_amsdu_to_8023s(struct sk_
+  	u8 *payload;
+  	int offset = 0, remaining;
+  	struct ethhdr eth;
+diff --git a/patches/0077-genl-ro-after-init/nl80211.patch b/patches/0077-genl-ro-after-init/nl80211.patch
+index bbc46c13..0864dca0 100644
+--- a/patches/0077-genl-ro-after-init/nl80211.patch
++++ b/patches/0077-genl-ro-after-init/nl80211.patch
+@@ -1,6 +1,6 @@
+ --- a/net/wireless/nl80211.c
+ +++ b/net/wireless/nl80211.c
+-@@ -15242,7 +15242,7 @@ static const struct genl_ops nl80211_ops
++@@ -15246,7 +15246,7 @@ static const struct genl_ops nl80211_ops
+  	},
+  };
+  
 -- 
 2.20.1
 
