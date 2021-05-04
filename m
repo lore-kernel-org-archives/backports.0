@@ -2,85 +2,75 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D71C433B4
-	for <backports@archiver.kernel.org>; Sun,  2 May 2021 22:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F2EC433B4
+	for <backports@archiver.kernel.org>; Tue,  4 May 2021 20:59:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E20C76112D
-	for <backports@archiver.kernel.org>; Sun,  2 May 2021 22:26:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24DD2613C3
+	for <backports@archiver.kernel.org>; Tue,  4 May 2021 20:59:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232358AbhEBW1g (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Sun, 2 May 2021 18:27:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37234 "EHLO
+        id S232580AbhEDVAW (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Tue, 4 May 2021 17:00:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232330AbhEBW1f (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sun, 2 May 2021 18:27:35 -0400
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [IPv6:2001:67c:2050::465:102])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1694C06174A
-        for <backports@vger.kernel.org>; Sun,  2 May 2021 15:26:43 -0700 (PDT)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4FYLLT3jWVzQjlj;
-        Mon,  3 May 2021 00:26:41 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-        t=1619994398;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=3BkBSPg/sv281R/EXGXsDfLgX91P1xSpBkRN7c0nNNw=;
-        b=x61osWGxts++zpO+lEzYzvs7CkbLQzAIcf58y4F17oToJEldB0OYc+/al32xS+xyozmfeC
-        y3aooV2094eXaDWno/IsZksoPasHKzytjHmM98WWllXtIOTYK0+EfTQJ8rrsU0Mbp9bECk
-        GjXunwBj2XXEl4HIetFTpWbwUsRGtjCHytTqJPQZFiG7d0ZmJhtEDQcU5NIX+MbaplWKS7
-        vu05gUVKNHu57UDH1kERqkORPb9Vx7JdThbb3IPO5P7INdyFfy4orP8R5xsvjFEr1H0YWt
-        Il7HHD+xVrwY5h/gvO1ILres2NCsPZZ+kR5hB3pGou7+ZlAQud+nOUg9A3myKA==
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id opQho1UMnEdf; Mon,  3 May 2021 00:26:37 +0200 (CEST)
-From:   Hauke Mehrtens <hauke@hauke-m.de>
+        with ESMTP id S232455AbhEDVAW (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 4 May 2021 17:00:22 -0400
+Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22949C061574
+        for <backports@vger.kernel.org>; Tue,  4 May 2021 13:59:27 -0700 (PDT)
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.94.2)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1le28b-004B2p-EC; Tue, 04 May 2021 22:59:25 +0200
+From:   Johannes Berg <johannes@sipsolutions.net>
 To:     backports@vger.kernel.org
-Cc:     Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH] backports: handle HTTP 404 from ubuntu mainline storage
-Date:   Mon,  3 May 2021 00:26:32 +0200
-Message-Id: <20210502222632.165399-1-hauke@hauke-m.de>
+Cc:     Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] backports: suppress errors from 'make kernelversion'
+Date:   Tue,  4 May 2021 22:59:20 +0200
+Message-Id: <20210504225919.393f7f931e90.I3aace2170f657561190f0473f2affafc850559b3@changeid>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-SPAM-Probability: 
-X-Rspamd-Score: -2.15 / 15.00 / 15.00
-X-Rspamd-Queue-Id: E05CC679
-X-Rspamd-UID: d9f5af
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- devel/backports-update-manager | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+From: Johannes Berg <johannes.berg@intel.com>
 
-diff --git a/devel/backports-update-manager b/devel/backports-update-manager
-index 2ef82854..4d63de8c 100755
---- a/devel/backports-update-manager
-+++ b/devel/backports-update-manager
-@@ -38,7 +38,11 @@ def make_version_tuple(ver):
-     return sver
- 
- def parse_ubuntu_ppa_page(version, baseurl):
--    html = urlopen(baseurl).read()
-+    try:
-+       html = urlopen(baseurl).read()
-+    except:
-+        return None
-+
-     if b'Build for amd64 failed' in html:
-         return None
-     pkgs = re.findall(b'href="linux-headers-[^"]*-generic_[^"]*\.deb"', html)
+Since kernel 5.8, specifically commit 4d0831e8a029 ("kconfig: unify
+cc-option and as-option"), 'make kernelversion' will call into the
+Kconfig system, evaluating cc-option from scripts/Kconfig.include,
+which requires a writable current working directory due to the use
+of ".tmp_<pid>" for temporary files. This seems questionable, but
+since the kernelversion really isn't affected, we can ignore it.
+
+I also mentioned this upstream, see the thread after the commit:
+https://lore.kernel.org/r/20200614144341.1077495-2-masahiroy@kernel.org
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/backport/Makefile b/backport/Makefile
+index ee7df4ba29ce..2bdea02d4a46 100644
+--- a/backport/Makefile
++++ b/backport/Makefile
+@@ -84,8 +84,8 @@ mrproper:
+ 				echo ""							;\
+ 			done								\
+ 		) > Kconfig.kernel							;\
+-		kver=$$($(MAKE) --no-print-directory -C $(KLIB_BUILD) kernelversion |	\
+-			sed 's/^\(\([3-5]\|2\.6\)\.[0-9]\+\).*/\1/;t;d')		;\
++		kver=$$($(MAKE) --no-print-directory -C $(KLIB_BUILD) kernelversion 	\
++			2>/dev/null | sed 's/^\(\([3-5]\|2\.6\)\.[0-9]\+\).*/\1/;t;d')	;\
+ 		test "$$kver" != "" || echo "Kernel version parse failed!"		;\
+ 		test "$$kver" != ""							;\
+ 		kvers="$$(seq 14 39 | sed 's/^/2.6./')"					;\
 -- 
 2.30.2
 
