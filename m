@@ -2,43 +2,43 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4212C11F67
-	for <backports@archiver.kernel.org>; Thu,  1 Jul 2021 22:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C206BC07E99
+	for <backports@archiver.kernel.org>; Mon,  5 Jul 2021 17:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A96A561353
-	for <backports@archiver.kernel.org>; Thu,  1 Jul 2021 22:55:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A164761946
+	for <backports@archiver.kernel.org>; Mon,  5 Jul 2021 17:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233933AbhGAW5z (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Thu, 1 Jul 2021 18:57:55 -0400
-Received: from dispatch1-us1.ppe-hosted.com ([67.231.154.164]:35026 "EHLO
+        id S229783AbhGERuM (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Mon, 5 Jul 2021 13:50:12 -0400
+Received: from dispatch1-us1.ppe-hosted.com ([67.231.154.184]:55196 "EHLO
         dispatch1-us1.ppe-hosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232807AbhGAW5w (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 1 Jul 2021 18:57:52 -0400
+        by vger.kernel.org with ESMTP id S229686AbhGERuL (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 5 Jul 2021 13:50:11 -0400
 X-Virus-Scanned: Proofpoint Essentials engine
-Received: from mx1-us1.ppe-hosted.com (unknown [10.110.51.168])
-        by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTPS id B6588A006C;
-        Thu,  1 Jul 2021 22:55:20 +0000 (UTC)
+Received: from mx1-us1.ppe-hosted.com (unknown [10.110.51.175])
+        by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTPS id C8B7B20061;
+        Mon,  5 Jul 2021 17:47:33 +0000 (UTC)
 Received: from mail3.candelatech.com (mail2.candelatech.com [208.74.158.173])
-        by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id 69F6D880069;
-        Thu,  1 Jul 2021 22:55:20 +0000 (UTC)
+        by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id 5F4968C006A;
+        Mon,  5 Jul 2021 17:47:33 +0000 (UTC)
 Received: from [192.168.100.195] (50-251-239-81-static.hfc.comcastbusiness.net [50.251.239.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail3.candelatech.com (Postfix) with ESMTPSA id C73EA13C2B1;
-        Thu,  1 Jul 2021 15:55:19 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com C73EA13C2B1
+        by mail3.candelatech.com (Postfix) with ESMTPSA id 3479913C2B3;
+        Mon,  5 Jul 2021 10:47:29 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com 3479913C2B3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
-        s=default; t=1625180119;
-        bh=fhlUKFK10csmHMfZ2jBQlTmLHacTgO6l7k87QnyF2q4=;
+        s=default; t=1625507249;
+        bh=/7KF+7irV/f55XOd/u1PtVxozgKVuIwNpHSlEex5N04=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=HBHJXnpnHQETRipNZwqgkvRzgGPvsWKOHI6j8LtgaRV8edQ6zXpTcLQL7koRU+p7x
-         TMdx+nHsqLIUql/iEwD3r38octvTWtChvQOnnTyPJFT4uSyebDQA1tu/VyjDabaZ2x
-         /FW9UlYBIPOkxQYzc8ZjFSGAtYy9B8LWY0ohSLfk=
+        b=KVa+d3Tf/CDfnBPaimm/tDzY09i1jvAlHR3v0W4+kc4cJD+Jh6/42w6aNyXc5b8I5
+         03J2UurGNQwh3PXhlMQSyg72YEfE1T9VWl4ERgzWjspsR6u/bMAh3s7U8qobgWbgsW
+         uAsvKWdKJzxHV2GqynFWKeB4CZNkUN36eyDdPkDo=
 Subject: Re: backports spatch question
 To:     Johannes Berg <johannes@sipsolutions.net>,
         Hauke Mehrtens <hauke@hauke-m.de>
@@ -49,8 +49,8 @@ References: <e26b0d55-8662-ecf7-6630-ac23a99374b5@candelatech.com>
  <6260cc7d2771a5d67e04736a036ae23c8441c57d.camel@sipsolutions.net>
 From:   Ben Greear <greearb@candelatech.com>
 Organization: Candela Technologies
-Message-ID: <91aec554-c4e3-3a1f-8283-f857c6cf8af3@candelatech.com>
-Date:   Thu, 1 Jul 2021 15:55:19 -0700
+Message-ID: <31776ce8-7014-b3ed-41bf-121e8ce5001c@candelatech.com>
+Date:   Mon, 5 Jul 2021 10:47:28 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
@@ -58,7 +58,7 @@ In-Reply-To: <6260cc7d2771a5d67e04736a036ae23c8441c57d.camel@sipsolutions.net>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-MDID: 1625180121-ftODrrkZmmoA
+X-MDID: 1625507254-r_m_srwwf7C8
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
@@ -81,25 +81,77 @@ On 7/1/21 2:51 PM, Johannes Berg wrote:
 > johannes
 > 
 
-I get the same error on F33, with same version of spatch as you show above.
+I hacked through this by removing the offending spatches.  Seems to have worked OK
+since the kernels I am using are relatively recent.
 
-Maybe I broke something trying to update the patches to work against my 5.13 tree
-(and, in case you can use any of those patches when you do your own port to 5.13,
-  of course feel free to grab them from my tree.)
+I spent a while getting the mac80211 patches from owrt tweaked or otherwise
+resolved so that it would patch against my backports tree.
 
-If you have time to try it out:
+But now I'm having trouble with rfkill and not sure best way forward.  Is backports
+supposed to take care of this somehow, or do I need to go hacking in openwrt?
 
-Here is my backports project tree:
 
-https://github.com/greearb/backports-project-5.13
+Building backport-include/backport/autoconf.h ... done.
+   CC [M]  /home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/compat/main.o
+   LD [M]  /home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/compat/compat.o
+   CC [M]  /home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/net/wireless/core.o
+In file included from 
+/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/net/wireless/core.c:26:
+/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/include/net/cfg80211.h:6653:16: 
+warning: 'enum rfkill_hard_block_reasons' declared inside parameter list will not be visible outside of this definition or declaration
+            enum rfkill_hard_block_reasons reason);
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~
+/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/include/net/cfg80211.h: In 
+function 'wiphy_rfkill_set_hw_state':
+/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/include/net/cfg80211.h:6658:7: 
+error: 'RFKILL_HARD_BLOCK_SIGNAL' undeclared (first use in this function)
+        RFKILL_HARD_BLOCK_SIGNAL);
+        ^~~~~~~~~~~~~~~~~~~~~~~~
+/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/include/net/cfg80211.h:6658:7: 
+note: each undeclared identifier is reported only once for each function it appears in
+/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/include/net/cfg80211.h:6658:7: 
+error: type of formal parameter 3 is incomplete
+/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/net/wireless/core.c: At 
+top level:
+/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/net/wireless/core.c:1125:16: 
+warning: 'enum rfkill_hard_block_reasons' declared inside parameter list will not be visible outside of this definition or declaration
+            enum rfkill_hard_block_reasons reason)
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~
+/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/net/wireless/core.c:1125:42: 
+error: parameter 3 ('reason') has incomplete type
+            enum rfkill_hard_block_reasons reason)
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/net/wireless/core.c: In 
+function 'wiphy_rfkill_set_hw_state_reason':
+/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/net/wireless/core.c:1129:6: 
+error: implicit declaration of function 'rfkill_set_hw_state_reason'; did you mean 'wiphy_rfkill_set_hw_state_reason'? [-Werror=implicit-function-declaration]
+   if (rfkill_set_hw_state_reason(rdev->rfkill, blocked, reason))
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+       wiphy_rfkill_set_hw_state_reason
+cc1: some warnings being treated as errors
+make[9]: *** [scripts/Makefile.build:279: 
+/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/net/wireless/core.o] Error 1
+make[8]: *** [scripts/Makefile.build:496: 
+/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/net/wireless] Error 2
+make[7]: *** [Makefile:1810: 
+/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0] Error 2
+make[6]: *** [Makefile.build:13: modules] Error 2
+make[5]: *** [Makefile.real:93: modules] Error 2
+make[4]: *** [Makefile:121: modules] Error 2
+make[4]: Leaving directory '/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0'
+make[3]: *** [Makefile:561: 
+/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/backports-ct-5.13.0/.built] Error 2
+make[3]: Leaving directory '/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/package/kernel/mac80211'
+time: package/kernel/mac80211/compile#3.68#1.38#4.72
+     ERROR: package/kernel/mac80211 failed to build.
+make[2]: *** [package/Makefile:114: package/kernel/mac80211/compile] Error 1
+make[2]: Leaving directory '/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt'
+make[1]: *** [package/Makefile:108: /home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/staging_dir/target-aarch64_cortex-a53_musl/stamp/.package_compile] Error 2
+make[1]: Leaving directory '/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt'
+make: *** [/home/greearb/git/tip/wlan-ap-ct-e8450-new/openwrt/include/toplevel.mk:230: world] Error 2
 
-And this is the tree I'm trying to generate from:
+Compilation exited abnormally with code 2 at Mon Jul  5 10:21:42
 
-https://github.com/greearb/linux-ct-5.13
-
-I cloned both in ~/git and ran from ~/git/backports/:
-
-./gentree.py --clean ~/git/linux-5.13.dev.y/ ~/tmp/backports
 
 Thanks,
 Ben
