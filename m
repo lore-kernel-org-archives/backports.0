@@ -1,84 +1,99 @@
 Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7675BC432BE
-	for <backports@archiver.kernel.org>; Fri, 27 Aug 2021 12:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09074C433EF
+	for <backports@archiver.kernel.org>; Mon, 11 Oct 2021 22:23:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3EB8E608FB
-	for <backports@archiver.kernel.org>; Fri, 27 Aug 2021 12:01:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE49460EB4
+	for <backports@archiver.kernel.org>; Mon, 11 Oct 2021 22:23:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231271AbhH0MCE (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Fri, 27 Aug 2021 08:02:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43248 "EHLO
+        id S235537AbhJKWY7 (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Mon, 11 Oct 2021 18:24:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231191AbhH0MCD (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 27 Aug 2021 08:02:03 -0400
-Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4C81C061757
-        for <backports@vger.kernel.org>; Fri, 27 Aug 2021 05:01:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Content-Type:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
-        Resent-Message-ID:In-Reply-To:References;
-        bh=euqNv0m1fUnbjhqTfsXvjGX3p6qY1f1+4V65SMV43o4=; t=1630065674; x=1631275274; 
-        b=hHl7cRolw8G6slk+PzJ8IRlwnYb2TcqpF2+pC139GdmVSM+vFO19Wosp1ltp4n0sZYnrfkMvQTt
-        GrZf7iZMAPJYk4apnuk1WBgQxh5wEdymCj/X97qw3BaU1g9GwHJtOUxAwfvMvnWSTQt+co2bbDtrP
-        +IkYedY66fXpVGDVvlfRqVrcupEY+vKdpyKVPZzi9T20Gw/m8Q4Ggu8DgVsQD/ysARvXNKF/9Zt6R
-        k9fX8OaOyB4sxdca+2X6kyZV7Fwv8PiQuJqLm8w3IfgVKWYciLTB7/4w/YZyYMkrXO1XdkTQCr+Wm
-        2T43m8ePMChtxtBA+0col0TAN0sJw3+hoetg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.94.2)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1mJaXm-00GbMM-KF; Fri, 27 Aug 2021 14:01:10 +0200
-From:   Johannes Berg <johannes@sipsolutions.net>
+        with ESMTP id S235528AbhJKWY6 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 11 Oct 2021 18:24:58 -0400
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [IPv6:2001:67c:2050::465:201])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90B2CC061745
+        for <backports@vger.kernel.org>; Mon, 11 Oct 2021 15:22:57 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4HStbK4TMNzQjwN;
+        Tue, 12 Oct 2021 00:22:53 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
+        t=1633990971;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YA/GL2PaUe9pIHOkyQuV9WYlp72H86e0w3jxEVBT/JU=;
+        b=Vkf74Rvq1rS03sLjAx5YbwZ96NyvnHrFObxPrdUVbNUg41m8Taa05rTKO8BDUsymDJcpqi
+        11s1Mr8pjekxFO++2EInFKuvLIGoE51DxnR8Whfr1d3a6tbkptuw4FkokFGAAP4XLYJMSD
+        ZEfCLK04KAVXCOgbNRAaaf271+/pIkWQYgg9TRU/OopvObUuPHdvef3MeUn406emc5uyk+
+        N9v3Ow13kbP19k3hQWh50mGLovqptvLDjebv7DDWuhY6JPkzLujrN+2b2/8ZK88Fl6ouIZ
+        9c553Q2Y4tQnk9WtKre6Y2so8CvHCnF6B/FyuJCqQ+anLBuydIUt/9Akzq4fNw==
+From:   Hauke Mehrtens <hauke@hauke-m.de>
 To:     backports@vger.kernel.org
-Cc:     Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] gentree: fix $(srctree)/$(src) adjustment
-Date:   Fri, 27 Aug 2021 14:01:08 +0200
-Message-Id: <20210827140108.ba4d435eaf5e.I3808fb9cfaa17561ed46170716158fbc1e008333@changeid>
-X-Mailer: git-send-email 2.31.1
+Cc:     johannes.berg@intel.com, Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 02/14] backports: cmake: Fixes for python3
+Date:   Tue, 12 Oct 2021 00:22:15 +0200
+Message-Id: <20211011222227.1189850-3-hauke@hauke-m.de>
+In-Reply-To: <20211011222227.1189850-1-hauke@hauke-m.de>
+References: <20211011222227.1189850-1-hauke@hauke-m.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: D5B0518B6
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+Make ckmake work with python3.
 
-We did an adjustment here, but only did it prefixed with -I,
-but a long time ago cfg80211 started doing $(srctree)/$(src)
-for the built-in certificates as well.
-
-Fix the regex to always apply this also to other occurrences,
-not just in cflags.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- gentree.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ devel/ckmake | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/gentree.py b/gentree.py
-index 1fc9dbb1dc37..2a9f60d7384b 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -1043,7 +1043,7 @@ def process(kerneldir, copy_list_file, git_revision=None,
-             for r in regexes:
-                 data = r.sub(r'' + bpid.full_prefix + '\\1', data)
-             # we have an absolue path in $(src) since we compile out of tree
--            data = re.sub(r'-I ?\$\(srctree\)/\$\(src\)', '-I$(src)', data)
-+            data = re.sub(r'\$\(srctree\)/\$\(src\)', '$(src)', data)
-             data = re.sub(r'\$\(srctree\)', '$(backport_srctree)', data)
-             data = re.sub(r'-Idrivers', '-I$(backport_srctree)/drivers', data)
-             if bpid.integrate:
+diff --git a/devel/ckmake b/devel/ckmake
+index d16de3a7..9252df84 100755
+--- a/devel/ckmake
++++ b/devel/ckmake
+@@ -20,7 +20,7 @@ import subprocess
+ import sys
+ import signal
+ 
+-from Queue import Queue
++from queue import Queue
+ from threading import Thread, Lock
+ from shutil import copytree, ignore_patterns, rmtree, copyfileobj
+ from time import sleep
+@@ -232,7 +232,6 @@ def cpu_info_build_jobs():
+ 
+ def kill_curses():
+     curses.endwin()
+-    sys.stdout = os.fdopen(0, 'w', 0)
+ 
+ 
+ def sig_handler(signal, frame):
+@@ -643,10 +642,10 @@ if __name__ == "__main__":
+             target_kranges.append(krange)
+ 
+     if not os.path.exists(modules):
+-        print "%s does not exist" % (modules)
++        print ("%s does not exist" % (modules))
+         sys.exit(1)
+     if not os.path.exists(my_cwd + '/Makefile'):
+-        print "%s does not exist" % (my_cwd + '/Makefile')
++        print ("%s does not exist" % (my_cwd + '/Makefile'))
+         sys.exit(1)
+     if os.path.exists(ckmake_log):
+         os.remove(ckmake_log)
 -- 
-2.31.1
+2.30.2
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
