@@ -2,27 +2,27 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA83C43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F714C433FE
 	for <backports@archiver.kernel.org>; Mon, 11 Oct 2021 22:23:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7397C60EB4
+	by mail.kernel.org (Postfix) with ESMTP id 268E360EB4
 	for <backports@archiver.kernel.org>; Mon, 11 Oct 2021 22:23:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235543AbhJKWZL (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Mon, 11 Oct 2021 18:25:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39740 "EHLO
+        id S235542AbhJKWZK (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Mon, 11 Oct 2021 18:25:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235541AbhJKWZC (ORCPT
+        with ESMTP id S235543AbhJKWZC (ORCPT
         <rfc822;backports@vger.kernel.org>); Mon, 11 Oct 2021 18:25:02 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [IPv6:2001:67c:2050::465:202])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8E21C061749
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050::465:101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8EB8C06174E
         for <backports@vger.kernel.org>; Mon, 11 Oct 2021 15:23:00 -0700 (PDT)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4HStbR28CWzQkhP;
-        Tue, 12 Oct 2021 00:22:59 +0200 (CEST)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4HStbQ5vGQzQl12;
+        Tue, 12 Oct 2021 00:22:58 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
         t=1633990977;
@@ -30,409 +30,663 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Ak8k9NmnHwKLspMeZifUzgwPewNaLth3AddZAF4hl70=;
-        b=Gxp1iKBs2pkDeNZ9x6GAWRBEjI/27yDKcgv/B57tgMbRoPU2llqwnK3IV2NApXGx/nq/vz
-        Pew72tqOEvigXDkRbTY37KA7eWCKBgbzrgzD7NK598FIiQwDHOHPkRzsehWOnKTfeenAY4
-        IT7DW7KyAF361a9EZuB4MXyqnzaXvuliRA19ufCzvpeCY2rWItE/QuLEPaTFUNHqdxWwNI
-        AiEltXjGLSvUme+ekgViEM197ljykbnIZO8ksv1nubpZb849fMdCryTU7he01U/VGc86RA
-        bcWQsNQCPDdZ7vHqLEVVwg+SJ4nn/nSZtOsNfuwiRCF9GksFyDZsd601f06FdQ==
+        bh=wjgQlOpYSB4DlKoF3QUeexVTYFSgcApnA6fP2SyfNuY=;
+        b=MXLDBOxcVGDbO3OMfo+Bi/hfQYdro3yAahiYtNiOiMvoVNrt+5MUZ/vckoA599H1ZlZJLJ
+        f6UTHgUS8l1orGdSStiuyPbfiYA5ekl5BttTG/JD6KX+WmN2OMxklStWTjfa2x0QE9Zo9a
+        wiN0mUxqhNKAQKBieGTHDIiZrQ2P052UiK2LqyO6H+p9QcAwczpHrzI/44jj58G4KA0uLa
+        ocPNmXm4W7NQhgjEz9brtxBlzjzR2Oh0KZqTZ2QJ8xcuaFoDLPhaxkytAEaj8wM/XkXGiK
+        utweMP4G90NMsUuLBexqjmWDHzTXpyp5sDg1VYTPqX5eRy0CRyzcCWNab1T8kQ==
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 To:     backports@vger.kernel.org
 Cc:     johannes.berg@intel.com, Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 14/14] backports: Remove support for kernel smaller than 4.4
-Date:   Tue, 12 Oct 2021 00:22:27 +0200
-Message-Id: <20211011222227.1189850-15-hauke@hauke-m.de>
+Subject: [PATCH 11/14] backports: Remove support for kernel smaller than 4.1
+Date:   Tue, 12 Oct 2021 00:22:24 +0200
+Message-Id: <20211011222227.1189850-12-hauke@hauke-m.de>
 In-Reply-To: <20211011222227.1189850-1-hauke@hauke-m.de>
 References: <20211011222227.1189850-1-hauke@hauke-m.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 8B74918B7
+X-Rspamd-Queue-Id: 1EB5118B4
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-This removes all the code which is needed to support kernel 4.3.
+This removes all the code which is needed to support kernel 4.0.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- README                                       |   2 +-
- backport/backport-include/linux/debugfs.h    |  30 -----
- backport/backport-include/linux/mei_cl_bus.h |  22 ----
- backport/backport-include/linux/netdevice.h  |   8 --
- backport/backport-include/linux/of_address.h |  18 ---
- backport/backport-include/net/netlink.h      |  22 ----
- backport/backport-include/net/tso.h          |  33 -----
- backport/compat/Makefile                     |   1 -
- backport/compat/backport-4.4.c               | 124 -------------------
- patches/0065-ndisc_send_na-argument.cocci    |   9 --
- 10 files changed, 1 insertion(+), 268 deletions(-)
- delete mode 100644 backport/backport-include/linux/mei_cl_bus.h
- delete mode 100644 backport/backport-include/linux/of_address.h
- delete mode 100644 backport/backport-include/net/tso.h
- delete mode 100644 backport/compat/backport-4.4.c
- delete mode 100644 patches/0065-ndisc_send_na-argument.cocci
+ README                                        |   2 +-
+ .../backport-include/linux/bcm47xx_nvram.h    |   5 -
+ backport/backport-include/linux/device.h      |  19 --
+ backport/backport-include/linux/netdevice.h   |  22 ---
+ backport/backport-include/linux/of_device.h   |   4 +-
+ backport/backport-include/linux/tty.h         |   5 -
+ backport/backport-include/net/iw_handler.h    |  23 ---
+ backport/backport-include/net/net_namespace.h |  34 ----
+ backport/backport-include/net/netlink.h       |  30 ---
+ backport/compat/Makefile                      |   1 -
+ backport/compat/backport-4.1.c                |  84 ---------
+ patches/0053-possible_net_t.patch             |  19 --
+ patches/0054-struct-proto_ops-sig.cocci       | 177 ------------------
+ patches/0058-ptp_getsettime64/INFO            |  11 --
+ .../ptp_getsettime64.cocci                    |  33 ----
+ 15 files changed, 2 insertions(+), 467 deletions(-)
+ delete mode 100644 backport/backport-include/linux/device.h
+ delete mode 100644 backport/backport-include/net/net_namespace.h
+ delete mode 100644 backport/compat/backport-4.1.c
+ delete mode 100644 patches/0053-possible_net_t.patch
+ delete mode 100644 patches/0054-struct-proto_ops-sig.cocci
+ delete mode 100644 patches/0058-ptp_getsettime64/INFO
+ delete mode 100644 patches/0058-ptp_getsettime64/ptp_getsettime64.cocci
 
 diff --git a/README b/README
-index acc0d7cd..f9cf7248 100644
+index e283d766..2316fb99 100644
 --- a/README
 +++ b/README
 @@ -8,7 +8,7 @@ down to older kernels. It currently backports the following subsystems:
    * WWAN
  
  This package provides the latest Linux kernel subsystem enhancements
--for kernels 4.3 and above.
-+for kernels 4.4 and above.
+-for kernels 4.0 and above.
++for kernels 4.1 and above.
  
  # Documentation
  
-diff --git a/backport/backport-include/linux/debugfs.h b/backport/backport-include/linux/debugfs.h
-index e342a38a..af401cf5 100644
---- a/backport/backport-include/linux/debugfs.h
-+++ b/backport/backport-include/linux/debugfs.h
-@@ -3,22 +3,6 @@
- #include_next <linux/debugfs.h>
+diff --git a/backport/backport-include/linux/bcm47xx_nvram.h b/backport/backport-include/linux/bcm47xx_nvram.h
+index 5295a023..d79f7c52 100644
+--- a/backport/backport-include/linux/bcm47xx_nvram.h
++++ b/backport/backport-include/linux/bcm47xx_nvram.h
+@@ -2,12 +2,7 @@
+ #define __BACKPORTS_BCM47XX_NVRAM_H
  #include <linux/version.h>
- #include <linux/device.h>
--#include <generated/utsrelease.h>
--
--#if LINUX_VERSION_IS_LESS(4,4,0)
--#define debugfs_create_bool LINUX_BACKPORT(debugfs_create_bool)
--#ifdef CONFIG_DEBUG_FS
--struct dentry *debugfs_create_bool(const char *name, umode_t mode,
--				   struct dentry *parent, bool *value);
+ 
+-#if LINUX_VERSION_IS_GEQ(4,1,0)
+ #include_next <linux/bcm47xx_nvram.h>
 -#else
--static inline struct dentry *
--debugfs_create_bool(const char *name, umode_t mode,
--		    struct dentry *parent, bool *value)
--{
--	return ERR_PTR(-ENODEV);
--}
+-#include <linux/types.h>
+-#include <linux/kernel.h>
 -#endif
--#endif /* LINUX_VERSION_IS_LESS(4,4,0) */
  
- #if LINUX_VERSION_IS_LESS(4,9,0) && \
-     !LINUX_VERSION_IN_RANGE(4,8,4, 4,9,0) && \
-@@ -41,20 +25,6 @@ debugfs_real_fops(const struct file *filp)
- 	debugfs_create_file(name, mode, parent, data, fops)
- #endif
- 
--#if LINUX_VERSION_IS_LESS(4,4,0)
--static inline struct dentry *
--debugfs_create_ulong(const char *name, umode_t mode,
--		     struct dentry *parent, unsigned long *value)
--{
--	if (sizeof(unsigned long) == sizeof(u64))
--		return debugfs_create_u64(name, mode, parent, (u64 *)value);
--	if (sizeof(unsigned long) == sizeof(u32))
--		return debugfs_create_u32(name, mode, parent, (u32 *)value);
--	WARN_ON(1);
--	return ERR_PTR(-EINVAL);
--}
--#endif
--
- #if LINUX_VERSION_IS_LESS(5,5,0)
- static inline void debugfs_create_xul(const char *name, umode_t mode,
- 				      struct dentry *parent,
-diff --git a/backport/backport-include/linux/mei_cl_bus.h b/backport/backport-include/linux/mei_cl_bus.h
+ #if LINUX_VERSION_IS_LESS(4,2,0)
+ #define bcm47xx_nvram_get_contents LINUX_BACKPORT(bcm47xx_nvram_get_contents)
+diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
 deleted file mode 100644
-index d6ef77e1..00000000
---- a/backport/backport-include/linux/mei_cl_bus.h
+index 72ef4ab9..00000000
+--- a/backport/backport-include/linux/device.h
 +++ /dev/null
-@@ -1,22 +0,0 @@
--#ifndef __BACKPORT_LINUX_MEI_CL_BUS_H
--#define __BACKPORT_LINUX_MEI_CL_BUS_H
--#include_next <linux/mei_cl_bus.h>
+@@ -1,19 +0,0 @@
+-#ifndef __BACKPORT_DEVICE_H
+-#define __BACKPORT_DEVICE_H
+-#include_next <linux/device.h>
 -
--#if LINUX_VERSION_IS_LESS(4,4,0)
--#define mei_cldev_register_event_cb(cldev, event_mask, read_cb, context) \
--	mei_cl_register_event_cb(cldev, event_mask, read_cb, context)
--#endif
--
--#if LINUX_VERSION_IS_LESS(4,4,0)
--#define __mei_cldev_driver_register(cldrv, owner) __mei_cl_driver_register(cldrv, owner)
--#define mei_cldev_driver_register(cldrv) mei_cl_driver_register(cldrv)
--#define mei_cldev_driver_unregister(cldrv) mei_cl_driver_unregister(cldrv)
--#define mei_cldev_send(cldev, buf, length) mei_cl_send(cldev, buf, length)
--#define mei_cldev_recv(cldev, buf, length) mei_cl_recv(cldev, buf, length)
--#define mei_cldev_get_drvdata(cldev) mei_cl_get_drvdata(cldev)
--#define mei_cldev_set_drvdata(cldev, data) mei_cl_set_drvdata(cldev, data)
--#define mei_cldev_enable(cldev) mei_cl_enable_device(cldev)
--#define mei_cldev_disable(cldev) mei_cl_disable_device(cldev)
--#endif
--
--#endif /* __BACKPORT_LINUX_MEI_CL_BUS_H */
-diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
-index a271c37a..e9c07a91 100644
---- a/backport/backport-include/linux/netdevice.h
-+++ b/backport/backport-include/linux/netdevice.h
-@@ -104,14 +104,6 @@ static inline int backport_dev_open(struct net_device *dev, struct netlink_ext_a
- #define dev_open LINUX_BACKPORT(dev_open)
- #endif
- 
--#if LINUX_VERSION_IS_LESS(4,4,0)
--#define netif_is_bridge_port LINUX_BACKPORT(netif_is_bridge_port)
--static inline bool netif_is_bridge_port(const struct net_device *dev)
--{
--	return dev->priv_flags & IFF_BRIDGE_PORT;
--}
--#endif
--
- #if LINUX_VERSION_IS_LESS(5,10,0)
- #define dev_fetch_sw_netstats LINUX_BACKPORT(dev_fetch_sw_netstats)
- void dev_fetch_sw_netstats(struct rtnl_link_stats64 *s,
-diff --git a/backport/backport-include/linux/of_address.h b/backport/backport-include/linux/of_address.h
-deleted file mode 100644
-index e3a5167a..00000000
---- a/backport/backport-include/linux/of_address.h
-+++ /dev/null
-@@ -1,18 +0,0 @@
--#ifndef __BACKPORT_OF_ADDRESS_H
--#define __BACKPORT_OF_ADDRESS_H
--#include_next <linux/of_address.h>
 -#include <linux/version.h>
 -
--#if LINUX_VERSION_IS_LESS(4,4,0) && !defined(CONFIG_OF_ADDRESS)
--#ifndef OF_BAD_ADDR
--#define OF_BAD_ADDR     ((u64)-1)
--#endif
--#define of_translate_address LINUX_BACKPORT(of_translate_addres)
--static inline u64 of_translate_address(struct device_node *np,
--				       const __be32 *addr)
+-#if LINUX_VERSION_IS_LESS(4, 1, 0)
+-#define dev_of_node LINUX_BACKPORT(dev_of_node)
+-static inline struct device_node *dev_of_node(struct device *dev)
 -{
--	return OF_BAD_ADDR;
+-#ifndef CONFIG_OF
+-	return NULL;
+-#else
+-	return dev->of_node;
+-#endif
 -}
--#endif /* LINUX_VERSION_IS_LESS(4,4,0) */
+-#endif
 -
--#endif /* __BACKPORT_OF_IRQ_H */
+-#endif /* __BACKPORT_DEVICE_H */
+diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+index 496e2fb3..b653e0e9 100644
+--- a/backport/backport-include/linux/netdevice.h
++++ b/backport/backport-include/linux/netdevice.h
+@@ -5,12 +5,6 @@
+ #include <backport/magic.h>
+ 
+ 
+-#if LINUX_VERSION_IS_LESS(4,1,0)
+-netdev_features_t passthru_features_check(struct sk_buff *skb,
+-					  struct net_device *dev,
+-					  netdev_features_t features);
+-#endif /* LINUX_VERSION_IS_LESS(4,1,0) */
+-
+ #if LINUX_VERSION_IS_LESS(4,2,0)
+ #undef u64_stats_init
+ static inline void u64_stats_init(struct u64_stats_sync *syncp)
+@@ -21,22 +15,6 @@ static inline void u64_stats_init(struct u64_stats_sync *syncp)
+ }
+ #endif /* LINUX_VERSION_IS_LESS(4,2,0) */
+ 
+-#ifndef netdev_alloc_pcpu_stats
+-#define netdev_alloc_pcpu_stats(type)				\
+-({								\
+-	typeof(type) __percpu *pcpu_stats = alloc_percpu(type); \
+-	if (pcpu_stats)	{					\
+-		int i;						\
+-		for_each_possible_cpu(i) {			\
+-			typeof(type) *stat;			\
+-			stat = per_cpu_ptr(pcpu_stats, i);	\
+-			u64_stats_init(&stat->syncp);		\
+-		}						\
+-	}							\
+-	pcpu_stats;						\
+-})
+-#endif /* netdev_alloc_pcpu_stats */
+-
+ #if LINUX_VERSION_IS_LESS(4,10,0)
+ static inline bool backport_napi_complete_done(struct napi_struct *n, int work_done)
+ {
+diff --git a/backport/backport-include/linux/of_device.h b/backport/backport-include/linux/of_device.h
+index cdd366e3..2a4d02b8 100644
+--- a/backport/backport-include/linux/of_device.h
++++ b/backport/backport-include/linux/of_device.h
+@@ -13,10 +13,8 @@ static inline int backport_of_dma_configure(struct device *dev,
+ 	return of_dma_configure(dev, np);
+ #elif LINUX_VERSION_IS_GEQ(4,12,0)
+ 	return of_dma_configure(dev, np);
+-#elif LINUX_VERSION_IS_GEQ(4,1,0)
+-	of_dma_configure(dev, np);
+-	return 0;
+ #else
++	of_dma_configure(dev, np);
+ 	return 0;
+ #endif
+ }
+diff --git a/backport/backport-include/linux/tty.h b/backport/backport-include/linux/tty.h
+index 9de8ad1a..855f5c52 100644
+--- a/backport/backport-include/linux/tty.h
++++ b/backport/backport-include/linux/tty.h
+@@ -2,11 +2,6 @@
+ #define __BACKPORT_LINUX_TTY_H
+ #include_next <linux/tty.h>
+ 
+-#if LINUX_VERSION_IS_LESS(4,1,0) && \
+-    LINUX_VERSION_IS_GEQ(4,0,0)
+-extern int tty_set_termios(struct tty_struct *tty, struct ktermios *kt);
+-#endif /* LINUX_VERSION_IS_LESS(4,1,0) */
+-
+ #ifndef N_NCI
+ #define N_NCI		25	/* NFC NCI UART */
+ #endif
+diff --git a/backport/backport-include/net/iw_handler.h b/backport/backport-include/net/iw_handler.h
+index 8b5f1c60..e0076d2c 100644
+--- a/backport/backport-include/net/iw_handler.h
++++ b/backport/backport-include/net/iw_handler.h
+@@ -2,29 +2,6 @@
+ #define __BACKPORT_IW_HANDLER_H
+ #include_next <net/iw_handler.h>
+ 
+-#if LINUX_VERSION_IS_LESS(4,1,0)
+-static inline char *
+-iwe_stream_add_event_check(struct iw_request_info *info, char *stream,
+-			   char *ends, struct iw_event *iwe, int event_len)
+-{
+-	char *res = iwe_stream_add_event(info, stream, ends, iwe, event_len);
+-
+-	if (res == stream)
+-		return ERR_PTR(-E2BIG);
+-	return res;
+-}
+-
+-static inline char *
+-iwe_stream_add_point_check(struct iw_request_info *info, char *stream,
+-			   char *ends, struct iw_event *iwe, char *extra)
+-{
+-	char *res = iwe_stream_add_point(info, stream, ends, iwe, extra);
+-
+-	if (res == stream)
+-		return ERR_PTR(-E2BIG);
+-	return res;
+-}
+-#endif /* LINUX_VERSION_IS_LESS(4,1,0) */
+ 
+ /* this was added in v3.2.79, v3.18.30, v4.1.21, v4.4.6 and 4.5 */
+ #if !(LINUX_VERSION_IS_GEQ(4,4,6) || \
+diff --git a/backport/backport-include/net/net_namespace.h b/backport/backport-include/net/net_namespace.h
+deleted file mode 100644
+index 47f6b3b5..00000000
+--- a/backport/backport-include/net/net_namespace.h
++++ /dev/null
+@@ -1,34 +0,0 @@
+-#ifndef _COMPAT_NET_NET_NAMESPACE_H
+-#define _COMPAT_NET_NET_NAMESPACE_H 1
+-
+-#include_next <net/net_namespace.h>
+-
+-
+-#if LINUX_VERSION_IS_LESS(4,1,0)
+-typedef struct {
+-#ifdef CONFIG_NET_NS
+-	struct net *net;
+-#endif
+-} possible_net_t;
+-
+-static inline void possible_write_pnet(possible_net_t *pnet, struct net *net)
+-{
+-#ifdef CONFIG_NET_NS
+-	pnet->net = net;
+-#endif
+-}
+-
+-static inline struct net *possible_read_pnet(const possible_net_t *pnet)
+-{
+-#ifdef CONFIG_NET_NS
+-	return pnet->net;
+-#else
+-	return &init_net;
+-#endif
+-}
+-#else
+-#define possible_write_pnet(pnet, net) write_pnet(pnet, net)
+-#define possible_read_pnet(pnet) read_pnet(pnet)
+-#endif /* LINUX_VERSION_IS_LESS(4,1,0) */
+-
+-#endif	/* _COMPAT_NET_NET_NAMESPACE_H */
 diff --git a/backport/backport-include/net/netlink.h b/backport/backport-include/net/netlink.h
-index 6f48fd71..3c7fdc7e 100644
+index ba07a5ca..6f48fd71 100644
 --- a/backport/backport-include/net/netlink.h
 +++ b/backport/backport-include/net/netlink.h
-@@ -435,28 +435,6 @@ static inline int _nla_parse_nested4(struct nlattr *tb[], int maxtype,
+@@ -435,36 +435,6 @@ static inline int _nla_parse_nested4(struct nlattr *tb[], int maxtype,
  	macro_dispatcher(_nla_parse_nested, __VA_ARGS__)(__VA_ARGS__)
  #endif /* LINUX_VERSION_IS_LESS(4,12,0) */
  
--#if LINUX_VERSION_IS_LESS(4,4,0)
--/**
-- * nla_get_le32 - return payload of __le32 attribute
-- * @nla: __le32 netlink attribute
-- */
--#define nla_get_le32 LINUX_BACKPORT(nla_get_le32)
--static inline __le32 nla_get_le32(const struct nlattr *nla)
+-
+-#if LINUX_VERSION_IS_LESS(4,1,0)
+-#define nla_put_in_addr LINUX_BACKPORT(nla_put_in_addr)
+-static inline int nla_put_in_addr(struct sk_buff *skb, int attrtype,
+-				  __be32 addr)
 -{
--	return *(__le32 *) nla_data(nla);
+-	return nla_put_be32(skb, attrtype, addr);
 -}
 -
--/**
-- * nla_get_le64 - return payload of __le64 attribute
-- * @nla: __le64 netlink attribute
-- */
--#define nla_get_le64 LINUX_BACKPORT(nla_get_le64)
--static inline __le64 nla_get_le64(const struct nlattr *nla)
+-#define nla_put_in6_addr LINUX_BACKPORT(nla_put_in6_addr)
+-static inline int nla_put_in6_addr(struct sk_buff *skb, int attrtype,
+-				   const struct in6_addr *addr)
 -{
--	return *(__le64 *) nla_data(nla);
+-	return nla_put(skb, attrtype, sizeof(*addr), addr);
 -}
--#endif /* < 4.4 */
 -
- #if LINUX_VERSION_IS_LESS(4,7,0)
+-static inline __be32 nla_get_in_addr(const struct nlattr *nla)
+-{
+-	return *(__be32 *) nla_data(nla);
+-}
+-
+-static inline struct in6_addr nla_get_in6_addr(const struct nlattr *nla)
+-{
+-	struct in6_addr tmp;
+-
+-	nla_memcpy(&tmp, nla, sizeof(tmp));
+-	return tmp;
+-}
+-#endif /* < 4.1 */
+-
+ #if LINUX_VERSION_IS_LESS(4,4,0)
  /**
-  * nla_need_padding_for_64bit - test 64-bit alignment of the next attribute
-diff --git a/backport/backport-include/net/tso.h b/backport/backport-include/net/tso.h
-deleted file mode 100644
-index 3a3f50b3..00000000
---- a/backport/backport-include/net/tso.h
-+++ /dev/null
-@@ -1,33 +0,0 @@
--#ifndef BACKPORT_TSO_H
--#define BACKPORT_TSO_H
--
--#include <net/ip.h>
--
--#if LINUX_VERSION_IS_LESS(4,4,0)
--
--#define tso_t LINUX_BACKPORT(tso_t)
--struct tso_t {
--	int next_frag_idx;
--	void *data;
--	size_t size;
--	u16 ip_id;
--	bool ipv6;
--	u32 tcp_seq;
--};
--
--#define tso_count_descs LINUX_BACKPORT(tso_count_descs)
--int tso_count_descs(struct sk_buff *skb);
--
--#define tso_build_hdr LINUX_BACKPORT(tso_build_hdr)
--void tso_build_hdr(struct sk_buff *skb, char *hdr, struct tso_t *tso,
--		   int size, bool is_last);
--#define tso_build_data LINUX_BACKPORT(tso_build_data)
--void tso_build_data(struct sk_buff *skb, struct tso_t *tso, int size);
--#define tso_start LINUX_BACKPORT(tso_start)
--void tso_start(struct sk_buff *skb, struct tso_t *tso);
--
--#else
--#include_next <net/tso.h>
--#endif
--
--#endif	/* BACKPORT_TSO_H */
+  * nla_get_le32 - return payload of __le32 attribute
 diff --git a/backport/compat/Makefile b/backport/compat/Makefile
-index bdb478bb..bbedd49c 100644
+index 2d7af92f..bc0d080d 100644
 --- a/backport/compat/Makefile
 +++ b/backport/compat/Makefile
 @@ -7,7 +7,6 @@ endif
  compat-y += main.o
  
  # Kernel backport compatibility code
--compat-$(CPTCFG_KERNEL_4_4) += backport-4.4.o
- compat-$(CPTCFG_KERNEL_4_5) += backport-4.5.o
- compat-$(CPTCFG_KERNEL_4_6) += backport-4.6.o
- compat-$(CPTCFG_KERNEL_4_7) += backport-4.7.o
-diff --git a/backport/compat/backport-4.4.c b/backport/compat/backport-4.4.c
+-compat-$(CPTCFG_KERNEL_4_1) += backport-4.1.o
+ compat-$(CPTCFG_KERNEL_4_2) += backport-4.2.o
+ compat-$(CPTCFG_KERNEL_4_3) += backport-4.3.o
+ compat-$(CPTCFG_KERNEL_4_4) += backport-4.4.o
+diff --git a/backport/compat/backport-4.1.c b/backport/compat/backport-4.1.c
 deleted file mode 100644
-index 71edc2be..00000000
---- a/backport/compat/backport-4.4.c
+index e0a3ec63..00000000
+--- a/backport/compat/backport-4.1.c
 +++ /dev/null
-@@ -1,124 +0,0 @@
+@@ -1,84 +0,0 @@
 -/*
-- * Copyright(c) 2015 Intel Deutschland GmbH
+- * Copyright (c) 2015  Stefan Assmann <sassmann@kpanic.de>
+- * Copyright (c) 2015  Hauke Mehrtens <hauke@hauke-m.de>
 - *
-- * Backport functionality introduced in Linux 4.4.
+- * Backport functionality introduced in Linux 4.1.
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
 - */
 -
--#include <linux/debugfs.h>
--#include <linux/export.h>
--#include <linux/uaccess.h>
--#include <linux/fs.h>
--#include <linux/if_vlan.h>
--#include <linux/mm.h>
--#include <linux/skbuff.h>
--#include <linux/tcp.h>
--#include <net/ip.h>
--#include <net/tso.h>
--#include <asm/unaligned.h>
+-#include <linux/netdevice.h>
+-#include <linux/tty.h>
 -
--#ifdef CONFIG_DEBUG_FS
+-netdev_features_t passthru_features_check(struct sk_buff *skb,
+-					  struct net_device *dev,
+-					  netdev_features_t features)
+-{
+-	return features;
+-}
+-EXPORT_SYMBOL_GPL(passthru_features_check);
 -
--static const struct file_operations fops_bool = {
--	.read =		debugfs_read_file_bool,
--	.write =	debugfs_write_file_bool,
--	.open =		simple_open,
--	.llseek =	default_llseek,
+-#ifdef CONFIG_TTY
+-#if LINUX_VERSION_IS_GEQ(4,0,0)
+-static void unset_locked_termios(struct ktermios *termios,
+-				 struct ktermios *old,
+-				 struct ktermios *locked)
+-{
+-	int	i;
+-
+-#define NOSET_MASK(x, y, z) (x = ((x) & ~(z)) | ((y) & (z)))
+-
+-	if (!locked) {
+-		printk(KERN_WARNING "Warning?!? termios_locked is NULL.\n");
+-		return;
+-	}
+-
+-	NOSET_MASK(termios->c_iflag, old->c_iflag, locked->c_iflag);
+-	NOSET_MASK(termios->c_oflag, old->c_oflag, locked->c_oflag);
+-	NOSET_MASK(termios->c_cflag, old->c_cflag, locked->c_cflag);
+-	NOSET_MASK(termios->c_lflag, old->c_lflag, locked->c_lflag);
+-	termios->c_line = locked->c_line ? old->c_line : termios->c_line;
+-	for (i = 0; i < NCCS; i++)
+-		termios->c_cc[i] = locked->c_cc[i] ?
+-			old->c_cc[i] : termios->c_cc[i];
+-	/* FIXME: What should we do for i/ospeed */
+-}
+-
+-int tty_set_termios(struct tty_struct *tty, struct ktermios *new_termios)
+-{
+-	struct ktermios old_termios;
+-	struct tty_ldisc *ld;
+-
+-	WARN_ON(tty->driver->type == TTY_DRIVER_TYPE_PTY &&
+-		tty->driver->subtype == PTY_TYPE_MASTER);
+-	/*
+-	 *	Perform the actual termios internal changes under lock.
+-	 */
+-
+-
+-	/* FIXME: we need to decide on some locking/ordering semantics
+-	   for the set_termios notification eventually */
+-	down_write(&tty->termios_rwsem);
+-	old_termios = tty->termios;
+-	tty->termios = *new_termios;
+-	unset_locked_termios(&tty->termios, &old_termios, &tty->termios_locked);
+-
+-	if (tty->ops->set_termios)
+-		tty->ops->set_termios(tty, &old_termios);
+-	else
+-		tty_termios_copy_hw(&tty->termios, &old_termios);
+-
+-	ld = tty_ldisc_ref(tty);
+-	if (ld != NULL) {
+-		if (ld->ops->set_termios)
+-			ld->ops->set_termios(tty, &old_termios);
+-		tty_ldisc_deref(ld);
+-	}
+-	up_write(&tty->termios_rwsem);
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(tty_set_termios);
+-#endif /* LINUX_VERSION_IS_GEQ(4,0,0) */
+-#endif /* CONFIG_TTY */
+diff --git a/patches/0053-possible_net_t.patch b/patches/0053-possible_net_t.patch
+deleted file mode 100644
+index 6ee009bd..00000000
+--- a/patches/0053-possible_net_t.patch
++++ /dev/null
+@@ -1,19 +0,0 @@
+-diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
+-index 04e5785..a251da1 100644
+---- a/include/net/cfg80211.h
+-+++ b/include/net/cfg80211.h
+-@@ -5026,12 +5026,12 @@ struct wiphy {
+- 
+- static inline struct net *wiphy_net(struct wiphy *wiphy)
+- {
+--	return read_pnet(&wiphy->_net);
+-+	return possible_read_pnet(&wiphy->_net);
+- }
+- 
+- static inline void wiphy_net_set(struct wiphy *wiphy, struct net *net)
+- {
+--	write_pnet(&wiphy->_net, net);
+-+	possible_write_pnet(&wiphy->_net, net);
+- }
+- 
+- /**
+diff --git a/patches/0054-struct-proto_ops-sig.cocci b/patches/0054-struct-proto_ops-sig.cocci
+deleted file mode 100644
+index 1d190dcd..00000000
+--- a/patches/0054-struct-proto_ops-sig.cocci
++++ /dev/null
+@@ -1,177 +0,0 @@
+-/*
+-This provides the backport for the collateral evolution introduced
+-via commit 1b784140474e4fc94281a49e96c67d29df0efbde, titled
+-"net: Remove iocb argument from sendmsg and recvmsg".
+-
+-The net/tipc/ subsystem (Transparent Inter Process Communication (TIPC))
+-relied historically on using an argument passed on the struct proto_ops
+-and struct proto sendmsg and recvmsg callbacks to determine if it needed
+-to perform a lock within its own code. Commit 1b784140474e4 removed replaced
+-the locking functionality to require the argument and instead moved all
+-the necessary heuristics into net/tipc. Other subsystems just passed NULL.
+-After the net/tipc code was cleaned up from the locking (see commmit
+-39a0295f901423e260a034ac7c3211ecaa9c2745 titled "tipc: Don't use iocb
+-argument in socket layer") we no longer needed the extra argument on the
+-struct proto_ops and struct proto callbacks.
+-
+-To backport non-tipc subsystems we then just need to modify the upstream
+-code which declares these callbacks and add the extra argument again, but
+-the same routine can be used from upstream code. The grammar we use below
+-declares routines which can be pegged to struct proto_ops and struct proto
+-callbacks that simply call the same upstream code, the extra argument is
+-ignored. The argument can be ignored as it was only used within the
+-net/tipc subsystem for locking purposes.
+-*/
+-
+-@ proto_ops @
+-identifier s, send_func, recv_func;
+-@@
+-
+- struct proto_ops s = {
+- 	.sendmsg = send_func,
+- 	.recvmsg = recv_func,
 -};
 -
--struct dentry *debugfs_create_bool(const char *name, umode_t mode,
--				   struct dentry *parent, bool *value)
--{
--	return debugfs_create_file(name, mode, parent, value, &fops_bool);
--}
--EXPORT_SYMBOL_GPL(debugfs_create_bool);
--#endif /* CONFIG_DEBUG_FS */
--
--/* Calculate expected number of TX descriptors */
--int tso_count_descs(struct sk_buff *skb)
--{
--	/* The Marvell Way */
--	return skb_shinfo(skb)->gso_segs * 2 + skb_shinfo(skb)->nr_frags;
--}
--EXPORT_SYMBOL(tso_count_descs);
--
--void tso_build_hdr(struct sk_buff *skb, char *hdr, struct tso_t *tso,
--		   int size, bool is_last)
--{
--	struct tcphdr *tcph;
--	int hdr_len = skb_transport_offset(skb) + tcp_hdrlen(skb);
--	int mac_hdr_len = skb_network_offset(skb);
--
--	memcpy(hdr, skb->data, hdr_len);
--	if (!tso->ipv6) {
--		struct iphdr *iph = (void *)(hdr + mac_hdr_len);
--
--		iph->id = htons(tso->ip_id);
--		iph->tot_len = htons(size + hdr_len - mac_hdr_len);
--		tso->ip_id++;
--	} else {
--#ifdef CONFIG_IPV6
--		struct ipv6hdr *iph = (void *)(hdr + mac_hdr_len);
--
--		iph->payload_len = htons(size + tcp_hdrlen(skb));
--#else /* CONFIG_IPV6 */
--		/* tso->ipv6 should never be set if IPV6 is not enabeld */
--		WARN_ON(1);
--#endif /* CONFIG_IPV6 */
--	}
--	tcph = (struct tcphdr *)(hdr + skb_transport_offset(skb));
--	put_unaligned_be32(tso->tcp_seq, &tcph->seq);
--
--	if (!is_last) {
--		/* Clear all special flags for not last packet */
--		tcph->psh = 0;
--		tcph->fin = 0;
--		tcph->rst = 0;
--	}
--}
--EXPORT_SYMBOL(tso_build_hdr);
--
--void tso_build_data(struct sk_buff *skb, struct tso_t *tso, int size)
--{
--	tso->tcp_seq += size;
--	tso->size -= size;
--	tso->data += size;
--
--	if ((tso->size == 0) &&
--	    (tso->next_frag_idx < skb_shinfo(skb)->nr_frags)) {
--		skb_frag_t *frag = &skb_shinfo(skb)->frags[tso->next_frag_idx];
--
--		/* Move to next segment */
--		tso->size = frag->size;
--		tso->data = page_address(skb_frag_page(frag)) + frag->page_offset;
--		tso->next_frag_idx++;
--	}
--}
--EXPORT_SYMBOL(tso_build_data);
--
--void tso_start(struct sk_buff *skb, struct tso_t *tso)
--{
--	int hdr_len = skb_transport_offset(skb) + tcp_hdrlen(skb);
--
--	tso->ip_id = ntohs(ip_hdr(skb)->id);
--	tso->tcp_seq = ntohl(tcp_hdr(skb)->seq);
--	tso->next_frag_idx = 0;
--	tso->ipv6 = vlan_get_protocol(skb) == htons(ETH_P_IPV6);
--
--	/* Build first data */
--	tso->size = skb_headlen(skb) - hdr_len;
--	tso->data = skb->data + hdr_len;
--	if ((tso->size == 0) &&
--	    (tso->next_frag_idx < skb_shinfo(skb)->nr_frags)) {
--		skb_frag_t *frag = &skb_shinfo(skb)->frags[tso->next_frag_idx];
--
--		/* Move to next segment */
--		tso->size = frag->size;
--		tso->data = page_address(skb_frag_page(frag)) + frag->page_offset;
--		tso->next_frag_idx++;
--	}
--}
--EXPORT_SYMBOL(tso_start);
-diff --git a/patches/0065-ndisc_send_na-argument.cocci b/patches/0065-ndisc_send_na-argument.cocci
-deleted file mode 100644
-index a3d00f3c..00000000
---- a/patches/0065-ndisc_send_na-argument.cocci
-+++ /dev/null
-@@ -1,9 +0,0 @@
+-@ mod_send depends on proto_ops @
+-identifier proto_ops.send_func;
+-fresh identifier backport_send = "backport_" ## send_func;
 -@@
--identifier ndisc_send_na;
--expression netdev, saddr, target, router, solicited, override, inc_opt;
+-
+-send_func(...)
+-{
+-	...
+-}
+-
+-+#if LINUX_VERSION_IS_LESS(4,1,0)
+-+static int backport_send(struct kiocb *iocb, struct socket *sock, struct msghdr *msg, size_t len)
+-+{
+-+	return send_func(sock, msg, len);
+-+}
+-+#endif /* LINUX_VERSION_IS_LESS(4,1,0) */
+-
+-@ mod_recv depends on proto_ops @
+-identifier proto_ops.recv_func;
+-fresh identifier backport_recv = "backport_" ## recv_func;
 -@@
--+#if LINUX_VERSION_IS_GEQ(4,4,0)
-- ipv6_stub->ndisc_send_na(netdev, saddr, target, router, solicited, override, inc_opt);
+-
+-recv_func(...)
+-{
+-	...
+-}
+-
+-+#if LINUX_VERSION_IS_LESS(4,1,0)
+-+static int backport_recv(struct kiocb *iocb, struct socket *sock,
+-+			  struct msghdr *msg, size_t len, int flags)
+-+{
+-+	return recv_func(sock, msg, len, flags);
+-+}
+-+#endif /* LINUX_VERSION_IS_LESS(4,1,0) */
+-
+-@ mod_proto_ops_tx depends on proto_ops && mod_send @
+-identifier s, proto_ops.send_func, mod_send.backport_send;
+-@@
+-
+- struct proto_ops s = {
+-+#if LINUX_VERSION_IS_GEQ(4,1,0)
+- 	.sendmsg = send_func,
 -+#else
--+ipv6_stub->ndisc_send_na(netdev, NULL, saddr, target, router, solicited, override, inc_opt);
--+#endif
+-+	.sendmsg = backport_send,
+-+#endif /* LINUX_VERSION_IS_GEQ(4,1,0) */
+-};
+-
+-@ mod_proto_ops_rx depends on proto_ops && mod_recv @
+-identifier s, proto_ops.recv_func, mod_recv.backport_recv;
+-@@
+-
+- struct proto_ops s = {
+-+#if LINUX_VERSION_IS_GEQ(4,1,0)
+- 	.recvmsg = recv_func,
+-+#else
+-+	.recvmsg = backport_recv,
+-+#endif /* LINUX_VERSION_IS_GEQ(4,1,0) */
+-};
+-
+-@ mod_sock_send_callers depends on proto_ops@
+-identifier proto_ops.send_func;
+-identifier sock, msg, len, sk;
+-@@
+-
+-send_func(struct socket *sock, struct msghdr *msg, size_t len)
+-{
+-	...
+-+#if LINUX_VERSION_IS_GEQ(4,1,0)
+-	return sk->sk_prot->sendmsg(sk, msg, len);
+-+#else
+-+	return sk->sk_prot->sendmsg(NULL, sk, msg, len);
+-+#endif /* LINUX_VERSION_IS_GEQ(4,1,0) */
+-}
+-
+-@ proto @
+-identifier s, send_func, recv_func;
+-@@
+-
+- struct proto s = {
+- 	.sendmsg = send_func,
+- 	.recvmsg = recv_func,
+-};
+-
+-@ proto_mod_send depends on proto @
+-identifier proto.send_func;
+-fresh identifier backport_send = "backport_" ## send_func;
+-@@
+-
+-send_func(...)
+-{
+-	...
+-}
+-
+-+#if LINUX_VERSION_IS_LESS(4,1,0)
+-+static int backport_send(struct kiocb *iocb, struct sock *sk,
+-+			  struct msghdr *msg, size_t len)
+-+{
+-+	return send_func(sk, msg, len);
+-+}
+-+#endif /* LINUX_VERSION_IS_LESS(4,1,0) */
+-
+-@ proto_mod_recv depends on proto @
+-identifier proto.recv_func;
+-fresh identifier backport_recv = "backport_" ## recv_func;
+-@@
+-
+-recv_func(...)
+-{
+-	...
+-}
+-
+-+#if LINUX_VERSION_IS_LESS(4,1,0)
+-+static int backport_recv(struct kiocb *iocb, struct sock *sk,
+-+			  struct msghdr *msg, size_t len,
+-+			  int noblock, int flags, int *addr_len)
+-+{
+-+	return recv_func(sk, msg, len, noblock, flags, addr_len);
+-+}
+-+#endif /* LINUX_VERSION_IS_LESS(4,1,0) */
+-
+-@ mod_proto_tx depends on proto && proto_mod_send @
+-identifier s, proto.send_func, proto_mod_send.backport_send;
+-@@
+-
+- struct proto s = {
+-+#if LINUX_VERSION_IS_GEQ(4,1,0)
+- 	.sendmsg = send_func,
+-+#else
+-+	.sendmsg = backport_send,
+-+#endif /* LINUX_VERSION_IS_GEQ(4,1,0) */
+-};
+-
+-@ mod_proto_rx depends on proto && proto_mod_recv @
+-identifier s, proto.recv_func, proto_mod_recv.backport_recv;
+-@@
+-
+- struct proto s = {
+-+#if LINUX_VERSION_IS_GEQ(4,1,0)
+- 	.recvmsg = recv_func,
+-+#else
+-+	.recvmsg = backport_recv,
+-+#endif /* LINUX_VERSION_IS_GEQ(4,1,0) */
+-};
+diff --git a/patches/0058-ptp_getsettime64/INFO b/patches/0058-ptp_getsettime64/INFO
+deleted file mode 100644
+index 9679d318..00000000
+--- a/patches/0058-ptp_getsettime64/INFO
++++ /dev/null
+@@ -1,11 +0,0 @@
+-In kernel 4.1 struct ptp_clock_info changes function pointers gettime,
+-settime to gettime64, settime64.
+-
+-commit 92f1719407b90475b3be0b7b9c983dec2ff8351e
+-Author: Richard Cochran <richardcochran@gmail.com>
+-Date:   Sun Mar 29 23:11:51 2015 +0200
+-
+-    ptp: introduce get/set time methods with explicit 64 bit seconds.
+-
+-git describe --contains 92f1719407b90475b3be0b7b9c983dec2ff8351e
+-next-20150401~92^2~18^2~22
+diff --git a/patches/0058-ptp_getsettime64/ptp_getsettime64.cocci b/patches/0058-ptp_getsettime64/ptp_getsettime64.cocci
+deleted file mode 100644
+index ff17ebde..00000000
+--- a/patches/0058-ptp_getsettime64/ptp_getsettime64.cocci
++++ /dev/null
+@@ -1,33 +0,0 @@
+-// ----------------------------------------------------------------------------
+-// handle gettime64 to gettime function assignments
+-@r1@
+-expression E1, E2;
+-@@
+-+#if LINUX_VERSION_IS_GEQ(4,1,0)
+- E1.gettime64 = E2;
+-+#else
+-+E1.gettime = E2;
+-+#endif /* LINUX_VERSION_IS_GEQ(4,1,0) */
+-
+-// ----------------------------------------------------------------------------
+-// handle calls to gettime64 as calls to gettime
+-@r2@
+-expression E1, E2, E3;
+-@@
+-+#if LINUX_VERSION_IS_GEQ(4,1,0)
+- E1.gettime64(E2, E3);
+-+#else
+-+E1.gettime(E2, E3);
+-+#endif /* LINUX_VERSION_IS_GEQ(4,1,0) */
+-
+-// ----------------------------------------------------------------------------
+-// handle settime64 to settime function assignments
+-@r3@
+-expression E1, E2;
+-@@
+-+#if LINUX_VERSION_IS_GEQ(4,1,0)
+- E1.settime64 = E2;
+-+#else
+-+E1.settime = E2;
+-+#endif /* LINUX_VERSION_IS_GEQ(4,1,0) */
+-
 -- 
 2.30.2
 
