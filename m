@@ -2,105 +2,82 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0D6C433EF
-	for <backports@archiver.kernel.org>; Tue, 19 Oct 2021 21:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E85C433F5
+	for <backports@archiver.kernel.org>; Tue, 19 Oct 2021 21:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 510D561052
-	for <backports@archiver.kernel.org>; Tue, 19 Oct 2021 21:43:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C23C61052
+	for <backports@archiver.kernel.org>; Tue, 19 Oct 2021 21:43:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229879AbhJSVqL (ORCPT <rfc822;backports@archiver.kernel.org>);
+        id S229837AbhJSVqL (ORCPT <rfc822;backports@archiver.kernel.org>);
         Tue, 19 Oct 2021 17:46:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51422 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229835AbhJSVqG (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 19 Oct 2021 17:46:06 -0400
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [IPv6:2001:67c:2050::465:102])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB796C061746
-        for <backports@vger.kernel.org>; Tue, 19 Oct 2021 14:43:52 -0700 (PDT)
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [80.241.60.233])
+        with ESMTP id S229784AbhJSVqH (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 19 Oct 2021 17:46:07 -0400
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050::465:101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09216C06161C
+        for <backports@vger.kernel.org>; Tue, 19 Oct 2021 14:43:54 -0700 (PDT)
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:105:465:1:3:0])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4HYnLb48T2zQjgT;
-        Tue, 19 Oct 2021 23:43:51 +0200 (CEST)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4HYnLc555szQkBQ;
+        Tue, 19 Oct 2021 23:43:52 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-        t=1634679829;
+        t=1634679831;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Q7Gyy0jhZS6iKwESGrV4teBJskqubdoThUDzZ7LE764=;
-        b=z1GVcMwKtQ+Dih9Xk4PEBczzYGRIRnBkTZNVHTIMRemQnCtLUQZJcWbL5Tx47GukCg3NWo
-        0YdvcU5pNY0MBLjQEHN+VSTXgfnxrFiZaKO0GWPHz4uffThxXSrTtYJq6UxLk7eeEvGDMR
-        w6ZF9/63Tgb2BSsvPIutbEIuRMDsuC3zakO0kC7K1EAPzlmg6BNhEPkJnNTawa6vS35PcI
-        oZC+2Mc5zva0IF+7b2W1BraNlyNF4twkG6i8mMwTRKkIxvu98ybpJrW2iWqTCS/falIV19
-        /B7B16DHsd8kg3mUJbPD/fNFufB1BOKKbPPeE9PNtnqXQnywiOzEh3oTqMvq1Q==
+        bh=VJddXQgV3LTklc/yrx9vT/6R6Rc0X8o/wFF8qoUWs9M=;
+        b=aZxi41Ud+FDIF6X+fvUkMNwYEAHjcLpCSww+4eHOgvJY2w6lp+Vo4fBiaVzoRf//5QoJWx
+        yGwN/2EXzmD6jMPaEXsXhIbDHt6jZHjcS88mLYDGfmirL8zk2Po6ttyttIlzttiZm/elb3
+        JH6T5gI25FJ+LVkK8neqNoN5sEjE0W0dYizrAy58AY/zjPxviCDBaBtWppOJCa0PU3bhTk
+        ejYB8Hmh7AffJ93oNeB23AH8Tap6JgyJE/DNahpjLlbGA+IhdDq1eprUO/u96YRNypQtGd
+        M6fd5snZnw7GkqIt9/1e3bsgqtq/SYvQPLcCEtmtV/KfLqR0oAE5nPFiHt2O1w==
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 To:     backports@vger.kernel.org
 Cc:     Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 35/47] backports: Remove prism54 driver
-Date:   Tue, 19 Oct 2021 23:43:08 +0200
-Message-Id: <20211019214320.2035704-36-hauke@hauke-m.de>
+Subject: [PATCH 38/47] backports: Remove intersil hostap driver
+Date:   Tue, 19 Oct 2021 23:43:11 +0200
+Message-Id: <20211019214320.2035704-39-hauke@hauke-m.de>
 In-Reply-To: <20211019214320.2035704-1-hauke@hauke-m.de>
 References: <20211019214320.2035704-1-hauke@hauke-m.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: DF3151313
+X-Rspamd-Queue-Id: 01CF71329
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-This driver was removed from upstream kernel.
+This removes the old hostap driver which only supports 802.11b devices.
+It now uses the new callback ndo_siocdevprivate. There are probably not
+many users of these device any more, so just remove this driver.
+
+This does not remove hostapd suport for other dveices.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/defconfigs/wifi                  |  1 -
- patches/0094-ndo-tx-timeout/prism54.patch | 23 -----------------------
- 2 files changed, 24 deletions(-)
- delete mode 100644 patches/0094-ndo-tx-timeout/prism54.patch
+ copy-list | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/backport/defconfigs/wifi b/backport/defconfigs/wifi
-index 86e3bd6e..ea0aee71 100644
---- a/backport/defconfigs/wifi
-+++ b/backport/defconfigs/wifi
-@@ -76,7 +76,6 @@ CPTCFG_P54_COMMON=m
- CPTCFG_P54_PCI=m
- CPTCFG_P54_SPI=m
- CPTCFG_P54_USB=m
--CPTCFG_PRISM54=m
- CPTCFG_PCI_ATMEL=m
- CPTCFG_PCI_HERMES=m
- CPTCFG_PCMCIA_ATMEL=m
-diff --git a/patches/0094-ndo-tx-timeout/prism54.patch b/patches/0094-ndo-tx-timeout/prism54.patch
-deleted file mode 100644
-index 1e55f03c..00000000
---- a/patches/0094-ndo-tx-timeout/prism54.patch
-+++ /dev/null
-@@ -1,23 +0,0 @@
----- a/drivers/net/wireless/intersil/prism54/islpci_eth.h
--+++ b/drivers/net/wireless/intersil/prism54/islpci_eth.h
--@@ -54,6 +54,7 @@ void islpci_eth_cleanup_transmit(islpci_
-- netdev_tx_t islpci_eth_transmit(struct sk_buff *, struct net_device *);
-- int islpci_eth_receive(islpci_private *);
-- void islpci_eth_tx_timeout(struct net_device *, unsigned int txqueue);
--+void bp_islpci_eth_tx_timeout(struct net_device *);
-- void islpci_do_reset_and_wake(struct work_struct *);
-- 
-- #endif				/* _ISL_GEN_H */
----- a/drivers/net/wireless/intersil/prism54/islpci_eth.c
--+++ b/drivers/net/wireless/intersil/prism54/islpci_eth.c
--@@ -487,3 +487,10 @@ islpci_eth_tx_timeout(struct net_device
-- 			"%s: tx_timeout, waiting for reset", ndev->name);
-- 	}
-- }
--+
--+#if LINUX_VERSION_IS_LESS(5,6,0)
--+void bp_islpci_eth_tx_timeout(struct net_device *dev) {
--+	islpci_eth_tx_timeout(dev, 0);
--+}
--+EXPORT_SYMBOL_GPL(bp_islpci_eth_tx_timeout);
--+#endif
+diff --git a/copy-list b/copy-list
+index c21596f8..b9fdd2ff 100644
+--- a/copy-list
++++ b/copy-list
+@@ -104,7 +104,10 @@ drivers/net/wireless/ralink/
+ drivers/net/wireless/zydas/
+ drivers/net/wireless/marvell/
+ drivers/net/wireless/microchip/
+-drivers/net/wireless/intersil/
++drivers/net/wireless/intersil/Kconfig
++drivers/net/wireless/intersil/Makefile
++drivers/net/wireless/intersil/orinoco/
++drivers/net/wireless/intersil/p54/
+ drivers/net/wireless/quantenna/
+ drivers/net/wireless/realtek/
+ drivers/net/wireless/ti/
 -- 
 2.30.2
 
