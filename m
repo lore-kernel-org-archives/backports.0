@@ -2,113 +2,84 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2B6C433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE509C4332F
 	for <backports@archiver.kernel.org>; Tue, 19 Oct 2021 21:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3581E610A3
+	by mail.kernel.org (Postfix) with ESMTP id 97E9461052
 	for <backports@archiver.kernel.org>; Tue, 19 Oct 2021 21:43:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229704AbhJSVqC (ORCPT <rfc822;backports@archiver.kernel.org>);
+        id S229723AbhJSVqC (ORCPT <rfc822;backports@archiver.kernel.org>);
         Tue, 19 Oct 2021 17:46:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51360 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229723AbhJSVp5 (ORCPT
+        with ESMTP id S229727AbhJSVp5 (ORCPT
         <rfc822;backports@vger.kernel.org>); Tue, 19 Oct 2021 17:45:57 -0400
 Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [IPv6:2001:67c:2050::465:102])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05C46C06174E
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 907C6C061768
         for <backports@vger.kernel.org>; Tue, 19 Oct 2021 14:43:43 -0700 (PDT)
 Received: from smtp102.mailbox.org (smtp102.mailbox.org [80.241.60.233])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4HYnLP1WHqzQjgJ;
-        Tue, 19 Oct 2021 23:43:41 +0200 (CEST)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4HYnLQ1xjwzQjgT;
+        Tue, 19 Oct 2021 23:43:42 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-        t=1634679819;
+        t=1634679820;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5w8Ys+x6fUHz9cKGllYakHITV+fYf0/NO303WCbmurs=;
-        b=lv/iUN8ctfEN2kVxIIjwW/Dc1V/1b0daL0L3OMh9thtzN2/pCOdGQ6+5z8/f5G32/w34rz
-        NagjZlcWMTccrq1JMY729c4jroZaGrV0MVWa+PQX8KToO8moQ06vr9L2EdlxR3bS+yURSL
-        o0m6ew1YuvchSzg+fGjz/TLOcb9Yxietkla3tgAMCwQiNdcRJPes9dGBpVXVm8DPA5eu4Z
-        PIZRdkzaQxkZ6NTrsdQ5VcfwbTsAKhOJQwZ8Tg9Gr0oIou3++Beh5CjppYlRmjIRmxtpB1
-        zyk39aJw4f4uzYTfcyJ3Oic1qJRzH96dGt28Sf3gplKDfAL2hT74PqBhdC7+AQ==
+        bh=MqT3OpuJyJWH5QYdnTjzlZM6stVwnnlnzjqrnhyy3/k=;
+        b=sCl+fUgxbmfZguAsHLmv/dyUxNN8l1z0Xmhjubi0f8FxMe97P8y8uXOfGw6d/ywhaVCfIR
+        yNl+UAgHNTng26u7muDWlCzUcDn3OWX5c18fsX3mQoJYU62Ekh9/gqa0K0rbD8gFqqiGtT
+        HVV7cpUa7uwdDiA2dv/8x32ecdzUtPtXDzuj3L/N3DeGszRYqtgS8JYyHpEVkb6+OZEswn
+        nVcRYqG97K9XdGqxWDB3uP74wZkcup03OSSoRNU/MDyNE09ahqlANSTB3BI1xBo/k9jpVv
+        4hR1bH9e1s5xS0cBjANbAvjEqBIwkfmgq8Dcf622qZ4jJy4IS5I5nNNHs55Q1A==
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 To:     backports@vger.kernel.org
 Cc:     Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 09/47] patches: Remove const from struct rchan_callbacks
-Date:   Tue, 19 Oct 2021 23:42:42 +0200
-Message-Id: <20211019214320.2035704-10-hauke@hauke-m.de>
+Subject: [PATCH 11/47] patches: include linux/modules.h in mt76/mt76_connac_mcu.c
+Date:   Tue, 19 Oct 2021 23:42:44 +0200
+Message-Id: <20211019214320.2035704-12-hauke@hauke-m.de>
 In-Reply-To: <20211019214320.2035704-1-hauke@hauke-m.de>
 References: <20211019214320.2035704-1-hauke@hauke-m.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 85BA711FD
+X-Rspamd-Queue-Id: 88E8B569
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-The struct rchan_callbacks parameter to the relay_open function was
-changed to const in kernel 5.11 and the drivers were adapted. On older
-kernel versions the struct rchan_callbacks should not be costs.
+The mt76/mt76_connac_mcu.c file uses MODULE_AUTHOR and MODULE_LICENSE,
+include linux/modules.h explicitly for older kernel versions.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- ...05-remove-const-from-rchan_callbacks.patch | 42 +++++++++++++++++++
- 1 file changed, 42 insertions(+)
- create mode 100644 patches/0105-remove-const-from-rchan_callbacks.patch
+ patches/0013-fix-makefile-includes/mt76.patch | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/patches/0105-remove-const-from-rchan_callbacks.patch b/patches/0105-remove-const-from-rchan_callbacks.patch
-new file mode 100644
-index 00000000..16c14707
---- /dev/null
-+++ b/patches/0105-remove-const-from-rchan_callbacks.patch
-@@ -0,0 +1,42 @@
-+--- a/drivers/net/wireless/ath/ath10k/spectral.c
-++++ b/drivers/net/wireless/ath/ath10k/spectral.c
-+@@ -497,7 +497,11 @@ static int remove_buf_file_handler(struc
-+ 	return 0;
-+ }
+diff --git a/patches/0013-fix-makefile-includes/mt76.patch b/patches/0013-fix-makefile-includes/mt76.patch
+index 81ee4944..7c5f0d45 100644
+--- a/patches/0013-fix-makefile-includes/mt76.patch
++++ b/patches/0013-fix-makefile-includes/mt76.patch
+@@ -12,6 +12,16 @@ linux/kthread.h include needed against kernel 4.19.
+  #include "mt7615.h"
+  #include "mcu.h"
+  #include "mac.h"
++--- a/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c
+++++ b/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c
++@@ -2,6 +2,7 @@
++ /* Copyright (C) 2020 MediaTek Inc. */
 + 
-++#if LINUX_VERSION_IS_GEQ(5,11,0)
-+ static const struct rchan_callbacks rfs_spec_scan_cb = {
-++#else
-++static struct rchan_callbacks rfs_spec_scan_cb = {
-++#endif
-+ 	.create_buf_file = create_buf_file_handler,
-+ 	.remove_buf_file = remove_buf_file_handler,
-+ };
-+--- a/drivers/net/wireless/ath/ath11k/spectral.c
-++++ b/drivers/net/wireless/ath/ath11k/spectral.c
-+@@ -148,7 +148,11 @@ static int remove_buf_file_handler(struc
-+ 	return 0;
-+ }
++ #include "mt76_connac_mcu.h"
+++#include <linux/module.h>
 + 
-++#if LINUX_VERSION_IS_GEQ(5,11,0)
-+ static const struct rchan_callbacks rfs_scan_cb = {
-++#else
-++static struct rchan_callbacks rfs_scan_cb = {
-++#endif
-+ 	.create_buf_file = create_buf_file_handler,
-+ 	.remove_buf_file = remove_buf_file_handler,
-+ };
-+--- a/drivers/net/wireless/ath/ath9k/common-spectral.c
-++++ b/drivers/net/wireless/ath/ath9k/common-spectral.c
-+@@ -1053,7 +1053,11 @@ static int remove_buf_file_handler(struc
-+ 	return 0;
-+ }
-+ 
-++#if LINUX_VERSION_IS_GEQ(5,11,0)
-+ static const struct rchan_callbacks rfs_spec_scan_cb = {
-++#else
-++static struct rchan_callbacks rfs_spec_scan_cb = {
-++#endif
-+ 	.create_buf_file = create_buf_file_handler,
-+ 	.remove_buf_file = remove_buf_file_handler,
-+ };
++ int mt76_connac_mcu_start_firmware(struct mt76_dev *dev, u32 addr, u32 option)
++ {
+ --- a/drivers/net/wireless/mediatek/mt76/mt7615/sdio.c
+ +++ b/drivers/net/wireless/mediatek/mt76/mt7615/sdio.c
+ @@ -9,6 +9,7 @@
 -- 
 2.30.2
 
