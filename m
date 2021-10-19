@@ -2,26 +2,26 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E5FC433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EC1C433FE
 	for <backports@archiver.kernel.org>; Tue, 19 Oct 2021 21:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D8FB61052
+	by mail.kernel.org (Postfix) with ESMTP id CDA8C61052
 	for <backports@archiver.kernel.org>; Tue, 19 Oct 2021 21:43:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229777AbhJSVqG (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Tue, 19 Oct 2021 17:46:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51354 "EHLO
+        id S229839AbhJSVqH (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Tue, 19 Oct 2021 17:46:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229784AbhJSVqB (ORCPT
+        with ESMTP id S229544AbhJSVqB (ORCPT
         <rfc822;backports@vger.kernel.org>); Tue, 19 Oct 2021 17:46:01 -0400
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [IPv6:2001:67c:2050::465:201])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC044C061773
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [IPv6:2001:67c:2050::465:202])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFB27C061746
         for <backports@vger.kernel.org>; Tue, 19 Oct 2021 14:43:47 -0700 (PDT)
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [80.241.60.233])
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:105:465:1:3:0])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4HYnLV2pFBzQkBc;
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4HYnLV05bFzQk0m;
         Tue, 19 Oct 2021 23:43:46 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
@@ -30,96 +30,69 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=4pmDWboTyoy/z1kmLp+GJmGUDbKMdUJShpdmsgQ3VXc=;
-        b=mecF7IfOW7WNbkK/Rz1ftYz4E+n/9W8+5rCwMtP+wWROzoYd5kdGw0q7wdo7/bcHekqbjw
-        hA26qBFFREmGOPvIXGgJpbU+r6AEv15JykegZuROazC8LJ/nL4+GrYuauo9Vo3Fw67AUOH
-        IN4sPJxkcBg2e+XOyyPkxtomLXhL3+/+QhWm8FmK3vl2Ko5QQJNk7sdcy5Uw7Y8TbWuXf8
-        fzm7aJJ1ga/+UEzUXHFyuSNgCCKUTaUYrnuLGAJTKUewTUmvGaZrCWqLBwPoWLA7b48vfv
-        NkqmRrg79IrLHoFHe/MKKMgHBDcfSJWHJRGfyW/9VGu7jSV0d15Tu5yaVXZFHw==
+        bh=xLPufhc4z8GFOATm4A4CWzJ7OXvRp+REclfe6ZuNXUk=;
+        b=Vhr1KhjAdwc7SvSLLGjhq9hDnDSLNAgSV9FGQ/OlOX08HJbt67tAXF7d+UMJmR1vGmIxPc
+        Hjh1GpW5XrcoJqTo5Xq7+nhFX2HgwJqzV5iEK30hcCY3Uq3aRl5MLqd0NwgQFH+AhOobQj
+        TLtdW89mkxHS4qXDC92I+Ls4p+FchnZi3DLTZBHdswCVRamYhB15KaM6H4BIkH/zn35fn+
+        Fq+IsIR38QBA+cr1QnUdXZZlThNQSizRSrSj1KrNunZ1V/gQRtWO24MBmyEZxtELzRQPO7
+        qvPY7auYygRJPM25rLq6zjCe3Wqesdl4f0gtEBLXvEY+C//1xqC+NjTVn0VE5w==
 From:   Hauke Mehrtens <hauke@hauke-m.de>
 To:     backports@vger.kernel.org
 Cc:     Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 22/47] headers: Add rfkill_set_hw_state_reason()
-Date:   Tue, 19 Oct 2021 23:42:55 +0200
-Message-Id: <20211019214320.2035704-23-hauke@hauke-m.de>
+Subject: [PATCH 21/47] headers: Adapt signature of of_get_mac_address()
+Date:   Tue, 19 Oct 2021 23:42:54 +0200
+Message-Id: <20211019214320.2035704-22-hauke@hauke-m.de>
 In-Reply-To: <20211019214320.2035704-1-hauke@hauke-m.de>
 References: <20211019214320.2035704-1-hauke@hauke-m.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: AC5995AF
+X-Rspamd-Queue-Id: 4E43B1318
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-This adds the new function rfkill_set_hw_state_reason() from kernel 5.11
-and maps it to the old rfkill_set_hw_state() by dropping the reason.
-kernel 5.11 also moved some definitions to the uapi/linux/rfkill.h, but
-on kernel versions < 5.11 it is not sufficient to only include the uapi
-version.
-This is used by the core wireless system.
+The function signature of of_get_mac_address() changed in kernel 5.13.
+This code converts calls using the new signature to the old API.
+The return value changed in kernel 5.2, which is still taken care of.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/rfkill.h      | 24 +++++++++++++++++++
- .../0013-fix-makefile-includes/cfg80211.patch | 14 ++++++++++-
- 2 files changed, 37 insertions(+), 1 deletion(-)
- create mode 100644 backport/backport-include/linux/rfkill.h
+ backport/backport-include/linux/of_net.h | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/backport/backport-include/linux/rfkill.h b/backport/backport-include/linux/rfkill.h
-new file mode 100644
-index 00000000..c0b99d58
---- /dev/null
-+++ b/backport/backport-include/linux/rfkill.h
-@@ -0,0 +1,24 @@
-+#ifndef __BACKPORT_UAPI__RFKILL_H
-+#define __BACKPORT_UAPI__RFKILL_H
-+#include_next <linux/rfkill.h>
-+
-+
-+#if LINUX_VERSION_IS_LESS(5,11,0)
-+
-+/* This should come from uapi/linux/rfkill.h, but it was much easier
-+ * to do it this way.
-+ */
-+enum rfkill_hard_block_reasons {
-+	RFKILL_HARD_BLOCK_SIGNAL        = 1 << 0,
-+	RFKILL_HARD_BLOCK_NOT_OWNER     = 1 << 1,
-+};
-+
-+static inline bool rfkill_set_hw_state_reason(struct rfkill *rfkill,
-+					      bool blocked, unsigned long reason)
-+{
-+	return rfkill_set_hw_state(rfkill, blocked);
-+}
-+
-+#endif /* 5.11 */
-+
-+#endif /* __BACKPORT_UAPI__RFKILL_H */
-diff --git a/patches/0013-fix-makefile-includes/cfg80211.patch b/patches/0013-fix-makefile-includes/cfg80211.patch
-index 0e079911..c44e3f58 100644
---- a/patches/0013-fix-makefile-includes/cfg80211.patch
-+++ b/patches/0013-fix-makefile-includes/cfg80211.patch
-@@ -6,7 +6,19 @@ the type is renamed.
+diff --git a/backport/backport-include/linux/of_net.h b/backport/backport-include/linux/of_net.h
+index 866aec57..9b9276f1 100644
+--- a/backport/backport-include/linux/of_net.h
++++ b/backport/backport-include/linux/of_net.h
+@@ -2,19 +2,23 @@
+ #define _BP_OF_NET_H
+ #include_next <linux/of_net.h>
+ #include <linux/version.h>
++#include <linux/etherdevice.h>
  
- --- a/include/net/cfg80211.h
- +++ b/include/net/cfg80211.h
--@@ -22,6 +22,7 @@
-+@@ -11,7 +11,11 @@
-+  */
-+ 
-+ #include <linux/ethtool.h>
-++#if LINUX_VERSION_IS_LESS(5,11,0)
-++#include <linux/rfkill.h>
-++#else
-+ #include <uapi/linux/rfkill.h>
-++#endif
-+ #include <linux/netdevice.h>
-+ #include <linux/debugfs.h>
-+ #include <linux/list.h>
-+@@ -23,6 +27,7 @@
-  #include <linux/ieee80211.h>
-  #include <linux/net.h>
-  #include <net/regulatory.h>
+ /* The behavior of of_get_mac_address() changed in kernel 5.2, it now
+  * returns an error code and not NULL in case of an error.
+  */
+-#if LINUX_VERSION_IS_LESS(5,2,0)
+-static inline const void *backport_of_get_mac_address(struct device_node *np)
++#if LINUX_VERSION_IS_LESS(5,13,0)
++static inline int backport_of_get_mac_address(struct device_node *np, u8 *mac_out)
+ {
+ 	const void *mac = of_get_mac_address(np);
+ 
+ 	if (!mac)
+-		return ERR_PTR(-ENODEV);
+-
+-	return mac;
++		return -ENODEV;
++	if (IS_ERR(mac))
++		return PTR_ERR(mac);
++	ether_addr_copy(mac_out, mac);
++	
++	return 0;
+ }
+ #define of_get_mac_address LINUX_BACKPORT(of_get_mac_address)
+ #endif /* < 5.2 */
 -- 
 2.30.2
 
