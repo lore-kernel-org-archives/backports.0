@@ -1,69 +1,72 @@
 Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 202C7C433F5
-	for <backports@archiver.kernel.org>; Sat,  6 Nov 2021 16:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E75526044F
-	for <backports@archiver.kernel.org>; Sat,  6 Nov 2021 16:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4550BC433EF
+	for <backports@archiver.kernel.org>; Wed, 24 Nov 2021 06:00:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234552AbhKFQbp (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Sat, 6 Nov 2021 12:31:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58658 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231658AbhKFQbo (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sat, 6 Nov 2021 12:31:44 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [IPv6:2001:67c:2050::465:202])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87C53C061570;
-        Sat,  6 Nov 2021 09:29:03 -0700 (PDT)
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:105:465:1:3:0])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4HmjVy1zQ3zQkBL;
-        Sat,  6 Nov 2021 17:28:58 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-        t=1636216135;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=PZ4kkfynZudBA6x5CzdSYa/sTNo6et8L/IlL/tHsv2c=;
-        b=CKn2ghVEvL76onl6imviK2jW9i4SxJDGKzNcdVqjKOlqk+UpipKy8xhDYeXNFg6C6XGN/b
-        PvtgMwNv7fmpvqieoC4FENvaNxl3SlZ79a/UZAMbVULf49jxglxwCTzFivmrYnRHVXdxhV
-        LzNV8BXX5WmxHLOq2iTdMozC8rNe+KVju/YuHMvgGDx/4Cgxf/2oP15uuN7JMIknyuw/Qs
-        O8NpJWkjIryrObMcahHTacVF3IA2I4/VW6oK6ENnMSMyLVMZ8EJOIaPusw8914nSGvB0o1
-        MTmA7PYdReCPnUpaC+Yn5veAqIQHT5CDSRMIBJnukhQw/jf1jQOVTPscIEGg7A==
-To:     "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc:     linux-wireless@vger.kernel.org
-From:   Hauke Mehrtens <hauke@hauke-m.de>
-Subject: wireless backports 5.15-rc6-1 released
-Message-ID: <51da80fc-5d72-3bbf-2798-acb124aa8e94@hauke-m.de>
-Date:   Sat, 6 Nov 2021 17:28:53 +0100
+        id S233411AbhKXGDm (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Wed, 24 Nov 2021 01:03:42 -0500
+Received: from mail.adapt-ip.com ([107.194.246.123]:56646 "EHLO
+        web.adapt-ip.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233662AbhKXGDm (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 24 Nov 2021 01:03:42 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by web.adapt-ip.com (Postfix) with ESMTP id 27CCC744D73;
+        Wed, 24 Nov 2021 05:55:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at web.adapt-ip.com
+Received: from web.adapt-ip.com ([127.0.0.1])
+        by localhost (web.adapt-ip.com [127.0.0.1]) (amavisd-new, port 10026)
+        with LMTP id Q5_UcL5uVQve; Wed, 24 Nov 2021 05:55:17 +0000 (UTC)
+Received: from atlas.campbell.adapt-ip.com (c-67-180-239-163.hsd1.ca.comcast.net [67.180.239.163])
+        (Authenticated sender: thomas@adapt-ip.com)
+        by web.adapt-ip.com (Postfix) with ESMTPSA id A851E744D72;
+        Wed, 24 Nov 2021 05:55:08 +0000 (UTC)
+From:   Thomas Pedersen <thomas@adapt-ip.com>
+To:     backports <backports@vger.kernel.org>
+Cc:     Hauke Mehrtens <hauke@hauke-m.de>,
+        Luis Rodriguez <mcgrof@kernel.org>,
+        Thomas Pedersen <thomas@adapt-ip.com>
+Subject: [PATCH 7/7] kconfig: fix select conversion for BPAUTO_ symbols in integration mode
+Date:   Tue, 23 Nov 2021 21:55:05 -0800
+Message-Id: <20211124055505.1267128-8-thomas@adapt-ip.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211124055505.1267128-1-thomas@adapt-ip.com>
+References: <20211124055505.1267128-1-thomas@adapt-ip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: C188556A
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-Hi
+In integration mode, the bpid.project_prefix is nonzero
+and needs to be prepended to the expected symbol to get a
+match.
 
-backports-5.15-rc6-1 was released. This is based on Linux 5.15-rc6.
-https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/v5.15-rc6/backports-5.15-rc6-1.tar.xz
+Signed-off-by: Thomas Pedersen <thomas@adapt-ip.com>
+---
+ lib/kconfig.py | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-All versions after backports 5.10 will only work with kernel 4.4 and 
-later, support for older kernel versions was removed.
+diff --git a/lib/kconfig.py b/lib/kconfig.py
+index a77f8a54eea7..0b5f8ebc1726 100644
+--- a/lib/kconfig.py
++++ b/lib/kconfig.py
+@@ -228,9 +228,10 @@ class ConfigTree(object):
+             out = ''
+             for l in open(os.path.join(self.bpid.target_dir, nf), 'r'):
+                 m = sel_line.match(l)
++                bpauto_prefix = self.bpid.project_prefix + 'BPAUTO_'
+                 if m and not m.group('sym') in syms:
+-                    if 'BPAUTO_' + m.group('sym') in syms:
+-                        out += m.group('spc') + "select BPAUTO_" + m.group('sym') + '\n'
++                    if bpauto_prefix + m.group('sym') in syms:
++                        out += m.group('spc') + "select " + bpauto_prefix + m.group('sym') + '\n'
+                     else:
+                         out += m.group('spc') + "depends on " + m.group('sym') + '\n'
+                 else:
+-- 
+2.30.2
 
-There is now a updated wiki page with the releases:
-https://backports.wiki.kernel.org/index.php/Releases
-
-The source code can be found here:
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
-
-Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
