@@ -2,34 +2,34 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 698F9C4332F
-	for <backports@archiver.kernel.org>; Wed, 24 Nov 2021 06:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DB4C43219
+	for <backports@archiver.kernel.org>; Wed, 24 Nov 2021 06:00:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233662AbhKXGDm (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Wed, 24 Nov 2021 01:03:42 -0500
-Received: from mail.adapt-ip.com ([107.194.246.123]:56640 "EHLO
+        id S233777AbhKXGDn (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Wed, 24 Nov 2021 01:03:43 -0500
+Received: from mail.adapt-ip.com ([107.194.246.123]:56658 "EHLO
         web.adapt-ip.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233622AbhKXGDm (ORCPT
+        with ESMTP id S233706AbhKXGDm (ORCPT
         <rfc822;backports@vger.kernel.org>); Wed, 24 Nov 2021 01:03:42 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by web.adapt-ip.com (Postfix) with ESMTP id 09602744D67;
-        Wed, 24 Nov 2021 05:55:13 +0000 (UTC)
+        by web.adapt-ip.com (Postfix) with ESMTP id 9ECCD744D6D;
+        Wed, 24 Nov 2021 05:55:15 +0000 (UTC)
 X-Virus-Scanned: Debian amavisd-new at web.adapt-ip.com
 Received: from web.adapt-ip.com ([127.0.0.1])
         by localhost (web.adapt-ip.com [127.0.0.1]) (amavisd-new, port 10026)
-        with LMTP id HukA_6zfisuz; Wed, 24 Nov 2021 05:55:10 +0000 (UTC)
+        with LMTP id KiPF9L0XKEgo; Wed, 24 Nov 2021 05:55:13 +0000 (UTC)
 Received: from atlas.campbell.adapt-ip.com (c-67-180-239-163.hsd1.ca.comcast.net [67.180.239.163])
         (Authenticated sender: thomas@adapt-ip.com)
-        by web.adapt-ip.com (Postfix) with ESMTPSA id 1BB03744D6D;
+        by web.adapt-ip.com (Postfix) with ESMTPSA id CD5CA744D6F;
         Wed, 24 Nov 2021 05:55:07 +0000 (UTC)
 From:   Thomas Pedersen <thomas@adapt-ip.com>
 To:     backports <backports@vger.kernel.org>
 Cc:     Hauke Mehrtens <hauke@hauke-m.de>,
         Luis Rodriguez <mcgrof@kernel.org>,
         Thomas Pedersen <thomas@adapt-ip.com>
-Subject: [PATCH 3/7] gentree: try to make patch operation idempotent in case of --clean
-Date:   Tue, 23 Nov 2021 21:55:01 -0800
-Message-Id: <20211124055505.1267128-4-thomas@adapt-ip.com>
+Subject: [PATCH 5/7] lib/bpversion: calculate Kconfig.versions for next major version
+Date:   Tue, 23 Nov 2021 21:55:03 -0800
+Message-Id: <20211124055505.1267128-6-thomas@adapt-ip.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211124055505.1267128-1-thomas@adapt-ip.com>
 References: <20211124055505.1267128-1-thomas@adapt-ip.com>
@@ -39,92 +39,31 @@ Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-The patch utility will not just skip a patch if it has
-already been applied. In the case of --integrate --clean
-we may need to repatch the kernel Makefile, which wasn't
-removed along with backports/. To support reapplying
-patches without error, revert a failed patch with -R, then
-reapply it.
-
 Signed-off-by: Thomas Pedersen <thomas@adapt-ip.com>
 ---
- gentree.py | 56 +++++++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 39 insertions(+), 17 deletions(-)
+ lib/bpversion.py | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/gentree.py b/gentree.py
-index 4705ffa08fc4..0576e14d6fe5 100755
---- a/gentree.py
-+++ b/gentree.py
-@@ -484,6 +484,31 @@ def upload_release(args, rel_prep, logwrite=lambda x:None):
-         kup_cmd = "kup put /\n\t\t%s /\n\t\t%s /\n\t\t%s" % (gzip_name, tar_name + '.asc', korg_path)
-         logwrite("kup-test: skipping cmd: %s" % kup_cmd)
+diff --git a/lib/bpversion.py b/lib/bpversion.py
+index aefdcf0ce3c9..1659823baaf4 100644
+--- a/lib/bpversion.py
++++ b/lib/bpversion.py
+@@ -42,7 +42,12 @@ def kernelversion(tree):
  
-+def do_patch(args, logwrite, pfile, target_dir, reverse=False):
-+    cmd = 'patch -p1'.split()
-+
-+    if reverse:
-+        cmd.append('-R')
-+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-+                               stderr=subprocess.STDOUT, stdin=subprocess.PIPE,
-+                               close_fds=True, universal_newlines=True,
-+                               cwd=target_dir)
-+    output = process.communicate(input=open(pfile, 'r').read())[0]
-+    output = output.split('\n')
-+    if output[-1] == '':
-+        output = output[:-1]
-+    if args.verbose:
-+        for line in output:
-+            logwrite('> %s' % line)
-+    else:
-+        logwrite("Failed to apply changes from %s" % print_name)
-+        if not args.verbose:
-+            for line in output:
-+                logwrite('> %s' % line)
-+
-+    return process.returncode
-+
-+
- def apply_patches(args, desc, source_dir, patch_src, target_dir, logwrite=lambda x:None):
-     """
-     Given a path of a directories of patches and SmPL patches apply
-@@ -539,23 +564,20 @@ def apply_patches(args, desc, source_dir, patch_src, target_dir, logwrite=lambda
-                 fullfn = os.path.join(target_dir, patched_file)
-                 shutil.copyfile(fullfn, fullfn + '.orig_file')
- 
--        process = subprocess.Popen(['patch', '-p1'], stdout=subprocess.PIPE,
--                                   stderr=subprocess.STDOUT, stdin=subprocess.PIPE,
--                                   close_fds=True, universal_newlines=True,
--                                   cwd=target_dir)
--        output = process.communicate(input=open(pfile, 'r').read())[0]
--        output = output.split('\n')
--        if output[-1] == '':
--            output = output[:-1]
--        if args.verbose:
--            for line in output:
--                logwrite('> %s' % line)
--        if process.returncode != 0:
--            if not args.verbose:
--                logwrite("Failed to apply changes from %s" % print_name)
--                for line in output:
--                    logwrite('> %s' % line)
--            return 2
-+        err = do_patch(args, logwrite, pfile, target_dir)
-+        if err > 0:
-+            if not args.clean or err == 2:
-+                return 2
-+
-+            # in case of clean, try to make patch idempotent
-+            # try the reverse
-+            err = do_patch(args, logwrite, pfile, target_dir, reverse=True)
-+            if err != 0:
-+                return 2
-+            # that worked, now reapply..
-+            err = do_patch(args, logwrite, pfile, target_dir)
-+            if err != 0:
-+                return 2
- 
-         if args.refresh:
-             pfilef = open(pfile + '.tmp', 'a')
+ def genkconfig_versions(rel_specs):
+     data = ''
+-    for i in range(int(rel_specs['PATCHLEVEL']) + 1, 99):
+-        data += "config BACKPORT_KERNEL_%s_%s\n" % (rel_specs['VERSION'], i)
+-        data += "    def_bool y\n"
++    print(str(rel_specs))
++    version = int(rel_specs['VERSION'])
++    start_patchlevel = int(rel_specs['PATCHLEVEL']) + 1
++    for i in range(version, version + 2):
++        for j in range(start_patchlevel, 99):
++            data += "config BACKPORT_KERNEL_%s_%s\n" % (i, j)
++            data += "    def_bool y\n"
++        start_patchlevel = 0
+     return data
 -- 
 2.30.2
 
