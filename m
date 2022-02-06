@@ -2,104 +2,91 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC68AC433F5
-	for <backports@archiver.kernel.org>; Sun,  6 Feb 2022 22:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96052C433EF
+	for <backports@archiver.kernel.org>; Sun,  6 Feb 2022 23:30:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235275AbiBFWa6 (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Sun, 6 Feb 2022 17:30:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39568 "EHLO
+        id S241365AbiBFXaR (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Sun, 6 Feb 2022 18:30:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229752AbiBFWa5 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sun, 6 Feb 2022 17:30:57 -0500
-Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A189C061348
-        for <backports@vger.kernel.org>; Sun,  6 Feb 2022 14:30:57 -0800 (PST)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 723363200911;
-        Sun,  6 Feb 2022 17:25:31 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Sun, 06 Feb 2022 17:25:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-        cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :message-id:mime-version:reply-to:sender:subject:subject:to:to;
-         s=fm1; bh=pl3YmsOn8e3AUl9vkh/kA6WOxeb6wbmEYsIFkz8MUb4=; b=EPCvR
-        dyHVKotwI3J0MtIqe4L3ImCSPgrjVL5VQhrd9eiVQBS642bJ+zqjml7pNtkBaQ01
-        H+ztZSxyD9uj0WDB7Vh+QFe/MTp5WC3QVSLs8pejgj1lNsge3qYdMbH8CwgrOg+z
-        3BQhMb/shiloCV693ZjV1D0Hkuy4R9DVK1qbe2WWrUAxSkcXbgK3xVYcsx2LEGBU
-        yeBfjI5xR69JKHjAAH7BSrB+h6E0ZHJ6vsyINgshoAwdoXd3WIlEf6miZyUnGuMo
-        VP/5kW9XmpiYa2EwkxM/8OdXJswLO8i0mh/2o0ZpcGbjPf7rmxY5qoka3VljtI4x
-        cjen3pDCDmWzvnIxg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :from:from:in-reply-to:message-id:mime-version:reply-to:sender
-        :subject:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm2; bh=pl3YmsOn8e3AUl9vkh/kA6WOxeb6w
-        bmEYsIFkz8MUb4=; b=gP44eDxdyF0HEkaMok7wGihagfLkKWo9EdWR8Snp/jvNn
-        CEiVfh7Ssu/GxS+JhnEG6n8MkY1cbKEH80zTAGOEY54eJLo25qjWpe828igo3Gs6
-        Ke6NXlrhITW9s0oxeblKWS1knk6TfPz/2hyomn5h18dgySs0Onja6reztGvCMiuL
-        hmffp0rLvycp7kSmzaCH4pFziTvoAY0HmiwNq2Gps9iorCmc72tHVhVmcDd4r+ef
-        eczTK7L+8HC/9aQkPzcs9QhblHVPKngnMZKFKifgkcBEqbiZan5YF6oCL6wbrNdR
-        SOT45acdqOd26TfmmB4QsN89FvY+EETeKrAzfAcbg==
-X-ME-Sender: <xms:2koAYh_UiCGPbEFOkni7N1hA0Xht3POEO6GHGUoGHRa_RRm-3Fq4uQ>
-    <xme:2koAYltHYOwo7wDpV1ZR0tkQwOTZT_ORlFpvUjQ7N0Es5RV_FLRk8XwBH6knFhXi9
-    pnULc0wiMCkw6yF1jY>
-X-ME-Received: <xmr:2koAYvB7Xs51WUIuSTR6hdrqpCsm2npU1hpSimPHtFjJmPPseStYHrQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrheefgdduieduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofgggfestdekredtre
-    dttdenucfhrhhomheplfhirgiguhhnucgjrghnghcuoehjihgrgihunhdrhigrnhhgsehf
-    lhihghhorghtrdgtohhmqeenucggtffrrghtthgvrhhnpefhjedtkedtueehtdeifeetke
-    evffetjeetfeegkeevgefftedvudfgleeihfdtudenucevlhhushhtvghrufhiiigvpedt
-    necurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorg
-    htrdgtohhm
-X-ME-Proxy: <xmx:2koAYlfRt2fLix5X2LhMxm50h7ErAmYoG-34PQaLdkRSc8Cub0ZamQ>
-    <xmx:2koAYmMQ0PmIjpFilmYKIBG0UDiKgXv1yey8OIDdmIRgh7IwXUHTNQ>
-    <xmx:2koAYnmIesLPCYa50vFIFOCV1aHrnTN7GOzCAHU9RZSbCU2RVJ7P2w>
-    <xmx:20oAYvamGQa73qTQ58ACJbXWIEBe52B1a_UbORSTB3UMyqaXdyus_Q>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 6 Feb 2022 17:25:29 -0500 (EST)
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-To:     hauke@hauke-m.de, mcgrof@kernel.org
-Cc:     backports@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: [PATCH 0/6] backports: Backport some ath11k runtime dependencies
-Date:   Sun,  6 Feb 2022 22:24:59 +0000
-Message-Id: <20220206222505.210326-1-jiaxun.yang@flygoat.com>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S242750AbiBFXaR (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sun, 6 Feb 2022 18:30:17 -0500
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050::465:101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 599D5C06173B
+        for <backports@vger.kernel.org>; Sun,  6 Feb 2022 15:30:15 -0800 (PST)
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4JsQVX5xGpz9sR5;
+        Mon,  7 Feb 2022 00:30:12 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
+        t=1644190211;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=qEbjdtY7z8Zsd+ZrRZ4DRgxtHjOHCYWuU1pCXyKkwM0=;
+        b=u7I4s/amwbueqRf8iYeYcqziIqh0GN+3uAZ56sDeKHnK3eN52G+6+MFrDjQ4Qurnug/hy+
+        UElbRUY2WHhUR5UOw2QaRSUovnIqIiUq36VZ51snb/NDE3g3NiVYiAAS19Y5RXT9yRi2SW
+        UUm19dJKn83pZGwAS3iLxRYihWIFPO1GVhiGCVR1I+v7n5cwP/KNwdntDVAwcsptSO6bzz
+        dRT0QLeMOrukA9ceskeZd19iuyGSxq2vkQFoB/JuJaUGmQDZnVpQAOkdCqosctA3aLvXEs
+        5NzCktQgZ9IcRyZu2JSmtW9oUAITuifzdIACy/+WQIaBtTUXzc+sHBl4yuuzqw==
+Message-ID: <12bcca34-90ec-ca85-a95b-c067b35a47ae@hauke-m.de>
+Date:   Mon, 7 Feb 2022 00:30:09 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 0/6] backports: Backport some ath11k runtime dependencies
+Content-Language: en-US
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>, mcgrof@kernel.org
+Cc:     backports@vger.kernel.org
+References: <20220206222656.210655-1-jiaxun.yang@flygoat.com>
+From:   Hauke Mehrtens <hauke@hauke-m.de>
+In-Reply-To: <20220206222656.210655-1-jiaxun.yang@flygoat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-Backport mhi bus driver and QRTR driver.
-ath11k requires them aligned with latest version at runtime.
+On 2/6/22 23:26, Jiaxun Yang wrote:
+> Backport mhi bus driver and QRTR driver.
+> ath11k requires them aligned with latest version at runtime.
+> 
+> Jiaxun Yang (6):
+>    headers: Add MHI stuff to mod_devicetable
+>    backports: Add mhi bus driver
+>    backports: backport {get,set}_user_ifreq
+>    headers: backport sk_error_report
+>    backports: Add QRTR driver
+>    defconfigs: Refresh for ath11k
+> 
+>   backport/Kconfig.sources                      |  2 +
+>   backport/Makefile.kernel                      |  2 +
+>   .../backport-include/linux/mod_devicetable.h  | 15 ++++++
+>   backport/backport-include/linux/netdevice.h   |  5 ++
+>   backport/backport-include/net/sock.h          |  8 ++++
+>   backport/compat/Makefile                      |  1 +
+>   backport/compat/backport-5.15.c               | 47 +++++++++++++++++++
+>   backport/compat/backport-genetlink.c          |  2 +-
+>   backport/defconfigs/ath11k                    | 14 ++++++
+>   backport/defconfigs/wifi                      |  3 ++
+>   copy-list                                     |  6 +++
+>   dependencies                                  |  6 +++
+>   12 files changed, 110 insertions(+), 1 deletion(-)
+>   create mode 100644 backport/compat/backport-5.15.c
+>   create mode 100644 backport/defconfigs/ath11k
+> 
 
-Jiaxun Yang (6):
-  headers: Add MHI stuff to mod_devicetable
-  backports: Add mhi bus driver
-  backports: backport {get,set}_user_ifreq
-  headers: backport sk_error_report
-  backports: Add QRTR driver
-  defconfigs: Refresh for ath11k
+This looks good to me.
 
- backport/Kconfig.sources                      |  2 +
- backport/Makefile.kernel                      |  2 +
- .../backport-include/linux/mod_devicetable.h  | 15 ++++++
- backport/backport-include/linux/netdevice.h   |  5 ++
- backport/backport-include/net/sock.h          |  8 ++++
- backport/compat/Makefile                      |  1 +
- backport/compat/backport-5.15.c               | 47 +++++++++++++++++++
- backport/compat/backport-genetlink.c          |  2 +-
- backport/defconfigs/ath11k                    | 14 ++++++
- backport/defconfigs/wifi                      |  3 ++
- copy-list                                     |  6 +++
- dependencies                                  |  6 +++
- 12 files changed, 110 insertions(+), 1 deletion(-)
- create mode 100644 backport/compat/backport-5.15.c
- create mode 100644 backport/defconfigs/ath11k
+I think you have to add "ATH11K 5.2" too to the dependencies file. If 
+this is not added Kconfig will try to activate QRTR on older kernel 
+configurations too.
 
--- 
-2.35.1
+On which kernel versions did you runtime tested this? Did you use this 
+with the PCIe or the AHB version of ath11k?
 
+Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
