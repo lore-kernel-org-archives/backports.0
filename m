@@ -2,87 +2,171 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6989CC43219
-	for <backports@archiver.kernel.org>; Mon,  7 Feb 2022 11:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1B3C433EF
+	for <backports@archiver.kernel.org>; Mon,  7 Feb 2022 12:48:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356758AbiBGL2P (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Mon, 7 Feb 2022 06:28:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49564 "EHLO
+        id S1358820AbiBGMqg (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Mon, 7 Feb 2022 07:46:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352462AbiBGLL4 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 7 Feb 2022 06:11:56 -0500
-Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED2DC043188
-        for <backports@vger.kernel.org>; Mon,  7 Feb 2022 03:11:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
-        Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-        Resent-Cc:Resent-Message-ID; bh=ioqJutIRPJP2Qkiv6iXiqhJCNfTUoaZFXThX9xWmkbo=;
-        t=1644232315; x=1645441915; b=r/PdjaTSyS2gD+M3LITYfxj4iiO8A7RQZsbE8sqDKKxC+b1
-        dh0R+bDqV8nbZecy5HFl/mU60BMk6++QJTOoZHbsEmBqWp7B1vLqvfXrYZa0L4j8xUR+PJCTsU6v6
-        XZ+pMqSGNmDLU/w3sGBmL6V0LjaFU7iQOSMqEutJJrVLUEP8yVuRJFyIUetS6jhS98U+2IqEUEPhw
-        jeZJUNWiuH3lPrSRsJitIQrN3tAGRkdVOeirxVvDQj4Wx6UheHoFyn/U4NoROTc5rYFJ8XQcsyUh7
-        DHapnrYJHaUne2Z9pryBqbLimN9lPKK2n4SAN15LsHDiE134dcUZF2DUqdzo7TOQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.95)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1nH1w1-00Fb8T-OL;
-        Mon, 07 Feb 2022 12:11:53 +0100
-Message-ID: <bb0ae37aa770e016463706d557fec1c5205bc6a9.camel@sipsolutions.net>
-Subject: Re: Dealing with SUBLEVEL overflow in backports
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Jiaxun Yang <jiaxun.yang@flygoat.com>, backports@vger.kernel.org
-Cc:     Hauke Mehrtens <hauke@hauke-m.de>
-Date:   Mon, 07 Feb 2022 12:11:52 +0100
-In-Reply-To: <cf1d0098-f871-4086-18fd-ffbc8e90da66@flygoat.com>
-References: <1796985a-4524-f6f8-2f67-acb2e985e87f@flygoat.com>
-         <545f9eb36509c21b3217804b43da4dcdbaf623b1.camel@sipsolutions.net>
-         <b372254d9c4cc7156eabfb5dd722d02541a31ea1.camel@sipsolutions.net>
-         <cf1d0098-f871-4086-18fd-ffbc8e90da66@flygoat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
+        with ESMTP id S1386376AbiBGLeb (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 7 Feb 2022 06:34:31 -0500
+Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B2E4C043188
+        for <backports@vger.kernel.org>; Mon,  7 Feb 2022 03:34:30 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 9DC6E3202455;
+        Mon,  7 Feb 2022 06:34:29 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 07 Feb 2022 06:34:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+        cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; bh=5lGvaqrQR2dW/T01s0B6Ba5MSXIKnr
+        kAlO+JKo0cQ2A=; b=nSEpxmXhPT/QWLmV+prPVEynUoMILWZfjAiCKlhU2Fm/tT
+        Au3klPyBoSN6+W5tY8zd/c7T7KS0NCIl4StrHyw4XCIBz1sbtJQC7S+Z/jxd/1P1
+        2WLPr2KUWcm+kA3572jTEo2UaZzgX/hdqNeuUQI+0Nk8NnYkg2bclu6K6iLjUhXT
+        igwgPMFZZhg+LHwZFOTTrwve0Y3ICVWKQbJ5n60abX48KYpkaIQpPLaLEp2FYuNO
+        s4XQwwnhhVj0wPfPpSLYcgGai9VK6Wp6oUp+SFW9QIhLXa+JRnJUBoPbRoZIcWvR
+        HtrliNn0iHr0SE3kILPmKhlf9ueutAjmwdt8Q/lg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=5lGvaq
+        rQR2dW/T01s0B6Ba5MSXIKnrkAlO+JKo0cQ2A=; b=IdjlgK5u651OHhjsbXW98T
+        vhqcQkbehZWUDkUdQDrfdxx5fmKY9k67TDauhHa/kXN+63MX1oqVKdr7/5zm6+nJ
+        YNIkmolV0IYQTTkLD6l2VqBgjaw9/XBf9TgEbfio6P3pCJUN7yyLQjZfduU3hnXy
+        vw979A6I8F2YdED714S80bxdWmv/IuWTxy/aOHQhIDG5UAqPhIvyo2Ta1sQl0X8y
+        Zx+PX02w8iD9B1HJrOTBlyurCqD3Mpc/V5WFeNC/9/XE5RHCrvK/n15Qbh6kqpzW
+        /SxWEWuiVCNw2WSFd1qSLD1XCGqhcA/k72nFJaNqBh8aGPWCaokTXgOFrIan9VPg
+        ==
+X-ME-Sender: <xms:xAMBYteMoWJGyiPgcSEWfkW0ExszfDn5l3hbkSoqMccdHI9kJluoXA>
+    <xme:xAMBYrM9fLPM4EDflYVtTXuK6jVz5YbZM-nJW3LlPGTzqmibjXZVGEntWnAm5JAMt
+    fNVmUOW7chNFBRUmWM>
+X-ME-Received: <xmr:xAMBYmhvuR0S-d8Byar--tNmde3G8N_RTnNDA2bEshkJtdI2a0XIvtY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrheehgddvjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffojghfggfgsedtkeertd
+    ertddtnecuhfhrohhmpeflihgrgihunhcujggrnhhguceojhhirgiguhhnrdihrghnghes
+    fhhlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeeihffgteelkeelffduke
+    dtheevudejvdegkeekjeefhffhhfetudetgfdtffeunecuvehluhhsthgvrhfuihiivgep
+    tdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgoh
+    grthdrtghomh
+X-ME-Proxy: <xmx:xQMBYm9Lz2r-ZnXs9zLbFLRDdE7sA5U1pWj4ZswLCvY7VwmbXPFafQ>
+    <xmx:xQMBYpucoMA9REfngLDJoqrZvbJ4zpsPxqQ6_Bzx_u2iklXRNwjsjw>
+    <xmx:xQMBYlGM4JqFkvRLKEMl8pJxNLkwHL-7Xo3yn6N55r3gr-J5oApgNg>
+    <xmx:xQMBYi6CKjonFf0h0ON5kb-Izrnpix2NdkOoghV_zxtdKzPBBWJcJg>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 7 Feb 2022 06:34:28 -0500 (EST)
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+To:     hauke@hauke-m.de, mcgrof@kernel.org
+Cc:     backports@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH v2 3/7] backports: backport {get,set}_user_ifreq
+Date:   Mon,  7 Feb 2022 11:33:34 +0000
+Message-Id: <20220207113338.214748-4-jiaxun.yang@flygoat.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220207113338.214748-1-jiaxun.yang@flygoat.com>
+References: <20220207113338.214748-1-jiaxun.yang@flygoat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-malware-bazaar: not-scanned
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-On Mon, 2022-02-07 at 11:09 +0000, Jiaxun Yang wrote:
-> 
-> 在 2022/2/7 10:50, Johannes Berg 写道:
-> > On Mon, 2022-02-07 at 10:15 +0100, Johannes Berg wrote:
-> > > On Mon, 2022-02-07 at 01:19 +0000, Jiaxun Yang wrote:
-> > > > Hi backport forks,
-> > > > 
-> > > > I was trying to fix ckmake FAIL building against 4.9 for 4.9.297+.
-> > > > 
-> > > > I found that macro KERNEL_VERSION_IN_RANGE(4,9,297, 4,10,0) won't work
-> > > > because SUBLEVEL 297 had overflowed 4 bit (255) in KERNEL_VERSION.
-> > > > 
-> > > > How are we supposed to deal with such situation?
-> > > > 
-> > > Hm. I guess the only way would be to somehow make a Kconfig variable in
-> > > backports, that uses the Makefile settings? But env="SUBLEVEL" doesn't
-> > > work, so not sure, maybe some Makefile trickery to extract it and write
-> > > it to the config?
+Backport them from 5.15, they are required by QRTR.
 
-> Or is it possible to persuade stable forks to define LINUX_VERSION_SUBLEVEL
-> on existing stable releases?
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+ backport/backport-include/linux/netdevice.h |  5 +++
+ backport/compat/Makefile                    |  1 +
+ backport/compat/backport-5.15.c             | 47 +++++++++++++++++++++
+ 3 files changed, 53 insertions(+)
+ create mode 100644 backport/compat/backport-5.15.c
 
-Probably not.
+diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+index 22942398..4e553791 100644
+--- a/backport/backport-include/linux/netdevice.h
++++ b/backport/backport-include/linux/netdevice.h
+@@ -152,6 +152,11 @@ bp_dev_get_tstats64(struct net_device *dev, struct rtnl_link_stats64 *s);
+ #endif /* < 4.11 */
+ 
+ #if LINUX_VERSION_IS_LESS(5,15,0)
++#define get_user_ifreq LINUX_BACKPORT(get_user_ifreq)
++int get_user_ifreq(struct ifreq *ifr, void __user **ifrdata, void __user *arg);
++#define put_user_ifreq LINUX_BACKPORT(put_user_ifreq)
++int put_user_ifreq(struct ifreq *ifr, void __user *arg);
++
+ static inline void backport_dev_put(struct net_device *dev)
+ {
+ 	if (dev)
+diff --git a/backport/compat/Makefile b/backport/compat/Makefile
+index 2761e5f5..b9f1dee9 100644
+--- a/backport/compat/Makefile
++++ b/backport/compat/Makefile
+@@ -20,6 +20,7 @@ compat-$(CPTCFG_KERNEL_5_5) += backport-5.5.o
+ compat-$(CPTCFG_KERNEL_5_10) += backport-5.10.o
+ compat-$(CPTCFG_KERNEL_5_11) += backport-5.11.o
+ compat-$(CPTCFG_KERNEL_5_13) += backport-5.13.o
++compat-$(CPTCFG_KERNEL_5_15) += backport-5.15.o
+ 
+ compat-$(CPTCFG_BPAUTO_BUILD_SYSTEM_DATA_VERIFICATION) += verification/verify.o
+ compat-$(CPTCFG_BPAUTO_BUILD_SYSTEM_DATA_VERIFICATION) += verification/pkcs7.asn1.o
+diff --git a/backport/compat/backport-5.15.c b/backport/compat/backport-5.15.c
+new file mode 100644
+index 00000000..cc0a48fd
+--- /dev/null
++++ b/backport/compat/backport-5.15.c
+@@ -0,0 +1,47 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/compat.h>
++#include <linux/export.h>
++#include <linux/uaccess.h>
++#include <linux/netdevice.h>
++
++#include <uapi/linux/if.h>
++
++int get_user_ifreq(struct ifreq *ifr, void __user **ifrdata, void __user *arg)
++{
++	if (in_compat_syscall()) {
++		struct compat_ifreq *ifr32 = (struct compat_ifreq *)ifr;
++
++		memset(ifr, 0, sizeof(*ifr));
++		if (copy_from_user(ifr32, arg, sizeof(*ifr32)))
++			return -EFAULT;
++
++		if (ifrdata)
++			*ifrdata = compat_ptr(ifr32->ifr_data);
++
++		return 0;
++	}
++
++	if (copy_from_user(ifr, arg, sizeof(*ifr)))
++		return -EFAULT;
++
++	if (ifrdata)
++		*ifrdata = ifr->ifr_data;
++
++	return 0;
++}
++EXPORT_SYMBOL(get_user_ifreq);
++
++int put_user_ifreq(struct ifreq *ifr, void __user *arg)
++{
++	size_t size = sizeof(*ifr);
++
++	if (in_compat_syscall())
++		size = sizeof(struct compat_ifreq);
++
++	if (copy_to_user(arg, ifr, size))
++		return -EFAULT;
++
++	return 0;
++}
++EXPORT_SYMBOL(put_user_ifreq);
+-- 
+2.35.1
 
-> > > 
-> > Or just find a way to handle the specific area? Is this for the
-> > build_bug.h stuff?
-
-> Yes, any idea?
-> 
-
-Looking at commit b29eec6c49, does it even matter? We can continue using
-bug.h which includes build_bug.h, it's just pulling in more than needed.
-
-johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
