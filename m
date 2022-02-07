@@ -2,69 +2,70 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F865C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC01C43217
 	for <backports@archiver.kernel.org>; Mon,  7 Feb 2022 12:48:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237728AbiBGMsD (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Mon, 7 Feb 2022 07:48:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46658 "EHLO
+        id S1359442AbiBGMsG (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Mon, 7 Feb 2022 07:48:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1386441AbiBGLej (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 7 Feb 2022 06:34:39 -0500
+        with ESMTP id S1386406AbiBGLef (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 7 Feb 2022 06:34:35 -0500
 Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7F86C043189
-        for <backports@vger.kernel.org>; Mon,  7 Feb 2022 03:34:38 -0800 (PST)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id DF8D632027A7;
-        Mon,  7 Feb 2022 06:34:37 -0500 (EST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70B4BC043181
+        for <backports@vger.kernel.org>; Mon,  7 Feb 2022 03:34:34 -0800 (PST)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id A8C3E3202B09;
+        Mon,  7 Feb 2022 06:34:33 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 07 Feb 2022 06:34:38 -0500
+  by compute3.internal (MEProxy); Mon, 07 Feb 2022 06:34:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
         cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; bh=gJFDttsg6PwCMwcFuyciI7AGWQUwzu
-        2HuP/zOpmnjQg=; b=2KByavI5FxUiRdqa9Az7sjYFRWOYJZ31GcMaMMY5GvQAgA
-        fAoeoYA39csKYcpR1vOkS0365LGBLryxJYswRx7t2iib53lysxKVrKISgnGCulWz
-        WNeNlX3yNvcItFt3KKZ5sHgKJvA+gf5yfMujVuUKnsQj53LbzR3WHykdRPLphn8N
-        HQCtkzsXD0inFXsZGOGkSQ7sE+JjUuaUKdyzj1Wv4hbL88uxPzFWZ68AeJehOxBo
-        n+bSjbfzKsaJyLRPVnYl2z3C5JtVAhrSxGYPYwBd6Es+zKmfooTj3eEvOuRb5+iK
-        9XvCPn3GKRyOlq0QRyZakYHoxM9M+LZBuOkCO9Cg==
+        :subject:subject:to:to; s=fm1; bh=oLIIWU9P1CgrZeA7fOI0oj0r4+rGfG
+        i1wlVzve5xwlo=; b=NVhwZVaeV61Wl+/5m29dPyLGVymK/Sz2VqcpDzYXqRF5SI
+        FnKEWmQrvkUJmODcKguVWgAAC0Lt5AcGd5r1ETQvCGtzEbdvmtb37EiV9fVMYoGL
+        LttEhd+YwgeDtHa80yE0kiaM/OCgV8kN6kAzppagr9KWA2LXN49fuWc3+bSBn6sc
+        DT52Gh/7DxV8op8nl2gsVvxFo1roOdzy0sJbtEyH4+AtXbCLtsDOC+y0Wn+A4Trv
+        kD5ArytjV7pMyTajcxs9xbXMPDDve2M1YyNoLPS1CGk4FJNuJympFRk4ug3YT/0t
+        0SolWaWJtU8UW/i8W6yaFgKJAqzMgTNqxdsjdoMg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
         :from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=gJFDtt
-        sg6PwCMwcFuyciI7AGWQUwzu2HuP/zOpmnjQg=; b=Jn1ItUhNf2eeMY+UD6EHmp
-        utWeLlhEq7KRb+2bPl+nJFroeidUXDMihulExEwztn0AXe/4GqRwf19EwJ6CXWR6
-        hjdAUSazMyUJ24DffSUcDZZSrqdZgMhCh1q4Evz0LIhd7qbA1GH9sVLFXtVCNAGw
-        BHn1yEWLymWFAjEepbyQSzGuH8VZmIibSLFHDXlATR+CjOpXLsuzF0qzeEV1For9
-        IrC++f+7NE90IA1xTEvU95uMFaMHEbeTcfM0YSTPfGHoMUcg/eLVlEv2s4jl3KzL
-        Sqdu3Tmn4U6w91wbbc18SEXgzIcWKZEl3sJpDErrMBKay15Z5t2TMbLfvGTBfixw
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=oLIIWU
+        9P1CgrZeA7fOI0oj0r4+rGfGi1wlVzve5xwlo=; b=JPbtpD3wIhA4fRttuEAB79
+        texwFEIa2Niy422EFlEPjSO/aHTAyOFHcSrbBuvcpTcki+nLrmuxfErz5RQ4BMp3
+        0N6ctHZHwt+TVezWA8tFHoLmwXN4ZEGhrCEhEgMaDwu5lckktLFgNNKRPN5NHQAL
+        UywDgu7/rtiG9maBEBP3EaREir2S1soOoSoAoJLOOLvWKoqkBnfcIKiA6nPugO4C
+        e/s4YZ7GqOrN7BGxPesGwWzOqKQz+AJ7E4TnHwpHu4aMI1QSxs2AbV+6nlPGluc8
+        3r6iToeEO20Tfw/pw7ijLpJBp/9CJJ1453XRm15thIU/kImLHi8Jw2LoSXv5WX9g
         ==
-X-ME-Sender: <xms:zQMBYu38MGWyKg5vBAkqY8oHporjXw_TfU8Cxi-_p0lj6yd1ZMDxEQ>
-    <xme:zQMBYhG7ihHkZ5H5_pOR2F0d6_owkWXDSuHCa2cu6fbdod4Pd3lCrmOfodDVs18Yl
-    6pAt3gDlEYcRzl30qk>
-X-ME-Received: <xmr:zQMBYm5EL0XN_OwPvgCUyOorXQ-Foke0V-J53VyZhwP3UcGFZ138E3U>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrheehgddvjecutefuodetggdotefrodftvf
+X-ME-Sender: <xms:yAMBYjldhT5Bsc-N5JKQ0ZxaLwNGzJ-vCg8htDhIvaC9nbATpWMLQg>
+    <xme:yAMBYm0DDBcJG6M32jw9-xsdb6xawMcuKsLOyXJOufFPT2pvYWv_cSIsAQJXIauZJ
+    JRoWWeEwxW3wb8jg9E>
+X-ME-Received: <xmr:yAMBYpq7DUHFBwghK5fpAG0AnTwpeUhlyl-m0NLm56YCvO6tCuW0v18>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrheehgddvkecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffojghfggfgsedtkeertd
-    ertddtnecuhfhrohhmpeflihgrgihunhcujggrnhhguceojhhirgiguhhnrdihrghnghes
-    fhhlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeeihffgteelkeelffduke
-    dtheevudejvdegkeekjeefhffhhfetudetgfdtffeunecuvehluhhsthgvrhfuihiivgep
-    tdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgoh
-    grthdrtghomh
-X-ME-Proxy: <xmx:zQMBYv1i5qrWuMHcT-mw1jPmXB43kDBNWm3jSFJaUSlgrvXvQS3QkA>
-    <xmx:zQMBYhE4h6Sb9gHwxmFal6Pu68xOBGeVOJbdI0PxR6EAMJengbEjgQ>
-    <xmx:zQMBYo_BhHi-gQLAQgTRuwE2ulVMqIH_nhiS7IOoaLeLoTeHw0axFQ>
-    <xmx:zQMBYmTWgJf_19Qy5H5OehzDEKgPJJkoNZdJP2gsV7r7eumrLS0Mrw>
+    uegrihhlohhuthemuceftddtnecuogfuuhhsphgvtghtffhomhgrihhnucdlgeelmdenuc
+    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomheplfhirgiguhhn
+    ucgjrghnghcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqeenucggtf
+    frrghtthgvrhhnpeejffeivdeghffgteduuddutdfhvefhhfeijefhjedtgfegledvleel
+    hfelueehffenucffohhmrghinhepkhgvhidrnhgvthenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghho
+    rghtrdgtohhm
+X-ME-Proxy: <xmx:yAMBYrmoQMyjoK_QoIDs4HhCG2Nla_RxPF_1uKJdjSisrliJ7-kPmQ>
+    <xmx:yAMBYh3R7UPK_W7xcScIaBGX_sjg69c-2gOWLnEE03kqAyGShNQ-kg>
+    <xmx:yAMBYquzxANfv9fe3bxkBEjUzqjVX9U3GPxohNakahe30wCGg3K0cg>
+    <xmx:yQMBYvAEhW_GxyU9OySPO7KCll6Nb26dcN_3jCj4PADGKndM1dCWQg>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 7 Feb 2022 06:34:36 -0500 (EST)
+ 7 Feb 2022 06:34:32 -0500 (EST)
 From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
 To:     hauke@hauke-m.de, mcgrof@kernel.org
 Cc:     backports@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: [PATCH v2 7/7] defconfigs: Refresh for ath11k
-Date:   Mon,  7 Feb 2022 11:33:38 +0000
-Message-Id: <20220207113338.214748-8-jiaxun.yang@flygoat.com>
+Subject: [PATCH v2 5/7] backports: Add QRTR driver
+Date:   Mon,  7 Feb 2022 11:33:36 +0000
+Message-Id: <20220207113338.214748-6-jiaxun.yang@flygoat.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220207113338.214748-1-jiaxun.yang@flygoat.com>
 References: <20220207113338.214748-1-jiaxun.yang@flygoat.com>
@@ -74,57 +75,73 @@ Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-Add defconfig for ath11k, also add ath11k runtime dependencies to
-wifi defconfig.
+ Add it to copylist and wire up in Makefile and Kconfig.
+ Also set minimal depdency to 5.2.
 
 Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
 ---
- backport/defconfigs/ath11k | 14 ++++++++++++++
- backport/defconfigs/wifi   |  3 +++
- 2 files changed, 17 insertions(+)
- create mode 100644 backport/defconfigs/ath11k
+ backport/Kconfig.sources | 1 +
+ backport/Makefile.kernel | 1 +
+ copy-list                | 3 +++
+ dependencies             | 3 +++
+ 4 files changed, 8 insertions(+)
 
-diff --git a/backport/defconfigs/ath11k b/backport/defconfigs/ath11k
-new file mode 100644
-index 00000000..9ca4b310
---- /dev/null
-+++ b/backport/defconfigs/ath11k
-@@ -0,0 +1,14 @@
-+CPTCFG_MHI_BUS=m
-+CPTCFG_QRTR=m
-+CPTCFG_QRTR_MHI=m
-+CPTCFG_CFG80211=m
-+CPTCFG_CFG80211_WEXT=y
-+CPTCFG_MAC80211=m
-+CPTCFG_MAC80211_LEDS=y
-+CPTCFG_MAC80211_MESH=y
-+CPTCFG_WLAN=y
-+CPTCFG_WLAN_VENDOR_ATH=y
-+CPTCFG_ATH11K_PCI=m
-+CPTCFG_ATH11K=m
-+CPTCFG_ATH11K_DEBUG=y
-+CPTCFG_ATH11K_DEBUGFS=y
-diff --git a/backport/defconfigs/wifi b/backport/defconfigs/wifi
-index 936203d9..774b0823 100644
---- a/backport/defconfigs/wifi
-+++ b/backport/defconfigs/wifi
-@@ -58,6 +58,7 @@ CPTCFG_MAC80211_HWSIM=m
- CPTCFG_MAC80211_LEDS=y
- CPTCFG_MAC80211=m
- CPTCFG_MAC80211_MESH=y
-+CPTCFG_MHI_BUS=m
- CPTCFG_MT7601U=m
- CPTCFG_MT7603E=m
- CPTCFG_MT7615E=m
-@@ -86,6 +87,8 @@ CPTCFG_PCMCIA_ATMEL=m
- CPTCFG_PCMCIA_HERMES=m
- CPTCFG_PCMCIA_SPECTRUM=m
- CPTCFG_PLX_HERMES=m
-+CPTCFG_QRTR=m
-+CPTCFG_QRTR_MHI=m
- CPTCFG_QTNFMAC_PCIE=m
- CPTCFG_R8188EU=m
- CPTCFG_RSI_91X=m
+diff --git a/backport/Kconfig.sources b/backport/Kconfig.sources
+index 8f430965..87ffca94 100644
+--- a/backport/Kconfig.sources
++++ b/backport/Kconfig.sources
+@@ -4,6 +4,7 @@ source "$BACKPORT_DIR/compat/Kconfig"
+ # these are copied from the kernel
+ source "$BACKPORT_DIR/net/wireless/Kconfig"
+ source "$BACKPORT_DIR/net/mac80211/Kconfig"
++source "$BACKPORT_DIR/net/qrtr/Kconfig"
+ source "$BACKPORT_DIR/drivers/bus/mhi/Kconfig"
+ source "$BACKPORT_DIR/drivers/net/wireless/Kconfig"
+ source "$BACKPORT_DIR/drivers/net/usb/Kconfig"
+diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
+index e2a1a263..373fed96 100644
+--- a/backport/Makefile.kernel
++++ b/backport/Makefile.kernel
+@@ -39,6 +39,7 @@ obj-y += compat/
+ 
+ obj-$(CPTCFG_CFG80211) += net/wireless/
+ obj-$(CPTCFG_MAC80211) += net/mac80211/
++obj-$(CPTCFG_QRTR) += net/qrtr/
+ obj-$(CPTCFG_MHI_BUS) += drivers/bus/mhi/
+ obj-$(CPTCFG_WLAN) += drivers/net/wireless/
+ obj-$(CPTCFG_SSB) += drivers/ssb/
+diff --git a/copy-list b/copy-list
+index 1be2285e..480a9fb3 100644
+--- a/copy-list
++++ b/copy-list
+@@ -36,6 +36,8 @@ include/linux/wireless.h
+ include/uapi/linux/wireless.h
+ include/linux/ieee80211.h
+ include/linux/pci_ids.h
++include/uapi/linux/qrtr.h
++include/trace/events/qrtr.h
+ include/uapi/linux/pci_regs.h
+ include/linux/mmc/sdio_ids.h
+ include/linux/ath9k_platform.h
+@@ -83,6 +85,7 @@ crypto/asymmetric_keys/x509_public_key.c -> compat/verification/x509_public_key.
+ 
+ net/Makefile
+ net/Kconfig
++net/qrtr/
+ net/wireless/
+ net/mac80211/
+ # MPLS labels, checked on skb->protocol on the
+diff --git a/dependencies b/dependencies
+index 623763a2..5de1bbe1 100644
+--- a/dependencies
++++ b/dependencies
+@@ -40,3 +40,6 @@ RTL8723BS 5.4
+ 
+ # ida_alloc(), xarray
+ MHI_BUS 4.19
++
++# sock_gettstamp()
++QRTR 5.2
 -- 
 2.35.1
 
