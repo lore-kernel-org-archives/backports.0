@@ -2,40 +2,40 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD35C433F5
-	for <backports@archiver.kernel.org>; Mon, 21 Feb 2022 14:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D57C4332F
+	for <backports@archiver.kernel.org>; Mon, 21 Feb 2022 14:11:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344535AbiBUOMC (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Mon, 21 Feb 2022 09:12:02 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44930 "EHLO
+        id S1354822AbiBUOMU (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Mon, 21 Feb 2022 09:12:20 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240412AbiBUOMB (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 21 Feb 2022 09:12:01 -0500
+        with ESMTP id S1357838AbiBUOMS (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 21 Feb 2022 09:12:18 -0500
 Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2935FEBC
-        for <backports@vger.kernel.org>; Mon, 21 Feb 2022 06:11:37 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59D0D1EACF
+        for <backports@vger.kernel.org>; Mon, 21 Feb 2022 06:11:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
         Message-Id:Date:Subject:Cc:To:From:Content-Type:Sender:Reply-To:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
         Resent-Message-ID:In-Reply-To:References;
-        bh=VA7jGafwnmuVgCyX+7h4VDl6V//egdVh1VMI0C5YIG8=; t=1645452698; x=1646662298; 
-        b=xYJoLeElIwKTcBn+DVtCY4q7KbgAzgiXYXSQHhZykx0d50F7jBkDbyEMC4bD665HtGdo65zpyzE
-        b7FR43OWZT+CC2+3JCDdGFilomfhhO9nMv1X4r5+iTH4fbFeX5ETzXRat36QPyOnQcV4hVJ/e3NRX
-        bKESkh+d5a75KuU8xhjGLj0Ix2SJ37oIoVPQBvTceG+Jj3GIn7smACY4pho3TwH5tDkccqfQ1K/Ei
-        VfcvkXXvr3LcILqMydK6CqwkzCR2LT4mI71C/NFXCyAnpKkX4/9/sQENvvfoh0BJfIXTSrBFuiEDi
-        PK8vDdSV0OLbHNQKu/xhGMJA7u3wfW1JIRYw==;
+        bh=cUKjrvLXXGPTEBL7mXtgRrtbMDTqdYHoiDfga5F+Dkw=; t=1645452713; x=1646662313; 
+        b=sVAtfM5+G8sHVqBxjsv4VdEissntsQsiR87uyKlcswVPKivGIO50NlS+NfTp6MeknsEzqrtOFin
+        37cQVPFCs7YnzePmt8Jlo7q273Ifv0J2AUwyQzXEsEL/0DbJHO5jPlD0mw2dVKNWrpCvu+PTIHEjZ
+        3mN86Bg4IG8n9V7YvrA38FC3GtwU1DJ4RdQGt7aLhylCTxXg0lIUGe7VBjHxHAttBRrQfUL4uTuvW
+        036fehbr/SbPQqeYdnK16A9FFpG8g3SPcGUjQZqMakABS2sbceYGHyyTtdLBFJQiC9clUNqiz8VPH
+        zNdz+hLd0xe1xIf/fXUUaU9jbFK6TCwRZZZw==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
         (Exim 4.95)
         (envelope-from <johannes@sipsolutions.net>)
-        id 1nM9PY-003r4E-A2;
-        Mon, 21 Feb 2022 15:11:32 +0100
+        id 1nM9Pp-003r4r-UY;
+        Mon, 21 Feb 2022 15:11:50 +0100
 From:   Johannes Berg <johannes@sipsolutions.net>
 To:     backports@vger.kernel.org
 Cc:     Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH v3] patches: add spatch to adjust to changed ethtool ringparam API
-Date:   Mon, 21 Feb 2022 15:11:28 +0100
-Message-Id: <20220221151128.f07d328aff62.I18f41541a5b4c6f8285a78d32203e6dbc35a5105@changeid>
+Subject: [PATCH 1/3] backports: stub structs but remove ndo_fill_forward_path
+Date:   Mon, 21 Feb 2022 15:11:45 +0100
+Message-Id: <20220221151147.f0ab663b932a.I59271805ee60501a03c50f5ec05240393f1fb4be@changeid>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -45,66 +45,102 @@ X-Mailing-List: backports@vger.kernel.org
 
 From: Johannes Berg <johannes.berg@intel.com>
 
-This changed in 5.17-rc1, so add the necessary ifdefs via a
-new spatch.
-
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- patches/0106-ethtool-ringparam.cocci | 45 ++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
- create mode 100644 patches/0106-ethtool-ringparam.cocci
+ backport/backport-include/linux/netdevice.h | 55 +++++++++++++++++++++
+ patches/0107-net-forward-path.cocci         | 19 +++++++
+ 2 files changed, 74 insertions(+)
+ create mode 100644 patches/0107-net-forward-path.cocci
 
-diff --git a/patches/0106-ethtool-ringparam.cocci b/patches/0106-ethtool-ringparam.cocci
+diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+index 2ef89e04c1a9..6214a69a3e65 100644
+--- a/backport/backport-include/linux/netdevice.h
++++ b/backport/backport-include/linux/netdevice.h
+@@ -192,4 +192,59 @@ static inline void backport_dev_hold(struct net_device *dev)
+ #define dev_hold LINUX_BACKPORT(dev_hold)
+ #endif /* < 5.15 */
+ 
++#ifndef NET_DEVICE_PATH_STACK_MAX
++enum net_device_path_type {
++	DEV_PATH_ETHERNET = 0,
++	DEV_PATH_VLAN,
++	DEV_PATH_BRIDGE,
++	DEV_PATH_PPPOE,
++	DEV_PATH_DSA,
++};
++
++struct net_device_path {
++	enum net_device_path_type	type;
++	const struct net_device		*dev;
++	union {
++		struct {
++			u16		id;
++			__be16		proto;
++			u8		h_dest[ETH_ALEN];
++		} encap;
++		struct {
++			enum {
++				DEV_PATH_BR_VLAN_KEEP,
++				DEV_PATH_BR_VLAN_TAG,
++				DEV_PATH_BR_VLAN_UNTAG,
++				DEV_PATH_BR_VLAN_UNTAG_HW,
++			}		vlan_mode;
++			u16		vlan_id;
++			__be16		vlan_proto;
++		} bridge;
++		struct {
++			int port;
++			u16 proto;
++		} dsa;
++	};
++};
++
++#define NET_DEVICE_PATH_STACK_MAX	5
++#define NET_DEVICE_PATH_VLAN_MAX	2
++
++struct net_device_path_stack {
++	int			num_paths;
++	struct net_device_path	path[NET_DEVICE_PATH_STACK_MAX];
++};
++
++struct net_device_path_ctx {
++	const struct net_device *dev;
++	const u8		*daddr;
++
++	int			num_vlans;
++	struct {
++		u16		id;
++		__be16		proto;
++	} vlan[NET_DEVICE_PATH_VLAN_MAX];
++};
++#endif /* NET_DEVICE_PATH_STACK_MAX */
++
+ #endif /* __BACKPORT_NETDEVICE_H */
+diff --git a/patches/0107-net-forward-path.cocci b/patches/0107-net-forward-path.cocci
 new file mode 100644
-index 000000000000..b131d52039ca
+index 000000000000..f612239404a6
 --- /dev/null
-+++ b/patches/0106-ethtool-ringparam.cocci
-@@ -0,0 +1,45 @@
-+@set@
++++ b/patches/0107-net-forward-path.cocci
+@@ -0,0 +1,19 @@
++@ops@
 +identifier ops, fn;
 +@@
-+const struct ethtool_ops ops = {
-+  .set_ringparam = fn,
++const struct net_device_ops ops = {
+++#if LINUX_VERSION_IS_GEQ(5,13,0)
++  .ndo_fill_forward_path = fn,
+++#endif
 +  ...
 +};
 +
 +@@
-+identifier set.fn;
-+identifier dev, rp, krp, extack;
++identifier ops.fn;
 +@@
-+int fn(struct net_device *dev,
-+       struct ethtool_ringparam *rp
-++#if LINUX_VERSION_IS_GEQ(5,17,0)
-+       , struct kernel_ethtool_ringparam *krp,
-+       struct netlink_ext_ack *extack
-++#endif
-+      )
+++#if LINUX_VERSION_IS_GEQ(5,13,0)
++int fn(...)
 +{
 +...
 +}
-+
-+@get@
-+identifier ops, fn;
-+@@
-+const struct ethtool_ops ops = {
-+  .get_ringparam = fn,
-+  ...
-+};
-+
-+@@
-+identifier get.fn;
-+identifier dev, rp, krp, extack;
-+@@
-+void fn(struct net_device *dev,
-+        struct ethtool_ringparam *rp
-++#if LINUX_VERSION_IS_GEQ(5,17,0)
-+        , struct kernel_ethtool_ringparam *krp,
-+        struct netlink_ext_ack *extack
-++#endif
-+       )
-+{
-+...
-+}
+++#endif /* LINUX_VERSION_IS_GEQ(5,13,0) */
 -- 
 2.35.1
 
