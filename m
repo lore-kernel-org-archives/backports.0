@@ -2,90 +2,92 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F2D4C433FE
-	for <backports@archiver.kernel.org>; Mon, 21 Feb 2022 14:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EFCBC4332F
+	for <backports@archiver.kernel.org>; Mon,  7 Mar 2022 16:55:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357838AbiBUOMV (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Mon, 21 Feb 2022 09:12:21 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45980 "EHLO
+        id S244339AbiCGQ4k (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Mon, 7 Mar 2022 11:56:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377336AbiBUOMS (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 21 Feb 2022 09:12:18 -0500
-Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0DCC1EAD2
-        for <backports@vger.kernel.org>; Mon, 21 Feb 2022 06:11:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Content-Type:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-        Resent-Cc:Resent-Message-ID; bh=WjbUeLb7BSeI9OfRwZeFvuwMCGt3q3GTV0+XAm3tQQY=;
-        t=1645452713; x=1646662313; b=HCNaAKT/n7c7JF7dY6ZjAXNaRAmkgLIH/6p3sQlz4pX5+Ol
-        Wt6EkNCRS+539zFZ/mDsJYZVrrW998z9EUIK7yru3yF49SLAQH58/7Li75ROHjf+P7kCJjM4XuZmv
-        dvh9ml5f1GU9C18JOwTCvYdi/wqTHqEZM6e0Rgt7KRGVtWWmuic4tzWGZnN+XpuZ2zQ58E6Io1hgb
-        l5sN1SiBKiaC+A6+Zhej+HChlZ1QUC6yKsfg86KQUyYVcEmxDtiXMeZGPlyru8hZJf4tTsa9k8Q/H
-        UA0PQyvMyzrTJ2e14mr72b55ncBPq+3jat/0nKdYBSYk2TVhIoBH0zqpMO/Q74Dw==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.95)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1nM9Pq-003r4r-LQ;
-        Mon, 21 Feb 2022 15:11:50 +0100
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     backports@vger.kernel.org
-Cc:     Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 3/3] backports: add ktime_get_coarse_boottime_ns
-Date:   Mon, 21 Feb 2022 15:11:47 +0100
-Message-Id: <20220221151147.3fccada91a71.Id1c6b53e4c57d92eb838e4c09ef8042cd42f150f@changeid>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220221151147.f0ab663b932a.I59271805ee60501a03c50f5ec05240393f1fb4be@changeid>
-References: <20220221151147.f0ab663b932a.I59271805ee60501a03c50f5ec05240393f1fb4be@changeid>
+        with ESMTP id S244350AbiCGQ4i (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 7 Mar 2022 11:56:38 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D88A77E0B3
+        for <backports@vger.kernel.org>; Mon,  7 Mar 2022 08:55:42 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id p9so24310919wra.12
+        for <backports@vger.kernel.org>; Mon, 07 Mar 2022 08:55:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=U7z4tAW4DqoDwH75I24oGDlB4HCyaup10TOpQfqgjgo=;
+        b=RYXKvZXzudxfisAlILIAEIDxPOwQ4x6IfofPxeeOoSXxDGUsDgDVdOnfQ/8/L/8GAC
+         8F+4neAX0VBEsugFiJmxljWXwiT8taAkU18wpHmP1UOSBqFgpRI1g9K32wa6ITybbLC5
+         rQpUUcVM/3Lwwt9HmthnnPsf+/aJI7YDVB3ssHNnZdiQBvzV89c6kQvr9oV3GK34Fj/P
+         ATClKHTTMpfy1hFsprf1/x4bF9u84VejEJT9f0wkC7jRVoqRLyOiRdRbq525K9pVdmSo
+         NJhqyCo/UJ7DpoTfVoRKHh5WkMmyrM4GT5hZAsQJsWWSDb3sHyEqPQtgvOlmiTz1o/XJ
+         f50g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=U7z4tAW4DqoDwH75I24oGDlB4HCyaup10TOpQfqgjgo=;
+        b=Jm/px9TavTpuZ48BbtzFXQSvfvnDNXRDyEVNgDcLfoipm+fsN7GRJ4y+bx+RkjHtf9
+         qoC7udVJ929/UM5okMevw2VEj+Q0DiShtavD0KA7NmAtTvD2l7T5CseEKMHWPaRPt7zn
+         SwXDINaazRwwA/WFMzacANq5pLHCl60RLYB+3oOJHNGphd2/zasYFcMfn5fLutFpjGvo
+         wQkrxBFnvLGWLd5QOP5Yrlv92s4WjH2FfZv36gXeLy5PunqjQ+xTksnzXxIt0NuHTV96
+         X6EgzayGzKfJMuGSLujQVkZ47XZoDCb73Tmdh5xRngF2V3XBXCTEqLfYfYaeKCY+7iVp
+         U+AQ==
+X-Gm-Message-State: AOAM5333D0o3aodZkg8km3RqeUjIqW6CcXXmjOsM+CXroiyH7pdV7cga
+        axR7jsszB3sDW6uKuankN2ar4G41IKDT1EZcG4zhpNJmcn8=
+X-Google-Smtp-Source: ABdhPJyzemf0BDwkXJHONWEtxs5vMFIflBC/VnPos3jNLG/9W0023Zo6KkI97Gbs8ZxLwKSkwTCMiiJrYSYiM8T4Pb0=
+X-Received: by 2002:a05:6000:1567:b0:1fb:768d:7a4 with SMTP id
+ 7-20020a056000156700b001fb768d07a4mr1949417wrz.185.1646672141267; Mon, 07 Mar
+ 2022 08:55:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Joo Yong-Seok <joo.yongseok@gmail.com>
+Date:   Mon, 7 Mar 2022 08:55:30 -0800
+Message-ID: <CAE3xvfbJudPQa9w5oe-LEjnZSj9CqrMts2jN-a2cmd4Wb+m1TQ@mail.gmail.com>
+Subject: Question about backport output generation with linux-4.9
+To:     backports@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+Hi,
 
-... and simplify the code while at it.
+I am a newbie on linux-backport and I have a problem generating a
+backport output with linux-kernel 4.9.y checkout. These are what I ran
+to generate backport output against linux-4.9 kernel.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- backport/backport-include/linux/timekeeping.h | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+1) "git clone git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git;
+git checkout linux-4.9.y"        # linux-stable git repo clone for
+source
+2) "git clone git://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git";
+git checkout linux-4.19.y" # linux-backports
+3) In backports directory, ran "./gentree --copy-list copy-list
+--clean /abs-path/linux-stable /abs-path/output"
 
-diff --git a/backport/backport-include/linux/timekeeping.h b/backport/backport-include/linux/timekeeping.h
-index 80c625569d6e..87744572bce6 100644
---- a/backport/backport-include/linux/timekeeping.h
-+++ b/backport/backport-include/linux/timekeeping.h
-@@ -6,23 +6,18 @@
- #include_next <linux/timekeeping.h>
- 
- #if LINUX_VERSION_IS_LESS(5,3,0)
--#define ktime_get_boottime_ns LINUX_BACKPORT(ktime_get_boottime_ns)
--static inline u64 ktime_get_boottime_ns(void)
--{
--	return ktime_get_boot_ns();
--}
-+#define ktime_get_boottime_ns ktime_get_boot_ns
-+#define ktime_get_coarse_boottime_ns ktime_get_boot_ns
- #endif /* < 5.3 */
- 
- #if LINUX_VERSION_IS_LESS(4,18,0)
- extern time64_t ktime_get_boottime_seconds(void);
--#endif /* < 4.18 */
- 
--#if LINUX_VERSION_IS_LESS(4,18,0)
- #define ktime_get_raw_ts64 LINUX_BACKPORT(ktime_get_raw_ts64)
- static inline void ktime_get_raw_ts64(struct timespec64 *ts)
- {
- 	return getrawmonotonic64(ts);
- }
--#endif
-+#endif /* < 4.18 */
- 
- #endif /* __BACKPORT_TIMEKEEPING_H */
--- 
-2.35.1
+I hit many gentree errors like
 
+> File doesn't exists
+> Patch error (refcount.c lock, rhashtable related things...)
+> Another patch errors
+
+I resolved by removing the patch files and directly modified the
+source in linux-4.9 stable repo as well as modified Kconfig file under
+backports/compat.
+Also, remove files that don't exist.
+
+I am really wondering whether these procedures are the right way to
+generate the backport output.
+I need to generate mac80211.ko / cfg80211.ko / and wifi-driver.ko
+against our linux-4.9 kernel source code to support a lower version of
+kernel.
+
+If I checked out linux-5.4.y kernel from linux-stable repo and checked
+out linux-5.4.y from backport repo, I don't see these types of errors.
+Please advise me.
+
+Thank you.
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
