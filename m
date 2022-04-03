@@ -2,108 +2,138 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4A2C433F5
-	for <backports@archiver.kernel.org>; Tue, 22 Mar 2022 18:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 883BEC433EF
+	for <backports@archiver.kernel.org>; Sun,  3 Apr 2022 23:20:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240253AbiCVSXc (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Tue, 22 Mar 2022 14:23:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37412 "EHLO
+        id S1356897AbiDCXV6 (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Sun, 3 Apr 2022 19:21:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237163AbiCVSXb (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 22 Mar 2022 14:23:31 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A7F28D6B0
-        for <backports@vger.kernel.org>; Tue, 22 Mar 2022 11:22:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1647973322; x=1679509322;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=sXzcv426M/YfAmIpQYty05d0EyhHtyIb3XZtS/DmAQY=;
-  b=Pr0OmF7pUgFHZYmFAM7zeDae1P3UmeAsJqthHwVoCYmHdFoQ71+q6ooI
-   a9Ft9RjiXiO5Nze7QBHTYEiQIpxuw23+vTPBcrR37jvLdQuVqiCMXF5vl
-   9dP7L2uaQatY6pUxqb9KrbuqgCKWAN4CjoR8B6A5S6tAmRJGvUSJOaRlh
-   0=;
-Received: from ironmsg-lv-alpha.qualcomm.com ([10.47.202.13])
-  by alexa-out.qualcomm.com with ESMTP; 22 Mar 2022 11:22:01 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg-lv-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2022 11:22:01 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 22 Mar 2022 11:22:01 -0700
-Received: from alokad-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 22 Mar 2022 11:22:00 -0700
-From:   Aloka Dixit <quic_alokad@quicinc.com>
-To:     <hauke@hauke-m.de>
-CC:     <backports@vger.kernel.org>, Aloka Dixit <quic_alokad@quicinc.com>
-Subject: [PATCH] patches: Add missing definition for NL80211_FILS_DISCOVERY_ATTR_TMPL
-Date:   Tue, 22 Mar 2022 11:21:48 -0700
-Message-ID: <20220322182148.27727-1-quic_alokad@quicinc.com>
-X-Mailer: git-send-email 2.31.1
+        with ESMTP id S1354780AbiDCXV6 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sun, 3 Apr 2022 19:21:58 -0400
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7219326DA
+        for <backports@vger.kernel.org>; Sun,  3 Apr 2022 16:19:59 -0700 (PDT)
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [80.241.60.245])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4KWqcs5D49z9sRt;
+        Mon,  4 Apr 2022 01:19:57 +0200 (CEST)
+Message-ID: <5a212284-063d-0b94-0186-cec415647e08@hauke-m.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
+        t=1649027995;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=q7YjwDUV1QIsJ4QzNF0RdlripzIykR8uY42Drt5Fgss=;
+        b=i3wIJoHmPJIz22TP0NzZoPnltcoohOPwA6eydFhlDb5VV/ZA2FudMYdJbaLlEJZUUbU/Hw
+        BFJIYZGnY0ToxR+EctDcdmfH3X8LtMsAz/paVdHJH9qif76vG7AGaZpl/EpTu+Pk1UfN8E
+        ln1w9IZRcEUIgBu9I5xLazotcTTB7m1xDAZp8f+RQDJjuDSED4lF1onpH0Mq0Wk6aObQL4
+        YaL7Mk2bHCibJILRUbQjpUyy+Bz3d+U7xaMd3bYGxiKWUVvPXHl6SWw8ciz03WcujiR++T
+        QwdfpOTzPk0SL5ci6bdLjw/6AlmteFHqN55gfB366XL87JKLeibgzsmuIFZTOw==
+Date:   Mon, 4 Apr 2022 01:19:53 +0200
 MIME-Version: 1.0
+Content-Language: en-US
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        backports@vger.kernel.org
+References: <1796985a-4524-f6f8-2f67-acb2e985e87f@flygoat.com>
+ <b372254d9c4cc7156eabfb5dd722d02541a31ea1.camel@sipsolutions.net>
+ <cf1d0098-f871-4086-18fd-ffbc8e90da66@flygoat.com>
+ <bb0ae37aa770e016463706d557fec1c5205bc6a9.camel@sipsolutions.net>
+ <5a58d473-a0a1-b213-c71d-963e6b180593@flygoat.com>
+ <d29fa260e1e9d43dc3fa2f5b9683a5b336451ad8.camel@sipsolutions.net>
+ <b16e61de-9258-7f32-7c2c-d59565f5fd05@flygoat.com>
+ <f234795fbc9ba700982d5182f3cb71d5a0408c17.camel@sipsolutions.net>
+ <9886de4b-7e5c-ee34-6e2c-83efb358d1ac@hauke-m.de>
+ <1ac779ab0dfebdaa1ce7e5b6e900d49164e4afa9.camel@sipsolutions.net>
+ <1153d726-aed6-0b62-d0f1-6a1e2a878543@flygoat.com>
+ <c4e0b94283e55619822a2f5d45a91b5d33d3cfa1.camel@sipsolutions.net>
+ <a3f573f1-7f61-b38d-813a-53d4af59f322@flygoat.com>
+ <789b2e40-c0f2-c078-907d-ceeacc8c2da9@hauke-m.de>
+ <7c1fd2554ae907eded15dd247bbda5bc5c28cbe7.camel@sipsolutions.net>
+ <64e20adf-b959-414f-8104-728ea8d23f76@www.fastmail.com>
+From:   Hauke Mehrtens <hauke@hauke-m.de>
+Subject: Re: Dealing with SUBLEVEL overflow in backports
+In-Reply-To: <64e20adf-b959-414f-8104-728ea8d23f76@www.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-Add definition for the attribute NL80211_FILS_DISCOVERY_ATTR_TMPL
-which is missing for kernels older than 5.10.0.
+On 2/10/22 15:05, Jiaxun Yang wrote:
+> 
+> 
+> 在2022年2月10日二月 上午8:17，Johannes Berg写道：
+>> On Thu, 2022-02-10 at 00:44 +0100, Hauke Mehrtens wrote:
+>>>
+>>> What build problem do you get when you include "#include <linux/bug.h>"
+>>> here on kernel 4.9.299?
+>>>
+>>
+>> I haven't tried, but per the explanation, you get issues if you tried to
+>> include bug.h in the first place, since then you get
+>>
+>> bug.h
+>> -> includes build_bug.h (since the patch)
+>> -> uses build_bug.h from backports
+>> -> includes bug.h (does nothing, double include)
+>>
+> 
+> Yep that's the problem.
+> 
+> What I'm trying is something like:
+> Though it won't work in kernel intergration mode. My makefile foo does not
+> allow me to come up a idea.
+> 
+> diff --git a/backport/Makefile.real b/backport/Makefile.real
+> index 65508028..26482e52 100644
+> --- a/backport/Makefile.real
+> +++ b/backport/Makefile.real
+> @@ -83,8 +83,19 @@ backport-include/backport/autoconf.h: .config Kconfig.versions Kconfig.kernel
+>          ) > backport-include/backport/autoconf.h
+>          @echo " done."
+>   
+> +.PHONY: backport-include/backport/version.h
+> +backport-include/backport/version.h:
+> +       @echo -n "Building backport-include/backport/version.h ..."
+> +       @echo "#ifndef COMPAT_VERSION_INCLUDED" > $@
+> +       @echo "#define COMPAT_VERSION_INCLUDED" >> $@
+> +       @echo '#define COMPAT_LINUX_VERSION $(VERSION)' >> $@
+> +       @echo '#define COMPAT_LINUX_PATCHLEVEL $(PATCHLEVEL)' >> $@
+> +       @echo '#define COMPAT_LINUX_SUBLEVEL $(SUBLEVEL)' >> $@
+> +       @echo "#endif" >> $@
+> +       @echo " done."
+> +
+>   .PHONY: modules
+> -modules: backport-include/backport/autoconf.h
+> +modules: backport-include/backport/autoconf.h backport-include/backport/version.h
+>          @$(MAKE) -f Makefile.build modules
 
-Fixes: 51258137c228 ("patches: Avoid using NLA_POLICY_RANGE(...)")
-Signed-off-by: Aloka Dixit <quic_alokad@quicinc.com>
----
- patches/0099-netlink-range/mac80211.patch | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+This does not work for me.
+We have to do this inside the kernel make call, when the kernel build 
+system calls backports again, we should have the needed information in 
+that call only.
 
-diff --git a/patches/0099-netlink-range/mac80211.patch b/patches/0099-netlink-range/mac80211.patch
-index e1037a58e1f1..168265ce50a9 100644
---- a/patches/0099-netlink-range/mac80211.patch
-+++ b/patches/0099-netlink-range/mac80211.patch
-@@ -1,6 +1,8 @@
-+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-+index 578bff9c378b..18145767193a 100644
- --- a/net/wireless/nl80211.c
- +++ b/net/wireless/nl80211.c
--@@ -412,10 +412,12 @@ static const struct nla_policy
-+@@ -412,10 +412,15 @@ static const struct nla_policy
-  nl80211_fils_discovery_policy[NL80211_FILS_DISCOVERY_ATTR_MAX + 1] = {
-  	[NL80211_FILS_DISCOVERY_ATTR_INT_MIN] = NLA_POLICY_MAX(NLA_U32, 10000),
-  	[NL80211_FILS_DISCOVERY_ATTR_INT_MAX] = NLA_POLICY_MAX(NLA_U32, 10000),
-@@ -9,11 +11,14 @@
-  			NLA_POLICY_RANGE(NLA_BINARY,
-  					 NL80211_FILS_DISCOVERY_TMPL_MIN_LEN,
-  					 IEEE80211_MAX_DATA_LEN),
-++#else
-++	[NL80211_FILS_DISCOVERY_ATTR_TMPL] = { .type = NLA_BINARY,
-++					       .len = IEEE80211_MAX_DATA_LEN },
- +#endif
-  };
-  
-  static const struct nla_policy
--@@ -655,16 +657,26 @@ static const struct nla_policy nl80211_p
-+@@ -665,16 +670,26 @@ static const struct nla_policy nl80211_policy[NUM_NL80211_ATTR] = {
-  	 * The value of the Length field of the Supported Operating
-  	 * Classes element is between 2 and 253.
-  	 */
-@@ -40,7 +45,7 @@
-  	[NL80211_ATTR_MAC_HINT] = NLA_POLICY_EXACT_LEN_WARN(ETH_ALEN),
-  	[NL80211_ATTR_WIPHY_FREQ_HINT] = { .type = NLA_U32 },
-  	[NL80211_ATTR_TDLS_PEER_CAPABILITY] = { .type = NLA_U32 },
--@@ -719,10 +731,15 @@ static const struct nla_policy nl80211_p
-+@@ -729,10 +744,15 @@ static const struct nla_policy nl80211_policy[NUM_NL80211_ATTR] = {
-  	[NL80211_ATTR_TXQ_LIMIT] = { .type = NLA_U32 },
-  	[NL80211_ATTR_TXQ_MEMORY_LIMIT] = { .type = NLA_U32 },
-  	[NL80211_ATTR_TXQ_QUANTUM] = { .type = NLA_U32 },
--- 
-2.31.1
+The build works like this:
+1. The normal make call to backports, KERNELRELEASE is not set and
+    Makefile forwards the call to Makefile.real.
+2. This calls "Makefile.build modules" in the next step.
+3. This calls the kernel build system with
+    "@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_DIR) modules"
+4. This calls again Makefile, but now with KERNELRELEASE set.
+5. This calls Makefile.kernel and uses the kernel build system to build
+    the backports code.
 
+I tried adding a new rule to Makefile.kernel and then call it in 
+Makefile.build using the kernel build system, but it looks like it only 
+supports make targets supported by the kernel build system.
+
+How do we make the kernel build system call our make target first?
+
+Hauke
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
