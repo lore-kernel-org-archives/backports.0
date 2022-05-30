@@ -2,69 +2,131 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F35C433F5
-	for <backports@archiver.kernel.org>; Fri, 27 May 2022 07:23:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E33FC433F5
+	for <backports@archiver.kernel.org>; Mon, 30 May 2022 17:47:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240822AbiE0HXy (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Fri, 27 May 2022 03:23:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59000 "EHLO
+        id S237325AbiE3RrG (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Mon, 30 May 2022 13:47:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238720AbiE0HXy (ORCPT
-        <rfc822;backports@vger.kernel.org>); Fri, 27 May 2022 03:23:54 -0400
-Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BC1AED712
-        for <backports@vger.kernel.org>; Fri, 27 May 2022 00:23:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-        Content-Type:References:In-Reply-To:Date:To:From:Subject:Message-ID:Sender:
-        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-        Resent-Cc:Resent-Message-ID; bh=qGEJN3A3phDynRkH3U4/CEevCjWlFrFkSW8Civq+JUY=;
-        t=1653636233; x=1654845833; b=C4+5llQSAzwyfM2s79vVKC044wLb1lpjA09hkf39GG9UR9y
-        nlgoTeb8OT9ShWpc11qh1hnu1KWga9EvXJwizNco2FR0ze+nqs9oesWkNfuSjDNIpyZjXsl5iXpST
-        LvGLJp0yPphPFTlxjRRHLvy1uWoW5QDZFu1l/oMTXjsUaM/UnIBbfj2AI9v5RqwLVsTgle3OMjgEK
-        AKGp60Icoog+h/o6bahs4KNke9QKZtE01lShI60JVzZVPspo30u0cIi9P7C/CmFck+EmyEvUh0C18
-        ZWiQpvstUMIEHzJSj5kstITE/IQKiX/yaFQgW9Vba5gGIaZmGQETe9UoiTYk1Mzg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.95)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1nuUK6-005xP6-Oo;
-        Fri, 27 May 2022 09:23:50 +0200
-Message-ID: <5361ae998893a0cd427a35a3050c6eb55b798aa6.camel@sipsolutions.net>
-Subject: Re: Backport wifi drivers from 5.15.8.1-1 to 4.15.0-38 not
- compatible with NetworkManager 1.2.6
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     =?ISO-8859-1?Q?Nicol=F2?= Sprea <nsprea@gmail.com>,
-        backports@vger.kernel.org
-Date:   Fri, 27 May 2022 09:23:49 +0200
-In-Reply-To: <CA+BgFQX=E53UWdw0u+36eO8KZB5HwTFM8Usp5Ju2b4eC6ah_Fg@mail.gmail.com>
-References: <CA+BgFQUdDoCx_zrxNjWGKWNMjioimeO+CSzGkx3Zg14bbbNpQA@mail.gmail.com>
-         <CA+BgFQX=E53UWdw0u+36eO8KZB5HwTFM8Usp5Ju2b4eC6ah_Fg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.1 (3.44.1-1.fc36) 
+        with ESMTP id S231549AbiE3RrF (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 30 May 2022 13:47:05 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC8CC532FB
+        for <backports@vger.kernel.org>; Mon, 30 May 2022 10:47:04 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id l19so4330555ejr.8
+        for <backports@vger.kernel.org>; Mon, 30 May 2022 10:47:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7QKPMST3Y5qMCcUw7ZEMfpiqFdWPcTX7PSIyN2SFQ+s=;
+        b=EVbo6FSXPQLJWCNEhhKuO0zmYpNJgKisauvbPo6ioHBXQXmJ0WNe2ObXb1hpqAHvim
+         lA9SQiP/9THIKNXgQ+iybiilwuh1ShkJPu9YnHXmhESPmsw4wS61OL6o+AZ7CfH6URai
+         RotC2xNl1938VxRMBfzI/irOOebbNOWi2L7+ZihOyrG6rMJppzYSYQuYMGVK9jCL6oUv
+         0mKmDYlBv+OGyUOa9sHSCx9nKMB0oB3OE93rJR7VG7G4t0TXGRQ3ADnalKctAfXKrpmu
+         zg3cAxQqO/rdsU1qX9ls1dVgIJ5UCvuGaCWmsnReRcy/iA2UYsFxLcwSZIYVjW4ewBJ+
+         jb6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7QKPMST3Y5qMCcUw7ZEMfpiqFdWPcTX7PSIyN2SFQ+s=;
+        b=xCYKolIUEiBRTMwwWap0wAepESX++l+K94Jne8BuhF4ziy55ukpkzDn7TU5cYZK4da
+         MavVGUMu8+MWJ15eStzY9GxJgYUOJ5tcTnAxXVwKlTWw6osl4oPcTpjDcNFh89vm1Obj
+         A+qHTTBklKhaMAbdsIYJANNou95xIepI4stHjM0LcYQQqEPCD7rU/QvPUGZ3KNNpbBxc
+         ptIxq5Oee+VMs4UL9pnK/wXmwGF9EeY9XE8fIe4M9d+6FjDjvBciCbuN6mvbPlZCOcEn
+         Poq9DjRQQdw56Zf71oAsMuJk8Aci3zl14bLHn2AI2bnVq3oP9sYsCv5OhoGU/aNVvcxU
+         fddQ==
+X-Gm-Message-State: AOAM532nHrmQVH6RrIhHgHy79ht/AgvhBe4v08dUPuJpPN0RBJssrvYV
+        k1RmK5KogSWyx+ORR6ms7lR8apkXHHM=
+X-Google-Smtp-Source: ABdhPJw5+lTHnCBcYHOC9ApGRjSJo4p+o5Z24F88iSQJQ3hRo4FrtJpp7bFJDL0enLBkUXvlbFTRwQ==
+X-Received: by 2002:a17:906:a397:b0:6fe:a1e5:de70 with SMTP id k23-20020a170906a39700b006fea1e5de70mr45993369ejz.2.1653932822819;
+        Mon, 30 May 2022 10:47:02 -0700 (PDT)
+Received: from fedora.robimarko.hr (cpezg-94-253-144-167-cbl.xnet.hr. [94.253.144.167])
+        by smtp.googlemail.com with ESMTPSA id k9-20020a50c089000000b0042617ba63c3sm6867968edf.77.2022.05.30.10.47.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 May 2022 10:47:02 -0700 (PDT)
+From:   Robert Marko <robimarko@gmail.com>
+To:     backports@vger.kernel.org
+Cc:     Robert Marko <robimarko@gmail.com>
+Subject: [PATCH] backports: add QMI helpers
+Date:   Mon, 30 May 2022 19:47:00 +0200
+Message-Id: <20220530174700.1669944-1-robimarko@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-On Fri, 2022-05-27 at 08:42 +0200, Nicol=C3=B2 Sprea wrote:
-> Hi backport team,
-> I'm trying to backport wifi drivers from 5.15.8.1-1 to 4.15.0-3.
-> However, starting NetworkManager results in the following kernel trace:
->=20
-> kernel: [ 1442.859649] BUG: unable to handle kernel NULL pointer
-> dereference at 00000000000001e8
-> kernel: [ 1442.859835] IP: cfg80211_init_wdev+0xa3/0x150 [cfg80211]
-> kernel: [ 1442.859917] PGD 8000000187ac4067 P4D 8000000187ac4067 PUD
-> 186ce3067 PMD 0
->=20
+QMI helpers are used by ath11k for both AHB and PCI support.
+They are also not user selectable but rather are meant to be selected
+by ath11k, so backport them as well to avoid patching the kernel to
+provide these from OpenWrt for example.
 
-Yeah, I think Mathy reported the same.
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+---
+ backport/Kconfig.sources | 1 +
+ backport/Makefile.kernel | 1 +
+ copy-list                | 5 +++++
+ dependencies             | 2 ++
+ 4 files changed, 9 insertions(+)
 
-You can turn off WEXT support in the meantime in the Kconfig for
-backports, but I'll need to investigate some time.
+diff --git a/backport/Kconfig.sources b/backport/Kconfig.sources
+index 87ffca94..2ea4d8a6 100644
+--- a/backport/Kconfig.sources
++++ b/backport/Kconfig.sources
+@@ -6,6 +6,7 @@ source "$BACKPORT_DIR/net/wireless/Kconfig"
+ source "$BACKPORT_DIR/net/mac80211/Kconfig"
+ source "$BACKPORT_DIR/net/qrtr/Kconfig"
+ source "$BACKPORT_DIR/drivers/bus/mhi/Kconfig"
++source "$BACKPORT_DIR/drivers/soc/qcom/Kconfig"
+ source "$BACKPORT_DIR/drivers/net/wireless/Kconfig"
+ source "$BACKPORT_DIR/drivers/net/usb/Kconfig"
+ 
+diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
+index 373fed96..11ce4177 100644
+--- a/backport/Makefile.kernel
++++ b/backport/Makefile.kernel
+@@ -40,6 +40,7 @@ obj-y += compat/
+ obj-$(CPTCFG_CFG80211) += net/wireless/
+ obj-$(CPTCFG_MAC80211) += net/mac80211/
+ obj-$(CPTCFG_QRTR) += net/qrtr/
++obj-$(CPTCFG_QCOM_QMI_HELPERS) += drivers/soc/qcom/
+ obj-$(CPTCFG_MHI_BUS) += drivers/bus/mhi/
+ obj-$(CPTCFG_WLAN) += drivers/net/wireless/
+ obj-$(CPTCFG_SSB) += drivers/ssb/
+diff --git a/copy-list b/copy-list
+index 480a9fb3..21bf6c58 100644
+--- a/copy-list
++++ b/copy-list
+@@ -102,6 +102,11 @@ drivers/ssb/
+ include/linux/ssb/
+ drivers/bcma/
+ include/linux/bcma/
++drivers/soc/qcom/Makefile
++drivers/soc/qcom/Kconfig
++drivers/soc/qcom/qmi_encdec.c
++drivers/soc/qcom/qmi_interface.c
++include/linux/soc/qcom/qmi.h
+ drivers/net/wireless/atmel/
+ drivers/net/wireless/broadcom/
+ drivers/net/wireless/st/
+diff --git a/dependencies b/dependencies
+index 5bb9c563..3f88c446 100644
+--- a/dependencies
++++ b/dependencies
+@@ -44,5 +44,7 @@ MHI_BUS 4.19
+ # sock_gettstamp()
+ QRTR 5.2
+ 
++QCOM_QMI_HELPERS 4.16
++
+ # QRTR
+ ATH11K 5.2
+-- 
+2.36.1
 
-johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
