@@ -2,131 +2,120 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E33FC433F5
-	for <backports@archiver.kernel.org>; Mon, 30 May 2022 17:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB25C43334
+	for <backports@archiver.kernel.org>; Mon, 11 Jul 2022 16:11:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237325AbiE3RrG (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Mon, 30 May 2022 13:47:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37708 "EHLO
+        id S229684AbiGKQLo (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Mon, 11 Jul 2022 12:11:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231549AbiE3RrF (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 30 May 2022 13:47:05 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC8CC532FB
-        for <backports@vger.kernel.org>; Mon, 30 May 2022 10:47:04 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id l19so4330555ejr.8
-        for <backports@vger.kernel.org>; Mon, 30 May 2022 10:47:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7QKPMST3Y5qMCcUw7ZEMfpiqFdWPcTX7PSIyN2SFQ+s=;
-        b=EVbo6FSXPQLJWCNEhhKuO0zmYpNJgKisauvbPo6ioHBXQXmJ0WNe2ObXb1hpqAHvim
-         lA9SQiP/9THIKNXgQ+iybiilwuh1ShkJPu9YnHXmhESPmsw4wS61OL6o+AZ7CfH6URai
-         RotC2xNl1938VxRMBfzI/irOOebbNOWi2L7+ZihOyrG6rMJppzYSYQuYMGVK9jCL6oUv
-         0mKmDYlBv+OGyUOa9sHSCx9nKMB0oB3OE93rJR7VG7G4t0TXGRQ3ADnalKctAfXKrpmu
-         zg3cAxQqO/rdsU1qX9ls1dVgIJ5UCvuGaCWmsnReRcy/iA2UYsFxLcwSZIYVjW4ewBJ+
-         jb6A==
+        with ESMTP id S229500AbiGKQLn (ORCPT
+        <rfc822;backports@vger.kernel.org>); Mon, 11 Jul 2022 12:11:43 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 777E07A502
+        for <backports@vger.kernel.org>; Mon, 11 Jul 2022 09:11:42 -0700 (PDT)
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id DE0253F8D6
+        for <backports@vger.kernel.org>; Mon, 11 Jul 2022 16:11:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1657555900;
+        bh=wVpXsqnpCwF85ChCzDHdsKZ9P2qYgExGI2oXRwfQYX8=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version;
+        b=k29xVZVrTwSaioMM9KbJEeeKjI8LH6mdZRYCH3943Y6QARtRmA0Yyu92t626Dxrtm
+         CwtTQ7bfpLtvDNg+vRKtryWckfYwFRHJSWyCsXu1wbA0ePyDnz7MM/jZFsIR8Buypl
+         1+GS00Kik2t9WSl8q+rWWCd/f6k1F0l5FF2QGBihfO+Am6Gv5YMPnSA1nkJB3LZnNQ
+         rNMQScompgHrZEEtiSFuXvP1mlFdo/c6CGOstzALe+H1NX79nUMTUEaCnZXNhjdPtu
+         ff+bp1MOVfmQwuV/YWvhtAsg6ZOiRZ9sCBEwanEMFaKjjfxI/0PKv2F1mnbaocT3H+
+         4ENL9pXoHgjKw==
+Received: by mail-wr1-f72.google.com with SMTP id h29-20020adfaa9d000000b0021d67fc0b4aso776414wrc.9
+        for <backports@vger.kernel.org>; Mon, 11 Jul 2022 09:11:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=7QKPMST3Y5qMCcUw7ZEMfpiqFdWPcTX7PSIyN2SFQ+s=;
-        b=xCYKolIUEiBRTMwwWap0wAepESX++l+K94Jne8BuhF4ziy55ukpkzDn7TU5cYZK4da
-         MavVGUMu8+MWJ15eStzY9GxJgYUOJ5tcTnAxXVwKlTWw6osl4oPcTpjDcNFh89vm1Obj
-         A+qHTTBklKhaMAbdsIYJANNou95xIepI4stHjM0LcYQQqEPCD7rU/QvPUGZ3KNNpbBxc
-         ptIxq5Oee+VMs4UL9pnK/wXmwGF9EeY9XE8fIe4M9d+6FjDjvBciCbuN6mvbPlZCOcEn
-         Poq9DjRQQdw56Zf71oAsMuJk8Aci3zl14bLHn2AI2bnVq3oP9sYsCv5OhoGU/aNVvcxU
-         fddQ==
-X-Gm-Message-State: AOAM532nHrmQVH6RrIhHgHy79ht/AgvhBe4v08dUPuJpPN0RBJssrvYV
-        k1RmK5KogSWyx+ORR6ms7lR8apkXHHM=
-X-Google-Smtp-Source: ABdhPJw5+lTHnCBcYHOC9ApGRjSJo4p+o5Z24F88iSQJQ3hRo4FrtJpp7bFJDL0enLBkUXvlbFTRwQ==
-X-Received: by 2002:a17:906:a397:b0:6fe:a1e5:de70 with SMTP id k23-20020a170906a39700b006fea1e5de70mr45993369ejz.2.1653932822819;
-        Mon, 30 May 2022 10:47:02 -0700 (PDT)
-Received: from fedora.robimarko.hr (cpezg-94-253-144-167-cbl.xnet.hr. [94.253.144.167])
-        by smtp.googlemail.com with ESMTPSA id k9-20020a50c089000000b0042617ba63c3sm6867968edf.77.2022.05.30.10.47.02
+        bh=wVpXsqnpCwF85ChCzDHdsKZ9P2qYgExGI2oXRwfQYX8=;
+        b=UxcyjkQIJ9zRfwtRgc2ltO8j0YLv846LL8dop1aDOkW3diSMZqDF0K6PBobE65k+SW
+         yDQ1TMQyyglhKE0tu1iRXjl61t+H+ts68PGhT2uu+UAfZ+qlgQnM1NE0V6saddSAaU8V
+         N4EJ/96MYUW6fhRqxs4zgtFht4UvwHXvpEM7HL8Sdx+9xCTmnsnbGf/IU6uroMVyZ96L
+         yadKAsV8TP7FD9bqd5PoztbisoJqI9N7sfiWjpY+ZMYT4g3bgWXkluJ2FsCnOZukCyGH
+         5wQMWGciDXvd/NPFdavFvhyYjUxnxR/SEsIUI8yQK2Z41w3bee0zMETENXptdtzmwUC3
+         LVoQ==
+X-Gm-Message-State: AJIora8VHe0gQk6Kj907VtLVB728W3DukRwEAfPfG1r6ET3dp1PFweKF
+        rMXh1qmVCww8x23A3Kum9jmdzbkzrCmE4rhLEECRLAeFLH6tLi4WO6n+X389MkEACwcE6tObl2i
+        kjR0SoOSSimIEV5XBzwm6lY3C0jWZEQOEqj0s5w==
+X-Received: by 2002:a1c:f710:0:b0:394:1960:e8a1 with SMTP id v16-20020a1cf710000000b003941960e8a1mr16790643wmh.154.1657555895309;
+        Mon, 11 Jul 2022 09:11:35 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1tGXBr2aNmAldbUOlCNh8SQdgdZJuTMN3rg4wB4p2HgEPex23uAfJjuu7AMjI4myUfLA6OFwQ==
+X-Received: by 2002:a1c:f710:0:b0:394:1960:e8a1 with SMTP id v16-20020a1cf710000000b003941960e8a1mr16790621wmh.154.1657555895050;
+        Mon, 11 Jul 2022 09:11:35 -0700 (PDT)
+Received: from localhost ([2a01:4b00:85fd:d700:2a48:63cb:df6d:cbf4])
+        by smtp.gmail.com with ESMTPSA id w15-20020a1cf60f000000b003a2c7bf0497sm7197837wmc.16.2022.07.11.09.11.34
+        for <backports@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 May 2022 10:47:02 -0700 (PDT)
-From:   Robert Marko <robimarko@gmail.com>
+        Mon, 11 Jul 2022 09:11:34 -0700 (PDT)
+From:   Dimitri John Ledkov <dimitri.ledkov@canonical.com>
 To:     backports@vger.kernel.org
-Cc:     Robert Marko <robimarko@gmail.com>
-Subject: [PATCH] backports: add QMI helpers
-Date:   Mon, 30 May 2022 19:47:00 +0200
-Message-Id: <20220530174700.1669944-1-robimarko@gmail.com>
-X-Mailer: git-send-email 2.36.1
+Subject: [PATCH] headers: backport IBT / CFI support
+Date:   Mon, 11 Jul 2022 17:11:30 +0100
+Message-Id: <20220711161130.529294-1-dimitri.ledkov@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-QMI helpers are used by ath11k for both AHB and PCI support.
-They are also not user selectable but rather are meant to be selected
-by ath11k, so backport them as well to avoid patching the kernel to
-provide these from OpenWrt for example.
+Kernels that support IBT on x86 require module_init/exit() functions
+to have cfi protection included. Backport __CFI_ADDRESSABLE changes
+from upstream linux/module.h into backports version of module.h
+header.
 
-Signed-off-by: Robert Marko <robimarko@gmail.com>
+This results in backported modules correctly pick up CFI protection
+only when building against IBT enabled kernels.
+
+Signed-off-by: Dimitri John Ledkov <dimitri.ledkov@canonical.com>
 ---
- backport/Kconfig.sources | 1 +
- backport/Makefile.kernel | 1 +
- copy-list                | 5 +++++
- dependencies             | 2 ++
- 4 files changed, 9 insertions(+)
+ backport/backport-include/linux/module.h | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/backport/Kconfig.sources b/backport/Kconfig.sources
-index 87ffca94..2ea4d8a6 100644
---- a/backport/Kconfig.sources
-+++ b/backport/Kconfig.sources
-@@ -6,6 +6,7 @@ source "$BACKPORT_DIR/net/wireless/Kconfig"
- source "$BACKPORT_DIR/net/mac80211/Kconfig"
- source "$BACKPORT_DIR/net/qrtr/Kconfig"
- source "$BACKPORT_DIR/drivers/bus/mhi/Kconfig"
-+source "$BACKPORT_DIR/drivers/soc/qcom/Kconfig"
- source "$BACKPORT_DIR/drivers/net/wireless/Kconfig"
- source "$BACKPORT_DIR/drivers/net/usb/Kconfig"
+diff --git a/backport/backport-include/linux/module.h b/backport/backport-include/linux/module.h
+index cd342e0d2fdd..efe970f174ed 100644
+--- a/backport/backport-include/linux/module.h
++++ b/backport/backport-include/linux/module.h
+@@ -3,6 +3,10 @@
+ #include_next <linux/module.h>
+ #include <linux/rcupdate.h>
  
-diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
-index 373fed96..11ce4177 100644
---- a/backport/Makefile.kernel
-+++ b/backport/Makefile.kernel
-@@ -40,6 +40,7 @@ obj-y += compat/
- obj-$(CPTCFG_CFG80211) += net/wireless/
- obj-$(CPTCFG_MAC80211) += net/mac80211/
- obj-$(CPTCFG_QRTR) += net/qrtr/
-+obj-$(CPTCFG_QCOM_QMI_HELPERS) += drivers/soc/qcom/
- obj-$(CPTCFG_MHI_BUS) += drivers/bus/mhi/
- obj-$(CPTCFG_WLAN) += drivers/net/wireless/
- obj-$(CPTCFG_SSB) += drivers/ssb/
-diff --git a/copy-list b/copy-list
-index 480a9fb3..21bf6c58 100644
---- a/copy-list
-+++ b/copy-list
-@@ -102,6 +102,11 @@ drivers/ssb/
- include/linux/ssb/
- drivers/bcma/
- include/linux/bcma/
-+drivers/soc/qcom/Makefile
-+drivers/soc/qcom/Kconfig
-+drivers/soc/qcom/qmi_encdec.c
-+drivers/soc/qcom/qmi_interface.c
-+include/linux/soc/qcom/qmi.h
- drivers/net/wireless/atmel/
- drivers/net/wireless/broadcom/
- drivers/net/wireless/st/
-diff --git a/dependencies b/dependencies
-index 5bb9c563..3f88c446 100644
---- a/dependencies
-+++ b/dependencies
-@@ -44,5 +44,7 @@ MHI_BUS 4.19
- # sock_gettstamp()
- QRTR 5.2
- 
-+QCOM_QMI_HELPERS 4.16
++#ifndef __CFI_ADDRESSABLE
++#define __CFI_ADDRESSABLE(fn, __attr)
++#endif
 +
- # QRTR
- ATH11K 5.2
+ /*
+  * The define overwriting module_init is based on the original module_init
+  * which looks like this:
+@@ -34,6 +38,7 @@ extern void backport_dependency_symbol(void);
+ 		return initfn();					\
+ 	}								\
+ 	int init_module(void) __attribute__((cold,alias("__init_backport")));\
++	__CFI_ADDRESSABLE(init_module, __initdata); \
+ 	BACKPORT_MOD_VERSIONS
+ 
+ /*
+@@ -58,7 +63,8 @@ extern void backport_dependency_symbol(void);
+ 		exitfn();						\
+ 		rcu_barrier();						\
+ 	}								\
+-	void cleanup_module(void) __attribute__((cold,alias("__exit_compat")));
++	void cleanup_module(void) __attribute__((cold,alias("__exit_compat"))); \
++	__CFI_ADDRESSABLE(cleanup_module, __exitdata);
+ #endif
+ 
+ #endif /* __BACKPORT_LINUX_MODULE_H */
 -- 
-2.36.1
+2.32.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
