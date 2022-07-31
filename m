@@ -2,66 +2,69 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F46C00140
-	for <backports@archiver.kernel.org>; Sun, 31 Jul 2022 15:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A1CC00140
+	for <backports@archiver.kernel.org>; Sun, 31 Jul 2022 15:56:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237438AbiGaP4V (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Sun, 31 Jul 2022 11:56:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49890 "EHLO
+        id S236780AbiGaP41 (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Sun, 31 Jul 2022 11:56:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231197AbiGaP4T (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sun, 31 Jul 2022 11:56:19 -0400
+        with ESMTP id S231197AbiGaP40 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sun, 31 Jul 2022 11:56:26 -0400
 Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3540A460
-        for <backports@vger.kernel.org>; Sun, 31 Jul 2022 08:56:17 -0700 (PDT)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8EFEF5A8
+        for <backports@vger.kernel.org>; Sun, 31 Jul 2022 08:56:25 -0700 (PDT)
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Lwm7v6HBCz9sPp;
-        Sun, 31 Jul 2022 17:56:11 +0200 (CEST)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Lwm866jKyz9sPp;
+        Sun, 31 Jul 2022 17:56:22 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-        t=1659282971;
+        t=1659282982;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=QpEAhkrtzRX6h8yCbo7Nm/GOQ2OPNKhxAgM9AJPxOlw=;
-        b=zbe1mQIOb/ky/Iy9Rf1/PaXfsVPpiVCUh6mDhz//4Z7sDg709ugTAqz49a30+Y/PvD1PZY
-        1r25kUdPhE7sxOTSXCAUlRXJ69C02K9AtBqRHgWYWWil8e1KVId3pdmRnimPBrARw2vQP/
-        qOoDqt8XvNSw+Cb72gJr1loNuRkctF3Cw2DY/ojd/MFdJk+/j/dZG6JL362kzUhxZKQxBK
-        mwIRXUyGeDHe4cKQnbRVszFKXJc87taLYRNflOTOdGNkRERaGqSdjzRb+ijX0l+FlRpY2z
-        LauGw4EDFLS2Hrr7Bi9CoMbg6W8Ng9AKsHspTyD2co2s4e/oD55cT9EDVe40Rw==
-Message-ID: <87fd5fab-99e4-bf4e-6110-c0a9b2de8ed8@hauke-m.de>
-Date:   Sun, 31 Jul 2022 17:56:10 +0200
+        bh=bfbIOyjkmk9wNp9StZCr1d3Ykh8e2Sdi4NvPA4/JbME=;
+        b=JMMAfyc1dQ0cMvc6RfSc+SIW6UxIzvsp7PC5V9BS+8nYN8SkmChrJkcvMyN5qoqJz7TE6E
+        26s2oAI8obmZRyNKKxdqt9GgDVsnVdqAWNyuxxjl/9G/AqsJempu79wwYPnaRqAsfh/1dP
+        oHMZDM3dvZhFOZSIys6FYWN82VeSykXC2Nf/E4uPRATw5Rq0bWXoYVrRzQZgVlwe9t1uyl
+        N7hT1C1CT4fapbB2tdk7xSPYIVidQR0bNWSxZQft00vNXBRunlFCiSE/OnPETpHoz+gNRr
+        PtyxmlOwVXo8FVp913ZNBwHJ8Y6ACfO0ChDLSgjYWWcjqmpp3NnqnbU2dRk2aA==
+Message-ID: <fb8b69ab-6893-821e-c71a-25e3b32bd6c5@hauke-m.de>
+Date:   Sun, 31 Jul 2022 17:56:22 +0200
 MIME-Version: 1.0
-Subject: Re: [PATCH] headers: backport IBT / CFI support
+Subject: Re: [PATCH] backports: add QMI helpers
 Content-Language: en-US
-To:     Dimitri John Ledkov <dimitri.ledkov@canonical.com>,
-        backports@vger.kernel.org
-References: <20220711161130.529294-1-dimitri.ledkov@canonical.com>
+To:     Robert Marko <robimarko@gmail.com>, backports@vger.kernel.org
+References: <20220530174700.1669944-1-robimarko@gmail.com>
 From:   Hauke Mehrtens <hauke@hauke-m.de>
-In-Reply-To: <20220711161130.529294-1-dimitri.ledkov@canonical.com>
+In-Reply-To: <20220530174700.1669944-1-robimarko@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4Lwm7v6HBCz9sPp
+X-Rspamd-Queue-Id: 4Lwm866jKyz9sPp
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-On 7/11/22 18:11, Dimitri John Ledkov wrote:
-> Kernels that support IBT on x86 require module_init/exit() functions
-> to have cfi protection included. Backport __CFI_ADDRESSABLE changes
-> from upstream linux/module.h into backports version of module.h
-> header.
+On 5/30/22 19:47, Robert Marko wrote:
+> QMI helpers are used by ath11k for both AHB and PCI support.
+> They are also not user selectable but rather are meant to be selected
+> by ath11k, so backport them as well to avoid patching the kernel to
+> provide these from OpenWrt for example.
 > 
-> This results in backported modules correctly pick up CFI protection
-> only when building against IBT enabled kernels.
+> Signed-off-by: Robert Marko <robimarko@gmail.com>
+> ---
+>   backport/Kconfig.sources | 1 +
+>   backport/Makefile.kernel | 1 +
+>   copy-list                | 5 +++++
+>   dependencies             | 2 ++
+>   4 files changed, 9 insertions(+)
 > 
-> Signed-off-by: Dimitri John Ledkov <dimitri.ledkov@canonical.com>
-
 Thank you for your patch I applied it to master.
 
 Hauke
+
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
