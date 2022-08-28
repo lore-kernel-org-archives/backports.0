@@ -2,61 +2,82 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DBE4C00140
-	for <backports@archiver.kernel.org>; Sun, 31 Jul 2022 15:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21AF0ECAAD5
+	for <backports@archiver.kernel.org>; Sun, 28 Aug 2022 14:23:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237455AbiGaP4u (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Sun, 31 Jul 2022 11:56:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50090 "EHLO
+        id S229530AbiH1OXj (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Sun, 28 Aug 2022 10:23:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231197AbiGaP4u (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sun, 31 Jul 2022 11:56:50 -0400
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050:0:465::101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00A23F5B8;
-        Sun, 31 Jul 2022 08:56:48 -0700 (PDT)
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Lwm8Y3mDpz9sQw;
-        Sun, 31 Jul 2022 17:56:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-        t=1659283005;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=YL8tRzwbOzLIHMrdZAVR9abCUBhVs9KYCSZtMX+wHc0=;
-        b=YHwzAN74nmHhsHmxIpiEbygHFTb9UIJr8HxCxjSo9+Ga2XIfWTjGKTpnoVaveSAdfWh/io
-        6cy0DoJ+mbhmcHZxNu4npgx/h2f1V4V8byj8o65PDP5PqATZnjlIhdakgzUkVzCJ7+yTIh
-        X7hIZReowAUKUmu5NVjWzRyWzRMjp4E9CUVI2QrpZZuhFqSbFXMBpCL8LoEbPsCfcL1Gr0
-        ArNT8x6acEFSMuQGamqfTWmgTFC03nm8RlMjiiGxEp+zTghqnS+P1oOlIt2zmwAmFIXCff
-        saR45wzXjt6WR0LB8G4QUDo9sOKxGB7f81LQa7yij02RkBfaVkF1cjM1Yul9dg==
-Message-ID: <df65214c-d26a-5b71-2b3d-2ce8ba60bdbd@hauke-m.de>
-Date:   Sun, 31 Jul 2022 17:56:44 +0200
+        with ESMTP id S229511AbiH1OXj (ORCPT
+        <rfc822;backports@vger.kernel.org>); Sun, 28 Aug 2022 10:23:39 -0400
+Received: from mail-oo1-xc34.google.com (mail-oo1-xc34.google.com [IPv6:2607:f8b0:4864:20::c34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19E76192AC
+        for <backports@vger.kernel.org>; Sun, 28 Aug 2022 07:23:37 -0700 (PDT)
+Received: by mail-oo1-xc34.google.com with SMTP id g5-20020a4ac4c5000000b0044af7c8c4b3so1084640ooq.1
+        for <backports@vger.kernel.org>; Sun, 28 Aug 2022 07:23:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:from:to:cc;
+        bh=zYJOH+OofDXb3hw4UkX/+KOtAeI6eoGamp7EUY4RLAs=;
+        b=MNvRQprdW5KxdI4pcAJNqQ7ozkCDs4pflVxvq3NgyoLkmXNlyiLm9/aTtaQ5f0xGhH
+         G8MCpWG5VTiKpXaG4zLTFgcn24dKTUcci0BqO4OIu+niwOZ8Wz0De4cFJPmgtzloKN0f
+         TiT4ipyXPJ1sxcWpSZVtb01R0W3U+HRxGilSgGdU2mrTr+n0WfmHfa6V3xg0wEf/1aur
+         qHQhw5EbT2SM0SONYvafAywh/1l5ys+N7UVgzhPM70/1kXcZwRjzAmDLkPbMAj2vFoNJ
+         uQe72mzGfsgHH5HHxlClqT8LKYh9pJaJV9ZvuOw2+iR0oN5SM59hQMhPvcxdCnEcc4Cy
+         Sm5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=zYJOH+OofDXb3hw4UkX/+KOtAeI6eoGamp7EUY4RLAs=;
+        b=HTYhYbreznArNXxxGjCcFX6a9h0h/TZaReORz4UQQWzMKZPOCKAKqheCEQQyWqkx2U
+         iTK3v5+pEkPYo0bO0QhzFbFUYQqfGhUY8fKbBpEb5NrnjHMK/NV4/RcrdA2uiMOy32nM
+         vHR0F+NPRefk4eQpxo+egoJxNoqTWUKFABwGCLJQGeiZOGFkx3PGIRCHPHkYIMv4CPkC
+         DfO6vRFcAgEGcWTpOYGLv0uMMe7JVSnxBshwt6hTeG0052zEOa0LJatSwKEgQh9xFgVb
+         JbhDIkbl40HdYDyhXOst7bYCRuXB09aOWN5fKKmSYBJqXUgsptNoUZmIHPZeQX+tb34b
+         8IDw==
+X-Gm-Message-State: ACgBeo3HyiJvyGd5buNuI1b2QrepFTNiep45aoLO9lLSsLXYhBa0tjk3
+        hXb3VJFRVODbPt5hjNTzuMjm/1D1irHBXgzIsjuFtSDZ9SU=
+X-Google-Smtp-Source: AA6agR5GMROx8SEoRnlHWNMG05T1W1mChP0aYu4s6zUFY15qs0SDoLfqjZDS6SAkmtNW8Xk9FZkCL/YcXR3gjDamjYk=
+X-Received: by 2002:a4a:abcf:0:b0:428:47bc:4bc0 with SMTP id
+ o15-20020a4aabcf000000b0042847bc4bc0mr4213992oon.15.1661696616385; Sun, 28
+ Aug 2022 07:23:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Language: en-US
-To:     "backports@vger.kernel.org" <backports@vger.kernel.org>
-Cc:     linux-wireless@vger.kernel.org
-From:   Hauke Mehrtens <hauke@hauke-m.de>
-Subject: wireless backports 5.15.58-1 released
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4Lwm8Y3mDpz9sQw
+From:   andy huang <jchuang1977@gmail.com>
+Date:   Sun, 28 Aug 2022 22:23:25 +0800
+Message-ID: <CAB0h_JxCSZCVNnL+9kcJ401Dtnp6e8BbG-8_1bsM8_e9WopL8Q@mail.gmail.com>
+Subject: About the ath11k driver support DBDC chip in openwrt router
+To:     backports@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-Hi
+Hi,
 
-backports-5.15.58-1 was released. This is based on Linux 5.15.58.
-https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/v5.15.58/backports-5.15.58-1.tar.xz
+    Recently I want to use WCN6856 on ARM64 platform (kernel 5.4) with
+ath11k backports version 5.15.8-1 .
 
-There is now a updated wiki page with the releases:
-https://backports.wiki.kernel.org/index.php/Releases
+But we can=E2=80=99t bring up 2 radio interfaces concurrently,  once we bri=
+ng
+up the 5G interface at first then get the =E2=80=9Cdevice busy=E2=80=9D err=
+or message
+when bring up 2.4G radio.
 
-The source code can be found here:
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
+     But WCN6856 is a DBDC chip, suppose I can bring up two radios in
+the same time for AP mode.
 
-Hauke
+      Is it the limitation of driver or HW ?   And how do I fix this issue =
+?
+Thanks for your time.
+
+
+
+Best,
+
+Andy
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
