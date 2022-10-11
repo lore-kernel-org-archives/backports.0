@@ -2,39 +2,39 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12123C4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70002C4332F
 	for <backports@archiver.kernel.org>; Tue, 11 Oct 2022 21:05:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229590AbiJKVFT (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Tue, 11 Oct 2022 17:05:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40036 "EHLO
+        id S229666AbiJKVFU (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Tue, 11 Oct 2022 17:05:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229694AbiJKVFC (ORCPT
+        with ESMTP id S229700AbiJKVFC (ORCPT
         <rfc822;backports@vger.kernel.org>); Tue, 11 Oct 2022 17:05:02 -0400
 Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2AB521247
-        for <backports@vger.kernel.org>; Tue, 11 Oct 2022 14:04:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BADE9356CA
+        for <backports@vger.kernel.org>; Tue, 11 Oct 2022 14:04:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Content-Type:Sender
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-        Resent-Cc:Resent-Message-ID; bh=nl+S5eYJqyWINBGeW1Z1FXUCq3j5VXrV4euMMEg9dhk=;
-        t=1665522299; x=1666731899; b=wbXbs+NO+g/h4TDslVleEqIPAzoNe7/pV5JklL250CMOpGs
-        18ckUO8RwDrj25RbZry0m/LcZwuMZzG+l6wre8imbsLXlpco9hNsFxKbACyTQvnoweuUVclot4Jxn
-        uzhucLyMwgXzWjtrqo5KZldKg68Ky3i/FKVDsD/sR7cZ3/1+93Aq8YqfpYjrsYJddNMHUz497UU7p
-        92jTnQR6Sr8gcUK00T4boqo++p1qU2Fx1dbbGhvDju0cw8A0ZFPt3X6U9CaPN2VjeI8HC+3Et7tOG
-        +9A2MzVS9aiQRL9DYpWT4xKbl+FvU2NPQuGoEovbNZZZ4552kMFvShzGCdFzaFrA==;
+        Resent-Cc:Resent-Message-ID; bh=umEFBdqdnJzsRgQYyjlVTNMtvITfREgUQGjkqojkPc8=;
+        t=1665522299; x=1666731899; b=cyXRm/etshNYL2sKTN6mNJUTXTfvz/4/8kvtkaZovvNMZAH
+        YVJ8lVxpHWskxCAQm7Jvebrcw4HmxuFM392CRHcBBhxfK7fGgzq71Ge1ySC/LEaoKokRBnRrMXzH9
+        6zmX9csXxp5M44wSmb3/SaUaInM2/n8wxGP5WLpwaRkzZzP+So7pemTAceG9TrgXpMztqLtzNuhRk
+        PJP5HdyV9k7vw2yhkqe9HA7nBHlQQVgDGRqgGtcBFTG9bDfvcJFqC46us2rHdTjfXjhxigaeNL84w
+        hkXivFtbYh83laGwx6MAdIm0WG1kqYyr6wP3QHT4G6ZYzJlSS9U5PSTNWMXEULJQ==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
         (Exim 4.96)
         (envelope-from <johannes@sipsolutions.net>)
-        id 1oiMQp-0045LP-1h;
-        Tue, 11 Oct 2022 23:04:55 +0200
+        id 1oiMQr-0045LP-0i;
+        Tue, 11 Oct 2022 23:04:57 +0200
 From:   Johannes Berg <johannes@sipsolutions.net>
 To:     backports@vger.kernel.org
 Cc:     nbd@nbd.name, Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 24/38] backports: add netif_rx()
-Date:   Tue, 11 Oct 2022 23:04:32 +0200
-Message-Id: <20221011230356.fb36659a480f.I4b1f5287579f615582a608782b8513f2f5cb374c@changeid>
+Subject: [PATCH 29/38] backports: add DECLARE_FLEX_ARRAY()
+Date:   Tue, 11 Oct 2022 23:04:37 +0200
+Message-Id: <20221011230356.1a1a6ae0dace.I5042a985a702b7a8b4dcb4116997b2a53749f6ca@changeid>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20221011210446.144768-1-johannes@sipsolutions.net>
 References: <20221011210446.144768-1-johannes@sipsolutions.net>
@@ -46,41 +46,51 @@ X-Mailing-List: backports@vger.kernel.org
 
 From: Johannes Berg <johannes.berg@intel.com>
 
-This got changed upstream to detect the context to get rid
-of netif_rx_ni(), so just copy the new upstream version
-with the detection.
-
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/linux/netdevice.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ backport/backport-include/linux/stddef.h | 31 ++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
-index d2e175243560..9b3291bb7188 100644
---- a/backport/backport-include/linux/netdevice.h
-+++ b/backport/backport-include/linux/netdevice.h
-@@ -254,4 +254,21 @@ struct net_device_path_ctx {
- };
- #endif /* NET_DEVICE_PATH_STACK_MAX */
+diff --git a/backport/backport-include/linux/stddef.h b/backport/backport-include/linux/stddef.h
+index a6cdc67d2727..54afbd556467 100644
+--- a/backport/backport-include/linux/stddef.h
++++ b/backport/backport-include/linux/stddef.h
+@@ -23,4 +23,35 @@
+ 	(offsetof(TYPE, MEMBER)	+ sizeof_field(TYPE, MEMBER))
+ #endif
  
-+#if LINUX_VERSION_IS_LESS(5,18,0)
-+static inline int LINUX_BACKPORT(netif_rx)(struct sk_buff *skb)
-+{
-+	bool need_bh_off = !(hardirq_count() | softirq_count());
-+	int ret;
++#ifndef DECLARE_FLEX_ARRAY
++/**
++ * __DECLARE_FLEX_ARRAY() - Declare a flexible array usable in a union
++ *
++ * @TYPE: The type of each flexible array element
++ * @NAME: The name of the flexible array member
++ *
++ * In order to have a flexible array member in a union or alone in a
++ * struct, it needs to be wrapped in an anonymous struct with at least 1
++ * named member, but that member can be empty.
+++ */
++#define __DECLARE_FLEX_ARRAY(TYPE, NAME)       \
++	struct {			       \
++		struct { } __empty_ ## NAME;   \
++		TYPE NAME[];		       \
++	}
 +
-+	if (need_bh_off)
-+		local_bh_disable();
-+	ret = netif_rx(skb);
-+	if (need_bh_off)
-+		local_bh_enable();
++/**
++ * DECLARE_FLEX_ARRAY() - Declare a flexible array usable in a union
++ *
++ * @TYPE: The type of each flexible array element
++ * @NAME: The name of the flexible array member
++ *
++ * In order to have a flexible array member in a union or alone in a
++ * struct, it needs to be wrapped in an anonymous struct with at least 1
++ * named member, but that member can be empty.
++ */
++#define DECLARE_FLEX_ARRAY(TYPE, NAME) \
++	__DECLARE_FLEX_ARRAY(TYPE, NAME)
++#endif
 +
-+	return ret;
-+}
-+#define netif_rx LINUX_BACKPORT(netif_rx)
-+#endif /* < 5.18.0 */
-+
- #endif /* __BACKPORT_NETDEVICE_H */
+ #endif /* __BACKPORT_LINUX_STDDEF_H */
 -- 
 2.37.3
 
