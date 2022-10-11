@@ -2,39 +2,39 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A632CC4332F
-	for <backports@archiver.kernel.org>; Tue, 11 Oct 2022 21:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BD4C43219
+	for <backports@archiver.kernel.org>; Tue, 11 Oct 2022 21:05:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229623AbiJKVFH (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Tue, 11 Oct 2022 17:05:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39610 "EHLO
+        id S229589AbiJKVFI (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Tue, 11 Oct 2022 17:05:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbiJKVFA (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 11 Oct 2022 17:05:00 -0400
+        with ESMTP id S229484AbiJKVE7 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 11 Oct 2022 17:04:59 -0400
 Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F556222A8
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EAA120BD8
         for <backports@vger.kernel.org>; Tue, 11 Oct 2022 14:04:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Content-Type:Sender
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-        Resent-Cc:Resent-Message-ID; bh=6TbvNPpfVOQ/fOlKyLkhN8fj6WgIZKuDgHZjEknifI0=;
-        t=1665522295; x=1666731895; b=oPKkDYAZq5DlbYka6SwuGeS9SfbAm4xRMh++1o4kpYSN+fs
-        3tdhQfGf6F42s+9cDpySN0rAdoou3p992l5RAe9V2zoo1/hO15Y+99OcL0ZSPNnpliot35YLvwKcw
-        st0X7g1qR00R5tFzIWPZDV6Ki8XxbNPcrbWayk717DF887jLb5OpgpmG+sqLdkkoA92/xVuHgWNEq
-        muhn5RkbnNkChCTCSslkuq2EnRl6nM5SAVGFHPNMbpSuo7Ck1MONjDE5kLdaicPbG/MW98dwsOefq
-        sq0/r/qxl+HEAm837XkY/mmf4AEfLTndoATVVaF++d2Cm6u6ya0N8aQqbxpAvvKQ==;
+        Resent-Cc:Resent-Message-ID; bh=Nu3TdfvE+J1WstyzbIYdp3nEZ9TMUs7ys2koe7Ycv1U=;
+        t=1665522295; x=1666731895; b=fprWYTeqrOynhjKVPK8vP6OmbKYHYtxjnE0x0uX3TymkU+c
+        I0mK+0FOI+sivhwPbEiWqS46PwLqrS2ewiSLZl4QmTwxYiZ+2mGCbMY6uQv6l9nYcOc1OmbCbjHl+
+        uzIj1GJXDxlnDeeQkzKonYbBraz2lxQ+Ht5M4E+QCm037JZMM1uFajqfMccnBlp7/SZCWXK55VgKH
+        8ykQZM7ie3qWdoZrvsseqDqOTyVwQUz1RpqwDrKi/3xleP1VfCaHpJYzU5YOfzBDv/GWyyYsQ8HV9
+        By6OBw4rSQ9umCVPrUCcmT4qMU97nMhszZLNXLN7xSG2YpfYDAVOA9G2iOh3InjA==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
         (Exim 4.96)
         (envelope-from <johannes@sipsolutions.net>)
-        id 1oiMQj-0045LP-2z;
+        id 1oiMQk-0045LP-0e;
         Tue, 11 Oct 2022 23:04:50 +0200
 From:   Johannes Berg <johannes@sipsolutions.net>
 To:     backports@vger.kernel.org
 Cc:     nbd@nbd.name, Luca Coelho <luciano.coelho@intel.com>
-Subject: [PATCH 05/38] backport: include kcov.h in sched.h for kernels < v4.10
-Date:   Tue, 11 Oct 2022 23:04:13 +0200
-Message-Id: <20221011230356.d66a96d62361.Iee3a886f6b132d9f0a501fcace491dbb5d712500@changeid>
+Subject: [PATCH 06/38] backports: increase cfg80211 wiphy padding
+Date:   Tue, 11 Oct 2022 23:04:14 +0200
+Message-Id: <20221011230356.91df2a084485.Icfb8295a72f19a169bef7ecee762ed693f923e65@changeid>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20221011210446.144768-1-johannes@sipsolutions.net>
 References: <20221011210446.144768-1-johannes@sipsolutions.net>
@@ -46,34 +46,35 @@ X-Mailing-List: backports@vger.kernel.org
 
 From: Luca Coelho <luciano.coelho@intel.com>
 
-In kernel v4.10 and later, kcov.h is included in sched.h.  Now
-mac80211 uses some kcov functions, but doesn't include kcov.h
-explicitly, since it's included by sched.h.  Include kvoc.h in kernels
-older than v4.10 to avoid compilation issues.
+The wiphy structure has grown over the 2048 bytes that we originally
+used in the wiphy padding, it's 2080 bytes long as of v5.11.  Increase
+the padding to an arbitrary higher round number, 2304.  We will end up
+using 2 pages now, so we could go as high as a page's length, but keep
+it lower so that when we grow over 2304 again we notice and can reasses
+the issue.
 
 type=maint
-ticket=jira:WIFI-95070
+ticket=none
 
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Reviewed-on: https://git-ger-8.devtools.intel.com/gerrit/139719
+Reviewed-on: https://git-ger-8.devtools.intel.com/gerrit/140382
 ---
- backport/backport-include/linux/sched.h | 3 +++
- 1 file changed, 3 insertions(+)
+ patches/0003-cfg80211-wext-padding/include_net_cfg80211.patch | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/backport/backport-include/linux/sched.h b/backport/backport-include/linux/sched.h
-index 6a5cf8db6b8c..29659af437de 100644
---- a/backport/backport-include/linux/sched.h
-+++ b/backport/backport-include/linux/sched.h
-@@ -3,6 +3,9 @@
- 
- #include_next <linux/sched.h>
- #include <linux/version.h>
-+#if LINUX_VERSION_IS_LESS(4,10,0)
-+#include <linux/kcov.h>
-+#endif /* LINUX_VERSION_IS_LESS(4,10,0) */
- 
- /* kcov was added in 4.6 and is included since then */
- #if LINUX_VERSION_IS_LESS(4,6,0)
+diff --git a/patches/0003-cfg80211-wext-padding/include_net_cfg80211.patch b/patches/0003-cfg80211-wext-padding/include_net_cfg80211.patch
+index a804077414d9..8f9b0985b769 100644
+--- a/patches/0003-cfg80211-wext-padding/include_net_cfg80211.patch
++++ b/patches/0003-cfg80211-wext-padding/include_net_cfg80211.patch
+@@ -4,7 +4,7 @@
+  
+  	/* assign these fields before you register the wiphy */
+  
+-+#define WIPHY_COMPAT_PAD_SIZE	2048
+++#define WIPHY_COMPAT_PAD_SIZE	2304
+ +	u8 padding[WIPHY_COMPAT_PAD_SIZE];
+ +
+  	u8 perm_addr[ETH_ALEN];
 -- 
 2.37.3
 
