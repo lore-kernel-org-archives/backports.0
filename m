@@ -2,39 +2,39 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC77C4332F
-	for <backports@archiver.kernel.org>; Tue, 11 Oct 2022 21:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C062CC433FE
+	for <backports@archiver.kernel.org>; Tue, 11 Oct 2022 21:05:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbiJKVFK (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Tue, 11 Oct 2022 17:05:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39718 "EHLO
+        id S229628AbiJKVFJ (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Tue, 11 Oct 2022 17:05:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbiJKVFA (ORCPT
+        with ESMTP id S229633AbiJKVFA (ORCPT
         <rfc822;backports@vger.kernel.org>); Tue, 11 Oct 2022 17:05:00 -0400
 Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FBC722BEA
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FB2E22B2E
         for <backports@vger.kernel.org>; Tue, 11 Oct 2022 14:04:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Content-Type:Sender
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-        Resent-Cc:Resent-Message-ID; bh=fjx3SsFktLKgxODkCIHOB5G/dKYbW3gYapXz0bBCp+o=;
-        t=1665522295; x=1666731895; b=O2pQG0qSjn2lLOI9CxOnK4lIgAFa4t7AzVG4YyTT3XbleTV
-        bPQtRw4HUfZHgmY7bEYSD2iXnP2MNCcW2ODfIo23Zez4/FqDJTeE9eLCtwc7HPSzM6kD9vKBDpKm2
-        KBHf6rCTco1NFPKJ4f9LYNmPWBLPCHYZe/TeXJflgEuTqXTo26gANkYpd1ALyL6GNNCrvaVGUlXpS
-        6fi9s4AfpJfPBkwlI3HD/e9UoNNUUg+qVvkVrLEq8PR6xjLb2Cc7jg3yxx9UlIlOWmUG3p9g5xegI
-        OfdOGLpYx71S5XD8pJwz/UwO7hfLWb9bjaGeFpRCnvcKzXMHN15mfpJLRGsLxtnA==;
+        Resent-Cc:Resent-Message-ID; bh=HBSiixcTod87tQzCN7L3quPYniLfoVK2OqfaLrXCpXw=;
+        t=1665522295; x=1666731895; b=ohw59v5EP3exRUusu8P/pYkGAjVq6w90V0siat146mh6Tuq
+        Az4pn5yNejPmver53GA9JNu7ojTNZ6im2LhryBtyw6No7x8jSiEZ6s0p5wGz+r+r6PfCESVuDebKo
+        QORrdVudMnOmOOjzMGiOfCVMTOCu44g69jbgNp44cXsFP+m+jcQE9e1E/imVbSSyGzXgGKA7DNYoe
+        pyyoI2CjIRK67TcaCO2Pgydn0pfOTWDVP3anLt8MxF9qoZijG4dUciKGfTeC1B5L1AsMwphG/AuUG
+        FCfIWukjup0nQxaxwNjwcWs+cfzPW6jqcVeClRSRFoHpGWB0hB7TP5Mu93o6H/Pg==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
         (Exim 4.96)
         (envelope-from <johannes@sipsolutions.net>)
-        id 1oiMQj-0045LP-06;
-        Tue, 11 Oct 2022 23:04:49 +0200
+        id 1oiMQk-0045LP-1Y;
+        Tue, 11 Oct 2022 23:04:50 +0200
 From:   Johannes Berg <johannes@sipsolutions.net>
 To:     backports@vger.kernel.org
 Cc:     nbd@nbd.name, Luca Coelho <luciano.coelho@intel.com>
-Subject: [PATCH 02/38] backport: implement NLA_POLICY_RANGE for NLA_BINARY
-Date:   Tue, 11 Oct 2022 23:04:10 +0200
-Message-Id: <20221011230356.c8e47a959e6d.Ife595e2dc94955bda3d7d3089ec6a219fde272c1@changeid>
+Subject: [PATCH 07/38] backport: remove aql_disable debugfs for < v4.10
+Date:   Tue, 11 Oct 2022 23:04:15 +0200
+Message-Id: <20221011210446.144768-2-johannes@sipsolutions.net>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20221011210446.144768-1-johannes@sipsolutions.net>
 References: <20221011210446.144768-1-johannes@sipsolutions.net>
@@ -46,73 +46,65 @@ X-Mailing-List: backports@vger.kernel.org
 
 From: Luca Coelho <luciano.coelho@intel.com>
 
-The range checks for NLA_BINARY are supported since v5.10.  Unwrap the
-macros and introduce a new function to test type.
+The static_key implementation has changed considerably in v4.10 and is
+only used in a new debugfs entry in mac80211.  It's very hard to
+backport the new static_key implementation, and not worth the trouble
+for a functionality that will probably never be used.
 
 type=maint
-ticket=jira:WIFI-85592
+ticket=jira:WIFI-116062
 
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Reviewed-on: https://git-ger-8.devtools.intel.com/gerrit/135576
 ---
- backport/backport-include/net/netlink.h    | 31 +++++++++++++++++++---
- patches/0097-nla_policy_binary_range.cocci |  5 ++++
- 2 files changed, 32 insertions(+), 4 deletions(-)
- create mode 100644 patches/0097-nla_policy_binary_range.cocci
+ patches/0101-remove_aql_disable.cocci | 39 +++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+ create mode 100644 patches/0101-remove_aql_disable.cocci
 
-diff --git a/backport/backport-include/net/netlink.h b/backport/backport-include/net/netlink.h
-index 3c7fdc7e3e0f..e94f32626782 100644
---- a/backport/backport-include/net/netlink.h
-+++ b/backport/backport-include/net/netlink.h
-@@ -546,10 +546,33 @@ static inline void *nla_memdup(const struct nlattr *src, gfp_t gfp)
- }
- #endif /* < 4.9 */
- 
--#ifndef NLA_POLICY_MIN_LEN
--#define NLA_POLICY_MIN_LEN(_len) {		\
--	.type = NLA_BINARY			\
-+#if LINUX_VERSION_IS_LESS(5,10,0)
-+// pre-declare all the minimum lengths in use
-+#define MIN_LEN_VALIDATION(n)						\
-+static inline								\
-+int nla_validate_min_len_##n(const struct nlattr *attr,			\
-+			     struct netlink_ext_ack *extack)		\
-+{									\
-+	if (nla_len(attr) < n)						\
-+		return -EINVAL;						\
-+	return 0;							\
- }
--#endif
-+
-+MIN_LEN_VALIDATION(2)
-+MIN_LEN_VALIDATION(16)
-+MIN_LEN_VALIDATION(42)
-+
-+// double-expansion to expand _min to the actual value
-+#define NLA_POLICY_BINARY_RANGE(_min, _max) _NLA_POLICY_BINARY_RANGE(_min, _max)
-+#define _NLA_POLICY_BINARY_RANGE(_min, _max)		\
-+{							\
-+	.type = NLA_BINARY,				\
-+	.len = _max,					\
-+	.validation_type = NLA_VALIDATE_FUNCTION,	\
-+	.validate = nla_validate_min_len_ ## _min,	\
-+}
-+#else
-+#define NLA_POLICY_BINARY_RANGE(_min, _max) NLA_POLICY_RANGE(NLA_BINARY, _min, _max)
-+#endif /* < 5.10 */
- 
- #endif /* __BACKPORT_NET_NETLINK_H */
-diff --git a/patches/0097-nla_policy_binary_range.cocci b/patches/0097-nla_policy_binary_range.cocci
+diff --git a/patches/0101-remove_aql_disable.cocci b/patches/0101-remove_aql_disable.cocci
 new file mode 100644
-index 000000000000..cb3b8be52b51
+index 000000000000..838d9d49e84a
 --- /dev/null
-+++ b/patches/0097-nla_policy_binary_range.cocci
-@@ -0,0 +1,5 @@
++++ b/patches/0101-remove_aql_disable.cocci
+@@ -0,0 +1,39 @@
++@aql_ops@
++identifier aql_disable_write, aql_disable_read;
++identifier simple_open, default_llseek;
 +@@
-+expression MIN, MAX;
+++#if LINUX_VERSION_IS_GEQ(4,10,0)
++static const struct file_operations aql_enable_ops = {
++	.write = aql_disable_write,
++	.read = aql_disable_read,
++	.open = simple_open,
++	.llseek = default_llseek,
++};
+++#endif
++
 +@@
-+-NLA_POLICY_RANGE(NLA_BINARY, MIN, MAX)
-++NLA_POLICY_BINARY_RANGE(MIN, MAX)
++identifier aql_ops.aql_disable_write;
++@@
+++#if LINUX_VERSION_IS_GEQ(4,10,0)
++aql_disable_write(...)
++{
++...
++}
+++#endif
++
++@@
++identifier aql_ops.aql_disable_read;
++@@
+++#if LINUX_VERSION_IS_GEQ(4,10,0)
++aql_disable_read(...);
++{
++...
++}
+++#endif
++
++@@
++expression e;
++@@
+++#if LINUX_VERSION_IS_GEQ(4,10,0)
++DEBUGFS_ADD_MODE(aql_enable, e);
+++#endif
 -- 
 2.37.3
 
