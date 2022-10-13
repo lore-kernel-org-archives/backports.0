@@ -2,103 +2,73 @@ Return-Path: <backports-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAA3C43219
-	for <backports@archiver.kernel.org>; Thu, 13 Oct 2022 08:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15635C4167B
+	for <backports@archiver.kernel.org>; Thu, 13 Oct 2022 08:54:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229851AbiJMIx6 (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Thu, 13 Oct 2022 04:53:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33972 "EHLO
+        id S229454AbiJMIx7 (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Thu, 13 Oct 2022 04:53:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229724AbiJMIxz (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 13 Oct 2022 04:53:55 -0400
+        with ESMTP id S229884AbiJMIx5 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 13 Oct 2022 04:53:57 -0400
 Received: from nbd.name (nbd.name [46.4.11.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B80015DB20
-        for <backports@vger.kernel.org>; Thu, 13 Oct 2022 01:53:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F0BE16EB5C
+        for <backports@vger.kernel.org>; Thu, 13 Oct 2022 01:53:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
-        s=20160729; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
-        To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        s=20160729; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=KaqsC1UJdP6R2hYZy1HKfj9PL4LSoZTGmp0mCmN0I6c=; b=aJ+h0BzQOt0DVpShgGccyA2KT/
-        lHLf+SwXgHFShwAf30H9u7FniLohtTVrrRT6f/O9jSKTG3nx60KdIzE0mzcUrKJrPedraZai1XS1d
-        mvnmJK+zazYp6bWS5hap5CRCwf0ERmXNxzfAGBonP+a8ozSu87Iarum3Sml36wbblRkk=;
+        bh=/6fwFqVTKTQUDdTTIa//A3YNABtTKyq5AxEVQAK8mPs=; b=irEs0xJbyJwbgPdk6U41w5IEw8
+        YHKrw2vpIUL58WpQ3/yzRWqG/EXf8v3zEllSXaPixxujbAue/3Y/KpAHOZRPhCmhdUjWhEz8iofwi
+        ePosNrxrw4lxkFH48BzgNpTJdrsb6w8ns5lYi10rTtB7GGZKIrIXTTab7QfzBPiIGZ4w=;
 Received: from p200300daa7301d0028e1e1004b08c350.dip0.t-ipconnect.de ([2003:da:a730:1d00:28e1:e100:4b08:c350] helo=Maecks.lan)
         by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
         (Exim 4.94.2)
         (envelope-from <nbd@nbd.name>)
-        id 1oityS-00CO7a-81
-        for backports@vger.kernel.org; Thu, 13 Oct 2022 10:53:52 +0200
+        id 1oityT-00CO7a-GX
+        for backports@vger.kernel.org; Thu, 13 Oct 2022 10:53:53 +0200
 From:   Felix Fietkau <nbd@nbd.name>
 To:     backports@vger.kernel.org
-Subject: [PATCH 1/8] headers: backport napi add functions
-Date:   Thu, 13 Oct 2022 10:53:44 +0200
-Message-Id: <20221013085351.14516-1-nbd@nbd.name>
+Subject: [PATCH 8/8] headers: add skb_tcp_all_headers
+Date:   Thu, 13 Oct 2022 10:53:51 +0200
+Message-Id: <20221013085351.14516-8-nbd@nbd.name>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20221013085351.14516-1-nbd@nbd.name>
+References: <20221013085351.14516-1-nbd@nbd.name>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-Deal with the removed weight argument
-
 Signed-off-by: Felix Fietkau <nbd@nbd.name>
 ---
- backport/backport-include/linux/netdevice.h | 38 ++++++++++-----------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+ backport/backport-include/linux/tcp.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 backport/backport-include/linux/tcp.h
 
-diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
-index 9b3291bb7188..c0c6a97945b1 100644
---- a/backport/backport-include/linux/netdevice.h
-+++ b/backport/backport-include/linux/netdevice.h
-@@ -23,27 +23,27 @@ static inline bool backport_napi_complete(struct napi_struct *n)
- #define napi_complete LINUX_BACKPORT(napi_complete)
- #endif /* < 4.10 */
- 
--#if LINUX_VERSION_IS_LESS(4,5,0)
--#define netif_tx_napi_add LINUX_BACKPORT(netif_tx_napi_add)
--/**
-- *	netif_tx_napi_add - initialize a napi context
-- *	@dev:  network device
-- *	@napi: napi context
-- *	@poll: polling function
-- *	@weight: default weight
-- *
-- * This variant of netif_napi_add() should be used from drivers using NAPI
-- * to exclusively poll a TX queue.
-- * This will avoid we add it into napi_hash[], thus polluting this hash table.
-- */
--static inline void netif_tx_napi_add(struct net_device *dev,
--				     struct napi_struct *napi,
--				     int (*poll)(struct napi_struct *, int),
--				     int weight)
-+#if LINUX_VERSION_IS_LESS(6,1,0)
-+static inline void backport_netif_napi_add(struct net_device *dev,
-+					   struct napi_struct *napi,
-+					   int (*poll)(struct napi_struct *, int))
-+{
-+	netif_napi_add(dev, napi, poll, NAPI_POLL_WEIGHT);
-+}
-+#define netif_napi_add LINUX_BACKPORT(netif_napi_add)
+diff --git a/backport/backport-include/linux/tcp.h b/backport/backport-include/linux/tcp.h
+new file mode 100644
+index 000000000000..2483cbebf66c
+--- /dev/null
++++ b/backport/backport-include/linux/tcp.h
+@@ -0,0 +1,14 @@
++#ifndef __BACKPORT_LINUX_TCP_H
++#define __BACKPORT_LINUX_TCP_H
 +
-+static inline void backport_netif_napi_add_tx(struct net_device *dev,
-+					      struct napi_struct *napi,
-+					      int (*poll)(struct napi_struct *, int))
- {
--	netif_napi_add(dev, napi, poll, weight);
-+#if LINUX_VERSION_IS_LESS(4,5,0)
-+	netif_napi_add(dev, napi, poll);
-+#else
-+	netif_tx_napi_add(dev, napi, poll, NAPI_POLL_WEIGHT);
++#include_next <linux/tcp.h>
++#include <linux/version.h>
++
++#if LINUX_VERSION_IS_LESS(6,0,0)
++static inline int skb_tcp_all_headers(const struct sk_buff *skb)
++{
++	return skb_transport_offset(skb) + tcp_hdrlen(skb);
++}
 +#endif
- }
--#endif /* < 4.5 */
-+#define netif_napi_add_tx LINUX_BACKPORT(netif_napi_add_tx)
-+#endif /* < 6.1 */
- 
- #ifndef NETIF_F_CSUM_MASK
- #define NETIF_F_CSUM_MASK NETIF_F_ALL_CSUM
++
++#endif
 -- 
 2.36.1
 
