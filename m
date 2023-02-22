@@ -1,66 +1,68 @@
-Return-Path: <backports-owner@kernel.org>
+Return-Path: <backports-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07979C4332F
-	for <backports@archiver.kernel.org>; Mon, 19 Dec 2022 19:07:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61881C64EC4
+	for <backports@archiver.kernel.org>; Wed, 22 Feb 2023 05:02:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229866AbiLSTHm (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Mon, 19 Dec 2022 14:07:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35652 "EHLO
+        id S229503AbjBVFCL (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Wed, 22 Feb 2023 00:02:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229624AbiLSTHl (ORCPT
-        <rfc822;backports@vger.kernel.org>); Mon, 19 Dec 2022 14:07:41 -0500
+        with ESMTP id S229464AbjBVFCL (ORCPT
+        <rfc822;backports@vger.kernel.org>); Wed, 22 Feb 2023 00:02:11 -0500
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67B4965EE
-        for <backports@vger.kernel.org>; Mon, 19 Dec 2022 11:07:37 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C75A4311FD
+        for <backports@vger.kernel.org>; Tue, 21 Feb 2023 21:02:09 -0800 (PST)
 Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BJFY9wO018398;
-        Mon, 19 Dec 2022 19:07:29 GMT
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31M2gM5U006211;
+        Wed, 22 Feb 2023 05:01:51 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=iYL0b1T4Pniw9ZTEyBB//GBORRd7dLlW0JGVAXBqNAo=;
- b=FNulaBpnNrj+tG3XEDVBS6rtFpROCexKFOR8hKOpM2E84+Htos2iv2dkVvX5kG8c6tN2
- eHnT/hRlJwgU+u2FUTKV862xJ1c4g9fdiq2cWwpxfSKnYyNFBb8f8EZSQDB0rd1DCf4P
- FCuQy0/WNva9kv0OddEamafpVTmCJDf/AFGyXudKqnKX3dFhLzOFPn7NKPAWQzzUXVMl
- wWG/XHxPEpS+51V4jT/Cpgr/jwih+bzT8bqeijuW8sNqE0adN+srnOy4id6LlCAz7Pq0
- Akx61zy6WA+fUArfvJ7zIlYRhmpKWB8N62P3W345SDer/kOqGhFjmOvlVpt1CcI/GLks Fg== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mh7havp0d-1
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=ArY2IWBDgmHqB4I2yUdQzRtPCBodS5iy7A9qU4fGJCg=;
+ b=maEZnoXgPL9XBuWBc2+zbo0Ifbva1rStF6/xXRnUMUXUldxDdzfFdcJOF/5g2Wg/3VY+
+ AbZ1SS90jHQmeRG2rVBIJ2ELZUwmYgWfFULw1bN2HDgdM8CIM2pFKXg0K3wXUhv4vWfl
+ lvKk0VYse/aGfwddBrDanJ5u4JGS07qLRQ4NjoSdsCy07IbodNSNrfWF32XoVKkey/1t
+ FMMr62Ob1SilrCgHMRz5Df99JkveY+lKZA+kbpmVybctZBquwd3nRfGrF+IvxfJrWm7a
+ /GVjEXVSztlMJOCAj2TQIxr3CDE7f+ICKKzqDg2fogakwQorB3o4nKK4ofyDr15vCveO 7g== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nvtmm2k1v-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Dec 2022 19:07:29 +0000
+        Wed, 22 Feb 2023 05:01:50 +0000
 Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BJJ7SDv030457
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31M51omh022928
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Dec 2022 19:07:28 GMT
+        Wed, 22 Feb 2023 05:01:50 GMT
 Received: from alokad-linux.qualcomm.com (10.80.80.8) by
  nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Mon, 19 Dec 2022 11:07:27 -0800
+ 15.2.986.41; Tue, 21 Feb 2023 21:01:49 -0800
 From:   Aloka Dixit <quic_alokad@quicinc.com>
 To:     <hauke@hauke-m.de>, <mcgrof@kernel.org>
 CC:     <backports@vger.kernel.org>, Aloka Dixit <quic_alokad@quicinc.com>
-Subject: [PATCH] patches: Avoid NLA_POLICY_RANGE() for NL80211_ATTR_EHT_CAPABILITY
-Date:   Mon, 19 Dec 2022 11:07:18 -0800
-Message-ID: <20221219190718.27547-1-quic_alokad@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+Subject: [PATCH v2] patches: Avoid NLA_POLICY_RANGE() for NL80211_ATTR_EHT_CAPABILITY
+Date:   Tue, 21 Feb 2023 21:01:38 -0800
+Message-ID: <20230222050138.11819-1-quic_alokad@quicinc.com>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01b.na.qualcomm.com (10.47.209.197)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Dg-6jCxaojZkT1a_cMjaPmxb0kloFxLa
-X-Proofpoint-ORIG-GUID: Dg-6jCxaojZkT1a_cMjaPmxb0kloFxLa
+X-Proofpoint-GUID: 2N_2qDjk5X9ZwwbKMT7JMLAHSn2GHmRG
+X-Proofpoint-ORIG-GUID: 2N_2qDjk5X9ZwwbKMT7JMLAHSn2GHmRG
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-12-19_01,2022-12-15_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 spamscore=0 clxscore=1011 lowpriorityscore=0 suspectscore=0
- mlxscore=0 adultscore=0 mlxlogscore=999 impostorscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2212190170
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-22_02,2023-02-20_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ priorityscore=1501 impostorscore=0 suspectscore=0 adultscore=0
+ clxscore=1011 mlxlogscore=999 mlxscore=0 phishscore=0 lowpriorityscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302220040
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
@@ -75,11 +77,14 @@ Date: Mon Feb 14 17:29:58 2022 +0100
 
 Signed-off-by: Aloka Dixit <quic_alokad@quicinc.com>
 ---
- patches/0099-netlink-range/mac80211.patch | 32 ++++++++++++++++++-----
- 1 file changed, 25 insertions(+), 7 deletions(-)
+v2: Removed the modification of NL80211_ATTR_HE_CAPABILITY which was
+a rebasing error and not related to this commit.
+
+ patches/0099-netlink-range/mac80211.patch | 27 +++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
 
 diff --git a/patches/0099-netlink-range/mac80211.patch b/patches/0099-netlink-range/mac80211.patch
-index bc55cc2f15bd..3e9333032728 100644
+index bc55cc2f15bd..ec4d1b9a08ca 100644
 --- a/patches/0099-netlink-range/mac80211.patch
 +++ b/patches/0099-netlink-range/mac80211.patch
 @@ -1,6 +1,8 @@
@@ -110,7 +115,7 @@ index bc55cc2f15bd..3e9333032728 100644
   	 * The value of the Length field of the Supported Operating
   	 * Classes element is between 2 and 253.
   	 */
-@@ -55,15 +57,14 @@
+@@ -55,7 +57,7 @@
   	[NL80211_ATTR_MAC_HINT] = NLA_POLICY_EXACT_LEN_WARN(ETH_ALEN),
   	[NL80211_ATTR_WIPHY_FREQ_HINT] = { .type = NLA_U32 },
   	[NL80211_ATTR_TDLS_PEER_CAPABILITY] = { .type = NLA_U32 },
@@ -119,17 +124,7 @@ index bc55cc2f15bd..3e9333032728 100644
   	[NL80211_ATTR_TXQ_LIMIT] = { .type = NLA_U32 },
   	[NL80211_ATTR_TXQ_MEMORY_LIMIT] = { .type = NLA_U32 },
   	[NL80211_ATTR_TXQ_QUANTUM] = { .type = NLA_U32 },
- +#if LINUX_VERSION_IS_GEQ(5,10,0)
-  	[NL80211_ATTR_HE_CAPABILITY] =
-- 		NLA_POLICY_RANGE(NLA_BINARY,
-- 				 NL80211_HE_MIN_CAPABILITY_LEN,
-- 				 NL80211_HE_MAX_CAPABILITY_LEN),
-+ 		NLA_POLICY_VALIDATE_FN(NLA_BINARY, validate_he_capa,
-+ 				       NL80211_HE_MAX_CAPABILITY_LEN),
- +#else
- +	[NL80211_ATTR_HE_CAPABILITY] = { .type = NLA_BINARY,
- +					 .len = NL80211_HE_MAX_CAPABILITY_LEN },
-@@ -71,3 +72,20 @@
+@@ -71,3 +73,20 @@
   	[NL80211_ATTR_FTM_RESPONDER] =
   		NLA_POLICY_NESTED(nl80211_ftm_responder_policy),
   	[NL80211_ATTR_TIMEOUT] = NLA_POLICY_MIN(NLA_U32, 1),
@@ -151,9 +146,9 @@ index bc55cc2f15bd..3e9333032728 100644
 + 	[NL80211_ATTR_MLO_LINKS] =
 + 		NLA_POLICY_NESTED_ARRAY(nl80211_policy),
 
-base-commit: e1867d552f108f403725067c72ad2dc87535b935
+base-commit: dfe0f60ca8a1065e63b4db703b3bd2708ee23a0e
 -- 
-2.17.1
+2.39.0
 
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
