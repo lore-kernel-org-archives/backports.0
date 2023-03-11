@@ -2,73 +2,57 @@ Return-Path: <backports-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 704C8C64EC4
-	for <backports@archiver.kernel.org>; Wed,  8 Mar 2023 08:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF61BC74A44
+	for <backports@archiver.kernel.org>; Sat, 11 Mar 2023 02:42:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229456AbjCHILF (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Wed, 8 Mar 2023 03:11:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50658 "EHLO
+        id S229541AbjCKCmq (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Fri, 10 Mar 2023 21:42:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjCHILD (ORCPT
-        <rfc822;backports@vger.kernel.org>); Wed, 8 Mar 2023 03:11:03 -0500
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDA17474E3;
-        Wed,  8 Mar 2023 00:11:02 -0800 (PST)
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32888L4Z029220;
-        Wed, 8 Mar 2023 08:10:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
- subject : from : to : cc : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2022-7-12;
- bh=Poyxy8CD2DCZjaZs2KsTEhzPtR1WAlMX9n3J+0QtfXU=;
- b=btmyJ0m7ZHiXNBmrvjdRA8WKc5G/VCeXLYm2XZtlj9UeoD1P8e6ZZI7G/M7sJFUwezD4
- kb6QGGR2ZfriHpqFEpxT9mmviEzHRTa2nZcCn9hpsyPMaTiB5snxvTBmgYPWP37Oebod
- muT32r0E0JVjfcfuoAQnzW1snyykBRc0fsqPqlrr4LlAoOX5d9xlQd5hUKLNKHU65WPL
- LEOQAVG1KFnu6ftJqqYjTcyVNiSdVGx6e6e9Wvfq6OIDjvCmu07upBv3ZY1Nryj5Xr+I
- TQ9rr0vgypujzg7mwDrtNEJct1pN2PmpYepo6N9ePcUWpBtG9dom8rtyCkrd5+98DDqr eQ== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3p415hyjme-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 08 Mar 2023 08:10:53 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 3286g4U8026601;
-        Wed, 8 Mar 2023 08:10:52 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2172.outbound.protection.outlook.com [104.47.57.172])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3p6g9tc9nk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 08 Mar 2023 08:10:52 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WmHN6rsrI0K59Kh6CFTxRyPtmZ9VemBI0RrO86FTOSPdbcsXmmfr6avWIiv/nNJcmJ1Spe9mJMOTCzVtDh1F5TLN1OvOnUMk6Hb5UhPbee3UYUTHPbHqxraHVS7if0VJki+d+cian7XhSLJTFWPniGiTcSodOHjZm0A3KFGtrmKy7534AHY9x5Y0dUI10gEg/REeUv5GplA5Ft0CxBI1HkJblcHxFQ2QpPkDOnQGk1t/8D8TcpyEbSl7ZN0wDhe4Go6+HEBomc6DdEhopEPR6sT9JNcFVUVpOBfvOxV6F/ysBbse7cAo5xet/bYXgZQfRUzT6e6Js3KPSfyzlJsXYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Poyxy8CD2DCZjaZs2KsTEhzPtR1WAlMX9n3J+0QtfXU=;
- b=nTVvTFwgFVQkAUWA12qi+oNBrivnwudeO72WQhjuPW4FVYp49CBuIHRYcWBaAjcCAqrXj2UtytBuDNz4i2H4NSmiqLUh42SEIiwD7XJbqJ7gBoRbk4sBXu1ADJH1sK31KJdCgBQw9zj0qURNfhF/fRiYk39F9y8ka2Ko0GzCSGCxeeCulJ3eNdkL1HNZhsGEF+RvyqEHy2A6TaueGl1wJJjIi5dCIxJbV7CNWCnqU+PYoHlU7ZzwM9ldMWvazvuJFUdEnao1DPOdbHn+9jWaWluTSbePRFrpabNBMHNSQjIIi0OW2EOsLSV8KPaUV3t1aMFt2+kWnNdUfMZGVoU90w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        with ESMTP id S229471AbjCKCmo (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 10 Mar 2023 21:42:44 -0500
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6802134822;
+        Fri, 10 Mar 2023 18:42:42 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id nn12so7045452pjb.5;
+        Fri, 10 Mar 2023 18:42:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Poyxy8CD2DCZjaZs2KsTEhzPtR1WAlMX9n3J+0QtfXU=;
- b=oQgC0dTd4QJ3KnTomdaIrzcyotTXiAhPMbG2AtwGKXg5au/cjNSK8E9Ql/QobwdNWQzL3r/zit8wh+c7qY+ah9DIIOZgmdYmaEUsvLkd3PwDVTqOG0XC4Q8uKeLLD0nL+OkzpSUwzq9cv1E++xjy26ID0n+8qCbKcIXcBtcGoq4=
-Received: from PH0PR10MB5433.namprd10.prod.outlook.com (2603:10b6:510:e0::9)
- by PH0PR10MB4599.namprd10.prod.outlook.com (2603:10b6:510:39::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.29; Wed, 8 Mar
- 2023 08:10:49 +0000
-Received: from PH0PR10MB5433.namprd10.prod.outlook.com
- ([fe80::a0c1:677d:5394:bf43]) by PH0PR10MB5433.namprd10.prod.outlook.com
- ([fe80::a0c1:677d:5394:bf43%6]) with mapi id 15.20.6156.029; Wed, 8 Mar 2023
- 08:10:49 +0000
-Message-ID: <62fda799-7418-eeb9-4702-2fedc78c8e45@oracle.com>
-Date:   Wed, 8 Mar 2023 09:10:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] docs: add backporting and conflict resolution document
-Content-Language: en-US
-From:   Vegard Nossum <vegard.nossum@oracle.com>
-To:     Bagas Sanjaya <bagasdotme@gmail.com>,
+        d=gmail.com; s=20210112; t=1678502562;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=umqzK/hOBtRu3pNuRypQQc9h+Uu3og0K8NY7WJV+iZA=;
+        b=kuu45IXEDEo/OxCiuuLWr+cOhNq7nvTvneMFTdgJQRJK9aRyg9jc4+yzEk6cD2lVGY
+         iWVqcKOzY9Iv8SzXRhy4XrY+NAlWESOMNUv4uHJI1WXyb8AixJK/zlpatlBAr+NHrFQk
+         ITQR4TvI9KEIoMD8TH/+G/M/d4NA3nNL18VEG4Dho0j65fjhx7C1oyr57KvjghB5q1+n
+         BrNdea2Z924MKhIDwdu7cX2I6fw6i5p/EUPX6l/wqJtHgCOen53t+1KkmUTAXrF1WEME
+         mElV3JADqK/VnUdZn5wxA4sRPgaY/Oj4tOut/CJHGYrEUb2kl93tbIDSxarn372OGKCM
+         Rf0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678502562;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=umqzK/hOBtRu3pNuRypQQc9h+Uu3og0K8NY7WJV+iZA=;
+        b=MGuLOK7SYWNg1K6sJmn2KNfzgYTPi41mBlXqkwpWQK0k457j84ajb6ERYHfZV8pkCy
+         7kL/4ogVFhoE2E94l3CVW09e9AskrR9iHCW72o9t15MhCQiR0KB/5etxu5TcgiV/AWxG
+         nGC+ZZEnS/3fTQ0qfT7O/GMkfvgYfs2rsSukuCzV8O2ZfoBDlL6J0ED6g/Vrcja4tIve
+         nBk74Z5LqNT9JAtaKp9VbuhO5+bocE93cuGH3yL/mXOEBBGGwVeCGshCBW5GkMz7qJLj
+         2kB1Gp7cyo//TEM2dtmUxThpupo9C444idodIT1cy+xCRgRANMUuTVomrPUtfD94NLgc
+         PGBw==
+X-Gm-Message-State: AO0yUKXt9PAGmBMCUjXIc/MLqogaIler283vn+GyfFTXikPUpSAChgaA
+        bB40ntxunJojz80lRwiqvRWWu6vy9To=
+X-Google-Smtp-Source: AK7set+bw2PZKBjOfEpcK/SQBdkFCXFqFMTtZP42+Q9HLXf5vggFG+C38LdqWm3xo4+ebIC7X/Silw==
+X-Received: by 2002:a17:902:eecc:b0:199:2ee:6238 with SMTP id h12-20020a170902eecc00b0019902ee6238mr25679291plb.16.1678502562106;
+        Fri, 10 Mar 2023 18:42:42 -0800 (PST)
+Received: from debian.me (subs28-116-206-12-51.three.co.id. [116.206.12.51])
+        by smtp.gmail.com with ESMTPSA id kt7-20020a170903088700b001963bc7bdb8sm573404plb.274.2023.03.10.18.42.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Mar 2023 18:42:41 -0800 (PST)
+Received: by debian.me (Postfix, from userid 1000)
+        id 767891065A6; Sat, 11 Mar 2023 09:42:36 +0700 (WIB)
+Date:   Sat, 11 Mar 2023 09:42:35 +0700
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+To:     Vegard Nossum <vegard.nossum@oracle.com>,
         Jonathan Corbet <corbet@lwn.net>
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         stable@vger.kernel.org, backports@vger.kernel.org,
@@ -76,129 +60,252 @@ Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
         "Jason A . Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [PATCH] docs: add backporting and conflict resolution document
+Message-ID: <ZAvqm9EqGq/kJpkT@debian.me>
 References: <20230303162553.17212-1-vegard.nossum@oracle.com>
  <ZAQUkbxQxCanh+9c@debian.me>
  <e70bf38e-af6a-dc63-3249-adbf168a1233@oracle.com>
-In-Reply-To: <e70bf38e-af6a-dc63-3249-adbf168a1233@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PR3P189CA0073.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:102:b4::18) To PH0PR10MB5433.namprd10.prod.outlook.com
- (2603:10b6:510:e0::9)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5433:EE_|PH0PR10MB4599:EE_
-X-MS-Office365-Filtering-Correlation-Id: 88b62718-3e31-4ec8-505b-08db1faca09d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 05kBKGDYbdQLH3/WM9kmUzf3kbnI0XRWAwF8VrMEUHhvFNGDkiN6zRTpvgGts6Y3wyUq1UAEJKyuot7Gn2Lvx6gqxLyI0YWjYy5xdRx0jXmHjebK6epH1nD7weJIX7Kj1zu6QI19426P8e4aeHsdT+F3a1UfNpk/xVvsAEeF9Mz/W+dps4sN0JOPCtBdO4ap3HqlPuU7wygycAStoGMxKY0aRImt+Q/luFZ20hmd2pAQxjoZbdLkkT/uVcdu9wfbRSm4qqODL5/FnaSFFkfN+S7rEdA9eoZooZ+Oq/AuH7pgX2fYrEcfvQyNsNcWqL7HegO27JEadhAVUQnJcMVb8zFYqPLl+gjDgpHlG+yh/zZ/rWGqwLDpiFl8v/QGETShYaYyc+XgIzk5fz0yG8kgmjn1BJX5ljSu9ht9oVeuHb3ASBPC/2zz2eni2yUHOlSNuAyBv9vMPA60loS/Ace24VXHXROBsvl0xn4Yq37JUDppZ+o+vdeWpF8kuQYxZN00CI2hVqDEQ6Zz62WwlO3JMu7ZqBJfln1ViGB1nS7gM3BcXbGmIPDt2rqvjaRCMgz7GmZInQgiYeQ3ZpQ2eR6JGm2EX0WVCP+yaptfvoZVSMIXjNBVDwwajQn6pwLRpqnugEPWChuc6ro+F3v1LYo9zvKKw4yqzoWbpxliUoQvg+eQizs0VRoogAkFcDVn0OVmztSkTyJ8QNTu0lzpuN8Q9R3Dj733U4sHssdZc36mWhk=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5433.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(136003)(346002)(376002)(396003)(366004)(39860400002)(451199018)(5660300002)(478600001)(86362001)(31696002)(186003)(6512007)(26005)(36756003)(4744005)(6506007)(2906002)(2616005)(53546011)(6486002)(44832011)(31686004)(66476007)(66556008)(66946007)(8676002)(4326008)(38100700002)(6666004)(8936002)(316002)(41300700001)(110136005)(54906003)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dlpmeWN2YXMyalg3aXU5OXpKUldPRkcwRWpxTERCMlNhMHdicWlabzI5Nmda?=
- =?utf-8?B?a2NKam1Ocit6UGd0LzNweWdEYmRscGxrMURVdzNSZ2ZxYkd1K0hwL3lkY0NE?=
- =?utf-8?B?aVNlRXlDOHdkd1hJN1VhZ0ppZ21yb3VoTEVFUy9hdWtwM2hxQm9EZHk5WHlv?=
- =?utf-8?B?dlB5MnhDY3BQalB2RXJkaHB6R3BQRTFGalp3ZEF5L09xM1Z6QWpEL2V2dFdM?=
- =?utf-8?B?b1BaWEx4RGJmRlJEVTdSY3ZiOVJZdExOUG9OMXdHSmFCMGhjcHM5OHhjdlRC?=
- =?utf-8?B?eTgyQWZyVDVOMzAvT3cydy93RHY4a0JxSzVUMFh5LzJEblR2cS9BQUQxaTFT?=
- =?utf-8?B?RE5lYm83TmVaUksrWkt0TWdHYUtNVG0xUktKaG9XRTYyR2Vndkp3YUFvZVNa?=
- =?utf-8?B?UFdBZkFmV2xYMmovR2h5N0wvSWVoWGdYZGNDak5JSFZJL2lnQTE4ZUc5Wmh2?=
- =?utf-8?B?bHNIOVFVTFBCQzF4b0lHRXJ4WkMzSGt1dW9vdmhKVncrU09mNzJURExKQldi?=
- =?utf-8?B?aVUxQzI3VHo1OFIycnYxaVY5dVljUmJyalpWSmNkamVOcXdIdVkxM1JhM3NY?=
- =?utf-8?B?QnRkQmtrZU1ZZGdpTDgwMERhc2FCZStkZTVLWFQ5WERvWkFKTmlLOHdGaitP?=
- =?utf-8?B?NXE4bFNhcENaQklHSWlQZXdMaTJIK3ZLVGtDN09pUTY3K1JSN1VPZ3ZkTlhh?=
- =?utf-8?B?Z29lRXEyODdoMlp5Q1paZTV5emJjNG15VXZTa1V3b1JlSmgzcjBHcGVGalVp?=
- =?utf-8?B?TjZDSEdNaDFUN1FmM2ZrcVZId09pU2Q4cGFmYjF5OHFyQ012MXAxNUdWQzI2?=
- =?utf-8?B?N05yQm9sZ05ZRVhXSTd1VFZmS2M1c2drMDk3NTVDR0dhdU9GSTljWjBQRHB1?=
- =?utf-8?B?ZUU4RjNsakxNSlBrcGVGSklTd0dsME13bE9tUzFWZjkzdThobGIxdHZLbHA2?=
- =?utf-8?B?VHFxK3NYN0hLZ2tmVHphT0RVYytKVzJWNkhwcXRsTzFFSU5qdTUvTmxtMXlC?=
- =?utf-8?B?MXFhbjhRYzhHYzdRZDJ3KzBiZXFyNlNOUnBVVkU1TTdZYlBCTEg1dm4vZnIr?=
- =?utf-8?B?SDNVOU9ubDVWdlFMQ0pLV29MRGdPaExtMHpGUEI2UWJ5UlFmUUg3OHdxUEdV?=
- =?utf-8?B?WERPcTJWMnNGMVpRTDNXS1daY1E3VzcvR2NLTGRBMllJaEtwK1R2YXoxRTVx?=
- =?utf-8?B?UW9KcWd1dllERnJEeVU0bzlCQ2tDRGVtY2pCNVBjR2kvbWFjeUtaMldDbXpD?=
- =?utf-8?B?SlU5Smd5M3lIV0JZNERnZHpkOTVSYm1UVGFqSTZvQU9hQmZLTXZsbndLYy9M?=
- =?utf-8?B?NGpKZVVDZ0JwODBEaHo3VU5HTjdkQlBLd2hjdWlXNXJPT3FxSkpiV0tCNHpy?=
- =?utf-8?B?UWxiL3dRMGhTRkhlbFpwbW9YMG55Uzh3U2ZHWitYemt2WCtyN1dPMFZsbFhM?=
- =?utf-8?B?blVYb0Y5Q3RIS2hkMXBQaSswbTRnN2VXdzZuUEN5OFlHbDd6RkxodEc1QU96?=
- =?utf-8?B?Q1B1RGZMTUFBVmswRnNkTEZUUnV0T09mYkEyd0tWQThvRHRNcXJTZ0YwVU1n?=
- =?utf-8?B?c3NiRDN2OURSSHZlTkpCNVZndnRhWk5uRjY0VkloN1RzQjEyR2FGc3NFaVEz?=
- =?utf-8?B?QzBJdnFBUGoxaTJQa0pSUWdmMndObUNhNnZJbm14QkUrekpVd3dxRVNzK3lz?=
- =?utf-8?B?U2RtR3MxWGpSSlBENHZlSWE0YnBZdlg1UlZsblNIdTBIUWhwUGZ3em5qNSs0?=
- =?utf-8?B?d01iTktaOG5lNkhMcmIzOWlFR3hVaXRzOWZDWXlsN0llVEJWTDQxV1laSWI3?=
- =?utf-8?B?UGxDUzhvZU16b1h2SE9LQXdZQUovNVZvTVpyV3JyZjdhUGdrYjJDMktKYWdv?=
- =?utf-8?B?MEkwOFFYUHgzdWtCZnRZUWJTbGRPOUtZZ1RVWjVZSWY5UkszczJsUm01YUkr?=
- =?utf-8?B?Vm9QdEQyNGZnbmxRTEJRRUs3ckFyUk9oSzJFTFZVSVdRQzUwaUk2dHZsM0NT?=
- =?utf-8?B?N3ExRUlJbnVkWXhudXh4RVcrbHp3Y1BRR0hDMDM1NXpueXNsdTdyaVJjNkc1?=
- =?utf-8?B?ZlhLOVhpbnVpbTNkc0cyQjVMejFvaDFKRHlldHlwN3UyTVZ4bXFyeGNBMDBu?=
- =?utf-8?B?VUkwQnY5V1pheUZCQ0xZK202cUF6WW4zR3VjamlrUHVZamZHTWxpUkx2NVd2?=
- =?utf-8?B?N0E9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?utf-8?B?N3BHb2RBdW5GQ3pxN05kUnFUTnZnN2trc3FUb2FRVURLeGU2VkZMOFBBL1l5?=
- =?utf-8?B?ekZFemV2MmNyV0tCQmR2dHVBNFQ4NVBpOVBpdjBhbnBTQnFMQ1p1ZkFwTXVw?=
- =?utf-8?B?dGh1WDFLMVRzRXAwL0Z1REpoTXg5TUR6WEg0ZGt0SHZoUnRCZkZlcUc2WUIw?=
- =?utf-8?B?bmVoK1JpN1M2UXNVZURycmxHL1ZETFhTQnlvcWhPTlVCL0puTTQ0aDhnb0NQ?=
- =?utf-8?B?ZmxhUENrTXYyZ2cwV3p4eEF6OVp0TmtId2lmK2R1ZzV5c043ZGRNbkplVkQx?=
- =?utf-8?B?TTh6OEdGdE1OSlB6MS9MaEk2bWNZMXZWVVVNaWRLYjA1WEl5L05LWDVXODBa?=
- =?utf-8?B?NEcrV09NMUhPUENaaisxQ3VQWUdleHZ5YkRFWmowMDZmdVZPR080eW9SWE41?=
- =?utf-8?B?Q2t0RTdkT0pSdVg3R2pzS1Q0TFlrVGJyeDZOLzhRRDJmbGEwa1k3YVQ4Zzla?=
- =?utf-8?B?WXFrenRZOXhOWldsY2VwRzFGYXA1bDdsVkRXLzJwOXFoeXZVRUsrNFVZejcx?=
- =?utf-8?B?dXRCVERaZ1BxZk1zWCtQWUdyamZZTVJ6SWR5UURYUWU3cTQzYllhRjlMQ1g0?=
- =?utf-8?B?c1JXL1A1aldoYS9uS2xBYnorajRSM1VJV093UmRpV0Q5aDI5L1IwOFFWcWh2?=
- =?utf-8?B?N256MnBjNXNGK0pJdm5WejliU1F6bjFrVGlSc0xCaU9YanV1aFFtUHRJcmov?=
- =?utf-8?B?YzBlQlNQb0FxZGxpaXNYbWo2M3h5NVpFMFp2N1JoSFp0VmJkSkwzcWxaVC9Q?=
- =?utf-8?B?L2Z5TlBuVXo5ajd3RmtEQk1RSjFIWW94OVYzOEVyT3lXMEpIRmRFbkF1cHJE?=
- =?utf-8?B?OElvSTNxYzljWXBOOTdlK052MldCakdXaUpWR25YTVVXbkI3Nm9keHhWSWF0?=
- =?utf-8?B?V2lhNmJTKzlyWVVDS1lEWGpVUDF5SUM5MkN4NUppVjN2cGlzQmU2S0xQWUJR?=
- =?utf-8?B?alRqeVVDSDVyZmd4MW5OTHRVN1FQcUNGUGhwWWd6QW9QUXRzNGJiYkJPWS9I?=
- =?utf-8?B?SzdkdmxLMUdSN0VtZk8rRGg0V241cXNMdVNNS3I4bStab3F5b1lvRkxTcTNv?=
- =?utf-8?B?d0NDSlZQb0ROeFVNQzJiMXNHT1VHSGhWU1QrL2hDdnh4bnRwM0F0d2FtVW9E?=
- =?utf-8?B?Ly9hL1V0SngrV1VuZi9rUW01RkdQQ284cUdFRmFVdnRlQTljbU9maWtBRFlj?=
- =?utf-8?B?VHZBTU5YUDcyUE5Zb2oxcUhGTGtXV0hyZ1hJUFNkTms4bGQvWkNkNjhaQ1Yz?=
- =?utf-8?Q?wmtXGquUkj8VMId?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88b62718-3e31-4ec8-505b-08db1faca09d
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5433.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Mar 2023 08:10:49.7087
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xoZk1kIYGI+oLMKcvramwghc/+cfYJTMmDQBB9C4b8XCDdhes4vwLIo1nR3DT+7F1yUE3wyawNFQXAGM5t0JZhnSzJ/rYzTneV4N/kkXnCE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4599
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-08_04,2023-03-08_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=838
- adultscore=0 bulkscore=0 spamscore=0 malwarescore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2303080070
-X-Proofpoint-GUID: llS9EsjUX7qF7yhpH0E24tBIYQ3GZSjM
-X-Proofpoint-ORIG-GUID: llS9EsjUX7qF7yhpH0E24tBIYQ3GZSjM
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5SlrIDA6gKdGPE62"
+Content-Disposition: inline
+In-Reply-To: <e70bf38e-af6a-dc63-3249-adbf168a1233@oracle.com>
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
 
-On 3/7/23 12:43, Vegard Nossum wrote:
+--5SlrIDA6gKdGPE62
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Mar 07, 2023 at 12:43:42PM +0100, Vegard Nossum wrote:
+> This whole document is meant for the developer doing the backport.
+>=20
+> git-format-patch --base=3D is already covered here:
+>=20
+> https://docs.kernel.org/process/submitting-patches.html#providing-base-tr=
+ee-information
+>=20
+> I don't think we need to repeat it in this document.
+
+OK.
+
+> >=20
+> > "In most cases, you will likely want to cherry-pick with ``-x`` option
+> > to record upstream commit in the resulting backport commit description,
+> > which looks like::
+> >=20
+> >      (cherry picked from commit <upstream commit>)
+> >=20
+> > However, for backporting to stable, you need to edit the description
+> > above to either::
+> >=20
+> >      commit <upstream commit> upstream
+> >=20
+> > or
+> >      [ Upstream commit <upstream commit> ]
+> >=20
+> > "
+>=20
+> Good point -- the original blog post where this came from was meant to
+> be more general than just stable backports, but this document in
+> particular is partly also meant to aid stable contributors we might as
+> well include it.
+
+Nice.
+
+>=20
+> > > +For backports, what likely happened was that your older branch is
+> > > +missing a patch compared to the branch you are backporting from --
+> > > +however, it is also possible that your older branch has some commit =
+that
+> > > +doesn't exist in the newer branch. In any case, the result is a conf=
+lict
+> > > +that needs to be resolved.
+> >=20
+> > Another conflict culprit that there are non-prerequisite commits that
+> > change the context line.
+>=20
+> I think that's already covered by "missing a patch", or at least that
+> was my intention. I guess we can change it to something like:
+>=20
+> +For backports, what likely happened was that the branch you are
+> +backporting from contains patches not in the branch you are backporting
+> +to. However, it is also possible that your older branch has some commit
+> +that doesn't exist in the newer branch. In any case, the result is a
+> +conflict that needs to be resolved.
+
+What I mean is "hey, we have changes that make context lines
+conflicted". By "patches not in the branch", I interpret that as "we
+have possible non-prereqs that cause this (messy) conflict".
+
+>=20
+> I'll fiddle a bit more with the exact phrasing.
+>=20
+> > > +git log
+> > > +^^^^^^^
+> > > +
+> > > +A good first step is to look at ``git log`` for the file that has the
+> > > +conflict -- this is usually sufficient when there aren't a lot of
+> > > +patches to the file, but may get confusing if the file is big and
+> > > +frequently patched. You should run ``git log`` on the range of commi=
+ts
+> > > +between your currently checked-out branch (``HEAD``) and the parent =
+of
+> > > +the patch you are picking (``COMMIT``), i.e.::
+> > > +
+> > > +    git log HEAD..COMMIT^ -- PATH
+> >=20
+> > HEAD and <commit> swapped, giving empty log. The correct way is:
+> >=20
+> > ```
+> > git log <commit>^..HEAD -- <path>
+> > ```
+>=20
+> Hrrm, I've double checked this and I think the original text is correct.
+>=20
+> HEAD..<commit>^ gives you commits reachable from <commit>^ (parent of
+> the commit we are backporting), excluding all commits that are reachable
+> from HEAD (the branch we are backporting to).
+>=20
+> <commit>^..HEAD, on the other hand, would give you commits reachable
+> from HEAD excluding all commits that are reachable from the parent of
+> the commit we are backporting.
+>=20
+> With a diagram like this:
+>=20
+> o--o--x--y--<commit>
+>     \
+>      \--u--v--HEAD
+>=20
+> HEAD..<commit>^ would give you x and y while
+> <commit>^..HEAD would give you u and v.
+
+In any case, the HEAD you mentioned is at target branch (linux-x.y),
+right?
+
+> > > +Sometimes the right thing to do will be to also backport the patch t=
+hat
+> > > +did the rename, but that's definitely not the most common case. Inst=
+ead,
+> > > +what you can do is to temporarily rename the file in the branch you'=
+re
+> > > +backporting to (using ``git mv`` and committing the result), restart=
+ the
+> > > +attempt to cherry-pick the patch, rename the file back (``git mv`` a=
+nd
+> > > +committing again), and finally squash the result using ``git rebase =
+-i``
+> > > +(`tutorial <https://medium.com/@slamflipstrom/a-beginners-guide-to-s=
+quashing-commits-with-git-rebase-8185cf6e62ec>`__)
+> > > +so it appears as a single commit when you are done.
+> >=20
+> > I'm kinda confused with above. Did you mean that after renaming file, I
+> > have to abort cherry-picking (``git cherry-pick --abort``) first and
+> > then redo cherry-picking?
+>=20
+> Yes, the idea is that instead of trying to resolve it as a conflict, you
+> rename the file first, do a (clean) cherry-pick, and then rename it back.
+>=20
+> What caused the confusion, specifically?
+
+I thought that the sequence was:
+
+```
+$ git checkout -b my-backport linux-x.y
+$ git cherry-pick <upstream commit>
+# we get mv/modified content conflict
+$ git mv <original path> <intended path> && git commit
+$ git cherry-pick --abort
+$ git cherry-pick <upstream commit>
+# resolve content conflicts
+$ git add <conflicted path>... && git commit
+$ git rebase -i linux-x.y
+```
+
+>=20
+> > > +Build testing
+> > > +~~~~~~~~~~~~~
+> > > +
+> > > +We won't cover runtime testing here, but it can be a good idea to bu=
+ild
+> > Runtime testing is described in the next section.
+> > > +just the files touched by the patch as a quick sanity check. For the
+> > > +Linux kernel you can build single files like this, assuming you have=
+ the
+> > > +``.config`` and build environment set up correctly::
+> > > +
+> > > +    make path/to/file.o
+> > > +
+> > > +Note that this won't discover linker errors, so you should still do a
+> > > +full build after verifying that the single file compiles. By compili=
+ng
+> > > +the single file first you can avoid having to wait for a full build =
+*in
+> > > +case* there are compiler errors in any of the files you've changed.
+> > > +
+> >=20
+> > plain ``make``?
+>=20
+> Yes, but I don't think we need to spell that out as it's the common case
+> (in other words, it is presupposed that you know this).
+>=20
+> > > +One concrete example of this was where a patch to the system call en=
+try
+> > > +code saved/restored a register and a later patch made use of the sav=
+ed
+> > > +register somewhere in the middle -- since there was no conflict, one
+> > > +could backport the second patch and believe that everything was fine,
+> > > +but in fact the code was now scribbling over an unsaved register.
+> >=20
+> > Did you mean the later patch is the backported syscall patch?
+>=20
+> Yes. I'll fiddle a bit with this paragraph to make it clearer.
+
+So, in that case, what would the correct resoultion be regarding to
+registers?
+
+> > For the external link targets, I'd like to separate them from
+> > corresponding link texts (see
+> > https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html=
+#external-links
+> > for details).
+>=20
 > We can probably do that, but it doesn't seem to be used much in existing
 > kernel documentation, I find no existing instances of it:
-> 
+>=20
 > $ git grep '\.\._.*: http' Documentation/
 > $
-> 
+
+I recently worked on Documentation/bpf/bpf_devel_QA.rst, where I mention
+this linking syntax.
+
+>=20
 > I know that lots of people really prefer to minimize the amount of
 > markup in these files (as they consume them in source form), so I'd
 > really like an ack from others before doing this.
+>=20
 
-Oops, bad regex (missing a space).
+OK. For now I'm OK with either separating targets or including them.
 
-$ git grep '\.\. _.*: http' Documentation/
+Thanks for reply!
 
-does indeed find a bunch of places where this is used, so I guess it's
-fine to do it here too.
+--=20
+An old man doll... just what I always wanted! - Clara
 
+--5SlrIDA6gKdGPE62
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Vegard
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZAvqkwAKCRD2uYlJVVFO
+o2MZAQCAq3m2XTlWIsKk4U6tgN+qvnbn7x48TuxMzTC83PN22QEA3zYHSclsym9s
+B/SoMSlJDwi63VCsTGslZfsPe4mb/w8=
+=o/ds
+-----END PGP SIGNATURE-----
+
+--5SlrIDA6gKdGPE62--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
