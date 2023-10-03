@@ -2,118 +2,94 @@ Return-Path: <backports-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 326E3CE79A9
-	for <backports@archiver.kernel.org>; Tue, 19 Sep 2023 17:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25AF6E7AD71
+	for <backports@archiver.kernel.org>; Tue,  3 Oct 2023 15:19:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231993AbjISRaA (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Tue, 19 Sep 2023 13:30:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35396 "EHLO
+        id S230238AbjJCPTS (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Tue, 3 Oct 2023 11:19:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230272AbjISR37 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 19 Sep 2023 13:29:59 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC409D6
-        for <backports@vger.kernel.org>; Tue, 19 Sep 2023 10:29:53 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 89A7EC433C8
-        for <backports@vger.kernel.org>; Tue, 19 Sep 2023 17:29:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695144593;
-        bh=TlmimCyCkbDmR0QHHKEayI9QmKTWdtMFFfq4KivgYtU=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=BnS0G19FHEXZ7HdSNk+sdRNiwZSxTm9qdLfRL4R5e3q2ZjqorPMGeyQ+A5ZRVV6tC
-         m26009jRMgJKQXWGHQeoiA2MV1Q7vJUTCFNmpqxpq0MjsgFk/w95F90yr7ZAoFgMvY
-         zvASx4T/Izsz7/PvUwW1QIPHINxWIEPGNFlpUgz6QN81dsJrC7gsMNKPlX4A+lobHg
-         Zt4SbUkd6U7+u0kSNWsnG/FM2pmAZ0oUuXS+Wzea+MAnGZ3oONTZWdNP1AgVsT6NPu
-         liO0aXKHGt+auExF4sE8Y+TuEdGaVodpJzanfZrZHm37JD+AihUQmOQC8zuNwl/9H6
-         75xDWXK5xjmRw==
-Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix, from userid 48)
-        id 5964CC4332E; Tue, 19 Sep 2023 17:29:53 +0000 (UTC)
-From:   bugzilla-daemon@kernel.org
-To:     backports@vger.kernel.org
-Subject: [Bug 217925] Backporting ath11k QCN9074 support to kernel 5.10 - no
- network interface
-Date:   Tue, 19 Sep 2023 17:29:52 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: Backports project
-X-Bugzilla-Component: Backports
-X-Bugzilla-Version: unspecified
-X-Bugzilla-Keywords: trivial
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: lakshmanakumar.mohan@celestica.com
-X-Bugzilla-Status: NEW
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: P3
-X-Bugzilla-Assigned-To: backports@vger.kernel.org
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: keywords short_desc
-Message-ID: <bug-217925-58281-iZxxDFpBBs@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-217925-58281@https.bugzilla.kernel.org/>
-References: <bug-217925-58281@https.bugzilla.kernel.org/>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugzilla.kernel.org/
-Auto-Submitted: auto-generated
+        with ESMTP id S229469AbjJCPTR (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 3 Oct 2023 11:19:17 -0400
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4A1183;
+        Tue,  3 Oct 2023 08:19:13 -0700 (PDT)
+Received: from localhost (unknown [IPv6:2601:281:8300:73::646])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 4209F2B4;
+        Tue,  3 Oct 2023 15:19:12 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4209F2B4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+        t=1696346352; bh=VKedhyMIgkQjXvL+hZvItrCFqi/RzTxxfS8XYS7wSfQ=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=ca7PDA0a4sWmOp9W17zjZ/0mH7IU4T6U9NYrx1gKDWUM6JxfQOCoWleWJtYCcDdu7
+         mrb7r+NLJoXF7/qJrfgeqmGSd3prExOfJCxSGXSKwtduSW7ntD+ickEEQqqGIPNTBe
+         3P+DXO904F5gfkckwGTpeRnwJY36vp8wml0z0TeSsZHGe5VEyP8M0kV6ZNYLNUhwFm
+         CaRq3zBHCpWSLG4Y+lKv+aVnC+m8yniFFPY1KGFrnDfcAurRAH4ZRfCdFX9+VevxDS
+         fgKgBr1qOethWdjN6ljNc6LmP/KF7ETVXn0wo8JxgmSSir26nEX0MYTMlzmEBWI8Sf
+         Au+HSozBeSI8A==
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Vegard Nossum <vegard.nossum@oracle.com>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, backports@vger.kernel.org,
+        Vegard Nossum <vegard.nossum@oracle.com>,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Subject: Re: [PATCH v2] docs: add backporting and conflict resolution document
+In-Reply-To: <20230824092325.1464227-1-vegard.nossum@oracle.com>
+References: <20230824092325.1464227-1-vegard.nossum@oracle.com>
+Date:   Tue, 03 Oct 2023 09:19:11 -0600
+Message-ID: <87bkdfg2ds.fsf@meer.lwn.net>
 MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-https://bugzilla.kernel.org/show_bug.cgi?id=3D217925
+Vegard Nossum <vegard.nossum@oracle.com> writes:
 
-Lakshmanakumar (lakshmanakumar.mohan@celestica.com) changed:
+> This is a new document based on my 2022 blog post:
+>
+>   https://blogs.oracle.com/linux/post/backporting-patches-using-git
+>
+> Although this is aimed at stable contributors and distro maintainers,
+> it does also contain useful tips and tricks for anybody who needs to
+> resolve merge conflicts.
+>
+> By adding this to the kernel as documentation we can more easily point
+> to it e.g. from stable emails about failed backports, as well as allow
+> the community to modify it over time if necessary.
+>
+> I've added this under process/ since it also has
+> process/applying-patches.rst. Another interesting document is
+> maintainer/rebasing-and-merging.rst which maybe should eventually refer
+> to this one, but I'm leaving that as a future cleanup.
+>
+> Thanks to Harshit Mogalapalli for helping with the original blog post
+> as well as this updated document and Bagas Sanjaya for providing
+> thoughtful feedback.
+>
+> v2: fixed heading style, link style, placeholder style, other comments
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-           Keywords|                            |trivial
-            Summary|Backporting ath11k QCN9074  |Backporting ath11k QCN9074
-                   |no network interface        |support to kernel 5.10 - no
-                   |                            |network interface
+So this seems generally good and useful.  I have a few small comments,
+none of which necessarily block merging it in its current form:
 
---- Comment #1 from Lakshmanakumar (lakshmanakumar.mohan@celestica.com) ---
-I'm trying to port the ath11k driver from kernel 5.15 to kernel 5.10 for
-supporting the QCN9074 modules. I have also copied the firmwares from
-https://github.com/kvalo/ath11k-firmware/tree/master/QCN9074/hw1.0=20=20
-I could see the below logs after loading the ath11k_pci driver. But it does=
- not
-proceed after the below state. Therefore the wireless network interface fai=
-ls
-loading.
-[  520.582093] cfg80211: Loading compiled-in X.509 certificates for regulat=
-ory
-database
-[  520.594227] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-[  520.630560] ath11k_pci 0000:03:00.0: runtime IRQ mapping not provided by
-arch
-[  520.637930] ath11k_pci 0000:03:00.0: BAR 0: assigned [mem
-0xdfa00000-0xdfbfffff 64bit]
-[  520.646225] ath11k_pci 0000:03:00.0: qcn9074 hw1.0
-[  520.654325] NET: Registered protocol family 42
-[  520.714305] mhi 0000:03:00.0: Requested to power ON
-[  520.719416] mhi 0000:03:00.0: Power on setup success
+- I would like to see an ack/reviewed-by tag by others with experience
+  with this task if possible.  The lack of complaints is a good start,
+  but not always indicative of a lack of disagreement...:)
 
-PCI list shows the interface as=20
-root@localhost:/# lspci -v -s 0000:03:00.0
-03:00.0 Network controller: Qualcomm Device 1104 (rev 01)
-        Subsystem: Qualcomm Device 1104
-        Flags: bus master, fast devsel, latency 0, IRQ 77
-        Memory at dfa00000 (64-bit, non-prefetchable) [size=3D2M]
-        Capabilities: [40] Power Management version 3
-        Capabilities: [50] MSI: Enable+ Count=3D16/32 Maskable+ 64bit-
-        Capabilities: [70] Express Endpoint, MSI 00
-        Kernel driver in use: ath11k_pci
-        Kernel modules: ath11k_pci
+- Might this be better placed in Documentation/maintainer?
 
-root@localhost:/# tree /sys/bus/pci/devices/0000\:03\:00.0/
-0000:03:00.0/             driver/                   rescan
-0000:03:00.0_IPCR/        driver_override           reset
-0000:03:00.0_LOOPBACK/
+- Colordiff looks cool, but I'd at least drop in a mention of the Emacs
+  ediff mode, which offers (I believe) a lot of the same functionality.
 
---=20
-You may reply to this email to add a comment.
+Thanks,
 
-You are receiving this mail because:
-You are the assignee for the bug.=
+jon
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
