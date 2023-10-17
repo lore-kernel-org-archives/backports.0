@@ -2,24 +2,33 @@ Return-Path: <backports-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F820CDB465
-	for <backports@archiver.kernel.org>; Sat, 14 Oct 2023 15:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB777CDB474
+	for <backports@archiver.kernel.org>; Tue, 17 Oct 2023 17:05:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231330AbjJNPIO (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Sat, 14 Oct 2023 11:08:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35404 "EHLO
+        id S234287AbjJQRF5 (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Tue, 17 Oct 2023 13:05:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230016AbjJNPIN (ORCPT
-        <rfc822;backports@vger.kernel.org>); Sat, 14 Oct 2023 11:08:13 -0400
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9F707C9;
-        Sat, 14 Oct 2023 08:08:09 -0700 (PDT)
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id 39EF7hFh021799;
-        Sat, 14 Oct 2023 17:07:43 +0200
-Date:   Sat, 14 Oct 2023 17:07:43 +0200
-From:   Willy Tarreau <w@1wt.eu>
-To:     Vegard Nossum <vegard.nossum@oracle.com>
+        with ESMTP id S232644AbjJQRF5 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Tue, 17 Oct 2023 13:05:57 -0400
+X-Greylist: delayed 1371 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 17 Oct 2023 10:05:55 PDT
+Received: from maynard.decadent.org.uk (maynard.decadent.org.uk [95.217.213.242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1438192;
+        Tue, 17 Oct 2023 10:05:54 -0700 (PDT)
+Received: from [213.219.164.206] (helo=deadeye)
+        by maynard with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1qsn9l-0000b9-Ae; Tue, 17 Oct 2023 18:42:57 +0200
+Received: from ben by deadeye with local (Exim 4.97-RC1)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1qsn9k-00000003p6a-3FLY;
+        Tue, 17 Oct 2023 18:42:56 +0200
+Message-ID: <8ebc783f95ee255d56372bfa59622bcb8cb4d79c.camel@decadent.org.uk>
+Subject: Re: [PATCH v2] docs: add backporting and conflict resolution
+ document
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Vegard Nossum <vegard.nossum@oracle.com>, Willy Tarreau <w@1wt.eu>
 Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, stable@vger.kernel.org,
         backports@vger.kernel.org,
@@ -29,280 +38,93 @@ Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         Stephen Rothwell <sfr@canb.auug.org.au>,
         "Jason A . Donenfeld" <Jason@zx2c4.com>,
         Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCH v2] docs: add backporting and conflict resolution document
-Message-ID: <20231014150743.GC21506@1wt.eu>
-References: <20230824092325.1464227-1-vegard.nossum@oracle.com>
- <87bkdfg2ds.fsf@meer.lwn.net>
- <877cnu5jy0.fsf@meer.lwn.net>
- <83fd1a05-974e-4d91-82b0-c09cc2f8da1e@oracle.com>
- <20231014094320.GC20662@1wt.eu>
- <12b082c8-908f-4de2-b0b5-4b638e10c402@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Steven Rostedt <rostedt@goodmis.org>
+Date:   Tue, 17 Oct 2023 18:42:49 +0200
 In-Reply-To: <12b082c8-908f-4de2-b0b5-4b638e10c402@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20230824092325.1464227-1-vegard.nossum@oracle.com>
+         <87bkdfg2ds.fsf@meer.lwn.net> <877cnu5jy0.fsf@meer.lwn.net>
+         <83fd1a05-974e-4d91-82b0-c09cc2f8da1e@oracle.com>
+         <20231014094320.GC20662@1wt.eu>
+         <12b082c8-908f-4de2-b0b5-4b638e10c402@oracle.com>
+Autocrypt: addr=ben@decadent.org.uk; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-T2Gq0/eSGsrekyVKrt0t"
+User-Agent: Evolution 3.50.0-1 
+MIME-Version: 1.0
+X-SA-Exim-Connect-IP: 213.219.164.206
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on maynard); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-On Sat, Oct 14, 2023 at 01:48:54PM +0200, Vegard Nossum wrote:
-> Did you see this meme? https://i.imgur.com/yk5rf13.png
 
-No I didn't know it.
+--=-T2Gq0/eSGsrekyVKrt0t
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> I think conflicts have a bit of a bad reputation exactly because you're
-> presented with something that's hard to make sense of at first sight.
-> I'd like to dispel this myth that you need to be an expert to make sense
-> of conflict markers. I think with the right attitude, the right tools,
-> and the right approach you can go a LONG way. Also, nobody is born an
-> expert and we should encourage people to gain experience in this area IMHO.
+On Sat, 2023-10-14 at 13:48 +0200, Vegard Nossum wrote:
+> On 14/10/2023 11:43, Willy Tarreau wrote:
+> > Hi Vegard,
+> >=20
+> > On Fri, Oct 13, 2023 at 05:24:31PM +0200, Vegard Nossum wrote:
+> > > I've now added Steven Rostedt and Willy Tarreau as well on the
+> > > off-chance that they have something to say about it (Steven presented
+> > > his conflict resolution method at Kernel Recipes and I think Willy is
+> > > experienced with backporting), but this is in no way meant as pressur=
+e
+> > > to review this patch. Here's a link to the top of the thread:
+> > >=20
+> > > https://lore.kernel.org/all/20230824092325.1464227-1-vegard.nossum@or=
+acle.com/
+>=20
+> (Adding Ben Hutchings to Cc as well for the same reasons.)
+[...]
 
-That's interesting that you mention this because I worked for a company
-years ago where there was a person in charge of merges, who was not at
-all part of the development team. I thought it made absolutely no sense
-to request that someone who doesn't know the project would resolve
-conflicts! When I expressed my surprise there, I was told "you know,
-merging requires skills developers don't have"! So it's very possible
-that there's this myth floating around, indeed.
+I previously wrote some text for CIP about reviewing stable backports.
+The "Read the code" section should be applicable to writing them as
+well:
+<https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipkernelmain=
+tenance#read_the_code>.
 
-> With that said, how about if we add a short section near the end about
-> submitting stable backports where we encourage submitters to 1) approach
-> the backporting process in a humble way, 2) describe the reason for the
-> conflict in the changelog and their resolution, 3) be honest about their
-> confidence in their resolution, 4) ask relevant maintainers for an
-> explicit ack?
+I didn't compare with your text so it may be that you already covered
+all those points.
 
-Maybe, by the way you remind me something that I've been used to doing
-for many years: whenever I adapt a patch to resolve a conflict, I shortly
-summarize my changes just before my signed-of-by line in brackets. It
-helps me figure which patches needed adaptations, and others figure if
-my reasoning is flawed. I seem to remember that Ben did the same. That's
-something really convenient we should encourage I think.
+Ben.
 
-> I'm open to other ideas, I just want to make sure we strike the right
-> balance of encouragement vs. discouragement.
 
-Sure. Another point which I didn't mention and which has to be considered
-when backporting the same patch across multiple versions is that you often
-face the choice of starting from the original patch and trying to stuff it
-into an old version, or starting from the closest version and trying to
-adapt it. I tend to prefer restarting from the closest (but more recent)
-version, for multiple reasons:
-  - less differences, some renames might already have been handled and
-    in general any of the previously mentioned adaptations.
+--=20
+Ben Hutchings
+Who are all these weirdos? - David Bowie, on joining IRC
 
-  - it limits the risk of leaving a failed backport in the middle of
-    the chain. Indeed, let's that than when I was doing 3.10 I would
-    have picked the original patch from 4.19 and adapted it myself.
-    Maybe the 4.4 version was broken, and the user later upgrading
-    from 3.10 to 4.4 could face a regression. Instead, by adapting
-    the 4.4 one to 3.10, if 4.4 was wrong, 3.10 would also likely be
-    and if detected there, the broken chain would be detected. This is
-    particularly true for rarely used parts (e.g. uncommon drivers)
-    where a bug can remain exposed for a long time without anyone
-    noticing.
 
-> >    - the tool that helped me the most in resolving rename conflicts is
-> >      "patch". As you explained, "git am" is a bit stubborn. But patch is
-> >      way more lenient (and will often do mistakes). In the very old 2.6.32
-> >      I used to rely on "git show XX | patch -p1" way more often than
-> >      "git am". For a rename, you do "git show XX -- file |patch otherfile".
-> >      It works the same with file-based patches or mbox: "patch -p1 < mbox".
-> >      Patch however will not place the conflict markers and will leave .rej
-> >      files. I then opened them in an editor next to the file to edit, to
-> >      locate the area and copy the relevant part to its location. Emacs'
-> >      ediff is also extremely convenient to pick select parts of each file.
-> > 
-> >    - control the patches: after I'm pretty sure I have resolved a patch,
-> >      I compare it side by side with the original one. Normally, backported
-> >      patches should have the same structure as the original. Using whatever
-> >      editor supporting a vertical split helps a lot. Otherwise I also use
-> >      "diff -y --width 200" between them to focus on differences (typically
-> >      line numbers). It's not rare that a part is missing, either because
-> >      I messed up, or because I forgot to process a .rej that I mistakenly
-> >      removed, or because a file was added, I reset the tree and it's left
-> >      untracked. So any difference between the patches should have its own
-> >      explanation (line numbers, function names, file names, occurrences).
-> >      By the way, it can very easily happen that applying a patch will work
-> >      fine but it will apply to the wrong function because some code patterns
-> >      especially in error unrolling paths are often the same between several
-> >      functions. It happened to me quite a few times in the past, and even
-> >      a few of these persisted till the public patch review. That's really
-> >      a risk that must not be minimized!
-> 
-> There is a section on this: "Verifying the result", and also describes
-> doing a side-by-side diff of the old and new patches.
+--=-T2Gq0/eSGsrekyVKrt0t
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-Ah yes, I didn't notice it the first time, I thought it meant comparing
-the files, not the patches.
+-----BEGIN PGP SIGNATURE-----
 
-> The bit about applying the patch to the wrong function -- I doubt this
-> happens that much when using cherry-pick, since it knows both sides of
-> the history and can tell when code moves around. You're probably right
-> that it can easily happen with plain git am/patch though. In my mind,
-> this is an argument in favour of using cherry-pick whenever possible.
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAmUuuYkACgkQ57/I7JWG
+EQlWoxAAoYTYvDLaLYc6/mndCvqwQPVYPqnuGWFk/NtXrL8LdELB7khnPcUk5ei8
+42idK4016efuzjZgusn49LgCQ69BPWMT+ODHYQXLxm6+m0z6dLCu+m5OjTy3oU8u
+Fjp9XBlc/OTMIqiexOm5Z3ELjFReeooHXxSVztaumQIW51z4+LupacpGTP3IWcii
+0UF1LwyvX72Gk8Fyr7dUjCHvCRUSsNSxselxcGgq51it4Ksr1JjaVwppVyLcGHqV
+CiuojfEvAviMpmHFqalN6hbboGRNDl3a+aYv1EY2slMtp0ZfAP1YGbgAx2znoDw1
+YQ+gjbNI3UN0VaTRZEGoB5PW/1NJo5Wz4vi4am97RwlW9ZVo3pYN2Mle8Kv3aNfA
+ngM0KOEXRR8kRbKTNpMAADlKfgcqho4HWgZ5KVWtl69PpJQZe59ng+E7mDjZlMQ0
+3rOLCpxfrFCnFncSgbBZmYKDMF9bUfEiuZbTxTtrKkmmc5Fp5KYRF16VOS7u4Vwt
+ikCuwUrodxkPGDPfFsE/YIOc2XGK2N5oIe+KCmzx53FEaepPx9aUzL1+fGumiUD2
+nHE8VK7wInOmivSBMvg4xvUoD0d/fchVwhva8xSmqt1l6Gf/VbapoDs3B1nBy9CD
+xlWPP6WXcIyP0ZxpJwuFinRIXaRvnVqE8OC31EYkGJ8JeQ04LmE=
+=N87o
+-----END PGP SIGNATURE-----
 
-Yep I never had it with cherry-pick, only with git-am (rare) and patch
-(more common). I totally agree with cherry-picking as much as possible,
-and I also often preferred to git-am to the original base to later
-cherry-pick, as you mentioned.
-
-> >    - something quite common is that as code evolves, it gets refactored
-> >      so that what used to appear at 3 locations in the past now moved to
-> >      a single function. But when you're backporting, you're doing the
-> >      reverse work, you're taking a patch for a single location that may
-> >      apply to multiple ones. Often the hint is that the function name
-> >      changed. But sometimes it's not even the case. If what you've found
-> >      looks like a nasty bug pattern that looks like it could easily have
-> >      been copy-pasted at other places, it's worth looking for it elsewhere
-> >      using git grep. If you find the same pattern, then you search for it
-> >      into the tree the patch comes from. If you don't find it, it's likely
-> >      that you'll need to adjust it, and git log is your friend to figure
-> >      what happened to these areas. Note that git blame doesn't work for
-> >      removed code. If you find the same pattern elsewhere in mainline, it's
-> >      worth asking the patch author if that one is also an occurrence of the
-> >      same bug or just normal. It's not uncommon to find new bugs during a
-> >      backport.
-> 
-> Very good point.
-> 
-> I think this fits very well alongside the sections on function
-> arguments, error handling, etc. since it details a specific thing that
-> can go easily wrong.
-> 
-> Can I take what you wrote above, or do you want to submit your own
-> incremental patch? I think we could insert it almost verbatim.
-
-Sure, feel free to take whatever I wrote and even rework it as suits you!
-
-> >    - color diff: usually I just rely on:
-> > 
-> >       [color]
-> >           ui = true
-> > 
-> >      But I also recently got used to using diff-highlight that will
-> >      highlight different characters between lines. It's nice for complex
-> >      "if" conditions where you don't see the difference, or for spaces
-> >      vs tabs:
-> > 
-> >      [pager]
-> >          log = /usr/doc/git-2.35.3/contrib/diff-highlight/diff-highlight | less
-> >          show = /usr/doc/git-2.35.3/contrib/diff-highlight/diff-highlight | less
-> >          diff = /usr/doc/git-2.35.3/contrib/diff-highlight/diff-highlight | less
-> 
-> Right, git log/show/diff --word-diff=color can also do this to some degree.
-
-I didn't know word-diff. The format is unusual but can be convenient at
-times. I think it's worth mentioning various options so that developers
-try them, adopt or reject them based on habits and taste.
-
-> There is also core.whitespace/color.diff.whitespace that will highlight
-> some common whitespace errors.
-
-yes.
-
-> I haven't used diff-highlight myself -- I'll give it a try.
-
-It gets a little while to get used to it as it changes the background
-color around some parts. I find patches less easy to read when only
-a few chars change on the line, but you get the info about what changes
-and that's the point.
-
-> In this case, I was using colordiff specifically to do the side-by-side
-> diff of the two patches since it handles the <() shell syntax _and_ does
-> the highlighting of differences between the patches.
-
-Ah, then I understand, I didn't catch that you were using it to compare
-the two patches. That's what I'm seeing on your site with the screenshots
-indeed. In this case editing tools are of limited use here (except to
-compare) since you definitely don't want to pick parts of a patch for
-the other one.
-
-> >    - git add, git add and git add: when fixing patches by hand, it's very
-> >      common to leave some parts not added (especially with | patch -p1).
-> >      It's useful to work on a clean tree to more easily spot untracked
-> >      files with "git status".
-> 
-> Yet another reason to use git cherry-pick instead of manual patch
-> commands: it keeps track of unmerged files for you. ;-)
-
-Definitely. I think everyone prefers cherry-pick, but you quickly
-learn it's not always an option. For old LTS kernels, they were so
-far away from original ones that cherry-pick would systematically
-pull in hundreds of context lines that made it very difficult to
-locate the useful part :-/
-
-> So I'm a bit torn on this. I think in this particular document I'd like
-> to encourage the use of git and doing things "the git way" as much as
-> possible.
-
-Well, you asked how people in charge of this used to do it, right ? :-)
-Similarly you've seen Steven's approach using Quilt. I had not thought
-about using it this way, but the approach here was to keep track of
-touched files. I think that in general patch management is ugly from a
-software developemnt perspective. It relies on modifications arbitrarily
-grouped by line because historically the tools have always worked this
-way, and developers adapted to this method. But it doesn't follow any
-sane workflow related to the software development cycle. It just
-happens to work well enough. Based on this, I see nothing wrong with
-doing what works for you. What matters is how much you can trust the
-operations (hence the need for post-checks).
-
-When working on old kernels, I used to find those rough ratios:
-  - cherry-pick applies 1/3 of the time
-  - 3/4 of applied cherry-picks actually build without error
-  - 90% of cherry-picks that apply well really fix the problem
-
-As such, as painful as it is, 10% of the patches that apply and build
-after a successful cherry-pick do not correctly fix a problem or have
-a side effect. Those that require manual fixing impose some analysis
-that more often allows to detect that something is going to be wrong.
-Several times it happened to me that I thought "uh oh 20 patches applied
-in a row without problem, that's getting nasty".
-
-I'm seeing a successful series of cherry-picks like a 100-line C program
-that you write at once and that first compiles and starts without error.
-You know that something's probably wrong but you don't know where to look.
-
-So in short, yes, I do by far prefer cherry-pick but I don't trust it
-that much because less human intervention usually means less validation.
-
-> > > I'd like to add that my impression is that a LOT of people *fear*
-> > > backporting and conflict resolution -- and it doesn't have to be that
-> > > way. We should be talking about merge conflicts and what good workflows
-> > > look like (one of the reasons why I was very happy to see Steven's
-> > > presentation at KR), instead of leaving everybody to figure it out on
-> > > their own. This document is my contribution towards that.
-> > 
-> > I'm not completely sold to this. Yes we should teach more people to
-> > perform that task themselves. But there's a big difference between
-> > backporting a few patches and feeling like you could maintain your own
-> > kernel because now you know how to resolve conflicts. What I mentioned
-> > above about dealing with patches you don't understand must not be
-> > underestimated, that's the biggest challenge I faced when working on
-> > stable kernels. There's probably a feeling of shame of not understanding
-> > something, but I can say that many times I asked for help and was helped
-> > even by top-ranked developers, and nobody ever laughed at me for not
-> > understanding a certain area. But doing that in your garage for your
-> > own kernel or for your company's products is a huge problem because it's
-> > unlikely that you'll get help from the maintainers this time, so you're
-> > left on your own with your own understanding of certain patches.
-> > 
-> > Thus, yes to backports, no to kernel forks being a collection of
-> > backports.
-> 
-> Right; almost every time I talk about backporting it's really in the
-> context of contributing these backports to stable. I'm not in favour of
-> forks either and I'm not trying to encourage it.
-> 
-> Let me try to come up with a specific addition related to the changes
-> you requested above and see if you agree with the wording.
-
-OK!
-
-Willy
+--=-T2Gq0/eSGsrekyVKrt0t--
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
