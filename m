@@ -2,129 +2,205 @@ Return-Path: <backports-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB777CDB474
-	for <backports@archiver.kernel.org>; Tue, 17 Oct 2023 17:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9243C001DF
+	for <backports@archiver.kernel.org>; Fri, 20 Oct 2023 02:26:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234287AbjJQRF5 (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Tue, 17 Oct 2023 13:05:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47806 "EHLO
+        id S233382AbjJTC0a (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Thu, 19 Oct 2023 22:26:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232644AbjJQRF5 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Tue, 17 Oct 2023 13:05:57 -0400
-X-Greylist: delayed 1371 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 17 Oct 2023 10:05:55 PDT
-Received: from maynard.decadent.org.uk (maynard.decadent.org.uk [95.217.213.242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1438192;
-        Tue, 17 Oct 2023 10:05:54 -0700 (PDT)
-Received: from [213.219.164.206] (helo=deadeye)
-        by maynard with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1qsn9l-0000b9-Ae; Tue, 17 Oct 2023 18:42:57 +0200
-Received: from ben by deadeye with local (Exim 4.97-RC1)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1qsn9k-00000003p6a-3FLY;
-        Tue, 17 Oct 2023 18:42:56 +0200
-Message-ID: <8ebc783f95ee255d56372bfa59622bcb8cb4d79c.camel@decadent.org.uk>
-Subject: Re: [PATCH v2] docs: add backporting and conflict resolution
- document
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Vegard Nossum <vegard.nossum@oracle.com>, Willy Tarreau <w@1wt.eu>
-Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        backports@vger.kernel.org,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Date:   Tue, 17 Oct 2023 18:42:49 +0200
-In-Reply-To: <12b082c8-908f-4de2-b0b5-4b638e10c402@oracle.com>
-References: <20230824092325.1464227-1-vegard.nossum@oracle.com>
-         <87bkdfg2ds.fsf@meer.lwn.net> <877cnu5jy0.fsf@meer.lwn.net>
-         <83fd1a05-974e-4d91-82b0-c09cc2f8da1e@oracle.com>
-         <20231014094320.GC20662@1wt.eu>
-         <12b082c8-908f-4de2-b0b5-4b638e10c402@oracle.com>
-Autocrypt: addr=ben@decadent.org.uk; prefer-encrypt=mutual;
- keydata=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
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-T2Gq0/eSGsrekyVKrt0t"
-User-Agent: Evolution 3.50.0-1 
+        with ESMTP id S233387AbjJTC03 (ORCPT
+        <rfc822;backports@vger.kernel.org>); Thu, 19 Oct 2023 22:26:29 -0400
+X-Greylist: delayed 499 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 19 Oct 2023 19:26:26 PDT
+Received: from wilbur.contactoffice.com (wilbur.contactoffice.com [212.3.242.68])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EEDC115
+        for <backports@vger.kernel.org>; Thu, 19 Oct 2023 19:26:25 -0700 (PDT)
+Received: from smtpauth2.co-bxl (smtpauth2.co-bxl [10.2.0.24])
+        by wilbur.contactoffice.com (Postfix) with ESMTP id 2DD05A0E;
+        Fri, 20 Oct 2023 04:18:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1697768284;
+        s=20210208-e7xh; d=mailfence.com; i=brianwitte@mailfence.com;
+        h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type:Content-Transfer-Encoding;
+        l=7395; bh=qz4CB0TgCibphVPj/5rTARslcsoYjOldV4QTtRRjVwk=;
+        b=Q+82uNDWGJ6g0Oq3vVsJzagzdV+UXSoTMfDm24H5/WXRnOcYq+sb6oSfWOQnrPMC
+        rg+89ZbwFyMvcQthYfyeLO/CN6WJGOd7BoEBz+taaNvudSJdZ1lmUHZcgU4foLIyCZQ
+        3LfbyhjTt7x8R/v0qW+TM+fJkjdA12PVR/frBgG4zmXGotl17fiv8ZHZ/h+VoQAmEmN
+        w08PloNaKQO1HY6o+OY2gHFeqmdJRMmarpHg213uYKK5fLYQYSIMue7HcL1e9B43g8a
+        DeSOYMl/jphJ1XqLJpRPgdasdWbhzDPCCHbU0X3Ip9eaA16qmAImwlMDeNDWRjkqXEu
+        mvGGISU5Kw==
+Received: by smtp.mailfence.com with ESMTPSA ; Fri, 20 Oct 2023 04:17:58 +0200 (CEST)
+Message-ID: <831d1de6-5d02-43b9-b907-70d9f1a03cab@mailfence.com>
+Date:   Thu, 19 Oct 2023 21:17:06 -0500
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 213.219.164.206
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on maynard); SAEximRunCond expanded to false
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To:     hauke@hauke-m.de, johannes@sipsolutions.net,
+        backports@vger.kernel.org
+From:   Brian Witte <brianwitte@mailfence.com>
+Subject: rtw88, rtw89 -- options for bringing a couple rtw standalone GitHub
+ repos into backports.git
+Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ContactOffice-Account: com:441463380
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
+Hauke, Johannes, or any other backports users/developers,
 
---=-T2Gq0/eSGsrekyVKrt0t
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+I recently spoke to Luis Chamberlain about a few different things 
+related my new shared maintainership of rtw,rtl drivers on GitHub that 
+are under Larry Finger's account:
 
-On Sat, 2023-10-14 at 13:48 +0200, Vegard Nossum wrote:
-> On 14/10/2023 11:43, Willy Tarreau wrote:
-> > Hi Vegard,
-> >=20
-> > On Fri, Oct 13, 2023 at 05:24:31PM +0200, Vegard Nossum wrote:
-> > > I've now added Steven Rostedt and Willy Tarreau as well on the
-> > > off-chance that they have something to say about it (Steven presented
-> > > his conflict resolution method at Kernel Recipes and I think Willy is
-> > > experienced with backporting), but this is in no way meant as pressur=
-e
-> > > to review this patch. Here's a link to the top of the thread:
-> > >=20
-> > > https://lore.kernel.org/all/20230824092325.1464227-1-vegard.nossum@or=
-acle.com/
->=20
-> (Adding Ben Hutchings to Cc as well for the same reasons.)
-[...]
+https://github.com/lwfinger?tab=repositories
 
-I previously wrote some text for CIP about reviewing stable backports.
-The "Read the code" section should be applicable to writing them as
-well:
-<https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipkernelmain=
-tenance#read_the_code>.
+The main thing I wanted to discuss is related to the sustainability, 
+longevity, and utility of maintaining a few in-tree, standalone manual 
+(#if #else #endif) backports for realtek:
 
-I didn't compare with your text so it may be that you already covered
-all those points.
+https://github.com/lwfinger/rtw88
+https://github.com/lwfinger/rtw89
 
-Ben.
+If you want to see where Larry introduces me, it's here:
+https://github.com/lwfinger/rtw88/issues/151#issuecomment-1604503581
 
+I just wanted to reach out about these repos and the options and 
+tradeoffs with porting them over to the backports.git project in a way 
+that will benefit the larger community and our existing users.
 
---=20
-Ben Hutchings
-Who are all these weirdos? - David Bowie, on joining IRC
+I am able to begin the work on these drivers if we decide to try and 
+merge them into backports.git, but I need to understand a few things 
+since my understanding is often the biggest limitation in all of this.
 
+On more than one occasion, I have gotten confused about how Linux 
+backports does things so I want to make sure I am making the right 
+assumptions about how it works with respect to commit history and a few 
+other things for their respective drivers.
 
---=-T2Gq0/eSGsrekyVKrt0t
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+My current understanding re: commit history is as follows:
 
------BEGIN PGP SIGNATURE-----
+The main Linux backports project does not preserve the commit history of 
+individual drivers as they exist in their original trees that they are 
+taken from. The main goal of the backports project is taking code from 
+newer Linux kernel versions and adapting them so they can be compiled 
+and run on older kernel versions. This backporting process is automated 
+by applying a series of patches to make the newer code compatible with 
+the older kernel via automation defined in the backports.git repo 
+through Makefile, Kconfig, dependent .c or .h files, etc. and of course 
+the "semantic patch language" scripts of coccinelle.
 
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAmUuuYkACgkQ57/I7JWG
-EQlWoxAAoYTYvDLaLYc6/mndCvqwQPVYPqnuGWFk/NtXrL8LdELB7khnPcUk5ei8
-42idK4016efuzjZgusn49LgCQ69BPWMT+ODHYQXLxm6+m0z6dLCu+m5OjTy3oU8u
-Fjp9XBlc/OTMIqiexOm5Z3ELjFReeooHXxSVztaumQIW51z4+LupacpGTP3IWcii
-0UF1LwyvX72Gk8Fyr7dUjCHvCRUSsNSxselxcGgq51it4Ksr1JjaVwppVyLcGHqV
-CiuojfEvAviMpmHFqalN6hbboGRNDl3a+aYv1EY2slMtp0ZfAP1YGbgAx2znoDw1
-YQ+gjbNI3UN0VaTRZEGoB5PW/1NJo5Wz4vi4am97RwlW9ZVo3pYN2Mle8Kv3aNfA
-ngM0KOEXRR8kRbKTNpMAADlKfgcqho4HWgZ5KVWtl69PpJQZe59ng+E7mDjZlMQ0
-3rOLCpxfrFCnFncSgbBZmYKDMF9bUfEiuZbTxTtrKkmmc5Fp5KYRF16VOS7u4Vwt
-ikCuwUrodxkPGDPfFsE/YIOc2XGK2N5oIe+KCmzx53FEaepPx9aUzL1+fGumiUD2
-nHE8VK7wInOmivSBMvg4xvUoD0d/fchVwhva8xSmqt1l6Gf/VbapoDs3B1nBy9CD
-xlWPP6WXcIyP0ZxpJwuFinRIXaRvnVqE8OC31EYkGJ8JeQ04LmE=
-=N87o
------END PGP SIGNATURE-----
+Because the goal is to make new code work with old kernels, rather than 
+to maintain a faithful, version-controlled history of that code, the 
+commit history for individual drivers is not included in project's 
+focus. The version control history in the backports.git repository 
+serves to track changes to the backporting process itself, rather than 
+to preserve the history of the backported code (I know that may be 
+obvious, but I need to make sure I am not mistaken.)
 
---=-T2Gq0/eSGsrekyVKrt0t--
+In a nutshell, the Linux backports project is geared towards 
+compatibility and functionality, not towards historical preservation of 
+codebase evolution.
+
+The second thing I want to make sure I understand is how users can get 
+backports for a driver via the Linux backports project:
+
+A happy path would look like them pulling down a tar of backports for 
+their kernel version from 
+https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/ and 
+then running something like:
+
+```sh
+# as a user
+make defconfig-rtlwifi
+make -j4
+# as root
+make install
+# reboot and enjoy
+```
+
+If a feature they need is not in a stable version, they will then have 
+to execute a small series of extra steps to compile their own backports 
+release and then use that; whether it's against linux-next or some other 
+tree. This is a documented and relatively well-traveled path in kernel 
+developer terms, but is likely out of reach for many "regular" users. I 
+think it is fair to say that this would require them to be a closer to a 
+"developer" or experienced Linux user or administrator. They also may 
+not know about or be able to find the docs for doing so. A GitHub repo 
+with their device driver name is often what they find first.
+
+The last thing I want to make sure I have straight is the value of 
+backports.git for wireless drivers generally because there seem to be many:
+
+For maintainers/developers, backports.git offers a standardized, 
+automated system that minimizes errors, streamlines many aspects of 
+building, testing, and iterating, and allows for community-vetted (more 
+eyes), secure code. This centralization frees maintainers to focus on 
+other development priorities like fixing/reproducing bugs and landing 
+patches upstream.
+
+For users, backports.git provides a stable way to access these new 
+features and fixes. It also can be quite simple if you have the right 
+kernel version, it lines up with the feature you need, or you have the 
+requisite experience and can find then dive into more "developer-like" 
+documentation.
+
+For the community, integrating the drivers into backports.git holds 
+benefits for downstream projects like OpenWrt, which already rely on 
+backports as a core design feature. Therefore OpenWrt and similar 
+projects can more seamlessly and securely include them in their 
+distributions, enhancing both device support and the end-user 
+experience. In addition, the upstream drivers benefit due to increased 
+visibility and accessibility, encouraging wider community engagement for 
+testing, bug reporting, and code contributions.
+
+This approach serves to unify efforts, improve security, and facilitate 
+a solid, shared pipeline for maintainers, users, and the larger community.
+
+In conclusion, there are a few questions I am trying to answer for 
+myself, but could use any feedback on.
+
+1. How critical is the preservation of commit history for effective 
+debugging and bisecting when issues arise in the backported drivers? We 
+have the commit history in our GitHub repos, but they would not be 
+present in drivers compiled from backports.git. Is there a way to have 
+"the best of both worlds" or mitigate the effects of lacking that history?
+
+2. Are there methods to automate or simplify the process for users who 
+need features not yet available in stable releases, to reduce the skill 
+barrier?
+
+3. How can I help the backports project directly (rtw related or not)?
+
+4. How can we best leverage the years of effort and modifications (#if 
+#else #endif macros) made by Larry in these stand-alone repositories to 
+inform the technical work of porting them to the shared backports framework?
+
+5. Given the popularity and visibility of the rtw88 and rtw89 GitHub 
+repositories, as indicated by their star counts, issue activity, and 
+search engine ranking, what strategies can we employ to maintain this 
+level of user engagement and support if we transition to backports.git? 
+Would mirroring the code and providing custom-tailored instructions in 
+the READMEs serve dual purposes of user support and elevating the 
+visibility of backports.git in the larger community? Is this a welcomed 
+proposition?
+
+I understand that many of these questions ultimately require hands-on 
+work and investigation on my part. However, I believe now is an 
+opportune time to engage the community in these discussions.
+
+I will be attending the Linux Plumbers Conference next month on behalf 
+of Larry and myself and would like to use this as a start to further 
+explore potential collaborations and conversations around these topics.
+
+Lastly, I want to thank the backports.git maintainers for providing an 
+invaluable tool for the Linux community. Also, thank you Luis for 
+getting me started on having these conversations.
+
+Thank you for your time, and I look forward to future discussions.
+
+Thanks,
+Brian Witte
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
