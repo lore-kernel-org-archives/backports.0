@@ -2,205 +2,380 @@ Return-Path: <backports-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9243C001DF
-	for <backports@archiver.kernel.org>; Fri, 20 Oct 2023 02:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B99FCDB474
+	for <backports@archiver.kernel.org>; Fri, 20 Oct 2023 07:34:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233382AbjJTC0a (ORCPT <rfc822;backports@archiver.kernel.org>);
-        Thu, 19 Oct 2023 22:26:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35552 "EHLO
+        id S1376359AbjJTHeq (ORCPT <rfc822;backports@archiver.kernel.org>);
+        Fri, 20 Oct 2023 03:34:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233387AbjJTC03 (ORCPT
-        <rfc822;backports@vger.kernel.org>); Thu, 19 Oct 2023 22:26:29 -0400
-X-Greylist: delayed 499 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 19 Oct 2023 19:26:26 PDT
-Received: from wilbur.contactoffice.com (wilbur.contactoffice.com [212.3.242.68])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EEDC115
-        for <backports@vger.kernel.org>; Thu, 19 Oct 2023 19:26:25 -0700 (PDT)
-Received: from smtpauth2.co-bxl (smtpauth2.co-bxl [10.2.0.24])
-        by wilbur.contactoffice.com (Postfix) with ESMTP id 2DD05A0E;
-        Fri, 20 Oct 2023 04:18:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1697768284;
-        s=20210208-e7xh; d=mailfence.com; i=brianwitte@mailfence.com;
-        h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type:Content-Transfer-Encoding;
-        l=7395; bh=qz4CB0TgCibphVPj/5rTARslcsoYjOldV4QTtRRjVwk=;
-        b=Q+82uNDWGJ6g0Oq3vVsJzagzdV+UXSoTMfDm24H5/WXRnOcYq+sb6oSfWOQnrPMC
-        rg+89ZbwFyMvcQthYfyeLO/CN6WJGOd7BoEBz+taaNvudSJdZ1lmUHZcgU4foLIyCZQ
-        3LfbyhjTt7x8R/v0qW+TM+fJkjdA12PVR/frBgG4zmXGotl17fiv8ZHZ/h+VoQAmEmN
-        w08PloNaKQO1HY6o+OY2gHFeqmdJRMmarpHg213uYKK5fLYQYSIMue7HcL1e9B43g8a
-        DeSOYMl/jphJ1XqLJpRPgdasdWbhzDPCCHbU0X3Ip9eaA16qmAImwlMDeNDWRjkqXEu
-        mvGGISU5Kw==
-Received: by smtp.mailfence.com with ESMTPSA ; Fri, 20 Oct 2023 04:17:58 +0200 (CEST)
-Message-ID: <831d1de6-5d02-43b9-b907-70d9f1a03cab@mailfence.com>
-Date:   Thu, 19 Oct 2023 21:17:06 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To:     hauke@hauke-m.de, johannes@sipsolutions.net,
+        with ESMTP id S1376317AbjJTHep (ORCPT
+        <rfc822;backports@vger.kernel.org>); Fri, 20 Oct 2023 03:34:45 -0400
+Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:242:246e::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D03291
+        for <backports@vger.kernel.org>; Fri, 20 Oct 2023 00:34:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+        Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+        Resent-Cc:Resent-Message-ID; bh=H7lkyymJgDnjkbsI2v2K61OBYiYCqMz90V6qOMWOS/Y=;
+        t=1697787282; x=1698996882; b=axkxnksQ3VNrBKPNRk0K02yGO/OAtig66VssCPLkA4YiyKL
+        2uK92dzpQUBSuI1uPrV+tfRw8NAlVB1KnEOAwXVQcV49SZg8QLdoCTVQZbJQ1rgeL+1WUYLUodpra
+        5M/Fo357P9a1aKERy3lkAycUYcTqxRCfWbNyvjrFXzsbkeZGuleQynhhzx3KLsDJKoqTHbarMRCsa
+        arfhwFI06GFRc7+g0eC0aCK4KqlT/jfTFDIX0x3zkgZkXZ0Lbne4hTlgzb2TxiHs2dWZMe/F0zMk+
+        thJ3loNFMld3LUQ6Wnk7jWA5xCr+GhvZwMqCEQ2SRHEQhiha3vZ+FioeV3T4zlrw==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.97-RC1)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1qtk1n-0000000EPh9-0BZ9;
+        Fri, 20 Oct 2023 09:34:39 +0200
+Message-ID: <435c43bae693e72004c39ff90a901bc911ab1e6d.camel@sipsolutions.net>
+Subject: Re: rtw88, rtw89 -- options for bringing a couple rtw standalone
+ GitHub repos into backports.git
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Brian Witte <brianwitte@mailfence.com>, hauke@hauke-m.de,
         backports@vger.kernel.org
-From:   Brian Witte <brianwitte@mailfence.com>
-Subject: rtw88, rtw89 -- options for bringing a couple rtw standalone GitHub
- repos into backports.git
 Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
         Luis Chamberlain <mcgrof@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ContactOffice-Account: com:441463380
+Date:   Fri, 20 Oct 2023 09:34:37 +0200
+In-Reply-To: <831d1de6-5d02-43b9-b907-70d9f1a03cab@mailfence.com>
+References: <831d1de6-5d02-43b9-b907-70d9f1a03cab@mailfence.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+MIME-Version: 1.0
+X-malware-bazaar: not-scanned
 Precedence: bulk
 List-ID: <backports.vger.kernel.org>
 X-Mailing-List: backports@vger.kernel.org
 
-Hauke, Johannes, or any other backports users/developers,
+Hi,
 
-I recently spoke to Luis Chamberlain about a few different things 
-related my new shared maintainership of rtw,rtl drivers on GitHub that 
-are under Larry Finger's account:
+> I just wanted to reach out about these repos and the options and=20
+> tradeoffs with porting them over to the backports.git project in a way=
+=20
+> that will benefit the larger community and our existing users.
 
-https://github.com/lwfinger?tab=repositories
+Can you explain what you're trying to achieve by that?
 
-The main thing I wanted to discuss is related to the sustainability, 
-longevity, and utility of maintaining a few in-tree, standalone manual 
-(#if #else #endif) backports for realtek:
+And even, what is the reason to have these out-of-tree versions of the
+drivers?
 
-https://github.com/lwfinger/rtw88
-https://github.com/lwfinger/rtw89
+The backports project doesn't in itself work with out-of-tree drivers.
+It _creates_ out-of-tree drivers, yes, but it takes the source of these
+always from the latest upstream kernel.
 
-If you want to see where Larry introduces me, it's here:
-https://github.com/lwfinger/rtw88/issues/151#issuecomment-1604503581
+So since I'm not sure what the github trees are even used for, let's say
 
-I just wanted to reach out about these repos and the options and 
-tradeoffs with porting them over to the backports.git project in a way 
-that will benefit the larger community and our existing users.
+ 1) these are used to provide additional fixes or hardware support over
+    what the upstream kernel already has
 
-I am able to begin the work on these drivers if we decide to try and 
-merge them into backports.git, but I need to understand a few things 
-since my understanding is often the biggest limitation in all of this.
+   -> this is something backports will not support, the source driver
+      must be fully upstream
 
-On more than one occasion, I have gotten confused about how Linux 
-backports does things so I want to make sure I am making the right 
-assumptions about how it works with respect to commit history and a few 
-other things for their respective drivers.
+      (OK, strictly speaking, that's not true - you could patch the
+       upstream driver before generating backports, but that seems
+       painful)
 
-My current understanding re: commit history is as follows:
+ 2) these are just used to provide newer drivers to users of
+    older kernels
 
-The main Linux backports project does not preserve the commit history of 
-individual drivers as they exist in their original trees that they are 
-taken from. The main goal of the backports project is taking code from 
-newer Linux kernel versions and adapting them so they can be compiled 
-and run on older kernel versions. This backporting process is automated 
-by applying a series of patches to make the newer code compatible with 
-the older kernel via automation defined in the backports.git repo 
-through Makefile, Kconfig, dependent .c or .h files, etc. and of course 
-the "semantic patch language" scripts of coccinelle.
+   -> this is exactly what backports pretty much already does
 
-Because the goal is to make new code work with old kernels, rather than 
-to maintain a faithful, version-controlled history of that code, the 
-commit history for individual drivers is not included in project's 
-focus. The version control history in the backports.git repository 
-serves to track changes to the backporting process itself, rather than 
-to preserve the history of the backported code (I know that may be 
-obvious, but I need to make sure I am not mistaken.)
 
-In a nutshell, the Linux backports project is geared towards 
-compatibility and functionality, not towards historical preservation of 
-codebase evolution.
+> I am able to begin the work on these drivers if we decide to try and=20
+> merge them into backports.git,
+>=20
 
-The second thing I want to make sure I understand is how users can get 
-backports for a driver via the Linux backports project:
+They probably already ship in the current backports, since we generally
+include all wifi drivers. However, it hasn't gotten a lot of attention
+in the past few years other than our (Intel's) internal maintenance for
+iwlwifi.
 
-A happy path would look like them pulling down a tar of backports for 
-their kernel version from 
-https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/ and 
-then running something like:
+> but I need to understand a few things=20
+> since my understanding is often the biggest limitation in all of this.
 
-```sh
-# as a user
-make defconfig-rtlwifi
-make -j4
-# as root
-make install
-# reboot and enjoy
-```
+Sure :)
 
-If a feature they need is not in a stable version, they will then have 
-to execute a small series of extra steps to compile their own backports 
-release and then use that; whether it's against linux-next or some other 
-tree. This is a documented and relatively well-traveled path in kernel 
-developer terms, but is likely out of reach for many "regular" users. I 
-think it is fair to say that this would require them to be a closer to a 
-"developer" or experienced Linux user or administrator. They also may 
-not know about or be able to find the docs for doing so. A GitHub repo 
-with their device driver name is often what they find first.
+> On more than one occasion, I have gotten confused about how Linux=20
+> backports does things so I want to make sure I am making the right=20
+> assumptions about how it works with respect to commit history and a few=
+=20
+> other things for their respective drivers.
+>=20
+> My current understanding re: commit history is as follows:
+>=20
+> The main Linux backports project does not preserve the commit history of=
+=20
+> individual drivers as they exist in their original trees that they are=
+=20
+> taken from.
 
-The last thing I want to make sure I have straight is the value of 
-backports.git for wireless drivers generally because there seem to be many:
+Correct.
 
-For maintainers/developers, backports.git offers a standardized, 
-automated system that minimizes errors, streamlines many aspects of 
-building, testing, and iterating, and allows for community-vetted (more 
-eyes), secure code. This centralization frees maintainers to focus on 
-other development priorities like fixing/reproducing bugs and landing 
-patches upstream.
+> The main goal of the backports project is taking code from=20
+> newer Linux kernel versions and adapting them so they can be compiled=20
+> and run on older kernel versions.=C2=A0
 
-For users, backports.git provides a stable way to access these new 
-features and fixes. It also can be quite simple if you have the right 
-kernel version, it lines up with the feature you need, or you have the 
-requisite experience and can find then dive into more "developer-like" 
-documentation.
+Yes.
 
-For the community, integrating the drivers into backports.git holds 
-benefits for downstream projects like OpenWrt, which already rely on 
-backports as a core design feature. Therefore OpenWrt and similar 
-projects can more seamlessly and securely include them in their 
-distributions, enhancing both device support and the end-user 
-experience. In addition, the upstream drivers benefit due to increased 
-visibility and accessibility, encouraging wider community engagement for 
-testing, bug reporting, and code contributions.
+> This backporting process is automated=20
+> by applying a series of patches to make the newer code compatible with=
+=20
+> the older kernel via automation defined in the backports.git repo=20
+> through Makefile, Kconfig, dependent .c or .h files, etc. and of course=
+=20
+> the "semantic patch language" scripts of coccinelle.
 
-This approach serves to unify efforts, improve security, and facilitate 
-a solid, shared pipeline for maintainers, users, and the larger community.
+Yes.
 
-In conclusion, there are a few questions I am trying to answer for 
-myself, but could use any feedback on.
+> Because the goal is to make new code work with old kernels, rather than=
+=20
+> to maintain a faithful, version-controlled history of that code, the=20
+> commit history for individual drivers is not included in project's=20
+> focus. The version control history in the backports.git repository=20
+> serves to track changes to the backporting process itself, rather than=
+=20
+> to preserve the history of the backported code (I know that may be=20
+> obvious, but I need to make sure I am not mistaken.)
 
-1. How critical is the preservation of commit history for effective 
-debugging and bisecting when issues arise in the backported drivers? We 
-have the commit history in our GitHub repos, but they would not be 
-present in drivers compiled from backports.git. Is there a way to have 
-"the best of both worlds" or mitigate the effects of lacking that history?
+Yes.
 
-2. Are there methods to automate or simplify the process for users who 
-need features not yet available in stable releases, to reduce the skill 
-barrier?
+There _is_ a script (devel/git-tracker.py) that can "port" over history
+from an upstream tree to a backport-generated git tree, but I'm not sure
+I'd generally recommend using it. It's geared fairly specifically to our
+internal development process which is actually that people work in such
+a backport tree (we even publish a version of it [1]).
 
-3. How can I help the backports project directly (rtw related or not)?
 
-4. How can we best leverage the years of effort and modifications (#if 
-#else #endif macros) made by Larry in these stand-alone repositories to 
-inform the technical work of porting them to the shared backports framework?
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/backport-iwlwifi.gi=
+t/
 
-5. Given the popularity and visibility of the rtw88 and rtw89 GitHub 
-repositories, as indicated by their star counts, issue activity, and 
-search engine ranking, what strategies can we employ to maintain this 
-level of user engagement and support if we transition to backports.git? 
-Would mirroring the code and providing custom-tailored instructions in 
-the READMEs serve dual purposes of user support and elevating the 
-visibility of backports.git in the larger community? Is this a welcomed 
-proposition?
+> In a nutshell, the Linux backports project is geared towards=20
+> compatibility and functionality, not towards historical preservation of=
+=20
+> codebase evolution.
 
-I understand that many of these questions ultimately require hands-on 
-work and investigation on my part. However, I believe now is an 
-opportune time to engage the community in these discussions.
+It's just not relevant - the historical preservation of the code base
+happens in the upstream Linux kernel project.
 
-I will be attending the Linux Plumbers Conference next month on behalf 
-of Larry and myself and would like to use this as a start to further 
-explore potential collaborations and conversations around these topics.
 
-Lastly, I want to thank the backports.git maintainers for providing an 
-invaluable tool for the Linux community. Also, thank you Luis for 
-getting me started on having these conversations.
+> The second thing I want to make sure I understand is how users can get=
+=20
+> backports for a driver via the Linux backports project:
+>=20
+> A happy path would look like them pulling down a tar of backports for=20
+> their kernel version from=20
+> https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/ and=
+=20
+> then running something like:
+>=20
+> ```sh
+> # as a user
+> make defconfig-rtlwifi
+> make -j4
+> # as root
+> make install
+> # reboot and enjoy
+> ```
 
-Thank you for your time, and I look forward to future discussions.
+Yes, pretty much. It'd require someone actually maintaining backports
+more reliably and creating packages though :)
 
-Thanks,
-Brian Witte
+> If a feature they need is not in a stable version, they will then have=
+=20
+> to execute a small series of extra steps to compile their own backports=
+=20
+> release and then use that; whether it's against linux-next or some other=
+=20
+> tree. This is a documented and relatively well-traveled path in kernel=
+=20
+> developer terms, but is likely out of reach for many "regular" users.=C2=
+=A0
+
+Well you could do that, but the backports maintainer could, in theory,
+also offer a snapshot version.
+
+This stuff is also fairly well scripted, I don't think it's _that_ much
+more effort than "make ..." stuff above? Though it does require more
+tooling (like spatch) to be installed.
+
+> I=20
+> think it is fair to say that this would require them to be a closer to a=
+=20
+> "developer" or experienced Linux user or administrator. They also may=20
+> not know about or be able to find the docs for doing so. A GitHub repo=
+=20
+> with their device driver name is often what they find first.
+
+If it exists ;-)
+
+
+I mean, if you wanted that, you _could_ generate such a repo with
+different tags/branches/etc. even with individual upstream commits using
+the git-tracker tool. But it can take a long time to run and it's often
+difficult to get the backports to even work for all individual commits,
+so you'd probably care more about specific snapshots like RCs etc.
+
+> The last thing I want to make sure I have straight is the value of=20
+> backports.git for wireless drivers generally because there seem to be man=
+y:
+>=20
+> For maintainers/developers, backports.git offers a standardized,=20
+> automated system that minimizes errors, streamlines many aspects of=20
+> building, testing, and iterating, and allows for community-vetted (more=
+=20
+> eyes), secure code. This centralization frees maintainers to focus on=20
+> other development priorities like fixing/reproducing bugs and landing=20
+> patches upstream.
+
+Well, I think that's overselling it a bit, given that it's been
+languishing. We could also probably contribute more fixes than we
+currently did, purely based on our internal version.
+
+But yeah, it was _meant_ to basically make it easier to do backports, by
+having everyone pitch in together ... did that happen? Not that much.
+
+
+> For users, backports.git provides a stable way to access these new=20
+> features and fixes. It also can be quite simple if you have the right=20
+> kernel version, it lines up with the feature you need, or you have the=
+=20
+> requisite experience and can find then dive into more "developer-like"=
+=20
+> documentation.
+
+I'm not sure it's really easy to use right now because there's no
+regular maintenance.
+
+> For the community, integrating the drivers into backports.git
+>=20
+
+I'm not sure I'd argue there's even a notion of "integrating the drivers
+into backports.git". After all, backports.git doesn't contain drivers.
+Though yeah, arguably having a driver actually work with backports takes
+some work on the backports side, something you could call "integration".
+
+> holds=20
+> benefits for downstream projects like OpenWrt, which already rely on=20
+> backports as a core design feature. Therefore OpenWrt and similar=20
+> projects can more seamlessly and securely include them in their=20
+> distributions, enhancing both device support and the end-user=20
+> experience. In addition, the upstream drivers benefit due to increased=
+=20
+> visibility and accessibility, encouraging wider community engagement for=
+=20
+> testing, bug reporting, and code contributions.
+
+:)
+
+> This approach serves to unify efforts, improve security, and facilitate=
+=20
+> a solid, shared pipeline for maintainers, users, and the larger community=
+.
+>=20
+> In conclusion, there are a few questions I am trying to answer for=20
+> myself, but could use any feedback on.
+>=20
+> 1. How critical is the preservation of commit history for effective=20
+> debugging and bisecting when issues arise in the backported drivers? We=
+=20
+> have the commit history in our GitHub repos, but they would not be=20
+> present in drivers compiled from backports.git. Is there a way to have=
+=20
+> "the best of both worlds" or mitigate the effects of lacking that history=
+?
+
+Like I said above, you _could_ use git-tracker and create a new backport
+for every (relevant) upstream commit, but then you end up fixing a lot
+of intermittent backport issues:
+Say some commit is introduced upstream that makes a patch in backports
+no longer apply, but then let's say that commit is reverted pretty soon.
+If you just follow the RCs, you might never notice. If you follow
+individual commits, you'd have to adjust backports *twice* over it.
+
+> 2. Are there methods to automate or simplify the process for users who=
+=20
+> need features not yet available in stable releases, to reduce the skill=
+=20
+> barrier?
+
+It's not _that_ hard, basically just running "./gentree.py ..."?
+
+Not sure what we could simplify there.
+
+
+> 3. How can I help the backports project directly (rtw related or not)?
+
+Depends how much work you want to put in? I think what'd help most right
+now would be to actually have someone to do what Hauke used to do, which
+was integrating patches from the list (and we'd probably have more of
+them), and creating releases.
+
+> 4. How can we best leverage the years of effort and modifications (#if=
+=20
+> #else #endif macros) made by Larry in these stand-alone repositories to=
+=20
+> inform the technical work of porting them to the shared backports framewo=
+rk?
+
+That's tricky, I don't think there's a good way to leverage that
+directly. Also, backports tries to _minimize_ the ifdefs needed in
+favour of providing spatches and API changes.
+
+Also, looking at the rtw89 repo, I notice that it _only_ contains the
+driver and attempts to make it compatible with all mac80211 versions,
+which we had previously though of as basically a losing proposition, and
+so backports ships the _entire_ wireless stack so that the coupling
+between cfg80211/mac80211/driver is maintained.
+
+As a result, I think the only way to use this would be for inspiration
+when looking at something that backports didn't (yet) handle (well).
+
+> 5. Given the popularity and visibility of the rtw88 and rtw89 GitHub=20
+> repositories, as indicated by their star counts, issue activity, and=20
+> search engine ranking, what strategies can we employ to maintain this=20
+> level of user engagement and support if we transition to backports.git?=
+=20
+> Would mirroring the code and providing custom-tailored instructions in=
+=20
+> the READMEs serve dual purposes of user support and elevating the=20
+> visibility of backports.git in the larger community? Is this a welcomed=
+=20
+> proposition?
+
+Given that nobody really seems to have much time to spend on the
+backports project ... I think that'd be up to you.
+
+You could generate backports for all Linux RCs and commit them to those
+repos for example, in ascending order? You could even try to use the
+git-tracker.py to generate individual commits, but as I described that
+has some caveats. Or even provide linux-next snapshots in a separate
+branch?
+
+As long as you don't think of "backport outputs a tarball", I think you
+can see a lot of choices, although not all of them will preserve a
+patch-by-patch history of the driver.
+
+> I understand that many of these questions ultimately require hands-on=20
+> work and investigation on my part. However, I believe now is an=20
+> opportune time to engage the community in these discussions.
+>=20
+> I will be attending the Linux Plumbers Conference next month on behalf=
+=20
+> of Larry and myself and would like to use this as a start to further=20
+> explore potential collaborations and conversations around these topics.
+
+Maybe Luis will be there? I won't.
+
+> Lastly, I want to thank the backports.git maintainers for providing an=
+=20
+> invaluable tool for the Linux community. Also, thank you Luis for=20
+> getting me started on having these conversations.
+
+:)
+
+johannes
 --
 To unsubscribe from this list: send the line "unsubscribe backports" in
