@@ -1,129 +1,65 @@
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786F42DF7D
-	for <backports@vger.kernel.org>; Mon,  6 Nov 2023 20:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="RcE7CUOG"
-Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:242:246e::2])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38DBD103
-	for <backports@vger.kernel.org>; Mon,  6 Nov 2023 12:58:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=7ujFNVoNiXide019ftlBdkOF8s0gRQ9pOLSL5bQsCRU=;
-	t=1699304337; x=1700513937; b=RcE7CUOGiIMsSeRZ+jcGuaM4+b7CNNq+iDd5iZNlK3aTI07
-	rPKaKj1sfZ2hJ7VjAy1MEtkZMzyeKKSjME3vhiy9GXwTyu4z19IpVx9LwKqhCRVQQ6UZwRsyHHIWU
-	mPprDMnXaFHacrwipVRhXasgYzTW0LsVjNyd//X/eFhjoOjPb6KB6zSJ2m6BGyldPe3TbaTZGC+FC
-	uZh7JdF7Qcnutwixb6rVAY3dLSdGA0gii+lEavZm+Tt4bJPY/ZQcYpHzep3BAI+tGxW/oE5gw+6AT
-	RfhQuS3CeWcSFE8XF0I1Vh2lJb4Gria8kX/PrIUWCa5r9+40SZbCi0NP+vpqLHsA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97-RC1)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1r06gL-0000000FtpF-1ii7;
-	Mon, 06 Nov 2023 21:58:49 +0100
-Message-ID: <d483eae0d92432e185dd5ddea575b4b58588de11.camel@sipsolutions.net>
-Subject: Re: rtw88, rtw89 -- options for bringing a couple rtw standalone
- GitHub repos into backports.git
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Brian Witte <brianwitte@mailfence.com>, backports@vger.kernel.org, 
-	hauke@hauke-m.de, Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Date: Mon, 06 Nov 2023 21:58:48 +0100
-In-Reply-To: <44560748.117980.1698769443983@ichabod.co-bxl>
-References: <831d1de6-5d02-43b9-b907-70d9f1a03cab@mailfence.com>
-	 <435c43bae693e72004c39ff90a901bc911ab1e6d.camel@sipsolutions.net>
-	 <029db1c1-2ac8-430e-915b-beb7c3741de2@lwfinger.net>
-	 <0b543e2e6aa3f2473d7ed8e406b74b69e1804143.camel@sipsolutions.net>
-	 <1a600228-6975-4798-b2df-89d99007337e@mailfence.com>
-	 <18fb6b9a0e1d2a7cc08eaa34979067e7094bb2a1.camel@sipsolutions.net>
-	 <b67264b6-41f8-4415-ab8a-fbdbac21748e@mailfence.com>
-	 <44560748.117980.1698769443983@ichabod.co-bxl>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	dkim=pass (2048-bit key) header.d=trego-co-il.20230601.gappssmtp.com header.i=@trego-co-il.20230601.gappssmtp.com header.b="ZRSwyKDD"
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5282A1A8
+	for <backports@vger.kernel.org>; Thu, 23 Nov 2023 06:25:21 -0800 (PST)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-a02ba1f500fso135590166b.0
+        for <backports@vger.kernel.org>; Thu, 23 Nov 2023 06:25:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=trego-co-il.20230601.gappssmtp.com; s=20230601; t=1700749519; x=1701354319; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SBnfnvpnuj4sr33Np2zVK8dmfqunLDb9uQnDgFp1Q/w=;
+        b=ZRSwyKDDUikRh28LkXhutXnfv0KJyGPyEAAvpjzFECivFOu/WmwGQHhrNJX4ZXhQlD
+         uw4cED2/yFgTuephXxbwKD2zi7AP2tV9BKchNHXh/7rxKRuVIgdqXJWGf9IIRXTb10CS
+         1tPJF6oPyIx34emK3KfI7c1D3wwYGT7HhJYbp2/dHGTASGLY1ZZ3WMHFVB6nT2bgk+Nn
+         s8oXId/f78IVclxNeyoOOTwK7jIzHMm8od8E6DepEoFBMcXQ/Ie1e4106usfoodEh8yi
+         foror3id/7k8gsvPrdR3aCJTYjWjTE0/hVeaBGZljP+6zyXi0eAehtcsFnz6BUWnVV6N
+         RSpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700749519; x=1701354319;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SBnfnvpnuj4sr33Np2zVK8dmfqunLDb9uQnDgFp1Q/w=;
+        b=jDFTxXX6SGGJ7X212MU1iNEfdyb4wqNXjdZdg2JaiW4zFMVO/vU0nndM3bWTUiKOQx
+         NzPxuTI9vx4HGbW75m94ievKNDS+t05kgCNmFhE7vvi+ywEkeiswCEqv+TXgo5o2cohk
+         AC/mQ6v/pB4avUf6pyG/G262drwEwfitjqtPIjiZUM2OBe6HCrX047fFMF7xR67kWWzq
+         e4w76fo6OfrkqeDC5yoXmRzxS1lRspjyclHoYZYXGWbLg53VJiFVmPLby4oo/fapHNUz
+         nZ+5pT/9Jexr6YP3V5Uf1pocMcfr7GtakmruSl4KXVRHi8JSa7lw27wevS4TAnh1h3EI
+         Xa8g==
+X-Gm-Message-State: AOJu0YxN+zGQeFjAUkGM71M4grHZRHKVRpmchwTJ3ATLlHb6ysA9T2Pl
+	d75Tb9kZqiGNImYSxsI+DjWKXkmdx0KhGA2SpUA=
+X-Google-Smtp-Source: AGHT+IGycAyINgEGQkY9AV1i52XbTh/nDKEC3MIJDWhhNGFOUi6mgPhGlhHmBVUix2WMAXC5Lz+Rkw==
+X-Received: by 2002:a17:906:19c:b0:9b2:cf77:a105 with SMTP id 28-20020a170906019c00b009b2cf77a105mr4134803ejb.15.1700749519354;
+        Thu, 23 Nov 2023 06:25:19 -0800 (PST)
+Received: from cristie14.c-scale.ro ([86.125.16.242])
+        by smtp.gmail.com with ESMTPSA id bv8-20020a170906b1c800b009fc927023bcsm842889ejb.34.2023.11.23.06.25.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Nov 2023 06:25:18 -0800 (PST)
+From: Cristian Cimpianu <cristi@trego.co.il>
+To: backports@vger.kernel.org
+Cc: eyal@trego.co.il
+Subject: backports for wifi-7 and kernel 6.5
+Date: Thu, 23 Nov 2023 16:24:35 +0200
+Message-ID: <31498106.Y1g1iz2YYI@cristie14.c-scale.ro>
 Precedence: bulk
 X-Mailing-List: backports@vger.kernel.org
 List-Id: <backports.vger.kernel.org>
 List-Subscribe: <mailto:backports+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Brian,
+Hi guys,
 
-Sorry for the delay - had a bit of a crazy week last week.
+I've been working on a project using the backports project to build some custom wifi modules for different kernel versions.
+Now the customer wants to do a wifi-7 chip keeping the infrastructure the same as much as possible. But wifi-7 has been added into kernel 6.5, while the backports project is still at 5.15. And the customer wants that in like 6 months.
+So, in the hope I will understand better what would be the easiest solution, I figured I could ask here.
+Is there a plan to add support in the backports project for kernel 6.5 or for the wifi-7 changes to the mac80211 and cfg80211 modules?
 
-> I was able to get a new backports package built and running on my
-> machine over the weekend.
+best regards,
+Cristian.
 
-Nice :)
 
-> First, I did a `./gentree.py` on Hauke's v5.15.92 release
-
-I didn't even know there was a backports release of the scripts itself
-rather than just the output ... :)
-
-> with it's
-> corrresponding branch in stable with success and installed backports on
-> my hardware running v5.10.0. The new driver code was loaded and worked
-> as intended with a couple different usb dongles I have.
-
-Great! So progress, I guess :)
-
-> Second, as a test I built a package release for v5.16.20 because initial
-> rtw89 commit appears here:
->=20
-> =C2=A0=C2=A0$ pwd
-> =C2=A0=C2=A0/home/bkz/linux-stable
->=20
-> =C2=A0=C2=A0$ git symbolic-ref --short HEAD && git rev-parse --short HEAD
-> =C2=A0=C2=A0master
-> =C2=A0=C2=A0ffc253263a13
->=20
-> =C2=A0=C2=A0$ git describe --contains e3ec7017f6a20d12ddd9fe23d345ebb7b8c=
-104dd
-> =C2=A0=C2=A0v5.16-rc1~159^2~121^2~39
->=20
-> I was able to cut that release package that works for the rtw89 driver
-> by adjust existing patch file diff hunks to apply properly and adding a
-> new header that came in to net.
-
-Right.
-
-> What other testing do you recommend for a "new driver" besides testing
-> "builds" as mentioned in docs [1] here in 'Adding new driver'?
-
-Well if you have the devices, you could test them too, but ... if we
-trust backports to more or less do the right thing, it should work :)
-
-> It goes over supporting latest minor versions and says, "you should insta=
-ll
-> all supported kernel with the script in devel/get-compat-kernels and
-> then run devel/ckmake to build backports against every kernel version."
->=20
-> [1] https://backports.wiki.kernel.org/index.php/Documentation/backports/h=
-acking
->=20
-> I am working on test/automation for our new backports workflow so any
-> insight you have would be helpful.
-
-Ah, well, that's more to make sure backports itself (as in the
-compatibility code it adds and the changes it makes) actually compiles
-against all the different kernels.
-
-You might want to check that, and ckmake and all is just a nicer way of
-achieving that. But you might want to restrict yourself to kernels that
-you see actually in (broad) use from your users?
-
-> Honestly, we could probably use some key points from this thread to make
-> some newbie friendly docs considering how confused I was at first, haha!
->=20
-> I could probably draw a nice diagram based on your explanations.
->=20
-
-I wouldn't mind (you) adding something to the wiki but I'm not even sure
-I know how to use it :)
-
-johannes
