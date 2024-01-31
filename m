@@ -1,66 +1,60 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14F17D3F2;
-	Tue, 30 Jan 2024 22:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEB55DF0F;
+	Wed, 31 Jan 2024 07:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706652574; cv=none; b=QNP/sC7QSRlNdjJ0kxhLJxGm0wJWFNdJQx3DDEtCEqFNWkud+TsOjh7gnDtMLJYqHm5beR3DOxl31JCuAeaf+GDbUQJRD3W2QQOzurJlWPVaL7rrT7okWWJFXj9zONmC/Jz0JqCyK4qbuVAWzgNiB2ChpuNHGYASJfjTcD4JSQo=
+	t=1706687069; cv=none; b=PEuROIfsNKue09sFQxBHTo+vnIR9cyceRoOkcIBjbtVd+Co979SsX7jRX+Og6wyiUwb5WcDqRx9mCIHkBJNA6GYoGbSZR+MPQg1MCw8VBOWMatjOzGPR3P3jrfnmKRa/wF1mvLwcWZIMk/EtOR2rUS+IHLKM9/5g87Bg0Xe65So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706652574; c=relaxed/simple;
-	bh=FiA3NZiRrJyeN92CXtbS7FCHmwseVMJK5GqHs0nMFpw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=bOBVyUGpWG9+8JaDDLTVN1qj8uUtqufuTOpA3P8Gfh5YuYLOYl33RX6xS6rcUcNji2HWHkpcuk37+nC8TQ+WL+RZI+FO4oPwODIcH/TvM+6VI9ED3gGibmkbFbqHoItfy6ujdQsXVBWjQDznp/F3iSteWsHxDP92L+gedwzqg2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=AZfKl1Cl; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
+	s=arc-20240116; t=1706687069; c=relaxed/simple;
+	bh=mQKIln3W0ISq3kuNCiQzmdN7IQWgnmxq6RpOiDib6vo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lvyu5UzZski1i5lSGy2RMfflt9RkDgJM7Sw3LMm+adoKEUvZGCPKmPZc80lfb0dKDAYO37LGB+jowO2EnNrGCCATnEROUFiazzPQTX8D7u5ff/sZgl3yPpM2ZRc5SHXo/4NcdLNYKankNYN0DO2efvCIdVVfomIc4D33BO3VzsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=evlkxGxz; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="AZfKl1Cl"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4TPfTZ6Cl8z9sV0;
-	Tue, 30 Jan 2024 23:09:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-	t=1706652562;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=jEtN4ve+vVsn7PlNJhk+nSDskhUqzXKbr5NjxzzGEc4=;
-	b=AZfKl1ClCnekmU3l+oaZxCuTc0EzgKq4LgKAwGI/ulfAB3tonJhU5V1+/A558LrfKtmK5T
-	PYSTImhUkAtgdDz8Pjp4jCLG4QxRPqnHYtBBpdbQ3zcwmh5qSoWfzO/oVUxYTVFz7ChE+/
-	9wwYglTweER2XKAWieLOdvM7zV/L/aUXDhZ0Db9tkAg34hQMu8tZ08a3EHCUA+aVpQ9LXq
-	tR6CZZ21VR5GQBRADHhSmhhLKOIDIJczeMwcgX3s9/h+Cv0cGUevFZaJJqgz1jYijGcJ5J
-	NDGfh0rhG5xRsePUtl8dyB+gvIiymBHRLMbEKRWWXE3Mk1seM/6jqcS9fF7IHQ==
-Message-ID: <14959b08-35e3-4a86-acb8-04ee0a218271@hauke-m.de>
-Date: Tue, 30 Jan 2024 23:09:22 +0100
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="evlkxGxz"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=mQKIln3W0ISq3kuNCiQzmdN7IQWgnmxq6RpOiDib6vo=;
+	t=1706687063; x=1707896663; b=evlkxGxzUaRpTfqBeiw36jlOKlJbpdtIxG2C7feL6YcShIo
+	mnKUm7xbSyaXOBNsgkPvkFpgoKn6ttKlI/onLBjaR8ICbl8dNCpceEs8KGI4RaG8sfEEVwyU/P0NN
+	x0CxMuTK44PAlal2xb3p9NxR5M+s39xWhFEy8OyLY8LmIWcvez0sL/3jZDd+UyNlKgl5O7gXfVacP
+	e+fpegTxGkJHZbvDYrKM6AsRehyFPJ8OuhfGj/vNv9Rf6rHIR5FbAqmDTzr75soK7/GtLYECrcWYi
+	68chELfQ7wZUaqc9RDxCzZqNFwpQpb2rffpqNXsRp6MH/l4cKpPxRSRFo4NVd/xA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1rV5Ge-0000000763z-0yT5;
+	Wed, 31 Jan 2024 08:44:20 +0100
+Message-ID: <912f1d0f22815823fa3c199a434d7510412e60fb.camel@sipsolutions.net>
+Subject: Re: wireless backports 5.15.148-1 released
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
+Cc: linux-wireless@vger.kernel.org
+Date: Wed, 31 Jan 2024 08:44:18 +0100
+In-Reply-To: <14959b08-35e3-4a86-acb8-04ee0a218271@hauke-m.de>
+References: <14959b08-35e3-4a86-acb8-04ee0a218271@hauke-m.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 (3.50.3-1.fc39) 
 Precedence: bulk
 X-Mailing-List: backports@vger.kernel.org
 List-Id: <backports.vger.kernel.org>
 List-Subscribe: <mailto:backports+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Language: en-US
-To: backports@vger.kernel.org
-Cc: linux-wireless@vger.kernel.org
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: wireless backports 5.15.148-1 released
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-malware-bazaar: not-scanned
 
-Hi
+On Tue, 2024-01-30 at 23:09 +0100, Hauke Mehrtens wrote:
+> I am planning to drop support for kernel < 4.19 from backports=20
+> based on kernel 6.1 and later.
+>=20
 
-backports-5.15.148-1 was released. This is based on Linux 5.15.148.
-https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/v5.15.148/backports-5.15.148-1.tar.xz
+I guess that makes sense, 4.14 is EOL at last :)
 
-There is now a updated wiki page with the releases:
-https://backports.wiki.kernel.org/index.php/Releases
-
-The source code can be found here:
-https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
-
-I am planning to work on backprots based on kernel 6.1 and 6.6. In this 
-process I am planning to drop support for kernel < 4.19 from backports 
-based on kernel 6.1 and later.
-
-Hauke
+johannes
