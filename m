@@ -1,60 +1,67 @@
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from c.mail.sonic.net (c.mail.sonic.net [64.142.111.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEB55DF0F;
-	Wed, 31 Jan 2024 07:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789DA54FBA;
+	Tue, 27 Feb 2024 06:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.142.111.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706687069; cv=none; b=PEuROIfsNKue09sFQxBHTo+vnIR9cyceRoOkcIBjbtVd+Co979SsX7jRX+Og6wyiUwb5WcDqRx9mCIHkBJNA6GYoGbSZR+MPQg1MCw8VBOWMatjOzGPR3P3jrfnmKRa/wF1mvLwcWZIMk/EtOR2rUS+IHLKM9/5g87Bg0Xe65So=
+	t=1709016750; cv=none; b=YV9KXHnsiO7GPhNJQgBF8ChetsDMIAZUthjyjF7HXvzglFmNzgj/clUQZGJuHQGKIuSUTmtwkMnnbzMVh9FpagcYCd4kOIF93us3v78Dv8iHno8fKsq+NGb8lyqB4fVYVVbVrRcypJTcdlG1xo0mVRGPkta1VckaKXlYeNygUk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706687069; c=relaxed/simple;
-	bh=mQKIln3W0ISq3kuNCiQzmdN7IQWgnmxq6RpOiDib6vo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lvyu5UzZski1i5lSGy2RMfflt9RkDgJM7Sw3LMm+adoKEUvZGCPKmPZc80lfb0dKDAYO37LGB+jowO2EnNrGCCATnEROUFiazzPQTX8D7u5ff/sZgl3yPpM2ZRc5SHXo/4NcdLNYKankNYN0DO2efvCIdVVfomIc4D33BO3VzsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=evlkxGxz; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+	s=arc-20240116; t=1709016750; c=relaxed/simple;
+	bh=bIkL3j1SUti+mxRknWXsGzjEHfZ++LfAOrCAj6OvBfk=;
+	h=From:To:Date:MIME-Version:Subject:Message-ID:Content-type; b=QyX6YK90xYi3FfiEQhQ3GcfIUN2m+9l+NxW3VWzFgr8WO0KpemdncNFHEm9Oca9bk/Fr9FktMBpsMJsIfz59Eps00qbRjsSf6rLXRvKapNAdH3Lmri2BpLE6t44pGmMFKU9rp0fpEgpqc/MopkrRFuVLiDNaY0LqBfPmGjqVCJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sonic.net; spf=pass smtp.mailfrom=sonic.net; dkim=pass (2048-bit key) header.d=sonic.net header.i=@sonic.net header.b=Ml0hgHv7; arc=none smtp.client-ip=64.142.111.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sonic.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sonic.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="evlkxGxz"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=mQKIln3W0ISq3kuNCiQzmdN7IQWgnmxq6RpOiDib6vo=;
-	t=1706687063; x=1707896663; b=evlkxGxzUaRpTfqBeiw36jlOKlJbpdtIxG2C7feL6YcShIo
-	mnKUm7xbSyaXOBNsgkPvkFpgoKn6ttKlI/onLBjaR8ICbl8dNCpceEs8KGI4RaG8sfEEVwyU/P0NN
-	x0CxMuTK44PAlal2xb3p9NxR5M+s39xWhFEy8OyLY8LmIWcvez0sL/3jZDd+UyNlKgl5O7gXfVacP
-	e+fpegTxGkJHZbvDYrKM6AsRehyFPJ8OuhfGj/vNv9Rf6rHIR5FbAqmDTzr75soK7/GtLYECrcWYi
-	68chELfQ7wZUaqc9RDxCzZqNFwpQpb2rffpqNXsRp6MH/l4cKpPxRSRFo4NVd/xA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1rV5Ge-0000000763z-0yT5;
-	Wed, 31 Jan 2024 08:44:20 +0100
-Message-ID: <912f1d0f22815823fa3c199a434d7510412e60fb.camel@sipsolutions.net>
-Subject: Re: wireless backports 5.15.148-1 released
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
-Cc: linux-wireless@vger.kernel.org
-Date: Wed, 31 Jan 2024 08:44:18 +0100
-In-Reply-To: <14959b08-35e3-4a86-acb8-04ee0a218271@hauke-m.de>
-References: <14959b08-35e3-4a86-acb8-04ee0a218271@hauke-m.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 (3.50.3-1.fc39) 
+	dkim=pass (2048-bit key) header.d=sonic.net header.i=@sonic.net header.b="Ml0hgHv7"
+Received: from [192.168.1.94] (45-23-117-7.lightspeed.livnmi.sbcglobal.net [45.23.117.7])
+	(authenticated bits=0)
+	by c.mail.sonic.net (8.16.1/8.16.1) with ESMTPSA id 41R6qJT6030968
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 26 Feb 2024 22:52:25 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sonic.net; s=net23;
+	t=1709016747; bh=bIkL3j1SUti+mxRknWXsGzjEHfZ++LfAOrCAj6OvBfk=;
+	h=From:To:Date:MIME-Version:Subject:Message-ID:From:Subject;
+	b=Ml0hgHv7wx+ASi/PUk0/sJAencnZ7pWKBvo/oZqllldUrzhKsDoV7vYGID2aA/Hss
+	 Dzl610Zurd6whS8Weqdh3uw2jm7ZybYiL+ig25c43RQ3SbQA9DyXahrFfmQ/KRnMs+
+	 oaJkx7ngNZxdevONW5l+D+KF3f6z1Mb8rSdHZvUxvLOuPah0JRvGhQ9tbdwrqjksUb
+	 slyVC0Z5Ts2q+PKr5vDJPQ5YPdv7B8vIPK42sqVmRtB4KqiQPanTLyiYVDUWBo4tIE
+	 JpJ97jzeJh6DdH8g9fmbO4d8llWVfqLVJK43wdpInA5VzQpoVeQXDAeUocOMQ4Zs4L
+	 M1Dft++3iZrOw==
+From: delyan@sonic.net
+To: autofs@vger.kernel.org, backports+subscribe@vger.kernel.org,
+        backports+unsubscribe@vger.kernel.org, backports@vger.kernel.org,
+        bpf+subscribe@vger.kernel.org, bpf+unsubscribe@vger.kernel.org,
+        bpf@vger.kernel.org, ceph-devel+subscribe@vger.kernel.org,
+        ceph-devel+unsubscribe@vger.kernel.org, ceph-devel@vger.kernel.org,
+        cgroups+subscribe@vger.kernel.org, cgroups+unsubscribe@vger.kernel.org,
+        cgroups@vger.kernel.org, dash+subscribe@vger.kernel.org,
+        dash+unsubscribe@vger.kernel.org, dash@vger.kernel.org,
+        dccp+subscribe@vger.kernel.org, dccp+unsubscribe@vger.kernel.org,
+        dccp@vger.kernel.org, devicetree+subscribe@vger.kernel.org,
+        devicetree+unsubscribe@vger.kernel.org, devicetree@vger.kernel.org,
+        devicetree-compiler+subscribe@vger.kernel.org,
+        devicetree-compiler+unsubscribe@vger.kernel.org,
+        devicetree-compiler@vger.kernel.org,
+        devicetree-spec+subscribe@vger.kernel.org
+Date: Tue, 27 Feb 2024 01:52:18 -0500
 Precedence: bulk
 X-Mailing-List: backports@vger.kernel.org
 List-Id: <backports.vger.kernel.org>
 List-Subscribe: <mailto:backports+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Subject: subscribe
+Message-ID: <65DD86A2.27104.445FAB06@delyan.sonic.net>
+Priority: normal
+X-mailer: Pegasus Mail for Windows (4.80.1028)
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
+X-Sonic-CAuth: UmFuZG9tSVYCkRG/6UK04HDk6+OCsT1RdUtuADigDnC8LwarJNsMkj4glK5OHTKQghGwThdqvM4n0IeB5bXX58WTEWTENbws
+X-Sonic-ID: C;Cr9LwDzV7hGbeC5nR+6Zsg== M;uIsOxDzV7hGbeC5nR+6Zsg==
+X-Spam-Flag: Unknown
+X-Sonic-Spam-Details: not scanned (too big) by cerberusd
 
-On Tue, 2024-01-30 at 23:09 +0100, Hauke Mehrtens wrote:
-> I am planning to drop support for kernel < 4.19 from backports=20
-> based on kernel 6.1 and later.
->=20
-
-I guess that makes sense, 4.14 is EOL at last :)
-
-johannes
+subscribe
