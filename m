@@ -1,36 +1,36 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C1B74BFC
-	for <backports@vger.kernel.org>; Thu, 14 Mar 2024 19:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CFD762D9
+	for <backports@vger.kernel.org>; Thu, 14 Mar 2024 19:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710443928; cv=none; b=t50sVE7/Km0KJmVFevjni/gYbACgEEY7LsWy8t4dOcf6T/UZCgfqzzEozOQPOGayHmRGfCCpZiviF7Pu8ddVJIhphflsClFRg4xupJwOTnBRkLxIPjUMgVuS7J/MLzsKS//ruGLAuRoJizRLwqBkaikU2Qk29E3sShODZD/p5/Y=
+	t=1710444142; cv=none; b=JQZPEvPnnpAmyI7CF3xR6ijjp8cqn9NkAqS5pNrSENopvrR2F8JO6mF45eQEQ75fbxaS/9NtgRqMV7mEtx6euq1QNnHslvzyqxxAGU1YkVkiURhAHEXL7s64chyWnYtAXQNWDRQKYOloZS0bjUynLl0k3VBzEYHfgaxCwZNifl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710443928; c=relaxed/simple;
-	bh=fkwWnRxsJXGI4Cw3EYfQFcBDqqrGkziADMfCYw1y9Gg=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=IdVMVHQhyvP6HkxD7ZaAKOuj03qYGh01I04bbtNCmCg/TZcy/YYeF6XlHjvKQt7pm5VZN5qiOwmWjn+6GGYnCDHUlb+jm9xYnK1kNRJHLxzcXHBbni+SSEbofmG3ARr6iiHVhP8z4lX0/zEDxufDw7giqM2emhn/03AQOBzEi2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q0abymlm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1710444142; c=relaxed/simple;
+	bh=O3tGMTDGlqaHxMmZfhjQ03/83FNrW0hRImmBt51Kxak=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=b+KDEE+rTcT6RNDFC+mIi+H92mGsvXqyrfP0ot8SU5loYSVFjq+mtt2ewSS/e6JHYNPQfU3pKcHvTW6B18Gb0y2HuwE1HThQcbLOa6IZTxJkr1bM7PzuYlsCTJEaQbDo4BAQEHf5W+0gp1rRMBzijF/tHBliENbGqJgKHLEAajU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npVDUpid; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q0abymlm"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9B7C6C433C7
-	for <backports@vger.kernel.org>; Thu, 14 Mar 2024 19:18:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npVDUpid"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A22FEC433C7
+	for <backports@vger.kernel.org>; Thu, 14 Mar 2024 19:22:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710443927;
-	bh=fkwWnRxsJXGI4Cw3EYfQFcBDqqrGkziADMfCYw1y9Gg=;
+	s=k20201202; t=1710444141;
+	bh=O3tGMTDGlqaHxMmZfhjQ03/83FNrW0hRImmBt51Kxak=;
 	h=From:To:Subject:Date:From;
-	b=q0abymlmLGE2z644gh1o1qROj38eC1HfIMak/rs1/zB9Im92xMEnIT4CAJVVCMZUL
-	 ND1fXEr3o7eWPFYxhivxSwbqYc/pcCH6q0LMAGNLJKyu9Zpk3Yv0k7bE5nvr4lTahe
-	 S8FkzttaRYqx4a1IuKs0r7lpr6YNNeFfqkWDrLODxlA6Hxx/WY5H27Mr4F5jHtw1c3
-	 t0uWG/Vr1jrjxkbPW4cCozoCri4h3oDJKKdkhq529IPGtnPoWuc4LeLXu1A7pjh+zk
-	 d797omAcCEsouqQrdIMKVjkjZaz04xyizll7dvIKMhHoZ9gjfgmr6IGXCCVp5FN4sD
-	 veSrID/o2Xzug==
+	b=npVDUpid2+k+eQJnlrUFLVrX3Z20aCBDZpH0aLrp02oi5mN+W+zhXeaNlmlhV8nnA
+	 nFhx/MWu83X+tIkfx6rZ6Br7hTX56GxoRbxxKjmTpbL3wh1iKSr+rqOGBCd9/l8xkv
+	 Hd5XDdbSBDzoUS9M7o2bNBCeUmpV3vD09MpwZVbVY60aI77/EeGFpD5vxKnvDz+bUb
+	 /QAx1JnOVNaH78u/D85+A9oSEOd0TRwPhKKPN/kUJ8fv8GcuHylPab35VCC8OlPVQN
+	 tUCJV86/0os1HpnNobEHUbWYUzbuGU+K2f+PIvHaNzYPJJcTNyYpbedXQgpK2topwy
+	 1wIm2ucPp4SxA==
 Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix, from userid 48)
-	id 8AC7FC4332E; Thu, 14 Mar 2024 19:18:47 +0000 (UTC)
+	id 93677C4332E; Thu, 14 Mar 2024 19:22:21 +0000 (UTC)
 From: bugzilla-daemon@kernel.org
 To: backports@vger.kernel.org
-Subject: [Bug 218598] New: create mesh network in backport2
-Date: Thu, 14 Mar 2024 19:18:47 +0000
+Subject: [Bug 218599] New: create mesh network in backport213-5.15
+Date: Thu, 14 Mar 2024 19:22:21 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -48,7 +48,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  cf_regression
-Message-ID: <bug-218598-58281@https.bugzilla.kernel.org/>
+Message-ID: <bug-218599-58281@https.bugzilla.kernel.org/>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Bugzilla-URL: https://bugzilla.kernel.org/
@@ -60,10 +60,10 @@ List-Subscribe: <mailto:backports+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-https://bugzilla.kernel.org/show_bug.cgi?id=3D218598
+https://bugzilla.kernel.org/show_bug.cgi?id=3D218599
 
-            Bug ID: 218598
-           Summary: create mesh network in backport2
+            Bug ID: 218599
+           Summary: create mesh network in backport213-5.15
            Product: Backports project
            Version: unspecified
           Hardware: All
@@ -75,6 +75,20 @@ https://bugzilla.kernel.org/show_bug.cgi?id=3D218598
           Assignee: backports@vger.kernel.org
           Reporter: abdolahi68@uvic.ca
         Regression: No
+
+Dear Sir,
+
+I intend to create a mesh network using backport 5.13, 5.14, and 5.15, Howe=
+ver,
+I received the following error in all of them:
+ command failed: operation not supported (-95).
+
+Also, I have used deconfig-ath9k.
+
+I am available if you require more information.
+
+Thanks.
+Mostafa
 
 --=20
 You may reply to this email to add a comment.
