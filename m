@@ -1,67 +1,83 @@
-Received: from c.mail.sonic.net (c.mail.sonic.net [64.142.111.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789DA54FBA;
-	Tue, 27 Feb 2024 06:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.142.111.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C1B74BFC
+	for <backports@vger.kernel.org>; Thu, 14 Mar 2024 19:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709016750; cv=none; b=YV9KXHnsiO7GPhNJQgBF8ChetsDMIAZUthjyjF7HXvzglFmNzgj/clUQZGJuHQGKIuSUTmtwkMnnbzMVh9FpagcYCd4kOIF93us3v78Dv8iHno8fKsq+NGb8lyqB4fVYVVbVrRcypJTcdlG1xo0mVRGPkta1VckaKXlYeNygUk8=
+	t=1710443928; cv=none; b=t50sVE7/Km0KJmVFevjni/gYbACgEEY7LsWy8t4dOcf6T/UZCgfqzzEozOQPOGayHmRGfCCpZiviF7Pu8ddVJIhphflsClFRg4xupJwOTnBRkLxIPjUMgVuS7J/MLzsKS//ruGLAuRoJizRLwqBkaikU2Qk29E3sShODZD/p5/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709016750; c=relaxed/simple;
-	bh=bIkL3j1SUti+mxRknWXsGzjEHfZ++LfAOrCAj6OvBfk=;
-	h=From:To:Date:MIME-Version:Subject:Message-ID:Content-type; b=QyX6YK90xYi3FfiEQhQ3GcfIUN2m+9l+NxW3VWzFgr8WO0KpemdncNFHEm9Oca9bk/Fr9FktMBpsMJsIfz59Eps00qbRjsSf6rLXRvKapNAdH3Lmri2BpLE6t44pGmMFKU9rp0fpEgpqc/MopkrRFuVLiDNaY0LqBfPmGjqVCJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sonic.net; spf=pass smtp.mailfrom=sonic.net; dkim=pass (2048-bit key) header.d=sonic.net header.i=@sonic.net header.b=Ml0hgHv7; arc=none smtp.client-ip=64.142.111.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sonic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sonic.net
+	s=arc-20240116; t=1710443928; c=relaxed/simple;
+	bh=fkwWnRxsJXGI4Cw3EYfQFcBDqqrGkziADMfCYw1y9Gg=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=IdVMVHQhyvP6HkxD7ZaAKOuj03qYGh01I04bbtNCmCg/TZcy/YYeF6XlHjvKQt7pm5VZN5qiOwmWjn+6GGYnCDHUlb+jm9xYnK1kNRJHLxzcXHBbni+SSEbofmG3ARr6iiHVhP8z4lX0/zEDxufDw7giqM2emhn/03AQOBzEi2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q0abymlm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sonic.net header.i=@sonic.net header.b="Ml0hgHv7"
-Received: from [192.168.1.94] (45-23-117-7.lightspeed.livnmi.sbcglobal.net [45.23.117.7])
-	(authenticated bits=0)
-	by c.mail.sonic.net (8.16.1/8.16.1) with ESMTPSA id 41R6qJT6030968
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 26 Feb 2024 22:52:25 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sonic.net; s=net23;
-	t=1709016747; bh=bIkL3j1SUti+mxRknWXsGzjEHfZ++LfAOrCAj6OvBfk=;
-	h=From:To:Date:MIME-Version:Subject:Message-ID:From:Subject;
-	b=Ml0hgHv7wx+ASi/PUk0/sJAencnZ7pWKBvo/oZqllldUrzhKsDoV7vYGID2aA/Hss
-	 Dzl610Zurd6whS8Weqdh3uw2jm7ZybYiL+ig25c43RQ3SbQA9DyXahrFfmQ/KRnMs+
-	 oaJkx7ngNZxdevONW5l+D+KF3f6z1Mb8rSdHZvUxvLOuPah0JRvGhQ9tbdwrqjksUb
-	 slyVC0Z5Ts2q+PKr5vDJPQ5YPdv7B8vIPK42sqVmRtB4KqiQPanTLyiYVDUWBo4tIE
-	 JpJ97jzeJh6DdH8g9fmbO4d8llWVfqLVJK43wdpInA5VzQpoVeQXDAeUocOMQ4Zs4L
-	 M1Dft++3iZrOw==
-From: delyan@sonic.net
-To: autofs@vger.kernel.org, backports+subscribe@vger.kernel.org,
-        backports+unsubscribe@vger.kernel.org, backports@vger.kernel.org,
-        bpf+subscribe@vger.kernel.org, bpf+unsubscribe@vger.kernel.org,
-        bpf@vger.kernel.org, ceph-devel+subscribe@vger.kernel.org,
-        ceph-devel+unsubscribe@vger.kernel.org, ceph-devel@vger.kernel.org,
-        cgroups+subscribe@vger.kernel.org, cgroups+unsubscribe@vger.kernel.org,
-        cgroups@vger.kernel.org, dash+subscribe@vger.kernel.org,
-        dash+unsubscribe@vger.kernel.org, dash@vger.kernel.org,
-        dccp+subscribe@vger.kernel.org, dccp+unsubscribe@vger.kernel.org,
-        dccp@vger.kernel.org, devicetree+subscribe@vger.kernel.org,
-        devicetree+unsubscribe@vger.kernel.org, devicetree@vger.kernel.org,
-        devicetree-compiler+subscribe@vger.kernel.org,
-        devicetree-compiler+unsubscribe@vger.kernel.org,
-        devicetree-compiler@vger.kernel.org,
-        devicetree-spec+subscribe@vger.kernel.org
-Date: Tue, 27 Feb 2024 01:52:18 -0500
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q0abymlm"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9B7C6C433C7
+	for <backports@vger.kernel.org>; Thu, 14 Mar 2024 19:18:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710443927;
+	bh=fkwWnRxsJXGI4Cw3EYfQFcBDqqrGkziADMfCYw1y9Gg=;
+	h=From:To:Subject:Date:From;
+	b=q0abymlmLGE2z644gh1o1qROj38eC1HfIMak/rs1/zB9Im92xMEnIT4CAJVVCMZUL
+	 ND1fXEr3o7eWPFYxhivxSwbqYc/pcCH6q0LMAGNLJKyu9Zpk3Yv0k7bE5nvr4lTahe
+	 S8FkzttaRYqx4a1IuKs0r7lpr6YNNeFfqkWDrLODxlA6Hxx/WY5H27Mr4F5jHtw1c3
+	 t0uWG/Vr1jrjxkbPW4cCozoCri4h3oDJKKdkhq529IPGtnPoWuc4LeLXu1A7pjh+zk
+	 d797omAcCEsouqQrdIMKVjkjZaz04xyizll7dvIKMhHoZ9gjfgmr6IGXCCVp5FN4sD
+	 veSrID/o2Xzug==
+Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix, from userid 48)
+	id 8AC7FC4332E; Thu, 14 Mar 2024 19:18:47 +0000 (UTC)
+From: bugzilla-daemon@kernel.org
+To: backports@vger.kernel.org
+Subject: [Bug 218598] New: create mesh network in backport2
+Date: Thu, 14 Mar 2024 19:18:47 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: Backports project
+X-Bugzilla-Component: Backports
+X-Bugzilla-Version: unspecified
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: abdolahi68@uvic.ca
+X-Bugzilla-Status: NEW
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: P3
+X-Bugzilla-Assigned-To: backports@vger.kernel.org
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ cf_regression
+Message-ID: <bug-218598-58281@https.bugzilla.kernel.org/>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugzilla.kernel.org/
+Auto-Submitted: auto-generated
 Precedence: bulk
 X-Mailing-List: backports@vger.kernel.org
 List-Id: <backports.vger.kernel.org>
 List-Subscribe: <mailto:backports+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: subscribe
-Message-ID: <65DD86A2.27104.445FAB06@delyan.sonic.net>
-Priority: normal
-X-mailer: Pegasus Mail for Windows (4.80.1028)
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
-X-Sonic-CAuth: UmFuZG9tSVYCkRG/6UK04HDk6+OCsT1RdUtuADigDnC8LwarJNsMkj4glK5OHTKQghGwThdqvM4n0IeB5bXX58WTEWTENbws
-X-Sonic-ID: C;Cr9LwDzV7hGbeC5nR+6Zsg== M;uIsOxDzV7hGbeC5nR+6Zsg==
-X-Spam-Flag: Unknown
-X-Sonic-Spam-Details: not scanned (too big) by cerberusd
 
-subscribe
+https://bugzilla.kernel.org/show_bug.cgi?id=3D218598
+
+            Bug ID: 218598
+           Summary: create mesh network in backport2
+           Product: Backports project
+           Version: unspecified
+          Hardware: All
+                OS: Linux
+            Status: NEW
+          Severity: normal
+          Priority: P3
+         Component: Backports
+          Assignee: backports@vger.kernel.org
+          Reporter: abdolahi68@uvic.ca
+        Regression: No
+
+--=20
+You may reply to this email to add a comment.
+
+You are receiving this mail because:
+You are the assignee for the bug.=
