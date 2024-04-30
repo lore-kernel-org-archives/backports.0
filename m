@@ -1,56 +1,66 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50BF1E888
-	for <backports@vger.kernel.org>; Mon, 29 Apr 2024 22:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539863611A
+	for <backports@vger.kernel.org>; Tue, 30 Apr 2024 07:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714431450; cv=none; b=N5tjf1c11mm5lCnPt2K8Ne8pjKAvwq8/6t6qjPqM++8YdHimB0RNFAY/Jj165LedI7GX6sMVzHOpOYO9bN7G5FIzSffeGPAMCpBbTzWXdtOjcZE5WObrIc+yVDnNfLp1rmnw57FsefUkOUh9wrgKqz20aN8nSZjGKVOKDMZog+M=
+	t=1714461478; cv=none; b=Z2phmvbtNoKGGJVvPGHdx5rfVdMr2e1cUKdovhXg2BZKb0N6jLJZRaqUiKyMxQfOlnPA/jVboCY8M7KW0PzA3tCq4TBB9WRmM/QQNm8E77u9TkUvx8BG2D8/g12dl7i4pxSaXu/0EapYwRfV5STB0xGaMN+56suuwuNXWQzkiKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714431450; c=relaxed/simple;
-	bh=p7WWz6VsSrQfP29lZjcLtioidXkge1iURyh2gN96coY=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=Ic3vIgd9l4g+6Idf5qjs9kqT7Gt9dXeJPxU7hB0R2mi675lU6D+EoXg1R6Jm+RLYLFxR1LCDeLX5CpQdu9dNvRjEZuJTA6Qd1EnJbA6Z1c2OHRMajY97qyp74CeepEylpV8vruKnAl7ky2o5JMMmOTgiU+bq/WK0ndDTBl/OUKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=Ypy+tR6U; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
+	s=arc-20240116; t=1714461478; c=relaxed/simple;
+	bh=NHDjZmek2ijHKOqcnci0kv/VIRGEUfIu+8C1mILytdI=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PMUMfHQi8DauVC8P3lD45lxl/0BaWTa7xOya23E4XQEGK7qAoyj4waWVz3k1N+yX0VhPVRfoqQAxcuESG3XVPeAi3FnnjpORrTErvytx6HWMWN5NYWDtzwN3ejbcPQDjPvJx22exrtRdZ6mSeNCIKlF6xsQLiRnu35WIlHo86qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=CG0JBP2I; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="Ypy+tR6U"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4VSzHS01j1z9tJ8;
-	Tue, 30 Apr 2024 00:57:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-	t=1714431444;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=WPpIac9MnT07FmIJ7iRuK/xOiESG/vpqpgRcXVtoaTk=;
-	b=Ypy+tR6ULw2bk/HnlFFNbAWtF3qUqB5fytGWHvpQhKlIh8SzoGtPEuQRBx+luF7DLUVZqX
-	m7EjadjgHHElG4VS+Yd3K/mNWi/FZn/4O0aj0Vpf7ZPrvctes8I71tMF8mOI5hCXkoVabx
-	TgbA7YL06Bhl8H+U6KIrw3+hmTZARX3fvA8BCY3wW5z/3R4Psdws40tDHJz4kVZDRUCS53
-	pEAt5Jm2J4D5Axq9Qp2OehfE9zP6xaT7/L1oNVhg/NWLD81McjcZECIxUWzpDcOfOhFLaC
-	cH2rgoT6yv29mTlBqeaP9HUC6cq6IhWxKCVNY0cqKaNlT1qtza3IKiilHBjGjw==
-Message-ID: <6848cf78-1421-4299-8513-c7fe4cad44ce@hauke-m.de>
-Date: Tue, 30 Apr 2024 00:57:23 +0200
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="CG0JBP2I"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:To:From:Subject:Message-ID:Sender:
+	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=NHDjZmek2ijHKOqcnci0kv/VIRGEUfIu+8C1mILytdI=;
+	t=1714461473; x=1715671073; b=CG0JBP2IkQzGcpCg9oTuHia4KvNFmp5zwbuEVx3EQhRkxEt
+	htG2O/4weidJLRkofJDTJ8fzIOS5gfzh5/8CFqJBHAvf0LeDuPMp4w/yKmuoHdmh8iyUEMqFFUJXi
+	EC6aGctPzKXWglO6bkxKGeeKthfJvW6kOhoiIf/k9W7j9UB03nTq7vxlkyhzECN7BPWuecO3lo949
+	FgBaFB6Lh4Zt45FZjE/ZeWGBTY0WPXzr/ihPFlapP9i9Oy9UhLKi6C8WHfBOVwyCXiBuaFhh4+f0y
+	56m8eivrYudsn4nBojrSG4ewlPpFemWVdvuxko0povyaO9YK7cvP5GWNqwxicpiw==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1s1hkJ-0000000DzhE-2iU2;
+	Tue, 30 Apr 2024 09:17:47 +0200
+Message-ID: <af95705a8fa094cb75c9cd08008f6197bda37f18.camel@sipsolutions.net>
+Subject: Re: backports commits without Signed-off-by line
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
+Date: Tue, 30 Apr 2024 09:17:46 +0200
+In-Reply-To: <6848cf78-1421-4299-8513-c7fe4cad44ce@hauke-m.de>
+References: <6848cf78-1421-4299-8513-c7fe4cad44ce@hauke-m.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: backports@vger.kernel.org
 List-Id: <backports.vger.kernel.org>
 List-Subscribe: <mailto:backports+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Language: en-US
-To: backports@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: backports commits without Signed-off-by line
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-malware-bazaar: not-scanned
 
-Hi,
+On Tue, 2024-04-30 at 00:57 +0200, Hauke Mehrtens wrote:
+> Hi,
+>=20
+> I just noticed that I pushed some commits to master without a=20
+> Signed-off-by line by me. Should I ignore it or force push an update=20
+> with a Signed-off-by?
+>=20
 
-I just noticed that I pushed some commits to master without a 
-Signed-off-by line by me. Should I ignore it or force push an update 
-with a Signed-off-by?
+It doesn't look like we've merged that part yet so I don't think it
+matters for us, but I'd also say it doesn't matter, especially since
+those commits were just removing things?
 
-Hauke
+I'd say leave it.
+
+johannes
