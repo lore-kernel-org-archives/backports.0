@@ -1,42 +1,42 @@
 Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20B3376EB
-	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912FA12EBFA
+	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716570595; cv=none; b=WqlCOrUinu7ZXGA/nJ5w+ZokKmm9cCNOB8sbqvolcZEhgJ6I+0rG9e3UTe+iTXxwrDmcc/h53czKLlSdYKAnsS5qeb29SZaVmCIi5A/CA6kKnCohmT3JzsTZp88ynCsxAmMouOtiwI6zSZ1XqCRpGKMKUV0bC+7ELQd3D+2lHiI=
+	t=1716570597; cv=none; b=pZhq7MUbpIOIWqx1LW13i8AEyZ/cv1Ad60taPnWhJcVAyKO20LQdziXXSTxLe9K6AMoPrndyOW97vEhPqETM0yYgW64GoehiGUnGFAO0oYqz492hzgESFh9Dvex9wblmgpyptGtTl50zMoxTJUMcxR/w2YKeIFW7mpsP5GPr/oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716570595; c=relaxed/simple;
-	bh=Ee7989dLOj4cWvlMWUJyIH670Ybqdv9VqniLMPtTjRE=;
+	s=arc-20240116; t=1716570597; c=relaxed/simple;
+	bh=9m9U4l7wYrd0KILh8tlZ5w2ArvGB12amjyj2xK/vfQ0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hifWQbMHQmYSC6GgTQiQV1iex2r011zW6NcI3mApN2mA8PRxWpiZbTw6LzhQnqfmvy6tRP+khQ5y0T9kSqllkZ6bvm/HzmwzxtoTVZFOiwSCbB/zS3/n428kFPER4aInoQyD7PU/HA5XSB6wFsjOI7WHlT+wLgADHkRgHQJ9nmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=pQXCzlnT; arc=none smtp.client-ip=168.119.38.16
+	 MIME-Version; b=JuYyZqKny34lSzuqqPqlE3agl/AzfNr+p5AgOuBIV6PWRS7VCtPh/zbw7PY+LwYPoFIA/uk/U8wPfn6/P9leAZCqDhZSokCBz21tucqIbBOfOkdqr8RkoYX1eA7tOh4iQ+DnnMllr0y3Vo/dFNAgnE+vHRPDEEgsq3ab0YQMhfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=HC33c1Rn; arc=none smtp.client-ip=168.119.38.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="pQXCzlnT"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="HC33c1Rn"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender
 	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=L8HPthczws/bS4VpOU288azrZ170QPZBwB9wbajCjF4=;
-	t=1716570594; x=1717780194; b=pQXCzlnTi4v+u99ovI1MQUSSvTmY399VF6BOT5S00bY3BW7
-	YnMaNVS4/PrGnVXdBxLoAvvNVUT9+iXg/5QQdkpsVevr9wCy4ZCyj4naEHNcYN5Tg0Bh1MRW+nLxW
-	hhostsQNXbLdsMlXgZDiQPR5lmvXmZNY9tuYowODzzQmjuLpxFgdA5yrfKr2k0IgLNRBKJ+KGQV/S
-	wYGPSLBsPJhA8v5vBpUrqpwZUpToPOpbrwnq2VsVTtFXBmUiwXGQZ607yFBDBOyLwMNCyoQtgbBVs
-	vnCMgovAO562hLlcJ7f80c2EWGfgU5ja9iEyg8kjFemui6gVSo2Xtv1Phau4lSxw==;
+	Resent-Cc:Resent-Message-ID; bh=eBiHiyxpOrObyZU1UR4cIBSGislCQOpMdEhTpUbITdI=;
+	t=1716570595; x=1717780195; b=HC33c1Rn7SBdWMWRwnIVyD409jLmtX3hHAvhPEZ1evQbd3V
+	Y6jTIPFGTr97iqfVHfTiO07oTW3YvazxdTqzFnHorc3s22rx3UvKSpsnKhdIaBu/QK8LY02d9NNmF
+	s/nrCVFCqSc17EycH1sTRxIQ/IhghxmQ061ENgDojS6NnCgtwmohqwzTZaOswn2EFGeFPJtppswMu
+	Nab4Tkrx1Sl8Ay4eG8GcRWwGK7UMW8EXrTQhjN+XijSi24w2Hjsho4jdD9OsO0me4GtNuYZnGy0Ae
+	fBrdMElEgVVWjezGTMABlN8B9u92zGlWTQUz/2+80x7DOuhg1qN9KcS6P4SwH2vw==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.97)
 	(envelope-from <johannes@sipsolutions.net>)
-	id 1sAYQR-00000008Xuw-0Z8Z;
-	Fri, 24 May 2024 19:09:51 +0200
+	id 1sAYQS-00000008Xuw-2LQK;
+	Fri, 24 May 2024 19:09:53 +0200
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
 Cc: Gregory Greenman <gregory.greenman@intel.com>
-Subject: [PATCH 40/74] backports: handle thermal_trip for kernels < 6.0
-Date: Fri, 24 May 2024 19:07:52 +0200
-Message-ID: <20240524190907.394dd12cb9eb.I0ae8b3f6d3d2784b230050d7d173921228d3f81f@changeid>
+Subject: [PATCH 41/74] backport: move backport-6.4 forward to 6.5
+Date: Fri, 24 May 2024 19:07:53 +0200
+Message-ID: <20240524190907.026bded40a5d.I5dea5fdff090dacf29f0d046dabf1d8259e08405@changeid>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240524170906.54680-76-johannes@sipsolutions.net>
 References: <20240524170906.54680-76-johannes@sipsolutions.net>
@@ -50,107 +50,88 @@ Content-Transfer-Encoding: 8bit
 
 From: Gregory Greenman <gregory.greenman@intel.com>
 
-thermal_trip struct was removed in kernel 5.10 and added
-back in 6.0; in addition 6.0 got some other changes.
+Move backport-6.4 to 6.5 and add some adjustments from
+iwlwifi in kunit and thermal.
 
 Signed-off-by: Gregory Greenman <gregory.greenman@intel.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/linux/thermal.h | 34 +++++++++++++++++++++++
- backport/compat/Makefile                  |  1 +
- backport/compat/backport-6.0.c            | 19 +++++++++++++
- 3 files changed, 54 insertions(+)
- create mode 100644 backport/compat/backport-6.0.c
+ backport/backport-include/linux/thermal.h     |  6 +++++-
+ backport/compat/Makefile                      |  2 +-
+ .../compat/{backport-6.4.c => backport-6.5.c} | 21 +------------------
+ 3 files changed, 7 insertions(+), 22 deletions(-)
+ rename backport/compat/{backport-6.4.c => backport-6.5.c} (65%)
 
 diff --git a/backport/backport-include/linux/thermal.h b/backport/backport-include/linux/thermal.h
-index 2e0fcb6b3d28..210292509ac3 100644
+index 210292509ac3..39b7ca476a3c 100644
 --- a/backport/backport-include/linux/thermal.h
 +++ b/backport/backport-include/linux/thermal.h
-@@ -14,6 +14,25 @@ static inline int thermal_zone_device_disable(struct thermal_zone_device *tz)
- { return 0; }
- #endif /* < 5.9 */
+@@ -34,7 +34,11 @@ thermal_zone_device_register_with_trips(const char *type,
+ #endif /* <6,0,0 */
  
-+#if LINUX_VERSION_IS_LESS(6,0,0) && LINUX_VERSION_IS_GEQ(5,10,0)
-+struct thermal_trip {
-+	int temperature;
-+	int hysteresis;
-+	enum thermal_trip_type type;
-+};
-+#endif
-+
-+#if LINUX_VERSION_IS_LESS(6,0,0)
-+struct thermal_zone_device *
-+thermal_zone_device_register_with_trips(const char *type,
-+					struct thermal_trip *trips,
-+					int num_trips, int mask, void *devdata,
-+					struct thermal_zone_device_ops *ops,
-+					struct thermal_zone_params *tzp,
-+					int passive_delay,
-+					int polling_delay);
-+#endif /* <6,0,0 */
-+
  #if LINUX_VERSION_IS_LESS(6,4,0)
- void *thermal_zone_device_priv(struct thermal_zone_device *tzd);
- #endif /* < 6.4.0 */
-@@ -28,6 +47,21 @@ static inline int thermal_zone_device_disable(struct thermal_zone_device *tz)
- { return -ENODEV; }
- #endif /* < 5.9 */
- 
-+#if LINUX_VERSION_IS_LESS(6,0,0)
-+#define thermal_zone_device_register_with_trips LINUX_BACKPORT(thermal_zone_device_register_with_trips)
-+static inline struct thermal_zone_device *
-+thermal_zone_device_register_with_trips(const char *type,
-+					struct thermal_trip *trips,
-+					int num_trips, int mask, void *devdata,
-+					struct thermal_zone_device_ops *ops,
-+					struct thermal_zone_params *tzp,
-+					int passive_delay,
-+					int polling_delay)
+-void *thermal_zone_device_priv(struct thermal_zone_device *tzd);
++#define thermal_zone_device_priv LINUX_BACKPORT(thermal_zone_device_priv)
++static inline void *thermal_zone_device_priv(struct thermal_zone_device *tzd)
 +{
-+	return NULL;
++	return tzd->devdata;
 +}
-+#endif
-+
- #if LINUX_VERSION_IS_LESS(6,4,0)
- #define thermal_zone_device_priv LINUX_BACKPORT(thermal_zone_device_priv)
- static inline void *thermal_zone_device_priv(struct thermal_zone_device *tzd)
+ #endif /* < 6.4.0 */
+ #else /* CONFIG_THERMAL */
+ #if LINUX_VERSION_IS_LESS(5,9,0)
 diff --git a/backport/compat/Makefile b/backport/compat/Makefile
-index 62dfc62f7b46..d55437d70ae7 100644
+index d55437d70ae7..30f6180b3dea 100644
 --- a/backport/compat/Makefile
 +++ b/backport/compat/Makefile
-@@ -16,6 +16,7 @@ compat-$(CPTCFG_KERNEL_5_10) += backport-5.10.o
- compat-$(CPTCFG_KERNEL_5_11) += backport-5.11.o
+@@ -17,7 +17,7 @@ compat-$(CPTCFG_KERNEL_5_11) += backport-5.11.o
  compat-$(CPTCFG_KERNEL_5_13) += backport-5.13.o
  compat-$(CPTCFG_KERNEL_5_15) += backport-5.15.o
-+compat-$(CPTCFG_KERNEL_6_0) += backport-6.0.o
- compat-$(CPTCFG_KERNEL_6_4) += backport-6.4.o
+ compat-$(CPTCFG_KERNEL_6_0) += backport-6.0.o
+-compat-$(CPTCFG_KERNEL_6_4) += backport-6.4.o
++compat-$(CPTCFG_KERNEL_6_5) += backport-6.5.o
  
  compat-$(CPTCFG_BPAUTO_BUILD_SYSTEM_DATA_VERIFICATION) += verification/verify.o
-diff --git a/backport/compat/backport-6.0.c b/backport/compat/backport-6.0.c
-new file mode 100644
-index 000000000000..7cb699fc0007
---- /dev/null
-+++ b/backport/compat/backport-6.0.c
-@@ -0,0 +1,19 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/types.h>
-+#include <linux/thermal.h>
-+
-+#ifdef CONFIG_THERMAL
-+struct thermal_zone_device *
-+thermal_zone_device_register_with_trips(const char *type,
-+					struct thermal_trip *trips,
-+					int num_trips, int mask, void *devdata,
-+					struct thermal_zone_device_ops *ops,
-+					struct thermal_zone_params *tzp, int passive_delay,
-+					int polling_delay)
-+{
-+	return thermal_zone_device_register(type, num_trips, mask, devdata, ops, tzp,
-+					    passive_delay, polling_delay);
-+}
-+EXPORT_SYMBOL_GPL(thermal_zone_device_register_with_trips);
-+#endif /* CONFIG_THERMAL */
+ compat-$(CPTCFG_BPAUTO_BUILD_SYSTEM_DATA_VERIFICATION) += verification/pkcs7.asn1.o
+diff --git a/backport/compat/backport-6.4.c b/backport/compat/backport-6.5.c
+similarity index 65%
+rename from backport/compat/backport-6.4.c
+rename to backport/compat/backport-6.5.c
+index af872e5de04d..a27306aa6a6a 100644
+--- a/backport/compat/backport-6.4.c
++++ b/backport/compat/backport-6.5.c
+@@ -2,10 +2,8 @@
+ 
+ #include <linux/types.h>
+ #include <linux/netdevice.h>
+-#include <net/dropreason.h>
+-#include <linux/thermal.h>
+ 
+-#if LINUX_VERSION_IS_GEQ(6,2,0) && defined(CONFIG_KUNIT)
++#if LINUX_VERSION_IS_GEQ(6,2,0) && IS_ENABLED(CONFIG_KUNIT)
+ #include <kunit/test.h>
+ 
+ struct kunit_auto_cleanup {
+@@ -45,20 +43,3 @@ void kunit_add_cleanup(struct kunit *test, kunit_cleanup_t cleanup_func,
+ }
+ EXPORT_SYMBOL_GPL(kunit_add_cleanup);
+ #endif /* LINUX_VERSION_IS_GEQ(6,2,0) */
+-
+-void drop_reasons_register_subsys(enum skb_drop_reason_subsys subsys,
+-				  const struct drop_reason_list *list)
+-{}
+-EXPORT_SYMBOL_GPL(drop_reasons_register_subsys);
+-
+-void drop_reasons_unregister_subsys(enum skb_drop_reason_subsys subsys)
+-{}
+-EXPORT_SYMBOL_GPL(drop_reasons_unregister_subsys);
+-
+-#ifdef CONFIG_THERMAL
+-void *thermal_zone_device_priv(struct thermal_zone_device *tzd)
+-{
+-	return tzd->devdata;
+-}
+-EXPORT_SYMBOL_GPL(thermal_zone_device_priv);
+-#endif /* CONFIG_THERMAL */
 -- 
 2.45.1
 
