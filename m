@@ -1,42 +1,42 @@
 Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E3012F368
-	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAE712EBC9
+	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716570602; cv=none; b=f0ysPHjhGYm5bXSzdbExb5xNkNdvWrY6o3DQQdLN2KCIQZua+2NlqmOvGIGnvOk6kl0YWmS2K/MqAdDgksmSCrMrlOeBBxvQ6pqi0/GJptMwYeUgs4U2zC9CYVEb4zF1Kbtyij4dLa/vdLu5Mp2/16lUaqzo0NIoBnvrEVACCpg=
+	t=1716570604; cv=none; b=cBSl/TeMoDyX9cDsYuWLJsVOx4Mgoc5d+ap20ad06HgQBhVqglJAd26NX5IDOA7qrFSfsRakAvFMY/39hzjHO84PTdMwfIO6ndwrRMuoShZHWbILksMwT8Cb6AQGApCijiXxyMsi7vw4DUKF+vPbh4drB2JPdmdWsPOpqlmqXdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716570602; c=relaxed/simple;
-	bh=PIHsxp865AdLGUrIcU+XTaD9fz66OPOJWMjRB2Y+Ls8=;
+	s=arc-20240116; t=1716570604; c=relaxed/simple;
+	bh=eNAlsFtBLJN8GIYFIKAlUeJFbibgfaM2jxkwVu9btRw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oRtoHVdW/YNjAGnazeYlOqU0uCjvAmBasN03f3mAlI/VEuDWg3CiXVK1xxhA8K4udvmAZ7Q7K/2f3Q8Hm4iUk9TWzcluYxDX5l2UdS7/oLskZWgnzitkI9vcTV0nJ6uYxwIQvZQZOYsENKbtShyg7mMgpE5h873/f4m/QbHe7iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=joCOEvGV; arc=none smtp.client-ip=168.119.38.16
+	 MIME-Version; b=fHQOygcWZErPCq+eKIDCNcujg7AzlbPU1Ju/emaEh0oa93AXQS4CeJTJzq9WeOXkqB+wSLJvsx7fM+FT3PYd8g3pFbyol0gJ2IbFH9BAN8MPXU06i8dXXCnWLE6LPssAn9OWXzkruxt9BzbIr1FFaGIEmMflpNWNDuAbWegX038=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=aHv/1cli; arc=none smtp.client-ip=168.119.38.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="joCOEvGV"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="aHv/1cli"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender
 	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=b4W+STmQLXNKMoVznW9RPzBQCdllgJuGZO4Ga+3EcoU=;
-	t=1716570601; x=1717780201; b=joCOEvGVr9nSy2ehgcF1wTlc+XMBOIuWIsus7asUCDunCt2
-	0T62HO+bi9D9seQx/vQ733DyL6GNY4mVTmgKqFgIw586nB8qg26Q5BPKcPTleZCG1dKBqQ2w7mt8R
-	SQa3ik5vogxAy7tn4tX1qnuLMe1lL0y9UFV+l1PMaX6LUvojlIf3GURDAugQOjBwo1Db6jhkw6T/v
-	YN+kH+Oqh4XG9YZrFGHDOG2C7s/vFAuRxkROnG7WxtWJpzQrF9bml6OGLZyXslYq8iNO7aYivGnb6
-	Z3WtLYUfu68uyyQNt+9aETOqQPTxBRdWScoNHhkZ468LWwGfoyGOhQJH0XJu0xag==;
+	Resent-Cc:Resent-Message-ID; bh=BvaDh8vgujN2svh5YgrX2cn9r9LXYktqKNnmJQneUZ4=;
+	t=1716570603; x=1717780203; b=aHv/1cliCXLrjVkqc3NntpVHjVNZsz64M8fhBKRgrLXtw9t
+	BPtZzYHSuPqItBvDeYESbdd3NWFOSeRcR1fUmBAn1dn7nMID9fHxIq7gukVgSTLWT7OawG8UClqHE
+	oZs3Laqh3I6xh3EtS/vn/6g8SlFrUC9x7+qm47vxAw3+Gaac+rM6hnOOrM09Qj7hT71GM8j1YuTtv
+	kWdAU9/lky5wsV1GgKMqZlqQcBDNOrq6uFr+K4D+agKYXyy0cfWwh8XM2qohiCFtzZPCrtZtdtpY9
+	i7HxXQRgoSFgxmAYvEBa8/a+Zdum5eyCKPB31xhuuWvQfOl6wIZt7/ht1FYWNZ8g==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.97)
 	(envelope-from <johannes@sipsolutions.net>)
-	id 1sAYQY-00000008Xuw-0Im1;
-	Fri, 24 May 2024 19:09:58 +0200
+	id 1sAYQZ-00000008Xuw-2jLn;
+	Fri, 24 May 2024 19:10:00 +0200
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 46/74] backports: add skb_get_dsfield()
-Date: Fri, 24 May 2024 19:07:58 +0200
-Message-ID: <20240524190907.d09ab5d1bfb6.Ia5da0970fd85b5844c99eae51c822dbe1e4ec81c@changeid>
+Cc: Luca Coelho <luciano.coelho@intel.com>
+Subject: [PATCH 47/74] backport: implement NLA_POLICY_RANGE for NLA_BINARY
+Date: Fri, 24 May 2024 19:07:59 +0200
+Message-ID: <20240524190907.84d051bc3c68.Ife595e2dc94955bda3d7d3089ec6a219fde272c1@changeid>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240524170906.54680-76-johannes@sipsolutions.net>
 References: <20240524170906.54680-76-johannes@sipsolutions.net>
@@ -48,88 +48,72 @@ List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Luca Coelho <luciano.coelho@intel.com>
 
-That may also require skb_protocol() and skb_vlan_tag_present()
+The range checks for NLA_BINARY are supported since v5.10.  Unwrap the
+macros and introduce a new function to test type.
 
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/net/inet_ecn.h | 66 ++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
- create mode 100644 backport/backport-include/net/inet_ecn.h
+ backport/backport-include/net/netlink.h    | 31 +++++++++++++++++++---
+ patches/0097-nla_policy_binary_range.cocci |  5 ++++
+ 2 files changed, 32 insertions(+), 4 deletions(-)
+ create mode 100644 patches/0097-nla_policy_binary_range.cocci
 
-diff --git a/backport/backport-include/net/inet_ecn.h b/backport/backport-include/net/inet_ecn.h
+diff --git a/backport/backport-include/net/netlink.h b/backport/backport-include/net/netlink.h
+index ad5882347440..7192153b860c 100644
+--- a/backport/backport-include/net/netlink.h
++++ b/backport/backport-include/net/netlink.h
+@@ -346,10 +346,33 @@ enum nla_policy_validation {
+ }
+ #endif /* < 4.20 */
+ 
+-#ifndef NLA_POLICY_MIN_LEN
+-#define NLA_POLICY_MIN_LEN(_len) {		\
+-	.type = NLA_BINARY			\
++#if LINUX_VERSION_IS_LESS(5,10,0)
++// pre-declare all the minimum lengths in use
++#define MIN_LEN_VALIDATION(n)						\
++static inline								\
++int nla_validate_min_len_##n(const struct nlattr *attr,			\
++			     struct netlink_ext_ack *extack)		\
++{									\
++	if (nla_len(attr) < n)						\
++		return -EINVAL;						\
++	return 0;							\
+ }
+-#endif
++
++MIN_LEN_VALIDATION(2)
++MIN_LEN_VALIDATION(16)
++MIN_LEN_VALIDATION(42)
++
++// double-expansion to expand _min to the actual value
++#define NLA_POLICY_BINARY_RANGE(_min, _max) _NLA_POLICY_BINARY_RANGE(_min, _max)
++#define _NLA_POLICY_BINARY_RANGE(_min, _max)		\
++{							\
++	.type = NLA_BINARY,				\
++	.len = _max,					\
++	.validation_type = NLA_VALIDATE_FUNCTION,	\
++	.validate = nla_validate_min_len_ ## _min,	\
++}
++#else
++#define NLA_POLICY_BINARY_RANGE(_min, _max) NLA_POLICY_RANGE(NLA_BINARY, _min, _max)
++#endif /* < 5.10 */
+ 
+ #endif /* __BACKPORT_NET_NETLINK_H */
+diff --git a/patches/0097-nla_policy_binary_range.cocci b/patches/0097-nla_policy_binary_range.cocci
 new file mode 100644
-index 000000000000..df83d3e179ec
+index 000000000000..cb3b8be52b51
 --- /dev/null
-+++ b/backport/backport-include/net/inet_ecn.h
-@@ -0,0 +1,66 @@
-+#ifndef __BACKPORT_NET_INET_ECN_H
-+#define __BACKPORT_NET_INET_ECN_H
-+#include_next <net/inet_ecn.h>
-+#include <linux/version.h>
-+#include <linux/if_vlan.h>
-+
-+#ifndef skb_vlan_tag_present
-+#define skb_vlan_tag_present(__skb)       ((__skb)->vlan_present)
-+#endif
-+
-+#if LINUX_VERSION_IS_LESS(5,7,10) &&			\
-+	!LINUX_VERSION_IN_RANGE(4,14,212, 4,15,0) &&	\
-+	!LINUX_VERSION_IN_RANGE(4,19,134, 4,20,0) &&	\
-+	!LINUX_VERSION_IN_RANGE(4,4,248, 4,5,0) &&	\
-+	!LINUX_VERSION_IN_RANGE(4,9,248, 4,10,0) &&	\
-+	!LINUX_VERSION_IN_RANGE(5,4,53, 5,5,0)
-+/* A getter for the SKB protocol field which will handle VLAN tags consistently
-+ * whether VLAN acceleration is enabled or not.
-+ */
-+static inline __be16 skb_protocol(const struct sk_buff *skb, bool skip_vlan)
-+{
-+	unsigned int offset = skb_mac_offset(skb) + sizeof(struct ethhdr);
-+	__be16 proto = skb->protocol;
-+
-+	if (!skip_vlan)
-+		/* VLAN acceleration strips the VLAN header from the skb and
-+		 * moves it to skb->vlan_proto
-+		 */
-+		return skb_vlan_tag_present(skb) ? skb->vlan_proto : proto;
-+
-+	while (eth_type_vlan(proto)) {
-+		struct vlan_hdr vhdr, *vh;
-+
-+		vh = skb_header_pointer(skb, offset, sizeof(vhdr), &vhdr);
-+		if (!vh)
-+			break;
-+
-+		proto = vh->h_vlan_encapsulated_proto;
-+		offset += sizeof(vhdr);
-+	}
-+
-+	return proto;
-+}
-+#endif
-+
-+#if LINUX_VERSION_IS_LESS(5,16,0)
-+#define skb_get_dsfield LINUX_BACKPORT(skb_get_dsfield)
-+static inline int skb_get_dsfield(struct sk_buff *skb)
-+{
-+	switch (skb_protocol(skb, true)) {
-+	case cpu_to_be16(ETH_P_IP):
-+		if (!pskb_network_may_pull(skb, sizeof(struct iphdr)))
-+			break;
-+		return ipv4_get_dsfield(ip_hdr(skb));
-+
-+	case cpu_to_be16(ETH_P_IPV6):
-+		if (!pskb_network_may_pull(skb, sizeof(struct ipv6hdr)))
-+			break;
-+		return ipv6_get_dsfield(ipv6_hdr(skb));
-+	}
-+
-+	return -1;
-+}
-+#endif
-+
-+#endif /* __BACKPORT_NET_INET_ECN_H */
++++ b/patches/0097-nla_policy_binary_range.cocci
+@@ -0,0 +1,5 @@
++@@
++expression MIN, MAX;
++@@
++-NLA_POLICY_RANGE(NLA_BINARY, MIN, MAX)
+++NLA_POLICY_BINARY_RANGE(MIN, MAX)
 -- 
 2.45.1
 
