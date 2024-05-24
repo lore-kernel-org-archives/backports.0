@@ -1,65 +1,84 @@
 Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D6012E1E4
-	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEF73B28F
+	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716571079; cv=none; b=Fsk2XKSxyvKhPbbSHWvXZF5pCuELm/HTxCqFSezvnv+AN53u1NUqGabTBWApRGhv9O02u0TLcZwRVi3mjdE5eZC9rowYyfaIGrAVoMg7dm2XDJRQRWc8Ui8gQFIeJehB0O8OmnwsOfA9aWHnulETply4l4FrAnUonu9wXMHXJuA=
+	t=1716572915; cv=none; b=UT/S/R7WBTQUCfEoECPC8vQptRyZvkuS48J4sdiaoTlCvy2g2XuWJpi65etJsCquUBbd5p32pt0g6MiAEYcwyP+tv9tfeZadGgqmBVlmPUbPVsvlkZm0hx4v08fcempvriEe5932mET4txotVRCK+UnWJzl5HVNcV6qsT3FTEzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716571079; c=relaxed/simple;
-	bh=ULgpn7+PWdTOz81Uxje2INS0yLUY+ENTdJE3H4bqYYM=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ru/rwCiV0VMn8hua2p7zHislWZh28PgsbLwYtHiEcfVg+PbizD+VAZ+Iwp3ASnoC/zAZ314sX7L2KEZokIlTpWaFq2kbdLYmiFO3jW0uaVmV2YiSZoqb6fvL2WbgyQLRt2Q84rZnig7AwElAosuywEWxeXnP1uDTrzhRTRBKNpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=pFWAE60V; arc=none smtp.client-ip=168.119.38.16
+	s=arc-20240116; t=1716572915; c=relaxed/simple;
+	bh=rSO04xPxtkcKp4Y9ZOUU4PI1k1z4xjQb5dpT0QZt2Wo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a5SUR9Ykj1UUmpVjA0Vr0c1hQDXLlmy03rn5W9HEE9uMGT6WtZjYX57le02+T4ZVLv20lJq/soqsSpQRB1AtQsYvWz3euF5LL9Xmqg8j7nUikcHeF00YomQmuhQXTwWkFl51SJ7yhfYW6Q9UB/s2mkY1EerXf9WAyOp1ElLM1PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=KNHr+nJ1; arc=none smtp.client-ip=168.119.38.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="pFWAE60V"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="KNHr+nJ1"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:To:From:Subject:Message-ID:Sender:
-	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=ULgpn7+PWdTOz81Uxje2INS0yLUY+ENTdJE3H4bqYYM=;
-	t=1716571077; x=1717780677; b=pFWAE60V7FwHfZtjjBdw976uYcpWsl32xW4nmjUw2UdW6tP
-	udxHsDvWB3KlcnT3dKBaS1pnLYzZzmDT4ApaN+RUnW5T4ULuvcwEQ26dhe04rrHl7U3QFP76modWm
-	84F5vai0lo2cnv5J9Me1jrVNSP2HhvDkWtfdDiNZxGevGnXqszHkMyFKrdxbQgtTXSSkY2avOaXvq
-	rD4oQe5e9zfpBx/ephdJHosXFEgpACvM4P+Km+z3FV/B3Ex7xu9VJIOrCyFQ5HAJMhGZYZuyKgEpv
-	svHvqUCk5A3ZvNIrzIebGqo+3zm/vgrDgR3ARi/uektdC1hnhH2egmzSRAF7iowg==;
+	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
+	Resent-Message-ID:In-Reply-To:References;
+	bh=W8aPtXg/5Zdy2K03f98nZs2rFgEtQVgFfavMKkJRaN4=; t=1716572914; x=1717782514; 
+	b=KNHr+nJ1K7wpLypvRAIHGubU5eWTmWjMtjNC2ow8/t2DfI6V1shilaSJ7mE1M7JR2gex05GTzl7
+	qI9NQR0mxIr3YBO08J71J4g1TJo5zDhn1d4g+ybZ5riah8f6+JzM3L/F2t0cPj2EfkzijqeU411Vl
+	LJbIOTdsX74hkr033JYBDmFUE7oMEjS/X9EFa7qsl0nBtWD+wR+rjxB2yetnA5OW07WR+yuvoQXGe
+	ulO7EUtaFhiXgWbV5YkWJdkgywN3raF0l9sDN9P9a8p99f3riZQd+8o17xGlECLqgl+7mE/g+Noep
+	YnX2NIkOmssgg8GQidlUPHZuUCnH8+FqIOqw==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.97)
 	(envelope-from <johannes@sipsolutions.net>)
-	id 1sAYYE-00000008Yuf-43sg
-	for backports@vger.kernel.org;
-	Fri, 24 May 2024 19:17:55 +0200
-Message-ID: <126e53f867d51de9d06752c027ca45399a39e35d.camel@sipsolutions.net>
-Subject: Re: [PATCH 00/74] backport updates from Intel
+	id 1sAZ1r-00000008alk-2IzQ;
+	Fri, 24 May 2024 19:48:31 +0200
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Date: Fri, 24 May 2024 19:17:54 +0200
-In-Reply-To: <20240524170906.54680-76-johannes@sipsolutions.net>
-References: <20240524170906.54680-76-johannes@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 1/3] backports: add list_count_nodes()
+Date: Fri, 24 May 2024 19:48:16 +0200
+Message-ID: <20240524194829.f11312298857.I2921f495b9feefbfe464ffd71c7350c66be119a8@changeid>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: backports@vger.kernel.org
 List-Id: <backports.vger.kernel.org>
 List-Subscribe: <mailto:backports+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2024-05-24 at 19:07 +0200, Johannes Berg wrote:
-> So ... I talked to Brian today, and realized that we've been
-> sort of maintaining backports to some extent, but not really.
->=20
-> This is what we have in our tree that's not upstream, and
-> rebased onto upstream (commit c96f36d5214).
->=20
-> With the copy-list restricted to the iwlwifi driver and hwsim
-> it even works,
+From: Johannes Berg <johannes.berg@intel.com>
 
-Well, I should've said, with 6.9 kernel.
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/backport-include/linux/list.h | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+ create mode 100644 backport/backport-include/linux/list.h
 
-johannes
+diff --git a/backport/backport-include/linux/list.h b/backport/backport-include/linux/list.h
+new file mode 100644
+index 000000000000..8495fd419a95
+--- /dev/null
++++ b/backport/backport-include/linux/list.h
+@@ -0,0 +1,19 @@
++#ifndef __BP_LINUX_LIST_H
++#define __BP_LINUX_LIST_H
++#include_next <linux/list.h>
++
++#if LINUX_VERSION_IS_LESS(6,3,0)
++#define list_count_nodes LINUX_BACKPORT(list_count_nodes)
++static inline size_t list_count_nodes(struct list_head *head)
++{
++	struct list_head *pos;
++	size_t count = 0;
++
++	list_for_each(pos, head)
++		count++;
++
++	return count;
++}
++#endif
++
++#endif /* __BP_LINUX_LIST_H */
+-- 
+2.45.1
+
