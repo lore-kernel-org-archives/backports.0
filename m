@@ -1,42 +1,42 @@
 Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19C912EBF0
-	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E9912F387
+	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716570563; cv=none; b=Pya0SE/I5KzQX7K7EprjD/Y8D6PmxIID13mxyJtzcnMNl5C+u+yeejRnLJVukZobWpA2m00saiytGLTBrQMIaJ57d7eTtQ7dnjsKIOOybHSryTH9jDqu+nlOx5A3lE8/OT6hDFVK9iAuxIV0BPmXs330ygq8gCQKYYj8lQkGvqw=
+	t=1716570563; cv=none; b=vFBo/2eapCTH6LipDb1FHNWBOBbPZT6mknqsNdgwfUj6PL7jHeDWotEIevweDWcp8hbZ4q1ebYm5Ne/1q6y8UoKNYCrKRhBd48wyOcqQGIefSycvskeIKROCg34HVd/PGos3You9LkJ1B3u4fT+a/AHyGPHTuT1HDm/cfrVk3n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716570563; c=relaxed/simple;
-	bh=qLxD8fVQSuvXUhHJYx/lEhXwPE/juutz4yzYzik5ceQ=;
+	bh=jtzmKNsqyzKzpRHv37EYebEi1RaIP3fZTkIgkF817tE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iV0W3QQasDbuVI08QP8+tqs4WaLxDXGY2WuQKpqgNIqm/tAL4VNJRREyavo66IAxZ1VcrigxF1Y01wEjkL9ISJzKaVD5TZ1f3ltjPsQg+gFBecqPjr98Vk/g4jju3EXW0q+NNj92bRBPQqxoBk6GtemyOYu+oFh3NvUjxpbT5Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=n/Rt5Me8; arc=none smtp.client-ip=168.119.38.16
+	 MIME-Version; b=bFYwUVhsFd4DqJpQia33xwYDEHHWpSAdS+LjW2xUHp1gTThTSfOPCmOVVc33FZx/u6WghLdxP74q+2eldBe7zW9vi3zpftC/nQfcDL5GuUa4UfUdw+Gjr9ckXrQ/jbZlF2tfp2JEItMQZ3jfDGqp2GaWh6rngDg4X4tfY4lEhaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=VEZMsvvV; arc=none smtp.client-ip=168.119.38.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="n/Rt5Me8"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="VEZMsvvV"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender
 	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=rD5+0bRFyf2DYLcbRes6xcAAwJ/2UanL9uymiw7vKII=;
-	t=1716570560; x=1717780160; b=n/Rt5Me8uYWakY7SzXf2LNQd+Sxbe5kcFpkiri9D4WXFtkP
-	GK1SpGzibETNzRg2hTdGGXklk6aJnhNeEBG8+NhOUpaWVoQ33UDEoCRRaX/alRbrmi6nnnzllS7Tt
-	vxSjB7vqDio5+oKIFqpEg3HLTs0CVE63tTmzkrSUGiqeaCshFQwTpzpTopXOPw1i849TeG3aQ9Tp/
-	CSvtrTBVOo/L/DnpiR4NQOy7D7AHZX7i7rRR6LShcISqGhinLeWrY7oOs1HxU7747d1uv/q/Dsnxp
-	KQfs4eTrG06LBP/Z/CelmuR8BBgzSuFegs5yArsuPN1fl5EMoAS8/FXiJyAC3NGQ==;
+	Resent-Cc:Resent-Message-ID; bh=67sY4M2ZTRVE9wRsf4wzp5ro8A0Bj/1eToMr62s5BkY=;
+	t=1716570561; x=1717780161; b=VEZMsvvV1MNpxjVq9IAumOHSM9aLyOYjsPm8icA4mF9bsIq
+	bkSTB2PRfs0EiwPI08mqRI0hFunS/rvU5LpaaMsw73BbUOAqoXpheNS7N3tlwyCZwHUWXHFFlsnWQ
+	v3S7DtFS5v1b7cQMyY3LechAtaDqdaEphUta06+bYwj6WV3m2BTivGVNA9GS3lrOZhqk0NOXructY
+	4/AsT4ZAF2sRNvEWTSlwmX+T2xSCE/hfsP//+/Ywivrb5pl6EIvCeLxaWZk75lWr3yFYmhKj15aPu
+	dD7VX1KebbAwFsMbq69xY6+vOn2sjJMKsFcD59UQV9nj6+6eV7LewFhEdPymyhvg==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.97)
 	(envelope-from <johannes@sipsolutions.net>)
-	id 1sAYPo-00000008Xuw-1gEn;
-	Fri, 24 May 2024 19:09:12 +0200
+	id 1sAYPv-00000008Xuw-0bMZ;
+	Fri, 24 May 2024 19:09:19 +0200
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 02/74] backports: build: allow kernel versions >= 6
-Date: Fri, 24 May 2024 19:07:14 +0200
-Message-ID: <20240524190906.d438f86506ea.Ic331b52f9678fd6b0a95dbe83267fc8b5ca0a733@changeid>
+Cc: Gregory Greenman <gregory.greenman@intel.com>
+Subject: [PATCH 10/74] backports: Add __counted_by attribute
+Date: Fri, 24 May 2024 19:07:22 +0200
+Message-ID: <20240524190906.03404f605970.I5f3ab2eb202242a2ccac0053fab1fb7d96c35829@changeid>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240524170906.54680-76-johannes@sipsolutions.net>
 References: <20240524170906.54680-76-johannes@sipsolutions.net>
@@ -48,26 +48,39 @@ List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Gregory Greenman <gregory.greenman@intel.com>
 
+This adds __counted_by attribute from
+c8248faf3ca2 ("Compiler Attributes: counted_by: Adjust name and identifier expansion")
+
+Signed-off-by: Gregory Greenman <gregory.greenman@intel.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../backport-include/linux/compiler_attributes.h    | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/backport/Makefile b/backport/Makefile
-index 77c2670d637e..37cd2c05ab38 100644
---- a/backport/Makefile
-+++ b/backport/Makefile
-@@ -85,7 +85,7 @@ mrproper:
- 			done								\
- 		) > Kconfig.kernel							;\
- 		kver=$$($(MAKE) --no-print-directory -C $(KLIB_BUILD) M=$(BACKPORT_DIR)	\
--			kernelversion |	sed 's/^\(\([3-5]\|2\.6\)\.[0-9]\+\).*/\1/;t;d');\
-+			kernelversion |	sed 's/^\(\([3-9]\|2\.6\)\.[0-9]\+\).*/\1/;t;d');\
- 		test "$$kver" != "" || echo "Kernel version parse failed!"		;\
- 		test "$$kver" != ""							;\
- 		kvers="$$(seq 14 39 | sed 's/^/2.6./')"					;\
+diff --git a/backport/backport-include/linux/compiler_attributes.h b/backport/backport-include/linux/compiler_attributes.h
+index 31ddc163e09a..6a0ffca2e102 100644
+--- a/backport/backport-include/linux/compiler_attributes.h
++++ b/backport/backport-include/linux/compiler_attributes.h
+@@ -31,4 +31,17 @@
+ #endif
+ #endif /* fallthrough */
+ 
++/*
++ * Optional: only supported since gcc >= 14
++ * Optional: only supported since clang >= 18
++ *
++ *   gcc: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108896
++ * clang: https://reviews.llvm.org/D148381
++ */
++#if __has_attribute(__counted_by__)
++# define __counted_by(member)		__attribute__((__counted_by__(member)))
++#else
++# define __counted_by(member)
++#endif
++
+ #endif /* _BACKPORTS_LINUX_COMPILER_ATTRIBUTES_H */
 -- 
 2.45.1
 
