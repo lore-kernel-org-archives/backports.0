@@ -1,42 +1,42 @@
 Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89ACA12EBD4
-	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842E5376EB
+	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716570598; cv=none; b=jrboxh820JQ5+iyI/nCysHmh0AGibkiA3GnbIK74VI3ruPQNRehls6LV+1qgdDnMVft2JLBd7SQyEZFhggou1Zfj5DrGJp5nr8oxZES/rSrcJRGHuPyJQJgsZUGeHDwrW1YOO2VG7rNZxP05HPM0yGeLsRkOYedooP6WxzMyStg=
+	t=1716570599; cv=none; b=j6tsNYJh5mtZUELEeIP91rI+bgzdaU34a3EqHXxRTbUkekwO030k66mgR3HXPBOQCt6RBuQFe9nP5jeHGo+fIabW94yPjxM54/JEh+X1o0jTY5834jznlERwOI2Erdnk5J4fF3XCP2a47ZpdtK/ZT/LeuLNW0hIarTAkovw0juk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716570598; c=relaxed/simple;
-	bh=+M4/RmqbM2b5wUp1FoMkbx2xaslXEhbRInfCNxRcB0A=;
+	s=arc-20240116; t=1716570599; c=relaxed/simple;
+	bh=w4y1rGezzL7GZmSt/I5k67cOzQQtjQnA31gVGNDTHOQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YXem2svh+RmkJh6mGi9+U7KrJjbaqppmOnooqAYlf69nr1umy+dvDTwXYbo5SE9uPPwJ+2DSuPFFVN40kk6arC9PYVCznBdQtQ095zc2g33LOokdFhEH9KQ9Scy78TWNqP9ZkWlaiV7Pigzv/OWcGtLY6Xwzp8VSQTbQ6vbf5Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=pf0bg6Op; arc=none smtp.client-ip=168.119.38.16
+	 MIME-Version; b=Dv5J4/qhH2aaJDP5pFK6UDsN2qxvpeVNEcHgb6s4aXaGO9waY7u59UHZHBC9paFssD4Ef7zORFXS5kOB+Z4R7agYT7pWXshw4vFZ2JQYSV9so8wZpMe5qEBdBatElENRBewKlC+UbYk52ou5E7Zppcd5XM8eimYlUKlyvb0DODE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Bk0aJaPf; arc=none smtp.client-ip=168.119.38.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="pf0bg6Op"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Bk0aJaPf"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender
 	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=A3IpyZa4XFQyZES7QShs9kMX8AzIgMleuBRu72f21Y8=;
-	t=1716570597; x=1717780197; b=pf0bg6OphtA1n1mhV3gQKD+IgO3qH5F540U/18OKUZiSOva
-	MAd6BtEj5u0kbCq2l+yBeJ9kOYFxcXdpTsgr7Dhi1uWPlqEDP47FjAwh5NWV8qNfUNOqjlK3xt+0x
-	O0XMUMjeoQQDeJ0XX7Tkzi5/sMCXPqPu/mdXfbjJ1IqV11O4d3IxjjOLd1KzUOx8EpQNY86bA7t66
-	tuiAcYuAdGpGpf/JsbTLEBhZ5GSKJe5FNpnzhtF2TPdyDSTnzaGkCctoHrPj/4RSdan4ch9grpMVP
-	j7go6i5y2vvroWVCvTmMJ0A+rcQy9gC1N7mdVYj39CP9xbLpHhSo0SLpPZOH+ErA==;
+	Resent-Cc:Resent-Message-ID; bh=XB2cjudwaVJyWuv8TI5SFCK10AtKjr3niFVIwgzb8bo=;
+	t=1716570598; x=1717780198; b=Bk0aJaPfXTIoBw7Nvr9oMTzwNNYeIIC3glCM/iOCacktSUI
+	O9rsl3hRptbAf61msRSMFs4dwXqqvOMHBeV7SXpRUGNaFIcSYuBwcVoMDJMkU75biWIoVZz1qs7xb
+	/bywWsQ0ph5rMW15/yY9FXDQmjFA930NPC1cB4O/aWFsYG43h/Hg0heUAd+33UVfPgnhaq4lSBZo8
+	A/5PdeAJATUP1mA0Vl2/WBxKuJSpA41GhyGf2X5gB1GvPUyQEWHwNd6x67Av7CR6he7Y35N8FMqmk
+	/bG7+rQuODIPdANm/yn+v8yJ/ZLXgxuA3PzTHE7WPsHjQw5tZCAYpg8fodSaKhxw==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.97)
 	(envelope-from <johannes@sipsolutions.net>)
-	id 1sAYQU-00000008Xuw-46xt;
-	Fri, 24 May 2024 19:09:55 +0200
+	id 1sAYQW-00000008Xuw-0kLu;
+	Fri, 24 May 2024 19:09:56 +0200
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Subject: [PATCH 43/74] backports: fix thermal backports
-Date: Fri, 24 May 2024 19:07:55 +0200
-Message-ID: <20240524190907.66a66be05882.I3d068f89b7527c0baecb7d320d1b80ef378fca61@changeid>
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 44/74] backports: add virtio_reset_device
+Date: Fri, 24 May 2024 19:07:56 +0200
+Message-ID: <20240524190907.c51e0f2751bd.I3dd09cc0b68e7a93e003ef10216ec310d74e80de@changeid>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240524170906.54680-76-johannes@sipsolutions.net>
 References: <20240524170906.54680-76-johannes@sipsolutions.net>
@@ -48,78 +48,35 @@ List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Miri Korenblit <miriam.rachel.korenblit@intel.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-- backport struct thermal_trip also for kernel versions 5.10-, to have
-  the flags field.
-- backport for_each_thermal_trip also for kernel versions [6.6, 6.9),
-  Since for this kernels we use the backported thermal_trip struct
+We need this for hwsim.
 
-Signed-off-by: Miri Korenblit <miriam.rachel.korenblit@intel.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/linux/thermal.h | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ backport/backport-include/linux/virtio.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+ create mode 100644 backport/backport-include/linux/virtio.h
 
-diff --git a/backport/backport-include/linux/thermal.h b/backport/backport-include/linux/thermal.h
-index 942883dc1f40..546caca8108c 100644
---- a/backport/backport-include/linux/thermal.h
-+++ b/backport/backport-include/linux/thermal.h
-@@ -14,8 +14,8 @@ static inline int thermal_zone_device_disable(struct thermal_zone_device *tz)
- { return 0; }
- #endif /* < 5.9 */
- 
--#if LINUX_VERSION_IS_LESS(6,9,0) && LINUX_VERSION_IS_GEQ(5,10,0)
--struct thermal_trip {
-+#if LINUX_VERSION_IS_LESS(6,9,0)
-+struct backport_thermal_trip {
- 	int temperature;
- 	int hysteresis;
- 	int threshold;
-@@ -23,10 +23,11 @@ struct thermal_trip {
- 	u8 flags;
- 	void *priv;
- };
--#endif
-+#define thermal_trip backport_thermal_trip
- 
--#if LINUX_VERSION_IS_LESS(6,9,0)
- #define THERMAL_TRIP_FLAG_RW_TEMP       BIT(0)
+diff --git a/backport/backport-include/linux/virtio.h b/backport/backport-include/linux/virtio.h
+new file mode 100644
+index 000000000000..98c844918251
+--- /dev/null
++++ b/backport/backport-include/linux/virtio.h
+@@ -0,0 +1,13 @@
++#ifndef __BACKPORT_LINUX_VIRTIO_H
++#define __BACKPORT_LINUX_VIRTIO_H
++#include_next <linux/virtio.h>
 +
-+#define thermal_zone_device_register_with_trips LINUX_BACKPORT(thermal_zone_device_register_with_trips)
- struct thermal_zone_device *
- thermal_zone_device_register_with_trips(const char *type,
- 					struct thermal_trip *trips,
-@@ -37,15 +38,18 @@ thermal_zone_device_register_with_trips(const char *type,
- 					int polling_delay);
- #endif /* <6,9,0 */
- 
--#if LINUX_VERSION_IS_LESS(6,6,0) && LINUX_VERSION_IS_GEQ(6,0,0)
-+#if LINUX_VERSION_IS_LESS(6,9,0) && LINUX_VERSION_IS_GEQ(6,0,0)
-+#define for_each_thermal_trip LINUX_BACKPORT(for_each_thermal_trip)
- static inline
- int for_each_thermal_trip(struct thermal_zone_device *tz,
- 			  int (*cb)(struct thermal_trip *, void *),
- 			  void *data)
- {
-+	struct thermal_trip *trip;
-+	struct thermal_trip *trips = (void *)tz->trips;
- 	int ret;
- 
--	for (trip = tz->trips; trip - tz->trips < tz->num_trips; trip++) {
-+	for (trip = trips; trip - trips < tz->num_trips; trip++) {
- 		ret = cb(trip, data);
- 		if (ret)
- 			return ret;
-@@ -53,7 +57,7 @@ int for_each_thermal_trip(struct thermal_zone_device *tz,
- 
- 	return 0;
- }
--#endif /* < 6,6,0 && >= 6,0,0 */
-+#endif /* < 6,9,0 && >= 6,0,0 */
- 
- /* for < 6,0,0 the trips are invalid anyway*/
- #if LINUX_VERSION_IS_LESS(6,0,0)
++#if LINUX_VERSION_IS_LESS(5,17,0)
++#include <linux/virtio_config.h>
++static inline void virtio_reset_device(struct virtio_device *dev)
++{
++	dev->config->reset(dev);
++}
++#endif
++
++#endif /* __BACKPORT_LINUX_VIRTIO_H */
 -- 
 2.45.1
 
