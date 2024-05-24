@@ -1,95 +1,65 @@
 Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3FD12EBD5
-	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D6012E1E4
+	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716570633; cv=none; b=krLWVyrhiw0dUaUKQdBWC+REwNWjqJdJmIspBEiCkSpiiF1KqtHfpytCEWTAZ7LhUtilQmvlMCGtsP9LGi8Ktyikf23OETyE/uUe5DSW+P7cTeRnnRpm/R+/1+ZIFoVRKFuv4IvvUVVFPf4exYi+4iPiEtaFf6J01bFnteVMH3o=
+	t=1716571079; cv=none; b=Fsk2XKSxyvKhPbbSHWvXZF5pCuELm/HTxCqFSezvnv+AN53u1NUqGabTBWApRGhv9O02u0TLcZwRVi3mjdE5eZC9rowYyfaIGrAVoMg7dm2XDJRQRWc8Ui8gQFIeJehB0O8OmnwsOfA9aWHnulETply4l4FrAnUonu9wXMHXJuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716570633; c=relaxed/simple;
-	bh=8kdmxQrwj/ZJvr0y536kyNAHWnLXtk7hnV8Sw6mJA5Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iCwhmbNTn4btsoRc2nyiSQpKMcj+nsHvaYyTkVCaJAVit1/SgX/TxDEmyDQ4qepfKHOdWiWNsyyXnKCU89bWTdhYS2fFaQ5DL+/C9ie44rHrRnwfeUWixZ84UnzdHf8Gzed2UDSlT9jKhrD+Qcp1Chi2uKejHOGwFwPbw1Rsjwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=vPCEyItJ; arc=none smtp.client-ip=168.119.38.16
+	s=arc-20240116; t=1716571079; c=relaxed/simple;
+	bh=ULgpn7+PWdTOz81Uxje2INS0yLUY+ENTdJE3H4bqYYM=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ru/rwCiV0VMn8hua2p7zHislWZh28PgsbLwYtHiEcfVg+PbizD+VAZ+Iwp3ASnoC/zAZ314sX7L2KEZokIlTpWaFq2kbdLYmiFO3jW0uaVmV2YiSZoqb6fvL2WbgyQLRt2Q84rZnig7AwElAosuywEWxeXnP1uDTrzhRTRBKNpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=pFWAE60V; arc=none smtp.client-ip=168.119.38.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="vPCEyItJ"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="pFWAE60V"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=Nj8CyGqxRvLN9eXVsxNQJEJS2ycPoKmJNp3OFdC07Qg=;
-	t=1716570632; x=1717780232; b=vPCEyItJkTP/3KJBOqDA3BvyuEHmsnNX8soA6Eex+cgwOra
-	eD/0ncPq9JPxigt6RfaDkl74swp2eB/YWyx+FN8qDs9OzvTniKvFeqUW7qwva+YjVWV8s258EClRh
-	Op30HHobI58FfCIw2HnlcCvJjK06su7mWVL7kcBGt4ofYguGxdVCTu5DeJKEg3SlJBD2itGuQ6OMm
-	2025yXRUZChkk5b3mWyQ3nOcikHMaxXwJF1JrqsZvs72AWV3G9+uKxZo8oweU0mQEK2gRdJ9+jjAq
-	HDQndvBxPTo4dh/y+KPvpZFCzDeaS7u4TO1fTBrvxr12CzyFzuTynEtY10CRbKIA==;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:To:From:Subject:Message-ID:Sender:
+	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=ULgpn7+PWdTOz81Uxje2INS0yLUY+ENTdJE3H4bqYYM=;
+	t=1716571077; x=1717780677; b=pFWAE60V7FwHfZtjjBdw976uYcpWsl32xW4nmjUw2UdW6tP
+	udxHsDvWB3KlcnT3dKBaS1pnLYzZzmDT4ApaN+RUnW5T4ULuvcwEQ26dhe04rrHl7U3QFP76modWm
+	84F5vai0lo2cnv5J9Me1jrVNSP2HhvDkWtfdDiNZxGevGnXqszHkMyFKrdxbQgtTXSSkY2avOaXvq
+	rD4oQe5e9zfpBx/ephdJHosXFEgpACvM4P+Km+z3FV/B3Ex7xu9VJIOrCyFQ5HAJMhGZYZuyKgEpv
+	svHvqUCk5A3ZvNIrzIebGqo+3zm/vgrDgR3ARi/uektdC1hnhH2egmzSRAF7iowg==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.97)
 	(envelope-from <johannes@sipsolutions.net>)
-	id 1sAYR4-00000008Xuw-1ot4;
-	Fri, 24 May 2024 19:10:30 +0200
+	id 1sAYYE-00000008Yuf-43sg
+	for backports@vger.kernel.org;
+	Fri, 24 May 2024 19:17:55 +0200
+Message-ID: <126e53f867d51de9d06752c027ca45399a39e35d.camel@sipsolutions.net>
+Subject: Re: [PATCH 00/74] backport updates from Intel
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 74/74] copy-list: minimal updates
-Date: Fri, 24 May 2024 19:08:26 +0200
-Message-ID: <20240524190908.e47720d3b00e.I38c2d2390eb0ad24c675ec42c58051f86d279548@changeid>
-X-Mailer: git-send-email 2.45.1
+Date: Fri, 24 May 2024 19:17:54 +0200
 In-Reply-To: <20240524170906.54680-76-johannes@sipsolutions.net>
 References: <20240524170906.54680-76-johannes@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: backports@vger.kernel.org
 List-Id: <backports.vger.kernel.org>
 List-Subscribe: <mailto:backports+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-malware-bazaar: not-scanned
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Fri, 2024-05-24 at 19:07 +0200, Johannes Berg wrote:
+> So ... I talked to Brian today, and realized that we've been
+> sort of maintaining backports to some extent, but not really.
+>=20
+> This is what we have in our tree that's not upstream, and
+> rebased onto upstream (commit c96f36d5214).
+>=20
+> With the copy-list restricted to the iwlwifi driver and hwsim
+> it even works,
 
-These are needed, but it still won't really work,
-since patches don't apply.
+Well, I should've said, with 6.9 kernel.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- copy-list | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/copy-list b/copy-list
-index 027e9c883b48..ce879409df45 100644
---- a/copy-list
-+++ b/copy-list
-@@ -14,10 +14,6 @@ COPYING
- LICENSES/
- Documentation/process/license-rules.rst
- MAINTAINERS
--include/linux/unaligned/
--include/linux/hashtable.h
--include/linux/fixp-arith.h
--include/linux/crc32poly.h
- 
- # This just defines some macros, simply take it
- include/linux/bitfield.h
-@@ -26,7 +22,7 @@ include/linux/overflow.h
- include/linux/units.h
- 
- # crypto_memneq
--lib/memneq.c -> compat/memneq.c
-+lib/crypto/memneq.c -> compat/memneq.c
- 
- # 802.11
- drivers/net/wireless/Kconfig
-@@ -82,6 +78,7 @@ crypto/asymmetric_keys/pkcs7_verify.c -> compat/verification/pkcs7_verify.c
- crypto/asymmetric_keys/x509_cert_parser.c -> compat/verification/x509_cert_parser.c
- crypto/asymmetric_keys/x509_parser.h -> compat/verification/x509_parser.h
- crypto/asymmetric_keys/x509_public_key.c -> compat/verification/x509_public_key.c
-+crypto/asymmetric_keys/x509_loader.c -> compat/verification/x509_loader.c
- 
- net/Makefile
- net/Kconfig
--- 
-2.45.1
-
+johannes
