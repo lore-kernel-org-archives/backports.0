@@ -1,42 +1,42 @@
 Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAE712EBC9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5DB376EB
 	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716570604; cv=none; b=cBSl/TeMoDyX9cDsYuWLJsVOx4Mgoc5d+ap20ad06HgQBhVqglJAd26NX5IDOA7qrFSfsRakAvFMY/39hzjHO84PTdMwfIO6ndwrRMuoShZHWbILksMwT8Cb6AQGApCijiXxyMsi7vw4DUKF+vPbh4drB2JPdmdWsPOpqlmqXdw=
+	t=1716570605; cv=none; b=UVT1BSONcDc54OuL4F9hf/mpyv3uTRgzzxjMJRu/WJ0xAoOHzuKnLRXgMWDhDWUgG96KJBJ/uzbkuQV3uKVxsdF3ODPP7NJ0oAShWtqkbilMNp+UcZynCe/xvgFHog9NcGwMarGjpPBZpUT3Am3X0zSfgdqnD+kfK3zWlXBVj0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716570604; c=relaxed/simple;
-	bh=eNAlsFtBLJN8GIYFIKAlUeJFbibgfaM2jxkwVu9btRw=;
+	s=arc-20240116; t=1716570605; c=relaxed/simple;
+	bh=WLBwGoOdIzwet5Fxh3wSJ3ansCcoyq89Kwdooa+rcGQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fHQOygcWZErPCq+eKIDCNcujg7AzlbPU1Ju/emaEh0oa93AXQS4CeJTJzq9WeOXkqB+wSLJvsx7fM+FT3PYd8g3pFbyol0gJ2IbFH9BAN8MPXU06i8dXXCnWLE6LPssAn9OWXzkruxt9BzbIr1FFaGIEmMflpNWNDuAbWegX038=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=aHv/1cli; arc=none smtp.client-ip=168.119.38.16
+	 MIME-Version; b=tq8gzp7DRv2O2EnZV/tFdfTEgpUNpbeT4eZv2575k/ZLY4LfDm2sNR7sq/pXQlrkZN/tmZvnd2ak1sejwKjxySJkDx0IQmcnpu5e9kYYsX+BUBwn+CZYRSeLbWVGT3I4LKlvEJpPxG6SOYJ1I+zw17DwgNdRsNUpoD1X3AX4nuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=ZRWWZ9nM; arc=none smtp.client-ip=168.119.38.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="aHv/1cli"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="ZRWWZ9nM"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender
 	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=BvaDh8vgujN2svh5YgrX2cn9r9LXYktqKNnmJQneUZ4=;
-	t=1716570603; x=1717780203; b=aHv/1cliCXLrjVkqc3NntpVHjVNZsz64M8fhBKRgrLXtw9t
-	BPtZzYHSuPqItBvDeYESbdd3NWFOSeRcR1fUmBAn1dn7nMID9fHxIq7gukVgSTLWT7OawG8UClqHE
-	oZs3Laqh3I6xh3EtS/vn/6g8SlFrUC9x7+qm47vxAw3+Gaac+rM6hnOOrM09Qj7hT71GM8j1YuTtv
-	kWdAU9/lky5wsV1GgKMqZlqQcBDNOrq6uFr+K4D+agKYXyy0cfWwh8XM2qohiCFtzZPCrtZtdtpY9
-	i7HxXQRgoSFgxmAYvEBa8/a+Zdum5eyCKPB31xhuuWvQfOl6wIZt7/ht1FYWNZ8g==;
+	Resent-Cc:Resent-Message-ID; bh=MyC4/fdcNERU60iWG1YjsVcSFeO+6GOGNz6Jf8q0Ihk=;
+	t=1716570603; x=1717780203; b=ZRWWZ9nM4D0MpOTEEka9W1k2NoamZMUdJwUOZhVHsqvoH1j
+	0tYZjTjAuPgw/31bERZj/CxBU562agn7G5VNa4pCkppflSfFccZr1/wzew8rMuaZ+VZ6jgYYawFR6
+	dUHU5twRob8e+AJuzp+XAidhxUCQT/zmVwqzjt+US2ir97U50Xi/d6rYFpuRLURaZOH7GaLSgmxJJ
+	tZ9XUlvn5hMgEvVpQDNKHSR8pSda9tFuiC7auPxzqFj4P2GX47YRcdr27RCn2BZbYtjAz/lcfwMvp
+	c4b336d8ThZdWc6nUYV45fyxTPJEXiyHsVIdsCZ8XtXyJFR9s8Oho5c4r7aErTJQ==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.97)
 	(envelope-from <johannes@sipsolutions.net>)
-	id 1sAYQZ-00000008Xuw-2jLn;
-	Fri, 24 May 2024 19:10:00 +0200
+	id 1sAYQb-00000008Xuw-2BYv;
+	Fri, 24 May 2024 19:10:01 +0200
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: Luca Coelho <luciano.coelho@intel.com>
-Subject: [PATCH 47/74] backport: implement NLA_POLICY_RANGE for NLA_BINARY
-Date: Fri, 24 May 2024 19:07:59 +0200
-Message-ID: <20240524190907.84d051bc3c68.Ife595e2dc94955bda3d7d3089ec6a219fde272c1@changeid>
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 48/74] backports: add NLA_POLICY_MIN_LEN()
+Date: Fri, 24 May 2024 19:08:00 +0200
+Message-ID: <20240524190907.6a342d68b754.I7e4b8c603be22ac6eee54cbc7b229d3b630f8498@changeid>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240524170906.54680-76-johannes@sipsolutions.net>
 References: <20240524170906.54680-76-johannes@sipsolutions.net>
@@ -48,72 +48,26 @@ List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-The range checks for NLA_BINARY are supported since v5.10.  Unwrap the
-macros and introduce a new function to test type.
-
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/net/netlink.h    | 31 +++++++++++++++++++---
- patches/0097-nla_policy_binary_range.cocci |  5 ++++
- 2 files changed, 32 insertions(+), 4 deletions(-)
- create mode 100644 patches/0097-nla_policy_binary_range.cocci
+ backport/backport-include/net/netlink.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/backport/backport-include/net/netlink.h b/backport/backport-include/net/netlink.h
-index ad5882347440..7192153b860c 100644
+index 7192153b860c..61c266d58196 100644
 --- a/backport/backport-include/net/netlink.h
 +++ b/backport/backport-include/net/netlink.h
-@@ -346,10 +346,33 @@ enum nla_policy_validation {
+@@ -264,6 +264,8 @@ nla_validate_nested_deprecated(const struct nlattr *start, int maxtype,
+ 	return __nla_validate_nested(start, maxtype, policy,
+ 				     NL_VALIDATE_LIBERAL, extack);
  }
- #endif /* < 4.20 */
- 
--#ifndef NLA_POLICY_MIN_LEN
--#define NLA_POLICY_MIN_LEN(_len) {		\
--	.type = NLA_BINARY			\
-+#if LINUX_VERSION_IS_LESS(5,10,0)
-+// pre-declare all the minimum lengths in use
-+#define MIN_LEN_VALIDATION(n)						\
-+static inline								\
-+int nla_validate_min_len_##n(const struct nlattr *attr,			\
-+			     struct netlink_ext_ack *extack)		\
-+{									\
-+	if (nla_len(attr) < n)						\
-+		return -EINVAL;						\
-+	return 0;							\
- }
--#endif
 +
-+MIN_LEN_VALIDATION(2)
-+MIN_LEN_VALIDATION(16)
-+MIN_LEN_VALIDATION(42)
-+
-+// double-expansion to expand _min to the actual value
-+#define NLA_POLICY_BINARY_RANGE(_min, _max) _NLA_POLICY_BINARY_RANGE(_min, _max)
-+#define _NLA_POLICY_BINARY_RANGE(_min, _max)		\
-+{							\
-+	.type = NLA_BINARY,				\
-+	.len = _max,					\
-+	.validation_type = NLA_VALIDATE_FUNCTION,	\
-+	.validate = nla_validate_min_len_ ## _min,	\
-+}
-+#else
-+#define NLA_POLICY_BINARY_RANGE(_min, _max) NLA_POLICY_RANGE(NLA_BINARY, _min, _max)
-+#endif /* < 5.10 */
++#define NLA_POLICY_MIN_LEN(_len)	{ .type = NLA_MIN_LEN, .len = _len }
+ #endif /* < 5.2 */
  
- #endif /* __BACKPORT_NET_NETLINK_H */
-diff --git a/patches/0097-nla_policy_binary_range.cocci b/patches/0097-nla_policy_binary_range.cocci
-new file mode 100644
-index 000000000000..cb3b8be52b51
---- /dev/null
-+++ b/patches/0097-nla_policy_binary_range.cocci
-@@ -0,0 +1,5 @@
-+@@
-+expression MIN, MAX;
-+@@
-+-NLA_POLICY_RANGE(NLA_BINARY, MIN, MAX)
-++NLA_POLICY_BINARY_RANGE(MIN, MAX)
+ #if LINUX_VERSION_IS_LESS(5,6,0)
 -- 
 2.45.1
 
