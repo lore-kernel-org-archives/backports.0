@@ -1,42 +1,42 @@
 Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA0C12E1EB
-	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBA7376EB
+	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716570588; cv=none; b=VV07pxX6xczHB6A3n26vh1YGewjop9blYFZv7zECPgBW4aS/L7JDpAIhehT37HNmhbaCWWSN+orK6t3Io/LJh6YTlp6UkEG2ozEdo3bdPfwhc4TBuMzEmWC/TYZ7lBi6NEy8Hi9KYPef2EOxr8mUwewrcnefo6U3ET5m9Mly1s8=
+	t=1716570592; cv=none; b=GZNWTVfEgoA0CMencLaKBDzRwJ1ELgpK+6mwkSqVZZWp+ETISv6DYPbPIcy0U6CGIjpVPV9nlBROSXP4YXA56dErDrNF2iXruGrdGWyhADeifMSd3dzoZqoY2rrwIObElv3XnJ5Srlk+G8ErwP49m7HVXo7dcWDGSwNuB5si41o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716570588; c=relaxed/simple;
-	bh=L7PP/uog8GWZiEftPzgMGj1eOn/56mCRFJ+e4aIa78A=;
+	s=arc-20240116; t=1716570592; c=relaxed/simple;
+	bh=uliRjOQR0+/6G0ruJ6s5WFoFgLT2MUxA2bB83oc9uB4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YnTycaE9vMZHBfAA2XeIX1uzf5AX+/ez99V4vLwSm6a6JEn/cqnFQcbOOgoA/DWyMoo4zUeT7u0OCoUF/wnXkLZEuCKko9kueb7iGKmMTP7TRxslKAne8VWKqXPb7XkPY5toZLdurPtL529TYYkgmH/uzoYvObDuZvl3PXL4F/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=d5Z+pOw6; arc=none smtp.client-ip=168.119.38.16
+	 MIME-Version; b=Otz8EZpjat6HA8iFFzAtFDYKWczDFZmqy9ZKqVSF0LWHkg+GdWI67+g6O9bn9BAhLewKOSQKjXS5SbQByW4i0KTi/LgYhyTebvGFinfRwXQ3Qx87oDjHh6Zog3qgL0tShRJoIaQYN0Tth+usuvG5ttZPkd4RYBfdtf9l3UZKVos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=arvQFNqN; arc=none smtp.client-ip=168.119.38.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="d5Z+pOw6"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="arvQFNqN"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender
 	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=+j09dzoHGoGC5bHoJSqCfNBk/nKJs3Onwkg/uo/YcUs=;
-	t=1716570587; x=1717780187; b=d5Z+pOw6ILQNy6RXDfU7jWoTu+qVawvv3PHnnf6AuYrLTSu
-	zThXjPp1vzAVgauvjeaIncwvEG8nYKUcRhi/0TiOK9rio+thypEoSRmYJysPY4RZyOzWefhl2vJ5D
-	hXjmiRL/MQidzoX9le8Wmcq8Iiqc9hGDkbD+31Kh7V6gOZcX84nJhk6M+6Le2L5D4bzPPQmFWND37
-	Ks2/ELCwWacCZpoqurx2hnRf2qnsjVo9y9HXBGHxHeLq/QrWKMPh4e260nE9G6EElk7PGWeYnybqg
-	UBohhny0qMKpuIclKw5ihYYQXOtXx2/TsCNwbJEqjVAHYvlrEhyaQKO0TE5UpFbA==;
+	Resent-Cc:Resent-Message-ID; bh=WGOFHhKTTHEwF21Lzyq8RdgPJTJYzZGTkXS8shUd0T4=;
+	t=1716570591; x=1717780191; b=arvQFNqNIgIzixZeov3s8CP3M1kjbsA8ArgOiRxAK30PM5i
+	Sw8Ksorw9gHon2FMUZd52CeAwwQ8u/oTw1ha12cxOseEWF19hODmdDk584ZLpeToDEnJc6yi2YfvC
+	UXHg1aSCx0F3TDAZyfvRH5SYER0J7m2fUGPzU0CFGW4D+ZrI7ivP99wFzsUzKIWvDuz8vxxy+5PF3
+	paUsddYPiAk9ryv/birhx/uE4VQm5Q4J9CFI5ey/UY35rhYfz4nv3vUSheWeIbBPdPxhiVmmNhkA0
+	wol6n1gMKuBop6Ceiw/yVVB+ngFVgh0dVCXb4RRLO+w7zaidYTM8anKmpDOgBUZQ==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.97)
 	(envelope-from <johannes@sipsolutions.net>)
-	id 1sAYQK-00000008Xuw-43D2;
-	Fri, 24 May 2024 19:09:45 +0200
+	id 1sAYQM-00000008Xuw-05tN;
+	Fri, 24 May 2024 19:09:46 +0200
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: Felix Fietkau <nbd@nbd.name>
-Subject: [PATCH 37/74] headers: add skb_tcp_all_headers
-Date: Fri, 24 May 2024 19:07:49 +0200
-Message-ID: <20240524190907.2429e3545959.Ia864c56f1dd70716e29a2f97f07f57932923ebb6@changeid>
+Cc: Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 38/74] thermal: return errors w/o CONFIG_THERMAL
+Date: Fri, 24 May 2024 19:07:50 +0200
+Message-ID: <20240524190907.ff076c34dfbe.I380a5ee9df3ecaceba5ffaf92b5ad41138b96567@changeid>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240524170906.54680-76-johannes@sipsolutions.net>
 References: <20240524170906.54680-76-johannes@sipsolutions.net>
@@ -48,35 +48,42 @@ List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Johannes Berg <johannes.berg@intel.com>
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/linux/tcp.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
- create mode 100644 backport/backport-include/linux/tcp.h
+ backport/backport-include/linux/thermal.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/backport/backport-include/linux/tcp.h b/backport/backport-include/linux/tcp.h
-new file mode 100644
-index 000000000000..2483cbebf66c
---- /dev/null
-+++ b/backport/backport-include/linux/tcp.h
-@@ -0,0 +1,14 @@
-+#ifndef __BACKPORT_LINUX_TCP_H
-+#define __BACKPORT_LINUX_TCP_H
+diff --git a/backport/backport-include/linux/thermal.h b/backport/backport-include/linux/thermal.h
+index d9b8153e9c87..76d4f231aa5a 100644
+--- a/backport/backport-include/linux/thermal.h
++++ b/backport/backport-include/linux/thermal.h
+@@ -3,6 +3,7 @@
+ #include_next <linux/thermal.h>
+ #include <linux/version.h>
+ 
++#ifdef CONFIG_THERMAL
+ #if LINUX_VERSION_IS_LESS(5,9,0)
+ #define thermal_zone_device_enable LINUX_BACKPORT(thermal_zone_device_enable)
+ static inline int thermal_zone_device_enable(struct thermal_zone_device *tz)
+@@ -12,5 +13,16 @@ static inline int thermal_zone_device_enable(struct thermal_zone_device *tz)
+ static inline int thermal_zone_device_disable(struct thermal_zone_device *tz)
+ { return 0; }
+ #endif /* < 5.9 */
++#else /* CONFIG_THERMAL */
++#if LINUX_VERSION_IS_LESS(5,9,0)
++#define thermal_zone_device_enable LINUX_BACKPORT(thermal_zone_device_enable)
++static inline int thermal_zone_device_enable(struct thermal_zone_device *tz)
++{ return -ENODEV; }
 +
-+#include_next <linux/tcp.h>
-+#include <linux/version.h>
-+
-+#if LINUX_VERSION_IS_LESS(6,0,0)
-+static inline int skb_tcp_all_headers(const struct sk_buff *skb)
-+{
-+	return skb_transport_offset(skb) + tcp_hdrlen(skb);
-+}
-+#endif
-+
-+#endif
++#define thermal_zone_device_disable LINUX_BACKPORT(thermal_zone_device_disable)
++static inline int thermal_zone_device_disable(struct thermal_zone_device *tz)
++{ return -ENODEV; }
++#endif /* < 5.9 */
++#endif /* CONFIG_THERMAL */
+ 
+ #endif /* __BACKPORT_LINUX_THERMAL_H */
 -- 
 2.45.1
 
