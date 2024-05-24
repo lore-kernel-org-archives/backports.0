@@ -1,42 +1,43 @@
 Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A7412EBFC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B77612EBD4
 	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716570577; cv=none; b=WjAHNsekTDJbTp88eWXF16smKQNWIm9Bzv3GuTjwBnz6q6EEg0zaz64n9M/gKLtAQigVJzMEsfq9UNq3O2CH8M0d7yAFrtYM8jS0TpQrRXLHPkzsVNSncyRyUxT6NU1AmkuOgve4QDGC1zLcgaqGn5oJQDlAfRhoNbqyJh1l0FY=
+	t=1716570577; cv=none; b=h3w/SuYnSERQJcg5a66l3lCHiWtyyhoqRFsV8i9DJT7Dv3vA6JJlxU+SG9Y1zsbwL/WFzacbVwhAa+h9dcz56Tu2AUFgGqispSDLTvKcs7dFlnd4uNjePW5ZKPPeyLnSTKqpaOhc6B/O7d0rXm744UO3cxsMKUoF/PysfI5py0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716570577; c=relaxed/simple;
-	bh=2mpEvFOlKhYGMdexMDe5NNthZ4Z3RWRAQgCdSfymWWM=;
+	bh=qPk+41qETnIeg+w5Mq+sxv5OdNH6DTlPYAl/XRzTL4w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MpqJ2jndBqo+Ry+O72xb++f2dHwOnhiv/nbNwGhimivK1NHA0o8ZrGSZF6M63JahVEba6UtbAda6ZRQNEEjgbFFBNJvoRsTKEyCBb0FuzgKXncbiw4Qf9qlPLSgxbHYNo6+Mkk8w0/qz+QYw02FprLrp+1fnMaQpKLtA8W6usBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=TMIHR6yv; arc=none smtp.client-ip=168.119.38.16
+	 MIME-Version; b=ladMXSduvXc2cmxCXcvh1QrTK+xCKDi/eBtWsSgomPV5kas3FbwNyl8yW7ZIJqUNCzVwNu+Dmgo8Nre06GjRCFqO8gFaRCQVMwjfUIAdKzOkNYu1l/SuN3FNIU5Fv0PkRApXIYC1mLu2SAM/uz3fEiRyT1dTRPjhetaKUp+cWMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=eKEkKMA6; arc=none smtp.client-ip=168.119.38.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="TMIHR6yv"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="eKEkKMA6"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender
 	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=8Jn1VttkLBPnNhO1G/2xxqR9r+1V/r73MX7IoaxUxuw=;
-	t=1716570576; x=1717780176; b=TMIHR6yvsImkTgh/Bn8M4xrHhPSWGBmyJv/v1+9oRXE+g5q
-	ABa3K1QY60q5DdkBysP+yQHSzp2GJiEg3lc0V8eBdB5zu3DHoik1GYUFKW7jKg3ntJ8yPqiG0KJ31
-	0NdLQM6WKQ0fgABSKy7JMltqny3wdE/YA+kGWoU0LLf+8cZ6s85cmd7jt6XoAxn7OcrdozvK85Uxo
-	g5xAQGZo7uItPm62EtBzKxoTxSruV4wiOV35ztnzF5FkQF1N4cijkVpw2wkfdbOev41mjMFCb4kLY
-	CCTjTiOu5vWwM8xw8cjZgdOt6fy1WFCE+JMXS0OPF2KvUZP5f2d0NVDYkDgTALvA==;
+	Resent-Cc:Resent-Message-ID; bh=NkrGxR4RNTYscWg8VbXL2HnuFhqWmSgHviSMJNlk6V0=;
+	t=1716570576; x=1717780176; b=eKEkKMA6xHv6eyUWTtcPu/MFZoo/v14BWuPqD8AY6zOEev7
+	/VTqjNTnKpVIwt6lJugs+UwYjV9AGYDrKLxtp6MMmTQ1pXoTDNiHlPsKuPTTMAjsAUQgPlTQyCRhZ
+	7l95X6hLii5aG8+Ea0/IT4ZchqBIsHaBFoU0X5Qkpiz93D5AAkCR0zCQPGIGw1Vzwb4yK8rClp09z
+	z9b/VjvwFVrW6XF6aa8llx5oyLDY9q/3kWT2E75+JRYTDtLCBMRTQO4CiRtP1UcKbaEYyDCHqtZvB
+	92p+TEt0z3lT6NXv+9qtrs9amugvfuZtJkW4Rso9ICcS0l1hXHf4gZ9ztGLy6vzw==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.97)
 	(envelope-from <johannes@sipsolutions.net>)
-	id 1sAYQ9-00000008Xuw-1nFU;
-	Fri, 24 May 2024 19:09:33 +0200
+	id 1sAYQA-00000008Xuw-1UA3;
+	Fri, 24 May 2024 19:09:34 +0200
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Cc: Felix Fietkau <nbd@nbd.name>
-Subject: [PATCH 26/74] headers: add DEFINE_SIMPLE_DEV_PM_OPS
-Date: Fri, 24 May 2024 19:07:38 +0200
-Message-ID: <20240524190907.aa2f57d0feb3.I26bf7a2fd34b6c2fc26bf2163f219e0f71aa77c9@changeid>
+Cc: Johannes Berg <johannes.berg@intel.com>,
+	Gregory Greenman <gregory.greenman@intel.com>
+Subject: [PATCH 27/74] backport: add get_random_u32_inclusive()
+Date: Fri, 24 May 2024 19:07:39 +0200
+Message-ID: <20240524190907.9b29c2303625.I3466484d655a8d5dbf9208a3f64ea5a926dd844e@changeid>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240524170906.54680-76-johannes@sipsolutions.net>
 References: <20240524170906.54680-76-johannes@sipsolutions.net>
@@ -48,53 +49,45 @@ List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Johannes Berg <johannes.berg@intel.com>
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
+For get_random_u32_inclusive() we need get_random_u32_below(),
+implement it with prandom_u32_max() as it used to be in iwlwifi.
+
+Reviewed-by: Gregory Greenman <gregory.greenman@intel.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/linux/pm.h | 30 ++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ backport/backport-include/linux/random.h | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+ create mode 100644 backport/backport-include/linux/random.h
 
-diff --git a/backport/backport-include/linux/pm.h b/backport/backport-include/linux/pm.h
-index 926b0bf15c8e..24d760fab33c 100644
---- a/backport/backport-include/linux/pm.h
-+++ b/backport/backport-include/linux/pm.h
-@@ -14,4 +14,34 @@
- #define PMSG_IS_AUTO(msg)	(((msg).event & PM_EVENT_AUTO) != 0)
- #endif
- 
-+#ifndef DEFINE_SIMPLE_DEV_PM_OPS
+diff --git a/backport/backport-include/linux/random.h b/backport/backport-include/linux/random.h
+new file mode 100644
+index 000000000000..0a247321785a
+--- /dev/null
++++ b/backport/backport-include/linux/random.h
+@@ -0,0 +1,21 @@
++#ifndef __BACKPORT_RANDOM_H
++#define __BACKPORT_RANDOM_H
++#include_next <linux/random.h>
++#include <linux/version.h>
 +
-+#define pm_sleep_ptr(_ptr) (IS_ENABLED(CONFIG_PM_SLEEP) ? (_ptr) : NULL)
-+
-+#define SYSTEM_SLEEP_PM_OPS(suspend_fn, resume_fn) \
-+	.suspend = pm_sleep_ptr(suspend_fn), \
-+	.resume = pm_sleep_ptr(resume_fn), \
-+	.freeze = pm_sleep_ptr(suspend_fn), \
-+	.thaw = pm_sleep_ptr(resume_fn), \
-+	.poweroff = pm_sleep_ptr(suspend_fn), \
-+	.restore = pm_sleep_ptr(resume_fn),
-+
-+#define RUNTIME_PM_OPS(suspend_fn, resume_fn, idle_fn) \
-+	.runtime_suspend = suspend_fn, \
-+	.runtime_resume = resume_fn, \
-+	.runtime_idle = idle_fn,
-+
-+#define _DEFINE_DEV_PM_OPS(name, \
-+			   suspend_fn, resume_fn, \
-+			   runtime_suspend_fn, runtime_resume_fn, idle_fn) \
-+const struct dev_pm_ops name = { \
-+	SYSTEM_SLEEP_PM_OPS(suspend_fn, resume_fn) \
-+	RUNTIME_PM_OPS(runtime_suspend_fn, runtime_resume_fn, idle_fn) \
++#if LINUX_VERSION_IS_LESS(6,2,0)
++static inline u32 get_random_u32_below(u32 ceil)
++{
++	return prandom_u32_max(ceil);
 +}
 +
-+#define DEFINE_SIMPLE_DEV_PM_OPS(name, suspend_fn, resume_fn) \
-+	_DEFINE_DEV_PM_OPS(name, suspend_fn, resume_fn, NULL, NULL, NULL)
-+
++static inline u32 get_random_u32_inclusive(u32 floor, u32 ceil)
++{
++	BUILD_BUG_ON_MSG(__builtin_constant_p(floor) && __builtin_constant_p(ceil) &&
++			 (floor > ceil || ceil - floor == U32_MAX),
++			 "get_random_u32_inclusive() must take floor <= ceil");
++	return floor + get_random_u32_below(ceil - floor + 1);
++}
 +#endif
 +
- #endif /* __BACKPORT_PM_H */
++#endif /* __BACKPORT_RANDOM_H */
 -- 
 2.45.1
 
