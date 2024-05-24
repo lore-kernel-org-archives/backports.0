@@ -1,42 +1,42 @@
 Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E9912F387
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D79912EBD5
 	for <backports@vger.kernel.org>; Fri, 24 May 2024 17:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716570563; cv=none; b=vFBo/2eapCTH6LipDb1FHNWBOBbPZT6mknqsNdgwfUj6PL7jHeDWotEIevweDWcp8hbZ4q1ebYm5Ne/1q6y8UoKNYCrKRhBd48wyOcqQGIefSycvskeIKROCg34HVd/PGos3You9LkJ1B3u4fT+a/AHyGPHTuT1HDm/cfrVk3n0=
+	t=1716570563; cv=none; b=DnqG8ZSz8JInUGm3nXSXaOkVFSGgQjDdni5qvBQel6O35wx56oUlgPW3f2aja0+jayMgQ2F5U07NCAxfbR8S5Ro2SrFx733HXFOV2KwI4OG1dWtxq2TM2HG8otMn86lAp7jFSUkZG+xvnhICyKVIREl6sS+l+Up4TA3wSuIP2NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716570563; c=relaxed/simple;
-	bh=jtzmKNsqyzKzpRHv37EYebEi1RaIP3fZTkIgkF817tE=;
+	bh=JzhiZIH6lJIma2Z0xYMT2/Dk3fQwq0dlMOTCplY3GsE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bFYwUVhsFd4DqJpQia33xwYDEHHWpSAdS+LjW2xUHp1gTThTSfOPCmOVVc33FZx/u6WghLdxP74q+2eldBe7zW9vi3zpftC/nQfcDL5GuUa4UfUdw+Gjr9ckXrQ/jbZlF2tfp2JEItMQZ3jfDGqp2GaWh6rngDg4X4tfY4lEhaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=VEZMsvvV; arc=none smtp.client-ip=168.119.38.16
+	 MIME-Version; b=AjpUjPAu/uO/K2jkAqmnRNFTZfIDUstOhZKyKEQuLnxugOQPeUvn5O8QGhSKoPF5EZZuKk50RddSqypN+GnATRLn9a1QaxTE08RNNx3fe+gvVJSP7RdAHlpgbXWu6K0Y9LuqB22VGKuMnAlnGi7TNkirKM4hei1ouse2iAZ6Rw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=pb0jdNrJ; arc=none smtp.client-ip=168.119.38.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="VEZMsvvV"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="pb0jdNrJ"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender
 	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=67sY4M2ZTRVE9wRsf4wzp5ro8A0Bj/1eToMr62s5BkY=;
-	t=1716570561; x=1717780161; b=VEZMsvvV1MNpxjVq9IAumOHSM9aLyOYjsPm8icA4mF9bsIq
-	bkSTB2PRfs0EiwPI08mqRI0hFunS/rvU5LpaaMsw73BbUOAqoXpheNS7N3tlwyCZwHUWXHFFlsnWQ
-	v3S7DtFS5v1b7cQMyY3LechAtaDqdaEphUta06+bYwj6WV3m2BTivGVNA9GS3lrOZhqk0NOXructY
-	4/AsT4ZAF2sRNvEWTSlwmX+T2xSCE/hfsP//+/Ywivrb5pl6EIvCeLxaWZk75lWr3yFYmhKj15aPu
-	dD7VX1KebbAwFsMbq69xY6+vOn2sjJMKsFcD59UQV9nj6+6eV7LewFhEdPymyhvg==;
+	Resent-Cc:Resent-Message-ID; bh=+mcXsJyx2eRCtTxaK6kuvnU54ia7gPJ/p07HCb11OTc=;
+	t=1716570562; x=1717780162; b=pb0jdNrJxmlzjCOBeLUDDC9Dwsl3Xl6g6lWxzJYs2VP7BaB
+	MAibN5BVqiduyw5576E/y9pJI1KeVSM2iSk+vrV+DL2YM85I3Dl82aYR4jZajy1CoyEOc0KRWbCvQ
+	4xTcwSgJqAA8SKzRbB8qaEUJdTdcDm3cgTujzhwja822Pp9EK2MvOkyM+hSBSA2A5uReFT3UM8UaH
+	+02xEcDL4aVOhWlbSqLvVEAR2twXvUB7D/BVvNVOVQyVV0nCe+iqNrivF541CJAm/ToHWTUiPww2f
+	Qd7QCX6o0fkHi10vYo640KSdU9wP76NEJrGF9wehPwhVN8WF0j9765AQlxEDOWJw==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.97)
 	(envelope-from <johannes@sipsolutions.net>)
-	id 1sAYPv-00000008Xuw-0bMZ;
+	id 1sAYPv-00000008Xuw-3LNR;
 	Fri, 24 May 2024 19:09:19 +0200
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
 Cc: Gregory Greenman <gregory.greenman@intel.com>
-Subject: [PATCH 10/74] backports: Add __counted_by attribute
-Date: Fri, 24 May 2024 19:07:22 +0200
-Message-ID: <20240524190906.03404f605970.I5f3ab2eb202242a2ccac0053fab1fb7d96c35829@changeid>
+Subject: [PATCH 11/74] backports: add stubs to handle debugfs cancellation API
+Date: Fri, 24 May 2024 19:07:23 +0200
+Message-ID: <20240524190906.076a30163546.I33e5bb5a3f12cbf87838ef867681a7ba51beaf46@changeid>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240524170906.54680-76-johannes@sipsolutions.net>
 References: <20240524170906.54680-76-johannes@sipsolutions.net>
@@ -50,37 +50,47 @@ Content-Transfer-Encoding: 8bit
 
 From: Gregory Greenman <gregory.greenman@intel.com>
 
-This adds __counted_by attribute from
-c8248faf3ca2 ("Compiler Attributes: counted_by: Adjust name and identifier expansion")
+It is added in v6.7-rc4, add empty stubs.
 
 Signed-off-by: Gregory Greenman <gregory.greenman@intel.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- .../backport-include/linux/compiler_attributes.h    | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ backport/backport-include/linux/debugfs.h | 24 +++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/backport/backport-include/linux/compiler_attributes.h b/backport/backport-include/linux/compiler_attributes.h
-index 31ddc163e09a..6a0ffca2e102 100644
---- a/backport/backport-include/linux/compiler_attributes.h
-+++ b/backport/backport-include/linux/compiler_attributes.h
-@@ -31,4 +31,17 @@
+diff --git a/backport/backport-include/linux/debugfs.h b/backport/backport-include/linux/debugfs.h
+index 6020c210f133..cb954ac392a9 100644
+--- a/backport/backport-include/linux/debugfs.h
++++ b/backport/backport-include/linux/debugfs.h
+@@ -23,4 +23,28 @@ static inline void debugfs_create_xul(const char *name, umode_t mode,
+ }
  #endif
- #endif /* fallthrough */
  
-+/*
-+ * Optional: only supported since gcc >= 14
-+ * Optional: only supported since clang >= 18
-+ *
-+ *   gcc: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108896
-+ * clang: https://reviews.llvm.org/D148381
++#if LINUX_VERSION_IS_LESS(6,7,0)
++/**
++ * struct debugfs_cancellation - cancellation data
++ * @list: internal, for keeping track
++ * @cancel: callback to call
++ * @cancel_data: extra data for the callback to call
 + */
-+#if __has_attribute(__counted_by__)
-+# define __counted_by(member)		__attribute__((__counted_by__(member)))
-+#else
-+# define __counted_by(member)
-+#endif
++struct debugfs_cancellation {
++	struct list_head list;
++	void (*cancel)(struct dentry *, void *);
++	void *cancel_data;
++};
 +
- #endif /* _BACKPORTS_LINUX_COMPILER_ATTRIBUTES_H */
++static inline void
++debugfs_enter_cancellation(struct file *file,
++			   struct debugfs_cancellation *cancellation)
++{}
++
++static inline void
++debugfs_leave_cancellation(struct file *file,
++			   struct debugfs_cancellation *cancellation)
++{}
++#endif /* < 6.7.0 */
++
+ #endif /* __BACKPORT_DEBUGFS_H_ */
 -- 
 2.45.1
 
