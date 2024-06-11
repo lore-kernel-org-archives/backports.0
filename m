@@ -1,60 +1,97 @@
 Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6496046525
-	for <backports@vger.kernel.org>; Tue, 11 Jun 2024 11:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1EC17C209
+	for <backports@vger.kernel.org>; Tue, 11 Jun 2024 11:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718104422; cv=none; b=g11lC7QxUegUorXu7Vx52VyjjADn+co9r/am4fJfwbdKP78aloIuB8Q7B1PUBP9fppcjrf8E2Bea9C+SDUKpLUc/HKD81HpPymhz5GcWFsBjbKFMzYrr7FCYtGpuLS2w0RHCD/xuhaKLewauv3sY4Qn49eclDv51G/BX94sTr1w=
+	t=1718106106; cv=none; b=XmQnpaJNj86v8vjv5ymC3hnA/IpsFqjqxMdJn0w6gYby211wtmw4hbwGAjgSC8BVzUFFY1f0rwI0pehXchR3DG2zfdtWSX2+/i7LwAwelgppJEEL46e6j7PYrR+qCqqJ5UyW0C59pp3TL428k353UNHo3UEZF0/7ozN9uEgdtpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718104422; c=relaxed/simple;
-	bh=J07XnIWDJhf07hyBCS4TYiUfnBKbLwkl5eXToJcE2l4=;
-	h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version; b=J0hThVmw1+3PIt/5A1lj590VfEp8hYEQzSjzQQyG3uaPGO/BhB8W/gaHBA27uTxNkN+pgYRKLcQcXncLBr8gWS7ibcqv9QXIyiwuWRKIdI8ufEGawQB9WlHRol3Kh28+MxQfuTp8G9icGmRdcVvt3l5BcjmnCMI1szMkk44R2g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=uLNB09GZ; arc=none smtp.client-ip=168.119.38.16
+	s=arc-20240116; t=1718106106; c=relaxed/simple;
+	bh=DeVALrmJfVE5vRxGdj45uzegPCZoBu4u67dcsjG0bbg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZZel9BAf7XVwVjhwwcLpzd2G48aP9irI5Eyk2QYbaA2119SF0P4/pzjpFnCdJrAFeVvWbRhTcCqlaU9MtwtkUoDHD4hX5Bqi/w9ADhyECvJbM7GZHKHlTcX+4pKumab6voJeVcvSb9dSu9raAH5UA0b3QXKSNv06/mWef8JgFg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=RqjV+nnX; arc=none smtp.client-ip=168.119.38.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="uLNB09GZ"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="RqjV+nnX"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:Date:To:From:Subject:Message-ID:Sender:Reply-To:Cc:Content-ID:
+	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender:Reply-To:Content-ID:
 	Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
 	Resent-Message-ID:In-Reply-To:References;
-	bh=J07XnIWDJhf07hyBCS4TYiUfnBKbLwkl5eXToJcE2l4=; t=1718104419; x=1719314019; 
-	b=uLNB09GZnxeokEag91jzSpSTKq57GiqfLFG2RAToItWqm3HiVGSv4gYtEQ2egYKL4rouynZRZjZ
-	tqhm55AunhMz7hLNS6UU60QObifuvIkpYUuLDfj4zLqmllyPX3LrcX8czx8N21ewUpGRIEp1zBDSL
-	4i8tUc7NHdq4y+ZhJ2t5/YwjpHl0pa93y+xSDBpv0capi9IXny5LnF6CLPJTEUZkLb3jATyUX3IP3
-	Uvizey9ljKzj5/ewM0kgJGAVdHc/wSH4IQzAgwzwEZ/YM1JUNw92Fqlf2GcO1XbOS4TmcnDgj5eMW
-	J/1lpWks7oeWBQUhxN4VJiWXih2UvQK1WIvw==;
+	bh=ZRpS1cUt/Jnj2WAGZIA6xscEFhnotHQwOEqtNzsJq0s=; t=1718106104; x=1719315704; 
+	b=RqjV+nnXE4zZGBJmnuLfJ+dYvVwGWRLKbFrdBlpRGZqDn9UikMub9MDG8A8mu3ifzaiwnR30YSL
+	5NMiwicSG3pqJvxT5ocGysMt8WUlWm/tt6O49ZYK60yILIqrPGXXC1yQHL+6dIMgiACr3QrhR2S3K
+	XirFeO1lk3gCdtF+Kj7bnFrnb8K3joACsu+VWX9oo6NhPpFitEdvR6YwW28gKRH3pQvix2Va3qexE
+	eyxNB6IQn8bykvH/PLDi8KxuLhxEI2KAahclx/hp8GS2ZhGFbev7sWYrW+XGoj+tFUeUAHTU07Dqb
+	edMGg5Key7rSSyFXEEhz1ATIBJf4DFHEWw4w==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.97)
 	(envelope-from <johannes@sipsolutions.net>)
-	id 1sGzRY-00000008WUx-32bG
-	for backports@vger.kernel.org;
-	Tue, 11 Jun 2024 13:13:36 +0200
-Message-ID: <8f050618afa00296db53d752db334eb7dfc5ff33.camel@sipsolutions.net>
-Subject: __assign_str handling
+	id 1sGzP7-00000008WLU-3Af0;
+	Tue, 11 Jun 2024 13:11:06 +0200
 From: Johannes Berg <johannes@sipsolutions.net>
 To: backports@vger.kernel.org
-Date: Tue, 11 Jun 2024 13:13:36 +0200
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+Cc: Miri Korenblit <miriam.rachel.korenblit@intel.com>
+Subject: [PATCH] backports: add alloc_netdev_dummy and free_netdev
+Date: Tue, 11 Jun 2024 13:11:00 +0200
+Message-ID: <20240611111059.23455-2-johannes@sipsolutions.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: backports@vger.kernel.org
 List-Id: <backports.vger.kernel.org>
 List-Subscribe: <mailto:backports+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
 
-In 6.10, the tracing __assign_str() macro lots its second argument.
+From: Miri Korenblit <miriam.rachel.korenblit@intel.com>
 
-We simply made a patch (for cfg80211, mac80211 and iwlwifi) to put it
-back under ifdef, but maybe someone else has any other ideas?
+Signed-off-by: Miri Korenblit <miriam.rachel.korenblit@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ backport/backport-include/linux/netdevice.h | 29 +++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-The big problem is that it's defined/undefined/redefined, so can't even
-override it (if it were even possible, since we don't generally know
-what the argument should be).
+diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+index 7f72c3a8eb98..58b8d0c68ed2 100644
+--- a/backport/backport-include/linux/netdevice.h
++++ b/backport/backport-include/linux/netdevice.h
+@@ -212,4 +212,33 @@ static inline bool napi_is_scheduled(struct napi_struct *n)
+ }
+ #endif /* < 6.7.0 */
+ 
++#if LINUX_VERSION_IS_LESS(6,10,0)
++static inline struct net_device *alloc_netdev_dummy(int sizeof_priv)
++{
++	struct net_device *dev;
++
++	dev = kzalloc(sizeof(*dev) +
++		      ALIGN(sizeof(struct net_device), NETDEV_ALIGN) +
++		      sizeof_priv,
++		      GFP_KERNEL);
++
++	if (!dev)
++		return NULL;
++
++	init_dummy_netdev(dev);
++	return dev;
++}
++
++static inline void LINUX_BACKPORT(free_netdev)(struct net_device *dev)
++{
++	if (dev->reg_state == NETREG_DUMMY) {
++		kfree(dev);
++		return;
++	}
++
++	free_netdev(dev);
++}
++#define free_netdev LINUX_BACKPORT(free_netdev)
++#endif /* 6.10.0 */
++
+ #endif /* __BACKPORT_NETDEVICE_H */
+-- 
+2.45.2
 
-johannes
