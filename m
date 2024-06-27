@@ -1,45 +1,46 @@
 Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96321A38FE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FA01A3BA6
 	for <backports@vger.kernel.org>; Thu, 27 Jun 2024 23:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719532137; cv=none; b=TLeoBaRHCvRWFu17iBU0bncmoWU+K4ieAZ1oVJNZixk5Zan+SllltpG79O4J03SRr9tJDP5+YGy3MFre1fHRyWuO1+jMGgKCmCaXWe/CQGf2ihonJ3x7C6rNrAT74WIReXnH1K7S+O9sdwdzGBfhFbKrddFlC/9wTPODNWvB9Bw=
+	t=1719532137; cv=none; b=msJXx7lR57ajlvvK/8mTQjiuHqOP9qBPCspniaH37lnFK8Ktx9EAZsrY3IC8666dvev00iijMiX07xfe341ZkzRbdgZJATT6S7J0TAGdRcCL3VZpQYU3euViubDTuPy+MGlkqUZ8s/JeXeGe8peORnJhUs34eqI99sjFaWhbQlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719532137; c=relaxed/simple;
-	bh=1m5IhTb+HQ51Ldr0wGHzamAhWe8jlaDFAUT4+FJlehc=;
+	bh=c15sDsvc9H2BGEFlQlBYbpnmw+7snDtQyC4F0g3QGY0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a3YJkgvRhLtQpdtgTQDXXNug0Wms9K61zxZ77k+I0L91fdYA8SPk76byBOwVn1c9OGkw3ih3fYB22te+c6UwBNa1vKf59IO5aALAUgHX4k5NFxIwZAZBOaPVgEQo9W9VXAcvb/I1h7avuRjZekR4JjM3glXOi/QlCgUXX4lh8No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=Hb40sPL9; arc=none smtp.client-ip=80.241.56.172
+	 MIME-Version; b=BU2DgLtLyscGVApx5a2NGZb9hY3dy7swf4ANHxQK/6XenIckq2PIA5UjNu921RC8e+vHblphTa0ZVft4VJo9EUZk9bR2w/K/iWK37zX3AnyVbjyWuKXUGHpfCIVOByxsnk13WKCYZFHyYwNreKklVE6Sgf/G/idpz9YacaSebWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=nVTEwF9V; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="Hb40sPL9"
+	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="nVTEwF9V"
 Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4W9FdW6zCTz9slL;
-	Fri, 28 Jun 2024 01:48:47 +0200 (CEST)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4W9FdX2gKbz9srj;
+	Fri, 28 Jun 2024 01:48:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-	t=1719532127;
+	t=1719532128;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=EGgNnAJ88Igmn8hLNnvAPjOer7j0E+VyiWND9X+2Mcc=;
-	b=Hb40sPL9dZzo/57bn5dNdRwq9kyahes3D3sM72r1i1O75xVnLf20pC9BX04UcYoyqL3sBE
-	ey/Fd1vph8+/5vz8MKgEbZdVhpjwT4jb3KfmMZNlb8DiENg5I4+8QiM/eErZV+oG5BISsx
-	qFkZwcZR1iauyj9LFYqOMoWraITCRZxbbryLtevwD3Q7G/8+Z6ons3BhVeAxe9d7zLtl9Z
-	xRm1RW/DU9Eeqfqm0lunmY2ZZ/DhTudJBFXmOh0dgslMB6U8gXiDyVM5wNAAoR2XDf6Je7
-	Rf9CzXdbZaZ763w/hI7ZF8UAYzlJlo/ATK5Lh8tLxxuQleWSYyHSMfPo5zN6ZA==
+	bh=bgqdym7V30pAqgJyPprEye0063/viRJa1TmAy0Pn5U8=;
+	b=nVTEwF9VOglH7OiD/xXay6UyWnIScCizHHFI0UJX84pNhSmZ3x19FQUjsSX9HNr5Xkgd8L
+	6Tgf2UWLEHz+fZDL3vjCY3RafE49LUfjUnjAcO40Uh1+RLw+8XlzzKyyjHThypkvzZ5v63
+	Wrn79VcUZdkCLkciKt/xV4zuZgGfSC33Z1DQL6bnA+9ZHaoNyTXGp2uVRbmDyqPE37YHdL
+	LDrOY+jkZKBr9ewdhH87n1RjpMoIyXOZ4s0LwFNnUNjCKZ2YFo+MNkYaSDzJjJchmLAz0+
+	CKP21VxN/3jiEmzcSPUQf5dSaEmFfKjCreERwm3ja0rb4/Rt/jqeHkDe8s3Jyw==
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 31/75] backports: add virtio_reset_device
-Date: Fri, 28 Jun 2024 01:47:17 +0200
-Message-ID: <20240627234808.1253337-32-hauke@hauke-m.de>
+Cc: Felix Fietkau <nbd@nbd.name>,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 32/75] headers: backport napi add functions
+Date: Fri, 28 Jun 2024 01:47:18 +0200
+Message-ID: <20240627234808.1253337-33-hauke@hauke-m.de>
 In-Reply-To: <20240627234808.1253337-1-hauke@hauke-m.de>
 References: <20240627234808.1253337-1-hauke@hauke-m.de>
 Precedence: bulk
@@ -49,37 +50,46 @@ List-Subscribe: <mailto:backports+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4W9FdW6zCTz9slL
+X-Rspamd-Queue-Id: 4W9FdX2gKbz9srj
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Felix Fietkau <nbd@nbd.name>
 
-We need this for hwsim.
+Deal with the removed weight argument
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+[Move functions to end of file]
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/virtio.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
- create mode 100644 backport/backport-include/linux/virtio.h
+ backport/backport-include/linux/netdevice.h | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/backport/backport-include/linux/virtio.h b/backport/backport-include/linux/virtio.h
-new file mode 100644
-index 00000000..98c84491
---- /dev/null
-+++ b/backport/backport-include/linux/virtio.h
-@@ -0,0 +1,13 @@
-+#ifndef __BACKPORT_LINUX_VIRTIO_H
-+#define __BACKPORT_LINUX_VIRTIO_H
-+#include_next <linux/virtio.h>
-+
-+#if LINUX_VERSION_IS_LESS(5,17,0)
-+#include <linux/virtio_config.h>
-+static inline void virtio_reset_device(struct virtio_device *dev)
+diff --git a/backport/backport-include/linux/netdevice.h b/backport/backport-include/linux/netdevice.h
+index 2523cfed..d7504531 100644
+--- a/backport/backport-include/linux/netdevice.h
++++ b/backport/backport-include/linux/netdevice.h
+@@ -200,4 +200,22 @@ static inline int LINUX_BACKPORT(netif_rx)(struct sk_buff *skb)
+ #define netif_rx LINUX_BACKPORT(netif_rx)
+ #endif /* < 5.18.0 */
+ 
++#if LINUX_VERSION_IS_LESS(6,1,0)
++static inline void backport_netif_napi_add(struct net_device *dev,
++					   struct napi_struct *napi,
++					   int (*poll)(struct napi_struct *, int))
 +{
-+	dev->config->reset(dev);
++	netif_napi_add(dev, napi, poll, NAPI_POLL_WEIGHT);
 +}
-+#endif
++#define netif_napi_add LINUX_BACKPORT(netif_napi_add)
 +
-+#endif /* __BACKPORT_LINUX_VIRTIO_H */
++static inline void backport_netif_napi_add_tx(struct net_device *dev,
++					      struct napi_struct *napi,
++					      int (*poll)(struct napi_struct *, int))
++{
++	netif_tx_napi_add(dev, napi, poll, NAPI_POLL_WEIGHT);
++}
++#define netif_napi_add_tx LINUX_BACKPORT(netif_napi_add_tx)
++#endif /* < 6.1 */
++
+ #endif /* __BACKPORT_NETDEVICE_H */
 -- 
 2.45.2
 
