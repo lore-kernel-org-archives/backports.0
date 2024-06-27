@@ -1,45 +1,45 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138651A2FD6
-	for <backports@vger.kernel.org>; Thu, 27 Jun 2024 23:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D371A3BC1
+	for <backports@vger.kernel.org>; Thu, 27 Jun 2024 23:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719532140; cv=none; b=P0HHU1akWpGGvmKRwpb2CkQ4pjf8aYVwJXVBxnq3WQclW3zC5GnTPkl+fYNJbXQP2ytwlkhe1an2UE9VFr/1Q3k+UtoEZ2dxeWIWGgxl/bvsfjoFfCUQVFTXGAfF9D6t5ewriJKsVFI2sf18wPYhkRByao0YADicI/U4qoNGmvg=
+	t=1719532140; cv=none; b=Rb0VK2YkvHvQGj4lq5GQnBTbkoTpbE7HfwxTxvnRNcoJ0MJoyRDcrJZXiWdXbeSLrK0W1LJ8a3Lp6zodYT6i+dBXxQfB95edvt4u5GOdY3iKpuT8G/+QYIUwL9cgldI24JavmXRFY83/s8tM7x5er0vZrgNjDvZCmsRgwNtOP7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719532140; c=relaxed/simple;
-	bh=T6ufCZvc33fjvQ4d/EyiSH4IL4fSPqv6KEUcr9MV1r0=;
+	bh=RFHV63RygNAYeB52eC7PkvUGpPwYi+x+dt1HHxY0fFc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nof5QLY3OyK/RsM8s3ZWoJnjv3sVfN3Q10KgJAXlmKMX6c3LdwNg+xZ/h4aoqpBgdG3np8xiRXba/RY3pkAU8D6u+02RMBa6gJEzLD4DcnA873YsagJWMfl6vQoYbQZtZAbrIyLoP3E5QYsCcKXcn2IqBf1jy41tnN61l/10tgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=R5dMvU/5; arc=none smtp.client-ip=80.241.56.172
+	 MIME-Version; b=TQUT4uF5DcXrvlz9i6hLEuLJEOWUqXFK75bU1Upd3a4xkBtKSZjRAgzqjwqhkJrs8JhFZqd9aFwJQh+IMYSSuio8BhrnNQVT49odNo/GHXs08k/8MkOr6OGrrG8xvun2odSL2pgV6DZ60FaJQuaN6nVjwzT55HlV/g7WUeW//mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=xB2DxZEj; arc=none smtp.client-ip=80.241.56.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="R5dMvU/5"
+	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="xB2DxZEj"
 Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4W9Fdg4qMtz9srp;
-	Fri, 28 Jun 2024 01:48:55 +0200 (CEST)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4W9Fdh11zMz9scH;
+	Fri, 28 Jun 2024 01:48:56 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-	t=1719532135;
+	t=1719532136;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Oy8pk31SWPFX6/Iw0jrqtwgS/lsphTz/M1t+RuTR2SM=;
-	b=R5dMvU/5iSfVYUlrH2cC6vMCcbzVseas6q8qpK9984og3a6GaBNfUTIdTWq2OjqJksvBiY
-	eK74xwq3L65zleLwNR6eu/ncF+jFjXKqBFGH8KufUH0bb/QCIs/yDvGf4Xlwl76Xg/wmmv
-	7bFTGrDSI+3rMUgODdwdEC38wP0u8oSj53VWdxiCMyVPLnsdDshfPVozn5P9kwgZFnHB2Z
-	tcLXm4lQoeTi4RBekacE34oxG1Ym2G/b5zYR0l3unqw1tySjQYdL+wBNpf38LIADPa1NI+
-	pETwwV5Nt9isrG7St/vshBAcZjbAqvcntERZsVzoOGx8RA2fiY3nhGQYegZ5iQ==
+	bh=X9pS7IZO/T0ldaCFKyef4Lo5/0u1U7quMGyyPFhs/Ck=;
+	b=xB2DxZEjdehD5eUpCotxcxl/J4YhNkre5BVGUFgA6psBtaUqIv0xLs9zKA38qUdnzCf9+L
+	wtB560MogU5y4IPKOdlS/oMl3veQ8wKu0x7yUlQsoxJ304k9Sa0ceXGA8jv54bnhZQjz1Z
+	ygud/2k0j7ay2tl5m+uZJCTBMmQs2nZRHorlRhnZmsb+llNlpdc+AlQ1Uj68zxaoZs4eNG
+	N1fsnjqucJKGiXjf0Nf8bm3kQzNaFlwYzbBNUGkdCipoFl/tUKob3z6AssIddFmr07qCE9
+	hf2L2YmqSvUgeqH5akQYGTiIQrVlP8HL976/Q67qSHfcLYP8waI0rd7EBfMOmw==
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 60/75] backports: Add sysfs_emit_at()
-Date: Fri, 28 Jun 2024 01:47:46 +0200
-Message-ID: <20240627234808.1253337-61-hauke@hauke-m.de>
+Subject: [PATCH 62/75] header: Add linux/minmax.h
+Date: Fri, 28 Jun 2024 01:47:48 +0200
+Message-ID: <20240627234808.1253337-63-hauke@hauke-m.de>
 In-Reply-To: <20240627234808.1253337-1-hauke@hauke-m.de>
 References: <20240627234808.1253337-1-hauke@hauke-m.de>
 Precedence: bulk
@@ -50,80 +50,28 @@ List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The sysfs_emit_at() function is used by mhi host driver.
-The code was copied from mainline Linux kernel.
+linux/minmax.h was extracted from linux/kernel.h, handle this on older
+kernel versions.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/sysfs.h |  9 ++++++++
- backport/compat/backport-5.10.c         | 28 +++++++++++++++++++++++++
- 2 files changed, 37 insertions(+)
+ backport/backport-include/linux/minmax.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+ create mode 100644 backport/backport-include/linux/minmax.h
 
-diff --git a/backport/backport-include/linux/sysfs.h b/backport/backport-include/linux/sysfs.h
-index 7126fb03..5fd25c9c 100644
---- a/backport/backport-include/linux/sysfs.h
-+++ b/backport/backport-include/linux/sysfs.h
-@@ -10,15 +10,24 @@
- 
- #if LINUX_VERSION_IS_LESS(5,10,0)
- #define sysfs_emit LINUX_BACKPORT(sysfs_emit)
-+#define sysfs_emit_at LINUX_BACKPORT(sysfs_emit_at)
- #ifdef CONFIG_SYSFS
- __printf(2, 3)
- int sysfs_emit(char *buf, const char *fmt, ...);
-+__printf(3, 4)
-+int sysfs_emit_at(char *buf, int at, const char *fmt, ...);
- #else /* CONFIG_SYSFS */
- __printf(2, 3)
- static inline int sysfs_emit(char *buf, const char *fmt, ...)
- {
- 	return 0;
- }
+diff --git a/backport/backport-include/linux/minmax.h b/backport/backport-include/linux/minmax.h
+new file mode 100644
+index 00000000..7830c9ce
+--- /dev/null
++++ b/backport/backport-include/linux/minmax.h
+@@ -0,0 +1,7 @@
++#include <linux/version.h>
 +
-+__printf(3, 4)
-+static inline int sysfs_emit_at(char *buf, int at, const char *fmt, ...)
-+{
-+	retur 0;
-+}
- #endif /* CONFIG_SYSFS */
- #endif /* < 5.10 */
- 
-diff --git a/backport/compat/backport-5.10.c b/backport/compat/backport-5.10.c
-index c3a7b7d3..c3b8e336 100644
---- a/backport/compat/backport-5.10.c
-+++ b/backport/compat/backport-5.10.c
-@@ -79,3 +79,31 @@ int sysfs_emit(char *buf, const char *fmt, ...)
- 	return len;
- }
- EXPORT_SYMBOL_GPL(sysfs_emit);
-+
-+/**
-+ *	sysfs_emit_at - scnprintf equivalent, aware of PAGE_SIZE buffer.
-+ *	@buf:	start of PAGE_SIZE buffer.
-+ *	@at:	offset in @buf to start write in bytes
-+ *		@at must be >= 0 && < PAGE_SIZE
-+ *	@fmt:	format
-+ *	@...:	optional arguments to @fmt
-+ *
-+ *
-+ * Returns number of characters written starting at &@buf[@at].
-+ */
-+int sysfs_emit_at(char *buf, int at, const char *fmt, ...)
-+{
-+	va_list args;
-+	int len;
-+
-+	if (WARN(!buf || offset_in_page(buf) || at < 0 || at >= PAGE_SIZE,
-+		 "invalid sysfs_emit_at: buf:%p at:%d\n", buf, at))
-+		return 0;
-+
-+	va_start(args, fmt);
-+	len = vscnprintf(buf + at, PAGE_SIZE - at, fmt, args);
-+	va_end(args);
-+
-+	return len;
-+}
-+EXPORT_SYMBOL_GPL(sysfs_emit_at);
++#if LINUX_VERSION_IS_GEQ(5,10,0)
++#include_next <linux/minmax.h>
++#else
++#include <linux/kernel.h>
++#endif
 -- 
 2.45.2
 
