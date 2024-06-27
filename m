@@ -1,26 +1,26 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771201A38F5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B771A3BB2
 	for <backports@vger.kernel.org>; Thu, 27 Jun 2024 23:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719532141; cv=none; b=PP9HXDWImbvy5wtUNQ43Hi++MsddkWpUcom+60isTGYKXHv+K0e56FN9nZuF10M0O3StO0ZIfSeVzKSHMAEg+lNIC8tTr/UXwMpn8aigUeZKZCzav5kXwQ2l+Ky75w6lezTJO/ei5yEqgkayA1VTCr9Q0KfjtDMENWsiOjd1RI8=
+	t=1719532141; cv=none; b=RWwUOyvDUMhqWy0UlzOYykR0DoRSnBsWnHtz1QOQleQbr4F4BsKE8q5Sl3iaxKndBpLzzK6J4+FxqD4LBSWnramPQjMx7AEQjADoyoimrLdshwctZc3LsHSIlvYMTIbFvC42r7vlG54dE9PlG8dfZ8CVv0/meDu/3BEWL+g8GxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719532141; c=relaxed/simple;
-	bh=U3BKB/gZHypdbexzXdu16bhfBu0jxH37Nun6u0MUdPw=;
+	bh=wEcKQhpCgHj3+N+vxrxN6iFL7yD7UaChwAEl61iJU1o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BxX1GgYNRRA1mHszt18YjbXj+K/f0WfsRJ/sa3SpS2dl54eJsT2ZqmBjAtq0LiJPqdGqoPoEBTL4B2aZMBTzeMVSoxWfg0uXIXyAVW9x5xVJ8JLzpFK8RZtB5RooAHRkb3Ay0kpd+MlqrmcXzqCNvpyY0DEs+BCilHtU62fYvDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=SMVyRLkj; arc=none smtp.client-ip=80.241.56.151
+	 MIME-Version; b=reR4Z38pRUVe1SKSXfSCcKK04hOFb8vxPTkKXNZhYCRd0mD+Mb7y5eGcaw3WKnBmaj8+UIvddiFjlaCQ7IzKqV8eiVloM6WDXXLWTxl4JDFeTbQSd2Zu2eshWXjM2mUcFmZ8G5oxmbXAAVH4CX4ea5qBqYcZZrslPStyBryQRkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=TdiOh7+I; arc=none smtp.client-ip=80.241.56.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="SMVyRLkj"
+	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="TdiOh7+I"
 Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4W9Fdh2t6vz9spB;
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4W9Fdh6C2Xz9sy9;
 	Fri, 28 Jun 2024 01:48:56 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
 	t=1719532136;
@@ -28,18 +28,18 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3l+F6MQal6eTwMKLor/Y0QZUNjK++qvqEqZQNMsunX4=;
-	b=SMVyRLkj0+hs4hWT+FOpZMZ6pnfs0n3kOJ9UNUtK0NGB/++fX/cFBn68HUmUOSgk6fkvhR
-	8OITRiaIDmqhHK8veU15fdpML7MHVGjb67ZCBpSmNx5awf3T/H1OhaASTlxl2mAXaEPqxP
-	HYVyA92WIaI14dSBFtypW+R62HPqAxbbFOCa0mlcdr4MEEX6M9i2g6hLrbECyOYSPW+GVL
-	Aq2vZ9fYQWs7QKppBgCXz39o9tON/V9sI2t61LVBBNfOvPc2WnPxKS+hBrMadBC097PqFQ
-	IthYwcQl6xI2AZRGiQ3dlJhtblliLCEAlAHgb1zupdlZ5wsuo/27CUiw7sK0AA==
+	bh=jxM6LG6zChVo9CXyrqONsifZEKBBPxpGogkHPKtgN88=;
+	b=TdiOh7+IR6ZB+MS45/lGNtD/UHxCLZvZkoA3nZU7NCq7Uv3ssWc2jXPhEmaDSGNW++XeLy
+	UZCcCIPGDqMBjgHoJZFH4BZAxeH1DHvQ3AxLLmA6C5CCCcCTsG/2FWW0xvJZpWJnwSlN48
+	Z+4/3Dxky8DHwqD0yUur4XGvzOo/+eAg3NDSlbdYDIKP30EU/U6X0uPXXMH49W8WJh2SYm
+	ob+JrxXfX/hB7DwWHGfOjwDx/yGPdR/X0fX5j0ecKILfhFyjUzFYA3NOvgvMWEXPF4ey7m
+	8atIAeeTVY0/C0gNOu9BYoQG/sd/W6uR9VPcdBvpeRl1CSo0ZfpVesrNfTxCIA==
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 63/75] header: Add pm_runtime_resume_and_get
-Date: Fri, 28 Jun 2024 01:47:49 +0200
-Message-ID: <20240627234808.1253337-64-hauke@hauke-m.de>
+Subject: [PATCH 65/75] header Add SENSOR_DEVICE_ATTR_RO
+Date: Fri, 28 Jun 2024 01:47:51 +0200
+Message-ID: <20240627234808.1253337-66-hauke@hauke-m.de>
 In-Reply-To: <20240627234808.1253337-1-hauke@hauke-m.de>
 References: <20240627234808.1253337-1-hauke@hauke-m.de>
 Precedence: bulk
@@ -50,54 +50,35 @@ List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This is used by the wlcore and wil6210 driver.
-
-Code was copied from upstream Linux kernel.
+These new attributes are used by the mt76 driver.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/pm_runtime.h | 31 ++++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 backport/backport-include/linux/pm_runtime.h
+ backport/backport-include/linux/hwmon-sysfs.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+ create mode 100644 backport/backport-include/linux/hwmon-sysfs.h
 
-diff --git a/backport/backport-include/linux/pm_runtime.h b/backport/backport-include/linux/pm_runtime.h
+diff --git a/backport/backport-include/linux/hwmon-sysfs.h b/backport/backport-include/linux/hwmon-sysfs.h
 new file mode 100644
-index 00000000..5b4b75e1
+index 00000000..84a4e149
 --- /dev/null
-+++ b/backport/backport-include/linux/pm_runtime.h
-@@ -0,0 +1,31 @@
-+#ifndef __BACKPORT_PM_RUNTIME_H
-+#define __BACKPORT_PM_RUNTIME_H
-+#include_next <linux/pm_runtime.h>
-+#include <linux/version.h>
++++ b/backport/backport-include/linux/hwmon-sysfs.h
+@@ -0,0 +1,15 @@
++#ifndef __BACKPORT_LINUX_HWMON_SYSFS_H
++#define __BACKPORT_LINUX_HWMON_SYSFS_H
++#include_next <linux/hwmon-sysfs.h>
 +
-+#if LINUX_VERSION_IS_LESS(5,10,0)
-+#define pm_runtime_resume_and_get LINUX_BACKPORT(pm_runtime_resume_and_get)
++#ifndef SENSOR_DEVICE_ATTR_RO
++#define SENSOR_DEVICE_ATTR_RO(_name, _func, _index)		\
++	SENSOR_DEVICE_ATTR(_name, 0444, _func##_show, NULL, _index)
++#endif
 +
-+/**
-+ * pm_runtime_resume_and_get - Bump up usage counter of a device and resume it.
-+ * @dev: Target device.
-+ *
-+ * Resume @dev synchronously and if that is successful, increment its runtime
-+ * PM usage counter. Return 0 if the runtime PM usage counter of @dev has been
-+ * incremented or a negative error code otherwise.
-+ */
-+static inline int pm_runtime_resume_and_get(struct device *dev)
-+{
-+	int ret;
++#ifndef SENSOR_DEVICE_ATTR_RW
++#define SENSOR_DEVICE_ATTR_RW(_name, _func, _index)		\
++	SENSOR_DEVICE_ATTR(_name, 0644, _func##_show, _func##_store, _index)
++#endif
 +
-+	ret = __pm_runtime_resume(dev, RPM_GET_PUT);
-+	if (ret < 0) {
-+		pm_runtime_put_noidle(dev);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+#endif /* < 5.10 */
-+
-+#endif /* __BACKPORT_PM_RUNTIME_H */
-\ No newline at end of file
++#endif /* __BACKPORT_LINUX_HWMON_SYSFS_H */
 -- 
 2.45.2
 
