@@ -1,26 +1,26 @@
 Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B937A1A38FD
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96321A38FE
 	for <backports@vger.kernel.org>; Thu, 27 Jun 2024 23:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719532137; cv=none; b=L/zn3iA8k9fVlRW/Wk2VqqPqU+zKDQTsG52/zgquCfX0WXMHiFarm1HLaGraM7thJ1xeBVqp0xbl0Sy01p9LgIMcvgBorMvu1SiGnPlLFylKLVON96hJEaDJjVEhD1YT41/KIx8pUSTF4Eib4pxGAw5aaWyK0V9dkwz4gF+4s2g=
+	t=1719532137; cv=none; b=TLeoBaRHCvRWFu17iBU0bncmoWU+K4ieAZ1oVJNZixk5Zan+SllltpG79O4J03SRr9tJDP5+YGy3MFre1fHRyWuO1+jMGgKCmCaXWe/CQGf2ihonJ3x7C6rNrAT74WIReXnH1K7S+O9sdwdzGBfhFbKrddFlC/9wTPODNWvB9Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719532137; c=relaxed/simple;
-	bh=JuxhMgNBFNeylPhuP4MI7m9GGyjwqAg6z1azHENTugc=;
+	bh=1m5IhTb+HQ51Ldr0wGHzamAhWe8jlaDFAUT4+FJlehc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l1e5HTRIbUciSMMSP0IEYiTkGlAX+7dUYLS1305J4OUQf61GPfTVROFlnpKAsMZwPhD9zMdP9YcxIwiwB15pe/BL7bt7C5+RpyQ4U7vQRvJUsd2aeHuoMf71pn6uahKk8r0Q4Ghjqi45E6y+jOzQH5gcsGQpD+0Wic9LBbWz9/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=cZoL2VXG; arc=none smtp.client-ip=80.241.56.172
+	 MIME-Version; b=a3YJkgvRhLtQpdtgTQDXXNug0Wms9K61zxZ77k+I0L91fdYA8SPk76byBOwVn1c9OGkw3ih3fYB22te+c6UwBNa1vKf59IO5aALAUgHX4k5NFxIwZAZBOaPVgEQo9W9VXAcvb/I1h7avuRjZekR4JjM3glXOi/QlCgUXX4lh8No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=Hb40sPL9; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="cZoL2VXG"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="Hb40sPL9"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4W9FdW3w4Rz9srM;
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4W9FdW6zCTz9slL;
 	Fri, 28 Jun 2024 01:48:47 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
 	t=1719532127;
@@ -28,18 +28,18 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UeFDoBNL7BCAgWfogBsUJZN8td5YGU2rIVpwadBtaBY=;
-	b=cZoL2VXGQSbbtwGG7J9Dg2sdF/BE1y24Hc7yWMBhgdh/KwLzHnQDF9qrjv3K7rQexxW2jv
-	3e3obkQEgAblVwW3FG4o0Npf1lnsSrM0xmsw7PQtjxJm0ZDdzpH40eklf46O0F6jo6iWtc
-	uv3cEkXcju+NuAffyuBF00DoKe6ibksPWli8R4mAkCl9YbElaZ/jPIHOhSw3xcS3ofMj7m
-	0OV82noVSaYUXYrSNtHuY6io/2K7ziCNnt9xQErfdy/mLS0R5koc+Z7cb85R18qxiVcfHy
-	SjmUEv2Wzrs6RWwPnvbvsT915m5LJkJiSiQjPnOjqD1jUimdpF9YQ7RWTlkjrg==
+	bh=EGgNnAJ88Igmn8hLNnvAPjOer7j0E+VyiWND9X+2Mcc=;
+	b=Hb40sPL9dZzo/57bn5dNdRwq9kyahes3D3sM72r1i1O75xVnLf20pC9BX04UcYoyqL3sBE
+	ey/Fd1vph8+/5vz8MKgEbZdVhpjwT4jb3KfmMZNlb8DiENg5I4+8QiM/eErZV+oG5BISsx
+	qFkZwcZR1iauyj9LFYqOMoWraITCRZxbbryLtevwD3Q7G/8+Z6ons3BhVeAxe9d7zLtl9Z
+	xRm1RW/DU9Eeqfqm0lunmY2ZZ/DhTudJBFXmOh0dgslMB6U8gXiDyVM5wNAAoR2XDf6Je7
+	Rf9CzXdbZaZ763w/hI7ZF8UAYzlJlo/ATK5Lh8tLxxuQleWSYyHSMfPo5zN6ZA==
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 29/75] backports: add mul_u64_u64_div_u64()
-Date: Fri, 28 Jun 2024 01:47:15 +0200
-Message-ID: <20240627234808.1253337-30-hauke@hauke-m.de>
+Subject: [PATCH 31/75] backports: add virtio_reset_device
+Date: Fri, 28 Jun 2024 01:47:17 +0200
+Message-ID: <20240627234808.1253337-32-hauke@hauke-m.de>
 In-Reply-To: <20240627234808.1253337-1-hauke@hauke-m.de>
 References: <20240627234808.1253337-1-hauke@hauke-m.de>
 Precedence: bulk
@@ -49,98 +49,37 @@ List-Subscribe: <mailto:backports+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4W9FdW6zCTz9slL
 
 From: Johannes Berg <johannes.berg@intel.com>
 
+We need this for hwsim.
+
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- backport/backport-include/linux/math64.h | 11 ++++++
- backport/compat/Makefile                 |  1 +
- backport/compat/backport-5.9.c           | 45 ++++++++++++++++++++++++
- 3 files changed, 57 insertions(+)
- create mode 100644 backport/backport-include/linux/math64.h
- create mode 100644 backport/compat/backport-5.9.c
+ backport/backport-include/linux/virtio.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+ create mode 100644 backport/backport-include/linux/virtio.h
 
-diff --git a/backport/backport-include/linux/math64.h b/backport/backport-include/linux/math64.h
+diff --git a/backport/backport-include/linux/virtio.h b/backport/backport-include/linux/virtio.h
 new file mode 100644
-index 00000000..6aea9c9e
+index 00000000..98c84491
 --- /dev/null
-+++ b/backport/backport-include/linux/math64.h
-@@ -0,0 +1,11 @@
-+#ifndef __BACKPORT_LINUX_MATH64_H
-+#define __BACKPORT_LINUX_MATH64_H
-+#include_next <linux/math64.h>
-+#include <linux/version.h>
++++ b/backport/backport-include/linux/virtio.h
+@@ -0,0 +1,13 @@
++#ifndef __BACKPORT_LINUX_VIRTIO_H
++#define __BACKPORT_LINUX_VIRTIO_H
++#include_next <linux/virtio.h>
 +
-+#if LINUX_VERSION_IS_LESS(5,9,0)
-+#define mul_u64_u64_div_u64 LINUX_BACKPORT(mul_u64_u64_div_u64)
-+extern u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 c);
-+#endif /* < 5.9 */
-+
-+#endif /* __BACKPORT_LINUX_MATH64_H */
-diff --git a/backport/compat/Makefile b/backport/compat/Makefile
-index c2b89176..698f14f5 100644
---- a/backport/compat/Makefile
-+++ b/backport/compat/Makefile
-@@ -11,6 +11,7 @@ compat-$(CPTCFG_KERNEL_4_18) += backport-4.18.o
- compat-$(CPTCFG_KERNEL_5_2) += backport-5.2.o backport-genetlink.o
- compat-$(CPTCFG_KERNEL_5_3) += backport-5.3.o
- compat-$(CPTCFG_KERNEL_5_5) += backport-5.5.o
-+compat-$(CPTCFG_KERNEL_5_9) += backport-5.9.o
- compat-$(CPTCFG_KERNEL_5_10) += backport-5.10.o
- compat-$(CPTCFG_KERNEL_5_11) += backport-5.11.o
- compat-$(CPTCFG_KERNEL_5_13) += backport-5.13.o
-diff --git a/backport/compat/backport-5.9.c b/backport/compat/backport-5.9.c
-new file mode 100644
-index 00000000..54d1802e
---- /dev/null
-+++ b/backport/compat/backport-5.9.c
-@@ -0,0 +1,45 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/export.h>
-+#include <linux/kernel.h>
-+#include <linux/math64.h>
-+
-+u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 c)
++#if LINUX_VERSION_IS_LESS(5,17,0)
++#include <linux/virtio_config.h>
++static inline void virtio_reset_device(struct virtio_device *dev)
 +{
-+	u64 res = 0, div, rem;
-+	int shift;
-+
-+	/* can a * b overflow ? */
-+	if (ilog2(a) + ilog2(b) > 62) {
-+		/*
-+		 * (b * a) / c is equal to
-+		 *
-+		 *      (b / c) * a +
-+		 *      (b % c) * a / c
-+		 *
-+		 * if nothing overflows. Can the 1st multiplication
-+		 * overflow? Yes, but we do not care: this can only
-+		 * happen if the end result can't fit in u64 anyway.
-+		 *
-+		 * So the code below does
-+		 *
-+		 *      res = (b / c) * a;
-+		 *      b = b % c;
-+		 */
-+		div = div64_u64_rem(b, c, &rem);
-+		res = div * a;
-+		b = rem;
-+
-+		shift = ilog2(a) + ilog2(b) - 62;
-+		if (shift > 0) {
-+			/* drop precision */
-+			b >>= shift;
-+			c >>= shift;
-+			if (!c)
-+				return res;
-+		}
-+	}
-+
-+	return res + div64_u64(a * b, c);
++	dev->config->reset(dev);
 +}
-+EXPORT_SYMBOL_GPL(mul_u64_u64_div_u64);
++#endif
++
++#endif /* __BACKPORT_LINUX_VIRTIO_H */
 -- 
 2.45.2
 
