@@ -1,26 +1,26 @@
 Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79CFA1A2FDB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697EB1A38F5
 	for <backports@vger.kernel.org>; Thu, 27 Jun 2024 23:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719532139; cv=none; b=M3FsiJwQyuvhJUQK+zmMVq7qIV1ByZgODaGLfh5BXO4LVVnlb1mquuTwENgnSifZhNIzA/1cQQuz7okqarXo2c+AXaUV8oUNBsE2gVi4XgA1yO8Qc3vYLC9UZjcDhlSdSUz3Lbj5lzxNrFnNN731L5JxpFFySYKh5ezEVM7Aaus=
+	t=1719532139; cv=none; b=Trr6G0Nfjm+WFyw/LF9Z00vglpuE2GGt77SfqAyldk3K8QAQhsMc5i3BhYvOLFGIivZxS6eSDIJHITBHVZM2U3/h5nOCbMx9yoMVc6ISmZEJgsR0vly+teY4S6oMyUw/0IQmepqft7O61YRDf4yYtJlkE1X6kAAT7+ewuooU/8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719532139; c=relaxed/simple;
-	bh=zh87wg4QnUyk/G6bZDktH7CsK3rSPeWMzzoJkc5VtI8=;
+	bh=pfK7MmdD3i13fGtbQOxdLWVCVnfCJ6/WUYBvsm3q5jY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NaNWagmflFVTeSuS3gqeADzy/FkOch6Gin5/LPhL8wkojhScQR2AzIedh38KAnCoKVt9jUcV6LA5QRuWDFEfFz4Rim3ULCGRSwrG8hQtOHqdoixneIEqmZC/e/tHy1WK63R6vSRmdHxWytYT+7yt8yHwpqZaNlg0VGdJJp+rGBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=uhn/hsD4; arc=none smtp.client-ip=80.241.56.172
+	 MIME-Version; b=FVdg0Qi2jYYfU14xswG7GKAzp3PlK7l0rPZAvldqHwE4MuqGAwd6IY8ALbMpTB59bIY+UiVrUIFyWYl8Xqf8mUH1+fqgmMyOQeae/pXhYqaH4EAAzN6fZ4jmmB7Xd4iX7AGq3vAcyZlzSljJdYaI9f5Ob5YOMKnrT6dxJyKQQ8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=OGOA4CVb; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="uhn/hsD4"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="OGOA4CVb"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4W9Fdd6xLCz9ssZ;
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4W9Fdd596jz9spb;
 	Fri, 28 Jun 2024 01:48:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
 	t=1719532133;
@@ -28,18 +28,18 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gVAdrkTa0CjWhefm0ifOYX6z8mKgBa/9a04if7fUxV0=;
-	b=uhn/hsD4t8oRHF/xxNww2Gk5D/qIsfcqlOr+Ar1zwwZ9774/bDEoD7veaC4Ao+UJBirzWj
-	3Tcn+E39Pr+5g1XYjWqjjdrLl+96i3bVViQh759ACshvo18N1fPWHteGk8IER1HHJ2fOoC
-	54crnSAsBjjVk/f9vG6A7SnXi6neE0VkyqFSn8AXfEebbx92GlNM25a9rrdqX9HldBO+kn
-	D6ED/Ixt8TmDpUoZ/S71JxY0gk8UoJL26pTV7DzKrZOrZKIYyIFqIoZUGgT5qXY42baiA5
-	fjA6m41T+YapHgxYotNxly7rFRZhx7gR9uQewWBYKxPrmrfCQt5OH58kCU9JCQ==
+	bh=2XLyS3sXQnIRq2RWypXi50C87IPGl8SIrWlmw3fWa2k=;
+	b=OGOA4CVbOlzampdoAKjxaIeqVusILq7h2KCR5a1Kd1DMwnvB31XAz1AgEYTlRpT8CE/bmg
+	rmXNk4e/eVygqdu06w5kHpfOL7pDrKkbAqvrWkBLtu3XAH8pMjmiOOPlVH2iZ2QztGPjfA
+	EsVgILcEV2lml2f+TgqKn+kjzGjR+F3x8wY7EU19U7ID8AI6WbVrRpZzgNirshm8Fenech
+	s8zQGcwSWMYXJZmOXwH/AbXPCZjz5d56lWKF1AfjjSBTfIJEADmaZ8GMvj5yyTuqoNg6uM
+	9EpidqfjvHWOUx5kfMWZEPQbibJFD2I1QuDnPtQBIWoG4XhSmZR/FNU7h3EGsg==
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 53/75] patch: Adapt struct pcpu_sw_netstats change to u64_stats_t
-Date: Fri, 28 Jun 2024 01:47:39 +0200
-Message-ID: <20240627234808.1253337-54-hauke@hauke-m.de>
+Subject: [PATCH 52/75] patches: Adapt struct msi_desc reorganization
+Date: Fri, 28 Jun 2024 01:47:38 +0200
+Message-ID: <20240627234808.1253337-53-hauke@hauke-m.de>
 In-Reply-To: <20240627234808.1253337-1-hauke@hauke-m.de>
 References: <20240627234808.1253337-1-hauke@hauke-m.de>
 Precedence: bulk
@@ -49,54 +49,38 @@ List-Subscribe: <mailto:backports+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4W9Fdd596jz9spb
 
-In kernel 6.0 the struct pcpu_sw_netstats which contains the counters
-for network devices changes from attributes of type u64 to u64_stats_t.
-The new types need special functions, use the old arithmetic operations
-on older kernel versions.
+In kernel 5.17 the anonymous struct in struct msi_desc was extracted
+into a own structure. Make the backports code use the old structure on
+older kernel versions.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- patches/0111-pcpu_sw_netstats.patch | 30 +++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 patches/0111-pcpu_sw_netstats.patch
+ patches/0110-msi-pci.patch | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 patches/0110-msi-pci.patch
 
-diff --git a/patches/0111-pcpu_sw_netstats.patch b/patches/0111-pcpu_sw_netstats.patch
+diff --git a/patches/0110-msi-pci.patch b/patches/0110-msi-pci.patch
 new file mode 100644
-index 00000000..70f3fad6
+index 00000000..128922e6
 --- /dev/null
-+++ b/patches/0111-pcpu_sw_netstats.patch
-@@ -0,0 +1,30 @@
-+--- a/drivers/net/usb/usbnet.c
-++++ b/drivers/net/usb/usbnet.c
-+@@ -334,8 +334,13 @@ void usbnet_skb_return (struct usbnet *d
-+ 		skb->protocol = eth_type_trans (skb, dev->net);
++++ b/patches/0110-msi-pci.patch
+@@ -0,0 +1,14 @@
++--- a/drivers/net/wireless/ath/ath11k/pci.c
+++++ b/drivers/net/wireless/ath/ath11k/pci.c
++@@ -451,7 +451,11 @@ static int ath11k_pci_alloc_msi(struct a
++ 	pci_read_config_dword(pci_dev, pci_dev->msi_cap + PCI_MSI_ADDRESS_LO,
++ 			      &ab->pci.msi.addr_lo);
 + 
-+ 	flags = u64_stats_update_begin_irqsave(&stats64->syncp);
-++#if LINUX_VERSION_IS_GEQ(6,0,0)
-+ 	u64_stats_inc(&stats64->rx_packets);
-+ 	u64_stats_add(&stats64->rx_bytes, skb->len);
+++#if LINUX_VERSION_IS_GEQ(5,17,0)
++ 	if (msi_desc->pci.msi_attrib.is_64) {
 ++#else
-++	stats64->rx_packets++;
-++	stats64->rx_bytes += skb->len;
+++	if (msi_desc->msi_attrib.is_64) {
 ++#endif
-+ 	u64_stats_update_end_irqrestore(&stats64->syncp, flags);
-+ 
-+ 	netif_dbg(dev, rx_status, dev->net, "< rx, len %zu, type 0x%x\n",
-+@@ -1253,8 +1258,13 @@ static void tx_complete (struct urb *urb
-+ 		unsigned long flags;
-+ 
-+ 		flags = u64_stats_update_begin_irqsave(&stats64->syncp);
-++#if LINUX_VERSION_IS_GEQ(6,0,0)
-+ 		u64_stats_add(&stats64->tx_packets, entry->packets);
-+ 		u64_stats_add(&stats64->tx_bytes, entry->length);
-++#else
-++		stats64->tx_packets += entry->packets;
-++		stats64->tx_bytes += entry->length;
-++#endif
-+ 		u64_stats_update_end_irqrestore(&stats64->syncp, flags);
++ 		pci_read_config_dword(pci_dev, pci_dev->msi_cap + PCI_MSI_ADDRESS_HI,
++ 				      &ab->pci.msi.addr_hi);
 + 	} else {
-+ 		dev->net->stats.tx_errors++;
 -- 
 2.45.2
 
