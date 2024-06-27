@@ -1,26 +1,26 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC2B1A3BB9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98961A2FB5
 	for <backports@vger.kernel.org>; Thu, 27 Jun 2024 23:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719532140; cv=none; b=eS80azcF37Z1odmr56T/KocCbjUgUQP0APQ1My6l7XNNwOrEDmt9ZZm1uL9YKCu32hh/H4s8tU4eFlI7liN+wd4RNT6UsQbnXjVcMVPvHE14f+Rf+kG22BSsOLNo3Qh57Ex4dgs7tAPc0ssti8+Kzat5jbNnAHIWtJbAnYLf4Ek=
+	t=1719532140; cv=none; b=WkN07jABjyt9M6iVsdodfl8nwA8EYruQ1PnqMSvzCwXfVVGFM5P7RMs7z8oAlf1xmyCzyGssCZ+3MmYdxXmEwlQ1wo4ttYj3S9tYLLIhY/WAUriAKjYQv7Mhl1kUSrjso+/xs+5j2QoyS8qegvn9g9TzTqSSaFtwk0PQ9UCpMTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719532140; c=relaxed/simple;
-	bh=1wY6m+b8xZrMnte2UUx8xrxt1XAuMLq+DHw6nA3maAE=;
+	bh=AUdsx3I6AAAZhrRjNiZ7Wjg52YU9+MnM1e4kw7RLZkA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CFiPe0NcIUCRVqvo/j33xbeAgOgs74TH9GP/nEn4eYTq78rnyqCVbz57TmSISpMIT3n0CsspWVJs0xMqqh89+8GURPK1g6P802bomM+agYKkhl/9TMGVMmJPvC5tRbt4lZ0Py7A77LeZJswQVdMcfvNWy/Y07W6m3SMbLgtjWzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=i4ixkmWv; arc=none smtp.client-ip=80.241.56.172
+	 MIME-Version; b=ZokM99RfzB3Pw6KT+5L8PRciDNfgiLiZP9j/L0NWoefMBFBs4BMfWA5D/0123cM+Ohzu4v7Z6sGH8pMkuVIiE9Tj+gJBoBJdFuVLqRkQ7tgDs8sWoFaVLDiTBodLolkzJ93fm0Ew9zzd6vNnv2dDLZ04p84Ge7J2Jv2Oya7QxcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=JCff0uoG; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="i4ixkmWv"
+	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="JCff0uoG"
 Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4W9Fdg1bwtz9sps;
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4W9Fdg3FnNz9smq;
 	Fri, 28 Jun 2024 01:48:55 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
 	t=1719532135;
@@ -28,18 +28,18 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Bp6sD75VkyGRM8IqHNOrvTM19foC2/LgmMQZ6pacPM8=;
-	b=i4ixkmWvEDiOpE/LImgNTMC/GYOcvDZxOX4R+1wyON8uYPfljbHieNEIrDSAhInp64H41b
-	POB2P5tyEAlsipQIcbek4cU8XVHNMvKOxRY6YR4XwbXvnUa+uN5lS1BnW0Wbp2txO5vkZJ
-	1OiUCbO9ZF8pSDSN/DJPUPBFPKSTJ1DepqSd+AmcaUfAruvVK1jR4+KjTHUjRbCh2Nhdxz
-	Gx5nvdibFe+1F35bxLp1oqE3fKhp8EyqMkBxwJ1gxAl3OM5Exegg9IPB1xs4WseVYVp2yg
-	O4rmLBnlNLYbCAby0UGD/LbAnFutvAK/Ppy+dF0zyS7XwmeHOwy6Mf9vLX/JhQ==
+	bh=TDn32d1zpPCrzSuM+cnaZwuaXuN993ot94bfYPP5IoI=;
+	b=JCff0uoGHRUQZjTxMrMznA0Yt8uEve4GbhkZx61chJ+0GdFJyIDWFxIlgvSbO/iFp0g5Em
+	kX2MAC6+2JMKaPXGYXlvaJXioeME5kLjmcBfQeWhBxBwGBA9AAdb3Ythpz5TER4beWqihu
+	7GTKl00h8ftA9XtnrdjInqhN0EEeban8fI73P9qPxR/6dEkBxOkDVptI9rBF8TaMD8hUsR
+	LwoloRHdORpZ2xtoSBwuRYTswZDIwFmTlyh6Ns/AYBgSEy3ylCkmZBET8tWQfsMGuFic4o
+	GX9BR0qleuM6I4sjusQDou7FNjrbqo290jFTWr+O2lAMN0eDl/2kt1PFCiSXVA==
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
 Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 58/75] header: Add empty request_partial_firmware_into_buf()
-Date: Fri, 28 Jun 2024 01:47:44 +0200
-Message-ID: <20240627234808.1253337-59-hauke@hauke-m.de>
+Subject: [PATCH 59/75] header: Add DEVICE_ATTR_ADMIN_RO
+Date: Fri, 28 Jun 2024 01:47:45 +0200
+Message-ID: <20240627234808.1253337-60-hauke@hauke-m.de>
 In-Reply-To: <20240627234808.1253337-1-hauke@hauke-m.de>
 References: <20240627234808.1253337-1-hauke@hauke-m.de>
 Precedence: bulk
@@ -50,34 +50,27 @@ List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This adds an empty implememntation.
+DEVICE_ATTR_ADMIN_RO is used by ipw2x00 driver.
 
 Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- backport/backport-include/linux/firmware.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ backport/backport-include/linux/device.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/backport/backport-include/linux/firmware.h b/backport/backport-include/linux/firmware.h
-index c12ce98c..9bfe6e9d 100644
---- a/backport/backport-include/linux/firmware.h
-+++ b/backport/backport-include/linux/firmware.h
-@@ -22,4 +22,16 @@ static inline int firmware_request_cache(struct device *device, const char *name
- #define FW_ACTION_UEVENT FW_ACTION_HOTPLUG
+diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
+index 46f2190b..06595285 100644
+--- a/backport/backport-include/linux/device.h
++++ b/backport/backport-include/linux/device.h
+@@ -7,4 +7,9 @@
+ 	struct device_attribute dev_attr_##_name = __ATTR_RW_MODE(_name, 0600)
  #endif
  
-+#if LINUX_VERSION_IS_LESS(5,10,0)
-+#define request_partial_firmware_into_buf LINUX_BACKPORT(request_partial_firmware_into_buf)
-+static inline int request_partial_firmware_into_buf
-+					(const struct firmware **firmware_p,
-+					 const char *name,
-+					 struct device *device,
-+					 void *buf, size_t size, size_t offset)
-+{
-+	return -ENOTSUPP;
-+}
++#ifndef DEVICE_ATTR_ADMIN_RO
++#define DEVICE_ATTR_ADMIN_RO(_name) \
++	struct device_attribute dev_attr_##_name = __ATTR_RO_MODE(_name, 0400)
 +#endif
 +
- #endif /* __BACKPORT_LINUX_FIRMWARE_H */
+ #endif /* __BACKPORT_DEVICE_H_ */
 -- 
 2.45.2
 
