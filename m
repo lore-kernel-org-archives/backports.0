@@ -1,45 +1,45 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A1E1A38DC
-	for <backports@vger.kernel.org>; Thu, 27 Jun 2024 23:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35ACB1A38F5
+	for <backports@vger.kernel.org>; Thu, 27 Jun 2024 23:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719532136; cv=none; b=gvV0d4BVBkMqHFOYTi0pWBtmdRxuldxg2JA+IFIrVY2w3IXcWQxbeh+Xi0/OIVS9xHq3ooDlmJmHs65IFc0gzr0CTa3hBYt9idhpYP/o/Cpj+OH5S36Y35JA/0YifpkOEe04X/aC6dYpCjexFzMZx1hp+tNz99n62O9N3ZQ5/GA=
+	t=1719532137; cv=none; b=EFdrzWjypKNnWzA9JNjXt4C41st6wMRhYst3XQZfzGNz/ggZUaWvsYh8o/NTGHpmtlfCl3yjwVIzoWzMBrSvvTXS6U2lOQmftVMl+ZdMyUWTuSg0Gc202aghTsl2Ao/4klosyK3dwfmHicL13tGRbA4aAtQUM6c32wXL5CX88E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719532136; c=relaxed/simple;
-	bh=B4qDEsGfevXf94uhMTZfXb8XvfSuGA4xB3xVacKHtu0=;
+	s=arc-20240116; t=1719532137; c=relaxed/simple;
+	bh=7Opzz6s5m5kriihGfyTlXd105RgmJ3ERhy2ZunN+BDQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nG8rX4yp7rMk2hwWnLyb69Pi/nB6M90MfS9j2RuIHB2CK9upy7o56iJs2sgjwTAmkVVYjAP8xRBc4hCcneNTd3mHO53jYi6J9LkMsfu+d22mNvdTVmK9/cMpyimFwpaxQrx0zXIAnWgPdKmaiOj7kuS+u5StUf41w461pB1HpqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=Gm2W/D/o; arc=none smtp.client-ip=80.241.56.171
+	 MIME-Version; b=lpUW7M3Q79Jp/d0FJ5vanq+kGkKzAMjhGBYsSonruSi4nKMZcVSDtIheL8hXGMZMkoWipURC63NIRVOUSbLfEq76Ge8mWqEwad3S3Fqo38sARGysIPlo1V5t9QJ8DzW5mWljLhar+yWFZcMC/zlQKSe2o+FVjBfF+II2FwjILuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=wXWGBUzs; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="Gm2W/D/o"
+	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="wXWGBUzs"
 Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4W9FdS61cWz9sW5;
-	Fri, 28 Jun 2024 01:48:44 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4W9Fdb63VVz9spN;
+	Fri, 28 Jun 2024 01:48:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-	t=1719532124;
+	t=1719532131;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MJ64ftm0h2DgPYxwQPNMYTIttg8mR0oaMxbkLYYDYMg=;
-	b=Gm2W/D/o3PcSsF2bbmLI3Cc1tCm1XPExDLrFnhPTEh1+E1UvChZ9n6hoVfWsg1G0jNV6oE
-	SoCJ5CkYCqC/3n90RnG8gBlrImFfRwAuDkw1KluvK97UVGyV93IjRXDZOFVPnWXA8UVWUt
-	WmqjVR6WEYHVQpxWaE3XphXXqT8XNHIamcIob3Za2luGg3T6gEtXBIkNYKVDnkfdYEM6dg
-	T+OU0ThG3C5x28RM8ZPCTGQpiAWf5ulVAgVFQhqZWn7hzMOVAnSmldyMERQiXtjEuhsQvF
-	RZaIZj2qsZpIJkGOu9KYiDsUv5jO0Ji9RnFqCqbjD4Iaht3uYlSSr3PfobY1Yg==
+	bh=glgQg+OPlJPyhagadRdtPf7tThCJYiJye6YvOhBN/OM=;
+	b=wXWGBUzs8X15h0jJWhHH9S3Z5PjMX0BbJ5jBOZEMNmiUQ8tCatwwMD+moTgBoqWAfw6A96
+	rB4X57jjfp0KrI61VhWwnHp/BvzZeEdKQIJQfaT8k8H4OCNBeXXFeiD5jcM0rRT6IB4Tth
+	dm8ocOQAFjwWcak1wWkhQovPcRPZO7LzNGUJWp6JeXtn7CzdwckRiBOsVptW0PaycZy6Gu
+	5Gn8n7Qp5T3pex3h97rAEyuC8zh6HNQVwqsZ0r3lkmkMC8DRGv/iqQGMV8QikwsZa2PO4u
+	8U/DHFLfO/GaR6BuH2ugRmtmVHj5RL5ey9VxlNvOVrPTuv9ZnlgxR/jxQ1XGlQ==
 From: Hauke Mehrtens <hauke@hauke-m.de>
 To: backports@vger.kernel.org
-Cc: Gregory Greenman <gregory.greenman@intel.com>
-Subject: [PATCH 18/75] backports: update mac80211-status.patch to v6.0-rc1
-Date: Fri, 28 Jun 2024 01:47:04 +0200
-Message-ID: <20240627234808.1253337-19-hauke@hauke-m.de>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 44/75] headers: Add linux/soc/mediatek/mtk_wed.h
+Date: Fri, 28 Jun 2024 01:47:30 +0200
+Message-ID: <20240627234808.1253337-45-hauke@hauke-m.de>
 In-Reply-To: <20240627234808.1253337-1-hauke@hauke-m.de>
 References: <20240627234808.1253337-1-hauke@hauke-m.de>
 Precedence: bulk
@@ -50,52 +50,80 @@ List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Gregory Greenman <gregory.greenman@intel.com>
+The mt76 driver uses the structures and enums from this header file. We
+are not activating this feature on older kernel versions, but allow to
+build the mt76 driver.
 
-Update for some changes in struct ieee80211_tx_status.
-
-Signed-off-by: Gregory Greenman <gregory.greenman@intel.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 ---
- patches/0097-skb-list/mac80211-status.patch | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ .../linux/soc/mediatek/mtk_wed.h              | 58 +++++++++++++++++++
+ 1 file changed, 58 insertions(+)
+ create mode 100644 backport/backport-include/linux/soc/mediatek/mtk_wed.h
 
-diff --git a/patches/0097-skb-list/mac80211-status.patch b/patches/0097-skb-list/mac80211-status.patch
-index 04d1a6af..1e8b0cb5 100644
---- a/patches/0097-skb-list/mac80211-status.patch
-+++ b/patches/0097-skb-list/mac80211-status.patch
-@@ -7,10 +7,10 @@ kernel versions.
- 
- --- a/include/net/mac80211.h
- +++ b/include/net/mac80211.h
--@@ -1137,7 +1137,11 @@ struct ieee80211_tx_status {
-- 	struct ieee80211_tx_info *info;
-- 	struct sk_buff *skb;
-- 	struct rate_info *rate;
-+@@ -1178,7 +1178,11 @@ struct ieee80211_tx_status {
-+ 	struct ieee80211_rate_status *rates;
-+ 	u8 n_rates;
-+ 
- +#if LINUX_VERSION_IS_GEQ(4,19,0)
-  	struct list_head *free_list;
- +#else
-@@ -21,7 +21,7 @@ kernel versions.
-  /**
- --- a/net/mac80211/status.c
- +++ b/net/mac80211/status.c
--@@ -1060,7 +1060,11 @@ static void __ieee80211_tx_status(struct
-+@@ -1075,7 +1075,11 @@ static void __ieee80211_tx_status(struct ieee80211_hw *hw,
-  	 */
-  	if (!local->monitors && (!send_to_cooked || !local->cooked_mntrs)) {
-  		if (status->free_list)
-@@ -33,7 +33,7 @@ kernel versions.
-  		else
-  			dev_kfree_skb(skb);
-  		return;
--@@ -1210,7 +1214,11 @@ free:
-+@@ -1228,7 +1232,11 @@ void ieee80211_tx_status_ext(struct ieee80211_hw *hw,
-  
-  	ieee80211_report_used_skb(local, skb, false);
-  	if (status->free_list)
+diff --git a/backport/backport-include/linux/soc/mediatek/mtk_wed.h b/backport/backport-include/linux/soc/mediatek/mtk_wed.h
+new file mode 100644
+index 00000000..46caa89f
+--- /dev/null
++++ b/backport/backport-include/linux/soc/mediatek/mtk_wed.h
+@@ -0,0 +1,58 @@
++#ifndef __BACKPORT_MTK_WED_H
++#define __BACKPORT_MTK_WED_H
++#include <linux/version.h>
++
++#if LINUX_VERSION_IS_GEQ(5,19,0)
++#include_next <linux/soc/mediatek/mtk_wed.h>
++#else
++#include <linux/kernel.h>
++#include <linux/rcupdate.h>
++#include <linux/regmap.h>
++#include <linux/pci.h>
++
++#define MTK_WED_TX_QUEUES		2
++
++struct mtk_wed_hw;
++struct mtk_wdma_desc;
++
++enum mtk_wed_bus_tye {
++	MTK_WED_BUS_PCIE,
++	MTK_WED_BUS_AXI,
++};
++
++struct mtk_wed_ring {
++	struct mtk_wdma_desc *desc;
++	dma_addr_t desc_phys;
++	u32 desc_size;
++	int size;
++
++	u32 reg_base;
++	void __iomem *wpdma;
++};
++
++struct mtk_wed_device {
++
++};
++
++static inline int
++mtk_wed_device_attach(struct mtk_wed_device *dev)
++{
++	return -ENODEV;
++}
++
++static inline bool mtk_wed_device_active(struct mtk_wed_device *dev)
++{
++	return false;
++}
++#define mtk_wed_device_detach(_dev) do {} while (0)
++#define mtk_wed_device_start(_dev, _mask) do {} while (0)
++#define mtk_wed_device_tx_ring_setup(_dev, _ring, _regs) -ENODEV
++#define mtk_wed_device_txfree_ring_setup(_dev, _ring, _regs) -ENODEV
++#define mtk_wed_device_reg_read(_dev, _reg) 0
++#define mtk_wed_device_reg_write(_dev, _reg, _val) do {} while (0)
++#define mtk_wed_device_irq_get(_dev, _mask) 0
++#define mtk_wed_device_irq_set_mask(_dev, _mask) do {} while (0)
++
++#endif /* >= 5.19.0 */
++
++#endif /* __BACKPORT_MTK_WED_H */
 -- 
 2.45.2
 
