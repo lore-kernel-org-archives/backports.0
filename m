@@ -1,78 +1,72 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDC91A2FCF
-	for <backports@vger.kernel.org>; Thu, 27 Jun 2024 23:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053F515351C
+	for <backports@vger.kernel.org>; Fri, 28 Jun 2024 10:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719532712; cv=none; b=CYn3h1jX6fsNEVTT6tr2ljkkxS12NNoH6RU6uCQCMhevd8dF8nTSEiFELbeZP0Gr9tXpEnij1IECAE3IrZ0hqzbRDUANnv9yD7p/dwSsCKTBee4G/C0y4UzS7udo0e22ymNAMEwaUwE27kClCedCzCLB/S7nl4AlaahAkdszyJ0=
+	t=1719570824; cv=none; b=OXMq5EPSwc4cz96Hg84EFS7AKiu0xNXeTYBN8WiHCPVvQ3IvsYwsRB53YWGm4Ft2ipvPl5//r+80+pWl9zqwtUUP1wRaCWXSbXptc6rgd/VKMje4etbYB0RKqz665pq0zZW/ObxfiSvj2EUnGH+BnMtSD2f31aiTHC4zvNX3Npk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719532712; c=relaxed/simple;
-	bh=0ZFCHMSsNt2i8JJJHoZdoMXEBERtiPwjRwljme3kjuQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=np3TPtNyUL8D3xVkRCE0Fvn60ndBs1xYI9HsyU9/vhzsLN5Y6yQ2Sw/JQDwDT4wkHbUU17jfVBAD+7ubQo0e0vEQnUIkVm5fjywNxuuL1ILjP+47yLcmLfp5x+A7vwI0Fvxg6UZf2+PprGLTua04xJ20+w1HfEyUjkhzcMySjVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=0usyRgqt; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
+	s=arc-20240116; t=1719570824; c=relaxed/simple;
+	bh=VeJjkKVEtxPinIXVUlnunzMsnYbFJ/vPjJhV3JBp8io=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=L7QL3hiE/idjuGY61pWg8DzSXFjzmrk9qxelViDpqIg49sB3tHqFsgu5iAUQYcdHJauyecX/b1+nAOYrcPo5Xjm+yEsXSFRdfEsZjQ2wgsdQVnT+2mw7RvjKQBTG+Zxxp3w4uErnfanK41yA3sVX3Bx9WW+PPEi83xZ+71AgMqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=CgihWfJt; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="0usyRgqt"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4W9FdL5kk0z9scC;
-	Fri, 28 Jun 2024 01:48:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-	t=1719532118;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QERYQzeX303vYvyKq2SfhrzB4Y9SS4EN5oqkF4c/ft8=;
-	b=0usyRgqtfwj82xZh06whIqFBb6LS2zBoJCFYVRt74XEU+/m8IYLmk0uK+JJAr+IOkF9jAy
-	0gF7M6SVfqLU/BE1b7GHnH9ro0AV7cmgOxTspmR5gp1/v4jZW9OamySjPCWV5q5kcvNcHs
-	883MNhFSDlkIGcx8rPhCtH4sEleGqqUVQEfrnTrTzZudC4jJYd7S4UFZWRy69oISNZApDr
-	hsPWKZDpAcpDbHCkmwqhhBdWT50QHK6Yb7y7MUik2EtEKl/2AWj0CTAJul+TKDl4++TNvp
-	ihKh/J/JQfQS3GfB90L5zg3VFieD3eK48zw4Mt1EQWUzhRxRP4gIsMDeN7KgYQ==
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 01/75] backports: Remove no-pointer-sign option
-Date: Fri, 28 Jun 2024 01:46:47 +0200
-Message-ID: <20240627234808.1253337-2-hauke@hauke-m.de>
-In-Reply-To: <20240627234808.1253337-1-hauke@hauke-m.de>
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="CgihWfJt"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=iyQakUaxAviNHBYR1hDw/3HXMV0VGCcBqmkUtUG5WNw=;
+	t=1719570822; x=1720780422; b=CgihWfJt/NCtpUPMlvHBhOcKHqj+wEE9Rs5gWisQGEa0782
+	3pS3FD7oYEoRfBiPAkv+nIGZlLq+5m2nYdyH/CjBba/HRoCLWJSFurmOr4xj16Crwt+mF4/joLidl
+	MDLF84Cn9fgOvSjOjeuKaToPtiuBJMZDEeETOvrPE5+ZNbNH5k6awSovF17s6Bokxp+l0qFKbLvkx
+	tvSNn2DmbjkxSCT7xbo5A58g6lrZ1rJGWTjB3wPnbWQEAJKx8g5zEFsy5xaejRxwOA1G87ho6STN1
+	FokTLypK3ZhspUN7BuXmIehadUr2qwX27VT2so8c7xTLo+M6l3IoMN+r24S2WPnQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1sN8vC-00000009nFp-0b90;
+	Fri, 28 Jun 2024 12:33:38 +0200
+Message-ID: <978b9c7378a52d4ca90586295ddd75887475aa3c.camel@sipsolutions.net>
+Subject: Re: [PATCH 09/75] backport: implement NLA_POLICY_RANGE for
+ NLA_BINARY
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
+Cc: Luca Coelho <luciano.coelho@intel.com>
+Date: Fri, 28 Jun 2024 12:33:37 +0200
+In-Reply-To: <20240627234808.1253337-10-hauke@hauke-m.de>
 References: <20240627234808.1253337-1-hauke@hauke-m.de>
+	 <20240627234808.1253337-10-hauke@hauke-m.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: backports@vger.kernel.org
 List-Id: <backports.vger.kernel.org>
 List-Subscribe: <mailto:backports+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4W9FdL5kk0z9scC
+X-malware-bazaar: not-scanned
 
-This option is only added with kernel 4.3, Support was removed some time
-ago.
+On Fri, 2024-06-28 at 01:46 +0200, Hauke Mehrtens wrote:
+> From: Luca Coelho <luciano.coelho@intel.com>
+>=20
+> The range checks for NLA_BINARY are supported since v5.10.  Unwrap the
+> macros and introduce a new function to test type.
+>=20
+> type=3Dmaint
+> ticket=3Djira:WIFI-85592
+...
+> Reviewed-on: https://git-ger-8.devtools.intel.com/gerrit/135576
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/Makefile.kernel | 3 ---
- 1 file changed, 3 deletions(-)
+Sorry, looks like I forgot to remove our internal stuff here. Maybe
+remove it.
 
-diff --git a/backport/Makefile.kernel b/backport/Makefile.kernel
-index 11ce4177..a936eb3b 100644
---- a/backport/Makefile.kernel
-+++ b/backport/Makefile.kernel
-@@ -31,9 +31,6 @@ NOSTDINC_FLAGS += \
- endif
- 
- subdir-ccflags-y := $(call cc-option, -fno-pie) $(call cc-option, -no-pie)
--ifeq ($(CPTCFG_KERNEL_4_3),y)
--subdir-ccflags-y += -Wno-pointer-sign
--endif
- 
- obj-y += compat/
- 
--- 
-2.45.2
+(that URL doesn't even exist internally any more!)
+
+johannes
 
