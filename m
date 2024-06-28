@@ -1,45 +1,44 @@
 Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E310D2139A8
-	for <backports@vger.kernel.org>; Fri, 28 Jun 2024 10:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD37B481D7
+	for <backports@vger.kernel.org>; Fri, 28 Jun 2024 10:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719571731; cv=none; b=mTNec9TdUId0ru8zEVOZYk444pV/chnbUWwmIvk3zvwh2NepZINiBKLlu4RTJoc3CTeNxQuz7VPKtw1vYhLiE8JegeFWQG/vQLehUhgho6FlNcKBHgbESYdjrUcC1gHW4M1/bVVtL1J7oKP5EY6V5h3vkgi9ofHbs+6B0MHpqO0=
+	t=1719571826; cv=none; b=ngFHqKSwaU4j+K7UZiWUjrX8wCMUUfh22cj03qdvWeKdnU+6SMmA3bgv621pKVdMv2jxpAWMgJdAKabj66EfuZ0OmmyOcOFt1JMCVbZGgmtR07PsaqZcc2Kla9IDFqvLIHqOoj2yKs4tpMPa+Unc4alKRYUuvr88Pqcd7hZFavQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719571731; c=relaxed/simple;
-	bh=Vcd+WHS+OSmAdl/mdVUQAxehnSI9CySBJQokuKQx418=;
+	s=arc-20240116; t=1719571826; c=relaxed/simple;
+	bh=X2NAwlSYwXzlnLdWlwzHW6Hma259e8R9k4K+/V6rN98=;
 	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=emzc/QzPDmROqcQKQjmhaIJvXbTPJJUl81SXFI04lM9MY1Eo+HN1JxVvni3tQfR+P97rCX+ltQ5sEjbiVKrrG0zwPIhPciBsERYePzqnJPw/0lnDqez31WzslDTJluDhTN21rlkTTk0SRBQRsRrWXdnSi+vSduZuBT5kwWjFA0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=VzNYUmfk; arc=none smtp.client-ip=168.119.38.16
+	 Content-Type:MIME-Version; b=lJ6slCQaAvOySUwJnruwHrSouBSRqe4TnRLi7Uz8fKW+o+eap8JOFXoc1SDN6l3eaxfER5Jr4GBYfZDber6Hp8g9SsDLXONPu6r2ksJuEMPinIeIGSGNJTFVeA+BNJsFWtz7WGeGLQBgVUeXci72I9MHTzPQ5fdX3uoLbRG9BGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=by5nm9WY; arc=none smtp.client-ip=168.119.38.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="VzNYUmfk"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="by5nm9WY"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
 	Content-Type:References:In-Reply-To:Date:To:From:Subject:Message-ID:Sender:
 	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=Vcd+WHS+OSmAdl/mdVUQAxehnSI9CySBJQokuKQx418=;
-	t=1719571730; x=1720781330; b=VzNYUmfklNIFVghw3hbc/lMtZ+wmFc/9unISakYEu/EUgnF
-	m4r4ssJa56UeB/EkeiRyK/z6gKlU9bbz/gRdIisc4UN19nA2+PEe2U6I70ACMdUGfGD5h7Zco4dv+
-	nKWCyh+pQLb3KhVX8uhEwGhD2L3Nhf3Fb6OUjqu376nHF++ZBvMgbNz4XyifjqyxObB9CcsBrpejG
-	b8eeD/QJmky+DNlpUrQI2DUEYsJ/VRh5VtJVj5YpEpg28Y7Zwa60tym7qkpMNWRVZCBCnN3syaVUB
-	vd6rJ3EehFJR8p63t76IvA7O1CiqY4+MO1lxv9v8WrBE+ZE3F4kD+xIp76+7DlSw==;
+	Resent-Cc:Resent-Message-ID; bh=X2NAwlSYwXzlnLdWlwzHW6Hma259e8R9k4K+/V6rN98=;
+	t=1719571824; x=1720781424; b=by5nm9WYO+rTV+rJLBwyxegXW/qri+CoFYRo+LjCPhAVQ/t
+	QYEn0GilnlAO+v9M1jT98MveJi0aYN5b+/cM7ynFilSwRSDte33yqPoKuymgz71uQAvrQvtPtCPQM
+	cMXAjwI9t0/wkcYhPa4+F2uDVqmdoBle+m7CulYF7BDMBJvW8+LKEg+uItZldpN3bKvrCbJzH2D+I
+	iiIRSew/8FbOfYVxVnbAwLPqOvboJ9GNL8jwCz83DiAUxtAJ5mkNextq/M0PeACl/O5XLXARKYEP8
+	StSQj5vwz6Wo4P13hCv2ClhF7w0mznmk2pVf+g2bbH7lvUlXGsVltN9o24xpqQCQ==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.97)
 	(envelope-from <johannes@sipsolutions.net>)
-	id 1sN99q-00000009q1q-3x3h;
-	Fri, 28 Jun 2024 12:48:47 +0200
-Message-ID: <2b1f167aa1a4f75f464cf5083d06dcbc719b0af1.camel@sipsolutions.net>
-Subject: Re: [PATCH 54/75] patch: bcma: Fill of_node instead of fwnode on
- older kernel
+	id 1sN9BL-00000009qNr-1kmu;
+	Fri, 28 Jun 2024 12:50:19 +0200
+Message-ID: <9b8eb7b9b5790b2eac74b5f22efadc67de72a69a.camel@sipsolutions.net>
+Subject: Re: [PATCH 61/75] dependencies: Make CONFIG_R8188EU depend on 5.10
 From: Johannes Berg <johannes@sipsolutions.net>
 To: Hauke Mehrtens <hauke@hauke-m.de>, backports@vger.kernel.org
-Date: Fri, 28 Jun 2024 12:48:44 +0200
-In-Reply-To: <20240627234808.1253337-55-hauke@hauke-m.de>
+Date: Fri, 28 Jun 2024 12:50:18 +0200
+In-Reply-To: <20240627234808.1253337-62-hauke@hauke-m.de>
 References: <20240627234808.1253337-1-hauke@hauke-m.de>
-	 <20240627234808.1253337-55-hauke@hauke-m.de>
+	 <20240627234808.1253337-62-hauke@hauke-m.de>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
@@ -52,13 +51,8 @@ MIME-Version: 1.0
 X-malware-bazaar: not-scanned
 
 On Fri, 2024-06-28 at 01:47 +0200, Hauke Mehrtens wrote:
-> Older kernel versions do not have the fwnode attribute in the struct
-> gpio_chip, fill the of_node attribuet instead.
+> CONFIG_R8188EU uses CONFIG_R8188EU()
+>=20
 
-type 'attribute'
-
-seems this should've been fairlyh simple with spatch?
-
-johannes
-
+copy/paste mistake?
 
