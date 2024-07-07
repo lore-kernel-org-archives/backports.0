@@ -1,78 +1,83 @@
 Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1F21D52B
-	for <backports@vger.kernel.org>; Sun,  7 Jul 2024 21:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882F76026A
+	for <backports@vger.kernel.org>; Sun,  7 Jul 2024 22:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720387229; cv=none; b=ntKfFHmUoVITAJf6jhH1GF3mDLX/Rc6HJmjih66FED1h27wHBMOawjMWAbmRvdqEv2ypD3bHsj5g2R2QQNb8DzMvxtn+L9Lcmi+Ol5kYxl3/ZjoQ0iXBBdb/AzYKjnUETnq7NwGPbK5aBEVPzFbIUcz2E6M+QbZdC8isVuufNi4=
+	t=1720393027; cv=none; b=oKv9h6JU+ZsPFRQHibRUoQJvocBBZM0gmbXr6+vszvF2qSVugqw0i0/r/JltkjseeiJrEGDoYx/P+sdDJuCDKDcGdkjBmIFe17JmTWm64rhBySg0Fu8pC9dWehKNPNeIjOwadnn64ZRqmU6YpVbvjyznbZ0H5cDv9vseWHaq/oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720387229; c=relaxed/simple;
-	bh=X8VrA4+kDj80vyQqdvI0Fz8GSnYlAjeTaA3z/0JrTsw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DnWqkrXM7u5FRKSjRXt2anartzyv/JtX4S7crj3RyeBrI6w/c+wq7DHU69U6bHF3LmTtxWd0wPSp/eBB6clLGdVnM7W+jLqp4+iKuHwyqBBDP9EvZ3BwDIZccQ9htIZ+D1FPvvdo9krp2VXdIdSKUyjKtoXRXqvfygYKhUdQiNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=PQBySoj+; arc=none smtp.client-ip=80.241.56.171
+	s=arc-20240116; t=1720393027; c=relaxed/simple;
+	bh=K0fZXpHUN3UWj8WKPMspY1/X27K6esrVaNSa8d5ybQ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AuAjarIPQvpSx3gbXJGjImwRWoRa/ZtBbTjdgmI9UG7vrmpIYzfxOwJ+hpUVHkq/1P0HDhiYHISy/L61eQ/9eRbe668pjXDSeKDjmzuTMInYYn+yadL0t1rgfi3k441rNSQQE/HRDCv+2bGoMVoOXKkNoT0zbbFkGH7vhZUCdG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=s5lmiVcW; arc=none smtp.client-ip=80.241.56.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="PQBySoj+"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="s5lmiVcW"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4WHKsY0cZRz9sWt;
-	Sun,  7 Jul 2024 23:20:17 +0200 (CEST)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4WHN1864nrz9shP;
+	Mon,  8 Jul 2024 00:57:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-	t=1720387217;
+	t=1720393020;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kGMlNqhYxvCu6W5G15dQjxj8BeQOSM5WX1VbgK1fe+M=;
-	b=PQBySoj++83Xo5dNmbjp7ywQSRjj9ZcQPcGxk/7bE51wYvT5XZxgfTZWdiy33JJ5kUJ/KY
-	EzIKda28AKW1puWMMWI+EDy3Mv3IGbpltvIfAIoP8WPhWZ/vB+3iec1IDFk+dxZweuVud0
-	XLkxGek514yAafktGjGR9PQX0+7m8UzJIElz3moVYN7Y9ibC5K7y1UFKF5RbR1bNQt4NXc
-	maFM4+OELTnZHZuy4ThEp0Kk4lRP3IaWAl56ELw62FX0zh7pLRSsdzjvvDSpO3/OgfF1BI
-	YdoJqctbtBs6pjFrTfKuZjZc+UJqlDxR86D0xOrOGH+Q+P1t8X1d28h7X4mWOg==
-Message-ID: <f518f105-07dd-47b9-92de-ace0a0557b61@hauke-m.de>
-Date: Sun, 7 Jul 2024 23:20:16 +0200
+	bh=EhYvqH8vdm4dS1rFfnWgXZ2lmyapyzU/TAIuSR3zrzk=;
+	b=s5lmiVcWlpQf+76SOA32vtsWiNV76Gl/t3vPHRXttec+0ymAggqPq5cV91xtKMQ/PqIgqG
+	duw41XC4/swOKGXZKty+IfY90ThZqxEt7pRj08UbrhdYbur7SwZlVZfogstwZTv2GQIAQu
+	gestWIrasc+WmC/l5bEhd1yWDNsrQh9v8D9ZbjONJtj3RVh3UOk2/eLJPVUuJbwtTOYbpZ
+	kU06V8DlzigtlJZr453kuX8MGGd++jILr/mriMXVjRIun6izl4tByd22fAtnzExn/K/RML
+	lgmBYUITraAwLBddVf8/vogkfU/Fpj/V4kN4q9xRynicmgBGQ6UwM/OnfdrJiA==
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: backports@vger.kernel.org
+Cc: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH 4/8] headers: Add BCMA_CC_SROM_CONTROL_OTP_PRESENT
+Date: Mon,  8 Jul 2024 00:56:42 +0200
+Message-ID: <20240707225646.1924882-4-hauke@hauke-m.de>
+In-Reply-To: <20240707225646.1924882-1-hauke@hauke-m.de>
+References: <20240707225646.1924882-1-hauke@hauke-m.de>
 Precedence: bulk
 X-Mailing-List: backports@vger.kernel.org
 List-Id: <backports.vger.kernel.org>
 List-Subscribe: <mailto:backports+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 00/74] backport updates from Intel
-To: Johannes Berg <johannes@sipsolutions.net>, backports@vger.kernel.org
-References: <20240524170906.54680-76-johannes@sipsolutions.net>
-Content-Language: en-US
-From: Hauke Mehrtens <hauke@hauke-m.de>
-In-Reply-To: <20240524170906.54680-76-johannes@sipsolutions.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4WHKsY0cZRz9sWt
+Content-Transfer-Encoding: 8bit
 
-On 5/24/24 19:07, Johannes Berg wrote:
-> So ... I talked to Brian today, and realized that we've been
-> sort of maintaining backports to some extent, but not really.
-> 
-> This is what we have in our tree that's not upstream, and
-> rebased onto upstream (commit c96f36d5214).
-> 
-> With the copy-list restricted to the iwlwifi driver and hwsim
-> it even works, but the copy-list as-is doesn't even work, it
-> even contains some files that no longer exist.
-> 
-> But it's a start, and it's a lot of stuff that's not upstream
-> yet.
-> 
-> johannes
-> 
-> 
+The brcmfmac driver needs the BCMA_CC_SROM_CONTROL_OTP_PRESENT constant.
+Previously this was provided by full headers of the bcma subsystem we
+shipped. Add this extension manually because we removed the full bcma
+now.
 
-Hi Johannes,
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ .../linux/bcma/bcma_driver_chipcommon.h               | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+ create mode 100644 backport/backport-include/linux/bcma/bcma_driver_chipcommon.h
 
-I pushed the changes supporting kernel 6.1 to master.
-Could you please rebase the patches on top of current master.
+diff --git a/backport/backport-include/linux/bcma/bcma_driver_chipcommon.h b/backport/backport-include/linux/bcma/bcma_driver_chipcommon.h
+new file mode 100644
+index 00000000..5a53b8b1
+--- /dev/null
++++ b/backport/backport-include/linux/bcma/bcma_driver_chipcommon.h
+@@ -0,0 +1,11 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef BACKPORT_BCMA_DRIVER_CC_H_
++#define BACKPORT_BCMA_DRIVER_CC_H_
++
++#include_next <linux/bcma/bcma_driver_chipcommon.h>
++
++#ifndef BCMA_CC_SROM_CONTROL_OTP_PRESENT
++#define  BCMA_CC_SROM_CONTROL_OTP_PRESENT	0x00000020
++#endif /* BCMA_CC_SROM_CONTROL_OTP_PRESENT */
++
++#endif /* BACKPORT_BCMA_DRIVER_CC_H_ */
+-- 
+2.45.2
 
-Hauke
