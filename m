@@ -1,108 +1,63 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA6B6A332
-	for <backports@vger.kernel.org>; Sun,  7 Jul 2024 22:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6981B86D6;
+	Tue,  9 Jul 2024 22:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720393034; cv=none; b=E9XnGeWxHeA4srPShmk5B7UUooAqa/d7vU8K4QFTGHBvD9BKi+nTYn3i+0WTwMWU+afAgju5iCQavboqvUx4eHZC76n2epIHODXMl1GhUwS0s3TsAqNVp5Ymv6tIwvj9QPLyQ9OF+9yQvkss0xBwKXHZ6ku98JhkODioZXEVnPM=
+	t=1720563659; cv=none; b=KyhVapbJtWn/9Y+H7ug0dl6jP6pOtVBIgB9mGGFO9FfI4npmXEby7qTqZyVSULx39rjfCXEj2OLmufqIlyWKQyu7j2ZuCElhiqaKH8MPkDMx+d7Bc+iEuizigTPEcANID5jdz/R2Z206ICFd5AAnXgffzsxB0SOkn29nC+NHSZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720393034; c=relaxed/simple;
-	bh=4+uhoqIMhxb1G91Yho/hg/BKNGn4kNVIOkK8IframIY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FqWzp2NhlUzjGbdeK51g7KPOCu/Au3ktFC4CTZwHrylwEafkfZ6Q/3kYpLqTctZ6zffPGuPa8SJMLXGRfT7l921fFmrjlcZWqEkzlTukLL5b/jKXff22ajSvvBS0Y+ykCRb6Gxz9wWHzhF2rleSKjUkyAoeo+TkxjxIzQlMXuKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=l0QMN7g/; arc=none smtp.client-ip=80.241.56.152
+	s=arc-20240116; t=1720563659; c=relaxed/simple;
+	bh=lTHsqg9IUHA2azTOczsXT8kWTiSuK4++zcJICVY5vdg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=GjFE2fZvGoY5/4YLAPnQhPJ53Vbcqp7140O75FpkWzMF9cZy6QR8qYVRf2yMy902CSsbxr4BPGMtfhMlS1bk6207+YISeXFMjcgv1VZWgVOAkCf1JtztS+q/5Slb2CFd8wq3r+dkkD51HU/1oUAhlqNb0D27QZ4ktJ91Ny5odU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=XdLJBm2G; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="l0QMN7g/"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="XdLJBm2G"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4WHN193kV8z9sdW;
-	Mon,  8 Jul 2024 00:57:01 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4WJb6X1qC7z9smP;
+	Wed, 10 Jul 2024 00:20:52 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-	t=1720393021;
+	t=1720563652;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cfixvQuJmXI0kwLzxNlpV36Nn8nFd4mfvfXBCmCBdZU=;
-	b=l0QMN7g//+Mvp3hjJIER4dFfQ+ccBBSzhPQZrDWuXVe9KH3lRaPF0z4tURMV24w7AdfcQf
-	5uZPEGJ4EmZR63+ZY2pZi4ww/lRgFomzVFY+0f5HJFvk3wH0FaT2C6Mt5PDR+FZAlR8gCh
-	aOCVJiEX4ka6f9qg4/DAu+GEirP8yL+X4CaJKq3xuZg+FXkVOhL29sAOZ+4r6dU/wfawKk
-	u6RcDUarMuKESvcHMAqogFIdEdExExGHQY3stpMW1U5cIzQuXUPH3brgdzUizeUxVc4NDv
-	UxP4SD/By4QcFDOGULqYNE/OoRoXUzG7/mbf5VUx3rglJD+wIzDhNlNuurL2WA==
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: backports@vger.kernel.org
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH 6/8] backports: Add Silabs WFX driver
-Date: Mon,  8 Jul 2024 00:56:44 +0200
-Message-ID: <20240707225646.1924882-6-hauke@hauke-m.de>
-In-Reply-To: <20240707225646.1924882-1-hauke@hauke-m.de>
-References: <20240707225646.1924882-1-hauke@hauke-m.de>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=lTHsqg9IUHA2azTOczsXT8kWTiSuK4++zcJICVY5vdg=;
+	b=XdLJBm2GZFM/s4u9AQxycetfG81TS0eZ3m6WURqqf6ngh4chaqCH9Yg6QtGuZsCJx1vkvt
+	fEMfx2cnmufoOwtijHPV8mjq3HOWudUTVTE+GtFRKJ4HhXR4yT1LdSpX0JdYDvEezUhjT9
+	YzC1sWEtvxnX6fDrGebSIaK6JFjiIo0jnLys5qygNu5Pnp1K20P65KgN7tmx0ExLlesMKV
+	kiEDQqDesOld/c+u8OZBvGdT8PZ0fKhVIF/ZBMLROOPObTlhYAKt4k2uYos5oRdK9E1Blw
+	8X5A2r19JJHSeMAb6LfatVGhRfIfbsqWqNzS6f/EHDLW3aTSjyRVBTcoXK/eEA==
+Message-ID: <7dacc734-72f2-43a8-beb6-b7a8de1f6b93@hauke-m.de>
+Date: Wed, 10 Jul 2024 00:20:51 +0200
 Precedence: bulk
 X-Mailing-List: backports@vger.kernel.org
 List-Id: <backports.vger.kernel.org>
 List-Subscribe: <mailto:backports+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+To: backports@vger.kernel.org
+Cc: linux-wireless@vger.kernel.org
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: wireless backports 5.15.162-1 released
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 4WJb6X1qC7z9smP
 
-This adds the new WFX driver to backports.
-This driver was moved out of staging to Linux wireless in 5.19.
+Hi
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
----
- backport/defconfigs/wifi | 2 ++
- copy-list                | 1 +
- dependencies             | 3 +++
- 3 files changed, 6 insertions(+)
+backports-5.15.162-1 was released. This is based on Linux 5.15.162.
+https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/v5.15.162/backports-5.15.162-1.tar.xz
 
-diff --git a/backport/defconfigs/wifi b/backport/defconfigs/wifi
-index 76578641..5cea894a 100644
---- a/backport/defconfigs/wifi
-+++ b/backport/defconfigs/wifi
-@@ -131,6 +131,7 @@ CPTCFG_TMD_HERMES=m
- CPTCFG_USB_NET_RNDIS_WLAN=m
- CPTCFG_USB_ZD1201=m
- CPTCFG_WCN36XX=m
-+CPTCFG_WFX=m
- CPTCFG_WIL6210=m
- CPTCFG_WILC1000_SDIO=m
- CPTCFG_WILC1000_SPI=m
-@@ -151,6 +152,7 @@ CPTCFG_WLAN_VENDOR_QUANTENNA=y
- CPTCFG_WLAN_VENDOR_RALINK=y
- CPTCFG_WLAN_VENDOR_REALTEK=y
- CPTCFG_WLAN_VENDOR_RSI=y
-+CPTCFG_WLAN_VENDOR_SILABS=y
- CPTCFG_WLAN_VENDOR_ST=y
- CPTCFG_WLAN_VENDOR_TI=y
- CPTCFG_WLAN_VENDOR_ZYDAS=y
-diff --git a/copy-list b/copy-list
-index 7d3811a2..d4034486 100644
---- a/copy-list
-+++ b/copy-list
-@@ -90,6 +90,7 @@ drivers/net/wireless/intersil/orinoco/
- drivers/net/wireless/intersil/p54/
- drivers/net/wireless/quantenna/
- drivers/net/wireless/realtek/
-+drivers/net/wireless/silabs/
- drivers/net/wireless/ti/
- drivers/net/wireless/mediatek/
- drivers/net/wireless/admtek/
-diff --git a/dependencies b/dependencies
-index 17204918..f938b27d 100644
---- a/dependencies
-+++ b/dependencies
-@@ -57,3 +57,6 @@ ATH11K 5.2
- 
- # usb_control_msg_send
- R8188EU 5.10
-+
-+# gpiod_set_consumer_name
-+WFX 4.19
--- 
-2.45.2
+There is now a updated wiki page with the releases:
+https://backports.wiki.kernel.org/index.php/Releases
 
+The source code can be found here:
+https://git.kernel.org/cgit/linux/kernel/git/backports/backports.git/
+
+Hauke
