@@ -1,95 +1,71 @@
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714FC21730E
-	for <backports@vger.kernel.org>; Fri, 11 Oct 2024 12:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CF112C470
+	for <backports@vger.kernel.org>; Fri, 11 Oct 2024 14:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728648105; cv=none; b=UwLyHBUUVQIw8d0Y8Vrpwq4vZRNVRnSdyx3cmcqYNHSCZjxm6/T6QaTdeWrYp4CYO4xN44M02MFDO/204Jwau/lpfpUIQVb95FshIm6S8+pfCjKCNbrbGWRdHUr822kB3arJ7SY1yKL3KyJwOqiifTdITQIFTAa9ryN2WFg7JSM=
+	t=1728656138; cv=none; b=Ls5+5dYX62JhKMhL99fiUa1YLcDvVOVQ9VHKBsW1oKQB2Gvc45cPvdCP4EXgUFtXIZDgrxRk7wX2BbQqqA2mWZQMd7fVdBEkCvjHwZ6qHYCvEsYxPZOoZs2/cDnhz0VEmzF8sjZqg/Ey/zICpfWUAJGAXORcT0ZVR17e32SX4/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728648105; c=relaxed/simple;
-	bh=CllwSRd/IpSg/DVqWYtDi8XyIAq0PVsXZummYuz6vgQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MrP9BE/423C6bzPnamcbk/5s0J4zsVTw0SdWazZvSJBa4P7dlef6gsTeV3upVh71HMT14LZiGbVdHDnew8Tyu0dh69A9jyLe5AcAOTBGoIXUqMwAvx1ZLGPw4AOp43TQDhICvHGJiZ3KrnowMSU+V7N4Zp3TADl+oMFjeRyp7g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=OBEkWuHu; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+	s=arc-20240116; t=1728656138; c=relaxed/simple;
+	bh=aNP9wN63tjCz2HvIlA4rzJnaTkkFJIGr3H+ChQm384A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YlDfjk0oqTG5toy/DJpTRY7gM9ilEHlcQRNP4WsxerY8rGp0VYY12O9spcIxjJCm7cAhfHcqLucGPQbj+vzCMfRM90IpB3tz8RhwtmApgljyTzbHbF5lIDuwE+YmVWmYV8K+/znzxMdqCAioC6v/PkbFcZJ7avPBE0c5Q8aHpLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OQz3HOih; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="OBEkWuHu"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:To:From:Subject:Message-ID:Sender:
-	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=LEtorgSTn6cwcZlxykvV4uxv8L18LG/GiRkUoEL2qcg=;
-	t=1728648104; x=1729857704; b=OBEkWuHuC0s6+jcAs3oicRLol+WzmSPxhpQvu/x3HfuYz4N
-	LdfnP7QrxMv3iECCGIoQqXArvxfKItmUZ2T8exJG4Na0DKWac6Tk7relyGtQli7n1sh6yg4MdDKR/
-	g0xsXPEuJqeCdJjFwJzh1o/04CACoHpM2jJ87Lpj0akmffoFtjkWFuoctBBdRMj4VogBnRyISAptj
-	IaM5AZjL24TaAG42fE+NtBI6AFl6hRylRJZVLzEQCWVjCrXVRZjs2xDsDN3Hg2CLN4xOk/OimrLDy
-	cXHRhJ7paxs63jug0AmfZNRMKWveLA0Hps9IAqEtKhSNzBPNMuuJks7M83OqkfFQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1szEKz-00000007AYI-3MOg;
-	Fri, 11 Oct 2024 14:01:41 +0200
-Message-ID: <fc1c1d078cc5026a829d9c9daa59f6732add8520.camel@sipsolutions.net>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OQz3HOih"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 850F3C4CEC3;
+	Fri, 11 Oct 2024 14:15:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728656137;
+	bh=aNP9wN63tjCz2HvIlA4rzJnaTkkFJIGr3H+ChQm384A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OQz3HOihg8/ZyzHrX/MR6sGL2fVgy/6U8I668GsEgnuRjFM0HQy3ZZkIf6l1mm00F
+	 iJylmaWkT+iHZ9ZD/2BYdtU+ZEnFBZCWInBBMc9tvCGfmabeSgJZS6vP+ixwPwtSHE
+	 +msFV2YqKfpm+cM3KfjBVqaweTSgMnYuQxj8255c=
+Date: Fri, 11 Oct 2024 10:15:34 -0400
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: backports@vger.kernel.org
 Subject: Re: Sunsetting backports.wiki.kernel.org
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>, 
-	backports@vger.kernel.org
-Date: Fri, 11 Oct 2024 14:01:41 +0200
-In-Reply-To: <20241008-amethyst-kestrel-of-realization-bb7b26@lemur>
+Message-ID: <20241011-radiant-precious-gaur-6e2a61@lemur>
 References: <20241008-amethyst-kestrel-of-realization-bb7b26@lemur>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+ <fc1c1d078cc5026a829d9c9daa59f6732add8520.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: backports@vger.kernel.org
 List-Id: <backports.vger.kernel.org>
 List-Subscribe: <mailto:backports+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:backports+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fc1c1d078cc5026a829d9c9daa59f6732add8520.camel@sipsolutions.net>
 
->=20
-> There are two ways forward:
->=20
-> 1. You can clone that git repository and host it on github. This would al=
-low
->    for a quick readthedocs.org integration and allow you to edit the file=
-s
->    directly via the github interface. This is a very wiki-like workflow a=
-nd
->    would allow you to grant access to the repository to anyone with a git=
-hub
->    account, plus accept pull requests with modifications. Once you have
->    readthedocs.org integration working, we can configure it to be under t=
-he
->    docs.kernel.org domain, which will allow you to remove the ads from th=
-e
->    site.
->=20
-> 2. Continue to host it in the current location and accept edits via patch=
-es
->    sent to this mailing list.
->=20
-> Please let me know how you would like to proceed. If I don't hear back fr=
-om
-> anyone in the next few days, I will configure the backports.docs.kernel.o=
-rg
-> with the current converted contents and redirect backports.wiki.kernel.or=
-g
-> there.
+On Fri, Oct 11, 2024 at 02:01:41PM GMT, Johannes Berg wrote:
+> > Please let me know how you would like to proceed. If I don't hear back from
+> > anyone in the next few days, I will configure the backports.docs.kernel.org
+> > with the current converted contents and redirect backports.wiki.kernel.org
+> > there.
+> 
+> Maybe for now it'd make sense to move the repo into the backports/ group
+> on kernel.org? Or are you trying keep everything together in
+> docs/docsko/?
 
-Maybe for now it'd make sense to move the repo into the backports/ group
-on kernel.org? Or are you trying keep everything together in
-docs/docsko/?
+Yes, it has to stay under docs/docsko for the triggers to work properly.
 
-It probably doesn't matter anyway, I'm just not sure how permissions
-would work if it's in docs/docsko/, I guess you can still give the
-backport group access? Who actually does have access to the repo now?
+> It probably doesn't matter anyway, I'm just not sure how permissions
+> would work if it's in docs/docsko/, I guess you can still give the
+> backport group access? Who actually does have access to the repo now?
 
-Honestly, I have very little opinion on this - even the few changes that
-backports is still seeing we're not taking much care of the wiki these
-days. Maybe Hauke has any further thoughts.
+I've granted access to that repository to the @backports group, so you should
+now be able to push changes there.
 
-johahnnes
+> Honestly, I have very little opinion on this - even the few changes that
+> backports is still seeing we're not taking much care of the wiki these
+> days. Maybe Hauke has any further thoughts.
+
+I'm perfectly happy to keep the source where it is. The only downside compared
+to hosting it on readthedocs.io is that propagating changes takes much longer
+(10-15 minutes).
+
+-K
