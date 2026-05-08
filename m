@@ -1,41 +1,37 @@
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2ED53398A
-	for <backports@vger.kernel.org>; Tue, 27 Jan 2026 02:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768DE36C9E5
+	for <backports@vger.kernel.org>; Fri,  8 May 2026 07:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769480621; cv=none; b=hIoqijtUNCFWaC55sFRhg+dKYCBSJ4L2RsL1ZwQfpYmUh0S+Csy/HbtcSnQIO7Z/+ZEleQLXY0iSe/3LpU6tOuT00hGhjLOG8VPqXbhE2HRp+kgZ8Etus1OnpfaCEr74dXAqjY/owrraPPNSRwiA7Csbade1STvQvQwi3cY9Z3w=
+	t=1778223838; cv=none; b=hZWVKoEsR4F7tdEVxpbNnu/A3KlZ0ITggzde79+lI3RWFp3aW3pMs/c7C4KCBLrlK+kHnZPdBbMICmS16vI9CWgG1ni81ACpB05sYRRDyaau1+DqoZNGUvmiRU7VS14NW9gvtdxYO+zpgV2NoVj3YLlr/fsaqkHX6RH/XYxZp7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769480621; c=relaxed/simple;
-	bh=7LmPPgofIb1IE8U43JSiqCwQWVM5REniQT8EO0NHNCQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fW8AcHxf4Ayt/xyBQ3OjROKi6PPIvPIPMhv6Kc7h3Eudpj9Vqb82YmBR6kVUFj3/jtZcYS9Sf9J8BsKHlyX/laC/q4mh+yRr6v5vm/MrxheZChO+3grqPeQmIuXKHxLSzYPZ29/3Q9kcJ98TZNpk2l5OstGfA08qhifGvlBkaoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h5mqeedj; arc=none smtp.client-ip=95.215.58.186
+	s=arc-20240116; t=1778223838; c=relaxed/simple;
+	bh=+CkLXDM6M3q0s/RzH6qdR0stLN10Q5NLDPUOHENse88=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=agpAvS7euOYuPr8KQdFPeh+HvfY0Zfxm5zGP5XemS2rBO+44PISrtgou2HH8kWhmB56O907ml5RYS1FRbx3uTj05IXq/3vr10hJHG0pskfXEZ4HdwTkORsw+SgJaDirDS7nLJ57OxOF4yUcwh9URzdUslsbDKmvnjTxaRpApFgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GsTpxsZf; arc=none smtp.client-ip=91.218.175.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h5mqeedj"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GsTpxsZf"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1769480618;
+	t=1778223832;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4pklMLFycNkq0XVtFjCiXKaAxe4amek66ovJT8s7WeE=;
-	b=h5mqeedjfoj/8EXKynUeqYJQbmW7GAKAdGC0tG90lrtuXRfDzq+9m1wnOc4h/GPEvP/gqS
-	kBbj+2G/3/KwRBqIWVdCdgUlK/wQ+7rI6rYekt5UxjusC3A5bDqOr9gIDp34TqowaXJYti
-	s7CYnDxdFNKvGMnBMf1nEebuL78hQhQ=
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=OIg6wXNLYTlHnZRkRxpSI2meaRkhs5oNOEVUMbP4rQM=;
+	b=GsTpxsZfDrM2uADHSKap4xWz5qKg2Xu/N35IG4jQrup7aH8rtes+PMKywh7o4+SYxE+9ta
+	6C0TVb9j5gwQ7y6KROtaBNoXXZqNHR7wGz4itCU3TbAFGw1qT5BX4/2ETrtLxSpDj/sNrC
+	xNKOezh+G0GB56JBuQYXXKwIUQ2AqcQ=
 From: Yi Cong <cong.yi@linux.dev>
 To: hauke@hauke-m.de,
 	backports@vger.kernel.org
 Cc: yicong@kylinos.cn
-Subject: [PATCH 2/2] patches: fix puncturing bitmap policy
-Date: Tue, 27 Jan 2026 10:22:39 +0800
-Message-Id: <20260127022239.754220-2-cong.yi@linux.dev>
-In-Reply-To: <20260127022239.754220-1-cong.yi@linux.dev>
-References: <20260127022239.754220-1-cong.yi@linux.dev>
+Subject: [PATCH] gentree: keep directory intact and ignore if missing
+Date: Fri,  8 May 2026 15:02:59 +0800
+Message-Id: <20260508070259.193255-1-cong.yi@linux.dev>
 Precedence: bulk
 X-Mailing-List: backports@vger.kernel.org
 List-Id: <backports.vger.kernel.org>
@@ -47,28 +43,52 @@ X-Migadu-Flow: FLOW_OUT
 
 From: Yi Cong <yicong@kylinos.cn>
 
-commit b27f07c50a73e34eefb6b1030b235192b7ded850 upstream.
+Previously, `shutil.rmtree` removed the target directory
+itself, breaking active terminal sessions in target output
+and then need to cd target directory again which add some
+additional operations during the manual debug test.
 
-Use u32 instead of u8.
+Optimize it so that only the output directory is cleared,
+rather than deleting the entire thing.
 
 Signed-off-by: Yi Cong <yicong@kylinos.cn>
 ---
- patches/0099-netlink-range/mac80211.patch | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ gentree.py | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/patches/0099-netlink-range/mac80211.patch b/patches/0099-netlink-range/mac80211.patch
-index 90d2bf53..2a83be99 100644
---- a/patches/0099-netlink-range/mac80211.patch
-+++ b/patches/0099-netlink-range/mac80211.patch
-@@ -92,7 +92,7 @@
-  		NLA_POLICY_FULL_RANGE(NLA_U32, &nl80211_punct_bitmap_range),
- -
- +#else
--+	[NL80211_ATTR_PUNCT_BITMAP] = NLA_POLICY_RANGE(NLA_U8, 0, 0xffff),
-++	[NL80211_ATTR_PUNCT_BITMAP] = NLA_POLICY_RANGE(NLA_U32, 0, 0xffff),
- +#endif
-  	[NL80211_ATTR_MAX_HW_TIMESTAMP_PEERS] = { .type = NLA_U16 },
-  	[NL80211_ATTR_HW_TIMESTAMP_ENABLED] = { .type = NLA_FLAG },
+diff --git a/gentree.py b/gentree.py
+index d709b907..7940c145 100755
+--- a/gentree.py
++++ b/gentree.py
+@@ -119,13 +119,22 @@ def check_output_dir(d, clean):
+     sanity check the output when generating a tree, so usually
+     running with --clean isn't suggested.
+     """
++    if not os.path.exists(d):
++        return
++
+     if clean:
+-        shutil.rmtree(d, ignore_errors=True)
+-    try:
+-        os.rmdir(d)
+-    except OSError as e:
+-        if e.errno != errno.ENOENT:
+-            raise
++        for item in os.listdir(d):
++            item_path = os.path.join(d, item)
++            if os.path.isdir(item_path) and not os.path.islink(item_path):
++                shutil.rmtree(item_path)
++            else:
++                os.unlink(item_path)
++    else:
++        if os.listdir(d):
++            raise OSError(
++                "Output directory '{}' exists and is not empty. "
++                "Use --clean to overwrite.".format(d)
++            )
+ 
+ 
+ def copytree(src, dst, symlinks=False, ignore=None):
 -- 
 2.25.1
 
