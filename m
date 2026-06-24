@@ -1,39 +1,39 @@
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5DD2ED870
-	for <backports@vger.kernel.org>; Wed, 24 Jun 2026 07:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB402EEE9E
+	for <backports@vger.kernel.org>; Wed, 24 Jun 2026 07:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782286827; cv=none; b=ZqcZNwL+FdLrOqZ8zmCVP+eeXiO71+MIoD9tX7a2Ri9dV0VQDrWS1I8qOHTDz8lTsc4RmMJfWnVfM3mCp1P04rxV448K7ZbSlc1sEi7DVFfDnRsVm8oTRPyhAa4fAfK7rROqSMn3HaEQwu6q6cfclCQuc9XF72BPtNss+tCw8p0=
+	t=1782286829; cv=none; b=b3RHVHxKjXBq8sHpmDKtv7n+vJ4Qu0sMni5txtN77G22TE9Cq6nN8IPpZ17rKr9iJN5WfYv+VjgsedHyrgvWL0XYOHkoGqLG9L3Kc1re28vCsAbEflMF8+m/feQJKB1w4N4kSMumywqTGuVsASY5DtIyPNh7UQRpvUZlfkERcWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782286827; c=relaxed/simple;
-	bh=qW+ESAQkqVno+lJ4cQlWS2Ir/XwTD/S5O1rB6zHXbgU=;
+	s=arc-20240116; t=1782286829; c=relaxed/simple;
+	bh=zcv5ttlUlZqkc5vt4dGdl3ZnRdZU9cp4mHmsFSJKgDo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lbAaMzJFKGoAvn5gk9gVInf77MM4hulU38NQ0w3Q4dR10TZF92wsKghpovvSezlyQD1J/BMt41dAy0/JkBLgQF+aTvY2bt3A3mx18p68F73AtUfhc9PVWfzmFDMqylWNP9Wi8kVqjt3NwpVvuHa8IzQMplGzlpR5+vkvk41haEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lE/L4tk+; arc=none smtp.client-ip=91.218.175.188
+	 MIME-Version; b=o16IdutZwnS6SZZKpFeguU5fSmVYSxhH3GiV1eqQKFLh0wapNqKnI8md5CljHm73Q08l6Fhu9wlVs5Ozegdex2ozNGlD+ua/6wNYFGSuIcP3jmNum+NWxheIkAu68kPjEMMywSsVl/UmjxyAXszaDSoBY1dvwOhzKhAm37YNXfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ir1de/BX; arc=none smtp.client-ip=91.218.175.186
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lE/L4tk+"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ir1de/BX"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1782286824;
+	t=1782286826;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+A4uPEpu7PDlCiDrQaCjMjVd3tY9ge2GAAESk655+Vg=;
-	b=lE/L4tk+W27ge4+eFpRSFRvTjvI4Y++bpb+Ioa37tSVOOENPNJfuHGeCbw6YtaJOaeTxLV
-	70bCBZzx+TJVgtIBWkGmP3agk+VMQunj2nMuFFMC+QDtrCiwLvfN8jhSvOmmu3pXD2sLlO
-	7Ffl7QnZOUhWW1PqYGsk4nEQISHF96k=
+	bh=EfYxP2N0zris0Y74FeQEt27970LcYpuJoQlyoPDbWrg=;
+	b=ir1de/BXaGGfYmPVsZiWhd64wfiaX/01OhUWGlILuJEW9ODdw98MpmagUpatGkrsXITrLQ
+	MXOyqc5NROb3s9DzenPTh8INe0qpMC8iwcZCCmIwRERCXwspN9Cj6n3UFeYfEV71DoJkjU
+	oE+m6vvOR9mBMyNpQ7peloeo7yiBHHQ=
 From: Yi Cong <cong.yi@linux.dev>
 To: hauke@hauke-m.de,
 	backports@vger.kernel.org
 Cc: Yi Cong <yicong@kylinos.cn>
-Subject: [PATCH 12/20] headers: add genl_small_ops backport for kernels < 5.10
-Date: Wed, 24 Jun 2026 15:38:36 +0800
-Message-ID: <20260624073844.2097504-13-cong.yi@linux.dev>
+Subject: [PATCH 13/20] headers: add class_create() single-argument backport for kernels < 6.4
+Date: Wed, 24 Jun 2026 15:38:37 +0800
+Message-ID: <20260624073844.2097504-14-cong.yi@linux.dev>
 In-Reply-To: <20260624073844.2097504-1-cong.yi@linux.dev>
 References: <20260624073844.2097504-1-cong.yi@linux.dev>
 Precedence: bulk
@@ -47,38 +47,38 @@ X-Migadu-Flow: FLOW_OUT
 
 From: Yi Cong <yicong@kylinos.cn>
 
-genl_small_ops was introduced in v5.10 as a more compact
-representation of genl_ops. For older kernels, alias genl_small_ops
-to genl_ops and map small_ops/n_small_ops struct fields to ops/n_ops.
+In v6.4 class_create() was simplified to take only the name argument,
+using THIS_MODULE implicitly. For older kernels, provide a wrapper
+that forwards to the two-argument __class_create() macro.
 
 Signed-off-by: Yi Cong <yicong@kylinos.cn>
 ---
- backport/backport-include/net/genetlink.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ backport/backport-include/linux/device.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/backport/backport-include/net/genetlink.h b/backport/backport-include/net/genetlink.h
-index b98d7110..a57cd200 100644
---- a/backport/backport-include/net/genetlink.h
-+++ b/backport/backport-include/net/genetlink.h
-@@ -7,6 +7,18 @@
- #define genl_split_ops genl_ops
+diff --git a/backport/backport-include/linux/device.h b/backport/backport-include/linux/device.h
+index 06595285..069337b7 100644
+--- a/backport/backport-include/linux/device.h
++++ b/backport/backport-include/linux/device.h
+@@ -12,4 +12,18 @@
+ 	struct device_attribute dev_attr_##_name = __ATTR_RO_MODE(_name, 0400)
  #endif
  
-+#if LINUX_VERSION_IS_LESS(5,10,0)
++#if LINUX_VERSION_IS_LESS(6,4,0)
 +/*
-+ * genl_small_ops was introduced in v5.10 to allow a more compact
-+ * representation of genl_ops.  For older kernels, just alias it to
-+ * genl_ops and map the struct genl_family small_ops/n_small_ops
-+ * fields to ops/n_ops.
++ * class_create() in v6.4+ takes only the name argument and uses
++ * THIS_MODULE implicitly.  For older kernels, provide a wrapper
++ * that forwards to the 2-argument macro version.
 + */
-+#define genl_small_ops genl_ops
-+#define small_ops ops
-+#define n_small_ops n_ops
++#undef class_create
++#define class_create(name) \
++({ \
++	static struct lock_class_key __key; \
++	__class_create(THIS_MODULE, (name), &__key); \
++})
 +#endif
 +
- /* this is for patches we apply */
- static inline struct netlink_ext_ack *genl_callback_extack(struct netlink_callback *cb)
- {
+ #endif /* __BACKPORT_DEVICE_H_ */
 -- 
 2.43.0
 
